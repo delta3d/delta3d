@@ -17,39 +17,12 @@ class ObjectWrap : public Object
            mSelf(self)
       {}
 
-      /*
-      virtual osg::Node* GetOSGNode()
-      {
-         return call_method<osg::Node*>(mSelf, "GetOSGNode"); 
-      }
-
-      osg::Node* DefaultGetOSGNode()
-      {
-         return Object::GetOSGNode();
-      }
-      */
-      
       virtual bool LoadFile(std::string filename, bool useCache = true)
       {
          return call_method<bool>(mSelf, "LoadFile", filename, useCache);
       }
       
-      bool LoadFile1(std::string filename)
-      {
-         LoadFile(filename);
-      }
-      
-      bool DefaultLoadFile1(std::string filename)
-      {
-         return Object::LoadFile(filename);
-      }
-      
-      bool LoadFile2(std::string filename, bool useCache)
-      {
-         LoadFile(filename, useCache);
-      }
-      
-      bool DefaultLoadFile2(std::string filename, bool useCache)
+      bool DefaultLoadFile(std::string filename, bool useCache)
       {
          return Object::LoadFile(filename, useCache);
       }
@@ -82,8 +55,7 @@ void initObjectBindings()
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
       .def("GetInstance", ObjectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      //.def("GetOSGNode", &Object::GetOSGNode, &ObjectWrap::DefaultGetOSGNode, return_internal_reference<>())
       .def("LoadFile", &Object::LoadFile, LF_overloads())
-      .def("LoadFile", &Object::LoadFile, &ObjectWrap::DefaultLoadFile2)
+      .def("LoadFile", &Object::LoadFile, &ObjectWrap::DefaultLoadFile)
       .def("GetFilename", &Object::GetFilename, &ObjectWrap::DefaultGetFilename);
 }
