@@ -1,9 +1,10 @@
+#ifndef DELTA_RTICONNECTION
+#define DELTA_RTICONNECTION
+
 // rticonnection.h: Declaration of the RTIConnection class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DT_HLA_RTI_CONNECTION
-#define DT_HLA_RTI_CONNECTION
 
 #include <map>
 #include <set>
@@ -1106,4 +1107,5 @@ namespace dtHLA
    };
 };
 
-#endif // DT_HLA_RTI_CONNECTION
+#endif // DELTA_RTICONNECTION
+

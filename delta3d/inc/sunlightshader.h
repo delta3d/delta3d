@@ -1,3 +1,6 @@
+#ifndef DELTA_SUNLIGHTSHADER
+#define DELTA_SUNLIGHTSHADER
+
 
 #include <osg/Vec3>
 #include <osg/VertexProgram>
@@ -41,3 +44,5 @@ namespace dtCore
       float ConcentrationFactor(float turbidity);
    };
 }
+
+#endif // DELTA_SUNLIGHTSHADER

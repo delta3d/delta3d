@@ -1,9 +1,10 @@
+#ifndef DELTA_EFFECTMANAGER
+#define DELTA_EFFECTMANAGER
+
 // effectmanager.h: Declaration of the EffectManager class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_EFFECT_MANAGER
-#define DELTA_EFFECT_MANAGER
 
 #include <map>
 #include <set>
@@ -372,4 +373,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_EFFECT_MANAGER
+
+#endif // DELTA_EFFECTMANAGER

@@ -1,13 +1,11 @@
+#ifndef DELTA_ISECTOR
+#define DELTA_ISECTOR
+
 // isector.h: interface for the Isector class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_ISECTOR_H__EAA7B048_67D4_4869_843A_D758E2D9450D__INCLUDED_)
-#define AFX_ISECTOR_H__EAA7B048_67D4_4869_843A_D758E2D9450D__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include "transformable.h"
 #include "drawable.h"
@@ -78,4 +76,5 @@ namespace dtCore
    };
 }
 
-#endif // !defined(AFX_ISECTOR_H__EAA7B048_67D4_4869_843A_D758E2D9450D__INCLUDED_)
+
+#endif // DELTA_ISECTOR

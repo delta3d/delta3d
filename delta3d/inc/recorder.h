@@ -1,9 +1,10 @@
+#ifndef DELTA_RECORDER
+#define DELTA_RECORDER
+
 // recorder.h: Declaration of the Recorder class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_RECORDER
-#define DELTA_RECORDER
 
 #include <map>
 #include <set>
@@ -247,5 +248,6 @@ namespace dtCore
          Recordable* mSource;
    };
 };
+
 
 #endif // DELTA_RECORDER

@@ -1,9 +1,10 @@
+#ifndef DELTA_WALKMOTIONMODEL
+#define DELTA_WALKMOTIONMODEL
+
 // walkmotionmodel.h: Declaration of the WalkMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_WALK_MOTION_MODEL
-#define DELTA_WALK_MOTION_MODEL
 
 #include "keyboard.h"
 #include "mouse.h"
@@ -276,4 +277,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_WALK_MOTION_MODEL
+
+#endif // DELTA_WALKMOTIONMODEL

@@ -1,9 +1,10 @@
+#ifndef DELTA_DRAWABLE
+#define DELTA_DRAWABLE
+
 // drawable.h: Declaration of the Drawable class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_DRAWABLE
-#define DELTA_DRAWABLE
 
 #include "export.h"
 
@@ -38,5 +39,6 @@ namespace dtCore
          virtual void AddedToScene(Scene* scene) {}
    };
 };
+
 
 #endif // DELTA_DRAWABLE

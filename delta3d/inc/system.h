@@ -1,13 +1,11 @@
+#ifndef DELTA_SYSTEM
+#define DELTA_SYSTEM
+
 // system.h: interface for the System class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_SYSTEM_H__41AEFCFC_3F25_4467_8F12_D10A5605A1A4__INCLUDED_)
-#define AFX_SYSTEM_H__41AEFCFC_3F25_4467_8F12_D10A5605A1A4__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include "base.h"
 #include "ul.h"
@@ -73,4 +71,5 @@ namespace dtCore
 };
 
 
-#endif // !defined(AFX_SYSTEM_H__41AEFCFC_3F25_4467_8F12_D10A5605A1A4__INCLUDED_)
+
+#endif // DELTA_SYSTEM

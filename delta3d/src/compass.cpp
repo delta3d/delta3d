@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 
 #include <osg/Geode>
 #include <osg/Geometry>

@@ -1,13 +1,11 @@
+#ifndef DELTA_OBJECT
+#define DELTA_OBJECT
+
 // object.h: interface for the Object class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_OBJECT_H__010FD38C_9DA6_4889_BD79_33CC9C620EC9__INCLUDED_)
-#define AFX_OBJECT_H__010FD38C_9DA6_4889_BD79_33CC9C620EC9__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include "base.h"
 #include <osg/ref_ptr>
@@ -56,4 +54,5 @@ namespace dtCore
    
 };
 
-#endif // !defined(AFX_OBJECT_H__010FD38C_9DA6_4889_BD79_33CC9C620EC9__INCLUDED_)
+
+#endif // DELTA_OBJECT

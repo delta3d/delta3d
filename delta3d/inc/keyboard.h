@@ -1,9 +1,10 @@
+#ifndef DELTA_KEYBOARD
+#define DELTA_KEYBOARD
+
 // keyboard.h: Declaration of the Keyboard class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_KEYBOARD
-#define DELTA_KEYBOARD
 
 #include <set>
 #include <string>
@@ -119,5 +120,6 @@ namespace dtCore
                                Producer::KeyCharacter character) {}
    };
 };
+
 
 #endif // DELTA_KEYBOARD

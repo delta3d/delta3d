@@ -1,4 +1,6 @@
-#pragma  once
+#ifndef DELTA_BASEABC
+#define DELTA_BASEABC
+
 #include <string>
 
 #include "Keyboard.h"
@@ -88,3 +90,5 @@ namespace   dtABC
       osg::ref_ptr<dtCore::Mouse>      mMouse;
    };
 };
+
+#endif // DELTA_BASEABC

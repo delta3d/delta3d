@@ -1,13 +1,11 @@
+#ifndef DELTA_SCENE
+#define DELTA_SCENE
+
  // scene.h: interface for the Scene class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_SCENE_H__3A865494_08F3_4A53_A41C_F65B3D517BDA__INCLUDED_)
-#define AFX_SCENE_H__3A865494_08F3_4A53_A41C_F65B3D517BDA__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include <Producer/Camera>
 #include <osg/FrameStamp>
@@ -142,4 +140,5 @@ namespace dtCore
    
 };
 
-#endif // !defined(AFX_SCENE_H__3A865494_08F3_4A53_A41C_F65B3D517BDA__INCLUDED_)
+
+#endif // DELTA_SCENE

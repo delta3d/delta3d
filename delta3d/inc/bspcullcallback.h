@@ -1,9 +1,10 @@
+#ifndef DELTA_BSPCULLCALLBACK
+#define DELTA_BSPCULLCALLBACK
+
 // bspcullcallback.h: Declaration of the BSPCullCallback class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef P51_VIS_BSP_CULL_CALLBACK
-#define P51_VIS_BSP_CULL_CALLBACK
 
 #include <set>
 
@@ -262,4 +263,5 @@ namespace dtVis
    };
 };
 
-#endif // P51_VIS_BSP_CULL_CALLBACK
+
+#endif // DELTA_BSPCULLCALLBACK

@@ -1,5 +1,6 @@
-#ifndef DT_CHAR
-#define DT_CHAR 
+#ifndef DELTA_DTCHAR
+#define DELTA_DTCHAR
+
 
 #include "character.h"
 
@@ -35,4 +36,5 @@
 
 #pragma comment (lib, _AUTOLIBNAME1)
 
-#endif // DT_CHAR
+
+#endif // DELTA_DTCHAR

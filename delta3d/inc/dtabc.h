@@ -1,5 +1,6 @@
-#ifndef DTABC_INCLUDE
-#define DTABC_INCLUDE
+#ifndef DELTA_DTABC
+#define DELTA_DTABC
+
 
 #include "application.h"
 #include "baseabc.h"
@@ -46,4 +47,5 @@
 #pragma  comment( lib, _AUTOLIBNAME6 )
 #pragma  comment( lib, _AUTOLIBNAME7 )
 
-#endif //DEFINE DTABC_INCLUDE
+
+#endif // DELTA_DTABC

@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 
 #include "system.h"
 #include "soundeffectbinder.h"

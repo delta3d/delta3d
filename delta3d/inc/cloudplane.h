@@ -1,5 +1,6 @@
-#ifndef _CLOUDPLANE_H
-#define _CLOUDPLANE_H
+#ifndef DELTA_CLOUDPLANE
+#define DELTA_CLOUDPLANE
+
 
 #include "EnvEffect.h"
 #include "sg.h"
@@ -101,4 +102,5 @@ namespace dtCore
 
 }
 
-#endif
+
+#endif // DELTA_CLOUDPLANE

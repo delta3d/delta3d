@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_COMPASS
+#define DELTA_COMPASS
+
 #include <osg/ref_ptr>
 #include <osg/MatrixTransform>
 
@@ -65,3 +67,5 @@ namespace dtCore
    };
 
 };
+
+#endif // DELTA_COMPASS

@@ -1,9 +1,10 @@
+#ifndef DELTA_UFOMOTIONMODEL
+#define DELTA_UFOMOTIONMODEL
+
 // ufomotionmodel.h: Declaration of the UFOMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_UFO_MOTION_MODEL
-#define DELTA_UFO_MOTION_MODEL
 
 #include "keyboard.h"
 #include "mouse.h"
@@ -248,4 +249,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_UFO_MOTION_MODEL
+
+#endif // DELTA_UFOMOTIONMODEL

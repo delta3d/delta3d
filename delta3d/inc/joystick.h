@@ -1,9 +1,10 @@
+#ifndef DELTA_JOYSTICK
+#define DELTA_JOYSTICK
+
 // joystick.h: Declaration of the Joystick class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef JOYSTICK
-#define JOYSTICK
 
 #include <string>
 
@@ -69,4 +70,5 @@ namespace dtCore
    };
 };
 
-#endif // JOYSTICK
+
+#endif // DELTA_JOYSTICK

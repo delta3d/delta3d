@@ -1,9 +1,10 @@
+#ifndef DELTA_MACROS
+#define DELTA_MACROS
+
 // macros.h: System-wide macro definitions.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_MACROS
-#define DELTA_MACROS
 
 #include <string>
 #include <vector>
@@ -83,6 +84,7 @@
       }                                                        \
       return NULL;                                             \
    }
+
 
 
 #endif // DELTA_MACROS

@@ -1,13 +1,12 @@
+#ifndef DELTA_GUIMGR
+#define DELTA_GUIMGR
+
+
 // guimgr.h: interface for the GUI class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_GUIMGR_H__88197C25_4C00_4251_9F90_21565007F1F7__INCLUDED_)
-#define AFX_GUIMGR_H__88197C25_4C00_4251_9F90_21565007F1F7__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 #include "OpenThreads/thread"
 #include "gui_fltk.h"
 #include "base.h"
@@ -101,4 +100,6 @@ private:
    
 #endif
 
-#endif // !defined(AFX_GUIMGR_H__88197C25_4C00_4251_9F90_21565007F1F7__INCLUDED_)
+
+
+#endif // DELTA_GUIMGR

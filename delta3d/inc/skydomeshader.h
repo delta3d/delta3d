@@ -1,3 +1,6 @@
+#ifndef DELTA_SKYDOMESHADER
+#define DELTA_SKYDOMESHADER
+
 #include <osg/Vec3>
 #include <osg/VertexProgram>
 #include <osg/FragmentProgram>
@@ -40,3 +43,5 @@ namespace dtCore
       float ConcentrationFactor(float turbidity);
    };
 }
+
+#endif // DELTA_SKYDOMESHADER

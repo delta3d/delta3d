@@ -313,7 +313,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\CloudDome.cpp">
+				RelativePath=".\clouddome.cpp">
 			</File>
 			<File
 				RelativePath=".\cloudplane.cpp">
@@ -322,10 +322,10 @@
 				RelativePath=".\compass.cpp">
 			</File>
 			<File
-				RelativePath=".\CUI_OpenGLRenderer.cpp">
+				RelativePath=".\cui_openglrenderer.cpp">
 			</File>
 			<File
-				RelativePath=".\CUI_OpenGLShader.cpp">
+				RelativePath=".\cui_openglshader.cpp">
 			</File>
 			<File
 				RelativePath="effectmanager.cpp">
@@ -365,10 +365,10 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\EnvEffect.cpp">
+				RelativePath=".\enveffect.cpp">
 			</File>
 			<File
-				RelativePath=".\Environment.cpp">
+				RelativePath=".\environment.cpp">
 			</File>
 			<File
 				RelativePath=".\ephemeris.cpp">
@@ -1073,7 +1073,7 @@
 				RelativePath="..\inc\camera.h">
 			</File>
 			<File
-				RelativePath="..\inc\CloudDome.h">
+				RelativePath="..\inc\clouddome.h">
 			</File>
 			<File
 				RelativePath="..\inc\cloudplane.h">
@@ -1082,10 +1082,10 @@
 				RelativePath="..\inc\compass.h">
 			</File>
 			<File
-				RelativePath="..\inc\CUI_OpenGLRenderer.h">
+				RelativePath="..\inc\cui_openglrenderer.h">
 			</File>
 			<File
-				RelativePath="..\inc\CUI_OpenGLShader.h">
+				RelativePath="..\inc\cui_openglshader.h">
 			</File>
 			<File
 				RelativePath="..\inc\drawable.h">
@@ -1097,10 +1097,10 @@
 				RelativePath="..\inc\effectmanager.h">
 			</File>
 			<File
-				RelativePath="..\inc\EnvEffect.h">
+				RelativePath="..\inc\enveffect.h">
 			</File>
 			<File
-				RelativePath="..\inc\Environment.h">
+				RelativePath="..\inc\environment.h">
 			</File>
 			<File
 				RelativePath="..\inc\ephemeris.h">

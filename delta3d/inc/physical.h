@@ -1,9 +1,10 @@
+#ifndef DELTA_PHYSICAL
+#define DELTA_PHYSICAL
+
 // physical.h: Declaration of the Physical class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_PHYSICAL
-#define DELTA_PHYSICAL
 
 #include "transform.h"
 
@@ -305,5 +306,6 @@ namespace dtCore
          bool mRenderingGeometry;///<if we're rendering the collision geometry
    };
 };
+
 
 #endif // DELTA_PHYSICAL

@@ -21,7 +21,7 @@ Purpose:
 
 // local
 #include "UI/CUI_SimpleShader.h"
-#include "CUI_OpenGLRenderer.h"
+#include "cui_openglrenderer.h"
 //#include "glpng.h"
 
 #include <osgDB/ReadFile>

@@ -1,9 +1,10 @@
+#ifndef DELTA_TRACKER
+#define DELTA_TRACKER
+
 // tracker.h: Declaration of the Tracker class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef TRACKER
-#define TRACKER
 
 #include <string>
 
@@ -69,4 +70,5 @@ namespace dtCore
    };
 };
 
-#endif // TRACKER
+
+#endif // DELTA_TRACKER

@@ -1,9 +1,10 @@
+#ifndef DELTA_MOTIONMODEL
+#define DELTA_MOTIONMODEL
+
 // motionmodel.h: Declaration of the MotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_MOTION_MODEL
-#define DELTA_MOTION_MODEL
 
 #include <osg/ref_ptr>
 
@@ -81,4 +82,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_MOTION_MODEL
+
+#endif // DELTA_MOTIONMODEL

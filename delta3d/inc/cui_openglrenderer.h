@@ -1,3 +1,6 @@
+#ifndef DELTA_CUI_OPENGLRENDERER
+#define DELTA_CUI_OPENGLRENDERER
+
 /*! \file CUI_OpenGLRenderer.h
 \brief A simple interface to opengl
 
@@ -12,8 +15,6 @@ Purpose:
 A simple interface to opengl
 */
 
-#ifndef CUI_OPENGLRENDERER_H
-#define CUI_OPENGLRENDERER_H
 
 #include <stack>
 
@@ -22,7 +23,7 @@ A simple interface to opengl
 #include "UI/UI_types.h"
 #include "UI/IUI_Renderer.h"
 
-#include "CUI_OpenGLShader.h"
+#include "cui_openglshader.h"
 
 namespace dtCore
 {
@@ -156,4 +157,5 @@ namespace dtCore
 
    };
 }
-#endif
+
+#endif // DELTA_CUI_OPENGLRENDERER

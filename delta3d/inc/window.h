@@ -1,13 +1,11 @@
+#ifndef DELTA_WINDOW
+#define DELTA_WINDOW
+
 // window.h: interface for the Window class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_WINDOW_H__538348DD_7E71_4B45_AE2B_67AC79B0CA89__INCLUDED_)
-#define AFX_WINDOW_H__538348DD_7E71_4B45_AE2B_67AC79B0CA89__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include <Producer/KeyboardMouse>
 #include <Producer/RenderSurface>
@@ -82,4 +80,5 @@ namespace dtCore
 };
 
 
-#endif // !defined(AFX_WINDOW_H__538348DD_7E71_4B45_AE2B_67AC79B0CA89__INCLUDED_)
+
+#endif // DELTA_WINDOW

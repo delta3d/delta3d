@@ -1,9 +1,10 @@
+#ifndef DELTA_LOGICALINPUTDEVICE
+#define DELTA_LOGICALINPUTDEVICE
+
 // logicalinputdevice.h: Declaration of the LogicalInputDevice class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_LOGICAL_INPUT_DEVICE
-#define DELTA_LOGICAL_INPUT_DEVICE
 
 #include "inputdevice.h"
 
@@ -799,4 +800,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_LOGICAL_INPUT_DEVICE
+
+#endif // DELTA_LOGICALINPUTDEVICE

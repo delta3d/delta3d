@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_SKYBOX
+#define DELTA_SKYBOX
+
 #include "enveffect.h"
 #include "skydome.h"
 namespace dtCore
@@ -101,3 +103,5 @@ private:
 };
 
 }
+
+#endif // DELTA_SKYBOX

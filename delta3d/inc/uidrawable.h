@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_UIDRAWABLE
+#define DELTA_UIDRAWABLE
+
 
 #include "base.h"
 #include "drawable.h"
@@ -10,7 +12,7 @@
 #include "UI/CUI_ListItem.h"
 #include "UI/CUI_ListBox.h"
 #include "UI/CUI_ScrollableFrame.h"
-#include "CUI_OpenGLRenderer.h"
+#include "cui_openglrenderer.h"
 #include <osg/group>
 #include "sg.h"
 #include "tinystr.h"
@@ -228,3 +230,5 @@ namespace dtCore
    };
 }
 
+
+#endif // DELTA_UIDRAWABLE

@@ -1,6 +1,8 @@
+#ifndef DELTA_STATS
+#define DELTA_STATS
 
-#ifndef _STATS
-#define _STATS 1
+
+
 
 #include <osgUtil/Statistics>
 #include <osg/Timer>
@@ -96,5 +98,6 @@ namespace dtCore
       void EnableTextNodes(int statsType);
    };
 }
-#endif
- 
+
+
+#endif // DELTA_STATS

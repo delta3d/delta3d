@@ -1,5 +1,6 @@
-#if !defined(GLOBALS_H_INCLUDED)
-#define GLOBALS_H_INCLUDED
+#ifndef DELTA_GLOBALS
+#define DELTA_GLOBALS
+
 
 #include <string>
 
@@ -11,4 +12,5 @@ namespace dtCore
    DT_EXPORT void SetDataFilePathList( std::string pathList );
 };
 
-#endif  //GLOBALS_H_INCLUDED
+
+#endif // DELTA_GLOBALS

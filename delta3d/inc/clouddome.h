@@ -1,8 +1,11 @@
+#ifndef DELTA_CLOUDDOME
+#define DELTA_CLOUDDOME
+
 /* CloudDome.h
 * Date: 28/04/04
 */
 
-#include "EnvEffect.h"
+#include "enveffect.h"
 #include "sg.h"
 #include "pnoise.h"
 
@@ -143,3 +146,5 @@ namespace dtCore
 
 	};
 }
+
+#endif // DELTA_CLOUDDOME

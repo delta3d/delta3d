@@ -1,6 +1,8 @@
-#pragma once
+#ifndef DELTA_FL_DT_WINDOW
+#define DELTA_FL_DT_WINDOW
 
-#include <assert.h>
+
+#include <cassert>
 
 #include <FL/Fl.h>
 #include <FL/X.h>
@@ -1200,3 +1202,5 @@ protected:
       long  mEvent;
 };
 
+
+#endif // DELTA_FL_DT_WINDOW

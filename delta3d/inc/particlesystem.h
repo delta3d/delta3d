@@ -1,9 +1,10 @@
+#ifndef DELTA_PARTICLESYSTEM
+#define DELTA_PARTICLESYSTEM
+
 // particlesystem.h: Declaration of the ParticleSystem class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_PARTICLE_SYSTEM
-#define DELTA_PARTICLE_SYSTEM
 
 #include <osg/Group>
 #include <osg/MatrixTransform>
@@ -128,4 +129,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_PARTICLE_SYSTEM
+
+#endif // DELTA_PARTICLESYSTEM
