@@ -51,7 +51,4 @@ void initSOARXTerrainBindings()
       .def("GetDetailMultiplier", &SOARXTerrain::GetDetailMultiplier)
       .def("GetHeight", &SOARXTerrain::GetHeight)
       .def("GetNormal", &SOARXTerrain::GetNormal);
-      
-   class_<SOARXTerrain::HeightColorMap, bases<std::map<float, osg::Vec3> > >("HeightColorMap")
-      .def("GetColor", SOARXTerrain::HeightColorMap::GetColor);
 }
