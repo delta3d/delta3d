@@ -724,6 +724,29 @@ namespace dtHLA
    };
    
    /**
+    * DIS/RPR-FOM articulated part metrics.
+    */
+   enum ArticulatedTypeMetric
+   {
+      PositionMetric = 1,
+      PositionRateMetric = 2,
+      ExtensionMetric = 3,
+      ExtensionRateMetric = 4,
+      XMetric = 5,
+      XRateMetric = 6,
+      YMetric = 7,
+      YRateMetric = 8,
+      ZMetric = 9,
+      ZRateMetric = 10,
+      AzimuthMetric = 11,
+      AzimuthRateMetric = 12,
+      ElevationMetric = 13,
+      ElevationRateMetric = 14,
+      RotationMetric = 15,
+      RotationRateMetric = 16
+   };
+   
+   /**
     * A DIS/RPR-FOM articulated part.
     */
    class ArticulatedParts
