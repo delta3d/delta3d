@@ -78,6 +78,10 @@ Kernel <= 2.6.10-1.741_FC3
    DELTA_DATA: $DELTA_ROOT/data
    DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc
    DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
+
+   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
+
+   Don't forget to 'export' your variables if you are using Bash!
    
 4. Check if you have the ext/ and data/ directories already in
    delta3d/.
@@ -104,11 +108,9 @@ Kernel <= 2.6.10-1.741_FC3
    Makefiles for your configuration. In each of these directories run:
 
    cmake . 
-   make clean 
    make
 
-   to build the apprpropriate files. "make clean" is only necessary if you
-   have downloaded the pre-built binaries and want to start fresh.
+   to build the apprpropriate files. 
 
    To build the Delta3D source, also run 'make install' to place the shared
    libraries in the ../lib folder.
