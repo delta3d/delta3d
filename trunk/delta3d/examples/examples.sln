@@ -19,10 +19,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPhysics", "testPhysics\
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testTerrain", "testTerrain\testTerrain.vcproj", "{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testWeather", "testWeather\testWeather.vcproj", "{FC8CDF6F-4FE6-4A8D-8D68-5DA752C977E2}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -77,10 +73,6 @@ Global
 		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Debug.Build.0 = Debug|Win32
 		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Release.ActiveCfg = Release|Win32
 		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Release.Build.0 = Release|Win32
-		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.ActiveCfg = Debug|Win32
-		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.Build.0 = Debug|Win32
-		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Release.ActiveCfg = Release|Win32
-		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Release.Build.0 = Release|Win32
 		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.ActiveCfg = Debug|Win32
 		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.Build.0 = Debug|Win32
 		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Release.ActiveCfg = Release|Win32
