@@ -36,7 +36,8 @@ MyWidget::OnMessage( MessageData* data )
 
       obj->LoadFile( filename );
 
-      SendMessage( "fileloaded", obj );
+      //SendMessage( "fileloaded", obj );
+      ObjectLoaded( obj );
       return;
    }
 
