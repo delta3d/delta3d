@@ -69,14 +69,7 @@ env = Environment(
       'DELTA_DATA' : os.environ['DELTA_DATA'].split(':')
     }, options = opts)
 
-<<<<<<< SConstruct
 env.Replace(CPPPATH = [], LIBS = [], LIBPATH = [], CPPDEFINES = [], CXXFLAGS = '', CCFLAGS = '')
-=======
-env.Replace(CPPPATH = [], LIBS = [], LIBPATH = [], CPPDEFINES = [], CXXFLAGS = '', CCFLAGS = '')
-
-print env['ENV']['LIBPATH']
-Exit(-1)
->>>>>>> 1.8.2.1
 
 Help(opts.GenerateHelpText(env))
 opts.Save('delta3d.conf', env)
