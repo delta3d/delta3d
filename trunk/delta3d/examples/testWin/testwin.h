@@ -34,6 +34,18 @@ private:
       RES_MENU       = 300,
       RES_SET        = 301,
       WH_MENU        = 302,
+      TITLE_SET      = 303,
+      TITLE_EDIT     = 304,
+      POS_TITLE      = 305,
+      POS_X          = 306, 
+      POS_Y          = 307,
+      POS_W          = 308,
+      POS_H          = 309,
+      POS_X_TEXT     = 310, 
+      POS_Y_TEXT     = 311,
+      POS_W_TEXT     = 312,
+      POS_H_TEXT     = 313,
+      POS_SET        = 314,
       REFRESH_MENU_1 = 1000,
       DEPTH_MENU_1   = 2000
    };
@@ -49,7 +61,7 @@ private:
    static dtCore::DeltaWin* mWindow;
    static dtCore::ResolutionVec mResVec;
    static int mSelectedRes;
-   static CUI_TextBox* mCurrentRexText;
+   static CUI_TextBox* mCurrentResText;
 };
 
 #endif // DELTA_TESTWINAPP
