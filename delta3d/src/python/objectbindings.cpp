@@ -2,11 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "pythonbindings.h"
+#include <boost/python.hpp>
+
 #include "object.h"
 
 using namespace boost::python;
-using namespace P51;
+using namespace dtCore;
 
 void initObjectBindings()
 {

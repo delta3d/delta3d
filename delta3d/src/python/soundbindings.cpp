@@ -7,7 +7,7 @@
 #include "sound.h"
 
 using namespace boost::python;
-using namespace P51;
+using namespace dtCore;
 
 void initSoundBindings()
 {

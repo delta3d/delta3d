@@ -7,7 +7,7 @@
 #include "window.h"
 
 using namespace boost::python;
-using namespace P51;
+using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SC_overloads, ShowCursor, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SFSM_overloads, SetFullScreenMode, 0, 1)

@@ -19,7 +19,7 @@ void initTransformableBindings();
 void initWindowBindings();
 
 
-BOOST_PYTHON_MODULE(P51)
+BOOST_PYTHON_MODULE(Delta)
 {
    initBaseBindings();
    initSystemBindings();

@@ -7,7 +7,7 @@
 #include "transform.h"
 
 using namespace boost::python;
-using namespace P51;
+using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(EE_overloads, EpsilonEquals, 1, 2)
 
