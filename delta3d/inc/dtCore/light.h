@@ -25,15 +25,16 @@
 #include <osg/LightModel>
 #include <osg/Light>
 
+#include "dtCore/base.h"
 #include "dtCore/export.h"
-#include "dtCore/transformable.h"
 #include "dtCore/deltadrawable.h"
 
 namespace dtCore
 {
 
-   class DT_EXPORT Light : public DeltaDrawable
+   class DT_EXPORT Light : public DeltaDrawable, public Base
    {
+      DECLARE_MANAGEMENT_LAYER(Light)
 
    public:
 
@@ -65,12 +66,6 @@ namespace dtCore
       * been removed
       */
       virtual void RemovedFromScene( Scene* scene ); 
-
-      inline void SetName( const std::string name )
-      { mName = name; };
-       
-      inline std::string GetName() const
-      { return mName; }
 
       inline osg::Node* GetOSGNode()
       { return mLightSource.get(); }
@@ -168,7 +163,6 @@ namespace dtCore
       { return mLightSource->getLight()->getSpotCutoff(); }
 
    private:
-      std::string mName;
       LightingMode mLightingMode;
       osg::ref_ptr<osg::LightSource> mLightSource;
 

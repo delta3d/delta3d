@@ -3,10 +3,14 @@
 
 using namespace dtCore;
 
+IMPLEMENT_MANAGEMENT_LAYER(Light)
+
 Light::Light( int number, const std::string name, const LightingMode mode )
-: mName( name ), mLightingMode( mode ), mLightSource( new osg::LightSource )
+:  mLightingMode( mode ), mLightSource( new osg::LightSource )
 {
    assert( number >= 0 && number <= MAX_LIGHT_NUMBER ); 
+
+   SetName(name);
 
    osg::Light* light = new osg::Light;
    light->setLightNum( number );
@@ -16,8 +20,9 @@ Light::Light( int number, const std::string name, const LightingMode mode )
 }
 
 Light::Light( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
-: mLightSource( osgLightSource ), mName( name ), mLightingMode( mode )
+: mLightSource( osgLightSource ), mLightingMode( mode )
 {
+   SetName(name);
    mLightSource->setLocalStateSetModes( osg::StateAttribute::ON ); //enable local lighting
 }
 
