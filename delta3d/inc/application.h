@@ -31,8 +31,8 @@ namespace dtABC
                      Application( std::string configFilename = "" );
       virtual        ~Application();
 
-               ///Start the Application
-               void  Run( void );
+      ///Start the Application
+      virtual  void  Run( void );
 
                void  DisplayDebugGUI( const bool enable = true );
 
