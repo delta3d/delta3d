@@ -41,25 +41,16 @@ namespace dtCore
    class Transformable;
    class Physical;
 
-   ///deprecated 3/23/04  use dtCore::Camera::_SceneHandler instead
-   class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
-   {
-   public:
-   	_SceneHandler(bool useSceneLight=true)
-      {
-         DEPRECATE("_SceneHandler()",
-                   "Camera::_SceneHandler()")
-      }
-      virtual ~_SceneHandler() {};
+   /*
+   Deprecated 3/23/04: dtCore::_SceneHandler
 
-      osgUtil::SceneView* GetSceneView()
-      {
-         DEPRECATE("osgUtil::SceneView* _SceneHandler::GetSceneView()",
-                   "osgUtil::SceneView* Camera::GetSceneView")
-         return(NULL);
-      }
-   };
-   
+   This was removed to support multi-window, multi-camera
+   funtionality. Since more than one camera+window can be
+   used each dtCore::Camera must have its own
+   Producer::SceneHandler.
+
+   So use dtCore::Camera::_SceneHandler instead.
+   */
    
    class DT_EXPORT Scene : public Base  
    {
@@ -83,17 +74,6 @@ namespace dtCore
 
       Scene(std::string name = "scene", bool useSceneLight = true);
       virtual ~Scene();
-
-
-      //deprecated 3/23/05
-      _SceneHandler *GetSceneHandler(void)
-      {
-         DEPRECATE("_SceneHandler Scene::GetSceneHandler(void)",
-                   "_SceneHandler Camera::GetSceneHandler(void)")
-
-         dtCore::Notify(dtCore::FATAL, "** Scene::GetSceneHandler() is deprecated, returning NULL! ***");
-         return(NULL);
-      }
 
       ///Get a pointer to the internal scene node
       osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
