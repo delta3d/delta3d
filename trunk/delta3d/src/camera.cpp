@@ -60,7 +60,10 @@ void Camera::Frame()
    //Get our Camera's position, up vector, and look-at vector and pass them
    //to the Producer Camera
    sgMat4 mat;
-   mAbsTransform->Get(mat);
+   Transform absXform;
+   //mAbsTransform->Get(mat);
+   GetTransform(&absXform, ABS_CS);
+   absXform.Get(mat);
    
    osg::Vec3 eyePoint(mat[3][0], mat[3][1], mat[3][2]);   
    osg::Vec3 upVec(mat[2][0], mat[2][1], mat[2][2]);

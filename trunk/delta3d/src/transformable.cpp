@@ -9,95 +9,126 @@ Transformable::Transformable():
 mParent(NULL)
 {
    RegisterInstance(this);
-   mAbsTransform = new Transform();
    mRelTransform = new Transform();
 }
 
 Transformable::~Transformable()
 {
    DeregisterInstance(this);
-   delete(mAbsTransform);
    delete(mRelTransform);
 }
 
 
 /*!
  * Set position/attitude of this Transformable using the supplied Transform.
- * An optional coordinate system parameter may be supplied to diferentiate 
- * between parent relative and absolute coordinates.
- * If this Transformable has any children added, they will be updated as well.
+ * An optional coordinate system parameter may be supplied to specify whether
+ * the Transform is in relation to this Transformable's parent.  
+ *
+ * If the CoordSysEnum is ABS_CS,
+ * then the Transformable is positioned assuming 
+ * absolute world coordinates and the Transformable parent/child relative
+ * position is recalculated.
+ * If the CoordSysEnum is REL_CS, then the Transformable is positioned relative
+ * to it's parent's Transform. (Note - if REL_CS is supplied and the Transformable
+ * does not have a parent, the Transform is assumed to be an absolute world 
+ * coordinate.
  *
  * @param *xform : The new Transform to position this instance
- * @param cs : Optional parameter describing the coord sys of xform
+ * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
 void Transformable::SetTransform(Transform *xform, CoordSysEnum cs )
 {
-   sgMat4 absMat;
-   sgMat4 relMat;
-   
+   sgMat4 newMat;
+   xform->Get( newMat );
+
    if (cs == ABS_CS) //absolute Transform
-   {
+   {  
       if (mParent.valid())
       {
-         //if we have a parent, then assume xform is an offset from the parent
-         // in absulte coordinates
+         //calculate and save our new relative Transform using the parent's 
+         // absolute Transform and the new Transform supplied
          Transform parentXform;
-         mParent->GetTransform(&parentXform, ABS_CS);
-         parentXform.Get(absMat);
-         
-         xform->Get(relMat);
-         sgInvertMat4( relMat, absMat ); //calc the relative based on the abs
-         
-         mRelTransform->Set( relMat );
-         mAbsTransform->Set( absMat );
+         sgMat4 parentMat;
+         mParent->GetTransform(&parentXform);
+         parentXform.Get(parentMat);
+
+         sgInvertMat4(parentMat);
+
+         sgMat4 relMat;
+         sgMultMat4(relMat, parentMat, newMat);
+
+         mRelTransform->Set(relMat); //store new rel xform
       }
       else
-      { 
-         //otherwise, just set our absolute position
-         xform->Get( absMat );
-         mAbsTransform->Set( absMat );
-      }
-   }
-   else if (cs == REL_CS) //relative to our parent (if any)
-   {
-      xform->Get( relMat );
-      mRelTransform->Set( relMat ); //set our new relative xform
-      
-      //If we have a parent, use its abs xform and add in our relative xform
-      // to calc our abs xform.  Otherwise, just use our current abs xform.
-      if (mParent.valid())
       {
-         Transform parentXform;
-         mParent->GetTransform(&parentXform);
-         parentXform.Get(absMat);
-         mAbsTransform->Set(absMat);
+         //no parent - just save the new Transform as our new relative Transform
+         mRelTransform->Set(newMat);
       }
-      else mAbsTransform->Get(absMat);
-      
-      sgPreMultMat4( absMat, relMat);
-      mAbsTransform->Set( absMat ); //set our new abs xform
    }
-   
-   //If we have children, tell them they need to recalc their positions since
-   //we were repositioned.
-   UpdateChildrenTransforms(mAbsTransform);
+   else if (cs == REL_CS) //relative to our parent
+   {
+      mRelTransform->Set( newMat );           
+   } 
 }
 
+/** Calculate this Transformable's absolute Transform and store it in xform.
+  *
+  * @param xform : the Transform to save the calculated absolute Transform
+  */
+void Transformable::CalcAbsTransform( Transform *xform )
+{
+   if (mParent.valid())
+   {
+      mParent.get()->CalcAbsTransform(xform);
+      sgMat4 parentMat;
+      xform->Get(parentMat);
+
+      sgMat4 relMat;
+      mRelTransform->Get(relMat);
+
+      sgMat4 newMat;
+      sgMultMat4(newMat, parentMat, relMat);
+
+      xform->Set(newMat);  
+   }
+   else
+   { 
+      //if no parent, just use the relative xform as the absolute position
+      sgMat4 absMat;
+      mRelTransform->Get(absMat);
+      xform->Set(absMat);
+   }
+}
 
 /*!
- * Get the current position/attitude of this Transformable.
+ * Get the current Transform of this Transformable.
  *
  * @param *xform : The Transform to be filled in
- * @param cs : Optional parameter to select either the absolute coordinate
+ * @param cs : Optional parameter to select either the absolute world coordinate
  *             or the parent relative coordinate (default == ABS_CS)
  */
 void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
 {
    sgMat4 mat;
 
-   if (cs == ABS_CS)      mAbsTransform->Get( mat );
-   else if (cs == REL_CS) mRelTransform->Get( mat );
+   if (cs == ABS_CS) 
+   {     
+      if (mParent.valid())
+      {
+         Transform absXform;
+         CalcAbsTransform( &absXform );
+         absXform.Get(mat);
+      }
+      else
+      {
+         mRelTransform->Get(mat);
+      }
+   }
+   else if (cs == REL_CS)
+   {     
+      mRelTransform->Get(mat);
+   } 
 
    xform->Set( mat );
 }
@@ -122,16 +153,7 @@ void Transformable::AddChild(Transformable *child)
 
    mChildList.push_back(child);
    child->mParent = this;
-
-   //This ends up keeping the child positioned where it currently is located by
-   //using the child's current position in relation to the parent's as an offset.
-   //child->SetTransform( mAbsTransform );
-
-   //This keeps doesn't recalc the child's parent-relative offset effectively
-   //snapping the child to the parent's position.
-   child->UpdateTransform(mAbsTransform);
 }
-
 
 /*!
  * Remove a child from this Transformable.  This will detach the child from its
@@ -160,7 +182,7 @@ void Transformable::RemoveChild(Transformable *child)
  *
  * @param *child : The candidate child to be tested
  *
- * @return bool  : True if it can be a child, false otherise
+ * @return bool  : True if it can be a child, false otherwise
  */
 bool Transformable::CanBeChild(Transformable *child)
 {
@@ -176,47 +198,4 @@ bool Transformable::CanBeChild(Transformable *child)
    }
    
    return true;
-}
-
-
-
-/*!
- * This method is used to make sure the relative and absolute Transforms
- * are up-to-date.  Typically, this is called from a parent Transform, indicating
- * that it moved.  The default behavior is to calculate our absolute
- * Transform based on the parent's absolute Transform and our relative
- * Transform.  After the Transforms are recalculated, any children are 
- * told to update as well.
- * Override this method to implement your own functionality.
- */
-void Transformable::UpdateTransform(Transform *parentAbsXform)
-{
-   if (parentAbsXform != NULL)
-   {
-      sgMat4 absMat, relMat;
-      parentAbsXform->Get(absMat);
-      mRelTransform->Get( relMat );
-            
-      sgPreMultMat4( absMat, relMat);
-      mAbsTransform->Set( absMat );
-
-      UpdateChildrenTransforms(mAbsTransform);
-   }
-}
-
-/** Update any children Transformables that might be attached.
- * @param parentAbsXform : The absolute coordinate Transform of the parent
- */
-void Transformable::UpdateChildrenTransforms(Transform *parentAbsXform)
-{
-   if (mChildList.size() > 0)
-   {
-      //pass this new abs position to all the children
-      ChildList::iterator itr;
-      for (itr=mChildList.begin(); itr!=mChildList.end(); ++itr)
-      {
-         (*itr)->UpdateTransform(parentAbsXform);
-      }
-   }
-
 }

@@ -62,15 +62,8 @@ namespace dtCore
       ///Get the current Transform of this Transformable
       void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
       
-      ///Update the Transform based on the parent's Transform
-      virtual void UpdateTransform(Transform *parentAbsXform);
-
    protected:
 
-      ///Update the attached children by passing the parent's xform to them
-      void UpdateChildrenTransforms(Transform *parentAbsXform);
-
-      Transform *mAbsTransform;  ///<Internal storage of the position/rotation
       Transform *mRelTransform;  ///<position relative to the parent
       ChildList mChildList;      ///<List of children Transformables added
       osg::ref_ptr<Transformable> mParent; ///<Any immediate parent of this instance
@@ -89,6 +82,9 @@ namespace dtCore
          } 
          return mChildList.size(); // node not found.
       }
+
+      void Transformable::CalcAbsTransform( Transform *xform );
+
    };
 };
 
