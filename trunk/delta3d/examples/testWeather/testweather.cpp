@@ -30,6 +30,8 @@ public:
       orbit = new dtCore::OrbitMotionModel( GetKeyboard(), GetMouse() );
       orbit->SetTarget( GetCamera() );
 
+      GUI *ui = new GUI();
+
  }
 	~TestWeatherApp()
    {
@@ -42,12 +44,6 @@ protected:
    {
       switch(key) {
       case Producer::Key_Escape:    Quit();    	 break;
-
-      case Producer::Key_H:
-         {
-            GUI *ui = new GUI();
-         }
-         break;
 
       case Producer::Key_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED);    break;
       case Producer::Key_F2: weather->SetBasicVisibilityType(Weather::VIS_FAR);    break;
