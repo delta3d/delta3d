@@ -328,19 +328,19 @@ conf = Configure(env, custom_tests = {
     })
 
 # TODO: don't run for install
-if not env.GetOption('clean'):
+##if not env.GetOption('clean'):
 
-    if not conf.CheckForGdal() or not conf.CheckForOpenThreads() or not conf.CheckForProducer() or not conf.CheckForOpenSceneGraph() or not conf.CheckForFltk() or not conf.CheckForGlGui() or not conf.CheckForIsense() or not conf.CheckForOpenAl() or not conf.CheckForOde() or not conf.CheckForPlib() or not conf.CheckForCal3d() or not conf.CheckForReplicantBody() or not conf.CheckForSignalSlot() or not conf.CheckForTinyXml() or not conf.CheckForXxf86m() :
-       #errorLog.write('Build Failed: Missing required libraries\n\n')
-       #errorLog.close()
-       if email == 'true' :
-          #email_results()
-          env.Exit(-1)
-       else:
-          env = conf.Finish()
-    else :
-       # No need to email since this is a clean (scons -c)
-       email = 'false'
+##    if not conf.CheckForGdal() or not conf.CheckForOpenThreads() or not conf.CheckForProducer() or not conf.CheckForOpenSceneGraph() or not conf.CheckForFltk() or not conf.CheckForGlGui() or not conf.CheckForIsense() or not conf.CheckForOpenAl() or not conf.CheckForOde() or not conf.CheckForPlib() or not conf.CheckForCal3d() or not conf.CheckForReplicantBody() or not conf.CheckForSignalSlot() or not conf.CheckForTinyXml() or not conf.CheckForXxf86m() :
+##       #errorLog.write('Build Failed: Missing required libraries\n\n')
+##       #errorLog.close()
+##       if email == 'true' :
+##          #email_results()
+##          env.Exit(-1)
+##       else:
+##          env = conf.Finish()
+##    else :
+##       # No need to email since this is a clean (scons -c)
+##       email = 'false'
 
 #################
 # Build Delta3D #
@@ -350,15 +350,18 @@ Export('env')
 
 env.Replace(CXXSUFFIX = '.cpp')
 
-#env.Alias('install','$prefix/lib')
-#env.Alias('examples',SConscript(dirs=['examples']))
-#env.Alias('python',SConscript(dirs=['src/python','examples/testPython']))
-#env.Alias('hla',SConscript(dirs=['src/dtHLA','examples/testHLA','utilties/hlaStealthViewer']))
+#env.Alias( 'install', '$prefix/lib' )
+env.Alias( 'examples', '$prefix/examples' )
+#env.Alias( 'python', ['$prefix/src/python','$prefix/examples/testPython'] ) 
+env.Alias( 'utilities', '$prefix/utilities' )
+#env.Alias('hla',['$prefix/src/dtHLA','$prefix/examples/testHLA','$prefix/utilties/hlaStealthViewer'])
 # hlabindings?
 
 # TODO: install headers, libs, to $prefix
 
 dtAbcLib, dtAudioLib, dtCharLib, dtCoreLib, dtUtilLib, dtVisLib, gui_flLib = SConscript( 'src/SConscript' )
+
+env.Default(dtAbcLib, dtAudioLib, dtCharLib, dtCoreLib, dtUtilLib, dtVisLib, gui_flLib )
 
 testApp, testAudio, testCharacters, testClouds, testEffects, testGui, testInput, testLights, testMotionModels, testPhysics, testSound, testWeather, testWidget, testWin = SConscript( 'examples/SConscript' )
 
