@@ -24,9 +24,9 @@ namespace dtCore
    /**
     * An infinite terrain surface.
     */
-   class InfiniteTerrain : public Base,
-                           public Drawable,
-                           public Physical
+   class DT_EXPORT InfiniteTerrain : public Base,
+                                     public Drawable,
+                                     public Physical
    {
       friend class InfiniteTerrainCallback;
       

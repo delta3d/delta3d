@@ -3,6 +3,8 @@
 
 #include <ostream>
 
+#include "export.h"
+
 namespace dtCore
 {
    
@@ -20,15 +22,15 @@ namespace dtCore
    
 
    ///Set the notification level
-   extern void SetNotifyLevel( NotifySeverity severity, 
-                               NotifySeverity osgSeverity = FATAL );
+   extern DT_EXPORT void SetNotifyLevel( NotifySeverity severity, 
+                                         NotifySeverity osgSeverity = FATAL );
 
 
    ///Display a notification to the console using printf format
-   extern void Notify(NotifySeverity level, const char *fmt, ...);
+   extern DT_EXPORT void Notify(NotifySeverity level, const char *fmt, ...);
 
    ///Display a notification to the console using cout format
-   extern std::ostream& Notify(const NotifySeverity severity);
+   extern DT_EXPORT std::ostream& Notify(const NotifySeverity severity);
 
 };
 

@@ -32,7 +32,7 @@ namespace dtCore
    *
    * The Object must be added to a Scene to be viewed using Scene::AddObject().
    */
-   class Object : public Transformable, public Drawable, public Physical
+   class DT_EXPORT Object : public Transformable, public Drawable, public Physical
    {
       DECLARE_MANAGEMENT_LAYER(Object)
          

@@ -34,7 +34,7 @@ namespace dtABC
     *  This allows the frame cycles to be embedded into a windowing system's
     *  idle event handling loop.
     */
-   class Widget :  public   dtABC::BaseABC
+   class DT_EXPORT Widget :  public   dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Widget)
 

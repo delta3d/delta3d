@@ -34,7 +34,7 @@ namespace dtCore
    /**
     * A recorder.
     */
-   class Recorder : public Base
+   class DT_EXPORT Recorder : public Base
    {
       DECLARE_MANAGEMENT_LAYER(Recorder)
 
@@ -150,7 +150,7 @@ namespace dtCore
     * they issue "stateFrame" messages with pointers to StateFrame objects
     * as their user data.
     */
-   class Recordable
+   class DT_EXPORT Recordable
    {
       public:
 
@@ -208,7 +208,7 @@ namespace dtCore
    /**
     * A recorded state update.
     */
-   class StateFrame
+   class DT_EXPORT StateFrame
    {
       public:
         

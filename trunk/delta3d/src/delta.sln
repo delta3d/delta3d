@@ -20,25 +20,43 @@ EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
+		Debug DLL = Debug DLL
 		Release = Release
+		Release DLL = Release DLL
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Debug.ActiveCfg = Debug|Win32
 		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Debug.Build.0 = Debug|Win32
+		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Debug DLL.Build.0 = Debug DLL|Win32
 		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Release.ActiveCfg = Release|Win32
 		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Release.Build.0 = Release|Win32
+		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Release DLL.ActiveCfg = Release DLL|Win32
+		{F933CCA0-88EB-48D0-99AE-DDD1ADB1DD69}.Release DLL.Build.0 = Release DLL|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug DLL.Build.0 = Debug DLL|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release DLL.ActiveCfg = Release DLL|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release DLL.Build.0 = Release DLL|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug DLL.Build.0 = Debug DLL|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release DLL.ActiveCfg = Release DLL|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release DLL.Build.0 = Release DLL|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug.ActiveCfg = Debug|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug.Build.0 = Debug|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug DLL.Build.0 = Debug DLL|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release.ActiveCfg = Release|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release.Build.0 = Release|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release DLL.ActiveCfg = Release DLL|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release DLL.Build.0 = Release DLL|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

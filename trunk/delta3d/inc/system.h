@@ -26,7 +26,7 @@ namespace dtCore
      * @see AddListener()
      * @see OnMessage()
      */
-   class System : public Base 
+   class DT_EXPORT System : public Base 
    {
    public:
       DECLARE_MANAGEMENT_LAYER(System)

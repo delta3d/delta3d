@@ -17,7 +17,7 @@ namespace dtCore
    /**
     * A motion model that simulates the action of flying in a UFO.
     */
-   class UFOMotionModel : public MotionModel
+   class DT_EXPORT UFOMotionModel : public MotionModel
    {
       DECLARE_MANAGEMENT_LAYER(UFOMotionModel)
 

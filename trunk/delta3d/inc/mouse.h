@@ -32,7 +32,7 @@ namespace dtCore
    /**
     * A mouse device.
     */
-   class Mouse : public InputDevice
+   class DT_EXPORT Mouse : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(Mouse)
 
@@ -105,7 +105,7 @@ namespace dtCore
    /**
     * An interface for objects interested in mouse events.
     */
-   class MouseListener
+   class DT_EXPORT MouseListener
    {
       public:
 

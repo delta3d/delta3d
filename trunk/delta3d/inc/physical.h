@@ -23,7 +23,7 @@ namespace dtCore
    /**
     * A physical object.
     */
-   class Physical
+   class DT_EXPORT Physical
    {
       public:
       

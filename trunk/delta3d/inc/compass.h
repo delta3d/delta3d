@@ -23,7 +23,7 @@ namespace dtCore
     * The Compass must be added to a Scene to be viewed using Scene::AddObject().
     */
 
-   class Compass :   public   Transformable, public   Drawable
+   class DT_EXPORT Compass :   public   Transformable, public   Drawable
    {
       DECLARE_MANAGEMENT_LAYER(Compass)
 

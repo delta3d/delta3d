@@ -6,7 +6,10 @@
 #define BASE
 
 #include <string>
+
+#include "export.h"
 #include "macros.h"
+
 #include <osg/Referenced>
 
 //disable the "identifier was truncated to '255' characters " message
@@ -28,7 +31,7 @@ namespace dtCore
      * The MessageData that gets passed to OnMessage() contains a pointer to the
      * sender, and optionally, a text message and pointer to user data.
      */
-   class Base : public sigslot::has_slots<>, public osg::Referenced
+   class DT_EXPORT Base : public sigslot::has_slots<>, public osg::Referenced
    {
       DECLARE_MANAGEMENT_LAYER(Base)
 
@@ -36,7 +39,7 @@ namespace dtCore
       public:
 
          ///Data that gets passed through SendMessage
-         struct MessageData{
+         struct DT_EXPORT MessageData{
             std::string message;   ///<Textual message
             Base *sender;     ///<Pointer to the sender
             void *userData;   ///<Void pointer to user data

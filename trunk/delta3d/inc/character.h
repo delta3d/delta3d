@@ -15,8 +15,8 @@ namespace dtChar
    /**
     * An animated character.
     */
-   class Character : public dtCore::Transformable,
-                     public dtCore::Drawable
+   class DT_EXPORT Character : public dtCore::Transformable,
+                               public dtCore::Drawable
    {
       DECLARE_MANAGEMENT_LAYER(Character)
 
@@ -194,19 +194,31 @@ namespace dtChar
 #undef _AUTOLIBNAME1
 
 #if defined(_DEBUG)
-   #define _AUTOLIBNAME  "dtChard.lib"
+   #ifndef DT_LIBRARY
+      #define _AUTOLIBNAME  "dtChard.lib"
+   #endif
    #define _AUTOLIBNAME1 "ReplicantBodyd.lib"
 #else
-   #define _AUTOLIBNAME  "dtChar.lib"
+   #ifndef DT_LIBRARY
+      #define _AUTOLIBNAME  "dtChar.lib"
+   #endif
    #define _AUTOLIBNAME1 "ReplicantBody.lib"
 #endif
 
 #ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
+   
+   #ifndef DT_LIBRARY
+      #pragma message( "Will automatically link with " _AUTOLIBNAME )
+   #endif
+   
    #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+   
 #endif
 
-#pragma comment (lib, _AUTOLIBNAME)
+#ifndef DT_LIBRARY
+   #pragma comment (lib, _AUTOLIBNAME)
+#endif
+
 #pragma comment (lib, _AUTOLIBNAME1)
 
 #endif // dtCore_CHARACTER

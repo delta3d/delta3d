@@ -11,7 +11,7 @@
 
 
 template<class T>
-class Fl_DT_Window  :  public   T, public   Fl_Window
+class DT_EXPORT Fl_DT_Window  :  public   T, public   Fl_Window
 {
    typedef  Fl_Window   Parent;
 

@@ -17,7 +17,7 @@ namespace dtCore
     * transforms of Transformable objects according to input gathered
     * from physical or logical input devices.
     */
-   class MotionModel : public Base
+   class DT_EXPORT MotionModel : public Base
    {
       DECLARE_MANAGEMENT_LAYER(MotionModel)
 

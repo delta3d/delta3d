@@ -2,9 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtpython"
-	ProjectGUID="{C34553DE-4963-4CAD-BA56-39B550358E87}"
-	RootNamespace="dtpython"
+	Name="dtCoreBindings"
+	ProjectGUID="{17C8B821-1515-4CE5-9C9A-00193C34FF0F}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -13,14 +12,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
-			ConfigurationType="4"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc,..\..\inc\python,..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc; ..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,8 +32,13 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\dtpythond.lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="boost_python_debug.lib python23.lib"
+				OutputFile="..\..\bin\dtCore.pyd"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt"
+				ImportLibrary="Debug/dtCoreBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -50,19 +54,21 @@
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
 			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
-			ConfigurationType="4"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc,..\..\inc\python,..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc; ..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -73,8 +79,13 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\dtpython.lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="boost_python.lib python23.lib"
+				OutputFile="..\..\bin\dtCore.pyd"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				IgnoreDefaultLibraryNames="libc; libcmt"
+				ImportLibrary="Release/dtCoreBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -89,6 +100,8 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -112,10 +125,10 @@
 				RelativePath=".\drawablebindings.cpp">
 			</File>
 			<File
-				RelativePath=".\objectbindings.cpp">
+				RelativePath=".\dtcorebindings.cpp">
 			</File>
 			<File
-				RelativePath=".\pythonbindings.cpp">
+				RelativePath=".\objectbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\scenebindings.cpp">
@@ -140,9 +153,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath="..\..\inc\python\pythonbindings.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

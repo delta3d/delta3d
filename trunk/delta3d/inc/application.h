@@ -21,7 +21,7 @@ namespace dtABC
      * app->Config();
      * app->Run();
      */
-   class Application : public dtABC::BaseABC
+   class DT_EXPORT Application : public dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Application)
 
@@ -58,21 +58,37 @@ namespace dtABC
 
 #if defined(_DEBUG)
    #define _AUTOLIBNAME "tinyxmld.lib"
-   #define _AUTOLIBNAME1 "dtabcD.lib"
+   
+   #ifndef DT_LIBRARY
+      #define _AUTOLIBNAME1 "dtabcD.lib"
+   #endif
+   
    #define _AUTOLIBNAME2 "gui_fld.lib"
 #else 
    #define _AUTOLIBNAME "tinyxml.lib"
-   #define _AUTOLIBNAME1 "dtabc.lib"  
+   
+   #ifndef DT_LIBRARY
+      #define _AUTOLIBNAME1 "dtabc.lib"  
+   #endif
+   
    #define _AUTOLIBNAME2 "gui_fl.lib"
 #endif
 
 #ifndef _NOAUTOLIBMSG
    #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+   
+   #ifndef DT_LIBRARY
+      #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+   #endif
+   
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
 #endif
 
 #pragma  comment( lib, _AUTOLIBNAME )
-#pragma  comment( lib, _AUTOLIBNAME1 )
+
+#ifndef DT_LIBRARY
+   #pragma  comment( lib, _AUTOLIBNAME1 )
+#endif
+
 #pragma  comment( lib, _AUTOLIBNAME2 )
 }

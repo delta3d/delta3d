@@ -28,7 +28,7 @@ namespace dtCore
     * then supply a unique id for an audible effect with the sound-
     * filename.
     */
-   class SoundEffectBinder :  public   EffectListener, public   Base
+   class DT_EXPORT SoundEffectBinder :  public   EffectListener, public   Base
    {
       private:
          DECLARE_MANAGEMENT_LAYER(SoundEffectBinder)

@@ -2,11 +2,11 @@
 #include <string>
 #include <dt.h>
 
-
+#include "base.h"
 
 namespace   dtABC
 {
-   class BaseABC  :  public   dtCore::Base,  public   dtCore::KeyboardListener,  public   dtCore::MouseListener
+   class DT_EXPORT BaseABC  :  public   dtCore::Base,  public   dtCore::KeyboardListener,  public   dtCore::MouseListener
    {
       DECLARE_MANAGEMENT_LAYER(BaseABC)
 
@@ -84,20 +84,21 @@ namespace   dtABC
    };
 
 
+#ifndef DT_LIBRARY
+   /* You may turn off this include message by defining _NOAUTOLIB */
+   #undef _AUTOLIBNAME
 
-/* You may turn off this include message by defining _NOAUTOLIB */
-#undef _AUTOLIBNAME
+   #if   defined(_DEBUG)
+      #define  _AUTOLIBNAME   "dtabcd.lib"
+   #else 
+      #define  _AUTOLIBNAME   "dtabc.lib"
+   #endif
 
-#if   defined(_DEBUG)
-   #define  _AUTOLIBNAME   "dtabcd.lib"
-#else 
-   #define  _AUTOLIBNAME   "dtabc.lib"
+   #if   !  defined(_NOAUTOLIBMSG)
+      #pragma message( "Will automatically link with " _AUTOLIBNAME )
+   #endif
+
+   #pragma  comment( lib, _AUTOLIBNAME )
 #endif
-
-#if   !  defined(_NOAUTOLIBMSG)
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma  comment( lib, _AUTOLIBNAME )
 
 };

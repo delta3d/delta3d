@@ -9,6 +9,8 @@
 #include <osg/Projection>
 #include <osg/Switch>
 
+#include "export.h"
+
 namespace dtCore
 {
    ///Used to gather and display statistical information regarding the display
@@ -16,7 +18,7 @@ namespace dtCore
    /** This class is used internally by the Scene to gather and report 
      * statistics on the frame rate, primitive totals, etc.
      */
-   class Stats
+   class DT_EXPORT Stats
    {
    public:
       Stats(osgUtil::SceneView *sv);

@@ -1,4 +1,4 @@
-from Delta import *
+from dtCore import *
 from math import *
 from time import *
 

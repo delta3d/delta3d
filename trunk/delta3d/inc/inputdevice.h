@@ -26,7 +26,7 @@ namespace dtCore
    /**
     * Represents an input device.
     */
-   class InputDevice : public Base
+   class DT_EXPORT InputDevice : public Base
    {
       friend class Button;
       friend class Axis;
@@ -176,7 +176,7 @@ namespace dtCore
     * The abstract base class of all input device features: buttons, axes,
     * etc.
     */
-   class InputDeviceFeature : public osg::Referenced
+   class DT_EXPORT InputDeviceFeature : public osg::Referenced
    {
       public:
 
@@ -232,7 +232,7 @@ namespace dtCore
    /**
     * Buttons are features with binary state.
     */
-   class Button : public InputDeviceFeature
+   class DT_EXPORT Button : public InputDeviceFeature
    {
       public:
       
@@ -291,7 +291,7 @@ namespace dtCore
    /**
     * An interface for objects interested in button state changes.
     */
-   class ButtonListener
+   class DT_EXPORT ButtonListener
    {
       public:
 
@@ -311,7 +311,7 @@ namespace dtCore
    /**
     * Axes are features with double-valued state.
     */
-   class Axis : public InputDeviceFeature
+   class DT_EXPORT Axis : public InputDeviceFeature
    {
       public:
 
@@ -371,7 +371,7 @@ namespace dtCore
    /**
     * An interface for objects interested in changes to axes.
     */
-   class AxisListener
+   class DT_EXPORT AxisListener
    {
       public:
       

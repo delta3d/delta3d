@@ -4,6 +4,8 @@
 
 #include <boost/python.hpp>
 
+#include "dt.h"
+
 
 // The individual class bindings
 
@@ -19,7 +21,7 @@ void initTransformableBindings();
 void initWindowBindings();
 
 
-BOOST_PYTHON_MODULE(Delta)
+BOOST_PYTHON_MODULE(dtCore)
 {
    initBaseBindings();
    initSystemBindings();
