@@ -7,20 +7,42 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABCBindings", "dtabcbindi
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCharBindings", "dtcharbindings.vcproj", "{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
+		Debug DLL = Debug DLL
 		Release = Release
+		Release DLL = Release DLL
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.ActiveCfg = Debug|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.Build.0 = Debug|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug DLL.ActiveCfg = Debug|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug DLL.Build.0 = Debug|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.ActiveCfg = Release|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.Build.0 = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release DLL.ActiveCfg = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release DLL.Build.0 = Release|Win32
 		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug.ActiveCfg = Debug|Win32
 		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug.Build.0 = Debug|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug DLL.ActiveCfg = Debug|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug DLL.Build.0 = Debug|Win32
 		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release.ActiveCfg = Release|Win32
 		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release.Build.0 = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release DLL.ActiveCfg = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release DLL.Build.0 = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Debug.ActiveCfg = Debug|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Debug.Build.0 = Debug|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Debug DLL.ActiveCfg = Debug|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Debug DLL.Build.0 = Debug|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release.ActiveCfg = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release.Build.0 = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release DLL.ActiveCfg = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release DLL.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

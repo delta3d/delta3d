@@ -33,5 +33,7 @@ void initCameraBindings()
       .def("SetClearColor", SetClearColor1)
       .def("SetClearColor", SetClearColor2)
       .def("GetClearColor", GetClearColor1)
-      .def("GetClearColor", GetClearColor2);
+      .def("GetClearColor", GetClearColor2)
+      .def("GetLens", &Camera::GetLens, return_internal_reference<>())
+      .def("GetCamera", &Camera::GetCamera, return_internal_reference<>());
 }

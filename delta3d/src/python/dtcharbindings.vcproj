@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtCoreBindings"
-	ProjectGUID="{17C8B821-1515-4CE5-9C9A-00193C34FF0F}"
+	Name="dtCharBindings"
+	ProjectGUID="{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -34,11 +34,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="boost_python_debug.lib python23.lib"
-				OutputFile="..\..\bin\dtCore.pyd"
+				OutputFile="..\..\bin\dtChar.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt"
-				ImportLibrary="Debug/dtCoreBindings.lib"/>
+				ImportLibrary="Debug/dtCharBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -81,11 +81,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="boost_python.lib python23.lib"
-				OutputFile="..\..\bin\dtCore.pyd"
+				OutputFile="..\..\bin\dtChar.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc; libcmt"
-				ImportLibrary="Release/dtCoreBindings.lib"/>
+				ImportLibrary="Release/dtCharBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -116,49 +116,16 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\basebindings.cpp">
+				RelativePath=".\characterbindings.cpp">
 			</File>
 			<File
-				RelativePath=".\camerabindings.cpp">
-			</File>
-			<File
-				RelativePath=".\drawablebindings.cpp">
-			</File>
-			<File
-				RelativePath=".\dtcorebindings.cpp">
-			</File>
-			<File
-				RelativePath=".\objectbindings.cpp">
-			</File>
-			<File
-				RelativePath=".\physicalbindings.cpp">
-			</File>
-			<File
-				RelativePath=".\scenebindings.cpp">
-			</File>
-			<File
-				RelativePath=".\soundbindings.cpp">
-			</File>
-			<File
-				RelativePath=".\systembindings.cpp">
-			</File>
-			<File
-				RelativePath=".\transformablebindings.cpp">
-			</File>
-			<File
-				RelativePath=".\transformbindings.cpp">
-			</File>
-			<File
-				RelativePath=".\windowbindings.cpp">
+				RelativePath=".\dtcharbindings.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath=".\dtpython.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
