@@ -54,7 +54,7 @@ public:
       Object *obj2 = new Object("box");
 
       if (!obj1->LoadFile("ground.flt")) return;
-      if (!obj2->LoadFile("PHYSICS/crate/crate.IVE")) return; 
+      if (!obj2->LoadFile("physics/crate/crate.ive")) return; 
 
       //position first falling crate
       Transform position;
@@ -97,7 +97,6 @@ public:
       OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
       omm->SetTarget( GetCamera() );
       omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
-
    }
    ~TestPhysicsApp(){}
 
@@ -135,7 +134,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
-            box->LoadFile("PHYSICS/crate/crate.IVE");
+            box->LoadFile("physics/crate/crate.ive");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -171,7 +170,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
-            sphere->LoadFile("PHYSICS/sphere/happy_sphere.IVE");
+            sphere->LoadFile("physics/sphere/happy_sphere.ive");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -204,7 +203,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *cyl = new Object("cylinder");
-            cyl->LoadFile("PHYSICS/barrel/rad_drum.IVE");
+            cyl->LoadFile("physics/barrel/barrel.ive");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
