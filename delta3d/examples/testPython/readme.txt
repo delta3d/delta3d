@@ -13,11 +13,11 @@ To demonstrate the Python interface to Delta3D. There are several scripts:
 flyhelo.py: should be run from the prompt within testPython to fly the 
             helicopter in a circle.
 
-testPathedCamera.py: flies the camera along a series of waypoints.
+testpathedcamera.py: flies the camera along a series of waypoints.
 
-testPythonGUI.py:
+testPythongui.py: opens a Tk GUI and displays the helo.
 
-testPython.py: also flies a helo in a circle, but should be run straight from
+testpython.py: also flies a helo in a circle, but should be run straight from
                Python instead of within the testPython C++ application.
 
 See instructions for each platform for details.
@@ -72,19 +72,19 @@ This should make the helo fly in a circle.
 
 Hit escape to exit.
 
-testPython.py: 
+testpython.py: 
 - This file is a seperate Python script that uses Delta3D. 
-- To use it, double-click on testPython.py.
+- To use it, double-click on testpython.py.
 - The resulting window should also show a helo flying in a circle.
 
-testPathedCamera.py:
+testpathedcamera.py:
 - This script shows how to move a camera along a series of waypoints.
-- To use it, double-click on testPathCamrea.py.
+- To use it, double-click on testpathedcamera.py.
 
-testPythonGUI.py:
+testpythongui.py:
 - This script uses the Tk toolkit (integrated with Python) to make a Delta3D Widget and
   display the standard helo.
-- To use it, double-click on testPythonGUI.py.
+- To use it, double-click on testpythongui.py.
 
 Linux
 =====
@@ -131,18 +131,18 @@ This should make the helo fly in a circle.
 
 Hit escape to exit.
 
-testPython.py: 
+testpython.py: 
 - This file is a seperate Python script that uses Delta3D. 
 - To use it, from examples/testPython type:
-     python testPython.py.
+     python testpython.py.
 - The resulting window should also show a helo flying in a circle.
 
-testPathedCamera.py:
+testpathedcamera.py:
 - This script shows how to move a camera along a series of waypoints.
 - To use it, from examples/testPython type:
-     python testPathedCamera.py.
+     python testpathedcamera.py.
 
-testPythonGUI.py:
+testpythongui.py:
 - This script uses the Tk toolkit to make a quick GUI.
 - It is unsupported on Linux for now, due to a X11 crash.
 
