@@ -4,8 +4,7 @@
 
 
 
-//const char* MyWindow::PATH = "..\\..\\data";
-const char* MyWindow::PATH = "../../data";
+const char* MyWindow::PATH = "../../data;";
 const char* MyWindow::FILE = "cessna.osg";
 
 
@@ -45,7 +44,7 @@ MyWindow::show( void )
 {
    MyParent::show();
 
-   std::string path(PATH);
+   std::string path(PATH + dtCore::GetDeltaDataPathList() );
    std::string file(FILE);
 
    SendMessage( "setpath", &path );

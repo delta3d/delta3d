@@ -7,12 +7,6 @@
 #include "dt.h"
 #include "dtabc.h"
 
-/*
-#include "globals.h"
-#include "uidrawable.h"
-#include "application.h"*/
-
-
 
 CUI_UI *ui = NULL; //global - needed for the callback
 
@@ -45,7 +39,7 @@ int main(int argc, char* argv[])
    }
 
    dtABC::Application *app = new dtABC::Application();
-   dtCore::SetDataFilePathList("../../data");
+   dtCore::SetDataFilePathList("../../data;" + GetDeltaDataPathList());
 
    ///put something in the background to look at
    dtCore::Object *ground = new dtCore::Object("ground");

@@ -32,7 +32,7 @@ class TestTerrainApplication : public Application
            mWireframe(false),
            mTimeOfDay(-1.0f)
       {
-         SetDataFilePathList("../../data/;./data/");
+         SetDataFilePathList("../../data/;./data/;" + GetDeltaDataPathList());
          
          mEnvironment = new Environment;
          
