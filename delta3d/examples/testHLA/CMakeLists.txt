@@ -10,7 +10,7 @@ INCLUDE_DIRECTORIES( ../../inc ../../ext/inc $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}
 LINK_DIRECTORIES( ../../lib ../../ext/lib $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib)
 
 ADD_EXECUTABLE( testHLA main )
-TARGET_LINK_LIBRARIES( testHLA dtcore dtabc dthla )
+TARGET_LINK_LIBRARIES( testHLA dtcore dthla )
 
 
 

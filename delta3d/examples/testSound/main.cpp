@@ -12,8 +12,8 @@ main( int argc, const char* argv[] )
    // set the directory to find the sound files & config.xml
    dtCore::SetDataFilePathList("..;../../data;../../../data/;" + dtCore::GetDeltaDataPathList());
 
-   testSoundApp   app;
-   app.Run();
+   testSoundApp* app = new testSoundApp("config.xml");
+   app->Run();
 
    return   0L;
 }

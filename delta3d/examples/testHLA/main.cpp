@@ -133,6 +133,8 @@ IMPLEMENT_MANAGEMENT_LAYER(Updater)
 int main( int argc, char **argv )
 {
    DeltaWin* win = new DeltaWin;
+   win->SetWindowTitle("testHLA");
+   
    Scene* scene = new Scene;
 
    Camera* cam = new Camera;

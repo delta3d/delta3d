@@ -126,6 +126,8 @@ IMPLEMENT_MANAGEMENT_LAYER(MouseControl)
 int main( int argc, char **argv )
 {
    DeltaWin *win = new DeltaWin();
+   win->SetWindowTitle("testWin");
+   
    Scene *scene = new Scene();
    System *sys = System::GetSystem();
 

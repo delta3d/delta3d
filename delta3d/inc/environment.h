@@ -57,9 +57,6 @@ namespace dtCore
       void SetFogColor(sgVec3 color);
       void GetFogColor(sgVec3 color) const {sgCopyVec3(color, mFogColor);}
 
-	  ///Get the modified color of the fog
-	  void GetModFogColor(sgVec3 color) const {sgCopyVec3(color, mModFogColor);}
-
       ///Set the fog mode
       void SetFogMode(FogMode mode);
       FogMode GetFogMode() const {return mFogMode;}

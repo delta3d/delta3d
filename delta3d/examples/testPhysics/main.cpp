@@ -158,6 +158,7 @@ public:
       float random(float min,float max) { return min + (max-min)*(float)rand()/(float)RAND_MAX; }
 
       PhysicsApp()
+      : Application( "config.xml" )
       {
          //This is where we'll find our files to load
 
@@ -193,7 +194,6 @@ public:
 
          GetScene()->SetGravity(0, 0, -9.8f);
 
-         GetWindow()->SetWindowTitle("'b'=box, 's'=sphere, 'c'=cylinder");
          ::OrbitMotionModel *omm = new ::OrbitMotionModel(GetMouse(), GetCamera());
 
          Updater *updater = new Updater(GetScene());

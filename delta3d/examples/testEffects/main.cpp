@@ -120,6 +120,8 @@ IMPLEMENT_MANAGEMENT_LAYER(Updater)
 int main( int argc, char **argv )
 {
    dtCore::DeltaWin* win = new dtCore::DeltaWin;
+   win->SetWindowTitle("testEffects");
+   
    Scene* scene = new Scene;
 
    dtCore::Camera* cam = new dtCore::Camera;

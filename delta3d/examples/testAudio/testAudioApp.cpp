@@ -46,7 +46,6 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    mSmokeCountA(0L),
    mSmokeCountC(0L)
 {
-
    AddSender( dtCore::System::GetSystem() );
 
    AudioManager::Instantiate();

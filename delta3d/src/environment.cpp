@@ -161,6 +161,8 @@ void Environment::AddEffect(EnvEffect *effect)
          mEnvEffectNode->addChild(effect->GetNode());
       }
 
+      this->Repaint();
+
    }
    else
    {

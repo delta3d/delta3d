@@ -22,11 +22,9 @@ int main()
    camPos.SetLookAt(camXYZ, lookAtXYZ, upVec);
    app->GetCamera()->SetTransform(&camPos);
 
-   app->GetWindow()->SetWindowTitle("Hit escape to exit");
-
    app->Config();
 
    app->Run();
 
-	return 0;
+   return 0;
 }

@@ -20,6 +20,7 @@
 #include <osg/Geode>
 #include <osg/Projection>
 #include <osg/MatrixTransform>
+#include <osgDB/FileUtils>
 
 using namespace dtCore;
 
@@ -262,19 +263,21 @@ void UIDrawable::LoadResourcePolyBorder( ELEMDATA *elem)
 /** Load a predefined GUI from an XML file.  This routine does not use
  *  any search paths so the fully qualified filename must be supplied.
  */
-void UIDrawable::LoadGUIFile(  std::string filename)
+bool UIDrawable::LoadGUIFile( std::string filename )
 {
+   std::string path = osgDB::findDataFile(filename);
+   
    //check if filename exists
+   TiXmlDocument doc(path.c_str());
 
-   TiXmlDocument doc(filename.c_str());
-
-   if (!doc.LoadFile())
+   if(path.empty())
    {
       dtCore::Notify(dtCore::WARN, "Can't load GUI config file '%s'", filename.c_str());
       dtCore::Notify(dtCore::WARN, "Description: '%s'", doc.ErrorDesc());
-      return;
+      return false;
    }
 
+   doc.LoadFile();
    TiXmlNode *root = doc.RootElement();
 
    TiXmlNode *sibling= root->FirstChildElement();
@@ -284,6 +287,7 @@ void UIDrawable::LoadGUIFile(  std::string filename)
       sibling = sibling->NextSiblingElement();
    }
 
+   return true;
 }
 
 void UIDrawable::LoadDataRect(ELEMDATA *obj)

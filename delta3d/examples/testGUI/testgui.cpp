@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
       filename = argv[1];
    }
    dtCore::SetDataFilePathList("..;../../data;../../../data/;" + dtCore::GetDeltaDataPathList());
-   dtABC::Application *app = new dtABC::Application();
+   dtABC::Application *app = new dtABC::Application( "config.xml" );
 
    ///put something in the background to look at
    dtCore::Object *ground = new dtCore::Object("ground");
@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
 
    if (!filename.empty())
    {
-      std::string foundPath = osgDB::findDataFile(filename);
-      drawable->LoadGUIFile(foundPath);
+       if(!drawable->LoadGUIFile(filename))
+          return false;
    }
    else
    {

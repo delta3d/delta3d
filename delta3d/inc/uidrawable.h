@@ -97,7 +97,7 @@ namespace dtCore
       CUI_UI* GetUI(void) {return mUI;}
 
       ///Load a xml GUI file and create the UI elements
-      void LoadGUIFile(std::string filename);
+      bool LoadGUIFile(std::string filename);
 
       ///Set the resolution of the DeltaWin this UI is in (pixels)
       void SetWindowResolution(const int w, const int h);

@@ -1,9 +1,5 @@
 // soarxterrain.h: Declaration of the SOARXTerrain class.
 //
-//  The original SOARX algorithm developed by Andras Balogh
-//        http://web.interware.hu/bandi/ranger.html
-//  Needless to say, we were very impressed and are in his debt
-//
 //////////////////////////////////////////////////////////////////////
 
 #ifndef DT_SOARX_TERRAIN
@@ -240,16 +236,7 @@ namespace dtSOARX
           */
          void LoadGeospecificImage(std::string filename,
                                    const double* geoTransform = NULL);
- 
-
-		 /**
-		 * Tell me interesting stats about an image.
-		 * @param image the handle to the image you want to examine
-		 * @param imagename a descriptive name to call this image
-		 */        
-		 void ImageStats(osg::Image* image, char* imagename);
-
-
+         
          /**
           * Loads road data from the specified filename.
           *
@@ -313,16 +300,6 @@ namespace dtSOARX
           * @return the height at the specified location
           */
          float GetHeight(float x, float y);
-
-		 
-         /**
-          * Determines the Longitude & Latitude of a specified location.
-          * @param x the x coordinate to check
-          * @param y the y coordinate to check
-          * @return Vec2f (longitude, latitude)
-          */
-		 osg::Vec2f GetLongLat(float x, float y);
-
          
          /**
           * Retrieves the normal of the terrain at the specified location.
@@ -332,38 +309,7 @@ namespace dtSOARX
           * @param normal the location at which to store the normal
           */
          void GetNormal(float x, float y, sgVec3 normal);
-        
- 
          
-         /**
-          * Determine if we are using LCC data.
-          *
-          * @return the value of mUseLCC
-          */
-         bool GetLCCStatus();
-
-
-		 /**
-		 * Determine if we are using LCC data.
-		 * @param LCCtype the LCC index type (e.g. "42" is evergreen forest)
-		 * @param x the x coordinate to check
-		 * @param y the y coordinate to check
-		 * @param limit the limiting value of the probability (i.e. the roll of the dice)
-		 * @return the value of mUseLCC
-		 */
-		 boolean GetVegetation(int LCCtype, int x, int y, int limit);
-
-
-		 /**
-		 * Buggy "histogram" of an image by a particular LCC type.
-		 *
-		 * @param LCCbase the black/white LCC image of picked points of a particular LCC type
-		 * @param image the slopemap, heightmap, or relative elevation
-		 * @param filename the filename to save the histogram data
-		 * @param binsize the sampling size of the image (i.e. the delta height or slope).
-		 */
-		 void LCCHistogram(osg::Image* LCCbase, osg::Image* image, char* filename, int binsize);
-
          
       private:
 
@@ -411,61 +357,6 @@ namespace dtSOARX
           */
          osg::Node* MakeRoads(int latitude, int longitude, const osg::Vec3& origin);
          
-
-		 /**
-		 * Create hit/miss map of the terrain by LCC type
-		 * @param src_image the Base Color image with LCC encoded within
-		 * @param rgb_selected the RGB color of the LCC type selected
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeLCCImage(osg::Image* src_image, osg::Vec3& rgb_selected);
-
-		 /**
-		 * Create smoothed grayscale map of the terrain by LCC type
-		 * Uses weighted next nearest neighbor to "fuzzy"-up the LCCImage data
-		 * @param src_image the black/white LCC Image by LCC type
-		 * @param rgb_selected the RGB color of the points to smooth (always 0,0,0 - black)
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeFilteredImage(osg::Image* src_image, osg::Vec3& rgb_selected);
-
-		 /**
-		 * Create heightmap image
-		 * @param hf the GDAL-derived heightfield
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeHeightmapImage(osg::HeightField* hf);
-
-		 /**
-		 * Create slopemap from GDAL-derived heightfield data
-		 * @param hf the GDAL-derived heightfield
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeSlopemapImage(osg::HeightField* hf);
-
-		 /**
-		 * Create relative elevation map from GDAL-derived heightfield data
-		 * @param hf the GDAL-derived heightfield
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeRelativeElevationImage(osg::HeightField* hf);
-
-
-		 /**
-		 * Create probability map of the likehihood for a particular LCC type
-		 * @param LCCidx LCC image index
-		 * @param h_image the heightmap image
-		 * @param s_image the slopemap image
-		 * @param r_image the relative elevation image
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeCombinedImage(
-			 int LCCidx,					// LCC image index (e.g. 42 = desiduous forest)
-			 osg::Image* h_image,			// heightmap
-			 osg::Image* s_image,			// slopemap image
-			 osg::Image* r_image);			// relative elevation image
-
-		 /**
          /**
           * Loads a single terrain segment.
           *
@@ -574,18 +465,6 @@ namespace dtSOARX
           */
          int mMaxTextureSize;
          
-
-		 /**
-		 * Array of combined images (probability maps for LCC types).
-		 */
-		 osg::ref_ptr<osg::Image> mCimage[100];
-
-		 /**
-		 * Array of LCC hit/miss images for each LCC type
-		 */
-		 osg::ref_ptr<osg::Image> mLCCfilter[100];
-
-
          /**
           * Detail gradient textures for each of the three DTED levels.
           */
@@ -682,12 +561,6 @@ namespace dtSOARX
           * Flags the segments as needing to be cleared.
           */
          bool mClearFlag;
-
-         /**
-          * Flags the need to use LCC data.
-          */
-         bool mUseLCC;
-
    };
 };
 

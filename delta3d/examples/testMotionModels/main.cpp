@@ -67,8 +67,7 @@ class TestMotionModelsApplication : public Application
          }
          
          SetMotionModel(0);
-         
-         GetWindow()->SetWindowTitle("1: walk, 2: fly, 3: ufo, 4: orbit");
+         Notify(ALWAYS,"Walk");
       }
    
       
@@ -90,18 +89,22 @@ class TestMotionModelsApplication : public Application
          switch(key)
          {
             case Producer::Key_1:
+               Notify(ALWAYS,"Walk");
                SetMotionModel(0);
                break;
                
             case Producer::Key_2:
+               Notify(ALWAYS,"Fly");
                SetMotionModel(1);
                break;
                
             case Producer::Key_3:
+               Notify(ALWAYS,"UFO");
                SetMotionModel(2);
                break;
                
             case Producer::Key_4:
+               Notify(ALWAYS,"Orbit");
                SetMotionModel(3);
                break;
          }

@@ -37,7 +37,8 @@ class TestInputApplication : public Application,
        * Constructor.
        */
       TestInputApplication()
-         : Application("config.xml")
+         : Application("config.xml"),
+         mGUILoaded(false)
       {
          mKeyboardAxisInputDevice = new LogicalInputDevice;
          
@@ -127,8 +128,10 @@ class TestInputApplication : public Application,
          
          mUIDrawable->SetWindowResolution(w, h);
          
-         
-         mUIDrawable->LoadGUIFile("gui.xml");
+         mGUILoaded = mUIDrawable->LoadGUIFile("gui.xml");
+
+         if(!mGUILoaded)
+            return;
          
          mUIDrawable->SetCallbackFunc("main", (CUI_UI::callbackfunc)CallbackHandler);
          mUIDrawable->SetActiveRootFrame("main");
@@ -136,6 +139,11 @@ class TestInputApplication : public Application,
          GetScene()->AddDrawable(mUIDrawable.get());
       }
       
+      bool IsGUILoaded()
+      {
+         return mGUILoaded;
+      }
+
       /**
        * Notifies the listener that the button mapping acquisition has
        * completed.
@@ -295,6 +303,7 @@ class TestInputApplication : public Application,
          return false;
       }   
       
+
       
    private:
       
@@ -322,6 +331,8 @@ class TestInputApplication : public Application,
        * The index of the button/axis being mapped.
        */
       int mButtonIndex, mAxisIndex;
+      bool mGUILoaded;
+
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestInputApplication)
@@ -333,6 +344,10 @@ int main( int argc, char **argv )
    testInputApp = new TestInputApplication;
    
    testInputApp->Config();
+
+   if(!testInputApp->IsGUILoaded())
+      return 0;
+
    testInputApp->Run();
 
    return 0;

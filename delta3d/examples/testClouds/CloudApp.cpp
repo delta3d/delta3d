@@ -9,7 +9,8 @@ class CloudApp : public dtABC::Application
 {
 
 public:
-	CloudApp()
+   CloudApp( std::string configFilename )
+      : Application( configFilename )
 	{
 		terr = new dtCore::InfiniteTerrain();
 		terr->SetHorizontalScale(0.01f);
@@ -29,8 +30,6 @@ public:
 		isDomeEnabled = false;
 		weather->GetEnvironment()->AddEffect(cp[0].get());
 		this->AddDrawable(weather->GetEnvironment());
-
-		GetWindow()->SetWindowTitle("Cloud Simulation");
 
 		dtCore::Transform xform(0.f, 00.f, 30.f, 0.f, 10.f, 0.f);
 		GetCamera()->SetTransform(&xform);
@@ -124,6 +123,7 @@ protected:
 				}
 				break;
 			case Producer::Key_KP_Add:
+                        case Producer::Key_equal:
 				if (!isDomeEnabled && cloudLayers >= 0 && cloudLayers < 3)
 				{	
 					weather->GetEnvironment()->AddEffect(cp[cloudLayers].get());
@@ -131,6 +131,7 @@ protected:
 				}
 				break;
 			case Producer::Key_KP_Subtract:
+                        case Producer::Key_minus:
 				if (!isDomeEnabled && cloudLayers > 0)
 				{
 					--cloudLayers;
@@ -160,7 +161,7 @@ private:
 int main(int argc, char* argv[])
 {
    dtCore::SetDataFilePathList("..;../../data/;../../../data/;" + dtCore::GetDeltaDataPathList());
-   CloudApp *app = new CloudApp();
+   CloudApp *app = new CloudApp( "config.xml" );
    app->Config();
    app->Run();
    
