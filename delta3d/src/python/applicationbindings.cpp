@@ -9,7 +9,6 @@ using namespace boost::python;
 using namespace dtABC;
 using namespace dtCore;
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(DDG_overloads, DisplayDebugGUI, 0, 1)
 
 class ApplicationWrap : public Application
 {
@@ -74,6 +73,5 @@ void initApplicationBindings()
       .def("GetInstance", ApplicationGI1, return_internal_reference<>())
       .def("GetInstance", ApplicationGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("Run", &Application::Run)
-      .def("DisplayDebugGUI", &Application::DisplayDebugGUI, DDG_overloads());
+      .def("Run", &Application::Run);
 }
