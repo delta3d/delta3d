@@ -5,7 +5,7 @@
 #include "dtCore/ephemeris.h"
 #include "dtCore/physical.h"
 
-#include "dtCore/deprecationmgr.h"
+#include "dtUtil/deprecationmgr.h"
 
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
