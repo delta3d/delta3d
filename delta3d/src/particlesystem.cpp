@@ -171,7 +171,7 @@ ParticleSystem::~ParticleSystem()
  *
  * @param filename the name of the file to load
  */
-void ParticleSystem::LoadFile(std::string filename)
+bool ParticleSystem::LoadFile(std::string filename)
 {
    mFilename = filename;
    
@@ -193,7 +193,9 @@ void ParticleSystem::LoadFile(std::string filename)
    else
    {
       Notify(WARN, "ParticleSystem: Can't load %s", mFilename.c_str());
+      return false;
    }
+   return true;
 }
 
 /**

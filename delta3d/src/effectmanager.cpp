@@ -138,6 +138,12 @@ Detonation* EffectManager::AddDetonation(
    if(mDetonationTypeFilenameMap.count(type) > 0)
    {
       osg::Node* node = osgDB::readNodeFile(mDetonationTypeFilenameMap[type], osgDB::Registry::CacheHintOptions::CACHE_NONE);
+      if (node == NULL) 
+      {
+         Notify(WARN, "Effectmanager-AddDetonation(): Can't load %s",
+                       mDetonationTypeFilenameMap[type].c_str() );
+         return NULL;
+      }
 
       PositionVisitor pv(  
          osg::Vec3(position[0], position[1], position[2])
