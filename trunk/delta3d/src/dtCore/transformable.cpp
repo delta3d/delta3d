@@ -3,6 +3,8 @@
 #include "dtCore/notify.h"
 #include "dtUtil/matrixutil.h"
 
+#include "dtCore/pointaxis.h"
+
 #include <osg/Geode>
 #include <osg/ShapeDrawable>
 #include <osg/Material>
@@ -199,6 +201,17 @@ void Transformable::RenderProxyNode( const bool enable )
       ss->setAttributeAndModes( polyoffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON) ;
 
       GetMatrixNode()->addChild( mProxyNode.get() );
+
+      PointAxis* paxis = new PointAxis();
+      paxis->Enable( PointAxis::X );
+      paxis->Enable( PointAxis::Y );
+      paxis->Enable( PointAxis::Z );
+      paxis->Enable( PointAxis::LABEL_X );
+      paxis->Enable( PointAxis::LABEL_Y );
+      paxis->Enable( PointAxis::LABEL_Z );
+
+      AddChild( paxis );
+
    }
    else
    {
