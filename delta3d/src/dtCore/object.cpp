@@ -3,9 +3,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/object.h"
+#include "dtCore/scene.h"
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
 #include "dtCore/notify.h"
+#include "dtCore/loadable.h"
+
 using namespace dtCore;
 using namespace std;
 
@@ -44,19 +47,19 @@ Object::Object(string name)
    RegisterInstance(this);
 
    SetName(name);
-   mNode = new osg::MatrixTransform;
+   //mNode = new osg::MatrixTransform;
    osg::StateSet *stateSet = mNode->getOrCreateStateSet();
    stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
 
    //hookup an update callback on this node
-   mNode.get()->setUpdateCallback(new _updateCallback(this));
+   //mNode.get()->setUpdateCallback(new _updateCallback(this));
 }
 
 Object::~Object()
 {
    Notify(DEBUG_INFO, "Object: Deleting '%s'", this->GetName().c_str());
    DeregisterInstance(this);
-   mNode = NULL;
+   //mNode = NULL;
 }
 
 
@@ -68,39 +71,20 @@ Object::~Object()
  * @param filename : The name of the file to be loaded
  * @param useCache : If true, use OSG's object cache
  */
-bool Object::LoadFile(string filename, bool useCache)
+osg::Node* Object::LoadFile(string filename, bool useCache)
 {
-   bool retVal = false;
+   osg::Node *node = NULL;
+   node = Loadable::LoadFile(filename, useCache);
 
-   mFilename = filename;
-   Notify(DEBUG_INFO, "Object:Loading %s...", mFilename.c_str());
-
-   osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
-
-   if (useCache)
+   //attach our geometry node to the matrix node
+   if (node!=NULL)
    {
-      options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
-   }
-   else
-   {  
-      options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
-   }
-   
-   osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
-   if (model != NULL)
-   {
-      // this crashes - prolly should be called from the Update traversal
-      if (mNode.get()->getNumChildren() != 0)
-      {
-         mNode.get()->removeChild(0,mNode.get()->getNumChildren() );
-      }
-      mNode.get()->addChild( model );
-      retVal = true;
+      //mMatrixNode->addChild(mDrawableNode.get());
+      GetMatrixNode()->addChild(node);
+      return node;
    }
    else
    {
-      Notify(WARN, "Object: Can't load %s", mFilename.c_str());
-      retVal = false;
+      return NULL;
    }
-   return retVal;
 }

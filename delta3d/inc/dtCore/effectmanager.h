@@ -41,15 +41,17 @@
 
 #include "sg.h"
 
-#include "dtCore/base.h"
-#include "dtCore/scene.h"
-
+//#include "dtCore/base.h"
+//#include "dtCore/scene.h"
+#include "dtCore/deltadrawable.h"
 
 namespace dtCore
 {
+   //forward declaration
    class EffectListener;
    class Effect;
    class Detonation;
+   class Transformable;
    
    
    /**
@@ -65,7 +67,7 @@ namespace dtCore
    /**
     * An effect manager.
     */
-   class DT_EXPORT EffectManager : public Base, public DeltaDrawable
+   class DT_EXPORT EffectManager : public DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(EffectManager)
 

@@ -21,7 +21,7 @@
 #ifndef DELTA_TRIPOD
 #define DELTA_TRIPOD
 
-#include "dtCore/base.h"
+#include "dtCore/Transformable.h"
 #include <osg/ref_ptr>
 #include "sg.h"
 
@@ -29,7 +29,6 @@ namespace dtCore
 {
    //forward declaration
    class Camera;
-   class Transformable;
 
    ///A Tripod is used to attach a Camera to a Transformable
 
@@ -41,7 +40,7 @@ namespace dtCore
     *  Also, the Tripod may be instructed to always point toward another
     *  Transformable.
     */
-   class DT_EXPORT Tripod : public Base
+   class DT_EXPORT Tripod : public Transformable
    {
    public:
 

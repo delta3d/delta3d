@@ -8,6 +8,7 @@
 #include "dtCore/environment.h"
 #include "dtCore/skydome.h"
 #include "dtCore/clouddome.h"
+#include "dtCore/object.h"
 #include "dtCore/system.h"
 #include "dtCore/infiniteterrain.h"
 #include "dtCore/positionallight.h"
@@ -72,7 +73,7 @@ void UserInterface::SelectInstance (void)
       TransformChildList->clear();
       for (unsigned int childIdx=0; childIdx<t->GetNumChildren(); childIdx++)
       {
-         osg::ref_ptr<Transformable> child = t->GetChild(childIdx);
+         osg::ref_ptr<DeltaDrawable> child = t->GetChild(childIdx);
          TransformChildList->add( child->GetName().c_str(), child.get() );
       }
 
@@ -558,7 +559,7 @@ void UserInterface::BaseNameCB(Fl_Input *o )
 
 void UserInterface::TransformPosCB(Fl_Value_Input*)
 {
-   Transformable *t = (Transformable*)GetSelectedInstance(this);
+   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
    Transform trans;
 
    trans.Set(TransformX->value(), 
@@ -581,7 +582,7 @@ void UserInterface::TransformPosCB(Fl_Value_Input*)
 
 void UserInterface::TransformCSCB( Fl_Round_Button *)
 {
-   Transformable *t = (Transformable*)GetSelectedInstance(this);
+   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
    Transform trans;
    sgVec3 xyz, hpr;
 
@@ -629,7 +630,7 @@ void UserInterface::CameraClearColorBrowserCB(Fl_Button*)
       CameraClearBlue->value(),
       1.f };
 
-   Camera *c = (Camera*)GetSelectedInstance(this);
+   Camera *c = dynamic_cast<Camera*>(GetSelectedInstance(this));
    c->SetClearColor( color );
 }
 
@@ -648,14 +649,14 @@ void UserInterface::CameraClearColorCB(Fl_Value_Input* )
       CameraClearLoadButton->color(fc);
       CameraClearLoadButton->redraw();
     
-   Camera *c = (Camera*)GetSelectedInstance(this);
+   Camera *c = dynamic_cast<Camera*>(GetSelectedInstance(this));
    c->SetClearColor( color );
 }
 
 
 void UserInterface::CameraSceneCB( Fl_Choice *o )
 {
-   Camera *cam = (Camera*)GetSelectedInstance(this);
+   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
    const Fl_Menu *menu = o->menu();   
 
    Scene *scene = (Scene*)menu[o->value()].user_data();
@@ -664,7 +665,7 @@ void UserInterface::CameraSceneCB( Fl_Choice *o )
 
 void UserInterface::CameraWinCB( Fl_Choice *o )
 {
-   Camera *cam = (Camera*)GetSelectedInstance(this);
+   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
    const Fl_Menu *menu = o->menu();   
    
    DeltaWin *win = (DeltaWin*)menu[o->value()].user_data();
@@ -674,14 +675,14 @@ void UserInterface::CameraWinCB( Fl_Choice *o )
 
 void UserInterface::WinPosCB( Fl_Value_Input *o)
 {
-   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
+   DeltaWin *w = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
    w->SetPosition( int(WinPosX->value()), int(WinPosY->value()), 
                    int(WinPosW->value()), int(WinPosH->value()) );
 }
 
 void UserInterface::WinSizeCB(Fl_Menu_Button *o)
 {
-   DeltaWin *win = (DeltaWin*)GetSelectedInstance(this);
+   DeltaWin *win = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
    const Fl_Menu_Item*menu = o->menu();
    
 
@@ -708,7 +709,7 @@ void UserInterface::WinSizeCB(Fl_Menu_Button *o)
 
 void UserInterface::WinCursorCB( Fl_Check_Button *o)
 {
-   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
+   DeltaWin *w = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
 
    if (o->value()) w->ShowCursor();
    else w->ShowCursor(false);
@@ -716,14 +717,14 @@ void UserInterface::WinCursorCB( Fl_Check_Button *o)
 
 void UserInterface::WinTitleCB( Fl_Input *o)
 {
-   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
+   DeltaWin *w = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
    std::string name(o->value());
    w->SetWindowTitle(name.c_str());
 }
 
 void UserInterface::WinFullScreenCB( Fl_Check_Button *o)
 {
-   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
+   DeltaWin *w = dynamic_cast<DeltaWin*>(GetSelectedInstance(this));
 
    if (o->value()) w->SetFullScreenMode(true);
    else            w->SetFullScreenMode(false);    
@@ -739,7 +740,7 @@ void UserInterface::ObjectLoadFileCB( Fl_Button *o)
 {
    string filename = fl_file_chooser("Load File", NULL, NULL, 1);
    
-   Object *obj = (Object*)GetSelectedInstance(this);
+   Object *obj = dynamic_cast<Object*>(GetSelectedInstance(this));
    obj->LoadFile(filename);
    
    filename = obj->GetFilename();
@@ -749,7 +750,7 @@ void UserInterface::ObjectLoadFileCB( Fl_Button *o)
 
 void UserInterface::TransformAddChildCB( Fl_Button *)
 {
-   Transformable *t = (Transformable*)GetSelectedInstance(this);
+   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
 
    SelectList->clear();
    for (int tIdx=0; tIdx<Transformable::GetInstanceCount(); tIdx++)
@@ -790,7 +791,7 @@ void UserInterface::TransformAddChildCB( Fl_Button *)
             TransformChildList->clear();
             for (unsigned int childIdx=0; childIdx<t->GetNumChildren(); childIdx++)
             {
-               osg::ref_ptr<Transformable> child = t->GetChild(childIdx);
+               osg::ref_ptr<DeltaDrawable> child = t->GetChild(childIdx);
                TransformChildList->add( child->GetName().c_str(), child.get() );
             }
 
@@ -807,14 +808,15 @@ void UserInterface::TransformAddChildCB( Fl_Button *)
 
 void UserInterface::TransformRemChildCB( Fl_Button *)
 {
-   Transformable *t = (Transformable*)GetSelectedInstance(this);
+   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
 
    //loop through selected items in TransformChildList and remove them
    for (int i=0; i<TransformChildList->size()+1; i++)
    {
       if (TransformChildList->selected(i))
       {
-         Transformable *child = (Transformable*)TransformChildList->data(i);
+         //DeltaDrawable *child = (DeltaDrawable*)TransformChildList->data(i);
+         DeltaDrawable *child = static_cast<DeltaDrawable*>(TransformChildList->data(i));
          t->RemoveChild( child );
       }
    }
@@ -822,7 +824,7 @@ void UserInterface::TransformRemChildCB( Fl_Button *)
    TransformChildList->clear();
    for (unsigned int childIdx=0; childIdx<t->GetNumChildren(); childIdx++)
    {
-      osg::ref_ptr<Transformable> child = t->GetChild(childIdx);
+      osg::ref_ptr<DeltaDrawable> child = t->GetChild(childIdx);
       TransformChildList->add( child->GetName().c_str(), child.get() );
    }
 }
@@ -842,7 +844,7 @@ void UserInterface::SkyBoxBaseColorCB(Fl_Value_Input* )
       SkyBoxBaseColorLoadButton->color(fc);
       SkyBoxBaseColorLoadButton->redraw();
     
-   SkyDome *c = (SkyDome*)GetSelectedInstance(this);
+   SkyDome *c = dynamic_cast<SkyDome*>(GetSelectedInstance(this));
    c->SetBaseColor( color );
 }
 
@@ -870,7 +872,7 @@ void UserInterface::SkyBoxBaseColorBrowserCB(Fl_Button*)
       SkyBoxBaseBlue->value(),
       1.f };
 
-   SkyDome *c = (SkyDome*)GetSelectedInstance(this);
+   SkyDome *c = dynamic_cast<SkyDome*>(GetSelectedInstance(this));
    c->SetBaseColor( color );
 }
 
@@ -880,7 +882,7 @@ void UserInterface::EnvAdvFogCB(Fl_Value_Input *)
    bc[0] = AdvFogTurbidity->value();
    bc[1] = AdvFogEnergy->value();
    bc[2] = AdvFogMolecules->value();
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetAdvFogCtrl(bc);
 }
 
@@ -899,7 +901,7 @@ void UserInterface::EnvFogColorCB(Fl_Value_Input *)
       FogColorLoadButton->color(fc);
       FogColorLoadButton->redraw();
     
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetFogColor( color );
 }
 
@@ -927,25 +929,25 @@ void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
       FogBlue->value(),
       1.f };
 
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetFogColor( color );
 }
 
 void UserInterface::EnvFogVisCB(Fl_Value_Input *o)
 {
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetVisibility( o->value() );
 }
 
 void UserInterface::EnvFogNearCB(Fl_Value_Input *o)
 {
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetFogNear( o->value() );
 }
 
 void UserInterface::EnvFogEnableCB(Fl_Check_Button *o)
 {
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
 
    if (o->value())   e->SetFogEnable(true);
    else      e->SetFogEnable(false);
@@ -965,7 +967,7 @@ void UserInterface::EnvFogModeCB(Fl_Choice* o)
       EnvAdvFogGroup->hide();
    }
 
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetFogMode((dtCore::Environment::FogMode)o->value());
 }
 
@@ -993,7 +995,7 @@ void UserInterface::EnvSkyColorBrowserCB(Fl_Button *)
       SkyBlue->value(),
       1.f };
 
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetSkyColor( color );
 }
 
@@ -1012,14 +1014,14 @@ void UserInterface::EnvSkyColorCB(Fl_Value_Input*)
       SkyColorLoadButton->color(fc);
       SkyColorLoadButton->redraw();
     
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetSkyColor( color );
 }
 
 
 void UserInterface::EnvTimeCB(Fl_Value_Slider *o)
 {
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
 
    int yr = int(EnvYear->value());
    int mo = int(EnvMonth->value());
@@ -1033,7 +1035,7 @@ void UserInterface::EnvTimeCB(Fl_Value_Slider *o)
 
 void UserInterface::EnvDateTimeCB(Fl_Value_Input *o)
 {
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
 
    int yr = int(EnvYear->value());
    int mo = int(EnvMonth->value());
@@ -1045,7 +1047,7 @@ void UserInterface::EnvDateTimeCB(Fl_Value_Input *o)
 
 void UserInterface::EnvRefPosCB(Fl_Value_Input *o)
 {
-   Environment *e = (Environment*)GetSelectedInstance(this);
+   Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    sgVec2 refPos;
    refPos[0] = EnvRefLat->value();
    refPos[1] = EnvRefLong->value();
@@ -1054,7 +1056,7 @@ void UserInterface::EnvRefPosCB(Fl_Value_Input *o)
 
 void UserInterface::InfRegenerateCB(Fl_Button *o)
 {
-   InfiniteTerrain *t = (InfiniteTerrain*)GetSelectedInstance(this);
+   InfiniteTerrain *t = dynamic_cast<InfiniteTerrain*>(GetSelectedInstance(this));
 
    float dist = InfBuildDistance->value();
    float segSize = InfSegSize->value();
@@ -1073,7 +1075,7 @@ void UserInterface::InfRegenerateCB(Fl_Button *o)
 
 void UserInterface::InfSmoothCDCB(Fl_Check_Button *o)
 {
-   InfiniteTerrain *t = (InfiniteTerrain*)GetSelectedInstance(this);
+   InfiniteTerrain *t = dynamic_cast<InfiniteTerrain*>(GetSelectedInstance(this));
 
    if (o->value()>0)
    {
@@ -1088,25 +1090,25 @@ void UserInterface::InfSmoothCDCB(Fl_Check_Button *o)
 // -- Additional GUI stuff for CloudDome. --> George
 void UserInterface::CloudScaleCB(Fl_Value_Slider *o)
 {
-   CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+   CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
    cd->setScale( cScale->value());
 }
 
 void UserInterface::CloudCutoffCB(Fl_Value_Slider *o)
 {
-   CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+   CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
    cd->setCutoff( cCutoff->value());
 }
 
 void UserInterface::CloudExponentCB(Fl_Value_Slider *o)
 {
-   CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+   CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
    cd->setExponent( cExponent->value());
 }
 
 void UserInterface::CloudWindCB(Fl_Value_Slider *)
 {
-    CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
     cd->setSpeedX( cSpeedX->value());
     cd->setSpeedY( cSpeedY->value());
        
@@ -1114,21 +1116,21 @@ void UserInterface::CloudWindCB(Fl_Value_Slider *)
 
 void UserInterface::CloudEnableCB(Fl_Check_Button *)
 {
-    CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
     cd->setShaderEnable( cEnable->value());
        
 }
 
 void UserInterface::CloudBiasCB(Fl_Value_Slider *)
 {
-    CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
     cd->setBias( cBias->value());
        
 }
 
 void UserInterface::CloudColorBrowserCB(Fl_Button *)
 {
-    CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
 
     double r = CloudRed->value();
     double g = CloudGreen->value();
@@ -1153,7 +1155,7 @@ void UserInterface::CloudColorBrowserCB(Fl_Button *)
 
 void UserInterface::CloudColorCB(Fl_Value_Input*)
 {
-    CloudDome *cd = (CloudDome*)GetSelectedInstance(this);
+    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
 
     osg::Vec3 *ccolor = new osg::Vec3(
          CloudRed->value(),
@@ -1172,7 +1174,7 @@ void UserInterface::CloudColorCB(Fl_Value_Input*)
 
 void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    if (WeatherThemeOption->value() == 1) //theme'd weather
    {
@@ -1190,7 +1192,7 @@ void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)
 
 void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
 {   
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    if (WeatherThemeCustomOption->value() == 1) w->SetTheme(Weather::THEME_CUSTOM);
    else if (WeatherThemeClearOption->value() == 1) w->SetTheme(Weather::THEME_CLEAR);
@@ -1247,7 +1249,7 @@ void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
 
 void UserInterface::WeatherCustomCloudCB(Fl_Slider *)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    int cloud  = static_cast<int>(WeatherCloudSlider->value());
    
@@ -1283,7 +1285,7 @@ void UserInterface::WeatherCustomCloudCB(Fl_Slider *)
 
 void UserInterface::WeatherCustomWindCB(Fl_Slider *)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    int wind  = static_cast<int>(WeatherWindSlider->value());
 
@@ -1319,7 +1321,7 @@ void UserInterface::WeatherCustomWindCB(Fl_Slider *)
 
 void UserInterface::WeatherCustomVisCB(Fl_Slider *)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    int vis  = static_cast<int>(WeatherVisSlider->value());
 
@@ -1355,7 +1357,7 @@ void UserInterface::WeatherCustomVisCB(Fl_Slider *)
 
 void UserInterface::WeatherTimeCB(Fl_Choice *o)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    Weather::TimePeriod t;
    Weather::Season s;
@@ -1373,7 +1375,7 @@ void UserInterface::WeatherTimeCB(Fl_Choice *o)
 
 void UserInterface::WeatherSeasonCB(Fl_Choice *o)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    Weather::TimePeriod t;
    Weather::Season s;
@@ -1392,7 +1394,7 @@ void UserInterface::WeatherSeasonCB(Fl_Choice *o)
 
 void UserInterface::WeatherRateOfChangeCB(Fl_Value_Slider *o)
 {
-   Weather *w = (Weather*)GetSelectedInstance(this);
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    w->SetRateOfChange( o->value() );
 }
@@ -1400,7 +1402,7 @@ void UserInterface::WeatherRateOfChangeCB(Fl_Value_Slider *o)
 
 void UserInterface::LightModeCB( Fl_Round_Button *)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    if (LightModeGlobal->value())
    {
@@ -1414,14 +1416,14 @@ void UserInterface::LightModeCB( Fl_Round_Button *)
 
 void UserInterface::LightNumCB(Fl_Value_Input *o)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    l->SetNumber( (int)LightNumberInput->value() );
 }
 
 void UserInterface::LightAmbColorCB(Fl_Value_Input*)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    float r,g,b;
    r = LightAmbRed->value();
@@ -1440,7 +1442,7 @@ void UserInterface::LightAmbColorCB(Fl_Value_Input*)
 
 void UserInterface::LightDifColorCB(Fl_Value_Input*)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    float r,g,b;
    r = LightDifRed->value();
@@ -1459,7 +1461,7 @@ void UserInterface::LightDifColorCB(Fl_Value_Input*)
 
 void UserInterface::LightSpecColorCB(Fl_Value_Input*)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    float r,g,b;
    r = LightSpecRed->value();
@@ -1479,7 +1481,7 @@ void UserInterface::LightSpecColorCB(Fl_Value_Input*)
 
 void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    double r = LightAmbRed->value();
    double g = LightAmbGreen->value();
@@ -1503,7 +1505,7 @@ void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightDifColorBrowserCB(Fl_Button *)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    double r = LightDifRed->value();
    double g = LightDifGreen->value();
@@ -1527,7 +1529,7 @@ void UserInterface::LightDifColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    double r = LightSpecRed->value();
    double g = LightSpecGreen->value();
@@ -1551,14 +1553,14 @@ void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightAttCB(Fl_Value_Input*)
 {
-   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
+   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
 
    l->SetAttenuation( LightConstAtt->value(), LightLinAtt->value(), LightQuadAtt->value() );
 }
 
 void UserInterface::LightSpotCB(Fl_Value_Input*)
 {
-   SpotLight *l = (SpotLight*)GetSelectedInstance(this);
+   SpotLight *l = dynamic_cast<SpotLight*>(GetSelectedInstance(this));
    
    l->SetSpotCutoff( LightCutoffInput->value() );
    l->SetSpotExponent( LightExponentInput->value() );

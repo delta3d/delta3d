@@ -4,7 +4,9 @@
 
 #include <iostream>
 
+#include "dtCore/scene.h"
 #include "dtCore/terrain.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 using namespace std;

@@ -25,7 +25,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/transform.h"
+#include "dtCore/transformable.h"
 
 #include <osg/Node>
 #include <osg/Geode>
@@ -43,7 +43,7 @@ namespace dtCore
    /**
     * A physical object.
     */
-   class DT_EXPORT Physical
+   class DT_EXPORT Physical : public Transformable
    {
       public:
       

@@ -7,7 +7,7 @@
 #include <osgText/Text>
 
 #include "dtCore/pointaxis.h"
-
+#include "dtCore/scene.h"
 
 
 using namespace   dtCore;
@@ -58,7 +58,6 @@ const osg::Vec4            PointAxis::COLOR[BASECOLORS] =
  */
 PointAxis::PointAxis()
 :  Transformable(),
-   DeltaDrawable(),
    mNode(NULL),
    mMainSwitch(NULL),
    mLabelSwitch(NULL)

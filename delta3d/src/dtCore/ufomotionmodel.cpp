@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/ufomotionmodel.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 using namespace std;

@@ -9,7 +9,7 @@
 #include <dtCore/transform.h>
 #include <dtCore/pointaxis.h>
 #include <dtCore/compass.h>
-
+#include <dtCore/camera.h>
 
 using namespace   dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Compass)

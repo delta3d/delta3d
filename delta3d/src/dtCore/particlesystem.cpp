@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/particlesystem.h"
+#include "dtCore/scene.h"
+#include <osg/Group>
 
 using namespace dtCore;
 using namespace std;
@@ -101,8 +103,8 @@ class TransformCallback : public osg::NodeCallback
             transform.Get(eMatrix);
          }
          
-         osg::MatrixTransform* mt = 
-            (osg::MatrixTransform*)mParticleSystem->GetOSGNode();
+         osg::MatrixTransform* mt = mParticleSystem->GetMatrixNode();
+            //(osg::MatrixTransform*)mParticleSystem->GetOSGNode();
          
          mt->setMatrix(
             osg::Matrix(
@@ -161,9 +163,9 @@ ParticleSystem::ParticleSystem(string name)
    
    RegisterInstance(this);
    
-   mNode = new osg::MatrixTransform;
+   //mNode = new osg::MatrixTransform;
    
-   mNode->setUpdateCallback(
+   GetMatrixNode()->setUpdateCallback(
       new TransformCallback(this)
    );
 }
@@ -189,15 +191,15 @@ bool ParticleSystem::LoadFile(std::string filename)
    
    if(node != NULL)
    {
-      if(mNode->getNumChildren() > 0)
+      if(GetMatrixNode()->getNumChildren() > 0)
       {
-         mNode->removeChild(0, mNode->getNumChildren());
+         GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
       
-      mNode->addChild(node);
+      GetMatrixNode()->addChild(node);
 
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
-      mNode->accept( pspv );
+      GetMatrixNode()->accept( pspv );
    }
    else
    {
@@ -273,7 +275,7 @@ bool ParticleSystem::IsParentRelative()
  *
  * @return the OpenSceneGraph node
  */
-osg::Node* ParticleSystem::GetOSGNode()
-{
-   return mNode.get();
-}
+//osg::Node* ParticleSystem::GetOSGNode()
+//{
+//   return mNode.get();
+//}

@@ -2,6 +2,7 @@
 #include <string>
 
 #include "dtCore/system.h"
+#include "dtCore/scene.h"
 #include "dtCore/uidrawable.h"
 #include "dtCore/notify.h"
 #include "dtCore/deltawin.h"

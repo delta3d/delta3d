@@ -24,10 +24,12 @@
 
 
 
-#include "dtCore/base.h"
-#include "sg.h"
+//#include "dtCore/base.h"
+#include "dtCore/deltadrawable.h"
 #include "dtCore/transform.h"
+#include "sg.h"
 #include <osg/ref_ptr>
+#include <osg/MatrixTransform>
 
 namespace dtCore
 {
@@ -41,7 +43,7 @@ namespace dtCore
      * is around the X axis, and roll is around the Y axis.  The angles are all
      * right-hand-rule.
      */
-   class DT_EXPORT Transformable : public Base  
+   class DT_EXPORT Transformable : virtual public  DeltaDrawable  
    {
       DECLARE_MANAGEMENT_LAYER(Transformable)
    public:
@@ -54,25 +56,25 @@ namespace dtCore
       virtual ~Transformable();
 
       //typedef std::vector<Transformable>  ChildList;
-      typedef std::vector<osg::ref_ptr<Transformable> > ChildList;
+     // typedef std::vector<osg::ref_ptr<Transformable> > ChildList;
 
       ///Test to see if child
-      bool CanBeChild( Transformable *child );
+      //bool CanBeChild( Transformable *child );
 
-      ///Add a Transformable child
-	   void AddChild( Transformable *child );
+      ///Add a DeltaDrawable child
+      virtual void AddChild( DeltaDrawable *child );
          
-      ///Remove a Transformable child
-      void RemoveChild( Transformable *child );
+      ///Remove a DeltaDrawable child
+      virtual void RemoveChild( DeltaDrawable *child );
 
       ///Return the number of Transformable children added
-      inline unsigned int GetNumChildren() { return mChildList.size(); }
+      //inline unsigned int GetNumChildren() { return mChildList.size(); }
 
       ///Get the child specified by idx (0 to number of children-1)
-      Transformable* GetChild( unsigned int idx ) {return mChildList[idx].get();}
+      //Transformable* GetChild( unsigned int idx ) {return mChildList[idx].get();}
 
       ///Get the immediate parent of this instance
-      Transformable* GetParent(void) {return mParent.get();}
+      //Transformable* GetParent(void) {return mParent.get();}
 
       ///Set the Transform to reposition this Transformable
       virtual  void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
@@ -80,32 +82,44 @@ namespace dtCore
       ///Get the current Transform of this Transformable
       virtual  void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
 
+      osg::MatrixTransform* GetMatrixNode(void) {return dynamic_cast<osg::MatrixTransform*>(mNode.get());}
+      
+
    protected:
       ///Override function for derived object to know when attaching to scene
-      virtual void SetParent(Transformable* parent) {mParent=parent;}
+      //virtual void SetParent(Transformable* parent) {mParent=parent;}
       
-   protected:
-
       Transform *mRelTransform;  ///<position relative to the parent
-      ChildList mChildList;      ///<List of children Transformables added
-      osg::ref_ptr<Transformable> mParent; ///<Any immediate parent of this instance
+      //ChildList mChildList;      ///<List of children Transformables added
+      //osg::ref_ptr<Transformable> mParent; ///<Any immediate parent of this instance
 
    private:
 
-   /** Get the index number of child, return a value between
-     * 0 and the number of children-1 if found, if not found then
-     * return the number of children.
-     */
-      inline unsigned int GetChildIndex( const Transformable* child ) const
-      {
-         for (unsigned int childNum=0;childNum<mChildList.size();++childNum)
-         {
-            if (mChildList[childNum]==child) return childNum;
-         } 
-         return mChildList.size(); // node not found.
-      }
+      static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat);
 
-      void Transformable::CalcAbsTransform( Transform *xform );
+      class getWCofNodeVisitor : public osg::NodeVisitor
+      {
+      public:
+         getWCofNodeVisitor( osg::Node *findNode ):
+            osg::NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN),
+               wcNode(findNode),
+               success(false)
+            {}
+
+            virtual void apply(osg::MatrixTransform &node)
+            {
+               if( &node == wcNode)
+               {
+                  wcMatrix = osg::computeLocalToWorld( getNodePath() );
+                  success = true;
+               }
+               traverse(node);
+            }
+
+            osg::Matrix wcMatrix;
+            bool success;
+            osg::Node *wcNode;
+      };
 
    };
 };

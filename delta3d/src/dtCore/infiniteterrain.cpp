@@ -4,6 +4,7 @@
 
 #include "dtCore/infiniteterrain.h"
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
 
 #include "osg/CullFace"
 #include "osg/Drawable"

@@ -4,6 +4,7 @@
 
 #include "dtCore/orbitmotionmodel.h"
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 using namespace std;

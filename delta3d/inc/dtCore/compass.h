@@ -26,14 +26,13 @@
 
 #include <dtCore/macros.h>
 #include <dtCore/transformable.h>
-#include <dtCore/deltadrawable.h>
-#include <dtCore/deltawin.h>
-#include <dtCore/camera.h>
-
 
 
 namespace dtCore
 {
+   //forward declaration
+   class Camera;
+   class DeltaWin;
 
    ///A special visual Object which constantly aligns with the world axes
 
@@ -45,7 +44,7 @@ namespace dtCore
     * The Compass must be added to a Scene to be viewed using Scene::AddObject().
     */
 
-   class DT_EXPORT Compass :   public   Transformable, public   DeltaDrawable
+   class DT_EXPORT Compass :   public   Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Compass)
 

@@ -28,6 +28,7 @@
 #include "Producer/Camera"
 #include "dtCore/deltawin.h"
 #include "dtCore/base.h"
+//#include "dtCore/positionable.h"
 #include "dtCore/scene.h"
 #include "sg.h"
 #include "dtCore/transformable.h"
@@ -52,7 +53,7 @@ namespace dtCore
     *  The Frame() method must be called once per frame.  This will update the
     *  scene, then cull and draw the visual objects.
     */
-   class DT_EXPORT Camera : public Transformable
+   class DT_EXPORT Camera : public Transformable//, public Base
    {
       DECLARE_MANAGEMENT_LAYER(Camera)
 
@@ -92,7 +93,6 @@ namespace dtCore
       
       ///Get a handle to the underlying Producer::Camera
       Producer::Camera *GetCamera(void)const {return (Producer::Camera*)mCamera.get();};
-      
 
    private:
       osg::ref_ptr<Producer::Camera> mCamera; // Handle to the Producer camera

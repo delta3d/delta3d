@@ -21,13 +21,13 @@
 #ifndef DELTA_INFINITE_LIGHT
 #define DELTA_INFINITE_LIGHT
 
-#include "dtCore/base.h"
+//#include "dtCore/base.h"
 #include "dtCore/light.h"
 
 namespace dtCore
 {
 
-   class DT_EXPORT InfiniteLight : public Base, public Light
+   class DT_EXPORT InfiniteLight : public Light
    {
       DECLARE_MANAGEMENT_LAYER(InfiniteLight)
 

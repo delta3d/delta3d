@@ -60,9 +60,9 @@
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 
-#include "dtCore/deltadrawable.h"
+//#include "dtCore/deltadrawable.h"
 #include "dtCore/physical.h"
-#include "dtCore/transformable.h"
+//#include "dtCore/transformable.h"
 
 #include "soarx/soarxdrawable.h"
 #include "soarx/soarx_tbuilder.h"
@@ -75,9 +75,7 @@ namespace dtSOARX
    /**
     * A piece of terrain using the SOARX library.
     */
-   class DT_EXPORT SOARXTerrain : public dtCore::Transformable,
-                                  public dtCore::DeltaDrawable,
-                                  public dtCore::Physical
+   class DT_EXPORT SOARXTerrain :public dtCore::Physical
    {
       friend class SOARXTerrainCallback;
       

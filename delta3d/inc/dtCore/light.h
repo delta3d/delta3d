@@ -24,18 +24,18 @@
 #include <osg/LightSource>
 #include <osg/LightModel>
 
-#include "dtCore/base.h"
+//#include "dtCore/base.h"
 #include "dtCore/export.h"
-#include "dtCore/notify.h"
+//#include "dtCore/notify.h"
 #include "dtCore/macros.h"
 #include "dtCore/deltadrawable.h"
 
-const int MAX_LIGHTS = 8;
 
 namespace dtCore
 {
+   const int MAX_LIGHTS = 8;
 
-   class DT_EXPORT Light
+   class DT_EXPORT Light : virtual public DeltaDrawable
    {
 
    public:

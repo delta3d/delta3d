@@ -192,6 +192,9 @@
 				RelativePath=".\cui_openglshader.cpp">
 			</File>
 			<File
+				RelativePath=".\deltadrawable.cpp">
+			</File>
+			<File
 				RelativePath=".\deltarendersurface.cpp">
 			</File>
 			<File
@@ -340,6 +343,9 @@
 			</File>
 			<File
 				RelativePath=".\light.cpp">
+			</File>
+			<File
+				RelativePath=".\loadable.cpp">
 			</File>
 			<File
 				RelativePath="logicalinputdevice.cpp">
@@ -630,6 +636,9 @@
 				RelativePath="..\..\inc\dtCore\deltawin.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\dtCore\deprecationmgr.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtCore\dt.h">
 			</File>
 			<File
@@ -676,6 +685,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\light.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\loadable.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\logicalinputdevice.h">

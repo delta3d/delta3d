@@ -32,14 +32,19 @@
 #include <ode/ode.h>
 #include "sg.h"
 #include "dtCore/base.h"
-#include "dtCore/object.h"
-#include "dtCore/physical.h"
+//#include "dtCore/deltadrawable.h"
+
+//#include "dtCore/physical.h"
 #include "dtCore/stats.h"
 #include "dtCore/light.h"
 
 namespace dtCore
 {         
-   class Light; //forward declaration
+   //forward declaration
+   class DeltaDrawable;
+   //class Light;
+   class Transformable;
+   class Physical;
 
    class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
    {
@@ -95,6 +100,8 @@ namespace dtCore
 
       ///Remove a DeltaDrawable from the Scene
       void RemoveDrawable( DeltaDrawable *drawable );
+
+      DeltaDrawable* GetDrawable(unsigned int i) {return mAddedDrawables[i].get(); }
      
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain( const float *x, const float *y);
@@ -154,6 +161,19 @@ namespace dtCore
 
       void UseSceneLight( bool lightState = true );
 
+
+      inline unsigned int GetDrawableIndex( const Drawable* drawable ) const
+      {
+         for (unsigned int childNum=0;childNum<mAddedDrawables.size();++childNum)
+         {
+            if (mAddedDrawables[childNum]==drawable) return childNum;
+         }
+         return mAddedDrawables.size(); // node not found.
+      }
+   
+      int GetNumberOfAddedDrawable(void) const {return mAddedDrawables.size();}     
+
+
    private:
       
       ///ODE collision callback
@@ -178,6 +198,11 @@ namespace dtCore
       //static 
       osg::Group* mLightGroup; // single light group for all scene lights
       Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
+
+      typedef std::vector< osg::ref_ptr<Drawable> > DrawableList;
+
+      DrawableList mAddedDrawables;
+
    };
    
 };
