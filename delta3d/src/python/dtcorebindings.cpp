@@ -82,16 +82,21 @@ BOOST_PYTHON_MODULE(dtCore)
    initSystemBindings();
    initSceneBindings();
    initTransformBindings();
-   initTransformableBindings();
+   initLoadableBindings();
+
    initDeltaDrawableBindings();
+   initTransformableBindings();
+
    initEnvEffectBindings();
    initCloudDomeBindings();
    initCloudPlaneBindings();
    initSkyBoxBindings();
    initSkyDomeBindings();
    initEnvironmentBindings();
+
    initPhysicalBindings();
    initObjectBindings();
+
    initCameraBindings();
    initTripodBindings();
    initInputDeviceBindings();
@@ -106,17 +111,20 @@ BOOST_PYTHON_MODULE(dtCore)
    initUIDrawableBindings();
    initIsectorBindings();
    initInfiniteTerrainBindings();
+
    initMotionModelBindings();
    initWalkMotionModelBindings();
    initFlyMotionModelBindings();
    initUFOMotionModelBindings();
    initOrbitMotionModelBindings();
+
    initCompassBindings();
    initNoiseGeneratorBindings();
    initPointAxisBindings();
    initRecorderBindings();
    initTerrainBindings();
    initEffectManagerBindings();
+
    initLightBindings();
    initInfiniteLightBindings();
    initPositionalLightBindings();

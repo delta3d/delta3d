@@ -19,7 +19,7 @@ void initCharacterBindings()
    Character* (*CharacterGI1)(int) = &Character::GetInstance;
    Character* (*CharacterGI2)(std::string) = &Character::GetInstance;
 
-   class_<Character, bases<Transformable, DeltaDrawable>, osg::ref_ptr<Character> >("Character", init<optional<std::string> >())
+   class_<Character, bases<Transformable>, osg::ref_ptr<Character> >("Character", init<optional<std::string> >())
       .def("GetInstanceCount", &Character::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CharacterGI1, return_internal_reference<>())

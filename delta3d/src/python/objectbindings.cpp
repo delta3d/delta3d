@@ -7,7 +7,7 @@
 
 using namespace boost::python;
 using namespace dtCore;
-
+/*
 class ObjectWrap : public Object
 {
    public:
@@ -31,7 +31,7 @@ class ObjectWrap : public Object
 
       PyObject* mSelf;
 };
-
+*/
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
 
 void initObjectBindings()
@@ -39,11 +39,11 @@ void initObjectBindings()
    Object* (*ObjectGI1)(int) = &Object::GetInstance;
    Object* (*ObjectGI2)(std::string) = &Object::GetInstance;
 
-   class_<Object, bases<Physical>, osg::ref_ptr<ObjectWrap>, boost::noncopyable>("Object", init<optional<std::string> >())
+   class_<Object, bases<Physical>, osg::ref_ptr<Object>, boost::noncopyable>("Object", init<optional<std::string> >())
       .def("GetInstanceCount", &Object::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
       .def("GetInstance", ObjectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("LoadFile", &Object::LoadFile, &ObjectWrap::DefaultLoadFile);
+      .def("LoadFile", &Object::LoadFile, LF_overloads()[return_internal_reference<>()]);
 }
