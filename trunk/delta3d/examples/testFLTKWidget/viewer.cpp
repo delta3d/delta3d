@@ -12,7 +12,7 @@ using namespace   dtCore;
 using namespace   std;
 
 
-const string Viewer::DEF_PATH("../../data");
+const string Viewer::DEF_PATH("../../data;");
 const string Viewer::DEF_FILE("cessna.osg");
 
 
@@ -216,7 +216,7 @@ Viewer::PostFrame( const double deltaFrameTime )
 void
 Viewer::ctor( void )
 {
-   SetDataFilePathList(DEF_PATH);
+   SetDataFilePathList(DEF_PATH + GetDeltaDataPathList());
 
 
    // create the scene

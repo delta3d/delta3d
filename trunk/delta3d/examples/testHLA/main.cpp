@@ -143,7 +143,7 @@ int main( int argc, char **argv )
    cam->SetTransform( &position );
    
    //This is where we'll find our files to load
-   SetDataFilePathList("../../data/");
+   SetDataFilePathList("../../data/;" + GetDeltaDataPathList());
 
    Entity* entity = new Entity;
 

@@ -1,16 +1,6 @@
 #include "dt.h"
 #include "dtabc.h"
 
-/*
-#include "application.h"
-#include "globals.h"
-#include "object.h"
-#include "notify.h"
-#include "infiniteterrain.h"
-#include "flymotionmodel.h"
-#include "orbitmotionmodel.h"
-#include "ufomotionmodel.h"
-#include "walkmotionmodel.h"*/
 
 
 using namespace dtCore;
@@ -32,7 +22,7 @@ class TestMotionModelsApplication : public Application
       TestMotionModelsApplication()
          : Application("config.xml")
       {
-         SetDataFilePathList("../../data/");
+         SetDataFilePathList("../../data/;" + GetDeltaDataPathList() );
          
          mTerrain = new InfiniteTerrain;
          

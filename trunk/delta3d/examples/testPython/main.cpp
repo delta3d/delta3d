@@ -31,7 +31,7 @@ class TestPythonApplication : public Application,
       TestPythonApplication()
          : Application("config.xml")
       {
-         SetDataFilePathList("../../data");
+         SetDataFilePathList("../../data;" + GetDeltaDataPathList());
          
          Object* obj = new Object("cessna");
          

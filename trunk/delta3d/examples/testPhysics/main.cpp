@@ -160,7 +160,7 @@ public:
       PhysicsApp()
       {
          //This is where we'll find our files to load
-         SetDataFilePathList("../../data/");
+         SetDataFilePathList("../../data/;" + GetDeltaDataPathList() );
 
          Object *obj1 = new Object("ground");
          Object *obj2 = new Object("box");
