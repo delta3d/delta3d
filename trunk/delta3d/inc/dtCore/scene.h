@@ -32,16 +32,21 @@
 #include <ode/ode.h>
 #include "sg.h"
 #include "dtCore/base.h"
+#include "dtCore/light.h"
 #include "dtCore/object.h"
 #include "dtCore/physical.h"
 #include "dtCore/stats.h"
+
+//NOTE: EVIL! fix w/ const
+#define mMaxLightNum 8 
+
 
 namespace dtCore
 {         
    class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
    {
    public:
-   	_SceneHandler();
+   	_SceneHandler(bool useSceneLight=true);
    	virtual ~_SceneHandler();
 
       osgUtil::SceneView* GetSceneView() { return mSceneView.get(); }
@@ -82,7 +87,9 @@ namespace dtCore
 
    public:
 
-      Scene(std::string name = "scene");
+
+
+      Scene(std::string name = "scene", bool useSceneLight = true);
       virtual ~Scene();
       _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
       osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
@@ -127,7 +134,7 @@ namespace dtCore
 
       double GetPhysicsStepSize( void ){ return mPhysicsStepSize; }
       void SetPhysicsStepSize( double stepSize = 0.0 );
-
+      
       ///Display the next statistics mode
       void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}
 
@@ -143,17 +150,27 @@ namespace dtCore
 		///UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical);
 
+      //removes a light from the scene
+      void RemoveLight( Light* const light );
+      void RemoveLight( const std::string name );
+      void RemoveLight( const int number );
+
+      inline Light* GetLight( int number ) const { return mLights[ number ]; }
+      Light* GetLight( const std::string name ) const;
+
+      void UseSceneLight( bool lightState = true );
+
    private:
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
       
       osg::ref_ptr<_SceneHandler> mSceneHandler;
-      osg::ref_ptr <osg::Group> mSceneNode; ///<This will be our root scene node
+      osg::ref_ptr<osg::Group> mSceneNode; ///<This will be our root scene node
       dSpaceID mSpaceID;
       dWorldID mWorldID;
       sgVec3 mGravity;
-
+      
       // The time (seconds) for the physics time step. 
       // (default = 0.0, indicating to use the System deltaFrameTime )
       double mPhysicsStepSize;
@@ -164,6 +181,9 @@ namespace dtCore
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
       void *mUserNearCallbackData; ///< pointer to user-supplied data
 
+      //static const int mMaxLightNum = 8;
+      osg::Group* mLightGroup; // single light group for all scene lights
+      Light* mLights[ mMaxLightNum ]; // contains all light associated with this scene
    };
    
 };

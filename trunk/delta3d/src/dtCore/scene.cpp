@@ -14,8 +14,6 @@ using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
-//double Scene::mPhysicsStepSize = 0.0;
-
 // Replacement message handler for ODE 
 extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
 {
@@ -38,19 +36,38 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
    exit(1);
 }
 
+//const int Scene::mMaxLightNum;
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Scene::Scene(string name) : Base(name), mPhysicsStepSize(0.0)
+Scene::Scene( string name, bool useSceneLight )
+: Base(name), mPhysicsStepSize(0.0)
 {
    RegisterInstance(this);
+
+   for( int i = 0; i < mMaxLightNum; i++ )
+      mLights[ i ] = 0;
+
    SetName(name);
-   mSceneHandler = new _SceneHandler();
+   mSceneHandler = new _SceneHandler(useSceneLight);
 
    mSceneNode = new osg::Group;
    mSceneHandler->GetSceneView()->setSceneData( mSceneNode.get() );
+
+   // new light stuff
+   mLightGroup = new osg::Group;
+   mSceneNode.get()->addChild(mLightGroup);
+
+   osg::LightSource* sceneLightSource = new osg::LightSource;	
+   sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
+   mLightGroup->addChild( sceneLightSource );
+
+   mLights[ sceneLightSource->getLight()->getLightNum() ] = new Light( sceneLightSource, "sceneLight", Light::GLOBAL ); //SHOULD be 0
+
+   //
    
    mUserNearCallback = NULL;
    mUserNearCallbackData = NULL;
@@ -75,24 +92,46 @@ Scene::~Scene()
 {
    DeregisterInstance(this);
 
+   for( int i = 0; i < mMaxLightNum; i++ )
+      delete mLights[ i ];
+
    dJointGroupDestroy(mContactJointGroupID);
    dSpaceDestroy(mSpaceID);
    dWorldDestroy(mWorldID);
    Notify(DEBUG_INFO, "destroying Scene ref:%d", this->referenceCount() );
 }
 
-void Scene::AddDrawable(DeltaDrawable *drawable)
+void Scene::AddDrawable( DeltaDrawable *drawable )
 {
    mSceneNode.get()->addChild( drawable->GetOSGNode() );
    
    drawable->AddedToScene(this);
    
+   //FIX: EVIL if-then casting
+
    Physical* physical = dynamic_cast<Physical*>(drawable);
    
    if(physical != NULL)
    {
       RegisterPhysical(physical);
    }
+
+   Light* light = dynamic_cast<Light*>(drawable);
+
+   if( light != NULL )
+   {
+      if( light->GetLightingMode() == Light::GLOBAL )
+      {
+         //enable global lighting
+         osg::StateSet* sceneStateSet = GetSceneHandler()->GetSceneView()->getGlobalStateSet(); 
+         light->GetOSGLightSource()->setStateSetModes( *sceneStateSet, osg::StateAttribute::ON );
+      }
+
+      mLightGroup->addChild( light->GetOSGLightSource() ); //add to a group that is alraedy a child of the scene
+
+      mLights[ light->GetNumber() ] = light; //add to internal array of lights
+   }
+
 }
 
 /** Register a Physical with the Scene.  This method is automatically called 
@@ -102,7 +141,7 @@ void Scene::AddDrawable(DeltaDrawable *drawable)
   * @param physical The Physical to register with the Scene
   * @see AddDrawable()
   */
-void Scene::RegisterPhysical( Physical *physical)
+void Scene::RegisterPhysical( Physical *physical )
 {
    if (physical==NULL) return;
 
@@ -159,14 +198,17 @@ void Scene::UnRegisterPhysical( Physical *physical)
 
 }
 
-_SceneHandler::_SceneHandler():
+_SceneHandler::_SceneHandler(bool useSceneLight):
 mSceneView(new osgUtil::SceneView()),
 mFrameStamp(new osg::FrameStamp())
 {
    mSceneView->init();
    mSceneView->setDefaults(); //osg::SceneView
 
-   mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+   if(useSceneLight)
+      mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+   else
+      mSceneView->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
 
    mSceneView->setFrameStamp(mFrameStamp.get());
 
@@ -465,4 +507,73 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
 void Scene::SetPhysicsStepSize( double stepSize )
 {
    mPhysicsStepSize = stepSize;
+}
+
+void Scene::RemoveLight( Light* const light )
+{
+   for( int i = 0; i < mMaxLightNum; i++ )
+   {
+      if( mLights[ i ] == light )
+      {
+         mLightGroup->removeChild( mLights[ i ]->GetOSGLightSource() );
+
+         // turn off global light
+         GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( mLights[ i ]->GetOSGLight(), osg::StateAttribute::OFF );
+
+         delete mLights[ i ];
+         mLights[ i ] = NULL;
+      }
+   }
+}
+
+void Scene::RemoveLight( const std::string name )
+{
+   for( int i = 0; i < mMaxLightNum; i++ )
+   {
+      if( mLights[ i ]->GetName() == name )
+      {
+         mLightGroup->removeChild( mLights[ i ]->GetOSGLightSource() );
+
+         // turn off global light
+         GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( mLights[ i ]->GetOSGLight(), osg::StateAttribute::OFF );
+
+         mLights[ i ] = NULL;
+      }
+   }
+}
+
+void Scene::RemoveLight( const int number )
+{
+   assert( number >= 0 && number <= mMaxLightNum );
+
+   mLightGroup->removeChild( mLights[ number ]->GetOSGLightSource() );
+
+   // turn off global light
+   GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( mLights[ number ]->GetOSGLight(), osg::StateAttribute::OFF );
+
+   mLights[ number ] = NULL;
+}
+
+
+
+Light* Scene::GetLight( const std::string name ) const
+{
+   for( int i = 0; i < mMaxLightNum; i++ )
+   {
+      if( mLights[ i ]->GetName() == name )
+      {
+         return mLights[ i ];
+      }
+   }
+
+   return NULL;
+}
+
+
+void Scene::UseSceneLight( bool lightState )
+{
+   if(lightState)
+      GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+   else
+      GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
 }
