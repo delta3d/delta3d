@@ -3,6 +3,7 @@
 #include "osgDB/FileUtils"
 
 
+
 /*!
  * Set the list of paths that dtCore should use to search for files to load.  Paths
  * are separated with a single ";".
@@ -24,3 +25,4 @@ void dtCore::SetDataFilePathList(std::string pathList )
    
    osgDB::setDataFilePathList(pathList);
 }
+
