@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc; ..\..\ext\inc"
+				AdditionalIncludeDirectories="../../inc;../../ext/inc;$(PYTHON_ROOT)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +36,7 @@
 				AdditionalDependencies="boost_python_debug.lib python23.lib"
 				OutputFile="..\..\bin\dtABC.pyd"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				AdditionalLibraryDirectories="../../lib;../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt"
 				ImportLibrary="Debug/dtABCBindings.lib"/>
 			<Tool
@@ -68,7 +68,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc; ..\..\ext\inc"
+				AdditionalIncludeDirectories="../../inc;../../ext/inc;$(PYTHON_ROOT)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -83,7 +83,7 @@
 				AdditionalDependencies="boost_python.lib python23.lib"
 				OutputFile="..\..\bin\dtABC.pyd"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				AdditionalLibraryDirectories="../../lib;../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libc; libcmt"
 				ImportLibrary="Release/dtABCBindings.lib"/>
 			<Tool
@@ -135,6 +135,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\inc\python\dtpython.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

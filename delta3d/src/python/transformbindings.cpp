@@ -4,7 +4,7 @@
 
 #include <boost/python.hpp>
 
-#include "transform.h"
+#include "dtCore/transform.h"
 
 using namespace boost::python;
 using namespace dtCore;

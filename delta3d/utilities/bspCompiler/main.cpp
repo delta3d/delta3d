@@ -20,7 +20,7 @@
 #include <osgUtil/Optimizer>
 #include <osgUtil/TriStripVisitor>
 
-#include "bspcullcallback.h"
+#include "dtVis/bspcullcallback.h"
 #include "splitgeode.h"
 
 using namespace dtVis;

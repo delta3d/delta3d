@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "compass.h"
+#include "python/dtpython.h"
+#include "dtCore/compass.h"
 
 using namespace boost::python;
 using namespace dtCore;

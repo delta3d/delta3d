@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "soundeffectbinder.h"
+#include "python/dtpython.h"
+#include "dtAudio/soundeffectbinder.h"
 
 using namespace boost::python;
 using namespace dtCore;

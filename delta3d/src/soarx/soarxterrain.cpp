@@ -2,9 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "soarxterrain.h"
+#include "soarx/soarxterrain.h"
 
-#include "notify.h"
+#include "dtCore/notify.h"
 
 #include <iostream>
 
@@ -127,9 +127,6 @@ class dtSOARX::SOARXTerrainCallback : public osg::NodeCallback
 };
 
 
-/**
- * A transformation callback.
- */
 class TransformCallback : public osg::NodeCallback
 {
    public:
@@ -2034,7 +2031,7 @@ inline void DrawRoadPixel(osg::Image* image, float x, float y, float weight)
  *
  * @param image the image to draw the line into
  * @param s1 the s coordinate of the line's start point
- * @parma t2 the t coordinate of the line's start point
+ * @param t1 the t coordinate of the line's start point
  * @param s2 the s coordinate of the line's end point
  * @param t2 the t coordinate of the line's end point
  * @param weight the weight of the line

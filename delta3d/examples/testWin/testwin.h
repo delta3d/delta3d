@@ -1,8 +1,8 @@
 #ifndef DELTA_TESTWINAPP
 #define DELTA_TESTWINAPP
 
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 
 class TestWinApp   :  public   dtABC::Application
 {

@@ -2,10 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
+#include "python/dtpython.h"
 
-#include "dt.h"
-#include "guimgr.h"
+#include "dtCore/dt.h"
+#include "gui_fl/guimgr.h"
 
 using namespace boost::python;
 using namespace dtCore;

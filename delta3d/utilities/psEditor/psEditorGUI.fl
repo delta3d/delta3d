@@ -2,10 +2,10 @@
 version 1.0104 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include "fl_dt_window.h"} {public
+decl {\#include "dtABC/fl_dt_window.h"} {public
 } 
 
-decl {\#include "dtabc.h"} {public
+decl {\#include "dtABC/dtabc.h"} {public
 } 
 
 Function {make_window()} {open

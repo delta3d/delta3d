@@ -10,11 +10,11 @@
 #include <osgDB/WriteFile>
 #include <osgDB/ReaderWriter>
 
-#include <flymotionmodel.h>
-#include <orbitmotionmodel.h>
-#include <ufomotionmodel.h>
-#include <walkmotionmodel.h>
-#include <compass.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/ufomotionmodel.h>
+#include <dtCore/walkmotionmodel.h>
+#include <dtCore/compass.h>
 
 #include "viewstate.h"
 #include "viewer.h"
@@ -817,6 +817,12 @@ Viewer::InitInputDevices( void )
    omm->SetDistanceAxis( middleButtonUpAndDown );
    omm->SetLeftRightTranslationAxis( secondaryLeftAndRight );
    omm->SetUpDownTranslationAxis( secondaryUpAndDown );
+
+   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+   omm->SetAngularRate(0.75);
+   omm->SetLinearRate(0.025f);
+   #endif
+   
    mMotionModel[ORBIT]  = omm;
 
 

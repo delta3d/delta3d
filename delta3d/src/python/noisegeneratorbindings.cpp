@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "pnoise.h"
+#include "python/dtpython.h"
+#include "dtCore/pnoise.h"
 
 using namespace boost::python;
 using namespace dtCore;

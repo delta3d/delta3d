@@ -1,7 +1,7 @@
 #include <string>
 
-#include <notify.h>
-#include <widget.h>
+#include <dtCore/notify.h>
+#include <dtABC/widget.h>
 
 #include "viewstate.h"
 #include "UserInterface.h"

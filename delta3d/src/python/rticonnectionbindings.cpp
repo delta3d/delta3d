@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "rticonnection.h"
+#include "python/dtpython.h"
+#include "dtHLA/rticonnection.h"
 
 using namespace boost::python;
 using namespace dtCore;

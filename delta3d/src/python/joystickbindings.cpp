@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "joystick.h"
+#include "python/dtpython.h"
+#include "dtCore/joystick.h"
 
 using namespace boost::python;
 using namespace dtCore;

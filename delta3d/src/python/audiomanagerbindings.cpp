@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "audiomanager.h"
+#include "python/dtpython.h"
+#include "dtAudio/audiomanager.h"
 
 using namespace boost::python;
 using namespace dtCore;
