@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/base.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 
@@ -26,6 +27,7 @@ Base::Base(string name) : mName(name)
  */
 Base::~Base()
 {
+   Notify( DEBUG_INFO, "Base: Destroying '%s'", GetName().c_str() );
    DeregisterInstance(this);
 }
 
