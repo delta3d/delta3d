@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
    }
 
    dtABC::Application *app = new dtABC::Application();
-   dtCore::SetDataFilePathList("../../data;" + GetDeltaDataPathList());
+   dtCore::SetDataFilePathList("../../data;" + dtCore::GetDeltaDataPathList());
 
    ///put something in the background to look at
    dtCore::Object *ground = new dtCore::Object("ground");

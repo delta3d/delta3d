@@ -47,7 +47,7 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    mSmokeCountA(0L),
    mSmokeCountC(0L)
 {
-   dtCore::SetDataFilePathList( kDataPath + GetDeltaDataPathList() );
+   dtCore::SetDataFilePathList( kDataPath + dtCore::GetDeltaDataPathList() );
 
    AddSender( dtCore::System::GetSystem() );
 
