@@ -35,8 +35,7 @@ utilities/hlaStealthViewer
 Linux 
 -----
 Tested on:
-Fedora Core 2
--Kernel ???
+Fedora Core-up (2.6.5-1.358)
 
 1. Run 'glxinfo | grep direct'.
    If you get 'direct rendering: yes' skip to 3.
