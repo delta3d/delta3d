@@ -727,7 +727,7 @@ class UserInterface {open
       }
       Fl_Group LightGroup {
         user_data this open selected
-        xywh {15 255 520 180} box ENGRAVED_BOX labeltype EMBOSSED_LABEL
+        xywh {15 255 520 180} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
       } {
         Fl_Value_Input LightNumberInput {
           label {Light Number}
