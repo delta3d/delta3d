@@ -131,6 +131,9 @@
 				RelativePath=".\inputdevicebindings.cpp">
 			</File>
 			<File
+				RelativePath=".\joystickbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\keyboardbindings.cpp">
 			</File>
 			<File
@@ -152,10 +155,16 @@
 				RelativePath=".\systembindings.cpp">
 			</File>
 			<File
+				RelativePath=".\trackerbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\transformablebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\transformbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\tripodbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\windowbindings.cpp">

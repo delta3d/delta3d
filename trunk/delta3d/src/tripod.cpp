@@ -3,9 +3,13 @@
 
 using namespace dtCore;
 
+IMPLEMENT_MANAGEMENT_LAYER(Tripod)
+
 Tripod::Tripod(Camera *cam, Transformable *trans):
 mTetherMode(TETHER_PARENT_REL)
 {
+   RegisterInstance(this);
+   
    AddSender(System::GetSystem());
    if (cam != NULL) SetCamera(cam);
    SetAttachToTransformable(trans);
@@ -17,6 +21,7 @@ mTetherMode(TETHER_PARENT_REL)
 
 Tripod::~Tripod(void)
 {
+    DeregisterInstance(this);
 }
 
 void Tripod::SetCamera(Camera *cam)

@@ -11,6 +11,8 @@
 #include "osgDB/FileUtils"
 #include "rbody/osg/ReplicantBodyMgr.h"
 
+#include "vrutils/os/FilePathContainer.h"
+
 using namespace dtCore;
 using namespace dtChar;
 using namespace std;
