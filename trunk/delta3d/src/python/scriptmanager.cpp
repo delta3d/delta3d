@@ -7,6 +7,7 @@ IMPLEMENT_MANAGEMENT_LAYER(ScriptManager)
 ScriptManager::ScriptManager()
 : mFileObject(0)
 {
+   SetName("ScriptManager");
    Py_Initialize();
 }
 
