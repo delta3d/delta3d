@@ -210,6 +210,21 @@ namespace dtSOARX
          const HeightColorMap& GetUpperHeightColorMap();
          
          /**
+          * Sets the maximum texture size, which should be a power of two
+          * (default is 4096).
+          *
+          * @param maxTextureSize the new maximum texture size
+          */
+         void SetMaxTextureSize(int maxTextureSize);
+         
+         /**
+          * Returns the maximum texture size.
+          *
+          * @return the maximum texture size
+          */
+         int GetMaxTextureSize();
+         
+         /**
           * Loads a geospecific image and drapes it over the terrain.  If
           * the image is monochrome, it will be modulated by the height
           * color map.
@@ -443,6 +458,11 @@ namespace dtSOARX
           * The height color map for height values above sea level.
           */
          HeightColorMap mUpperHeightColorMap;
+         
+         /**
+          * The maximum texture size.
+          */
+         int mMaxTextureSize;
          
          /**
           * Detail gradient textures for each of the three DTED levels.

@@ -173,7 +173,8 @@ class TransformCallback : public osg::NodeCallback
 SOARXTerrain::SOARXTerrain(string name)
    : mLoadDistance(10000.0f),
      mThreshold(2.0f),
-     mDetailMultiplier(7.0f)
+     mDetailMultiplier(7.0f),
+     mMaxTextureSize(4096)
 {
    SetName(name);
    
@@ -564,6 +565,27 @@ const SOARXTerrain::HeightColorMap& SOARXTerrain::GetUpperHeightColorMap()
    return mUpperHeightColorMap;
 }
 
+/**
+ * Sets the maximum texture size, which should be a power of two
+ * (default is 2048).
+ *
+ * @param maxTextureSize the new maximum texture size
+ */
+void SOARXTerrain::SetMaxTextureSize(int maxTextureSize)
+{
+   mMaxTextureSize = maxTextureSize;
+}
+
+/**
+ * Returns the maximum texture size. 
+ *
+ * @return the maximum texture size
+ */
+int SOARXTerrain::GetMaxTextureSize()
+{
+   return mMaxTextureSize;
+}
+         
 /**
  * Loads a geospecific image and drapes it over the terrain.  If
  * the image is monochrome, it will be modulated by the height
@@ -1162,9 +1184,32 @@ osg::Image* SOARXTerrain::MakeBaseGradient(osg::HeightField* hf)
       }
    }
    
-   image->ensureValidSizeForTexturing(4096);
+   image->ensureValidSizeForTexturing(mMaxTextureSize);
    
    return image;
+}
+
+/**
+ * Gets an interpolated height value.
+ *
+ * @param hf the HeightField to sample
+ * @param x the x coordinate of the location to sample
+ * @param y the y coordinate of the location to sample
+ * @return the interpolated height value
+ */
+static float GetInterpolatedHeight(osg::HeightField* hf, double x, double y)
+{
+   int fx = (int)floor(x), cx = (int)ceil(x),
+       fy = (int)floor(y), cy = (int)ceil(y);
+         
+   double v1 = hf->getHeight(fx, fy),
+          v2 = hf->getHeight(cx, fy),
+          v3 = hf->getHeight(fx, cy),
+          v4 = hf->getHeight(cx, cy),
+          v12 = v1 + (v2-v1)*(x-fx),
+          v34 = v3 + (v4-v3)*(x-fx);
+         
+   return v12 + (v34-v12)*(y-fy);
 }
 
 /**
@@ -1177,24 +1222,12 @@ osg::Image* SOARXTerrain::MakeBaseGradient(osg::HeightField* hf)
  */
 osg::Image* SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int longitude)
 {
-   osg::Image* image = new osg::Image;
-   
-   int width = hf->getNumColumns()-1,
-       height = hf->getNumRows()-1;
-   
-   image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
-   
-   unsigned char* ptr = (unsigned char*)image->data();
-   
-   float heightVal;
-   osg::Vec3 color, coord;
-   
-   double latStep = 1.0/width, lonStep = 1.0/height,
-          lat = latitude+latStep*0.5, lon;
-   
    vector<GeospecificImage> images;
    
    vector<GeospecificImage>::iterator it;
+   
+   int width = hf->getNumColumns()-1,
+       height = hf->getNumRows()-1;
    
    for(it = mGeospecificImages.begin();
        it != mGeospecificImages.end();
@@ -1204,19 +1237,49 @@ osg::Image* SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int 
          longitude >= (*it).mMinLongitude && longitude <= (*it).mMaxLongitude)
       {
          images.push_back(*it);
+         
+         width = osg::maximum(
+            width, 
+            osg::Image::computeNearestPowerOfTwo(
+               abs(1.0/(*it).mGeoTransform[1])
+            )
+         );
+         
+         height = osg::maximum(
+            height,
+            osg::Image::computeNearestPowerOfTwo(
+               abs(1.0/(*it).mGeoTransform[5])
+            )
+         );
       }
    }
+   
+   if(width > mMaxTextureSize) width = mMaxTextureSize;
+   if(height > mMaxTextureSize) height = mMaxTextureSize;
+   
+   osg::Image* image = new osg::Image;
+   
+   image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
+   
+   unsigned char* ptr = (unsigned char*)image->data();
+   
+   float heightVal, l1, l2, l3, l4, l12, l34;
+   osg::Vec3 c1, c2, c3, c4, c12, c34, color, coord;
+   unsigned char* data;
+   
+   double latStep = 1.0/height, lonStep = 1.0/width,
+          lat = latitude+latStep*0.5, lon,
+          sStep = (hf->getNumColumns()-1.0)/width, tStep = (hf->getNumRows()-1.0)/height,
+          s, t = tStep*0.5;
    
    for(int y=0;y<height;y++)
    {
       lon = longitude + lonStep*0.5;
+      s = sStep*0.5;
       
       for(int x=0;x<width;x++)
       {
-         heightVal = (hf->getHeight(x, y)
-                      + hf->getHeight(x+1,y+1)
-                      + hf->getHeight(x, y+1)
-                      + hf->getHeight(x+1, y))*0.25f;
+         heightVal = GetInterpolatedHeight(hf, s, t);
          
          if(heightVal > 0.0f)
          {
@@ -1236,23 +1299,50 @@ osg::Image* SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int 
                        (*it).mInverseGeoTransform[4]*lon + 
                        (*it).mInverseGeoTransform[5]*lat;
             
-            int ix = (int)x, iy = (int)y;
+            int fx = (int)floor(x), fy = (int)floor(y),
+                cx = (int)ceil(x), cy = (int)ceil(y);
             
-            if(ix >= 0 && ix < (*it).mImage->s() && iy >= 0 && iy <= (*it).mImage->t())
-            {   
-               unsigned char* data = (*it).mImage->data(ix, iy);
-       
+            if(fx >= 0 && cx < (*it).mImage->s() && fy >= 0 && cy < (*it).mImage->t())
+            {
+               float ax = (float)(x - fx), ay = (float)(y - fy);
+               
                if((*it).mImage->getPixelFormat() == GL_LUMINANCE)
                {
-                  color[0] *= (data[0]/255.0f);
-                  color[1] *= (data[0]/255.0f);
-                  color[2] *= (data[0]/255.0f);
+                  data = (*it).mImage->data(fx, fy);
+                  l1 = data[0]/255.0f;
+            
+                  data = (*it).mImage->data(cx, fy);
+                  l2 = data[0]/255.0f;
+                  
+                  data = (*it).mImage->data(fx, cy);
+                  l3 = data[0]/255.0f;
+                  
+                  data = (*it).mImage->data(cx, cy);
+                  l4 = data[0]/255.0f;
+                  
+                  l12 = l1*(1.0f-ax) + l2*ax;
+                  l34 = l3*(1.0f-ax) + l4*ax;
+                  
+                  color *= (l12*(1.0f-ay) + l34*ay);
                }
                else
                {
-                  color[0] = (data[0]/255.0f);
-                  color[1] = (data[1]/255.0f);
-                  color[2] = (data[2]/255.0f);
+                  data = (*it).mImage->data(fx, fy);
+                  c1.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
+            
+                  data = (*it).mImage->data(cx, fy);
+                  c2.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
+                  
+                  data = (*it).mImage->data(fx, cy);
+                  c3.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
+                  
+                  data = (*it).mImage->data(cx, cy);
+                  c4.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
+                  
+                  c12 = c1*(1.0f-ax) + c2*ax;
+                  c34 = c3*(1.0f-ax) + c4*ax;
+                  
+                  color = c12*(1.0f-ay) + c34*ay;
                }
             }
          }
@@ -1262,9 +1352,11 @@ osg::Image* SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int 
          *(ptr++) = (unsigned char)(color[2]*255);
          
          lon += lonStep;
+         s += sStep;
       }
       
       lat += latStep;
+      t += tStep;
    }
    
    return image;
@@ -1697,7 +1789,7 @@ osg::Node* SOARXTerrain::MakeRoads(int latitude, int longitude, const osg::Vec3&
    
    return geode;
 }
-         
+
 /**
  * Resizes an osg::HeightField for use in the SOARX algorithm, which requires
  * that heightfields be square and 2^(integer n)+1 on each side.
@@ -1717,10 +1809,7 @@ static osg::HeightField* ResizeHeightField(osg::HeightField* hf)
    newHF->allocate(newSize, newSize);
    
    double x, xStep = (hf->getNumColumns()-1.0)/(newSize-1.0),
-          y = 0.0, yStep = (hf->getNumRows()-1.0)/(newSize-1.0),
-          v1, v2, v3, v4, v12, v34;
-   
-   int fx, cx, fy, cy;
+          y = 0.0, yStep = (hf->getNumRows()-1.0)/(newSize-1.0);
    
    for(int i=0;i<newSize;i++)
    {
@@ -1728,20 +1817,7 @@ static osg::HeightField* ResizeHeightField(osg::HeightField* hf)
       
       for(int j=0;j<newSize;j++)
       {
-         fx = (int)floor(x);
-         cx = (int)ceil(x);
-         fy = (int)floor(y);
-         cy = (int)ceil(y);
-         
-         v1 = hf->getHeight(fx, fy);
-         v2 = hf->getHeight(cx, fy);
-         v3 = hf->getHeight(fx, cy);
-         v4 = hf->getHeight(cx, cy);
-         
-         v12 = v1 + (v2-v1)*(x-fx);
-         v34 = v3 + (v4-v3)*(x-fx);
-         
-         newHF->setHeight(j, i, v12 + (v34-v12)*(y-fy));
+         newHF->setHeight(j, i, GetInterpolatedHeight(hf, x, y));
          
          x += xStep;
       }
@@ -1884,7 +1960,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             
             baseGradient = MakeBaseGradient(hf);
                
-            baseGradient->ensureValidSizeForTexturing(4096);
+            baseGradient->ensureValidSizeForTexturing(mMaxTextureSize);
             
             osgDB::writeImageFile(*baseGradient, baseGradientPath);
          }
@@ -1899,7 +1975,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             
             baseColor = MakeBaseColor(hf, latitude, longitude);
                
-            baseColor->ensureValidSizeForTexturing(4096);
+            baseColor->ensureValidSizeForTexturing(mMaxTextureSize);
             
             osgDB::writeImageFile(*baseColor, baseColorPath);
          }
