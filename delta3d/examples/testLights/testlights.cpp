@@ -23,8 +23,8 @@ TestLightsApp::Config()
 
    Object* terrain = new Object( "Terrain" );
    //terrain->LoadFile( "room/shoothouse-1story-sans-lites.ive" );
-   terrain->LoadFile( "csar/csar.ive" );
-   //terrain->LoadFile( "dirt/flatdirt.ive" );
+   //terrain->LoadFile( "csar/csar.ive" );
+   terrain->LoadFile( "dirt/dirt.ive" );
    AddDrawable( terrain );
 
    Object* barrel = new Object( "Barrel" );
