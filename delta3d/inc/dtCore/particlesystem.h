@@ -36,14 +36,14 @@
 #include <osgParticle/Emitter>
 
 #include "dtCore/transformable.h"
-#include "dtCore/notify.h"
+#include "dtCore/loadable.h"
 
 namespace dtCore
 {
    /**
     * A particle system.
     */
-   class DT_EXPORT ParticleSystem : public Transformable
+   class DT_EXPORT ParticleSystem : public Transformable, public Loadable
    {
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
 
@@ -68,14 +68,18 @@ namespace dtCore
           * @param filename the name of the file to load
           * @return true if loaded, false if not loaded
           */
-         bool LoadFile(std::string filename);
+         //bool LoadFile(std::string filename);
+
+         ///Load a file from disk
+         virtual osg::Node* LoadFile( std::string filename, bool useCache = true);
+
          
          /**
           * Returns the name of the last loaded file.
           *
           * @return the filename
           */
-         std::string GetFilename();
+         //std::string GetFilename();
          
          /**
           * Enables or disables this particle system.  Particle systems
@@ -127,7 +131,7 @@ namespace dtCore
          /**
           * The filename of the loaded particle system.
           */
-         std::string mFilename;
+         //std::string mFilename;
          
          /**
           * Whether or not the particle system is enabled.

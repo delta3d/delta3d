@@ -32,9 +32,6 @@
 #include <ode/ode.h>
 #include "sg.h"
 #include "dtCore/base.h"
-//#include "dtCore/deltadrawable.h"
-
-//#include "dtCore/physical.h"
 #include "dtCore/stats.h"
 #include "dtCore/light.h"
 
@@ -42,7 +39,6 @@ namespace dtCore
 {         
    //forward declaration
    class DeltaDrawable;
-   //class Light;
    class Transformable;
    class Physical;
 
@@ -92,7 +88,10 @@ namespace dtCore
 
       Scene(std::string name = "scene", bool useSceneLight = true);
       virtual ~Scene();
+
       _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
+
+      ///Get a pointer to the internal scene node
       osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
       
       ///Add a DeltaDrawable to the Scene to be viewed.
@@ -101,6 +100,7 @@ namespace dtCore
       ///Remove a DeltaDrawable from the Scene
       void RemoveDrawable( DeltaDrawable *drawable );
 
+      ///Get a handle to the DeltaDrawable with the supplied index number
       DeltaDrawable* GetDrawable(unsigned int i) {return mAddedDrawables[i].get(); }
      
       ///Get the height of terrain at a given x,y
@@ -135,7 +135,16 @@ namespace dtCore
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback( dNearCallback *func, void *data=NULL );
 
+      /** Get the step size of the physics.  The physics will 
+      *  be updated numerous times per frame based on this number.  For example,
+      *  if the delta frame rate is 33ms and the step size is 2ms, the physics
+      *  will be updated 16 times.
+      *  @return the step size in seconds
+      *  @see SetPhysicsStepSize()
+      */
       inline double GetPhysicsStepSize( void ) const { return mPhysicsStepSize; }
+
+      /// @see GetPhysicsStepSize()
       inline void SetPhysicsStepSize( const double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
       
       ///Display the next statistics mode
@@ -147,21 +156,24 @@ namespace dtCore
          mSceneHandler->mStats->SelectType(type);
       }
 
-      // Register a Physical with the Scene
+      /// Register a Physical with the Scene
       void RegisterPhysical( Physical *physical);
 
-		// UnRegister a Physical with the Scene
+		/// UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical);
 
+      ///Add a Light to the Scene to shade the Drawable which have been added
       void AddLight( Light* light );
+
       void RemoveLight( Light* light );
 
       inline Light* GetLight( int number ) const { return mLights[ number ]; }
       //Light* GetLight( const std::string name ) const;
 
+      ///Use the internal scene light
       void UseSceneLight( bool lightState = true );
 
-
+      ///Get the index number of the supplied drawable
       inline unsigned int GetDrawableIndex( const Drawable* drawable ) const
       {
          for (unsigned int childNum=0;childNum<mAddedDrawables.size();++childNum)
@@ -171,6 +183,7 @@ namespace dtCore
          return mAddedDrawables.size(); // node not found.
       }
    
+      ///Get the number of Drawables which have been directly added to the Scene
       int GetNumberOfAddedDrawable(void) const {return mAddedDrawables.size();}     
 
 
@@ -201,10 +214,9 @@ namespace dtCore
 
       typedef std::vector< osg::ref_ptr<Drawable> > DrawableList;
 
-      DrawableList mAddedDrawables;
+      DrawableList mAddedDrawables; ///<The list of Drawable directly added
 
-   };
-   
+   };   
 };
 
 

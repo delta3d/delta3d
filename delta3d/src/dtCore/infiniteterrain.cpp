@@ -51,7 +51,7 @@ class dtCore::InfiniteTerrainCallback : public osg::NodeCallback
       {
          if(mTerrain->mClearFlag)
          {
-            mTerrain->mNode->removeChild(0, mTerrain->mNode->getNumChildren());
+            mTerrain->GetMatrixNode()->removeChild(0, mTerrain->GetMatrixNode()->getNumChildren());
    
             mTerrain->mBuiltSegments.clear();
             
@@ -111,7 +111,7 @@ InfiniteTerrain::InfiniteTerrain(string name, osg::Image* textureImage)
 {
    SetName(name);
    
-   mNode = new osg::Group;
+   //mNode = new osg::Group;
 
    osg::StateSet* ss = mNode->getOrCreateStateSet();
    
@@ -210,10 +210,10 @@ InfiniteTerrain::~InfiniteTerrain()
  *
  * @return the OpenSceneGraph node
  */
-osg::Node* InfiniteTerrain::GetOSGNode()
-{
-   return mNode.get();
-}
+//osg::Node* InfiniteTerrain::GetOSGNode()
+//{
+//   return mNode.get();
+//}
 
 /**
  * Regenerates the terrain surface.
@@ -577,7 +577,7 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    
    lod->addChild(geode, 0.0f, mBuildDistance);
    
-   mNode->addChild(lod);
+   GetMatrixNode()->addChild(lod);
 }
 
 /**

@@ -58,7 +58,6 @@ const osg::Vec4            PointAxis::COLOR[BASECOLORS] =
  */
 PointAxis::PointAxis()
 :  Transformable(),
-   mNode(NULL),
    mMainSwitch(NULL),
    mLabelSwitch(NULL)
 {
@@ -88,20 +87,6 @@ PointAxis::PointAxis()
 PointAxis::~PointAxis()
 {
    DeregisterInstance( this );
-}
-
-
-
-/// public member functions
-/**
- * get the underlying geometry node
- *
- * @return  the osg-node containing the geometry
- */
-osg::Node*
-PointAxis::GetOSGNode( void )
-{
-   return   mNode.get();
 }
 
 
@@ -500,16 +485,10 @@ PointAxis::ctor( void )
    osg::Geode*    geode(NULL);
    osg::StateSet* ss(NULL);
 
-
-   // create base tree structure
-   mNode = new osg::MatrixTransform;
-   assert( mNode.get() );
-
-
    mMainSwitch = new osg::Switch;
    assert( mMainSwitch.get() );
 
-   mNode->addChild( mMainSwitch.get() );
+   GetMatrixNode()->addChild( mMainSwitch.get() );
 
 
    mLabelSwitch = new osg::Switch;

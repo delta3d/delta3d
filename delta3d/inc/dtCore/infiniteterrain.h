@@ -74,7 +74,7 @@ namespace dtCore
           *
           * @return the OpenSceneGraph node
           */
-         virtual osg::Node* GetOSGNode();
+         //virtual osg::Node* GetOSGNode();
          
          /**
           * Regenerates the terrain surface.
@@ -251,7 +251,7 @@ namespace dtCore
          /**
           * The container node.
           */
-         osg::ref_ptr<osg::Group> mNode;
+         //osg::ref_ptr<osg::Group> mNode;
          
          /**
           * The noise object.

@@ -24,8 +24,15 @@ Transformable::~Transformable()
 }
 
 
+/** Calculates the world coordinate system matrix using the supplied node.
+ * @param node : the node to calculate the world coordinate matrix from
+ * @param wcMat : The supplied matrix to return with world coordinates
+ * @return successfull or not
+ */
 bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat)
 {
+   if (!node || !wcMat) return false;
+
    osg::Node *topParent = node;
 
    for (;topParent->getNumParents()!=0; topParent=topParent->getParent(0) ) {}
@@ -64,7 +71,8 @@ void Transformable::SetTransform(Transform *xform, CoordSysEnum cs )
 
    if (cs == ABS_CS)
    {
-      //convert the xform into a Relative CS
+      //convert the xform into a Relative CS as the MatrixNode is always
+      //in relative coords
 
       //if this has a parent
       if (mParent.valid())
@@ -154,6 +162,7 @@ void Transformable::AddChild(DeltaDrawable *child)
 {
    DeltaDrawable::AddChild(child);
 
+   //add the child's node to our's
    GetMatrixNode()->addChild( child->GetOSGNode() );
 }
 
@@ -170,38 +179,4 @@ void Transformable::RemoveChild(DeltaDrawable *child)
    bool success = GetAbsoluteMatrix( child->GetOSGNode(), &absMat );
    GetMatrixNode()->removeChild( child->GetOSGNode() );
    DeltaDrawable::RemoveChild(child);
-
-   if (success)
-   {
-//      if (Transformable *t = dynamic_cast<Transformable*>(child))
-//      {
-//         t->GetMatrixNode()->setMatrix(absMat);
-//      }
-   }
 }
-
-
-/*!
- * Check to see if the supplied Transformable can be a child to this instance.
- * To be valid, it can't already have a parent, can't be this instance, and
- * can't be the parent of this instance.
- *
- * @param *child : The candidate child to be tested
- *
- * @return bool  : True if it can be a child, false otherwise
- */
-//bool Transformable::CanBeChild(Transformable *child)
-//{
-//   if (child->GetParent()!=NULL) return false;
-//   if (this == child) return false;
-//   
-//   //loop through parent's parents and make sure they're not == child
-//   osg::ref_ptr<Transformable> t = this->GetParent();
-//   while (t != NULL)
-//   {
-//      if (t==child) return false;
-//      t = t->GetParent();
-//   }
-//   
-//   return true;
-//}

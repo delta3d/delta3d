@@ -124,9 +124,6 @@ namespace dtCore
          /// destructor
          virtual              ~PointAxis();
 
-         /// get the underlying geometry node
-         virtual  osg::Node*  GetOSGNode( void );
-
          /// enable rendering axes, labels and types of labels
          virtual  void        Enable( int f );
          /// disable rendering axes, labels and types of labels
@@ -168,7 +165,6 @@ namespace dtCore
          inline   void        LabelSetup( osg::Geode* g, const char* l, osg::Vec3 p, osg::Vec4 c, float s = 1.0f );
 
       private:
-                  osg::ref_ptr<osg::MatrixTransform>  mNode;               ///< contains the actual model
                   std::string                         mLabel[NUMAXES];     ///< lable for each axis
                   std::string                         mCLabel[NUMAXES];    ///< user labels for each axis
                   AXISCOLOR                           mColorID[NUMAXES];   ///< color id for each axis

@@ -41,7 +41,16 @@
 namespace dtCore
 {
    /**
-    * A physical object.
+    * A rigid body object which can behave with realistic physical properties.
+    * Typical use would involve supplying the shape to use for the collision
+    * detection and the mass of the body.  A Physical instance is not enabled
+    * by default and must be enabled by calling EnableDynamics().
+    *
+    * Since a Physical is derived from DeltaDrawable, it already has a 
+    * geometry node associated with it.  As such, a collision geometry can be 
+    * assigned to this body by either supplying the shape properties, or by 
+    * passing a NULL into the SetCollision*() methods.
+    * 
     */
    class DT_EXPORT Physical : public Transformable
    {
