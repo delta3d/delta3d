@@ -25,13 +25,14 @@
 
 
 #include <osgUtil/Statistics>
-#include <osg/Timer>
+//#include <osg/Timer>
 #include <osgUtil/SceneView>
 #include <osgText/Text>
 #include <osg/Projection>
 #include <osg/Switch>
 
 #include "dtCore/export.h"
+#include "dtCore/deltatimer.h"
 
 namespace dtCore
 {
@@ -70,7 +71,8 @@ namespace dtCore
       osg::ref_ptr<osgUtil::RenderStage> mStage;
       float mFrameRate;
       int mPrintStats;
-      osg::Timer   mTimer;
+      //osg::Timer   mTimer;
+      DeltaTimer mTimer;
       osg::Timer_t mInitialTick;
       osg::Timer_t mLastFrameTick;
       osg::Timer_t mFrameTick;
