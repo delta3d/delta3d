@@ -7,7 +7,6 @@
 
 
 #include "export.h"
-
 #include "osg/Node"
 
 namespace dtCore
