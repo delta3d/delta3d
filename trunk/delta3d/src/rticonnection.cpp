@@ -10,6 +10,9 @@
 #include "sg.h"
 #include "tinyxml.h"
 
+#include <osg/Material>
+#include <osg/StateSet>
+
 #include "osgDB/FileUtils"
 
 #include "osgUtil/IntersectVisitor"
@@ -2236,7 +2239,7 @@ void RTIConnection::reflectAttributeValues(
          if(damageAttribute!=0)
          {
             if(mEffectManager != NULL)
-            {
+            {   
                mIgnoreEffect = true;
                mEffectManager->AddDetonation(
                   position,//position,
@@ -2247,6 +2250,28 @@ void RTIConnection::reflectAttributeValues(
             }
          }
 
+         osg::StateSet* ss = ghost->GetOSGNode()->getOrCreateStateSet();
+                  
+         osg::Material* mat = 
+            (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
+         
+         if(mat == NULL)
+         {
+            mat = new osg::Material;
+            
+            mat->setDiffuse(
+               osg::Material::FRONT_AND_BACK,
+               osg::Vec4(0, 0, 0, 1)
+            );
+         }
+         
+         ss->setAttributeAndModes(
+            mat, 
+            damageAttribute == Destroyed ?
+               (osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE) :
+               osg::StateAttribute::OFF
+         );
+               
          //std::cout<<"Got Damage update type: "<<damageAttribute<<std::endl;
       }
    }
