@@ -434,6 +434,20 @@ namespace dtHLA
           * @return the current ground clamp mode
           */
          GroundClampMode GetGroundClampMode();
+
+         /**
+         * Sets the effect clamp mode.
+         *
+         * @param mode the new effect clamp mode
+         */
+         void SetEffectClampMode(bool mode);
+
+         /**
+         * Returns the effect clamp mode.
+         *
+         * @return the current effect clamp mode
+         */
+         bool GetEffectClampMode();
          
          /**
           * Adds a detonation listener.
@@ -1129,6 +1143,11 @@ namespace dtHLA
           * The ground clamp mode.
           */
          GroundClampMode mGroundClampMode;
+
+         /**
+         * The effect clamp mode.
+         */
+         bool mEffectClampMode;
          
          /**
           * The set of detonation listeners.
