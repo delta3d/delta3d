@@ -1,14 +1,14 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0105 
 header_name {.h} 
 code_name {.cxx}
 Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Particle System Editor} open
-    xywh {782 278 598 585} type Double visible
+    xywh {446 165 598 585} type Double hide
   } {
-    Fl_Menu_Bar {} {open selected
+    Fl_Menu_Bar {} {open
       xywh {0 0 595 25}
     } {
       submenu {} {
@@ -72,7 +72,7 @@ Function {make_window()} {open
     } {
       Fl_Group {} {
         label Particles open
-        xywh {5 60 590 520}
+        xywh {5 60 590 520} hide
       } {
         Fl_Choice Particles_Alignment {
           label Alignment
@@ -117,27 +117,27 @@ Function {make_window()} {open
         Fl_Value_Input Particles_Lifetime {
           label Lifetime
           callback psEditorGUI_Particles_SetLifetime
-          xywh {80 145 80 25} maximum 10 step 0.01 value 2
+          tooltip {The lifetime of each particle (seconds)} xywh {80 145 80 25} maximum 10 step 0.01 value 2
         }
         Fl_Value_Input Particles_MinSize {
           label Size
           callback psEditorGUI_Particles_SetMinSize
-          xywh {80 250 80 25} maximum 10 step 0.01 value 0.2
+          tooltip {size scalar at start of lifetime} xywh {80 250 80 25} maximum 10 step 0.01 value 0.2
         }
         Fl_Value_Input Particles_MaxSize {
           label to
           callback psEditorGUI_Particles_SetMaxSize
-          xywh {180 250 80 25} maximum 10 step 0.01 value 0.2
+          tooltip {size scalar at end of lifetime} xywh {180 250 80 25} maximum 10 step 0.01 value 0.2
         }
         Fl_Value_Input Particles_MinAlpha {
           label Alpha
           callback psEditorGUI_Particles_SetMinAlpha
-          xywh {80 285 80 25} step 0.01 value 1
+          tooltip {alpha amount at start of lifetime} xywh {80 285 80 25} step 0.01 value 1
         }
         Fl_Value_Input Particles_MaxAlpha {
           label to
           callback psEditorGUI_Particles_SetMaxAlpha
-          xywh {180 285 80 25} step 0.01
+          tooltip {alpha amount at end of lifetime} xywh {180 285 80 25} step 0.01
         }
         Fl_Value_Input Particles_Radius {
           label Radius
@@ -152,7 +152,7 @@ Function {make_window()} {open
         Fl_Input Particles_Texture {
           label Texture
           callback psEditorGUI_Particles_SetTexture
-          xywh {380 80 125 25}
+          xywh {290 80 215 25}
         }
         Fl_Button {} {
           label {...}
@@ -232,12 +232,12 @@ Function {make_window()} {open
           Fl_Check_Button Particles_Emitter_Endless {
             label Endless
             callback psEditorGUI_Particles_SetEmitterEndless
-            xywh {280 475 80 25} down_box DOWN_BOX value 1
+            tooltip {Does the emitter endlessly emit particles?} xywh {280 475 80 25} down_box DOWN_BOX value 1
           }
           Fl_Value_Input Particles_Emitter_Lifetime {
             label Lifetime
             callback psEditorGUI_Particles_SetEmitterLifetime
-            xywh {180 440 80 25} maximum 10 step 0.01 value 5
+            tooltip {The emitter's lifetime (in seconds)} xywh {180 440 80 25} maximum 10 step 0.01 value 5
           }
           Fl_Value_Input Particles_Emitter_StartTime {
             label {Start Time}
@@ -247,16 +247,16 @@ Function {make_window()} {open
           Fl_Value_Input Particles_Emitter_ResetTime {
             label {Reset Time}
             callback psEditorGUI_Particles_SetEmitterResetTime
-            xywh {180 510 80 25} maximum 10 step 0.01
+            tooltip {How long before the emitter resets (seconds)} xywh {180 510 80 25} maximum 10 step 0.01
           }
         }
       }
       Fl_Group {} {
-        label Counter
-        xywh {5 60 590 520} hide
+        label Counter open
+        xywh {5 60 590 520}
       } {
         Fl_Group RandomRateCounterParameters {
-          label {Random Rate Counter Parameters} open
+          label {Random Rate Counter Parameters} selected
           xywh {10 310 580 160} box DOWN_BOX align 18 hide
         } {
           Fl_Value_Input RandomRateCounter_MinRate {
@@ -469,22 +469,22 @@ Function {make_window()} {open
           Fl_Value_Input RadialShooter_MinTheta {
             label {Min. Theta}
             callback psEditorGUI_RadialShooter_SetMinTheta
-            xywh {105 340 85 25} maximum 3.1416 step 0.01
+            xywh {105 340 85 25} minimum -3.1416 maximum 3.1416 step 0.01
           }
           Fl_Value_Input RadialShooter_MaxTheta {
             label {Max. Theta}
             callback psEditorGUI_RadialShooter_SetMaxTheta
-            xywh {105 370 85 25} maximum 3.1416 step 0.01 value 0.3927
+            xywh {105 370 85 25} minimum -3.1416 maximum 3.1416 step 0.01 value 0.3927
           }
           Fl_Value_Input RadialShooter_MinPhi {
             label {Min. Phi}
             callback psEditorGUI_RadialShooter_SetMinPhi
-            xywh {265 340 85 25} maximum 6.2832 step 0.01
+            xywh {265 340 85 25} minimum -6.2832 maximum 6.2832 step 0.01
           }
           Fl_Value_Input RadialShooter_MaxPhi {
             label {Max. Phi}
             callback psEditorGUI_RadialShooter_SetMaxPhi
-            xywh {265 370 85 25} maximum 6.2832 step 0.01 value 6.2832
+            xywh {265 370 85 25} minimum -6.2832 maximum 6.2832 step 0.01 value 6.2832
           }
           Fl_Value_Input RadialShooter_MinInitialSpeed {
             label {Min. Initial Speed}
