@@ -1,7 +1,7 @@
 #include "application.h"
 #include "system.h"
 
-
+#include "osgDB/FileUtils"
 
 using namespace dtABC;
 using namespace dtCore;
@@ -28,7 +28,9 @@ Application::Application(std::string configFilename)
    if ( configFilename != "" )
    {
       //  parse config file
-      TiXmlDocument *xmlDoc = new TiXmlDocument(configFilename.c_str());
+      std::string foundPath = osgDB::findDataFile(configFilename);
+      
+      TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());
       if (!xmlDoc->LoadFile(configFilename.c_str()))
       {
          Notify(WARN, "Application: can't find config file %s", configFilename.c_str());
