@@ -8,11 +8,13 @@
 | 0.8.6 |
 ---------
 
-New features:
+Misc
 - Updated python bindings to reflect changes in Scene and Camera classes.
+- Removed default "-Wall" in SCons build until we can remove all the
+  silly warnings.
 
 Bug fixes:
-- SCons now links with GDAL automatically.
+- SCons now links with GDAL & osgSim for HLA-related libs+apps.
 - SCons won't exit if RTI environment variables aren't found (they are
   optional anyways!)
 - SCons exits nicely if the DELTA environment variables aren't found.
