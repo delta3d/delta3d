@@ -325,7 +325,7 @@ void UserInterface::SelectInstance (void)
    }
 
    /** CloudDome **/
-   if (CloudDome *cd = dynamic_cast<CloudDome*>b)
+   if (CloudDome *cd = dynamic_cast<CloudDome*>(b))
    {   
        InstanceClassName->label( "dtCore::CloudDome" );
 
