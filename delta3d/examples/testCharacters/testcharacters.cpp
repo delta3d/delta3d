@@ -202,6 +202,13 @@ public:
    {
       Application::Config();
 
+      //tweak the ambient lighting a little
+      _SceneHandler *sh = GetScene()->GetSceneHandler();
+      osgUtil::SceneView *sv = sh->GetSceneView();
+      osg::Light *light = sv->getLight();
+      light->setAmbient(osg::Vec4( 0.35f, 0.35f, 0.35f, 1.0f ));
+
+
       Transform position;
       position.Set(0.f, -10.f, 1.0f, 0.f, 0.f, 0.f);
       GetCamera()->SetTransform( &position );
@@ -257,6 +264,9 @@ int main()
    TestCharactersApp* app = new TestCharactersApp( "config.xml" );
 
    app->Config();
+
+
+
    app->Run();
 
 
