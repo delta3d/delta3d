@@ -1371,6 +1371,7 @@ s)");
       o->box(FL_ENGRAVED_BOX);
       o->labeltype(FL_EMBOSSED_LABEL);
       o->user_data((void*)(this));
+      o->hide();
       { Fl_Value_Input* o = LightNumberInput = new Fl_Value_Input(81, 280, 25, 25, "Light Number");
         o->minimum(1);
         o->maximum(8);
