@@ -63,7 +63,6 @@ TestWinApp::Config()
    drawable->CreateShader( "back_panel", "gui/back_panel.rgb");
 
    drawable->CreateShader( "drop_icon", "gui/drop_icon.tga" );
-   drawable->CreateShader( "selected_icon", "gui/selected_icon.tga" );
    drawable->CreateShader( "submenu_icon", "gui/submenu_icon.tga" );
 
    CUI_Frame* mainFrame = new CUI_Frame;
@@ -225,7 +224,6 @@ TestWinApp::Config()
                      selectedMenu->SetItemShader( drawable->GetShader("button") );
                      selectedMenu->SetHoverShader( drawable->GetShader("button") );
                      selectedMenu->SetSelectedShader( drawable->GetShader("button") );
-                     selectedMenu->SetToggleIcons( drawable->GetShader("black"), drawable->GetShader("selected_icon") );
                      selectedMenu->SetFlag( UI_INACTIVE, true );
                      selectedMenu->SetFlag( UI_VERTICAL, true );
                      selectedMenu->Move( 0.0, 0.96, 0.15, 1.0 );
@@ -233,7 +231,7 @@ TestWinApp::Config()
                      selectedMenu->SetFrameID( depthIndex );
                      drawable->AddFrame( selectedMenu );
                      mainFrame->AddChild( selectedMenu );
-                     selectedMenu->AddItem( "Select?", 0, NULL, UI_ITEM_TOGGLE );
+                     selectedMenu->AddItem( "Select?", 0, NULL, UI_ITEM_BUTTON );
 
                      depthMenu->AddItem( depth, depthIndex, NULL, UI_ITEM_SUBMENU, selectedMenu);
                   }
@@ -367,7 +365,9 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
    case RES_SET:
       {
          if( mSelectedRes != -1 )
+         {
             DeltaWin::ChangeScreenResolution( mResVec[mSelectedRes] );
+         }
 
          break;
       }
