@@ -28,15 +28,16 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sg_d.lib ul_d.lib"
+				AdditionalDependencies="sg_d.lib ul_d.lib openthreadswin32d.lib osgd.lib"
 				OutputFile="../../bin/dtutild.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtUtil.pdb"
 				SubSystem="2"
@@ -78,15 +79,16 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sg.lib ul.lib"
+				AdditionalDependencies="sg.lib ul.lib openthreadswin32.lib osg.lib"
 				OutputFile="../../bin/dtutil.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -125,6 +127,12 @@
 			<File
 				RelativePath=".\domain.cpp">
 			</File>
+			<File
+				RelativePath=".\printvisitor.cpp">
+			</File>
+			<File
+				RelativePath=".\sketchvisitor.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -135,6 +143,12 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtUtil\dtUtil.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtUtil\printvisitor.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtUtil\sketchvisitor.h">
 			</File>
 		</Filter>
 		<Filter
