@@ -152,7 +152,7 @@
 				RelativePath=".\flymotionmodelbindings.cpp">
 			</File>
 			<File
-				RelativePath=".\infinitelightbindings.cpp">
+				RelativePath=".\infiniteterrainbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\inputdevicebindings.cpp">
