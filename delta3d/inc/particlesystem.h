@@ -47,8 +47,9 @@ namespace dtCore
           * Loads a particle system from a file.
           *
           * @param filename the name of the file to load
+          * @return true if loaded, false if not loaded
           */
-         void LoadFile(std::string filename);
+         bool LoadFile(std::string filename);
          
          /**
           * Returns the name of the last loaded file.
