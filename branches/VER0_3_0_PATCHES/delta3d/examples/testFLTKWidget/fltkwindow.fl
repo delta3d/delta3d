@@ -1,0 +1,30 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0104 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <assert.h>} {public
+} 
+
+class FLTKWindow {open
+} {
+  Function {FLTKWindow()} {open
+  } {
+    Fl_Window MainWindow {
+      label FLTKWindow open
+      private xywh {50 34 640 480} type Single resizable non_modal visible
+    } {
+      Fl_Box ViewPort {
+        label viewport selected
+        private xywh {0 0 640 480} labeltype NO_LABEL resizable
+        code0 {\#include <FL/X.h>}
+        code1 {\#include "Fl_P51_Window.h"}
+        class Fl_P51_Window
+      }
+    }
+    code {} {}
+  }
+  Function {make_window( int argc, const char** argv )} {open
+  } {
+    code {MainWindow->show();} {}
+  }
+} 
