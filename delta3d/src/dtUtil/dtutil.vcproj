@@ -127,6 +127,9 @@
 			<File
 				RelativePath=".\domain.cpp">
 			</File>
+			<File
+				RelativePath=".\polardecomp.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -137,6 +140,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtUtil\dtUtil.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtUtil\polardecomp.h">
 			</File>
 		</Filter>
 		<Filter
