@@ -52,10 +52,7 @@ namespace dtCore
       inline osg::LightSource* GetLightSource()
       { return mLightSource.get(); }
 
-      inline void SetLightingMode( const LightingMode mode )
-      {
-         mLightingMode = mode;
-      }
+      void SetLightingMode( const LightingMode mode );
       
       inline LightingMode GetLightingMode() const
       { return mLightingMode; }
