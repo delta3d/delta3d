@@ -142,58 +142,6 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 		</Filter>
-		<Filter
-			Name="Shaders"
-			Filter="">
-			<File
-				RelativePath=".\cloud1.frag">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="glslvalidate.exe -f $(InputName).frag
-"
-						Outputs="fragment.log"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="glslvalidate.exe -f $(InputName).frag
-"
-						Outputs="fragment.log"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\cloud1.vert">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="glslvalidate.exe -v $(InputName).vert
-"
-						Outputs="vertex.log"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="glslvalidate.exe -v $(InputName).vert
-"
-						Outputs="vertex.log"/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="Shader Compile Logs"
-			Filter="">
-			<File
-				RelativePath=".\fragment.log">
-			</File>
-			<File
-				RelativePath=".\vertex.log">
-			</File>
-		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
