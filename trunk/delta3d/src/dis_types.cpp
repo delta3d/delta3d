@@ -495,16 +495,10 @@ unsigned char EntityType::GetExtra() const
 /**
  * Constructor.
  *
- * @param siteIdentifier the site identifier
- * @param applicationIdentifier the application identifier
  * @param eventIdentifier the event identifier
  */
-EventIdentifier::EventIdentifier(unsigned short siteIdentifier,
-                                 unsigned short applicationIdentifier,
-                                 unsigned short eventIdentifier)
-   : mSiteIdentifier(siteIdentifier),
-     mApplicationIdentifier(applicationIdentifier),
-     mEventIdentifier(eventIdentifier)
+EventIdentifier::EventIdentifier(unsigned short eventIdentifier)
+   : mEventIdentifier(eventIdentifier)
 {}
 
 /**
@@ -514,7 +508,7 @@ EventIdentifier::EventIdentifier(unsigned short siteIdentifier,
  */
 int EventIdentifier::EncodedLength() const
 {
-   return 6;
+   return 5;
 }
 
 /**
@@ -524,20 +518,16 @@ int EventIdentifier::EncodedLength() const
  */
 void EventIdentifier::Encode(char* buf) const
 {
-   unsigned short siteIdentifier = mSiteIdentifier,
-                  applicationIdentifier = mApplicationIdentifier,
-                  eventIdentifier = mEventIdentifier;
+   unsigned short eventIdentifier = mEventIdentifier;
                   
    if(ulIsLittleEndian)
-   {
-      ulEndianSwap(&siteIdentifier);
-      ulEndianSwap(&applicationIdentifier);
+   {      
       ulEndianSwap(&eventIdentifier);
    }
 
-   *(unsigned short *)(&buf[0]) = siteIdentifier;
-   *(unsigned short *)(&buf[2]) = applicationIdentifier;
-   *(unsigned short *)(&buf[4]) = eventIdentifier;
+   
+   *(unsigned short *)(&buf[0]) = eventIdentifier;
+   strcpy(buf+2,"oo");  //filler for now
 }
 
 /**
@@ -547,62 +537,18 @@ void EventIdentifier::Encode(char* buf) const
  */
 void EventIdentifier::Decode(const char* buf)
 {
-   unsigned short siteIdentifier = *(unsigned short*)(&buf[0]),
-                  applicationIdentifier = *(unsigned short*)(&buf[2]),
-                  eventIdentifier = *(unsigned short*)(&buf[4]);
+   unsigned short eventIdentifier = *(unsigned short*)(&buf[0]);
 
    if(ulIsLittleEndian)
    {
-      ulEndianSwap(&siteIdentifier);
-      ulEndianSwap(&applicationIdentifier);
+      
       ulEndianSwap(&eventIdentifier);
    }
    
-   mSiteIdentifier = siteIdentifier;
-   mApplicationIdentifier = applicationIdentifier;
+   
    mEventIdentifier = eventIdentifier;
 }
 
-/**
- * Sets the value of the site identifier field.
- *
- * @param siteIdentifier the value of the site identifier field
- */
-void EventIdentifier::SetSiteIdentifier(unsigned short siteIdentifier)
-{
-   mSiteIdentifier = siteIdentifier;
-}
-
-/**
- * Returns the value of the site identifier field.
- *
- * @return the value of the site identifier field
- */
-unsigned short EventIdentifier::GetSiteIdentifier() const
-{
-   return mSiteIdentifier;
-}
-
-/**
- * Sets the value of the application identifier field.
- *
- * @param applicationIdentifier the value of the application
- * identifier field
- */
-void EventIdentifier::SetApplicationIdentifier(unsigned short applicationIdentifier)
-{
-   mApplicationIdentifier = applicationIdentifier;
-}
-
-/**
- * Returns the value of the application identifier field.
- *
- * @return the value of the application identifier field
- */
-unsigned short EventIdentifier::GetApplicationIdentifier() const
-{
-   return mApplicationIdentifier;
-}
 
 /**
  * Sets the value of the event identifier field.
@@ -623,6 +569,7 @@ unsigned short EventIdentifier::GetEventIdentifier() const
 {
    return mEventIdentifier;
 }
+
 
 /**
  * Constructor.

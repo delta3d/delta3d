@@ -12,6 +12,7 @@
 #include "Producer/Timer"
 
 #define RTI_USES_STD_FSTREAM
+
 #include "rti.hh"
 #include "NullFederateAmbassador.hh"
 
@@ -88,7 +89,8 @@ static double Geocent_ep2 = 0.00673949675658690300; /* 2nd eccentricity squared 
 
 namespace dtHLA
 {
-   class DetonationListener;
+   struct MasterData;
+   struct GhostData;
 
 
    /**
@@ -122,7 +124,7 @@ namespace dtHLA
           * @param fedFilename the fed filename
           * @param federateName the name of this federate
           */
-         void JoinFederationExecution(std::string executionName = "dtCore",
+         void JoinFederationExecution(std::string executionName = "Delta",
                                       std::string fedFilename = "RPR-FOM.fed",
                                       std::string federateName = "Participant");
          
@@ -347,25 +349,13 @@ namespace dtHLA
          bool LoadEntityTypeMappings(std::string filename);
          
          /**
-          * Adds a detonation listener.
-          *
-          * @param listener the listener to add
-          */
-         void AddDetonationListener(DetonationListener* listener);
-         
-         /**
-          * Removes a detonation listener.
-          *
-          * @param listener the listener to remove
-          */
-         void RemoveDetonationListener(DetonationListener* listener);
-         
-         /**
           * Processes a received message.
           *
           * @param data the message structure
           */
          virtual void OnMessage(MessageData *data);
+
+
 
          /**
           * Invoked by the RTI ambassador to notify the federate of a new object
@@ -611,6 +601,7 @@ namespace dtHLA
           * The RTI ambassador.
           */
          RTI::RTIambassador mRTIAmbassador;
+         //NullFederateAmbassador mRTIAmbassador;
 
          /**
           * The named of the joined execution.
@@ -687,6 +678,7 @@ namespace dtHLA
           */
          RTI::AttributeHandle mVelocityVectorAttributeHandle;
 
+         
          /**
           * The damage-state attribute handle.
           */
@@ -772,6 +764,45 @@ namespace dtHLA
           */
          RTI::ParameterHandle mQuantityFiredParameterHandle;
 
+         /**
+         * The Final Velocity Vector Handle
+         */
+
+         RTI::ParameterHandle mFinalVelocityVectorHandle;
+         /**
+         * The Articulated Part Data Handle
+         */
+         RTI::ParameterHandle mArticulatedPartDataHandle;
+
+         /**
+         * The Firing Object Identifier Handle
+         */
+
+         RTI::ParameterHandle mFiringObjectIdentifierHandle;
+         
+         /**
+         * The Munition Object Identifier Handle
+         */
+
+         RTI::ParameterHandle mMunitionObjectIdentifierHandle;
+
+         /**
+         * The Rate Of Fire Handle
+         */
+
+         RTI::ParameterHandle mRateOfFireHandle;
+
+         /**
+         * The Relative Detonation Location Handle
+         */
+
+         RTI::ParameterHandle mRelativeDetonationLocationHandle;
+
+         /**
+         * The Target Object Identifier Handle
+         */
+
+         RTI::ParameterHandle mTargetObjectIdentifierHandle;
          /**
           * The scene in which to create ghost entities.
           */
@@ -886,7 +917,7 @@ namespace dtHLA
          struct MasterData
          {
             /**
-             * The dtCore entity.
+             * The P51 entity.
              */
             osg::ref_ptr<Entity> mEntity;
 
@@ -912,7 +943,7 @@ namespace dtHLA
          struct GhostData
          {
             /**
-             * The dtCore entity.
+             * The P51 entity.
              */
             osg::ref_ptr<Entity> mEntity;
          };
@@ -922,11 +953,6 @@ namespace dtHLA
           */
          std::map<RTI::ObjectHandle, GhostData> mObjectHandleGhostDataMap;
 
-         /**
-          * The set of detonation listeners.
-          */
-         std::set<DetonationListener*> mDetonationListeners;
-         
          /**
           * A Producer timer object.
           */
@@ -946,36 +972,6 @@ namespace dtHLA
           * The set of objects for which to provide updates.
           */
          std::set<RTI::ObjectHandle> mObjectsToUpdate;
-   };
-   
-   
-   /**
-    * An interface for objects interested in detonation events.
-    */
-   class DetonationListener
-   {
-      public:
-      
-         /**
-          * Called when a detonation occurs.
-          *
-          * @param detonationLocation the location of the detonation in geocentric coordinates
-          * @param eventIdentifier the identifier of the detonation event
-          * @param fuseType the type of fuse
-          * @param munitionType the type of munition detonated
-          * @param warheadType the type of warhead
-          * @param detonationResultCode the detonation result
-          * @param quantityFired the quantity fired
-          */
-         virtual void DetonationOccurred(
-            WorldCoordinate detonationLocation,
-            EventIdentifier eventIdentifier,
-            unsigned short fuseType,
-            EntityType munitionType,
-            unsigned short warheadType,
-            unsigned char detonationResultCode,
-            unsigned short quantityFired
-         ) {}
    };
 };
 
@@ -1003,4 +999,4 @@ namespace dtHLA
 #pragma comment(lib, _AUTOLIBNAME)
 #pragma comment(lib, _AUTOLIBNAME1)
 
-#endif // DT_HLA_RTI_CONNECTION
+#endif // P51_HLA_RTI_CONNECTION
