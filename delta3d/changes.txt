@@ -4,6 +4,9 @@
 #                            #
 ##############################
 
+Added scaling
+Added SCONS build system
+Now supports multi-Camera and multi-Window
 osg::Timer hack
 Profiler
 dtCore::RefPtr
