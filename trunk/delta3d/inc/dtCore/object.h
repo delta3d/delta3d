@@ -27,18 +27,18 @@
 
 
 
-#include "dtCore/base.h"
+//#include "dtCore/base.h"
 #include <osg/ref_ptr>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
-#include "dtCore/notify.h"
-#include "dtCore/transformable.h"
-#include "dtCore/deltadrawable.h"
+//#include "dtCore/notify.h"
+//#include "dtCore/transformable.h"
+#include "dtCore/loadable.h"
 #include "dtCore/physical.h"
 
 namespace dtCore
 {
-   
+
    ///A visual Object
 
  /** The Object represents a visual object in the Scene.  Once instantiated, 
@@ -50,7 +50,7 @@ namespace dtCore
    *
    * The Object must be added to a Scene to be viewed using Scene::AddObject().
    */
-   class DT_EXPORT Object : public Transformable, public DeltaDrawable, public Physical
+   class DT_EXPORT Object : public Physical, public Loadable
    {
       DECLARE_MANAGEMENT_LAYER(Object)
          
@@ -59,17 +59,17 @@ namespace dtCore
          virtual ~Object();
          
          ///Get a handle to the OSG Node
-         virtual osg::Node * GetOSGNode(void) {return mNode.get();}
+         //virtual osg::Node * GetOSGNode(void) {return mNode.get();}
          
          ///Load a file from disk
-         virtual  bool LoadFile( std::string filename, bool useCache = true);
+         virtual osg::Node* LoadFile( std::string filename, bool useCache = true);
 
          ///Get the filename of the last loaded file
-         virtual  std::string GetFilename(void) const {return mFilename;}
+         //virtual  std::string GetFilename(void) const {return mFilename;}
          
       protected:
-         osg::ref_ptr<osg::MatrixTransform> mNode; ///<Contains the actual model
-         std::string mFilename; ///<The filename of the last file loaded
+         //osg::ref_ptr<osg::MatrixTransform> mNode; ///<Contains the actual model
+         //std::string mFilename; ///<The filename of the last file loaded
    };
    
 };

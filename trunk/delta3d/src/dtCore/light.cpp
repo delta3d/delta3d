@@ -1,5 +1,6 @@
 #include "dtCore/light.h"
 #include "dtCore/scene.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 

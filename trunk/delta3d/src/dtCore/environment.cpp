@@ -3,6 +3,7 @@
 #include "dtCore/notify.h"
 #include "dtCore/camera.h"
 #include "dtCore/ephemeris.h"
+#include "dtCore/physical.h"
 
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)

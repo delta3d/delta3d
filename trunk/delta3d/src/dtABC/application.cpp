@@ -1,5 +1,6 @@
 #include "dtABC/application.h"
 #include "dtCore/system.h"
+#include "dtCore/notify.h"
 
 #include "osgDB/FileUtils"
 

@@ -10,6 +10,8 @@
 #include "dtCore/notify.h"
 #include "dtCore/infinitelight.h"
 #include "dtCore/positionallight.h"
+#include "dtCore/deltadrawable.h"
+#include "dtCore/physical.h"
 
 using namespace dtCore;
 using namespace std;
@@ -86,25 +88,36 @@ Scene::Scene( string name, bool useSceneLight )
 
 Scene::~Scene()
 {
+   Notify(DEBUG_INFO, "destroying Scene ref:%d", this->referenceCount() );
+
+   while (GetNumberOfAddedDrawable()>0)
+   {
+      DeltaDrawable *d = GetDrawable(0);
+      if (d)
+      {
+         RemoveDrawable(d);
+      }
+   }
+
    DeregisterInstance(this);
 
    dJointGroupDestroy(mContactJointGroupID);
    dSpaceDestroy(mSpaceID);
    dWorldDestroy(mWorldID);
-   Notify(DEBUG_INFO, "destroying Scene ref:%d", this->referenceCount() );
 }
 
 void Scene::AddDrawable( DeltaDrawable *drawable )
 {
+   mSceneNode->addChild( drawable->GetOSGNode() );
+
    if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
    {       
       RegisterPhysical(physical);
    }
 
-   mSceneNode.get()->addChild( drawable->GetOSGNode() );
-
    drawable->AddedToScene(this);
 
+   mAddedDrawables.push_back(drawable);
 }
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
@@ -114,8 +127,16 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
       UnRegisterPhysical(physical);
    }
 
+  // drawable->AddedToScene(NULL);
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
+
+   unsigned int pos = GetDrawableIndex(drawable);
+   if (pos<mAddedDrawables.size())
+   {
+      mAddedDrawables.erase( mAddedDrawables.begin()+pos );                           
+   }
 }
+
 
 /** Register a Physical with the Scene.  This method is automatically called 
   * when adding Drawables to the Scene.  Typically, this only needs to be 

@@ -14,8 +14,10 @@
 #include "osgParticle/Particle"
 
 #include "dtCore/effectmanager.h"
+#include "dtCore/transformable.h"
 #include "dtCore/notify.h"
 #include "dtCore/system.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 using namespace std;
@@ -99,11 +101,11 @@ class DetonationUpdateCallback : public osg::NodeCallback
  * @param name the instance name
  */
 EffectManager::EffectManager(string name) :
-   Base(name),
+DeltaDrawable(name),
    mLastTime(0)
 {
    RegisterInstance(this);
-
+   
    mGroup = new osg::Group;
 
    AddSender(System::GetSystem());

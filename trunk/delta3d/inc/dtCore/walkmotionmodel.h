@@ -25,20 +25,23 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "dtCore/keyboard.h"
-#include "dtCore/mouse.h"
-#include "dtCore/logicalinputdevice.h"
 #include "dtCore/motionmodel.h"
-#include "dtCore/inputdevice.h"
-#include "dtCore/scene.h"
-#include "dtCore/system.h"
 
 #include <osgUtil/IntersectVisitor>
 
 
 namespace dtCore
 {
+   //forward declaration
+   class Scene;
+   class Keyboard;
+   class Mouse;
+   class LogicalInputDevice;
+   class ButtonAxisToAxis;
+   class Axis;
+   class ButtonsToAxis;
+   class LogicalAxis;
+
    /**
     * A motion model that simulates the action of walking or driving.
     */

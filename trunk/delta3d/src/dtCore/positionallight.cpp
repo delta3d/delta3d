@@ -1,4 +1,5 @@
 #include "dtCore/positionallight.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 

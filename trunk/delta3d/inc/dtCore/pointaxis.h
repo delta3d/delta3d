@@ -31,7 +31,7 @@
 #include <osg/MatrixTransform>
 #include <dtCore/macros.h>
 #include <dtCore/transformable.h>
-#include <dtCore/deltadrawable.h>
+//#include <dtCore/deltadrawable.h>
 
 
 
@@ -62,7 +62,7 @@ namespace dtCore
      * GetOSGNode function while casting to an osg::MatrixTransform pointer, then manipulate
      * the matrix.
      */
-   class DT_EXPORT PointAxis  :  public   Transformable, public   DeltaDrawable
+   class DT_EXPORT PointAxis  :  public   Transformable
    {
       DECLARE_MANAGEMENT_LAYER(PointAxis)
 

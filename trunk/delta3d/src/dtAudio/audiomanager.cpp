@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 #include <stack>
 
 #include <osgDB/FileUtils>
@@ -8,7 +8,7 @@
 #include "dtCore/system.h"
 #include "dtCore/notify.h"
 #include "dtAudio/audiomanager.h"
-
+#include "dtCore/camera.h"
 
 
 #if   defined(WIN32) | defined(_WIN32)
@@ -1031,10 +1031,13 @@ AudioManager::PostFrame( const double deltaFrameTime )
       mStopQueue.pop();
 
       snd   = mSourceMap[src];
-      snd->RemoveSender( this );
-      snd->RemoveSender( dtCore::System::GetSystem() );
+      if (snd.valid())
+      {
+         snd->RemoveSender( this );
+         snd->RemoveSender( dtCore::System::GetSystem() );
 
-      FreeSource( snd.get() );
+         FreeSource( snd.get() );
+      }
    }
 }
 
@@ -2263,22 +2266,22 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
 
 
 
-void
-AudioManager::ListenerObj::SetParent( dtCore::Transformable* parent )
-{
-   dtCore::Transformable::SetParent( parent );
-}
+//void
+//AudioManager::ListenerObj::SetParent( dtCore::Transformable* parent )
+//{
+//   dtCore::Transformable::SetParent( parent );
+//}
 
 
 
 void
 AudioManager::ListenerObj::Clear( void )
 {
-   Transformable* parent(GetParent());
-   if( parent )
-   {
-      parent->RemoveChild( this );
-   }
+   //dtCore::Transformable* parent(GetParent());
+   //if( parent )
+   //{
+   //   parent->RemoveChild( this );
+   //}
 
    union
    {

@@ -2,7 +2,7 @@
 
 #include "dtCore/system.h"
 #include "dtAudio/soundeffectbinder.h"
-
+#include "dtCore/scene.h"
 
 
 // namespaces

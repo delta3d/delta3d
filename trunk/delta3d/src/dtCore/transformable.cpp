@@ -1,23 +1,43 @@
-
+#include "dtCore/scene.h"
 #include "dtCore/transformable.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 
-Transformable::Transformable():
-mParent(NULL)
+
+
+
+Transformable::Transformable()
 {
    RegisterInstance(this);
    mRelTransform = new Transform();
+   mNode = new osg::MatrixTransform();
 }
 
 Transformable::~Transformable()
 {
+   Notify(DEBUG_INFO, "Transformable: Deleting '%s'", GetName().c_str());
    DeregisterInstance(this);
    delete(mRelTransform);
 }
 
+
+bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat)
+{
+   osg::Node *topParent = node;
+
+   for (;topParent->getNumParents()!=0; topParent=topParent->getParent(0) ) {}
+
+   osg::ref_ptr<Transformable::getWCofNodeVisitor> vis = new Transformable::getWCofNodeVisitor( node );
+
+   topParent->accept( *vis.get() );
+
+   wcMat->set( vis->wcMatrix );
+
+   return( vis->success );
+}
 
 /*!
  * Set position/attitude of this Transformable using the supplied Transform.
@@ -42,64 +62,47 @@ void Transformable::SetTransform(Transform *xform, CoordSysEnum cs )
    sgMat4 newMat;
    xform->Get( newMat );
 
-   if (cs == ABS_CS) //absolute Transform
-   {  
+   if (cs == ABS_CS)
+   {
+      //convert the xform into a Relative CS
+
+      //if this has a parent
       if (mParent.valid())
       {
-         //calculate and save our new relative Transform using the parent's 
-         // absolute Transform and the new Transform supplied
-         Transform parentXform;
+         //get the parent's world position
+         osg::Matrix mat;
+         GetAbsoluteMatrix( mParent->GetOSGNode(), &mat );
+
+         //calc the difference between xform and the parent's world position
+         //child * parent^-1
+         sgMat4 relMat;
          sgMat4 parentMat;
-         mParent->GetTransform(&parentXform);
-         parentXform.Get(parentMat);
+         for (int i=0; i<4;i++)
+         {
+            for (int j=0; j<4; j++)
+            {
+               parentMat[i][j] = mat(i,j);
+            }
+         }
 
          sgInvertMat4(parentMat);
+         sgMultMat4(relMat, newMat, parentMat);
 
-         sgMat4 relMat;
-         sgMultMat4(relMat, parentMat, newMat);
-
-         mRelTransform->Set(relMat); //store new rel xform
+         //pass the rel matrix to this node
+         GetMatrixNode()->setMatrix( osg::Matrix((float*)relMat) );
       }
-      else
+      else 
       {
-         //no parent - just save the new Transform as our new relative Transform
-         mRelTransform->Set(newMat);
+         //pass the xform to the this node
+         GetMatrixNode()->setMatrix( osg::Matrix((float*)newMat) );
       }
    }
-   else if (cs == REL_CS) //relative to our parent
+   else if (cs == REL_CS)
    {
-      mRelTransform->Set( newMat );           
-   } 
-}
-
-/** Calculate this Transformable's absolute Transform and store it in xform.
-  *
-  * @param xform : the Transform to save the calculated absolute Transform
-  */
-void Transformable::CalcAbsTransform( Transform *xform )
-{
-   if (mParent.valid())
-   {
-      mParent.get()->CalcAbsTransform(xform);
-      sgMat4 parentMat;
-      xform->Get(parentMat);
-
-      sgMat4 relMat;
-      mRelTransform->Get(relMat);
-
-      sgMat4 newMat;
-      sgMultMat4(newMat, parentMat, relMat);
-
-      xform->Set(newMat);  
-   }
-   else
-   { 
-      //if no parent, just use the relative xform as the absolute position
-      sgMat4 absMat;
-      mRelTransform->Get(absMat);
-      xform->Set(absMat);
+     GetMatrixNode()->setMatrix( osg::Matrix((float*)newMat) );
    }
 }
+
 
 /*!
  * Get the current Transform of this Transformable.
@@ -111,24 +114,24 @@ void Transformable::CalcAbsTransform( Transform *xform )
 void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
 {
    sgMat4 mat;
+   osg::Matrix newMat;
 
-   if (cs == ABS_CS) 
+   if (cs ==ABS_CS)
    {     
-      if (mParent.valid())
-      {
-         Transform absXform;
-         CalcAbsTransform( &absXform );
-         absXform.Get(mat);
-      }
-      else
-      {
-         mRelTransform->Get(mat);
-      }
+     GetAbsoluteMatrix( GetMatrixNode(), &newMat);     
    }
    else if (cs == REL_CS)
-   {     
-      mRelTransform->Get(mat);
-   } 
+   {
+     newMat = GetMatrixNode()->getMatrix();
+   }
+
+   for (int i=0; i<4;i++)
+   {
+      for (int j=0; j<4; j++)
+      {
+         mat[i][j] = newMat(i,j);
+      }
+   }
 
    xform->Set( mat );
 }
@@ -147,18 +150,11 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
  * @see SetTransform()
  * @see RemoveChild()
  */
-void Transformable::AddChild(Transformable *child)
+void Transformable::AddChild(DeltaDrawable *child)
 {
-   if (!CanBeChild(child)) return;
+   DeltaDrawable::AddChild(child);
 
-   Transform absTransform;
-   
-   child->CalcAbsTransform(&absTransform);
-   
-   mChildList.push_back(child);
-   child->SetParent(this);
-   
-   child->SetTransform(&absTransform);
+   GetMatrixNode()->addChild( child->GetOSGNode() );
 }
 
 /*!
@@ -167,24 +163,22 @@ void Transformable::AddChild(Transformable *child)
  *
  * @param *child : The child Transformable to be removed
  */
-void Transformable::RemoveChild(Transformable *child)
+void Transformable::RemoveChild(DeltaDrawable *child)
 {
-   if (!child || child->mParent!=this) return;
+   
+   osg::Matrix absMat;
+   bool success = GetAbsoluteMatrix( child->GetOSGNode(), &absMat );
+   GetMatrixNode()->removeChild( child->GetOSGNode() );
+   DeltaDrawable::RemoveChild(child);
 
-   Transform absTransform;
-   
-   child->CalcAbsTransform(&absTransform);
-   
-   unsigned int pos = GetChildIndex( child );
-   if (pos < mChildList.size())
+   if (success)
    {
-      mChildList.erase( mChildList.begin()+pos );
+//      if (Transformable *t = dynamic_cast<Transformable*>(child))
+//      {
+//         t->GetMatrixNode()->setMatrix(absMat);
+//      }
    }
-   child->SetParent(NULL);
-   
-   child->SetTransform(&absTransform);
 }
-
 
 
 /*!
@@ -196,18 +190,18 @@ void Transformable::RemoveChild(Transformable *child)
  *
  * @return bool  : True if it can be a child, false otherwise
  */
-bool Transformable::CanBeChild(Transformable *child)
-{
-   if (child->GetParent()!=NULL) return false;
-   if (this == child) return false;
-   
-   //loop through parent's parents and make sure they're not == child
-   osg::ref_ptr<Transformable> t = this->GetParent();
-   while (t != NULL)
-   {
-      if (t==child) return false;
-      t = t->GetParent();
-   }
-   
-   return true;
-}
+//bool Transformable::CanBeChild(Transformable *child)
+//{
+//   if (child->GetParent()!=NULL) return false;
+//   if (this == child) return false;
+//   
+//   //loop through parent's parents and make sure they're not == child
+//   osg::ref_ptr<Transformable> t = this->GetParent();
+//   while (t != NULL)
+//   {
+//      if (t==child) return false;
+//      t = t->GetParent();
+//   }
+//   
+//   return true;
+//}

@@ -1,4 +1,6 @@
 #include "dtCore/infinitelight.h"
+#include "dtCore/scene.h"
+
 #include "sg.h"
 
 using namespace dtCore;

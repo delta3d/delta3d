@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <osg/Group>
+
 #include <osg/MatrixTransform>
 #include <osg/NodeCallback>
 #include <osg/NodeVisitor>
@@ -35,17 +35,15 @@
 
 #include <osgParticle/Emitter>
 
-#include "dtCore/deltadrawable.h"
-#include "dtCore/notify.h"
 #include "dtCore/transformable.h"
+#include "dtCore/notify.h"
 
 namespace dtCore
 {
    /**
     * A particle system.
     */
-   class DT_EXPORT ParticleSystem : public Transformable,
-                                    public DeltaDrawable
+   class DT_EXPORT ParticleSystem : public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
 
@@ -121,7 +119,7 @@ namespace dtCore
           *
           * @return the OpenSceneGraph node
           */
-         virtual osg::Node* GetOSGNode();
+         //virtual osg::Node* GetOSGNode();
          
          
       private:
@@ -145,7 +143,7 @@ namespace dtCore
          /**
           * The OSG node.
           */
-         osg::ref_ptr<osg::MatrixTransform> mNode;
+        // osg::ref_ptr<osg::MatrixTransform> mNode;
    };
 };
 

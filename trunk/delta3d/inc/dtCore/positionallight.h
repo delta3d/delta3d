@@ -26,7 +26,7 @@
 
 namespace dtCore
 {
-   class DT_EXPORT PositionalLight : public Light, public Transformable
+   class DT_EXPORT PositionalLight :  public Light,  public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(PositionalLight)
 
@@ -40,7 +40,12 @@ namespace dtCore
       // where k_c = constant, k_l = linear, k_q = quadractric
       void SetAttenuation( const float constant, const float linear, const float quadratic );
       void GetAttenuation( float* constant, float* linear, float* quadratic );
-
+ 
+      ///Add a DeltaDrawable child
+      virtual void AddChild( DeltaDrawable *child ) { Transformable::AddChild(child); };
+ 
+      ///Remove a DeltaDrawable child
+      virtual void RemoveChild( DeltaDrawable *child ) {Transformable::RemoveChild(child); }
    };
 }
 

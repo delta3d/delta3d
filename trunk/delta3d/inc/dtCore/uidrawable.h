@@ -25,7 +25,7 @@
 #define stricmp strcasecmp
 #endif
 
-#include "dtCore/base.h"
+//#include "dtCore/base.h"
 #include "dtCore/deltadrawable.h"
 #include "dtCore/mouse.h"
 #include "dtCore/keyboard.h"
@@ -62,8 +62,7 @@ namespace dtCore
      *
      * @see Scene::AddDrawable()
      */
-   class DT_EXPORT UIDrawable : public dtCore::Base,
-                                public dtCore::DeltaDrawable,
+   class DT_EXPORT UIDrawable : public dtCore::DeltaDrawable,
                                 public dtCore::MouseListener,
                                 public dtCore::KeyboardListener
    {

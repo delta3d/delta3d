@@ -1,5 +1,5 @@
 #include <dtAudio/listener.h>
-
+#include "dtCore/scene.h"
 
 
 // namespaces
@@ -20,7 +20,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Listener)
  * instead requests the listener from AudioManager
  */
 Listener::Listener()
-:  Transformable()
 {
     RegisterInstance(this);
 }

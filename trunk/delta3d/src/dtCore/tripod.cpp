@@ -1,6 +1,7 @@
 #include "dtCore/tripod.h"
 #include "dtCore/system.h"
 #include "dtCore/camera.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 

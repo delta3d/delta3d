@@ -25,18 +25,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
+#include "dtCore/base.h"
 #include "dtCore/export.h"
+//#include "dtCore/scene.h"
 #include "osg/Node"
 
 namespace dtCore
 {
+   //forward declaration
    class Scene;
-   
+
    /**
     * A drawable object.
     */
-   class DT_EXPORT DeltaDrawable
+   class DT_EXPORT DeltaDrawable : virtual public Base
    {
       public:
 
@@ -45,8 +47,12 @@ namespace dtCore
           *
           * @return the OpenSceneGraph node
           */
-         virtual osg::Node* GetOSGNode() = 0;
+         virtual osg::Node* GetOSGNode() 
+         {
+            return (mNode.get());
+         }
          
+
          /**
           * Notifies this drawable object that it has been added to
           * a scene.
@@ -54,8 +60,51 @@ namespace dtCore
           * @param scene the scene to which this drawable object has
           * been added
           */
-         virtual void AddedToScene( Scene* scene ) {}
+         virtual void AddedToScene( Scene* scene );
+
+         ///Override function for derived object to know when attaching to scene
+         virtual void SetParent(DeltaDrawable* parent) {mParent=parent;}
+         DeltaDrawable* GetParent(void)  {return mParent.get();}
          
+         Scene* GetSceneParent(void);
+
+         ///Add a DeltaDrawable child
+         virtual void AddChild( DeltaDrawable *child );
+
+         ///Remove a DeltaDrawable child
+         virtual void RemoveChild( DeltaDrawable *child );
+
+         ///Return the number of Transformable children added
+         inline unsigned int GetNumChildren() { return mChildList.size(); }
+
+         ///Get the child specified by idx (0 to number of children-1)
+         DeltaDrawable* GetChild( unsigned int idx ) {return mChildList[idx].get();}
+
+         /** Get the index number of child, return a value between
+         * 0 and the number of children-1 if found, if not found then
+         * return the number of children.
+         */
+         inline unsigned int GetChildIndex( const DeltaDrawable* child ) const
+         {
+            for (unsigned int childNum=0;childNum<mChildList.size();++childNum)
+            {
+               if (mChildList[childNum]==child) return childNum;
+            } 
+            return mChildList.size(); // node not found.
+         }
+
+         ///Test to see if child
+         bool CanBeChild( DeltaDrawable *child );
+
+   protected:
+      DeltaDrawable(std::string name = "DeltaDrawable");
+      virtual ~DeltaDrawable() {};
+
+      osg::ref_ptr<osg::Node> mNode;
+      osg::ref_ptr<DeltaDrawable> mParent; ///<Any immediate parent of this instance
+      typedef std::vector<osg::ref_ptr<DeltaDrawable> > ChildList;
+      ChildList mChildList;      ///<List of children DeltaDrawable added
+      osg::ref_ptr<Scene> mParentScene;
    };
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)

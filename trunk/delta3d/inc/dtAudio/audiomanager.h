@@ -251,7 +251,7 @@ namespace   dtAudio
                virtual  void     OnMessage( MessageData* data );
 
                /// override method so listener knows when it's becomeing a child
-               virtual  void     SetParent( dtCore::Transformable* parent );
+               //virtual  void     SetParent( dtCore::Transformable* parent );
 
                /// clean up listener for no apparent reason
                virtual  void     Clear( void );

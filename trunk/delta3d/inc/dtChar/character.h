@@ -26,7 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "dtCore/deltadrawable.h"
 #include "dtCore/transformable.h"
 
 #undef Status
@@ -37,8 +36,7 @@ namespace dtChar
    /**
     * An animated character.
     */
-   class DT_EXPORT Character : public dtCore::Transformable,
-                               public dtCore::DeltaDrawable
+   class DT_EXPORT Character : public dtCore::Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Character)
 

@@ -3,9 +3,11 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/deltadrawable.h"
+#include "dtCore/scene.h"
 #include "dtCore/physical.h"
 #include "dtCore/transformable.h"
 #include "dtCore/object.h"
+#include "dtCore/notify.h"
 
 #include <vector>
 
@@ -52,6 +54,8 @@ Physical::Physical()
  */
 Physical::~Physical()
 {
+   Notify(DEBUG_INFO, "Physical: Deleting '%s'", GetName().c_str());
+
    dGeomDestroy(mGeomID);
  
    if(mBodyID != 0)
@@ -146,11 +150,11 @@ void Physical::SetCollisionSphere(osg::Node* node)
 {
    if(node == NULL)
    {
-      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
+      //DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
-      if(d != NULL)
+      //if(d != NULL)
       {
-         node = d->GetOSGNode();
+         node = this->GetOSGNode();
       }
    }
    
@@ -238,11 +242,11 @@ void Physical::SetCollisionBox(osg::Node* node)
 {
    if(node == NULL)
    {
-      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
+      //DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
-      if(d != NULL)
+      //if(d != NULL)
       {
-         node = d->GetOSGNode();
+         node = this->GetOSGNode(); //d->GetOSGNode();
       }
    }
    
@@ -394,11 +398,11 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
 {
    if(node == NULL)
    {
-      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
+      //DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
-      if(d != NULL)
+      //if(d != NULL)
       {
-         node = d->GetOSGNode();
+         node = this->GetOSGNode(); //d->GetOSGNode();
       }
    }
    
@@ -567,11 +571,11 @@ void Physical::SetCollisionMesh(osg::Node* node)
 {
    if(node == NULL)
    {
-      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
+      //DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
-      if(d != NULL)
+      //if(d != NULL)
       {
-         node = d->GetOSGNode();
+         node = this->GetOSGNode(); //d->GetOSGNode();
       }
    }
    
@@ -792,13 +796,14 @@ void Physical::GetInertiaTensor(sgMat3 dest) const
  */
 void Physical::PrePhysicsStepUpdate()
 {
-   Transformable* t = dynamic_cast<Transformable*>(this);
+   //Transformable* t = dynamic_cast<Transformable*>(this);
    
-   if(t != NULL)
+   //if(t != NULL)
+   if (DynamicsEnabled())   
    {
       Transform transform;
       
-      t->GetTransform(&transform);
+      this->GetTransform(&transform);
       
       if(!transform.EpsilonEquals(&mGeomTransform))
       {
@@ -856,9 +861,10 @@ bool Physical::FilterContact(dContact* contact, Physical* collider)
  */
 void Physical::PostPhysicsStepUpdate()
 {
-   Transformable* t = dynamic_cast<Transformable*>(this);
+   //Transformable* t = dynamic_cast<Transformable*>(this);
    
-   if(t != NULL)
+   //if(t != NULL)
+   if (DynamicsEnabled())
    {
       const dReal* position = dGeomGetPosition(mGeomID);
       const dReal* rotation = dGeomGetRotation(mGeomID);
@@ -887,17 +893,16 @@ void Physical::PostPhysicsStepUpdate()
 
       mGeomTransform.SetRotation(rot);
       
-      t->SetTransform(&mGeomTransform);
+      this->SetTransform(&mGeomTransform);
    }
 }
 
 void Physical::RenderCollisionGeometry( const bool enable)
 {
-   Object* obj = dynamic_cast<Object*>(this);
-   if (!obj) return;
+   //Object* obj = dynamic_cast<Object*>(this);
+   //if (!obj) return;
 
-   osg::Node *node = obj->GetOSGNode();
-   osg::MatrixTransform *xform = dynamic_cast<osg::MatrixTransform*>(node);
+   osg::MatrixTransform *xform = this->GetMatrixNode();
    if (!xform) return;
 
    if (enable)

@@ -1,4 +1,5 @@
 #include "dtCore/spotlight.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 
