@@ -51,7 +51,7 @@ AudioManager::LOB_PTR   AudioManager::_Mic(NULL);
 const char*             AudioManager::_EaxVer   = "EAX2.0";
 const char*             AudioManager::_EaxSet   = "EAXSet";
 const char*             AudioManager::_EaxGet   = "EAXGet";
-const AudioConfigData   AudioManager::_DefCfg(24L, true);
+const AudioConfigData   AudioManager::_DefCfg;
 
 
 
