@@ -989,9 +989,15 @@ void Physical::RenderCollisionGeometry( const bool enable)
 void Physical::AddedToScene( Scene *scene )
 {
    if( scene )
+   {
+      DeltaDrawable::AddedToScene( scene );
       scene->RegisterPhysical(this); 
+   }
    else
+   {
       mParentScene->UnRegisterPhysical(this);
+      DeltaDrawable::AddedToScene( scene );
+   }
 
-   DeltaDrawable::AddedToScene( scene );
+   
 } 
