@@ -11,5 +11,6 @@ using namespace dtCore;
 
 void initDrawableBindings()
 {
-   class_<Drawable, boost::noncopyable>("Drawable", no_init);
+   class_<Drawable, boost::noncopyable>("Drawable", no_init)
+      .def("AddedToScene", &Drawable::AddedToScene);
 }
