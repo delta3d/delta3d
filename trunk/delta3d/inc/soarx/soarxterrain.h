@@ -28,6 +28,8 @@
 
 #ifndef DT_SOARX_TERRAIN
 #define DT_SOARX_TERRAIN
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 
 #include <sstream>
 
@@ -38,6 +40,8 @@
 #include <osg/TexEnv>
 #include <osg/TexGen>
 #include <osg/Texture2D>
+#include <osg/Switch>
+#include <osg/PositionAttitudeTransform>
 
 #include <osgDB/FileUtils>
 #include <osgDB/ReadFile>
@@ -94,6 +98,11 @@ namespace dtSOARX
           * Destructor.
           */
          virtual ~SOARXTerrain();
+
+		 /**
+		 *  Cleanup routines
+		 */
+		 void CleanUp();
 
          /**
           * Loads the specified configuration file.
@@ -260,6 +269,19 @@ namespace dtSOARX
           */
          void LoadGeospecificImage(std::string filename,
                                    const double* geoTransform = NULL);
+
+		 /**
+		 * Loads a geospecific LCC image and drapes it over the terrain.  If
+		 * the image is monochrome, it will be modulated by the height
+		 * color map.
+		 *
+		 * @param filename the name of the image to load
+		 * @param geoTransform an array of six double values representing
+		 * the geotransform of the image, or NULL to read the geotransform
+		 * from the image itself
+		 */
+		 void LoadGeospecificLCCImage(std::string filename,
+			 const double* geoTransform = NULL);
  
 
 		 /**
@@ -371,18 +393,14 @@ namespace dtSOARX
 		 * @param limit the limiting value of the probability (i.e. the roll of the dice)
 		 * @return the value of mUseLCC
 		 */
-		 boolean GetVegetation(int LCCtype, int x, int y, int limit);
+//		 boolean GetVegetation(int LCCtype, int x, int y, int limit);
 
 
 		 /**
-		 * Buggy "histogram" of an image by a particular LCC type.
-		 *
-		 * @param LCCbase the black/white LCC image of picked points of a particular LCC type
-		 * @param image the slopemap, heightmap, or relative elevation
-		 * @param filename the filename to save the histogram data
-		 * @param binsize the sampling size of the image (i.e. the delta height or slope).
+		 * Sets if LCC objects are updated/culled/rendered.
+		 * @param mask 0/false=hide, 1/true=display
 		 */
-		 void LCCHistogram(osg::Image* LCCbase, osg::Image* image, char* filename, int binsize);
+		 void SetLCCVisibility(bool mask);
 
          
       private:
@@ -420,6 +438,19 @@ namespace dtSOARX
           * @return the newly created image
           */
          osg::Image* MakeBaseColor(osg::HeightField* hf, int latitude, int longitude);
+
+
+		 /**
+		 * Makes the base LCC color texture map for the specified heightfield.
+		 *
+		 * @param hf the heightfield to process
+		 * @param latitude the latitude of the terrain segment
+		 * @param longitude the longitude of the terrain segment
+		 * @return the newly created image
+		 */
+		 osg::Image* MakeBaseLCCColor(osg::HeightField* hf, int latitude, int longitude);
+
+
          
          /**
           * Makes roads for the specified segment.
@@ -480,7 +511,7 @@ namespace dtSOARX
 		 * @return the newly created image
 		 */
 		 osg::Image* MakeCombinedImage(
-			 int LCCidx,					// LCC image index (e.g. 42 = desiduous forest)
+			 osg::Image* f_image,			// LCC filtered image
 			 osg::Image* h_image,			// heightmap
 			 osg::Image* s_image,			// slopemap image
 			 osg::Image* r_image);			// relative elevation image
@@ -538,12 +569,35 @@ namespace dtSOARX
           * @return 1 if it intersects, 0 if it does not
           */
          static int AABBTest(dGeomID o1, dGeomID o2, dReal aabb2[6]);
+
+
+		 /**
+		 * Buggy "histogram" of an image by a particular LCC type.
+		 *
+		 * @param LCCbase the black/white LCC image of picked points of a particular LCC type
+		 * @param image the slopemap, heightmap, or relative elevation
+		 * @param filename the filename to save the histogram data
+		 * @param binsize the sampling size of the image (i.e. the delta height or slope).
+		 */
+		 void LCCHistogram(osg::Image* LCCbase, osg::Image* image, char* filename, int binsize);
+
+
          
          /**
           * The container node.
           */
          osg::ref_ptr<osg::MatrixTransform> mNode;
          
+		 /**
+		  *	  Listing of objects (plants, trees, etc) 
+		  */
+		 std::vector<osg::ref_ptr<dtCore::Object> > mObjects;
+
+		 /**
+		  *	  Listing of groups
+		  */
+		 std::vector<osg::ref_ptr<osg::Group> > mGroups;		 
+
          /**
           * The GLSL program object.
           */
@@ -594,17 +648,6 @@ namespace dtSOARX
           */
          int mMaxTextureSize;
          
-
-		 /**
-		 * Array of combined images (probability maps for LCC types).
-		 */
-		 osg::ref_ptr<osg::Image> mCimage[100];
-
-		 /**
-		 * Array of LCC hit/miss images for each LCC type
-		 */
-		 osg::ref_ptr<osg::Image> mLCCfilter[100];
-
 
          /**
           * Detail gradient textures for each of the three DTED levels.
@@ -662,6 +705,14 @@ namespace dtSOARX
           * The list of geospecific images.
           */
          std::vector<GeospecificImage> mGeospecificImages;
+
+
+		 /**
+		 * The list of geospecific LCC images.
+		 */
+		 std::vector<GeospecificImage> mGeospecificLCCImages;
+
+
          
          /**
           * Maps filenames to loaded OGR data sources.
@@ -682,12 +733,68 @@ namespace dtSOARX
              
             float mWidth, mSScale, mTScale;
          };
+
+		 /**
+		  *	An LCC Cell's data
+		  */
+		 struct LCCCells
+		 {
+			 /**
+			 *	  Listing/location of objects (plants, trees, etc) 
+			 */
+			 std::vector<osg::PositionAttitudeTransform*> mPATs;
+
+
+			 /**
+			 * The top node of the vegetation scene graph.
+			 */
+			 osg::ref_ptr<osg::Group> mRootVegeGroup;
+		 };
+
+
+		 /**
+		 * Maps loaded segments to LCCCells.
+		 */
+		 std::map<Segment, LCCCells*> mSegmentLCCCellMap;
+
+
+		 /**
+		  *	 LCC type data
+		  */
+		 struct LCCs
+		 {
+			 int idx;
+			 int rgb[3];
+			 std::string name;
+			 std::string model;
+			 osg::Group* vegeObject;
+		 };
+
+
+		 /**
+		  *	 The list of active LCCs
+		  */
+		 std::vector<LCCs> mLCCs;
+
          
          /**
           * The list of road data.
           */
          std::vector<Roads> mRoads;
          
+
+		 /**
+		 * The list of LCC Cell data.
+		 */
+		 std::vector<LCCCells> mLCCCells;
+
+
+		 /**
+		 * The list of segments.
+		 */
+		 std::vector<Segment> mSegments;
+
+		 /**
          /**
           * The threshold parameter.
           */
@@ -707,6 +814,37 @@ namespace dtSOARX
           * Flags the need to use LCC data.
           */
          bool mUseLCC;
+
+
+		 /**
+		  *	 Hack to retain scope of quadtree groups
+		  */
+		 std::vector<osg::Group*> mGroupies;
+
+		 /**
+		 * Loads the specified configuration file.
+		 *
+		 * @param filename the name of the configuration file to load
+		 */
+		 bool LoadLCCConfiguration(std::string filename);
+
+		 /**
+		 * Parses the specified XML configuration element.
+		 *
+		 * @param configElement the configuration element to parse
+		 */
+		 void ParseLCCConfiguration(TiXmlElement* configElement);
+
+
+		 /**
+		 * Place the vegetation into cell specified by lat-long.
+		 *
+		 * @param latitude the latitude of the origin
+		 * @param longitude the longitude of the origin
+		 */		 
+		 void AddVegetation(int latitude, int longitude);
+
+		 bool GetVegetation(osg::Image* mCimage, int x, int y, int limit);
 
    };
 };
