@@ -67,7 +67,6 @@ TestWinApp::Config()
    drawable->CreateShader( "button", "gui/button.tga" );
    drawable->CreateShader( "button_hover", "gui/button_hover.tga" );
    drawable->CreateShader( "button_click", "gui/button_click.tga" );
-   //drawable->CreateShader( "cursor", "gui/cursor.rgba" );
    drawable->CreateShader( "edit_box", "gui/edit_box.rgb");
    drawable->CreateShader( "back_panel", "gui/back_panel.rgb");
 
@@ -482,7 +481,7 @@ TestWinApp::Config()
    mainFrame->AddChild( refreshButton );
    drawable->AddFrame( refreshButton );
 
-   /// "exit" button
+   // "exit" button
    CUI_Button* exit = new CUI_Button();
    exit->Move(0.1, 0.095, 0.4, 0.18 );
    exit->SetShader(drawable->GetShader("button"));
@@ -552,6 +551,7 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
          bool fullScreen = fullScreenCombo->GetSelectedID() - FULL_OFF;
          mWindow->SetFullScreenMode( fullScreen );
 
+         //toggle position button/textboxes
          CUI_TextBox* positionTitle = static_cast<CUI_TextBox*>( mUI->GetFrame( POS_TITLE ) );
          assert(positionTitle);
          CUI_Button* positionButton = static_cast<CUI_Button*>( mUI->GetFrame( POS_SET ) );
@@ -605,6 +605,7 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
       }
    case POS_SET: //Position Set
       {
+         
          CUI_EditableTextBox* xEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_X ) );
          assert(xEdit);
          CUI_EditableTextBox* yEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_Y ) );
@@ -620,6 +621,7 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
          int h = atoi( hEdit->GetText() );
 
          mWindow->SetPosition( x, y, w, h );
+         
          UpdatePosition();
          break;
       }
