@@ -25,15 +25,15 @@ public:
       : Application( configFile )
    {
 
-      Object* obj = new Object("AH-1W");
+      Object* obj = new Object("UH-1N");
 
-      obj->LoadFile("ah-1w.ive");
+      obj->LoadFile("UH-1N/UH-1N.ive");
 
       Transform transform(0, 50, 0);
 
       obj->SetTransform(&transform);
 
-      GetScene()->AddDrawable(obj);
+      AddDrawable(obj);
 
       Py_Initialize();
 
