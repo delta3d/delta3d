@@ -36,7 +36,7 @@
 				AdditionalDependencies="dtcored.lib openal32.lib alut.lib producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib isensed.lib"
 				OutputFile="..\bin\dtaudiod.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
-				IgnoreDefaultLibraryNames="libcD.lib;libcmtd.lib;libcmtD.lib;msvcrt.lib"
+				IgnoreDefaultLibraryNames="libcD.lib;libcmtD.lib;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				ImportLibrary="..\lib\dtaudiod.lib"/>
