@@ -25,17 +25,21 @@ class UserInterface {open
         private xywh {210 15 300 30} box BORDER_BOX color 46 labelfont 2 labelsize 18
       }
       Fl_Group BaseGroup {
-        xywh {195 60 185 60} box ENGRAVED_FRAME align 5
+        xywh {195 60 295 65} box ENGRAVED_FRAME align 5
       } {
         Fl_Input BaseName {
           label {Name:}
           user_data this
           callback {((UserInterface*)v)->BaseNameCB(o)}
-          private tooltip {The name of this instance} xywh {250 80 90 25} when 8
+          private tooltip {The name of this instance} xywh {250 65 230 25} when 8
+        }
+        Fl_Value_Output BaseReferenceCount {
+          label {Ref:}
+          tooltip {The current reference count} xywh {250 95 60 25}
         }
       }
       Fl_Group DrawableGroup {
-        label Drawable selected
+        label Drawable
         xywh {10 145 230 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Browser DrawableChildList {
@@ -115,20 +119,20 @@ class UserInterface {open
           }
         }
       }
-      Fl_Group ObjectGroup {
-        xywh {180 259 290 75} box ENGRAVED_FRAME align 5 hide
+      Fl_Group LoadableGroup {selected
+        xywh {245 259 290 36} box ENGRAVED_FRAME align 5 hide
       } {
-        Fl_Input ObjectFilename {
+        Fl_Input LoadableFilename {
           label File
           user_data this
-          callback {((UserInterface*)v)->ObjectFileCB(o)}
-          private xywh {220 284 210 25} when 8
+          callback {((UserInterface*)v)->LoadableFileCB(o)}
+          private xywh {285 265 210 25} when 8
         }
         Fl_Button {} {
           label {...}
           user_data this
-          callback {((UserInterface*)v)->ObjectLoadFileCB(o)}
-          xywh {435 284 25 25}
+          callback {((UserInterface*)v)->LoadableLoadFileCB(o)}
+          xywh {500 265 25 25}
         }
       }
       Fl_Group CameraGroup {
@@ -885,6 +889,23 @@ class UserInterface {open
           }
         }
       }
+      Fl_Group ParticleGroup {
+        label {Particle System} open
+        xywh {15 270 135 60} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Check_Button ParticleEnabled {
+          label Enabled
+          user_data this
+          callback {((UserInterface*)v)->ParticleEnabledCB(o)}
+          xywh {20 275 75 25} down_box DOWN_BOX
+        }
+        Fl_Check_Button ParticleParentRelative {
+          label {Parent Relative}
+          user_data this
+          callback {((UserInterface*)v)->ParticleRelativeCB(o)}
+          xywh {20 300 125 25} down_box DOWN_BOX
+        }
+      }
     }
     Fl_Window SelectWindow {
       label {Add Child}
@@ -920,8 +941,8 @@ class UserInterface {open
   decl {void WinCursorCB( Fl_Check_Button * );} {}
   decl {void WinFullScreenCB( Fl_Check_Button * );} {}
   decl {void WinTitleCB( Fl_Input * );} {}
-  decl {void ObjectFileCB( Fl_Input * );} {}
-  decl {void ObjectLoadFileCB( Fl_Button * );} {}
+  decl {void LoadableFileCB( Fl_Input * );} {}
+  decl {void LoadableLoadFileCB( Fl_Button * );} {}
   decl {void SkyBoxBaseColorCB(Fl_Value_Input *);} {}
   decl {void SkyBoxBaseColorBrowserCB(Fl_Button*);} {}
   decl {void EnvFogColorCB(Fl_Value_Input *);} {}
@@ -964,6 +985,8 @@ class UserInterface {open
   decl {void LightSpecColorBrowserCB(Fl_Button*);} {}
   decl {void LightAttCB(Fl_Value_Input*);} {}
   decl {void LightSpotCB(Fl_Value_Input*);} {}
+  decl {void ParticleRelativeCB(Fl_Check_Button*);} {}
+  decl {void ParticleEnabledCB(Fl_Check_Button*);} {}
 } 
 
 decl {\#pragma comment(lib, "fltk.lib")} {public

@@ -86,15 +86,15 @@ void UserInterface::cb_TransformCSRelButton(Fl_Round_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_TransformCSRelButton_i(o,v);
 }
 
-inline void UserInterface::cb_ObjectFilename_i(Fl_Input* o, void* v) {
-  ((UserInterface*)v)->ObjectFileCB(o);
+inline void UserInterface::cb_LoadableFilename_i(Fl_Input* o, void* v) {
+  ((UserInterface*)v)->LoadableFileCB(o);
 }
-void UserInterface::cb_ObjectFilename(Fl_Input* o, void* v) {
-  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_ObjectFilename_i(o,v);
+void UserInterface::cb_LoadableFilename(Fl_Input* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_LoadableFilename_i(o,v);
 }
 
 inline void UserInterface::cb_2_i(Fl_Button* o, void* v) {
-  ((UserInterface*)v)->ObjectLoadFileCB(o);
+  ((UserInterface*)v)->LoadableLoadFileCB(o);
 }
 void UserInterface::cb_2(Fl_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_2_i(o,v);
@@ -728,6 +728,20 @@ void UserInterface::cb_LightCutoffInput(Fl_Value_Input* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_LightCutoffInput_i(o,v);
 }
 
+inline void UserInterface::cb_ParticleEnabled_i(Fl_Check_Button* o, void* v) {
+  ((UserInterface*)v)->ParticleEnabledCB(o);
+}
+void UserInterface::cb_ParticleEnabled(Fl_Check_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_ParticleEnabled_i(o,v);
+}
+
+inline void UserInterface::cb_ParticleParentRelative_i(Fl_Check_Button* o, void* v) {
+  ((UserInterface*)v)->ParticleRelativeCB(o);
+}
+void UserInterface::cb_ParticleParentRelative(Fl_Check_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_ParticleParentRelative_i(o,v);
+}
+
 Fl_Double_Window* UserInterface::make_window() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = MainWindow = new Fl_Double_Window(545, 438, "dtCore");
@@ -743,13 +757,16 @@ Fl_Double_Window* UserInterface::make_window() {
       o->labelfont(2);
       o->labelsize(18);
     }
-    { Fl_Group* o = BaseGroup = new Fl_Group(195, 60, 185, 60);
+    { Fl_Group* o = BaseGroup = new Fl_Group(195, 60, 295, 65);
       o->box(FL_ENGRAVED_FRAME);
       o->align(FL_ALIGN_TOP_LEFT);
-      { Fl_Input* o = BaseName = new Fl_Input(250, 80, 90, 25, "Name:");
+      { Fl_Input* o = BaseName = new Fl_Input(250, 65, 230, 25, "Name:");
         o->tooltip("The name of this instance");
         o->callback((Fl_Callback*)cb_BaseName, (void*)(this));
         o->when(FL_WHEN_ENTER_KEY);
+      }
+      { Fl_Value_Output* o = BaseReferenceCount = new Fl_Value_Output(250, 95, 60, 25, "Ref:");
+        o->tooltip("The current reference count");
       }
       o->end();
     }
@@ -834,15 +851,15 @@ Fl_Double_Window* UserInterface::make_window() {
       }
       o->end();
     }
-    { Fl_Group* o = ObjectGroup = new Fl_Group(180, 259, 290, 75);
+    { Fl_Group* o = LoadableGroup = new Fl_Group(245, 259, 290, 36);
       o->box(FL_ENGRAVED_FRAME);
       o->align(FL_ALIGN_TOP_LEFT);
       o->hide();
-      { Fl_Input* o = ObjectFilename = new Fl_Input(220, 284, 210, 25, "File");
-        o->callback((Fl_Callback*)cb_ObjectFilename, (void*)(this));
+      { Fl_Input* o = LoadableFilename = new Fl_Input(285, 265, 210, 25, "File");
+        o->callback((Fl_Callback*)cb_LoadableFilename, (void*)(this));
         o->when(FL_WHEN_ENTER_KEY);
       }
-      { Fl_Button* o = new Fl_Button(435, 284, 25, 25, "...");
+      { Fl_Button* o = new Fl_Button(500, 265, 25, 25, "...");
         o->callback((Fl_Callback*)cb_2, (void*)(this));
       }
       o->end();
@@ -1503,6 +1520,20 @@ s)");
           o->align(FL_ALIGN_TOP);
         }
         o->end();
+      }
+      o->end();
+    }
+    { Fl_Group* o = ParticleGroup = new Fl_Group(15, 270, 135, 60, "Particle System");
+      o->box(FL_ENGRAVED_FRAME);
+      o->align(FL_ALIGN_TOP_LEFT);
+      o->hide();
+      { Fl_Check_Button* o = ParticleEnabled = new Fl_Check_Button(20, 275, 75, 25, "Enabled");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_ParticleEnabled, (void*)(this));
+      }
+      { Fl_Check_Button* o = ParticleParentRelative = new Fl_Check_Button(20, 300, 125, 25, "Parent Relative");
+        o->down_box(FL_DOWN_BOX);
+        o->callback((Fl_Callback*)cb_ParticleParentRelative, (void*)(this));
       }
       o->end();
     }
