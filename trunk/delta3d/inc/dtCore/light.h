@@ -40,12 +40,19 @@ namespace dtCore
 
    public:
 
-      //directional?
       enum LightingMode
       {
          GLOBAL = 0,
          LOCAL  = 1
       };
+
+      /*
+      enum DirPos
+      {
+         DIRECTIONAL = 0,
+         POSITONAL   = 1
+      };
+      */
 
       enum AttenuationType
       {
@@ -77,6 +84,7 @@ namespace dtCore
       */
       virtual void RemovedFromScene( Scene* scene ); 
 
+      //get lightsource?
       inline osg::Node* GetOSGNode()
       { return mLightSource.get(); }
 
@@ -85,15 +93,16 @@ namespace dtCore
       
       inline LightingMode GetLightingMode() const
       { return mLightingMode; }
+
+      void SetDirectionalLighting( bool directional );
+      bool GetDirectionalLighting();
       
       inline void SetLightModel( osg::LightModel* model )
       { mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, osg::StateAttribute::ON ); }
 
-      //REMOVE
       inline void SetNumber( const int number )
       { mLightSource->getLight()->setLightNum( number ); }
-      
-      //REMOVE
+
       inline int GetNumber() const
       { return mLightSource->getLight()->getLightNum(); }
 
@@ -128,26 +137,6 @@ namespace dtCore
       // where k_c = constant, k_l = linear, k_q = quadractric
       void SetAttenuation( AttenuationType type, float value );
       float GetAttenuation( AttenuationType type );
-
-      /*
-      inline void SetConstantAttenuation( float constant_attenuation )
-      { mLightSource->getLight()->setConstantAttenuation( constant_attenuation ); }
-      
-      inline float GetConstantAttenuation() const
-      { return mLightSource->getLight()->getConstantAttenuation(); }
-
-      inline void SetLinearAttenuation( float linear_attenuation )
-      { mLightSource->getLight()->setLinearAttenuation( linear_attenuation ); }
-      
-      inline float GetLinearAttenuation() const
-      { return mLightSource->getLight()->getLinearAttenuation(); }
-
-      inline void SetQuadraticAttenuation( float quadratic_attenuation )
-      { mLightSource->getLight()->setQuadraticAttenuation( quadratic_attenuation ); }
-      
-      inline float GetQuadraticAttenuation() const
-      { return mLightSource->getLight()->getQuadraticAttenuation(); }
-      */
 
       inline void SetSpotExponent( float spot_exponent )
       { mLightSource->getLight()->setSpotExponent( spot_exponent ); }

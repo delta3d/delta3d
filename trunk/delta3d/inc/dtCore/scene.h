@@ -36,9 +36,7 @@
 #include "dtCore/physical.h"
 #include "dtCore/stats.h"
 
-
-//NOTE: EVIL! fix w/ static const int
-const int MAX_LIGHT_NUMBER = 8;
+const int MAX_LIGHTS = 8;
 
 namespace dtCore
 {         
@@ -183,7 +181,7 @@ namespace dtCore
 
       //static 
       osg::Group* mLightGroup; // single light group for all scene lights
-      Light* mLights[ MAX_LIGHT_NUMBER ]; // contains all light associated with this scene
+      Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
    };
    
 };

@@ -25,7 +25,14 @@ public:
 
       osg::LightSource* lightSourceNode = static_cast<osg::LightSource*>( node );
 
-      lightSourceNode->getLight()->setPosition( osg::Vec4( x, y, z, 1.0 ) );
+      osg::Vec4 position = lightSourceNode->getLight()->getPosition();
+
+      position[0] = x; 
+      position[1] = y; 
+      position[2] = z;
+      //position[3] = position[3] to perserve directional lighting value
+
+      lightSourceNode->getLight()->setPosition( position );
 
       //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
       sgMat4 hRot, pRot, rRot;
@@ -54,9 +61,18 @@ private:
 Light::Light( int number, const std::string name, const LightingMode mode )
 :  mLightingMode( mode ), mLightSource( new osg::LightSource )
 {
-   assert( number >= 0 && number <= MAX_LIGHT_NUMBER ); 
+   //ensure light number within 0-7
+   while( number < 0 )
+   {
+      number++;
+   }
 
-   SetName(name);
+   while( number >= MAX_LIGHTS )
+   {
+      number--;
+   }
+
+   SetName( name );
 
    osg::Light* light = new osg::Light;
    light->setLightNum( number );
@@ -64,21 +80,50 @@ Light::Light( int number, const std::string name, const LightingMode mode )
    mLightSource->setLight( light );
    mLightSource->setLocalStateSetModes( osg::StateAttribute::ON ); //enable local lighting
 
-   mLightSource.get()->setUpdateCallback( new LightCallback(this) );
+   mLightSource.get()->setUpdateCallback( new LightCallback( this ) );
+   
 }
 
 Light::Light( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
 : mLightSource( osgLightSource ), mLightingMode( mode )
 {
-   SetName(name);
+   //ensure light number within 0-7
+   /*
+   while( osgLightSource->getLight()->getLightNum() < 0 )
+   {
+      number++;
+   }
+
+   while( number >= MAX_LIGHTS )
+   {
+      number--;
+   }
+   */
+
+   SetName( name );
    mLightSource->setLocalStateSetModes( osg::StateAttribute::ON ); //enable local lighting
 
-   mLightSource.get()->setUpdateCallback( new LightCallback(this) );
+   mLightSource.get()->setUpdateCallback( new LightCallback(this ) );
 }
 
 Light::~Light()
 {
    mLightSource = NULL;
+}
+
+void 
+Light::SetDirectionalLighting( bool directional )
+{
+   osg::Vec4 position = mLightSource->getLight()->getPosition();
+   position[3] = float( !directional );
+   mLightSource->getLight()->setPosition( position );
+}
+
+bool 
+Light::GetDirectionalLighting()
+{
+   osg::Vec4 position = mLightSource->getLight()->getPosition();
+   return bool(position[3]);
 }
 
 // attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
