@@ -22,35 +22,31 @@
 #define DELTA_SCRIPT_MANAGER
 
 #include <string>
+#include "dtCore/base.h"
 #include "dtCore/export.h"
 #include "Python.h"
 
 namespace dtScript
 {
-	class DT_EXPORT ScriptManager
+   class DT_EXPORT ScriptManager : public dtCore::Base
 	{
+
+      DECLARE_MANAGEMENT_LAYER(ScriptManager)
 	
 	public:
 	
 	   ScriptManager();
 	   ~ScriptManager();
 	   
-	   inline void Load( std::string filename )
-	   {
-	      mFilename = filename;
-	      mFileObject = PyFile_FromString( const_cast<char*>(mFilename.c_str()), "r");
-	   }
+      ///Load a Python script (.py) into memory
+	   void Load( std::string filename );
 	   
-	   inline void Run()
-      { 
-         PyRun_SimpleFile(PyFile_AsFile(mFileObject), const_cast<char*>(mFilename.c_str()));
-      }
-      
-	   inline void Run( std::string filename )
-      { 
-         Load( filename );
-         Run();
-      }
+      ///Execute the loaded Python script
+	   void Run();
+
+      ///Load a Python script and execute it immediately
+	   void Run( std::string filename );
+
    protected:
    
       PyObject* mFileObject;
