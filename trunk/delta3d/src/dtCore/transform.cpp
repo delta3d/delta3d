@@ -24,6 +24,13 @@ void Transform::Set( float x, float y, float z, float h, float p, float r )
    sgMakeCoordMat4(mTransform, x, y, z, h, p, r);
 }
 
+void Transform::Set( osg::Matrix& mat )
+{
+   for( int i = 0; i< 4; i++ )
+      for( int j = 0; j < 4; j++)
+         mTransform[i][j] = mat(i,j);
+}
+
 void Transform::SetTranslation( float x, float y, float z )
 {
    sgVec3 xyz = {x,y,z};
@@ -60,6 +67,12 @@ void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r 
    *r = pos.hpr[2];
 }
 
+void Transform::Get( osg::Matrix& mat ) const
+{
+   for( int i = 0; i < 4; i++ )
+      for( int j = 0; j < 4; j++)
+         mat(i,j) = mTransform[i][j];
+}
 
 void Transform::GetTranslation(float *x, float *y, float *z ) 
 {
@@ -113,7 +126,6 @@ bool Transform::EpsilonEquals(const Transform* transform, float epsilon )
 
 void Transform::SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec )
 {
-    //use sgMakeLookAtMat4() method
     sgMakeLookAtMat4( mTransform, xyz, lookAtXYZ, upVec );
 }
 
@@ -140,5 +152,5 @@ bool Transform::operator==(const Transform & rhs)
 {
    if (this == &rhs) return true;
 
-   return   EpsilonEquals( &rhs, 0.0f );
+   return EpsilonEquals( &rhs, 0.0f );
 }
