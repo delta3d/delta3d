@@ -7,7 +7,6 @@
 #include <stdlib.h>
 
 #ifndef _WIN32
-#define SOCKET int
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -103,7 +102,8 @@ RTIConnection::RTIConnection(string name)
    
    if(connect(some_socket, (sockaddr*)&other, sizeof(other)) == 0)
    {
-           if(getsockname(some_socket, (sockaddr*)&me, (socklen_t*)&len) == 0)
+
+      if(getsockname(some_socket, (sockaddr*)&me, (socklen_t*)&len) == 0)
       {
          #ifdef _WIN32
          mLocalIPAddress = me.sin_addr.S_un.S_addr;
