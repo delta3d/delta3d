@@ -24,9 +24,7 @@
 #include <osg/LightSource>
 #include <osg/LightModel>
 
-//#include "dtCore/base.h"
 #include "dtCore/export.h"
-//#include "dtCore/notify.h"
 #include "dtCore/macros.h"
 #include "dtCore/deltadrawable.h"
 
