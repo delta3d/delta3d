@@ -7,7 +7,7 @@
 
 using namespace boost::python;
 using namespace dtCore;
-
+/*
 class ParticleSystemWrap : public ParticleSystem
 {
 
@@ -17,27 +17,21 @@ public:
          mSelf(self)
    {}
 
-   virtual bool LoadFile(std::string filename, bool useCache = true)
+   virtual osg::Node* LoadFile(std::string filename, bool useCache=false)
    {
-      return call_method<bool>(mSelf, "LoadFile", filename, useCache);
+      call_method<osg::Node*>(mSelf, "LoadFile", filename, useCache);
    }
 
-   void DefaultLoadFile(std::string filename, bool useCache)
+   osg::Node* DefaultLoadFile(std::string filename)
    {
-      return ParticleSystem::LoadFile(filename, useCache);
+      ParticleSystem::LoadFile(filename);
    }
 
-   virtual void AddedToScene( Scene *scene )
-   {
-      call_method<void>(mSelf, "AddedToScene"); 
-   }
+protected:
 
-   void DefaultAddedToScene( Scene *scene )
-   {
-      ParticleSystem::AddedToScene(scene);
-   }
-}
-
+   PyObject* mSelf;
+};
+*/
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
 
 void initParticleSystemBindings()
@@ -51,9 +45,7 @@ void initParticleSystemBindings()
       .def("GetInstance", ParticleSystemGI1, return_internal_reference<>())
       .def("GetInstance", ParticleSystemGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("LoadFile", &ParticleSystem::LoadFile, LF_overloads())
-      .def("LoadFile", &ParticleSystem::LoadFile, &ParticleSystemWrap::DefaultLoadFile)
-      .def("AddedToScene", &ParticleSystem::AddedToScene, &ParticleSystemWrap::AddedToScene);
+      .def("LoadFile", &ParticleSystem::LoadFile, LF_overloads()[return_internal_reference<>()])
       .def("SetEnabled", &ParticleSystem::SetEnabled)
       .def("IsEnabled", &ParticleSystem::IsEnabled)
       .def("SetParentRelative", &ParticleSystem::SetParentRelative)

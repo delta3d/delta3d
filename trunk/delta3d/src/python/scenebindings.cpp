@@ -19,8 +19,8 @@ void initSceneBindings()
    void (Scene::*GetGravity1)(sgVec3) = &Scene::GetGravity;
    void (Scene::*GetGravity2)(float*, float*, float*) = &Scene::GetGravity;
 
-   Light* (Scene::*GetLight1)(int) = &Scene::GetLight;
-   Light* (Scene::*GetLight2)(std::string) = &Scene::GetLight;
+   Light* (Scene::*GetLight1)(const int) const = &Scene::GetLight;
+   Light* (Scene::*GetLight2)(const std::string) const = &Scene::GetLight;
    
    scope sceneScope = class_<Scene, bases<Base>, osg::ref_ptr<Scene> >("Scene", init<optional<std::string> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)

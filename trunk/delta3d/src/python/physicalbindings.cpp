@@ -45,16 +45,6 @@ class PhysicalWrap : public Physical
       {
          Physical::PostPhysicsStepUpdate();
       }
-
-      virtual void AddedToScene( Scene *scene )
-      {
-         call_method<void>(mSelf, "AddedToScene");
-      }
-
-      void DefaultAddedToScene( Scene* scene )
-      {
-         Physical::AddedToScene(scene);      
-      }
       
    protected:
 
@@ -113,6 +103,6 @@ void initPhysicalBindings()
       .def("FilterContact", &Physical::FilterContact, &PhysicalWrap::DefaultFilterContact)
       .def("PostPhysicsStepUpdate", &Physical::PostPhysicsStepUpdate, &PhysicalWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Physical::RenderCollisionGeometry)
-      .def("GetRenderCollisionGeometry", &Physical::GetRenderCollisionGeometry)
-      .def("AddedToScene", &Physical::AddedToScene, &PhysicalWrap::DefaultAddedToScene);
+      .def("GetRenderCollisionGeometry", &Physical::GetRenderCollisionGeometry);
+      
 }
