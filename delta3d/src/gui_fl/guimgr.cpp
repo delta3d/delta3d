@@ -37,7 +37,7 @@ void UserInterface::SelectInstance (void)
 {
    Base *b = GetSelectedInstance(this);
    
-   if (IS_A(b, Base*))
+   if (b = dynamic_cast<Base*>(b))
    {
       BaseName->value( b->GetName().c_str() );
       InstanceClassName->label( "dtCore::Base" ); 
@@ -46,9 +46,8 @@ void UserInterface::SelectInstance (void)
 
 
    /** Transformable **/
-   if (IS_A(b, Transformable*))
+   if(Transformable *t = dynamic_cast<Transformable*>(b))
    {
-      Transformable *t = (Transformable*)b;
       InstanceClassName->label( "dtCore::Transformable" ); 
       
       Transform trans;
@@ -88,9 +87,8 @@ void UserInterface::SelectInstance (void)
    else TransformGroup->hide();
    
    /** Camera **/
-   if (IS_A(b, Camera*))
+   if (Camera *c = dynamic_cast<Camera*>(b))
    {
-      Camera *c = (Camera*)b;
       InstanceClassName->label( "dtCore::Camera" ); 
       sgVec4 color;
       c->GetClearColor(color);
@@ -158,18 +156,16 @@ void UserInterface::SelectInstance (void)
    else CameraGroup->hide();
    
    /** Scene **/
-   if (IS_A(b, Scene*))
+   if (Scene *s = dynamic_cast<Scene*>(b))
    {
-      Scene *s = (Scene*)b;
       InstanceClassName->label( "dtCore::Scene" ); 
       //SceneGroup->show();
    }
    //else SceneGroup->hide();
    
    /** Object **/
-   if (IS_A(b, Object*))
+   if (Object *o = dynamic_cast<Object*>(b))
    {
-      Object *o = (Object*)b;
       InstanceClassName->label( "dtCore::Object" ); 
       std::string filename = o->GetFilename();
       ObjectFilename->value( filename.c_str() );
@@ -179,9 +175,8 @@ void UserInterface::SelectInstance (void)
    else ObjectGroup->hide();
    
    /** DeltaWin **/
-   if (IS_A(b, DeltaWin*))
+   if (DeltaWin *w = dynamic_cast<DeltaWin*>(b))
    {
-      DeltaWin *w = (DeltaWin*)b;
       InstanceClassName->label( "dtCore::DeltaWin" ); 
 
       int x,y,width,height;
@@ -203,9 +198,8 @@ void UserInterface::SelectInstance (void)
    else WindowGroup->hide();
 
    /** Environment **/
-   if (IS_A(b, Environment*))
+   if (Environment *e = dynamic_cast<Environment*>(b))
    {
-      Environment *e = (Environment*)b;
       InstanceClassName->label( "dtCore::Environment" );
       
       sgVec4 fColor;
@@ -283,9 +277,8 @@ void UserInterface::SelectInstance (void)
 
 
    /** SkyDome **/
-   if (IS_A(b, SkyDome*))
+   if (SkyDome *s = dynamic_cast<SkyDome*>(b))
    {
-      SkyDome *s = (SkyDome*)b;
       InstanceClassName->label( "dtCore::SkyDome" );
 
       sgVec3 color;
@@ -305,15 +298,13 @@ void UserInterface::SelectInstance (void)
    else SkyBoxGroup->hide();
 
 
-   if (IS_A(b, System*))
+   if (System *s = dynamic_cast<System*>(b))
    {
-      System *s = (System*)b;
       InstanceClassName->label( "dtCore::System" );
    }
 
-   if (IS_A(b, InfiniteTerrain*))
+   if (InfiniteTerrain *t = dynamic_cast<InfiniteTerrain*>(b))
    {
-      InfiniteTerrain *t = (InfiniteTerrain*)b;
       float dist = t->GetBuildDistance();
       float hscale = t->GetHorizontalScale();
       float vscale = t->GetVerticalScale();
@@ -334,9 +325,8 @@ void UserInterface::SelectInstance (void)
    }
 
    /** CloudDome **/
-   if (IS_A(b, CloudDome*))
-   {
-       CloudDome *cd = (CloudDome*)b;
+   if (CloudDome *cd = dynamic_cast<CloudDome*>b)
+   {   
        InstanceClassName->label( "dtCore::CloudDome" );
 
        cScale->value(cd->getScale());
@@ -367,10 +357,8 @@ void UserInterface::SelectInstance (void)
    else CloudEditor->hide();
 
    /** Weather */
-   if (IS_A(b, Weather*))
+   if (Weather *w = dynamic_cast<Weather*>(b))
    {
-      Weather *w = (Weather*)b;
-
       InstanceClassName->label( "dtABC::Weather" );
 
       Weather::WeatherTheme theme = w->GetTheme();
@@ -472,10 +460,8 @@ void UserInterface::SelectInstance (void)
    else WeatherGroup->hide();
 
    // Light
-   if (IS_A(b, PositionalLight*))
+   if (PositionalLight *l = dynamic_cast<PositionalLight*>(b))
    {
-      PositionalLight *l = (PositionalLight*)b;
-
       InstanceClassName->label( "dtCore::PositionalLight" );
 
 
@@ -546,10 +532,8 @@ void UserInterface::SelectInstance (void)
       LightGroup->hide();
    }
 
-   if (IS_A(b, SpotLight*))
+   if (SpotLight *l = dynamic_cast<SpotLight*>(b))
    {
-      SpotLight *l = (SpotLight*)b;
-
       InstanceClassName->label( "dtCore::SpotLight" );
      
       float spotCutoff = l->GetSpotCutoff();

@@ -142,9 +142,8 @@ void Environment::AddEffect(EnvEffect *effect)
       //effect doesn't exit so add it to the list
       mEffectList.push_back(effect);
 
-      if (IS_A(effect, SkyDome*)) //is a SkyDome
+      if (SkyDome *dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
       {
-         SkyDome *dome = (SkyDome*)effect;
          mSkyDome = dome;
          mEnvEffectNode->addChild( dome->GetNode() ); 
 

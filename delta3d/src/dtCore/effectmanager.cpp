@@ -305,10 +305,8 @@ static double FindMaximumParticleLifeTime(osg::Node* effectNode)
 {
    double maximumLifeTime = 0.0;
 
-   if(IS_A(effectNode, osg::Group*))
+   if(osg::Group* group = dynamic_cast<osg::Group*>(effectNode))
    {
-      osg::Group* group = (osg::Group*)effectNode;
-
       for(unsigned int i=0;i<group->getNumChildren();i++)
       {
          double lifeTime = FindMaximumParticleLifeTime(group->getChild(i));
@@ -319,21 +317,16 @@ static double FindMaximumParticleLifeTime(osg::Node* effectNode)
          }
       }
    }
-   else if(IS_A(effectNode, osg::Geode*))
+   else if(osg::Geode* geode = dynamic_cast<osg::Geode*>(effectNode))
    {
-      osg::Geode* geode = (osg::Geode*)effectNode;
-
       for(unsigned int i=0;i<geode->getNumDrawables();i++)
       {
          osg::Drawable* drawable = geode->getDrawable(i);
 
-         if(IS_A(drawable, osgParticle::ParticleSystem*))
+         if(osgParticle::ParticleSystem* particleSystem =
+            dynamic_cast<osgParticle::ParticleSystem*>(drawable))
          {
-            osgParticle::ParticleSystem* particleSystem =
-               (osgParticle::ParticleSystem*)drawable;
-
-            maximumLifeTime = 
-               particleSystem->getDefaultParticleTemplate().getLifeTime();
+            maximumLifeTime = particleSystem->getDefaultParticleTemplate().getLifeTime();
          }
       }
    }
@@ -348,21 +341,19 @@ static double FindMaximumParticleLifeTime(osg::Node* effectNode)
  */
 static void DeleteParticleEmitters(osg::Node* effectNode)
 {
-   if(IS_A(effectNode, osg::Group*))
+   if(osg::Group* group = dynamic_cast<osg::Group*>(effectNode))
    {
-      osg::Group* group = (osg::Group*)effectNode;
-
       vector<osg::Node*> nodesToRemove;
 
       for(unsigned int i=0;i<group->getNumChildren();i++)
       {
          osg::Node* node = group->getChild(i);
          
-         if(IS_A(node, osgParticle::Emitter*))
+         if(IS_A(node,osgParticle::Emitter*))  
          {
             nodesToRemove.push_back(node);
          }
-         else if(IS_A(node, osg::Group*))
+         else if(IS_A(node, osg::Group*)) 
          {
             DeleteParticleEmitters(node);
          }

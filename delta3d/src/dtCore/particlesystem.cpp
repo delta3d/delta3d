@@ -52,11 +52,9 @@ class ParticleSystemParameterVisitor : public osg::NodeVisitor
       {
          osg::Node* nodePtr = &node;
 
-         if(IS_A(nodePtr, osgParticle::Emitter*))
-         {
-            osgParticle::Emitter* emitter = 
-               (osgParticle::Emitter*)nodePtr;
-            
+         if(osgParticle::Emitter* emitter = 
+            dynamic_cast<osgParticle::Emitter*>(nodePtr))
+         {          
             emitter->setEnabled(mEnabled);
          }
          
