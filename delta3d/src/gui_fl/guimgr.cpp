@@ -5,6 +5,7 @@
 #include "gui_fl/guimgr.h"
 #include "dtCore/transformable.h"
 #include "dtCore/camera.h"
+#include "dtCore/deltadrawable.h"
 #include "dtCore/environment.h"
 #include "dtCore/skydome.h"
 #include "dtCore/clouddome.h"
@@ -45,6 +46,29 @@ void UserInterface::SelectInstance (void)
    }
 
 
+   if (DeltaDrawable *d = dynamic_cast<DeltaDrawable*>(b))
+   {
+      InstanceClassName->label( "dtCore::DeltaDrawalbe" ); 
+
+      DrawableChildList->clear();
+      for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
+      {
+         osg::ref_ptr<DeltaDrawable> child = d->GetChild(childIdx);
+         DrawableChildList->add( child->GetName().c_str(), child.get() );
+      }
+
+      if (d->GetParent() != NULL)
+         DrawableParentText->value(  d->GetParent()->GetName().c_str() );
+      else
+         DrawableParentText->value( "NULL" );
+
+      DrawableGroup->show();
+   }
+   else
+   {
+      DrawableGroup->hide();
+   }
+
 
    /** Transformable **/
    if(Transformable *t = dynamic_cast<Transformable*>(b))
@@ -70,17 +94,7 @@ void UserInterface::SelectInstance (void)
       TransformP->value(hpr[1]);
       TransformR->value(hpr[2]);
 
-      TransformChildList->clear();
-      for (unsigned int childIdx=0; childIdx<t->GetNumChildren(); childIdx++)
-      {
-         osg::ref_ptr<DeltaDrawable> child = t->GetChild(childIdx);
-         TransformChildList->add( child->GetName().c_str(), child.get() );
-      }
 
-      if (t->GetParent() != NULL)
-        TransformParentText->value(  t->GetParent()->GetName().c_str() );
-      else
-        TransformParentText->value( "NULL" );
 
       
       TransformGroup->show();
@@ -748,18 +762,18 @@ void UserInterface::ObjectLoadFileCB( Fl_Button *o)
 }
 
 
-void UserInterface::TransformAddChildCB( Fl_Button *)
+void UserInterface::DrawableAddChildCB( Fl_Button *)
 {
-   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
+   DeltaDrawable *d = dynamic_cast<DeltaDrawable*>(GetSelectedInstance(this));
 
    SelectList->clear();
-   for (int tIdx=0; tIdx<Transformable::GetInstanceCount(); tIdx++)
+   for (int tIdx=0; tIdx<DeltaDrawable::GetInstanceCount(); tIdx++)
    {
-      Transformable *xform = Transformable::GetInstance(tIdx);
+      DeltaDrawable *drawable = DeltaDrawable::GetInstance(tIdx);
       //see is xform is a valid child
-      if (t->CanBeChild(xform))
+      if (d->CanBeChild(drawable))
       {
-         SelectList->add( xform->GetName().c_str());
+         SelectList->add( drawable->GetName().c_str());
       }
    }
 
@@ -781,18 +795,18 @@ void UserInterface::TransformAddChildCB( Fl_Button *)
             {
                if (SelectList->checked(i))
                {
-                  Transformable *c = Transformable::GetInstance(SelectList->text(i));
-                  t->AddChild( c );
+                  DeltaDrawable *c = DeltaDrawable::GetInstance(SelectList->text(i));
+                  d->AddChild( c );
                }
             }
             SelectWindow->hide();
 
-            //redraw the list of childer on this Transformable
-            TransformChildList->clear();
-            for (unsigned int childIdx=0; childIdx<t->GetNumChildren(); childIdx++)
+            //redraw the list of children on this Transformable
+            DrawableChildList->clear();
+            for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
             {
-               osg::ref_ptr<DeltaDrawable> child = t->GetChild(childIdx);
-               TransformChildList->add( child->GetName().c_str(), child.get() );
+               osg::ref_ptr<DeltaDrawable> child = d->GetChild(childIdx);
+               DrawableChildList->add( child->GetName().c_str(), child.get() );
             }
 
             break;
@@ -806,26 +820,26 @@ void UserInterface::TransformAddChildCB( Fl_Button *)
    }
 }
 
-void UserInterface::TransformRemChildCB( Fl_Button *)
+void UserInterface::DrawableRemChildCB( Fl_Button *)
 {
-   Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
+   DeltaDrawable *d = dynamic_cast<DeltaDrawable*>(GetSelectedInstance(this));
 
    //loop through selected items in TransformChildList and remove them
-   for (int i=0; i<TransformChildList->size()+1; i++)
+   for (int i=0; i<DrawableChildList->size()+1; i++)
    {
-      if (TransformChildList->selected(i))
+      if (DrawableChildList->selected(i))
       {
          //DeltaDrawable *child = (DeltaDrawable*)TransformChildList->data(i);
-         DeltaDrawable *child = static_cast<DeltaDrawable*>(TransformChildList->data(i));
-         t->RemoveChild( child );
+         DeltaDrawable *child = static_cast<DeltaDrawable*>(DrawableChildList->data(i));
+         d->RemoveChild( child );
       }
    }
 
-   TransformChildList->clear();
-   for (unsigned int childIdx=0; childIdx<t->GetNumChildren(); childIdx++)
+   DrawableChildList->clear();
+   for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
    {
-      osg::ref_ptr<DeltaDrawable> child = t->GetChild(childIdx);
-      TransformChildList->add( child->GetName().c_str(), child.get() );
+      osg::ref_ptr<DeltaDrawable> child = d->GetChild(childIdx);
+      DrawableChildList->add( child->GetName().c_str(), child.get() );
    }
 }
 

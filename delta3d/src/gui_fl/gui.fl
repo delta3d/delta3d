@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
+version 1.0106 
 header_name {gui_fltk.h} 
 code_name {gui_fltk.cpp}
 decl {\#include "dtCore/base.h"} {public
@@ -14,7 +14,7 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {589 106 545 438} type Double visible
+      xywh {575 88 545 438} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -24,90 +24,95 @@ class UserInterface {open
       Fl_Box InstanceClassName {
         private xywh {210 15 300 30} box BORDER_BOX color 46 labelfont 2 labelsize 18
       }
-      Fl_Group {} {
-        xywh {175 70 185 60} box ENGRAVED_FRAME align 5
+      Fl_Group BaseGroup {
+        xywh {195 60 185 60} box ENGRAVED_FRAME align 5
       } {
         Fl_Input BaseName {
           label {Name:}
           user_data this
           callback {((UserInterface*)v)->BaseNameCB(o)}
-          private tooltip {The name of this instance} xywh {230 90 90 25} when 8
+          private tooltip {The name of this instance} xywh {250 80 90 25} when 8
+        }
+      }
+      Fl_Group DrawableGroup {
+        label Drawable selected
+        xywh {10 145 230 105} box ENGRAVED_FRAME align 5 hide
+      } {
+        Fl_Browser DrawableChildList {
+          label Children
+          private xywh {70 180 135 65} type Multi align 4
+        }
+        Fl_Button {} {
+          user_data this
+          callback {((UserInterface*)v)->DrawableAddChildCB(o)}
+          tooltip {Add a child to the list} image {C:/Documents and Settings/ejohnson/My Documents/Projects/p51/data/btnAdd.gif} xywh {210 180 25 25}
+        }
+        Fl_Button {} {
+          user_data this
+          callback {((UserInterface*)v)->DrawableRemChildCB(o)}
+          tooltip {Remove a child from the list} image {C:/Documents and Settings/ejohnson/My Documents/Projects/p51/data/btnDel.gif} xywh {210 215 25 25}
+        }
+        Fl_Output DrawableParentText {
+          label {Parent:}
+          private xywh {75 150 130 25} box ENGRAVED_FRAME
         }
       }
       Fl_Group TransformGroup {
         label Transformable
-        xywh {15 150 520 105} box ENGRAVED_FRAME align 5 hide
+        xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input TransformX {
           label {X:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {42 169 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {273 164 60 25} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformY {
           label {Y:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {42 194 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {273 189 60 25} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformZ {
           label {Z:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {42 219 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {273 214 60 25} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformH {
           label {H:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {132 169 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {363 164 60 25} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformP {
           label {P:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {132 194 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {363 189 60 25} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformR {
           label {R:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {132 219 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {363 214 60 25} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Group {} {
           label System
-          xywh {245 170 95 40} box ENGRAVED_FRAME align 4
+          xywh {430 165 95 40} box ENGRAVED_FRAME align 5
         } {
           Fl_Round_Button TransformCSAbsButton {
             label Absolute
             user_data this
             callback {((UserInterface*)v)->TransformCSCB(o)}
-            private tooltip {The position/attitude reflects an Absolute Coordinate System} xywh {245 170 95 25} type Radio down_box ROUND_DOWN_BOX value 1
+            private tooltip {The position/attitude reflects an Absolute Coordinate System} xywh {430 165 95 25} type Radio down_box ROUND_DOWN_BOX value 1
           }
           Fl_Round_Button TransformCSRelButton {
             label Relative
             user_data this
             callback {((UserInterface*)v)->TransformCSCB(o)}
-            private tooltip {The position/attitude reflects a Relative Coordinate System} xywh {245 190 95 20} type Radio down_box ROUND_DOWN_BOX
+            private tooltip {The position/attitude reflects a Relative Coordinate System} xywh {430 185 95 20} type Radio down_box ROUND_DOWN_BOX
           }
-        }
-        Fl_Browser TransformChildList {
-          label Children
-          private xywh {350 170 144 75} type Multi align 5
-        }
-        Fl_Button {} {
-          user_data this
-          callback {((UserInterface*)v)->TransformAddChildCB(o)}
-          tooltip {Add a child to the list} image {C:/Documents and Settings/ejohnson/My Documents/Projects/p51/data/btnAdd.gif} xywh {499 180 25 25}
-        }
-        Fl_Button {} {
-          user_data this
-          callback {((UserInterface*)v)->TransformRemChildCB(o)}
-          tooltip {Remove a child from the list} image {C:/Documents and Settings/ejohnson/My Documents/Projects/p51/data/btnDel.gif} xywh {499 210 25 25}
-        }
-        Fl_Output TransformParentText {
-          label {Parent:}
-          private xywh {245 219 95 25} box ENGRAVED_FRAME
         }
       }
       Fl_Group ObjectGroup {
@@ -726,7 +731,7 @@ class UserInterface {open
         }
       }
       Fl_Group LightGroup {
-        user_data this open selected
+        user_data this
         xywh {15 255 520 180} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
       } {
         Fl_Value_Input LightNumberInput {
@@ -902,7 +907,10 @@ class UserInterface {open
   }
   decl {static dtCore::Base *GetSelectedInstance( UserInterface *ui);} {}
   decl {void BaseNameCB(Fl_Input *o);} {}
+  decl {void DrawableAddChildCB( Fl_Button *);} {}
+  decl {void DrawableRemChildCB( Fl_Button *);} {}
   decl {void TransformPosCB( Fl_Value_Input *);} {}
+  decl {void TransformCSCB( Fl_Round_Button *);} {}
   decl {void CameraClearColorBrowserCB(Fl_Button*);} {}
   decl {void CameraClearColorCB(Fl_Value_Input* )} {}
   decl {void CameraWinCB(Fl_Choice *);} {}
@@ -914,9 +922,6 @@ class UserInterface {open
   decl {void WinTitleCB( Fl_Input * );} {}
   decl {void ObjectFileCB( Fl_Input * );} {}
   decl {void ObjectLoadFileCB( Fl_Button * );} {}
-  decl {void TransformCSCB( Fl_Round_Button *);} {}
-  decl {void TransformAddChildCB( Fl_Button *);} {}
-  decl {void TransformRemChildCB( Fl_Button *);} {}
   decl {void SkyBoxBaseColorCB(Fl_Value_Input *);} {}
   decl {void SkyBoxBaseColorBrowserCB(Fl_Button*);} {}
   decl {void EnvFogColorCB(Fl_Value_Input *);} {}
