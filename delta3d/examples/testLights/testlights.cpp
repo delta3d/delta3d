@@ -26,61 +26,86 @@ TestLightsApp::Config()
 {
    GetScene()->UseSceneLight( false );
 
-   Object* terrain = new Object( "Terrain" );
-   terrain->LoadFile("room-int-walls.ive");
-   AddDrawable( terrain );
+   Object* warehouse = new Object( "Warehouse" );
+   warehouse->LoadFile("room-int-walls.ive");
+   AddDrawable( warehouse );
 
-   // create a spot light.
-   SpotLight* myLight1 = new SpotLight( 1, "spotlight", Light::GLOBAL);
 
-   Transform l1 = Transform( 5.0f, 10.0f, 2.0f, 0.0f, 0.0f, 0.0f );
-   myLight1->SetTransform(&l1);
 
-   myLight1->SetAmbient( 1.0f, 0.0f, 0.0f, 1.0f );
-   myLight1->SetDiffuse( 1.0f, 0.0f, 0.0f, 1.0f );
-   myLight1->SetSpotCutoff( 20.0f );
-   myLight1->SetSpotExponent( 50.0f );
+   // create a global spot light.
+   SpotLight* globalSpot = new SpotLight( 1, "globalSpotlight", Light::GLOBAL);
+
+   Transform trans = Transform( 5.0f, 10.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   globalSpot->SetTransform( &trans );
+
+   globalSpot->SetAmbient( 1.0f, 0.0f, 0.0f, 1.0f );
+   globalSpot->SetDiffuse( 1.0f, 0.0f, 0.0f, 1.0f );
+   globalSpot->SetSpotCutoff( 20.0f );
+   globalSpot->SetSpotExponent( 50.0f );
   
-   GetScene()->AddLight( myLight1 );
+   GetScene()->AddLight( globalSpot );
 
-   // create a positional light.
-   PositionalLight* myLight2 = new PositionalLight( 2, "poslight", Light::LOCAL);
 
-   l1.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
-   myLight2->SetTransform(&l1);
 
-   myLight2->SetAmbient( 0.0f, 1.0f, 0.0f, 1.0f );
-   myLight2->SetDiffuse( 0.0f, 1.0f, 0.0f, 1.0f );
-   myLight2->SetAttenuation( 1.0f, 2.0f/20, 2.0f/osg::square(20) );
+   // create a local positional light.
+   PositionalLight* localPositional = new PositionalLight( 2, "localPositionalLight", Light::LOCAL);
 
-   Object* barrel = new Object( "Barrel" );
-   barrel->LoadFile( "physics/sphere/happy_sphere.ive" );
-   barrel->SetTransform(&l1);
-   //AddDrawable( barrel );
-   myLight2->AddLightChild ( barrel );
+   trans.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   localPositional->SetTransform( &trans );
 
-   GetScene()->AddLight( myLight2 );
+   localPositional->SetAmbient( 0.0f, 1.0f, 0.0f, 1.0f );
+   localPositional->SetDiffuse( 0.0f, 1.0f, 0.0f, 1.0f );
+   localPositional->SetAttenuation( 1.0f, 2.0f/20, 2.0f/osg::square(20) );
 
-   InfiniteLight* myLight3 = new InfiniteLight( 3, "ilight", Light::GLOBAL );
+   GetScene()->AddLight( localPositional );
+
+   // add a child to the local light
+   Object* sphere = new Object( "Barrel" );
+   sphere->LoadFile( "physics/sphere/happy_sphere.ive" );
+   sphere->SetTransform( &trans );
+
+   localPositional->AddLightChild ( sphere );
+
+
+
+
+
+   // create a global positional light.
+   PositionalLight* globalPositional = new PositionalLight( 3, "globalPositionalLight", Light::GLOBAL);
+
+   trans.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   globalPositional->SetTransform( &trans );
+
+   globalPositional->SetAmbient( 0.0f, 1.0f, 0.0f, 1.0f );
+   globalPositional->SetDiffuse( 0.0f, 1.0f, 0.0f, 1.0f );
+   globalPositional->SetAttenuation( 1.0f, 2.0f/20, 2.0f/osg::square(20) );
+
+   //GetScene()->AddLight( globalPositional );
+
+
+
+   // create an infinite light
+   InfiniteLight* myLight3 = new InfiniteLight( 4, "ilight", Light::GLOBAL );
    myLight3->SetAmbient( 0.0f, 0.0f, 1.0f, 1.0f );
    myLight3->SetDiffuse( 0.0f, 0.0f, 1.0f, 1.0f );
 
    //GetScene()->AddLight( myLight3 );
 
+
+
    //set camera
-   Transform position;
-   position.Set(0.3f, 0.6f, 1.2f, 0.0f, 0.0f, 0.0f );
-   GetCamera()->SetTransform( &position );
+   trans.Set(0.3f, 0.6f, 1.2f, 0.0f, 0.0f, 0.0f );
+   GetCamera()->SetTransform( &trans );
 
    //remove:
    sgVec3 camLoc;
-   position.GetTranslation( camLoc );
+   trans.GetTranslation( camLoc );
 
    sgVec3 origin = { 0.0f, 0.0f, 0.0f };
 
    OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
-   omm->SetTarget(GetCamera());
-   omm->SetTarget(GetCamera());
+   omm->SetTarget( GetCamera() );
+   omm->SetTarget( GetCamera() );
    omm->SetDistance( 0 );
 
    //GUI *ui = new GUI(); 
@@ -134,16 +159,16 @@ TestLightsApp::OnMessage( Base::MessageData *data )
       float blue = 0.0f;
       float alpha = 0.0f;
 
-      SpotLight* plight = static_cast<SpotLight*>(GetScene()->GetLight( 1 ));
+      SpotLight* globalSpot = static_cast<SpotLight*>(GetScene()->GetLight( 1 ));
 
-      plight->SetAmbient( redValue, greenValue, blueValue, alpha );
-      plight->SetDiffuse( redValue, greenValue, blueValue, alpha );
+      globalSpot->SetAmbient( redValue, greenValue, blueValue, alpha );
+      globalSpot->SetDiffuse( redValue, greenValue, blueValue, alpha );
 
       Transform t;
-      plight->GetTransform( &t );
+      globalSpot->GetTransform( &t );
       t.SetRotation( redCount, 0.0f, 0.0f );
       
-      plight->SetTransform( &t );
+      globalSpot->SetTransform( &t );
       
       
    }
