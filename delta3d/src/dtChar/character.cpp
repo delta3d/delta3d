@@ -30,6 +30,7 @@ Character::Character(string name)
       mVelocity(0.0f)
 {
    SetName(name);
+   mBodyNode = new rbody::OsgBodyNode(false);
    
    RegisterInstance(this);
 }
@@ -94,11 +95,20 @@ osg::Node* Character::LoadFile(std::string filename, bool useCache)
          name = buf.str();
       }
       
+      osg::Matrix mat;
+      if (mBodyNode.valid())
+      {
+         mat = mBodyNode->getMatrix();
+        mBodyNode = NULL;
+      }
+
       mBodyNode = rbody::ReplicantBodyMgr::instance()->createCharacter(
          path,
          name,
          mCollisionRootNode.get()
       );
+
+      mBodyNode->setMatrix(mat);
 
       mBodyNode->setUpdateMode(  rbody::OsgBodyNode::UPDATE_ANIMATION | 
                                  rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
