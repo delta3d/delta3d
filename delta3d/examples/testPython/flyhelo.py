@@ -2,7 +2,7 @@ from dtCore import *
 from math import *
 from time import *
 
-plane = Object.GetInstance('cessna')
+plane = Object.GetInstance('AH-1W')
 
 transform = Transform()
 
@@ -17,4 +17,4 @@ while True:
                  0, angle, 0, -45)
    plane.SetTransform(transform)
    sleep(0.01)
-   angle -= 0.45
+   angle += 0.45

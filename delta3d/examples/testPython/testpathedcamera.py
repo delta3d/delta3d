@@ -211,14 +211,14 @@ class SplinePathController:
 class TestPathedCameraApplication(Application):
 
     infiniteTerrain = InfiniteTerrain()
-    plane = Object()
+    helo = Object()
     
     def Config(self):
         Application.Config(self)
         SetDataFilePathList('../../data');
         self.AddDrawable(self.infiniteTerrain)
-        self.plane.LoadFile('cessna.osg')
-        self.AddDrawable(self.plane)
+        self.helo.LoadFile('ah-1w.ive')
+        self.AddDrawable(self.helo)
         self.spc = SplinePathController(
             self.GetCamera(),
             [ Waypoint(5.0, (0.0, -200.0, 50.0), (0.0, 0.0, 0.0)),

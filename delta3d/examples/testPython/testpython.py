@@ -11,9 +11,9 @@ class TestPythonApplication(Application):
     def Config(self):
         Application.Config(self)
         SetDataFilePathList('../../data');
-        self.plane = Object('cessna')
-        self.plane.LoadFile('cessna.osg')
-        self.GetScene().AddDrawable(self.plane)
+        self.helo = Object('AH-1W')
+        self.helo.LoadFile('ah-1w.ive')
+        self.GetScene().AddDrawable(self.helo)
         self.transform = Transform()
         self.angle = 0.0
         
@@ -21,8 +21,8 @@ class TestPythonApplication(Application):
         self.transform.Set(40*cos(radians(self.angle)),
                            100 + 40*sin(radians(self.angle)), 
                            0, self.angle, 0, -45)
-        self.plane.SetTransform(self.transform)
-        self.angle -= 45*deltaFrameTime
+        self.helo.SetTransform(self.transform)
+        self.angle += 45*deltaFrameTime
 
 testPythonApp = TestPythonApplication('config.xml')
 
