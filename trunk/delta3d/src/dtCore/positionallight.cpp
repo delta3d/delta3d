@@ -58,9 +58,8 @@ private:
 };
 
 PositionalLight::PositionalLight( int number, const std::string name, const LightingMode mode )
-: Light()
+: Light( number, mode, NULL )
 {
-   Init( number, mode, NULL);
    SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
@@ -73,9 +72,8 @@ PositionalLight::PositionalLight( int number, const std::string name, const Ligh
 }
 
 PositionalLight::PositionalLight( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
-: Light()
+: Light( osgLightSource->getLight()->getLightNum(), mode, osgLightSource )
 {
-   Init( osgLightSource->getLight()->getLightNum(), mode, osgLightSource );
    SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();

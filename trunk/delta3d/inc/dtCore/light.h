@@ -46,6 +46,7 @@ namespace dtCore
          LOCAL  = 1
       };
 
+      Light( int number, LightingMode mode, osg::LightSource* lightSource );
       virtual ~Light() = 0;
 
       inline osg::LightSource* GetOSGLightSource()
@@ -62,6 +63,16 @@ namespace dtCore
       
       inline LightingMode GetLightingMode() const
       { return mLightingMode; }
+
+      inline void SetSceneParent( Scene* scene )
+      { mSceneParent = scene; }
+
+      inline Scene* GetSceneParent()
+      { return mSceneParent; }
+
+      void SetEnabled( bool enabled );
+      inline bool GetEnabled()
+      { return mEnabled; }
       
       inline void SetLightModel( osg::LightModel* model )
       { mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, osg::StateAttribute::ON ); }
@@ -101,30 +112,12 @@ namespace dtCore
 
    protected:
 
-      void Init( int number, LightingMode mode, osg::LightSource* lightSource )
-      {
-         if( number < 0 || number >= MAX_LIGHTS )
-            dtCore::Notify(WARN, "Light number %d is out of bounds, use values 0-7.",number);
-
-         osg::Light* light = new osg::Light;
-         light->setLightNum( number );
-
-         if( lightSource )
-            mLightSource = lightSource;
-         else
-            mLightSource = new osg::LightSource;
-
-         mLightingMode = mode;
-
-         mLightSource->setLight( light );
-         mLightSource->setLocalStateSetModes( osg::StateAttribute::ON ); //enable local lighting
-      }
-
       LightingMode mLightingMode;
       osg::ref_ptr<osg::LightSource> mLightSource;
+      Scene* mSceneParent;
 
+      bool mEnabled;
    };
-
 }
 
 
