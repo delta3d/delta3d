@@ -5,7 +5,7 @@
 ########################################
 
 ADD_EXECUTABLE( testCharacters main )
-TARGET_LINK_LIBRARIES( testCharacters dtcore dtchar cfgscript rbody )
+TARGET_LINK_LIBRARIES( testCharacters dtcore dtchar rbody cal3d )
 
 
 
