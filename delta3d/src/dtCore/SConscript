@@ -58,6 +58,5 @@ env = env.Copy()
 
 dtCoreLib = env.SharedLibrary( 'dtcore', dtCoreSrcs, LIBS=[ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml' ] )
 
-# env.Depends(...)
-
-env.Install( '../../lib', dtCoreLib )
+# TODO: install headers
+env.Install( '$prefix/lib', dtCoreLib )

@@ -1,14 +1,15 @@
 Import('*')
 
-dtAbcSrcs = [ 	'application.cpp', 
-		'baseabc.cpp', 
-		'weather.cpp', 
-		'widget.cpp' ]
+dtAbcSrcs = [   'application.cpp',
+                'baseabc.cpp',
+                'weather.cpp',
+                'widget.cpp' ]
 
 env = env.Copy()
+#env['LIBPATH'] = env['LIBPATH'] + [env['prefix']+'/src/dtCore']
+#print env['LIBPATH']
 
 dtAbcLib = env.SharedLibrary( 'dtabc', dtAbcSrcs, LIBS=[ 'dtcore', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
 
-# change to INSTALL_DIR
-
-env.Install( '../../lib', dtAbcLib )
+# TODO: install headers
+env.Install( '$prefix/lib', dtAbcLib )

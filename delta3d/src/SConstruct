@@ -8,20 +8,24 @@ opts.AddOptions(
     BoolOption('distcc', 'Enable compiling with distcc', 0),
     BoolOption('nowarn', 'Disable all warnings', 0),
     BoolOption('warningsAsErrors', 'Treat warnings as errors', 0),
-    PathOption('prefix', 'Directory to install under (Default: /usr/local)', '/usr/local') )
+    PathOption('prefix', 'Directory to install under (Default: /usr/local)', '/home/cwosborn/delta/HEAD/delta3d') )
 
 env = Environment(
     ENV = {
-      'PATH'       : os.environ[ 'PATH' ],
-      'HOME'       : os.environ[ 'HOME' ], # required for distcc
+      'PATH'       : os.environ['PATH'],
+      'HOME'       : os.environ['HOME'], # required for distcc
       'DELTA_ROOT' : os.environ['DELTA_ROOT'].split(':'),
       'DELTA_INC'  : os.environ['DELTA_INC'].split(':'),
       'DELTA_LIB'  : os.environ['DELTA_LIB'].split(':'),
       'DELTA_DATA' : os.environ['DELTA_DATA'].split(':')
     }, options = opts)
+
+
 env.Replace(CPPPATH = [], LIBS = [], LIBPATH = [], CPPDEFINES = [],
-    CXXFLAGS = "", CCFLAGS = "")
+    CXXFLAGS = '', CCFLAGS = '')
+
 Help(opts.GenerateHelpText(env))
+opts.Save('delta3d.conf', env)
 
 if env.get('debug'):
     env.Append(CCFLAGS=['-g'], CPPDEFINES=['DEBUG', '_DEBUG'])
@@ -45,8 +49,10 @@ if env.get('warningsAsErrors'):
     elif env['CXX'] == 'g++':
         env.Append(CXXFLAGS=['-Werror'])
 
-
 Help(opts.GenerateHelpText(env))
+
+#env['CPPPATH'] = env['CPPPATH'].append(env['ENV']['DELTA_INC'])
+#env['LIBPATH'] = env['LIBPATH'].append(env['ENV']['DELTA_LIB'])
 
 env['CPPPATH'] = env['ENV']['DELTA_INC']
 env['LIBPATH'] = env['ENV']['DELTA_LIB']
@@ -58,79 +64,96 @@ env['LIBPATH'] = env['ENV']['DELTA_LIB']
 # ...
 ##############################################
 
-def CheckForSimpleLibrary(name, header, libraries, call = "main();", language = "C++"):
-
-    if not conf.CheckCXXHeader(header):
-        return 0
-
-    previous_libs = env[ 'LIBS' ]
-    library = libraries[ 0 ]
-    vars[ "LIBS" ] = libraries[ 1: ]
-
-    if not conf.CheckLibWithHeader(library, header, language, call, False):
-        return 0
-
-    env[ varprefix + "LIBS" ] = libraries
-    env[ 'LIBS' ] = previous_libs
-
-    return 1
+# do version, config checking
 
 def CheckForOpenSceneGraph(context):
 
-  potentialOsgDirs = [
-    "/usr",
-    "/usr/local"
-     ]
+    osgLibs = [ 'osg', 'osgDB', 'osgUtil', 'osgGL2', 'osgText', 'osgSim', 'osgFX', 'osgParticle', 'osg', 'osgGA', 'osgProducer', 'osgTerrain' ]
 
-  if os.environ.has_key('DELTA_ROOT'):
-      potentialOsgDirs.insert( 0, os.path.join( os.environ['DELTA_ROOT'], "ext" ) )
+    for lib in osgLibs:
+        if not conf.CheckLib(lib, language='C++'):
+            return 0
 
-  for i in potentialOsgDirs:
-    if CheckForSimpleLibrary("osg", "MatrixTransform", [ "osg" ] ):
-      context.env.Replace(OSG_DIR = i)
-      return 1
-  return 0
+    return 1
 
 def CheckForProducer(context):
+    if conf.CheckLib('Producer',language='C++'):
+        return 1
     return 0
 
 def CheckForOpenThreads(context):
+    if conf.CheckLib('OpenThreads',language='C++'):
+        return 1
     return 0
 
 def CheckForCal3d(context):
+    # test for --enable-rtti
+    if conf.CheckLib('cal3d',language='C++'):
+        return 1
     return 0
 
 def CheckForFltk(context):
+    # test for --enable-shared(?), --enable-threads
+    if conf.CheckLib('fltk',language='C++'):
+        return 1
     return 0
 
 def CheckForGdal(context):
+    if conf.CheckLib('gdal',language='C++'):
+        return 1
     return 0
 
 def CheckForGlGui(context):
+    if conf.CheckLib('glgui',language='C++'):
+        return 1
     return 0
 
 def CheckForIsense(context):
+    if conf.CheckLib('isense',language='C++'):
+        return 1
     return 0
 
 def CheckForOpenAl(context):
+    # verify hacks
+    if conf.CheckLib('openal',language='C++'):
+        return 1
     return 0
 
 def CheckForOde(context):
+    # test for single precision, trimesh enabled, RTTI on
+    if conf.CheckLib('ode',language='C'):
+        return 1
     return 0
 
 def CheckForPlib(context):
-    return 0
 
-def CheckForReplicantBody(context):
-    return 0
+    pLibLibs = [ 'plibsg', 'plibul', 'plibjs' ]
 
-def CheckForSignalSlot(context):
-    if not conf.CheckCXXHeader('sigslot.h'):
-        print 'sigslot.h must be installed!'
-        return 0
+    for lib in pLibLibs:
+        if not conf.CheckLib(lib, language='C++'):
+            return 0
+
     return 1
 
+def CheckForReplicantBody(context):
+
+    rbodyLibs = [ 'rbodyvortex', 'rbodyvrutils', 'cfgvrutils', 'cfgscript', 'rbody', 'rbodyosg' ]
+
+    for lib in rbodyLibs:
+        if not conf.CheckLib(lib, language='C++'):
+            return 0
+
+    return 1
+
+def CheckForSignalSlot(context):
+    # test for gcc3.4 compatibility
+    if conf.CheckHeader('sigslot.h',language='C++'):
+        return 1
+    return 0
+
 def CheckForTinyXml(context):
+    if conf.CheckLib('tinyxml',language='C++'):
+        return 1
     return 0
 
 def CheckForRti(context):
@@ -140,29 +163,66 @@ def CheckForBoost(context):
     return 0
 
 conf = Configure(env, custom_tests = {
-    "CheckForOpenSceneGraph" : CheckForOpenSceneGraph,
-    "CheckForProducer" : CheckForProducer,
-    "CheckForOpenThreads" : CheckForOpenThreads,
-    "CheckForCal3d" : CheckForCal3d,
-    "CheckForFltk" : CheckForFltk,
-    "CheckForGdal" : CheckForGdal,
-    "CheckForGlGui" : CheckForGlGui,
-    "CheckForIsense" : CheckForIsense,
-    "CheckForOpenAl" : CheckForOpenAl,
-    "CheckForOde" : CheckForOde,
-    "CheckForPlib" : CheckForPlib,
-    "CheckForReplicantBody" : CheckForReplicantBody,
-    "CheckForSignalSlot" : CheckForSignalSlot,
-    "CheckForTinyXml" : CheckForTinyXml
+    'CheckForOpenSceneGraph' : CheckForOpenSceneGraph,
+    'CheckForProducer' : CheckForProducer,
+    'CheckForOpenThreads' : CheckForOpenThreads,
+    'CheckForCal3d' : CheckForCal3d,
+    'CheckForFltk' : CheckForFltk,
+    'CheckForGdal' : CheckForGdal,
+    'CheckForGlGui' : CheckForGlGui,
+    'CheckForIsense' : CheckForIsense,
+    'CheckForOpenAl' : CheckForOpenAl,
+    'CheckForOde' : CheckForOde,
+    'CheckForPlib' : CheckForPlib,
+    'CheckForReplicantBody' : CheckForReplicantBody,
+    'CheckForSignalSlot' : CheckForSignalSlot,
+    'CheckForTinyXml' : CheckForTinyXml
     })
 
-#if not conf.CheckForOpenSceneGraph():
-#    Exit(1)
+# TODO: don't run for install
+if not env.GetOption('clean'):
 
-if not conf.CheckForSignalSlot():
-    Exit(1)
+    if not conf.CheckForGdal():
+        Exit(1)
 
-# etc.
+    if not conf.CheckForOpenThreads():
+        Exit(1)
+
+    if not conf.CheckForProducer():
+        Exit(1)
+
+    if not conf.CheckForOpenSceneGraph():
+        Exit(1)
+
+    if not conf.CheckForFltk():
+        Exit(1)
+
+    if not conf.CheckForGlGui():
+        Exit(1)
+
+    if not conf.CheckForIsense():
+        Exit(1)
+
+    if not conf.CheckForOpenAl():
+        Exit(1)
+
+    if not conf.CheckForOde():
+        Exit(1)
+
+    if not conf.CheckForPlib():
+        Exit(1)
+
+    if not conf.CheckForCal3d():
+        Exit(1)
+
+    if not conf.CheckForReplicantBody():
+        Exit(1)
+
+    if not conf.CheckForSignalSlot():
+        Exit(1)
+
+    if not conf.CheckForTinyXml():
+        Exit(1)
 
 env = conf.Finish()
 
@@ -170,14 +230,19 @@ env = conf.Finish()
 # Build Delta3D #
 #################
 
-Export("env")
+Export('env')
 
-env.Replace(CXXSUFFIX = ".cpp")
+env.Replace(CXXSUFFIX = '.cpp')
 
-env.Alias("install", "$prefix/lib")
+env.Alias('install','$prefix/lib')
+env.Alias('examples','$prefix/examples')
 
-SConscript(dirs=['dtCore'])
-#SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gui_fl' ])
-#SConscript(dirs=[ 'dtHLA' ])
+# TODO: install headers, libs, to $prefix
+
+SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gui_fl' ])
 #SConscript(dirs=[ 'python' ])
 #SConscript(dirs=[ 'soarx' ])
+
+env.Depends('dtABC','dtCore')
+env.Depends('dtChar','dtCore')
+env.Depends('gui_fl','dtCore')
