@@ -63,7 +63,7 @@ class HLAStealthViewerApplication : public Application
          
          mOrbitMotionModel->SetDistance(350.0f);
          
-         GetScene()->GetSceneHandler()->GetSceneView()->setClearColor(Vec4(0, 0, 0, 1));
+         GetCamera()->SetClearColor(0.f, 0.f, 0.f, 1.f);
          
          mEarth = new dtCore::Object;
          
