@@ -1,6 +1,7 @@
-#pragma once
+#ifndef _CLOUDPLANE_H
+#define _CLOUDPLANE_H
 
-#include "enveffect.h"
+#include "EnvEffect.h"
 #include "sg.h"
 
 #include <osg/Group>
@@ -9,7 +10,7 @@
 #include <osg/Transform>
 #include <osg/Texture2D>
 #include <osgUtil/CullVisitor>
-#include <osg/fog>
+#include <osg/Fog>
 
 namespace dtCore
 {
@@ -99,3 +100,5 @@ namespace dtCore
    };
 
 }
+
+#endif

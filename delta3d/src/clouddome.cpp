@@ -1,5 +1,5 @@
 
-#include "cloudDome.h"
+#include "clouddome.h"
 #include "system.h"
 #include "notify.h"
 
@@ -13,11 +13,50 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(CloudDome)
 
-CloudDome::CloudDome(std::string filename)
+// Constructor without volume texture file
+CloudDome::CloudDome(int   octaves,
+					 int   frequency,
+                     float amp,
+                     float persistence,
+					 float cutoff,
+                     float exponent,
+                     float radius,
+					 int   segments)
+:EnvEffect("CloudDome"), 
+mFileName(""),
+mRadius(radius),
+mSegments(segments),
+mScale(1/mRadius*1000),
+mExponent(exponent),
+mCutoff(cutoff),
+mSpeedX(0.1f),
+mSpeedY(0.05f),
+mOffset(new osg::Vec3(.01f, .01f, 0.f)),
+mCloudColor(new osg::Vec3(1.0f, 1.0f, 1.0f)),
+mEnable(true),
+mBias(1.0f),
+ctime(0),
+mOctaves(octaves),
+mFrequency(frequency),
+mPersistence(persistence),
+mAmplitude(amp),
+shaders_enabled(true),
+mNode(new osg::Group)
+{
+    RegisterInstance(this);
+    Create();
+    AddSender(System::GetSystem());
+}
+
+// Constructor with filename of volume texture
+CloudDome::CloudDome(float radius,
+					 int   segments,
+					 std::string filename)
 :EnvEffect("CloudDome"),
 mFileName(filename),
-mRadius(5500.f),
-mScale(.2f),
+mRadius(radius),
+mSegments(segments),
+mScale(1/mRadius*1000),
 mExponent(5.f),
 mCutoff(.5f),
 mSpeedX(0.1f),
@@ -27,8 +66,8 @@ mCloudColor(new osg::Vec3(1.0f, 1.0f, 1.0f)),
 mEnable(true),
 mBias(1.0f),
 ctime(0),
-mOctaves(4),
-mFrequency(6),
+mOctaves(6),
+mFrequency(2),
 mPersistence(.5),
 mAmplitude(.7),
 shaders_enabled(true),
@@ -59,14 +98,14 @@ void CloudDome::loadShaderSource( osgGL2::ShaderObject* obj, std::string fileNam
 }
 
 
-osg::Geode *CloudDome::createDome( float radius = 5500.f)
+osg::Geode *CloudDome::createDome( float radius, int segs)
 {
     int i, j;
     float lev[] = { 1.0, 5.0, 10.0, 15.0, 30.0, 45.0 , 60.0, 75, 90.0  };
     float cc[][4] =
     {
-        { 0.0, 0.0, 0.0,  0.0 },  // has bright colors for debugging when 
-        { 1.0, 0.0, 0.0,  0.3 },  // shaders are disabled
+        { 1.0, 0.0, 0.0,  0.0 },  // has bright colors for debugging when 
+        { 0.0, 1.0, 0.0,  0.3 },  // shaders are disabled
         { 0.0, 0.0, 1.0,  0.7 },
         { 1.0, 0.0, 0.0,  1.0 },
         { 0.0, 1.0, 0.0,  1.0 },
@@ -75,11 +114,12 @@ osg::Geode *CloudDome::createDome( float radius = 5500.f)
         { 0.0, 1.0, 0.0,  1.0 },
         { 0.0, 0.0, 1.0,  1.0 }
     };
+	
+	--segs; // We want segments to span from  0 to segs-1
 
     float x, y, z;
     float alpha, theta;
     int nlev = sizeof( lev )/sizeof(float);
-    int segs = 19;
 
     osg::Geometry *geom = new osg::Geometry;
 
@@ -119,7 +159,6 @@ osg::Geode *CloudDome::createDome( float radius = 5500.f)
     for( i = 0; i < nlev-1; ++i )
     {
         osg::DrawElementsUShort* drawElements = new osg::DrawElementsUShort(osg::PrimitiveSet::TRIANGLE_STRIP);
-        //drawElements->reserve(38);
 
         for( j = 0; j < segs; ++j )
         {
@@ -148,20 +187,28 @@ void CloudDome::Create()
 {
     mXform = new MoveEarthySkyWithEyePointTransform();
 
-    mScale = (1 / mRadius) * 1000;
-
-    mDome = createDome(mRadius);
+    mDome = createDome(mRadius, mSegments);
     osg::StateSet *mStateSet = mDome->getOrCreateStateSet();
 
-    mImage_3D = osgDB::readImageFile(mFileName);
-    if (!mImage_3D.valid())
-    {
-        dtCore::Notify(WARN, "CloudDome can't load image file."  );
-        dtCore::Notify(WARN, "Creating new 128^3 3d texture...");
+    if (mFileName != "")
+	{
+		mImage_3D = osgDB::readImageFile(mFileName);
+		if (!mImage_3D.valid())
+		{
+			dtCore::Notify(WARN, "CloudDome can't load image file."  );
+			dtCore::Notify(WARN, "Creating new 128^3 3d texture...");
 
-        NoiseGenerator noise3d(mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128);
-        mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
-    }
+			NoiseGenerator noise3d(mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128);
+			mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
+		}
+	}
+	else
+	{
+		dtCore::Notify(WARN, "Creating 128^3 3d texture...");	
+		NoiseGenerator noise3d(mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128);
+		mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
+	}
+
 
 
     mTex3D = new osg::Texture3D;
@@ -186,7 +233,6 @@ void CloudDome::Create()
     _progObjList.push_back( progObj );
     mStateSet->setAttributeAndModes(progObj, osg::StateAttribute::ON);
 
-
     // Set the program objects
     Cloud_ProgObj = new osgGL2::ProgramObject;
     _progObjList.push_back( Cloud_ProgObj );
@@ -194,11 +240,11 @@ void CloudDome::Create()
     Cloud_FragObj = new osgGL2::ShaderObject( osgGL2::ShaderObject::FRAGMENT );
     Cloud_ProgObj->addShader( Cloud_FragObj );
     Cloud_ProgObj->addShader( Cloud_VertObj );
+  
+    loadShaderSource( Cloud_VertObj, "cloud1.vert" );
+    loadShaderSource( Cloud_FragObj, "cloud1.frag" );
 
-    loadShaderSource( Cloud_VertObj, "Cloud1.vert" );
-    loadShaderSource( Cloud_FragObj, "Cloud1.frag" );
-
-    Cloud_ProgObj->setUniform( "Scale",      mScale );
+    Cloud_ProgObj->setUniform( "Scale",      mScale / 1000 );
     Cloud_ProgObj->setSampler( "Noise",      0 );  // TODO: Change texture files at runtime
     Cloud_ProgObj->setUniform( "Offset",     *mOffset);
     Cloud_ProgObj->setUniform( "CloudColor", *mCloudColor );
@@ -211,6 +257,7 @@ void CloudDome::Create()
 
     mXform->addChild(mDome.get());
     mNode->addChild(mXform.get());
+
 
 }
 
@@ -236,7 +283,7 @@ void CloudDome::Update(const double deltaFrameTime)
     if(ctime > INT_MAX)  
         ctime = 0;        
 
-    mOffset->set( ctime * mSpeedX / 100, ctime * mSpeedY / 100, 0);
+    mOffset->set( ctime * mSpeedX/10, ctime * mSpeedY/20, 0);
 
     if(mEnable)
     {

@@ -91,7 +91,7 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
 }
 
 
-void CloudPlane::Create( void )
+void CloudPlane::Create( void ) 
 {
 	mXform = new MoveEarthySkyWithEyePointTransform();
 	mXform->setCullingActive(false);
@@ -101,7 +101,7 @@ void CloudPlane::Create( void )
 
 	mCloudColor = new osg::Vec4;
 
-	mWind = new osg::Vec2(.005f / mHeight, .005f/ mHeight);
+	mWind = new osg::Vec2(.05f / mHeight, .05f/ mHeight);
 
 	int planeSize = 20000;
 
@@ -115,6 +115,8 @@ void CloudPlane::Create( void )
 	mCloudTexture->setUseHardwareMipMapGeneration(true);
 	mCloudTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	mCloudTexture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	mCloudTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
+	mCloudTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
 
 	// Texture Blending
 	osg::TexEnv* texenv = new osg::TexEnv;
@@ -147,16 +149,15 @@ void CloudPlane::Repaint(sgVec4 sky_color, sgVec4 fog_color,
 {
 	mFog->setColor(osg::Vec4(fog_color[0], fog_color[1], fog_color[2], 1.f) );
 	mFog->setEnd(vis);
-
-	if(sun_angle < 12)
-		mCloudColor->set(0.2f, 0.2f, 0.2f, 1.0f);
-	else if (sun_angle > 12 && sun_angle <= 14)
+	
+	int pm = 500;
+	if(sun_angle < 13)
+		mCloudColor->set(0.3f, 0.3f, 0.3f, 1.0f);
+	else if (sun_angle > 13 && sun_angle <= 18)
 	{
-		float fr = (sun_angle - 12)  / 18.f; 
-		fr = fr - .3f;
-		if(fr < 0)
-			fr = 0;
-		mCloudColor->set((.98f - fr)*(160/mHeight), (.9f - sqrt(fr))*(160/mHeight), (.76f - fr)*(160/mHeight), 1.0f);
+		float fr = (18 - sun_angle)  / 5.f; 
+
+		mCloudColor->set(fr*(pm/mHeight), .9f *fr*(pm/mHeight), .76f *fr*(pm/mHeight), 1.0f);
 	}
 	else
 		mCloudColor->set(1.0f, 1.0f, 1.0f, 1.0f);
