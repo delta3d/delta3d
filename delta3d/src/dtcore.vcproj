@@ -484,6 +484,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\soundeffectbinder.cpp">
+			</File>
+			<File
 				RelativePath=".\stats.cpp">
 			</File>
 			<File
@@ -721,6 +724,9 @@
 			</File>
 			<File
 				RelativePath="..\inc\sound.h">
+			</File>
+			<File
+				RelativePath="..\inc\soundeffectbinder.h">
 			</File>
 			<File
 				RelativePath="..\inc\stats.h">
