@@ -29,6 +29,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
      mMaximumTurnSpeed(90.0f),
      mMaximumSidestepSpeed(5.0f),
      mHeightAboveTerrain(2.0f),
+     mMaximumStepUpDistance(1.0f),
      mDownwardSpeed(0.0f)
 {
    RegisterInstance(this);
@@ -327,7 +328,30 @@ float WalkMotionModel::GetHeightAboveTerrain()
 {
    return mHeightAboveTerrain;
 }
-   
+
+/**
+ * Sets the maximum step-up distance.  When clamping to the ground, the
+ * maximum step-up distance determines whether to rise to a new level
+ * (as when the model climbs a staircase) or to stay at the current level
+ * (as when the model passes under a roof).  The default is 1.0.
+ *
+ * @param maximumStepUpDistance the new maximum step-up distance
+ */
+void WalkMotionModel::SetMaximumStepUpDistance(float maximumStepUpDistance)
+{
+   mMaximumStepUpDistance = maximumStepUpDistance;
+}
+
+/**
+ * Returns the current maximum step-up distance.
+ *
+ * @return the maximum step-up distance
+ */
+float WalkMotionModel::GetMaximumStepUpDistance()
+{
+   return mMaximumStepUpDistance;
+}
+         
 /**
  * Message handler callback.
  *
@@ -384,8 +408,34 @@ void WalkMotionModel::OnMessage(MessageData *data)
       
       if(mScene.get() != NULL)
       {
-         float height = 
-            mScene->GetHeightOfTerrain(&xyz[0], &xyz[1]) + mHeightAboveTerrain;
+         osgUtil::IntersectVisitor iv;
+      
+         osg::Vec3 start(
+            xyz[0],
+            xyz[1],
+            xyz[2] + mMaximumStepUpDistance - mHeightAboveTerrain
+         );
+         
+         osg::Vec3 end(
+            xyz[0], 
+            xyz[1], 
+            xyz[2] - 10000.0f
+         );
+         
+         osg::LineSegment* seg = new osg::LineSegment(start, end);
+            
+         iv.addLineSegment(seg);
+      
+         mScene->GetSceneNode()->accept(iv);
+         
+         float height = 0.0f;
+         
+         if(iv.hits())
+         {
+            height = iv.getHitList(seg)[0].getWorldIntersectPoint()[2];
+         }
+         
+         height += mHeightAboveTerrain;
          
          if(xyz[2] <= height)
          {
