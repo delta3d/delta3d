@@ -8,13 +8,16 @@
 #include "environment.h"
 #include "skydome.h"
 #include "clouddome.h"
+#include "dtabc.h"
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_draw.H>
 #include "system.h"
 #include "infiniteterrain.h"
 
-using namespace dtCore;using namespace std;
+using namespace dtCore;
+using namespace dtABC;
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -45,7 +48,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, Transformable*))
    {
       Transformable *t = (Transformable*)b;
-      InstanceClassName->label( typeid(t).name() ); 
+      InstanceClassName->label( "dtCore::Transformable" ); 
       
       Transform trans;
       if (TransformCSAbsButton->value())
@@ -87,7 +90,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, Camera*))
    {
       Camera *c = (Camera*)b;
-      InstanceClassName->label( typeid(c).name() ); 
+      InstanceClassName->label( "dtCore::Camera" ); 
       sgVec4 color;
       c->GetClearColor(color);
       CameraClearRed->value(color[0]);
@@ -157,7 +160,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, Scene*))
    {
       Scene *s = (Scene*)b;
-      InstanceClassName->label( typeid(s).name() ); 
+      InstanceClassName->label( "dtCore::Scene" ); 
       //SceneGroup->show();
    }
    //else SceneGroup->hide();
@@ -166,7 +169,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, Object*))
    {
       Object *o = (Object*)b;
-      InstanceClassName->label( typeid(o).name() ); 
+      InstanceClassName->label( "dtCore::Object" ); 
       std::string filename = o->GetFilename();
       ObjectFilename->value( filename.c_str() );
 
@@ -178,7 +181,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, DeltaWin*))
    {
       DeltaWin *w = (DeltaWin*)b;
-      InstanceClassName->label( typeid(w).name() ); 
+      InstanceClassName->label( "dtCore::DeltaWin" ); 
 
       int x,y,width,height;
       w->GetPosition(&x, &y, &width, &height);
@@ -202,7 +205,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, Environment*))
    {
       Environment *e = (Environment*)b;
-      InstanceClassName->label( typeid(e).name() );
+      InstanceClassName->label( "dtCore::Environment" );
       
       sgVec4 fColor;
       e->GetFogColor(fColor);
@@ -282,7 +285,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, SkyDome*))
    {
       SkyDome *s = (SkyDome*)b;
-      InstanceClassName->label( typeid(s).name() );
+      InstanceClassName->label( "dtCore::SkyDome" );
 
       sgVec3 color;
       s->GetBaseColor(color);
@@ -304,7 +307,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, System*))
    {
       System *s = (System*)b;
-      InstanceClassName->label( typeid(s).name() );
+      InstanceClassName->label( "dtCore::System" );
    }
 
    if (IS_A(b, InfiniteTerrain*))
@@ -333,7 +336,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, CloudDome*))
    {
        CloudDome *cd = (CloudDome*)b;
-       InstanceClassName->label( typeid(cd).name() );
+       InstanceClassName->label( "dtCore::CloudDome" );
 
        cScale->value(cd->getScale());
        cExponent->value(cd->getExponent());
@@ -361,6 +364,113 @@ void UserInterface::SelectInstance (void)
        CloudEditor->show();
    }
    else CloudEditor->hide();
+
+   /** Weather */
+   if (IS_A(b, Weather*))
+   {
+      Weather *w = (Weather*)b;
+
+      InstanceClassName->label( "dtABC::Weather" );
+
+      Weather::WeatherTheme theme = w->GetTheme();
+      switch(theme)
+      {
+         case Weather::THEME_CUSTOM: 
+            WeatherThemeCustomOption->setonly(); 
+            WeatherThemeGroup->deactivate();
+            WeatherCustomGroup->activate();
+            break;
+         case Weather::THEME_CLEAR: 
+            WeatherThemeClearOption->setonly(); 
+            WeatherThemeOption->setonly();
+            WeatherThemeGroup->activate();
+            WeatherCustomGroup->deactivate();
+            break;
+         case Weather::THEME_FAIR: 
+            WeatherThemeFairOption->setonly();
+            WeatherThemeOption->setonly();
+            WeatherThemeGroup->activate();
+            WeatherCustomGroup->deactivate();
+            break;
+         case Weather::THEME_FOGGY: 
+            WeatherThemeFoggyOption->setonly();
+            WeatherThemeOption->setonly();
+            WeatherThemeGroup->activate();
+            WeatherCustomGroup->deactivate();
+            break;
+         case Weather::THEME_RAINY: 
+            WeatherThemeRainyOption->setonly(); 
+            WeatherThemeOption->setonly();
+            WeatherThemeGroup->activate();
+            WeatherCustomGroup->deactivate();
+            break;
+         default: 
+            WeatherThemeClearOption->setonly();
+            WeatherThemeOption->setonly();
+            WeatherThemeGroup->activate();
+            WeatherCustomGroup->deactivate();
+            break;
+      }
+
+
+      float roc = w->GetRateOfChange();
+      WeatherRateOfChangeSlider->value(roc);
+
+      Weather::TimePeriod t;
+      Weather::Season s;
+      w->GetTimePeriodAndSeason(&t, &s);
+      WeatherTimePeriodChoice->value((int)t);
+      WeatherSeasonChoice->value( (int)s ) ;
+
+      {
+         Weather::CloudType cloud = w->GetBasicCloudType();
+         WeatherCloudSlider->value( (int) cloud);
+
+         switch(cloud) 
+         {
+         case Weather::CLOUD_CLEAR: WeatherCloudSlider->label("Cloud: Clear"); break;
+         case Weather::CLOUD_FEW: WeatherCloudSlider->label("Cloud: Few"); break;
+         case Weather::CLOUD_SCATTERED: WeatherCloudSlider->label("Cloud: Scattered"); break;
+         case Weather::CLOUD_BROKEN: WeatherCloudSlider->label("Cloud: Broken"); break;
+         case Weather::CLOUD_OVERCAST: WeatherCloudSlider->label("Cloud: Overcast"); break;
+         default: WeatherCloudSlider->label("Cloud: Clear"); break;
+         }
+      }
+
+      {
+         Weather::VisibilityType vis = w->GetBasicVisibilityType();
+         WeatherVisSlider->value( (int)vis );
+
+         switch(vis) {
+      case Weather::VIS_UNLIMITED: WeatherVisSlider->label("Vis: Unlimited"); 	break;
+      case Weather::VIS_FAR: WeatherVisSlider->label("Vis: Far"); 	break;
+      case Weather::VIS_MODERATE: WeatherVisSlider->label("Vis: Moderate"); 	break;
+      case Weather::VIS_LIMITED: WeatherVisSlider->label("Vis: Limited"); 	break;
+      case Weather::VIS_CLOSE: WeatherVisSlider->label("Vis: Close"); 	break;
+      default: WeatherVisSlider->label("Vis: Unlimited"); 	break;
+         }
+      }
+
+      {
+         Weather::WindType wind = w->GetBasicWindType();
+         WeatherWindSlider->value( (int)wind );
+
+         switch(wind) {
+      case Weather::WIND_NONE: WeatherWindSlider->label("Wind: None");   	break;
+      case Weather::WIND_BREEZE: WeatherWindSlider->label("Wind: Breeze");   	break;
+      case Weather::WIND_LIGHT: WeatherWindSlider->label("Wind: Light");   	break;
+      case Weather::WIND_MODERATE: WeatherWindSlider->label("Wind: Moderate");   	break;
+      case Weather::WIND_HEAVY: WeatherWindSlider->label("Wind: Heavy");   	break;
+      case Weather::WIND_SEVERE: WeatherWindSlider->label("Wind: Severe");   	break;
+      default:WeatherWindSlider->label("Wind: None");   	break;
+         }
+      }
+
+
+
+      WeatherGroup->show();
+   }
+   else WeatherGroup->hide();
 
 }
 
@@ -982,4 +1092,231 @@ void UserInterface::CloudColorCB(Fl_Value_Input*)
       CloudColorLoadButton->redraw();
 
    cd->setCloudColor( ccolor );
+}
+
+void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   if (WeatherThemeOption->value() == 1) //theme'd weather
+   {
+      WeatherThemeGroup->activate();
+      WeatherCustomGroup->deactivate();
+   }
+   else if (WeatherCustomOption->value() ==1) //custom weather
+   {
+      WeatherThemeGroup->deactivate();
+      WeatherCustomGroup->activate();
+      
+      //w->SetTheme(Weather::THEME_CUSTOM);
+   }
+}
+
+void UserInterface::WeatherThemeCB( Fl_Round_Button *o)
+{   
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   if (WeatherThemeCustomOption->value() == 1) w->SetTheme(Weather::THEME_CUSTOM);
+   else if (WeatherThemeClearOption->value() == 1) w->SetTheme(Weather::THEME_CLEAR);
+   else if (WeatherThemeFairOption->value() == 1) w->SetTheme(Weather::THEME_FAIR);
+   else if (WeatherThemeFoggyOption->value() == 1) w->SetTheme(Weather::THEME_FOGGY);
+   else if (WeatherThemeRainyOption->value() == 1) w->SetTheme(Weather::THEME_RAINY);
+
+   //need to update the custom weather sliders to match
+   {
+      Weather::CloudType cloud = w->GetBasicCloudType();
+      WeatherCloudSlider->value( (int) cloud);
+
+      switch(cloud) 
+      {
+      case Weather::CLOUD_CLEAR: WeatherCloudSlider->label("Cloud: Clear"); break;
+      case Weather::CLOUD_FEW: WeatherCloudSlider->label("Cloud: Few"); break;
+      case Weather::CLOUD_SCATTERED: WeatherCloudSlider->label("Cloud: Scattered"); break;
+      case Weather::CLOUD_BROKEN: WeatherCloudSlider->label("Cloud: Broken"); break;
+      case Weather::CLOUD_OVERCAST: WeatherCloudSlider->label("Cloud: Overcast"); break;
+      default: WeatherCloudSlider->label("Cloud: Clear"); break;
+      }
+   }
+
+   {
+      Weather::VisibilityType vis = w->GetBasicVisibilityType();
+      WeatherVisSlider->value( (int)vis );
+
+      switch(vis) {
+      case Weather::VIS_UNLIMITED: WeatherVisSlider->label("Vis: Unlimited"); 	break;
+      case Weather::VIS_FAR: WeatherVisSlider->label("Vis: Far"); 	break;
+      case Weather::VIS_MODERATE: WeatherVisSlider->label("Vis: Moderate"); 	break;
+      case Weather::VIS_LIMITED: WeatherVisSlider->label("Vis: Limited"); 	break;
+      case Weather::VIS_CLOSE: WeatherVisSlider->label("Vis: Close"); 	break;
+      default: WeatherVisSlider->label("Vis: Unlimited"); 	break;
+      }
+   }
+
+   {
+      Weather::WindType wind = w->GetBasicWindType();
+      WeatherWindSlider->value( (int)wind );
+
+      switch(wind) {
+      case Weather::WIND_NONE: WeatherWindSlider->label("Wind: None");   	break;
+      case Weather::WIND_BREEZE: WeatherWindSlider->label("Wind: Breeze");   	break;
+      case Weather::WIND_LIGHT: WeatherWindSlider->label("Wind: Light");   	break;
+      case Weather::WIND_MODERATE: WeatherWindSlider->label("Wind: Moderate");   	break;
+      case Weather::WIND_HEAVY: WeatherWindSlider->label("Wind: Heavy");   	break;
+      case Weather::WIND_SEVERE: WeatherWindSlider->label("Wind: Severe");   	break;
+      default:WeatherWindSlider->label("Wind: None");   	break;
+      }
+   }
+
+}
+
+void UserInterface::WeatherCustomCloudCB(Fl_Slider *)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   int cloud  = WeatherCloudSlider->value();
+   
+   switch(cloud) {
+   case 0: 
+      w->SetBasicCloudType(Weather::CLOUD_CLEAR);
+      WeatherCloudSlider->label("Cloud: Clear");      
+      break;
+   case 1: 
+      w->SetBasicCloudType(Weather::CLOUD_FEW);
+      WeatherCloudSlider->label("Cloud: Few");
+      break;
+   case 2: 
+      w->SetBasicCloudType(Weather::CLOUD_SCATTERED);
+      WeatherCloudSlider->label("Cloud: Scattered");
+      break;
+   case 3: 
+      w->SetBasicCloudType(Weather::CLOUD_BROKEN);
+      WeatherCloudSlider->label("Cloud: Broken");
+      break;
+   case 4: 
+      w->SetBasicCloudType(Weather::CLOUD_OVERCAST);
+      WeatherCloudSlider->label("Cloud: Overcast");
+      break;
+   default: 
+      w->SetBasicCloudType(Weather::CLOUD_CLEAR);
+      WeatherCloudSlider->label("Cloud: Clear");
+   break;
+   }
+
+   WeatherThemeCustomOption->setonly();
+}
+
+void UserInterface::WeatherCustomWindCB(Fl_Slider *)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   int wind  = WeatherWindSlider->value();
+
+   switch(wind) {
+   case 0: 
+      w->SetBasicWindType(Weather::WIND_NONE);
+      WeatherWindSlider->label("Wind: None");      
+      break;
+   case 1: 
+      w->SetBasicWindType(Weather::WIND_BREEZE);
+      WeatherWindSlider->label("Wind: Breeze");
+      break;
+   case 2: 
+      w->SetBasicWindType(Weather::WIND_LIGHT);
+      WeatherWindSlider->label("Wind: Light");
+      break;
+   case 3: 
+      w->SetBasicWindType(Weather::WIND_MODERATE);
+      WeatherWindSlider->label("Wind: Moderate");
+      break;
+   case 4: 
+      w->SetBasicWindType(Weather::WIND_HEAVY);
+      WeatherWindSlider->label("Wind: Heavy");
+      break;
+   default: 
+      w->SetBasicWindType(Weather::WIND_SEVERE);
+      WeatherWindSlider->label("Wind: Severe");
+      break;
+   }
+
+   WeatherThemeCustomOption->setonly();
+}
+
+void UserInterface::WeatherCustomVisCB(Fl_Slider *)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   int vis  = WeatherVisSlider->value();
+
+   switch(vis) {
+   case 0: 
+      w->SetBasicVisibilityType(Weather::VIS_UNLIMITED);
+      WeatherVisSlider->label("Vis: Unlimited");      
+      break;
+   case 1: 
+      w->SetBasicVisibilityType(Weather::VIS_FAR);
+      WeatherVisSlider->label("Vis: VIS_FAR");
+      break;
+   case 2: 
+      w->SetBasicVisibilityType(Weather::VIS_MODERATE);
+      WeatherVisSlider->label("Vis: Moderate");
+      break;
+   case 3: 
+      w->SetBasicVisibilityType(Weather::VIS_LIMITED);
+      WeatherVisSlider->label("Vis: Limited");
+      break;
+   case 4: 
+      w->SetBasicVisibilityType(Weather::VIS_CLOSE);
+      WeatherVisSlider->label("Vis: Close");
+      break;
+   default: 
+      w->SetBasicVisibilityType(Weather::VIS_UNLIMITED);
+      WeatherVisSlider->label("Vis: Unlimited");
+      break;
+   }
+
+   WeatherThemeCustomOption->setonly();
+}
+
+void UserInterface::WeatherTimeCB(Fl_Choice *o)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   Weather::TimePeriod t;
+   Weather::Season s;
+   w->GetTimePeriodAndSeason(&t, &s);
+
+   switch (o->value())
+   {
+   case 0: w->SetTimePeriodAndSeason(Weather::TIME_DAWN, s); break;
+   case 1: w->SetTimePeriodAndSeason(Weather::TIME_DAY, s);break;
+   case 2: w->SetTimePeriodAndSeason(Weather::TIME_DUSK, s);break;
+   case 3: w->SetTimePeriodAndSeason(Weather::TIME_NIGHT, s);break;
+   default: w->SetTimePeriodAndSeason(Weather::TIME_DUSK, s);break;
+   }
+}
+
+void UserInterface::WeatherSeasonCB(Fl_Choice *o)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   Weather::TimePeriod t;
+   Weather::Season s;
+
+   w->GetTimePeriodAndSeason(&t, &s);
+
+   switch (o->value())
+   {
+   case 0: w->SetTimePeriodAndSeason(t, Weather::SEASON_SPRING); break;
+   case 1: w->SetTimePeriodAndSeason(t, Weather::SEASON_SUMMER); break;
+   case 2: w->SetTimePeriodAndSeason(t, Weather::SEASON_FALL);    break;
+   case 3: w->SetTimePeriodAndSeason(t, Weather::SEASON_WINTER) ;break;
+   default: w->SetTimePeriodAndSeason(t, Weather::SEASON_SPRING);break;
+   }
+}
+
+void UserInterface::WeatherRateOfChangeCB(Fl_Value_Slider *o)
+{
+   Weather *w = (Weather*)GetSelectedInstance(this);
+
+   w->SetRateOfChange( o->value() );
 }
