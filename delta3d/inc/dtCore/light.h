@@ -28,11 +28,13 @@
 #include "dtCore/base.h"
 #include "dtCore/export.h"
 #include "dtCore/deltadrawable.h"
+#include "dtCore/transformable.h"
 
 namespace dtCore
 {
 
-   class DT_EXPORT Light : public DeltaDrawable, public Base
+   class DT_EXPORT Light : public DeltaDrawable,
+                           public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Light)
 
@@ -79,9 +81,11 @@ namespace dtCore
       inline void SetLightModel( osg::LightModel* model )
       { mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, osg::StateAttribute::ON ); }
 
+      //REMOVE
       inline void SetNumber( const int number )
       { mLightSource->getLight()->setLightNum( number ); }
       
+      //REMOVE
       inline int GetNumber() const
       { return mLightSource->getLight()->getLightNum(); }
 
@@ -112,20 +116,24 @@ namespace dtCore
          *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
       }
 
+      //REMOVE
       inline void SetPosition( const float x, const float y, const float z )
       {
          mLightSource->getLight()->setPosition( osg::Vec4( x, y, z, 1.0 ) );
       }
       
+      //REMOVE
       inline void GetPosition( float* x, float* y, float *z ) const
       {
          osg::Vec4f position = mLightSource->getLight()->getPosition();
          *x = position[0]; *y = position[1]; *z = position[2];
       }
 
+      //REMOVE
       inline void SetDirection( const float x, const float y, const float z )
       { mLightSource->getLight()->setDirection( osg::Vec3( x, y, z ) ); }
       
+      //REMOVE
       inline void GetDirection( float* x, float* y, float *z ) const
       {
          osg::Vec3f direction = mLightSource->getLight()->getDirection();
