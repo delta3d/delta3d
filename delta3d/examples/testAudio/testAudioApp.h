@@ -1,5 +1,5 @@
-#ifndef  TEST_AUDIO
-#define  TEST_AUDIO
+#ifndef  DELTA_TEST_AUDIO
+#define  DELTA_TEST_AUDIO
 
 #include <string>
 #include <vector>
@@ -101,4 +101,4 @@ class testAudioApp   :  public   dtABC::Application
 
 
 
-#endif   // TEST_AUDIO
+#endif   // DELTA_TEST_AUDIO
