@@ -124,6 +124,9 @@
 			<File
 				RelativePath=".\dtabcbindings.cpp">
 			</File>
+			<File
+				RelativePath=".\weatherbindings.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
