@@ -21,13 +21,12 @@ Win32 w/ Visual Studio .NET 7.1
 2. Check if you have the ext/ and data/ directories already in
    delta3d/.
    
-   If you do not, please download them the following packages 
-   from Sourceforge and decompress into :
+   If you do not, please download the latest version of
+   the following packages from Sourceforge and extract them into the
+   Delta3D folder:
 
-   delta3d-dependencies 0.2.0
-   delta3d-data         0.0.5
-
-   Extract them in your delta3d directory.
+   delta3d-dependencies 
+   delta3d-data        
 
 3. Open src/delta.sln, build!
 
@@ -85,13 +84,12 @@ Fedora Core-up (2.6.5-1.358)
 4. Check if you have the ext/ and data/ directories already in
    delta3d/.
    
-   If you do not, please download them the following packages 
-   from Sourceforge and decompress into :
+   If you do not, please download the latest version of
+   the following packages from Sourceforge and extract them into the
+   Delta3D folder:
 
-   delta3d-dependencies 0.2.0b
-   delta3d-data         0.0.5
-
-   Extract them in your delta3d directory.
+   delta3d-dependencies 
+   delta3d-data 
 
 5. Download CMake from http://www.cmake.org .
    We use CMake to synconize cross-platform builds of Delta3D.

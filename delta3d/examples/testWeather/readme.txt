@@ -12,6 +12,9 @@ To demonstrate the weather features of the dtABC module. Fog can be increased
 or decreased by setting the visibility. The amount of clouds can be changed
 as well. The time of day is determined by your system clock.
 
+The gui_fl debugging window is automatically created to interact with Weather class.
+Just select the "weather" instance and the weather parameters will be displayed.
+
 Instructions
 ------------
 Win32 Source: 
