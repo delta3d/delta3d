@@ -46,11 +46,21 @@ class DeltaDrawableWrap : public DeltaDrawable
          DeltaDrawable::RemoveChild(child);
       }
 
+      /*
+      virtual void RenderProxyNode( const bool enable )
+      {
+         call_method<void>(mSelf, "RenderProxyNode", enable);
+      }
+
+      virutal void 
+      */
+
    protected:
 
       PyObject* mSelf;
 };
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(RPN_overloads, RenderProxyNode, 0, 1)
 
 void initDeltaDrawableBindings()
 {
@@ -63,5 +73,6 @@ void initDeltaDrawableBindings()
       .def("GetNumChildren", &DeltaDrawable::GetNumChildren)
       .def("GetChild", &DeltaDrawable::GetChild, return_internal_reference<>())
       .def("GetChildIndex", &DeltaDrawable::GetChildIndex)
-      .def("CanBeChild", &DeltaDrawable::CanBeChild);
+      .def("CanBeChild", &DeltaDrawable::CanBeChild)
+      .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads());
 }

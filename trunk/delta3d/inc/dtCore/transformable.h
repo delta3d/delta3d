@@ -71,6 +71,8 @@ namespace dtCore
       ///convenience function to return back the internal matrix transform node
       virtual osg::MatrixTransform* GetMatrixNode(void)
       { return dynamic_cast<osg::MatrixTransform*>( mNode.get() ); }
+
+      virtual void RenderProxyNode( const bool enable = true );
       
      ///Get the world coordinate matrix from the supplied node
       static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix );

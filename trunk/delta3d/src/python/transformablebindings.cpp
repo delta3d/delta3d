@@ -10,6 +10,7 @@ using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ST_overloads, SetTransform, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GT_overloads, GetTransform, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(RPN_overloads, RenderProxyNode, 0, 1)
 
 void initTransformableBindings()
 {
@@ -25,7 +26,8 @@ void initTransformableBindings()
       .def("AddChild", &Transformable::AddChild, with_custodian_and_ward<1, 2>())
       .def("RemoveChild", &Transformable::RemoveChild)
       .def("SetTransform", &Transformable::SetTransform, ST_overloads())
-      .def("GetTransform", &Transformable::GetTransform, GT_overloads());
+      .def("GetTransform", &Transformable::GetTransform, GT_overloads())
+      .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads());
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")
       .value("REL_CS", Transformable::REL_CS)
