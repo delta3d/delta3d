@@ -1,6 +1,7 @@
-#pragma once
+#ifndef DELTA_HELPERSTRUCTS
+#define DELTA_HELPERSTRUCTS
 
-#include <FL/X.h>
+#include <FL/x.H>
 
 
 
@@ -9,7 +10,9 @@
 #define  BIT(a)   (1<<a)
 #endif
 
-
+#ifndef _WIN32
+typedef unsigned long HWND; 
+#endif // _WIN32
 
 ///WinRect  struct for passing window dimensions
 struct   WinRect
@@ -41,3 +44,5 @@ struct   WinData   :  public   WinRect
    WinData( const WinRect& that );
    WinData& operator=( const WinData& that );
 };
+
+#endif // DELTA_HELPERSTRUCTS

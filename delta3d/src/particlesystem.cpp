@@ -200,7 +200,6 @@ bool ParticleSystem::LoadFile(std::string filename)
 
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
       mNode->accept( pspv );
-      //mNode->accept( ParticleSystemParameterVisitor(mEnabled) );
    }
    else
    {
@@ -232,7 +231,6 @@ void ParticleSystem::SetEnabled(bool enable)
 
    ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
    mNode->accept( pspv );
-   //mNode->accept( ParticleSystemParameterVisitor(mEnabled) );
 }
 
 /**

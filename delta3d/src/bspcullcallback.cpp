@@ -340,14 +340,16 @@ void BSPCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
           it != pvs->GetNodesToDisable().end();
           it++)
       {
-         (*it)->setNodeMask(0x0);
+         osg::ref_ptr<osg::Node> nrp = (*it);
+         nrp->setNodeMask(0x0);
       }
       
       for(it = pvs->GetNodesToEnable().begin();
           it != pvs->GetNodesToEnable().end();
           it++)
       {
-         (*it)->setNodeMask(0xFFFFFFFF);
+         osg::ref_ptr<osg::Node> nrp = (*it);
+         nrp->setNodeMask(0xFFFFFFFF);
       }
    }
    

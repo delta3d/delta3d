@@ -6,8 +6,6 @@
 
 #include "widget.h"
 
-
-
 /** name spaces */
 using namespace   dtABC;
 using namespace   dtCore;
@@ -512,7 +510,7 @@ WinData::WinData( const WinData& that )
  */
 WinData::WinData( const WinRect& that )
 :  WinRect(that),
-hwnd(0L)
+   hwnd(0L)
 {
 }
 

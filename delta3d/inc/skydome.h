@@ -2,11 +2,11 @@
 #define DELTA_SKYDOME
 
 #include "enveffect.h"
-#include "osg/group"
+#include "osg/Group"
 #include "osg/Geode"
-#include <osg/Geometry>
-#include <osg/Transform>
-#include <osgUtil/CullVisitor>
+#include "osg/Geometry"
+#include "osg/Transform"
+#include "osgUtil/CullVisitor"
 #include "sg.h"
 
 namespace dtCore

@@ -3,12 +3,12 @@
 
 #include <string>
 
-#include "Keyboard.h"
+#include "keyboard.h"
 #include "mouse.h"
-#include "drawable.h"
 #include "window.h"
 #include "camera.h"
 #include "system.h"
+#include "drawable.h"
 
 
 namespace   dtABC

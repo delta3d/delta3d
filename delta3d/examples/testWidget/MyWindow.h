@@ -1,6 +1,7 @@
-#pragma once
+#ifndef DELTA_MYWINDOW
+#define DELTA_MYWINDOW
 
-#include <Fl_DT_Window.h>
+#include "fl_dt_window.h"
 #include "MyWidget.h"
 
 
@@ -23,3 +24,5 @@ public:
 private:
             void  ctor( void );
 };
+
+#endif // DELTA_MYWINDOW

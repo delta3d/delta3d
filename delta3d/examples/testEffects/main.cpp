@@ -1,14 +1,16 @@
-#include "dt.h"
+//#include "dt.h"
 
-/*
+#define Window pWindow
 #include "Producer/Timer"
+#include "keyboard.h"
+#undef Window
 
 #include "effectmanager.h"
 #include "particlesystem.h"
 #include "globals.h"
-#include "keyboard.h"
 #include "notify.h"
-*/
+#include "camera.h"
+#include "system.h"
 
 using namespace dtCore;
 
@@ -19,7 +21,7 @@ class Updater : public Base
       DECLARE_MANAGEMENT_LAYER(Updater)
 
       Updater(Keyboard* keyboard, EffectManager* effectManager, 
-            Object* entity, Camera* camera)
+            Object* entity, dtCore::Camera* camera)
          : Base("updater"),
            mKeyboard(keyboard),
            mEffectManager(effectManager),
@@ -114,7 +116,7 @@ class Updater : public Base
       Keyboard* mKeyboard;
       EffectManager* mEffectManager;
       Object* mEntity;
-      Camera* mCamera;
+      dtCore::Camera* mCamera;
       Producer::Timer mTimer;
       Producer::Timer_t mLastTime;
       Transform mPosition;
@@ -127,10 +129,10 @@ IMPLEMENT_MANAGEMENT_LAYER(Updater)
 
 int main( int argc, char **argv )
 {
-   Window* win = new Window;
+   dtCore::Window* win = new dtCore::Window;
    Scene* scene = new Scene;
 
-   Camera* cam = new Camera;
+   dtCore::Camera* cam = new dtCore::Camera;
    cam->SetWindow( win );
    cam->SetScene( scene );
    Transform position;

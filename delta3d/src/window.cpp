@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Producer/KeyboardMouse"
-
 #include "window.h"
 #include "notify.h"
 
@@ -11,7 +10,6 @@ using namespace dtCore;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Window)
-
 
 class InputCallback : public Producer::KeyboardMouseCallback
 {
@@ -263,6 +261,7 @@ bool Window::CalcPixelCoords(const float x, const float y, float &pixel_x, float
 
 }
 
+#ifdef _WIN32
 
 bool Window::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
 {
@@ -280,3 +279,5 @@ bool Window::ChangeScreenResolution (int width, int height, int bitsPerPixel)   
    }
    return TRUE;                                                                         // Display Change Was Successful, Return True
 }
+
+#endif // _WIN32

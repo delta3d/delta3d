@@ -5,8 +5,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-
 #include <Producer/Camera>
 #include <osg/FrameStamp>
 #include <osgUtil/SceneView>

@@ -1,7 +1,7 @@
 #ifndef DELTA_CLOUDDOME
 #define DELTA_CLOUDDOME
 
-/* CloudDome.h
+/* clouddome.h
 * Date: 28/04/04
 */
 

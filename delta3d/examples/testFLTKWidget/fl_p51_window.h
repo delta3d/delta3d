@@ -1,6 +1,8 @@
-#pragma once
+#ifndef DELTA_FL_P51_WINDOW
+#define DELTA_FL_P51_WINDOW
+
 #include <string>
-#include <FL/Fl_Window.h>
+#include <FL/Fl_Window.H>
 
 #include "base.h"
 
@@ -106,3 +108,5 @@ class Fl_P51_Window  :  public   Fl_Window,  public   dtCore::Base
                            ///Pointer to Viewer class object this class contains
                Base*       viewer;
 };
+
+#endif // DELTA_FL_P51_WINDOW

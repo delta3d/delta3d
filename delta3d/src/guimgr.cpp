@@ -113,7 +113,7 @@ void UserInterface::SelectInstance (void)
       }
 
       const Fl_Menu_Item *menu = CameraSceneChoice->menu();
-      for ( i=0; i<CameraSceneChoice->size(); i++)
+      for ( int i=0; i<CameraSceneChoice->size(); i++)
       {
          Scene *menuItemScene = (Scene*)menu[i].user_data();
          
@@ -129,7 +129,7 @@ void UserInterface::SelectInstance (void)
       //we have new Windows's or they changed their names
       CameraWinChoice->clear();
       CameraWinChoice->add( "None", NULL, NULL);
-      for ( i=0; i<Window::GetInstanceCount(); i++)
+      for ( int i=0; i<Window::GetInstanceCount(); i++)
       {         
          CameraWinChoice->add( Window::GetInstance(i)->GetName().c_str(), NULL, NULL,
                                Window::GetInstance(i), 0);
@@ -137,7 +137,7 @@ void UserInterface::SelectInstance (void)
 
       menu = CameraWinChoice->menu();
       
-      for ( i=0; i<CameraWinChoice->size(); i++)
+      for ( int i=0; i<CameraWinChoice->size(); i++)
       {
          Window *menuItemWin = (Window*)menu[i].user_data();
          

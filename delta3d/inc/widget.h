@@ -1,9 +1,10 @@
 #ifndef DELTA_WIDGET
 #define DELTA_WIDGET
 
-#include <FL/X.h>
-
+#include <FL/x.H>
 #include <baseabc.h>
+
+
 
 
 
@@ -12,10 +13,11 @@
    #define  BIT(a)   (1<<a)
 #endif
 
-
-
 namespace dtABC
 {
+   #ifndef _WIN32
+   typedef unsigned long HWND; 
+   #endif // _WIN32
 
    // forward references
    struct   WinRect;
@@ -39,6 +41,8 @@ namespace dtABC
    class DT_EXPORT Widget :  public   dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Widget)
+
+    
 
 
    public:
@@ -201,6 +205,58 @@ namespace dtABC
                SCROLLLOCK  = BIT(6L),
             };
 
+#ifndef _WIN32
+      #undef KEY_0
+      #undef KEY_1
+      #undef KEY_2
+      #undef KEY_3
+      #undef KEY_4
+      #undef KEY_5
+      #undef KEY_6
+      #undef KEY_7
+      #undef KEY_8
+      #undef KEY_9
+      #undef KEY_A
+      #undef KEY_B
+      #undef KEY_C
+      #undef KEY_D
+      #undef KEY_E
+      #undef KEY_F
+      #undef KEY_G
+      #undef KEY_H
+      #undef KEY_I
+      #undef KEY_J
+      #undef KEY_K
+      #undef KEY_L
+      #undef KEY_M
+      #undef KEY_N
+      #undef KEY_O
+      #undef KEY_P
+      #undef KEY_Q
+      #undef KEY_R
+      #undef KEY_S
+      #undef KEY_T
+      #undef KEY_U
+      #undef KEY_V
+      #undef KEY_W
+      #undef KEY_X
+      #undef KEY_Y
+      #undef KEY_Z
+      #undef KEY_F1
+      #undef KEY_F2
+      #undef KEY_F3
+      #undef KEY_F4
+      #undef KEY_F5
+      #undef KEY_F6
+      #undef KEY_F7
+      #undef KEY_F8
+      #undef KEY_F9
+      #undef KEY_F10
+      #undef KEY_F11
+      #undef KEY_F12
+#endif
+      
+      
       static   const int   KEY_BackSpace;
       static   const int   KEY_Tab;
       static   const int   KEY_Enter;
@@ -248,16 +304,16 @@ namespace dtABC
       static   const int   KEY_Minus;
       static   const int   KEY_Period;
       static   const int   KEY_Slash;
-      static   const int   KEY_0;
-      static   const int   KEY_1;
-      static   const int   KEY_2;
-      static   const int   KEY_3;
-      static   const int   KEY_4;
-      static   const int   KEY_5;
-      static   const int   KEY_6;
-      static   const int   KEY_7;
-      static   const int   KEY_8;
-      static   const int   KEY_9;
+      static   const int   KEY_0;//
+      static   const int   KEY_1;//
+      static   const int   KEY_2;//
+      static   const int   KEY_3;//
+      static   const int   KEY_4;//
+      static   const int   KEY_5;//
+      static   const int   KEY_6;//
+      static   const int   KEY_7;//
+      static   const int   KEY_8;//
+      static   const int   KEY_9;//
       static   const int   KEY_Colon;
       static   const int   KEY_Semicolon;
       static   const int   KEY_Less;
@@ -265,32 +321,32 @@ namespace dtABC
       static   const int   KEY_Greater;
       static   const int   KEY_Question;
       static   const int   KEY_At;
-      static   const int   KEY_A;
-      static   const int   KEY_B;
-      static   const int   KEY_C;
-      static   const int   KEY_D;
-      static   const int   KEY_E;
-      static   const int   KEY_F;
-      static   const int   KEY_G;
-      static   const int   KEY_H;
-      static   const int   KEY_I;
-      static   const int   KEY_J;
-      static   const int   KEY_K;
-      static   const int   KEY_L;
-      static   const int   KEY_M;
-      static   const int   KEY_N;
-      static   const int   KEY_O;
-      static   const int   KEY_P;
-      static   const int   KEY_Q;
-      static   const int   KEY_R;
-      static   const int   KEY_S;
-      static   const int   KEY_T;
-      static   const int   KEY_U;
-      static   const int   KEY_V;
-      static   const int   KEY_W;
-      static   const int   KEY_X;
-      static   const int   KEY_Y;
-      static   const int   KEY_Z;
+      static   const int   KEY_A;//
+      static   const int   KEY_B;//
+      static   const int   KEY_C;//
+      static   const int   KEY_D;//
+      static   const int   KEY_E;//
+      static   const int   KEY_F;//
+      static   const int   KEY_G;//
+      static   const int   KEY_H;//
+      static   const int   KEY_I;//
+      static   const int   KEY_J;//
+      static   const int   KEY_K;//
+      static   const int   KEY_L;//
+      static   const int   KEY_M;//
+      static   const int   KEY_N;//
+      static   const int   KEY_O;//
+      static   const int   KEY_P;//
+      static   const int   KEY_Q;//
+      static   const int   KEY_R;//
+      static   const int   KEY_S;//
+      static   const int   KEY_T;//
+      static   const int   KEY_U;//
+      static   const int   KEY_V;//
+      static   const int   KEY_W;//
+      static   const int   KEY_X;//
+      static   const int   KEY_Y;//
+      static   const int   KEY_Z;//
       static   const int   KEY_Bracket_L;
       static   const int   KEY_Backslash;
       static   const int   KEY_Bracket_R;
@@ -353,18 +409,18 @@ namespace dtABC
       static   const int   KEY_KP_8;
       static   const int   KEY_KP_9;
       static   const int   KEY_KP_Equal;
-      static   const int   KEY_F1;
-      static   const int   KEY_F2;
-      static   const int   KEY_F3;
-      static   const int   KEY_F4;
-      static   const int   KEY_F5;
-      static   const int   KEY_F6;
-      static   const int   KEY_F7;
-      static   const int   KEY_F8;
-      static   const int   KEY_F9;
-      static   const int   KEY_F10;
-      static   const int   KEY_F11;
-      static   const int   KEY_F12;
+      static   const int   KEY_F1;//
+      static   const int   KEY_F2;//
+      static   const int   KEY_F3;//
+      static   const int   KEY_F4;//
+      static   const int   KEY_F5;//
+      static   const int   KEY_F6;//
+      static   const int   KEY_F7;//
+      static   const int   KEY_F8;//
+      static   const int   KEY_F9;//
+      static   const int   KEY_F10;//
+      static   const int   KEY_F11;//
+      static   const int   KEY_F12;//
    };
 
 };
