@@ -93,7 +93,7 @@ namespace dtCore
    private:
 
       #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-      int CalcRefreshRate( int width, int height, int dotclock );
+      static int CalcRefreshRate( int width, int height, int dotclock );
       #endif
       
       Producer::RenderSurface *mRenderSurface;
