@@ -1497,10 +1497,11 @@ AudioManager::SetRelative( SoundObj* snd )
       // multiple channels don't get positioned
       ALint numchannels(0L);
       alGetBufferi( buf, AL_CHANNELS, &numchannels );
-      if( numchannels != 1L )
+      if( numchannels == 2L )
       {
          // stereo!
          // set flag and bail
+         dtCore::Notify(dtCore::WARN, "AudioManager: A stereo Sound can't be positioned in 3D space");
          snd->ResetState( Sound::POSITION );
          return;
       }
@@ -1979,13 +1980,13 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
 
    if( data->message == kCommand[REL] )
    {
-      SetState( POSITION );
+      SetState( Sound::POSITION );
       return;
    }
 
    if( data->message == kCommand[ABS] )
    {
-      ResetState( POSITION );
+      ResetState( Sound::POSITION );
       return;
    }
 }
@@ -2042,7 +2043,7 @@ AudioManager::SoundObj::IsLooping( void ) const
 bool
 AudioManager::SoundObj::IsListenerRelative( void ) const
 {
-   return    GetState( POSITION );
+   return    GetState( Sound::POSITION );
 }
 
 
