@@ -83,33 +83,53 @@
    #ifndef DT_LIBRARY  
       #define  _AUTOLIBNAME5 "dtcoreD.lib"
    #endif
+
+   #define _AUTOLIBNAME   "Producerd.lib"
+   #define _AUTOLIBNAME1  "sg_d.lib"
+   #define _AUTOLIBNAME2  "ul_d.lib"
+   #define _AUTOLIBNAME4  "OpenThreadsWin32d.lib"  
+   #define _AUTOLIBNAME6  "osgd.lib"
+   #define _AUTOLIBNAME7  "osgDBd.lib"
+   #define _AUTOLIBNAME8  "osgParticled.lib"
+   #define _AUTOLIBNAME9  "tinyxmld.lib"
+   #define _AUTOLIBNAME10 "osgUtild.lib"
+   #define _AUTOLIBNAME11 "oded.lib"
+   #define _AUTOLIBNAME13 "osgTextd.lib"
+   #define _AUTOLIBNAME15 "osgTerraind.lib"
+   #define _AUTOLIBNAME16 "glGUI_d.lib"
+   #define _AUTOLIBNAME17 "osgGL2d.lib"
+   #define _AUTOLIBNAME18 "js_d.lib"
+   #define _AUTOLIBNAME21 "isensed.lib"
 #else
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME5 "dtcore.lib"
    #endif
+
+   #define _AUTOLIBNAME   "Producer.lib"
+   #define _AUTOLIBNAME1  "sg.lib"
+   #define _AUTOLIBNAME2  "ul.lib"
+   #define _AUTOLIBNAME4  "OpenThreadsWin32.lib"  
+   #define _AUTOLIBNAME6  "osg.lib"
+   #define _AUTOLIBNAME7  "osgDB.lib"
+   #define _AUTOLIBNAME8  "osgParticle.lib"
+   #define _AUTOLIBNAME9  "tinyxml.lib"
+   #define _AUTOLIBNAME10 "osgUtil.lib"
+   #define _AUTOLIBNAME11 "ode.lib"
+   #define _AUTOLIBNAME13 "osgText.lib"
+   #define _AUTOLIBNAME15 "osgTerrain.lib"
+   #define _AUTOLIBNAME16 "glGUI.lib"
+   #define _AUTOLIBNAME17 "osgGL2.lib"
+   #define _AUTOLIBNAME18 "js.lib"
+   #define _AUTOLIBNAME21 "isense.lib"
 #endif
 
-#define _AUTOLIBNAME   "Producer.lib"
-#define _AUTOLIBNAME1  "sg.lib"
-#define _AUTOLIBNAME2  "ul.lib"
 #define _AUTOLIBNAME3  "winmm.lib"
-#define _AUTOLIBNAME4  "OpenThreadsWin32.lib"  
-#define _AUTOLIBNAME6  "osg.lib"
-#define _AUTOLIBNAME7  "osgDB.lib"
-#define _AUTOLIBNAME8  "osgParticle.lib"
-#define _AUTOLIBNAME9  "tinyxml.lib"
-#define _AUTOLIBNAME10 "osgUtil.lib"
-#define _AUTOLIBNAME11 "ode.lib"
+
 #define _AUTOLIBNAME12 "opcode.lib"
-#define _AUTOLIBNAME13 "osgText.lib"
 #define _AUTOLIBNAME14 "opengl32.lib"
-#define _AUTOLIBNAME15 "osgTerrain.lib"
-#define _AUTOLIBNAME16 "glGUI.lib"
-#define _AUTOLIBNAME17 "osgGL2.lib"
-#define _AUTOLIBNAME18 "js.lib"
 #define _AUTOLIBNAME19 "openal32.lib"
 #define _AUTOLIBNAME20 "alut.lib"
-#define _AUTOLIBNAME21 "isense.lib"
+
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
