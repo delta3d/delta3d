@@ -1,5 +1,5 @@
 #include "testsoundapp.h"
-
+#include "globals.h"
 
 
 /// A simple application that demonstrates the most basic methods
@@ -9,6 +9,9 @@
 int
 main( int argc, const char* argv[] )
 {
+   // set the directory to find the sound files & config.xml
+   dtCore::SetDataFilePathList("..;../../data;" + dtCore::GetDeltaDataPathList());
+
    testSoundApp   app;
    app.Run();
 

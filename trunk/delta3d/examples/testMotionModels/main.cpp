@@ -22,7 +22,6 @@ class TestMotionModelsApplication : public Application
       TestMotionModelsApplication()
          : Application("config.xml")
       {
-         SetDataFilePathList("../../data/;" + GetDeltaDataPathList() );
          
          mTerrain = new InfiniteTerrain;
          
@@ -145,6 +144,8 @@ IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApplication)
 
 int main( int argc, char **argv )
 {
+   SetDataFilePathList("..;../../data/;" + GetDeltaDataPathList() );
+
    TestMotionModelsApplication* testMotionModelsApp =
       new TestMotionModelsApplication;
    

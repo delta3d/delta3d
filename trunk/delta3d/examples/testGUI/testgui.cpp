@@ -37,9 +37,8 @@ int main(int argc, char* argv[])
    {
       filename = argv[1];
    }
-
+   dtCore::SetDataFilePathList("..;../../data;" + dtCore::GetDeltaDataPathList());
    dtABC::Application *app = new dtABC::Application();
-   dtCore::SetDataFilePathList("../../data;" + dtCore::GetDeltaDataPathList());
 
    ///put something in the background to look at
    dtCore::Object *ground = new dtCore::Object("ground");

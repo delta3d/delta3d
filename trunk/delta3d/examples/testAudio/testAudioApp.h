@@ -23,7 +23,6 @@ class testAudioApp   :  public   dtABC::Application
       typedef  osg::ref_ptr<dtAudio::SoundEffectBinder>  BIN_PTR;
 
    private:
-      static   const char*       kDataPath;
       static   unsigned int      kNumSoundFiles;
       static   const char*       kSoundFile[];
 

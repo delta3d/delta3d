@@ -160,7 +160,6 @@ public:
       PhysicsApp()
       {
          //This is where we'll find our files to load
-         SetDataFilePathList("../../data/;" + GetDeltaDataPathList() );
 
          Object *obj1 = new Object("ground");
          Object *obj2 = new Object("box");
@@ -291,7 +290,9 @@ protected:
 
 int main( int argc, char **argv )
 {
-  PhysicsApp *app = new PhysicsApp();
+   SetDataFilePathList("..;../../data/;" + GetDeltaDataPathList() );
+            
+   PhysicsApp *app = new PhysicsApp();
   app->Config();
   dtCore::SetNotifyLevel(DEBUG_INFO, WARN);
   app->Run();
