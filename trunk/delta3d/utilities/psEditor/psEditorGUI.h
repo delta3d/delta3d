@@ -10,6 +10,7 @@
 extern Fl_Menu_Bar *MainMenu;
 extern void psEditorGUI_New(Fl_Menu_*, void*);
 extern void psEditorGUI_Open(Fl_Menu_*, void*);
+extern void psEditorGUI_Import(Fl_Menu_*, void*);
 extern void psEditorGUI_Save(Fl_Menu_*, void*);
 extern void psEditorGUI_SaveAs(Fl_Menu_*, void*);
 extern void psEditorGUI_Quit(Fl_Menu_*, void*);
@@ -18,6 +19,7 @@ extern void psEditorGUI_XYGrid(Fl_Menu_*, void*);
 extern void psEditorGUI_YZGrid(Fl_Menu_*, void*);
 extern void psEditorGUI_XZGrid(Fl_Menu_*, void*);
 #include <FL/Fl_Tabs.H>
+extern Fl_Tabs *ParameterTabs;
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Choice.H>
 extern void psEditorGUI_Particles_SetAlignment(Fl_Choice*, void*);
@@ -132,6 +134,7 @@ extern Fl_Value_Input *MultiSegmentPlacer_Y;
 extern void psEditorGUI_MultiSegmentPlacer_Vertex_SetZ(Fl_Value_Input*, void*);
 extern Fl_Value_Input *MultiSegmentPlacer_Z;
 extern void psEditorGUI_Placer_SetType(Fl_Choice*, void*);
+extern Fl_Choice *Placer_Type;
 extern Fl_Group *RadialShooterParameters;
 extern void psEditorGUI_RadialShooter_SetMinTheta(Fl_Value_Input*, void*);
 extern Fl_Value_Input *RadialShooter_MinTheta;
@@ -189,11 +192,18 @@ extern Fl_Value_Input *Acceleration_Y;
 extern void psEditorGUI_Acceleration_SetZ(Fl_Value_Input*, void*);
 extern Fl_Value_Input *Acceleration_Z;
 extern Fl_DT_Window<dtABC::Widget> *viewWidget;
+extern void psEditorGUI_NewLayer(Fl_Button*, void*);
+extern void psEditorGUI_DeleteLayer(Fl_Button*, void*);
+extern Fl_Button *Layers_DeleteButton;
+extern void psEditorGUI_RenameLayer(Fl_Button*, void*);
+extern Fl_Button *Layers_RenameButton;
+extern void psEditorGUI_LayerSelect(Fl_Browser*, void*);
+extern Fl_Browser *Layers;
 Fl_Double_Window* make_window();
 extern Fl_Menu_Item menu_MainMenu[];
 extern Fl_Menu_Item menu_Particles_Alignment[];
 extern Fl_Menu_Item menu_Particles_Shape[];
 extern Fl_Menu_Item menu_Counter[];
-extern Fl_Menu_Item menu_Placer[];
+extern Fl_Menu_Item menu_Placer_Type[];
 extern Fl_Menu_Item menu_Shooter[];
 #endif

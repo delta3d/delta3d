@@ -83,39 +83,51 @@ static osg::MatrixTransform* xzGridTransform;
 static osg::Group* particleSystemGroup = NULL;
 
 /**
- * The geode that holds the drawable particle system.
+ * A single particle system in the particle system group.
  */
-static osg::Geode* geode;
+struct ParticleSystemLayer
+{
+   /**
+    * The geode that holds the drawable particle system, and whose name is
+    * the name of the layer.
+    */
+   osg::ref_ptr<osg::Geode> mGeode;
+   
+   /**
+    * The active particle system.
+    */
+   osg::ref_ptr<osgParticle::ParticleSystem> mParticleSystem;
+   
+   /**
+    * The active particle template.
+    */
+   Particle* mParticle;
+   
+   /**
+    * The transform that controls the position of the emitter.
+    */
+   osg::ref_ptr<osg::MatrixTransform> mEmitterTransform;
+   
+   /**
+    * The active emitter.
+    */
+   osg::ref_ptr<osgParticle::ModularEmitter> mModularEmitter;
+   
+   /**
+    * The active program.
+    */
+   osg::ref_ptr<osgParticle::ModularProgram> mModularProgram;
+};
 
 /**
- * The active particle system.
+ * The particle system layers.
  */
-static osgParticle::ParticleSystem* particleSystem;
-
-/**
- * The active particle template.
- */
-static Particle* particle;
-
-/**
- * The transform that controls the position of the emitter.
- */
-static osg::MatrixTransform* emitterTransform;
-
-/**
- * The active emitter.
- */
-static ModularEmitter* modularEmitter;
-
-/**
- * The active program.
- */
-static ModularProgram* modularProgram;
+static std::vector<ParticleSystemLayer> layers;
 
 /**
  * The particle system updater.
  */
-static ParticleSystemUpdater* particleSystemUpdater;
+static osgParticle::ParticleSystemUpdater* particleSystemUpdater = NULL;
 
 /**
  * The filename of the active particle system.
@@ -134,10 +146,12 @@ char relativeHistory[5][1024];
  */
 static void updateRandomRateCounterParameters()
 {
+   int layer = Layers->value() - 1;
+   
    RandomRateCounterParameters->show();
 
    RandomRateCounter* rrc = 
-      (RandomRateCounter*)modularEmitter->getCounter();
+      (RandomRateCounter*)layers[layer].mModularEmitter->getCounter();
 
    RandomRateCounter_MinRate->value(rrc->getRateRange().minimum);
    RandomRateCounter_MaxRate->value(rrc->getRateRange().maximum);
@@ -148,13 +162,17 @@ static void updateRandomRateCounterParameters()
  */
 static void updatePointPlacerParameters()
 {
+   int layer = Layers->value() - 1;
+   
+   Placer_Type->value(0);
+   
    PointPlacerParameters->show();
    SectorPlacerParameters->hide();
    SegmentPlacerParameters->hide();
    MultiSegmentPlacerParameters->hide();
 
    PointPlacer* pp = 
-      (PointPlacer*)modularEmitter->getPlacer();
+      (PointPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    PointPlacer_X->value(pp->getCenter()[0]);
    PointPlacer_Y->value(pp->getCenter()[1]);
@@ -166,13 +184,17 @@ static void updatePointPlacerParameters()
  */
 static void updateSectorPlacerParameters()
 {
+   int layer = Layers->value() - 1;
+   
+   Placer_Type->value(1);
+   
    PointPlacerParameters->hide();
    SectorPlacerParameters->show();
    SegmentPlacerParameters->hide();
    MultiSegmentPlacerParameters->hide();
 
    SectorPlacer* sp = 
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    SectorPlacer_X->value(sp->getCenter()[0]);
    SectorPlacer_Y->value(sp->getCenter()[1]);
@@ -190,13 +212,17 @@ static void updateSectorPlacerParameters()
  */
 static void updateSegmentPlacerParameters()
 {
+   int layer = Layers->value() - 1;
+   
+   Placer_Type->value(2);
+   
    PointPlacerParameters->hide();
    SectorPlacerParameters->hide();
    SegmentPlacerParameters->show();
    MultiSegmentPlacerParameters->hide();
 
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    SegmentPlacer_A_X->value(sp->getVertexA()[0]);
    SegmentPlacer_A_Y->value(sp->getVertexA()[1]);
@@ -212,13 +238,17 @@ static void updateSegmentPlacerParameters()
  */
 static void updateMultiSegmentPlacerParameters()
 {
+   int layer = Layers->value() - 1;
+   
+   Placer_Type->value(3);
+   
    PointPlacerParameters->hide();
    SectorPlacerParameters->hide();
    SegmentPlacerParameters->hide();
    MultiSegmentPlacerParameters->show();
 
    MultiSegmentPlacer* msp = 
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    MultiSegmentPlacer_Vertices->clear();
 
@@ -240,239 +270,265 @@ static void updateMultiSegmentPlacerParameters()
 }
 
 /**
+ * Updates the state of the parameter tabs.
+ */
+static void updateParameterTabs()
+{
+   int layer = Layers->value() - 1;
+   
+   if(layer >= 0)
+   {
+      ParameterTabs->activate();
+      
+      Particles_Alignment->value(
+         layers[layer].mParticleSystem->getParticleAlignment()
+      );
+
+      Particles_Shape->value(
+         layers[layer].mParticle->getShape()
+      );
+
+      Particles_Lifetime->value(
+         layers[layer].mParticle->getLifeTime()
+      );
+
+      Particles_Radius->value(
+         layers[layer].mParticle->getRadius()
+      );
+
+      Particles_Mass->value(
+         layers[layer].mParticle->getMass()
+      );
+
+      Particles_MinSize->value(
+         layers[layer].mParticle->getSizeRange().minimum
+      );
+
+      Particles_MaxSize->value(
+         layers[layer].mParticle->getSizeRange().maximum
+      );
+
+      Particles_MinAlpha->value(
+         layers[layer].mParticle->getAlphaRange().minimum
+      );
+
+      Particles_MaxAlpha->value(
+         layers[layer].mParticle->getAlphaRange().maximum
+      );
+
+      Particles_MinR->value(
+         layers[layer].mParticle->getColorRange().minimum[0]
+      );
+
+      Particles_MinG->value(
+         layers[layer].mParticle->getColorRange().minimum[1]
+      );
+
+      Particles_MinB->value(
+         layers[layer].mParticle->getColorRange().minimum[2]
+      );
+
+      Particles_MinColor->color(
+         fl_rgb_color(
+            (uchar)(layers[layer].mParticle->getColorRange().minimum[0]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().minimum[1]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().minimum[2]*255)
+         )
+      );
+
+      Particles_MinColor->redraw();
+
+      Particles_MaxR->value(
+         layers[layer].mParticle->getColorRange().maximum[0]
+      );
+
+      Particles_MaxG->value(
+         layers[layer].mParticle->getColorRange().maximum[1]
+      );
+
+      Particles_MaxB->value(
+         layers[layer].mParticle->getColorRange().maximum[2]
+      );
+
+      Particles_MaxColor->color(
+         fl_rgb_color(
+            (uchar)(layers[layer].mParticle->getColorRange().maximum[0]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().maximum[1]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().maximum[2]*255)
+         )
+      );
+
+      Particles_MaxColor->redraw();
+
+      Particles_Emitter_Endless->value(layers[layer].mModularEmitter->isEndless());
+      
+      Particles_Emitter_Lifetime->value(layers[layer].mModularEmitter->getLifeTime());
+      
+      if(layers[layer].mModularEmitter->isEndless())
+      {
+         Particles_Emitter_Lifetime->deactivate();
+      }
+      else
+      {
+         Particles_Emitter_Lifetime->activate();
+      }
+      
+      Particles_Emitter_StartTime->value(layers[layer].mModularEmitter->getStartTime());
+      
+      Particles_Emitter_ResetTime->value(layers[layer].mModularEmitter->getResetTime());
+      
+      std::string textureFile = "";
+
+      osg::StateSet* ss =
+         layers[layer].mParticleSystem->getStateSet();
+
+      osg::StateAttribute* sa = 
+         ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
+
+      if(IS_A(sa, osg::Texture2D*))
+      {
+         osg::Texture2D* t2d = (osg::Texture2D*)sa;
+
+         osg::Image* image = t2d->getImage();
+
+         if(image != NULL)
+         {
+            textureFile = image->getFileName();
+         }
+      }
+
+      Particles_Texture->value(
+         textureFile.c_str()
+      );
+
+      Particles_TexturePreview->SetTexture(textureFile);
+      
+      osg::BlendFunc* blend = 
+         (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
+
+      Particles_Emissive->value(
+         blend->getDestination() == osg::BlendFunc::ONE
+      );
+
+      osg::Material* material = 
+         (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
+
+      Particles_Lighting->value(
+         material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE
+      );
+
+
+      Counter* counter = layers[layer].mModularEmitter->getCounter();
+
+      if(IS_A(counter, RandomRateCounter*))
+      {
+         updateRandomRateCounterParameters();
+      }
+
+
+      Placer* placer = layers[layer].mModularEmitter->getPlacer();
+
+      if(IS_A(placer, PointPlacer*))
+      {
+         updatePointPlacerParameters();
+      }
+      else if(IS_A(placer, SectorPlacer*))
+      {
+         updateSectorPlacerParameters();
+      }
+      else if(IS_A(placer, SegmentPlacer*))
+      {
+         updateSegmentPlacerParameters();
+      }
+      else if(IS_A(placer, MultiSegmentPlacer*))
+      {
+         updateMultiSegmentPlacerParameters();
+      }
+
+
+      Shooter* shooter = layers[layer].mModularEmitter->getShooter();
+
+      if(IS_A(shooter, RadialShooter*))
+      {
+         RadialShooterParameters->show();
+
+         RadialShooter* rs = (RadialShooter*)shooter;
+
+         RadialShooter_MinTheta->value(rs->getThetaRange().minimum);
+         RadialShooter_MaxTheta->value(rs->getThetaRange().maximum);
+
+         RadialShooter_MinPhi->value(rs->getPhiRange().minimum);
+         RadialShooter_MaxPhi->value(rs->getPhiRange().maximum);
+
+         RadialShooter_MinInitialSpeed->value(rs->getInitialSpeedRange().minimum);
+         RadialShooter_MaxInitialSpeed->value(rs->getInitialSpeedRange().maximum);
+
+         RadialShooter_MinInitialRotationalSpeedX->value(
+            rs->getInitialRotationalSpeedRange().minimum[0]
+         );
+
+         RadialShooter_MinInitialRotationalSpeedY->value(
+            rs->getInitialRotationalSpeedRange().minimum[1]
+         );
+
+         RadialShooter_MinInitialRotationalSpeedZ->value(
+            rs->getInitialRotationalSpeedRange().minimum[2]
+         );
+
+         RadialShooter_MaxInitialRotationalSpeedX->value(
+            rs->getInitialRotationalSpeedRange().maximum[0]
+         );
+
+         RadialShooter_MaxInitialRotationalSpeedY->value(
+            rs->getInitialRotationalSpeedRange().maximum[1]
+         );
+
+         RadialShooter_MaxInitialRotationalSpeedZ->value(
+            rs->getInitialRotationalSpeedRange().maximum[2]
+         );
+      }
+
+
+      Program_Operators->clear();
+
+      for(int i=0;i<layers[layer].mModularProgram->numOperators();i++)
+      {
+         Operator* op = layers[layer].mModularProgram->getOperator(i);
+
+         if(IS_A(op, FluidFrictionOperator*))
+         {
+            Program_Operators->add("Fluid Friction");
+         }
+         else if(IS_A(op, ForceOperator*))
+         {
+            Program_Operators->add("Force");
+         }
+         else if(IS_A(op, AccelOperator*))
+         {
+            Program_Operators->add("Acceleration");
+         }
+      }
+   }
+   else
+   {
+      ParameterTabs->deactivate(); 
+   }
+}
+
+/**
  * Updates the state of all GUI elements in response to a new or
  * open request.
  */
 static void updateGUIElements()
 {
-   Particles_Alignment->value(
-      particleSystem->getParticleAlignment()
-   );
-
-   Particles_Shape->value(
-      particle->getShape()
-   );
-
-   Particles_Lifetime->value(
-      particle->getLifeTime()
-   );
-
-   Particles_Radius->value(
-      particle->getRadius()
-   );
-
-   Particles_Mass->value(
-      particle->getMass()
-   );
-
-   Particles_MinSize->value(
-      particle->getSizeRange().minimum
-   );
-
-   Particles_MaxSize->value(
-      particle->getSizeRange().maximum
-   );
-
-   Particles_MinAlpha->value(
-      particle->getAlphaRange().minimum
-   );
-
-   Particles_MaxAlpha->value(
-      particle->getAlphaRange().maximum
-   );
-
-   Particles_MinR->value(
-      particle->getColorRange().minimum[0]
-   );
-
-   Particles_MinG->value(
-      particle->getColorRange().minimum[1]
-   );
-
-   Particles_MinB->value(
-      particle->getColorRange().minimum[2]
-   );
-
-   Particles_MinColor->color(
-      fl_rgb_color(
-         (uchar)(particle->getColorRange().minimum[0]*255),
-         (uchar)(particle->getColorRange().minimum[1]*255),
-         (uchar)(particle->getColorRange().minimum[2]*255)
-      )
-   );
-
-   Particles_MinColor->redraw();
-
-   Particles_MaxR->value(
-      particle->getColorRange().maximum[0]
-   );
-
-   Particles_MaxG->value(
-      particle->getColorRange().maximum[1]
-   );
-
-   Particles_MaxB->value(
-      particle->getColorRange().maximum[2]
-   );
-
-   Particles_MaxColor->color(
-      fl_rgb_color(
-         (uchar)(particle->getColorRange().maximum[0]*255),
-         (uchar)(particle->getColorRange().maximum[1]*255),
-         (uchar)(particle->getColorRange().maximum[2]*255)
-      )
-   );
-
-   Particles_MaxColor->redraw();
-
-   Particles_Emitter_Endless->value(modularEmitter->isEndless());
+   Layers->clear();
    
-   Particles_Emitter_Lifetime->value(modularEmitter->getLifeTime());
-   
-   if(modularEmitter->isEndless())
+   for(unsigned int i=0;i<layers.size();i++)
    {
-      Particles_Emitter_Lifetime->deactivate();
-   }
-   else
-   {
-      Particles_Emitter_Lifetime->activate();
+      Layers->add(layers[i].mGeode->getName().c_str());
    }
    
-   Particles_Emitter_StartTime->value(modularEmitter->getStartTime());
-   
-   Particles_Emitter_ResetTime->value(modularEmitter->getResetTime());
-   
-   std::string textureFile = "";
-
-   osg::StateSet* ss =
-      particleSystem->getStateSet();
-
-   osg::StateAttribute* sa = 
-      ss->getTextureAttribute(0, osg::StateAttribute::TEXTURE);
-
-   if(IS_A(sa, osg::Texture2D*))
-   {
-      osg::Texture2D* t2d = (osg::Texture2D*)sa;
-
-      osg::Image* image = t2d->getImage();
-
-      if(image != NULL)
-      {
-         textureFile = image->getFileName();
-      }
-   }
-
-   Particles_Texture->value(
-      textureFile.c_str()
-   );
-
-   Particles_TexturePreview->SetTexture(textureFile);
-   
-   osg::BlendFunc* blend = 
-      (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
-
-   Particles_Emissive->value(
-      blend->getDestination() == osg::BlendFunc::ONE
-   );
-
-   osg::Material* material = 
-      (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
-
-   Particles_Lighting->value(
-      material->getColorMode() == osg::Material::AMBIENT_AND_DIFFUSE
-   );
-
-
-   Counter* counter = modularEmitter->getCounter();
-
-   if(IS_A(counter, RandomRateCounter*))
-   {
-      updateRandomRateCounterParameters();
-   }
-
-
-   Placer* placer = modularEmitter->getPlacer();
-
-   if(IS_A(placer, PointPlacer*))
-   {
-      updatePointPlacerParameters();
-   }
-   else if(IS_A(placer, SectorPlacer*))
-   {
-      updateSectorPlacerParameters();
-   }
-   else if(IS_A(placer, SegmentPlacer*))
-   {
-      updateSegmentPlacerParameters();
-   }
-   else if(IS_A(placer, MultiSegmentPlacer*))
-   {
-      updateMultiSegmentPlacerParameters();
-   }
-
-
-   Shooter* shooter = modularEmitter->getShooter();
-
-   if(IS_A(shooter, RadialShooter*))
-   {
-      RadialShooterParameters->show();
-
-      RadialShooter* rs = (RadialShooter*)shooter;
-
-      RadialShooter_MinTheta->value(rs->getThetaRange().minimum);
-      RadialShooter_MaxTheta->value(rs->getThetaRange().maximum);
-
-      RadialShooter_MinPhi->value(rs->getPhiRange().minimum);
-      RadialShooter_MaxPhi->value(rs->getPhiRange().maximum);
-
-      RadialShooter_MinInitialSpeed->value(rs->getInitialSpeedRange().minimum);
-      RadialShooter_MaxInitialSpeed->value(rs->getInitialSpeedRange().maximum);
-
-      RadialShooter_MinInitialRotationalSpeedX->value(
-         rs->getInitialRotationalSpeedRange().minimum[0]
-      );
-
-      RadialShooter_MinInitialRotationalSpeedY->value(
-         rs->getInitialRotationalSpeedRange().minimum[1]
-      );
-
-      RadialShooter_MinInitialRotationalSpeedZ->value(
-         rs->getInitialRotationalSpeedRange().minimum[2]
-      );
-
-      RadialShooter_MaxInitialRotationalSpeedX->value(
-         rs->getInitialRotationalSpeedRange().maximum[0]
-      );
-
-      RadialShooter_MaxInitialRotationalSpeedY->value(
-         rs->getInitialRotationalSpeedRange().maximum[1]
-      );
-
-      RadialShooter_MaxInitialRotationalSpeedZ->value(
-         rs->getInitialRotationalSpeedRange().maximum[2]
-      );
-   }
-
-
-   Program_Operators->clear();
-
-   for(int i=0;i<modularProgram->numOperators();i++)
-   {
-      Operator* op = modularProgram->getOperator(i);
-
-      if(IS_A(op, FluidFrictionOperator*))
-      {
-         Program_Operators->add("Fluid Friction");
-      }
-      else if(IS_A(op, ForceOperator*))
-      {
-         Program_Operators->add("Force");
-      }
-      else if(IS_A(op, AccelOperator*))
-      {
-         Program_Operators->add("Acceleration");
-      }
-   }
+   psEditorGUI_LayerSelect(NULL, NULL);
 }
 
 // Update file history from preferences...
@@ -537,72 +593,137 @@ static void setParticleSystemFilename(std::string newFilename)
 }
 
 
+void psEditorGUI_NewLayer(Fl_Button*, void*)
+{
+   ParticleSystemLayer layer;
+   
+   
+   layer.mParticleSystem = new osgParticle::ParticleSystem();
+
+   layer.mParticleSystem->setDefaultAttributes("", true, false);
+
+   layer.mParticle = new Particle();
+
+   layer.mParticleSystem->setDefaultParticleTemplate(*layer.mParticle);
+
+
+   layer.mGeode = new osg::Geode();
+
+   char buf[256];
+   
+   sprintf(buf, "Layer %d", layers.size());
+   
+   layer.mGeode->setName(buf);
+   
+   layer.mGeode->addDrawable(layer.mParticleSystem.get());
+
+   particleSystemGroup->addChild(layer.mGeode.get());
+
+
+   layer.mEmitterTransform = new osg::MatrixTransform();
+
+   layer.mModularEmitter = new ModularEmitter();
+
+   layer.mModularEmitter->setParticleSystem(layer.mParticleSystem.get());
+
+   RandomRateCounter* rrc = new RandomRateCounter();
+
+   rrc->setRateRange(20, 30);
+
+   layer.mModularEmitter->setCounter(
+      rrc
+   );
+
+   layer.mModularEmitter->setPlacer(
+      new PointPlacer()
+   );
+
+   layer.mModularEmitter->setShooter(
+      new RadialShooter()
+   );
+
+   layer.mEmitterTransform->addChild(layer.mModularEmitter.get());
+
+   particleSystemGroup->addChild(layer.mEmitterTransform.get());
+
+
+   layer.mModularProgram = new ModularProgram();
+ 
+   layer.mModularProgram->setParticleSystem(layer.mParticleSystem.get());
+
+   particleSystemGroup->addChild(layer.mModularProgram.get());
+
+
+   particleSystemUpdater->addParticleSystem(layer.mParticleSystem.get());
+
+
+   layers.push_back(layer);
+   
+   Layers->add(layer.mGeode->getName().c_str());
+   
+   Layers->value(layers.size());
+   
+   psEditorGUI_LayerSelect(NULL, NULL);
+}
+
+void psEditorGUI_DeleteLayer(Fl_Button*, void*)
+{
+   int layer = Layers->value() - 1;
+   
+   particleSystemGroup->removeChild(layers[layer].mGeode.get());
+   particleSystemGroup->removeChild(layers[layer].mEmitterTransform.get());
+   particleSystemGroup->removeChild(layers[layer].mModularProgram.get());
+   
+   particleSystemUpdater->removeParticleSystem(layers[layer].mParticleSystem.get());
+   
+   layers.erase(layers.begin() + layer);
+   
+   Layers->remove(Layers->value());
+   
+   psEditorGUI_LayerSelect(NULL, NULL);
+}
+
+void psEditorGUI_RenameLayer(Fl_Button*, void*)
+{
+   int layer = Layers->value() - 1;
+   
+   const char* input = fl_input("Rename Layer", layers[layer].mGeode->getName().c_str());
+   
+   if(input != NULL)
+   {
+      layers[layer].mGeode->setName(input);
+      Layers->text(Layers->value(), input);
+   }
+}
+
+void psEditorGUI_LayerSelect(Fl_Browser*, void*)
+{
+   if(Layers->value() == 0)
+   {
+      Layers_DeleteButton->deactivate();
+      Layers_RenameButton->deactivate();
+   }
+   else
+   {
+      Layers_DeleteButton->activate();
+      Layers_RenameButton->activate();     
+   }
+   
+   updateParameterTabs();
+}
+
 
 void psEditorGUI_New(Fl_Menu_*, void*)
 {
    if(particleSystemGroup != NULL)
    {
-      particleSystemUpdater->removeParticleSystem(particleSystem);
-
       sceneGroup->removeChild(particleSystemGroup);
    }
 
    particleSystemGroup = new osg::Group();
 
 
-   particleSystem = new osgParticle::ParticleSystem();
-
-   particleSystem->setDefaultAttributes("", true, false);
-
-   particle = new Particle();
-
-   particleSystem->setDefaultParticleTemplate(*particle);
-
-
-   geode = new osg::Geode();
-
-   geode->addDrawable(particleSystem);
-
-   particleSystemGroup->addChild(geode);
-
-
-   emitterTransform = new osg::MatrixTransform();
-
-   modularEmitter = new ModularEmitter();
-
-   modularEmitter->setParticleSystem(particleSystem);
-
-   RandomRateCounter* rrc = new RandomRateCounter();
-
-   rrc->setRateRange(20, 30);
-
-   modularEmitter->setCounter(
-      rrc
-   );
-
-   modularEmitter->setPlacer(
-      new PointPlacer()
-   );
-
-   modularEmitter->setShooter(
-      new RadialShooter()
-   );
-
-   emitterTransform->addChild(modularEmitter);
-
-   particleSystemGroup->addChild(emitterTransform);
-
-
-   modularProgram = new ModularProgram();
- 
-   modularProgram->setParticleSystem(particleSystem);
-
-   particleSystemGroup->addChild(modularProgram);
-
-   
    particleSystemUpdater = new ParticleSystemUpdater();
-
-   particleSystemUpdater->addParticleSystem(particleSystem);
 
    particleSystemGroup->addChild(particleSystemUpdater);
 
@@ -612,12 +733,17 @@ void psEditorGUI_New(Fl_Menu_*, void*)
 
    setParticleSystemFilename("");
    
-
+   
+   layers.clear();
+   
+   psEditorGUI_NewLayer(NULL, NULL);
+   
+   
    updateGUIElements();
 }
 
 ///Load the given filename
-void LoadFile( std::string filename )
+void LoadFile( std::string filename, bool import = false )
 {
    if(!filename.empty())
    {
@@ -632,39 +758,60 @@ void LoadFile( std::string filename )
 
       osg::Group* newParticleSystemGroup = (osg::Group*)node;
 
-      osg::Geode* newGeode = NULL;
-      osgParticle::ParticleSystem* newParticleSystem = NULL;
-      Particle* newParticle = NULL;
-      osg::MatrixTransform* newEmitterTransform = NULL;
-      ModularEmitter* newModularEmitter = NULL;
-      ModularProgram* newModularProgram = NULL;
+      std::vector<ParticleSystemLayer> newLayers;
+      
       ParticleSystemUpdater* newParticleSystemUpdater = NULL;
 
-      for(unsigned int i=0;i<newParticleSystemGroup->getNumChildren();i++)
+      unsigned int i;
+      
+      for(i=0;i<newParticleSystemGroup->getNumChildren();i++)
       {
          node = newParticleSystemGroup->getChild(i);
 
          if(IS_A(node, osg::Geode*))
          {
-            newGeode = (osg::Geode*)node;
+            ParticleSystemLayer layer;
+            
+            layer.mGeode = (osg::Geode*)node;
 
-            for(unsigned int j=0;j<newGeode->getNumDrawables();j++)
+            for(unsigned int j=0;j<layer.mGeode->getNumDrawables();j++)
             {
-               osg::Drawable* drawable = newGeode->getDrawable(j);
+               osg::Drawable* drawable = layer.mGeode->getDrawable(j);
 
                if(IS_A(drawable, osgParticle::ParticleSystem*))
                {
-                  newParticleSystem = (osgParticle::ParticleSystem*)drawable;
+                  layer.mParticleSystem = (osgParticle::ParticleSystem*)drawable;
 
-                  newParticle = new Particle(
-                     newParticleSystem->getDefaultParticleTemplate()
+                  layer.mParticle = new Particle(
+                     layer.mParticleSystem->getDefaultParticleTemplate()
                   );
                }
             }
+            
+            if(layer.mGeode->getName() == "")
+            {
+               char buf[256];
+               
+               sprintf(buf, "Layer %d", newLayers.size() + (import ? layers.size() : 0));
+               
+               layer.mGeode->setName(buf);
+            }
+            
+            newLayers.push_back(layer);
          }
-         else if(IS_A(node, osg::MatrixTransform*))
+         else if(IS_A(node, ParticleSystemUpdater*))
          {
-            newEmitterTransform = (osg::MatrixTransform*)node;
+            newParticleSystemUpdater = (ParticleSystemUpdater*)node;
+         }
+      }
+      
+      for(i=0;i<newParticleSystemGroup->getNumChildren();i++)
+      {
+         node = newParticleSystemGroup->getChild(i);
+         
+         if(IS_A(node, osg::MatrixTransform*))
+         {
+            osg::MatrixTransform* newEmitterTransform = (osg::MatrixTransform*)node;
 
             for(unsigned int j=0;j<newEmitterTransform->getNumChildren();j++)
             {
@@ -672,44 +819,64 @@ void LoadFile( std::string filename )
 
                if(IS_A(childNode, ModularEmitter*))
                {
-                  newModularEmitter = (ModularEmitter*)childNode;
+                  osgParticle::ModularEmitter* newModularEmitter = (ModularEmitter*)childNode;
+                  
+                  for(unsigned int k=0;k<newLayers.size();k++)
+                  {
+                     if(newLayers[k].mParticleSystem == newModularEmitter->getParticleSystem())
+                     {
+                        newLayers[k].mEmitterTransform = newEmitterTransform;
+                        newLayers[k].mModularEmitter = newModularEmitter;
+                        break;
+                     }
+                  }
                }
             }
          }
          else if(IS_A(node, ModularProgram*))
          {
-            newModularProgram = (ModularProgram*)node;
-         }
-         else if(IS_A(node, ParticleSystemUpdater*))
-         {
-            newParticleSystemUpdater = (ParticleSystemUpdater*)node;
+            osgParticle::ModularProgram* newModularProgram = (ModularProgram*)node;
+            
+            for(unsigned int j=0;j<newLayers.size();j++)
+            {
+               if(newLayers[j].mParticleSystem == newModularProgram->getParticleSystem())
+               {
+                  newLayers[j].mModularProgram = newModularProgram;
+                  break;
+               }
+            }
          }
       }
-
-      if(newGeode != NULL &&
-         newParticleSystem != NULL &&
-         newParticle != NULL &&
-         newEmitterTransform != NULL &&
-         newModularEmitter != NULL &&
-         newModularProgram != NULL &&
-         newParticleSystemUpdater != NULL)
+      
+      if(newParticleSystemUpdater != NULL)
       {
-         sceneGroup->removeChild(particleSystemGroup);         
+         if(import)
+         {
+            for(i=0;i<newLayers.size();i++)
+            {
+               particleSystemGroup->addChild(newLayers[i].mGeode.get());
+               particleSystemGroup->addChild(newLayers[i].mEmitterTransform.get());
+               particleSystemGroup->addChild(newLayers[i].mModularProgram.get());
+               
+               particleSystemUpdater->addParticleSystem(newLayers[i].mParticleSystem.get());
+               
+               layers.push_back(newLayers[i]);
+            }
+         }
+         else
+         {
+            sceneGroup->removeChild(particleSystemGroup);         
 
-         particleSystemGroup = newParticleSystemGroup;
-         geode = newGeode;
-         particleSystem = newParticleSystem;
-         particle = newParticle;
-         emitterTransform = newEmitterTransform;
-         modularEmitter = newModularEmitter;
-         modularProgram = newModularProgram;
-         particleSystemUpdater = newParticleSystemUpdater;
+            particleSystemGroup = newParticleSystemGroup;
+            
+            layers = newLayers;
+            
+            particleSystemUpdater = newParticleSystemUpdater;
 
-         sceneGroup->addChild(particleSystemGroup);
-
+            sceneGroup->addChild(particleSystemGroup);
+         }
+         
          updateGUIElements();
-
-         setParticleSystemFilename(filename);
       }
       else
       {
@@ -735,6 +902,23 @@ void psEditorGUI_Open(Fl_Menu_*, void*)
    }
 }
 
+void psEditorGUI_Import(Fl_Menu_*, void*)
+{
+   char* filename =
+      fl_file_chooser(
+      "Import",
+      "Particle Systems (*.osg)",
+      particleSystemFilename.c_str(),
+      1
+      );
+
+   if (filename != NULL)
+   {
+      std::string name = filename;
+      LoadFile(name, true);
+   }
+}
+
 void psEditorGUI_Save(Fl_Menu_*, void*)
 {
    if(particleSystemFilename == "")
@@ -743,7 +927,10 @@ void psEditorGUI_Save(Fl_Menu_*, void*)
    }
    else
    {
-      modularEmitter->setCurrentTime(0.0);
+      for(unsigned int i=0;i<layers.size();i++)
+      {
+         layers[i].mModularEmitter->setCurrentTime(0.0);
+      }
       
       osgDB::writeNodeFile(*particleSystemGroup, particleSystemFilename);
    }
@@ -806,98 +993,118 @@ void psEditorGUI_XZGrid(Fl_Menu_*, void*)
 
 void psEditorGUI_Particles_SetAlignment(Fl_Choice*, void*)
 {
-   particleSystem->setParticleAlignment(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticleSystem->setParticleAlignment(
       (osgParticle::ParticleSystem::Alignment)Particles_Alignment->value()
    );
 }
 
 void psEditorGUI_Particles_SetShape(Fl_Choice*, void*)
 {
-   particle->setShape(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setShape(
       (Particle::Shape)Particles_Shape->value()
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetLifetime(Fl_Value_Input*, void*)
 {
-   particle->setLifeTime(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setLifeTime(
       Particles_Lifetime->value()
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMinSize(Fl_Value_Input*, void*)
 {
-   particle->setSizeRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setSizeRange(
       rangef(
          Particles_MinSize->value(),
          Particles_MaxSize->value()
       )
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMaxSize(Fl_Value_Input*, void*)
 {
-   particle->setSizeRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setSizeRange(
       rangef(
          Particles_MinSize->value(),
          Particles_MaxSize->value()
       )
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMinAlpha(Fl_Value_Input*, void*)
 {
-   particle->setAlphaRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setAlphaRange(
       rangef(
          Particles_MinAlpha->value(),
          Particles_MaxAlpha->value()
       )
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMaxAlpha(Fl_Value_Input*, void*)
 {
-   particle->setAlphaRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setAlphaRange(
       rangef(
          Particles_MinAlpha->value(),
          Particles_MaxAlpha->value()
       )
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetRadius(Fl_Value_Input*, void*)
 {
-   particle->setRadius(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setRadius(
       Particles_Radius->value()
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMass(Fl_Value_Input*, void*)
 {
-   particle->setMass(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setMass(
       Particles_Mass->value()
    );
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetTexture(Fl_Input*, void*)
 {
-   particleSystem->setDefaultAttributes(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticleSystem->setDefaultAttributes(
       Particles_Texture->value(),
       Particles_Emissive->value(),
       Particles_Lighting->value()
@@ -908,6 +1115,8 @@ void psEditorGUI_Particles_SetTexture(Fl_Input*, void*)
 
 void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    char* filename = 
       fl_file_chooser(
          "Choose Texture",
@@ -922,7 +1131,7 @@ void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
 
       Particles_TexturePreview->SetTexture(filename);
       
-      particleSystem->setDefaultAttributes(
+      layers[layer].mParticleSystem->setDefaultAttributes(
          Particles_Texture->value(),
          Particles_Emissive->value(),
          Particles_Lighting->value()
@@ -932,7 +1141,9 @@ void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
 
 void psEditorGUI_Particles_SetEmissive(Fl_Check_Button*, void*)
 {
-   particleSystem->setDefaultAttributes(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticleSystem->setDefaultAttributes(
       Particles_Texture->value(),
       Particles_Emissive->value(),
       Particles_Lighting->value()
@@ -941,7 +1152,9 @@ void psEditorGUI_Particles_SetEmissive(Fl_Check_Button*, void*)
 
 void psEditorGUI_Particles_SetLighting(Fl_Check_Button*, void*)
 {
-   particleSystem->setDefaultAttributes(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticleSystem->setDefaultAttributes(
       Particles_Texture->value(),
       Particles_Emissive->value(),
       Particles_Lighting->value()
@@ -950,7 +1163,9 @@ void psEditorGUI_Particles_SetLighting(Fl_Check_Button*, void*)
 
 void psEditorGUI_Particles_SetMinR(Fl_Value_Input*, void*)
 {
-   particle->setColorRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setColorRange(
       rangev4(
          osg::Vec4(
             Particles_MinR->value(),
@@ -969,20 +1184,22 @@ void psEditorGUI_Particles_SetMinR(Fl_Value_Input*, void*)
 
    Particles_MinColor->color(
       fl_rgb_color(
-         (uchar)(particle->getColorRange().minimum[0]*255),
-         (uchar)(particle->getColorRange().minimum[1]*255),
-         (uchar)(particle->getColorRange().minimum[2]*255)
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[0]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[1]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[2]*255)
       )
    );  
 
    Particles_MinColor->redraw();
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMinG(Fl_Value_Input*, void*)
 {
-   particle->setColorRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setColorRange(
       rangev4(
          osg::Vec4(
             Particles_MinR->value(),
@@ -1001,20 +1218,22 @@ void psEditorGUI_Particles_SetMinG(Fl_Value_Input*, void*)
 
    Particles_MinColor->color(
       fl_rgb_color(
-         (uchar)(particle->getColorRange().minimum[0]*255),
-         (uchar)(particle->getColorRange().minimum[1]*255),
-         (uchar)(particle->getColorRange().minimum[2]*255)
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[0]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[1]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[2]*255)
       )
    );  
-   
+
    Particles_MinColor->redraw();
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMinB(Fl_Value_Input*, void*)
 {
-   particle->setColorRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setColorRange(
       rangev4(
          osg::Vec4(
             Particles_MinR->value(),
@@ -1033,19 +1252,21 @@ void psEditorGUI_Particles_SetMinB(Fl_Value_Input*, void*)
 
    Particles_MinColor->color(
       fl_rgb_color(
-         (uchar)(particle->getColorRange().minimum[0]*255),
-         (uchar)(particle->getColorRange().minimum[1]*255),
-         (uchar)(particle->getColorRange().minimum[2]*255)
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[0]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[1]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().minimum[2]*255)
       )
    );  
 
    Particles_MinColor->redraw();
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_ChooseMinColor(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    double r = Particles_MinR->value(),
           g = Particles_MinG->value(),
           b = Particles_MinB->value();
@@ -1056,7 +1277,7 @@ void psEditorGUI_Particles_ChooseMinColor(Fl_Button*, void*)
       Particles_MinG->value(g);
       Particles_MinB->value(b);
 
-      particle->setColorRange(
+      layers[layer].mParticle->setColorRange(
          rangev4(
             osg::Vec4(
                Particles_MinR->value(),
@@ -1075,21 +1296,23 @@ void psEditorGUI_Particles_ChooseMinColor(Fl_Button*, void*)
 
       Particles_MinColor->color(
          fl_rgb_color(
-            (uchar)(particle->getColorRange().minimum[0]*255),
-            (uchar)(particle->getColorRange().minimum[1]*255),
-            (uchar)(particle->getColorRange().minimum[2]*255)
+            (uchar)(layers[layer].mParticle->getColorRange().minimum[0]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().minimum[1]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().minimum[2]*255)
          )
       );
 
       Particles_MinColor->redraw();
 
-      particleSystem->setDefaultParticleTemplate(*particle);
+      layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
    }
 }
 
 void psEditorGUI_Particles_SetMaxR(Fl_Value_Input*, void*)
 {
-   particle->setColorRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setColorRange(
       rangev4(
          osg::Vec4(
             Particles_MinR->value(),
@@ -1108,20 +1331,22 @@ void psEditorGUI_Particles_SetMaxR(Fl_Value_Input*, void*)
 
    Particles_MaxColor->color(
       fl_rgb_color(
-         (uchar)(particle->getColorRange().maximum[0]*255),
-         (uchar)(particle->getColorRange().maximum[1]*255),
-         (uchar)(particle->getColorRange().maximum[2]*255)
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[0]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[1]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[2]*255)
       )
    );   
 
    Particles_MaxColor->redraw();
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMaxG(Fl_Value_Input*, void*)
 {
-   particle->setColorRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setColorRange(
       rangev4(
          osg::Vec4(
             Particles_MinR->value(),
@@ -1140,20 +1365,22 @@ void psEditorGUI_Particles_SetMaxG(Fl_Value_Input*, void*)
 
    Particles_MaxColor->color(
       fl_rgb_color(
-         (uchar)(particle->getColorRange().maximum[0]*255),
-         (uchar)(particle->getColorRange().maximum[1]*255),
-         (uchar)(particle->getColorRange().maximum[2]*255)
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[0]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[1]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[2]*255)
       )
    );   
 
    Particles_MaxColor->redraw();
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_SetMaxB(Fl_Value_Input*, void*)
 {
-   particle->setColorRange(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mParticle->setColorRange(
       rangev4(
          osg::Vec4(
             Particles_MinR->value(),
@@ -1172,19 +1399,21 @@ void psEditorGUI_Particles_SetMaxB(Fl_Value_Input*, void*)
 
    Particles_MaxColor->color(
       fl_rgb_color(
-         (uchar)(particle->getColorRange().maximum[0]*255),
-         (uchar)(particle->getColorRange().maximum[1]*255),
-         (uchar)(particle->getColorRange().maximum[2]*255)
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[0]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[1]*255),
+         (uchar)(layers[layer].mParticle->getColorRange().maximum[2]*255)
       )
    );   
 
    Particles_MaxColor->redraw();
 
-   particleSystem->setDefaultParticleTemplate(*particle);
+   layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
 }
 
 void psEditorGUI_Particles_ChooseMaxColor(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    double r = Particles_MaxR->value(),
           g = Particles_MaxG->value(),
           b = Particles_MaxB->value();
@@ -1195,7 +1424,7 @@ void psEditorGUI_Particles_ChooseMaxColor(Fl_Button*, void*)
       Particles_MaxG->value(g);
       Particles_MaxB->value(b);
 
-      particle->setColorRange(
+      layers[layer].mParticle->setColorRange(
          rangev4(
             osg::Vec4(
                Particles_MinR->value(),
@@ -1214,25 +1443,27 @@ void psEditorGUI_Particles_ChooseMaxColor(Fl_Button*, void*)
 
       Particles_MaxColor->color(
          fl_rgb_color(
-            (uchar)(particle->getColorRange().maximum[0]*255),
-            (uchar)(particle->getColorRange().maximum[1]*255),
-            (uchar)(particle->getColorRange().maximum[2]*255)
+            (uchar)(layers[layer].mParticle->getColorRange().maximum[0]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().maximum[1]*255),
+            (uchar)(layers[layer].mParticle->getColorRange().maximum[2]*255)
          )
       );
 
       Particles_MaxColor->redraw();
 
-      particleSystem->setDefaultParticleTemplate(*particle);
+      layers[layer].mParticleSystem->setDefaultParticleTemplate(*layers[layer].mParticle);
    }
 }
 
 void psEditorGUI_Particles_SetEmitterEndless(Fl_Check_Button*, void*)
 {
-   modularEmitter->setEndless(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mModularEmitter->setEndless(
       Particles_Emitter_Endless->value()
    );
    
-   if(modularEmitter->isEndless())
+   if(layers[layer].mModularEmitter->isEndless())
    {
       Particles_Emitter_Lifetime->deactivate();
    }
@@ -1244,29 +1475,37 @@ void psEditorGUI_Particles_SetEmitterEndless(Fl_Check_Button*, void*)
 
 void psEditorGUI_Particles_SetEmitterLifetime(Fl_Value_Input*, void*)
 {
-   modularEmitter->setLifeTime(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mModularEmitter->setLifeTime(
       Particles_Emitter_Lifetime->value()
    );
 }
 
 void psEditorGUI_Particles_SetEmitterStartTime(Fl_Value_Input*, void*)
 {
-   modularEmitter->setStartTime(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mModularEmitter->setStartTime(
       Particles_Emitter_StartTime->value()
    );
 }
 
 void psEditorGUI_Particles_SetEmitterResetTime(Fl_Value_Input*, void*)
 {
-   modularEmitter->setResetTime(
+   int layer = Layers->value() - 1;
+   
+   layers[layer].mModularEmitter->setResetTime(
       Particles_Emitter_ResetTime->value()
    );
 }
 
 void psEditorGUI_RandomRateCounter_SetMinRate(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RandomRateCounter* rrc = 
-      (RandomRateCounter*)modularEmitter->getCounter();
+      (RandomRateCounter*)layers[layer].mModularEmitter->getCounter();
 
    rrc->setRateRange(
       rangef(
@@ -1278,8 +1517,10 @@ void psEditorGUI_RandomRateCounter_SetMinRate(Fl_Value_Input*, void*)
 
 void psEditorGUI_RandomRateCounter_SetMaxRate(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RandomRateCounter* rrc = 
-      (RandomRateCounter*)modularEmitter->getCounter();
+      (RandomRateCounter*)layers[layer].mModularEmitter->getCounter();
 
    rrc->setRateRange(
       rangef(
@@ -1291,14 +1532,16 @@ void psEditorGUI_RandomRateCounter_SetMaxRate(Fl_Value_Input*, void*)
 
 void psEditorGUI_Counter_SetType(Fl_Choice* counterType, void*)
 {
-   Counter* counter = modularEmitter->getCounter();
+   int layer = Layers->value() - 1;
+   
+   Counter* counter = layers[layer].mModularEmitter->getCounter();
 
    switch(counterType->value())
    {
       case 0:
          if(!IS_A(counter, RandomRateCounter*))
          {
-            modularEmitter->setCounter(
+            layers[layer].mModularEmitter->setCounter(
                new RandomRateCounter()
             );
 
@@ -1310,8 +1553,10 @@ void psEditorGUI_Counter_SetType(Fl_Choice* counterType, void*)
 
 void psEditor_SegmentPlacer_VertexA_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setVertexA(
       SegmentPlacer_A_X->value(),
@@ -1322,8 +1567,10 @@ void psEditor_SegmentPlacer_VertexA_SetX(Fl_Value_Input*, void*)
 
 void psEditor_SegmentPlacer_VertexA_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setVertexA(
       SegmentPlacer_A_X->value(),
@@ -1334,8 +1581,10 @@ void psEditor_SegmentPlacer_VertexA_SetY(Fl_Value_Input*, void*)
 
 void psEditor_SegmentPlacer_VertexA_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setVertexA(
       SegmentPlacer_A_X->value(),
@@ -1346,8 +1595,10 @@ void psEditor_SegmentPlacer_VertexA_SetZ(Fl_Value_Input*, void*)
 
 void psEditor_SegmentPlacer_VertexB_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setVertexB(
       SegmentPlacer_B_X->value(),
@@ -1358,8 +1609,10 @@ void psEditor_SegmentPlacer_VertexB_SetX(Fl_Value_Input*, void*)
 
 void psEditor_SegmentPlacer_VertexB_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setVertexB(
       SegmentPlacer_B_X->value(),
@@ -1370,8 +1623,10 @@ void psEditor_SegmentPlacer_VertexB_SetY(Fl_Value_Input*, void*)
 
 void psEditor_SegmentPlacer_VertexB_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SegmentPlacer* sp = 
-      (SegmentPlacer*)modularEmitter->getPlacer();
+      (SegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setVertexB(
       SegmentPlacer_B_X->value(),
@@ -1382,8 +1637,10 @@ void psEditor_SegmentPlacer_VertexB_SetZ(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_Center_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setCenter(
       SectorPlacer_X->value(),
@@ -1394,8 +1651,10 @@ void psEditorGUI_SectorPlacer_Center_SetX(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_Center_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setCenter(
       SectorPlacer_X->value(),
@@ -1406,8 +1665,10 @@ void psEditorGUI_SectorPlacer_Center_SetY(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_Center_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setCenter(
       SectorPlacer_X->value(),
@@ -1418,8 +1679,10 @@ void psEditorGUI_SectorPlacer_Center_SetZ(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_SetMinRadius(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setRadiusRange(
       SectorPlacer_MinRadius->value(),
@@ -1429,8 +1692,10 @@ void psEditorGUI_SectorPlacer_SetMinRadius(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_SetMaxRadius(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setRadiusRange(
       SectorPlacer_MinRadius->value(),
@@ -1440,8 +1705,10 @@ void psEditorGUI_SectorPlacer_SetMaxRadius(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_SetMinPhi(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setPhiRange(
       SectorPlacer_MinPhi->value(),
@@ -1451,8 +1718,10 @@ void psEditorGUI_SectorPlacer_SetMinPhi(Fl_Value_Input*, void*)
 
 void psEditorGUI_SectorPlacer_SetMaxPhi(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    SectorPlacer* sp =
-      (SectorPlacer*)modularEmitter->getPlacer();
+      (SectorPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    sp->setPhiRange(
       SectorPlacer_MinPhi->value(),
@@ -1462,8 +1731,10 @@ void psEditorGUI_SectorPlacer_SetMaxPhi(Fl_Value_Input*, void*)
 
 void psEditorGUI_PointPlacer_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    PointPlacer* pp =
-      (PointPlacer*)modularEmitter->getPlacer();
+      (PointPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    pp->setCenter(
       PointPlacer_X->value(),
@@ -1474,8 +1745,10 @@ void psEditorGUI_PointPlacer_SetX(Fl_Value_Input*, void*)
 
 void psEditorGUI_PointPlacer_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    PointPlacer* pp =
-      (PointPlacer*)modularEmitter->getPlacer();
+      (PointPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    pp->setCenter(
       PointPlacer_X->value(),
@@ -1486,8 +1759,10 @@ void psEditorGUI_PointPlacer_SetY(Fl_Value_Input*, void*)
 
 void psEditorGUI_PointPlacer_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    PointPlacer* pp =
-      (PointPlacer*)modularEmitter->getPlacer();
+      (PointPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    pp->setCenter(
       PointPlacer_X->value(),
@@ -1498,8 +1773,10 @@ void psEditorGUI_PointPlacer_SetZ(Fl_Value_Input*, void*)
 
 void psEditorGUI_MultiSegmentPlacer_VerticesChanged(Fl_Browser*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    MultiSegmentPlacer* msp =
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    int i = MultiSegmentPlacer_Vertices->value() - 1;
 
@@ -1521,8 +1798,10 @@ void psEditorGUI_MultiSegmentPlacer_VerticesChanged(Fl_Browser*, void*)
 
 void psEditorGUI_MultiSegmentPlacer_AddVertex(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    MultiSegmentPlacer* msp =
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    MultiSegmentPlacer_Vertices->add("0, 0, 0");
 
@@ -1535,8 +1814,10 @@ void psEditorGUI_MultiSegmentPlacer_AddVertex(Fl_Button*, void*)
 
 void psEditorGUI_MultiSegmentPlacer_DeleteVertex(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    MultiSegmentPlacer* msp =
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    int i = MultiSegmentPlacer_Vertices->value() - 1;
 
@@ -1554,8 +1835,10 @@ void psEditorGUI_MultiSegmentPlacer_DeleteVertex(Fl_Button*, void*)
 
 void psEditorGUI_MultiSegmentPlacer_Vertex_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    MultiSegmentPlacer* msp =
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    int i = MultiSegmentPlacer_Vertices->value() - 1;
 
@@ -1579,8 +1862,10 @@ void psEditorGUI_MultiSegmentPlacer_Vertex_SetX(Fl_Value_Input*, void*)
 
 void psEditorGUI_MultiSegmentPlacer_Vertex_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    MultiSegmentPlacer* msp =
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    int i = MultiSegmentPlacer_Vertices->value() - 1;
 
@@ -1604,8 +1889,10 @@ void psEditorGUI_MultiSegmentPlacer_Vertex_SetY(Fl_Value_Input*, void*)
 
 void psEditorGUI_MultiSegmentPlacer_Vertex_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    MultiSegmentPlacer* msp =
-      (MultiSegmentPlacer*)modularEmitter->getPlacer();
+      (MultiSegmentPlacer*)layers[layer].mModularEmitter->getPlacer();
 
    int i = MultiSegmentPlacer_Vertices->value() - 1;
 
@@ -1629,14 +1916,16 @@ void psEditorGUI_MultiSegmentPlacer_Vertex_SetZ(Fl_Value_Input*, void*)
 
 void psEditorGUI_Placer_SetType(Fl_Choice* placerType, void*)
 {
-   Placer* placer = modularEmitter->getPlacer();
+   int layer = Layers->value() - 1;
+   
+   Placer* placer = layers[layer].mModularEmitter->getPlacer();
 
    switch(placerType->value())
    {
       case 0:
          if(!IS_A(placer, PointPlacer*))
          {
-            modularEmitter->setPlacer(
+            layers[layer].mModularEmitter->setPlacer(
                new PointPlacer()
             );
 
@@ -1647,7 +1936,7 @@ void psEditorGUI_Placer_SetType(Fl_Choice* placerType, void*)
       case 1:
          if(!IS_A(placer, SectorPlacer*))
          {
-            modularEmitter->setPlacer(
+            layers[layer].mModularEmitter->setPlacer(
                new SectorPlacer()
             );
 
@@ -1658,7 +1947,7 @@ void psEditorGUI_Placer_SetType(Fl_Choice* placerType, void*)
       case 2:
          if(!IS_A(placer, SegmentPlacer*))
          {
-            modularEmitter->setPlacer(
+            layers[layer].mModularEmitter->setPlacer(
                new SegmentPlacer()
             );
 
@@ -1674,7 +1963,7 @@ void psEditorGUI_Placer_SetType(Fl_Choice* placerType, void*)
             msp->addVertex(-1, 0, 0);
             msp->addVertex(1, 0, 0);
 
-            modularEmitter->setPlacer(msp);
+            layers[layer].mModularEmitter->setPlacer(msp);
 
             updateMultiSegmentPlacerParameters();
          }
@@ -1684,8 +1973,10 @@ void psEditorGUI_Placer_SetType(Fl_Choice* placerType, void*)
 
 void psEditorGUI_RadialShooter_SetMinTheta(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setThetaRange(
       RadialShooter_MinTheta->value(),
@@ -1695,8 +1986,10 @@ void psEditorGUI_RadialShooter_SetMinTheta(Fl_Value_Input*, void*)
 
 void psEditorGUI_RadialShooter_SetMaxTheta(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setThetaRange(
       RadialShooter_MinTheta->value(),
@@ -1706,8 +1999,10 @@ void psEditorGUI_RadialShooter_SetMaxTheta(Fl_Value_Input*, void*)
 
 void psEditorGUI_RadialShooter_SetMinPhi(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setPhiRange(
       RadialShooter_MinPhi->value(),
@@ -1717,8 +2012,10 @@ void psEditorGUI_RadialShooter_SetMinPhi(Fl_Value_Input*, void*)
 
 void psEditorGUI_RadialShooter_SetMaxPhi(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setPhiRange(
       RadialShooter_MinPhi->value(),
@@ -1728,8 +2025,10 @@ void psEditorGUI_RadialShooter_SetMaxPhi(Fl_Value_Input*, void*)
 
 void psEditorGUI_RadialShooter_SetMinInitialSpeed(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialSpeedRange(
       RadialShooter_MinInitialSpeed->value(),
@@ -1739,8 +2038,10 @@ void psEditorGUI_RadialShooter_SetMinInitialSpeed(Fl_Value_Input*, void*)
 
 void psEditorGUI_RadialShooter_SetMaxInitialSpeed(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialSpeedRange(
       RadialShooter_MinInitialSpeed->value(),
@@ -1750,8 +2051,10 @@ void psEditorGUI_RadialShooter_SetMaxInitialSpeed(Fl_Value_Input*, void*)
 
 void psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialRotationalSpeedRange(
       osg::Vec3(
@@ -1769,8 +2072,10 @@ void psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX(Fl_Value_Input*, vo
 
 void psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialRotationalSpeedRange(
       osg::Vec3(
@@ -1788,8 +2093,10 @@ void psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY(Fl_Value_Input*, vo
 
 void psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialRotationalSpeedRange(
       osg::Vec3(
@@ -1807,8 +2114,10 @@ void psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ(Fl_Value_Input*, vo
 
 void psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialRotationalSpeedRange(
       osg::Vec3(
@@ -1826,8 +2135,10 @@ void psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX(Fl_Value_Input*, vo
 
 void psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialRotationalSpeedRange(
       osg::Vec3(
@@ -1845,8 +2156,10 @@ void psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY(Fl_Value_Input*, vo
 
 void psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    RadialShooter* rs = 
-      (RadialShooter*)modularEmitter->getShooter();
+      (RadialShooter*)layers[layer].mModularEmitter->getShooter();
 
    rs->setInitialRotationalSpeedRange(
       osg::Vec3(
@@ -1868,13 +2181,15 @@ void psEditorGUI_Shooter_SetType(Fl_Choice*, void*)
 
 void psEditor_Program_OperatorsChanged(Fl_Browser*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    if(i >= 0)
    {
       Program_DeleteOperator->activate();
 
-      Operator* op = modularProgram->getOperator(i);
+      Operator* op = layers[layer].mModularProgram->getOperator(i);
 
       if(IS_A(op, FluidFrictionOperator*))
       {
@@ -1948,9 +2263,11 @@ void psEditor_Program_OperatorsChanged(Fl_Browser*, void*)
 
 void psEditorGUI_Program_NewForce(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    ForceOperator* fo = new ForceOperator();
 
-   modularProgram->addOperator(fo);
+   layers[layer].mModularProgram->addOperator(fo);
 
    Program_Operators->add("Force");
 
@@ -1961,9 +2278,11 @@ void psEditorGUI_Program_NewForce(Fl_Button*, void*)
 
 void psEditorGUI_Program_NewAcceleration(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    AccelOperator* ao = new AccelOperator();
 
-   modularProgram->addOperator(ao);
+   layers[layer].mModularProgram->addOperator(ao);
 
    Program_Operators->add("Acceleration");
 
@@ -1974,9 +2293,11 @@ void psEditorGUI_Program_NewAcceleration(Fl_Button*, void*)
 
 void psEditorGUI_Program_NewFluidFriction(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    FluidFrictionOperator* ffo = new FluidFrictionOperator();
 
-   modularProgram->addOperator(ffo);
+   layers[layer].mModularProgram->addOperator(ffo);
 
    Program_Operators->add("Fluid Friction");
 
@@ -1987,9 +2308,11 @@ void psEditorGUI_Program_NewFluidFriction(Fl_Button*, void*)
 
 void psEditorGUI_Program_DeleteOperator(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
-   modularProgram->removeOperator(i);
+   layers[layer].mModularProgram->removeOperator(i);
 
    Program_Operators->remove(i + 1);
 
@@ -2003,10 +2326,12 @@ void psEditorGUI_Program_DeleteOperator(Fl_Button*, void*)
 
 void psEditorGUI_FluidFriction_Air(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    FluidFrictionOperator* ffo = 
-      (FluidFrictionOperator*)modularProgram->getOperator(i);
+      (FluidFrictionOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ffo->setFluidToAir();
 
@@ -2021,10 +2346,12 @@ void psEditorGUI_FluidFriction_Air(Fl_Button*, void*)
 
 void psEditorGUI_FluidFriction_Water(Fl_Button*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    FluidFrictionOperator* ffo = 
-      (FluidFrictionOperator*)modularProgram->getOperator(i);
+      (FluidFrictionOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ffo->setFluidToWater();
 
@@ -2039,10 +2366,12 @@ void psEditorGUI_FluidFriction_Water(Fl_Button*, void*)
 
 void psEditorGUI_FluidFriction_SetDensity(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    FluidFrictionOperator* ffo = 
-      (FluidFrictionOperator*)modularProgram->getOperator(i);
+      (FluidFrictionOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ffo->setFluidDensity(
       FluidFriction_Density->value()
@@ -2051,10 +2380,12 @@ void psEditorGUI_FluidFriction_SetDensity(Fl_Value_Input*, void*)
 
 void psEditorGUI_FluidFriction_SetViscosity(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    FluidFrictionOperator* ffo = 
-      (FluidFrictionOperator*)modularProgram->getOperator(i);
+      (FluidFrictionOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ffo->setFluidViscosity(
       FluidFriction_Viscosity->value()
@@ -2063,10 +2394,12 @@ void psEditorGUI_FluidFriction_SetViscosity(Fl_Value_Input*, void*)
 
 void psEditorGUI_FluidFriction_SetOverrideRadius(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    FluidFrictionOperator* ffo = 
-      (FluidFrictionOperator*)modularProgram->getOperator(i);
+      (FluidFrictionOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ffo->setOverrideRadius(
       FluidFriction_OverrideRadius->value()
@@ -2075,10 +2408,12 @@ void psEditorGUI_FluidFriction_SetOverrideRadius(Fl_Value_Input*, void*)
 
 void psEditorGUI_Force_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    ForceOperator* fo =
-      (ForceOperator*)modularProgram->getOperator(i);
+      (ForceOperator*)layers[layer].mModularProgram->getOperator(i);
 
    fo->setForce(
       osg::Vec3(
@@ -2091,10 +2426,12 @@ void psEditorGUI_Force_SetX(Fl_Value_Input*, void*)
 
 void psEditorGUI_Force_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    ForceOperator* fo =
-      (ForceOperator*)modularProgram->getOperator(i);
+      (ForceOperator*)layers[layer].mModularProgram->getOperator(i);
 
    fo->setForce(
       osg::Vec3(
@@ -2107,10 +2444,12 @@ void psEditorGUI_Force_SetY(Fl_Value_Input*, void*)
 
 void psEditorGUI_Force_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    ForceOperator* fo =
-      (ForceOperator*)modularProgram->getOperator(i);
+      (ForceOperator*)layers[layer].mModularProgram->getOperator(i);
 
    fo->setForce(
       osg::Vec3(
@@ -2123,10 +2462,12 @@ void psEditorGUI_Force_SetZ(Fl_Value_Input*, void*)
 
 void psEditorGUI_Acceleration_SetX(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    AccelOperator* ao =
-      (AccelOperator*)modularProgram->getOperator(i);
+      (AccelOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ao->setAcceleration(
       osg::Vec3(
@@ -2139,10 +2480,12 @@ void psEditorGUI_Acceleration_SetX(Fl_Value_Input*, void*)
 
 void psEditorGUI_Acceleration_SetY(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    AccelOperator* ao =
-      (AccelOperator*)modularProgram->getOperator(i);
+      (AccelOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ao->setAcceleration(
       osg::Vec3(
@@ -2155,10 +2498,12 @@ void psEditorGUI_Acceleration_SetY(Fl_Value_Input*, void*)
 
 void psEditorGUI_Acceleration_SetZ(Fl_Value_Input*, void*)
 {
+   int layer = Layers->value() - 1;
+   
    int i = Program_Operators->value() - 1;
 
    AccelOperator* ao =
-      (AccelOperator*)modularProgram->getOperator(i);
+      (AccelOperator*)layers[layer].mModularProgram->getOperator(i);
 
    ao->setAcceleration(
       osg::Vec3(
