@@ -14,9 +14,8 @@ from email.MIMEText import MIMEText
 # add them to the groups below
 email = 'false'
 
-bmh = ['johnson@bmh.com', 'guthrie@bmh.com', 'murphy@bmh.com', 'campbell@bmh.com', 'coonan@bmh.com']
-nps = ['cwosborn@nps.edu', 'rejohnso@nps.edu']
-# netc
+# fill this in with interested parties
+peopleToEmail = []
 
 # Function to calculate current time for logging
 def current_time() :
