@@ -40,7 +40,6 @@
       #define  _AUTOLIBNAME "dthlad.lib"
    #endif
    
-   #define _AUTOLIBNAME1  "libRTI-NGd.lib"
    #define _AUTOLIBNAME2  "tinyxmld.lib"
    #define _AUTOLIBNAME3  "osgSimd.lib"
    #define _AUTOLIBNAME4  "ws2_32.lib"
@@ -51,7 +50,6 @@
       #define  _AUTOLIBNAME "dthla.lib"
    #endif
    
-   #define _AUTOLIBNAME1  "libRTI-NG.lib"
    #define _AUTOLIBNAME2  "tinyxml.lib"
    #define _AUTOLIBNAME3  "osgSim.lib"
    #define _AUTOLIBNAME4  "ws2_32.lib"
@@ -61,14 +59,12 @@
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
 #pragma message( "Will automatically link with " _AUTOLIBNAME )
-#pragma message( "Will automatically link with " _AUTOLIBNAME1 )
 #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
 #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
 #endif
 
 #pragma comment(lib, _AUTOLIBNAME)
-#pragma comment(lib, _AUTOLIBNAME1)
 #pragma comment(lib, _AUTOLIBNAME2)
 #pragma comment(lib, _AUTOLIBNAME3)
 #pragma comment(lib, _AUTOLIBNAME4)
