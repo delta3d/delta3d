@@ -24,6 +24,93 @@ struct   AudioConfigData;
 
 namespace   dtAudio
 {
+
+   /** dtAudio::AudioManager 
+    *
+    * dtAudio::AudioManager is the interface to the underlying audio-
+    * engine; OpenAL.
+    *
+    * Before using, the user must instantiate and configure the
+    * AudioManager:
+    *
+    *    AudioManager::Instantiate();
+    *    AudioManager::GetManager()->Configure();
+    *
+    * Optionally the user can create an AudioConfigData structure
+    * to pass to the AudioManager when configuring set some of the
+    * base functionalit of the manager.  Currently only the number
+    * of sources is set this way.  It is encouraged, but not required,
+    * that the user know how many channels their audio hardware uses
+    * and set the number of sources = the number of channels.
+    *
+    * After user is finished with all sound, the AudioManager should
+    * be freed:
+    *
+    *    AudioManager::Destroy();
+    *
+    * FOR THE USER:
+    * Sounds are not created by the user, but they are requested from
+    * the AudioManager.  After getting a sound from the AudioManager
+    * the user then calls the sound's functions.  When the user is
+    * finished with the sound, the sound should be passed back to 
+    * the AudioManager for free the resource.
+    *
+    * There is one global listener which the user also requests from
+    * the AudioManager.  After getting the listener from the AudioManager
+    * the usere then calls the listener's functions.  When finished
+    * with the listener, the user does NOT free it.  The listener is
+    * just an interface to AudioManager's protected object and the
+    * AudioManager will handle it's resources.
+    *
+    * In many cases it's more efficeint to preload the sounds into
+    * the AudioManager before loading them into the individual sounds.
+    *
+    * FOR THE DEVELOPER:
+    * The AudioManager is a repository for all sounds objects, buffers,
+    * sources (sound channels), listeners, etc.  The AudioManager 
+    * hands out interfaces to the various objects for users to manipulate
+    * but it holds all the resources for those objects.
+    *
+    * When a sound command is requested (play, stop, pitch, etc.) the
+    * AudioManager receives the sound through the sig-slot messaging
+    * system and pushes the sound onto a queue of sounds requesting
+    * command processing.  At pre-frame, the AudioManager process all the
+    * sounds waiting for command processing in the ordered they were queued.
+    * State commands are commnads to change the state of the sound
+    * (play, stop, pause, etc.), but not the value of any of the sounds
+    * attributes (gain, pitch, etc.).  Value commands change the value of
+    * a sound's attributes.  If the sound is currently active (has a source)
+    * the value commands are processed immediately, else the value is saved
+    * for when the sound becomes active.  State commands push the sound onto
+    * a queue for further processing at the appropriate time.  For instance,
+    * a play command will bind a sound's source to the sound's buffer and 
+    * then will push the source onto the play queue awaiting to start playing.
+    *
+    * At frame time, AudioManager process all sources waiting for a state
+    * change.  All sources waiting a stop command get stopped, waiting a
+    * pause command get paused, waiting a rewind command get rewound, and
+    * waiting a play command get played.  Then the AudioManager runs through
+    * all sources in it's active list and removes sources that have finished
+    * playing then puts them in a cleanup list for later cleanup.
+    * 
+    * At post-frame, the AudioManager takes all sources waiting for cleanup
+    * and unbinds the source from it's associated buffer.  The source is then
+    * put in a recycle queue for later use by new sounds.
+    *
+    *********************       WARNING       ********************
+    ********************* JPJ (Sept. 23 2004) ********************
+    * The SetRelative() and SetAbsolute() functions are not working properly.
+    * The underlying sound engine (OpenAL) claims setting the
+    * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sources with
+    * respect to the gloabal listener's position, and resetting the
+    * flag to AL_FALSE will not do any distance calculations.  This does
+    * not  appear to be correct.  It appears that resetting the flag to
+    * AL_FALSE does the distance calculations with respect to the
+    * listener's position, and setting to AL_TRUE still does the
+    * distance calculations with respect to the origin.  For now, we
+    * are always resseting the flag to AL_FALSE.
+    *
+    */
    class DT_EXPORT AudioManager   :  public   dtCore::Base
    {
         DECLARE_MANAGEMENT_LAYER(AudioManager)
@@ -181,48 +268,130 @@ namespace   dtAudio
          virtual                    ~AudioManager();
 
       public:
+         /// create the singleton and initialize OpenAL
          static   void              Instantiate( void );
+
+         /// destroy the singleton and shutdown OpenAL
          static   void              Destroy( void );
+
+         /// access the AudioManager
          static   AudioManager*     GetManager( void );
+
+         /// access the global Listener
          static   Listener*         GetListener( void );
 
+         /// initialize AudioManager
          virtual  void              Config( const AudioConfigData& data = _DefCfg );
+
+         /**
+          * receive messages
+          * handles the timeing messages (pre-post-frame) from the system
+          * pushes sounds onto the command queue for later processing
+          */
          virtual  void              OnMessage( MessageData* data );
 
+         /// create or recycle a new sound for the user
                   Sound*            NewSound( void );
+
+         /// free a sound (recycle it) that the user is finish with
                   void              FreeSound( Sound*& sound );
 
+         /// pre-load a wave sound into a buffer
                   bool              LoadWaveFile( const char* file );
+
+         /// un-load a wave sound from a buffer (if use-count is zero)
                   bool              UnloadWaveFile( const char* file );
 
       private:
+         /// process commands of all sounds in the command queue
          inline   void              PreFrame( const double deltaFrameTime );
+
+         /// process all sounds in the play, pause, stop, and rewind queues
+         /// put active sounds on active list
+         /// remove inactive sounds from active list
          inline   void              Frame( const double deltaFrameTime );
+
+         /// unbind the source/buffers from all inactive sounds (stopped sounds)
+         /// free the source
+         /// stop sending AudioManager messages to sound
          inline   void              PostFrame( const double deltaFrameTime );
+
+         /// check if manager has been configured
          inline   bool              Configured( void )   const;
+
+         /// pre-create the specified number of sources
          inline   bool              ConfigSources( unsigned int num );
+
+         /// get the eax function pointers from OpenAL (nothing done with them yet)
          inline   bool              ConfigEAX( bool eax );
+
+         /// give a sound the pointer to the buffer it wants
          inline   void              LoadSound( SoundObj* snd );
+
+         /// remove the buffer from a sound
          inline   void              UnloadSound( SoundObj* snd );
+
+         /// bind a source to the sound's buffer
+         /// initialize the source
+         /// start sending AudioManager messages to sound
+         /// push sound onto the play queue
          inline   void              PlaySound( SoundObj* snd );
+
+         /// push sound onto pause queue
          inline   void              PauseSound( SoundObj* snd );
+
+         /// push sound onto stopped queue
          inline   void              StopSound( SoundObj* snd );
+
+         /// push sound onto rewind queue
          inline   void              RewindSound( SoundObj* snd );
+
+         /// set sound's source to looping
          inline   void              SetLoop( SoundObj* snd );
+
+         /// set sound's source to not looping
          inline   void              ResetLoop( SoundObj* snd );
+
+         /// set sound's source to listener-relative
          inline   void              SetRelative( SoundObj* snd );
+
+         /// set sound's source to not listener-relative
          inline   void              SetAbsolute( SoundObj* snd );
+
+         /// set sound source's gain
          inline   void              SetGain( SoundObj* snd );
+
+         /// set sound source's pitch
          inline   void              SetPitch( SoundObj* snd );
+
+         /// set sound source's position
          inline   void              SetPosition( SoundObj* snd );
+
+         /// set sound source's direction
          inline   void              SetDirection( SoundObj* snd );
+
+         /// set sound source's velocity
          inline   void              SetVelocity( SoundObj* snd );
+
+         /// set sound source's reference distance (minimum dist)
          inline   void              SetReferenceDistance( SoundObj* snd );
+
+         /// set sound source's maximum distance
          inline   void              SetMaximumDistance( SoundObj* snd );
+
+         /// set sound source's rolloff factor
          inline   void              SetRolloff( SoundObj* snd );
+
+         /// set sound source's minimum gain
          inline   void              SetMinimumGain( SoundObj* snd );
+
+         /// set sound source's maximum gain
          inline   void              SetMaximumGain( SoundObj* snd );
+
+         /// give this sound a source
          inline   bool              GetSource( SoundObj* snd );
+
+         /// take source away from this sound
          inline   void              FreeSource( SoundObj* snd );
 
       private:
