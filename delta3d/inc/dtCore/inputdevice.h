@@ -328,7 +328,7 @@ namespace dtCore
           * Sets the state of this axis.  The delta value is used to
           * indicate stateless motion, such as mouse scrolling.
           *
-          * @param axis the new state
+          * @param state the new state
           * @param delta the optional delta value
           */
          void SetState(double state, double delta = 0.0);
