@@ -50,8 +50,6 @@ Light::SetLightModel( osg::LightModel* model, bool enabled )
 
 void Light::AddedToScene( Scene *scene )
 { 
-   DeltaDrawable::AddedToScene( scene );
-
    if( scene )
    {
       SetEnabled( true );
@@ -62,4 +60,6 @@ void Light::AddedToScene( Scene *scene )
       SetEnabled( false );
       mParentScene->UnRegisterLight( this );
    }
+
+   DeltaDrawable::AddedToScene( scene );
 }
