@@ -284,7 +284,7 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel) 
    }
    return TRUE;                                                                         // Display Change Was Successful, Return True
 #else
-   return FALSE;
+   return false;
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 }
 
