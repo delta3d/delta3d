@@ -1,0 +1,16 @@
+##############################
+#                            #
+# Delta3D: Version Changes   # 
+#                            #
+##############################
+
+0.8
+---
+Added Light, PositionalLight, SpotLight, and InfiniteLight classes
+
+Loadable
+
+New hierarchy
+
+DeprecationMgr
+
