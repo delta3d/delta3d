@@ -21,7 +21,6 @@
 #ifndef DELTA_DTCHAR
 #define DELTA_DTCHAR
 
-//#undef Status
 #include "dtChar/character.h"
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)

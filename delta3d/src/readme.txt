@@ -57,7 +57,7 @@ Win32 w/ Visual Studio .NET 7.1
 Linux 
 -----
 Tested on: Fedora Core 2, Fedora Core 3 
-Kernel <= 2.6.10-1.741_FC3
+Kernel <= 2.6.10-1.770_FC3
 
 1. Run 'glxinfo | grep direct'.
    If you get 'direct rendering: yes' skip to 3.
@@ -70,9 +70,7 @@ Kernel <= 2.6.10-1.741_FC3
    ATI:   http://www.fedorafaq.org/#radeon
    Nvdia: http://www.fedorafaq.org/#nvidia
 
-3. Set the Delta3D environment variables. There is no
-   installer cause this is Linux, and you're a power user,
-   right? The following variables need to be set:
+3. Set the Delta3D environment variables. 
    
    DELTA_ROOT: path to your Delta3D installation
    DELTA_DATA: $DELTA_ROOT/data
@@ -93,27 +91,43 @@ Kernel <= 2.6.10-1.741_FC3
    delta3d-dependencies 
    delta3d-data 
 
-5. Download CMake from http://www.cmake.org .
-   We use CMake to synconize cross-platform builds of Delta3D.
+5. Download SCons from http://www.scons.org .
 
-6. You will notice files called CMakeLists.txt in the following directories:
+6. You will notice files called SConstruct and SConscript in the delta3d 
+   subdirectories. These files are high-level scripts that tell SCons how 
+   to build Delta3D.
 
-   src/
-   examples/
-   utilities/bspCompiler
-   utilities/psEditor
-   utilities/Viewer
+   To build the Delta3D libraries from the root delta3d directory type:
+    scons
 
-   These files are high-level instructions that tell CMake how to genereate 
-   Makefiles for your configuration. In each of these directories run:
+   To build the examples:
+    scons examples
 
-   cmake . 
-   make
+   To build the utilities:
+    scons utilities
 
-   to build the apprpropriate files. 
+   To build HLA-related libraries, examples, and utilities:
+    scons hla
 
-   To build the Delta3D source, also run 'make install' to place the shared
-   libraries in the ../lib folder.
+   To build the Python bindings and example:
+    scons python 
+
+   To install the shared libraries in the lib folder under the prefix
+   you specified:
+    scons install
+
+   Use options include:
+    -Q   - Quiet output.
+    -j N - Number of jobs to use, help for multiple processors.
+    -c   - Clean out the previous build.
+    prefix=path - Path to in which to install Delta3D.
+    mode=debug|release - 'debug' builds with debugging symbols.
+                         'release' builds with optimizations enabled.
+    noWarnings=1 - Turns off all compiler warnings.
+
+   The old Cmake file are still around and you can build with them using:
+     cmake .
+     make
 
    dtPython
    --------

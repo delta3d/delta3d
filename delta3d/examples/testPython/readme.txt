@@ -121,17 +121,13 @@ Note: If you wish to place the boost_python libraries in a different location,
       to the LINK_DIRECTORTIES list.
 
 Build the Python bindings for Delta3D engine:
-- Go to delta3d/src/python.
-- Run 'cmake .'
-- Run 'make; make install'
-- Run 'install_linux_python'
+- Go to the delta3d root directory.
+- Run 'scons python'
+- Run 'scons install'
 
 Set the PYTHONPATH environement variable to contain $DELTA_LIB.
 
-Build testPython example:
-- Go to examples/testPython.
-- Run 'cmake .'.
-- Run 'make'.
+The testPython example should be built automictally by the above command.
 
 Run 'testPython'.
 

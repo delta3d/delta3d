@@ -77,6 +77,12 @@ namespace dtCore
      ///Get the world coordinate matrix from the supplied node
       static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix );
 
+      ///Automatically rescales normals if you scale your objects.
+      void SetNormalRescaling( bool enable );
+
+      ///Checks if we are rescaling normals for this object.
+      bool GetNormalRescaling() const;
+
    private:
 
       class getWCofNodeVisitor : public osg::NodeVisitor

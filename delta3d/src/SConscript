@@ -1,25 +1,12 @@
 Import('*')
 
-dtAbcLib = SConscript( 'dtABC/SConscript' )
-dtAudioLib = SConscript( 'dtAudio/SConscript' )
-dtCharLib = SConscript( 'dtChar/SConscript' )
-dtCoreLib = SConscript( 'dtCore/SConscript' )
-#dtHlaLib = SConscript( 'dtHLA/SConscript' )
-#dtSoarxLib = SConscript( 'soarx/SConscript' )
-dtUtilLib = SConscript( 'dtUtil/SConscript' )
-dtVisLib = SConscript( 'dtVis/SConscript' )
-gui_flLib = SConscript( 'gui_fl/SConscript' )
-
-#pythonLibs = SConscript( 'python/SConscript' )
-
-env.Depends( dtCoreLib, dtUtilLib )
-env.Depends( dtAbcLib, dtCoreLib )
-env.Depends( dtCharLib, dtCoreLib )
-env.Depends( gui_flLib, [ dtCoreLib, dtAbcLib ] )
-#env.Depends( dtHlaLib, dtCoreLib ) #RTI?
-#env.Depends( dtSoarxLib, dtCoreLib )
-
-#python dependencies
-
-Return( 'dtAbcLib', 'dtAudioLib', 'dtCharLib', 'dtCoreLib', 'dtUtilLib', 'dtVisLib', 'gui_flLib' )
-
+SConscript( 'dtABC/SConscript' )
+SConscript( 'dtAudio/SConscript' )
+SConscript( 'dtChar/SConscript' )
+SConscript( 'dtCore/SConscript' )
+SConscript( 'dtHLA/SConscript' )
+SConscript( 'dtUtil/SConscript' )
+SConscript( 'dtVis/SConscript' )
+SConscript( 'gui_fl/SConscript' )
+SConscript( 'python/SConscript' )
+SConscript( 'soarx/SConscript' )
