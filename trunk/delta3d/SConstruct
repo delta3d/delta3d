@@ -239,10 +239,6 @@ env.Alias('examples','$prefix/examples')
 
 # TODO: install headers, libs, to $prefix
 
-SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gui_fl' ])
-#SConscript(dirs=[ 'python' ])
-#SConscript(dirs=[ 'soarx' ])
-
-env.Depends('dtABC','dtCore')
-env.Depends('dtChar','dtCore')
-env.Depends('gui_fl','dtCore')
+SConscript(dirs=[ 'src' ])
+#SConscript(dirs=[ 'examples' ])
+#SConscript(dirs=[ 'utilities' ])
