@@ -26,12 +26,12 @@ class InputCallback : public Producer::KeyboardMouseCallback
 
       void mouseMotion(float x, float y)
       {
-         mMouse->mouseMotion(x, y);
+         mMouse->mouseMotion( x, y );
       }
 
       void passiveMouseMotion(float x, float y)
       {
-         mMouse->passiveMouseMotion(x, y);
+         mMouse->passiveMouseMotion( x, y );
       }
 
       void buttonPress(float x, float y, unsigned int button)
@@ -82,9 +82,13 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-DeltaWin::DeltaWin(string name, int x, int y, int width, int height) :
+DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool callback) :
 Base(name),
-mShowCursor(true)
+mShowCursor(true),
+mResWidth(0),
+mResHeight(0),
+mResDepth(0),
+mFullscreen(false)
 {
    RegisterInstance(this);
 
@@ -94,21 +98,28 @@ mShowCursor(true)
 
    mMouse = new Mouse;
 
-   mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
-
-   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
-
-   mKeyboardMouse->startThread();
+   //if(callback)
+   //{
+      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
+      mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+      mKeyboardMouse->startThread();
+   //}
 
    SetPosition(x, y, width, height);
    SetName( name );
    SetWindowTitle(name.c_str());
    ShowCursor();
+
+   if(mFullscreen)
+      SetFullScreenMode(mFullscreen);
+
+   if( mResWidth != 0 && mResHeight != 0 && mResDepth != 0 )
+      ChangeScreenResolution( mResWidth, mResHeight, mResDepth );
 }
 
 
 
-DeltaWin::DeltaWin(string name, Producer::RenderSurface* rs) :
+DeltaWin::DeltaWin(string name, Producer::RenderSurface* rs, bool callback) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(rs)
@@ -119,18 +130,21 @@ mRenderSurface(rs)
 
    mMouse = new Mouse;
 
-   mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
 
-   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+   //if(callback)
+   //{
+      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
 
-   mKeyboardMouse->startThread();
+      mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+      mKeyboardMouse->startThread();
+   //}
 
    ShowCursor();
 }
 
 
 
-DeltaWin::DeltaWin(string name, Producer::InputArea* ia) :
+DeltaWin::DeltaWin(string name, Producer::InputArea* ia, bool callback) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(ia->getRenderSurface(0))
@@ -141,11 +155,15 @@ mRenderSurface(ia->getRenderSurface(0))
 
    mMouse = new Mouse;
 
-   mKeyboardMouse = new Producer::KeyboardMouse(ia);
 
-   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+   //if(callback)
+   //{
+      mKeyboardMouse = new Producer::KeyboardMouse(ia);
 
-   mKeyboardMouse->startThread();
+      mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+      mKeyboardMouse->startThread();
+   //}
+ 
 
    ShowCursor();
 }
@@ -161,8 +179,6 @@ DeltaWin::~DeltaWin()
    mRenderSurface = NULL;
 
    DeregisterInstance(this);
-   Notify(DEBUG_INFO, "destroying DeltaWin, ref count:%d", this->referenceCount() );
-
 }
 
 /** Set the position and size of the DeltaWin in screen coordinates
@@ -185,6 +201,7 @@ void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
    *height = h;
 }
 
+// Producer::RenderSurface must realized for this to work
 void DeltaWin::SetWindowTitle(const char *title)
 {
    mRenderSurface->setWindowName(title);
@@ -195,8 +212,15 @@ void DeltaWin::SetWindowTitle(const char *title)
    HWND win = mRenderSurface->getWindow();
    SetWindowText(win, title); //from winuser.h
 #else
-   //Display* dpy = mRenderSurface->getDisplay();
-   //Window win = mRenderSurface->getWindow(); 
+   if( mRenderSurface->isRealized() )
+   {
+      Display* dpy = mRenderSurface->getDisplay();
+      Window win = mRenderSurface->getWindow();
+
+      XStoreName( dpy, win, title );
+      XSetIconName( dpy, win, title );
+      XFlush( dpy );
+   }
 #endif
 }
 
@@ -243,65 +267,151 @@ void DeltaWin::ShowCursor(const bool show )
  */
 bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, float &pixel_y)
 {
-   if (x<-1.0f) return false;
-   if (x>1.0f) return false;
-   
-   if (y<-1.0f) return false;
-   if (y>1.0f) return false;
-   
-   float rx = (x+1.0f)*0.5f;
-   float ry = (y+1.0f)*0.5f;
+   if ( x < -1.0f || x > 1.0f ) return false;
+   if ( y < -1.0f || y > 1.0f ) return false;
    
    int wx, wy;
    unsigned int w, h;
    GetRenderSurface()->getWindowRectangle( wx, wy, w, h );
-   
-   pixel_x = (float)wx + ((float)w)* rx;
-   pixel_y = (float)wy + ((float)h)* ry;
+
+   pixel_x = ( w/2 ) * (x + 1);
+   pixel_y = ( h/2 ) * (y + 1);
    
    return true;
 
 }
 
+bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float &x, float &y)
+{   
+   int wx, wy;
+   unsigned int w, h;
+   GetRenderSurface()->getWindowRectangle( wx, wy, w, h );
 
-bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)   // Change The Screen Resolution
+   if (pixel_x < 0 || pixel_x > w ) return false;
+   if (pixel_y < 0 || pixel_y > h ) return false;
+
+   if( w != 0 && y != 0)
+   {
+      x = ( 2 * pixel_x )/w - 1;
+      y = ( 2 * pixel_y )/h - 1;
+
+      return true;
+   }
+   else
+   {
+      Notify(DEBUG_INFO,"Window size of 0");
+      return false;
+   }
+}
+ /*
+ResolutionVec DeltaWin::GetResolutions( void )
+{
+   
+}
+*/
+
+bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth) 
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-   DEVMODE dmScreenSettings;                                                            // Device Mode
-   ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));                                    // Make Sure Memory Is Cleared
-   dmScreenSettings.dmSize                              = sizeof (DEVMODE);             // Size Of The Devmode Structure
-   dmScreenSettings.dmPelsWidth         = width;                                        // Select Screen Width
-   dmScreenSettings.dmPelsHeight                = height;                               // Select Screen Height
-   dmScreenSettings.dmBitsPerPel                = colorDepth;                         // Select Bits Per Pixel
-   dmScreenSettings.dmFields                    = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+   DEVMODE dmScreenSettings;                                                           
+   ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));
+   
+   dmScreenSettings.dmSize       = sizeof (DEVMODE);             
+   dmScreenSettings.dmPelsWidth  = width;                                        
+   dmScreenSettings.dmPelsHeight = height;                              
+   dmScreenSettings.dmBitsPerPel = colorDepth;                     
+   dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
-   if ( ChangeDisplaySettings (&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+   if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
    {
-      return FALSE;                                                                     // Display Change Failed, Return False
+      return false;
    }
-   return TRUE;                                                                         // Display Change Was Successful, Return True
+   return true;
+   
 #else
+
+   Display* dpy = mRenderSurface->getDisplay();
+   int screenNum = mRenderSurface->getScreenNum();
+
+   int dotClock;
+   XF86VidModeModeLine modeline;
+   XF86VidModeGetModeLine( dpy, screenNum, &dotClock, &modeline);
+
+   //test if new value is same as current, if so don't do anything
+   if( modeline.hdisplay == width && modeline.vdisplay == height )
+      return true;
+
+   int numResolutions;
+   XF86VidModeModeInfo** resolutions;
+   XF86VidModeGetAllModeLines(dpy,
+                              screenNum,
+                              &numResolutions,
+                              &resolutions);
+
+   for(int i = 0; i < numResolutions; i++)
+   {
+      XF86VidModeModeInfo* tempRes = resolutions[i];
+      
+      if( tempRes->hdisplay == width && tempRes->vdisplay == height )
+      {
+         XF86VidModeSwitchToMode( dpy, screenNum, tempRes );
+         XF86VidModeSetViewPort( dpy,screenNum, 0, 0 );
+         XSync(dpy,false);
+
+         return true;
+      }
+   }
+
    return false;
+   
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 }
 
-int DeltaWin::GetColorDepth( void )
+
+Resolution DeltaWin::GetCurrentResolution( void )
 {
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)   
 
-   PIXELFORMATDESCRIPTOR  pfd;
-   HDC  hdc = GetDC( mRenderSurface->getWindow() );
+   HDC hdc = GetDC( GetDesktopWindow() );
    
-   int pixelFormat = GetPixelFormat( hdc ); 
-   DescribePixelFormat(hdc, pixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+   Resolution r  = { GetDeviceCaps(hdc, HORZRES),
+                     GetDeviceCaps(hdc, VERTRES),
+                     GetDeviceCaps(hdc, BITSPIXEL),
+                     GetDeviceCaps(hdc, VREFRESH) };
+   return r;
 
-   return static_cast<int>(pfd.cColorBits);
 
 #else
 
-   return XDefaultDepth( mRenderSurface->getDisplay(), mRenderSurface->getScreenNum() );
-   
-#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+   Display* dpy = mRenderSurface->getDisplay();
+   int screenNum = mRenderSurface->getScreenNum();
 
+   int dotclock;
+   XF86VidModeModeLine modeline;
+   XF86VidModeGetModeLine( dpy, screenNum, &dotclock, &modeline);
+
+   int thorz = static_cast<int>(modeline.hdisplay);
+   int tvert = static_cast<int>(modeline.vdisplay);
+
+   //approximate vertical refresh rate
+   int tfreq = static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( modeline.htotal * modeline.vtotal ) ) );
+   int tdepth = XDefaultDepth( dpy, screenNum );
+
+   Resolution r = { thorz, tvert, tdepth, tfreq };
+   return r;
+   
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)   
+}
+
+void DeltaWin::SetFullscreenFlag( bool fullscreen )
+{
+   mFullscreen = fullscreen;
+}
+
+void DeltaWin::SetChangeScreenResolutionFlag( int width, int height, int pixelDepth )
+{
+   mResWidth = width;
+   mResHeight = height;
+   mResDepth = pixelDepth;
 }
