@@ -33,22 +33,4 @@ namespace dtCore
    extern DT_EXPORT std::ostream& Notify(const NotifySeverity severity);
 
 };
-
-
-#undef _AUTOLIBNAME
-
-#if defined(_DEBUG)
-#define _AUTOLIBNAME "osgD.lib"
-#else
-#define _AUTOLIBNAME "osg.lib"
-#endif
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#ifndef _NOAUTOLIBMSG
-#pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-
-
 #endif

@@ -227,3 +227,4 @@ namespace dtCore
       CUI_OpenGLRenderer *mRenderer; ///<The opengl renderer we're using
    };
 }
+

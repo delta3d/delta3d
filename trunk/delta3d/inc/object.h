@@ -56,24 +56,4 @@ namespace dtCore
    
 };
 
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
-
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME "osgD.lib"
-   #define _AUTOLIBNAME1 "osgDBd.lib"
-#else
-   #define _AUTOLIBNAME "osg.lib"
-   #define _AUTOLIBNAME1 "osgDB.lib"
-#endif
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-#pragma comment(lib, _AUTOLIBNAME1)
-
 #endif // !defined(AFX_OBJECT_H__010FD38C_9DA6_4889_BD79_33CC9C620EC9__INCLUDED_)

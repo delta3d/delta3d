@@ -74,11 +74,8 @@ namespace dtCore
 
 #define _AUTOLIBNAME "winmm.lib"
 
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME1 "js_d.lib"
-#else
-   #define _AUTOLIBNAME1 "js.lib"
-#endif
+#define _AUTOLIBNAME1 "js.lib"
+
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG

@@ -1,4 +1,5 @@
 #include "dt.h"
+#include "dtabc.h"
 #include "application.h"
 #include "effectmanager.h"
 #include "globals.h"

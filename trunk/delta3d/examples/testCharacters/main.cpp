@@ -1,4 +1,7 @@
 #include "dt.h"
+#include "dtchar.h"
+
+/*
 #include "camera.h"
 #include "globals.h"
 #include "notify.h"
@@ -7,6 +10,7 @@
 #include "character.h"
 #include "keyboard.h"
 #include "mouse.h"
+*/
 
 using namespace dtCore;
 using namespace dtChar;
@@ -387,7 +391,7 @@ int main( int argc, char **argv )
    KeyController* kc = new KeyController(guy1, win->GetKeyboard());
    FollowController* fc = new FollowController(guy2, guy1);
    
-   OrbitMotionModel omm(win->GetMouse(), cam);
+   ::OrbitMotionModel omm(win->GetMouse(), cam);
    
    sys->Config();
    sys->Run();

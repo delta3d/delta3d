@@ -1,7 +1,8 @@
 #pragma  warning( disable : 4311 )  // casting void*->long warning
 #pragma  warning( disable : 4312 )  // casting long->void* warning
 
-
+#include "dt.h"
+#include "dtabc.h"
 #include <assert.h>
 
 #include "UserInterface.h"

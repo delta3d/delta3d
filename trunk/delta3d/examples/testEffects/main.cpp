@@ -1,5 +1,6 @@
 #include "dt.h"
 
+/*
 #include "Producer/Timer"
 
 #include "effectmanager.h"
@@ -7,6 +8,7 @@
 #include "globals.h"
 #include "keyboard.h"
 #include "notify.h"
+*/
 
 using namespace dtCore;
 

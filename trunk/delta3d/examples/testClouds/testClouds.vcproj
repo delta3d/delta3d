@@ -35,7 +35,6 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osggl2d.lib"
 				ShowProgress="0"
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="2"
@@ -87,12 +86,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osggl2.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies=" odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="FALSE"
 				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
+				IgnoreDefaultLibraryNames="libc.lib"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

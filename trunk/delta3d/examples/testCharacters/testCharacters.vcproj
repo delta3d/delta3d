@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib"
 				OutputFile=".\Release/testCharacters.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -102,12 +102,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js_d.lib isensed.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib"
 				OutputFile=".\Debug/testCharacters.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\lib\,..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd;msvcrt.lib"
+				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd;msvcrt.lib;libc.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/testCharacters.pdb"
 				SubSystem="1"

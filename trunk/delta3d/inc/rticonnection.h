@@ -1116,16 +1116,14 @@ namespace dtHLA
 //
 #undef _AUTOLIBNAME
 #if defined(_DEBUG)
-#define _AUTOLIBNAME  "libRTI-NGd.lib"
-#define _AUTOLIBNAME1  "tinyxmld.lib"
-#define _AUTOLIBNAME2  "ws2_32.lib"
-#define _AUTOLIBNAME3  "osgSimd.lib"
+   #define _AUTOLIBNAME  "libRTI-NGd.lib"
 #else
-#define _AUTOLIBNAME  "libRTI-NG.lib"
-#define _AUTOLIBNAME1  "tinyxml.lib"
-#define _AUTOLIBNAME2  "ws2_32.lib"
-#define _AUTOLIBNAME3  "osgSim.lib"
+   #define _AUTOLIBNAME  "libRTI-NG.lib"
 #endif
+
+#define _AUTOLIBNAME1  "tinyxml.lib"
+#define _AUTOLIBNAME3  "osgSim.lib"
+#define _AUTOLIBNAME2  "ws2_32.lib"
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG

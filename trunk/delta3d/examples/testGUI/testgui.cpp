@@ -14,7 +14,7 @@ CUI_UI *ui = NULL; //global - needed for the callback
 
 
 ///this is the callback function that gets triggered from the widgets
-static bool mainHandler( int id, int numparam, void *param )
+static bool mainHandler( int id, int numparam, void *value )
 {
    switch(id) 
    {
@@ -23,7 +23,7 @@ static bool mainHandler( int id, int numparam, void *param )
       {
          if (numparam >0)
          {
-            float val = ((float*)param)[1];
+            float val = ((float*)value)[1];
             val/=100.f;
             ui->GetRenderer()->SetFade(val);
          }
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
    }
 
    //hook up the main callback
-   drawable->SetCallbackFunc("intro", mainHandler );
+   drawable->SetCallbackFunc("intro", (CUI_UI::callbackfunc)mainHandler );
    drawable->SetActiveRootFrame("intro");
 
    ///Add the drawable to the Scene

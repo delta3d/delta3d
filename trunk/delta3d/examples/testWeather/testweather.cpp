@@ -11,12 +11,16 @@
             Esc: Quit the application
             H: display the debug GUI 
 *********************************************************************/
+#include "dt.h"
+#include "dtabc.h"
 
+/*
 #include "application.h"
 #include "infiniteterrain.h"
 #include "weather.h"
 #include "orbitmotionmodel.h"
-#include "logicalinputdevice.h"
+#include "logicalinputdevice.h"*/
+
 
 using namespace dtABC;
 using namespace dtCore;

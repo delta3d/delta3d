@@ -127,7 +127,7 @@ class TestInputApplication : public Application,
          
          mUIDrawable->LoadGUIFile("gui.xml");
          
-         mUIDrawable->SetCallbackFunc("main", CallbackHandler);
+         mUIDrawable->SetCallbackFunc("main", (CUI_UI::callbackfunc)CallbackHandler);
          mUIDrawable->SetActiveRootFrame("main");
          
          GetScene()->AddDrawable(mUIDrawable.get());

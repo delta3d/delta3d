@@ -610,7 +610,7 @@ osg::Image* Terrain::MakeBaseTexture(osg::HeightField* hf)
       }
    }
    
-   image->computeMipMaps();
+   //image->computeMipMaps();
    
    return image;
 }
@@ -647,7 +647,7 @@ static osg::Image* makeDetailTextureImage()
       }
    }
    
-   image->computeMipMaps();
+   //image->computeMipMaps();
    
    return image;
 }

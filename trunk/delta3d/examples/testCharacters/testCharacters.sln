@@ -1,6 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testCharacters", "testCharacters.vcproj", "{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}"
 	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
 	EndProjectSection
 EndProject

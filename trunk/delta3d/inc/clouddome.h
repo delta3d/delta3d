@@ -143,17 +143,3 @@ namespace dtCore
 
 	};
 }
-
-#undef _AUTOLIBNAME
-
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME  "osgGL2d.lib"
-#else
-   #define _AUTOLIBNAME  "osgGL2.lib"
-#endif
-
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma comment (lib, _AUTOLIBNAME)

@@ -220,6 +220,9 @@
 				RelativePath="..\inc\baseabc.h">
 			</File>
 			<File
+				RelativePath="..\inc\dtabc.h">
+			</File>
+			<File
 				RelativePath="..\inc\fl_dt_window.h">
 			</File>
 			<File

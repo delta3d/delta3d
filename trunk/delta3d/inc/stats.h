@@ -95,26 +95,6 @@ namespace dtCore
    private:
       void EnableTextNodes(int statsType);
    };
-
 }
-
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
-
-#if defined(_DEBUG)
-#define _AUTOLIBNAME  "osgTextd.lib"
-#else
-#define _AUTOLIBNAME  "osgText.lib"
-#endif
-#define _AUTOLIBNAME1 "opengl32.lib"
-
-#ifndef _NOAUTOLIBMSG
-#pragma message( "Will automatically link with " _AUTOLIBNAME )
-#pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-#pragma comment(lib, _AUTOLIBNAME1)
-
 #endif
  

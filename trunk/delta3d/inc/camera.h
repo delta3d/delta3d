@@ -90,40 +90,4 @@ namespace dtCore
    
 };
 
-
-//
-// Automatic library inclusion macros that use the #pragma/lib feature
-//
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
-#undef _AUTOLIBNAME2
-#undef _AUTOLIBNAME3
-#undef _AUTOLIBNAME4
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME  "Producerd.lib"
-   #define _AUTOLIBNAME4 "OpenThreadsWin32d.lib"  
-#else
-   #define _AUTOLIBNAME  "Producer.lib"
-   #define _AUTOLIBNAME4 "OpenThreadsWin32.lib"  
-#endif
-#define _AUTOLIBNAME1  "sg.lib"
-#define _AUTOLIBNAME2  "ul.lib"
-#define _AUTOLIBNAME3  "winmm.lib"
-
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-#pragma comment(lib, _AUTOLIBNAME1)
-#pragma comment(lib, _AUTOLIBNAME2)
-#pragma comment(lib, _AUTOLIBNAME4)
-
-
 #endif // !defined(AFX_CAMERA_H__45494578_1EF4_493B_86C9_F2E3DB98ED68__INCLUDED_)
