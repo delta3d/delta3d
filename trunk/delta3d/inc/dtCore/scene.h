@@ -26,14 +26,13 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <Producer/Camera>
-#include <osg/FrameStamp>
-#include <osgUtil/SceneView>
-
 #include <ode/ode.h>
 #include "sg.h"
 #include "dtCore/base.h"
 #include "dtCore/stats.h"
 #include "dtCore/light.h"
+
+#include "dtUtil/deprecationmgr.h"
 
 namespace dtCore
 {         
@@ -42,44 +41,23 @@ namespace dtCore
    class Transformable;
    class Physical;
 
+   ///deprecated 3/23/04  use dtCore::Camera::_SceneHandler instead
    class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
    {
    public:
-   	_SceneHandler(bool useSceneLight=true);
-   	virtual ~_SceneHandler();
+   	_SceneHandler(bool useSceneLight=true)
+      {
+         DEPRECATE("_SceneHandler()",
+                   "Camera::_SceneHandler()")
+      }
+      virtual ~_SceneHandler() {};
 
-      osgUtil::SceneView* GetSceneView() { return mSceneView.get(); }
-
-      virtual void clear(Producer::Camera& cam);
-
-      void ClearImplementation( Producer::Camera& cam);
-
-      /** 
-      *  Prepare the scene by sorting, and
-      *  ordering for optimal rendering
-      */
-      virtual void cull( Producer::Camera &cam);
-
-      void CullImplementation( Producer::Camera &cam );
-
-      /** 
-      *  The draw() method must be implemented by
-      *  the derived class for rendering the scene
-      */
-      virtual void draw( Producer::Camera &cam);
-
-      void DrawImplementation( Producer::Camera &cam );
-
-      Stats *mStats; ///<The statistics display
-
-   protected:
-   	RefPtr<osgUtil::SceneView> mSceneView;
-      Timer mTimer;
-      //osg::Timer mTimer;
-   private:
-     RefPtr<osg::FrameStamp> mFrameStamp;
-     //osg::Timer_t mStartTime;
-     dtCore::Timer_t mStartTime;
+      osgUtil::SceneView* GetSceneView()
+      {
+         DEPRECATE("osgUtil::SceneView* _SceneHandler::GetSceneView()",
+                   "osgUtil::SceneView* Camera::GetSceneView")
+         return(NULL);
+      }
    };
    
    
@@ -106,7 +84,13 @@ namespace dtCore
       Scene(std::string name = "scene", bool useSceneLight = true);
       virtual ~Scene();
 
-      _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
+
+      //deprecated 3/23/05
+      _SceneHandler *GetSceneHandler(void)
+      {
+         DEPRECATE("_SceneHandler Scene::GetSceneHandler(void)",
+                   "_SceneHandler Camera::GetSceneHandler(void)")
+      }
 
       ///Get a pointer to the internal scene node
       osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
@@ -168,13 +152,18 @@ namespace dtCore
       /// @see GetPhysicsStepSize()
       inline void SetPhysicsStepSize( const double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
       
-      ///Display the next statistics mode
-      void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}
+      ///Deprecated 3/23/05
+      void SetNextStatisticsType() 
+      {
+         DEPRECATE("void Scene::SetNextStatisticsType()",
+                   "void Camera::SetNextStatisticsType()")
+      }
 
-      //Display the supplied statistics type5
+      ///Deprecated 3/23/05
       void SetStatisticsType(osgUtil::Statistics::statsType type) 
       {
-         mSceneHandler->mStats->SelectType(type);
+         DEPRECATE("void Scene::SetStatisticsType(osgUtil::Statistics::statsType type)",
+                   "void Camera::SetStatisticsType(osgUtil::Statistics::statsType type)")    
       }
 
       /// Register a Physical with the Scene
@@ -217,7 +206,6 @@ namespace dtCore
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
       
-      RefPtr<_SceneHandler> mSceneHandler;
       RefPtr<osg::Group> mSceneNode; ///<This will be our root scene node
       dSpaceID mSpaceID;
       dWorldID mWorldID;

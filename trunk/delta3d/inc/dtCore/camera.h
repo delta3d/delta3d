@@ -31,6 +31,8 @@
 #include "dtCore/scene.h"
 #include "sg.h"
 #include "dtCore/transformable.h"
+#include <osg/FrameStamp>
+#include <osgUtil/SceneView>
 
 
 namespace dtCore
@@ -57,6 +59,47 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Camera)
 
    public:
+
+      class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
+      {
+      public:
+         _SceneHandler(bool useSceneLight=true);
+         virtual ~_SceneHandler();
+
+         osgUtil::SceneView* GetSceneView() { return mSceneView.get(); }
+
+         virtual void clear(Producer::Camera& cam);
+
+         void ClearImplementation( Producer::Camera& cam);
+
+         /** 
+         *  Prepare the scene by sorting, and
+         *  ordering for optimal rendering
+         */
+         virtual void cull( Producer::Camera &cam);
+
+         void CullImplementation( Producer::Camera &cam );
+
+         /** 
+         *  The draw() method must be implemented by
+         *  the derived class for rendering the scene
+         */
+         virtual void draw( Producer::Camera &cam);
+
+         void DrawImplementation( Producer::Camera &cam );
+
+         Stats *mStats; ///<The statistics display
+
+      protected:
+         RefPtr<osgUtil::SceneView> mSceneView;
+         Timer mTimer;
+         //osg::Timer mTimer;
+      private:
+         RefPtr<osg::FrameStamp> mFrameStamp;
+         //osg::Timer_t mStartTime;
+         dtCore::Timer_t mStartTime;
+      };
+
       Camera(std::string name = "camera");
       virtual ~Camera();
       
@@ -129,6 +172,17 @@ namespace dtCore
       ///Get a handle to the underlying Producer::Camera
       Producer::Camera *GetCamera(void)const {return (Producer::Camera*)mCamera.get();};
 
+      _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
+
+      ///Display the next statistics mode
+      void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}     
+
+      ///Display the supplied statistics type
+      void SetStatisticsType(osgUtil::Statistics::statsType type) 
+      {
+        mSceneHandler->mStats->SelectType(type);
+      }
+
    private:
       RefPtr<Producer::Camera> mCamera; // Handle to the Producer camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
@@ -136,6 +190,8 @@ namespace dtCore
       sgVec4 mClearColor; // The current clear color
 
       DeltaRenderSurface* mDefaultRenderSurface;
+      RefPtr<_SceneHandler> mSceneHandler;
+
    };
    
 };

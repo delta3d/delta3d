@@ -14,9 +14,96 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Camera)
 using namespace std;
 
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
+
+
+Camera::_SceneHandler::_SceneHandler(bool useSceneLight):
+mSceneView(new osgUtil::SceneView()),
+mFrameStamp(new osg::FrameStamp())
+{
+   mSceneView->init();
+   mSceneView->setDefaults(); //osg::SceneView
+
+   if(useSceneLight)
+      mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+   else
+      mSceneView->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
+
+   mSceneView->setFrameStamp(mFrameStamp.get());
+
+   mStats = new Stats( mSceneView.get() );
+   mStats->Init( mSceneView.get()->getRenderStage() );
+
+   mStartTime = mTimer.tick();
+}
+
+Camera::_SceneHandler::~_SceneHandler()
+{
+   dtCore::Notify(dtCore::DEBUG_INFO, "Destroying _SceneHandler");
+}
+
+void Camera::_SceneHandler::clear(Producer::Camera& cam)
+{
+   ClearImplementation( cam );
+}
+
+void Camera::_SceneHandler::ClearImplementation( Producer::Camera &cam )
+{
+   //Override the Producer::Camera::clear() because the 
+   //  OSGUtil::SceneView::draw() does it for us.
+
+   //So lets not do anything clearing here, ok?
+}
+
+void Camera::_SceneHandler::cull( Producer::Camera &cam) 
+{
+   //call osg cull here         
+   CullImplementation( cam );
+}
+
+void Camera::_SceneHandler::CullImplementation(Producer::Camera &cam)
+{
+   mStats->SetTime(Stats::TIME_BEFORE_CULL);
+
+   mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+1);
+   mFrameStamp->setReferenceTime( mTimer.delta_s( mStartTime, mTimer.tick() ) );
+
+   //copy the Producer Camera's position to osg::SceneView  
+   mSceneView->getProjectionMatrix().set(cam.getProjectionMatrix());
+   mSceneView->getViewMatrix().set(cam.getPositionAndAttitudeMatrix());
+
+   //Copy the Producer Camera's viewport info to osg::SceneView
+   int x, y;
+   unsigned int w, h;
+   cam.getProjectionRectangle( x, y, w, h );
+
+   mSceneView->setViewport( x, y, w, h );
+
+   //Now tell SceneView to cull
+   mSceneView->cull();
+
+   mStats->SetTime(Stats::TIME_AFTER_CULL);
+}
+
+void Camera::_SceneHandler::draw( Producer::Camera &cam) 
+{
+   //call osg draw here
+   DrawImplementation( cam );
+};
+
+
+void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
+{
+   mStats->SetTime(Stats::TIME_BEFORE_DRAW);
+
+   mSceneView->draw();
+   mStats->SetTime(Stats::TIME_AFTER_DRAW);
+   mStats->Draw();
+}
+
 
 Camera::Camera(string name) :
 mWindow(NULL),
@@ -26,6 +113,9 @@ mScene(NULL)
    SetName(name);
 
    mCamera = new Producer::Camera();
+
+   mSceneHandler = new _SceneHandler(false);
+   mCamera->setSceneHandler( mSceneHandler.get() );
 
    //A Producer Camera has a default RenderSurface (a "window") so lets
    //set its "default" values in case the user doesn't supply their own
@@ -55,9 +145,10 @@ Camera::~Camera()
  */
 void Camera::Frame()
 {
+
    if (mScene != NULL)
    {
-      mScene->GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
+      GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
    }
 
 
@@ -78,7 +169,9 @@ void Camera::Frame()
                              centerPoint[0], centerPoint[1], centerPoint[2],
                              upVec[0], upVec[1], upVec[2] );
 
-   mCamera->frame();
+   //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
+   //Might cause a problem with multi camera's sharing one RenderSurface
+   mCamera->frame(true);
 }
 
 void Camera::SetWindow(DeltaWin *win)
@@ -89,23 +182,28 @@ void Camera::SetWindow(DeltaWin *win)
       mCamera.get()->setRenderSurface( mDefaultRenderSurface );
    }
    else
+   {
       mCamera.get()->setRenderSurface( mWindow.get()->GetRenderSurface() );
+   }
 }
 
 void Camera::SetScene(Scene *scene)
 {
    mScene = scene;
    if (mScene == NULL)
+   {
       mCamera->setSceneHandler( NULL);
+   }
    else
    {
-      mCamera->setSceneHandler( scene->GetSceneHandler() );
-
       //Copy our camera's clear color into the scene handler cause thats where
       //  the screen actually gets cleared.      
       osg::Vec4 clearColor;
       sgCopyVec4(clearColor._v, mClearColor);
-      mScene->GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
+      GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
+
+      //assign the supplied scene to the SceneView
+      GetSceneHandler()->GetSceneView()->setSceneData( scene->GetSceneNode() );
    }
 }
 
@@ -123,7 +221,7 @@ void Camera::SetClearColor(sgVec4 color)
    //tell the scene handler about the change
    osg::Vec4 clearColor;
    sgCopyVec4(clearColor._v, mClearColor);
-   if (mScene.get()) mScene->GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
+   GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
 }
 
 void Camera::GetClearColor( float *r, float *g, float *b, float *a)
