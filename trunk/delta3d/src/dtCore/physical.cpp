@@ -140,6 +140,89 @@ void Physical::SetCollisionSphere(float radius)
 }
 
 /**
+* A visitor that determines the parameters associated
+* with a node.
+*/
+template< class T >
+class DrawableVisitor : public osg::NodeVisitor
+{
+public:
+
+   osg::TriangleFunctor<T> mFunctor;
+
+   /**
+   * Constructor.
+   */
+   DrawableVisitor()
+      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
+   {}
+
+   /**
+   * Applies this visitor to a geode.
+   *
+   * @param node the geode to visit
+   */
+   virtual void apply(osg::Geode& node)
+   {
+      for(unsigned int i=0;i<node.getNumDrawables();i++)
+      {
+         osg::Drawable* d = node.getDrawable(i);
+
+         if(d->supports(mFunctor))
+         {            
+            d->accept(mFunctor);
+         }
+      }
+   }
+};
+/**
+* Determines the cylinder parameters 
+*/
+class SphereFunctor
+{
+public:
+
+   float mRadius;
+
+   osg::Matrix mMatrix;
+
+   /**
+   * Constructor.
+   */
+   SphereFunctor()
+      : mRadius(0.0f)
+   {}
+
+   /**
+   * Called once for each visited triangle.
+   *
+   * @param v1 the triangle's first vertex
+   * @param v2 the triangle's second vertex
+   * @param v3 the triangle's third vertex
+   * @param treatVertexDataAsTemporary whether or not to treat the vertex data
+   * as temporary
+   */
+   void operator()(const osg::Vec3& v1,
+      const osg::Vec3& v2,
+      const osg::Vec3& v3,
+      bool treatVertexDataAsTemporary)
+   {
+      osg::Vec3 tv1 = v1*mMatrix,
+         tv2 = v2*mMatrix,
+         tv3 = v3*mMatrix;
+
+      tv1[2] = 0;
+      if(tv1.length() > mRadius) mRadius = tv1.length();
+
+      tv2[2] = 0;
+      if(tv2.length() > mRadius) mRadius = tv2.length();
+
+      tv3[2] = 0;
+      if(tv2.length() > mRadius) mRadius = tv3.length();
+   }
+};
+
+/**
  * Sets this object's collision geometry to a sphere with
  * radius derived from the specified OpenSceneGraph node.
  *
@@ -153,23 +236,17 @@ void Physical::SetCollisionSphere( osg::Node* node )
 
    if( node )
    {
+      DrawableVisitor<SphereFunctor> sv;
+      node->accept(sv);
+
       dGeomID subTransformID = dCreateGeomTransform(0);
 
       dGeomTransformSetCleanup(subTransformID, 1);
 
       dGeomTransformSetGeom(
          subTransformID,
-         dCreateSphere(0, node->getBound().radius())
+         dCreateSphere(0, sv.mFunctor.mRadius )
       );
-
-      /*
-      dGeomSetPosition(
-      subTransformID,
-      absCenter[0],
-      absCenter[1],
-      absCenter[2]
-      );
-      */
 
       dGeomTransformSetGeom(mGeomID, subTransformID);
    }
@@ -205,17 +282,12 @@ class BoundingBoxVisitor : public osg::NodeVisitor
        * @param node the geode to visit
        */
       virtual void apply(osg::Geode& node)
-      {
-         osg::Matrix matrix = 
-            osg::computeLocalToWorld(getNodePath());
-         
+      {     
          for(unsigned int i=0;i<node.getNumDrawables();i++)
          {
             for(unsigned int j=0;j<8;j++)
             {
-               mBoundingBox.expandBy(
-                  node.getDrawable(i)->getBound().corner(j) * matrix
-               );
+               mBoundingBox.expandBy( node.getDrawable(i)->getBound().corner(j) );
             }
          }
       }
@@ -247,7 +319,7 @@ void Physical::SetCollisionBox(osg::Node* node)
       dGeomID subTransformID = dCreateGeomTransform(0);
       
       dGeomTransformSetCleanup(subTransformID, 1);
-      
+
       dGeomTransformSetGeom(
          subTransformID,
          dCreateBox(
@@ -258,14 +330,6 @@ void Physical::SetCollisionBox(osg::Node* node)
          )
       );
       
-      /*
-      dGeomSetPosition(
-         subTransformID,
-         bbv.mBoundingBox.center()[0],
-         bbv.mBoundingBox.center()[1],
-         bbv.mBoundingBox.center()[2]
-      );
-      */
       dGeomTransformSetGeom(mGeomID, subTransformID);
    }
 }
@@ -338,44 +402,7 @@ class CylinderFunctor
       }
 };
 
-/**
- * A visitor that determines the cylinder parameters associated
- * with a node.
- */
-class CylinderVisitor : public osg::NodeVisitor
-{
-   public:
-   
-      osg::TriangleFunctor<CylinderFunctor> mFunctor;
-      
-      /**
-       * Constructor.
-       */
-      CylinderVisitor()
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
-      {}
-      
-      /**
-       * Applies this visitor to a geode.
-       *
-       * @param node the geode to visit
-       */
-      virtual void apply(osg::Geode& node)
-      {
-         for(unsigned int i=0;i<node.getNumDrawables();i++)
-         {
-            osg::Drawable* d = node.getDrawable(i);
 
-            if(d->supports(mFunctor))
-            {
-               mFunctor.mMatrix = 
-                  osg::computeLocalToWorld(getNodePath());
-               
-               d->accept(mFunctor);
-            }
-         }
-      }
-};
 
 /**
  * Sets this object's collision geometry to a capped cylinder with
@@ -391,31 +418,21 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
    
    if( node )
    {
-      CylinderVisitor cv;
-      
+      DrawableVisitor<CylinderFunctor> cv;
       node->accept(cv);
       
       dGeomID subTransformID = dCreateGeomTransform(0);
       
       dGeomTransformSetCleanup(subTransformID, 1);
-      
+
       dGeomTransformSetGeom(
          subTransformID,
          dCreateCCylinder(
-            0, 
-            cv.mFunctor.mRadius,
-            cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ
+         0, 
+         cv.mFunctor.mRadius,
+         cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ
          )
       );
-      
-      /*
-      dGeomSetPosition(
-         subTransformID,
-         0.0,
-         0.0,
-         (cv.mFunctor.mMaxZ + cv.mFunctor.mMinZ) * 0.5
-      );
-      */
       
       dGeomTransformSetGeom(mGeomID, subTransformID);
    }
@@ -508,44 +525,6 @@ class TriangleRecorder
 };
 
 /**
- * A visitor that collects all OSG geometry into a single mesh.
- */
-class MeshVisitor : public osg::NodeVisitor
-{
-   public:
-   
-      osg::TriangleFunctor<TriangleRecorder> mRecorder;
-      
-      /**
-       * Constructor.
-       */
-      MeshVisitor()
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ACTIVE_CHILDREN)
-      {}
-      
-      /**
-       * Applies this visitor to a geode.
-       *
-       * @param node the geode to visit
-       */
-      virtual void apply(osg::Geode& node)
-      {
-         for(unsigned int i=0;i<node.getNumDrawables();i++)
-         {
-            osg::Drawable* d = node.getDrawable(i);
-
-            if(d->supports(mRecorder))
-            {
-               mRecorder.mMatrix = 
-                  osg::computeLocalToWorld(getNodePath());
-               
-               d->accept(mRecorder);
-            }
-         }
-      }
-};
-
-/**
  * Sets this object's collision geometry to a triangle mesh derived
  * from the given OpenSceneGraph node.
  *
@@ -559,7 +538,7 @@ void Physical::SetCollisionMesh(osg::Node* node)
    
    if( node )
    {
-      MeshVisitor mv;
+      DrawableVisitor<TriangleRecorder> mv;
       
       node->accept(mv);
    
@@ -569,35 +548,34 @@ void Physical::SetCollisionMesh(osg::Node* node)
          delete[] mMeshIndices;
       }
       
-      mMeshVertices = new dVector3[mv.mRecorder.mVertices.size()];
-      mMeshIndices = new int[mv.mRecorder.mTriangles.size()*3];
+      mMeshVertices = new dVector3[mv.mFunctor.mVertices.size()];
+      mMeshIndices = new int[mv.mFunctor.mTriangles.size()*3];
       
       memcpy(
          mMeshVertices, 
-         &mv.mRecorder.mVertices.front(), 
-         mv.mRecorder.mVertices.size()*sizeof(StridedVertex)
+         &mv.mFunctor.mVertices.front(), 
+         mv.mFunctor.mVertices.size()*sizeof(StridedVertex)
       );
       
       memcpy(
          mMeshIndices,
-         &mv.mRecorder.mTriangles.front(),
-         mv.mRecorder.mTriangles.size()*sizeof(StridedTriangle)
+         &mv.mFunctor.mTriangles.front(),
+         mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle)
       );
       
       dGeomTriMeshDataBuildSimple(
          mTriMeshDataID,
          (dReal*)mMeshVertices,
-         mv.mRecorder.mVertices.size(),
+         mv.mFunctor.mVertices.size(),
          mMeshIndices,
-         mv.mRecorder.mTriangles.size()*3
+         mv.mFunctor.mTriangles.size()*3
       );
 
-      /*
       dGeomTransformSetGeom(
          mGeomID, 
          dCreateTriMesh(0, mTriMeshDataID, NULL, NULL, NULL)
       );
-      */
+      
    }
 }
 
