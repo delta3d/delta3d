@@ -22,9 +22,8 @@ TARGET_LINK_LIBRARIES( gui_fl dtcore fltk GL glgui isense Producer ode opcode op
 ADD_LIBRARY( dtabc SHARED application baseabc weather widget )
 TARGET_LINK_LIBRARIES( dtabc dtcore gui_fl glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 
-#ADD_LIBRARY( dtchar SHARED character )
-#TARGET_LINK_LIBRARIES( dtchar dtcore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
-# add replicantbody
+ADD_LIBRARY( dtchar SHARED character )
+TARGET_LINK_LIBRARIES( dtchar dtcore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml rbody cfgscript )
 
 ADD_LIBRARY( dtvis SHARED bspcullcallback )
 TARGET_LINK_LIBRARIES( dtvis GL osg osgDB osgUtil )
