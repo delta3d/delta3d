@@ -144,7 +144,7 @@ public:
       GetCamera()->SetTransform( &position );
 
       Entity* entity = new Entity;
-      entity->LoadFile("ah-1w.ive");
+      entity->LoadFile("UH-1N/UH-1N.ive");
       entity->SetEntityIdentifier(
          EntityIdentifier(1, 1, 1)
          );
@@ -179,7 +179,7 @@ public:
       mRtic->RegisterMasterEntity(entity);
       mRtic->AddEntityTypeMapping(
          helicopter,
-         "ah-1w.ive"
+         "UH-1N/UH-1N.ive"
          );  
    }
 
