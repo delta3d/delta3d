@@ -16,7 +16,7 @@
 namespace dtABC
 {
    #ifndef _WIN32
-   typedef unsigned long HWND; 
+   typedef Window HWND; 
    #endif // _WIN32
 
    // forward references
@@ -304,16 +304,16 @@ namespace dtABC
       static   const int   KEY_Minus;
       static   const int   KEY_Period;
       static   const int   KEY_Slash;
-      static   const int   KEY_0;//
-      static   const int   KEY_1;//
-      static   const int   KEY_2;//
-      static   const int   KEY_3;//
-      static   const int   KEY_4;//
-      static   const int   KEY_5;//
-      static   const int   KEY_6;//
-      static   const int   KEY_7;//
-      static   const int   KEY_8;//
-      static   const int   KEY_9;//
+      static   const int   KEY_0;
+      static   const int   KEY_1;
+      static   const int   KEY_2;
+      static   const int   KEY_3;
+      static   const int   KEY_4;
+      static   const int   KEY_5;
+      static   const int   KEY_6;
+      static   const int   KEY_7;
+      static   const int   KEY_8;
+      static   const int   KEY_9;
       static   const int   KEY_Colon;
       static   const int   KEY_Semicolon;
       static   const int   KEY_Less;
@@ -321,32 +321,32 @@ namespace dtABC
       static   const int   KEY_Greater;
       static   const int   KEY_Question;
       static   const int   KEY_At;
-      static   const int   KEY_A;//
-      static   const int   KEY_B;//
-      static   const int   KEY_C;//
-      static   const int   KEY_D;//
-      static   const int   KEY_E;//
-      static   const int   KEY_F;//
-      static   const int   KEY_G;//
-      static   const int   KEY_H;//
-      static   const int   KEY_I;//
-      static   const int   KEY_J;//
-      static   const int   KEY_K;//
-      static   const int   KEY_L;//
-      static   const int   KEY_M;//
-      static   const int   KEY_N;//
-      static   const int   KEY_O;//
-      static   const int   KEY_P;//
-      static   const int   KEY_Q;//
-      static   const int   KEY_R;//
-      static   const int   KEY_S;//
-      static   const int   KEY_T;//
-      static   const int   KEY_U;//
-      static   const int   KEY_V;//
-      static   const int   KEY_W;//
-      static   const int   KEY_X;//
-      static   const int   KEY_Y;//
-      static   const int   KEY_Z;//
+      static   const int   KEY_A;
+      static   const int   KEY_B;
+      static   const int   KEY_C;
+      static   const int   KEY_D;
+      static   const int   KEY_E;
+      static   const int   KEY_F;
+      static   const int   KEY_G;
+      static   const int   KEY_H;
+      static   const int   KEY_I;
+      static   const int   KEY_J;
+      static   const int   KEY_K;
+      static   const int   KEY_L;
+      static   const int   KEY_M;
+      static   const int   KEY_N;
+      static   const int   KEY_O;
+      static   const int   KEY_P;
+      static   const int   KEY_Q;
+      static   const int   KEY_R;
+      static   const int   KEY_S;
+      static   const int   KEY_T;
+      static   const int   KEY_U;
+      static   const int   KEY_V;
+      static   const int   KEY_W;
+      static   const int   KEY_X;
+      static   const int   KEY_Y;
+      static   const int   KEY_Z;
       static   const int   KEY_Bracket_L;
       static   const int   KEY_Backslash;
       static   const int   KEY_Bracket_R;
@@ -409,18 +409,18 @@ namespace dtABC
       static   const int   KEY_KP_8;
       static   const int   KEY_KP_9;
       static   const int   KEY_KP_Equal;
-      static   const int   KEY_F1;//
-      static   const int   KEY_F2;//
-      static   const int   KEY_F3;//
-      static   const int   KEY_F4;//
-      static   const int   KEY_F5;//
-      static   const int   KEY_F6;//
-      static   const int   KEY_F7;//
-      static   const int   KEY_F8;//
-      static   const int   KEY_F9;//
-      static   const int   KEY_F10;//
-      static   const int   KEY_F11;//
-      static   const int   KEY_F12;//
+      static   const int   KEY_F1;
+      static   const int   KEY_F2;
+      static   const int   KEY_F3;
+      static   const int   KEY_F4;
+      static   const int   KEY_F5;
+      static   const int   KEY_F6;
+      static   const int   KEY_F7;
+      static   const int   KEY_F8;
+      static   const int   KEY_F9;
+      static   const int   KEY_F10;
+      static   const int   KEY_F11;
+      static   const int   KEY_F12;
    };
 
 };
