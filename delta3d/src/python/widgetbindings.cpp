@@ -9,6 +9,78 @@ using namespace boost::python;
 using namespace dtABC;
 using namespace dtCore;
 
+class WidgetWrap : public Widget
+{
+   public:
+
+      WidgetWrap(PyObject* self, std::string name = "Widget")
+         : Widget(name),
+           mSelf(self)
+      {}
+
+      virtual void Config(const WinData* data)
+      {
+         call_method<void>(mSelf, "Config", data);
+      }
+      
+      void DefaultConfig(const WinData* data)
+      {
+         Widget::Config(data);
+      }
+      
+      virtual void Quit()
+      {
+         call_method<void>(mSelf, "Quit");
+      }
+      
+      void DefaultQuit()
+      {
+         Widget::Quit();
+      }
+      
+   protected:
+      
+      virtual void PreFrame(const double deltaFrameTime)
+      {
+         if(PyObject_HasAttrString(mSelf, "PreFrame"))
+         {
+            call_method<void>(mSelf, "PreFrame", deltaFrameTime);
+         }
+         else
+         {
+            Widget::PreFrame(deltaFrameTime);
+         }
+      }
+      
+      virtual void Frame(const double deltaFrameTime)
+      {
+         if(PyObject_HasAttrString(mSelf, "Frame"))
+         {
+            call_method<void>(mSelf, "Frame", deltaFrameTime);
+         }
+         else
+         {
+            Widget::Frame(deltaFrameTime);
+         }
+      }
+      
+      virtual void PostFrame(const double deltaFrameTime)
+      {
+         if(PyObject_HasAttrString(mSelf, "PostFrame"))
+         {
+            call_method<void>(mSelf, "PostFrame", deltaFrameTime);
+         }
+         else
+         {
+            Widget::PostFrame(deltaFrameTime);
+         }
+      }
+      
+   private:
+      
+      PyObject* mSelf;
+};
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
 void SetWinDataHWND(WinData* winData, long hwnd)
@@ -51,7 +123,7 @@ void initWidgetBindings()
    Widget* (*WidgetGI1)(int) = &Widget::GetInstance;
    Widget* (*WidgetGI2)(std::string) = &Widget::GetInstance;
 
-   class_<Widget, bases<BaseABC>, osg::ref_ptr<Widget> >("Widget", init<optional<std::string> >())
+   class_<Widget, bases<BaseABC>, osg::ref_ptr<WidgetWrap>, boost::noncopyable>("Widget", init<optional<std::string> >())
       .def("GetInstanceCount", &Widget::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", WidgetGI1, return_internal_reference<>())
@@ -67,8 +139,8 @@ void initWidgetBindings()
       .def_readonly("msgSetPath", &Widget::msgSetPath)
       .def_readonly("msgWindowData", &Widget::msgWindowData)
       .def_readonly("msgQuit", &Widget::msgQuit)
-      .def("Config", &Widget::Config, C_overloads())
-      .def("Quit", &Widget::Quit)
+      .def("Config", &Widget::Config, &WidgetWrap::DefaultConfig)
+      .def("Quit", &Widget::Quit, &WidgetWrap::DefaultQuit)
       .def("SetPath", &Widget::SetPath)
       .def("SendMessage", SendEmptyMessage)
       .def("SendMessage", SendMouseMessage)
