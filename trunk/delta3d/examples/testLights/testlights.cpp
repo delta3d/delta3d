@@ -13,10 +13,6 @@ TestLightsApp::TestLightsApp( std::string configFilename )
 :  Application( configFilename )
 {}
 
-TestLightsApp::~TestLightsApp()
-{}
-
-
 void
 TestLightsApp::Config()
 {
@@ -27,6 +23,7 @@ TestLightsApp::Config()
    mWarehouse = new Object( "Warehouse" );
    mWarehouse->LoadFile( "models/warehouse.ive" );
    AddDrawable( mWarehouse.get() );
+
 
 
 
@@ -43,13 +40,16 @@ TestLightsApp::Config()
 
 
 
+
    // add a child to the local light
    mSphere = new Object( "HappySphere" );
    mSphere->LoadFile( "models/physics_happy_sphere.ive" );
    
-   //we want the sphere 1 unit below light so we can see effect of local light and
+   // we want the sphere 1 unit below light so we can see effect of local light and
    trans.Set( 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f ); 
    mSphere->SetTransform( &trans );
+
+
 
 
    // create a global positional light.
@@ -63,6 +63,7 @@ TestLightsApp::Config()
 
 
 
+
    // create an infinite light
    mGlobalInfinite = new InfiniteLight( 4, "GlobalInfiniteLight" );
 
@@ -71,7 +72,7 @@ TestLightsApp::Config()
 
 
 
-   //set camera stuff
+   // set camera stuff
    trans.Set( 30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f );
    GetCamera()->SetTransform( &trans );
 
@@ -104,15 +105,11 @@ TestLightsApp::KeyPressed( Keyboard*               keyboard,
       break;
    case Producer::Key_3:
    {
-      bool prevEnabled = mPositional->GetEnabled();
-      mPositional->SetEnabled( false );      
-      
       if( mPositional->GetLightingMode() == Light::GLOBAL )
          mPositional->SetLightingMode( Light::LOCAL );
       else
          mPositional->SetLightingMode( Light::GLOBAL );
 
-      mPositional->SetEnabled( prevEnabled );
       break;
    }
    case Producer::Key_4:
@@ -126,17 +123,17 @@ TestLightsApp::KeyPressed( Keyboard*               keyboard,
 void 
 TestLightsApp::PreFrame( const double deltaFrameTime )
 {
-   //increment some values at different rates
+   // increment some values at different rates
    countOne +=50.0f*deltaFrameTime;
    countTwo += 60.0f*deltaFrameTime;
    countThree += 70.0f*deltaFrameTime;
 
-   //cap at 360
+   // cap at 360
    if( countOne > 360.0f ) countOne -= 360.0f;
    if( countTwo > 360.0f ) countTwo -= 360.0f;
    if( countThree > 360.0f ) countThree -= 360.0f;
    
-   //scale values to 0.0-1.0
+   // scale values to 0.0-1.0
    float redValue = ( cos( osg::DegreesToRadians(countOne) ) + 1.0f ) / 2.0f;
    float greenValue = ( cos( osg::DegreesToRadians(countTwo) ) + 1.0f ) / 2.0f;
    float blueValue = ( cos( osg::DegreesToRadians(countThree) ) + 1.0f ) / 2.0f;
@@ -144,7 +141,7 @@ TestLightsApp::PreFrame( const double deltaFrameTime )
    // modify all global lights
    mGlobalSpot->SetDiffuse( redValue, greenValue, blueValue, 1.0f ); //change color
    
-   //rotate the spotlight
+   // rotate the spotlight
    Transform trans;
    mGlobalSpot->GetTransform( &trans );
    trans.SetRotation( countOne, 0.0f, 0.0f );
@@ -152,7 +149,7 @@ TestLightsApp::PreFrame( const double deltaFrameTime )
    
    mPositional->SetAttenuation( 1.0f, greenValue/2.0f, blueValue/2.0f ); //change attenutation
    
-   //move the global positional light in a circle
+   // move the global positional light in a circle
    float tx = 1.5*cos( osg::DegreesToRadians(countOne) ) + 2.0f;
    float ty = 1.5*sin( osg::DegreesToRadians(countOne) ) + 5.0f;
    trans.Set( tx, ty, 2.0f, 0.0f, 0.0f, 0.0f ); 

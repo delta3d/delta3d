@@ -84,8 +84,8 @@ public:
 
 private:
 
-   Character* mCharacter;
-   Keyboard* mKeyboard;
+   RefPtr<Character> mCharacter;
+   RefPtr<Keyboard> mKeyboard;
         
 };
 
@@ -180,8 +180,8 @@ public:
 
 private:
 
-   Character* mCharacter;
-   Transformable* mTarget;
+   RefPtr<Character> mCharacter;
+   RefPtr<Transformable> mTarget;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(FollowController)
@@ -203,7 +203,7 @@ public:
       Application::Config();
 
       //tweak the ambient lighting a little
-      Light *l = GetScene()->GetLight(0);
+      RefPtr<Light> l = GetScene()->GetLight(0);
       l->SetAmbient(0.75f, 0.75f, 0.75f, 1.f);
       l->SetDiffuse(1.f, 1.f, 1.f, 1.f);
 
@@ -211,12 +211,12 @@ public:
       position.Set(0.f, -10.f, 1.0f, 0.f, 0.f, 0.f);
       GetCamera()->SetTransform( &position );
       
-      Object* terrain = new Object( "Terrain" );
+      terrain = new Object( "Terrain" );
       terrain->LoadFile( "models/dirt.ive" );
-      AddDrawable( terrain );
+      AddDrawable( terrain.get() );
 
-      Character* guy1 = new Character( "bob" );
-      Character* guy2 = new Character( "dave" );
+      guy1 = new Character( "bob" );
+      guy2 = new Character( "dave" );
       
       position.Set(0, 0, 0, 0, 0, 0);
       guy1->SetTransform(&position);
@@ -227,11 +227,11 @@ public:
       guy1->LoadFile( "opfor/opfor.rbody" );
       guy2->LoadFile( "marine/marine.rbody" );
 
-      AddDrawable( guy1 );
-      AddDrawable( guy2 );
+      AddDrawable( guy1.get() );
+      AddDrawable( guy2.get() );
 
-      KeyController* kc = new KeyController(guy1, GetWindow()->GetKeyboard());
-      FollowController* fc = new FollowController(guy2, guy1);
+      kc = new KeyController( guy1.get(), GetWindow()->GetKeyboard() );
+      fc = new FollowController( guy2.get(), guy1.get() );
 
       Transform trans;
       GetCamera()->GetTransform(&trans);
@@ -241,12 +241,21 @@ public:
 
       sgVec3 origin = {0.0f, 0.0f, 0.0f};
 
-      OrbitMotionModel* omm = new OrbitMotionModel(GetKeyboard(),GetMouse());
-      omm->SetTarget(GetCamera());
+      omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+      omm->SetTarget( GetCamera() );
       omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
       
       
    }
+
+protected:
+
+   RefPtr<Object> terrain;
+   RefPtr<Character> guy1;
+   RefPtr<Character> guy2;
+   RefPtr<KeyController> kc;
+   RefPtr<FollowController> fc;
+   RefPtr<OrbitMotionModel> omm;
   
 };
 
@@ -259,16 +268,10 @@ int main()
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
   
-   TestCharactersApp* app = new TestCharactersApp( "config.xml" );
+   RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
 
    app->Config();
-
-
-
    app->Run();
-
-
-   delete app;
 
    return 0;
 }

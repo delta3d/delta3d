@@ -8,17 +8,17 @@ int main()
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   Application *app = new Application( "config.xml" );
+   RefPtr<Application> app = new Application( "config.xml" );
 
    //load some terrain
-   Object *terrain = new Object( "Terrain" );
+   RefPtr<Object> terrain = new Object( "Terrain" );
    terrain->LoadFile( "models/dirt.ive" );
-   app->AddDrawable( terrain );
+   app->AddDrawable( terrain.get() );
 
    //load an object
-   Object *brdm = new Object( "BRDM" );
+   RefPtr<Object> brdm = new Object( "BRDM" );
    brdm->LoadFile( "models/brdm.ive" );
-   app->AddDrawable( brdm );
+   app->AddDrawable( brdm.get() );
    Transform trans = Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
    brdm->SetTransform( &trans );
    
@@ -32,8 +32,6 @@ int main()
 
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }

@@ -41,6 +41,8 @@ IMPLEMENT_MANAGEMENT_LAYER(Updater)
 
 class TestPhysicsApp : public Application
 {
+
+   DECLARE_MANAGEMENT_LAYER(TestPhysicsApp)
 public:
 
    float random(float min,float max) { return min + (max-min)*(float)rand()/(float)RAND_MAX; }
@@ -49,9 +51,9 @@ public:
       : Application( configFile )
    {
 
-      Object *obj1 = new Object("Ground");
-      Object *obj2 = new Object("FallingCrate");
-      Object *obj3 = new Object("GroundCrate");
+      RefPtr<Object> obj1 = new Object("Ground");
+      RefPtr<Object> obj2 = new Object("FallingCrate");
+      RefPtr<Object> obj3 = new Object("GroundCrate");
 
       //load the model files
       if (!obj1->LoadFile("models/flatdirt.ive")) return;
@@ -91,18 +93,18 @@ public:
       obj3->EnableDynamics();
 
       //Add the objects to the Scene to be rendered
-      GetScene()->AddDrawable( obj1 );
-      GetScene()->AddDrawable( obj2 );
-      GetScene()->AddDrawable( obj3 );
+      GetScene()->AddDrawable( obj1.get() );
+      GetScene()->AddDrawable( obj2.get() );
+      GetScene()->AddDrawable( obj3.get() );
 
       //put the falling crate in the vector of dropped objects
       mObjects.push(obj2);
 
       GetScene()->SetGravity(0, 0, -15.f);
 
-      Updater *updater = new Updater(GetScene());
+      updater = new Updater(GetScene());
 
-      OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+      omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
       omm->SetTarget( GetCamera() );
 
       //calculate and set focal distance for orbit motion model (origin -> camera)
@@ -115,7 +117,6 @@ public:
       sgVec3 origin = {0.0f, 0.0f, 0.0f};
       omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
    }
-   ~TestPhysicsApp(){}
 
 protected:
 
@@ -123,14 +124,14 @@ protected:
    {
       while( !mToAdd.empty() )
       {
-         GetScene()->AddDrawable( mToAdd.front() );
+         GetScene()->AddDrawable( mToAdd.front().get() );
          mObjects.push( mToAdd.front() );
          mToAdd.pop();
       }
       
       while( !mToRemove.empty() )
       {
-         GetScene()->RemoveDrawable( mToRemove.front() );
+         GetScene()->RemoveDrawable( mToRemove.front().get() );
          mObjects.pop();
          mToRemove.pop();
       }
@@ -150,7 +151,7 @@ protected:
       {
          if( mObjects.size() < kLimit )
          {
-            Object *box = new Object("box");
+            RefPtr<Object> box = new Object("box");
             box->LoadFile("models/physics_crate.ive");
  
 
@@ -186,7 +187,7 @@ protected:
       {
          if( mObjects.size() < kLimit )
          {
-            Object *sphere = new Object("sphere");
+            RefPtr<Object> sphere = new Object("sphere");
             sphere->LoadFile("models/physics_happy_sphere.ive");
   
             Transform xform(random(-2.f,2.f),
@@ -218,7 +219,7 @@ protected:
       {
          if( mObjects.size() < kLimit )
          {
-            Object *cyl = new Object("cylinder");
+            RefPtr<Object> cyl = new Object("cylinder");
             cyl->LoadFile("models/physics_barrel.ive");
 
             Transform xform(random(-2.f,2.f),
@@ -251,28 +252,32 @@ protected:
 
    static const unsigned int kLimit;
 
-   static std::queue<Object*> mToAdd;
-   static std::queue<Object*> mToRemove;
-   static std::queue<Object*> mObjects;
+   static std::queue< RefPtr<Object> > mToAdd;
+   static std::queue< RefPtr<Object> > mToRemove;
+   static std::queue< RefPtr<Object> > mObjects;
+
+   protected:
+   RefPtr<Updater> updater;
+   RefPtr<OrbitMotionModel> omm;
 };
+
+IMPLEMENT_MANAGEMENT_LAYER(TestPhysicsApp)
 
 const unsigned int TestPhysicsApp::kLimit = 50;
 
-std::queue<Object*> TestPhysicsApp::mToAdd;
-std::queue<Object*> TestPhysicsApp::mToRemove;
-std::queue<Object*> TestPhysicsApp::mObjects;
+std::queue< RefPtr<Object> > TestPhysicsApp::mToAdd;
+std::queue< RefPtr<Object> > TestPhysicsApp::mToRemove;
+std::queue< RefPtr<Object> > TestPhysicsApp::mObjects;
 
 
 int main( int argc, char **argv )
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestPhysicsApp *app = new TestPhysicsApp( "config.xml" );
+   RefPtr<TestPhysicsApp> app = new TestPhysicsApp( "config.xml" );
 
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }

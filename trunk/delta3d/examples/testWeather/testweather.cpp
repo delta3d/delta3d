@@ -23,9 +23,9 @@ public:
       GetCamera()->SetTransform(&trans);
 
       weather = new dtABC::Weather();   
-      weather->AddChild(terr);
+      weather->AddChild( terr.get() );
 
-      AddDrawable(weather->GetEnvironment());
+      AddDrawable( weather->GetEnvironment());
 
       orbit = new dtCore::OrbitMotionModel( GetKeyboard(), GetMouse() );
       orbit->SetTarget( GetCamera() );
@@ -62,9 +62,9 @@ protected:
    }
 	
 private:
-   dtCore::InfiniteTerrain *terr;
-   dtABC::Weather *weather;
-   dtCore::OrbitMotionModel *orbit;
+   RefPtr<InfiniteTerrain> terr;
+   RefPtr<Weather> weather;
+   RefPtr<OrbitMotionModel> orbit;
 
 };
 
@@ -74,11 +74,9 @@ int main(int argc, char* argv[])
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestWeatherApp *app = new TestWeatherApp( "config.xml" );
+   RefPtr<TestWeatherApp> app = new TestWeatherApp( "config.xml" );
    app->Config();
    app->Run();
 
-   delete app;
-
-	return 0;
+   return 0;
 }

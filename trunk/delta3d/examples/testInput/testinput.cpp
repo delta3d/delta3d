@@ -12,7 +12,6 @@ using namespace osg;
 */
 class TestInputApp* app;
 
-
 /**
 * The input test application.
 */
