@@ -69,18 +69,4 @@ namespace dtCore
    };
 };
 
-#undef _AUTOLIBNAME
-
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME  "isensed.lib"
-#else
-   #define _AUTOLIBNAME  "isense.lib"
-#endif
-
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma comment (lib, _AUTOLIBNAME)
-
 #endif // TRACKER

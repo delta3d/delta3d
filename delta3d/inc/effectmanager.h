@@ -372,18 +372,4 @@ namespace dtCore
    };
 };
 
-//
-// Automatic library inclusion macros that use the #pragma/lib feature
-//
-#undef _AUTOLIBNAME
-
-#define _AUTOLIBNAME  "osgParticle.lib"
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#ifndef _NOAUTOLIBMSG
-#pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-
 #endif // DELTA_EFFECT_MANAGER
