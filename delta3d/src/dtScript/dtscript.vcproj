@@ -132,10 +132,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\inc\python\dtscript.h">
+				RelativePath="..\..\inc\dtScript\dtscript.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\python\scriptmanager.h">
+				RelativePath="..\..\inc\dtScript\scriptmanager.h">
 			</File>
 		</Filter>
 		<Filter

@@ -18,6 +18,6 @@
  *
 */
 
-#include "python/scriptmanager.h"
+#include "dtScript/scriptmanager.h"
 
 typedef dtScript::ScriptManager dtScript::Script;
