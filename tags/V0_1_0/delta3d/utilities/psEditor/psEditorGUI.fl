@@ -1,0 +1,698 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0105 
+header_name {.h} 
+code_name {.cxx}
+Function {make_window()} {open
+} {
+  Fl_Window {} {
+    label {Particle System Editor} open
+    xywh {805 165 602 584} type Double visible
+  } {
+    Fl_Menu_Bar MainMenu {selected
+      xywh {0 0 600 25}
+    } {
+      submenu {} {
+        label {&File} open
+        xywh {0 0 100 20}
+      } {
+        menuitem {} {
+          label {&New}
+          callback psEditorGUI_New
+          xywh {0 0 100 20}
+        }
+        menuitem {} {
+          label {&Open...}
+          callback psEditorGUI_Open
+          xywh {0 0 100 20}
+        }
+        submenu {} {
+          label {Open &Previous} open
+          xywh {0 0 100 20} divider
+        } {
+          menuitem {} {
+            label item
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {20 20 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {30 30 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {40 40 100 20}
+          }
+        }
+        menuitem {} {
+          label {&Save}
+          callback psEditorGUI_Save
+          xywh {0 0 100 20}
+        }
+        menuitem {} {
+          label {Save &As...}
+          callback psEditorGUI_SaveAs
+          xywh {0 0 100 20} divider
+        }
+        menuitem {} {
+          label {&Quit}
+          callback psEditorGUI_Quit
+          xywh {0 0 100 20}
+        }
+      }
+      submenu {} {
+        label {&View}
+        xywh {0 0 100 20}
+      } {
+        menuitem {} {
+          label {&Compass}
+          callback psEditorGUI_Compass
+          xywh {0 0 100 20} divider
+        }
+        menuitem {} {
+          label {&XY Grid}
+          callback psEditorGUI_XYGrid
+          xywh {0 0 100 20}
+        }
+        menuitem {} {
+          label {&YZ Grid}
+          callback psEditorGUI_YZGrid
+          xywh {0 0 100 20}
+        }
+        menuitem {} {
+          label {X&Z Grid}
+          callback psEditorGUI_XZGrid
+          xywh {0 0 100 20}
+        }
+      }
+    }
+    Fl_Tabs {} {open
+      xywh {4 25 595 550}
+    } {
+      Fl_Group {} {
+        label Particles
+        xywh {4 52 590 515}
+      } {
+        Fl_Choice Particles_Alignment {
+          label Alignment
+          callback psEditorGUI_Particles_SetAlignment
+          xywh {79 62 105 25} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label Billboard
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label Fixed
+            xywh {0 0 100 20}
+          }
+        }
+        Fl_Choice Particles_Shape {
+          label Shape
+          callback psEditorGUI_Particles_SetShape
+          xywh {79 97 150 25} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label Point
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label Quad
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label {Quad Triangle Strip}
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label Hexagon
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label Line
+            xywh {0 0 100 20}
+          }
+        }
+        Fl_Value_Input Particles_Lifetime {
+          label {Life(sec)}
+          callback psEditorGUI_Particles_SetLifetime
+          tooltip {The lifetime of each particle (seconds)} xywh {79 132 80 25} maximum 10 step 0.01 value 2
+        }
+        Fl_Value_Input Particles_MinSize {
+          label {Size (m)}
+          callback psEditorGUI_Particles_SetMinSize
+          tooltip {Size at start of lifetime} xywh {79 237 80 25} maximum 1000 step 0.01 value 0.2
+        }
+        Fl_Value_Input Particles_MaxSize {
+          label to
+          callback psEditorGUI_Particles_SetMaxSize
+          tooltip {Size at end of lifetime} xywh {179 237 80 25} maximum 1000 step 0.01 value 0.2
+        }
+        Fl_Value_Input Particles_Radius {
+          label Radius
+          callback psEditorGUI_Particles_SetRadius
+          xywh {79 167 80 25} maximum 10 step 0.01 value 0.2
+        }
+        Fl_Value_Input Particles_Mass {
+          label Mass
+          callback psEditorGUI_Particles_SetMass
+          xywh {79 202 80 25} maximum 10 step 0.01 value 0.1
+        }
+        Fl_Input Particles_Texture {
+          label Texture
+          callback psEditorGUI_Particles_SetTexture
+          xywh {249 61 291 25}
+        }
+        Fl_Button {} {
+          label {...}
+          callback psEditorGUI_Particles_ChooseTexture
+          xywh {550 61 30 25}
+        }
+        Fl_Check_Button Particles_Emissive {
+          label Emissive
+          callback psEditorGUI_Particles_SetEmissive
+          xywh {379 97 120 25} down_box DOWN_BOX
+        }
+        Fl_Check_Button Particles_Lighting {
+          label Lighting
+          callback psEditorGUI_Particles_SetLighting
+          xywh {379 122 20 25} down_box DOWN_BOX
+        }
+        Fl_Group {} {open
+          xywh {79 280 140 125} box ENGRAVED_BOX
+        } {
+          Fl_Value_Input Particles_MinR {
+            label R
+            callback psEditorGUI_Particles_SetMinR
+            tooltip {Start color Red} xywh {99 286 80 25} step 0.01 value 1
+          }
+          Fl_Value_Input Particles_MinG {
+            label G
+            callback psEditorGUI_Particles_SetMinG
+            tooltip {Start color green} xywh {99 316 80 25} step 0.01 value 1
+          }
+          Fl_Value_Input Particles_MinB {
+            label B
+            callback psEditorGUI_Particles_SetMinB
+            tooltip {Start color blue} xywh {99 346 80 25} step 0.01 value 1
+          }
+          Fl_Button Particles_MinColor {
+            label {...}
+            callback psEditorGUI_Particles_ChooseMinColor
+            xywh {184 286 25 85}
+          }
+          Fl_Value_Input Particles_MinAlpha {
+            label A
+            callback psEditorGUI_Particles_SetMinAlpha
+            tooltip {Alpha value at start of lifetime} xywh {98 375 80 25} step 0.01 value 1
+          }
+        }
+        Fl_Box {} {
+          label Color
+          xywh {34 342 45 25}
+        }
+        Fl_Group {} {
+          xywh {244 280 140 125} box ENGRAVED_BOX
+        } {
+          Fl_Value_Input Particles_MaxR {
+            label R
+            callback psEditorGUI_Particles_SetMaxR
+            tooltip {End color red} xywh {264 286 80 25} step 0.01 value 1
+          }
+          Fl_Value_Input Particles_MaxG {
+            label G
+            callback psEditorGUI_Particles_SetMaxG
+            tooltip {End color green} xywh {264 316 80 25} step 0.01 value 1
+          }
+          Fl_Value_Input Particles_MaxB {
+            label B
+            callback psEditorGUI_Particles_SetMaxB
+            tooltip {End color blue} xywh {264 346 80 25} step 0.01 value 1
+          }
+          Fl_Button Particles_MaxColor {
+            label {...}
+            callback psEditorGUI_Particles_ChooseMaxColor
+            xywh {349 286 25 85}
+          }
+          Fl_Value_Input Particles_MaxAlpha {
+            label A
+            callback psEditorGUI_Particles_SetMaxAlpha
+            tooltip {Alpha value at end of lifetime} xywh {265 375 80 25} step 0.01
+          }
+        }
+        Fl_Box {} {
+          label to
+          xywh {219 342 25 25}
+        }
+        Fl_Group {} {
+          label Emitter
+          xywh {79 414 305 120} box ENGRAVED_BOX align 4
+        } {
+          Fl_Check_Button Particles_Emitter_Endless {
+            label Forever
+            callback psEditorGUI_Particles_SetEmitterEndless
+            tooltip {Does the emitter endlessly emit particles?} xywh {296 464 80 25} down_box DOWN_BOX value 1
+          }
+          Fl_Value_Input Particles_Emitter_Lifetime {
+            label {Life(sec)}
+            callback psEditorGUI_Particles_SetEmitterLifetime
+            tooltip {The emitter's lifetime (in seconds)} xywh {196 429 80 25} maximum 10 step 0.01 value 5
+          }
+          Fl_Value_Input Particles_Emitter_StartTime {
+            label {Start Time (sec)}
+            callback psEditorGUI_Particles_SetEmitterStartTime
+            tooltip {The amount of delay before emitting} xywh {196 464 80 25} maximum 10 step 0.01
+          }
+          Fl_Value_Input Particles_Emitter_ResetTime {
+            label {Reset Time (sec)}
+            callback psEditorGUI_Particles_SetEmitterResetTime
+            tooltip {How long before the emitter resets (seconds)} xywh {196 499 80 25} maximum 10 step 0.01
+          }
+        }
+      }
+      Fl_Group {} {
+        label Counter
+        xywh {4 52 590 515} hide
+      } {
+        Fl_Group RandomRateCounterParameters {
+          label {Random Rate Counter Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Value_Input RandomRateCounter_MinRate {
+            label {Min. Rate (particles/sec)}
+            callback psEditorGUI_RandomRateCounter_SetMinRate
+            tooltip {The minimum number of particles/sec output from the Emitter} xywh {289 342 80 25} maximum 1000 step 0.1 value 20
+          }
+          Fl_Value_Input RandomRateCounter_MaxRate {
+            label {Max. Rate (particles/sec)}
+            callback psEditorGUI_RandomRateCounter_SetMaxRate
+            tooltip {The maximum number of particles/sec output from the Emitter} xywh {289 377 80 25} maximum 1000 step 0.1 value 30
+          }
+        }
+        Fl_Choice {} {
+          label {Counter Type}
+          callback psEditorGUI_Counter_SetType
+          xywh {224 117 180 25} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label {Random Rate Counter}
+            xywh {0 0 100 20}
+          }
+        }
+      }
+      Fl_Group {} {
+        label Placer
+        xywh {4 52 590 515} hide
+      } {
+        Fl_Group SegmentPlacerParameters {
+          label {Segment Placer Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Group {} {
+            label {Vertex A}
+            xywh {29 327 260 105} box ENGRAVED_BOX
+          } {
+            Fl_Value_Input SegmentPlacer_A_X {
+              label X
+              callback psEditor_SegmentPlacer_VertexA_SetX
+              xywh {119 337 80 25} minimum -10 maximum 10 step 0.1 value -1
+            }
+            Fl_Value_Input SegmentPlacer_A_Y {
+              label Y
+              callback psEditor_SegmentPlacer_VertexA_SetY
+              xywh {119 367 80 25} minimum -10 maximum 10 step 0.1
+            }
+            Fl_Value_Input SegmentPlacer_A_Z {
+              label Z
+              callback psEditor_SegmentPlacer_VertexA_SetZ
+              xywh {119 397 80 25} minimum -10 maximum 10 step 0.1
+            }
+          }
+          Fl_Group {} {
+            label {Vertex B}
+            xywh {309 327 260 105} box ENGRAVED_BOX
+          } {
+            Fl_Value_Input SegmentPlacer_B_X {
+              label X
+              callback psEditor_SegmentPlacer_VertexB_SetX
+              xywh {399 337 80 25} minimum -10 maximum 10 step 0.1 value 1
+            }
+            Fl_Value_Input SegmentPlacer_B_Y {
+              label Y
+              callback psEditor_SegmentPlacer_VertexB_SetY
+              xywh {399 367 80 25} minimum -10 maximum 10 step 0.1
+            }
+            Fl_Value_Input SegmentPlacer_B_Z {
+              label Z
+              callback psEditor_SegmentPlacer_VertexB_SetZ
+              xywh {399 397 80 25} minimum -10 maximum 10 step 0.1
+            }
+          }
+        }
+        Fl_Group SectorPlacerParameters {
+          label {Sector Placer Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Group {} {
+            label Center
+            xywh {24 322 165 105} box ENGRAVED_BOX
+          } {
+            Fl_Value_Input SectorPlacer_X {
+              label X
+              callback psEditorGUI_SectorPlacer_Center_SetX
+              xywh {69 332 80 25} minimum -10 maximum 10 step 0.1
+            }
+            Fl_Value_Input SectorPlacer_Y {
+              label Y
+              callback psEditorGUI_SectorPlacer_Center_SetY
+              xywh {69 362 80 25} minimum -10 maximum 10 step 0.1
+            }
+            Fl_Value_Input SectorPlacer_Z {
+              label Z
+              callback psEditorGUI_SectorPlacer_Center_SetZ
+              xywh {69 392 80 25} minimum -10 maximum 10 step 0.1
+            }
+          }
+          Fl_Value_Input SectorPlacer_MinRadius {
+            label {Min. Radius}
+            callback psEditorGUI_SectorPlacer_SetMinRadius
+            xywh {299 347 80 25} maximum 10 step 0.1
+          }
+          Fl_Value_Input SectorPlacer_MaxRadius {
+            label {Max. Radius}
+            callback psEditorGUI_SectorPlacer_SetMaxRadius
+            xywh {299 377 80 25} maximum 10 step 0.1 value 1
+          }
+          Fl_Value_Input SectorPlacer_MinPhi {
+            label {Min. Phi}
+            callback psEditorGUI_SectorPlacer_SetMinPhi
+            xywh {479 347 80 25} maximum 6.2832 step 0.01
+          }
+          Fl_Value_Input SectorPlacer_MaxPhi {
+            label {Max. Phi}
+            callback psEditorGUI_SectorPlacer_SetMaxPhi
+            xywh {479 377 80 25} maximum 6.2832 step 0.01 value 6.2832
+          }
+        }
+        Fl_Group PointPlacerParameters {
+          label {Point Placer Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Value_Input PointPlacer_X {
+            label X
+            callback psEditorGUI_PointPlacer_SetX
+            xywh {259 327 80 25} minimum -10 maximum 10 step 0.1
+          }
+          Fl_Value_Input PointPlacer_Y {
+            label Y
+            callback psEditorGUI_PointPlacer_SetY
+            xywh {259 357 80 25} minimum -10 maximum 10 step 0.1
+          }
+          Fl_Value_Input PointPlacer_Z {
+            label Z
+            callback psEditorGUI_PointPlacer_SetZ
+            xywh {259 387 80 25} minimum -10 maximum 10 step 0.1
+          }
+        }
+        Fl_Group MultiSegmentPlacerParameters {
+          label {Multi Segment Placer Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Browser MultiSegmentPlacer_Vertices {
+            label Vertices
+            callback psEditorGUI_MultiSegmentPlacer_VerticesChanged
+            xywh {19 307 170 105} type Hold
+          }
+          Fl_Button {} {
+            label {Add Vertex}
+            callback psEditorGUI_MultiSegmentPlacer_AddVertex
+            xywh {194 357 115 25}
+          }
+          Fl_Button MultiSegmentPlacer_DeleteVertex {
+            label {Delete Vertex}
+            callback psEditorGUI_MultiSegmentPlacer_DeleteVertex
+            xywh {194 387 115 25}
+          }
+          Fl_Group MultiSegmentPlacer_VertexParameters {
+            label {Vertex Parameters}
+            xywh {349 307 230 105} box ENGRAVED_BOX align 2 hide
+          } {
+            Fl_Value_Input MultiSegmentPlacer_X {
+              label X
+              callback psEditorGUI_MultiSegmentPlacer_Vertex_SetX
+              xywh {429 317 80 25} minimum -10 maximum 10 step 0.1
+            }
+            Fl_Value_Input MultiSegmentPlacer_Y {
+              label Y
+              callback psEditorGUI_MultiSegmentPlacer_Vertex_SetY
+              xywh {429 347 80 25} minimum -10 maximum 10 step 0.1
+            }
+            Fl_Value_Input MultiSegmentPlacer_Z {
+              label Z
+              callback psEditorGUI_MultiSegmentPlacer_Vertex_SetZ
+              xywh {429 377 80 25} minimum -10 maximum 10 step 0.1
+            }
+          }
+        }
+        Fl_Choice {} {
+          label {Placer Type}
+          callback psEditorGUI_Placer_SetType
+          xywh {234 132 155 25} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label {Point Placer}
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label {Sector Placer}
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label {Segment Placer}
+            xywh {5 5 100 20}
+          }
+          menuitem {} {
+            label {Multi Segment Placer}
+            xywh {5 5 100 20}
+          }
+        }
+      }
+      Fl_Group {} {
+        label Shooter
+        xywh {4 52 590 515} hide
+      } {
+        Fl_Group RadialShooterParameters {
+          label {Radial Shooter Parameters} open
+          xywh {9 297 580 270} box DOWN_BOX align 18
+        } {
+          Fl_Group {} {
+            label {Elevation Range} open
+            tooltip {The elevation range the Shooter will send each particle. 0=up, 3.14=down} xywh {31 327 163 64} box ENGRAVED_FRAME
+          } {
+            Fl_Value_Input RadialShooter_MinTheta {
+              label {Min (rad)}
+              callback psEditorGUI_RadialShooter_SetMinTheta
+              tooltip {The minimum elevation (0=up, 3.14=down)} xywh {104 331 85 25} minimum -3.1416 maximum 3.1416 step 0.01
+            }
+            Fl_Value_Input RadialShooter_MaxTheta {
+              label {Max (rad)}
+              callback psEditorGUI_RadialShooter_SetMaxTheta
+              tooltip {The maximum elevation (0=up, 3.14=down)} xywh {104 361 85 25} minimum -3.1416 maximum 3.1416 step 0.01 value 0.3927
+            }
+          }
+          Fl_Group {} {
+            label {Azimuth Range} open
+            tooltip {The azimuth range the Shooter will send each particle. 0 = X axis, 3.14 = -X axis} xywh {218 327 163 64} box ENGRAVED_FRAME
+          } {
+            Fl_Value_Input RadialShooter_MinPhi {
+              label {Min (rad)}
+              callback psEditorGUI_RadialShooter_SetMinPhi
+              tooltip {The minimum azimuth (0=down the X+ axis)} xywh {291 332 85 25} minimum -6.2832 maximum 6.2832 step 0.01
+            }
+            Fl_Value_Input RadialShooter_MaxPhi {
+              label {Max (rad)}
+              callback psEditorGUI_RadialShooter_SetMaxPhi
+              tooltip {The maximum azimuth (0=down the -X axis)} xywh {291 362 85 25} minimum -6.2832 maximum 6.2832 step 0.01 value 6.2832
+            }
+          }
+          Fl_Group {} {
+            label {Initial Velocity Range} open
+            tooltip {The initial velocity range the Shooter will send each particle} xywh {407 327 163 64} box ENGRAVED_FRAME
+          } {
+            Fl_Value_Input RadialShooter_MinInitialSpeed {
+              label {Min (m/s)}
+              callback psEditorGUI_RadialShooter_SetMinInitialSpeed
+              tooltip {The minimum starting velocity of each particle} xywh {480 332 85 25} maximum 1000 step 0.1 value 10
+            }
+            Fl_Value_Input RadialShooter_MaxInitialSpeed {
+              label {Max (m/s)}
+              callback psEditorGUI_RadialShooter_SetMaxInitialSpeed
+              tooltip {The maximum starting velocity of each particle} xywh {480 362 85 25} maximum 1000 step 0.1 value 10
+            }
+          }
+          Fl_Group {} {
+            label {Initial Rotational Velocity Range} open
+            tooltip {The inital rotational velocity range the Shooter applies to each particle} xywh {40 417 505 113} box ENGRAVED_BOX
+          } {
+            Fl_Group {} {
+              label {Min(rad/sec)}
+              xywh {130 426 138 94} box ENGRAVED_FRAME align 4
+            } {
+              Fl_Value_Input RadialShooter_MinInitialRotationalSpeedX {
+                label {X Axis}
+                callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX
+                xywh {178 431 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MinInitialRotationalSpeedY {
+                label {Y Axis}
+                callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY
+                xywh {178 461 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MinInitialRotationalSpeedZ {
+                label {Z Axis}
+                callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ
+                xywh {178 491 85 25} minimum -10 maximum 10 step 0.1
+              }
+            }
+            Fl_Group {} {
+              label {Max(rad/sec)} open
+              xywh {386 426 138 94} box ENGRAVED_FRAME align 4
+            } {
+              Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedX {
+                label {X Axis}
+                callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX
+                xywh {433 431 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedY {
+                label {Y Axis}
+                callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY
+                xywh {433 461 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedZ {
+                label {Z Axis}
+                callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedZ
+                xywh {433 491 85 25} minimum -10 maximum 10 step 0.1
+              }
+            }
+          }
+        }
+        Fl_Choice {} {
+          label {Shooter Type}
+          callback psEditorGUI_Shooter_SetType open
+          xywh {229 127 150 25} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label {Radial Shooter}
+            xywh {5 5 100 20}
+          }
+        }
+      }
+      Fl_Group {} {
+        label Program
+        xywh {4 57 590 510} hide
+      } {
+        Fl_Browser Program_Operators {
+          label Operators
+          callback psEditor_Program_OperatorsChanged
+          xywh {134 112 150 130} type Hold align 1
+        }
+        Fl_Button {} {
+          label {New Force}
+          callback psEditorGUI_Program_NewForce
+          xywh {294 112 130 25}
+        }
+        Fl_Button {} {
+          label {New Acceleration}
+          callback psEditorGUI_Program_NewAcceleration
+          xywh {294 147 130 25}
+        }
+        Fl_Button {} {
+          label {New Fluid Friction}
+          callback psEditorGUI_Program_NewFluidFriction
+          xywh {294 182 130 25}
+        }
+        Fl_Button Program_DeleteOperator {
+          label {Delete Operator}
+          callback psEditorGUI_Program_DeleteOperator
+          xywh {294 217 130 25}
+        }
+        Fl_Group FluidFrictionParameters {
+          label {Fluid Friction Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Button {} {
+            label Air
+            callback psEditorGUI_FluidFriction_Air
+            xywh {314 322 90 25}
+          }
+          Fl_Button {} {
+            label Water
+            callback psEditorGUI_FluidFriction_Water
+            xywh {314 352 90 25}
+          }
+          Fl_Value_Input FluidFriction_Density {
+            label Density
+            callback psEditorGUI_FluidFriction_SetDensity
+            xywh {219 322 80 25} step 0.001 value 1.2929
+          }
+          Fl_Value_Input FluidFriction_Viscosity {
+            label Viscosity
+            callback psEditorGUI_FluidFriction_SetViscosity
+            xywh {219 352 80 25} step 0.0001 value 1.8e-005
+          }
+          Fl_Value_Input FluidFriction_OverrideRadius {
+            label {Override Radius}
+            callback psEditorGUI_FluidFriction_SetOverrideRadius
+            xywh {219 382 80 25} maximum 10 step 0.1
+          }
+        }
+        Fl_Group ForceParameters {
+          label {Force Parameters} open
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Value_Input Force_X {
+            label X
+            callback psEditorGUI_Force_SetX
+            tooltip {A constant force on the X-axis} xywh {239 327 115 25} minimum -1000 maximum 1000 step 0.1
+          }
+          Fl_Value_Input Force_Y {
+            label Y
+            callback psEditorGUI_Force_SetY
+            tooltip {A constant force on the Y-axis} xywh {239 357 115 25} minimum -1000 maximum 1000 step 0.1
+          }
+          Fl_Value_Input Force_Z {
+            label Z
+            callback psEditorGUI_Force_SetZ
+            tooltip {A constant force on the Z-axis} xywh {239 387 115 25} minimum -1000 maximum 1000 step 0.1
+          }
+        }
+        Fl_Group AccelerationParameters {
+          label {Acceleration Parameters}
+          xywh {9 297 580 160} box DOWN_BOX align 18 hide
+        } {
+          Fl_Value_Input Acceleration_X {
+            label X
+            callback psEditorGUI_Acceleration_SetX
+            xywh {239 327 115 25} minimum -10 maximum 10 step 0.1
+          }
+          Fl_Value_Input Acceleration_Y {
+            label Y
+            callback psEditorGUI_Acceleration_SetY
+            xywh {239 357 115 25} minimum -10 maximum 10 step 0.1
+          }
+          Fl_Value_Input Acceleration_Z {
+            label Z
+            callback psEditorGUI_Acceleration_SetZ
+            xywh {239 387 115 25} minimum -10 maximum 10 step 0.1
+          }
+        }
+      }
+    }
+  }
+} 

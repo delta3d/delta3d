@@ -1,0 +1,36 @@
+<ui>
+   <coordsys name="default" />
+   <polyedgeborder name="default">
+      <point2d x="0" y="0" />
+      <point2d x="1" y="0" />
+      <point2d x="1" y="1" />
+      <point2d x="0" y="1" />
+   </polyedgeborder>
+   <shader name="black" r="0.0" g="0.0" b="0.0" a="1.0" />
+   <shader name="dgrey" r="0.25" g="0.25" b="0.25" a="1.0" />
+   <shader name="grey"  r="0.5" g="0.5" b="0.5" a="1.0" />
+   <shader name="buttonshader" filename="bBox.rgba" />
+   <shader name="buttonhover" filename="bBox_hi.rgba" />
+   <shader name="buttonclick" filename="bBox_dn.rgba" />
+   <shader name="bar" filename="target.bmp" />
+   <shader name="cursor" filename="cursor.rgba" />
+   <shader name="raster8" r="0.0" g="0.0" b="0.0" a="1.0" filename="raster8.rgba" />
+   <fixedwidthbitmapfont name="raster8" shader="raster8" characterwidth="16"
+      characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" />
+   <rootframe name="intro" shader="dgrey">
+      <rect xmin="0.2" ymin="0.2" xmax="0.8" ymax="0.8" />
+      <textbox text="P-51" font="raster8" columns="4" rows="1">
+         <rect xmin="0.2" ymin="0.5" xmax="0.7" ymax="0.7" />
+      </textbox>
+      <edittextbox shader="default" font="raster8" text="EdittableTextBox" columns="20" rows="1" cursortype="bar">
+         <rect xmin="0.11" ymin="0.2" xmax="0.5" ymax="0.3" />
+      </edittextbox>
+      <sliderbar shader="default" slidershader="bar" rangemin="0.0" rangemax="105.0" frameid="2">
+         <rect xmin="0.1" ymin="0.8" xmax="0.9" ymax="0.9" />
+      </sliderbar>
+      <button shader="buttonshader" hovershader="buttonhover" clickshader="buttonclick" font="raster8" text="Exit"
+         textscale="0.4" frameid="1">
+         <rect xmin="0.7" ymin="0.1" xmax="0.9" ymax="0.3" />
+      </button>
+   </rootframe>
+</ui>
