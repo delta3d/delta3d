@@ -364,9 +364,9 @@ int main( int argc, char **argv )
    position.Set(-2, 0, 0, 0, 0, 0);
    guy2->SetTransform(&position);
    
-   if (!guy1->LoadFile("bizguy1/bizguy1.rbody"))    return(-1);
+   if (!guy1->LoadFile("marine/marine.rbody"))    return(-1);
 
-   if (!guy2->LoadFile("bizguy1/bizguy1.rbody"))    return(-1);
+   if (!guy2->LoadFile("marine/marine.rbody"))    return(-1);
    
    Object* obj = new Object("ground");
    
