@@ -24,6 +24,11 @@
 #include <osg/PolygonOffset>
 #include <osg/Material>
 
+
+#include <osg/StateSet>
+#include <osg/LineWidth>
+
+
 using namespace dtCore;
 using namespace std;
 
@@ -236,6 +241,9 @@ void Physical::SetCollisionSphere( osg::Node* node )
 
    if( node )
    {
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      GetMatrixNode()->setMatrix( osg::Matrix::identity() );
+
       DrawableVisitor<SphereFunctor> sv;
       node->accept(sv);
 
@@ -249,6 +257,8 @@ void Physical::SetCollisionSphere( osg::Node* node )
       );
 
       dGeomTransformSetGeom(mGeomID, subTransformID);
+
+      GetMatrixNode()->setMatrix( oldMatrix );
    }
 }
 
@@ -265,39 +275,6 @@ void Physical::SetCollisionBox(float lx, float ly, float lz)
    dGeomTransformSetGeom(mGeomID, dCreateBox(0, lx, ly, lz));
 }
 
-class BoundingBoxVisitor : public osg::NodeVisitor
-{
-   public:
-   
-      /**
-       * Constructor.
-       */
-      BoundingBoxVisitor()
-         : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-      {}
-      
-      /**
-       * Visits the specified geode.
-       *
-       * @param node the geode to visit
-       */
-      virtual void apply(osg::Geode& node)
-      {     
-         for(unsigned int i=0;i<node.getNumDrawables();i++)
-         {
-            for(unsigned int j=0;j<8;j++)
-            {
-               mBoundingBox.expandBy( node.getDrawable(i)->getBound().corner(j) );
-            }
-         }
-      }
-      
-      /**
-       * The aggregate bounding box.
-       */
-      osg::BoundingBox mBoundingBox;
-};
-
 /**
  * Sets this object's collision geometry to a box with parameters
  * derived from the specified OpenSceneGraph node.
@@ -305,16 +282,20 @@ class BoundingBoxVisitor : public osg::NodeVisitor
  * @param node the node from which to obtain the box parameters
  * (if NULL, attempt to use own node)
  */
-void Physical::SetCollisionBox(osg::Node* node)
+void Physical::SetCollisionBox( osg::Node* node )
 {
    if(node == NULL)
       node = GetOSGNode();
    
    if(node != NULL)
    {
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      GetMatrixNode()->setMatrix( osg::Matrix::identity() );
+
       BoundingBoxVisitor bbv;
-      
       node->accept(bbv);
+
+      GetMatrixNode()->setMatrix( oldMatrix );
       
       dGeomID subTransformID = dCreateGeomTransform(0);
       
@@ -329,8 +310,16 @@ void Physical::SetCollisionBox(osg::Node* node)
             bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
          )
       );
-      
+
+      dGeomSetPosition(
+         subTransformID,
+         bbv.mBoundingBox.center()[0],
+         bbv.mBoundingBox.center()[1],
+         bbv.mBoundingBox.center()[2]
+      );
+            
       dGeomTransformSetGeom(mGeomID, subTransformID);
+      
    }
 }
 
@@ -418,6 +407,9 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
    
    if( node )
    {
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      GetMatrixNode()->setMatrix( osg::Matrix::identity() );
+
       DrawableVisitor<CylinderFunctor> cv;
       node->accept(cv);
       
@@ -435,6 +427,8 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
       );
       
       dGeomTransformSetGeom(mGeomID, subTransformID);
+
+      GetMatrixNode()->setMatrix( oldMatrix );
    }
 }
 
@@ -538,6 +532,9 @@ void Physical::SetCollisionMesh(osg::Node* node)
    
    if( node )
    {
+      osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
+      GetMatrixNode()->setMatrix( osg::Matrix::identity() );
+
       DrawableVisitor<TriangleRecorder> mv;
       
       node->accept(mv);
@@ -575,6 +572,8 @@ void Physical::SetCollisionMesh(osg::Node* node)
          mGeomID, 
          dCreateTriMesh(0, mTriMeshDataID, NULL, NULL, NULL)
       );
+
+      GetMatrixNode()->setMatrix( oldMatrix );
       
    }
 }
@@ -849,7 +848,7 @@ void Physical::PostPhysicsStepUpdate()
    }
 }
 
-void Physical::RenderCollisionGeometry( const bool enable)
+void Physical::RenderCollisionGeometry( const bool enable )
 {
    osg::MatrixTransform *xform = this->GetMatrixNode();
    if (!xform) return;
@@ -975,7 +974,5 @@ void Physical::AddedToScene( Scene *scene )
    {
       mParentScene->UnRegisterPhysical(this);
       DeltaDrawable::AddedToScene( scene );
-   }
-
-   
+   } 
 } 
