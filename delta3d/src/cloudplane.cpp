@@ -45,6 +45,8 @@ mHeight(height)
 		mHeight = MAX_HEIGHT;
 
 	mNode = new osg::Group();
+   mNode->setNodeMask(0xf0000000);
+
 	Create();
 	AddSender(System::GetSystem());
 }
