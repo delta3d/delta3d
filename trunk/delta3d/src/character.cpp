@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <strstream>
+#include <sstream>
 
 #include "character.h"
 #include "notify.h"
@@ -190,7 +190,7 @@ bool Character::LoadFile(string filename)
           rbody::ReplicantBodyMgr::instance()->findCharacter(name) != NULL;
           i++)
       {
-         ostrstream buf;
+         std::ostringstream buf;
 
          buf << GetName() << " " << i;
          
