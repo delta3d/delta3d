@@ -4,13 +4,36 @@
 #                            #
 ##############################
 
-0.8
----
-Added Light, PositionalLight, SpotLight, and InfiniteLight classes
+ ---
+|0.8|
+ ---
 
-Loadable
+BIG change in the hierarchy! 
+See release notes online for more detail.
 
-New hierarchy
+New features: 
+-family of Light classes
+-Loadable class 
+-DeltaDrawable::RenderProxyNode
+-Object::RecenterGeometryUponLoad
+-DeprecationMgr class
+-Domain class
+-MatrixUtil class
+-PolarDecomposition class
+-Python Script class
+-Viewer now has icons
 
-DeprecationMgr
+Bug fixes:
+-Auto-collision geometry ( with SetCollisionBox, SetCollisionSphere, 
+ SetCollisionMesh, SetCollisionCappedCylinder should all generate correct
+ collision geometry now. (Bug 1110847)
+-All drawables render fine under Linux with auto-collision geometry.
+ (Bug 1068805)
+-Viewer: now you can switch between recently opened files fine
+-testEffects: works on Linux (Bug 1059177)
+-Chracters do not cause other textures  in scene to disappear (Bug 1075403)
+-hlaStealthViewer does not crash after exiting a concurrent testHLA 
+ (Bug 1068186)
+-And many many many more!
+
 
