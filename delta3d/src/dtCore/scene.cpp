@@ -55,14 +55,12 @@ Scene::Scene( string name, bool useSceneLight )
       mLights[ i ] = 0;
 
    SetName(name);
-   mSceneHandler = new _SceneHandler(useSceneLight);
 
    mSceneNode = new osg::Group;
-   mSceneHandler->GetSceneView()->setSceneData( mSceneNode.get() );
 
-   osg::LightSource* sceneLightSource = new osg::LightSource;	
-   sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
-   mLights[ sceneLightSource->getLight()->getLightNum() ] = new InfiniteLight( *sceneLightSource, "sceneLight", Light::GLOBAL );
+//   osg::LightSource* sceneLightSource = new osg::LightSource;	
+//   sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
+   mLights[ 0 ] = new InfiniteLight( 0 );
 
    mUserNearCallback = NULL;
    mUserNearCallbackData = NULL;
@@ -236,94 +234,6 @@ void Scene::UnRegisterPhysical( Physical *physical )
 	}
 
 }
-
-
-
-_SceneHandler::_SceneHandler(bool useSceneLight):
-mSceneView(new osgUtil::SceneView()),
-mFrameStamp(new osg::FrameStamp())
-{
-   mSceneView->init();
-   mSceneView->setDefaults(); //osg::SceneView
-
-   if(useSceneLight)
-      mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
-   else
-      mSceneView->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
-
-   mSceneView->setFrameStamp(mFrameStamp.get());
-
-   mStats = new Stats( mSceneView.get() );
-   mStats->Init( mSceneView.get()->getRenderStage() );
-
-   mStartTime = mTimer.tick();
-}
-
-_SceneHandler::~_SceneHandler()
-{
-   dtCore::Notify(dtCore::DEBUG_INFO, "Destroying _SceneHandler");
-}
-
-void _SceneHandler::clear(Producer::Camera& cam)
-{
-   ClearImplementation( cam );
-}
-
-void _SceneHandler::ClearImplementation( Producer::Camera &cam )
-{
-   //Override the Producer::Camera::clear() because the 
-   //  OSGUtil::SceneView::draw() does it for us.
-
-   //So lets not do anything clearing here, ok?
-}
-
-void _SceneHandler::cull( Producer::Camera &cam) 
-{
-   //call osg cull here         
-   CullImplementation( cam );
-}
-
-void _SceneHandler::CullImplementation(Producer::Camera &cam)
-{
-   mStats->SetTime(Stats::TIME_BEFORE_CULL);
-
-   mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+1);
-   mFrameStamp->setReferenceTime( mTimer.delta_s( mStartTime, mTimer.tick() ) );
-
-   //copy the Producer Camera's position to osg::SceneView  
-   mSceneView->getProjectionMatrix().set(cam.getProjectionMatrix());
-   mSceneView->getViewMatrix().set(cam.getPositionAndAttitudeMatrix());
-
-   //Copy the Producer Camera's viewport info to osg::SceneView
-   int x, y;
-   unsigned int w, h;
-   cam.getProjectionRectangle( x, y, w, h );
-
-   mSceneView->setViewport( x, y, w, h );
-
-   //Now tell SceneView to cull
-   mSceneView->cull();
-
-   mStats->SetTime(Stats::TIME_AFTER_CULL);
-}
-
-void _SceneHandler::draw( Producer::Camera &cam) 
-{
-   //call osg draw here
-   DrawImplementation( cam );
-};
-
-
-void _SceneHandler::DrawImplementation( Producer::Camera &cam )
-{
-   mStats->SetTime(Stats::TIME_BEFORE_DRAW);
-
-   mSceneView->draw();
-   mStats->SetTime(Stats::TIME_AFTER_DRAW);
-   mStats->Draw();
-}
-
-
 
 
 /*!
@@ -571,17 +481,6 @@ Light* Scene::GetLight( const std::string name ) const
 
 
 void Scene::UseSceneLight( bool lightState )
-{
-   osg::Light* osgLight = mLights[ 0 ]->GetLightSource()->getLight();
-
-   if(lightState)
-   {
-      GetSceneHandler()->GetSceneView()->setLightingMode( osgUtil::SceneView::SKY_LIGHT );
-      GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::ON );
-   }
-   else
-   {
-      GetSceneHandler()->GetSceneView()->setLightingMode( osgUtil::SceneView::NO_SCENEVIEW_LIGHT );
-      GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::OFF );
-   }
+{ 
+   mLights[0]->SetEnabled(lightState);
 }
