@@ -106,6 +106,7 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
    mSceneNode->addChild( drawable->GetOSGNode() );
    drawable->AddedToScene(this);
 
+   /*
    if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
    {       
       RegisterPhysical(physical);
@@ -115,6 +116,7 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
       light->SetEnabled( true );
       mLights[ light->GetNumber() ] = light; //add to internal array of lights
    }
+   */
 
    mAddedDrawables.push_back(drawable);
 }
@@ -123,6 +125,7 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
    drawable->AddedToScene(NULL);
 
+   /*
    if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
    {
       UnRegisterPhysical(physical);
@@ -132,6 +135,7 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
       light->SetEnabled( false );
       mLights[ light->GetNumber() ] = NULL;
    }
+   */
 
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
 

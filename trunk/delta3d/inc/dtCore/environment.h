@@ -52,10 +52,10 @@ namespace dtCore
       virtual void AddedToScene(Scene* scene);
          
       ///Add a DeltaDrawable to be rendered using this Environment's properties.
-      void AddDrawable( DeltaDrawable *drawable );
+      void AddChild( DeltaDrawable *child );
 
 		///Remove a DeltaDrawable added to the Environment.
-		void RemoveDrawable( DeltaDrawable *drawable );
+		void RemoveChild( DeltaDrawable *child );
 
       /// Add an Environmental Effect to the Environment
       void AddEffect(EnvEffect *effect);
@@ -153,8 +153,8 @@ namespace dtCore
       sgVec3 mDifLightColor; ///<The current diffuse light color
       sgVec3 mSpecLightColor; ///<The current specular light color
 
-      typedef std::vector<osg::ref_ptr<EnvEffect> > EnvEffectList;
-
+      typedef std::vector< osg::ref_ptr<EnvEffect> > EnvEffectList;
+      
       EnvEffectList mEffectList; ///<The list of environment effects
       EnvEffectList mToBeRemoved;///<temp list of effects to remove
       osg::ref_ptr<osg::Group> mEnvEffectNode; ///<Contains the env effects

@@ -1014,3 +1014,14 @@ void Physical::RenderCollisionGeometry( const bool enable)
 
    mRenderingGeometry = enable;
 }
+
+void Physical::AddedToScene( Scene *scene )
+{
+   //DeltaDrawable::AddedToScene( scene );
+
+   if( scene )
+      scene->RegisterPhysical(this); 
+   else
+      scene->UnRegisterPhysical(this);
+} 
+

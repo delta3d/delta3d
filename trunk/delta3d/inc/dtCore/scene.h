@@ -165,6 +165,16 @@ namespace dtCore
       inline Light* GetLight( int number ) const { return mLights[ number ]; }
       Light* GetLight( const std::string name ) const;
 
+      inline void RegisterLight( Light* light )
+      { 
+         mLights[ light->GetNumber() ] = light; //add to internal array of lights
+      }
+
+      inline void UnRegisterLight( Light* light )
+      { 
+         mLights[ light->GetNumber() ] = NULL; //add to internal array of lights
+      }
+
       ///Use the internal scene light
       void UseSceneLight( bool lightState = true );
 
