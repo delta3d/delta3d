@@ -11,19 +11,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testEffects", "testEffects\
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testMessage", "testMessage\testMessage.vcproj", "{3AF879B6-F5EC-466D-8792-A8FE0DC65359}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPhysics", "testPhysics\testPhysics.vcproj", "{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testWeather", "testWeather\testWeather.vcproj", "{FC8CDF6F-4FE6-4A8D-8D68-5DA752C977E2}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGUI", "testGUI\testGUI.vcproj", "{4B1B3A75-0621-48F6-8045-38B526B6F805}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -55,6 +47,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testSound", "testSound\test
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGUI", "testGUI\testGUI.vcproj", "{4B1B3A75-0621-48F6-8045-38B526B6F805}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -73,10 +69,6 @@ Global
 		{8F5AAEC9-3184-497E-B4D6-E399FA9A8928}.Debug.Build.0 = Debug|Win32
 		{8F5AAEC9-3184-497E-B4D6-E399FA9A8928}.Release.ActiveCfg = Release|Win32
 		{8F5AAEC9-3184-497E-B4D6-E399FA9A8928}.Release.Build.0 = Release|Win32
-		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Debug.ActiveCfg = Debug|Win32
-		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Debug.Build.0 = Debug|Win32
-		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Release.ActiveCfg = Release|Win32
-		{3AF879B6-F5EC-466D-8792-A8FE0DC65359}.Release.Build.0 = Release|Win32
 		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.ActiveCfg = Debug|Win32
 		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.Build.0 = Debug|Win32
 		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Release.ActiveCfg = Release|Win32
@@ -85,10 +77,6 @@ Global
 		{FC8CDF6F-4FE6-4A8D-8D68-5DA752C977E2}.Debug.Build.0 = Debug|Win32
 		{FC8CDF6F-4FE6-4A8D-8D68-5DA752C977E2}.Release.ActiveCfg = Release|Win32
 		{FC8CDF6F-4FE6-4A8D-8D68-5DA752C977E2}.Release.Build.0 = Release|Win32
-		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Debug.ActiveCfg = Debug|Win32
-		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Debug.Build.0 = Debug|Win32
-		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Release.ActiveCfg = Release|Win32
-		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Release.Build.0 = Release|Win32
 		{355AF710-FC5B-442C-A69A-17A6FA1F1025}.Debug.ActiveCfg = Debug|Win32
 		{355AF710-FC5B-442C-A69A-17A6FA1F1025}.Debug.Build.0 = Debug|Win32
 		{355AF710-FC5B-442C-A69A-17A6FA1F1025}.Release.ActiveCfg = Release|Win32
@@ -117,6 +105,10 @@ Global
 		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Debug.Build.0 = Debug|Win32
 		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Release.ActiveCfg = Release|Win32
 		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Release.Build.0 = Release|Win32
+		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Debug.ActiveCfg = Debug|Win32
+		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Debug.Build.0 = Debug|Win32
+		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Release.ActiveCfg = Release|Win32
+		{4B1B3A75-0621-48F6-8045-38B526B6F805}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

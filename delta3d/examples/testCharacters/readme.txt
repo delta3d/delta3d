@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtChar
+Uses modules: dtCore, dtChar, dtABC
 
 Purpose
 -------

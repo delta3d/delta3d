@@ -1,5 +1,5 @@
 #include "MyWidget.h"
-
+#include "TestWidget.h"
 
 using namespace   dtCore;
 using namespace   dtABC;
@@ -255,3 +255,20 @@ MyWidget::InitInputDevices( void )
 
    
 }
+
+int
+main( int argc, const char* argv[] )
+{
+   TestWidget* app   = new TestWidget;
+   assert( app );
+
+   Fl::visual( FL_DOUBLE | FL_RGB8 );
+   app->make_window();
+   Fl::run();
+
+   delete   app;
+   app   = NULL;
+
+   return   0;
+}
+

@@ -6,31 +6,53 @@
       <point2d x="1" y="1" />
       <point2d x="0" y="1" />
    </polyedgeborder>
+   
    <shader name="black" r="0.0" g="0.0" b="0.0" a="1.0" />
-   <shader name="dgrey" r="0.25" g="0.25" b="0.25" a="1.0" />
-   <shader name="grey"  r="0.5" g="0.5" b="0.5" a="1.0" />
-   <shader name="buttonshader" filename="bBox.rgba" />
-   <shader name="buttonhover" filename="bBox_hi.rgba" />
-   <shader name="buttonclick" filename="bBox_dn.rgba" />
-   <shader name="bar" filename="target.bmp" />
-   <shader name="cursor" filename="cursor.rgba" />
-   <shader name="raster8" r="0.0" g="0.0" b="0.0" a="1.0" filename="raster8.rgba" />
+   <shader name="white" r="1.0" g="0.0" b="1.0" a="1.0" />
+   <shader name="transparent" r="0.0" g="0.0" b="0.0" a="0.0" />
+   
+   <shader name="raster8" r="1.0" g="1.0" b="1.0" a="1.0" filename="raster8.rgba" />
+   <shader name="digital_font" r="0.0" g="0.0" b="0.0" a="1.0" filename="digital_font.rgba" />
+   
    <fixedwidthbitmapfont name="raster8" shader="raster8" characterwidth="16"
       characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" />
-   <rootframe name="intro" shader="dgrey">
+      
+   <fixedwidthbitmapfont name="digital_font" shader="digital_font" characterwidth="16"
+      characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" /> 
+   
+   
+   <shader name="button" filename="button.tga" />
+   <shader name="button_hover" filename="button_hover.tga" />
+   <shader name="button_click" filename="button_click.tga" />
+   <shader name="cursor" filename="cursor.rgba" />
+   <shader name="panel" filename="panel.rgba" />
+   <shader name="edit_box" filename="edit_box.rgb" />
+   <shader name="slider_bar" filename="slider_bar.tga" />
+   <shader name="slider" filename="slider.rgba" />
+      
+   <rootframe name="main" shader="panel">
       <rect xmin="0.2" ymin="0.2" xmax="0.8" ymax="0.8" />
-      <textbox text="P-51" font="raster8" columns="4" rows="1">
-         <rect xmin="0.2" ymin="0.5" xmax="0.7" ymax="0.7" />
+      
+      <textbox text="Delta_3D" shader="transparent" font="digital_font" columns="8" rows="1" textscale="1.0">
+         <rect xmin="0.2" ymin="0.575" xmax="0.8" ymax="0.825" />
       </textbox>
-      <edittextbox shader="default" font="raster8" text="EdittableTextBox" columns="20" rows="1" cursortype="bar">
-         <rect xmin="0.11" ymin="0.2" xmax="0.5" ymax="0.3" />
+      
+      <textbox text="Loaded from XML!" shader="transparent" font="digital_font" columns="16" rows="1" textscale="1.0">
+         <rect xmin="0.2" ymin="0.475" xmax="0.8" ymax="0.575" />
+      </textbox>
+      
+      <edittextbox shader="edit_box" font="raster8" text="EdittableTextBox" columns="20" rows="1" cursortype="bar">
+         <rect xmin="0.3" ymin="0.35" xmax="0.7" ymax="0.45" />
       </edittextbox>
-      <sliderbar shader="default" slidershader="bar" rangemin="0.0" rangemax="105.0" frameid="2">
-         <rect xmin="0.1" ymin="0.8" xmax="0.9" ymax="0.9" />
+      
+      <sliderbar shader="slider" slidershader="slider_bar" rangemin="0.0" rangemax="105.0" frameid="2">
+         <rect xmin="0.12" ymin="0.8" xmax="0.88" ymax="0.9" />
       </sliderbar>
-      <button shader="buttonshader" hovershader="buttonhover" clickshader="buttonclick" font="raster8" text="Exit"
+      
+      <button shader="button" hovershader="button_hover" clickshader="button_click" font="raster8" text="Exit"
          textscale="0.4" frameid="1">
-         <rect xmin="0.7" ymin="0.1" xmax="0.9" ymax="0.3" />
+         <rect xmin="0.4" ymin="0.2" xmax="0.6" ymax="0.3" />
       </button>
    </rootframe>
+   
 </ui>

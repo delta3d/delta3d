@@ -5,7 +5,7 @@
 
 
 const char* MyWindow::PATH = "../../data;";
-const char* MyWindow::FILE = "cessna.osg";
+const char* MyWindow::FILE = "tacoma.ive";
 
 
 

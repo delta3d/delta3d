@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc\;..\..\ext\inc\"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -39,7 +39,7 @@
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd,libc;MSVCRT.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testClouds.pdb"
@@ -74,7 +74,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc\;..\..\ext\inc\"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -90,7 +90,7 @@
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="FALSE"
-				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
@@ -128,7 +128,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath=".\CloudApp.cpp">
+				RelativePath=".\testclouds.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -141,6 +141,12 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 		</Filter>
+		<File
+			RelativePath=".\config.xml">
+		</File>
+		<File
+			RelativePath=".\readme.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
