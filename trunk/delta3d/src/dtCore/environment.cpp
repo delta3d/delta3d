@@ -128,8 +128,9 @@ Environment::~Environment(void)
 ///Notifies this object that it has been added to a Scene
 void Environment::AddedToScene(Scene* scene)
 {
+   DeltaDrawable::AddedToScene( scene );
    mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
-   mParentScene = scene;
+   //mParentScene = scene;
 }
       
 // Add an Environmental Effect to the Environment

@@ -187,7 +187,7 @@ namespace dtCore
       SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
       osg::ref_ptr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be NULL)
 
-      osg::ref_ptr<Scene> mParentScene;///<The Scene the Environment was added to
+      //osg::ref_ptr<Scene> mParentScene;///<The Scene the Environment was added to
 
       void UpdateSkyLight(void);
       void UpdateFogColor(void);
