@@ -33,6 +33,7 @@ class ObjectWrap : public Object
 };
 */
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(RGUL_overloads, RecenterGeometryUponLoad, 0, 1)
 
 void initObjectBindings()
 {
@@ -45,5 +46,6 @@ void initObjectBindings()
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
       .def("GetInstance", ObjectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("LoadFile", &Object::LoadFile, LF_overloads()[return_internal_reference<>()]);
+      .def("LoadFile", &Object::LoadFile, LF_overloads()[return_internal_reference<>()])
+      .def("RecenterGeometryUponLoad", &Object::RecenterGeometryUponLoad, RGUL_overloads());
 }
