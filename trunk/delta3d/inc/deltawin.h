@@ -37,9 +37,9 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(DeltaWin)
 
    public:
-      DeltaWin(std::string name="window", int x=100, int y=100, int width=640, int height=480, bool callback=true);
-      DeltaWin(std::string name, Producer::RenderSurface* rs, bool callback=true);
-      DeltaWin(std::string name, Producer::InputArea* ia, bool callback=true);
+      DeltaWin(std::string name="window", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false);//, bool callback=true);
+      DeltaWin(std::string name, Producer::RenderSurface* rs);//, bool callback=true);
+      DeltaWin(std::string name, Producer::InputArea* ia);//, bool callback=true);
       virtual ~DeltaWin();
 
       ///Calculate the screen pixel coords ([0,w],[0,h]) given the window coords (x,y) ([-1,1],[-1,1])
@@ -57,8 +57,8 @@ namespace dtCore
       /** Set the full screen mode.  If enabled, this will resize the window to fill
        *  the display and remove the window border.
        */
-      void SetFullScreenMode( bool enable=true) {mRenderSurface->fullScreen(enable);}
-
+      void SetFullScreenMode( bool enable=true);// {mRenderSurface->fullScreen(enable);}
+  
       ///Is the window currently in fullscreen mode?
       bool GetFullScreenMode(void) {return mRenderSurface->isFullScreen();}
       
@@ -84,8 +84,7 @@ namespace dtCore
       //Note: make these static
       ResolutionVec GetResolutions( void );
  
-      void  SetFullscreenFlag( bool fullscreen );
-      void  SetChangeScreenResolutionFlag( int width, int height, int pixelDepth );
+      //void  SetChangeScreenResolutionFlag( int width, int height, int pixelDepth );
                               
       Resolution GetCurrentResolution( void );
       bool  ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
@@ -102,11 +101,7 @@ namespace dtCore
       osg::ref_ptr<Keyboard> mKeyboard;
       osg::ref_ptr<Mouse> mMouse;
       bool mShowCursor;
-
-      int mResWidth;
-      int mResHeight;
-      int mResDepth;
-      bool mFullscreen;
+ 
    };
 
    #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
