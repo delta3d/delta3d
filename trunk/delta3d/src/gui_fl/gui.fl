@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
-header_name {gui_fl/gui_fltk.h} 
+version 1.0104 
+header_name {gui_fltk.h} 
 code_name {gui_fltk.cpp}
 decl {\#include "dtCore/base.h"} {public
 } 
@@ -14,7 +14,7 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {598 106 545 438} type Double visible
+      xywh {946 83 545 438} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -596,7 +596,7 @@ class UserInterface {open
         }
       }
       Fl_Group WeatherGroup {
-        user_data this selected
+        user_data this
         xywh {31 165 500 260} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
       } {
         Fl_Choice WeatherTimePeriodChoice {
@@ -646,7 +646,7 @@ class UserInterface {open
           }
         }
         Fl_Group WeatherCustomGroup {
-          label Custom open
+          label Custom
           xywh {115 335 405 67} box EMBOSSED_FRAME align 4
         } {
           Fl_Slider WeatherCloudSlider {
@@ -669,7 +669,7 @@ class UserInterface {open
           }
         }
         Fl_Group {} {
-          user_data this open
+          user_data this
           xywh {45 235 25 150}
         } {
           Fl_Round_Button WeatherThemeOption {
@@ -684,7 +684,7 @@ class UserInterface {open
           }
         }
         Fl_Group WeatherThemeGroup {
-          label {Theme:} open
+          label {Theme:}
           xywh {115 185 92 145} box EMBOSSED_FRAME align 4
         } {
           Fl_Round_Button WeatherThemeClearOption {
@@ -723,6 +723,207 @@ class UserInterface {open
           user_data this
           callback {((UserInterface*)v)->WeatherRateOfChangeCB(o)}
           xywh {310 240 140 25} type Horizontal minimum -1
+        }
+      }
+      Fl_Group LightGroup {
+        user_data this selected
+        xywh {30 170 505 260} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
+      } {
+        Fl_Value_Input LightNumberInput {
+          label {Num:}
+          user_data this
+          callback {((UserInterface*)v)->LightNumCB(o)}
+          private xywh {75 180 25 25} minimum 1 maximum 8 step 1
+        }
+        Fl_Group {} {
+          label Mode
+          xywh {40 230 65 45} box ENGRAVED_FRAME
+        } {
+          Fl_Round_Button LightModeLocal {
+            label Local
+            user_data this
+            callback {((UserInterface*)v)->LightModeCB(o)}
+            xywh {40 230 65 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button LightModeGlobal {
+            label Global
+            user_data this
+            callback {((UserInterface*)v)->LightModeCB(o)}
+            xywh {40 250 65 25} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+        }
+        Fl_Group {} {
+          label Attenuation
+          xywh {175 195 70 80}
+        } {
+          Fl_Value_Input LightConstAtt {
+            label {Constant:}
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {180 195 60 25} maximum 100 step 0.001
+          }
+          Fl_Value_Input LightLinAtt {
+            label {Linear:}
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {180 220 60 25} maximum 100 step 0.001
+          }
+          Fl_Value_Input LightQuadAtt {
+            label {Quadratic:}
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {180 245 60 25} maximum 100 step 0.001
+          }
+        }
+        Fl_Group {} {
+          label Diffuse
+          xywh {50 305 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input LightDifRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorCB(o)}
+            private xywh {100 310 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightDifGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorCB(o)}
+            private xywh {100 335 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightDifBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorCB(o)}
+            private xywh {100 360 45 25} step 0.01 value 8.888
+          }
+          Fl_Button LightDifColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->LightDifColorBrowserCB(o)}
+            private xywh {150 310 25 75}
+          }
+        }
+        Fl_Group {} {
+          label Ambient
+          xywh {210 305 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input LightAmbRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorCB(o)}
+            private xywh {260 310 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightAmbGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorCB(o)}
+            private xywh {260 335 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightAmbBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorCB(o)}
+            private xywh {260 360 45 25} step 0.01 value 8.888
+          }
+          Fl_Button LightAmbColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->LightAmbColorBrowserCB(o)}
+            private xywh {310 310 25 75}
+          }
+        }
+        Fl_Group {} {
+          label Specular
+          xywh {375 305 130 85} box THIN_DOWN_FRAME
+        } {
+          Fl_Value_Input LightSpecRed {
+            label {Red:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorCB(o)}
+            private xywh {425 310 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightSpecGreen {
+            label {Green:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorCB(o)}
+            private xywh {425 335 45 25} step 0.01 value 8.888
+          }
+          Fl_Value_Input LightSpecBlue {
+            label {Blue:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorCB(o)}
+            private xywh {425 360 45 25} step 0.01 value 8.888
+          }
+          Fl_Button LightSpecColorLoadButton {
+            label {...}
+            user_data this
+            callback {((UserInterface*)v)->LightSpecColorBrowserCB(o)}
+            private xywh {475 310 25 75}
+          }
+        }
+        Fl_Group {} {
+          label Position
+          xywh {390 195 60 75}
+        } {
+          Fl_Value_Input LightX {
+            label {X:}
+            user_data this
+            callback {((UserInterface*)v)->LightPosCB(o)}
+            private xywh {390 195 60 25} minimum -500000 maximum 500000 step 0.1
+          }
+          Fl_Value_Input LightY {
+            label {Y:}
+            user_data this
+            callback {((UserInterface*)v)->LightPosCB(o)}
+            private xywh {390 220 60 25} minimum -500000 maximum 500000 step 0.1
+          }
+          Fl_Value_Input LightZ {
+            label {Z:}
+            user_data this
+            callback {((UserInterface*)v)->LightPosCB(o)}
+            private xywh {390 245 60 25} minimum -500000 maximum 500000 step 0.1
+          }
+        }
+        Fl_Group {} {
+          label Direction
+          xywh {475 195 50 75}
+        } {
+          Fl_Value_Input LightDirX {
+            label {X:}
+            user_data this
+            callback {((UserInterface*)v)->LightDirCB(o)}
+            private xywh {475 195 50 25} minimum -500000 maximum 500000 step 0.1
+          }
+          Fl_Value_Input LightDirY {
+            label {Y:}
+            user_data this
+            callback {((UserInterface*)v)->LightDirCB(o)}
+            private xywh {475 220 50 25} minimum -500000 maximum 500000 step 0.1
+          }
+          Fl_Value_Input LightDirZ {
+            label {Z:}
+            user_data this
+            callback {((UserInterface*)v)->LightDirCB(o)}
+            private xywh {475 245 50 25} minimum -500000 maximum 500000 step 0.1
+          }
+        }
+        Fl_Group {} {
+          label Spot open
+          xywh {300 195 60 50}
+        } {
+          Fl_Value_Input LightExponentInput {
+            label {Exp:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpotCB(o)}
+            private xywh {300 195 60 25} maximum 500000 step 0.1
+          }
+          Fl_Value_Input LightCutoffInput {
+            label {Cutoff:}
+            user_data this
+            callback {((UserInterface*)v)->LightSpotCB(o)}
+            private xywh {300 220 60 25} maximum 500000 step 0.1
+          }
         }
       }
     }
@@ -794,6 +995,18 @@ class UserInterface {open
   decl {void WeatherTimeCB(Fl_Choice*);} {}
   decl {void WeatherSeasonCB(Fl_Choice*);} {}
   decl {void WeatherRateOfChangeCB(Fl_Value_Slider*);} {}
+  decl {void LightPosCB(Fl_Value_Input*);} {}
+  decl {void LightModeCB(Fl_Round_Button*);} {}
+  decl {void LightNumCB(Fl_Value_Input*);} {}
+  decl {void LightAmbColorCB(Fl_Value_Input*);} {}
+  decl {void LightDifColorCB(Fl_Value_Input*);} {}
+  decl {void LightSpecColorCB(Fl_Value_Input*);} {}
+  decl {void LightAmbColorBrowserCB(Fl_Button*);} {}
+  decl {void LightDifColorBrowserCB(Fl_Button*);} {}
+  decl {void LightSpecColorBrowserCB(Fl_Button*);} {}
+  decl {void LightAttCB(Fl_Value_Input*);} {}
+  decl {void LightSpotCB(Fl_Value_Input*);} {}
+  decl {void LightDirCB(Fl_Value_Input*);} {}
 } 
 
 decl {\#pragma comment(lib, "fltk.lib")} {public
