@@ -233,6 +233,13 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
   */
 void dtABC::Application::GenerateDefaultConfigFile()
 {
+   TiXmlDocument *xmlDoc = new TiXmlDocument( "config.xml" );
+   if (xmlDoc->LoadFile( "config.xml" ))
+   {
+      Notify(WARN, "Application found existing config.xml, delete file before generating a new one.");
+      return;
+   }
+
    TiXmlDocument xml( "config.xml" );
    TiXmlDeclaration dec( "1.0", "iso-8859-1", "no" );
    xml.InsertEndChild( dec );
