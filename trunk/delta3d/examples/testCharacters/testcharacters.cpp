@@ -71,6 +71,8 @@ public:
       case Producer::Key_Escape:
          System::GetSystem()->Stop();
          break;
+      default:
+         break;
       }
    }
 

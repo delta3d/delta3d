@@ -85,8 +85,12 @@ class InputCallback : public Producer::KeyboardMouseCallback
 
 
 DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor, bool fullScreen) :
-Base(name),
-mShowCursor(true)
+   Base(name),
+   mRenderSurface(0),
+   mKeyboardMouse(0),
+   mKeyboard(0),
+   mMouse(0),
+   mShowCursor(true)
 {
    RegisterInstance(this);
 
@@ -115,8 +119,11 @@ mShowCursor(true)
 
 DeltaWin::DeltaWin(string name, DeltaRenderSurface* rs, Producer::InputArea* ia) :
 Base(name),
-mShowCursor(true),
-mRenderSurface(rs)
+mRenderSurface(rs),
+mKeyboardMouse(0),
+mKeyboard(0),
+mMouse(0),
+mShowCursor(true)
 {
    RegisterInstance(this);
    

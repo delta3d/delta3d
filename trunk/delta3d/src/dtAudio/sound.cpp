@@ -57,20 +57,20 @@ const char* Sound::kCommand[kNumCommands]   =
  */
 class SoundStateFrame : public dtCore::StateFrame
 {
-   /********************************************/
-   /*
-   /* WARNING FROM JPJ (Sep.23,2004)
-   /*
-   /* SoundStateFrame was a cut/past from
-   /* the old dtCore::Sound,  I did not have
-   /* time to implement the guts for the new
-   /* dtAudio::Sound.  Whomever works on this
-   /* code after me beware... and remove this
-   /* comment when you fix this.
-   /*
-   /* So long and thanks for all the fish.
-   /*
-   /********************************************/
+   /********************************************
+    *
+    * WARNING FROM JPJ (Sep.23,2004)
+    *
+    * SoundStateFrame was a cut/past from
+    * the old dtCore::Sound,  I did not have
+    * time to implement the guts for the new
+    * dtAudio::Sound.  Whomever works on this
+    * code after me beware... and remove this
+    * comment when you fix this.
+    *
+    * So long and thanks for all the fish.
+    *
+    ********************************************/
    public:
 
       enum Elements
@@ -148,8 +148,8 @@ IMPLEMENT_MANAGEMENT_LAYER(Sound)
 
 
 /********************************
-/** Protected Member Functions **
-/********************************
+ ** Protected Member Functions **
+ ********************************/
 /**
  * Constructor, user does not create directly
  * instead requests a sound from AudioManager
@@ -157,17 +157,17 @@ IMPLEMENT_MANAGEMENT_LAYER(Sound)
 Sound::Sound()
 :  Transformable(),
    mFilename(""),
+   mPlayCB(NULL),
+   mPlayCBData(NULL),
+   mStopCB(NULL),
+   mStopCBData(NULL),
    mGain(1.0f),
-   mPitch(1.0f),
+   mPitch(1.0f),   
    mMinDist(1.0f),
    mMaxDist(static_cast<float>(MAX_FLOAT)),
    mRolloff(1.0f),
    mMinGain(0.0f),
-   mMaxGain(1.0f),
-   mPlayCB(NULL),
-   mPlayCBData(NULL),
-   mStopCB(NULL),
-   mStopCBData(NULL)
+   mMaxGain(1.0f)
 {
    RegisterInstance( this );
 
@@ -210,8 +210,8 @@ Sound::OnMessage( MessageData* data )
 
 
 /*****************************
-/** Public Member Functions **
-/*****************************
+ ** Public Member Functions **
+ *****************************/
 /**
  * Loads the specified sound file.
  *
@@ -599,20 +599,20 @@ Sound::SetMaxGain( float gain )
 dtCore::StateFrame*
 Sound::GenerateKeyFrame( void )
 {
-   /********************************************/
-   /*
-   /* WARNING FROM JPJ (Sep.23,2004)
-   /*
-   /* GenerateKeyFrame was a cut/past from
-   /* the old dtCore::Sound,  I did not have
-   /* time to implement the guts for the new
-   /* dtAudio::Sound.  Whomever works on this
-   /* code after me beware... and remove this
-   /* comment when you fix this.
-   /*
-   /* So long and thanks for all the fish.
-   /*
-   /********************************************/
+   /********************************************
+   *
+   * WARNING FROM JPJ (Sep.23,2004)
+   *
+   * GenerateKeyFrame was a cut/past from
+   * the old dtCore::Sound,  I did not have
+   * time to implement the guts for the new
+   * dtAudio::Sound.  Whomever works on this
+   * code after me beware... and remove this
+   * comment when you fix this.
+   *
+   * So long and thanks for all the fish.
+   *
+   ********************************************/
    return new SoundStateFrame(
       this, 
       SoundStateFrame::Playing | SoundStateFrame::Gain,
@@ -631,20 +631,20 @@ Sound::GenerateKeyFrame( void )
 dtCore::StateFrame*
 Sound::DeserializeFrame( TiXmlElement* element )
 {
-   /********************************************/
-   /*
-   /* WARNING FROM JPJ (Sep.23,2004)
-   /*
-   /* DeserializeFrame was a cut/past from
-   /* the old dtCore::Sound,  I did not have
-   /* time to implement the guts for the new
-   /* dtAudio::Sound.  Whomever works on this
-   /* code after me beware... and remove this
-   /* comment when you fix this.
-   /*
-   /* So long and thanks for all the fish.
-   /*
-   /********************************************/
+   /********************************************
+    *
+    * WARNING FROM JPJ (Sep.23,2004)
+    *
+    * DeserializeFrame was a cut/past from
+    * the old dtCore::Sound,  I did not have
+    * time to implement the guts for the new
+    * dtAudio::Sound.  Whomever works on this
+    * code after me beware... and remove this
+    * comment when you fix this.
+    *
+    *  So long and thanks for all the fish.
+    *
+    ********************************************/
    int validElements = 0;
    bool playing = false;
    float gain = 1.0f;

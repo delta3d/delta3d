@@ -45,7 +45,7 @@ TestWinApp::Config()
    sgVec4 black_col = { 0.0, 0.0, 0.0, 1.0 };
    sgVec4 white_col = { 1.0, 1.0, 1.0, 1.0 };
    sgVec4 trans_col = { 0.0, 0.0, 0.0, 0.0 };
-   sgVec4 grey_col = { 0.3, 0.3, 0.3, 1.0 };
+   //sgVec4 grey_col = { 0.3, 0.3, 0.3, 1.0 };
    mDrawable->CreateShader( "black", black_col );
    mDrawable->CreateShader( "transparent", trans_col );
 

@@ -39,11 +39,14 @@ IMPLEMENT_MANAGEMENT_LAYER(Physical)
  * Constructor.
  */
 Physical::Physical()
-   : mBodyID(0),
-     mDynamicsEnabled(false),
+   : mGeomID(0),
+     mOriginalGeomID(0),
      mTriMeshDataID(0),
+     mBodyID(0),
+     mDynamicsEnabled(false),
      mMeshVertices(NULL),
      mMeshIndices(NULL),
+     mGeomGeod(0),
      mRenderingGeometry(false)
 {
    RegisterInstance(this);
@@ -135,8 +138,8 @@ dBodyID Physical::GetBodyID() const
  */
 void Physical::SetCollisionGeom(dGeomID geom)
 {
-   //mOrignalGeomID = dGeomID(geom);
-   //dGeomDisable( mOrignalGeomID );
+   //mOriginalGeomID = dGeomID(geom);
+   //dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, geom);
 }
@@ -149,8 +152,8 @@ void Physical::SetCollisionGeom(dGeomID geom)
  */
 void Physical::SetCollisionSphere(float radius)
 {
-   mOrignalGeomID = dCreateSphere(0, radius);
-   dGeomDisable( mOrignalGeomID );
+   mOriginalGeomID = dCreateSphere(0, radius);
+   dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateSphere(0, radius) );
 }
@@ -262,8 +265,8 @@ void Physical::SetCollisionSphere( osg::Node* node )
 
       dGeomTransformSetCleanup(subTransformID, 1);
 
-      mOrignalGeomID = dCreateSphere( 0, sv.mFunctor.mRadius );
-      dGeomDisable( mOrignalGeomID );
+      mOriginalGeomID = dCreateSphere( 0, sv.mFunctor.mRadius );
+      dGeomDisable( mOriginalGeomID );
 
       dGeomTransformSetGeom( subTransformID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
 
@@ -283,8 +286,8 @@ void Physical::SetCollisionSphere( osg::Node* node )
  */
 void Physical::SetCollisionBox(float lx, float ly, float lz)
 {
-   mOrignalGeomID = dCreateBox(0, lx, ly, lz);
-   dGeomDisable( mOrignalGeomID );
+   mOriginalGeomID = dCreateBox(0, lx, ly, lz);
+   dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateBox(0, lx, ly, lz) );
 }
@@ -315,13 +318,13 @@ void Physical::SetCollisionBox( osg::Node* node )
       
       dGeomTransformSetCleanup(subTransformID, 1);
 
-      mOrignalGeomID =  dCreateBox( 0, 
+      mOriginalGeomID =  dCreateBox( 0, 
          bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
          bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
          bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
       );
 
-      dGeomDisable( mOrignalGeomID );
+      dGeomDisable( mOriginalGeomID );
 
       dGeomTransformSetGeom( subTransformID, dCreateBox( 0, 
          bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
@@ -351,8 +354,8 @@ void Physical::SetCollisionBox( osg::Node* node )
  */
 void Physical::SetCollisionCappedCylinder(float radius, float length)
 {
-   mOrignalGeomID = dCreateCCylinder(0, radius, length);
-   dGeomDisable( mOrignalGeomID );
+   mOriginalGeomID = dCreateCCylinder(0, radius, length);
+   dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateCCylinder(0, radius, length) );
 }
@@ -439,8 +442,8 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
       
       dGeomTransformSetCleanup(subTransformID, 1);
 
-      mOrignalGeomID = dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ );
-      dGeomDisable( mOrignalGeomID );
+      mOriginalGeomID = dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ );
+      dGeomDisable( mOriginalGeomID );
 
       dGeomTransformSetGeom( subTransformID, dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ ) );
       
@@ -458,8 +461,8 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
  */
 void Physical::SetCollisionRay(float length)
 {
-   mOrignalGeomID = dCreateRay(0, length);
-   dGeomDisable( mOrignalGeomID );
+   mOriginalGeomID = dCreateRay(0, length);
+   dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateRay(0, length) );
 }
@@ -829,10 +832,11 @@ void Physical::PrePhysicsStepUpdate()
             {
             case dBoxClass:
                {
-                  dVector3 currentSide, originalSide;
+                  //dVector3 currentSide;
+                  dVector3 originalSide;
 
-                  dGeomBoxGetLengths( id, currentSide );
-                  dGeomBoxGetLengths( mOrignalGeomID, originalSide );
+                  //dGeomBoxGetLengths( id, currentSide );
+                  dGeomBoxGetLengths( mOriginalGeomID, originalSide );
        
                   dGeomBoxSetLengths( id, originalSide[0]*scale[0], originalSide[1]*scale[1], originalSide[2]*scale[2] );
                      
@@ -840,8 +844,8 @@ void Physical::PrePhysicsStepUpdate()
                break;
             case dSphereClass:
                {
-                  dReal currentRadius = dGeomSphereGetRadius( id );
-                  dReal originalRadius = dGeomSphereGetRadius( mOrignalGeomID );
+                  //dReal currentRadius = dGeomSphereGetRadius( id );
+                  dReal originalRadius = dGeomSphereGetRadius( mOriginalGeomID );
 
                   float maxScale = std::max( std::max( scale[0], scale[1] ), scale[2] );
 
@@ -850,10 +854,11 @@ void Physical::PrePhysicsStepUpdate()
                break;
             case dCCylinderClass:
                {
-                  dReal currentRadius, currentLength, originalRadius, originalLength;
+                  //dReal currentRadius, currentLength;
+                  dReal originalRadius, originalLength;
 
-                  dGeomCCylinderGetParams( id, &currentRadius, &currentLength );
-                  dGeomCCylinderGetParams( mOrignalGeomID, &originalRadius, &originalLength );
+                  //dGeomCCylinderGetParams( id, &currentRadius, &currentLength );
+                  dGeomCCylinderGetParams( mOriginalGeomID, &originalRadius, &originalLength );
 
                   //find max radius based on x/y scaling
                   float maxRadiusScale = std::max( scale[0], scale[1] );
@@ -864,10 +869,10 @@ void Physical::PrePhysicsStepUpdate()
             case dRayClass:
                {
                   dVector3 start, dir;
-                  dReal currentLength = dGeomRayGetLength( id );
-                  dReal originalLength = dGeomRayGetLength( mOrignalGeomID );
+                  //dReal currentLength = dGeomRayGetLength( id );
+                  dReal originalLength = dGeomRayGetLength( mOriginalGeomID );
 
-                  dGeomRayGet(mOrignalGeomID, start, dir);
+                  dGeomRayGet(mOriginalGeomID, start, dir);
 
                   //ignore x/y scaling, use z to scale ray
                   dGeomRaySetLength( id, originalLength * scale[2] );
@@ -986,9 +991,9 @@ void Physical::RenderCollisionGeometry( const bool enable )
          case dBoxClass:
             {
                dVector3 side;
-               dGeomBoxGetLengths(mOrignalGeomID, side);
-               const dReal *pos = dGeomGetPosition(id);
-               const dReal *rot = dGeomGetRotation(id);
+               dGeomBoxGetLengths(mOriginalGeomID, side);
+               //const dReal *pos = dGeomGetPosition(id);
+               //const dReal *rot = dGeomGetRotation(id);
                mGeomGeod.get()->addDrawable(
                   new osg::ShapeDrawable(
                   new osg::Box(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
@@ -997,7 +1002,7 @@ void Physical::RenderCollisionGeometry( const bool enable )
             break;
          case dSphereClass:
             {
-               dReal rad = dGeomSphereGetRadius(mOrignalGeomID);
+               dReal rad = dGeomSphereGetRadius(mOriginalGeomID);
                mGeomGeod.get()->addDrawable(
                   new osg::ShapeDrawable(
                   new osg::Sphere(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
@@ -1007,7 +1012,7 @@ void Physical::RenderCollisionGeometry( const bool enable )
          case dCCylinderClass:
             {
                dReal radius, length;
-               dGeomCCylinderGetParams(mOrignalGeomID, &radius, &length);
+               dGeomCCylinderGetParams(mOriginalGeomID, &radius, &length);
                mGeomGeod.get()->addDrawable(
                   new osg::ShapeDrawable(
                   new osg::Cylinder(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
@@ -1018,14 +1023,14 @@ void Physical::RenderCollisionGeometry( const bool enable )
          case dCylinderClass:
          case dPlaneClass:
             {
-               dVector4 result; //a*x+b*y+c*z = d
-               dGeomPlaneGetParams(id, result);
+               //dVector4 result; //a*x+b*y+c*z = d
+               //dGeomPlaneGetParams(id, result);
             }
          case dRayClass:
             {
-               dVector3 start, dir;
-               dReal length = dGeomRayGetLength(id);
-               dGeomRayGet(id, start, dir);
+               //dVector3 start, dir;
+               //dReal length = dGeomRayGetLength(id);
+               //dGeomRayGet(id, start, dir);
             }
          case dTriMeshClass:
          default:

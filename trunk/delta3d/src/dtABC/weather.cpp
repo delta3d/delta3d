@@ -9,10 +9,10 @@ IMPLEMENT_MANAGEMENT_LAYER(Weather)
 Weather::Weather(void):
 mEnvironment(NULL),
 mCloudType(CLOUD_CLEAR),
-mWindType(WIND_NONE),
 mVisType(VIS_UNLIMITED),
-mTheme(THEME_CLEAR),
+mWindType(WIND_NONE),
 mRateOfChange(0.f),
+mTheme(THEME_CLEAR),
 mTimePeriod(TIME_DAY),
 mSeason(SEASON_SUMMER)
 {

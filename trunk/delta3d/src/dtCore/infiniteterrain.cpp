@@ -498,7 +498,7 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    
    sgVec2 minimum = { x * mSegmentSize, y * mSegmentSize };
           
-   float halfStep = 0.5f * (mSegmentSize / mSegmentDivisions);
+   //float halfStep = 0.5f * (mSegmentSize / mSegmentDivisions);
    
    RefPtr<osg::Vec3Array> vertices = 
       new osg::Vec3Array(width*height);

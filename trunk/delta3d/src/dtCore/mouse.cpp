@@ -110,7 +110,7 @@ void Mouse::RemoveMouseListener(MouseListener* mouseListener)
  */
 void Mouse::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 {
-   int delta;
+   int delta = 0;
 
    switch(sm)
    {
