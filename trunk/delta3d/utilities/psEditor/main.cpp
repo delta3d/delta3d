@@ -717,6 +717,11 @@ void psEditorGUI_RenameLayer(Fl_Button*, void*)
    }
 }
 
+void psEditorGUI_ResetLayers(Fl_Button*, void*)
+{
+   resetEmitters();
+}
+
 void psEditorGUI_LayerSelect(Fl_Browser*, void*)
 {
    if(Layers->value() == 0)
