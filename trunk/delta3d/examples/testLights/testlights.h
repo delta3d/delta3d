@@ -19,7 +19,7 @@ public:
                      Producer::KeyboardKey  key,
                      Producer::KeyCharacter character );
 
-   void OnMessage( dtCore::Base::MessageData* data );
+   void PreFrame( const double deltaFrameTime );
 
 private:
 
@@ -32,8 +32,7 @@ private:
    osg::ref_ptr<dtCore::Object> mSphere;
 
    osg::ref_ptr<dtCore::SpotLight> mGlobalSpot;
-   osg::ref_ptr<dtCore::PositionalLight> mLocalPositional;
-   osg::ref_ptr<dtCore::PositionalLight> mGlobalPositional;
+   osg::ref_ptr<dtCore::PositionalLight> mPositional;
    osg::ref_ptr<dtCore::InfiniteLight> mGlobalInfinite;
 
    osg::ref_ptr<dtCore::OrbitMotionModel> mOmm;

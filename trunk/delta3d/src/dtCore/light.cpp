@@ -5,7 +5,7 @@
 using namespace dtCore;
 
 Light::Light( int number, LightingMode mode, osg::LightSource* lightSource )
-: mLightingMode( mode ), mLightSource( lightSource ), mSceneParent( NULL ), mEnabled ( false )
+: mLightingMode( mode ), mLightSource( lightSource ), mEnabled ( false )
 {
    if( number < 0 || number >= MAX_LIGHTS )
       dtCore::Notify(WARN, "Light number %d is out of bounds, use values 0-7.",number);
@@ -29,10 +29,10 @@ Light::SetEnabled( bool enabled )
    if( mEnabled ) state = osg::StateAttribute::ON;
    else           state = osg::StateAttribute::OFF;
 
-   if( GetLightingMode() == GLOBAL && mSceneParent )
+   if( GetLightingMode() == GLOBAL && GetSceneParent() )
    {
       osg::Light* osgLight = mLightSource->getLight();
-      mSceneParent->GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, state );
+      GetSceneParent()->GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, state );
    }
 
    mLightSource->setLocalStateSetModes( state );

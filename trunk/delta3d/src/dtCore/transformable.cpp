@@ -14,7 +14,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 Transformable::Transformable()
 {
    RegisterInstance(this);
-   //mRelTransform = new Transform();
    mNode = new osg::MatrixTransform();
    mNode->setName("Transformable");
 }
@@ -23,7 +22,6 @@ Transformable::~Transformable()
 {
    Notify(DEBUG_INFO, "Transformable: Deleting '%s'", GetName().c_str());
    DeregisterInstance(this);
-   //delete(mRelTransform);
 }
 
 
@@ -177,7 +175,6 @@ void Transformable::AddChild(DeltaDrawable *child)
  */
 void Transformable::RemoveChild(DeltaDrawable *child)
 {
-   
    osg::Matrix absMat;
    bool success = GetAbsoluteMatrix( child->GetOSGNode(), &absMat );
    GetMatrixNode()->removeChild( child->GetOSGNode() );

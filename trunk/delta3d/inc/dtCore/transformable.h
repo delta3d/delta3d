@@ -72,6 +72,8 @@ namespace dtCore
       ///convenience function to return back the internal matrix transform node
       osg::MatrixTransform* GetMatrixNode(void) {return dynamic_cast<osg::MatrixTransform*>(mNode.get());}
       
+     ///Get the world coordinate matrix from the supplied node
+      static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat);
 
    protected:
       
@@ -79,10 +81,7 @@ namespace dtCore
 
    private:
 
-      ///Get the world coordinate matrix from the supplied node
-      static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat);
-
-      class getWCofNodeVisitor : public osg::NodeVisitor
+       class getWCofNodeVisitor : public osg::NodeVisitor
       {
       public:
          getWCofNodeVisitor( osg::Node *findNode ):

@@ -29,23 +29,26 @@ namespace dtCore
    class DT_EXPORT PositionalLight :  public Light,  public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(PositionalLight)
-
-   public:
-
+         
+         public:
+      
       PositionalLight( int number, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL );
-      PositionalLight( osg::LightSource* const source, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL  );
+      PositionalLight( osg::LightSource* const source, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL );
       virtual ~PositionalLight();
 
+      virtual osg::Node* GetOSGNode() { return mNode.get(); } 
+      
       // attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
       // where k_c = constant, k_l = linear, k_q = quadractric
       void SetAttenuation( const float constant, const float linear, const float quadratic );
       void GetAttenuation( float* constant, float* linear, float* quadratic );
- 
-      ///Add a DeltaDrawable child
-      virtual void AddChild( DeltaDrawable *child ) { Transformable::AddChild(child); };
- 
-      ///Remove a DeltaDrawable child
-      virtual void RemoveChild( DeltaDrawable *child ) {Transformable::RemoveChild(child); }
+      
+      // Add a DeltaDrawable child
+      virtual void AddChild( DeltaDrawable *child ); 
+         
+      // Remove a DeltaDrawable child
+      virtual void RemoveChild( DeltaDrawable *child );
+
    };
 }
 
