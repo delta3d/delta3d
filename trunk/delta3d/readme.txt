@@ -14,7 +14,7 @@ double-clicking on the .exe files inside the Release folders.
 There are also several useful utitilies found in the utilities/ folder.
 See the readme.txt in that folder for more details.
 
-If you are a developer (or a Linux user) you'll need to build from the source
+If you are a developer you'll want to build from the source
 which we provide with all our distributions. Please follow instructions
 in src/readme.txt to build the source.
 
@@ -37,7 +37,7 @@ ReplicantBody
 Signal_Slot	
 TinyXML
 
-Thanks for using Delta3D! Please visit our webpage at http://delta3d.org
+Thanks for using Delta3D! Please visit our webpage at http://www.delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
 our best to respond as quick as possible.
 
