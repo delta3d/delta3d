@@ -38,8 +38,6 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
    exit(1);
 }
 
-//const int Scene::MAX_LIGHT_NUMBER ;
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -49,7 +47,7 @@ Scene::Scene( string name, bool useSceneLight )
 {
    RegisterInstance(this);
 
-   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
+   for( int i = 0; i < MAX_LIGHTS; i++ )
       mLights[ i ] = 0;
 
    SetName(name);
@@ -90,7 +88,7 @@ Scene::~Scene()
 {
    DeregisterInstance(this);
 
-   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
+   for( int i = 0; i < MAX_LIGHTS; i++ )
       delete mLights[ i ];
 
    dJointGroupDestroy(mContactJointGroupID);
@@ -193,7 +191,7 @@ void Scene::RegisterLight( Light* light )
 
 void Scene::UnRegisterLight( Light* light )
 {
-   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
+   for( int i = 0; i < MAX_LIGHTS; i++ )
    {
       if( mLights[ i ] == light )
       {
@@ -522,7 +520,7 @@ void Scene::SetPhysicsStepSize( double stepSize )
 
 Light* Scene::GetLight( const std::string name ) const
 {
-   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
+   for( int i = 0; i < MAX_LIGHTS; i++ )
    {
       if( mLights[ i ]->GetName() == name )
       {
