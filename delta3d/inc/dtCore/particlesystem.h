@@ -53,7 +53,7 @@ namespace dtCore
          virtual ~ParticleSystem();         
 
          ///Load a file from disk
-         virtual osg::Node* LoadFile( std::string filename, bool useCache = true);
+         virtual osg::Node* LoadFile( std::string filename, bool useCache = false);
 
          ///Supply the Scene this Drawable has been added to
          /**
