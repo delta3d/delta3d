@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python23.lib"
+				AdditionalDependencies="python23.lib osgd.lib"
 				OutputFile="..\..\bin\dtscriptd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB),$(PYTHON_LIB_PATH)"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python23.lib"
+				AdditionalDependencies="python23.lib osg.lib"
 				OutputFile="..\..\bin\dtscript.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories="$(DELTA_LIB),$(PYTHON_LIB_PATH)"
@@ -131,6 +131,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\inc\python\dtscript.h">
+			</File>
 			<File
 				RelativePath="..\..\inc\python\scriptmanager.h">
 			</File>
