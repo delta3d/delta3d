@@ -7,6 +7,7 @@
 
 using namespace boost::python;
 using namespace dtCore;
+using namespace dtAudio;
 
 void initSoundEffectBinderBindings()
 {

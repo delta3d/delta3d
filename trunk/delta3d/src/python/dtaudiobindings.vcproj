@@ -124,6 +124,9 @@
 			<File
 				RelativePath=".\listenerbindings.cpp">
 			</File>
+			<File
+				RelativePath=".\soundeffectbinderbindings.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

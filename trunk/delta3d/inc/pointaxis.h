@@ -6,6 +6,9 @@
 #include <osg/ref_ptr>
 #include <osg/Vec3>
 #include <osg/Vec4>
+#include <osg/Geode>
+#include <osg/Switch>
+#include <osg/MatrixTransform>
 #include <macros.h>
 #include <transformable.h>
 #include <deltadrawable.h>
@@ -15,13 +18,6 @@
 #if   !defined(BIT)
 #define  BIT(a)   (1L<<a)
 #endif
-
-
-
-// forward references
-class osg::Geode;
-class osg::Switch;
-class osg::MatrixTransform;
 
 
 

@@ -49,7 +49,7 @@ void initObjectBindings()
    Object* (*ObjectGI1)(int) = &Object::GetInstance;
    Object* (*ObjectGI2)(std::string) = &Object::GetInstance;
 
-   class_<Object, bases<Transformable, Drawable, Physical>, osg::ref_ptr<ObjectWrap>, boost::noncopyable>("Object", init<optional<std::string> >())
+   class_<Object, bases<Transformable, DeltaDrawable, Physical>, osg::ref_ptr<ObjectWrap>, boost::noncopyable>("Object", init<optional<std::string> >())
       .def("GetInstanceCount", &Object::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ObjectGI1, return_internal_reference<>())

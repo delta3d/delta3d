@@ -131,7 +131,10 @@
 				RelativePath=".\compassbindings.cpp">
 			</File>
 			<File
-				RelativePath=".\drawablebindings.cpp">
+				RelativePath=".\deltadrawablebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\deltawinbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\dtcorebindings.cpp">
@@ -209,9 +212,6 @@
 				RelativePath=".\soundbindings.cpp">
 			</File>
 			<File
-				RelativePath=".\soundeffectbinderbindings.cpp">
-			</File>
-			<File
 				RelativePath=".\systembindings.cpp">
 			</File>
 			<File
@@ -237,9 +237,6 @@
 			</File>
 			<File
 				RelativePath=".\walkmotionmodelbindings.cpp">
-			</File>
-			<File
-				RelativePath=".\windowbindings.cpp">
 			</File>
 		</Filter>
 		<Filter

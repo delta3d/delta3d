@@ -12,10 +12,12 @@
 
 void initAudioManagerBindings();
 void initListenerBindings();
+void initSoundEffectBinderBindings();
 
 
 BOOST_PYTHON_MODULE(dtAudio)
 {
    initAudioManagerBindings();
    initListenerBindings();
+   initSoundEffectBinderBindings();
 }

@@ -17,7 +17,7 @@ void initSOARXTerrainBindings()
    SOARXTerrain* (*SOARXTerrainGI1)(int) = &SOARXTerrain::GetInstance;
    SOARXTerrain* (*SOARXTerrainGI2)(std::string) = &SOARXTerrain::GetInstance;
 
-   scope SOARXTerrain_scope = class_<SOARXTerrain, bases<Transformable, Drawable, Physical>, osg::ref_ptr<SOARXTerrain> >("SOARXTerrain", init<optional<std::string> >())
+   scope SOARXTerrain_scope = class_<SOARXTerrain, bases<Transformable, DeltaDrawable, Physical>, osg::ref_ptr<SOARXTerrain> >("SOARXTerrain", init<optional<std::string> >())
       .def("GetInstanceCount", &SOARXTerrain::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SOARXTerrainGI1, return_internal_reference<>())
