@@ -31,5 +31,8 @@ void initWindowBindings()
       .def("GetWindowTitle", &Window::GetWindowTitle)
       .def("SetPosition", &Window::SetPosition)
       .def("GetPosition", &Window::GetPosition)
+      .def("GetRenderSurface", &Window::GetRenderSurface, return_internal_reference<>())
+      .def("GetKeyboard", &Window::GetKeyboard, return_internal_reference<>())
+      .def("GetMouse", &Window::GetMouse, return_internal_reference<>())
       .def("ChangeScreenResolution", &Window::ChangeScreenResolution);
 }

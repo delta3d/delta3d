@@ -16,13 +16,6 @@ class DrawableWrap : public Drawable
          : mSelf(self)
       {}
 
-      /*
-      virtual osg::Node* GetOSGNode()
-      {
-         return call_method<osg::Node*>(mSelf, "GetOSGNode"); 
-      }
-      */
-      
       virtual void AddedToScene(Scene* scene)
       {
          call_method<void>(mSelf, "AddedToScene");
@@ -36,6 +29,5 @@ class DrawableWrap : public Drawable
 void initDrawableBindings()
 {
    class_<Drawable, DrawableWrap, boost::noncopyable>("Drawable", no_init)
-      //.def("GetOSGNode", &Drawable::GetOSGNode, return_internal_reference<>())
       .def("AddedToScene", &Drawable::AddedToScene);
 }

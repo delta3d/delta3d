@@ -128,6 +128,15 @@
 				RelativePath=".\dtcorebindings.cpp">
 			</File>
 			<File
+				RelativePath=".\inputdevicebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\keyboardbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\mousebindings.cpp">
+			</File>
+			<File
 				RelativePath=".\objectbindings.cpp">
 			</File>
 			<File

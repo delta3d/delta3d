@@ -9,13 +9,15 @@
 using namespace boost::python;
 using namespace dtCore;
 
-
 // The individual class bindings
 
 void initBaseBindings();
 void initDrawableBindings();
 void initCameraBindings();
+void initInputDeviceBindings();
 void initObjectBindings();
+void initKeyboardBindings();
+void initMouseBindings();
 void initPhysicalBindings();
 void initSceneBindings();
 void initSoundBindings();
@@ -53,6 +55,9 @@ BOOST_PYTHON_MODULE(dtCore)
    initPhysicalBindings();
    initObjectBindings();
    initCameraBindings();
+   initInputDeviceBindings();
+   initKeyboardBindings();
+   initMouseBindings();
    initWindowBindings();
    initSoundBindings();
 }
