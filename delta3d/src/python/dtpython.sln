@@ -3,6 +3,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCoreBindings", "dtCoreBin
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABCBindings", "dtabcbindings.vcproj", "{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -13,6 +17,10 @@ Global
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.Build.0 = Debug|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.ActiveCfg = Release|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.Build.0 = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug.ActiveCfg = Debug|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug.Build.0 = Debug|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release.ActiveCfg = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

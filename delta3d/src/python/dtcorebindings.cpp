@@ -1,4 +1,4 @@
-// pythonbindings.cpp: Python binding implementations.
+// dtcorebindings.cpp: Python bindings for dtCore library.
 //
 //////////////////////////////////////////////////////////////////////
 
