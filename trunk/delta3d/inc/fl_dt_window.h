@@ -86,7 +86,7 @@ public:
     * 
     * @return non-zero on handled, zero on not handled
     */
-   virtual  int
+   virtual int
    handle( int event )
    {
       switch( event )
@@ -526,6 +526,7 @@ protected:
 
       ev.pos_x =  (ev.pos_x / ( float(Fl_Widget::w() - 1L) * 0.5f )) - 1.f;
       ev.pos_y = ((ev.pos_y / ( float(Fl_Widget::h() - 1L) * 0.5f )) - 1.f ) * -1.f;
+      
    }
 
 
