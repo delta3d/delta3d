@@ -633,6 +633,9 @@
 				RelativePath="..\inc\drawable.h">
 			</File>
 			<File
+				RelativePath="..\inc\dt.h">
+			</File>
+			<File
 				RelativePath="..\inc\effectmanager.h">
 			</File>
 			<File
@@ -688,9 +691,6 @@
 			</File>
 			<File
 				RelativePath="..\inc\orbitmotionmodel.h">
-			</File>
-			<File
-				RelativePath="..\inc\p51.h">
 			</File>
 			<File
 				RelativePath="..\inc\particlesystem.h">
