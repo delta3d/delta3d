@@ -54,7 +54,7 @@ public:
       Object *obj3 = new Object("GroundCrate");
 
       //load the model files
-      if (!obj1->LoadFile("dirt/testdirt.ive")) return;
+      if (!obj1->LoadFile("dirt/flatdirt.ive")) return;
       if (!obj2->LoadFile("physics/crate/crate.ive")) return; 
       if (!obj3->LoadFile("physics/crate/crate.ive")) return; 
 
