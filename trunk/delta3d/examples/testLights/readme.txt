@@ -13,13 +13,13 @@ object-oriented wrap of osg::Light and osg::LightSource, which is in turn a
 wrap of OpenGL vertex lighting. This example simply creates 4 lights in a 
 scene (not including the default scene light, which has been turned off 
 here) and demos their functionality. Light 1 is a spotlight rotating around
-the warehouse with continuously changing color. Lights 2 and 3 are yellow and 
-have a sphere as their child. However, Light 2 is a yellow local positional
-light and it only affects the sphere and Light 3 is a global positional 
-light and affects the scene. Light 4 is an infinite light (same as the OpenGL
-directional light) and has the appearance of being located at an infinite
-distance from the scene and therefore only it's direction and color can
-change (and change they do).
+the warehouse with continuously changing color. Light 2 is a yellow local
+positional light and it only affects the sphere. Light 3 is also yellow but
+is a global positional light and affects the scene. The sphere is a 
+Transformable child of Light 3 (i.e. when Light 3 moves, the sphere moves).
+Light 4 is an infinite light (same as the OpenGL directional light) and has
+the appearance of being located at an infinite distance from the scene and
+therefore only it's direction and color can change (and change they do).
 
 Instructions
 ------------
