@@ -52,6 +52,7 @@ void dtCore::SkyDome::Config(void)
 
    //group->addChild(clearNode);
    group->addChild(mXform);
+   group->setNodeMask(0xf0000000);
 
    mNode->addChild(group);
 }
