@@ -45,5 +45,6 @@ void initDeltaWinBindings()
       .def("GetMouse", &DeltaWin::GetMouse, return_internal_reference<>())
       .def("GetCurrentResolution", &DeltaWin::GetCurrentResolution)
       .def("ChangeScreenResolution", DeltaWinCSR1)
-      .def("ChangeScreenResolution", DeltaWinCSR2);
+      .def("ChangeScreenResolution", DeltaWinCSR2)
+      .def("IsValidResolution", &DeltaWin::IsValidResolution);
 }
