@@ -8,7 +8,7 @@ ADD_LIBRARY( dtcore SHARED base camera clouddome cloudplane compass cui_openglre
 TARGET_LINK_LIBRARIES( dtcore glgui isense ode OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs Producer tinyxml )
 
 IF(EXISTS /usr/X11R6/lib/libXxf86vm.so )
-TARGET_LINK_LIBRARIES( Xxf86vm )
+TARGET_LINK_LIBRARIES( dtcore Xxf86vm )
 ENDIF(EXISTS /usr/X11R6/lib/libXxf86vm.so )
 
-INSTALL_TARGETS( ../../lib dtcore )
+INSTALL_TARGETS( ../lib dtcore )
