@@ -154,6 +154,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
+				RelativePath=".\bspCompiler.rc">
+			</File>
+			<File
 				RelativePath="main.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -181,12 +184,18 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
+				RelativePath=".\resource.h">
+			</File>
+			<File
 				RelativePath=".\splitgeode.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath=".\bsp.ico">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
