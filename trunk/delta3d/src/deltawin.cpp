@@ -318,7 +318,7 @@ ResolutionVec DeltaWin::GetResolutions( void )
    Resolution currentRes = GetCurrentResolution();
    int currentDepth = currentRes.bitDepth;
      
-   DEVMODE *pdm;
+   DEVMODE *pdm = 0;
 
    ResolutionVec rv;
 
@@ -335,7 +335,7 @@ ResolutionVec DeltaWin::GetResolutions( void )
 
      rv.push_back( r );
    }
-   numResolutions = i;
+   int numResolutions = i;
     
    ReleaseDC(GetDesktopWindow(), hDC);
  
@@ -442,7 +442,7 @@ Resolution DeltaWin::GetCurrentResolution( void )
    
    Resolution r  = { GetDeviceCaps(hdc, HORZRES),
                      GetDeviceCaps(hdc, VERTRES),
-                     GetDeviceCAps(hdc, BITSPIXEL),
+                     GetDeviceCaps(hdc, BITSPIXEL),
                      GetDeviceCaps(hdc, VREFRESH) };
    return r;
 
