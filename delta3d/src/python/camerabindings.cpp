@@ -19,7 +19,7 @@ void initCameraBindings()
    void (Camera::*GetClearColor1)(float*, float*, float*, float*) = &Camera::GetClearColor;
    void (Camera::*GetClearColor2)(sgVec4) = &Camera::GetClearColor;
 
-   class_<Camera, bases<Transformable>, osg::ref_ptr<Camera> >("Camera", init<optional<std::string> >())
+   class_<Camera, bases<Transformable>, dtCore::RefPtr<Camera> >("Camera", init<optional<std::string> >())
       .def("GetInstanceCount", &Camera::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CameraGI1, return_internal_reference<>())

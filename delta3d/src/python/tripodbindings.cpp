@@ -25,7 +25,7 @@ void initTripodBindings()
    void (Tripod::*SetScale1)(float, float, float, float, float, float) = &Tripod::SetScale;
    void (Tripod::*SetScale2)(sgVec3, sgVec3) = &Tripod::SetScale;
    
-   scope Tripod_scope = class_<Tripod, bases<Transformable>, osg::ref_ptr<Tripod> >("Tripod", init<optional<Camera*, Transformable*> >())
+   scope Tripod_scope = class_<Tripod, bases<Transformable>, dtCore::RefPtr<Tripod> >("Tripod", init<optional<Camera*, Transformable*> >())
       .def("GetInstanceCount", &Tripod::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TripodGI1, return_internal_reference<>())

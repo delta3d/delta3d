@@ -17,7 +17,7 @@ void initAudioManagerBindings()
    Sound* (*SoundGI2)(std::string) = &Sound::GetInstance;
 
    {
-      scope Sound_scope = class_<Sound, bases<Transformable>, osg::ref_ptr<Sound>, boost::noncopyable>("Sound", no_init)
+      scope Sound_scope = class_<Sound, bases<Transformable>, dtCore::RefPtr<Sound>, boost::noncopyable>("Sound", no_init)
          .def("GetInstanceCount", &Sound::GetInstanceCount)
          .staticmethod("GetInstanceCount")
          .def("GetInstance", SoundGI1, return_internal_reference<>())
@@ -89,7 +89,7 @@ void initAudioManagerBindings()
    AudioManager* (*AudioManagerGI1)(int) = &AudioManager::GetInstance;
    AudioManager* (*AudioManagerGI2)(std::string) = &AudioManager::GetInstance;
    
-   class_<AudioManager, bases<Base>, osg::ref_ptr<AudioManager>, boost::noncopyable>("AudioManager", no_init)
+   class_<AudioManager, bases<Base>, dtCore::RefPtr<AudioManager>, boost::noncopyable>("AudioManager", no_init)
       .def("GetInstanceCount", &AudioManager::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", AudioManagerGI1, return_internal_reference<>())

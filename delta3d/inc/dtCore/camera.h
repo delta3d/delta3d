@@ -94,9 +94,9 @@ namespace dtCore
       Producer::Camera *GetCamera(void)const {return (Producer::Camera*)mCamera.get();};
 
    private:
-      osg::ref_ptr<Producer::Camera> mCamera; // Handle to the Producer camera
-      osg::ref_ptr<DeltaWin> mWindow; // The currently assigned DeltaWin
-      osg::ref_ptr<Scene> mScene;
+      RefPtr<Producer::Camera> mCamera; // Handle to the Producer camera
+      RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
+      RefPtr<Scene> mScene;
       sgVec4 mClearColor; // The current clear color
 
       DeltaRenderSurface* mDefaultRenderSurface;

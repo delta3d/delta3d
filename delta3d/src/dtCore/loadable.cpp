@@ -1,5 +1,6 @@
 #include "dtCore/loadable.h"
 #include "dtCore/notify.h"
+#include "dtCore/refptr.h"
 
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
@@ -28,7 +29,7 @@ osg::Node* Loadable::LoadFile(std::string filename, bool useCache)
    mFilename = filename;
    Notify(DEBUG_INFO, "Loadable:Loading %s...", filename.c_str());
 
-   osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
+   RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 
    if (useCache)
    {

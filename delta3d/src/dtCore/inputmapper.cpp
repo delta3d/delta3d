@@ -52,7 +52,7 @@ void InputMapper::AddDevice(InputDevice* device)
  */
 void InputMapper::RemoveDevice(InputDevice* device)
 {
-   for(vector< ref_ptr<InputDevice> >::iterator it = mDevices.begin();
+   for(vector< RefPtr<InputDevice> >::iterator it = mDevices.begin();
        it != mDevices.end();
        it++)
    {

@@ -30,7 +30,7 @@
 #include "dtCore/deltarendersurface.h"
 #include "dtCore/keyboard.h"
 #include "dtCore/mouse.h"
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 
 #include "dtCore/base.h"
 
@@ -121,8 +121,8 @@ namespace dtCore
       
       DeltaRenderSurface *mRenderSurface; //changed from straight-up RS
       Producer::KeyboardMouse *mKeyboardMouse;
-      osg::ref_ptr<Keyboard> mKeyboard;
-      osg::ref_ptr<Mouse> mMouse;
+      RefPtr<Keyboard> mKeyboard;
+      RefPtr<Mouse> mMouse;
       bool mShowCursor;
  
    };

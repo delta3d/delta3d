@@ -162,7 +162,7 @@ void InputDevice::AddFeature(InputDeviceFeature* feature)
 */
 void InputDevice::RemoveFeature(InputDeviceFeature* feature)
 {
-   for(vector< ref_ptr<InputDeviceFeature> >::iterator it = mFeatures.begin();
+   for(vector< RefPtr<InputDeviceFeature> >::iterator it = mFeatures.begin();
        it != mFeatures.end();
        it++)
    {
@@ -172,7 +172,7 @@ void InputDevice::RemoveFeature(InputDeviceFeature* feature)
 
          if(IS_A(feature, Button*))
          {
-            for(vector< ref_ptr<Button> >::iterator bit = mButtons.begin();
+            for(vector< RefPtr<Button> >::iterator bit = mButtons.begin();
                 bit != mButtons.end();
                 bit++)
             {
@@ -186,7 +186,7 @@ void InputDevice::RemoveFeature(InputDeviceFeature* feature)
 
          if(IS_A(feature, Axis*))
          {
-            for(vector< ref_ptr<Axis> >::iterator ait = mAxes.begin();
+            for(vector< RefPtr<Axis> >::iterator ait = mAxes.begin();
                 ait != mAxes.end();
                 ait++)
             {

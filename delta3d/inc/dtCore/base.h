@@ -51,9 +51,9 @@ namespace dtCore
      *
      * This class is also reference counted using the osg::Referenced class.  To
      * safely keep the reference count up-to-date, pointers to Base classes should
-     * be stored in a osg::ref_ptr template.  For example:
+     * be stored in a RefPtr template.  For example:
      * \code 
-     * osg::ref_ptr<Base> mPointerToMyBase;
+     * RefPtr<Base> mPointerToMyBase;
      * \endcode
      */
    class DT_EXPORT Base : public sigslot::has_slots<>, public osg::Referenced

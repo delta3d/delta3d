@@ -14,7 +14,7 @@ void initWeatherBindings()
    Weather* (*WeatherGI1)(int) = &Weather::GetInstance;
    Weather* (*WeatherGI2)(std::string) = &Weather::GetInstance;
 
-   scope Weather_scope = class_<Weather, bases<Base>, osg::ref_ptr<Weather> >("Weather", init<>())
+   scope Weather_scope = class_<Weather, bases<Base>, dtCore::RefPtr<Weather> >("Weather", init<>())
       .def("GetInstanceCount", &Weather::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", WeatherGI1, return_internal_reference<>())

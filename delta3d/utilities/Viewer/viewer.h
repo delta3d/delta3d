@@ -133,11 +133,11 @@ class Viewer :  public   dtABC::Widget
                void           InitGridPlanes( void );
 
    private:
-      osg::ref_ptr<dtCore::LogicalInputDevice>   mInputDevice;
+      dtCore::RefPtr<dtCore::LogicalInputDevice>   mInputDevice;
       dtCore::MotionModel*                       mMotionModel[NUMMOTIONMODELS];
       osg::MatrixTransform*                      mDispXform[NUMGRIDS];
       ViewState&                                 mCurState;
-      osg::ref_ptr<osg::Group>                   mViewerNode;
+      dtCore::RefPtr<osg::Group>                   mViewerNode;
 };
 
 

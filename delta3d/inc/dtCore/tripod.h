@@ -22,7 +22,7 @@
 #define DELTA_TRIPOD
 
 #include "dtCore/transformable.h"
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 #include "sg.h"
 
 namespace dtCore
@@ -55,14 +55,14 @@ namespace dtCore
       void SetCamera( const std::string camName);
 
       ///Get the currently connected Camera
-      osg::ref_ptr<Camera> GetCamera(void)const {return mCamera;}
+      RefPtr<Camera> GetCamera(void)const {return mCamera;}
 
       ///Attach this Tripod to a Transformable
       void SetAttachToTransformable(Transformable *trans);
       void SetAttachToTransformable(std::string transName);
 
       ///Get the currently connected Transformable
-      osg::ref_ptr<Transformable> GetAttachedTransformable(void) const {return mParent;}
+      RefPtr<Transformable> GetAttachedTransformable(void) const {return mParent;}
       
       ///Set the Tripod's offset from the parent Transformable
       void SetOffset(float x, float y, float z, float h, float p, float r);
@@ -98,13 +98,13 @@ namespace dtCore
       ///Override to implement your own method
       virtual void Update(const double deltaFrameTime);
 
-      osg::ref_ptr<Camera> mCamera; ///<pointer to the Camera to control
-      osg::ref_ptr<Transformable> mParent; ///<pointer to the parent Transformable
+      RefPtr<Camera> mCamera; ///<pointer to the Camera to control
+      RefPtr<Transformable> mParent; ///<pointer to the parent Transformable
       sgCoord mOffsetCoord; ///<The offset values
       TetherMode mTetherMode; ///<The tethering mode
       sgVec3 mXYZScale; ///<The scale factors for x,y,z
       sgVec3 mHPRScale; ///<The scale factors for h,p,r
-      osg::ref_ptr<Transformable> mLookAtTarget; ///<the look-at target
+      RefPtr<Transformable> mLookAtTarget; ///<the look-at target
    };
    
 }

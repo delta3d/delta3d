@@ -107,8 +107,8 @@ private:
    Weather *weather;
    OrbitMotionModel *orbit;
 
-   osg::ref_ptr<dtCore::CloudDome>  cd;
-   osg::ref_ptr<dtCore::CloudPlane> cp[3];
+   RefPtr<dtCore::CloudDome>  cd;
+   RefPtr<dtCore::CloudPlane> cp[3];
    int cloudLayers;
    bool isDomeEnabled;
 

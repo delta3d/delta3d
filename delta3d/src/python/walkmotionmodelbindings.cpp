@@ -13,7 +13,7 @@ void initWalkMotionModelBindings()
    WalkMotionModel* (*WalkMotionModelGI1)(int) = &WalkMotionModel::GetInstance;
    WalkMotionModel* (*WalkMotionModelGI2)(std::string) = &WalkMotionModel::GetInstance;
 
-   class_<WalkMotionModel, bases<MotionModel>, osg::ref_ptr<WalkMotionModel> >("WalkMotionModel", init<optional<Keyboard*, Mouse*> >())
+   class_<WalkMotionModel, bases<MotionModel>, dtCore::RefPtr<WalkMotionModel> >("WalkMotionModel", init<optional<Keyboard*, Mouse*> >())
       .def("GetInstanceCount", &WalkMotionModel::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", WalkMotionModelGI1, return_internal_reference<>())

@@ -39,7 +39,7 @@ void initEnvEffectBindings()
    EnvEffect* (*EnvEffectGI1)(int) = &EnvEffect::GetInstance;
    EnvEffect* (*EnvEffectGI2)(std::string) = &EnvEffect::GetInstance;
 
-   class_<EnvEffect, bases<Base>, osg::ref_ptr<EnvEffectWrap>, boost::noncopyable>("EnvEffect", init<optional<std::string> >())
+   class_<EnvEffect, bases<Base>, dtCore::RefPtr<EnvEffectWrap>, boost::noncopyable>("EnvEffect", init<optional<std::string> >())
       .def("GetInstanceCount", &EnvEffect::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EnvEffectGI1, return_internal_reference<>())

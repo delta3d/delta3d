@@ -226,12 +226,12 @@ namespace dtCore
          /**
           * A reference to the Scene, used for ground following.
           */
-         osg::ref_ptr<Scene> mScene;
+         RefPtr<Scene> mScene;
          
          /**
           * The default input device.
           */
-         osg::ref_ptr<LogicalInputDevice> mDefaultInputDevice;
+         RefPtr<LogicalInputDevice> mDefaultInputDevice;
          
          /**
           * The left button up/down mapping.

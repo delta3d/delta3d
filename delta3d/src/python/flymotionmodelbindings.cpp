@@ -13,7 +13,7 @@ void initFlyMotionModelBindings()
    FlyMotionModel* (*FlyMotionModelGI1)(int) = &FlyMotionModel::GetInstance;
    FlyMotionModel* (*FlyMotionModelGI2)(std::string) = &FlyMotionModel::GetInstance;
 
-   class_<FlyMotionModel, bases<MotionModel>, osg::ref_ptr<FlyMotionModel> >("FlyMotionModel", init<optional<Keyboard*, Mouse*> >())
+   class_<FlyMotionModel, bases<MotionModel>, dtCore::RefPtr<FlyMotionModel> >("FlyMotionModel", init<optional<Keyboard*, Mouse*> >())
       .def("GetInstanceCount", &FlyMotionModel::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", FlyMotionModelGI1, return_internal_reference<>())

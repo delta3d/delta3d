@@ -962,12 +962,12 @@ namespace dtHLA
          /**
           * The scene in which to create ghost entities.
           */
-         osg::ref_ptr<dtCore::Scene> mScene;
+         dtCore::RefPtr<dtCore::Scene> mScene;
 
          /**
           * The effect manager.
           */
-         osg::ref_ptr<dtCore::EffectManager> mEffectManager;
+         dtCore::RefPtr<dtCore::EffectManager> mEffectManager;
 
          /**
           * Whether or not globe mode is enabled.
@@ -1085,7 +1085,7 @@ namespace dtHLA
             /**
              * The dtCore entity.
              */
-            osg::ref_ptr<Entity> mEntity;
+            dtCore::RefPtr<Entity> mEntity;
 
             /**
              * The last transform transmitted.
@@ -1101,7 +1101,7 @@ namespace dtHLA
          /**
           * The set of master entities.
           */
-         std::set< osg::ref_ptr<Entity> > mMasterEntities;
+         std::set< dtCore::RefPtr<Entity> > mMasterEntities;
          
          /**
           * An internal structure for data associated with ghost entities.
@@ -1111,7 +1111,7 @@ namespace dtHLA
             /**
              * The dtCore entity.
              */
-            osg::ref_ptr<Entity> mEntity;
+            dtCore::RefPtr<Entity> mEntity;
             
             /**
              * Maps articulated part transforms to DOFTransform nodes.

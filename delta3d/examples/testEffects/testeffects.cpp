@@ -167,9 +167,9 @@ public:
       Updater* updater = new Updater(GetKeyboard(), effectManager.get(), entity.get(), GetCamera());
    }
 
-   osg::ref_ptr<Object> entity;
-   osg::ref_ptr<ParticleSystem> smoke;
-   osg::ref_ptr<EffectManager> effectManager;
+   RefPtr<Object> entity;
+   RefPtr<ParticleSystem> smoke;
+   RefPtr<EffectManager> effectManager;
 
 };
 

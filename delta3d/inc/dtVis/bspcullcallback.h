@@ -30,8 +30,9 @@
 
 #include <osg/Export>
 #include <osg/NodeCallback>
-
 #include <osgDB/Registry>
+
+#include "dtCore/refptr.h"
 
 namespace dtVis
 {
@@ -93,14 +94,14 @@ namespace dtVis
          /**
           * The root node of the BSP tree.
           */
-         osg::ref_ptr<BSPNode> mBSPTree;
+         dtCore::RefPtr<BSPNode> mBSPTree;
    };
    
    
    /**
     * A set of OSG node references.
     */
-   typedef std::set< osg::ref_ptr<osg::Node> > NodeSet;
+   typedef std::set< dtCore::RefPtr<osg::Node> > NodeSet;
    
    
    /**
@@ -234,12 +235,12 @@ namespace dtVis
          /**
           * The left child of this node.
           */
-         osg::ref_ptr<BSPNode> mLeftChild;
+         dtCore::RefPtr<BSPNode> mLeftChild;
          
          /**
           * The right child of this node.
           */
-         osg::ref_ptr<BSPNode> mRightChild;
+         dtCore::RefPtr<BSPNode> mRightChild;
    };
    
    
@@ -279,7 +280,7 @@ namespace dtVis
          /**
           * The potentially visible set for this leaf node.
           */
-         osg::ref_ptr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
+         dtCore::RefPtr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
    };
 };
 

@@ -28,8 +28,8 @@ private:
    inline   void  InitInputDevices( void );
 
 private:
-            osg::ref_ptr<dtCore::LogicalInputDevice> mInputDevice;
-            osg::ref_ptr<dtCore::MotionModel>        mMotionModel;
+            dtCore::RefPtr<dtCore::LogicalInputDevice> mInputDevice;
+            dtCore::RefPtr<dtCore::MotionModel>        mMotionModel;
 };
 
 #endif // DELTA_MYWIDGET

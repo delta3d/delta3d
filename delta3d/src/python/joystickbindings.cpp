@@ -13,7 +13,7 @@ void initJoystickBindings()
    Joystick* (*JoystickGI1)(int) = &Joystick::GetInstance;
    Joystick* (*JoystickGI2)(std::string) = &Joystick::GetInstance;
 
-   class_<Joystick, bases<InputDevice>, osg::ref_ptr<Joystick> >("Joystick", no_init)
+   class_<Joystick, bases<InputDevice>, dtCore::RefPtr<Joystick> >("Joystick", no_init)
       .def("GetInstanceCount", &Joystick::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", JoystickGI1, return_internal_reference<>())

@@ -31,18 +31,13 @@
 #include <string>
 #include <vector>
 
-#include "Producer/Timer"
-
-#include "osg/ref_ptr"
-#include "osg/Node"
-#include "osg/Group"
-
-#include "osgParticle/ParticleSystemUpdater"
+#include <Producer/Timer>
+#include <osg/Node>
+#include <osg/Group>
+#include <osgParticle/ParticleSystemUpdater>
 
 #include "sg.h"
 
-//#include "dtCore/base.h"
-//#include "dtCore/scene.h"
 #include "dtCore/deltadrawable.h"
 
 namespace dtCore
@@ -185,7 +180,7 @@ namespace dtCore
          /**
           * The group that contains all effect nodes.
           */
-         osg::ref_ptr<osg::Group> mGroup;
+         RefPtr<osg::Group> mGroup;
 
          /**
           * Maps detonation types to filenames.
@@ -312,7 +307,7 @@ namespace dtCore
          /**
           * The effect's OpenSceneGraph node.
           */
-         osg::ref_ptr<osg::Node> mNode;
+         RefPtr<osg::Node> mNode;
 
          /**
           * The remaining lifespan of the detonation, in seconds.
@@ -391,7 +386,7 @@ namespace dtCore
          /**
           * The optional parent of the transformation.
           */
-         osg::ref_ptr<Transformable> mParent;
+         RefPtr<Transformable> mParent;
    };
 };
 

@@ -159,7 +159,7 @@ namespace dtCore
          /**
           * The default input device.
           */
-         osg::ref_ptr<LogicalInputDevice> mDefaultInputDevice;
+         RefPtr<LogicalInputDevice> mDefaultInputDevice;
          
          /**
           * The left button up/down mapping.

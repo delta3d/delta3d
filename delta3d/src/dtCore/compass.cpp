@@ -85,7 +85,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
       }
 
    private:
-      osg::ref_ptr<dtCore::Compass> mCompass;
+      RefPtr<dtCore::Compass> mCompass;
 };
 
 

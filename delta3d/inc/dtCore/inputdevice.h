@@ -30,7 +30,7 @@
 #include <string>
 #include <vector>
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 
 #include "dtCore/base.h"
 
@@ -169,17 +169,17 @@ namespace dtCore
          /**
           * The list of features.
           */
-         std::vector< osg::ref_ptr<InputDeviceFeature> > mFeatures;
+         std::vector< dtCore::RefPtr<InputDeviceFeature> > mFeatures;
 
          /**
           * The list of buttons.
           */
-         std::vector< osg::ref_ptr<Button> > mButtons;
+         std::vector< dtCore::RefPtr<Button> > mButtons;
 
          /**
           * The list of axes.
           */
-         std::vector< osg::ref_ptr<Axis> > mAxes;
+         std::vector< dtCore::RefPtr<Axis> > mAxes;
          
          /**
           * The set of button listeners.

@@ -137,10 +137,10 @@ namespace dtABC
       void RemoveChild( dtCore::DeltaDrawable *child);
 
    private:
-      typedef std::vector<osg::ref_ptr<dtCore::CloudPlane> > CloudPlaneList;
+      typedef std::vector<dtCore::RefPtr<dtCore::CloudPlane> > CloudPlaneList;
       CloudPlaneList mClouds;
 
-      osg::ref_ptr<dtCore::Environment> mEnvironment;
+      dtCore::RefPtr<dtCore::Environment> mEnvironment;
       CloudType mCloudType;
       VisibilityType mVisType;
       WindType mWindType;

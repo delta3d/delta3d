@@ -2,10 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtVis/bspcullcallback.h"
-
 #include <osgUtil/CullVisitor>
 
+#include "dtVis/bspcullcallback.h"
 #include "dtCore/notify.h"
 
 using namespace dtVis;
@@ -176,7 +175,7 @@ bool PotentiallyVisibleSet_readLocalData(osg::Object& obj, osgDB::Input& fr)
       
       while(!fr.matchSequence("}"))
       {
-         osg::ref_ptr<osg::Node> node = dynamic_cast<osg::Node*>(
+         dtCore::RefPtr<osg::Node> node = dynamic_cast<osg::Node*>(
             fr.readObject()
          );
          
@@ -195,7 +194,7 @@ bool PotentiallyVisibleSet_readLocalData(osg::Object& obj, osgDB::Input& fr)
       
       while(!fr.matchSequence("}"))
       {
-         osg::ref_ptr<osg::Node> node = dynamic_cast<osg::Node*>(
+         dtCore::RefPtr<osg::Node> node = dynamic_cast<osg::Node*>(
             fr.readObject()
          );
          
@@ -340,7 +339,7 @@ void BSPCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
           it != pvs->GetNodesToDisable().end();
           it++)
       {
-         osg::ref_ptr<osg::Node> nrp = (*it);
+         dtCore::RefPtr<osg::Node> nrp = (*it);
          nrp->setNodeMask(0x0);
       }
       
@@ -348,7 +347,7 @@ void BSPCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
           it != pvs->GetNodesToEnable().end();
           it++)
       {
-         osg::ref_ptr<osg::Node> nrp = (*it);
+         dtCore::RefPtr<osg::Node> nrp = (*it);
          nrp->setNodeMask(0xFFFFFFFF);
       }
    }

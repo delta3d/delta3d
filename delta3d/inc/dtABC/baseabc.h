@@ -115,11 +115,11 @@ namespace   dtABC
       virtual  void  CreateInstances( void );
 
    protected:
-      osg::ref_ptr<dtCore::DeltaWin>         mWindow; ///<built-in Window
-      osg::ref_ptr<dtCore::Camera>           mCamera; ///<built-in Camera
-      osg::ref_ptr<dtCore::Scene>            mScene; ///<built-in Scene
-      osg::ref_ptr<dtCore::Keyboard>         mKeyboard; ///<built-in Keyboard
-      osg::ref_ptr<dtCore::Mouse>            mMouse;  ///<built-in Mouse
+      dtCore::RefPtr<dtCore::DeltaWin>         mWindow; ///<built-in Window
+      dtCore::RefPtr<dtCore::Camera>           mCamera; ///<built-in Camera
+      dtCore::RefPtr<dtCore::Scene>            mScene; ///<built-in Scene
+      dtCore::RefPtr<dtCore::Keyboard>         mKeyboard; ///<built-in Keyboard
+      dtCore::RefPtr<dtCore::Mouse>            mMouse;  ///<built-in Mouse
    };
 };
 

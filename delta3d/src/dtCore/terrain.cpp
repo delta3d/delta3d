@@ -617,7 +617,7 @@ osg::Image* Terrain::MakeBaseTexture(osg::HeightField* hf)
 /**
  * The detail texture image.
  */
-osg::ref_ptr<osg::Image> Terrain::mDetailTextureImage;
+RefPtr<osg::Image> Terrain::mDetailTextureImage;
 
 /**
  * Creates and returns the detail texture image.

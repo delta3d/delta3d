@@ -168,7 +168,7 @@ main( int argc, const char* argv[] )
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   osg::ref_ptr<TestLightsApp> app = new TestLightsApp( "config.xml" );
+   RefPtr<TestLightsApp> app = new TestLightsApp( "config.xml" );
    app->Config();
    app->Run();
 

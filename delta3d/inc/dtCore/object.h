@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include "dtCore/loadable.h"

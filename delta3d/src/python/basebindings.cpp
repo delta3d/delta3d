@@ -39,7 +39,7 @@ void initBaseBindings()
    Base* (*BaseGI1)(int) = &Base::GetInstance;
    Base* (*BaseGI2)(std::string) = &Base::GetInstance;
 
-   scope baseScope = class_<Base, osg::ref_ptr<BaseWrap>, boost::noncopyable>("Base")
+   scope baseScope = class_<Base, dtCore::RefPtr<BaseWrap>, boost::noncopyable>("Base")
       .def("GetInstanceCount", &Base::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", BaseGI1, return_internal_reference<>())

@@ -58,7 +58,7 @@ bool Isector::Update()
 {
    bool retVal = false;
    osgUtil::IntersectVisitor iv;
-   osg::ref_ptr<osg::LineSegment> seg = new osg::LineSegment;
+   RefPtr<osg::LineSegment> seg = new osg::LineSegment;
    
    sgVec3 endPt;
 

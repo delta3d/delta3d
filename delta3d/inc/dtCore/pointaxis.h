@@ -23,7 +23,7 @@
 
 #include <string>
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 #include <osg/Vec3>
 #include <osg/Vec4>
 #include <osg/Geode>
@@ -172,8 +172,8 @@ namespace dtCore
                   osg::Vec4                           mColor[NUMAXES];     ///< color for each axis
                   osg::Vec4                           mLColor[NUMAXES];    ///< color for each label
                   osg::Vec3                           mPoint[NUMAXES+1L];  ///< data points to construct geometry
-                  osg::ref_ptr<osg::Switch>           mMainSwitch;         ///< toggle for axis and all lables
-                  osg::ref_ptr<osg::Switch>           mLabelSwitch;        ///< toggle for individual labels
+                  RefPtr<osg::Switch>           mMainSwitch;         ///< toggle for axis and all lables
+                  RefPtr<osg::Switch>           mLabelSwitch;        ///< toggle for individual labels
    };
 };
 

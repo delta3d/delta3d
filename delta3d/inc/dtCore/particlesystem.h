@@ -116,7 +116,7 @@ namespace dtCore
           */
          bool mParentRelative;
 
-         osg::ref_ptr<osg::Node> mLoadedFile; ///<handle to the whole system
+         RefPtr<osg::Node> mLoadedFile; ///<handle to the whole system
          
    };
 };

@@ -13,7 +13,7 @@ void initTrackerBindings()
    Tracker* (*TrackerGI1)(int) = &Tracker::GetInstance;
    Tracker* (*TrackerGI2)(std::string) = &Tracker::GetInstance;
 
-   class_<Tracker, bases<InputDevice>, osg::ref_ptr<Tracker> >("Tracker", no_init)
+   class_<Tracker, bases<InputDevice>, dtCore::RefPtr<Tracker> >("Tracker", no_init)
       .def("GetInstanceCount", &Tracker::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TrackerGI1, return_internal_reference<>())

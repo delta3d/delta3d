@@ -23,6 +23,7 @@
 
 
 #include "dtCore/enveffect.h"
+#include "dtCore/refptr.h"
 #include "sg.h"
 
 #include <osg/Group>
@@ -96,13 +97,12 @@ namespace dtCore
        void Update(const double deltaFrameTime);
        osg::Geometry *createPlane(float, float);
 
-
-       osg::ref_ptr<osg::Group> mNode;
-       osg::ref_ptr<osg::Geode> mGeode;
-       osg::ref_ptr<osg::Geometry> mPlane;
-       osg::ref_ptr<osg::Image> mImage;
-       osg::ref_ptr<osg::Texture2D> mCloudTexture;
-       osg::ref_ptr<osg::Fog> mFog; ///< The fog adjuster
+       dtCore::RefPtr<osg::Group> mNode;
+       dtCore::RefPtr<osg::Geode> mGeode;
+       dtCore::RefPtr<osg::Geometry> mPlane;
+       dtCore::RefPtr<osg::Image> mImage;
+       dtCore::RefPtr<osg::Texture2D> mCloudTexture;
+       dtCore::RefPtr<osg::Fog> mFog; ///< The fog adjuster
        int mOctaves;
        float mCutoff;
        int   mFrequency;
@@ -116,7 +116,7 @@ namespace dtCore
        osg::Vec4 *mCloudColor;
        osg::Vec2Array *mTexCoords;
        osg::Vec4Array *mColors;
-       osg::ref_ptr<MoveEarthySkyWithEyePointTransform> mXform;
+       dtCore::RefPtr<MoveEarthySkyWithEyePointTransform> mXform;
 
    };
 

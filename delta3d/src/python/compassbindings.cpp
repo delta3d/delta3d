@@ -13,7 +13,7 @@ void initCompassBindings()
    Compass* (*CompassGI1)(int) = &Compass::GetInstance;
    Compass* (*CompassGI2)(std::string) = &Compass::GetInstance;
 
-   class_<Compass, bases<Transformable>, osg::ref_ptr<Compass> >("Compass", init<Camera*>())
+   class_<Compass, bases<Transformable>, dtCore::RefPtr<Compass> >("Compass", init<Camera*>())
       .def("GetInstanceCount", &Compass::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CompassGI1, return_internal_reference<>())

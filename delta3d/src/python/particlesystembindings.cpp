@@ -36,7 +36,7 @@ void initParticleSystemBindings()
    ParticleSystem* (*ParticleSystemGI1)(int) = &ParticleSystem::GetInstance;
    ParticleSystem* (*ParticleSystemGI2)(std::string) = &ParticleSystem::GetInstance;
 
-   class_<ParticleSystem, bases<Transformable, Loadable>, osg::ref_ptr<ParticleSystemWrap>, boost::noncopyable>("ParticleSystem", init<optional<std::string> >())
+   class_<ParticleSystem, bases<Transformable, Loadable>, dtCore::RefPtr<ParticleSystemWrap>, boost::noncopyable>("ParticleSystem", init<optional<std::string> >())
       .def("GetInstanceCount", &ParticleSystem::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ParticleSystemGI1, return_internal_reference<>())

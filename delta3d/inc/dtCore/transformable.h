@@ -26,7 +26,7 @@
 
 #include "dtCore/deltadrawable.h"
 #include "dtCore/transform.h"
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 #include <osg/MatrixTransform>
 
 namespace dtCore

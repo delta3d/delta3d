@@ -61,7 +61,7 @@ void initInputDeviceBindings()
    InputDevice* (*InputDeviceGI1)(int) = &InputDevice::GetInstance;
    InputDevice* (*InputDeviceGI2)(std::string) = &InputDevice::GetInstance;
 
-   class_<InputDevice, bases<Base>, osg::ref_ptr<InputDevice> >("InputDevice", no_init)
+   class_<InputDevice, bases<Base>, dtCore::RefPtr<InputDevice> >("InputDevice", no_init)
       .def("GetInstanceCount", &InputDevice::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", InputDeviceGI1, return_internal_reference<>())
@@ -78,12 +78,12 @@ void initInputDeviceBindings()
       .def("AddAxisListener", &InputDevice::AddAxisListener)
       .def("RemoveAxisListener", &InputDevice::RemoveAxisListener);
       
-   class_<InputDeviceFeature, osg::ref_ptr<InputDeviceFeature>, boost::noncopyable>("InputDeviceFeature", no_init)
+   class_<InputDeviceFeature, dtCore::RefPtr<InputDeviceFeature>, boost::noncopyable>("InputDeviceFeature", no_init)
       .def("GetOwner", &InputDeviceFeature::GetOwner, return_internal_reference<>())
       .def("SetDescription", &InputDeviceFeature::SetDescription)
       .def("GetDescription", &InputDeviceFeature::GetDescription);
       
-   class_<Button, bases<InputDeviceFeature>, osg::ref_ptr<Button> >("Button", no_init)
+   class_<Button, bases<InputDeviceFeature>, dtCore::RefPtr<Button> >("Button", no_init)
       .def("SetState", &Button::SetState)
       .def("GetState", &Button::GetState)
       .def("AddButtonListener", &Button::AddButtonListener)
@@ -92,7 +92,7 @@ void initInputDeviceBindings()
    class_<ButtonListener, ButtonListenerWrap, boost::noncopyable>("ButtonListener")
       .def("ButtonStateChanged", &ButtonListener::ButtonStateChanged, &ButtonListenerWrap::DefaultButtonStateChanged);
       
-   class_<Axis, bases<InputDeviceFeature>, osg::ref_ptr<Axis> >("Axis", no_init)
+   class_<Axis, bases<InputDeviceFeature>, dtCore::RefPtr<Axis> >("Axis", no_init)
       .def("SetState", &Axis::SetState, SS_overloads())
       .def("GetState", &Axis::GetState)
       .def("AddAxisListener", &Axis::AddAxisListener)

@@ -13,7 +13,7 @@ void initMotionModelBindings()
    MotionModel* (*MotionModelGI1)(int) = &MotionModel::GetInstance;
    MotionModel* (*MotionModelGI2)(std::string) = &MotionModel::GetInstance;
 
-   class_<MotionModel, bases<Base>, osg::ref_ptr<MotionModel> >("MotionModel", init<optional<std::string> >())
+   class_<MotionModel, bases<Base>, dtCore::RefPtr<MotionModel> >("MotionModel", init<optional<std::string> >())
       .def("GetInstanceCount", &MotionModel::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", MotionModelGI1, return_internal_reference<>())

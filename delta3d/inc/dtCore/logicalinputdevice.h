@@ -148,7 +148,7 @@ namespace dtCore
           * The mapping that determines where this button gets its
           * state.
           */
-         osg::ref_ptr<ButtonMapping> mMapping;
+         RefPtr<ButtonMapping> mMapping;
    };
    
 
@@ -254,12 +254,12 @@ namespace dtCore
          /**
           * The source button.
           */
-         osg::ref_ptr<Button> mSourceButton;
+         RefPtr<Button> mSourceButton;
 
          /**
           * The target button.
           */
-         osg::ref_ptr<LogicalButton> mTargetButton;
+         RefPtr<LogicalButton> mTargetButton;
 
 
          /**
@@ -308,7 +308,7 @@ namespace dtCore
           * The mapping that determines where this axis gets its
           * state.
           */
-         osg::ref_ptr<AxisMapping> mMapping;
+         RefPtr<AxisMapping> mMapping;
    };
 
 
@@ -436,12 +436,12 @@ namespace dtCore
          /**
           * The source axis.
           */
-         osg::ref_ptr<Axis> mSourceAxis;
+         RefPtr<Axis> mSourceAxis;
 
          /**
           * The target axis.
           */
-         osg::ref_ptr<LogicalAxis> mTargetAxis;
+         RefPtr<LogicalAxis> mTargetAxis;
 
          /**
           * The transformation scale.
@@ -547,12 +547,12 @@ namespace dtCore
          /**
           * The source axes.
           */
-         std::vector< osg::ref_ptr<Axis> > mSourceAxes;
+         std::vector< RefPtr<Axis> > mSourceAxes;
          
          /**
           * The target axis.
           */
-         osg::ref_ptr<LogicalAxis> mTargetAxis;
+         RefPtr<LogicalAxis> mTargetAxis;
          
          
          /**
@@ -669,17 +669,17 @@ namespace dtCore
          /**
           * The first source button.
           */
-         osg::ref_ptr<Button> mFirstSourceButton;
+         RefPtr<Button> mFirstSourceButton;
 
          /**
           * The second source button.
           */
-         osg::ref_ptr<Button> mSecondSourceButton;
+         RefPtr<Button> mSecondSourceButton;
 
          /**
           * The target axis.
           */
-         osg::ref_ptr<LogicalAxis> mTargetAxis;
+         RefPtr<LogicalAxis> mTargetAxis;
 
          /**
           * The value corresponding to the first button.
@@ -800,17 +800,17 @@ namespace dtCore
          /**
           * The source button.
           */
-         osg::ref_ptr<Button> mSourceButton;
+         RefPtr<Button> mSourceButton;
          
          /**
           * The source axis.
           */
-         osg::ref_ptr<Axis> mSourceAxis;
+         RefPtr<Axis> mSourceAxis;
          
          /**
           * The target axis.
           */
-         osg::ref_ptr<LogicalAxis> mTargetAxis;
+         RefPtr<LogicalAxis> mTargetAxis;
          
          
          /**

@@ -13,7 +13,7 @@ void initSystemBindings()
    System* (*SystemGI1)(int) = &System::GetInstance;
    System* (*SystemGI2)(std::string) = &System::GetInstance;
 
-   class_<System, bases<Base>, osg::ref_ptr<System>, boost::noncopyable>("System", no_init)
+   class_<System, bases<Base>, dtCore::RefPtr<System>, boost::noncopyable>("System", no_init)
       .def("GetInstanceCount", &System::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SystemGI1, return_internal_reference<>())
