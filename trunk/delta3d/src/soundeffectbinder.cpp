@@ -336,15 +336,14 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
    snd->SetPlayCallback( PlayCB, this );
    snd->SetStopCallback( StopCB, this );
 
-   FLT_MAP::iterator minmax(NULL);
-   minmax   = mMinDist.find( fx->GetType() );
-   if( ( minmax != NULL ) && ( minmax != mMinDist.end() ) )
+   FLT_MAP::iterator minmax   = mMinDist.find( fx->GetType() );
+   if( minmax != mMinDist.end() )
    {
       snd->SetMinDistance( minmax->second );
    }
 
    minmax   = mMaxDist.find( fx->GetType() );
-   if( ( minmax != NULL ) && ( minmax != mMaxDist.end() ) )
+   if( minmax != mMaxDist.end() )
    {
       snd->SetMaxDistance( minmax->second );
    }
