@@ -47,6 +47,8 @@ TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
    mSmokeCountA(0L),
    mSmokeCountC(0L)
 {
+   SetNotifyLevel(DEBUG_INFO);
+
    AddSender( dtCore::System::GetSystem() );
 
    AudioManager::Instantiate();
@@ -586,7 +588,7 @@ TestAudioApp::LoadPSFile( const char* fname )
    
    assert( particlesystem );
    
-   particlesystem->LoadFile( fname );
+   particlesystem->LoadFile( fname, false );
 
    osg::Node*  filenode = particlesystem->GetOSGNode();
    assert( filenode );
