@@ -30,6 +30,9 @@ namespace   dtABC
       ///Add a visual object to the Scene
       virtual  void  AddDrawable( dtCore::Drawable* obj );
 
+      ///Remove a visual object from the Scene
+      virtual  void  RemoveDrawable( dtCore::Drawable* obj );
+      
       dtCore::Window*   GetWindow( void )    { return mWindow.get(); }
       dtCore::Camera*   GetCamera( void )    { return mCamera.get(); }
       dtCore::Scene*    GetScene( void )     { return mScene.get();  }

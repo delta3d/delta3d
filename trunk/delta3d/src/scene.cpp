@@ -101,6 +101,30 @@ void Scene::AddDrawable(Drawable *drawable)
    }
 }
 
+void Scene::RemoveDrawable(Drawable *drawable)
+{
+   mSceneNode.get()->removeChild( drawable->GetOSGNode() );
+   
+   Physical* physical = dynamic_cast<Physical*>(drawable);
+   
+   if(physical != NULL)
+   {
+      dSpaceRemove(mSpaceID, physical->GetGeomID());
+
+      dBodyDestroy(physical->GetBodyID());
+      
+      for(vector<Physical*>::iterator it = mPhysicalContents.begin();
+          it != mPhysicalContents.end();
+          it++)
+      {
+         if(*it == physical)
+         {
+            mPhysicalContents.erase(it);
+            break;
+         }
+      }
+   }
+}
 
 _SceneHandler::_SceneHandler():
 mSceneView(new osgUtil::SceneView()),
