@@ -39,7 +39,7 @@
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtchar.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				SubSystem="2"
 				ImportLibrary="..\..\lib/dtchard.lib"
 				TargetMachine="1"/>
