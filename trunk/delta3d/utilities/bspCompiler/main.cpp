@@ -2509,7 +2509,7 @@ void FlattenGeodeTransformAndState(NodePath& path)
 {
    ref_ptr<StateSet> stateSet = new StateSet;
    
-   stateSet->setAllToInherit();
+	stateSet->clear();
    
    Matrix matrix;
    
