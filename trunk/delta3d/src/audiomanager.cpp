@@ -23,7 +23,7 @@
 #endif
 
 #if   !  defined(MAX_FLOAT)
-#define  MAX_FLOAT   static_cast<double>(0xFFFFFFFFFFFFFFFF)
+#define  MAX_FLOAT   static_cast<float>(0xFFFFFFFF)
 #endif
 
 
