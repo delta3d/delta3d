@@ -6,7 +6,7 @@
 #define DELTA_SOARX_FRAMEWORK
 
 #include <typeinfo>
-#include "soarx_definitions.h"
+#include "soarx/soarx_definitions.h"
 
 namespace dtSOARX
 {

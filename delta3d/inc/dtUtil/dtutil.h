@@ -12,13 +12,13 @@
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtUtilD.lib"
+      #define _AUTOLIBNAME  "dtutild.lib"
    #endif
    #define _AUTOLIBNAME1 "sg_d.lib"
    #define _AUTOLIBNAME2 "ul_d.lib"
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtUtil.lib"
+      #define _AUTOLIBNAME  "dtutil.lib"
    #endif
    #define _AUTOLIBNAME1 "sg.lib"
    #define _AUTOLIBNAME2 "ul.lib"

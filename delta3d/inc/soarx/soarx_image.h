@@ -1,7 +1,7 @@
 #ifndef DELTA_SOARX_IMAGE
 #define DELTA_SOARX_IMAGE
 
-#include "soarx_framework.h"
+#include "soarx/soarx_framework.h"
 
 namespace dtSOARX
 {

@@ -1,7 +1,7 @@
 #ifndef DELTA_SOARX_CAMERA
 #define DELTA_SOARX_CAMERA
 
-#include "soarx_generic.h"
+#include "soarx/soarx_generic.h"
 
 namespace dtSOARX
 {

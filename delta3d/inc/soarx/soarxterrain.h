@@ -36,9 +36,9 @@
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 
-#include "deltadrawable.h"
-#include "physical.h"
-#include "transformable.h"
+#include "dtCore/deltadrawable.h"
+#include "dtCore/physical.h"
+#include "dtCore/transformable.h"
 
 #include "soarx/soarxdrawable.h"
 #include "soarx/soarx_tbuilder.h"

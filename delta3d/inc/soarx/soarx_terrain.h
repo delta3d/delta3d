@@ -1,8 +1,8 @@
 #ifndef DELTA_SOARX_TERRAIN
 #define DELTA_SOARX_TERRAIN
 
-#include "soarx_framework.h"
-#include "soarx_generic.h"
+#include "soarx/soarx_framework.h"
+#include "soarx/soarx_generic.h"
 
 namespace dtSOARX
 {

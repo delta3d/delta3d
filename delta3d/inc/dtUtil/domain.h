@@ -1,7 +1,7 @@
 #ifndef DOMAIN_INCLUDED
 #define DOMAIN_INCLUDED
 
-#include "export.h"
+#include "dtCore/export.h"
 
 #include "sg.h"
 
