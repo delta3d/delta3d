@@ -185,8 +185,6 @@ void UIDrawable::KeyPressed(Keyboard* keyboard,
    case Producer::KeyChar_Down:  uikey = UI_KEY_DOWN;  	break;
    case Producer::KeyChar_BackSpace:   uikey = '\b';  	break;
    case Producer::KeyChar_Delete:      uikey = 127;  	break;
-   case Producer::KeyChar_Shift_L:     return;   break;
-   case Producer::KeyChar_Shift_R:     return;   break;
    default: break;
    }
    mUI->ProcessKey(uikey);

@@ -121,9 +121,6 @@ namespace dtCore
          mSceneHandler->mStats->SelectType(type);
       }
 
-      ///Register a Physical with the Scene
-      void RegisterPhysical( Physical *physical);
-
    private:
       
       ///ODE collision callback

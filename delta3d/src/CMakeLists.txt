@@ -10,8 +10,6 @@
 
 PROJECT( DELTA )
 
-SET( CMAKE_INSTALL_PREFIX ${DELTA_SOURCE_DIR}/ )
-
 INCLUDE_DIRECTORIES( ../inc ../ext/inc )
 LINK_DIRECTORIES( ../lib ../ext/lib )
 
@@ -35,7 +33,7 @@ TARGET_LINK_LIBRARIES( dtaudio glgui isense Producer ode opcode openal OpenThrea
 
 #SUBDIRS( python soarx )
 
-INSTALL_TARGETS( ../lib dtcore dtabc dtchar dtvis dtaudio gui_fl )
+INSTALL_TARGETS( ${DELTA_SOURCE_DIR}/../lib dtcore dtabc dtvis dtaudio gui_fl )
 
 # Note! You must have RTI installed for dthla to build. 
 # We cannot distribute RTI, so you are on your own.

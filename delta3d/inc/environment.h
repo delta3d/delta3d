@@ -8,7 +8,6 @@
 #include "sunlightshader.h"
 #include "skydomeshader.h"
 #include "skydome.h"
-#include "scene.h"
 
 namespace dtCore
 {
@@ -164,8 +163,6 @@ namespace dtCore
       SunlightShader *mSunlightShader; ///<pixel shader for light scattering
       SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
       osg::ref_ptr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be NULL)
-
-      osg::ref_ptr<Scene> mParentScene;///<The Scene the Environment was added to
 
       void UpdateSkyLight(void);
       void UpdateFogColor(void);

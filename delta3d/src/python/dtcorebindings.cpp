@@ -60,7 +60,6 @@ void NotifyWrap(NotifySeverity ns, const char* msg)
 BOOST_PYTHON_MODULE(dtCore)
 {
    def("SetDataFilePathList", SetDataFilePathList);
-   def("GetDeltaDataPathList", GetDeltaDataPathList);
    def("SetNotifyLevel", SetNotifyLevel);
    def("Notify", NotifyWrap);
    

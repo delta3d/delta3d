@@ -127,7 +127,7 @@ class TestInputApplication : public Application,
          
          mUIDrawable->SetWindowResolution(w, h);
          
-         SetDataFilePathList("../../data;" + GetDeltaDataPathList());
+         SetDataFilePathList("../../data");
          
          mUIDrawable->LoadGUIFile("gui.xml");
          

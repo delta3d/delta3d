@@ -13,7 +13,7 @@ using namespace   std;
 
 
 // static member variables
-const char*    testAudioApp::kDataPath = "../../data;";
+const char*    testAudioApp::kDataPath = "../../data";
 unsigned int   testAudioApp::kNumSoundFiles(4L);
 const char*    testAudioApp::kSoundFile[] =
                {
@@ -47,7 +47,7 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    mSmokeCountA(0L),
    mSmokeCountC(0L)
 {
-   dtCore::SetDataFilePathList( kDataPath + dtCore::GetDeltaDataPathList() );
+   dtCore::SetDataFilePathList( kDataPath );
 
    AddSender( dtCore::System::GetSystem() );
 

@@ -128,7 +128,6 @@ Environment::~Environment(void)
 void Environment::AddedToScene(Scene* scene)
 {
    mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
-   mParentScene = scene;
 }
       
 // Add an Environmental Effect to the Environment
@@ -219,19 +218,7 @@ void Environment::AddDrawable( DeltaDrawable *drawable )
 {
    //we add Drawables to our mDrawableNode
    if (drawable)
-   {
       mDrawableNode->addChild( drawable->GetOSGNode() );
-
-      Physical* physical = dynamic_cast<Physical*>(drawable);
-
-      if(physical != NULL)
-      {
-         if (mParentScene.valid())
-         {
-            mParentScene->RegisterPhysical(physical);
-         }
-      }
-   }
 }
 
 

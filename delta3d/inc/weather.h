@@ -70,20 +70,6 @@ namespace dtABC
          THEME_RAINY///<overcast clouds, limited vis, mod winds
       };
 
-      enum TimePeriod{
-         TIME_DAWN,  ///<sunrise
-         TIME_DAY,   ///<high noon
-         TIME_DUSK,  ///<sunset
-         TIME_NIGHT  ///<night
-      };
-
-      enum Season{
-         SEASON_SPRING,
-         SEASON_SUMMER,
-         SEASON_FALL,
-         SEASON_WINTER
-      };
-
       ///Creates a set of clouds to represent the generic cloud description
       void SetBasicCloudType( const CloudType type );
       CloudType GetBasicCloudType(void) const {return mCloudType;}
@@ -101,15 +87,11 @@ namespace dtABC
       WeatherTheme GetTheme(void) const {return mTheme;}
 
       ///Get a handle to the Weather's Environment instance
-      dtCore::Environment* GetEnvironment(void) {return mEnvironment.get();}
+      dtCore::Environment* GetEnvironment(void)const {return mEnvironment;}
 
       ///Set the weather's rate of change (-1.0 to 1.0)
       void SetRateOfChange(const float rate);
       float GetRateOfChange(void) const {return mRateOfChange;}
-
-      ///Set the weather's time period and season
-      void SetTimePeriodAndSeason(const TimePeriod period, const Season season);
-      void GetTimePeriodAndSeason(TimePeriod *period, Season *season) const;
 
       ///Add a DeltaDrawable to be affected by this weather's lighting and fog
       void AddDrawable( dtCore::DeltaDrawable *drawable);
@@ -118,14 +100,12 @@ namespace dtABC
       typedef std::vector<osg::ref_ptr<dtCore::CloudPlane> > CloudPlaneList;
       CloudPlaneList mClouds;
 
-      osg::ref_ptr<dtCore::Environment> mEnvironment;
+      dtCore::Environment *mEnvironment;
       CloudType mCloudType;
       VisibilityType mVisType;
       WindType mWindType;
       float mRateOfChange; ///<weather change rate (-1 to 1)
       WeatherTheme mTheme;
-      TimePeriod mTimePeriod; ///<the rough time period
-      Season mSeason; ///< the current season
    };
 
 }

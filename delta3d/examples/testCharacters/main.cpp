@@ -353,7 +353,7 @@ int main( int argc, char **argv )
    cam->SetTransform( &position );
    
    //This is where we'll find our files to load
-   SetDataFilePathList("../../data/;" + GetDeltaDataPathList());
+   SetDataFilePathList("../../data/");
 
    Character* guy1 = new Character("bob");
    Character* guy2 = new Character("dave");

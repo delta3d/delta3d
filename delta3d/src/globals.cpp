@@ -6,7 +6,7 @@
 
 /*!
  * Set the list of paths that dtCore should use to search for files to load.  Paths
- * are separated with a single ";" on Win32 and a single ":" on Linux.
+ * are separated with a single ";".
  *
  * @param pathList : The list of all paths to be used to find data files
  */
@@ -26,17 +26,3 @@ void dtCore::SetDataFilePathList(std::string pathList )
    osgDB::setDataFilePathList(pathList);
 }
 
-/*!
- * Get the Delta Data file path.  This comes directly from the environment 
- * variable "DELTA_DATA".  If the environment variable is not set, the local
- * directory will be returned.
- */
-DT_EXPORT std::string dtCore::GetDeltaDataPathList(void)
-{
-   char *ptr;
-   if( (ptr = getenv( "DELTA_DATA" )) )
-   {
-      return (std::string(ptr));
-   }
-   else return (std::string("./"));
-}

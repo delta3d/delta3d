@@ -12,9 +12,7 @@ mCloudType(CLOUD_CLEAR),
 mWindType(WIND_NONE),
 mVisType(VIS_UNLIMITED),
 mTheme(THEME_CLEAR),
-mRateOfChange(0.f),
-mTimePeriod(TIME_DAY),
-mSeason(SEASON_SUMMER)
+mRateOfChange(0.f)
 {
    SetName("Weather");
 
@@ -189,48 +187,6 @@ void Weather::SetRateOfChange(const float rate)
    else if (mRateOfChange > 1.f) mRateOfChange = 1.f;
 
 }
-
-/** Set the Weather's rough time period.  This doesn't affect the date.
- */
-void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season season)
-{
-   if (mTimePeriod == period && mSeason == season) return;
-
-   mTimePeriod = period;
-   mSeason = season;
-
-   int yr, mo, da, hr, mi, sc;
-   mEnvironment->GetDateTime(&yr, &mo, &da, &hr, &mi, &sc);
-
-   //the times should probably be related to the horizon events
-   //corresponding to the date
-   switch ( mTimePeriod )
-   {
-   case TIME_DAWN:  hr=6;  mi=0; sc=0; break;      
-   case TIME_DAY:   hr=12; mi=30;sc=0; break;
-   case TIME_DUSK:  hr=18; mi=0; sc=0; break;
-   case TIME_NIGHT: hr=23; mi=0; sc=0; break;
-   default:         hr=12; mi=0; sc=0; break;
-   }
-
-   switch (mSeason) 
-   {
-   case SEASON_SPRING: yr=2004; mo=3; da=15; break;
-   case SEASON_SUMMER: yr=2004; mo=7; da=15; break;
-   case SEASON_FALL:   yr=2004; mo=10; da=15;break;
-   case SEASON_WINTER: yr=2004; mo=12; da=15;break;
-   default:            yr=2004; mo=7; da=15; break;
-   }
-
-   mEnvironment->SetDateTime(yr, mo, da, hr, mi, sc);
-}
-
-void Weather::GetTimePeriodAndSeason(TimePeriod *period, Season *season) const
-{
-   *period = mTimePeriod;
-   *season = mSeason;
-}
-
 
 void Weather::AddDrawable(dtCore::DeltaDrawable *drawable)
 {

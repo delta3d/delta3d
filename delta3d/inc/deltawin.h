@@ -70,9 +70,7 @@ namespace dtCore
       Mouse *GetMouse() {return mMouse.get();}
 
       ///Changes system screen resolution
-      bool  ChangeScreenResolution (int width, int height, int colorDepth);
-
-      int GetColorDepth(void);
+      bool  ChangeScreenResolution (int width, int height, int bitsPerPixel);
 
    private:
 
