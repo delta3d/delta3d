@@ -1,6 +1,6 @@
-#include "dt.h"
-#include "dtchar.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtChar/dtchar.h"
+#include "dtABC/dtabc.h"
 
 using namespace dtCore;
 using namespace dtABC;

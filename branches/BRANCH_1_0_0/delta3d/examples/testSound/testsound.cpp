@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "dt.h"
+#include "dtCore/dt.h"
 #include "testsound.h"
 
 // namespaces

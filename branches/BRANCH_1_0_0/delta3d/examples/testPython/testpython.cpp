@@ -1,5 +1,5 @@
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 
 #include <OpenThreads/Thread>
 #include <boost/python/detail/wrap_python.hpp>
