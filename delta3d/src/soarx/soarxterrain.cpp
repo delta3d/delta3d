@@ -852,7 +852,8 @@ void SOARXTerrain::LoadGeospecificImage(string filename, const double* geoTransf
  * the data file
  * @param width the width of the roads to create
  * @param texture the name of the texture to use, or "" for
- * none
+ * none (in which case the roads will be baked into the base
+ * texture)
  * @param sScale the texture s scale
  * @param tScale the texture t scale
  */
@@ -923,13 +924,19 @@ void SOARXTerrain::LoadRoads(string filename,
          roads.mMinLongitude = (int)floor(env.MinX);
          roads.mMaxLongitude = (int)floor(env.MaxX);
          
-         osg::Image* image = osgDB::readImageFile(texture);
+         if(texture != "")
+         {
+            osg::Image* image = osgDB::readImageFile(texture);
          
-         roads.mTexture = new osg::Texture2D(image);
-         
-         roads.mTexture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
-         roads.mTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+            if(image != NULL)
+            {
+               roads.mTexture = new osg::Texture2D(image);
             
+               roads.mTexture->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
+               roads.mTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
+            }
+         }
+         
          roads.mWidth = width;
          roads.mSScale = sScale;
          roads.mTScale = tScale;
@@ -1213,6 +1220,99 @@ static float GetInterpolatedHeight(osg::HeightField* hf, double x, double y)
 }
 
 /**
+ * Draws an antialiased black pixel into the specified image.
+ *
+ * @param image the image into which to draw the pixel
+ * @param x the x coordinate at which to draw the pixel
+ * @param y the y coordinate at which to draw the pixel
+ * @param weight the weight of the pixel
+ */
+inline void DrawRoadPixel(osg::Image* image, float x, float y, float weight)
+{
+   int fx = (int)floor(x),
+       fy = (int)floor(y),
+       cx = (int)ceil(x),
+       cy = (int)ceil(y);
+       
+   if(fx >= 0 && cx < image->s() && fy >= 0 && cy < image->t())
+   {
+      unsigned char* p1 = image->data(fx, fy);
+      unsigned char* p2 = image->data(cx, fy);
+      unsigned char* p3 = image->data(fx, cy);
+      unsigned char* p4 = image->data(cx, cy);
+
+      float sw = x-fx, 
+            tw = y-fy,
+            w1 = 1 - (1-sw)*(1-tw)*weight,
+            w2 = 1 - sw*(1-tw)*weight,
+            w3 = 1 - (1-sw)*tw*weight,
+            w4 = 1 - sw*tw*weight;
+            
+      int i;
+      
+      for(i=0;i<3;i++) p1[i] *= w1;
+      for(i=0;i<3;i++) p2[i] *= w2;
+      for(i=0;i<3;i++) p3[i] *= w3;
+      for(i=0;i<3;i++) p4[i] *= w4;
+   }
+}
+
+/**
+ * Draws an antialiased black line into the specified image.
+ *
+ * @param image the image to draw the line into
+ * @param s1 the s coordinate of the line's start point
+ * @parma t2 the t coordinate of the line's start point
+ * @param s2 the s coordinate of the line's end point
+ * @param t2 the t coordinate of the line's end point
+ * @param weight the weight of the line
+ */
+static void DrawRoadLine(osg::Image* image, float s1,
+                         float t1, float s2,
+                         float t2, float weight)
+{
+   float x1 = s1*image->s(),
+         y1 = t1*image->t(),
+         x2 = s2*image->s(),
+         y2 = t2*image->t();
+
+   if(osg::absolute(y2-y1) > osg::absolute(x2-x1))
+   {
+      if(y1 > y2)
+      {
+         swap(x1, x2);
+         swap(y1, y2);
+      }
+      
+      float x = x1, xStep = (x2 - x1)/(y2 - y1);
+      
+      for(float y = y1; y <= y2; y += 1.0f)
+      {
+         DrawRoadPixel(image, x, y, weight);
+         
+         x += xStep;
+      }
+   }
+   else
+   {
+      if(x1 > x2)
+      {
+         swap(x1, x2);
+         swap(y1, y2);
+      }
+      
+      float y = y1, yStep = (y2 - y1)/(x2 - x1);
+      
+      for(float x = x1; x <= x2; x += 1.0f)
+      {
+         DrawRoadPixel(image, x, y, weight);
+         
+         y += yStep;
+      }
+   }
+}
+
+/**
  * Makes the base color texture map for the specified heightfield.
  *
  * @param hf the heightfield to process
@@ -1357,6 +1457,66 @@ osg::Image* SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int 
       
       lat += latStep;
       t += tStep;
+   }
+   
+   for(vector<Roads>::iterator r = mRoads.begin();
+       r != mRoads.end();
+       r++)
+   {
+      if((*r).mTexture == NULL &&
+         latitude >= (*r).mMinLatitude && latitude <= (*r).mMaxLatitude &&
+         longitude >= (*r).mMinLongitude && longitude <= (*r).mMaxLongitude)
+      {
+         vector<OGRLineString*> lineStrings;
+         
+         for(OGRFeature* feature = (*r).mLayer->GetNextFeature();
+             feature != NULL;
+             feature = (*r).mLayer->GetNextFeature())
+         {
+            OGRLineString* ls =
+               dynamic_cast<OGRLineString*>(feature->GetGeometryRef());
+               
+            OGRMultiLineString* mls = 
+               dynamic_cast<OGRMultiLineString*>(feature->GetGeometryRef());
+            
+            if(ls != NULL)
+            {
+               lineStrings.push_back(ls);
+            }
+            else if(mls != NULL)
+            {
+               for(int i=0;i<mls->getNumGeometries();i++)
+               {
+                  lineStrings.push_back((OGRLineString*)mls->getGeometryRef(i));
+               }
+            }
+         }
+         
+         OGRPoint ogrp1, ogrp2;
+         
+         float weight = ((*r).mWidth*image->s())/(SG_DEGREES_TO_RADIANS*semiMajorAxis);
+         
+         for(vector<OGRLineString*>::iterator ls = lineStrings.begin();
+             ls != lineStrings.end();
+             ls++)
+         {
+            int numPoints = (*ls)->getNumPoints(),
+                numEdges = (*ls)->get_IsClosed() ? numPoints : numPoints - 1;
+            
+            for(int i=0;i<numEdges;i++)
+            {
+               (*ls)->getPoint(i, &ogrp1);
+               (*ls)->getPoint((i+1)%numPoints, &ogrp2);
+               
+               float s1 = ogrp1.getX() - longitude,
+                     t1 = ogrp1.getY() - latitude,
+                     s2 = ogrp2.getX() - longitude,
+                     t2 = ogrp2.getY() - latitude;
+                     
+               DrawRoadLine(image, s1, t1, s2, t2, weight);
+            }
+         }
+      }
    }
    
    return image;
@@ -1543,7 +1703,8 @@ osg::Node* SOARXTerrain::MakeRoads(int latitude, int longitude, const osg::Vec3&
        it != mRoads.end();
        it++)
    {
-      if(latitude >= (*it).mMinLatitude && latitude <= (*it).mMaxLatitude &&
+      if((*it).mTexture != NULL &&
+         latitude >= (*it).mMinLatitude && latitude <= (*it).mMaxLatitude &&
          longitude >= (*it).mMinLongitude && longitude <= (*it).mMaxLongitude)
       {
          osg::Geometry* geom = new osg::Geometry;
@@ -2094,24 +2255,27 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
       
          mSegmentDrawableMap[segment] = soarxd;
          
-         osg::Node* roads;
-         
-         string roadsPath = mCachePath + "/" + cellName + ".roads.ive";
-         
-         if(osgDB::fileExists(roadsPath))
+         if(mRoads.size() > 0)
          {
-            roads = osgDB::readNodeFile(roadsPath);
-         }
-         else
-         {
-            Notify(NOTICE, "SOARXTerrain: Making roads for %s...", cellName);
+            osg::Node* roads;
             
-            roads = MakeRoads(latitude, longitude, origin);
+            string roadsPath = mCachePath + "/" + cellName + ".roads.ive";
+            
+            if(osgDB::fileExists(roadsPath))
+            {
+               roads = osgDB::readNodeFile(roadsPath);
+            }
+            else
+            {
+               Notify(NOTICE, "SOARXTerrain: Making roads for %s...", cellName);
                
-            osgDB::writeNodeFile(*roads, roadsPath);
+               roads = MakeRoads(latitude, longitude, origin);
+                  
+               osgDB::writeNodeFile(*roads, roadsPath);
+            }
+            
+            mt->addChild(roads);
          }
-         
-         mt->addChild(roads);
          
          Notify(NOTICE, "SOARXTerrain: Loaded %s", cellName);
          
