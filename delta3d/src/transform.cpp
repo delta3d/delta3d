@@ -104,6 +104,17 @@ void Transform::SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec )
     sgMakeLookAtMat4( mTransform, xyz, lookAtXYZ, upVec );
 }
 
+void Transform::SetLookAt(float posX, float posY, float posZ,
+                          float lookAtX, float lookAtY, float lookAtZ,
+                          float upVecX, float upVecY, float upVecZ)
+{
+   sgVec3 xyz = { posX, posY, posZ },
+          lookAt = { lookAtX, lookAtY, lookAtZ },
+          upVec = { upVecX, upVecY, upVecZ };
+          
+   SetLookAt(xyz, lookAt, upVec);
+}
+
 Transform & Transform::operator=(const Transform & rhs)
 {
    if (this == &rhs) return *this;

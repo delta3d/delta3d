@@ -26,6 +26,10 @@ namespace dtCore
 
       void SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec );
       
+      void SetLookAt(float posX, float posY, float posZ,
+                     float lookAtX, float lookAtY, float lookAtZ,
+                     float upVecX, float upVecY, float upVecZ);
+                     
       //Set only translation methods
       virtual void SetTranslation( float x, float y, float z);
       virtual void SetTranslation( sgVec3 xyz ) {sgCopyVec3(mTransform[3], xyz);}
