@@ -239,5 +239,5 @@ void SOARXDrawable::LoadTextures()
 //	glLoadTexture("normal.png");
 	delete text;
 
-	dtCore::Notify(dtCore::NOTICE, "Textures loaded.\n");
+	dtCore::Notify(dtCore::INFO, "Textures loaded.\n");
 }
