@@ -18,6 +18,8 @@
 *
 */
 
+/*  Algorithm by Ken Shoemake, 1993 */
+
 #ifndef DELTA_POLAR_DECOMP
 #define DELTA_POLAR_DECOMP
 
@@ -33,61 +35,41 @@ namespace dtUtil
    {
    public:
 
-      void Print( osg::Matrixf& matrix );  
-      void Print( osg::Vec3d& vec );
+      // Copy nxn matrix A to C using "gets" for assignment
+      static void MatCopyMinusEqual( osg::Matrixf& C, const osg::Matrixf& A );
 
-      /** Copy nxn matrix A to C using "gets" for assignment **/
-      void MatCopyMinusEqual( osg::Matrixf& C, osg::Matrixf& A );
+      // Assign nxn matrix C the element-wise combination of A and B using "op"
+      static void MatBinOpEqualPlus( osg::Matrixf& C, const float g1, const osg::Matrixf& A, const float g2, const osg::Matrixf& B );
 
-      /** Assign nxn matrix C the element-wise combination of A and B using "op" **/
-      void MatBinOpEqualPlus( osg::Matrixf& C, float g1, osg::Matrixf& A, float g2, osg::Matrixf& B );
+      // Set MadjT to transpose of inverse of M times determinant of M
+      static void AdjointTranspose( const osg::Matrixf& M, osg::Matrixf& MadjT );
 
-      void Transpose( osg::Matrixf& dest, const osg::Matrixf& src );
+      static float NormInf( const osg::Matrixf& M );
+      static float NormOne( const osg::Matrixf& M );
 
-      inline osg::Vec3f GetRow( osg::Matrixf& matrix, int row )
-      {
-         return osg::Vec3f( matrix(row,0), matrix(row,1), matrix(row,2) );
-      }
+      // Return index of column of M containing maximum abs entry, or -1 if M=0
+      static int FindMaxCol( const osg::Matrixf& M );
 
-      inline osg::Vec3f GetColumn( osg::Matrixf& matrix, int column )
-      {
-         return osg::Vec3f( matrix(0,column), matrix(1,column), matrix(2,column) );
-      }
+      // Setup u for Household reflection to zero all v components but first
+      static void MakeReflector( const osg::Vec3f& v, osg::Vec3f& u );
 
-      void SetRow( osg::Matrixf& matrix, const osg::Vec3f& vec, const int row );
+      // Apply Householder reflection represented by u to column vectors of M
+      static void ReflectCols( osg::Matrixf& M, const osg::Vec3f& u );
 
-      void SetColumn( osg::Matrixf& matrix, const osg::Vec3f& vec, const int column );
+      // Apply Householder reflection represented by u to row vectors of M
+      static void ReflectRows( osg::Matrixf& M, const osg::Vec3f& u );
 
-      /** Set MadjT to transpose of inverse of M times determinant of M **/
-      void AdjointTranspose( osg::Matrixf& M, osg::Matrixf& MadjT );
+      // Compute either the 1 or infinity norm of M, depending on tpose
+      static float MatNorm( const osg::Matrixf& M, const int tpose );
 
-      float NormInf( osg::Matrixf& M );
-      float NormOne( osg::Matrixf& M );
+      // Find orthogonal factor Q of rank 1 (or less) M
+      static void DoRank1( osg::Matrixf& M, osg::Matrixf& Q );
 
-      /** Return index of column of M containing maximum abs entry, or -1 if M=0 **/
-      int FindMaxCol( osg::Matrixf& M );
+      // Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose
+      static void DoRank2( osg::Matrixf& M, const osg::Matrixf& MadjT, osg::Matrixf& Q );
 
-      /** Setup u for Household reflection to zero all v components but first **/
-      void MakeReflector( osg::Vec3f& v, osg::Vec3f& u );
-
-      /** Apply Householder reflection represented by u to column vectors of M **/
-      void ReflectCols( osg::Matrixf& M, osg::Vec3f& u );
-
-      /** Apply Householder reflection represented by u to row vectors of M **/
-      void ReflectRows( osg::Matrixf& M, osg::Vec3f& u );
-
-      /** Compute either the 1 or infinity norm of M, depending on tpose **/
-      float MatNorm( osg::Matrixf& M, int tpose );
-
-      /** Find orthogonal factor Q of rank 1 (or less) M **/
-      void DoRank1( osg::Matrixf& M, osg::Matrixf& Q );
-
-      /** Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose **/
-      void DoRank2( osg::Matrixf& M, osg::Matrixf& MadjT, osg::Matrixf& Q );
-
-      float Decompose( osg::Matrixf& M, osg::Matrixf& Q, osg::Matrixf& S );
-
-      void Test();
+      // Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation
+      static float Decompose( const osg::Matrixf& M, osg::Matrixf& Q, osg::Matrixf& S, osg::Vec4f& T );
 
    };
 }

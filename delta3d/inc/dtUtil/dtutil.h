@@ -22,14 +22,15 @@
 #define DTUTIL_INCLUDE
 
 #include "dtUtil/domain.h"
+#include "dtUtil/matrixutil.h"
 #include "dtUtil/polardecomp.h"
-
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
+#undef _AUTOLIBNAME3
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
