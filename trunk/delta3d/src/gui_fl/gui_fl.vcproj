@@ -30,7 +30,7 @@
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="FALSE"
+				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtcored.lib producerd.lib sg_d.lib ul_d.lib openthreadswin32d.lib osgd.lib"
-				OutputFile="..\..\bin\gui_fld.dll"
+				OutputFile="../../bin/gui_fld.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmtd; msvcrt"
 				GenerateDebugInformation="TRUE"
@@ -86,7 +86,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtcore.lib producer.lib openthreadswin32.lib osg.lib sg.lib ul.lib"
-				OutputFile="..\..\bin\gui_fl.dll"
+				OutputFile="../../bin/gui_fl.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc; libcmt; msvcrtd"
 				ImportLibrary="..\..\lib\gui_fl.lib"/>
