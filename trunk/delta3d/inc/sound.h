@@ -10,63 +10,6 @@
 
 
 
-/** dtAudio::Sound 
- *
- * dtAudio::Sound is a little more than just an interface to an object
- * held within (and protected) by the dtAudio::AudioManager.
- *
- * Sound objects are not created directly by the user (new/delete).
- * Instead the user requests a new sound from the AudioManager:
- *
- *    Sound* mysound = AudioManager::GetManager()->NewSound();
- *
- * The user can then call any of the Sound interface functions.
- * After the user is finished with Sound, it should be returned
- * to the AudioManager for recycling:
- *
- *    AudioManager::GetManager()->FreeSound( mysound );
- *
- * Sounds do not directly call the underlying sound-engine functions,
- * but rather send commands through the sig-slot messaging system
- * to the AudioManager for processing.  The AudioManager will queue
- * up the commands for processing at the appropriate times.
- *
- * Since the Sound commands (play, stop, pitch, etc.) may not happen
- * immediately, Sound has two callback functions which, if set by
- * the user, will get fired off when the Sound actually starts
- * playing and when it actually stops playing.
- * 
- * Sound is a transformable, so it can be a child of other
- * transformables.  When a Sound is child of another object, it
- * automatically gets positioned in scene-space relative to the
- * parent object every frame, so there is no need to update the
- * Sound's position.  The Sound position can be set manually in
- * scene-space without having to make it a child of another object,
- * but any position updates must then be made manually.
- *
- *********************       WARNING       ********************
- ********************* JPJ (Sept. 23 2004) ********************
- * The ListenerRelative( bool ) is not working properly.  The
- * underlying sound engine (OpenAL) claims setting the
- * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sounds with
- * respect to the gloabal listener's position, and resetting the
- * flag to AL_FALSE will not do any distance calculations.  This does
- * not  appear to be correct.  It appears that resetting the flag to
- * AL_FALSE does the distance calculations with respect to the
- * listener's position, and setting to AL_TRUE still does the
- * distance calculations with respect to the origin.  For now, we
- * are always resseting the flag to AL_FALSE.
- *
- *********************       WARNING       ********************
- ********************* JPJ (Sept. 23 2004) ********************
- * At the time of this writing, the dtAudio::Sound functions
- * for the Recording System are just cut&paste from the old
- * dtCore::Sound objects.  Their guts are obsolete and will
- * probably cause a crash on their first use.  Sorry, folks, but
- * I did not have enough time to convert these functions.
- * That fix has been left to whomever inherits this code.
- *
- */
 namespace dtAudio
 {
    class Sound;
@@ -74,8 +17,62 @@ namespace dtAudio
    //! callback function type
    typedef  void  (*SoundCB)( Sound* sound, void* param );
 
-   /**
-    * A sound.
+   /** dtAudio::Sound 
+    *
+    * dtAudio::Sound is a little more than just an interface to an object
+    * held within (and protected) by the dtAudio::AudioManager.
+    *
+    * Sound objects are not created directly by the user (new/delete).
+    * Instead the user requests a new sound from the AudioManager:
+    *
+    *    Sound* mysound = AudioManager::GetManager()->NewSound();
+    *
+    * The user can then call any of the Sound interface functions.
+    * After the user is finished with Sound, it should be returned
+    * to the AudioManager for recycling:
+    *
+    *    AudioManager::GetManager()->FreeSound( mysound );
+    *
+    * Sounds do not directly call the underlying sound-engine functions,
+    * but rather send commands through the sig-slot messaging system
+    * to the AudioManager for processing.  The AudioManager will queue
+    * up the commands for processing at the appropriate times.
+    *
+    * Since the Sound commands (play, stop, pitch, etc.) may not happen
+    * immediately, Sound has two callback functions which, if set by
+    * the user, will get fired off when the Sound actually starts
+    * playing and when it actually stops playing.
+    * 
+    * Sound is a transformable, so it can be a child of other
+    * transformables.  When a Sound is child of another object, it
+    * automatically gets positioned in scene-space relative to the
+    * parent object every frame, so there is no need to update the
+    * Sound's position.  The Sound position can be set manually in
+    * scene-space without having to make it a child of another object,
+    * but any position updates must then be made manually.
+    *
+    *********************       WARNING       ********************
+    ********************* JPJ (Sept. 23 2004) ********************
+    * The ListenerRelative( bool ) is not working properly.  The
+    * underlying sound engine (OpenAL) claims setting the
+    * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sounds with
+    * respect to the gloabal listener's position, and resetting the
+    * flag to AL_FALSE will not do any distance calculations.  This does
+    * not  appear to be correct.  It appears that resetting the flag to
+    * AL_FALSE does the distance calculations with respect to the
+    * listener's position, and setting to AL_TRUE still does the
+    * distance calculations with respect to the origin.  For now, we
+    * are always resseting the flag to AL_FALSE.
+    *
+    *********************       WARNING       ********************
+    ********************* JPJ (Sept. 23 2004) ********************
+    * At the time of this writing, the dtAudio::Sound functions
+    * for the Recording System are just cut&paste from the old
+    * dtCore::Sound objects.  Their guts are obsolete and will
+    * probably cause a crash on their first use.  Sorry, folks, but
+    * I did not have enough time to convert these functions.
+    * That fix has been left to whomever inherits this code.
+    *
     */
    class DT_EXPORT   Sound :  public   dtCore::Transformable,
                               public   dtCore::Recordable
