@@ -7,6 +7,8 @@
 #include "dtCore/notify.h"
 
 #include <osg/Group>
+#include <osg/NodeVisitor>
+#include <osgParticle/ModularEmitter>
 
 using namespace dtCore;
 using namespace std;
@@ -15,29 +17,6 @@ using namespace std;
 IMPLEMENT_MANAGEMENT_LAYER(ParticleSystem)
 
 
-/**
- * A visitor class that finds matrix transforms and sets their
- * transforms to the given value.
- */
-class TransformVisitor : public osg::NodeVisitor
-{
-   public:
-
-      TransformVisitor(osg::Matrix matrix)
-         : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN),
-           mMatrix(matrix)
-      {}
-
-      virtual void apply(osg::MatrixTransform& node)
-      {
-         node.setMatrix(mMatrix);
-      }
-
-
-   private:
-
-      osg::Matrix mMatrix;
-};
 
 
 /**
@@ -73,86 +52,6 @@ class ParticleSystemParameterVisitor : public osg::NodeVisitor
 
 
 /**
- * A transformation callback.
- */
-class TransformCallback : public osg::NodeCallback
-{
-   public:
-
-      TransformCallback(ParticleSystem* particleSystem)
-      {
-         mParticleSystem = particleSystem;
-      }
-
-      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-      { 
-         Transform transform;
-
-         mParticleSystem->GetTransform(&transform);
-         
-         sgMat4 psMatrix, eMatrix;
-
-         if(mParticleSystem->IsParentRelative())
-         {
-            transform.Get(psMatrix);
-            
-            sgInvertMat4(eMatrix, psMatrix);
-         }
-         else
-         {
-            sgMakeIdentMat4(psMatrix);
-            
-            transform.Get(eMatrix);
-         }
-         
-         osg::MatrixTransform* mt = mParticleSystem->GetMatrixNode();
-            //(osg::MatrixTransform*)mParticleSystem->GetOSGNode();
-         
-         mt->setMatrix(
-            osg::Matrix(
-               psMatrix[0][0], psMatrix[0][1], psMatrix[0][2], psMatrix[0][3],
-               psMatrix[1][0], psMatrix[1][1], psMatrix[1][2], psMatrix[1][3],
-               psMatrix[2][0], psMatrix[2][1], psMatrix[2][2], psMatrix[2][3],
-               psMatrix[3][0], psMatrix[3][1], psMatrix[3][2], psMatrix[3][3]
-            )
-         );
-         
-         for(unsigned int i=0;i<mt->getNumChildren();i++)
-         {
-            TransformVisitor tv = TransformVisitor(
-               osg::Matrix(
-                     eMatrix[0][0], eMatrix[0][1], eMatrix[0][2], eMatrix[0][3],
-                     eMatrix[1][0], eMatrix[1][1], eMatrix[1][2], eMatrix[1][3],
-                     eMatrix[2][0], eMatrix[2][1], eMatrix[2][2], eMatrix[2][3],
-                     eMatrix[3][0], eMatrix[3][1], eMatrix[3][2], eMatrix[3][3]
-               )
-            );
-            mt->getChild(i)->accept( tv );
-
-            /*
-            mt->getChild(i)->accept( 
-               TransformVisitor( 
-                  osg::Matrix( 
-                     eMatrix[0][0], eMatrix[0][1], eMatrix[0][2], eMatrix[0][3],
-                     eMatrix[1][0], eMatrix[1][1], eMatrix[1][2], eMatrix[1][3],
-                     eMatrix[2][0], eMatrix[2][1], eMatrix[2][2], eMatrix[2][3],
-                     eMatrix[3][0], eMatrix[3][1], eMatrix[3][2], eMatrix[3][3]
-                  )
-               )
-            );
-            */
-         }
-         
-         traverse(node, nv);
-      }
-      
-   private:
-      
-      ParticleSystem* mParticleSystem;
-};
-
-
-/**
  * Constructor.
  *
  * @param name the instance name
@@ -164,12 +63,6 @@ ParticleSystem::ParticleSystem(string name)
    SetName(name);
    
    RegisterInstance(this);
-   
-   //mNode = new osg::MatrixTransform;
-   
-   GetMatrixNode()->setUpdateCallback(
-      new TransformCallback(this)
-   );
 }
 
 /**
@@ -177,8 +70,50 @@ ParticleSystem::ParticleSystem(string name)
  */
 ParticleSystem::~ParticleSystem()
 {
+   Notify(DEBUG_INFO, "ParticleSystem: Destroying %s", GetName().c_str());
    DeregisterInstance(this);
 }
+
+
+///find the VariableRateCounter and RadialShooter and store the pointers
+class ParticleVisitor : public osg::NodeVisitor
+{
+public:
+
+   ParticleVisitor():
+      osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
+      {
+      }
+
+      virtual void apply(osg::Node& node)
+      {
+         osg::Node* nodePtr = &node;
+
+         if(IS_A(nodePtr, osgParticle::ModularEmitter*))
+         {
+            osgParticle::ModularEmitter* me =
+               (osgParticle::ModularEmitter*)nodePtr;
+            
+            emitter = me;
+
+            if(IS_A(me->getCounter(), osgParticle::VariableRateCounter*))
+            {
+               vrc = (osgParticle::VariableRateCounter*)me->getCounter();             
+            }
+
+            if(IS_A(me->getShooter(), osgParticle::RadialShooter*))
+            {
+               rs = (osgParticle::RadialShooter*)me->getShooter();
+            }            
+         }
+
+         traverse(node);
+      }
+
+      osgParticle::VariableRateCounter *vrc;
+      osgParticle::RadialShooter* rs;
+      osgParticle::ModularEmitter *emitter;
+};
 
 
 ///Load a file from disk
@@ -189,65 +124,49 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
 
    if(node != NULL)
    {
+      mLoadedFile = node;
+
       if(GetMatrixNode()->getNumChildren() > 0)
       {
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
 
-      GetMatrixNode()->addChild(node);
+      ParticleVisitor pv;
+      node->accept(pv);
+
+      //Note: the Emitter is removed from the Particle System group
+      //and added to the mNode (Transform) for repositioning.
+      //The rest of the Particle System gets added to the Scene with *no*
+      //transform nodes above it.
+
+      //get the emitter
+      osg::ref_ptr<osgParticle::ModularEmitter> em = pv.emitter;
+
+      //remove it from it's current parent
+      em.get()->getParent(0)->removeChild( em.get() );
+
+      //add it as a child to mNode
+      GetMatrixNode()->addChild( em.get() );
+         
+      //add the rest of the PS to the Scene
+      if (mParentScene.valid())
+      {
+         mParentScene.get()->GetSceneNode()->addChild(mLoadedFile.get());
+      }
 
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
-      GetMatrixNode()->accept( pspv );
+      mLoadedFile->accept(pspv);
    }
    else
    {
       Notify(WARN, "ParticleSystem: Can't load %s", filename.c_str());
       return NULL;
    }
+
    return node;
 }
 
 
-/**
- * Loads a particle system from a file.
- *
- * @param filename the name of the file to load
- */
-//bool ParticleSystem::LoadFile(std::string filename)
-//{
-//   mFilename = filename;
-//   
-//   osg::Node* node = osgDB::readNodeFile(filename);
-//   
-//   if(node != NULL)
-//   {
-//      if(GetMatrixNode()->getNumChildren() > 0)
-//      {
-//         GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
-//      }
-//      
-//      GetMatrixNode()->addChild(node);
-//
-//      ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
-//      GetMatrixNode()->accept( pspv );
-//   }
-//   else
-//   {
-//      Notify(WARN, "ParticleSystem: Can't load %s", mFilename.c_str());
-//      return false;
-//   }
-//   return true;
-//}
-
-/**
- * Returns the name of the last loaded file.
- *
- * @return the filename
- */
-//std::string ParticleSystem::GetFilename()
-//{
-//   return mFilename;
-//}
 
 /**
  * Enables or disables this particle system.
@@ -300,12 +219,19 @@ bool ParticleSystem::IsParentRelative()
    return mParentRelative;
 }
          
-/**
- * Returns this object's OpenSceneGraph node.
- *
- * @return the OpenSceneGraph node
- */
-//osg::Node* ParticleSystem::GetOSGNode()
-//{
-//   return mNode.get();
-//}
+void ParticleSystem::AddedToScene( Scene* scene )
+{
+   if (mParentScene.get() == scene) return;
+
+   if (scene != NULL)
+   {
+      DeltaDrawable::AddedToScene(scene);
+      mParentScene.get()->GetSceneNode()->addChild(mLoadedFile.get());
+   }
+   else
+   {
+      mParentScene.get()->GetSceneNode()->removeChild( mLoadedFile.get() );
+      DeltaDrawable::AddedToScene(scene);
+   }
+
+}

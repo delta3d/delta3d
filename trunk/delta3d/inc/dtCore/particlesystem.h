@@ -26,15 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 
-
-#include <osg/MatrixTransform>
-#include <osg/NodeCallback>
-#include <osg/NodeVisitor>
-
-#include <osgDB/ReadFile>
-
-#include <osgParticle/Emitter>
-
 #include "dtCore/transformable.h"
 #include "dtCore/loadable.h"
 
@@ -46,7 +37,6 @@ namespace dtCore
    class DT_EXPORT ParticleSystem : public Transformable, public Loadable
    {
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
-
 
       public:
 
@@ -60,26 +50,20 @@ namespace dtCore
          /**
           * Destructor.
           */
-         virtual ~ParticleSystem();
-         
-         /**
-          * Loads a particle system from a file.
-          *
-          * @param filename the name of the file to load
-          * @return true if loaded, false if not loaded
-          */
-         //bool LoadFile(std::string filename);
+         virtual ~ParticleSystem();         
 
          ///Load a file from disk
          virtual osg::Node* LoadFile( std::string filename, bool useCache = true);
 
-         
+         ///Supply the Scene this Drawable has been added to
          /**
-          * Returns the name of the last loaded file.
-          *
-          * @return the filename
-          */
-         //std::string GetFilename();
+         * Notifies this drawable object that it has been added to
+         * a scene.
+         *
+         * @param scene the scene to which this drawable object has
+         * been added
+         */
+         virtual void AddedToScene( Scene* scene );
          
          /**
           * Enables or disables this particle system.  Particle systems
@@ -118,20 +102,8 @@ namespace dtCore
           */
          bool IsParentRelative();
          
-         /**
-          * Returns this object's OpenSceneGraph node.
-          *
-          * @return the OpenSceneGraph node
-          */
-         //virtual osg::Node* GetOSGNode();
-         
-         
-      private:
-         
-         /**
-          * The filename of the loaded particle system.
-          */
-         //std::string mFilename;
+
+   private:
          
          /**
           * Whether or not the particle system is enabled.
@@ -143,11 +115,9 @@ namespace dtCore
           * mode.
           */
          bool mParentRelative;
+
+         osg::ref_ptr<osg::Node> mLoadedFile; ///<handle to the whole system
          
-         /**
-          * The OSG node.
-          */
-        // osg::ref_ptr<osg::MatrixTransform> mNode;
    };
 };
 
