@@ -1665,11 +1665,13 @@ struct WorkingBSPLeafNode : public WorkingBSPNode
           p != leaf->mClippedPortals.end();
           p++)
       {
-         for(set<WorkingBSPLeafNode*>::iterator pl = (*p).mRightLeaves.begin();
+         set<WorkingBSPLeafNode*>::iterator pl;
+         for(pl = (*p).mRightLeaves.begin();
              pl != (*p).mRightLeaves.end();
              pl++)
          {
-            for(vector<Portal>::iterator plp = (*pl)->mClippedPortals.begin();
+            vector<Portal>::iterator plp; 
+            for(plp = (*pl)->mClippedPortals.begin();
                 plp != (*pl)->mClippedPortals.end();
                 plp++)
             {
@@ -1705,7 +1707,8 @@ struct WorkingBSPLeafNode : public WorkingBSPNode
          {
             if(!(*p).mInternal)
             {
-               for(set<WorkingBSPLeafNode*>::iterator pl = (*p).mRightLeaves.begin();
+               set<WorkingBSPLeafNode*>::iterator pl; 
+               for(pl = (*p).mRightLeaves.begin();
                    pl != (*p).mRightLeaves.end();
                    pl++)
                {
@@ -2772,8 +2775,9 @@ Node* Compile(Node* input)
    cout << "Creating portals";
    
    bound = input->getBound();
-   
-   tree->CreatePortals(vector<WorkingBSPInternalNode*>());
+
+   vector<WorkingBSPInternalNode*> vbspin = vector<WorkingBSPInternalNode*>();
+   tree->CreatePortals(vbspin);
    
    cout << endl;
    
@@ -2941,8 +2945,9 @@ Node* Compile(Node* input)
          input, 
          Optimizer::SHARE_DUPLICATE_STATE | Optimizer::REMOVE_REDUNDANT_NODES
       );
-      
-      input->accept(TriStripVisitor());
+
+      TriStripVisitor tsv = TriStripVisitor();
+      input->accept( tsv );
       
       cout << endl;
    }
