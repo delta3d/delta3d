@@ -20,6 +20,8 @@ public:
       Producer::KeyboardKey   key,
       Producer::KeyCharacter  character );
 
+   static void UpdatePosition();
+
    static bool GuiHandler( int id, int numparam, void *value );
 
 private:
@@ -46,6 +48,7 @@ private:
       POS_W_TEXT     = 312,
       POS_H_TEXT     = 313,
       POS_SET        = 314,
+      POS_REFRESH    = 315,
       REFRESH_MENU_1 = 1000,
       DEPTH_MENU_1   = 2000
    };
