@@ -2,6 +2,8 @@
 #include "dtCore/transformable.h"
 #include "dtCore/notify.h"
 
+#include "dtUtil/dtUtil.h"
+
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Transformable)
@@ -12,22 +14,23 @@ IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 Transformable::Transformable()
 {
    RegisterInstance(this);
-   mRelTransform = new Transform();
+   //mRelTransform = new Transform();
    mNode = new osg::MatrixTransform();
+   mNode->setName("Transformable");
 }
 
 Transformable::~Transformable()
 {
    Notify(DEBUG_INFO, "Transformable: Deleting '%s'", GetName().c_str());
    DeregisterInstance(this);
-   delete(mRelTransform);
+   //delete(mRelTransform);
 }
 
 
 /** Calculates the world coordinate system matrix using the supplied node.
  * @param node : the node to calculate the world coordinate matrix from
  * @param wcMat : The supplied matrix to return with world coordinates
- * @return successfull or not
+ * @return successfully or not
  */
 bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat)
 {
@@ -125,7 +128,7 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
    osg::Matrix newMat;
 
    if (cs ==ABS_CS)
-   {     
+   { 
      GetAbsoluteMatrix( GetMatrixNode(), &newMat);     
    }
    else if (cs == REL_CS)
@@ -151,7 +154,7 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
  * the child.  Any number of children may be added to a parent.
  * The child's position in relation to the parent's will not change (ie: the 
  * child will *not* snap to the parent's position) unless the offset is 
- * overriden using SetTransform() on the child.
+ * overwritten using SetTransform() on the child.
  *
  * @param *child : The child to add to this Transformable
  *
