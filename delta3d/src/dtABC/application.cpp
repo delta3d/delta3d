@@ -27,6 +27,9 @@ Application::Application(std::string configFilename)
         
       if(foundPath.empty())
       {
+         Notify( WARN,
+            "Application: Can't find config file '%s', using defaults instead.",
+            configFilename.c_str() );
          CreateInstances(); //create default window, camera, etc.
       }
       else
@@ -35,13 +38,13 @@ Application::Application(std::string configFilename)
     
          if( xmlDoc->LoadFile() )
          {
-                 TiXmlElement *root = xmlDoc->RootElement();
-                 ParseConfigFile(root);
+            TiXmlElement *root = xmlDoc->RootElement();
+            ParseConfigFile(root);
          }
          else
          {
-                 Notify(WARN,"Error loading config file, using defaults instead.");
-                 CreateInstances(); //create default window, camera, etc.
+            Notify(WARN,"Application: Error loading config file, using defaults instead.");
+            CreateInstances(); //create default window, camera, etc.
          }
       }
    }
