@@ -81,7 +81,7 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
 
             data = 255 - (unsigned char) (pow(mDensity, data) * 255);
             
-            if(data > 255) data = 255;
+            //if(data > 255) data = 255; //not needed?
             
             *(dataPtr++) = data;
         }

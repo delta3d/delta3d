@@ -20,7 +20,7 @@ void Tracker::CreateInstances()
 {
    ISD_TRACKER_HANDLE trackerHandle;
 
-   trackerHandle = ISD_OpenTracker(NULL, 0, FALSE, FALSE);
+   trackerHandle = ISD_OpenTracker(0, 0, FALSE, FALSE);
 
    if(trackerHandle > 0)
    {

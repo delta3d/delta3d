@@ -89,11 +89,11 @@ void CloudDome::loadShaderSource( osgGL2::ShaderObject* obj, std::string fileNam
     std::string fqFileName = osgDB::findDataFile(fileName);
     if( fqFileName.length() != 0 )
     {
-        obj->loadShaderSourceFromFile( fqFileName.c_str() );
+       obj->loadShaderSourceFromFile( fqFileName.c_str() );
     }
     else
     {
-        Notify(WARN,  "File '%s' not found.", fileName );
+		   Notify(WARN,  "File '%s' not found.", fileName.c_str() );
     }
 }
 

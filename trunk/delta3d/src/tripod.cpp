@@ -38,7 +38,7 @@ void Tripod::SetCamera(std::string camName)
       {
          SetCamera(cam);
       }
-      else Notify(WARN, "Tripod: Can't find Camera %s", camName);
+      else Notify(WARN, "Tripod: Can't find Camera %s", camName.c_str());
    }
 }
 
@@ -60,7 +60,7 @@ void Tripod::SetAttachToTransformable(std::string transName)
       {
          SetAttachToTransformable(trans);
       }
-      else Notify(WARN, "Tripod: Can't find Transformable %s", transName);
+      else Notify(WARN, "Tripod: Can't find Transformable %s", transName.c_str());
    }
 }
 
