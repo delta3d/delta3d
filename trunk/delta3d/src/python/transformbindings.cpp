@@ -17,6 +17,9 @@ void initTransformBindings()
    void (Transform::*Set2)(float, float, float, float, float, float) = &Transform::Set;
    void (Transform::*Set3)(sgVec3, sgVec3) = &Transform::Set;
 
+   void (Transform::*SetLookAt1)(sgVec3, sgVec3, sgVec3) = &Transform::SetLookAt;
+   void (Transform::*SetLookAt2)(float, float, float, float, float, float, float, float, float) = &Transform::SetLookAt;
+   
    void (Transform::*SetTranslation1)(float, float, float) = &Transform::SetTranslation;
    void (Transform::*SetTranslation2)(sgVec3) = &Transform::SetTranslation;
 
@@ -39,7 +42,8 @@ void initTransformBindings()
       .def("Set", Set1)
       .def("Set", Set2)
       .def("Set", Set3)
-      .def("SetLookAt", &Transform::SetLookAt)
+      .def("SetLookAt", SetLookAt1)
+      .def("SetLookAt", SetLookAt2)
       .def("SetTranslation", SetTranslation1)
       .def("SetTranslation", SetTranslation2)
       .def("SetRotation", SetRotation1)
