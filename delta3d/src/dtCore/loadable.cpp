@@ -1,4 +1,4 @@
-#include "dtcore/loadable.h"
+#include "dtCore/loadable.h"
 #include "dtCore/notify.h"
 
 #include <osgDB/ReadFile>
