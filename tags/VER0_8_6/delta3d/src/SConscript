@@ -1,0 +1,12 @@
+Import('*')
+
+SConscript( 'dtABC/SConscript' )
+SConscript( 'dtAudio/SConscript' )
+SConscript( 'dtChar/SConscript' )
+SConscript( 'dtCore/SConscript' )
+SConscript( 'dtHLA/SConscript' )
+SConscript( 'dtUtil/SConscript' )
+SConscript( 'dtVis/SConscript' )
+SConscript( 'gui_fl/SConscript' )
+SConscript( 'python/SConscript' )
+SConscript( 'soarx/SConscript' )

@@ -1,0 +1,6 @@
+Import('*')
+
+SConscript( 'bspCompiler/SConscript' )
+SConscript( 'hlaStealthViewer/SConscript' )
+SConscript( 'psEditor/SConscript' )
+SConscript( 'Viewer/SConscript' )

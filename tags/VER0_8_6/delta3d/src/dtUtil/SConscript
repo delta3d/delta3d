@@ -1,0 +1,10 @@
+Import('*')
+
+dtUtilSrcs = [  'domain.cpp',
+                'matrixutil.cpp',
+                'polardecomp.cpp' ]
+
+dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS=[ 'osg', 'plibsg', 'plibul' ] )
+
+env.Alias( 'install', env.Install( '$prefix/lib', dtUtilLib ) )
+env.Default( dtUtilLib )

@@ -1,0 +1,4 @@
+Import('*')
+
+bspCompiler = env.Program( 'bspCompiler', ['splitgeode.cpp', 'main.cpp'], LIBS=[ 'dtvis', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'gdal' ] )
+
