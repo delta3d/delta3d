@@ -30,17 +30,20 @@
 
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME1
+#undef _AUTOLIBNAME2
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtchard.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBodyd.lib"
+   #define _AUTOLIBNAME2 "cal3d_d.lib"
 #else
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtchar.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBody.lib"
+   #define _AUTOLIBNAME2 "cal3d.lib"
 #endif
 
 
@@ -51,6 +54,7 @@
    #endif
 
    #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
 
 #endif
 
@@ -59,6 +63,7 @@
 #endif
 
 #pragma comment (lib, _AUTOLIBNAME1)
+#pragma comment (lib, _AUTOLIBNAME2)
 
 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
