@@ -54,7 +54,7 @@ public:
       Object *obj3 = new Object("GroundCrate");
 
       //load the model files
-      if (!obj1->LoadFile("dirt/flatdirt.ive")) return;
+      if (!obj1->LoadFile("dirt/testdirt.ive")) return;
       if (!obj2->LoadFile("physics/crate/crate.ive")) return; 
       if (!obj3->LoadFile("physics/crate/crate.ive")) return; 
 
@@ -68,17 +68,28 @@ public:
       obj2->SetTransform( &position );
 
       //position the crate on the ground
-      position.Set(0.0f, 0.f, 0.5f, 0.0f, 0.0f, 0.0f);
+      position.Set(0.0f, 0.f, 0.525f, 0.0f, 0.0f, 0.0f);
       obj3->SetTransform( &position );
 
+      float lx = 1.0f;
+      float ly = 1.0f;
+      float lz = 1.0f;
+
+      #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+      //create collision meshes
+      obj1->SetCollisionBox(50.0f,50.0f,0.05f);
+      obj2->SetCollisionBox(lx,ly,lz);
+      obj3->SetCollisionBox(lx,ly,lz);
+      #else
       //create collision meshes
       obj1->SetCollisionMesh();
       obj2->SetCollisionBox();
       obj3->SetCollisionBox();
+      #endif //!defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
       //set the mass for objects
       dMass mass;
-      dMassSetBox(&mass, 1, 1.0f, 1.0f, 1.0f);
+      dMassSetBox(&mass, 1, lx, ly, lz);
       obj2->SetMass(&mass);
       obj3->SetMass(&mass);
 
@@ -141,13 +152,14 @@ protected:
       {
          this->Quit();
       }
-
+      
       if (key == Producer::Key_B)
       {
          if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
             box->LoadFile("physics/crate/crate.ive");
+ 
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -157,11 +169,15 @@ protected:
                random(0.f, 90.f));
             box->SetTransform(&xform);
 
-            box->SetCollisionBox();
-
             float lx = 1.0f;
             float ly = 1.0f;
             float lz = 1.0f;
+
+            #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+            box->SetCollisionBox(lx,ly,lz);
+            #else
+            box->SetCollisionBox();
+            #endif //!defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
             dMass mass;
             dMassSetBox(&mass, 1, lx, ly, lz);
@@ -176,14 +192,14 @@ protected:
             mToRemove.push( mObjects.front() );
          }
       }
-
+      
       if (key == Producer::Key_S)
       {
          if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
             sphere->LoadFile("physics/sphere/happy_sphere.ive");
-
+  
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
                random(5.f, 10.f),
@@ -192,9 +208,13 @@ protected:
                random(0.f, 90.f));
             sphere->SetTransform(&xform);
 
-            sphere->SetCollisionSphere();
-
             float radius = 0.5f;
+
+            #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+            sphere->SetCollisionSphere(radius);
+            #else
+            sphere->SetCollisionSphere();
+            #endif //!defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
             dMass mass;
             dMassSetSphere(&mass, 1, radius);
@@ -208,7 +228,7 @@ protected:
             mToRemove.push( mObjects.front() );
          }
       }
-
+      
       if (key == Producer::Key_C)
       {
          if( mObjects.size() < kLimit )
@@ -224,10 +244,14 @@ protected:
                random(0.f, 90.f));
             cyl->SetTransform(&xform);
 
-            cyl->SetCollisionCappedCylinder();
-
             float radius = 0.321f; 
-            float length = 1.0f;
+            float length = 1.0f;            
+
+            #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+            cyl->SetCollisionCappedCylinder(radius,length);
+            #else
+            cyl->SetCollisionCappedCylinder();
+            #endif // !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
             dMass mass;
             dMassSetCappedCylinder(&mass, 1, 2, radius, length);
