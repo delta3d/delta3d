@@ -41,7 +41,6 @@ void initRecorderBindings();
 void initSceneBindings();
 void initSkyBoxBindings();
 void initSkyDomeBindings();
-void initSoundBindings();
 void initSystemBindings();
 void initTerrainBindings();
 void initTrackerBindings();
@@ -97,7 +96,6 @@ BOOST_PYTHON_MODULE(dtCore)
    initLogicalInputDeviceBindings();
    initInputMapperBindings();
    initDeltaWinBindings();
-   initSoundBindings();
    initParticleSystemBindings();
    initUIDrawableBindings();
    initIsectorBindings();

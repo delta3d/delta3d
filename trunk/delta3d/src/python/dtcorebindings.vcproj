@@ -209,9 +209,6 @@
 				RelativePath=".\skydomebindings.cpp">
 			</File>
 			<File
-				RelativePath=".\soundbindings.cpp">
-			</File>
-			<File
 				RelativePath=".\systembindings.cpp">
 			</File>
 			<File
