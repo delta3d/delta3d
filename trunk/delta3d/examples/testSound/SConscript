@@ -1,0 +1,5 @@
+Import('*')
+
+env = env.Copy()
+
+testSound = env.Program( 'testSound', 'testsound.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'dtaudio', 'openal', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm' ] )
