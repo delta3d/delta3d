@@ -103,6 +103,24 @@ public:
 
 protected:
 
+   virtual void PreFrame( const double deltaFrameTiime )
+   {
+      while( !mToAdd.empty() )
+      {
+         GetScene()->AddDrawable( mToAdd.front() );
+         mObjects.push( mToAdd.front() );
+         mToAdd.pop();
+      }
+      
+      while( !mToRemove.empty() )
+      {
+         GetScene()->RemoveDrawable( mToRemove.front() );
+         mObjects.pop();
+         mToRemove.pop();
+      }
+   
+   }
+
    virtual void KeyPressed(dtCore::Keyboard* keyboard, 
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
@@ -114,7 +132,7 @@ protected:
 
       if (key == Producer::Key_B)
       {
-         if( mObjects.size() < 25 )
+         if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
             box->LoadFile("d3d_models/Crate/2lowpol_crate.ive");
@@ -139,21 +157,18 @@ protected:
             box->SetMass(&mass);
 
             box->EnableDynamics();
-
-            GetScene()->AddDrawable(box);
-
-            mObjects.push(box);
+            
+            mToAdd.push( box );
          }
          else
          {
-            GetScene()->RemoveDrawable( mObjects.front() );
-            mObjects.pop();
+            mToRemove.push( mObjects.front() );
          }
       }
 
       if (key == Producer::Key_S)
       {
-         if( mObjects.size() < 25 )
+         if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
             sphere->LoadFile("d3d_models/Sphere/happy_sphere.IVE");
@@ -175,21 +190,18 @@ protected:
             dMassSetSphere(&mass, 1, radius);
             sphere->SetMass(&mass);
             sphere->EnableDynamics();
-
-            GetScene()->AddDrawable(sphere);
-
-            mObjects.push(sphere);
+     
+             mToAdd.push( sphere );
          }
          else
-         {
-            GetScene()->RemoveDrawable( mObjects.front() );
-            mObjects.pop();
+         {         
+            mToRemove.push( mObjects.front() );
          }
       }
 
       if (key == Producer::Key_C)
       {
-         if( mObjects.size() < 25 )
+         if( mObjects.size() < kLimit )
          {
             Object *cyl = new Object("cylinder");
             cyl->LoadFile("d3d_models/Barrel/rad_drum/rad_drum.ive");
@@ -214,22 +226,28 @@ protected:
 
             cyl->EnableDynamics();
 
-            GetScene()->AddDrawable(cyl);
-
-            mObjects.push(cyl);
+            mToAdd.push( cyl );
          }
          else
          {
-            GetScene()->RemoveDrawable( mObjects.front() );
-            mObjects.pop();
+            mToRemove.push( mObjects.front() );
          }
       }
    }
 
+   static const unsigned int kLimit;
+
+   static std::queue<Object*> mToAdd;
+   static std::queue<Object*> mToRemove;
    static std::queue<Object*> mObjects;
 };
 
+const unsigned int TestPhysicsApp::kLimit = 50;
+
+std::queue<Object*> TestPhysicsApp::mToAdd;
+std::queue<Object*> TestPhysicsApp::mToRemove;
 std::queue<Object*> TestPhysicsApp::mObjects;
+
 
 int main( int argc, char **argv )
 {
