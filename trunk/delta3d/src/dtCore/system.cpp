@@ -6,6 +6,7 @@
 #include "dtCore/notify.h"
 #include "dtCore/camera.h"
 
+
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(System)
@@ -62,7 +63,8 @@ void System::Run()
       Frame(deltaFrameTime);
       PostFrame(deltaFrameTime);
    }
-
+   Notify(DEBUG_INFO, "System: Exiting...");
+   SendMessage("exit");
 }
 
 void System::Start()
@@ -103,6 +105,6 @@ void System::Config()
    {
       Camera::GetInstance(camIdx)->Frame();
    }
-   
+
    SendMessage("configure");
 }
