@@ -3,8 +3,8 @@
 #ifndef psEditorGUI_h
 #define psEditorGUI_h
 #include <FL/Fl.H>
-#include "fl_dt_window.h"
-#include "dtabc.h"
+#include "dtABC/fl_dt_window.h"
+#include "dtABC/dtabc.h"
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
 extern Fl_Menu_Bar *MainMenu;

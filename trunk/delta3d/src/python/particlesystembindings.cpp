@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "particlesystem.h"
+#include "python/dtpython.h"
+#include "dtCore/particlesystem.h"
 
 using namespace boost::python;
 using namespace dtCore;

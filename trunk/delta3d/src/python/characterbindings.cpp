@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "character.h"
+#include "python/dtpython.h"
+#include "dtChar/character.h"
 
 using namespace boost::python;
 using namespace dtCore;

@@ -4,8 +4,8 @@
 //
 //______________________________________________________________
 // Include headers:
-#include "soarxdrawable.h"
-#include "soarx_camera.h"
+#include "soarx/soarxdrawable.h"
+#include "soarx/soarx_camera.h"
 
 #include <iostream>
 

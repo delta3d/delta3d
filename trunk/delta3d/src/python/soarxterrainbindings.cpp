@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
+#include "python/dtpython.h"
 #include "soarx/soarxterrain.h"
 
 using namespace boost::python;

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "application.h"
+#include "python/dtpython.h"
+#include "dtABC/application.h"
 
 using namespace boost::python;
 using namespace dtABC;

@@ -1,8 +1,8 @@
 #ifndef DELTA_MYWIDGET
 #define DELTA_MYWIDGET
 
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 
 class MyWidget :  public   dtABC::Widget
 {

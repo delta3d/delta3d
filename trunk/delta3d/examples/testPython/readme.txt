@@ -16,6 +16,7 @@ flyhelo.py: should be run from the prompt within testPython to fly the
 testpathedcamera.py: flies the camera along a series of waypoints.
 
 testPythongui.py: opens a Tk GUI and displays the helo.
+                  Bug: user may need to click on the menu before helo appears.
 
 testpython.py: also flies a helo in a circle, but should be run straight from
                Python instead of within the testPython C++ application.
@@ -42,11 +43,16 @@ Build boost_python.
 Make sure boost_python.dll and boost_python_debug.dll are within a directory in your PATH
    evironement variable.
 
+Check if the following environement variables are set:
+  PYTHON_ROOT: directory of Python installation
+  PYTHON_LIB_PATH: %PYTHON_ROOT%/lib
+  PYTHON_VERSION: version of your Python installation
+  PYTHONPATH: environement variable contains the directory with the resulting
+              .pyd libraries (most likely delta3d/bin).
+
 Build the Delta3D Python bindings:
 - Open delta3d/src/python/dtPython.sln
 - Build.
-- Make sure the PYTHONPATH environement variable contains the directory with the resulting
-  .pyd libraries (most likely delta3d/bin).
 
 To use pre-built testPython: 
 - Go to examples/testPython/Release.
@@ -54,14 +60,14 @@ To use pre-built testPython:
 - At the Python prompt inside the console/terminal type:
    execfile('../flyhelo.py')
 
-
 To build from source:
 - Open examples/testPython/testPython.sln.
-- Go to the "Projects/VC++ Directories" section of the Visual C++ "Options" menu.  
-- Add the Python and Boost include directories (e.g., "c:\Python23\include" and "c:\boost_1_31_0")
-  to the "Include" section.
-- Add the Python and Boost lib directories (e.g., "c:\Python23\libs" and 
-  "C:\boost_1_31_0\libs\python\build\bin-stage") to the "Library files" section.
+- Go to the Tools->Options->Projects->VC++ Directories and select 
+  "Show directories for: Include files".
+- Add the Boost include directorie (e.g., "c:\boost_1_31_0") to the "Include" 
+  section.
+- Boost lib directories (e.g., "C:\boost_1_31_0\libs\python\build\bin-stage") 
+  to the "Library files" section.
 - Build testPython.
 - Start testPython.
 - At the Python prompt inside the console/terminal type:
@@ -103,9 +109,10 @@ Install Boost Python:
 - Decompress the BoostJam archive and place the file 'bjam' in your PATH.
 - Go to boost_1_31_0/libs/python/build.
 - Run 'bjam -sTOOLS=gcc'.
-- Copy resulting shared objects to /usr/local/lib:
-     'cp -d libboost_python.so* /usr/local/lib'
-     'cp -d libboost_python_debug.so* /usr/local/lib'
+- Copy resulting shared objects to delta3d/ext/lib (non-debug version is
+  already supplied, but hey, you want your own, right?):
+     'cp -d libboost_python.so* $DELTA_ROOT/ext/lib'
+     'cp -d libboost_python_debug.so* $DELTA_ROOT/ext/lib'
 
 Note: If you wish to place the boost_python libraries in a different location,
       make sure to edit delta3d/src/python/CMakeLists.txt and add that location

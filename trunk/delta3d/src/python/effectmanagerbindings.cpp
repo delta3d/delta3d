@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "effectmanager.h"
+#include "python/dtpython.h"
+#include "dtCore/effectmanager.h"
 
 using namespace boost::python;
 using namespace dtCore;

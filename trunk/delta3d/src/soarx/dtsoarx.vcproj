@@ -3,8 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="dtsoarx"
-	ProjectGUID="{C34553DE-4963-4CAD-BA56-39B550358E87}"
-	RootNamespace="dtsoarx"
+	ProjectGUID="{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -20,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc,..\..\inc\soarx,..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +35,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="gdal_i.lib dtcored.lib osgd.lib osgUtild.lib osgDBd.lib osgGL2d.lib sg_d.lib tinyxmld.lib ul_d.lib oded.lib opengl32.lib"
 				OutputFile="..\..\bin\dtsoarxd.dll"
-				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcd; libcmtd; libc"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
@@ -70,7 +69,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc,..\..\inc\soarx,..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -84,7 +83,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="gdal_i.lib dtcore.lib osg.lib osgUtil.lib osgDB.lib osgGL2.lib sg.lib tinyxml.lib ul.lib ode.lib opengl32.lib"
 				OutputFile="..\..\bin\dtsoarx.dll"
-				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc; libcmt"
 				ImportLibrary="..\..\lib\dtsoarx.lib"/>
 			<Tool
