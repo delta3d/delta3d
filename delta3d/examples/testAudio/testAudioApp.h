@@ -28,8 +28,9 @@ class testAudioApp   :  public   dtABC::Application
 
                enum              GfxObjId
                                  {
-                                    BOX   = 0L,
-                                    GROUND,
+                                    GROUND   = 0L,
+                                    BOX_A,
+                                    BOX_C,
 
                                     kNumGfx
                                  };
@@ -57,7 +58,7 @@ class testAudioApp   :  public   dtABC::Application
                                              Producer::KeyCharacter  character   );
 
    private:
-      inline   void              LoadPlaySound( const char* fname, bool boxed = false );
+      inline   void              LoadPlaySound( const char* fname, unsigned int box = 0L );
       inline   void              StopAllSounds( void );
       inline   void              FreeAllStoppedSounds( bool forced = false );
       inline   void              FlushQueuedSounds( void );
@@ -73,6 +74,7 @@ class testAudioApp   :  public   dtABC::Application
       inline   dtCore::ParticleSystem* LoadPSFile( const char* fname );
       inline   void                    InitInputDevices( void );
       inline   void                    SetUpCamera( void );
+      inline   void                    MoveTheStupidBox( unsigned int box );
 
       static   void              MakeSmoke( dtAudio::Sound* sound, void* param );
       static   void              StopSmoke( dtAudio::Sound* sound, void* param );
@@ -86,11 +88,13 @@ class testAudioApp   :  public   dtABC::Application
                dtAudio::Listener*            mMic;
 
                OBJ_PTR                       mGfxObj[kNumGfx];
-               PAR_PTR                       mPSys;
+               PAR_PTR                       mPSysA;
+               PAR_PTR                       mPSysC;
                FXM_PTR                       mFXMgr;
                dtCore::LogicalInputDevice*   mInputDevice;
                dtCore::MotionModel*          mMotionModel;
-               unsigned int                  mSmokeCount;
+               unsigned int                  mSmokeCountA;
+               unsigned int                  mSmokeCountC;
 };
 
 
