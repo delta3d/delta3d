@@ -170,27 +170,10 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       if( const char* changeResChar  = win->Attribute("ChangeDisplayResolution") )
          changeRes = atoi( changeResChar );
 
+      if( changeRes )
+         DeltaWin::ChangeScreenResolution( width, height, pixelDepth, refreshRate );
 
-      if( changeRes && fullScreen )     
-      {
-         CreateInstances( name, winX, winY, width, height, showCursor, !fullScreen );
-
-         mWindow->GetRenderSurface()->realize();
-         mWindow->ChangeScreenResolution( width, height, pixelDepth, refreshRate );
-         mWindow->SetFullScreenMode( fullScreen );
-      }
-      else if ( changeRes && !fullScreen )
-      {
-         CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
-
-         mWindow->GetRenderSurface()->realize();
-         mWindow->ChangeScreenResolution( width, height, pixelDepth, refreshRate );
-      }
-      else
-      {
-         CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
-      }
-      
+      CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
 
    }
 
