@@ -52,6 +52,7 @@ void Light::AddedToScene( Scene *scene )
 { 
    if( scene )
    {
+      DeltaDrawable::AddedToScene( scene );
       SetEnabled( true );
       scene->RegisterLight( this );
    }
@@ -59,7 +60,6 @@ void Light::AddedToScene( Scene *scene )
    {
       SetEnabled( false );
       mParentScene->UnRegisterLight( this );
+      DeltaDrawable::AddedToScene( scene );
    }
-
-   DeltaDrawable::AddedToScene( scene );
 }
