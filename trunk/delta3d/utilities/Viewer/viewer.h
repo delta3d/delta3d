@@ -119,18 +119,18 @@ class Viewer :  public   dtABC::Widget
                void           ResetCam( void );
 
    private:
-      inline   void           GetDefaultState( ViewState* vs );
-      inline   void           EnableFile( bool on, unsigned int indx );
-      inline   void           EnableDisplay( bool on, DISPLAYITEM di );
-      inline   void           EnablePolygonMode( POLYGONMODE mode, bool on, unsigned int indx = SCENE_INDX );
-      inline   void           EnableTexture( bool on, unsigned int indx = SCENE_INDX );
-      inline   void           EnableLighting( bool on, unsigned int indx = SCENE_INDX );
-      inline   void           EnableMotionModel( MOTIONMODEL mm );
-      inline   void           EnableJoystick( bool on, JOYSTICKID jy );
-      inline   void           InitInputDevices( void );
-      inline   void           InitObjects( void );
-      inline   void           InitCompass( void );
-      inline   void           InitGridPlanes( void );
+               void           GetDefaultState( ViewState* vs );
+               void           EnableFile( bool on, unsigned int indx );
+               void           EnableDisplay( bool on, DISPLAYITEM di );
+               void           EnablePolygonMode( POLYGONMODE mode, bool on, unsigned int indx = SCENE_INDX );
+               void           EnableTexture( bool on, unsigned int indx = SCENE_INDX );
+               void           EnableLighting( bool on, unsigned int indx = SCENE_INDX );
+               void           EnableMotionModel( MOTIONMODEL mm );
+               void           EnableJoystick( bool on, JOYSTICKID jy );
+               void           InitInputDevices( void );
+               void           InitObjects( void );
+               void           InitCompass( void );
+               void           InitGridPlanes( void );
 
    private:
       osg::ref_ptr<dtCore::LogicalInputDevice>   mInputDevice;
