@@ -264,7 +264,7 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
    if (pixel_x < 0 || pixel_x > w ) return false;
    if (pixel_y < 0 || pixel_y > h ) return false;
 
-   if( w != 0 && y != 0)
+   if( w != 0 && h != 0)
    {
       x = ( 2 * pixel_x / w ) - 1;
       y = ( 2 * pixel_y / h ) - 1;
