@@ -75,10 +75,18 @@ bool Object::LoadFile(string filename, bool useCache)
    mFilename = filename;
    Notify(DEBUG_INFO, "Object:Loading %s...", mFilename.c_str());
 
-   osgDB::Registry::CacheHintOptions cache = osgDB::Registry::CACHE_NONE;
-   if (useCache) cache = osgDB::Registry::CACHE_ALL;
+   osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 
-   osg::Node *model = osgDB::readNodeFile(mFilename, cache);
+   if (useCache)
+   {
+      options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
+   }
+   else
+   {  
+      options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_NONE);
+   }
+   
+   osg::Node *model = osgDB::readNodeFile(mFilename, options.get());
    if (model != NULL)
    {
       // this crashes - prolly should be called from the Update traversal

@@ -195,7 +195,7 @@ Compass::ctor( void )
    osg::MatrixTransform*   modelview_abs  = new osg::MatrixTransform;
    assert( modelview_abs );
 
-   modelview_abs->setReferenceFrame( osg::Transform::RELATIVE_TO_ABSOLUTE );
+   modelview_abs->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
    modelview_abs->setMatrix( osg::Matrix::identity() );
    modelview_abs->addChild( axis->GetOSGNode() );
 
