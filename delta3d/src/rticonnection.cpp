@@ -210,6 +210,11 @@ void RTIConnection::JoinFederationExecution(string executionName,
       mBaseEntityClassHandle
    );
    
+   mArticulatedParametersArrayAttributeHandle = mRTIAmbassador.getAttributeHandle(
+      "ArticulatedParametersArray",
+      mPhysicalEntityClassHandle
+   );
+   
    mDamageStateAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "DamageState",
       mPhysicalEntityClassHandle
@@ -338,6 +343,7 @@ void RTIConnection::JoinFederationExecution(string executionName,
    ahs->add(mVelocityVectorAttributeHandle);
    ahs->add(mAccelerationVectorAttributeHandle);
    ahs->add(mAngularVelocityVectorAttributeHandle);
+   ahs->add(mArticulatedParametersArrayAttributeHandle);
    ahs->add(mDamageStateAttributeHandle);
    ahs->add(mForceIdentifierAttributeHandle);
    ahs->add(mMarkingAttributeHandle);
@@ -2219,6 +2225,25 @@ void RTIConnection::reflectAttributeValues(
 
             ghost->SetAngularVelocityVector(velocityVector);
          }
+      }
+      else if(handle == mArticulatedParametersArrayAttributeHandle)
+      {
+         unsigned long length;
+         
+         char* buf = theAttributes.getValuePointer(i, length);
+         
+         int numParams = length/20;
+         
+         vector<ArticulatedParameter> params;
+         
+         params.resize(numParams);
+         
+         for(int i=0;i<numParams;i++)
+         {
+            params[i].Decode(&buf[i*20]);
+         }
+         
+         ghost->SetArticulatedParametersArray(params);
       }
       else if(handle == mDamageStateAttributeHandle)
       {
