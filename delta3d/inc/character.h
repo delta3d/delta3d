@@ -9,6 +9,7 @@
 #include "deltadrawable.h"
 #include "transformable.h"
 
+#undef Status
 #include "rbody/osg/OsgBody.h"
 
 namespace dtChar

@@ -21,7 +21,7 @@
 #include "stats.h"
 
 namespace dtCore
-{
+{         
    class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
    {
    public:
