@@ -82,13 +82,13 @@ namespace dtCore
       Mouse *GetMouse() {return mMouse.get();}
 
       //Note: make these static
-      ResolutionVec GetResolutions( void );
+      static ResolutionVec GetResolutions( void );
  
       //void  SetChangeScreenResolutionFlag( int width, int height, int pixelDepth );
                               
-      Resolution GetCurrentResolution( void );
-      bool  ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
-      bool  ChangeScreenResolution( Resolution res );
+      static Resolution GetCurrentResolution( void );
+      static bool  ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
+      static bool  ChangeScreenResolution( Resolution res );
 
    private:
 
