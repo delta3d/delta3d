@@ -1,0 +1,6 @@
+SConscript( dirs=['bspCompiler',
+                  'psEditor', 
+                  'Viewer'] )
+
+#SConscript('hlaStealthViewer')
+
