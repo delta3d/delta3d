@@ -112,14 +112,14 @@ class Viewer :  public   dtABC::Widget
       virtual  void           FileLoaded( bool loaded, const char* filename ) = 0L;
       inline   osg::Group*    GetFileObj( unsigned int indx );
       inline   osg::Group*    GetDisplayObj( unsigned int indx );
+               void           LoadFile( ViewState* vs );
+               void           GetState( ViewState* vs );
+               void           SaveFileAs( char *filename );
+               void           SetState( ViewState* vs );
+               void           ResetCam( void );
 
    private:
-      inline   void           GetState( ViewState* vs );
-      inline   void           SetState( ViewState* vs );
       inline   void           GetDefaultState( ViewState* vs );
-      inline   void           LoadFile( ViewState* vs );
-      inline   void           SaveFileAs( char *filename );
-      inline   void           ResetCam( void );
       inline   void           EnableFile( bool on, unsigned int indx );
       inline   void           EnableDisplay( bool on, DISPLAYITEM di );
       inline   void           EnablePolygonMode( POLYGONMODE mode, bool on, unsigned int indx = SCENE_INDX );
@@ -137,6 +137,7 @@ class Viewer :  public   dtABC::Widget
                dtCore::MotionModel*          mMotionModel[NUMMOTIONMODELS];
                osg::MatrixTransform*      mDispXform[NUMGRIDS];
                ViewState&                 mCurState;
+               osg::ref_ptr<osg::Group>   mViewerNode;
 };
 
 

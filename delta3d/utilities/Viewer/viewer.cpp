@@ -92,6 +92,13 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 
    Widget::Config( d );
 
+   SetNotifyLevel(DEBUG_INFO, WARN);
+
+   Scene*   scene = GetScene();
+   osg::Group* sceneRoot  = scene->GetSceneNode();
+   mViewerNode = new osg::Group();
+   sceneRoot->addChild(mViewerNode.get());
+
    InitInputDevices();
    InitGridPlanes();
    InitCompass();
@@ -105,11 +112,6 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 
    GetCamera()->SetTransform( &cam );
 
-   Scene*   scene = GetScene();
-   assert( scene );
-
-   osg::Group* root  = scene->GetSceneNode();
-   assert( root );
 
    // make sure that the global color mask exists.
    osg::ColorMask*   rootColorMask  = new osg::ColorMask;
@@ -121,11 +123,9 @@ Viewer::Config( const WinData* d /*= NULL*/ )
    rootDepth->setFunction( osg::Depth::LESS );
    rootDepth->setRange( 0.0, 1.0 );
 
-   osg::StateSet* rootStateSet   = new osg::StateSet();        
+   osg::StateSet* rootStateSet = mViewerNode->getOrCreateStateSet();
    rootStateSet->setAttribute( rootColorMask );
    rootStateSet->setAttribute( rootDepth );
-
-   root->setStateSet( rootStateSet );
 
    // force default static settings for ViewState
    ViewState vs;
@@ -177,9 +177,8 @@ Viewer::OnMessage( MessageData* data )
 
 
 
-/**private methods */
-void
-Viewer::GetState( ViewState* vs )
+/**Protected */
+void Viewer::GetState( ViewState* vs )
 {
    assert( vs );
 
@@ -196,9 +195,8 @@ Viewer::GetState( ViewState* vs )
 }
 
 
-
-void
-Viewer::SetState( ViewState* vs )
+//protected
+void Viewer::SetState( ViewState* vs )
 {
    assert( vs );
 
@@ -345,9 +343,8 @@ Viewer::GetDefaultState( ViewState* vs )
 }
 
 
-
-void
-Viewer::LoadFile( ViewState* vs )
+//protected
+void Viewer::LoadFile( ViewState* vs )
 {
    assert( vs );
 
@@ -389,6 +386,7 @@ Viewer::LoadFile( ViewState* vs )
    // set up the scribe node (turned off) then attach the file object
    osgFX::Scribe* scribe   = new osgFX::Scribe;
    assert( scribe );
+   scribe->setName("fileScribe");
 
    scribe->setEnabled( false );
    scribe->addChild( filenode );
@@ -420,8 +418,8 @@ Viewer::LoadFile( ViewState* vs )
    scenenode->addChild( scribe );
 }
 
-void
-Viewer::SaveFileAs( char *filename )
+//protected
+void Viewer::SaveFileAs( char *filename )
 {
    assert(filename!=NULL);
 
@@ -438,8 +436,8 @@ Viewer::SaveFileAs( char *filename )
 }
 
 
-void
-Viewer::ResetCam( void )
+//Protected
+void Viewer::ResetCam( void )
 {
    Transform   cam;
    mCurState.GetCamPosition( cam, true );
@@ -480,9 +478,13 @@ Viewer::EnableDisplay( bool on, DISPLAYITEM di )
    assert( node );
 
    if( on )
+   {
       node->setNodeMask( NODEMASK_ON );
+   }
    else
+   {
       node->setNodeMask( NODEMASK_OFF );
+   }
 }
 
 
@@ -842,13 +844,14 @@ Viewer::InitObjects( void )
    Scene*   scene = GetScene();
    assert( scene );
 
-   osg::Group*  root  = scene->GetSceneNode();
-   assert( root );
+   //osg::Group*  root  = scene->GetSceneNode();
+   //assert( root );
 
    osgFX::Scribe* scribe   = new osgFX::Scribe;
    assert( scribe );
+   scribe->setName("HeadScribe");
 
-   root->addChild( scribe );
+   mViewerNode->addChild( scribe );
 
    scribe->setEnabled( false );
 }
@@ -864,7 +867,8 @@ Viewer::InitCompass( void )
    Compass* compass  = new Compass( cam );
    assert( compass );
 
-   AddDrawable( compass );
+   //AddDrawable( compass );
+   mViewerNode->addChild(compass->GetOSGNode());
 }
 
 
@@ -927,15 +931,15 @@ Viewer::InitGridPlanes()
    mDispXform[ZX_PLANE]->setNodeMask( NODEMASK_OFF );
 
 
-   Scene* scene   = GetScene();
-   assert( scene );
+   //Scene* scene   = GetScene();
+   //assert( scene );
 
-   osg::Group* root = scene->GetSceneNode();
-   assert( root != NULL );
+   //osg::Group* root = scene->GetSceneNode();
+   //assert( root != NULL );
 
-   root->addChild( mDispXform[XY_PLANE] );
-   root->addChild( mDispXform[YZ_PLANE] );
-   root->addChild( mDispXform[ZX_PLANE] );
+   mViewerNode->addChild( mDispXform[XY_PLANE] );
+   mViewerNode->addChild( mDispXform[YZ_PLANE] );
+   mViewerNode->addChild( mDispXform[ZX_PLANE] );
 }
 
 
@@ -943,13 +947,14 @@ Viewer::InitGridPlanes()
 osg::Group*
 Viewer::GetFileObj( unsigned int indx )
 {
-   Scene*   scene = GetScene();
-   assert( scene );
+   //Scene*   scene = GetScene();
+   //assert( scene );
 
-   osg::Group* root  = scene->GetSceneNode();
-   assert( root );
+   //osg::Group* root  = scene->GetSceneNode();
+   //( root );
 
-   osg::Group* objs  = static_cast<osg::Group*>(root->getChild( FILEOBJS ));
+
+   osg::Group* objs  = static_cast<osg::Group*>(mViewerNode->getChild( FILEOBJS ));
    assert( objs );
 
    if( indx >= objs->getNumChildren() )
@@ -963,14 +968,14 @@ Viewer::GetFileObj( unsigned int indx )
 osg::Group*
 Viewer::GetDisplayObj( unsigned int indx )
 {
-   Scene*   scene = GetScene();
-   assert( scene );
+   //Scene*   scene = GetScene();
+   //assert( scene );
 
-   osg::Group* root  = scene->GetSceneNode();
-   assert( root );
+   //osg::Group* root  = scene->GetSceneNode();
+   //assert( root );
 
    if( indx >= NUMDISPLAYITEMS )
       return   NULL;
 
-   return   static_cast<osg::Group*>(root->getChild( indx ));
+   return   static_cast<osg::Group*>(mViewerNode->getChild( indx ));
 }
