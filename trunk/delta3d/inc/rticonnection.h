@@ -656,11 +656,11 @@ namespace dtHLA
                                           double* x, double* y, double* z);
 
          /**
-          * Clamps the specified transform to the ground using the active ground clamp mode.
+          * Clamps the specified entity to the ground using the active ground clamp mode.
           *
-          * @param transform the transform to clamp
+          * @param entity the entity to clamp
           */
-         void ClampToGround(dtCore::Transform* transform);
+         void ClampToGround(Entity* entity);
          
          /**
           * The RTI ambassador.

@@ -1211,18 +1211,30 @@ void RTIConnection::GeodeticToGeocentric(double latitude, double longitude, doub
 }
 
 /**
- * Clamps the specified transform to the ground using the active ground clamp mode.
+ * Clamps the specified entity to the ground using the active ground clamp mode.
  *
- * @param transform the transform to clamp
+ * @param entity the entity to clamp
  */
-void RTIConnection::ClampToGround(Transform* transform)
-{
-   if(mGroundClampMode != NO_CLAMP)
+void RTIConnection::ClampToGround(Entity* entity)
+{  
+   bool groundBased = 
+      (entity->GetEntityType().GetKind() == PlatformKind ||
+       entity->GetEntityType().GetKind() == LifeFormKind) &&
+      (entity->GetEntityType().GetDomain() == LandPlatformDomain ||
+       entity->GetEntityType().GetDomain() == SurfacePlatformDomain);
+   
+   bool destroyed = (entity->GetDamageState() == Destroyed);
+   
+   if((groundBased && mGroundClampMode != NO_CLAMP) || destroyed)
    {
+      Transform transform;
+   
+      entity->GetTransform(&transform);
+   
       sgVec3 xyz, groundNormal = {0, 0, 1};
       float HOT = 0.0f;
       
-      transform->GetTranslation(xyz);
+      transform.GetTranslation(xyz);
       
       osgUtil::IntersectVisitor iv;
    
@@ -1258,14 +1270,14 @@ void RTIConnection::ClampToGround(Transform* transform)
       
       xyz[2] = HOT;
       
-      transform->SetTranslation(xyz);
+      transform.SetTranslation(xyz);
       
-      if(mGroundClampMode == CLAMP_ELEVATION_AND_ROTATION)
+      if(groundBased && mGroundClampMode == CLAMP_ELEVATION_AND_ROTATION && !destroyed)
       {
          sgVec3 oldNormal = { 0, 0, 1 };
          sgMat4 rotMat;
          
-         transform->GetRotation(rotMat);
+         transform.GetRotation(rotMat);
          
          sgXformVec3(oldNormal, rotMat);
          
@@ -1285,9 +1297,11 @@ void RTIConnection::ClampToGround(Transform* transform)
             
             sgPostMultMat4(rotMat, deltaRot);
             
-            transform->SetRotation(rotMat);
+            transform.SetRotation(rotMat);
          }
       }
+      
+      entity->SetTransform(&transform);
    }
 }
 
@@ -1952,14 +1966,9 @@ void RTIConnection::OnMessage(MessageData *data)
          
          transform.SetTranslation(position);
          
-         if((ghost->GetEntityType().GetKind() == PlatformKind ||
-             ghost->GetEntityType().GetKind() == LifeFormKind) &&
-            ghost->GetEntityType().GetDomain() == LandPlatformDomain)
-         {
-            ClampToGround(&transform);
-         }
-         
          ghost->SetTransform(&transform);
+         
+         ClampToGround(ghost);
          
          const vector<ArticulatedParameter>& params =
             ghost->GetArticulatedParametersArray();
@@ -2746,14 +2755,9 @@ void RTIConnection::reflectAttributeValues(
       }
    }
 
-   if((ghost->GetEntityType().GetKind() == PlatformKind ||
-       ghost->GetEntityType().GetKind() == LifeFormKind) &&
-      ghost->GetEntityType().GetDomain() == LandPlatformDomain)
-   {
-      ClampToGround(&transform);
-   }
-   
    ghost->SetTransform(&transform);
+   
+   ClampToGround(ghost);
 }
 
 /**
