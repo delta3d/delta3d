@@ -2,12 +2,21 @@
 
 #include "psEditorGUI.h"
 
-Fl_Menu_Item menu_[] = {
+Fl_Menu_Bar *MainMenu=(Fl_Menu_Bar *)0;
+
+Fl_Menu_Item menu_MainMenu[] = {
  {"&File", 0,  0, 0, 64, 0, 0, 14, 56},
  {"&New", 0,  (Fl_Callback*)psEditorGUI_New, 0, 0, 0, 0, 14, 56},
- {"&Open", 0,  (Fl_Callback*)psEditorGUI_Open, 0, 128, 0, 0, 14, 56},
+ {"&Open...", 0,  (Fl_Callback*)psEditorGUI_Open, 0, 0, 0, 0, 14, 56},
+ {"Open &Previous", 0,  0, 0, 192, 0, 0, 14, 56},
+ {"item", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"item", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"item", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"item", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"item", 0,  0, 0, 0, 0, 0, 14, 56},
+ {0},
  {"&Save", 0,  (Fl_Callback*)psEditorGUI_Save, 0, 0, 0, 0, 14, 56},
- {"Save &As", 0,  (Fl_Callback*)psEditorGUI_SaveAs, 0, 128, 0, 0, 14, 56},
+ {"Save &As...", 0,  (Fl_Callback*)psEditorGUI_SaveAs, 0, 128, 0, 0, 14, 56},
  {"&Quit", 0,  (Fl_Callback*)psEditorGUI_Quit, 0, 0, 0, 0, 14, 56},
  {0},
  {"&View", 0,  0, 0, 64, 0, 0, 14, 56},
@@ -216,8 +225,8 @@ Fl_Double_Window* make_window() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = new Fl_Double_Window(602, 584, "Particle System Editor");
     w = o;
-    { Fl_Menu_Bar* o = new Fl_Menu_Bar(0, 0, 600, 25);
-      o->menu(menu_);
+    { Fl_Menu_Bar* o = MainMenu = new Fl_Menu_Bar(0, 0, 600, 25);
+      o->menu(menu_MainMenu);
     }
     { Fl_Tabs* o = new Fl_Tabs(4, 25, 595, 550);
       { Fl_Group* o = new Fl_Group(4, 52, 590, 515, "Particles");
