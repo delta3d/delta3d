@@ -1,15 +1,15 @@
-// window.cpp: implementation of the Window class.
+// window.cpp: implementation of the DeltaWin class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "Producer/KeyboardMouse"
-#include "window.h"
+#include "deltawin.h"
 #include "notify.h"
 
 using namespace dtCore;
 using namespace std;
 
-IMPLEMENT_MANAGEMENT_LAYER(Window)
+IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
 class InputCallback : public Producer::KeyboardMouseCallback
 {
@@ -82,7 +82,7 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-Window::Window(string name, int x, int y, int width, int height) :
+DeltaWin::DeltaWin(string name, int x, int y, int width, int height) :
 Base(name),
 mShowCursor(true)
 {
@@ -108,7 +108,7 @@ mShowCursor(true)
 
 
 
-Window::Window(string name, Producer::RenderSurface* rs) :
+DeltaWin::DeltaWin(string name, Producer::RenderSurface* rs) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(rs)
@@ -130,7 +130,7 @@ mRenderSurface(rs)
 
 
 
-Window::Window(string name, Producer::InputArea* ia) :
+DeltaWin::DeltaWin(string name, Producer::InputArea* ia) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(ia->getRenderSurface(0))
@@ -152,7 +152,7 @@ mRenderSurface(ia->getRenderSurface(0))
 
 
 
-Window::~Window()
+DeltaWin::~DeltaWin()
 {
    mKeyboardMouse->cancel();
 
@@ -161,22 +161,22 @@ Window::~Window()
    mRenderSurface = NULL;
 
    DeregisterInstance(this);
-   Notify(DEBUG_INFO, "destroying Window, ref count:%d", this->referenceCount() );
+   Notify(DEBUG_INFO, "destroying DeltaWin, ref count:%d", this->referenceCount() );
 
 }
 
-/** Set the position and size of the Window in screen coordinates
+/** Set the position and size of the DeltaWin in screen coordinates
 * @param x The left edge of the window in screen coordinates
 * @param y The bottom edge of the window in screen coordinates
 * @param width The width of the window
 * @param height The height of the window
 */
-void Window::SetPosition(const int x, const int y, const int width, const int height)
+void DeltaWin::SetPosition(const int x, const int y, const int width, const int height)
 {
    mRenderSurface->setWindowRectangle(x, y, width, height);  
 }
 
-void Window::GetPosition( int *x, int *y,int *width, int *height )
+void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
 {
    unsigned int w, h;
    
@@ -185,7 +185,7 @@ void Window::GetPosition( int *x, int *y,int *width, int *height )
    *height = h;
 }
 
-void Window::SetWindowTitle(const char *title)
+void DeltaWin::SetWindowTitle(const char *title)
 {
    mRenderSurface->setWindowName(title);
 
@@ -197,12 +197,12 @@ void Window::SetWindowTitle(const char *title)
 #endif
 }
 
-const std::string Window::GetWindowTitle() const
+const std::string DeltaWin::GetWindowTitle() const
 {
    return mRenderSurface->getWindowName();
 }
 
-void Window::ShowCursor(const bool show )
+void DeltaWin::ShowCursor(const bool show )
 {
    mShowCursor = show;
 
@@ -239,7 +239,7 @@ void Window::ShowCursor(const bool show )
  *
  * @return bool  : Returns true if the (x,y) is a valid window coordinate
  */
-bool Window::CalcPixelCoords(const float x, const float y, float &pixel_x, float &pixel_y)
+bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, float &pixel_y)
 {
    if (x<-1.0f) return false;
    if (x>1.0f) return false;
@@ -263,7 +263,7 @@ bool Window::CalcPixelCoords(const float x, const float y, float &pixel_x, float
 
 #ifdef _WIN32
 
-bool Window::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
+bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
 {
    DEVMODE dmScreenSettings;                                                            // Device Mode
    ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));                                    // Make Sure Memory Is Cleared

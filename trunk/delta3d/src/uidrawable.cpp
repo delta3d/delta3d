@@ -28,7 +28,7 @@ IMPLEMENT_MANAGEMENT_LAYER(UIDrawable)
 
 
 /** The constructor.  Supply the width and height
-  * of the parent Window.  The constructor will create a new CUI_UI and 
+  * of the parent DeltaWin.  The constructor will create a new CUI_UI and 
   * CUI_OpenGLRenderer, setup some default Shaders, and create the OSG
   * nodes.
   */
@@ -43,7 +43,7 @@ mCurrentQueue(0L)
    RegisterInstance(this);
    
    dtCore::Mouse::GetInstance(0)->AddMouseListener(this);
-   dtCore::Window::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
+   dtCore::DeltaWin::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
 
    AddSender( System::GetSystem() );
    
@@ -1540,7 +1540,7 @@ void UIDrawable::EndElement()
 
 }
 
-/** Set the resolution of the Window this UI is being displayed in.
+/** Set the resolution of the DeltaWin this UI is being displayed in.
   * @param w : width in pixels
   * @param h : height in pixels
   */

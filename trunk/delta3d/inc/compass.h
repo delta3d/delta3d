@@ -6,8 +6,8 @@
 
 #include <macros.h>
 #include <transformable.h>
-#include <drawable.h>
-#include <window.h>
+#include <deltadrawable.h>
+#include <deltawin.h>
 #include <camera.h>
 
 
@@ -25,7 +25,7 @@ namespace dtCore
     * The Compass must be added to a Scene to be viewed using Scene::AddObject().
     */
 
-   class DT_EXPORT Compass :   public   Transformable, public   Drawable
+   class DT_EXPORT Compass :   public   Transformable, public   DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(Compass)
 
@@ -55,7 +55,7 @@ namespace dtCore
 
       private:
          inline   void              ctor( void );
-         inline   void              SetWindow( dtCore::Window* win );
+         inline   void              SetWindow( dtCore::DeltaWin* win );
 
       private:
                   osg::ref_ptr<osg::MatrixTransform>  mNode;      /// contains the actual model

@@ -38,6 +38,8 @@
 				OutputFile="..\..\bin\dtsoarxd.dll"
 				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd; libcmtd; libc"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="..\..\lib\dtsoarxd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

@@ -8,7 +8,8 @@
 #include "compass.h"
 #include "cui_openglrenderer.h"
 #include "cui_openglshader.h"
-#include "drawable.h"
+#include "deltadrawable.h"
+#include "deltawin.h"
 #include "environment.h"
 #include "enveffect.h"
 #include "effectmanager.h"
@@ -46,7 +47,7 @@
 #include "ufomotionmodel.h"
 #include "uidrawable.h"
 #include "walkmotionmodel.h"
-#include "window.h"
+
 
 #ifdef _WIN32
 

@@ -45,7 +45,7 @@ namespace dtCore
    /**
     * An effect manager.
     */
-   class DT_EXPORT EffectManager : public Base, public Drawable
+   class DT_EXPORT EffectManager : public Base, public DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(EffectManager)
 

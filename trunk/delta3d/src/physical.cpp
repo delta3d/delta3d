@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "physical.h"
 #include "transformable.h"
 
@@ -144,7 +144,7 @@ void Physical::SetCollisionSphere(osg::Node* node)
 {
    if(node == NULL)
    {
-      Drawable* d = dynamic_cast<Drawable*>(this);
+      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
       if(d != NULL)
       {
@@ -236,7 +236,7 @@ void Physical::SetCollisionBox(osg::Node* node)
 {
    if(node == NULL)
    {
-      Drawable* d = dynamic_cast<Drawable*>(this);
+      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
       if(d != NULL)
       {
@@ -392,7 +392,7 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
 {
    if(node == NULL)
    {
-      Drawable* d = dynamic_cast<Drawable*>(this);
+      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
       if(d != NULL)
       {
@@ -565,7 +565,7 @@ void Physical::SetCollisionMesh(osg::Node* node)
 {
    if(node == NULL)
    {
-      Drawable* d = dynamic_cast<Drawable*>(this);
+      DeltaDrawable* d = dynamic_cast<DeltaDrawable*>(this);
       
       if(d != NULL)
       {

@@ -1,7 +1,7 @@
-#ifndef DELTA_WINDOW
-#define DELTA_WINDOW
+#ifndef DELTA_DELTA_WINDOW
+#define DELTA_DELTA_WINDOW
 
-// window.h: interface for the Window class.
+// deltawin.h: interface for the DeltaWin class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -20,15 +20,15 @@ namespace dtCore
 {
    
    
-   class DT_EXPORT Window : public Base
+   class DT_EXPORT DeltaWin : public Base
    {
-      DECLARE_MANAGEMENT_LAYER(Window)
+      DECLARE_MANAGEMENT_LAYER(DeltaWin)
 
    public:
-      Window(std::string name="window", int x=100, int y=100, int width=640, int height=480);
-      Window(std::string name, Producer::RenderSurface* rs);
-      Window(std::string name, Producer::InputArea* ia);
-      virtual ~Window();
+      DeltaWin(std::string name="window", int x=100, int y=100, int width=640, int height=480);
+      DeltaWin(std::string name, Producer::RenderSurface* rs);
+      DeltaWin(std::string name, Producer::InputArea* ia);
+      virtual ~DeltaWin();
 
       ///Calculate the screen pixel coords given the window (x,y)
 	   bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y);
@@ -48,23 +48,23 @@ namespace dtCore
       ///Is the window currently in fullscreen mode?
       bool GetFullScreenMode(void) {return mRenderSurface->isFullScreen();}
       
-      ///The the title on the Window border
+      ///The the title on the DeltaWin border
 	   void SetWindowTitle( const char *title );
       const std::string GetWindowTitle(void) const;
       
-      ///Set the size and position of the Window
+      ///Set the size and position of the DeltaWin
 	   void SetPosition( int x, int y, int width, int height );
 
-      ///Get the size and position of the Window
+      ///Get the size and position of the DeltaWin
       void GetPosition( int *x, int *y, int *width, int *height );
 
       ///Get a handle to the underlying Producer RenderSurface
       Producer::RenderSurface *GetRenderSurface(void) {return mRenderSurface;}
       
-      ///Get a handle to the Keyboard associated with the Window
+      ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard *GetKeyboard() {return mKeyboard.get();}
 
-      ///Get a handle to the Mouse associated with the Window
+      ///Get a handle to the Mouse associated with the DeltaWin
       Mouse *GetMouse() {return mMouse.get();}
 
       #ifdef _WIN32
@@ -81,8 +81,12 @@ namespace dtCore
       bool mShowCursor;
    };
 
+   #ifdef _WIN32
+   typedef DeltaWin Window;
+   #endif
+
 };
 
 
 
-#endif // DELTA_WINDOW
+#endif // DELTA_DELTA_WINDOW

@@ -83,7 +83,7 @@ Widget::Config( const WinData* d /*= NULL*/ )
 
       ia->addRenderSurface( rs.get() );
 
-      mWindow  = new dtCore::Window( "Widget", ia.get() );
+      mWindow  = new dtCore::DeltaWin( "Widget", ia.get() );
       assert( mWindow.get() );
 
       mKeyboard = mWindow->GetKeyboard();
@@ -203,7 +203,7 @@ Widget::OnMessage( MessageData* data )
 
    if( data->message == msgAddDrawable )
    {
-      AddDrawable( reinterpret_cast<dtCore::Drawable*>(data->userData) );
+      AddDrawable( reinterpret_cast<dtCore::DeltaDrawable*>(data->userData) );
       return;
    }
 

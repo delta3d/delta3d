@@ -39,12 +39,12 @@ Isector::~Isector()
 
 
 /*!
- * Tell this Isector to intersect with only the supplied Drawable.  By default,
+ * Tell this Isector to intersect with only the supplied DeltaDrawable.  By default,
  * Isector will search the entire Scene.
  *
  * @param *object : The geometry to intersect with
  */
-void Isector::SetGeometry(Drawable *object)
+void Isector::SetGeometry(DeltaDrawable *object)
 {
    mGeometry = object;
 }

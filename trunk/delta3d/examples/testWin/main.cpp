@@ -1,4 +1,7 @@
 #include "dt.h"
+#include "guimgr.h"
+
+/*
 #include "camera.h"
 #include "globals.h"
 #include "notify.h"
@@ -8,9 +11,9 @@
 #include "logicalinputdevice.h"
 #include "mouse.h"
 #include "tracker.h"
-
-#include "guimgr.h"
 #include "system.h"
+*/
+
 
 using namespace dtCore;
 

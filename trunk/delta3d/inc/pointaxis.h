@@ -8,7 +8,7 @@
 #include <osg/Vec4>
 #include <macros.h>
 #include <transformable.h>
-#include <drawable.h>
+#include <deltadrawable.h>
 
 
 
@@ -46,7 +46,7 @@ namespace dtCore
      * GetOSGNode function while casting to an osg::MatrixTransform pointer, then manipulate
      * the matrix.
      */
-   class DT_EXPORT PointAxis  :  public   Transformable, public   Drawable
+   class DT_EXPORT PointAxis  :  public   Transformable, public   DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(PointAxis)
 

@@ -213,8 +213,8 @@ void Environment::RemoveEffectCache(void)
 }
 
 
-///Add a Drawable to the Scene to be viewed.
-void Environment::AddDrawable( Drawable *drawable )
+///Add a DeltaDrawable to the Scene to be viewed.
+void Environment::AddDrawable( DeltaDrawable *drawable )
 {
    //we add Drawables to our mDrawableNode
    if (drawable)

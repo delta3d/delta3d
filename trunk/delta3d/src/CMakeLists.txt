@@ -16,7 +16,7 @@ INCLUDE_DIRECTORIES( ${DELTA}/inc ${DELTA}/ext/inc )
 LINK_DIRECTORIES( ${DELTA}/lib ${DELTA}/ext/lib )
 
 PROJECT( dtcore )
-SET( DT_CORE_SRCS base camera clouddome cloudplane compass cui_openglrenderer cui_openglshader effectmanager enveffect environment ephemeris flymotionmodel globals infiniteterrain inputdevice inputmapper isector joystick keyboard logicalinputdevice motionmodel mouse notify object orbitmotionmodel particlesystem physical pnoise pointaxis recorder scene skybox skydome skydomeshader sound soundeffectbinder stats sunlightshader system terrain tracker transform transformable tripod uidrawable ufomotionmodel walkmotionmodel window )
+SET( DT_CORE_SRCS base camera clouddome cloudplane compass cui_openglrenderer cui_openglshader deltawindow effectmanager enveffect environment ephemeris flymotionmodel globals infiniteterrain inputdevice inputmapper isector joystick keyboard logicalinputdevice motionmodel mouse notify object orbitmotionmodel particlesystem physical pnoise pointaxis recorder scene skybox skydome skydomeshader sound soundeffectbinder stats sunlightshader system terrain tracker transform transformable tripod uidrawable ufomotionmodel walkmotionmodel )
 ADD_LIBRARY( dtcore SHARED ${DT_CORE_SRCS} )
 TARGET_LINK_LIBRARIES( dtcore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 

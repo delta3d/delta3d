@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "transformable.h"
 
 #include "rbody/osg/OsgBody.h"
@@ -17,7 +17,7 @@ namespace dtChar
     * An animated character.
     */
    class DT_EXPORT Character : public dtCore::Transformable,
-                               public dtCore::Drawable
+                               public dtCore::DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(Character)
 

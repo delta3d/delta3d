@@ -5,10 +5,10 @@
 
 #include "keyboard.h"
 #include "mouse.h"
-#include "window.h"
+#include "deltawin.h"
 #include "camera.h"
 #include "system.h"
-#include "drawable.h"
+#include "deltadrawable.h"
 
 
 namespace   dtABC
@@ -28,16 +28,16 @@ namespace   dtABC
       virtual  void  Quit( void );
 
       ///Add a visual object to the Scene
-      virtual  void  AddDrawable( dtCore::Drawable* obj );
+      virtual  void  AddDrawable( dtCore::DeltaDrawable* obj );
 
       ///Remove a visual object from the Scene
-      virtual  void  RemoveDrawable( dtCore::Drawable* obj );
+      virtual  void  RemoveDrawable( dtCore::DeltaDrawable* obj );
       
-      dtCore::Window*   GetWindow( void )    { return mWindow.get(); }
-      dtCore::Camera*   GetCamera( void )    { return mCamera.get(); }
-      dtCore::Scene*    GetScene( void )     { return mScene.get();  }
-      dtCore::Keyboard* GetKeyboard( void )  { return mKeyboard.get(); }
-      dtCore::Mouse*    GetMouse( void )     { return mMouse.get(); }
+      dtCore::DeltaWin*    GetWindow( void )    { return mWindow.get(); }
+      dtCore::Camera*         GetCamera( void )    { return mCamera.get(); }
+      dtCore::Scene*          GetScene( void )     { return mScene.get();  }
+      dtCore::Keyboard*       GetKeyboard( void )  { return mKeyboard.get(); }
+      dtCore::Mouse*          GetMouse( void )     { return mMouse.get(); }
 
    protected:
       ///Override for preframe
@@ -86,11 +86,11 @@ namespace   dtABC
       virtual  void  CreateInstances( void );
 
    protected:
-      osg::ref_ptr<dtCore::Window>     mWindow;
-      osg::ref_ptr<dtCore::Camera>     mCamera;
-      osg::ref_ptr<dtCore::Scene>      mScene;
-      osg::ref_ptr<dtCore::Keyboard>   mKeyboard;
-      osg::ref_ptr<dtCore::Mouse>      mMouse;
+      osg::ref_ptr<dtCore::DeltaWin>      mWindow;
+      osg::ref_ptr<dtCore::Camera>           mCamera;
+      osg::ref_ptr<dtCore::Scene>            mScene;
+      osg::ref_ptr<dtCore::Keyboard>         mKeyboard;
+      osg::ref_ptr<dtCore::Mouse>            mMouse;
    };
 };
 

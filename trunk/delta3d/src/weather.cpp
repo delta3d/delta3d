@@ -188,7 +188,7 @@ void Weather::SetRateOfChange(const float rate)
 
 }
 
-void Weather::AddDrawable(dtCore::Drawable *drawable)
+void Weather::AddDrawable(dtCore::DeltaDrawable *drawable)
 {
    if (drawable)  mEnvironment->AddDrawable(drawable);
 }

@@ -67,7 +67,7 @@ BaseABC::Quit( void )
  * @Param obj the object to add to the scene
  */
 void
-BaseABC::AddDrawable( Drawable* obj )
+BaseABC::AddDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    mScene->AddDrawable( obj );
@@ -80,7 +80,7 @@ BaseABC::AddDrawable( Drawable* obj )
  * @Param obj the object to remove from the scene
  */
 void
-BaseABC::RemoveDrawable( Drawable* obj )
+BaseABC::RemoveDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    mScene->RemoveDrawable( obj );

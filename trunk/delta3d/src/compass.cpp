@@ -5,7 +5,7 @@
 #include <osg/Projection>
 #include <osgText/Text>
 
-#include <window.h>
+#include <deltawin.h>
 #include <transform.h>
 #include <pointaxis.h>
 #include <compass.h>
@@ -219,7 +219,7 @@ Compass::ctor( void )
 
 
 void
-Compass::SetWindow( dtCore::Window* win )
+Compass::SetWindow( dtCore::DeltaWin* win )
 {
    if( win == NULL )
       return;

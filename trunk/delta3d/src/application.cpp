@@ -114,7 +114,7 @@ void  Application::CreateInstances( void )
    //overwritten using a config file
    BaseABC::CreateInstances();
 
-   mWindow = new Window("defaultWin");
+   mWindow = new DeltaWin("defaultWin");
    assert( mWindow.get() );
 
    mCamera->SetWindow( mWindow.get() );
@@ -186,11 +186,11 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       std::string sceneInst = cam->Attribute("SceneInstance");
 
       mCamera->SetName(name);
-      Window* win = Window::GetInstance(winInst);
+      DeltaWin* win = DeltaWin::GetInstance(winInst);
       if (win != NULL)
          mCamera->SetWindow(win);
       else
-         Notify(WARN, "Application:Can't find instance of Window '%s'", winInst.c_str() );
+         Notify(WARN, "Application:Can't find instance of DeltaWin '%s'", winInst.c_str() );
 
       Scene* scene = Scene::GetInstance(sceneInst);
       if (scene != NULL)

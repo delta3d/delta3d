@@ -15,7 +15,7 @@
 
 #include <osgParticle/Emitter>
 
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "notify.h"
 #include "transformable.h"
 
@@ -25,7 +25,7 @@ namespace dtCore
     * A particle system.
     */
    class DT_EXPORT ParticleSystem : public Transformable,
-                                    public Drawable
+                                    public DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
 

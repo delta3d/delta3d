@@ -8,7 +8,7 @@
 
 
 #include "transformable.h"
-#include "drawable.h"
+#include "deltadrawable.h"
 
 namespace dtCore
 {
@@ -65,11 +65,11 @@ namespace dtCore
 	   bool Update(void);
 
       ///Supply a particular geometry to intersect
-	   void SetGeometry( Drawable *object);
+	   void SetGeometry( DeltaDrawable *object);
       
    private:
 	   sgVec3 mHitPoint;
-	   Drawable* mGeometry;
+	   DeltaDrawable* mGeometry;
 	   sgVec3 mStartXYZ;
       sgVec3 mDirVec;
       float mDistance;
