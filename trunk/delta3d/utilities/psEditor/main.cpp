@@ -847,7 +847,7 @@ void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
          "Choose Texture",
          "Image Files (*.{bmp,dds,gif,jpg,pic,png,rgb,tga,tiff})",
          Particles_Texture->value(),
-         1
+         0
       );
 
    if(filename != NULL)
