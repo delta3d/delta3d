@@ -47,6 +47,8 @@ namespace dtCore
 
       inline float GetSpotExponent() const
       { return mLightSource->getLight()->getSpotExponent(); }
+      
+      void RenderGeometry( const bool enable = true );
 
    };
 
