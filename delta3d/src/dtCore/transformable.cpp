@@ -31,7 +31,8 @@ Transformable::~Transformable()
  */
 bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix )
 {
-   for(  osg::Node *topParent = node; 
+   osg::Node* topParent;
+   for(  topParent = node; 
          topParent->getNumParents() != 0; 
          topParent = topParent->getParent(0) );
    

@@ -21,6 +21,7 @@
 #ifndef DTUTIL_INCLUDE
 #define DTUTIL_INCLUDE
 
+#include "dtUtil/deprecationmgr.h"
 #include "dtUtil/domain.h"
 #include "dtUtil/matrixutil.h"
 #include "dtUtil/polardecomp.h"
