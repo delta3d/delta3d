@@ -93,8 +93,11 @@ void UserInterface::SelectInstance (void)
          t->GetTransform( &trans, Transformable::REL_CS );
       }
 
-      osg::Vec3 xyz, hpr, scale;
-      trans.Get( xyz, hpr, scale );
+      osg::Vec3 xyz, hpr;
+      
+      trans.GetTranslation( xyz );
+      trans.GetRotation( hpr );
+
       TransformX->value(xyz[0]);
       TransformY->value(xyz[1]);
       TransformZ->value(xyz[2]);
@@ -641,8 +644,11 @@ void UserInterface::TransformCSCB( Fl_Round_Button *)
       t->GetTransform( &trans, Transformable::REL_CS );
    }
   
-   osg::Vec3 xyz, hpr, scale;
-   trans.Get( xyz, hpr, scale );
+   osg::Vec3 xyz, hpr;
+
+   trans.GetTranslation( xyz );
+   trans.GetTranslation( hpr );
+
    TransformX->value(xyz[0]);
    TransformY->value(xyz[1]);
    TransformZ->value(xyz[2]);

@@ -44,7 +44,7 @@ namespace dtCore
       virtual void Set( float tx, float ty, float tz, 
                         float h, float p, float r, 
                         float sx, float sy, float sz ); 
-      virtual void Set( const osg::Vec3& xyz, const osg::Vec3& hpr, const osg::Vec3& scale );
+      virtual void Set( const osg::Vec3& xyz, const osg::Matrix& rotation, const osg::Vec3& scale );
       virtual void Set( const osg::Matrix& mat );
 
       ///DEPRECRATED: Use Set( const osg::Matrix& mat )
@@ -62,9 +62,9 @@ namespace dtCore
       virtual void SetTranslation( sgVec3 xyz );
       
       //Set only rotation methods
-      virtual void SetRotation( float h, float p, float r ) { mRotation.set( h, p, r); }
-      virtual void SetRotation( const osg::Vec3& hpr ) { mRotation.set( hpr ); }
-      virtual void SetRotation( const osg::Matrix& rotation );
+      virtual void SetRotation( float h, float p, float r );
+      virtual void SetRotation( const osg::Vec3& hpr );
+      virtual void SetRotation( const osg::Matrix& rotation ) { mRotation.set( rotation ); }
 
       ///DEPRECRATED: Use SetRotation( const osg::Vec3& hpr )
       virtual void SetRotation( sgVec3 hpr );
@@ -77,7 +77,7 @@ namespace dtCore
       
       //Get translation and rotation methods
       void Get( float& tx, float& ty, float& tz, float& h, float& p, float& r, float& sx, float& sy, float& sz ) const;
-      void Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale ) const;
+      void Get( osg::Vec3& xyz, osg::Matrix& rotation, osg::Vec3& scale ) const;
       void Get( osg::Matrix& matrix ) const; 
       
       ///DEPRECRATED: Use Get( osg::Vec3& xyz, osg::Vec3& hpr, float& scale  )
@@ -102,8 +102,8 @@ namespace dtCore
     
       //Get only rotation methods
       void GetRotation( float& h, float& p, float& r ) const;
-      void GetRotation( osg::Vec3& rotation ) const { rotation.set( mRotation ); }
-      void GetRotation( osg::Matrix& rotation ) const;
+      void GetRotation( osg::Vec3& hpr ) const;
+      void GetRotation( osg::Matrix& rotation ) const { rotation.set( mRotation ); }
 
       ///DEPRECRATED: Use GetRotation( float& h, float& p, float& r )
       void GetRotation( float *h, float *p, float *r );
@@ -132,7 +132,7 @@ namespace dtCore
    protected:
 
       osg::Vec3 mTranslation; ///<Internal storage of translation
-      osg::Vec3 mRotation; ///<Internal storage of the rotation
+      osg::Matrix mRotation; ///<Internal storage of the rotation
       osg::Vec3 mScale; ///<Internal storage of scale
       
    };

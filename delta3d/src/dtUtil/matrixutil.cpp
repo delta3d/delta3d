@@ -170,7 +170,6 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
 
 void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 {
-   
    sgMat4 mat;
 
    for( int i = 0; i < 4; i++ )
@@ -183,7 +182,6 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
    hpr[0] = pos.hpr[0];
    hpr[1] = pos.hpr[1];
    hpr[2] = pos.hpr[2];
-   
    
    //Converted from PLIB's SG library: http://plib.sourceforge.net/
 
