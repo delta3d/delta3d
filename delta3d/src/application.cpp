@@ -18,7 +18,12 @@ Application::Application(std::string configFilename)
    :  BaseABC("Application")
 {
    RegisterInstance(this);
- 
+
+   //mOriginalRes.width = 0;
+   //mOriginalRes.height = 0;
+   //mOriginalRes.bitDepth = 0;
+   //mOriginalRes.refresh = 0;
+   
    //if config file passed in
    if ( configFilename != "" )
    {
@@ -47,8 +52,7 @@ Application::Application(std::string configFilename)
 Application::~Application(void)
 {
    #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   //if( mHorz != 0 && mVert != 0 && mDepth != 0)
-      //SwitchToOriginalResolution();
+   //mWindow->ChangeScreenResolution( mOriginalRes );
    #endif
    
    DeregisterInstance(this);
@@ -99,6 +103,9 @@ void  Application::CreateInstances( std::string name, int x, int y, int width, i
    mWindow = new DeltaWin( name, x, y, width, height, cursor, fullScreen );
    
    assert( mWindow.get() );
+
+   //mWindow->GetRenderSurface()->realize();
+   //mOriginalRes = mWindow->GetCurrentResolution();
 
    mCamera->SetWindow( mWindow.get() );
 
@@ -162,18 +169,28 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       bool changeRes( false );
       if( const char* changeResChar  = win->Attribute("ChangeDisplayResolution") )
          changeRes = atoi( changeResChar );
-      
-      CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
- 
-      if( changeRes )
+
+
+      if( changeRes && fullScreen )     
       {
-         //mHorz = width;
-         //mVert = height;
-         //mDepth = pixelDepth;
-         //SaveOriginalResolution( width, height, pixelDepth );
+         CreateInstances( name, winX, winY, width, height, showCursor, !fullScreen );
+
+         mWindow->GetRenderSurface()->realize();
+         mWindow->ChangeScreenResolution( width, height, pixelDepth, refreshRate );
+         mWindow->SetFullScreenMode( fullScreen );
+      }
+      else if ( changeRes && !fullScreen )
+      {
+         CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
+
          mWindow->GetRenderSurface()->realize();
          mWindow->ChangeScreenResolution( width, height, pixelDepth, refreshRate );
       }
+      else
+      {
+         CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
+      }
+      
 
    }
 
@@ -249,18 +266,3 @@ void dtABC::Application::GenerateDefaultConfigFile()
 
    xml.SaveFile();
 }
-
-/*
-void  dtABC::Application::SaveOriginalResolution()
-{
-   Resolution r = mWindow->GetCurrentResolution();
-   mHorz = r.width;
-   mVert = r.height;
-   mDepth = r.bitDepth;
-}
-
-void  dtABC::Application::SwitchToOriginalResolution()
-{
-   //mWindow->ChangeScreenResolution( mHorz, mVert, mDepth );
-}
-*/
