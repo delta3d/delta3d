@@ -404,8 +404,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    //test if new value is same as current, if so don't do anything
    if( modeline.hdisplay == width && modeline.vdisplay == height && tempRefresh == refreshRate )
    {
-      Notify(ALWAYS,"same resolution as current");
-      return true;
+       return true;
 
    }
 
@@ -421,19 +420,18 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       XF86VidModeModeInfo* tempRes = resolutions[i];
       
       tempRefresh = CalcRefreshRate( tempRes->htotal, tempRes->vtotal, tempRes->dotclock );
-      Notify(ALWAYS,"refreshRate = %d, tempRefresh = %d",refreshRate,tempRefresh);
+  
       if( tempRes->hdisplay == width && tempRes->vdisplay == height && tempRefresh == refreshRate )
       {
          XF86VidModeSwitchToMode( dpy, screenNum, tempRes );
          XF86VidModeSetViewPort( dpy,screenNum, 0, 0 );
          XSync(dpy,false);
 
-         Notify(ALWAYS,"changed");
          return true;
       }
    }
 
-   Notify(ALWAYS,"not changed");
+   Notify(DEBUG_INFO,"Resolutoin not changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
    return false;
    
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
