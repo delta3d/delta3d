@@ -22,12 +22,14 @@ void initEffectManagerBindings();
 void initEnvEffectBindings();
 void initEnvironmentBindings();
 void initFlyMotionModelBindings();
+void initInfiniteLightBindings(); //LIGHT
 void initInfiniteTerrainBindings();
 void initInputDeviceBindings();
 void initInputMapperBindings();
 void initIsectorBindings();
 void initJoystickBindings();
 void initKeyboardBindings();
+void initLightBindings();//LIGHT
 void initLogicalInputDeviceBindings();
 void initMotionModelBindings();
 void initMouseBindings();
@@ -37,8 +39,10 @@ void initOrbitMotionModelBindings();
 void initParticleSystemBindings();
 void initPhysicalBindings();
 void initPointAxisBindings();
+void initPositionalLightBindings(); //LIGHT
 void initRecorderBindings();
 void initSceneBindings();
+void initSpotLightBindings(); //LIGHT
 void initSkyBoxBindings();
 void initSkyDomeBindings();
 void initSystemBindings();
@@ -112,4 +116,8 @@ BOOST_PYTHON_MODULE(dtCore)
    initRecorderBindings();
    initTerrainBindings();
    initEffectManagerBindings();
+   initLightBindings();
+   initInfiniteLightBindings();
+   initPositionalLightBindings();
+   initSpotLightBindings();
 }
