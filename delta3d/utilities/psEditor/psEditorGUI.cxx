@@ -91,6 +91,8 @@ Fl_Value_Input *Particles_Emitter_StartTime=(Fl_Value_Input *)0;
 
 Fl_Value_Input *Particles_Emitter_ResetTime=(Fl_Value_Input *)0;
 
+TexturePreview *Particles_TexturePreview=(TexturePreview *)0;
+
 Fl_Group *RandomRateCounterParameters=(Fl_Group *)0;
 
 Fl_Value_Input *RandomRateCounter_MinRate=(Fl_Value_Input *)0;
@@ -281,11 +283,11 @@ Fl_Double_Window* make_window() {
         { Fl_Button* o = new Fl_Button(1181, 66, 30, 25, "...");
           o->callback((Fl_Callback*)psEditorGUI_Particles_ChooseTexture);
         }
-        { Fl_Check_Button* o = Particles_Emissive = new Fl_Check_Button(1010, 102, 120, 25, "Emissive");
+        { Fl_Check_Button* o = Particles_Emissive = new Fl_Check_Button(815, 160, 120, 25, "Emissive");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)psEditorGUI_Particles_SetEmissive);
         }
-        { Fl_Check_Button* o = Particles_Lighting = new Fl_Check_Button(1010, 127, 20, 25, "Lighting");
+        { Fl_Check_Button* o = Particles_Lighting = new Fl_Check_Button(815, 185, 20, 25, "Lighting");
           o->down_box(FL_DOWN_BOX);
           o->callback((Fl_Callback*)psEditorGUI_Particles_SetLighting);
         }
@@ -381,6 +383,17 @@ Fl_Double_Window* make_window() {
             o->callback((Fl_Callback*)psEditorGUI_Particles_SetEmitterResetTime);
           }
           o->end();
+        }
+        { TexturePreview* o = Particles_TexturePreview = new TexturePreview(1040, 107, 128, 128, "Texture Preview");
+          o->box(FL_DOWN_BOX);
+          o->color(FL_BACKGROUND_COLOR);
+          o->selection_color(FL_BACKGROUND_COLOR);
+          o->labeltype(FL_NORMAL_LABEL);
+          o->labelfont(0);
+          o->labelsize(14);
+          o->labelcolor(FL_BLACK);
+          o->align(FL_ALIGN_LEFT);
+          o->when(FL_WHEN_RELEASE);
         }
         o->end();
       }

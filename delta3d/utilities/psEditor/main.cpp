@@ -366,6 +366,8 @@ static void updateGUIElements()
       textureFile.c_str()
    );
 
+   Particles_TexturePreview->SetTexture(textureFile);
+   
    osg::BlendFunc* blend = 
       (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);
 
@@ -900,6 +902,8 @@ void psEditorGUI_Particles_SetTexture(Fl_Input*, void*)
       Particles_Emissive->value(),
       Particles_Lighting->value()
    );
+   
+   Particles_TexturePreview->SetTexture(Particles_Texture->value());
 }
 
 void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
@@ -916,6 +920,8 @@ void psEditorGUI_Particles_ChooseTexture(Fl_Button*, void*)
    {
       Particles_Texture->value(filename);
 
+      Particles_TexturePreview->SetTexture(filename);
+      
       particleSystem->setDefaultAttributes(
          Particles_Texture->value(),
          Particles_Emissive->value(),

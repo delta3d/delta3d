@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib fltk.lib wsock32.lib comctl32.lib osgParticle.lib osgText.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js_d.lib fltkd.lib wsock32.lib comctl32.lib osgParticled.lib osgTextd.lib"
 				OutputFile=".\Debug/psEditor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -186,12 +186,18 @@
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\texturepreview.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
 				RelativePath="psEditorGUI.h">
+			</File>
+			<File
+				RelativePath=".\texturepreview.h">
 			</File>
 		</Filter>
 		<Filter
