@@ -62,13 +62,6 @@ namespace dtCore
          }
          
          ///Supply the Scene this Drawable has been added to
-         /**
-          * Notifies this drawable object that it has been added to
-          * a scene.
-          *
-          * @param scene the scene to which this drawable object has
-          * been added
-          */
          virtual void AddedToScene( Scene* scene );
 
          ///Override function for derived object to know when attaching to scene
@@ -80,15 +73,13 @@ namespace dtCore
          Scene* GetSceneParent(void);
 
          ///Add a child to this DeltaDrawable
-         /** This virtual method can be overwritten
-          *  to perform specific functionality.  The default method will 
-          *  store the child in a list and set the child's parent.
-          * @param child : The child to add to this Drawable
-          */
-         virtual void AddChild( DeltaDrawable *child );
+         virtual bool AddChild( DeltaDrawable *child );
 
          ///Remove a DeltaDrawable child
          virtual void RemoveChild( DeltaDrawable *child );
+
+         ///Remove this DeltaDrawable from it's parent
+         void Emancipate();
 
          ///Return the number of DeltaDrawable children added
          inline unsigned int GetNumChildren() { return mChildList.size(); }

@@ -245,9 +245,9 @@ void Weather::GetTimePeriodAndSeason(TimePeriod *period, Season *season) const
 }
 
 
-void Weather::AddChild(dtCore::DeltaDrawable *child)
+bool Weather::AddChild(dtCore::DeltaDrawable *child)
 {
-   if (child)  mEnvironment->AddChild(child);
+   return( mEnvironment->AddChild(child) );
 }
 
 void Weather::RemoveChild( dtCore::DeltaDrawable *child)

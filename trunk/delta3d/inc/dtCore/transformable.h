@@ -57,7 +57,7 @@ namespace dtCore
       virtual ~Transformable();
 
       ///Add a DeltaDrawable child
-      virtual void AddChild( DeltaDrawable *child );
+      virtual bool AddChild( DeltaDrawable *child );
          
       ///Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable *child );

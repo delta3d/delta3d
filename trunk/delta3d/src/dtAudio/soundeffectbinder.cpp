@@ -351,7 +351,7 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
    dtCore::Transformable*  parent   = fx->GetParent();
    if( parent )
    {
-      parent->AddChild( snd );
+      bool success = parent->AddChild( snd );
 
       dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
       snd->SetTransform( &transform, dtCore::Transformable::REL_CS );

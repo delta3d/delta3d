@@ -38,15 +38,15 @@ namespace dtCore
 
       virtual osg::Node* GetOSGNode() { return mNode.get(); } 
       
-      // attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
-      // where k_c = constant, k_l = linear, k_q = quadractric
+      /// attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
+      /// where k_c = constant, k_l = linear, k_q = quadractric
       void SetAttenuation( const float constant, const float linear, const float quadratic );
       void GetAttenuation( float* constant, float* linear, float* quadratic );
       
-      // Add a DeltaDrawable child
-      virtual void AddChild( DeltaDrawable *child ); 
+      /// Add a DeltaDrawable child
+      virtual bool AddChild( DeltaDrawable *child ); 
          
-      // Remove a DeltaDrawable child
+      /// Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable *child );
 
       virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }

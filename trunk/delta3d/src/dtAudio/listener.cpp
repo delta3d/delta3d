@@ -21,7 +21,8 @@ IMPLEMENT_MANAGEMENT_LAYER(Listener)
  */
 Listener::Listener()
 {
-    RegisterInstance(this);
+   SetName("Listener");
+   RegisterInstance(this);
 }
 
 

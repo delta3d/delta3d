@@ -220,11 +220,12 @@ void Environment::RemoveEffectCache(void)
 
 
 ///Add a DeltaDrawable to the Scene to be viewed.
-void Environment::AddChild( DeltaDrawable *child )
+bool Environment::AddChild( DeltaDrawable *child )
 {
-   DeltaDrawable::AddChild( child );
+   bool success = DeltaDrawable::AddChild( child );
+
    //we add Drawables to our mDrawableNode
-   if (child)
+   if ((child) && (success))
    {
       mDrawableNode->addChild( child->GetOSGNode() );
 
@@ -237,7 +238,9 @@ void Environment::AddChild( DeltaDrawable *child )
          }
       }
       */
+      return (true);
    }
+   else return (false);
 }
 
 ///Remove a DeltaDrawable from the Environment Node.

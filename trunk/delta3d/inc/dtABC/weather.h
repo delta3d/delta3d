@@ -133,7 +133,7 @@ namespace dtABC
       void GetTimePeriodAndSeason(TimePeriod *period, Season *season) const;
 
       ///Add a DeltaDrawable to be affected by this weather's lighting and fog
-      void AddChild( dtCore::DeltaDrawable *child);
+      bool AddChild( dtCore::DeltaDrawable *child);
       void RemoveChild( dtCore::DeltaDrawable *child);
 
    private:

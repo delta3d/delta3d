@@ -139,16 +139,22 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
  * overwritten using SetTransform() on the child.
  *
  * @param *child : The child to add to this Transformable
- *
+ * @return : successfully added the child or not
  * @see SetTransform()
  * @see RemoveChild()
  */
-void Transformable::AddChild(DeltaDrawable *child)
+bool Transformable::AddChild(DeltaDrawable *child)
 {
-   DeltaDrawable::AddChild(child);
+   bool success = DeltaDrawable::AddChild(child);
 
    //add the child's node to our's
-   GetMatrixNode()->addChild( child->GetOSGNode() );
+   if (success) 
+   {
+      GetMatrixNode()->addChild( child->GetOSGNode() );
+      return (true);
+   }
+   else return (false);
+
 }
 
 /*!

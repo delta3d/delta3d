@@ -52,7 +52,7 @@ namespace dtCore
       virtual void AddedToScene(Scene* scene);
          
       ///Add a DeltaDrawable to be rendered using this Environment's properties.
-      void AddChild( DeltaDrawable *child );
+      virtual bool AddChild( DeltaDrawable *child );
 
 		///Remove a DeltaDrawable added to the Environment.
 		void RemoveChild( DeltaDrawable *child );
