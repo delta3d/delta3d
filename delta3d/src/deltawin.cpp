@@ -195,9 +195,8 @@ void DeltaWin::SetWindowTitle(const char *title)
    HWND win = mRenderSurface->getWindow();
    SetWindowText(win, title); //from winuser.h
 #else
-   Display* dpy = mRenderSurface->getDisplay();
-   Window win = mRenderSurface->getWindow();
-   //XStoreName(dpy,win,title);
+   //Display* dpy = mRenderSurface->getDisplay();
+   //Window win = mRenderSurface->getWindow(); 
 #endif
 }
 
@@ -210,10 +209,9 @@ void DeltaWin::ShowCursor(const bool show )
 {
    mShowCursor = show;
 
-   //gotta do a little cursor game to make this work
-
-   //First, save the current position of the cursor
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+   //Win32: gotta do a little cursor game to make this work
+   //First, save the current position of the cursor
    POINT coords;
    GetCursorPos(&coords);
 #endif 
@@ -270,7 +268,7 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)   
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-        DEVMODE dmScreenSettings;                                                            // Device Mode
+   DEVMODE dmScreenSettings;                                                            // Device Mode
    ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));                                    // Make Sure Memory Is Cleared
    dmScreenSettings.dmSize                              = sizeof (DEVMODE);             // Size Of The Devmode Structure
    dmScreenSettings.dmPelsWidth         = width;                                        // Select Screen Width
