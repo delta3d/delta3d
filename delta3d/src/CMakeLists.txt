@@ -13,32 +13,32 @@ PROJECT( DELTA )
 INCLUDE_DIRECTORIES( ../inc ../ext/inc )
 LINK_DIRECTORIES( ../lib ../ext/lib )
 
-ADD_LIBRARY( dtCore SHARED base camera clouddome cloudplane compass cui_openglrenderer cui_openglshader deltawin effectmanager enveffect environment ephemeris flymotionmodel globals infiniteterrain inputdevice inputmapper isector joystick keyboard logicalinputdevice motionmodel mouse notify object orbitmotionmodel particlesystem physical pnoise pointaxis recorder scene skybox skydome skydomeshader sound stats sunlightshader system terrain tracker transform transformable tripod uidrawable ufomotionmodel walkmotionmodel )
-TARGET_LINK_LIBRARIES( dtCore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
+ADD_LIBRARY( dtcore SHARED base camera clouddome cloudplane compass cui_openglrenderer cui_openglshader deltawin effectmanager enveffect environment ephemeris flymotionmodel globals infiniteterrain inputdevice inputmapper isector joystick keyboard logicalinputdevice motionmodel mouse notify object orbitmotionmodel particlesystem physical pnoise pointaxis recorder scene skybox skydome skydomeshader sound stats sunlightshader system terrain tracker transform transformable tripod uidrawable ufomotionmodel walkmotionmodel )
+TARGET_LINK_LIBRARIES( dtcore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 
 ADD_LIBRARY( gui_fl SHARED gui_fltk guimgr )
-TARGET_LINK_LIBRARIES( gui_fl dtCore fltk GL glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
+TARGET_LINK_LIBRARIES( gui_fl dtcore fltk GL glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 
-ADD_LIBRARY( dtABC SHARED application baseabc weather widget )
-TARGET_LINK_LIBRARIES( dtABC dtCore gui_fl glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
+ADD_LIBRARY( dtabc SHARED application baseabc weather widget )
+TARGET_LINK_LIBRARIES( dtabc dtcore gui_fl glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 
-#ADD_LIBRARY( dtChar SHARED character )
-#TARGET_LINK_LIBRARIES( dtChar dtCore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
+#ADD_LIBRARY( dtchar SHARED character )
+#TARGET_LINK_LIBRARIES( dtchar dtcore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 # add replicantbody
 
-ADD_LIBRARY( dtVis SHARED bspcullcallback )
-TARGET_LINK_LIBRARIES( dtVis GL osg osgDB osgUtil )
+ADD_LIBRARY( dtvis SHARED bspcullcallback )
+TARGET_LINK_LIBRARIES( dtvis GL osg osgDB osgUtil )
 
-ADD_LIBRARY( dtAudio SHARED audiomanager listener soundeffectbinder )
-TARGET_LINK_LIBRARIES( dtAudio glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
+ADD_LIBRARY( dtaudio SHARED audiomanager listener soundeffectbinder )
+TARGET_LINK_LIBRARIES( dtaudio glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 
 #SUBDIRS( python soarx )
 
-INSTALL_TARGETS( ${DELTA_SOURCE_DIR}/../lib dtCore dtABC dtVis dtAudio gui_fl )
+INSTALL_TARGETS( ${DELTA_SOURCE_DIR}/../lib dtcore dtabc dtvis dtaudio gui_fl )
 
-# Note! You must have RTI installed for dtHLA to build. 
+# Note! You must have RTI installed for dthla to build. 
 # We cannot distribute RTI, so you are on your own.
 #INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
 #LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
-#ADD_LIBRARY( dtHLA SHARED dis_types entity rticonnection )
-#TARGET_LINK_LIBRARIES( dtHLA dtCore GL glgui Producer ode opcode OpenThreads osg osgDB osgSim osgText osgUtil plibsg plibul tinyxml RTI-NG fedtime )
+#ADD_LIBRARY( dthla SHARED dis_types entity rticonnection )
+#TARGET_LINK_LIBRARIES( dthla dtcore GL glgui Producer ode opcode OpenThreads osg osgDB osgSim osgText osgUtil plibsg plibul tinyxml RTI-NG fedtime )
