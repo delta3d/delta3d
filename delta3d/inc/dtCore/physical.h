@@ -30,20 +30,15 @@
 #include <osg/Node>
 #include <osg/Geode>
 #include <sg.h>
-#include <ode/ode.h>
-#include <ode/collision_trimesh.h>
 
+//extern "C" {
+   #include <ode/ode.h>
+   #include <ode/collision_trimesh.h>
+//}
 
 #include <osg/NodeVisitor>
 #include <osg/Billboard>
 #include <osg/MatrixTransform>
-
-
-
-//#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-//#include <ode/src/collision_kernel.h> 
-//#include <ode/src/objects.h>
-//#endif
 
 namespace dtCore
 {
@@ -294,6 +289,8 @@ namespace dtCore
          bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
          virtual void AddedToScene( Scene *scene );
+         
+         virtual void SetTransform(Transform *xform, enum dtCore::Transformable::CoordSysEnum cs = ABS_CS);
 
       private:
       
@@ -343,8 +340,10 @@ namespace dtCore
          RefPtr<osg::Geode> mGeomGeod;
 
          bool mRenderingGeometry;///<if we're rendering the collision geometry
+         
+         
+         osg::Matrix decompScale;
 
-        
    };
 };
 

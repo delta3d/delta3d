@@ -8,6 +8,7 @@
 #include "dtCore/transformable.h"
 #include "dtCore/object.h"
 #include "dtCore/notify.h"
+#include "dtUtil/polardecomp.h"
 
 #include <vector>
 
@@ -767,29 +768,31 @@ void Physical::PrePhysicsStepUpdate()
       {
          mGeomTransform = transform;
          
-         sgVec3 position;
-         
-         mGeomTransform.GetTranslation(position);
+         osg::Vec3 position = mGeomTransform.GetTranslation();
          
          dGeomSetPosition(mGeomID, position[0], position[1], position[2]);
          
-         sgMat4 rotation;
+         osg::Matrix fullMatrix = mGeomTransform.GetRotation();
          
-         mGeomTransform.GetRotation(rotation);
+         // remove scale from rotation matrix
+         osg::Matrix rotationMatrix;
+         osg::Vec4f translation;
+         
+         dtUtil::PolarDecomp::Decompose( fullMatrix, rotationMatrix, decompScale, translation );
          
          dMatrix3 dRot;
          
-         dRot[0] = rotation[0][0];
-         dRot[1] = rotation[1][0];
-         dRot[2] = rotation[2][0];
+         dRot[0] = rotationMatrix(0,0);
+         dRot[1] = rotationMatrix(1,0);
+         dRot[2] = rotationMatrix(2,0);
          
-         dRot[4] = rotation[0][1];
-         dRot[5] = rotation[1][1];
-         dRot[6] = rotation[2][1];
+         dRot[4] = rotationMatrix(0,1);
+         dRot[5] = rotationMatrix(1,1);
+         dRot[6] = rotationMatrix(2,1);
          
-         dRot[8] = rotation[0][2];
-         dRot[9] = rotation[1][2];
-         dRot[10] = rotation[2][2];
+         dRot[8] = rotationMatrix(0,2);
+         dRot[9] = rotationMatrix(1,2);
+         dRot[10] = rotationMatrix(2,2);
          
          dGeomSetRotation(mGeomID, dRot);
       }
@@ -830,23 +833,24 @@ void Physical::PostPhysicsStepUpdate()
          position[2]
       );
       
-      sgMat4 rot;
+      osg::Matrix newRotation;
       
-      sgMakeIdentMat4(rot);
+      newRotation(0,0) = rotation[0];
+      newRotation(1,0) = rotation[1];
+      newRotation(2,0) = rotation[2];
+         
+      newRotation(0,1) = rotation[4];
+      newRotation(1,1) = rotation[5];
+      newRotation(2,1) = rotation[6];
+         
+      newRotation(0,2) = rotation[8];
+      newRotation(1,2) = rotation[9];
+      newRotation(2,2) = rotation[10];
       
-      rot[0][0] = rotation[0];
-      rot[1][0] = rotation[1];
-      rot[2][0] = rotation[2];
-         
-      rot[0][1] = rotation[4];
-      rot[1][1] = rotation[5];
-      rot[2][1] = rotation[6];
-         
-      rot[0][2] = rotation[8];
-      rot[1][2] = rotation[9];
-      rot[2][2] = rotation[10];
+      //re-apply scale
+      newRotation = newRotation * decompScale;
 
-      mGeomTransform.SetRotation(rot);
+      mGeomTransform.SetRotation(newRotation);
       
       this->SetTransform(&mGeomTransform);
    }
@@ -980,3 +984,15 @@ void Physical::AddedToScene( Scene *scene )
       DeltaDrawable::AddedToScene( scene );
    } 
 } 
+
+void Physical::SetTransform(Transform *xform, dtCore::Transformable::CoordSysEnum cs )
+{
+    
+   Transformable::SetTransform( xform, cs );
+   
+   //float x,y,z;
+   //xform->GetTranslation(&x,&y,&z);
+   
+   //dGeomSetPosition(mGeomID, x, y, z);
+   
+}
