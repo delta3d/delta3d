@@ -26,14 +26,14 @@ class DeltaDrawableWrap : public DeltaDrawable
          DeltaDrawable::SetParent(parent);
       }
 
-      virtual void AddChild(DeltaDrawable* child)
+      virtual bool AddChild(DeltaDrawable* child)
       {
-         call_method<void>(mSelf, "AddChild", child);
+         return call_method<bool>(mSelf, "AddChild", child);
       }
 
-      void DefaultAddChild(DeltaDrawable* child)
+      bool DefaultAddChild(DeltaDrawable* child)
       {
-         DeltaDrawable::AddChild(child);
+         return DeltaDrawable::AddChild(child);
       }
 
       virtual void RemoveChild( DeltaDrawable* child )
@@ -74,5 +74,6 @@ void initDeltaDrawableBindings()
       .def("GetChild", &DeltaDrawable::GetChild, return_internal_reference<>())
       .def("GetChildIndex", &DeltaDrawable::GetChildIndex)
       .def("CanBeChild", &DeltaDrawable::CanBeChild)
-      .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads());
+      .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads())
+      .def("Emancipate", &DeltaDrawable::Emancipate);
 }
