@@ -49,7 +49,8 @@ namespace dtScript
 
    protected:
    
-      PyObject* mFileObject;
+      PyObject *mFileObject;
+      PyThreadState *mThreadState;
       std::string mFilename;
       
 	};
