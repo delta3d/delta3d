@@ -605,7 +605,7 @@ void Physical::SetCollisionMesh(osg::Node* node)
          (dReal*)mMeshVertices,
          mv.mRecorder.mVertices.size(),
          mMeshIndices,
-         mv.mRecorder.mTriangles.size()
+         mv.mRecorder.mTriangles.size()*3
       );
 
       dGeomTransformSetGeom(
