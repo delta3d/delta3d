@@ -1,3 +1,6 @@
+Note: To use the Python bindings, you must compile Delta3D in DLL mode.
+Use the "Release DLL" or the "Debug DLL" configuration.
+
 To compile the Python test, first install Python 2.3:
 
    http://www.python.org/2.3.4/
@@ -23,5 +26,10 @@ When running testPython, try typing the following command in the console:
 
 You should see the Cessna fly around in a circle.  You can press ^C to return to the
 Python interpreter.  To exit the application, type ^Z and Enter.
+
+The file 'testPython.py' is a Python application that uses Delta3D.  To run it, make
+sure that the Python bindings are compiled and that the PYTHONPATH environment
+variable includes the Delta3D bin directory ("c:\Delta3D\bin" or equivalent).  You
+should be able to run the application by double-clicking the file.
 
      --Andrzej
