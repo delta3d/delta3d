@@ -25,7 +25,7 @@ Win32 Binary:
 Linux Source:
 - Run 'cmake .' from examples/ directory.
 - To build all examples: run 'make' from examples/
-- To build on testEffects: run 'make' from examples/testEffects.
+- To build only testEffects: run 'make' from examples/testEffects.
 - Enter examples/testEffects directory.
 - Run 'testEffects'.
 

@@ -38,9 +38,7 @@ int main(int argc, char* argv[])
       filename = argv[1];
    }
    dtCore::SetDataFilePathList("..;../../data;../../../data/;" + dtCore::GetDeltaDataPathList());
-   dtABC::Application *app = new dtABC::Application();
-
-   app->GetWindow()->SetWindowTitle("testGUI");
+   dtABC::Application *app = new dtABC::Application( "config.xml" );
 
    ///put something in the background to look at
    dtCore::Object *ground = new dtCore::Object("ground");

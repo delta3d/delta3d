@@ -27,10 +27,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGUI", "testGUI\testGUI.
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testFLTKWidget", "testFLTKWidget\testFLTKWidget.vcproj", "{FF9CCBCE-CC2E-459A-846F-BE3B8C0EF067}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testWidget", "testWidget\testWidget.vcproj", "{355AF710-FC5B-442C-A69A-17A6FA1F1025}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection

@@ -25,7 +25,7 @@ Win32 Binary:
 Linux Source:
 - Run 'cmake .' from examples/ directory.
 - To build all examples: run 'make' from examples/
-- To build on testApp: run 'make' from examples/testApp.
+- To build only testApp: run 'make' from examples/testApp.
 - Enter examples/testApp directory.
 - Run 'testApp'.
 

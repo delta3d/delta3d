@@ -25,7 +25,7 @@ Win32 Binary:
 Linux Source:
 - Run 'cmake .' from examples/ directory.
 - To build all examples: run 'make' from examples/
-- To build on testCharacters: run 'make' from examples/testCharacters.
+- To build only testCharacters: run 'make' from examples/testCharacters.
 - Enter examples/testCharacters directory.
 - Run 'testCharacters'.
 

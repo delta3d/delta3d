@@ -27,7 +27,7 @@ Win32 Binary:
 Linux Source:
 - Run 'cmake .' from examples/ directory.
 - To build all examples: run 'make' from examples/
-- To build on testGUI: run 'make' from examples/testGUI.
+- To build only testGUI: run 'make' from examples/testGUI.
 - Enter examples/testGUI directory.
 - Run 'testGUI'.
 

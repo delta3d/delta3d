@@ -28,7 +28,7 @@ Win32 Binary:
 Linux Source:
 - Run 'cmake .' from examples/ directory.
 - To build all examples: run 'make' from examples/
-- To build on testClouds: run 'make' from examples/testClouds.
+- To build only testClouds: run 'make' from examples/testClouds.
 - Enter examples/testClouds directory.
 - Run 'testClouds'.
 

@@ -11,6 +11,9 @@ Purpose
 To demonstrate advanced functionality of the dtAudio module, specfically
 effect binding, panning, dopler effects, gain, pitch changing, and looping. 
 
+Note: When a sound is played on Linux, the application hangs waiting for a
+      message to be received. This is a known bug.
+
 Instructions
 ------------
 Win32 Source: 
@@ -25,7 +28,7 @@ Win32 Binary:
 Linux Source:
 - Run 'cmake .' from examples/ directory.
 - To build all examples: run 'make' from examples/
-- To build on testAudio: run 'make' from examples/testAudio.
+- To build only testAudio: run 'make' from examples/testAudio.
 - Enter examples/testAudio directory.
 - Run 'testAudio'.
 
