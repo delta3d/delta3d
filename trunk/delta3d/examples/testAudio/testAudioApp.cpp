@@ -24,7 +24,7 @@ const char*    testAudioApp::kSoundFile[] =
                   "exp35.wav",
                   "exp57.wav",
                   "WIND.wav",
-                  "UnPause.wav"
+                  "clunk.wav"
                };
 
 
