@@ -23,6 +23,9 @@
 using namespace dtCore;
 
 
+IMPLEMENT_MANAGEMENT_LAYER(UIDrawable)
+
+
 /** The constructor.  Supply the width and height
   * of the parent Window.  The constructor will create a new CUI_UI and 
   * CUI_OpenGLRenderer, setup some default Shaders, and create the OSG
@@ -36,6 +39,8 @@ mHeight(height),
 mRenderer(NULL),
 mCurrentQueue(0L)
 {
+   RegisterInstance(this);
+   
    dtCore::Mouse::GetInstance(0)->AddMouseListener(this);
    dtCore::Window::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
 
@@ -74,6 +79,8 @@ mCurrentQueue(0L)
 
 UIDrawable::~UIDrawable(void)
 {
+   DeregisterInstance(this);
+   
    mNode = NULL;
 }
 

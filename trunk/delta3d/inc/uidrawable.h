@@ -80,6 +80,9 @@ namespace dtCore
       };
 
    public:
+   
+      DECLARE_MANAGEMENT_LAYER(UIDrawable)
+        
       ///Default constructor - accepts the width and height of window
       UIDrawable(int width=1, int height=1);
       virtual ~UIDrawable();
