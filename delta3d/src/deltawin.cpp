@@ -24,7 +24,7 @@ class InputCallback : public Producer::KeyboardMouseCallback
          mMouse->mouseScroll(sm);
       }
 
-      void mouseMotion(float x, float y)
+       void mouseMotion(float x, float y)
       {
          mMouse->mouseMotion( x, y );
       }
@@ -282,7 +282,7 @@ bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, flo
 }
 
 bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float &x, float &y)
-{   
+{
    int wx, wy;
    unsigned int w, h;
    GetRenderSurface()->getWindowRectangle( wx, wy, w, h );
@@ -292,8 +292,11 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
 
    if( w != 0 && y != 0)
    {
-      x = ( 2 * pixel_x )/w - 1;
-      y = ( 2 * pixel_y )/h - 1;
+      float rx = ( pixel_x - float(wx) ) / float(w);
+      float ry = ( pixel_y - float(wy) ) / float(h);
+
+      x = ( rx / 0.5f ) - 1.0f;
+      y = ( ry / 0.5f ) - 1.0f;
 
       return true;
    }
@@ -303,12 +306,75 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
       return false;
    }
 }
- /*
+
+
 ResolutionVec DeltaWin::GetResolutions( void )
 {
    
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
+   HDC hDC = GetDC(GetDesktopWindow());
+
+   Resolution currentRes = GetCurrentResolution();
+   int currentDepth = currentRes.bitDepth;
+     
+   DEVMODE *pdm;
+
+   ResolutionVec rv;
+
+   int i = 0;
+   for (i = 0; EnumDisplaySettings(NULL, i, pdm); i++) {
+     // convert frequency of 1 to 0 (meaning the default)
+     if ((pdm->dmFields & DM_DISPLAYFREQUENCY) && pdm->dmDisplayFrequency == 1)
+       pdm->dmDisplayFrequency = 0;
+ 
+     Resolution r = { pdm->dmPelsWidth,
+                      pdm->dmPelsHeight,
+                      pdm->dmBitsPerPel,
+                      pdm->dmDisplayFrequency };
+
+     rv.push_back( r );
+   }
+   numResolutions = i;
+    
+   ReleaseDC(GetDesktopWindow(), hDC);
+ 
+   return rv;
+
+#else
+
+   Display* dpy = mRenderSurface->getDisplay();
+   int screenNum = mRenderSurface->getScreenNum();
+   
+   Resolution currentRes = GetCurrentResolution();
+   
+   int numResolutions;
+   XF86VidModeModeInfo** resolutions;
+   XF86VidModeGetAllModeLines(dpy,
+                              screenNum,
+                              &numResolutions,
+                              &resolutions );
+
+   ResolutionVec rv;
+
+   for(int i=0; i < numResolutions; i++)
+   {
+      int refreshRate = CalcRefreshRate(resolutions[i]->htotal, resolutions[i]->vtotal, resolutions[i]->dotclock );
+      
+      Resolution r = { resolutions[i]->hdisplay,
+                       resolutions[i]->vdisplay,
+                       currentRes.bitDepth,
+                       refreshRate };
+
+      rv.push_back( r );
+   }
+
+   return rv;
+   
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+   
 }
-*/
+
 
 bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth) 
 {
@@ -368,7 +434,6 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 }
 
-
 Resolution DeltaWin::GetCurrentResolution( void )
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)   
@@ -377,10 +442,9 @@ Resolution DeltaWin::GetCurrentResolution( void )
    
    Resolution r  = { GetDeviceCaps(hdc, HORZRES),
                      GetDeviceCaps(hdc, VERTRES),
-                     GetDeviceCaps(hdc, BITSPIXEL),
+                     GetDeviceCAps(hdc, BITSPIXEL),
                      GetDeviceCaps(hdc, VREFRESH) };
    return r;
-
 
 #else
 
@@ -393,9 +457,7 @@ Resolution DeltaWin::GetCurrentResolution( void )
 
    int thorz = static_cast<int>(modeline.hdisplay);
    int tvert = static_cast<int>(modeline.vdisplay);
-
-   //approximate vertical refresh rate
-   int tfreq = static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( modeline.htotal * modeline.vtotal ) ) );
+   int tfreq = CalcRefreshRate( modeline.htotal, modeline.vtotal, dotclock );
    int tdepth = XDefaultDepth( dpy, screenNum );
 
    Resolution r = { thorz, tvert, tdepth, tfreq };
@@ -415,3 +477,11 @@ void DeltaWin::SetChangeScreenResolutionFlag( int width, int height, int pixelDe
    mResHeight = height;
    mResDepth = pixelDepth;
 }
+
+//Approximates refresh rate (X11 only)
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+int DeltaWin::CalcRefreshRate( int horzTotal, int vertTotal, int dotclock )
+{
+   return static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( horzTotal * vertTotal ) ) );
+}
+#endif

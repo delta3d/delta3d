@@ -82,7 +82,7 @@ namespace dtCore
       Mouse *GetMouse() {return mMouse.get();}
 
       //Note: make these static
-      //ResolutionVec GetResolutions( void );
+      ResolutionVec GetResolutions( void );
  
       void  SetFullscreenFlag( bool fullscreen );
       void  SetChangeScreenResolutionFlag( int width, int height, int pixelDepth );
@@ -92,6 +92,10 @@ namespace dtCore
 
    private:
 
+      #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+      int CalcRefreshRate( int height, int width, int dotclock );
+      #endif
+      
       Producer::RenderSurface *mRenderSurface;
       Producer::KeyboardMouse *mKeyboardMouse;
       osg::ref_ptr<Keyboard> mKeyboard;
