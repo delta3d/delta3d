@@ -303,8 +303,8 @@ void Scene::OnMessage(MessageData *data)
 
    if(data->message == "preframe")
    {
-      double dtCore = *(double *)data->userData;
-      const int numSteps = (int)(dtCore/PHYSICS_STEPSIZE);
+      double dt = *(double *)data->userData;
+      const int numSteps = (int)(dt/PHYSICS_STEPSIZE);
 
       vector<Physical*>::iterator it;
       
@@ -326,7 +326,7 @@ void Scene::OnMessage(MessageData *data)
          dJointGroupEmpty(mContactJointGroupID);
       }
 
-      double leftOver = dtCore - (numSteps * PHYSICS_STEPSIZE);
+      double leftOver = dt - (numSteps * PHYSICS_STEPSIZE);
       
       if(leftOver > 0.0)
       {   
