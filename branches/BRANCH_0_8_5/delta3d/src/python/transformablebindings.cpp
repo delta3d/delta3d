@@ -27,7 +27,9 @@ void initTransformableBindings()
       .def("RemoveChild", &Transformable::RemoveChild)
       .def("SetTransform", &Transformable::SetTransform, ST_overloads())
       .def("GetTransform", &Transformable::GetTransform, GT_overloads())
-      .def("RenderProxyNode", &DeltaDrawable::RenderProxyNode, RPN_overloads());
+      .def("RenderProxyNode", &Transformable::RenderProxyNode, RPN_overloads())
+      .def("SetNormalRescaling", &Transformable::SetNormalRescaling)
+      .def("GetNormalRescaling", &Transformable::GetNormalRescaling);
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")
       .value("REL_CS", Transformable::REL_CS)
