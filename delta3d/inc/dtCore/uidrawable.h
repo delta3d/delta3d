@@ -25,18 +25,19 @@
 #define stricmp strcasecmp
 #endif
 
-//#include "dtCore/base.h"
 #include "dtCore/deltadrawable.h"
 #include "dtCore/mouse.h"
 #include "dtCore/keyboard.h"
-//#include "dtCore/deltawin.h"
+
 #include <osg/Drawable>
+#include <osg/Group>
+
 #include "UI/CUI_UI.h"
 #include "UI/CUI_ListItem.h"
 #include "UI/CUI_ListBox.h"
 #include "UI/CUI_ScrollableFrame.h"
 #include "cui_openglrenderer.h"
-#include <osg/Group>
+
 #include "sg.h"
 #include "tinystr.h"
 #include "tinyxml.h"
@@ -87,8 +88,8 @@ namespace dtCore
          virtual ~osgCUIDrawable() {}
 
 
-         virtual Object* cloneType() const { return new osgCUIDrawable(mUI); }
-         virtual Object* clone(const osg::CopyOp& copyop) const { return new osgCUIDrawable(*this,copyop); }        
+         virtual osgCUIDrawable* cloneType() const { return new osgCUIDrawable(mUI); }
+         virtual osgCUIDrawable* clone(const osg::CopyOp& copyop) const { return new osgCUIDrawable(*this,copyop); }        
 
          virtual void drawImplementation(osg::State& state) const
          { //tell the UI to update and to render
