@@ -85,7 +85,7 @@
 				OutputFile="$(OutDir)/testWeather.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"

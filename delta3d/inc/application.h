@@ -50,45 +50,4 @@ namespace dtABC
                void  ParseConfigFile( TiXmlElement* rootNode );
                void  GenerateConfigFile( void );
    };
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
-#undef _AUTOLIBNAME2
-
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME "tinyxmld.lib"
-   
-   #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME1 "dtabcD.lib"
-   #endif
-   
-   #define _AUTOLIBNAME2 "gui_fld.lib"
-#else 
-   #define _AUTOLIBNAME "tinyxml.lib"
-   
-   #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME1 "dtabc.lib"  
-   #endif
-   
-   #define _AUTOLIBNAME2 "gui_fl.lib"
-#endif
-
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   
-   #ifndef DT_LIBRARY
-      #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-   #endif
-   
-   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-#endif
-
-#pragma  comment( lib, _AUTOLIBNAME )
-
-#ifndef DT_LIBRARY
-   #pragma  comment( lib, _AUTOLIBNAME1 )
-#endif
-
-#pragma  comment( lib, _AUTOLIBNAME2 )
 }

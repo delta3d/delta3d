@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltkd.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltk.lib"
 				OutputFile="$(OutDir)/Viewer.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"

@@ -45,11 +45,7 @@ private:
 // Automatic library inclusion macros that use the #pragma/lib feature
 //
 #undef _AUTOLIBNAME
-#if defined(_DEBUG)
-#define _AUTOLIBNAME  "osgtextd.lib"
-#else
 #define _AUTOLIBNAME  "osgtext.lib"
-#endif
 
 
 /* You may turn off this include message by defining _NOAUTOLIB */

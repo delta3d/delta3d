@@ -101,7 +101,7 @@ void Camera::SetScene(Scene *scene)
       //  the screen actually gets cleared.      
       osg::Vec4 clearColor;
       sgCopyVec4(clearColor._v, mClearColor);
-      mScene->GetSceneHandler()->GetSceneView()->setBackgroundColor( clearColor );
+      mScene->GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
    }
 }
 
@@ -119,7 +119,7 @@ void Camera::SetClearColor(sgVec4 color)
    //tell the scene handler about the change
    osg::Vec4 clearColor;
    sgCopyVec4(clearColor._v, mClearColor);
-   if (mScene.get()) mScene->GetSceneHandler()->GetSceneView()->setBackgroundColor( clearColor );
+   if (mScene.get()) mScene->GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
 }
 
 void Camera::GetClearColor( float *r, float *g, float *b, float *a)

@@ -207,6 +207,9 @@
 			<File
 				RelativePath="..\inc\character.h">
 			</File>
+			<File
+				RelativePath="..\inc\dtchar.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

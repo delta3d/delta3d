@@ -150,7 +150,7 @@ InfiniteTerrain::InfiniteTerrain(string name)
       texture, osg::Image::USE_NEW_DELETE
    );
    
-   image->computeMipMaps();
+   //image->computeMipMaps();
       
    osg::Texture2D* tex = new osg::Texture2D(image);
       

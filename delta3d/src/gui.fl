@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0104 
+version 1.0105 
 header_name {gui_fltk.h} 
 code_name {gui_fltk.cpp}
 decl {\#include "base.h"} {public
@@ -8,13 +8,12 @@ decl {\#include "base.h"} {public
 decl {///Do not create directly - use dtCore::GUI instead} {public
 } 
 
-class UserInterface {open
-} {
+class UserInterface {} {
   Function {make_window()} {open
   } {
     Fl_Window MainWindow {
       label dtCore
-      xywh {748 224 545 438} type Double visible
+      xywh {752 224 545 438} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -615,8 +614,7 @@ class UserInterface {open
   }
   decl {void SelectInstance(void);} {public
   }
-  decl {static dtCore::Base *GetSelectedInstance( UserInterface *ui);} {selected
-  }
+  decl {static dtCore::Base *GetSelectedInstance( UserInterface *ui);} {}
   decl {void BaseNameCB(Fl_Input *o);} {}
   decl {void TransformPosCB( Fl_Value_Input *);} {}
   decl {void CameraClearColorBrowserCB(Fl_Button*);} {}
@@ -659,7 +657,7 @@ class UserInterface {open
   decl {void CloudBiasCB(Fl_Value_Slider*);} {}
 } 
 
-decl {\#pragma comment(lib, "fltkd.lib")} {public
+decl {\#pragma comment(lib, "fltk.lib")} {selected public
 } 
 
 decl {\#pragma comment(lib, "wsock32.lib")} {public

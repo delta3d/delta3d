@@ -104,7 +104,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" odbc32.lib odbccp32.lib winmm.lib js_d.lib isensed.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile=".\Debug/testPhysics.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

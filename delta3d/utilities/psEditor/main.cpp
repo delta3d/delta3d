@@ -90,7 +90,7 @@ static osg::Geode* geode;
 /**
  * The active particle system.
  */
-static ParticleSystem* particleSystem;
+static osgParticle::ParticleSystem* particleSystem;
 
 /**
  * The active particle template.
@@ -548,7 +548,7 @@ void psEditorGUI_New(Fl_Menu_*, void*)
    particleSystemGroup = new osg::Group();
 
 
-   particleSystem = new ParticleSystem();
+   particleSystem = new osgParticle::ParticleSystem();
 
    particleSystem->setDefaultAttributes("", true, false);
 
@@ -631,7 +631,7 @@ void LoadFile( std::string filename )
       osg::Group* newParticleSystemGroup = (osg::Group*)node;
 
       osg::Geode* newGeode = NULL;
-      ParticleSystem* newParticleSystem = NULL;
+      osgParticle::ParticleSystem* newParticleSystem = NULL;
       Particle* newParticle = NULL;
       osg::MatrixTransform* newEmitterTransform = NULL;
       ModularEmitter* newModularEmitter = NULL;
@@ -650,9 +650,9 @@ void LoadFile( std::string filename )
             {
                osg::Drawable* drawable = newGeode->getDrawable(j);
 
-               if(IS_A(drawable, ParticleSystem*))
+               if(IS_A(drawable, osgParticle::ParticleSystem*))
                {
-                  newParticleSystem = (ParticleSystem*)drawable;
+                  newParticleSystem = (osgParticle::ParticleSystem*)drawable;
 
                   newParticle = new Particle(
                      newParticleSystem->getDefaultParticleTemplate()
@@ -805,7 +805,7 @@ void psEditorGUI_XZGrid(Fl_Menu_*, void*)
 void psEditorGUI_Particles_SetAlignment(Fl_Choice*, void*)
 {
    particleSystem->setParticleAlignment(
-      (ParticleSystem::Alignment)Particles_Alignment->value()
+      (osgParticle::ParticleSystem::Alignment)Particles_Alignment->value()
    );
 }
 
@@ -2556,7 +2556,7 @@ int main( int argc, char **argv )
 
    makeCompass();
    
-   OrbitMotionModel obm(win.GetMouse(), &cam);
+   ::OrbitMotionModel obm(win.GetMouse(), &cam);
 
    psEditorGUI_New(NULL, NULL);
 

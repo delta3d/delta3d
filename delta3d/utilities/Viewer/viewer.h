@@ -142,7 +142,7 @@ class Viewer :  public   dtABC::Widget
 #undef _AUTOLIBNAME
 
 #if defined(_DEBUG)
-   #define _AUTOLIBNAME "osgFXd.lib"
+   #define _AUTOLIBNAME "osgFX.lib"
 #else 
    #define _AUTOLIBNAME "osgFX.lib"
 #endif

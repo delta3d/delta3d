@@ -1,5 +1,5 @@
-#include "globals.h"
-#include "application.h"
+#include "dt.h"
+#include "dtabc.h"
 
 extern "C"
 {
@@ -195,7 +195,7 @@ public:
          GetScene()->SetGravity(0, 0, -9.8f);
 
          GetWindow()->SetWindowTitle("'b'=box, 's'=sphere, 'c'=cylinder");
-         OrbitMotionModel *omm = new OrbitMotionModel(GetMouse(), GetCamera());
+         ::OrbitMotionModel *omm = new ::OrbitMotionModel(GetMouse(), GetCamera());
 
          Updater *updater = new Updater(GetScene());
       }

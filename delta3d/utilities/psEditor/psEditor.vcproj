@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="psEditor"
+	ProjectGUID="{7F57A273-325C-487B-B130-9643754B8232}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -39,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib fltkd.lib wsock32.lib comctl32.lib osgParticled.lib osgTextd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib fltk.lib wsock32.lib comctl32.lib osgParticle.lib osgText.lib"
 				OutputFile=".\Debug/psEditor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

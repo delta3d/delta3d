@@ -1,8 +1,13 @@
 #pragma  once
 #include <string>
-#include <dt.h>
 
-#include "base.h"
+#include "Keyboard.h"
+#include "mouse.h"
+#include "drawable.h"
+#include "window.h"
+#include "camera.h"
+#include "system.h"
+
 
 namespace   dtABC
 {
@@ -82,23 +87,4 @@ namespace   dtABC
       osg::ref_ptr<dtCore::Keyboard>   mKeyboard;
       osg::ref_ptr<dtCore::Mouse>      mMouse;
    };
-
-
-#ifndef DT_LIBRARY
-   /* You may turn off this include message by defining _NOAUTOLIB */
-   #undef _AUTOLIBNAME
-
-   #if   defined(_DEBUG)
-      #define  _AUTOLIBNAME   "dtabcd.lib"
-   #else 
-      #define  _AUTOLIBNAME   "dtabc.lib"
-   #endif
-
-   #if   !  defined(_NOAUTOLIBMSG)
-      #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #endif
-
-   #pragma  comment( lib, _AUTOLIBNAME )
-#endif
-
 };

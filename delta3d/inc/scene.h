@@ -142,28 +142,4 @@ namespace dtCore
    
 };
 
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
-
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME "osgUtild.lib"
-   #define _AUTOLIBNAME1 "ode.lib"
-   #define _AUTOLIBNAME2 "opcode_d.lib"
-#else
-   #define _AUTOLIBNAME "osgUtil.lib"
-   #define _AUTOLIBNAME1 "ode.lib"
-   #define _AUTOLIBNAME2 "opcode.lib"
-#endif
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-#pragma comment (lib, _AUTOLIBNAME1)
-#pragma comment (lib, _AUTOLIBNAME2)
-
 #endif // !defined(AFX_SCENE_H__3A865494_08F3_4A53_A41C_F65B3D517BDA__INCLUDED_)

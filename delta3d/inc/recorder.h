@@ -248,21 +248,4 @@ namespace dtCore
    };
 };
 
-//
-// Automatic library inclusion macros that use the #pragma/lib feature
-//
-#undef _AUTOLIBNAME
-#if defined(_DEBUG)
-#define _AUTOLIBNAME  "tinyxmld.lib"
-#else
-#define _AUTOLIBNAME  "tinyxml.lib"
-#endif
-
-/* You may turn off this include message by defining _NOAUTOLIB */
-#ifndef _NOAUTOLIBMSG
-#pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-
 #endif // DELTA_RECORDER
