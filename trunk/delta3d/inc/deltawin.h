@@ -14,7 +14,9 @@
 
 #include "base.h"
 
-
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+#include <X11/Xlib.h>
+#endif
 
 namespace dtCore
 {
@@ -31,7 +33,7 @@ namespace dtCore
       virtual ~DeltaWin();
 
       ///Calculate the screen pixel coords given the window (x,y)
-	   bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y);
+      bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y);
 
 
       ///Draw the cursor or not
@@ -83,6 +85,8 @@ namespace dtCore
 
    #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    typedef DeltaWin Window;
+   #else
+   typedef Window HWND;
    #endif
 
 };

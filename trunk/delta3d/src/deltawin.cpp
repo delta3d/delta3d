@@ -190,10 +190,14 @@ void DeltaWin::SetWindowTitle(const char *title)
    mRenderSurface->setWindowName(title);
 
    //Producer doesn't dynamically re-title the window so we do it ourself here
-   //This only works for win32
+    
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    HWND win = mRenderSurface->getWindow();
    SetWindowText(win, title); //from winuser.h
+#else
+   Display* dpy = mRenderSurface->getDisplay();
+   Window win = mRenderSurface->getWindow();
+   //XStoreName(dpy,win,title);
 #endif
 }
 

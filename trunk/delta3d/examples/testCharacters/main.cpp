@@ -1,17 +1,6 @@
 #include "dt.h"
 #include "dtchar.h"
 
-/*
-#include "camera.h"
-#include "globals.h"
-#include "notify.h"
-#include "object.h"
-#include "system.h"
-#include "character.h"
-#include "keyboard.h"
-#include "mouse.h"
-*/
-
 using namespace dtCore;
 using namespace dtChar;
 
