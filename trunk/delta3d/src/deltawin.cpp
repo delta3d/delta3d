@@ -266,7 +266,7 @@ bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, flo
 }
 
 
-bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
+bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)   // Change The Screen Resolution
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
@@ -275,7 +275,7 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel) 
    dmScreenSettings.dmSize                              = sizeof (DEVMODE);             // Size Of The Devmode Structure
    dmScreenSettings.dmPelsWidth         = width;                                        // Select Screen Width
    dmScreenSettings.dmPelsHeight                = height;                               // Select Screen Height
-   dmScreenSettings.dmBitsPerPel                = bitsPerPixel;                         // Select Bits Per Pixel
+   dmScreenSettings.dmBitsPerPel                = colorDepth;                         // Select Bits Per Pixel
    dmScreenSettings.dmFields                    = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
    if ( ChangeDisplaySettings (&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
@@ -288,3 +288,22 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel) 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 }
 
+int DeltaWin::GetColorDepth( void )
+{
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
+   PIXELFORMATDESCRIPTOR  pfd;
+   HDC  hdc = GetDC( mRenderSurface->getWindow() );
+   
+   int pixelFormat = GetPixelFormat( hdc ); 
+   DescribePixelFormat(hdc, pixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
+   return static_cast<int>(pfd.cColorBits);
+
+#else
+
+   return XDefaultDepth( mRenderSurface->getDisplay(), mRenderSurface->getScreenNum() );
+   
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
+}
