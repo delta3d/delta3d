@@ -9,8 +9,11 @@
 
 PROJECT( DELTA )
 
-INCLUDE_DIRECTORIES( ../inc ../ext/inc )
-LINK_DIRECTORIES( ../lib ../ext/lib )
+SET( CMAKE_INSTALL_PREFIX ${DELTA_SOURCE_DIR}/ )
+
+# will be run from subdirs, so use ../.. instead of ..
+INCLUDE_DIRECTORIES( ../../inc ../../ext/inc )
+LINK_DIRECTORIES( ../../lib ../../ext/lib )
 
 IF(EXISTS /usr/X11R6/lib )
 LINK_DIRECTORIES( /usr/X11R6/lib )

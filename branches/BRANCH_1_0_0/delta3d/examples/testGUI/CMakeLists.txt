@@ -4,7 +4,7 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testGUI testGUI.cpp )
+ADD_EXECUTABLE( testGUI testgui )
 TARGET_LINK_LIBRARIES( testGUI dtcore dtabc )
 
 
