@@ -10,5 +10,5 @@ PROJECT( examples )
 INCLUDE_DIRECTORIES( ../../inc ../../ext/inc ) 
 LINK_DIRECTORIES( ../../lib ../../ext/lib )
 
-SUBDIRS( testApp testAudio testClouds testEffects testFLTKWidget testGUI testHLA testInput testMessage testMotionModels testPhysics testSound testTerrain testWeather testWidget testWin )
+SUBDIRS( testApp testAudio testClouds testEffects testFLTKWidget testGUI testInput testMessage testMotionModels testPhysics testSound testTerrain testWeather testWidget testWin )
 #add testCharacters testLua testPython

@@ -4,9 +4,10 @@
 #
 ########################################
 
-INCLUDE_DIRECTORIES( ../../ext/RTI-1.3NGv6.4.1/Linux-rh9.0-i386-gcc-3.2.2-opt-mt/include )
+PROJECT( testHLA )
 
-LINK_DIRECTORIES( ../../ext/RTI-1.3NGv6.4.1/Linux-rh9.0-i386-gcc-3.2.2-opt-mt/lib )
+INCLUDE_DIRECTORIES( ../../inc ../../ext/inc $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include ) 
+LINK_DIRECTORIES( ../../lib ../../ext/lib $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib)
 
 ADD_EXECUTABLE( testHLA main )
 TARGET_LINK_LIBRARIES( testHLA dtcore dtabc dthla )
