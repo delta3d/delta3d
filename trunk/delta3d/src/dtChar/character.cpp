@@ -10,9 +10,9 @@
 
 #include "osgDB/FileUtils"
 #include "rbody/osg/ReplicantBodyMgr.h"
-#include "rbody/osg/OsgBody.h"
+//#include "rbody/osg/OsgBody.h"
 
-#include "rvrutils/os/FilePathContainer.h"
+//#include "rvrutils/os/FilePathContainer.h"
 
 using namespace dtCore;
 using namespace dtChar;
@@ -108,6 +108,24 @@ osg::Node* Character::LoadFile(std::string filename, bool useCache)
          name,
          mCollisionRootNode.get()
       );
+
+      for( unsigned int i = 0; i < mBodyNode->getNumChildren(); i++ )
+      {
+         osg::MatrixTransform* scale = dynamic_cast<osg::MatrixTransform*>( mBodyNode->getChild(i) );
+
+         for( unsigned int j = 0; j < scale->getNumChildren(); j++ )
+         {
+            osg::Geode* geode = dynamic_cast<osg::Geode*>( scale->getChild(j) );
+
+            for( unsigned int k = 0; k < geode->getNumDrawables(); k++ )
+            {
+               osg::Drawable* drawable = dynamic_cast<osg::Drawable*>( geode->getDrawable(k) );
+
+               osg::StateSet* stateSet = drawable->getOrCreateStateSet();
+               stateSet->setMode(GL_TEXTURE_COORD_ARRAY, osg::StateAttribute::OFF);
+            }
+         }
+      }
 
       mBodyNode->setMatrix(mat);
 
