@@ -32,7 +32,7 @@ protected:
    PyObject* mSelf;
 };
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
 
 void initLoadableBindings()
 {
