@@ -2,8 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <boost/python.hpp>
-
+#include "dtpython.h"
 #include "scene.h"
 
 using namespace boost::python;
@@ -14,7 +13,7 @@ void initSceneBindings()
    Scene* (*SceneGI1)(int) = &Scene::GetInstance;
    Scene* (*SceneGI2)(std::string) = &Scene::GetInstance;
 
-   class_<Scene, bases<Base> >("Scene", init<optional<std::string> >())
+   class_<Scene, bases<Base>, osg::ref_ptr<Scene> >("Scene", init<optional<std::string> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SceneGI1, return_internal_reference<>())

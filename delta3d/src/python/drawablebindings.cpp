@@ -2,8 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <boost/python.hpp>
-
+#include "dtpython.h"
 #include "drawable.h"
 
 using namespace boost::python;
