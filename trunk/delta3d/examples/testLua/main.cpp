@@ -48,7 +48,7 @@ class SystemThread : public OpenThreads::Thread
 
 int main( int argc, char **argv )
 {
-   Window win;
+   DeltaWin win;
    Scene scene;
    System *sys = System::GetSystem();
 

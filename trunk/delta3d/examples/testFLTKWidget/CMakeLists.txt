@@ -7,7 +7,7 @@
 INCLUDE_DIRECTORIES( BEFORE . )
 
 ADD_EXECUTABLE( testFLTKWidget fl_p51_window fltkwindow viewer helperstructs main )
-TARGET_LINK_LIBRARIES( testFLTKWidget dtcore dtabc gui_fl )
+TARGET_LINK_LIBRARIES( testFLTKWidget dtcore dtabc fltk gui_fl )
 
 
 

@@ -36,8 +36,8 @@ public:
    {
       Joystick::CreateInstances();
       
-      keyboard = Window::GetInstance(0)->GetKeyboard();
-      mouse = Window::GetInstance(0)->GetMouse();
+      keyboard = DeltaWin::GetInstance(0)->GetKeyboard();
+      mouse = DeltaWin::GetInstance(0)->GetMouse();
            
       quitButton = lid.AddButton(
          "quit",
@@ -125,7 +125,7 @@ IMPLEMENT_MANAGEMENT_LAYER(MouseControl)
 
 int main( int argc, char **argv )
 {
-   Window *win = new Window();
+   DeltaWin *win = new DeltaWin();
    Scene *scene = new Scene();
    System *sys = System::GetSystem();
 
