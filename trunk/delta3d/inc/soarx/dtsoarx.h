@@ -19,7 +19,7 @@
    #endif
    
    #define _AUTOLIBNAME2 "osgGL2d.lib"
-   #define _AUTOLIBNAME3 "gdal.lib"
+   #define _AUTOLIBNAME3 "gdal_i.lib"
    
 #else
 
@@ -28,7 +28,7 @@
    #endif
    
    #define _AUTOLIBNAME2 "osgGL2.lib"
-   #define _AUTOLIBNAME3 "gdal.lib"
+   #define _AUTOLIBNAME3 "gdal_i.lib"
    
 #endif
 
