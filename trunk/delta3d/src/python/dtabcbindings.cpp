@@ -13,10 +13,13 @@
 void initBaseABCBindings();
 void initApplicationBindings();
 void initWeatherBindings();
+void initWidgetBindings();
+
 
 BOOST_PYTHON_MODULE(dtABC)
 {
    initBaseABCBindings();
    initApplicationBindings();
    initWeatherBindings();
+   initWidgetBindings();
 }
