@@ -266,7 +266,7 @@ float Scene::GetHeightOfTerrain(const float *x, const float *y)
 {
    float HOT = 0.f;
    osgUtil::IntersectVisitor iv;
-   osg::ref_ptr<osg::LineSegment> segDown = new osg::LineSegment;
+   RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
    
    segDown->set(osg::Vec3(*x, *y, 10000.f),osg::Vec3(*x,*y, -10000.f));
    iv.addLineSegment(segDown.get());

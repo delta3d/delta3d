@@ -66,7 +66,7 @@ void initRecorderBindings()
       .value("RecorderPlaying", RecorderPlaying)
       .export_values();
       
-   class_<Recorder, bases<Base>, osg::ref_ptr<Recorder> >("Recorder", init<optional<std::string> >())
+   class_<Recorder, bases<Base>, dtCore::RefPtr<Recorder> >("Recorder", init<optional<std::string> >())
       .def("GetInstanceCount", &Recorder::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", RecorderGI1, return_internal_reference<>())

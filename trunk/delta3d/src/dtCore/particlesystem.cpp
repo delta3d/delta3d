@@ -141,7 +141,7 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
 
-      osg::ref_ptr<ParticleVisitor> pv = new ParticleVisitor();
+      RefPtr<ParticleVisitor> pv = new ParticleVisitor();
       node->accept(*pv.get());
 
       //Note: the Emitter is removed from the Particle System group
@@ -150,7 +150,7 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
       //transform nodes above it.
 
       //get the emitter
-      osg::ref_ptr<osgParticle::ModularEmitter> em = pv.get()->emitter;
+      RefPtr<osgParticle::ModularEmitter> em = pv.get()->emitter;
 
       //remove it from it's current parent
       em.get()->getParent(0)->removeChild( em.get() );

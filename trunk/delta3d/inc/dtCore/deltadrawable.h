@@ -28,6 +28,7 @@
 #include "dtCore/base.h"
 #include "dtCore/export.h"
 #include "dtCore/notify.h"
+#include "dtCore/refptr.h"
 #include "osg/Node"
 
 namespace dtCore
@@ -118,15 +119,15 @@ namespace dtCore
       DeltaDrawable(std::string name = "DeltaDrawable");
       virtual ~DeltaDrawable();
 
-      osg::ref_ptr<osg::Node> mNode; ///< The node to store anything
-      osg::ref_ptr<DeltaDrawable> mParent; ///<Any immediate parent of this instance
+      RefPtr<osg::Node> mNode; ///< The node to store anything
+      RefPtr<DeltaDrawable> mParent; ///<Any immediate parent of this instance
 
-      typedef std::vector<osg::ref_ptr<DeltaDrawable> > ChildList;
+      typedef std::vector<RefPtr<DeltaDrawable> > ChildList;
       ChildList mChildList;      ///<List of children DeltaDrawable added
 
-      osg::ref_ptr<Scene> mParentScene; ///<The Scene this Drawable was added to
+      RefPtr<Scene> mParentScene; ///<The Scene this Drawable was added to
 
-      osg::ref_ptr<osg::Node> mProxyNode;
+      RefPtr<osg::Node> mProxyNode;
       bool mRenderingProxy;
    };
 };

@@ -114,12 +114,12 @@ private:
    /**
    * The terrain object.
    */
-   osg::ref_ptr<InfiniteTerrain> mTerrain;
+   RefPtr<InfiniteTerrain> mTerrain;
 
    /**
    * The four motion models.
    */
-   osg::ref_ptr<MotionModel> mMotionModels[4];
+   RefPtr<MotionModel> mMotionModels[4];
 };
 
 IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )

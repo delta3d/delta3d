@@ -25,16 +25,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "osg/ref_ptr"
-#include "osg/Group"
-#include "osg/LOD"
-#include "osg/Node"
+#include <osg/Group>
+#include <osg/LOD>
+#include <osg/Node>
 
 #include "sg.h"
 
-//#include "dtCore/base.h"
-//#include "dtCore/deltadrawable.h"
 #include "dtCore/physical.h"
 
 namespace dtCore
@@ -251,7 +247,7 @@ namespace dtCore
          /**
           * The container node.
           */
-         //osg::ref_ptr<osg::Group> mNode;
+         //RefPtr<osg::Group> mNode;
          
          /**
           * The noise object.

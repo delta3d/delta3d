@@ -102,7 +102,7 @@ namespace dtCore
    protected:
 
       LightingMode mLightingMode;
-      osg::ref_ptr<osg::LightSource> mLightSource;
+      RefPtr<osg::LightSource> mLightSource;
       bool mEnabled;
    };
 }

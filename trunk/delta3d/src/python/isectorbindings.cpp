@@ -13,7 +13,7 @@ void initIsectorBindings()
    Isector* (*IsectorGI1)(int) = &Isector::GetInstance;
    Isector* (*IsectorGI2)(std::string) = &Isector::GetInstance;
 
-   class_<Isector, bases<Transformable>, osg::ref_ptr<Isector> >("Isector", init<>())
+   class_<Isector, bases<Transformable>, dtCore::RefPtr<Isector> >("Isector", init<>())
       .def("GetInstanceCount", &Isector::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", IsectorGI1, return_internal_reference<>())

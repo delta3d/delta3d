@@ -28,14 +28,14 @@ private:
    static float countTwo;
    static float countThree;
 
-   osg::ref_ptr<dtCore::Object> mWarehouse;
-   osg::ref_ptr<dtCore::Object> mSphere;
+   dtCore::RefPtr<dtCore::Object> mWarehouse;
+   dtCore::RefPtr<dtCore::Object> mSphere;
 
-   osg::ref_ptr<dtCore::SpotLight> mGlobalSpot;
-   osg::ref_ptr<dtCore::PositionalLight> mPositional;
-   osg::ref_ptr<dtCore::InfiniteLight> mGlobalInfinite;
+   dtCore::RefPtr<dtCore::SpotLight> mGlobalSpot;
+   dtCore::RefPtr<dtCore::PositionalLight> mPositional;
+   dtCore::RefPtr<dtCore::InfiniteLight> mGlobalInfinite;
 
-   osg::ref_ptr<dtCore::OrbitMotionModel> mOmm;
+   dtCore::RefPtr<dtCore::OrbitMotionModel> mOmm;
 
 };
 

@@ -13,7 +13,7 @@ void initSkyDomeBindings()
    SkyDome* (*SkyDomeGI1)(int) = &SkyDome::GetInstance;
    SkyDome* (*SkyDomeGI2)(std::string) = &SkyDome::GetInstance;
 
-   class_<SkyDome, bases<EnvEffect>, osg::ref_ptr<SkyDome> >("SkyDome", init<optional<std::string> >())
+   class_<SkyDome, bases<EnvEffect>, dtCore::RefPtr<SkyDome> >("SkyDome", init<optional<std::string> >())
       .def("GetInstanceCount", &SkyDome::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SkyDomeGI1, return_internal_reference<>())

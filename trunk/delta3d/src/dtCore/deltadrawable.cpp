@@ -78,7 +78,7 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
    if (this == child) return false;
    
    //loop through parent's parents and make sure they're not == child
-   osg::ref_ptr<DeltaDrawable> t = this->GetParent();
+   RefPtr<DeltaDrawable> t = this->GetParent();
    while (t != NULL)
    {
       if (t==child) return false;

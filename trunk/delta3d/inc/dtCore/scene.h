@@ -73,10 +73,10 @@ namespace dtCore
       Stats *mStats; ///<The statistics display
 
    protected:
-   	osg::ref_ptr<osgUtil::SceneView> mSceneView;
+   	RefPtr<osgUtil::SceneView> mSceneView;
       ulClock mClock;
    private:
-     osg::ref_ptr<osg::FrameStamp> mFrameStamp;
+     RefPtr<osg::FrameStamp> mFrameStamp;
    };
    
    
@@ -196,8 +196,8 @@ namespace dtCore
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
       
-      osg::ref_ptr<_SceneHandler> mSceneHandler;
-      osg::ref_ptr<osg::Group> mSceneNode; ///<This will be our root scene node
+      RefPtr<_SceneHandler> mSceneHandler;
+      RefPtr<osg::Group> mSceneNode; ///<This will be our root scene node
       dSpaceID mSpaceID;
       dWorldID mWorldID;
       sgVec3 mGravity;
@@ -214,7 +214,7 @@ namespace dtCore
 
       Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
 
-      typedef std::vector< osg::ref_ptr<DeltaDrawable> > DrawableList;
+      typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
 
       DrawableList mAddedDrawables; ///<The list of Drawable directly added
 

@@ -67,7 +67,7 @@ void initApplicationBindings()
    Application* (*ApplicationGI1)(int) = &Application::GetInstance;
    Application* (*ApplicationGI2)(std::string) = &Application::GetInstance;
 
-   class_<Application, bases<BaseABC>, osg::ref_ptr<ApplicationWrap>, boost::noncopyable>("Application", init<optional<std::string> >())
+   class_<Application, bases<BaseABC>, dtCore::RefPtr<ApplicationWrap>, boost::noncopyable>("Application", init<optional<std::string> >())
       .def("GetInstanceCount", &Application::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ApplicationGI1, return_internal_reference<>())

@@ -16,7 +16,7 @@ void initInfiniteTerrainBindings()
    InfiniteTerrain* (*InfiniteTerrainGI1)(int) = &InfiniteTerrain::GetInstance;
    InfiniteTerrain* (*InfiniteTerrainGI2)(std::string) = &InfiniteTerrain::GetInstance;
 
-   class_<InfiniteTerrain, bases<Physical>, osg::ref_ptr<InfiniteTerrain> >("InfiniteTerrain", init<optional<std::string> >())
+   class_<InfiniteTerrain, bases<Physical>, dtCore::RefPtr<InfiniteTerrain> >("InfiniteTerrain", init<optional<std::string> >())
       .def("GetInstanceCount", &InfiniteTerrain::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", InfiniteTerrainGI1, return_internal_reference<>())

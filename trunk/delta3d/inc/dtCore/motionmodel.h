@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 
 #include "dtCore/base.h"
 #include "dtCore/transformable.h"
@@ -93,7 +93,7 @@ namespace dtCore
          /**
           * The motion model target.
           */
-         osg::ref_ptr<Transformable> mTarget;
+         RefPtr<Transformable> mTarget;
          
          /**
           * Whether or not the motion model is enabled.

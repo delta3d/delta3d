@@ -144,12 +144,12 @@ class SplitFunctor : public Drawable::AttributeFunctor,
       /**
        * The primitive sets above the plane.
        */
-      vector< ref_ptr<PrimitiveSet> > mAbovePrimitiveSets;
+      vector< osg::ref_ptr<PrimitiveSet> > mAbovePrimitiveSets;
       
       /**
        * The primitive sets below the plane.
        */
-      vector< ref_ptr<PrimitiveSet> > mBelowPrimitiveSets;
+      vector< osg::ref_ptr<PrimitiveSet> > mBelowPrimitiveSets;
       
       
       /**
@@ -918,7 +918,7 @@ void SplitGeode(const Plane& plane,
    
    unsigned int j;
    
-   ref_ptr<Geode> aboveGeode = new Geode,
+   osg::ref_ptr<Geode> aboveGeode = new Geode,
                   belowGeode = new Geode;
    
    while(geode->getNumDrawables() > 0)
@@ -927,7 +927,7 @@ void SplitGeode(const Plane& plane,
       
       splitter.mPlane = transformedPlane;
       
-      ref_ptr<Drawable> drawable = geode->getDrawable(0);
+      osg::ref_ptr<Drawable> drawable = geode->getDrawable(0);
       
       drawable->accept((Drawable::AttributeFunctor&)splitter);
       drawable->accept((Drawable::PrimitiveFunctor&)splitter);
@@ -944,7 +944,7 @@ void SplitGeode(const Plane& plane,
       }
       else
       {
-         ref_ptr<Geometry> aboveGeom = new Geometry,
+         osg::ref_ptr<Geometry> aboveGeom = new Geometry,
                            belowGeom = new Geometry;
          
          aboveGeom->setStateSet(drawable->getStateSet());

@@ -92,7 +92,7 @@ void initMouseBindings()
       .value("RightButton", RightButton)
       .export_values();
       
-   class_<Mouse, bases<InputDevice>, osg::ref_ptr<Mouse> >("Mouse", no_init)
+   class_<Mouse, bases<InputDevice>, dtCore::RefPtr<Mouse> >("Mouse", no_init)
       .def("GetInstanceCount", &Mouse::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", MouseGI1, return_internal_reference<>())

@@ -53,7 +53,7 @@ void initEffectManagerBindings()
       .value("SmokeDetonation", SmokeDetonation)
       .export_values();
       
-   class_<EffectManager, bases<DeltaDrawable>, osg::ref_ptr<EffectManager> >("EffectManager", init<optional<std::string> >())
+   class_<EffectManager, bases<DeltaDrawable>, dtCore::RefPtr<EffectManager> >("EffectManager", init<optional<std::string> >())
       .def("GetInstanceCount", &EffectManager::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EffectManagerGI1, return_internal_reference<>())

@@ -105,7 +105,7 @@ void initBaseABCBindings()
    BaseABC* (*BaseABCGI1)(int) = &BaseABC::GetInstance;
    BaseABC* (*BaseABCGI2)(std::string) = &BaseABC::GetInstance;
 
-   class_<BaseABC, bases<Base>, osg::ref_ptr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
+   class_<BaseABC, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", BaseABCGI1, return_internal_reference<>())

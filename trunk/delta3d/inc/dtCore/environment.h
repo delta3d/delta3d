@@ -159,24 +159,24 @@ namespace dtCore
       sgVec3 mDifLightColor; ///<The current diffuse light color
       sgVec3 mSpecLightColor; ///<The current specular light color
 
-      typedef std::vector< osg::ref_ptr<EnvEffect> > EnvEffectList;
+      typedef std::vector< RefPtr<EnvEffect> > EnvEffectList;
       
       EnvEffectList mEffectList; ///<The list of environment effects
       EnvEffectList mToBeRemoved;///<temp list of effects to remove
-      osg::ref_ptr<osg::Group> mEnvEffectNode; ///<Contains the env effects
-      osg::ref_ptr<osg::Group> mDrawableNode; ///<Contains the actual model
+      RefPtr<osg::Group> mEnvEffectNode; ///<Contains the env effects
+      RefPtr<osg::Group> mDrawableNode; ///<Contains the actual model
       virtual void OnMessage(MessageData *data);
       void Update(const double deltaFrameTime);
       void RemoveEffectCache(void);///<actually remove EnvEffects from the Env
 
-      osg::ref_ptr<osg::Light> mSkyLight; ///< The sky light
+      RefPtr<osg::Light> mSkyLight; ///< The sky light
       
       sgVec3 mSkyColor; ///< The user-set base sky color
       sgVec3 mModSkyColor; ///<The time-based modified color
       sgVec3 mFogColor; ///<the user-set base fog color
       sgVec3 mAdvFogCtrl; ///<values for the advanced fog (Turbidity, Energy, Visibility)
       sgVec3 mModFogColor; ///<time-based fog modified color
-      osg::ref_ptr<osg::Fog> mFog; ///< The fog adjuster
+      RefPtr<osg::Fog> mFog; ///< The fog adjuster
       float mVisibility; ///<The user-set visibility distance (m)
       bool mFogEnabled; ///< Is the fog enabled?
       FogMode mFogMode; ///< Linear, Exp, Exp2, Advanced
@@ -191,9 +191,9 @@ namespace dtCore
       double mLastUpdate;
       SunlightShader *mSunlightShader; ///<pixel shader for light scattering
       SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
-      osg::ref_ptr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be NULL)
+      RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be NULL)
 
-      //osg::ref_ptr<Scene> mParentScene;///<The Scene the Environment was added to
+      //RefPtr<Scene> mParentScene;///<The Scene the Environment was added to
 
       void UpdateSkyLight(void);
       void UpdateFogColor(void);

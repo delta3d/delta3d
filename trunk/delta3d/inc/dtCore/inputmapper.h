@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 
 #include <OpenThreads/Thread>
 
@@ -160,12 +160,12 @@ namespace dtCore
          /**
           * The set of devices to watch.
           */
-         std::vector< osg::ref_ptr<InputDevice> > mDevices;
+         std::vector< RefPtr<InputDevice> > mDevices;
          
          /**
           * The cancel button.
           */
-         osg::ref_ptr<Button> mCancelButton;
+         RefPtr<Button> mCancelButton;
          
          /**
           * The callback interface.

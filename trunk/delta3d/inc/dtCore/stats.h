@@ -21,11 +21,7 @@
 #ifndef DELTA_STATS
 #define DELTA_STATS
 
-
-
-
 #include <osgUtil/Statistics>
-//#include <osg/Timer>
 #include <osgUtil/SceneView>
 #include <osgText/Text>
 #include <osg/Projection>
@@ -33,6 +29,7 @@
 
 #include "dtCore/export.h"
 #include "dtCore/timer.h"
+#include "dtCore/refptr.h"
 
 namespace dtCore
 {
@@ -68,7 +65,7 @@ namespace dtCore
       };
 
    protected:
-      osg::ref_ptr<osgUtil::RenderStage> mStage;
+      dtCore::RefPtr<osgUtil::RenderStage> mStage;
       float mFrameRate;
       int mPrintStats;
       //osg::Timer   mTimer;
@@ -101,21 +98,21 @@ namespace dtCore
       inline osg::Timer_t ClockTick() {return mTimer.tick();}
       inline osg::Timer_t FrameTick() {return mFrameTick;}
 
-      osg::ref_ptr<osgUtil::SceneView> mSV;
-      osg::ref_ptr<osgText::Text> mFrameRateCounterText;
-      osg::ref_ptr<osgText::Text> mUpdateTimeText;
-      osg::ref_ptr<osgText::Text> mCullTimeText;
-      osg::ref_ptr<osgText::Text> mDrawTimeText;
-      osg::ref_ptr<osgText::Text> mFrameRateTimeText;
-      osg::ref_ptr<osgText::Text> mPrimTotalsText;
-      osg::ref_ptr<osgText::Text> mPrimTypesText;
-      osg::ref_ptr<osgText::Text> mPrimText;
-      osg::ref_ptr<osgText::Text> mVerticesText;
-      osg::ref_ptr<osgText::Text> mTrianglesText;
-      osg::ref_ptr<osgText::Text> mDcText;
+      dtCore::RefPtr<osgUtil::SceneView> mSV;
+      dtCore::RefPtr<osgText::Text> mFrameRateCounterText;
+      dtCore::RefPtr<osgText::Text> mUpdateTimeText;
+      dtCore::RefPtr<osgText::Text> mCullTimeText;
+      dtCore::RefPtr<osgText::Text> mDrawTimeText;
+      dtCore::RefPtr<osgText::Text> mFrameRateTimeText;
+      dtCore::RefPtr<osgText::Text> mPrimTotalsText;
+      dtCore::RefPtr<osgText::Text> mPrimTypesText;
+      dtCore::RefPtr<osgText::Text> mPrimText;
+      dtCore::RefPtr<osgText::Text> mVerticesText;
+      dtCore::RefPtr<osgText::Text> mTrianglesText;
+      dtCore::RefPtr<osgText::Text> mDcText;
 
-      osg::ref_ptr<osg::Projection> mProjection;
-      osg::ref_ptr<osg::Switch> mSwitch;
+      dtCore::RefPtr<osg::Projection> mProjection;
+      dtCore::RefPtr<osg::Switch> mSwitch;
    private:
       void EnableTextNodes(int statsType);
    };

@@ -42,7 +42,7 @@ struct Triangle
    /**
     * The Geode from which the triangle was obtained.
     */
-   ref_ptr<Geode> mGeode;
+   dtCore::RefPtr<Geode> mGeode;
 };
 
 
@@ -71,7 +71,7 @@ class TriangleRecorder
       /**
        * The active geode.
        */
-      ref_ptr<Geode> mActiveGeode;
+      dtCore::RefPtr<Geode> mActiveGeode;
       
       /**
        * The aggregate transformation matrix.
@@ -749,7 +749,7 @@ struct WorkingBSPNode : public Referenced
    /**
     * The parent of this node, or NULL for root.
     */
-   ref_ptr<WorkingBSPNode> mParent;
+   dtCore::RefPtr<WorkingBSPNode> mParent;
    
    
    /**
@@ -864,12 +864,12 @@ struct WorkingBSPInternalNode : public WorkingBSPNode
    /**
     * The left child (represents the space below the plane).
     */
-   ref_ptr<WorkingBSPNode> mLeftChild;
+   dtCore::RefPtr<WorkingBSPNode> mLeftChild;
    
    /**
     * The right child (represents the space above the plane).
     */
-   ref_ptr<WorkingBSPNode> mRightChild;
+   dtCore::RefPtr<WorkingBSPNode> mRightChild;
    
    
    /**
@@ -1271,7 +1271,7 @@ class PotentiallyVisibleSetVisitor : public NodeVisitor
       /**
        * The potentially visible set.
        */
-      ref_ptr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
+      dtCore::RefPtr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
       
       
       /**
@@ -2507,7 +2507,7 @@ class GeodeCollector : public NodeVisitor
  */
 void FlattenGeodeTransformAndState(NodePath& path)
 {
-   ref_ptr<StateSet> stateSet = new StateSet;
+   dtCore::RefPtr<StateSet> stateSet = new StateSet;
    
 	stateSet->clear();
    
@@ -2748,7 +2748,7 @@ Node* Compile(Node* input)
    
    cout << "Building BSP tree";
    
-   ref_ptr<WorkingBSPNode> tree = BuildTree(
+   dtCore::RefPtr<WorkingBSPNode> tree = BuildTree(
       tv->mRecorder.mTriangles,
       tv->mRecorder.mDetailTriangles
    );

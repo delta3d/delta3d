@@ -13,7 +13,7 @@ void initOrbitMotionModelBindings()
    OrbitMotionModel* (*OrbitMotionModelGI1)(int) = &OrbitMotionModel::GetInstance;
    OrbitMotionModel* (*OrbitMotionModelGI2)(std::string) = &OrbitMotionModel::GetInstance;
 
-   class_<OrbitMotionModel, bases<MotionModel>, osg::ref_ptr<OrbitMotionModel> >("OrbitMotionModel", init<optional<Keyboard*, Mouse*> >())
+   class_<OrbitMotionModel, bases<MotionModel>, dtCore::RefPtr<OrbitMotionModel> >("OrbitMotionModel", init<optional<Keyboard*, Mouse*> >())
       .def("GetInstanceCount", &OrbitMotionModel::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", OrbitMotionModelGI1, return_internal_reference<>())

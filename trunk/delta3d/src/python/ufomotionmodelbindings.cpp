@@ -13,7 +13,7 @@ void initUFOMotionModelBindings()
    UFOMotionModel* (*UFOMotionModelGI1)(int) = &UFOMotionModel::GetInstance;
    UFOMotionModel* (*UFOMotionModelGI2)(std::string) = &UFOMotionModel::GetInstance;
 
-   class_<UFOMotionModel, bases<MotionModel>, osg::ref_ptr<UFOMotionModel> >("UFOMotionModel", init<optional<Keyboard*, Mouse*> >())
+   class_<UFOMotionModel, bases<MotionModel>, dtCore::RefPtr<UFOMotionModel> >("UFOMotionModel", init<optional<Keyboard*, Mouse*> >())
       .def("GetInstanceCount", &UFOMotionModel::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", UFOMotionModelGI1, return_internal_reference<>())

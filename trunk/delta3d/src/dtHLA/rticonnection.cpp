@@ -422,7 +422,7 @@ void RTIConnection::JoinFederationExecution(string executionName,
       mMunitionDetonationClassHandle
    );
 
-   for(set< osg::ref_ptr<Entity> >::iterator it = mMasterEntities.begin();
+   for(set< RefPtr<Entity> >::iterator it = mMasterEntities.begin();
        it != mMasterEntities.end();
        it++)
    {
@@ -1271,7 +1271,7 @@ void RTIConnection::ClampToGround(Entity* entity)
       
       osgUtil::IntersectVisitor iv;
    
-      osg::ref_ptr<osg::LineSegment> segDown = new osg::LineSegment;
+      RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
    
       segDown->set(
          osg::Vec3(xyz[0], xyz[1], 10000.f),
@@ -1490,7 +1490,7 @@ int RTIConnection::GetMasterEntityCount()
  */
 Entity* RTIConnection::GetMasterEntity(int index)
 {
-   for(set< osg::ref_ptr<Entity> >::iterator it = mMasterEntities.begin();
+   for(set< RefPtr<Entity> >::iterator it = mMasterEntities.begin();
        it != mMasterEntities.end();
        it++)
    {

@@ -23,6 +23,8 @@
 
 #include "dtCore/enveffect.h"
 #include "dtCore/skydome.h"
+#include "dtCore/refptr.h"
+
 namespace dtCore
 {
 
@@ -115,8 +117,8 @@ private:
    };
    
    MoveEarthySkyWithEyePointTransform *mXform;
-   osg::ref_ptr<osg::Group> mNode;
-   osg::ref_ptr<osg::Geode> mGeode;
+   dtCore::RefPtr<osg::Group> mNode;
+   dtCore::RefPtr<osg::Geode> mGeode;
    void Config(void);
    osg::Node* MakeBox(void);
    std::map<short, std::string> mTextureFilenameMap; ///<maps side to filename

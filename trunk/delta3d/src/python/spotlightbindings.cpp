@@ -10,7 +10,7 @@ using namespace dtCore;
 
 void initSpotLightBindings()
 {
-   class_<SpotLight, bases<PositionalLight>, osg::ref_ptr<SpotLight> >("SpotLight", init<int, optional<std::string, Light::LightingMode> >())
+   class_<SpotLight, bases<PositionalLight>, dtCore::RefPtr<SpotLight> >("SpotLight", init<int, optional<std::string, Light::LightingMode> >())
       .def("SetSpotCutoff", &SpotLight::SetSpotCutoff)
       .def("GetSpotCutoff", &SpotLight::GetSpotCutoff)
       .def("SetSpotExponent", &SpotLight::SetSpotExponent)

@@ -21,7 +21,7 @@
 #ifndef DELTA_COMPASS
 #define DELTA_COMPASS
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 #include <osg/MatrixTransform>
 
 #include <dtCore/macros.h>
@@ -74,7 +74,7 @@ namespace dtCore
          inline   void              SetWindow( dtCore::DeltaWin* win );
 
       private:
-                  osg::ref_ptr<dtCore::Camera>           mCamera;    /// camera who's window we place the model
+                  RefPtr<dtCore::Camera>           mCamera;    /// camera who's window we place the model
                   float                               mScreenX;   /// screen position of model
                   float                               mScreenY;   /// screen position of model
                   float                               mScreenW;   /// screen width

@@ -735,6 +735,9 @@
 				RelativePath="..\..\inc\dtCore\recorder.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\dtCore\refptr.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtCore\scene.h">
 			</File>
 			<File

@@ -372,7 +372,7 @@ void SOARXTerrain::CleanUp()
 	{
 		if (mObjects.size()!=0) 
 		{
-			vector<osg::ref_ptr<dtCore::Object> >::iterator it;
+			vector<dtCore::RefPtr<dtCore::Object> >::iterator it;
 
 			for(it = mObjects.begin();
 				it != mObjects.end();
@@ -385,7 +385,7 @@ void SOARXTerrain::CleanUp()
 		if (mGroups.size()!=0)
 		{
 			Notify (NOTICE, "mGroups.size() = %i", mGroups.size());
-			for(vector<osg::ref_ptr<osg::Group> >::iterator it = mGroups.begin();
+			for(vector<dtCore::RefPtr<osg::Group> >::iterator it = mGroups.begin();
 				it != mGroups.end();
 				it++)
 			{
@@ -3449,8 +3449,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
       {
          if(mDetailGradient[i].get() == NULL || mDetailScale[i].get() == NULL)
          {
-            osg::ref_ptr<osg::Image> detailGradient;
-            osg::ref_ptr<osg::Image> detailScale;
+            dtCore::RefPtr<osg::Image> detailGradient;
+            dtCore::RefPtr<osg::Image> detailScale;
 
             char suffix[32];
 
@@ -3496,8 +3496,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             mDetailScale[i]->setWrap(osg::Texture::WRAP_T, osg::Texture::MIRROR);
          }
 
-         osg::ref_ptr<osg::Image> baseGradient;
-         osg::ref_ptr<osg::Image> baseColor;
+         dtCore::RefPtr<osg::Image> baseGradient;
+         dtCore::RefPtr<osg::Image> baseColor;
 
          char cellName[64];
 
@@ -3536,7 +3536,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
 		 if (mUseLCC)
 		 {
-			 osg::ref_ptr<osg::Image> baseLCCColor;
+			 dtCore::RefPtr<osg::Image> baseLCCColor;
 
 			 string baseLCCColorPath = mCachePath + "/" + cellName + ".baselcc.color.bmp";
 
@@ -3574,7 +3574,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 						}
 						else
 						{
-							osg::ref_ptr<osg::Image> LCCimage;
+							dtCore::RefPtr<osg::Image> LCCimage;
 							string LCCimagePath = mCachePath + "/" + cellName + ".lcc.image." + idxnum +".bmp";
 
 							if(osgDB::fileExists(LCCimagePath))
@@ -3590,7 +3590,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 								osgDB::writeImageFile(*(LCCimage.get()), LCCimagePath);
 							}
 
-							osg::ref_ptr<osg::Image> LCCfilter;
+							dtCore::RefPtr<osg::Image> LCCfilter;
 							Notify(NOTICE, "SOARXTerrain: Making LCC smoothed image for LCC type %s...", idxnum);
 							osg::Vec3 filterRGB(0.0,0.0,0.0);					//select black
 							LCCfilter = MakeFilteredImage((LCCimage.get()), filterRGB);
@@ -3600,7 +3600,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							LCCimage = NULL;
 							LCCfilter = NULL;
 
-//							osg::ref_ptr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
+//							dtCore::RefPtr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
 //							options->_destinationImageWindowMode = osgDB::ImageOptions::PIXEL_WINDOW;
 //							options->_destinationPixelWindow.set(0,0,mMaxTextureSize,mMaxTextureSize);
 //							osgDB::Registry::instance()->setOptions(options.get());
@@ -3681,11 +3681,11 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 						}
 						else
 						{
-							osg::ref_ptr<osg::Image> LCCfilter;
+							dtCore::RefPtr<osg::Image> LCCfilter;
 //							osg::Image* LCCfilter = new osg::Image;
 //							LCCfilter->allocateImage(mMaxTextureSize, mMaxTextureSize, 1, GL_RGB, GL_UNSIGNED_BYTE);
 
-							osg::ref_ptr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
+							dtCore::RefPtr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
 							options->_destinationImageWindowMode = osgDB::ImageOptions::PIXEL_WINDOW;
 							options->_destinationPixelWindow.set(0,0,mMaxTextureSize,mMaxTextureSize);
 							osgDB::Registry::instance()->setOptions(options.get());
@@ -3695,7 +3695,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 //							Notify(NOTICE, "filter image sizes = %i", LCCfilter->s());
 //							Notify(NOTICE, "mMaxTextSize = %i", mMaxTextureSize);
 
-							osg::ref_ptr<osg::Image> mCimage;
+							dtCore::RefPtr<osg::Image> mCimage;
 							Notify(NOTICE, "SOARXTerrain: Making probability map for LCC type %i.",idx);
 							mCimage = MakeCombinedImage(LCCfilter.get(), HFimage, SLimage, REimage);
 							mCimage->ensureValidSizeForTexturing(mMaxTextureSize);
@@ -4391,7 +4391,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					Notify(NOTICE, "Placing LCCtype %i '%s'....",(*l).idx, (*l).name.c_str());
 
 					//create object
-//					osg::ref_ptr<osg::Object> obj = new osg::Object(name);
+//					dtCore::RefPtr<osg::Object> obj = new osg::Object(name);
 //					obj.get()->setName("placed object "+name);
 
 					//load up model
@@ -4417,11 +4417,11 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					sprintf(idxnum, "%i",(*l).idx);
 					string mCimagePath = mCachePath + "/" + cellName + ".c.image." + idxnum +".bmp";
 					//load up that probability map
-					osg::ref_ptr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
+					dtCore::RefPtr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
 					options->_destinationImageWindowMode = osgDB::ImageOptions::PIXEL_WINDOW;
 					options->_destinationPixelWindow.set(0,0,mMaxTextureSize,mMaxTextureSize);
 					osgDB::Registry::instance()->setOptions(options.get());
-					osg::ref_ptr<osg::Image> mCimage;
+					dtCore::RefPtr<osg::Image> mCimage;
 					mCimage = osgDB::readImageFile(mCimagePath);
 
 					for (int y = 0; y < 1024; y++)

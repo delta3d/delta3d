@@ -500,13 +500,13 @@ void InfiniteTerrain::BuildSegment(int x, int y)
           
    float halfStep = 0.5f * (mSegmentSize / mSegmentDivisions);
    
-   osg::ref_ptr<osg::Vec3Array> vertices = 
+   RefPtr<osg::Vec3Array> vertices = 
       new osg::Vec3Array(width*height);
    
-   osg::ref_ptr<osg::Vec3Array> normals =
+   RefPtr<osg::Vec3Array> normals =
       new osg::Vec3Array(width*height);
    
-   osg::ref_ptr<osg::Vec2Array> textureCoordinates =
+   RefPtr<osg::Vec2Array> textureCoordinates =
       new osg::Vec2Array(width*height);
       
    int i, j;
@@ -539,7 +539,7 @@ void InfiniteTerrain::BuildSegment(int x, int y)
 
    geom->setTexCoordArray(0, textureCoordinates.get());
    
-   osg::ref_ptr<osg::IntArray> indices = 
+   RefPtr<osg::IntArray> indices = 
       new osg::IntArray(mSegmentDivisions*width*2);
    
    for(i=0;i<mSegmentDivisions;i++)

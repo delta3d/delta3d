@@ -82,7 +82,7 @@ void initRTIConnectionBindings()
       &RTIConnection::AddEntityTypeMapping;
    
    {
-      scope RTIConnection_scope = class_<RTIConnection, bases<Base>, osg::ref_ptr<RTIConnection> >("RTIConnection", init<optional<std::string> >())
+      scope RTIConnection_scope = class_<RTIConnection, bases<Base>, dtCore::RefPtr<RTIConnection> >("RTIConnection", init<optional<std::string> >())
          .def("GetInstanceCount", &RTIConnection::GetInstanceCount)
          .staticmethod("GetInstanceCount")
          .def("GetInstance", RTIConnectionGI1, return_internal_reference<>())

@@ -19,10 +19,10 @@ class TestAudioApp   :  public   dtABC::Application
       typedef  std::vector<dtAudio::Sound*>              SND_LST;
       typedef  SND_LST::iterator                         SND_ITR;
       typedef  std::queue<dtAudio::Sound*>               SND_QUE;
-      typedef  osg::ref_ptr<dtCore::Object>              OBJ_PTR;
-      typedef  osg::ref_ptr<dtCore::EffectManager>       FXM_PTR;
-      typedef  osg::ref_ptr<dtCore::ParticleSystem>      PAR_PTR;
-      typedef  osg::ref_ptr<dtAudio::SoundEffectBinder>  BIN_PTR;
+      typedef  dtCore::RefPtr<dtCore::Object>              OBJ_PTR;
+      typedef  dtCore::RefPtr<dtCore::EffectManager>       FXM_PTR;
+      typedef  dtCore::RefPtr<dtCore::ParticleSystem>      PAR_PTR;
+      typedef  dtCore::RefPtr<dtAudio::SoundEffectBinder>  BIN_PTR;
 
    private:
       static   unsigned int      kNumSoundFiles;

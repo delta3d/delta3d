@@ -22,7 +22,7 @@ void initLogicalInputDeviceBindings()
    LogicalAxis* (LogicalInputDevice::*AddAxis1)(std::string, AxisMapping*) = &LogicalInputDevice::AddAxis;
    LogicalAxis* (LogicalInputDevice::*AddAxis2)(std::string, Axis*) = &LogicalInputDevice::AddAxis;
    
-   class_<LogicalInputDevice, bases<InputDevice>, osg::ref_ptr<LogicalInputDevice> >("LogicalInputDevice", init<optional<std::string> >())
+   class_<LogicalInputDevice, bases<InputDevice>, dtCore::RefPtr<LogicalInputDevice> >("LogicalInputDevice", init<optional<std::string> >())
       .def("GetInstanceCount", &LogicalInputDevice::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", LogicalInputDeviceGI1, return_internal_reference<>())
@@ -35,41 +35,41 @@ void initLogicalInputDeviceBindings()
       .def("AddAxis", AddAxis2, return_internal_reference<>())
       .def("RemoveAxis", &LogicalInputDevice::RemoveAxis);
       
-   class_<LogicalButton, bases<Button>, osg::ref_ptr<LogicalButton> >("LogicalButton", no_init)
+   class_<LogicalButton, bases<Button>, dtCore::RefPtr<LogicalButton> >("LogicalButton", no_init)
       .def("SetMapping", &LogicalButton::SetMapping)
       .def("GetMapping", &LogicalButton::GetMapping, return_internal_reference<>());
       
-   class_<ButtonMapping, osg::ref_ptr<ButtonMapping>, boost::noncopyable>("ButtonMapping", no_init);
+   class_<ButtonMapping, dtCore::RefPtr<ButtonMapping>, boost::noncopyable>("ButtonMapping", no_init);
    
-   class_<ButtonToButton, bases<ButtonMapping>, osg::ref_ptr<ButtonToButton> >("ButtonToButton", init<Button*>())
+   class_<ButtonToButton, bases<ButtonMapping>, dtCore::RefPtr<ButtonToButton> >("ButtonToButton", init<Button*>())
       .def("SetSourceButton", &ButtonToButton::SetSourceButton)
       .def("GetSourceButton", &ButtonToButton::GetSourceButton, return_internal_reference<>());
       
-   class_<LogicalAxis, bases<Axis>, osg::ref_ptr<LogicalAxis> >("LogicalAxis", no_init)
+   class_<LogicalAxis, bases<Axis>, dtCore::RefPtr<LogicalAxis> >("LogicalAxis", no_init)
       .def("SetMapping", &LogicalAxis::SetMapping)
       .def("GetMapping", &LogicalAxis::GetMapping, return_internal_reference<>());
       
-   class_<AxisMapping, osg::ref_ptr<AxisMapping>, boost::noncopyable>("AxisMapping", no_init);
+   class_<AxisMapping, dtCore::RefPtr<AxisMapping>, boost::noncopyable>("AxisMapping", no_init);
    
-   class_<AxisToAxis, bases<AxisMapping>, osg::ref_ptr<AxisToAxis> >("AxisToAxis", init<Axis*, optional<double, double> >())
+   class_<AxisToAxis, bases<AxisMapping>, dtCore::RefPtr<AxisToAxis> >("AxisToAxis", init<Axis*, optional<double, double> >())
       .def("SetSourceAxis", &AxisToAxis::SetSourceAxis)
       .def("GetSourceAxis", &AxisToAxis::GetSourceAxis, return_internal_reference<>())
       .def("SetTransformationParameters", &AxisToAxis::SetTransformationParameters)
       .def("GetTransformationParameters", &AxisToAxis::GetTransformationParameters);
 
-   class_<AxesToAxis, bases<AxisMapping>, osg::ref_ptr<AxesToAxis> >("AxesToAxis", init<optional<Axis*, Axis*> >())
+   class_<AxesToAxis, bases<AxisMapping>, dtCore::RefPtr<AxesToAxis> >("AxesToAxis", init<optional<Axis*, Axis*> >())
       .def("AddSourceAxis", &AxesToAxis::AddSourceAxis)
       .def("RemoveSourceAxis", &AxesToAxis::RemoveSourceAxis)
       .def("GetNumSourceAxes", &AxesToAxis::GetNumSourceAxes)
       .def("GetSourceAxis", &AxesToAxis::GetSourceAxis, return_internal_reference<>());
       
-   class_<ButtonsToAxis, bases<AxisMapping>, osg::ref_ptr<ButtonsToAxis> >("ButtonsToAxis", init<Button*, Button*, optional<double, double, double> >())
+   class_<ButtonsToAxis, bases<AxisMapping>, dtCore::RefPtr<ButtonsToAxis> >("ButtonsToAxis", init<Button*, Button*, optional<double, double, double> >())
       .def("SetSourceButtons", &ButtonsToAxis::SetSourceButtons)
       .def("GetSourceButtons", &ButtonsToAxis::GetSourceButtons)
       .def("SetValues", &ButtonsToAxis::SetValues)
       .def("GetValues", &ButtonsToAxis::GetValues);
       
-   class_<ButtonAxisToAxis, bases<AxisMapping>, osg::ref_ptr<ButtonAxisToAxis> >("ButtonAxisToAxis", init<Button*, Axis*>())
+   class_<ButtonAxisToAxis, bases<AxisMapping>, dtCore::RefPtr<ButtonAxisToAxis> >("ButtonAxisToAxis", init<Button*, Axis*>())
       .def("SetSourceButton", &ButtonAxisToAxis::SetSourceButton)
       .def("GetSourceButton", &ButtonAxisToAxis::GetSourceButton, return_internal_reference<>())
       .def("SetSourceAxis", &ButtonAxisToAxis::SetSourceAxis)

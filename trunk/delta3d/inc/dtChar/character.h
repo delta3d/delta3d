@@ -171,12 +171,12 @@ namespace dtChar
          /**
           * The ReplicantBody OSG node.
           */
-         osg::ref_ptr<rbody::OsgBodyNode> mBodyNode;
+         dtCore::RefPtr<rbody::OsgBodyNode> mBodyNode;
          
          /**
           * The collision root node.
           */
-         osg::ref_ptr<osg::Node> mCollisionRootNode;
+         dtCore::RefPtr<osg::Node> mCollisionRootNode;
          
          /**
           * The name of the last file loaded.

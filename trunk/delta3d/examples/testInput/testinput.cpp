@@ -315,22 +315,22 @@ private:
    /**
    * The application input device.
    */
-   ref_ptr<LogicalInputDevice> mApplicationInputDevice;
+   RefPtr<LogicalInputDevice> mApplicationInputDevice;
 
    /**
    * The keyboard axis input device.
    */
-   ref_ptr<LogicalInputDevice> mKeyboardAxisInputDevice;
+   RefPtr<LogicalInputDevice> mKeyboardAxisInputDevice;
 
    /**
    * The input mapper.
    */
-   ref_ptr<InputMapper> mInputMapper;
+   RefPtr<InputMapper> mInputMapper;
 
    /**
    * The user interface.
    */
-   ref_ptr<UIDrawable> mUIDrawable;
+   RefPtr<UIDrawable> mUIDrawable;
 
    /**
    * The index of the button/axis being mapped.

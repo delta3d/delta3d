@@ -116,22 +116,22 @@ class HLAStealthViewerApplication : public Application
       /**
        * The effect manager.
        */
-      ref_ptr<EffectManager> mEffectManager;
+      dtCore::RefPtr<EffectManager> mEffectManager;
       
       /**
        * The RTI connection object.
        */
-      ref_ptr<RTIConnection> mRTIConnection;
+      dtCore::RefPtr<RTIConnection> mRTIConnection;
       
       /**
        * Orbit motion model for the camera.
        */
-      ref_ptr<OrbitMotionModel> mOrbitMotionModel;
+      dtCore::RefPtr<OrbitMotionModel> mOrbitMotionModel;
       
       /**
        * The Earth object.
        */
-      ref_ptr<dtCore::Object> mEarth;
+      dtCore::RefPtr<dtCore::Object> mEarth;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(HLAStealthViewerApplication)

@@ -244,7 +244,7 @@ namespace dtCore
       ///create default shaders, coordinate systems, etc.
       void SetupDefaults();
 
-      osg::ref_ptr<osg::Group> mNode; ///<Contains the node which renders the UI
+      RefPtr<osg::Group> mNode; ///<Contains the node which renders the UI
       CUI_UI *mUI; ///<Pointer to the CUI_UI
       std::string mActiveRootFrame; ///<The name of the active root frame
       unsigned short mButtonState; ///<The current mouse button state

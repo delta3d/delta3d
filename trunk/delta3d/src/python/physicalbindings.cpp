@@ -75,7 +75,7 @@ void initPhysicalBindings()
    void (Physical::*GetMass1)(dMass*) const = &Physical::GetMass;
    float (Physical::*GetMass2)() const = &Physical::GetMass;
    
-   class_<Physical, bases<Transformable>, osg::ref_ptr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
+   class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
       .def("GetGeomID", &Physical::GetGeomID, return_value_policy<return_opaque_pointer>())
       .def("SetBodyID", &Physical::SetBodyID)
       .def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())

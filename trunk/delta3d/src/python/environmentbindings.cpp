@@ -15,7 +15,7 @@ void initEnvironmentBindings()
    Environment* (*EnvironmentGI1)(int) = &Environment::GetInstance;
    Environment* (*EnvironmentGI2)(std::string) = &Environment::GetInstance;
 
-   scope Environment_scope = class_<Environment, bases<DeltaDrawable>, osg::ref_ptr<Environment>, boost::noncopyable>("Environment", init<optional<std::string> >())
+   scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<std::string> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EnvironmentGI1, return_internal_reference<>())

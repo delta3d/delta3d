@@ -14,7 +14,7 @@ void initListenerBindings()
    Listener* (*ListenerGI1)(int) = &Listener::GetInstance;
    Listener* (*ListenerGI2)(std::string) = &Listener::GetInstance;
 
-   class_<Listener, bases<Transformable>, osg::ref_ptr<Listener>, boost::noncopyable>("Listener", no_init)
+   class_<Listener, bases<Transformable>, dtCore::RefPtr<Listener>, boost::noncopyable>("Listener", no_init)
       .def("GetInstanceCount", &Listener::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ListenerGI1, return_internal_reference<>())

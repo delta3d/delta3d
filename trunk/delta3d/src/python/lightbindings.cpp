@@ -10,7 +10,7 @@ using namespace dtCore;
 
 void initLightBindings()
 {
-   scope LightScope = class_<Light, bases<DeltaDrawable>, osg::ref_ptr<Light>, boost::noncopyable>("Light", no_init)
+   scope LightScope = class_<Light, bases<DeltaDrawable>, dtCore::RefPtr<Light>, boost::noncopyable>("Light", no_init)
       .def("SetLightingMode", &Light::SetLightingMode)
       .def("GetLightingMode", &Light::GetLightingMode)
       .def("SetEnabled", &Light::SetEnabled)

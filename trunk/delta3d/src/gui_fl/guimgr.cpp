@@ -55,7 +55,7 @@ void UserInterface::SelectInstance (void)
       DrawableChildList->clear();
       for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
       {
-         osg::ref_ptr<DeltaDrawable> child = d->GetChild(childIdx);
+         dtCore::RefPtr<DeltaDrawable> child = d->GetChild(childIdx);
          DrawableChildList->add( child->GetName().c_str(), child.get() );
       }
 
@@ -839,7 +839,7 @@ void UserInterface::DrawableAddChildCB( Fl_Button *)
             DrawableChildList->clear();
             for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
             {
-               osg::ref_ptr<DeltaDrawable> child = d->GetChild(childIdx);
+               dtCore::RefPtr<DeltaDrawable> child = d->GetChild(childIdx);
                DrawableChildList->add( child->GetName().c_str(), child.get() );
             }
 
@@ -872,7 +872,7 @@ void UserInterface::DrawableRemChildCB( Fl_Button *)
    DrawableChildList->clear();
    for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
    {
-      osg::ref_ptr<DeltaDrawable> child = d->GetChild(childIdx);
+      dtCore::RefPtr<DeltaDrawable> child = d->GetChild(childIdx);
       DrawableChildList->add( child->GetName().c_str(), child.get() );
    }
 }

@@ -123,7 +123,7 @@ void initWidgetBindings()
    Widget* (*WidgetGI1)(int) = &Widget::GetInstance;
    Widget* (*WidgetGI2)(std::string) = &Widget::GetInstance;
 
-   class_<Widget, bases<BaseABC>, osg::ref_ptr<WidgetWrap>, boost::noncopyable>("Widget", init<optional<std::string> >())
+   class_<Widget, bases<BaseABC>, dtCore::RefPtr<WidgetWrap>, boost::noncopyable>("Widget", init<optional<std::string> >())
       .def("GetInstanceCount", &Widget::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", WidgetGI1, return_internal_reference<>())

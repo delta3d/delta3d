@@ -14,7 +14,7 @@ void initEntityBindings()
    Entity* (*EntityGI1)(int) = &Entity::GetInstance;
    Entity* (*EntityGI2)(std::string) = &Entity::GetInstance;
 
-   class_<Entity, bases<Object>, osg::ref_ptr<Entity> >("Entity", init<optional<std::string> >())
+   class_<Entity, bases<Object>, dtCore::RefPtr<Entity> >("Entity", init<optional<std::string> >())
       .def("GetInstanceCount", &Entity::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EntityGI1, return_internal_reference<>())

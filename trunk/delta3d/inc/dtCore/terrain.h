@@ -299,7 +299,7 @@ namespace dtCore
          /**
           * The detail texture (noise) image.
           */
-         static osg::ref_ptr<osg::Image> mDetailTextureImage;
+         static RefPtr<osg::Image> mDetailTextureImage;
          
          /**
           * The latitude of the origin in geographic coordinates.
@@ -349,7 +349,7 @@ namespace dtCore
          /**
           * The OSG node.
           */
-         osg::ref_ptr<osg::MatrixTransform> mNode;
+         RefPtr<osg::MatrixTransform> mNode;
          
          /**
           * Identifies a single terrain segment.
@@ -454,7 +454,7 @@ namespace dtCore
          /**
           * The creating Terrain object.
           */
-         osg::ref_ptr<Terrain> mTerrain;
+         RefPtr<Terrain> mTerrain;
          
          /**
           * The latitude, longitude, and DTED level of the heightfield.
@@ -464,7 +464,7 @@ namespace dtCore
          /**
           * The Geode that holds the heightfield Drawable.
           */
-         osg::ref_ptr<osg::Geode> mGeode;
+         RefPtr<osg::Geode> mGeode;
    };
 };
 

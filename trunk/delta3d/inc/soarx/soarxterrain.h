@@ -33,7 +33,7 @@
 
 #include <sstream>
 
-#include <osg/ref_ptr>
+#include "dtCore/refptr.h"
 #include <osg/Geometry>
 #include <osg/MatrixTransform>
 #include <osg/Node>
@@ -584,22 +584,22 @@ namespace dtSOARX
          /**
           * The container node.
           */
-         osg::ref_ptr<osg::MatrixTransform> mNode;
+         dtCore::RefPtr<osg::MatrixTransform> mNode;
          
 		 /**
 		  *	  Listing of objects (plants, trees, etc) 
 		  */
-		 std::vector<osg::ref_ptr<dtCore::Object> > mObjects;
+		 std::vector<dtCore::RefPtr<dtCore::Object> > mObjects;
 
 		 /**
 		  *	  Listing of groups
 		  */
-		 std::vector<osg::ref_ptr<osg::Group> > mGroups;		 
+		 std::vector<dtCore::RefPtr<osg::Group> > mGroups;		 
 
          /**
           * The GLSL program object.
           */
-         osg::ref_ptr<osgGL2::ProgramObject> mProgramObject;
+         dtCore::RefPtr<osgGL2::ProgramObject> mProgramObject;
          
          /**
           * The latitude of the origin in geographic coordinates.
@@ -650,12 +650,12 @@ namespace dtSOARX
          /**
           * Detail gradient textures for each of the three DTED levels.
           */
-         osg::ref_ptr<osg::Texture2D> mDetailGradient[3];
+         dtCore::RefPtr<osg::Texture2D> mDetailGradient[3];
          
          /**
           * Detail scale textures for each of the three DTED levels.
           */
-         osg::ref_ptr<osg::Texture2D> mDetailScale[3];
+         dtCore::RefPtr<osg::Texture2D> mDetailScale[3];
          
          /**
           * Identifies a single terrain segment.
@@ -687,7 +687,7 @@ namespace dtSOARX
           */
          struct GeospecificImage
          {
-            osg::ref_ptr<osg::Image> mImage;
+            dtCore::RefPtr<osg::Image> mImage;
             
             std::string mFilename;
             
@@ -727,7 +727,7 @@ namespace dtSOARX
             int mMinLatitude, mMaxLatitude,
                 mMinLongitude, mMaxLongitude;
             
-            osg::ref_ptr<osg::Texture2D> mTexture;
+            dtCore::RefPtr<osg::Texture2D> mTexture;
              
             float mWidth, mSScale, mTScale;
          };
@@ -746,7 +746,7 @@ namespace dtSOARX
 			 /**
 			 * The top node of the vegetation scene graph.
 			 */
-			 osg::ref_ptr<osg::Group> mRootVegeGroup;
+			 dtCore::RefPtr<osg::Group> mRootVegeGroup;
 		 };
 
 

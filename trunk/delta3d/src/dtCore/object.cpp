@@ -62,7 +62,7 @@ osg::Node* Object::LoadFile(string filename, bool useCache)
          BoundingBoxVisitor bbv;
          node->accept(bbv);
 
-         osg::ref_ptr<osg::MatrixTransform> offset = new osg::MatrixTransform();
+         RefPtr<osg::MatrixTransform> offset = new osg::MatrixTransform();
 
          osg::Matrix tempMat;
          tempMat.makeTranslate( -bbv.mBoundingBox.center() );

@@ -28,6 +28,7 @@
 #include "dtCore/enveffect.h"
 #include "sg.h"
 #include "dtCore/pnoise.h"
+#include "dtCore/refptr.h"
 
 #include <osg/Group>
 #include <osg/Geode>
@@ -127,10 +128,10 @@ namespace dtCore
 		virtual void OnMessage(MessageData *data);
 		void Update(const double deltaFrameTime);
 
-		osg::ref_ptr<osg::Group> mNode;
-		osg::ref_ptr<osg::Geode> mDome;
-		osg::ref_ptr<osg::Image> mImage_3D;
-		osg::ref_ptr<osg::Texture3D> mTex3D;
+      dtCore::RefPtr<osg::Group> mNode;
+		dtCore::RefPtr<osg::Geode> mDome;
+		dtCore::RefPtr<osg::Image> mImage_3D;
+		dtCore::RefPtr<osg::Texture3D> mTex3D;
 		std::string mFileName;
 		osg::Vec3 *mFogColor;
 
@@ -139,7 +140,7 @@ namespace dtCore
 		float mPersistence;
 		float mAmplitude;
 
-		osg::ref_ptr<MoveEarthySkyWithEyePointTransform> mXform;
+		dtCore::RefPtr<MoveEarthySkyWithEyePointTransform> mXform;
 		double ctime;
 		bool mEnable;
 		bool shaders_enabled;

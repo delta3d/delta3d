@@ -532,7 +532,7 @@ AxesToAxis::AxesToAxis(Axis* firstSourceAxis,
  */
 AxesToAxis::~AxesToAxis()
 {
-   for(vector< ref_ptr<Axis> >::iterator it = mSourceAxes.begin();
+   for(vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
        it != mSourceAxes.end();
        it++)
    {
@@ -561,7 +561,7 @@ void AxesToAxis::AddSourceAxis(Axis* sourceAxis)
  */
 void AxesToAxis::RemoveSourceAxis(Axis* sourceAxis)
 {
-   for(vector< ref_ptr<Axis> >::iterator it = mSourceAxes.begin();
+   for(vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
        it != mSourceAxes.end();
        it++)
    {

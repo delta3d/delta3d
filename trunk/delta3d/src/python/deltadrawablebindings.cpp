@@ -64,7 +64,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(RPN_overloads, RenderProxyNode, 0, 1)
 
 void initDeltaDrawableBindings()
 {
-   class_<DeltaDrawable, bases<Base>, osg::ref_ptr<DeltaDrawableWrap>, boost::noncopyable>("DeltaDrawable", no_init)
+   class_<DeltaDrawable, bases<Base>, dtCore::RefPtr<DeltaDrawableWrap>, boost::noncopyable>("DeltaDrawable", no_init)
       .def("SetParent", &DeltaDrawable::SetParent, &DeltaDrawableWrap::DefaultSetParent)
       .def("AddChild", &DeltaDrawable::AddChild, with_custodian_and_ward<1, 2>())
       .def("RemoveChild", &DeltaDrawable::RemoveChild, &DeltaDrawableWrap::DefaultRemoveChild)

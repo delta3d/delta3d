@@ -68,7 +68,7 @@ void initKeyboardBindings()
    Keyboard* (*KeyboardGI1)(int) = &Keyboard::GetInstance;
    Keyboard* (*KeyboardGI2)(std::string) = &Keyboard::GetInstance;
 
-   class_<Keyboard, bases<InputDevice>, osg::ref_ptr<Keyboard> >("Keyboard", no_init)
+   class_<Keyboard, bases<InputDevice>, dtCore::RefPtr<Keyboard> >("Keyboard", no_init)
       .def("GetInstanceCount", &Keyboard::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", KeyboardGI1, return_internal_reference<>())

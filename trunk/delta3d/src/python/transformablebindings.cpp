@@ -17,7 +17,7 @@ void initTransformableBindings()
    Transformable* (*TransformableGI1)(int) = &Transformable::GetInstance;
    Transformable* (*TransformableGI2)(std::string) = &Transformable::GetInstance;
 
-   scope Transformable_scope = class_<Transformable, bases<DeltaDrawable>, osg::ref_ptr<Transformable> >("Transformable", no_init)
+   scope Transformable_scope = class_<Transformable, bases<DeltaDrawable>, dtCore::RefPtr<Transformable> >("Transformable", no_init)
       .def("GetInstanceCount", &Transformable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TransformableGI1, return_internal_reference<>())

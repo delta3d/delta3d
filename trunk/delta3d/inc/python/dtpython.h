@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <boost/python.hpp>
-#include <osg/ref_ptr>
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "ode/src/collision_kernel.h"
@@ -36,7 +35,7 @@ namespace boost
 {
    namespace python
    {
-      template <class T> T* get_pointer(const osg::ref_ptr<T>& p)
+      template <class T> T* get_pointer(const dtCore::RefPtr<T>& p)
       {
          return (T*)p.get();
       }

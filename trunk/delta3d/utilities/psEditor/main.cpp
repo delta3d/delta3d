@@ -91,12 +91,12 @@ struct ParticleSystemLayer
     * The geode that holds the drawable particle system, and whose name is
     * the name of the layer.
     */
-   osg::ref_ptr<osg::Geode> mGeode;
+   RefPtr<osg::Geode> mGeode;
    
    /**
     * The active particle system.
     */
-   osg::ref_ptr<osgParticle::ParticleSystem> mParticleSystem;
+   RefPtr<osgParticle::ParticleSystem> mParticleSystem;
    
    /**
     * The active particle template.
@@ -106,17 +106,17 @@ struct ParticleSystemLayer
    /**
     * The transform that controls the position of the emitter.
     */
-   osg::ref_ptr<osg::MatrixTransform> mEmitterTransform;
+   RefPtr<osg::MatrixTransform> mEmitterTransform;
    
    /**
     * The active emitter.
     */
-   osg::ref_ptr<osgParticle::ModularEmitter> mModularEmitter;
+   RefPtr<osgParticle::ModularEmitter> mModularEmitter;
    
    /**
     * The active program.
     */
-   osg::ref_ptr<osgParticle::ModularProgram> mModularProgram;
+   RefPtr<osgParticle::ModularProgram> mModularProgram;
 };
 
 /**

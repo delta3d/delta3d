@@ -72,13 +72,13 @@ Widget::Config( const WinData* d /*= NULL*/ )
 
    if( d != NULL )
    {
-      osg::ref_ptr<Producer::Camera>         pc = mCamera->GetCamera();
+      dtCore::RefPtr<Producer::Camera>         pc = mCamera->GetCamera();
       assert( pc.get() );
 
-      osg::ref_ptr<DeltaRenderSurface>       rs = new DeltaRenderSurface;
+      dtCore::RefPtr<DeltaRenderSurface>       rs = new DeltaRenderSurface;
       assert( rs.get() );
 
-      osg::ref_ptr<Producer::InputArea>      ia = new Producer::InputArea;
+      dtCore::RefPtr<Producer::InputArea>      ia = new Producer::InputArea;
       assert( ia.get() );
       
       rs->setWindow( d->hwnd );

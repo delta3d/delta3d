@@ -338,7 +338,7 @@ namespace dtCore
          /** 
           *  Pointer to the collision geometry representation
           */
-         osg::ref_ptr<osg::Geode> mGeomGeod;
+         RefPtr<osg::Geode> mGeomGeod;
 
          bool mRenderingGeometry;///<if we're rendering the collision geometry
 

@@ -262,9 +262,9 @@ namespace   dtAudio
          };
 
       private:
-         typedef  osg::ref_ptr<AudioManager>          MOB_ptr;
-         typedef  osg::ref_ptr<SoundObj>              SOB_PTR;
-         typedef  osg::ref_ptr<ListenerObj>           LOB_PTR;
+         typedef  dtCore::RefPtr<AudioManager>          MOB_ptr;
+         typedef  dtCore::RefPtr<SoundObj>              SOB_PTR;
+         typedef  dtCore::RefPtr<ListenerObj>           LOB_PTR;
 
          typedef  std::map<std::string, BufferData*>  BUF_MAP;
 

@@ -74,8 +74,8 @@ class InputCallback : public Producer::KeyboardMouseCallback
 
    private:
 
-      osg::ref_ptr<Keyboard> mKeyboard;
-      osg::ref_ptr<Mouse> mMouse;
+      RefPtr<Keyboard> mKeyboard;
+      RefPtr<Mouse> mMouse;
 };
 
 

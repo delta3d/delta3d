@@ -46,7 +46,7 @@ void initInputMapperBindings()
    InputMapper* (*InputMapperGI1)(int) = &InputMapper::GetInstance;
    InputMapper* (*InputMapperGI2)(std::string) = &InputMapper::GetInstance;
 
-   class_<InputMapper, bases<Base>, osg::ref_ptr<InputMapper> >("InputMapper", init<optional<std::string> >())
+   class_<InputMapper, bases<Base>, dtCore::RefPtr<InputMapper> >("InputMapper", init<optional<std::string> >())
       .def("GetInstanceCount", &InputMapper::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", InputMapperGI1, return_internal_reference<>())
