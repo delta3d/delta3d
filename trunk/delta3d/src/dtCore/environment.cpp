@@ -246,11 +246,11 @@ bool Environment::AddChild( DeltaDrawable *child )
 ///Remove a DeltaDrawable from the Environment Node.
 void Environment::RemoveChild( DeltaDrawable *child )
 {
-   DeltaDrawable::RemoveChild( child );
 	//we add Drawables to our mDrawableNode
 	if (child)
 	{
 		mDrawableNode->removeChild( child->GetOSGNode() );
+      DeltaDrawable::RemoveChild( child );
 
       /*
 		if( Physical* physical = dynamic_cast<Physical*>(drawable) )
