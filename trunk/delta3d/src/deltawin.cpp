@@ -110,11 +110,11 @@ mFullscreen(false)
    SetWindowTitle(name.c_str());
    ShowCursor();
 
-   if(mFullscreen)
-      SetFullScreenMode(mFullscreen);
+   //if(mFullscreen)
+      //SetFullScreenMode(mFullscreen);
 
-   if( mResWidth != 0 && mResHeight != 0 && mResDepth != 0 )
-      ChangeScreenResolution( mResWidth, mResHeight, mResDepth );
+   //if( mResWidth != 0 && mResHeight != 0 && mResDepth != 0 )
+      //ChangeScreenResolution( mResWidth, mResHeight, mResDepth );
 }
 
 
@@ -310,7 +310,6 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
 
 ResolutionVec DeltaWin::GetResolutions( void )
 {
-   
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
    HDC hDC = GetDC(GetDesktopWindow());
@@ -323,9 +322,6 @@ ResolutionVec DeltaWin::GetResolutions( void )
 
    int i = 0;
    for (i = 0; EnumDisplaySettings(NULL, i, &dm); i++) {
-     // convert frequency of 1 to 0 (meaning the default)
-     if ((dm.dmFields & DM_DISPLAYFREQUENCY) && dm.dmDisplayFrequency == 1)
-       dm.dmDisplayFrequency = 0;
  
      Resolution r = { dm.dmPelsWidth,
                       dm.dmPelsHeight,
@@ -371,21 +367,21 @@ ResolutionVec DeltaWin::GetResolutions( void )
    return rv;
    
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   
 }
 
 
-bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth) 
+bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate ) 
 {
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
    DEVMODE dmScreenSettings;                                                           
    ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));
    
-   dmScreenSettings.dmSize       = sizeof (DEVMODE);             
-   dmScreenSettings.dmPelsWidth  = width;                                        
-   dmScreenSettings.dmPelsHeight = height;                              
-   dmScreenSettings.dmBitsPerPel = colorDepth;                     
+   dmScreenSettings.dmSize             = sizeof (DEVMODE);             
+   dmScreenSettings.dmPelsWidth        = width;                                        
+   dmScreenSettings.dmPelsHeight       = height;                              
+   dmScreenSettings.dmBitsPerPel       = colorDepth;    
+   dmScreenSettings.dmDisplayFrequency = refreshRate;
    dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
    if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
@@ -403,8 +399,10 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)
    XF86VidModeModeLine modeline;
    XF86VidModeGetModeLine( dpy, screenNum, &dotClock, &modeline);
 
+   int tempRefresh = CalcRefreshRate( modeline.htotal, modeline.vtotal, dotClock );
+
    //test if new value is same as current, if so don't do anything
-   if( modeline.hdisplay == width && modeline.vdisplay == height )
+   if( modeline.hdisplay == width && modeline.vdisplay == height && tempRefresh == refreshRate )
       return true;
 
    int numResolutions;
@@ -418,7 +416,8 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)
    {
       XF86VidModeModeInfo* tempRes = resolutions[i];
       
-      if( tempRes->hdisplay == width && tempRes->vdisplay == height )
+      tempRefresh = CalcRefreshRate( tempRes->htotal, tempRes->vtotal, tempRes->dotClock );
+      if( tempRes->hdisplay == width && tempRes->vdisplay == height && tempRefresh == refreshRate )
       {
          XF86VidModeSwitchToMode( dpy, screenNum, tempRes );
          XF86VidModeSetViewPort( dpy,screenNum, 0, 0 );
@@ -432,6 +431,12 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int colorDepth)
    
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 }
+
+bool DeltaWin::ChangeScreenResolution( Resolution res ) 
+{
+   return ChangeScreenResolution( res.width, res.height, res.bitDepth, res.refresh );
+}
+
 
 Resolution DeltaWin::GetCurrentResolution( void )
 {
