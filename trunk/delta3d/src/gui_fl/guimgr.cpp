@@ -476,11 +476,6 @@ void UserInterface::SelectInstance (void)
 
       InstanceClassName->label( "dtCore::Light" );
 
-      float x,y,z;
-      l->GetPosition(&x, &y, &z);
-      LightX->value(x);
-      LightY->value(y);
-      LightZ->value(z);
 
       if (l->GetLightingMode()==Light::GLOBAL)
       {
@@ -533,11 +528,6 @@ void UserInterface::SelectInstance (void)
 
       LightDifColorLoadButton->color(fc);
       LightDifColorLoadButton->redraw();
-
-      l->GetDirection(&x, &y, &z);
-      LightDirX->value(x);
-      LightDirY->value(y);
-      LightDirZ->value(z);
 
       float con = l->GetConstantAttenuation();
       float quad = l->GetQuadraticAttenuation();
@@ -1402,17 +1392,6 @@ void UserInterface::WeatherRateOfChangeCB(Fl_Value_Slider *o)
    w->SetRateOfChange( o->value() );
 }
 
-void UserInterface::LightPosCB(Fl_Value_Input*)
-{
-   Light *l = (Light*)GetSelectedInstance(this);
-
-   float x,y,z;
-   x = LightX->value();
-   y = LightY->value();
-   z = LightZ->value();
-   
-   l->SetPosition(x,y,z);
-}
 
 void UserInterface::LightModeCB( Fl_Round_Button *)
 {
@@ -1564,17 +1543,6 @@ void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
    l->SetSpecular(r,g,b, 1.f);
 }
 
-void UserInterface::LightDirCB(Fl_Value_Input *)
-{
-   Light *l = (Light*)GetSelectedInstance(this);
-
-   float x,y,z;
-   x = LightDirX->value();
-   y = LightDirY->value();
-   z = LightDirZ->value();
-   
-   l->SetDirection(x,y,z);
-}
 
 void UserInterface::LightAttCB(Fl_Value_Input*)
 {
