@@ -20,13 +20,15 @@
 #if defined(_DEBUG)
    #define _AUTOLIBNAME1   "dtabcD.lib"
    #define _AUTOLIBNAME2   "gui_fld.lib"
+   #define _AUTOLIBNAME4   "fltkd.lib"
+   #define _AUTOLIBNAME3   "tinyxmld.lib"
 #else 
    #define _AUTOLIBNAME1   "dtabc.lib"  
    #define _AUTOLIBNAME2   "gui_fl.lib"
+   #define _AUTOLIBNAME4   "fltk.lib"
+   #define _AUTOLIBNAME3   "tinyxml.lib"
 #endif
 
-#define _AUTOLIBNAME3 "tinyxml.lib"
-#define _AUTOLIBNAME4 "fltk.lib"
 #define _AUTOLIBNAME5 "wsock32.lib"
 #define _AUTOLIBNAME6 "comctl32.lib"
 #define _AUTOLIBNAME7 "winmm.lib"

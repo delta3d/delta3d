@@ -13,13 +13,14 @@
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtChard.lib"
    #endif
+   #define _AUTOLIBNAME1 "ReplicantBodyd.lib"
 #else
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtChar.lib"
    #endif
+   #define _AUTOLIBNAME1 "ReplicantBody.lib"
 #endif
 
-#define _AUTOLIBNAME1 "ReplicantBody.lib"
 
 #ifndef _NOAUTOLIBMSG
 
