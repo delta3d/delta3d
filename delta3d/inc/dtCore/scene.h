@@ -35,8 +35,7 @@
 #include "dtCore/object.h"
 #include "dtCore/physical.h"
 #include "dtCore/stats.h"
-
-const int MAX_LIGHTS = 8;
+#include "dtCore/light.h"
 
 namespace dtCore
 {         
@@ -147,14 +146,11 @@ namespace dtCore
 		// UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical);
 
-      // Register a Light with the Scene
-      void RegisterLight( Light* light );
-      
-      // Removes a light from the scene
-      void UnRegisterLight( Light* light );      
+      void AddLight( Light* light );
+      void RemoveLight( Light* light );
 
       inline Light* GetLight( int number ) const { return mLights[ number ]; }
-      Light* GetLight( const std::string name ) const;
+      //Light* GetLight( const std::string name ) const;
 
       void UseSceneLight( bool lightState = true );
 

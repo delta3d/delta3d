@@ -23,20 +23,20 @@
 
 #include <osg/LightSource>
 #include <osg/LightModel>
-#include <osg/Light>
 
 #include "dtCore/base.h"
 #include "dtCore/export.h"
+#include "dtCore/notify.h"
+#include "dtCore/macros.h"
 #include "dtCore/deltadrawable.h"
-#include "dtCore/transformable.h"
+
+const int MAX_LIGHTS = 8;
 
 namespace dtCore
 {
 
-   class DT_EXPORT Light : public DeltaDrawable,
-                           public Transformable
+   class DT_EXPORT Light
    {
-      DECLARE_MANAGEMENT_LAYER(Light)
 
    public:
 
@@ -46,56 +46,22 @@ namespace dtCore
          LOCAL  = 1
       };
 
-      /*
-      enum DirPos
-      {
-         DIRECTIONAL = 0,
-         POSITONAL   = 1
-      };
-      */
+      virtual ~Light() = 0;
 
-      enum AttenuationType
-      {
-         CONSTANT  = 0,
-         LINEAR    = 1,
-         QUADRATIC = 2
-      };
-
-      Light( int number, const std::string name, const LightingMode mode );
-
-      Light( osg::LightSource* const source, const std::string name, const LightingMode mode );
-      virtual ~Light();
-      
-     /**
-      * Notifies this light object that it has been added to
-      * a scene.
-      *
-      * @param scene the scene to which this light object has
-      * been added
-      */
-      virtual void AddedToScene( Scene* scene );    
-      
-      /**
-      * Notifies this light object that it has been removed from
-      * a scene.
-      *
-      * @param scene the scene to which this light object has
-      * been removed
-      */
-      virtual void RemovedFromScene( Scene* scene ); 
-
-      //get lightsource?
-      inline osg::Node* GetOSGNode()
+      inline osg::LightSource* GetOSGLightSource()
       { return mLightSource.get(); }
+
+      inline void AddLightChild( DeltaDrawable* drawable )
+      { mLightSource->addChild( drawable->GetOSGNode() ); }
+
+      inline void RemoveLightChild( DeltaDrawable* drawable )
+      { mLightSource->removeChild( drawable->GetOSGNode() ); }
 
       inline void SetLightingMode( const LightingMode mode )
       { mLightingMode = mode; }
       
       inline LightingMode GetLightingMode() const
       { return mLightingMode; }
-
-      void SetDirectionalLighting( bool directional );
-      bool GetDirectionalLighting();
       
       inline void SetLightModel( osg::LightModel* model )
       { mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, osg::StateAttribute::ON ); }
@@ -133,29 +99,34 @@ namespace dtCore
          *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
       }
 
-      // attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
-      // where k_c = constant, k_l = linear, k_q = quadractric
-      void SetAttenuation( AttenuationType type, float value );
-      float GetAttenuation( AttenuationType type );
+   protected:
 
-      inline void SetSpotExponent( float spot_exponent )
-      { mLightSource->getLight()->setSpotExponent( spot_exponent ); }
-      
-      inline float GetSpotExponent() const
-      { return mLightSource->getLight()->getSpotExponent(); }
+      void Init( int number, LightingMode mode, osg::LightSource* lightSource )
+      {
+         if( number < 0 || number >= MAX_LIGHTS )
+            dtCore::Notify(WARN, "Light number %d is out of bounds, use values 0-7.",number);
 
-      inline void SetSpotCutoff( float spot_cutoff )
-      { mLightSource->getLight()->setSpotCutoff( spot_cutoff ); }
-      
-      inline float GetSpotCutoff() const
-      { return mLightSource->getLight()->getSpotCutoff(); }
+         osg::Light* light = new osg::Light;
+         light->setLightNum( number );
 
-   private:
+         if( lightSource )
+            mLightSource = lightSource;
+         else
+            mLightSource = new osg::LightSource;
+
+         mLightingMode = mode;
+
+         mLightSource->setLight( light );
+         mLightSource->setLocalStateSetModes( osg::StateAttribute::ON ); //enable local lighting
+      }
+
       LightingMode mLightingMode;
       osg::ref_ptr<osg::LightSource> mLightSource;
 
    };
 
 }
+
+
 
 #endif // DELTA_LIGHT
