@@ -39,49 +39,50 @@ namespace dtABC
       virtual ~Weather(void);
 
       enum CloudType{
-         CLOUD_CLEAR,
-         CLOUD_FEW,
-         CLOUD_SCATTERED,
-         CLOUD_BROKEN,
-         CLOUD_OVERCAST
+         CLOUD_CLEAR = 0,
+         CLOUD_FEW = 1,
+         CLOUD_SCATTERED = 2,
+         CLOUD_BROKEN = 3,
+         CLOUD_OVERCAST = 4
       };
 
       enum WindType{
-         WIND_NONE,
-         WIND_BREEZE,
-         WIND_LIGHT,
-         WIND_MODERATE,
-         WIND_HEAVY,
-         WIND_SEVERE
+         WIND_NONE = 0,
+         WIND_BREEZE = 1,
+         WIND_LIGHT = 2,
+         WIND_MODERATE = 3,
+         WIND_HEAVY = 4,
+         WIND_SEVERE = 5
       };
 
       enum VisibilityType{
-         VIS_UNLIMITED, ///<no restrictions
-         VIS_FAR,       ///<50km
-         VIS_MODERATE,  ///<25km
-         VIS_LIMITED,   ///<8km
-         VIS_CLOSE      ///<1.5km
+         VIS_UNLIMITED = 0, ///<no restrictions
+         VIS_FAR = 1,       ///<50km
+         VIS_MODERATE = 2,  ///<25km
+         VIS_LIMITED = 3,   ///<8km
+         VIS_CLOSE = 4      ///<1.5km
       };
 
       enum WeatherTheme{
-         THEME_CLEAR,///<no clouds, good visibility, no wind
-         THEME_FAIR,///<light clouds, avg. vis, light winds
-         THEME_FOGGY,///<low visibility, no wind
-         THEME_RAINY///<overcast clouds, limited vis, mod winds
+         THEME_CUSTOM = 0,///<custom weather
+         THEME_CLEAR = 1,///<no clouds, good visibility, no wind
+         THEME_FAIR = 2,///<light clouds, avg. vis, light winds
+         THEME_FOGGY = 3,///<low visibility, no wind
+         THEME_RAINY = 4///<overcast clouds, limited vis, mod winds
       };
 
       enum TimePeriod{
-         TIME_DAWN,  ///<sunrise
-         TIME_DAY,   ///<high noon
-         TIME_DUSK,  ///<sunset
-         TIME_NIGHT  ///<night
+         TIME_DAWN = 0,  ///<sunrise
+         TIME_DAY = 1,   ///<high noon
+         TIME_DUSK = 2,  ///<sunset
+         TIME_NIGHT = 3  ///<night
       };
 
       enum Season{
-         SEASON_SPRING,
-         SEASON_SUMMER,
-         SEASON_FALL,
-         SEASON_WINTER
+         SEASON_SPRING = 0,
+         SEASON_SUMMER = 1,
+         SEASON_FALL = 2,
+         SEASON_WINTER = 3
       };
 
       ///Creates a set of clouds to represent the generic cloud description
