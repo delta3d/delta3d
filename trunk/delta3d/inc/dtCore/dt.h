@@ -41,6 +41,7 @@
 #include "dtCore/isector.h"
 #include "dtCore/joystick.h"
 #include "dtCore/keyboard.h"
+#include "dtCore/light.h"
 #include "dtCore/logicalinputdevice.h"
 #include "dtCore/motionmodel.h"
 #include "dtCore/mouse.h"
