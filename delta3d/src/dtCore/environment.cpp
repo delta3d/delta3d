@@ -131,8 +131,10 @@ Environment::~Environment(void)
 void Environment::AddedToScene(Scene* scene)
 {
    DeltaDrawable::AddedToScene( scene );
-   mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
-   //mParentScene = scene;
+   if (scene != NULL)
+   {
+      mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
+   }
 }
       
 // Add an Environmental Effect to the Environment
@@ -276,6 +278,15 @@ void Environment::OnMessage(MessageData *data)
    {
       //remove any EnvEffects that need removing
       if(mToBeRemoved.size()>0) RemoveEffectCache();
+   }
+   else if ( data->message == "exit" )
+   {
+      //time to get rid of any added children
+      while (GetNumChildren()>0)
+      {
+         DeltaDrawable *d = GetChild(0);
+         RemoveChild(d);
+      }
    }
 }
 
