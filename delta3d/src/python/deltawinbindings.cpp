@@ -25,7 +25,7 @@ void initDeltaWinBindings()
             .def_readwrite("bitDepth", &Resolution::bitDepth)
             .def_readwrite("refresh", &Resolution::refresh);
    
-   class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin", init<optional<std::string, int, int, int, int> >())
+   class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin", init<optional<std::string, int, int, int, int, bool, bool> >())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", DeltaWinGI1, return_internal_reference<>())
