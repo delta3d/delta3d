@@ -145,7 +145,7 @@ namespace dtCore
          virtual  void        SetColor( AXIS a, AXISCOLOR c );
 
          /// get the color value of an axis (0.0 - 1.0)
-         virtual  void        GetColor( AXIS a, osg::Vec4 c )        const;
+         virtual  void        GetColor( AXIS a, osg::Vec4& c )        const;
          /// set a custom color value of an axis
          virtual  void        SetColor( AXIS a, const osg::Vec4 c );
 
@@ -155,7 +155,7 @@ namespace dtCore
          virtual  void        SetLabelColor( AXIS a, AXISCOLOR c );
 
          /// get the color value of a label (0.0 - 1.0)
-         virtual  void        GetLabelColor( AXIS a, osg::Vec4 c )   const;
+         virtual  void        GetLabelColor( AXIS a, osg::Vec4& c )   const;
          /// set a custom color value of an label
          virtual  void        SetLabelColor( AXIS a, const osg::Vec4 c );
 

@@ -361,7 +361,7 @@ PointAxis::SetColor( AXIS a, AXISCOLOR c )
  * @param c : the color value array
  */
 void
-PointAxis::GetColor( AXIS a, osg::Vec4 c )  const
+PointAxis::GetColor( AXIS a, osg::Vec4& c )  const
 {
    if( a >= NUMAXES )
       return;
@@ -441,7 +441,7 @@ PointAxis::SetLabelColor( AXIS a, AXISCOLOR c )
  * @param c : the color value array
  */
 void
-PointAxis::GetLabelColor( AXIS a, osg::Vec4 c )   const
+PointAxis::GetLabelColor( AXIS a, osg::Vec4& c )   const
 {
    if( a >= NUMAXES )
       return;
