@@ -37,6 +37,9 @@ namespace dtCore
       ///Add a DeltaDrawable to be rendered using this Environment's properties.
       void AddDrawable( DeltaDrawable *drawable );
 
+		///Remove a DeltaDrawable added to the Environment.
+		void RemoveDrawable( DeltaDrawable *drawable );
+
       /// Add an Environmental Effect to the Environment
       void AddEffect(EnvEffect *effect);
 

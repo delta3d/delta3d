@@ -26,7 +26,7 @@ public:
       osg::MatrixTransform *xformNode = (osg::MatrixTransform*)node;
 
       Transform xform;
-      mObject.get()->GetTransform(&xform);
+      mObject->GetTransform(&xform);
       sgMat4 mat;
       xform.Get(mat);
 
@@ -35,7 +35,7 @@ public:
       traverse(node, nv);
    }
 private:
-   osg::ref_ptr<dtCore::Object> mObject;
+   dtCore::Object* mObject;
 };
 
 

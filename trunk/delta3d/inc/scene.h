@@ -124,6 +124,9 @@ namespace dtCore
       ///Register a Physical with the Scene
       void RegisterPhysical( Physical *physical);
 
+		///UnRegister a Physical with the Scene
+		void UnRegisterPhysical( Physical *physical);
+
    private:
       
       ///ODE collision callback
