@@ -19,6 +19,10 @@ BaseABC::BaseABC( std::string name /*= "BaseABC"*/ )
    KeyboardListener()
 {
    RegisterInstance(this);
+
+   System*  sys   = System::GetSystem();
+   assert( sys );
+   AddSender( sys );
 }
 
 
@@ -44,8 +48,6 @@ BaseABC::Config( void )
    assert( sys );
 
    sys->Config();
-
-   AddSender( sys );
 }
 
 
