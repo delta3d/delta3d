@@ -13,18 +13,18 @@ PROJECT( DELTA )
 SET( CMAKE_INSTALL_PREFIX ${DELTA_SOURCE_DIR}/ )
 
 INCLUDE_DIRECTORIES( ../inc ../ext/inc )
-LINK_DIRECTORIES( ../lib ../ext/lib /usr/X11R6/lib )
+LINK_DIRECTORIES( ../lib ../ext/lib )
 
-IF(UNIX)
+IF(EXISTS /usr/X11R6/lib )
 LINK_DIRECTORIES( /usr/X11R6/lib )
-ENDIF(UNIX)
+ENDIF(EXISTS /usr/X11R6/lib )
 
 ADD_LIBRARY( dtcore SHARED base camera clouddome cloudplane compass cui_openglrenderer cui_openglshader deltawin effectmanager enveffect environment ephemeris flymotionmodel globals infiniteterrain inputdevice inputmapper isector joystick keyboard logicalinputdevice motionmodel mouse notify object orbitmotionmodel particlesystem physical pnoise pointaxis recorder scene skybox skydome skydomeshader sound stats sunlightshader system terrain tracker transform transformable tripod uidrawable ufomotionmodel walkmotionmodel )
 TARGET_LINK_LIBRARIES( dtcore glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml Xxf86vm )
 
-IF(UNIX)
+IF(EXISTS /usr/X11R6/lib/libXxf86vm.so )
 TARGET_LINK_LIBRARIES( Xxf86vm )
-ENDIF(UNIX)
+ENDIF(EXISTS /usr/X11R6/lib/libXxf86vm.so )
 
 ADD_LIBRARY( gui_fl SHARED gui_fltk guimgr )
 TARGET_LINK_LIBRARIES( gui_fl dtcore fltk GL glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
