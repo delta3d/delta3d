@@ -15,7 +15,7 @@
 #ifdef WIN32
   #include "prof_win32.h"
 #else
-  #error "need to define Prof_get_timestamp() and Prof_Int64"
+  #include "prof_linux.h"
 #endif
 
 #include "dtCore/export.h"
