@@ -58,7 +58,7 @@ namespace dtCore
       virtual  void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
 
       ///Get the current Transform of this Transformable
-      void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
+      virtual  void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
 
    protected:
       ///Override function for derived object to know when attaching to scene

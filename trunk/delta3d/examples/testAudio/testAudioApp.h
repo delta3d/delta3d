@@ -14,17 +14,35 @@
 class testAudioApp   :  public   dtABC::Application
 {
    private:
-      typedef  std::vector<dtAudio::Sound*>  SND_LST;
-      typedef  SND_LST::iterator             SND_ITR;
-      typedef  std::queue<dtAudio::Sound*>   SND_QUE;
+      typedef  std::vector<dtAudio::Sound*>           SND_LST;
+      typedef  SND_LST::iterator                      SND_ITR;
+      typedef  std::queue<dtAudio::Sound*>            SND_QUE;
+      typedef  osg::ref_ptr<dtCore::Object>           OBJ_PTR;
+      typedef  osg::ref_ptr<dtCore::EffectManager>    FXM_PTR;
+      typedef  osg::ref_ptr<dtCore::ParticleSystem>   PAR_PTR;
 
    private:
       static   const char*       kDataPath;
       static   unsigned int      kNumSoundFiles;
       static   const char*       kSoundFile[];
 
-      static   unsigned int      kNumGfxFiles;
-      static   const char*       kGfxFile[];
+               enum              GfxObjId
+                                 {
+                                    BOX   = 0L,
+                                    GROUND,
+
+                                    kNumGfx
+                                 };
+      static   const char*       kGfxFile[kNumGfx];
+
+               enum              FxObjId
+                                 {
+                                    EXPLODE  = 0L,
+                                    SMOKE,
+
+                                    kNumFx
+                                 };
+      static   const char*       kFxFile[kNumFx];
 
    public:
                                  testAudioApp( std::string configFilename = "" );
@@ -39,7 +57,7 @@ class testAudioApp   :  public   dtABC::Application
                                              Producer::KeyCharacter  character   );
 
    private:
-      inline   void              LoadPlaySound( const char* fname );
+      inline   void              LoadPlaySound( const char* fname, bool boxed = false );
       inline   void              StopAllSounds( void );
       inline   void              FreeAllStoppedSounds( bool forced = false );
       inline   void              FlushQueuedSounds( void );
@@ -49,14 +67,30 @@ class testAudioApp   :  public   dtABC::Application
       inline   void              PauseAllSounds( void );
       inline   void              RewindAllSounds( void );
 
-      inline   dtCore::Object*   LoadGfxFile( const char* fname );
+      inline   void                    SetUpVisuals( void );
+      inline   dtCore::Object*         LoadGfxFile( const char* fname );
+      inline   dtCore::EffectManager*  LoadFxFile( const char* fname );
+      inline   dtCore::ParticleSystem* LoadPSFile( const char* fname );
+      inline   void                    InitInputDevices( void );
+      inline   void                    SetUpCamera( void );
+
+      static   void              MakeSmoke( dtAudio::Sound* sound, void* param );
+      static   void              StopSmoke( dtAudio::Sound* sound, void* param );
 
    private:
-               SND_LST           mActive;
-               SND_QUE           mQueued;
-               float             mSndGain;
-               float             mSndPitch;
-               bool              mLooping;
+               SND_LST                       mActive;
+               SND_QUE                       mQueued;
+               float                         mSndGain;
+               float                         mSndPitch;
+               bool                          mLooping;
+               dtAudio::Listener*            mMic;
+
+               OBJ_PTR                       mGfxObj[kNumGfx];
+               PAR_PTR                       mPSys;
+               FXM_PTR                       mFXMgr;
+               dtCore::LogicalInputDevice*   mInputDevice;
+               dtCore::MotionModel*          mMotionModel;
+               unsigned int                  mSmokeCount;
 };
 
 
