@@ -351,6 +351,30 @@ namespace dtHLA
          bool LoadEntityTypeMappings(std::string filename);
 
          /**
+          * Ground clamp modes.
+          */
+         enum GroundClampMode
+         {
+            NO_CLAMP,
+            CLAMP_ELEVATION,
+            CLAMP_ELEVATION_AND_ROTATION
+         };
+         
+         /**
+          * Sets the ground clamp mode.
+          *
+          * @param mode the new ground clamp mode
+          */
+         void SetGroundClampMode(GroundClampMode mode);
+         
+         /**
+          * Returns the ground clamp mode.
+          *
+          * @return the current ground clamp mode
+          */
+         GroundClampMode GetGroundClampMode();
+         
+         /**
           * Adds a detonation listener.
           *
           * @param listener the listener to add
@@ -614,6 +638,13 @@ namespace dtHLA
          static void GeodeticToGeocentric(double latitude, double longitude, double elevation,
                                           double* x, double* y, double* z);
 
+         /**
+          * Clamps the specified transform to the ground using the active ground clamp mode.
+          *
+          * @param transform the transform to clamp
+          */
+         void ClampToGround(dtCore::Transform* transform);
+         
          /**
           * The RTI ambassador.
           */
@@ -970,6 +1001,11 @@ namespace dtHLA
           */
          std::map<RTI::ObjectHandle, GhostData> mObjectHandleGhostDataMap;
 
+         /**
+          * The ground clamp mode.
+          */
+         GroundClampMode mGroundClampMode;
+         
          /**
           * The set of detonation listeners.
           */
