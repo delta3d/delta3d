@@ -144,7 +144,7 @@ public:
       GetCamera()->SetTransform( &position );
 
       Entity* entity = new Entity;
-      entity->LoadFile("UH-1N/UH-1N.ive");
+      entity->LoadFile("models/uh-1n.ive");
       entity->SetEntityIdentifier(
          EntityIdentifier(1, 1, 1)
          );
@@ -158,12 +158,12 @@ public:
 
       effectManager->AddDetonationTypeMapping(
          HighExplosiveDetonation,
-         "explosion.osg"
+         "effects/explosion.osg"
          );
 
       effectManager->AddDetonationTypeMapping(
          SmokeDetonation,
-         "smoke.osg"
+         "effects/smoke.osg"
          );
 
       AddDrawable( effectManager );
@@ -179,7 +179,7 @@ public:
       mRtic->RegisterMasterEntity(entity);
       mRtic->AddEntityTypeMapping(
          helicopter,
-         "UH-1N/UH-1N.ive"
+         "models/uh-1n.ive"
          );  
    }
 
