@@ -126,7 +126,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+					T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -142,7 +142,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -153,7 +153,7 @@ public:
                dtABC::MouseEvent ev( FL_ENTER );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -164,7 +164,7 @@ public:
                dtABC::MouseEvent ev( FL_LEAVE );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -179,7 +179,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -194,7 +194,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -209,7 +209,7 @@ public:
                                       );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -220,7 +220,7 @@ public:
                dtABC::KeyboardEvent   ev( FL_FOCUS );
 
                TranslateKeyboardEvent( ev );
-               SendMessage( msgKeyboardEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgKeyboardEvent, &ev );
                return   1;
             }
             break;
@@ -231,7 +231,7 @@ public:
                dtABC::KeyboardEvent   ev( FL_UNFOCUS );
 
                TranslateKeyboardEvent( ev );
-               SendMessage( msgKeyboardEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgKeyboardEvent, &ev );
                return   1;
             }
             break;
@@ -247,7 +247,7 @@ public:
                                          );
 
                TranslateKeyboardEvent( ev );
-               SendMessage( msgKeyboardEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgKeyboardEvent, &ev );
                return   1;
             }
             break;
@@ -263,7 +263,7 @@ public:
                                          );
 
                TranslateKeyboardEvent( ev );
-               SendMessage( msgKeyboardEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgKeyboardEvent, &ev );
                return   1;
             }
             break;
@@ -274,7 +274,7 @@ public:
                dtABC::MouseEvent ev( FL_DND_ENTER );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -285,7 +285,7 @@ public:
                dtABC::MouseEvent ev( FL_DND_LEAVE );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -300,7 +300,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -316,7 +316,7 @@ public:
                                     );
 
                TranslateMouseEvent( ev );
-               SendMessage( msgMouseEvent, &ev );
+               T::SendMessage( dtABC::Widget::msgMouseEvent, &ev );
                return   1;
             }
             break;
@@ -345,7 +345,7 @@ public:
       Parent::resize( x, y, w, h );
 
       dtABC::WinRect rect(x, y, w, h);
-      SendMessage( msgResize, &rect );
+      T::SendMessage( dtABC::Widget::msgResize, &rect );
    }
 
 
@@ -367,7 +367,7 @@ public:
                                 Parent::w(),
                                 Parent::h() );
 
-      SendMessage( msgWindowData, &windata );
+      T::SendMessage( dtABC::Widget::msgWindowData, &windata );
       Fl::add_idle( idle_callback, this );
    }
 
@@ -427,14 +427,14 @@ protected:
    {
       assert( data );
 
-      if( data->message == msgStopped )
+      if( data->message == dtABC::Widget::msgStopped )
       {
          Parent::hide();
          Fl::first_window()->hide();
          return;
       }
 
-      if( data->message == msgRedraw )
+      if( data->message == dtABC::Widget::msgRedraw )
       {
          Parent::redraw();
          return;
@@ -469,7 +469,7 @@ protected:
    virtual  void
    idle_callback( void )
    {
-      SendMessage( msgStep );
+      T::SendMessage( dtABC::Widget::msgStep );
    }
 
 
