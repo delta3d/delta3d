@@ -37,9 +37,8 @@
 #include "dtCore/physical.h"
 #include "dtCore/stats.h"
 
-//NOTE: EVIL! fix w/ const
-#define mMaxLightNum 8 
-
+//NOTE: EVIL! fix w/ static const int
+const int MAX_LIGHT_NUMBER = 8;
 
 namespace dtCore
 {         
@@ -87,19 +86,17 @@ namespace dtCore
 
    public:
 
-
-
       Scene(std::string name = "scene", bool useSceneLight = true);
       virtual ~Scene();
       _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
       osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
       
       ///Add a DeltaDrawable to the Scene to be viewed.
-      void AddDrawable( DeltaDrawable *drawable );
+      void AddDrawable( DeltaDrawable* drawable );
 
       ///Remove a DeltaDrawable from the Scene
       void RemoveDrawable( DeltaDrawable *drawable );
-      
+     
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain( const float *x, const float *y);
       
@@ -144,16 +141,17 @@ namespace dtCore
          mSceneHandler->mStats->SelectType(type);
       }
 
-      ///Register a Physical with the Scene
+      // Register a Physical with the Scene
       void RegisterPhysical( Physical *physical);
 
-		///UnRegister a Physical with the Scene
+		// UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical);
 
-      //removes a light from the scene
-      void RemoveLight( Light* const light );
-      void RemoveLight( const std::string name );
-      void RemoveLight( const int number );
+      // Register a Light with the Scene
+      void RegisterLight( Light* light );
+      
+      // Removes a light from the scene
+      void UnRegisterLight( Light* light );      
 
       inline Light* GetLight( int number ) const { return mLights[ number ]; }
       Light* GetLight( const std::string name ) const;
@@ -181,9 +179,9 @@ namespace dtCore
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
       void *mUserNearCallbackData; ///< pointer to user-supplied data
 
-      //static const int mMaxLightNum = 8;
+      //static 
       osg::Group* mLightGroup; // single light group for all scene lights
-      Light* mLights[ mMaxLightNum ]; // contains all light associated with this scene
+      Light* mLights[ MAX_LIGHT_NUMBER ]; // contains all light associated with this scene
    };
    
 };
