@@ -6,6 +6,11 @@
 #include <memory.h>
 #include <stdlib.h>
 
+#ifndef _WIN32
+
+#include <sys/socket.h>
+#endif
+
 #include "ul.h"
 #include "sg.h"
 #include "tinyxml.h"
@@ -109,11 +114,12 @@ RTIConnection::RTIConnection(string name)
  * Destructor.
  */
 RTIConnection::~RTIConnection()
+throw (RTI::FederateInternalError)        
 {
    RemoveSender(System::GetSystem());
    
    DeregisterInstance(this);
-}
+} 
 
 /**
  * Creates/joins a federation execution.
@@ -395,7 +401,7 @@ void RTIConnection::JoinFederationExecution(string executionName,
        it != mMasterEntities.end();
        it++)
    {
-      RegisterMasterEntity((*it).get());
+           RegisterMasterEntity(const_cast<Entity*>((*it).get()));
    }
 }
 
@@ -1465,7 +1471,7 @@ Entity* RTIConnection::GetMasterEntity(int index)
    {
       if(index-- == 0)
       {
-         return (*it).get();
+          return const_cast<Entity*>((*it).get());
       }
    }
    
@@ -2311,6 +2317,10 @@ void RTIConnection::discoverObjectInstance(
    RTI::ObjectHandle theObject,
    RTI::ObjectClassHandle theObjectClass,
    const char* theObjectName)
+        throw (
+                RTI::CouldNotDiscover,
+                RTI::ObjectClassNotKnown,
+                RTI::FederateInternalError)
 {
    Entity* ghost = new Entity(theObjectName);
 
@@ -2340,6 +2350,12 @@ void RTIConnection::discoverObjectInstance(
 void RTIConnection::provideAttributeValueUpdate(
    RTI::ObjectHandle theObject,
    const RTI::AttributeHandleSet& theAttributes)
+throw (
+            RTI::ObjectNotKnown,
+            RTI::AttributeNotKnown,
+            RTI::AttributeNotOwned,
+            RTI::FederateInternalError
+         )
 {
    mObjectsToUpdate.insert(theObject);
 }
@@ -2360,6 +2376,13 @@ void RTIConnection::reflectAttributeValues(
    const RTI::FedTime& theTime,
    const char *theTag,
    RTI::EventRetractionHandle theHandle)
+throw (
+            RTI::ObjectNotKnown,
+            RTI::AttributeNotKnown,
+            RTI::FederateOwnsAttributes,
+            RTI::InvalidFederationTime,
+            RTI::FederateInternalError
+         )        
 {
    reflectAttributeValues(theObject, theAttributes, theTag);
 }
@@ -2414,6 +2437,12 @@ void RTIConnection::reflectAttributeValues(
    RTI::ObjectHandle theObject,
    const RTI::AttributeHandleValuePairSet& theAttributes,
    const char *theTag)
+       throw (
+            RTI::ObjectNotKnown,
+            RTI::AttributeNotKnown,
+            RTI::FederateOwnsAttributes,
+            RTI::FederateInternalError
+         ) 
 {
    GhostData& ghostData = mObjectHandleGhostDataMap[theObject];
 
@@ -2775,6 +2804,11 @@ void RTIConnection::removeObjectInstance(
    const RTI::FedTime& theTime,
    const char *theTag,
    RTI::EventRetractionHandle theHandle)
+throw (
+            RTI::ObjectNotKnown,
+            RTI::InvalidFederationTime,
+            RTI::FederateInternalError
+         )        
 {
    removeObjectInstance(theObject, theTag);
 }
@@ -2789,6 +2823,10 @@ void RTIConnection::removeObjectInstance(
 void RTIConnection::removeObjectInstance(
    RTI::ObjectHandle theObject,
    const char *theTag)
+throw (
+            RTI::ObjectNotKnown,
+            RTI::FederateInternalError
+         )        
 {
    mObjectHandleGhostDataMap.erase(theObject);
 }
@@ -2805,6 +2843,11 @@ void RTIConnection::receiveInteraction(
    RTI::InteractionClassHandle theInteraction,
    const RTI::ParameterHandleValuePairSet& theParameters,
    const char *theTag)
+throw (
+            RTI::InteractionClassNotKnown,
+            RTI::InteractionParameterNotKnown,
+            RTI::FederateInternalError
+         )        
 {
    if(theInteraction == mMunitionDetonationClassHandle)
    {
