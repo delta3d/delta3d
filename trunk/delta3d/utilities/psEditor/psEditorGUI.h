@@ -29,7 +29,8 @@ extern Fl_Button *Layers_RenameButton;
 #include <FL/Fl_Browser.H>
 extern void psEditorGUI_LayerSelect(Fl_Browser*, void*);
 extern Fl_Browser *Layers;
-extern void psEditorGUI_ResetLayers(Fl_Button*, void*);
+extern void psEditorGUI_HideLayer(Fl_Button*, void*);
+extern Fl_Button *Layers_HideButton;
 #include <FL/Fl_Box.H>
 extern Fl_DT_Window<dtABC::Widget> *viewWidget;
 #include <FL/Fl_Tabs.H>
@@ -201,6 +202,7 @@ extern void psEditorGUI_Acceleration_SetY(Fl_Value_Input*, void*);
 extern Fl_Value_Input *Acceleration_Y;
 extern void psEditorGUI_Acceleration_SetZ(Fl_Value_Input*, void*);
 extern Fl_Value_Input *Acceleration_Z;
+extern void psEditorGUI_ResetLayers(Fl_Button*, void*);
 Fl_Double_Window* make_window();
 extern Fl_Menu_Item menu_MainMenu[];
 extern Fl_Menu_Item menu_Particles_Alignment[];
