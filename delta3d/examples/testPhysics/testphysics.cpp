@@ -54,9 +54,9 @@ public:
       Object *obj3 = new Object("GroundCrate");
 
       //load the model files
-      if (!obj1->LoadFile("dirt/flatdirt.osg")) return;
-      if (!obj2->LoadFile("physics/crate/crate.osg")) return; 
-      if (!obj3->LoadFile("physics/crate/crate.osg")) return; 
+      if (!obj1->LoadFile("models/flatdirt.ive")) return;
+      if (!obj2->LoadFile("models/physics_crate.ive")) return; 
+      if (!obj3->LoadFile("models/physics_crate.ive")) return; 
 
       //position the camera
       Transform position;
@@ -79,6 +79,14 @@ public:
       obj1->SetCollisionBox(100.0f,100.0f,0.05f); //make VERY thin "box" for ground
       obj2->SetCollisionBox(lx,ly,lz);
       obj3->SetCollisionBox(lx,ly,lz);
+
+      //obj1->SetCollisionBox(); //make VERY thin "box" for ground
+      //obj2->SetCollisionBox();
+      //obj3->SetCollisionBox();
+
+      //obj1->RenderCollisionGeometry(); //make VERY thin "box" for ground
+      //obj2->RenderCollisionGeometry();
+      //obj3->RenderCollisionGeometry();
 
       //set the mass for objects
       dMass mass;
@@ -151,7 +159,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
-            box->LoadFile("physics/crate/crate.osg");
+            box->LoadFile("models/physics_crate.ive");
  
 
             Transform xform(random(-2.f,2.f),
@@ -167,6 +175,8 @@ protected:
             float lz = 1.0f;
 
             box->SetCollisionBox(lx,ly,lz);
+            //box->SetCollisionBox();
+            //box->RenderCollisionGeometry();
 
             dMass mass;
             dMassSetBox(&mass, 1, lx, ly, lz);
@@ -187,7 +197,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
-            sphere->LoadFile("physics/sphere/happy_sphere.osg");
+            sphere->LoadFile("models/physics_happy_sphere.ive");
   
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -200,6 +210,8 @@ protected:
             float radius = 0.5f;
 
             sphere->SetCollisionSphere(radius);
+            //sphere->SetCollisionSphere();
+            //sphere->RenderCollisionGeometry();
 
             dMass mass;
             dMassSetSphere(&mass, 1, radius);
@@ -219,7 +231,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *cyl = new Object("cylinder");
-            cyl->LoadFile("physics/barrel/barrel.osg");
+            cyl->LoadFile("models/physics_barrel.ive");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -233,6 +245,8 @@ protected:
             float length = 1.0f;            
 
             cyl->SetCollisionCappedCylinder(radius,length);
+            //cyl->SetCollisionCappedCylinder();
+            //cyl->RenderCollisionGeometry();
 
             dMass mass;
             dMassSetCappedCylinder(&mass, 1, 2, radius, length);

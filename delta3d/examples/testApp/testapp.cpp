@@ -12,12 +12,12 @@ int main()
 
    //load some terrain
    Object *terrain = new Object( "Terrain" );
-   terrain->LoadFile( "dirt/dirt.osg" );
+   terrain->LoadFile( "models/dirt.ive" );
    app->AddDrawable( terrain );
 
    //load an object
    Object *brdm = new Object( "BRDM" );
-   brdm->LoadFile( "BRDM/brdm-2.osg" );
+   brdm->LoadFile( "models/brdm.ive" );
    app->AddDrawable( brdm );
    Transform trans = Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
    brdm->SetTransform( &trans );
