@@ -5,7 +5,6 @@
 #include "tinyxml.h"
 
 
-
 namespace dtABC
 {
    ///Base generic Application class
@@ -34,8 +33,6 @@ namespace dtABC
       ///Start the Application
       virtual  void  Run( void );
 
-               void  DisplayDebugGUI( const bool enable = true );
-
    protected:
       ///override for preframe 
       virtual  void  PreFrame( const double deltaFrameTime );
@@ -45,6 +42,7 @@ namespace dtABC
 
       ///override for postframe
       virtual  void  PostFrame( const double deltaFrameTime );
+
 
    private:
       ///Create basic instances and set up system hooks
