@@ -11,8 +11,8 @@ class TestPythonApplication(Application):
     def Config(self):
         Application.Config(self)
         SetDataFilePathList('../../data');
-        self.helo = Object('AH-1W')
-        self.helo.LoadFile('ah-1w.ive')
+        self.helo = Object('UH-1N')
+        self.helo.LoadFile('UH-1N/UH-1N.ive')
         self.GetScene().AddDrawable(self.helo)
         self.transform = Transform()
         self.angle = 0.0
