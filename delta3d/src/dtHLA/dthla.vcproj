@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_INC);$(RTI_HOME)/$(RTI_BUILD_TYPE)/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -29,7 +29,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -69,13 +69,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_INC);$(RTI_HOME)/$(RTI_BUILD_TYPE)/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
