@@ -22,7 +22,7 @@ public:
 
 		cd = new dtCore::CloudDome(6, 2, 0.7, 0.5, 0.7, 5, 5500.f, 20);
 		//cd = new dtCore::CloudDome(5500.0f, 20, "../../data/NoiseVolume_ALPHA.dds");
-		cp[0] = new dtCore::CloudPlane(6, 0.5, 4, 1, .2, 0.96, 256, 1800);
+		cp[0] = new dtCore::CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 1800);
 		cp[1] = new dtCore::CloudPlane(6, 0.7, 12, 1, .4, 0.95, 512, 1000);
 		cp[2] = new dtCore::CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
 
@@ -30,6 +30,7 @@ public:
 		weather->AddDrawable(terr);
 		
 		cloudLayers = 1;
+		isDomeEnabled = false;
 		weather->GetEnvironment()->AddEffect(cp[0].get());
 		this->AddDrawable(weather->GetEnvironment());
 
@@ -84,6 +85,8 @@ public:
       orbit->SetTarget(GetCamera());
 	}
 
+	
+
 	~CloudApp()
 	{
 	}
@@ -102,24 +105,33 @@ protected:
 			case Producer::Key_F4: weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
 			case Producer::Key_F5: weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
 			case Producer::Key_P:
-				for(int i = 0; i < cloudLayers; ++i)
-					weather->GetEnvironment()->AddEffect(cp[i].get());
-				weather->GetEnvironment()->RemEffect(cd.get());
+				if(isDomeEnabled)
+				{
+					for(int i = 0; i < cloudLayers; ++i)
+						weather->GetEnvironment()->AddEffect(cp[i].get());
+					
+					weather->GetEnvironment()->RemEffect(cd.get());
+					isDomeEnabled = false;
+				}
 				break;
 			case Producer::Key_D:
-				weather->GetEnvironment()->AddEffect(cd.get());
-				for(int i = 0; i < cloudLayers; ++i)
-				weather->GetEnvironment()->RemEffect(cp[i].get());
+				if(!isDomeEnabled)
+				{
+					weather->GetEnvironment()->AddEffect(cd.get());
+					isDomeEnabled = true;
+					for(int i = 0; i < cloudLayers; ++i)
+						weather->GetEnvironment()->RemEffect(cp[i].get());
+				}
 				break;
 			case Producer::Key_KP_Add:
-				if (cloudLayers >= 0 && cloudLayers < 3)
+				if (!isDomeEnabled && cloudLayers >= 0 && cloudLayers < 3)
 				{	
 					weather->GetEnvironment()->AddEffect(cp[cloudLayers].get());
 					++cloudLayers;
 				}
 				break;
 			case Producer::Key_KP_Subtract:
-				if (cloudLayers > 0)
+				if (!isDomeEnabled && cloudLayers > 0)
 				{
 					--cloudLayers;
 					weather->GetEnvironment()->RemEffect(cp[cloudLayers].get());
@@ -139,6 +151,7 @@ private:
 	osg::ref_ptr<dtCore::CloudDome>  cd;
 	osg::ref_ptr<dtCore::CloudPlane> cp[3];
 	int cloudLayers;
+	bool isDomeEnabled;
 
 };
 
