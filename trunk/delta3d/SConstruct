@@ -362,8 +362,8 @@ env.Alias('install','$prefix/lib')
 # TODO: install headers, libs, to $prefix
 
 SConscript(dirs=[ 'src' ])
-#SConscript(dirs=[ 'examples' ])
-#SConscript(dirs=[ 'utilities' ])
+SConscript(dirs=[ 'examples' ])
+SConscript(dirs=[ 'utilities' ])
 
 # Close the error log and print the results
 errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
