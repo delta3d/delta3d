@@ -33,6 +33,13 @@
 #include <ode/ode.h>
 #include <ode/collision_trimesh.h>
 
+
+#include <osg/NodeVisitor>
+#include <osg/Billboard>
+#include <osg/MatrixTransform>
+
+
+
 //#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 //#include <ode/src/collision_kernel.h> 
 //#include <ode/src/objects.h>
@@ -279,10 +286,10 @@ namespace dtCore
           *  This will draw a purple outline of shape the collision 
           *  detection routine is using.
           */
-         void RenderCollisionGeometry( const bool enable = true);
+         void RenderCollisionGeometry( const bool enable = true );
 
          ///Are we currently rendering the collision geometry?
-         bool GetRenderCollisionGeometry(void)const {return mRenderingGeometry;}
+         bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
          virtual void AddedToScene( Scene *scene );
 
@@ -334,8 +341,44 @@ namespace dtCore
          osg::ref_ptr<osg::Geode> mGeomGeod;
 
          bool mRenderingGeometry;///<if we're rendering the collision geometry
+
+        
    };
 };
 
+class BoundingBoxVisitor : public osg::NodeVisitor
+{
+public:
+
+   /**
+   * Constructor.
+   */
+   BoundingBoxVisitor()
+      : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+   {}
+
+   /**
+   * Visits the specified geode.
+   *
+   * @param node the geode to visit
+   */
+   virtual void apply(osg::Geode& node)
+   {     
+      osg::Matrix matrix = osg::computeLocalToWorld(getNodePath());
+
+      for(unsigned int i=0;i<node.getNumDrawables();i++)
+      {
+         for(unsigned int j=0;j<8;j++)
+         {
+            mBoundingBox.expandBy( node.getDrawable(i)->getBound().corner(j) * matrix );
+         }
+      }
+   }
+
+   /**
+   * The aggregate bounding box.
+   */
+   osg::BoundingBox mBoundingBox;
+};
 
 #endif // DELTA_PHYSICAL

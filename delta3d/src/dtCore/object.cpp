@@ -16,6 +16,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Object)
 
 
 Object::Object(string name)
+: mRecenterGeometry( false )
 {
    RegisterInstance(this);
 
@@ -53,7 +54,28 @@ osg::Node* Object::LoadFile(string filename, bool useCache)
          GetMatrixNode()->removeChild(0,GetMatrixNode()->getNumChildren() );
       }
 
-      GetMatrixNode()->addChild(node);
+      //recenter the geometry about the origin by finding the center of it's 
+      //bounding box and adding a transform between the loaded group node
+      //and the top transform which undo's any offsets
+      if( mRecenterGeometry )
+      {
+         BoundingBoxVisitor bbv;
+         node->accept(bbv);
+
+         osg::ref_ptr<osg::MatrixTransform> offset = new osg::MatrixTransform();
+
+         osg::Matrix tempMat;
+         tempMat.makeTranslate( -bbv.mBoundingBox.center() );
+         offset->setMatrix( tempMat );
+
+         GetMatrixNode()->addChild(offset.get());
+         offset->addChild(node);
+      }
+      else
+      {
+         GetMatrixNode()->addChild(node);
+      }
+   
       return node;
    }
    else
