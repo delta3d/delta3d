@@ -55,7 +55,7 @@ namespace dtAudio
     ********************* JPJ (Sept. 23 2004) ********************
     * The ListenerRelative( bool ) is not working properly.  The
     * underlying sound engine (OpenAL) claims setting the
-    * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sounds with
+    * AL_SOURCE_RELATIVE flag to AL_TRUE will attenuate the sources with
     * respect to the gloabal listener's position, and resetting the
     * flag to AL_FALSE will not do any distance calculations.  This does
     * not  appear to be correct.  It appears that resetting the flag to
