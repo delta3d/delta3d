@@ -37,6 +37,6 @@ Left   -  Turn left
 Right  -  Turn right
 Up     -  Look up (hold shift to look faster)
 Down   -  Look down (hold shift to look faster)
-Enter  -  GetScene()->SetNextStatisticsType()
+Enter  -  Display next statistic
 W      -  Toggle Walk motion model.
 Space  -  Toggle wireframe view.
