@@ -10,7 +10,7 @@ def radians(v):
 class TestPythonApplication(Application):
     def Config(self):
         Application.Config(self)
-        SetDataFilePathList('../../data');
+        SetDataFilePathList('../../data')
         self.helo = Object('UH-1N')
         self.helo.LoadFile('UH-1N/UH-1N.ive')
         self.GetScene().AddDrawable(self.helo)
