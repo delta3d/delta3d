@@ -16,7 +16,8 @@ void initCameraBindings();
 void initCloudDomeBindings();
 void initCloudPlaneBindings();
 void initCompassBindings();
-void initDrawableBindings();
+void initDeltaDrawableBindings();
+void initDeltaWinBindings();
 void initEffectManagerBindings();
 void initEnvEffectBindings();
 void initEnvironmentBindings();
@@ -41,7 +42,6 @@ void initSceneBindings();
 void initSkyBoxBindings();
 void initSkyDomeBindings();
 void initSoundBindings();
-void initSoundEffectBinderBindings();
 void initSystemBindings();
 void initTerrainBindings();
 void initTrackerBindings();
@@ -51,7 +51,7 @@ void initTripodBindings();
 void initUFOMotionModelBindings();
 void initUIDrawableBindings();
 void initWalkMotionModelBindings();
-void initWindowBindings();
+
 
 void NotifyWrap(NotifySeverity ns, const char* msg)
 {
@@ -78,7 +78,7 @@ BOOST_PYTHON_MODULE(dtCore)
    initSceneBindings();
    initTransformBindings();
    initTransformableBindings();
-   initDrawableBindings();
+   initDeltaDrawableBindings();
    initEnvEffectBindings();
    initCloudDomeBindings();
    initCloudPlaneBindings();
@@ -96,7 +96,7 @@ BOOST_PYTHON_MODULE(dtCore)
    initTrackerBindings();
    initLogicalInputDeviceBindings();
    initInputMapperBindings();
-   initWindowBindings();
+   initDeltaWinBindings();
    initSoundBindings();
    initParticleSystemBindings();
    initUIDrawableBindings();
@@ -111,7 +111,6 @@ BOOST_PYTHON_MODULE(dtCore)
    initNoiseGeneratorBindings();
    initPointAxisBindings();
    initRecorderBindings();
-   initSoundEffectBinderBindings();
    initTerrainBindings();
    initEffectManagerBindings();
 }

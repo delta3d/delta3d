@@ -37,22 +37,22 @@ class BaseABCWrap : public BaseABC
          BaseABC::Quit();
       }
       
-      virtual void AddDrawable(Drawable* drawable)
+      virtual void AddDrawable(DeltaDrawable* drawable)
       {
          call_method<void>(mSelf, "AddDrawable", drawable);
       }
       
-      void DefaultAddDrawable(Drawable* drawable)
+      void DefaultAddDrawable(DeltaDrawable* drawable)
       {
          BaseABC::AddDrawable(drawable);
       }
       
-      virtual void RemoveDrawable(Drawable* drawable)
+      virtual void RemoveDrawable(DeltaDrawable* drawable)
       {
          call_method<void>(mSelf, "RemoveDrawable", drawable);
       }
       
-      void DefaultRemoveDrawable(Drawable* drawable)
+      void DefaultRemoveDrawable(DeltaDrawable* drawable)
       {
          BaseABC::RemoveDrawable(drawable);
       }

@@ -13,7 +13,7 @@ void initTerrainBindings()
    Terrain* (*TerrainGI1)(int) = &Terrain::GetInstance;
    Terrain* (*TerrainGI2)(std::string) = &Terrain::GetInstance;
 
-   scope Terrain_scope = class_<Terrain, bases<Transformable, Drawable>, osg::ref_ptr<Terrain> >("Terrain", init<optional<std::string> >())
+   scope Terrain_scope = class_<Terrain, bases<Transformable, DeltaDrawable>, osg::ref_ptr<Terrain> >("Terrain", init<optional<std::string> >())
       .def("GetInstanceCount", &Terrain::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TerrainGI1, return_internal_reference<>())

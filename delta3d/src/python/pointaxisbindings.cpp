@@ -25,7 +25,7 @@ void initPointAxisBindings()
    void (PointAxis::*SetLabelColor1)(PointAxis::AXIS, PointAxis::AXISCOLOR) = &PointAxis::SetLabelColor;
    void (PointAxis::*SetLabelColor2)(PointAxis::AXIS, const osg::Vec4) = &PointAxis::SetLabelColor;
    
-   scope PointAxis_scope = class_<PointAxis, bases<Transformable, Drawable>, osg::ref_ptr<PointAxis> >("PointAxis", init<>())
+   scope PointAxis_scope = class_<PointAxis, bases<Transformable, DeltaDrawable>, osg::ref_ptr<PointAxis> >("PointAxis", init<>())
       .def("GetInstanceCount", &PointAxis::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", PointAxisGI1, return_internal_reference<>())
