@@ -1504,6 +1504,29 @@ void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
 }
 
 /**
+ * Maps the specified entity type to the given filename.
+ *
+ * @param entityType the entity type to map
+ * @param modelFilename the entity model filename
+ * @param articulatedPartClassNameMap the map from articulated part class IDs
+ * to names of DOFTransform nodes
+ * @param iconFilename the entity icon filename
+ */
+void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
+                                         string modelFilename,
+                                         const map<unsigned int, string>&
+                                          articulatedPartClassNameMap,
+                                         string iconFilename)
+{
+   mEntityTypeMappings[entityType].mModelFilename = modelFilename;
+   
+   mEntityTypeMappings[entityType].mArticulatedPartClassNameMap = 
+      articulatedPartClassNameMap;
+      
+   mEntityTypeMappings[entityType].mIconFilename = iconFilename;
+}
+                                   
+/**
  * Removes the mapping for the given entity type.
  *
  * @param entityType the entity type to unmap
@@ -1573,6 +1596,21 @@ bool RTIConnection::LoadEntityTypeMappings(string filename)
          if((val = e->Attribute("icon")) != NULL)
          {
             mEntityTypeMappings[et].mIconFilename = val;
+         }
+         
+         for(TiXmlElement* se = 
+               e->FirstChildElement("ArticulatedPart");
+             se != NULL;
+             se = e->NextSiblingElement("ArticulatedPart"))
+         {
+            if(se->Attribute("class", &i) != NULL)
+            {
+               if((val = se->Attribute("name")) != NULL)
+               {
+                  mEntityTypeMappings[et].mArticulatedPartClassNameMap[i] =
+                     val;   
+               }
+            }   
          }
       }
       
@@ -1867,6 +1905,7 @@ void RTIConnection::OnMessage(MessageData *data)
           g != mObjectHandleGhostDataMap.end();
           g++)
       {
+         GhostData& gd = (*g).second;
          Entity* ghost = (*g).second.mEntity.get();
          
          Transform transform;
@@ -1921,6 +1960,303 @@ void RTIConnection::OnMessage(MessageData *data)
          }
          
          ghost->SetTransform(&transform);
+         
+         const vector<ArticulatedParameter>& params =
+            ghost->GetArticulatedParametersArray();
+         
+         map<unsigned int, map<unsigned int, float> > classTypeValueMap;
+         
+         vector<ArticulatedParameter> newParams;
+         
+         for(vector<ArticulatedParameter>::const_iterator p = params.begin();
+             p != params.end();
+             p++)
+         {
+            const ParameterValue& pv = (*p).GetParameterValue();
+                        
+            if(pv.GetArticulatedParameterType() == ArticulatedPart)
+            {
+               const ArticulatedParts& ap = pv.GetArticulatedParts();
+               
+               switch(ap.GetTypeMetric())
+               {
+                  case AzimuthMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(AzimuthMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][AzimuthMetric] = ap.GetValue();
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][AzimuthMetric] += ap.GetValue();
+                     }
+                     break;
+                     
+                  case AzimuthRateMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(AzimuthMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][AzimuthMetric] = ap.GetValue()*dt;
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][AzimuthMetric] += ap.GetValue()*dt;
+                     }
+                     newParams.push_back(*p);
+                     break;
+                     
+                  case ElevationMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(ElevationMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][ElevationMetric] = ap.GetValue();
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][ElevationMetric] += ap.GetValue();
+                     }
+                     break;
+                     
+                  case ElevationRateMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(ElevationMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][ElevationMetric] = ap.GetValue()*dt;
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][ElevationMetric] += ap.GetValue()*dt;
+                     }
+                     newParams.push_back(*p);
+                     break;
+                     
+                  case RotationMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(RotationMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][RotationMetric] = ap.GetValue();
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][RotationMetric] += ap.GetValue();
+                     }
+                     break;
+                     
+                  case RotationRateMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(RotationMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][RotationMetric] = ap.GetValue()*dt;
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][RotationMetric] += ap.GetValue()*dt;
+                     }
+                     newParams.push_back(*p);
+                     break;
+                     
+                  case XMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(XMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][XMetric] = ap.GetValue();
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][XMetric] += ap.GetValue();
+                     }
+                     break;
+                  
+                  case XRateMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(XMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][XMetric] = ap.GetValue()*dt;
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][XMetric] += ap.GetValue()*dt;
+                     }
+                     newParams.push_back(*p);
+                     break;
+                     
+                  case YMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(YMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][YMetric] = ap.GetValue();
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][YMetric] += ap.GetValue();
+                     }
+                     break;
+                  
+                  case YRateMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(YMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][YMetric] = ap.GetValue()*dt;
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][YMetric] += ap.GetValue()*dt;
+                     }
+                     newParams.push_back(*p);
+                     break;
+                     
+                  case ZMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(ZMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][ZMetric] = ap.GetValue();
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][ZMetric] += ap.GetValue();
+                     }
+                     break;
+                     
+                  case ZRateMetric:
+                     if(classTypeValueMap[ap.GetClass()].count(ZMetric) == 0)
+                     {
+                        classTypeValueMap[ap.GetClass()][ZMetric] = ap.GetValue()*dt;
+                     }
+                     else
+                     {
+                        classTypeValueMap[ap.GetClass()][ZMetric] += ap.GetValue()*dt;
+                     }
+                     newParams.push_back(*p);
+                     break;
+               
+                  default:
+                     newParams.push_back(*p);
+                     break;
+               }
+            }
+            else
+            {
+               newParams.push_back(*p);
+            }
+         }
+         
+         for(map<unsigned int, map<unsigned int, float> >::iterator ctvm =
+               classTypeValueMap.begin();
+             ctvm != classTypeValueMap.end();
+             ctvm++)
+         {
+            osgSim::DOFTransform* transform = NULL;
+            osg::Vec3 hpr, translate;
+            
+            if(gd.mArticulatedPartClassTransformMap.count((*ctvm).first) > 0)
+            {
+               transform = gd.mArticulatedPartClassTransformMap[(*ctvm).first];
+            
+               hpr = transform->getCurrentHPR();
+               translate = transform->getCurrentTranslate();
+            }
+            
+            if((*ctvm).second.count(AzimuthMetric) > 0)
+            {
+               hpr[0] = -(*ctvm).second[AzimuthMetric];
+
+               newParams.push_back(
+                  ArticulatedParameter(
+                     0, 0,
+                     ParameterValue(
+                        ArticulatedParts(
+                           (*ctvm).first,
+                           AzimuthMetric,
+                           (*ctvm).second[AzimuthMetric]
+                        )
+                     )
+                  )
+               );
+            }
+            if((*ctvm).second.count(ElevationMetric) > 0)
+            {
+               hpr[1] = (*ctvm).second[ElevationMetric];
+               
+               newParams.push_back(
+                  ArticulatedParameter(
+                     0, 0,
+                     ParameterValue(
+                        ArticulatedParts(
+                           (*ctvm).first,
+                           ElevationMetric,
+                           (*ctvm).second[ElevationMetric]
+                        )
+                     )
+                  )
+               );
+            }
+            if((*ctvm).second.count(RotationMetric) > 0)
+            {
+               hpr[2] = (*ctvm).second[RotationMetric];
+               
+               newParams.push_back(
+                  ArticulatedParameter(
+                     0, 0,
+                     ParameterValue(
+                        ArticulatedParts(
+                           (*ctvm).first,
+                           RotationMetric,
+                           (*ctvm).second[RotationMetric]
+                        )
+                     )
+                  )
+               );
+            }
+            
+            if((*ctvm).second.count(XMetric) > 0)
+            {
+               translate[0] = (*ctvm).second[XMetric];
+               
+               newParams.push_back(
+                  ArticulatedParameter(
+                     0, 0,
+                     ParameterValue(
+                        ArticulatedParts(
+                           (*ctvm).first,
+                           XMetric,
+                           (*ctvm).second[XMetric]
+                        )
+                     )
+                  )
+               );
+            }
+            if((*ctvm).second.count(YMetric) > 0)
+            {
+               translate[1] = (*ctvm).second[YMetric];
+               
+               newParams.push_back(
+                  ArticulatedParameter(
+                     0, 0,
+                     ParameterValue(
+                        ArticulatedParts(
+                           (*ctvm).first,
+                           YMetric,
+                           (*ctvm).second[YMetric]
+                        )
+                     )
+                  )
+               );
+            }
+            if((*ctvm).second.count(ZMetric) > 0)
+            {
+               translate[2] = -(*ctvm).second[ZMetric];
+               
+               newParams.push_back(
+                  ArticulatedParameter(
+                     0, 0,
+                     ParameterValue(
+                        ArticulatedParts(
+                           (*ctvm).first,
+                           ZMetric,
+                           (*ctvm).second[ZMetric]
+                        )
+                     )
+                  )
+               );
+            }
+            
+            if(transform != NULL)
+            {
+               transform->setCurrentHPR(hpr);
+               transform->setCurrentTranslate(translate);
+            }
+         }
+         
+         ghost->SetArticulatedParametersArray(newParams);
       }
       
             
@@ -2019,6 +2355,44 @@ void RTIConnection::reflectAttributeValues(
 }
 
 /**
+ * Finds a named DOFTransform under the specified parent.
+ *
+ * @param parent the parent to search
+ * @param name the name of the DOFTransform to find
+ * @return a pointer to the transform with the specified name, or NULL if no
+ * such transform exists
+ */
+osgSim::DOFTransform* FindNamedTransform(osg::Node* parent, string name)
+{
+   osgSim::DOFTransform* transform = 
+      dynamic_cast<osgSim::DOFTransform*>(parent);
+   
+   if(transform != NULL && transform->getName() == name)
+   {
+      return transform;
+   }
+   else
+   {
+      osg::Group* group = parent->asGroup();
+   
+      if(group != NULL)
+      {
+         for(unsigned int i=0;i<group->getNumChildren();i++)
+         {
+            transform = FindNamedTransform(group->getChild(i), name);
+            
+            if(transform != NULL)
+            {
+               return transform;
+            }
+         }
+      }
+      
+      return NULL;
+   }
+}
+
+/**
  * Invoked by the RTI ambassador to notify the federate of updated object
  * attribute values.
  *
@@ -2031,7 +2405,7 @@ void RTIConnection::reflectAttributeValues(
    const RTI::AttributeHandleValuePairSet& theAttributes,
    const char *theTag)
 {
-   GhostData ghostData = mObjectHandleGhostDataMap[theObject];
+   GhostData& ghostData = mObjectHandleGhostDataMap[theObject];
 
    Entity* ghost = ghostData.mEntity.get();
 
@@ -2095,6 +2469,26 @@ void RTIConnection::reflectAttributeValues(
             if(filename != ghost->GetFilename())
             {
                ghost->LoadFile(filename);
+               
+               if(mapping != NULL)
+               {
+                  for(map<unsigned int, string>::iterator it =
+                        mapping->mArticulatedPartClassNameMap.begin();
+                      it != mapping->mArticulatedPartClassNameMap.end();
+                      it++)
+                  {
+                     osgSim::DOFTransform* transform = 
+                        FindNamedTransform(ghost->GetOSGNode(), (*it).second);
+                        
+                     if(transform != NULL)
+                     {
+                        transform->setAnimationOn(false);
+                        
+                        ghostData.mArticulatedPartClassTransformMap[(*it).first] =
+                           transform;
+                     }
+                  }
+               }
             }
          }
       }
@@ -2244,6 +2638,57 @@ void RTIConnection::reflectAttributeValues(
          }
          
          ghost->SetArticulatedParametersArray(params);
+         
+         for(vector<ArticulatedParameter>::iterator p = params.begin();
+             p != params.end();
+             p++)
+         {
+            const ParameterValue& pv = (*p).GetParameterValue();
+                        
+            if(pv.GetArticulatedParameterType() == ArticulatedPart)
+            {
+               const ArticulatedParts& ap = pv.GetArticulatedParts();
+               
+               if(ghostData.mArticulatedPartClassTransformMap.count(ap.GetClass()) > 0)
+               {
+                  osgSim::DOFTransform* transform = 
+                     ghostData.mArticulatedPartClassTransformMap[ap.GetClass()];
+                     
+                  osg::Vec3 hpr = transform->getCurrentHPR(),
+                            translate = transform->getCurrentTranslate();
+                            
+                  switch(ap.GetTypeMetric())
+                  {
+                     case AzimuthMetric:
+                        hpr[0] = -ap.GetValue();
+                        break;
+                        
+                     case ElevationMetric:
+                        hpr[1] = ap.GetValue();
+                        break;
+                        
+                     case RotationMetric:
+                        hpr[2] = ap.GetValue();
+                        break;
+                        
+                     case XMetric:
+                        translate[0] = ap.GetValue();
+                        break;
+                        
+                     case YMetric:
+                        translate[1] = ap.GetValue();
+                        break;
+                        
+                     case ZMetric:
+                        translate[2] = -ap.GetValue();
+                        break;
+                  }
+                  
+                  transform->setCurrentHPR(hpr);
+                  transform->setCurrentTranslate(translate);
+               }
+            }
+         }
       }
       else if(handle == mDamageStateAttributeHandle)
       {
