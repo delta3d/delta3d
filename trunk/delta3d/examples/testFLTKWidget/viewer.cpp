@@ -12,7 +12,7 @@ using namespace   dtCore;
 
 
 
-         const std::string Viewer::DEF_PATH("..\\..\\..\\data");
+         const std::string Viewer::DEF_PATH("..\\..\\data");
          const std::string Viewer::DEF_FILE("cessna.osg");
 
 
