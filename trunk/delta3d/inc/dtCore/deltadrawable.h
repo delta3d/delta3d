@@ -109,7 +109,7 @@ namespace dtCore
           */
          bool CanBeChild( DeltaDrawable *child );
 
-         virtual void RenderProxyNode( const bool enable = true )
+         virtual void RenderProxyNode( bool enable = true )
          {
             if( mProxyNode == 0 )
                dtCore::Notify( WARN, "Proxy node is not implemented, overwrite RenderProxyNode." );
