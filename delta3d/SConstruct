@@ -235,10 +235,10 @@ Export('env')
 env.Replace(CXXSUFFIX = '.cpp')
 
 env.Alias('install','$prefix/lib')
-env.Alias('examples','$prefix/examples')
+#env.Alias('examples',SConscript('examples'))
 
 # TODO: install headers, libs, to $prefix
 
 SConscript(dirs=[ 'src' ])
-#SConscript(dirs=[ 'examples' ])
+SConscript(dirs=[ 'examples' ])
 #SConscript(dirs=[ 'utilities' ])
