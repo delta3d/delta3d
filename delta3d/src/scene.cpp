@@ -242,6 +242,7 @@ float Scene::GetHeightOfTerrain(const float *x, const float *y)
    
    segDown->set(osg::Vec3(*x, *y, 10000.f),osg::Vec3(*x,*y, -10000.f));
    iv.addLineSegment(segDown.get());
+   iv.setTraversalMask(0x0fffffff);
    
    mSceneNode->accept(iv);
    
