@@ -10,18 +10,14 @@
 
 #include <osg/Node>
 #include <osg/Geode>
-
 #include <sg.h>
+#include <ode/ode.h>
+#include <ode/collision_trimesh.h>
 
-//extern "C"
-//{
-   #include <ode/ode.h>
-   #include <ode/collision_trimesh.h>
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include <ode/src/collision_kernel.h> 
 #include <ode/src/objects.h>
 #endif
-//}
 
 namespace dtCore
 {
