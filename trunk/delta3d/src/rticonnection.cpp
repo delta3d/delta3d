@@ -7,8 +7,10 @@
 #include <stdlib.h>
 
 #ifndef _WIN32
-
+#define SOCKET int
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #endif
 
 #include "ul.h"
@@ -84,7 +86,7 @@ RTIConnection::RTIConnection(string name)
    //
    // Code from http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1047083789&id=1045780608
    //
-   
+
    int len;
    sockaddr_in other, me;
 
@@ -98,14 +100,22 @@ RTIConnection::RTIConnection(string name)
    {
       if(getsockname(some_socket, (sockaddr*)&me, &len) == 0)
       {
+         #ifdef _WIN32
          mLocalIPAddress = me.sin_addr.S_un.S_addr;
+         #else
+         mLocalIPAddress = me.sin_addr.s_addr;
+         #endif
          
          if(ulIsLittleEndian)
          {
             ulEndianSwap(&mLocalIPAddress);
          }
-         
+
+         #ifdef _WIN32
          mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
+         #else
+         //mSiteIdentifier = ??? 
+         #endif
       }
    }
 }
