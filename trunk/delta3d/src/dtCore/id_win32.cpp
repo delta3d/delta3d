@@ -16,8 +16,17 @@ Id::Id()
 
 Id::Id( const Id& id )
 {
-   //Data1 = ...
-
+   mId.Data1 = id.mId.Data1;
+   mId.Data2 = id.mId.Data2;
+   mId.Data3 = id.mId.Data3;
+   mId.Data4[0] = id.mId.Data4[0];
+   mId.Data4[1] = id.mId.Data4[1];
+   mId.Data4[2] = id.mId.Data4[2];
+   mId.Data4[3] = id.mId.Data4[3];
+   mId.Data4[4] = id.mId.Data4[4];
+   mId.Data4[5] = id.mId.Data4[5];
+   mId.Data4[6] = id.mId.Data4[6];
+   mId.Data4[7] = id.mId.Data4[7];
 }
 
 bool Id::operator== ( Id id )
