@@ -54,7 +54,7 @@ public:
       Object *obj2 = new Object("box");
 
       if (!obj1->LoadFile("ground.flt")) return;
-      if (!obj2->LoadFile("d3d_models/Crate/2lowpol_crate.ive")) return; 
+      if (!obj2->LoadFile("PHYSICS/crate/crate.IVE")) return; 
 
       //position first falling crate
       Transform position;
@@ -135,7 +135,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
-            box->LoadFile("d3d_models/Crate/2lowpol_crate.ive");
+            box->LoadFile("PHYSICS/crate/crate.IVE");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -171,7 +171,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
-            sphere->LoadFile("d3d_models/Sphere/happy_sphere.IVE");
+            sphere->LoadFile("PHYSICS/sphere/happy_sphere.IVE");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -184,7 +184,7 @@ protected:
             sphere->SetCollisionSphere();
             //sphere->RenderCollisionGeometry();
 
-            float radius = 1.0f;
+            float radius = 0.5f;
 
             dMass mass;
             dMassSetSphere(&mass, 1, radius);
@@ -204,7 +204,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *cyl = new Object("cylinder");
-            cyl->LoadFile("d3d_models/Barrel/rad_drum/rad_drum.ive");
+            cyl->LoadFile("PHYSICS/barrel/rad_drum.IVE");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -217,8 +217,8 @@ protected:
             cyl->SetCollisionCappedCylinder();
             //cyl->RenderCollisionGeometry();
 
-            float radius = 0.25f; 
-            float length = 1.75f;
+            float radius = 0.321f; 
+            float length = 1.0f;
 
             dMass mass;
             dMassSetCappedCylinder(&mass, 1, 2, radius, length);
