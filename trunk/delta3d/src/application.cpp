@@ -29,9 +29,9 @@ Application::Application(std::string configFilename)
    {
       //  parse config file
       std::string foundPath = osgDB::findDataFile(configFilename);
-      
+        
       TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());
-      if (!xmlDoc->LoadFile(configFilename.c_str()))
+      if (!xmlDoc->LoadFile(foundPath.c_str()))
       {
          Notify(WARN, "Application: can't find config file %s", configFilename.c_str());
          CreateInstances(); //create default window, camera, etc.
