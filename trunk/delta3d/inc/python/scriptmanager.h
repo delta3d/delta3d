@@ -29,15 +29,35 @@ namespace dtScript
 {
 	class DT_EXPORT ScriptManager
 	{
+	
 	public:
+	
 	   ScriptManager();
 	   ~ScriptManager();
 	   
+	   inline void Load( std::string filename )
+	   {
+	      mFilename = filename;
+	      mFileObject = PyFile_FromString( const_cast<char*>(mFilename.c_str()), "r");
+	   }
+	   
+	   inline void Run()
+      { 
+         PyRun_SimpleFile(PyFile_AsFile(mFileObject), const_cast<char*>(mFilename.c_str()));
+      }
+      
 	   inline void Run( std::string filename )
       { 
-         PyRun_SimpleFile(PyFile_AsFile(PyFile_FromString(const_cast<char*>(filename.c_str()), "r")), const_cast<char*>(filename.c_str()));
+         Load( filename );
+         Run();
       }
+   protected:
+   
+      PyObject* mFileObject;
+      std::string mFilename;
+      
 	};
+	
 }
 
 #endif // DELTA_SCRIPT_MANAGER
