@@ -27,7 +27,7 @@ public:
 
       Object* obj = new Object("UH-1N");
 
-      obj->LoadFile("UH-1N/UH-1N.ive");
+      obj->LoadFile("models/uh-1n.ive");
 
       Transform transform(0, 50, 0);
 
