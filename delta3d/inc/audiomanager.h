@@ -29,7 +29,7 @@ namespace   dtAudio
    // into it's own file, replacing dtCore::Sound
 
    //! callback function type
-   typedef  void  (*SoundCB)( Sound* sound, void *param );
+   typedef  void  (*SoundCB)( Sound* sound, void* param );
 
    class DT_EXPORT Sound :  public   dtCore::Transformable
    {
@@ -55,6 +55,11 @@ namespace   dtAudio
                            VELOCITY,
                            ABS,
                            REL,
+                           MIN_DIST,
+                           MAX_DIST,
+                           ROL_FACT,
+                           MIN_GAIN,
+                           MAX_GAIN,
 
                            kNumCommands
                         };
@@ -82,21 +87,21 @@ namespace   dtAudio
          virtual  void        Stop( void );
          virtual  void        Rewind( void );
 
-         virtual  bool        IsPlaying( void )          const {  return   false;   }
-         virtual  bool        IsPaused( void )           const {  return   false;   }
-         virtual  bool        IsStopped( void )          const {  return   true;    }
+         virtual  bool        IsPlaying( void )                   const {  return   false;   }
+         virtual  bool        IsPaused( void )                    const {  return   false;   }
+         virtual  bool        IsStopped( void )                   const {  return   true;    }
 
          virtual  void        SetLooping( bool loop = true );
-         virtual  bool        IsLooping( void )          const {  return   false;   }
+         virtual  bool        IsLooping( void )                   const {  return   false;   }
 
          virtual  void        ListenerRelative( bool relative );
-         virtual  bool        IsListenerRelative( void ) const {  return   false;   }
+         virtual  bool        IsListenerRelative( void )          const {  return   false;   }
 
          virtual  void        SetGain( float gain );
-         virtual  float       GetGain( void )            const {  return   static_cast<float>(mGain);    }
+         virtual  float       GetGain( void )                     const {  return   mGain;    }
 
          virtual  void        SetPitch( float pitch );
-         virtual  float       GetPitch( void )           const {  return   static_cast<float>(mPitch);   }
+         virtual  float       GetPitch( void )                    const {  return   mPitch;   }
 
          virtual  void        SetTransform(  dtCore::Transform*                  xform,
                                              dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
@@ -110,6 +115,21 @@ namespace   dtAudio
          virtual  void        SetVelocity( const sgVec3& velocity );
          virtual  void        GetVelocity( sgVec3& velocity )     const;
 
+         virtual  void        SetMinDistance( float dist );
+         virtual  float       GetMinDistance( void )              const {  return   mMinDist;   }
+
+         virtual  void        SetMaxDistance( float dist );
+         virtual  float       GetMaxDistance( void )              const {  return   mMaxDist;   }
+
+         virtual  void        SetRolloffFactor( float rolloff );
+         virtual  float       GetRolloffFactor( void )            const {  return   mRolloff;   }
+
+         virtual  void        SetMinGain( float gain );
+         virtual  float       GetMinGain( void )                  const {  return   mMinGain;   }
+
+         virtual  void        SetMaxGain( float gain );
+         virtual  float       GetMaxGain( void )                  const {  return   mMaxGain;   }
+
       protected:
                   std::string    mFilename;
                   SoundCB        mPlayCB;
@@ -121,6 +141,11 @@ namespace   dtAudio
                   sgVec3         mPos;
                   sgVec3         mDir;
                   sgVec3         mVelo;
+                  float          mMinDist;
+                  float          mMaxDist;
+                  float          mRolloff;
+                  float          mMinGain;
+                  float          mMaxGain;
    };
 
 
@@ -177,6 +202,7 @@ namespace   dtAudio
 
                         void           SetState( unsigned int flag );
                         void           ResetState( unsigned int flag );
+                        bool           GetState( unsigned int flag ) const;
 
                         void           Clear( void );
 
@@ -273,6 +299,11 @@ namespace   dtAudio
          inline   void              SetPosition( SoundObj* snd );
          inline   void              SetDirection( SoundObj* snd );
          inline   void              SetVelocity( SoundObj* snd );
+         inline   void              SetReferenceDistance( SoundObj* snd );
+         inline   void              SetMaximumDistance( SoundObj* snd );
+         inline   void              SetRolloff( SoundObj* snd );
+         inline   void              SetMinimumGain( SoundObj* snd );
+         inline   void              SetMaximumGain( SoundObj* snd );
          inline   bool              GetSource( SoundObj* snd );
          inline   void              FreeSource( SoundObj* snd );
 

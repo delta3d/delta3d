@@ -3,6 +3,7 @@
 
 #include <listener.h>
 #include <audiomanager.h>
+#include <soundeffectbinder.h>
 
 
 

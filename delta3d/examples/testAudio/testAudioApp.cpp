@@ -18,8 +18,8 @@ const char*    testAudioApp::kDataPath = "../../data";
 unsigned int   testAudioApp::kNumSoundFiles(4L);
 const char*    testAudioApp::kSoundFile[] =
                {
-                  "exp35.wav",
-                  "exp57.wav",
+                  "pow.wav",
+                  "bang.wav",
                   "tone_C_264_sawtooth.wav",
                   "tone_A_440_sawtooth.wav"
                };
@@ -75,8 +75,21 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
    mMic->SetTransform( &transform, dtCore::Transformable::REL_CS );
 
+   mSFXBinder  = new dtAudio::SoundEffectBinder;
+   assert( mSFXBinder.get() );
+
+   if( mFXMgr.get() )
+   {
+      mSFXBinder->Initialize( mFXMgr.get() );
+      mSFXBinder->AddEffectTypeMapping( dtCore::HighExplosiveDetonation, kSoundFile[1L] );
+      mSFXBinder->AddEffectTypeRange( dtCore::HighExplosiveDetonation, 35.0f );
+   }
+
    dtCore::Notify( dtCore::ALWAYS, " " );
-   dtCore::Notify( dtCore::ALWAYS, "   [ASDF]    plays a sound" );
+   dtCore::Notify( dtCore::ALWAYS, "   [A]       plays a sound" );
+   dtCore::Notify( dtCore::ALWAYS, "   [S]       plays a sound bound to an effect" );
+   dtCore::Notify( dtCore::ALWAYS, "   [D]       plays a sound with panning" );
+   dtCore::Notify( dtCore::ALWAYS, "   [F]       plays a sound with panning and dopler" );
    dtCore::Notify( dtCore::ALWAYS, "   [0-9]     sets gain" );
    dtCore::Notify( dtCore::ALWAYS, "   [+|-]     rase|lower pitch" );
    dtCore::Notify( dtCore::ALWAYS, "   [L]       set|unset all sounds looping" );
@@ -90,6 +103,14 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
 
 testAudioApp::~testAudioApp()
 {
+   if( mSFXBinder.get() )
+   {
+      mSFXBinder->RemoveEffectTypeRange( dtCore::HighExplosiveDetonation );
+      mSFXBinder->RemoveEffectTypeMapping( dtCore::HighExplosiveDetonation );
+      mSFXBinder->Shutdown();
+      mSFXBinder  = NULL;
+   }
+
    StopAllSounds();
    FreeAllStoppedSounds( true );
 
@@ -140,6 +161,7 @@ testAudioApp::KeyPressed(  dtCore::Keyboard*       keyboard,
                            Producer::KeyCharacter  character   )
 {
    dtABC::Application::KeyPressed( keyboard, key, character );
+   sgVec3   pos   = { 0.0f, 0.0f, 0.0f };
 
    switch( key )
    {
@@ -148,7 +170,7 @@ testAudioApp::KeyPressed(  dtCore::Keyboard*       keyboard,
          break;
 
       case  Producer::Key_S:
-         LoadPlaySound( kSoundFile[1L] );
+         mFXMgr->AddDetonation( pos, dtCore::HighExplosiveDetonation );
          break;
 
       case  Producer::Key_D:
@@ -257,6 +279,11 @@ testAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
    snd->SetGain( mSndGain );
    snd->SetPitch( mSndPitch );
    snd->SetLooping( mLooping );
+   if( box )
+   {
+      snd->SetMinDistance( 30.0f );
+      snd->SetRolloffFactor( 10.0f );
+   }
    snd->Play();
    mQueued.push( snd );
 
@@ -792,6 +819,10 @@ testAudioApp::MoveTheStupidBox( unsigned int box )
    xform.SetTranslation( pos );
    gfx->SetTransform( &xform );
 
+   // don't set velocity for BOX_A
+   if( box == BOX_A )
+      return;
+
    // set the velocity for all children of the box
    vel[I]   = static_cast<ALfloat>(V * 50.0f);
    Sound*   snd(NULL);
@@ -820,11 +851,11 @@ testAudioApp::MakeSmoke( dtAudio::Sound* sound, void* param )
 
    if( fname == app->kSoundFile[2L] )
    {
-      assert( app->mPSysC.get() );
+      assert( app->mPSysA.get() );
 
-      app->mSmokeCountC++;
+      app->mSmokeCountA++;
 
-      osg::Node*  node  = app->mPSysC->GetOSGNode();
+      osg::Node*  node  = app->mPSysA->GetOSGNode();
       assert( node );
 
       node->setNodeMask( 0xFFFFFFFF );
@@ -833,11 +864,11 @@ testAudioApp::MakeSmoke( dtAudio::Sound* sound, void* param )
 
    if( fname == app->kSoundFile[3L] )
    {
-      assert( app->mPSysA.get() );
+      assert( app->mPSysC.get() );
 
-      app->mSmokeCountA++;
+      app->mSmokeCountC++;
 
-      osg::Node*  node  = app->mPSysA->GetOSGNode();
+      osg::Node*  node  = app->mPSysC->GetOSGNode();
       assert( node );
 
       node->setNodeMask( 0xFFFFFFFF );
@@ -860,21 +891,6 @@ testAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
 
    if( fname == app->kSoundFile[2L] )
    {
-      assert( app->mPSysC.get() );
-
-      app->mSmokeCountC--;
-
-      if( app->mSmokeCountC )
-         return;
-
-      osg::Node*  node  = app->mPSysC->GetOSGNode();
-      assert( node );
-
-      node->setNodeMask( 0x00000000 );
-   }
-
-   if( fname == app->kSoundFile[3L] )
-   {
       assert( app->mPSysA.get() );
 
       app->mSmokeCountA--;
@@ -883,6 +899,21 @@ testAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
          return;
 
       osg::Node*  node  = app->mPSysA->GetOSGNode();
+      assert( node );
+
+      node->setNodeMask( 0x00000000 );
+   }
+
+   if( fname == app->kSoundFile[3L] )
+   {
+      assert( app->mPSysC.get() );
+
+      app->mSmokeCountC--;
+
+      if( app->mSmokeCountC )
+         return;
+
+      osg::Node*  node  = app->mPSysC->GetOSGNode();
       assert( node );
 
       node->setNodeMask( 0x00000000 );

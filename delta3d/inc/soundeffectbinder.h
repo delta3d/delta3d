@@ -10,7 +10,7 @@
 
 #include "base.h"
 #include "effectmanager.h"
-#include "sound.h"
+#include "audiomanager.h"
 
 
 
@@ -21,7 +21,7 @@
 
 
 
-namespace dtCore
+namespace dtAudio
 {
    /**
     * A class that binds audible effects to visual effects
@@ -30,20 +30,21 @@ namespace dtCore
     * then supply a unique id for an audible effect with the sound-
     * filename.
     */
-   class DT_EXPORT SoundEffectBinder :  public   EffectListener, public   Base
+   class DT_EXPORT SoundEffectBinder :  public   dtCore::EffectListener, public   dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(SoundEffectBinder)
         
       private:
          
          // forward references
-         class SfxObj;
+         class    SfxObj;
 
-         typedef  std::vector<EffectManager*>         MGR_LST;
-         typedef  std::vector<SfxObj*>                SFX_LST;
-         typedef  std::queue<SfxObj*>                 SFX_QUE;
-         typedef  std::map<unsigned int,std::string>  FIL_MAP;
-         typedef  std::map<Detonation*,SfxObj*>       SFX_MAP;
+         typedef  std::vector<dtCore::EffectManager*>    MGR_LST;
+         typedef  std::vector<SfxObj*>                   SFX_LST;
+         typedef  std::queue<SfxObj*>                    SFX_QUE;
+         typedef  std::map<unsigned int,std::string>     FIL_MAP;
+         typedef  std::map<dtCore::Detonation*,SfxObj*>  SFX_MAP;
+         typedef  std::map<unsigned int,float>           FLT_MAP;
 
          static   const char* kPreFrame;
          static   const char* kFrame;
@@ -53,7 +54,7 @@ namespace dtCore
           * A sound effect object adding mapping managment
           * ability to a Delta3D sound object
           */
-         class SfxObj   :  public   Sound
+         class SfxObj   :  public   dtCore::Base
          {
             private:
                typedef  std::vector<SfxObj*> SFX_LST;
@@ -63,8 +64,10 @@ namespace dtCore
                virtual           ~SfxObj();
 
                         void     SetList( SFX_LST* list );
+                        Sound*   GetSound( void )        const {  return   mSnd; }
 
             private:
+                        Sound*   mSnd;
                         SFX_LST* mList;
          };
 
@@ -77,7 +80,7 @@ namespace dtCore
           *
           * @param fxMgr the effect manager to add
           */
-         virtual  void        Initialize( EffectManager* fxMgr = NULL );
+         virtual  void        Initialize( dtCore::EffectManager* fxMgr = NULL );
 
          /**
           * Shutdown the SoundEffectBinder.
@@ -89,14 +92,14 @@ namespace dtCore
           *
           * @param fxMgr the effect manager to add
           */
-         virtual  void        AddEffectManager( EffectManager* fxMgr );
+         virtual  void        AddEffectManager( dtCore::EffectManager* fxMgr );
 
          /**
           * Remove an effect manager from our list.
           *
           * @param fxMgr the effect manager to remove
           */
-         virtual  void        RemoveEffectManager( EffectManager* fxMgr );
+         virtual  void        RemoveEffectManager( dtCore::EffectManager* fxMgr );
 
          /**
           * Maps the specified effect type to the given filename.
@@ -113,6 +116,23 @@ namespace dtCore
           */
          virtual  void        RemoveEffectTypeMapping( unsigned int fxType );
 
+         /**
+          * Maps the specified effect type to and audible range value.
+          *
+          * @param fxType the effect type to map
+          * @param value to map
+          * @param minimum range if true, else maximum range
+          */
+         virtual  void        AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range = true );
+
+         /**
+          * Removes the specified effect type's audible range value.
+          *
+          * @param fxType the effect type to map
+          * @param minimum range if true, else maximum range
+          */
+         virtual  void        RemoveEffectTypeRange( unsigned int fxType, bool minimum_range = true );
+
       private:
          /**
           * Called when a message is sent to this object.
@@ -127,7 +147,7 @@ namespace dtCore
           * @param fxMgr the effect manager that generated the event
           * @param fx the effect object
           */
-         virtual  void        EffectAdded( EffectManager* fxMgr, Effect* fx );
+         virtual  void        EffectAdded( dtCore::EffectManager* fxMgr, dtCore::Effect* fx );
 
          /**
           * Called when an effect is removed from the manager.
@@ -135,7 +155,7 @@ namespace dtCore
           * @param fxMgr the effect manager that generated the event
           * @param fx the effect object
           */
-         virtual  void        EffectRemoved( EffectManager* fxMgr, Effect* fx );
+         virtual  void        EffectRemoved( dtCore::EffectManager* fxMgr, dtCore::Effect* fx );
 
          /**
           * Called when a detonation is added to the manager.
@@ -143,7 +163,7 @@ namespace dtCore
           * @param fxMgr the effect manager that generated the event
           * @param fx the Detonation object
           */
-         inline   void        DetonationAdded( EffectManager* fxMgr, Detonation* fx );
+         inline   void        DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detonation* fx );
 
          /**
           * Called when a detonation is removed from the manager.
@@ -151,7 +171,7 @@ namespace dtCore
           * @param fxMgr the effect manager that generated the event
           * @param fx the Detonation object
           */
-         inline   void        DetonationRemoved( EffectManager* fxMgr, Detonation* fx );
+         inline   void        DetonationRemoved( dtCore::EffectManager* fxMgr, dtCore::Detonation* fx );
 
          /**
           * Override for preframe
@@ -168,6 +188,22 @@ namespace dtCore
           */
          inline   void        PostFrame( const double deltaFrameTime );
 
+         /**
+          * Callback for when sound gets played.
+          *
+          * @param Sound pointer to the sound object
+          * @param void pointer to the containing SfxObj
+          */
+         static   void     PlayCB( Sound* sound, void* param );
+
+         /**
+          * Callback for when sound get stopped.
+          *
+          * @param Sound pointer to the sound object
+          * @param void pointer to the containing SfxObj
+          */
+         static   void     StopCB( Sound* sound, void* param );
+
       private:
                   SFX_LST     mQueued;
                   SFX_LST     mActive;
@@ -175,7 +211,11 @@ namespace dtCore
                   FIL_MAP     mFileMap;
                   SFX_MAP     mSfxMap;
                   MGR_LST     mFxMgr;
+                  FLT_MAP     mMinDist;
+                  FLT_MAP     mMaxDist;
    };
 };
+
+
 
 #endif // DELTA_SOUNDEFFECTBINDER
