@@ -389,7 +389,7 @@ def CheckForTinyXml(context):
 
 def CheckForRti(context):
 
-   #context.Message( 'Checking for RTI...' )
+   context.Message( 'Checking for RTI...' )
    
    if env['ENV']['RTI_HOME'] is not None and env['ENV']['RTI_INCLUDE'] is not None and env['ENV']['RTI_LIB'] is not None:
       result = 1
@@ -536,9 +536,9 @@ SConscript( 'utilities/SConscript' )
 #   env.Exit(-1)
 
 # Close the error log and print the results
-print 'Build Succeeded: Build ended: ' + current_time()
-errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
-errorLog.close()
+#print 'Build Succeeded: Build ended: ' + current_time()
+#errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
+#errorLog.close()
 
 # email the results
 if email == 'true' :
