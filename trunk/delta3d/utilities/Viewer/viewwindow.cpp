@@ -414,9 +414,7 @@ ViewWindow::CommandLine( int argc, char** argv )
 /// private member functions
 void
 ViewWindow::ctor( void )
-{
-   AddSender( this );
-   
+{      
    SetEvent( FL_PUSH );
    SetEvent( FL_RELEASE );
    SetEvent( FL_ENTER );
@@ -441,10 +439,10 @@ ViewWindow::KeyboardEventHandler( const KeyboardEvent& ev )
 
    switch( ev.event )
    {
-      case  ev.KEYDOWN:
+   case  KeyboardEvent::KEYDOWN:
          break;
 
-      case  ev.KEYUP:
+      case  KeyboardEvent::KEYUP:
          {
             if( ev.key == ev.KEY_w )
                mContainer->ToggleWireframeScene();

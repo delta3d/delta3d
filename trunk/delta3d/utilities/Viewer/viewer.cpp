@@ -92,8 +92,6 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 
    Widget::Config( d );
 
-   SetNotifyLevel(DEBUG_INFO, WARN);
-
    Scene*   scene = GetScene();
    osg::Group* sceneRoot  = scene->GetSceneNode();
    mViewerNode = new osg::Group();
