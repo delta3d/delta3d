@@ -9,6 +9,8 @@
 #include <set>
 #include <string>
 
+#include <osgSim/DOFTransform>
+
 #include "Producer/Timer"
 
 #define RTI_USES_STD_FSTREAM
@@ -335,6 +337,21 @@ namespace dtHLA
                                    std::string modelFilename,
                                    std::string iconFilename = "");
 
+         /**
+          * Maps the specified entity type to the given filename.
+          *
+          * @param entityType the entity type to map
+          * @param modelFilename the entity model filename
+          * @param articulatedPartClassNameMap the map from articulated part class IDs
+          * to names of DOFTransform nodes
+          * @param iconFilename the entity icon filename
+          */
+         void AddEntityTypeMapping(const EntityType& entityType,
+                                   std::string modelFilename,
+                                   const std::map<unsigned int, std::string>&
+                                    articulatedPartClassNameMap,
+                                   std::string iconFilename = "");
+                                   
          /**
           * Removes the mapping for the given entity type.
           *
@@ -954,6 +971,11 @@ namespace dtHLA
             std::string mModelFilename;
             
             /**
+             * Maps articulated part classes to DOFTransform names.
+             */
+            std::map<unsigned int, std::string> mArticulatedPartClassNameMap;
+            
+            /**
              * The filename of the entity's icon.
              */
             std::string mIconFilename;
@@ -1008,6 +1030,12 @@ namespace dtHLA
              * The dtCore entity.
              */
             osg::ref_ptr<Entity> mEntity;
+            
+            /**
+             * Maps articulated part transforms to DOFTransform nodes.
+             */
+            std::map<unsigned int, osgSim::DOFTransform*>
+               mArticulatedPartClassTransformMap;
          };
 
          /**
