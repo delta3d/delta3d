@@ -15,6 +15,8 @@
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
 #include <dtCore/compass.h>
+#include <dtCore/object.h>
+#include <dtCore/notify.h>
 
 #include "viewstate.h"
 #include "viewer.h"
