@@ -1,6 +1,7 @@
 #ifndef  DELTA_DTAUDIO
 #define  DELTA_DTAUDIO
 
+#include <sound.h>
 #include <listener.h>
 #include <audiomanager.h>
 #include <soundeffectbinder.h>

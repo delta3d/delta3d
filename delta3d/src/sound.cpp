@@ -3,37 +3,59 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "sound.h"
-#include "notify.h"
-#include "system.h"
 
-#include <osgDB/FileUtils>
 
-using namespace dtCore;
+
+// definitions
+#if   defined(WIN32) | defined(_WIN32)
+#pragma warning( disable : 4800 )
+#endif
+
+
+
+#if   !  defined(MAX_FLOAT)
+#define  MAX_FLOAT   static_cast<float>(0xFFFFFFFF)
+#endif
+
+
+
+// namespaces
+using namespace dtAudio;
 using namespace std;
 
-IMPLEMENT_MANAGEMENT_LAYER(Sound)
 
 
-/**
- * Whether or not ALUT has been initialized.
- */
-bool Sound::mALUTInitialized = false;
+// helper template functions
+template <class   T>
+T  MIN( T a, T b )         {  return   (a<b)?a:b;        }
 
-/**
- * The transform of the listener.
- */
-Transform Sound::mListenerTransform;
+template <class   T>
+T  MAX( T a, T b )         {  return   (a>b)?a:b;        }
 
-/**
- * The gain of the listener.
- */
-float Sound::mListenerGain = 1.0f;
+template <class   T>
+T  CLAMP( T x, T l, T h )  {  return   MAX(MIN(x,h),l);  }
+
+
+
+// static member variables
+const char* Sound::kCommand[kNumCommands]   =
+            {
+               "",            "load",        "unload",
+               "play",        "pause",       "stop",
+               "rewind",      "loop",        "unloop",
+               "queue",       "gain",        "pitch",
+               "position",    "direction",   "velocity",
+               "absolute",    "relative",    "mindist",
+               "maxdist",     "rolloff",     "mingain",
+               "maxgain"
+            };
+
 
 
 /**
  * Represents a snapshot of the state of a sound.
  */
-class SoundStateFrame : public StateFrame
+class SoundStateFrame : public dtCore::StateFrame
 {
    public:
 
@@ -106,249 +128,176 @@ class SoundStateFrame : public StateFrame
 };
 
 
+
+IMPLEMENT_MANAGEMENT_LAYER(Sound)
+
+
+
+/********************************
+/** Protected Member Functions **
+/********************************
 /**
- * Constructor.
- *
- * @param name the instance name
+ * Constructor, user does not create directly
+ * instead requests a sound from AudioManager
  */
-Sound::Sound(string name)
-   : mGain(1.0f),
-     mLooping(false),
-     mPitch(1.f)
+Sound::Sound()
+:  Transformable(),
+   mFilename(""),
+   mGain(1.0f),
+   mPitch(1.0f),
+   mMinDist(1.0f),
+   mMaxDist(static_cast<float>(MAX_FLOAT)),
+   mRolloff(1.0f),
+   mMinGain(0.0f),
+   mMaxGain(1.0f),
+   mPlayCB(NULL),
+   mPlayCBData(NULL),
+   mStopCB(NULL),
+   mStopCBData(NULL)
 {
-   SetName(name);
+   RegisterInstance( this );
 
-   RegisterInstance(this);
+   mPos[0L]       = 0.0f;
+   mPos[1L]       = 0.0f;
+   mPos[2L]       = 0.0f;
 
-   if(!mALUTInitialized)
-   {
-      alutInit(0, NULL);
+   mDir[0L]       = 0.0f;
+   mDir[1L]       = 1.0f;
+   mDir[2L]       = 0.0f;
 
-      mALUTInitialized = true;
-   }
-
-   alGenBuffers(1, &mBuffer);
-   alGenSources(1, &mSource);
-
-   AddSender(System::GetSystem());
+   mVelo[0L]      = 0.0f;
+   mVelo[1L]      = 0.0f;
+   mVelo[2L]      = 0.0f;
 }
 
+
+
 /**
- * Destructor.
+ * Destructor, user does not delete directly
+ * instead frees sound to the AudioManager
  */
 Sound::~Sound()
 {
-   DeregisterInstance(this);
-
-   alDeleteSources(1, &mSource);
-   alDeleteBuffers(1, &mBuffer);
+    DeregisterInstance(this);
 }
+
+
 
 /**
- * Sets the transform of the listener.
+ * Message handler.
  *
- * @param transform the new transform
+ * @param data the received message
  */
-void Sound::SetListenerTransform(Transform* transform)
+void
+Sound::OnMessage( MessageData* data )
 {
-   sgMat4 matrix;
-
-   transform->Get(matrix);
-
-   mListenerTransform.Set(matrix);
-
-   sgVec3 position;
-
-   mListenerTransform.GetTranslation(position);
-
-   sgVec3 at = {0, 1, 0},
-          up = {0, 0, 1};
-
-   sgXformVec3(at, matrix);
-   sgXformVec3(up, matrix);
-
-   float orientation[6];
-
-   orientation[0] = at[0];
-   orientation[1] = at[1];
-   orientation[2] = at[2];
-
-   orientation[3] = up[0];
-   orientation[4] = up[1];
-   orientation[5] = up[2];
-
-   if(!mALUTInitialized)
-   {
-      alutInit(0, NULL);
-
-      mALUTInitialized = true;
-   }
-
-   alListenerfv(AL_POSITION, position);
-   alListenerfv(AL_ORIENTATION, orientation);
 }
 
-/**
- * Retrieves the transform of the listener.
- *
- * @param transform the transform to fill
- */
-void Sound::GetListenerTransform(Transform* transform)
-{
-   sgMat4 matrix;
 
-   mListenerTransform.Get(matrix);
-
-   transform->Set(matrix);
-}
-
-/**
- * Sets the listener gain.
- *
- * @param gain the new gain
- */
-void Sound::SetListenerGain(float gain)
-{
-   mListenerGain = gain;
-
-   alListenerf(AL_GAIN, mListenerGain);
-}
-
-/**
- * Returns the listener gain.
- *
- * @return the current gain
- */
-float Sound::GetListenerGain()
-{
-   return mListenerGain;
-}
 
 /**
  * Loads the specified sound file.
  *
  * @param filename the name of the file to load
  */
-void Sound::LoadFile(string filename)
+void
+Sound::LoadFile( const char* file )
 {
-   int format;
-   ALsizei size, freq;
-   void *data = NULL;
-   ALboolean loop;
+   mFilename   = file;
+   SendMessage( kCommand[LOAD], this );
+}
 
-   ALbyte buf[256];
-   
-   mFilename = filename;
 
-    //strcpy(buf, osgDB::findDataFile(mFilename).c_str());
-   memcpy(buf, osgDB::findDataFile(mFilename).c_str(), 256);
 
-   
+/**
+ * Unloads the specified sound file.
+ */
+void
+Sound::UnloadFile( void )
+{
+   SendMessage( kCommand[UNLOAD], this );
+}
 
-   alutLoadWAVFile(buf, &format, &data, &size, &freq, &loop);
+/**
+ * Set callback for when sound starts playing.
+ *
+ * @param callback function pointer
+ * @param user data
+ */
+void
+Sound::SetPlayCallback( SoundCB cb, void* param )
+{
+   mPlayCB  = cb;
 
-   if(data != NULL)
-   {
-      alBufferData(mBuffer, format, data, size, freq);
-
-      alSourcei(mSource, AL_BUFFER, mBuffer);
-
-      alutUnloadWAV(format, data, size, freq);
-   }
+   if( mPlayCB )
+      mPlayCBData = param;
    else
-   {
-      Notify(WARN, "Sound: Can't load %s", mFilename.c_str());
-   }
+      mPlayCBData = NULL;
 }
+
+
 
 /**
- * Returns the name of the loaded sound file.
+ * Set callback for when sound stops playing.
  *
- * @return the name of the loaded file
+ * @param callback function pointer
+ * @param user data
  */
-std::string Sound::GetFilename() const
+void
+Sound::SetStopCallback( SoundCB cb, void* param )
 {
-   return mFilename;
+   mStopCB  = cb;
+
+   if( mStopCB )
+      mStopCBData = param;
+   else
+      mStopCBData = NULL;
 }
+
+
 
 /**
- * Sets the gain of the sound source.
- *
- * @param gain the new gain
+ * Tell audio manager to play this sound.
  */
-void Sound::SetGain(float gain)
+void
+Sound::Play( void )
 {
-   if(mGain != gain)
-   {
-      mGain = gain;
-
-      alSourcef(mSource, AL_GAIN, mGain);
-
-      if(IsBeingRecorded())
-      {
-         SendMessage(
-            "stateFrame",
-            new SoundStateFrame(
-               this,
-               SoundStateFrame::Gain,
-               true,
-               mGain
-            )
-         );
-      }
-   }
+   SendMessage( kCommand[PLAY], this );
 }
+
+
 
 /**
- * Returns the gain of the sound source.
- *
- * @return the current gain
+ * Tell audio manager to pause this sound.
  */
-float Sound::GetGain() const
+void
+Sound::Pause( void )
 {
-   return mGain;
+   SendMessage( kCommand[PAUSE], this );
 }
+
+
 
 /**
- * Set the pitch of the sound source.
- *
- * @param pitch: the pitch multiplier [0.5, 2.0] (default = 1)
+ * Tell audio manager to stop this sound.
  */
-void Sound::SetPitch(float pitch)
+void
+Sound::Stop( void )
 {
-   if(mPitch != pitch)
-   {
-      mPitch = pitch;
-
-      if (mPitch<0.5f)     mPitch = 0.5f;
-      else if (mPitch>2.f) mPitch = 2.f;
-
-      alSourcef(mSource, AL_PITCH, mPitch);    
-
-      if(IsBeingRecorded())
-      {
-         SendMessage(
-            "stateFrame",
-            new SoundStateFrame(
-            this,
-            SoundStateFrame::Pitch,
-            true,
-            mPitch
-            )
-            );
-      }
-   }
+   SendMessage( kCommand[STOP], this );
 }
 
-/** 
- *  Get the current pitch multiplier of the sound source.
- *
- * @return the pitch multiplier [0.5, 2.0]
+
+
+/**
+ * Tell audio manager to rewind this sound.
  */
-float Sound::GetPitch() const
+void
+Sound::Rewind( void )
 {
-   return mPitch;
+   SendMessage( kCommand[REWIND], this );
 }
+
 
 
 /**
@@ -357,130 +306,272 @@ float Sound::GetPitch() const
  * @param looping true to play the sound in a loop, false
  * otherwise
  */
-void Sound::SetLooping(bool looping)
+void
+Sound::SetLooping( bool loop /*= true*/ )
 {
-   mLooping = looping;
-
-   alSourcei(mSource, AL_LOOPING, mLooping);
+   if( loop )
+      SendMessage( kCommand[LOOP], this );
+   else
+      SendMessage( kCommand[UNLOOP], this );
 }
 
+
+
 /**
- * Checks whether or not the sound plays in a continuous loop.
+ * Sets the gain of the sound source.
  *
- * @return true if the sound plays in a loop, false otherwise
+ * @param gain the new gain
  */
-bool Sound::IsLooping() const
+void
+Sound::SetGain( float gain )
 {
-   return mLooping;
+   // force gain to range from zero to one
+   mGain    = CLAMP( gain, 0.0f, 1.0f );
+
+   SendMessage( kCommand[GAIN], this );
 }
 
-/**
- * Starts playing this sound.
- */
-void Sound::Play()
-{
-   if(!IsPlaying())
-   {
-      alSourcePlay(mSource);
 
-      if(IsBeingRecorded())
-      {
-         SendMessage(
-            "stateFrame",
-            new SoundStateFrame(
-               this,
-               SoundStateFrame::Playing,
-               true,
-               1.0f
-            )
-         );
-      }
-   }
-}
 
 /**
- * Checks whether or not the sound is playing.
+ * Sets the pitch multiplier of the sound source.
  *
- * @return true if the sound is playing, false otherwise
+ * @param pitch the new pitch
  */
-bool Sound::IsPlaying() const
+void
+Sound::SetPitch( float pitch )
 {
-   ALint state;
+   // force pitch to range from zero+ to two
+   // for some reason openAL chokes on 2+
+   // also, openAL states zero to be invalid
+   mPitch   = CLAMP( pitch, 0.000001f, 2.0f );
 
-   alGetSourcei(mSource, AL_SOURCE_STATE, &state);
-
-   return state == AL_PLAYING;
+   SendMessage( kCommand[PITCH], this );
 }
 
-/**
- * Pauses playing this sound.
- */
-void Sound::Pause()
-{
-   alSourcePause(mSource);
-}
+
 
 /**
- * Stops playing this sound.
- */
-void Sound::Stop()
-{
-   if(IsPlaying())
-   {
-      alSourceStop(mSource);
-
-      if(IsBeingRecorded())
-      {
-         SendMessage(
-            "stateFrame",
-            new SoundStateFrame(
-               this,
-               SoundStateFrame::Playing,
-               false,
-               1.0f
-            )
-         );
-      }
-   }
-}
-
-/**
- * Rewinds to the beginning of this sound.
- */
-void Sound::Rewind()
-{
-   alSourceRewind(mSource);
-}
-
-/**
- * Message handler.
+ * Flags sound to be relative to listener position.
  *
- * @param data the received message
+ * @param relative true uses distance modeling
  */
-void Sound::OnMessage(MessageData *data)
+void
+Sound::ListenerRelative( bool relative )
 {
-   if(data->message == "frame")
-   {
-      Transform transform;
-
-      GetTransform(&transform);
-
-      sgVec3 position;
-
-      transform.GetTranslation(position);
-
-      sgMat4 matrix;
-
-      transform.Get(matrix);
-
-      sgVec3 direction = {1, 0, 0};
-
-      sgXformVec3(direction, matrix);
-
-      alSourcefv(mSource, AL_POSITION, position);
-      alSourcefv(mSource, AL_DIRECTION, direction);
-   }
+   if( relative )
+      SendMessage( kCommand[REL], this );
+   else
+      SendMessage( kCommand[ABS], this );
 }
+
+
+
+/**
+ * Set the transform position of sound.
+ *
+ * @param *xform : The new Transform to position this instance
+ * @param cs : Optional parameter describing the coordinate system of xform
+ *             Defaults to ABS_CS.
+ */
+void
+Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEnum cs )
+{
+   // properly set transform to transformable object
+   dtCore::Transformable::SetTransform( xform, cs );
+
+   // get new transform, and break up into
+   // position and direction for sound object
+   dtCore::Transform transform;
+   sgMat4            matrix;
+   sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
+   sgVec3            dir   = { 0.0f, 1.0f, 0.0f };
+
+   GetTransform( &transform, cs );
+
+   transform.GetTranslation( pos );
+
+   transform.Get( matrix );
+   sgXformVec3( dir, matrix );
+
+   SetPosition( pos );
+   SetDirection( dir );
+}
+
+/**
+ * Set the position of sound.
+ *
+ * @param position to set
+ */
+void
+Sound::SetPosition( const sgVec3& position )
+{
+   mPos[0L] = position[0L];
+   mPos[1L] = position[1L];
+   mPos[2L] = position[2L];
+
+   SendMessage( kCommand[POSITION], this );
+}
+
+
+
+/**
+ * Get the position of sound.
+ *
+ * @param position to get
+ */
+void
+Sound::GetPosition( sgVec3& position ) const
+{
+   position[0L]   = mPos[0L];
+   position[1L]   = mPos[1L];
+   position[2L]   = mPos[2L];
+}
+
+
+
+/**
+ * Set the direction of sound.
+ *
+ * @param direction to set
+ */
+void
+Sound::SetDirection( const sgVec3& direction )
+{
+   mDir[0L] = direction[0L];
+   mDir[1L] = direction[1L];
+   mDir[2L] = direction[2L];
+
+   SendMessage( kCommand[DIRECTION], this );
+}
+
+
+
+/**
+ * Get the direction of sound.
+ *
+ * @param direction to get
+ */
+void
+Sound::GetDirection( sgVec3& direction ) const
+{
+   direction[0L]  = mDir[0L];
+   direction[1L]  = mDir[1L];
+   direction[2L]  = mDir[2L];
+}
+
+
+
+/**
+ * Set the velocity of sound.
+ *
+ * @param velocity to set
+ */
+void
+Sound::SetVelocity( const sgVec3& velocity )
+{
+   mVelo[0L]   = velocity[0L];
+   mVelo[1L]   = velocity[1L];
+   mVelo[2L]   = velocity[2L];
+
+   SendMessage( kCommand[VELOCITY], this );
+}
+
+
+
+/**
+ * Get the velocity of sound.
+ *
+ * @param velocity to get
+ */
+void
+Sound::GetVelocity( sgVec3& velocity ) const
+{
+   velocity[0L]   = mVelo[0L];
+   velocity[1L]   = mVelo[1L];
+   velocity[2L]   = mVelo[2L];
+}
+
+
+
+/**
+ * Set the minimum distance that sound plays at max_gain.
+ * Attenuation is not calculated below this distance
+ *
+ * @param distance set to minimum
+ */
+void
+Sound::SetMinDistance( float dist )
+{
+   mMinDist = MAX( 0.0f, dist );
+
+   SendMessage( kCommand[MIN_DIST], this );
+}
+
+
+
+/**
+ * Set the maximum distance that sound plays at min_gain.
+ * Attenuation is not calculated above this distance
+ *
+ * @param distance set to maximum
+ */
+void
+Sound::SetMaxDistance( float dist )
+{
+   mMaxDist = MAX( 0.0f, dist );
+
+   SendMessage( kCommand[MAX_DIST], this );
+}
+
+
+
+/**
+ * Set the rolloff factor describing attenuation curve.
+ *
+ * @param rollff factor to set
+ */
+void
+Sound::SetRolloffFactor( float rolloff )
+{
+   mRolloff = MAX( 0.0f, rolloff );
+
+   SendMessage( kCommand[ROL_FACT], this );
+}
+
+
+
+/**
+ * Set the minimum gain that sound plays at.
+ * Attenuation is clamped to this gain
+ *
+ * @param gain set to minimum
+ */
+void
+Sound::SetMinGain( float gain )
+{
+   mMinDist = CLAMP( gain, 0.0f, 1.0f );
+
+   SendMessage( kCommand[MIN_DIST], this );
+}
+
+
+
+/**
+ * Set the maximum gain that sound plays at.
+ * Attenuation is clamped to this gain
+ *
+ * @param gain set to maximum
+ */
+void
+Sound::SetMaxGain( float gain )
+{
+   mMaxDist = CLAMP( gain, 0.0f, 1.0f );
+
+   SendMessage( kCommand[MAX_DIST], this );
+}
+
+
 
 /**
  * Generates and returns a key frame that represents the
@@ -488,7 +579,8 @@ void Sound::OnMessage(MessageData *data)
  *
  * @return a new key frame
  */
-StateFrame* Sound::GenerateKeyFrame()
+dtCore::StateFrame*
+Sound::GenerateKeyFrame( void )
 {
    return new SoundStateFrame(
       this, 
@@ -505,7 +597,8 @@ StateFrame* Sound::GenerateKeyFrame()
  * @param element the element that represents the frame
  * @return a newly generated state frame corresponding to the element
  */
-StateFrame* Sound::DeserializeFrame(TiXmlElement* element)
+dtCore::StateFrame*
+Sound::DeserializeFrame( TiXmlElement* element )
 {
    int validElements = 0;
    bool playing = false;
