@@ -20,7 +20,7 @@ void initUIDrawableBindings()
    void (UIDrawable::*CreateShader3)(std::string, std::string) = &UIDrawable::CreateShader;
    void (UIDrawable::*CreateShader4)(std::string, sgVec4, std::string) = &UIDrawable::CreateShader;
    
-   class_<UIDrawable, bases<DeltaDrawable>, dtCore::RefPtr<UIDrawable> >("UIDrawable", init<optional<int, int> >())
+   class_<UIDrawable, bases<DeltaDrawable,MouseListener,KeyboardListener>, dtCore::RefPtr<UIDrawable> >("UIDrawable", init<optional<int, int> >())
       .def("GetInstanceCount", &UIDrawable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", UIDrawableGI1, return_internal_reference<>())
@@ -43,4 +43,5 @@ void initUIDrawableBindings()
       .def("AddRootFrame", &UIDrawable::AddRootFrame)
       .def("SetActiveRootFrame", &UIDrawable::SetActiveRootFrame)
       .def("GetActiveRootFrame", &UIDrawable::GetActiveRootFrame);
+ 
 }
