@@ -359,7 +359,7 @@ PointAxis::GetColor( AXIS a )   const
 void
 PointAxis::SetColor( AXIS a, AXISCOLOR c )
 {
-   if( ( a >= NUMAXES ) || ( c >= BASECOLORS ) )
+   if( ( a >= NUMAXES ) || ( int(c) >= int(BASECOLORS) ) )
       return;
 
    mColorID[a] = c;
@@ -436,7 +436,7 @@ PointAxis::GetLabelColor( AXIS a )   const
 void
 PointAxis::SetLabelColor( AXIS a, AXISCOLOR c )
 {
-   if( ( a >= NUMAXES ) || ( c >= BASECOLORS ) )
+   if( ( a >= NUMAXES ) || ( int(c) >= int(BASECOLORS) ) )
       return;
 
    mLColorID[a] = c;
