@@ -57,8 +57,6 @@ Physical::Physical()
    dMassSetSphere(&mMass, 1.0f, 1.0f);
    
    mTriMeshDataID = dGeomTriMeshDataCreate();
-
-
 }
 
 /**
