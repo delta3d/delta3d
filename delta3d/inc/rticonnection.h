@@ -54,6 +54,13 @@
 
 #define DENOM(Latitude) ((double) (sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))))
 
+#ifndef _WIN32
+typedef unsigned int SOCKET;
+#else
+typedef int socklen_t;
+#endif
+
+
          /* Ellipsoid Parameters, default to WGS 84  */
 static double TranMerc_a = 6378137.0;              /* Semi-major axis of ellipsoid i meters */
 static double TranMerc_f = 1 / 298.257223563;      /* Flattening of ellipsoid  */
