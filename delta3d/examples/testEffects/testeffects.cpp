@@ -132,23 +132,25 @@ public:
 
    void Config()
    {
+      SetNotifyLevel(DEBUG_INFO);
+
       Application::Config();
 
       Transform position;
       position.Set(0.f, -50.f, 0.f, 0.f, 0.f, 0.f);
       GetCamera()->SetTransform( &position );
 
-      Object* entity = new Object("UH-1N");
+      entity = new Object("UH-1N");
       entity->LoadFile("UH-1N/UH-1N.ive");
-      AddDrawable( entity );
+      AddDrawable( entity.get() );
 
-      ParticleSystem* smoke = new ParticleSystem;
+      smoke = new ParticleSystem;
       smoke->LoadFile("smoke.osg");
-      AddDrawable(smoke);
 
-      entity->AddChild(smoke);
+      entity->AddChild(smoke.get());
 
-      EffectManager* effectManager = new EffectManager;
+
+      effectManager = new EffectManager;
 
       effectManager->AddDetonationTypeMapping(
          HighExplosiveDetonation,
@@ -160,11 +162,15 @@ public:
          "smoke.osg"
          );
 
-      AddDrawable( effectManager );
+      AddDrawable( effectManager.get() );
 
-      Updater* updater = new Updater(GetKeyboard(), effectManager, entity, GetCamera());
-
+      Updater* updater = new Updater(GetKeyboard(), effectManager.get(), entity.get(), GetCamera());
    }
+
+   osg::ref_ptr<Object> entity;
+   osg::ref_ptr<ParticleSystem> smoke;
+   osg::ref_ptr<EffectManager> effectManager;
+
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestEffectsApp)
