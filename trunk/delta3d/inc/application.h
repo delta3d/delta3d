@@ -49,6 +49,13 @@ namespace dtABC
       virtual  void  CreateInstances( void );
                void  ParseConfigFile( TiXmlElement* rootNode );
                void  GenerateConfigFile( void );
+
+               void  SaveOriginalResolution( void );
+               void  SwitchToOriginalResolution( void );
+
+               int mHorz;
+               int mVert;
+               int mDepth;
    };
 }
 
