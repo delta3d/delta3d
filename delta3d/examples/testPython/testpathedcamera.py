@@ -217,7 +217,7 @@ class TestPathedCameraApplication(Application):
         Application.Config(self)
         SetDataFilePathList('../../data');
         self.AddDrawable(self.infiniteTerrain)
-        self.helo.LoadFile('ah-1w.ive')
+        self.helo.LoadFile('UH-1N/UH-1N.ive')
         self.AddDrawable(self.helo)
         self.spc = SplinePathController(
             self.GetCamera(),
