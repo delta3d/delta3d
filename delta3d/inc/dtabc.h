@@ -5,6 +5,7 @@
 #include "application.h"
 #include "baseabc.h"
 #include "weather.h"
+#include "widget.h"
 
 #ifdef _WIN32
 

@@ -110,7 +110,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libcd,libcmt,msvcrt"
+				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt; libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/testPython.pdb"
 				SubSystem="1"

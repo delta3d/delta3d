@@ -34,7 +34,4 @@ void initTerrainBindings()
       .def("GetLowerHeightColorMap", &Terrain::GetLowerHeightColorMap, return_internal_reference<>())
       .def("SetUpperHeightColorMap", &Terrain::SetUpperHeightColorMap)
       .def("GetUpperHeightColorMap", &Terrain::GetUpperHeightColorMap, return_internal_reference<>());
-      
-   class_<Terrain::HeightColorMap, bases<std::map<float, osg::Vec3> > >("HeightColorMap")
-      .def("GetColor", Terrain::HeightColorMap::GetColor);
 }

@@ -109,7 +109,7 @@ namespace dtABC
 
 
    ///WinRect struct for passing window dimensions
-   struct   WinRect
+   struct DT_EXPORT WinRect
    {
       int   pos_x;                  ///window x position
       int   pos_y;                  ///window y position
@@ -124,7 +124,7 @@ namespace dtABC
 
 
    ///WinData struct for passing window handle and dimensions
-   struct   WinData   :  public   WinRect
+   struct DT_EXPORT WinData   :  public   WinRect
    {
       HWND  hwnd;                   ///window handle
 
@@ -137,7 +137,7 @@ namespace dtABC
 
 
    ///MouseEvent struct for passing mouse events
-   struct   MouseEvent
+   struct DT_EXPORT MouseEvent
    {
       int   event;                  ///mouse event
       float pos_x;                  ///x coordinate
@@ -170,7 +170,7 @@ namespace dtABC
 
 
    ///KeyboardEvent struct for passing keyboard events
-   struct   KeyboardEvent
+   struct DT_EXPORT KeyboardEvent
    {
       int   event;                  ///keyboard event
       int   key;                    ///event key
