@@ -4,7 +4,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testMessage", "testMessage.
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "p51", "..\..\src\p51.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "..\..\src\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
