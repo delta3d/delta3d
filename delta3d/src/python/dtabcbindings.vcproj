@@ -127,6 +127,9 @@
 			<File
 				RelativePath=".\weatherbindings.cpp">
 			</File>
+			<File
+				RelativePath=".\widgetbindings.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
