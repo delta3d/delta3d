@@ -424,6 +424,9 @@ private:
   Fl_Button *LightSpecColorLoadButton;
   inline void cb_LightSpecColorLoadButton_i(Fl_Button*, void*);
   static void cb_LightSpecColorLoadButton(Fl_Button*, void*);
+public:
+  Fl_Group *LightSpotGroup;
+private:
   Fl_Value_Input *LightExponentInput;
   inline void cb_LightExponentInput_i(Fl_Value_Input*, void*);
   static void cb_LightExponentInput(Fl_Value_Input*, void*);

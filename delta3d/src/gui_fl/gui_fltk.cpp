@@ -1371,7 +1371,6 @@ s)");
       o->box(FL_ENGRAVED_BOX);
       o->labeltype(FL_EMBOSSED_LABEL);
       o->user_data((void*)(this));
-      o->hide();
       { Fl_Value_Input* o = LightNumberInput = new Fl_Value_Input(81, 280, 25, 25, "Light Number");
         o->minimum(1);
         o->maximum(8);
@@ -1482,7 +1481,7 @@ s)");
         }
         o->end();
       }
-      { Fl_Group* o = new Fl_Group(125, 274, 139, 50, "Spot");
+      { Fl_Group* o = LightSpotGroup = new Fl_Group(125, 274, 139, 50, "Spot");
         o->box(FL_THIN_DOWN_BOX);
         { Fl_Value_Input* o = LightExponentInput = new Fl_Value_Input(197, 295, 60, 25, "Exp");
           o->maximum(500000);

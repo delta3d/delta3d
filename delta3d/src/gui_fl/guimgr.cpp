@@ -10,7 +10,8 @@
 #include "dtCore/clouddome.h"
 #include "dtCore/system.h"
 #include "dtCore/infiniteterrain.h"
-#include "dtCore/light.h"
+#include "dtCore/positionallight.h"
+#include "dtCore/spotlight.h"
 #include "dtABC/dtabc.h"
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
@@ -471,11 +472,11 @@ void UserInterface::SelectInstance (void)
    else WeatherGroup->hide();
 
    // Light
-   if (IS_A(b, Light*))
+   if (IS_A(b, PositionalLight*))
    {
-      Light *l = (Light*)b;
+      PositionalLight *l = (PositionalLight*)b;
 
-      InstanceClassName->label( "dtCore::Light" );
+      InstanceClassName->label( "dtCore::PositionalLight" );
 
 
       if (l->GetLightingMode()==Light::GLOBAL)
@@ -530,14 +531,10 @@ void UserInterface::SelectInstance (void)
       LightDifColorLoadButton->color(fc);
       LightDifColorLoadButton->redraw();
 
-      float spotCutoff = l->GetSpotCutoff();
-      float spotExp = l->GetSpotExponent();
-      LightCutoffInput->value(spotCutoff);
-      LightExponentInput->value(spotExp);
 
-      float con = l->GetAttenuation( Light::CONSTANT );
-      float lin = l->GetAttenuation( Light::LINEAR );
-      float quad = l->GetAttenuation( Light::QUADRATIC );
+
+      float con, lin, quad;
+      l->GetAttenuation(&con, &lin, &quad);
       LightConstAtt->value(con);
       LightLinAtt->value(lin);
       LightQuadAtt->value(quad);
@@ -547,6 +544,24 @@ void UserInterface::SelectInstance (void)
    else
    {
       LightGroup->hide();
+   }
+
+   if (IS_A(b, SpotLight*))
+   {
+      SpotLight *l = (SpotLight*)b;
+
+      InstanceClassName->label( "dtCore::SpotLight" );
+     
+      float spotCutoff = l->GetSpotCutoff();
+      float spotExp = l->GetSpotExponent();
+      LightCutoffInput->value(spotCutoff);
+      LightExponentInput->value(spotExp);
+      
+      LightSpotGroup->show();
+   }
+   else
+   {
+      LightSpotGroup->hide();
    }
 
 }
@@ -1422,7 +1437,7 @@ void UserInterface::LightNumCB(Fl_Value_Input *o)
 
 void UserInterface::LightAmbColorCB(Fl_Value_Input*)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
    float r,g,b;
    r = LightAmbRed->value();
@@ -1441,7 +1456,7 @@ void UserInterface::LightAmbColorCB(Fl_Value_Input*)
 
 void UserInterface::LightDifColorCB(Fl_Value_Input*)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
    float r,g,b;
    r = LightDifRed->value();
@@ -1460,7 +1475,7 @@ void UserInterface::LightDifColorCB(Fl_Value_Input*)
 
 void UserInterface::LightSpecColorCB(Fl_Value_Input*)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
    float r,g,b;
    r = LightSpecRed->value();
@@ -1480,7 +1495,7 @@ void UserInterface::LightSpecColorCB(Fl_Value_Input*)
 
 void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
    double r = LightAmbRed->value();
    double g = LightAmbGreen->value();
@@ -1504,7 +1519,7 @@ void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightDifColorBrowserCB(Fl_Button *)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
    double r = LightDifRed->value();
    double g = LightDifGreen->value();
@@ -1528,7 +1543,7 @@ void UserInterface::LightDifColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
    double r = LightSpecRed->value();
    double g = LightSpecGreen->value();
@@ -1552,16 +1567,14 @@ void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightAttCB(Fl_Value_Input*)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   PositionalLight *l = (PositionalLight*)GetSelectedInstance(this);
 
-   l->SetAttenuation( Light::CONSTANT, LightQuadAtt->value() );
-   l->SetAttenuation( Light::LINEAR, LightLinAtt->value() );
-   l->SetAttenuation( Light::QUADRATIC, LightConstAtt->value());
+   l->SetAttenuation( LightConstAtt->value(), LightLinAtt->value(), LightQuadAtt->value() );
 }
 
 void UserInterface::LightSpotCB(Fl_Value_Input*)
 {
-   Light *l = (Light*)GetSelectedInstance(this);
+   SpotLight *l = (SpotLight*)GetSelectedInstance(this);
    
    l->SetSpotCutoff( LightCutoffInput->value() );
    l->SetSpotExponent( LightExponentInput->value() );

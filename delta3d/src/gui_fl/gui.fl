@@ -8,7 +8,7 @@ decl {\#include "dtCore/base.h"} {public
 decl {///Do not create directly - use dtCore::GUI instead} {public
 } 
 
-class UserInterface {open selected
+class UserInterface {open
 } {
   Function {make_window()} {open
   } {
@@ -726,8 +726,8 @@ class UserInterface {open selected
         }
       }
       Fl_Group LightGroup {
-        user_data this open
-        xywh {15 255 520 180} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
+        user_data this open selected
+        xywh {15 255 520 180} box ENGRAVED_BOX labeltype EMBOSSED_LABEL
       } {
         Fl_Value_Input LightNumberInput {
           label {Light Number}
@@ -862,7 +862,7 @@ class UserInterface {open selected
             private xywh {410 348 25 75}
           }
         }
-        Fl_Group {} {
+        Fl_Group LightSpotGroup {
           label Spot
           xywh {125 274 139 50} box THIN_DOWN_BOX
         } {
