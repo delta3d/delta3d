@@ -140,6 +140,9 @@
 				RelativePath=".\environmentbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\flymotionmodelbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\infiniteterrainbindings.cpp">
 			</File>
 			<File
@@ -158,10 +161,16 @@
 				RelativePath=".\logicalinputdevicebindings.cpp">
 			</File>
 			<File
+				RelativePath=".\motionmodelbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\mousebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\objectbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\orbitmotionmodelbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\particlesystembindings.cpp">
@@ -197,7 +206,13 @@
 				RelativePath=".\tripodbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\ufomotionmodelbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\uidrawablebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\walkmotionmodelbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\windowbindings.cpp">
