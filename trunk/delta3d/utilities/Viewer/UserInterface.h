@@ -13,10 +13,10 @@ class ChoicePopUp;   // forward reference
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Tile.H>
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
 #include "viewwindow.h"
-#include <FL/Fl_Box.H>
 
 class UserInterface {
   int mArgc;
@@ -123,25 +123,46 @@ public:
 private:
   inline void cb_CompassButton_i(Fl_Button*, void*);
   static void cb_CompassButton(Fl_Button*, void*);
-  inline void cb_XY_i(Fl_Button*, void*);
-  static void cb_XY(Fl_Button*, void*);
-  inline void cb_YZ_i(Fl_Button*, void*);
-  static void cb_YZ(Fl_Button*, void*);
-  inline void cb_ZX_i(Fl_Button*, void*);
-  static void cb_ZX(Fl_Button*, void*);
+public:
+  Fl_Button *XYGridButton;
+private:
+  inline void cb_XYGridButton_i(Fl_Button*, void*);
+  static void cb_XYGridButton(Fl_Button*, void*);
+public:
+  Fl_Button *YZGridButton;
+private:
+  inline void cb_YZGridButton_i(Fl_Button*, void*);
+  static void cb_YZGridButton(Fl_Button*, void*);
+public:
+  Fl_Button *ZXGridButton;
+private:
+  inline void cb_ZXGridButton_i(Fl_Button*, void*);
+  static void cb_ZXGridButton(Fl_Button*, void*);
 public:
   Fl_Button *WireframeButton;
 private:
   inline void cb_WireframeButton_i(Fl_Button*, void*);
   static void cb_WireframeButton(Fl_Button*, void*);
-  inline void cb_Fly_i(Fl_Button*, void*);
-  static void cb_Fly(Fl_Button*, void*);
-  inline void cb_Orb_i(Fl_Button*, void*);
-  static void cb_Orb(Fl_Button*, void*);
-  inline void cb_UFO_i(Fl_Button*, void*);
-  static void cb_UFO(Fl_Button*, void*);
-  inline void cb_Walk_i(Fl_Button*, void*);
-  static void cb_Walk(Fl_Button*, void*);
+public:
+  Fl_Button *MotionFlyButton;
+private:
+  inline void cb_MotionFlyButton_i(Fl_Button*, void*);
+  static void cb_MotionFlyButton(Fl_Button*, void*);
+public:
+  Fl_Button *MotionOrbButton;
+private:
+  inline void cb_MotionOrbButton_i(Fl_Button*, void*);
+  static void cb_MotionOrbButton(Fl_Button*, void*);
+public:
+  Fl_Button *MotionUFOButton;
+private:
+  inline void cb_MotionUFOButton_i(Fl_Button*, void*);
+  static void cb_MotionUFOButton(Fl_Button*, void*);
+public:
+  Fl_Button *MotionWalkButton;
+private:
+  inline void cb_MotionWalkButton_i(Fl_Button*, void*);
+  static void cb_MotionWalkButton(Fl_Button*, void*);
   inline void cb_Reset_i(Fl_Button*, void*);
   static void cb_Reset(Fl_Button*, void*);
 public:
