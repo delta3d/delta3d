@@ -191,6 +191,9 @@
 				RelativePath=".\cui_openglshader.cpp">
 			</File>
 			<File
+				RelativePath=".\deltarendersurface.cpp">
+			</File>
+			<File
 				RelativePath=".\deltawin.cpp">
 			</File>
 			<File
@@ -606,6 +609,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\deltadrawable.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\deltarendersurface.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\deltawin.h">
