@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cd ../../lib
+
+ln -sf dtcorebindings.so dtCore.so
+ln -sf dtabcbindings.so dtABC.so
+ln -sf dtcharbindings.so dtChar.so
+ln -sf dtaudiobindings.so dtAudio.so
+ln -sf dtguiflbindings.so dtGUIFl.so
+#ln -sf dthlabindings.so dtHLA.so
+#ln -sf dtsoarxbindings.so dtSOARX.so
+
