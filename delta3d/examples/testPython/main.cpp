@@ -62,7 +62,7 @@ IMPLEMENT_MANAGEMENT_LAYER(TestPythonApplication)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;../../data;" + GetDeltaDataPathList());
+   SetDataFilePathList("..;../../data;../../../data/;" + GetDeltaDataPathList());
 
    TestPythonApplication* testPythonApp = new TestPythonApplication;
    

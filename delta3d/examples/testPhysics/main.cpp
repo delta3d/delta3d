@@ -290,7 +290,7 @@ protected:
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;../../data/;" + GetDeltaDataPathList() );
+   SetDataFilePathList("..;../../data/;../../../data/;" + GetDeltaDataPathList() );
             
    PhysicsApp *app = new PhysicsApp();
   app->Config();

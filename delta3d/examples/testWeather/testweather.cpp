@@ -130,7 +130,7 @@ private:
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-   SetDataFilePathList("..;../../data/;./data/;" + GetDeltaDataPathList());
+   SetDataFilePathList("..;../../data/;../../../data/;./data/;" + GetDeltaDataPathList());
 
    WeatherApp *app = new WeatherApp();
    app->Config();

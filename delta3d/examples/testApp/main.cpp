@@ -5,7 +5,7 @@
 
 int main()
 {
-   dtCore::SetDataFilePathList("..;../../data/;" + dtCore::GetDeltaDataPathList());
+   dtCore::SetDataFilePathList("..;../../data/;../../../data/;" + dtCore::GetDeltaDataPathList());
 
    dtABC::Application *app = new dtABC::Application("config.xml");
 

@@ -328,7 +328,7 @@ IMPLEMENT_MANAGEMENT_LAYER(TestInputApplication)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;../../data;" + GetDeltaDataPathList());
+   SetDataFilePathList("..;../../data;../../../data/;" + GetDeltaDataPathList());
  
    testInputApp = new TestInputApplication;
    
