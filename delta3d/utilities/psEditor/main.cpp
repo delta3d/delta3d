@@ -2163,39 +2163,6 @@ void psEditorGUI_Acceleration_SetZ(Fl_Value_Input*, void*)
    );
 }
 
-
-/**
- * A GUI updater class.
- */
-class GUIUpdater : public Base
-{
-   public:
-
-      /**
-       * Constructor.
-       *
-       * @param system the system object
-       */
-      GUIUpdater()
-      {
-         AddSender(System::GetSystem());
-      }
-
-      /**
-       * Message callback.
-       *
-       * @param data the message object
-       */
-      virtual void OnMessage(MessageData *data)
-      {
-         if(data->message == "frame")
-         {
-            Fl::wait(0.0);
-         }
-      }
-};
-
-
 class OrbitMotionModel : public MouseListener
 {
    public:
@@ -2420,84 +2387,6 @@ static void makeGrids()
    sceneGroup->addChild(xzGridTransform);
 }
 
-/**
- * The size of the compass edges.
- */
-const float compassSize = 0.05f;
-
-static void makeCompass()
-{
-   osg::Geometry* geometry = new osg::Geometry;
-   
-   osg::Vec3 vertices[6] = {
-      osg::Vec3(0, 0, 0),
-      osg::Vec3(compassSize, 0, 0),
-      osg::Vec3(0, 0, 0),
-      osg::Vec3(0, compassSize, 0),
-      osg::Vec3(0, 0, 0),
-      osg::Vec3(0, 0, compassSize)
-   };
-   
-   osg::Vec4 colors[6] = {
-      osg::Vec4(1, 0, 0, 1),
-      osg::Vec4(0, 1, 0, 1),
-      osg::Vec4(0, 0, 1, 1)
-   };
-   
-   geometry->setVertexArray(
-      new osg::Vec3Array(6, vertices)
-   );
-
-   geometry->setColorArray(
-      new osg::Vec4Array(3, colors)
-   );
-   
-   geometry->setColorBinding(osg::Geometry::BIND_PER_PRIMITIVE);
-   
-   geometry->addPrimitiveSet(
-      new osg::DrawArrays(
-         osg::PrimitiveSet::LINES, 0, 6
-      )
-   );
-
-   osgText::Text* xLabel = new osgText::Text;
-   osgText::Text* yLabel = new osgText::Text;
-   osgText::Text* zLabel = new osgText::Text;
-   
-   xLabel->setText("X");
-   xLabel->setCharacterSize(0.3f*compassSize);
-   xLabel->setAutoRotateToScreen(true);
-   xLabel->setColor(osg::Vec4(1, 0, 0, 1));
-   xLabel->setPosition(osg::Vec3(compassSize, 0, 0));
-   
-   yLabel->setText("Y");
-   yLabel->setCharacterSize(0.3f*compassSize);
-   yLabel->setAutoRotateToScreen(true);
-   yLabel->setColor(osg::Vec4(0, 1, 0, 1));
-   yLabel->setPosition(osg::Vec3(0, compassSize, 0));
-   
-   zLabel->setText("Z");
-   zLabel->setCharacterSize(0.3f*compassSize);
-   zLabel->setAutoRotateToScreen(true);
-   zLabel->setColor(osg::Vec4(0, 0, 1, 1));
-   zLabel->setPosition(osg::Vec3(0, 0, compassSize));
-   
-   osg::Geode* geode = new osg::Geode;
-
-   geode->addDrawable(geometry);
-   geode->addDrawable(xLabel);
-   geode->addDrawable(yLabel);
-   geode->addDrawable(zLabel);
-
-   geode->getOrCreateStateSet()->setMode(GL_LIGHTING, 0);
-   
-   compassTransform = new osg::MatrixTransform;
-   
-   compassTransform->addChild(geode);
-   
-   sceneGroup->addChild(compassTransform);
-}
-
 ///Called from the Open Previous menu items
 static void OpenHistoryCB(Fl_Widget *, void *v)
 {
@@ -2535,36 +2424,27 @@ void ReadPrefs(void)
 
 int main( int argc, char **argv )
 {
-   Window win;
-   Scene scene;
-
-   Camera cam;
-   cam.SetWindow( &win );
-   cam.SetScene( &scene );
-   Transform position;
-   position.Set(0.f, -50.f, 0.f, 0.f, 0.f, 0.f);
-   cam.SetTransform( &position );
-   
-   //This is where we'll find our files to load
-   SetDataFilePathList("../../data/");
-   
    editorWindow = make_window();
 
-   sceneGroup = scene.GetSceneNode();
+   editorWindow->show();
 
+   sceneGroup = viewWidget->GetScene()->GetSceneNode();
+
+   viewWidget->Config();
+   
    makeGrids();
 
-   makeCompass();
+   Compass* compass = new Compass(viewWidget->GetCamera());
    
-   ::OrbitMotionModel obm(win.GetMouse(), &cam);
+   viewWidget->GetScene()->AddDrawable(compass);
+   
+   compassTransform = (osg::MatrixTransform*)compass->GetOSGNode();
+   
+   ::OrbitMotionModel obm(viewWidget->GetMouse(), viewWidget->GetCamera());
 
    psEditorGUI_New(NULL, NULL);
 
    ReadPrefs();
-
-   editorWindow->show();
-
-   GUIUpdater guic;
 
    //load the first filename passed in on the command line
    if (argc>1)
@@ -2573,8 +2453,17 @@ int main( int argc, char **argv )
       LoadFile(filename);
    }
 
-   System::GetSystem()->Config();
-   System::GetSystem()->Run();
-
-   return 0;
+   viewWidget->SetEvent( FL_PUSH );
+   viewWidget->SetEvent( FL_RELEASE );
+   viewWidget->SetEvent( FL_ENTER );
+   viewWidget->SetEvent( FL_LEAVE );
+   viewWidget->SetEvent( FL_DRAG );
+   viewWidget->SetEvent( FL_MOVE );
+   viewWidget->SetEvent( FL_MOUSEWHEEL );
+   viewWidget->SetEvent( FL_FOCUS );
+   viewWidget->SetEvent( FL_UNFOCUS );
+   viewWidget->SetEvent( FL_KEYDOWN );
+   viewWidget->SetEvent( FL_KEYUP );
+   
+   Fl::run();
 }
