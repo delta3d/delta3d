@@ -249,3 +249,8 @@ void Weather::AddChild(dtCore::DeltaDrawable *child)
 {
    if (child)  mEnvironment->AddChild(child);
 }
+
+void Weather::RemoveChild( dtCore::DeltaDrawable *child)
+{
+   if (child)  mEnvironment->RemoveChild(child);
+}
