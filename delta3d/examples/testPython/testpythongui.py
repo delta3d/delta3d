@@ -513,7 +513,7 @@ class TestPythonGUIApplication(Widget):
         print "Widget config"
         SetDataFilePathList('../../data')
         self.helo = Object('UH-1N')
-        self.helo.LoadFile('UH-1N/UH-1N.ive')
+        self.helo.LoadFile('models/uh-1n.ive')
         print "loaded file"
         self.AddDrawable(self.helo)
         self.omm = OrbitMotionModel(self.GetKeyboard(), self.GetMouse())

@@ -12,7 +12,7 @@ class TestPythonApplication(Application):
         Application.Config(self)
         SetDataFilePathList('../../data')
         self.helo = Object('UH-1N')
-        self.helo.LoadFile('UH-1N/UH-1N.ive')
+        self.helo.LoadFile('models/uh-1n.ive')
         self.GetScene().AddDrawable(self.helo)
         self.transform = Transform()
         self.angle = 0.0
