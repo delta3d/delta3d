@@ -5,7 +5,7 @@ using namespace dtUtil;
 using namespace osg;
 
 /** Copy nxn matrix A to C using "gets" for assignment **/
-void PolarDecomp::MatCopyMinusEqual( Matrixf& C, const Matrixf& A )
+void PolarDecomp::MatCopyMinusEqual( Matrix& C, const Matrix& A )
 {
    for( int i = 0; i < 3; i++ ) 
       for( int j = 0; j < 3; j++ )
@@ -13,7 +13,7 @@ void PolarDecomp::MatCopyMinusEqual( Matrixf& C, const Matrixf& A )
 }
 
 /** Assign nxn matrix C the element-wise combination of A and B using "op" **/
-void PolarDecomp::MatBinOpEqualPlus( osg::Matrixf& C, const float g1, const osg::Matrixf& A, const float g2, const osg::Matrixf& B )
+void PolarDecomp::MatBinOpEqualPlus( osg::Matrix& C, const float g1, const osg::Matrix& A, const float g2, const osg::Matrix& B )
 {
    for( int i = 0; i < 3; i++ ) 
       for( int j = 0; j < 3; j++ )
@@ -21,24 +21,24 @@ void PolarDecomp::MatBinOpEqualPlus( osg::Matrixf& C, const float g1, const osg:
 }
 
 /** Set MadjT to transpose of inverse of M times determinant of M **/
-void PolarDecomp::AdjointTranspose( const Matrixf& M, Matrixf& MadjT )
+void PolarDecomp::AdjointTranspose( const Matrix& M, Matrix& MadjT )
 {
    MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,1)^MatrixUtil::GetColumn3(M,2), 0);
    MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,2)^MatrixUtil::GetColumn3(M,0), 1);
    MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,0)^MatrixUtil::GetColumn3(M,1), 2);
 }
 
-float PolarDecomp::NormInf( const Matrixf& M )
+float PolarDecomp::NormInf( const Matrix& M )
 {
    return MatNorm( M, 0 );
 }
-float PolarDecomp::NormOne( const Matrixf& M ) 
+float PolarDecomp::NormOne( const Matrix& M ) 
 {
    return MatNorm( M, 1 );
 }
 
 /** Return index of column of M containing maximum abs entry, or -1 if M=0 **/
-int PolarDecomp::FindMaxCol( const Matrixf& M )
+int PolarDecomp::FindMaxCol( const Matrix& M )
 {
    float abs;
    
@@ -82,7 +82,7 @@ void PolarDecomp::MakeReflector( const Vec3f& v, Vec3f& u )
 }
 
 /** Apply Householder reflection represented by u to column vectors of M **/
-void PolarDecomp::ReflectCols( Matrixf& M, const Vec3f& u )
+void PolarDecomp::ReflectCols( Matrix& M, const Vec3f& u )
 {
    for( int i = 0; i < 3; i++ ) 
    {
@@ -94,7 +94,7 @@ void PolarDecomp::ReflectCols( Matrixf& M, const Vec3f& u )
 }
 
 /** Apply Householder reflection represented by u to row vectors of M **/
-void PolarDecomp::ReflectRows( Matrixf& M, const Vec3f& u )
+void PolarDecomp::ReflectRows( Matrix& M, const Vec3f& u )
 {
    for( int i = 0; i < 3; i++ )
    {
@@ -106,7 +106,7 @@ void PolarDecomp::ReflectRows( Matrixf& M, const Vec3f& u )
 }
 
 /** Compute either the 1 or infinity norm of M, depending on tpose **/
-float PolarDecomp::MatNorm( const Matrixf& M, const int tpose )
+float PolarDecomp::MatNorm( const Matrix& M, const int tpose )
 {
    float sum;
 
@@ -126,7 +126,7 @@ float PolarDecomp::MatNorm( const Matrixf& M, const int tpose )
 }
 
 /** Find orthogonal factor Q of rank 1 (or less) M **/
-void PolarDecomp::DoRank1( Matrixf& M, Matrixf& Q )
+void PolarDecomp::DoRank1( Matrix& M, Matrix& Q )
 {
    Q.makeIdentity();
 
@@ -156,7 +156,7 @@ void PolarDecomp::DoRank1( Matrixf& M, Matrixf& Q )
 }
 
 /** Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose **/
-void PolarDecomp::DoRank2( Matrixf& M, const Matrixf& MadjT, Matrixf& Q )
+void PolarDecomp::DoRank2( Matrix& M, const Matrix& MadjT, Matrix& Q )
 {
    /* If rank(M) is 2, we should find a non-zero column in MadjT */
    int col = FindMaxCol(MadjT);
@@ -215,25 +215,25 @@ void PolarDecomp::DoRank2( Matrixf& M, const Matrixf& MadjT, Matrixf& Q )
 }
 
 
-float PolarDecomp::Decompose( const osg::Matrixf& M, osg::Matrixf& Q, osg::Matrixf& S, osg::Vec4f& T )
+float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec4f& T )
 {
    const float TOL = 1.0e-6;
    
    // return and remove translation
    T = MatrixUtil::GetColumn4( M, 3 );
-   Matrixf noTransM = M;
+   Matrix noTransM = M;
    
    Vec4f newCol = Vec4f( 0.0f, 0.0f, 0.0f, 1.0f );
    MatrixUtil::SetColumn( noTransM, newCol, 3 );
    //
 
-   Matrixf Mk;
+   Matrix Mk;
    MatrixUtil::Transpose( Mk, noTransM );
 
    float M_one = NormOne( Mk );  
    float M_inf = NormInf( Mk );
    
-   Matrixf MadjTk, Ek;
+   Matrix MadjTk, Ek;
    float det, MadjT_one, MadjT_inf, E_one, gamma, g1, g2;
 
    do
