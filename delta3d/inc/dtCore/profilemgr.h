@@ -1,15 +1,13 @@
 #ifndef PROFMGR_INCLUDED
 #define PROFMGR_INCLUDED
 
-#include "dtcore/deltadrawable.h"
+#include "dtCore/deltadrawable.h"
 #include "dtCore/keyboard.h"
+#include "dtCore/prof.h"
+#include "dtCore/prof_internal.h"
 
 #include <osgText/Text>
 #include <osg/Geode>
-
-#include "prof.h"
-#include "prof_internal.h"
-
 
 namespace dtCore
 {
