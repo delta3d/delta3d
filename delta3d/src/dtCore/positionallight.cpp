@@ -24,8 +24,7 @@ public:
       mPositionalLight->GetTransform( &trans, Transformable::ABS_CS );
 
       osg::Matrix absMatrix;
-      Transformable::GetAbsoluteMatrix( mPositionalLight->GetMatrixNode(), &absMatrix );
-      //mPositionalLight->GetHelperMatrix()->setMatrix( osg::Matrix::inverse( absMatrix)  );
+      Transformable::GetAbsoluteMatrix( mPositionalLight->GetMatrixNode(), absMatrix );
             
       osg::Light* osgLight = mPositionalLight->GetLightSource()->getLight();
 

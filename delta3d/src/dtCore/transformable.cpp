@@ -20,7 +20,6 @@ Transformable::Transformable()
 
 Transformable::~Transformable()
 {
-   Notify(DEBUG_INFO, "Transformable: Deleting '%s'", GetName().c_str());
    DeregisterInstance(this);
 }
 
@@ -30,21 +29,17 @@ Transformable::~Transformable()
  * @param wcMat : The supplied matrix to return with world coordinates
  * @return successfully or not
  */
-bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat)
+bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix )
 {
-   if (!node || !wcMat) return false;
+   for(  osg::Node *topParent = node; 
+         topParent->getNumParents() != 0; 
+         topParent = topParent->getParent(0) );
+   
+   getWCofNodeVisitor vis( node, wcMatrix );
 
-   osg::Node *topParent = node;
+   topParent->accept( vis );
 
-   for (;topParent->getNumParents()!=0; topParent=topParent->getParent(0) ) {}
-
-   osg::ref_ptr<Transformable::getWCofNodeVisitor> vis = new Transformable::getWCofNodeVisitor( node );
-
-   topParent->accept( *vis.get() );
-
-   wcMat->set( vis->wcMatrix );
-
-   return( vis->success );
+   return vis.success;
 }
 
 /*!
@@ -65,9 +60,9 @@ bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat)
  * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
-void Transformable::SetTransform(Transform *xform, CoordSysEnum cs )
+void Transformable::SetTransform( Transform *xform, CoordSysEnum cs )
 {
-   sgMat4 newMat;
+   osg::Matrix newMat;
    xform->Get( newMat );
 
    if (cs == ABS_CS)
@@ -79,36 +74,27 @@ void Transformable::SetTransform(Transform *xform, CoordSysEnum cs )
       if (mParent.valid())
       {
          //get the parent's world position
-         osg::Matrix mat;
-         GetAbsoluteMatrix( mParent->GetOSGNode(), &mat );
+         osg::Matrix parentMat;
+         GetAbsoluteMatrix( mParent->GetOSGNode(), parentMat );
 
          //calc the difference between xform and the parent's world position
          //child * parent^-1
-         sgMat4 relMat;
-         sgMat4 parentMat;
-         for (int i=0; i<4;i++)
-         {
-            for (int j=0; j<4; j++)
-            {
-               parentMat[i][j] = mat(i,j);
-            }
-         }
 
-         sgInvertMat4(parentMat);
-         sgMultMat4(relMat, newMat, parentMat);
+         osg::Matrix::inverse(parentMat);
+         osg::Matrix relMat = newMat * parentMat;
 
          //pass the rel matrix to this node
-         GetMatrixNode()->setMatrix( osg::Matrix((float*)relMat) );
+         GetMatrixNode()->setMatrix( relMat );
       }
       else 
       {
          //pass the xform to the this node
-         GetMatrixNode()->setMatrix( osg::Matrix((float*)newMat) );
+         GetMatrixNode()->setMatrix( newMat );
       }
    }
    else if (cs == REL_CS)
    {
-     GetMatrixNode()->setMatrix( osg::Matrix((float*)newMat) );
+     GetMatrixNode()->setMatrix( newMat );
    }
 }
 
@@ -122,27 +108,18 @@ void Transformable::SetTransform(Transform *xform, CoordSysEnum cs )
  */
 void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
 {
-   sgMat4 mat;
    osg::Matrix newMat;
 
    if (cs ==ABS_CS)
    { 
-     GetAbsoluteMatrix( GetMatrixNode(), &newMat);     
+     GetAbsoluteMatrix( GetMatrixNode(), newMat );     
    }
    else if (cs == REL_CS)
    {
      newMat = GetMatrixNode()->getMatrix();
    }
 
-   for (int i=0; i<4;i++)
-   {
-      for (int j=0; j<4; j++)
-      {
-         mat[i][j] = newMat(i,j);
-      }
-   }
-
-   xform->Set( mat );
+   xform->Set( newMat );
 }
 
 
@@ -176,7 +153,7 @@ void Transformable::AddChild(DeltaDrawable *child)
 void Transformable::RemoveChild(DeltaDrawable *child)
 {
    osg::Matrix absMat;
-   bool success = GetAbsoluteMatrix( child->GetOSGNode(), &absMat );
+   GetAbsoluteMatrix( child->GetOSGNode(), absMat );
    GetMatrixNode()->removeChild( child->GetOSGNode() );
    DeltaDrawable::RemoveChild(child);
 }

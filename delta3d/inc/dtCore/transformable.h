@@ -26,7 +26,6 @@
 
 #include "dtCore/deltadrawable.h"
 #include "dtCore/transform.h"
-#include "sg.h"
 #include <osg/ref_ptr>
 #include <osg/MatrixTransform>
 
@@ -50,8 +49,8 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Transformable)
    public:
       enum CoordSysEnum{
-      REL_CS, ///< The Transform coordinate system is relative to the parent
-      ABS_CS  ///< The Transform coordinate system is absolute
+         REL_CS, ///< The Transform coordinate system is relative to the parent
+         ABS_CS  ///< The Transform coordinate system is absolute
       } ;
 
       Transformable();
@@ -64,30 +63,28 @@ namespace dtCore
       virtual void RemoveChild( DeltaDrawable *child );
 
       ///Set the Transform to reposition this Transformable
-      virtual  void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
+      virtual void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
 
       ///Get the current Transform of this Transformable
-      virtual  void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
+      virtual void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
 
       ///convenience function to return back the internal matrix transform node
-      osg::MatrixTransform* GetMatrixNode(void) {return dynamic_cast<osg::MatrixTransform*>(mNode.get());}
+      osg::MatrixTransform* GetMatrixNode(void)
+      { return dynamic_cast<osg::MatrixTransform*>( mNode.get() ); }
       
      ///Get the world coordinate matrix from the supplied node
-      static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat);
-
-   protected:
-      
-      //Transform *mRelTransform;  ///<position relative to the parent
+      static bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix );
 
    private:
 
-       class getWCofNodeVisitor : public osg::NodeVisitor
+      class getWCofNodeVisitor : public osg::NodeVisitor
       {
-      public:
-         getWCofNodeVisitor( osg::Node *findNode ):
-            osg::NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN),
+         public:
+            getWCofNodeVisitor( osg::Node *findNode, osg::Matrix& matrix ):
+               osg::NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN),
+               success(false),
                wcNode(findNode),
-               success(false)
+               wcMatrix(matrix)
             {}
 
             virtual void apply(osg::MatrixTransform &node)
@@ -100,9 +97,12 @@ namespace dtCore
                traverse(node);
             }
 
-            osg::Matrix wcMatrix;
             bool success;
+
+         private:
+
             osg::Node *wcNode;
+            osg::Matrix& wcMatrix;
       };
 
    };

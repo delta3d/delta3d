@@ -25,6 +25,7 @@
 
 
 #include "dtCore/export.h"
+#include "osg/Matrix"
 #include "sg.h"
 
 namespace dtCore
@@ -40,7 +41,8 @@ namespace dtCore
       virtual ~Transform();
 
       //Set both translation and rotation methods
-      virtual void Set (sgMat4 mat) {sgCopyMat4(mTransform, mat);}
+      virtual void Set( sgMat4 mat ) { sgCopyMat4(mTransform, mat); }
+      virtual void Set( osg::Matrix& mat );
       virtual void Set( float x, float y, float z, float h, float p, float r); 
       virtual void Set(sgVec3 xyz, sgVec3 hpr ) {sgMakeCoordMat4(mTransform, xyz, hpr);}
 
@@ -62,6 +64,7 @@ namespace dtCore
       //Get translation and rotation methods
       void Get( sgVec3 xyz, sgVec3 hpr ) {Get(&xyz[0], &xyz[1], &xyz[2], &hpr[0], &hpr[1], &hpr[2]);}     
       void Get( sgMat4 mat) {sgCopyMat4(mat, mTransform); }     
+      void Get( osg::Matrix& mat) const; 
       void Get( float *x, float *y, float *z, float *h, float *p, float *r);
 
       //Get only translation methods
