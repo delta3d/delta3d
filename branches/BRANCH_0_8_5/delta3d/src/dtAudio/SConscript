@@ -1,0 +1,12 @@
+Import('*')
+
+dtAudioSrcs = [ 'audiomanager.cpp',
+                'listener.cpp',
+                'sound.cpp',
+                'soundeffectbinder.cpp' ]
+
+dtAudioLib = env.SharedLibrary( 'dtaudio', dtAudioSrcs, LIBS=[ 'openal', 'OpenThreads', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+
+env.Alias('install', env.Install( "$prefix/lib", dtAudioLib ) )
+
+Return( 'dtAudioLib' )

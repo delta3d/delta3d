@@ -1,0 +1,90 @@
+Import('*')
+
+#####################
+# Delcare src files #
+#####################
+
+pythonDtCoreSrcs = [    'basebindings',
+                'camerabindings',
+                'clouddomebindings',
+                'cloudplanebindings',
+                'compassbindings',
+                'deltadrawablebindings',
+                'deltawinbindings',
+                'dtcorebindings',
+                'effectmanagerbindings',
+                'enveffectbindings',
+                'environmentbindings',
+                'flymotionmodelbindings',
+                'infinitelightbindings',
+                'infiniteterrainbindings',
+                'inputdevicebindings',
+                'inputmapperbindings',
+                'isectorbindings',
+                'joystickbindings',
+                'keyboardbindings',
+                'lightbindings',
+                'loadablebindings',
+                'logicalinputdevicebindings',
+                'motionmodelbindings',
+                'mousebindings',
+                'noisegeneratorbindings',
+                'objectbindings',
+                'orbitmotionmodelbindings',
+                'particlesystembindings',
+                'physicalbindings',
+                'pointaxisbindings',
+                'positionallightbindings',
+                'recorderbindings',
+                'scenebindings',
+                'skyboxbindings',
+                'skydomebindings',
+                'spotlightbindings',
+                'systembindings',
+                'terrainbindings',
+                'trackerbindings',
+                'transformablebindings',
+                'transformbindings',
+                'tripodbindings',
+                'ufomotionmodelbindings',
+                'uidrawablebindings',
+                'walkmotionmodelbindings' ]
+
+pythonDtAbcSrcs = [ 'applicationbindings', 'baseabcbindings', 'dtabcbindings', 'weatherbindings', 'widgetbindings' ]
+
+pythonDtAudioSrcs = [ 'audiomanagerbindings', 'dtaudiobindings', 'listenerbindings', 'soundeffectbinderbindings' ]
+
+pythonDtCharSrcs = [ 'characterbindings', 'dtcharbindings' ]
+
+pythonGui_flSrcs = [ 'dtguiflbindings' ]
+
+#pythonDtHlaSrcs = []
+#pythonDtSoarxSrcs = []
+
+# add python lib, inc dirs?
+#INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
+#LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
+
+##############
+# Build libs #
+##############
+
+pythonDtCoreLib = env.SharedLibrary( 'dtcorebindings', pythonDtCoreSrcs, LIBS=[ 'dtcore', 'boost_python', 'python2.3', 'util' ] )
+
+pythonDtAbcLib = env.SharedLibrary( dtabcbindings, pythonDtAbcSrcs, LIBS=[ 'dtabc', 'boost_python', 'python2.3', 'util' ] )
+
+pythonDtAudioLib = env.SharedLibrary( dtaudiobindings, pythonDtAudioSrcs, LIBS=[ 'dtaudio', 'boost_python', 'python2.3', 'util' ] )
+
+pythonDtCharLib = env.SharedLibrary( dtcharbindings, pythonDtCharSrcs, LIBS=[ 'dtchar', 'boost_python', 'python2.3', 'util' ] )
+
+pythonGui_flLib = env.SharedLibrary( gui_flbindings, pythonGui_flSrcs LIBS=[ 'gui_fl', 'boost_python', 'python2.3', 'util' ] )
+
+#pythonDtHlaLib = env.SharedLibrary( dthlabindings, LIBS=[ 'dthla', 'boost_python', 'python2.3', 'util' ] )
+
+################
+# Install libs #
+################
+
+env.Install( "$prefix/lib", [ pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib ] )
+
+#env.Install( "$prefix/lib", [ pythonDtHlaLib, pythonDtSoarxLib ] )

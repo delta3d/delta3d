@@ -1,0 +1,7 @@
+Import('*')
+
+env = env.Copy()
+
+viewer = env.Program( 'viewer', ['main.cpp', 'UserInterface.cxx', 'viewer.cpp', 'viewstate.cpp', 'viewwindow.cpp'], LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'fltk', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgFX', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'glgui', 'Xxf86vm', 'isense'] )
+
+Return( 'viewer' )
