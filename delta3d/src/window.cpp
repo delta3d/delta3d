@@ -263,3 +263,21 @@ bool Window::CalcPixelCoords(const float x, const float y, float &pixel_x, float
    return true;
 
 }
+
+
+bool Window::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
+{
+   DEVMODE dmScreenSettings;                                                            // Device Mode
+   ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));                                    // Make Sure Memory Is Cleared
+   dmScreenSettings.dmSize                              = sizeof (DEVMODE);             // Size Of The Devmode Structure
+   dmScreenSettings.dmPelsWidth         = width;                                        // Select Screen Width
+   dmScreenSettings.dmPelsHeight                = height;                               // Select Screen Height
+   dmScreenSettings.dmBitsPerPel                = bitsPerPixel;                         // Select Bits Per Pixel
+   dmScreenSettings.dmFields                    = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+   if ( ChangeDisplaySettings (&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+   {
+      return FALSE;                                                                     // Display Change Failed, Return False
+   }
+   return TRUE;                                                                         // Display Change Was Successful, Return True
+}

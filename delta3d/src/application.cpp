@@ -145,14 +145,18 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       int         height      = atoi(win->Attribute("Height"));
       int         winX        = atoi(win->Attribute("X"));
       int         winY        = atoi(win->Attribute("Y"));
+      int         pixelDepth  = atoi(win->Attribute("PixelDepth"));
       bool        showCursor  = atoi(win->Attribute("ShowCursor"));
       bool        fullScreen  = atoi(win->Attribute("FullScreen"));
+
 
       mWindow->SetName(name);
       mWindow->SetWindowTitle(name.c_str());
       mWindow->SetPosition(winX, winY, width, height);
       mWindow->ShowCursor(showCursor);
       mWindow->SetFullScreenMode(fullScreen);
+      
+      if (fullScreen) mWindow->ChangeScreenResolution(width, height, pixelDepth);
    }
 
    TiXmlElement*  scene = rootNode->FirstChildElement("Scene");
@@ -229,3 +233,5 @@ void dtABC::Application::GenerateConfigFile()
 
    xml.SaveFile();
 }
+
+
