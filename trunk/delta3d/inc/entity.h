@@ -17,7 +17,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM entity.
     */
-   class Entity : public dtCore::Object
+   class DT_EXPORT Entity : public dtCore::Object
    {
       DECLARE_MANAGEMENT_LAYER(Entity)
 

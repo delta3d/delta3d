@@ -101,9 +101,9 @@ namespace dtHLA
    /**
     * Represents a connection to the HLA run-time infrastructure.
     */
-   class RTIConnection : public dtCore::Base,
-                         public dtCore::EffectListener,
-                         public NullFederateAmbassador
+   class DT_EXPORT RTIConnection : public dtCore::Base,
+                                   public dtCore::EffectListener,
+                                   public NullFederateAmbassador
    {
       DECLARE_MANAGEMENT_LAYER(RTIConnection)
 
@@ -1077,10 +1077,10 @@ namespace dtHLA
    };
 
 
-    /**
+   /**
     * An interface for objects interested in detonation events.
     */
-   class DetonationListener
+   class DT_EXPORT DetonationListener
    {
       public:
       

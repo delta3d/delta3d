@@ -37,7 +37,7 @@
 				OutputFile="..\..\bin\dtGUIFl.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt"
+				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt; libcmtd"
 				ImportLibrary="Debug/dtGUIFlBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

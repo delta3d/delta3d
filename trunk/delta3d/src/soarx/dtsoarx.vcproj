@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="p51soarx"
+	Name="dtsoarx"
 	ProjectGUID="{C34553DE-4963-4CAD-BA56-39B550358E87}"
 	RootNamespace="dtsoarx"
 	Keyword="Win32Proj">
@@ -15,13 +15,13 @@
 			Name="Debug|Win32"
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\inc,..\..\inc\soarx,..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -33,8 +33,12 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\dtsoarxD.lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="gdal_i.lib dtcored.lib osgd.lib osgUtild.lib osgDBd.lib osgGL2d.lib sg_d.lib tinyxmld.lib ul_d.lib oded.lib opengl32.lib"
+				OutputFile="..\..\bin\dtsoarxd.dll"
+				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				IgnoreDefaultLibraryNames="libcd; libcmtd; libc"
+				ImportLibrary="..\..\lib\dtsoarxd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -49,6 +53,8 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -58,12 +64,12 @@
 			Name="Release|Win32"
 			OutputDirectory=".\Release"
 			IntermediateDirectory=".\Release"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\inc,..\..\inc\soarx,..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -73,8 +79,12 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\dtsoarx.lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="gdal_i.lib dtcore.lib osg.lib osgUtil.lib osgDB.lib osgGL2.lib sg.lib tinyxml.lib ul.lib ode.lib opengl32.lib"
+				OutputFile="..\..\bin\dtsoarx.dll"
+				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
+				IgnoreDefaultLibraryNames="libc; libcmt"
+				ImportLibrary="..\..\lib\dtsoarx.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -89,6 +99,8 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -131,6 +143,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\inc\soarx\dtsoarx.h">
+			</File>
 			<File
 				RelativePath="..\..\inc\soarx\soarx_camera.h">
 			</File>
