@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <string>} {public
@@ -28,11 +28,10 @@ class UserInterface {open
   decl {int mArgc;} {}
   decl {char** mArgv;} {}
   decl {bool mMenusEnabled;} {}
-  Function {UserInterface( int argc = 0L, char** argv = NULL ) : mArgc(argc), mArgv(argv), mMenusEnabled(false)} {open
-  } {
+  Function {UserInterface( int argc = 0L, char** argv = NULL ) : mArgc(argc), mArgv(argv), mMenusEnabled(false)} {} {
     Fl_Window UIMainWindow {
       label Viewer open
-      private xywh {811 485 748 536} type Double resizable non_modal visible
+      private xywh {612 427 748 536} type Double resizable non_modal visible
     } {
       Fl_Menu_Bar UIMenu {open
         private xywh {0 0 750 24}
@@ -78,7 +77,7 @@ class UserInterface {open
           }
         }
         submenu UIMenuView {
-          label {&View} open
+          label {&View}
           private xywh {0 0 100 20} deactivate
         } {
           submenu UIMenuViewDisplay {
@@ -227,7 +226,7 @@ LightingButton->value(UIMenuViewSceneLighting->value() != 0L);}
           }
         }
         submenu UIMenuMotion {
-          label {&Motion} open
+          label {&Motion}
           private xywh {0 0 100 20} deactivate
         } {
           menuitem UIMenuMotionFly {
@@ -283,77 +282,66 @@ MotionWalkButton->setonly();}
           xywh {680 23 67 487} box THIN_DOWN_BOX
         } {
           Fl_Button TextureButton {
-            label T
             callback {ToggleTextureScene();}
-            tooltip {Toggle Texture} xywh {701 40 25 25} type Toggle
+            tooltip {Toggle Texture} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/texture.png} xywh {695 29 36 36} type Toggle
             code0 {o->value(1);}
           }
           Fl_Button LightingButton {
-            label L
             callback {ToggleLightingScene();}
-            tooltip {Toggle Lighting} xywh {701 67 25 25} type Toggle
+            tooltip {Toggle Lighting} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/lighting.png} xywh {695 66 36 36} type Toggle
             code0 {o->value(1);}
           }
           Fl_Button CompassButton {
-            label C
             callback {ToggleCompass();}
-            tooltip {Toggle Compass} xywh {701 235 25 25} type Toggle
+            tooltip {Toggle Compass} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/compass.png} xywh {695 103 36 36} type Toggle
             code0 {o->value(1);}
           }
           Fl_Button XYGridButton {
-            label XY
             callback {ToggleXYPlane();}
-            tooltip {Toggle XY Grid} xywh {701 150 25 25} type Toggle
+            tooltip {Toggle XY Grid} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/xygrid.png} xywh {695 181 36 36} type Toggle
             code0 {o->value(1);}
           }
           Fl_Button YZGridButton {
-            label YZ
             callback {ToggleYZPlane();}
-            tooltip {Toggle YZ grid} xywh {701 177 25 25} type Toggle
+            tooltip {Toggle YZ grid} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/yzgrid.png} xywh {695 218 36 36} type Toggle
           }
           Fl_Button ZXGridButton {
-            label ZX
             callback {ToggleZXPlane();}
-            tooltip {Toggle ZX grid} xywh {701 205 25 25} type Toggle
+            tooltip {Toggle ZX grid} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/xzgrid.png} xywh {695 255 36 36} type Toggle
           }
           Fl_Button WireframeButton {
-            label W
             callback {ToggleWireframeScene();}
-            tooltip {Toggle Wireframe/scribe} xywh {701 95 25 25}
+            tooltip {Toggle Wireframe/scribe} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/wireframe.png} xywh {695 140 36 36}
           }
-          Fl_Group {} {open
-            xywh {688 290 50 105}
+          Fl_Group {} {
+            xywh {688 290 52 160}
           } {
             Fl_Button MotionFlyButton {
-              label Fly
               callback {UIViewWindow->SetMotion( ViewState::FLY );
 UIMenuMotionFly->setonly();}
-              tooltip {Fly Motion Model} xywh {688 290 50 25} type Radio
+              tooltip {Fly Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/fly.png} xywh {695 296 36 36} type Radio
             }
             Fl_Button MotionOrbButton {
-              label Orb
               callback {UIViewWindow->SetMotion( ViewState::ORBIT );
 UIMenuMotionOrbit->setonly();}
-              tooltip {Orbit Motion Model} xywh {688 316 50 25} type Radio
+              tooltip {Orbit Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/orbit.png} xywh {695 333 36 36} type Radio
               code0 {o->value(1);}
             }
             Fl_Button MotionUFOButton {
-              label UFO
               callback {UIViewWindow->SetMotion( ViewState::UFO );
 UIMenuMotionUFO->setonly();}
-              tooltip {UFO Motion Model} xywh {688 343 50 25} type Radio
+              tooltip {UFO Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/ufo.png} xywh {695 370 36 36} type Radio
             }
             Fl_Button MotionWalkButton {
-              label Walk
               callback {UIViewWindow->SetMotion( ViewState::WALK );
 UIMenuMotionWalk->setonly();}
-              tooltip {Walk Motion Model} xywh {688 370 50 25} type Radio
+              tooltip {Walk Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/walk.png} xywh {695 407 36 36} type Radio
             }
           }
           Fl_Button {} {
             label Reset
             callback {ResetCam();} selected
-            tooltip {Reset the Camera} xywh {688 397 50 25}
+            tooltip {Reset the Camera} xywh {688 450 50 25}
           }
         }
         Fl_Group ViewGroup {open
