@@ -165,8 +165,9 @@ public:
          Object *obj1 = new Object("ground");
          Object *obj2 = new Object("box");
 
-         obj1->LoadFile("ground.flt");
-         obj2->LoadFile("box.flt");
+         if (!obj1->LoadFile("ground.flt")) return;
+
+         if (!obj2->LoadFile("box.flt")) return;
 
          Transform position;
          position.Set(5.f, -10.f, 2.f, 0.f, 0.f, 0.f);
