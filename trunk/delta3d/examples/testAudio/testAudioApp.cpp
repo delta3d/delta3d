@@ -796,8 +796,8 @@ testAudioApp::MoveTheStupidBox( unsigned int box )
 {
    // figure out which box gets what velocity
    static   long              X(0L);
-   static   const double      A(1.0f/50.0f);
-   static   const double      C(1.0f/75.0f);
+   static   const double      A(1.0f/1500.0f);
+   static   const double      C(1.0f/1750.0f);
             double            D((box==BOX_C)? C: A);
             double            P(sin( double(X++) * D ));
             double            V(cos( double(X++) * D ));
