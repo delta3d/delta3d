@@ -24,9 +24,9 @@ const char*    TestAudioApp::kSoundFile[] =
                };
 const char*    TestAudioApp::kGfxFile[kNumGfx] =
                {
-                  "dirt/flatdirt.ive",
-                  "BRDM/brdm-2.ive",
-                  "UH-1N/UH-1N.ive"
+                  "dirt/flatdirt.osg",
+                  "BRDM/brdm-2.osg",
+                  "UH-1N/UH-1N.osg"
                };
 const char*    TestAudioApp::kFxFile[kNumFx] =
                {

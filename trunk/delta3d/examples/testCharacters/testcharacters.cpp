@@ -212,7 +212,7 @@ public:
       GetCamera()->SetTransform( &position );
       
       Object* terrain = new Object( "Terrain" );
-      terrain->LoadFile( "dirt/dirt.ive" );
+      terrain->LoadFile( "dirt/dirt.osg" );
       AddDrawable( terrain );
 
       Character* guy1 = new Character( "bob" );
