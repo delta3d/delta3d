@@ -54,9 +54,9 @@ public:
       Object *obj3 = new Object("GroundCrate");
 
       //load the model files
-      if (!obj1->LoadFile("dirt/flatdirt.ive")) return;
-      if (!obj2->LoadFile("physics/crate/crate.ive")) return; 
-      if (!obj3->LoadFile("physics/crate/crate.ive")) return; 
+      if (!obj1->LoadFile("dirt/flatdirt.osg")) return;
+      if (!obj2->LoadFile("physics/crate/crate.osg")) return; 
+      if (!obj3->LoadFile("physics/crate/crate.osg")) return; 
 
       //position the camera
       Transform position;
@@ -151,7 +151,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
-            box->LoadFile("physics/crate/crate.ive");
+            box->LoadFile("physics/crate/crate.osg");
  
 
             Transform xform(random(-2.f,2.f),
@@ -187,7 +187,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
-            sphere->LoadFile("physics/sphere/happy_sphere.ive");
+            sphere->LoadFile("physics/sphere/happy_sphere.osg");
   
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -219,7 +219,7 @@ protected:
          if( mObjects.size() < kLimit )
          {
             Object *cyl = new Object("cylinder");
-            cyl->LoadFile("physics/barrel/barrel.ive");
+            cyl->LoadFile("physics/barrel/barrel.osg");
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),

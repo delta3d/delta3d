@@ -25,7 +25,7 @@ TestLightsApp::Config()
 
    // load up a warehouse
    mWarehouse = new Object( "Warehouse" );
-   mWarehouse->LoadFile( "warehouse/warehouse.ive" );
+   mWarehouse->LoadFile( "warehouse/warehouse.osg" );
    AddDrawable( mWarehouse.get() );
 
 
@@ -45,7 +45,7 @@ TestLightsApp::Config()
 
    // add a child to the local light
    mSphere = new Object( "HappySphere" );
-   mSphere->LoadFile( "physics/sphere/happy_sphere.ive" );
+   mSphere->LoadFile( "physics/sphere/happy_sphere.osg" );
    
    //we want the sphere 1 unit below light so we can see effect of local light and
    trans.Set( 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f ); 

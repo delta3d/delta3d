@@ -44,7 +44,7 @@ public:
 
       ///put something in the background to look at
       Object *helo = new Object( "Helo" );
-      helo->LoadFile( "UH-1N/UH-1N.ive" );
+      helo->LoadFile( "UH-1N/UH-1N.osg" );
       AddDrawable( helo );
 
       ///move the camera up
