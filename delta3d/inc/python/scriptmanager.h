@@ -18,8 +18,8 @@
  *
 */
 
-#ifndef DELTA_SCRIPT
-#define DELTA_SCRIPT
+#ifndef DELTA_SCRIPT_MANAGER
+#define DELTA_SCRIPT_MANAGER
 
 #include <string>
 #include "dtCore/export.h"
@@ -27,18 +27,17 @@
 
 namespace dtScript
 {
-	class DT_EXPORT Script
+	class DT_EXPORT ScriptManager
 	{
 	public:
-	   Script();
-	   ~Script();
+	   ScriptManager();
+	   ~ScriptManager();
 	   
 	   inline void Run( std::string filename )
       { 
          PyRun_SimpleFile(PyFile_AsFile(PyFile_FromString(const_cast<char*>(filename.c_str()), "r")), const_cast<char*>(filename.c_str()));
       }
 	};
-	
 }
 
-#endif // DELTA_SCRIPT
+#endif // DELTA_SCRIPT_MANAGER
