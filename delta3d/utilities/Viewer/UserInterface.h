@@ -4,8 +4,8 @@
 #define UserInterface_h
 #include <FL/Fl.H>
 #include <string>
-#include <FL/Fl_Choice.h>
-#include <FL/Fl_File_Chooser.h>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_File_Chooser.H>
 #include "viewwindow.h"
 #include "viewstate.h"
 #define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds})\tOSG Files (*.osg)\tIVE Files (*.ive)\tFlight Files (*.flt)\t3ds Export Files (*.3ds)"
