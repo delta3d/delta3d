@@ -1173,7 +1173,7 @@ void UserInterface::WeatherCustomCloudCB(Fl_Slider *)
 {
    Weather *w = (Weather*)GetSelectedInstance(this);
 
-   int cloud  = WeatherCloudSlider->value();
+   int cloud  = static_cast<int>(WeatherCloudSlider->value());
    
    switch(cloud) {
    case 0: 
@@ -1209,7 +1209,7 @@ void UserInterface::WeatherCustomWindCB(Fl_Slider *)
 {
    Weather *w = (Weather*)GetSelectedInstance(this);
 
-   int wind  = WeatherWindSlider->value();
+   int wind  = static_cast<int>(WeatherWindSlider->value());
 
    switch(wind) {
    case 0: 
@@ -1245,7 +1245,7 @@ void UserInterface::WeatherCustomVisCB(Fl_Slider *)
 {
    Weather *w = (Weather*)GetSelectedInstance(this);
 
-   int vis  = WeatherVisSlider->value();
+   int vis  = static_cast<int>(WeatherVisSlider->value());
 
    switch(vis) {
    case 0: 
