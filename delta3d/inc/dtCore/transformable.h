@@ -75,7 +75,7 @@ namespace dtCore
 
    protected:
       
-      Transform *mRelTransform;  ///<position relative to the parent
+      //Transform *mRelTransform;  ///<position relative to the parent
 
    private:
 
