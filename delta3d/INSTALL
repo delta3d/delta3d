@@ -9,8 +9,8 @@ Win32 w/ Visual Studio .NET 7.1
 
 1. Download the following packages from Sourceforge:
 
-   dt_dep_vc7.1_0.1.0c.zip
-   dt_data_0.0.3.zip
+   delta3d-dependencies
+   delta3d-data
 
    Extract them in your delta3d directory.
 
@@ -32,6 +32,11 @@ src/dthla.sln
 examples/testHLA/testHLA.sln
 utilities/hlaStealthViewer
 
+dtPython requires the following additional downloads:
+-python 2.3.4
+-boost 1.31.0
+
+
 Linux 
 -----
 Tested on:
@@ -50,8 +55,8 @@ Fedora Core-up (2.6.5-1.358)
 
 3. Download the following packages from Sourceforge:
 
-   dt_dep_linux_0.1.0c.tar.gz
-   dt_data_0.0.3.tar.gz
+   delta3d-dependencies
+   delta3d-data
 
    Extract them in your delta3d directory.
 
