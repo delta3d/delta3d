@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib osg.lib osgdb.lib osgutil.lib"
+				AdditionalDependencies="opengl32.lib osgd.lib osgdbd.lib osgutild.lib OpenThreadsWin32d.lib"
 				OutputFile="../../bin/dtvis_d.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				ImportLibrary="../../lib/dtvis_d.lib"/>
@@ -79,7 +79,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osg.lib osgdb.lib opengl32.lib"
+				AdditionalDependencies="osg.lib osgdb.lib opengl32.lib OpenThreadsWin32.lib"
 				OutputFile="../../bin/dtvis.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				ImportLibrary="../../lib/dtvis.lib"/>

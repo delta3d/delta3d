@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib producer.lib osg.lib osgdb.lib replicantbody.lib sg.lib ul.lib"
+				AdditionalDependencies="dtcore.lib producer.lib osg.lib osgdb.lib replicantbody.lib sg.lib ul.lib OpenThreadsWin32.lib"
 				OutputFile="..\..\bin\dtchar.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
