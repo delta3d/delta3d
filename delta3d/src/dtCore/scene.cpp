@@ -36,8 +36,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
    exit(1);
 }
 
-//const int Scene::mMaxLightNum;
-
+//const int Scene::MAX_LIGHT_NUMBER ;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -48,7 +47,7 @@ Scene::Scene( string name, bool useSceneLight )
 {
    RegisterInstance(this);
 
-   for( int i = 0; i < mMaxLightNum; i++ )
+   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
       mLights[ i ] = 0;
 
    SetName(name);
@@ -57,7 +56,6 @@ Scene::Scene( string name, bool useSceneLight )
    mSceneNode = new osg::Group;
    mSceneHandler->GetSceneView()->setSceneData( mSceneNode.get() );
 
-   // new light stuff
    mLightGroup = new osg::Group;
    mSceneNode.get()->addChild(mLightGroup);
 
@@ -65,10 +63,8 @@ Scene::Scene( string name, bool useSceneLight )
    sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
    mLightGroup->addChild( sceneLightSource );
 
-   mLights[ sceneLightSource->getLight()->getLightNum() ] = new Light( sceneLightSource, "sceneLight", Light::GLOBAL ); //SHOULD be 0
+   mLights[ 0 ] = new Light( sceneLightSource, "sceneLight", Light::GLOBAL ); //SHOULD be 0
 
-   //
-   
    mUserNearCallback = NULL;
    mUserNearCallbackData = NULL;
 
@@ -92,7 +88,7 @@ Scene::~Scene()
 {
    DeregisterInstance(this);
 
-   for( int i = 0; i < mMaxLightNum; i++ )
+   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
       delete mLights[ i ];
 
    dJointGroupDestroy(mContactJointGroupID);
@@ -103,35 +99,40 @@ Scene::~Scene()
 
 void Scene::AddDrawable( DeltaDrawable *drawable )
 {
-   mSceneNode.get()->addChild( drawable->GetOSGNode() );
-   
-   drawable->AddedToScene(this);
-   
-   //FIX: EVIL if-then casting
-
-   Physical* physical = dynamic_cast<Physical*>(drawable);
-   
-   if(physical != NULL)
+   //NOTE: Evil if-then casting, must redesign hierarchy
+   if( Light* light = dynamic_cast<Light*>(drawable) )
    {
-      RegisterPhysical(physical);
+      RegisterLight( light ); //don't add child because light is not a direct child of scene node
    }
-
-   Light* light = dynamic_cast<Light*>(drawable);
-
-   if( light != NULL )
-   {
-      if( light->GetLightingMode() == Light::GLOBAL )
-      {
-         //enable global lighting
-         osg::StateSet* sceneStateSet = GetSceneHandler()->GetSceneView()->getGlobalStateSet(); 
-         light->GetOSGLightSource()->setStateSetModes( *sceneStateSet, osg::StateAttribute::ON );
+   else
+   { 
+      if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
+      {       
+         RegisterPhysical(physical);
       }
 
-      mLightGroup->addChild( light->GetOSGLightSource() ); //add to a group that is alraedy a child of the scene
-
-      mLights[ light->GetNumber() ] = light; //add to internal array of lights
+      mSceneNode.get()->addChild( drawable->GetOSGNode() );
    }
+   drawable->AddedToScene(this);
 
+}
+
+void Scene::RemoveDrawable(DeltaDrawable *drawable)
+{
+   //NOTE: Evil if-then casting, must redesign hierarchy
+   if( Light* light = dynamic_cast<Light*>(drawable) )
+   {
+      UnRegisterLight( light ); //don't remove child because light is not a direct child of scene node
+   }
+   else
+   { 
+      if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
+      {
+         UnRegisterPhysical(physical);
+      }
+
+      mSceneNode.get()->removeChild( drawable->GetOSGNode() );
+   }
 }
 
 /** Register a Physical with the Scene.  This method is automatically called 
@@ -154,32 +155,9 @@ void Scene::RegisterPhysical( Physical *physical )
    mPhysicalContents.push_back(physical);
 }
 
-void Scene::RemoveDrawable(DeltaDrawable *drawable)
-{
-   mSceneNode.get()->removeChild( drawable->GetOSGNode() );
-                            
-   Physical* physical = dynamic_cast<Physical*>(drawable);
-   
-   if(physical != NULL)
-   {
-      dSpaceRemove(mSpaceID, physical->GetGeomID());
 
-      //dBodyDestroy(physical->GetBodyID());
-      
-      for(vector<Physical*>::iterator it = mPhysicalContents.begin();
-          it != mPhysicalContents.end();
-          it++)
-      {
-         if(*it == physical)
-         {
-            mPhysicalContents.erase(it);
-            break;
-         }
-      }
-   }
-}
 
-void Scene::UnRegisterPhysical( Physical *physical)
+void Scene::UnRegisterPhysical( Physical *physical )
 {
 	dSpaceRemove(mSpaceID, physical->GetGeomID());
 
@@ -196,6 +174,37 @@ void Scene::UnRegisterPhysical( Physical *physical)
 		}
 	}
 
+}
+
+void Scene::RegisterLight( Light* light )
+{
+   if( light->GetLightingMode() == Light::GLOBAL )
+   {
+      //enable global lighting
+      osg::StateSet* sceneStateSet = GetSceneHandler()->GetSceneView()->getGlobalStateSet(); 
+      static_cast<osg::LightSource*>( light->GetOSGNode() )->setStateSetModes( *sceneStateSet, osg::StateAttribute::ON );
+   }
+   
+   mLightGroup->addChild( light->GetOSGNode() ); //add to a group that is alraedy a child of the scene
+   mLights[ light->GetNumber() ] = light; //add to internal array of lights
+}
+
+void Scene::UnRegisterLight( Light* light )
+{
+   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
+   {
+      if( mLights[ i ] == light )
+      {
+         mLightGroup->removeChild( mLights[ i ]->GetOSGNode() );
+
+         // turn off light in scene
+         osg::Light* osgLight = static_cast<osg::LightSource*>(mLights[ i ]->GetOSGNode())->getLight();
+         GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::OFF );
+
+         delete mLights[ i ];
+         mLights[ i ] = NULL;
+      }
+   }
 }
 
 _SceneHandler::_SceneHandler(bool useSceneLight):
@@ -509,56 +518,9 @@ void Scene::SetPhysicsStepSize( double stepSize )
    mPhysicsStepSize = stepSize;
 }
 
-void Scene::RemoveLight( Light* const light )
-{
-   for( int i = 0; i < mMaxLightNum; i++ )
-   {
-      if( mLights[ i ] == light )
-      {
-         mLightGroup->removeChild( mLights[ i ]->GetOSGLightSource() );
-
-         // turn off global light
-         GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( mLights[ i ]->GetOSGLight(), osg::StateAttribute::OFF );
-
-         delete mLights[ i ];
-         mLights[ i ] = NULL;
-      }
-   }
-}
-
-void Scene::RemoveLight( const std::string name )
-{
-   for( int i = 0; i < mMaxLightNum; i++ )
-   {
-      if( mLights[ i ]->GetName() == name )
-      {
-         mLightGroup->removeChild( mLights[ i ]->GetOSGLightSource() );
-
-         // turn off global light
-         GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( mLights[ i ]->GetOSGLight(), osg::StateAttribute::OFF );
-
-         mLights[ i ] = NULL;
-      }
-   }
-}
-
-void Scene::RemoveLight( const int number )
-{
-   assert( number >= 0 && number <= mMaxLightNum );
-
-   mLightGroup->removeChild( mLights[ number ]->GetOSGLightSource() );
-
-   // turn off global light
-   GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( mLights[ number ]->GetOSGLight(), osg::StateAttribute::OFF );
-
-   mLights[ number ] = NULL;
-}
-
-
-
 Light* Scene::GetLight( const std::string name ) const
 {
-   for( int i = 0; i < mMaxLightNum; i++ )
+   for( int i = 0; i < MAX_LIGHT_NUMBER; i++ )
    {
       if( mLights[ i ]->GetName() == name )
       {
@@ -573,7 +535,17 @@ Light* Scene::GetLight( const std::string name ) const
 void Scene::UseSceneLight( bool lightState )
 {
    if(lightState)
+   {
       GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+      
+      osg::Light* osgLight = static_cast<osg::LightSource*>(mLights[ 0 ]->GetOSGNode())->getLight();
+      GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::ON );
+   }
    else
+   {
       GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
+
+      osg::Light* osgLight = static_cast<osg::LightSource*>(mLights[ 0 ]->GetOSGNode())->getLight();
+      GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::OFF );
+   }
 }

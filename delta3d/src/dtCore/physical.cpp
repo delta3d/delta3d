@@ -68,6 +68,7 @@ Physical::~Physical()
    }
 }
 
+
 /**
  * Returns the ODE geometry identifier associated with this
  * object.

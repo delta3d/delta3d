@@ -25,7 +25,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include "dtCore/transform.h"
 
 #include <osg/Node>
@@ -57,7 +56,7 @@ namespace dtCore
           * Destructor.
           */
          virtual ~Physical();
-         
+           
          /**
           * Returns the ODE geometry identifier associated with this
           * object.

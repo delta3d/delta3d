@@ -54,7 +54,8 @@ namespace dtCore
           * @param scene the scene to which this drawable object has
           * been added
           */
-         virtual void AddedToScene(Scene* scene) {}
+         virtual void AddedToScene( Scene* scene ) {}
+         
    };
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
