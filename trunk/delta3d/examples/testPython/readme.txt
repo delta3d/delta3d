@@ -124,6 +124,8 @@ Build the Python bindings for Delta3D engine:
 - Run 'make; make install'
 - Run 'install_linux_python'
 
+Set the PYTHONPATH environement variable to contain $DELTA_LIB.
+
 Build testPython example:
 - Go to examples/testPython.
 - Run 'cmake .'.
