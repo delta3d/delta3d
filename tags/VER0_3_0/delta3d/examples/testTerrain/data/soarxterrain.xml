@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+
+<SOARXTerrain cachePath="cache">
+	
+	<GeoOrigin latitude="36.58" longitude="-121.85" elevation="0.0"/>
+	    
+	<DTED path="c:/dted/level1"/>
+	
+	<Roads filename="tiger_monterey_county"
+           query="SELECT * FROM CompleteChain WHERE CFCC LIKE 'A%'"/>
+           
+</SOARXTerrain>
+	

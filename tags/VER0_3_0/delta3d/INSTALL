@@ -1,0 +1,118 @@
+###############################
+#                             #
+# Delta3D Source Installation #
+#                             #
+###############################
+
+Win32 w/ Visual Studio .NET 7.1
+-------------------------------
+
+1. Download the following packages from Sourceforge:
+
+   delta3d-dependencies
+   delta3d-data
+
+   Extract them in your delta3d directory.
+
+2. Open src/delta.sln, build!
+
+3. Examples can be built view the examples/examples.sln
+   file.
+
+4. Utilities each have their own solution. Open to build.
+
+Note:
+HLA-related modules/examples/utilities require RTI, which
+we cannot distribute. To build the module dtHLA, example
+testHLA, and utility hlaStealthViewer, RTI must be installed
+with the RTI_HOME, RTI_BUILD_TYPE, and RTI_RID_FILE envionment
+variables set. VS solutions are provided for these apps as:
+
+src/dthla.sln
+examples/testHLA/testHLA.sln
+utilities/hlaStealthViewer
+
+dtPython requires the following additional downloads:
+-python 2.3.4
+-boost 1.31.0
+
+
+Linux 
+-----
+Tested on:
+Fedora Core-up (2.6.5-1.358)
+
+1. Run 'glxinfo | grep direct'.
+   If you get 'direct rendering: yes' skip to 3.
+   Else...
+
+2. Install OpenGL drivers for your video card.
+
+   For info on how to do this, see:
+
+   ATI:   http://www.fedorafaq.org/#radeon
+   Nvdia: http://www.fedorafaq.org/#nvidia
+
+3. Download the following packages from Sourceforge:
+
+   delta3d-dependencies
+   delta3d-data
+
+   Extract them in your delta3d directory.
+
+4. Download CMake from http://www.cmake.org .
+   We use CMake to synconize cross-platform builds of Delta3D.
+
+
+5. You will notice files called CMakeLists.txt in the following directories:
+
+   src/
+   examples/
+   utilities/bspCompiler
+   utilities/psEditor
+   utilities/Viewer
+
+   These files are high-level instructions that tell CMake how to genereate 
+   Makefiles for your configuration. In each of these directories run:
+
+   'cmake .', and then 'make' 
+
+   to build the apprpropriate files. 	
+
+   To build the Delta3D source, also run 'make install' to place the shared
+   libraries in the ../lib folder.
+
+   dtPython
+   --------
+   Before building dtPython, make sure you have Boost Python and the library
+   libboost_python-gcc-mt is located in /usr/local/lib or somewhere in your
+   LD_LIBRARY_PATH environment variable.
+
+   Then, go to src/python and run:
+
+   'cmake .', and then 'make' 
+
+   Make sure to run the script install_linux_python from src/python to create 
+   necessary symbolic links to Python modules. Also don't forgot to
+   point your PYTHONPATH environment variable to directory containing
+   these links.
+
+   testPython:
+
+   Run 'cmake .' and then 'make' from the examples/testPython directory.
+   Follow instructions in readme.txt.
+
+   dtHLA
+   -----
+   HLA requires RTI, as mentioned above. Instructions to build HLA-related
+   apps are as follows:
+
+   dtHLA   : Uncomment the relavent portion of src/CMakeLists.txt .
+
+   testHLA : Run 'cmake .' from examples/testHLA/ and then 'make' .
+
+   hlaStealthViewer : Run 'cmake .' from utilities/hlaStealthViewer/ 
+                   and then 'make' 
+
+   
+
