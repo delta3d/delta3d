@@ -1,5 +1,5 @@
-#ifndef DELTA_DELTA_WINDOW
-#define DELTA_DELTA_WINDOW
+#ifndef DELTA_DELTA_WIN
+#define DELTA_DELTA_WIN
 
 // deltawin.h: interface for the DeltaWin class.
 //
@@ -89,4 +89,4 @@ namespace dtCore
 
 
 
-#endif // DELTA_DELTA_WINDOW
+#endif // DELTA_DELTA_WIN
