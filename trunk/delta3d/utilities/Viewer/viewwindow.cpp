@@ -1,5 +1,6 @@
 #include <string>
 
+#include <dtCore/globals.h>
 #include <dtCore/notify.h>
 #include <dtABC/widget.h>
 
@@ -71,7 +72,8 @@ ViewWindow::show( void )
 {
    MyParent::show();
 
-   SendMessage( msgGetState, mCurFile );
+   //SendMessage( msgGetState, mCurFile );
+   Viewer::GetState(mCurFile);
    mContainer->UpdateSettings( mCurFile );
 }
 
@@ -129,7 +131,8 @@ void
 ViewWindow::SetPath( const char* path )
 {
    mPath = path;
-   SendMessage( msgSetPath, &mPath );
+   //SendMessage( msgSetPath, &mPath );
+   dtCore::SetDataFilePathList(mPath);
 }
 
 
@@ -167,7 +170,8 @@ ViewWindow::LoadFile( const char* file )
    assert( vs );
 
    // load this file into the scene
-   SendMessage( msgLoadFile, reinterpret_cast<void*>(vs) );
+   //SendMessage( msgLoadFile, reinterpret_cast<void*>(vs) );
+   Viewer::LoadFile( vs );
 
    //if the file loaded, add it to our list
    if (mFileLoaded)   mFileList.push_back( vs );
@@ -181,7 +185,8 @@ ViewWindow::SaveFileAs(const char *filename)
 {
    assert(filename!=NULL);
 
-   SendMessage(msgSaveFileAs, (void*)filename );
+   //SendMessage(msgSaveFileAs, (void*)filename );
+   Viewer::SaveFileAs((char*)filename);
 
    return true;
 }
@@ -193,13 +198,16 @@ ViewWindow::SelectFile( unsigned int indx )
       return;
 
    // save the old file state
-   SendMessage( msgGetState, mCurFile );
+   //SendMessage( msgGetState, mCurFile );
+   Viewer::GetState(mCurFile);
 
    // switch to a new file
    mCurFile = mFileList.at( indx );
 
    // set the new file state
-   SendMessage( msgSetState, mCurFile );
+   //SendMessage( msgSetState, mCurFile );
+   Viewer::SetState(mCurFile);
+
    mContainer->UpdateSettings( mCurFile );
 }
 
@@ -244,7 +252,8 @@ ViewWindow::SetDisplay( unsigned int state, bool value /*= true*/ )
          break;
 
       case  ViewState::RESET:
-         SendMessage( msgResetCam );
+         //SendMessage( msgResetCam );
+         Viewer::ResetCam();
          return;
          break;
 
@@ -254,7 +263,8 @@ ViewWindow::SetDisplay( unsigned int state, bool value /*= true*/ )
 
    }
 
-   SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
+   //SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
+   Viewer::SetState(mCurFile);
 }
 
 
@@ -286,7 +296,8 @@ ViewWindow::SetMotion( unsigned int state )
 
    }
 
-   SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
+   //SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
+   Viewer::SetState(mCurFile);
 }
 
 
@@ -310,7 +321,8 @@ ViewWindow::SetJoystick( unsigned int state, bool value /*= true*/ )
 
    }
 
-   SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
+   //SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
+   Viewer::SetState(mCurFile);
 }
 
 
