@@ -728,11 +728,20 @@ void psEditorGUI_LayerSelect(Fl_Browser*, void*)
    {
       Layers_DeleteButton->deactivate();
       Layers_RenameButton->deactivate();
+      Layers_HideButton->deactivate();
    }
    else
    {
+      int layer = Layers->value() - 1;
+
       Layers_DeleteButton->activate();
-      Layers_RenameButton->activate();     
+      Layers_RenameButton->activate();   
+      Layers_HideButton->activate();
+
+      if (layers[layer].mModularEmitter->isEnabled() )      
+         Layers_HideButton->label("Hide");
+      else
+         Layers_HideButton->label("Show");
    }
    
    updateParameterTabs();
@@ -765,6 +774,22 @@ void psEditorGUI_New(Fl_Menu_*, void*)
    updateLayers();
    
    psEditorGUI_NewLayer(NULL, NULL);
+}
+
+void psEditorGUI_HideLayer( Fl_Button*, void*)
+{
+   int layer = Layers->value() - 1;
+
+   if (layers[layer].mModularEmitter->isEnabled() )
+   {
+      layers[layer].mModularEmitter->setEnabled(false);
+      Layers_HideButton->label("Show");
+   }
+   else
+   {
+      layers[layer].mModularEmitter->setEnabled(true);
+      Layers_HideButton->label("Hide");
+   }
 }
 
 ///Load the given filename

@@ -35,6 +35,8 @@ Fl_Button *Layers_RenameButton=(Fl_Button *)0;
 
 Fl_Browser *Layers=(Fl_Browser *)0;
 
+Fl_Button *Layers_HideButton=(Fl_Button *)0;
+
 Fl_DT_Window<dtABC::Widget> *viewWidget=(Fl_DT_Window<dtABC::Widget> *)0;
 
 Fl_Tabs *ParameterTabs=(Fl_Tabs *)0;
@@ -245,7 +247,7 @@ Fl_Double_Window* make_window() {
     }
     { Fl_Tile* o = new Fl_Tile(5, 35, 1405, 555);
       o->box(FL_UP_FRAME);
-      { Fl_Group* o = new Fl_Group(719, 60, 185, 265);
+      { Fl_Group* o = new Fl_Group(719, 35, 185, 290);
         o->box(FL_DOWN_BOX);
         { Fl_Button* o = new Fl_Button(729, 255, 30, 30, "@+");
           o->tooltip("Add new Layer");
@@ -264,15 +266,11 @@ Fl_Double_Window* make_window() {
           o->callback((Fl_Callback*)psEditorGUI_LayerSelect);
           o->align(FL_ALIGN_TOP);
         }
-        { Fl_Button* o = new Fl_Button(799, 255, 40, 30, "Hide");
-          o->callback((Fl_Callback*)psEditorGUI_NewLayer);
-          o->deactivate();
+        { Fl_Button* o = Layers_HideButton = new Fl_Button(799, 255, 40, 30, "Hide");
+          o->tooltip("Toggle the visibility of the selected Layer");
+          o->callback((Fl_Callback*)psEditorGUI_HideLayer);
         }
-        { Fl_Button* o = new Fl_Button(799, 290, 41, 30, "@>");
-          o->tooltip("Reset\'s the start time (\"plays\" the effect from start)");
-          o->callback((Fl_Callback*)psEditorGUI_ResetLayers);
-        }
-        { Fl_Box* o = new Fl_Box(839, 60, 45, 265);
+        { Fl_Box* o = new Fl_Box(839, 35, 45, 290);
           o->hide();
           Fl_Group::current()->resizable(o);
         }
@@ -884,6 +882,14 @@ axis");
             o->end();
           }
           o->end();
+        }
+        o->end();
+      }
+      { Fl_Group* o = new Fl_Group(719, 325, 185, 265);
+        o->box(FL_DOWN_BOX);
+        { Fl_Button* o = new Fl_Button(729, 340, 65, 30, "@>");
+          o->tooltip("Reset\'s the start time (\"plays\" the effect from start)");
+          o->callback((Fl_Callback*)psEditorGUI_ResetLayers);
         }
         o->end();
       }

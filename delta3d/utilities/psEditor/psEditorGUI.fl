@@ -12,7 +12,7 @@ Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Particle System Editor} open
-    xywh {134 164 1408 594} type Double resizable visible
+    xywh {129 104 1408 594} type Double hide resizable
   } {
     Fl_Menu_Bar MainMenu {open
       xywh {5 5 1400 25}
@@ -98,7 +98,7 @@ Function {make_window()} {open
         }
         menuitem {} {
           label {X&Z Grid}
-          callback psEditorGUI_XZGrid
+          callback psEditorGUI_XZGrid selected
           xywh {10 10 100 20}
         }
       }
@@ -107,7 +107,7 @@ Function {make_window()} {open
       xywh {5 35 1405 555} box UP_FRAME
     } {
       Fl_Group {} {
-        xywh {719 60 185 265} box DOWN_BOX
+        xywh {719 35 185 290} box DOWN_BOX
       } {
         Fl_Button {} {
           label {@+}
@@ -129,21 +129,16 @@ Function {make_window()} {open
           callback psEditorGUI_LayerSelect
           xywh {724 85 180 165} type Hold align 1
         }
-        Fl_Button {} {
+        Fl_Button Layers_HideButton {
           label Hide
-          callback psEditorGUI_NewLayer
-          xywh {799 255 40 30} deactivate
-        }
-        Fl_Button {} {
-          label {@>}
-          callback psEditorGUI_ResetLayers
-          tooltip {Reset's the start time ("plays" the effect from start)} xywh {799 290 41 30}
+          callback psEditorGUI_HideLayer
+          tooltip {Toggle the visibility of the selected Layer} xywh {799 255 40 30}
         }
         Fl_Box {} {
-          xywh {839 60 45 265} hide resizable
+          xywh {839 35 45 290} hide resizable
         }
       }
-      Fl_Box viewWidget {selected
+      Fl_Box viewWidget {
         xywh {5 35 714 555} box DOWN_BOX
         class {Fl_DT_Window<dtABC::Widget>}
       }
@@ -752,6 +747,15 @@ Function {make_window()} {open
               xywh {1072 395 115 25} minimum -10 maximum 10 step 0.1
             }
           }
+        }
+      }
+      Fl_Group {} {open
+        xywh {719 325 185 265} box DOWN_BOX
+      } {
+        Fl_Button {} {
+          label {@>}
+          callback psEditorGUI_ResetLayers
+          tooltip {Reset's the start time ("plays" the effect from start)} xywh {729 340 65 30}
         }
       }
     }
