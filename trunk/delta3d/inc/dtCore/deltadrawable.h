@@ -46,6 +46,8 @@ namespace dtCore
     */
    class DT_EXPORT DeltaDrawable : virtual public Base
    {
+      DECLARE_MANAGEMENT_LAYER(DeltaDrawable)
+
       public:
 
          ///Get the internal node
@@ -58,7 +60,6 @@ namespace dtCore
             return (mNode.get());
          }
          
-
          ///Supply the Scene this Drawable has been added to
          /**
           * Notifies this drawable object that it has been added to
@@ -71,6 +72,7 @@ namespace dtCore
 
          ///Override function for derived object to know when attaching to scene
          virtual void SetParent(DeltaDrawable* parent) {mParent=parent;}
+
          DeltaDrawable* GetParent(void)  {return mParent.get();}
          
          ///Get a pointer to the Scene this Drawable has been added to
@@ -116,7 +118,7 @@ namespace dtCore
 
    protected:
       DeltaDrawable(std::string name = "DeltaDrawable");
-      virtual ~DeltaDrawable() {};
+      virtual ~DeltaDrawable();
 
       osg::ref_ptr<osg::Node> mNode; ///< The node to store anything
       osg::ref_ptr<DeltaDrawable> mParent; ///<Any immediate parent of this instance
