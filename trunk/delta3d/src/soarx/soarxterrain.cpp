@@ -2137,7 +2137,7 @@ osg::Image* SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int 
 
    float heightVal, l1, l2, l3, l4, l12, l34;
    osg::Vec3 c1, c2, c3, c4, c12, c34, color, coord;
-   unsigned char* data;
+   //unsigned char* data;
 
    double latStep = 1.0/height, lonStep = 1.0/width,
           lat = latitude+latStep*0.5, lon,
