@@ -3,9 +3,17 @@
 
 using namespace dtCore;
 
+IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
+
 DeltaDrawable::DeltaDrawable(std::string name):
 Base(name)
 {
+   RegisterInstance(this);
+}
+
+DeltaDrawable::~DeltaDrawable()
+{
+   DeregisterInstance(this);
 }
 
 /*!
@@ -40,7 +48,7 @@ void DeltaDrawable::RemoveChild(DeltaDrawable *child)
    if (pos < mChildList.size())
    {
       child->SetParent(NULL);
-      //child->AddedToScene(NULL); ??
+      child->AddedToScene(NULL);
       mChildList.erase( mChildList.begin()+pos );
    }
 }
@@ -72,7 +80,14 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
 
 void DeltaDrawable::AddedToScene( Scene *scene )
 {
-    mParentScene = scene;
+   mParentScene = scene;
+
+   for (ChildList::iterator itr = mChildList.begin();
+      itr != mChildList.end();
+      ++itr)
+   {
+      (*itr)->AddedToScene(scene);
+   }
 }
 
 Scene* DeltaDrawable::GetSceneParent()
