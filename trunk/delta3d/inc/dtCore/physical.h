@@ -61,6 +61,8 @@ namespace dtCore
     */
    class DT_EXPORT Physical : public Transformable
    {
+      DECLARE_MANAGEMENT_LAYER(Physical)
+
       public:
       
          /**

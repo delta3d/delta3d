@@ -6,7 +6,6 @@
 
 class TestWinApp   :  public   dtABC::Application
 {
-   DECLARE_MANAGEMENT_LAYER( TestWinApp )
 
 public:
 
@@ -20,7 +19,6 @@ public:
       Producer::KeyCharacter  character );
 
    static void UpdatePosition();
-
    static bool GuiHandler( int id, int numparam, void *value );
 
 private:
@@ -58,6 +56,8 @@ private:
       REFRESH_ITEMS = 4000,
       DEPTH_ITEMS   = 5000,
    };
+
+   dtCore::RefPtr<dtCore::UIDrawable> mDrawable;
 
    static CUI_UI* mUI;
    static dtCore::RefPtr<dtCore::DeltaWin> mWindow;

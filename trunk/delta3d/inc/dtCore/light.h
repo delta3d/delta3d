@@ -36,6 +36,8 @@ namespace dtCore
    class DT_EXPORT Light : virtual public DeltaDrawable
    {
 
+      DECLARE_MANAGEMENT_LAYER(Light)
+
    public:
 
       enum LightingMode
