@@ -40,6 +40,8 @@ int main(int argc, char* argv[])
    dtCore::SetDataFilePathList("..;../../data;../../../data/;" + dtCore::GetDeltaDataPathList());
    dtABC::Application *app = new dtABC::Application();
 
+   app->GetWindow()->SetWindowTitle("testGUI");
+
    ///put something in the background to look at
    dtCore::Object *ground = new dtCore::Object("ground");
    ground->LoadFile("ground.flt");
