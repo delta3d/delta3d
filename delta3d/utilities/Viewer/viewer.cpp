@@ -141,37 +141,6 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 void
 Viewer::OnMessage( MessageData* data )
 {
-   
-   if( data->message == msgGetState )
-   {
-      GetState( reinterpret_cast<ViewState*>(data->userData) );
-      return;
-   }
-
-   if( data->message == msgSetState )
-   {
-      SetState( reinterpret_cast<ViewState*>(data->userData) );
-      return;
-   }
-
-   if( data->message == msgLoadFile )
-   {
-      LoadFile( reinterpret_cast<ViewState*>(data->userData) );
-      return;
-   }
-
-   if (data->message == msgSaveFileAs)
-   {
-      SaveFileAs(reinterpret_cast<char*>(data->userData) );
-      return;
-   }
-
-   if( data->message == msgResetCam )
-   {
-      ResetCam();
-      return;
-   }
-
    Widget::OnMessage( data );
 }
 
@@ -368,14 +337,12 @@ void Viewer::LoadFile( ViewState* vs )
    if (!fileLoaded) 
    {
       //tell the GUI the file didn't load
-      //SendMessage("fileNotLoaded", (void*)(filename.c_str()));
       FileLoaded( false, filename.c_str() );
       return;
    }
    else 
    {
       //Tell the GUI the file loaded
-      //SendMessage("fileLoaded", (void*)(filename.c_str()));
       FileLoaded( true, filename.c_str() );
    }
 
@@ -843,9 +810,6 @@ Viewer::InitObjects( void )
    Scene*   scene = GetScene();
    assert( scene );
 
-   //osg::Group*  root  = scene->GetSceneNode();
-   //assert( root );
-
    osgFX::Scribe* scribe   = new osgFX::Scribe;
    assert( scribe );
    scribe->setName("HeadScribe");
@@ -866,7 +830,6 @@ Viewer::InitCompass( void )
    Compass* compass  = new Compass( cam );
    assert( compass );
 
-   //AddDrawable( compass );
    mViewerNode->addChild(compass->GetOSGNode());
 }
 
@@ -929,13 +892,6 @@ Viewer::InitGridPlanes()
    mDispXform[ZX_PLANE]->addChild( geode );
    mDispXform[ZX_PLANE]->setNodeMask( NODEMASK_OFF );
 
-
-   //Scene* scene   = GetScene();
-   //assert( scene );
-
-   //osg::Group* root = scene->GetSceneNode();
-   //assert( root != NULL );
-
    mViewerNode->addChild( mDispXform[XY_PLANE] );
    mViewerNode->addChild( mDispXform[YZ_PLANE] );
    mViewerNode->addChild( mDispXform[ZX_PLANE] );
@@ -946,13 +902,6 @@ Viewer::InitGridPlanes()
 osg::Group*
 Viewer::GetFileObj( unsigned int indx )
 {
-   //Scene*   scene = GetScene();
-   //assert( scene );
-
-   //osg::Group* root  = scene->GetSceneNode();
-   //( root );
-
-
    osg::Group* objs  = static_cast<osg::Group*>(mViewerNode->getChild( FILEOBJS ));
    assert( objs );
 
@@ -967,12 +916,6 @@ Viewer::GetFileObj( unsigned int indx )
 osg::Group*
 Viewer::GetDisplayObj( unsigned int indx )
 {
-   //Scene*   scene = GetScene();
-   //assert( scene );
-
-   //osg::Group* root  = scene->GetSceneNode();
-   //assert( root );
-
    if( indx >= NUMDISPLAYITEMS )
       return   NULL;
 
