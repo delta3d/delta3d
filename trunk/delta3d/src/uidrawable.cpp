@@ -63,7 +63,9 @@ mCurrentQueue(0L)
 
    stateset->setRenderBinDetails(11,"RenderBin");
    stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
-   stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+  // stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
+	geod->setStateSet(stateset);
 
    geod->addDrawable(new osgCUIDrawable(mUI)); //add our osg node here
 
