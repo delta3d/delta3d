@@ -8,6 +8,10 @@ using namespace   dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestLightsApp )
 
+float TestLightsApp::redCount = 0.0f;
+float TestLightsApp::greenCount = 0.0f;
+float TestLightsApp::blueCount = 0.0f;
+
 TestLightsApp::TestLightsApp( std::string configFilename /*= "config.xml"*/ )
 :  Application(configFilename)
 {
@@ -29,7 +33,7 @@ TestLightsApp::Config()
    // create a spot light.
    SpotLight* myLight1 = new SpotLight( 1, "spotlight", Light::GLOBAL);
 
-   Transform l1 = Transform( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   Transform l1 = Transform( 5.0f, 10.0f, 2.0f, 0.0f, 0.0f, 0.0f );
    myLight1->SetTransform(&l1);
 
    myLight1->SetAmbient( 1.0f, 0.0f, 0.0f, 1.0f );
@@ -40,7 +44,7 @@ TestLightsApp::Config()
    GetScene()->AddLight( myLight1 );
 
    // create a positional light.
-   PositionalLight* myLight2 = new PositionalLight( 2, "poslight", Light::GLOBAL);
+   PositionalLight* myLight2 = new PositionalLight( 2, "poslight", Light::LOCAL);
 
    l1.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
    myLight2->SetTransform(&l1);
@@ -52,7 +56,8 @@ TestLightsApp::Config()
    Object* barrel = new Object( "Barrel" );
    barrel->LoadFile( "physics/sphere/happy_sphere.ive" );
    barrel->SetTransform(&l1);
-   AddDrawable( barrel );
+   //AddDrawable( barrel );
+   myLight2->AddLightChild ( barrel );
 
    GetScene()->AddLight( myLight2 );
 
@@ -107,31 +112,39 @@ TestLightsApp::OnMessage( Base::MessageData *data )
       trans.Get(&x,&y,&z,&h,&p,&r);
       //Notify(ALWAYS,"(%f,%f,%f) (%f,%f,%f)", x, y, z, h, p, r );
 
-      /*
-      PositionalLight* plight = static_cast<PositionalLight*>(GetScene()->GetLight( 2 ));
-      
+      redCount = redCount + 0.5f;
+      greenCount = greenCount + 0.6f;
+      blueCount = blueCount + 0.7f;
+
+      if( redCount > 360.0f )
+         redCount = 0;
+
+      if( greenCount > 360.0f )
+         greenCount = 0;
+
+      if( blueCount > 360.0f )
+         blueCount = 0;
+    
+      float redValue = (cos( (redCount) * SG_DEGREES_TO_RADIANS ) + 1.0f) / 2.0f;
+      float greenValue = (cos( (greenCount) * SG_DEGREES_TO_RADIANS ) + 1.0f) / 2.0f;
+      float blueValue = (cos( (blueCount) * SG_DEGREES_TO_RADIANS ) + 1.0f) / 2.0f;
+
       float red = 0.0f;
-      float g = 0.0f;
-      float b = 0.0f;
-      float a = 0.0f;
-      plight->GetAmbient( &red, &g, &b, &a );
+      float green = 0.0f;
+      float blue = 0.0f;
+      float alpha = 0.0f;
 
-      red = red + 0.01f;
-      g = g + 0.05f;
-      b = b + 0.10f;
+      SpotLight* plight = static_cast<SpotLight*>(GetScene()->GetLight( 1 ));
 
-      if( red > 1.0f )
-         red = red - 1.0f;
+      plight->SetAmbient( redValue, greenValue, blueValue, alpha );
+      plight->SetDiffuse( redValue, greenValue, blueValue, alpha );
 
-      if( g > 1.0f )
-         g = g - 1.0f;
-
-      if( b > 1.0f )
-         b = b - 1.0f;
-
-      plight->SetAmbient( red, g, b, a );
-      plight->SetDiffuse( red, g, b, a );
-      */
+      Transform t;
+      plight->GetTransform( &t );
+      t.SetRotation( redCount, 0.0f, 0.0f );
+      
+      plight->SetTransform( &t );
+      
       
    }
 }

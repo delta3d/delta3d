@@ -37,6 +37,12 @@ public:
 
    virtual void OnMessage( dtCore::Base::MessageData* data );
 
+private:
+
+   static float redCount;
+   static float greenCount;
+   static float blueCount;
+
 };
 
 #endif // DELTA_TESTLIGHTS
