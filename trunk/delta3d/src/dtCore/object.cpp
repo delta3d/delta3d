@@ -48,6 +48,11 @@ osg::Node* Object::LoadFile(string filename, bool useCache)
    //attach our geometry node to the matrix node
    if (node!=NULL)
    {
+      if (GetMatrixNode()->getNumChildren() != 0)
+      {
+         GetMatrixNode()->removeChild(0,GetMatrixNode()->getNumChildren() );
+      }
+
       GetMatrixNode()->addChild(node);
       return node;
    }
