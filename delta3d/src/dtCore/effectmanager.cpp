@@ -181,9 +181,7 @@ Detonation* EffectManager::AddDetonation(sgVec3 position,
    if(mDetonationTypeFilenameMap.count(type) > 0)
    {
       osg::Node* node = osgDB::readNodeFile(
-         mDetonationTypeFilenameMap[type], 
-         osgDB::Registry::CACHE_NONE
-      );
+         mDetonationTypeFilenameMap[type]);
       
       Detonation* detonation = 
          new Detonation(node, timeToLive, position, type, parent);

@@ -70,7 +70,7 @@ mCurrentQueue(0L)
    geod->addDrawable(new osgCUIDrawable(mUI)); //add our osg node here
 
    osg::MatrixTransform* modelview_abs = new osg::MatrixTransform;
-   modelview_abs->setReferenceFrame(osg::Transform::RELATIVE_TO_ABSOLUTE);
+   modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
    modelview_abs->setMatrix(osg::Matrix::identity());
    modelview_abs->addChild(geod);
 
