@@ -2,8 +2,8 @@
 // Framework interface declaration file
 // 10/08/2003
 
-#ifndef DELTA_SOARX_DEFINITIONS
-#define DELTA_SOARX_DEFINITIONS
+#ifndef DELTA_SOARX_FRAMEWORK
+#define DELTA_SOARX_FRAMEWORK
 
 #include <typeinfo>
 #include "soarx_definitions.h"

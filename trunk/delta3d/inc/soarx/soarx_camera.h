@@ -1,5 +1,5 @@
-#ifndef DELTA_SOARX_GENERIC
-#define DELTA_SOARX_GENERIC
+#ifndef DELTA_SOARX_CAMERA
+#define DELTA_SOARX_CAMERA
 
 #include "soarx_generic.h"
 
@@ -33,4 +33,4 @@ namespace dtSOARX
    };
 };
 
-#endif // DELTA_SOARX_GENERIC
+#endif // DELTA_SOARX_CAMERA
