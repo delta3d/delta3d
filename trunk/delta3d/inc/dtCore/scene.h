@@ -174,7 +174,7 @@ namespace dtCore
       void UseSceneLight( bool lightState = true );
 
       ///Get the index number of the supplied drawable
-      inline unsigned int GetDrawableIndex( const Drawable* drawable ) const
+      inline unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const
       {
          for (unsigned int childNum=0;childNum<mAddedDrawables.size();++childNum)
          {
@@ -186,8 +186,7 @@ namespace dtCore
       ///Get the number of Drawables which have been directly added to the Scene
       int GetNumberOfAddedDrawable(void) const {return mAddedDrawables.size();}     
 
-
-   private:
+    private:
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
@@ -212,7 +211,7 @@ namespace dtCore
       osg::Group* mLightGroup; // single light group for all scene lights
       Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
 
-      typedef std::vector< osg::ref_ptr<Drawable> > DrawableList;
+      typedef std::vector< osg::ref_ptr<DeltaDrawable> > DrawableList;
 
       DrawableList mAddedDrawables; ///<The list of Drawable directly added
 

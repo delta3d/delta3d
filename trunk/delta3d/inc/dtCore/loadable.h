@@ -27,10 +27,10 @@ namespace dtCore
       std::string GetFilename(void) const {return mFilename;}
 
    protected:
-   Loadable(void);
-   virtual ~Loadable(void);
+	   Loadable(void);
+		virtual ~Loadable(void);
 
-   std::string mFilename; ///<The filename of the last file loaded
+      std::string mFilename; ///<The filename of the last file loaded
    };
 
 }

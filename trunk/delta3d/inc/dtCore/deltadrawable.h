@@ -126,10 +126,6 @@ namespace dtCore
 
       osg::ref_ptr<Scene> mParentScene; ///<The Scene this Drawable was added to
    };
-
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   typedef DeltaDrawable Drawable;
-#endif
 };
 
 
