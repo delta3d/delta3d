@@ -95,50 +95,6 @@ void Transform::GetRotation( sgMat4 rot )
    sgSetVec3(rot[3], 0.f, 0.f, 0.f);
 }
 
-void Transform::Scale( float x, float y, float z )
-{
-   //M = S * R * T
-   
-   sgMat4 newMatrix;
-   sgMakeIdentMat4( newMatrix );
-
-   sgMat4 scaleMatrix;
-   sgSetVec4( scaleMatrix[0], x, 0.0f, 0.0f, 0.0f );
-   sgSetVec4( scaleMatrix[1], 0.0f, y, 0.0f, 0.0f );
-   sgSetVec4( scaleMatrix[2], 0.0f, 0.0f, z, 0.0f );
-   sgSetVec4( scaleMatrix[3], 0.0f, 0.0f, 0.0f, 1.0f );
-   sgPostMultMat4( newMatrix, scaleMatrix );
-
-   sgMat4 rotation;
-   GetRotation( rotation );
-   sgPostMultMat4( newMatrix, rotation );
-
-   sgMat4 translation;
-   sgMakeTransMat4( translation, mTransform[3] );
-   sgPostMultMat4( newMatrix, translation );
-
-   sgCopyMat4( mTransform, newMatrix );
-
-}
-
-void Transform::Scale( float value )
-{   
-   Scale( value, value, value );
-}
-
-void Transform::Print()
-{
-   for(int i=0;i<4;i++)
-   {
-      for(int j=0;j<4;j++)
-      {
-         Notify(ALWAYS) << "[" << mTransform[j][i] << "]";
-      }
-
-      Notify(ALWAYS) << "\n";
-   }
-}
-
 bool Transform::EpsilonEquals(const Transform* transform, float epsilon)
 {
    for(int i=0;i<4;i++)
