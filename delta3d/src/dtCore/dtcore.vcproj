@@ -335,6 +335,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\light.cpp">
+			</File>
+			<File
 				RelativePath="logicalinputdevice.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -617,9 +620,6 @@
 				RelativePath="..\..\inc\dtCore\deltawin.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtCore\drawable.h">
-			</File>
-			<File
 				RelativePath="..\..\inc\dtCore\dt.h">
 			</File>
 			<File
@@ -660,6 +660,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\keyboard.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\light.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\logicalinputdevice.h">
@@ -744,9 +747,6 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\walkmotionmodel.h">
-			</File>
-			<File
-				RelativePath="..\..\inc\dtCore\window.h">
 			</File>
 		</Filter>
 	</Files>
