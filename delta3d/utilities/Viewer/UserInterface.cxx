@@ -308,27 +308,99 @@ Fl_Menu_Item* UserInterface::UIMenuMotionWalk = UserInterface::menu_UIMenu + 32;
 Fl_Menu_Item* UserInterface::UIMenuMotionJoy1 = UserInterface::menu_UIMenu + 33;
 Fl_Menu_Item* UserInterface::UIMenuMotionJoy2 = UserInterface::menu_UIMenu + 34;
 
+inline void UserInterface::cb_TextureButton_i(Fl_Button*, void*) {
+  ToggleTextureScene();
+}
+void UserInterface::cb_TextureButton(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_TextureButton_i(o,v);
+}
+
+inline void UserInterface::cb_LightingButton_i(Fl_Button*, void*) {
+  ToggleLightingScene();
+}
+void UserInterface::cb_LightingButton(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_LightingButton_i(o,v);
+}
+
+inline void UserInterface::cb_CompassButton_i(Fl_Button*, void*) {
+  ToggleCompass();
+}
+void UserInterface::cb_CompassButton(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_CompassButton_i(o,v);
+}
+
+inline void UserInterface::cb_XY_i(Fl_Button*, void*) {
+  ToggleXYPlane();
+}
+void UserInterface::cb_XY(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_XY_i(o,v);
+}
+
+inline void UserInterface::cb_YZ_i(Fl_Button*, void*) {
+  ToggleYZPlane();
+}
+void UserInterface::cb_YZ(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_YZ_i(o,v);
+}
+
+inline void UserInterface::cb_ZX_i(Fl_Button*, void*) {
+  ToggleZXPlane();
+}
+void UserInterface::cb_ZX(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_ZX_i(o,v);
+}
+
+inline void UserInterface::cb_WireframeButton_i(Fl_Button*, void*) {
+  ToggleWireframeScene();
+}
+void UserInterface::cb_WireframeButton(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WireframeButton_i(o,v);
+}
+
+inline void UserInterface::cb_Fly_i(Fl_Button*, void*) {
+  UIViewWindow->SetMotion( ViewState::FLY );
+}
+void UserInterface::cb_Fly(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_Fly_i(o,v);
+}
+
+inline void UserInterface::cb_Orb_i(Fl_Button*, void*) {
+  UIViewWindow->SetMotion( ViewState::ORBIT );
+}
+void UserInterface::cb_Orb(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_Orb_i(o,v);
+}
+
+inline void UserInterface::cb_UFO_i(Fl_Button*, void*) {
+  UIViewWindow->SetMotion( ViewState::UFO );
+}
+void UserInterface::cb_UFO(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_UFO_i(o,v);
+}
+
+inline void UserInterface::cb_Walk_i(Fl_Button*, void*) {
+  UIViewWindow->SetMotion( ViewState::WALK );
+}
+void UserInterface::cb_Walk(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_Walk_i(o,v);
+}
+
+inline void UserInterface::cb_Reset_i(Fl_Button*, void*) {
+  ResetCam();
+}
+void UserInterface::cb_Reset(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_Reset_i(o,v);
+}
+
 UserInterface::UserInterface( int argc , char** argv ) : mArgc(argc), mArgv(argv), mMenusEnabled(false) {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = UIMainWindow = new Fl_Double_Window(640, 544, "Viewer");
+  { Fl_Double_Window* o = UIMainWindow = new Fl_Double_Window(748, 536, "Viewer");
     w = o;
     o->user_data((void*)(this));
-    { Fl_Menu_Bar* o = UIMenu = new Fl_Menu_Bar(0, 0, 640, 24);
+    { Fl_Menu_Bar* o = UIMenu = new Fl_Menu_Bar(0, 0, 750, 24);
       o->menu(menu_UIMenu);
     }
-    { ViewWindow* o = UIViewWindow = new ViewWindow(0, 24, 640, 480, "ViewWindow");
-      o->box(FL_NO_BOX);
-      o->color(FL_BACKGROUND_COLOR);
-      o->selection_color(FL_BACKGROUND_COLOR);
-      o->labeltype(FL_NORMAL_LABEL);
-      o->labelfont(0);
-      o->labelsize(14);
-      o->labelcolor(FL_BLACK);
-      o->align(FL_ALIGN_CENTER);
-      o->when(FL_WHEN_RELEASE);
-      Fl_Group::current()->resizable(o);
-    }
-    { ChoicePopUp* o = UIFileList = new ChoicePopUp(36, 512, 600, 24, "File:");
+    { ChoicePopUp* o = UIFileList = new ChoicePopUp(36, 512, 714, 23, "File:");
       o->box(FL_FLAT_BOX);
       o->down_box(FL_BORDER_BOX);
       o->color(FL_BACKGROUND2_COLOR);
@@ -340,8 +412,85 @@ UserInterface::UserInterface( int argc , char** argv ) : mArgc(argc), mArgv(argv
       o->align(FL_ALIGN_LEFT);
       o->when(FL_WHEN_RELEASE);
     }
+    { Fl_Tile* o = new Fl_Tile(0, 23, 755, 487);
+      { Fl_Group* o = ToolBox = new Fl_Group(645, 23, 110, 487);
+        o->box(FL_THIN_DOWN_BOX);
+        { Fl_Button* o = TextureButton = new Fl_Button(655, 60, 25, 25, "T");
+          o->tooltip("Toggle Texture");
+          o->callback((Fl_Callback*)cb_TextureButton);
+        }
+        { Fl_Button* o = LightingButton = new Fl_Button(655, 87, 25, 25, "L");
+          o->tooltip("Toggle Lighting");
+          o->callback((Fl_Callback*)cb_LightingButton);
+        }
+        { Fl_Button* o = CompassButton = new Fl_Button(655, 245, 25, 25, "C");
+          o->tooltip("Toggle Compass");
+          o->callback((Fl_Callback*)cb_CompassButton);
+        }
+        { Fl_Button* o = new Fl_Button(655, 150, 25, 25, "XY");
+          o->tooltip("Toggle XY Grid");
+          o->callback((Fl_Callback*)cb_XY);
+        }
+        { Fl_Button* o = new Fl_Button(655, 177, 25, 25, "YZ");
+          o->tooltip("Toggle YZ grid");
+          o->callback((Fl_Callback*)cb_YZ);
+        }
+        { Fl_Button* o = new Fl_Button(655, 205, 25, 25, "ZX");
+          o->tooltip("Toggle ZX grid");
+          o->callback((Fl_Callback*)cb_ZX);
+        }
+        { Fl_Button* o = WireframeButton = new Fl_Button(655, 115, 25, 25, "W");
+          o->tooltip("Toggle Wireframe/scribe");
+          o->callback((Fl_Callback*)cb_WireframeButton);
+        }
+        { Fl_Button* o = new Fl_Button(655, 290, 40, 25, "Fly");
+          o->tooltip("Toggle XY Grid");
+          o->callback((Fl_Callback*)cb_Fly);
+        }
+        { Fl_Button* o = new Fl_Button(655, 317, 40, 25, "Orb");
+          o->tooltip("Toggle YZ grid");
+          o->callback((Fl_Callback*)cb_Orb);
+        }
+        { Fl_Button* o = new Fl_Button(655, 345, 40, 25, "UFO");
+          o->tooltip("Toggle ZX grid");
+          o->callback((Fl_Callback*)cb_UFO);
+        }
+        { Fl_Button* o = new Fl_Button(655, 370, 40, 25, "Walk");
+          o->tooltip("Toggle ZX grid");
+          o->callback((Fl_Callback*)cb_Walk);
+        }
+        { Fl_Button* o = new Fl_Button(655, 395, 40, 25, "Reset");
+          o->tooltip("Reset the Camera");
+          o->callback((Fl_Callback*)cb_Reset);
+        }
+        o->end();
+      }
+      { Fl_Group* o = ViewGroup = new Fl_Group(0, 23, 645, 487);
+        o->box(FL_DOWN_BOX);
+        { ViewWindow* o = UIViewWindow = new ViewWindow(0, 25, 645, 485, "ViewWindow");
+          o->box(FL_NO_BOX);
+          o->color(FL_BACKGROUND_COLOR);
+          o->selection_color(FL_BACKGROUND_COLOR);
+          o->labeltype(FL_NORMAL_LABEL);
+          o->labelfont(0);
+          o->labelsize(14);
+          o->labelcolor(FL_BLACK);
+          o->align(FL_ALIGN_CENTER);
+          o->when(FL_WHEN_RELEASE);
+          Fl_Group::current()->resizable(o);
+        }
+        o->end();
+      }
+      { Fl_Box* o = new Fl_Box(645, 265, 105, 30);
+        o->hide();
+        Fl_Tile *t = (Fl_Tile*)o->parent();
+        t->resizable(o);
+      }
+      o->end();
+    }
     o->set_non_modal();
     o->end();
+    o->resizable(o);
   }
   UIViewWindow->Container( this );
 }
