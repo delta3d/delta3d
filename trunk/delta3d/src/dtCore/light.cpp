@@ -37,3 +37,12 @@ Light::SetEnabled( bool enabled )
    mLightSource->setLocalStateSetModes( state );
 }
 
+void
+Light::SetLightModel( osg::LightModel* model, bool enabled )
+{ 
+   osg::StateAttribute::Values value;
+   if( enabled ) value = osg::StateAttribute::ON;
+   else value = osg::StateAttribute::OFF;
+
+   mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, value );
+}
