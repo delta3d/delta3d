@@ -10,8 +10,6 @@
 #include "notify.h"
 #include "system.h"
 
-#include "python/pythonbindings.h"
-
 using namespace dtCore;
 using namespace dtABC;
 
@@ -46,8 +44,6 @@ class TestPythonApplication : public Application,
          
          Py_Initialize();
 
-         initDelta();
-         
          start();
       }
 

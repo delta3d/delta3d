@@ -45,7 +45,7 @@ namespace dtCore
      * GetOSGNode function while casting to an osg::MatrixTransform pointer, then manipulate
      * the matrix.
      */
-   class PointAxis  :  public   Transformable, public   Drawable
+   class DT_EXPORT PointAxis  :  public   Transformable, public   Drawable
    {
       DECLARE_MANAGEMENT_LAYER(PointAxis)
 

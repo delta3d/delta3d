@@ -20,7 +20,7 @@
 
 namespace dtCore
 {
-   class Window : public Base
+   class DT_EXPORT Window : public Base
    {
       DECLARE_MANAGEMENT_LAYER(Window)
 

@@ -26,7 +26,7 @@
 
 namespace dtCore
 {
-   class _SceneHandler : public Producer::Camera::SceneHandler
+   class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
    {
    public:
    	_SceneHandler();
@@ -64,7 +64,7 @@ namespace dtCore
    };
    
    
-   class Scene : public Base  
+   class DT_EXPORT Scene : public Base  
    {
       DECLARE_MANAGEMENT_LAYER(Scene)
 
@@ -102,7 +102,7 @@ namespace dtCore
       virtual void OnMessage(MessageData *data);
       
       ///The user data associated with "collision" messages
-      struct CollisionData
+      struct DT_EXPORT CollisionData
       {
          Physical* mBodies[2]; ///<The bodies colliding
          sgVec3 mLocation; ///<The collision location

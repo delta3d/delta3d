@@ -3,10 +3,12 @@
 
 #include <string>
 
+#include "export.h"
+
 namespace dtCore
 {
    ///Set the list of data file paths
-   void SetDataFilePathList( std::string pathList );
+   DT_EXPORT void SetDataFilePathList( std::string pathList );
 };
 
 #endif  //GLOBALS_H_INCLUDED

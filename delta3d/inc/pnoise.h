@@ -10,11 +10,11 @@
 #include <stdio.h>
 
 #include <osg/Image>
-
+#include "export.h"
 namespace dtCore
 {
 
-    class NoiseGenerator
+    class DT_EXPORT NoiseGenerator
     {
     public:
 

@@ -36,7 +36,7 @@ namespace dtCore
     *  The Frame() method must be called once per frame.  This will update the
     *  scene, then cull and draw the visual objects.
     */
-   class Camera : public Transformable
+   class DT_EXPORT Camera : public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Camera)
 

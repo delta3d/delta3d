@@ -14,7 +14,7 @@ namespace dtCore
     *  Also, the Tripod may be instructed to always point toward another
     *  Transformable.
     */
-   class Tripod : public Base
+   class DT_EXPORT Tripod : public Base
    {
    public:
 

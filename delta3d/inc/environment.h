@@ -10,7 +10,7 @@
 namespace dtCore
 {
    ///A unique environment which controls lighting and visibility
-   class Environment :  public dtCore::Drawable, public dtCore::Base
+   class DT_EXPORT Environment :  public dtCore::Drawable, public dtCore::Base
    {
    public:
             DECLARE_MANAGEMENT_LAYER(Environment)

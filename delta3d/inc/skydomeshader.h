@@ -3,6 +3,8 @@
 #include <osg/FragmentProgram>
 #include "sg.h"
 
+#include "export.h"
+
 namespace dtCore
 {
    ///A light scattering pixel shader for use with dtCore::Environment
@@ -10,7 +12,7 @@ namespace dtCore
    /** This shader is built into the Environment and is used by setting the
      * Environment::FogMode to ADV.
      */
-   class SkyDomeShader
+   class DT_EXPORT SkyDomeShader
    {
    public:
       SkyDomeShader();

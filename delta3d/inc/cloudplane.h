@@ -14,7 +14,7 @@
 
 namespace dtCore
 {
-   class CloudPlane : public dtCore::EnvEffect
+   class DT_EXPORT CloudPlane : public dtCore::EnvEffect
    {
    public:
       

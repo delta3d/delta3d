@@ -17,7 +17,7 @@ namespace dtCore
    /**
     * A motion model that simulates the action of flying.
     */
-   class FlyMotionModel : public MotionModel
+   class DT_EXPORT FlyMotionModel : public MotionModel
    {
       DECLARE_MANAGEMENT_LAYER(FlyMotionModel)
 

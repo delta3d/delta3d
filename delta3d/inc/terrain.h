@@ -42,8 +42,8 @@ namespace dtCore
    /**
     * A terrain object.
     */
-   class Terrain : public Transformable,
-                   public Drawable
+   class DT_EXPORT Terrain : public Transformable,
+                             public Drawable
    {
       friend class SimpleHeightFieldRenderer;
       friend class TerrainCallback;
@@ -151,7 +151,7 @@ namespace dtCore
          /**
           * Maps height values to colors with interpolation/extrapolation.
           */
-         struct HeightColorMap : public std::map<float, osg::Vec3>
+         struct DT_EXPORT HeightColorMap : public std::map<float, osg::Vec3>
          {
             /**
              * Gets the color corresponding to the specified height.
@@ -366,7 +366,7 @@ namespace dtCore
    /**
     * A simple, direct heightfield renderer.
     */
-   class SimpleHeightFieldRenderer : public osgTerrain::HeightFieldRenderer
+   class DT_EXPORT SimpleHeightFieldRenderer : public osgTerrain::HeightFieldRenderer
    {
       public:
       

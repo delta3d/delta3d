@@ -6,7 +6,7 @@
 namespace dtCore
 {
    ///A base class for all Environmental Effects
-   class EnvEffect : public dtCore::Base
+   class DT_EXPORT EnvEffect : public dtCore::Base
    {
    public:
       DECLARE_MANAGEMENT_LAYER(EnvEffect)

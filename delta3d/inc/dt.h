@@ -17,12 +17,16 @@
 #undef _AUTOLIBNAME5
 #if defined(_DEBUG)
    #define _AUTOLIBNAME  "Producerd.lib"
-   #define _AUTOLIBNAME4 "OpenThreadsWin32d.lib"  
-   #define  _AUTOLIBNAME5 "dtcoreD.lib"
+   #define _AUTOLIBNAME4 "OpenThreadsWin32d.lib"
+   #ifndef DT_LIBRARY  
+      #define  _AUTOLIBNAME5 "dtcoreD.lib"
+   #endif
 #else
    #define _AUTOLIBNAME  "Producer.lib"
    #define _AUTOLIBNAME4 "OpenThreadsWin32.lib"  
-   #define _AUTOLIBNAME5 "dtcore.lib"
+   #ifndef DT_LIBRARY
+      #define _AUTOLIBNAME5 "dtcore.lib"
+   #endif
 #endif
 #define _AUTOLIBNAME1  "sg.lib"
 #define _AUTOLIBNAME2  "ul.lib"
@@ -36,7 +40,11 @@
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
+   
+   #ifndef DT_LIBRARY
+      #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
+   #endif
+   
 #endif
 
 #pragma comment(lib, _AUTOLIBNAME)
@@ -44,6 +52,9 @@
 #pragma comment(lib, _AUTOLIBNAME2)
 #pragma comment(lib, _AUTOLIBNAME3)
 #pragma comment(lib, _AUTOLIBNAME4)
-#pragma comment(lib, _AUTOLIBNAME5)
+
+#ifndef DT_LIBRARY
+   #pragma comment(lib, _AUTOLIBNAME5)
+#endif
 
 #endif //DELTA_INCLUDE

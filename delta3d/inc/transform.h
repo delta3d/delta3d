@@ -6,13 +6,14 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "export.h"
 #include "sg.h"
 
 namespace dtCore
 {
    ///A class that represents a position and attitude in 3D space
    
-   class Transform
+   class DT_EXPORT Transform
    {
    public:
       

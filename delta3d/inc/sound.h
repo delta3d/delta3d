@@ -16,7 +16,8 @@ namespace dtCore
    /**
     * A sound.
     */
-   class Sound : public Transformable, public Recordable
+   class DT_EXPORT Sound : public Transformable,
+                           public Recordable
    {
       DECLARE_MANAGEMENT_LAYER(Sound)
 

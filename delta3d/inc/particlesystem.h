@@ -23,8 +23,8 @@ namespace dtCore
    /**
     * A particle system.
     */
-   class ParticleSystem : public Transformable,
-                          public Drawable
+   class DT_EXPORT ParticleSystem : public Transformable,
+                                    public Drawable
    {
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
 

@@ -37,10 +37,10 @@ namespace dtCore
      *
      * @see Scene::AddDrawable()
      */
-   class UIDrawable : public dtCore::Base,
-                      public dtCore::Drawable,
-                      public dtCore::MouseListener,
-                      public dtCore::KeyboardListener
+   class DT_EXPORT UIDrawable : public dtCore::Base,
+                                public dtCore::Drawable,
+                                public dtCore::MouseListener,
+                                public dtCore::KeyboardListener
    {
 
       ///private class that ties the GUI rendering to an OSG node

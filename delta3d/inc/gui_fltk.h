@@ -21,7 +21,7 @@
 #include <FL/Fl_Check_Browser.H>
 #include <FL/Fl_Return_Button.H>
 
-class UserInterface {
+class DT_EXPORT UserInterface {
 public:
   Fl_Double_Window* make_window();
   Fl_Double_Window *MainWindow;

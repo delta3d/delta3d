@@ -10,7 +10,7 @@
 namespace dtCore
 {
    ///A rendered dome that represents the sky
-   class SkyDome :  public EnvEffect
+   class DT_EXPORT SkyDome :  public EnvEffect
    {
       DECLARE_MANAGEMENT_LAYER(SkyDome)
    public:
@@ -25,7 +25,7 @@ namespace dtCore
                            double sun_angle, double sunAzimuth,
                            double vis);
 
-      class MoveEarthySkyWithEyePointTransform : public osg::Transform
+      class DT_EXPORT MoveEarthySkyWithEyePointTransform : public osg::Transform
       {
       public:
          float mAzimuth; ///<Rotates the Transform to line up with this amount(deg)

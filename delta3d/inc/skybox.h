@@ -32,7 +32,7 @@ namespace dtCore
    * Environment.  Adding fog, sun, and clouds typically make things look a 
    * little weird.
    */
-class SkyBox :  public EnvEffect
+class DT_EXPORT SkyBox :  public EnvEffect
 {
    DECLARE_MANAGEMENT_LAYER(SkyBox)
 

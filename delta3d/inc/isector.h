@@ -42,7 +42,7 @@ namespace dtCore
     isect->GetHitPoint( hitPt );
 \endcode
 */
-   class Isector : public Transformable  
+   class DT_EXPORT Isector : public Transformable  
    {
    public:
       DECLARE_MANAGEMENT_LAYER(Isector)

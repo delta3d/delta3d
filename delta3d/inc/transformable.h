@@ -23,7 +23,7 @@ namespace dtCore
      * is around the X axis, and roll is around the Y axis.  The angles are all
      * right-hand-rule.
      */
-   class Transformable : public Base  
+   class DT_EXPORT Transformable : public Base  
    {
       DECLARE_MANAGEMENT_LAYER(Transformable)
    public:

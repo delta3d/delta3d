@@ -5,6 +5,8 @@
 #ifndef DELTA_DRAWABLE
 #define DELTA_DRAWABLE
 
+#include "export.h"
+
 #include "osg/Node"
 
 namespace dtCore
@@ -15,7 +17,7 @@ namespace dtCore
    /**
     * A drawable object.
     */
-   class Drawable
+   class DT_EXPORT Drawable
    {
       public:
 

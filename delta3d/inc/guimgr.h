@@ -26,7 +26,7 @@
   * NOTE: any instantiated classes that change values during runtime will not
   * reflect their new values on the GUI.
   */
-class GUI : public OpenThreads::Thread
+class DT_EXPORT GUI : public OpenThreads::Thread
 {
 public:  
    GUI()
@@ -83,18 +83,22 @@ private:
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
 //
-#undef _AUTOLIBNAME
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME  "gui_fld.lib"
-#else
-   #define _AUTOLIBNAME  "gui_fl.lib"
+
+#ifndef DT_LIBRARY
+
+   #undef _AUTOLIBNAME
+   #if defined(_DEBUG)
+      #define _AUTOLIBNAME  "gui_fld.lib"
+   #else
+      #define _AUTOLIBNAME  "gui_fl.lib"
+   #endif
+
+   #ifndef _NOAUTOLIBMSG
+      #pragma message( "Will automatically link with " _AUTOLIBNAME )
+   #endif
+
+   #pragma comment(lib, _AUTOLIBNAME)
+   
 #endif
-
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-#endif
-
-#pragma comment(lib, _AUTOLIBNAME)
-
 
 #endif // !defined(AFX_GUIMGR_H__88197C25_4C00_4251_9F90_21565007F1F7__INCLUDED_)
