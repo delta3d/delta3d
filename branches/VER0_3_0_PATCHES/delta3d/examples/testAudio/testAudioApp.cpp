@@ -46,6 +46,7 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    mSmokeCountA(0L),
    mSmokeCountC(0L)
 {
+   GetWindow()->SetWindowTitle("testAudio");
 
    AddSender( dtCore::System::GetSystem() );
 

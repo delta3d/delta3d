@@ -11,6 +11,7 @@ main( int argc, const char* argv[] )
    
    testAudioApp*  app   = new testAudioApp;
    assert( app );
+   
 
    app->Run();
 

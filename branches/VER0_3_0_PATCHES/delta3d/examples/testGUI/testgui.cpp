@@ -62,8 +62,7 @@ int main(int argc, char* argv[])
 
    if (!filename.empty())
    {
-      std::string foundPath = osgDB::findDataFile(filename);
-      drawable->LoadGUIFile(foundPath);
+       drawable->LoadGUIFile(filename);
    }
    else
    {
