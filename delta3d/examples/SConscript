@@ -1,18 +1,18 @@
-SConscript( dirs=['testApp'] )
-
-##SConscript( dirs=['testApp',
-##                  'testAudio',
-##                  'testCharacters',
-##                  'testClouds',
-##                  'testEffects',
-##                  'testGUI',
-##                  'testHLA',
-##                  'testInput',
-##                  'testLights',
-##                  'testMotionModels',
-##                  'testPhysics',
-##                  'testPython',
-##                  'testSound',
-##                  'testWeather',
-##                  'testWidget',
-##                  'testWin'] )
+SConscript( dirs=['testApp',
+                  'testAudio', 
+                  'testCharacters',
+                  'testClouds',
+                  'testEffects',
+                  'testGUI',
+                  'testHLA',
+                  'testInput',
+                  'testLights',
+                  'testMotionModels',
+                  'testPhysics',
+                  'testPython',
+                  'testSound',
+                  'testWeather',
+                  'testWidget',
+                  'testWin'] )
+#SConscript('testHLA')
+#SConscript('testPython')
