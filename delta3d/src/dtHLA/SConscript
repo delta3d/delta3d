@@ -4,10 +4,8 @@ dtHlaSrcs = [   'dis_types.cpp',
                 'entity.cpp',
                 'rticonnection.cpp' ]
 
-# add in RTI dirs
-#INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
-#LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
-
-dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=[ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'RTI-NG', 'fedtime', 'tinyxml' ] )
+dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=[ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'tinyxml', '$rtiLibName' ] )
 
 env.Alias('install', env.Install( "$prefix/lib", dtHlaLib ) )
+
+Return( 'dtHlaLib' )
