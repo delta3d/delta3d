@@ -155,10 +155,6 @@ DeltaWin::~DeltaWin()
 void DeltaWin::SetPosition(const int x, const int y, const int width, const int height)
 {
    mRenderSurface->setWindowRectangle(x, y, width, height);
-
-   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   mRenderSurface->useBorder(true);
-   #endif
 }
 
 void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
