@@ -14,26 +14,37 @@
 
 
 #if   defined(_DEBUG)
-   #define  _AUTOLIBNAME1  "dtabcd.lib"
-   #define  _AUTOLIBNAME2  "OpenAL32.lib" // Note: Not Debug
-   #define  _AUTOLIBNAME3  "ALut.lib"     // Note: Not Debug
-#else 
-   #define  _AUTOLIBNAME1  "dtabc.lib"
-   #define  _AUTOLIBNAME2  "OpenAL32.lib"
-   #define  _AUTOLIBNAME3  "ALut.lib"
+   #ifndef  DT_LIBRARY
+      #define  _AUTOLIBNAME1  "dtaudioD.lib"
+   #endif
+#else
+   #ifndef  DT_LIBRARY
+      #define  _AUTOLIBNAME1  "dtaudio.lib"
+   #endif
 #endif
 
 
 
+#define  _AUTOLIBNAME2  "OpenAL32.lib" // Note: Not Debug
+#define  _AUTOLIBNAME3  "ALut.lib"     // Note: Not Debug
+
+
+
 #if   !  defined(_NOAUTOLIBMSG)
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+   #ifndef  DT_LIBRARY
+      #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+   #endif
+
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
 
 
 
-#pragma  comment( lib, _AUTOLIBNAME1 )
+#ifndef  DT_LIBRARY
+   #pragma  comment( lib, _AUTOLIBNAME1 )
+#endif
+
 #pragma  comment( lib, _AUTOLIBNAME2 )
 #pragma  comment( lib, _AUTOLIBNAME3 )
 
