@@ -151,8 +151,14 @@ void Transformable::AddChild(Transformable *child)
 {
    if (!CanBeChild(child)) return;
 
+   Transform absTransform;
+   
+   child->CalcAbsTransform(&absTransform);
+   
    mChildList.push_back(child);
    child->mParent = this;
+   
+   child->SetTransform(&absTransform);
 }
 
 /*!
@@ -165,12 +171,18 @@ void Transformable::RemoveChild(Transformable *child)
 {
    if (!child || child->mParent!=this) return;
 
+   Transform absTransform;
+   
+   child->CalcAbsTransform(&absTransform);
+   
    unsigned int pos = GetChildIndex( child );
    if (pos < mChildList.size())
    {
       mChildList.erase( mChildList.begin()+pos );
    }
    child->mParent = NULL;
+   
+   child->SetTransform(&absTransform);
 }
 
 
