@@ -37,7 +37,7 @@ ReplicantBody
 Signal_Slot	
 TinyXML
 
-Thanks for using out Delta3D! Please visit our webpage at http://delta3d.org
+Thanks for using Delta3D! Please visit our webpage at http://delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
 our best to respond as quick as possible.
 
