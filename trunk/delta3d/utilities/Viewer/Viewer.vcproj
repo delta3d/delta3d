@@ -143,6 +143,9 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\resource.h">
+			</File>
+			<File
 				RelativePath=".\UserInterface.h">
 			</File>
 			<File
@@ -161,6 +164,12 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
 				RelativePath=".\UserInterface.fl">
+			</File>
+			<File
+				RelativePath=".\viewer.ico">
+			</File>
+			<File
+				RelativePath=".\Viewer.rc">
 			</File>
 		</Filter>
 	</Files>
