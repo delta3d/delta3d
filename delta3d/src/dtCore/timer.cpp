@@ -1,7 +1,9 @@
-#include "dtCore/deltatimer.h"
+#include "dtCore/timer.h"
 
-using namespace dtCore;
+//using namespace dtCore;
 using namespace osg;
+
+// borrowed from osg/Timer.cpp...
 
 #ifdef WIN32
 
@@ -9,7 +11,7 @@ using namespace osg;
 #include <fcntl.h>
 #include <windows.h>
 #include <winbase.h>
-DeltaTimer::DeltaTimer()
+dtCore::Timer::Timer()
 {
    _useStandardClock = false;
    //_useStandardClock = true;

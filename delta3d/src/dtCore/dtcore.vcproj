@@ -198,9 +198,6 @@
 				RelativePath=".\deltarendersurface.cpp">
 			</File>
 			<File
-				RelativePath=".\deltatimer.cpp">
-			</File>
-			<File
 				RelativePath=".\deltawin.cpp">
 			</File>
 			<File
@@ -533,6 +530,9 @@
 				RelativePath=".\terrain.cpp">
 			</File>
 			<File
+				RelativePath=".\timer.cpp">
+			</File>
+			<File
 				RelativePath="tracker.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -634,9 +634,6 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\deltarendersurface.h">
-			</File>
-			<File
-				RelativePath="..\..\inc\dtCore\deltatimer.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\deltawin.h">
@@ -763,6 +760,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\terrain.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\timer.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\tracker.h">

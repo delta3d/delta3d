@@ -32,7 +32,7 @@
 #include <osg/Switch>
 
 #include "dtCore/export.h"
-#include "dtCore/deltatimer.h"
+#include "dtCore/timer.h"
 
 namespace dtCore
 {
@@ -72,7 +72,7 @@ namespace dtCore
       float mFrameRate;
       int mPrintStats;
       //osg::Timer   mTimer;
-      DeltaTimer mTimer;
+      dtCore::Timer mTimer;
       osg::Timer_t mInitialTick;
       osg::Timer_t mLastFrameTick;
       osg::Timer_t mFrameTick;
