@@ -2,6 +2,8 @@
 #define PROFMGR_INCLUDED
 
 #include "dtcore/deltadrawable.h"
+#include "dtCore/keyboard.h"
+
 #include <osgText/Text>
 #include <osg/Geode>
 
@@ -33,9 +35,22 @@ namespace dtCore
     * }
     *  \endcode
     *
+    *  There are a number of a user interface controls to adjust the profiler
+    *  displays.  The ProfileMgr can use its internal keyboard mapping or the
+    *  user can call the ProfileMgr API directly.  To use the internal keyboard
+    *  mapping, call UseDefaultKeyboardMapping().
+    * 
+    *  \li F10 = Render the profile data
+    *  \li F11 = Change the report mode
+    *  \li g   = Render the profile graph
+    *  \li up  = Move the cursor up
+    *  \li dn  = Move the cursor down
+    *  \li ent = Select
+    *  \li p   = Pause the data collection
     * 
     */
-   class DT_EXPORT ProfileMgr : public dtCore::DeltaDrawable
+   class DT_EXPORT ProfileMgr : public dtCore::DeltaDrawable,
+                                public dtCore::KeyboardListener
    {
    public:
       const static short MAX_NUM_PROF_RECORDS = 20;
@@ -55,6 +70,10 @@ namespace dtCore
       void Pause(const bool pause=true) {mPaused = pause;}
       bool IsPaused(void) const {return mPaused;}
 
+      ///Setup and use the default keyboard mappings
+      void UseDefaultKeyboardMapping(const bool enable=true);
+      bool IsUsingDefaultkeyboardMapping(void) const {return mUseDefaultKeyMap;}
+
       virtual void OnMessage(MessageData *data);
 
       ///increment to the next report mode
@@ -69,6 +88,18 @@ namespace dtCore
       ///expand the currently selected line
       inline void Select(void) { Prof_select(); }
 
+      /**
+      * Called when a key is pressed.
+      *
+      * @param keyboard the source of the event
+      * @param key the key pressed
+      * @param character the corresponding character
+      */
+      virtual void KeyPressed(Keyboard* keyboard, 
+                              Producer::KeyboardKey key,
+                              Producer::KeyCharacter character);
+
+
 
    private:
       osg::ref_ptr<osgText::Text> mTextTitle[NUM_TITLE];
@@ -82,6 +113,7 @@ namespace dtCore
       float mSX; ///<The starting x screen coordinate of the rendered data
       float mSY; ///<The starting y screen coordinate of the rendered data
       Prof_Report_Mode mProfMode; ///<current profile mode
+      bool mUseDefaultKeyMap; ///<are we using the default keyboard mapping?
 
       ///refresh the text
       void UpdateText(void); 

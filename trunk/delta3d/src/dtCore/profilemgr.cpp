@@ -18,9 +18,13 @@ mGraphRendered(false),
 mSX(sx),
 mSY(sy),
 mProfMode(Prof_SORT_SELF_TIME),
-mPaused(false)
+mPaused(false),
+mUseDefaultKeyMap(false)
 {
+   SetName("ProfileMgr");
+
    AddSender(System::GetSystem());
+   
 
    osg::MatrixTransform *mat = new osg::MatrixTransform();
    mat->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -311,4 +315,49 @@ void ProfileMgr::RenderGraph(const bool enable)
       mGraph->setNodeMask(0xffffffff);
    else
       mGraph->setNodeMask(0x0);
+}
+
+/**
+* Called when a key is pressed.
+*
+* @param keyboard the source of the event
+* @param key the key pressed
+* @param character the corresponding character
+*/
+void ProfileMgr::KeyPressed(Keyboard* keyboard, 
+                        Producer::KeyboardKey key,
+                        Producer::KeyCharacter character)
+{
+   switch(key) 
+   {
+   case Producer::Key_F10:  EnableRender( !IsRendering() ); 	break;
+   case Producer::Key_F11:  IncReportMode();                   break;
+   case Producer::Key_Down: MoveCursorDown();                  break;
+   case Producer::Key_Up:   MoveCursorUp();                    break;
+   case Producer::Key_Return: Select();                        break;
+   case Producer::Key_G:    RenderGraph( !IsGraphRendered() ); break;
+   case Producer::Key_P:   Pause( !IsPaused() );               break;
+   default: break;
+   }
+}
+
+/** If true, this will subscribe the ProfileMgr to the first instance
+ *  of the Keyboard.  When a key is pressed, it will be compared to the
+ *  internal keyboard mappings.
+ *  If false, the ProfileMgr will be unsubscribed from the first instance
+ *  of the Keyboard.
+ *  ProfileMgr will not use its internal keyboard mapping by default.
+ */
+void ProfileMgr::UseDefaultKeyboardMapping(const bool enable)
+{
+   if (enable == mUseDefaultKeyMap) return;
+
+   if (enable && !mUseDefaultKeyMap)
+   {
+      Keyboard::GetInstance(0)->AddKeyboardListener(this);
+   }
+   else if (!enable && mUseDefaultKeyMap)
+   {
+      Keyboard::GetInstance(0)->RemoveKeyboardListener(this);
+   }
 }
