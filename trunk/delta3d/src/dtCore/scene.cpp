@@ -180,6 +180,8 @@ mFrameStamp(new osg::FrameStamp())
 
    mStats = new Stats( mSceneView.get() );
    mStats->Init( mSceneView.get()->getRenderStage() );
+
+   mStartTime = mTimer.tick();
 }
 
 _SceneHandler::~_SceneHandler()
@@ -211,10 +213,7 @@ void _SceneHandler::CullImplementation(Producer::Camera &cam)
    mStats->SetTime(Stats::TIME_BEFORE_CULL);
 
    mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+1);
-
-   mClock.update();
-
-   mFrameStamp->setReferenceTime(mClock.getAbsTime() );      
+   mFrameStamp->setReferenceTime( mTimer.delta_s( mStartTime, mTimer.tick() ) );
 
    //copy the Producer Camera's position to osg::SceneView  
    mSceneView->getProjectionMatrix().set(cam.getProjectionMatrix());
