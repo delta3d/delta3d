@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
 
    if (!filename.empty())
    {
-       drawable->LoadGUIFile(filename);
+       if(!drawable->LoadGUIFile(filename))
+          return false;
    }
    else
    {
