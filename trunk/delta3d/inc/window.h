@@ -5,19 +5,21 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-
 #include <Producer/KeyboardMouse>
 #include <Producer/RenderSurface>
 
+#include "keyboard.h"
+#include "mouse.h"
 #include <osg/ref_ptr>
 
 #include "base.h"
-#include "keyboard.h"
-#include "mouse.h"
+
+
 
 namespace dtCore
 {
+   
+   
    class DT_EXPORT Window : public Base
    {
       DECLARE_MANAGEMENT_LAYER(Window)
@@ -65,8 +67,10 @@ namespace dtCore
       ///Get a handle to the Mouse associated with the Window
       Mouse *GetMouse() {return mMouse.get();}
 
+      #ifdef _WIN32
       ///Changes system screen resolution
       bool  ChangeScreenResolution (int width, int height, int bitsPerPixel);
+      #endif // _WIN32
 
    private:
 

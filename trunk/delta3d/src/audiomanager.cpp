@@ -2204,15 +2204,16 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
       sgMat4            matrix;
       ALfloat           pos[3L]  = { 0.0f, 0.0f, 0.0f };
 
-      union
+      union orient
       {
-         ALfloat     or[6L];
+         ALfloat     ort[6L];
+
          struct
-         {
-            ALfloat  at[3L];
-            ALfloat  up[3L];
+         {  
+            ALfloat  at[3L];  
+            ALfloat  up[3L];  
          };
-      }  orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+      } orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 
       GetTransform( &transform );
       transform.GetTranslation( pos );
@@ -2222,7 +2223,7 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
       sgXformVec3( orient.up, matrix );
 
       alListenerfv( AL_POSITION, pos );
-      alListenerfv( AL_ORIENTATION, orient.or );
+      alListenerfv( AL_ORIENTATION, orient.ort );
 
       alListenerfv( AL_VELOCITY, mVelo );
       alListenerf( AL_GAIN, mGain );
@@ -2250,7 +2251,7 @@ AudioManager::ListenerObj::Clear( void )
 
    union
    {
-      ALfloat     or[6L];
+      ALfloat     ort[6L];
       struct
       {
          ALfloat  at[3L];
@@ -2268,5 +2269,5 @@ AudioManager::ListenerObj::Clear( void )
    alListenerf( AL_GAIN, mGain );
    alListenerfv( AL_VELOCITY, mVelo );
    alListenerfv( AL_POSITION, pos );
-   alListenerfv( AL_ORIENTATION, orient.or );
+   alListenerfv( AL_ORIENTATION, orient.ort );
 }

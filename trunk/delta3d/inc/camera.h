@@ -5,11 +5,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-
-#include "Producer\camera"
-#include "base.h"
+#include "Producer/Camera"
 #include "window.h"
+#include "base.h"
 #include "scene.h"
 #include "sg.h"
 #include "transformable.h"

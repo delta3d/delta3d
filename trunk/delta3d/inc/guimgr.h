@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "OpenThreads/thread"
+#include "OpenThreads/Thread"
 #include "gui_fltk.h"
 #include "base.h"
 #include "notify.h"

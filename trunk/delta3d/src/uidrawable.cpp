@@ -1,4 +1,5 @@
 #include <cassert>
+#include <string>
 
 #include "system.h"
 #include "uidrawable.h"
@@ -11,14 +12,14 @@
 #include "UI/CUI_ScrollableFrame.h"
 #include "UI/CUI_ComboBox.h"
 #include "UI/CUI_ResizeButton.h"
-#include "ui/CUI_DraggableViewFrame.h"
-#include "ui/CUI_DraggableFrame.h"
+#include "UI/CUI_DraggableViewFrame.h"
+#include "UI/CUI_DraggableFrame.h"
 #include "UI/CUI_FixedBMFont.h"
 #include "UI/CUI_MultipleStateButton.h"
 
-#include <osg/geode>
+#include <osg/Geode>
 #include <osg/Projection>
-#include <osg/matrixtransform>
+#include <osg/MatrixTransform>
 
 using namespace dtCore;
 
@@ -468,12 +469,12 @@ void UIDrawable::LoadControlScrollTextBox( ELEMDATA *elem )
 
    if( elem->elem->Attribute("columns" ) )
    {
-      w = atof( elem->elem->Attribute("columns"));
+      w = atoi( elem->elem->Attribute("columns"));
    }
 
    if( elem->elem->Attribute("rows") )
    {
-      h = atof(elem->elem->Attribute("rows"));
+      h = atoi(elem->elem->Attribute("rows"));
    }
 
    newframe->SetTextBoxSize( w, h );

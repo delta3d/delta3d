@@ -1,19 +1,22 @@
 #ifndef DELTA_UIDRAWABLE
 #define DELTA_UIDRAWABLE
 
+#ifndef _WIN32
+#define stricmp strcasecmp
+#endif
 
 #include "base.h"
 #include "drawable.h"
 #include "mouse.h"
 #include "keyboard.h"
 #include "window.h"
-#include <osg/drawable>
-#include "UI/cui_ui.h"
+#include <osg/Drawable>
+#include "UI/CUI_UI.h"
 #include "UI/CUI_ListItem.h"
 #include "UI/CUI_ListBox.h"
 #include "UI/CUI_ScrollableFrame.h"
 #include "cui_openglrenderer.h"
-#include <osg/group>
+#include <osg/Group>
 #include "sg.h"
 #include "tinystr.h"
 #include "tinyxml.h"

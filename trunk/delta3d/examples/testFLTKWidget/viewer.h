@@ -1,11 +1,12 @@
-#pragma once
+#ifndef DELTA_VIEWER
+#define DELTA_VIEWER
 
 #include <string>
 
+#include <camera.h>
 #include <base.h>
 #include <window.h>
 #include <scene.h>
-#include <camera.h>
 
 #include "helperstructs.h"
 
@@ -105,3 +106,5 @@ class Viewer :  public   dtCore::Base
                int            cmd;  ///packed command cache
                WinRect        rect; ///cached window data for resizes
 };
+
+#endif // DELTA_VIEWER

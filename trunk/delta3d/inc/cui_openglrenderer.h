@@ -1,7 +1,7 @@
 #ifndef DELTA_CUI_OPENGLRENDERER
 #define DELTA_CUI_OPENGLRENDERER
 
-/*! \file CUI_OpenGLRenderer.h
+/*! \file cui_openglrenderer.h
 \brief A simple interface to opengl
 
 Original Author:

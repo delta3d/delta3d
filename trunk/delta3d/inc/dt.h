@@ -50,9 +50,6 @@
 
 #ifdef _WIN32
 
-
-#pragma message( "In _WIN32 " )
-
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
 //

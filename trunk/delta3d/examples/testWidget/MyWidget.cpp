@@ -1,6 +1,6 @@
 #include <orbitmotionmodel.h>
 
-#include "mywidget.h"
+#include "MyWidget.h"
 
 
 

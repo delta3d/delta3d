@@ -4,9 +4,9 @@
 
 #include <cassert>
 
-#include <FL/Fl.h>
-#include <FL/X.h>
-#include <FL/Fl_Window.h>
+#include <FL/Fl.H>
+#include <FL/x.H>
+#include <FL/Fl_Window.H>
 
 #include "widget.h"
 
@@ -64,7 +64,7 @@ public:
          Parent(x, y, w, h, label),
          mEvent(0L)
    {
-      assert( IS_A(this, Widget*) );
+      assert( IS_A(this, dtABC::Widget*) );
       ctor();
    }
 

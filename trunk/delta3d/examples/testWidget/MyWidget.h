@@ -1,7 +1,12 @@
-#pragma once
-#include <widget.h>
-#include <logicalinputdevice.h>
-#include <motionmodel.h>
+#ifndef DELTA_MYWIDGET
+#define DELTA_MYWIDGET
+
+#include "dt.h"
+#include "dtabc.h"
+
+//#include <widget.h>
+//#include <logicalinputdevice.h>
+//#include <motionmodel.h>
 
 
 
@@ -29,3 +34,5 @@ private:
             osg::ref_ptr<dtCore::LogicalInputDevice> mInputDevice;
             osg::ref_ptr<dtCore::MotionModel>        mMotionModel;
 };
+
+#endif // DELTA_MYWIDGET

@@ -2,7 +2,7 @@
 #define DELTA_CLOUDPLANE
 
 
-#include "EnvEffect.h"
+#include "enveffect.h"
 #include "sg.h"
 
 #include <osg/Group>

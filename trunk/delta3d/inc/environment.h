@@ -3,8 +3,8 @@
 
 #include "drawable.h"
 #include "enveffect.h"
-#include "osg/group"
-#include <osg/fog>
+#include "osg/Group"
+#include "osg/Fog"
 #include "sunlightshader.h"
 #include "skydomeshader.h"
 #include "skydome.h"

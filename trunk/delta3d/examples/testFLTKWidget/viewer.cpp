@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <cassert>
 
 #include <system.h>
 #include <globals.h>
@@ -9,11 +9,11 @@
 
 
 using namespace   dtCore;
+using namespace   std;
 
 
-
-         const std::string Viewer::DEF_PATH("..\\..\\data");
-         const std::string Viewer::DEF_FILE("cessna.osg");
+const string Viewer::DEF_PATH("../../data");
+const string Viewer::DEF_FILE("cessna.osg");
 
 
 

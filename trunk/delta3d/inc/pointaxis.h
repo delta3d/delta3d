@@ -6,10 +6,6 @@
 #include <osg/ref_ptr>
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <osg/Geode>
-#include <osg/MatrixTransform>
-#include <osg/Switch>
-
 #include <macros.h>
 #include <transformable.h>
 #include <drawable.h>

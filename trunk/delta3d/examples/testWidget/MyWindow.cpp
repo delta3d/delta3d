@@ -1,10 +1,11 @@
 #include <string>
 
-#include "mywindow.h"
+#include "MyWindow.h"
 
 
 
-const char* MyWindow::PATH = "..\\..\\data";
+//const char* MyWindow::PATH = "..\\..\\data";
+const char* MyWindow::PATH = "../../data";
 const char* MyWindow::FILE = "cessna.osg";
 
 

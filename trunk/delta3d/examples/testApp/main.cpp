@@ -8,7 +8,7 @@ int main()
    dtABC::Application *app = new dtABC::Application("config.xml");
 
    //load something interesting
-   dtCore::SetDataFilePathList("../../data/;../../../data/");
+   dtCore::SetDataFilePathList("../../data/");
    dtCore::Object *obj = new dtCore::Object("MyObject");
    obj->LoadFile("ground.flt");
    app->AddDrawable(obj);

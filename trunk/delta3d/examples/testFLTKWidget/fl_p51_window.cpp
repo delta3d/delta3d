@@ -1,7 +1,7 @@
 #include <assert.h>
 
-#include <FL/Fl.h>
-#include <FL/X.h>
+#include <FL/Fl.H>
+#include <FL/x.H>
 
 #include "helperstructs.h"
 #include "viewer.h"
