@@ -23,9 +23,9 @@ void PolarDecomp::MatBinOpEqualPlus( osg::Matrixf& C, const float g1, const osg:
 /** Set MadjT to transpose of inverse of M times determinant of M **/
 void PolarDecomp::AdjointTranspose( const Matrixf& M, Matrixf& MadjT )
 {
-   MatrixUtil::SetColumn3( MadjT, MatrixUtil::GetColumn3(M,1)^MatrixUtil::GetColumn3(M,2), 0);
-   MatrixUtil::SetColumn3( MadjT, MatrixUtil::GetColumn3(M,2)^MatrixUtil::GetColumn3(M,0), 1);
-   MatrixUtil::SetColumn3( MadjT, MatrixUtil::GetColumn3(M,0)^MatrixUtil::GetColumn3(M,1), 2);
+   MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,1)^MatrixUtil::GetColumn3(M,2), 0);
+   MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,2)^MatrixUtil::GetColumn3(M,0), 1);
+   MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,0)^MatrixUtil::GetColumn3(M,1), 2);
 }
 
 float PolarDecomp::NormInf( const Matrixf& M )
@@ -224,7 +224,7 @@ float PolarDecomp::Decompose( const osg::Matrixf& M, osg::Matrixf& Q, osg::Matri
    Matrixf noTransM = M;
    
    Vec4f newCol = Vec4f( 0.0f, 0.0f, 0.0f, 1.0f );
-   MatrixUtil::SetColumn4( noTransM, newCol, 3 );
+   MatrixUtil::SetColumn( noTransM, newCol, 3 );
    //
 
    Matrixf Mk;

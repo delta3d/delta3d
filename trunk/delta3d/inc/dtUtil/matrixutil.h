@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-#include "osg/Matrixf"
+#include "osg/Matrix"
 #include "dtCore/export.h"
 
 namespace dtUtil
@@ -33,37 +33,24 @@ namespace dtUtil
    {
    public:
 
-      static void Print( const osg::Matrixf& matrix );  
+      static void Print( const osg::Matrix& matrix );  
       static void Print( const osg::Vec3f& vec );
       static void Print( const osg::Vec4f& vec );
 
-      static void Transpose( osg::Matrixf& dest, const osg::Matrixf& src );
+      static void Transpose( osg::Matrix& dest, const osg::Matrix& src );
 
-      static inline osg::Vec3f GetColumn3( const osg::Matrixf& matrix, const int column )
-      {
-         return osg::Vec3f( matrix(column,0), matrix(column,1), matrix(column,2) );
-      }
-      static inline osg::Vec3f GetRow3( const osg::Matrixf& matrix, const int row )
-      {
-         return osg::Vec3f( matrix(0,row), matrix(1,row), matrix(2,row) );
-      }
+      static osg::Vec3f GetColumn3( const osg::Matrix& matrix, const int column );
+      static osg::Vec4f GetColumn4( const osg::Matrix& matrix, const int column );
+
+      static osg::Vec3f GetRow3( const osg::Matrix& matrix, const int row );      
+      static osg::Vec4f GetRow4( const osg::Matrix& matrix, const int row );
       
-      static inline osg::Vec4f GetColumn4( const osg::Matrixf& matrix, const int column )
-      {
-         return osg::Vec4f( matrix(column,0), matrix(column,1), matrix(column,2), matrix(column,3) );
-      }
-      static inline osg::Vec4f GetRow4( const osg::Matrixf& matrix, const int row )
-      {
-         return osg::Vec4f( matrix(0,row), matrix(1,row), matrix(2,row), matrix(3,row) );
-      }
-      
-      static void SetColumn3( osg::Matrixf& matrix, const osg::Vec3f& vec, const int column );
-      static void SetRow3( osg::Matrixf& matrix, const osg::Vec3f& vec, const int row );
-      
-      static void SetColumn4( osg::Matrixf& matrix, const osg::Vec4f& vec, const int column );
-      static void SetRow4( osg::Matrixf& matrix, const osg::Vec4f& vec, const int row );
+      static void SetColumn( osg::Matrix& matrix, const osg::Vec3f& vec, const int column );
+      static void SetColumn( osg::Matrix& matrix, const osg::Vec4f& vec, const int column );
+
+      static void SetRow( osg::Matrix& matrix, const osg::Vec3f& vec, const int row );      
+      static void SetRow( osg::Matrix& matrix, const osg::Vec4f& vec, const int row );
      
-
    };
 }
 #endif // DELTA_MATRIX_UTIL
