@@ -639,9 +639,6 @@
 				RelativePath="..\..\inc\dtCore\deltawin.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtCore\deprecationmgr.h">
-			</File>
-			<File
 				RelativePath="..\..\inc\dtCore\dt.h">
 			</File>
 			<File

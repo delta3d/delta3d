@@ -289,9 +289,9 @@ namespace dtCore
          bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
          virtual void AddedToScene( Scene *scene );
-         
-         virtual void SetTransform(Transform *xform, enum dtCore::Transformable::CoordSysEnum cs = ABS_CS);
 
+         virtual void SetTransform( Transform *xform, CoordSysEnum cs = ABS_CS );
+       
       private:
       
          /**
@@ -340,9 +340,8 @@ namespace dtCore
          RefPtr<osg::Geode> mGeomGeod;
 
          bool mRenderingGeometry;///<if we're rendering the collision geometry
-         
-         
-         osg::Matrix decompScale;
+                
+         osg::Vec3 orginalBoxSize;
 
    };
 };

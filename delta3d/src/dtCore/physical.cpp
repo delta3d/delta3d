@@ -277,6 +277,7 @@ void Physical::SetCollisionSphere( osg::Node* node )
  */
 void Physical::SetCollisionBox(float lx, float ly, float lz)
 {
+   orginalBoxSize.set( lx, ly, lz );
    dGeomTransformSetGeom(mGeomID, dCreateBox(0, lx, ly, lz));
 }
 
@@ -306,13 +307,17 @@ void Physical::SetCollisionBox( osg::Node* node )
       
       dGeomTransformSetCleanup(subTransformID, 1);
 
+      orginalBoxSize.set(  bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
+                           bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
+                           bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin() );
+
       dGeomTransformSetGeom(
          subTransformID,
          dCreateBox(
             0, 
-            bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
-            bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
-            bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
+            orginalBoxSize[0],
+            orginalBoxSize[1],
+            orginalBoxSize[2]
          )
       );
 
@@ -768,33 +773,98 @@ void Physical::PrePhysicsStepUpdate()
       {
          mGeomTransform = transform;
          
-         osg::Vec3 position = mGeomTransform.GetTranslation();
+         osg::Matrix rotation;
+         osg::Vec3 position, scale;
+         mGeomTransform.GetTranslation( position );
+         mGeomTransform.GetRotation( rotation );
+         mGeomTransform.GetScale( scale );
          
          dGeomSetPosition(mGeomID, position[0], position[1], position[2]);
          
-         osg::Matrix fullMatrix = mGeomTransform.GetRotation();
-         
-         // remove scale from rotation matrix
-         osg::Matrix rotationMatrix;
-         osg::Vec4f translation;
-         
-         dtUtil::PolarDecomp::Decompose( fullMatrix, rotationMatrix, decompScale, translation );
-         
          dMatrix3 dRot;
          
-         dRot[0] = rotationMatrix(0,0);
-         dRot[1] = rotationMatrix(1,0);
-         dRot[2] = rotationMatrix(2,0);
+         dRot[0] = rotation(0,0);
+         dRot[1] = rotation(1,0);
+         dRot[2] = rotation(2,0);
          
-         dRot[4] = rotationMatrix(0,1);
-         dRot[5] = rotationMatrix(1,1);
-         dRot[6] = rotationMatrix(2,1);
+         dRot[4] = rotation(0,1);
+         dRot[5] = rotation(1,1);
+         dRot[6] = rotation(2,1);
          
-         dRot[8] = rotationMatrix(0,2);
-         dRot[9] = rotationMatrix(1,2);
-         dRot[10] = rotationMatrix(2,2);
+         dRot[8] = rotation(0,2);
+         dRot[9] = rotation(1,2);
+         dRot[10] = rotation(2,2);
          
          dGeomSetRotation(mGeomID, dRot);
+
+         int geomclass = dGeomGetClass(mGeomID) ;
+         dGeomID id = mGeomID;
+
+         sgMat4 absMat; ///<The cumulative position from parent to child
+         sgMakeIdentMat4(absMat);
+
+         while (geomclass == dGeomTransformClass) 
+         {
+            id = dGeomTransformGetGeom(id);
+            if (id == 0) return; //in case we haven't assigned a collision shape yet
+            geomclass = dGeomGetClass(id);
+            const dReal *pos = dGeomGetPosition(id);
+            const dReal *rot = dGeomGetRotation(id);
+            sgMat4 tmp;
+            sgMakeIdentMat4(tmp);
+            sgSetVec3(tmp[0], rot[0], rot[1], rot[2] );
+            sgSetVec3(tmp[1], rot[4], rot[5], rot[6] );
+            sgSetVec3(tmp[2], rot[8], rot[9], rot[10] );
+            sgSetVec3(tmp[3], pos[0], pos[1], pos[2] );
+
+            sgPostMultMat4(absMat, tmp);
+         }
+
+         switch(dGeomGetClass(id))
+         {
+         case dBoxClass:
+            {
+               dVector3 side;
+               dGeomBoxGetLengths (id, side);
+               const dReal *pos = dGeomGetPosition(id);
+               const dReal *rot = dGeomGetRotation(id);
+
+               dGeomBoxSetLengths( id, orginalBoxSize[0]*scale[0], orginalBoxSize[0]*scale[1], orginalBoxSize[0]*scale[2] );
+            }
+            break;
+         case dSphereClass:
+            {
+               dReal rad = dGeomSphereGetRadius(id);
+
+
+            }
+            break;
+         case dCCylinderClass:
+            {
+               dReal radius, length;
+               dGeomCCylinderGetParams (id, &radius, &length);
+
+
+            }
+            break;
+
+         case dCylinderClass:
+         case dPlaneClass:
+            {
+               dVector4 result; //a*x+b*y+c*z = d
+               dGeomPlaneGetParams(id, result);
+            }
+         case dRayClass:
+            {
+               dVector3 start, dir;
+               dReal length = dGeomRayGetLength(id);
+               dGeomRayGet(id, start, dir);
+            }
+         case dTriMeshClass:
+         default:
+            break;
+         }
+         //
       }
    }
 }
@@ -847,9 +917,6 @@ void Physical::PostPhysicsStepUpdate()
       newRotation(1,2) = rotation[9];
       newRotation(2,2) = rotation[10];
       
-      //re-apply scale
-      newRotation = newRotation * decompScale;
-
       mGeomTransform.SetRotation(newRotation);
       
       this->SetTransform(&mGeomTransform);
@@ -985,14 +1052,7 @@ void Physical::AddedToScene( Scene *scene )
    } 
 } 
 
-void Physical::SetTransform(Transform *xform, dtCore::Transformable::CoordSysEnum cs )
+void Physical::SetTransform( Transform *xform, CoordSysEnum cs )
 {
-    
    Transformable::SetTransform( xform, cs );
-   
-   //float x,y,z;
-   //xform->GetTranslation(&x,&y,&z);
-   
-   //dGeomSetPosition(mGeomID, x, y, z);
-   
 }

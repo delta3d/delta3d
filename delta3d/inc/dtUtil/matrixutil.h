@@ -24,6 +24,8 @@
 #include <iostream>
 
 #include "osg/Matrix"
+#include "osg/Vec3"
+#include "osg/Vec4"
 #include "dtCore/export.h"
 
 namespace dtUtil
@@ -34,23 +36,28 @@ namespace dtUtil
    public:
 
       static void Print( const osg::Matrix& matrix );  
-      static void Print( const osg::Vec3f& vec );
-      static void Print( const osg::Vec4f& vec );
+      static void Print( const osg::Vec3& vec );
+      static void Print( const osg::Vec4& vec );
+
+      static float Clamp( float x, float clampToValue );
 
       static void Transpose( osg::Matrix& dest, const osg::Matrix& src );
 
-      static osg::Vec3f GetColumn3( const osg::Matrix& matrix, const int column );
-      static osg::Vec4f GetColumn4( const osg::Matrix& matrix, const int column );
+      static osg::Vec3 GetColumn3( const osg::Matrix& matrix, int column );
+      static osg::Vec4 GetColumn4( const osg::Matrix& matrix, int column );
 
-      static osg::Vec3f GetRow3( const osg::Matrix& matrix, const int row );      
-      static osg::Vec4f GetRow4( const osg::Matrix& matrix, const int row );
+      static osg::Vec3 GetRow3( const osg::Matrix& matrix, int row );      
+      static osg::Vec4 GetRow4( const osg::Matrix& matrix, int row );
       
-      static void SetColumn( osg::Matrix& matrix, const osg::Vec3f& vec, const int column );
-      static void SetColumn( osg::Matrix& matrix, const osg::Vec4f& vec, const int column );
+      static void SetColumn( osg::Matrix& matrix, const osg::Vec3& vec, int column );
+      static void SetColumn( osg::Matrix& matrix, const osg::Vec4& vec, int column );
 
-      static void SetRow( osg::Matrix& matrix, const osg::Vec3f& vec, const int row );      
-      static void SetRow( osg::Matrix& matrix, const osg::Vec4f& vec, const int row );
-     
+      static void SetRow( osg::Matrix& matrix, const osg::Vec3& vec, int row );      
+      static void SetRow( osg::Matrix& matrix, const osg::Vec4& vec, int row );
+
+      static void HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr );
+      static void MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation );
+
    };
 }
 #endif // DELTA_MATRIX_UTIL

@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "osg/Matrix"
+#include "osg/Vec3"
 #include "dtCore/export.h"
 
 namespace dtUtil
@@ -35,7 +36,7 @@ namespace dtUtil
    {
    public:
       // Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation
-      static float Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec4f& T );
+      static float Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec3& T );
 
    private:
 
@@ -55,13 +56,13 @@ namespace dtUtil
       static int FindMaxCol( const osg::Matrix& M );
 
       // Setup u for Household reflection to zero all v components but first
-      static void MakeReflector( const osg::Vec3f& v, osg::Vec3f& u );
+      static void MakeReflector( const osg::Vec3& v, osg::Vec3& u );
 
       // Apply Householder reflection represented by u to column vectors of M
-      static void ReflectCols( osg::Matrix& M, const osg::Vec3f& u );
+      static void ReflectCols( osg::Matrix& M, const osg::Vec3& u );
 
       // Apply Householder reflection represented by u to row vectors of M
-      static void ReflectRows( osg::Matrix& M, const osg::Vec3f& u );
+      static void ReflectRows( osg::Matrix& M, const osg::Vec3& u );
 
       // Compute either the 1 or infinity norm of M, depending on tpose
       static float MatNorm( const osg::Matrix& M, const int tpose );
