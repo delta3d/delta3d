@@ -112,7 +112,7 @@ TestWinApp::Config()
    // dump all valid resolutions into a vector
    mResVec = DeltaWin::GetResolutions();
 
-   map< int, int > widthHeightMap;
+   set< pair<int, int> > widthHeightSet;
    set< int > refreshSet;
    set< int > depthSet;
 
@@ -120,7 +120,7 @@ TestWinApp::Config()
       resIter != mResVec.end(); 
       resIter++ )
    {
-      widthHeightMap.insert( map< int, int >::value_type((*resIter).width, (*resIter).height ));
+      widthHeightSet.insert( make_pair( (*resIter).width, (*resIter).height) );
       refreshSet.insert( (*resIter).refresh );
       depthSet.insert( (*resIter).bitDepth );
    }
@@ -166,7 +166,7 @@ TestWinApp::Config()
    mainFrame->AddChild( widthHeightMenu );  
 
    // populate menus based on resolution data
-   for( map< int, int >::iterator whIter = widthHeightMap.begin(); whIter != widthHeightMap.end(); whIter++ )
+   for( set< pair<int, int> >::iterator whIter = widthHeightSet.begin(); whIter != widthHeightSet.end(); whIter++ )
    {
       int w = (*whIter).first;
       int h = (*whIter).second;
