@@ -1,5 +1,6 @@
 #include "testlights.h"
 #include "dtCore/dt.h"
+#include "gui_fl/guimgr.h"
 
 // namespaces
 using namespace   dtABC;
@@ -22,46 +23,25 @@ TestLightsApp::Config()
    GetScene()->UseSceneLight( false );
 
    Object* terrain = new Object( "Terrain" );
-   //terrain->LoadFile( "room/shoothouse-1story-sans-lites.ive" );
-   //terrain->LoadFile( "Darken/csar-noshadow.ive" );
-   //terrain->LoadFile("bsp_gamelevel.ive");
+   //terrain->LoadFile( "csar_lighting/csar-noshadow.ive" );
    terrain->LoadFile( "dirt/dirt.ive" );
+   //terrain->LoadFile("room.ive");
    AddDrawable( terrain );
-
-   Object* happy1 = new Object( "Happy1" );
-   happy1->LoadFile( "physics/sphere/happy_sphere.ive" );
-   Transform t = Transform( -1.0f, 2.0f, 1.0f, 0.0f, 0.0f, 0.0f );
-   happy1->SetTransform(&t);
-   AddDrawable( happy1 );
-
-   Object* happy2 = new Object( "Happy2" );
-   happy2->LoadFile( "physics/sphere/happy_sphere.ive" );
-   t.Set( 25.0f, 18.0f, 1.0f, 0.0f, 0.0f, 0.0f );
-   happy2->SetTransform( &t );
-   AddDrawable( happy2 );
 
    // create a spot light.
    Light* myLight1 = new Light( 1, "spotlight", Light::GLOBAL);
-   myLight1->SetPosition( 0.0f, 0.0f, 20.0f );
+
+   Transform l1 = Transform( -2.0f, -8.0f, -0.7f, 0.0f, 0.0f, 0.0f );
+   myLight1->SetTransform(&l1);
+
    myLight1->SetAmbient( 1.0f, 0.0f, 0.0f, 1.0f );
    myLight1->SetDiffuse( 1.0f, 0.0f, 0.0f, 1.0f );
    myLight1->SetSpotCutoff( 20.0f );
    myLight1->SetSpotExponent( 50.0f );
-   myLight1->SetDirection( 1.0f, 1.0f, -1.0f );
    AddDrawable( myLight1 );
 
-   // create a local light.
-   Light* myLight2 = new Light( 2, "local light", Light::GLOBAL );
-   myLight2->SetPosition( 3.0f, -8.0f, 2.0f );
-   myLight2->SetAmbient( 0.0f ,1.0f ,1.0f ,1.0f );
-   myLight2->SetDiffuse( 0.0f, 1.0f, 1.0f, 1.0f );
-   myLight2->SetConstantAttenuation( 1.0f );
-   myLight2->SetLinearAttenuation( 2.0f/20 );
-   myLight2->SetQuadraticAttenuation( 2.0f/osg::square(20) );
-   AddDrawable( myLight2 );
-
    Transform position;
-   position.Set(3.0f, -8.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   position.Set(0.3f, 0.6f, 1.2f, 0.0f, 0.0f, 0.0f );
    GetCamera()->SetTransform( &position );
 
    //remove:
@@ -73,7 +53,9 @@ TestLightsApp::Config()
    OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
    omm->SetTarget(GetCamera());
    omm->SetTarget(GetCamera());
-   omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
+   omm->SetDistance( 0 );
+
+   GUI *ui = new GUI(); 
 
 }
 
