@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osggl2d.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib Rpcrt4.lib"
+				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osggl2d.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib"
 				OutputFile="..\..\bin\dtcored.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
@@ -101,7 +101,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib glgui.lib isense.lib js.lib ode.lib opcode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osggl2.lib osgparticle.lib osgterrain.lib osgtext.lib osgutil.lib producer.lib sg.lib tinyxml.lib ul.lib winmm.lib"
+				AdditionalDependencies="dtutil.lib glgui.lib isense.lib js.lib ode.lib opcode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osggl2.lib osgparticle.lib osgterrain.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib sg.lib tinyxml.lib ul.lib winmm.lib"
 				OutputFile="..\..\bin\dtcore.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc;libcmt"
