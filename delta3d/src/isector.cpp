@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "isector.h"
-#include <osgUtil/IntersectVisitor>
 #include "scene.h"
 using namespace dtCore;
 
@@ -20,10 +19,10 @@ IMPLEMENT_MANAGEMENT_LAYER(Isector)
  */
 Isector::Isector(sgVec3 xyz, sgVec3 dir):
 mGeometry(NULL),
-mDistance(10000.f)
+mDistance(10000.f),
+mDirVecSet(false)
 {
    RegisterInstance(this);
-   sgZeroVec3(mHitPoint);
    sgZeroVec3(mStartXYZ);
    sgZeroVec3(mDirVec);
 
@@ -61,12 +60,20 @@ bool Isector::Update()
    osgUtil::IntersectVisitor iv;
    osg::ref_ptr<osg::LineSegment> seg = new osg::LineSegment;
    
-   //make an end point from the start xyz, direction, and distance
    sgVec3 endPt;
-   sgCopyVec3(endPt, mDirVec);
-   sgScaleVec3(endPt, mDistance);
-   sgAddVec3(endPt, mStartXYZ );
-   
+
+   if (mDirVecSet)
+   {
+      //make an end point from the start xyz, direction, and distance
+      sgCopyVec3(endPt, mDirVec);
+      sgScaleVec3(endPt, mDistance);
+      sgAddVec3(endPt, mStartXYZ );
+   }
+   else
+   {
+      sgCopyVec3(endPt, mEndXYZ);
+   }
+
    seg->set(osg::Vec3(mStartXYZ[0], mStartXYZ[1], mStartXYZ[2]),
             osg::Vec3(endPt[0], endPt[1], endPt[2]) );
    
@@ -88,18 +95,14 @@ bool Isector::Update()
    
    if (iv.hits())
    {
-      osgUtil::IntersectVisitor::HitList& hitList = iv.getHitList(seg.get());
-      if (!hitList.empty())
-      {
-         osg::Vec3 ip = hitList.front().getWorldIntersectPoint();
-         sgSetVec3(mHitPoint, ip[0], ip[1], ip[2] );
-         //osg::Vec3 np = hitList.front().getWorldIntersectNormal();
-      }
+      mHitList = iv.getHitList(seg.get());
       retVal = true;
    }
 
    return retVal;
 }
+
+
 
 
 /*!
@@ -110,6 +113,17 @@ bool Isector::Update()
 void Isector::SetStartPosition(sgVec3 xyz)
 {
    sgCopyVec3(mStartXYZ, xyz);
+}
+
+/*!
+* Set the starting location for the Isector.
+*
+* @param xyz : XYZ in meters
+*/
+void Isector::SetEndPosition(sgVec3 xyz)
+{
+   sgCopyVec3(mEndXYZ, xyz);
+   mDirVecSet = false;
 }
 
 
@@ -123,17 +137,25 @@ void Isector::SetDirection(sgVec3 dir)
 {
    sgCopyVec3(mDirVec, dir);
    sgNormaliseVec3(mDirVec);
+   
+   mDirVecSet = true;
 }
 
 
 /*!
- * Get the first intersected point since the last call to Update().
+ * Get the intersected point since the last call to Update().
  *
  * @param xyz : The xyz position to be filled out [in/out]
+ * @param pointNum:  Which intersection point to return [0..GetNumberOfHits()]
  */
-void Isector::GetHitPoint(sgVec3 xyz)
+void Isector::GetHitPoint(sgVec3 xyz, const int pointNum)
 {
-   sgCopyVec3(xyz, mHitPoint);
+   if (pointNum >= GetNumberOfHits()) return;
+
+   osg::Vec3 ip = mHitList[pointNum].getWorldIntersectPoint();
+   sgSetVec3(xyz, ip[0], ip[1], ip[2] );
+
+   osg::Geode *g = mHitList[pointNum]._geode.get();
 }
 
 
@@ -146,4 +168,15 @@ void Isector::GetHitPoint(sgVec3 xyz)
 void Isector::SetLength(const float distance)
 {
    mDistance = distance;
+}
+
+/*! 
+ * Get the number of items that were intersected by this Isector.  Note: 
+ * Isector::Update() must be called prior to calling this method.
+ * 
+ * @return The number of intersected items
+ */
+int Isector::GetNumberOfHits(void)
+{
+   return( mHitList.size() );
 }

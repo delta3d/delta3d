@@ -9,6 +9,7 @@
 
 #include "transformable.h"
 #include "deltadrawable.h"
+#include <osgUtil/IntersectVisitor>
 
 namespace dtCore
 {
@@ -40,6 +41,7 @@ namespace dtCore
     isect->GetHitPoint( hitPt );
 \endcode
 */
+
    class DT_EXPORT Isector : public Transformable  
    {
    public:
@@ -52,14 +54,19 @@ namespace dtCore
       ///Set the length of the isector
 	   void SetLength( const float distance);
       
-      ///Get the first intersected point
-	   void GetHitPoint( sgVec3 xyz );
+      ///Get the intersected point
+	   void GetHitPoint( sgVec3 xyz, const int pointNum=0 );
+
+      ///Get the number of intersected items
+      int GetNumberOfHits(void);
 
       ///Set the direction vector
 	   void SetDirection( sgVec3 dir );
 
       ///Set the starting position
 	   void SetStartPosition( sgVec3 xyz );
+
+      void SetEndPosition( sgVec3 endXYZ );
 
       ///Check for intersections
 	   bool Update(void);
@@ -68,11 +75,13 @@ namespace dtCore
 	   void SetGeometry( DeltaDrawable *object);
       
    private:
-	   sgVec3 mHitPoint;
 	   DeltaDrawable* mGeometry;
-	   sgVec3 mStartXYZ;
-      sgVec3 mDirVec;
-      float mDistance;
+	   sgVec3 mStartXYZ; ///<The starting xyz
+      sgVec3 mEndXYZ;
+      sgVec3 mDirVec;   ///<The direction vector
+      float mDistance;  ///<The maximum distance for the intersector
+      osgUtil::IntersectVisitor::HitList mHitList; ///<The last list of hits
+      bool mDirVecSet;
    };
 }
 
