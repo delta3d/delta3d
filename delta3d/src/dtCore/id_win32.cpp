@@ -1,58 +1,48 @@
 #include "dtCore/id.h"
+#include "dtCore/notify.h"
 
 #include <cassert>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-IMPLEMENT_MANAGEMENT_LAYER(Id)
-
 using namespace dtCore;
 using namespace std;
    
 Id::Id()
 {
-   assert( CoCreateGuid( &mId ) == S_OK );
+   assert( UuidCreate( &mId ) == RPC_S_OK );
 }
 
-Id::Id( const Id& id )
+Id::Id( const std::string& stringId )
 {
-   
+   Set( stringId );
 }
 
-virtual Id::~Id()
+Id::~Id()
 {
 }
 
 bool Id::operator== ( Id id )
 {
-   if( mId.Data1 == id.Data1 &&
-       mId.Data2 == id.Data2 &&
-       mId.Data3 == id.Data3 &&
-       mId.Data4[0] == id.Data4[0] &&
-       mId.Data4[1] == id.Data4[1] &&
-       mId.Data4[2] == id.Data4[2] &&
-       mId.Data4[3] == id.Data4[3] &&
-       mId.Data4[4] == id.Data4[4] &&
-       mId.Data4[5] == id.Data4[5] &&
-       mId.Data4[6] == id.Data4[6] &&
-       mId.Data4[7] == id.Data4[7] )
-      return true;
-   else
-      return false;
+   RPC_STATUS status;
+   int result = UuidEqual( &mId, &id.mId, &status );
+   assert( status == RPC_S_OK );
+
+   return result == TRUE;
 }
-      
-std::string Id::ToString()
+
+void Id::Set( const std::string& stringId )
 {
-   //add in dashes, << "-" ???
-   
-   ostringstream id;
-   id << setw( 8 ) << setfill( '0' ) << hex << mId.Data1 << setw( 4 ) << setfill( '0' ) << hex << mId.Data2 << setw( 4 ) << setfill( '0' ) << hex << mId.Data3;
+   if( UuidFromString( reinterpret_cast<unsigned char*>(const_cast<char*>(stringId.c_str())), &mId ) != RPC_S_OK )
+      Notify( WARN, "Could not convert std::string to dtCore::Id." );
+}
 
-   for ( size_t i = 0; i < 8; ++i )
-      id << setw( 2 ) << setfill( '0' ) << hex << (unsigned short) mId.Data4[ i ];
+void Id::Get( std::string& stringId ) const
+{
+   unsigned char* guidChar;
+   if( UuidToString( const_cast<UUID*>(&mId), &guidChar ) != RPC_S_OK )
+      Notify( WARN, "Could not convert dtCore::Id to std::string");
 
-   id << ends;
-
-   return id.str();
+   stringId = std::string( reinterpret_cast<const char*>(guidChar) );
 }

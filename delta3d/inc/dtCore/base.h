@@ -109,7 +109,7 @@ namespace dtCore
           *
           * @return the current name
           */
-         std::string GetName() const;
+         const std::string& GetName() const;
 
          void SetId( const Id& id ) { mId = id; };
          const Id& GetId() const { return mId; }
