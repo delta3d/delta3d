@@ -40,7 +40,7 @@
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib;"
+				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd,libc;MSVCRT.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testClouds.pdb"
@@ -75,7 +75,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc\;..\..\ext\inc\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -91,7 +91,7 @@
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="FALSE"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
