@@ -4,6 +4,9 @@
 
 #include "dtpython.h"
 
+#include "dt.h"
+#include "dtabc.h"
+
 
 // The individual class bindings
 
