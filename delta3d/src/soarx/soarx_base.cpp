@@ -6,14 +6,14 @@
 
 #include <cstdlib>
 #include <string>
-#include "soarx_framework.h"
-#include "soarx_generic.h"
-#include "soarxdrawable.h"
-#include "soarx_camera.h"
+#include "soarx/soarx_framework.h"
+#include "soarx/soarx_generic.h"
+#include "soarx/soarxdrawable.h"
+#include "soarx/soarx_camera.h"
 
 #include <iostream>
 
-#include "notify.h"
+#include "dtCore/notify.h"
 
 #include <osg/GL>
 #include <osg/GLExtensions>

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "tripod.h"
+#include "python/dtpython.h"
+#include "dtCore/tripod.h"
 
 using namespace boost::python;
 using namespace dtCore;

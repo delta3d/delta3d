@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "weather.h"
+#include "python/dtpython.h"
+#include "dtABC/weather.h"
 
 using namespace boost::python;
 using namespace dtABC;

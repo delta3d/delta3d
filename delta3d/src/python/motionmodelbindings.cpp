@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "motionmodel.h"
+#include "python/dtpython.h"
+#include "dtCore/motionmodel.h"
 
 using namespace boost::python;
 using namespace dtCore;

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "isector.h"
+#include "python/dtpython.h"
+#include "dtCore/isector.h"
 
 using namespace boost::python;
 using namespace dtCore;

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "deltadrawable.h"
+#include "python/dtpython.h"
+#include "dtCore/deltadrawable.h"
 
 using namespace boost::python;
 using namespace dtCore;

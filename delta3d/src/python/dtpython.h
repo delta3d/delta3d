@@ -10,7 +10,7 @@
 #include "ode/src/objects.h"
 #endif
 
-#include "dt.h"
+#include "dtCore/dt.h"
 
 namespace boost
 {

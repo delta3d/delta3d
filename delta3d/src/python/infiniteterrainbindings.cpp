@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "infiniteterrain.h"
+#include "python/dtpython.h"
+#include "dtCore/infiniteterrain.h"
 
 using namespace boost::python;
 using namespace dtCore;

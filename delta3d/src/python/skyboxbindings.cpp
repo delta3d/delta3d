@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "skybox.h"
+#include "python/dtpython.h"
+#include "dtCore/skybox.h"
 
 using namespace boost::python;
 using namespace dtCore;

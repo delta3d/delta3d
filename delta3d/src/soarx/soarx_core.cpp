@@ -8,12 +8,12 @@
 //
 //______________________________________________________________
 // Include headers:
-#include "soarx_framework.h"
-#include "soarx_generic.h"
-#include "soarxdrawable.h"
-#include "soarx_camera.h"
+#include "soarx/soarx_framework.h"
+#include "soarx/soarx_generic.h"
+#include "soarx/soarxdrawable.h"
+#include "soarx/soarx_camera.h"
 
-#include "notify.h"
+#include "dtCore/notify.h"
 
 using namespace dtSOARX;
 
