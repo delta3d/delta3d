@@ -1,0 +1,5 @@
+Import('*')
+
+env = env.Copy()
+
+testApp = env.Program( 'testApp', 'testapp.cpp', LIBS=[ 'dtcore', 'dtabc'] )
