@@ -1,0 +1,50 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testTerrain", "testTerrain.vcproj", "{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD} = {D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD}
+		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "p51", "..\..\src\p51.vcproj", "{D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "p51abc", "..\..\src\p51abc.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "p51soarx", "..\..\src\soarx\p51soarx.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.ActiveCfg = Debug|Win32
+		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Debug.Build.0 = Debug|Win32
+		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Release.ActiveCfg = Release|Win32
+		{D7A1B8D2-8C2A-4DBA-83A5-A0E13CC1C573}.Release.Build.0 = Release|Win32
+		{D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD}.Debug.ActiveCfg = Debug|Win32
+		{D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD}.Debug.Build.0 = Debug|Win32
+		{D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD}.Release.ActiveCfg = Release|Win32
+		{D3CA1B2D-5B64-46F9-B1CA-702E43F5F2AD}.Release.Build.0 = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
