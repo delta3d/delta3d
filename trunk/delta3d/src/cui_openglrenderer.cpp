@@ -27,6 +27,8 @@ Purpose:
 #include <osgDB/ReadFile>
 #include "notify.h"
 
+using namespace dtCore;
+
 const unsigned int CUI_OpenGLRenderer::TranslatePrimitive[] = {
 		GL_POLYGON, GL_QUADS, GL_TRIANGLES, GL_LINE_LOOP
 };

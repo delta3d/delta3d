@@ -24,6 +24,8 @@ Purpose:
 #include <stdio.h>
 
 
+using namespace dtCore;
+
 /////////////////////////////////////////////////////////////
 // Function: CUI_OpenGLShader::CUI_OpenGLShader
 //           ( void )
