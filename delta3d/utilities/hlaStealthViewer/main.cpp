@@ -1,10 +1,14 @@
 #include "dt.h"
 #include "dtabc.h"
+#include "dthla.h"
+
+/*
 #include "application.h"
 #include "effectmanager.h"
 #include "globals.h"
 #include "orbitmotionmodel.h"
-#include "rticonnection.h"
+#include "rticonnection.h"*/
+
 
 #include <osg/Billboard>
 #include <osg/Geode>

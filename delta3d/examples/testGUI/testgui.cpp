@@ -3,10 +3,14 @@
 // This will load a GUI config xml if the filename is passed in on the command
 // line or if no filename is present, create one from code.
 //
-#include "application.h"
+
 #include "dt.h"
+#include "dtabc.h"
+
+/*
 #include "globals.h"
 #include "uidrawable.h"
+#include "application.h"*/
 
 
 
