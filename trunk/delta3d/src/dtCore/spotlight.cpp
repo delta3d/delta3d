@@ -8,6 +8,8 @@ IMPLEMENT_MANAGEMENT_LAYER(SpotLight)
 SpotLight::SpotLight( int number, const std::string name, const LightingMode mode )
 :  PositionalLight( number, name, mode )
 {
+   RegisterInstance(this);
+
    //set some default spotlight parameters
    SetSpotCutoff( 22.5f ); //spot angle of 45 degrees
    SetSpotExponent( 1.0f ); 
@@ -16,6 +18,8 @@ SpotLight::SpotLight( int number, const std::string name, const LightingMode mod
 SpotLight::SpotLight( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
 :  PositionalLight( osgLightSource, name, mode )
 {
+   RegisterInstance(this);
+
    //set some default spotlight parameters
    SetSpotCutoff( 22.5f ); //spot angle of 45 degrees
    SetSpotExponent( 1.0f );
@@ -24,5 +28,7 @@ SpotLight::SpotLight( osg::LightSource* const osgLightSource, const std::string 
 SpotLight::~SpotLight()
 {
    mLightSource = NULL;
+
+   DeregisterInstance(this);
 }
 

@@ -11,6 +11,8 @@ IMPLEMENT_MANAGEMENT_LAYER(SkyDome)
 SkyDome::SkyDome(std::string name)
 :EnvEffect(name)
 {
+   RegisterInstance(this);
+
    mNode = new osg::Group();
    sgSetVec3(mBaseColor, 0.5f, 0.5f, 0.2f);
    Config();

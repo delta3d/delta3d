@@ -17,6 +17,8 @@ EnvEffect(name),
 mNode(NULL),
 mGeode(NULL)
 {
+   RegisterInstance(this);
+
    AddSender(System::GetSystem()); //hook us up to the System
 
    //need this made so the SkyBox can be added to the Environment
@@ -25,6 +27,7 @@ mGeode(NULL)
 
 SkyBox::~SkyBox(void)
 {
+   DeregisterInstance(this);
 }
 
 
