@@ -95,13 +95,12 @@ namespace dtCore
       
 
    private:
-      osg::ref_ptr<Producer::Camera> mCamera; ///<Handle to the Producer camera
-      osg::ref_ptr<DeltaWin> mWindow; ///<The currently assigned DeltaWin
+      osg::ref_ptr<Producer::Camera> mCamera; // Handle to the Producer camera
+      osg::ref_ptr<DeltaWin> mWindow; // The currently assigned DeltaWin
       osg::ref_ptr<Scene> mScene;
-      sgVec4 mClearColor; ///<The current clear color
+      sgVec4 mClearColor; // The current clear color
 
-      /// The Producer "build-in" RenderSurface.
-      osg::ref_ptr<Producer::RenderSurface> mDefaultRenderSurface;
+      DeltaRenderSurface* mDefaultRenderSurface;
    };
    
 };

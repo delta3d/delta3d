@@ -75,7 +75,7 @@ Widget::Config( const WinData* d /*= NULL*/ )
       osg::ref_ptr<Producer::Camera>         pc = mCamera->GetCamera();
       assert( pc.get() );
 
-      osg::ref_ptr<Producer::RenderSurface>  rs = pc->getRenderSurface();
+      osg::ref_ptr<DeltaRenderSurface>       rs = new DeltaRenderSurface;
       assert( rs.get() );
 
       osg::ref_ptr<Producer::InputArea>      ia = new Producer::InputArea;
@@ -87,7 +87,9 @@ Widget::Config( const WinData* d /*= NULL*/ )
 
       ia->addRenderSurface( rs.get() );
 
-      mWindow  = new dtCore::DeltaWin( "Widget", ia.get() );
+      pc->setRenderSurface( rs.get() );
+
+      mWindow  = new dtCore::DeltaWin( "Widget", rs.get(), ia.get() );
       assert( mWindow.get() );
 
       mKeyboard = mWindow->GetKeyboard();
@@ -264,6 +266,8 @@ Widget::Resize( const WinRect* r )
 
    Producer::RenderSurface*   prs   = pcam->getRenderSurface();
    assert( prs );
+
+   //convert to DeltaRenderSurface
 
    prs->setWindowRectangle( r->pos_x, r->pos_y, r->width, r->height, false );
 }

@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <cassert>
+
 #include "Producer/KeyboardMouse"
 #include "dtCore/deltawin.h"
 #include "dtCore/notify.h"
@@ -82,24 +84,20 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor, bool fullScreen) ://, bool callback) :
+DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor, bool fullScreen) :
 Base(name),
 mShowCursor(true)
 {
    RegisterInstance(this);
 
-   mRenderSurface = new Producer::RenderSurface;
+   mRenderSurface = new DeltaRenderSurface; 
    
    mKeyboard = new Keyboard;
-
    mMouse = new Mouse;
 
-   //if(callback)
-   //{
    mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
    mKeyboardMouse->startThread();
-   //}
 
    if(!fullScreen)
    {
@@ -115,7 +113,7 @@ mShowCursor(true)
 
 }
 
-DeltaWin::DeltaWin(string name, Producer::RenderSurface* rs) ://, bool callback) :
+DeltaWin::DeltaWin(string name, DeltaRenderSurface* rs, Producer::InputArea* ia) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(rs)
@@ -123,46 +121,18 @@ mRenderSurface(rs)
    RegisterInstance(this);
    
    mKeyboard = new Keyboard;
-
    mMouse = new Mouse;
 
-
-   //if(callback)
-   //{
+   if(ia) // use the passed InputArea if not NULL
+      mKeyboardMouse = new Producer::KeyboardMouse(ia);
+   else // otherwise use the passed DeltaRenderSurface
       mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
 
-      mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
-      mKeyboardMouse->startThread();
-   //}
+   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+   mKeyboardMouse->startThread();
 
    ShowCursor();
 }
-
-
-DeltaWin::DeltaWin(string name, Producer::InputArea* ia) ://, bool callback) :
-Base(name),
-mShowCursor(true),
-mRenderSurface(ia->getRenderSurface(0))
-{
-   RegisterInstance(this);
-   
-   mKeyboard = new Keyboard;
-
-   mMouse = new Mouse;
-
-
-   //if(callback)
-   //{
-      mKeyboardMouse = new Producer::KeyboardMouse(ia);
-
-      mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
-      mKeyboardMouse->startThread();
-   //}
- 
-
-   ShowCursor();
-}
-
 
 
 DeltaWin::~DeltaWin()
@@ -374,6 +344,23 @@ ResolutionVec DeltaWin::GetResolutions( void )
 
 bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate ) 
 {
+   bool changeSuccessful = false;
+
+   std::vector<bool> fullScreenVec; //container to store fullScreen state of each RenderSurface
+
+   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+   {
+      DeltaWin* dw = DeltaWin::GetInstance(i);
+
+      //store fullScreen state, then set to false
+      fullScreenVec.push_back(dw->GetFullScreenMode());
+      dw->SetFullScreenMode(false);
+
+      //notify all render surfaces that resolution has changed
+      dw->GetRenderSurface()->SetScreenWidthHeight(   static_cast<unsigned int>(width),
+                                                      static_cast<unsigned int>(height) );
+   }
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
    DEVMODE dmScreenSettings;                                                           
@@ -389,10 +376,12 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
    {
       Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
-      return false;
    }
-   return true;
-   
+   else
+   {
+      changeSuccessful = true;
+   }
+
 #else
 
    Display* dpy = XOpenDisplay(NULL);
@@ -406,9 +395,10 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
    //test if new value is same as current, if so don't do anything
    if( modeline.hdisplay == width && modeline.vdisplay == height && tempRefresh == refreshRate )
-       return true;
+   {
+      changeSuccessful = true;
+   }
   
-
    int numResolutions;
    XF86VidModeModeInfo** resolutions;
    XF86VidModeGetAllModeLines(dpy,
@@ -416,29 +406,44 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
                               &numResolutions,
                               &resolutions);
 
-   for(int i = 0; i < numResolutions; i++)
+   for(int i = 0; i < numResolutions && !changeSuccessful; i++)
    {
       XF86VidModeModeInfo* tempRes = resolutions[i];
       
       tempRefresh = CalcRefreshRate( tempRes->htotal, tempRes->vtotal, tempRes->dotclock );
-
-      //Notify(WARN,"Checking resolution: %dx%d @ %d, %d", tempRes->hdisplay, tempRes->vdisplay, colorDepth, tempRefresh );
-      //Notify(WARN,"against:             %dx%d @ %d, %d\n", width, height, colorDepth, refreshRate );
-      
+     
       if( tempRes->hdisplay == width && tempRes->vdisplay == height && tempRefresh == refreshRate )
       {
          XF86VidModeSwitchToMode( dpy, screenNum, tempRes );
          XF86VidModeSetViewPort( dpy,screenNum, 0, 0 );
          XSync(dpy,false);
 
-         return true;
+         changeSuccessful = true;
       }
    }
 
-   Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
-   return false;
+   if(!changeSuccessful)
+      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
    
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
+   //change back to original fullScreen state
+   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+   {
+      if(fullScreenVec[i])
+      {
+         DeltaWin::GetInstance(i)->SetFullScreenMode(fullScreenVec[i]);
+      }
+      else
+      {
+         //reset window position
+         int x,y,w,h;
+         DeltaWin::GetInstance(i)->GetPosition(&x,&y,&w,&h);
+         DeltaWin::GetInstance(i)->SetPosition(x,y,w,h);
+      }
+   }
+
+   return changeSuccessful;
 }
 
 bool DeltaWin::ChangeScreenResolution( Resolution res ) 

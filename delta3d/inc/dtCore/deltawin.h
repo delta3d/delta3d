@@ -26,8 +26,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <Producer/KeyboardMouse>
-#include <Producer/RenderSurface>
+//#include <Producer/RenderSurface>
 
+#include "dtCore/deltarendersurface.h"
 #include "dtCore/keyboard.h"
 #include "dtCore/mouse.h"
 #include <osg/ref_ptr>
@@ -57,9 +58,9 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(DeltaWin)
 
    public:
-      DeltaWin(std::string name="window", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false);//, bool callback=true);
-      DeltaWin(std::string name, Producer::RenderSurface* rs);//, bool callback=true);
-      DeltaWin(std::string name, Producer::InputArea* ia);//, bool callback=true);
+      DeltaWin(std::string name="window", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false);
+      DeltaWin(std::string name, DeltaRenderSurface* rs, Producer::InputArea* ia = NULL);
+
       virtual ~DeltaWin();
 
       ///Calculate the screen pixel coords ([0,w],[0,h]) given the window coords (x,y) ([-1,1],[-1,1])
@@ -92,8 +93,9 @@ namespace dtCore
       ///Get the size and position of the DeltaWin
       void GetPosition( int *x, int *y, int *width, int *height );
 
-      ///Get a handle to the underlying Producer RenderSurface
-      Producer::RenderSurface *GetRenderSurface(void) {return mRenderSurface;}
+      ///Get a handle to the underlying DeltaRenderSurface
+      DeltaRenderSurface *GetRenderSurface(void) {return mRenderSurface;}
+      
       
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard *GetKeyboard() {return mKeyboard.get();}
@@ -118,7 +120,7 @@ namespace dtCore
       static int CalcRefreshRate( int width, int height, int dotclock );
       #endif
       
-      Producer::RenderSurface *mRenderSurface;
+      DeltaRenderSurface *mRenderSurface; //changed from straight-up RS
       Producer::KeyboardMouse *mKeyboardMouse;
       osg::ref_ptr<Keyboard> mKeyboard;
       osg::ref_ptr<Mouse> mMouse;
