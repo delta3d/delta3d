@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "base.h"
+#include "python/dtpython.h"
+#include "dtCore/base.h"
 
 using namespace boost::python;
 using namespace boost::python::detail;

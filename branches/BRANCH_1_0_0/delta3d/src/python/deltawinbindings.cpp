@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "deltawin.h"
+#include "python/dtpython.h"
+#include "dtCore/deltawin.h"
 
 using namespace boost::python;
 using namespace dtCore;

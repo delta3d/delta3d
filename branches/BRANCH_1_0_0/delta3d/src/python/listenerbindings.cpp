@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "listener.h"
+#include "python/dtpython.h"
+#include "dtAudio/listener.h"
 
 using namespace boost::python;
 using namespace dtCore;

@@ -2,10 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
+#include "python/dtpython.h"
 
-#include "dt.h"
-#include "dtchar.h"
+#include "dtCore/dt.h"
+#include "dtChar/dtchar.h"
 
 
 // The individual class bindings

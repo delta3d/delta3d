@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "clouddome.h"
+#include "python/dtpython.h"
+#include "dtCore/clouddome.h"
 
 using namespace boost::python;
 using namespace dtCore;

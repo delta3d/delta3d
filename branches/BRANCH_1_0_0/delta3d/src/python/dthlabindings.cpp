@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
+#include "python/dtpython.h"
 
 #include "dt.h"
 #include "dthla.h"

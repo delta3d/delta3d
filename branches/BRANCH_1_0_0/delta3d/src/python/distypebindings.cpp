@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "dis_types.h"
+#include "python/dtpython.h"
+#include "dtHLA/dis_types.h"
 
 using namespace boost::python;
 using namespace dtHLA;

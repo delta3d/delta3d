@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "keyboard.h"
+#include "python/dtpython.h"
+#include "dtCore/keyboard.h"
 
 using namespace boost::python;
 using namespace dtCore;

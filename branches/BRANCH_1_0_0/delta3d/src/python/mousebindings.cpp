@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "mouse.h"
+#include "python/dtpython.h"
+#include "dtCore/mouse.h"
 
 using namespace boost::python;
 using namespace dtCore;

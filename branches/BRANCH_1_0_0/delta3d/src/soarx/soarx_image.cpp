@@ -2,11 +2,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <cstring>
-#include "soarx_framework.h"
-#include "soarx_generic.h"
-#include "soarx_image.h"
+#include "soarx/soarx_framework.h"
+#include "soarx/soarx_generic.h"
+#include "soarx/soarx_image.h"
 
-#include "notify.h"
+#include "dtCore/notify.h"
 
 using namespace dtSOARX;
 

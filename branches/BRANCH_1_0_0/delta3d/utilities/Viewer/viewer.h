@@ -1,9 +1,9 @@
 #ifndef DELTA_VIEWER
 #define DELTA_VIEWER
 
-#include <widget.h>
-#include <logicalinputdevice.h>
-#include <motionmodel.h>
+#include <dtABC/widget.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/motionmodel.h>
 
 
 

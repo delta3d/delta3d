@@ -10,11 +10,11 @@
 #include <osgDB/WriteFile>
 #include <osgDB/ReaderWriter>
 
-#include <flymotionmodel.h>
-#include <orbitmotionmodel.h>
-#include <ufomotionmodel.h>
-#include <walkmotionmodel.h>
-#include <compass.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/ufomotionmodel.h>
+#include <dtCore/walkmotionmodel.h>
+#include <dtCore/compass.h>
 
 #include "viewstate.h"
 #include "viewer.h"

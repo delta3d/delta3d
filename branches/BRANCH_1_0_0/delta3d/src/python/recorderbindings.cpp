@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "recorder.h"
+#include "python/dtpython.h"
+#include "dtCore/recorder.h"
 
 using namespace boost::python;
 using namespace dtCore;

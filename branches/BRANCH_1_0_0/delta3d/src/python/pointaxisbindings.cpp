@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "pointaxis.h"
+#include "python/dtpython.h"
+#include "dtCore/pointaxis.h"
 
 using namespace boost::python;
 using namespace dtCore;

@@ -2,9 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "soarxterrain.h"
+#include "soarx/soarxterrain.h"
 
-#include "notify.h"
+#include "dtCore/notify.h"
 
 #include <iostream>
 
