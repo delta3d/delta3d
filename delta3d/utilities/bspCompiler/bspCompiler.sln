@@ -1,10 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bspCompiler", "bspCompiler.vcproj", "{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}"
 	ProjectSection(ProjectDependencies) = postProject
-		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+		{6CB0D175-771B-4592-91A2-C367C61A3381} = {6CB0D175-771B-4592-91A2-C367C61A3381}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "..\..\src\dtVis\dtvis.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "..\..\src\dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -18,10 +18,10 @@ Global
 		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Debug.Build.0 = Debug|Win32
 		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Release.ActiveCfg = Release|Win32
 		{BE9E03DF-21E7-45B7-87B3-F146CAA9D582}.Release.Build.0 = Release|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.ActiveCfg = Debug|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.Build.0 = Debug|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.ActiveCfg = Release|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
