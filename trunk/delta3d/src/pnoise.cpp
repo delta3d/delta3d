@@ -11,7 +11,7 @@
 // For pixel format it should be used GL_ALPHA (for a transparency map),
 // GL_LUMINANCE, GL_RGB or GL_RGBA
  
-#include "PNoise.h"
+#include "pnoise.h"
 #include "time.h"
 
 using namespace dtCore;

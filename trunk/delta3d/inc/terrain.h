@@ -1,9 +1,10 @@
+#ifndef DELTA_TERRAIN
+#define DELTA_TERRAIN
+
 // terrain.h: Declaration of the Terrain class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_TERRAIN
-#define DELTA_TERRAIN
 
 #include <sstream>
 
@@ -447,5 +448,6 @@ namespace dtCore
          osg::ref_ptr<osg::Geode> mGeode;
    };
 };
+
 
 #endif // DELTA_TERRAIN

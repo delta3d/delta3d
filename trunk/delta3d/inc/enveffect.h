@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_ENVEFFECT
+#define DELTA_ENVEFFECT
+
 #include "base.h"
 #include "sg.h"
 #include <osg/Group>
@@ -23,3 +25,5 @@ namespace dtCore
 
    };
 }
+
+#endif // DELTA_ENVEFFECT

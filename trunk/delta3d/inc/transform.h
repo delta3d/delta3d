@@ -1,10 +1,8 @@
+#ifndef DELTA_TRANSFORM
+#define DELTA_TRANSFORM
 
-#if !defined(AFX_TRANSFORM_H__C6D53150_DAEC_4E42_BF12_C588CB62C637__INCLUDED_)
-#define AFX_TRANSFORM_H__C6D53150_DAEC_4E42_BF12_C588CB62C637__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+
 
 #include "export.h"
 #include "sg.h"
@@ -63,4 +61,5 @@ namespace dtCore
 };
 
 
-#endif // !defined(AFX_TRANSFORM_H__C6D53150_DAEC_4E42_BF12_C588CB62C637__INCLUDED_)
+
+#endif // DELTA_TRANSFORM

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_WIDGET
+#define DELTA_WIDGET
+
 #include <FL/X.h>
 
 #include <baseabc.h>
@@ -366,3 +368,5 @@ namespace dtABC
    };
 
 };
+
+#endif // DELTA_WIDGET

@@ -1,9 +1,10 @@
+#ifndef DELTA_CHARACTER
+#define DELTA_CHARACTER
+
 // character.h: Declaration of the Character class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef dtCore_CHARACTER
-#define dtCore_CHARACTER
 
 #include "drawable.h"
 #include "transformable.h"
@@ -190,4 +191,5 @@ namespace dtChar
    };
 };
 
-#endif // dtCore_CHARACTER
+
+#endif // DELTA_CHARACTER

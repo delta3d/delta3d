@@ -1,9 +1,10 @@
+#ifndef DELTA_FLYMOTIONMODEL
+#define DELTA_FLYMOTIONMODEL
+
 // flymotionmodel.h: Declaration of the FlyMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_FLY_MOTION_MODEL
-#define DELTA_FLY_MOTION_MODEL
 
 #include "keyboard.h"
 #include "mouse.h"
@@ -212,4 +213,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_FLY_MOTION_MODEL
+
+#endif // DELTA_FLYMOTIONMODEL

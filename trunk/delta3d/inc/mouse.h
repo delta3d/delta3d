@@ -1,9 +1,10 @@
+#ifndef DELTA_MOUSE
+#define DELTA_MOUSE
+
 // mouse.h: Declaration of the Mouse class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_MOUSE
-#define DELTA_MOUSE
 
 #include <set>
 #include <string>
@@ -161,5 +162,6 @@ namespace dtCore
          virtual void MouseScrolled(Mouse* mouse, int delta) {}
    };
 };
+
 
 #endif // DELTA_MOUSE

@@ -1,5 +1,5 @@
 /** header files */
-#include <assert.h>
+#include <cassert>
 
 #include <system.h>
 #include <globals.h>

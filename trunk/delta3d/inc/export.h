@@ -1,9 +1,10 @@
+#ifndef DELTA_EXPORT
+#define DELTA_EXPORT
+
 // export.h: Export definitions.  Modeled after osg/Export.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_EXPORT
-#define DELTA_EXPORT
 
 #ifdef DT_DLL
 	#  ifdef DT_LIBRARY
@@ -14,5 +15,6 @@
 #else
 	#  define DT_EXPORT
 #endif
+
 
 #endif // DELTA_EXPORT

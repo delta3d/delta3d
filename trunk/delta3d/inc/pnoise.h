@@ -1,10 +1,11 @@
+#ifndef DELTA_PNOISE
+#define DELTA_PNOISE
+
 // Pnoise.h
 // Based on updated implementation (2002) of Ken Perlin's Noise
 // Modified to support 2d noise and to to be tileable to every
 // dimension
 
-#ifndef _PNOISE_H
-#define _PNOISE_H
 
 #include <math.h>
 #include <stdio.h>
@@ -64,4 +65,5 @@ namespace dtCore
     };
 }
 
-#endif _PNOISE_H
+
+#endif // DELTA_PNOISE

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_APPLICATION
+#define DELTA_APPLICATION
+
 #include "baseabc.h"
 #include "tinyxml.h"
 
@@ -51,3 +53,5 @@ namespace dtABC
                void  GenerateConfigFile( void );
    };
 }
+
+#endif // DELTA_APPLICATION

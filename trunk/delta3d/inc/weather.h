@@ -1,6 +1,8 @@
-#pragma once
+#ifndef DELTA_WEATHER
+#define DELTA_WEATHER
+
 #include "base.h"
-#include "Environment.h"
+#include "environment.h"
 #include "cloudplane.h"
 
 namespace dtABC
@@ -107,3 +109,5 @@ namespace dtABC
    };
 
 }
+
+#endif // DELTA_WEATHER

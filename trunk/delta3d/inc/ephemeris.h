@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_EPHEMERIS
+#define DELTA_EPHEMERIS
+
 #include "sg.h"
 #include <time.h>
 
@@ -13,3 +15,5 @@ namespace dtCore
    ///Get the Greenwich Mean Time for the give day and time
    DT_EXPORT time_t GetGMT(int year, int month, int day, int hour, int min, int sec);
 }
+
+#endif // DELTA_EPHEMERIS

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_TRIPOD
+#define DELTA_TRIPOD
+
 #include "transformable.h"
 #include "camera.h"
 
@@ -80,3 +82,5 @@ namespace dtCore
    };
    
 }
+
+#endif // DELTA_TRIPOD

@@ -1,9 +1,10 @@
+#ifndef DELTA_ENTITY
+#define DELTA_ENTITY
+
 // entity.h: Declaration of the Entity class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DT_HLA_ENTITY
-#define DT_HLA_ENTITY
 
 #include <string>
 
@@ -211,4 +212,5 @@ namespace dtHLA
    };
 };
 
-#endif // DT_HLA_ENTITY
+
+#endif // DELTA_ENTITY

@@ -1,9 +1,10 @@
+#ifndef DELTA_SOUND
+#define DELTA_SOUND
+
 // sound.h: Declaration of the Sound class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_SOUND
-#define DELTA_SOUND
 
 #include <al.h>
 #include <alut.h>
@@ -211,5 +212,6 @@ namespace dtCore
 
    };
 };
+
 
 #endif // DELTA_SOUND

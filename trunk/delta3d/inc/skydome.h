@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_SKYDOME
+#define DELTA_SKYDOME
+
 #include "enveffect.h"
 #include "osg/group"
 #include "osg/Geode"
@@ -67,3 +69,5 @@ namespace dtCore
       MoveEarthySkyWithEyePointTransform *mXform;
    };
 }
+
+#endif // DELTA_SKYDOME

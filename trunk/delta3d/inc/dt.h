@@ -1,5 +1,6 @@
-#if !defined(DELTA_INCLUDE)
-#define  DELTA_INCLUDE
+#ifndef DELTA_DT
+#define DELTA_DT
+
 
 #include "camera.h"
 #include "clouddome.h"
@@ -8,7 +9,7 @@
 #include "cui_openglrenderer.h"
 #include "cui_openglshader.h"
 #include "drawable.h"
-#include "Environment.h"
+#include "environment.h"
 #include "enveffect.h"
 #include "effectmanager.h"
 #include "flymotionmodel.h"
@@ -161,4 +162,5 @@
    #pragma comment(lib, _AUTOLIBNAME5)
 #endif
 
-#endif //DELTA_INCLUDE
+
+#endif // DELTA_DT

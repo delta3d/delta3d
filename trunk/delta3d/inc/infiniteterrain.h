@@ -1,9 +1,10 @@
+#ifndef DELTA_INFINITETERRAIN
+#define DELTA_INFINITETERRAIN
+
 // infiniteterrain.h: Declaration of the InfiniteTerrain class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_INFINITE_TERRAIN
-#define DELTA_INFINITE_TERRAIN
 
 #include "osg/ref_ptr"
 #include "osg/Group"
@@ -298,4 +299,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_INFINITE_TERRAIN
+
+#endif // DELTA_INFINITETERRAIN

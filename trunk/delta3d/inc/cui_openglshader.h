@@ -1,3 +1,6 @@
+#ifndef DELTA_CUI_OPENGLSHADER
+#define DELTA_CUI_OPENGLSHADER
+
 /*! \file CUI_Shader.h
 \brief Class definition for CUI_Shader
 
@@ -12,8 +15,6 @@ Purpose:
 Class definition for CUI_Shader
 */
 
-#ifndef CUI_SHADER_H
-#define CUI_SHADER_H
 
 #include "UI/UI_types.h"
 #include "UI/CUI_SimpleShader.h"
@@ -61,5 +62,5 @@ namespace dtCore
 
    };
 }
-#endif
 
+#endif // DELTA_CUI_OPENGLSHADER

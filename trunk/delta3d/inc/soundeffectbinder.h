@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_SOUNDEFFECTBINDER
+#define DELTA_SOUNDEFFECTBINDER
+
 #include <string>
 #include <vector>
 #include <map>
@@ -174,3 +176,5 @@ namespace dtCore
                   MGR_LST     mFxMgr;
    };
 };
+
+#endif // DELTA_SOUNDEFFECTBINDER

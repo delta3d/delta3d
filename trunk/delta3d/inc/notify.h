@@ -1,5 +1,6 @@
-#ifndef NOTIFY_H_INCLUDED
-#define NOTIFY_H_INCLUDED
+#ifndef DELTA_NOTIFY
+#define DELTA_NOTIFY
+
 
 #include <ostream>
 
@@ -33,4 +34,5 @@ namespace dtCore
    extern DT_EXPORT std::ostream& Notify(const NotifySeverity severity);
 
 };
-#endif
+
+#endif // DELTA_NOTIFY

@@ -1,13 +1,11 @@
+#ifndef DELTA_CAMERA
+#define DELTA_CAMERA
+
 // camera.h: interface for the Camera class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_CAMERA_H__45494578_1EF4_493B_86C9_F2E3DB98ED68__INCLUDED_)
-#define AFX_CAMERA_H__45494578_1EF4_493B_86C9_F2E3DB98ED68__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include "Producer\camera"
 #include "base.h"
@@ -90,4 +88,5 @@ namespace dtCore
    
 };
 
-#endif // !defined(AFX_CAMERA_H__45494578_1EF4_493B_86C9_F2E3DB98ED68__INCLUDED_)
+
+#endif // DELTA_CAMERA

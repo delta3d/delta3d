@@ -1,4 +1,6 @@
-#pragma  once
+#ifndef DELTA_POINTAXIS
+#define DELTA_POINTAXIS
+
 #include <string>
 
 #include <osg/ref_ptr>
@@ -163,3 +165,5 @@ namespace dtCore
                   osg::ref_ptr<osg::Switch>           mLabelSwitch;        ///< toggle for individual labels
    };
 };
+
+#endif // DELTA_POINTAXIS

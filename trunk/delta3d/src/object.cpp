@@ -3,8 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "object.h"
-#include <osgDB\ReadFile>
-#include <osgDB\Registry>
+#include <osgDB/ReadFile>
+#include <osgDB/Registry>
 #include "notify.h"
 using namespace dtCore;
 using namespace std;

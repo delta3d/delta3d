@@ -1,6 +1,8 @@
-#pragma once
+#ifndef DELTA_ENVIRONMENT
+#define DELTA_ENVIRONMENT
+
 #include "drawable.h"
-#include "EnvEffect.h"
+#include "enveffect.h"
 #include "osg/group"
 #include <osg/fog>
 #include "sunlightshader.h"
@@ -169,3 +171,5 @@ namespace dtCore
       void UpdateShaders(void);
 };
 }
+
+#endif // DELTA_ENVIRONMENT

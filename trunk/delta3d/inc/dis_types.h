@@ -1,9 +1,10 @@
+#ifndef DELTA_DIS_TYPES
+#define DELTA_DIS_TYPES
+
 // dis_types.h: DIS/RPR-FOM data types.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DT_HLA_DIS_TYPES
-#define DT_HLA_DIS_TYPES
 
 namespace dtHLA
 {
@@ -1161,4 +1162,5 @@ namespace dtHLA
    };
 };
 
-#endif // P51_HLA_DIS_TYPES
+
+#endif // DELTA_DIS_TYPES

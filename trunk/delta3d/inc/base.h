@@ -1,9 +1,10 @@
+#ifndef DELTA_BASE
+#define DELTA_BASE
+
 // base.h: The root of the inheritance hierarchy.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef BASE
-#define BASE
 
 #include <string>
 
@@ -102,4 +103,5 @@ namespace dtCore
    };
 };
 
-#endif // BASE
+
+#endif // DELTA_BASE

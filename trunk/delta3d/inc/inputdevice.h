@@ -1,9 +1,10 @@
+#ifndef DELTA_INPUTDEVICE
+#define DELTA_INPUTDEVICE
+
 // inputdevice.h: Declaration of the InputDevice class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_INPUT_DEVICE
-#define DELTA_INPUT_DEVICE
 
 #include <set>
 #include <string>
@@ -390,4 +391,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_INPUT_DEVICE
+
+#endif // DELTA_INPUTDEVICE

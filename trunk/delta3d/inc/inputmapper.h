@@ -1,9 +1,10 @@
+#ifndef DELTA_INPUTMAPPER
+#define DELTA_INPUTMAPPER
+
 // inputmapper.h: Declaration of the InputMapper class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DELTA_INPUT_MAPPER
-#define DELTA_INPUT_MAPPER
 
 #include <osg/ref_ptr>
 
@@ -190,4 +191,5 @@ namespace dtCore
    };
 };
 
-#endif // DELTA_INPUT_MAPPER
+
+#endif // DELTA_INPUTMAPPER
