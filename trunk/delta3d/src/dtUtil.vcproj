@@ -33,13 +33,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sg_d.lib ul_d.lib"
-				OutputFile="../../bin/dtUtild.dll"
+				OutputFile="../bin/dtUtild.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../ext/lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtUtil.pdb"
 				SubSystem="2"
-				ImportLibrary="../../lib/dtUtild.lib"
+				ImportLibrary="../lib/dtUtild.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -82,14 +82,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sg.lib ul.lib"
-				OutputFile="../../bin/dtUtil.dll"
+				OutputFile="../bin/dtUtil.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../ext/lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../lib/dtUtil.lib"
+				ImportLibrary="../lib/dtUtil.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
