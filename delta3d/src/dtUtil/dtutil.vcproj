@@ -39,7 +39,7 @@
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtUtil.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				SubSystem="2"
 				ImportLibrary="../../lib/dtutild.lib"
 				TargetMachine="1"/>

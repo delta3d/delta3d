@@ -38,6 +38,8 @@
 				OutputFile="..\..\bin\dthlad.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB);$(DELTA_INC);$(RTI_HOME)/$(RTI_BUILD_TYPE)/lib"
 				IgnoreDefaultLibraryNames="libcd; libcmtd"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				ImportLibrary="..\..\lib\dthlad.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
