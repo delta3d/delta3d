@@ -439,7 +439,7 @@ void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
 /** The supplied function will be used instead of the built-in collision
  *  callback.  
  * @param func : The function to handle collision detection
- * @para data : A void pointer to user data.  This gets passed directly to func.
+ * @param data : A void pointer to user data.  This gets passed directly to func.
  */
 void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
 {

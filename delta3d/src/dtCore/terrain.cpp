@@ -95,9 +95,6 @@ class dtCore::TerrainCallback : public osg::NodeCallback
 };
 
 
-/**
- * A transformation callback.
- */
 class TransformCallback : public osg::NodeCallback
 {
    public:

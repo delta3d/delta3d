@@ -135,7 +135,7 @@ namespace dtAudio
          /**
           * Loads the specified sound file.
           *
-          * @param filename the name of the file to load
+          * @param file the name of the file to load
           */
          virtual  void        LoadFile( const char* file );
 
@@ -154,16 +154,16 @@ namespace dtAudio
          /**
           * Set callback for when sound starts playing.
           *
-          * @param callback function pointer
-          * @param user data
+          * @param cb callback function pointer
+          * @param param any supplied user data
           */
          virtual  void        SetPlayCallback( SoundCB cb, void* param );
 
          /**
           * Set callback for when sound stops playing.
           *
-          * @param callback function pointer
-          * @param user data
+          * @param cb callback function pointer
+          * @param param any supplied user data
           */
          virtual  void        SetStopCallback( SoundCB cb, void* param );
 
@@ -190,28 +190,28 @@ namespace dtAudio
          /**
           * Is sound playing. (overloaded function)
           *
-          * @param true if playing
+          * @return true if playing
           */
          virtual  bool        IsPlaying( void )                   const {  return   false;   }
 
          /**
           * Is sound paused. (overloaded function)
           *
-          * @param true if playing
+          * @return true if playing
           */
          virtual  bool        IsPaused( void )                    const {  return   false;   }
 
          /**
           * Is sound stopped. (overloaded function)
           *
-          * @param true if playing
+          * @return true if playing
           */
          virtual  bool        IsStopped( void )                   const {  return   true;    }
 
          /**
           * Sets whether or not to play the sound in a continuous loop.
           *
-          * @param looping true to play the sound in a loop, false
+          * @param loop true to play the sound in a loop, false
           * otherwise
           */
          virtual  void        SetLooping( bool loop = true );
@@ -323,7 +323,7 @@ namespace dtAudio
           * Set the minimum distance that sound plays at max_gain.
           * Attenuation is not calculated below this distance
           *
-          * @param distance set to minimum
+          * @param dist set to minimum
           */
          virtual  void        SetMinDistance( float dist );
 
@@ -338,7 +338,7 @@ namespace dtAudio
           * Set the maximum distance that sound plays at min_gain.
           * Attenuation is not calculated above this distance
           *
-          * @param distance set to maximum
+          * @param dist the maximum distance
           */
          virtual  void        SetMaxDistance( float dist );
 
@@ -352,14 +352,14 @@ namespace dtAudio
          /**
           * Set the rolloff factor describing attenuation curve.
           *
-          * @param rollff factor to set
+          * @param rolloff factor to set
           */
          virtual  void        SetRolloffFactor( float rolloff );
 
          /**
           * Get the rolloff factor describing attenuation curve.
           *
-          * @return rollff factor
+          * @return rolloff factor
           */
          virtual  float       GetRolloffFactor( void )            const {  return   mRolloff;   }
 

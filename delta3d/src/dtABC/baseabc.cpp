@@ -66,7 +66,7 @@ BaseABC::Quit( void )
 /**
  * Add a visual object to the Scene.
  *
- * @Param obj the object to add to the scene
+ * @param obj the object to add to the scene
  */
 void
 BaseABC::AddDrawable( DeltaDrawable* obj )
@@ -79,7 +79,7 @@ BaseABC::AddDrawable( DeltaDrawable* obj )
 /**
  * Remove a visual object from the Scene.
  *
- * @Param obj the object to remove from the scene
+ * @param obj the object to remove from the scene
  */
 void
 BaseABC::RemoveDrawable( DeltaDrawable* obj )

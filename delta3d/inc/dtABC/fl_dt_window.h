@@ -356,8 +356,8 @@ public:
    /**
     * Set/unset which events get handled.
     *
-    * @Param ev the event to set
-    * @Param set flag to set or unset the event
+    * @param ev the event to set
+    * @param set flag to set or unset the event
     */
    virtual  void
    SetEvent( Fl_Event ev, bool set = true )
@@ -457,7 +457,7 @@ protected:
    /**
     * Translate the mouse event from FLTK data to dtABC data.
     *
-    * @Param ev the event to translate
+    * @param ev the event to translate
     */
    virtual  void
    TranslateMouseEvent( dtABC::MouseEvent& ev )
@@ -534,7 +534,7 @@ protected:
    /**
     * Translate the mouse event from FLTK data to dtCore data.
     *
-    * @Param ev the event to translate
+    * @param ev the event to translate
     */
    virtual  void
    TranslateKeyboardEvent( dtABC::KeyboardEvent& ev )
