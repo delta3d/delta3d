@@ -907,6 +907,8 @@ void LoadFile( std::string filename, bool import = false )
          Layers->value(newLayer);
          
          psEditorGUI_LayerSelect(NULL, NULL);
+
+         setParticleSystemFilename(filename);
       }
       else
       {
