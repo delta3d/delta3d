@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtUtil"
+	Name="dtutil"
 	ProjectGUID="{5F516A22-15B8-4160-B032-BDFD78707350}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -33,13 +33,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sg_d.lib ul_d.lib"
-				OutputFile="../bin/dtUtild.dll"
+				OutputFile="../bin/dtutild.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../ext/lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtUtil.pdb"
 				SubSystem="2"
-				ImportLibrary="../lib/dtUtild.lib"
+				ImportLibrary="../lib/dtutild.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -82,14 +82,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="sg.lib ul.lib"
-				OutputFile="../bin/dtUtil.dll"
+				OutputFile="../bin/dtutil.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../ext/lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../lib/dtUtil.lib"
+				ImportLibrary="../lib/dtutil.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
