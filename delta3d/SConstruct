@@ -50,8 +50,8 @@ opts.AddOptions(
     PathOption('prefix', 'Directory to install under (Default: /usr/local)', '/home/cwosborn/delta/HEAD/delta3d') )
 
 # Open the error log
-errorLog = open('BuildLog.txt', 'w')
-errorLog.write('Build started: ' + current_time() + '\n\n')
+#errorLog = open('BuildLog.txt', 'w')
+#errorLog.write('Build started: ' + current_time() + '\n\n')
 
 env = Environment(
     ENV = {
@@ -74,18 +74,19 @@ if sys.platform == 'win32' :
 elif sys.platform == 'linux2' or sys.platform == 'linux-i386' :
    OS = 'linux'
 else :
-   errorLog.write('Build Failed: Unsupported platform: ' + sys.platform)
-   errorLog.close()
-   env.Exit(-1) 
+   print 'Unsupported platform'
+   #errorLog.write('Build Failed: Unsupported platform: ' + sys.platform)
+   #errorLog.close()
+   #env.Exit(-1) 
 
 if env.get('debug'):
     env.Append(CCFLAGS=['-g'], CPPDEFINES=['DEBUG', '_DEBUG'])
     mode = 'debug'
-    errorLog.write('Build Configuration: Debug\n\n')
+    #errorLog.write('Build Configuration: Debug\n\n')
 else:
     env.Append(CCFLAGS=['-O2'], LINKFLAGS=['-s'], CPPDEFINES=['NDEBUG'])
     mode = 'release'
-    errorLog.write('Build Configuration: Release\n\n')
+    #errorLog.write('Build Configuration: Release\n\n')
     
 if env.get('distcc'):
     env['CC']  = ['$(', 'distcc', '$)', env['CC']]
@@ -116,9 +117,6 @@ env['LIBPATH'] = env['ENV']['DELTA_LIB']
 if OS == 'linux' :
   env['CPPPATH'].append('/usr/X11R6/include')
   env['LIBPATH'].append('/usr/X11R6/lib')
-
-print env['CPPPATH']
-print env['LIBPATH']
 
 #############################################
 # Configure: Testing for dependencies vX.X.X
@@ -309,7 +307,7 @@ def CheckForXxf86m(context):
 ##    errorLog.close()
 ##    env.Exit(-1)
 
-errorLog.write('OS: ' + OS + '\n\n')
+#errorLog.write('OS: ' + OS + '\n\n')
 
 conf = Configure(env, custom_tests = {
     'CheckForOpenSceneGraph' : CheckForOpenSceneGraph,
@@ -333,10 +331,10 @@ conf = Configure(env, custom_tests = {
 if not env.GetOption('clean'):
 
     if not conf.CheckForGdal() or not conf.CheckForOpenThreads() or not conf.CheckForProducer() or not conf.CheckForOpenSceneGraph() or not conf.CheckForFltk() or not conf.CheckForGlGui() or not conf.CheckForIsense() or not conf.CheckForOpenAl() or not conf.CheckForOde() or not conf.CheckForPlib() or not conf.CheckForCal3d() or not conf.CheckForReplicantBody() or not conf.CheckForSignalSlot() or not conf.CheckForTinyXml() or not conf.CheckForXxf86m() :
-       errorLog.write('Build Failed: Missing required libraries\n\n')
-       errorLog.close()
+       #errorLog.write('Build Failed: Missing required libraries\n\n')
+       #errorLog.close()
        if email == 'true' :
-          email_results()
+          #email_results()
           env.Exit(-1)
        else:
           env = conf.Finish()
@@ -352,7 +350,7 @@ Export('env')
 
 env.Replace(CXXSUFFIX = '.cpp')
 
-env.Alias('install','$prefix/lib')
+#env.Alias('install','$prefix/lib')
 #env.Alias('examples',SConscript(dirs=['examples']))
 #env.Alias('python',SConscript(dirs=['src/python','examples/testPython']))
 #env.Alias('hla',SConscript(dirs=['src/dtHLA','examples/testHLA','utilties/hlaStealthViewer']))
@@ -360,13 +358,39 @@ env.Alias('install','$prefix/lib')
 
 # TODO: install headers, libs, to $prefix
 
-SConscript(dirs=[ 'src' ])
-SConscript(dirs=[ 'examples' ])
-SConscript(dirs=[ 'utilities' ])
+dtAbcLib, dtAudioLib, dtCharLib, dtCoreLib, dtUtilLib, dtVisLib, gui_flLib = SConscript( 'src/SConscript' )
+
+testApp, testAudio, testCharacters, testClouds, testEffects, testGui, testInput, testLights, testMotionModels, testPhysics, testSound, testWeather, testWidget, testWin = SConscript( 'examples/SConscript' )
+
+env.Depends( testApp,[ dtCoreLib, dtAbcLib ] )
+env.Depends( testAudio, [ dtCoreLib, dtAbcLib, dtAudioLib ] )
+env.Depends( testCharacters, [ dtCoreLib, dtCharLib ] )
+env.Depends( testClouds, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testEffects, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testGui, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testInput, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testLights, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testMotionModels, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testPhysics, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testSound, [ dtCoreLib, dtAbcLib, dtAudioLib ] )
+env.Depends( testWeather, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testWidget, [ dtCoreLib, dtAbcLib ] )
+env.Depends( testWin, [ dtCoreLib, dtAbcLib ] )
+
+bspCompiler, psEditor, viewer = SConscript( 'utilities/SConscript' )
+
+env.Depends( psEditor, [ dtCoreLib, dtAbcLib ] )
+env.Depends( viewer, [ dtCoreLib, dtAbcLib, dtVisLib ] )
+
+#if libs == '[]' :
+#   errorLog.write('Failed to create the libraries or executable file')
+#   errorLog.write('Build Failed: Build ended: ' + current_time() + '\n')
+#   errorLog.close()
+#   env.Exit(-1)
 
 # Close the error log and print the results
-errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
-errorLog.close()
+#errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
+#errorLog.close()
 
 # email the results
 if email == 'true' :
