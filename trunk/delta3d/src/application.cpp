@@ -226,7 +226,7 @@ void dtABC::Application::GenerateConfigFile()
    win.SetAttribute("Height", h);
    win.SetAttribute("X", x);
    win.SetAttribute("Y", y);
-   //win.SetAttribute("PixelDepth", pd);
+   win.SetAttribute("PixelDepth", 24);
    win.SetAttribute("ShowCursor", cursor);
    win.SetAttribute("FullScreen", fullscreen);
    win.SetAttribute("UseWinAsRes", 0);
