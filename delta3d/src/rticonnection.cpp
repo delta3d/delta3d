@@ -1343,7 +1343,7 @@ void RTIConnection::RegisterMasterEntity(Entity* entity)
       
       sprintf(
          name, 
-         "Delta3D/%x/%hu-%hu-%hu", 
+         "JSAF/%x/%hu-%hu-%hu", 
          mLocalIPAddress,
          entityIdentifier.GetSiteIdentifier(),
          entityIdentifier.GetApplicationIdentifier(),
