@@ -477,6 +477,53 @@ Resolution DeltaWin::GetCurrentResolution( void )
 
 
 
+int DeltaWin::IsValidResolution( ResolutionVec rv, int width, int height, int refreshRate, int colorDepth )
+{
+   for( unsigned int i = 0; i < rv.size(); i++ )
+   {
+      if( width && height )
+      {
+         if( refreshRate && colorDepth )
+         {
+            if( rv[i].width == width && rv[i].height == height && rv[i].refresh == refreshRate && rv[i].bitDepth == colorDepth )
+               return i;
+         }
+         else if( refreshRate )
+         {
+            if( rv[i].width == width && rv[i].height == height && rv[i].refresh == refreshRate )
+               return i;
+         }
+         else if( colorDepth )
+         {
+            if( rv[i].width == width && rv[i].height == height && rv[i].bitDepth == colorDepth )
+               return i;
+         }
+         else
+         {
+            if( rv[i].width == width && rv[i].height == height )
+               return i;
+         }
+      }
+      else if( refreshRate && colorDepth )
+      {
+         if( rv[i].refresh == refreshRate && rv[i].bitDepth == colorDepth )
+            return i;
+      }
+      else if( refreshRate )
+      {
+         if(  rv[i].refresh == refreshRate )
+            return i;
+      }
+      else if( colorDepth )
+      {
+         if( rv[i].bitDepth == colorDepth )
+            return i;
+      }
+   }
+   
+   return -1;
+}
+
 //Approximates refresh rate (X11 only)
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 int DeltaWin::CalcRefreshRate( int horzTotal, int vertTotal, int dotclock )

@@ -90,6 +90,8 @@ namespace dtCore
       static bool  ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
       static bool  ChangeScreenResolution( Resolution res );
 
+      static int   IsValidResolution( ResolutionVec rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
+
    private:
 
       #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
