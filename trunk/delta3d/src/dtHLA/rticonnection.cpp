@@ -132,6 +132,15 @@ RTIConnection::RTIConnection(string name)
 RTIConnection::~RTIConnection()
 throw (RTI::FederateInternalError)        
 {
+   for(  std::map<RTI::ObjectHandle, GhostData>::iterator it = 
+         mObjectHandleGhostDataMap.begin();
+         it != mObjectHandleGhostDataMap.end();
+         it++ )
+   {
+      mScene->RemoveDrawable( (*it).second.mEntity.get() ); 
+   }
+   mObjectHandleGhostDataMap.clear();
+
    RemoveSender(System::GetSystem());
    
    DeregisterInstance(this);
