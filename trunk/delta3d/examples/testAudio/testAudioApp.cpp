@@ -54,7 +54,7 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
 
    AudioManager::Instantiate();
 
-   AudioConfigData   data(32L, true);
+   AudioConfigData   data;//(32L, true);
    AudioManager::GetManager()->Config( data );
 
    for( unsigned int ii(0L); ii < kNumSoundFiles; ii++ )
