@@ -204,7 +204,7 @@ void CloudDome::Create()
 	}
 	else
 	{
-		dtCore::Notify(WARN, "Creating 128^3 3d texture...");	
+		dtCore::Notify(ALWAYS, "Creating 128^3 3d texture...");	
 		NoiseGenerator noise3d(mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128);
 		mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
 	}
