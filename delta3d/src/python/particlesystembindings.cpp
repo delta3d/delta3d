@@ -7,16 +7,16 @@
 
 using namespace boost::python;
 using namespace dtCore;
-/*
+
 class ParticleSystemWrap : public ParticleSystem
 {
 
 public:
    ParticleSystemWrap(PyObject* self, std::string name = "ParticleSystem")
-      :  ParticleSystem( name ),
-         mSelf(self)
+      :  mSelf(self)
    {}
 
+   /*
    virtual osg::Node* LoadFile(std::string filename, bool useCache=false)
    {
       call_method<osg::Node*>(mSelf, "LoadFile", filename, useCache);
@@ -26,26 +26,39 @@ public:
    {
       ParticleSystem::LoadFile(filename);
    }
+   */
+   
+   void LoadFileWrapper1(std::string filename, bool useCache)
+   {
+      ParticleSystem::LoadFile(filename,useCache); 
+   }
+   
+   void LoadFileWrapper2(std::string filename)
+   {
+      ParticleSystem::LoadFile(filename);
+   }
 
 protected:
 
    PyObject* mSelf;
 };
-*/
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
+
+//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
 
 void initParticleSystemBindings()
 {
    ParticleSystem* (*ParticleSystemGI1)(int) = &ParticleSystem::GetInstance;
    ParticleSystem* (*ParticleSystemGI2)(std::string) = &ParticleSystem::GetInstance;
 
-   class_<ParticleSystem, bases<Transformable, Loadable>, osg::ref_ptr<ParticleSystem> >("ParticleSystem", init<optional<std::string> >())
+   class_<ParticleSystem, bases<Transformable, Loadable>, osg::ref_ptr<ParticleSystemWrap>, boost::noncopyable>("ParticleSystem", init<optional<std::string> >())
       .def("GetInstanceCount", &ParticleSystem::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ParticleSystemGI1, return_internal_reference<>())
       .def("GetInstance", ParticleSystemGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("LoadFile", &ParticleSystem::LoadFile, LF_overloads()[return_internal_reference<>()])
+      //.def("LoadFile", &ParticleSystem::LoadFile, LF_overloads()[return_internal_reference<>()])
+      .def("LoadFile", &ParticleSystemWrap::LoadFileWrapper1)
+      .def("LoadFile", &ParticleSystemWrap::LoadFileWrapper2)
       .def("SetEnabled", &ParticleSystem::SetEnabled)
       .def("IsEnabled", &ParticleSystem::IsEnabled)
       .def("SetParentRelative", &ParticleSystem::SetParentRelative)

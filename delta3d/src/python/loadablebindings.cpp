@@ -8,7 +8,7 @@
 using namespace boost::python;
 using namespace dtCore;
 
-/*
+
 class LoadableWrap : public Loadable
 {
 public:
@@ -17,14 +17,14 @@ public:
       : mSelf(self)
    {}
 
-   virtual osg::Node* LoadFile(std::string filename, bool useCache )
+   void LoadFileWrapper1(std::string filename, bool useCache)
    {
-      return call_method<osg::Node*>(mSelf, "LoadFile", filename, useCache);
+      Loadable::LoadFile(filename,useCache);
    }
-
-   osg::Node* DefaultLoadFile(std::string filename)
+   
+   void LoadFileWrapper2(std::string filename)
    {
-      return Loadable::LoadFile(filename);
+      Loadable::LoadFile(filename);
    }
 
 protected:
@@ -32,14 +32,14 @@ protected:
    PyObject* mSelf;
 };
 
-*/
-
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
 
 void initLoadableBindings()
 {
-   class_<Loadable, Loadable*, boost::noncopyable>("Loadable", no_init)
-      .def("LoadFile", &Loadable::LoadFile, LF_overloads()[return_internal_reference<>()])
+   class_<Loadable, LoadableWrap*, boost::noncopyable>("Loadable", no_init)
+      //.def("LoadFile", &Loadable::LoadFile, LF_overloads()[return_internal_reference<>()])
       //.def("LoadFile", &Loadable::LoadFile, &LoadableWrap::LoadFile[return_internal_reference<>()])
+      .def("LoadFile", &LoadableWrap::LoadFileWrapper1 )
+      .def("LoadFile", &LoadableWrap::LoadFileWrapper2 )
       .def("GetFilename", &Loadable::GetFilename );
 }
