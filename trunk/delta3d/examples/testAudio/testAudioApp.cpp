@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stack>
 
-#include "testaudioapp.h"
+#include "testAudioApp.h"
 
 
 
@@ -14,7 +14,6 @@ using namespace   std;
 
 // static member variables
 const char*    testAudioApp::kDataPath = "../../data";
-//const char*    testAudioApp::kDataPath = "C:/projects/delta3d/data";
 unsigned int   testAudioApp::kNumSoundFiles(4L);
 const char*    testAudioApp::kSoundFile[] =
                {
@@ -552,7 +551,7 @@ testAudioApp::LoadGfxFile( const char* fname )
 
    if( ! fileLoaded )
    {
-      dtCore::Notify( dtCore::WARN, "can't load gfx file '%s'", filename );
+      dtCore::Notify( dtCore::WARN, "can't load gfx file '%s'", filename.c_str() );
       delete   fileobj;
       return   NULL;
    }

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_TEST_SOUND_APP
+#define DELTA_TEST_SOUND_APP
+
 #include <dtaudio.h>
 #include <dtabc.h>
 
@@ -95,3 +97,5 @@ class testSoundApp   :  public   dtABC::Application
                 */
                dtAudio::Sound*   mSound;
 };
+
+#endif // DELTA_TEST_SOUND_APP
