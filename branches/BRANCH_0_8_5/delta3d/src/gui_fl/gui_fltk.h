@@ -69,6 +69,15 @@ private:
   Fl_Value_Input *TransformR;
   inline void cb_TransformR_i(Fl_Value_Input*, void*);
   static void cb_TransformR(Fl_Value_Input*, void*);
+  Fl_Value_Input *TransformScaleX;
+  inline void cb_TransformScaleX_i(Fl_Value_Input*, void*);
+  static void cb_TransformScaleX(Fl_Value_Input*, void*);
+  Fl_Value_Input *TransformScaleY;
+  inline void cb_TransformScaleY_i(Fl_Value_Input*, void*);
+  static void cb_TransformScaleY(Fl_Value_Input*, void*);
+  Fl_Value_Input *TransformScaleZ;
+  inline void cb_TransformScaleZ_i(Fl_Value_Input*, void*);
+  static void cb_TransformScaleZ(Fl_Value_Input*, void*);
   Fl_Round_Button *TransformCSAbsButton;
   inline void cb_TransformCSAbsButton_i(Fl_Round_Button*, void*);
   static void cb_TransformCSAbsButton(Fl_Round_Button*, void*);
