@@ -79,6 +79,8 @@ private:
    UserInterface *ui;
 };
 
+#ifdef _WIN32
+
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
 //
@@ -100,6 +102,6 @@ private:
    
 #endif
 
-
+#endif // _WIN32
 
 #endif // DELTA_GUIMGR

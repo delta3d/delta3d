@@ -344,8 +344,13 @@ private:
   void CloudEnableCB(Fl_Check_Button*);
   void CloudBiasCB(Fl_Value_Slider*);
 };
+
+#ifdef _WIN32
+
 #pragma comment(lib, "fltk.lib")
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "comctl32.lib")
+
+#endif // _WIN32
 
 #endif // DELTA_GUI_FLTK

@@ -6,6 +6,8 @@
 #include "baseabc.h"
 #include "weather.h"
 
+#ifdef _WIN32
+
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
@@ -47,5 +49,6 @@
 #pragma  comment( lib, _AUTOLIBNAME6 )
 #pragma  comment( lib, _AUTOLIBNAME7 )
 
+#endif // _WIN32
 
 #endif // DELTA_DTABC

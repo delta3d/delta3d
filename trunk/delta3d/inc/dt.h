@@ -48,6 +48,10 @@
 #include "walkmotionmodel.h"
 #include "window.h"
 
+#ifdef _WIN32
+
+
+#pragma message( "In _WIN32 " )
 
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
@@ -162,5 +166,6 @@
    #pragma comment(lib, _AUTOLIBNAME5)
 #endif
 
+#endif // _WIN32
 
 #endif // DELTA_DT

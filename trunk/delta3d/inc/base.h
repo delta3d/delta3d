@@ -14,7 +14,6 @@
 #include <osg/Referenced>
 
 //disable the "identifier was truncated to '255' characters " message
-#pragma warning(disable:4786) 
 
 #include "sigslot.h"
 
