@@ -68,6 +68,8 @@ class SoundStateFrame : public dtCore::StateFrame
    /* code after me beware... and remove this
    /* comment when you fix this.
    /*
+   /* So long and thanks for all the fish.
+   /*
    /********************************************/
    public:
 
@@ -605,6 +607,8 @@ Sound::GenerateKeyFrame( void )
    /* code after me beware... and remove this
    /* comment when you fix this.
    /*
+   /* So long and thanks for all the fish.
+   /*
    /********************************************/
    return new SoundStateFrame(
       this, 
@@ -634,6 +638,8 @@ Sound::DeserializeFrame( TiXmlElement* element )
    /* dtAudio::Sound.  Whomever works on this
    /* code after me beware... and remove this
    /* comment when you fix this.
+   /*
+   /* So long and thanks for all the fish.
    /*
    /********************************************/
    int validElements = 0;
