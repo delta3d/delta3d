@@ -744,7 +744,7 @@ void UserInterface::cb_ParticleParentRelative(Fl_Check_Button* o, void* v) {
 
 Fl_Double_Window* UserInterface::make_window() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = MainWindow = new Fl_Double_Window(545, 438, "dtCore");
+  { Fl_Double_Window* o = MainWindow = new Fl_Double_Window(545, 555, "dtCore");
     w = o;
     o->user_data((void*)(this));
     { Fl_Browser* o = InstanceList = new Fl_Browser(15, 25, 145, 100);
@@ -988,35 +988,35 @@ Fl_Double_Window* UserInterface::make_window() {
       }
       o->end();
     }
-    { Fl_Group* o = EnvironmentGroup = new Fl_Group(70, 145, 450, 285);
+    { Fl_Group* o = EnvironmentGroup = new Fl_Group(70, 255, 450, 285);
       o->box(FL_ENGRAVED_FRAME);
       o->hide();
-      { Fl_Group* o = EnvFogColorGroup = new Fl_Group(376, 164, 130, 85, "Fog Color");
+      { Fl_Group* o = EnvFogColorGroup = new Fl_Group(376, 274, 130, 85, "Fog Color");
         o->box(FL_THIN_DOWN_FRAME);
         o->hide();
-        { Fl_Value_Input* o = FogRed = new Fl_Value_Input(426, 169, 45, 25, "Red:");
+        { Fl_Value_Input* o = FogRed = new Fl_Value_Input(426, 279, 45, 25, "Red:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_FogRed, (void*)(this));
         }
-        { Fl_Value_Input* o = FogGreen = new Fl_Value_Input(426, 194, 45, 25, "Green:");
+        { Fl_Value_Input* o = FogGreen = new Fl_Value_Input(426, 304, 45, 25, "Green:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_FogGreen, (void*)(this));
         }
-        { Fl_Value_Input* o = FogBlue = new Fl_Value_Input(426, 219, 45, 25, "Blue:");
+        { Fl_Value_Input* o = FogBlue = new Fl_Value_Input(426, 329, 45, 25, "Blue:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_FogBlue, (void*)(this));
         }
-        { Fl_Button* o = FogColorLoadButton = new Fl_Button(476, 169, 25, 75, "...");
+        { Fl_Button* o = FogColorLoadButton = new Fl_Button(476, 279, 25, 75, "...");
           o->callback((Fl_Callback*)cb_FogColorLoadButton, (void*)(this));
         }
         o->end();
       }
-      { Fl_Group* o = EnvAdvFogGroup = new Fl_Group(374, 170, 126, 87, "Adv Fog");
+      { Fl_Group* o = EnvAdvFogGroup = new Fl_Group(374, 280, 126, 87, "Adv Fog");
         o->box(FL_THIN_DOWN_FRAME);
-        { Fl_Value_Input* o = AdvFogTurbidity = new Fl_Value_Input(425, 174, 68, 22, "Turb:");
+        { Fl_Value_Input* o = AdvFogTurbidity = new Fl_Value_Input(425, 284, 68, 22, "Turb:");
           o->tooltip("Quality of the Air (~1.0 is a good choice)");
           o->minimum(0.01);
           o->maximum(64);
@@ -1024,7 +1024,7 @@ Fl_Double_Window* UserInterface::make_window() {
           o->value(88.88);
           o->callback((Fl_Callback*)cb_AdvFogTurbidity, (void*)(this));
         }
-        { Fl_Value_Input* o = AdvFogEnergy = new Fl_Value_Input(426, 201, 67, 25, "Engy:");
+        { Fl_Value_Input* o = AdvFogEnergy = new Fl_Value_Input(426, 311, 67, 25, "Engy:");
           o->tooltip("Energy passed to the atmosphere (0=dark; + = brighter)");
           o->minimum(0.1);
           o->maximum(100);
@@ -1032,7 +1032,7 @@ Fl_Double_Window* UserInterface::make_window() {
           o->value(888.88);
           o->callback((Fl_Callback*)cb_AdvFogEnergy, (void*)(this));
         }
-        { Fl_Value_Input* o = AdvFogMolecules = new Fl_Value_Input(426, 228, 67, 25, "Vis:");
+        { Fl_Value_Input* o = AdvFogMolecules = new Fl_Value_Input(426, 338, 67, 25, "Vis:");
           o->tooltip("Visibility ratio (0=no visibility; + = increased visibility)");
           o->maximum(100);
           o->step(0.01);
@@ -1041,74 +1041,74 @@ Fl_Double_Window* UserInterface::make_window() {
         }
         o->end();
       }
-      { Fl_Value_Input* o = EnvFogVis = new Fl_Value_Input(265, 156, 61, 25, "Visibility Distance:");
+      { Fl_Value_Input* o = EnvFogVis = new Fl_Value_Input(265, 266, 61, 25, "Visibility Distance:");
         o->maximum(500000);
         o->step(1);
         o->value(88888);
         o->callback((Fl_Callback*)cb_EnvFogVis, (void*)(this));
       }
-      { Fl_Value_Input* o = EnvFogNear = new Fl_Value_Input(265, 183, 61, 25, "Fog Start:");
+      { Fl_Value_Input* o = EnvFogNear = new Fl_Value_Input(265, 293, 61, 25, "Fog Start:");
         o->tooltip("Start of fog (only used for Linear fog)");
         o->maximum(99999);
         o->step(1);
         o->value(88888);
         o->callback((Fl_Callback*)cb_EnvFogNear, (void*)(this));
       }
-      { Fl_Choice* o = EnvFogMode = new Fl_Choice(244, 212, 101, 25, "Fog Mode:");
+      { Fl_Choice* o = EnvFogMode = new Fl_Choice(244, 322, 101, 25, "Fog Mode:");
         o->down_box(FL_BORDER_BOX);
         o->callback((Fl_Callback*)cb_EnvFogMode, (void*)(this));
         o->menu(menu_EnvFogMode);
       }
-      { Fl_Check_Button* o = EnvFogEnable = new Fl_Check_Button(121, 213, 45, 25, "Fog:");
+      { Fl_Check_Button* o = EnvFogEnable = new Fl_Check_Button(121, 323, 45, 25, "Fog:");
         o->down_box(FL_DOWN_BOX);
         o->value(1);
         o->callback((Fl_Callback*)cb_EnvFogEnable, (void*)(this));
         o->align(FL_ALIGN_LEFT);
       }
-      { Fl_Group* o = new Fl_Group(380, 339, 130, 85, "Sky Color");
+      { Fl_Group* o = new Fl_Group(380, 449, 130, 85, "Sky Color");
         o->box(FL_THIN_DOWN_FRAME);
-        { Fl_Value_Input* o = SkyRed = new Fl_Value_Input(430, 344, 45, 25, "Red:");
+        { Fl_Value_Input* o = SkyRed = new Fl_Value_Input(430, 454, 45, 25, "Red:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_SkyRed, (void*)(this));
         }
-        { Fl_Value_Input* o = SkyGreen = new Fl_Value_Input(430, 369, 45, 25, "Green:");
+        { Fl_Value_Input* o = SkyGreen = new Fl_Value_Input(430, 479, 45, 25, "Green:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_SkyGreen, (void*)(this));
         }
-        { Fl_Value_Input* o = SkyBlue = new Fl_Value_Input(430, 394, 45, 25, "Blue:");
+        { Fl_Value_Input* o = SkyBlue = new Fl_Value_Input(430, 504, 45, 25, "Blue:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_SkyBlue, (void*)(this));
         }
-        { Fl_Button* o = SkyColorLoadButton = new Fl_Button(480, 344, 25, 75, "...");
+        { Fl_Button* o = SkyColorLoadButton = new Fl_Button(480, 454, 25, 75, "...");
           o->callback((Fl_Callback*)cb_SkyColorLoadButton, (void*)(this));
         }
         o->end();
       }
-      { Fl_Group* o = new Fl_Group(234, 340, 109, 85, "Sun Color");
+      { Fl_Group* o = new Fl_Group(234, 450, 109, 85, "Sun Color");
         o->box(FL_THIN_DOWN_FRAME);
-        { Fl_Value_Input* o = EnvSunRed = new Fl_Value_Input(284, 345, 45, 25, "Red:");
+        { Fl_Value_Input* o = EnvSunRed = new Fl_Value_Input(284, 455, 45, 25, "Red:");
           o->step(0.01);
           o->value(8.888);
           o->user_data((void*)(this));
         }
-        { Fl_Value_Input* o = EnvSunGreen = new Fl_Value_Input(284, 370, 45, 25, "Green:");
+        { Fl_Value_Input* o = EnvSunGreen = new Fl_Value_Input(284, 480, 45, 25, "Green:");
           o->step(0.01);
           o->value(8.888);
           o->user_data((void*)(this));
         }
-        { Fl_Value_Input* o = EnvSunBlue = new Fl_Value_Input(284, 395, 45, 25, "Blue:");
+        { Fl_Value_Input* o = EnvSunBlue = new Fl_Value_Input(284, 505, 45, 25, "Blue:");
           o->step(0.01);
           o->value(8.888);
           o->user_data((void*)(this));
         }
         o->end();
       }
-      { Fl_Group* o = new Fl_Group(78, 340, 109, 85, "Ref Position");
+      { Fl_Group* o = new Fl_Group(78, 450, 109, 85, "Ref Position");
         o->box(FL_THIN_DOWN_FRAME);
-        { Fl_Value_Input* o = EnvRefLat = new Fl_Value_Input(119, 345, 60, 25, "Lat:");
+        { Fl_Value_Input* o = EnvRefLat = new Fl_Value_Input(119, 455, 60, 25, "Lat:");
           o->tooltip("Ephemeris Reference Lattitude (deg)");
           o->minimum(-90);
           o->maximum(90);
@@ -1116,7 +1116,7 @@ Fl_Double_Window* UserInterface::make_window() {
           o->value(8.888);
           o->callback((Fl_Callback*)cb_EnvRefLat, (void*)(this));
         }
-        { Fl_Value_Input* o = EnvRefLong = new Fl_Value_Input(119, 370, 60, 25, "Long:");
+        { Fl_Value_Input* o = EnvRefLong = new Fl_Value_Input(119, 480, 60, 25, "Long:");
           o->tooltip("Ephemeris Reference Longitude (deg)");
           o->minimum(-180);
           o->maximum(180);
@@ -1126,16 +1126,16 @@ Fl_Double_Window* UserInterface::make_window() {
         }
         o->end();
       }
-      { Fl_Group* o = new Fl_Group(105, 260, 315, 60, "Date/Time");
+      { Fl_Group* o = new Fl_Group(105, 370, 315, 60, "Date/Time");
         o->box(FL_THIN_DOWN_FRAME);
-        { Fl_Value_Slider* o = EnvTimeOfDay = new Fl_Value_Slider(154, 293, 241, 23, "Time");
+        { Fl_Value_Slider* o = EnvTimeOfDay = new Fl_Value_Slider(154, 403, 241, 23, "Time");
           o->type(5);
           o->maximum(24);
           o->value(12);
           o->callback((Fl_Callback*)cb_EnvTimeOfDay, (void*)(this));
           o->align(FL_ALIGN_LEFT);
         }
-        { Fl_Value_Input* o = EnvYear = new Fl_Value_Input(168, 266, 45, 23, "Year:");
+        { Fl_Value_Input* o = EnvYear = new Fl_Value_Input(168, 376, 45, 23, "Year:");
           o->tooltip("Year (1970-2023)");
           o->minimum(1970);
           o->maximum(2023);
@@ -1143,7 +1143,7 @@ Fl_Double_Window* UserInterface::make_window() {
           o->value(8888);
           o->callback((Fl_Callback*)cb_EnvYear, (void*)(this));
         }
-        { Fl_Value_Input* o = EnvMonth = new Fl_Value_Input(273, 266, 35, 23, "Month:");
+        { Fl_Value_Input* o = EnvMonth = new Fl_Value_Input(273, 376, 35, 23, "Month:");
           o->tooltip("Month (1-12)");
           o->minimum(1);
           o->maximum(12);
@@ -1151,7 +1151,7 @@ Fl_Double_Window* UserInterface::make_window() {
           o->value(88);
           o->callback((Fl_Callback*)cb_EnvMonth, (void*)(this));
         }
-        { Fl_Value_Input* o = EnvDay = new Fl_Value_Input(361, 266, 30, 23, "Day:");
+        { Fl_Value_Input* o = EnvDay = new Fl_Value_Input(361, 376, 30, 23, "Day:");
           o->tooltip("Day (1-31)");
           o->minimum(1);
           o->maximum(31);
@@ -1163,44 +1163,45 @@ Fl_Double_Window* UserInterface::make_window() {
       }
       o->end();
     }
-    { Fl_Group* o = InfTerrainGroup = new Fl_Group(70, 145, 450, 285);
+    { Fl_Group* o = InfTerrainGroup = new Fl_Group(185, 280, 190, 215, "InfiniteTerrain");
       o->box(FL_ENGRAVED_FRAME);
+      o->align(FL_ALIGN_TOP_LEFT);
       o->hide();
-      { Fl_Value_Input* o = InfBuildDistance = new Fl_Value_Input(300, 200, 65, 25, "Build Distance:");
+      { Fl_Value_Input* o = InfBuildDistance = new Fl_Value_Input(300, 290, 65, 25, "Build Distance:");
         o->tooltip("How far (meters) into the distance should there be terrain");
         o->minimum(1);
         o->maximum(999999);
         o->value(888888);
       }
-      { Fl_Value_Input* o = InfSegSize = new Fl_Value_Input(300, 225, 65, 25, "Seg Size:");
+      { Fl_Value_Input* o = InfSegSize = new Fl_Value_Input(300, 315, 65, 25, "Seg Size:");
         o->tooltip("The size (meters) of each side of a block of terrain");
         o->minimum(1);
         o->maximum(999999);
         o->value(888888);
       }
-      { Fl_Value_Input* o = InfSegDivisions = new Fl_Value_Input(300, 250, 65, 25, "Seg Divisions:");
+      { Fl_Value_Input* o = InfSegDivisions = new Fl_Value_Input(300, 340, 65, 25, "Seg Divisions:");
         o->tooltip("The number of divisions in each block of terrain");
         o->minimum(1);
         o->maximum(999999);
         o->value(888888);
       }
-      { Fl_Value_Input* o = InfVertScale = new Fl_Value_Input(300, 275, 65, 25, "Vertical Scale:");
+      { Fl_Value_Input* o = InfVertScale = new Fl_Value_Input(300, 365, 65, 25, "Vertical Scale:");
         o->tooltip("The vertical scaling factor of the terrain");
         o->minimum(1);
         o->maximum(999999);
         o->value(888888);
       }
-      { Fl_Value_Input* o = InfHorizScale = new Fl_Value_Input(300, 300, 65, 25, "Horiz Scale:");
+      { Fl_Value_Input* o = InfHorizScale = new Fl_Value_Input(300, 390, 65, 25, "Horiz Scale:");
         o->tooltip("The horizontal scaling factor of the terrain (spreads out the terrain feature\
 s)");
         o->minimum(1);
         o->maximum(999999);
         o->value(888888);
       }
-      { Fl_Button* o = InfRegenerateButton = new Fl_Button(280, 335, 90, 30, "Regenerate!");
+      { Fl_Button* o = InfRegenerateButton = new Fl_Button(245, 425, 90, 30, "Regenerate!");
         o->callback((Fl_Callback*)cb_InfRegenerateButton, (void*)(this));
       }
-      { Fl_Check_Button* o = InfSmoothCollision = new Fl_Check_Button(280, 385, 20, 25, "Smooth Collisions");
+      { Fl_Check_Button* o = InfSmoothCollision = new Fl_Check_Button(320, 465, 20, 20, "Smooth Collisions");
         o->tooltip("Enables smoothed collision detection");
         o->down_box(FL_DOWN_BOX);
         o->callback((Fl_Callback*)cb_InfSmoothCollision, (void*)(this));
