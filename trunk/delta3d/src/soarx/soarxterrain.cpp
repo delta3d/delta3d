@@ -73,7 +73,7 @@ const char* fragmentShader =
    "  const float LOG2E = 1.442695;"   // = 1/log(2)
 //   "  if (gl_FogFragCoord < 0.0) {gl_FogFragCoord = 0.0;}"
 //   "  fog = exp2(-gl_Fog.density * .3 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
-   "  fog = exp2(-gl_Fog.density * 1 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
+"  fog = exp2(-gl_Fog.density * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
    "  fog = clamp(fog, 0.0, 1.0);"
    "  gl_FragColor = mix(gl_Fog.color, gl_FragColor, fog);"
    "}";
@@ -4769,12 +4769,18 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 //						cout << myvegename << endl;
 
-						(*l).vegeObject[q] = static_cast<osg::Group*> 
-							(osgDB::readNodeFile(myvegename));
-						(*l).vegeObject[q]->setDataVariance(osg::Object::STATIC);
+                  osg::Node* nodeFromFile = osgDB::readNodeFile(myvegename);
 
-						osg::StateSet* ss = (*l).vegeObject[q]->getOrCreateStateSet();
-						ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+                  if( nodeFromFile )
+                  {
+						   (*l).vegeObject[q] = static_cast<osg::Group*> 
+							   (osgDB::readNodeFile(myvegename));
+
+   						(*l).vegeObject[q]->setDataVariance(osg::Object::STATIC);
+
+						   osg::StateSet* ss = (*l).vegeObject[q]->getOrCreateStateSet();
+						   ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+
 
 /*							// the osgUtil::InsertImpostorsVisitor used lower down to insert impostors
 							// only operators on subclass of Group's, if the model top node is not
@@ -4821,7 +4827,12 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 							// insert the Impostors above groups and LOD's
 							ov.insertImpostors();
 */
-
+                  }
+                  else
+                  {
+                     Notify(WARN,"Missing vegetation models.");
+                     
+                  }
 					}
 
 					Notify(NOTICE, "Placing LCCtype %i '%s'....",(*l).idx, (*l).name.c_str());
@@ -4955,7 +4966,11 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 //				Notify(NOTICE, "Adding VegeGround #%i:%i to Scene; max = %i, min = %i", groupcount++, vg, maxchildren, minchildren);
 			}
-			Notify(NOTICE, "gc = %i, max = %i, min = %i, ave = %i", groupcount, maxchildren, minchildren, totalcount/groupcount);
+
+         if( groupcount != 0 )
+			   Notify(NOTICE, "gc = %i, max = %i, min = %i, ave = %i", groupcount, maxchildren, minchildren, totalcount/groupcount);
+         else
+            Notify(NOTICE, "gc = %i, max = %i, min = %i", groupcount, maxchildren, minchildren);
 
 			//delete empty nodes
 			for (int i = 0; i < 4096; i++)
