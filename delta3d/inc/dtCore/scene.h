@@ -162,13 +162,8 @@ namespace dtCore
 		/// UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical);
 
-      ///Add a Light to the Scene to shade the Drawable which have been added
-      void AddLight( Light* light );
-
-      void RemoveLight( Light* light );
-
       inline Light* GetLight( int number ) const { return mLights[ number ]; }
-      //Light* GetLight( const std::string name ) const;
+      Light* GetLight( const std::string name ) const;
 
       ///Use the internal scene light
       void UseSceneLight( bool lightState = true );
@@ -207,8 +202,6 @@ namespace dtCore
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
       void *mUserNearCallbackData; ///< pointer to user-supplied data
 
-      //static 
-      osg::Group* mLightGroup; // single light group for all scene lights
       Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
 
       typedef std::vector< osg::ref_ptr<DeltaDrawable> > DrawableList;

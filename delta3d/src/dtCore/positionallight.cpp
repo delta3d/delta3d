@@ -1,5 +1,8 @@
 #include "dtCore/positionallight.h"
 #include "dtCore/scene.h"
+#include "dtUtil/matrixutil.h"
+
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 
@@ -16,23 +19,21 @@ public:
    }
 
    virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
-   {      
-      Transform xform;
-      mPositionalLight->GetTransform( &xform );
+   {
+      Transform trans;
+      mPositionalLight->GetTransform( &trans, Transformable::ABS_CS );
 
-      float x,y,z,h,p,r;
-      xform.Get(&x,&y,&z,&h,&p,&r);
+      osg::Matrix absMatrix;
+      Transformable::GetAbsoluteMatrix( mPositionalLight->GetMatrixNode(), &absMatrix );
+      //mPositionalLight->GetHelperMatrix()->setMatrix( osg::Matrix::inverse( absMatrix)  );
+            
+      osg::Light* osgLight = mPositionalLight->GetLightSource()->getLight();
 
-      osg::LightSource* lightSourceNode = static_cast<osg::LightSource*>( node );
+      float x, y, z, h, p, r;
+      trans.Get( &x, &y, &z, &h, &p, &r );
 
-      osg::Vec4 position = lightSourceNode->getLight()->getPosition();
-
-      position[0] = x; 
-      position[1] = y; 
-      position[2] = z;
-      position[3] = 1.0f; //force positional lighting
-
-      lightSourceNode->getLight()->setPosition( position );
+      osg::Vec4 position( x, y, z, 1.0f ); //force positional lighting with w of 1.0f
+      osgLight->setPosition( position * osg::Matrix::inverse( absMatrix ) );
 
       //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
       sgMat4 hRot, pRot, rRot;
@@ -41,16 +42,9 @@ public:
       sgMakeRotMat4( pRot, 0.0f, p, 0.0f );
       sgMakeRotMat4( rRot, 0.0f, 0.0f, r );
 
-      sgMat4 hpRot, hprRot;
-      sgMultMat4( hpRot, hRot, pRot );
-      sgMultMat4( hprRot, hpRot, rRot );
-
-      sgVec3 xyz;
-      sgVec3 forwardVector = {0.0f, 1.0f, 0.0f}; 
-
-      sgXformVec3( xyz, forwardVector, hprRot );
-
-      lightSourceNode->getLight()->setDirection( osg::Vec3( xyz[0], xyz[1], xyz[2] ) );
+      osg::Matrix rotation = osg::Matrix((float*)hRot) * osg::Matrix((float*)pRot) * osg::Matrix((float*)rRot);
+      osg::Vec3 xyz = rotation.preMult( osg::Vec3( 0.0f, 1.0f, 0.0f ) );
+      osgLight->setDirection( xyz );
 
       traverse( node, nv );
    }
@@ -59,31 +53,23 @@ private:
 };
 
 PositionalLight::PositionalLight( int number, const std::string name, const LightingMode mode )
-: Light( number, mode, NULL )
+   : Light( number, mode, NULL ),
+     Transformable()
 {
+   GetMatrixNode()->addChild( mLightSource.get() );
    SetName( name );
-
-   osg::Vec4 position = mLightSource->getLight()->getPosition();
-
-   position[3] = 1.0f;
-
-   mLightSource->getLight()->setPosition( position );
 
    mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
 }
 
 PositionalLight::PositionalLight( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
-: Light( osgLightSource->getLight()->getLightNum(), mode, osgLightSource )
+   : Light( osgLightSource->getLight()->getLightNum(), mode, osgLightSource ),
+     Transformable()
 {
+   GetMatrixNode()->addChild( mLightSource.get() );
    SetName( name );
 
-   osg::Vec4 position = mLightSource->getLight()->getPosition();
-
-   position[3] = 1.0f;
-
-   mLightSource->getLight()->setPosition( position );
-
-   mLightSource.get()->setUpdateCallback( new PositionalLightCallback(this ) );
+   mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
 }
 
 PositionalLight::~PositionalLight()
@@ -108,4 +94,22 @@ PositionalLight::GetAttenuation( float* constant, float* linear, float* quadrati
    *constant = mLightSource->getLight()->getConstantAttenuation();
    *linear = mLightSource->getLight()->getLinearAttenuation();
    *quadratic = mLightSource->getLight()->getQuadraticAttenuation();
+}
+
+void
+PositionalLight::AddChild( DeltaDrawable *child )
+{
+   mLightSource->addChild( child->GetOSGNode() );
+}
+
+/*!
+ * Remove a child from this Transformable.  This will detach the child from its
+ * parent so that its free to be repositioned on its own.
+ *
+ * @param *child : The child Transformable to be removed
+ */
+void
+PositionalLight::RemoveChild( DeltaDrawable *child )
+{
+   mLightSource->removeChild( child->GetOSGNode() );
 }

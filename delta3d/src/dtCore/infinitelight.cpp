@@ -30,7 +30,7 @@ InfiniteLight::InfiniteLight( osg::LightSource* const source, const std::string 
 
    mLightSource->getLight()->setPosition( position );
 }
-
+x
 
 InfiniteLight::~InfiniteLight()
 {

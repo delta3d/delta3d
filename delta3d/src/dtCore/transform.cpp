@@ -4,13 +4,13 @@
 using namespace dtCore;
 
 
-Transform::Transform(float x, float y, float z, float h, float p, float r)
+Transform::Transform( float x, float y, float z, float h, float p, float r )
 {
    Set(x,y,z,h,p,r);
 }
 
 
-Transform::Transform(const Transform& that)
+Transform::Transform( const Transform& that )
 {
     sgCopyMat4(mTransform, that.mTransform);
 }
@@ -19,12 +19,12 @@ Transform::~Transform()
 {
 }
 
-void Transform::Set( float x, float y, float z, float h, float p, float r)
+void Transform::Set( float x, float y, float z, float h, float p, float r )
 {
    sgMakeCoordMat4(mTransform, x, y, z, h, p, r);
 }
 
-void Transform::SetTranslation( float x, float y, float z)
+void Transform::SetTranslation( float x, float y, float z )
 {
    sgVec3 xyz = {x,y,z};
    SetTranslation(xyz);
@@ -35,20 +35,20 @@ void Transform::SetRotation( sgVec3 hpr )
    sgMakeCoordMat4(mTransform, mTransform[3], hpr );
 }
 
-void Transform::SetRotation( float h, float p, float r)
+void Transform::SetRotation( float h, float p, float r )
 {
    sgVec3 hpr = {h, p, r};
    SetRotation(hpr);
 }
 
-void Transform::SetRotation( sgMat4 rot)
+void Transform::SetRotation( sgMat4 rot )
 {
    sgVec3 xyz = {mTransform[3][0], mTransform[3][1], mTransform[3][2] };
    sgCopyMat4(mTransform, rot);
    SetTranslation(xyz);
 }
 
-void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r)
+void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r )
 {
    sgCoord pos;
    sgSetCoord( &pos, mTransform);
@@ -61,7 +61,7 @@ void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r)
 }
 
 
-void Transform::GetTranslation(float *x, float *y, float *z) 
+void Transform::GetTranslation(float *x, float *y, float *z ) 
 {
    *x = mTransform[3][0];
    *y = mTransform[3][1];
@@ -95,7 +95,7 @@ void Transform::GetRotation( sgMat4 rot )
    sgSetVec3(rot[3], 0.f, 0.f, 0.f);
 }
 
-bool Transform::EpsilonEquals(const Transform* transform, float epsilon)
+bool Transform::EpsilonEquals(const Transform* transform, float epsilon )
 {
    for(int i=0;i<4;i++)
    {

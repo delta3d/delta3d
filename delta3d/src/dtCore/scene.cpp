@@ -58,13 +58,8 @@ Scene::Scene( string name, bool useSceneLight )
    mSceneNode = new osg::Group;
    mSceneHandler->GetSceneView()->setSceneData( mSceneNode.get() );
 
-   mLightGroup = new osg::Group;
-   mSceneNode.get()->addChild( mLightGroup );
-
    osg::LightSource* sceneLightSource = new osg::LightSource;	
    sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
-   mLightGroup->addChild( sceneLightSource );
-
    mLights[ 0 ] = new InfiniteLight( sceneLightSource, "sceneLight", Light::GLOBAL );
 
    mUserNearCallback = NULL;
@@ -109,25 +104,34 @@ Scene::~Scene()
 void Scene::AddDrawable( DeltaDrawable *drawable )
 {
    mSceneNode->addChild( drawable->GetOSGNode() );
+   drawable->AddedToScene(this);
 
    if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
    {       
       RegisterPhysical(physical);
    }
-
-   drawable->AddedToScene(this);
+   else if( Light* light = dynamic_cast<Light*>( drawable ) )
+   {
+      light->SetEnabled( true );
+      mLights[ light->GetNumber() ] = light; //add to internal array of lights
+   }
 
    mAddedDrawables.push_back(drawable);
 }
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
+   drawable->AddedToScene(NULL);
+
    if( Physical* physical = dynamic_cast<Physical*>( drawable ) )
    {
       UnRegisterPhysical(physical);
    }
-
-   drawable->AddedToScene(NULL);
+   else if( Light* light = dynamic_cast<Light*>( drawable ) )
+   {
+      light->SetEnabled( false );
+      mLights[ light->GetNumber() ] = NULL;
+   }
 
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
 
@@ -137,7 +141,6 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
       mAddedDrawables.erase( mAddedDrawables.begin()+pos );                           
    }
 }
-
 
 /** Register a Physical with the Scene.  This method is automatically called 
   * when adding Drawables to the Scene.  Typically, this only needs to be 
@@ -331,19 +334,19 @@ void Scene::GetGravity(float* x, float* y, float* z)
    *z = mGravity[2];
 }
 
-///Get the ODE space ID
+// Get the ODE space ID
 dSpaceID Scene::GetSpaceID() const
 {
    return mSpaceID;
 }
 
-///Get the ODE world ID
+// Get the ODE world ID
 dWorldID Scene::GetWorldID() const
 {
    return mWorldID;
 }
 
-///Performs collision detection and updates physics
+// Performs collision detection and updates physics
 void Scene::OnMessage(MessageData *data)
 {
 
@@ -409,7 +412,7 @@ void Scene::OnMessage(MessageData *data)
    }
 }
 
-///ODE collision callback     
+// ODE collision callback     
 void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
 {
    Scene* scene = (Scene*)data;
@@ -488,32 +491,6 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
    mUserNearCallbackData = data;
 }
 
-void Scene::AddLight( Light* light )
-{
-   light->SetSceneParent( this );
-   light->SetEnabled( true );
- 
-   mLightGroup->addChild( light->GetOSGLightSource() ); //add to a group that is alraedy a child of the scene
-   mLights[ light->GetNumber() ] = light; //add to internal array of lights
-  
-}
-
-void Scene::RemoveLight( Light* light )
-{
-   for( int i = 0; i < MAX_LIGHTS; i++ )
-   {
-      if( mLights[ i ] == light )
-      {
-         mLightGroup->removeChild( mLights[ i ]->GetOSGLightSource() );
-
-         light->SetEnabled( false );
-
-         mLights[ i ] = NULL;
-      }
-   }
-}
-
-/*
 Light* Scene::GetLight( const std::string name ) const
 {
    for( int i = 0; i < MAX_LIGHTS; i++ )
@@ -523,14 +500,14 @@ Light* Scene::GetLight( const std::string name ) const
          return mLights[ i ];
       }
    }
-
+   
    return NULL;
 }
-*/
+
 
 void Scene::UseSceneLight( bool lightState )
 {
-   osg::Light* osgLight = mLights[ 0 ]->GetOSGLightSource()->getLight();
+   osg::Light* osgLight = mLights[ 0 ]->GetLightSource()->getLight();
 
    if(lightState)
    {

@@ -49,28 +49,21 @@ namespace dtCore
       Light( int number, LightingMode mode, osg::LightSource* lightSource );
       virtual ~Light() = 0;
 
-      inline osg::LightSource* GetOSGLightSource()
+      virtual osg::Node* GetOSGNode() { return mLightSource.get(); } 
+
+      inline osg::LightSource* GetLightSource()
       { return mLightSource.get(); }
 
-      inline void AddLightChild( DeltaDrawable* drawable )
-      { mLightSource->addChild( drawable->GetOSGNode() ); }
-
-      inline void RemoveLightChild( DeltaDrawable* drawable )
-      { mLightSource->removeChild( drawable->GetOSGNode() ); }
-
       inline void SetLightingMode( const LightingMode mode )
-      { mLightingMode = mode; }
+      {
+         mLightingMode = mode;
+      }
       
       inline LightingMode GetLightingMode() const
       { return mLightingMode; }
 
-      inline void SetSceneParent( Scene* scene )
-      { mSceneParent = scene; }
-
-      inline Scene* GetSceneParent()
-      { return mSceneParent; }
-
       void SetEnabled( bool enabled );
+      
       inline bool GetEnabled()
       { return mEnabled; }
       
@@ -113,8 +106,6 @@ namespace dtCore
 
       LightingMode mLightingMode;
       osg::ref_ptr<osg::LightSource> mLightSource;
-      Scene* mSceneParent;
-
       bool mEnabled;
    };
 }

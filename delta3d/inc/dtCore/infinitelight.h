@@ -21,7 +21,6 @@
 #ifndef DELTA_INFINITE_LIGHT
 #define DELTA_INFINITE_LIGHT
 
-//#include "dtCore/base.h"
 #include "dtCore/light.h"
 
 namespace dtCore
@@ -39,6 +38,7 @@ namespace dtCore
 
       void SetDirection( const float h, const float p, const float r );
       void GetDirection( float* h, float* p, float* r ) const;
+
 
    };
 
