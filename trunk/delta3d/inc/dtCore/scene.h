@@ -162,7 +162,7 @@ namespace dtCore
 		/// UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical);
 
-      inline Light* GetLight( int number ) const { return mLights[ number ]; }
+      inline Light* GetLight( const int number ) const { return mLights[ number ]; }
       Light* GetLight( const std::string name ) const;
 
       inline void RegisterLight( Light* light )
