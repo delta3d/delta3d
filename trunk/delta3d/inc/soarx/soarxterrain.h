@@ -245,7 +245,8 @@ namespace dtSOARX
           * the data file
           * @param width the width of the roads to create
           * @param texture the name of the texture to use, or "" for
-          * none
+          * none (in which case the roads will be baked into the base
+          * texture)
           * @param sScale the texture s scale
           * @param tScale the texture t scale
           */
