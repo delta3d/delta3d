@@ -23,8 +23,8 @@ TARGET_LINK_LIBRARIES( dtaudiobindings dtaudio boost_python python2.3 util )
 ADD_LIBRARY( dtcharbindings SHARED characterbindings dtcharbindings )
 TARGET_LINK_LIBRARIES( dtcharbindings dtchar boost_python python2.3 util )
 
-ADD_LIBRARY( dtguiflbindings SHARED dtguiflbindings )
-TARGET_LINK_LIBRARIES( dtguiflbindings gui_fl boost_python python2.3 util )
+ADD_LIBRARY( gui_flbindings SHARED dtguiflbindings )
+TARGET_LINK_LIBRARIES( gui_flbindings gui_fl boost_python python2.3 util )
 
 INSTALL_TARGETS( ../../lib dtcorebindings dtabcbindings dtcharbindings dtaudiobindings gui_flbindings )
 
