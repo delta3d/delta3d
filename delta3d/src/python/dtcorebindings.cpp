@@ -18,14 +18,17 @@ void initCloudPlaneBindings();
 void initDrawableBindings();
 void initEnvEffectBindings();
 void initEnvironmentBindings();
+void initFlyMotionModelBindings();
 void initInfiniteTerrainBindings();
 void initInputDeviceBindings();
 void initIsectorBindings();
 void initJoystickBindings();
 void initKeyboardBindings();
 void initLogicalInputDeviceBindings();
+void initMotionModelBindings();
 void initMouseBindings();
 void initObjectBindings();
+void initOrbitMotionModelBindings();
 void initParticleSystemBindings();
 void initPhysicalBindings();
 void initSceneBindings();
@@ -37,7 +40,9 @@ void initTrackerBindings();
 void initTransformBindings();
 void initTransformableBindings();
 void initTripodBindings();
+void initUFOMotionModelBindings();
 void initUIDrawableBindings();
+void initWalkMotionModelBindings();
 void initWindowBindings();
 
 void NotifyWrap(NotifySeverity ns, const char* msg)
@@ -88,4 +93,9 @@ BOOST_PYTHON_MODULE(dtCore)
    initUIDrawableBindings();
    initIsectorBindings();
    initInfiniteTerrainBindings();
+   initMotionModelBindings();
+   initWalkMotionModelBindings();
+   initFlyMotionModelBindings();
+   initUFOMotionModelBindings();
+   initOrbitMotionModelBindings();
 }
