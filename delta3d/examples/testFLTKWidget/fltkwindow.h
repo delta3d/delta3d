@@ -5,8 +5,8 @@
 #include <FL/Fl.H>
 #include <assert.h>
 #include <FL/Fl_Window.H>
-#include <FL/X.h>
-#include "Fl_P51_Window.h"
+#include <FL/x.H>
+#include "fl_p51_window.h"
 
 class FLTKWindow {
 public:

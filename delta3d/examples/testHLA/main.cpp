@@ -132,7 +132,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Updater)
 
 int main( int argc, char **argv )
 {
-   Window* win = new Window;
+   DeltaWin* win = new DeltaWin;
    Scene* scene = new Scene;
 
    Camera* cam = new Camera;

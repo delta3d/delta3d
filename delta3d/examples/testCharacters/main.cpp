@@ -352,7 +352,7 @@ class OrbitMotionModel : public MouseListener
 
 int main( int argc, char **argv )
 {
-   Window* win = new Window;
+   DeltaWin* win = new DeltaWin;
    Scene* scene = new Scene;
    System *sys = System::GetSystem();
 

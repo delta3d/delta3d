@@ -119,7 +119,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Updater)
 
 int main( int argc, char **argv )
 {
-   dtCore::Window* win = new dtCore::Window;
+   dtCore::DeltaWin* win = new dtCore::DeltaWin;
    Scene* scene = new Scene;
 
    dtCore::Camera* cam = new dtCore::Camera;

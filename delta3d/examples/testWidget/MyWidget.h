@@ -4,12 +4,6 @@
 #include "dt.h"
 #include "dtabc.h"
 
-//#include <widget.h>
-//#include <logicalinputdevice.h>
-//#include <motionmodel.h>
-
-
-
 class MyWidget :  public   dtABC::Widget
 {
       enum  MyEvents
