@@ -26,6 +26,7 @@
 #include <osgText/Text>
 #include <osg/Projection>
 #include <osg/Switch>
+//#include <osg/Timer>
 
 #include "dtCore/export.h"
 #include "dtCore/timer.h"
@@ -70,21 +71,27 @@ namespace dtCore
       int mPrintStats;
       //osg::Timer   mTimer;
       dtCore::Timer mTimer;
-      osg::Timer_t mInitialTick;
-      osg::Timer_t mLastFrameTick;
-      osg::Timer_t mFrameTick;
-      osg::Timer_t mRegTimes[6];
+      //osg::Timer_t mInitialTick;
+      //osg::Timer_t mLastFrameTick;
+      //osg::Timer_t mFrameTick;
+      //osg::Timer_t mRegTimes[6];
+      dtCore::Timer_t mInitialTick;
+      dtCore::Timer_t mLastFrameTick;
+      dtCore::Timer_t mFrameTick;
+      dtCore::Timer_t mRegTimes[6];
 
       struct
       {
          float timeApp, timeCull, timeDraw, timeFrame;
-         osg::Timer_t frameend;
+         //osg::Timer_t frameend;
+         dtCore::Timer_t frameend;
       } times[3]; // store up to 3 frames worth of times
 
       // time from the current frame update and the previous one in seconds.
       // time since initClock() in seconds.
       // update the number of ticks since the last frame update.
-      osg::Timer_t UpdateFrameTick();
+      //osg::Timer_t UpdateFrameTick();
+      dtCore::Timer_t UpdateFrameTick();
 
       // initialize the clock.
       long InitClock();
@@ -95,8 +102,10 @@ namespace dtCore
       void Display();
 
       // system tick.
-      inline osg::Timer_t ClockTick() {return mTimer.tick();}
-      inline osg::Timer_t FrameTick() {return mFrameTick;}
+      //inline osg::Timer_t ClockTick() {return mTimer.tick();}
+      //inline osg::Timer_t FrameTick() {return mFrameTick;}
+      inline dtCore::Timer_t ClockTick() {return mTimer.tick();}
+      inline dtCore::Timer_t FrameTick() {return mFrameTick;}
 
       dtCore::RefPtr<osgUtil::SceneView> mSV;
       dtCore::RefPtr<osgText::Text> mFrameRateCounterText;
