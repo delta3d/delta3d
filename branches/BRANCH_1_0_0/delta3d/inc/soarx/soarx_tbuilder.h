@@ -4,9 +4,9 @@
 
 #define DATA_LAYOUT_EMBEDDED_QUADTREE
 
-#include "soarx_framework.h"
-#include "soarx_terrain.h"
-#include "soarx_image.h"
+#include "soarx/soarx_framework.h"
+#include "soarx/soarx_terrain.h"
+#include "soarx/soarx_image.h"
 
 #include <osg/Image>
 #include <osg/Shape>

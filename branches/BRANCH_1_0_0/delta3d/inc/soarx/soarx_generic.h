@@ -8,7 +8,7 @@
 
 #include <cmath>
 #include <cstdio>
-#include "soarx_configure.h"
+#include "soarx/soarx_configure.h"
 
 //______________________________________________________________
 // Compiler settings and definitions:
