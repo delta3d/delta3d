@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib osgd.lib osgdbd.lib producerd.lib sg_d.lib ul_d.lib tinyxmld.lib"
+				AdditionalDependencies="dtcored.lib OpenThreadsWin32.lib osgd.lib osgdbd.lib producerd.lib sg_d.lib ul_d.lib tinyxmld.lib"
 				OutputFile="..\..\bin\dtabcd.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmtd; libcd; msvcrt"
@@ -71,7 +71,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -82,7 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib osg.lib osgdb.lib producer.lib sg.lib ul.lib tinyxml.lib"
+				AdditionalDependencies="dtcore.lib OpenThreadsWin32d.lib osg.lib osgdb.lib producer.lib sg.lib ul.lib tinyxml.lib"
 				OutputFile="..\..\bin\dtabc.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc; libcmt; msvcrtd"

@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -74,7 +74,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
