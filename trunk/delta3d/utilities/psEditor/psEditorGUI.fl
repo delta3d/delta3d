@@ -14,7 +14,7 @@ Function {make_window()} {open
     label {Particle System Editor} open
     xywh {159 396 1408 587} type Double resizable visible
   } {
-    Fl_Menu_Bar MainMenu {open
+    Fl_Menu_Bar MainMenu {open selected
       xywh {5 5 1400 25}
     } {
       submenu {} {
@@ -107,7 +107,7 @@ Function {make_window()} {open
       xywh {805 36 600 549}
     } {
       Fl_Group {} {
-        label Particles open selected
+        label Particles open
         xywh {805 57 590 515}
       } {
         Fl_Choice Particles_Alignment {

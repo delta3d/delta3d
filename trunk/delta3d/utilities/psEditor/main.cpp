@@ -516,10 +516,9 @@ static void updateParameterTabs()
 }
 
 /**
- * Updates the state of all GUI elements in response to a new or
- * open request.
+ * Updates the state of the layers widget.
  */
-static void updateGUIElements()
+static void updateLayers()
 {
    Layers->clear();
    
@@ -527,8 +526,6 @@ static void updateGUIElements()
    {
       Layers->add(layers[i].mGeode->getName().c_str());
    }
-   
-   psEditorGUI_LayerSelect(NULL, NULL);
 }
 
 // Update file history from preferences...
@@ -589,6 +586,18 @@ static void setParticleSystemFilename(std::string newFilename)
 
       editorWindow->label(buf);
       UpdateHistory(newFilename);
+   }
+}
+
+
+/**
+ * Synchronizes all emitters by resetting them to the zero time.
+ */
+static void resetEmitters()
+{
+   for(unsigned int i=0;i<layers.size();i++)
+   {
+      layers[i].mModularEmitter->setCurrentTime(0.0);
    }
 }
 
@@ -659,16 +668,19 @@ void psEditorGUI_NewLayer(Fl_Button*, void*)
 
    layers.push_back(layer);
    
+   resetEmitters();
+   
    Layers->add(layer.mGeode->getName().c_str());
    
    Layers->value(layers.size());
+   
    
    psEditorGUI_LayerSelect(NULL, NULL);
 }
 
 void psEditorGUI_DeleteLayer(Fl_Button*, void*)
 {
-   int layer = Layers->value() - 1;
+   unsigned int layer = Layers->value() - 1;
    
    particleSystemGroup->removeChild(layers[layer].mGeode.get());
    particleSystemGroup->removeChild(layers[layer].mEmitterTransform.get());
@@ -679,6 +691,15 @@ void psEditorGUI_DeleteLayer(Fl_Button*, void*)
    layers.erase(layers.begin() + layer);
    
    Layers->remove(Layers->value());
+   
+   if(layers.size() > layer)
+   {
+      Layers->value(layer + 1);
+   }
+   else
+   {
+      Layers->value(layer);
+   }
    
    psEditorGUI_LayerSelect(NULL, NULL);
 }
@@ -736,10 +757,9 @@ void psEditorGUI_New(Fl_Menu_*, void*)
    
    layers.clear();
    
+   updateLayers();
+   
    psEditorGUI_NewLayer(NULL, NULL);
-   
-   
-   updateGUIElements();
 }
 
 ///Load the given filename
@@ -850,8 +870,12 @@ void LoadFile( std::string filename, bool import = false )
       
       if(newParticleSystemUpdater != NULL)
       {
+         int newLayer = 1;
+         
          if(import)
          {
+            newLayer = layers.size() + 1;
+            
             for(i=0;i<newLayers.size();i++)
             {
                particleSystemGroup->addChild(newLayers[i].mGeode.get());
@@ -862,6 +886,8 @@ void LoadFile( std::string filename, bool import = false )
                
                layers.push_back(newLayers[i]);
             }
+            
+            resetEmitters();
          }
          else
          {
@@ -876,7 +902,11 @@ void LoadFile( std::string filename, bool import = false )
             sceneGroup->addChild(particleSystemGroup);
          }
          
-         updateGUIElements();
+         updateLayers();
+         
+         Layers->value(newLayer);
+         
+         psEditorGUI_LayerSelect(NULL, NULL);
       }
       else
       {
@@ -927,10 +957,7 @@ void psEditorGUI_Save(Fl_Menu_*, void*)
    }
    else
    {
-      for(unsigned int i=0;i<layers.size();i++)
-      {
-         layers[i].mModularEmitter->setCurrentTime(0.0);
-      }
+      resetEmitters();
       
       osgDB::writeNodeFile(*particleSystemGroup, particleSystemFilename);
    }
