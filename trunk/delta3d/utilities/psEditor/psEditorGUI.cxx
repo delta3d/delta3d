@@ -591,85 +591,114 @@ Fl_Double_Window* make_window() {
         { Fl_Group* o = RadialShooterParameters = new Fl_Group(9, 297, 580, 270, "Radial Shooter Parameters");
           o->box(FL_DOWN_BOX);
           o->align(FL_ALIGN_BOTTOM|FL_ALIGN_INSIDE);
-          { Fl_Value_Input* o = RadialShooter_MinTheta = new Fl_Value_Input(104, 327, 85, 25, "Min. Theta");
-            o->minimum(-3.1416);
-            o->maximum(3.1416);
-            o->step(0.01);
-            o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinTheta);
-          }
-          { Fl_Value_Input* o = RadialShooter_MaxTheta = new Fl_Value_Input(104, 357, 85, 25, "Max. Theta");
-            o->minimum(-3.1416);
-            o->maximum(3.1416);
-            o->step(0.01);
-            o->value(0.3927);
-            o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxTheta);
-          }
-          { Fl_Value_Input* o = RadialShooter_MinPhi = new Fl_Value_Input(264, 327, 85, 25, "Min. Phi");
-            o->minimum(-6.2832);
-            o->maximum(6.2832);
-            o->step(0.01);
-            o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinPhi);
-          }
-          { Fl_Value_Input* o = RadialShooter_MaxPhi = new Fl_Value_Input(264, 357, 85, 25, "Max. Phi");
-            o->minimum(-6.2832);
-            o->maximum(6.2832);
-            o->step(0.01);
-            o->value(6.2832);
-            o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxPhi);
-          }
-          { Fl_Value_Input* o = RadialShooter_MinInitialSpeed = new Fl_Value_Input(479, 327, 85, 25, "Min. Initial Speed");
-            o->maximum(50);
-            o->step(0.1);
-            o->value(10);
-            o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialSpeed);
-          }
-          { Fl_Value_Input* o = RadialShooter_MaxInitialSpeed = new Fl_Value_Input(479, 357, 85, 25, "Max. Initial Speed");
-            o->maximum(50);
-            o->step(0.1);
-            o->value(10);
-            o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialSpeed);
-          }
-          { Fl_Group* o = new Fl_Group(79, 417, 205, 105, "Min. Initial Rotational Speed");
-            o->box(FL_ENGRAVED_BOX);
-            { Fl_Value_Input* o = RadialShooter_MinInitialRotationalSpeedX = new Fl_Value_Input(144, 427, 85, 25, "X");
-              o->minimum(-10);
-              o->maximum(10);
-              o->step(0.1);
-              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX);
+          { Fl_Group* o = new Fl_Group(31, 327, 163, 64, "Elevation Range");
+            o->tooltip("The elevation range the Shooter will send each particle. 0=up, 3.14=down");
+            o->box(FL_ENGRAVED_FRAME);
+            { Fl_Value_Input* o = RadialShooter_MinTheta = new Fl_Value_Input(104, 331, 85, 25, "Min (rad)");
+              o->tooltip("The minimum elevation (0=up, 3.14=down)");
+              o->minimum(-3.1416);
+              o->maximum(3.1416);
+              o->step(0.01);
+              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinTheta);
             }
-            { Fl_Value_Input* o = RadialShooter_MinInitialRotationalSpeedY = new Fl_Value_Input(144, 457, 85, 25, "Y");
-              o->minimum(-10);
-              o->maximum(10);
-              o->step(0.1);
-              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY);
-            }
-            { Fl_Value_Input* o = RadialShooter_MinInitialRotationalSpeedZ = new Fl_Value_Input(144, 487, 85, 25, "Z");
-              o->minimum(-10);
-              o->maximum(10);
-              o->step(0.1);
-              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ);
+            { Fl_Value_Input* o = RadialShooter_MaxTheta = new Fl_Value_Input(104, 361, 85, 25, "Max (rad)");
+              o->tooltip("The maximum elevation (0=up, 3.14=down)");
+              o->minimum(-3.1416);
+              o->maximum(3.1416);
+              o->step(0.01);
+              o->value(0.3927);
+              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxTheta);
             }
             o->end();
           }
-          { Fl_Group* o = new Fl_Group(314, 417, 205, 105, "Max. Initial Rotational Speed");
+          { Fl_Group* o = new Fl_Group(218, 327, 163, 64, "Azimuth Range");
+            o->tooltip("The azimuth range the Shooter will send each particle. 0 = X axis, 3.14 = -X \
+axis");
+            o->box(FL_ENGRAVED_FRAME);
+            { Fl_Value_Input* o = RadialShooter_MinPhi = new Fl_Value_Input(291, 332, 85, 25, "Min (rad)");
+              o->tooltip("The minimum azimuth (0=down the X+ axis)");
+              o->minimum(-6.2832);
+              o->maximum(6.2832);
+              o->step(0.01);
+              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinPhi);
+            }
+            { Fl_Value_Input* o = RadialShooter_MaxPhi = new Fl_Value_Input(291, 362, 85, 25, "Max (rad)");
+              o->tooltip("The maximum azimuth (0=down the -X axis)");
+              o->minimum(-6.2832);
+              o->maximum(6.2832);
+              o->step(0.01);
+              o->value(6.2832);
+              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxPhi);
+            }
+            o->end();
+          }
+          { Fl_Group* o = new Fl_Group(407, 327, 163, 64, "Initial Velocity Range");
+            o->tooltip("The initial velocity range the Shooter will send each particle");
+            o->box(FL_ENGRAVED_FRAME);
+            { Fl_Value_Input* o = RadialShooter_MinInitialSpeed = new Fl_Value_Input(480, 332, 85, 25, "Min (m/s)");
+              o->tooltip("The minimum starting velocity of each particle");
+              o->maximum(1000);
+              o->step(0.1);
+              o->value(10);
+              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialSpeed);
+            }
+            { Fl_Value_Input* o = RadialShooter_MaxInitialSpeed = new Fl_Value_Input(480, 362, 85, 25, "Max (m/s)");
+              o->tooltip("The maximum starting velocity of each particle");
+              o->maximum(1000);
+              o->step(0.1);
+              o->value(10);
+              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialSpeed);
+            }
+            o->end();
+          }
+          { Fl_Group* o = new Fl_Group(40, 417, 505, 113, "Initial Rotational Velocity Range");
+            o->tooltip("The inital rotational velocity range the Shooter applies to each particle");
             o->box(FL_ENGRAVED_BOX);
-            { Fl_Value_Input* o = RadialShooter_MaxInitialRotationalSpeedX = new Fl_Value_Input(379, 427, 85, 25, "X");
-              o->minimum(-10);
-              o->maximum(10);
-              o->step(0.1);
-              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX);
+            { Fl_Group* o = new Fl_Group(130, 426, 138, 94, "Min(rad/sec)");
+              o->box(FL_ENGRAVED_FRAME);
+              o->align(FL_ALIGN_LEFT);
+              { Fl_Value_Input* o = RadialShooter_MinInitialRotationalSpeedX = new Fl_Value_Input(178, 431, 85, 25, "X Axis");
+                o->minimum(-10);
+                o->maximum(10);
+                o->step(0.1);
+                o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX);
+              }
+              { Fl_Value_Input* o = RadialShooter_MinInitialRotationalSpeedY = new Fl_Value_Input(178, 461, 85, 25, "Y Axis");
+                o->minimum(-10);
+                o->maximum(10);
+                o->step(0.1);
+                o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY);
+              }
+              { Fl_Value_Input* o = RadialShooter_MinInitialRotationalSpeedZ = new Fl_Value_Input(178, 491, 85, 25, "Z Axis");
+                o->minimum(-10);
+                o->maximum(10);
+                o->step(0.1);
+                o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ);
+              }
+              o->end();
             }
-            { Fl_Value_Input* o = RadialShooter_MaxInitialRotationalSpeedY = new Fl_Value_Input(379, 457, 85, 25, "Y");
-              o->minimum(-10);
-              o->maximum(10);
-              o->step(0.1);
-              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY);
-            }
-            { Fl_Value_Input* o = RadialShooter_MaxInitialRotationalSpeedZ = new Fl_Value_Input(379, 487, 85, 25, "Z");
-              o->minimum(-10);
-              o->maximum(10);
-              o->step(0.1);
-              o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedZ);
+            { Fl_Group* o = new Fl_Group(386, 426, 138, 94, "Max(rad/sec)");
+              o->box(FL_ENGRAVED_FRAME);
+              o->align(FL_ALIGN_LEFT);
+              { Fl_Value_Input* o = RadialShooter_MaxInitialRotationalSpeedX = new Fl_Value_Input(433, 431, 85, 25, "X Axis");
+                o->minimum(-10);
+                o->maximum(10);
+                o->step(0.1);
+                o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX);
+              }
+              { Fl_Value_Input* o = RadialShooter_MaxInitialRotationalSpeedY = new Fl_Value_Input(433, 461, 85, 25, "Y Axis");
+                o->minimum(-10);
+                o->maximum(10);
+                o->step(0.1);
+                o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY);
+              }
+              { Fl_Value_Input* o = RadialShooter_MaxInitialRotationalSpeedZ = new Fl_Value_Input(433, 491, 85, 25, "Z Axis");
+                o->minimum(-10);
+                o->maximum(10);
+                o->step(0.1);
+                o->callback((Fl_Callback*)psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedZ);
+              }
+              o->end();
             }
             o->end();
           }
