@@ -20,13 +20,14 @@ const char*    testAudioApp::kSoundFile[] =
                {
                   "exp35.wav",
                   "exp57.wav",
-                  "WIND.wav",
+                  "tone_C_264_sawtooth.wav",
                   "tone_A_440_sawtooth.wav"
                };
 const char*    testAudioApp::kGfxFile[kNumGfx] =
                {
-                  "box.flt",
                   "ground.flt",
+                  "box.flt",
+                  "box.flt",
                };
 const char*    testAudioApp::kFxFile[kNumFx] =
                {
@@ -44,7 +45,8 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    mMic(NULL),
    mInputDevice(NULL),
    mMotionModel(NULL),
-   mSmokeCount(0L)
+   mSmokeCountA(0L),
+   mSmokeCountC(0L)
 {
    dtCore::SetDataFilePathList( kDataPath );
 
@@ -126,23 +128,8 @@ testAudioApp::PostFrame( const double deltaFrameTime )
    Application::PostFrame( deltaFrameTime );
    FreeAllStoppedSounds();
 
-   // move the stupid little box
-   static   long           X(0L);
-   static   const double   D(1.0f/50.0f);
-
-   assert( mGfxObj[BOX].get() );
-
-   dtCore::Transform xform;
-   sgVec3   pos;
-
-   mGfxObj[BOX]->GetTransform( &xform );
-   xform.GetTranslation( pos );
-
-   double   S  = sin( double(X++) * D ) * 50.0f;
-   pos[0L]  = static_cast<SGfloat>(S);
-
-   xform.SetTranslation( pos );
-   mGfxObj[BOX]->SetTransform( &xform );
+   MoveTheStupidBox( BOX_A );
+   MoveTheStupidBox( BOX_C );
 }
 
 
@@ -165,11 +152,11 @@ testAudioApp::KeyPressed(  dtCore::Keyboard*       keyboard,
          break;
 
       case  Producer::Key_D:
-         LoadPlaySound( kSoundFile[2L] );
+         LoadPlaySound( kSoundFile[2L], BOX_A );
          break;
 
       case  Producer::Key_F:
-         LoadPlaySound( kSoundFile[3L], true );
+         LoadPlaySound( kSoundFile[3L], BOX_C );
          break;
 
       case  Producer::Key_0:
@@ -257,7 +244,7 @@ testAudioApp::KeyPressed(  dtCore::Keyboard*       keyboard,
 
 
 void
-testAudioApp::LoadPlaySound( const char* fname, bool boxed /*= false*/ )
+testAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
 {
    assert( fname );
 
@@ -273,9 +260,9 @@ testAudioApp::LoadPlaySound( const char* fname, bool boxed /*= false*/ )
    snd->Play();
    mQueued.push( snd );
 
-   if( boxed )
+   if( box )
    {
-      dtCore::Object*  obj   = mGfxObj[BOX].get();
+      dtCore::Object*  obj   = mGfxObj[box].get();
       assert( obj );
 
       obj->AddChild( snd );
@@ -496,10 +483,15 @@ testAudioApp::SetUpVisuals( void )
    mFXMgr   = LoadFxFile( kFxFile[EXPLODE] );
    assert( mFXMgr.get() );
 
-   mPSys    = LoadPSFile( kFxFile[SMOKE] );
-   assert( mPSys.get() );
+   mPSysA   = LoadPSFile( kFxFile[SMOKE] );
+   assert( mPSysA.get() );
 
-   mGfxObj[BOX]->AddChild( mPSys.get() );
+   mGfxObj[BOX_A]->AddChild( mPSysA.get() );
+
+   mPSysC   = LoadPSFile( kFxFile[SMOKE] );
+   assert( mPSysC.get() );
+
+   mGfxObj[BOX_C]->AddChild( mPSysC.get() );
 
    InitInputDevices();
    SetUpCamera();
@@ -774,6 +766,48 @@ testAudioApp::SetUpCamera( void )
 
 
 void
+testAudioApp::MoveTheStupidBox( unsigned int box )
+{
+   // figure out which box gets what velocity
+   static   long              X(0L);
+   static   const double      A(1.0f/50.0f);
+   static   const double      C(1.0f/75.0f);
+            double            D((box==BOX_C)? C: A);
+            double            P(sin( double(X++) * D ));
+            double            V(cos( double(X++) * D ));
+            unsigned int      I((box==BOX_C)? 1L: 0L);
+            dtCore::Transform xform;
+            sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
+            sgVec3            vel   = { 0.0f, 0.0f, 0.0f };
+            OBJ_PTR           gfx(mGfxObj[box]);
+
+   // move the stupid little box
+   assert( gfx.get() );
+
+   gfx->GetTransform( &xform );
+   xform.GetTranslation( pos );
+
+   pos[I]   = static_cast<SGfloat>(P * 50.0f);
+
+   xform.SetTranslation( pos );
+   gfx->SetTransform( &xform );
+
+   // set the velocity for all children of the box
+   vel[I]   = static_cast<ALfloat>(V * 50.0f);
+   Sound*   snd(NULL);
+   for( unsigned int ii(0L); ii < gfx->GetNumChildren(); ii++ )
+   {
+      snd   = dynamic_cast<Sound*>(gfx->GetChild( ii ));
+      if( snd == NULL )
+         continue;
+
+      snd->SetVelocity( vel );
+   }
+}
+
+
+
+void
 testAudioApp::MakeSmoke( dtAudio::Sound* sound, void* param )
 {
    assert( sound );
@@ -781,15 +815,34 @@ testAudioApp::MakeSmoke( dtAudio::Sound* sound, void* param )
 
    sound->SetPlayCallback( NULL, NULL );
 
+   std::string    fname = sound->GetFilename();
    testAudioApp*  app   = static_cast<testAudioApp*>(param);
-   assert( app->mPSys.get() );
 
-   app->mSmokeCount++;
+   if( fname == app->kSoundFile[2L] )
+   {
+      assert( app->mPSysC.get() );
 
-   osg::Node*  node  = app->mPSys->GetOSGNode();
-   assert( node );
+      app->mSmokeCountC++;
 
-   node->setNodeMask( 0xFFFFFFFF );
+      osg::Node*  node  = app->mPSysC->GetOSGNode();
+      assert( node );
+
+      node->setNodeMask( 0xFFFFFFFF );
+      return;
+   }
+
+   if( fname == app->kSoundFile[3L] )
+   {
+      assert( app->mPSysA.get() );
+
+      app->mSmokeCountA++;
+
+      osg::Node*  node  = app->mPSysA->GetOSGNode();
+      assert( node );
+
+      node->setNodeMask( 0xFFFFFFFF );
+      return;
+   }
 }
 
 
@@ -802,16 +855,36 @@ testAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
 
    sound->SetStopCallback( NULL, NULL );
 
+   std::string    fname = sound->GetFilename();
    testAudioApp*  app   = static_cast<testAudioApp*>(param);
-   assert( app->mPSys.get() );
 
-   app->mSmokeCount--;
+   if( fname == app->kSoundFile[2L] )
+   {
+      assert( app->mPSysC.get() );
 
-   if( app->mSmokeCount )
-      return;
+      app->mSmokeCountC--;
 
-   osg::Node*  node  = app->mPSys->GetOSGNode();
-   assert( node );
+      if( app->mSmokeCountC )
+         return;
 
-   node->setNodeMask( 0x00000000 );
+      osg::Node*  node  = app->mPSysC->GetOSGNode();
+      assert( node );
+
+      node->setNodeMask( 0x00000000 );
+   }
+
+   if( fname == app->kSoundFile[3L] )
+   {
+      assert( app->mPSysA.get() );
+
+      app->mSmokeCountA--;
+
+      if( app->mSmokeCountA )
+         return;
+
+      osg::Node*  node  = app->mPSysA->GetOSGNode();
+      assert( node );
+
+      node->setNodeMask( 0x00000000 );
+   }
 }
