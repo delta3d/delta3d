@@ -18,9 +18,6 @@
 #include "rticonnection.h"
 #include "system.h"
 
-
-
-
 using namespace dtCore;
 using namespace dtHLA;
 using namespace std;
@@ -62,7 +59,8 @@ RTIConnection::RTIConnection(string name)
      mGlobeModeEnabled(false),
      mUTMModeEnabled(false),
      mGlobeRadius(100.0f),
-     mGroundClampMode(NO_CLAMP)
+     mGroundClampMode(NO_CLAMP),
+     mLocalIPAddress(0x7F000001)
 {
    RegisterInstance(this);
    
@@ -71,7 +69,35 @@ RTIConnection::RTIConnection(string name)
    SetGeoOrigin(0, 0, 0);
 
    mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
-   mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));  
+   mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));
+   
+   SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
+   
+   //
+   // Code from http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1047083789&id=1045780608
+   //
+   
+   int len;
+   sockaddr_in other, me;
+
+   memset(&other, 0, sizeof(other));
+
+   other.sin_family = AF_INET;
+   other.sin_port = 8192;
+   other.sin_addr.S_un.S_addr = 0x7F000001;
+   
+   if(connect(some_socket, (sockaddr*)&other, sizeof(other)) == 0)
+   {
+      if(getsockname(some_socket, (sockaddr*)&me, &len) == 0)
+      {
+         mLocalIPAddress = me.sin_addr.S_un.S_addr;
+         
+         if(ulIsLittleEndian)
+         {
+            ulEndianSwap(&mLocalIPAddress);
+         }
+      }
+   }
 }
 
 /**
@@ -104,11 +130,7 @@ void RTIConnection::JoinFederationExecution(string executionName,
    }
    catch(RTI::FederationExecutionAlreadyExists feae)
    {}
-
-
-
-    
-
+   
    mIgnoreEffect = false;
    mEntityIdentifierCounter = 1;
    mEventIdentifierCounter = 1;
@@ -121,12 +143,6 @@ void RTIConnection::JoinFederationExecution(string executionName,
    mRTIAmbassador.joinFederationExecution(
       federateName.c_str(), executionName.c_str(), this     
    );
-
-
-
-
-
-
 
    mExecutionName = executionName;
    
@@ -142,13 +158,14 @@ void RTIConnection::JoinFederationExecution(string executionName,
    mAircraftClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.Aircraft");
 
+   mGroundVehicleClassHandle =
+      mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.GroundVehicle");
+      
    mLifeFormClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.LifeForm");
 
    mHumanClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.LifeForm.Human");
-
-   
 
    mAccelerationVectorAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "AccelerationVector",
@@ -190,8 +207,6 @@ void RTIConnection::JoinFederationExecution(string executionName,
       mBaseEntityClassHandle
    );
    
-
-
    mDamageStateAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "DamageState",
       mPhysicalEntityClassHandle
@@ -309,13 +324,6 @@ void RTIConnection::JoinFederationExecution(string executionName,
       mMunitionDetonationClassHandle
    );
 
-   
-
-  
-
-   
-
-
    RTI::AttributeHandleSet* ahs = 
       RTI::AttributeHandleSetFactory::create(17);//was4
 
@@ -357,6 +365,11 @@ void RTIConnection::JoinFederationExecution(string executionName,
       *ahs
    );
 
+   mRTIAmbassador.publishObjectClass(
+      mGroundVehicleClassHandle,
+      *ahs
+   );
+   
    delete ahs;
    
    mRTIAmbassador.publishInteractionClass(
@@ -1312,31 +1325,7 @@ void RTIConnection::RegisterMasterEntity(Entity* entity)
       EntityType entityType = entity->GetEntityType();
 
       RTI::ObjectHandle handle;
-
-      if(entityType.GetKind() == PlatformKind &&
-         entityType.GetDomain() == AirPlatformDomain)
-      {
-         handle = mRTIAmbassador.registerObjectInstance(
-            mAircraftClassHandle
-         );
-      }
-      else if(entityType.GetKind() == LifeFormKind)
-      {
-         handle = mRTIAmbassador.registerObjectInstance(
-            mHumanClassHandle
-         );
-      }
-      else
-      {
-         handle = mRTIAmbassador.registerObjectInstance(
-            mPhysicalEntityClassHandle
-         );
-      }
-
-      MasterData masterData;
-
-      masterData.mEntity = entity;
-
+      
       EntityIdentifier entityIdentifier(
          mSiteIdentifier,
          mApplicationIdentifier,
@@ -1349,6 +1338,52 @@ void RTIConnection::RegisterMasterEntity(Entity* entity)
       }
 
       entity->SetEntityIdentifier(entityIdentifier);
+
+      char name[128];
+      
+      sprintf(
+         name, 
+         "Delta3D/%x/%hu-%hu-%hu", 
+         mLocalIPAddress,
+         entityIdentifier.GetSiteIdentifier(),
+         entityIdentifier.GetApplicationIdentifier(),
+         entityIdentifier.GetEntityIdentifier()
+      );
+      
+      if(entityType.GetKind() == PlatformKind &&
+         entityType.GetDomain() == AirPlatformDomain)
+      {
+         handle = mRTIAmbassador.registerObjectInstance(
+            mAircraftClassHandle,
+            name
+         );
+      }
+      else if(entityType.GetKind() == PlatformKind &&
+              entityType.GetDomain() == LandPlatformDomain)
+      {
+         handle = mRTIAmbassador.registerObjectInstance(
+            mGroundVehicleClassHandle,
+            name
+         );
+      }
+      else if(entityType.GetKind() == LifeFormKind)
+      {
+         handle = mRTIAmbassador.registerObjectInstance(
+            mHumanClassHandle,
+            name
+         );
+      }
+      else
+      {
+         handle = mRTIAmbassador.registerObjectInstance(
+            mPhysicalEntityClassHandle,
+            name
+         );
+      }
+
+      MasterData masterData;
+
+      masterData.mEntity = entity;
 
       mObjectHandleMasterDataMap[handle] = masterData;
    }
@@ -1679,7 +1714,12 @@ void RTIConnection::OnMessage(MessageData *data)
                1
             );
 
-            *((int*)encodedDamageState) = 0; // No damage
+            *((int*)encodedDamageState) = master->GetDamageState();
+            
+            if(ulIsLittleEndian)
+            {
+               ulEndianSwap((int*)encodedDamageState);
+            }
 
             theAttributes->add(
                mDamageStateAttributeHandle,
@@ -1864,7 +1904,8 @@ void RTIConnection::OnMessage(MessageData *data)
          
          transform.SetTranslation(position);
          
-         if(ghost->GetEntityType().GetKind() == PlatformKind &&
+         if((ghost->GetEntityType().GetKind() == PlatformKind ||
+             ghost->GetEntityType().GetKind() == LifeFormKind) &&
             ghost->GetEntityType().GetDomain() == LandPlatformDomain)
          {
             ClampToGround(&transform);
@@ -2190,6 +2231,8 @@ void RTIConnection::reflectAttributeValues(
             
          }
 
+         ghost->SetDamageState((DamageState)damageAttribute);
+         
          if(damageAttribute!=0)
          {
             if(mEffectManager != NULL)
@@ -2208,7 +2251,8 @@ void RTIConnection::reflectAttributeValues(
       }
    }
 
-   if(ghost->GetEntityType().GetKind() == PlatformKind &&
+   if((ghost->GetEntityType().GetKind() == PlatformKind ||
+       ghost->GetEntityType().GetKind() == LifeFormKind) &&
       ghost->GetEntityType().GetDomain() == LandPlatformDomain)
    {
       ClampToGround(&transform);
