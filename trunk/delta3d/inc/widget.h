@@ -15,10 +15,6 @@
 
 namespace dtABC
 {
-   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   typedef Window HWND; 
-   #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-
    // forward references
    struct   WinRect;
    struct   WinData;
