@@ -55,8 +55,9 @@ namespace dtChar
           * Loads a ReplicantBody data file for this character.
           *
           * @param filename the name of the file to load
+          * @return true if successful, false if not
           */
-         void LoadFile(std::string filename);
+         bool LoadFile(std::string filename);
 
          /**
           * Returns the name of the last file loaded.
