@@ -1,0 +1,137 @@
+
+DIV.qindex { width: 100%;
+             background-color: #666666;
+             border: 4px solid #666666;
+             text-align: center;
+             margin-bottom: 2px
+}
+A.qindex { text-decoration: none; font-weight: bold; color: #FFCC00 }
+A.qindex:visited { text-decoration: none; font-weight: bold; color: #999966 }
+A.el { text-decoration: none; font-weight: bold; color: #FFCC00 }
+A.el:visited { text-decoration: none; color: #999966 }
+A.elRef { font-weight: bold }
+A.qindex:hover { text-decoration: none; background-color: #ddddff }
+A.qindexHL { text-decoration: none; font-weight: bold;
+             background-color: #666666;
+             color: #FFCC00
+           }
+A.qindexHL:hover { text-decoration: none; background-color: #666666; color: #ffffff }
+A.qindexHL:visited { text-decoration: none; background-color: #666666; color: #999966 }
+TD.md { background-color: #666666; font-weight: bold; }
+TD.mdname1 { background-color: #666666; font-weight: bold; color: #FFCC00; }
+TD.mdname { background-color: #666666; font-weight: bold; color: #FFCC00; width: 600px; }
+DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
+DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
+BODY {
+	background: #333333;
+	color: #FFFFFF;
+	margin-right: 20px;
+	margin-left: 20px;
+}
+TD.indexkey { 
+   background-color: #666666; 
+   font-weight: bold; 
+   padding-right  : 10px; 
+   padding-top    : 2px; 
+   padding-left   : 10px; 
+   padding-bottom : 2px; 
+   margin-left    : 0px; 
+   margin-right   : 0px; 
+   margin-top     : 2px; 
+   margin-bottom  : 2px  
+}
+TD.indexvalue { 
+   background-color: #666666; 
+   font-style: italic; 
+   padding-right  : 10px; 
+   padding-top    : 2px; 
+   padding-left   : 10px; 
+   padding-bottom : 2px; 
+   margin-left    : 0px; 
+   margin-right   : 0px; 
+   margin-top     : 2px; 
+   margin-bottom  : 2px  
+}
+TR.memlist {
+   background-color: #666666; 
+}
+P.formulaDsp { text-align: center; }
+IMG.formulaDsp { }
+IMG.formulaInl { vertical-align: middle; }
+SPAN.keyword       { color: #008000 }
+SPAN.keywordtype   { color: #604020 }
+SPAN.keywordflow   { color: #e08000 }
+SPAN.comment       { color: #800000 }
+SPAN.preprocessor  { color: #806020 }
+SPAN.stringliteral { color: #002080 }
+SPAN.charliteral   { color: #008080 }
+.mdTable {
+	border: 1px solid #868686;
+	background-color: #666666;
+}
+.mdRow {
+	padding: 8px 20px;
+}
+.mdescLeft {
+	font-size: smaller;
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: #666666;
+	padding-left: 8px;
+	border-top: 1px none #666666;
+	border-right: 1px none #666666;
+	border-bottom: 1px none #666666;
+	border-left: 1px none #666666;
+	margin: 0px;
+}
+.mdescRight {
+	font-size: smaller;
+	font-family: Arial, Helvetica, sans-serif;
+	font-style: italic;
+	background-color: #666666;
+	padding-left: 4px;
+	border-top: 1px none #666666;
+	border-right: 1px none #666666;
+	border-bottom: 1px none #666666;
+	border-left: 1px none #666666;
+	margin: 0px;
+	padding-bottom: 0px;
+	padding-right: 8px;
+}
+.memItemLeft {
+	padding: 1px 0px 0px 8px;
+	margin: 4px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-top-color: #666666;
+	border-right-color: #666666;
+	border-bottom-color: #666666;
+	border-left-color: #666666;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	background-color: #666666;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.memItemRight {
+	padding: 1px 0px 0px 8px;
+	margin: 4px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-top-color: #666666;
+	border-right-color: #666666;
+	border-bottom-color: #666666;
+	border-left-color: #666666;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+	background-color: #666666;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 13px;
+}
