@@ -1,18 +1,16 @@
-#include "dtCore/dt.h"
 #include "dtChar/dtchar.h"
+#include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtChar;
 
-
 class KeyController : public Base, public KeyboardListener
 {
    DECLARE_MANAGEMENT_LAYER(KeyController)
 
 public:
-
 
    KeyController(Character* character, Keyboard* keyboard)
       : Base("KeyController"),

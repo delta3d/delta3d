@@ -126,7 +126,7 @@ namespace dtChar
           * @param force whether or not to force the action
           */
          void ExecuteActionWithSpeed(std::string name, 
-                                     double speed,
+                                     float speed,
                                      bool priority = true,
                                      bool force = false);
          
@@ -139,7 +139,7 @@ namespace dtChar
           * @param force whether or not to force the action
           */
          void ExecuteActionWithAngle(std::string name, 
-                                     double angle,
+                                     float angle,
                                      bool priority = true,
                                      bool force = false);
          
@@ -153,8 +153,8 @@ namespace dtChar
           * @param force whether or not to force the action
           */
          void ExecuteActionWithSpeedAndAngle(std::string name, 
-                                             double speed, 
-                                             double angle,
+                                             float speed, 
+                                             float angle,
                                              bool priority = true,
                                              bool force = false);
          
