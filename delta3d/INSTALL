@@ -84,7 +84,9 @@ Fedora Core-up (2.6.5-1.358)
 
    Uncomment SUBDIRS( python ) to build dtPython as well. Make sure to
    run the script install_linux_python from src/python to create 
-   necessary symbolic links to Python modules.
+   necessary symbolic links to Python modules. Also don't forgot to
+   point your PYTHONPATH environment variable to directory containing
+   these links.
 
 Note:
 HLA requires RTI, as mentioned above. Instructions to build HLA-related
