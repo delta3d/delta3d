@@ -102,7 +102,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="p51D.lib odbc32.lib odbccp32.lib winmm.lib js_d.lib isensed.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js_d.lib isensed.lib"
 				OutputFile=".\Debug/testTerrain.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
