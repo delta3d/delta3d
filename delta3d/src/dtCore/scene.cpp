@@ -4,10 +4,12 @@
 
 #include "osg/FrameStamp"
 #include <osgUtil/IntersectVisitor>
+#include <osg/LightSource>
 
 #include "dtCore/scene.h"
 #include "dtCore/system.h"
 #include "dtCore/notify.h"
+#include "dtCore/light.h"
 
 using namespace dtCore;
 using namespace std;
