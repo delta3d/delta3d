@@ -88,12 +88,13 @@ namespace dtCore
       void  SetChangeScreenResolutionFlag( int width, int height, int pixelDepth );
                               
       Resolution GetCurrentResolution( void );
-      bool  ChangeScreenResolution (int width, int height, int colorDepth);
+      bool  ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
+      bool  ChangeScreenResolution( Resolution res );
 
    private:
 
       #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-      int CalcRefreshRate( int height, int width, int dotclock );
+      int CalcRefreshRate( int width, int height, int dotclock );
       #endif
       
       Producer::RenderSurface *mRenderSurface;
