@@ -24,6 +24,11 @@ mSeason(SEASON_SUMMER)
    mEnvironment->SetFogEnable(true);
    mEnvironment->SetFogMode(dtCore::Environment::EXP2);
 
+   mClouds.push_back(new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f));//few
+   mClouds.push_back(new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f));//scattered
+   mClouds.push_back(new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f)); //broken
+   mClouds.push_back(new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f));//overcast
+
    SetTheme(mTheme);
 
    RegisterInstance(this);
@@ -36,9 +41,10 @@ Weather::~Weather(void)
 
 void Weather::SetTheme(const WeatherTheme theme)
 {
-   mTheme = theme;
+   if (theme == mTheme) return;
 
-   switch (mTheme) {
+
+   switch (theme) {
    case THEME_CLEAR:
       SetBasicWindType(WIND_BREEZE);
       SetBasicCloudType(CLOUD_CLEAR);
@@ -62,6 +68,11 @@ void Weather::SetTheme(const WeatherTheme theme)
    default:
       break;
    }
+
+   //The theme will be set to CUSTOM because of the above,
+   //this will reset it to what it's supposed to be
+   mTheme = theme;
+
    
 }
 
@@ -69,44 +80,42 @@ void Weather::SetBasicCloudType( const CloudType type)
 {
    //create a set of cloud layers EnvEffects to represent the 
    //supplied cloud type
+
+   mTheme = THEME_CUSTOM;
+
+   if (type == mCloudType) return;
+
    mCloudType = type;
+
+   //remove any existing Clouds that have been added to the Env
+   for (CloudPlaneList::iterator it = mClouds.begin();
+      it != mClouds.end(); it++)
+   {
+      mEnvironment->RemEffect( it->get() );
+   }
+
 
    switch (mCloudType) {
    case CLOUD_CLEAR:
-      //remove any existing Clouds that have been added to the Env
-      for (CloudPlaneList::iterator it = mClouds.begin();
-           it != mClouds.end(); it++)
-      {
-         mEnvironment->RemEffect( it->get() );
-      }
-      mClouds.clear();
    	break;
    case CLOUD_FEW:
       {
-         dtCore::CloudPlane *cld1 = new dtCore::CloudPlane(6, 0.75f, 2, 1, .2, .96, 512, 1100.f);
-         mClouds.push_back(cld1);
-         mEnvironment->AddEffect(cld1);
+         mEnvironment->AddEffect( mClouds[CLOUD_FEW-1].get() );
       }
    	break;
    case CLOUD_SCATTERED:
       {
-         dtCore::CloudPlane *cld1 = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .97,  512, 1000.f);
-         mClouds.push_back(cld1);
-         mEnvironment->AddEffect(cld1);
+         mEnvironment->AddEffect( mClouds[CLOUD_SCATTERED-1].get() );
       }
    	break;
    case CLOUD_BROKEN:
       {
-         dtCore::CloudPlane *cld1 = new dtCore::CloudPlane(6, 0.5f, 4, 1, .3, .96,  512, 800.f);
-         mClouds.push_back(cld1);
-         mEnvironment->AddEffect(cld1);
+         mEnvironment->AddEffect( mClouds[CLOUD_BROKEN-1].get() );
       }
    	break;
    case CLOUD_OVERCAST:
       {
-         dtCore::CloudPlane *cld1 = new dtCore::CloudPlane(6, 0.4f, 6, 1, .2, .98,  512, 600.f);
-         mClouds.push_back(cld1);
-         mEnvironment->AddEffect(cld1);
+         mEnvironment->AddEffect( mClouds[CLOUD_OVERCAST-1].get() );
       }
      break;   
    default: 
@@ -120,6 +129,8 @@ void Weather::SetBasicCloudType( const CloudType type)
  */
 void Weather::SetBasicWindType( const WindType windType)
 {
+   mTheme = THEME_CUSTOM;
+
    if (mWindType == windType) return;
 
    mWindType = windType;
@@ -149,6 +160,8 @@ void Weather::SetBasicWindType( const WindType windType)
  */
 void Weather::SetBasicVisibilityType(const VisibilityType visType)
 {
+   mTheme = THEME_CUSTOM;
+
    if (mVisType == visType) return;
 
    mVisType = visType;
