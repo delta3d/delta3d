@@ -1,29 +1,35 @@
 import os
 
-env = Environment()
-
-#conf = Configure(env)
-
 optCache = 'options.cache'
 opts = Options(optCache)
 opts.AddOptions(
     BoolOption('debug',    'Build with debugging enabled', 0),
     BoolOption('optimize', 'Build with optimizations', 0),
-    #BoolOption('distcc', 'Enable compiling with distcc', 0),
+    BoolOption('distcc', 'Enable compiling with distcc', 0),
     BoolOption('nowarn', 'Disable all warnings', 0),
-    BoolOption('warningsAsErrors', 'Treat warnings as errors', 0))
+    BoolOption('warningsAsErrors', 'Treat warnings as errors', 0),
+    PathOption('prefix', 'Directory to install under (Default: /usr/local)', '/usr/local') )
 
-opts.Update(env)
+env = Environment(
+    ENV = {
+      'PATH'       : os.environ[ 'PATH' ],
+      'HOME'       : os.environ[ 'HOME' ], # required for distcc
+      'DELTA_ROOT' : os.environ['DELTA_ROOT'].split(':'),
+      'DELTA_INC'  : os.environ['DELTA_INC'].split(':'),
+      'DELTA_LIB'  : os.environ['DELTA_LIB'].split(':'),
+      'DELTA_DATA' : os.environ['DELTA_DATA'].split(':')
+    }, options = opts)
+env.Replace(CPPPATH = [], LIBS = [], LIBPATH = [], CPPDEFINES = [],
+    CXXFLAGS = "", CCFLAGS = "")
 Help(opts.GenerateHelpText(env))
-opts.Save(optCache, env)
 
 if env.get('debug'):
     env.Append(CCFLAGS=['-g'], CPPDEFINES=['DEBUG', '_DEBUG'])
 if env.get('optimize'):
     env.Append(CCFLAGS=['-O2'], LINKFLAGS=['-s'], CPPDEFINES=['NDEBUG'])
-#if env.get('distcc'):
-#    env['CC']  = ['$(', 'distcc', '$)', env['CC']]
-#    env['CXX'] = ['$(', 'distcc', '$)', env['CXX']]
+if env.get('distcc'):
+    env['CC']  = ['$(', 'distcc', '$)', env['CC']]
+    env['CXX'] = ['$(', 'distcc', '$)', env['CXX']]
 if env.get('nowarn'):
     env.Append(CCFLAGS=['-w'])
 else:
@@ -39,15 +45,139 @@ if env.get('warningsAsErrors'):
     elif env['CXX'] == 'g++':
         env.Append(CXXFLAGS=['-Werror'])
 
-env['ENV']['DELTA_ROOT'] = os.environ['DELTA_ROOT'].split(':')
-env['ENV']['DELTA_INC'] = os.environ['DELTA_INC'].split(':')
-env['ENV']['DELTA_LIB'] = os.environ['DELTA_LIB'].split(':')
-env['ENV']['DELTA_DATA'] = os.environ['DELTA_DATA'].split(':')
+
+Help(opts.GenerateHelpText(env))
 
 env['CPPPATH'] = env['ENV']['DELTA_INC']
 env['LIBPATH'] = env['ENV']['DELTA_LIB']
 
-#env = conf.Finish()
+#############################################
+# Configure: Testing for dependencies vX.X.X
+#
+# osg0.9.8-2, etc.
+# ...
+##############################################
+
+def CheckForSimpleLibrary(name, header, libraries, call = "main();", language = "C++"):
+
+    if not conf.CheckCXXHeader(header):
+        return 0
+
+    previous_libs = env[ 'LIBS' ]
+    library = libraries[ 0 ]
+    vars[ "LIBS" ] = libraries[ 1: ]
+
+    if not conf.CheckLibWithHeader(library, header, language, call, False):
+        return 0
+
+    env[ varprefix + "LIBS" ] = libraries
+    env[ 'LIBS' ] = previous_libs
+
+    return 1
+
+def CheckForOpenSceneGraph(context):
+
+  potentialOsgDirs = [
+    "/usr",
+    "/usr/local"
+     ]
+
+  if os.environ.has_key('DELTA_ROOT'):
+      potentialOsgDirs.insert( 0, os.path.join( os.environ['DELTA_ROOT'], "ext" ) )
+
+  for i in potentialOsgDirs:
+    if CheckForSimpleLibrary("osg", "MatrixTransform", [ "osg" ] ):
+      context.env.Replace(OSG_DIR = i)
+      return 1
+  return 0
+
+def CheckForProducer(context):
+    return 0
+
+def CheckForOpenThreads(context):
+    return 0
+
+def CheckForCal3d(context):
+    return 0
+
+def CheckForFltk(context):
+    return 0
+
+def CheckForGdal(context):
+    return 0
+
+def CheckForGlGui(context):
+    return 0
+
+def CheckForIsense(context):
+    return 0
+
+def CheckForOpenAl(context):
+    return 0
+
+def CheckForOde(context):
+    return 0
+
+def CheckForPlib(context):
+    return 0
+
+def CheckForReplicantBody(context):
+    return 0
+
+def CheckForSignalSlot(context):
+    if not conf.CheckCXXHeader('sigslot.h'):
+        print 'sigslot.h must be installed!'
+        return 0
+    return 1
+
+def CheckForTinyXml(context):
+    return 0
+
+def CheckForRti(context):
+    return 0
+
+def CheckForBoost(context):
+    return 0
+
+conf = Configure(env, custom_tests = {
+    "CheckForOpenSceneGraph" : CheckForOpenSceneGraph,
+    "CheckForProducer" : CheckForProducer,
+    "CheckForOpenThreads" : CheckForOpenThreads,
+    "CheckForCal3d" : CheckForCal3d,
+    "CheckForFltk" : CheckForFltk,
+    "CheckForGdal" : CheckForGdal,
+    "CheckForGlGui" : CheckForGlGui,
+    "CheckForIsense" : CheckForIsense,
+    "CheckForOpenAl" : CheckForOpenAl,
+    "CheckForOde" : CheckForOde,
+    "CheckForPlib" : CheckForPlib,
+    "CheckForReplicantBody" : CheckForReplicantBody,
+    "CheckForSignalSlot" : CheckForSignalSlot,
+    "CheckForTinyXml" : CheckForTinyXml
+    })
+
+#if not conf.CheckForOpenSceneGraph():
+#    Exit(1)
+
+if not conf.CheckForSignalSlot():
+    Exit(1)
+
+# etc.
+
+env = conf.Finish()
+
+#################
+# Build Delta3D #
+#################
 
 Export("env")
-SConscript(dirs=['dtCore']) #etc etc
+
+env.Replace(CXXSUFFIX = ".cpp")
+
+env.Alias("install", "$prefix/lib")
+
+SConscript(dirs=['dtCore'])
+#SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gui_fl' ])
+#SConscript(dirs=[ 'dtHLA' ])
+#SConscript(dirs=[ 'python' ])
+#SConscript(dirs=[ 'soarx' ])
