@@ -233,7 +233,6 @@ AudioManager::Config( const AudioConfigData& data /*= _DefCfg*/ )
    if( mSource )
    {
       // already configured
-      assert( false );
       return;
    }
 
