@@ -21,7 +21,7 @@
 #ifndef DELTA_TRIPOD
 #define DELTA_TRIPOD
 
-#include "dtCore/Transformable.h"
+#include "dtCore/transformable.h"
 #include <osg/ref_ptr>
 #include "sg.h"
 
