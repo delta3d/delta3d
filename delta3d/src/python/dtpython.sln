@@ -11,6 +11,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCharBindings", "dtcharbin
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAudioBindings", "dtaudiobindings.vcproj", "{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtSOARXBindings", "dtsoarxbindings.vcproj", "{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUIFlBindings", "dtguiflbindings.vcproj", "{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -43,6 +55,30 @@ Global
 		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release.Build.0 = Release|Win32
 		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release DLL.ActiveCfg = Release|Win32
 		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release DLL.Build.0 = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Debug.ActiveCfg = Debug|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Debug.Build.0 = Debug|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Debug DLL.ActiveCfg = Debug|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Debug DLL.Build.0 = Debug|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Release.ActiveCfg = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Release.Build.0 = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Release DLL.ActiveCfg = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Release DLL.Build.0 = Release|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Debug.ActiveCfg = Debug|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Debug.Build.0 = Debug|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Debug DLL.ActiveCfg = Debug|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Debug DLL.Build.0 = Debug|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Release.ActiveCfg = Release|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Release.Build.0 = Release|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Release DLL.ActiveCfg = Release|Win32
+		{33C4924B-EBAE-4862-AA87-924A1DAEC4B7}.Release DLL.Build.0 = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.ActiveCfg = Debug|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.Build.0 = Debug|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug DLL.ActiveCfg = Debug|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug DLL.Build.0 = Debug|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.ActiveCfg = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.Build.0 = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release DLL.ActiveCfg = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release DLL.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

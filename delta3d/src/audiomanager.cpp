@@ -64,6 +64,9 @@ const AudioConfigData      AudioManager::_DefCfg(24L, true);
 
 
 
+IMPLEMENT_MANAGEMENT_LAYER(Sound)
+
+
 // public member functions
 // default consructor
 Sound::Sound()
@@ -72,6 +75,8 @@ Sound::Sound()
    mGain(1.0f),
    mPitch(1.0f)
 {
+   RegisterInstance(this);
+
    mPos[0L]       = 0.0f;
    mPos[1L]       = 0.0f;
    mPos[2L]       = 0.0f;
@@ -90,6 +95,7 @@ Sound::Sound()
 // desructor
 Sound::~Sound()
 {
+    DeregisterInstance(this);
 }
 
 
@@ -194,6 +200,8 @@ Sound::SetPitch( float pitch )
    SendMessage( kCommand[PITCH], this );
 }
 
+
+IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
 
 void
@@ -306,6 +314,8 @@ AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
    mEAXSet(NULL),
    mEAXGet(NULL)
 {
+    RegisterInstance(this);
+    
    mSourceMap.clear();
    mActiveList.clear();
    mBufferMap.clear();
@@ -342,6 +352,8 @@ AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
 // desructor
 AudioManager::~AudioManager()
 {
+    DeregisterInstance(this);
+    
    // stop all sources
    for( unsigned int ii(0L); ii < mNumSources; ii++ )
    {

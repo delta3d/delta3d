@@ -9,6 +9,8 @@ namespace   dtAudio
 {
    class Listener :  public   dtCore::Transformable
    {
+        DECLARE_MANAGEMENT_LAYER(Listener)
+        
       protected:
                         Listener();
          virtual        ~Listener();

@@ -27,6 +27,8 @@ namespace   dtAudio
    // into it's own file, replacing dtCore::Sound
    class Sound :  public   dtCore::Transformable
    {
+        DECLARE_MANAGEMENT_LAYER(Sound)
+        
       public:
                   enum  Command
                         {
@@ -112,6 +114,8 @@ namespace   dtAudio
 
    class AudioManager   :  public   dtCore::Base
    {
+        DECLARE_MANAGEMENT_LAYER(AudioManager)
+        
       private:
          struct   BufferData
          {
