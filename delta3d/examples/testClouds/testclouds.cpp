@@ -25,7 +25,7 @@ public:
       cp[2] = new CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
 
       weather = new Weather();   
-      weather->AddDrawable(terr);
+      weather->AddChild(terr);
 
       cloudLayers = 1;
       isDomeEnabled = false;

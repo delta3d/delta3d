@@ -23,7 +23,7 @@ public:
       GetCamera()->SetTransform(&trans);
 
       weather = new dtABC::Weather();   
-      weather->AddDrawable(terr);
+      weather->AddChild(terr);
 
       AddDrawable(weather->GetEnvironment());
 

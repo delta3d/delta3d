@@ -134,6 +134,7 @@ namespace dtABC
 
       ///Add a DeltaDrawable to be affected by this weather's lighting and fog
       void AddChild( dtCore::DeltaDrawable *child);
+      void RemoveChild( dtCore::DeltaDrawable *child);
 
    private:
       typedef std::vector<osg::ref_ptr<dtCore::CloudPlane> > CloudPlaneList;
