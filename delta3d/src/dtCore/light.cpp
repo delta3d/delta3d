@@ -4,9 +4,13 @@
 
 using namespace dtCore;
 
+IMPLEMENT_MANAGEMENT_LAYER(Light)
+
 Light::Light( int number, LightingMode mode, osg::LightSource* lightSource )
 : mLightingMode( mode ), mLightSource( lightSource ), mEnabled ( false )
 {
+   RegisterInstance(this);
+
    if( number < 0 || number >= MAX_LIGHTS )
       dtCore::Notify(WARN, "Light number %d is out of bounds, use values 0-7.",number);
 
@@ -17,7 +21,10 @@ Light::Light( int number, LightingMode mode, osg::LightSource* lightSource )
    mLightSource->setLight( light );
 }
 
-Light::~Light() {}
+Light::~Light()
+{
+   DeregisterInstance(this);
+}
 
 void Light::SetLightingMode( const LightingMode mode )
 {

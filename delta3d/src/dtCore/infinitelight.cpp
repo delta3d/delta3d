@@ -10,6 +10,8 @@ IMPLEMENT_MANAGEMENT_LAYER(InfiniteLight)
 InfiniteLight::InfiniteLight( int number, const std::string name, const LightingMode mode )
 : Light( number, mode, NULL )
 {
+   RegisterInstance(this);
+
    SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
@@ -22,6 +24,8 @@ InfiniteLight::InfiniteLight( int number, const std::string name, const Lighting
 InfiniteLight::InfiniteLight( osg::LightSource* const source, const std::string name, const LightingMode mode )
 : Light( source->getLight()->getLightNum(), mode, source )
 {
+   RegisterInstance(this);
+
    SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
@@ -35,6 +39,8 @@ InfiniteLight::InfiniteLight( osg::LightSource* const source, const std::string 
 InfiniteLight::~InfiniteLight()
 {
    mLightSource = 0;
+
+   DeregisterInstance(this);
 }
 
 

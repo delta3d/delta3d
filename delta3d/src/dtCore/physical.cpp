@@ -32,6 +32,8 @@
 using namespace dtCore;
 using namespace std;
 
+IMPLEMENT_MANAGEMENT_LAYER(Physical)
+
 /**
  * Constructor.
  */
@@ -43,6 +45,8 @@ Physical::Physical()
      mMeshIndices(NULL),
      mRenderingGeometry(false)
 {
+   RegisterInstance(this);
+
    mGeomID = dCreateGeomTransform(0);
    
    dGeomTransformSetCleanup(mGeomID, 1);
@@ -73,6 +77,8 @@ Physical::~Physical()
       delete[] mMeshVertices;
       delete[] mMeshIndices;
    }
+
+   DeregisterInstance(this);
 }
 
 

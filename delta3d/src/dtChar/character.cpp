@@ -52,11 +52,10 @@ Character::~Character()
  */
 void Character::AddedToScene(Scene* scene)
 {
-   mCollisionRootNode = scene->GetSceneNode();
-   
-   if(mBodyNode.get() != NULL)
+   if(mBodyNode.valid() && scene)
    {
-      mBodyNode->setCollisionRootNode(mCollisionRootNode.get());
+      mCollisionRootNode = scene->GetSceneNode();
+      mBodyNode->setCollisionRootNode(mCollisionRootNode.get());    
    }
 }
 
