@@ -6,7 +6,7 @@
 #include <memory.h>
 #include <stdlib.h>
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include <sys/socket.h>
 #include <linux/in.h>
 #endif
@@ -93,7 +93,7 @@ RTIConnection::RTIConnection(string name)
    other.sin_family = AF_INET;
    other.sin_port = 8192;
 
-   #ifdef _WIN32
+   #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    other.sin_addr.S_un.S_addr = 0x7F000001;
    #else
    other.sin_addr.s_addr = 0x7F000001;
@@ -104,7 +104,7 @@ RTIConnection::RTIConnection(string name)
 
       if(getsockname(some_socket, (sockaddr*)&me, (socklen_t*)&len) == 0)
       {
-         #ifdef _WIN32
+         #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
          mLocalIPAddress = me.sin_addr.S_un.S_addr;
          #else
          mLocalIPAddress = me.sin_addr.s_addr;
@@ -115,7 +115,7 @@ RTIConnection::RTIConnection(string name)
             ulEndianSwap(&mLocalIPAddress);
          }
 
-         #ifdef _WIN32
+         #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
          mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
          #else
          win_addr temp_addr;

@@ -15,9 +15,9 @@
 
 namespace dtABC
 {
-   #ifndef _WIN32
+   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
    typedef Window HWND; 
-   #endif // _WIN32
+   #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
    // forward references
    struct   WinRect;
@@ -205,7 +205,7 @@ namespace dtABC
                SCROLLLOCK  = BIT(6L),
             };
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
       #undef KEY_0
       #undef KEY_1
       #undef KEY_2

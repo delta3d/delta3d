@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_SOARX_GENERIC
+#define DELTA_SOARX_GENERIC
+
 #include "soarx_generic.h"
 
 namespace dtSOARX
@@ -30,3 +32,5 @@ namespace dtSOARX
 	   void RenderFrustum();
    };
 };
+
+#endif // DELTA_SOARX_GENERIC

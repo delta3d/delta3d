@@ -2,8 +2,10 @@
 // Framework interface declaration file
 // 10/08/2003
 
-#pragma once
+#ifndef DELTA_SOARX_DEFINITIONS
+#define DELTA_SOARX_DEFINITIONS
 
+#include <typeinfo>
 #include "soarx_definitions.h"
 
 namespace dtSOARX
@@ -245,19 +247,24 @@ namespace dtSOARX
 	   void* m_object_ptr;
 	   void* m_function_ptr;
 	   char* m_function_sig;
-	   const type_info* m_function_type;
+	   //const type_info* m_function_type;
+           const std::type_info* m_function_type;
 
    public:
 	   template<typename T>
 	   Callback(void* i_object, T i_function)
 	   {
+                   #ifdef _WIN32
 		   __asm {
-			   mov eax, [i_object]
+                           mov eax, [i_object]
 			   mov [ecx], eax
 			   mov eax, [i_function]
 			   mov [ecx+4], eax
 			   mov DWORD PTR [ecx+8], 0
 		   }
+                   #else
+                   asm("movw (i_object),%eax\n\tmovw %eax,(%ecx)\n\tmovw (i_function), %eax\n\tmovw %eax,4(%ecx)\n\tmovl $0,8(%ecx)");
+                   #endif
 		   m_function_type = &typeid(T);
 	   }
 
@@ -274,3 +281,5 @@ namespace dtSOARX
 #define REGISTER(event, function) sys->Subscribe(#event, Callback(this, function));
 
 //______________________________________________________________
+
+#endif // DELTA_SOARX_FRAMEWORK

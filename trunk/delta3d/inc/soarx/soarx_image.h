@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_SOARX_FRAMEWORK
+#define DELTA_SOARX_FRAMEWORK
+
 #include "soarx_framework.h"
 
 namespace dtSOARX
@@ -40,3 +42,5 @@ namespace dtSOARX
 	   int Save_JPEG(FILE* f);
    };
 };
+
+#endif // DELTA_SOARX_FRAMEWORK

@@ -1,7 +1,7 @@
 #ifndef DELTA_UIDRAWABLE
 #define DELTA_UIDRAWABLE
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #define stricmp strcasecmp
 #endif
 

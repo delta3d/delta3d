@@ -1,5 +1,7 @@
 //______________________________________________________________
-#pragma once
+
+#ifndef DELTA_SOARXDRAWABLE
+#define DELTA_SOARXDRAWABLE
 
 #define DATA_LAYOUT_EMBEDDED_QUADTREE
 
@@ -206,3 +208,4 @@ namespace dtSOARX
    };
 };
 
+#endif // DELTA_SOARXDRAWABLE

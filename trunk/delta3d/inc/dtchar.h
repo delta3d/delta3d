@@ -4,7 +4,7 @@
 
 #include "character.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME1
@@ -39,6 +39,6 @@
 #pragma comment (lib, _AUTOLIBNAME1)
 
 
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #endif // DELTA_DTCHAR

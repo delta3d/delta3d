@@ -191,7 +191,7 @@ void DeltaWin::SetWindowTitle(const char *title)
 
    //Producer doesn't dynamically re-title the window so we do it ourself here
    //This only works for win32
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    HWND win = mRenderSurface->getWindow();
    SetWindowText(win, title); //from winuser.h
 #endif
@@ -209,7 +209,7 @@ void DeltaWin::ShowCursor(const bool show )
    //gotta do a little cursor game to make this work
 
    //First, save the current position of the cursor
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    POINT coords;
    GetCursorPos(&coords);
 #endif 
@@ -222,7 +222,7 @@ void DeltaWin::ShowCursor(const bool show )
    //Tell Producer
    mRenderSurface->useCursor(mShowCursor);
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    //Then move the cursor back to where it started from
    SetCursorPos(coords.x, coords.y);
 #endif
@@ -261,7 +261,7 @@ bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, flo
 
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
 {
@@ -280,4 +280,4 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel) 
    return TRUE;                                                                         // Display Change Was Successful, Return True
 }
 
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)

@@ -247,4 +247,12 @@ MyWidget::InitInputDevices( void )
    mMotionModel   = omm;
    mMotionModel->SetTarget( GetCamera() );
    mMotionModel->SetEnabled( true );
+
+   //float angRate = omm->GetAngularRate();
+   //omm->SetAngularRate(1.0f);
+   
+   //float linRate = omm->GetLinearRate();
+   //omm->SetLinearRate(0.05f);
+
+   //Notify(ALWAYS,"angRate = %f, linRate = %f\n",angRate,linRate);
 }

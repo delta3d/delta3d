@@ -39,7 +39,7 @@ namespace dtCore
          virtual void AddedToScene(Scene* scene) {}
    };
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    typedef DeltaDrawable Drawable;
 #endif
 };

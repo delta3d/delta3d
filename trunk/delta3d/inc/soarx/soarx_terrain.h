@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DELTA_SOARX_TERRAIN
+#define DELTA_SOARX_TERRAIN
 
 #include "soarx_framework.h"
 #include "soarx_generic.h"
@@ -99,3 +100,5 @@ namespace dtSOARX
 
    //______________________________________________________________
 };
+
+#endif // DELTA_SOARX_TERRAIN

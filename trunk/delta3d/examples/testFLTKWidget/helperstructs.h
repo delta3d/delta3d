@@ -10,9 +10,9 @@
 #define  BIT(a)   (1<<a)
 #endif
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 typedef unsigned long HWND; 
-#endif // _WIN32
+#endif // !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
 ///WinRect  struct for passing window dimensions
 struct   WinRect

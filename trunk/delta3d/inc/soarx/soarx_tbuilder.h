@@ -1,5 +1,6 @@
 //______________________________________________________________
-#pragma once
+#ifndef DELTA_SOARX_TBUILDER
+#define DELTA_SOARX_TBUILDER
 
 #define DATA_LAYOUT_EMBEDDED_QUADTREE
 
@@ -116,3 +117,6 @@ namespace dtSOARX
 };
 
 //______________________________________________________________
+
+#endif // DELTA_SOARX_TBUILDER
+

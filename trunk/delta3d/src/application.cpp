@@ -151,7 +151,7 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       const char* pixelChar   = win->Attribute("PixelDepth");
       const char* winResChar  = win->Attribute("UseWinAsRes");
 
-      #ifdef _WIN32
+      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
       if( pixelChar && winResChar )
       {
          int      pixelDepth  = atoi(pixelChar);
@@ -159,7 +159,7 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
 
          if(useWinAsRes) mWindow->ChangeScreenResolution(width, height, pixelDepth);
       }
-      #endif // _WIN32
+      #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
       mWindow->SetName(name);
       mWindow->SetWindowTitle(name.c_str());

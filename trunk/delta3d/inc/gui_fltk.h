@@ -345,12 +345,12 @@ private:
   void CloudBiasCB(Fl_Value_Slider*);
 };
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #pragma comment(lib, "fltk.lib")
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "comctl32.lib")
 
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #endif // DELTA_GUI_FLTK

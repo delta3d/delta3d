@@ -54,7 +54,7 @@
 
 #define DENOM(Latitude) ((double) (sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))))
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 typedef unsigned int SOCKET;
 
 typedef struct win_addr {

@@ -3,7 +3,9 @@
 // Modified: 10/09/2003
 
 //______________________________________________________________
-#pragma once
+#ifndef DELTA_SOARX_GENERIC
+#define DELTA_SOARX_GENERIC
+
 #include <cmath>
 #include <cstdio>
 #include "soarx_configure.h"
@@ -32,11 +34,19 @@ namespace dtSOARX
    typedef signed char i8;
    typedef signed short int i16;
    typedef signed long int i32;
+   #ifdef _WIN32
    typedef signed __int64 i64;
+   #else
+   typedef signed long i64;
+   #endif
    typedef unsigned char u8;
    typedef unsigned short int u16;
    typedef unsigned long int u32;
+   #ifdef _WIN32
    typedef unsigned __int64 u64;
+   #else
+   typedef unsigned long u64;
+   #endif
    typedef float f32;
    typedef double f64;
    typedef long double f80;
@@ -331,8 +341,10 @@ namespace dtSOARX
 	   void max(Vector& u) {x = ::max(x, u.x), y = ::max(y, u.y), z = ::max(z, u.z), w = ::max(w, u.w); }
 	   void scale(T f) {x*=f, y*=f, z*=f, w*=f;}
 	   void setlength(T f) {scale(f/length());}
-	   void minlength(T f) {T l=length(); (l<f ? scale(f/l):); }
-	   void maxlength(T f) {T l=length(); (l>f ? scale(f/l):); }
+	   //void minlength(T f) {T l=length(); (l<f ? scale(f/l): ); }
+           void minlength(T f) {T l=length(); if(l<f){ scale(f/l); } }
+	   //void maxlength(T f) {T l=length(); (l>f ? scale(f/l): ); }
+           void maxlength(T f) {T l=length(); if(l>f){ scale(f/l); } }
 	   void normalize() {setlength(1); }
 
 	   void xprod(const Vector a, const Vector b) {x=a.y*b.z-a.z*b.y; y=a.z*b.x-a.x*b.z; z=a.x*b.y-a.y*b.x;}
@@ -693,4 +705,6 @@ namespace dtSOARX
    };
 };
 
-//______________________________________________________________
+
+#endif // DELTA_SOARX_GENERIC
+
