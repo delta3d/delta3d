@@ -18,7 +18,6 @@
 
 
 
-
 using namespace dtCore;
 using namespace dtHLA;
 using namespace std;
@@ -96,6 +95,10 @@ void RTIConnection::JoinFederationExecution(string executionName,
    catch(RTI::FederationExecutionAlreadyExists feae)
    {}
 
+
+
+    
+
    mIgnoreEffect = false;
    mEntityIdentifierCounter = 1;
    mEventIdentifierCounter = 1;
@@ -106,8 +109,14 @@ void RTIConnection::JoinFederationExecution(string executionName,
    mObjectsToUpdate.clear();
    
    mRTIAmbassador.joinFederationExecution(
-      federateName.c_str(), executionName.c_str(), this
+      federateName.c_str(), executionName.c_str(), this     
    );
+
+
+
+
+
+
 
    mExecutionName = executionName;
    
@@ -128,6 +137,8 @@ void RTIConnection::JoinFederationExecution(string executionName,
 
    mHumanClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.LifeForm.Human");
+
+   
 
    mAccelerationVectorAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "AccelerationVector",
@@ -163,11 +174,13 @@ void RTIConnection::JoinFederationExecution(string executionName,
       "Orientation",
       mBaseEntityClassHandle
    );
-
+    
    mVelocityVectorAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "VelocityVector",
       mBaseEntityClassHandle
    );
+   
+
 
    mDamageStateAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "DamageState",
@@ -213,32 +226,17 @@ void RTIConnection::JoinFederationExecution(string executionName,
       "PowerPlantOn",
       mPhysicalEntityClassHandle
    );
-
+//Detonation
    mMunitionDetonationClassHandle =
       mRTIAmbassador.getInteractionClassHandle("MunitionDetonation");
 
+   mArticulatedPartDataHandle = mRTIAmbassador.getParameterHandle( //added by mark
+      "ArticulatedPartData",
+      mMunitionDetonationClassHandle
+   );
+
    mDetonationLocationParameterHandle = mRTIAmbassador.getParameterHandle(
       "DetonationLocation",
-      mMunitionDetonationClassHandle
-   );
-
-   mEventIdentifierParameterHandle = mRTIAmbassador.getParameterHandle(
-      "EventIdentifier",
-      mMunitionDetonationClassHandle
-   );
-
-   mFuseTypeParameterHandle = mRTIAmbassador.getParameterHandle(
-      "FuseType",
-      mMunitionDetonationClassHandle
-   ); 
-
-   mMunitionTypeParameterHandle = mRTIAmbassador.getParameterHandle(
-      "MunitionType",
-      mMunitionDetonationClassHandle
-   );
-
-   mWarheadTypeParameterHandle = mRTIAmbassador.getParameterHandle(
-      "WarheadType",
       mMunitionDetonationClassHandle
    );
 
@@ -247,14 +245,69 @@ void RTIConnection::JoinFederationExecution(string executionName,
       mMunitionDetonationClassHandle
    );
 
-   mQuantityFiredParameterHandle = mRTIAmbassador.getParameterHandle(
+   mEventIdentifierParameterHandle = mRTIAmbassador.getParameterHandle(
+      "EventIdentifier",
+      mMunitionDetonationClassHandle
+   );
+   mFiringObjectIdentifierHandle = mRTIAmbassador.getParameterHandle(
+      "FiringObjectIdentifier",
+      mMunitionDetonationClassHandle
+   );
+
+   mFinalVelocityVectorHandle = mRTIAmbassador.getParameterHandle(
+      "FinalVelocityVector",
+      mMunitionDetonationClassHandle
+   );
+
+   mFuseTypeParameterHandle = mRTIAmbassador.getParameterHandle(
+      "FuseType",
+      mMunitionDetonationClassHandle
+   ); 
+
+   mMunitionObjectIdentifierHandle = mRTIAmbassador.getParameterHandle(
+      "MunitionObjectIdentifier",
+      mMunitionDetonationClassHandle
+   ); 
+
+   mMunitionTypeParameterHandle = mRTIAmbassador.getParameterHandle(
+      "MunitionType",
+      mMunitionDetonationClassHandle
+   );
+
+    mQuantityFiredParameterHandle = mRTIAmbassador.getParameterHandle(
       "QuantityFired",
+      mMunitionDetonationClassHandle
+   );
+   mRateOfFireHandle = mRTIAmbassador.getParameterHandle(
+      "RateOfFire",
+      mMunitionDetonationClassHandle
+   );
+
+  mRelativeDetonationLocationHandle = mRTIAmbassador.getParameterHandle(
+      "RelativeDetonationLocation",
+      mMunitionDetonationClassHandle
+   );
+
+   mTargetObjectIdentifierHandle = mRTIAmbassador.getParameterHandle(
+      "TargetObjectIdentifier",
       mMunitionDetonationClassHandle
    );
 
 
+   mWarheadTypeParameterHandle = mRTIAmbassador.getParameterHandle(
+      "WarheadType",
+      mMunitionDetonationClassHandle
+   );
+
+   
+
+  
+
+   
+
+
    RTI::AttributeHandleSet* ahs = 
-      RTI::AttributeHandleSetFactory::create(4);
+      RTI::AttributeHandleSetFactory::create(17);//was4
 
    ahs->add(mEntityIdentifierAttributeHandle);
    ahs->add(mEntityTypeAttributeHandle);
@@ -315,13 +368,19 @@ void RTIConnection::JoinFederationExecution(string executionName,
 /**
  * Leaves/destroys the joined execution.
  */
-void RTIConnection::LeaveFederationExecution()
+void RTIConnection::LeaveFederationExecution()  //this is kind of broken
 {
-   
+   try
+   {
       mRTIAmbassador.resignFederationExecution(   
          RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES
+         
       );
-   
+   }
+   catch(RTI::RTIinternalError ine)
+   {
+     
+   }
 
    try
    {
@@ -329,7 +388,7 @@ void RTIConnection::LeaveFederationExecution()
       mRTIAmbassador.destroyFederationExecution(
          mExecutionName.c_str()
       );
-      //std::cout<<"Destroyed Execution"<<std::endl;
+      
 
    }
    catch(RTI::FederatesCurrentlyJoined fcj)
@@ -1391,26 +1450,6 @@ bool RTIConnection::LoadEntityTypeMappings(string filename)
 }
 
 /**
- * Adds a detonation listener.
- *
- * @param listener the listener to add
- */
-void RTIConnection::AddDetonationListener(DetonationListener* listener)
-{
-   mDetonationListeners.insert(listener);
-}
-
-/**
- * Removes a detonation listener.
- *
- * @param listener the listener to remove
- */
-void RTIConnection::RemoveDetonationListener(DetonationListener* listener)
-{
-   mDetonationListeners.erase(listener);
-}
-         
-/**
  * Processes a received message.
  *
  * @param data the message structure
@@ -1689,6 +1728,7 @@ void RTIConnection::OnMessage(MessageData *data)
             position[1] = wc.GetY() - mLocationOffset[1];
             position[2] = wc.GetZ() - mLocationOffset[2];
             sgXformVec3(position, mRotationOffsetInverse);
+            //std::cout<<"X: " <<position[0]<<"Y: " <<position[1]<<"Z: " <<position[2]<<std::endl;  //debugging
          }
          
          transform.SetTranslation(position);
@@ -2045,16 +2085,9 @@ void RTIConnection::receiveInteraction(
 {
    if(theInteraction == mMunitionDetonationClassHandle)
    {
-      WorldCoordinate detonationLocation;
-      EventIdentifier eventIdentifier;
-      unsigned short fuseType;
-      EntityType munitionType;
-      unsigned short warheadType;
-      unsigned char detonationResultCode;
-      unsigned short quantityFired;
-      
       sgVec3 position;
-      
+      unsigned short warhead;
+
       for(unsigned int i=0;i<theParameters.size();i++)
       {
          RTI::ParameterHandle handle = theParameters.getHandle(i);
@@ -2067,51 +2100,15 @@ void RTIConnection::receiveInteraction(
 
             if(length == 24)
             {
-               detonationLocation.Decode(buf);
+               WorldCoordinate worldCoordinate;
 
-               position[0] = detonationLocation.GetX() - mLocationOffset[0];
-               position[1] = detonationLocation.GetY() - mLocationOffset[1];
-               position[2] = detonationLocation.GetZ() - mLocationOffset[2];
+               worldCoordinate.Decode(buf);
+
+               position[0] = worldCoordinate.GetX() - mLocationOffset[0];
+               position[1] = worldCoordinate.GetY() - mLocationOffset[1];
+               position[2] = worldCoordinate.GetZ() - mLocationOffset[2];
                
                sgXformPnt3(position, mRotationOffsetInverse);
-            }
-         }
-         else if(handle == mEventIdentifierParameterHandle)
-         {
-            unsigned long length;
-
-            char* buf = theParameters.getValuePointer(i, length);
-
-            if(length == 6)
-            {
-               eventIdentifier.Decode(buf);
-            }
-         }
-         else if(handle == mFuseTypeParameterHandle)
-         {
-            unsigned long length;
-
-            char* buf = theParameters.getValuePointer(i, length);
-
-            if(length == 2)
-            {
-               fuseType = *(unsigned short*)(&buf[0]);
-
-               if(ulIsLittleEndian)
-               {
-                  ulEndianSwap(&fuseType);
-               }
-            }
-         }
-         else if(handle == mMunitionTypeParameterHandle)
-         {
-            unsigned long length;
-
-            char* buf = theParameters.getValuePointer(i, length);
-
-            if(length == 8)
-            {
-               munitionType.Decode(buf);
             }
          }
          else if(handle == mWarheadTypeParameterHandle)
@@ -2122,65 +2119,23 @@ void RTIConnection::receiveInteraction(
 
             if(length == 2)
             {
-               warheadType = *(unsigned short*)(&buf[0]);
+               warhead = *(unsigned short*)(&buf[0]);
 
                if(ulIsLittleEndian)
                {
-                  ulEndianSwap(&warheadType);
-               }
-            }
-         }
-         else if(handle == mDetonationResultCodeParameterHandle)
-         {
-            unsigned long length;
-
-            char* buf = theParameters.getValuePointer(i, length);
-
-            if(length == 1)
-            {
-               detonationResultCode = *(unsigned char*)(&buf[0]);
-            }
-         }
-         else if(handle == mQuantityFiredParameterHandle)
-         {
-            unsigned long length;
-
-            char* buf = theParameters.getValuePointer(i, length);
-
-            if(length == 2)
-            {
-               quantityFired = *(unsigned short*)(&buf[0]);
-
-               if(ulIsLittleEndian)
-               {
-                  ulEndianSwap(&quantityFired);
+                  ulEndianSwap(&warhead);
                }
             }
          }
       }
 
-      for(set<DetonationListener*>::iterator it = mDetonationListeners.begin();
-          it != mDetonationListeners.end();
-          it++)
-      {
-         (*it)->DetonationOccurred(
-            detonationLocation,
-            eventIdentifier,
-            fuseType,
-            munitionType,
-            warheadType,
-            detonationResultCode,
-            quantityFired
-         );
-      }
-      
       if(mEffectManager != NULL)
       {
          mIgnoreEffect = true;
 
          mEffectManager->AddDetonation(
             position,
-            (DetonationType)warheadType
+            (DetonationType)warhead
          );
 
          mIgnoreEffect = false;
@@ -2204,19 +2159,24 @@ void RTIConnection::EffectAdded(
       Detonation* detonation = (Detonation*)effect;
 
       RTI::ParameterHandleValuePairSet* theParameters =
-         RTI::ParameterSetFactory::create(7);
+         RTI::ParameterSetFactory::create(14);
 
       WorldCoordinate detonationLocation;
-      EventIdentifier eventIdentifier;
+      VelocityVector  finalVelocity;
+      EventIdentifier eventIdentifier; //changed by mark
+      //EventIdent eventIdentifier;
       unsigned short warheadType;
 
+
       char encodedDetonationLocation[24],
-           encodedEventIdentifier[6],
+           encodedEventIdentifier[5],  //changed by mark
            encodedWarheadType[2],
            encodedFuseType[2],
            encodedMunitionType[8],
            encodedDetonationResultCode[1],
-           encodedQuantityFired[2];
+           encodedQuantityFired[2],
+           encodedFinalVelocity[12];
+           
 
       sgVec3 vec;
 
@@ -2227,6 +2187,7 @@ void RTIConnection::EffectAdded(
       detonationLocation.SetX(vec[0] + mLocationOffset[0]);
       detonationLocation.SetY(vec[1] + mLocationOffset[1]);
       detonationLocation.SetZ(vec[2] + mLocationOffset[2]);
+     
 
       detonationLocation.Encode(encodedDetonationLocation);
 
@@ -2236,8 +2197,19 @@ void RTIConnection::EffectAdded(
          24
       );
 
-      eventIdentifier.SetSiteIdentifier(mSiteIdentifier);
-      eventIdentifier.SetApplicationIdentifier(mApplicationIdentifier);
+     finalVelocity.SetX(0);  //test this
+     finalVelocity.SetY(0);  //test this
+     finalVelocity.SetZ(1000);  //test this
+
+     finalVelocity.Encode(encodedFinalVelocity);
+     
+     theParameters->add(
+        mFinalVelocityVectorHandle,
+        encodedFinalVelocity,
+        12
+     );
+
+     
       eventIdentifier.SetEventIdentifier(mEventIdentifierCounter++);
 
       if(mEventIdentifierCounter == 0)
@@ -2250,11 +2222,11 @@ void RTIConnection::EffectAdded(
       theParameters->add(
          mEventIdentifierParameterHandle,
          encodedEventIdentifier,
-         6
+         5  //changed this because of error
       );
 
       warheadType = (unsigned short)detonation->GetType();
-
+      //warheadType = 7000;  nuke
       if(ulIsLittleEndian)
       {
          ulEndianSwap(&warheadType);
@@ -2268,7 +2240,7 @@ void RTIConnection::EffectAdded(
          2
       );
 
-      *(unsigned short*)(&encodedFuseType[0]) = 0; // Other
+      *(unsigned short*)(&encodedFuseType[0]) = 1000; // 0 Other
 
       theParameters->add(
          mFuseTypeParameterHandle,
@@ -2276,8 +2248,11 @@ void RTIConnection::EffectAdded(
          2
       );
 
-      EntityType munitionType(MunitionKind);
-
+     
+      //EntityType munitionType(MunitionKind);  //need real entity mapping
+      //EntityType munitionType(2,9,255,2,14,18,0);  //155 HEDP
+      //EntityType munitionType(2,9,255,2,14,14,0);  //M825 WP
+      EntityType munitionType(2,9,255,1,14,1,0); //500lbs bomb  More damage
       munitionType.Encode(encodedMunitionType);
 
       theParameters->add(
