@@ -14,13 +14,10 @@ Id::Id()
    assert( UuidCreate( &mId ) == RPC_S_OK );
 }
 
-Id::Id( const std::string& stringId )
+Id::Id( const Id& id )
 {
-   Set( stringId );
-}
+   //Data1 = ...
 
-Id::~Id()
-{
 }
 
 bool Id::operator== ( Id id )

@@ -45,8 +45,9 @@ namespace dtCore
       public:
 
          Id();
-         Id( const std::string& stringId );
-         virtual ~Id();
+         Id( const dtCore::Id& id );
+         Id( const std::string& stringId ) { Set( stringId ); }
+         virtual ~Id() {}
 
          bool operator== ( Id id );
       
