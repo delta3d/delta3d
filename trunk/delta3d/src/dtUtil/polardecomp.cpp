@@ -66,7 +66,7 @@ int PolarDecomp::FindMaxCol( const Matrix& M )
 }
 
 /** Setup u for Household reflection to zero all v components but first **/
-void PolarDecomp::MakeReflector( const Vec3f& v, Vec3f& u )
+void PolarDecomp::MakeReflector( const Vec3& v, Vec3& u )
 {
    float s = sqrt( v*v );
 
@@ -82,7 +82,7 @@ void PolarDecomp::MakeReflector( const Vec3f& v, Vec3f& u )
 }
 
 /** Apply Householder reflection represented by u to column vectors of M **/
-void PolarDecomp::ReflectCols( Matrix& M, const Vec3f& u )
+void PolarDecomp::ReflectCols( Matrix& M, const Vec3& u )
 {
    for( int i = 0; i < 3; i++ ) 
    {
@@ -94,7 +94,7 @@ void PolarDecomp::ReflectCols( Matrix& M, const Vec3f& u )
 }
 
 /** Apply Householder reflection represented by u to row vectors of M **/
-void PolarDecomp::ReflectRows( Matrix& M, const Vec3f& u )
+void PolarDecomp::ReflectRows( Matrix& M, const Vec3& u )
 {
    for( int i = 0; i < 3; i++ )
    {
@@ -136,12 +136,12 @@ void PolarDecomp::DoRank1( Matrix& M, Matrix& Q )
    if( col < 0 ) 
       return; /* Rank is 0 */
       
-   Vec3f v1 = MatrixUtil::GetRow3( M, col );
+   Vec3 v1 = MatrixUtil::GetRow3( M, col );
 
    MakeReflector(v1, v1); 
    ReflectCols(M, v1);
 
-   Vec3f v2 = MatrixUtil::GetColumn3( M, 2 );
+   Vec3 v2 = MatrixUtil::GetColumn3( M, 2 );
    
    MakeReflector(v2, v2); 
    ReflectRows(M, v2);
@@ -167,12 +167,12 @@ void PolarDecomp::DoRank2( Matrix& M, const Matrix& MadjT, Matrix& Q )
       return;
    } /* Rank<2 */
 
-   Vec3f v1 = MatrixUtil::GetRow3( MadjT, col );
+   Vec3 v1 = MatrixUtil::GetRow3( MadjT, col );
    
    MakeReflector(v1, v1); 
    ReflectCols(M, v1);
 
-   Vec3f v2 = MatrixUtil::GetColumn3(M,0) ^ MatrixUtil::GetColumn3(M,1);
+   Vec3 v2 = MatrixUtil::GetColumn3(M,0) ^ MatrixUtil::GetColumn3(M,1);
 
    MakeReflector(v2, v2); 
    ReflectRows(M, v2);
@@ -215,18 +215,17 @@ void PolarDecomp::DoRank2( Matrix& M, const Matrix& MadjT, Matrix& Q )
 }
 
 
-float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec4f& T )
+float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec3& T )
 {
    const float TOL = 1.0e-6;
    
    // return and remove translation
-   T = MatrixUtil::GetColumn4( M, 3 );
+   T = MatrixUtil::GetColumn3( M, 3 );
    Matrix noTransM = M;
    
    Vec4f newCol = Vec4f( 0.0f, 0.0f, 0.0f, 1.0f );
    MatrixUtil::SetColumn( noTransM, newCol, 3 );
-   //
-
+   
    Matrix Mk;
    MatrixUtil::Transpose( Mk, noTransM );
 

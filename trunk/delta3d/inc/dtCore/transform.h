@@ -34,67 +34,107 @@ namespace dtCore
    {
    public:
       
-      Transform(float x=0, float y=0, float z=0, float h=0, float p=0, float r=0);
-      Transform(const Transform& that);
+      Transform(  float tx = 0.0f, float ty = 0.0f, float tz = 0.0f, 
+                  float h = 0.0f, float p = 0.0f, float r = 0.0f, 
+                  float sx = 1.0f, float sy = 1.0f, float sz = 1.0f );
+      Transform( const Transform& that );
       virtual ~Transform();
 
       //Set both translation and rotation methods
-      virtual void Set( sgMat4 mat ) { sgCopyMat4(mTransform, mat); }
-      virtual void Set( osg::Matrix& mat );
-      virtual void Set( float x, float y, float z, float h, float p, float r); 
-      virtual void Set(sgVec3 xyz, sgVec3 hpr ) {sgMakeCoordMat4(mTransform, xyz, hpr);}
+      virtual void Set( float tx, float ty, float tz, 
+                        float h, float p, float r, 
+                        float sx, float sy, float sz ); 
+      virtual void Set( const osg::Vec3& xyz, const osg::Vec3& hpr, const osg::Vec3& scale );
+      virtual void Set( const osg::Matrix& mat );
 
-      void SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec );
-      
-      void SetLookAt(float posX, float posY, float posZ,
-                     float lookAtX, float lookAtY, float lookAtZ,
-                     float upVecX, float upVecY, float upVecZ);
-                     
+      ///DEPRECRATED: Use Set( const osg::Matrix& mat )
+      virtual void Set( sgMat4 mat );
+      ///DEPRECRATED: Use Set( float tx, float ty, float tz, float h, float p, float r, float sx, float sy, float sz )
+      virtual void Set( float x, float y, float z, float h, float p, float r );
+      ///DEPRECRATED: Use Set( const osg::Vec3& xyz, const osg::Vec3& hpr, const osg::Vec3& scale )
+      virtual void Set( sgVec3 xyz, sgVec3 hpr );
+
       //Set only translation methods
-      virtual void SetTranslation( float x, float y, float z);
-      virtual void SetTranslation( sgVec3 xyz ) {sgCopyVec3(mTransform[3], xyz);}
+      virtual void SetTranslation( float tx, float ty, float tz ) { mTranslation.set( tx, ty, tz); }
+      virtual void SetTranslation( const osg::Vec3& xyz ) { mTranslation.set( xyz ); }
 
-      //Set only rotation methods
-      virtual void SetRotation( sgVec3 hpr );
-      virtual void SetRotation( float h, float p, float r );    
-      virtual void SetRotation( sgMat4 rot );
-      virtual void SetRotation( const osg::Matrix& rot );
+      //DEPRECRATED: Use SetTranslation( const osg::Vec3& xyz )
+      virtual void SetTranslation( sgVec3 xyz );
       
-      virtual void SetScale( float x, float y, float z );
-      virtual void SetScale( const osg::Vec3& scale );
+      //Set only rotation methods
+      virtual void SetRotation( float h, float p, float r ) { mRotation.set( h, p, r); }
+      virtual void SetRotation( const osg::Vec3& hpr ) { mRotation.set( hpr ); }
+      virtual void SetRotation( const osg::Matrix& rotation );
+
+      ///DEPRECRATED: Use SetRotation( const osg::Vec3& hpr )
+      virtual void SetRotation( sgVec3 hpr );
+      ///DEPRECRATED: Use SetRotation( const osg::Matrix& rot )
+      virtual void SetRotation( sgMat4 rot );
+      
+      ///Set the uniform scale factor
+      virtual void SetScale( float sx, float sy, float sz ) { mScale.set( sx, sy, sz ); }
+      virtual void SetScale( const osg::Vec3& scale ) { mScale.set( scale ); }
       
       //Get translation and rotation methods
-      void Get( sgVec3 xyz, sgVec3 hpr ) {Get(&xyz[0], &xyz[1], &xyz[2], &hpr[0], &hpr[1], &hpr[2]);}     
-      void Get( sgMat4 mat) {sgCopyMat4(mat, mTransform); }     
-      void Get( osg::Matrix& mat) const; 
-      void Get( float *x, float *y, float *z, float *h, float *p, float *r);
-
+      void Get( float& tx, float& ty, float& tz, float& h, float& p, float& r, float& sx, float& sy, float& sz ) const;
+      void Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale ) const;
+      void Get( osg::Matrix& matrix ) const; 
+      
+      ///DEPRECRATED: Use Get( osg::Vec3& xyz, osg::Vec3& hpr, float& scale  )
+      void Get( sgVec3 xyz, sgVec3 hpr );
+      ///DEPRECRATED: Use Get( osg::Matrix& matrix )
+      void Get( sgMat4 mat);    
+      ///DEPRECRATED: Use Get( float& tx, float& ty, float& tz, float& h, float& p, float& r, float& sx, float& sy, float& sz )
+      void Get( float *x, float *y, float *z, float *h, float *p, float *r );
+      
       //Get only translation methods
-      void GetTranslation( sgVec3 xyz ) { GetTranslation(&xyz[0], &xyz[1], &xyz[2]); }
-      osg::Vec3 GetTranslation() const { return osg::Vec3( mTransform[3][0], mTransform[3][1], mTransform[3][2] ); }
+      void GetTranslation( osg::Vec3& translation ) const { translation.set( mTranslation ); }
+      void GetTranslation( float& tx, float& ty, float& tz ) const;
+
+      ///DEPRECRATED: Use osg::Vec3& GetTranslation()
+      void GetTranslation( sgVec3 xyz );
+      ///DEPRECRATED: Use GetTranslation( float& x, float& y, float& z )
       void GetTranslation( float *x, float *y, float *z );
 
-      float GetTranslationX();
-      float GetTranslationY();
-      float GetTranslationZ();
-      
+      float GetTranslationX() const { return mTranslation[0]; }
+      float GetTranslationY() const { return mTranslation[0]; }
+      float GetTranslationZ() const { return mTranslation[0]; }
+    
       //Get only rotation methods
-      void GetRotation( float *h, float *p, float *r);
-      void GetRotation( sgVec3 hpr ) { GetRotation(&hpr[0], &hpr[1], &hpr[2] );}
+      void GetRotation( float& h, float& p, float& r ) const;
+      void GetRotation( osg::Vec3& rotation ) const { rotation.set( mRotation ); }
+      void GetRotation( osg::Matrix& rotation ) const;
+
+      ///DEPRECRATED: Use GetRotation( float& h, float& p, float& r )
+      void GetRotation( float *h, float *p, float *r );
+      ///DEPRECRATED: Use GetRotation( const osg::Vec3& rotation )
+      void GetRotation( sgVec3 hpr );
+      ///DEPRECRATED: Use GetRotation( const osg::Matrix& rotation )
       void GetRotation( sgMat4 rot );
-      osg::Matrix GetRotation() const;
       
-      virtual void GetScale( float& x, float& y, float& z ) const;
-      osg::Vec3 GetScale() const;
+      void GetScale( float& sx, float& sy, float& sz ) const;
+      void GetScale( osg::Vec3& scale ) const { scale.set( mScale ); }
+
+      void SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec );      
+      void SetLookAt(   float posX, float posY, float posZ,
+                        float lookAtX, float lookAtY, float lookAtZ,
+                        float upVecX, float upVecY, float upVecZ );
+
+      ///DEPPRECATED: Use SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec )
+      void SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec );
       
       //Compares this transform to another within the given threshold
-      bool EpsilonEquals(const Transform* transform, float epsilon = 0.0001f);
+      bool EpsilonEquals( const Transform* transform, float epsilon = 0.0001f ) const;
 
       Transform & operator=(const Transform &);
       bool        operator==(const Transform &);
 
    protected:
-      sgMat4 mTransform;  ///<Internal storage of the position/rotation
+
+      osg::Vec3 mTranslation; ///<Internal storage of translation
+      osg::Vec3 mRotation; ///<Internal storage of the rotation
+      osg::Vec3 mScale; ///<Internal storage of scale
+      
    };
 };
 

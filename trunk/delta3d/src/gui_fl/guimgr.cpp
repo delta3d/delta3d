@@ -93,18 +93,15 @@ void UserInterface::SelectInstance (void)
          t->GetTransform( &trans, Transformable::REL_CS );
       }
 
-      sgVec3 xyz, hpr;
-      trans.Get( xyz, hpr );
+      osg::Vec3 xyz, hpr, scale;
+      trans.Get( xyz, hpr, scale );
       TransformX->value(xyz[0]);
       TransformY->value(xyz[1]);
       TransformZ->value(xyz[2]);
       TransformH->value(hpr[0]);
       TransformP->value(hpr[1]);
       TransformR->value(hpr[2]);
-
-
-
-      
+ 
       TransformGroup->show();
    }
    else TransformGroup->hide();
@@ -632,8 +629,7 @@ void UserInterface::TransformCSCB( Fl_Round_Button *)
 {
    Transformable *t = dynamic_cast<Transformable*>(GetSelectedInstance(this));
    Transform trans;
-   sgVec3 xyz, hpr;
-
+   
    if (TransformCSAbsButton->value())
    {
       //fill in widgets with abs position
@@ -644,8 +640,9 @@ void UserInterface::TransformCSCB( Fl_Round_Button *)
       //fill in widgets with rel position
       t->GetTransform( &trans, Transformable::REL_CS );
    }
-   
-   trans.Get( xyz, hpr );
+  
+   osg::Vec3 xyz, hpr, scale;
+   trans.Get( xyz, hpr, scale );
    TransformX->value(xyz[0]);
    TransformY->value(xyz[1]);
    TransformZ->value(xyz[2]);

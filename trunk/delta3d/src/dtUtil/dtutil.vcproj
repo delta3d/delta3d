@@ -139,10 +139,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\inc\dtUtil\deprecationmgr.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtUtil\domain.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtUtil\dtUtil.h">
+				RelativePath="..\..\inc\dtUtil\dtutil.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtUtil\matrixutil.h">
