@@ -31,23 +31,27 @@
 #include "dtCore/export.h"
 
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32__)
-#include <uuid/uuid.h>
+#   include <uuid/uuid.h>
+#else
+#   include <Rpc.h>
+#   include <Rpcdce.h>
 #endif
 
 namespace dtCore
 {
-   //Conforms to OSF DCE 1.1
+   ///Conforms to OSF DCE 1.1
    class DT_EXPORT Id
    {
       public:
 
          Id();
-         Id( const Id& id );
+         Id( const std::string& stringId );
          virtual ~Id();
 
          bool operator== ( Id id );
       
-         std::string ToString();
+         void Set( const std::string& stringId );
+         void Get( std::string& stringId ) const;
       
       private:
       

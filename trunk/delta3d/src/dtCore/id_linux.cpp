@@ -10,10 +10,12 @@ Id::Id()
    uuid_generate( mId );
 }
 
+/*
 Id::Id( const Id& id )
 {
    uuid_copy( mId, id.mId );
 }
+*/
 
 Id::~Id()
 {
@@ -27,10 +29,16 @@ bool Id::operator== ( Id id )
       return false;
 }
 
-std::string Id::ToString()
+void Id::Set( const std::string& stringId )
+{
+   //uuid_parse
+   //uuid_copy( mId, id.mId );
+}
+
+void Id::Get( std::string& stringId ) const
 {
    char str[37];
    uuid_unparse( mId, str );
 
-   return string( str );
+   stringId = string( str );
 }

@@ -23,8 +23,6 @@ Base::Base(string name) : mName(name)
    RegisterInstance(this);
 
    mId = Id();
-
-   //cout << mId.ToString() << endl;
 }
 
 /**
@@ -51,7 +49,7 @@ void Base::SetName(string name)
  *
  * @return the current name
  */
-string Base::GetName() const
+const string& Base::GetName() const
 {
    return mName;
 }

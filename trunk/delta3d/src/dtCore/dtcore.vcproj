@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osggl2d.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osggl2d.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib Rpcrt4.lib"
 				OutputFile="..\..\bin\dtcored.dll"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
@@ -251,6 +251,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\id_win32.cpp">
 			</File>
 			<File
 				RelativePath=".\infinitelight.cpp">
@@ -661,6 +664,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\globals.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\id.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\infinitelight.h">
