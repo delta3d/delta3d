@@ -45,7 +45,7 @@ Make sure boost_python.dll and boost_python_debug.dll are within a directory in 
 
 Check if the following environement variables are set:
   PYTHON_ROOT: directory of Python installation
-  PYTHON_LIB_PATH: %PYTHON_ROOT%/lib
+  PYTHON_LIB_PATH: %PYTHON_ROOT%/libs
   PYTHON_VERSION: version of your Python installation
   PYTHONPATH: environement variable contains the directory with the resulting
               .pyd libraries (most likely delta3d/bin).
