@@ -110,8 +110,8 @@ class Viewer :  public   dtABC::Widget
       ///Override to receive messages.
       virtual  void           OnMessage( dtCore::Base::MessageData* data );
       virtual  void           FileLoaded( bool loaded, const char* filename ) = 0L;
-      inline   osg::Group*    GetFileObj( unsigned int indx );
-      inline   osg::Group*    GetDisplayObj( unsigned int indx );
+               osg::Group*    GetFileObj( unsigned int indx );
+               osg::Group*    GetDisplayObj( unsigned int indx );
                void           LoadFile( ViewState* vs );
                void           GetState( ViewState* vs );
                void           SaveFileAs( char *filename );
@@ -133,11 +133,11 @@ class Viewer :  public   dtABC::Widget
       inline   void           InitGridPlanes( void );
 
    private:
-               dtCore::LogicalInputDevice*   mInputDevice;
-               dtCore::MotionModel*          mMotionModel[NUMMOTIONMODELS];
-               osg::MatrixTransform*      mDispXform[NUMGRIDS];
-               ViewState&                 mCurState;
-               osg::ref_ptr<osg::Group>   mViewerNode;
+      osg::ref_ptr<dtCore::LogicalInputDevice>   mInputDevice;
+      dtCore::MotionModel*                       mMotionModel[NUMMOTIONMODELS];
+      osg::MatrixTransform*                      mDispXform[NUMGRIDS];
+      ViewState&                                 mCurState;
+      osg::ref_ptr<osg::Group>                   mViewerNode;
 };
 
 
@@ -146,7 +146,7 @@ class Viewer :  public   dtABC::Widget
 #undef _AUTOLIBNAME
 
 #if defined(_DEBUG)
-   #define _AUTOLIBNAME "osgFX.lib"
+   #define _AUTOLIBNAME "osgFXd.lib"
 #else 
    #define _AUTOLIBNAME "osgFX.lib"
 #endif

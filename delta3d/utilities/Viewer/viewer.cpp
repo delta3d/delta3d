@@ -643,7 +643,6 @@ void
 Viewer::InitInputDevices( void )
 {
    mInputDevice   = new LogicalInputDevice;
-   assert( mInputDevice );
 
    dtCore::Keyboard* k     = GetKeyboard();
    assert( k );
