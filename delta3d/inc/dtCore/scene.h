@@ -74,9 +74,10 @@ namespace dtCore
 
    protected:
    	RefPtr<osgUtil::SceneView> mSceneView;
-      ulClock mClock;
+      Timer mTimer;
    private:
      RefPtr<osg::FrameStamp> mFrameStamp;
+     osg::Timer_t mStartTime;
    };
    
    
