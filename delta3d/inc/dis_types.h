@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef P51_HLA_DIS_TYPES
-#define P51_HLA_DIS_TYPES
+#ifndef DT_HLA_DIS_TYPES
+#define DT_HLA_DIS_TYPES
 
 namespace dtHLA
 {
@@ -356,10 +356,14 @@ namespace dtHLA
 
          /**
           * Constructor.
-          *          
+          *
+          * @param siteIdentifier the site identifier
+          * @param applicationIdentifier the application identifier
           * @param eventIdentifier the event identifier
           */
-         EventIdentifier(unsigned short eventIdentifier = 0);
+         EventIdentifier(unsigned short siteIdentifier = 0,
+                         unsigned short applicationIdentifier = 0,
+                         unsigned short eventIdentifier = 0);
 
          /**
           * Returns the encoded length of this object.
@@ -382,7 +386,35 @@ namespace dtHLA
           */
          void Decode(const char* buf);
 
-         
+         /**
+          * Sets the value of the site identifier field.
+          *
+          * @param siteIdentifier the value of the site identifier field
+          */
+         void SetSiteIdentifier(unsigned short siteIdentifier);
+
+         /**
+          * Returns the value of the site identifier field.
+          *
+          * @return the value of the site identifier field
+          */
+         unsigned short GetSiteIdentifier() const;
+
+         /**
+          * Sets the value of the application identifier field.
+          *
+          * @param applicationIdentifier the value of the application
+          * identifier field
+          */
+         void SetApplicationIdentifier(unsigned short applicationIdentifier);
+
+         /**
+          * Returns the value of the application identifier field.
+          *
+          * @return the value of the application identifier field
+          */
+         unsigned short GetApplicationIdentifier() const;
+
          /**
           * Sets the value of the event identifier field.
           *
@@ -400,7 +432,15 @@ namespace dtHLA
 
       private:
 
-         
+         /**
+          * The value of the site identifier field.
+          */
+         unsigned short mSiteIdentifier;
+
+         /**
+          * The value of the application identifier field.
+          */
+         unsigned short mApplicationIdentifier;
 
          /**
           * The value of the event identifier field.
@@ -712,4 +752,4 @@ namespace dtHLA
    };
 };
 
-#endif // P51_HLA_DIS_TYPES
+#endif // DT_HLA_DIS_TYPES
