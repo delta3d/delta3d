@@ -21,11 +21,9 @@
 #ifndef DELTA_TRANSFORM
 #define DELTA_TRANSFORM
 
-
-
-
 #include "dtCore/export.h"
 #include "osg/Matrix"
+#include "osg/Vec3"
 #include "sg.h"
 
 namespace dtCore
@@ -58,8 +56,12 @@ namespace dtCore
 
       //Set only rotation methods
       virtual void SetRotation( sgVec3 hpr );
-      virtual void SetRotation( float h, float p, float r);    
-      virtual void SetRotation( sgMat4 rot);
+      virtual void SetRotation( float h, float p, float r );    
+      virtual void SetRotation( sgMat4 rot );
+      virtual void SetRotation( const osg::Matrix& rot );
+      
+      virtual void SetScale( float x, float y, float z );
+      virtual void SetScale( const osg::Vec3& scale );
       
       //Get translation and rotation methods
       void Get( sgVec3 xyz, sgVec3 hpr ) {Get(&xyz[0], &xyz[1], &xyz[2], &hpr[0], &hpr[1], &hpr[2]);}     
@@ -69,7 +71,8 @@ namespace dtCore
 
       //Get only translation methods
       void GetTranslation( sgVec3 xyz ) { GetTranslation(&xyz[0], &xyz[1], &xyz[2]); }
-      void GetTranslation(float *x, float *y, float *z);
+      osg::Vec3 GetTranslation() const { return osg::Vec3( mTransform[3][0], mTransform[3][1], mTransform[3][2] ); }
+      void GetTranslation( float *x, float *y, float *z );
 
       float GetTranslationX();
       float GetTranslationY();
@@ -79,6 +82,10 @@ namespace dtCore
       void GetRotation( float *h, float *p, float *r);
       void GetRotation( sgVec3 hpr ) { GetRotation(&hpr[0], &hpr[1], &hpr[2] );}
       void GetRotation( sgMat4 rot );
+      osg::Matrix GetRotation() const;
+      
+      virtual void GetScale( float& x, float& y, float& z ) const;
+      osg::Vec3 GetScale() const;
       
       //Compares this transform to another within the given threshold
       bool EpsilonEquals(const Transform* transform, float epsilon = 0.0001f);

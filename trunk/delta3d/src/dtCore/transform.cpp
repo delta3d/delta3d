@@ -55,6 +55,34 @@ void Transform::SetRotation( sgMat4 rot )
    SetTranslation(xyz);
 }
 
+void Transform::SetRotation( const osg::Matrix& rot )
+{
+   for( int i = 0; i < 3; i++ )
+      for( int j = 0; j < 3; j++ )
+         mTransform[i][j] = rot(i,j);
+}
+
+void Transform::SetScale( float x, float y, float z )
+{
+   osg::Matrix scaleMatrix = osg::Matrix::scale(x,y,z);
+   
+   osg::Matrix currentMatrix;
+   for( int i = 0; i< 4; i++ )
+      for( int j = 0; j < 4; j++)
+          currentMatrix(i,j) = mTransform[i][j];
+   
+   currentMatrix.postMult(scaleMatrix);
+   
+   for( int i = 0; i< 4; i++ )
+      for( int j = 0; j < 4; j++)
+         mTransform[i][j] = currentMatrix(i,j);
+}
+
+void Transform::SetScale( const osg::Vec3& scale )
+{
+   SetScale(scale[0],scale[1],scale[2]);
+}
+
 void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r )
 {
    sgCoord pos;
@@ -106,6 +134,29 @@ void Transform::GetRotation( sgMat4 rot )
 {
    Get(rot);
    sgSetVec3(rot[3], 0.f, 0.f, 0.f);
+}
+
+osg::Matrix Transform::GetRotation() const
+{
+   osg::Matrix rotation;
+   Get(rotation);
+   
+   for( int i = 0; i < 3; i++ )
+      rotation(3,i) = 0.0;
+      
+   return rotation;
+}
+
+void Transform::GetScale( float& x, float& y, float& z ) const
+{
+   x = mTransform[0][0];
+   y = mTransform[1][1];
+   z = mTransform[2][2];
+}
+
+osg::Vec3 Transform::GetScale() const
+{
+   return osg::Vec3( mTransform[0][0], mTransform[1][1], mTransform[2][2] );
 }
 
 bool Transform::EpsilonEquals(const Transform* transform, float epsilon )
