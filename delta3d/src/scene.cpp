@@ -125,7 +125,7 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
    {
       dSpaceRemove(mSpaceID, physical->GetGeomID());
 
-      dBodyDestroy(physical->GetBodyID());
+      //dBodyDestroy(physical->GetBodyID());
       
       for(vector<Physical*>::iterator it = mPhysicalContents.begin();
           it != mPhysicalContents.end();
@@ -138,6 +138,25 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
          }
       }
    }
+}
+
+void Scene::UnRegisterPhysical( Physical *physical)
+{
+	dSpaceRemove(mSpaceID, physical->GetGeomID());
+
+	//dBodyDestroy(physical->GetBodyID());
+
+	for(vector<Physical*>::iterator it = mPhysicalContents.begin();
+		it != mPhysicalContents.end();
+		it++)
+	{
+		if(*it == physical)
+		{
+			mPhysicalContents.erase(it);
+			break;
+		}
+	}
+
 }
 
 _SceneHandler::_SceneHandler():

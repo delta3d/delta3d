@@ -236,6 +236,26 @@ void Environment::AddDrawable( DeltaDrawable *drawable )
    }
 }
 
+///Remove a DeltaDrawable from the Environment Node.
+void Environment::RemoveDrawable( DeltaDrawable *drawable )
+{
+	//we add Drawables to our mDrawableNode
+	if (drawable)
+	{
+		mDrawableNode->removeChild( drawable->GetOSGNode() );
+
+		Physical* physical = dynamic_cast<Physical*>(drawable);
+
+		if(physical != NULL)
+		{
+			if (mParentScene.valid())
+			{
+				mParentScene->UnRegisterPhysical(physical);
+			}
+		}
+	}
+}
+
 
 void Environment::OnMessage(MessageData *data)
 {
