@@ -33,7 +33,7 @@ Application::Application(std::string configFilename)
       TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());
       if(foundPath.empty())
       {
-         Notify(WARN, "Application: can't find config file %s", configFilename.c_str());
+         Notify(WARN, "Application: can't find config file %s, using defaults instead.", configFilename.c_str());
          CreateInstances(); //create default window, camera, etc.
       }
       else
