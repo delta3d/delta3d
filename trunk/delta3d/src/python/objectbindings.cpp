@@ -27,16 +27,6 @@ class ObjectWrap : public Object
          return Object::LoadFile(filename, useCache);
       }
       
-      virtual std::string GetFilename() const
-      {
-         return call_method<std::string>(mSelf, "GetFilename");
-      }
-      
-      std::string DefaultGetFilename() const
-      {
-         return Object::GetFilename();
-      }
-      
    protected:
 
       PyObject* mSelf;
@@ -49,13 +39,11 @@ void initObjectBindings()
    Object* (*ObjectGI1)(int) = &Object::GetInstance;
    Object* (*ObjectGI2)(std::string) = &Object::GetInstance;
 
-   class_<Object, bases<Transformable, DeltaDrawable, Physical>, osg::ref_ptr<ObjectWrap>, boost::noncopyable>("Object", init<optional<std::string> >())
+   class_<Object, bases<Physical>, osg::ref_ptr<ObjectWrap>, boost::noncopyable>("Object", init<optional<std::string> >())
       .def("GetInstanceCount", &Object::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
       .def("GetInstance", ObjectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("LoadFile", &Object::LoadFile, LF_overloads())
-      .def("LoadFile", &Object::LoadFile, &ObjectWrap::DefaultLoadFile)
-      .def("GetFilename", &Object::GetFilename, &ObjectWrap::DefaultGetFilename);
+      .def("LoadFile", &Object::LoadFile, &ObjectWrap::DefaultLoadFile);
 }

@@ -10,7 +10,7 @@ using namespace dtCore;
 
 void initInfiniteLightBindings()
 {
-   class_<InfiniteLight, bases<Base,Light>, osg::ref_ptr<InfiniteLight> >("InfiniteLight", init<int, optional<std::string, Light::LightingMode> >())
+   class_<InfiniteLight, bases<Light>, osg::ref_ptr<InfiniteLight> >("InfiniteLight", init<int, optional<std::string, Light::LightingMode> >())
       .def("SetDirection", &InfiniteLight::SetDirection)
       .def("GetDirection", &InfiniteLight::GetDirection);
 }

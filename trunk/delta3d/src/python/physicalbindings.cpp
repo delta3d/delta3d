@@ -45,6 +45,16 @@ class PhysicalWrap : public Physical
       {
          Physical::PostPhysicsStepUpdate();
       }
+
+      virtual void AddedToScene( Scene *scene )
+      {
+         call_method<void>(mSelf, "AddedToScene");
+      }
+
+      void DefaultAddedToScene( Scene* scene )
+      {
+         Physical::AddedToScene(scene);      
+      }
       
    protected:
 
@@ -75,7 +85,7 @@ void initPhysicalBindings()
    void (Physical::*GetMass1)(dMass*) const = &Physical::GetMass;
    float (Physical::*GetMass2)() const = &Physical::GetMass;
    
-   class_<Physical, PhysicalWrap, boost::noncopyable>("Physical", no_init)
+   class_<Physical, bases<Transformable>, osg::ref_ptr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
       .def("GetGeomID", &Physical::GetGeomID, return_value_policy<return_opaque_pointer>())
       .def("SetBodyID", &Physical::SetBodyID)
       .def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
@@ -103,5 +113,6 @@ void initPhysicalBindings()
       .def("FilterContact", &Physical::FilterContact, &PhysicalWrap::DefaultFilterContact)
       .def("PostPhysicsStepUpdate", &Physical::PostPhysicsStepUpdate, &PhysicalWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Physical::RenderCollisionGeometry)
-      .def("GetRenderCollisionGeometry", &Physical::GetRenderCollisionGeometry);
+      .def("GetRenderCollisionGeometry", &Physical::GetRenderCollisionGeometry)
+      .def("AddedToScene", &Physical::AddedToScene, &PhysicalWrap::DefaultAddedToScene);
 }
