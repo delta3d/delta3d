@@ -13,6 +13,7 @@
 #include "dtCore/deltadrawable.h"
 #include "dtCore/physical.h"
 
+
 using namespace dtCore;
 using namespace std;
 
@@ -83,8 +84,6 @@ Scene::Scene( string name, bool useSceneLight )
 
 Scene::~Scene()
 {
-   Notify(DEBUG_INFO, "destroying Scene ref:%d", this->referenceCount() );
-
    while (GetNumberOfAddedDrawable()>0)
    {
       DeltaDrawable *d = GetDrawable(0);
@@ -387,6 +386,18 @@ void Scene::OnMessage(MessageData *data)
 
       if( usingDeltaStep ) //reset physics step size to 0.0 (i.e. use System step size)
          SetPhysicsStepSize( 0.0 );
+   }
+
+   else if (data->message == "exit")
+   {
+      while (GetNumberOfAddedDrawable()>0)
+      {
+         DeltaDrawable *d = GetDrawable(0);
+         if (d)
+         {
+            RemoveDrawable(d);
+         }
+      }
    }
 }
 
