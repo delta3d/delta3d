@@ -1,0 +1,6 @@
+Import('*')
+
+dtCharSrcs = [ 	'character.cpp' ]
+
+env = env.Copy()
+env.SharedLibrary( 'dtchar', dtCharSrcs, LIBS=[ 'dtcore', 'osg', 'osgDB', 'plibsg', 'plibul', 'Producer', 'rbody' ] )

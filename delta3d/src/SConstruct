@@ -1,0 +1,53 @@
+import os
+
+env = Environment()
+
+#conf = Configure(env)
+
+optCache = 'options.cache'
+opts = Options(optCache)
+opts.AddOptions(
+    BoolOption('debug',    'Build with debugging enabled', 0),
+    BoolOption('optimize', 'Build with optimizations', 0),
+    #BoolOption('distcc', 'Enable compiling with distcc', 0),
+    BoolOption('nowarn', 'Disable all warnings', 0),
+    BoolOption('warningsAsErrors', 'Treat warnings as errors', 0))
+
+opts.Update(env)
+Help(opts.GenerateHelpText(env))
+opts.Save(optCache, env)
+
+if env.get('debug'):
+    env.Append(CCFLAGS=['-g'], CPPDEFINES=['DEBUG', '_DEBUG'])
+if env.get('optimize'):
+    env.Append(CCFLAGS=['-O2'], LINKFLAGS=['-s'], CPPDEFINES=['NDEBUG'])
+#if env.get('distcc'):
+#    env['CC']  = ['$(', 'distcc', '$)', env['CC']]
+#    env['CXX'] = ['$(', 'distcc', '$)', env['CXX']]
+if env.get('nowarn'):
+    env.Append(CCFLAGS=['-w'])
+else:
+    if env['CC'] == 'gcc':
+        env.Append(CCFLAGS=['-Wall'])
+    elif env['CXX'] == 'g++':
+        env.Append(CXXFLAGS=['-Wall'])
+    if env['CXX'] == 'g++':
+        env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
+if env.get('warningsAsErrors'):
+    if env['CC'] == 'gcc':
+        env.Append(CCFLAGS=['-Werror'])
+    elif env['CXX'] == 'g++':
+        env.Append(CXXFLAGS=['-Werror'])
+
+env['ENV']['DELTA_ROOT'] = os.environ['DELTA_ROOT'].split(':')
+env['ENV']['DELTA_INC'] = os.environ['DELTA_INC'].split(':')
+env['ENV']['DELTA_LIB'] = os.environ['DELTA_LIB'].split(':')
+env['ENV']['DELTA_DATA'] = os.environ['DELTA_DATA'].split(':')
+
+env['CPPPATH'] = env['ENV']['DELTA_INC']
+env['LIBPATH'] = env['ENV']['DELTA_LIB']
+
+#env = conf.Finish()
+
+Export("env")
+SConscript(dirs=['dtCore']) #etc etc
