@@ -120,6 +120,9 @@
 				RelativePath="..\inc\dis_types.h">
 			</File>
 			<File
+				RelativePath="..\inc\dthla.h">
+			</File>
+			<File
 				RelativePath="..\inc\entity.h">
 			</File>
 			<File

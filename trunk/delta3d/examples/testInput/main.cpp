@@ -1,11 +1,15 @@
 #include "dt.h"
+#include "dtabc.h"
+
+/*
 #include "application.h"
 #include "globals.h"
 #include "inputmapper.h"
 #include "joystick.h"
 #include "logicalinputdevice.h"
 #include "notify.h"
-#include "uidrawable.h"
+#include "uidrawable.h"*/
+
 
 using namespace dtCore;
 using namespace dtABC;

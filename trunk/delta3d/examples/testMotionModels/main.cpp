@@ -1,4 +1,7 @@
 #include "dt.h"
+#include "dtabc.h"
+
+/*
 #include "application.h"
 #include "globals.h"
 #include "object.h"
@@ -7,7 +10,8 @@
 #include "flymotionmodel.h"
 #include "orbitmotionmodel.h"
 #include "ufomotionmodel.h"
-#include "walkmotionmodel.h"
+#include "walkmotionmodel.h"*/
+
 
 using namespace dtCore;
 using namespace dtABC;
