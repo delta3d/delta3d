@@ -5,6 +5,11 @@
 #include <boost/python.hpp>
 #include <osg/ref_ptr>
 
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+#include "ode/src/collision_kernel.h"
+#include "ode/src/objects.h"
+#endif
+
 #include "dt.h"
 
 namespace boost
