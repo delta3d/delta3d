@@ -236,11 +236,14 @@ void Sound::LoadFile(string filename)
    void *data = NULL;
    ALboolean loop;
 
+   ALbyte buf[256];
+   
    mFilename = filename;
 
-   char buf[256];
+    //strcpy(buf, osgDB::findDataFile(mFilename).c_str());
+   memcpy(buf, osgDB::findDataFile(mFilename).c_str(), 256);
 
-   strcpy(buf, osgDB::findDataFile(mFilename).c_str());
+   
 
    alutLoadWAVFile(buf, &format, &data, &size, &freq, &loop);
 

@@ -1,4 +1,4 @@
-#include "SkyDomeShader.h"
+#include "skydomeshader.h"
 
 using namespace dtCore;
 

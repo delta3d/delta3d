@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <osg/notify>
+#include <osg/Notify>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -89,7 +89,7 @@ inline static void PrintSeverity(const dtCore::NotifySeverity level)
  */
 void dtCore::Notify(dtCore::NotifySeverity level, const char *fmt, ...)
 {
-   char t[255] = {NULL};
+   char t[255] = {0}; 
    
    static bool initialized = InitNotifyLevel();
    
@@ -97,7 +97,13 @@ void dtCore::Notify(dtCore::NotifySeverity level, const char *fmt, ...)
    {
       va_list argptr;
       va_start( argptr, fmt );
+
+      #if defined(_WIN32) || defined(WIN32)
       _vsnprintf(t, sizeof(t), fmt, argptr );
+      #else
+      vsnprintf(t, sizeof(t), fmt, argptr );
+      #endif
+      
       va_end( argptr );
       
       std::cout << "dtCore-";

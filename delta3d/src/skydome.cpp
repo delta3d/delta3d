@@ -3,7 +3,7 @@
 #include "notify.h"
 #include <osg/PolygonMode>
 //#include <osg/texture2d>
-#include <osgdb/readfile>
+#include <osgDB/ReadFile>
 using  namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyDome)

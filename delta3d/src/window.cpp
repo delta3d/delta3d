@@ -10,7 +10,6 @@
 using namespace dtCore;
 using namespace std;
 
-
 IMPLEMENT_MANAGEMENT_LAYER(Window)
 
 

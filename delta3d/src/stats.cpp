@@ -3,7 +3,7 @@
 #include <osg/Geode>
 #include <osg/MatrixTransform>
 #include <osg/Projection>
-#include <osg/switch>
+#include <osg/Switch>
 
 using namespace osg;
 using namespace osgUtil;

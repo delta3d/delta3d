@@ -19,7 +19,7 @@ Purpose:
 #include "UI/IUI_Renderer.h"
 
 //local
-#include "CUI_OpenGLShader.h"
+#include "cui_openglshader.h"
 
 #include <stdio.h>
 
