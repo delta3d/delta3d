@@ -34,11 +34,11 @@ Object::~Object()
 
 /*!
  * Load a geometry from a file using any supplied data file paths set in
- * dtCore::SetDataFilePathList().  Additional calls to this method will just combine
- * the loaded files together.
+ * dtCore::SetDataFilePathList().  Additional calls to this method will replace
+ * the first geometry for the next.
  *
  * @param filename : The name of the file to be loaded
- * @param useCache : If true, use OSG's object cache
+ * @param useCache : If true, use OSG's file cache
  */
 osg::Node* Object::LoadFile(string filename, bool useCache)
 {
