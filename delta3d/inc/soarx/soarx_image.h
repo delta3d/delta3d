@@ -1,5 +1,5 @@
-#ifndef DELTA_SOARX_FRAMEWORK
-#define DELTA_SOARX_FRAMEWORK
+#ifndef DELTA_SOARX_IMAGE
+#define DELTA_SOARX_IMAGE
 
 #include "soarx_framework.h"
 
@@ -43,4 +43,4 @@ namespace dtSOARX
    };
 };
 
-#endif // DELTA_SOARX_FRAMEWORK
+#endif // DELTA_SOARX_IMAGE
