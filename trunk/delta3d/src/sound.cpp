@@ -57,6 +57,18 @@ const char* Sound::kCommand[kNumCommands]   =
  */
 class SoundStateFrame : public dtCore::StateFrame
 {
+   /********************************************/
+   /*
+   /* WARNING FROM JPJ (Sep.23,2004)
+   /*
+   /* SoundStateFrame was a cut/past from
+   /* the old dtCore::Sound,  I did not have
+   /* time to implement the guts for the new
+   /* dtAudio::Sound.  Whomever works on this
+   /* code after me beware... and remove this
+   /* comment when you fix this.
+   /*
+   /********************************************/
    public:
 
       enum Elements
@@ -582,6 +594,18 @@ Sound::SetMaxGain( float gain )
 dtCore::StateFrame*
 Sound::GenerateKeyFrame( void )
 {
+   /********************************************/
+   /*
+   /* WARNING FROM JPJ (Sep.23,2004)
+   /*
+   /* GenerateKeyFrame was a cut/past from
+   /* the old dtCore::Sound,  I did not have
+   /* time to implement the guts for the new
+   /* dtAudio::Sound.  Whomever works on this
+   /* code after me beware... and remove this
+   /* comment when you fix this.
+   /*
+   /********************************************/
    return new SoundStateFrame(
       this, 
       SoundStateFrame::Playing | SoundStateFrame::Gain,
@@ -600,6 +624,18 @@ Sound::GenerateKeyFrame( void )
 dtCore::StateFrame*
 Sound::DeserializeFrame( TiXmlElement* element )
 {
+   /********************************************/
+   /*
+   /* WARNING FROM JPJ (Sep.23,2004)
+   /*
+   /* DeserializeFrame was a cut/past from
+   /* the old dtCore::Sound,  I did not have
+   /* time to implement the guts for the new
+   /* dtAudio::Sound.  Whomever works on this
+   /* code after me beware... and remove this
+   /* comment when you fix this.
+   /*
+   /********************************************/
    int validElements = 0;
    bool playing = false;
    float gain = 1.0f;
