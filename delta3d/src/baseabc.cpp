@@ -74,6 +74,18 @@ BaseABC::AddDrawable( Drawable* obj )
 }
 
 
+/**
+ * Remove a visual object from the Scene.
+ *
+ * @Param obj the object to remove from the scene
+ */
+void
+BaseABC::RemoveDrawable( Drawable* obj )
+{
+   assert( obj );
+   mScene->RemoveDrawable( obj );
+}
+
 
 /** Protected methods */
 /**

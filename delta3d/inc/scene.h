@@ -79,6 +79,9 @@ namespace dtCore
       ///Add a Drawable to the Scene to be viewed.
       void AddDrawable( Drawable *drawable );
 
+      ///Remove a Drawable from the Scene
+      void RemoveDrawable( Drawable *drawable );
+      
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain( const float *x, const float *y);
       

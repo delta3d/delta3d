@@ -47,6 +47,16 @@ class BaseABCWrap : public BaseABC
          BaseABC::AddDrawable(drawable);
       }
       
+      virtual void RemoveDrawable(Drawable* drawable)
+      {
+         call_method<void>(mSelf, "RemoveDrawable", drawable);
+      }
+      
+      void DefaultRemoveDrawable(Drawable* drawable)
+      {
+         BaseABC::RemoveDrawable(drawable);
+      }
+      
    protected:
       
       virtual void PreFrame(const double deltaFrameTime)
@@ -104,6 +114,7 @@ void initBaseABCBindings()
       .def("Config", &BaseABC::Config, &BaseABCWrap::DefaultConfig)
       .def("Quit", &BaseABC::Quit, &BaseABCWrap::DefaultQuit)
       .def("AddDrawable", &BaseABC::AddDrawable, &BaseABCWrap::DefaultAddDrawable)
+      .def("RemoveDrawable", &BaseABC::RemoveDrawable, &BaseABCWrap::DefaultRemoveDrawable)
       .def("GetWindow", &BaseABC::GetWindow, return_internal_reference<>())
       .def("GetCamera", &BaseABC::GetCamera, return_internal_reference<>())
       .def("GetScene", &BaseABC::GetScene, return_internal_reference<>())
