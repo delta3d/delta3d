@@ -6,7 +6,7 @@
 
 /*!
  * Set the list of paths that dtCore should use to search for files to load.  Paths
- * are separated with a single ";".
+ * are separated with a single ";" on Win32 and a single ":" on Linux.
  *
  * @param pathList : The list of all paths to be used to find data files
  */
