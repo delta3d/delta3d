@@ -94,9 +94,9 @@ void UserInterface::SelectInstance (void)
       CameraClearGreen->value(color[1]);
       CameraClearBlue->value(color[2]);
       
-      Fl_Color fc = fl_color_cube( color[0]*(FL_NUM_RED-1),
-         color[1]*(FL_NUM_GREEN-1),
-         color[2]*(FL_NUM_BLUE-1) );
+      Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
+                                       int(color[1]*(FL_NUM_GREEN-1)),
+                                       int(color[2]*(FL_NUM_BLUE-1)) );
       
       CameraClearLoadButton->color(fc);      
       
@@ -105,11 +105,11 @@ void UserInterface::SelectInstance (void)
       //we have new Scene's or they changed their names
       CameraSceneChoice->clear();
 
-      CameraSceneChoice->add( "None", NULL, NULL);
+      CameraSceneChoice->add( "None", 0, NULL);
       for (int i=0; i<Scene::GetInstanceCount(); i++)
       {
          Scene *s = Scene::GetInstance(i);
-         CameraSceneChoice->add( s->GetName().c_str(), NULL, NULL, s, 0);
+         CameraSceneChoice->add( s->GetName().c_str(), 0, NULL, s, 0);
       }
 
       const Fl_Menu_Item *menu = CameraSceneChoice->menu();
@@ -128,10 +128,10 @@ void UserInterface::SelectInstance (void)
       //rebuild the CameraWinChoice menu here in case
       //we have new Windows's or they changed their names
       CameraWinChoice->clear();
-      CameraWinChoice->add( "None", NULL, NULL);
+      CameraWinChoice->add( "None", 0, NULL);
       for ( int i=0; i<DeltaWin::GetInstanceCount(); i++)
       {         
-         CameraWinChoice->add( DeltaWin::GetInstance(i)->GetName().c_str(), NULL, NULL,
+         CameraWinChoice->add( DeltaWin::GetInstance(i)->GetName().c_str(), 0, NULL,
                                DeltaWin::GetInstance(i), 0);
       }
 
@@ -210,9 +210,9 @@ void UserInterface::SelectInstance (void)
       FogGreen->value(fColor[1]);
       FogBlue->value(fColor[2]);
 
-      Fl_Color fc = fl_color_cube( fColor[0]*(FL_NUM_RED-1),
-         fColor[1]*(FL_NUM_GREEN-1),
-         fColor[2]*(FL_NUM_BLUE-1) );
+      Fl_Color fc = fl_color_cube( int(fColor[0])*(FL_NUM_RED-1),
+                                   int(fColor[1])*(FL_NUM_GREEN-1),
+                                   int(fColor[2])*(FL_NUM_BLUE-1) );
       
       FogColorLoadButton->color(fc);
 
@@ -255,9 +255,9 @@ void UserInterface::SelectInstance (void)
       SkyGreen->value(skyColor[1]);
       SkyBlue->value(skyColor[2]);
 
-      Fl_Color sc = fl_color_cube( skyColor[0]*(FL_NUM_RED-1),
-         skyColor[1]*(FL_NUM_GREEN-1),
-         skyColor[2]*(FL_NUM_BLUE-1) );
+      Fl_Color sc = fl_color_cube( int(skyColor[0]*(FL_NUM_RED-1)),
+                                   int(skyColor[1]*(FL_NUM_GREEN-1)),
+                                   int(skyColor[2]*(FL_NUM_BLUE-1) ));
       
       SkyColorLoadButton->color(sc);
 
@@ -290,9 +290,9 @@ void UserInterface::SelectInstance (void)
       SkyBoxBaseGreen->value(color[1]);
       SkyBoxBaseBlue->value(color[2]);
 
-      Fl_Color fc = fl_color_cube( color[0]*(FL_NUM_RED-1),
-         color[1]*(FL_NUM_GREEN-1),
-         color[2]*(FL_NUM_BLUE-1) );
+      Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
+                                   int(color[1]*(FL_NUM_GREEN-1)),
+                                   int(color[2]*(FL_NUM_BLUE-1)) );
       
       SkyBoxBaseColorLoadButton->color(fc);      
 
@@ -352,9 +352,9 @@ void UserInterface::SelectInstance (void)
        CloudGreen->value(ccolor->y());
        CloudBlue->value(ccolor->z());
 
-       Fl_Color fc = fl_color_cube( ccolor->x()*(FL_NUM_RED-1),
-           ccolor->y()*(FL_NUM_GREEN-1),
-           ccolor->z()*(FL_NUM_BLUE-1) );
+       Fl_Color fc = fl_color_cube( int(ccolor->x()*(FL_NUM_RED-1)),
+                                    int(ccolor->y()*(FL_NUM_GREEN-1)),
+                                    int(ccolor->z()*(FL_NUM_BLUE-1)) );
 
        CloudColorLoadButton->color(fc);      
 
@@ -431,9 +431,9 @@ void UserInterface::CameraClearColorBrowserCB(Fl_Button*)
    CameraClearGreen->value(g);
    CameraClearBlue->value(b);
    
-   Fl_Color fc = fl_color_cube( r*(FL_NUM_RED-1),
-                                g*(FL_NUM_GREEN-1),
-                                b*(FL_NUM_BLUE-1) );
+   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                int(g*(FL_NUM_GREEN-1)),
+                                int(b*(FL_NUM_BLUE-1)) );
 
    CameraClearLoadButton->color(fc);
    
@@ -455,9 +455,9 @@ void UserInterface::CameraClearColorCB(Fl_Value_Input* )
          CameraClearBlue->value(),
          1.f };
 
-      Fl_Color fc = fl_color_cube( color[0]*(FL_NUM_RED-1),
-         color[1]*(FL_NUM_GREEN-1),
-         color[2]*(FL_NUM_BLUE-1) );
+   Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
+                                int(color[1]*(FL_NUM_GREEN-1)),
+                                int(color[2]*(FL_NUM_BLUE-1)) );
       
       CameraClearLoadButton->color(fc);
       CameraClearLoadButton->redraw();
@@ -489,8 +489,8 @@ void UserInterface::CameraWinCB( Fl_Choice *o )
 void UserInterface::WinPosCB( Fl_Value_Input *o)
 {
    DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
-   w->SetPosition( WinPosX->value(), WinPosY->value(), 
-                   WinPosW->value(), WinPosH->value() );
+   w->SetPosition( int(WinPosX->value()), int(WinPosY->value()), 
+                   int(WinPosW->value()), int(WinPosH->value()) );
 }
 
 void UserInterface::WinSizeCB(Fl_Menu_Button *o)
@@ -649,9 +649,9 @@ void UserInterface::SkyBoxBaseColorCB(Fl_Value_Input* )
          SkyBoxBaseBlue->value(),
          1.f };
 
-      Fl_Color fc = fl_color_cube( color[0]*(FL_NUM_RED-1),
-         color[1]*(FL_NUM_GREEN-1),
-         color[2]*(FL_NUM_BLUE-1) );
+   Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
+                                int(color[1]*(FL_NUM_GREEN-1)),
+                                int(color[2]*(FL_NUM_BLUE-1)) );
       
       SkyBoxBaseColorLoadButton->color(fc);
       SkyBoxBaseColorLoadButton->redraw();
@@ -672,9 +672,9 @@ void UserInterface::SkyBoxBaseColorBrowserCB(Fl_Button*)
    SkyBoxBaseGreen->value(g);
    SkyBoxBaseBlue->value(b);
    
-   Fl_Color fc = fl_color_cube( r*(FL_NUM_RED-1),
-                                g*(FL_NUM_GREEN-1),
-                                b*(FL_NUM_BLUE-1) );
+   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                int(g*(FL_NUM_GREEN-1)),
+                                int(b*(FL_NUM_BLUE-1)) );
 
    SkyBoxBaseColorLoadButton->color(fc);
    
@@ -706,9 +706,9 @@ void UserInterface::EnvFogColorCB(Fl_Value_Input *)
          FogBlue->value(),
          1.f };
 
-      Fl_Color fc = fl_color_cube( color[0]*(FL_NUM_RED-1),
-         color[1]*(FL_NUM_GREEN-1),
-         color[2]*(FL_NUM_BLUE-1) );
+      Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
+                                   int(color[1]*(FL_NUM_GREEN-1)),
+                                   int(color[2]*(FL_NUM_BLUE-1)) );
       
       FogColorLoadButton->color(fc);
       FogColorLoadButton->redraw();
@@ -729,9 +729,9 @@ void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
    FogGreen->value(g);
    FogBlue->value(b);
    
-   Fl_Color fc = fl_color_cube( r*(FL_NUM_RED-1),
-                                g*(FL_NUM_GREEN-1),
-                                b*(FL_NUM_BLUE-1) );
+   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                int(g*(FL_NUM_GREEN-1)),
+                                int(b*(FL_NUM_BLUE-1)) );
 
    FogColorLoadButton->color(fc);
    
@@ -795,9 +795,9 @@ void UserInterface::EnvSkyColorBrowserCB(Fl_Button *)
    SkyGreen->value(g);
    SkyBlue->value(b);
    
-   Fl_Color sc = fl_color_cube( r*(FL_NUM_RED-1),
-                                g*(FL_NUM_GREEN-1),
-                                b*(FL_NUM_BLUE-1) );
+   Fl_Color sc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                int(g*(FL_NUM_GREEN-1)),
+                                int(b*(FL_NUM_BLUE-1)) );
 
    SkyColorLoadButton->color(sc);
    
@@ -819,9 +819,9 @@ void UserInterface::EnvSkyColorCB(Fl_Value_Input*)
          SkyBlue->value(),
          1.f };
 
-      Fl_Color fc = fl_color_cube( color[0]*(FL_NUM_RED-1),
-         color[1]*(FL_NUM_GREEN-1),
-         color[2]*(FL_NUM_BLUE-1) );
+      Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
+                                   int(color[1]*(FL_NUM_GREEN-1)),
+                                   int(color[2]*(FL_NUM_BLUE-1)) );
       
       SkyColorLoadButton->color(fc);
       SkyColorLoadButton->redraw();
@@ -835,12 +835,12 @@ void UserInterface::EnvTimeCB(Fl_Value_Slider *o)
 {
    Environment *e = (Environment*)GetSelectedInstance(this);
 
-   int yr = EnvYear->value();
-   int mo = EnvMonth->value();
-   int da = EnvDay->value();
+   int yr = int(EnvYear->value());
+   int mo = int(EnvMonth->value());
+   int da = int(EnvDay->value());
    float tod = EnvTimeOfDay->value();
-   int hr = floor(tod);
-   int min = floor((tod-hr)*60.0);
+   int hr = int(floor(tod));
+   int min = int(floor((tod-hr)*60.0));
    
    e->SetDateTime(yr, mo, da, hr, min, 0);
 }
@@ -849,9 +849,9 @@ void UserInterface::EnvDateTimeCB(Fl_Value_Input *o)
 {
    Environment *e = (Environment*)GetSelectedInstance(this);
 
-   int yr = EnvYear->value();
-   int mo = EnvMonth->value();
-   int da = EnvDay->value();
+   int yr = int(EnvYear->value());
+   int mo = int(EnvMonth->value());
+   int da = int(EnvDay->value());
    float tod = EnvTimeOfDay->value();
 
    e->SetDateTime(yr, mo, da, (int)tod, 0, 0);
@@ -872,7 +872,7 @@ void UserInterface::InfRegenerateCB(Fl_Button *o)
 
    float dist = InfBuildDistance->value();
    float segSize = InfSegSize->value();
-   int segDiv = InfSegDivisions->value();
+   int segDiv = int(InfSegDivisions->value());
    float vScale = InfVertScale->value();
    float hScale = InfHorizScale->value();
 
@@ -954,9 +954,9 @@ void UserInterface::CloudColorBrowserCB(Fl_Button *)
     CloudGreen->value(g);
     CloudBlue->value(b);
 
-    Fl_Color cc = fl_color_cube( r*(FL_NUM_RED-1),
-        g*(FL_NUM_GREEN-1),
-        b*(FL_NUM_BLUE-1) );
+    Fl_Color cc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
 
     CloudColorLoadButton->color(cc);
 
@@ -974,9 +974,9 @@ void UserInterface::CloudColorCB(Fl_Value_Input*)
          CloudGreen->value(),
          CloudBlue->value());
 
-      Fl_Color fc = fl_color_cube( ccolor->x()*(FL_NUM_RED-1),
-         ccolor->y()*(FL_NUM_GREEN-1),
-         ccolor->z()*(FL_NUM_BLUE-1) );
+    Fl_Color fc = fl_color_cube( int(ccolor->x()*(FL_NUM_RED-1)),
+                                 int(ccolor->y()*(FL_NUM_GREEN-1)),
+                                 int(ccolor->z()*(FL_NUM_BLUE-1)) );
       
       CloudColorLoadButton->color(fc);
       CloudColorLoadButton->redraw();
