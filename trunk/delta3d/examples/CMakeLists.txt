@@ -6,10 +6,9 @@
 
 PROJECT( examples )
 
-SET( DELTA_HOME /home/cwosborn/delta3d )
+# this will be run from subdirectories, so use two ..'s
+INCLUDE_DIRECTORIES( ../../inc ../../ext/inc ) 
+LINK_DIRECTORIES( ../../lib ../../ext/lib )
 
-INCLUDE_DIRECTORIES( ${DELTA_HOME}/inc ${DELTA_HOME}/ext/inc )
-LINK_DIRECTORIES( ${DELTA_HOME}/lib ${DELTA_HOME}/ext/lib )
-
-SUBDIRS( testApp testClouds testEffects testFLTKWidget testGUI testInput testMessage testMotionModels testPhysics testTerrain testWeather testWidget testWin )
-#add testCharacters testHLA testLua testPython
+SUBDIRS( testApp testAudio testClouds testEffects testFLTKWidget testGUI testHLA testInput testMessage testMotionModels testPhysics testSound testTerrain testWeather testWidget testWin )
+#add testCharacters testLua testPython
