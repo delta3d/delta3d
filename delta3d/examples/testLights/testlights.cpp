@@ -1,6 +1,6 @@
 #include "testlights.h"
 #include "dtCore/dt.h"
-#include "gui_fl/guimgr.h"
+//#include "gui_fl/guimgr.h"
 
 // namespaces
 using namespace   dtABC;
@@ -23,23 +23,46 @@ TestLightsApp::Config()
    GetScene()->UseSceneLight( false );
 
    Object* terrain = new Object( "Terrain" );
-   //terrain->LoadFile( "csar_lighting/csar-noshadow.ive" );
-   terrain->LoadFile( "dirt/dirt.ive" );
-   //terrain->LoadFile("room.ive");
+   terrain->LoadFile("room-int-walls.ive");
    AddDrawable( terrain );
 
    // create a spot light.
-   Light* myLight1 = new Light( 1, "spotlight", Light::GLOBAL);
+   SpotLight* myLight1 = new SpotLight( 1, "spotlight", Light::GLOBAL);
 
-   Transform l1 = Transform( -2.0f, -8.0f, -0.7f, 0.0f, 0.0f, 0.0f );
+   Transform l1 = Transform( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
    myLight1->SetTransform(&l1);
 
    myLight1->SetAmbient( 1.0f, 0.0f, 0.0f, 1.0f );
    myLight1->SetDiffuse( 1.0f, 0.0f, 0.0f, 1.0f );
    myLight1->SetSpotCutoff( 20.0f );
    myLight1->SetSpotExponent( 50.0f );
-   AddDrawable( myLight1 );
+  
+   GetScene()->AddLight( myLight1 );
 
+   // create a positional light.
+   PositionalLight* myLight2 = new PositionalLight( 2, "poslight", Light::GLOBAL);
+
+   l1.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   myLight2->SetTransform(&l1);
+
+   myLight2->SetAmbient( 0.0f, 1.0f, 0.0f, 1.0f );
+   myLight2->SetDiffuse( 0.0f, 1.0f, 0.0f, 1.0f );
+   myLight2->SetAttenuation( 1.0f, 2.0f/20, 2.0f/osg::square(20) );
+
+   Object* barrel = new Object( "Barrel" );
+   barrel->LoadFile( "physics/sphere/happy_sphere.ive" );
+   barrel->SetTransform(&l1);
+   AddDrawable( barrel );
+
+   GetScene()->AddLight( myLight2 );
+
+   InfiniteLight* myLight3 = new InfiniteLight( 3, "ilight", Light::GLOBAL );
+   myLight3->SetAmbient( 0.0f, 0.0f, 1.0f, 1.0f );
+   myLight3->SetDiffuse( 0.0f, 0.0f, 1.0f, 1.0f );
+
+   //GetScene()->AddLight( myLight3 );
+
+   //set camera
    Transform position;
    position.Set(0.3f, 0.6f, 1.2f, 0.0f, 0.0f, 0.0f );
    GetCamera()->SetTransform( &position );
@@ -55,7 +78,7 @@ TestLightsApp::Config()
    omm->SetTarget(GetCamera());
    omm->SetDistance( 0 );
 
-   GUI *ui = new GUI(); 
+   //GUI *ui = new GUI(); 
 
 }
 
@@ -83,6 +106,32 @@ TestLightsApp::OnMessage( Base::MessageData *data )
       float x,y,z,h,p,r;
       trans.Get(&x,&y,&z,&h,&p,&r);
       //Notify(ALWAYS,"(%f,%f,%f) (%f,%f,%f)", x, y, z, h, p, r );
+
+      /*
+      PositionalLight* plight = static_cast<PositionalLight*>(GetScene()->GetLight( 2 ));
+      
+      float red = 0.0f;
+      float g = 0.0f;
+      float b = 0.0f;
+      float a = 0.0f;
+      plight->GetAmbient( &red, &g, &b, &a );
+
+      red = red + 0.01f;
+      g = g + 0.05f;
+      b = b + 0.10f;
+
+      if( red > 1.0f )
+         red = red - 1.0f;
+
+      if( g > 1.0f )
+         g = g - 1.0f;
+
+      if( b > 1.0f )
+         b = b - 1.0f;
+
+      plight->SetAmbient( red, g, b, a );
+      plight->SetDiffuse( red, g, b, a );
+      */
       
    }
 }
