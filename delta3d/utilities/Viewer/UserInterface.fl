@@ -17,7 +17,7 @@ decl {\#include "viewwindow.h"} {public
 decl {\#include "viewstate.h"} {public
 } 
 
-decl {\#define kDefFltr "Geometry Files (*.{osg,ive,flt})\\tOSG Files (*.osg)\\tIVE Files (*.ive)\\tFlight Files (*.flt)"} {public
+decl {\#define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds})\\tOSG Files (*.osg)\\tIVE Files (*.ive)\\tFlight Files (*.flt)\\t3ds Export Files (*.3ds)"} {public
 } 
 
 decl {class ChoicePopUp;   // forward reference} {public
@@ -32,13 +32,13 @@ class UserInterface {open
   } {
     Fl_Window UIMainWindow {
       label Viewer open
-      private xywh {839 178 640 544} type Double resizable non_modal visible
+      private xywh {840 178 640 544} type Double resizable non_modal visible
     } {
       Fl_Menu_Bar UIMenu {open
         private xywh {0 0 640 24}
       } {
         submenu UIMenuFile {
-          label {&File} open
+          label {&File}
           private xywh {0 0 100 20}
         } {
           menuitem UIMenuFileOpen {
@@ -78,11 +78,11 @@ class UserInterface {open
           }
         }
         submenu UIMenuView {
-          label {&View}
+          label {&View} open
           private xywh {0 0 100 20} deactivate
         } {
           submenu UIMenuViewDisplay {
-            label {&Display} open
+            label {&Display}
             private xywh {0 0 100 20}
           } {
             menuitem UIMenuViewDisplayCompass {
@@ -156,7 +156,7 @@ class UserInterface {open
             }
             menuitem UIMenuViewSceneLighting {
               label {&Lighting}
-              callback {UIViewWindow->SetDisplay( ViewState::SCENELIGHT, UIMenuViewSceneLighting->value() != 0L );}
+              callback {UIViewWindow->SetDisplay( ViewState::SCENELIGHT, UIMenuViewSceneLighting->value() != 0L );} selected
               private xywh {10 10 100 20} type Toggle
             }
           }
@@ -294,8 +294,7 @@ class UserInterface {open
 			UIMenuFileSaveAs->activate();
 			mMenusEnabled	= true;
 		}
-	}} {selected
-    }
+	}} {}
   }
   Function {SaveFileAs( std::string pathfile )} {open
   } {
