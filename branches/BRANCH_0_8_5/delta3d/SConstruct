@@ -144,16 +144,16 @@ if env.get('noWarnings'):
       env.Append(CXXFLAGS=['/w'])
    elif OS == 'linux':
       env.Append(CXXFLAGS=['-w'])
-else:
-   if OS == 'windows':
-      env.Append(CXXFLAGS=['/Wall'])
-   elif OS == 'linux':
-      if env['CC'] == 'gcc':
-         env.Append(CXXFLAGS=['-Wall'])
-      elif env['CXX'] == 'g++':
-         env.Append(CXXFLAGS=['-Wall'])
-      if env['CXX'] == 'g++':
-            env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
+##else:
+##   if OS == 'windows':
+##      env.Append(CXXFLAGS=['/Wall'])
+##   elif OS == 'linux':
+##      if env['CC'] == 'gcc':
+##         env.Append(CXXFLAGS=['-Wall'])
+##      elif env['CXX'] == 'g++':
+##         env.Append(CXXFLAGS=['-Wall'])
+##      if env['CXX'] == 'g++':
+##            env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
 Help(opts.GenerateHelpText(env))
 
