@@ -76,17 +76,9 @@ public:
       float lz = 1.0f;
 
       //create collision meshes
-      obj1->SetCollisionBox(100.0f,100.0f,0.05f); //make VERY thin "box" for ground
-      obj2->SetCollisionBox(lx,ly,lz);
-      obj3->SetCollisionBox(lx,ly,lz);
-
-      //obj1->SetCollisionBox(); //make VERY thin "box" for ground
-      //obj2->SetCollisionBox();
-      //obj3->SetCollisionBox();
-
-      //obj1->RenderCollisionGeometry(); //make VERY thin "box" for ground
-      //obj2->RenderCollisionGeometry();
-      //obj3->RenderCollisionGeometry();
+      obj1->SetCollisionBox(); 
+      obj2->SetCollisionBox();
+      obj3->SetCollisionBox();
 
       //set the mass for objects
       dMass mass;
@@ -174,9 +166,7 @@ protected:
             float ly = 1.0f;
             float lz = 1.0f;
 
-            box->SetCollisionBox(lx,ly,lz);
-            //box->SetCollisionBox();
-            //box->RenderCollisionGeometry();
+            box->SetCollisionBox();
 
             dMass mass;
             dMassSetBox(&mass, 1, lx, ly, lz);
@@ -209,10 +199,8 @@ protected:
 
             float radius = 0.5f;
 
-            sphere->SetCollisionSphere(radius);
-            //sphere->SetCollisionSphere();
-            //sphere->RenderCollisionGeometry();
-
+            sphere->SetCollisionSphere();
+            
             dMass mass;
             dMassSetSphere(&mass, 1, radius);
             sphere->SetMass(&mass);
@@ -244,9 +232,7 @@ protected:
             float radius = 0.321f; 
             float length = 1.0f;            
 
-            cyl->SetCollisionCappedCylinder(radius,length);
-            //cyl->SetCollisionCappedCylinder();
-            //cyl->RenderCollisionGeometry();
+            cyl->SetCollisionCappedCylinder();
 
             dMass mass;
             dMassSetCappedCylinder(&mass, 1, 2, radius, length);
