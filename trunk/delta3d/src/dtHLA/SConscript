@@ -9,4 +9,7 @@ dtHlaSrcs = [ 	'dis_types.cpp',
 #LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
 
 env = env.Copy()
-env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=[ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'RTI-NG', 'fedtime', 'tinyxml' ] )
+
+dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=[ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'RTI-NG', 'fedtime', 'tinyxml' ] )
+
+env.Install( '../../lib', dtHlaLib )

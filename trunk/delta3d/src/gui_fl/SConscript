@@ -4,4 +4,7 @@ gui_flSrcs = [ 	'gui_fltk.cpp',
 		'guimgr.cpp' ]
 
 env = env.Copy()
-env.SharedLibrary( 'gui_fl', gui_flSrcs, LIBS=[ 'dtcore', 'fltk', 'OpenThreads', 'osg', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+
+dtGui_flLib = env.SharedLibrary( 'gui_fl', gui_flSrcs, LIBS=[ 'dtcore', 'fltk', 'OpenThreads', 'osg', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+
+env.Install( '../../lib', dtGui_flLib )
