@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "python/dtpython.h"
-#include "dtCore/entity.h"
+#include "dtHLA/entity.h"
 
 using namespace boost::python;
 using namespace dtCore;
