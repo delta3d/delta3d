@@ -3,15 +3,15 @@
    <shader name="dgrey" r="0.25" g="0.25" b="0.25" a="1.0" />
    <shader name="grey"  r="0.5" g="0.5" b="0.5" a="1.0" />
    <shader name="green"  r="0.0" g="0.75" b="0.0" a="1.0" />
-   <shader name="raster8" r="0.0" g="0.0" b="0.0" a="1.0" filename="raster8.rgba" />
-   <shader name="raster8w" r="1.0" g="1.0" b="1.0" a="1.0" filename="raster8.rgba" />
-   <shader name="back_panel" filename="back_panel.rgb" />
-   <shader name="button" filename="button.tga" />
-   <shader name="button_red" filename="button_red.tga" />
-   <shader name="edit_box" filename="edit_box.rgb" />
-   <shader name="edit_box_hover" filename="edit_box_hover.rgb" />
-   <shader name="edit_box_click" filename="edit_box_click.rgb" />
-   <shader name="slider_red_vert" filename="slider_red_vert.tga" />
+   <shader name="raster8" r="0.0" g="0.0" b="0.0" a="1.0" filename="gui/raster8.rgba" />
+   <shader name="raster8w" r="1.0" g="1.0" b="1.0" a="1.0" filename="gui/raster8.rgba" />
+   <shader name="back_panel" filename="gui/back_panel.rgb" />
+   <shader name="button" filename="gui/button.tga" />
+   <shader name="button_red" filename="gui/button_red.tga" />
+   <shader name="edit_box" filename="gui/edit_box.rgb" />
+   <shader name="edit_box_hover" filename="gui/edit_box_hover.rgb" />
+   <shader name="edit_box_click" filename="gui/edit_box_click.rgb" />
+   <shader name="slider_red_vert" filename="gui/slider_red_vert.tga" />
    
    <fixedwidthbitmapfont name="raster8" shader="raster8" characterwidth="16"
       characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" />

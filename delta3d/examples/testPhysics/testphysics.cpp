@@ -48,44 +48,60 @@ public:
    TestPhysicsApp( std::string configFile = "config.xml" )
       : Application( configFile )
    {
-      //This is where we'll find our files to load
 
-      Object *obj1 = new Object("ground");
-      Object *obj2 = new Object("box");
+      Object *obj1 = new Object("Ground");
+      Object *obj2 = new Object("FallingCrate");
+      Object *obj3 = new Object("GroundCrate");
 
-      if (!obj1->LoadFile("ground.flt")) return;
+      //load the model files
+      if (!obj1->LoadFile("dirt/flatdirt.ive")) return;
       if (!obj2->LoadFile("physics/crate/crate.ive")) return; 
+      if (!obj3->LoadFile("physics/crate/crate.ive")) return; 
 
-      //position first falling crate
+      //position the camera
       Transform position;
-      position.Set(0.f, -10.f, 2.f, 0.f, 0.f, 0.f);
+      position.Set(0.0f, -10.0f, 2.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(&position);
 
-      position.Set(0.55, 0, 3, 0, 40, 0);
+      //position first falling crate
+      position.Set(0.55f, 0.0f, 3.0f, 0.0f, 40.0f, 0.0f);
       obj2->SetTransform( &position );
 
-      //set ODE parameters
+      //position the crate on the ground
+      position.Set(0.0f, 0.f, 0.5f, 0.0f, 0.0f, 0.0f);
+      obj3->SetTransform( &position );
+
+      //create collision meshes
       obj1->SetCollisionMesh();
       obj2->SetCollisionBox();
+      obj3->SetCollisionBox();
 
+      //set the mass for objects
       dMass mass;
       dMassSetBox(&mass, 1, 1.0f, 1.0f, 1.0f);
       obj2->SetMass(&mass);
+      obj3->SetMass(&mass);
 
       //turn on the physics
       obj2->EnableDynamics();
-      //obj2->RenderCollisionGeometry();
+      obj3->EnableDynamics();
 
-      //Add the Objects to the Scene to be rendered
+      //Add the objects to the Scene to be rendered
       GetScene()->AddDrawable( obj1 );
       GetScene()->AddDrawable( obj2 );
+      GetScene()->AddDrawable( obj3 );
 
+      //put the falling crate in the vector of dropped objects
       mObjects.push(obj2);
 
       GetScene()->SetGravity(0, 0, -15.f);
 
       Updater *updater = new Updater(GetScene());
 
+      OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+      omm->SetTarget( GetCamera() );
+
+      //calculate and set focal distance for orbit motion model (origin -> camera)
       Transform trans;
       GetCamera()->GetTransform(&trans);
 
@@ -93,9 +109,6 @@ public:
       trans.GetTranslation( camLoc );
 
       sgVec3 origin = {0.0f, 0.0f, 0.0f};
-
-      OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
-      omm->SetTarget( GetCamera() );
       omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
    }
    ~TestPhysicsApp(){}
@@ -145,7 +158,6 @@ protected:
             box->SetTransform(&xform);
 
             box->SetCollisionBox();
-            //box->RenderCollisionGeometry();
 
             float lx = 1.0f;
             float ly = 1.0f;
@@ -181,7 +193,6 @@ protected:
             sphere->SetTransform(&xform);
 
             sphere->SetCollisionSphere();
-            //sphere->RenderCollisionGeometry();
 
             float radius = 0.5f;
 
@@ -214,7 +225,6 @@ protected:
             cyl->SetTransform(&xform);
 
             cyl->SetCollisionCappedCylinder();
-            //cyl->RenderCollisionGeometry();
 
             float radius = 0.321f; 
             float length = 1.0f;

@@ -11,8 +11,8 @@
    <shader name="white" r="1.0" g="0.0" b="1.0" a="1.0" />
    <shader name="transparent" r="0.0" g="0.0" b="0.0" a="0.0" />
    
-   <shader name="raster8" r="1.0" g="1.0" b="1.0" a="1.0" filename="raster8.rgba" />
-   <shader name="digital_font" r="0.0" g="0.0" b="0.0" a="1.0" filename="digital_font.rgba" />
+   <shader name="raster8" r="1.0" g="1.0" b="1.0" a="1.0" filename="gui/raster8.rgba" />
+   <shader name="digital_font" r="0.0" g="0.0" b="0.0" a="1.0" filename="gui/digital_font.rgba" />
    
    <fixedwidthbitmapfont name="raster8" shader="raster8" characterwidth="16"
       characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" />
@@ -21,14 +21,14 @@
       characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" /> 
    
    
-   <shader name="button" filename="button.tga" />
-   <shader name="button_hover" filename="button_hover.tga" />
-   <shader name="button_click" filename="button_click.tga" />
-   <shader name="cursor" filename="cursor.rgba" />
-   <shader name="panel" filename="panel.rgba" />
-   <shader name="edit_box" filename="edit_box.rgb" />
-   <shader name="slider_bar" filename="slider_bar.tga" />
-   <shader name="slider" filename="slider.rgba" />
+   <shader name="button" filename="gui/button.tga" />
+   <shader name="button_hover" filename="gui/button_hover.tga" />
+   <shader name="button_click" filename="gui/button_click.tga" />
+   <shader name="cursor" filename="gui/cursor.rgba" />
+   <shader name="panel" filename="gui/panel.rgba" />
+   <shader name="edit_box" filename="gui/edit_box.rgb" />
+   <shader name="slider_bar" filename="gui/slider_bar.tga" />
+   <shader name="slider" filename="gui/slider.rgba" />
       
    <rootframe name="main" shader="panel">
       <rect xmin="0.2" ymin="0.2" xmax="0.8" ymax="0.8" />

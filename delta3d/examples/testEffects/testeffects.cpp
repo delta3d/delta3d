@@ -138,8 +138,8 @@ public:
       position.Set(0.f, -50.f, 0.f, 0.f, 0.f, 0.f);
       GetCamera()->SetTransform( &position );
 
-      Object* entity = new Object("AH-1W");
-      entity->LoadFile("ah-1w.ive");
+      Object* entity = new Object("UH-1N");
+      entity->LoadFile("UH-1N/UH-1N.ive");
       AddDrawable( entity );
 
       ParticleSystem* smoke = new ParticleSystem;

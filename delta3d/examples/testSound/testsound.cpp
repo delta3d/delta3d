@@ -12,8 +12,8 @@ using namespace   Producer;
 
 
 // static member variables
-const char* TestSoundApp::kSoundFile1  = "exp57.wav";
-const char* TestSoundApp::kSoundFile2  = "exp35.wav";
+const char* TestSoundApp::kSoundFile1  = "sounds/exp57.wav";
+const char* TestSoundApp::kSoundFile2  = "sounds/exp35.wav";
 
 
 

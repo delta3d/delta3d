@@ -43,14 +43,17 @@ public:
       Application::Config();
 
       ///put something in the background to look at
-      Object *ground = new Object("ground");
-      ground->LoadFile("ground.flt");
-
-      AddDrawable(ground);
+      Object *helo = new Object( "Helo" );
+      helo->LoadFile( "UH-1N/UH-1N.ive" );
+      AddDrawable( helo );
 
       ///move the camera up
-      Transform xform(0.f, 0.f, 5.f, 0.f, 0.f,0.f);
-      GetCamera()->SetTransform(&xform);
+      Transform xform(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f );
+      GetCamera()->SetTransform( &xform );
+
+      //position the helo behind the UI
+      xform.Set( -2.5f, 30.0f, 2.5f, 90.0f, 0.0f, 0.0f );
+      helo->SetTransform( &xform );
 
       int w,h,x,y;
       GetWindow()->GetPosition(&x, &y, &w, &h);
@@ -60,12 +63,12 @@ public:
       drawable->SetWindowResolution(w,h);
       ui = drawable->GetUI();
 
-      if (!mFilename.empty())
+      if (!mFilename.empty()) //create the GUI w/ XML
       {
          if(!drawable->LoadGUIFile(mFilename))
             return;
       }
-      else
+      else //create the GUI w/ C++
       {
          // make some general purpose shaders
          sgVec4 black_col = { 0.0, 0.0, 0.0, 1.0 };
@@ -74,20 +77,20 @@ public:
          drawable->CreateShader( "transparent", trans_col );
 
          // fonts
-         drawable->CreateShader( "raster8", white_col, "raster8.rgba" );
-         drawable->CreateShader( "digital_font", black_col, "digital_font.rgba" );
+         drawable->CreateShader( "raster8", white_col, "gui/raster8.rgba" );
+         drawable->CreateShader( "digital_font", black_col, "gui/digital_font.rgba" );
          drawable->CreateFixedFont("digital_font", "digital_font");
          drawable->CreateFixedFont("raster8", "raster8");
 
          // textures
-         drawable->CreateShader( "button", "button.tga" );
-         drawable->CreateShader( "button_hover", "button_hover.tga" );
-         drawable->CreateShader( "button_click", "button_click.tga" );
-         drawable->CreateShader( "cursor", "cursor.rgba" );
-         drawable->CreateShader( "panel", "panel.rgba");
-         drawable->CreateShader( "edit_box", "edit_box.rgb");
-         drawable->CreateShader( "slider_bar", "slider_bar.tga");
-         drawable->CreateShader( "slider", "slider.rgba");
+         drawable->CreateShader( "button", "gui/button.tga" );
+         drawable->CreateShader( "button_hover", "gui/button_hover.tga" );
+         drawable->CreateShader( "button_click", "gui/button_click.tga" );
+         drawable->CreateShader( "cursor", "gui/cursor.rgba" );
+         drawable->CreateShader( "panel", "gui/panel.rgba");
+         drawable->CreateShader( "edit_box", "gui/edit_box.rgb");
+         drawable->CreateShader( "slider_bar", "gui/slider_bar.tga");
+         drawable->CreateShader( "slider", "gui/slider.rgba");
 
          ///this main frame will contain all the widgets
          CUI_Frame *mainFrame = new CUI_Frame();
@@ -148,6 +151,8 @@ public:
 
       ///Add the drawable to the Scene
       AddDrawable( drawable );
+
+
    }
 
    void SetFilename( string file )
