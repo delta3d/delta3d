@@ -41,7 +41,8 @@ TARGET_LINK_LIBRARIES( dtvis GL osg osgDB osgUtil )
 ADD_LIBRARY( dtaudio SHARED audiomanager listener soundeffectbinder )
 TARGET_LINK_LIBRARIES( dtaudio glgui isense Producer ode opcode openal OpenThreads osg osgDB osgGL2 osgParticle osgTerrain osgText osgUtil plibsg plibul plibjs tinyxml )
 
-#SUBDIRS( python soarx )
+#SUBDIRS( python )
+#SUBDIRS( soarx )
 
 INSTALL_TARGETS( ../lib dtcore dtabc dtchar dtvis dtaudio gui_fl )
 
