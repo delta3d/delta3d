@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DELTA_VIEWSTATE
+#define DELTA_VIEWSTATE
 
 /**
  * Included files.
@@ -97,3 +98,4 @@ class ViewState
                int                  mMotionFlags;
                int                  mJoystickFlags;
 };
+#endif // DELTA_VIEWSTATE

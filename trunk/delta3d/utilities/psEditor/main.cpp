@@ -35,9 +35,9 @@
 
 #include "osgText/Text"
 
-#include "FL/FL_Color_Chooser.h"
-#include "FL/FL_File_Chooser.h"
-#include "FL/fl_ask.h"
+#include "FL/Fl_Color_Chooser.H"
+#include "FL/Fl_File_Chooser.H"
+#include "FL/fl_ask.H"
 
 #include "psEditorGUI.h"
 
@@ -2699,7 +2699,7 @@ static void makeGrids()
       );
    }
 
-   for(i=0;i<gridLineCount;i++)
+   for(int i=0;i<gridLineCount;i++)
    {
       vertices[ptr++].set(
          length/2,

@@ -4,7 +4,7 @@
 #include <widget.h>
 
 #include "viewstate.h"
-#include "userinterface.h"
+#include "UserInterface.h"
 #include "viewwindow.h"
 
 

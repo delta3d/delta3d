@@ -1,9 +1,11 @@
+#ifdef _WIN32
 #pragma  warning( disable : 4311 )  // casting void*->long warning
 #pragma  warning( disable : 4312 )  // casting long->void* warning
+#endif // _WIN32
 
 #include "dt.h"
 #include "dtabc.h"
-#include <assert.h>
+#include <cassert>
 
 #include "UserInterface.h"
 

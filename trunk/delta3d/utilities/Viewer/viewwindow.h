@@ -1,10 +1,12 @@
-#pragma once
+#ifndef DELTA_VIEWWINDOW
+#define DELTA_VIEWWINDOW
+
 // header files
 #include <vector>
 
-#include <Fl_DT_Window.h>
+#include <fl_dt_window.h>
 
-#include "Viewer.h"
+#include "viewer.h"
 
 
 
@@ -57,3 +59,4 @@ class ViewWindow  :  public   Fl_DT_Window<Viewer>
                UserInterface*          mContainer;
                bool                    mFileLoaded; ///<magic
 };
+#endif // DELTA_VIEWWINDOW

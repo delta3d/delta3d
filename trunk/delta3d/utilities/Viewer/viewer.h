@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DELTA_VIEWER
+#define DELTA_VIEWER
+
 #include <widget.h>
 #include <logicalinputdevice.h>
 #include <motionmodel.h>
@@ -137,7 +139,7 @@ class Viewer :  public   dtABC::Widget
 };
 
 
-
+#ifdef _WIN32
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME
 
@@ -152,3 +154,6 @@ class Viewer :  public   dtABC::Widget
 #endif
 
 #pragma comment (lib, _AUTOLIBNAME)
+#endif // _WIN32
+
+#endif // DELTA_VIEWER
