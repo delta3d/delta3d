@@ -48,9 +48,6 @@ namespace dtCore
          ADV         ///<Advanced light scattering "fog"
       };
 
-      ///Get the scene graph node that contains all things to be rendered
-      virtual osg::Node* GetOSGNode() {return mNode.get();}
-
       ///Notifies this object that it has been added to a Scene
       virtual void AddedToScene(Scene* scene);
          
@@ -160,7 +157,6 @@ namespace dtCore
 
       EnvEffectList mEffectList; ///<The list of environment effects
       EnvEffectList mToBeRemoved;///<temp list of effects to remove
-      osg::ref_ptr<osg::Group> mNode; ///<Contains the actual model
       osg::ref_ptr<osg::Group> mEnvEffectNode; ///<Contains the env effects
       osg::ref_ptr<osg::Group> mDrawableNode; ///<Contains the actual model
       virtual void OnMessage(MessageData *data);

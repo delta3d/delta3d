@@ -27,7 +27,6 @@
 
 #include "dtCore/base.h"
 #include "dtCore/export.h"
-//#include "dtCore/scene.h"
 #include "osg/Node"
 
 namespace dtCore
@@ -35,16 +34,23 @@ namespace dtCore
    //forward declaration
    class Scene;
 
+   ///A renderable object. 
+
    /**
-    * A drawable object.
+    * A Drawable is a virtual base class which cannot be
+    * created, but rather must be derived.  The derived class must instantiate 
+    * the mNode protected variable which is some type of osg::Node. 
+    * A Drawable instance must be added to the Scene for it to be rendered.
+    *
+    * @see Scene::AddDrawable
     */
    class DT_EXPORT DeltaDrawable : virtual public Base
    {
       public:
 
+         ///Get the internal node
          /**
           * Returns this object's OpenSceneGraph node.
-          *
           * @return the OpenSceneGraph node
           */
          virtual osg::Node* GetOSGNode() 
@@ -53,6 +59,7 @@ namespace dtCore
          }
          
 
+         ///Supply the Scene this Drawable has been added to
          /**
           * Notifies this drawable object that it has been added to
           * a scene.
@@ -66,21 +73,28 @@ namespace dtCore
          virtual void SetParent(DeltaDrawable* parent) {mParent=parent;}
          DeltaDrawable* GetParent(void)  {return mParent.get();}
          
+         ///Get a pointer to the Scene this Drawable has been added to
          Scene* GetSceneParent(void);
 
-         ///Add a DeltaDrawable child
+         ///Add a child to this DeltaDrawable
+         /** This virtual method can be overwritten
+          *  to perform specific functionality.  The default method will 
+          *  store the child in a list and set the child's parent.
+          * @param child : The child to add to this Drawable
+          */
          virtual void AddChild( DeltaDrawable *child );
 
          ///Remove a DeltaDrawable child
          virtual void RemoveChild( DeltaDrawable *child );
 
-         ///Return the number of Transformable children added
+         ///Return the number of DeltaDrawable children added
          inline unsigned int GetNumChildren() { return mChildList.size(); }
 
          ///Get the child specified by idx (0 to number of children-1)
          DeltaDrawable* GetChild( unsigned int idx ) {return mChildList[idx].get();}
 
-         /** Get the index number of child, return a value between
+         ///Get the index number of child
+         /** Return a value between
          * 0 and the number of children-1 if found, if not found then
          * return the number of children.
          */
@@ -93,18 +107,24 @@ namespace dtCore
             return mChildList.size(); // node not found.
          }
 
-         ///Test to see if child
+         ///Check if the supplied DeltaDrawable can actually be a chil of this instance.
+         /** 
+          * @param child : The child to test
+          * @return true if the supplied parameter can be a child
+          */
          bool CanBeChild( DeltaDrawable *child );
 
    protected:
       DeltaDrawable(std::string name = "DeltaDrawable");
       virtual ~DeltaDrawable() {};
 
-      osg::ref_ptr<osg::Node> mNode;
+      osg::ref_ptr<osg::Node> mNode; ///< The node to store anything
       osg::ref_ptr<DeltaDrawable> mParent; ///<Any immediate parent of this instance
+
       typedef std::vector<osg::ref_ptr<DeltaDrawable> > ChildList;
       ChildList mChildList;      ///<List of children DeltaDrawable added
-      osg::ref_ptr<Scene> mParentScene;
+
+      osg::ref_ptr<Scene> mParentScene; ///<The Scene this Drawable was added to
    };
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)

@@ -63,9 +63,6 @@ namespace dtCore
                                     Compass( dtCore::Camera* cam );
          virtual                    ~Compass();
          
-         ///Get a handle to the OSG Node
-         virtual  osg::Node*        GetOSGNode( void );
-
          virtual  void              GetScreenPosition( float& x, float& y )   const;
          virtual  void              SetScreenPosition( float x, float y );
 
@@ -77,7 +74,6 @@ namespace dtCore
          inline   void              SetWindow( dtCore::DeltaWin* win );
 
       private:
-                  osg::ref_ptr<osg::MatrixTransform>  mNode;      /// contains the actual model
                   osg::ref_ptr<dtCore::Camera>           mCamera;    /// camera who's window we place the model
                   float                               mScreenX;   /// screen position of model
                   float                               mScreenY;   /// screen position of model

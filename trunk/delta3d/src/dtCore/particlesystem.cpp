@@ -4,6 +4,8 @@
 
 #include "dtCore/particlesystem.h"
 #include "dtCore/scene.h"
+#include "dtCore/notify.h"
+
 #include <osg/Group>
 
 using namespace dtCore;
@@ -178,24 +180,20 @@ ParticleSystem::~ParticleSystem()
    DeregisterInstance(this);
 }
 
-/**
- * Loads a particle system from a file.
- *
- * @param filename the name of the file to load
- */
-bool ParticleSystem::LoadFile(std::string filename)
+
+///Load a file from disk
+osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
 {
-   mFilename = filename;
-   
-   osg::Node* node = osgDB::readNodeFile(filename);
-   
+   osg::Node *node = NULL;
+   node = Loadable::LoadFile(filename, useCache);
+
    if(node != NULL)
    {
       if(GetMatrixNode()->getNumChildren() > 0)
       {
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
-      
+
       GetMatrixNode()->addChild(node);
 
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
@@ -203,21 +201,53 @@ bool ParticleSystem::LoadFile(std::string filename)
    }
    else
    {
-      Notify(WARN, "ParticleSystem: Can't load %s", mFilename.c_str());
-      return false;
+      Notify(WARN, "ParticleSystem: Can't load %s", filename.c_str());
+      return NULL;
    }
-   return true;
+   return node;
 }
+
+
+/**
+ * Loads a particle system from a file.
+ *
+ * @param filename the name of the file to load
+ */
+//bool ParticleSystem::LoadFile(std::string filename)
+//{
+//   mFilename = filename;
+//   
+//   osg::Node* node = osgDB::readNodeFile(filename);
+//   
+//   if(node != NULL)
+//   {
+//      if(GetMatrixNode()->getNumChildren() > 0)
+//      {
+//         GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
+//      }
+//      
+//      GetMatrixNode()->addChild(node);
+//
+//      ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
+//      GetMatrixNode()->accept( pspv );
+//   }
+//   else
+//   {
+//      Notify(WARN, "ParticleSystem: Can't load %s", mFilename.c_str());
+//      return false;
+//   }
+//   return true;
+//}
 
 /**
  * Returns the name of the last loaded file.
  *
  * @return the filename
  */
-std::string ParticleSystem::GetFilename()
-{
-   return mFilename;
-}
+//std::string ParticleSystem::GetFilename()
+//{
+//   return mFilename;
+//}
 
 /**
  * Enables or disables this particle system.

@@ -7,6 +7,16 @@
 
 namespace dtCore
 {
+   
+   /** The Loadable class is a simple mechanism for loading files.  Inheriting
+    *  from this class will supply the derived class the API to load any type
+    *  of file in a generic fashion.  The LoadFile()
+    *  method stores the supplied filename for later retrieval.  The default 
+    *  behavior will pass the supplied filename to the OSG reader functions
+    *  and return back the osg::Node.  The LoadFile() method is intended to be
+    *  overwritten if the default behavior doesn't support the needs of the derive
+    *  class.
+    */
    class DT_EXPORT Loadable
    {
    public:

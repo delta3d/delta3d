@@ -105,7 +105,7 @@ const float                Compass::DEF_AXIS_SIZE(50.0f);
 
 // default constructor
 Compass::Compass( Camera* cam )
-:  mNode(NULL),
+:
    mCamera(cam),
    mScreenX(DEF_SCREEN_X),
    mScreenY(DEF_SCREEN_Y),
@@ -113,9 +113,6 @@ Compass::Compass( Camera* cam )
    mScreenH(DEF_SCREEN_H)
 {
    RegisterInstance( this );
-
-   mNode = new osg::MatrixTransform;
-   assert( mNode.get() );
 
    ctor();
 
@@ -134,13 +131,6 @@ Compass::~Compass()
 
 
 /** PUBLIC MEMBER FUNCTIONS */
-osg::Node*
-Compass::GetOSGNode( void )
-{
-   return   mNode.get();;
-}
-
-
 
 void
 Compass::GetScreenPosition( float& x, float& y )   const
@@ -207,7 +197,7 @@ Compass::ctor( void )
    projection->addChild( modelview_abs );
 
 
-   mNode->addChild( projection );
+   GetMatrixNode()->addChild( projection );
 
 
    SetName( "Compass" );

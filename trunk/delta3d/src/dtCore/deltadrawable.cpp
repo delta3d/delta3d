@@ -27,10 +27,10 @@ void DeltaDrawable::AddChild(DeltaDrawable *child)
 }
 
 /*!
-* Remove a child from this Transformable.  This will detach the child from its
+* Remove a child from this DeltaDrawable.  This will detach the child from its
 * parent so that its free to be repositioned on its own.
 *
-* @param *child : The child Transformable to be removed
+* @param *child : The child DeltaDrawable to be removed
 */
 void DeltaDrawable::RemoveChild(DeltaDrawable *child)
 {
@@ -46,7 +46,7 @@ void DeltaDrawable::RemoveChild(DeltaDrawable *child)
 }
 
 /*!
-* Check to see if the supplied Transformable can be a child to this instance.
+* Check to see if the supplied DeltaDrawable can be a child to this instance.
 * To be valid, it can't already have a parent, can't be this instance, and
 * can't be the parent of this instance.
 *

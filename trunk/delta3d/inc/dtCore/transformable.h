@@ -24,7 +24,6 @@
 
 
 
-//#include "dtCore/base.h"
 #include "dtCore/deltadrawable.h"
 #include "dtCore/transform.h"
 #include "sg.h"
@@ -36,12 +35,15 @@ namespace dtCore
    ///Anything that can be located and moved in 3D space
    
    /** The Transformable class is the base class of anything that can move in the 
-     * virtual world.
+     * virtual world and can be added to the Scene.
      * 
      * The default coordinate system of dtCore is +X to the right, +Y forward into
      * the screen, and +Z is up.  Therefore, heading is around the Z axis, pitch
      * is around the X axis, and roll is around the Y axis.  The angles are all
      * right-hand-rule.
+     * 
+     * The Transformable class creates a osg::MatrixTransform node for the
+     * protected member mNode.  
      */
    class DT_EXPORT Transformable : virtual public  DeltaDrawable  
    {
@@ -55,26 +57,11 @@ namespace dtCore
       Transformable();
       virtual ~Transformable();
 
-      //typedef std::vector<Transformable>  ChildList;
-     // typedef std::vector<osg::ref_ptr<Transformable> > ChildList;
-
-      ///Test to see if child
-      //bool CanBeChild( Transformable *child );
-
       ///Add a DeltaDrawable child
       virtual void AddChild( DeltaDrawable *child );
          
       ///Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable *child );
-
-      ///Return the number of Transformable children added
-      //inline unsigned int GetNumChildren() { return mChildList.size(); }
-
-      ///Get the child specified by idx (0 to number of children-1)
-      //Transformable* GetChild( unsigned int idx ) {return mChildList[idx].get();}
-
-      ///Get the immediate parent of this instance
-      //Transformable* GetParent(void) {return mParent.get();}
 
       ///Set the Transform to reposition this Transformable
       virtual  void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
@@ -82,19 +69,17 @@ namespace dtCore
       ///Get the current Transform of this Transformable
       virtual  void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
 
+      ///convenience function to return back the internal matrix transform node
       osg::MatrixTransform* GetMatrixNode(void) {return dynamic_cast<osg::MatrixTransform*>(mNode.get());}
       
 
    protected:
-      ///Override function for derived object to know when attaching to scene
-      //virtual void SetParent(Transformable* parent) {mParent=parent;}
       
       Transform *mRelTransform;  ///<position relative to the parent
-      //ChildList mChildList;      ///<List of children Transformables added
-      //osg::ref_ptr<Transformable> mParent; ///<Any immediate parent of this instance
 
    private:
 
+      ///Get the world coordinate matrix from the supplied node
       static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix *wcMat);
 
       class getWCofNodeVisitor : public osg::NodeVisitor

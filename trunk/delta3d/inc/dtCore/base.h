@@ -33,8 +33,6 @@
 
 #include <osg/Referenced>
 
-//disable the "identifier was truncated to '255' characters " message
-
 #include "sigslot.h"
 
 namespace dtCore
@@ -50,6 +48,13 @@ namespace dtCore
      * calls SendMessage(), the receiver class' OnMessage() will get triggered.
      * The MessageData that gets passed to OnMessage() contains a pointer to the
      * sender, and optionally, a text message and pointer to user data.
+     *
+     * This class is also reference counted using the osg::Referenced class.  To
+     * safely keep the reference count up-to-date, pointers to Base classes should
+     * be stored in a osg::ref_ptr template.  For example:
+     * \code 
+     * osg::ref_ptr<Base> mPointerToMyBase;
+     * \endcode
      */
    class DT_EXPORT Base : public sigslot::has_slots<>, public osg::Referenced
    {

@@ -28,8 +28,8 @@ mCurrTime(0)
    mNode = new osg::Group();
    mEnvEffectNode = new osg::Group();
    mDrawableNode = new osg::Group();
-   mNode->addChild(mEnvEffectNode.get());
-   mNode->addChild(mDrawableNode.get());
+   dynamic_cast<osg::Group*>(mNode.get())->addChild(mEnvEffectNode.get());
+   dynamic_cast<osg::Group*>(mNode.get())->addChild(mDrawableNode.get());
 
    sgSetVec3(mSkyColor, 0.39f, 0.50f, 0.74f);
    sgSetVec3(mFogColor, 0.84f, 0.87f, 1.f);
