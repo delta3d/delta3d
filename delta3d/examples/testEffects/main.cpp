@@ -1,16 +1,6 @@
-//#include "dt.h"
+#include "dt.h"
 
-#define Window pWindow
 #include "Producer/Timer"
-#include "keyboard.h"
-#undef Window
-
-#include "effectmanager.h"
-#include "particlesystem.h"
-#include "globals.h"
-#include "notify.h"
-#include "camera.h"
-#include "system.h"
 
 using namespace dtCore;
 
