@@ -5,6 +5,9 @@
 #include <boost/python.hpp>
 #include <osg/ref_ptr>
 
+#include "dt.h"
+#include "ode/common.h"
+
 namespace boost
 {
    namespace python
