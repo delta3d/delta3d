@@ -389,7 +389,7 @@ def CheckForTinyXml(context):
 
 def CheckForRti(context):
 
-   #context.Message( 'Checking for RTI...' )
+   context.Message( 'Checking for RTI...' )
    
    if env['ENV']['RTI_HOME'] is not None and env['ENV']['RTI_INCLUDE'] is not None and env['ENV']['RTI_LIB'] is not None:
       result = 1
