@@ -1,6 +1,3 @@
-Note: To use the Python bindings, you must compile Delta3D in DLL mode.
-Use the "Release DLL" or the "Debug DLL" configuration.
-
 To compile the Python test, first install Python 2.3:
 
    http://www.python.org/2.3.4/

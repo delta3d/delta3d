@@ -74,6 +74,8 @@ extern void psEditorGUI_Particles_SetEmitterStartTime(Fl_Value_Input*, void*);
 extern Fl_Value_Input *Particles_Emitter_StartTime;
 extern void psEditorGUI_Particles_SetEmitterResetTime(Fl_Value_Input*, void*);
 extern Fl_Value_Input *Particles_Emitter_ResetTime;
+#include "texturepreview.h"
+extern TexturePreview *Particles_TexturePreview;
 extern Fl_Group *RandomRateCounterParameters;
 extern void psEditorGUI_RandomRateCounter_SetMinRate(Fl_Value_Input*, void*);
 extern Fl_Value_Input *RandomRateCounter_MinRate;

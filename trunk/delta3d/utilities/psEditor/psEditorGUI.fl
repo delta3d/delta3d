@@ -102,7 +102,7 @@ Function {make_window()} {open
       xywh {635 36 600 549}
     } {
       Fl_Group {} {
-        label Particles
+        label Particles open
         xywh {635 57 590 515}
       } {
         Fl_Choice Particles_Alignment {
@@ -183,14 +183,14 @@ Function {make_window()} {open
         Fl_Check_Button Particles_Emissive {
           label Emissive
           callback psEditorGUI_Particles_SetEmissive
-          xywh {1010 102 120 25} down_box DOWN_BOX
+          xywh {815 160 120 25} down_box DOWN_BOX
         }
         Fl_Check_Button Particles_Lighting {
           label Lighting
           callback psEditorGUI_Particles_SetLighting
-          xywh {1010 127 20 25} down_box DOWN_BOX
+          xywh {815 185 20 25} down_box DOWN_BOX
         }
-        Fl_Group {} {open
+        Fl_Group {} {
           xywh {710 285 140 125} box ENGRAVED_BOX
         } {
           Fl_Value_Input Particles_MinR {
@@ -280,6 +280,12 @@ Function {make_window()} {open
             callback psEditorGUI_Particles_SetEmitterResetTime
             tooltip {How long before the emitter resets (seconds)} xywh {827 504 80 25} maximum 10 step 0.01
           }
+        }
+        Fl_Box Particles_TexturePreview {
+          label {Texture Preview} selected
+          xywh {1040 107 128 128} box DOWN_BOX align 4
+          code0 {\#include "texturepreview.h"}
+          class TexturePreview
         }
       }
       Fl_Group {} {
@@ -700,7 +706,7 @@ Function {make_window()} {open
         }
       }
     }
-    Fl_Box viewWidget {selected
+    Fl_Box viewWidget {
       xywh {5 35 625 550}
       class {Fl_DT_Window<dtABC::Widget>}
     }

@@ -11,6 +11,41 @@ using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
+void SetWinDataHWND(WinData* winData, long hwnd)
+{
+   winData->hwnd = (HWND)hwnd;
+}
+
+long GetWinDataHWND(WinData* winData)
+{
+   return (long)winData->hwnd;
+}
+
+void SendEmptyMessage(Base* base, std::string message)
+{
+   base->SendMessage(message);
+}
+
+void SendMouseMessage(Base* base, std::string message, MouseEvent* userData)
+{
+   base->SendMessage(message, userData);
+}
+
+void SendKeyboardMessage(Base* base, std::string message, KeyboardEvent* userData)
+{
+   base->SendMessage(message, userData);
+}
+
+void SendResizeMessage(Base* base, std::string message, WinRect* userData)
+{
+   base->SendMessage(message, userData);
+}
+
+void SendWindowDataMessage(Base* base, std::string message, WinData* userData)
+{
+   base->SendMessage(message, userData);
+}
+
 void initWidgetBindings()
 {
    Widget* (*WidgetGI1)(int) = &Widget::GetInstance;
@@ -34,7 +69,12 @@ void initWidgetBindings()
       .def_readonly("msgQuit", &Widget::msgQuit)
       .def("Config", &Widget::Config, C_overloads())
       .def("Quit", &Widget::Quit)
-      .def("SetPath", &Widget::SetPath);
+      .def("SetPath", &Widget::SetPath)
+      .def("SendMessage", SendEmptyMessage)
+      .def("SendMessage", SendMouseMessage)
+      .def("SendMessage", SendKeyboardMessage)
+      .def("SendMessage", SendResizeMessage)
+      .def("SendMessage", SendWindowDataMessage);
       
    class_<WinRect>("WinRect", init<optional<int, int, int, int> >())
       .def_readwrite("pos_x", &WinRect::pos_x)
@@ -43,7 +83,9 @@ void initWidgetBindings()
       .def_readwrite("height", &WinRect::height);
       
    class_<WinData, bases<WinRect> >("WinData", init<optional<HWND, int, int, int, int> >())
-      .def_readwrite("hwnd", &WinData::hwnd);
+      .def_readwrite("hwnd", &WinData::hwnd)
+      .def("SetHWND", SetWinDataHWND)
+      .def("GetHWND", GetWinDataHWND);
    
    {   
       scope MouseEvent_scope = class_<MouseEvent>("MouseEvent", init<optional<int, float, float, int> >())
