@@ -4,6 +4,8 @@
 #include <globals.h>
 #include <system.h>
 #include <notify.h>
+#include <scene.h>
+#include <object.h>
 
 #include "testaudioapp.h"
 
@@ -17,7 +19,8 @@ using namespace   std;
 
 
 // static member variables
-const char*    testAudioApp::kDataPath = "C:/projects/delta3d/examples/testAudio";
+//const char*    testAudioApp::kDataPath = "C:/projects/delta3d/examples/testAudio";
+const char*    testAudioApp::kDataPath = "C:/projects/delta3d/data";
 unsigned int   testAudioApp::kNumSoundFiles(4L);
 const char*    testAudioApp::kSoundFile[] =
                {
@@ -25,6 +28,14 @@ const char*    testAudioApp::kSoundFile[] =
                   "exp57.wav",
                   "WIND.wav",
                   "clunk.wav"
+               };
+unsigned int   testAudioApp::kNumGfxFiles(4L);
+const char*    testAudioApp::kGfxFile[] =
+               {
+                  "box.flt",
+                  "ground.flt",
+                  "explosion.osg",
+                  "smoke.osg"
                };
 
 
@@ -47,6 +58,11 @@ testAudioApp::testAudioApp( string configFilename /*= ""*/ )
    for( unsigned int ii(0L); ii < kNumSoundFiles; ii++ )
    {
       AudioManager::GetManager()->LoadWaveFile( kSoundFile[ii] );
+   }
+
+   for( unsigned int ii(0L); ii < kNumGfxFiles; ii++ )
+   {
+      LoadGfxFile( kGfxFile[ii] );
    }
 
    dtCore::Notify( dtCore::ALWAYS, " " );
@@ -424,4 +440,50 @@ testAudioApp::RewindAllSounds( void )
 
       dtCore::Notify( dtCore::ALWAYS, " RewindAllSounds( %s )", snd->GetFilename() );
    }
+}
+
+
+
+dtCore::Object*
+testAudioApp::LoadGfxFile( const char* fname )
+{
+   if( fname == NULL )
+      // no file name, bail...
+      return   NULL;
+
+   std::string filename = osgDB::findDataFile( fname );
+   if( filename == "" )
+   {
+      // still no file name, bail...
+      dtCore::Notify( dtCore::WARN, "AudioManager: can't load file %s", fname );
+      return   NULL;
+   }
+
+
+   dtCore::Object*  fileobj  = new dtCore::Object;
+   assert( fileobj );
+
+
+   // load the graphics file from disk
+   bool fileLoaded = false;
+   fileLoaded = fileobj->LoadFile( filename );
+
+   if( ! fileLoaded )
+   {
+      dtCore::Notify( dtCore::WARN, "can't load gfx file '%s'", filename );
+      delete   fileobj;
+      return   NULL;
+   }
+
+   // add the object to the scene
+   dtCore::Scene* scene = GetScene();
+   assert( scene );
+
+   AddDrawable( fileobj );
+
+   osg::Node*  filenode = fileobj->GetOSGNode();
+   assert( filenode );
+
+   filenode->setNodeMask( 0L );
+   return   fileobj;
 }

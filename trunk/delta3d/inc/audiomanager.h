@@ -43,7 +43,10 @@ namespace   dtAudio
                            GAIN,
                            PITCH,
                            POSITION,
+                           DIRECTION,
                            VELOCITY,
+                           ABS,
+                           REL,
 
                            kNumCommands
                         };
@@ -58,6 +61,8 @@ namespace   dtAudio
          virtual  void        OnMessage( MessageData* data );
 
       public:
+         virtual  const char* GetFilename( void )              {  return   mFilename.c_str();   }
+
          virtual  void        LoadFile( const char* file );
          virtual  void        UnloadFile( void );
 
@@ -66,26 +71,43 @@ namespace   dtAudio
          virtual  void        Stop( void );
          virtual  void        Rewind( void );
 
-         virtual  bool        IsPlaying( void ) const {  return   false;   }
-         virtual  bool        IsPaused( void )  const {  return   false;   }
-         virtual  bool        IsStopped( void ) const {  return   true;    }
+         virtual  bool        IsPlaying( void )          const {  return   false;   }
+         virtual  bool        IsPaused( void )           const {  return   false;   }
+         virtual  bool        IsStopped( void )          const {  return   true;    }
 
          virtual  void        SetLooping( bool loop = true );
-         virtual  bool        IsLooping( void ) const {  return   false;   }
+         virtual  bool        IsLooping( void )          const {  return   false;   }
+
+         virtual  void        ListenerRelative( bool relative );
+         virtual  bool        IsListenerRelative( void ) const {  return   false;   }
 
          virtual  void        SetGain( float gain );
-         virtual  float       GetGain( void )   const {  return   mGain;   }
+         virtual  float       GetGain( void )            const {  return   static_cast<float>(mGain);    }
 
          virtual  void        SetPitch( float pitch );
-         virtual  float       GetPitch( void )  const {  return   mPitch;  }
+         virtual  float       GetPitch( void )           const {  return   static_cast<float>(mPitch);   }
 
-         virtual  const char* GetFilename( void )  {  return   mFilename.c_str();   }
+         virtual  void        SetTransform(  dtCore::Transform*                  xform,
+                                             dtCore::Transformable::CoordSysEnum cs = dtCore::Transformable::ABS_CS );
+
+         virtual  void        SetPosition( const sgVec3& position );
+         virtual  void        GetPosition( sgVec3& position )     const;
+
+         virtual  void        SetDirection( const sgVec3& direction );
+         virtual  void        GetDirection( sgVec3& direction )   const;
+
+         virtual  void        SetVelocity( const sgVec3& velocity );
+         virtual  void        GetVelocity( sgVec3& velocity )     const;
 
       protected:
-                  std::string mFilename;
-                  float       mGain;
-                  float       mPitch;
+                  std::string    mFilename;
+                  float          mGain;
+                  float          mPitch;
+                  sgVec3         mPos;
+                  sgVec3         mDir;
+                  sgVec3         mVelo;
    };
+
 
 
    class AudioManager   :  public   dtCore::Base
@@ -117,10 +139,13 @@ namespace   dtAudio
 
                virtual  void           OnMessage( MessageData* data );
 
-               virtual  bool           IsPlaying( void ) const;
-               virtual  bool           IsPaused( void )  const;
-               virtual  bool           IsStopped( void ) const;
-               virtual  bool           IsLooping( void ) const;
+               virtual  void           SetParent( dtCore::Transformable* parent );
+
+               virtual  bool           IsPlaying( void )          const;
+               virtual  bool           IsPaused( void )           const;
+               virtual  bool           IsStopped( void )          const;
+               virtual  bool           IsLooping( void )          const;
+               virtual  bool           IsListenerRelative( void ) const;
 
                         void           Command( const char* cmd );
                         const char*    Command( void );
@@ -218,8 +243,13 @@ namespace   dtAudio
          inline   void              RewindSound( SoundObj* snd );
          inline   void              SetLoop( SoundObj* snd );
          inline   void              ResetLoop( SoundObj* snd );
+         inline   void              SetRelative( SoundObj* snd );
+         inline   void              SetAbsolute( SoundObj* snd );
          inline   void              SetGain( SoundObj* snd );
          inline   void              SetPitch( SoundObj* snd );
+         inline   void              SetPosition( SoundObj* snd );
+         inline   void              SetDirection( SoundObj* snd );
+         inline   void              SetVelocity( SoundObj* snd );
          inline   bool              GetSource( SoundObj* snd );
          inline   void              FreeSource( SoundObj* snd );
 

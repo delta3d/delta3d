@@ -45,12 +45,15 @@ T  CLAMP( T x, T l, T h )  {  return   MAX(MIN(x,h),l);  }
 // static member variables
 const char* Sound::kCommand[kNumCommands]   =
             {
-               "",         "load",     "unload",
-               "play",     "pause",    "stop",
-               "rewind",   "loop",     "unloop",
-               "queue",    "gain",     "pitch",
-               "position", "velocity",
+               "",            "load",        "unload",
+               "play",        "pause",       "stop",
+               "rewind",      "loop",        "unloop",
+               "queue",       "gain",        "pitch",
+               "position",    "direction",   "velocity",
+               "absolute",    "relative",
             };
+
+
 
 AudioManager*              AudioManager::_Mgr(NULL);
 AudioManager::ListenerObj* AudioManager::_Mic(NULL);
@@ -58,6 +61,7 @@ const char*                AudioManager::_EaxVer   = "EAX2.0";
 const char*                AudioManager::_EaxSet   = "EAXSet";
 const char*                AudioManager::_EaxGet   = "EAXGet";
 const AudioConfigData      AudioManager::_DefCfg(24L, true);
+
 
 
 // public member functions
@@ -68,6 +72,17 @@ Sound::Sound()
    mGain(1.0f),
    mPitch(1.0f)
 {
+   mPos[0L]       = 0.0f;
+   mPos[1L]       = 0.0f;
+   mPos[2L]       = 0.0f;
+
+   mDir[0L]       = 0.0f;
+   mDir[1L]       = 1.0f;
+   mDir[2L]       = 0.0f;
+
+   mVelo[0L]      = 0.0f;
+   mVelo[1L]      = 0.0f;
+   mVelo[2L]      = 0.0f;
 }
 
 
@@ -147,10 +162,21 @@ Sound::SetLooping( bool loop /*= true*/ )
 
 
 void
+Sound::ListenerRelative( bool relative )
+{
+   if( relative )
+      SendMessage( kCommand[RELATIVE], this );
+   else
+      SendMessage( kCommand[ABSOLUTE], this );
+}
+
+
+
+void
 Sound::SetGain( float gain )
 {
    // force gain to range from zero to one
-   mGain = CLAMP( gain, 0.0f, 1.0f );
+   mGain    = CLAMP( gain, 0.0f, 1.0f );
 
    SendMessage( kCommand[GAIN], this );
 }
@@ -163,9 +189,110 @@ Sound::SetPitch( float pitch )
    // force pitch to range from zero+ to two
    // for some reason openAL chokes on 2+
    // also, openAL states zero to be invalid
-   mPitch = CLAMP( pitch, 0.000001f, 2.0f );
+   mPitch   = CLAMP( pitch, 0.000001f, 2.0f );
 
    SendMessage( kCommand[PITCH], this );
+}
+
+
+
+void
+Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEnum cs )
+{
+   // properly set transform to transformable object
+   dtCore::Transformable::SetTransform( xform, cs );
+
+   // get new transform, and break up into
+   // position and direction for sound object
+   dtCore::Transform transform;
+   sgMat4            matrix;
+   sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
+   sgVec3            dir   = { 0.0f, 1.0f, 0.0f };
+
+   GetTransform( &transform, cs );
+
+   transform.GetTranslation( pos );
+
+   transform.Get( matrix );
+   sgXformVec3( dir, matrix );
+
+   SetPosition( pos );
+   SetDirection( dir );
+}
+
+
+
+void
+Sound::SetPosition( const sgVec3& position )
+{
+   if( ! IsListenerRelative() )
+      ListenerRelative( true );
+
+   mPos[0L] = position[0L];
+   mPos[1L] = position[1L];
+   mPos[2L] = position[2L];
+
+   SendMessage( kCommand[POSITION], this );
+}
+
+
+
+void
+Sound::GetPosition( sgVec3& position ) const
+{
+   position[0L]   = mPos[0L];
+   position[1L]   = mPos[1L];
+   position[2L]   = mPos[2L];
+}
+
+
+
+void
+Sound::SetDirection( const sgVec3& direction )
+{
+   if( ! IsListenerRelative() )
+      ListenerRelative( true );
+
+   mDir[0L] = direction[0L];
+   mDir[1L] = direction[1L];
+   mDir[2L] = direction[2L];
+
+   SendMessage( kCommand[DIRECTION], this );
+}
+
+
+
+void
+Sound::GetDirection( sgVec3& direction ) const
+{
+   direction[0L]  = mDir[0L];
+   direction[1L]  = mDir[1L];
+   direction[2L]  = mDir[2L];
+}
+
+
+
+void
+Sound::SetVelocity( const sgVec3& velocity )
+{
+   if( ! IsListenerRelative() )
+      ListenerRelative( true );
+
+   mVelo[0L]   = velocity[0L];
+   mVelo[1L]   = velocity[1L];
+   mVelo[2L]   = velocity[2L];
+
+   SendMessage( kCommand[VELOCITY], this );
+}
+
+
+
+void
+Sound::GetVelocity( sgVec3& velocity ) const
+{
+   velocity[0L]   = mVelo[0L];
+   velocity[1L]   = mVelo[1L];
+   velocity[2L]   = mVelo[2L];
 }
 
 
@@ -390,6 +517,33 @@ AudioManager::OnMessage( MessageData* data )
 
 
    // sound commands
+   if( data->message == Sound::kCommand[Sound::POSITION] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::POSITION] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::DIRECTION] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::DIRECTION] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::VELOCITY] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::VELOCITY] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
    if( data->message == Sound::kCommand[Sound::PLAY] )
    {
       assert( data->userData );
@@ -476,6 +630,24 @@ AudioManager::OnMessage( MessageData* data )
       assert( data->userData );
       SoundObj*   snd(static_cast<SoundObj*>(data->userData));
       snd->Command( Sound::kCommand[Sound::REWIND] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::REL] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::REL] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::ABS] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::ABS] );
       mSoundCommand.push( snd );
       return;
    }
@@ -695,6 +867,27 @@ AudioManager::PreFrame( const double deltaFrameTime )
 
       cmd   = snd->Command();
 
+      // set sound position
+      if( cmd == Sound::kCommand[Sound::POSITION] )
+      {
+         SetPosition( snd );
+         continue;
+      }
+
+      // set sound direction
+      if( cmd == Sound::kCommand[Sound::DIRECTION] )
+      {
+         SetDirection( snd );
+         continue;
+      }
+
+      // set sound velocity
+      if( cmd == Sound::kCommand[Sound::VELOCITY] )
+      {
+         SetVelocity( snd );
+         continue;
+      }
+
       // set sound to play
       if( cmd == Sound::kCommand[Sound::PLAY] )
       {
@@ -762,6 +955,20 @@ AudioManager::PreFrame( const double deltaFrameTime )
       if( cmd == Sound::kCommand[Sound::REWIND] )
       {
          RewindSound( snd );
+         continue;
+      }
+
+      // set sound relative to listener
+      if( cmd == Sound::kCommand[Sound::REL] )
+      {
+         SetRelative( snd );
+         continue;
+      }
+
+      // set sound absolute (not relative to listener)
+      if( cmd == Sound::kCommand[Sound::ABS] )
+      {
+         SetAbsolute( snd );
          continue;
       }
    }
@@ -1165,6 +1372,7 @@ AudioManager::PlaySound( SoundObj* snd )
       }
    }
 
+   // bind the buffer to the source
    alSourcei( src, AL_BUFFER, buf );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
@@ -1172,18 +1380,68 @@ AudioManager::PlaySound( SoundObj* snd )
       return;
    }
 
+   // set looping flag
    alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOPING) error %d", err );
    }
 
+   // set source relative flag
+   if( snd->IsListenerRelative() )
+   {
+      // is listener relative
+      alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+      }
+
+      // set initial position and direction
+      sgVec3   pos   = { 0.0f, 0.0f, 0.0f };
+      sgVec3   dir   = { 0.0f, 1.0f, 0.0f };
+
+      snd->GetPosition( pos );
+      snd->GetDirection( dir );
+
+      alSource3f( src,
+                  AL_POSITION,
+                  static_cast<ALfloat>(pos[0L]),
+                  static_cast<ALfloat>(pos[1L]),
+                  static_cast<ALfloat>(pos[2L]) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_POSITION) error %d", err );
+      }
+
+      alSource3f( src,
+                  AL_DIRECTION,
+                  static_cast<ALfloat>(dir[0L]),
+                  static_cast<ALfloat>(dir[1L]),
+                  static_cast<ALfloat>(dir[2L]) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_DIRECTION) error %d", err );
+      }
+   }
+   else
+   {
+      // not listener relative
+      alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+      }
+   }
+
+   // set gain
    alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_GAIN) error %d", err );
    }
 
+   // set pitch
    alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
@@ -1303,6 +1561,83 @@ AudioManager::ResetLoop( SoundObj* snd )
 
 
 void
+AudioManager::SetRelative( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   buf   = snd->Buffer();
+   if( alIsBuffer( buf ) == AL_FALSE )
+   {
+      // does not have sound buffer
+      // set flag and bail
+      snd->ResetState( Sound::POSITION );
+      return;
+   }
+   else
+   {
+      // check for stereo
+      // multiple channels don't get positioned
+      ALint numchannels(0L);
+      alGetBufferi( buf, AL_CHANNELS, &numchannels );
+      if( numchannels != 1L )
+      {
+         // stereo!
+         // set flag and bail
+         snd->ResetState( Sound::POSITION );
+         return;
+      }
+   }
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing
+      // set flag and bail
+      snd->SetState( Sound::POSITION );
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::REL], snd );
+}
+
+
+
+void
+AudioManager::SetAbsolute( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing
+      // set flag and bail
+      snd->ResetState( Sound::POSITION );
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::ABS], snd );
+}
+
+
+
+void
 AudioManager::SetGain( SoundObj* snd )
 {
    assert( snd );
@@ -1348,6 +1683,90 @@ AudioManager::SetPitch( SoundObj* snd )
    }
 
    SendMessage( Sound::kCommand[Sound::PITCH], snd );
+}
+
+
+
+void
+AudioManager::SetPosition( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   sgVec3   pos;
+   snd->GetPosition( pos );
+
+   ALenum   err(alGetError());
+   alSource3f( src, AL_POSITION, static_cast<ALfloat>(pos[0L]), static_cast<ALfloat>(pos[1L]), static_cast<ALfloat>(pos[2L]) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_POSITION) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::POSITION], snd );
+}
+
+
+
+void
+AudioManager::SetDirection( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   sgVec3   dir;
+   snd->GetDirection( dir );
+
+   ALenum   err(alGetError());
+   alSource3f( src, AL_DIRECTION, static_cast<ALfloat>(dir[0L]), static_cast<ALfloat>(dir[1L]), static_cast<ALfloat>(dir[2L]) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_DIRECTION) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::DIRECTION], snd );
+}
+
+
+
+void
+AudioManager::SetVelocity( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   sgVec3   velo;
+   snd->GetVelocity( velo );
+
+   ALenum   err(alGetError());
+   alSource3f( src, AL_VELOCITY, static_cast<ALfloat>(velo[0L]), static_cast<ALfloat>(velo[1L]), static_cast<ALfloat>(velo[2L]) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_VELOCITY) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::VELOCITY], snd );
 }
 
 
@@ -1428,32 +1847,25 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
    if( data->message == "frame" )
    {
       if( alIsSource( mSource ) == AL_FALSE )
-         // no source, don't bother with positions
+         // no source, don't bother with positions or direction
          return;
 
-      ALenum            err(alGetError());
+      if( ! IsListenerRelative() )
+         // not relative, don't care about position or direction
+         return;
+
       dtCore::Transform transform;
       sgMat4            matrix;
-      sgVec3            position    = { 0.0f, 0.0f, 0.0f };
-      sgVec3            direction   = { 1.0f, 0.0f, 0.0f };
+      sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
+      sgVec3            dir   = { 0.0f, 1.0f, 0.0f };
 
       GetTransform( &transform );
-      transform.GetTranslation( position );
+      transform.GetTranslation( pos );
       transform.Get( matrix );
+      sgXformVec3( dir, matrix );
 
-      sgXformVec3( direction, matrix );
-
-      alSourcefv( mSource, AL_POSITION, position );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcefv(AL_POSITION) error %d", err );
-      }
-
-      alSourcefv( mSource, AL_DIRECTION, direction );
-      if( ( err = alGetError() ) != AL_NO_ERROR )
-      {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcefv(AL_DIRECTION) error %d", err );
-      }
+      SetPosition( pos );
+      SetDirection( dir );
 
       return;
    }
@@ -1497,6 +1909,27 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
       ResetState( LOOP );
       return;
    }
+
+   if( data->message == kCommand[REL] )
+   {
+      SetState( POSITION );
+      return;
+   }
+
+   if( data->message == kCommand[ABS] )
+   {
+      ResetState( POSITION );
+      return;
+   }
+}
+
+
+
+void
+AudioManager::SoundObj::SetParent( dtCore::Transformable* parent )
+{
+   ListenerRelative( bool(parent) );
+   dtCore::Transformable::SetParent( parent );
 }
 
 
@@ -1529,6 +1962,14 @@ bool
 AudioManager::SoundObj::IsLooping( void ) const
 {
    return   bool(mState & BIT(LOOP));
+}
+
+
+
+bool
+AudioManager::SoundObj::IsListenerRelative( void ) const
+{
+   return   bool(mState & BIT(POSITION));
 }
 
 
@@ -1643,7 +2084,7 @@ void
 AudioManager::ListenerObj::SetTransform( dtCore::Transform* transform )
 {
    // explicitly setting transform
-   // removes from listener from tree
+   // removes listener from tree
    Transformable* parent(GetParent());
    if( parent )
    {
@@ -1666,9 +2107,9 @@ AudioManager::ListenerObj::GetTransform( dtCore::Transform* transform )
 void
 AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
 {
-   mVelo[0L]   = velocity[0L];
-   mVelo[1L]   = velocity[1L];
-   mVelo[2L]   = velocity[2L];
+   mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
+   mVelo[1L]   = static_cast<ALfloat>(velocity[1L]);
+   mVelo[2L]   = static_cast<ALfloat>(velocity[2L]);
 }
 
 
@@ -1676,9 +2117,9 @@ AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
 void
 AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
 {
-   velocity[0L]   = mVelo[0L];
-   velocity[1L]   = mVelo[1L];
-   velocity[2L]   = mVelo[2L];
+   velocity[0L]   = static_cast<SGfloat>(mVelo[0L]);
+   velocity[1L]   = static_cast<SGfloat>(mVelo[1L]);
+   velocity[2L]   = static_cast<SGfloat>(mVelo[2L]);
 }
 
 
