@@ -32,16 +32,18 @@
 #include <ode/ode.h>
 #include "sg.h"
 #include "dtCore/base.h"
-#include "dtCore/light.h"
 #include "dtCore/object.h"
 #include "dtCore/physical.h"
 #include "dtCore/stats.h"
+
 
 //NOTE: EVIL! fix w/ static const int
 const int MAX_LIGHT_NUMBER = 8;
 
 namespace dtCore
 {         
+   class Light; //forward declaration
+
    class DT_EXPORT _SceneHandler : public Producer::Camera::SceneHandler
    {
    public:
