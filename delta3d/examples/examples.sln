@@ -51,6 +51,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testClouds", "testClouds\te
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testAudio", "testAudio\testAudio.vcproj", "{E11EA848-D306-4034-92FB-F4FABC95D7BE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testSound", "testSound\testSound.vcproj", "{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -109,6 +117,14 @@ Global
 		{080CB95C-2B86-42F8-831D-490367ED0A43}.Debug.Build.0 = Debug|Win32
 		{080CB95C-2B86-42F8-831D-490367ED0A43}.Release.ActiveCfg = Release|Win32
 		{080CB95C-2B86-42F8-831D-490367ED0A43}.Release.Build.0 = Release|Win32
+		{E11EA848-D306-4034-92FB-F4FABC95D7BE}.Debug.ActiveCfg = Debug|Win32
+		{E11EA848-D306-4034-92FB-F4FABC95D7BE}.Debug.Build.0 = Debug|Win32
+		{E11EA848-D306-4034-92FB-F4FABC95D7BE}.Release.ActiveCfg = Release|Win32
+		{E11EA848-D306-4034-92FB-F4FABC95D7BE}.Release.Build.0 = Release|Win32
+		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Debug.ActiveCfg = Debug|Win32
+		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Debug.Build.0 = Debug|Win32
+		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Release.ActiveCfg = Release|Win32
+		{88DD5AA5-9AE2-4C10-8326-DDC577E290EB}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
