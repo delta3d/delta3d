@@ -17,16 +17,16 @@ IMPLEMENT_MANAGEMENT_LAYER( TestAudioApp )
 unsigned int   TestAudioApp::kNumSoundFiles(4L);
 const char*    TestAudioApp::kSoundFile[] =
                {
-                  "pow.wav",
-                  "bang.wav",
-                  "helo.wav",
-                  "carhorn.wav"
+                  "sounds/pow.wav",
+                  "sounds/bang.wav",
+                  "sounds/helo.wav",
+                  "sounds/carhorn.wav"
                };
 const char*    TestAudioApp::kGfxFile[kNumGfx] =
                {
-                  "ground.flt",
-                  "tacoma.ive",
-                  "ah-1w.ive"
+                  "Dirt/flatdirt.ive",
+                  "BRDM/brdm-2.ive",
+                  "UH-1N/UH-1N.ive"
                };
 const char*    TestAudioApp::kFxFile[kNumFx] =
                {
@@ -537,9 +537,16 @@ TestAudioApp::LoadGfxFile( const char* fname )
 
    if( ! fileLoaded )
    {
-      dtCore::Notify( dtCore::WARN, "can't load gfx file '%s'", filename.c_str() );
+      Notify( WARN, "can't load gfx file '%s'", filename.c_str() );
       delete   fileobj;
       return   NULL;
+   }
+
+   if( string(fname) == kGfxFile[1] )
+   {
+      //rotate BRDM 90 degrees
+      Transform trans = Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
+      fileobj->SetTransform( &trans );
    }
 
    // add the object to the scene

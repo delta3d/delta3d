@@ -210,8 +210,8 @@ public:
       terrain->LoadFile( "dirt.ive" );
       AddDrawable( terrain );
 
-      Weather* weather = new Weather();   
-      AddDrawable( weather->GetEnvironment() );
+      //Weather* weather = new Weather();   
+      //AddDrawable( weather->GetEnvironment() );
 
       Character* guy1 = new Character( "bob" );
       Character* guy2 = new Character( "dave" );
