@@ -2844,7 +2844,8 @@ throw (
             RTI::FederateInternalError
          )        
 {
-   mObjectHandleGhostDataMap.erase(theObject);
+   mScene->RemoveDrawable( mObjectHandleGhostDataMap[ theObject ].mEntity.get() ); //ADDED BY OSB
+   mObjectHandleGhostDataMap.erase( theObject );
 }
 
 /**
