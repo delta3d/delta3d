@@ -4,13 +4,26 @@
 #                            #
 ##############################
 
-Added scaling
-Added SCONS build system
-Now supports multi-Camera and multi-Window
-osg::Timer hack
-Profiler
-dtCore::RefPtr
-Script -> ScriptManager
+---------
+| 0.8.5 |
+---------
+
+New features:
+- Scaling, non-uniform and uniform
+- Brand new Linux build system using SCons (http://www.scons.org)
+  (Windows support for a SCons Delta3D build coming soon!)
+- Can have multiple cameras and multiple windows
+- Added a dtCore::Timer to compensate for inaccurate osg::Timer in osg0.9.8
+- Created a dtCore::RefPtr based on the osg::ref_ptr
+- dtScript::Script class has moved to dtScript::ScriptManager
+- Camera field of view controls
+- Microsoft Visual Studio Project Template for Delta3D Applications
+
+Bug fixes:
+- Fixed NaN matrix error when using Characters on certain platforms.
+  (Bug 1115629)
+- Our TinyXML lib now does not conflict with CAL3D's integrated TinyXML lib.
+  (Bug 1068290)
 
  ---
 |0.8|

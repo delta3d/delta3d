@@ -68,6 +68,7 @@ RTIConnection::RTIConnection(string name)
      mUTMModeEnabled(false),
      mGlobeRadius(100.0f),
      mGroundClampMode(NO_CLAMP),
+     mEffectClampMode(true),
      mLocalIPAddress(0x7F000001)
 {
    RegisterInstance(this);
@@ -1687,6 +1688,26 @@ RTIConnection::GroundClampMode RTIConnection::GetGroundClampMode()
 {
    return mGroundClampMode;
 }
+
+/**
+* Sets the effect clamp mode.
+*
+* @param mode the new effect clamp mode
+*/
+void RTIConnection::SetEffectClampMode(bool mode)
+{
+   mEffectClampMode = mode;
+}
+
+/**
+* Returns the effect clamp mode.
+*
+* @return the current effect clamp mode
+*/
+bool RTIConnection::GetEffectClampMode()
+{
+   return mEffectClampMode;
+}
          
 /**
  * Adds a detonation listener.
@@ -2904,9 +2925,14 @@ throw (
 
                position[0] = detonationLocation.GetX() - mLocationOffset[0];
                position[1] = detonationLocation.GetY() - mLocationOffset[1];
-               position[2] = detonationLocation.GetZ() - mLocationOffset[2];
+
+               if(mEffectClampMode)
+                  position[2] = mScene->GetHeightOfTerrain( &(position[0]), &(position[1])); 
+               else
+                  position[2] = detonationLocation.GetZ() - mLocationOffset[2];
                
                sgXformPnt3(position, mRotationOffsetInverse);
+			  
             }
          }
          else if(handle == mEventIdentifierParameterHandle)
@@ -3009,11 +3035,48 @@ throw (
       
       if(mEffectManager != NULL)
       {
+
+			unsigned int munType = munitionType.GetSpecific();
+			unsigned int  expType;
+
+			switch (munType)
+			{
+				case 2: //HE
+					{
+						if((unsigned int)munitionType.GetExtra() == 1)
+							expType = 4000L;
+						else
+							expType = 1000L;
+
+						break;
+					}
+				case 13: //SMOKE
+					{
+						expType = 3000L;
+
+						break;
+					}
+				case 14: //M825
+				case 18:
+					{
+						expType = 6000L;
+						break;
+					}
+				case 1: //ICM					
+				case 3: //ICM
+					{
+						expType = 5000L;
+						break;
+					}
+				default:
+					expType = 1000L;
+					break;
+			}
          mIgnoreEffect = true;
 
          mEffectManager->AddDetonation(
             position,
-            (DetonationType)warheadType
+            (DetonationType)expType
          );
 
          mIgnoreEffect = false;
@@ -3041,13 +3104,13 @@ void RTIConnection::EffectAdded(
 
       WorldCoordinate detonationLocation;
       VelocityVector  finalVelocity;
-      EventIdentifier eventIdentifier; //changed by mark
-      //EventIdent eventIdentifier;
+      EventIdentifier eventIdentifier;
+
       unsigned short warheadType;
 
 
       char encodedDetonationLocation[24],
-           encodedEventIdentifier[5],  //changed by mark
+           encodedEventIdentifier[5], 
            encodedWarheadType[2],
            encodedFuseType[2],
            encodedMunitionType[8],
@@ -3077,7 +3140,7 @@ void RTIConnection::EffectAdded(
 
      finalVelocity.SetX(0);  //test this
      finalVelocity.SetY(0);  //test this
-     finalVelocity.SetZ(1000);  //test this
+     finalVelocity.SetZ(900);  //test this
 
      finalVelocity.Encode(encodedFinalVelocity);
      
@@ -3103,8 +3166,8 @@ void RTIConnection::EffectAdded(
          5  //changed this because of error
       );
 
-      warheadType = (unsigned short)detonation->GetType();
-      //warheadType = 7000;  nuke
+      warheadType = 1000; // clamp to HE warhead
+
       if(ulIsLittleEndian)
       {
          ulEndianSwap(&warheadType);
@@ -3126,11 +3189,35 @@ void RTIConnection::EffectAdded(
          2
       );
 
-     
-      //EntityType munitionType(MunitionKind);  //need real entity mapping
-      //EntityType munitionType(2,9,255,2,14,18,0);  //155 HEDP
-      //EntityType munitionType(2,9,255,2,14,14,0);  //M825 WP
-      EntityType munitionType(2,9,255,1,14,1,0); //500lbs bomb  More damage
+		unsigned short munType = (unsigned short)detonation->GetType();
+      EntityType munitionType(2,9,255,2,14,2,0); //Default
+
+		if (munType == 1000)
+		{
+			//munitionType.SetExtra(2);
+			//std::cout<<"HE"<<std::endl;
+		}
+		else if(munType == 2000)
+		{
+			munitionType.SetSpecific(13);
+		}
+		else if(munType == 3000)
+		{
+			munitionType.SetSpecific(18);
+		}
+		else if(munType == 4000)
+		{
+         munitionType.SetExtra(1);
+		}
+		else if(munType == 5000)
+		{
+			munitionType.SetSpecific(3);
+		}
+		else if(munType == 6000)
+		{
+			munitionType.SetSpecific(18);
+		}
+      
       munitionType.Encode(encodedMunitionType);
 
       theParameters->add(

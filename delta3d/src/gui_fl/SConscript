@@ -5,6 +5,5 @@ gui_flSrcs = [  'gui_fltk.cpp',
 
 gui_flLib = env.SharedLibrary( 'gui_fl', gui_flSrcs, LIBS=[ 'dtcore', 'fltk', 'OpenThreads', 'osg', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
 
-env.Alias('install', env.Install( "$prefix/lib", gui_flLib ) )
-
-Return( 'gui_flLib' )
+env.Alias( 'install', env.Install( "$prefix/lib", gui_flLib ) )
+env.Default( gui_flLib )

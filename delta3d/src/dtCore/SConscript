@@ -58,6 +58,5 @@ dtCoreSrcs = [  'base.cpp',
 dtCoreLib = env.SharedLibrary( 'dtcore', dtCoreSrcs, LIBS=[ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'dtutil' ] )
 
 # TODO: install headers
-env.Alias('install', env.Install( '$prefix/lib', dtCoreLib ) )
-
-Return( 'dtCoreLib' )
+env.Alias( 'install', env.Install( '$prefix/lib', dtCoreLib ) )
+env.Default( dtCoreLib )

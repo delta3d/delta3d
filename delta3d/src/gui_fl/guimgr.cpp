@@ -93,10 +93,11 @@ void UserInterface::SelectInstance (void)
          t->GetTransform( &trans, Transformable::REL_CS );
       }
 
-      osg::Vec3 xyz, hpr;
+      osg::Vec3 xyz, hpr, scale;
       
       trans.GetTranslation( xyz );
       trans.GetRotation( hpr );
+      trans.GetScale( scale );
 
       TransformX->value(xyz[0]);
       TransformY->value(xyz[1]);
@@ -104,7 +105,10 @@ void UserInterface::SelectInstance (void)
       TransformH->value(hpr[0]);
       TransformP->value(hpr[1]);
       TransformR->value(hpr[2]);
- 
+      TransformScaleX->value(scale[0]);
+      TransformScaleY->value(scale[1]);
+      TransformScaleZ->value(scale[2]);
+
       TransformGroup->show();
    }
    else TransformGroup->hide();
@@ -615,7 +619,10 @@ void UserInterface::TransformPosCB(Fl_Value_Input*)
              TransformZ->value(),
              TransformH->value(),
              TransformP->value(),
-             TransformR->value());
+             TransformR->value(),
+             TransformScaleX->value(),
+             TransformScaleY->value(),
+             TransformScaleZ->value());
 
    if (TransformCSAbsButton->value())
    {

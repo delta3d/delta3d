@@ -1,18 +1,18 @@
 #ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <gl/gl.h>
+   #define WIN32_LEAN_AND_MEAN
+   #include <windows.h>
+   #include <gl/gl.h>
+
+   #pragma warning(disable:4305; disable:4244)
 #else
-#include <gl.h>
+   #include <GL/gl.h>
+   #include <string.h>
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "dtCore/prof.h"
 #include "dtCore/prof_internal.h"
-
-#pragma warning(disable:4305; disable:4244)
-
 
 // use factor to compute a glow amount
 static int get_colors(float factor,

@@ -289,7 +289,7 @@ namespace dtCore
          bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
          virtual void AddedToScene( Scene *scene );
-       
+
       private:
 
          /**
