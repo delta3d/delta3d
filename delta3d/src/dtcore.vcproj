@@ -608,10 +608,10 @@
 				RelativePath="..\inc\cui_openglshader.h">
 			</File>
 			<File
-				RelativePath="..\inc\deltawin.h">
+				RelativePath="..\inc\deltadrawable.h">
 			</File>
 			<File
-				RelativePath="..\inc\drawable.h">
+				RelativePath="..\inc\deltawin.h">
 			</File>
 			<File
 				RelativePath="..\inc\dt.h">
