@@ -90,6 +90,9 @@ namespace dtCore
       {
          DEPRECATE("_SceneHandler Scene::GetSceneHandler(void)",
                    "_SceneHandler Camera::GetSceneHandler(void)")
+
+         dtCore::Notify(dtCore::FATAL, "** Scene::GetSceneHandler() is deprecated, returning NULL! ***");
+         return(NULL);
       }
 
       ///Get a pointer to the internal scene node
