@@ -508,13 +508,17 @@ class TestPythonGUIApplication(Widget):
     angle = 0.0
     
     def Config(self, data):
+        print "Config"
         Widget.Config(self, data)
+        print "Widget config"
         SetDataFilePathList('../../data')
         self.plane = Object('cessna')
         self.plane.LoadFile('cessna.osg')
+        print "loaded file"
         self.AddDrawable(self.plane)
         self.omm = OrbitMotionModel(self.GetKeyboard(), self.GetMouse())
         self.omm.SetTarget(self.GetCamera())
+        print "End"
         
     def Quit(self):
         root.quit()

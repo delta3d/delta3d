@@ -21,7 +21,7 @@ using namespace dtCore;
 class WeatherApp : public dtABC::Application
 {
 public:
-	WeatherApp()
+   WeatherApp()
    {
       terr = new dtCore::InfiniteTerrain();
       terr->SetHorizontalScale(0.005);
@@ -32,7 +32,7 @@ public:
       weather->AddDrawable(terr);
 
       this->AddDrawable(weather->GetEnvironment());
-      GetWindow()->SetWindowTitle("F1-F5 for Visibility, 1-5 for Clouds");
+      //GetWindow()->SetWindowTitle("F1-F5 for Visibility, 1-5 for Clouds");
 
       mLogicalInputDevice = new LogicalInputDevice();
 
