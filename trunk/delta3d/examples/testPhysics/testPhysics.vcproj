@@ -23,7 +23,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\inc\,..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc\;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -45,7 +45,7 @@
 				OutputFile=".\Release/testPhysics.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\lib\,..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcimt,libc,msvcrtd"
 				ProgramDatabaseFile=".\Release/testPhysics.pdb"
 				SubSystem="1"
@@ -86,7 +86,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc\,..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc\;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -108,7 +108,7 @@
 				OutputFile=".\Debug/testPhysics.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\lib\,..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\lib\;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd,libc;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/testPhysics.pdb"
@@ -147,24 +147,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="main.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
+				RelativePath=".\testphysics.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -175,6 +158,12 @@
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		</Filter>
+		<File
+			RelativePath=".\config.xml">
+		</File>
+		<File
+			RelativePath=".\readme.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -4,64 +4,77 @@
    <shader name="grey"  r="0.5" g="0.5" b="0.5" a="1.0" />
    <shader name="green"  r="0.0" g="0.75" b="0.0" a="1.0" />
    <shader name="raster8" r="0.0" g="0.0" b="0.0" a="1.0" filename="raster8.rgba" />
+   <shader name="raster8w" r="1.0" g="1.0" b="1.0" a="1.0" filename="raster8.rgba" />
+   <shader name="back_panel" filename="back_panel.rgb" />
+   <shader name="button" filename="button.tga" />
+   <shader name="button_red" filename="button_red.tga" />
+   <shader name="edit_box" filename="edit_box.rgb" />
+   <shader name="edit_box_hover" filename="edit_box_hover.rgb" />
+   <shader name="edit_box_click" filename="edit_box_click.rgb" />
+   <shader name="slider_red_vert" filename="slider_red_vert.tga" />
+   
    <fixedwidthbitmapfont name="raster8" shader="raster8" characterwidth="16"
       characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" />
-   <rootframe name="main" shader="dgrey">
+      
+   <fixedwidthbitmapfont name="raster8w" shader="raster8w" characterwidth="16"
+      characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" /> 
+      
+   <rootframe name="main" shader="back_panel">
       <rect xmin="0" ymin="0" xmax="1" ymax="1" />
       
-      <textbox text="action 1" font="raster8" columns="8" rows="1">
-         <rect xmin="0" ymin="0.85" xmax="0.3" ymax="0.95" />
+      <textbox text="Action 1" font="raster8" columns="8" rows="1">
+         <rect xmin="0.1" ymin="0.8" xmax="0.3" ymax="0.9" />
       </textbox>
-      <button shader="dgrey" hovershader="grey" clickshader="black" font="raster8" text="1"
-         textscale="0.4" frameid="1">
-         <rect xmin="0.3" ymin="0.85" xmax="0.6" ymax="0.95" />
+      <button shader="edit_box" hovershader="edit_box_hover" clickshader="edit_box_click" font="raster8w" text="1           "
+         textscale="0.8" frameid="1">
+         <rect xmin="0.35" ymin="0.8" xmax="0.65" ymax="0.9" />
       </button>
-      <frame shader="black" frameid="6">
-         <rect xmin="0.65" ymin="0.85" xmax="0.95" ymax="0.95" />
+      <frame shader="button" frameid="6">
+         <rect xmin="0.7" ymin="0.8" xmax="0.9" ymax="0.9" />
       </frame>
       
-      <textbox text="action 2" font="raster8" columns="8" rows="1">
-         <rect xmin="0" ymin="0.7" xmax="0.3" ymax="0.8" />
+      <textbox text="Action 2" font="raster8" columns="8" rows="1">
+         <rect xmin="0.1" ymin="0.65" xmax="0.3" ymax="0.75" />
       </textbox>
-      <button shader="dgrey" hovershader="grey" clickshader="black" font="raster8" text="2"
-         textscale="0.4" frameid="2">
-         <rect xmin="0.3" ymin="0.7" xmax="0.6" ymax="0.8" />
+      <button shader="edit_box" hovershader="edit_box_hover" clickshader="edit_box_click" font="raster8w" text="2           "
+         textscale="0.8" frameid="2">
+         <rect xmin="0.35" ymin="0.65" xmax="0.65" ymax="0.75" />
       </button>
-      <frame shader="black" frameid="7">
-         <rect xmin="0.65" ymin="0.7" xmax="0.95" ymax="0.8" />
+      <frame shader="button" frameid="7">
+         <rect xmin="0.7" ymin="0.65" xmax="0.9" ymax="0.75" />
       </frame>
       
-      <textbox text="action 3" font="raster8" columns="8" rows="1">
-         <rect xmin="0" ymin="0.55" xmax="0.3" ymax="0.65" />
+      <textbox text="Action 3" font="raster8" columns="8" rows="1">
+         <rect xmin="0.1" ymin="0.5" xmax="0.3" ymax="0.6" />
       </textbox>
-      <button shader="dgrey" hovershader="grey" clickshader="black" font="raster8" text="3"
-         textscale="0.4" frameid="3">
-         <rect xmin="0.3" ymin="0.55" xmax="0.6" ymax="0.65" />
+      <button shader="edit_box" hovershader="edit_box_hover" clickshader="edit_box_click" font="raster8w" text="3           "
+         textscale="0.8" frameid="3">
+         <rect xmin="0.35" ymin="0.5" xmax="0.65" ymax="0.6" />
       </button>
-      <frame shader="black" frameid="8">
-         <rect xmin="0.65" ymin="0.55" xmax="0.95" ymax="0.65" />
+      <frame shader="button" frameid="8">
+         <rect xmin="0.7" ymin="0.5" xmax="0.9" ymax="0.6" />
       </frame>
       
-      <textbox text="axis 1" font="raster8" columns="6" rows="1">
-         <rect xmin="0" ymin="0.35" xmax="0.3" ymax="0.45" />
+      <textbox text="Axis 1" font="raster8" columns="8" rows="1">
+        <rect xmin="0.1" ymin="0.25" xmax="0.3" ymax="0.35" />
       </textbox>
-      <button shader="dgrey" hovershader="grey" clickshader="black" font="raster8" text="up/down"
-         textscale="0.4" frameid="4">
-         <rect xmin="0.3" ymin="0.35" xmax="0.6" ymax="0.45" />
+      <button shader="edit_box" hovershader="edit_box_hover" clickshader="edit_box_click" font="raster8w" text="up/down"
+         textscale="0.8" frameid="4">
+         <rect xmin="0.35" ymin="0.25" xmax="0.65" ymax="0.35" />
       </button>
-      <sliderbar shader="black" slidershader="green" rangemin="-5.0" rangemax="105.0" frameid="9">
-         <rect xmin="0.65" ymin="0.35" xmax="0.95" ymax="0.45" />
+      <sliderbar shader="button" slidershader="slider_red_vert" rangemin="-5.0" rangemax="105.0" frameid="9">
+         <rect xmin="0.7" ymin="0.25" xmax="0.9" ymax="0.35" />
       </sliderbar>
       
-      <textbox text="axis 2" font="raster8" columns="6" rows="1">
-         <rect xmin="0" ymin="0.2" xmax="0.3" ymax="0.3" />
+      <textbox text="Axis 2" font="raster8" columns="8" rows="1">
+         <rect xmin="0.1" ymin="0.1" xmax="0.3" ymax="0.2" />
       </textbox>
-      <button shader="dgrey" hovershader="grey" clickshader="black" font="raster8" text="left/right"
-         textscale="0.4" frameid="5">
-         <rect xmin="0.3" ymin="0.2" xmax="0.6" ymax="0.3" />
+      <button shader="edit_box" hovershader="edit_box_hover" clickshader="edit_box_click" font="raster8w" text="left/right"
+         textscale="0.8" frameid="5">
+         <rect xmin="0.35" ymin="0.1" xmax="0.65" ymax="0.2" />
       </button>
-      <sliderbar shader="black" slidershader="green" rangemin="-5.0" rangemax="105.0" frameid="10">
-         <rect xmin="0.65" ymin="0.2" xmax="0.95" ymax="0.3" />
+      <sliderbar shader="button" slidershader="slider_red_vert" rangemin="-5.0" rangemax="105.0" frameid="10">
+         <rect xmin="0.7" ymin="0.1" xmax="0.9" ymax="0.2" />
       </sliderbar>
       
    </rootframe>

@@ -4,12 +4,17 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore
+Uses modules: dtCore, dtABC
 
 Purpose
 -------
-To demonstrate the gui_fl, which allows a user to inspect and change some 
-aspects of a Delta3D window.
+To demonstrate the ChangeScreenResolution and SetFullScreenMode functions
+from the DeltaWin class.
+
+Note: A call to FullScreen and a subsequent call to ChangeScreenResolution 
+      (and vice versa) will not yield expected results. Producer does not
+      update its values for the screen width and height, so changing the
+      resolution leaves the Producer values out of sync with the real ones.
 
 Instructions
 ------------
@@ -29,8 +34,6 @@ Linux Source:
 - Enter examples/testWin directory.
 - Run 'testWin'.
 
-Controls
---------
-Mouse moves cessna (with box child) on a horizontal plane.
+
 
 
