@@ -6,9 +6,8 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(InfiniteLight)
 
 InfiniteLight::InfiniteLight( int number, const std::string name, const LightingMode mode )
-: Light()
+: Light( number, mode, NULL )
 {
-   Init( number, mode, NULL );
    SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
@@ -19,9 +18,8 @@ InfiniteLight::InfiniteLight( int number, const std::string name, const Lighting
 }
 
 InfiniteLight::InfiniteLight( osg::LightSource* const source, const std::string name, const LightingMode mode )
-: Light()
+: Light( source->getLight()->getLightNum(), mode, source )
 {
-   Init( source->getLight()->getLightNum(), mode, source );
    SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
@@ -76,4 +74,3 @@ InfiniteLight::GetDirection( float* h, float* p, float* r ) const
    *p = hpr[1];
    *r = hpr[2];
 }
-

@@ -88,9 +88,6 @@ Scene::~Scene()
 {
    DeregisterInstance(this);
 
-   for( int i = 0; i < MAX_LIGHTS; i++ )
-      delete mLights[ i ];
-
    dJointGroupDestroy(mContactJointGroupID);
    dSpaceDestroy(mSpaceID);
    dWorldDestroy(mWorldID);
@@ -477,15 +474,12 @@ void Scene::SetPhysicsStepSize( double stepSize )
 
 void Scene::AddLight( Light* light )
 {
-   if( light->GetLightingMode() == Light::GLOBAL )
-   {
-      //enable global lighting
-      osg::StateSet* sceneStateSet = GetSceneHandler()->GetSceneView()->getGlobalStateSet(); 
-      light->GetOSGLightSource()->setStateSetModes( *sceneStateSet, osg::StateAttribute::ON );
-   }
-
+   light->SetSceneParent( this );
+   light->SetEnabled( true );
+ 
    mLightGroup->addChild( light->GetOSGLightSource() ); //add to a group that is alraedy a child of the scene
    mLights[ light->GetNumber() ] = light; //add to internal array of lights
+  
 }
 
 void Scene::RemoveLight( Light* light )
@@ -496,11 +490,8 @@ void Scene::RemoveLight( Light* light )
       {
          mLightGroup->removeChild( mLights[ i ]->GetOSGLightSource() );
 
-         // turn off light in scene
-         osg::Light* osgLight = mLights[ i ]->GetOSGLightSource()->getLight();
-         GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::OFF );
+         light->SetEnabled( false );
 
-         delete mLights[ i ];
          mLights[ i ] = NULL;
       }
    }
@@ -527,12 +518,12 @@ void Scene::UseSceneLight( bool lightState )
 
    if(lightState)
    {
-      GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+      GetSceneHandler()->GetSceneView()->setLightingMode( osgUtil::SceneView::SKY_LIGHT );
       GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::ON );
    }
    else
    {
-      GetSceneHandler()->GetSceneView()->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
+      GetSceneHandler()->GetSceneView()->setLightingMode( osgUtil::SceneView::NO_SCENEVIEW_LIGHT );
       GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, osg::StateAttribute::OFF );
    }
 }

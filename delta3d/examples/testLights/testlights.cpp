@@ -1,114 +1,95 @@
 #include "testlights.h"
-#include "dtCore/dt.h"
-//#include "gui_fl/guimgr.h"
 
-// namespaces
+
 using namespace   dtABC;
 using namespace   dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestLightsApp )
 
-float TestLightsApp::redCount = 0.0f;
-float TestLightsApp::greenCount = 0.0f;
-float TestLightsApp::blueCount = 0.0f;
+float TestLightsApp::countOne = 0.0f;
+float TestLightsApp::countTwo = 0.0f;
+float TestLightsApp::countThree = 0.0f;
 
-TestLightsApp::TestLightsApp( std::string configFilename /*= "config.xml"*/ )
-:  Application(configFilename)
-{
-}
+TestLightsApp::TestLightsApp( std::string configFilename )
+:  Application( configFilename )
+{}
 
 TestLightsApp::~TestLightsApp()
-{
-}
+{}
+
 
 void
 TestLightsApp::Config()
 {
+   // turn off scene light so we only see the lights we create
    GetScene()->UseSceneLight( false );
 
-   Object* warehouse = new Object( "Warehouse" );
-   warehouse->LoadFile("room-int-walls.ive");
-   AddDrawable( warehouse );
+   // load up a warehouse
+   mWarehouse = new Object( "Warehouse" );
+   mWarehouse->LoadFile("warehouse/room-int-walls.ive");
+   AddDrawable( mWarehouse.get() );
 
 
+
+   Transform trans;
 
    // create a global spot light.
-   SpotLight* globalSpot = new SpotLight( 1, "globalSpotlight", Light::GLOBAL);
+   mGlobalSpot = new SpotLight( 1, "GlobalSpotlight", Light::GLOBAL);
+   trans.Set( 5.0f, 10.0f, 2.0f, 0.0f, 0.0f, 0.0f );
+   mGlobalSpot->SetTransform( &trans );
+   mGlobalSpot->SetSpotCutoff( 20.0f );
+   mGlobalSpot->SetSpotExponent( 50.0f );
 
-   Transform trans = Transform( 5.0f, 10.0f, 2.0f, 0.0f, 0.0f, 0.0f );
-   globalSpot->SetTransform( &trans );
+   GetScene()->AddLight( mGlobalSpot.get() );
 
-   globalSpot->SetAmbient( 1.0f, 0.0f, 0.0f, 1.0f );
-   globalSpot->SetDiffuse( 1.0f, 0.0f, 0.0f, 1.0f );
-   globalSpot->SetSpotCutoff( 20.0f );
-   globalSpot->SetSpotExponent( 50.0f );
-  
-   GetScene()->AddLight( globalSpot );
+
+
+   // add a child to the local light
+   mSphere = new Object( "HappySphere" );
+   mSphere->LoadFile( "physics/sphere/happy_sphere.ive" );
 
 
 
    // create a local positional light.
-   PositionalLight* localPositional = new PositionalLight( 2, "localPositionalLight", Light::LOCAL);
+   mLocalPositional = new PositionalLight( 2, "LocalPositionalLight", Light::LOCAL);
+   mLocalPositional->SetDiffuse( 1.0f, 1.0f, 0.0f, 1.0f ); // yellow light
+   mLocalPositional->AddLightChild ( mSphere.get() ); //light only the sphere
 
-   trans.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
-   localPositional->SetTransform( &trans );
-
-   localPositional->SetAmbient( 0.0f, 1.0f, 0.0f, 1.0f );
-   localPositional->SetDiffuse( 0.0f, 1.0f, 0.0f, 1.0f );
-   localPositional->SetAttenuation( 1.0f, 2.0f/20, 2.0f/osg::square(20) );
-
-   GetScene()->AddLight( localPositional );
-
-   // add a child to the local light
-   Object* sphere = new Object( "Barrel" );
-   sphere->LoadFile( "physics/sphere/happy_sphere.ive" );
-   sphere->SetTransform( &trans );
-
-   localPositional->AddLightChild ( sphere );
-
-
+   GetScene()->AddLight( mLocalPositional.get() );
+   mLocalPositional->SetEnabled( false );
 
 
 
    // create a global positional light.
-   PositionalLight* globalPositional = new PositionalLight( 3, "globalPositionalLight", Light::GLOBAL);
+   mGlobalPositional = new PositionalLight( 3, "GlobalPositionalLight", Light::GLOBAL);
+   mGlobalPositional->SetDiffuse( 1.0f, 1.0f, 0.0f, 1.0f ); // yellow light
+   mGlobalPositional->AddChild( mSphere.get() ); //move sphere along with light
 
-   trans.Set( 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f );
-   globalPositional->SetTransform( &trans );
-
-   globalPositional->SetAmbient( 0.0f, 1.0f, 0.0f, 1.0f );
-   globalPositional->SetDiffuse( 0.0f, 1.0f, 0.0f, 1.0f );
-   globalPositional->SetAttenuation( 1.0f, 2.0f/20, 2.0f/osg::square(20) );
-
-   //GetScene()->AddLight( globalPositional );
+   GetScene()->AddLight( mGlobalPositional.get() );
+   mGlobalPositional->SetEnabled( false );
 
 
 
    // create an infinite light
-   InfiniteLight* myLight3 = new InfiniteLight( 4, "ilight", Light::GLOBAL );
-   myLight3->SetAmbient( 0.0f, 0.0f, 1.0f, 1.0f );
-   myLight3->SetDiffuse( 0.0f, 0.0f, 1.0f, 1.0f );
+   mGlobalInfinite = new InfiniteLight( 4, "GlobalInfiniteLight", Light::GLOBAL );
 
-   //GetScene()->AddLight( myLight3 );
-
+   GetScene()->AddLight( mGlobalInfinite.get() );
+   mGlobalInfinite->SetEnabled( false );
 
 
-   //set camera
-   trans.Set(0.3f, 0.6f, 1.2f, 0.0f, 0.0f, 0.0f );
+
+   //set camera stuff
+   trans.Set( 30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f );
    GetCamera()->SetTransform( &trans );
 
-   //remove:
-   sgVec3 camLoc;
-   trans.GetTranslation( camLoc );
-
+   sgVec3 camLoc; 
    sgVec3 origin = { 0.0f, 0.0f, 0.0f };
 
-   OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
-   omm->SetTarget( GetCamera() );
-   omm->SetTarget( GetCamera() );
-   omm->SetDistance( 0 );
+   trans.GetTranslation( camLoc );
 
-   //GUI *ui = new GUI(); 
+   mOmm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+   mOmm->SetTarget( GetCamera() );
+   mOmm->SetDistance( sgDistanceVec3( camLoc, origin ) );
 
 }
 
@@ -117,72 +98,79 @@ TestLightsApp::KeyPressed( Keyboard*               keyboard,
                            Producer::KeyboardKey   key,
                            Producer::KeyCharacter  character )
 {
-   switch(key)
+   switch( key )
    {
    case Producer::Key_Escape:
       Quit();
+      break;
+   case Producer::Key_1: 
+      mGlobalSpot->SetEnabled( !mGlobalSpot->GetEnabled() );
+      break;
+   case Producer::Key_2:
+      mLocalPositional->SetEnabled( !mLocalPositional->GetEnabled() );
+      break;
+   case Producer::Key_3: 
+      mGlobalPositional->SetEnabled( !mGlobalPositional->GetEnabled() );
+      break;
+   case Producer::Key_4:
+      mGlobalInfinite->SetEnabled( !mGlobalInfinite->GetEnabled() );
+      break;
+   default:
       break;
    }
 }
 
 void 
-TestLightsApp::OnMessage( Base::MessageData *data )
+TestLightsApp::OnMessage( Base::MessageData* data )
 {
    if(data->message == "preframe")
    {
-      
-      Transform trans;
-      GetCamera()->GetTransform( &trans );
-      float x,y,z,h,p,r;
-      trans.Get(&x,&y,&z,&h,&p,&r);
-      //Notify(ALWAYS,"(%f,%f,%f) (%f,%f,%f)", x, y, z, h, p, r );
+      //increment some values at different rates
+      countOne +=0.5f;
+      countTwo += 0.6f;
+      countThree += 0.7f;
 
-      redCount = redCount + 0.5f;
-      greenCount = greenCount + 0.6f;
-      blueCount = blueCount + 0.7f;
-
-      if( redCount > 360.0f )
-         redCount = 0;
-
-      if( greenCount > 360.0f )
-         greenCount = 0;
-
-      if( blueCount > 360.0f )
-         blueCount = 0;
+      //cap at 360
+      if( countOne > 360.0f ) countOne -= 360.0f;
+      if( countTwo > 360.0f ) countTwo -= 360.0f;
+      if( countThree > 360.0f ) countThree -= 360.0f;
     
-      float redValue = (cos( (redCount) * SG_DEGREES_TO_RADIANS ) + 1.0f) / 2.0f;
-      float greenValue = (cos( (greenCount) * SG_DEGREES_TO_RADIANS ) + 1.0f) / 2.0f;
-      float blueValue = (cos( (blueCount) * SG_DEGREES_TO_RADIANS ) + 1.0f) / 2.0f;
+      //scale values to 0.0-1.0
+      float redValue = ( sgCos( countOne ) + 1.0f ) / 2.0f;
+      float greenValue = ( sgCos( countTwo ) + 1.0f ) / 2.0f;
+      float blueValue = ( sgCos( countThree ) + 1.0f ) / 2.0f;
 
-      float red = 0.0f;
-      float green = 0.0f;
-      float blue = 0.0f;
-      float alpha = 0.0f;
+      // modify all global lights
+      mGlobalSpot->SetDiffuse( redValue, greenValue, blueValue, 1.0f ); //change color
 
-      SpotLight* globalSpot = static_cast<SpotLight*>(GetScene()->GetLight( 1 ));
+      //rotate the spotlight
+      Transform trans;
+      mGlobalSpot->GetTransform( &trans );
+      trans.SetRotation( countOne, 0.0f, 0.0f );
+      mGlobalSpot->SetTransform( &trans );
 
-      globalSpot->SetAmbient( redValue, greenValue, blueValue, alpha );
-      globalSpot->SetDiffuse( redValue, greenValue, blueValue, alpha );
-
-      Transform t;
-      globalSpot->GetTransform( &t );
-      t.SetRotation( redCount, 0.0f, 0.0f );
+      mGlobalPositional->SetAttenuation( 1.0f, greenValue/2.0f, blueValue/2.0f ); //change attenutation
       
-      globalSpot->SetTransform( &t );
-      
-      
+      //move the global positional light in a circle
+      float tx = 2*sgCos( countOne ) + 3.0f;
+      float ty = 2*sgSin( countOne ) + 7.0f;
+      trans.Set( tx, ty, 2.0f, 0.0f, 0.0f, 0.0f ); 
+      mGlobalPositional->SetTransform( &trans );
+         
+      mGlobalInfinite->SetDiffuse( redValue, greenValue, blueValue, 1.0f ); //change color
+      mGlobalInfinite->SetDirection( countOne, countTwo, countThree ); //change direction
    }
 }
 
-int
+
+int 
 main( int argc, const char* argv[] )
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestLightsApp* app = new TestLightsApp("config.xml");
+   osg::ref_ptr<TestLightsApp> app = new TestLightsApp( "config.xml" );
    app->Config();
    app->Run();
 
-   delete app;
-   return   0L;
+   return 0;
 }

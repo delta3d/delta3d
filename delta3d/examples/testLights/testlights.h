@@ -1,6 +1,7 @@
 #ifndef DELTA_TESTLIGHTS
 #define DELTA_TESTLIGHTS
 
+#include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
 
 class TestLightsApp : public dtABC::Application
@@ -9,39 +10,33 @@ class TestLightsApp : public dtABC::Application
 
 public:
 
-   /**
-   * Default constructor.
-   *
-   * @param configuration file name
-   */
    TestLightsApp( std::string configFilename = "config.xml" );
+   ~TestLightsApp();
 
-   /**
-   * Destructor.
-   */
-   virtual ~TestLightsApp();
+   void Config();
 
-   virtual void Config();
+   void KeyPressed(  dtCore::Keyboard*      keyboard, 
+                     Producer::KeyboardKey  key,
+                     Producer::KeyCharacter character );
 
-   /**
-   * KeyboardListener override
-   * Called when a key is pressed.
-   *
-   * @param keyboard the source of the event
-   * @param key the key pressed
-   * @param character the corresponding character
-   */
-   virtual void KeyPressed(   dtCore::Keyboard*      keyboard, 
-                              Producer::KeyboardKey  key,
-                              Producer::KeyCharacter character );
-
-   virtual void OnMessage( dtCore::Base::MessageData* data );
+   void OnMessage( dtCore::Base::MessageData* data );
 
 private:
 
-   static float redCount;
-   static float greenCount;
-   static float blueCount;
+   //static values between 0-360 used to calculate new colors + positions
+   static float countOne;
+   static float countTwo;
+   static float countThree;
+
+   osg::ref_ptr<dtCore::Object> mWarehouse;
+   osg::ref_ptr<dtCore::Object> mSphere;
+
+   osg::ref_ptr<dtCore::SpotLight> mGlobalSpot;
+   osg::ref_ptr<dtCore::PositionalLight> mLocalPositional;
+   osg::ref_ptr<dtCore::PositionalLight> mGlobalPositional;
+   osg::ref_ptr<dtCore::InfiniteLight> mGlobalInfinite;
+
+   osg::ref_ptr<dtCore::OrbitMotionModel> mOmm;
 
 };
 
