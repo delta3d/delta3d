@@ -2,4 +2,6 @@ Import('*')
 
 env = env.Copy()
 
-testApp = env.Program( 'testApp', 'testapp.cpp', LIBS=[ 'dtcore', 'dtabc'] )
+env['LIBPATH'] = env['LIBPATH']+['/usr/X11R6/lib']
+
+testApp = env.Program( 'testApp', 'testapp.cpp', LIBS=[ 'dtcore', 'dtabc', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm' ] )

@@ -1,3 +1,5 @@
+Import('*')
+
 SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gui_fl' ])
 
 #SConscript(dirs=[ 'python' ])
