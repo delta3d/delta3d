@@ -14,7 +14,6 @@ namespace dtCore
 {
    class Scene;
    
-     
    /**
     * A drawable object.
     */

@@ -265,11 +265,12 @@ bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, flo
 
 }
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel)   // Change The Screen Resolution
 {
-   DEVMODE dmScreenSettings;                                                            // Device Mode
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
+        DEVMODE dmScreenSettings;                                                            // Device Mode
    ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));                                    // Make Sure Memory Is Cleared
    dmScreenSettings.dmSize                              = sizeof (DEVMODE);             // Size Of The Devmode Structure
    dmScreenSettings.dmPelsWidth         = width;                                        // Select Screen Width
@@ -282,6 +283,8 @@ bool DeltaWin::ChangeScreenResolution (int width, int height, int bitsPerPixel) 
       return FALSE;                                                                     // Display Change Failed, Return False
    }
    return TRUE;                                                                         // Display Change Was Successful, Return True
+#else
+   return FALSE;
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 }
 
-#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
