@@ -75,17 +75,10 @@ public:
       float ly = 1.0f;
       float lz = 1.0f;
 
-      #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
       //create collision meshes
-      obj1->SetCollisionBox(50.0f,50.0f,0.05f);
+      obj1->SetCollisionBox(50.0f,50.0f,0.05f); //make VERY thin "box" for ground
       obj2->SetCollisionBox(lx,ly,lz);
       obj3->SetCollisionBox(lx,ly,lz);
-      #else
-      //create collision meshes
-      obj1->SetCollisionMesh();
-      obj2->SetCollisionBox();
-      obj3->SetCollisionBox();
-      #endif //!defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
       //set the mass for objects
       dMass mass;
@@ -173,11 +166,7 @@ protected:
             float ly = 1.0f;
             float lz = 1.0f;
 
-            #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
             box->SetCollisionBox(lx,ly,lz);
-            #else
-            box->SetCollisionBox();
-            #endif //!defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
             dMass mass;
             dMassSetBox(&mass, 1, lx, ly, lz);
@@ -210,11 +199,7 @@ protected:
 
             float radius = 0.5f;
 
-            #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
             sphere->SetCollisionSphere(radius);
-            #else
-            sphere->SetCollisionSphere();
-            #endif //!defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
             dMass mass;
             dMassSetSphere(&mass, 1, radius);
@@ -247,11 +232,7 @@ protected:
             float radius = 0.321f; 
             float length = 1.0f;            
 
-            #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
             cyl->SetCollisionCappedCylinder(radius,length);
-            #else
-            cyl->SetCollisionCappedCylinder();
-            #endif // !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 
             dMass mass;
             dMassSetCappedCylinder(&mass, 1, 2, radius, length);
