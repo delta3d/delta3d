@@ -131,6 +131,8 @@ BaseABC::KeyPressed( dtCore::Keyboard*          keyboard,
       case Producer::Key_Escape:
          Quit();
          break;
+      default:
+         break;
    }
 }
 

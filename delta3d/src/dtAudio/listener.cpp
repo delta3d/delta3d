@@ -13,8 +13,9 @@ IMPLEMENT_MANAGEMENT_LAYER(Listener)
 
 
 /********************************
-/** Protected Member Functions **
-/********************************
+ ** Protected Member Functions **
+ ********************************
+ */
 /**
  * Constructor, user does not create directly
  * instead requests the listener from AudioManager

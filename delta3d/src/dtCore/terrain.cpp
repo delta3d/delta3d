@@ -62,7 +62,7 @@ class dtCore::TerrainCallback : public osg::NodeCallback
          
          osg::Vec3 eyepoint = nv->getEyePoint();
          
-         float bd = mTerrain->GetLoadDistance();
+         //float bd = mTerrain->GetLoadDistance();
          
          double latitude, longitude, elevation;
          

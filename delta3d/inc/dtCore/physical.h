@@ -302,7 +302,7 @@ namespace dtCore
          * The scale values in our matrix transform will be applied to
          * this value to modify the shape of mGeomID.
          */
-         dGeomID mOrignalGeomID;
+         dGeomID mOriginalGeomID;
          
          /**
           * The ODE triangle mesh data identifier, if any.

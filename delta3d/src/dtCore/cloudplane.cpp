@@ -20,25 +20,35 @@ const int MAX_HEIGHT = 2000;
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(CloudPlane)
 
-CloudPlane::CloudPlane(int   octaves,
-                       float cutoff,
-                       int   frequency,
-                       float amp,
-                       float persistence,
-                       float density,
-                       int   texSize,
-                       float height,
-                       std::string name)
-:EnvEffect(name),
-mOctaves(octaves),
-mCutoff(cutoff),
-mFrequency(frequency),
-mAmplitude(amp),
-mPersistence(persistence),
-mDensity(density),
-mTexSize(texSize),
-mHeight(height)
-
+CloudPlane::CloudPlane( int   octaves,
+                        float cutoff,
+                        int   frequency,
+                        float amp,
+                        float persistence,
+                        float density,
+                        int   texSize,
+                        float height,
+                        std::string name )
+   : EnvEffect(name),
+     mNode(0),
+     mGeode(0),
+     mPlane(0),
+     mImage(0),
+     mCloudTexture(0),
+     mFog(0),
+     mOctaves(octaves),
+     mCutoff(cutoff),
+     mFrequency(frequency),
+     mAmplitude(amp),
+     mPersistence(persistence),
+     mDensity(density),
+     mHeight(height),
+     mTexSize(texSize),
+     mWind(0),
+     mCloudColor(0),
+     mTexCoords(0),
+     mColors(0),
+     mXform(0)
 {
 	RegisterInstance(this);
 	if(mHeight > MAX_HEIGHT)
@@ -61,7 +71,7 @@ CloudPlane::~CloudPlane()
 osg::Texture2D* CloudPlane::createPerlinTexture()
 {
 
-    float bias = 1.5f;
+   //float bias = 1.5f;
 
 	NoiseGenerator noise2d(mOctaves, mFrequency, mAmplitude, mPersistence, mTexSize, mTexSize);
 	mImage = noise2d.makeNoiseTexture(GL_ALPHA);

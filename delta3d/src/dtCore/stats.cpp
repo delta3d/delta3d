@@ -91,7 +91,7 @@ osg::Timer_t Stats::UpdateFrameTick()
 //Select the next statistics type - will wrap around back to NONE
 void Stats::SelectNextType(void)
 {
-   Statistics::statsType type;
+   Statistics::statsType type = Statistics::STAT_NONE;
 
    switch (mPrintStats) {
    case Statistics::STAT_NONE: type = Statistics::STAT_FRAMERATE;  	break;
