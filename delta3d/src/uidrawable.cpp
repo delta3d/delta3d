@@ -1,3 +1,6 @@
+#include <assert.h>
+
+#include "system.h"
 #include "uidrawable.h"
 #include "notify.h"
 #include "UI/CUI_Menu.h"
@@ -30,11 +33,14 @@ mUI(NULL),
 mButtonState(0),
 mWidth(width),
 mHeight(height),
-mRenderer(NULL)
+mRenderer(NULL),
+mCurrentQueue(0L)
 {
    dtCore::Mouse::GetInstance(0)->AddMouseListener(this);
    dtCore::Window::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
-  
+
+   AddSender( System::GetSystem() );
+   
    mUI = new CUI_UI();
 
    mRenderer = new CUI_OpenGLRenderer();
@@ -71,6 +77,28 @@ UIDrawable::~UIDrawable(void)
    mNode = NULL;
 }
 
+void UIDrawable::OnMessage(MessageData *data)
+{
+   if(!mUI) return;
+
+   assert( data );
+   if( data->message == "frame" )
+   {
+      unsigned int   flush = mCurrentQueue;
+
+      // the following line could cause a crash if an asynchronous mouse
+      // event happens at the exact moment this line is being accessed
+      mCurrentQueue  =  ( mCurrentQueue + 1L ) % NumMouseQueues;
+
+      while( mMouseQueue[flush].size() )
+      {
+         MOUSEEVENT& event = mMouseQueue[flush].front();
+         mUI->UpdateCursor( event.x, event.y, event.s );
+         mMouseQueue[flush].pop();
+      }
+   }
+}
+
 void UIDrawable::ButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button)
 {      
    if (!mUI) return;
@@ -82,7 +110,9 @@ void UIDrawable::ButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button
    case dtCore::MiddleButton: mButtonState &= ~UI_MBUTTONDOWN;   	break;
    default:                mButtonState = mButtonState;        break; 
    }
-   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
+
+   mMouseQueue[mCurrentQueue].push( MOUSEEVENT(mMouseX,mMouseY,mButtonState) );
+//   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
 }
 
 void UIDrawable::ButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button)
@@ -96,7 +126,9 @@ void UIDrawable::ButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button)
    case dtCore::MiddleButton: mButtonState |= UI_MBUTTONDOWN;   	break;
    default:                mButtonState = mButtonState;        break;
    }
-   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
+
+   mMouseQueue[mCurrentQueue].push( MOUSEEVENT(mMouseX,mMouseY,mButtonState) );
+//   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
 }
 
 void UIDrawable::MouseMoved(dtCore::Mouse* mouse, float x, float y) 
@@ -109,7 +141,9 @@ void UIDrawable::MouseMoved(dtCore::Mouse* mouse, float x, float y)
    y = (y*-1.f) + 1.f;
    mMouseX = x*mWidth;
    mMouseY = y*mHeight;
-   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
+
+   mMouseQueue[mCurrentQueue].push( MOUSEEVENT(mMouseX,mMouseY,mButtonState) );
+//   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
 }
 
 void UIDrawable::MouseDragged(Mouse* mouse, float x, float y)
@@ -122,7 +156,9 @@ void UIDrawable::MouseDragged(Mouse* mouse, float x, float y)
    y = (y*-1.f) + 1.f;
    mMouseX = x*mWidth;
    mMouseY = y*mHeight;
-   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
+
+   mMouseQueue[mCurrentQueue].push( MOUSEEVENT(mMouseX,mMouseY,mButtonState) );
+//   mUI->UpdateCursor(mMouseX, mMouseY, mButtonState);
 }
 
 void UIDrawable::KeyPressed(Keyboard* keyboard, 
