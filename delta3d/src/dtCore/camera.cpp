@@ -6,6 +6,7 @@
 
 #include "dtCore/camera.h"
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 
@@ -42,6 +43,7 @@ mScene(NULL)
 Camera::~Camera()
 {
    DeregisterInstance(this);
+   Notify(DEBUG_INFO, "Destroying Camera, ref count:%d", this->referenceCount() );
 }
 
 
@@ -130,4 +132,88 @@ void Camera::GetClearColor( float *r, float *g, float *b, float *a)
    *g = mClearColor[1];
    *b = mClearColor[2];
    *a = mClearColor[3];
+}
+
+void Camera::SetPerspective(double hfov, double vfov, double nearClip, double farClip)
+{
+	mCamera.get()->getLens()->setPerspective(hfov, vfov, nearClip, farClip);
+
+}
+
+void Camera::SetFrustum(double left, double right, double bottom, double top, double nearClip, double farClip)
+{
+   mCamera.get()->getLens()->setFrustum(left, right, bottom, top, nearClip, farClip);
+
+}
+
+void Camera::SetOrtho( double left, double right, double bottom, double top, double nearClip, double farClip )
+{
+   mCamera.get()->getLens()->setOrtho(left, right, bottom, top, nearClip, farClip);
+}
+
+void Camera::ConvertToOrtho( float d )
+{
+   mCamera.get()->getLens()->convertToOrtho(d);
+}
+
+bool Camera::ConvertToPerspective( float d )
+{
+   bool t;
+   t = mCamera.get()->getLens()->convertToPerspective(d);
+   return t;
+}
+
+/*void Camera::Apply( float xshear=0.0f, float yshear=0.0 )
+{
+   mCamera.get()->getLens()->apply(xshear, yshear);
+}*/
+
+/*void Camera::GenerateMatrix( float xshear, float yshear, Matrix::value_type matrix[16] )
+{
+   mCamera.get()->getLens()->generateMatrix(xshear, yshear, Matrix);
+}*/
+
+/*void Camera::GetParams( double &left, double &right, 
+                double &bottom, double &top, 
+                double &nearClip, double &farClip )
+{
+	mCamera.get()->getLens()->getParams(&left, &right, &bottom, &top, &nearClip, &farClip);
+}*/
+
+float Camera::GetHorizontalFov()
+{
+   float hfov = 0.0f;
+   hfov = mCamera.get()->getLens()->getHorizontalFov();
+   return hfov;
+}
+
+float Camera::GetVerticalFov()
+{
+   float vfov = 0.0f;
+   vfov = mCamera.get()->getLens()->getVerticalFov();
+   return vfov;
+}
+
+void Camera::SetAutoAspect( bool ar )
+{
+   mCamera.get()->getLens()->setAutoAspect(ar);
+}
+
+bool Camera::GetAutoAspect()
+{
+   bool ar;
+   ar = mCamera.get()->getLens()->getAutoAspect();
+   return ar;
+}
+
+void Camera::SetAspectRatio( double aspectRatio )
+{
+	mCamera.get()->getLens()->setAspectRatio(aspectRatio);
+}
+
+double Camera::GetAspectRatio()
+{
+	double aspectRatio;
+	aspectRatio = mCamera.get()->getLens()->getAspectRatio();
+	return aspectRatio;
 }

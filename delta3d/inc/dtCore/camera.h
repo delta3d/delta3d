@@ -87,6 +87,42 @@ namespace dtCore
       ///Get the color that non-geometry in the Scene should be rendered
       void GetClearColor( sgVec4 color ) {sgCopyVec4(color, mClearColor);}
 
+      ///Set Perspective of camera lens
+      void SetPerspective( double hfov, double vfov, double nearClip, double farClip );
+
+      ///Set view frustrum of camera lens
+      void SetFrustum( double left, double right,
+                        double bottom, double top,
+                        double nearClip, double farClip );
+
+      void SetOrtho( double left, double right,
+                        double bottom, double top,
+                        double nearClip, double farClip );
+
+      void ConvertToOrtho( float d );
+
+      bool ConvertToPerspective( float d );
+
+//      void Apply( float xshear=0.0f, float yshear=0.0 );
+
+//      void GenerateMatrix( float xshear, float yshear, Matrix::value_type matrix[16] );
+
+//      void GetParams( double &left, double &right, 
+//                      double &bottom, double &top, 
+//                      double &nearClip, double &farClip );
+
+      float GetHorizontalFov();
+
+      float GetVerticalFov();
+
+      void SetAutoAspect( bool ar );
+
+      bool GetAutoAspect();
+
+      void SetAspectRatio( double aspectRatio );
+
+      double GetAspectRatio();
+
       ///Get a handle to the Producer Lens that this Camera uses
       Producer::Camera::Lens *GetLens(void) {return mCamera.get()->getLens();}
       
