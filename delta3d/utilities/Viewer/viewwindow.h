@@ -50,8 +50,8 @@ class ViewWindow  :  public   Fl_DT_Window<Viewer>
                void                    CommandLine( int argc, char** argv );
 
    private:
-      inline   void                    ctor( void );
-      inline   void                    KeyboardEventHandler( const dtABC::KeyboardEvent& ev );
+               void                    ctor( void );
+               void                    KeyboardEventHandler( const dtABC::KeyboardEvent& ev );
 
    private:
                std::string             mPath;
