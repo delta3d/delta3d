@@ -176,6 +176,9 @@
 				RelativePath=".\lightbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\loadablebindings.cpp">
+			</File>
+			<File
 				RelativePath=".\logicalinputdevicebindings.cpp">
 			</File>
 			<File

@@ -18,6 +18,9 @@ void initSceneBindings()
    
    void (Scene::*GetGravity1)(sgVec3) = &Scene::GetGravity;
    void (Scene::*GetGravity2)(float*, float*, float*) = &Scene::GetGravity;
+
+   Light* (Scene::*GetLight1)(int) = &Scene::GetLight;
+   Light* (Scene::*GetLight2)(std::string) = &Scene::GetLight;
    
    scope sceneScope = class_<Scene, bases<Base>, osg::ref_ptr<Scene> >("Scene", init<optional<std::string> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
@@ -40,9 +43,8 @@ void initSceneBindings()
       .def("SetStatisticsType", &Scene::SetStatisticsType)
       .def("SetPhysicsStepSize", &Scene::SetPhysicsStepSize)
       .def("GetPhysicsStepSize", &Scene::GetPhysicsStepSize)
-      .def("AddLight", &Scene::AddLight)
-      .def("RemoveLight", &Scene::RemoveLight)
-      .def("GetLight", &Scene::GetLight, return_internal_reference<>())
+      .def("GetLight", GetLight1, return_internal_reference<>())
+      .def("GetLight", GetLight2, return_internal_reference<>())
       .def("UseSceneLight", &Scene::UseSceneLight);
       
    class_<Scene::CollisionData>("CollisionData")

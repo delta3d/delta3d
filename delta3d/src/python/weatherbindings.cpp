@@ -31,7 +31,8 @@ void initWeatherBindings()
       .def("GetEnvironment", &Weather::GetEnvironment, return_internal_reference<>())
       .def("SetRateOfChange", &Weather::SetRateOfChange)
       .def("GetRateOfChange", &Weather::GetRateOfChange)
-      .def("AddDrawable", &Weather::AddDrawable);
+      .def("AddChild", &Weather::AddChild)
+      .def("RemoveChild", &Weather::RemoveChild);
       
    enum_<Weather::CloudType>("CloudType")
       .value("CLOUD_CLEAR", Weather::CLOUD_CLEAR)

@@ -20,7 +20,7 @@ void initUIDrawableBindings()
    void (UIDrawable::*CreateShader3)(std::string, std::string) = &UIDrawable::CreateShader;
    void (UIDrawable::*CreateShader4)(std::string, sgVec4, std::string) = &UIDrawable::CreateShader;
    
-   class_<UIDrawable, bases<Base, DeltaDrawable>, osg::ref_ptr<UIDrawable> >("UIDrawable", init<optional<int, int> >())
+   class_<UIDrawable, bases<DeltaDrawable>, osg::ref_ptr<UIDrawable> >("UIDrawable", init<optional<int, int> >())
       .def("GetInstanceCount", &UIDrawable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", UIDrawableGI1, return_internal_reference<>())
