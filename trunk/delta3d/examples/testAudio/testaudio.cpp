@@ -24,14 +24,14 @@ const char*    TestAudioApp::kSoundFile[] =
                };
 const char*    TestAudioApp::kGfxFile[kNumGfx] =
                {
-                  "dirt/flatdirt.osg",
-                  "BRDM/brdm-2.osg",
-                  "UH-1N/UH-1N.osg"
+                  "models/flatdirt.ive",
+                  "models/brdm.ive",
+                  "models/uh-1n.ive"
                };
 const char*    TestAudioApp::kFxFile[kNumFx] =
                {
-                  "explosion.osg",
-                  "smoke.osg"
+                  "effects/explosion.osg",
+                  "effects/smoke.osg"
                };
 
 

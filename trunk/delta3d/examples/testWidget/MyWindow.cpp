@@ -5,7 +5,7 @@
 IMPLEMENT_MANAGEMENT_LAYER( MyWindow )
 
 const char* MyWindow::PATH = "../../data;";
-const char* MyWindow::FILE = "BRDM/brdm-2.osg";
+const char* MyWindow::FILE = "models/brdm.ive";
 
 
 

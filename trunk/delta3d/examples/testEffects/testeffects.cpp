@@ -141,11 +141,11 @@ public:
       GetCamera()->SetTransform( &position );
 
       entity = new Object("UH-1N");
-      entity->LoadFile("UH-1N/UH-1N.osg");
+      entity->LoadFile("models/uh-1n.ive");
       AddDrawable( entity.get() );
 
       smoke = new ParticleSystem;
-      smoke->LoadFile("smoke.osg");
+      smoke->LoadFile("effects/smoke.osg");
 
       entity->AddChild(smoke.get());
 
@@ -154,12 +154,12 @@ public:
 
       effectManager->AddDetonationTypeMapping(
          HighExplosiveDetonation,
-         "explosion.osg"
+         "effects/explosion.osg"
          );
 
       effectManager->AddDetonationTypeMapping(
          SmokeDetonation,
-         "smoke.osg"
+         "effects/smoke.osg"
          );
 
       AddDrawable( effectManager.get() );
