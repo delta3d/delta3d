@@ -52,6 +52,55 @@ class PositionVisitor : public osg::NodeVisitor
 
 
 /**
+ * A callback class that updates the state of a detonation.
+ */
+class DetonationUpdateCallback : public osg::NodeCallback
+{
+   public:
+   
+      DetonationUpdateCallback(Detonation* detonation)
+         : mDetonation(detonation)
+      {}
+      
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         sgVec3 position;
+         
+         mDetonation->GetPosition(position);
+         
+         if(mDetonation->GetParent() != NULL)
+         {
+            Transform transform;
+            
+            mDetonation->GetParent()->GetTransform(&transform);
+            
+            sgMat4 mat;
+            
+            transform.Get(mat);
+            
+            sgXformPnt3(position, mat);
+         }
+         
+         node->accept(
+            PositionVisitor(
+               osg::Vec3(
+                  position[0],
+                  position[1],
+                  position[2]
+               )
+            )
+         );
+         
+         traverse(node, nv);
+      }
+      
+   private:
+   
+      Detonation* mDetonation;
+};
+
+
+/**
  * Constructor.
  *
  * @param name the instance name
@@ -121,35 +170,53 @@ Effect* EffectManager::GetEffect(int index) const
 }
 
 /**
- * Adds a new detonation to the list of detonations managed by
- * this effect manager.
+ * Adds a new detonation effect.
  *
  * @param position the position of the detonation
  * @param type the type of the detonation
  * @param timeToLive the lifespan of the detonation, in seconds,
  * or 0.0 for unlimited
+ * @param parent the parent of the detonation, or NULL for
+ * none
  * @return a pointer to the detonation object
  */
-Detonation* EffectManager::AddDetonation(
-   sgVec3 position,
-   DetonationType type,
-   double timeToLive)
+Detonation* EffectManager::AddDetonation(sgVec3 position,
+                                         DetonationType type,
+                                         double timeToLive,
+                                         Transformable* parent)
 {
    if(mDetonationTypeFilenameMap.count(type) > 0)
    {
-      osg::Node* node = osgDB::readNodeFile(mDetonationTypeFilenameMap[type], osgDB::Registry::CacheHintOptions::CACHE_NONE);
+      osg::Node* node = osgDB::readNodeFile(
+         mDetonationTypeFilenameMap[type], 
+         osgDB::Registry::CacheHintOptions::CACHE_NONE
+      );
       
-      if (node != NULL) 
-      { 
-        PositionVisitor pv(  
-           osg::Vec3(position[0], position[1], position[2])
-        );
+      Detonation* detonation = 
+         new Detonation(node, timeToLive, position, type, parent);
 
-        node->accept(pv);
+      if(node != NULL) 
+      {
+         if(parent != NULL)
+         {
+            node->setUpdateCallback(
+               new DetonationUpdateCallback(detonation)
+            );
+         }
+         else
+         {
+            node->accept(
+               PositionVisitor(
+                  osg::Vec3(
+                     position[0],
+                     position[1],
+                     position[2]
+                  )
+               )
+            );
+         }
       }
       
-      Detonation* detonation = new Detonation(node, timeToLive, position, type);
-
       AddEffect(detonation);
 
       return detonation;
@@ -480,13 +547,17 @@ bool Effect::IsDying()
  * 0.0 for unlimited
  * @param position the position of the detonation
  * @param type the type of the detonation
+ * @param parent the parent of the detonation, or NULL
+ * for none
  */
 Detonation::Detonation(osg::Node* node,
                        double timeToLive,
                        sgVec3 position,
-                       DetonationType type)
+                       DetonationType type,
+                       Transformable* parent)
    : Effect(node, timeToLive),
-     mType(type)
+     mType(type),
+     mParent(parent)
 {
    mPosition[0] = position[0];
    mPosition[1] = position[1];
@@ -513,4 +584,15 @@ void Detonation::GetPosition(sgVec3 result)
 DetonationType Detonation::GetType()
 {
    return mType;
+}
+
+/**
+ * Returns the Transformable parent of the detonation, or
+ * NULL if the detonation is unparented.
+ *
+ * @return the parent of the detonation
+ */
+Transformable* Detonation::GetParent()
+{
+   return mParent.get();
 }

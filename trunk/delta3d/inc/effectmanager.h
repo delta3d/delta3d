@@ -100,12 +100,15 @@ namespace dtCore
           * @param type the type of the detonation
           * @param timeToLive the lifespan of the detonation, in seconds,
           * or 0.0 for unlimited
+          * @param parent the parent of the detonation, or NULL for
+          * none
           * @return a pointer to the detonation object
           */
          Detonation* AddDetonation(
             sgVec3 position,
             DetonationType type = HighExplosiveDetonation,
-            double timeToLive = 5.0
+            double timeToLive = 5.0,
+            Transformable* parent = NULL
          );
 
          /**
@@ -318,11 +321,14 @@ namespace dtCore
           * 0.0 for unlimited
           * @param position the position of the detonation
           * @param type the type of the detonation
+          * @param parent the parent of the detonation, or NULL
+          * for none
           */
          Detonation(osg::Node* node,
                     double timeToLive,
                     sgVec3 position,
-                    DetonationType type);
+                    DetonationType type,
+                    Transformable* parent);
          
          /**
           * Retrieves the position of this detonation.
@@ -338,6 +344,14 @@ namespace dtCore
           */
          DetonationType GetType();
 
+         /**
+          * Returns the Transformable parent of the detonation, or
+          * NULL if the detonation is unparented.
+          *
+          * @return the parent of the detonation
+          */
+         Transformable* GetParent();
+         
 
       private:
 
@@ -350,6 +364,11 @@ namespace dtCore
           * The type of the detonation.
           */
          DetonationType mType;
+         
+         /**
+          * The optional parent of the transformation.
+          */
+         osg::ref_ptr<Transformable> mParent;
    };
 };
 
