@@ -28,6 +28,12 @@
 
 namespace dtScript
 {
+   /** This class assists the user in executing Python scripts from within
+   * the C++ Delta3D world. Just instantiate a ScriptManager, call Load(filename)
+   * on your Python script, and then sucessive Run() calls will execute it.
+   * Alternatively you can call Run(filename) to load and execute in one step (but
+   * it will not save the compiled Python object in memory.
+   */
    class DT_EXPORT ScriptManager : public dtCore::Base
 	{
 
