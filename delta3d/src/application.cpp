@@ -31,13 +31,14 @@ Application::Application(std::string configFilename)
       std::string foundPath = osgDB::findDataFile(configFilename);
         
       TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());
-      if (!xmlDoc->LoadFile(foundPath.c_str()))
+      if(foundPath.empty())
       {
          Notify(WARN, "Application: can't find config file %s", configFilename.c_str());
          CreateInstances(); //create default window, camera, etc.
       }
       else
       {
+         xmlDoc->LoadFile();
          TiXmlElement *root = xmlDoc->RootElement();
          if (root != NULL)  ParseConfigFile(root);
       }

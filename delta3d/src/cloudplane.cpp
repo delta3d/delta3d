@@ -111,11 +111,11 @@ void CloudPlane::Create( void )
 	osg::StateSet *stateset = mPlane->getOrCreateStateSet();
 
 	mCloudTexture = createPerlinTexture();
-    stateset->setTextureAttributeAndModes(0, mCloudTexture.get());
+   stateset->setTextureAttributeAndModes(0, mCloudTexture.get());
 
 	// Texture filtering
 	mCloudTexture->setUseHardwareMipMapGeneration(true);
-	mCloudTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
+	mCloudTexture->setFilter(osg::Texture::MAG_FILTER, osg::Texture::LINEAR);
 	mCloudTexture->setFilter(osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR);
 	mCloudTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
 	mCloudTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
@@ -131,18 +131,24 @@ void CloudPlane::Create( void )
 	// Blending Function
 	osg::BlendFunc *trans = new osg::BlendFunc();
 	trans->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-	stateset->setAttributeAndModes(trans);
-
+   stateset->setAttributeAndModes(trans);
+   
 	// Add fog - Every EnvEffect must do it itself, if we want fog enabled for it
 	mFog = new osg::Fog();
 	mFog->setMode(osg::Fog::LINEAR);
 	stateset->setAttributeAndModes(mFog.get());
 	stateset->setMode( GL_FOG, osg::StateAttribute::ON );
 
+
 	mGeode->addDrawable(mPlane.get());
 
 	mXform->addChild(mGeode.get());
 	mNode->addChild(mXform.get());
+
+   //init the colors to something believable
+   sgVec4 sky = {1.f, 1.f, 1.f, 1.f};
+   sgVec4 fogColor = {1.f, 1.f, 1.f, 1.f};
+   Repaint(sky, fogColor, 45.0, 45.0, 10000.0);
 }
 
 void CloudPlane::Repaint(sgVec4 sky_color, sgVec4 fog_color, 
