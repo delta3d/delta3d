@@ -1,5 +1,6 @@
 #pragma once
 
+#include "base.h"
 #include "drawable.h"
 #include "mouse.h"
 #include "keyboard.h"
@@ -15,6 +16,7 @@
 #include "tinystr.h"
 #include "tinyxml.h"
 #include <stack>
+#include <queue>
 
 namespace dtCore
 {
@@ -35,7 +37,7 @@ namespace dtCore
      *
      * @see Scene::AddDrawable()
      */
-   class UIDrawable : public osg::Referenced,
+   class UIDrawable : public dtCore::Base,
                       public dtCore::Drawable,
                       public dtCore::MouseListener,
                       public dtCore::KeyboardListener
@@ -79,6 +81,9 @@ namespace dtCore
       ///Default constructor - accepts the width and height of window
       UIDrawable(int width=1, int height=1);
       virtual ~UIDrawable();
+
+      ///Override to receive messages
+      virtual void OnMessage(MessageData *data);
 
       ///Get a pointer to the underlying CUI_UI
       CUI_UI* GetUI(void) {return mUI;}
@@ -160,6 +165,24 @@ namespace dtCore
 
       //! stack of frame hierarchy
       ELEMSTACK m_elementStack;
+
+      ///used for caching mouse events
+      typedef struct MOUSEEVENT
+      {
+         MOUSEEVENT(float X = 0.f, float Y =0.f, unsigned int S = 0L):x(X),y(Y),s(S){}
+         MOUSEEVENT& operator=( const MOUSEEVENT& that ) { x=that.x; y=that.y; s=that.s; return *this; }
+         float          x;
+         float          y;
+         unsigned int   s;
+      };
+
+      /// type - STL queue of mouse events
+      typedef std::queue<MOUSEEVENT> MOUSEQUEUE;
+
+      //! queues of mouse events (buffered for access protection)
+      enum  {  NumMouseQueues = 2L  };
+      MOUSEQUEUE     mMouseQueue[NumMouseQueues];
+      unsigned int   mCurrentQueue;
 
       void LoadControlFrame( ELEMDATA *elem, CUI_Frame *frame = NULL );
       void LoadControlDraggableFrame( ELEMDATA *elem );
