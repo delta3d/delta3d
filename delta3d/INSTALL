@@ -75,9 +75,12 @@ Fedora Core-up (2.6.5-1.358)
    These files are high-level instructions that tell CMake how to genereate 
    Makefiles for your configuration. In each of these directories run:
 
-   'cmake .' and then 'make'
+   'cmake .', and then 'make' 
 
-   to build the apprpropriate files. That's it! . 
+   to build the apprpropriate files. 	
+
+   To build the Delta3D source, also run 'make install' to place the shared
+   libraries in the ../lib folder.
 
 Note:
 HLA requires RTI, as mentioned above. Instructions to build HLA-related
