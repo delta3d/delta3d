@@ -11,5 +11,16 @@
  */
 void dtCore::SetDataFilePathList(std::string pathList )
 {
+   for(std::string::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
+   {
+      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+      if( *itr == ':' )
+         *itr = ';';
+      #else
+      if( *itr == ';' )
+         *itr = ':'; 
+      #endif
+   }
+   
    osgDB::setDataFilePathList(pathList);
 }
