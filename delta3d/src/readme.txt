@@ -125,6 +125,10 @@ Kernel <= 2.6.10-1.770_FC3
                          'release' builds with optimizations enabled.
     noWarnings=1 - Turns off all compiler warnings.
 
+   The old Cmake file are still around and you can build with them using:
+     cmake .
+     make
+
    dtPython
    --------
    Follow instructions in examples/testPython/readme.txt.

@@ -1,9 +1,6 @@
 Import('*')
 
-bspCompiler = SConscript( 'bspCompiler/SConscript' )
-#hlaStealthViewer = SConscript( 'hlaStealthViewer/SConscript' )
-psEditor = SConscript( 'psEditor/SConscript' )
-viewer = SConscript( 'Viewer/SConscript' )
-
-#Return( 'bspCompiler', 'hlaStealthViewer', 'psEditor', 'viewer' )
-#Return( 'bspCompiler', 'psEditor', 'viewer' )
+SConscript( 'bspCompiler/SConscript' )
+SConscript( 'hlaStealthViewer/SConscript' )
+SConscript( 'psEditor/SConscript' )
+SConscript( 'Viewer/SConscript' )

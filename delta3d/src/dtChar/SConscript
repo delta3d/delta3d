@@ -5,5 +5,4 @@ dtCharSrcs = [  'character.cpp' ]
 dtCharLib = env.SharedLibrary( 'dtchar', dtCharSrcs, LIBS=[ 'dtcore', 'osg', 'osgDB', 'plibsg', 'plibul', 'Producer', 'rbody' ] )
 
 env.Alias('install', env.Install( "$prefix/lib", dtCharLib ) )
-
-Return( 'dtCharLib' )
+env.Default( dtCharLib )
