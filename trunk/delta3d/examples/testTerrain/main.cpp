@@ -711,7 +711,6 @@ int main( int argc, char **argv )
 {
    SetDataFilePathList("..;../../data/;../../../data/;./data/;" + GetDeltaDataPathList());
 
-{
    TestTerrainApplication* testTerrainApp =
       new TestTerrainApplication;
 
