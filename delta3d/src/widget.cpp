@@ -241,7 +241,7 @@ Widget::Step( void )
    assert( sys );
 
    sys->Step();
-   SendMessage( msgRedraw );
+   //SendMessage( msgRedraw );
 }
 
 
