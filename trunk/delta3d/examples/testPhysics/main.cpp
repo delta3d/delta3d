@@ -191,7 +191,7 @@ public:
          GetScene()->AddDrawable( obj1 );
          GetScene()->AddDrawable( obj2 );
 
-         GetScene()->SetGravity(0, 0, -9.8f);
+         GetScene()->SetGravity(0, 0, -15.f);
 
          GetWindow()->SetWindowTitle("'b'=box, 's'=sphere, 'c'=cylinder");
          ::OrbitMotionModel *omm = new ::OrbitMotionModel(GetMouse(), GetCamera());
