@@ -1,0 +1,5 @@
+Import('*')
+
+env = env.Copy()
+
+testLights = env.Program( 'testLights', 'testlights.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm' ] )
