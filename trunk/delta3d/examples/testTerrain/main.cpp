@@ -1,12 +1,6 @@
 #include "dt.h"
-#include "application.h"
-#include "environment.h"
-#include "globals.h"
-#include "object.h"
-#include "skydome.h"
-#include "ufomotionmodel.h"
-
-#include "soarx/soarxterrain.h"
+#include "dtabc.h"
+#include "soarx/dtsoarx.h"
 
 #include <osg/CullSettings>
 #include <osg/PolygonMode>

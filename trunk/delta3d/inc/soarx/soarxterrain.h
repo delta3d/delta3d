@@ -564,28 +564,4 @@ namespace dtSOARX
    };
 };
 
-#undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
-#undef _AUTOLIBNAME2
-
-#if defined(_DEBUG)
-   #define _AUTOLIBNAME  "dtsoarxd.lib"
-   #define _AUTOLIBNAME2 "gdal.lib"
-#else
-   #define _AUTOLIBNAME  "dtsoarx.lib"
-   #define _AUTOLIBNAME2 "gdal.lib"
-#endif
-
-#define _AUTOLIBNAME1 "osgGL2.lib"
-
-#ifndef _NOAUTOLIBMSG
-   #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-#endif
-
-#pragma comment (lib, _AUTOLIBNAME)
-#pragma comment (lib, _AUTOLIBNAME1)
-#pragma comment (lib, _AUTOLIBNAME2)
-
 #endif // DT_SOARX_TERRAIN
