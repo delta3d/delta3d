@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib openal32.lib alut.lib isense.lib replicantbodyd.lib"
+				AdditionalDependencies="dtcored.lib producerd.lib osgd.lib osgdbd.lib replicantbodyd.lib sg_d.lib ul_d.lib"
 				OutputFile="..\bin\dtchard.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd; libcmt"
@@ -82,7 +82,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib producer.lib sg.lib ul.lib winmm.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib tinyxml.lib osgutil.lib ode.lib opcode.lib osgtext.lib opengl32.lib osgterrain.lib glgui.lib osggl2.lib js.lib openal32.lib alut.lib isense.lib replicantbody.lib"
+				AdditionalDependencies="dtcore.lib producer.lib osg.lib osgdb.lib replicantbody.lib sg.lib ul.lib"
 				OutputFile="..\bin\dtchar.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt"
