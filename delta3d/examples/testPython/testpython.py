@@ -24,15 +24,7 @@ class TestPythonApplication(Application):
         self.plane.SetTransform(self.transform)
         self.angle -= 45*deltaFrameTime
 
-class MouseHandler(MouseListener):
-    def MouseMoved(self, mouse, x, y):
-        print 'you moved the mouse!'
-        
 testPythonApp = TestPythonApplication('config.xml')
-
-mouseHandler = MouseHandler()
-
-testPythonApp.GetMouse().AddMouseListener(mouseHandler)
 
 testPythonApp.Config()
 testPythonApp.Run()
