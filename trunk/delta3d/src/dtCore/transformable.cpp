@@ -1,8 +1,7 @@
 #include "dtCore/scene.h"
 #include "dtCore/transformable.h"
 #include "dtCore/notify.h"
-
-#include "dtUtil/dtUtil.h"
+#include "dtUtil/matrixutil.h"
 
 using namespace dtCore;
 
