@@ -14,7 +14,7 @@ using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
-double Scene::PHYSICS_STEPSIZE = 0.01;
+double Scene::mPhysicsStepSize = 0.0;
 
 // Replacement message handler for ODE 
 extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
@@ -118,7 +118,7 @@ void Scene::RegisterPhysical( Physical *physical)
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
-   
+                            
    Physical* physical = dynamic_cast<Physical*>(drawable);
    
    if(physical != NULL)
@@ -165,6 +165,7 @@ mFrameStamp(new osg::FrameStamp())
 {
    mSceneView->init();
    mSceneView->setDefaults(); //osg::SceneView
+
    mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
 
    mSceneView->setFrameStamp(mFrameStamp.get());
@@ -323,7 +324,17 @@ void Scene::OnMessage(MessageData *data)
    if(data->message == "preframe")
    {
       double dt = *(double *)data->userData;
-      const int numSteps = (int)(dt/PHYSICS_STEPSIZE);
+
+      bool usingDeltaStep = false;
+
+      // if step size is 0.0, use the deltaFrameTime instead
+      if( mPhysicsStepSize == 0.0 ) 
+      {
+         SetPhysicsStepSize( dt );
+         usingDeltaStep = true;
+      }
+
+      const int numSteps = (int)(dt/mPhysicsStepSize);
 
       vector<Physical*>::iterator it;
       
@@ -333,6 +344,7 @@ void Scene::OnMessage(MessageData *data)
       {
          (*it)->PrePhysicsStepUpdate();
       }
+
       for (int i=0; i<numSteps; i++)
       {
          if (mUserNearCallback)
@@ -340,12 +352,12 @@ void Scene::OnMessage(MessageData *data)
          else
             dSpaceCollide(mSpaceID, this, NearCallback);
 
-         dWorldQuickStep(mWorldID, PHYSICS_STEPSIZE);
+         dWorldQuickStep(mWorldID, mPhysicsStepSize);
          
          dJointGroupEmpty(mContactJointGroupID);
       }
 
-      double leftOver = dt - (numSteps * PHYSICS_STEPSIZE);
+      double leftOver = dt - (numSteps * mPhysicsStepSize);
       
       if(leftOver > 0.0)
       {   
@@ -365,6 +377,9 @@ void Scene::OnMessage(MessageData *data)
       {
          (*it)->PostPhysicsStepUpdate();
       }
+
+      if( usingDeltaStep ) //reset physics step size to 0.0 (i.e. use System step size)
+         SetPhysicsStepSize( 0.0 );
    }
 }
 
@@ -447,3 +462,7 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
    mUserNearCallbackData = data;
 }
 
+void Scene::SetPhysicsStepSize( double stepSize )
+{
+   mPhysicsStepSize = stepSize;
+}

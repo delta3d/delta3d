@@ -29,11 +29,7 @@
 #include <osg/FrameStamp>
 #include <osgUtil/SceneView>
 
-//extern "C"
-//{
-   #include <ode/ode.h>
-//}
-
+#include <ode/ode.h>
 #include "sg.h"
 #include "dtCore/base.h"
 #include "dtCore/object.h"
@@ -85,9 +81,9 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Scene)
 
    public:
-      ///The fixed time (seconds) for the physics
-      ///time step. (default = 0.01)
-      static double PHYSICS_STEPSIZE;
+      // The time (seconds) for the physics time step. 
+      // (default = 0.0, indicating to use the System deltaFrameTime )
+      static double mPhysicsStepSize;
 
       Scene(std::string name = "scene");
       virtual ~Scene();
@@ -131,6 +127,8 @@ namespace dtCore
       
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback( dNearCallback *func, void *data=NULL );
+
+      static void SetPhysicsStepSize( double stepSize = 0.0 );
       
       ///Display the next statistics mode
       void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}
@@ -163,6 +161,7 @@ namespace dtCore
       dJointGroupID mContactJointGroupID; ///<The group that contains all contact joints
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
       void *mUserNearCallbackData; ///< pointer to user-supplied data
+
    };
    
 };
