@@ -7,7 +7,7 @@
 #include "weather.h"
 #include "widget.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
@@ -52,6 +52,6 @@
 #pragma  comment( lib, _AUTOLIBNAME6 )
 #pragma  comment( lib, _AUTOLIBNAME7 )
 
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #endif // DELTA_DTABC

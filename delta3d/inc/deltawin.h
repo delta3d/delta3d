@@ -67,10 +67,10 @@ namespace dtCore
       ///Get a handle to the Mouse associated with the DeltaWin
       Mouse *GetMouse() {return mMouse.get();}
 
-      #ifdef _WIN32
+      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
       ///Changes system screen resolution
       bool  ChangeScreenResolution (int width, int height, int bitsPerPixel);
-      #endif // _WIN32
+      #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
    private:
 
@@ -81,7 +81,7 @@ namespace dtCore
       bool mShowCursor;
    };
 
-   #ifdef _WIN32
+   #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
    typedef DeltaWin Window;
    #endif
 

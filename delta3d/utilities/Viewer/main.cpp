@@ -1,7 +1,7 @@
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #pragma  warning( disable : 4311 )  // casting void*->long warning
 #pragma  warning( disable : 4312 )  // casting long->void* warning
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #include "dt.h"
 #include "dtabc.h"

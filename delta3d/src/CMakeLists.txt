@@ -38,7 +38,7 @@ INSTALL_TARGETS( ${DELTA_SOURCE_DIR}/../lib dtcore dtabc dtvis dtaudio gui_fl )
 
 # Note! You must have RTI installed for dthla to build. 
 # We cannot distribute RTI, so you are on your own.
-#INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
-#LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
-#ADD_LIBRARY( dthla SHARED dis_types entity rticonnection )
-#TARGET_LINK_LIBRARIES( dthla dtcore GL glgui Producer ode opcode OpenThreads osg osgDB osgSim osgText osgUtil plibsg plibul tinyxml RTI-NG fedtime )
+INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
+LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
+ADD_LIBRARY( dthla SHARED dis_types entity rticonnection )
+TARGET_LINK_LIBRARIES( dthla dtcore GL glgui Producer ode opcode OpenThreads osg osgDB osgSim osgText osgUtil plibsg plibul tinyxml RTI-NG fedtime )

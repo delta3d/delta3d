@@ -3,6 +3,7 @@
 
 #include <soarx/soarxterrain.h>
 
+#ifdef _WIN32
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
@@ -49,6 +50,6 @@
 #pragma  comment( lib, _AUTOLIBNAME2 )
 #pragma  comment( lib, _AUTOLIBNAME3 )
 
-
+#endif // _WIN32
 
 #endif   // DELTA_DTSOARX

@@ -139,7 +139,7 @@ class Viewer :  public   dtABC::Widget
 };
 
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME
 
@@ -154,6 +154,6 @@ class Viewer :  public   dtABC::Widget
 #endif
 
 #pragma comment (lib, _AUTOLIBNAME)
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #endif // DELTA_VIEWER

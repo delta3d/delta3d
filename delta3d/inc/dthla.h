@@ -3,7 +3,7 @@
 
 #include "rticonnection.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
@@ -53,6 +53,6 @@
 #pragma comment(lib, _AUTOLIBNAME3)
 #pragma comment(lib, _AUTOLIBNAME4)
 
-#endif // _WIN32
+#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #endif // DT_HLA

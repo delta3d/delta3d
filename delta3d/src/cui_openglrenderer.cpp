@@ -14,7 +14,7 @@ Purpose:
 	a simple interface to OpenGL
 */
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #include <windows.h>
 #include <GL/gl.h>
 #endif

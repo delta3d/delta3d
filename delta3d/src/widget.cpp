@@ -6,7 +6,7 @@
 
 #include "widget.h"
 
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
 #endif
 
