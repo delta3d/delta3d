@@ -17,6 +17,8 @@
 //{
    #include <ode/ode.h>
    #include <ode/collision_trimesh.h>
+#include <ode/src/collision_kernel.h> //new
+#include <ode/src/objects.h>
 //}
 
 namespace dtCore
