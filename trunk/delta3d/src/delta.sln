@@ -22,10 +22,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtutil", "dtUtil\dtutil.vcp
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "dtVis\dtvis.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "gui_fl\gui_fl.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
@@ -35,6 +31,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtsoarx", "soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -63,10 +63,6 @@ Global
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
-		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug.ActiveCfg = Debug|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug.Build.0 = Debug|Win32
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release.ActiveCfg = Release|Win32
@@ -75,6 +71,10 @@ Global
 		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Debug.Build.0 = Debug|Win32
 		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Release.ActiveCfg = Release|Win32
 		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Release.Build.0 = Release|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.ActiveCfg = Debug|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.Build.0 = Debug|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.ActiveCfg = Release|Win32
+		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		readme.txt = readme.txt
