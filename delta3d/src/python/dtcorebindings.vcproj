@@ -122,13 +122,31 @@
 				RelativePath=".\camerabindings.cpp">
 			</File>
 			<File
+				RelativePath=".\clouddomebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\cloudplanebindings.cpp">
+			</File>
+			<File
 				RelativePath=".\drawablebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\dtcorebindings.cpp">
 			</File>
 			<File
+				RelativePath=".\enveffectbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\environmentbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\infiniteterrainbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\inputdevicebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\isectorbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\joystickbindings.cpp">
@@ -137,16 +155,28 @@
 				RelativePath=".\keyboardbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\logicalinputdevicebindings.cpp">
+			</File>
+			<File
 				RelativePath=".\mousebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\objectbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\particlesystembindings.cpp">
+			</File>
+			<File
 				RelativePath=".\physicalbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\scenebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\skyboxbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\skydomebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\soundbindings.cpp">
@@ -165,6 +195,9 @@
 			</File>
 			<File
 				RelativePath=".\tripodbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\uidrawablebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\windowbindings.cpp">

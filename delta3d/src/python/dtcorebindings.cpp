@@ -12,21 +12,32 @@ using namespace dtCore;
 // The individual class bindings
 
 void initBaseBindings();
-void initDrawableBindings();
 void initCameraBindings();
+void initCloudDomeBindings();
+void initCloudPlaneBindings();
+void initDrawableBindings();
+void initEnvEffectBindings();
+void initEnvironmentBindings();
+void initInfiniteTerrainBindings();
 void initInputDeviceBindings();
-void initObjectBindings();
+void initIsectorBindings();
 void initJoystickBindings();
 void initKeyboardBindings();
+void initLogicalInputDeviceBindings();
 void initMouseBindings();
+void initObjectBindings();
+void initParticleSystemBindings();
 void initPhysicalBindings();
 void initSceneBindings();
+void initSkyBoxBindings();
+void initSkyDomeBindings();
 void initSoundBindings();
 void initSystemBindings();
 void initTrackerBindings();
 void initTransformBindings();
 void initTransformableBindings();
 void initTripodBindings();
+void initUIDrawableBindings();
 void initWindowBindings();
 
 void NotifyWrap(NotifySeverity ns, const char* msg)
@@ -55,6 +66,12 @@ BOOST_PYTHON_MODULE(dtCore)
    initTransformBindings();
    initTransformableBindings();
    initDrawableBindings();
+   initEnvEffectBindings();
+   initCloudDomeBindings();
+   initCloudPlaneBindings();
+   initSkyBoxBindings();
+   initSkyDomeBindings();
+   initEnvironmentBindings();
    initPhysicalBindings();
    initObjectBindings();
    initCameraBindings();
@@ -64,6 +81,11 @@ BOOST_PYTHON_MODULE(dtCore)
    initMouseBindings();
    initJoystickBindings();
    initTrackerBindings();
+   initLogicalInputDeviceBindings();
    initWindowBindings();
    initSoundBindings();
+   initParticleSystemBindings();
+   initUIDrawableBindings();
+   initIsectorBindings();
+   initInfiniteTerrainBindings();
 }
