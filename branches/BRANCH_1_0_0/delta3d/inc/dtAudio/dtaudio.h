@@ -1,10 +1,10 @@
 #ifndef  DELTA_DTAUDIO
 #define  DELTA_DTAUDIO
 
-#include <dtaudio/sound.h>
-#include <dtaudio/listener.h>
-#include <dtaudio/audiomanager.h>
-#include <dtaudio/soundeffectbinder.h>
+#include <dtAudio/sound.h>
+#include <dtAudio/listener.h>
+#include <dtAudio/audiomanager.h>
+#include <dtAudio/soundeffectbinder.h>
 
 
 
