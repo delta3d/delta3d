@@ -15,18 +15,6 @@ public:
    ParticleSystemWrap(PyObject* self, std::string name = "ParticleSystem")
       :  mSelf(self)
    {}
-
-   /*
-   virtual osg::Node* LoadFile(std::string filename, bool useCache=false)
-   {
-      call_method<osg::Node*>(mSelf, "LoadFile", filename, useCache);
-   }
-
-   osg::Node* DefaultLoadFile(std::string filename)
-   {
-      ParticleSystem::LoadFile(filename);
-   }
-   */
    
    void LoadFileWrapper1(std::string filename, bool useCache)
    {
@@ -43,8 +31,6 @@ protected:
    PyObject* mSelf;
 };
 
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
-
 void initParticleSystemBindings()
 {
    ParticleSystem* (*ParticleSystemGI1)(int) = &ParticleSystem::GetInstance;
@@ -56,7 +42,6 @@ void initParticleSystemBindings()
       .def("GetInstance", ParticleSystemGI1, return_internal_reference<>())
       .def("GetInstance", ParticleSystemGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      //.def("LoadFile", &ParticleSystem::LoadFile, LF_overloads()[return_internal_reference<>()])
       .def("LoadFile", &ParticleSystemWrap::LoadFileWrapper1)
       .def("LoadFile", &ParticleSystemWrap::LoadFileWrapper2)
       .def("SetEnabled", &ParticleSystem::SetEnabled)

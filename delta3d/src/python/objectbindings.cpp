@@ -15,17 +15,7 @@ class ObjectWrap : public Object
       ObjectWrap(PyObject* self, std::string name = "")
          : mSelf(self)
       {}
-      /*
-      virtual bool LoadFile(std::string filename, bool useCache = true)
-      {
-         return call_method<bool>(mSelf, "LoadFile", filename, useCache);
-      }
-      
-      bool DefaultLoadFile(std::string filename, bool useCache)
-      {
-         return Object::LoadFile(filename, useCache);
-      }
-      */  
+
       void LoadFileWrapper1(std::string filename, bool useCache)
       {
          Object::LoadFile(filename,useCache);
@@ -55,7 +45,6 @@ void initObjectBindings()
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
       .def("GetInstance", ObjectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      //.def("LoadFile", &Object::LoadFile, LF_overloads()[return_internal_reference<>()])
       .def("LoadFile", &ObjectWrap::LoadFileWrapper1 )
       .def("LoadFile", &ObjectWrap::LoadFileWrapper2 )
       .def("RecenterGeometryUponLoad", &Object::RecenterGeometryUponLoad, RGUL_overloads());
