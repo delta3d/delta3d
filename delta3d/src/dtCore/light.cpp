@@ -66,7 +66,7 @@ void Light::SetEnabled( bool enabled )
    if( GetLightingMode() == GLOBAL && GetSceneParent() )
    {
       osg::Light* osgLight = mLightSource->getLight();
-      GetSceneParent()->GetSceneHandler()->GetSceneView()->getGlobalStateSet()->setAssociatedModes( osgLight, state );
+      GetSceneParent()->GetSceneNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
    }
 
    mLightSource->setLocalStateSetModes( state );
