@@ -200,11 +200,6 @@ public:
    {
       Application::Config();
 
-      //tweak the ambient lighting a little
-      RefPtr<Light> l = GetScene()->GetLight(0);
-      l->SetAmbient(0.75f, 0.75f, 0.75f, 1.f);
-      l->SetDiffuse(1.f, 1.f, 1.f, 1.f);
-
       Transform position;
       position.Set(0.f, -10.f, 1.0f, 0.f, 0.f, 0.f);
       GetCamera()->SetTransform( &position );
