@@ -107,6 +107,8 @@ Install Boost Python:
      http://sourceforge.net/projects/boost/
 - Obtain Boost Jam (package 'boost-jam').
 - Decompress the BoostJam archive and place the file 'bjam' in your PATH.
+- Set env. var PYTHON_ROOT to your your python installation (usually /usr or /usr/local)
+- Set env. var PYTHON_VERSION to the 2-part major python version (e.g. 2.3 or 2.4)
 - Go to boost_1_31_0/libs/python/build.
 - Run 'bjam -sTOOLS=gcc'.
 - Copy resulting shared objects to delta3d/ext/lib (non-debug version is
