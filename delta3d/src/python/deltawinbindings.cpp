@@ -34,7 +34,5 @@ void initDeltaWinBindings()
       .def("GetRenderSurface", &DeltaWin::GetRenderSurface, return_internal_reference<>())
       .def("GetKeyboard", &DeltaWin::GetKeyboard, return_internal_reference<>())
       .def("GetMouse", &DeltaWin::GetMouse, return_internal_reference<>())
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-           .def("ChangeScreenResolution", &DeltaWin::ChangeScreenResolution);
-#endif
+      .def("ChangeScreenResolution", &DeltaWin::ChangeScreenResolution);
 }
