@@ -339,6 +339,7 @@ public:
    show( void )
    {
       Parent::show();
+      Fl::check();
 
       dtABC::WinData  windata(  fl_xid(this),
                                  Parent::x(),
