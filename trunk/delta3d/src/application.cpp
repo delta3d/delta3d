@@ -1,6 +1,5 @@
 #include "application.h"
 #include "system.h"
-#include "guimgr.h"
 
 
 
@@ -60,28 +59,6 @@ void  Application::Run( void )
 {
    System::GetSystem()->Run();
 }
-
-
-
-void  Application::DisplayDebugGUI( const bool enable )
-{
-   static   GUI*  s_GUI = NULL;
-   if (s_GUI == NULL)
-   {
-      s_GUI = new GUI();
-      return;
-   }
-
-   if (enable == true)
-   {
-      s_GUI->Show(true);
-   }
-   else
-   {
-      s_GUI->Show(false);
-   }
-}
-
 
 
 /** protected methods */
