@@ -13,6 +13,8 @@
 
 class TestAudioApp   :  public   dtABC::Application
 {
+   DECLARE_MANAGEMENT_LAYER( TestAudioApp )
+
    private:
       typedef  std::vector<dtAudio::Sound*>              SND_LST;
       typedef  SND_LST::iterator                         SND_ITR;

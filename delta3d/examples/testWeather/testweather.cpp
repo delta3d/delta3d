@@ -7,6 +7,9 @@ using namespace dtCore;
 
 class TestWeatherApp : public dtABC::Application
 {
+
+   DECLARE_MANAGEMENT_LAYER( TestWeatherApp )
+
 public:
    TestWeatherApp( std::string configFile = "config.xml" )
   : Application( configFile )
@@ -69,7 +72,7 @@ private:
 
 };
 
-
+IMPLEMENT_MANAGEMENT_LAYER( TestWeatherApp )
 
 int main(int argc, char* argv[])
 {

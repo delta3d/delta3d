@@ -4,7 +4,7 @@
 using namespace   dtCore;
 using namespace   dtABC;
 
-
+IMPLEMENT_MANAGEMENT_LAYER( MyWidget )
 
 MyWidget::MyWidget( std::string name /*= "MyWidget"*/ )
 :  Widget(name),

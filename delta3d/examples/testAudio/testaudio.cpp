@@ -11,7 +11,7 @@ using namespace   dtABC;
 using namespace   dtAudio;
 using namespace   std;
 
-
+IMPLEMENT_MANAGEMENT_LAYER( TestAudioApp )
 
 // static member variables
 unsigned int   TestAudioApp::kNumSoundFiles(4L);

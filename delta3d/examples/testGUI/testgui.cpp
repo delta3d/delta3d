@@ -28,6 +28,8 @@ static bool mainHandler( int id, int numparam, void *value )
 class TestGUIApp : public Application
 {
 
+DECLARE_MANAGEMENT_LAYER( TestGUIApp )
+
 public:
    TestGUIApp( string configFilename = "config.xml" )
       : 
@@ -155,6 +157,8 @@ public:
 
    string mFilename;
 };
+
+IMPLEMENT_MANAGEMENT_LAYER( TestGUIApp )
 
 
 int main( int argc, const char* argv[] )

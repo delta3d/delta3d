@@ -223,7 +223,7 @@ public:
       position.Set(-2, 0, 0, 0, 0, 0);
       guy2->SetTransform(&position);
 
-      guy1->LoadFile( "marine/marine.rbody" );
+      guy1->LoadFile( "opfor/opfor.rbody" );
       guy2->LoadFile( "marine/marine.rbody" );
 
       AddDrawable( guy1 );
