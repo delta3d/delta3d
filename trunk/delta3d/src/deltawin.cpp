@@ -414,6 +414,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
    if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
    {
+      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
       return false;
    }
    return true;
