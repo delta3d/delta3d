@@ -14,7 +14,7 @@ using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
-double Scene::mPhysicsStepSize = 0.0;
+//double Scene::mPhysicsStepSize = 0.0;
 
 // Replacement message handler for ODE 
 extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
@@ -43,7 +43,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Scene::Scene(string name) : Base(name)
+Scene::Scene(string name) : Base(name), mPhysicsStepSize(0.0)
 {
    RegisterInstance(this);
    SetName(name);

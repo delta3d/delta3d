@@ -81,9 +81,6 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Scene)
 
    public:
-      // The time (seconds) for the physics time step. 
-      // (default = 0.0, indicating to use the System deltaFrameTime )
-      static double mPhysicsStepSize;
 
       Scene(std::string name = "scene");
       virtual ~Scene();
@@ -128,8 +125,9 @@ namespace dtCore
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback( dNearCallback *func, void *data=NULL );
 
-      static void SetPhysicsStepSize( double stepSize = 0.0 );
-      
+      double GetPhysicsStepSize( void ){ return mPhysicsStepSize; }
+      void SetPhysicsStepSize( double stepSize = 0.0 );
+
       ///Display the next statistics mode
       void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}
 
@@ -155,6 +153,10 @@ namespace dtCore
       dSpaceID mSpaceID;
       dWorldID mWorldID;
       sgVec3 mGravity;
+
+      // The time (seconds) for the physics time step. 
+      // (default = 0.0, indicating to use the System deltaFrameTime )
+      double mPhysicsStepSize;
       
       std::vector<Physical*> mPhysicalContents; ///<The physical contents of the scene
       
