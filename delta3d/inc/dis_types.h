@@ -40,6 +40,18 @@ namespace dtHLA
 
 
    /**
+    * DIS/RPR-FOM damage states.
+    */
+   enum DamageState
+   {
+      NoDamage = 0,
+      SlightDamage = 1,
+      ModerateDamage = 2,
+      Destroyed = 3
+   };
+   
+   
+   /**
     * A DIS/RPR-FOM entity identifier.
     */
    class EntityIdentifier

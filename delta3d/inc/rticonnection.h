@@ -677,6 +677,11 @@ namespace dtHLA
          RTI::ObjectClassHandle mAircraftClassHandle;
 
          /**
+          * The ground vehicle entity class handle.
+          */
+         RTI::ObjectClassHandle mGroundVehicleClassHandle;
+         
+         /**
           * The life form entity class handle.
           */
          RTI::ObjectClassHandle mLifeFormClassHandle;
@@ -897,6 +902,11 @@ namespace dtHLA
          sgMat4 mRotationOffsetInverse;
 
          /**
+          * The IP address of the local machine.
+          */
+         unsigned int mLocalIPAddress;
+         
+         /**
           * The DIS/RPR-FOM site identifier.
           */
          unsigned short mSiteIdentifier;
@@ -1066,6 +1076,7 @@ namespace dtHLA
 
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME1
+#undef _AUTOLIBNAME2
 
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
@@ -1074,18 +1085,22 @@ namespace dtHLA
 #if defined(_DEBUG)
 #define _AUTOLIBNAME  "libRTI-NGd.lib"
 #define _AUTOLIBNAME1  "tinyxmld.lib"
+#define _AUTOLIBNAME2  "ws2_32.lib"
 #else
 #define _AUTOLIBNAME  "libRTI-NG.lib"
 #define _AUTOLIBNAME1  "tinyxml.lib"
+#define _AUTOLIBNAME2  "ws2_32.lib"
 #endif
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
 #pragma message( "Will automatically link with " _AUTOLIBNAME )
 #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
+#pragma message( "Will automatically link with " _AUTOLIBNAME2 )
 #endif
 
 #pragma comment(lib, _AUTOLIBNAME)
 #pragma comment(lib, _AUTOLIBNAME1)
+#pragma comment(lib, _AUTOLIBNAME2)
 
 #endif // DT_HLA_RTI_CONNECTION

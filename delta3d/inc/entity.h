@@ -133,6 +133,20 @@ namespace dtHLA
           */
          const VelocityVector& GetAngularVelocityVector();
 
+         /**
+          * Sets this entity's DIS/RPR-FOM damage state.
+          *
+          * @param damageState the damage state
+          */
+         void SetDamageState(DamageState damageState);
+         
+         /**
+          * Returns this entity's DIS/RPR-FOM damage state.
+          *
+          * @return the damage state
+          */
+         DamageState GetDamageState();
+
 
       private:
 
@@ -170,6 +184,11 @@ namespace dtHLA
           * The entity's DIS/RPR-FOM angular velocity vector.
           */
          VelocityVector mAngularVelocityVector;
+         
+         /**
+          * The entity's DIS/RPR-FOM damage state.
+          */
+         DamageState mDamageState;
    };
 };
 

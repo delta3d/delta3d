@@ -19,7 +19,8 @@ IMPLEMENT_MANAGEMENT_LAYER(Entity)
  * @param name the instance name
  */
 Entity::Entity(string name)
-   : Object(name)
+   : Object(name),
+     mDamageState(NoDamage)
 {}
 
 /**
@@ -166,4 +167,24 @@ void Entity::SetAngularVelocityVector(const VelocityVector& angularVelocityVecto
 const VelocityVector& Entity::GetAngularVelocityVector()
 {
    return mAngularVelocityVector;
+}
+
+/**
+ * Sets this entity's DIS/RPR-FOM damage state.
+ *
+ * @param damageState the damage state
+ */
+void Entity::SetDamageState(DamageState damageState)
+{
+   mDamageState = damageState;
+}
+
+/**
+ * Returns this entity's DIS/RPR-FOM damage state.
+ *
+ * @return the damage state
+ */
+DamageState Entity::GetDamageState()
+{
+   return mDamageState;
 }
