@@ -207,11 +207,8 @@ public:
       GetCamera()->SetTransform( &position );
       
       Object* terrain = new Object( "Terrain" );
-      terrain->LoadFile( "dirt.ive" );
+      terrain->LoadFile( "dirt/dirt.ive" );
       AddDrawable( terrain );
-
-      //Weather* weather = new Weather();   
-      //AddDrawable( weather->GetEnvironment() );
 
       Character* guy1 = new Character( "bob" );
       Character* guy2 = new Character( "dave" );
