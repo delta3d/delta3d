@@ -1,0 +1,4 @@
+Import('*')
+
+if boostFound and pythonFound :
+    testPython = env.Program( 'testPython', 'testpython.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'python2.3' ] )

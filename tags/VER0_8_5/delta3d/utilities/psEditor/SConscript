@@ -1,0 +1,4 @@
+Import('*')
+
+psEditor = env.Program( 'psEditor', ['main.cpp', 'psEditorGUI.cxx', 'texturepreview.cpp'], LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'fltk', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgFX', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'glgui', 'Xxf86vm', 'isense'] )
+
