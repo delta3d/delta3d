@@ -144,7 +144,7 @@ IMPLEMENT_MANAGEMENT_LAYER(TestMotionModelsApplication)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;../../data/;" + GetDeltaDataPathList() );
+   SetDataFilePathList("..;../../data/;../../../data/;" + GetDeltaDataPathList() );
 
    TestMotionModelsApplication* testMotionModelsApp =
       new TestMotionModelsApplication;

@@ -311,7 +311,7 @@ IMPLEMENT_MANAGEMENT_LAYER(TestTerrainApplication)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;../../data/;./data/;" + GetDeltaDataPathList());
+   SetDataFilePathList("..;../../data/;../../../data/;./data/;" + GetDeltaDataPathList());
 
    TestTerrainApplication* testTerrainApp = 
       new TestTerrainApplication;
