@@ -71,7 +71,7 @@ Function {make_window()} {open
       xywh {4 25 595 550}
     } {
       Fl_Group {} {
-        label Particles open selected
+        label Particles selected
         xywh {4 52 590 515}
       } {
         Fl_Choice Particles_Alignment {

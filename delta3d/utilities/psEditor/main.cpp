@@ -562,23 +562,15 @@ void psEditorGUI_New(Fl_Menu_*, void*)
    updateGUIElements();
 }
 
-void psEditorGUI_Open(Fl_Menu_*, void*)
+void LoadFile( std::string filename )
 {
-   char* filename =
-      fl_file_chooser(
-         "Open",
-         "Particle Systems (*.osg)",
-         particleSystemFilename.c_str(),
-         1
-      );
-
-   if(filename != NULL)
+   if(!filename.empty())
    {
-      osg::Node* node = osgDB::readNodeFile(filename);
+      osg::Node* node = osgDB::readNodeFile(filename.c_str());
 
       if(node == NULL || !IS_A(node, osg::Group*))
       {
-         fl_alert("Invalid particle system: %s", filename);
+         fl_alert("Invalid particle system: %s", filename.c_str());
 
          return;
       }
@@ -666,9 +658,23 @@ void psEditorGUI_Open(Fl_Menu_*, void*)
       }
       else
       {
-         fl_alert("Invalid particle system: %s", filename);
+         fl_alert("Invalid particle system: %s", filename.c_str());
       }
    }
+}
+
+void psEditorGUI_Open(Fl_Menu_*, void*)
+{
+   char* filename =
+      fl_file_chooser(
+      "Open",
+      "Particle Systems (*.osg)",
+      particleSystemFilename.c_str(),
+      1
+      );
+
+   std::string name = filename;
+   LoadFile(name);
 }
 
 void psEditorGUI_Save(Fl_Menu_*, void*)
@@ -2466,6 +2472,13 @@ int main( int argc, char **argv )
    editorWindow->show();
 
    GUIUpdater guic;
+
+   //load the first filename passed in on the command line
+   if (argc>1)
+   {
+      std::string filename = argv[1];
+      LoadFile(filename);
+   }
 
    System::GetSystem()->Config();
    System::GetSystem()->Run();
