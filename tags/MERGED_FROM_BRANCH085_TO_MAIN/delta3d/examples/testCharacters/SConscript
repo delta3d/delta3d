@@ -1,0 +1,7 @@
+Import('*')
+
+env = env.Copy()
+
+testCharacters = env.Program( 'testCharacters', 'testcharacters.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'dtchar', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'rbody', 'rvrutils', 'cal3d', 'rcfgscript', 'gdal' ] )
+
+Return( 'testCharacters' )

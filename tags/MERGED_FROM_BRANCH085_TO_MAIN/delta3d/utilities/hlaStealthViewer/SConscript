@@ -1,0 +1,16 @@
+import glob
+import os
+import string
+
+Import('*')
+
+if rtiFound :
+
+    rtiLibs = glob.glob( os.path.join(env['ENV']['RTI_LIB'], '*.so' ))
+    rtiLibs = [ os.path.basename(path) for path in rtiLibs ]
+    rtiLibs = [ string.split(lib,'.')[0] for lib in rtiLibs ]
+
+    linkTheseLibs = [ 'dtcore', 'dtabc', 'dthla', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgSim', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'gdal' ] + rtiLibs
+
+    hlaStealthViewer = env.Program( 'hlaStealthViewer', 'main.cpp', LIBS=linkTheseLibs )
+
