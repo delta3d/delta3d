@@ -59,8 +59,6 @@ Physical::Physical()
  */
 Physical::~Physical()
 {
-   Notify(DEBUG_INFO, "Physical: Deleting '%s'", GetName().c_str());
-
    dGeomDestroy(mGeomID);
  
    if(mBodyID != 0)
@@ -972,7 +970,7 @@ void Physical::AddedToScene( Scene *scene )
    }
    else
    {
-      mParentScene->UnRegisterPhysical(this);
+      if (mParentScene.valid()) mParentScene->UnRegisterPhysical(this);
       DeltaDrawable::AddedToScene( scene );
    } 
 } 
