@@ -6,9 +6,9 @@ Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Particle System Editor} open
-    xywh {45 125 602 584} type Double visible
+    xywh {805 165 602 584} type Double visible
   } {
-    Fl_Menu_Bar MainMenu {open
+    Fl_Menu_Bar MainMenu {selected
       xywh {0 0 600 25}
     } {
       submenu {} {
@@ -92,7 +92,7 @@ Function {make_window()} {open
         }
       }
     }
-    Fl_Tabs {} {
+    Fl_Tabs {} {open
       xywh {4 25 595 550}
     } {
       Fl_Group {} {
@@ -488,77 +488,97 @@ Function {make_window()} {open
         xywh {4 52 590 515} hide
       } {
         Fl_Group RadialShooterParameters {
-          label {Radial Shooter Parameters}
+          label {Radial Shooter Parameters} open
           xywh {9 297 580 270} box DOWN_BOX align 18
         } {
-          Fl_Value_Input RadialShooter_MinTheta {
-            label {Min. Theta}
-            callback psEditorGUI_RadialShooter_SetMinTheta
-            xywh {104 327 85 25} minimum -3.1416 maximum 3.1416 step 0.01
-          }
-          Fl_Value_Input RadialShooter_MaxTheta {
-            label {Max. Theta}
-            callback psEditorGUI_RadialShooter_SetMaxTheta
-            xywh {104 357 85 25} minimum -3.1416 maximum 3.1416 step 0.01 value 0.3927
-          }
-          Fl_Value_Input RadialShooter_MinPhi {
-            label {Min. Phi}
-            callback psEditorGUI_RadialShooter_SetMinPhi
-            xywh {264 327 85 25} minimum -6.2832 maximum 6.2832 step 0.01
-          }
-          Fl_Value_Input RadialShooter_MaxPhi {
-            label {Max. Phi}
-            callback psEditorGUI_RadialShooter_SetMaxPhi
-            xywh {264 357 85 25} minimum -6.2832 maximum 6.2832 step 0.01 value 6.2832
-          }
-          Fl_Value_Input RadialShooter_MinInitialSpeed {
-            label {Min. Initial Speed}
-            callback psEditorGUI_RadialShooter_SetMinInitialSpeed
-            xywh {479 327 85 25} maximum 50 step 0.1 value 10
-          }
-          Fl_Value_Input RadialShooter_MaxInitialSpeed {
-            label {Max. Initial Speed}
-            callback psEditorGUI_RadialShooter_SetMaxInitialSpeed
-            xywh {479 357 85 25} maximum 50 step 0.1 value 10
-          }
           Fl_Group {} {
-            label {Min. Initial Rotational Speed}
-            xywh {79 417 205 105} box ENGRAVED_BOX
+            label {Elevation Range} open
+            tooltip {The elevation range the Shooter will send each particle. 0=up, 3.14=down} xywh {31 327 163 64} box ENGRAVED_FRAME
           } {
-            Fl_Value_Input RadialShooter_MinInitialRotationalSpeedX {
-              label X
-              callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX
-              xywh {144 427 85 25} minimum -10 maximum 10 step 0.1
+            Fl_Value_Input RadialShooter_MinTheta {
+              label {Min (rad)}
+              callback psEditorGUI_RadialShooter_SetMinTheta
+              tooltip {The minimum elevation (0=up, 3.14=down)} xywh {104 331 85 25} minimum -3.1416 maximum 3.1416 step 0.01
             }
-            Fl_Value_Input RadialShooter_MinInitialRotationalSpeedY {
-              label Y
-              callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY
-              xywh {144 457 85 25} minimum -10 maximum 10 step 0.1
-            }
-            Fl_Value_Input RadialShooter_MinInitialRotationalSpeedZ {
-              label Z
-              callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ
-              xywh {144 487 85 25} minimum -10 maximum 10 step 0.1
+            Fl_Value_Input RadialShooter_MaxTheta {
+              label {Max (rad)}
+              callback psEditorGUI_RadialShooter_SetMaxTheta
+              tooltip {The maximum elevation (0=up, 3.14=down)} xywh {104 361 85 25} minimum -3.1416 maximum 3.1416 step 0.01 value 0.3927
             }
           }
           Fl_Group {} {
-            label {Max. Initial Rotational Speed}
-            xywh {314 417 205 105} box ENGRAVED_BOX
+            label {Azimuth Range} open
+            tooltip {The azimuth range the Shooter will send each particle. 0 = X axis, 3.14 = -X axis} xywh {218 327 163 64} box ENGRAVED_FRAME
           } {
-            Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedX {
-              label X
-              callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX
-              xywh {379 427 85 25} minimum -10 maximum 10 step 0.1
+            Fl_Value_Input RadialShooter_MinPhi {
+              label {Min (rad)}
+              callback psEditorGUI_RadialShooter_SetMinPhi
+              tooltip {The minimum azimuth (0=down the X+ axis)} xywh {291 332 85 25} minimum -6.2832 maximum 6.2832 step 0.01
             }
-            Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedY {
-              label Y
-              callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY
-              xywh {379 457 85 25} minimum -10 maximum 10 step 0.1
+            Fl_Value_Input RadialShooter_MaxPhi {
+              label {Max (rad)}
+              callback psEditorGUI_RadialShooter_SetMaxPhi
+              tooltip {The maximum azimuth (0=down the -X axis)} xywh {291 362 85 25} minimum -6.2832 maximum 6.2832 step 0.01 value 6.2832
             }
-            Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedZ {
-              label Z
-              callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedZ
-              xywh {379 487 85 25} minimum -10 maximum 10 step 0.1
+          }
+          Fl_Group {} {
+            label {Initial Velocity Range} open
+            tooltip {The initial velocity range the Shooter will send each particle} xywh {407 327 163 64} box ENGRAVED_FRAME
+          } {
+            Fl_Value_Input RadialShooter_MinInitialSpeed {
+              label {Min (m/s)}
+              callback psEditorGUI_RadialShooter_SetMinInitialSpeed
+              tooltip {The minimum starting velocity of each particle} xywh {480 332 85 25} maximum 1000 step 0.1 value 10
+            }
+            Fl_Value_Input RadialShooter_MaxInitialSpeed {
+              label {Max (m/s)}
+              callback psEditorGUI_RadialShooter_SetMaxInitialSpeed
+              tooltip {The maximum starting velocity of each particle} xywh {480 362 85 25} maximum 1000 step 0.1 value 10
+            }
+          }
+          Fl_Group {} {
+            label {Initial Rotational Velocity Range} open
+            tooltip {The inital rotational velocity range the Shooter applies to each particle} xywh {40 417 505 113} box ENGRAVED_BOX
+          } {
+            Fl_Group {} {
+              label {Min(rad/sec)}
+              xywh {130 426 138 94} box ENGRAVED_FRAME align 4
+            } {
+              Fl_Value_Input RadialShooter_MinInitialRotationalSpeedX {
+                label {X Axis}
+                callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedX
+                xywh {178 431 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MinInitialRotationalSpeedY {
+                label {Y Axis}
+                callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedY
+                xywh {178 461 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MinInitialRotationalSpeedZ {
+                label {Z Axis}
+                callback psEditorGUI_RadialShooter_SetMinInitialRotationalSpeedZ
+                xywh {178 491 85 25} minimum -10 maximum 10 step 0.1
+              }
+            }
+            Fl_Group {} {
+              label {Max(rad/sec)} open
+              xywh {386 426 138 94} box ENGRAVED_FRAME align 4
+            } {
+              Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedX {
+                label {X Axis}
+                callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedX
+                xywh {433 431 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedY {
+                label {Y Axis}
+                callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedY
+                xywh {433 461 85 25} minimum -10 maximum 10 step 0.1
+              }
+              Fl_Value_Input RadialShooter_MaxInitialRotationalSpeedZ {
+                label {Z Axis}
+                callback psEditorGUI_RadialShooter_SetMaxInitialRotationalSpeedZ
+                xywh {433 491 85 25} minimum -10 maximum 10 step 0.1
+              }
             }
           }
         }
