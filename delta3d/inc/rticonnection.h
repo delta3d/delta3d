@@ -16,7 +16,7 @@
 
 #define RTI_USES_STD_FSTREAM
 
-#include "rti.hh"
+#include "RTI.hh"
 #include "NullFederateAmbassador.hh"
 
 #include "sg.h"
@@ -120,7 +120,8 @@ namespace dtHLA
          /**
           * Destructor.
           */
-         virtual ~RTIConnection();
+         virtual ~RTIConnection()
+                 throw (RTI::FederateInternalError);
 
          /**
           * Creates/joins a federation execution.
@@ -428,7 +429,12 @@ namespace dtHLA
             RTI::ObjectHandle theObject,
             RTI::ObjectClassHandle theObjectClass,
             const char* theObjectName
-         );
+         )
+        throw (
+                RTI::CouldNotDiscover,
+                RTI::ObjectClassNotKnown,
+                RTI::FederateInternalError
+                );
 
          /**
           * Invoked by the RTI ambassador to request that the federate provide
@@ -440,6 +446,12 @@ namespace dtHLA
          virtual void provideAttributeValueUpdate(
             RTI::ObjectHandle theObject,
             const RTI::AttributeHandleSet& theAttributes
+         )
+         throw (
+            RTI::ObjectNotKnown,
+            RTI::AttributeNotKnown,
+            RTI::AttributeNotOwned,
+            RTI::FederateInternalError
          );
 
          /**
@@ -458,8 +470,15 @@ namespace dtHLA
             const RTI::FedTime& theTime,
             const char *theTag,
             RTI::EventRetractionHandle theHandle
+         )
+         throw (
+            RTI::ObjectNotKnown,
+            RTI::AttributeNotKnown,
+            RTI::FederateOwnsAttributes,
+            RTI::InvalidFederationTime,
+            RTI::FederateInternalError
          );
-
+         
          /**
           * Invoked by the RTI ambassador to notify the federate of updated object
           * attribute values.
@@ -472,6 +491,12 @@ namespace dtHLA
             RTI::ObjectHandle theObject,
             const RTI::AttributeHandleValuePairSet& theAttributes,
             const char *theTag
+         )
+         throw (
+            RTI::ObjectNotKnown,
+            RTI::AttributeNotKnown,
+            RTI::FederateOwnsAttributes,
+            RTI::FederateInternalError
          );
 
          /**
@@ -488,6 +513,11 @@ namespace dtHLA
             const RTI::FedTime& theTime,
             const char *theTag,
             RTI::EventRetractionHandle theHandle
+         )
+         throw (
+            RTI::ObjectNotKnown,
+            RTI::InvalidFederationTime,
+            RTI::FederateInternalError
          );
 
          /**
@@ -500,6 +530,10 @@ namespace dtHLA
          virtual void removeObjectInstance(
             RTI::ObjectHandle theObject,
             const char *theTag
+         )
+         throw (
+            RTI::ObjectNotKnown,
+            RTI::FederateInternalError
          );
 
          /**
@@ -514,6 +548,11 @@ namespace dtHLA
             RTI::InteractionClassHandle theInteraction,
             const RTI::ParameterHandleValuePairSet& theParameters,
             const char *theTag
+         )
+         throw (
+            RTI::InteractionClassNotKnown,
+            RTI::InteractionParameterNotKnown,
+            RTI::FederateInternalError
          );
 
          /**
