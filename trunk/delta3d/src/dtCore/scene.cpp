@@ -466,12 +466,6 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
    mUserNearCallbackData = data;
 }
 
-void Scene::SetPhysicsStepSize( double stepSize )
-{
-   mPhysicsStepSize = stepSize;
-}
-
-
 void Scene::AddLight( Light* light )
 {
    light->SetSceneParent( this );

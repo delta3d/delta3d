@@ -128,8 +128,8 @@ namespace dtCore
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback( dNearCallback *func, void *data=NULL );
 
-      double GetPhysicsStepSize( void ){ return mPhysicsStepSize; }
-      void SetPhysicsStepSize( double stepSize = 0.0 );
+      inline double GetPhysicsStepSize( void ) const { return mPhysicsStepSize; }
+      inline void SetPhysicsStepSize( const double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
       
       ///Display the next statistics mode
       void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}
