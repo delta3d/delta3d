@@ -35,7 +35,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="sg_d.lib ul_d.lib openthreadswin32d.lib osgd.lib"
 				OutputFile="../../bin/dtutild.dll"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
@@ -86,7 +86,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="sg.lib ul.lib openthreadswin32.lib osg.lib"
 				OutputFile="../../bin/dtutil.dll"
-				LinkIncremental="1"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
@@ -127,12 +127,6 @@
 			<File
 				RelativePath=".\domain.cpp">
 			</File>
-			<File
-				RelativePath=".\printvisitor.cpp">
-			</File>
-			<File
-				RelativePath=".\sketchvisitor.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -143,12 +137,6 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtUtil\dtUtil.h">
-			</File>
-			<File
-				RelativePath="..\..\inc\dtUtil\printvisitor.h">
-			</File>
-			<File
-				RelativePath="..\..\inc\dtUtil\sketchvisitor.h">
 			</File>
 		</Filter>
 		<Filter
