@@ -31,5 +31,6 @@ void initWindowBindings()
       .def("SetWindowTitle", &Window::SetWindowTitle)
       .def("GetWindowTitle", &Window::GetWindowTitle)
       .def("SetPosition", &Window::SetPosition)
-      .def("GetPosition", &Window::GetPosition);
+      .def("GetPosition", &Window::GetPosition)
+      .def("ChangeScreenResolution", &Window::ChangeScreenResolution);
 }

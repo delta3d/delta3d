@@ -26,7 +26,7 @@ System::~System()
    mInstanceFlag = false;
 }
 
-System* System::GetSystem(void)
+System* System::GetSystem()
 {
    if (!mInstanceFlag)
    {

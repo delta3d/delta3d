@@ -35,7 +35,7 @@ namespace dtCore
       void Config(void);
 
       ///Get a pointer to the System
-      static System *GetSystem(void);
+      static System *GetSystem();
 
       ///Toggles the running flag to true
       void Start(void);
