@@ -79,61 +79,12 @@ void UserInterface::cb_(Fl_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb__i(o,v);
 }
 
-#include <FL/Fl_Pixmap.H>
-static const char *idata_btnAdd[] = {
-"20 18 -4 1",
-" \377""f\377!\200\200\200\"\0\0\0#\377\377\377",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"        !\"\"#        ",
-"        !\"\"#        ",
-"        !\"\"#        ",
-"     !\"\"\"\"\"\"\"\"#     ",
-"     !\"\"\"\"\"\"\"\"#     ",
-"        !\"\"#        ",
-"        !\"\"#        ",
-"        !\"\"#        ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    "
-};
-static Fl_Pixmap image_btnAdd(idata_btnAdd);
-
 inline void UserInterface::cb_1_i(Fl_Button* o, void* v) {
   ((UserInterface*)v)->TransformRemChildCB(o);
 }
 void UserInterface::cb_1(Fl_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_1_i(o,v);
 }
-
-static const char *idata_btnDel[] = {
-"20 18 -4 1",
-" \377""f\377!\200\200\200\"\0\0\0#\377\377\377",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"     !\"\"\"\"\"\"\"\"#     ",
-"     !\"\"\"\"\"\"\"\"#     ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    ",
-"                    "
-};
-static Fl_Pixmap image_btnDel(idata_btnDel);
 
 inline void UserInterface::cb_ObjectFilename_i(Fl_Input* o, void* v) {
   ((UserInterface*)v)->ObjectFileCB(o);
@@ -530,6 +481,113 @@ void UserInterface::cb_cEnable(Fl_Check_Button* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_cEnable_i(o,v);
 }
 
+inline void UserInterface::cb_WeatherTimePeriodChoice_i(Fl_Choice* o, void* v) {
+  ((UserInterface*)v)->WeatherTimeCB(o);
+}
+void UserInterface::cb_WeatherTimePeriodChoice(Fl_Choice* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_WeatherTimePeriodChoice_i(o,v);
+}
+
+Fl_Menu_Item UserInterface::menu_WeatherTimePeriodChoice[] = {
+ {"Dawn", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"Day", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"Dusk", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"Night", 0,  0, 0, 0, 0, 0, 14, 56},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+inline void UserInterface::cb_WeatherSeasonChoice_i(Fl_Choice* o, void* v) {
+  ((UserInterface*)v)->WeatherSeasonCB(o);
+}
+void UserInterface::cb_WeatherSeasonChoice(Fl_Choice* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_WeatherSeasonChoice_i(o,v);
+}
+
+Fl_Menu_Item UserInterface::menu_WeatherSeasonChoice[] = {
+ {"Spring", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"Summer", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"Fall", 0,  0, 0, 0, 0, 0, 14, 56},
+ {"Winter", 0,  0, 0, 0, 0, 0, 14, 56},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+inline void UserInterface::cb_WeatherCloudSlider_i(Fl_Slider* o, void* v) {
+  ((UserInterface*)v)->WeatherCustomCloudCB(o);
+}
+void UserInterface::cb_WeatherCloudSlider(Fl_Slider* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherCloudSlider_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherWindSlider_i(Fl_Slider* o, void* v) {
+  ((UserInterface*)v)->WeatherCustomWindCB(o);
+}
+void UserInterface::cb_WeatherWindSlider(Fl_Slider* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherWindSlider_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherVisSlider_i(Fl_Slider* o, void* v) {
+  ((UserInterface*)v)->WeatherCustomVisCB(o);
+}
+void UserInterface::cb_WeatherVisSlider(Fl_Slider* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherVisSlider_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherThemeOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCustomOptionCB(o);
+}
+void UserInterface::cb_WeatherThemeOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherThemeOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherCustomOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCustomOptionCB(o);
+}
+void UserInterface::cb_WeatherCustomOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherCustomOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherThemeClearOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCB(o);
+}
+void UserInterface::cb_WeatherThemeClearOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherThemeClearOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherThemeFairOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCB(o);
+}
+void UserInterface::cb_WeatherThemeFairOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherThemeFairOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherThemeFoggyOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCB(o);
+}
+void UserInterface::cb_WeatherThemeFoggyOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherThemeFoggyOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherThemeRainyOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCB(o);
+}
+void UserInterface::cb_WeatherThemeRainyOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherThemeRainyOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherThemeCustomOption_i(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)v)->WeatherThemeCB(o);
+}
+void UserInterface::cb_WeatherThemeCustomOption(Fl_Round_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->parent()->user_data()))->cb_WeatherThemeCustomOption_i(o,v);
+}
+
+inline void UserInterface::cb_WeatherRateOfChangeSlider_i(Fl_Value_Slider* o, void* v) {
+  ((UserInterface*)v)->WeatherRateOfChangeCB(o);
+}
+void UserInterface::cb_WeatherRateOfChangeSlider(Fl_Value_Slider* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_WeatherRateOfChangeSlider_i(o,v);
+}
+
 Fl_Double_Window* UserInterface::make_window() {
   Fl_Double_Window* w;
   { Fl_Double_Window* o = MainWindow = new Fl_Double_Window(545, 438, "dtCore");
@@ -619,12 +677,10 @@ Fl_Double_Window* UserInterface::make_window() {
       }
       { Fl_Button* o = new Fl_Button(499, 180, 25, 25);
         o->tooltip("Add a child to the list");
-        o->image(image_btnAdd);
         o->callback((Fl_Callback*)cb_, (void*)(this));
       }
       { Fl_Button* o = new Fl_Button(499, 210, 25, 25);
         o->tooltip("Remove a child from the list");
-        o->image(image_btnDel);
         o->callback((Fl_Callback*)cb_1, (void*)(this));
       }
       { Fl_Output* o = TransformParentText = new Fl_Output(245, 219, 95, 25, "Parent:");
@@ -1074,6 +1130,100 @@ s)");
         o->value(1);
         o->labeltype(FL_EMBOSSED_LABEL);
         o->callback((Fl_Callback*)cb_cEnable, (void*)(this));
+      }
+      o->end();
+    }
+    { Fl_Group* o = WeatherGroup = new Fl_Group(31, 165, 500, 260);
+      o->box(FL_ENGRAVED_BOX);
+      o->labeltype(FL_EMBOSSED_LABEL);
+      o->user_data((void*)(this));
+      o->hide();
+      { Fl_Choice* o = WeatherTimePeriodChoice = new Fl_Choice(270, 185, 90, 30, "Time:");
+        o->down_box(FL_BORDER_BOX);
+        o->callback((Fl_Callback*)cb_WeatherTimePeriodChoice, (void*)(this));
+        o->menu(menu_WeatherTimePeriodChoice);
+      }
+      { Fl_Choice* o = WeatherSeasonChoice = new Fl_Choice(425, 185, 90, 30, "Season:");
+        o->down_box(FL_BORDER_BOX);
+        o->callback((Fl_Callback*)cb_WeatherSeasonChoice, (void*)(this));
+        o->menu(menu_WeatherSeasonChoice);
+      }
+      { Fl_Group* o = WeatherCustomGroup = new Fl_Group(115, 335, 405, 67, "Custom");
+        o->box(FL_EMBOSSED_FRAME);
+        o->align(FL_ALIGN_LEFT);
+        { Fl_Slider* o = WeatherCloudSlider = new Fl_Slider(131, 366, 120, 25, "Cloud");
+          o->type(1);
+          o->maximum(4);
+          o->step(1);
+          o->callback((Fl_Callback*)cb_WeatherCloudSlider, (void*)(this));
+          o->align(FL_ALIGN_TOP);
+        }
+        { Fl_Slider* o = WeatherWindSlider = new Fl_Slider(265, 366, 120, 25, "Wind");
+          o->type(1);
+          o->maximum(5);
+          o->step(1);
+          o->callback((Fl_Callback*)cb_WeatherWindSlider, (void*)(this));
+          o->align(FL_ALIGN_TOP);
+        }
+        { Fl_Slider* o = WeatherVisSlider = new Fl_Slider(395, 366, 120, 25, "Visibility");
+          o->type(1);
+          o->maximum(4);
+          o->step(1);
+          o->callback((Fl_Callback*)cb_WeatherVisSlider, (void*)(this));
+          o->align(FL_ALIGN_TOP);
+        }
+        o->end();
+      }
+      { Fl_Group* o = new Fl_Group(45, 235, 25, 150);
+        o->user_data((void*)(this));
+        { Fl_Round_Button* o = WeatherThemeOption = new Fl_Round_Button(45, 235, 25, 25);
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->value(1);
+          o->callback((Fl_Callback*)cb_WeatherThemeOption, (void*)(this));
+        }
+        { Fl_Round_Button* o = WeatherCustomOption = new Fl_Round_Button(45, 360, 25, 25);
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->callback((Fl_Callback*)cb_WeatherCustomOption, (void*)(this));
+        }
+        o->end();
+      }
+      { Fl_Group* o = WeatherThemeGroup = new Fl_Group(115, 185, 92, 145, "Theme:");
+        o->box(FL_EMBOSSED_FRAME);
+        o->align(FL_ALIGN_LEFT);
+        { Fl_Round_Button* o = WeatherThemeClearOption = new Fl_Round_Button(117, 213, 80, 25, "Clear");
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->value(1);
+          o->callback((Fl_Callback*)cb_WeatherThemeClearOption, (void*)(this));
+        }
+        { Fl_Round_Button* o = WeatherThemeFairOption = new Fl_Round_Button(117, 243, 80, 25, "Fair");
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->callback((Fl_Callback*)cb_WeatherThemeFairOption, (void*)(this));
+        }
+        { Fl_Round_Button* o = WeatherThemeFoggyOption = new Fl_Round_Button(117, 273, 80, 25, "Foggy");
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->callback((Fl_Callback*)cb_WeatherThemeFoggyOption, (void*)(this));
+        }
+        { Fl_Round_Button* o = WeatherThemeRainyOption = new Fl_Round_Button(117, 301, 80, 25, "Rainy");
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->callback((Fl_Callback*)cb_WeatherThemeRainyOption, (void*)(this));
+        }
+        { Fl_Round_Button* o = WeatherThemeCustomOption = new Fl_Round_Button(115, 185, 80, 25, "Custom");
+          o->type(102);
+          o->down_box(FL_ROUND_DOWN_BOX);
+          o->callback((Fl_Callback*)cb_WeatherThemeCustomOption, (void*)(this));
+        }
+        o->end();
+      }
+      { Fl_Value_Slider* o = WeatherRateOfChangeSlider = new Fl_Value_Slider(310, 240, 140, 25, "Rate of Change");
+        o->type(1);
+        o->minimum(-1);
+        o->callback((Fl_Callback*)cb_WeatherRateOfChangeSlider, (void*)(this));
       }
       o->end();
     }

@@ -8,12 +8,13 @@ decl {\#include "base.h"} {public
 decl {///Do not create directly - use dtCore::GUI instead} {public
 } 
 
-class UserInterface {} {
+class UserInterface {open
+} {
   Function {make_window()} {open
   } {
     Fl_Window MainWindow {
-      label dtCore
-      xywh {752 224 545 438} type Double visible
+      label dtCore open
+      xywh {598 106 545 438} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -594,6 +595,136 @@ class UserInterface {} {
           tooltip {Enables/Disables the cloud shader} xywh {400 380 25 25} down_box DOWN_BOX value 1 labeltype EMBOSSED_LABEL
         }
       }
+      Fl_Group WeatherGroup {
+        user_data this selected
+        xywh {31 165 500 260} box ENGRAVED_BOX labeltype EMBOSSED_LABEL hide
+      } {
+        Fl_Choice WeatherTimePeriodChoice {
+          label {Time:}
+          user_data this
+          callback {((UserInterface*)v)->WeatherTimeCB(o)}
+          xywh {270 185 90 30} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label Dawn
+            xywh {40 40 100 20}
+          }
+          menuitem {} {
+            label Day
+            xywh {40 40 100 20}
+          }
+          menuitem {} {
+            label Dusk
+            xywh {40 40 100 20}
+          }
+          menuitem {} {
+            label Night
+            xywh {40 40 100 20}
+          }
+        }
+        Fl_Choice WeatherSeasonChoice {
+          label {Season:}
+          user_data this
+          callback {((UserInterface*)v)->WeatherSeasonCB(o)}
+          xywh {425 185 90 30} down_box BORDER_BOX
+        } {
+          menuitem {} {
+            label Spring
+            xywh {50 50 100 20}
+          }
+          menuitem {} {
+            label Summer
+            xywh {50 50 100 20}
+          }
+          menuitem {} {
+            label Fall
+            xywh {50 50 100 20}
+          }
+          menuitem {} {
+            label Winter
+            xywh {50 50 100 20}
+          }
+        }
+        Fl_Group WeatherCustomGroup {
+          label Custom open
+          xywh {115 335 405 67} box EMBOSSED_FRAME align 4
+        } {
+          Fl_Slider WeatherCloudSlider {
+            label Cloud
+            user_data this
+            callback {((UserInterface*)v)->WeatherCustomCloudCB(o)}
+            xywh {131 366 120 25} type Horizontal align 1 maximum 4 step 1
+          }
+          Fl_Slider WeatherWindSlider {
+            label Wind
+            user_data this
+            callback {((UserInterface*)v)->WeatherCustomWindCB(o)}
+            xywh {265 366 120 25} type Horizontal align 1 maximum 5 step 1
+          }
+          Fl_Slider WeatherVisSlider {
+            label Visibility
+            user_data this
+            callback {((UserInterface*)v)->WeatherCustomVisCB(o)}
+            xywh {395 366 120 25} type Horizontal align 1 maximum 4 step 1
+          }
+        }
+        Fl_Group {} {
+          user_data this open
+          xywh {45 235 25 150}
+        } {
+          Fl_Round_Button WeatherThemeOption {
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCustomOptionCB(o)}
+            xywh {45 235 25 25} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+          Fl_Round_Button WeatherCustomOption {
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCustomOptionCB(o)}
+            xywh {45 360 25 25} type Radio down_box ROUND_DOWN_BOX
+          }
+        }
+        Fl_Group WeatherThemeGroup {
+          label {Theme:} open
+          xywh {115 185 92 145} box EMBOSSED_FRAME align 4
+        } {
+          Fl_Round_Button WeatherThemeClearOption {
+            label Clear
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 213 80 25} type Radio down_box ROUND_DOWN_BOX value 1
+          }
+          Fl_Round_Button WeatherThemeFairOption {
+            label Fair
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 243 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button WeatherThemeFoggyOption {
+            label Foggy
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 273 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button WeatherThemeRainyOption {
+            label Rainy
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {117 301 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+          Fl_Round_Button WeatherThemeCustomOption {
+            label Custom
+            user_data this
+            callback {((UserInterface*)v)->WeatherThemeCB(o)}
+            xywh {115 185 80 25} type Radio down_box ROUND_DOWN_BOX
+          }
+        }
+        Fl_Value_Slider WeatherRateOfChangeSlider {
+          label {Rate of Change}
+          user_data this
+          callback {((UserInterface*)v)->WeatherRateOfChangeCB(o)}
+          xywh {310 240 140 25} type Horizontal minimum -1
+        }
+      }
     }
     Fl_Window SelectWindow {
       label {Add Child}
@@ -655,9 +786,17 @@ class UserInterface {} {
   decl {void CloudWindCB(Fl_Value_Slider*);} {}
   decl {void CloudEnableCB(Fl_Check_Button*);} {}
   decl {void CloudBiasCB(Fl_Value_Slider*);} {}
+  decl {void WeatherThemeCustomOptionCB(Fl_Round_Button*);} {}
+  decl {void WeatherThemeCB(Fl_Round_Button*);} {}
+  decl {void WeatherCustomCloudCB(Fl_Slider*);} {}
+  decl {void WeatherCustomWindCB(Fl_Slider*);} {}
+  decl {void WeatherCustomVisCB(Fl_Slider*);} {}
+  decl {void WeatherTimeCB(Fl_Choice*);} {}
+  decl {void WeatherSeasonCB(Fl_Choice*);} {}
+  decl {void WeatherRateOfChangeCB(Fl_Value_Slider*);} {}
 } 
 
-decl {\#pragma comment(lib, "fltk.lib")} {selected public
+decl {\#pragma comment(lib, "fltk.lib")} {public
 } 
 
 decl {\#pragma comment(lib, "wsock32.lib")} {public
