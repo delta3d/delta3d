@@ -1665,9 +1665,9 @@ void UIDrawable::SetCallbackFunc(std::string rootFrameName, CUI_UI::callbackfunc
  */
 void UIDrawable::AddFrame( CUI_Frame *frame )
  {
-//    if (IS_A(frame,CUI_SliderBar*)) //<<Needs RTTI for this
+//    if (CUI_SliderBar* sliderBar = dynamic_cast<CUI_SliderBar*>(frame)) //<<Needs RTTI for this
 //    {
-//      ((CUI_SliderBar*)(frame))->SetBarShader( GetShader("defaultHi"));
+//      sliderBar->SetBarShader( GetShader("defaultHi"));
 //    }
 
    if (!frame->GetShader()) frame->SetShader(GetShader("default"));

@@ -144,14 +144,14 @@ void InputDevice::AddFeature(InputDeviceFeature* feature)
 {
    mFeatures.push_back(feature);
 
-   if(IS_A(feature, Button*))
+   if(Button* button = dynamic_cast<Button*>(feature))
    {
-      mButtons.push_back((Button*)feature);
+      mButtons.push_back(button);
    }
    
-   if(IS_A(feature, Axis*))
+   if(Axis* axis = dynamic_cast<Axis*>(feature))
    {
-      mAxes.push_back((Axis*)feature);
+      mAxes.push_back(axis);
    }
 }
 
