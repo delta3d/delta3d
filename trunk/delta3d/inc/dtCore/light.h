@@ -32,7 +32,7 @@
 namespace dtCore
 {
 
-   class DT_EXPORT Light : public Transformable, public DeltaDrawable
+   class DT_EXPORT Light : public DeltaDrawable
    {
 
    public:
