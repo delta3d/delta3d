@@ -81,6 +81,9 @@ class ParticleVisitor : public osg::NodeVisitor
 public:
 
    ParticleVisitor():
+      vrc(NULL),
+      rs(NULL),
+      emitter(NULL),
       osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
       {
       }
@@ -131,8 +134,8 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
 
-      ParticleVisitor pv;
-      node->accept(pv);
+      osg::ref_ptr<ParticleVisitor> pv = new ParticleVisitor();
+      node->accept(*pv.get());
 
       //Note: the Emitter is removed from the Particle System group
       //and added to the mNode (Transform) for repositioning.
@@ -140,7 +143,7 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
       //transform nodes above it.
 
       //get the emitter
-      osg::ref_ptr<osgParticle::ModularEmitter> em = pv.emitter;
+      osg::ref_ptr<osgParticle::ModularEmitter> em = pv.get()->emitter;
 
       //remove it from it's current parent
       em.get()->getParent(0)->removeChild( em.get() );
