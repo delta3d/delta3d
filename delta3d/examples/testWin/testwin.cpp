@@ -47,24 +47,24 @@ TestWinApp::Config()
    drawable->CreateShader( "transparent", trans_col );
 
    // fonts
-   drawable->CreateShader( "raster8b", black_col, "gui/raster8.rgba" );
-   drawable->CreateShader( "raster8w", white_col, "gui/raster8.rgba" );
+   drawable->CreateShader( "raster8b", black_col, "raster8.rgba" );
+   drawable->CreateShader( "raster8w", white_col, "raster8.rgba" );
 
    drawable->CreateFixedFont("raster8b", "raster8b");
    drawable->CreateFixedFont("raster8w", "raster8w");
    drawable->CreateFixedFont("default", "raster8w");
 
    // textures
-   drawable->CreateShader( "button", "gui/button.tga" );
-   drawable->CreateShader( "button_hover", "gui/button_hover.tga" );
-   drawable->CreateShader( "button_click", "gui/button_click.tga" );
-   drawable->CreateShader( "cursor", "gui/cursor.rgba" );
-   drawable->CreateShader( "edit_box", "gui/edit_box.rgb");
-   drawable->CreateShader( "back_panel", "gui/back_panel.rgb");
+   drawable->CreateShader( "button", "button.tga" );
+   drawable->CreateShader( "button_hover", "button_hover.tga" );
+   drawable->CreateShader( "button_click", "button_click.tga" );
+   drawable->CreateShader( "cursor", "cursor.rgba" );
+   drawable->CreateShader( "edit_box", "edit_box.rgb");
+   drawable->CreateShader( "back_panel", "back_panel.rgb");
 
-   drawable->CreateShader( "drop_icon", "gui/drop_icon.tga" );
-   drawable->CreateShader( "selected_icon", "gui/selected_icon.tga" );
-   drawable->CreateShader( "submenu_icon", "gui/submenu_icon.tga" );
+   drawable->CreateShader( "drop_icon", "drop_icon.tga" );
+   drawable->CreateShader( "selected_icon", "selected_icon.tga" );
+   drawable->CreateShader( "submenu_icon", "submenu_icon.tga" );
 
    CUI_Frame* mainFrame = new CUI_Frame;
    mainFrame->SetShader(drawable->GetShader("back_panel"));
