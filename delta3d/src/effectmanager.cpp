@@ -80,16 +80,9 @@ class DetonationUpdateCallback : public osg::NodeCallback
             
             sgXformPnt3(position, mat);
          }
-         
-         node->accept(
-            PositionVisitor(
-               osg::Vec3(
-                  position[0],
-                  position[1],
-                  position[2]
-               )
-            )
-         );
+
+         PositionVisitor pv = PositionVisitor( osg::Vec3(position[0], position[1], position[2] ) );
+         node->accept( pv );
          
          traverse(node, nv);
       }
@@ -189,7 +182,7 @@ Detonation* EffectManager::AddDetonation(sgVec3 position,
    {
       osg::Node* node = osgDB::readNodeFile(
          mDetonationTypeFilenameMap[type], 
-         osgDB::Registry::CacheHintOptions::CACHE_NONE
+         osgDB::Registry::CACHE_NONE
       );
       
       Detonation* detonation = 
@@ -205,16 +198,9 @@ Detonation* EffectManager::AddDetonation(sgVec3 position,
          }
          else
          {
-            node->accept(
-               PositionVisitor(
-                  osg::Vec3(
-                     position[0],
-                     position[1],
-                     position[2]
-                  )
-               )
-            );
-         }
+            PositionVisitor pv = PositionVisitor( osg::Vec3( position[0], position[1], position[2] ) );
+            node->accept( pv );
+          }
       }
       
       AddEffect(detonation);

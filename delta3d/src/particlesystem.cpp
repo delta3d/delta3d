@@ -117,9 +117,20 @@ class TransformCallback : public osg::NodeCallback
          
          for(unsigned int i=0;i<mt->getNumChildren();i++)
          {
-            mt->getChild(i)->accept(
-               TransformVisitor(
-                  osg::Matrix(
+            TransformVisitor tv = TransformVisitor(
+               osg::Matrix(
+                     eMatrix[0][0], eMatrix[0][1], eMatrix[0][2], eMatrix[0][3],
+                     eMatrix[1][0], eMatrix[1][1], eMatrix[1][2], eMatrix[1][3],
+                     eMatrix[2][0], eMatrix[2][1], eMatrix[2][2], eMatrix[2][3],
+                     eMatrix[3][0], eMatrix[3][1], eMatrix[3][2], eMatrix[3][3]
+               )
+            );
+            mt->getChild(i)->accept( tv );
+
+            /*
+            mt->getChild(i)->accept( 
+               TransformVisitor( 
+                  osg::Matrix( 
                      eMatrix[0][0], eMatrix[0][1], eMatrix[0][2], eMatrix[0][3],
                      eMatrix[1][0], eMatrix[1][1], eMatrix[1][2], eMatrix[1][3],
                      eMatrix[2][0], eMatrix[2][1], eMatrix[2][2], eMatrix[2][3],
@@ -127,6 +138,7 @@ class TransformCallback : public osg::NodeCallback
                   )
                )
             );
+            */
          }
          
          traverse(node, nv);
@@ -185,10 +197,10 @@ bool ParticleSystem::LoadFile(std::string filename)
       }
       
       mNode->addChild(node);
-      
-      mNode->accept(
-         ParticleSystemParameterVisitor(mEnabled)
-      );
+
+      ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
+      mNode->accept( pspv );
+      //mNode->accept( ParticleSystemParameterVisitor(mEnabled) );
    }
    else
    {
@@ -217,10 +229,10 @@ std::string ParticleSystem::GetFilename()
 void ParticleSystem::SetEnabled(bool enable)
 {
    mEnabled = enable;
-   
-   mNode->accept(
-      ParticleSystemParameterVisitor(mEnabled)
-   );
+
+   ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
+   mNode->accept( pspv );
+   //mNode->accept( ParticleSystemParameterVisitor(mEnabled) );
 }
 
 /**
