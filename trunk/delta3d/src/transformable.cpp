@@ -156,7 +156,7 @@ void Transformable::AddChild(Transformable *child)
    child->CalcAbsTransform(&absTransform);
    
    mChildList.push_back(child);
-   child->mParent = this;
+   child->SetParent(this);
    
    child->SetTransform(&absTransform);
 }
@@ -180,7 +180,7 @@ void Transformable::RemoveChild(Transformable *child)
    {
       mChildList.erase( mChildList.begin()+pos );
    }
-   child->mParent = NULL;
+   child->SetParent(NULL);
    
    child->SetTransform(&absTransform);
 }

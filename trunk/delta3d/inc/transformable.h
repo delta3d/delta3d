@@ -55,10 +55,14 @@ namespace dtCore
       Transformable* GetParent(void) {return mParent.get();}
 
       ///Set the Transform to reposition this Transformable
-      void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
+      virtual  void SetTransform( Transform *xform, CoordSysEnum cs=ABS_CS );
 
       ///Get the current Transform of this Transformable
       void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
+
+   protected:
+      ///Override function for derived object to know when attaching to scene
+      virtual void SetParent(Transformable* parent) {mParent=parent;}
       
    protected:
 
