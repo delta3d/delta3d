@@ -5,7 +5,7 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(SpotLight)
 
-SpotLight::SpotLight( int number, const std::string name, const LightingMode mode )
+SpotLight::SpotLight( int number, const std::string& name, LightingMode mode )
 :  PositionalLight( number, name, mode )
 {
    RegisterInstance(this);
@@ -15,7 +15,7 @@ SpotLight::SpotLight( int number, const std::string name, const LightingMode mod
    SetSpotExponent( 1.0f ); 
 }
 
-SpotLight::SpotLight( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
+SpotLight::SpotLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
 :  PositionalLight( osgLightSource, name, mode )
 {
    RegisterInstance(this);
@@ -31,4 +31,3 @@ SpotLight::~SpotLight()
 
    DeregisterInstance(this);
 }
-

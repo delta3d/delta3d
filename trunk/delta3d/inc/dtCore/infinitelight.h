@@ -26,18 +26,21 @@
 namespace dtCore
 {
 
+   ///Light located an infintie distance from origin, only has direction
    class DT_EXPORT InfiniteLight : public Light
    {
       DECLARE_MANAGEMENT_LAYER(InfiniteLight)
 
    public:
 
-      InfiniteLight( int number, const std::string name = "defaultInfiniteLight", const LightingMode mode = GLOBAL );
-      InfiniteLight( osg::LightSource* const source, const std::string name = "defaultInfiniteLight", const LightingMode mode = GLOBAL  );
+      InfiniteLight( int number, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL );
+
+      ///Copy constructor from an osg::LightSource
+      InfiniteLight( const osg::LightSource& source, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL  );
       virtual ~InfiniteLight();
 
-      void SetDirection( const float h, const float p, const float r );
-      void GetDirection( float* h, float* p, float* r ) const;
+      void SetDirection( float h, float p, float r );
+      void GetDirection( float& h, float& p, float& r ) const;
 
 
    };

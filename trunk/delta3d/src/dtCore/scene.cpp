@@ -62,7 +62,7 @@ Scene::Scene( string name, bool useSceneLight )
 
    osg::LightSource* sceneLightSource = new osg::LightSource;	
    sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
-   mLights[ 0 ] = new InfiniteLight( sceneLightSource, "sceneLight", Light::GLOBAL );
+   mLights[ sceneLightSource->getLight()->getLightNum() ] = new InfiniteLight( *sceneLightSource, "sceneLight", Light::GLOBAL );
 
    mUserNearCallback = NULL;
    mUserNearCallbackData = NULL;
