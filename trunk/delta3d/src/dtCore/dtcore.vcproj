@@ -198,6 +198,9 @@
 				RelativePath=".\deltarendersurface.cpp">
 			</File>
 			<File
+				RelativePath=".\deltatimer.cpp">
+			</File>
+			<File
 				RelativePath=".\deltawin.cpp">
 			</File>
 			<File
@@ -631,6 +634,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\deltarendersurface.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\deltatimer.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\deltawin.h">
