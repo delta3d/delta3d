@@ -289,15 +289,20 @@ namespace dtCore
          bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
          virtual void AddedToScene( Scene *scene );
-
-         virtual void SetTransform( Transform *xform, CoordSysEnum cs = ABS_CS );
        
       private:
-      
+
          /**
           * The ODE geometry identifier of the geometry transform.
           */
          dGeomID mGeomID;
+
+         /**
+         * The original geometry set in SetCollisionShape functions.
+         * The scale values in our matrix transform will be applied to
+         * this value to modify the shape of mGeomID.
+         */
+         dGeomID mOrignalGeomID;
          
          /**
           * The ODE triangle mesh data identifier, if any.
@@ -340,8 +345,6 @@ namespace dtCore
          RefPtr<osg::Geode> mGeomGeod;
 
          bool mRenderingGeometry;///<if we're rendering the collision geometry
-                
-         osg::Vec3 orginalBoxSize;
 
    };
 };

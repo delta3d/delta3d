@@ -478,3 +478,127 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
       GetTarget()->SetTransform(&transform);
    }
 }
+
+/*
+void OrbitMotionModel::AxisStateChanged(Axis* axis,
+                                        double oldState, 
+                                        double newState, 
+                                        double delta)
+{
+   if(GetTarget() != NULL && IsEnabled())
+   {
+      Transform transform;
+
+      GetTarget()->GetTransform(&transform);
+
+      sgVec3 xyz, hpr;
+
+      transform.Get(xyz, hpr);
+
+      if(axis == mAzimuthAxis)
+      {
+         sgVec3 focus = { 0.0f, mDistance, 0.0f };
+
+         sgMat4 mat;
+
+         transform.Get(mat);
+
+         sgXformPnt3(focus, mat);
+
+         hpr[0] -= (float)(delta * mAngularRate);
+
+         sgVec3 offset = { 0.0f, -mDistance, 0.0f };
+
+         sgMakeCoordMat4(mat, focus, hpr);
+
+         sgXformPnt3(xyz, offset, mat);
+      }
+      else if(axis == mElevationAxis)
+      {
+         sgVec3 focus = { 0.0f, mDistance, 0.0f };
+
+         sgMat4 mat;
+
+         transform.Get(mat);
+
+         sgXformPnt3(focus, mat);
+
+         hpr[1] += (float)(delta * mAngularRate);
+
+         if(hpr[1] < -89.9f)
+         {
+            hpr[1] = -89.9f;
+         }
+         else if(hpr[1] > 89.9f)
+         {
+            hpr[1] = 89.9;
+         }
+
+         sgVec3 offset = { 0.0f, -mDistance, 0.0f };
+
+         sgMakeCoordMat4(mat, focus, hpr);
+
+         sgXformPnt3(xyz, offset, mat);
+      }
+      else if(axis == mDistanceAxis)
+      {
+         float distDelta = -(float)(delta * mDistance * mLinearRate);
+
+         if(mDistance + distDelta < 1.0f)
+         {
+            distDelta = 1.0f - mDistance;
+         }
+
+         sgVec3 translation = { 0.0f, -distDelta, 0.0f };
+
+         sgMat4 mat;
+
+         sgMakeRotMat4(mat, hpr);
+
+         sgXformVec3(translation, mat);
+
+         sgAddVec3(xyz, translation);
+
+         mDistance += distDelta;
+      }
+      else if(axis == mLeftRightTranslationAxis)
+      {
+         sgVec3 translation =
+         {
+            -(float)(delta * mDistance * mLinearRate),
+               0.0f,
+               0.0f
+         };
+
+         sgMat4 mat;
+
+         sgMakeRotMat4(mat, hpr);
+
+         sgXformVec3(translation, mat);
+
+         sgAddVec3(xyz, translation);
+      }
+      else if(axis == mUpDownTranslationAxis)
+      {
+         sgVec3 translation =
+         {
+            0.0f,
+               0.0f,
+               -(float)(delta * mDistance * mLinearRate)
+         };
+
+         sgMat4 mat;
+
+         sgMakeRotMat4(mat, hpr);
+
+         sgXformVec3(translation, mat);
+
+         sgAddVec3(xyz, translation);
+      }
+
+      transform.Set(xyz, hpr);
+
+      GetTarget()->SetTransform(&transform);
+   }
+}
+*/

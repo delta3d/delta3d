@@ -158,13 +158,17 @@ protected:
             RefPtr<Object> box = new Object("box");
             box->LoadFile("models/physics_crate.ive");
  
-
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
                random(5.f, 10.f),
                random(0.f, 180.f),
                random(0.f, 90.f),
-               random(0.f, 90.f));
+               random(0.f, 90.f)      
+               );
+
+            float randomScale = random(0.5f, 2.0f);
+            xform.SetScale( randomScale, randomScale, randomScale );
+
             box->SetTransform(&xform);
 
             float lx = 1.0f;
@@ -193,13 +197,17 @@ protected:
          {
             RefPtr<Object> sphere = new Object("sphere");
             sphere->LoadFile("models/physics_happy_sphere.ive");
-  
+
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
                random(5.f, 10.f),
                random(0.f, 180.f),
                random(0.f, 90.f),
                random(0.f, 90.f));
+
+            float randomScale = random(0.5f, 2.0f);
+            xform.SetScale( randomScale, randomScale, randomScale );
+
             sphere->SetTransform(&xform);
 
             float radius = 0.5f;
@@ -211,7 +219,7 @@ protected:
             sphere->SetMass(&mass);
             sphere->EnableDynamics();
      
-             mToAdd.push( sphere );
+            mToAdd.push( sphere );
          }
          else
          {         
@@ -232,6 +240,10 @@ protected:
                random(0.f, 180.f),
                random(0.f, 90.f),
                random(0.f, 90.f));
+
+            float randomScale = random(0.5f, 2.0f);
+            xform.SetScale( randomScale, randomScale, randomScale );
+
             cyl->SetTransform(&xform);
 
             float radius = 0.321f; 
