@@ -97,10 +97,16 @@ PositionalLight::GetAttenuation( float* constant, float* linear, float* quadrati
    *quadratic = mLightSource->getLight()->getQuadraticAttenuation();
 }
 
-void
+bool
 PositionalLight::AddChild( DeltaDrawable *child )
 {
-   mLightSource->addChild( child->GetOSGNode() );
+   bool success = Transformable::AddChild(child);
+   if (success)
+   {   
+      mLightSource->addChild( child->GetOSGNode() );
+      return (true);
+   }
+   else return (false);
 }
 
 /*!

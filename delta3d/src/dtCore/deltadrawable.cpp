@@ -1,5 +1,6 @@
 #include "dtCore/deltadrawable.h"
 #include "dtCore/scene.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 
@@ -18,14 +19,20 @@ DeltaDrawable::~DeltaDrawable()
    DeregisterInstance(this);
 }
 
-/*!
-* @param *child : The child to add to this DeltaDrawable
-*
-* @see RemoveChild()
+/** This virtual method can be overwritten
+*  to perform specific functionality.  The default method will 
+*  store the child in a list and set the child's parent.
+* @param child : The child to add to this Drawable
+* @return : Successfully added this child or not
 */
-void DeltaDrawable::AddChild(DeltaDrawable *child)
+bool DeltaDrawable::AddChild(DeltaDrawable *child)
 {
-   if (!CanBeChild(child)) return;
+   if (!CanBeChild(child))
+   {
+      Notify(WARN, "DeltaDrawable: '%s' cannot be added as a child to '%s'",
+             child->GetName().c_str(), this->GetName().c_str() );
+      return (false);
+   }
 
    mChildList.push_back(child);
    child->SetParent(this);
@@ -34,6 +41,7 @@ void DeltaDrawable::AddChild(DeltaDrawable *child)
    {
       child->AddedToScene(mParentScene.get());
    }
+   return (true);
 }
 
 /*!
@@ -80,6 +88,13 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
    return true;
 }
 
+/**
+* Notifies this drawable object that it has been added to
+* a scene.
+*
+* @param scene the scene to which this drawable object has
+* been added
+*/
 void DeltaDrawable::AddedToScene( Scene *scene )
 {
    mParentScene = scene;
@@ -95,4 +110,17 @@ void DeltaDrawable::AddedToScene( Scene *scene )
 Scene* DeltaDrawable::GetSceneParent()
 {
    return mParentScene.get();
+}
+
+/** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.
+  * Each DeltaDrawable may have only one parent and it must be removed from
+  * it's parent before adding it as a child to another.
+  * @see RemoveChild()
+  */
+void DeltaDrawable::Emancipate() 
+{
+   if (mParent.valid())
+   {
+      mParent->RemoveChild(this);
+   }
 }
