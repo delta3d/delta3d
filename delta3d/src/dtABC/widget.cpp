@@ -286,31 +286,31 @@ Widget::HandleMouseEvent( const MouseEvent& ev )
 
    switch( ev.event )
    {
-      case  ev.PUSH:
+       case  MouseEvent::PUSH:
          mMouse->buttonPress( ev.pos_x, ev.pos_y, ev.button );
          break;
 
-      case  ev.DOUBLE:
+      case  MouseEvent::DOUBLE:
          mMouse->doubleButtonPress( ev.pos_x, ev.pos_y, ev.button );
          break;
 
-      case  ev.RELEASE:
+      case  MouseEvent::RELEASE:
          mMouse->buttonRelease( ev.pos_x, ev.pos_y, ev.button );
          break;
 
-      case  ev.DRAG:
+      case  MouseEvent::DRAG:
          mMouse->mouseMotion( ev.pos_x, ev.pos_y );
          break;
 
-      case  ev.MOVE:
+      case  MouseEvent::MOVE:
          mMouse->passiveMouseMotion( ev.pos_x, ev.pos_y );
          break;
 
-      case  ev.WHEEL_UP:
+      case  MouseEvent::WHEEL_UP:
          mMouse->mouseScroll( Producer::KeyboardMouseCallback::ScrollUp );
          break;
 
-      case  ev.WHEEL_DN:
+      case  MouseEvent::WHEEL_DN:
          mMouse->mouseScroll( Producer::KeyboardMouseCallback::ScrollDown );
          break;
 
@@ -333,14 +333,14 @@ Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
 
    switch( ev.event )
    {
-      case  ev.KEYDOWN:
+      case  KeyboardEvent::KEYDOWN:
          if( IsSpecialKeyboardEvent( ev ) )
             mKeyboard->specialKeyPress( Producer::KeyCharacter(ev.key) );
          else
             mKeyboard->keyPress( Producer::KeyCharacter(ev.key) );
          break;
 
-      case  ev.KEYUP:
+      case  KeyboardEvent::KEYUP:
          if( IsSpecialKeyboardEvent( ev ) )
             mKeyboard->specialKeyRelease( Producer::KeyCharacter(ev.key) );
          else
