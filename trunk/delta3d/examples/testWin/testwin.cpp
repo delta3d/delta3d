@@ -469,6 +469,19 @@ TestWinApp::Config()
    mainFrame->AddChild( positionButton );
    drawable->AddFrame( positionButton );
 
+   // "refresh" button
+   CUI_Button* refreshButton = new CUI_Button;
+   refreshButton->Move(0.8, 0.18, 0.9, 0.265 );
+   refreshButton->SetShader(drawable->GetShader("button"));
+   refreshButton->SetHoverShader(drawable->GetShader("button_hover"));
+   refreshButton->SetClickShader(drawable->GetShader("button_click"));
+   refreshButton->SetFont( drawable->GetFont("raster8w") );
+   refreshButton->SetText("Refresh");
+   refreshButton->SetTextScale(0.60f);
+   refreshButton->SetFrameID( POS_REFRESH );
+   mainFrame->AddChild( refreshButton );
+   drawable->AddFrame( refreshButton );
+
    /// "exit" button
    CUI_Button* exit = new CUI_Button();
    exit->Move(0.1, 0.095, 0.4, 0.18 );
@@ -533,33 +546,33 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
       }
    case FULL_SET: //FullScreen set
       {
-         CUI_ComboBox* fullScreenCombo = dynamic_cast<CUI_ComboBox*>( mUI->GetFrame( FULL_COMBO ) );
+         CUI_ComboBox* fullScreenCombo = static_cast<CUI_ComboBox*>( mUI->GetFrame( FULL_COMBO ) );
          assert( fullScreenCombo );
 
          bool fullScreen = fullScreenCombo->GetSelectedID() - FULL_OFF;
          mWindow->SetFullScreenMode( fullScreen );
 
-         CUI_TextBox* positionTitle = dynamic_cast<CUI_TextBox*>( mUI->GetFrame( POS_TITLE ) );
+         CUI_TextBox* positionTitle = static_cast<CUI_TextBox*>( mUI->GetFrame( POS_TITLE ) );
          assert(positionTitle);
-         CUI_Button* positionButton = dynamic_cast<CUI_Button*>( mUI->GetFrame( POS_SET ) );
+         CUI_Button* positionButton = static_cast<CUI_Button*>( mUI->GetFrame( POS_SET ) );
          assert(positionButton);
          
-         CUI_EditableTextBox* xEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_X ) );
+         CUI_EditableTextBox* xEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_X ) );
          assert(xEdit);
-         CUI_EditableTextBox* yEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_Y ) );
+         CUI_EditableTextBox* yEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_Y ) );
          assert(yEdit);
-         CUI_EditableTextBox* wEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_W ) );
+         CUI_EditableTextBox* wEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_W ) );
          assert(wEdit);
-         CUI_EditableTextBox* hEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_H ) );
+         CUI_EditableTextBox* hEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_H ) );
          assert(hEdit);
 
-         CUI_TextBox* xText = dynamic_cast<CUI_TextBox*>( mUI->GetFrame( POS_X_TEXT ) );
+         CUI_TextBox* xText = static_cast<CUI_TextBox*>( mUI->GetFrame( POS_X_TEXT ) );
          assert(xText);
-         CUI_TextBox* yText = dynamic_cast<CUI_TextBox*>( mUI->GetFrame( POS_Y_TEXT ) );
+         CUI_TextBox* yText = static_cast<CUI_TextBox*>( mUI->GetFrame( POS_Y_TEXT ) );
          assert(yText);
-         CUI_TextBox* wText = dynamic_cast<CUI_TextBox*>( mUI->GetFrame( POS_W_TEXT ) );
+         CUI_TextBox* wText = static_cast<CUI_TextBox*>( mUI->GetFrame( POS_W_TEXT ) );
          assert(wText);
-         CUI_TextBox* hText = dynamic_cast<CUI_TextBox*>( mUI->GetFrame( POS_H_TEXT ) );
+         CUI_TextBox* hText = static_cast<CUI_TextBox*>( mUI->GetFrame( POS_H_TEXT ) );
          assert(hText);
 
          positionTitle->Activate( !fullScreen );
@@ -577,25 +590,14 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
          
          if( !fullScreen )
          {
-            //query values
-            int x,y,w,h;
-            mWindow->GetPosition( &x, &y, &w, &h );
-            xEdit->SetText( ToString(x).c_str() );
-            yEdit->SetText( ToString(y).c_str() );
-            wEdit->SetText( ToString(w).c_str() );
-            hEdit->SetText( ToString(h).c_str() );
-
-            xEdit->MoveCursor( ToString(x).length() );
-            yEdit->MoveCursor( ToString(y).length() );
-            wEdit->MoveCursor( ToString(w).length() );
-            hEdit->MoveCursor( ToString(h).length() );
+            UpdatePosition();
          }
          
          break;
       }
    case TITLE_SET: //Window Title Set
       {
-         CUI_EditableTextBox* titleEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( TITLE_EDIT ) );
+         CUI_EditableTextBox* titleEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( TITLE_EDIT ) );
          assert(titleEdit);
          
          mWindow->SetWindowTitle( titleEdit->GetText() );
@@ -603,13 +605,13 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
       }
    case POS_SET: //Position Set
       {
-         CUI_EditableTextBox* xEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_X ) );
+         CUI_EditableTextBox* xEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_X ) );
          assert(xEdit);
-         CUI_EditableTextBox* yEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_Y ) );
+         CUI_EditableTextBox* yEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_Y ) );
          assert(yEdit);
-         CUI_EditableTextBox* wEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_W ) );
+         CUI_EditableTextBox* wEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_W ) );
          assert(wEdit);
-         CUI_EditableTextBox* hEdit = dynamic_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_H ) );
+         CUI_EditableTextBox* hEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_H ) );
          assert(hEdit);
 
          int x = atoi( xEdit->GetText() );
@@ -618,6 +620,12 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
          int h = atoi( hEdit->GetText() );
 
          mWindow->SetPosition( x, y, w, h );
+         UpdatePosition();
+         break;
+      }
+   case POS_REFRESH:
+      {
+         UpdatePosition();
          break;
       }
    default: //menu selection
@@ -645,6 +653,31 @@ TestWinApp::GuiHandler( int id, int numparam, void *value )
    return false;
 }
 
+void
+TestWinApp::UpdatePosition()
+{
+   CUI_EditableTextBox* xEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_X ) );
+   assert(xEdit);
+   CUI_EditableTextBox* yEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_Y ) );
+   assert(yEdit);
+   CUI_EditableTextBox* wEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_W ) );
+   assert(wEdit);
+   CUI_EditableTextBox* hEdit = static_cast<CUI_EditableTextBox*>( mUI->GetFrame( POS_H ) );
+   assert(hEdit);
+
+   //query values
+   int x,y,w,h;
+   mWindow->GetPosition( &x, &y, &w, &h );
+   xEdit->SetText( ToString(x).c_str() );
+   yEdit->SetText( ToString(y).c_str() );
+   wEdit->SetText( ToString(w).c_str() );
+   hEdit->SetText( ToString(h).c_str() );
+
+   xEdit->MoveCursor( ToString(x).length() );
+   yEdit->MoveCursor( ToString(y).length() );
+   wEdit->MoveCursor( ToString(w).length() );
+   hEdit->MoveCursor( ToString(h).length() );
+}
 
 int 
 main( int argc, char **argv )
