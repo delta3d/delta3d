@@ -152,6 +152,9 @@
 				RelativePath=".\flymotionmodelbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\infinitelightbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\infiniteterrainbindings.cpp">
 			</File>
 			<File
@@ -168,6 +171,9 @@
 			</File>
 			<File
 				RelativePath=".\keyboardbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\lightbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\logicalinputdevicebindings.cpp">
@@ -197,6 +203,9 @@
 				RelativePath=".\pointaxisbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\positionallightbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\recorderbindings.cpp">
 			</File>
 			<File
@@ -207,6 +216,9 @@
 			</File>
 			<File
 				RelativePath=".\skydomebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\spotlightbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\systembindings.cpp">
