@@ -37,26 +37,3 @@ Light::SetEnabled( bool enabled )
    mLightSource->setLocalStateSetModes( state );
 }
 
-/*
-void 
-Light::Init( int number, LightingMode mode, osg::LightSource* lightSource )
-{
-   if( number < 0 || number >= MAX_LIGHTS )
-      dtCore::Notify(WARN, "Light number %d is out of bounds, use values 0-7.",number);
-
-   mSceneParent = NULL;
-   mEnabled = false;
-
-   osg::Light* light = new osg::Light;
-   light->setLightNum( number );
-
-   if( lightSource )
-      mLightSource = lightSource;
-   else
-      mLightSource = new osg::LightSource;
-
-   mLightingMode = mode;
-
-   mLightSource->setLight( light );
-}
-*/
