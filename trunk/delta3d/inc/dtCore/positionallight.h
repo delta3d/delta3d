@@ -49,10 +49,7 @@ namespace dtCore
       // Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable *child );
 
-      void AddedToScene( Scene *scene )
-      {
-         Light::AddedToScene( scene );
-      }
+      virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
 
    };
 }
