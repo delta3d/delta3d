@@ -58,9 +58,9 @@ Scene::Scene( string name, bool useSceneLight )
 
    mSceneNode = new osg::Group;
 
-//   osg::LightSource* sceneLightSource = new osg::LightSource;	
-//   sceneLightSource->setLight( GetSceneHandler()->GetSceneView()->getLight() );
-   mLights[ 0 ] = new InfiniteLight( 0 );
+   InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
+   AddDrawable( skyLight );
+   skyLight->SetEnabled( true );
 
    mUserNearCallback = NULL;
    mUserNearCallbackData = NULL;
