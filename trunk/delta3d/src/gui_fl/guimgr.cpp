@@ -535,9 +535,9 @@ void UserInterface::SelectInstance (void)
       LightCutoffInput->value(spotCutoff);
       LightExponentInput->value(spotExp);
 
-      float con = l->GetConstantAttenuation();
-      float quad = l->GetQuadraticAttenuation();
-      float lin = l->GetLinearAttenuation();
+      float con = l->GetAttenuation( Light::CONSTANT );
+      float lin = l->GetAttenuation( Light::LINEAR );
+      float quad = l->GetAttenuation( Light::QUADRATIC );
       LightConstAtt->value(con);
       LightLinAtt->value(lin);
       LightQuadAtt->value(quad);
@@ -1554,9 +1554,9 @@ void UserInterface::LightAttCB(Fl_Value_Input*)
 {
    Light *l = (Light*)GetSelectedInstance(this);
 
-   l->SetLinearAttenuation(LightLinAtt->value());
-   l->SetConstantAttenuation(LightQuadAtt->value());
-   l->SetQuadraticAttenuation(LightConstAtt->value());
+   l->SetAttenuation( Light::CONSTANT, LightQuadAtt->value() );
+   l->SetAttenuation( Light::LINEAR, LightLinAtt->value() );
+   l->SetAttenuation( Light::QUADRATIC, LightConstAtt->value());
 }
 
 void UserInterface::LightSpotCB(Fl_Value_Input*)
