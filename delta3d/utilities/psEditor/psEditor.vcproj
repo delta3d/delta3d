@@ -167,6 +167,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\psEditor.rc">
+			</File>
+			<File
 				RelativePath="psEditorGUI.cxx">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -197,12 +200,18 @@
 				RelativePath="psEditorGUI.h">
 			</File>
 			<File
+				RelativePath=".\resource.h">
+			</File>
+			<File
 				RelativePath=".\texturepreview.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath=".\DeltaParticle.ico">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
