@@ -1,0 +1,8 @@
+Import('*')
+
+dtUtilSrcs = [ 	'domain.cpp', 
+		'matrixutil.cpp', 
+		'polardecomp.cpp' ]
+
+env = env.Copy()
+env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS=[ 'osg', 'plibsg', 'plibul' ] )

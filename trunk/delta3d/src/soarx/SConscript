@@ -1,0 +1,13 @@
+Import('*')
+
+dtSoarxSrcs = [ 'soarx_base.cpp', 
+		'soarx_camera.cpp', 
+		'soarx_core.cpp', 
+		'soarx_image.cpp',
+		'soarx_render.cpp',
+		'soarx_tbuilder.cpp',
+		'soarxterrain.cpp',
+		'soarx_texture.cpp' ]
+
+env = env.Copy()
+env.SharedLibrary( 'dtsoarx', dtSoarxSrcs, LIBS=[ 'gdal_i', 'dtcore', 'osg', 'osgUtil', 'osgDB', 'osgGL2', 'plibsg', 'tinyxml', 'plibul', 'ode', 'GL' ] )

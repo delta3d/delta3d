@@ -1,0 +1,70 @@
+Import('*')
+
+pythonDtCoreSrcs = [ 	'basebindings', 
+		'camerabindings', 
+		'clouddomebindings', 
+		'cloudplanebindings', 
+		'compassbindings', 
+		'deltadrawablebindings', 
+		'deltawinbindings', 
+		'dtcorebindings', 
+		'effectmanagerbindings', 
+		'enveffectbindings', 
+		'environmentbindings', 
+		'flymotionmodelbindings', 
+		'infinitelightbindings', 
+		'infiniteterrainbindings', 
+		'inputdevicebindings', 
+		'inputmapperbindings', 
+		'isectorbindings', 
+		'joystickbindings', 
+		'keyboardbindings', 
+		'lightbindings', 
+		'loadablebindings', 
+		'logicalinputdevicebindings', 
+		'motionmodelbindings', 
+		'mousebindings', 
+		'noisegeneratorbindings', 
+		'objectbindings', 
+		'orbitmotionmodelbindings', 
+		'particlesystembindings', 
+		'physicalbindings', 
+		'pointaxisbindings', 
+		'positionallightbindings', 
+		'recorderbindings', 
+		'scenebindings', 
+		'skyboxbindings', 
+		'skydomebindings', 
+		'spotlightbindings', 
+		'systembindings', 
+		'terrainbindings', 
+		'trackerbindings', 
+		'transformablebindings', 
+		'transformbindings', 
+		'tripodbindings', 
+		'ufomotionmodelbindings', 
+		'uidrawablebindings', 
+		'walkmotionmodelbindings' ]
+
+# add python lib, inc dirs?
+
+env = env.Copy()
+env.SharedLibrary( 'dtcorebindings', pythonDtCoreSrcs, LIBS=[ 'dtcore', 'boost_python', 'python2.3', 'util' ] )
+
+pythonDtAbcSrcs = [ 'applicationbindings', 'baseabcbindings', 'dtabcbindings', 'weatherbindings', 'widgetbindings' ]
+env.SharedLibrary( dtabcbindings, pythonDtAbcSrcs, LIBS=[ 'dtabc', 'boost_python', 'python2.3', 'util' ] )
+
+pythonDtAudioSrcs = [ 'audiomanagerbindings', 'dtaudiobindings', 'listenerbindings', 'soundeffectbinderbindings' ]
+env.SharedLibrary( dtaudiobindings, pythonDtAudioSrcs, LIBS=[ 'dtaudio', 'boost_python', 'python2.3', 'util' ] )
+
+pythonDtCharSrcs = [ 'characterbindings', 'dtcharbindings' ]
+env.SharedLibrary( dtcharbindings, pythonDtCharSrcs, LIBS=[ 'dtchar', 'boost_python', 'python2.3', 'util' ] )
+
+pythonGui_flSrcs = [ 'dtguiflbindings' ]
+env.SharedLibrary( gui_flbindings, pythonGui_flSrcs LIBS=[ 'gui_fl', 'boost_python', 'python2.3', 'util' ] )
+
+#INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
+#LINK_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/lib )
+
+#pythonDtHlaSrcs = [ 'distypebindings', 'dthlabindings', 'entitybindings', 'rticonnectionbindings' ]
+#env.SharedLibrary( dthlabindings, LIBS=[ 'dthla', 'boost_python', 'python2.3', 'util' ] )

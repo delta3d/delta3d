@@ -1,0 +1,9 @@
+Import('*')
+
+dtAudioSrcs = [ 'audiomanager.cpp', 
+		'listener.cpp', 
+		'sound.cpp', 
+		'soundeffectbinder.cpp' ]
+
+env = env.Copy()
+env.SharedLibrary( 'dtaudio', dtAudioSrcs, LIBS=[ 'openal', 'OpenThreads', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )

@@ -1,0 +1,9 @@
+Import('*')
+
+dtAbcSrcs = [ 	'application.cpp', 
+		'baseabc.cpp', 
+		'weather.cpp', 
+		'widget.cpp' ]
+
+env = env.Copy()
+env.SharedLibrary( 'dtabc', dtAbcSrcs, LIBS=[ 'dtcore', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
