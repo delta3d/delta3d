@@ -10,10 +10,10 @@
 #include <iostream>
 
 #include <osg/Geode>
-#include <osg/Switch>
 #include <osgDB/ImageOptions>
 
-#include <osgUtil/InsertImpostorsVisitor>
+//#include <osg/Switch>
+//#include <osgUtil/InsertImpostorsVisitor>
 
 #include <osg/NodeVisitor>
 
@@ -152,13 +152,13 @@ class dtSOARX::SOARXTerrainCallback : public osg::NodeCallback
 			   if (mTerrain->mUseLCC)
 			   {
 					mTerrain->AddVegetation(i,j);
-//					Notify(WARN, "ep[0] = %f, ep[1] = %f", eyepoint[0], eyepoint[1]);
+//					Notify(NOTICE, "ep[0] = %f, ep[1] = %f", eyepoint[0], eyepoint[1]);
 //			        mTerrain->SimplifyTerrain(eyepoint);
 			   }
             }
          }
 
-//		 Notify(WARN, "%s in cull", (node->getName()).c_str());
+//		 Notify(NOTICE, "%s in cull", (node->getName()).c_str());
 
 		 traverse(node, nv);
       }
@@ -204,7 +204,7 @@ class TransformCallback : public osg::NodeCallback
             )
          );
 
-//		 Notify(WARN, "%s in transform", (node->getName()).c_str());
+//		 Notify(NOTICE, "%s in transform", (node->getName()).c_str());
 
 		 traverse(node,nv);
 	  }
@@ -248,7 +248,7 @@ public:
 		if (cv)
 		{
 			osg::BoundingSphere bs = node->getBound();
-//			if (node->getNodeMask()==2) Notify(WARN, "%s is NodeMasked 2", (node->getName()).c_str());
+//			if (node->getNodeMask()==2) Notify(NOTICE, "%s is NodeMasked 2", (node->getName()).c_str());
 //			if (node->getBound()._radius == -1) node->dirtyBound();
 
 			osg::Vec3 eyept = cv->getEyeLocal();
@@ -263,11 +263,11 @@ public:
 			osg::Vec3 vLookVector = cv->getLookVectorLocal();
 			osg::Vec3 fsCenter(eyept + vLookVector*(fViewLen*0.5f));
 
-//			Notify(WARN, "fCenter = %f, %f, %f", fCenter[0], fCenter[1], fCenter[2]);
+//			Notify(NOTICE, "fCenter = %f, %f, %f", fCenter[0], fCenter[1], fCenter[2]);
 
 			if ((bs._radius+fsRadius) < (cv->getDistanceToEyePoint(bs._center,FALSE)))
 			{
-//				Notify(WARN, "%s is now TOO FAR AWAY", (node->getName()).c_str());
+//				Notify(NOTICE, "%s is now TOO FAR AWAY", (node->getName()).c_str());
 				return;
 			}
 			else
@@ -2039,10 +2039,10 @@ osg::Image* SOARXTerrain::ApplyMask(osg::Image* src_image, osg::Image* mask_imag
 			mask_data = (unsigned char*)mask_image->data(x,y);
 			dst_data = (unsigned char*)dst_image->data(x,y);
 
-			if (mask_data[0]==0)
-					value = 255;
-			else
+			if (mask_data[0]>225)         //not masked-out
 					value = src_data[0];
+			else
+					value = 255;
 
 			dst_data[0]=value;
 			dst_data[1]=value;
@@ -2194,7 +2194,7 @@ osg::Image* SOARXTerrain::MakeRelativeElevationImage(osg::HeightField* hf)
 		}
 	}
 
-   Notify(WARN, "MaxRel = %5.2f, MinRel = %5.2f", maxrel, minrel);
+   Notify(NOTICE, "MaxRel = %5.2f, MinRel = %5.2f", maxrel, minrel);
 
    image->ensureValidSizeForTexturing(mMaxTextureSize);
 
@@ -2361,7 +2361,7 @@ osg::Image* SOARXTerrain::MakeCombinedImage(
 {
 
 
-	Notify(WARN, "Making the Combined Image for %i", l.idx);
+	Notify(NOTICE, "Making the Combined Image for %i", l.idx);
 
 	if (f_image == NULL) Notify(WARN, "missing filter image" );
 
@@ -3848,7 +3848,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
 							//setup MaskImage using LCC 11 (water) as the mask
 							osg::ref_ptr<osg::Image> MaskImage;
-							string MaskPath = mCachePath + "/" + cellName + ".lcc.image." + "11" +".jpeg";
+							string MaskPath = mCachePath + "/" + cellName + ".lcc.filter." + "11" +".jpeg";
 							if (osgDB::fileExists(MaskPath))
 							{
 								MaskImage = osgDB::readImageFile(MaskPath);
@@ -3857,6 +3857,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							{
 								osg::Vec3 selectedRGB(110,130,177);	  // settings for water
 								MaskImage = MakeLCCImage(baseLCCColor.get(), selectedRGB);
+								osg::Vec3 filterRGB(0.0,0.0,0.0);	  //select black
+								MaskImage = MakeFilteredImage((MaskImage.get()), filterRGB);
 								osgDB::writeImageFile(*(MaskImage.get()), MaskPath);
 							}
 							LCCfilter = ApplyMask(LCCfilter.get(), MaskImage.get());
@@ -4475,55 +4477,55 @@ void SOARXTerrain::ParseLCCConfiguration(TiXmlElement* configElement)
 			if((str = element->Attribute("SlopeMin")) != NULL)
 			{
 				lcc.slope.min = atof(str);
-//				Notify(WARN, "slope min = %5.2f", lcc.slope.min);
+//				Notify(NOTICE, "slope min = %5.2f", lcc.slope.min);
 			}
 			if((str = element->Attribute("SlopeMax")) != NULL)
 			{
 				lcc.slope.max = atof(str);
-//				Notify(WARN, "slope max = %5.2f", lcc.slope.max);
+//				Notify(NOTICE, "slope max = %5.2f", lcc.slope.max);
 			}
 			if((str = element->Attribute("SlopeSharpness")) != NULL)
 			{
 				lcc.slope.sharpness = atof(str);
-//				Notify(WARN, "slope sharpness = %5.2f", lcc.slope.sharpness);
+//				Notify(NOTICE, "slope sharpness = %5.2f", lcc.slope.sharpness);
 			}
 			if((str = element->Attribute("ElevationMin")) != NULL)
 			{
 				lcc.elevation.min = atof(str);
-//				Notify(WARN, "elevation min = %5.2f", lcc.elevation.min);
+//				Notify(NOTICE, "elevation min = %5.2f", lcc.elevation.min);
 			}
 			if((str = element->Attribute("ElevationMax")) != NULL)
 			{
 				lcc.elevation.max = atof(str);
-//				Notify(WARN, "elevation max = %5.2f", lcc.elevation.max);
+//				Notify(NOTICE, "elevation max = %5.2f", lcc.elevation.max);
 			}
 			if((str = element->Attribute("ElevationSharpness")) != NULL)
 			{
 				lcc.elevation.sharpness = atof(str);
-//				Notify(WARN, "elevation sharpness = %5.2f", lcc.elevation.sharpness);
+//				Notify(NOTICE, "elevation sharpness = %5.2f", lcc.elevation.sharpness);
 			}
 			if((str = element->Attribute("RelativeElevationMin")) != NULL)
 			{
 				lcc.relelevation.min = atof(str);
-//				Notify(WARN, "relelevation min = %5.2f", lcc.relelevation.min);
+//				Notify(NOTICE, "relelevation min = %5.2f", lcc.relelevation.min);
 			}
 			if((str = element->Attribute("RelativeElevationMax")) != NULL)
 			{
 				lcc.relelevation.max = atof(str);
-//				Notify(WARN, "relelevation max = %5.2f", lcc.relelevation.max);
+//				Notify(NOTICE, "relelevation max = %5.2f", lcc.relelevation.max);
 			}
 			if((str = element->Attribute("RelativeElevationSharpness")) != NULL)
 			{
 				lcc.relelevation.sharpness = atof(str);
-//				Notify(WARN, "relelevation sharpness = %5.2f", lcc.relelevation.sharpness);
+//				Notify(NOTICE, "relelevation sharpness = %5.2f", lcc.relelevation.sharpness);
 			}
 			if((str = element->Attribute("Aspect")) != NULL)
 			{
 				lcc.aspect = atof(str);
-//				Notify(WARN, "aspect = %5.2f", lcc.aspect);
+//				Notify(NOTICE, "aspect = %5.2f", lcc.aspect);
 			}
 
-/*			Notify(WARN, "idx = %i, r=%i, g=%i, b=%i, %s, %s",
+/*			Notify(NOTICE, "idx = %i, r=%i, g=%i, b=%i, %s, %s",
 				lcc.idx,
 				lcc.rgb[0],
 				lcc.rgb[1],
@@ -4561,12 +4563,12 @@ void SOARXTerrain::SimplifyTerrain(osg::Vec3& ep)
 			if (dist < 50000) 
 			{
 				(*it)->setAllChildrenOn();
-//				Notify (WARN, "Setting group %d OFF : dist = %f", count, dist);
+//				Notify (NOTICE, "Setting group %d OFF : dist = %f", count, dist);
 			}
 //			else
 //			{
 //				(*it)->setAllChildrenOn();
-//				Notify (WARN, "Setting group %d ON : dist = %f", count, dist);
+//				Notify (NOTICE, "Setting group %d ON : dist = %f", count, dist);
 //			}
 
 			count++;
@@ -4939,7 +4941,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					else
 						whichgroup = int((toprow-2)/2)*2 + int(row/2)*128 + 2*(row - int(row/2)*2) + 1;
 
-//					if (row < 3) Notify(WARN, "vg = %i, whichgroup = %i", vg, whichgroup);
+//					if (row < 3) Notify(NOTICE, "vg = %i, whichgroup = %i", vg, whichgroup);
 
 					groupcount++;
 					totalcount = totalcount + vegechild;
