@@ -245,7 +245,7 @@ void Weather::GetTimePeriodAndSeason(TimePeriod *period, Season *season) const
 }
 
 
-void Weather::AddDrawable(dtCore::DeltaDrawable *drawable)
+void Weather::AddChild(dtCore::DeltaDrawable *child)
 {
-   if (drawable)  mEnvironment->AddDrawable(drawable);
+   if (child)  mEnvironment->AddChild(child);
 }

@@ -47,3 +47,19 @@ Light::SetLightModel( osg::LightModel* model, bool enabled )
 
    mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, value );
 }
+
+void Light::AddedToScene( Scene *scene )
+{ 
+   //DeltaDrawable::AddedToScene( scene );
+
+   if( scene )
+   {
+      SetEnabled( true );
+      scene->RegisterLight( this );
+   }
+   else
+   {
+      SetEnabled( false );
+      scene->UnRegisterLight( this );
+   }
+}

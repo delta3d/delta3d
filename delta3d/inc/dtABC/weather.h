@@ -133,7 +133,7 @@ namespace dtABC
       void GetTimePeriodAndSeason(TimePeriod *period, Season *season) const;
 
       ///Add a DeltaDrawable to be affected by this weather's lighting and fog
-      void AddDrawable( dtCore::DeltaDrawable *drawable);
+      void AddChild( dtCore::DeltaDrawable *child);
 
    private:
       typedef std::vector<osg::ref_ptr<dtCore::CloudPlane> > CloudPlaneList;

@@ -102,6 +102,8 @@ namespace dtCore
          *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
       }
 
+      virtual void AddedToScene( Scene *scene );
+
    protected:
 
       LightingMode mLightingMode;

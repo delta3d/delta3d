@@ -218,42 +218,44 @@ void Environment::RemoveEffectCache(void)
 
 
 ///Add a DeltaDrawable to the Scene to be viewed.
-void Environment::AddDrawable( DeltaDrawable *drawable )
+void Environment::AddChild( DeltaDrawable *child )
 {
+   DeltaDrawable::AddChild( child );
    //we add Drawables to our mDrawableNode
-   if (drawable)
+   if (child)
    {
-      mDrawableNode->addChild( drawable->GetOSGNode() );
+      mDrawableNode->addChild( child->GetOSGNode() );
 
-      Physical* physical = dynamic_cast<Physical*>(drawable);
-
-      if(physical != NULL)
+      /*
+      if( Physical* physical = dynamic_cast<Physical*>(drawable) )
       {
          if (mParentScene.valid())
          {
-            mParentScene->RegisterPhysical(physical);
+            mParentScene->RegisterPhysical( physical );
          }
       }
+      */
    }
 }
 
 ///Remove a DeltaDrawable from the Environment Node.
-void Environment::RemoveDrawable( DeltaDrawable *drawable )
+void Environment::RemoveChild( DeltaDrawable *child )
 {
+   DeltaDrawable::RemoveChild( child );
 	//we add Drawables to our mDrawableNode
-	if (drawable)
+	if (child)
 	{
-		mDrawableNode->removeChild( drawable->GetOSGNode() );
+		mDrawableNode->removeChild( child->GetOSGNode() );
 
-		Physical* physical = dynamic_cast<Physical*>(drawable);
-
-		if(physical != NULL)
+      /*
+		if( Physical* physical = dynamic_cast<Physical*>(drawable) )
 		{
 			if (mParentScene.valid())
 			{
 				mParentScene->UnRegisterPhysical(physical);
 			}
 		}
+      */
 	}
 }
 

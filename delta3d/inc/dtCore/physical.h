@@ -284,6 +284,8 @@ namespace dtCore
          ///Are we currently rendering the collision geometry?
          bool GetRenderCollisionGeometry(void)const {return mRenderingGeometry;}
 
+         virtual void AddedToScene( Scene *scene );
+
       private:
       
          /**
