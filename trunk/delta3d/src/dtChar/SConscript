@@ -2,8 +2,8 @@ Import('*')
 
 dtCharSrcs = [  'character.cpp' ]
 
-env = env.Copy()
-
 dtCharLib = env.SharedLibrary( 'dtchar', dtCharSrcs, LIBS=[ 'dtcore', 'osg', 'osgDB', 'plibsg', 'plibul', 'Producer', 'rbody' ] )
 
-env.Install( "$prefix/lib", dtCharLib )
+env.Alias('install', env.Install( "$prefix/lib", dtCharLib ) )
+
+Return( 'dtCharLib' )

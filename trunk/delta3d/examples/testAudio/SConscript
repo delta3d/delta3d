@@ -3,3 +3,5 @@ Import('*')
 env = env.Copy()
 
 testAudio = env.Program( 'testAudio', 'testaudio.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'dtaudio', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'openal' ] )
+
+Return( 'testAudio' )

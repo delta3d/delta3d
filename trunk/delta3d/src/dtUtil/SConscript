@@ -4,7 +4,8 @@ dtUtilSrcs = [  'domain.cpp',
                 'matrixutil.cpp',
                 'polardecomp.cpp' ]
 
-env = env.Copy()
 dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS=[ 'osg', 'plibsg', 'plibul' ] )
 
-env.Install( "$prefix/lib", dtUtilLib )
+env.Alias('install', env.Install( "$prefix/lib", dtUtilLib ) )
+
+Return( 'dtUtilLib' )

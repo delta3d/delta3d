@@ -1,6 +1,6 @@
-SConscript( dirs=['bspCompiler',
-                  'psEditor', 
-                  'Viewer'] )
+bspCompiler = SConscript( 'bspCompiler/SConscript' )
+#hlaStealthViewer = SConscript('hlaStealthViewer')
+psEditor = SConscript( 'psEditor/SConscript' )
+viewer = SConscript( 'Viewer/SConscript' )
 
-#SConscript('hlaStealthViewer')
-
+Return( 'bspCompiler', 'psEditor', 'viewer' ) #add hla
