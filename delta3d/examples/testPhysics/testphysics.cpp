@@ -144,6 +144,10 @@ protected:
    {
       if (key == Producer::Key_Escape)
       {
+         while( !mToAdd.empty() )    mToAdd.pop();
+         while( !mToRemove.empty() ) mToRemove.pop();
+         while( !mObjects.empty() )  mObjects.pop();
+ 
          this->Quit();
       }
       
