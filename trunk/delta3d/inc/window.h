@@ -67,6 +67,9 @@ namespace dtCore
       ///Get a handle to the Mouse associated with the Window
       Mouse *GetMouse() {return mMouse.get();}
 
+      ///Changes system screen resolution
+      bool  ChangeScreenResolution (int width, int height, int bitsPerPixel);
+
    private:
 
       Producer::RenderSurface *mRenderSurface;

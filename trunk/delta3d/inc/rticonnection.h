@@ -1109,6 +1109,7 @@ namespace dtHLA
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
+#undef _AUTOLIBNAME3
 
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
@@ -1118,10 +1119,12 @@ namespace dtHLA
 #define _AUTOLIBNAME  "libRTI-NGd.lib"
 #define _AUTOLIBNAME1  "tinyxmld.lib"
 #define _AUTOLIBNAME2  "ws2_32.lib"
+#define _AUTOLIBNAME3  "osgSimd.lib"
 #else
 #define _AUTOLIBNAME  "libRTI-NG.lib"
 #define _AUTOLIBNAME1  "tinyxml.lib"
 #define _AUTOLIBNAME2  "ws2_32.lib"
+#define _AUTOLIBNAME3  "osgSim.lib"
 #endif
 
 /* You may turn off this include message by defining _NOAUTOLIB */
@@ -1129,10 +1132,12 @@ namespace dtHLA
 #pragma message( "Will automatically link with " _AUTOLIBNAME )
 #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
 #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
+#pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
 
 #pragma comment(lib, _AUTOLIBNAME)
 #pragma comment(lib, _AUTOLIBNAME1)
 #pragma comment(lib, _AUTOLIBNAME2)
+#pragma comment(lib, _AUTOLIBNAME3)
 
 #endif // DT_HLA_RTI_CONNECTION
