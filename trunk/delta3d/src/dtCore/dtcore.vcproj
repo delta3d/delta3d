@@ -249,6 +249,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\infinitelight.cpp">
+			</File>
+			<File
 				RelativePath=".\infiniteterrain.cpp">
 			</File>
 			<File
@@ -436,6 +439,9 @@
 				RelativePath=".\pointaxis.cpp">
 			</File>
 			<File
+				RelativePath=".\positionallight.cpp">
+			</File>
+			<File
 				RelativePath="recorder.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -483,6 +489,9 @@
 			</File>
 			<File
 				RelativePath=".\skydomeshader.cpp">
+			</File>
+			<File
+				RelativePath=".\spotlight.cpp">
 			</File>
 			<File
 				RelativePath=".\stats.cpp">
@@ -644,6 +653,9 @@
 				RelativePath="..\..\inc\dtCore\globals.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\dtCore\infinitelight.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtCore\infiniteterrain.h">
 			</File>
 			<File
@@ -701,6 +713,9 @@
 				RelativePath="..\..\inc\dtCore\pointaxis.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\dtCore\positionallight.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtCore\recorder.h">
 			</File>
 			<File
@@ -714,6 +729,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\skydomeshader.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\spotlight.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\stats.h">
