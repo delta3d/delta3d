@@ -6,4 +6,7 @@ dtAudioSrcs = [ 'audiomanager.cpp',
 		'soundeffectbinder.cpp' ]
 
 env = env.Copy()
-env.SharedLibrary( 'dtaudio', dtAudioSrcs, LIBS=[ 'openal', 'OpenThreads', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+
+dtAudioLib = env.SharedLibrary( 'dtaudio', dtAudioSrcs, LIBS=[ 'openal', 'OpenThreads', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+
+env.Install( '../../lib', dtAudioLib )
