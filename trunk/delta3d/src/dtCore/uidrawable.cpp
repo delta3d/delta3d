@@ -4,6 +4,8 @@
 #include "dtCore/system.h"
 #include "dtCore/uidrawable.h"
 #include "dtCore/notify.h"
+#include "dtCore/deltawin.h"
+
 #include "UI/CUI_Menu.h"
 #include "UI/CUI_PolyEdgeBorder.h"
 #include "UI/CUI_RadioGroup.h"
