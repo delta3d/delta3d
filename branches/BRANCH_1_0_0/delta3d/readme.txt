@@ -20,22 +20,22 @@ in src/readme.txt to build the source.
 
 Delta3D is built upon the following other open-source projects:
 
-OpenSceneGraph 0.9.7-3
-Producer (from osg 0.9.7-3)
-OpenThreads (from osg 0.9.7-3)
+OpenSceneGraph
+Producer
+OpenThreads
 
-Cal3D (CVS: 10/18/04)
-ConfigScript 1.2
-FLTK 1.1.5
-GDAL  1.2.0
-glGUI (CVS: 3/9/04)
+Cal3D
+ConfigScript
+FLTK
+GDAL
+glGUI
 Intersense Tracker Library
-OpenAL 1.0
-Open Dynamics Engine (0.5) 
-PLIB 1.8.3
-ReplicantBody 0.1 
+OpenAL
+Open Dynamics Engine
+PLIB
+ReplicantBody
 Signal_Slot	
-TinyXML 2.3.2
+TinyXML
 
 Thanks for using out Delta3D! Please visit our webpage at http://delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
