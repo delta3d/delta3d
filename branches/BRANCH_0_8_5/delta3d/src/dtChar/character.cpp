@@ -4,15 +4,10 @@
 
 #include <sstream>
 
-#include "dtChar/character.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
-
 #include "osgDB/FileUtils"
-#include "rbody/osg/ReplicantBodyMgr.h"
-//#include "rbody/osg/OsgBody.h"
 
-//#include "rvrutils/os/FilePathContainer.h"
+#include "dtChar/character.h"
 
 using namespace dtCore;
 using namespace dtChar;
