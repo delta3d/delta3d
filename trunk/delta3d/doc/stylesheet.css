@@ -1,35 +1,35 @@
 
 DIV.qindex { width: 100%;
-             background-color: #666666;
-             border: 4px solid #666666;
+             background-color: #E0E0F0;
+             border: 4px solid #E0E0F0;
              text-align: center;
              margin-bottom: 2px
 }
-A.qindex { text-decoration: none; font-weight: bold; color: #FFCC00 }
-A.qindex:visited { text-decoration: none; font-weight: bold; color: #999966 }
-A.el { text-decoration: none; font-weight: bold; color: #FFCC00 }
-A.el:visited { text-decoration: none; color: #999966 }
+A.qindex { text-decoration: none; font-weight: bold; color: #0000FF }
+A.qindex:visited { text-decoration: none; font-weight: bold; color: #FF8C00 }
+A.el { text-decoration: none; font-weight: bold; color: #0000FF }
+A.el:visited { text-decoration: none; color: #FF8C00 }
 A.elRef { font-weight: bold }
-A.qindex:hover { text-decoration: none; background-color: #ddddff }
+A.qindex:hover { text-decoration: none; background-color: #C0C0F0 }
 A.qindexHL { text-decoration: none; font-weight: bold;
-             background-color: #666666;
-             color: #FFCC00
+             background-color: #6699CC;
+             color: #0000FF
            }
-A.qindexHL:hover { text-decoration: none; background-color: #666666; color: #ffffff }
-A.qindexHL:visited { text-decoration: none; background-color: #666666; color: #999966 }
-TD.md { background-color: #666666; font-weight: bold; }
-TD.mdname1 { background-color: #666666; font-weight: bold; color: #FFCC00; }
-TD.mdname { background-color: #666666; font-weight: bold; color: #FFCC00; width: 600px; }
+A.qindexHL:hover { text-decoration: none; background-color: #6699CC; color: #FFFFFF }
+A.qindexHL:visited { text-decoration: none; background-color: #5050FF; color: #FFFFFF }
+TD.md { background-color: #E0E0F0; font-weight: bold; }
+TD.mdname1 { background-color: #E0E0F0; font-weight: bold; color: #0000FF; }
+TD.mdname { background-color: #E0E0F0; font-weight: bold; color: #0000FF; width: 600px; }
 DIV.groupHeader { margin-left: 16px; margin-top: 12px; margin-bottom: 6px; font-weight: bold }
 DIV.groupText { margin-left: 16px; font-style: italic; font-size: smaller }
 BODY {
-	background: #333333;
-	color: #FFFFFF;
+	background: #FFFFFF;
+	color: #000000;
 	margin-right: 20px;
 	margin-left: 20px;
 }
 TD.indexkey { 
-   background-color: #666666; 
+   background-color: #F8F8F8; 
    font-weight: bold; 
    padding-right  : 10px; 
    padding-top    : 2px; 
@@ -41,7 +41,7 @@ TD.indexkey {
    margin-bottom  : 2px  
 }
 TD.indexvalue { 
-   background-color: #666666; 
+   background-color: #F8F8F8; 
    font-style: italic; 
    padding-right  : 10px; 
    padding-top    : 2px; 
@@ -53,7 +53,7 @@ TD.indexvalue {
    margin-bottom  : 2px  
 }
 TR.memlist {
-   background-color: #666666; 
+   background-color: #E0E0F0; 
 }
 P.formulaDsp { text-align: center; }
 IMG.formulaDsp { }
@@ -66,8 +66,8 @@ SPAN.preprocessor  { color: #806020 }
 SPAN.stringliteral { color: #002080 }
 SPAN.charliteral   { color: #008080 }
 .mdTable {
-	border: 1px solid #868686;
-	background-color: #666666;
+	border: 1px solid #E0E0F0;
+	background-color: #E0E0F0;
 }
 .mdRow {
 	padding: 8px 20px;
@@ -75,24 +75,24 @@ SPAN.charliteral   { color: #008080 }
 .mdescLeft {
 	font-size: smaller;
 	font-family: Arial, Helvetica, sans-serif;
-	background-color: #666666;
+	background-color: #E0E0F0; 
 	padding-left: 8px;
-	border-top: 1px none #666666;
-	border-right: 1px none #666666;
-	border-bottom: 1px none #666666;
-	border-left: 1px none #666666;
+	border-top: 1px none #E0E0F0;
+	border-right: 1px none #E0E0F0;
+	border-bottom: 1px none #E0E0F0;
+	border-left: 1px none #E0E0F0;
 	margin: 0px;
 }
 .mdescRight {
 	font-size: smaller;
 	font-family: Arial, Helvetica, sans-serif;
 	font-style: italic;
-	background-color: #666666;
+	background-color: #E0E0F0;
 	padding-left: 4px;
-	border-top: 1px none #666666;
-	border-right: 1px none #666666;
-	border-bottom: 1px none #666666;
-	border-left: 1px none #666666;
+	border-top: 1px none #E0E0F0;
+	border-right: 1px none #E0E0F0;
+	border-bottom: 1px none #E0E0F0;
+	border-left: 1px none #E0E0F0;
 	margin: 0px;
 	padding-bottom: 0px;
 	padding-right: 8px;
@@ -105,14 +105,14 @@ SPAN.charliteral   { color: #008080 }
 	border-bottom-width: 1px;
 	border-left-width: 1px;
 	border-top-style: solid;
-	border-top-color: #666666;
-	border-right-color: #666666;
-	border-bottom-color: #666666;
-	border-left-color: #666666;
+	border-top-color: #E0E0F0;
+	border-right-color: #E0E0F0;
+	border-bottom-color: #E0E0F0;
+	border-left-color: #E0E0F0;
 	border-right-style: none;
 	border-bottom-style: none;
 	border-left-style: none;
-	background-color: #666666;
+	background-color: #E0E0F0;
 	font-family: Geneva, Arial, Helvetica, sans-serif;
 	font-size: 12px;
 }
@@ -124,14 +124,14 @@ SPAN.charliteral   { color: #008080 }
 	border-bottom-width: 1px;
 	border-left-width: 1px;
 	border-top-style: solid;
-	border-top-color: #666666;
-	border-right-color: #666666;
-	border-bottom-color: #666666;
-	border-left-color: #666666;
+	border-top-color: #E0E0F0;
+	border-right-color: #E0E0F0;
+	border-bottom-color: #E0E0F0;
+	border-left-color: #E0E0F0;
 	border-right-style: none;
 	border-bottom-style: none;
 	border-left-style: none;
-	background-color: #666666;
+	background-color: #E0E0F0;
 	font-family: Geneva, Arial, Helvetica, sans-serif;
 	font-size: 13px;
 }
