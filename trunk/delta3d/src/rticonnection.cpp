@@ -8,8 +8,7 @@
 
 #ifndef _WIN32
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <linux/in.h>
 #endif
 
 #include "ul.h"
@@ -78,8 +77,8 @@ RTIConnection::RTIConnection(string name)
    SetGeoOrigin(0, 0, 0);
 
    mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
-   mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));
-   
+   mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535)); 
+  
    SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
    
    //
@@ -119,7 +118,9 @@ RTIConnection::RTIConnection(string name)
          #ifdef _WIN32
          mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
          #else
-         memcpy( &mSiteIdentifier, &me.sin_addr, sizeof(mSiteIdentifier));
+         win_addr temp_addr;
+         memcpy(&temp_addr,&me.sin_addr,sizeof(win_addr));
+         mSiteIdentifier = temp_addr.S_un.S_un_w.s_w1;
          #endif
       }
    }
@@ -416,7 +417,7 @@ void RTIConnection::JoinFederationExecution(string executionName,
        it != mMasterEntities.end();
        it++)
    {
-           RegisterMasterEntity(const_cast<Entity*>((*it).get()));
+      RegisterMasterEntity(const_cast<Entity*>((*it).get()));
    }
 }
 
