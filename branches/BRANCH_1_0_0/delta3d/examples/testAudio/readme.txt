@@ -34,10 +34,11 @@ Linux Source:
 
 Controls
 --------
-A      -  Plays a sound
-S      -  Plays a sound bound to an effect
-D      -  Plays a sound with panning
-F      -  Plays a sound with panning and dopler
+A      -  Plays a sound centered on the terrain
+S      -  Plays a sound bound to a particle effect 
+D      -  Plays a sound with panning bound to the helo
+F      -  Plays a sound with panning and dopler bound to the BRDM (retro-fitted 
+          with a car horn)
 0-9    -  Sets gain
 +|-    -  Raise|lower pitch
 L      -  Set|unset all sounds looping

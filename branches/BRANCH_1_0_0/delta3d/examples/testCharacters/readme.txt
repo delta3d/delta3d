@@ -9,7 +9,8 @@ Uses modules: dtCore, dtChar, dtABC
 Purpose
 -------
 To demonstrate basic functionality of the ReplicantBody/Cal3D character
-animation toolkit.
+animation toolkit. Two avatars are used and the user controls one while
+the second follows the user.
 
 Instructions
 ------------
@@ -31,9 +32,9 @@ Linux Source:
 
 Controls
 --------
-Up     -  Walk marine forward
-Left   -  Turn marine left
-Right  -  Turn marine right
+Up     -  Walk character forward
+Left   -  Turn character left
+Right  -  Turn character right
 Shift  -  Hold down to run
 Esc    -  Exit
 
