@@ -25,7 +25,10 @@ TexturePreview::TexturePreview(int x, int y, int w, int h, const char *label)
  */
 void TexturePreview::SetTexture(std::string texture)
 {
-   mImage = osgDB::readImageFile(texture, osgDB::Registry::CACHE_IMAGES);
+	osg::ref_ptr <osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
+	options.get()->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_IMAGES);
+
+	mImage = osgDB::readImageFile(texture, options.get());
          
    redraw();
 }
