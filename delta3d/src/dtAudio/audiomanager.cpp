@@ -830,6 +830,15 @@ AudioManager::PreFrame( const double deltaFrameTime )
          SetMaximumGain( snd.get() );
          continue;
       }
+
+      // set the roll off attenutation factor
+      if ( cmd == Sound::kCommand[Sound::ROL_FACT] )
+      {
+         SetRolloff( snd.get() );
+         continue;
+      }
+
+      Notify( dtCore::WARN, "AudioManager: Unknown command:%s", cmd);
    }
 }
 
