@@ -21,7 +21,7 @@
 #ifndef DELTA_DTSCRIPT
 #define DELTA_DTSCRIPT
 
-#include "python/scriptmanager.h"
+#include "dtScript/scriptmanager.h"
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 

@@ -1,4 +1,4 @@
-#include "python/scriptmanager.h"
+#include "dtScript/scriptmanager.h"
 
 #include <boost/python/errors.hpp>
 
