@@ -1,8 +1,8 @@
 Import('*')
 
-dtHlaSrcs = [ 	'dis_types.cpp', 
-		'entity.cpp', 
-		'rticonnection.cpp' ]
+dtHlaSrcs = [   'dis_types.cpp',
+                'entity.cpp',
+                'rticonnection.cpp' ]
 
 # add in RTI dirs
 #INCLUDE_DIRECTORIES( $ENV{RTI_HOME}/$ENV{RTI_BUILD_TYPE}/include )
@@ -12,4 +12,4 @@ env = env.Copy()
 
 dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=[ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'RTI-NG', 'fedtime', 'tinyxml' ] )
 
-env.Install( '../../lib', dtHlaLib )
+env.Install( "$prefix/lib", dtHlaLib )

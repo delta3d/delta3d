@@ -1,10 +1,10 @@
 Import('*')
 
-gui_flSrcs = [ 	'gui_fltk.cpp', 
-		'guimgr.cpp' ]
+gui_flSrcs = [  'gui_fltk.cpp',
+                'guimgr.cpp' ]
 
 env = env.Copy()
 
 dtGui_flLib = env.SharedLibrary( 'gui_fl', gui_flSrcs, LIBS=[ 'dtcore', 'fltk', 'OpenThreads', 'osg', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
 
-env.Install( '../../lib', dtGui_flLib )
+env.Install( "$prefix/lib", dtGui_flLib )

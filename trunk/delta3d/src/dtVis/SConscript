@@ -6,4 +6,4 @@ env = env.Copy()
 
 dtVisLib = env.SharedLibrary( 'dtvis', dtVisSrcs, LIBS=[ 'GL', 'osg', 'osgDB', 'osgUtil' ] )
 
-env.Install( '../../lib', dtVisLib )
+env.Install( "$prefix/lib", dtVisLib )
