@@ -4,8 +4,7 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testCharacters main )
-TARGET_LINK_LIBRARIES( testCharacters dtcore dtchar rbody cal3d )
-
+ADD_EXECUTABLE( testCharacters testcharacters )
+TARGET_LINK_LIBRARIES( testCharacters dtcore dtabc dtchar cal3d )
 
 

@@ -252,6 +252,7 @@ void DeltaWin::ShowCursor(const bool show )
 void DeltaWin::SetFullScreenMode( bool enable )
 {
    mRenderSurface->fullScreen(enable);
+   mRenderSurface->useBorder(enable);
 }
 
 /*!

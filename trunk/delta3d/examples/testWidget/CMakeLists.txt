@@ -4,7 +4,7 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testWidget main MyWidget MyWindow TestWidget )
+ADD_EXECUTABLE( testWidget MyWidget MyWindow TestWidget )
 TARGET_LINK_LIBRARIES( testWidget dtcore dtabc fltk )
 
 

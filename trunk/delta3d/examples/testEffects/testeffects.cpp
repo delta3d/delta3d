@@ -61,10 +61,9 @@ public:
                );
          }
 
-         //mAngle = mAngle - 45.0f*delta;
+ 
          mAngle = mAngle + 45.0f*delta;
 
-         //if(mAngle < 0) mAngle += 360.0f;
          if(mAngle > 360) mAngle -= 360.0f;
 
          mPosition.Set(
@@ -175,6 +174,7 @@ int main( int argc, char **argv )
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
    TestEffectsApp* app = new TestEffectsApp( "config.xml" );
+   
    app->Config();
    app->Run();
 

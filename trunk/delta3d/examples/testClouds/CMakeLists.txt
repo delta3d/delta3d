@@ -4,8 +4,8 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testClouds CloudApp )
-TARGET_LINK_LIBRARIES( testClouds dtcore dtabc )
+ADD_EXECUTABLE( testClouds testclouds )
+TARGET_LINK_LIBRARIES( testClouds dtcore dtabc gui_fl )
 
 
 

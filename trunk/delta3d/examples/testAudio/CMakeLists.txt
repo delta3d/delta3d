@@ -4,7 +4,7 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testAudio main testAudioApp )
+ADD_EXECUTABLE( testAudio testaudio )
 TARGET_LINK_LIBRARIES( testAudio dtcore dtabc dtaudio )
 
 

@@ -162,7 +162,6 @@ BaseABC::CreateInstances( void )
    mScene   = new dtCore::Scene("defaultScene");
    assert( mScene.get() );
 
-
    // create the camera
    mCamera  = new dtCore::Camera("defaultCam");
    assert( mCamera.get() );
