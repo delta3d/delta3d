@@ -1,6 +1,6 @@
 #include "dt.h"
 #include "dtabc.h"
-
+#include "guimgr.h"
 
 using namespace dtABC;
 using namespace dtCore;
@@ -94,7 +94,11 @@ protected:
 	{
 		switch(key) {
 			case Producer::Key_Escape:    this->Quit();    	 break;
-			case Producer::Key_H:   DisplayDebugGUI(true);   break;
+			case Producer::Key_H:
+            {
+               GUI *ui = new GUI(); 
+            }
+            break;
 			case Producer::Key_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
 			case Producer::Key_F2: weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
 			case Producer::Key_F3: weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
