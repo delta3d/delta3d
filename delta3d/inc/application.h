@@ -3,7 +3,7 @@
 
 #include "baseabc.h"
 #include "tinyxml.h"
-
+#include "deltawin.h"
 
 namespace dtABC
 {
@@ -46,16 +46,11 @@ namespace dtABC
 
    private:
       ///Create basic instances and set up system hooks
-      virtual  void  CreateInstances( void );
+      virtual  void  CreateInstances( std::string name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
                void  ParseConfigFile( TiXmlElement* rootNode );
-               void  GenerateConfigFile( void );
+               void  GenerateDefaultConfigFile( void );
 
-               void  SaveOriginalResolution( void );
-               void  SwitchToOriginalResolution( void );
-
-               int mHorz;
-               int mVert;
-               int mDepth;
+               dtCore::Resolution mOriginalRes;
    };
 }
 
