@@ -321,7 +321,7 @@ void Scene::OnMessage(MessageData *data)
          else
             dSpaceCollide(mSpaceID, this, NearCallback);
 
-         dWorldStep(mWorldID, PHYSICS_STEPSIZE);
+         dWorldQuickStep(mWorldID, PHYSICS_STEPSIZE);
          
          dJointGroupEmpty(mContactJointGroupID);
       }
