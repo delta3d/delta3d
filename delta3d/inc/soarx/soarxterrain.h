@@ -479,6 +479,16 @@ namespace dtSOARX
 		 osg::Image* MakeFilteredImage(osg::Image* src_image, osg::Vec3& rgb_selected);
 
 		 /**
+		 * Use an image to mask-out vegetation probability (set probability to 0%)
+		 * Useful for masking-out bodies of water or user-created urban models
+		 * @param src_image the black/white LCC Image by LCC type
+		 * @param mask_image the black/white - using LCC type 11 as default
+		 * @return the modified filtered image
+		 */
+		 osg::Image* ApplyMask(osg::Image* src_image, osg::Image* mask_image);
+
+
+		 /**
 		 * Create heightmap image
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
@@ -491,6 +501,13 @@ namespace dtSOARX
 		 * @return the newly created image
 		 */
 		 osg::Image* MakeSlopemapImage(osg::HeightField* hf);
+
+		 /**
+		 * Create slopemap from GDAL-derived heightfield data
+		 * @param hf the GDAL-derived heightfield
+		 * @return the newly created image
+		 */
+		 osg::Image* MakeSlopeAspectImage(osg::HeightField* hf);
 
 		 /**
 		 * Create relative elevation map from GDAL-derived heightfield data
@@ -507,12 +524,14 @@ namespace dtSOARX
 		 * @param s_image the slopemap image
 		 * @param r_image the relative elevation image
 		 * @return the newly created image
-		 */
+		 
 		 osg::Image* MakeCombinedImage(
 			 osg::Image* f_image,			// LCC filtered image
 			 osg::Image* h_image,			// heightmap
 			 osg::Image* s_image,			// slopemap image
 			 osg::Image* r_image);			// relative elevation image
+*/
+
 
 		 /**
          /**
@@ -589,7 +608,7 @@ namespace dtSOARX
 		 /**
 		  *	  Listing of objects (plants, trees, etc) 
 		  */
-		 std::vector<dtCore::RefPtr<dtCore::Object> > mObjects;
+//		 std::vector<dtCore::RefPtr<dtCore::Object> > mObjects;
 
 		 /**
 		  *	  Listing of groups
@@ -646,8 +665,33 @@ namespace dtSOARX
           */
          int mMaxTextureSize;
          
+		 /**
+		 * Image gamma correction factor.
+		 */
+		 float mGamma;
 
          /**
+		 * Looks per pixel X.
+		 */
+		 float mLooksX;
+
+		 /**
+		 * Looks per pixel Y.
+		 */
+		 float mLooksY;
+
+		 /**
+		 * Random number seed
+		 */
+		 short mSeed;
+
+		 /**
+		 * Using DEMs?
+		 */
+		 bool mDEMmode;
+		 std::string mDEMpath;
+
+		 /**
           * Detail gradient textures for each of the three DTED levels.
           */
          dtCore::RefPtr<osg::Texture2D> mDetailGradient[3];
@@ -755,6 +799,12 @@ namespace dtSOARX
 		 */
 		 std::map<Segment, LCCCells*> mSegmentLCCCellMap;
 
+		 struct LCCrange
+		 {
+			 float min;
+			 float max;
+			 float sharpness;
+		 };
 
 		 /**
 		  *	 LCC type data
@@ -765,7 +815,12 @@ namespace dtSOARX
 			 int rgb[3];
 			 std::string name;
 			 std::string model;
-			 osg::Group* vegeObject;
+			 float scale;
+			 osg::Group* vegeObject[3];
+			 float aspect;
+			 LCCrange slope;
+			 LCCrange elevation;
+			 LCCrange relelevation;
 		 };
 
 
@@ -813,12 +868,14 @@ namespace dtSOARX
           */
          bool mUseLCC;
 
+		 int totalvegecount;
 
 		 /**
 		  *	 Hack to retain scope of quadtree groups
 		  */
 		 std::vector<osg::Group*> mGroupies;
 
+		 void SimplifyTerrain(osg::Vec3& ep);
 		 /**
 		 * Loads the specified configuration file.
 		 *
@@ -842,7 +899,43 @@ namespace dtSOARX
 		 */		 
 		 void AddVegetation(int latitude, int longitude);
 
+
+
+		 /**
+		 * Determine whether vegetation exists at coord x,y
+		 * @param mCimage the LCC type's combined image)
+		 * @param x the x coordinate to check
+		 * @param y the y coordinate to check
+		 * @param limit the probability rolled
+		 * @return boolean on existence of vegetaton at x,y
+		 */
 		 bool GetVegetation(osg::Image* mCimage, int x, int y, int limit);
+
+		 /**
+		 * Determine type/age of vegetation type (1-3; young-old).
+		 * @param mCimage the LCC type's combined image)
+		 * @param x the x coordinate to check
+		 * @param y the y coordinate to check
+		 * @param pref_angle the preferred angle of aspect in degrees for optimum growth
+		 * @return the age bias of the vegetation type
+		 */
+		 int GetVegType(osg::Image* mCimage, int x, int y, float good_angle);
+
+
+		 /**
+		 * Create probability map of the likehihood for a particular LCC type
+		 * @param LCCidx LCC image index
+		 * @param h_image the heightmap image
+		 * @param s_image the slopemap image
+		 * @param r_image the relative elevation image
+		 * @return the newly created image
+		 */
+		 osg::Image* MakeCombinedImage(
+			 LCCs l,
+			 osg::Image* f_image,			// LCC filtered image
+			 osg::Image* h_image,			// heightmap
+			 osg::Image* s_image,			// slopemap image
+			 osg::Image* r_image);			// relative elevation image
 
    };
 };
