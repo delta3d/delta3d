@@ -26,3 +26,17 @@ void dtCore::SetDataFilePathList(std::string pathList )
    osgDB::setDataFilePathList(pathList);
 }
 
+/*!
+ * Get the Delta Data file path.  This comes directly from the environment 
+ * variable "DELTA_DATA".  If the environment variable is not set, the local
+ * directory will be returned.
+ */
+DT_EXPORT std::string dtCore::GetDeltaDataPathList(void)
+{
+   char *ptr;
+   if( (ptr = getenv( "DELTA_DATA" )) )
+   {
+      return (std::string(ptr));
+   }
+   else return (std::string("./"));
+}
