@@ -24,7 +24,7 @@ MyWidget::~MyWidget( void )
 void
 MyWidget::OnMessage( MessageData* data )
 {
-   if( data->message == "loadfile" )
+   if( data->message == "loadfile")
    {
       assert( data->userData );
 
