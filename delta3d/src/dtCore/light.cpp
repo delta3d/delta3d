@@ -81,6 +81,47 @@ Light::~Light()
    mLightSource = NULL;
 }
 
+// attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
+// where k_c = constant, k_l = linear, k_q = quadractric
+void 
+Light::SetAttenuation( AttenuationType type, float value )
+{
+   switch( type )
+   {
+   case CONSTANT:
+      mLightSource->getLight()->setConstantAttenuation( value );
+      break;
+   case LINEAR:
+      mLightSource->getLight()->setLinearAttenuation( value );
+      break;
+   case QUADRATIC:
+      mLightSource->getLight()->setQuadraticAttenuation( value );
+      break;
+   default:
+      break;
+   }
+}  
+
+float 
+Light::GetAttenuation( AttenuationType type )
+{
+   switch( type )
+   {
+   case CONSTANT:
+      return mLightSource->getLight()->getConstantAttenuation();
+      break;
+   case LINEAR:
+      return mLightSource->getLight()->getLinearAttenuation();
+      break;
+   case QUADRATIC:
+      return mLightSource->getLight()->getQuadraticAttenuation();
+      break;
+   default:
+      return 0;
+      break;
+   }
+}
+
 void
 Light::AddedToScene( Scene* scene )
 {

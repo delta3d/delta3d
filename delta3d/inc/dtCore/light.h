@@ -40,10 +40,18 @@ namespace dtCore
 
    public:
 
+      //directional?
       enum LightingMode
       {
          GLOBAL = 0,
          LOCAL  = 1
+      };
+
+      enum AttenuationType
+      {
+         CONSTANT  = 0,
+         LINEAR    = 1,
+         QUADRATIC = 2
       };
 
       Light( int number, const std::string name, const LightingMode mode );
@@ -116,30 +124,12 @@ namespace dtCore
          *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
       }
 
-      //REMOVE
-      inline void SetPosition( const float x, const float y, const float z )
-      {
-         mLightSource->getLight()->setPosition( osg::Vec4( x, y, z, 1.0 ) );
-      }
-      
-      //REMOVE
-      inline void GetPosition( float* x, float* y, float *z ) const
-      {
-         osg::Vec4f position = mLightSource->getLight()->getPosition();
-         *x = position[0]; *y = position[1]; *z = position[2];
-      }
+      // attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
+      // where k_c = constant, k_l = linear, k_q = quadractric
+      void SetAttenuation( AttenuationType type, float value );
+      float GetAttenuation( AttenuationType type );
 
-      //REMOVE
-      inline void SetDirection( const float x, const float y, const float z )
-      { mLightSource->getLight()->setDirection( osg::Vec3( x, y, z ) ); }
-      
-      //REMOVE
-      inline void GetDirection( float* x, float* y, float *z ) const
-      {
-         osg::Vec3f direction = mLightSource->getLight()->getDirection();
-         *x = direction[0]; *y = direction[1]; *z = direction[2];
-      }
-
+      /*
       inline void SetConstantAttenuation( float constant_attenuation )
       { mLightSource->getLight()->setConstantAttenuation( constant_attenuation ); }
       
@@ -157,6 +147,7 @@ namespace dtCore
       
       inline float GetQuadraticAttenuation() const
       { return mLightSource->getLight()->getQuadraticAttenuation(); }
+      */
 
       inline void SetSpotExponent( float spot_exponent )
       { mLightSource->getLight()->setSpotExponent( spot_exponent ); }
