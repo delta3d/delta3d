@@ -680,7 +680,7 @@ void Terrain::LoadSegment(int latitude, int longitude)
    {
       char dtedName[64];
       
-      sprintf(dtedName, "%s/%s.dtCore%d", longString, latString, i);
+      sprintf(dtedName, "%s/%s.dt%d", longString, latString, i);
       
       string path = osgDB::findFileInPath(
          dtedName, 
@@ -852,8 +852,8 @@ void SimpleHeightFieldRenderer::CreateHeightFieldDrawable()
    geom->setTexCoordArray(2, detailTexCoords);
    
    float ds = 1.0f/hf->getNumColumns(),
-         dtCore = 1.0f/hf->getNumRows(),
-         s, t = dtCore/2;
+         dt = 1.0f/hf->getNumRows(),
+         s, t = dt/2;
 
    double latitude = mLatitude, longitude,
           dLat = 1.0f/(hf->getNumColumns()-1),
@@ -884,7 +884,7 @@ void SimpleHeightFieldRenderer::CreateHeightFieldDrawable()
          longitude += dLong;
       }
       
-      t += dtCore;
+      t += dt;
       latitude += dLat;
    }
    
