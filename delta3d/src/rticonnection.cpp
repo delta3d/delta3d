@@ -99,6 +99,8 @@ RTIConnection::RTIConnection(string name)
          {
             ulEndianSwap(&mLocalIPAddress);
          }
+         
+         mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
       }
    }
 }
@@ -1366,9 +1368,8 @@ void RTIConnection::RegisterMasterEntity(Entity* entity)
       
       sprintf(
          name, 
-         "Delta3D/%x/%hu-%hu-%hu", 
+         "Delta3D/%x/%hu/%hu", 
          mLocalIPAddress,
-         entityIdentifier.GetSiteIdentifier(),
          entityIdentifier.GetApplicationIdentifier(),
          entityIdentifier.GetEntityIdentifier()
       );
@@ -1797,7 +1798,7 @@ void RTIConnection::OnMessage(MessageData *data)
             );
 
             encodedMarking[0] = 1; // ASCII
-               
+            
             memset(encodedMarking + 1, 0, 11);
                   
             theAttributes->add(
@@ -1857,7 +1858,7 @@ void RTIConnection::OnMessage(MessageData *data)
 
          master->GetTransform(&transform);
 
-         if( !(*m).second.mTransform.EpsilonEquals(&transform) )
+         if(doHeartbeat || !(*m).second.mTransform.EpsilonEquals(&transform))
          {
             transform.GetTranslation(vec);
             transform.GetRotation(mat);

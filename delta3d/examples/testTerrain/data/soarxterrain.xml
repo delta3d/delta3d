@@ -6,7 +6,7 @@
 	    
 	<DTED path="c:/dted/level1"/>
 	
-	<GeospecificImage filename="60105678.tif"/>
+	<GeospecificImage filename="bayarea_landsat7.tif"/>
 	
 	<!--
 	
