@@ -15,7 +15,12 @@ using namespace   dtABC;
 
 ///static variables
 static   ViewState   bogus( "bogus" );
+
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
          const char* ViewWindow::DEF_PATH = "C:/";
+#else
+         const char* ViewWindow::DEF_PATH = "/";
+#endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 
 
@@ -77,28 +82,40 @@ ViewWindow::OnMessage( dtCore::Base::MessageData* data )
 {
    assert( data );
 
-   MyParent::OnMessage( data );
+   //MyParent::OnMessage( data );
 
    if( data->message == msgKeyboardEvent )
    {
       assert( data->userData );
       KeyboardEventHandler( *(reinterpret_cast<KeyboardEvent*>(data->userData)) );
+      return; //
    }
    else  if (data->message == "fileNotLoaded")
    {
       //the file we're trying to load failed - don't create GUI stuff for it.
       mFileLoaded = false;
       fl_alert("Error: Can't load file-\n%s", (char*)data->userData );
+      return; //
 
    }
    else  if (data->message == "fileLoaded")
    {
       //the file we're trying to load was loaded
       mFileLoaded = true;
+      return; ///
    }
+
+   MyParent::OnMessage( data );
 }
 
+void
+ViewWindow::FileLoaded( bool loaded, const char* filename )
+{
+   if( !loaded )
+      fl_alert("Error: Can't load file-\n%s", filename );
 
+   mFileLoaded = loaded;
+}
 
 const char*
 ViewWindow::GetPath( void )
@@ -411,6 +428,8 @@ ViewWindow::CommandLine( int argc, char** argv )
 void
 ViewWindow::ctor( void )
 {
+   AddSender( this );
+   
    SetEvent( FL_PUSH );
    SetEvent( FL_RELEASE );
    SetEvent( FL_ENTER );

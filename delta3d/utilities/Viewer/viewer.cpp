@@ -141,6 +141,7 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 void
 Viewer::OnMessage( MessageData* data )
 {
+   
    if( data->message == msgGetState )
    {
       GetState( reinterpret_cast<ViewState*>(data->userData) );
@@ -363,7 +364,6 @@ Viewer::LoadFile( ViewState* vs )
    Object*  fileobj  = new Object;
    assert( fileobj );
 
-
    // load the graphics file from disk
    bool fileLoaded = false;
    fileLoaded = fileobj->LoadFile( filename );
@@ -371,13 +371,15 @@ Viewer::LoadFile( ViewState* vs )
    if (!fileLoaded) 
    {
       //tell the GUI the file didn't load
-      SendMessage("fileNotLoaded", (void*)(filename.c_str())); 
+      //SendMessage("fileNotLoaded", (void*)(filename.c_str()));
+      FileLoaded( false, filename.c_str() );
       return;
    }
    else 
    {
       //Tell the GUI the file loaded
-      SendMessage("fileLoaded", (void*)(filename.c_str())); 
+      //SendMessage("fileLoaded", (void*)(filename.c_str()));
+      FileLoaded( true, filename.c_str() );
    }
 
    osg::Node*  filenode = fileobj->GetOSGNode();
@@ -391,7 +393,6 @@ Viewer::LoadFile( ViewState* vs )
    scribe->setEnabled( false );
    scribe->addChild( filenode );
 
-
    // set default cam position for this object based on it's bounding sphere
    osg::BoundingSphere  bs(scribe->getBound());
 
@@ -401,7 +402,7 @@ Viewer::LoadFile( ViewState* vs )
 
    Transform   cam;
    cam.SetLookAt( pos, lookat, up );
-
+    
    float dist(sgDistanceVec3( lookat, pos ));
 
    vs->SetCamPosition( cam, true );
@@ -409,11 +410,9 @@ Viewer::LoadFile( ViewState* vs )
    vs->SetCamOrbitDist( dist, true );
    vs->SetCamOrbitDist( dist, false );
 
-
    // turn off node visibility
    scribe->setNodeMask( NODEMASK_OFF );
-
-
+   
    // add the object to the scene
    osg::Group* scenenode  = GetDisplayObj( FILEOBJS );
    assert( scenenode );
