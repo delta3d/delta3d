@@ -1,20 +1,6 @@
 #ifndef DELTA_CUI_OPENGLRENDERER
 #define DELTA_CUI_OPENGLRENDERER
 
-/*! \file cui_openglrenderer.h
-\brief A simple interface to opengl
-
-Original Author:
-Scott Franke
-sfranke@gljournal.org
-
-Creation date:
-12 Jun 2000
-
-Purpose:
-A simple interface to opengl
-*/
-
 
 #include <stack>
 

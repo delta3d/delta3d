@@ -74,7 +74,7 @@ namespace dtCore
        osg::Texture2D *createPerlinTexture(void);
        virtual void OnMessage(MessageData *data);
        void Update(const double deltaFrameTime);
-       osg::Geometry *CloudPlane::createPlane(float, float);
+       osg::Geometry *createPlane(float, float);
 
 
        osg::ref_ptr<osg::Group> mNode;

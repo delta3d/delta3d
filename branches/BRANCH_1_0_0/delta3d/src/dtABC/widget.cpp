@@ -545,6 +545,7 @@ WinData::operator=( const WinData& that )
  * @param ev mouse event
  * @param px horizontal position
  * @param py vertical position
+ * @param bt the button number
  */
 MouseEvent::MouseEvent( int ev, float px, float py, int bt )
 :  event(ev),
@@ -591,13 +592,6 @@ MouseEvent::operator=( const MouseEvent& that )
 
 
 
-/**
- * Default Constructor.
- *
- * @param ev keyboard event
- * @param px vertical position
- * @param py width
- */
 KeyboardEvent::KeyboardEvent( int ev, int ky, int md, char ch )
 :  event(ev),
    key(ky),

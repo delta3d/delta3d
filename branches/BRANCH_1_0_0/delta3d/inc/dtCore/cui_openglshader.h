@@ -1,20 +1,6 @@
 #ifndef DELTA_CUI_OPENGLSHADER
 #define DELTA_CUI_OPENGLSHADER
 
-/*! \file CUI_Shader.h
-\brief Class definition for CUI_Shader
-
-Original Author:
-Scott Franke
-sfranke@gljournal.org
-
-Creation date:
-29 Feb 2000
-
-Purpose:
-Class definition for CUI_Shader
-*/
-
 
 #include "UI/UI_types.h"
 #include "UI/CUI_SimpleShader.h"
