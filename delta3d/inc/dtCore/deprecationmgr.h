@@ -22,14 +22,17 @@
 #ifndef _DEPRECATIONMGR_H_
 #define _DEPRECATIONMGR_H_
 
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 // Identifier was truncated to '255' characters in the debug information
 #pragma warning( disable:4786 )  
-
+#include <windows.h>
+#else
+#include <iostream>
+#endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #include <string>
 #include <map>
 #include <set>
-#include <windows.h>
 
 
 #ifdef _DEBUG
@@ -56,8 +59,13 @@ class DeprecationMgr
    {
       if ( !m_Functions.empty() )
       {
+			#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
          OutputDebugString( "*************************************************************\n" );
          OutputDebugString( "WARNING. You are using the following deprecated functions:\n" );
+			#else
+			std::cout << "*************************************************************" << std::endl;
+			std::cout << "WARNING. You are using the following deprecated functions:" << std::endl;
+         #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
          char txt[255];
          std::map<const char *, DeprecatedFunction>::iterator i;
@@ -68,15 +76,31 @@ class DeprecationMgr
             sprintf ( txt, "- Function %s called from %i different places.\n",
                pFunction->OldFunctionName, 
                pFunction->CalledFrom.size() );
-            OutputDebugString (txt);
+
+            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            OutputDebugString (txt);         
+		      #else
+			   std::cout << txt;
+            #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+				
 
             sprintf ( txt, "  Instead use %s.\n", 
                pFunction->NewFunctionName );
-            OutputDebugString (txt);
+
+            #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+            OutputDebugString (txt);         
+		      #else
+			   std::cout << txt;
+            #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+        
          }
 
 
-         OutputDebugString( "*************************************************************\n" );
+         #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+			OutputDebugString( "*************************************************************\n" );
+		   #else
+			std::cout << "*************************************************************" << std::endl;
+         #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
          m_Functions.clear();
       }
