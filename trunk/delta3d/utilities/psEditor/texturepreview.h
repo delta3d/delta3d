@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <FL/Fl_Widget.h>
-#include <FL/fl_draw.h>
+#include <FL/Fl_Widget.H>
+#include <FL/fl_draw.H>
 
 #include <osg/Image>
 
