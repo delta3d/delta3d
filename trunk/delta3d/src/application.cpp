@@ -15,24 +15,19 @@ IMPLEMENT_MANAGEMENT_LAYER(Application)
 /** public methods */
 /** constructor */
 Application::Application(std::string configFilename)
-   :  BaseABC("Application"),
-      mHorz(0),
-      mVert(0),
-      mDepth(0)
+   :  BaseABC("Application")
 {
    RegisterInstance(this);
-   CreateInstances();
-
+ 
    //if config file passed in
-   if (configFilename!="")
+   if ( configFilename != "" )
    {
       //  parse config file
       TiXmlDocument *xmlDoc = new TiXmlDocument(configFilename.c_str());
       if (!xmlDoc->LoadFile(configFilename.c_str()))
       {
          Notify(WARN, "Application: can't find config file %s", configFilename.c_str());
-         Notify(WARN, "             Generating default one.");
-         GenerateConfigFile();      
+         CreateInstances(); //create default window, camera, etc.
       }
       else
       {
@@ -41,7 +36,9 @@ Application::Application(std::string configFilename)
       }
    }
    else
-      GenerateConfigFile();
+   {
+      CreateInstances(); //create default window, camera, etc.
+   }
 }
 
 
@@ -50,7 +47,7 @@ Application::Application(std::string configFilename)
 Application::~Application(void)
 {
    #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   if( mHorz != 0 && mVert != 0 && mDepth != 0)
+   //if( mHorz != 0 && mVert != 0 && mDepth != 0)
       //SwitchToOriginalResolution();
    #endif
    
@@ -92,14 +89,15 @@ void  Application::PostFrame( const double deltaFrameTime )
 
 /** Private methods */
 /** Create basic instances and set up system hooks */
-void  Application::CreateInstances( void )
+void  Application::CreateInstances( std::string name, int x, int y, int width, int height, bool cursor, bool fullScreen )
 {
    //create the instances and hook-up the default
    //connections.  The instance attributes may be
    //overwritten using a config file
    BaseABC::CreateInstances();
 
-   mWindow = new DeltaWin("defaultWin");
+   mWindow = new DeltaWin( name, x, y, width, height, cursor, fullScreen );
+   
    assert( mWindow.get() );
 
    mCamera->SetWindow( mWindow.get() );
@@ -125,63 +123,58 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
    TiXmlElement* win = rootNode->FirstChildElement( "Window" );
    if (win != NULL)
    {
-       const char* nameChar       = win->Attribute("Name");
-      const char* widthChar      = win->Attribute("Width");
-      const char* heightChar     = win->Attribute("Height");
-      const char* winXChar       = win->Attribute("X");
-      const char* winYChar       = win->Attribute("Y");
-      const char* showCursorChar = win->Attribute("ShowCursor");
-      const char* fullScreenChar = win->Attribute("FullScreen");
-      const char* pixelChar      = win->Attribute("PixelDepth");
-      const char* refreshChar    = win->Attribute("RefreshRate");
-      const char* changeResChar  = win->Attribute("ChangeDisplayResolution");
+      std::string name( "defaultWin" );
+      if( const char* nameChar = win->Attribute( "Name" ) )
+         name = nameChar;
 
-      if( nameChar )
-      {
-         std::string name = nameChar;
-         mWindow->SetName(name);
-         mWindow->SetWindowTitle(nameChar);
-      }
+      int width( 640 );
+      if( const char* widthChar = win->Attribute( "Width" ) )
+         width = atoi( widthChar );
 
-      if( widthChar && heightChar && winXChar && winYChar )
-      {
-         int         width       = atoi( widthChar );
-         int         height      = atoi( heightChar );
-         int         winX        = atoi( winXChar );
-         int         winY        = atoi( winYChar );
+      int height( 480 );
+      if( const char* heightChar = win->Attribute( "Height" ) )
+         height = atoi( heightChar );
 
-         mWindow->SetPosition(winX, winY, width, height);
-      }
-    
-      if( showCursorChar )
-      {
-         bool        showCursor  = atoi( showCursorChar );
-         mWindow->ShowCursor(showCursor);
-      }
+      int winX( 100 );
+      if( const char* winXChar = win->Attribute( "X" ) )
+         winX = atoi( winXChar );
 
-      if( fullScreenChar )
-      {
-         bool        fullScreen  = atoi( fullScreenChar );
-         //mWindow->SetFullScreenMode(fullScreen);
-         //mWindow->SetFullscreenFlag(fullScreen);
-      }
+      int winY( 100 );
+      if( const char* winYChar = win->Attribute( "Y" ) )
+         winY = atoi( winYChar );
 
-      if( pixelChar && refreshChar && changeResChar )
-      {
-         int      pixelDepth  = atoi( pixelChar );
-         int      refreshRate = atoi( refreshChar );
-         bool     changeRes   = atoi( changeResChar );
+      bool showCursor( true );
+      if( const char* showCursorChar = win->Attribute( "ShowCursor" ) )
+         showCursor = atoi( showCursorChar );
+
+      bool fullScreen( false );
+      if( const char* fullScreenChar = win->Attribute( "FullScreen" ) )
+         fullScreen = atoi( fullScreenChar );
          
-         if( changeRes )
-         {
-            //mHorz = width;
-            //mVert = height;
-            //mDepth = pixelDepth;
-            //SaveOriginalResolution( width, height, pixelDepth );
-            //mWindow->ChangeScreenResolution( width, height, pixelDepth, 60 );
-            //mWindow->SetChangeScreenResolutionFlag(width, height, pixelDepth, refreshRate);
-         }
+      int pixelDepth( 24 );
+      if( const char* pixelChar = win->Attribute( "PixelDepth" ) )
+         pixelDepth = atoi( pixelChar );
+
+      int refreshRate( 60 );
+      if( const char* refreshChar    = win->Attribute("RefreshRate") )
+         refreshRate = atoi( refreshChar );
+
+      bool changeRes( false );
+      if( const char* changeResChar  = win->Attribute("ChangeDisplayResolution") )
+         changeRes = atoi( changeResChar );
+      
+      CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
+ 
+      if( changeRes )
+      {
+         //mHorz = width;
+         //mVert = height;
+         //mDepth = pixelDepth;
+         //SaveOriginalResolution( width, height, pixelDepth );
+         mWindow->GetRenderSurface()->realize();
+         mWindow->ChangeScreenResolution( width, height, pixelDepth, refreshRate );
       }
+
    }
 
    TiXmlElement*  scene = rootNode->FirstChildElement("Scene");
@@ -221,48 +214,43 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
   * @todo probably should check to see if the filename already exists so it 
   *       doesn't overwrite it.
   */
-void dtABC::Application::GenerateConfigFile()
+void dtABC::Application::GenerateDefaultConfigFile()
 {
-   TiXmlDocument xml("config.xml");
-   TiXmlDeclaration dec("1.0", "iso-8859-1", "no");
-   xml.InsertEndChild(dec);
+   TiXmlDocument xml( "config.xml" );
+   TiXmlDeclaration dec( "1.0", "iso-8859-1", "no" );
+   xml.InsertEndChild( dec );
 
-   TiXmlElement app("Application");
+   TiXmlElement app( "Application" );
 
-   TiXmlElement win("Window");
-   win.SetAttribute("Name", mWindow->GetName().c_str());
-   int x,y,w,h;
-   mWindow->GetPosition(&x, &y, &w, &h);
-   bool cursor, fullscreen;
-   cursor = mWindow->GetShowCursor();
-   fullscreen = mWindow->GetFullScreenMode();
-   win.SetAttribute("Width", w);
-   win.SetAttribute("Height", h);
-   win.SetAttribute("X", x);
-   win.SetAttribute("Y", y);
-   win.SetAttribute("PixelDepth", 24); //default!
-   win.SetAttribute("RefreshRate", 60); //default!
-   win.SetAttribute("ShowCursor", cursor);
-   win.SetAttribute("FullScreen", fullscreen);
-   win.SetAttribute("ChangeDisplayResolution", 0);
+   TiXmlElement win( "Window" );
+   win.SetAttribute( "Name", "defaultWin" );
+   win.SetAttribute( "X", 100 );
+   win.SetAttribute( "Y", 100 );
+   win.SetAttribute( "Width", 640 );
+   win.SetAttribute( "Height", 480 );
+   win.SetAttribute( "PixelDepth", 24 ); 
+   win.SetAttribute( "RefreshRate", 60 ); 
+   win.SetAttribute( "ShowCursor", 1 );
+   win.SetAttribute( "FullScreen", 0 );
+   win.SetAttribute( "ChangeDisplayResolution", 0 );
    app.InsertEndChild(win);
 
-   TiXmlElement scene("Scene");
-   scene.SetAttribute("Name", mScene->GetName().c_str());
-   app.InsertEndChild(scene);
+   TiXmlElement scene( "Scene" );
+   scene.SetAttribute( "Name", "defaultScene" );
+   app.InsertEndChild( scene );
 
-   TiXmlElement cam("Camera");
-   cam.SetAttribute("Name", mCamera->GetName().c_str());
-   cam.SetAttribute("WindowInstance", mCamera->GetWindow()->GetName().c_str() );
-   cam.SetAttribute("SceneInstance", mCamera->GetScene()->GetName().c_str());
-   app.InsertEndChild(cam);
+   TiXmlElement cam( "Camera" );
+   cam.SetAttribute( "Name", "defaultCam" );
+   cam.SetAttribute( "WindowInstance", "defaultWin" );
+   cam.SetAttribute( "SceneInstance", "defaultScene" );
+   app.InsertEndChild( cam );
 
-   xml.InsertEndChild(app);
+   xml.InsertEndChild( app );
 
    xml.SaveFile();
 }
 
-
+/*
 void  dtABC::Application::SaveOriginalResolution()
 {
    Resolution r = mWindow->GetCurrentResolution();
@@ -275,3 +263,4 @@ void  dtABC::Application::SwitchToOriginalResolution()
 {
    //mWindow->ChangeScreenResolution( mHorz, mVert, mDepth );
 }
+*/

@@ -249,6 +249,42 @@ void DeltaWin::ShowCursor(const bool show )
 #endif
 }
 
+void DeltaWin::SetFullScreenMode( bool enable )
+{
+   /*
+   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+
+   // now set position and size
+   long dummy;
+   XSizeHints* xsh = new XSizeHints();
+
+   Window window = mRenderSurface->getWindow();
+   Display* dpy = mRenderSurface->getDisplay();
+
+   Resolution r = GetCurrentResolution();
+   
+   XGetWMNormalHints(dpy, window, xsh, &dummy);
+   xsh->x = 0;
+   xsh->y = 0;
+   xsh->base_width = r.width;
+   xsh->base_height = r.height;
+   xsh->flags |= USPosition | PPosition | PBaseSize;
+
+   XSetWMNormalHints(dpy, window, xsh);
+   XMoveResizeWindow(dpy, window, xsh->x, xsh->y,
+                         xsh->base_width, xsh->base_height);
+  
+   XSetWindowAttributes attr;
+   attr.override_redirect = false;
+   XChangeWindowAttributes(dpy, window, CWOverrideRedirect, &attr);
+   XSync(dpy, false);
+   
+   #endif
+   */
+
+   mRenderSurface->fullScreen(enable);
+}
+
 /*!
  * Calculate the screen coordinates given a window coordinate. Screem
  * coordinate (0,0) is located in the lower left of the display.
@@ -386,6 +422,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
    Display* dpy = mRenderSurface->getDisplay();
    int screenNum = mRenderSurface->getScreenNum();
+   Window win = mRenderSurface->getWindow();
 
    int dotClock;
    XF86VidModeModeLine modeline;
