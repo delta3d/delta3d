@@ -75,9 +75,11 @@ namespace dtCore
    protected:
    	RefPtr<osgUtil::SceneView> mSceneView;
       Timer mTimer;
+      //osg::Timer mTimer;
    private:
      RefPtr<osg::FrameStamp> mFrameStamp;
-     osg::Timer_t mStartTime;
+     //osg::Timer_t mStartTime;
+     dtCore::Timer_t mStartTime;
    };
    
    
@@ -86,6 +88,20 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Scene)
 
    public:
+
+      enum Face 
+      {
+         FRONT,
+         BACK,
+         FRONT_AND_BACK
+      };
+
+      enum Mode 
+      {
+         POINT = GL_POINT,
+         LINE = GL_LINE,
+         FILL = GL_FILL
+      };
 
       Scene(std::string name = "scene", bool useSceneLight = true);
       virtual ~Scene();
@@ -103,6 +119,10 @@ namespace dtCore
 
       ///Get a handle to the DeltaDrawable with the supplied index number
       DeltaDrawable* GetDrawable(unsigned int i) {return mAddedDrawables[i].get(); }
+
+      //Set the State for rendering.  Wireframe, Fill polygons, or vertex points.
+      void SetRenderState( Face face, Mode mode );
+      const std::pair<Face,Mode> GetRenderState() const { return std::make_pair( mRenderFace, mRenderMode ); }
      
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain( const float *x, const float *y);
@@ -218,6 +238,9 @@ namespace dtCore
       typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
 
       DrawableList mAddedDrawables; ///<The list of Drawable directly added
+
+      Mode mRenderMode;
+      Face mRenderFace;
 
    };   
 };

@@ -31,13 +31,35 @@ namespace dtCore
    * of the system clock, and since it's inaccurate, we must flip it.
    */
 
+#if defined(_MSC_VER)
+   typedef __int64 Timer_t;
+#else
+   typedef unsigned long long Timer_t;
+#endif
+
+   /** Time stamper. */
    class DT_EXPORT Timer : public osg::Timer
    {
 
-   #ifdef WIN32
    public:
-         Timer();
-   #endif //WIN32
+
+      Timer();
+      ~Timer() {}
+
+      static const Timer* instance();
+
+      Timer_t tick() const;
+
+      //inline double delta_s( Timer_t t1, Timer_t t2 ) const { return (double)(t2 - t1)*_secsPerTick; }
+      //inline double delta_m( Timer_t t1, Timer_t t2 ) const { return delta_s(t1,t2)*1e3; }
+      //inline double delta_u( Timer_t t1, Timer_t t2 ) const { return delta_s(t1,t2)*1e6; }
+      //inline double delta_n( Timer_t t1, Timer_t t2 ) const { return delta_s(t1,t2)*1e9; }
+
+      //inline double getSecondsPerTick() const { return _secsPerTick; }
+
+   //protected :
+
+      //double _secsPerTick;
 
    };
 };

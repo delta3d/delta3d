@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "osg/FrameStamp"
+#include <osg/FrameStamp>
 #include <osgUtil/IntersectVisitor>
+#include <osg/PolygonMode>
 
 #include "dtCore/scene.h"
 #include "dtCore/system.h"
@@ -80,6 +81,8 @@ Scene::Scene( string name, bool useSceneLight )
    dSetErrorHandler(ODEErrorHandler);
    
    AddSender(System::GetSystem());
+
+   //TODO set default render face, mode
 }
 
 Scene::~Scene()
@@ -102,10 +105,23 @@ Scene::~Scene()
 
 void Scene::AddDrawable( DeltaDrawable *drawable )
 {
+   // This is modified to put a ref_ptr in the scene
+   // They are required or when you change the stateset
+   // Everything is killed and you get a blank screen.
+   // I still pushback the original *drawable 
+   // so remove will still work
+   RefPtr<DeltaDrawable> drawme = drawable;
+   mSceneNode->addChild( drawme->GetOSGNode() );
+   drawable->AddedToScene(this);
+
+   mAddedDrawables.push_back(drawable);
+   /* 
+   // this is the original code
    mSceneNode->addChild( drawable->GetOSGNode() );
    drawable->AddedToScene(this);
 
    mAddedDrawables.push_back(drawable);
+   */
 }
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
@@ -119,6 +135,66 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
       mAddedDrawables.erase( mAddedDrawables.begin()+pos );                           
    }
 }
+
+void Scene::SetRenderState( Face face, Mode mode )
+{
+   mRenderFace = face;
+   mRenderMode = mode;
+
+   // We need a face and a mode from osg to set the face and mode in delta
+   // I used the same names to create enums in scene
+   osg::PolygonMode::Face myface;
+   osg::PolygonMode::Mode mymode;
+
+   // this switch statement will take the osg face and make it the corresponding
+   // scene face
+   switch(mRenderFace)
+   {
+   case FRONT:
+      myface = osg::PolygonMode::FRONT;
+      break;
+
+   case BACK:
+      myface = osg::PolygonMode::BACK;
+      break;
+
+   case FRONT_AND_BACK:
+      myface = osg::PolygonMode::FRONT_AND_BACK;
+      break;
+
+   default:
+      myface = osg::PolygonMode::FRONT;
+      break;
+   }
+
+   // this switch statement is similar to the one above for mode
+   switch(mRenderMode)
+   {
+   case POINT:
+      mymode = osg::PolygonMode::POINT;
+      break;
+
+   case LINE:
+      mymode = osg::PolygonMode::LINE;
+      break;
+
+   case FILL:
+      mymode = osg::PolygonMode::FILL;
+      break;
+
+   default:
+      mymode = osg::PolygonMode::FILL;
+      break;
+   }
+
+   // We change the scenes stateset here.
+   osg::ref_ptr<osg::PolygonMode> polymode = new osg::PolygonMode;
+   polymode->setMode(myface, mymode);
+
+   osg::StateSet *stateSet = mSceneNode.get()->getOrCreateStateSet();
+   stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON); 
+}
+
 
 /** Register a Physical with the Scene.  This method is automatically called 
   * when adding Drawables to the Scene.  Typically, this only needs to be 
