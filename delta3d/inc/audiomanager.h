@@ -23,12 +23,18 @@ struct   AudioConfigData;
 
 namespace   dtAudio
 {
+   class Sound;
+
    // dtAudio::Sound should really be broken out
    // into it's own file, replacing dtCore::Sound
+
+   //! callback function type
+   typedef  void  (*SoundCB)( Sound* sound, void *param );
+
    class DT_EXPORT Sound :  public   dtCore::Transformable
    {
-        DECLARE_MANAGEMENT_LAYER(Sound)
-        
+      DECLARE_MANAGEMENT_LAYER(Sound)
+
       public:
                   enum  Command
                         {
@@ -64,6 +70,9 @@ namespace   dtAudio
 
       public:
          virtual  const char* GetFilename( void )              {  return   mFilename.c_str();   }
+
+         virtual  void        SetPlayCallback( SoundCB cb, void* param );
+         virtual  void        SetStopCallback( SoundCB cb, void* param );
 
          virtual  void        LoadFile( const char* file );
          virtual  void        UnloadFile( void );
@@ -103,6 +112,10 @@ namespace   dtAudio
 
       protected:
                   std::string    mFilename;
+                  SoundCB        mPlayCB;
+                  void*          mPlayCBData;
+                  SoundCB        mStopCB;
+                  void*          mStopCBData;
                   float          mGain;
                   float          mPitch;
                   sgVec3         mPos;
@@ -115,7 +128,7 @@ namespace   dtAudio
    class DT_EXPORT AudioManager   :  public   dtCore::Base
    {
         DECLARE_MANAGEMENT_LAYER(AudioManager)
-        
+
       private:
          struct   BufferData
          {
@@ -134,6 +147,8 @@ namespace   dtAudio
 
          class SoundObj :  public   Sound
          {
+            DECLARE_MANAGEMENT_LAYER(SoundObj)
+
             private:
                typedef  std::queue<const char*>   CMD_QUE;
 
@@ -174,12 +189,11 @@ namespace   dtAudio
 
          class ListenerObj :  public   Listener
          {
+            DECLARE_MANAGEMENT_LAYER(ListenerObj)
+
             public:
                                  ListenerObj();
                virtual           ~ListenerObj();
-
-               virtual  void     SetTransform( dtCore::Transform* transform );
-               virtual  void     GetTransform( dtCore::Transform* transform );
 
                virtual  void     SetVelocity( const sgVec3& velocity );
                virtual  void     GetVelocity( sgVec3& velocity )  const;
@@ -188,6 +202,7 @@ namespace   dtAudio
                virtual  float    GetGain( void )   const;
 
                virtual  void     OnMessage( MessageData* data );
+               virtual  void     SetParent( dtCore::Transformable* parent );
                virtual  void     Clear( void );
 
             private:
@@ -196,18 +211,22 @@ namespace   dtAudio
          };
 
       private:
+         typedef  osg::ref_ptr<AudioManager>          MOB_ptr;
+         typedef  osg::ref_ptr<SoundObj>              SOB_PTR;
+         typedef  osg::ref_ptr<ListenerObj>           LOB_PTR;
+
          typedef  std::map<std::string, BufferData*>  BUF_MAP;
 
-         typedef  std::map<ALuint, SoundObj*>         SRC_MAP;
+         typedef  std::map<ALuint, SOB_PTR>           SRC_MAP;
          typedef  std::queue<ALuint>                  SRC_QUE;
          typedef  std::vector<ALuint>                 SRC_LST;
 
-         typedef  std::queue<SoundObj*>               SND_QUE;
-         typedef  std::vector<SoundObj*>              SND_LST;
+         typedef  std::queue<SOB_PTR>                 SND_QUE;
+         typedef  std::vector<SOB_PTR>                SND_LST;
 
       private:
-         static   AudioManager*           _Mgr;
-         static   ListenerObj*            _Mic;
+         static   MOB_ptr                 _Mgr;
+         static   LOB_PTR                 _Mic;
          static   const char*             _EaxVer;
          static   const char*             _EaxSet;
          static   const char*             _EaxGet;
@@ -285,13 +304,23 @@ namespace   dtAudio
 // configuration data
 struct DT_EXPORT AudioConfigData
 {
+   enum           DistanceModel
+                  {
+                     dmNONE      = AL_NONE,
+                     dmINVERSE   = AL_INVERSE_DISTANCE,
+                     dmINVCLAMP  = AL_INVERSE_DISTANCE_CLAMPED,
+                  };
+
    unsigned int   numSources;
    bool           eax;
+   unsigned int   distancemodel;
 
    AudioConfigData(  unsigned int   ns = 16L,
-                     bool           ex = false  )
+                     bool           ex = false,
+                     unsigned int   dm = dmINVERSE )
    :  numSources(ns),
-      eax(ex)
+      eax(ex),
+      distancemodel(dm)
    {}
 };
 

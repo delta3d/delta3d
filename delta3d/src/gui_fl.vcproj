@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode_d.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib openal32.lib alut.lib isensed.lib dtcored.lib"
+				AdditionalDependencies="producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib openal32.lib alut.lib isensed.lib dtcored.lib"
 				OutputFile="..\bin\gui_fld.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd; msvcrt"

@@ -55,16 +55,20 @@ const char* Sound::kCommand[kNumCommands]   =
 
 
 
-AudioManager*              AudioManager::_Mgr(NULL);
-AudioManager::ListenerObj* AudioManager::_Mic(NULL);
-const char*                AudioManager::_EaxVer   = "EAX2.0";
-const char*                AudioManager::_EaxSet   = "EAXSet";
-const char*                AudioManager::_EaxGet   = "EAXGet";
-const AudioConfigData      AudioManager::_DefCfg(24L, true);
+AudioManager::MOB_ptr   AudioManager::_Mgr(NULL);
+AudioManager::LOB_PTR   AudioManager::_Mic(NULL);
+const char*             AudioManager::_EaxVer   = "EAX2.0";
+const char*             AudioManager::_EaxSet   = "EAXSet";
+const char*             AudioManager::_EaxGet   = "EAXGet";
+const AudioConfigData   AudioManager::_DefCfg(24L, true);
 
 
 
 IMPLEMENT_MANAGEMENT_LAYER(Sound)
+IMPLEMENT_MANAGEMENT_LAYER(AudioManager::SoundObj)
+IMPLEMENT_MANAGEMENT_LAYER(AudioManager::ListenerObj)
+IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
+
 
 
 // public member functions
@@ -73,9 +77,13 @@ Sound::Sound()
 :  Transformable(),
    mFilename(""),
    mGain(1.0f),
-   mPitch(1.0f)
+   mPitch(1.0f),
+   mPlayCB(NULL),
+   mPlayCBData(NULL),
+   mStopCB(NULL),
+   mStopCBData(NULL)
 {
-   RegisterInstance(this);
+   RegisterInstance( this );
 
    mPos[0L]       = 0.0f;
    mPos[1L]       = 0.0f;
@@ -96,6 +104,32 @@ Sound::Sound()
 Sound::~Sound()
 {
     DeregisterInstance(this);
+}
+
+
+
+void
+Sound::SetPlayCallback( SoundCB cb, void* param )
+{
+   mPlayCB  = cb;
+
+   if( mPlayCB )
+      mPlayCBData = param;
+   else
+      mPlayCBData = NULL;
+}
+
+
+
+void
+Sound::SetStopCallback( SoundCB cb, void* param )
+{
+   mStopCB  = cb;
+
+   if( mStopCB )
+      mStopCBData = param;
+   else
+      mStopCBData = NULL;
 }
 
 
@@ -171,9 +205,9 @@ void
 Sound::ListenerRelative( bool relative )
 {
    if( relative )
-      SendMessage( kCommand[RELATIVE], this );
+      SendMessage( kCommand[REL], this );
    else
-      SendMessage( kCommand[ABSOLUTE], this );
+      SendMessage( kCommand[ABS], this );
 }
 
 
@@ -200,8 +234,6 @@ Sound::SetPitch( float pitch )
    SendMessage( kCommand[PITCH], this );
 }
 
-
-IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
 
 void
@@ -233,9 +265,6 @@ Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEn
 void
 Sound::SetPosition( const sgVec3& position )
 {
-   if( ! IsListenerRelative() )
-      ListenerRelative( true );
-
    mPos[0L] = position[0L];
    mPos[1L] = position[1L];
    mPos[2L] = position[2L];
@@ -258,9 +287,6 @@ Sound::GetPosition( sgVec3& position ) const
 void
 Sound::SetDirection( const sgVec3& direction )
 {
-   if( ! IsListenerRelative() )
-      ListenerRelative( true );
-
    mDir[0L] = direction[0L];
    mDir[1L] = direction[1L];
    mDir[2L] = direction[2L];
@@ -283,9 +309,6 @@ Sound::GetDirection( sgVec3& direction ) const
 void
 Sound::SetVelocity( const sgVec3& velocity )
 {
-   if( ! IsListenerRelative() )
-      ListenerRelative( true );
-
    mVelo[0L]   = velocity[0L];
    mVelo[1L]   = velocity[1L];
    mVelo[2L]   = velocity[2L];
@@ -314,8 +337,8 @@ AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
    mEAXSet(NULL),
    mEAXGet(NULL)
 {
-    RegisterInstance(this);
-    
+   RegisterInstance( this );
+
    mSourceMap.clear();
    mActiveList.clear();
    mBufferMap.clear();
@@ -352,8 +375,8 @@ AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
 // desructor
 AudioManager::~AudioManager()
 {
-    DeregisterInstance(this);
-    
+   DeregisterInstance( this );
+
    // stop all sources
    for( unsigned int ii(0L); ii < mNumSources; ii++ )
    {
@@ -399,17 +422,17 @@ AudioManager::~AudioManager()
    }
    mBufferMap.clear();
 
-   SoundObj*   snd(NULL);
+//   SOB_PTR  snd(NULL);
    for( SND_LST::iterator iter(mSoundList.begin()); iter != mSoundList.end(); iter++ )
    {
-      snd   = *iter;
+//      snd   = *iter;
       *iter = NULL;
 
-      if( snd == NULL )
-         continue;
+//      if( snd == NULL )
+//         continue;
 
-      delete   snd;
-      snd   = NULL;
+//      delete   snd;
+//      snd   = NULL;
    }
    mSoundList.clear();
 
@@ -430,14 +453,14 @@ AudioManager::~AudioManager()
 void
 AudioManager::Instantiate( void )
 {
-   if( _Mgr )
+   if( _Mgr.get() )
       return;
 
    _Mgr  = new AudioManager;
-   assert( _Mgr );
+   assert( _Mgr.get() );
 
    _Mic  = new ListenerObj;
-   assert( _Mic );
+   assert( _Mic.get() );
 }
 
 
@@ -446,17 +469,8 @@ AudioManager::Instantiate( void )
 void
 AudioManager::Destroy( void )
 {
-   if( _Mic )
-   {
-      delete   _Mic;
-      _Mic  = NULL;
-   }
-
-   if( _Mgr )
-   {
-      delete   _Mgr;
-      _Mgr  = NULL;
-   }
+   _Mic  = NULL;
+   _Mgr  = NULL;
 }
 
 
@@ -465,7 +479,7 @@ AudioManager::Destroy( void )
 AudioManager*
 AudioManager::GetManager( void )
 {
-   return   _Mgr;
+   return   _Mgr.get();
 }
 
 
@@ -474,7 +488,7 @@ AudioManager::GetManager( void )
 Listener*
 AudioManager::GetListener( void )
 {
-   return   static_cast<Listener*>(_Mic);
+   return   static_cast<Listener*>(_Mic.get());
 }
 
 
@@ -488,6 +502,23 @@ AudioManager::Config( const AudioConfigData& data /*= _DefCfg*/ )
       // already configured
       assert( false );
       return;
+   }
+
+   // set up the distance model
+   switch( data.distancemodel )
+   {
+      case  AL_NONE:
+         alDistanceModel( AL_NONE );
+         break;
+
+      case  AL_INVERSE_DISTANCE_CLAMPED:
+         alDistanceModel( AL_INVERSE_DISTANCE_CLAMPED );
+         break;
+
+      case  AL_INVERSE_DISTANCE:
+      default:
+         alDistanceModel( AL_INVERSE_DISTANCE );
+         break;
    }
 
 
@@ -670,33 +701,33 @@ AudioManager::OnMessage( MessageData* data )
 Sound*
 AudioManager::NewSound( void )
 {
-   SoundObj*   snd(NULL);
+   SOB_PTR  snd(NULL);
 
    // first look if we can recycle a sound
    if( mSoundRecycle.size() )
    {
       snd   = mSoundRecycle.front();
-      assert( snd );
+      assert( snd.get() );
 
       snd->Clear();
       mSoundRecycle.pop();
    }
 
    // create a new sound object if we don't have one
-   if( snd == NULL )
+   if( snd.get() == NULL )
    {
       snd   = new SoundObj;
-      assert( snd );
+      assert( snd.get() );
    }
 
    // listen to messages from this guy
-   AddSender( snd );
+   AddSender( snd.get() );
 
    // save the sound
    mSoundList.push_back( snd );
 
    // hand out the interface to the sound
-   return   static_cast<Sound*>(snd);
+   return   static_cast<Sound*>(snd.get());
 }
 
 
@@ -704,12 +735,12 @@ AudioManager::NewSound( void )
 void
 AudioManager::FreeSound( Sound*& sound )
 {
-   SoundObj*   snd   = static_cast<SoundObj*>(sound);
+   SOB_PTR  snd   = static_cast<SoundObj*>(sound);
 
    // remove user's copy of pointer
    sound = NULL;
 
-   if( snd == NULL )
+   if( snd.get() == NULL )
       return;
 
    // remove sound from list
@@ -726,11 +757,11 @@ AudioManager::FreeSound( Sound*& sound )
    // stop listening to this guys messages
    snd->RemoveSender( this );
    snd->RemoveSender( dtCore::System::GetSystem() );
-   RemoveSender( snd );
+   RemoveSender( snd.get() );
 
    // free the sound's source and buffer
-   FreeSource( snd );
-   UnloadSound( snd );
+   FreeSource( snd.get() );
+   UnloadSound( snd.get() );
    snd->Clear();
 
    // recycle this sound
@@ -865,7 +896,7 @@ AudioManager::UnloadWaveFile( const char* file )
 void
 AudioManager::PreFrame( const double deltaFrameTime )
 {
-   SoundObj*   snd(NULL);
+   SOB_PTR     snd(NULL);
    const char* cmd(NULL);
 
    // flush all the sound commands
@@ -874,7 +905,7 @@ AudioManager::PreFrame( const double deltaFrameTime )
       snd   = mSoundCommand.front();
       mSoundCommand.pop();
 
-      if( snd == NULL )
+      if( snd.get() == NULL )
          continue;
 
       cmd   = snd->Command();
@@ -882,105 +913,105 @@ AudioManager::PreFrame( const double deltaFrameTime )
       // set sound position
       if( cmd == Sound::kCommand[Sound::POSITION] )
       {
-         SetPosition( snd );
+         SetPosition( snd.get() );
          continue;
       }
 
       // set sound direction
       if( cmd == Sound::kCommand[Sound::DIRECTION] )
       {
-         SetDirection( snd );
+         SetDirection( snd.get() );
          continue;
       }
 
       // set sound velocity
       if( cmd == Sound::kCommand[Sound::VELOCITY] )
       {
-         SetVelocity( snd );
+         SetVelocity( snd.get() );
          continue;
       }
 
       // set sound to play
       if( cmd == Sound::kCommand[Sound::PLAY] )
       {
-         PlaySound( snd );
+         PlaySound( snd.get() );
          continue;
       }
 
       // set sound to stop
       if( cmd == Sound::kCommand[Sound::STOP] )
       {
-         StopSound( snd );
+         StopSound( snd.get() );
          continue;
       }
 
       // set sound to pause
       if( cmd == Sound::kCommand[Sound::PAUSE] )
       {
-         PauseSound( snd );
+         PauseSound( snd.get() );
          continue;
       }
 
       // loading a new sound
       if( cmd == Sound::kCommand[Sound::LOAD] )
       {
-         LoadSound( snd );
+         LoadSound( snd.get() );
          continue;
       }
 
       // unloading an old sound
       if( cmd == Sound::kCommand[Sound::UNLOAD] )
       {
-         UnloadSound( snd );
+         UnloadSound( snd.get() );
          continue;
       }
 
       // setting the loop flag
       if( cmd == Sound::kCommand[Sound::LOOP] )
       {
-         SetLoop( snd );
+         SetLoop( snd.get() );
          continue;
       }
 
       // un-setting the loop flag
       if( cmd == Sound::kCommand[Sound::UNLOOP] )
       {
-         ResetLoop( snd );
+         ResetLoop( snd.get() );
          continue;
       }
 
       // setting the gain
       if( cmd == Sound::kCommand[Sound::GAIN] )
       {
-         SetGain( snd );
+         SetGain( snd.get() );
          continue;
       }
 
       // setting the pitch
       if( cmd == Sound::kCommand[Sound::PITCH] )
       {
-         SetPitch( snd );
+         SetPitch( snd.get() );
          continue;
       }
 
       // rewind the sound
       if( cmd == Sound::kCommand[Sound::REWIND] )
       {
-         RewindSound( snd );
+         RewindSound( snd.get() );
          continue;
       }
 
       // set sound relative to listener
       if( cmd == Sound::kCommand[Sound::REL] )
       {
-         SetRelative( snd );
+         SetRelative( snd.get() );
          continue;
       }
 
       // set sound absolute (not relative to listener)
       if( cmd == Sound::kCommand[Sound::ABS] )
       {
-         SetAbsolute( snd );
+         SetAbsolute( snd.get() );
          continue;
       }
    }
@@ -996,7 +1027,7 @@ AudioManager::Frame( const double deltaFrameTime )
    ALuint                        src(0L);
    ALint                         state(AL_STOPPED);
    ALenum                        err(alGetError());
-   SoundObj*                     snd(NULL);
+   SOB_PTR                       snd(NULL);
 
 
    // signal any sources commanded to stop
@@ -1051,9 +1082,9 @@ AudioManager::Frame( const double deltaFrameTime )
 
                // send play message
                snd   = mSourceMap[src];
-               if( snd )
+               if( snd.get() )
                {
-                  SendMessage( Sound::kCommand[Sound::PLAY], snd );
+                  SendMessage( Sound::kCommand[Sound::PLAY], snd.get() );
                }
             }
             break;
@@ -1062,9 +1093,9 @@ AudioManager::Frame( const double deltaFrameTime )
             {
                // send stopped message
                snd   = mSourceMap[src];
-               if( snd )
+               if( snd.get() )
                {
-                  SendMessage( Sound::kCommand[Sound::STOP], snd );
+                  SendMessage( Sound::kCommand[Sound::STOP], snd.get() );
                }
 
                // save stopped sound iterator for later removal
@@ -1101,9 +1132,9 @@ AudioManager::Frame( const double deltaFrameTime )
 
                // send pause message
                snd   = mSourceMap[src];
-               if( snd )
+               if( snd.get() )
                {
-                  SendMessage( Sound::kCommand[Sound::PAUSE], snd );
+                  SendMessage( Sound::kCommand[Sound::PAUSE], snd.get() );
                }
             }
             break;
@@ -1114,9 +1145,9 @@ AudioManager::Frame( const double deltaFrameTime )
 
                // send pause message
                snd   = mSourceMap[src];
-               if( snd )
+               if( snd.get() )
                {
-                  SendMessage( Sound::kCommand[Sound::PLAY], snd );
+                  SendMessage( Sound::kCommand[Sound::PLAY], snd.get() );
                }
             }
             break;
@@ -1139,9 +1170,9 @@ AudioManager::Frame( const double deltaFrameTime )
 
       // send rewind message
       snd   = mSourceMap[src];
-      if( snd )
+      if( snd.get() )
       {
-         SendMessage( Sound::kCommand[Sound::REWIND], snd );
+         SendMessage( Sound::kCommand[Sound::REWIND], snd.get() );
       }
    }
 
@@ -1163,7 +1194,7 @@ AudioManager::Frame( const double deltaFrameTime )
 void
 AudioManager::PostFrame( const double deltaFrameTime )
 {
-   SoundObj*   snd(NULL);
+   SOB_PTR     snd(NULL);
    ALuint      src(0L);
    ALenum      err(alGetError());
 
@@ -1178,7 +1209,7 @@ AudioManager::PostFrame( const double deltaFrameTime )
       snd->RemoveSender( this );
       snd->RemoveSender( dtCore::System::GetSystem() );
 
-      FreeSource( snd );
+      FreeSource( snd.get() );
    }
 }
 
@@ -1403,7 +1434,7 @@ AudioManager::PlaySound( SoundObj* snd )
    if( snd->IsListenerRelative() )
    {
       // is listener relative
-      alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE );
+      alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
          dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
@@ -1610,7 +1641,7 @@ AudioManager::SetRelative( SoundObj* snd )
    }
 
    ALenum   err(alGetError());
-   alSourcei( src, AL_SOURCE_RELATIVE, AL_TRUE );
+   alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
@@ -1837,6 +1868,7 @@ AudioManager::SoundObj::SoundObj()
    mSource(0L),
    mState(BIT(STOP))
 {
+   RegisterInstance( this );
 }
 
 
@@ -1844,6 +1876,8 @@ AudioManager::SoundObj::SoundObj()
 // desructor
 AudioManager::SoundObj::~SoundObj()
 {
+   DeregisterInstance( this );
+
    Clear();
 }
 
@@ -1891,6 +1925,11 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
       SetState( PLAY );
       ResetState( PAUSE );
       ResetState( STOP );
+
+      if( mPlayCB )
+      {
+         mPlayCB( static_cast<Sound*>(this), mPlayCBData );
+      }
       return;
    }
 
@@ -1907,6 +1946,11 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
       ResetState( PLAY );
       ResetState( PAUSE );
       SetState( STOP );
+
+      if( mStopCB )
+      {
+         mStopCB( static_cast<Sound*>(this), mStopCBData );
+      }
       return;
    }
 
@@ -1942,6 +1986,12 @@ AudioManager::SoundObj::SetParent( dtCore::Transformable* parent )
 {
    ListenerRelative( bool(parent) );
    dtCore::Transformable::SetParent( parent );
+
+   if( parent )
+   {
+      dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
+      dtCore::Transformable::SetTransform( &transform, dtCore::Transformable::REL_CS );
+   }
 }
 
 
@@ -2069,6 +2119,16 @@ AudioManager::SoundObj::Clear( void )
    {
       mCommand.pop();
    }
+
+   mPlayCB     = NULL;
+   mPlayCBData = NULL;
+   mStopCB     = NULL;
+   mStopCBData = NULL;
+
+   if( mParent.get() )
+   {
+      mParent->RemoveChild( this );
+   }
 }
 
 
@@ -2078,6 +2138,8 @@ AudioManager::SoundObj::Clear( void )
 AudioManager::ListenerObj::ListenerObj()
 :  Listener()
 {
+   RegisterInstance( this );
+
    Clear();
    AddSender( dtCore::System::GetSystem() );
 }
@@ -2086,32 +2148,10 @@ AudioManager::ListenerObj::ListenerObj()
 
 AudioManager::ListenerObj::~ListenerObj()
 {
+   DeregisterInstance( this );
+
    RemoveSender( dtCore::System::GetSystem() );
    Clear();
-}
-
-
-
-void
-AudioManager::ListenerObj::SetTransform( dtCore::Transform* transform )
-{
-   // explicitly setting transform
-   // removes listener from tree
-   Transformable* parent(GetParent());
-   if( parent )
-   {
-      parent->RemoveChild( this );
-   }
-
-   Transformable::SetTransform( transform );
-}
-
-
-
-void
-AudioManager::ListenerObj::GetTransform( dtCore::Transform* transform )
-{
-   Transformable::GetTransform( transform );
 }
 
 
@@ -2162,6 +2202,7 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
    {
       dtCore::Transform transform;
       sgMat4            matrix;
+      ALfloat           pos[3L]  = { 0.0f, 0.0f, 0.0f };
 
       union
       {
@@ -2173,10 +2214,9 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
          };
       }  orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 
-      ALfloat           pos[3L]  = { 0.0f, 0.0f, 0.0f };
-
       GetTransform( &transform );
       transform.GetTranslation( pos );
+
       transform.Get( matrix );
       sgXformVec3( orient.at, matrix );
       sgXformVec3( orient.up, matrix );
@@ -2187,6 +2227,14 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
       alListenerfv( AL_VELOCITY, mVelo );
       alListenerf( AL_GAIN, mGain );
    }
+}
+
+
+
+void
+AudioManager::ListenerObj::SetParent( dtCore::Transformable* parent )
+{
+   dtCore::Transformable::SetParent( parent );
 }
 
 
