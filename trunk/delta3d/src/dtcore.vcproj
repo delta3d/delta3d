@@ -479,9 +479,6 @@
 				RelativePath=".\skydomeshader.cpp">
 			</File>
 			<File
-				RelativePath=".\sound.cpp">
-			</File>
-			<File
 				RelativePath=".\stats.cpp">
 			</File>
 			<File
@@ -702,9 +699,6 @@
 			</File>
 			<File
 				RelativePath="..\inc\skydomeshader.h">
-			</File>
-			<File
-				RelativePath="..\inc\sound.h">
 			</File>
 			<File
 				RelativePath="..\inc\stats.h">

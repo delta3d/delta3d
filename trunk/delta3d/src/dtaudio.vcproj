@@ -122,6 +122,9 @@
 				RelativePath=".\listener.cpp">
 			</File>
 			<File
+				RelativePath=".\sound.cpp">
+			</File>
+			<File
 				RelativePath=".\soundeffectbinder.cpp">
 			</File>
 		</Filter>
@@ -137,6 +140,9 @@
 			</File>
 			<File
 				RelativePath="..\inc\listener.h">
+			</File>
+			<File
+				RelativePath="..\inc\sound.h">
 			</File>
 			<File
 				RelativePath="..\inc\soundeffectbinder.h">
