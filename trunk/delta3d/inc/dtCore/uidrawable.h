@@ -94,6 +94,7 @@ namespace dtCore
          virtual void drawImplementation(osg::State& state) const
          { //tell the UI to update and to render
             if (!mUI) return;
+            state.setActiveTextureUnit(0);
             mUI->UpdateStatus();
             mUI->Render(51);
          }
