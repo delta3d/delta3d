@@ -12,6 +12,8 @@
 
 #include "osgDB/FileUtils"
 
+#include "osgUtil/IntersectVisitor"
+
 #include "notify.h"
 #include "rticonnection.h"
 #include "system.h"
@@ -41,6 +43,12 @@ const double semiMajorAxis = 6378137.0;
  */
 const double flatteningReciprocal = 298.257223563;
 
+/**
+ * Flags nodes as entities, which should not be included in the ground clamping
+ * intersection test.
+ */
+const osg::Node::NodeMask entityMask = 0x01;
+
 
 /**
  * Constructor.
@@ -53,7 +61,8 @@ RTIConnection::RTIConnection(string name)
      mEffectManager(NULL),
      mGlobeModeEnabled(false),
      mUTMModeEnabled(false),
-     mGlobeRadius(100.0f)
+     mGlobeRadius(100.0f),
+     mGroundClampMode(NO_CLAMP)
 {
    RegisterInstance(this);
    
@@ -1180,6 +1189,87 @@ void RTIConnection::GeodeticToGeocentric(double latitude, double longitude, doub
 }
 
 /**
+ * Clamps the specified transform to the ground using the active ground clamp mode.
+ *
+ * @param transform the transform to clamp
+ */
+void RTIConnection::ClampToGround(Transform* transform)
+{
+   if(mGroundClampMode != NO_CLAMP)
+   {
+      sgVec3 xyz, groundNormal = {0, 0, 1};
+      float HOT = 0.0f;
+      
+      transform->GetTranslation(xyz);
+      
+      osgUtil::IntersectVisitor iv;
+   
+      osg::ref_ptr<osg::LineSegment> segDown = new osg::LineSegment;
+   
+      segDown->set(
+         osg::Vec3(xyz[0], xyz[1], 10000.f),
+         osg::Vec3(xyz[0], xyz[1], -10000.f)
+      );
+      
+      iv.addLineSegment(segDown.get());
+   
+      iv.setTraversalMask(~entityMask);
+      
+      mScene->GetSceneNode()->accept(iv);
+   
+      if (iv.hits())
+      {
+         osgUtil::IntersectVisitor::HitList& hitList = iv.getHitList(segDown.get());
+         
+         if (!hitList.empty())
+         {
+            osg::Vec3 ip = hitList.front().getWorldIntersectPoint();
+            osg::Vec3 np = hitList.front().getWorldIntersectNormal();
+            
+            HOT = ip.z();
+            
+            groundNormal[0] = np.x();
+            groundNormal[1] = np.y();
+            groundNormal[2] = np.z();
+         }
+      }
+      
+      xyz[2] = HOT;
+      
+      transform->SetTranslation(xyz);
+      
+      if(mGroundClampMode == CLAMP_ELEVATION_AND_ROTATION)
+      {
+         sgVec3 oldNormal = { 0, 0, 1 };
+         sgMat4 rotMat;
+         
+         transform->GetRotation(rotMat);
+         
+         sgXformVec3(oldNormal, rotMat);
+         
+         sgVec3 axis;
+         
+         sgVectorProductVec3(axis, oldNormal, groundNormal);
+         
+         float angle = sgASin(sgLengthVec3(axis));
+         
+         if(angle > 0.0001f)
+         {
+            sgNormalizeVec3(axis);
+            
+            sgMat4 deltaRot;
+            
+            sgMakeRotMat4(deltaRot, angle, axis);
+            
+            sgPostMultMat4(rotMat, deltaRot);
+            
+            transform->SetRotation(rotMat);
+         }
+      }
+   }
+}
+
+/**
  * Finds the best (most specific) mapping for the specified
  * entity type.
  *
@@ -1450,6 +1540,26 @@ bool RTIConnection::LoadEntityTypeMappings(string filename)
    }
 }
 
+/**
+ * Sets the ground clamp mode.
+ *
+ * @param mode the new ground clamp mode
+ */
+void RTIConnection::SetGroundClampMode(RTIConnection::GroundClampMode mode)
+{
+   mGroundClampMode = mode;
+}
+
+/**
+ * Returns the ground clamp mode.
+ *
+ * @return the current ground clamp mode
+ */
+RTIConnection::GroundClampMode RTIConnection::GetGroundClampMode()
+{
+   return mGroundClampMode;
+}
+         
 /**
  * Adds a detonation listener.
  *
@@ -1754,6 +1864,12 @@ void RTIConnection::OnMessage(MessageData *data)
          
          transform.SetTranslation(position);
          
+         if(ghost->GetEntityType().GetKind() == PlatformKind &&
+            ghost->GetEntityType().GetDomain() == LandPlatformDomain)
+         {
+            ClampToGround(&transform);
+         }
+         
          ghost->SetTransform(&transform);
       }
       
@@ -1802,6 +1918,8 @@ void RTIConnection::discoverObjectInstance(
 {
    Entity* ghost = new Entity(theObjectName);
 
+   ghost->GetOSGNode()->setNodeMask(entityMask);
+   
    GhostData ghostData;
 
    ghostData.mEntity = ghost;
@@ -2090,6 +2208,12 @@ void RTIConnection::reflectAttributeValues(
       }
    }
 
+   if(ghost->GetEntityType().GetKind() == PlatformKind &&
+      ghost->GetEntityType().GetDomain() == LandPlatformDomain)
+   {
+      ClampToGround(&transform);
+   }
+   
    ghost->SetTransform(&transform);
 }
 
