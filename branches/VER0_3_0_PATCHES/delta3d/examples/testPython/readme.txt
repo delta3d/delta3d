@@ -51,6 +51,9 @@ Build the Delta3D Python bindings:
 To use pre-built testPython: 
 - Go to examples/testPython/Release.
 - Double-click testPython.exe.
+- At the Python prompt inside the console/terminal type:
+   execfile('../flyplane.py')
+
 
 To build from source:
 - Open examples/testPython/testPython.sln.
@@ -61,9 +64,9 @@ To build from source:
   "C:\boost_1_31_0\libs\python\build\bin-stage") to the "Library files" section.
 - Build testPython.
 - Start testPython.
-
-At the Python prompt inside the console/terminal type:
+- At the Python prompt inside the console/terminal type:
    execfile('flyplane.py')
+
 
 This should make the plane fly in a circle.
 
