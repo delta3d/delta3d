@@ -82,6 +82,10 @@ Fedora Core-up (2.6.5-1.358)
    To build the Delta3D source, also run 'make install' to place the shared
    libraries in the ../lib folder.
 
+   Uncomment SUBDIRS( python ) to build dtPython as well. Make sure to
+   run the script install_linux_python from src/python to create 
+   necessary symbolic links to Python modules.
+
 Note:
 HLA requires RTI, as mentioned above. Instructions to build HLA-related
 apps are as follows:
