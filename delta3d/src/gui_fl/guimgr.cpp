@@ -470,6 +470,7 @@ void UserInterface::SelectInstance (void)
    }
    else WeatherGroup->hide();
 
+   // Light
    if (IS_A(b, Light*))
    {
       Light *l = (Light*)b;
@@ -528,6 +529,11 @@ void UserInterface::SelectInstance (void)
 
       LightDifColorLoadButton->color(fc);
       LightDifColorLoadButton->redraw();
+
+      float spotCutoff = l->GetSpotCutoff();
+      float spotExp = l->GetSpotExponent();
+      LightCutoffInput->value(spotCutoff);
+      LightExponentInput->value(spotExp);
 
       float con = l->GetConstantAttenuation();
       float quad = l->GetQuadraticAttenuation();
