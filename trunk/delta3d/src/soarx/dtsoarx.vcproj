@@ -39,7 +39,7 @@
 				AdditionalLibraryDirectories="..\..\lib; ..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd; libcmtd; libc"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				ImportLibrary="..\..\lib\dtsoarxd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

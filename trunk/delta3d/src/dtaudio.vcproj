@@ -13,7 +13,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\lib"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="dtaudio_Debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -33,12 +33,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib openal32.lib alut.lib isensed.lib"
+				AdditionalDependencies="dtcored.lib openal32.lib alut.lib producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib isensed.lib"
 				OutputFile="..\bin\dtaudiod.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
-				IgnoreDefaultLibraryNames="libcmtd"
+				IgnoreDefaultLibraryNames="libcD.lib;libcmtd.lib;libcmtD.lib;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				ImportLibrary="..\lib\dtaudiod.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -81,10 +81,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="producer.lib sg.lib ul.lib winmm.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib tinyxml.lib osgutil.lib ode.lib opcode.lib osgtext.lib opengl32.lib osgterrain.lib glgui.lib osggl2.lib js.lib openal32.lib alut.lib isense.lib dtcore.lib"
+				AdditionalDependencies="dtcore.lib openal32.lib alut.lib producer.lib sg.lib ul.lib winmm.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib tinyxml.lib osgutil.lib ode.lib opcode.lib osgtext.lib opengl32.lib osgterrain.lib glgui.lib osggl2.lib js.lib isense.lib"
 				OutputFile="..\bin\dtaudio.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
-				IgnoreDefaultLibraryNames="libcmt"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;libcp.lib;msvcrtD.lib"
 				ImportLibrary="..\lib\dtaudio.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -121,6 +121,9 @@
 			<File
 				RelativePath=".\listener.cpp">
 			</File>
+			<File
+				RelativePath=".\soundeffectbinder.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -134,6 +137,9 @@
 			</File>
 			<File
 				RelativePath="..\inc\listener.h">
+			</File>
+			<File
+				RelativePath="..\inc\soundeffectbinder.h">
 			</File>
 		</Filter>
 		<Filter

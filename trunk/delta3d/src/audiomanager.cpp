@@ -19,7 +19,11 @@
 
 // definitions
 #if   !  defined(BIT)
-#define  BIT(a)   (1L<<a)
+#define  BIT(a)      (1L<<a)
+#endif
+
+#if   !  defined(MAX_FLOAT)
+#define  MAX_FLOAT   static_cast<double>(0xFFFFFFFFFFFFFFFF)
 #endif
 
 
@@ -50,7 +54,9 @@ const char* Sound::kCommand[kNumCommands]   =
                "rewind",      "loop",        "unloop",
                "queue",       "gain",        "pitch",
                "position",    "direction",   "velocity",
-               "absolute",    "relative",
+               "absolute",    "relative",    "mindist",
+               "maxdist",     "rolloff",     "mingain",
+               "maxgain"
             };
 
 
@@ -78,6 +84,11 @@ Sound::Sound()
    mFilename(""),
    mGain(1.0f),
    mPitch(1.0f),
+   mMinDist(1.0f),
+   mMaxDist(static_cast<float>(MAX_FLOAT)),
+   mRolloff(1.0f),
+   mMinGain(0.0f),
+   mMaxGain(1.0f),
    mPlayCB(NULL),
    mPlayCBData(NULL),
    mStopCB(NULL),
@@ -324,6 +335,56 @@ Sound::GetVelocity( sgVec3& velocity ) const
    velocity[0L]   = mVelo[0L];
    velocity[1L]   = mVelo[1L];
    velocity[2L]   = mVelo[2L];
+}
+
+
+
+void
+Sound::SetMinDistance( float dist )
+{
+   mMinDist = MAX( 0.0f, dist );
+
+   SendMessage( kCommand[MIN_DIST], this );
+}
+
+
+
+void
+Sound::SetMaxDistance( float dist )
+{
+   mMaxDist = MAX( 0.0f, dist );
+
+   SendMessage( kCommand[MAX_DIST], this );
+}
+
+
+
+void
+Sound::SetRolloffFactor( float rolloff )
+{
+   mRolloff = MAX( 0.0f, rolloff );
+
+   SendMessage( kCommand[ROL_FACT], this );
+}
+
+
+
+void
+Sound::SetMinGain( float gain )
+{
+   mMinDist = CLAMP( gain, 0.0f, 1.0f );
+
+   SendMessage( kCommand[MIN_DIST], this );
+}
+
+
+
+void
+Sound::SetMaxGain( float gain )
+{
+   mMaxDist = CLAMP( gain, 0.0f, 1.0f );
+
+   SendMessage( kCommand[MAX_DIST], this );
 }
 
 
@@ -694,6 +755,51 @@ AudioManager::OnMessage( MessageData* data )
       mSoundCommand.push( snd );
       return;
    }
+
+   if( data->message == Sound::kCommand[Sound::MIN_DIST] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::MIN_DIST] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::MAX_DIST] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::MAX_DIST] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::ROL_FACT] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::ROL_FACT] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::MIN_GAIN] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::MIN_GAIN] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::MAX_GAIN] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::MAX_GAIN] );
+      mSoundCommand.push( snd );
+      return;
+   }
 }
 
 
@@ -913,6 +1019,7 @@ AudioManager::PreFrame( const double deltaFrameTime )
       // set sound position
       if( cmd == Sound::kCommand[Sound::POSITION] )
       {
+         SetRelative( snd.get() );
          SetPosition( snd.get() );
          continue;
       }
@@ -920,6 +1027,7 @@ AudioManager::PreFrame( const double deltaFrameTime )
       // set sound direction
       if( cmd == Sound::kCommand[Sound::DIRECTION] )
       {
+         SetRelative( snd.get() );
          SetDirection( snd.get() );
          continue;
       }
@@ -927,6 +1035,7 @@ AudioManager::PreFrame( const double deltaFrameTime )
       // set sound velocity
       if( cmd == Sound::kCommand[Sound::VELOCITY] )
       {
+         SetRelative( snd.get() );
          SetVelocity( snd.get() );
          continue;
       }
@@ -1012,6 +1121,41 @@ AudioManager::PreFrame( const double deltaFrameTime )
       if( cmd == Sound::kCommand[Sound::ABS] )
       {
          SetAbsolute( snd.get() );
+         continue;
+      }
+
+      // set minimum distance for attenuation
+      if( cmd == Sound::kCommand[Sound::MIN_DIST] )
+      {
+         SetReferenceDistance( snd.get() );
+         continue;
+      }
+
+      // set maximum distance for attenuation
+      if( cmd == Sound::kCommand[Sound::MAX_DIST] )
+      {
+         SetMaximumDistance( snd.get() );
+         continue;
+      }
+
+      // set rolloff factor for attenuation
+      if( cmd == Sound::kCommand[Sound::MIN_GAIN] )
+      {
+         SetRolloff( snd.get() );
+         continue;
+      }
+
+      // set minimum gain for attenuation
+      if( cmd == Sound::kCommand[Sound::MIN_GAIN] )
+      {
+         SetMinimumGain( snd.get() );
+         continue;
+      }
+
+      // set maximum gain for attenuation
+      if( cmd == Sound::kCommand[Sound::MAX_GAIN] )
+      {
+         SetMaximumGain( snd.get() );
          continue;
       }
    }
@@ -1491,6 +1635,61 @@ AudioManager::PlaySound( SoundObj* snd )
       dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_PITCH) error %d", err );
    }
 
+   // set reference distance
+   if( snd->GetState( Sound::MIN_DIST ) )
+   {
+      snd->ResetState( Sound::MIN_DIST );
+      alSourcef( src, AL_REFERENCE_DISTANCE, static_cast<ALfloat>(snd->GetMinDistance()) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %d", err );
+      }
+   }
+
+   // set maximum distance
+   if( snd->GetState( Sound::MAX_DIST ) )
+   {
+      snd->ResetState( Sound::MAX_DIST );
+      alSourcef( src, AL_MAX_DISTANCE, static_cast<ALfloat>(snd->GetMaxDistance()) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_DISTANCE) error %d", err );
+      }
+   }
+
+   // set rolloff factor
+   if( snd->GetState( Sound::ROL_FACT ) )
+   {
+      snd->ResetState( Sound::ROL_FACT );
+      alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %d", err );
+      }
+   }
+
+   // set minimum gain
+   if( snd->GetState( Sound::MIN_GAIN ) )
+   {
+      snd->ResetState( Sound::MIN_GAIN );
+      alSourcef( src, AL_MIN_GAIN, static_cast<ALfloat>(snd->GetMinGain()) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MIN_GAIN) error %d", err );
+      }
+   }
+
+   // set maximum gain
+   if( snd->GetState( Sound::MAX_GAIN ) )
+   {
+      snd->ResetState( Sound::MAX_GAIN );
+      alSourcef( src, AL_MAX_GAIN, static_cast<ALfloat>(snd->GetMaxGain()) );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_GAIN) error %d", err );
+      }
+   }
+
    snd->AddSender( this );
    snd->AddSender( dtCore::System::GetSystem() );
    mPlayQueue.push( snd->Source() );
@@ -1607,6 +1806,10 @@ void
 AudioManager::SetRelative( SoundObj* snd )
 {
    assert( snd );
+
+   if( snd->IsListenerRelative() )
+      // already set, bail
+      return;
 
    ALuint   buf   = snd->Buffer();
    if( alIsBuffer( buf ) == AL_FALSE )
@@ -1814,6 +2017,142 @@ AudioManager::SetVelocity( SoundObj* snd )
 
 
 
+void
+AudioManager::SetReferenceDistance( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, set flag and bail
+      snd->SetState( Sound::MIN_DIST );
+      return;
+   }
+
+   ALfloat  min_dist(static_cast<ALfloat>(snd->GetMinDistance()));
+   ALfloat  max_dist(static_cast<ALfloat>(snd->GetMaxDistance()));
+   assert( min_dist <= max_dist );
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_REFERENCE_DISTANCE, min_dist );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %d", err );
+      return;
+   }
+}
+
+
+
+void
+AudioManager::SetMaximumDistance( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, set flag and bail
+      snd->SetState( Sound::MIN_DIST );
+      return;
+   }
+
+   ALfloat  min_dist(static_cast<ALfloat>(snd->GetMinDistance()));
+   ALfloat  max_dist(static_cast<ALfloat>(snd->GetMaxDistance()));
+   assert( min_dist <= max_dist );
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_MAX_DISTANCE, max_dist );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_DISTANCE) error %d", err );
+      return;
+   }
+}
+
+
+
+void
+AudioManager::SetRolloff( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, set flag and bail
+      snd->SetState( Sound::ROL_FACT );
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %d", err );
+      return;
+   }
+}
+
+
+
+void
+AudioManager::SetMinimumGain( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, set flag and bail
+      snd->SetState( Sound::MIN_GAIN );
+      return;
+   }
+
+   ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
+   ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
+   assert( min_gain <= max_gain );
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_MIN_GAIN, min_gain );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MIN_GAIN) error %d", err );
+      return;
+   }
+}
+
+
+
+void
+AudioManager::SetMaximumGain( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, set flag and bail
+      snd->SetState( Sound::MAX_GAIN );
+      return;
+   }
+
+   ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
+   ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
+   assert( min_gain <= max_gain );
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_MAX_GAIN, max_gain );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_GAIN) error %d", err );
+      return;
+   }
+}
+
+
+
 bool
 AudioManager::GetSource( SoundObj* snd )
 {
@@ -1999,7 +2338,7 @@ AudioManager::SoundObj::SetParent( dtCore::Transformable* parent )
 bool
 AudioManager::SoundObj::IsPlaying( void ) const
 {
-   return   bool(mState & BIT(PLAY));
+   return   GetState( PLAY );
 }
 
 
@@ -2007,7 +2346,7 @@ AudioManager::SoundObj::IsPlaying( void ) const
 bool
 AudioManager::SoundObj::IsPaused( void ) const
 {
-   return   bool(mState & BIT(PAUSE));
+   return    GetState( PAUSE );
 }
 
 
@@ -2015,7 +2354,7 @@ AudioManager::SoundObj::IsPaused( void ) const
 bool
 AudioManager::SoundObj::IsStopped( void ) const
 {
-   return   bool(mState & BIT(STOP));
+   return    GetState( STOP );
 }
 
 
@@ -2023,7 +2362,7 @@ AudioManager::SoundObj::IsStopped( void ) const
 bool
 AudioManager::SoundObj::IsLooping( void ) const
 {
-   return   bool(mState & BIT(LOOP));
+   return    GetState( LOOP );
 }
 
 
@@ -2031,7 +2370,7 @@ AudioManager::SoundObj::IsLooping( void ) const
 bool
 AudioManager::SoundObj::IsListenerRelative( void ) const
 {
-   return   bool(mState & BIT(POSITION));
+   return    GetState( POSITION );
 }
 
 
@@ -2109,6 +2448,14 @@ AudioManager::SoundObj::ResetState( unsigned int flag )
 
 
 
+bool
+AudioManager::SoundObj::GetState( unsigned int flag ) const
+{
+   return   static_cast<bool>(mState & BIT( flag ));
+}
+
+
+
 void
 AudioManager::SoundObj::Clear( void )
 {
@@ -2119,6 +2466,8 @@ AudioManager::SoundObj::Clear( void )
    {
       mCommand.pop();
    }
+
+   mState      = BIT(STOP);
 
    mPlayCB     = NULL;
    mPlayCBData = NULL;

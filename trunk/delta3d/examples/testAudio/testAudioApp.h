@@ -14,12 +14,13 @@
 class testAudioApp   :  public   dtABC::Application
 {
    private:
-      typedef  std::vector<dtAudio::Sound*>           SND_LST;
-      typedef  SND_LST::iterator                      SND_ITR;
-      typedef  std::queue<dtAudio::Sound*>            SND_QUE;
-      typedef  osg::ref_ptr<dtCore::Object>           OBJ_PTR;
-      typedef  osg::ref_ptr<dtCore::EffectManager>    FXM_PTR;
-      typedef  osg::ref_ptr<dtCore::ParticleSystem>   PAR_PTR;
+      typedef  std::vector<dtAudio::Sound*>              SND_LST;
+      typedef  SND_LST::iterator                         SND_ITR;
+      typedef  std::queue<dtAudio::Sound*>               SND_QUE;
+      typedef  osg::ref_ptr<dtCore::Object>              OBJ_PTR;
+      typedef  osg::ref_ptr<dtCore::EffectManager>       FXM_PTR;
+      typedef  osg::ref_ptr<dtCore::ParticleSystem>      PAR_PTR;
+      typedef  osg::ref_ptr<dtAudio::SoundEffectBinder>  BIN_PTR;
 
    private:
       static   const char*       kDataPath;
@@ -91,6 +92,7 @@ class testAudioApp   :  public   dtABC::Application
                PAR_PTR                       mPSysA;
                PAR_PTR                       mPSysC;
                FXM_PTR                       mFXMgr;
+               BIN_PTR                       mSFXBinder;
                dtCore::LogicalInputDevice*   mInputDevice;
                dtCore::MotionModel*          mMotionModel;
                unsigned int                  mSmokeCountA;
