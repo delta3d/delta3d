@@ -238,7 +238,7 @@ void DeltaWin::ShowCursor(const bool show )
    //Then move the cursor to be on our window'
    int x,y,w,h;
    GetPosition(&x, &y, &w, &h); //winuser.h
-   mRenderSurface->positionPointer(x+1, y+1);
+   mRenderSurface->positionPointer((x+w)/2, (y+h)/2);
 
    //Tell Producer
    mRenderSurface->useCursor(mShowCursor);
@@ -256,7 +256,7 @@ void DeltaWin::SetFullScreenMode( bool enable )
 }
 
 /*!
- * Calculate the screen coordinates given a window coordinate. Screem
+ * Calculate the screen coordinates given a window coordinate. Screen
  * coordinate (0,0) is located in the lower left of the display.
  *
  * @param x : window x coordinate [-1, 1]
@@ -275,8 +275,8 @@ bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, flo
    unsigned int w, h;
    GetRenderSurface()->getWindowRectangle( wx, wy, w, h );
 
-   pixel_x = ( w/2 ) * (x + 1);
-   pixel_y = ( h/2 ) * (y + 1);
+   pixel_x = ( w/2 ) * (x + 1.0f);
+   pixel_y = ( h/2 ) * (1.0f - y);
    
    return true;
 
