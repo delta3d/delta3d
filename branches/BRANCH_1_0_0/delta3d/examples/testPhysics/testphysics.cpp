@@ -76,7 +76,7 @@ public:
       float lz = 1.0f;
 
       //create collision meshes
-      obj1->SetCollisionBox(50.0f,50.0f,0.05f); //make VERY thin "box" for ground
+      obj1->SetCollisionBox(100.0f,100.0f,0.05f); //make VERY thin "box" for ground
       obj2->SetCollisionBox(lx,ly,lz);
       obj3->SetCollisionBox(lx,ly,lz);
 
