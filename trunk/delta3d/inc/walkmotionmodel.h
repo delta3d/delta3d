@@ -14,6 +14,9 @@
 #include "scene.h"
 #include "system.h"
 
+#include <osgUtil/IntersectVisitor>
+
+
 namespace dtCore
 {
    /**
@@ -171,6 +174,23 @@ namespace dtCore
          float GetHeightAboveTerrain();
          
          /**
+          * Sets the maximum step-up distance.  When clamping to the ground, the
+          * maximum step-up distance determines whether to rise to a new level
+          * (as when the model climbs a staircase) or to stay at the current level
+          * (as when the model passes under a roof).  The default is 1.0.
+          *
+          * @param maximumStepUpDistance the new maximum step-up distance
+          */
+         void SetMaximumStepUpDistance(float maximumStepUpDistance);
+         
+         /**
+          * Returns the current maximum step-up distance.
+          *
+          * @return the maximum step-up distance
+          */
+         float GetMaximumStepUpDistance();
+         
+         /**
           * Message handler callback.
           *
           * @param data the message data
@@ -269,6 +289,11 @@ namespace dtCore
           * The height to maintain above terrain (meters).
           */
          float mHeightAboveTerrain;
+         
+         /**
+          * The maximum step-up distance (meters).
+          */
+         float mMaximumStepUpDistance;
          
          /**
           * The current downward speed.
