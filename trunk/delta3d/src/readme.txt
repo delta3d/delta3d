@@ -103,9 +103,12 @@ Kernel <= 2.6.10-1.741_FC3
    These files are high-level instructions that tell CMake how to genereate 
    Makefiles for your configuration. In each of these directories run:
 
-   'cmake .', and then 'make' 
+   cmake . 
+   make clean 
+   make
 
-   to build the apprpropriate files. 	
+   to build the apprpropriate files. "make clean" is only necessary if you
+   have downloaded the pre-built binaries and want to start fresh.
 
    To build the Delta3D source, also run 'make install' to place the shared
    libraries in the ../lib folder.
