@@ -1,11 +1,23 @@
+import os
+import glob
+import string
+
 Import('*')
 
-dtHlaSrcs = [   'dis_types.cpp',
+if rtiFound == 1 :
+
+    dtHlaSrcs = [   'dis_types.cpp',
                 'entity.cpp',
                 'rticonnection.cpp' ]
 
-dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=[ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'tinyxml', '$rtiLibName' ] )
+    rtiLibs = glob.glob( os.path.join(env['ENV']['RTI_LIB'], '*.so' ))
+    rtiLibs = [ os.path.basename(path) for path in rtiLibs ]
+    rtiLibs = [ string.split(lib,'.')[0] for lib in rtiLibs ]
+    
+    linkTheseLibs = [ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] + rtiLibs
+    
+    dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=linkTheseLibs )
 
-env.Alias('install', env.Install( "$prefix/lib", dtHlaLib ) )
+    env.Alias( 'install', env.Install( "$prefix/lib", dtHlaLib ) )
+    env.Default( dtHlaLib )
 
-Return( 'dtHlaLib' )

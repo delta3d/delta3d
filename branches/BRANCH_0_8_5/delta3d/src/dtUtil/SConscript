@@ -6,6 +6,5 @@ dtUtilSrcs = [  'domain.cpp',
 
 dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS=[ 'osg', 'plibsg', 'plibul' ] )
 
-env.Alias('install', env.Install( '$prefix/lib', dtUtilLib ) )
-
-Return( 'dtUtilLib' )
+env.Alias( 'install', env.Install( '$prefix/lib', dtUtilLib ) )
+env.Default( dtUtilLib )

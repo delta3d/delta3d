@@ -9,6 +9,5 @@ dtAbcLib = env.SharedLibrary( 'dtabc', dtAbcSrcs, LIBS=[ 'dtcore', 'osgDB', 'pli
 
 # TODO: install headers
 env.Alias('install', env.Install( '$prefix/lib', dtAbcLib ) )
-
-Return( 'dtAbcLib' )
+env.Default( dtAbcLib )
 

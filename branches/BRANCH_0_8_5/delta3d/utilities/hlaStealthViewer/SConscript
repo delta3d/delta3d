@@ -1,7 +1,16 @@
+import glob
+import os
+import string
+
 Import('*')
 
-env = env.Copy()
+if rtiFound :
 
-hlaStealthViewer = env.Program( 'hlaStealthViewer', 'main.cpp', LIBS=[ 'dtcore', 'dtabc', 'dthla', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'rtis', 'fedtime13', 'mcast', 'mpiif', 'msgstats', 'rid', 'timers', 'urlreader', 'bitvector', 'vterm', 'netutil', 'if', 'mempool', 'mersenne', 'parser', 'rti13' ] )
+    rtiLibs = glob.glob( os.path.join(env['ENV']['RTI_LIB'], '*.so' ))
+    rtiLibs = [ os.path.basename(path) for path in rtiLibs ]
+    rtiLibs = [ string.split(lib,'.')[0] for lib in rtiLibs ]
 
-Return( 'hlaStealthViewer' )
+    linkTheseLibs = [ 'dtcore', 'dtabc', 'dthla', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm' ] + rtiLibs
+
+    hlaStealthViewer = env.Program( 'hlaStealthViewer', 'main.cpp', LIBS=linkTheseLibs )
+
