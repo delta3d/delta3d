@@ -36,7 +36,7 @@
 				OutputFile="$(OutDir)/testGUI.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\lib;..\..\ext.\lib"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testGUI.pdb"
 				SubSystem="1"
