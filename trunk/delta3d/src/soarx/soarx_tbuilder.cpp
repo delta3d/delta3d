@@ -58,7 +58,7 @@ int TBuilder::Build(const char* path,
                     osg::HeightField* hf,
                     bool buildDetail)
 {
-   Notify(NOTICE, "SOARXTerrain: Making base map for %s..", prefix);
+   Notify(INFO, "SOARXTerrain: Making base map for %s..", prefix);
    
 	//sys->Subscribe("Event.Update", Callback(this, BuildSteps));
 
@@ -194,7 +194,7 @@ int TBuilder::Build(const char* path,
 	
 	if(buildDetail)
 	{
-	   Notify(NOTICE, "SOARXTerrain: Making detail map...");
+	   Notify(INFO, "SOARXTerrain: Making detail map...");
 	   
 	   src_dim.width = detail_size;
       src_dim.height = detail_size;
