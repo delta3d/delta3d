@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+
+<SOARXTerrain cachePath="cache">
+	
+	<GeoOrigin latitude="36.58" longitude="-121.85" elevation="0.0"/>
+	    
+	<DTED path="c:/dted/level1"/>
+	<LCCImage filename="mb_lcc.tif" /> 
+
+ <!-- 
+	<GeospecificImage filename="mb_lcc.tif" />
+	<GeospecificImage filename="bayarea_landsat7.tif" />
+	<LCCImage filename="mb_lcc.tif" />
+	
+	<Roads filename="tiger_monterey_county"
+           query="SELECT * FROM CompleteChain WHERE CFCC LIKE 'A%'"/>
+              
+  -->      
+</SOARXTerrain>
+	
