@@ -56,8 +56,8 @@ Win32 w/ Visual Studio .NET 7.1
 
 Linux 
 -----
-Tested on:
-Fedora Core-up (2.6.5-1.358)
+Tested on: Fedora Core 2, Fedora Core 3 
+Kernel <= 2.6.10-1.741_FC3
 
 1. Run 'glxinfo | grep direct'.
    If you get 'direct rendering: yes' skip to 3.
