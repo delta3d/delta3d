@@ -92,30 +92,27 @@ public:
       {
          osg::Node* nodePtr = &node;
 
-         if(IS_A(nodePtr, osgParticle::ModularEmitter*))
+         if( osgParticle::ModularEmitter* me = dynamic_cast<osgParticle::ModularEmitter*>(nodePtr) )
          {
-            osgParticle::ModularEmitter* me =
-               (osgParticle::ModularEmitter*)nodePtr;
-            
-            emitter = me;
+            emitter.push_back( me );
 
-            if(IS_A(me->getCounter(), osgParticle::VariableRateCounter*))
+            if( osgParticle::VariableRateCounter* counter = dynamic_cast<osgParticle::VariableRateCounter*>(me->getCounter()) )
             {
-               vrc = (osgParticle::VariableRateCounter*)me->getCounter();             
+               vrc.push_back( counter );             
             }
 
-            if(IS_A(me->getShooter(), osgParticle::RadialShooter*))
+            if( osgParticle::RadialShooter* shooter = dynamic_cast<osgParticle::RadialShooter*>(me->getShooter()) )
             {
-               rs = (osgParticle::RadialShooter*)me->getShooter();
+               rs.push_back( shooter );
             }            
          }
 
          traverse(node);
       }
 
-      osgParticle::VariableRateCounter *vrc;
-      osgParticle::RadialShooter* rs;
-      osgParticle::ModularEmitter *emitter;
+      std::vector<osgParticle::VariableRateCounter*> vrc;
+      std::vector<osgParticle::RadialShooter*> rs;
+      std::vector<osgParticle::ModularEmitter*> emitter;
 };
 
 
@@ -144,20 +141,26 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
       RefPtr<ParticleVisitor> pv = new ParticleVisitor();
       node->accept(*pv.get());
 
-      //Note: the Emitter is removed from the Particle System group
+      //Note: the Emitters are removed from the Particle System group
       //and added to the mNode (Transform) for repositioning.
       //The rest of the Particle System gets added to the Scene with *no*
       //transform nodes above it.
 
-      //get the emitter
-      RefPtr<osgParticle::ModularEmitter> em = pv.get()->emitter;
+      //get the emitters
+      std::vector<osgParticle::ModularEmitter*> emitters = pv.get()->emitter;
 
-      //remove it from it's current parent
-      em.get()->getParent(0)->removeChild( em.get() );
+      for(  std::vector<osgParticle::ModularEmitter*>::iterator iter = emitters.begin();
+            iter != emitters.end();
+            iter++ )
+      {
+         RefPtr<osgParticle::ModularEmitter> em = *iter;
+         //remove it from it's current parent
+         em.get()->getParent(0)->removeChild( em.get() );
 
-      //add it as a child to mNode
-      GetMatrixNode()->addChild( em.get() );
-         
+         //add it as a child to mNode
+         GetMatrixNode()->addChild( em.get() );
+      }
+
       //add the rest of the PS to the Scene
       if (mParentScene.valid())
       {
