@@ -598,6 +598,7 @@ static void resetEmitters()
    for(unsigned int i=0;i<layers.size();i++)
    {
       layers[i].mModularEmitter->setCurrentTime(0.0);
+      layers[i].mModularProgram->setCurrentTime(0.0);
    }
 }
 
@@ -739,9 +740,11 @@ void psEditorGUI_LayerSelect(Fl_Browser*, void*)
       Layers_HideButton->activate();
 
       if (layers[layer].mModularEmitter->isEnabled() )      
-         Layers_HideButton->label("Hide");
+         //Layers_HideButton->label("Hide");
+         Layers_HideButton->value(1);
       else
-         Layers_HideButton->label("Show");
+         //Layers_HideButton->label("Show");
+         Layers_HideButton->value(0);
    }
    
    updateParameterTabs();
@@ -776,19 +779,21 @@ void psEditorGUI_New(Fl_Menu_*, void*)
    psEditorGUI_NewLayer(NULL, NULL);
 }
 
-void psEditorGUI_HideLayer( Fl_Button*, void*)
+void psEditorGUI_HideLayer( Fl_Light_Button*, void*)
 {
    int layer = Layers->value() - 1;
 
    if (layers[layer].mModularEmitter->isEnabled() )
    {
       layers[layer].mModularEmitter->setEnabled(false);
-      Layers_HideButton->label("Show");
+      //Layers_HideButton->label("Show");
+      Layers_HideButton->value(0);
    }
    else
    {
       layers[layer].mModularEmitter->setEnabled(true);
-      Layers_HideButton->label("Hide");
+      //Layers_HideButton->label("Hide");
+      Layers_HideButton->value(1);
    }
 }
 

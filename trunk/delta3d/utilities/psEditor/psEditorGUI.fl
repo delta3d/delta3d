@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0105 
+version 1.0106 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include "dtABC/fl_dt_window.h"} {public
@@ -12,7 +12,7 @@ Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Particle System Editor} open
-    xywh {129 104 1408 594} type Double hide resizable
+    xywh {134 24 1408 594} type Double resizable visible
   } {
     Fl_Menu_Bar MainMenu {open
       xywh {5 5 1400 25}
@@ -98,7 +98,7 @@ Function {make_window()} {open
         }
         menuitem {} {
           label {X&Z Grid}
-          callback psEditorGUI_XZGrid selected
+          callback psEditorGUI_XZGrid
           xywh {10 10 100 20}
         }
       }
@@ -106,18 +106,20 @@ Function {make_window()} {open
     Fl_Tile {} {open
       xywh {5 35 1405 555} box UP_FRAME
     } {
-      Fl_Group {} {
+      Fl_Group {} {open
         xywh {719 35 185 290} box DOWN_BOX
       } {
+        Fl_Box {} {
+          label resizebox selected
+          xywh {845 75 53 180} hide resizable
+        }
         Fl_Button {} {
-          label {@+}
           callback psEditorGUI_NewLayer
-          tooltip {Add new Layer} xywh {729 255 30 30}
+          tooltip {Add new Layer} image {newlayer.png} xywh {729 255 34 34}
         }
         Fl_Button Layers_DeleteButton {
-          label {@line}
           callback psEditorGUI_DeleteLayer
-          tooltip {Delete selected Layer} xywh {764 255 30 30}
+          tooltip {Delete selected Layer} image {trashlayer.png} xywh {764 255 34 34}
         }
         Fl_Button Layers_RenameButton {
           label Rename
@@ -127,15 +129,11 @@ Function {make_window()} {open
         Fl_Browser Layers {
           label Layers
           callback psEditorGUI_LayerSelect
-          xywh {724 85 180 165} type Hold align 1
+          xywh {724 85 181 165} type Hold align 1
         }
-        Fl_Button Layers_HideButton {
-          label Hide
+        Fl_Light_Button Layers_HideButton {
           callback psEditorGUI_HideLayer
-          tooltip {Toggle the visibility of the selected Layer} xywh {799 255 40 30}
-        }
-        Fl_Box {} {
-          xywh {839 35 45 290} hide resizable
+          tooltip {Toggle the visibility of the selected Layer} image {hidelayer.png} xywh {800 255 47 34} value 1
         }
       }
       Fl_Box viewWidget {
