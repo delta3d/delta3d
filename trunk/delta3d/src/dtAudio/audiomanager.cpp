@@ -3,7 +3,7 @@
 
 #include <osgDB/FileUtils>
 
-#include <alut.h>
+#include <AL/alut.h>
 
 #include "dtCore/system.h"
 #include "dtCore/notify.h"

@@ -27,7 +27,7 @@
 #include <map>
 #include <string>
 
-#include <al.h>
+#include <AL/al.h>
 #include <sg.h>
 
 #include <dtCore/base.h>
