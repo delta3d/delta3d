@@ -34,6 +34,10 @@ namespace dtUtil
    class DT_EXPORT PolarDecomp
    {
    public:
+      // Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation
+      static float Decompose( const osg::Matrixf& M, osg::Matrixf& Q, osg::Matrixf& S, osg::Vec4f& T );
+
+   private:
 
       // Copy nxn matrix A to C using "gets" for assignment
       static void MatCopyMinusEqual( osg::Matrixf& C, const osg::Matrixf& A );
@@ -67,9 +71,6 @@ namespace dtUtil
 
       // Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose
       static void DoRank2( osg::Matrixf& M, const osg::Matrixf& MadjT, osg::Matrixf& Q );
-
-      // Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation
-      static float Decompose( const osg::Matrixf& M, osg::Matrixf& Q, osg::Matrixf& S, osg::Vec4f& T );
 
    };
 }
