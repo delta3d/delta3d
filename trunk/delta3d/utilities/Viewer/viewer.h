@@ -109,6 +109,7 @@ class Viewer :  public   dtABC::Widget
 
       ///Override to receive messages.
       virtual  void           OnMessage( dtCore::Base::MessageData* data );
+      virtual  void           FileLoaded( bool loaded, const char* filename ) = 0L;
       inline   osg::Group*    GetFileObj( unsigned int indx );
       inline   osg::Group*    GetDisplayObj( unsigned int indx );
 

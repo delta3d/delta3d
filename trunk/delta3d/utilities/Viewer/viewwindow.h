@@ -36,6 +36,7 @@ class ViewWindow  :  public   Fl_DT_Window<Viewer>
 
       virtual  void                    show( void );
       virtual  void                    OnMessage( dtCore::Base::MessageData* data );
+      virtual  void                    FileLoaded( bool loaded, const char* filename );
 
                const char*             GetPath( void );
                void                    SetPath( const char* path );
