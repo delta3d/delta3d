@@ -78,7 +78,7 @@ void Camera::Frame()
    mCamera->frame();
 }
 
-void Camera::SetWindow(Window *win)
+void Camera::SetWindow(DeltaWin *win)
 {
    mWindow = win;
    if (mWindow == NULL)

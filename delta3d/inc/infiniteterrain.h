@@ -14,7 +14,7 @@
 #include "sg.h"
 
 #include "base.h"
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "physical.h"
 
 namespace dtCore
@@ -26,7 +26,7 @@ namespace dtCore
     * An infinite terrain surface.
     */
    class DT_EXPORT InfiniteTerrain : public Base,
-                                     public Drawable,
+                                     public DeltaDrawable,
                                      public Physical
    {
       friend class InfiniteTerrainCallback;

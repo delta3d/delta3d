@@ -81,7 +81,7 @@ Scene::~Scene()
    Notify(DEBUG_INFO, "destroying Scene ref:%d", this->referenceCount() );
 }
 
-void Scene::AddDrawable(Drawable *drawable)
+void Scene::AddDrawable(DeltaDrawable *drawable)
 {
    mSceneNode.get()->addChild( drawable->GetOSGNode() );
    
@@ -101,7 +101,7 @@ void Scene::AddDrawable(Drawable *drawable)
    }
 }
 
-void Scene::RemoveDrawable(Drawable *drawable)
+void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
    

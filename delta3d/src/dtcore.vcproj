@@ -44,6 +44,8 @@
 				OutputFile="..\bin\dtcored.dll"
 				AdditionalLibraryDirectories="..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt;libc;libcmtd;libcd"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="..\lib\dtcored.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -187,6 +189,9 @@
 			</File>
 			<File
 				RelativePath=".\cui_openglshader.cpp">
+			</File>
+			<File
+				RelativePath=".\deltawin.cpp">
 			</File>
 			<File
 				RelativePath="effectmanager.cpp">
@@ -597,26 +602,6 @@
 			<File
 				RelativePath=".\walkmotionmodel.cpp">
 			</File>
-			<File
-				RelativePath="window.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -641,6 +626,9 @@
 			</File>
 			<File
 				RelativePath="..\inc\cui_openglshader.h">
+			</File>
+			<File
+				RelativePath="..\inc\deltawin.h">
 			</File>
 			<File
 				RelativePath="..\inc\drawable.h">
@@ -773,9 +761,6 @@
 			</File>
 			<File
 				RelativePath="..\inc\walkmotionmodel.h">
-			</File>
-			<File
-				RelativePath="..\inc\window.h">
 			</File>
 		</Filter>
 	</Files>

@@ -37,6 +37,8 @@
 				OutputFile="..\bin\dtaudiod.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="..\lib\dtaudiod.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

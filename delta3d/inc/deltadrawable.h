@@ -1,7 +1,7 @@
-#ifndef DELTA_DRAWABLE
-#define DELTA_DRAWABLE
+#ifndef DELTA_DELTA_DRAWABLE
+#define DELTA_DELTA_DRAWABLE
 
-// drawable.h: Declaration of the Drawable class.
+// deltadrawable.h: Declaration of the DeltaDrawable class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ namespace dtCore
    /**
     * A drawable object.
     */
-   class DT_EXPORT Drawable
+   class DT_EXPORT DeltaDrawable
    {
       public:
 
@@ -38,7 +38,11 @@ namespace dtCore
           */
          virtual void AddedToScene(Scene* scene) {}
    };
+
+#ifdef _WIN32
+   typedef DeltaDrawable Drawable;
+#endif
 };
 
 
-#endif // DELTA_DRAWABLE
+#endif // DELTA_DELTA_DRAWABLE

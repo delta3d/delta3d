@@ -13,7 +13,7 @@
 #include <osg/Geode>
 #include "notify.h"
 #include "transformable.h"
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "physical.h"
 
 namespace dtCore
@@ -30,7 +30,7 @@ namespace dtCore
    *
    * The Object must be added to a Scene to be viewed using Scene::AddObject().
    */
-   class DT_EXPORT Object : public Transformable, public Drawable, public Physical
+   class DT_EXPORT Object : public Transformable, public DeltaDrawable, public Physical
    {
       DECLARE_MANAGEMENT_LAYER(Object)
          

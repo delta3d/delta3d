@@ -129,17 +129,17 @@ void UserInterface::SelectInstance (void)
       //we have new Windows's or they changed their names
       CameraWinChoice->clear();
       CameraWinChoice->add( "None", NULL, NULL);
-      for ( int i=0; i<Window::GetInstanceCount(); i++)
+      for ( int i=0; i<DeltaWin::GetInstanceCount(); i++)
       {         
-         CameraWinChoice->add( Window::GetInstance(i)->GetName().c_str(), NULL, NULL,
-                               Window::GetInstance(i), 0);
+         CameraWinChoice->add( DeltaWin::GetInstance(i)->GetName().c_str(), NULL, NULL,
+                               DeltaWin::GetInstance(i), 0);
       }
 
       menu = CameraWinChoice->menu();
       
       for ( int i=0; i<CameraWinChoice->size(); i++)
       {
-         Window *menuItemWin = (Window*)menu[i].user_data();
+         DeltaWin *menuItemWin = (DeltaWin*)menu[i].user_data();
          
          if (menuItemWin == c->GetWindow())
          {
@@ -174,10 +174,10 @@ void UserInterface::SelectInstance (void)
    }
    else ObjectGroup->hide();
    
-   /** Window **/
-   if (IS_A(b, Window*))
+   /** DeltaWin **/
+   if (IS_A(b, DeltaWin*))
    {
-      Window *w = (Window*)b;
+      DeltaWin *w = (DeltaWin*)b;
       InstanceClassName->label( typeid(w).name() ); 
 
       int x,y,width,height;
@@ -481,21 +481,21 @@ void UserInterface::CameraWinCB( Fl_Choice *o )
    Camera *cam = (Camera*)GetSelectedInstance(this);
    const Fl_Menu *menu = o->menu();   
    
-   Window *win = (Window*)menu[o->value()].user_data();
+   DeltaWin *win = (DeltaWin*)menu[o->value()].user_data();
    cam->SetWindow( win );
 
 }
 
 void UserInterface::WinPosCB( Fl_Value_Input *o)
 {
-   Window *w = (Window*)GetSelectedInstance(this);
+   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
    w->SetPosition( WinPosX->value(), WinPosY->value(), 
                    WinPosW->value(), WinPosH->value() );
 }
 
 void UserInterface::WinSizeCB(Fl_Menu_Button *o)
 {
-   Window *win = (Window*)GetSelectedInstance(this);
+   DeltaWin *win = (DeltaWin*)GetSelectedInstance(this);
    const Fl_Menu_Item*menu = o->menu();
    
 
@@ -522,7 +522,7 @@ void UserInterface::WinSizeCB(Fl_Menu_Button *o)
 
 void UserInterface::WinCursorCB( Fl_Check_Button *o)
 {
-   Window *w = (Window*)GetSelectedInstance(this);
+   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
 
    if (o->value()) w->ShowCursor();
    else w->ShowCursor(false);
@@ -530,14 +530,14 @@ void UserInterface::WinCursorCB( Fl_Check_Button *o)
 
 void UserInterface::WinTitleCB( Fl_Input *o)
 {
-   Window *w = (Window*)GetSelectedInstance(this);
+   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
    std::string name(o->value());
    w->SetWindowTitle(name.c_str());
 }
 
 void UserInterface::WinFullScreenCB( Fl_Check_Button *o)
 {
-   Window *w = (Window*)GetSelectedInstance(this);
+   DeltaWin *w = (DeltaWin*)GetSelectedInstance(this);
 
    if (o->value()) w->SetFullScreenMode(true);
    else            w->SetFullScreenMode(false);    

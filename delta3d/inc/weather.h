@@ -93,8 +93,8 @@ namespace dtABC
       void SetRateOfChange(const float rate);
       float GetRateOfChange(void) const {return mRateOfChange;}
 
-      ///Add a Drawable to be affected by this weather's lighting and fog
-      void AddDrawable( dtCore::Drawable *drawable);
+      ///Add a DeltaDrawable to be affected by this weather's lighting and fog
+      void AddDrawable( dtCore::DeltaDrawable *drawable);
 
    private:
       typedef std::vector<osg::ref_ptr<dtCore::CloudPlane> > CloudPlaneList;

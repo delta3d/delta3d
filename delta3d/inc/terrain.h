@@ -30,7 +30,7 @@
 
 #include <osgTerrain/HeightFieldNode>
 
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "notify.h"
 #include "transformable.h"
 
@@ -44,7 +44,7 @@ namespace dtCore
     * A terrain object.
     */
    class DT_EXPORT Terrain : public Transformable,
-                             public Drawable
+                             public DeltaDrawable
    {
       friend class SimpleHeightFieldRenderer;
       friend class TerrainCallback;

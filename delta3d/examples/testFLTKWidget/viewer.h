@@ -3,11 +3,7 @@
 
 #include <string>
 
-#include <camera.h>
-#include <base.h>
-#include <window.h>
-#include <scene.h>
-
+#include "dt.h"
 #include "helperstructs.h"
 
 

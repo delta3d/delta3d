@@ -38,6 +38,8 @@
 				OutputFile="..\bin\dtchard.dll"
 				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd; libcmt"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="..\lib\dtchard.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

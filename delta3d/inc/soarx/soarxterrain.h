@@ -32,7 +32,7 @@
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "physical.h"
 #include "transformable.h"
 
@@ -48,7 +48,7 @@ namespace dtSOARX
     * A piece of terrain using the SOARX library.
     */
    class DT_EXPORT SOARXTerrain : public dtCore::Transformable,
-                                  public dtCore::Drawable,
+                                  public dtCore::DeltaDrawable,
                                   public dtCore::Physical
    {
       friend class SOARXTerrainCallback;

@@ -14,7 +14,7 @@ namespace dtABC
      * is the base level class for most applications.  It contains the basic
      * components required for applications.
      * An optional XML configuration file can be supplied on the constructor which
-     * contains the attributes for the internal Window, Camera, and Scene.  If no
+     * contains the attributes for the internal DeltaWin, Camera, and Scene.  If no
      * config file is supplied, a default file ("config.xml") is saved
      * which may be customized and passed in on the next run.
      *

@@ -74,11 +74,11 @@ namespace dtCore
       _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
       osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
       
-      ///Add a Drawable to the Scene to be viewed.
-      void AddDrawable( Drawable *drawable );
+      ///Add a DeltaDrawable to the Scene to be viewed.
+      void AddDrawable( DeltaDrawable *drawable );
 
-      ///Remove a Drawable from the Scene
-      void RemoveDrawable( Drawable *drawable );
+      ///Remove a DeltaDrawable from the Scene
+      void RemoveDrawable( DeltaDrawable *drawable );
       
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain( const float *x, const float *y);

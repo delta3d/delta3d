@@ -58,7 +58,7 @@ const osg::Vec4            PointAxis::COLOR[BASECOLORS] =
  */
 PointAxis::PointAxis()
 :  Transformable(),
-   Drawable(),
+   DeltaDrawable(),
    mNode(NULL),
    mMainSwitch(NULL),
    mLabelSwitch(NULL)

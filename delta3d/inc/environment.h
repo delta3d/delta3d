@@ -1,7 +1,7 @@
 #ifndef DELTA_ENVIRONMENT
 #define DELTA_ENVIRONMENT
 
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "enveffect.h"
 #include "osg/Group"
 #include "osg/Fog"
@@ -12,7 +12,7 @@
 namespace dtCore
 {
    ///A unique environment which controls lighting and visibility
-   class DT_EXPORT Environment :  public dtCore::Drawable, public dtCore::Base
+   class DT_EXPORT Environment :  public dtCore::DeltaDrawable, public dtCore::Base
    {
    public:
             DECLARE_MANAGEMENT_LAYER(Environment)
@@ -33,8 +33,8 @@ namespace dtCore
       ///Notifies this object that it has been added to a Scene
       virtual void AddedToScene(Scene* scene);
          
-      ///Add a Drawable to be rendered using this Environment's properties.
-      void AddDrawable( Drawable *drawable );
+      ///Add a DeltaDrawable to be rendered using this Environment's properties.
+      void AddDrawable( DeltaDrawable *drawable );
 
       /// Add an Environmental Effect to the Environment
       void AddEffect(EnvEffect *effect);

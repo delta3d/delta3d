@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Producer/Camera"
-#include "window.h"
+#include "deltawin.h"
 #include "base.h"
 #include "scene.h"
 #include "sg.h"
@@ -18,9 +18,9 @@ namespace dtCore
    
    ///A dtCore::Camera
 
-   /** A dtCore::Camera is a view into the Scene.  It requires a dtCore::Window to 
-    *  render the the Scene into.  If no Window is supplied, a default Window 
-    *  will be created and will be overridden when a valid Window is supplied
+   /** A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to 
+    *  render the the Scene into.  If no DeltaWin is supplied, a default DeltaWin 
+    *  will be created and will be overridden when a valid DeltaWin is supplied
     *  using SetWindow().
     * 
     *  The method SetScene() supplies the geometry to be rendered from the 
@@ -40,11 +40,11 @@ namespace dtCore
       Camera(std::string name = "camera");
       virtual ~Camera();
       
-      ///Use the supplied Window to draw into
-	   void SetWindow( Window *win );
+      ///Use the supplied DeltaWin to draw into
+	   void SetWindow( DeltaWin *win );
 
-      ///Get the supplied Window (could be NULL)
-      Window *GetWindow(void) {return mWindow.get();}
+      ///Get the supplied DeltaWin (could be NULL)
+      DeltaWin *GetWindow(void) {return mWindow.get();}
 
       ///Redraw the view
 	   void Frame( void );
@@ -76,7 +76,7 @@ namespace dtCore
 
    private:
       osg::ref_ptr<Producer::Camera> mCamera; ///<Handle to the Producer camera
-      osg::ref_ptr<Window> mWindow; ///<The currently assigned Window
+      osg::ref_ptr<DeltaWin> mWindow; ///<The currently assigned DeltaWin
       osg::ref_ptr<Scene> mScene;
       sgVec4 mClearColor; ///<The current clear color
 

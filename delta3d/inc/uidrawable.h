@@ -6,10 +6,10 @@
 #endif
 
 #include "base.h"
-#include "drawable.h"
+#include "deltadrawable.h"
 #include "mouse.h"
 #include "keyboard.h"
-#include "window.h"
+#include "deltawin.h"
 #include <osg/Drawable>
 #include "UI/CUI_UI.h"
 #include "UI/CUI_ListItem.h"
@@ -26,10 +26,10 @@
 namespace dtCore
 {
 
-   ///ties the OSG GUI node to a dtCore Drawable
+   ///ties the OSG GUI node to a dtCore DeltaDrawable
 
    /** The UIDrawable class allows you to associate a glGUI User Interface with
-     * a dtCore::Drawable so it can be added to the dtCore::Scene.
+     * a dtCore::DeltaDrawable so it can be added to the dtCore::Scene.
      * To use, just create an instance of it, then add in the UI elements using
      * AddFrame(), AddShader(), AddFont(), AddBorder(), etc.
      * Then add the UIDrawable to the Scene for it to be rendered.
@@ -43,7 +43,7 @@ namespace dtCore
      * @see Scene::AddDrawable()
      */
    class DT_EXPORT UIDrawable : public dtCore::Base,
-                                public dtCore::Drawable,
+                                public dtCore::DeltaDrawable,
                                 public dtCore::MouseListener,
                                 public dtCore::KeyboardListener
    {
@@ -99,7 +99,7 @@ namespace dtCore
       ///Load a xml GUI file and create the UI elements
       void LoadGUIFile(std::string filename);
 
-      ///Set the resolution of the Window this UI is in (pixels)
+      ///Set the resolution of the DeltaWin this UI is in (pixels)
       void SetWindowResolution(const int w, const int h);
 
       ///Get a pointer to the underlying CUI_OpenGLRender
@@ -228,8 +228,8 @@ namespace dtCore
       CUI_UI *mUI; ///<Pointer to the CUI_UI
       std::string mActiveRootFrame; ///<The name of the active root frame
       unsigned short mButtonState; ///<The current mouse button state
-      int mWidth; ///<the width of the Window
-      int mHeight; ///<The height of the Window
+      int mWidth; ///<the width of the DeltaWin
+      int mHeight; ///<The height of the DeltaWin
       float mMouseX; ///<The current Mouse X position
       float mMouseY; ///<the current Mouse Y position
       CUI_OpenGLRenderer *mRenderer; ///<The opengl renderer we're using
