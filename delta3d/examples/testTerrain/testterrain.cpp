@@ -1,5 +1,5 @@
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 #include "soarx/dtsoarx.h"
 //#include "dtUtil/visitor.h"
 

@@ -22,7 +22,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;C:\Program Files\RTI-1.3NGv6.4.1\WinNT-4.0-VC6\include"
+				AdditionalIncludeDirectories="$(DELTA_INC);C:\Program Files\RTI-1.3NGv6.4.1\WinNT-4.0-VC6\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -85,7 +85,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;C:\Program Files\RTI-1.3NGv6.4.1\WinNT-4.0-VC6\include"
+				AdditionalIncludeDirectories="$(DELTA_INC);C:\Program Files\RTI-1.3NGv6.4.1\WinNT-4.0-VC6\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
