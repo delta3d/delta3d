@@ -29,6 +29,11 @@ namespace   dtAudio
         DECLARE_MANAGEMENT_LAYER(AudioManager)
 
       private:
+         /**
+          * BufferData is an internal structure
+          * used to identify an OpenAL buffer and
+          * hold reference data associated with it
+          */
          struct   BufferData
          {
             ALuint         buf;
@@ -44,6 +49,22 @@ namespace   dtAudio
             {}
          };
 
+         /**
+          * SoundObj is the concrete object associated
+          * with Sound interface that users manipulate.
+          *
+          * The SoundObj is the mechanism that binds
+          * an OpenAL buffer to an OpenAL source for
+          * playing sounds.  Typically a SoundObj always
+          * holds onto a buffer, but it's buffer could be
+          * swapped for another.
+          *
+          * The SoundObj rarely holds onto a source.
+          * Just before playing, the SoundObj gets a new-
+          * recycled source and binds it with the buffer.
+          * Immediately after finished playing, the source
+          * is removed from SoundObj for recycling.
+          */
          class SoundObj :  public   Sound
          {
             DECLARE_MANAGEMENT_LAYER(SoundObj)
@@ -55,38 +76,54 @@ namespace   dtAudio
                                        SoundObj();
                virtual                 ~SoundObj();
 
+               /// update messages which set state flags and
+               /// repositions sound if it's a child in scene-space
                virtual  void           OnMessage( MessageData* data );
 
+               /// override method so sound knows when it's becomeing a child
                virtual  void           SetParent( dtCore::Transformable* parent );
 
+               /// override methods for user to querry sound state
                virtual  bool           IsPlaying( void )          const;
                virtual  bool           IsPaused( void )           const;
                virtual  bool           IsStopped( void )          const;
                virtual  bool           IsLooping( void )          const;
                virtual  bool           IsListenerRelative( void ) const;
 
+               /// set/get next command in this sound's command queue
                         void           Command( const char* cmd );
                         const char*    Command( void );
 
+               /// set/get this sounds buffer id
                         void           Buffer( ALuint buffer );
                         ALuint         Buffer( void );
 
+               /// set/get this sounds source id
                         void           Source( ALuint source );
                         ALuint         Source( void );
 
+               /// set/reset/get various state flags
                         void           SetState( unsigned int flag );
                         void           ResetState( unsigned int flag );
                         bool           GetState( unsigned int flag ) const;
 
+               /// clean up sound for recycling
                         void           Clear( void );
 
             private:
-                        CMD_QUE        mCommand;          
+                        CMD_QUE        mCommand;
                         ALuint         mBuffer;
                         ALuint         mSource;
                         unsigned int   mState;
          };
 
+         /**
+          * ListenerObj is the concrete object associated
+          * with Listener interface that users manipulate.
+          * 
+          * Function calls on the listener are processed
+          * immediately, unlike the SoundObj functions.
+          */
          class ListenerObj :  public   Listener
          {
             DECLARE_MANAGEMENT_LAYER(ListenerObj)
@@ -95,14 +132,21 @@ namespace   dtAudio
                                  ListenerObj();
                virtual           ~ListenerObj();
 
+               /// set/get listener's velocity
                virtual  void     SetVelocity( const sgVec3& velocity );
                virtual  void     GetVelocity( sgVec3& velocity )  const;
 
+               /// set/get listener's gain (master volume)
                virtual  void     SetGain( float gain );
                virtual  float    GetGain( void )   const;
 
+               /// repositions listener if it's a child in scene-space
                virtual  void     OnMessage( MessageData* data );
+
+               /// override method so listener knows when it's becomeing a child
                virtual  void     SetParent( dtCore::Transformable* parent );
+
+               /// clean up listener for no apparent reason
                virtual  void     Clear( void );
 
             private:

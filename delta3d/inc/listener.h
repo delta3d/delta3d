@@ -22,6 +22,13 @@ namespace   dtAudio
     * free it up.  The underlying listener object is a global singular
     * which lasts as long as the AudioManager exists.
     *
+    * Listener is a transformable, so it can be a child of other
+    * transformables (ie. the camera)  When a Listener is child of
+    * another object, it automatically gets positioned in scene-space
+    * relative to the parent object every frame, so there is no need to
+    * update the Listener's position.  The Listener position can be set
+    * manually in scene-space without having to make it a child of another
+    * object, but any position updates must then be made manually.
     */
    class DT_EXPORT Listener :  public   dtCore::Transformable
    {
