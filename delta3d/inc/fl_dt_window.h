@@ -1,7 +1,6 @@
 #ifndef DELTA_FL_DT_WINDOW
 #define DELTA_FL_DT_WINDOW
 
-
 #include <cassert>
 
 #include <FL/Fl.H>
@@ -338,14 +337,15 @@ public:
    virtual  void
    show( void )
    {
+
       Parent::show();
       Fl::check();
 
       dtABC::WinData  windata(  fl_xid(this),
-                                 Parent::x(),
-                                 Parent::y(),
-                                 Parent::w(),
-                                 Parent::h() );
+                                Parent::x(),
+                                Parent::y(),
+                                Parent::w(),
+                                Parent::h() );
 
       SendMessage( msgWindowData, &windata );
       Fl::add_idle( idle_callback, this );
@@ -402,7 +402,7 @@ protected:
     *
     * @param data the message to receive
     */
-   virtual  void
+   virtual void
    OnMessage( dtCore::Base::MessageData* data )
    {
       assert( data );
