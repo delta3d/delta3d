@@ -25,12 +25,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+//#undef Status
+#include "rbody/osg/OsgBody.h"
 
 #include "dtCore/transformable.h"
 #include "dtCore/loadable.h"
-
-#undef Status
-#include "rbody/osg/OsgBody.h"
 
 namespace dtChar
 {
@@ -58,7 +57,7 @@ namespace dtChar
 
          virtual osg::Node* GetOSGNode() { return dynamic_cast<osg::Node*>(mBodyNode.get()); }
          virtual osg::MatrixTransform* GetMatrixNode(void) { return dynamic_cast<osg::MatrixTransform*>(mBodyNode.get()); }
-      
+
          /**
           * Notifies this drawable object that it has been added to
           * a scene.
