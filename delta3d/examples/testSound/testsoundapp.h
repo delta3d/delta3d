@@ -1,6 +1,7 @@
 #ifndef DELTA_TEST_SOUND_APP
 #define DELTA_TEST_SOUND_APP
 
+#include <dt.h>
 #include <dtaudio.h>
 #include <dtabc.h>
 
@@ -44,7 +45,6 @@ class testSoundApp   :  public   dtABC::Application
       DECLARE_MANAGEMENT_LAYER( testSoundApp )
 
    private:
-      static   const char* kFilePath;
       static   const char* kSoundFile1;
       static   const char* kSoundFile2;
 

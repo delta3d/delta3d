@@ -15,7 +15,6 @@ using namespace   Producer;
 
 
 // static member variables
-const char* testSoundApp::kFilePath    = "../../data;";
 const char* testSoundApp::kSoundFile1  = "exp57.wav";
 const char* testSoundApp::kSoundFile2  = "exp35.wav";
 
@@ -37,9 +36,6 @@ testSoundApp::testSoundApp( std::string configFilename /*= ""*/ )
    // create and configure the audio manager
    AudioManager::Instantiate();
    AudioManager::GetManager()->Config();
-
-   // set the directory to find the sound files
-   SetDataFilePathList( kFilePath+GetDeltaDataPathList() );
 
    // pre-load the sound files
    // (an optional optimization)

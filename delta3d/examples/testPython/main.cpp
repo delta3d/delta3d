@@ -31,7 +31,6 @@ class TestPythonApplication : public Application,
       TestPythonApplication()
          : Application("config.xml")
       {
-         SetDataFilePathList("../../data;" + GetDeltaDataPathList());
          
          Object* obj = new Object("cessna");
          
@@ -63,6 +62,8 @@ IMPLEMENT_MANAGEMENT_LAYER(TestPythonApplication)
 
 int main( int argc, char **argv )
 {
+   SetDataFilePathList("..;../../data;" + GetDeltaDataPathList());
+
    TestPythonApplication* testPythonApp = new TestPythonApplication;
    
    testPythonApp->Config();

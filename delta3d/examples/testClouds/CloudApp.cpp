@@ -159,9 +159,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	CloudApp *app = new CloudApp();
-	app->Config();
-	app->Run();
-
-	return 0;
+   dtCore::SetDataFilePathList("..;../../data/;" + dtCore::GetDeltaDataPathList());
+   CloudApp *app = new CloudApp();
+   app->Config();
+   app->Run();
+   
+   return 0;
 }

@@ -32,8 +32,6 @@ class TestTerrainApplication : public Application
            mWireframe(false),
            mTimeOfDay(-1.0f)
       {
-         SetDataFilePathList("../../data/;./data/;" + GetDeltaDataPathList());
-         
          mEnvironment = new Environment;
          
          mEnvironment->SetVisibility(500000.0f);
@@ -312,7 +310,9 @@ class TestTerrainApplication : public Application
 IMPLEMENT_MANAGEMENT_LAYER(TestTerrainApplication)
 
 int main( int argc, char **argv )
-{  
+{
+   SetDataFilePathList("..;../../data/;./data/;" + GetDeltaDataPathList());
+
    TestTerrainApplication* testTerrainApp = 
       new TestTerrainApplication;
 

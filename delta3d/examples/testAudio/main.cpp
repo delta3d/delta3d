@@ -7,6 +7,8 @@
 int
 main( int argc, const char* argv[] )
 {
+   dtCore::SetDataFilePathList( "..;../../data;" + dtCore::GetDeltaDataPathList() );
+   
    testAudioApp*  app   = new testAudioApp;
    assert( app );
 
