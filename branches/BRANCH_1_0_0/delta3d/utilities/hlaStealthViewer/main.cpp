@@ -41,7 +41,7 @@ class HLAStealthViewerApplication : public Application
       {
          GetWindow()->SetWindowTitle("HLA Stealth Viewer");
 
-         SetDataFilePathList("./data;../../data;./data/images;" + GetDeltaDataPathList());
+         SetDataFilePathList("./data;./data/images;../data;../data/images;" + GetDeltaDataPathList());
          
          mEffectManager = new EffectManager;
          
