@@ -38,10 +38,10 @@ namespace dtCore
 
    /** The Compass represents visual axes in the Scene.  The Compass is positioned
     *  by screen space and is set in it's own renderbin to render after everything else.
-    *  The compass is derived from Object so the user could manipulate it's translations,
+    *  The compass is derived from Transformable so the user could manipulate it's translations,
     *  however, this is discouraged.
     *
-    * The Compass must be added to a Scene to be viewed using Scene::AddObject().
+    * The Compass must be added to a Scene to be viewed using Scene::AddDrawable().
     */
 
    class DT_EXPORT Compass :   public   Transformable

@@ -22,11 +22,11 @@
 #define DELTA_POSITIONAL_LIGHT
 
 #include "dtCore/light.h"
-#include "dtCore/transformable.h"
+#include "dtCore/ghost.h"
 
 namespace dtCore
 {
-   class DT_EXPORT PositionalLight :  public Light,  public Transformable
+   class DT_EXPORT PositionalLight :  public Light,  public Ghost
    {
       DECLARE_MANAGEMENT_LAYER(PositionalLight)
          
@@ -50,6 +50,8 @@ namespace dtCore
       virtual void RemoveChild( DeltaDrawable *child );
 
       virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
+      
+      virtual void RenderGeometry( const bool enable = true );
 
    };
 }
