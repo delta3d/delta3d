@@ -91,14 +91,28 @@ void Scene::AddDrawable(DeltaDrawable *drawable)
    
    if(physical != NULL)
    {
-      dSpaceAdd(mSpaceID, physical->GetGeomID());
-      
-      dGeomSetData(physical->GetGeomID(), physical);
-      
-      physical->SetBodyID(dBodyCreate(mWorldID));
-      
-      mPhysicalContents.push_back(physical);
+      RegisterPhysical(physical);
    }
+}
+
+/** Register a Physical with the Scene.  This method is automatically called 
+  * when adding Drawables to the Scene.  Typically, this only needs to be 
+  * called when a creating a Physical that is not added to the Scene like a
+  * Drawable.
+  * @param physical The Physical to register with the Scene
+  * @see AddDrawable()
+  */
+void Scene::RegisterPhysical( Physical *physical)
+{
+   if (physical==NULL) return;
+
+   dSpaceAdd(mSpaceID, physical->GetGeomID());
+
+   dGeomSetData(physical->GetGeomID(), physical);
+
+   physical->SetBodyID(dBodyCreate(mWorldID));
+
+   mPhysicalContents.push_back(physical);
 }
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
