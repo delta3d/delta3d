@@ -318,20 +318,19 @@ ResolutionVec DeltaWin::GetResolutions( void )
    Resolution currentRes = GetCurrentResolution();
    int currentDepth = currentRes.bitDepth;
      
-   DEVMODE *pdm = 0;
-
+   DEVMODE dm;
    ResolutionVec rv;
 
    int i = 0;
-   for (i = 0; EnumDisplaySettings(NULL, i, pdm); i++) {
+   for (i = 0; EnumDisplaySettings(NULL, i, &dm); i++) {
      // convert frequency of 1 to 0 (meaning the default)
-     if ((pdm->dmFields & DM_DISPLAYFREQUENCY) && pdm->dmDisplayFrequency == 1)
-       pdm->dmDisplayFrequency = 0;
+     if ((dm.dmFields & DM_DISPLAYFREQUENCY) && dm.dmDisplayFrequency == 1)
+       dm.dmDisplayFrequency = 0;
  
-     Resolution r = { pdm->dmPelsWidth,
-                      pdm->dmPelsHeight,
-                      pdm->dmBitsPerPel,
-                      pdm->dmDisplayFrequency };
+     Resolution r = { dm.dmPelsWidth,
+                      dm.dmPelsHeight,
+                      dm.dmBitsPerPel,
+                      dm.dmDisplayFrequency };
 
      rv.push_back( r );
    }
