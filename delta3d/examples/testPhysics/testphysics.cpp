@@ -54,11 +54,9 @@ public:
       Object *obj2 = new Object("box");
 
       if (!obj1->LoadFile("ground.flt")) return;
-      if (!obj2->LoadFile("box.flt")) return;
+      if (!obj2->LoadFile("d3d_models/Crate/2lowpol_crate.ive")) return; 
 
-      Weather* weather = new Weather();   
-      GetScene()->AddDrawable( weather->GetEnvironment() );    
-
+      //position first falling crate
       Transform position;
       position.Set(0.f, -10.f, 2.f, 0.f, 0.f, 0.f);
       GetCamera()->SetTransform(&position);
@@ -66,21 +64,23 @@ public:
       position.Set(0.55, 0, 3, 0, 40, 0);
       obj2->SetTransform( &position );
 
+      //set ODE parameters
       obj1->SetCollisionMesh();
       obj2->SetCollisionBox();
 
       dMass mass;
-
-      dMassSetBox(&mass, 1, 1, 1, 1);
-
+      dMassSetBox(&mass, 1, 1.0f, 1.0f, 1.0f);
       obj2->SetMass(&mass);
 
+      //turn on the physics
       obj2->EnableDynamics();
-      obj2->RenderCollisionGeometry();
+      //obj2->RenderCollisionGeometry();
 
       //Add the Objects to the Scene to be rendered
       GetScene()->AddDrawable( obj1 );
       GetScene()->AddDrawable( obj2 );
+
+      mObjects.push(obj2);
 
       GetScene()->SetGravity(0, 0, -15.f);
 
@@ -97,7 +97,7 @@ public:
       OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
       omm->SetTarget( GetCamera() );
       omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
-      
+
    }
    ~TestPhysicsApp(){}
 
@@ -114,80 +114,122 @@ protected:
 
       if (key == Producer::Key_B)
       {
-         Object *box = new Object("box");
-         Transform xform(random(-2.f,2.f),
-            random(-2.f, 2.f),
-            random(5.f, 10.f),
-            random(0.f, 180.f),
-            random(0.f, 90.f),
-            random(0.f, 90.f));
-         box->SetTransform(&xform);
-         float lx = random(0.5, 3.f);
-         float ly = random(0.5, 3.f);
-         float lz = random(0.5, 3.f);
-         box->SetCollisionBox(lx, ly, lz);
-         box->RenderCollisionGeometry();
+         if( mObjects.size() < 25 )
+         {
+            Object *box = new Object("box");
+            box->LoadFile("d3d_models/Crate/2lowpol_crate.ive");
 
-         dMass mass;
-         dMassSetBox(&mass, 1, lx, ly, lz);
-         box->SetMass(&mass);
-         box->EnableDynamics();
+            Transform xform(random(-2.f,2.f),
+               random(-2.f, 2.f),
+               random(5.f, 10.f),
+               random(0.f, 180.f),
+               random(0.f, 90.f),
+               random(0.f, 90.f));
+            box->SetTransform(&xform);
 
-         GetScene()->AddDrawable(box);
+            box->SetCollisionBox();
+            //box->RenderCollisionGeometry();
+
+            float lx = 1.0f;
+            float ly = 1.0f;
+            float lz = 1.0f;
+
+            dMass mass;
+            dMassSetBox(&mass, 1, lx, ly, lz);
+            box->SetMass(&mass);
+
+            box->EnableDynamics();
+
+            GetScene()->AddDrawable(box);
+
+            mObjects.push(box);
+         }
+         else
+         {
+            GetScene()->RemoveDrawable( mObjects.front() );
+            mObjects.pop();
+         }
       }
 
       if (key == Producer::Key_S)
       {
-         Object *sphere = new Object("sphere");
+         if( mObjects.size() < 25 )
+         {
+            Object *sphere = new Object("sphere");
+            sphere->LoadFile("d3d_models/Sphere/happy_sphere.IVE");
 
-         Transform xform(random(-2.f,2.f),
-            random(-2.f, 2.f),
-            random(5.f, 10.f),
-            random(0.f, 180.f),
-            random(0.f, 90.f),
-            random(0.f, 90.f));
-         sphere->SetTransform(&xform);
+            Transform xform(random(-2.f,2.f),
+               random(-2.f, 2.f),
+               random(5.f, 10.f),
+               random(0.f, 180.f),
+               random(0.f, 90.f),
+               random(0.f, 90.f));
+            sphere->SetTransform(&xform);
 
-         float radius = random(0.5, 2.f);
-         sphere->SetCollisionSphere(radius);
-         sphere->RenderCollisionGeometry();
+            sphere->SetCollisionSphere();
+            //sphere->RenderCollisionGeometry();
 
-         dMass mass;
-         dMassSetSphere(&mass, 1, radius);
-         sphere->SetMass(&mass);
-         sphere->EnableDynamics();
+            float radius = 1.0f;
 
-         GetScene()->AddDrawable(sphere);
+            dMass mass;
+            dMassSetSphere(&mass, 1, radius);
+            sphere->SetMass(&mass);
+            sphere->EnableDynamics();
+
+            GetScene()->AddDrawable(sphere);
+
+            mObjects.push(sphere);
+         }
+         else
+         {
+            GetScene()->RemoveDrawable( mObjects.front() );
+            mObjects.pop();
+         }
       }
 
       if (key == Producer::Key_C)
       {
-         Object *cyl = new Object("cylinder");
+         if( mObjects.size() < 25 )
+         {
+            Object *cyl = new Object("cylinder");
+            cyl->LoadFile("d3d_models/Barrel/rad_drum/rad_drum.ive");
 
-         Transform xform(random(-2.f,2.f),
-            random(-2.f, 2.f),
-            random(5.f, 10.f),
-            random(0.f, 180.f),
-            random(0.f, 90.f),
-            random(0.f, 90.f));
-         cyl->SetTransform(&xform);
+            Transform xform(random(-2.f,2.f),
+               random(-2.f, 2.f),
+               random(5.f, 10.f),
+               random(0.f, 180.f),
+               random(0.f, 90.f),
+               random(0.f, 90.f));
+            cyl->SetTransform(&xform);
 
-         float radius = random(0.5, 2.f);
-         float length = random(0.5, 2.f);
-         cyl->SetCollisionCappedCylinder(radius, length);
-         cyl->RenderCollisionGeometry();
+            cyl->SetCollisionCappedCylinder();
+            //cyl->RenderCollisionGeometry();
 
-         dMass mass;
-         dMassSetCappedCylinder(&mass, 1, 1, radius, length);
-         cyl->SetMass(&mass);
-         cyl->EnableDynamics();
+            float radius = 0.25f; 
+            float length = 1.75f;
 
-         GetScene()->AddDrawable(cyl);
+            dMass mass;
+            dMassSetCappedCylinder(&mass, 1, 2, radius, length);
+            cyl->SetMass(&mass);
+
+            cyl->EnableDynamics();
+
+            GetScene()->AddDrawable(cyl);
+
+            mObjects.push(cyl);
+         }
+         else
+         {
+            GetScene()->RemoveDrawable( mObjects.front() );
+            mObjects.pop();
+         }
       }
    }
+
+   static std::queue<Object*> mObjects;
 };
 
-
+std::queue<Object*> TestPhysicsApp::mObjects;
 
 int main( int argc, char **argv )
 {
