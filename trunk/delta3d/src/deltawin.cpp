@@ -82,13 +82,9 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool callback) :
+DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor, bool fullScreen) ://, bool callback) :
 Base(name),
-mShowCursor(true),
-mResWidth(0),
-mResHeight(0),
-mResDepth(0),
-mFullscreen(false)
+mShowCursor(true)
 {
    RegisterInstance(this);
 
@@ -100,26 +96,26 @@ mFullscreen(false)
 
    //if(callback)
    //{
-      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
-      mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
-      mKeyboardMouse->startThread();
+   mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
+   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+   mKeyboardMouse->startThread();
    //}
 
-   SetPosition(x, y, width, height);
+   if(!fullScreen)
+   {
+      SetPosition(x, y, width, height);
+   }
+   else
+   {
+   }
+
    SetName( name );
    SetWindowTitle(name.c_str());
-   ShowCursor();
+   ShowCursor( cursor );
 
-   //if(mFullscreen)
-      //SetFullScreenMode(mFullscreen);
-
-   //if( mResWidth != 0 && mResHeight != 0 && mResDepth != 0 )
-      //ChangeScreenResolution( mResWidth, mResHeight, mResDepth );
 }
 
-
-
-DeltaWin::DeltaWin(string name, Producer::RenderSurface* rs, bool callback) :
+DeltaWin::DeltaWin(string name, Producer::RenderSurface* rs) ://, bool callback) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(rs)
@@ -143,8 +139,7 @@ mRenderSurface(rs)
 }
 
 
-
-DeltaWin::DeltaWin(string name, Producer::InputArea* ia, bool callback) :
+DeltaWin::DeltaWin(string name, Producer::InputArea* ia) ://, bool callback) :
 Base(name),
 mShowCursor(true),
 mRenderSurface(ia->getRenderSurface(0))
@@ -292,12 +287,9 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
 
    if( w != 0 && y != 0)
    {
-      float rx = ( pixel_x - float(wx) ) / float(w);
-      float ry = ( pixel_y - float(wy) ) / float(h);
-
-      x = ( rx / 0.5f ) - 1.0f;
-      y = ( ry / 0.5f ) - 1.0f;
-
+      x = ( 2 * pixel_x / w ) - 1;
+      y = ( 2 * pixel_y / h ) - 1;
+      
       return true;
    }
    else
@@ -403,10 +395,8 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
    //test if new value is same as current, if so don't do anything
    if( modeline.hdisplay == width && modeline.vdisplay == height && tempRefresh == refreshRate )
-   {
        return true;
-
-   }
+  
 
    int numResolutions;
    XF86VidModeModeInfo** resolutions;
@@ -420,7 +410,10 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       XF86VidModeModeInfo* tempRes = resolutions[i];
       
       tempRefresh = CalcRefreshRate( tempRes->htotal, tempRes->vtotal, tempRes->dotclock );
-  
+
+      //Notify(WARN,"Checking resolution: %dx%d @ %d, %d", tempRes->hdisplay, tempRes->vdisplay, colorDepth, tempRefresh );
+      //Notify(WARN,"against:             %dx%d @ %d, %d\n", width, height, colorDepth, refreshRate );
+      
       if( tempRes->hdisplay == width && tempRes->vdisplay == height && tempRefresh == refreshRate )
       {
          XF86VidModeSwitchToMode( dpy, screenNum, tempRes );
@@ -431,7 +424,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       }
    }
 
-   Notify(DEBUG_INFO,"Resolutoin not changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
+   Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
    return false;
    
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
@@ -475,17 +468,7 @@ Resolution DeltaWin::GetCurrentResolution( void )
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)   
 }
 
-void DeltaWin::SetFullscreenFlag( bool fullscreen )
-{
-   mFullscreen = fullscreen;
-}
 
-void DeltaWin::SetChangeScreenResolutionFlag( int width, int height, int pixelDepth )
-{
-   mResWidth = width;
-   mResHeight = height;
-   mResDepth = pixelDepth;
-}
 
 //Approximates refresh rate (X11 only)
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
