@@ -22,6 +22,7 @@ class WeatherApp : public dtABC::Application
 {
 public:
    WeatherApp()
+  : Application("config.xml")
    {
       terr = new dtCore::InfiniteTerrain();
       terr->SetHorizontalScale(0.005);
