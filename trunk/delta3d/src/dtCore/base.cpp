@@ -5,8 +5,9 @@
 #include "dtCore/base.h"
 #include "dtCore/notify.h"
 
-using namespace dtCore;
+#include <iostream>
 
+using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Base)
 
@@ -20,6 +21,10 @@ using namespace std;
 Base::Base(string name) : mName(name)
 {
    RegisterInstance(this);
+
+   mId = Id();
+
+   //cout << mId.ToString() << endl;
 }
 
 /**
