@@ -30,13 +30,13 @@ NoiseGenerator::NoiseGenerator(int    octaves,
                                int    width,
                                int    height,
                                int    slices)
-   : mWidth(width),
-     mHeight(height),
-     mSlices(slices),
-     mOctaves(octaves),
-     mFrequency(frequency),
-     mAmplitude(amp),
-     mPersistence(persistence)
+:mOctaves(octaves),
+mFrequency(frequency),
+mAmplitude(amp),
+mPersistence(persistence),
+mWidth(width),
+mHeight(height),
+mSlices(slices)
 {
     reseed();
 }

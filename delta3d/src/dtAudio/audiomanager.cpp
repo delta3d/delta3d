@@ -65,10 +65,10 @@ IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 // default consructor
 AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
 :  Base(name),
-   mEAXSet(NULL),
-   mEAXGet(NULL),
    mNumSources(0L),
-   mSource(NULL)
+   mSource(NULL),
+   mEAXSet(NULL),
+   mEAXGet(NULL)
 {
    RegisterInstance( this );
 
@@ -111,7 +111,7 @@ AudioManager::~AudioManager()
    DeregisterInstance( this );
 
    // stop all sources
-   for( int ii(0L); ii < mNumSources; ii++ )
+   for( unsigned int ii(0L); ii < mNumSources; ii++ )
    {
       alSourceStop( mSource[ii] );
       alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
@@ -1020,7 +1020,7 @@ AudioManager::PostFrame( const double deltaFrameTime )
 {
    SOB_PTR     snd(NULL);
    ALuint      src(0L);
-   //ALenum      err(alGetError());
+   ALenum      err(alGetError());
 
    // for all sounds that have stopped
    while( mStopQueue.size() )
@@ -1075,7 +1075,7 @@ AudioManager::ConfigSources( unsigned int num )
    }
 
 
-   for( int ii(0L); ii < mNumSources; ii++ )
+   for( unsigned int ii(0L); ii < mNumSources; ii++ )
    {
       assert( alIsSource( mSource[ii] ) == AL_TRUE );
       mAvailable.push( mSource[ii] );

@@ -2925,14 +2925,12 @@ throw (
 
                position[0] = detonationLocation.GetX() - mLocationOffset[0];
                position[1] = detonationLocation.GetY() - mLocationOffset[1];
+               position[2] = detonationLocation.GetZ() - mLocationOffset[2];
+
+               sgXformPnt3(position, mRotationOffsetInverse);
 
                if(mEffectClampMode)
                   position[2] = mScene->GetHeightOfTerrain( &(position[0]), &(position[1])); 
-               else
-                  position[2] = detonationLocation.GetZ() - mLocationOffset[2];
-               
-               sgXformPnt3(position, mRotationOffsetInverse);
-			  
             }
          }
          else if(handle == mEventIdentifierParameterHandle)

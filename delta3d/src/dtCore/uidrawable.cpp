@@ -37,15 +37,12 @@ IMPLEMENT_MANAGEMENT_LAYER(UIDrawable)
   * nodes.
   */
 UIDrawable::UIDrawable(int width, int height):
-   mCurrentQueue(0L),
-   mNode(0),
-   mUI(NULL),
-   mButtonState(0),
-   mWidth(width),
-   mHeight(height),
-   mMouseX(0),
-   mMouseY(0),
-   mRenderer(NULL)
+mUI(NULL),
+mButtonState(0),
+mWidth(width),
+mHeight(height),
+mRenderer(NULL),
+mCurrentQueue(0L)
 {
    RegisterInstance(this);
    
@@ -207,9 +204,9 @@ void UIDrawable::LoadResourceShader( ELEMDATA *elem)
    std::string name = elem->elem->Attribute("name");
    sgVec4 color = {-1.f, -1.f, -1.f, -1.f};
    std::string filename;
-   //CUI_OpenGLShader *shader = NULL;
+   CUI_OpenGLShader *shader = NULL;
 
-   //bool hasColor = false;
+   bool hasColor = false;
    if (elem->elem->Attribute("r"))
    {
       color[0] = atof(elem->elem->Attribute("r")); 
@@ -1136,7 +1133,7 @@ void UIDrawable::LoadResourceFBMFont( ELEMDATA *elem )
 // Load a coordinate system
 void UIDrawable::LoadResourceCoordSys( ELEMDATA *elem)
 {
-   //char *value = NULL;
+   char *value = NULL;
 
    CUI_CoordSys *coordsys = new CUI_CoordSys();
 

@@ -351,9 +351,8 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
    dtCore::Transformable*  parent   = fx->GetParent();
    if( parent )
    {
-      //bool success = parent->AddChild( snd );
-      parent->AddChild( snd );
-      
+      bool success = parent->AddChild( snd );
+
       dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
       snd->SetTransform( &transform, dtCore::Transformable::REL_CS );
    }
@@ -544,8 +543,8 @@ SoundEffectBinder::StopCB( Sound* sound, void* param )
  */
 SoundEffectBinder::SfxObj::SfxObj( std::string name /*= "sfxobj"*/ )
 :  Base(name),
-   mSnd(NULL),
-   mList(NULL)
+   mList(NULL),
+   mSnd(NULL)
 {
    AudioManager*  mgr(AudioManager::GetManager());
    assert( mgr );

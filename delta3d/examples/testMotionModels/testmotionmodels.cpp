@@ -91,8 +91,6 @@ protected:
          Notify(ALWAYS,"Orbit");
          SetMotionModel(3);
          break;
-      default:
-         break;
       }
    }
 

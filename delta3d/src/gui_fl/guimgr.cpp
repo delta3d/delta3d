@@ -183,8 +183,7 @@ void UserInterface::SelectInstance (void)
    else CameraGroup->hide();
    
    /** Scene **/
-   //if (Scene *s = dynamic_cast<Scene*>(b))
-   if (dynamic_cast<Scene*>(b))
+   if (Scene *s = dynamic_cast<Scene*>(b))
    {
       InstanceClassName->label( "dtCore::Scene" ); 
       //SceneGroup->show();
@@ -326,8 +325,7 @@ void UserInterface::SelectInstance (void)
    else SkyBoxGroup->hide();
 
 
-   //if (System *s = dynamic_cast<System*>(b))
-   if (dynamic_cast<System*>(b))
+   if (System *s = dynamic_cast<System*>(b))
    {
       InstanceClassName->label( "dtCore::System" );
    }
@@ -577,8 +575,7 @@ void UserInterface::SelectInstance (void)
       LightSpotGroup->hide();
    }
 
-   //if (Object *o = dynamic_cast<Object*>(b) )
-   if (dynamic_cast<Object*>(b) )
+   if (Object *o = dynamic_cast<Object*>(b) )
    {
       InstanceClassName->label( "dtCore::Object" );
    }
@@ -1235,7 +1232,7 @@ void UserInterface::CloudColorCB(Fl_Value_Input*)
 
 void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)
 {
-   //Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
+   Weather *w = dynamic_cast<Weather*>(GetSelectedInstance(this));
 
    if (WeatherThemeOption->value() == 1) //theme'd weather
    {

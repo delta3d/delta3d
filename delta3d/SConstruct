@@ -144,16 +144,16 @@ if env.get('noWarnings'):
       env.Append(CXXFLAGS=['/w'])
    elif OS == 'linux':
       env.Append(CXXFLAGS=['-w'])
-else:
-   if OS == 'windows':
-      env.Append(CXXFLAGS=['/Wall'])
-   elif OS == 'linux':
-      if env['CC'] == 'gcc':
-         env.Append(CXXFLAGS=['-Wall'])
-      elif env['CXX'] == 'g++':
-         env.Append(CXXFLAGS=['-Wall'])
-      if env['CXX'] == 'g++':
-            env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
+##else:
+##   if OS == 'windows':
+##      env.Append(CXXFLAGS=['/Wall'])
+##   elif OS == 'linux':
+##      if env['CC'] == 'gcc':
+##         env.Append(CXXFLAGS=['-Wall'])
+##      elif env['CXX'] == 'g++':
+##         env.Append(CXXFLAGS=['-Wall'])
+##      if env['CXX'] == 'g++':
+##            env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
 Help(opts.GenerateHelpText(env))
 
@@ -536,9 +536,9 @@ SConscript( 'utilities/SConscript' )
 #   env.Exit(-1)
 
 # Close the error log and print the results
-print 'Build Succeeded: Build ended: ' + current_time()
-errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
-errorLog.close()
+#print 'Build Succeeded: Build ended: ' + current_time()
+#errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
+#errorLog.close()
 
 # email the results
 if email == 'true' :

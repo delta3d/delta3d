@@ -155,7 +155,7 @@ void Isector::GetHitPoint(sgVec3 xyz, const int pointNum)
    osg::Vec3 ip = mHitList[pointNum].getWorldIntersectPoint();
    sgSetVec3(xyz, ip[0], ip[1], ip[2] );
 
-   //osg::Geode *g = mHitList[pointNum]._geode.get();
+   osg::Geode *g = mHitList[pointNum]._geode.get();
 }
 
 

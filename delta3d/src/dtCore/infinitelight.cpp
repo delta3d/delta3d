@@ -55,7 +55,7 @@ InfiniteLight::SetDirection( float h, float p, float r )
    sgMultMat4( hprRot, hpRot, rRot );
 
    sgVec3 xyz;
-   sgVec3 forwardVector = { 0.0f, -1.0f, 0.0f }; 
+   sgVec3 forwardVector = { 0.0f, 1.0f, 0.0f }; 
 
    sgXformVec3( xyz, forwardVector, hprRot );
 

@@ -12,25 +12,18 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
 Environment::Environment(const std::string name):
+mVisibility(0.f),
+mFogEnabled(true),
+mFogMode(EXP2),
+mFogNear(1.f),
+mSunAltitude(0.f),
+mSunAzimuth(0.f),
 mAmbLightTable(NULL),
 mDifLightTable(NULL),
 mSpecLightTable(NULL),
 mSkyLightTable(NULL),
-mEnvEffectNode(0),
-mDrawableNode(0),
-mSkyLight(0),
-mFog(0),
-mVisibility(0),
-mFogEnabled(true),
-mFogMode(EXP2),
-mFogNear(1.0f),
-mSunAltitude(0),
-mSunAzimuth(0),
-mCurrTime(0),
-mLastUpdate(0),
-mSunlightShader(0),
-mSkyDomeShader(0),
-mSkyDome(0)
+mLastUpdate(0.0),
+mCurrTime(0)
 {
    RegisterInstance(this);
 
@@ -524,12 +517,12 @@ void dtCore::Environment::Update(const double deltaFrameTime)
 
 void dtCore::Environment::UpdateEnvColors(void)
 {
-   //sgVec3 white ={1.f, 1.f, 1.f};
-   //sgVec3 baseFogColor = {0.84f, 0.87f, 1.f};
+   sgVec3 white ={1.f, 1.f, 1.f};
+   sgVec3 baseFogColor = {0.84f, 0.87f, 1.f};
 
-   //float ambient = mAmbLightTable->Interpolate( mSunAltitude );
-   //float diffuse = mDifLightTable->Interpolate( mSunAltitude );
-   //float specular = mSpecLightTable->Interpolate(mSunAltitude);
+   float ambient = mAmbLightTable->Interpolate( mSunAltitude );
+   float diffuse = mDifLightTable->Interpolate( mSunAltitude );
+   float specular = mSpecLightTable->Interpolate(mSunAltitude);
    float skyBright = mSkyLightTable->Interpolate(mSunAltitude);
 
    //Modify the sky color

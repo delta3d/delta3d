@@ -28,7 +28,6 @@
 
 #include <string>
 
-#include "dtCore/id.h"
 #include "dtCore/export.h"
 #include "dtCore/macros.h"
 
@@ -80,8 +79,6 @@ namespace dtCore
          
          ///The actual signal that gets triggered from SendMessage()
          sigslot::signal1<MessageData *> _sendMessage;
-         
-         Id mId;
 
       public:
 
@@ -109,10 +106,7 @@ namespace dtCore
           *
           * @return the current name
           */
-         const std::string& GetName() const;
-
-         void SetId( const Id& id ) { mId = id; };
-         const Id& GetId() const { return mId; }
+         std::string GetName() const;
 
          ///Override to receive messages
          virtual void OnMessage(MessageData *data) {}

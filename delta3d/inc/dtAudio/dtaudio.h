@@ -26,7 +26,7 @@
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/soundeffectbinder.h>
 
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
@@ -70,6 +70,6 @@
 #pragma  comment( lib, _AUTOLIBNAME2 )
 #pragma  comment( lib, _AUTOLIBNAME3 )
 
-#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+
 
 #endif   // DELTA_DTAUDIO

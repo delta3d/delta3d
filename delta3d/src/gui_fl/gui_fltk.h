@@ -532,11 +532,7 @@ private:
   void ParticleRelativeCB(Fl_Check_Button*);
   void ParticleEnabledCB(Fl_Check_Button*);
 };
-
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #pragma comment(lib, "fltk.lib")
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "comctl32.lib")
-#endif
-
 #endif

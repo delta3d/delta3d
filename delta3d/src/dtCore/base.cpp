@@ -5,9 +5,8 @@
 #include "dtCore/base.h"
 #include "dtCore/notify.h"
 
-#include <iostream>
-
 using namespace dtCore;
+
 
 IMPLEMENT_MANAGEMENT_LAYER(Base)
 
@@ -21,8 +20,6 @@ using namespace std;
 Base::Base(string name) : mName(name)
 {
    RegisterInstance(this);
-
-   mId = Id();
 }
 
 /**
@@ -49,7 +46,7 @@ void Base::SetName(string name)
  *
  * @return the current name
  */
-const string& Base::GetName() const
+string Base::GetName() const
 {
    return mName;
 }
