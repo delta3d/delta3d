@@ -56,6 +56,19 @@
 
 #ifndef _WIN32
 typedef unsigned int SOCKET;
+
+typedef struct win_addr {
+  union {
+    struct {
+      unsigned char s_b1,s_b2,s_b3,s_b4;
+    } S_un_b;
+    struct {
+      unsigned short s_w1,s_w2;
+    } S_un_w;
+    unsigned long S_addr;
+  } S_un;
+} win_addr;
+
 #else
 typedef int socklen_t;
 #endif
@@ -127,8 +140,10 @@ namespace dtHLA
          /**
           * Destructor.
           */
+
          virtual ~RTIConnection()
                  throw (RTI::FederateInternalError);
+
 
          /**
           * Creates/joins a federation execution.
@@ -437,11 +452,11 @@ namespace dtHLA
             RTI::ObjectClassHandle theObjectClass,
             const char* theObjectName
          )
-        throw (
-                RTI::CouldNotDiscover,
-                RTI::ObjectClassNotKnown,
-                RTI::FederateInternalError
-                );
+         throw (
+           RTI::CouldNotDiscover,
+           RTI::ObjectClassNotKnown,
+           RTI::FederateInternalError
+         );
 
          /**
           * Invoked by the RTI ambassador to request that the federate provide
