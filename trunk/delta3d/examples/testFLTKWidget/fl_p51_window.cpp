@@ -121,6 +121,7 @@ void
 Fl_P51_Window::show()
 {
    Parent::show();
+   Fl::check();
 
    WinData  windata( fl_xid(this),
                      Parent::x(),
