@@ -127,7 +127,8 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
       UnRegisterPhysical(physical);
    }
 
-  // drawable->AddedToScene(NULL);
+   drawable->AddedToScene(NULL);
+
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
 
    unsigned int pos = GetDrawableIndex(drawable);
