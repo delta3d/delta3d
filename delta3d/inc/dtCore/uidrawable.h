@@ -29,7 +29,7 @@
 #include "dtCore/deltadrawable.h"
 #include "dtCore/mouse.h"
 #include "dtCore/keyboard.h"
-#include "dtCore/deltawin.h"
+//#include "dtCore/deltawin.h"
 #include <osg/Drawable>
 #include "UI/CUI_UI.h"
 #include "UI/CUI_ListItem.h"

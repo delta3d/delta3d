@@ -1,5 +1,6 @@
 #include "dtCore/tripod.h"
 #include "dtCore/system.h"
+#include "dtCore/camera.h"
 
 using namespace dtCore;
 
