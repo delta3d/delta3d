@@ -10,6 +10,7 @@
 
 #include "osgDB/FileUtils"
 #include "rbody/osg/ReplicantBodyMgr.h"
+#include "rbody/osg/OsgBody.h"
 
 #include "vrutils/os/FilePathContainer.h"
 
@@ -19,110 +20,16 @@ using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Character)
 
-
-/**
- * Updates the state of a character based on its transform.
- */
-class CharacterCallback : public osg::NodeCallback
-{
-   public:
-      
-      /**
-       * Constructor.
-       *
-       * @param character the dtCore Character object
-       */
-      CharacterCallback(Character* character)
-         : mCharacter(character)
-      {}
-      
-      /**
-       * Update action.
-       *
-       * @param node the node object
-       * @param nv the visitor object
-       */
-      virtual void operator()(osg::Node* node, osg::NodeVisitor *nv)
-      {
-         osg::Group* group = (osg::Group*)node;
-         
-         if(group->getNumChildren() > 0)
-         {
-            rbody::OsgBodyNode* child = 
-               (rbody::OsgBodyNode*)group->getChild(0);
-            
-            osg::Matrix mat = child->getMatrix();
-            
-            Transform transform;
-         
-            mCharacter->GetTransform(&transform);
-            
-            if(mTransform.EpsilonEquals(&transform))
-            {
-               sgMat4 matrix = {
-                  { mat(0,0), mat(0,1), mat(0,2), mat(0,3) },
-                  { mat(1,0), mat(1,1), mat(1,2), mat(1,3) },
-                  { mat(2,0), mat(2,1), mat(2,2), mat(2,3) },
-                  { mat(3,0), mat(3,1), mat(3,2), mat(3,3) }
-               };
-               
-               transform.Set(matrix);
-               
-               mCharacter->SetTransform(&transform);
-            }
-            else
-            {
-               sgMat4 matrix;
-               
-               transform.Get(matrix);
-               
-               child->setMatrix(
-                  osg::Matrix(
-                     matrix[0][0], matrix[0][1], matrix[0][2], matrix[0][3],
-                     matrix[1][0], matrix[1][1], matrix[1][2], matrix[1][3],
-                     matrix[2][0], matrix[2][1], matrix[2][2], matrix[2][3],
-                     matrix[3][0], matrix[3][1], matrix[3][2], matrix[3][3]
-                  )
-               );
-            }
-         
-            mTransform = transform;
-         }
-         
-         traverse(node, nv);
-      }
-      
-      
-   private:
-   
-      /**
-       * The dtCore Character object.
-       */
-      Character* mCharacter;
-      
-      /**
-       * The transform applied on the last update.
-       */
-      Transform mTransform;
-};
-
-
 /**
  * Constructor.
  *
  * @param name the instance name
  */
 Character::Character(string name)
-   : mRotation(0.0f),
-     mVelocity(0.0f)
+   :  mRotation(0.0f),
+      mVelocity(0.0f)
 {
    SetName(name);
-   
-   mNode = new osg::Group;
-
-   mNode->setUpdateCallback(
-      new CharacterCallback(this)
-   );
    
    RegisterInstance(this);
 }
@@ -133,16 +40,6 @@ Character::Character(string name)
 Character::~Character()
 {
    DeregisterInstance(this);
-}
-
-/**
- * Returns this object's OpenSceneGraph node.
- *
- * @return the OpenSceneGraph node
- */
-osg::Node* Character::GetOSGNode()
-{
-   return mNode.get();
 }
 
 /**
@@ -167,7 +64,7 @@ void Character::AddedToScene(Scene* scene)
  *
  * @param filename the name of the file to load
  */
-bool Character::LoadFile(string filename)
+osg::Node* Character::LoadFile(std::string filename, bool useCache)
 {
    mFilename = filename;
    
@@ -202,6 +99,10 @@ bool Character::LoadFile(string filename)
          name,
          mCollisionRootNode.get()
       );
+
+      mBodyNode->setUpdateMode(  rbody::OsgBodyNode::UPDATE_ANIMATION | 
+                                 rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
+                                 rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );
       
       if(mBodyNode.get() == NULL)
       {
@@ -213,20 +114,10 @@ bool Character::LoadFile(string filename)
          
          SetVelocity(mVelocity);
          
-         mNode->addChild(mBodyNode.get());
+         dynamic_cast<osg::Group*>(mNode.get())->addChild(mBodyNode.get());
       }
    }
-   return true;
-}
-
-/**
- * Returns the name of the last file loaded.
- *
- * @return the name of the last file loaded
- */
-string Character::GetFilename() const
-{
-   return mFilename;
+   return mBodyNode.get();
 }
 
 /**

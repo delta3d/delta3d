@@ -69,11 +69,11 @@ namespace dtCore
       virtual void GetTransform( Transform *xform, CoordSysEnum cs=ABS_CS  );
 
       ///convenience function to return back the internal matrix transform node
-      osg::MatrixTransform* GetMatrixNode(void)
+      virtual osg::MatrixTransform* GetMatrixNode(void)
       { return dynamic_cast<osg::MatrixTransform*>( mNode.get() ); }
       
      ///Get the world coordinate matrix from the supplied node
-      static bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix );
+      static bool GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix );
 
    private:
 
