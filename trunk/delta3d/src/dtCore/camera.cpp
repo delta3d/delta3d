@@ -5,7 +5,6 @@
 #include "Producer/RenderSurface"
 
 #include "dtCore/camera.h"
-
 #include "dtCore/notify.h"
 
 using namespace dtCore;
@@ -30,9 +29,12 @@ mScene(NULL)
    //A Producer Camera has a default RenderSurface (a "window") so lets
    //set its "default" values in case the user doesn't supply their own
    //later on with SetWindow().
-   mDefaultRenderSurface = mCamera->getRenderSurface();
+
+   //mDefaultRenderSurface = dynamic_cast<DeltaRenderSurface*>(mCamera->getRenderSurface());
+   mDefaultRenderSurface = new DeltaRenderSurface;
+  
    mDefaultRenderSurface->setWindowRectangle( 100, 100, 640, 480 );
-   mDefaultRenderSurface->setWindowName("Default Window");
+   mDefaultRenderSurface->setWindowName("defaultWin");
 
    SetClearColor( 0.2f, 0.2f, 0.6f, 1.f );
 }
@@ -83,7 +85,7 @@ void Camera::SetWindow(DeltaWin *win)
    mWindow = win;
    if (mWindow == NULL)
    {
-      mCamera.get()->setRenderSurface( mDefaultRenderSurface.get() );
+      mCamera.get()->setRenderSurface( mDefaultRenderSurface );
    }
    else
       mCamera.get()->setRenderSurface( mWindow.get()->GetRenderSurface() );
