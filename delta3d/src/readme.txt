@@ -75,9 +75,9 @@ Fedora Core-up (2.6.5-1.358)
    right? The following variables need to be set:
    
    DELTA_ROOT: path to your Delta3D installation
-   DELTA_DATA: $DELTA_ROOT%/data
-   DELTA_INC:  $DELTA_ROOT%/inc;%DELTA_ROOT%/ext/inc
-   DELTA_LIB:  $DELTA_ROOT%/lib;%DELTA_ROOT%/ext/lib
+   DELTA_DATA: $DELTA_ROOT/data
+   DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc
+   DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
    
    Also add $DELTA_ROOT\bin to your path.
 
