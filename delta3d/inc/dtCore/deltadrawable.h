@@ -27,6 +27,7 @@
 
 #include "dtCore/base.h"
 #include "dtCore/export.h"
+#include "dtCore/notify.h"
 #include "osg/Node"
 
 namespace dtCore
@@ -116,6 +117,12 @@ namespace dtCore
           */
          bool CanBeChild( DeltaDrawable *child );
 
+         virtual void RenderProxyNode( const bool enable = true )
+         {
+            if( mProxyNode == 0 )
+               dtCore::Notify( WARN, "Proxy node is not implemented, overwrite RenderProxyNode." );
+         };
+
    protected:
       DeltaDrawable(std::string name = "DeltaDrawable");
       virtual ~DeltaDrawable();
@@ -127,6 +134,9 @@ namespace dtCore
       ChildList mChildList;      ///<List of children DeltaDrawable added
 
       osg::ref_ptr<Scene> mParentScene; ///<The Scene this Drawable was added to
+
+      osg::ref_ptr<osg::Node> mProxyNode;
+      bool mRenderingProxy;
    };
 };
 

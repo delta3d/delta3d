@@ -114,23 +114,3 @@ PositionalLight::RemoveChild( DeltaDrawable *child )
 {
    mLightSource->removeChild( child->GetOSGNode() );
 }
-
-void
-PositionalLight::RenderGeometry( const bool enable )
-{
-   mRenderingGeometry = enable;
-
-   if( enable )
-   {
-      //make sphere
-      float radius = 0.5f;
-      osg::Matrix relMat = GetMatrixNode()->getMatrix();
-   
-      osg::Sphere* sphere = new osg::Sphere(  osg::Vec3( relMat(3,0), relMat(3,1), relMat(3,2) ), radius );
-      AddGeometry( sphere );
-   }
-   else
-   {
-      AddGeometry( 0 );
-   }
-}

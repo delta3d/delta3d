@@ -233,9 +233,6 @@
 				RelativePath=".\flymotionmodel.cpp">
 			</File>
 			<File
-				RelativePath=".\ghost.cpp">
-			</File>
-			<File
 				RelativePath="globals.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -661,9 +658,6 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\flymotionmodel.h">
-			</File>
-			<File
-				RelativePath="..\..\inc\dtCore\ghost.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\globals.h">

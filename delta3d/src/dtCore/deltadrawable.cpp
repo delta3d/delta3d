@@ -5,8 +5,10 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
-DeltaDrawable::DeltaDrawable(std::string name):
-Base(name)
+DeltaDrawable::DeltaDrawable(std::string name)
+:  Base(name), 
+   mProxyNode(0), 
+   mRenderingProxy(false)
 {
    RegisterInstance(this);
 }
