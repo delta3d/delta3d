@@ -73,8 +73,10 @@ private:
    void Init(void)
    {
       ui->TransformGroup->hide();
-      ui->ObjectGroup->hide();
+      ui->DrawableGroup->hide();
+      ui->LoadableGroup->hide();
       ui->CameraGroup->hide();
+      ui->ParticleGroup->hide();
       
       for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
       {
