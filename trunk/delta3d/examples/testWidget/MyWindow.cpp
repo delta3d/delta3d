@@ -2,7 +2,7 @@
 
 #include "MyWindow.h"
 
-
+IMPLEMENT_MANAGEMENT_LAYER( MyWindow )
 
 const char* MyWindow::PATH = "../../data;";
 const char* MyWindow::FILE = "tacoma.ive";

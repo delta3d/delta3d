@@ -8,6 +8,8 @@
 
 class MyWindow :  public   Fl_DT_Window<MyWidget>
 {
+   DECLARE_MANAGEMENT_LAYER( MyWindow)
+
    typedef  Fl_DT_Window<MyWidget> MyParent;
 
    static   const char* PATH;

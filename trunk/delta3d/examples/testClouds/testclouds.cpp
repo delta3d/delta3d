@@ -8,6 +8,8 @@ using namespace dtCore;
 class TestCloudsApp : public Application
 {
 
+DECLARE_MANAGEMENT_LAYER( TestCloudsApp )
+
 public:
    TestCloudsApp( std::string configFilename = "config.xml" )
       : Application( configFilename )
@@ -112,7 +114,7 @@ private:
 
 };
 
-
+IMPLEMENT_MANAGEMENT_LAYER( TestCloudsApp )
 
 int main(int argc, char* argv[])
 {

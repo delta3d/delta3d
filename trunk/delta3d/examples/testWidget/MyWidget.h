@@ -6,6 +6,9 @@
 
 class MyWidget :  public   dtABC::Widget
 {
+
+   DECLARE_MANAGEMENT_LAYER( MyWidget )
+
       enum  MyEvents
       {
          FILELOADED  = BIT(0),
