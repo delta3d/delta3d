@@ -119,11 +119,18 @@ public:
 };
 
 
-///Load a file from disk
+/** This method will load the particle effect from a file.  The loaded particle 
+  * system will be broken apart, with the Emitter added to the parent 
+  * MatrixTransform node and the geometry added directly to the Scene.
+  *
+  * @param filename : The file to load.  This will use the search paths to 
+  *                   locate the file.
+  * @param useCache : This param gets ignored and is forced to false
+  */
 osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
 {
    osg::Node *node = NULL;
-   node = Loadable::LoadFile(filename, useCache);
+   node = Loadable::LoadFile(filename, false); //force it not to use cache
 
    if(node != NULL)
    {
