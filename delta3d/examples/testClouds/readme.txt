@@ -12,8 +12,6 @@ To demonstrate CloudDome class, which creates a sphere with realistic clouds
 surrounding the scene. CloudDome is implemented using the OpenGL Shading
 Language.
 
-Note: Ignore "OpenGL error 'invalid enumerant'" if it appears.
-
 Instructions
 ------------
 Win32 Source: 

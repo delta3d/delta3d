@@ -31,7 +31,7 @@
    <shader name="slider" filename="gui/slider.rgba" />
       
    <rootframe name="main" shader="panel">
-      <rect xmin="0.2" ymin="0.2" xmax="0.8" ymax="0.8" />
+      <rect xmin="0.0" ymin="0.0" xmax="1.0" ymax="1.0" />
       
       <textbox text="Delta_3D" shader="transparent" font="digital_font" columns="8" rows="1" textscale="1.0">
          <rect xmin="0.2" ymin="0.575" xmax="0.8" ymax="0.825" />

@@ -30,9 +30,9 @@ Linux Source:
 
 Controls
 --------
-B  -  Drop box
-C  -  Drop cyclinder
-S  -  Drop sphere
+B  -  Drop crate (box)
+C  -  Drop radioactive drum (cylinder)
+S  -  Drop a happy sphere (spherE)
 Esc - Exit
 
 Left   Mouse Button - Rotate camera
