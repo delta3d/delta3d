@@ -14,7 +14,7 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {899 86 545 555} type Double visible
+      xywh {464 85 545 555} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -62,60 +62,78 @@ class UserInterface {open
         }
       }
       Fl_Group TransformGroup {
-        label Transformable selected
+        label Transformable open selected
         xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input TransformX {
           label {X:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {273 164 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {265 185 60 20} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformY {
           label {Y:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {273 189 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {265 205 60 20} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformZ {
           label {Z:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {273 214 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {265 225 60 20} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformH {
           label {H:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {363 164 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {355 185 60 20} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformP {
           label {P:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {363 189 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {355 205 60 20} minimum -500000 maximum 500000 step 0.1
         }
         Fl_Value_Input TransformR {
           label {R:}
           user_data this
           callback {((UserInterface*)v)->TransformPosCB(o)}
-          private xywh {363 214 60 25} minimum -500000 maximum 500000 step 0.1
+          private xywh {355 225 60 20} minimum -500000 maximum 500000 step 0.1
+        }
+        Fl_Value_Input TransformScaleX {
+          label {ScaleX:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private tooltip {Scale the Transformable in the x-axis} xywh {475 185 60 20} maximum 500000 step 0.1 value 1
+        }
+        Fl_Value_Input TransformScaleY {
+          label {ScaleY:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private tooltip {Scale the Transformable in the y-axis} xywh {475 205 60 20} maximum 500000 step 0.1 value 1
+        }
+        Fl_Value_Input TransformScaleZ {
+          label {ScaleZ:}
+          user_data this
+          callback {((UserInterface*)v)->TransformPosCB(o)}
+          private tooltip {Scale the Transformable in the z-axis} xywh {475 225 60 20} maximum 500000 step 0.1 value 1
         }
         Fl_Group {} {
           label System
-          xywh {430 165 95 40} box ENGRAVED_FRAME align 5
+          xywh {310 150 165 30} box THIN_DOWN_FRAME align 4
         } {
           Fl_Round_Button TransformCSAbsButton {
             label Absolute
             user_data this
             callback {((UserInterface*)v)->TransformCSCB(o)}
-            private tooltip {The position/attitude reflects an Absolute Coordinate System} xywh {430 165 95 25} type Radio down_box ROUND_DOWN_BOX value 1
+            private tooltip {The position/attitude reflects an Absolute Coordinate System} xywh {315 155 80 20} type Radio down_box ROUND_DOWN_BOX value 1
           }
           Fl_Round_Button TransformCSRelButton {
             label Relative
             user_data this
             callback {((UserInterface*)v)->TransformCSCB(o)}
-            private tooltip {The position/attitude reflects a Relative Coordinate System} xywh {430 185 95 20} type Radio down_box ROUND_DOWN_BOX
+            private tooltip {The position/attitude reflects a Relative Coordinate System} xywh {395 155 75 20} type Radio down_box ROUND_DOWN_BOX
           }
         }
       }

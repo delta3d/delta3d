@@ -48,16 +48,18 @@ namespace dtCore
    class Detonation;
    class Transformable;
    
-   
    /**
-    * Detonation types (values correspond to DIS warhead field values).
+    * Detonation types 
     */
    enum DetonationType
    {
       HighExplosiveDetonation = 1000,
-      SmokeDetonation = 2000
+      SmokeDetonation         = 2000,
+      WP                      = 3000,
+      VT                      = 4000,
+      ICM                     = 5000,
+      M825                    = 6000
    };
-
 
    /**
     * An effect manager.

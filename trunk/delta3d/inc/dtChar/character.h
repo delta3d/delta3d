@@ -25,8 +25,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#undef Status
-#include "rbody/osg/OsgBody.h"
+#undef Status
+#undef DEBUG
+#include "rbody/osg/ReplicantBodyMgr.h"
 
 #include "dtCore/transformable.h"
 #include "dtCore/loadable.h"

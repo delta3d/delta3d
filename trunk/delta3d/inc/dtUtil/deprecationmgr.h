@@ -36,14 +36,14 @@
 #include <set>
 
 
-#ifdef _DEBUG
-#define DEPRECATE(a,b) { \
-		void * fptr;	\
-		_asm { mov fptr, ebp }	\
+#if defined( _DEBUG) && (defined(_WIN32) || defined(WIN32) || defined(__WIN32__))
+   #define DEPRECATE(a,b) { \
+      void * fptr;	\
+      _asm { mov fptr, ebp }                                       \
 		DeprecationMgr::GetInstance()->AddDeprecatedFunction(a, b, fptr); \
-	}
+   }
 #else
-#define DEPRECATE(a,b)
+   #define DEPRECATE(a,b)
 #endif
 
 

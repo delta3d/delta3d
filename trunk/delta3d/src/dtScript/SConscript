@@ -1,0 +1,10 @@
+Import('*')
+
+if pythonFound == 1 :
+    dtScriptSrcs = [ 'scriptmanager.cpp' ]
+
+    dtScriptLib = env.SharedLibrary( 'dtscript', dtScriptSrcs, LIBS=[ 'dtcore', 'python2.3' ] )
+    
+    env.Alias( 'install', env.Install( "$prefix/lib", dtScriptLib ) )
+    env.Default( dtScriptLib )
+

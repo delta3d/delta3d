@@ -72,6 +72,27 @@ void UserInterface::cb_TransformR(Fl_Value_Input* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformR_i(o,v);
 }
 
+inline void UserInterface::cb_TransformScaleX_i(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)v)->TransformPosCB(o);
+}
+void UserInterface::cb_TransformScaleX(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformScaleX_i(o,v);
+}
+
+inline void UserInterface::cb_TransformScaleY_i(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)v)->TransformPosCB(o);
+}
+void UserInterface::cb_TransformScaleY(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformScaleY_i(o,v);
+}
+
+inline void UserInterface::cb_TransformScaleZ_i(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)v)->TransformPosCB(o);
+}
+void UserInterface::cb_TransformScaleZ(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_TransformScaleZ_i(o,v);
+}
+
 inline void UserInterface::cb_TransformCSAbsButton_i(Fl_Round_Button* o, void* v) {
   ((UserInterface*)v)->TransformCSCB(o);
 }
@@ -795,53 +816,74 @@ Fl_Double_Window* UserInterface::make_window() {
       o->box(FL_ENGRAVED_FRAME);
       o->align(FL_ALIGN_TOP_LEFT);
       o->hide();
-      { Fl_Value_Input* o = TransformX = new Fl_Value_Input(273, 164, 60, 25, "X:");
+      { Fl_Value_Input* o = TransformX = new Fl_Value_Input(265, 185, 60, 20, "X:");
         o->minimum(-500000);
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformX, (void*)(this));
       }
-      { Fl_Value_Input* o = TransformY = new Fl_Value_Input(273, 189, 60, 25, "Y:");
+      { Fl_Value_Input* o = TransformY = new Fl_Value_Input(265, 205, 60, 20, "Y:");
         o->minimum(-500000);
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformY, (void*)(this));
       }
-      { Fl_Value_Input* o = TransformZ = new Fl_Value_Input(273, 214, 60, 25, "Z:");
+      { Fl_Value_Input* o = TransformZ = new Fl_Value_Input(265, 225, 60, 20, "Z:");
         o->minimum(-500000);
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformZ, (void*)(this));
       }
-      { Fl_Value_Input* o = TransformH = new Fl_Value_Input(363, 164, 60, 25, "H:");
+      { Fl_Value_Input* o = TransformH = new Fl_Value_Input(355, 185, 60, 20, "H:");
         o->minimum(-500000);
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformH, (void*)(this));
       }
-      { Fl_Value_Input* o = TransformP = new Fl_Value_Input(363, 189, 60, 25, "P:");
+      { Fl_Value_Input* o = TransformP = new Fl_Value_Input(355, 205, 60, 20, "P:");
         o->minimum(-500000);
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformP, (void*)(this));
       }
-      { Fl_Value_Input* o = TransformR = new Fl_Value_Input(363, 214, 60, 25, "R:");
+      { Fl_Value_Input* o = TransformR = new Fl_Value_Input(355, 225, 60, 20, "R:");
         o->minimum(-500000);
         o->maximum(500000);
         o->step(0.1);
         o->callback((Fl_Callback*)cb_TransformR, (void*)(this));
       }
-      { Fl_Group* o = new Fl_Group(430, 165, 95, 40, "System");
-        o->box(FL_ENGRAVED_FRAME);
-        o->align(FL_ALIGN_TOP_LEFT);
-        { Fl_Round_Button* o = TransformCSAbsButton = new Fl_Round_Button(430, 165, 95, 25, "Absolute");
+      { Fl_Value_Input* o = TransformScaleX = new Fl_Value_Input(475, 185, 60, 20, "ScaleX:");
+        o->tooltip("Scale the Transformable in the x-axis");
+        o->maximum(500000);
+        o->step(0.1);
+        o->value(1);
+        o->callback((Fl_Callback*)cb_TransformScaleX, (void*)(this));
+      }
+      { Fl_Value_Input* o = TransformScaleY = new Fl_Value_Input(475, 205, 60, 20, "ScaleY:");
+        o->tooltip("Scale the Transformable in the y-axis");
+        o->maximum(500000);
+        o->step(0.1);
+        o->value(1);
+        o->callback((Fl_Callback*)cb_TransformScaleY, (void*)(this));
+      }
+      { Fl_Value_Input* o = TransformScaleZ = new Fl_Value_Input(475, 225, 60, 20, "ScaleZ:");
+        o->tooltip("Scale the Transformable in the z-axis");
+        o->maximum(500000);
+        o->step(0.1);
+        o->value(1);
+        o->callback((Fl_Callback*)cb_TransformScaleZ, (void*)(this));
+      }
+      { Fl_Group* o = new Fl_Group(310, 150, 165, 30, "System");
+        o->box(FL_THIN_DOWN_FRAME);
+        o->align(FL_ALIGN_LEFT);
+        { Fl_Round_Button* o = TransformCSAbsButton = new Fl_Round_Button(315, 155, 80, 20, "Absolute");
           o->tooltip("The position/attitude reflects an Absolute Coordinate System");
           o->type(102);
           o->down_box(FL_ROUND_DOWN_BOX);
           o->value(1);
           o->callback((Fl_Callback*)cb_TransformCSAbsButton, (void*)(this));
         }
-        { Fl_Round_Button* o = TransformCSRelButton = new Fl_Round_Button(430, 185, 95, 20, "Relative");
+        { Fl_Round_Button* o = TransformCSRelButton = new Fl_Round_Button(395, 155, 75, 20, "Relative");
           o->tooltip("The position/attitude reflects a Relative Coordinate System");
           o->type(102);
           o->down_box(FL_ROUND_DOWN_BOX);
