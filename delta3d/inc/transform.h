@@ -47,6 +47,10 @@ namespace dtCore
       //Get only translation methods
       void GetTranslation( sgVec3 xyz ) { GetTranslation(&xyz[0], &xyz[1], &xyz[2]); }
       void GetTranslation(float *x, float *y, float *z);
+
+      float GetTranslationX();
+      float GetTranslationY();
+      float GetTranslationZ();
       
       //Get only rotation methods
       void GetRotation( float *h, float *p, float *r);

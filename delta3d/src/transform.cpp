@@ -70,20 +70,20 @@ void Transform::GetTranslation(float *x, float *y, float *z)
    *z = mTransform[3][2];
 }
 
-//float Transform::GetTranslationX() 
-//{
-//   return mTransform[3][0];
-//}
-//
-//float Transform::GetTranslationY() 
-//{
-//   return mTransform[3][1];
-//}
-//
-//float Transform::GetTranslationZ() 
-//{
-//   return mTransform[3][2];
-//}
+float Transform::GetTranslationX() 
+{
+   return mTransform[3][0];
+}
+
+float Transform::GetTranslationY() 
+{
+   return mTransform[3][1];
+}
+
+float Transform::GetTranslationZ() 
+{
+   return mTransform[3][2];
+}
 
 void Transform::GetRotation(float *h, float *p, float *r )
 {
