@@ -8,7 +8,7 @@ int main()
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   Application *app = new Application(( "config.xml" ));
+   Application *app = new Application( "config.xml" );
 
    //load something
    Object *terrain = new Object( "Terrain" );
