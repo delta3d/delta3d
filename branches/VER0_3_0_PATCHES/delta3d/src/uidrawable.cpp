@@ -20,6 +20,7 @@
 #include <osg/Geode>
 #include <osg/Projection>
 #include <osg/MatrixTransform>
+#include <osgDB/FileUtils>
 
 using namespace dtCore;
 
@@ -262,11 +263,12 @@ void UIDrawable::LoadResourcePolyBorder( ELEMDATA *elem)
 /** Load a predefined GUI from an XML file.  This routine does not use
  *  any search paths so the fully qualified filename must be supplied.
  */
-void UIDrawable::LoadGUIFile(  std::string filename)
+void UIDrawable::LoadGUIFile( std::string filename )
 {
+   std::string path = osgDB::findDataFile(filename);
+   
    //check if filename exists
-
-   TiXmlDocument doc(filename.c_str());
+   TiXmlDocument doc(path.c_str());
 
    if (!doc.LoadFile())
    {
