@@ -210,10 +210,8 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
 
 
 
-/** This method grabs all the required attributes from the internal members
-  * and writes them out to a .xml file ("config.xml").
-  * @todo probably should check to see if the filename already exists so it 
-  *       doesn't overwrite it.
+/** This method writes out all the default attributes from the internal Application
+  * members and writes them out to a .xml file ("config.xml").
   */
 void dtABC::Application::GenerateDefaultConfigFile()
 {

@@ -13,9 +13,10 @@ namespace dtABC
      * is the base level class for most applications.  It contains the basic
      * components required for applications.
      * An optional XML configuration file can be supplied on the constructor which
-     * contains the attributes for the internal DeltaWin, Camera, and Scene.  If no
-     * config file is supplied, a default file ("config.xml") is saved
-     * which may be customized and passed in on the next run.
+     * contains the attributes for the internal DeltaWin, Camera, and Scene.  
+     * A default Config File can be created by calling GenerateDefaultConfigFile().
+     * This file will contain the default parameters and can be edited, then 
+     * supplied to the constructor.
      *
      * Typical use:
      * Application *app = new Application("Mydatafile.xml");
@@ -33,6 +34,7 @@ namespace dtABC
       ///Start the Application
       virtual  void  Run( void );
 
+      ///Generate a default configuration file
       void  GenerateDefaultConfigFile( void );
 
    protected:
@@ -49,9 +51,10 @@ namespace dtABC
    private:
       ///Create basic instances and set up system hooks
       virtual  void  CreateInstances( std::string name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
+              
+               ///Read the supplied config file
                void  ParseConfigFile( TiXmlElement* rootNode );
               
-
                dtCore::Resolution mOriginalRes;
    };
 }

@@ -576,8 +576,8 @@ namespace dtCore
          /**
           * Sets the two source buttons.
           *
-          * @param firstButton the first button
-          * @param secondButton the second button
+          * @param firstSourceButton the first button
+          * @param secondSourceButton the second button
           */
          void SetSourceButtons(Button* firstSourceButton,
                                Button* secondSourceButton);
@@ -585,9 +585,9 @@ namespace dtCore
          /**
           * Retrieves pointers to the two source buttons.
           *
-          * @param firstButton a pointer to the location in which to store a
+          * @param firstSourceButton a pointer to the location in which to store a
           * pointer to the first button
-          * @param secondButton a pointer to the location in which to store a
+          * @param secondSourceButton a pointer to the location in which to store a
           * pointer to the second button
           */
          void GetSourceButtons(Button** firstSourceButton,

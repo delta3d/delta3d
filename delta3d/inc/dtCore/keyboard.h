@@ -103,7 +103,8 @@ namespace dtCore
           *
           * @param keyboard the source of the event
           * @param key the key released
-          */
+          * @param character the corresponding character
+         */
          virtual void KeyReleased(Keyboard* keyboard, 
                                   Producer::KeyboardKey key,
                                   Producer::KeyCharacter character) {}
@@ -113,6 +114,7 @@ namespace dtCore
           *
           * @param keyboard the source of the event
           * @param key the key typed
+          * @param character the corresponding character
           */
          virtual void KeyTyped(Keyboard* keyboard, 
                                Producer::KeyboardKey key,

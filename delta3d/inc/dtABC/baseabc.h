@@ -33,10 +33,19 @@ namespace   dtABC
       ///Remove a visual object from the Scene
       virtual  void  RemoveDrawable( dtCore::DeltaDrawable* obj );
       
+      ///Get the default Application Window
       dtCore::DeltaWin*    GetWindow( void )    { return mWindow.get(); }
+
+      ///Get the default Application Camera
       dtCore::Camera*         GetCamera( void )    { return mCamera.get(); }
+
+      ///Get the default Application Scene
       dtCore::Scene*          GetScene( void )     { return mScene.get();  }
+
+      ///Get the default Application Keyboard
       dtCore::Keyboard*       GetKeyboard( void )  { return mKeyboard.get(); }
+
+      ///Get the default Application Mouse
       dtCore::Mouse*          GetMouse( void )     { return mMouse.get(); }
 
    protected:
@@ -86,11 +95,11 @@ namespace   dtABC
       virtual  void  CreateInstances( void );
 
    protected:
-      osg::ref_ptr<dtCore::DeltaWin>      mWindow;
-      osg::ref_ptr<dtCore::Camera>           mCamera;
-      osg::ref_ptr<dtCore::Scene>            mScene;
-      osg::ref_ptr<dtCore::Keyboard>         mKeyboard;
-      osg::ref_ptr<dtCore::Mouse>            mMouse;
+      osg::ref_ptr<dtCore::DeltaWin>      mWindow; ///<built-in Window
+      osg::ref_ptr<dtCore::Camera>           mCamera; ///<built-in Camera
+      osg::ref_ptr<dtCore::Scene>            mScene; ///<built-in Scene
+      osg::ref_ptr<dtCore::Keyboard>         mKeyboard; ///<built-in Keyboard
+      osg::ref_ptr<dtCore::Mouse>            mMouse;  ///<built-in Mouse
    };
 };
 

@@ -86,6 +86,7 @@ inline static void PrintSeverity(const dtCore::NotifySeverity level)
  * \code  Notify(INFO, "hello world %d", 5); \endcode
  *
  * @param level : Level of severity of the message
+ * @param fmt : The format of the message (printf-like)
  */
 void dtCore::Notify(dtCore::NotifySeverity level, const char *fmt, ...)
 {
