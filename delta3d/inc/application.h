@@ -33,6 +33,8 @@ namespace dtABC
       ///Start the Application
       virtual  void  Run( void );
 
+      void  GenerateDefaultConfigFile( void );
+
    protected:
       ///override for preframe 
       virtual  void  PreFrame( const double deltaFrameTime );
@@ -48,7 +50,7 @@ namespace dtABC
       ///Create basic instances and set up system hooks
       virtual  void  CreateInstances( std::string name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
                void  ParseConfigFile( TiXmlElement* rootNode );
-               void  GenerateDefaultConfigFile( void );
+              
 
                dtCore::Resolution mOriginalRes;
    };
