@@ -1,5 +1,5 @@
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 #include <ode/ode.h>
 
 using namespace dtCore;
@@ -68,17 +68,21 @@ public:
       obj2->SetTransform( &position );
 
       //position the crate on the ground
-      position.Set(0.0f, 0.f, 0.5f, 0.0f, 0.0f, 0.0f);
+      position.Set(0.0f, 0.f, 0.525f, 0.0f, 0.0f, 0.0f);
       obj3->SetTransform( &position );
 
+      float lx = 1.0f;
+      float ly = 1.0f;
+      float lz = 1.0f;
+
       //create collision meshes
-      obj1->SetCollisionMesh();
-      obj2->SetCollisionBox();
-      obj3->SetCollisionBox();
+      obj1->SetCollisionBox(100.0f,100.0f,0.05f); //make VERY thin "box" for ground
+      obj2->SetCollisionBox(lx,ly,lz);
+      obj3->SetCollisionBox(lx,ly,lz);
 
       //set the mass for objects
       dMass mass;
-      dMassSetBox(&mass, 1, 1.0f, 1.0f, 1.0f);
+      dMassSetBox(&mass, 1, lx, ly, lz);
       obj2->SetMass(&mass);
       obj3->SetMass(&mass);
 
@@ -141,13 +145,14 @@ protected:
       {
          this->Quit();
       }
-
+      
       if (key == Producer::Key_B)
       {
          if( mObjects.size() < kLimit )
          {
             Object *box = new Object("box");
             box->LoadFile("physics/crate/crate.ive");
+ 
 
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
@@ -157,11 +162,11 @@ protected:
                random(0.f, 90.f));
             box->SetTransform(&xform);
 
-            box->SetCollisionBox();
-
             float lx = 1.0f;
             float ly = 1.0f;
             float lz = 1.0f;
+
+            box->SetCollisionBox(lx,ly,lz);
 
             dMass mass;
             dMassSetBox(&mass, 1, lx, ly, lz);
@@ -176,14 +181,14 @@ protected:
             mToRemove.push( mObjects.front() );
          }
       }
-
+      
       if (key == Producer::Key_S)
       {
          if( mObjects.size() < kLimit )
          {
             Object *sphere = new Object("sphere");
             sphere->LoadFile("physics/sphere/happy_sphere.ive");
-
+  
             Transform xform(random(-2.f,2.f),
                random(-2.f, 2.f),
                random(5.f, 10.f),
@@ -192,9 +197,9 @@ protected:
                random(0.f, 90.f));
             sphere->SetTransform(&xform);
 
-            sphere->SetCollisionSphere();
-
             float radius = 0.5f;
+
+            sphere->SetCollisionSphere(radius);
 
             dMass mass;
             dMassSetSphere(&mass, 1, radius);
@@ -208,7 +213,7 @@ protected:
             mToRemove.push( mObjects.front() );
          }
       }
-
+      
       if (key == Producer::Key_C)
       {
          if( mObjects.size() < kLimit )
@@ -224,10 +229,10 @@ protected:
                random(0.f, 90.f));
             cyl->SetTransform(&xform);
 
-            cyl->SetCollisionCappedCylinder();
-
             float radius = 0.321f; 
-            float length = 1.0f;
+            float length = 1.0f;            
+
+            cyl->SetCollisionCappedCylinder(radius,length);
 
             dMass mass;
             dMassSetCappedCylinder(&mass, 1, 2, radius, length);

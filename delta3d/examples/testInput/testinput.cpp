@@ -1,5 +1,5 @@
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 
 
 using namespace dtCore;

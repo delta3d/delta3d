@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -39,7 +39,7 @@
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd,libc;MSVCRT.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testClouds.pdb"
@@ -74,7 +74,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -90,8 +90,8 @@
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="FALSE"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libc.lib"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

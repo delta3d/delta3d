@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "flymotionmodel.h"
+#include "python/dtpython.h"
+#include "dtCore/flymotionmodel.h"
 
 using namespace boost::python;
 using namespace dtCore;

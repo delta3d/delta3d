@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "inputmapper.h"
+#include "python/dtpython.h"
+#include "dtCore/inputmapper.h"
 
 using namespace boost::python;
 using namespace dtCore;

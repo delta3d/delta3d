@@ -1,6 +1,6 @@
-#include "dt.h"
-#include "dtabc.h"
-#include "guimgr.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
+#include "gui_fl/guimgr.h"
 
 using namespace dtABC;
 using namespace dtCore;

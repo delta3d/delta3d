@@ -1,7 +1,7 @@
 //______________________________________________________________
-#include "soarx_generic.h"
-#include "soarx_terrain.h"
-#include "soarx_camera.h"
+#include "soarx/soarx_generic.h"
+#include "soarx/soarx_terrain.h"
+#include "soarx/soarx_camera.h"
 
 #include <osg/GL>
 

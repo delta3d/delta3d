@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/testGUI.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext.\lib"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testGUI.pdb"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/testGUI.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext.\lib"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

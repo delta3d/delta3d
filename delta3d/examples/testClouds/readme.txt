@@ -8,11 +8,9 @@ Uses modules: dtCore, dtABC
 
 Purpose
 -------
-To demonstrate CloudDome class, which creates a sphere with realistic clouds
-surrounding the scene. CloudDome is implemented using the OpenGL Shading
-Language.
-
-Note: Ignore "OpenGL error 'invalid enumerant'" if it appears.
+To demonstrate the CloudPlane and CloudDome class.  The CloudPlane is a planar-sytle cloud
+while the CloudDome is spherical. CloudDome is implemented using the OpenGL Shading
+Language and requires a graphics card which supports GLSL.
 
 Instructions
 ------------

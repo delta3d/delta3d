@@ -29,26 +29,26 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUIFlBindings", "dtguiflb
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09} = {7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "..\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "..\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtabc", "..\dtabc.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtaudio", "..\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtabc", "..\dtABC\dtabc.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtchar", "..\dtchar.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtaudio", "..\dtAudio\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "..\gui_fl.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtchar", "..\dtChar\dtchar.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "..\gui_fl\gui_fl.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}

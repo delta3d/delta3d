@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "logicalinputdevice.h"
+#include "python/dtpython.h"
+#include "dtCore/logicalinputdevice.h"
 
 using namespace boost::python;
 using namespace dtCore;

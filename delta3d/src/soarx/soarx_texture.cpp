@@ -1,9 +1,9 @@
 //______________________________________________________________
 #include <string>
-#include "soarxdrawable.h"
-#include "soarx_image.h"
+#include "soarx/soarxdrawable.h"
+#include "soarx/soarx_image.h"
 
-#include "notify.h"
+#include "dtCore/notify.h"
 
 #include <osg/GL>
 

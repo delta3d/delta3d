@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "transformable.h"
+#include "python/dtpython.h"
+#include "dtCore/transformable.h"
 
 using namespace boost::python;
 using namespace dtCore;

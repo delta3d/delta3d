@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtpython.h"
-#include "terrain.h"
+#include "python/dtpython.h"
+#include "dtCore/terrain.h"
 
 using namespace boost::python;
 using namespace dtCore;

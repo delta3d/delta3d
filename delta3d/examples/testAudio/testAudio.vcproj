@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,8 +35,8 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/testAudioD.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
-				IgnoreDefaultLibraryNames=""
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="LIBCMTD.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				SubSystem="1"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -82,11 +82,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtAudio.lib"
 				OutputFile="$(OutDir)/testAudio.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
-				IgnoreDefaultLibraryNames=""
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="LIBCMT.lib"
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"

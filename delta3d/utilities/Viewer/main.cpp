@@ -3,8 +3,8 @@
 #pragma  warning( disable : 4312 )  // casting long->void* warning
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-#include "dt.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
 #include <cassert>
 
 #include "UserInterface.h"

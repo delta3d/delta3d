@@ -5,9 +5,9 @@
 #include <vector>
 #include <queue>
 
-#include "dt.h"
-#include "dtaudio.h"
-#include "dtabc.h"
+#include "dtCore/dt.h"
+#include "dtAudio/dtaudio.h"
+#include "dtABC/dtabc.h"
 
 
 

@@ -2,7 +2,7 @@ from dtCore import *
 from math import *
 from time import *
 
-plane = Object.GetInstance('AH-1W')
+helo = Object.GetInstance("UH-1N")
 
 transform = Transform()
 
@@ -15,6 +15,6 @@ while True:
    transform.Set(40*cos(radians(angle)),
                  100 + 40*sin(radians(angle)), 
                  0, angle, 0, -45)
-   plane.SetTransform(transform)
+   helo.SetTransform(transform)
    sleep(0.01)
    angle += 0.45

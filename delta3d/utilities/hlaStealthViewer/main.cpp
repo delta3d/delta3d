@@ -1,6 +1,6 @@
-#include "dt.h"
-#include "dtabc.h"
-#include "dthla.h"
+#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
+#include "dtHLA/dthla.h"
 
 #include <osg/Billboard>
 #include <osg/Geode>
@@ -41,7 +41,7 @@ class HLAStealthViewerApplication : public Application
       {
          GetWindow()->SetWindowTitle("HLA Stealth Viewer");
 
-         SetDataFilePathList("./data;../../data;./data/images;" + GetDeltaDataPathList());
+         SetDataFilePathList("./data;./data/images;../data;../data/images;" + GetDeltaDataPathList());
          
          mEffectManager = new EffectManager;
          
