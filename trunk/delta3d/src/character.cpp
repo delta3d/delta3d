@@ -165,7 +165,7 @@ void Character::AddedToScene(Scene* scene)
  *
  * @param filename the name of the file to load
  */
-void Character::LoadFile(string filename)
+bool Character::LoadFile(string filename)
 {
    mFilename = filename;
    
@@ -174,6 +174,7 @@ void Character::LoadFile(string filename)
    if(path.empty())
    {
       Notify(WARN, "Character: Can't find %s", mFilename.c_str());
+      return false;
    }
    else
    {
@@ -213,6 +214,7 @@ void Character::LoadFile(string filename)
          mNode->addChild(mBodyNode.get());
       }
    }
+   return true;
 }
 
 /**
