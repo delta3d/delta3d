@@ -150,7 +150,7 @@ void Mouse::mouseMotion(float x, float y)
        it != mouseListeners.end();
        it++)
    {
-      (*it)->MouseDragged(this, x, y);
+      (*it)->MouseDragged(this, x, y);      
    }
 }
 
@@ -169,7 +169,7 @@ void Mouse::passiveMouseMotion(float x, float y)
        it != mouseListeners.end();
        it++)
    {
-      (*it)->MouseMoved(this, x, y);
+      (*it)->MouseMoved(this, x, y);      
    }
 }
 
