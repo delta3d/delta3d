@@ -4,6 +4,7 @@
 #include "dtCore/camera.h"
 #include "dtCore/ephemeris.h"
 #include "dtCore/physical.h"
+#include "dtCore/infinitelight.h"
 
 #include "dtUtil/deprecationmgr.h"
 
@@ -133,7 +134,8 @@ void Environment::AddedToScene(Scene* scene)
    DeltaDrawable::AddedToScene( scene );
    if (scene != NULL)
    {
-      mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
+      //mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
+      mSkyLight = scene->GetLight(0);
    }
 }
       
@@ -586,14 +588,17 @@ void dtCore::Environment::UpdateSkyLight(void)
 {
    if(mSkyLight.valid())
    {
-      mSkyLight->setPosition(
-         osg::Vec4(
+      InfiniteLight *sun = dynamic_cast<InfiniteLight*>(mSkyLight.get());
+      if (sun)
+      {
+         sun->GetLightSource()->getLight()->setPosition(
+            osg::Vec4(
             sgSin(mSunAzimuth)*sgCos(mSunAltitude),
             sgCos(mSunAzimuth)*sgCos(mSunAltitude),
             sgSin(mSunAltitude),
-            0.0f
-         )
-      );
+            0.0f )
+            );
+      }
    }
 }
 

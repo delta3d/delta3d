@@ -169,7 +169,7 @@ namespace dtCore
       void Update(const double deltaFrameTime);
       void RemoveEffectCache(void);///<actually remove EnvEffects from the Env
 
-      RefPtr<osg::Light> mSkyLight; ///< The sky light
+      RefPtr<Light> mSkyLight; ///< The sky light
       
       sgVec3 mSkyColor; ///< The user-set base sky color
       sgVec3 mModSkyColor; ///<The time-based modified color
