@@ -14,14 +14,13 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Transformable)
 
-
-
-
 Transformable::Transformable()
 {
    RegisterInstance(this);
    mNode = new osg::MatrixTransform();
    mNode->setName("Transformable");
+
+   SetNormalRescaling( true );
 }
 
 Transformable::~Transformable()
@@ -226,4 +225,25 @@ void Transformable::RenderProxyNode( const bool enable )
    }
 
    mRenderingProxy = enable;
+}
+
+void Transformable::SetNormalRescaling( const bool enable )
+{
+   osg::StateAttribute::GLModeValue state;
+
+   if( enable )   state = osg::StateAttribute::ON;
+   else           state = osg::StateAttribute::OFF;
+
+   GetOSGNode()->getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, state );
+}
+
+
+bool Transformable::GetNormalRescaling() const
+{
+   osg::StateAttribute::GLModeValue state = mNode->getStateSet()->getMode( GL_RESCALE_NORMAL );
+
+   if( state & osg::StateAttribute::ON )
+      return true;
+   else
+      return false;
 }
