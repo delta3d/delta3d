@@ -33,6 +33,10 @@ namespace dtCore
 {
    const int MAX_LIGHTS = 8;
 
+   /**
+   * An abstract class declaring the base functionality for a vertex light.
+   * It's properties are thin wrappers of OpenGL light calls.
+   */
    class DT_EXPORT Light : virtual public DeltaDrawable
    {
 
@@ -40,64 +44,69 @@ namespace dtCore
 
    public:
 
+      ///GLOBAL lights everything in scene, LOCAL only lights children
       enum LightingMode
       {
          GLOBAL = 0,
          LOCAL  = 1
       };
 
-      Light( int number, LightingMode mode, osg::LightSource* lightSource = NULL );
+      Light( int number, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
+
+      ///Copy constructor from an osg::LightSource
+      Light( const osg::LightSource& lightSource, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
+      
       virtual ~Light() = 0;
 
       virtual osg::Node* GetOSGNode() { return mLightSource.get(); } 
 
-      inline osg::LightSource* GetLightSource()
+      ///Get the const internal osg::LightSource
+      const osg::LightSource* GetLightSource() const
       { return mLightSource.get(); }
 
-      void SetLightingMode( const LightingMode mode );
+      ///Get the non-const internal osg::LightSource
+      osg::LightSource* GetLightSource()
+      { return mLightSource.get(); }
+
+      ///Change lighting mode to GLOBAL or LOCAL mode
+      void SetLightingMode( LightingMode mode );
       
-      inline LightingMode GetLightingMode() const
+      LightingMode GetLightingMode() const
       { return mLightingMode; }
 
+      ///Turn light on or off
       void SetEnabled( bool enabled );
       
-      inline bool GetEnabled()
+      bool GetEnabled()
       { return mEnabled; }
-      
-      void SetLightModel( osg::LightModel* model, bool enabled );
 
-      inline void SetNumber( const int number )
+      /*!
+      * Sets the OpenGL light number associated with this light. Lights numbers
+      * must be in the range 0-7. There is a default scene light setup at light
+      * number 0, so that will be overwritten if you set your own light to 0.
+      *
+      * @param number : The OpenGL light number
+      */
+      void SetNumber( int number )
       { mLightSource->getLight()->setLightNum( number ); }
 
-      inline int GetNumber() const
+      int GetNumber() const
       { return mLightSource->getLight()->getLightNum(); }
 
-      inline void SetAmbient( const float r, const float g, const float b, const float a )
+      void SetAmbient( float r, float g, float b, float a )
       { mLightSource->getLight()->setAmbient( osg::Vec4( r, g, b, a) ); }
       
-      inline void GetAmbient( float* r, float* g, float* b, float* a ) const
-      { 
-         osg::Vec4f color = mLightSource->getLight()->getAmbient();
-         *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
-      }
+      void GetAmbient( float& r, float& g, float& b, float& a ) const;
       
-      inline void SetDiffuse( const float r, const float g, const float b, const float a )
+      void SetDiffuse( float r, float g, float b, float a )
       { mLightSource->getLight()->setDiffuse( osg::Vec4( r, g, b, a) ); }
       
-      inline void GetDiffuse( float* r, float* g, float* b, float* a ) const
-      {
-         osg::Vec4f color = mLightSource->getLight()->getDiffuse();
-         *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
-      }
+      void GetDiffuse( float& r, float& g, float& b, float& a ) const;
       
-      inline void SetSpecular( const float r, const float g, const float b, const float a )
+      void SetSpecular( float r, float g, float b, float a )
       { mLightSource->getLight()->setSpecular( osg::Vec4( r, g, b, a) ); }
       
-      inline void GetSpecular( float* r, float* g, float* b, float* a ) const
-      {
-         osg::Vec4f color = mLightSource->getLight()->getSpecular();
-         *r = color[0]; *g = color[1]; *b = color[2]; *a = color[3];
-      }
+      void GetSpecular( float& r, float& g, float& b, float& a ) const;
 
       virtual void AddedToScene( Scene *scene );
 

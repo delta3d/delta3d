@@ -10,16 +10,19 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(PositionalLight)
 
-///An update callback for a visual Object
+/**
+* Callback to sync internal Transform with underlying osg::Light.
+* TODO: Overwrite SetTransform to do all of this.
+*/
 class PositionalLightCallback : public osg::NodeCallback
 {
 public:
 
-   PositionalLightCallback( PositionalLight* poslight )
+   PositionalLightCallback( PositionalLight *poslight )
       :  mPositionalLight( poslight )
    {}
 
-   virtual void operator()( osg::Node* node, osg::NodeVisitor* nv )
+   virtual void operator()( osg::Node *node, osg::NodeVisitor* nv )
    {
       Transform trans;
       mPositionalLight->GetTransform( &trans, Transformable::ABS_CS );
@@ -52,22 +55,18 @@ private:
    PositionalLight* mPositionalLight;
 };
 
-PositionalLight::PositionalLight( int number, const std::string name, const LightingMode mode )
-   : Light( number, mode, NULL )//,
-     //Transformable()
+PositionalLight::PositionalLight( int number, const std::string& name, LightingMode mode )
+   : Light( number, name, mode )
 {
    GetMatrixNode()->addChild( mLightSource.get() );
-   SetName( name );
 
    mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
 }
 
-PositionalLight::PositionalLight( osg::LightSource* const osgLightSource, const std::string name, const LightingMode mode )
-   : Light( osgLightSource->getLight()->getLightNum(), mode, osgLightSource )//,
-     //Transformable()
+PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
+   : Light( osgLightSource, name, mode )
 {
    GetMatrixNode()->addChild( mLightSource.get() );
-   SetName( name );
 
    mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
 }
@@ -77,27 +76,31 @@ PositionalLight::~PositionalLight()
    mLightSource = NULL;
 }
 
-
-// attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
-// where k_c = constant, k_l = linear, k_q = quadractric
-void 
-PositionalLight::SetAttenuation( const float constant, const float linear, const float quadratic )
+/**
+* Determines how fast the light fades as one moves away from the light. It is
+* determined by the following equation: 
+*
+* attenuation factor = 1 / ( constant + linear*(distance) + quadratic*(distance^2) )
+*
+* @param constant the constant factor
+* @param linear the linear factor
+* @param quadractic the quadractic factor
+*/
+void PositionalLight::SetAttenuation( float constant, float linear, float quadratic )
 {
    mLightSource->getLight()->setConstantAttenuation( constant );
    mLightSource->getLight()->setLinearAttenuation( linear );
    mLightSource->getLight()->setQuadraticAttenuation( quadratic );
 }  
 
-void 
-PositionalLight::GetAttenuation( float* constant, float* linear, float* quadratic )
+void PositionalLight::GetAttenuation( float& constant, float& linear, float& quadratic )
 {
-   *constant = mLightSource->getLight()->getConstantAttenuation();
-   *linear = mLightSource->getLight()->getLinearAttenuation();
-   *quadratic = mLightSource->getLight()->getQuadraticAttenuation();
+   constant = mLightSource->getLight()->getConstantAttenuation();
+   linear = mLightSource->getLight()->getLinearAttenuation();
+   quadratic = mLightSource->getLight()->getQuadraticAttenuation();
 }
 
-bool
-PositionalLight::AddChild( DeltaDrawable *child )
+bool PositionalLight::AddChild( DeltaDrawable *child )
 {
    bool success = Transformable::AddChild(child);
    if (success)
@@ -108,14 +111,7 @@ PositionalLight::AddChild( DeltaDrawable *child )
    else return (false);
 }
 
-/*!
- * Remove a child from this Transformable.  This will detach the child from its
- * parent so that its free to be repositioned on its own.
- *
- * @param *child : The child Transformable to be removed
- */
-void
-PositionalLight::RemoveChild( DeltaDrawable *child )
+void PositionalLight::RemoveChild( DeltaDrawable *child )
 {
    mLightSource->removeChild( child->GetOSGNode() );
 }

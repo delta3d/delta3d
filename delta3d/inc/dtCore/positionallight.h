@@ -26,31 +26,34 @@
 
 namespace dtCore
 {
+   /**
+   * A transformable light. This is the class to use for omni-directional
+   * lights that have actual locations within the scene.
+   */
    class DT_EXPORT PositionalLight :  public Light,  public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(PositionalLight)
          
          public:
       
-      PositionalLight( int number, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL );
-      PositionalLight( osg::LightSource* const source, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL );
+      PositionalLight( int number, const std::string& name = "defaultPositonalLight", LightingMode mode = GLOBAL );
+
+      ///Copy constructor from an osg::LightSource
+      PositionalLight( const osg::LightSource& source, const std::string& name = "defaultPositonalLight", LightingMode mode = GLOBAL );
       virtual ~PositionalLight();
 
-      virtual osg::Node* GetOSGNode() { return mNode.get(); } 
+      virtual osg::Node* GetOSGNode() { return mNode.get(); }
+
+      ///Set that values that control how fast light fades as one moves away from the light
+      void SetAttenuation( float constant, float linear, float quadratic );
+      void GetAttenuation( float& constant, float& linear, float& quadratic );
       
-      /// attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
-      /// where k_c = constant, k_l = linear, k_q = quadractric
-      void SetAttenuation( const float constant, const float linear, const float quadratic );
-      void GetAttenuation( float* constant, float* linear, float* quadratic );
-      
-      /// Add a DeltaDrawable child
       virtual bool AddChild( DeltaDrawable *child ); 
-         
-      /// Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable *child );
 
       virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
-      virtual void RenderProxyNode( const bool enable = true ) { Transformable::RenderProxyNode( enable ); }
+
+      virtual void RenderProxyNode( bool enable = true ) { Transformable::RenderProxyNode( enable ); }
 
    };
 }

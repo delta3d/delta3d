@@ -7,12 +7,10 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(InfiniteLight)
 
-InfiniteLight::InfiniteLight( int number, const std::string name, const LightingMode mode )
-: Light( number, mode, NULL )
+InfiniteLight::InfiniteLight( int number, const std::string& name, LightingMode mode )
+: Light( number, name, mode )
 {
    RegisterInstance(this);
-
-   SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
 
@@ -21,12 +19,10 @@ InfiniteLight::InfiniteLight( int number, const std::string name, const Lighting
    mLightSource->getLight()->setPosition( position );
 }
 
-InfiniteLight::InfiniteLight( osg::LightSource* const source, const std::string name, const LightingMode mode )
-: Light( source->getLight()->getLightNum(), mode, source )
+InfiniteLight::InfiniteLight( const osg::LightSource& source, const std::string& name, LightingMode mode )
+: Light( source, name, mode )
 {
    RegisterInstance(this);
-
-   SetName( name );
 
    osg::Vec4 position = mLightSource->getLight()->getPosition();
 
@@ -45,7 +41,7 @@ InfiniteLight::~InfiniteLight()
 
 
 void 
-InfiniteLight::SetDirection( const float h, const float p, const float r )
+InfiniteLight::SetDirection( float h, float p, float r )
 {
    //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
    sgMat4 hRot, pRot, rRot;
@@ -68,7 +64,7 @@ InfiniteLight::SetDirection( const float h, const float p, const float r )
 }
 
 void 
-InfiniteLight::GetDirection( float* h, float* p, float* r ) const
+InfiniteLight::GetDirection( float& h, float& p, float& r ) const
 {
    osg::Vec4 position = mLightSource->getLight()->getPosition();
 
@@ -78,7 +74,7 @@ InfiniteLight::GetDirection( float* h, float* p, float* r ) const
    xyz[2] = position[2];
    sgHPRfromVec3( hpr, xyz );
 
-   *h = hpr[0];
-   *p = hpr[1];
-   *r = hpr[2];
+   h = hpr[0];
+   p = hpr[1];
+   r = hpr[2];
 }

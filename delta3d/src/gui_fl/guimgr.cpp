@@ -502,7 +502,7 @@ void UserInterface::SelectInstance (void)
       LightNumberInput->value( l->GetNumber() );
 
       float r,g,b,a;
-      l->GetAmbient(&r, &g, &b, &a);
+      l->GetAmbient(r, g, b, a);
       LightAmbRed->value(r);
       LightAmbGreen->value(g);
       LightAmbBlue->value(b);
@@ -515,7 +515,7 @@ void UserInterface::SelectInstance (void)
       LightAmbColorLoadButton->redraw();
 
 
-      l->GetSpecular(&r, &g, &b, &a);
+      l->GetSpecular(r, g, b, a);
       LightSpecRed->value(r);
       LightSpecGreen->value(g);
       LightSpecBlue->value(b);
@@ -528,7 +528,7 @@ void UserInterface::SelectInstance (void)
       LightSpecColorLoadButton->redraw();
 
 
-      l->GetDiffuse(&r, &g, &b, &a);
+      l->GetDiffuse(r, g, b, a);
       LightDifRed->value(r);
       LightDifGreen->value(g);
       LightDifBlue->value(b);
@@ -543,7 +543,7 @@ void UserInterface::SelectInstance (void)
 
 
       float con, lin, quad;
-      l->GetAttenuation(&con, &lin, &quad);
+      l->GetAttenuation(con, lin, quad);
       LightConstAtt->value(con);
       LightLinAtt->value(lin);
       LightQuadAtt->value(quad);
