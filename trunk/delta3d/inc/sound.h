@@ -212,7 +212,4 @@ namespace dtCore
    };
 };
 
-#pragma comment(lib, "OpenAL32.lib")
-#pragma comment(lib, "ALut.lib")
-
 #endif // DELTA_SOUND
