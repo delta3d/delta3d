@@ -10,6 +10,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Value_Input.H>
@@ -38,6 +39,7 @@ private:
   inline void cb_BaseName_i(Fl_Input*, void*);
   static void cb_BaseName(Fl_Input*, void*);
 public:
+  Fl_Value_Output *BaseReferenceCount;
   Fl_Group *DrawableGroup;
 private:
   Fl_Browser *DrawableChildList;
@@ -74,11 +76,11 @@ private:
   inline void cb_TransformCSRelButton_i(Fl_Round_Button*, void*);
   static void cb_TransformCSRelButton(Fl_Round_Button*, void*);
 public:
-  Fl_Group *ObjectGroup;
+  Fl_Group *LoadableGroup;
 private:
-  Fl_Input *ObjectFilename;
-  inline void cb_ObjectFilename_i(Fl_Input*, void*);
-  static void cb_ObjectFilename(Fl_Input*, void*);
+  Fl_Input *LoadableFilename;
+  inline void cb_LoadableFilename_i(Fl_Input*, void*);
+  static void cb_LoadableFilename(Fl_Input*, void*);
   inline void cb_2_i(Fl_Button*, void*);
   static void cb_2(Fl_Button*, void*);
 public:
@@ -440,6 +442,17 @@ private:
   inline void cb_LightCutoffInput_i(Fl_Value_Input*, void*);
   static void cb_LightCutoffInput(Fl_Value_Input*, void*);
 public:
+  Fl_Group *ParticleGroup;
+  Fl_Check_Button *ParticleEnabled;
+private:
+  inline void cb_ParticleEnabled_i(Fl_Check_Button*, void*);
+  static void cb_ParticleEnabled(Fl_Check_Button*, void*);
+public:
+  Fl_Check_Button *ParticleParentRelative;
+private:
+  inline void cb_ParticleParentRelative_i(Fl_Check_Button*, void*);
+  static void cb_ParticleParentRelative(Fl_Check_Button*, void*);
+public:
   Fl_Double_Window *SelectWindow;
 private:
   Fl_Check_Browser *SelectList;
@@ -463,8 +476,8 @@ private:
   void WinCursorCB( Fl_Check_Button * );
   void WinFullScreenCB( Fl_Check_Button * );
   void WinTitleCB( Fl_Input * );
-  void ObjectFileCB( Fl_Input * );
-  void ObjectLoadFileCB( Fl_Button * );
+  void LoadableFileCB( Fl_Input * );
+  void LoadableLoadFileCB( Fl_Button * );
   void SkyBoxBaseColorCB(Fl_Value_Input *);
   void SkyBoxBaseColorBrowserCB(Fl_Button*);
   void EnvFogColorCB(Fl_Value_Input *);
@@ -507,6 +520,8 @@ private:
   void LightSpecColorBrowserCB(Fl_Button*);
   void LightAttCB(Fl_Value_Input*);
   void LightSpotCB(Fl_Value_Input*);
+  void ParticleRelativeCB(Fl_Check_Button*);
+  void ParticleEnabledCB(Fl_Check_Button*);
 };
 #pragma comment(lib, "fltk.lib")
 #pragma comment(lib, "wsock32.lib")

@@ -10,6 +10,7 @@
 #include "dtCore/skydome.h"
 #include "dtCore/clouddome.h"
 #include "dtCore/object.h"
+#include "dtCore/particlesystem.h"
 #include "dtCore/system.h"
 #include "dtCore/infiniteterrain.h"
 #include "dtCore/positionallight.h"
@@ -43,6 +44,7 @@ void UserInterface::SelectInstance (void)
    {
       BaseName->value( b->GetName().c_str() );
       InstanceClassName->label( "dtCore::Base" ); 
+      BaseReferenceCount->value( b->referenceCount() );
    }
 
 
@@ -58,9 +60,15 @@ void UserInterface::SelectInstance (void)
       }
 
       if (d->GetParent() != NULL)
+      {
          DrawableParentText->value(  d->GetParent()->GetName().c_str() );
+         DrawableParentText->redraw();
+      }
       else
+      {
          DrawableParentText->value( "NULL" );
+         DrawableParentText->redraw();
+      }
 
       DrawableGroup->show();
    }
@@ -178,16 +186,16 @@ void UserInterface::SelectInstance (void)
    }
    //else SceneGroup->hide();
    
-   /** Object **/
-   if (Object *o = dynamic_cast<Object*>(b))
+   /** Loadable **/
+   if (Loadable *o = dynamic_cast<Loadable*>(b))
    {
-      InstanceClassName->label( "dtCore::Object" ); 
+      InstanceClassName->label( "dtCore::Loadable" ); 
       std::string filename = o->GetFilename();
-      ObjectFilename->value( filename.c_str() );
+      LoadableFilename->value( filename.c_str() );
 
-      ObjectGroup->show();
+      LoadableGroup->show();
    }
-   else ObjectGroup->hide();
+   else LoadableGroup->hide();
    
    /** DeltaWin **/
    if (DeltaWin *w = dynamic_cast<DeltaWin*>(b))
@@ -563,6 +571,32 @@ void UserInterface::SelectInstance (void)
       LightSpotGroup->hide();
    }
 
+   if (Object *o = dynamic_cast<Object*>(b) )
+   {
+      InstanceClassName->label( "dtCore::Object" );
+   }
+   else
+   {
+
+   }
+
+   if (ParticleSystem *ps = dynamic_cast<ParticleSystem*>(b) )
+   {
+      InstanceClassName->label( "dtCore::ParticleSystem" );
+
+      if (ps->IsEnabled())    ParticleEnabled->value(1);       
+      else                    ParticleEnabled->value(0);
+         
+
+      if (ps->IsParentRelative())  ParticleParentRelative->value(1);
+      else                         ParticleParentRelative->value(0);
+
+      ParticleGroup->show();
+   }
+   else
+   {
+      ParticleGroup->hide();
+   }
 }
 
 void UserInterface::BaseNameCB(Fl_Input *o )
@@ -745,20 +779,20 @@ void UserInterface::WinFullScreenCB( Fl_Check_Button *o)
    
 }
 
-void UserInterface::ObjectFileCB( Fl_Input *o)
+void UserInterface::LoadableFileCB( Fl_Input *o)
 {
    
 }
 
-void UserInterface::ObjectLoadFileCB( Fl_Button *o)
+void UserInterface::LoadableLoadFileCB( Fl_Button *o)
 {
    string filename = fl_file_chooser("Load File", NULL, NULL, 1);
    
-   Object *obj = dynamic_cast<Object*>(GetSelectedInstance(this));
+   Loadable *obj = dynamic_cast<Loadable*>(GetSelectedInstance(this));
    obj->LoadFile(filename);
    
    filename = obj->GetFilename();
-   ObjectFilename->value( filename.c_str() );
+   LoadableFilename->value( filename.c_str() );
 }
 
 
@@ -1579,4 +1613,31 @@ void UserInterface::LightSpotCB(Fl_Value_Input*)
    l->SetSpotCutoff( LightCutoffInput->value() );
    l->SetSpotExponent( LightExponentInput->value() );
    
+}
+
+void UserInterface::ParticleRelativeCB( Fl_Check_Button *o)
+{
+   ParticleSystem *ps = dynamic_cast<ParticleSystem*>(GetSelectedInstance(this));
+   if (o->value())
+   {
+      ps->SetParentRelative(true);
+   }
+   else
+   {
+      ps->SetParentRelative(false);
+   }
+}
+
+void UserInterface::ParticleEnabledCB( Fl_Check_Button *o)
+{
+   ParticleSystem *ps = dynamic_cast<ParticleSystem*>(GetSelectedInstance(this));
+
+   if (o->value())
+   {
+      ps->SetEnabled(true);
+   }
+   else
+   {
+      ps->SetEnabled(false);
+   }
 }
