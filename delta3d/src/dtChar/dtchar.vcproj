@@ -37,6 +37,7 @@
 				OutputFile="..\..\bin/dtchard.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="libcmtd.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtchar.pdb"
 				SubSystem="2"
