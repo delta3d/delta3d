@@ -25,12 +25,9 @@ static bool mainHandler( int id, int numparam, void *value )
    case 1:   dtCore::System::GetSystem()->Stop();  	break;
    case 2:
       {
-         if (numparam >0)
-         {
-            float val = ((float*)value)[1];
-            val/=100.f;
-            ui->GetRenderer()->SetFade(val);
-         }
+         CUI_SliderBar* bar = (CUI_SliderBar*)ui->GetFrame(2);
+         
+         ui->GetRenderer()->SetFade(bar->GetValue()/100);
       }
       break;
    default: break;
