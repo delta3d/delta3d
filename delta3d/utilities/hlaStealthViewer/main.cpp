@@ -2,14 +2,6 @@
 #include "dtabc.h"
 #include "dthla.h"
 
-/*
-#include "application.h"
-#include "effectmanager.h"
-#include "globals.h"
-#include "orbitmotionmodel.h"
-#include "rticonnection.h"*/
-
-
 #include <osg/Billboard>
 #include <osg/Geode>
 #include <osg/Image>
@@ -48,8 +40,13 @@ class HLAStealthViewerApplication : public Application
            mFedFilename(fedFilename)
       {
          GetWindow()->SetWindowTitle("HLA Stealth Viewer");
+
+         #ifdef _WIN32
+         SetDataFilePathList("./data;../../data;./data/images");
+         #else
+         SetDataFilePathList("./data:../../data:./data/images");
          
-         SetDataFilePathList("../../data;./data");
+         #endif
          
          mEffectManager = new EffectManager;
          
