@@ -209,6 +209,9 @@ Sound::OnMessage( MessageData* data )
 
 
 
+/*****************************
+/** Public Member Functions **
+/*****************************
 /**
  * Loads the specified sound file.
  *
