@@ -3,7 +3,7 @@
 using namespace dtScript;
 
 ScriptManager::ScriptManager()
-: mFileObject(0), mFilename(0)
+: mFileObject(0)
 {
    Py_Initialize();
 }
