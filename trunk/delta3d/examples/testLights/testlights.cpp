@@ -26,7 +26,7 @@ TestLightsApp::Config()
 
    // load up a warehouse
    mWarehouse = new Object( "Warehouse" );
-   mWarehouse->LoadFile("warehouse/room-int-walls.ive");
+   mWarehouse->LoadFile( "warehouse/room-int-walls.ive" );
    AddDrawable( mWarehouse.get() );
 
 
@@ -34,7 +34,7 @@ TestLightsApp::Config()
    Transform trans;
 
    // create a global spot light.
-   mGlobalSpot = new SpotLight( 1, "GlobalSpotlight", Light::GLOBAL);
+   mGlobalSpot = new SpotLight( 1, "GlobalSpotlight" );
    trans.Set( 5.0f, 10.0f, 2.0f, 0.0f, 0.0f, 0.0f );
    mGlobalSpot->SetTransform( &trans );
    mGlobalSpot->SetSpotCutoff( 20.0f );
@@ -51,7 +51,7 @@ TestLightsApp::Config()
 
 
    // create a local positional light.
-   mLocalPositional = new PositionalLight( 2, "LocalPositionalLight", Light::LOCAL);
+   mLocalPositional = new PositionalLight( 2, "LocalPositionalLight", Light::LOCAL );
    mLocalPositional->SetDiffuse( 1.0f, 1.0f, 0.0f, 1.0f ); // yellow light
    mLocalPositional->AddLightChild ( mSphere.get() ); //light only the sphere
 
@@ -61,7 +61,7 @@ TestLightsApp::Config()
 
 
    // create a global positional light.
-   mGlobalPositional = new PositionalLight( 3, "GlobalPositionalLight", Light::GLOBAL);
+   mGlobalPositional = new PositionalLight( 3, "GlobalPositionalLight" );
    mGlobalPositional->SetDiffuse( 1.0f, 1.0f, 0.0f, 1.0f ); // yellow light
    mGlobalPositional->AddChild( mSphere.get() ); //move sphere along with light
 
@@ -71,7 +71,7 @@ TestLightsApp::Config()
 
 
    // create an infinite light
-   mGlobalInfinite = new InfiniteLight( 4, "GlobalInfiniteLight", Light::GLOBAL );
+   mGlobalInfinite = new InfiniteLight( 4, "GlobalInfiniteLight" );
 
    GetScene()->AddLight( mGlobalInfinite.get() );
    mGlobalInfinite->SetEnabled( false );

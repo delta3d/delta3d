@@ -33,9 +33,8 @@ namespace dtCore
 
    public:
 
-      InfiniteLight( int number, const std::string name, const LightingMode mode );
-
-      InfiniteLight( osg::LightSource* const source, const std::string name, const LightingMode mode );
+      InfiniteLight( int number, const std::string name = "defaultInfiniteLight", const LightingMode mode = GLOBAL );
+      InfiniteLight( osg::LightSource* const source, const std::string name = "defaultInfiniteLight", const LightingMode mode = GLOBAL  );
       virtual ~InfiniteLight();
 
       void SetDirection( const float h, const float p, const float r );
