@@ -4,8 +4,8 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testEffects main )
-TARGET_LINK_LIBRARIES( testEffects dtcore )
+ADD_EXECUTABLE( testEffects testeffects )
+TARGET_LINK_LIBRARIES( testEffects dtcore dtabc )
 
 
 

@@ -84,10 +84,9 @@ public:
 
 private:
 
-
    Character* mCharacter;
-
    Keyboard* mKeyboard;
+        
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(KeyController)
@@ -182,8 +181,6 @@ public:
 private:
 
    Character* mCharacter;
-
-
    Transformable* mTarget;
 };
 
@@ -193,9 +190,11 @@ IMPLEMENT_MANAGEMENT_LAYER(FollowController)
 class TestCharactersApp : public dtABC::Application
 {
 
+DECLARE_MANAGEMENT_LAYER(TestCharactersApp)
+            
 public:
    TestCharactersApp( std::string configFilename = "config.xml" )
-      : Application( configFilename )
+      : Application( configFilename ) 
    {
    }
 
@@ -203,20 +202,20 @@ public:
    {
       Application::Config();
 
+      Transform position;
+      position.Set(0.f, -10.f, 1.0f, 0.f, 0.f, 0.f);
+      GetCamera()->SetTransform( &position );
+      
       Object* terrain = new Object( "Terrain" );
       terrain->LoadFile( "dirt.ive" );
       AddDrawable( terrain );
 
-      dtABC::Weather* weather = new dtABC::Weather();   
-      AddDrawable( weather->GetEnvironment() );      
+      Weather* weather = new Weather();   
+      AddDrawable( weather->GetEnvironment() );
 
       Character* guy1 = new Character( "bob" );
       Character* guy2 = new Character( "dave" );
-
-      Transform position;
-      position.Set(0.f, -10.f, 1.0f, 0.f, 0.f, 0.f);
-      GetCamera()->SetTransform( &position );
-
+      
       position.Set(0, 0, 0, 0, 0, 0);
       guy1->SetTransform(&position);
 
@@ -243,14 +242,21 @@ public:
       OrbitMotionModel* omm = new OrbitMotionModel(GetKeyboard(),GetMouse());
       omm->SetTarget(GetCamera());
       omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
+      
+      
    }
-
+  
 };
 
-int main( int argc, char **argv )
+IMPLEMENT_MANAGEMENT_LAYER(TestCharactersApp)
+
+
+        
+
+int main()
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
-
+  
    TestCharactersApp* app = new TestCharactersApp( "config.xml" );
 
    app->Config();

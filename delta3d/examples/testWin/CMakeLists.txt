@@ -4,8 +4,8 @@
 #
 ########################################
 
-ADD_EXECUTABLE( testWin main )
-TARGET_LINK_LIBRARIES( testWin dtcore gui_fl )
+ADD_EXECUTABLE( testWin testwin )
+TARGET_LINK_LIBRARIES( testWin dtcore dtabc gui_fl )
 
 
 

@@ -18,29 +18,30 @@ Application::Application(std::string configFilename)
    :  BaseABC("Application")
 {
    RegisterInstance(this);
-
-   //mOriginalRes.width = 0;
-   //mOriginalRes.height = 0;
-   //mOriginalRes.bitDepth = 0;
-   //mOriginalRes.refresh = 0;
    
-   //if config file passed in
    if ( configFilename != "" )
    {
       //  parse config file
       std::string foundPath = osgDB::findDataFile(configFilename);
         
-      TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());
       if(foundPath.empty())
       {
-         Notify(WARN, "Application: can't find config file %s, using defaults instead.", configFilename.c_str());
          CreateInstances(); //create default window, camera, etc.
       }
       else
-      {
-         xmlDoc->LoadFile();
-         TiXmlElement *root = xmlDoc->RootElement();
-         if (root != NULL)  ParseConfigFile(root);
+      {          
+         TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());
+    
+         if( xmlDoc->LoadFile() )
+         {
+                 TiXmlElement *root = xmlDoc->RootElement();
+                 ParseConfigFile(root);
+         }
+         else
+         {
+                 Notify(WARN,"Error loading config file, using defaults instead.");
+                 CreateInstances(); //create default window, camera, etc.
+         }
       }
    }
    else
@@ -106,9 +107,6 @@ void  Application::CreateInstances( std::string name, int x, int y, int width, i
    mWindow = new DeltaWin( name, x, y, width, height, cursor, fullScreen );
    
    assert( mWindow.get() );
-
-   //mWindow->GetRenderSurface()->realize();
-   //mOriginalRes = mWindow->GetCurrentResolution();
 
    mCamera->SetWindow( mWindow.get() );
 
