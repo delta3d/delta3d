@@ -1,0 +1,1771 @@
+#include <assert.h>
+#include <stack>
+
+#include <osgDB/FileUtils>
+
+#include <alut.h>
+
+#include "system.h"
+#include "notify.h"
+#include "audiomanager.h"
+
+
+
+#if   defined(WIN32) | defined(_WIN32)
+#pragma warning( disable : 4800 )
+#endif
+
+
+
+// definitions
+#if   !  defined(BIT)
+#define  BIT(a)   (1L<<a)
+#endif
+
+
+
+// name spaces
+using namespace   dtAudio;
+using namespace   std;
+
+
+
+// helper template functions
+template <class   T>
+T  MIN( T a, T b )         {  return   (a<b)?a:b;        }
+
+template <class   T>
+T  MAX( T a, T b )         {  return   (a>b)?a:b;        }
+
+template <class   T>
+T  CLAMP( T x, T l, T h )  {  return   MAX(MIN(x,h),l);  }
+
+
+
+// static member variables
+const char* Sound::kCommand[kNumCommands]   =
+            {
+               "",         "load",     "unload",
+               "play",     "pause",    "stop",
+               "rewind",   "loop",     "unloop",
+               "queue",    "gain",     "pitch",
+               "position", "velocity",
+            };
+
+AudioManager*              AudioManager::_Mgr(NULL);
+AudioManager::ListenerObj* AudioManager::_Mic(NULL);
+const char*                AudioManager::_EaxVer   = "EAX2.0";
+const char*                AudioManager::_EaxSet   = "EAXSet";
+const char*                AudioManager::_EaxGet   = "EAXGet";
+const AudioConfigData      AudioManager::_DefCfg(24L, true);
+
+
+// public member functions
+// default consructor
+Sound::Sound()
+:  Transformable(),
+   mFilename(""),
+   mGain(1.0f),
+   mPitch(1.0f)
+{
+}
+
+
+
+// desructor
+Sound::~Sound()
+{
+}
+
+
+
+void
+Sound::OnMessage( MessageData* data )
+{
+}
+
+
+
+void
+Sound::LoadFile( const char* file )
+{
+   mFilename   = file;
+   SendMessage( kCommand[LOAD], this );
+}
+
+
+
+void
+Sound::UnloadFile( void )
+{
+   SendMessage( kCommand[UNLOAD], this );
+}
+
+
+
+void
+Sound::Play( void )
+{
+   SendMessage( kCommand[PLAY], this );
+}
+
+
+
+void
+Sound::Pause( void )
+{
+   SendMessage( kCommand[PAUSE], this );
+}
+
+
+
+void
+Sound::Stop( void )
+{
+   SendMessage( kCommand[STOP], this );
+}
+
+
+
+void
+Sound::Rewind( void )
+{
+   SendMessage( kCommand[REWIND], this );
+}
+
+
+
+void
+Sound::SetLooping( bool loop /*= true*/ )
+{
+   if( loop )
+      SendMessage( kCommand[LOOP], this );
+   else
+      SendMessage( kCommand[UNLOOP], this );
+}
+
+
+
+void
+Sound::SetGain( float gain )
+{
+   // force gain to range from zero to one
+   mGain = CLAMP( gain, 0.0f, 1.0f );
+
+   SendMessage( kCommand[GAIN], this );
+}
+
+
+
+void
+Sound::SetPitch( float pitch )
+{
+   // force pitch to range from zero+ to two
+   // for some reason openAL chokes on 2+
+   // also, openAL states zero to be invalid
+   mPitch = CLAMP( pitch, 0.000001f, 2.0f );
+
+   SendMessage( kCommand[PITCH], this );
+}
+
+
+
+// public member functions
+// default consructor
+AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
+:  Base(name),
+   mNumSources(0L),
+   mSource(NULL),
+   mEAXSet(NULL),
+   mEAXGet(NULL)
+{
+   mSourceMap.clear();
+   mActiveList.clear();
+   mBufferMap.clear();
+   mSoundList.clear();
+
+   while( mAvailable.size() )
+      mAvailable.pop();
+
+   while( mPlayQueue.size() )
+      mPlayQueue.pop();
+
+   while( mPauseQueue.size() )
+      mPauseQueue.pop();
+
+   while( mStopQueue.size() )
+      mStopQueue.pop();
+
+   while( mRewindQueue.size() )
+      mRewindQueue.pop();
+
+   while( mSoundCommand.size() )
+      mSoundCommand.pop();
+
+   while( mSoundRecycle.size() )
+      mSoundRecycle.pop();
+
+   AddSender( dtCore::System::GetSystem() );
+
+   alutInit( 0L, NULL );
+}
+
+
+
+// desructor
+AudioManager::~AudioManager()
+{
+   // stop all sources
+   for( unsigned int ii(0L); ii < mNumSources; ii++ )
+   {
+      alSourceStop( mSource[ii] );
+      alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+   }
+
+   // delete the sources
+   if( mSource != NULL )
+   {
+      alDeleteSources( mNumSources, mSource );
+      delete   mSource;
+   }
+
+   mSourceMap.clear();
+   mActiveList.clear();
+
+   while( mAvailable.size() )
+      mAvailable.pop();
+
+   while( mPlayQueue.size() )
+      mPlayQueue.pop();
+
+   while( mPauseQueue.size() )
+      mPauseQueue.pop();
+
+   while( mStopQueue.size() )
+      mStopQueue.pop();
+
+   while( mRewindQueue.size() )
+      mRewindQueue.pop();
+
+   // delete the buffers
+   BufferData* bd(NULL);
+   for( BUF_MAP::iterator iter(mBufferMap.begin()); iter != mBufferMap.end(); iter++ )
+   {
+      if( ( bd = iter->second ) == NULL )
+         continue;
+
+      iter->second   = NULL;
+      alDeleteBuffers( 1L, &bd->buf );
+      delete   bd;
+   }
+   mBufferMap.clear();
+
+   SoundObj*   snd(NULL);
+   for( SND_LST::iterator iter(mSoundList.begin()); iter != mSoundList.end(); iter++ )
+   {
+      snd   = *iter;
+      *iter = NULL;
+
+      if( snd == NULL )
+         continue;
+
+      delete   snd;
+      snd   = NULL;
+   }
+   mSoundList.clear();
+
+   while( mSoundCommand.size() )
+      mSoundCommand.pop();
+
+   while( mSoundRecycle.size() )
+      mSoundRecycle.pop();
+
+   alutExit();
+
+   RemoveSender( dtCore::System::GetSystem() );
+}
+
+
+
+// create the singleton manager
+void
+AudioManager::Instantiate( void )
+{
+   if( _Mgr )
+      return;
+
+   _Mgr  = new AudioManager;
+   assert( _Mgr );
+
+   _Mic  = new ListenerObj;
+   assert( _Mic );
+}
+
+
+
+// destroy the singleton manager
+void
+AudioManager::Destroy( void )
+{
+   if( _Mic )
+   {
+      delete   _Mic;
+      _Mic  = NULL;
+   }
+
+   if( _Mgr )
+   {
+      delete   _Mgr;
+      _Mgr  = NULL;
+   }
+}
+
+
+
+// static instance accessor
+AudioManager*
+AudioManager::GetManager( void )
+{
+   return   _Mgr;
+}
+
+
+
+// static listener accessor
+Listener*
+AudioManager::GetListener( void )
+{
+   return   static_cast<Listener*>(_Mic);
+}
+
+
+
+// manager configuration
+void
+AudioManager::Config( const AudioConfigData& data /*= _DefCfg*/ )
+{
+   if( mSource )
+   {
+      // already configured
+      assert( false );
+      return;
+   }
+
+
+   // set up the sources
+   if( ! ConfigSources( data.numSources ) )
+      return;
+
+
+   // set up EAX
+   ConfigEAX( data.eax );
+}
+
+
+
+// message receiver
+void
+AudioManager::OnMessage( MessageData* data )
+{
+   assert( data );
+
+   // system messages
+   if( data->message == "preframe" )
+   {
+      PreFrame( *static_cast<const double*>(data->userData) );
+      return;
+   }
+
+   if( data->message == "frame" )
+   {
+      Frame( *static_cast<const double*>(data->userData) );
+      return;
+   }
+
+   if( data->message == "postframe" )
+   {
+      PostFrame( *static_cast<const double*>(data->userData) );
+      return;
+   }
+
+
+   // sound commands
+   if( data->message == Sound::kCommand[Sound::PLAY] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::PLAY] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::STOP] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::STOP] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::PAUSE] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::PAUSE] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::LOAD] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::LOAD] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::UNLOAD] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::UNLOAD] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::LOOP] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::LOOP] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::UNLOOP] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::UNLOOP] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::GAIN] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::GAIN] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::PITCH] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::PITCH] );
+      mSoundCommand.push( snd );
+      return;
+   }
+
+   if( data->message == Sound::kCommand[Sound::REWIND] )
+   {
+      assert( data->userData );
+      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+      snd->Command( Sound::kCommand[Sound::REWIND] );
+      mSoundCommand.push( snd );
+      return;
+   }
+}
+
+
+
+Sound*
+AudioManager::NewSound( void )
+{
+   SoundObj*   snd(NULL);
+
+   // first look if we can recycle a sound
+   if( mSoundRecycle.size() )
+   {
+      snd   = mSoundRecycle.front();
+      assert( snd );
+
+      snd->Clear();
+      mSoundRecycle.pop();
+   }
+
+   // create a new sound object if we don't have one
+   if( snd == NULL )
+   {
+      snd   = new SoundObj;
+      assert( snd );
+   }
+
+   // listen to messages from this guy
+   AddSender( snd );
+
+   // save the sound
+   mSoundList.push_back( snd );
+
+   // hand out the interface to the sound
+   return   static_cast<Sound*>(snd);
+}
+
+
+
+void
+AudioManager::FreeSound( Sound*& sound )
+{
+   SoundObj*   snd   = static_cast<SoundObj*>(sound);
+
+   // remove user's copy of pointer
+   sound = NULL;
+
+   if( snd == NULL )
+      return;
+
+   // remove sound from list
+   SND_LST::iterator iter(NULL);
+   for( iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
+   {
+      if( snd != *iter )
+         continue;
+
+      mSoundList.erase( iter );
+      break;
+   }
+
+   // stop listening to this guys messages
+   snd->RemoveSender( this );
+   snd->RemoveSender( dtCore::System::GetSystem() );
+   RemoveSender( snd );
+
+   // free the sound's source and buffer
+   FreeSource( snd );
+   UnloadSound( snd );
+   snd->Clear();
+
+   // recycle this sound
+   mSoundRecycle.push( snd );
+}
+
+
+
+bool
+AudioManager::LoadWaveFile( const char* file )
+{
+   if( file == NULL )
+      // no file name, bail...
+      return   false;
+
+   std::string filename = osgDB::findDataFile( file );
+   if( filename == "" )
+   {
+      // still no file name, bail...
+      dtCore::Notify( dtCore::WARN, "AudioManager: can't load file %s", file );
+      return   false;
+   }
+
+   BufferData* bd = mBufferMap[file];
+   if( bd != NULL )
+      // file already loaded, bail...
+      return   false;
+
+   bd = new BufferData;
+   assert( bd );
+
+   ALenum      err(alGetError());
+   ALenum      format(ALenum(0L));
+   ALvoid*     data(NULL);
+   ALsizei     size(0L);
+   ALsizei     freq(0L);
+   ALbyte      fname[256L];
+
+
+   // create buffer for the wave file
+   alGenBuffers( 1L, &bd->buf );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      // somethings wrong with buffers, bail...
+      dtCore::Notify( dtCore::WARN, "AudioManager: alGenBuffers error %d", err );
+      delete   bd;
+      return   false;
+   }
+
+
+   // load the wave file
+   unsigned int   len = MIN( filename.size(), size_t(255L) );
+   memcpy( fname, filename.c_str(), len );
+   fname[len]  = 0L;
+   alutLoadWAVFile( fname, &format, &data, &size, &freq, &bd->loop );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      // can't load the wave file, bail...
+      dtCore::Notify( dtCore::WARN, "AudioManager: alutLoadWAVFile error %d on %s", err, file );
+      alDeleteBuffers( 1L, &bd->buf );
+      delete   bd;
+      return   false;
+   }
+
+
+   // copy wave file to the buffer
+   alBufferData( bd->buf, format, data, size, freq );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      // can't copy the data??? bail like you've never bailed before...
+      dtCore::Notify( dtCore::WARN, "AudioManager: alBufferData error %d on %s", err, file );
+      alDeleteBuffers( 1L, &bd->buf );
+      alutUnloadWAV( format, data, size, freq );
+      delete   bd;
+      return   false;
+   }
+
+
+   // unload the wave file
+   alutUnloadWAV( format, data, size, freq );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      // can't unload the wave file?
+      // well, ok we just leaked but can continue
+      dtCore::Notify( dtCore::WARN, "AudioManager: alutUnloadWAV error %d on %s", err, file );
+   }
+
+
+   // store this buffer in the map by name
+   mBufferMap[file]  = bd;
+   bd->file          = mBufferMap.find( file )->first.c_str();
+   return   true;
+}
+
+
+
+bool
+AudioManager::UnloadWaveFile( const char* file )
+{
+   if( file == NULL )
+      // no file name, bail...
+      return   false;
+
+   BUF_MAP::iterator iter  = mBufferMap.find( file );
+   if( iter == mBufferMap.end() )
+      // file is not loaded, bail...
+      return   false;
+
+   BufferData* bd = iter->second;
+   if( bd == NULL )
+   {
+      // bd should never be NULL
+      // this code should never run
+      mBufferMap.erase( iter );
+      return   false;
+   }
+
+   if( bd->use )
+      // buffer still in use, don't remove buffer
+      return   false;
+
+   alDeleteBuffers( 1L, &bd->buf );
+   delete   bd;
+
+   mBufferMap.erase( iter );
+   return   true;
+}
+
+
+
+// private member functions
+void
+AudioManager::PreFrame( const double deltaFrameTime )
+{
+   SoundObj*   snd(NULL);
+   const char* cmd(NULL);
+
+   // flush all the sound commands
+   while( mSoundCommand.size() )
+   {
+      snd   = mSoundCommand.front();
+      mSoundCommand.pop();
+
+      if( snd == NULL )
+         continue;
+
+      cmd   = snd->Command();
+
+      // set sound to play
+      if( cmd == Sound::kCommand[Sound::PLAY] )
+      {
+         PlaySound( snd );
+         continue;
+      }
+
+      // set sound to stop
+      if( cmd == Sound::kCommand[Sound::STOP] )
+      {
+         StopSound( snd );
+         continue;
+      }
+
+      // set sound to pause
+      if( cmd == Sound::kCommand[Sound::PAUSE] )
+      {
+         PauseSound( snd );
+         continue;
+      }
+
+      // loading a new sound
+      if( cmd == Sound::kCommand[Sound::LOAD] )
+      {
+         LoadSound( snd );
+         continue;
+      }
+
+      // unloading an old sound
+      if( cmd == Sound::kCommand[Sound::UNLOAD] )
+      {
+         UnloadSound( snd );
+         continue;
+      }
+
+      // setting the loop flag
+      if( cmd == Sound::kCommand[Sound::LOOP] )
+      {
+         SetLoop( snd );
+         continue;
+      }
+
+      // un-setting the loop flag
+      if( cmd == Sound::kCommand[Sound::UNLOOP] )
+      {
+         ResetLoop( snd );
+         continue;
+      }
+
+      // setting the gain
+      if( cmd == Sound::kCommand[Sound::GAIN] )
+      {
+         SetGain( snd );
+         continue;
+      }
+
+      // setting the pitch
+      if( cmd == Sound::kCommand[Sound::PITCH] )
+      {
+         SetPitch( snd );
+         continue;
+      }
+
+      // rewind the sound
+      if( cmd == Sound::kCommand[Sound::REWIND] )
+      {
+         RewindSound( snd );
+         continue;
+      }
+   }
+}
+
+
+
+void
+AudioManager::Frame( const double deltaFrameTime )
+{
+   SRC_LST::iterator             iter(NULL);
+   std::stack<SRC_LST::iterator> stk;
+   ALuint                        src(0L);
+   ALint                         state(AL_STOPPED);
+   ALenum                        err(alGetError());
+   SoundObj*                     snd(NULL);
+
+
+   // signal any sources commanded to stop
+   while( mStopQueue.size() )
+   {
+      src   = mStopQueue.front();
+      mStopQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      alSourceStop( src );
+   }
+
+
+   // push the new sources onto the active list
+   while( mPlayQueue.size() )
+   {
+      src   = mPlayQueue.front();
+      mPlayQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      mActiveList.push_back( src );
+   }
+
+
+   // start any new sounds and
+   // remove any sounds that have stopped
+   for( iter = mActiveList.begin(); iter != mActiveList.end(); iter++ )
+   {
+      src   = *iter;
+      assert( alIsSource( src ) == AL_TRUE );
+
+      alGetSourcei( src, AL_SOURCE_STATE, &state );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         continue;
+      }
+
+      switch( state )
+      {
+         case  AL_PLAYING:
+         case  AL_PAUSED:
+            // don't need to do anything
+            break;
+
+         case  AL_INITIAL:
+            {
+               // start any new sources
+               alSourcePlay( src );
+
+               // send play message
+               snd   = mSourceMap[src];
+               if( snd )
+               {
+                  SendMessage( Sound::kCommand[Sound::PLAY], snd );
+               }
+            }
+            break;
+
+         case  AL_STOPPED:
+            {
+               // send stopped message
+               snd   = mSourceMap[src];
+               if( snd )
+               {
+                  SendMessage( Sound::kCommand[Sound::STOP], snd );
+               }
+
+               // save stopped sound iterator for later removal
+               stk.push( iter );
+            }
+            break;
+
+         default:
+            break;
+      }
+   }
+
+
+   // signal any sources commanded to pause
+   while( mPauseQueue.size() )
+   {
+      src   = mPauseQueue.front();
+      mPauseQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      alGetSourcei( src, AL_SOURCE_STATE, &state );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         continue;
+      }
+
+      switch( state )
+      {
+         case  AL_PLAYING:
+            {
+               alSourcePause( src );
+
+               // send pause message
+               snd   = mSourceMap[src];
+               if( snd )
+               {
+                  SendMessage( Sound::kCommand[Sound::PAUSE], snd );
+               }
+            }
+            break;
+
+         case  AL_PAUSED:
+            {
+               alSourcePlay( src );
+
+               // send pause message
+               snd   = mSourceMap[src];
+               if( snd )
+               {
+                  SendMessage( Sound::kCommand[Sound::PLAY], snd );
+               }
+            }
+            break;
+
+         default:
+            break;
+      }
+   }
+
+
+   // signal any sources commanded to rewind
+   while( mRewindQueue.size() )
+   {
+      src   = mRewindQueue.front();
+      mRewindQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      alSourceRewind( src );
+
+      // send rewind message
+      snd   = mSourceMap[src];
+      if( snd )
+      {
+         SendMessage( Sound::kCommand[Sound::REWIND], snd );
+      }
+   }
+
+
+   // remove stopped sounds from the active list
+   while( stk.size() )
+   {
+      iter  = stk.top();
+      stk.pop();
+
+      src   = *iter;
+      mStopQueue.push( src );
+      mActiveList.erase( iter );
+   }
+}
+
+
+
+void
+AudioManager::PostFrame( const double deltaFrameTime )
+{
+   SoundObj*   snd(NULL);
+   ALuint      src(0L);
+   ALenum      err(alGetError());
+
+   // for all sounds that have stopped
+   while( mStopQueue.size() )
+   {
+      // free the source for later use
+      src   = mStopQueue.front();
+      mStopQueue.pop();
+
+      snd   = mSourceMap[src];
+      snd->RemoveSender( this );
+      snd->RemoveSender( dtCore::System::GetSystem() );
+
+      FreeSource( snd );
+   }
+}
+
+
+
+bool
+AudioManager::Configured( void ) const
+{
+   return   mSource != NULL;
+}
+
+
+
+bool
+AudioManager::ConfigSources( unsigned int num )
+{
+   if( num == 0L )
+      return   false;
+
+   mNumSources = ALsizei(num);
+
+   mSource  = new ALuint[mNumSources];
+   assert( mSource );
+
+   ALenum   error(alGetError());
+   alGenSources( mNumSources, mSource );
+   if( ( error = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alGenSources Error %d", error );
+      if( mSource )
+      {
+         delete   mSource;
+         mSource  = NULL;
+      }
+      return   false;
+   }
+
+
+   for( unsigned int ii(0L); ii < mNumSources; ii++ )
+   {
+      assert( alIsSource( mSource[ii] ) == AL_TRUE );
+      mAvailable.push( mSource[ii] );
+   }
+
+   return   true;
+}
+
+
+
+bool
+AudioManager::ConfigEAX( bool eax )
+{
+   if( ! eax )
+      return   false;
+
+   // copy strings because
+   // funcs don't take const char
+   ALubyte  buf[32L];
+   memset( buf, 0L, 32L );
+   memcpy( buf, _EaxVer, MIN( strlen( _EaxVer ), size_t(32L) ) );
+
+
+   // check for EAX support
+   if( alIsExtensionPresent( buf ) == AL_FALSE )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: %s is not available", _EaxVer );
+      return   false;
+   }
+
+
+   // get the eax-set function
+   memset( buf, 0L, 32L );
+   memcpy( buf, _EaxSet, MIN( strlen( _EaxSet ), size_t(32L) ) );
+
+   mEAXSet  = alGetProcAddress( buf );
+   if( mEAXSet == NULL )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: %s is not available", _EaxVer );
+      return   false;
+   }
+
+
+   // get the eax-get function
+   memset( buf, 0L, 32L );
+   memcpy( buf, _EaxGet, MIN( strlen( _EaxGet ), size_t(32L) ) );
+
+   mEAXGet  = alGetProcAddress( buf );
+   if( mEAXGet == NULL)
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: %s is not available", _EaxVer );
+      mEAXSet  = NULL;
+      return   false;
+   }
+
+   return   true;
+}
+
+
+
+void
+AudioManager::LoadSound( SoundObj* snd )
+{
+   assert( snd );
+
+   const char* file(static_cast<Sound*>(snd)->GetFilename());
+
+   if( file == NULL )
+      return;
+
+   LoadWaveFile( file );
+
+   BufferData* bd = mBufferMap[file];
+
+   if( bd == NULL )
+      return;
+
+   bd->use++;
+   snd->Buffer( bd->buf );
+}
+
+
+
+void
+AudioManager::UnloadSound( SoundObj* snd )
+{
+   assert( snd );
+
+   const char* file(static_cast<Sound*>(snd)->GetFilename());
+
+   if( file == NULL )
+      return;
+
+   snd->Buffer( 0L );
+
+   BufferData* bd = mBufferMap[file];
+
+   if( bd == NULL )
+      return;
+
+   bd->use--;
+
+   UnloadWaveFile( file );
+}
+
+
+
+void
+AudioManager::PlaySound( SoundObj* snd )
+{
+   ALuint   buf(0L);
+   ALuint   src(0L);
+   ALenum   err(alGetError());
+
+   assert( snd );
+
+   // first check if sound has a buffer
+   buf   = snd->Buffer();
+   if( alIsBuffer( buf ) == AL_FALSE )
+      // no buffer, bail
+      return;
+
+   // then check if sound has a source
+   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // no source, gotta get one
+      if( ! GetSource( snd ) )
+      {
+         // no source available
+         dtCore::Notify( dtCore::WARN, "AudioManager: play attempt w/o available sources" );
+         dtCore::Notify( dtCore::WARN, "AudioManager: try increasing the number of sources at config time" );
+         return;
+      }
+
+      src   = snd->Source();
+   }
+   else
+   {
+      // already has buffer and source
+      // could be paused (or playing)
+      ALint state(AL_STOPPED);
+      alGetSourcei( src, AL_SOURCE_STATE, &state );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         return;
+      }
+
+      switch( state )
+      {
+         case  AL_PAUSED:
+            mPauseQueue.push( src );
+            // no break, run to next case
+
+         case  AL_PLAYING:
+            return;
+            break;
+
+         default:
+            // either initialized or stopped
+            // continue setting the buffer and playing
+            break;
+      }
+   }
+
+   alSourcei( src, AL_BUFFER, buf );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_BUFFER) error %d", err );
+      return;
+   }
+
+   alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOPING) error %d", err );
+   }
+
+   alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_GAIN) error %d", err );
+   }
+
+   alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_PITCH) error %d", err );
+   }
+
+   snd->AddSender( this );
+   snd->AddSender( dtCore::System::GetSystem() );
+   mPlayQueue.push( snd->Source() );
+}
+
+
+
+void
+AudioManager::PauseSound( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( src == 0L )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   mPauseQueue.push( src );
+}
+
+
+
+void
+AudioManager::StopSound( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   mStopQueue.push( src );
+}
+
+
+
+void
+AudioManager::RewindSound( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   mRewindQueue.push( src );
+}
+
+
+
+void
+AudioManager::SetLoop( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing
+      // set flag and bail
+      snd->SetState( Sound::LOOP );
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcei( src, AL_LOOPING, AL_TRUE );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOP) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::LOOP], snd );
+}
+
+
+
+void
+AudioManager::ResetLoop( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing
+      // set flag and bail
+      snd->ResetState( Sound::LOOP );
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcei( src, AL_LOOPING, AL_FALSE );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOP) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::UNLOOP], snd );
+}
+
+
+
+void
+AudioManager::SetGain( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_GAIN) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::GAIN], snd );
+}
+
+
+
+void
+AudioManager::SetPitch( SoundObj* snd )
+{
+   assert( snd );
+
+   ALuint   src   = snd->Source();
+   if( alIsSource( src ) == AL_FALSE )
+   {
+      // sound is not playing, bail
+      return;
+   }
+
+   ALenum   err(alGetError());
+   alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
+   if( ( err = alGetError() ) != AL_NO_ERROR )
+   {
+      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_PITCH) error %d", err );
+      return;
+   }
+
+   SendMessage( Sound::kCommand[Sound::PITCH], snd );
+}
+
+
+
+bool
+AudioManager::GetSource( SoundObj* snd )
+{
+   ALuint   src(0L);
+
+   assert( snd );
+
+   if( mAvailable.size() )
+   {
+      src   = mAvailable.front();
+      mAvailable.pop();
+   }
+
+   snd->Source( src );
+
+   if( alIsSource( src ) == AL_FALSE )
+      return   false;
+
+   mSourceMap[src]   = snd;
+   return   true;
+}
+
+
+
+void
+AudioManager::FreeSource( SoundObj* snd )
+{
+   if( snd == NULL )
+      return;
+
+   ALuint   src(snd->Source());
+   snd->Source( 0L );
+
+   if( alIsSource( src ) == AL_FALSE )
+      return;
+
+   alSourceStop( src );
+   alSourceRewind( src );
+   alSourcei( src, AL_LOOPING, AL_FALSE );
+   alSourcei( src, AL_BUFFER, AL_NONE );
+   mSourceMap[src]   = NULL;
+   mAvailable.push( src );
+}
+
+
+
+// public member functions
+// default consructor
+AudioManager::SoundObj::SoundObj()
+:  Sound(),
+   mBuffer(0L),
+   mSource(0L),
+   mState(BIT(STOP))
+{
+}
+
+
+
+// desructor
+AudioManager::SoundObj::~SoundObj()
+{
+   Clear();
+}
+
+
+
+void
+AudioManager::SoundObj::OnMessage( MessageData* data )
+{
+   assert( data );
+
+   Sound::OnMessage( data );
+
+   if( data->message == "frame" )
+   {
+      if( alIsSource( mSource ) == AL_FALSE )
+         // no source, don't bother with positions
+         return;
+
+      ALenum            err(alGetError());
+      dtCore::Transform transform;
+      sgMat4            matrix;
+      sgVec3            position    = { 0.0f, 0.0f, 0.0f };
+      sgVec3            direction   = { 1.0f, 0.0f, 0.0f };
+
+      GetTransform( &transform );
+      transform.GetTranslation( position );
+      transform.Get( matrix );
+
+      sgXformVec3( direction, matrix );
+
+      alSourcefv( mSource, AL_POSITION, position );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcefv(AL_POSITION) error %d", err );
+      }
+
+      alSourcefv( mSource, AL_DIRECTION, direction );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcefv(AL_DIRECTION) error %d", err );
+      }
+
+      return;
+   }
+
+
+   if( data->userData != this )
+      return;
+
+   if( data->message == kCommand[PLAY] )
+   {
+      SetState( PLAY );
+      ResetState( PAUSE );
+      ResetState( STOP );
+      return;
+   }
+
+   if( data->message == kCommand[PAUSE] )
+   {
+      ResetState( PLAY );
+      SetState( PAUSE );
+      ResetState( STOP );
+      return;
+   }
+
+   if( data->message == kCommand[STOP] )
+   {
+      ResetState( PLAY );
+      ResetState( PAUSE );
+      SetState( STOP );
+      return;
+   }
+
+   if( data->message == kCommand[LOOP] )
+   {
+      SetState( LOOP );
+      return;
+   }
+
+   if( data->message == kCommand[UNLOOP] )
+   {
+      ResetState( LOOP );
+      return;
+   }
+}
+
+
+
+bool
+AudioManager::SoundObj::IsPlaying( void ) const
+{
+   return   bool(mState & BIT(PLAY));
+}
+
+
+
+bool
+AudioManager::SoundObj::IsPaused( void ) const
+{
+   return   bool(mState & BIT(PAUSE));
+}
+
+
+
+bool
+AudioManager::SoundObj::IsStopped( void ) const
+{
+   return   bool(mState & BIT(STOP));
+}
+
+
+
+bool
+AudioManager::SoundObj::IsLooping( void ) const
+{
+   return   bool(mState & BIT(LOOP));
+}
+
+
+
+void
+AudioManager::SoundObj::Command( const char* cmd )
+{
+   if( cmd == NULL )
+      return;
+
+   mCommand.push( cmd );
+}
+
+
+
+const char*
+AudioManager::SoundObj::Command( void )
+{
+   if( mCommand.empty() )
+      return   NULL;
+
+   const char* cmd   = mCommand.front();
+   mCommand.pop();
+
+   return   cmd;
+}
+
+
+
+void
+AudioManager::SoundObj::Buffer( ALuint buffer )
+{
+   mBuffer  = buffer;
+}
+
+
+
+ALuint
+AudioManager::SoundObj::Buffer( void )
+{
+   return   mBuffer;
+}
+
+
+
+void
+AudioManager::SoundObj::Source( ALuint source )
+{
+   mSource  = source;
+}
+
+
+
+ALuint
+AudioManager::SoundObj::Source( void )
+{
+   return   mSource;
+}
+
+
+
+void
+AudioManager::SoundObj::SetState( unsigned int flag )
+{
+   mState   |= BIT( flag );
+}
+
+
+
+void
+AudioManager::SoundObj::ResetState( unsigned int flag )
+{
+   mState   &= ~BIT( flag );
+}
+
+
+
+void
+AudioManager::SoundObj::Clear( void )
+{
+   mFilename   = "";
+   mBuffer     = 0L;
+   mSource     = 0L;
+   while( mCommand.size() )
+   {
+      mCommand.pop();
+   }
+}
+
+
+
+// public member functions
+// default consructor
+AudioManager::ListenerObj::ListenerObj()
+:  Listener()
+{
+   Clear();
+   AddSender( dtCore::System::GetSystem() );
+}
+
+
+
+AudioManager::ListenerObj::~ListenerObj()
+{
+   RemoveSender( dtCore::System::GetSystem() );
+   Clear();
+}
+
+
+
+void
+AudioManager::ListenerObj::SetTransform( dtCore::Transform* transform )
+{
+   // explicitly setting transform
+   // removes from listener from tree
+   Transformable* parent(GetParent());
+   if( parent )
+   {
+      parent->RemoveChild( this );
+   }
+
+   Transformable::SetTransform( transform );
+}
+
+
+
+void
+AudioManager::ListenerObj::GetTransform( dtCore::Transform* transform )
+{
+   Transformable::GetTransform( transform );
+}
+
+
+
+void
+AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
+{
+   mVelo[0L]   = velocity[0L];
+   mVelo[1L]   = velocity[1L];
+   mVelo[2L]   = velocity[2L];
+}
+
+
+
+void
+AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
+{
+   velocity[0L]   = mVelo[0L];
+   velocity[1L]   = mVelo[1L];
+   velocity[2L]   = mVelo[2L];
+}
+
+
+
+void
+AudioManager::ListenerObj::SetGain( float gain )
+{
+   // force gain to range from zero to one
+   mGain = static_cast<ALfloat>(CLAMP( gain, 0.0f, 1.0f ));
+}
+
+
+
+float
+AudioManager::ListenerObj::GetGain( void )   const
+{
+   return   static_cast<float>(mGain);
+}
+
+
+
+void
+AudioManager::ListenerObj::OnMessage( MessageData* data )
+{
+   assert( data );
+
+   if( data->message == "frame" )
+   {
+      dtCore::Transform transform;
+      sgMat4            matrix;
+
+      union
+      {
+         ALfloat     or[6L];
+         struct
+         {
+            ALfloat  at[3L];
+            ALfloat  up[3L];
+         };
+      }  orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+
+      ALfloat           pos[3L]  = { 0.0f, 0.0f, 0.0f };
+
+      GetTransform( &transform );
+      transform.GetTranslation( pos );
+      transform.Get( matrix );
+      sgXformVec3( orient.at, matrix );
+      sgXformVec3( orient.up, matrix );
+
+      alListenerfv( AL_POSITION, pos );
+      alListenerfv( AL_ORIENTATION, orient.or );
+
+      alListenerfv( AL_VELOCITY, mVelo );
+      alListenerf( AL_GAIN, mGain );
+   }
+}
+
+
+
+void
+AudioManager::ListenerObj::Clear( void )
+{
+   Transformable* parent(GetParent());
+   if( parent )
+   {
+      parent->RemoveChild( this );
+   }
+
+   union
+   {
+      ALfloat     or[6L];
+      struct
+      {
+         ALfloat  at[3L];
+         ALfloat  up[3L];
+      };
+   }  orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+
+   ALfloat  pos[3L]  = { 0.0f, 0.0f, 0.0f };
+
+   mGain       = 1.0f;
+   mVelo[0L]   =
+   mVelo[1L]   =
+   mVelo[2L]   = 0.0f;
+
+   alListenerf( AL_GAIN, mGain );
+   alListenerfv( AL_VELOCITY, mVelo );
+   alListenerfv( AL_POSITION, pos );
+   alListenerfv( AL_ORIENTATION, orient.or );
+}
