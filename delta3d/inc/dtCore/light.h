@@ -74,8 +74,7 @@ namespace dtCore
       inline bool GetEnabled()
       { return mEnabled; }
       
-      inline void SetLightModel( osg::LightModel* model )
-      { mLightSource->getOrCreateStateSet()->setAttributeAndModes( model, osg::StateAttribute::ON ); }
+      void SetLightModel( osg::LightModel* model, bool enabled );
 
       inline void SetNumber( const int number )
       { mLightSource->getLight()->setLightNum( number ); }
