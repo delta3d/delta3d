@@ -154,7 +154,7 @@ class TestTerrainApplication : public Application
            mWireframe(false),
            mTimeOfDay(-1.0f)
       {
-         SetDataFilePathList("../../data/;./data/;" + GetDeltaDataPathList());
+//         SetDataFilePathList("../../data/;./data/;" + GetDeltaDataPathList());
 
 		 weather = new dtABC::Weather();
 		 mEnvironment = weather->GetEnvironment();
