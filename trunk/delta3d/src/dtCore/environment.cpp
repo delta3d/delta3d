@@ -5,6 +5,8 @@
 #include "dtCore/ephemeris.h"
 #include "dtCore/physical.h"
 
+#include "dtCore/deprecationmgr.h"
+
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
@@ -664,4 +666,20 @@ void dtCore::Environment::UpdateShaders()
 void dtCore::Environment::SetRefLatLong(sgVec2 latLong)
 {
    sgCopyVec2(mRefLatLong, latLong);
+}
+
+void Environment::AddDrawable( DeltaDrawable *drawable)
+{
+   DEPRECATE("void Environment::AddDrawable( DeltaDrawable *drawable)",
+             "void Environment::AddChild( DeltaDrawable *child )")
+
+   AddChild(drawable);
+}
+
+void Environment::RemoveDrawable( DeltaDrawable *drawable)
+{
+   DEPRECATE("void Environment::RemoveDrawable( DeltaDrawable *drawable)",
+             "void Environment::RemoveChild( DeltaDrawable *child )")
+
+   RemoveChild(drawable);
 }
