@@ -44,7 +44,7 @@ namespace dtCore
          LOCAL  = 1
       };
 
-      Light( int number, LightingMode mode, osg::LightSource* lightSource );
+      Light( int number, LightingMode mode, osg::LightSource* lightSource = NULL );
       virtual ~Light() = 0;
 
       virtual osg::Node* GetOSGNode() { return mLightSource.get(); } 
