@@ -81,12 +81,7 @@ class ParticleVisitor : public osg::NodeVisitor
 public:
 
    ParticleVisitor():
-      vrc(NULL),
-      rs(NULL),
-      emitter(NULL),
-      osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
-      {
-      }
+      osg::NodeVisitor(TRAVERSE_ALL_CHILDREN) {}
 
       virtual void apply(osg::Node& node)
       {
