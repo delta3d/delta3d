@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
 
    if (!filename.empty())
    {
-      drawable->LoadGUIFile(filename);
+      std::string foundPath = osgDB::findDataFile(filename);
+      drawable->LoadGUIFile(foundPath);
    }
    else
    {
@@ -90,8 +91,8 @@ int main(int argc, char* argv[])
       ///display some text
       CUI_TextBox *title = new CUI_TextBox();
       title->Move( 0.2, 0.5, 0.8, 0.7 );
-      title->SetSize(4, 1);
-      title->SetText( "P-51" );
+      title->SetSize(7, 1);
+      title->SetText( "Delta3D" );
       title->SetFont(drawable->GetFont("raster8") );
       mainF->AddChild( title );
       drawable->AddFrame( title );
