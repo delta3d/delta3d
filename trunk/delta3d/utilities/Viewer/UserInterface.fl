@@ -32,10 +32,10 @@ class UserInterface {open
   } {
     Fl_Window UIMainWindow {
       label Viewer open
-      private xywh {840 178 640 544} type Double resizable non_modal visible
+      private xywh {503 499 748 536} type Double resizable non_modal visible
     } {
       Fl_Menu_Bar UIMenu {open
-        private xywh {0 0 640 24}
+        private xywh {0 0 750 24}
       } {
         submenu UIMenuFile {
           label {&File}
@@ -78,7 +78,7 @@ class UserInterface {open
           }
         }
         submenu UIMenuView {
-          label {&View} open
+          label {&View}
           private xywh {0 0 100 20} deactivate
         } {
           submenu UIMenuViewDisplay {
@@ -107,7 +107,7 @@ class UserInterface {open
             }
           }
           submenu UIMenuViewScene {
-            label {&Scene} open
+            label {&Scene}
             private xywh {0 0 100 20}
           } {
             menuitem UIMenuViewScenePolygon {
@@ -156,12 +156,12 @@ class UserInterface {open
             }
             menuitem UIMenuViewSceneLighting {
               label {&Lighting}
-              callback {UIViewWindow->SetDisplay( ViewState::SCENELIGHT, UIMenuViewSceneLighting->value() != 0L );} selected
+              callback {UIViewWindow->SetDisplay( ViewState::SCENELIGHT, UIMenuViewSceneLighting->value() != 0L );}
               private xywh {10 10 100 20} type Toggle
             }
           }
           submenu UIMenuViewModel {
-            label {&Model} open
+            label {&Model}
             private xywh {0 0 100 20} divider
           } {
             menuitem UIMenuViewModelPolygon {
@@ -256,17 +256,94 @@ class UserInterface {open
           }
         }
       }
-      Fl_Box UIViewWindow {
-        label ViewWindow
-        private xywh {0 24 640 480} resizable
-        code0 {\#include "viewwindow.h"}
-        class ViewWindow
-      }
       Fl_Choice UIFileList {
         label {File:}
-        private xywh {36 512 600 24} down_box BORDER_BOX
+        private xywh {36 512 714 23} down_box BORDER_BOX
         class ChoicePopUp
       } {}
+      Fl_Tile {} {open
+        xywh {0 23 755 487}
+      } {
+        Fl_Group ToolBox {
+          xywh {645 23 110 487} box THIN_DOWN_BOX
+        } {
+          Fl_Button TextureButton {
+            label T
+            callback {ToggleTextureScene();}
+            tooltip {Toggle Texture} xywh {655 60 25 25}
+          }
+          Fl_Button LightingButton {
+            label L
+            callback {ToggleLightingScene();}
+            tooltip {Toggle Lighting} xywh {655 87 25 25}
+          }
+          Fl_Button CompassButton {
+            label C
+            callback {ToggleCompass();}
+            tooltip {Toggle Compass} xywh {655 245 25 25}
+          }
+          Fl_Button {} {
+            label XY
+            callback {ToggleXYPlane();}
+            tooltip {Toggle XY Grid} xywh {655 150 25 25}
+          }
+          Fl_Button {} {
+            label YZ
+            callback {ToggleYZPlane();}
+            tooltip {Toggle YZ grid} xywh {655 177 25 25}
+          }
+          Fl_Button {} {
+            label ZX
+            callback {ToggleZXPlane();}
+            tooltip {Toggle ZX grid} xywh {655 205 25 25}
+          }
+          Fl_Button WireframeButton {
+            label W
+            callback {ToggleWireframeScene();}
+            tooltip {Toggle Wireframe/scribe} xywh {655 115 25 25}
+          }
+          Fl_Button {} {
+            label Fly
+            callback {UIViewWindow->SetMotion( ViewState::FLY );}
+            tooltip {Toggle XY Grid} xywh {655 290 40 25}
+          }
+          Fl_Button {} {
+            label Orb
+            callback {UIViewWindow->SetMotion( ViewState::ORBIT );}
+            tooltip {Toggle YZ grid} xywh {655 317 40 25}
+          }
+          Fl_Button {} {
+            label UFO
+            callback {UIViewWindow->SetMotion( ViewState::UFO );}
+            tooltip {Toggle ZX grid} xywh {655 345 40 25}
+          }
+          Fl_Button {} {
+            label Walk
+            callback {UIViewWindow->SetMotion( ViewState::WALK );}
+            tooltip {Toggle ZX grid} xywh {655 370 40 25}
+          }
+          Fl_Button {} {
+            label Reset
+            callback {ResetCam();}
+            tooltip {Reset the Camera} xywh {655 395 40 25}
+          }
+        }
+        Fl_Group ViewGroup {
+          xywh {0 23 645 487} box DOWN_BOX
+        } {
+          Fl_Box UIViewWindow {
+            label ViewWindow
+            private xywh {0 25 645 485} resizable
+            code0 {\#include "viewwindow.h"}
+            class ViewWindow
+          }
+        }
+        Fl_Box {} {selected
+          xywh {645 265 105 30} hide
+          code0 {Fl_Tile *t = (Fl_Tile*)o->parent();}
+          code1 {t->resizable(o);}
+        }
+      }
     }
     code {UIViewWindow->Container( this );} {}
   }
@@ -277,8 +354,7 @@ class UserInterface {open
   Function {Quit()} {} {
     code {UIMainWindow->hide();} {}
   }
-  Function {LoadFile( std::string pathfile )} {open
-  } {
+  Function {LoadFile( std::string pathfile )} {} {
     code {if( pathfile == "" )
 		return;
 
@@ -296,8 +372,7 @@ class UserInterface {open
 		}
 	}} {}
   }
-  Function {SaveFileAs( std::string pathfile )} {open
-  } {
+  Function {SaveFileAs( std::string pathfile )} {} {
     code {if( pathfile == "" )
 		return;
 

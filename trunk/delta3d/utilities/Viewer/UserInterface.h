@@ -12,7 +12,11 @@
 class ChoicePopUp;   // forward reference
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Tile.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Button.H>
 #include "viewwindow.h"
+#include <FL/Fl_Box.H>
 
 class UserInterface {
   int mArgc;
@@ -102,8 +106,48 @@ private:
   static Fl_Menu_Item *UIMenuMotionJoy2;
   inline void cb_UIMenuMotionJoy2_i(Fl_Menu_*, void*);
   static void cb_UIMenuMotionJoy2(Fl_Menu_*, void*);
-  ViewWindow *UIViewWindow;
   ChoicePopUp *UIFileList;
+public:
+  Fl_Group *ToolBox;
+  Fl_Button *TextureButton;
+private:
+  inline void cb_TextureButton_i(Fl_Button*, void*);
+  static void cb_TextureButton(Fl_Button*, void*);
+public:
+  Fl_Button *LightingButton;
+private:
+  inline void cb_LightingButton_i(Fl_Button*, void*);
+  static void cb_LightingButton(Fl_Button*, void*);
+public:
+  Fl_Button *CompassButton;
+private:
+  inline void cb_CompassButton_i(Fl_Button*, void*);
+  static void cb_CompassButton(Fl_Button*, void*);
+  inline void cb_XY_i(Fl_Button*, void*);
+  static void cb_XY(Fl_Button*, void*);
+  inline void cb_YZ_i(Fl_Button*, void*);
+  static void cb_YZ(Fl_Button*, void*);
+  inline void cb_ZX_i(Fl_Button*, void*);
+  static void cb_ZX(Fl_Button*, void*);
+public:
+  Fl_Button *WireframeButton;
+private:
+  inline void cb_WireframeButton_i(Fl_Button*, void*);
+  static void cb_WireframeButton(Fl_Button*, void*);
+  inline void cb_Fly_i(Fl_Button*, void*);
+  static void cb_Fly(Fl_Button*, void*);
+  inline void cb_Orb_i(Fl_Button*, void*);
+  static void cb_Orb(Fl_Button*, void*);
+  inline void cb_UFO_i(Fl_Button*, void*);
+  static void cb_UFO(Fl_Button*, void*);
+  inline void cb_Walk_i(Fl_Button*, void*);
+  static void cb_Walk(Fl_Button*, void*);
+  inline void cb_Reset_i(Fl_Button*, void*);
+  static void cb_Reset(Fl_Button*, void*);
+public:
+  Fl_Group *ViewGroup;
+private:
+  ViewWindow *UIViewWindow;
 public:
   void Show();
   void Quit();
