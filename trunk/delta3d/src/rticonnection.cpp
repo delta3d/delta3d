@@ -94,11 +94,16 @@ RTIConnection::RTIConnection(string name)
 
    other.sin_family = AF_INET;
    other.sin_port = 8192;
+
+   #ifdef _WIN32
    other.sin_addr.S_un.S_addr = 0x7F000001;
+   #else
+   other.sin_addr.s_addr = 0x7F000001;
+   #endif
    
    if(connect(some_socket, (sockaddr*)&other, sizeof(other)) == 0)
    {
-      if(getsockname(some_socket, (sockaddr*)&me, &len) == 0)
+           if(getsockname(some_socket, (sockaddr*)&me, (socklen_t*)&len) == 0)
       {
          #ifdef _WIN32
          mLocalIPAddress = me.sin_addr.S_un.S_addr;
@@ -114,7 +119,7 @@ RTIConnection::RTIConnection(string name)
          #ifdef _WIN32
          mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
          #else
-         //mSiteIdentifier = ??? 
+         memcpy( &mSiteIdentifier, &me.sin_addr, sizeof(mSiteIdentifier));
          #endif
       }
    }
