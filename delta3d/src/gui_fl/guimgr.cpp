@@ -10,6 +10,7 @@
 #include "dtCore/clouddome.h"
 #include "dtCore/system.h"
 #include "dtCore/infiniteterrain.h"
+#include "dtCore/light.h"
 #include "dtABC/dtabc.h"
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
@@ -38,8 +39,7 @@ void UserInterface::SelectInstance (void)
    if (IS_A(b, Base*))
    {
       BaseName->value( b->GetName().c_str() );
-      std::string name = typeid(b).name();
-      InstanceClassName->label( name.c_str() ); 
+      InstanceClassName->label( "dtCore::Base" ); 
    }
 
 
@@ -466,11 +466,92 @@ void UserInterface::SelectInstance (void)
          }
       }
 
-
-
       WeatherGroup->show();
    }
    else WeatherGroup->hide();
+
+   if (IS_A(b, Light*))
+   {
+      Light *l = (Light*)b;
+
+      InstanceClassName->label( "dtCore::Light" );
+
+      float x,y,z;
+      l->GetPosition(&x, &y, &z);
+      LightX->value(x);
+      LightY->value(y);
+      LightZ->value(z);
+
+      if (l->GetLightingMode()==Light::GLOBAL)
+      {
+         LightModeGlobal->value(1);
+         LightModeLocal->value(0);
+      }
+      else 
+      {
+         LightModeLocal->value(1);
+         LightModeGlobal->value(0);
+      }
+
+      LightNumberInput->value( l->GetNumber() );
+
+      float r,g,b,a;
+      l->GetAmbient(&r, &g, &b, &a);
+      LightAmbRed->value(r);
+      LightAmbGreen->value(g);
+      LightAmbBlue->value(b);
+
+      Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                    int(g*(FL_NUM_GREEN-1)),
+                                    int(b*(FL_NUM_BLUE-1)) );
+
+      LightAmbColorLoadButton->color(fc);
+      LightAmbColorLoadButton->redraw();
+
+
+      l->GetSpecular(&r, &g, &b, &a);
+      LightSpecRed->value(r);
+      LightSpecGreen->value(g);
+      LightSpecBlue->value(b);
+
+      fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
+
+      LightSpecColorLoadButton->color(fc);
+      LightSpecColorLoadButton->redraw();
+
+
+      l->GetDiffuse(&r, &g, &b, &a);
+      LightDifRed->value(r);
+      LightDifGreen->value(g);
+      LightDifBlue->value(b);
+
+      fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                    int(g*(FL_NUM_GREEN-1)),
+                                    int(b*(FL_NUM_BLUE-1)) );
+
+      LightDifColorLoadButton->color(fc);
+      LightDifColorLoadButton->redraw();
+
+      l->GetDirection(&x, &y, &z);
+      LightDirX->value(x);
+      LightDirY->value(y);
+      LightDirZ->value(z);
+
+      float con = l->GetConstantAttenuation();
+      float quad = l->GetQuadraticAttenuation();
+      float lin = l->GetLinearAttenuation();
+      LightConstAtt->value(con);
+      LightLinAtt->value(lin);
+      LightQuadAtt->value(quad);
+
+      LightGroup->show();
+   }
+   else
+   {
+      LightGroup->hide();
+   }
 
 }
 
@@ -1319,4 +1400,196 @@ void UserInterface::WeatherRateOfChangeCB(Fl_Value_Slider *o)
    Weather *w = (Weather*)GetSelectedInstance(this);
 
    w->SetRateOfChange( o->value() );
+}
+
+void UserInterface::LightPosCB(Fl_Value_Input*)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   float x,y,z;
+   x = LightX->value();
+   y = LightY->value();
+   z = LightZ->value();
+   
+   l->SetPosition(x,y,z);
+}
+
+void UserInterface::LightModeCB( Fl_Round_Button *)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   if (LightModeGlobal->value())
+   {
+      l->SetLightingMode(Light::GLOBAL);
+   }
+   else if (LightModeLocal->value())
+   {
+      l->SetLightingMode(Light::LOCAL);
+   }
+}
+
+void UserInterface::LightNumCB(Fl_Value_Input *o)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   l->SetNumber( (int)LightNumberInput->value() );
+}
+
+void UserInterface::LightAmbColorCB(Fl_Value_Input*)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   float r,g,b;
+   r = LightAmbRed->value();
+   g = LightAmbGreen->value();
+   b = LightAmbBlue->value();
+
+   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                              int(g*(FL_NUM_GREEN-1)),
+                              int(b*(FL_NUM_BLUE-1)) );
+
+   LightAmbColorLoadButton->color(fc);
+   LightAmbColorLoadButton->redraw();
+
+   l->SetAmbient(r,g,b, 1.f);
+}
+
+void UserInterface::LightDifColorCB(Fl_Value_Input*)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   float r,g,b;
+   r = LightDifRed->value();
+   g = LightDifGreen->value();
+   b = LightDifBlue->value();
+
+   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
+
+   LightDifColorLoadButton->color(fc);
+   LightDifColorLoadButton->redraw();
+
+   l->SetDiffuse(r,g,b, 1.f);
+}
+
+void UserInterface::LightSpecColorCB(Fl_Value_Input*)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   float r,g,b;
+   r = LightSpecRed->value();
+   g = LightSpecGreen->value();
+   b = LightSpecBlue->value();
+
+   Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
+
+   LightSpecColorLoadButton->color(fc);
+   LightSpecColorLoadButton->redraw();
+
+   l->SetSpecular(r,g,b, 1.);
+}
+
+
+void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   double r = LightAmbRed->value();
+   double g = LightAmbGreen->value();
+   double b = LightAmbBlue->value();
+
+   fl_color_chooser("Ambient Color", r, g, b);
+
+   LightAmbRed->value(r);
+   LightAmbGreen->value(g);
+   LightAmbBlue->value(b);
+
+   Fl_Color sc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
+
+   LightAmbColorLoadButton->color(sc);
+
+   l->SetAmbient(r,g,b, 1.f);
+}
+
+
+void UserInterface::LightDifColorBrowserCB(Fl_Button *)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   double r = LightDifRed->value();
+   double g = LightDifGreen->value();
+   double b = LightDifBlue->value();
+
+   fl_color_chooser("Diffuse Color", r, g, b);
+
+   LightDifRed->value(r);
+   LightDifGreen->value(g);
+   LightDifBlue->value(b);
+
+   Fl_Color sc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
+
+   LightDifColorLoadButton->color(sc);
+
+   l->SetDiffuse(r,g,b, 1.f);
+}
+
+
+void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   double r = LightSpecRed->value();
+   double g = LightSpecGreen->value();
+   double b = LightSpecBlue->value();
+
+   fl_color_chooser("Specular Color", r, g, b);
+
+   LightSpecRed->value(r);
+   LightSpecGreen->value(g);
+   LightSpecBlue->value(b);
+
+   Fl_Color sc = fl_color_cube( int(r*(FL_NUM_RED-1)),
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
+
+   LightSpecColorLoadButton->color(sc);
+
+   l->SetSpecular(r,g,b, 1.f);
+}
+
+void UserInterface::LightDirCB(Fl_Value_Input *)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   float x,y,z;
+   x = LightDirX->value();
+   y = LightDirY->value();
+   z = LightDirZ->value();
+   
+   l->SetDirection(x,y,z);
+}
+
+void UserInterface::LightAttCB(Fl_Value_Input*)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+
+   l->SetLinearAttenuation(LightLinAtt->value());
+   l->SetConstantAttenuation(LightQuadAtt->value());
+   l->SetQuadraticAttenuation(LightConstAtt->value());
+}
+
+void UserInterface::LightSpotCB(Fl_Value_Input*)
+{
+   Light *l = (Light*)GetSelectedInstance(this);
+   
+   l->SetSpotCutoff( LightCutoffInput->value() );
+   l->SetSpotExponent( LightExponentInput->value() );
+   
 }
