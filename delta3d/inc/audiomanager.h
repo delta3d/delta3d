@@ -25,7 +25,7 @@ namespace   dtAudio
 {
    // dtAudio::Sound should really be broken out
    // into it's own file, replacing dtCore::Sound
-   class Sound :  public   dtCore::Transformable
+   class DT_EXPORT Sound :  public   dtCore::Transformable
    {
         DECLARE_MANAGEMENT_LAYER(Sound)
         
@@ -112,7 +112,7 @@ namespace   dtAudio
 
 
 
-   class AudioManager   :  public   dtCore::Base
+   class DT_EXPORT AudioManager   :  public   dtCore::Base
    {
         DECLARE_MANAGEMENT_LAYER(AudioManager)
         
@@ -283,7 +283,7 @@ namespace   dtAudio
 
 
 // configuration data
-struct   AudioConfigData
+struct DT_EXPORT AudioConfigData
 {
    unsigned int   numSources;
    bool           eax;

@@ -7,7 +7,7 @@
 
 namespace   dtAudio
 {
-   class Listener :  public   dtCore::Transformable
+   class DT_EXPORT Listener :  public   dtCore::Transformable
    {
         DECLARE_MANAGEMENT_LAYER(Listener)
         

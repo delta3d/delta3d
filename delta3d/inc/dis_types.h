@@ -6,6 +6,9 @@
 //////////////////////////////////////////////////////////////////////
 
 
+#include "export.h"
+
+
 namespace dtHLA
 {
    /**
@@ -55,7 +58,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM entity identifier.
     */
-   class EntityIdentifier
+   class DT_EXPORT EntityIdentifier
    {
       public:
 
@@ -157,7 +160,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM entity type.
     */
-   class EntityType
+   class DT_EXPORT EntityType
    {
       public:
 
@@ -363,7 +366,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM event identifier.
     */
-   class EventIdentifier
+   class DT_EXPORT EventIdentifier
    {
       public:
 
@@ -425,7 +428,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM world coordinate type.
     */
-   class WorldCoordinate
+   class DT_EXPORT WorldCoordinate
    {
       public:
 
@@ -526,7 +529,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM euler angle type.
     */
-   class EulerAngles
+   class DT_EXPORT EulerAngles
    {
       public:
 
@@ -627,7 +630,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM velocity vector type.
     */
-   class VelocityVector
+   class DT_EXPORT VelocityVector
    {
       public:
 
@@ -750,7 +753,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM articulated part.
     */
-   class ArticulatedParts
+   class DT_EXPORT ArticulatedParts
    {
       public:
       
@@ -850,7 +853,7 @@ namespace dtHLA
    /**
     * DIS/RPR-FOM attached part.
     */
-   class AttachedParts
+   class DT_EXPORT AttachedParts
    {
       public:
          
@@ -945,7 +948,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM parameter value.
     */
-   class ParameterValue
+   class DT_EXPORT ParameterValue
    {
       public:
       
@@ -1055,7 +1058,7 @@ namespace dtHLA
    /**
     * A DIS/RPR-FOM articulated parameter.
     */
-   class ArticulatedParameter
+   class DT_EXPORT ArticulatedParameter
    {
       public:
          

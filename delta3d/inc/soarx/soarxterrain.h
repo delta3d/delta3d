@@ -47,9 +47,9 @@ namespace dtSOARX
    /**
     * A piece of terrain using the SOARX library.
     */
-   class SOARXTerrain : public dtCore::Transformable,
-                        public dtCore::Drawable,
-                        public dtCore::Physical
+   class DT_EXPORT SOARXTerrain : public dtCore::Transformable,
+                                  public dtCore::Drawable,
+                                  public dtCore::Physical
    {
       friend class SOARXTerrainCallback;
       
@@ -170,7 +170,7 @@ namespace dtSOARX
          /**
           * Maps height values to colors with interpolation/extrapolation.
           */
-         struct HeightColorMap : public std::map<float, osg::Vec3>
+         struct DT_EXPORT HeightColorMap : public std::map<float, osg::Vec3>
          {
             /**
              * Gets the color corresponding to the specified height.

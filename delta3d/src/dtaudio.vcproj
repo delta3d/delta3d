@@ -13,14 +13,14 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="..\lib"
-			IntermediateDirectory=".\dtaudio_Debug"
-			ConfigurationType="4"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\inc;..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -32,9 +32,12 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/dtAudioD.lib"
-				AdditionalLibraryDirectories="..\lib;..\ext\lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="producerd.lib sg_d.lib ul_d.lib winmm.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib tinyxmld.lib osgutild.lib oded.lib opcode_d.lib osgtextd.lib opengl32.lib osgterraind.lib glgui_d.lib osggl2d.lib js_d.lib openal32.lib alut.lib isensed.lib"
+				OutputFile="..\bin\dtaudiod.dll"
+				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
+				IgnoreDefaultLibraryNames="libcmtd"
+				ImportLibrary="..\lib\dtaudiod.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -50,6 +53,8 @@
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
 			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
@@ -57,13 +62,13 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="..\lib"
-			IntermediateDirectory=".\dtaudio_Release"
-			ConfigurationType="4"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\inc;..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -73,9 +78,12 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/dtAudio.lib"
-				AdditionalLibraryDirectories="..\lib;..\ext\lib"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="producer.lib sg.lib ul.lib winmm.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib tinyxml.lib osgutil.lib ode.lib opcode.lib osgtext.lib opengl32.lib osgterrain.lib glgui.lib osggl2.lib js.lib openal32.lib alut.lib isense.lib dtcore.lib"
+				OutputFile="..\bin\dtaudio.dll"
+				AdditionalLibraryDirectories="..\lib; ..\ext\lib"
+				IgnoreDefaultLibraryNames="libcmt"
+				ImportLibrary="..\lib\dtaudio.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -90,6 +98,8 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
