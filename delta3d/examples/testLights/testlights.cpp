@@ -28,23 +28,17 @@ TestLightsApp::Config()
    terrain->LoadFile( "dirt/dirt.ive" );
    AddDrawable( terrain );
 
-   Object* barrel = new Object( "Barrel" );
-   barrel->LoadFile( "physics/sphere/happy_sphere.ive" );
+   Object* happy1 = new Object( "Happy1" );
+   happy1->LoadFile( "physics/sphere/happy_sphere.ive" );
    Transform t = Transform( -1.0f, 2.0f, 1.0f, 0.0f, 0.0f, 0.0f );
-   barrel->SetTransform(&t);
-   AddDrawable( barrel );
+   happy1->SetTransform(&t);
+   AddDrawable( happy1 );
 
-   Object* barrel2 = new Object( "Barrel2" );
-   barrel2->LoadFile( "physics/sphere/happy_sphere.ive" );
+   Object* happy2 = new Object( "Happy2" );
+   happy2->LoadFile( "physics/sphere/happy_sphere.ive" );
    t.Set( 25.0f, 18.0f, 1.0f, 0.0f, 0.0f, 0.0f );
-   barrel2->SetTransform( &t );
-   AddDrawable( barrel2 );
-
-   Object* barrel3 = new Object( "Barrel3" );
-   barrel3->LoadFile( "physics/sphere/happy_sphere.ive" );
-   t.Set( -3.0f, 3.0f, 1.0f, 0.0f, 0.0f, 0.0f );
-   barrel3->SetTransform( &t );
-   AddDrawable( barrel3 );
+   happy2->SetTransform( &t );
+   AddDrawable( happy2 );
 
    // create a spot light.
    Light* myLight1 = new Light( 1, "spotlight", Light::GLOBAL);
@@ -78,11 +72,9 @@ TestLightsApp::Config()
 
    OrbitMotionModel* omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
    omm->SetTarget(GetCamera());
-   //umm->SetMaximumFlySpeed( 10.0 );
-   //umm->SetMaximumTurnSpeed( 10.0 );
    omm->SetTarget(GetCamera());
    omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
-   //end remove
+
 }
 
 void
@@ -116,7 +108,6 @@ TestLightsApp::OnMessage( Base::MessageData *data )
 int
 main( int argc, const char* argv[] )
 {
-   // set the directory to find the sound files & config.xml
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
    TestLightsApp* app = new TestLightsApp("config.xml");
