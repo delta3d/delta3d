@@ -45,6 +45,8 @@ def email_results() :
 
 # Open the error log
 errorLog = open('BuildLog.txt', 'w')
+
+print 'Build started: ' + current_time() + ''
 errorLog.write('Build started: ' + current_time() + '\n\n')
 
 # detemine the OS
@@ -53,7 +55,7 @@ if sys.platform == 'win32' :
 elif sys.platform == 'linux2' or sys.platform == 'linux-i386' :
    OS = 'linux'
 else :
-   print 'Unsupported platform'
+   print 'Build Failed: Unsupported platform'
    errorLog.write('Build Failed: Unsupported platform: ' + sys.platform)
    errorLog.close()
    env.Exit(-1) 
@@ -68,21 +70,38 @@ opts.AddOptions(
 )
 
 if OS == 'windows' :
-    opts.AddOptions( PathOption('prefix', 'Directory to install under (Default: C:\Program Files)', 'C:\\Program Files' ) )
+    opts.AddOptions( PathOption('prefix', 'Directory to install under (Default: C:\Program Files\delta3d)', 'C:\\Program Files\delta3d' ) )
 else :
     opts.AddOptions( PathOption('prefix', 'Directory to install under (Default: /usr/local)', '/usr/local' ) )
+
+
 
 env = Environment(
     ENV = {
       'PATH'       : os.environ['PATH'],
-      'DELTA_ROOT' : os.environ['DELTA_ROOT'].split(':'),
-      'DELTA_INC'  : os.environ['DELTA_INC'].split(':'),
-      'DELTA_LIB'  : os.environ['DELTA_LIB'].split(':'),
-      'DELTA_DATA' : os.environ['DELTA_DATA'].split(':'),
-      'RTI_HOME'   : os.environ['RTI_HOME'],
-      'RTI_INCLUDE': os.environ['RTI_INCLUDE'],
-      'RTI_LIB'    : os.environ['RTI_LIB']
     }, options = opts)
+
+deltaVars = [ 'DELTA_ROOT', 'DELTA_INC', 'DELTA_LIB', 'DELTA_DATA' ]
+
+for var in deltaVars:
+   if os.environ.has_key( var ):
+      env['ENV'][var] = os.environ[ var ].split(':')
+   else:
+      print 'Build Failed: Missing required environment variables'
+      errorLog.write('Build Failed: Missing required environment variables\n\n')
+      errorLog.close()
+
+      if email == 'true' :
+         email_results()
+      env.Exit(-1)
+
+rtiVars = [ 'RTI_HOME', 'RTI_INCLUDE', 'RTI_LIB' ]
+
+for var in rtiVars:
+   if os.environ.has_key( var ):
+      env['ENV'][var] = os.environ[ var ]                       
+   else:
+      env['ENV'][var] = None
 
 if env.get('mode') == 'debug':
    mode = 'debug'
@@ -94,6 +113,7 @@ env.Replace(CPPPATH = [], LIBS = [], LIBPATH = [], CPPDEFINES = [], CXXFLAGS = '
 Help(opts.GenerateHelpText(env))
 opts.Save('delta3d.conf', env)
 
+print 'OS: ' + OS
 errorLog.write('OS: ' + OS + '\n\n')
 
 # set compiler options for debug/release modes
@@ -105,7 +125,8 @@ if mode == 'debug':
    elif OS == 'linux':
       print 'debug linux'
       env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CXXDEFINES=['DEBUG', '_DEBUG', '_X11_IMPLEMENTATION'])
-
+      
+   print 'Build Configuration: Debug'
    errorLog.write('Build Configuration: Debug\n\n')
 else:
    if OS == 'windows':
@@ -115,6 +136,7 @@ else:
       
       env.Append(CXXFLAGS=['-O2', '-pipe'], LINKFLAGS=['-s'], CPPDEFINES=['NDEBUG' ])
 
+   print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
     
 if env.get('noWarnings'):
@@ -136,10 +158,11 @@ else:
 Help(opts.GenerateHelpText(env))
 
 env.Append(CPPPATH=env['ENV']['DELTA_INC'])
-env.Append(CPPPATH=env['ENV']['RTI_INCLUDE'])
-
 env.Append(LIBPATH=env['ENV']['DELTA_LIB'])
-env.Append(LIBPATH=env['ENV']['RTI_LIB'])
+
+if env['ENV']['RTI_INCLUDE'] is not None and env['ENV']['RTI_LIB'] is not None:
+   env.Append(CPPPATH=env['ENV']['RTI_INCLUDE'])
+   env.Append(LIBPATH=env['ENV']['RTI_LIB'])
 
 srcLibPaths = [ 'src/dtABC', 'src/dtAudio', 'src/dtChar','src/dtCore', 'src/dtHLA', 'src/dtScript', 'src/dtUtil', 'src/dtVis', 'src/gui_fl', 'src/python', 'src/soarx' ]
 
@@ -184,7 +207,7 @@ def CheckForOpenSceneGraph(context):
 def CheckForProducer(context):
 
    #context.Message( 'Checking for Producer...' )
-   
+
    if mode == 'debug' and OS == 'windows' :
       result = conf.CheckLib('Producerd',language='C++')
    else:
@@ -368,7 +391,7 @@ def CheckForRti(context):
 
    #context.Message( 'Checking for RTI...' )
    
-   if env['ENV']['RTI_HOME'] and env['ENV']['RTI_INCLUDE'] and env['ENV']['RTI_LIB'] is not None:
+   if env['ENV']['RTI_HOME'] is not None and env['ENV']['RTI_INCLUDE'] is not None and env['ENV']['RTI_LIB'] is not None:
       result = 1
    else :
       result = 0
@@ -468,12 +491,14 @@ if not env.GetOption('clean'):
    rtiFound = conf.CheckForRti()
 
    if foundReqLibs == 0 :   
+      print 'Build Failed: Missing required libraries'
       errorLog.write('Build Failed: Missing required libraries\n\n')
       errorLog.close()
 
       if email == 'true' :
          email_results()
-         env.Exit(-1)
+         
+      env.Exit(-1)
    else:
       env = conf.Finish()
 else :
@@ -511,10 +536,10 @@ SConscript( 'utilities/SConscript' )
 #   env.Exit(-1)
 
 # Close the error log and print the results
+print 'Build Succeeded: Build ended: ' + current_time()
 errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
 errorLog.close()
 
 # email the results
 if email == 'true' :
-   print 'not emailing'
    email_results() 
