@@ -36,7 +36,6 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(EA_overloads, ExecuteAction, 1, 3)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(EAWS_overloads, ExecuteActionWithSpeed, 2, 4)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(EAWA_overloads, ExecuteActionWithAngle, 2, 4)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(EAWSAA_overloads, ExecuteActionWithSpeedAndAngle, 3, 5)
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LF_overloads, LoadFile, 1, 2)
 
 void initCharacterBindings()
 {

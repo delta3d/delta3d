@@ -14,13 +14,13 @@ void initPointAxisBindings()
    PointAxis* (*PointAxisGI2)(std::string) = &PointAxis::GetInstance;
 
    PointAxis::AXISCOLOR (PointAxis::*GetColor1)(PointAxis::AXIS) const = &PointAxis::GetColor;
-   void (PointAxis::*GetColor2)(PointAxis::AXIS, osg::Vec4) const = &PointAxis::GetColor;
+   void (PointAxis::*GetColor2)(PointAxis::AXIS, osg::Vec4&) const = &PointAxis::GetColor;
    
    void (PointAxis::*SetColor1)(PointAxis::AXIS, PointAxis::AXISCOLOR) = &PointAxis::SetColor;
    void (PointAxis::*SetColor2)(PointAxis::AXIS, const osg::Vec4) = &PointAxis::SetColor;
    
    PointAxis::AXISCOLOR (PointAxis::*GetLabelColor1)(PointAxis::AXIS) const = &PointAxis::GetLabelColor;
-   void (PointAxis::*GetLabelColor2)(PointAxis::AXIS, osg::Vec4) const = &PointAxis::GetLabelColor;
+   void (PointAxis::*GetLabelColor2)(PointAxis::AXIS, osg::Vec4&) const = &PointAxis::GetLabelColor;
    
    void (PointAxis::*SetLabelColor1)(PointAxis::AXIS, PointAxis::AXISCOLOR) = &PointAxis::SetLabelColor;
    void (PointAxis::*SetLabelColor2)(PointAxis::AXIS, const osg::Vec4) = &PointAxis::SetLabelColor;
