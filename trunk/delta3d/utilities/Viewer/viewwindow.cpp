@@ -72,7 +72,6 @@ ViewWindow::show( void )
 {
    MyParent::show();
 
-   //SendMessage( msgGetState, mCurFile );
    Viewer::GetState(mCurFile);
    mContainer->UpdateSettings( mCurFile );
 }
@@ -84,27 +83,12 @@ ViewWindow::OnMessage( dtCore::Base::MessageData* data )
 {
    assert( data );
 
-   //MyParent::OnMessage( data );
 
    if( data->message == msgKeyboardEvent )
    {
       assert( data->userData );
       KeyboardEventHandler( *(reinterpret_cast<KeyboardEvent*>(data->userData)) );
       return; //
-   }
-   else  if (data->message == "fileNotLoaded")
-   {
-      //the file we're trying to load failed - don't create GUI stuff for it.
-      mFileLoaded = false;
-      fl_alert("Error: Can't load file-\n%s", (char*)data->userData );
-      return; //
-
-   }
-   else  if (data->message == "fileLoaded")
-   {
-      //the file we're trying to load was loaded
-      mFileLoaded = true;
-      return; ///
    }
 
    MyParent::OnMessage( data );
@@ -131,7 +115,6 @@ void
 ViewWindow::SetPath( const char* path )
 {
    mPath = path;
-   //SendMessage( msgSetPath, &mPath );
    dtCore::SetDataFilePathList(mPath);
 }
 
@@ -170,7 +153,6 @@ ViewWindow::LoadFile( const char* file )
    assert( vs );
 
    // load this file into the scene
-   //SendMessage( msgLoadFile, reinterpret_cast<void*>(vs) );
    Viewer::LoadFile( vs );
 
    //if the file loaded, add it to our list
@@ -185,7 +167,6 @@ ViewWindow::SaveFileAs(const char *filename)
 {
    assert(filename!=NULL);
 
-   //SendMessage(msgSaveFileAs, (void*)filename );
    Viewer::SaveFileAs((char*)filename);
 
    return true;
@@ -198,14 +179,12 @@ ViewWindow::SelectFile( unsigned int indx )
       return;
 
    // save the old file state
-   //SendMessage( msgGetState, mCurFile );
    Viewer::GetState(mCurFile);
 
    // switch to a new file
    mCurFile = mFileList.at( indx );
 
    // set the new file state
-   //SendMessage( msgSetState, mCurFile );
    Viewer::SetState(mCurFile);
 
    mContainer->UpdateSettings( mCurFile );
@@ -252,7 +231,6 @@ ViewWindow::SetDisplay( unsigned int state, bool value /*= true*/ )
          break;
 
       case  ViewState::RESET:
-         //SendMessage( msgResetCam );
          Viewer::ResetCam();
          return;
          break;
@@ -263,7 +241,6 @@ ViewWindow::SetDisplay( unsigned int state, bool value /*= true*/ )
 
    }
 
-   //SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
    Viewer::SetState(mCurFile);
 }
 
@@ -296,7 +273,6 @@ ViewWindow::SetMotion( unsigned int state )
 
    }
 
-   //SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
    Viewer::SetState(mCurFile);
 }
 
@@ -321,7 +297,6 @@ ViewWindow::SetJoystick( unsigned int state, bool value /*= true*/ )
 
    }
 
-   //SendMessage( msgSetState, reinterpret_cast<void*>(mCurFile) );
    Viewer::SetState(mCurFile);
 }
 
