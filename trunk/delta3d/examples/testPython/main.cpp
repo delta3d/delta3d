@@ -1,32 +1,54 @@
-#include "p51.h"
+#include "dt.h"
 
 #include <OpenThreads/Thread>
 
 #include <boost/python/detail/wrap_python.hpp>
 
+#include "application.h"
 #include "camera.h"
 #include "globals.h"
 #include "notify.h"
 #include "system.h"
-#include "pythonbindings.h"
 
-using namespace P51;
+#include "python/pythonbindings.h"
+
+using namespace dtCore;
+using namespace dtABC;
+
 
 /**
- * A system thread class.
+ * The Python test application.
  */
-class SystemThread : public OpenThreads::Thread
+class TestPythonApplication : public Application,
+                              public OpenThreads::Thread
 {
+   DECLARE_MANAGEMENT_LAYER(TestPythonApplication)
+   
    public:
-
+   
       /**
        * Constructor.
-       *
-       * @param system the system object
        */
-      SystemThread(System* system)
+      TestPythonApplication()
+         : Application("config.xml")
       {
-         mSystem = system;
+         SetDataFilePathList("../../data");
+         
+         Object* obj = new Object("cessna");
+         
+         obj->LoadFile("cessna.osg");
+         
+         Transform transform(0, 50, 0);
+         
+         obj->SetTransform(&transform);
+         
+         GetScene()->AddDrawable(obj);
+         
+         Py_Initialize();
+
+         initDelta();
+         
+         start();
       }
 
       /**
@@ -34,65 +56,20 @@ class SystemThread : public OpenThreads::Thread
        */
       virtual void run()
       {
-         mSystem->Config();
-
-         mSystem->Run();
+         PyRun_InteractiveLoop(stdin, "???");
+         
+         Quit();
       }
-
-
-   private:
-
-      /**
-       * The system object.
-       */
-      System* mSystem;
 };
+
+IMPLEMENT_MANAGEMENT_LAYER(TestPythonApplication)
 
 int main( int argc, char **argv )
 {
-   Window win;
-   Scene scene;
-   System *sys = System::GetSystem();
-
-   Camera cam;
-   cam.SetWindow( &win );
-   cam.SetScene( &scene );
-   Transform position;
-   position.Set(0.f, -50.f, 5.f, 0.f, -10.f, 0.f);
-   cam.SetTransform( &position );
+   TestPythonApplication* testPythonApp = new TestPythonApplication;
    
-   //This is where we'll find our files to load
-   SetDataFilePathList("../../data/");
-
-   Object obj("cessna");
-   obj.LoadFile("cessna.osg");
-
-   position.SetTranslation( 0.f, 0.f, -2.f );
-   obj.SetTransform( &position );
-
-   //Add the Objects to the Scene to be rendered
-   scene.AddDrawable( &obj );
-
-
-   // Run in another thread
-
-   SystemThread systemThread(sys);
-
-   systemThread.start();
-
+   testPythonApp->Config();
+   testPythonApp->Run();
    
-   Py_Initialize();
-
-   initP51();
-
-   // Evaluation loop
-
-   PyRun_InteractiveLoop(stdin, "???");
-
-
-   sys->Stop();
-
-   systemThread.join();
-
    return 0;
 }

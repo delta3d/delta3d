@@ -8,7 +8,7 @@
 
 using namespace boost::python;
 using namespace boost::python::detail;
-using namespace P51;
+using namespace dtCore;
 
 class BaseWrap : public Base
 {

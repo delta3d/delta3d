@@ -7,7 +7,7 @@
 #include "transformable.h"
 
 using namespace boost::python;
-using namespace P51;
+using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ST_overloads, SetTransform, 1, 2)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GT_overloads, GetTransform, 1, 2)
@@ -30,8 +30,7 @@ void initTransformableBindings()
       .def("GetChild", &Transformable::GetChild, return_internal_reference<>())
       .def("GetParent", &Transformable::GetParent, return_internal_reference<>())
       .def("SetTransform", &Transformable::SetTransform, ST_overloads())
-      .def("GetTransform", &Transformable::GetTransform, GT_overloads())
-      .def("UpdateTransform", &Transformable::UpdateTransform);
+      .def("GetTransform", &Transformable::GetTransform, GT_overloads());
 
    enum_<Transformable::CoordSysEnum>("CoordSysEnum")
       .value("REL_CS", Transformable::REL_CS)
