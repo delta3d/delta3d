@@ -203,11 +203,9 @@ public:
       Application::Config();
 
       //tweak the ambient lighting a little
-      _SceneHandler *sh = GetScene()->GetSceneHandler();
-      osgUtil::SceneView *sv = sh->GetSceneView();
-      osg::Light *light = sv->getLight();
-      light->setAmbient(osg::Vec4( 0.35f, 0.35f, 0.35f, 1.0f ));
-
+      Light *l = GetScene()->GetLight(0);
+      l->SetAmbient(0.75f, 0.75f, 0.75f, 1.f);
+      l->SetDiffuse(1.f, 1.f, 1.f, 1.f);
 
       Transform position;
       position.Set(0.f, -10.f, 1.0f, 0.f, 0.f, 0.f);
