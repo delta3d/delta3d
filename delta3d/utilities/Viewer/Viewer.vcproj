@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -28,7 +28,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -37,7 +37,7 @@
 				OutputFile="$(OutDir)/Viewer.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
-				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt,msvcrt"
+				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt,libcmtd,msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Viewer.pdb"
 				SubSystem="1"
@@ -72,13 +72,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
