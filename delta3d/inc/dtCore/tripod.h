@@ -23,13 +23,12 @@
 
 #include "dtCore/transformable.h"
 #include "dtCore/refptr.h"
+#include "dtCore/camera.h"
+
 #include "sg.h"
 
 namespace dtCore
 {
-   //forward declaration
-   class Camera;
-
    ///A Tripod is used to attach a Camera to a Transformable
 
    /** The Tripod is useful for attaching a Camera to another
