@@ -28,6 +28,7 @@
 #include <windows.h>
 #else
 #include <iostream>
+#include <csignal>
 #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #include <string>
@@ -114,7 +115,18 @@ class DeprecationMgr
 
       int *pReturn = (int*)FramePtr+1; // usual return address @ [ebp+4]
 
+      #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
       int CalledFrom = IsBadReadPtr( pReturn,4 ) ? 0 : *pReturn;
+      #else
+
+      int CalledFrom = 0;
+
+      std::signal(SIGSEGV,SIG_IGN);
+      
+      if( pReturn )
+         CalledFrom = *pReturn;
+      
+      #endif //defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
       // Check if this function was already listed as deprecated
       std::map<const char *, DeprecatedFunction>::iterator ExistingFunc;
