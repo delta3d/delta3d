@@ -28,7 +28,6 @@ Object::Object(string name)
 
 Object::~Object()
 {
-   Notify(DEBUG_INFO, "Object: Deleting '%s'", this->GetName().c_str());
    DeregisterInstance(this);
 }
 

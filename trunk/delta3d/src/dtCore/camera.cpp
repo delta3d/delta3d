@@ -42,7 +42,6 @@ mScene(NULL)
 Camera::~Camera()
 {
    DeregisterInstance(this);
-   Notify(DEBUG_INFO, "destroying Camera ref count:%d", this->referenceCount() );
 }
 
 
