@@ -134,6 +134,20 @@ namespace dtHLA
          const VelocityVector& GetAngularVelocityVector();
 
          /**
+          * Sets this entity's DIS/RPR-FOM articulated parameters array.
+          *
+          * @param array the articulated parameter array to copy
+          */
+         void SetArticulatedParametersArray(const std::vector<ArticulatedParameter>& array);
+         
+         /**
+          * Retrieves this entity's DIS/RPR-FOM articulated parameters array.
+          *
+          * @return the articulated parameter array
+          */
+         const std::vector<ArticulatedParameter>& GetArticulatedParametersArray();
+         
+         /**
           * Sets this entity's DIS/RPR-FOM damage state.
           *
           * @param damageState the damage state
@@ -184,6 +198,11 @@ namespace dtHLA
           * The entity's DIS/RPR-FOM angular velocity vector.
           */
          VelocityVector mAngularVelocityVector;
+         
+         /**
+          * The entity's DIS/RPR-FOM articulated parameter array.
+          */
+         std::vector<ArticulatedParameter> mArticulatedParametersArray;
          
          /**
           * The entity's DIS/RPR-FOM damage state.

@@ -170,6 +170,26 @@ const VelocityVector& Entity::GetAngularVelocityVector()
 }
 
 /**
+ * Sets this entity's DIS/RPR-FOM articulated parameters array.
+ *
+ * @param array the articulated parameter array to copy
+ */
+void Entity::SetArticulatedParametersArray(const std::vector<ArticulatedParameter>& array)
+{
+   mArticulatedParametersArray = array;
+}
+
+/**
+ * Retrieves this entity's DIS/RPR-FOM articulated parameters array.
+ *
+ * @return the articulated parameter array
+ */
+const std::vector<ArticulatedParameter>& Entity::GetArticulatedParametersArray()
+{
+   return mArticulatedParametersArray;
+}
+         
+/**
  * Sets this entity's DIS/RPR-FOM damage state.
  *
  * @param damageState the damage state

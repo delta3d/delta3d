@@ -722,6 +722,420 @@ namespace dtHLA
           */
          float mZ;
    };
+   
+   /**
+    * A DIS/RPR-FOM articulated part.
+    */
+   class ArticulatedParts
+   {
+      public:
+      
+         /**
+          * Constructor.
+          *
+          * @param pClass the part class
+          * @param typeMetric the type metric
+          * @param value the part value
+          */
+         ArticulatedParts(unsigned int pClass = 0,
+                          unsigned int typeMetric = 0,
+                          float value = 0.0f);
+                          
+         /**
+          * Returns the encoded length of this object.
+          *
+          * @return the encoded length of this object, in bytes
+          */
+         int EncodedLength() const;
+
+         /**
+          * Encodes this object into the specified buffer.
+          *
+          * @param buf the buffer to contain the encoded object
+          */
+         void Encode(char* buf) const;
+
+         /**
+          * Decodes the values contained in the specified buffer.
+          *
+          * @param buf the buffer containing the encoded object
+          */
+         void Decode(const char* buf);
+         
+         /**
+          * Sets the part class.
+          *
+          * @param pClass the part class
+          */
+         void SetClass(unsigned int pClass);
+         
+         /**
+          * Returns the part class.
+          *
+          * @return the part class
+          */
+         unsigned int GetClass() const;
+         
+         /**
+          * Sets the type metric.
+          *
+          * @param typeMetric the type metric
+          */
+         void SetTypeMetric(unsigned int typeMetric);
+         
+         /**
+          * Returns the type metric.
+          *
+          * @return the type metric
+          */
+         unsigned int GetTypeMetric() const;
+         
+         /**
+          * Sets the part value.
+          *
+          * @param value the part value
+          */
+         void SetValue(float value);
+         
+         /**
+          * Returns the part value.
+          *
+          * @return the part value
+          */
+         float GetValue() const;
+         
+         
+      private:
+      
+         /**
+          * The part class.
+          */
+         unsigned int mClass;
+         
+         /**
+          * The part type metric.
+          */
+         unsigned int mTypeMetric;
+         
+         /**
+          * The part value.
+          */
+         float mValue;
+   };
+   
+   /**
+    * DIS/RPR-FOM attached part.
+    */
+   class AttachedParts
+   {
+      public:
+         
+         /**
+          * Constructor.
+          *
+          * @param station the part station
+          */
+         AttachedParts(unsigned int station = 0);
+         
+         /**
+          * Constructor.
+          *
+          * @param station the part station
+          * @param storeType the store type
+          */
+         AttachedParts(unsigned int station,
+                       const EntityType& storeType);
+         
+         /**
+          * Returns the encoded length of this object.
+          *
+          * @return the encoded length of this object, in bytes
+          */
+         int EncodedLength() const;
+
+         /**
+          * Encodes this object into the specified buffer.
+          *
+          * @param buf the buffer to contain the encoded object
+          */
+         void Encode(char* buf) const;
+
+         /**
+          * Decodes the values contained in the specified buffer.
+          *
+          * @param buf the buffer containing the encoded object
+          */
+         void Decode(const char* buf);
+         
+         /**
+          * Sets the part station.
+          *
+          * @param station the part station
+          */
+         void SetStation(unsigned int station);
+         
+         /**
+          * Returns the part station.
+          *
+          * @return the part station
+          */
+         unsigned int GetStation() const;
+         
+         /**
+          * Sets the store type.
+          *
+          * @param storeType the store type
+          */
+         void SetStoreType(const EntityType& storeType);
+         
+         /**
+          * Returns the store type.
+          *
+          * @return the store type
+          */
+         const EntityType& GetStoreType() const;
+         
+         
+      private:
+      
+         /**
+          * The part station.
+          */
+         unsigned int mStation;
+         
+         /**
+          * The part store type.
+          */
+         EntityType mStoreType;
+   };
+   
+   /**
+    * DIS/RPR-FOM articulated parameter type.
+    */
+   enum ArticulatedParameterType
+   {
+      ArticulatedPart = 0,
+      AttachedPart = 1
+   };
+   
+   /**
+    * A DIS/RPR-FOM parameter value.
+    */
+   class ParameterValue
+   {
+      public:
+      
+         /**
+          * Constructor.
+          *
+          * @param type the articulated parameter type
+          */
+         ParameterValue(ArticulatedParameterType type = ArticulatedPart);
+         
+         /**
+          * Constructor.
+          *
+          * @param articulatedParts the articulated parts
+          */
+         ParameterValue(const ArticulatedParts& articulatedParts);
+         
+         /**
+          * Constructor.
+          *
+          * @param attachedParts the attached parts
+          */
+         ParameterValue(const AttachedParts& attachedParts);
+         
+         /**
+          * Returns the encoded length of this object.
+          *
+          * @return the encoded length of this object, in bytes
+          */
+         int EncodedLength() const;
+
+         /**
+          * Encodes this object into the specified buffer.
+          *
+          * @param buf the buffer to contain the encoded object
+          */
+         void Encode(char* buf) const;
+
+         /**
+          * Decodes the values contained in the specified buffer.
+          *
+          * @param buf the buffer containing the encoded object
+          */
+         void Decode(const char* buf);
+         
+         /**
+          * Sets the articulated parameter type.
+          *
+          * @param type the articulated parameter type
+          */
+         void SetArticulatedParameterType(ArticulatedParameterType type);
+         
+         /**
+          * Returns the articulated parameter type.
+          *
+          * @return the articulated parameter type
+          */
+         ArticulatedParameterType GetArticulatedParameterType() const;
+         
+         /**
+          * Sets the articulated parts structure.
+          *
+          * @param articulatedParts the articulated parts structure to copy
+          */
+         void SetArticulatedParts(const ArticulatedParts& articulatedParts);
+         
+         /**
+          * Returns the articulated parts structure.
+          *
+          * @return the articulated parts structure
+          */
+         const ArticulatedParts& GetArticulatedParts() const;
+         
+         /**
+          * Sets the attached parts structure.
+          *
+          * @param attachedParts the attached parts structure to copy
+          */
+         void SetAttachedParts(const AttachedParts& attachedParts);
+         
+         /**
+          * Returns the attached parts structure.
+          *
+          * @return the attached parts structure
+          */
+         const AttachedParts& GetAttachedParts() const;
+         
+         
+      private:
+         
+         /**
+          * The parameter type (articulated or attached).
+          */
+         ArticulatedParameterType mArticulatedParameterType;
+         
+         /**
+          * The articulated part structure.
+          */
+         ArticulatedParts mArticulatedParts;
+         
+         /**
+          * The attached part structure.
+          */
+         AttachedParts mAttachedParts;
+   };
+   
+   /**
+    * A DIS/RPR-FOM articulated parameter.
+    */
+   class ArticulatedParameter
+   {
+      public:
+         
+         /**
+          * Constructor.
+          *
+          * @param articulatedParameterChange the articulated parameter change
+          * @param partAttachedTo the part attached to
+          */
+         ArticulatedParameter(unsigned char articulatedParameterChange = 0,
+                              unsigned short partAttachedTo = 0);
+         
+         /**
+          * Constructor.
+          *
+          * @param articulatedParameterChange the articulated parameter change
+          * @param partAttachedTo the part attached to
+          * @param parameterValue the parameter value
+          */
+         ArticulatedParameter(unsigned char articulatedParameterChange,
+                              unsigned short partAttachedTo,
+                              const ParameterValue& parameterValue);
+                              
+         /**
+          * Returns the encoded length of this object.
+          *
+          * @return the encoded length of this object, in bytes
+          */
+         int EncodedLength() const;
+
+         /**
+          * Encodes this object into the specified buffer.
+          *
+          * @param buf the buffer to contain the encoded object
+          */
+         void Encode(char* buf) const;
+
+         /**
+          * Decodes the values contained in the specified buffer.
+          *
+          * @param buf the buffer containing the encoded object
+          */
+         void Decode(const char* buf);
+         
+         /**
+          * Sets the articulated parameter change.
+          *
+          * @param articulatedParameterChange the articulated parameter change
+          */
+         void SetArticulatedParameterChange(unsigned char articulatedParameterChange);
+         
+         /**
+          * Returns the articulated parameter change.
+          *
+          * @return the articulated parameter change
+          */
+         unsigned char GetArticulatedParameterChange() const;
+         
+         /**
+          * Sets the part attached to.
+          *
+          * @param partAttachedTo the part attached to
+          */
+         void SetPartAttachedTo(unsigned short partAttachedTo);
+         
+         /**
+          * Returns the part attached to.
+          *
+          * @return the part attached to
+          */
+         unsigned short GetPartAttachedTo() const;
+         
+         /**
+          * Sets the parameter value.
+          *
+          * @param parameterValue the parameter value to copy
+          */
+         void SetParameterValue(const ParameterValue& parameterValue);
+         
+         /**
+          * Returns the parameter value.
+          *
+          * @return the parameter value
+          */
+         const ParameterValue& GetParameterValue() const;
+         
+         
+      private:
+      
+         /**
+          * The articulated parameter change.
+          */
+         unsigned char mArticulatedParameterChange;
+         
+         /**
+          * The part attached to.
+          */
+         unsigned short mPartAttachedTo;
+         
+         /**
+          * The parameter value.
+          */
+         ParameterValue mParameterValue;
+   };
 };
 
 #endif // P51_HLA_DIS_TYPES

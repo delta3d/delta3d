@@ -986,3 +986,537 @@ float VelocityVector::GetZ() const
 {
    return mZ;
 }
+
+/**
+ * Constructor.
+ *
+ * @param pClass the part class
+ * @param typeMetric the type metric
+ * @param value the part value
+ */
+ArticulatedParts::ArticulatedParts(unsigned int pClass,
+                                   unsigned int typeMetric,
+                                   float value)
+   : mClass(pClass),
+     mTypeMetric(typeMetric),
+     mValue(value)
+{}
+          
+/**
+ * Returns the encoded length of this object.
+ *
+ * @return the encoded length of this object, in bytes
+ */
+int ArticulatedParts::EncodedLength() const
+{
+   return 12;
+}
+
+/**
+ * Encodes this object into the specified buffer.
+ *
+ * @param buf the buffer to contain the encoded object
+ */
+void ArticulatedParts::Encode(char* buf) const
+{
+   unsigned int tClass = mClass,
+                typeMetric = mTypeMetric;
+                
+   float value = mValue;
+                  
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&tClass);
+      ulEndianSwap(&typeMetric);
+      ulEndianSwap(&value);
+   }
+
+   *(unsigned int *)(&buf[0]) = tClass;
+   *(unsigned int *)(&buf[4]) = typeMetric;
+   *(float *)(&buf[8]) = value;
+}
+
+/**
+ * Decodes the values contained in the specified buffer.
+ *
+ * @param buf the buffer containing the encoded object
+ */
+void ArticulatedParts::Decode(const char* buf)
+{
+   unsigned int tClass = *(unsigned int *)(&buf[0]),
+                typeMetric = *(unsigned int *)(&buf[4]);
+                
+   float value = *(float *)(&buf[8]);
+
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&tClass);
+      ulEndianSwap(&typeMetric);
+      ulEndianSwap(&value);
+   }
+   
+   mClass = tClass;
+   mTypeMetric = typeMetric;
+   mValue = value;
+}
+
+/**
+ * Sets the part class.
+ *
+ * @param pClass the part class
+ */
+void ArticulatedParts::SetClass(unsigned int pClass)
+{
+   mClass = pClass;
+}
+
+/**
+ * Returns the part class.
+ *
+ * @return the part class
+ */
+unsigned int ArticulatedParts::GetClass() const
+{
+   return mClass;
+}
+
+/**
+ * Sets the type metric.
+ *
+ * @param typeMetric the type metric
+ */
+void ArticulatedParts::SetTypeMetric(unsigned int typeMetric)
+{
+   mTypeMetric = typeMetric;
+}
+
+/**
+ * Returns the type metric.
+ *
+ * @return the type metric
+ */
+unsigned int ArticulatedParts::GetTypeMetric() const
+{
+   return mTypeMetric;
+}
+
+/**
+ * Sets the part value.
+ *
+ * @param value the part value
+ */
+void ArticulatedParts::SetValue(float value)
+{
+   mValue = value;
+}
+
+/**
+ * Returns the part value.
+ *
+ * @return the part value
+ */
+float ArticulatedParts::GetValue() const
+{
+   return mValue;
+}
+
+
+/**
+ * Constructor.
+ *
+ * @param station the part station
+ */
+AttachedParts::AttachedParts(unsigned int station)
+   : mStation(station)
+{}
+
+/**
+ * Constructor.
+ *
+ * @param station the part station
+ * @param storeType the store type
+ */
+AttachedParts::AttachedParts(unsigned int station,
+                             const EntityType& storeType)
+   : mStation(station),
+     mStoreType(storeType)
+{}
+
+/**
+ * Returns the encoded length of this object.
+ *
+ * @return the encoded length of this object, in bytes
+ */
+int AttachedParts::EncodedLength() const
+{
+   return 12;
+}
+
+/**
+ * Encodes this object into the specified buffer.
+ *
+ * @param buf the buffer to contain the encoded object
+ */
+void AttachedParts::Encode(char* buf) const
+{
+   unsigned int station = mStation;
+                
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&station);
+   }
+
+   *(unsigned int *)(&buf[0]) = station;
+   mStoreType.Encode(&buf[4]);
+}
+
+/**
+ * Decodes the values contained in the specified buffer.
+ *
+ * @param buf the buffer containing the encoded object
+ */
+void AttachedParts::Decode(const char* buf)
+{
+   unsigned int station = *(unsigned int *)(&buf[0]);
+      
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&station);
+   }
+   
+   mStation = station;
+   
+   mStoreType.Decode(&buf[4]);
+}
+
+/**
+ * Sets the part station.
+ *
+ * @param station the part station
+ */
+void AttachedParts::SetStation(unsigned int station)
+{
+   mStation = station;
+}
+
+/**
+ * Returns the part station.
+ *
+ * @return the part station
+ */
+unsigned int AttachedParts::GetStation() const
+{
+   return mStation;
+}
+
+/**
+ * Sets the store type.
+ *
+ * @param storeType the store type
+ */
+void AttachedParts::SetStoreType(const EntityType& storeType)
+{
+   mStoreType = storeType;
+}
+
+/**
+ * Returns the store type.
+ *
+ * @return the store type
+ */
+const EntityType& AttachedParts::GetStoreType() const
+{
+   return mStoreType;
+}
+
+
+/**
+ * Constructor.
+ *
+ * @param type the articulated parameter type
+ */
+ParameterValue::ParameterValue(ArticulatedParameterType type)
+   : mArticulatedParameterType(type)
+{}
+
+/**
+ * Constructor.
+ *
+ * @param articulatedParts the articulated parts
+ */
+ParameterValue::ParameterValue(const ArticulatedParts& articulatedParts)
+   : mArticulatedParameterType(ArticulatedPart),
+     mArticulatedParts(articulatedParts)
+{}
+
+/**
+ * Constructor.
+ *
+ * @param attachedParts the attached parts
+ */
+ParameterValue::ParameterValue(const AttachedParts& attachedParts)
+   : mArticulatedParameterType(AttachedPart),
+     mAttachedParts(attachedParts)
+{}
+
+/**
+ * Returns the encoded length of this object.
+ *
+ * @return the encoded length of this object, in bytes
+ */
+int ParameterValue::EncodedLength() const
+{
+   return 16;
+}
+
+/**
+ * Encodes this object into the specified buffer.
+ *
+ * @param buf the buffer to contain the encoded object
+ */
+void ParameterValue::Encode(char* buf) const
+{
+   unsigned int articulatedParameterType = mArticulatedParameterType;
+                
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&articulatedParameterType);
+   }
+
+   *(unsigned int *)(&buf[0]) = articulatedParameterType;
+   
+   if(mArticulatedParameterType == ArticulatedPart)
+   {
+      mArticulatedParts.Encode(&buf[4]);
+   }
+   else
+   {
+      mAttachedParts.Encode(&buf[4]);
+   }
+}
+
+/**
+ * Decodes the values contained in the specified buffer.
+ *
+ * @param buf the buffer containing the encoded object
+ */
+void ParameterValue::Decode(const char* buf)
+{
+   unsigned int articulatedParameterType = *(unsigned int *)(&buf[0]);
+      
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&articulatedParameterType);
+   }
+   
+   mArticulatedParameterType = 
+      (ArticulatedParameterType)articulatedParameterType;
+      
+   if(mArticulatedParameterType == ArticulatedPart)
+   {
+      mArticulatedParts.Decode(&buf[4]);
+   }
+   else
+   {
+      mAttachedParts.Decode(&buf[4]);
+   }
+}
+
+/**
+ * Sets the articulated parameter type.
+ *
+ * @param type the articulated parameter type
+ */
+void ParameterValue::SetArticulatedParameterType(ArticulatedParameterType type)
+{
+   mArticulatedParameterType = type;
+}
+
+/**
+ * Returns the articulated parameter type.
+ *
+ * @return the articulated parameter type
+ */
+ArticulatedParameterType ParameterValue::GetArticulatedParameterType() const
+{
+   return mArticulatedParameterType;
+}
+
+/**
+ * Sets the articulated parts structure.
+ *
+ * @param articulatedParts the articulated parts structure to copy
+ */
+void ParameterValue::SetArticulatedParts(const ArticulatedParts& articulatedParts)
+{
+   mArticulatedParts = articulatedParts;
+}
+
+/**
+ * Returns the articulated parts structure.
+ *
+ * @return the articulated parts structure
+ */
+const ArticulatedParts& ParameterValue::GetArticulatedParts() const
+{
+   return mArticulatedParts;
+}
+
+/**
+ * Sets the attached parts structure.
+ *
+ * @param attachedParts the attached parts structure to copy
+ */
+void ParameterValue::SetAttachedParts(const AttachedParts& attachedParts)
+{
+   mAttachedParts = attachedParts;
+}
+
+/**
+ * Returns the attached parts structure.
+ *
+ * @return the attached parts structure
+ */
+const AttachedParts& ParameterValue::GetAttachedParts() const
+{
+   return mAttachedParts;
+}
+
+
+/**
+ * Constructor.
+ *
+ * @param articulatedParameterChange the articulated parameter change
+ * @param partAttachedTo the part attached to
+ */
+ArticulatedParameter::ArticulatedParameter(unsigned char articulatedParameterChange,
+                                           unsigned short partAttachedTo)
+   : mArticulatedParameterChange(articulatedParameterChange),
+     mPartAttachedTo(partAttachedTo)
+{}
+
+/**
+ * Constructor.
+ *
+ * @param articulatedParameterChange the articulated parameter change
+ * @param partAttachedTo the part attached to
+ * @param parameterValue the parameter value
+ */
+ArticulatedParameter::ArticulatedParameter(unsigned char articulatedParameterChange,
+                                           unsigned short partAttachedTo,
+                                           const ParameterValue& parameterValue)
+   : mArticulatedParameterChange(articulatedParameterChange),
+     mPartAttachedTo(partAttachedTo),
+     mParameterValue(parameterValue)
+{}
+                 
+/**
+ * Returns the encoded length of this object.
+ *
+ * @return the encoded length of this object, in bytes
+ */
+int ArticulatedParameter::EncodedLength() const
+{
+   return 20;
+}
+
+/**
+ * Encodes this object into the specified buffer.
+ *
+ * @param buf the buffer to contain the encoded object
+ */
+void ArticulatedParameter::Encode(char* buf) const
+{
+   unsigned short partAttachedTo = mPartAttachedTo;
+                
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&partAttachedTo);
+   }
+
+   *(unsigned char *)(&buf[0]) = mArticulatedParameterChange;
+   *(unsigned char *)(&buf[1]) = 0; // padding
+   *(unsigned short *)(&buf[2]) = partAttachedTo;
+   mParameterValue.Encode(&buf[4]);
+}
+
+/**
+ * Decodes the values contained in the specified buffer.
+ *
+ * @param buf the buffer containing the encoded object
+ */
+void ArticulatedParameter::Decode(const char* buf)
+{
+   mArticulatedParameterChange = *(unsigned char *)(&buf[0]);
+   
+   unsigned short partAttachedTo = *(unsigned short *)(&buf[2]);
+      
+   if(ulIsLittleEndian)
+   {
+      ulEndianSwap(&partAttachedTo);
+   }
+   
+   mPartAttachedTo = partAttachedTo;
+   
+   mParameterValue.Decode(&buf[4]);
+}
+
+/**
+ * Sets the articulated parameter change.
+ *
+ * @param articulatedParameterChange the articulated parameter change
+ */
+void ArticulatedParameter::SetArticulatedParameterChange(unsigned char articulatedParameterChange)
+{
+   mArticulatedParameterChange = articulatedParameterChange;
+}
+
+/**
+ * Returns the articulated parameter change.
+ *
+ * @return the articulated parameter change
+ */
+unsigned char ArticulatedParameter::GetArticulatedParameterChange() const
+{
+   return mArticulatedParameterChange;
+}
+
+/**
+ * Sets the part attached to.
+ *
+ * @param partAttachedTo the part attached to
+ */
+void ArticulatedParameter::SetPartAttachedTo(unsigned short partAttachedTo)
+{
+   mPartAttachedTo = partAttachedTo;
+}
+
+/**
+ * Returns the part attached to.
+ *
+ * @return the part attached to
+ */
+unsigned short ArticulatedParameter::GetPartAttachedTo() const
+{
+   return mPartAttachedTo;
+}
+
+/**
+ * Sets the parameter value.
+ *
+ * @param parameterValue the parameter value to copy
+ */
+void ArticulatedParameter::SetParameterValue(const ParameterValue& parameterValue)
+{
+   mParameterValue = parameterValue;
+}
+
+/**
+ * Returns the parameter value.
+ *
+ * @return the parameter value
+ */
+const ParameterValue& ArticulatedParameter::GetParameterValue() const
+{
+   return mParameterValue;
+}

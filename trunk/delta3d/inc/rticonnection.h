@@ -731,6 +731,10 @@ namespace dtHLA
           */
          RTI::AttributeHandle mVelocityVectorAttributeHandle;
 
+         /**
+          * The articulated parameters array attribute handle.
+          */
+         RTI::AttributeHandle mArticulatedParametersArrayAttributeHandle;
          
          /**
           * The damage-state attribute handle.
