@@ -14,7 +14,7 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {575 88 545 438} type Double visible
+      xywh {899 86 545 555} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -62,7 +62,7 @@ class UserInterface {open
         }
       }
       Fl_Group TransformGroup {
-        label Transformable
+        label Transformable selected
         xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input TransformX {
@@ -119,7 +119,7 @@ class UserInterface {open
           }
         }
       }
-      Fl_Group LoadableGroup {selected
+      Fl_Group LoadableGroup {
         xywh {245 259 290 36} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Input LoadableFilename {
@@ -291,77 +291,77 @@ class UserInterface {open
         }
       }
       Fl_Group EnvironmentGroup {
-        xywh {70 145 450 285} box ENGRAVED_FRAME hide
+        xywh {70 255 450 285} box ENGRAVED_FRAME hide
       } {
         Fl_Group EnvFogColorGroup {
           label {Fog Color}
-          xywh {376 164 130 85} box THIN_DOWN_FRAME hide
+          xywh {376 274 130 85} box THIN_DOWN_FRAME hide
         } {
           Fl_Value_Input FogRed {
             label {Red:}
             user_data this
             callback {((UserInterface*)v)->EnvFogColorCB(o)}
-            private xywh {426 169 45 25} step 0.01 value 8.888
+            private xywh {426 279 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input FogGreen {
             label {Green:}
             user_data this
             callback {((UserInterface*)v)->EnvFogColorCB(o)}
-            private xywh {426 194 45 25} step 0.01 value 8.888
+            private xywh {426 304 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input FogBlue {
             label {Blue:}
             user_data this
             callback {((UserInterface*)v)->EnvFogColorCB(o)}
-            private xywh {426 219 45 25} step 0.01 value 8.888
+            private xywh {426 329 45 25} step 0.01 value 8.888
           }
           Fl_Button FogColorLoadButton {
             label {...}
             user_data this
             callback {((UserInterface*)v)->EnvFogColorBrowserCB(o)}
-            private xywh {476 169 25 75}
+            private xywh {476 279 25 75}
           }
         }
         Fl_Group EnvAdvFogGroup {
           label {Adv Fog}
-          xywh {374 170 126 87} box THIN_DOWN_FRAME
+          xywh {374 280 126 87} box THIN_DOWN_FRAME
         } {
           Fl_Value_Input AdvFogTurbidity {
             label {Turb:}
             user_data this
             callback {((UserInterface*)v)->EnvAdvFogCB(o)}
-            private tooltip {Quality of the Air (~1.0 is a good choice)} xywh {425 174 68 22} minimum 0.01 maximum 64 step 0.01 value 88.88
+            private tooltip {Quality of the Air (~1.0 is a good choice)} xywh {425 284 68 22} minimum 0.01 maximum 64 step 0.01 value 88.88
           }
           Fl_Value_Input AdvFogEnergy {
             label {Engy:}
             user_data this
             callback {((UserInterface*)v)->EnvAdvFogCB(o)}
-            private tooltip {Energy passed to the atmosphere (0=dark; + = brighter)} xywh {426 201 67 25} minimum 0.1 maximum 100 step 0.01 value 888.88
+            private tooltip {Energy passed to the atmosphere (0=dark; + = brighter)} xywh {426 311 67 25} minimum 0.1 maximum 100 step 0.01 value 888.88
           }
           Fl_Value_Input AdvFogMolecules {
             label {Vis:}
             user_data this
             callback {((UserInterface*)v)->EnvAdvFogCB(o)}
-            private tooltip {Visibility ratio (0=no visibility; + = increased visibility)} xywh {426 228 67 25} maximum 100 step 0.01 value 888.88
+            private tooltip {Visibility ratio (0=no visibility; + = increased visibility)} xywh {426 338 67 25} maximum 100 step 0.01 value 888.88
           }
         }
         Fl_Value_Input EnvFogVis {
           label {Visibility Distance:}
           user_data this
           callback {((UserInterface*)v)->EnvFogVisCB(o)}
-          private xywh {265 156 61 25} maximum 500000 step 1 value 88888
+          private xywh {265 266 61 25} maximum 500000 step 1 value 88888
         }
         Fl_Value_Input EnvFogNear {
           label {Fog Start:}
           user_data this
           callback {((UserInterface*)v)->EnvFogNearCB(o)}
-          private tooltip {Start of fog (only used for Linear fog)} xywh {265 183 61 25} maximum 99999 step 1 value 88888
+          private tooltip {Start of fog (only used for Linear fog)} xywh {265 293 61 25} maximum 99999 step 1 value 88888
         }
         Fl_Choice EnvFogMode {
           label {Fog Mode:}
           user_data this
           callback {((UserInterface*)v)->EnvFogModeCB(o)}
-          xywh {244 212 101 25} down_box BORDER_BOX
+          xywh {244 322 101 25} down_box BORDER_BOX
         } {
           menuitem {} {
             label Linear
@@ -384,138 +384,139 @@ class UserInterface {open
           label {Fog:}
           user_data this
           callback {((UserInterface*)v)->EnvFogEnableCB(o)}
-          private xywh {121 213 45 25} down_box DOWN_BOX value 1 align 4
+          private xywh {121 323 45 25} down_box DOWN_BOX value 1 align 4
         }
         Fl_Group {} {
           label {Sky Color}
-          xywh {380 339 130 85} box THIN_DOWN_FRAME
+          xywh {380 449 130 85} box THIN_DOWN_FRAME
         } {
           Fl_Value_Input SkyRed {
             label {Red:}
             user_data this
             callback {((UserInterface*)v)->EnvSkyColorCB(o)}
-            private xywh {430 344 45 25} step 0.01 value 8.888
+            private xywh {430 454 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input SkyGreen {
             label {Green:}
             user_data this
             callback {((UserInterface*)v)->EnvSkyColorCB(o)}
-            private xywh {430 369 45 25} step 0.01 value 8.888
+            private xywh {430 479 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input SkyBlue {
             label {Blue:}
             user_data this
             callback {((UserInterface*)v)->EnvSkyColorCB(o)}
-            private xywh {430 394 45 25} step 0.01 value 8.888
+            private xywh {430 504 45 25} step 0.01 value 8.888
           }
           Fl_Button SkyColorLoadButton {
             label {...}
             user_data this
             callback {((UserInterface*)v)->EnvSkyColorBrowserCB(o)}
-            private xywh {480 344 25 75}
+            private xywh {480 454 25 75}
           }
         }
         Fl_Group {} {
           label {Sun Color}
-          xywh {234 340 109 85} box THIN_DOWN_FRAME
+          xywh {234 450 109 85} box THIN_DOWN_FRAME
         } {
           Fl_Value_Input EnvSunRed {
             label {Red:}
             user_data this
-            private xywh {284 345 45 25} step 0.01 value 8.888
+            private xywh {284 455 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input EnvSunGreen {
             label {Green:}
             user_data this
-            private xywh {284 370 45 25} step 0.01 value 8.888
+            private xywh {284 480 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input EnvSunBlue {
             label {Blue:}
             user_data this
-            private xywh {284 395 45 25} step 0.01 value 8.888
+            private xywh {284 505 45 25} step 0.01 value 8.888
           }
         }
         Fl_Group {} {
           label {Ref Position}
-          xywh {78 340 109 85} box THIN_DOWN_FRAME
+          xywh {78 450 109 85} box THIN_DOWN_FRAME
         } {
           Fl_Value_Input EnvRefLat {
             label {Lat:}
             user_data this
             callback {((UserInterface*)v)->EnvRefPosCB(o)}
-            private tooltip {Ephemeris Reference Lattitude (deg)} xywh {119 345 60 25} minimum -90 maximum 90 step 0.001 value 8.888
+            private tooltip {Ephemeris Reference Lattitude (deg)} xywh {119 455 60 25} minimum -90 maximum 90 step 0.001 value 8.888
           }
           Fl_Value_Input EnvRefLong {
             label {Long:}
             user_data this
             callback {((UserInterface*)v)->EnvRefPosCB(o)}
-            private tooltip {Ephemeris Reference Longitude (deg)} xywh {119 370 60 25} minimum -180 maximum 180 step 0.001 value 8.888
+            private tooltip {Ephemeris Reference Longitude (deg)} xywh {119 480 60 25} minimum -180 maximum 180 step 0.001 value 8.888
           }
         }
         Fl_Group {} {
           label {Date/Time}
-          xywh {105 260 315 60} box THIN_DOWN_FRAME
+          xywh {105 370 315 60} box THIN_DOWN_FRAME
         } {
           Fl_Value_Slider EnvTimeOfDay {
             label Time
             user_data this
             callback {((UserInterface*)v)->EnvTimeCB(o)}
-            xywh {154 293 241 23} type {Horz Knob} align 4 maximum 24 value 12
+            xywh {154 403 241 23} type {Horz Knob} align 4 maximum 24 value 12
           }
           Fl_Value_Input EnvYear {
             label {Year:}
             user_data this
             callback {((UserInterface*)v)->EnvDateTimeCB(o)}
-            tooltip {Year (1970-2023)} xywh {168 266 45 23} minimum 1970 maximum 2023 step 1 value 8888
+            tooltip {Year (1970-2023)} xywh {168 376 45 23} minimum 1970 maximum 2023 step 1 value 8888
           }
           Fl_Value_Input EnvMonth {
             label {Month:}
             user_data this
             callback {((UserInterface*)v)->EnvDateTimeCB(o)}
-            tooltip {Month (1-12)} xywh {273 266 35 23} minimum 1 maximum 12 step 1 value 88
+            tooltip {Month (1-12)} xywh {273 376 35 23} minimum 1 maximum 12 step 1 value 88
           }
           Fl_Value_Input EnvDay {
             label {Day:}
             user_data this
             callback {((UserInterface*)v)->EnvDateTimeCB(o)}
-            tooltip {Day (1-31)} xywh {361 266 30 23} minimum 1 maximum 31 step 1 value 88
+            tooltip {Day (1-31)} xywh {361 376 30 23} minimum 1 maximum 31 step 1 value 88
           }
         }
       }
       Fl_Group InfTerrainGroup {
-        xywh {70 145 450 285} box ENGRAVED_FRAME hide
+        label InfiniteTerrain
+        xywh {185 280 190 215} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input InfBuildDistance {
           label {Build Distance:}
-          tooltip {How far (meters) into the distance should there be terrain} xywh {300 200 65 25} minimum 1 maximum 999999 value 888888
+          tooltip {How far (meters) into the distance should there be terrain} xywh {300 290 65 25} minimum 1 maximum 999999 value 888888
         }
         Fl_Value_Input InfSegSize {
           label {Seg Size:}
-          tooltip {The size (meters) of each side of a block of terrain} xywh {300 225 65 25} minimum 1 maximum 999999 value 888888
+          tooltip {The size (meters) of each side of a block of terrain} xywh {300 315 65 25} minimum 1 maximum 999999 value 888888
         }
         Fl_Value_Input InfSegDivisions {
           label {Seg Divisions:}
-          tooltip {The number of divisions in each block of terrain} xywh {300 250 65 25} minimum 1 maximum 999999 value 888888
+          tooltip {The number of divisions in each block of terrain} xywh {300 340 65 25} minimum 1 maximum 999999 value 888888
         }
         Fl_Value_Input InfVertScale {
           label {Vertical Scale:}
-          tooltip {The vertical scaling factor of the terrain} xywh {300 275 65 25} minimum 1 maximum 999999 value 888888
+          tooltip {The vertical scaling factor of the terrain} xywh {300 365 65 25} minimum 1 maximum 999999 value 888888
         }
         Fl_Value_Input InfHorizScale {
           label {Horiz Scale:}
-          tooltip {The horizontal scaling factor of the terrain (spreads out the terrain features)} xywh {300 300 65 25} minimum 1 maximum 999999 value 888888
+          tooltip {The horizontal scaling factor of the terrain (spreads out the terrain features)} xywh {300 390 65 25} minimum 1 maximum 999999 value 888888
         }
         Fl_Button InfRegenerateButton {
           label {Regenerate!}
           user_data this
           callback {((UserInterface*)v)->InfRegenerateCB(o)}
-          xywh {280 335 90 30}
+          xywh {245 425 90 30}
         }
         Fl_Check_Button InfSmoothCollision {
           label {Smooth Collisions}
           user_data this
           callback {((UserInterface*)v)->InfSmoothCDCB(o)}
-          tooltip {Enables smoothed collision detection} xywh {280 385 20 25} down_box DOWN_BOX align 4
+          tooltip {Enables smoothed collision detection} xywh {320 465 20 20} down_box DOWN_BOX align 4
         }
       }
       Fl_Group CloudEditor {
@@ -890,7 +891,7 @@ class UserInterface {open
         }
       }
       Fl_Group ParticleGroup {
-        label {Particle System} open
+        label {Particle System}
         xywh {15 270 135 60} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Check_Button ParticleEnabled {
