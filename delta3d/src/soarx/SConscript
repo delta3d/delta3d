@@ -9,8 +9,9 @@ dtSoarxSrcs = [ 'soarx_base.cpp',
                 'soarxterrain.cpp',
                 'soarx_texture.cpp' ]
 
-env = env.Copy()
-
 dtSoarxLib = env.SharedLibrary( 'dtsoarx', dtSoarxSrcs, LIBS=[ 'gdal_i', 'dtcore', 'osg', 'osgUtil', 'osgDB', 'osgGL2', 'plibsg', 'tinyxml', 'plibul', 'ode', 'GL' ] )
 
-env.Install( "$prefix/lib", dtSoarxLib )
+env.Alias('install', env.Install( "$prefix/lib", dtSoarxLib ) )
+
+Return( 'dtSoarxLib' )
+

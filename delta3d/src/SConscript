@@ -1,11 +1,25 @@
 Import('*')
 
-SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gui_fl' ])
+dtAbcLib = SConscript( 'dtABC/SConscript' )
+dtAudioLib = SConscript( 'dtAudio/SConscript' )
+dtCharLib = SConscript( 'dtChar/SConscript' )
+dtCoreLib = SConscript( 'dtCore/SConscript' )
+#dtHlaLib = SConscript( 'dtHLA/SConscript' )
+#dtSoarxLib = SConscript( 'soarx/SConscript' )
+dtUtilLib = SConscript( 'dtUtil/SConscript' )
+dtVisLib = SConscript( 'dtVis/SConscript' )
+gui_flLib = SConscript( 'gui_fl/SConscript' )
 
-#SConscript(dirs=[ 'python' ])
-#SConscript(dirs=[ 'soarx' ])
+#pythonLibs = SConscript( 'python/SConscript' )
 
-env.Depends('dtcore','dtutil')
-env.Depends('dtabc','dtcore')
-env.Depends('dtchar','dtcore')
-env.Depends('gui_fl','dtcore')
+env.Depends( dtCoreLib, dtUtilLib )
+env.Depends( dtAbcLib, dtCoreLib )
+env.Depends( dtCharLib, dtCoreLib )
+env.Depends( gui_flLib, [ dtCoreLib, dtAbcLib ] )
+#env.Depends( dtHlaLib, dtCoreLib ) #RTI?
+#env.Depends( dtSoarxLib, dtCoreLib )
+
+#python dependencies
+
+Return( 'dtAbcLib', 'dtAudioLib', 'dtCharLib', 'dtCoreLib', 'dtUtilLib', 'dtVisLib', 'gui_flLib' )
+

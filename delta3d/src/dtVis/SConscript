@@ -2,8 +2,8 @@ Import('*')
 
 dtVisSrcs = [ 'bspcullcallback.cpp' ]
 
-env = env.Copy()
-
 dtVisLib = env.SharedLibrary( 'dtvis', dtVisSrcs, LIBS=[ 'GL', 'osg', 'osgDB', 'osgUtil' ] )
 
-env.Install( "$prefix/lib", dtVisLib )
+env.Alias('install', env.Install( "$prefix/lib", dtVisLib ) )
+
+Return( 'dtVisLib' )
