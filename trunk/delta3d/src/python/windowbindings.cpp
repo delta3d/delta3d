@@ -2,8 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <boost/python.hpp>
-
+#include "dtpython.h"
 #include "window.h"
 
 using namespace boost::python;
@@ -17,7 +16,7 @@ void initWindowBindings()
    Window* (*WindowGI1)(int) = &Window::GetInstance;
    Window* (*WindowGI2)(std::string) = &Window::GetInstance;
 
-   class_<Window, bases<Base> >("Window", init<optional<std::string, int, int, int, int> >())
+   class_<Window, bases<Base>, osg::ref_ptr<Window> >("Window", init<optional<std::string, int, int, int, int> >())
       .def("GetInstanceCount", &Window::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", WindowGI1, return_internal_reference<>())

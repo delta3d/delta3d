@@ -2,9 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <boost/python.hpp>
+#include "dtpython.h"
 
 #include "dt.h"
+#include "globals.h"
+
+using namespace boost::python;
+using namespace dtCore;
 
 
 // The individual class bindings
@@ -23,6 +27,8 @@ void initWindowBindings();
 
 BOOST_PYTHON_MODULE(dtCore)
 {
+   def("SetDataFilePathList", SetDataFilePathList);
+   
    initBaseBindings();
    initSystemBindings();
    initSceneBindings();

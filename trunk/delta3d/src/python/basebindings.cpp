@@ -2,8 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <boost/python.hpp>
-
+#include "dtpython.h"
 #include "base.h"
 
 using namespace boost::python;
@@ -24,9 +23,11 @@ class BaseWrap : public Base
       }
 
       void DefaultOnMessage(MessageData* data)
-      {}
+      {
+         Base::OnMessage(data);
+      }
 
-   private:
+   protected:
 
       PyObject* mSelf;
 };
@@ -38,7 +39,7 @@ void initBaseBindings()
    Base* (*BaseGI1)(int) = &Base::GetInstance;
    Base* (*BaseGI2)(std::string) = &Base::GetInstance;
 
-   scope baseScope = class_<Base, BaseWrap, boost::noncopyable>("Base")
+   scope baseScope = class_<Base, osg::ref_ptr<BaseWrap>, boost::noncopyable>("Base")
       .def("GetInstanceCount", &Base::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", BaseGI1, return_internal_reference<>())
