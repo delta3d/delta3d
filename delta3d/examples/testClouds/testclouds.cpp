@@ -25,7 +25,7 @@ public:
       cp[2] = new CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
 
       weather = new Weather();   
-      weather->AddChild(terr);
+      weather->AddChild(terr.get());
 
       cloudLayers = 1;
       isDomeEnabled = false;
@@ -103,9 +103,9 @@ default:
    }
 
 private:
-   InfiniteTerrain *terr;
-   Weather *weather;
-   OrbitMotionModel *orbit;
+   RefPtr<InfiniteTerrain> terr;
+   RefPtr<Weather> weather;
+   RefPtr<OrbitMotionModel> orbit;
 
    RefPtr<dtCore::CloudDome>  cd;
    RefPtr<dtCore::CloudPlane> cp[3];
@@ -119,10 +119,9 @@ IMPLEMENT_MANAGEMENT_LAYER( TestCloudsApp )
 int main(int argc, char* argv[])
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
-   TestCloudsApp *app = new TestCloudsApp( "config.xml" );
+   RefPtr<TestCloudsApp> app = new TestCloudsApp( "config.xml" );
    app->Config();
    app->Run();
 
-   delete app;
    return 0;
 }

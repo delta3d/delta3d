@@ -11,7 +11,6 @@ class TestWinApp   :  public   dtABC::Application
 public:
 
    TestWinApp( std::string configFilename = "config.xml" );
-   virtual  ~TestWinApp();
 
    virtual void Config();
 
@@ -61,7 +60,7 @@ private:
    };
 
    static CUI_UI* mUI;
-   static dtCore::DeltaWin* mWindow;
+   static dtCore::RefPtr<dtCore::DeltaWin> mWindow;
    static dtCore::ResolutionVec mResVec;
    static int mSelectedRes;
    static CUI_TextBox* mCurrentResText;

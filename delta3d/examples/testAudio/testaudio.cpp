@@ -3,8 +3,6 @@
 
 #include "testaudio.h"
 
-
-
 // name spaces
 using namespace   dtCore;
 using namespace   dtABC;
@@ -49,7 +47,7 @@ TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
 {
    SetNotifyLevel(DEBUG_INFO);
 
-   AddSender( dtCore::System::GetSystem() );
+   AddSender( System::GetSystem() );
 
    AudioManager::Instantiate();
 
@@ -66,13 +64,13 @@ TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
 
    SetUpVisuals();
 
-   dtCore::Camera*   cam   = GetCamera();
+   Camera*   cam   = GetCamera();
    assert( cam );
 
    cam->AddChild( mMic );
 
-   dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-   mMic->SetTransform( &transform, dtCore::Transformable::REL_CS );
+   Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
+   mMic->SetTransform( &transform, Transformable::REL_CS );
 
    mSFXBinder  = new dtAudio::SoundEffectBinder;
    assert( mSFXBinder.get() );
@@ -80,8 +78,8 @@ TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
    if( mFXMgr.get() )
    {
       mSFXBinder->Initialize( mFXMgr.get() );
-      mSFXBinder->AddEffectTypeMapping( dtCore::HighExplosiveDetonation, kSoundFile[1L] );
-      mSFXBinder->AddEffectTypeRange( dtCore::HighExplosiveDetonation, 35.0f );
+      mSFXBinder->AddEffectTypeMapping( HighExplosiveDetonation, kSoundFile[1L] );
+      mSFXBinder->AddEffectTypeRange( HighExplosiveDetonation, 35.0f );
    }
 
 }
@@ -92,8 +90,8 @@ TestAudioApp::~TestAudioApp()
 {
    if( mSFXBinder.get() )
    {
-      mSFXBinder->RemoveEffectTypeRange( dtCore::HighExplosiveDetonation );
-      mSFXBinder->RemoveEffectTypeMapping( dtCore::HighExplosiveDetonation );
+      mSFXBinder->RemoveEffectTypeRange( HighExplosiveDetonation );
+      mSFXBinder->RemoveEffectTypeMapping( HighExplosiveDetonation );
       mSFXBinder->Shutdown();
       mSFXBinder  = NULL;
    }
@@ -108,7 +106,7 @@ TestAudioApp::~TestAudioApp()
 
    AudioManager::Destroy();
 
-   RemoveSender( dtCore::System::GetSystem() );
+   RemoveSender( System::GetSystem() );
 }
 
 
@@ -143,7 +141,7 @@ TestAudioApp::PostFrame( const double deltaFrameTime )
 
 
 void
-TestAudioApp::KeyPressed(  dtCore::Keyboard*       keyboard,
+TestAudioApp::KeyPressed(  Keyboard*       keyboard,
                            Producer::KeyboardKey   key,
                            Producer::KeyCharacter  character   )
 {
@@ -157,7 +155,7 @@ TestAudioApp::KeyPressed(  dtCore::Keyboard*       keyboard,
          break;
 
       case  Producer::Key_S:
-         mFXMgr->AddDetonation( pos, dtCore::HighExplosiveDetonation );
+         mFXMgr->AddDetonation( pos, HighExplosiveDetonation );
          break;
 
       case  Producer::Key_D:
@@ -257,7 +255,7 @@ TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
 {
    assert( fname );
 
-   dtCore::Notify( dtCore::ALWAYS, " LoadPlaySound( %s )", fname );
+   Notify( ALWAYS, " LoadPlaySound( %s )", fname );
 
    Sound*   snd = AudioManager::GetManager()->NewSound();
    assert( snd );
@@ -276,13 +274,13 @@ TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
 
    if( box )
    {
-      dtCore::Object*  obj   = mGfxObj[box].get();
+      Object*  obj   = mGfxObj[box].get();
       assert( obj );
 
       obj->AddChild( snd );
 
-      dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
-      snd->SetTransform( &transform, dtCore::Transformable::REL_CS );
+      Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
+      snd->SetTransform( &transform, Transformable::REL_CS );
 
       snd->SetPlayCallback( MakeSmoke, this );
       snd->SetStopCallback( StopSmoke, this );
@@ -306,7 +304,7 @@ TestAudioApp::StopAllSounds( void )
       {
          snd->Stop();
 
-         dtCore::Notify( dtCore::ALWAYS, " StopAllSounds( %s )", snd->GetFilename() );
+         Notify( ALWAYS, " StopAllSounds( %s )", snd->GetFilename() );
       }
    }
 }
@@ -341,7 +339,7 @@ TestAudioApp::FreeAllStoppedSounds( bool forced /*= false*/ )
       if( snd == NULL )
          continue;
 
-      dtCore::Notify( dtCore::ALWAYS, " FreeAllStoppedSounds( %s )", snd->GetFilename() );
+      Notify( ALWAYS, " FreeAllStoppedSounds( %s )", snd->GetFilename() );
 
       AudioManager::GetManager()->FreeSound( snd );
       mActive.erase( iter );
@@ -382,7 +380,7 @@ TestAudioApp::ChangeSoundGain( float gain )
 {
    mSndGain = gain;
 
-   dtCore::Notify( dtCore::ALWAYS, " ChangeSoundGain( %1.1f )", mSndGain );
+   Notify( ALWAYS, " ChangeSoundGain( %1.1f )", mSndGain );
 
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -403,7 +401,7 @@ TestAudioApp::ChangeSoundPitch( float pitch )
 {
    mSndPitch   *= pitch;
 
-   dtCore::Notify( dtCore::ALWAYS, " ChangeSoundPitch( %1.4f )", mSndPitch );
+   Notify( ALWAYS, " ChangeSoundPitch( %1.4f )", mSndPitch );
 
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -424,7 +422,7 @@ TestAudioApp::ToggleSoundLooping( void )
 {
    mLooping =  !mLooping;
 
-   dtCore::Notify( dtCore::ALWAYS, " ToggleSoundLooping( %s )", (mLooping)? "true": "false" );
+   Notify( ALWAYS, " ToggleSoundLooping( %s )", (mLooping)? "true": "false" );
 
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -455,11 +453,11 @@ TestAudioApp::PauseAllSounds( void )
 
       if( snd->IsPlaying() )
       {
-         dtCore::Notify( dtCore::ALWAYS, " PauseAllSounds( %s ) paused", snd->GetFilename() );
+         Notify( ALWAYS, " PauseAllSounds( %s ) paused", snd->GetFilename() );
       }
       else  if( snd->IsPaused() )
       {
-         dtCore::Notify( dtCore::ALWAYS, " PauseAllSounds( %s ) un-paused", snd->GetFilename() );
+         Notify( ALWAYS, " PauseAllSounds( %s ) un-paused", snd->GetFilename() );
       }
    }
 }
@@ -479,7 +477,7 @@ TestAudioApp::RewindAllSounds( void )
 
       snd->Rewind();
 
-      dtCore::Notify( dtCore::ALWAYS, " RewindAllSounds( %s )", snd->GetFilename() );
+      Notify( ALWAYS, " RewindAllSounds( %s )", snd->GetFilename() );
    }
 }
 
@@ -513,7 +511,7 @@ TestAudioApp::SetUpVisuals( void )
 
 
 
-dtCore::Object*
+Object*
 TestAudioApp::LoadGfxFile( const char* fname )
 {
    if( fname == NULL )
@@ -524,12 +522,12 @@ TestAudioApp::LoadGfxFile( const char* fname )
    if( filename == "" )
    {
       // still no file name, bail...
-      dtCore::Notify( dtCore::WARN, "AudioManager: can't load file %s", fname );
+      Notify( WARN, "AudioManager: can't load file %s", fname );
       return   NULL;
    }
 
 
-   dtCore::Object*  fileobj  = new dtCore::Object;
+   Object*  fileobj  = new Object;
    assert( fileobj );
 
 
@@ -563,14 +561,14 @@ TestAudioApp::LoadGfxFile( const char* fname )
 
 
 
-dtCore::EffectManager*
+EffectManager*
 TestAudioApp::LoadFxFile( const char* fname )
 {
-   dtCore::EffectManager* effectManager  = new dtCore::EffectManager;
+   EffectManager* effectManager  = new EffectManager;
    assert( effectManager );
 
    effectManager->AddDetonationTypeMapping(
-      dtCore::HighExplosiveDetonation,
+      HighExplosiveDetonation,
       fname
    );
 
@@ -581,10 +579,10 @@ TestAudioApp::LoadFxFile( const char* fname )
 
 
 
-dtCore::ParticleSystem*
+ParticleSystem*
 TestAudioApp::LoadPSFile( const char* fname )
 {
-   dtCore::ParticleSystem*   particlesystem = new dtCore::ParticleSystem;
+   ParticleSystem*   particlesystem = new ParticleSystem;
    
    assert( particlesystem );
    
@@ -605,146 +603,146 @@ TestAudioApp::LoadPSFile( const char* fname )
 void
 TestAudioApp::InitInputDevices( void )
 {
-   mInputDevice   = new dtCore::LogicalInputDevice;
-   assert( mInputDevice );
+   mInputDevice   = new LogicalInputDevice;
+   //assert( mInputDevice );
 
-   dtCore::Keyboard* k  = GetKeyboard();
+   Keyboard* k  = GetKeyboard();
    assert( k );
 
-   dtCore::Mouse*    m  = GetMouse();
+   Mouse*    m  = GetMouse();
    assert( m );
 
-   dtCore::Axis* leftButtonUpAndDown  =
+   Axis* leftButtonUpAndDown  =
          mInputDevice->AddAxis(
                                  "left mouse button up/down",
-                                 new dtCore::ButtonAxisToAxis(
-                                       m->GetButton( dtCore::LeftButton ),
+                                 new ButtonAxisToAxis(
+                                       m->GetButton( LeftButton ),
                                        m->GetAxis( 1 )
                                                              )
                               );
 
 
-   dtCore::Axis* leftButtonLeftAndRight  =
+   Axis* leftButtonLeftAndRight  =
          mInputDevice->AddAxis(
                                  "left mouse button left/right",
-                                 new dtCore::ButtonAxisToAxis(
-                                       m->GetButton( dtCore::LeftButton ),
+                                 new ButtonAxisToAxis(
+                                       m->GetButton( LeftButton ),
                                        m->GetAxis( 0 )
                                                              )
                               );
 
 
-   dtCore::Axis* middleButtonUpAndDown   =
+   Axis* middleButtonUpAndDown   =
          mInputDevice->AddAxis(
                                  "middle mouse button up/down",
-                                 new dtCore::ButtonAxisToAxis(
-                                       m->GetButton( dtCore::MiddleButton ),
+                                 new ButtonAxisToAxis(
+                                       m->GetButton( MiddleButton ),
                                        m->GetAxis( 1 )
                                                              )
                               );
 
 
-   dtCore::Axis* rightButtonUpAndDown    =
+   Axis* rightButtonUpAndDown    =
          mInputDevice->AddAxis(
                                  "right mouse button up/down",
-                                 new dtCore::ButtonAxisToAxis(
-                                       m->GetButton( dtCore::RightButton ),
+                                 new ButtonAxisToAxis(
+                                       m->GetButton( RightButton ),
                                        m->GetAxis( 1 )
                                                              )
                               );
 
 
-   dtCore::Axis* rightButtonLeftAndRight =
+   Axis* rightButtonLeftAndRight =
          mInputDevice->AddAxis(
                                  "right mouse button left/right",
-                                 new dtCore::ButtonAxisToAxis(
-                                       m->GetButton( dtCore::RightButton ),
+                                 new ButtonAxisToAxis(
+                                       m->GetButton( RightButton ),
                                        m->GetAxis( 0 )
                                                              )
                               );
 
 
-   dtCore::Axis* arrowKeysUpAndDown      =
+   Axis* arrowKeysUpAndDown      =
          mInputDevice->AddAxis(
                                  "arrow keys up/down",
-                                 new dtCore::ButtonsToAxis(
+                                 new ButtonsToAxis(
                                        k->GetButton( Producer::Key_Down ),
                                        k->GetButton( Producer::Key_Up )
                                                           )
                               );
 
 
-   dtCore::Axis* arrowKeysLeftAndRight   =
+   Axis* arrowKeysLeftAndRight   =
          mInputDevice->AddAxis(
                                  "arrow keys left/right",
-                                 new dtCore::ButtonsToAxis(
+                                 new ButtonsToAxis(
                                        k->GetButton( Producer::Key_Left ),
                                        k->GetButton( Producer::Key_Right )
                                                           )
                               );
 
 
-   dtCore::Axis* wsKeysUpAndDown         =
+   Axis* wsKeysUpAndDown         =
          mInputDevice->AddAxis(
                                  "w/s keys up/down",
-                                 new dtCore::ButtonsToAxis(
+                                 new ButtonsToAxis(
                                        k->GetButton( Producer::Key_S ),
                                        k->GetButton( Producer::Key_W )
                                                           )
                               );
 
 
-   dtCore::Axis* adKeysLeftAndRight      =
+   Axis* adKeysLeftAndRight      =
          mInputDevice->AddAxis(
                                  "a/d keys left/right",
-                                 new dtCore::ButtonsToAxis(
+                                 new ButtonsToAxis(
                                        k->GetButton( Producer::Key_A ),
                                        k->GetButton( Producer::Key_D )
                                                           )
                               );
 
 
-   dtCore::Axis* primaryUpAndDown        =
+   Axis* primaryUpAndDown        =
          mInputDevice->AddAxis(
                                  "primary up/down",
-                                 new dtCore::AxesToAxis(
+                                 new AxesToAxis(
                                        arrowKeysUpAndDown,
                                        leftButtonUpAndDown
                                                        )
                               );
 
 
-   dtCore::Axis* secondaryUpAndDown      =
+   Axis* secondaryUpAndDown      =
          mInputDevice->AddAxis(
                                  "secondary up/down",
-                                 new dtCore::AxesToAxis(
+                                 new AxesToAxis(
                                        wsKeysUpAndDown,
                                        rightButtonUpAndDown
                                                        )
                               );
 
 
-   dtCore::Axis* primaryLeftAndRight     =
+   Axis* primaryLeftAndRight     =
          mInputDevice->AddAxis(
                                  "primary left/right",
-                                 new dtCore::AxesToAxis(
+                                 new AxesToAxis(
                                        arrowKeysLeftAndRight,
                                        leftButtonLeftAndRight
                                                        )
                               );
 
 
-   dtCore::Axis* secondaryLeftAndRight   =
+   Axis* secondaryLeftAndRight   =
          mInputDevice->AddAxis(
                                  "secondary left/right",
-                                 new dtCore::AxesToAxis(
+                                 new AxesToAxis(
                                        adKeysLeftAndRight,
                                        rightButtonLeftAndRight
                                                        )
                               );
 
 
-   dtCore::OrbitMotionModel* omm   = new dtCore::OrbitMotionModel;
+   OrbitMotionModel* omm   = new OrbitMotionModel;
    assert( omm );
 
    omm->SetAzimuthAxis( primaryLeftAndRight );
@@ -767,19 +765,19 @@ TestAudioApp::SetUpCamera( void )
    sgVec3   lookat   = { 0.f, 0.f, 0.f };
    sgVec3   up       = { 0.f, 0.f, 1.f };
 
-   dtCore::Transform   xform;
+   Transform   xform;
    xform.SetLookAt( pos, lookat, up );
 
    float dist(sgDistanceVec3( lookat, pos ));
 
-   dtCore::Camera*   cam(GetCamera());
+   Camera*   cam(GetCamera());
    assert( cam );
 
    cam->SetTransform( &xform );
 
 
-   dtCore::OrbitMotionModel*  omm   =
-      static_cast<dtCore::OrbitMotionModel*>(mMotionModel);
+   OrbitMotionModel*  omm   =
+      static_cast<OrbitMotionModel*>(mMotionModel.get());
    assert( omm );
 
    omm->SetDistance( dist );
@@ -798,7 +796,7 @@ TestAudioApp::MoveTheObject( unsigned int obj )
             double            P(sin( double(X++) * D ));
             double            V(cos( double(X++) * D ));
             unsigned int      I((obj==TRUCK)? 1L: 0L);
-            dtCore::Transform xform;
+            Transform xform;
             sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
             sgVec3            vel   = { 0.0f, 0.0f, 0.0f };
             OBJ_PTR           gfx(mGfxObj[obj]);
@@ -920,13 +918,9 @@ main( int argc, const char* argv[] )
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestAudioApp*  app   = new TestAudioApp( "config.xml" );
-   assert( app );
+   RefPtr<TestAudioApp>  app   = new TestAudioApp( "config.xml" );
 
    app->Run();
-
-   delete   app;
-   app   = NULL;
 
    return   0L;
 }

@@ -43,9 +43,9 @@ public:
       Application::Config();
 
       ///put something in the background to look at
-      Object *helo = new Object( "Helo" );
+      helo = new Object( "Helo" );
       helo->LoadFile( "models/uh-1n.ive" );
-      AddDrawable( helo );
+      AddDrawable( helo.get() );
 
       ///move the camera up
       Transform xform(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f );
@@ -59,7 +59,7 @@ public:
       GetWindow()->GetPosition(&x, &y, &w, &h);
 
       //This will contain all our UI elements
-      UIDrawable *drawable = new UIDrawable(w,h);
+      drawable = new UIDrawable(w,h);
       drawable->SetWindowResolution(w,h);
       ui = drawable->GetUI();
 
@@ -150,7 +150,7 @@ public:
       drawable->SetActiveRootFrame("main");
 
       ///Add the drawable to the Scene
-      AddDrawable( drawable );
+      AddDrawable( drawable.get() );
 
 
    }
@@ -160,7 +160,10 @@ public:
       mFilename = file;
    }
 
+   protected:
    string mFilename;
+   RefPtr<Object> helo;
+   RefPtr<UIDrawable> drawable;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER( TestGUIApp )
@@ -176,13 +179,11 @@ int main( int argc, const char* argv[] )
    }
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestGUIApp *app = new TestGUIApp( "config.xml" );
+   RefPtr<TestGUIApp> app = new TestGUIApp( "config.xml" );
    app->SetFilename( filename );
 
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }

@@ -106,10 +106,10 @@ public:
 
 private:
 
-   Keyboard* mKeyboard;
-   EffectManager* mEffectManager;
-   Object* mEntity;
-   dtCore::Camera* mCamera;
+   RefPtr<Keyboard> mKeyboard;
+   RefPtr<EffectManager> mEffectManager;
+   RefPtr<Object> mEntity;
+   RefPtr<Camera> mCamera;
    Producer::Timer mTimer;
    Producer::Timer_t mLastTime;
    Transform mPosition;
@@ -164,12 +164,14 @@ public:
 
       AddDrawable( effectManager.get() );
 
-      Updater* updater = new Updater(GetKeyboard(), effectManager.get(), entity.get(), GetCamera());
+      updater = new Updater(GetKeyboard(), effectManager.get(), entity.get(), GetCamera());
+
    }
 
    RefPtr<Object> entity;
    RefPtr<ParticleSystem> smoke;
    RefPtr<EffectManager> effectManager;
+   RefPtr<Updater> updater;
 
 };
 
@@ -179,12 +181,10 @@ int main( int argc, char **argv )
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestEffectsApp* app = new TestEffectsApp( "config.xml" );
+   RefPtr<TestEffectsApp> app = new TestEffectsApp( "config.xml" );
    
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }

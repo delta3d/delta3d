@@ -11,11 +11,11 @@ using namespace dtABC;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestWinApp )
 
-CUI_UI*       TestWinApp::mUI = NULL;
-DeltaWin*     TestWinApp::mWindow = NULL;
-ResolutionVec TestWinApp::mResVec;
-int           TestWinApp::mSelectedRes = -1;
-CUI_TextBox*  TestWinApp::mCurrentResText = NULL;
+CUI_UI*              TestWinApp::mUI = NULL;
+RefPtr<DeltaWin>     TestWinApp::mWindow = NULL;
+ResolutionVec        TestWinApp::mResVec;
+int                  TestWinApp::mSelectedRes = -1;
+CUI_TextBox*         TestWinApp::mCurrentResText = NULL;
 
 template<class T>
 std::string ToString(const T& val)
@@ -30,10 +30,6 @@ TestWinApp::TestWinApp( std::string configFilename /*= "config.xml"*/ )
 {
 }
 
-TestWinApp::~TestWinApp()
-{
-}
-
 void 
 TestWinApp::Config()
 {
@@ -43,7 +39,7 @@ TestWinApp::Config()
    mWindow = GetWindow();
    mWindow->GetPosition(&x, &y, &w, &h);
 
-   UIDrawable *drawable = new UIDrawable(w,h);
+   RefPtr<UIDrawable> drawable = new UIDrawable(w,h);
    drawable->SetWindowResolution(w,h);
 
    mUI = drawable->GetUI();
@@ -502,7 +498,7 @@ TestWinApp::Config()
    drawable->SetActiveRootFrame("testWin");
 
    /// add the drawable to the scene
-   GetScene()->AddDrawable( drawable );
+   AddDrawable( drawable.get() );
 
 }
 

@@ -16,13 +16,15 @@ class TestAudioApp   :  public   dtABC::Application
    DECLARE_MANAGEMENT_LAYER( TestAudioApp )
 
    private:
-      typedef  std::vector<dtAudio::Sound*>              SND_LST;
-      typedef  SND_LST::iterator                         SND_ITR;
-      typedef  std::queue<dtAudio::Sound*>               SND_QUE;
-      typedef  dtCore::RefPtr<dtCore::Object>              OBJ_PTR;
-      typedef  dtCore::RefPtr<dtCore::EffectManager>       FXM_PTR;
-      typedef  dtCore::RefPtr<dtCore::ParticleSystem>      PAR_PTR;
-      typedef  dtCore::RefPtr<dtAudio::SoundEffectBinder>  BIN_PTR;
+      typedef  std::vector<dtAudio::Sound*>                 SND_LST;
+      typedef  SND_LST::iterator                            SND_ITR;
+      typedef  std::queue<dtAudio::Sound*>                  SND_QUE;
+      typedef  dtCore::RefPtr<dtCore::Object>               OBJ_PTR;
+      typedef  dtCore::RefPtr<dtCore::EffectManager>        FXM_PTR;
+      typedef  dtCore::RefPtr<dtCore::ParticleSystem>       PAR_PTR;
+      typedef  dtCore::RefPtr<dtAudio::SoundEffectBinder>   BIN_PTR;
+      typedef  dtCore::RefPtr<dtCore::LogicalInputDevice>   LID_PTR;
+      typedef  dtCore::RefPtr<dtCore::MotionModel>          MM_PTR;
 
    private:
       static   unsigned int      kNumSoundFiles;
@@ -94,8 +96,8 @@ class TestAudioApp   :  public   dtABC::Application
                PAR_PTR                       mPSysC;
                FXM_PTR                       mFXMgr;
                BIN_PTR                       mSFXBinder;
-               dtCore::LogicalInputDevice*   mInputDevice;
-               dtCore::MotionModel*          mMotionModel;
+               LID_PTR                       mInputDevice;
+               MM_PTR                        mMotionModel;
                unsigned int                  mSmokeCountA;
                unsigned int                  mSmokeCountC;
 };

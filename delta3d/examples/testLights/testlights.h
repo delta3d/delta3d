@@ -11,7 +11,6 @@ class TestLightsApp : public dtABC::Application
 public:
 
    TestLightsApp( std::string configFilename = "config.xml" );
-   ~TestLightsApp();
 
    void Config();
 

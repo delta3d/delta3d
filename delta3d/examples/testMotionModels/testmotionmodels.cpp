@@ -23,11 +23,11 @@ public:
       mTerrain = new InfiniteTerrain;
       AddDrawable(mTerrain.get());
 
-      WalkMotionModel* wmm;
-      mMotionModels[0] = wmm = new WalkMotionModel(
+      RefPtr<WalkMotionModel> wmm = new WalkMotionModel(
          GetKeyboard(),
          GetMouse()
          );
+      mMotionModels[0] = wmm.get();
       wmm->SetScene(GetScene());
 
       mMotionModels[1] = new FlyMotionModel(
@@ -128,12 +128,10 @@ int main( int argc, char **argv )
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   TestMotionModelsApp* app = new TestMotionModelsApp( "config.xml" );
+   RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }
