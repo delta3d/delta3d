@@ -16,14 +16,17 @@ void initDrawableBindings();
 void initCameraBindings();
 void initInputDeviceBindings();
 void initObjectBindings();
+void initJoystickBindings();
 void initKeyboardBindings();
 void initMouseBindings();
 void initPhysicalBindings();
 void initSceneBindings();
 void initSoundBindings();
 void initSystemBindings();
+void initTrackerBindings();
 void initTransformBindings();
 void initTransformableBindings();
+void initTripodBindings();
 void initWindowBindings();
 
 void NotifyWrap(NotifySeverity ns, const char* msg)
@@ -55,9 +58,12 @@ BOOST_PYTHON_MODULE(dtCore)
    initPhysicalBindings();
    initObjectBindings();
    initCameraBindings();
+   initTripodBindings();
    initInputDeviceBindings();
    initKeyboardBindings();
    initMouseBindings();
+   initJoystickBindings();
+   initTrackerBindings();
    initWindowBindings();
    initSoundBindings();
 }

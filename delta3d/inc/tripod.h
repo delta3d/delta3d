@@ -20,6 +20,8 @@ namespace dtCore
    {
    public:
 
+      DECLARE_MANAGEMENT_LAYER(Tripod)
+      
       ///Contructor which takes in a optional Camera and Transformable
       Tripod(Camera *cam = NULL, Transformable *trans = NULL);
       virtual ~Tripod(void);
