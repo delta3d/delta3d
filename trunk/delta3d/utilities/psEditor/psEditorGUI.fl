@@ -6,9 +6,9 @@ Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Particle System Editor} open
-    xywh {432 156 602 584} type Double visible
+    xywh {45 125 602 584} type Double visible
   } {
-    Fl_Menu_Bar {} {
+    Fl_Menu_Bar MainMenu {open
       xywh {0 0 600 25}
     } {
       submenu {} {
@@ -21,9 +21,34 @@ Function {make_window()} {open
           xywh {0 0 100 20}
         }
         menuitem {} {
-          label {&Open}
+          label {&Open...}
           callback psEditorGUI_Open
+          xywh {0 0 100 20}
+        }
+        submenu {} {
+          label {Open &Previous} open
           xywh {0 0 100 20} divider
+        } {
+          menuitem {} {
+            label item
+            xywh {0 0 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {10 10 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {20 20 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {30 30 100 20}
+          }
+          menuitem {} {
+            label item
+            xywh {40 40 100 20}
+          }
         }
         menuitem {} {
           label {&Save}
@@ -31,7 +56,7 @@ Function {make_window()} {open
           xywh {0 0 100 20}
         }
         menuitem {} {
-          label {Save &As}
+          label {Save &As...}
           callback psEditorGUI_SaveAs
           xywh {0 0 100 20} divider
         }
@@ -42,7 +67,7 @@ Function {make_window()} {open
         }
       }
       submenu {} {
-        label {&View} open
+        label {&View}
         xywh {0 0 100 20}
       } {
         menuitem {} {
@@ -67,11 +92,11 @@ Function {make_window()} {open
         }
       }
     }
-    Fl_Tabs {} {open
+    Fl_Tabs {} {
       xywh {4 25 595 550}
     } {
       Fl_Group {} {
-        label Particles selected
+        label Particles
         xywh {4 52 590 515}
       } {
         Fl_Choice Particles_Alignment {

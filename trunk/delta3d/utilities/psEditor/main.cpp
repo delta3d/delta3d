@@ -41,6 +41,7 @@
 
 #include "psEditorGUI.h"
 
+#include <string.h>
 
 using namespace dtCore;
 using namespace osgParticle;
@@ -121,6 +122,12 @@ static ParticleSystemUpdater* particleSystemUpdater;
  */
 static std::string particleSystemFilename;
 
+///The Editor preferences - gets saved automatically when app exits
+Fl_Preferences appPrefs (Fl_Preferences::USER, "Delta3D", "ParticleEditor/preferences");
+
+// Previous loaded file history
+char absoluteHistory[5][1024];
+char relativeHistory[5][1024];
 
 /**
  * Activates and updates the random rate counter parameters.
@@ -466,6 +473,48 @@ static void updateGUIElements()
    }
 }
 
+// Update file history from preferences...
+void UpdateHistory(const std::string filename) 
+{
+   int	i;		// Looping var
+   char	absolute[1024];
+
+   fl_filename_absolute(absolute, sizeof(absolute), filename.c_str());
+
+   for (i = 0; i < 5; i ++)
+   {
+      if (!strcmp(absolute, absoluteHistory[i])) break;
+   }
+
+   if (i == 0) return;
+
+   if (i >= 5) i = 4;
+
+   // Move the other filenames down in the list...
+   memmove(absoluteHistory + 1, absoluteHistory, i * sizeof(absoluteHistory[0]));
+   memmove(relativeHistory + 1, relativeHistory, i * sizeof(relativeHistory[0]));
+
+   // Put the new file at the top...
+   strncpy(absoluteHistory[0], absolute, sizeof(absoluteHistory[0]));
+
+   fl_filename_relative(relativeHistory[0], sizeof(relativeHistory[0]),
+      absoluteHistory[0]);
+
+   // Update the menu items as needed...
+   for (i = 0; i < 5; i ++) 
+   {
+      appPrefs.set( Fl_Preferences::Name("file%d", i), absoluteHistory[i]);
+      if (absoluteHistory[i][0])
+      {
+         menu_MainMenu[i + 4].flags = 0;
+         menu_MainMenu[i + 4].label( );
+      }
+      else  menu_MainMenu[i + 4].flags = FL_MENU_INVISIBLE;
+   }
+
+   menu_MainMenu[3].flags &= ~FL_MENU_INACTIVE;
+}
+
 static void setParticleSystemFilename(std::string newFilename)
 {
    particleSystemFilename = newFilename;
@@ -481,8 +530,11 @@ static void setParticleSystemFilename(std::string newFilename)
       sprintf(buf, "Particle System Editor (%s)", newFilename.c_str());
 
       editorWindow->label(buf);
+      UpdateHistory(newFilename);
    }
 }
+
+
 
 void psEditorGUI_New(Fl_Menu_*, void*)
 {
@@ -562,6 +614,7 @@ void psEditorGUI_New(Fl_Menu_*, void*)
    updateGUIElements();
 }
 
+///Load the given filename
 void LoadFile( std::string filename )
 {
    if(!filename.empty())
@@ -673,8 +726,11 @@ void psEditorGUI_Open(Fl_Menu_*, void*)
       1
       );
 
-   std::string name = filename;
-   LoadFile(name);
+   if (filename != NULL)
+   {
+      std::string name = filename;
+      LoadFile(name);
+   }
 }
 
 void psEditorGUI_Save(Fl_Menu_*, void*)
@@ -2442,6 +2498,41 @@ static void makeCompass()
    sceneGroup->addChild(compassTransform);
 }
 
+///Called from the Open Previous menu items
+static void OpenHistoryCB(Fl_Widget *, void *v)
+{
+   LoadFile( (char*)v );
+}
+
+///Read the preference file and populate the particular widgets
+void ReadPrefs(void)
+{
+   for (int i=0; i<5; i++)
+   {
+      appPrefs.get( Fl_Preferences::Name("file%d", i), absoluteHistory[i],
+                     "", sizeof(absoluteHistory[i]));
+
+      if (absoluteHistory[i][0])
+      {
+         fl_filename_relative(relativeHistory[i], sizeof(relativeHistory[i]), absoluteHistory[i]);
+         menu_MainMenu[i+4].flags = 0;
+      }
+      else
+      {
+         menu_MainMenu[i+4].flags = FL_MENU_INVISIBLE;
+      }
+   }
+
+   if (!absoluteHistory[0][0]) menu_MainMenu[3].flags |= FL_MENU_INACTIVE;
+
+   //populate the menu items with the file paths
+   for (int i=0; i<5; i++)
+   {
+      menu_MainMenu[i+4].label(relativeHistory[i]);
+      menu_MainMenu[i+4].callback(OpenHistoryCB, absoluteHistory[i]);
+   }
+}
+
 int main( int argc, char **argv )
 {
    Window win;
@@ -2468,6 +2559,8 @@ int main( int argc, char **argv )
    OrbitMotionModel obm(win.GetMouse(), &cam);
 
    psEditorGUI_New(NULL, NULL);
+
+   ReadPrefs();
 
    editorWindow->show();
 

@@ -5,6 +5,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
+extern Fl_Menu_Bar *MainMenu;
 extern void psEditorGUI_New(Fl_Menu_*, void*);
 extern void psEditorGUI_Open(Fl_Menu_*, void*);
 extern void psEditorGUI_Save(Fl_Menu_*, void*);
@@ -184,7 +185,7 @@ extern Fl_Value_Input *Acceleration_Y;
 extern void psEditorGUI_Acceleration_SetZ(Fl_Value_Input*, void*);
 extern Fl_Value_Input *Acceleration_Z;
 Fl_Double_Window* make_window();
-extern Fl_Menu_Item menu_[];
+extern Fl_Menu_Item menu_MainMenu[];
 extern Fl_Menu_Item menu_Particles_Alignment[];
 extern Fl_Menu_Item menu_Particles_Shape[];
 extern Fl_Menu_Item menu_Counter[];
