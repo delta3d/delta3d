@@ -12,7 +12,7 @@
 #include "rbody/osg/ReplicantBodyMgr.h"
 #include "rbody/osg/OsgBody.h"
 
-#include "vrutils/os/FilePathContainer.h"
+#include "rvrutils/os/FilePathContainer.h"
 
 using namespace dtCore;
 using namespace dtChar;
@@ -72,11 +72,13 @@ osg::Node* Character::LoadFile(std::string filename, bool useCache)
    
    if(path.empty())
    {
-      Notify(WARN, "Character: Can't find %s", mFilename.c_str());
+      dtCore::Notify(WARN, "Character: Can't find %s", mFilename.c_str());
       return false;
    }
    else
    {
+      CalLoader::setLoadingMode(LOADER_INVERT_V_COORD);
+
       // Prevents ReplicantBody from complaining
       putenv("REPLICANTBODY_FILE_PATH=."); 
       
@@ -115,7 +117,7 @@ osg::Node* Character::LoadFile(std::string filename, bool useCache)
       
       if(mBodyNode.get() == NULL)
       {
-         Notify(WARN, "Character: Can't load %s", mFilename.c_str());
+         dtCore::Notify(WARN, "Character: Can't load %s", mFilename.c_str());
       }
       else
       {
@@ -173,12 +175,12 @@ void Character::SetVelocity(float velocity)
    {
       mVelocity = velocity;
    
-      double walkSpeed;
+      float walkSpeed;
       
       rbody::ActionRequest* walk = 
          mBodyNode->getBody()->getActionPrototype("ACT_WALK");
          
-      walk->getPropertyValueReturn("speed", walkSpeed);
+      walkSpeed = walk->getPropertyFloat("speed");
       
       rbody::ActionRequest* action;
       
@@ -243,7 +245,7 @@ void Character::ExecuteAction(string name,
  * @param force whether or not to force the action
  */
 void Character::ExecuteActionWithSpeed(string name, 
-                                       double speed,
+                                       float speed,
                                        bool priority,
                                        bool force)
 {
@@ -255,7 +257,7 @@ void Character::ExecuteActionWithSpeed(string name,
       
       action->setPrioritized(priority);
       
-      action->setPropertyValueReturn("speed", speed);
+      action->setPropertyFloat("speed", speed);
       
       mBodyNode->getBody()->executeAction(action, force);
    }
@@ -270,7 +272,7 @@ void Character::ExecuteActionWithSpeed(string name,
  * @param force whether or not to force the action
  */
 void Character::ExecuteActionWithAngle(string name, 
-                                       double angle,
+                                       float angle,
                                        bool priority, 
                                        bool force)
 {
@@ -282,7 +284,7 @@ void Character::ExecuteActionWithAngle(string name,
       
       action->setPrioritized(priority);
       
-      action->setPropertyValueReturn("angle", angle);
+      action->setPropertyFloat("angle", angle);
    
       mBodyNode->getBody()->executeAction(action, force);
    }
@@ -298,8 +300,8 @@ void Character::ExecuteActionWithAngle(string name,
  * @param force whether or not to force the action
  */
 void Character::ExecuteActionWithSpeedAndAngle(string name, 
-                                               double speed, 
-                                               double angle,
+                                               float speed, 
+                                               float angle,
                                                bool priority,
                                                bool force)
 {
@@ -311,8 +313,8 @@ void Character::ExecuteActionWithSpeedAndAngle(string name,
       
       action->setPrioritized(priority);
       
-      action->setPropertyValueReturn("speed", speed);
-      action->setPropertyValueReturn("angle", angle);
+      action->setPropertyFloat("speed", speed);
+      action->setPropertyFloat("angle", angle);
    
       mBodyNode->getBody()->executeAction(action, force);
    }
