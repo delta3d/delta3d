@@ -148,7 +148,7 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       int         pixelDepth  = atoi(win->Attribute("PixelDepth"));
       bool        showCursor  = atoi(win->Attribute("ShowCursor"));
       bool        fullScreen  = atoi(win->Attribute("FullScreen"));
-
+      bool        useWinAsRes = atoi(win->Attribute("UseWinAsRes"));
 
       mWindow->SetName(name);
       mWindow->SetWindowTitle(name.c_str());
@@ -156,7 +156,7 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       mWindow->ShowCursor(showCursor);
       mWindow->SetFullScreenMode(fullScreen);
       
-      if (fullScreen) mWindow->ChangeScreenResolution(width, height, pixelDepth);
+      if (useWinAsRes) mWindow->ChangeScreenResolution(width, height, pixelDepth);
    }
 
    TiXmlElement*  scene = rootNode->FirstChildElement("Scene");
