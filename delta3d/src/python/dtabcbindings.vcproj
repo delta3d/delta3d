@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../inc;../../ext/inc;$(PYTHON_ROOT)/include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -28,7 +28,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -37,7 +37,7 @@
 				OutputFile="..\..\bin\dtABC.pyd"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../lib;../../ext/lib;$(PYTHON_LIB_PATH)"
-				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt"
+				IgnoreDefaultLibraryNames="libcd; libcmtd; libcmt; msvcrt"
 				ImportLibrary="Debug/dtABCBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -69,13 +69,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../inc;../../ext/inc;$(PYTHON_ROOT)/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
