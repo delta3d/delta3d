@@ -109,6 +109,8 @@ osg::Node* Character::LoadFile(std::string filename, bool useCache)
          mCollisionRootNode.get()
       );
 
+      //HACK: Somehow fixes bug where multi-textures models drop their textures when
+      //      a character is in the scene. Weird. Please someone fix this fo' real!
       for( unsigned int i = 0; i < mBodyNode->getNumChildren(); i++ )
       {
          osg::MatrixTransform* scale = dynamic_cast<osg::MatrixTransform*>( mBodyNode->getChild(i) );
