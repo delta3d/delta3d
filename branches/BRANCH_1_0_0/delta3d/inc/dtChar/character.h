@@ -153,7 +153,7 @@ namespace dtChar
          /**
           * Stops a character action.
           *
-          * @param action the name of the action to stop
+          * @param name the name of the action to stop
           */
          void StopAction(std::string name);
          
