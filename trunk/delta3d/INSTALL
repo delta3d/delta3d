@@ -82,21 +82,36 @@ Fedora Core-up (2.6.5-1.358)
    To build the Delta3D source, also run 'make install' to place the shared
    libraries in the ../lib folder.
 
-   Uncomment SUBDIRS( python ) to build dtPython as well. Make sure to
-   run the script install_linux_python from src/python to create 
+   dtPython
+   --------
+   Before building dtPython, make sure you have Boost Python and the library
+   libboost_python-gcc-mt is located in /usr/local/lib or somewhere in your
+   LD_LIBRARY_PATH environment variable.
+
+   Then, go to src/python and run:
+
+   'cmake .', and then 'make' 
+
+   Make sure to run the script install_linux_python from src/python to create 
    necessary symbolic links to Python modules. Also don't forgot to
    point your PYTHONPATH environment variable to directory containing
    these links.
 
-Note:
-HLA requires RTI, as mentioned above. Instructions to build HLA-related
-apps are as follows:
+   testPython:
 
-dtHLA   : Uncomment the relavent portion of src/CMakeLists.txt .
+   Run 'cmake .' and then 'make' from the examples/testPython directory.
+   Follow instructions in readme.txt.
 
-testHLA : Run 'cmake .' from examples/testHLA/ and then 'make' .
+   dtHLA
+   -----
+   HLA requires RTI, as mentioned above. Instructions to build HLA-related
+   apps are as follows:
 
-hlaStealthViewer : Run 'cmake .' from utilities/hlaStealthViewer/ 
+   dtHLA   : Uncomment the relavent portion of src/CMakeLists.txt .
+
+   testHLA : Run 'cmake .' from examples/testHLA/ and then 'make' .
+
+   hlaStealthViewer : Run 'cmake .' from utilities/hlaStealthViewer/ 
                    and then 'make' 
 
    
