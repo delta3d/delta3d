@@ -548,11 +548,11 @@ namespace dtSOARX
 #undef _AUTOLIBNAME2
 
 #if defined(_DEBUG)
-   #define _AUTOLIBNAME  "p51soarxd.lib"
+   #define _AUTOLIBNAME  "dtsoarxd.lib"
    #define _AUTOLIBNAME1 "osgGL2d.lib"
    #define _AUTOLIBNAME2 "gdal.lib"
 #else
-   #define _AUTOLIBNAME  "p51soarx.lib"
+   #define _AUTOLIBNAME  "dtsoarx.lib"
    #define _AUTOLIBNAME1 "osgGL2.lib"
    #define _AUTOLIBNAME2 "gdal.lib"
 #endif
