@@ -5,6 +5,7 @@ SConscript(dirs=[ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtUtil', 'dtVis', 'gu
 #SConscript(dirs=[ 'python' ])
 #SConscript(dirs=[ 'soarx' ])
 
+env.Depends('dtCore','dtUtil')
 env.Depends('dtABC','dtCore')
 env.Depends('dtChar','dtCore')
 env.Depends('gui_fl','dtCore')

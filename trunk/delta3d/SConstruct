@@ -1,4 +1,44 @@
 import os
+import sys
+import time
+import glob
+import smtplib
+
+from email.MIMEText import MIMEText
+
+########################
+# Build error emailing #
+########################
+
+# Set this to true to enable build emailing. If additional email addresses are desired, 
+# add them to the groups below
+email = 'false'
+
+bmh = ['johnson@bmh.com', 'guthrie@bmh.com', 'murphy@bmh.com', 'campbell@bmh.com', 'coonan@bmh.com']
+nps = ['cwosborn@nps.edu', 'rejohnso@nps.edu']
+# netc
+
+# Function to calculate current time for logging
+def current_time() :
+   now = time.localtime()
+   display = time.strftime('%A, %B %d %Y, %X', now)
+   return display
+
+# Function to email the result of the build
+def email_results() :
+	file = open('BuildLog.txt', 'r')
+	buffer = MIMEText(file.read())
+	buffer['Subject'] = 'Editor Build Log'
+	file.close()
+
+	s = smtplib.SMTP()
+	#s.connect('norfolk.bmh.com') #change to NPS server
+	s.sendmail('cwosborn@nps.edu', nps, buffer.as_string())
+	s.close()
+
+###########
+# Options #
+###########
 
 optCache = 'options.cache'
 opts = Options(optCache)
@@ -10,6 +50,10 @@ opts.AddOptions(
     BoolOption('warningsAsErrors', 'Treat warnings as errors', 0),
     PathOption('prefix', 'Directory to install under (Default: /usr/local)', '/home/cwosborn/delta/HEAD/delta3d') )
 
+# Open the error log
+errorLog = open('BuildLog.txt', 'w')
+errorLog.write('Build started: ' + current_time() + '\n\n')
+
 env = Environment(
     ENV = {
       'PATH'       : os.environ['PATH'],
@@ -20,17 +64,30 @@ env = Environment(
       'DELTA_DATA' : os.environ['DELTA_DATA'].split(':')
     }, options = opts)
 
-
 env.Replace(CPPPATH = [], LIBS = [], LIBPATH = [], CPPDEFINES = [],
     CXXFLAGS = '', CCFLAGS = '')
 
 Help(opts.GenerateHelpText(env))
 opts.Save('delta3d.conf', env)
 
+if sys.platform == 'win32' :
+   OS = 'windows'	
+elif sys.platform == 'linux2' or sys.platform == 'linux-i386' :
+   OS = 'linux'
+else :
+   errorLog.write('Build Failed: Unsupported platform: ' + sys.platform)
+   errorLog.close()
+   env.Exit(-1) 
+
 if env.get('debug'):
     env.Append(CCFLAGS=['-g'], CPPDEFINES=['DEBUG', '_DEBUG'])
-if env.get('optimize'):
+    mode = 'debug'
+    errorLog.write('Build Configuration: Debug\n\n')
+else:
     env.Append(CCFLAGS=['-O2'], LINKFLAGS=['-s'], CPPDEFINES=['NDEBUG'])
+    mode = 'release'
+    errorLog.write('Build Configuration: Release\n\n')
+    
 if env.get('distcc'):
     env['CC']  = ['$(', 'distcc', '$)', env['CC']]
     env['CXX'] = ['$(', 'distcc', '$)', env['CXX']]
@@ -57,6 +114,13 @@ Help(opts.GenerateHelpText(env))
 env['CPPPATH'] = env['ENV']['DELTA_INC']
 env['LIBPATH'] = env['ENV']['DELTA_LIB']
 
+if OS == 'linux' :
+  env['CPPPATH'].append('/usr/X11R6/include')
+  env['LIBPATH'].append('/usr/X11R6/lib')
+
+print env['CPPPATH']
+print env['LIBPATH']
+
 #############################################
 # Configure: Testing for dependencies vX.X.X
 #
@@ -68,7 +132,14 @@ env['LIBPATH'] = env['ENV']['DELTA_LIB']
 
 def CheckForOpenSceneGraph(context):
 
-    osgLibs = [ 'osg', 'osgDB', 'osgUtil', 'osgGL2', 'osgText', 'osgSim', 'osgFX', 'osgParticle', 'osg', 'osgGA', 'osgProducer', 'osgTerrain' ]
+    if mode == 'debug' and OS == 'windows' :
+        osgLibs = ['osgd', 'osgDBd', 'osgUtild', 'osgGL2d', 'osgTextd', 
+                   'osgSimd', 'osgFXd', 'osgParticled', 'osgd', 'osgGAd', 
+                   'osgProducerd', 'osgTerraind']
+    else:
+        osgLibs = [ 'osg', 'osgDB', 'osgUtil', 'osgGL2', 'osgText',
+                    'osgSim', 'osgFX', 'osgParticle', 'osg', 'osgGA',
+                    'osgProducer', 'osgTerrain' ]
 
     for lib in osgLibs:
         if not conf.CheckLib(lib, language='C++'):
@@ -77,67 +148,100 @@ def CheckForOpenSceneGraph(context):
     return 1
 
 def CheckForProducer(context):
-    if conf.CheckLib('Producer',language='C++'):
-        return 1
-    return 0
+    if mode == 'debug' and OS == 'windows' :
+        return conf.CheckLib('Producer',language='C++')
+    else:
+        return conf.CheckLib('Producer', language = 'C++') 
 
 def CheckForOpenThreads(context):
-    if conf.CheckLib('OpenThreads',language='C++'):
-        return 1
-    return 0
+    if OS == 'windows':
+        if mode == 'debug' : 
+		return conf.CheckLib('OpenThreadsWin32d', language = 'C++')
+	else :
+		return conf.CheckLib('OpenThreadsWin32', language = 'C++')
+    else :
+        return conf.CheckLib('OpenThreads',language='C++')
 
 def CheckForCal3d(context):
     # test for --enable-rtti
-    if conf.CheckLib('cal3d',language='C++'):
-        return 1
-    return 0
+
+    if mode == 'debug' and OS == 'windows' : 
+	return conf.CheckLib('cal3d_d', language = 'C++')
+    else :
+        return conf.CheckLib('cal3d', language = 'C++')
 
 def CheckForFltk(context):
     # test for --enable-shared(?), --enable-threads
-    if conf.CheckLib('fltk',language='C++'):
-        return 1
-    return 0
 
+    if mode == 'debug' and OS == 'windows' : 
+        return conf.CheckLib('fltkd', language = 'C++')
+    else :
+        return conf.CheckLib('fltk', language = 'C++')
+    
 def CheckForGdal(context):
-    if conf.CheckLib('gdal',language='C++'):
-        return 1
-    return 0
+
+    if mode == 'debug' and OS == 'windows' : 
+        return conf.CheckLib('gdal_i', language = 'C++')
+    else :
+        return conf.CheckLib('gdal', language = 'C++')
 
 def CheckForGlGui(context):
-    if conf.CheckLib('glgui',language='C++'):
-        return 1
-    return 0
+        
+    if mode == 'debug' and OS == 'windows' : 
+        return conf.CheckLib('glgui_d', language = 'C++')
+    else :
+        return conf.CheckLib('glgui', language = 'C++')
 
 def CheckForIsense(context):
-    if conf.CheckLib('isense',language='C++'):
-        return 1
-    return 0
+
+    if mode == 'debug' and OS == 'windows': 
+        return conf.CheckLib('isensed', language = 'C++')
+    else :
+        return conf.CheckLib('isense', language = 'C++')
 
 def CheckForOpenAl(context):
-    # verify hacks
-    if conf.CheckLib('openal',language='C++'):
-        return 1
-    return 0
+
+    if mode == 'debug' and OS == 'windows' : 
+        return conf.CheckLib('openal32', language = 'C++')
+    else :
+        return conf.CheckLib('openal', language = 'C++')
 
 def CheckForOde(context):
     # test for single precision, trimesh enabled, RTTI on
-    if conf.CheckLib('ode',language='C'):
-        return 1
-    return 0
+
+    if mode == 'debug' and OS == 'windows' : 
+        return conf.CheckLib('oded', language = 'C++')
+    else :
+        return conf.CheckLib('ode', language = 'C++')
 
 def CheckForPlib(context):
 
     pLibLibs = [ 'plibsg', 'plibul', 'plibjs' ]
 
+    # windows filenames?
+
     for lib in pLibLibs:
         if not conf.CheckLib(lib, language='C++'):
             return 0
-
+        
     return 1
 
 def CheckForReplicantBody(context):
 
-    rbodyLibs = [ 'rbodyvortex', 'rbodyvrutils', 'cfgvrutils', 'cfgscript', 'rbody', 'rbodyosg' ]
+    # windows filenames?
+
+    if OS == 'windows' :
+        if mode == 'debug' :
+           rbodyLibs = [ 'rbodyvortex', 'rbodyvrutils', 'cfgvrutils',
+                         'cfgscript', 'ReplicandtBodyd', 'rbodyosg' ]
+        else :
+           rbodyLibs = [ 'rbodyvortex', 'rbodyvrutils', 'cfgvrutils',
+                         'cfgscript', 'ReplicantBody', 'rbodyosg' ]
+    else:
+        #rbodyLibs = [ 'rbodyvortex', 'rbodyvrutils', 'cfgvrutils',
+        #              'cfgscript', 'rbody', 'rbodyosg' ]
+        rbodyLibs = [ 'rbodyvortex', 'rbodyvrutils', 'cfgvrutils',
+                      'cfgscript']
 
     for lib in rbodyLibs:
         if not conf.CheckLib(lib, language='C++'):
@@ -147,20 +251,66 @@ def CheckForReplicantBody(context):
 
 def CheckForSignalSlot(context):
     # test for gcc3.4 compatibility
-    if conf.CheckHeader('sigslot.h',language='C++'):
-        return 1
-    return 0
-
+    return conf.CheckHeader('sigslot.h',language='C++')
+        
 def CheckForTinyXml(context):
-    if conf.CheckLib('tinyxml',language='C++'):
-        return 1
-    return 0
+
+    if mode == 'debug' and OS == 'windows' :
+        return conf.CheckLib('tinyxmld', language = 'C++')
+    else :
+        return conf.CheckLib('tinyxml', language = 'C++')
 
 def CheckForRti(context):
     return 0
 
 def CheckForBoost(context):
     return 0
+
+def CheckForXxf86m(context):
+    if OS == 'linux' :
+        return conf.CheckLib('Xxf86vm') #language = ???
+    else:
+        return 1
+
+### Determine the OS and build configuration
+##if sys.platform == 'win32' :
+##    #isRelease = ARGUMENTS.get('release', 0)
+##    isRelease = not env.get('debug')
+##    if int(isRelease): 
+##        env = Environment(CPPDEFINES = ['WIN32', 'NDEBUG', 'DT_LIBRARY', '_NOAUTOLIBMSG'],
+##                          CXXFLAGS = ['/EHsc', '/GR', '/MD'])
+##        errorLog.write('Build Configuration: Release\n\n')
+##        mode = 'release'
+##    else:
+##        env = Environment(CPPDEFINES = ['WIN32', '_DEBUG', 'DT_LIBRARY', '_NOAUTOLIBMSG'],
+##                          CXXFLAGS = ['/EHsc', '/GR', '/MDd'])
+##        errorLog.write('Build Configuration: Debug\n\n')
+##        mode = 'debug'
+		
+##	OS  = 'windows'	
+	
+##elif sys.platform == 'linux2' or sys.platform == 'linux-i386' :
+##    #isRelease = ARGUMENTS.get('release', 0)
+##    isRelease = not env.get('debug')
+##    if int(isRelease) :
+##        env = Environment(CPPDEFINES = '_X11_IMPLEMENTATION',
+##                          CCFLAGS = ['-O2', '-march=i686', '-Wall', '-pipe']) 
+##        errorLog.write('Build Configuration: Release\n\n')
+##        mode = 'release'
+##    else : 
+##        env = Environment(CPPDEFINES = '_X11_IMPLEMENTATION',
+##                          CCFLAGS = ['-g', '-pg', '-O0', '-Wall', '-pipe']) 
+##        errorLog.write('Build Configuration: Debug\n\n')
+##        mode = 'debug'
+	
+##    OS = 'linux'
+
+##else :
+##    errorLog.write('Build Failed: Unsupported platform: ' + sys.platform)
+##    errorLog.close()
+##    env.Exit(-1)
+
+errorLog.write('OS: ' + OS + '\n\n')
 
 conf = Configure(env, custom_tests = {
     'CheckForOpenSceneGraph' : CheckForOpenSceneGraph,
@@ -176,55 +326,24 @@ conf = Configure(env, custom_tests = {
     'CheckForPlib' : CheckForPlib,
     'CheckForReplicantBody' : CheckForReplicantBody,
     'CheckForSignalSlot' : CheckForSignalSlot,
-    'CheckForTinyXml' : CheckForTinyXml
+    'CheckForTinyXml' : CheckForTinyXml,
+    'CheckForXxf86m' : CheckForXxf86m
     })
 
 # TODO: don't run for install
 if not env.GetOption('clean'):
 
-    if not conf.CheckForGdal():
-        Exit(1)
-
-    if not conf.CheckForOpenThreads():
-        Exit(1)
-
-    if not conf.CheckForProducer():
-        Exit(1)
-
-    if not conf.CheckForOpenSceneGraph():
-        Exit(1)
-
-    if not conf.CheckForFltk():
-        Exit(1)
-
-    if not conf.CheckForGlGui():
-        Exit(1)
-
-    if not conf.CheckForIsense():
-        Exit(1)
-
-    if not conf.CheckForOpenAl():
-        Exit(1)
-
-    if not conf.CheckForOde():
-        Exit(1)
-
-    if not conf.CheckForPlib():
-        Exit(1)
-
-    if not conf.CheckForCal3d():
-        Exit(1)
-
-    if not conf.CheckForReplicantBody():
-        Exit(1)
-
-    if not conf.CheckForSignalSlot():
-        Exit(1)
-
-    if not conf.CheckForTinyXml():
-        Exit(1)
-
-env = conf.Finish()
+    if not conf.CheckForGdal() or not conf.CheckForOpenThreads() or not conf.CheckForProducer() or not conf.CheckForOpenSceneGraph() or not conf.CheckForFltk() or not conf.CheckForGlGui() or not conf.CheckForIsense() or not conf.CheckForOpenAl() or not conf.CheckForOde() or not conf.CheckForPlib() or not conf.CheckForCal3d() or not conf.CheckForReplicantBody() or not conf.CheckForSignalSlot() or not conf.CheckForTinyXml() or not conf.CheckForXxf86m() :
+       errorLog.write('Build Failed: Missing required libraries\n\n')
+       errorLog.close()
+       if email == 'true' :
+          email_results()
+          env.Exit(-1)
+       else:
+          env = conf.Finish()
+    else :
+       # No need to email since this is a clean (scons -c)
+       email = 'false'
 
 #################
 # Build Delta3D #
@@ -235,10 +354,22 @@ Export('env')
 env.Replace(CXXSUFFIX = '.cpp')
 
 env.Alias('install','$prefix/lib')
-#env.Alias('examples',SConscript('examples'))
+#env.Alias('examples',SConscript(dirs=['examples']))
+#env.Alias('python',SConscript(dirs=['src/python','examples/testPython']))
+#env.Alias('hla',SConscript(dirs=['src/dtHLA','examples/testHLA','utilties/hlaStealthViewer']))
+# hlabindings?
 
 # TODO: install headers, libs, to $prefix
 
 SConscript(dirs=[ 'src' ])
 SConscript(dirs=[ 'examples' ])
 #SConscript(dirs=[ 'utilities' ])
+
+# Close the error log and print the results
+errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
+errorLog.close()
+
+# email the results
+if email == 'true' :
+   print 'not emailing'
+   #email_results() 
