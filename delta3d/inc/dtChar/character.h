@@ -27,6 +27,7 @@
 
 
 #include "dtCore/transformable.h"
+#include "dtCore/loadable.h"
 
 #undef Status
 #include "rbody/osg/OsgBody.h"
@@ -36,7 +37,7 @@ namespace dtChar
    /**
     * An animated character.
     */
-   class DT_EXPORT Character : public dtCore::Transformable
+   class DT_EXPORT Character : public dtCore::Transformable, public dtCore::Loadable
    {
       DECLARE_MANAGEMENT_LAYER(Character)
 
@@ -55,13 +56,9 @@ namespace dtChar
           */
          virtual ~Character();
 
-         /**
-          * Returns this object's OpenSceneGraph node.
-          *
-          * @return the OpenSceneGraph node
-          */
-         virtual osg::Node* GetOSGNode();
-         
+         virtual osg::Node* GetOSGNode() { return dynamic_cast<osg::Node*>(mBodyNode.get()); }
+         virtual osg::MatrixTransform* GetMatrixNode(void) { return dynamic_cast<osg::MatrixTransform*>(mBodyNode.get()); }
+      
          /**
           * Notifies this drawable object that it has been added to
           * a scene.
@@ -77,14 +74,7 @@ namespace dtChar
           * @param filename the name of the file to load
           * @return true if successful, false if not
           */
-         bool LoadFile(std::string filename);
-
-         /**
-          * Returns the name of the last file loaded.
-          *
-          * @return the name of the last file loaded
-          */
-         std::string GetFilename() const;
+         virtual osg::Node* LoadFile( std::string filename, bool useCache = true );
 
          /**
           * Sets the rotation of this character.
@@ -177,11 +167,6 @@ namespace dtChar
          
 
       private:
-
-         /**
-          * The container node.
-          */
-         osg::ref_ptr<osg::Group> mNode;
          
          /**
           * The ReplicantBody OSG node.
