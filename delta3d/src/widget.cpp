@@ -1,10 +1,14 @@
 /** header files */
 #include <cassert>
-
+#include <iostream> //tests
 #include <system.h>
 #include <globals.h>
 
 #include "widget.h"
+
+#ifndef _WIN32
+#include "X11/Xlib.h"
+#endif
 
 /** name spaces */
 using namespace   dtABC;
@@ -76,7 +80,7 @@ Widget::Config( const WinData* d /*= NULL*/ )
 
       osg::ref_ptr<Producer::InputArea>      ia = new Producer::InputArea;
       assert( ia.get() );
-
+      
       rs->setWindow( d->hwnd );
       rs->setWindowRectangle( d->pos_x, d->pos_y, d->width, d->height );
       rs->setInputRectangle( Producer::RenderSurface::InputRectangle( d->pos_x, d->width, d->pos_y, d->height ) );
@@ -99,6 +103,7 @@ Widget::Config( const WinData* d /*= NULL*/ )
       sys->Start();
    }
 
+   
    BaseABC::Config();
 }
 

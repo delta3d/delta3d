@@ -1,6 +1,9 @@
 //______________________________________________________________
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#endif // _WIN32
+
 #include <cstdlib>
 #include <string>
 #include "soarx_framework.h"
@@ -43,8 +46,8 @@ extensions(NULL)
    setSupportsDisplayList(false);
    
    renderer[0] = Render0;
-	renderer[1] = Render1;
-	renderer[2] = Render2;
+   renderer[1] = Render1;
+   renderer[2] = Render2;
 
    m_view_camera = m_refinement_camera = new Camera;
    
