@@ -99,7 +99,7 @@ static int dInfiniteTerrainClass = 0;
  *
  * @param name the instance name
  */
-InfiniteTerrain::InfiniteTerrain(string name)
+InfiniteTerrain::InfiniteTerrain(string name, osg::Image* textureImage)
    : mSegmentSize(1000.0f),
      mSegmentDivisions(128),
      mHorizontalScale(0.01f),
@@ -125,30 +125,37 @@ InfiniteTerrain::InfiniteTerrain(string name)
    
    ss->setAttribute(mat);
    
-   osg::Image* image = new osg::Image;
-   
-   sgPerlinNoise_2D texNoise;
-   
-   unsigned char* texture = new unsigned char[256*256*3];
-   
-   int k = 0;
-   
-   for(int i=0;i<256;i++)
+   osg::Image* image = NULL;
+
+   if (textureImage != NULL)
+      image = textureImage;
+   else 
    {
-      for(int j=0;j<256;j++)
+      image = new osg::Image;
+
+      sgPerlinNoise_2D texNoise;
+
+      unsigned char* texture = new unsigned char[256*256*3];
+
+      int k = 0;
+
+      for(int i=0;i<256;i++)
       {
-         float val = 0.7f + texNoise.getNoise(i*0.1f, j*0.1f)*0.3f;
-         
-         texture[k++] = 0;
-         texture[k++] = (unsigned char)(val*0.5*255);
-         texture[k++] = (unsigned char)(val*0.1*255);
+         for(int j=0;j<256;j++)
+         {
+            float val = 0.7f + texNoise.getNoise(i*0.1f, j*0.1f)*0.3f;
+
+            texture[k++] = 0;
+            texture[k++] = (unsigned char)(val*0.5*255);
+            texture[k++] = (unsigned char)(val*0.1*255);
+         }
       }
+
+      image->setImage(
+         256, 256, 1, 3, GL_RGB, GL_UNSIGNED_BYTE, 
+         texture, osg::Image::USE_NEW_DELETE
+         );
    }
-   
-   image->setImage(
-      256, 256, 1, 3, GL_RGB, GL_UNSIGNED_BYTE, 
-      texture, osg::Image::USE_NEW_DELETE
-   );
    
    //image->computeMipMaps();
       
