@@ -31,13 +31,12 @@ namespace dtCore
    * of the system clock, and since it's inaccurate, we must flip it.
    */
 
-   class DT_EXPORT DeltaTimer : public osg::Timer
+   class DT_EXPORT Timer : public osg::Timer
    {
 
    #ifdef WIN32
    public:
-
-         DeltaTimer();
+         Timer();
    #endif //WIN32
 
    };
