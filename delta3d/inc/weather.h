@@ -30,7 +30,7 @@ namespace dtABC
      * Make sure to add your Drawables using Weather::AddDrawable().  This will
      * ensure that the Drawables get affected by the fog and lighting.
      */
-   class DT_EXPORT Weather : dtCore::Base
+   class DT_EXPORT Weather : public dtCore::Base
    {
    public:
       DECLARE_MANAGEMENT_LAYER(Weather)

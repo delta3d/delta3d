@@ -4,8 +4,11 @@
 #include <string>
 
 #include <osg/ref_ptr>
-#include <osg/vec3>
-#include <osg/vec4>
+#include <osg/Vec3>
+#include <osg/Vec4>
+#include <osg/Geode>
+#include <osg/MatrixTransform>
+#include <osg/Switch>
 
 #include <macros.h>
 #include <transformable.h>

@@ -15,27 +15,35 @@ void initBaseBindings();
 void initCameraBindings();
 void initCloudDomeBindings();
 void initCloudPlaneBindings();
+void initCompassBindings();
 void initDrawableBindings();
+void initEffectManagerBindings();
 void initEnvEffectBindings();
 void initEnvironmentBindings();
 void initFlyMotionModelBindings();
 void initInfiniteTerrainBindings();
 void initInputDeviceBindings();
+void initInputMapperBindings();
 void initIsectorBindings();
 void initJoystickBindings();
 void initKeyboardBindings();
 void initLogicalInputDeviceBindings();
 void initMotionModelBindings();
 void initMouseBindings();
+void initNoiseGeneratorBindings();
 void initObjectBindings();
 void initOrbitMotionModelBindings();
 void initParticleSystemBindings();
 void initPhysicalBindings();
+void initPointAxisBindings();
+void initRecorderBindings();
 void initSceneBindings();
 void initSkyBoxBindings();
 void initSkyDomeBindings();
 void initSoundBindings();
+void initSoundEffectBinderBindings();
 void initSystemBindings();
+void initTerrainBindings();
 void initTrackerBindings();
 void initTransformBindings();
 void initTransformableBindings();
@@ -64,7 +72,7 @@ BOOST_PYTHON_MODULE(dtCore)
       .value("INFO", INFO)
       .value("DEBUG_INFO", DEBUG_INFO)
       .export_values();
-      
+   
    initBaseBindings();
    initSystemBindings();
    initSceneBindings();
@@ -87,6 +95,7 @@ BOOST_PYTHON_MODULE(dtCore)
    initJoystickBindings();
    initTrackerBindings();
    initLogicalInputDeviceBindings();
+   initInputMapperBindings();
    initWindowBindings();
    initSoundBindings();
    initParticleSystemBindings();
@@ -98,4 +107,11 @@ BOOST_PYTHON_MODULE(dtCore)
    initFlyMotionModelBindings();
    initUFOMotionModelBindings();
    initOrbitMotionModelBindings();
+   initCompassBindings();
+   initNoiseGeneratorBindings();
+   initPointAxisBindings();
+   initRecorderBindings();
+   initSoundEffectBinderBindings();
+   initTerrainBindings();
+   initEffectManagerBindings();
 }

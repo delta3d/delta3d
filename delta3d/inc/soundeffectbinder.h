@@ -32,9 +32,10 @@ namespace dtCore
     */
    class DT_EXPORT SoundEffectBinder :  public   EffectListener, public   Base
    {
+      DECLARE_MANAGEMENT_LAYER(SoundEffectBinder)
+        
       private:
-         DECLARE_MANAGEMENT_LAYER(SoundEffectBinder)
-
+         
          // forward references
          class SfxObj;
 

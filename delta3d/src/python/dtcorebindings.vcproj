@@ -128,10 +128,16 @@
 				RelativePath=".\cloudplanebindings.cpp">
 			</File>
 			<File
+				RelativePath=".\compassbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\drawablebindings.cpp">
 			</File>
 			<File
 				RelativePath=".\dtcorebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\effectmanagerbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\enveffectbindings.cpp">
@@ -147,6 +153,9 @@
 			</File>
 			<File
 				RelativePath=".\inputdevicebindings.cpp">
+			</File>
+			<File
+				RelativePath=".\inputmapperbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\isectorbindings.cpp">
@@ -167,6 +176,9 @@
 				RelativePath=".\mousebindings.cpp">
 			</File>
 			<File
+				RelativePath=".\noisegeneratorbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\objectbindings.cpp">
 			</File>
 			<File
@@ -177,6 +189,12 @@
 			</File>
 			<File
 				RelativePath=".\physicalbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\pointaxisbindings.cpp">
+			</File>
+			<File
+				RelativePath=".\recorderbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\scenebindings.cpp">
@@ -191,7 +209,13 @@
 				RelativePath=".\soundbindings.cpp">
 			</File>
 			<File
+				RelativePath=".\soundeffectbinderbindings.cpp">
+			</File>
+			<File
 				RelativePath=".\systembindings.cpp">
+			</File>
+			<File
+				RelativePath=".\terrainbindings.cpp">
 			</File>
 			<File
 				RelativePath=".\trackerbindings.cpp">
