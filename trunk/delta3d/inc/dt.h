@@ -35,6 +35,10 @@
 #undef _AUTOLIBNAME15
 #undef _AUTOLIBNAME16
 #undef _AUTOLIBNAME17
+#undef _AUTOLIBNAME18
+#undef _AUTOLIBNAME19
+#undef _AUTOLIBNAME20
+#undef _AUTOLIBNAME21
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY  
@@ -63,6 +67,10 @@
 #define _AUTOLIBNAME15 "osgTerrain.lib"
 #define _AUTOLIBNAME16 "glGUI.lib"
 #define _AUTOLIBNAME17 "osgGL2.lib"
+#define _AUTOLIBNAME18 "js.lib"
+#define _AUTOLIBNAME19 "openal32.lib"
+#define _AUTOLIBNAME20 "alut.lib"
+#define _AUTOLIBNAME21 "isense.lib"
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
@@ -83,6 +91,10 @@
    #pragma message( "Will automatically link with " _AUTOLIBNAME15 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME16 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME17 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME18 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME19 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME20 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME21 )
 
    #ifndef DT_LIBRARY
       #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
@@ -106,6 +118,10 @@
 #pragma comment(lib, _AUTOLIBNAME15)
 #pragma comment(lib, _AUTOLIBNAME16)
 #pragma comment(lib, _AUTOLIBNAME17)
+#pragma comment(lib, _AUTOLIBNAME18)
+#pragma comment(lib, _AUTOLIBNAME19)
+#pragma comment(lib, _AUTOLIBNAME20)
+#pragma comment(lib, _AUTOLIBNAME21)
 
 #ifndef DT_LIBRARY
    #pragma comment(lib, _AUTOLIBNAME5)
