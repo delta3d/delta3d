@@ -19,6 +19,17 @@ Light::Light( int number, LightingMode mode, osg::LightSource* lightSource )
 
 Light::~Light() {}
 
+void Light::SetLightingMode( const LightingMode mode )
+{
+   bool wasEnabled = GetEnabled();
+   SetEnabled( false );
+
+   mLightingMode = mode;
+
+   SetEnabled( wasEnabled ); 
+}
+
+
 void 
 Light::SetEnabled( bool enabled )
 {
