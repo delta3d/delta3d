@@ -32,9 +32,8 @@ namespace dtCore
 
    public:
 
-      SpotLight( int number, const std::string name, const LightingMode mode );
-
-      SpotLight( osg::LightSource* const source, const std::string name, const LightingMode mode );
+      SpotLight( int number, const std::string name = "defaultSpotLight", const LightingMode mode = GLOBAL );
+      SpotLight( osg::LightSource* const source, const std::string name = "defaultSpotLight", const LightingMode mode = GLOBAL  );
       virtual ~SpotLight();
 
       inline void SetSpotCutoff( float spot_cutoff )

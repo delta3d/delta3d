@@ -32,9 +32,8 @@ namespace dtCore
 
    public:
 
-      PositionalLight( int number, const std::string name, const LightingMode mode );
-
-      PositionalLight( osg::LightSource* const source, const std::string name, const LightingMode mode );
+      PositionalLight( int number, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL );
+      PositionalLight( osg::LightSource* const source, const std::string name = "defaultPositonalLight", const LightingMode mode = GLOBAL  );
       virtual ~PositionalLight();
 
       // attenuation factor = 1 / ( k_c + k_l*(d) + k_q*(d^2) )
