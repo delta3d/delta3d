@@ -22,7 +22,7 @@ Base::Base(string name) : mName(name)
 {
    RegisterInstance(this);
 
-   mId = Id();
+   mId = new Id();
 }
 
 /**
