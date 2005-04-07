@@ -25,17 +25,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include <string>
 
 #include "dtCore/export.h"
-
-#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32__)
-#   include <uuid/uuid.h>
-#else
-#   include <Rpc.h>
-#   include <Rpcdce.h>
-#endif
 
 namespace dtCore
 {
@@ -45,22 +37,34 @@ namespace dtCore
       public:
 
          Id();
-         Id( const dtCore::Id& id );
-         Id( const std::string& stringId ) { Set( stringId ); }
+         //Id( const dtCore::Id& id ) { mId = id.mId; }
+         Id( const std::string& stringId ) : mId( stringId ) {}
          virtual ~Id() {}
+         
+         bool operator== ( const Id& rhs ) const;
+         bool operator< ( const Id& rhs ) const;
+         bool operator> ( const Id& rhs ) const;
 
-         bool operator== ( Id id );
+         const std::string& ToString() const { return mId; }
       
-         void Set( const std::string& stringId );
-         void Get( std::string& stringId ) const;
+      protected:
+
+         Id& operator=( const Id& rhs )
+         { 
+            if( this == &rhs ) 
+               return *this; 
+            
+            mId = rhs.mId; 
+            return *this; 
+         }
+
+         Id& operator=( const std::string& rhs )
+         { 
+            mId = rhs; 
+            return *this;
+         }
       
-      private:
-      
-         #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32__)
-         uuid_t mId;
-         #else
-         GUID mId;
-         #endif
+         std::string mId;
 
    };
 };

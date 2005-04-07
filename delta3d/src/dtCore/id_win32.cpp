@@ -1,54 +1,70 @@
-#include "dtCore/id.h"
-#include "dtCore/notify.h"
-
 #include <cassert>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+
+#include <Rpc.h>
+#include <Rpcdce.h>
+
+#include "dtCore/id.h"
+#include "dtCore/notify.h"
 
 using namespace dtCore;
 using namespace std;
    
 Id::Id()
 {
-   assert( UuidCreate( &mId ) == RPC_S_OK );
+   GUID guid;
+
+   assert( UuidCreate( &guid ) == RPC_S_OK );
+
+   unsigned char* guidChar;
+   assert( UuidToString( const_cast<UUID*>(&guid), &guidChar ) == RPC_S_OK );
+
+   mId = std::string( reinterpret_cast<const char*>(guidChar) );
 }
 
-Id::Id( const Id& id )
+bool Id::operator== ( const Id& rhs ) const
 {
-   mId.Data1 = id.mId.Data1;
-   mId.Data2 = id.mId.Data2;
-   mId.Data3 = id.mId.Data3;
-   mId.Data4[0] = id.mId.Data4[0];
-   mId.Data4[1] = id.mId.Data4[1];
-   mId.Data4[2] = id.mId.Data4[2];
-   mId.Data4[3] = id.mId.Data4[3];
-   mId.Data4[4] = id.mId.Data4[4];
-   mId.Data4[5] = id.mId.Data4[5];
-   mId.Data4[6] = id.mId.Data4[6];
-   mId.Data4[7] = id.mId.Data4[7];
-}
+   GUID lhsGuid;
+   GUID rhsuid;
 
-bool Id::operator== ( Id id )
-{
+   assert( UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK );
+   assert( UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK );
+
    RPC_STATUS status;
-   int result = UuidEqual( &mId, &id.mId, &status );
+   int result = UuidCompare( &lhsGuid, &rhsuid, &status );
    assert( status == RPC_S_OK );
 
-   return result == TRUE;
+   return result == 0;
 }
 
-void Id::Set( const std::string& stringId )
+bool Id::operator< ( const Id& rhs ) const
 {
-   if( UuidFromString( reinterpret_cast<unsigned char*>(const_cast<char*>(stringId.c_str())), &mId ) != RPC_S_OK )
-      Notify( WARN, "Could not convert std::string to dtCore::Id." );
+   GUID lhsGuid;
+   GUID rhsuid;
+
+   assert( UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK );
+   assert( UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK );
+
+   RPC_STATUS status;
+   int result = UuidCompare( &lhsGuid, &rhsuid, &status );
+   assert( status == RPC_S_OK );
+
+   return result == -1;
 }
 
-void Id::Get( std::string& stringId ) const
+bool Id::operator> ( const Id& rhs ) const
 {
-   unsigned char* guidChar;
-   if( UuidToString( const_cast<UUID*>(&mId), &guidChar ) != RPC_S_OK )
-      Notify( WARN, "Could not convert dtCore::Id to std::string");
+   GUID lhsGuid;
+   GUID rhsuid;
 
-   stringId = std::string( reinterpret_cast<const char*>(guidChar) );
+   assert( UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK );
+   assert( UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK );
+
+   RPC_STATUS status;
+   int result = UuidCompare( &lhsGuid, &rhsuid, &status );
+   assert( status == RPC_S_OK );
+
+   return result == 1;
 }
