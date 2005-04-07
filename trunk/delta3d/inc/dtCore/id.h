@@ -37,7 +37,6 @@ namespace dtCore
       public:
 
          Id();
-         //Id( const dtCore::Id& id ) { mId = id.mId; }
          Id( const std::string& stringId ) : mId( stringId ) {}
          virtual ~Id() {}
          
