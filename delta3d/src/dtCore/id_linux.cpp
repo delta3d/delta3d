@@ -13,53 +13,43 @@ Id::Id()
    uuid_generate( uuid );
 
    char buffer[37];
-   uuid_unparse( mId, buffer );
+   uuid_unparse( uuid, buffer );
 
    mId = std::string( buffer );
 }
 
-/*
-Id::Id( const Id& id )
-{
-   uuid_clear( mId );
-   uuid_copy( mId, id.mId );
-
-   char str[37];
-   uuid_unparse( mId, str );
-
-   mId = std::string( str );
-}
-*/
-
 bool Id::operator== ( const Id& rhs ) const
 {
    uuid_t lhsUuid;
-   uuid_t rhsUid;
+   uuid_t rhsUuid;
+   
+   if( uuid_parse( mId.c_str(), lhsUuid ) != 0 ||
+       uuid_parse( rhs.mId.c_str(), rhsUuid ) != 0 )
+      Notify( ALWAYS, "Could not convert std::string to uuid_t." );
 
-   assert( uuid_parse( mId.c_str(), lhsUuid ) != 0 );
-   assert( uuid_parse( ths.mId.c_str(), rhsUid ) != 0 );
-
-   return uuid_compare( lhsUuid, rhsUid ) == 0;
+   return uuid_compare( lhsUuid, rhsUuid ) == 0;
 }
 
 bool Id::operator< ( const Id& rhs ) const
 {
    uuid_t lhsUuid;
-   uuid_t rhsUid;
+   uuid_t rhsUuid;
 
-   assert( uuid_parse( mId.c_str(), lhsUuid ) != 0 );
-   assert( uuid_parse( ths.mId.c_str(), rhsUid ) != 0 );
+   if( uuid_parse( mId.c_str(), lhsUuid ) != 0 ||
+       uuid_parse( rhs.mId.c_str(), rhsUuid ) != 0 )
+      Notify( ALWAYS, "Could not convert std::string to uuid_t." );
 
-   return uuid_compare( lhsUuid, rhsUid ) == -1;
+   return uuid_compare( lhsUuid, rhsUuid ) < 0;
 }
 
 bool Id::operator> ( const Id& rhs ) const
 {
    uuid_t lhsUuid;
-   uuid_t rhsUid;
+   uuid_t rhsUuid;
 
-   assert( uuid_parse( mId.c_str(), lhsUuid ) != 0 );
-   assert( uuid_parse( ths.mId.c_str(), rhsUid ) != 0 );
+   if( uuid_parse( mId.c_str(), lhsUuid ) != 0 ||
+       uuid_parse( rhs.mId.c_str(), rhsUuid ) != 0 )
+      Notify( ALWAYS, "Could not convert std::string to uuid_t." );
 
-   return uuid_compare( lhsUuid, rhsUid ) == 1;
+   return uuid_compare( lhsUuid, rhsUuid ) > 0;
 }
