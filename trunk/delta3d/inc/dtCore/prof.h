@@ -85,8 +85,8 @@ typedef enum
 } Prof_Report_Mode;
 
 extern Prof_C void Prof_set_report_mode(Prof_Report_Mode e);
-extern Prof_C void Prof_move_cursor(int delta);
-extern Prof_C void Prof_select(void);
+extern Prof_C DT_EXPORT void Prof_move_cursor(int delta);
+extern Prof_C DT_EXPORT void Prof_select(void);
 extern Prof_C void Prof_select_parent(void);
 extern Prof_C void Prof_move_frame(int delta);
 
