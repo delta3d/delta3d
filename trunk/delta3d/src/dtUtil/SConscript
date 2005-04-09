@@ -4,7 +4,13 @@ dtUtilSrcs = [  'domain.cpp',
                 'matrixutil.cpp',
                 'polardecomp.cpp' ]
 
-dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS=[ 'osg', 'plibsg', 'plibul' ] )
+libsToLink = [ 'osg', 'sg', 'ul', 'User32' ]
+
+for lib in libsToLink :
+   if extLibs.has_key(lib):
+      lib = extLibs[lib]
+
+dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS = libsToLink )
 
 env.Alias( 'install', env.Install( '$prefix/lib', dtUtilLib ) )
 env.Default( dtUtilLib )

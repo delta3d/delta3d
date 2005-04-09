@@ -4,7 +4,7 @@ Import('*')
 # Delcare src files #
 #####################
 
-if pythonFound and boostFound :
+if boostFound :
     
     pythonDtCoreSrcs = [    'basebindings.cpp',
                             'camerabindings.cpp',
