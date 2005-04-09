@@ -261,7 +261,7 @@ elif OS == 'linux' :
          'glgui'        : 'glgui',
          'isense'       : 'isense',
          'openal'       : 'openal', 
-         'ode'          : ' ode', 
+         'ode'          : 'ode', 
          'sg'           : 'plibsg', 
          'ul'           : 'plibul', 
          'js'           : 'plibjs',  
@@ -278,7 +278,7 @@ else :
 conf = Configure(env)
 
 # TODO: don't run for install
-if not env.GetOption('clean') and OS != 'windows':
+if not env.GetOption('clean') and OS != 'windows' and 0:
      
    foundReqLibs = 1
    for lib in extLibs.keys() :

@@ -5,10 +5,7 @@ dtUtilSrcs = [  'domain.cpp',
                 'polardecomp.cpp' ]
 
 libsToLink = [ 'osg', 'sg', 'ul', 'User32' ]
-
-for lib in libsToLink :
-   if extLibs.has_key(lib):
-      lib = extLibs[lib]
+libsToLink = [ extLibs[lib] for lib in libsToLink if extLibs.has_key(lib) ]
 
 dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, LIBS = libsToLink )
 
