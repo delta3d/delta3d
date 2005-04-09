@@ -41,6 +41,7 @@ namespace dtCore
          virtual ~Id() {}
          
          bool operator== ( const Id& rhs ) const;
+         bool operator!= ( const Id& rhs ) const;
          bool operator< ( const Id& rhs ) const;
          bool operator> ( const Id& rhs ) const;
 
