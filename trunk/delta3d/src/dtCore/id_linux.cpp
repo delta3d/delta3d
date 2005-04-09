@@ -30,6 +30,18 @@ bool Id::operator== ( const Id& rhs ) const
    return uuid_compare( lhsUuid, rhsUuid ) == 0;
 }
 
+bool Id::operator!= ( const Id& rhs ) const
+{
+   uuid_t lhsUuid;
+   uuid_t rhsUuid;
+   
+   if( uuid_parse( mId.c_str(), lhsUuid ) != 0 ||
+       uuid_parse( rhs.mId.c_str(), rhsUuid ) != 0 )
+      Notify( ALWAYS, "Could not convert std::string to uuid_t." );
+
+   return uuid_compare( lhsUuid, rhsUuid ) != 0;
+}
+
 bool Id::operator< ( const Id& rhs ) const
 {
    uuid_t lhsUuid;
