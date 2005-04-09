@@ -331,8 +331,8 @@ env.Alias( 'hla', [ os.path.join(os.getcwd(), 'src', 'dtHLA'),
                      os.path.join(os.getcwd(), 'utilities', 'hlaStealthViewer') ] )
                      
 SConscript( dirs=['src'] )
-#SConscript( dirs=['examples'] )
-#SConscript( dirs=['utilities'] )
+SConscript( dirs=['examples'] )
+SConscript( dirs=['utilities'] )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')
