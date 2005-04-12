@@ -64,7 +64,7 @@ namespace dtCore
 
 		~CloudDome();
 
-		osg::Group *GetNode(void) {return mNode.get();}
+		//osg::Group *GetNode(void) {return mNode.get();}
 
 		// getters
 		float getScale()            { return mScale; }
@@ -128,7 +128,7 @@ namespace dtCore
 		virtual void OnMessage(MessageData *data);
 		void Update(const double deltaFrameTime);
 
-      dtCore::RefPtr<osg::Group> mNode;
+      //dtCore::RefPtr<osg::Group> mNode;
 		dtCore::RefPtr<osg::Geode> mDome;
 		dtCore::RefPtr<osg::Image> mImage_3D;
 		dtCore::RefPtr<osg::Texture3D> mTex3D;

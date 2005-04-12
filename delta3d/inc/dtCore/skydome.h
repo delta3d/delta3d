@@ -38,7 +38,7 @@ namespace dtCore
    public:
       SkyDome(std::string name="SkyDome");
       virtual ~SkyDome(void);
-      virtual osg::Group *GetNode(void) {return mNode;}
+      //virtual osg::Group *GetNode(void) {return mNode;}
 
       void SetBaseColor(sgVec3 color);
       void GetBaseColor(sgVec3 color) {sgCopyVec3(color, mBaseColor);}
@@ -46,6 +46,17 @@ namespace dtCore
       virtual void Repaint(sgVec4 sky_color, sgVec4 fog_color, 
                            double sun_angle, double sunAzimuth,
                            double vis);
+
+
+
+   private:
+      // Build the sky dome
+      void Config(void);
+
+      //osg::Group *mNode;
+      osg::Node* MakeDome(void);
+      sgVec3 mBaseColor;
+      osg::Geode *mGeode;
 
       class DT_EXPORT MoveEarthySkyWithEyePointTransform : public osg::Transform
       {
@@ -78,14 +89,6 @@ namespace dtCore
          }
       };
 
-   private:
-      // Build the sky dome
-      void Config(void);
-
-      osg::Group *mNode;
-      osg::Node* MakeDome(void);
-      sgVec3 mBaseColor;
-      osg::Geode *mGeode;
       MoveEarthySkyWithEyePointTransform *mXform;
    };
 }

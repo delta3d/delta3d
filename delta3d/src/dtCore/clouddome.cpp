@@ -2,6 +2,7 @@
 #include "dtCore/clouddome.h"
 #include "dtCore/system.h"
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
 
 #include <osg/Vec3>
 #include <osg/BlendFunc>
@@ -23,7 +24,6 @@ CloudDome::CloudDome( int   octaves,
                       float radius,
                       int   segments)
    : EnvEffect("CloudDome"), 
-     mNode(new osg::Group),
      mDome(0),
      mImage_3D(0),
      mTex3D(0),
@@ -55,6 +55,8 @@ CloudDome::CloudDome( int   octaves,
      mOffset(new osg::Vec3(.01f, .01f, 0.f))
 {
     RegisterInstance(this);
+    mNode = new osg::Group();
+    mNode->setName( this->GetName() );
     Create();
     AddSender(System::GetSystem());
 }
@@ -64,7 +66,6 @@ CloudDome::CloudDome( float radius,
                       int   segments,
                       std::string filename )
    : EnvEffect("CloudDome"),
-     mNode(new osg::Group),
      mDome(0),
      mImage_3D(0),
      mTex3D(0),
@@ -96,6 +97,10 @@ CloudDome::CloudDome( float radius,
      mOffset(new osg::Vec3(.01f, .01f, 0.f))
 {
     RegisterInstance(this);
+
+    mNode = new osg::Group();
+    mNode->setName( this->GetName() );
+
     Create();
     AddSender(System::GetSystem());
 }
@@ -278,7 +283,7 @@ void CloudDome::Create()
     mStateSet->setAttributeAndModes( Cloud_ProgObj, osg::StateAttribute::ON);
 
     mXform->addChild(mDome.get());
-    mNode->addChild(mXform.get());
+    dynamic_cast<osg::Group*>(mNode.get())->addChild(mXform.get());
 
 
 }

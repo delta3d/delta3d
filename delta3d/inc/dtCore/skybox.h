@@ -73,7 +73,7 @@ public:
       SKYBOX_BOTTOM
    } SkyBoxSideEnum;
 
-   virtual osg::Group *GetNode(void) {return mNode.get();}
+   //virtual osg::Group *GetNode(void) {return mNode.get();}
 
    /// Must override this to supply the repainting routine
    virtual void Repaint(sgVec3 skyColor, sgVec3 fogColor,
@@ -117,7 +117,7 @@ private:
    };
    
    MoveEarthySkyWithEyePointTransform *mXform;
-   dtCore::RefPtr<osg::Group> mNode;
+   //dtCore::RefPtr<osg::Group> mNode;
    dtCore::RefPtr<osg::Geode> mGeode;
    void Config(void);
    osg::Node* MakeBox(void);

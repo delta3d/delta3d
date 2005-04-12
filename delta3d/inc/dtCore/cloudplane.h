@@ -53,7 +53,7 @@ namespace dtCore
       
       ~CloudPlane();
 
-      virtual osg::Group *GetNode(void) {return mNode.get();}
+      //virtual osg::Group *GetNode(void) {return mNode.get();}
 
       virtual void Repaint(sgVec4 sky_color, sgVec4 fog_color, 
           double sun_angle, double sunAzimuth,
@@ -97,7 +97,7 @@ namespace dtCore
        void Update(const double deltaFrameTime);
        osg::Geometry *createPlane(float, float);
 
-       dtCore::RefPtr<osg::Group> mNode;
+       //dtCore::RefPtr<osg::Group> mNode;
        dtCore::RefPtr<osg::Geode> mGeode;
        dtCore::RefPtr<osg::Geometry> mPlane;
        dtCore::RefPtr<osg::Image> mImage;

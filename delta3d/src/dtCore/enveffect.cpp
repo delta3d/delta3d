@@ -1,4 +1,5 @@
 #include "dtCore/enveffect.h"
+#include "dtCore/scene.h"
 
 using namespace dtCore;
 
