@@ -1908,7 +1908,7 @@ void RTIConnection::OnMessage(MessageData *data)
             );
          }
 
-         master->GetTransform(&transform);
+         master->GetTransform(&transform, Transformable::REL_CS);
 
          if(doHeartbeat || !(*m).second.mTransform.EpsilonEquals(&transform))
          {
