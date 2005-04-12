@@ -1263,7 +1263,7 @@ void RTIConnection::ClampToGround(Entity* entity)
    {
       Transform transform;
    
-      entity->GetTransform(&transform);
+      entity->GetTransform(&transform, Transformable::REL_CS);
    
       sgVec3 xyz, groundNormal = {0, 0, 1};
       float HOT = 0.0f;
@@ -1335,7 +1335,7 @@ void RTIConnection::ClampToGround(Entity* entity)
          }
       }
       
-      entity->SetTransform(&transform);
+      entity->SetTransform(&transform, Transformable::REL_CS);
    }
 }
 
@@ -1975,53 +1975,7 @@ void RTIConnection::OnMessage(MessageData *data)
          GhostData& gd = (*g).second;
          Entity* ghost = (*g).second.mEntity.get();
          
-         Transform transform;
-         
-         ghost->GetTransform(&transform);
-         
-         WorldCoordinate wc = ghost->GetWorldLocation();
-         
-         VelocityVector vv = ghost->GetVelocityVector();
-         
-         wc.SetX(wc.GetX() + vv.GetX()*dt);
-         wc.SetY(wc.GetY() + vv.GetY()*dt);
-         wc.SetZ(wc.GetZ() + vv.GetZ()*dt);
-         
-         ghost->SetWorldLocation(wc);
-         
-         sgVec3 position;
-            
-         if(mGlobeModeEnabled)
-         {
-            position[0] = (wc.GetX()/semiMajorAxis)*mGlobeRadius;
-            position[1] = (wc.GetY()/semiMajorAxis)*mGlobeRadius;
-            position[2] = (wc.GetZ()/semiMajorAxis)*mGlobeRadius;
-            
-         }
-         else if(mUTMModeEnabled)
-         {
-            ConvertGeocentricToGeodetic(wc.GetX(),wc.GetY(),wc.GetZ(),&mLat,&mLong,&mElevation);
-            ConvertGeodeticToUTM(mLat,mLong,&mZone,&mHemisphere,&mEasting,&mNorthing);
-            position[0] = mEasting - mLocationOffset[0];
-            position[1] = mNorthing - mLocationOffset[1];
-            position[2] = mElevation - mLocationOffset[2];
-            sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
-            
-         }
-         else
-         {
-            position[0] = wc.GetX()- mLocationOffset[0];
-            position[1] = wc.GetY() - mLocationOffset[1];
-            position[2] = wc.GetZ() - mLocationOffset[2];
-            sgXformVec3(position, mRotationOffsetInverse);
-            //std::cout<<"X: " <<position[0]<<"Y: " <<position[1]<<"Z: " <<position[2]<<std::endl;  //debugging
-         }
-         
-         transform.SetTranslation(position);
-         
-         ghost->SetTransform(&transform);
-         
-         ClampToGround(ghost);
+         UpdateGhostPosition(dt, gd, ghost);
          
          const vector<ArticulatedParameter>& params =
             ghost->GetArticulatedParametersArray();
@@ -2322,7 +2276,7 @@ void RTIConnection::OnMessage(MessageData *data)
       }
       
             
-      mRTIAmbassador.tick();
+      mRTIAmbassador.tick();     
       
       
       // Request types of newly discovered objects
@@ -2338,7 +2292,6 @@ void RTIConnection::OnMessage(MessageData *data)
           objs != mNewlyDiscoveredObjects.end();
           objs++)
       {
-             
          mRTIAmbassador.requestObjectAttributeValueUpdate(
             *objs,
             *requiredAttributes
@@ -2349,6 +2302,59 @@ void RTIConnection::OnMessage(MessageData *data)
 
       delete requiredAttributes;
    }
+}
+
+void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *ghost)
+{
+   Transform transform;
+   WorldCoordinate wc;
+   VelocityVector vv;
+
+   ghost->GetTransform(&transform, Transformable::REL_CS);
+
+   wc = ghost->GetWorldLocation();
+
+   vv = ghost->GetVelocityVector();
+
+   wc.SetX(wc.GetX() + vv.GetX()*dt);
+   wc.SetY(wc.GetY() + vv.GetY()*dt);
+   wc.SetZ(wc.GetZ() + vv.GetZ()*dt);
+
+   ghost->SetWorldLocation(wc);
+
+   sgVec3 position;
+
+   if(mGlobeModeEnabled)
+   {
+      position[0] = (wc.GetX()/semiMajorAxis)*mGlobeRadius;
+      position[1] = (wc.GetY()/semiMajorAxis)*mGlobeRadius;
+      position[2] = (wc.GetZ()/semiMajorAxis)*mGlobeRadius;
+
+   }
+   else if(mUTMModeEnabled)
+   {
+      ConvertGeocentricToGeodetic(wc.GetX(),wc.GetY(),wc.GetZ(),&mLat,&mLong,&mElevation);
+      ConvertGeodeticToUTM(mLat,mLong,&mZone,&mHemisphere,&mEasting,&mNorthing);
+      position[0] = mEasting - mLocationOffset[0];
+      position[1] = mNorthing - mLocationOffset[1];
+      position[2] = mElevation - mLocationOffset[2];
+      sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
+
+   }
+   else
+   {
+      position[0] = wc.GetX()- mLocationOffset[0];
+      position[1] = wc.GetY() - mLocationOffset[1];
+      position[2] = wc.GetZ() - mLocationOffset[2];
+      sgXformVec3(position, mRotationOffsetInverse);
+      //std::cout<<"X: " <<position[0]<<"Y: " <<position[1]<<"Z: " <<position[2]<<std::endl;  //debugging
+   }
+
+   transform.SetTranslation(position);
+
+   ghost->SetTransform(&transform, Transformable::REL_CS);
+
+   ClampToGround(ghost);
 }
 
 /**
@@ -2498,7 +2504,7 @@ void RTIConnection::reflectAttributeValues(
 
    unsigned int damageAttribute;
 
-   ghost->GetTransform(&transform);
+   ghost->GetTransform(&transform, Transformable::REL_CS);
 
    
 
@@ -2831,7 +2837,7 @@ void RTIConnection::reflectAttributeValues(
       }
    }
 
-   ghost->SetTransform(&transform);
+   ghost->SetTransform(&transform, Transformable::REL_CS);
    
    ClampToGround(ghost);
 }

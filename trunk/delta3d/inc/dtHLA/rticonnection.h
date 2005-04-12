@@ -758,6 +758,8 @@ namespace dtHLA
           */
          void ClampToGround(Entity* entity);
          
+
+
          /**
           * The RTI ambassador.
           */
@@ -1133,6 +1135,9 @@ namespace dtHLA
             std::map<unsigned int, osgSim::DOFTransform*>
                mArticulatedPartClassTransformMap;
          };
+
+         ///Private method to update an entity's position
+         void UpdateGhostPosition(const double dt, GhostData &gd, Entity *ghost);
 
          /**
           * Maps object instance handles to ghost entity data.
