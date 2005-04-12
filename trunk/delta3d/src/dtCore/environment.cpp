@@ -160,19 +160,19 @@ void Environment::AddEffect(EnvEffect *effect)
       if (SkyDome *dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
       {
          mSkyDome = dome;
-         mEnvEffectNode->addChild( dome->GetNode() ); 
+         mEnvEffectNode->addChild( dome->GetOSGNode() ); 
 
          //add the skydome shader to dome's stateset
          short attr = osg::StateAttribute::OFF;
          if (GetFogMode()==Environment::ADV) attr = osg::StateAttribute::ON;
 
-         osg::StateSet *state = dome->GetNode()->getOrCreateStateSet();
+         osg::StateSet *state = dome->GetOSGNode()->getOrCreateStateSet();
          state->setAttributeAndModes(mSkyDomeShader->mLightScatterinVP, attr );
          state->setAttributeAndModes(mSkyDomeShader->mDomeFP, attr );
       }
       else
       {
-         mEnvEffectNode->addChild(effect->GetNode());
+         mEnvEffectNode->addChild(effect->GetOSGNode());
       }
 
       this->Repaint();
@@ -217,7 +217,7 @@ void Environment::RemoveEffectCache(void)
    {
       EnvEffect *effect = it->get();
 
-      mEnvEffectNode->removeChild( effect->GetNode() );
+      mEnvEffectNode->removeChild( effect->GetOSGNode() );
 
       //also take it out of the Environment's effect list
       EnvEffectList::iterator itr = std::find(mEffectList.begin(),mEffectList.end(),effect);
@@ -374,7 +374,7 @@ void dtCore::Environment::SetFogMode(FogMode mode)
    //if we're using a skyDome, turn on/off its shader
    if (mSkyDome.valid())
    {
-      state = mSkyDome.get()->GetNode()->getOrCreateStateSet();
+      state = mSkyDome.get()->GetOSGNode()->getOrCreateStateSet();
       state->setAttributeAndModes(mSkyDomeShader->mLightScatterinVP, attr );
       state->setAttributeAndModes(mSkyDomeShader->mDomeFP, attr );
    }
@@ -447,7 +447,7 @@ void dtCore::Environment::SetFogEnable(bool enable)
       //if we're using a skyDome, turn on/off its shader
       if (mSkyDome.valid())
       {        
-         state = mSkyDome.get()->GetNode()->getOrCreateStateSet();
+         state = mSkyDome.get()->GetOSGNode()->getOrCreateStateSet();
          state->setAttributeAndModes(mSkyDomeShader->mLightScatterinVP, attr );
          state->setAttributeAndModes(mSkyDomeShader->mDomeFP, attr );
       }

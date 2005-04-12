@@ -1,5 +1,6 @@
 #include "dtCore/system.h"
 #include "dtCore/skybox.h"
+#include "dtCore/scene.h"
 
 #include <osg/ShapeDrawable>
 #include <osg/Depth>
@@ -14,7 +15,6 @@ IMPLEMENT_MANAGEMENT_LAYER(SkyBox)
 
 SkyBox::SkyBox(std::string name):
 EnvEffect(name),
-mNode(NULL),
 mGeode(NULL)
 {
    RegisterInstance(this);
@@ -44,7 +44,7 @@ void dtCore::SkyBox::Config(void)
    mXform->addChild( MakeBox() );
 
    group->addChild(mXform);
-   mNode->addChild(group);
+   dynamic_cast<osg::Group*>(mNode.get())->addChild(group);
 }
 
 /** Make the box and load the textures */

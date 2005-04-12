@@ -3,6 +3,7 @@
 #include "dtCore/pnoise.h"
 #include "dtCore/system.h"
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
 
 #include <osg/Vec2>
 #include <osg/Vec3>
@@ -30,7 +31,6 @@ CloudPlane::CloudPlane( int   octaves,
                         float height,
                         std::string name )
    : EnvEffect(name),
-     mNode(0),
      mGeode(0),
      mPlane(0),
      mImage(0),
@@ -55,7 +55,7 @@ CloudPlane::CloudPlane( int   octaves,
 		mHeight = MAX_HEIGHT;
 
 	mNode = new osg::Group();
-   mNode->setNodeMask(0xf0000000);
+   dynamic_cast<osg::Group*>(mNode.get())->setNodeMask(0xf0000000);
 
 	Create();
 	AddSender(System::GetSystem());
@@ -153,7 +153,7 @@ void CloudPlane::Create( void )
 	mGeode->addDrawable(mPlane.get());
 
 	mXform->addChild(mGeode.get());
-	mNode->addChild(mXform.get());
+   dynamic_cast<osg::Group*>(mNode.get())->addChild(mXform.get());
 
    //init the colors to something believable
    sgVec4 sky = {1.f, 1.f, 1.f, 1.f};

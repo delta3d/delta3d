@@ -1,9 +1,11 @@
 #include "dtCore/skydome.h"
-#include <osg/Depth>
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
+
+#include <osg/Depth>
 #include <osg/PolygonMode>
-//#include <osg/texture2d>
 #include <osgDB/ReadFile>
+
 using  namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyDome)
@@ -56,7 +58,7 @@ void dtCore::SkyDome::Config(void)
    group->addChild(mXform);
    group->setNodeMask(0xf0000000);
 
-   mNode->addChild(group);
+   dynamic_cast<osg::Group*>(mNode.get())->addChild(group);
 }
 
 osg::Node* dtCore::SkyDome::MakeDome(void)

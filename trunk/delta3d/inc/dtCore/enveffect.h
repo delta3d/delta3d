@@ -21,14 +21,14 @@
 #ifndef DELTA_ENVEFFECT
 #define DELTA_ENVEFFECT
 
-#include "dtCore/base.h"
+#include "dtCore/deltadrawable.h"
 #include "sg.h"
 #include <osg/Group>
 
 namespace dtCore
 {
    ///A base class for all Environmental Effects
-   class DT_EXPORT EnvEffect : public dtCore::Base
+   class DT_EXPORT EnvEffect : public dtCore::DeltaDrawable
    {
    public:
       DECLARE_MANAGEMENT_LAYER(EnvEffect)
@@ -41,7 +41,7 @@ namespace dtCore
                            double sunAngle, double sunAzimuth,
                            double visibility) = 0;
 
-      virtual osg::Group *GetNode(void) = 0;
+      //virtual osg::Group *GetNode(void) = 0;
 
    };
 }
