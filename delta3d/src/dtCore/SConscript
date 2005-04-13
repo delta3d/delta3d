@@ -56,9 +56,9 @@ dtCoreSrcs = [  'base.cpp',
                 'walkmotionmodel.cpp' ]
 
 if OS == 'windows' :
-    dtCoreSrcs.append( 'id_win32.cpp' )
+    dtCoreSrcs.append( 'uniqueid_win32.cpp' )
 else:
-    dtCoreSrcs.append( 'id_linux.cpp' )
+    dtCoreSrcs.append( 'uniqueid_linux.cpp' )
 
 libsToLink = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'dtutil' ]
 libsToLink = [ extLibs[lib] for lib in libsToLink if extLibs.has_key(lib) ]
