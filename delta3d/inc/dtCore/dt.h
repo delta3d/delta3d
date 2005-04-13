@@ -68,6 +68,7 @@
 #include "dtCore/tripod.h"
 #include "dtCore/system.h"
 #include "dtCore/ufomotionmodel.h"
+#include "dtCore/uniqueid.h"
 #include "dtCore/uidrawable.h"
 #include "dtCore/walkmotionmodel.h"
 
