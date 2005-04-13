@@ -28,7 +28,7 @@
 
 #include <string>
 
-#include "dtCore/id.h"
+#include "dtCore/uniqueid.h"
 #include "dtCore/export.h"
 #include "dtCore/macros.h"
 
@@ -81,7 +81,7 @@ namespace dtCore
          ///The actual signal that gets triggered from SendMessage()
          sigslot::signal1<MessageData *> _sendMessage;
          
-         Id* mId;
+         UniqueId* mId;
 
       public:
 
@@ -111,8 +111,8 @@ namespace dtCore
           */
          const std::string& GetName() const;
 
-         void SetId( const Id* id ) { mId = new Id(*id); };
-         const Id* GetId() const { return mId; }
+         void SetUniqueId( const UniqueId* id ) { mId = new UniqueId(*id); };
+         const UniqueId* GetUniqueId() const { return mId; }
 
          ///Override to receive messages
          virtual void OnMessage(MessageData *data) {}

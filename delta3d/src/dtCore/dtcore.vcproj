@@ -253,9 +253,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\id_win32.cpp">
-			</File>
-			<File
 				RelativePath=".\infinitelight.cpp">
 			</File>
 			<File
@@ -605,6 +602,9 @@
 				RelativePath=".\uidrawable.cpp">
 			</File>
 			<File
+				RelativePath=".\uniqueid_win32.cpp">
+			</File>
+			<File
 				RelativePath=".\walkmotionmodel.cpp">
 			</File>
 		</Filter>
@@ -664,9 +664,6 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\globals.h">
-			</File>
-			<File
-				RelativePath="..\..\inc\dtCore\id.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\infinitelight.h">
@@ -787,6 +784,9 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\uidrawable.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtCore\uniqueid.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtCore\walkmotionmodel.h">
