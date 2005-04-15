@@ -2,13 +2,10 @@ Import('*')
 
 dtVisSrcs = [ 'bspcullcallback.cpp' ]
 
-libsToLink = [ 'GL', 'osg', 'osgDB', 'osgUtil' ]
+dtVisDeps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
+dtVisDeps = [ extLibs[lib] for lib in dtVisDeps if extLibs.has_key(lib) ]
 
-for lib in libsToLink :
-   if extLibs.has_key(lib):
-      lib = extLibs[lib]
-
-dtVisLib = env.SharedLibrary( 'dtvis', dtVisSrcs, LIBS = libsToLink )
+dtVisLib = env.SharedLibrary( 'dtvis', dtVisSrcs, CPPDEFINES = env['CPPDEFINES']+['SG_LIBRARY'], LIBS = dtVisDeps  )
 
 env.Alias( 'install', env.Install( "$prefix/lib", dtVisLib ) )
 env.Default( dtVisLib )

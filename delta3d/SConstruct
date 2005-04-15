@@ -1,4 +1,5 @@
 import os 
+import re
 import sys
 import time
 import smtplib
@@ -7,7 +8,6 @@ import SCons.Util
 from email.MIMEText import MIMEText
 
 # TODO:
-# define 'DT_LIBRARY' for libs
 # install headers, libs, to prefix
 # make clean
 # fix dtCore/dtUtil auto-install
@@ -16,6 +16,7 @@ from email.MIMEText import MIMEText
 # make packaged release
 # CVS support
 # move DLLs to bin
+# use debug RTI libs?
 
 ########################
 # Build error emailing #
@@ -72,40 +73,90 @@ else :
    errorLog.close()
    env.Exit(-1) 
 
+rtiSLibs = [   'bitvector', 
+               'if', 
+               'libfedtime13', 
+               'librti13', 
+               'mcast', 
+               'mempool', 
+               'mersenne',
+               'mpiif', 
+               'msgstats', 
+               'netutil',
+               'parser', 
+               'rid',
+               'rtis', 
+               'timers', 
+               'urlreader', 
+               'vterm', 
+               'zlib' ] 
+   
+# some basic command-line options
 optCache = 'options.cache'
 opts = Options(optCache)
 opts.AddOptions(
-   EnumOption('mode', 'Build as either debug or release', 'release',
-               allowed_values=('debug', 'release'),
-               map={}, ignorecase=1),
-   BoolOption('no_warnings', 'Disable all warnings', 0),
-   PathOption('prefix', 'Directory to install under', os.getcwd() )
+   EnumOption( 'mode', 'Build as either debug or release', 'release',
+               allowed_values = ( 'debug', 'release' ),
+               map = {}, ignorecase = 1 ),
+   BoolOption( 'no_warnings', 'Disable all warnings', 0 ),
+   PathOption( 'prefix', 'Directory to install under', os.getcwd() ),
+   PackageOption( 'boost', 'Boost installation directory', 'no' ),
+   PackageOption( 'rti', 'RTI installation directory', 'no' ),
+   ( 'rti_libs', 'List of RTI libraries to link against', rtiSLibs )
 )
-
+      
 env = Environment( options = opts )
 
+# append the outside env to ours
 for K in os.environ.keys():
    if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE' ]:
       env['ENV'][K]=SCons.Util.AppendPath( env['ENV'][K], os.environ[K] )
    else:
       env['ENV'][K]=os.environ[K]
       
-env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] )
-env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] )
-env.Append( CPPPATH = [os.path.join( sys.prefix, 'include' ) ] )
+env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
+env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
+env.Append( CPPPATH = [os.path.join( sys.prefix, 'include' ) ] ) # Python includes
 
-env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] )
-env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] )
-env.Append( LIBPATH = [os.path.join( sys.prefix, 'libs' ) ] )
- 
-rtiFound = os.environ.has_key('RTI_INCLUDE') and os.environ.has_key('RTI_LIB')
+env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
+env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
+env.Append( LIBPATH = [os.path.join( sys.prefix, 'libs' ) ] ) # Python libs
 
-if rtiFound :
-   env['ENV']['RTI_INCLUDE'] = os.environ['RTI_INCLUDE']  
-   env['ENV']['RTI_LIB'] = os.environ['RTI_LIB']  
-   env.Append( CPPPATH = [ os.environ['RTI_INCLUDE'] ] )
-   env.Append( LIBPATH = [ os.environ['RTI_LIB'] ] )
+def findFile( findThis, startDirs ) :
+   for startDir in startDirs :
+      for root, dirs, files in os.walk( startDir ) :
+         if findThis in files :
+            return os.path.join( root, findThis )
+   return None
+   
+# Boost Python
+if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
 
+   env.Append( CPPPATH = [ env.get('boost') ] )
+   env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )   
+      
+ # RTI 
+if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.path.isdir( env.get('rti') ) :
+
+   rtiHeader = findFile( 'RTI.hh', [ env.get('rti') ] )
+   
+   if OS == 'windows' :
+      pattern = 'rti.*?\.dll'
+   else :
+      pattern = 'librti.*?\.so'
+   
+   rtiLib = None
+   for root, dirs, files in os.walk( env.get('rti') ) :
+      for file in files :
+         if re.search( pattern, file ) is not None :
+            rtiLib = os.path.join( root, file )
+            break;
+      if rtiLib is not None :
+         break;
+    
+   env.Append( CPPPATH = [ os.path.dirname( rtiHeader ) ] )
+   env.Append( LIBPATH = [ os.path.dirname( rtiLib ) ] )
+   
 srcLibPaths = [ 'dtABC', 'dtAudio', 'dtChar','dtCore', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
 env.Append(LIBPATH=[ os.path.join( os.getcwd(), 'src', elem ) for elem in srcLibPaths ])
 
@@ -114,14 +165,19 @@ if OS == 'linux' :
    env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
    env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 
-Help(opts.GenerateHelpText(env))
-opts.Save('delta3d.conf', env)
+Help( opts.GenerateHelpText( env ) )
+opts.Save( 'delta3d.conf', env )
 
 if env.get('mode') == 'debug':
    mode = 'debug'
-else:
+elif env.get('mode') == 'release':
    mode = 'release'
-
+else:
+   print 'Build Failed: Unsupported mode'
+   errorLog.write('Build Failed: Unsupportedmode: ' + sys.platform)
+   errorLog.close()
+   env.Exit(-1) 
+   
 print 'OS: ' + OS
 errorLog.write('OS: ' + OS + '\n\n')
 
@@ -133,10 +189,10 @@ if mode == 'debug':
    
    if OS == 'windows':
       env.Append( CPPDEFINES = ['WIN32', '_DEBUG', '_NOAUTOLIBMSG'],
-                  CXXFLAGS = ['/EHsc', '/GR', '/MDd' ],
-                  LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD'] ) 
+                  CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
+                  LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
    elif OS == 'linux':
-      env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], 
+      env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
                   CXXDEFINES=['DEBUG', '_DEBUG'] )
                   
 else:
@@ -145,11 +201,11 @@ else:
    errorLog.write('Build Configuration: Release\n\n')
    
    if OS == 'windows':
-      env.Append( CPPDEFINES = ['WIN32', 'NDEBUG', 'DT_LIBRARY', '_NOAUTOLIBMSG'],
-                  CXXFLAGS = ['/EHsc', '/GR', '/MD' ],
-                  LINKFLAGS = ['/NODEFAULTLIB:LIBCMT'] )  
+      env.Append( CPPDEFINES = ['WIN32', 'NDEBUG', '_NOAUTOLIBMSG'],
+                  CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
+                  LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-      env.Append( CXXFLAGS=['-O2', '-pipe'], 
+      env.Append( CXXFLAGS=['-O2', '-pipe'], #optimizations, pipe object data
                   CPPDEFINES=['NDEBUG'],
                   LINKFLAGS=['-s'] )
     
@@ -179,6 +235,7 @@ else:
 if OS == 'windows' :
    if mode == 'debug' :
       extLibs = { 
+         'boost_python' : 'boost_python_debug',
          'osg'          : 'osgd',
          'osgDB'        : 'osgDBd',
          'osgUtil'      : 'osgUtild',
@@ -192,24 +249,35 @@ if OS == 'windows' :
          'osgTerrain'   : 'osgTerraind',
          'Producer'     : 'Producerd',
          'OpenThreads'  : 'OpenThreadsWin32d',
+         'python'       : 'python23',
          'cal3d'        : 'cal3d_d',
          'fltk'         : 'fltkd',
          'gdal'         : 'gdal_i',
          'glgui'        : 'glGUI_d',
          'isense'       : 'isensed',
          'openal'       : 'OpenAL32', 
+         'alut'         : 'ALut',         
          'ode'          : 'oded', 
          'sg'           : 'sg_d', 
          'ul'           : 'ul_d', 
          'js'           : 'js_d',  
          'rvrutils'     : 'rvrutilsd',
          'rcfgscript'   : 'rcfgscriptd', 
-         'rbody'        : 'ReplicandtBodyd',
-         'tinyXml'      : 'tinyxmld',
-         'User32'       : 'User32'
+         'rbody'        : 'ReplicantBodyd',
+         'tinyxml'      : 'tinyxmld',
+         'User32'       : 'User32',
+         'Advapi32'     : 'Advapi32',
+         'Rpcrt4'       : 'Rpcrt4',
+         'Winmm'        : 'Winmm',
+         'Gdi32'        : 'Gdi32',
+         'opengl'       : 'Opengl32',
+         'winsock'      : 'ws2_32',
+         'shell32'      : 'shell32',
+         'ole32'        : 'ole32' 
       }
    else :
       extLibs = { 
+         'boost_python' : 'boost_python',
          'osg'          : 'osg',
          'osgDB'        : 'osgDB',
          'osgUtil'      : 'osgUtil',
@@ -223,25 +291,36 @@ if OS == 'windows' :
          'osgTerrain'   : 'osgTerrain',
          'Producer'     : 'Producer',
          'OpenThreads'  : 'OpenThreadsWin32',
+         'python'       : 'python23',
          'cal3d'        : 'cal3d',
          'fltk'         : 'fltk',
          'gdal'         : 'gdal_i',
          'glgui'        : 'glGUI',
          'isense'       : 'isense',
          'openal'       : 'OpenAL32', 
+         'alut'         : 'ALut',         
          'ode'          : 'ode', 
          'sg'           : 'sg', 
          'ul'           : 'ul', 
          'js'           : 'js',  
          'rvrutils'     : 'rvrutils',
          'rcfscript'    : 'rcfgscript', 
-         'rbody'        : 'ReplicandtBody',
+         'rbody'        : 'ReplicantBody',
          'tinyxml'      : 'tinyxml',
-         'User32'       : 'User32'
+         'User32'       : 'User32',
+         'Advapi32'     : 'Advapi32',
+         'Rpcrt4'       : 'Rpcrt4',
+         'Winmm'        : 'Winmm',
+         'Gdi32'        : 'Gdi32',
+         'opengl'       : 'Opengl32',
+         'winsock'      : 'ws2_32',
+         'shell32'      : 'shell32',
+         'ole32'        : 'ole32' 
       }
    
 elif OS == 'linux' :
       extLibs = { 
+         'boost_python' : 'boost_python',
          'osg'          : 'osg',
          'osgDB'        : 'osgDB',
          'osgUtil'      : 'osgUtil',
@@ -254,6 +333,7 @@ elif OS == 'linux' :
          'osgProducer'  : 'osgProducer',
          'osgTerrain'   : 'osgTerrain',
          'Producer'     : 'Producer',
+         'python'       : 'python2.3',
          'OpenThreads'  : 'OpenThreads',
          'cal3d'        : 'cal3d',
          'fltk'         : 'fltk',
@@ -270,7 +350,8 @@ elif OS == 'linux' :
          'rbody'        : 'rbody',
          'tinyxml'      : 'tinyxml' ,
          'Xxf86vm'      : 'Xxf86vm',
-         'uuid'         : 'uuid'
+         'uuid'         : 'uuid',
+         'opengl'       : 'GL'
       }
 else :
    extLibs = {}
@@ -278,23 +359,12 @@ else :
 conf = Configure(env)
 
 # TODO: don't run for install
-if not env.GetOption('clean') and OS != 'windows' and 0:
+if not env.GetOption('clean') and OS == 'linux' and 0:
      
    foundReqLibs = 1
    for lib in extLibs.keys() :
       foundReqLibs = foundReqLibs and conf.CheckLib( extLibs[lib], language = 'C++')         
    foundReqLibs = foundReqLibs and conf.CheckHeader('sigslot.h',language='C++')
-   
-   if mode == 'debug' :
-      boostPython = 'libboost_python_debug.so'
-   else :
-      boostPython = 'libboost_python.so'
-
-   boostFound = 0
-   for path in env['LIBPATH']:
-      if os.path.exists(os.path.join(path, boostPython)):
-         boostFound = 1
-         break
    
    env = conf.Finish()
 
@@ -307,12 +377,7 @@ if not env.GetOption('clean') and OS != 'windows' and 0:
          email_results()
          
       env.Exit(-1)
-      
-else :
-   # No need to email since this is a clean (scons -c)
-   boostFound = 0
-   email = 'false'
-
+   
 # Documentation generation system
 #doxygenBuilder = Builder(action = 'doxygen $SOURCE')
 #env.Append(BUILDERS = { 'DoxygenDoc' : doxygenBuilder })
@@ -321,7 +386,7 @@ else :
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'boostFound', 'rtiFound', 'extLibs' )
+Export( 'env', 'OS', 'mode', 'extLibs' , 'rtiSLibs' )
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                        os.path.join(os.getcwd(), 'examples', 'testPython')] )

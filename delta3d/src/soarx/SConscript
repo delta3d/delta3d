@@ -2,17 +2,24 @@ Import('*')
 
 if OS == 'windows' :
 
-    dtSoarxSrcs = [ 'soarx_base.cpp',
-                    'soarx_camera.cpp',
-                    'soarx_core.cpp',
-                    'soarx_image.cpp',
-                    'soarx_render.cpp',
-                    'soarx_tbuilder.cpp',
-                    'soarxterrain.cpp',
-                    'soarx_texture.cpp' ]
+   dtSoarxSrcs = [ 'soarx_base.cpp',
+                   'soarx_camera.cpp',
+                   'soarx_core.cpp',
+                   'soarx_image.cpp',
+                   'soarx_render.cpp',
+                   'soarx_tbuilder.cpp',
+                   'soarxterrain.cpp',
+                   'soarx_texture.cpp' ]
 
-    dtSoarxLib = env.SharedLibrary( 'dtsoarx', dtSoarxSrcs, LIBS=[ 'gdal_i', 'dtcore', 'osg', 'osgUtil', 'osgDB', 'osgGL2', 'plibsg', 'tinyxml', 'plibul', 'ode', 'GL' ] )
+   dtSoarxDeps = [ 'gdal', 'osg', 'osgUtil', 'osgDB', 'osgGL2', 'sg', 'tinyxml', 'ul', 'ode', 'OpenGL' ]
+   
+   if OS == 'windows' :
+      dtSoarxDeps += [ 'User32' ]
     
-    env.Alias( 'install', env.Install( "$prefix/lib", dtSoarxLib ) )
-    env.Default( dtSoarxLib )
+   dtSoarxDeps = [ extLibs[lib] for lib in dtSoarxDeps if extLibs.has_key(lib) ] + ['dtcore']
+                    
+   dtSoarxLib = env.SharedLibrary( 'dtsoarx', dtSoarxSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtSoarxDeps )
+    
+   env.Alias( 'install', env.Install( "$prefix/lib", dtSoarxLib ) )
+   env.Default( dtSoarxLib )
 

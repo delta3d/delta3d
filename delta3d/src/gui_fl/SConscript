@@ -3,7 +3,14 @@ Import('*')
 gui_flSrcs = [  'gui_fltk.cpp',
                 'guimgr.cpp' ]
 
-gui_flLib = env.SharedLibrary( 'gui_fl', gui_flSrcs, LIBS=[ 'dtcore', 'fltk', 'OpenThreads', 'osg', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+gui_flDeps = [ 'fltk', 'OpenThreads', 'osg', 'sg', 'ul', 'Producer', 'tinyxml' ]
+                
+if OS == 'windows' :
+    gui_flDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+    
+gui_flDeps = [ extLibs[lib] for lib in gui_flDeps if extLibs.has_key(lib) ] + ['dtcore']
+                
+gui_flLib = env.SharedLibrary( 'gui_fl', gui_flSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS=gui_flDeps )
 
 env.Alias( 'install', env.Install( "$prefix/lib", gui_flLib ) )
 env.Default( gui_flLib )
