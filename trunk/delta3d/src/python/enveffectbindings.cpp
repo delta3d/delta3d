@@ -24,11 +24,6 @@ class EnvEffectWrap : public EnvEffect
          call_method<void>(mSelf, "Repaint", skyColor, fogColor, sunAngle, sunAzimuth, visibility);
       }
       
-      virtual osg::Group *GetNode(void)
-      {
-         return call_method<osg::Group*>(mSelf, "GetNode");
-      }
-      
    protected:
 
       PyObject* mSelf;
@@ -39,12 +34,11 @@ void initEnvEffectBindings()
    EnvEffect* (*EnvEffectGI1)(int) = &EnvEffect::GetInstance;
    EnvEffect* (*EnvEffectGI2)(std::string) = &EnvEffect::GetInstance;
 
-   class_<EnvEffect, bases<Base>, dtCore::RefPtr<EnvEffectWrap>, boost::noncopyable>("EnvEffect", init<optional<std::string> >())
+   class_<EnvEffect, bases<DeltaDrawable>, dtCore::RefPtr<EnvEffectWrap>, boost::noncopyable>("EnvEffect", init<optional<std::string> >())
       .def("GetInstanceCount", &EnvEffect::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EnvEffectGI1, return_internal_reference<>())
       .def("GetInstance", EnvEffectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("Repaint", &EnvEffect::Repaint)
-      .def("GetNode", &EnvEffect::GetNode, return_internal_reference<>());
+      .def("Repaint", &EnvEffect::Repaint);
 }
