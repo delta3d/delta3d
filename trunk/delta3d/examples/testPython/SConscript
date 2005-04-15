@@ -1,4 +1,4 @@
 Import('*')
 
-if boostFound :
-    testPython = env.Program( 'testPython', 'testpython.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'python2.3', 'gdal' ] )
+if env.get('boost') != 0 :
+    testPython = env.Program( 'testPython', 'testpython.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'Xxf86vm', 'python2.3', 'gdal' ] )

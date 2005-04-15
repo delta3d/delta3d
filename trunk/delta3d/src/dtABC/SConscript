@@ -5,8 +5,15 @@ dtAbcSrcs = [   'application.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 
-dtAbcLib = env.SharedLibrary( 'dtabc', dtAbcSrcs, LIBS=[ 'dtcore', 'osgDB', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] )
+dtAbcDeps = [ 'OpenThreads', 'osg', 'osgDB', 'Producer', 'sg', 'tinyxml', 'ul' ]
 
+if OS == 'windows' :
+    dtAbcDeps += [ 'User32' ]
+    
+dtAbcDeps = [ extLibs[lib] for lib in dtAbcDeps if extLibs.has_key(lib) ]
+
+dtAbcLib = env.SharedLibrary( 'dtabc', dtAbcSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtAbcDeps + [ 'dtcore' ] )
+    
 # TODO: install headers
 env.Alias('install', env.Install( '$prefix/lib', dtAbcLib ) )
 env.Default( dtAbcLib )

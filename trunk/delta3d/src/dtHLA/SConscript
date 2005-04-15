@@ -1,23 +1,25 @@
 import os
 import glob
+import re
 import string
 
 Import('*')
 
-if rtiFound == 1 :
+if env.get('rti') != 0 :
 
-    dtHlaSrcs = [   'dis_types.cpp',
-                'entity.cpp',
-                'rticonnection.cpp' ]
+   dtHlaSrcs = [  'dis_types.cpp',
+                  'entity.cpp',
+                  'rticonnection.cpp' ]
+                  
+   dtHlaDeps = [ 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'sg', 'ul', 'Producer', 'tinyxml' ]
+   
+   if OS == 'windows' :
+      dtHlaDeps += ['User32','winsock']
+      
+   dtHlaDeps = [ extLibs[lib] for lib in dtHlaDeps if extLibs.has_key(lib) ] + rtiSLibs + ['dtcore']
+             
+   dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtHlaDeps )
 
-    rtiLibs = glob.glob( os.path.join(env['ENV']['RTI_LIB'], '*.so' ))
-    rtiLibs = [ os.path.basename(path) for path in rtiLibs ]
-    rtiLibs = [ string.split(lib,'.')[0] for lib in rtiLibs ]
-    
-    linkTheseLibs = [ 'dtcore', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'plibsg', 'plibul', 'Producer', 'tinyxml' ] + rtiLibs
-    
-    dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, LIBS=linkTheseLibs )
-
-    env.Alias( 'install', env.Install( "$prefix/lib", dtHlaLib ) )
-    env.Default( dtHlaLib )
+   env.Alias( 'install', env.Install( "$prefix/lib", dtHlaLib ) )
+   env.Default( dtHlaLib )
 
