@@ -4,7 +4,7 @@ Import('*')
 # Delcare src files #
 #####################
 
-if env.get('boost') != 0 :
+if foundLibs.has_key('boost_python') :
     
    pythonDtCoreSrcs = [    'basebindings.cpp',
                            'camerabindings.cpp',
