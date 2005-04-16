@@ -11,12 +11,9 @@ from email.MIMEText import MIMEText
 # install headers, libs, to prefix
 # make clean
 # fix dtCore/dtUtil auto-install
-# fix conf messages
 # doxygen
 # make packaged release
 # CVS support
-# move DLLs to bin
-# use debug RTI libs?
 
 ########################
 # Build error emailing #
@@ -70,13 +67,13 @@ def build_delta3d_lib( name, srcs, deps ) :
    
    if OS == 'windows' :
       env.Install( '#/bin', dtLib[0] ) # .dll
-      env.Install( '#/lib', dtLib[1] ) # .lib, .exp
-      env.Install( '#/lib', dtLib[2] )
+      env.Install( '#/lib', dtLib[1] ) # .lib, 
+      env.Install( '#/lib', dtLib[2] ) # .exp
    elif OS == 'linux' :
       # copy headers
-      env.Alias( 'install', env.Install( '$prefix/lib', dtLib ) )
+      env.Install( '#/lib', dtLib )
    
-   env.Default( dtLib )
+   #libs += dtLib[0]
    
 ###########
 # Options #
@@ -182,9 +179,6 @@ if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.pa
     
    env.Append( CPPPATH = [ os.path.dirname( rtiHeader ) ] )
    env.Append( LIBPATH = [ os.path.dirname( rtiLib ) ] )
-   
-#srcLibPaths = [ 'dtABC', 'dtAudio', 'dtChar','dtCore', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
-#env.Append(LIBPATH=[ os.path.join( os.getcwd(), 'src', elem ) for elem in srcLibPaths ])
 
 # TODO: can we remove these?
 if OS == 'linux' :
@@ -385,23 +379,29 @@ else :
 conf = Configure(env)
 
 # TODO: don't run for install
-if not env.GetOption('clean') and OS == 'linux' and 0:
+if not env.GetOption('clean') :
      
-   foundReqLibs = 1
+   foundLibs = {}
    for lib in extLibs.keys() :
-      foundReqLibs = foundReqLibs and conf.CheckLib( extLibs[lib], language = 'C++')         
-   foundReqLibs = foundReqLibs and conf.CheckHeader('sigslot.h',language='C++')
+      foundLibs[lib] = conf.CheckLib( extLibs[lib], language = 'C++')         
+   foundLibs['sigslot.h'] = conf.CheckHeader('sigslot.h',language='C++')
+   
+   # TODO: check for RTI libs without worrying non-RTI users with warnings
+   #for lib in env.get('rti_libs') :
+   #   foundLibs[lib] = conf.( lib, language = 'C++')       
    
    env = conf.Finish()
 
-   if foundReqLibs == 0 :   
+   # check if we found all the libraries
+   # TODO: it's ok if we are missing boost_python, but make this explicit!
+   if len( foundLibs.keys() ) < len( extLibs.keys() ) - 1 : 
       print 'Build Failed: Missing required libraries'
       errorLog.write('Build Failed: Missing required libraries\n\n')
       errorLog.close()
 
       if email == 'true' :
          email_results()
-         
+        
       env.Exit(-1)
    
 # Documentation generation system
@@ -412,15 +412,16 @@ if not env.GetOption('clean') and OS == 'linux' and 0:
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'extLibs' , 'rtiSLibs', 'build_delta3d_lib' )
+#libs = []
 
-#env.Default(None)
+Export( 'env', 'OS', 'mode', 'extLibs' , 'rtiSLibs', 'build_delta3d_lib', 'foundLibs' )
+
+Default( None )
 
 if OS == 'windows' :
-   env.Default( 'bin' )
-   env.Default( 'lib' )
-#else :
-#   env.Alias( 'install', 'lib' )
+   Default( [ 'lib', 'bin' ] )
+else :
+   Default( [ 'lib' ] )
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                        os.path.join(os.getcwd(), 'examples', 'testPython')] )
@@ -438,12 +439,12 @@ SConscript( dirs=['utilities'] )
 #   errorLog.write('Build Failed: Build ended: ' + current_time() + '\n')
 #   errorLog.close()
 #   env.Exit(-1)
-
-# Close the error log and print the results
-print 'Build Succeeded: Build ended: ' + current_time()
-errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
-errorLog.close()
-
-# email the results
-if email == 'true' :
-   email_results() 
+#else :
+#   # Close the error log and print the results
+#   print 'Build Succeeded: Build ended: ' + current_time()
+#   errorLog.write('Build Succeeded: Build ended: ' + current_time() + '\n')
+#   errorLog.close()
+#
+#   # email the results
+#   if email == 'true' :
+#      email_results() 
