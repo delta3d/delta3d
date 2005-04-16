@@ -1,3 +1,5 @@
+import os
+
 Import('*')
 
 dtCoreSrcs = [  'base.cpp',
@@ -64,10 +66,6 @@ else:
     dtCoreSrcs.append( 'uniqueid_linux.cpp' )
     dtCoreDeps += [ 'uuid' ]
     
-dtCoreDeps = [ extLibs[lib] for lib in dtCoreDeps if extLibs.has_key(lib) ]
+dtCoreDeps = [ extLibs[lib] for lib in dtCoreDeps if extLibs.has_key(lib) ] +['dtutil']
 
-dtCoreLib = env.SharedLibrary( 'dtcore', dtCoreSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtCoreDeps+['dtutil'] )
-
-# TODO: install headers
-env.Alias( 'install', env.Install( '$prefix/lib', dtCoreLib ) )
-env.Default( dtCoreLib )
+build_delta3d_lib( 'dtcore', dtCoreSrcs, dtCoreDeps )

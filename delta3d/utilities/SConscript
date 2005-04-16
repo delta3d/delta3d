@@ -1,6 +1,19 @@
+import os
+
 Import('*')
 
-SConscript( 'bspCompiler/SConscript' )
-SConscript( 'hlaStealthViewer/SConscript' )
-SConscript( 'psEditor/SConscript' )
-SConscript( 'Viewer/SConscript' )
+if OS == 'windows' :
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+else :
+   build = '.'
+
+modules = [ 'bspCompiler', 
+            'hlaStealthViewer', 
+            'psEditor',
+            'Viewer' ]
+   
+for module in modules :
+   SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )

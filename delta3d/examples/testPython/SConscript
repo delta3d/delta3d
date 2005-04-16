@@ -1,4 +1,16 @@
 Import('*')
 
 if env.get('boost') != 0 :
-    testPython = env.Program( 'testPython', 'testpython.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'Xxf86vm', 'python2.3', 'gdal' ] )
+
+   testPythonSrcs = ['testpython.cpp']
+
+   testPythonDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'python' ]
+
+   if OS == 'windows' :
+      testPythonDeps += ['User32']
+   elif OS == 'linux' :
+      testPythonDeps += ['Xxf86vm']
+
+   testPythonDeps = [ extLibs[lib] for lib in testPythonDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+
+   testPython = env.Program( 'testPython', testPythonSrcs, LIBS = testPythonDeps )

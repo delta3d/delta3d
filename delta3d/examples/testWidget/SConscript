@@ -1,7 +1,14 @@
 Import('*')
 
-env = env.Copy()
+testSrcs = ['MyWidget.cpp', 'MyWindow.cpp', 'TestWidget.cxx' ]
 
-testWidget = env.Program( 'testWidget', ['MyWidget.cpp', 'MyWindow.cpp', 'TestWidget.cxx' ], LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'fltk', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'gdal' ] )
+testDeps = [ 'glgui', 'fltk', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal' ]
 
-Return( 'testWidget' )
+if OS == 'windows' :
+   testDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+elif OS == 'linux' :
+   testDeps += [ 'Xxf86vm' ]
+
+testDeps = [ extLibs[lib] for lib in testDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+
+env.Program( 'testWidget', testSrcs, LIBS = testDeps )

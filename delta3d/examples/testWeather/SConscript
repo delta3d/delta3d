@@ -1,7 +1,14 @@
 Import('*')
 
-env = env.Copy()
+testSrcs = ['testweather.cpp']
 
-testWeather = env.Program( 'testWeather', 'testweather.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'gui_fl', 'fltk', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'gdal' ] )
+testDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal' ]
 
-Return( 'testWeather' )
+if OS == 'windows' :
+   testDeps += ['User32']
+elif OS == 'linux' :
+   testDeps += ['Xxf86vm']
+
+testDeps = [ extLibs[lib] for lib in testDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+
+env.Program( 'testWeather', testSrcs, LIBS = testDeps )

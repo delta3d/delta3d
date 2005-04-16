@@ -1,10 +1,8 @@
 Import('*')
 
-if pythonFound == 1 :
-    dtScriptSrcs = [ 'scriptmanager.cpp' ]
+dtScriptSrcs = [ 'scriptmanager.cpp' ]
+dtScriptDeps = [ 'osg', 'python' ]
 
-    dtScriptLib = env.SharedLibrary( 'dtscript', dtScriptSrcs, LIBS=[ 'dtcore', 'python2.3' ] )
+dtScriptDeps = [ extLibs[lib] for lib in dtScriptDeps if extLibs.has_key(lib) ] + [ 'dtcore' ]
     
-    env.Alias( 'install', env.Install( "$prefix/lib", dtScriptLib ) )
-    env.Default( dtScriptLib )
-
+build_delta3d_lib( 'dtscript', dtScriptSrcs, dtScriptDeps )
