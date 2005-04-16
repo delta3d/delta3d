@@ -1,8 +1,3 @@
-import os
-import glob
-import re
-import string
-
 Import('*')
 
 if env.get('rti') != 0 :
@@ -18,8 +13,5 @@ if env.get('rti') != 0 :
       
    dtHlaDeps = [ extLibs[lib] for lib in dtHlaDeps if extLibs.has_key(lib) ] + rtiSLibs + ['dtcore']
              
-   dtHlaLib = env.SharedLibrary( 'dthla', dtHlaSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtHlaDeps )
-
-   env.Alias( 'install', env.Install( "$prefix/lib", dtHlaLib ) )
-   env.Default( dtHlaLib )
+   build_delta3d_lib( 'dthla', dtHlaSrcs, dtHlaDeps )
 

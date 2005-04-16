@@ -1,18 +1,31 @@
+import os
+
 Import('*')
 
-testApp = SConscript( 'testApp/SConscript' )
-testAudio = SConscript( 'testAudio/SConscript' ) 
-testCharacters = SConscript( 'testCharacters/SConscript' )
-testClouds = SConscript( 'testClouds/SConscript' )
-testEffects = SConscript( 'testEffects/SConscript' )
-testGui = SConscript( 'testGUI/SConscript' )
-testHla =  SConscript( 'testHLA/SConscript' )
-testInput = SConscript( 'testInput/SConscript' )
-testLights = SConscript( 'testLights/SConscript' )
-testMotionModels = SConscript( 'testMotionModels/SConscript' )
-testPhysics = SConscript( 'testPhysics/SConscript' )
-testPython = SConscript( 'testPython/SConscript' )
-testSound = SConscript( 'testSound/SConscript' )
-testWeather = SConscript( 'testWeather/SConscript' )
-testWidget = SConscript( 'testWidget/SConscript' )
-testWin = SConscript( 'testWin/SConscript' )
+if OS == 'windows' :
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+else :
+   build = '.'
+
+modules = [ 'testApp', 
+            'testAudio', 
+            'testCharacters', 
+            'testClouds', 
+            'testEffects', 
+            'testGui', 
+            'testHla', 
+            'testInput', 
+            'testLights', 
+            'testMotionModels', 
+            'testPhysics', 
+            'testPython', 
+            'testSound', 
+            'testWeather', 
+            'testWidget', 
+            'testWin' ]
+   
+for module in modules :
+   SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )

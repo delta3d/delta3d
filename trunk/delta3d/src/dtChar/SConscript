@@ -7,9 +7,6 @@ dtCharDeps = [ 'osg', 'osgDB', 'sg', 'ul', 'Producer', 'rbody', 'rvrutils', 'cal
 if OS == 'windows' :
     dtCharDeps += ['User32']
     
-dtCharDeps = [ extLibs[lib] for lib in dtCharDeps if extLibs.has_key(lib) ]
+dtCharDeps = [ extLibs[lib] for lib in dtCharDeps if extLibs.has_key(lib) ] + [ 'dtcore' ]
 
-dtCharLib = env.SharedLibrary( 'dtchar', dtCharSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtCharDeps+['dtcore'] )
-
-env.Alias('install', env.Install( "$prefix/lib", dtCharLib ) )
-env.Default( dtCharLib )
+build_delta3d_lib( 'dtchar', dtCharSrcs, dtCharDeps )

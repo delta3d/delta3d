@@ -17,9 +17,6 @@ if OS == 'windows' :
       dtSoarxDeps += [ 'User32' ]
     
    dtSoarxDeps = [ extLibs[lib] for lib in dtSoarxDeps if extLibs.has_key(lib) ] + ['dtcore']
-                    
-   dtSoarxLib = env.SharedLibrary( 'dtsoarx', dtSoarxSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtSoarxDeps )
-    
-   env.Alias( 'install', env.Install( "$prefix/lib", dtSoarxLib ) )
-   env.Default( dtSoarxLib )
 
+   build_delta3d_lib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps )
+   

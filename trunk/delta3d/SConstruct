@@ -51,7 +51,33 @@ def email_results() :
 	s.connect(smtpServer) 
 	s.sendmail(fromAddress, peopleToEmail, buffer.as_string())
 	s.close()
+   
+def find_file( findThis, startDirs ) :
+   for startDir in startDirs :
+      for root, dirs, files in os.walk( startDir ) :
+         if findThis in files :
+            return os.path.join( root, findThis )
+   return None
 
+def build_delta3d_lib( name, srcs, deps ) :
+   
+   if OS == 'windows' and mode == 'debug' :
+      dtTarget = name + 'd'
+   else :
+      dtTarget = name
+    
+   dtLib = env.SharedLibrary( dtTarget, srcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = deps )
+   
+   if OS == 'windows' :
+      env.Install( '#/bin', dtLib[0] ) # .dll
+      env.Install( '#/lib', dtLib[1] ) # .lib, .exp
+      env.Install( '#/lib', dtLib[2] )
+   elif OS == 'linux' :
+      # copy headers
+      env.Alias( 'install', env.Install( '$prefix/lib', dtLib ) )
+   
+   env.Default( dtLib )
+   
 ###########
 # Options #
 ###########
@@ -114,6 +140,13 @@ for K in os.environ.keys():
    else:
       env['ENV'][K]=os.environ[K]
       
+# don't forget the Visual Studio paths...
+if OS == 'windows' :
+   if os.environ.has_key( 'INCLUDE' ) :
+      env.Append( CPPPATH = env['ENV']['INCLUDE'].split(os.pathsep) )
+   if os.environ.has_key( 'LIB' ) :
+      env.Append( LIBPATH = env['ENV']['LIB'].split(os.pathsep) )
+      
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
 env.Append( CPPPATH = [os.path.join( sys.prefix, 'include' ) ] ) # Python includes
@@ -122,13 +155,6 @@ env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
 env.Append( LIBPATH = [os.path.join( sys.prefix, 'libs' ) ] ) # Python libs
 
-def findFile( findThis, startDirs ) :
-   for startDir in startDirs :
-      for root, dirs, files in os.walk( startDir ) :
-         if findThis in files :
-            return os.path.join( root, findThis )
-   return None
-   
 # Boost Python
 if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
 
@@ -138,7 +164,7 @@ if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and o
  # RTI 
 if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.path.isdir( env.get('rti') ) :
 
-   rtiHeader = findFile( 'RTI.hh', [ env.get('rti') ] )
+   rtiHeader = find_file( 'RTI.hh', [ env.get('rti') ] )
    
    if OS == 'windows' :
       pattern = 'rti.*?\.dll'
@@ -157,8 +183,8 @@ if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.pa
    env.Append( CPPPATH = [ os.path.dirname( rtiHeader ) ] )
    env.Append( LIBPATH = [ os.path.dirname( rtiLib ) ] )
    
-srcLibPaths = [ 'dtABC', 'dtAudio', 'dtChar','dtCore', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
-env.Append(LIBPATH=[ os.path.join( os.getcwd(), 'src', elem ) for elem in srcLibPaths ])
+#srcLibPaths = [ 'dtABC', 'dtAudio', 'dtChar','dtCore', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
+#env.Append(LIBPATH=[ os.path.join( os.getcwd(), 'src', elem ) for elem in srcLibPaths ])
 
 # TODO: can we remove these?
 if OS == 'linux' :
@@ -386,7 +412,15 @@ if not env.GetOption('clean') and OS == 'linux' and 0:
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'extLibs' , 'rtiSLibs' )
+Export( 'env', 'OS', 'mode', 'extLibs' , 'rtiSLibs', 'build_delta3d_lib' )
+
+#env.Default(None)
+
+if OS == 'windows' :
+   env.Default( 'bin' )
+   env.Default( 'lib' )
+#else :
+#   env.Alias( 'install', 'lib' )
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                        os.path.join(os.getcwd(), 'examples', 'testPython')] )

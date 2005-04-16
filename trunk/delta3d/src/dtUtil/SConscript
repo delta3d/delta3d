@@ -10,8 +10,5 @@ if OS == 'windows' :
     dtUtilDeps += ['User32']
 
 dtUtilDeps = [ extLibs[lib] for lib in dtUtilDeps if extLibs.has_key(lib) ]
-    
-dtUtilLib = env.SharedLibrary( 'dtutil', dtUtilSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'], LIBS = dtUtilDeps )
 
-env.Alias( 'install', env.Install( '$prefix/lib', dtUtilLib ) )
-env.Default( dtUtilLib )
+build_delta3d_lib( 'dtutil', dtUtilSrcs, dtUtilDeps )

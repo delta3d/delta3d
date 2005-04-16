@@ -87,6 +87,8 @@ if env.get('boost') != 0 :
     
    if env.get('rti') != 0 :
       pythonDtHlaLib = env.SharedLibrary( 'dthlabindings', pythonDtHlaSrcs, LIBS = pythonDeps + [ 'dthla' ] )
+   else :
+      pythonDtHlaLib = None
 
    if OS == 'windows' :
       pythonDtSoarxLib = env.SharedLibrary( 'dtsoarxbindings', pythonDtSoarxSrcs, LIBS = pythonDeps + [ 'dtsoarx' ] )
@@ -94,19 +96,47 @@ if env.get('boost') != 0 :
    ################
    # Install libs #
    ################
+   
+   if OS == 'windows':
+      env.InstallAs( [  '#/bin/dtCore.pyd', \
+                        '#/bin/dtABC.pyd', \
+                        '#/bin/dtAudio.pyd', \
+                        '#/bin/dtChar.pyd', \
+                        '#/bin/dtGUIFl.pyd', \
+                        '#/bin/dtSOARX.pyd' ], \
+                     [  pythonDtCoreLib[0], \
+                        pythonDtAbcLib[0], \
+                        pythonDtAudioLib[0], \
+                        pythonDtCharLib[0], \
+                        pythonGui_flLib[0], \
+                        pythonDtSoarxLib[0] ] )  
+                        
+      env.Install( '#/lib', [ pythonDtCoreLib[1:], \
+                              pythonDtAbcLib[1:], \
+                              pythonDtAudioLib[1:], \
+                              pythonDtCharLib[1:], \
+                              pythonGui_flLib[1:], \
+                              pythonDtSoarxLib[1:] ] )
 
-   if OS == 'linux':
-      env.Alias('install', env.InstallAs( ['$prefix/lib/dtCore.so', '$prefix/lib/dtABC.so', '$prefix/lib/dtAudio.so', '$prefix/lib/dtChar.so', '$prefix/lib/dtGUIFl.so' ], [ pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib ] ) )
+      if pythonDtHlaLib is not None:
+         env.InstallAs( '#/bin/dtHLA.pyd', pythonDtHlaLib[0] )
+         env.Install( '#/bin', pythonDtHlaLib[1:] )
+               
+   elif OS == 'linux':
+   
+      env.Alias('install', env.InstallAs( [  '$prefix/lib/dtCore.pyd', \
+                                             '$prefix/lib/dtABC.pyd', \
+                                             '$prefix/lib/dtAudio.pyd', \
+                                             '$prefix/lib/dtChar.pyd', \
+                                             '$prefix/lib/dtGUIFl.pyd' ], \
+                                           [ pythonDtCoreLib, \
+                                             pythonDtAbcLib, \
+                                             pythonDtAudioLib, \
+                                             pythonDtCharLib, \
+                                             pythonGui_flLib ] ) )
         
       if pythonDtHlaLib is not None:
          env.Alias('install', env.InstallAs( '$prefix/lib/dtHLA.so', pythonDtHlaLib ) )
             
-      if pythonDtSoarxLib is not None:
-         env.Alias('install', env.InstallAs( '$prefix/lib/dtSOARX.so', pythonDtSoarxLib ) )
-            
-   #elif OS == 'windows':
-        
-      #env.Alias('install', env.InstallAs( ['$prefix/bin/dtCore.pyd', '$prefix/bin/dtABC.pyd', '$prefix/bin/dtAudio.pyd', '$prefix/bin/dtChar.pyd', '$prefix/bin/dtGUIFl.pyd', '$prefix/bin/dtSOARX.pyd' ], [ pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib, pythonDtSoarxLib ] ) )    
-
-      #if pythonDtHlaLib is not None:
-      #   env.Alias('install', env.InstallAs( '$prefix/bin/dtHLA.pyd', pythonDtHlaLib ) )       
+      #env.Alias('install', env.InstallAs( '$prefix/lib/dtSOARX.so', pythonDtSoarxLib ) )     
+      

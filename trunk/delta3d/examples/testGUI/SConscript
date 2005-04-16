@@ -1,7 +1,14 @@
 Import('*')
 
-env = env.Copy()
+testSrcs = ['testgui.cpp']
 
-testGui = env.Program( 'testGUI', 'testgui.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'gdal' ] )
+testDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal' ]
 
-Return( 'testGui' )
+if OS == 'windows' :
+   testDeps += ['User32']
+elif OS == 'linux' :
+   testDeps += ['Xxf86vm']
+
+testDeps = [ extLibs[lib] for lib in testDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+
+env.Program( 'testGUI', testSrcs, LIBS = testDeps )

@@ -1,7 +1,14 @@
 Import('*')
 
-env = env.Copy()
+testEffectsSrcs = ['testeffects.cpp']
 
-testEffects = env.Program( 'testEffects', 'testeffects.cpp', LIBS=[ 'dtcore', 'dtabc', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'plibsg', 'plibul', 'plibjs', 'Producer', 'tinyxml', 'Xxf86vm', 'gdal' ] )
+testEffectsDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal' ]
 
-Return( 'testEffects' )
+if OS == 'windows' :
+   testEffectsDeps += ['User32']
+elif OS == 'linux' :
+   testEffectsDeps += ['Xxf86vm']
+
+testEffectsDeps = [ extLibs[lib] for lib in testEffectsDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+
+testEffects = env.Program( 'testEffects', testEffectsSrcs, LIBS = testEffectsDeps )
