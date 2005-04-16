@@ -1,6 +1,6 @@
 Import('*')
 
-if foundLibs.has_key('boost_python') :
+if foundLibs['boost_python'] :
 
    testPythonSrcs = ['testpython.cpp']
 

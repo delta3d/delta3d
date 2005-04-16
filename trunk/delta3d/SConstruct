@@ -143,14 +143,25 @@ if OS == 'windows' :
       env.Append( CPPPATH = env['ENV']['INCLUDE'].split(os.pathsep) )
    if os.environ.has_key( 'LIB' ) :
       env.Append( LIBPATH = env['ENV']['LIB'].split(os.pathsep) )
-      
+
+   # Python stuff
+   env.Append( CPPPATH = [os.path.join( sys.prefix, 'include' ) ] ) 
+   env.Append( LIBPATH = [os.path.join( sys.prefix, 'libs' ) ] ) 
+
+else :
+
+   vi = sys.version_info
+   python_version = 'python' + str(vi[0])+'.'+str(vi[1])
+   
+   # Python stuff
+   env.Append( CPPPATH = [os.path.join( sys.prefix, 'include',  python_version ) ] ) 
+   env.Append( LIBPATH = [os.path.join( sys.prefix, 'lib',  python_version ) ] ) 
+   
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
-env.Append( CPPPATH = [os.path.join( sys.prefix, 'include' ) ] ) # Python includes
 
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
-env.Append( LIBPATH = [os.path.join( sys.prefix, 'libs' ) ] ) # Python libs
 
 # Boost Python
 if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
@@ -366,7 +377,7 @@ elif OS == 'linux' :
          'ul'           : 'plibul', 
          'js'           : 'plibjs',  
          'rvrutils'     : 'rvrutils',
-         'rcfscript'    : 'rcfgscript', 
+         'rcfgscript'   : 'rcfgscript', 
          'rbody'        : 'rbody',
          'tinyxml'      : 'tinyxml' ,
          'Xxf86vm'      : 'Xxf86vm',

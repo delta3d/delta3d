@@ -2,21 +2,13 @@ import os
 
 Import('*')
 
-if OS == 'windows' :
-   if mode == 'debug' :
-      build = 'Debug'
-   else :
-      build = 'Release'
-else :
-   build = '.'
-
 modules = [ 'testApp', 
             'testAudio', 
             'testCharacters', 
             'testClouds', 
             'testEffects', 
-            'testGui', 
-            'testHla', 
+            'testGUI', 
+            'testHLA', 
             'testInput', 
             'testLights', 
             'testMotionModels', 
@@ -26,6 +18,18 @@ modules = [ 'testApp',
             'testWeather', 
             'testWidget', 
             'testWin' ]
+
+if OS == 'windows' :
    
-for module in modules :
-   SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+
+   for module in modules :
+      SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+
+else :
+   
+   for module in modules :
+      SConscript( dirs=[module]  )
