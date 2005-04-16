@@ -2,18 +2,24 @@ import os
 
 Import('*')
 
-if OS == 'windows' :
-   if mode == 'debug' :
-      build = 'Debug'
-   else :
-      build = 'Release'
-else :
-   build = '.'
-
 modules = [ 'bspCompiler', 
             'hlaStealthViewer', 
             'psEditor',
             'Viewer' ]
+
+if OS == 'windows' :
+
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+
+   for module in modules :
+      SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+
+else :
+
+   for module in modules :
+      SConscript( dirs=[module] )
+
    
-for module in modules :
-   SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
