@@ -1,15 +1,20 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testApp", "testApp.vcproj", "{4A1728D2-7B7C-4D0C-B089-31E9A6FC0AF7}"
 	ProjectSection(ProjectDependencies) = postProject
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "..\..\src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
 	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtabc", "..\..\src\dtABC\dtabc.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtutil", "..\..\src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -31,6 +36,10 @@ Global
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
 		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.ActiveCfg = Debug|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
