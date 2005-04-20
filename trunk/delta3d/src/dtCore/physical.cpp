@@ -1067,10 +1067,31 @@ void Physical::RenderCollisionGeometry( const bool enable )
    mRenderingGeometry = enable;
 }
 
+/** This typically gets called from Scene::AddDrawable().  
+  * 
+  * This method perform the standard DeltaDrawable::AddedToScene() functionality
+  * then registers this Physical object with the supplied Scene to create the 
+  * internal physical properties.
+  * 
+  * If the param scene is NULL, this will unregister this Physical from the
+  * previous parent Scene.  
+  * If this Physical already has a parent Scene, it will
+  * first remove itself from the old Scene (Scene::RemoveDrawable()), then 
+  * re-register with the new Scene.
+  *
+  * @param scene The Scene this Physical has been added to
+  */
 void Physical::AddedToScene( Scene *scene )
 {
    if( scene )
    {
+      //remove us from our existing parent scene, if we already have one.
+      //TODO This ends up calling AddedToScene again with a NULL.  Is this bad?
+      if (mParentScene.valid())
+      {
+         mParentScene->RemoveDrawable(this);
+      }
+
       DeltaDrawable::AddedToScene( scene );
       scene->RegisterPhysical(this); 
    }
