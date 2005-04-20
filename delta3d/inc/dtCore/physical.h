@@ -288,6 +288,7 @@ namespace dtCore
          ///Are we currently rendering the collision geometry?
          bool GetRenderCollisionGeometry() const { return mRenderingGeometry; }
 
+         ///Tell this Physical is has been added to the supplied Scene
          virtual void AddedToScene( Scene *scene );
 
       private:
