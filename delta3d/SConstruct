@@ -389,17 +389,20 @@ else :
 
 conf = Configure(env)
 
+foundLibs = {}
+
 # TODO: don't run for install
 if not env.GetOption('clean') :
      
-   foundLibs = {}
    for lib in extLibs.keys() :
       foundLibs[lib] = conf.CheckLib( extLibs[lib], language = 'C++')         
    foundLibs['sigslot.h'] = conf.CheckHeader('sigslot.h',language='C++')
    
    # TODO: check for RTI libs without worrying non-RTI users with warnings
    #for lib in env.get('rti_libs') :
-   #   foundLibs[lib] = conf.( lib, language = 'C++')       
+   #   foundLibs[lib] = conf.( lib, language = 'C++')
+   
+   foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp') ,language='C++')
    
    env = conf.Finish()
 

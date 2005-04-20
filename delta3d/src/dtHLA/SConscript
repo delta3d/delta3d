@@ -10,8 +10,13 @@ if env.get('rti') != 0 :
    
    if OS == 'windows' :
       dtHlaDeps += ['User32','winsock']
+   
+   dtHlaDeps = [ extLibs[lib] for lib in dtHlaDeps if extLibs.has_key(lib) ] + rtiSLibs
+   
+   if mode == 'debug' :
+      dtHlaDeps += [ 'dtcored' ]
+   else :
+      dtHlaDeps += [ 'dtcore' ]
       
-   dtHlaDeps = [ extLibs[lib] for lib in dtHlaDeps if extLibs.has_key(lib) ] + rtiSLibs + ['dtcore']
-             
    build_delta3d_lib( 'dthla', dtHlaSrcs, dtHlaDeps )
 

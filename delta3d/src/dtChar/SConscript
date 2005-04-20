@@ -5,8 +5,15 @@ dtCharSrcs = [  'character.cpp' ]
 dtCharDeps = [ 'osg', 'osgDB', 'sg', 'ul', 'Producer', 'rbody', 'rvrutils', 'cal3d' ]
                 
 if OS == 'windows' :
-    dtCharDeps += ['User32']
+   dtCharDeps += ['User32']
+
+   dtCharDeps = [ extLibs[lib] for lib in dtCharDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtCharDeps += [ 'dtcored' ]
+else :
+   dtCharDeps += [ 'dtcore' ]
     
-dtCharDeps = [ extLibs[lib] for lib in dtCharDeps if extLibs.has_key(lib) ] + [ 'dtcore' ]
+
 
 build_delta3d_lib( 'dtchar', dtCharSrcs, dtCharDeps )

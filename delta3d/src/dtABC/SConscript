@@ -8,8 +8,13 @@ dtAbcSrcs = [   'application.cpp',
 dtAbcDeps = [ 'OpenThreads', 'osg', 'osgDB', 'Producer', 'sg', 'tinyxml', 'ul' ]
 
 if OS == 'windows' :
-    dtAbcDeps += [ 'User32' ]
+   dtAbcDeps += [ 'User32' ]
     
-dtAbcDeps = [ extLibs[lib] for lib in dtAbcDeps if extLibs.has_key(lib) ] + [ 'dtcore' ]
+dtAbcDeps = [ extLibs[lib] for lib in dtAbcDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtAbcDeps += [ 'dtcored' ]
+else :
+   dtAbcDeps += [ 'dtcore' ]
 
 build_delta3d_lib( 'dtabc', dtAbcSrcs, dtAbcDeps )
