@@ -90,13 +90,17 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
 
 /**
 * Notifies this drawable object that it has been added to
-* a scene.
+* a scene.  This is typically called from Scene::AddDrawable().
+*
+* This method will iterate through the list of children DeltaDrawable's (if any)
+* and call AddedToScene() with the supplied Scene.
 *
 * @param scene the scene to which this drawable object has
-* been added
+* been added.  Note: Can be NULL.
 */
 void DeltaDrawable::AddedToScene( Scene *scene )
 {
+   //TODO Should DeltaDrawable remove itself from it's existing parent Scene?
    mParentScene = scene;
 
    for (ChildList::iterator itr = mChildList.begin();
