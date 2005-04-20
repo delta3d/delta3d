@@ -88,29 +88,28 @@ namespace dtCore
       class getWCofNodeVisitor : public osg::NodeVisitor
       {
          public:
-            getWCofNodeVisitor( osg::Node *findNode, osg::Matrix& matrix ):
-               osg::NodeVisitor(NodeVisitor::TRAVERSE_ALL_CHILDREN),
-               success(false),
-               wcNode(findNode),
-               wcMatrix(matrix)
+            getWCofNodeVisitor( osg::Matrix& matrix ):
+               osg::NodeVisitor(NodeVisitor::TRAVERSE_PARENTS),
+               wcMatrix(matrix),
+               done(false)
             {}
 
-            virtual void apply(osg::MatrixTransform &node)
+            virtual void apply(osg::Node &node)
             {
-               if( &node == wcNode)
+               if (!done)
                {
-                  wcMatrix = osg::computeLocalToWorld( getNodePath() );
-                  success = true;
+                  if ( 0 == node.getNumParents() )
+                  {
+                     wcMatrix.set( osg::computeLocalToWorld(this->getNodePath()) );
+                     done = true;
+                  }
+                  traverse(node);
                }
-               traverse(node);
             }
 
-            bool success;
-
          private:
-
-            osg::Node *wcNode;
             osg::Matrix& wcMatrix;
+            bool done;
       };
 
    };

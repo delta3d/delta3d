@@ -36,16 +36,11 @@ Transformable::~Transformable()
  */
 bool Transformable::GetAbsoluteMatrix( osg::Node *node, osg::Matrix& wcMatrix )
 {
-   osg::Node* topParent;
-   for(  topParent = node; 
-         topParent->getNumParents() != 0; 
-         topParent = topParent->getParent(0) );
-   
-   getWCofNodeVisitor vis( node, wcMatrix );
+   getWCofNodeVisitor vis( wcMatrix );
 
-   topParent->accept( vis );
+   node->accept( vis );
 
-   return vis.success;
+   return true;
 }
 
 /*!
