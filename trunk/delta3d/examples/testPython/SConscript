@@ -1,16 +1,24 @@
+import os
+
 Import('*')
 
-if foundLibs['boost_python'] :
+if mode == 'debug' :
+   boostLib = 'boost_python_debug'
+else :
+   boostLib = 'boost_python'
 
-   testPythonSrcs = ['testpython.cpp']
+if foundLibs.has_key( boostLib ) and foundLibs.has_key( os.path.join('boost','python.hpp') ) :
+   if foundLibs[ boostLib ] and foundLibs[ os.path.join('boost','python.hpp') ] :
 
-   testPythonDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'python' ]
+      testPythonSrcs = ['testpython.cpp']
 
-   if OS == 'windows' :
-      testPythonDeps += ['User32']
-   elif OS == 'linux' :
-      testPythonDeps += ['Xxf86vm']
+      testPythonDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'python' ]
 
-   testPythonDeps = [ extLibs[lib] for lib in testPythonDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+      if OS == 'windows' :
+         testPythonDeps += ['User32']
+      elif OS == 'linux' :
+         testPythonDeps += ['Xxf86vm']
 
-   testPython = env.Program( 'testPython', testPythonSrcs, LIBS = testPythonDeps )
+      testPythonDeps = [ extLibs[lib] for lib in testPythonDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil' ]
+
+      testPython = env.Program( 'testPython', testPythonSrcs, LIBS = testPythonDeps )
