@@ -16,12 +16,12 @@ if OS == 'windows' :
    if OS == 'windows' :
       dtSoarxDeps += [ 'User32' ]
       
+   dtSoarxDeps = [ extLibs[lib] for lib in dtSoarxDeps if extLibs.has_key(lib) ]
+      
    if mode == 'debug' :
       dtSoarxDeps += [ 'dtcored' ]
    else :
       dtSoarxDeps += [ 'dtcore' ]
-
-   dtSoarxDeps = [ extLibs[lib] for lib in dtSoarxDeps if extLibs.has_key(lib) ]
 
    build_delta3d_lib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps )
    
