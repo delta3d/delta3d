@@ -657,7 +657,7 @@ void UserInterface::TransformCSCB( Fl_Round_Button *)
    osg::Vec3 xyz, hpr;
 
    trans.GetTranslation( xyz );
-   trans.GetTranslation( hpr );
+   trans.GetRotation( hpr );
 
    TransformX->value(xyz[0]);
    TransformY->value(xyz[1]);
