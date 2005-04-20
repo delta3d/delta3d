@@ -3,6 +3,11 @@ Import('*')
 dtScriptSrcs = [ 'scriptmanager.cpp' ]
 dtScriptDeps = [ 'osg', 'python' ]
 
-dtScriptDeps = [ extLibs[lib] for lib in dtScriptDeps if extLibs.has_key(lib) ] + [ 'dtcore' ]
+dtScriptDeps = [ extLibs[lib] for lib in dtScriptDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtScriptDeps += [ 'dtcored' ]
+else :
+   dtScriptDeps += [ 'dtcore' ]
     
 build_delta3d_lib( 'dtscript', dtScriptSrcs, dtScriptDeps )

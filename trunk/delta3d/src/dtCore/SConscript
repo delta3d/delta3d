@@ -65,7 +65,12 @@ if OS == 'windows' :
 else:
     dtCoreSrcs.append( 'uniqueid_linux.cpp' )
     dtCoreDeps += [ 'uuid' ]
-    
-dtCoreDeps = [ extLibs[lib] for lib in dtCoreDeps if extLibs.has_key(lib) ] +['dtutil']
 
+dtCoreDeps = [ extLibs[lib] for lib in dtCoreDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtCoreDeps += [ 'dtutild' ]
+else :
+   dtCoreDeps += [ 'dtutil' ]
+    
 build_delta3d_lib( 'dtcore', dtCoreSrcs, dtCoreDeps )

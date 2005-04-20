@@ -8,8 +8,13 @@ dtAudioSrcs = [ 'audiomanager.cpp',
 dtAudioDeps = [ 'openal', 'OpenThreads', 'osg', 'osgDB', 'sg', 'ul', 'Producer', 'tinyxml' ]
 
 if OS == 'windows' :
-    dtAudioDeps += ['alut', 'User32']
+   dtAudioDeps += [ 'alut', 'User32' ]
 
-dtAudioDeps = [ extLibs[lib] for lib in dtAudioDeps if extLibs.has_key(lib) ] + ['dtcore']
+dtAudioDeps = [ extLibs[lib] for lib in dtAudioDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtAudioDeps += [ 'dtcored' ]
+else :
+   dtAudioDeps += [ 'dtcore' ]
 
 build_delta3d_lib( 'dtaudio', dtAudioSrcs, dtAudioDeps )
