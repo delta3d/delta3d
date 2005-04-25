@@ -25,18 +25,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Producer/KeyboardMouse>
-
 #include "dtCore/deltarendersurface.h"
 #include "dtCore/keyboard.h"
 #include "dtCore/mouse.h"
 #include "dtCore/refptr.h"
 
-#include "dtCore/base.h"
-
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-
-#endif
+namespace Producer
+{
+   class KeyboardMouse;
+}
 
 namespace dtCore
 {
@@ -68,7 +65,7 @@ namespace dtCore
 
       ///Calculate the window coords ([-1,1],[-1,1]), given the screen pixel coords (x,y) ([0,w],[0,h])
       bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y );
-      
+
       ///Draw the cursor or not
       void ShowCursor( bool show = true );
       
@@ -93,13 +90,13 @@ namespace dtCore
       void GetPosition( int *x, int *y, int *width, int *height );
 
       ///Get a handle to the underlying DeltaRenderSurface
-      DeltaRenderSurface *GetRenderSurface() { return mRenderSurface; }
+      DeltaRenderSurface* GetRenderSurface() { return mRenderSurface; }
       
       ///Get a handle to the Keyboard associated with the DeltaWin
-      Keyboard *GetKeyboard() { return mKeyboard.get(); }
+      Keyboard* GetKeyboard() { return mKeyboard.get(); }
 
       ///Get a handle to the Mouse associated with the DeltaWin
-      Mouse *GetMouse() { return mMouse.get(); }
+      Mouse* GetMouse() { return mMouse.get(); }
 
       //TODO: put these into a dtCore::Display class
       static ResolutionVec GetResolutions();              
@@ -112,8 +109,8 @@ namespace dtCore
 
       static int CalcRefreshRate( int width, int height, int dotclock );
       
-      DeltaRenderSurface *mRenderSurface; //changed from straight-up RS
-      Producer::KeyboardMouse *mKeyboardMouse;
+      DeltaRenderSurface* mRenderSurface; //changed from straight-up RS
+      Producer::KeyboardMouse* mKeyboardMouse;
 
       RefPtr<Keyboard> mKeyboard;
       RefPtr<Mouse> mMouse;
