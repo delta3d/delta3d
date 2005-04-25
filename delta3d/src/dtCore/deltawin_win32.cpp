@@ -2,9 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <cassert>
-
-#include "Producer/KeyboardMouse"
 #include "dtCore/deltawin.h"
 #include "dtCore/notify.h"
 

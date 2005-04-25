@@ -2,9 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <cassert>
+#include <Producer/KeyboardMouse>
 
-#include "Producer/KeyboardMouse"
 #include "dtCore/deltawin.h"
 #include "dtCore/notify.h"
 
@@ -84,7 +83,7 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor, bool fullScreen) :
+DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool cursor, bool fullScreen ) :
    Base(name),
    mRenderSurface(0),
    mKeyboardMouse(0),
@@ -99,7 +98,7 @@ DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor
    mKeyboard = new Keyboard;
    mMouse = new Mouse;
 
-   mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
+   mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
    mKeyboardMouse->startThread();
 
@@ -117,7 +116,7 @@ DeltaWin::DeltaWin(string name, int x, int y, int width, int height, bool cursor
 
 }
 
-DeltaWin::DeltaWin(string name, DeltaRenderSurface* rs, Producer::InputArea* ia) :
+DeltaWin::DeltaWin( string name, DeltaRenderSurface* rs, Producer::InputArea* ia ) :
 Base(name),
 mRenderSurface(rs),
 mKeyboardMouse(0),
@@ -131,16 +130,15 @@ mShowCursor(true)
    mMouse = new Mouse;
 
    if(ia) // use the passed InputArea if not NULL
-      mKeyboardMouse = new Producer::KeyboardMouse(ia);
+      mKeyboardMouse = new Producer::KeyboardMouse( ia );
    else // otherwise use the passed DeltaRenderSurface
-      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
+      mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
 
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
    mKeyboardMouse->startThread();
 
    ShowCursor();
 }
-
 
 DeltaWin::~DeltaWin()
 {
@@ -159,7 +157,7 @@ DeltaWin::~DeltaWin()
 * @param width The width of the window
 * @param height The height of the window
 */
-void DeltaWin::SetPosition(const int x, const int y, const int width, const int height)
+void DeltaWin::SetPosition( int x, int y, int width, int height )
 {
    mRenderSurface->setWindowRectangle(x, y, width, height);
 }
@@ -189,7 +187,7 @@ const std::string& DeltaWin::GetWindowTitle() const
  *
  * @return bool  : Returns true if the (x,y) is a valid window coordinate
  */
-bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, float &pixel_y)
+bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y )
 {
    if ( x < -1.0f || x > 1.0f ) return false;
    if ( y < -1.0f || y > 1.0f ) return false;
@@ -205,7 +203,7 @@ bool DeltaWin::CalcPixelCoords(const float x, const float y, float &pixel_x, flo
 
 }
 
-bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float &x, float &y)
+bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y )
 {
    int wx, wy;
    unsigned int w, h;
@@ -214,7 +212,7 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
    if (pixel_x < 0 || pixel_x > w ) return false;
    if (pixel_y < 0 || pixel_y > h ) return false;
 
-   if( w != 0 && h != 0)
+   if( w != 0 && h != 0 )
    {
       x = ( 2 * pixel_x / w ) - 1;
       y = ( 2 * pixel_y / h ) - 1;
@@ -227,6 +225,7 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
       return false;
    }
 }
+
 bool DeltaWin::ChangeScreenResolution( Resolution res ) 
 {
    return ChangeScreenResolution( res.width, res.height, res.bitDepth, res.refresh );
