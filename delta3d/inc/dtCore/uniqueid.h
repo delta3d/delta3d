@@ -40,8 +40,8 @@ namespace dtCore
          UniqueId( const std::string& stringId ) : mId( stringId ) {}
          virtual ~UniqueId() {}
          
-         bool operator== ( const UniqueId& rhs ) const;
-         bool operator!= ( const UniqueId& rhs ) const;
+         bool operator== ( const UniqueId& rhs ) const { return mId == rhs.mId; }
+         bool operator!= ( const UniqueId& rhs ) const { return mId != rhs.mId; }
          bool operator< ( const UniqueId& rhs ) const;
          bool operator> ( const UniqueId& rhs ) const;
 
