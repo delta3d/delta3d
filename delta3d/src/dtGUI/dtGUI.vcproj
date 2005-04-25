@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osgd.lib openthreadswin32d.lib producerd.lib OpenGLGUIRenderer_d.lib sg_d.lib ul_d.lib"
+				AdditionalDependencies="osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib OpenGLGUIRenderer_d.lib sg_d.lib ul_d.lib"
 				OutputFile="..\..\bin\dtguid.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osg.lib openthreadswin32.lib producer.lib OpenGLGUIRenderer.lib sg.lib ul.lib"
+				AdditionalDependencies="osg.lib osgDB.lib openthreadswin32.lib producer.lib OpenGLGUIRenderer.lib sg.lib ul.lib"
 				OutputFile="..\..\bin\dtgui.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
@@ -126,6 +126,12 @@
 			<File
 				RelativePath=".\ceuidrawable.cpp">
 			</File>
+			<File
+				RelativePath=".\renderer.cpp">
+			</File>
+			<File
+				RelativePath=".\resourceprovider.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -136,6 +142,12 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\dtGUI\dtgui.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtGUI\renderer.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtGUI\resourceprovider.h">
 			</File>
 		</Filter>
 		<Filter

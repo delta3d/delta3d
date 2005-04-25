@@ -6,7 +6,7 @@
 #pragma once
 
 
-#include "CEGUI/openglrenderer.h"
+#include "dtGUI/renderer.h"
 #include <CEGUI/CEGUISystem.h>
 
 #include <osg/Drawable>
@@ -127,7 +127,7 @@ namespace dtGUI
       int mHalfHeight; ///<The height of the Window
       float mMouseX; ///<The current Mouse X position
       float mMouseY; ///<the current Mouse Y position
-      CEGUI::OpenGLRenderer* mRenderer; ///<The opengl renderer we're using
+      Renderer* mRenderer; ///<The opengl renderer we're using
       double elapsedTime;
    };
 }//namespace dtGUI

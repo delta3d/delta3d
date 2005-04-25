@@ -37,8 +37,7 @@ elapsedTime(0.0)
 
    AddSender( System::GetSystem() );
 
-   mRenderer = new CEGUI::OpenGLRenderer(1024, mWidth, mHeight);
-	//mRenderer = new CEGUI::OpenGLRenderer(1024);
+   mRenderer = new dtGUI::Renderer(1024, mWidth, mHeight);
    new CEGUI::System(mRenderer);
    mUI = CEGUI::System::getSingletonPtr();
 
