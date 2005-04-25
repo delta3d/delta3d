@@ -35,9 +35,7 @@
 #include "dtCore/base.h"
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/extensions/xf86vmode.h>
+
 #endif
 
 namespace dtCore
@@ -57,34 +55,36 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(DeltaWin)
 
    public:
-      DeltaWin(std::string name="window", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false);
-      DeltaWin(std::string name, DeltaRenderSurface* rs, Producer::InputArea* ia = NULL);
+
+      DeltaWin(   std::string name = "window", int x = 100, int y = 100, int width = 640, 
+                  int height = 480, bool cursor = true, bool fullScreen = false );
+
+      DeltaWin(   std::string name, DeltaRenderSurface* rs, Producer::InputArea* ia = 0 );
 
       virtual ~DeltaWin();
 
       ///Calculate the screen pixel coords ([0,w],[0,h]) given the window coords (x,y) ([-1,1],[-1,1])
-      bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y);
+      bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y );
 
       ///Calculate the window coords ([-1,1],[-1,1]), given the screen pixel coords (x,y) ([0,w],[0,h])
-      bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y);
+      bool CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y );
       
       ///Draw the cursor or not
-      void ShowCursor( bool show = true);
+      void ShowCursor( bool show = true );
       
       ///Is the cursor being drawn or not?
-      bool GetShowCursor(void) {return mShowCursor;}
+      bool GetShowCursor() { return mShowCursor; }
 
-      /** Set the full screen mode.  If enabled, this will resize the window to fill
-       *  the display and remove the window border.
-       */
-      void SetFullScreenMode( bool enable=true);// {mRenderSurface->fullScreen(enable);}
+      ///Set the full screen mode.  If enabled, this will resize the window to fill the display and remove the window border.
+      void SetFullScreenMode( bool enable = true );
   
       ///Is the window currently in fullscreen mode?
-      bool GetFullScreenMode(void) {return mRenderSurface->isFullScreen();}
+      bool GetFullScreenMode() { return mRenderSurface->isFullScreen(); }
       
       ///The the title on the DeltaWin border
-      void SetWindowTitle( const char *title );
-      const std::string GetWindowTitle(void) const;
+      void SetWindowTitle( const std::string& title );
+
+      const std::string& GetWindowTitle() const;
       
       ///Set the size and position of the DeltaWin
       void SetPosition( int x, int y, int width, int height );
@@ -93,46 +93,35 @@ namespace dtCore
       void GetPosition( int *x, int *y, int *width, int *height );
 
       ///Get a handle to the underlying DeltaRenderSurface
-      DeltaRenderSurface *GetRenderSurface(void) {return mRenderSurface;}
-      
+      DeltaRenderSurface *GetRenderSurface() { return mRenderSurface; }
       
       ///Get a handle to the Keyboard associated with the DeltaWin
-      Keyboard *GetKeyboard() {return mKeyboard.get();}
+      Keyboard *GetKeyboard() { return mKeyboard.get(); }
 
       ///Get a handle to the Mouse associated with the DeltaWin
-      Mouse *GetMouse() {return mMouse.get();}
+      Mouse *GetMouse() { return mMouse.get(); }
 
-      //Note: make these static
-      static ResolutionVec GetResolutions( void );
- 
-      //void  SetChangeScreenResolutionFlag( int width, int height, int pixelDepth );
-                              
-      static Resolution GetCurrentResolution( void );
-      static bool  ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
-      static bool  ChangeScreenResolution( Resolution res );
-
-      static int   IsValidResolution( ResolutionVec rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
+      //TODO: put these into a dtCore::Display class
+      static ResolutionVec GetResolutions();              
+      static Resolution GetCurrentResolution();
+      static bool ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
+      static bool ChangeScreenResolution( Resolution res );
+      static int IsValidResolution( ResolutionVec rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
 
    private:
 
-      #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
       static int CalcRefreshRate( int width, int height, int dotclock );
-      #endif
       
       DeltaRenderSurface *mRenderSurface; //changed from straight-up RS
       Producer::KeyboardMouse *mKeyboardMouse;
+
       RefPtr<Keyboard> mKeyboard;
       RefPtr<Mouse> mMouse;
+
       bool mShowCursor;
  
    };
-
-   #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   typedef DeltaWin Window;
-   #endif
-   
+  
 };
-
-
 
 #endif // DELTA_DELTA_WIN

@@ -1,4 +1,4 @@
-// window.cpp: implementation of the DeltaWin class.
+// deltawin.cpp: implementation of the DeltaWin class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -173,66 +173,9 @@ void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
    *height = h;
 }
 
-// Producer::RenderSurface must realized for this to work
-void DeltaWin::SetWindowTitle(const char *title)
-{
-   mRenderSurface->setWindowName(title);
-
-   //Producer doesn't dynamically re-title the window so we do it ourself here
-    
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   HWND win = mRenderSurface->getWindow();
-   SetWindowText(win, title); //from winuser.h
-#else
-   if( mRenderSurface->isRealized() )
-   {
-      Display* dpy = mRenderSurface->getDisplay();
-      Window win = mRenderSurface->getWindow();
-
-      XStoreName( dpy, win, title );
-      XSetIconName( dpy, win, title );
-      XFlush( dpy );
-   }
-#endif
-}
-
-const std::string DeltaWin::GetWindowTitle() const
+const std::string& DeltaWin::GetWindowTitle() const
 {
    return mRenderSurface->getWindowName();
-}
-
-void DeltaWin::ShowCursor(const bool show )
-{
-   mShowCursor = show;
-
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   //Win32: gotta do a little cursor game to make this work
-   //First, save the current position of the cursor
-   POINT coords;
-   GetCursorPos(&coords);
-#endif 
-   
-   //Then move the cursor to be on our window'
-   int x,y,w,h;
-   GetPosition(&x, &y, &w, &h); //winuser.h
-   mRenderSurface->positionPointer((x+w)/2, (y+h)/2);
-
-   //Tell Producer
-   mRenderSurface->useCursor(mShowCursor);
-
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-   //Then move the cursor back to where it started from
-   SetCursorPos(coords.x, coords.y);
-#endif
-}
-
-void DeltaWin::SetFullScreenMode( bool enable )
-{
-   mRenderSurface->fullScreen(enable);
-
-   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   mRenderSurface->useBorder(enable);
-   #endif
 }
 
 /*!
@@ -284,214 +227,10 @@ bool DeltaWin::CalcWindowCoords(const float pixel_x, const float pixel_y, float 
       return false;
    }
 }
-
-
-ResolutionVec DeltaWin::GetResolutions( void )
-{
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-
-   HDC hDC = GetDC(GetDesktopWindow());
-
-   Resolution currentRes = GetCurrentResolution();
-   int currentDepth = currentRes.bitDepth;
-     
-   DEVMODE dm;
-   ResolutionVec rv;
-
-   int i = 0;
-   for (i = 0; EnumDisplaySettings(NULL, i, &dm); i++) {
- 
-     Resolution r = { dm.dmPelsWidth,
-                      dm.dmPelsHeight,
-                      dm.dmBitsPerPel,
-                      dm.dmDisplayFrequency };
-
-     rv.push_back( r );
-   }
-   int numResolutions = i;
-    
-   ReleaseDC(GetDesktopWindow(), hDC);
- 
-   return rv;
-
-#else
-
-   Display* dpy = XOpenDisplay(NULL);
-   int screenNum = DefaultScreen(dpy);
-
-   
-   Resolution currentRes = GetCurrentResolution();
-   
-   int numResolutions;
-   XF86VidModeModeInfo** resolutions;
-   XF86VidModeGetAllModeLines(dpy,
-                              screenNum,
-                              &numResolutions,
-                              &resolutions );
-
-   ResolutionVec rv;
-
-   for(int i=0; i < numResolutions; i++)
-   {
-      int refreshRate = CalcRefreshRate(resolutions[i]->htotal, resolutions[i]->vtotal, resolutions[i]->dotclock );
-      
-      Resolution r = { resolutions[i]->hdisplay,
-                       resolutions[i]->vdisplay,
-                       currentRes.bitDepth,
-                       refreshRate };
-
-      rv.push_back( r );
-   }
-
-   return rv;
-   
-#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-}
-
-
-bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate ) 
-{
-   bool changeSuccessful = false;
-
-   std::vector<bool> fullScreenVec; //container to store fullScreen state of each RenderSurface
-
-   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
-   {
-      DeltaWin* dw = DeltaWin::GetInstance(i);
-
-      //store fullScreen state, then set to false
-      fullScreenVec.push_back(dw->GetFullScreenMode());
-      dw->SetFullScreenMode(false);
-
-      //notify all render surfaces that resolution has changed
-      dw->GetRenderSurface()->SetScreenWidthHeight(   static_cast<unsigned int>(width),
-                                                      static_cast<unsigned int>(height) );
-   }
-
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-
-   DEVMODE dmScreenSettings;                                                           
-   ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));
-   
-   dmScreenSettings.dmSize             = sizeof (DEVMODE);             
-   dmScreenSettings.dmPelsWidth        = width;                                        
-   dmScreenSettings.dmPelsHeight       = height;                              
-   dmScreenSettings.dmBitsPerPel       = colorDepth;    
-   dmScreenSettings.dmDisplayFrequency = refreshRate;
-   dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
-   if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
-   {
-      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
-   }
-   else
-   {
-      changeSuccessful = true;
-   }
-
-#else
-
-   Display* dpy = XOpenDisplay(NULL);
-   int screenNum = DefaultScreen(dpy);
-
-   int dotClock;
-   XF86VidModeModeLine modeline;
-   XF86VidModeGetModeLine( dpy, screenNum, &dotClock, &modeline);
-
-   int tempRefresh = CalcRefreshRate( modeline.htotal, modeline.vtotal, dotClock );
-
-   //test if new value is same as current, if so don't do anything
-   if( modeline.hdisplay == width && modeline.vdisplay == height && tempRefresh == refreshRate )
-   {
-      changeSuccessful = true;
-   }
-  
-   int numResolutions;
-   XF86VidModeModeInfo** resolutions;
-   XF86VidModeGetAllModeLines(dpy,
-                              screenNum,
-                              &numResolutions,
-                              &resolutions);
-
-   for(int i = 0; i < numResolutions && !changeSuccessful; i++)
-   {
-      XF86VidModeModeInfo* tempRes = resolutions[i];
-      
-      tempRefresh = CalcRefreshRate( tempRes->htotal, tempRes->vtotal, tempRes->dotclock );
-     
-      if( tempRes->hdisplay == width && tempRes->vdisplay == height && tempRefresh == refreshRate )
-      {
-         XF86VidModeSwitchToMode( dpy, screenNum, tempRes );
-         XF86VidModeSetViewPort( dpy,screenNum, 0, 0 );
-         XSync(dpy,false);
-
-         changeSuccessful = true;
-      }
-   }
-
-   if(!changeSuccessful)
-      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
-   
-#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
-
-   //change back to original fullScreen state
-   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
-   {
-      if(fullScreenVec[i])
-      {
-         DeltaWin::GetInstance(i)->SetFullScreenMode(fullScreenVec[i]);
-      }
-      else
-      {
-         //reset window position
-         int x,y,w,h;
-         DeltaWin::GetInstance(i)->GetPosition(&x,&y,&w,&h);
-         DeltaWin::GetInstance(i)->SetPosition(x,y,w,h);
-      }
-   }
-
-   return changeSuccessful;
-}
-
 bool DeltaWin::ChangeScreenResolution( Resolution res ) 
 {
    return ChangeScreenResolution( res.width, res.height, res.bitDepth, res.refresh );
 }
-
-
-Resolution DeltaWin::GetCurrentResolution( void )
-{
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)   
-
-   HDC hdc = GetDC( GetDesktopWindow() );
-   
-   Resolution r  = { GetDeviceCaps(hdc, HORZRES),
-                     GetDeviceCaps(hdc, VERTRES),
-                     GetDeviceCaps(hdc, BITSPIXEL),
-                     GetDeviceCaps(hdc, VREFRESH) };
-   return r;
-
-#else
-
-   Display* dpy = XOpenDisplay(NULL);
-   int screenNum = DefaultScreen(dpy);
-
-   int dotclock;
-   XF86VidModeModeLine modeline;
-   XF86VidModeGetModeLine( dpy, screenNum, &dotclock, &modeline);
-
-   int thorz = static_cast<int>(modeline.hdisplay);
-   int tvert = static_cast<int>(modeline.vdisplay);
-   int tfreq = CalcRefreshRate( modeline.htotal, modeline.vtotal, dotclock );
-   int tdepth = XDefaultDepth( dpy, screenNum );
-
-   Resolution r = { thorz, tvert, tdepth, tfreq };
-   return r;
-   
-#endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)   
-}
-
-
 
 int DeltaWin::IsValidResolution( ResolutionVec rv, int width, int height, int refreshRate, int colorDepth )
 {
@@ -540,10 +279,7 @@ int DeltaWin::IsValidResolution( ResolutionVec rv, int width, int height, int re
    return -1;
 }
 
-//Approximates refresh rate (X11 only)
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 int DeltaWin::CalcRefreshRate( int horzTotal, int vertTotal, int dotclock )
 {
    return static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( horzTotal * vertTotal ) ) );
 }
-#endif
