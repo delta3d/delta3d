@@ -1,31 +1,21 @@
-#ifndef _ceuidrawable_h_
-#define _ceuidrawable_h_
+#ifndef DELTA_CEUIDRAWABLE
+#define DELTA_CEUIDRAWABLE
 
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #pragma comment(lib, "glu32.lib")
-
 #pragma once
+#endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
+#include <dtGUI/renderer.h>
+#include <dtCore/deltadrawable.h>
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
 
-#include "dtGUI/renderer.h"
 #include <CEGUI/CEGUISystem.h>
 
 #include <osg/Drawable>
 #include <osg/group>
 #include <osg/copyop>
-
-#include "dtCore/deltadrawable.h"
-#include "dtCore/mouse.h"
-#include "dtCore/keyboard.h"
-/*
-#if defined(_WIN32)
-#  if defined(_DEBUG)
-#     pragma comment(lib, "OpenGLRendererD.lib")
-#  else
-#     pragma comment(lib, "OpenGLRenderer.lib")
-#  endif
-#endif
-*/
-
 
 namespace dtGUI
 {
@@ -132,4 +122,4 @@ namespace dtGUI
    };
 }//namespace dtGUI
 
-#endif
+#endif // DELTA_CEUIDRAWABLE

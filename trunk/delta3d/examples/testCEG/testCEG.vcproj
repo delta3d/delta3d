@@ -19,8 +19,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_ROOT)/ext/inc/CEGUI"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE_NOAUTOLIBMSG"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
@@ -71,8 +71,8 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_ROOT)/ext/inc/CEGUI"
-				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
+				AdditionalIncludeDirectories="$(DELTA_INC)"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"

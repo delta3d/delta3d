@@ -1,7 +1,8 @@
 #ifndef RESOURCEPROVIDER_INCLUDED
 #define RESOURCEPROVIDER_INCLUDED
 
-#include "CEGUI/CEGUIDefaultResourceProvider.h"
+#include <dtCore/export.h>
+#include <CEGUI/CEGUIDefaultResourceProvider.h>
 
 namespace dtGUI
 {
@@ -12,7 +13,7 @@ namespace dtGUI
      *
      * @see SetDataFilePathList()
      */
-   class ResourceProvider :   public CEGUI::DefaultResourceProvider
+   class DT_EXPORT ResourceProvider :   public CEGUI::DefaultResourceProvider
    {
    public:
       ResourceProvider();

@@ -21,7 +21,7 @@
 #ifndef DTGUI_H
 #define DTGUI_H
 
-#include "dtGUI/ceuidrawable.h"
+#include <dtGUI/ceuidrawable.h>
 
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
