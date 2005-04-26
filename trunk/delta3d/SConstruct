@@ -438,6 +438,8 @@ def build_delta3d_lib( name, srcs, deps, defines = [], extraLinkFlags = [] ) :
     
    addToLibs = []
    addToLink = []
+   if env.has_key('LINKFLAGS'):
+      addToLink = env['LINKFLAGS']
 
    if OS == 'darwin':
        addToLink.append('$FRAMEWORKSPATH')
