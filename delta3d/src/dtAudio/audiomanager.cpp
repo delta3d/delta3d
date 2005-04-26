@@ -3,7 +3,11 @@
 
 #include <osgDB/FileUtils>
 
-#include <AL/alut.h>
+#ifdef __APPLE__
+  #include <OpenAL/alut.h>
+#else
+  #include <AL/alut.h>
+#endif
 
 #include "dtCore/system.h"
 #include "dtCore/notify.h"
@@ -593,7 +597,13 @@ AudioManager::LoadWaveFile( const char* file )
    unsigned int   len = MIN( filename.size(), size_t(255L) );
    memcpy( fname, filename.c_str(), len );
    fname[len]  = 0L;
+   
+#ifdef __APPLE__
+   alutLoadWAVFile( fname, &format, &data, &size, &freq );
+#else   
    alutLoadWAVFile( fname, &format, &data, &size, &freq, &bd->loop );
+#endif
+   
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       // can't load the wave file, bail...

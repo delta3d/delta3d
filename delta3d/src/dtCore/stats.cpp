@@ -80,7 +80,7 @@ void Stats::Draw()
 // Stats::updateFrameTick
 //------------------------------------------------------------------
 // update time from the current frame update and the previous one.
-osg::Timer_t Stats::UpdateFrameTick()
+dtCore::Timer_t Stats::UpdateFrameTick()
 {
   mLastFrameTick = mFrameTick;
   mFrameTick = mTimer.tick();

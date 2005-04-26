@@ -5,7 +5,7 @@ dtAudioSrcs = [ 'audiomanager.cpp',
                 'sound.cpp',
                 'soundeffectbinder.cpp' ]
                 
-dtAudioDeps = [ 'openal', 'OpenThreads', 'osg', 'osgDB', 'sg', 'ul', 'Producer', 'tinyxml' ]
+dtAudioDeps = [ 'openal', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgProducer', 'osgGA', 'osgTerrain', 'osgParticle', 'osgSim', 'osgFX', 'glgui', 'isense', 'osgDB', 'sg', 'ul', 'js', 'Producer', 'tinyxml']
 
 if OS == 'windows' :
    dtAudioDeps += [ 'alut', 'User32' ]

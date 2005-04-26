@@ -3,8 +3,11 @@ Import('*')
 gui_flSrcs = [  'gui_fltk.cpp',
                 'guimgr.cpp' ]
 
-gui_flDeps = [ 'fltk', 'OpenThreads', 'osg', 'sg', 'ul', 'Producer', 'tinyxml' ]
-                
+if OS == 'darwin':
+    gui_flDeps=[ 'dtcore', 'dtABC', 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX', 'osgProducer', 'glgui', 'isense', 'plibjs', 'osgSim', 'osgDB', 'plibsg', 'plibul', 'tinyxml' ]
+else:
+    gui_flDeps = [ 'fltk', 'OpenThreads', 'osg', 'sg', 'ul', 'Producer', 'tinyxml' ]
+
 if OS == 'windows' :
    gui_flDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
     

@@ -6,6 +6,9 @@
 #include <memory.h>
 #include <stdlib.h>
 
+#if defined(__APPLE__)
+#include <sys/socket.h>
+#include <netinet/in.h>
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include <sys/socket.h>
 #include <linux/in.h>

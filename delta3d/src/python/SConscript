@@ -146,11 +146,11 @@ if foundLibs.has_key( boostLib ) and foundLibs.has_key( os.path.join('boost','py
                
       elif OS == 'linux':
    
-         env.Alias('install', env.InstallAs( [  '$prefix/lib/dtCore.pyd', \
-                                                '$prefix/lib/dtABC.pyd', \
-                                                '$prefix/lib/dtAudio.pyd', \
-                                                '$prefix/lib/dtChar.pyd', \
-                                                '$prefix/lib/dtGUIFl.pyd' ], \
+         env.Alias('install', env.InstallAs( [  '$prefix/lib/dtCore.so', \
+                                                '$prefix/lib/dtABC.so', \
+                                                '$prefix/lib/dtAudio.so', \
+                                                '$prefix/lib/dtChar.so', \
+                                                '$prefix/lib/dtGUIFl.so' ], \
                                              [ pythonDtCoreLib, \
                                                 pythonDtAbcLib, \
                                                 pythonDtAudioLib, \

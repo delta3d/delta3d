@@ -6,7 +6,7 @@
 
 #include "dtABC/widget.h"
 
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+#if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
 #endif
 
