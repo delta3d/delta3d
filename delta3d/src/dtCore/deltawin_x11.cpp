@@ -6,6 +6,7 @@
 
 #include "Producer/KeyboardMouse"
 #include "dtCore/deltawin.h"
+#include "dtCore/notify.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -24,8 +25,8 @@ void DeltaWin::SetWindowTitle( const std::string& title )
       Display* dpy = mRenderSurface->getDisplay();
       Window win = mRenderSurface->getWindow();
 
-      XStoreName( dpy, win, title );
-      XSetIconName( dpy, win, title );
+      XStoreName( dpy, win, title.c_str() );
+      XSetIconName( dpy, win, title.c_str() );
       XFlush( dpy );
    }
 }
