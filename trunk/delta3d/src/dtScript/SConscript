@@ -1,7 +1,7 @@
 Import('*')
 
 dtScriptSrcs = [ 'scriptmanager.cpp' ]
-dtScriptDeps = [ 'osg', 'python' ]
+dtScriptDeps = [ 'OpenThreads', 'osg', 'python' ]
 
 dtScriptDeps = [ extLibs[lib] for lib in dtScriptDeps if extLibs.has_key(lib) ]
 
@@ -9,24 +9,16 @@ if mode == 'debug' :
    dtScriptDeps += [ 'dtcored' ]
 else :
    dtScriptDeps += [ 'dtcore' ]
-    
-if OS == 'windows' and mode == 'debug' :
-   dtTarget = 'dtscriptd'
-else :
-   dtTarget = 'dtscript'
 
-if mode == 'debug' :
-   dtLib = env.SharedLibrary( dtTarget, dtScriptSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'],\
-                                                      LINKFLAGS = env['LINKFLAGS']+['/NODEFAULTLIB:'+extLibs['python']+'_d'], \
-                                                      LIBS = dtScriptDeps )
-else :
-   dtLib = env.SharedLibrary( dtTarget, dtScriptSrcs, CPPDEFINES = env['CPPDEFINES']+['DT_LIBRARY'],\
-                                                      LIBS = dtScriptDeps )
+oldLINK = env['LINKFLAGS']
+
+extraLink = []
+
+if OS == 'windows':
+   extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
+       
+build_delta3d_lib( 'dtscript', dtScriptSrcs, dtScriptDeps, extraLinkFlags = extraLink )
+
+env['LINKFLAGS']
+
  
-if OS == 'windows' :
-   env.Install( '#/bin', dtLib[0] ) # .dll
-   env.Install( '#/lib', dtLib[1] ) # .lib, 
-   env.Install( '#/lib', dtLib[2] ) # .exp
-elif OS == 'linux' :
-   # copy headers
-   env.Install( '#/lib', dtLib )

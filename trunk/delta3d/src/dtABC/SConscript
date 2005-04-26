@@ -5,7 +5,7 @@ dtAbcSrcs = [   'application.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 
-dtAbcDeps = [ 'OpenThreads', 'osg', 'osgDB', 'Producer', 'sg', 'tinyxml', 'ul' ]
+dtAbcDeps=[ 'dtcore', 'osg', 'osgText', 'osgSim','osgUtil', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX' ,'osgDB', 'osgProducer', 'sg', 'ul', 'js', 'Producer', 'OpenThreads', 'tinyxml', 'glgui', 'isense']
 
 if OS == 'windows' :
    dtAbcDeps += [ 'User32' ]

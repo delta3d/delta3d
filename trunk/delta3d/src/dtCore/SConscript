@@ -57,14 +57,17 @@ dtCoreSrcs = [ 'base.cpp',
                'ufomotionmodel.cpp',
                'walkmotionmodel.cpp' ]
 
-dtCoreDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml' ]
-                
+dtCoreDeps=[ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgFX', 'osgProducer', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
+
 if OS == 'windows' :
    dtCoreSrcs.extend( [ 'deltawin_win32.cpp', 'uniqueid_win32.cpp' ] )
    dtCoreDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-else:
+elif OS == 'linux':
    dtCoreSrcs.extend( [ 'deltawin_x11.cpp', 'uniqueid_linux.cpp' ] )
    dtCoreDeps += [ 'uuid' ]
+elif OS == 'darwin':
+    dtCoreSrcs.extend(['deltawin_carbon.cpp', 'uniqueid_macosx.cpp'] )
+    dtCoreDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
 dtCoreDeps = [ extLibs[lib] for lib in dtCoreDeps if extLibs.has_key(lib) ]
 

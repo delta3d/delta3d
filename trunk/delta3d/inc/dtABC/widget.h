@@ -24,7 +24,6 @@
 #include <FL/x.H>
 #include <dtABC/baseabc.h>
 
-
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 typedef Window HWND;
 #endif

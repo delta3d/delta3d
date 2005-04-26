@@ -27,7 +27,12 @@
 #include <map>
 #include <string>
 
-#include <AL/al.h>
+#ifdef __APPLE__
+  #include <OpenAL/al.h>
+#else
+  #include <AL/al.h>
+#endif
+
 #include <sg.h>
 
 #include <dtCore/base.h>
