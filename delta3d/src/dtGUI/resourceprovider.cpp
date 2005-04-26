@@ -1,7 +1,7 @@
-#include "dtGUI/resourceprovider.h"
-#include "dtCore/notify.h"
+#include <dtGUI/resourceprovider.h>
+#include <dtCore/notify.h>
 
-#include "osgDB/fileutils"
+#include <osgDB/FileUtils>
 
 using namespace dtGUI;
 

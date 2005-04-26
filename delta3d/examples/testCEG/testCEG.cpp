@@ -1,15 +1,15 @@
 // testCEG.cpp : defines the implementation of the application
+
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/CEGUIPropertySet.h>
+
 #include "dtGUI/dtgui.h"
 #include "testCEG.h"
 #include "dtCore/dt.h"
 
-
 using namespace dtCore;
 using namespace dtABC;
 using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER( testCEG )
 
@@ -48,14 +48,18 @@ void testCEG::Config()
    ///move the camera up
    Transform xform(-30.0f, 0.0f, 0.0f, -90.0f, 0.0f, 0.0f );
    GetCamera()->SetTransform( &xform );
+   GetCamera()->SetClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 
    int x,y,w,h;
    GetWindow()->GetPosition(&x, &y, &w, &h);
+   GetWindow()->ShowCursor( false );
    mGUI = new dtGUI::CEUIDrawable(w, h);
 
    BuildGUI();
 
    GetScene()->AddDrawable(mGUI.get());
+
+
 }
 
 void testCEG::KeyPressed(   Keyboard*      keyboard, 

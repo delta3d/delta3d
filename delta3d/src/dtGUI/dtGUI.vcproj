@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_ROOT)/ext/inc/CEGUI/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_NOAUTOLIBMSG;_USRDLL;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -33,11 +33,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib OpenGLGUIRenderer_d.lib sg_d.lib ul_d.lib"
+				AdditionalDependencies="osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib sg_d.lib ul_d.lib"
 				OutputFile="..\..\bin\dtguid.dll"
 				LinkIncremental="0"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtGUI.pdb"
 				SubSystem="2"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_NOAUTOLIBMSG;_USRDLL;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -84,10 +84,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="osg.lib osgDB.lib openthreadswin32.lib producer.lib OpenGLGUIRenderer.lib sg.lib ul.lib"
+				AdditionalDependencies="osg.lib osgDB.lib openthreadswin32.lib producer.lib CEGUIBase.lib OpenGLGUIRenderer.lib sg.lib ul.lib"
 				OutputFile="..\..\bin\dtgui.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"

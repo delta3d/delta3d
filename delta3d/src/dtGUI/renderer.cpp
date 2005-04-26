@@ -1,5 +1,5 @@
-#include "dtGUI/renderer.h"
-#include "dtGUI/resourceprovider.h"
+#include <dtGUI/renderer.h>
+#include <dtGUI/resourceprovider.h>
 
 using namespace dtGUI;
 
