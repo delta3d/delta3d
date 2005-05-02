@@ -409,7 +409,7 @@ namespace dtSOARX
           * @param level the DTED level to make the texture map for
           * @return the newly created image
           */
-         osg::Image* MakeDetailGradient(int level);
+         dtCore::RefPtr<osg::Image> MakeDetailGradient(int level);
          
          /**
           * Makes the detail scale texture map for the specified DTED level.
@@ -417,7 +417,7 @@ namespace dtSOARX
           * @param level the DTED level to make the texture map for
           * @return the newly created image
           */
-         osg::Image* MakeDetailScale(int level);
+        dtCore::RefPtr<osg::Image> MakeDetailScale(int level);
          
          /**
           * Makes the base gradient texture map for the specified heightfield.
@@ -425,7 +425,7 @@ namespace dtSOARX
           * @param hf the heightfield to process
           * @return the newly created image
           */
-         osg::Image* MakeBaseGradient(osg::HeightField* hf);
+         dtCore::RefPtr<osg::Image> MakeBaseGradient(osg::HeightField* hf);
          
          /**
           * Makes the base color texture map for the specified heightfield.
@@ -435,7 +435,8 @@ namespace dtSOARX
           * @param longitude the longitude of the terrain segment
           * @return the newly created image
           */
-         osg::Image* MakeBaseColor(osg::HeightField* hf, int latitude, int longitude);
+//         osg::Image* MakeBaseColor(osg::HeightField* hf, int latitude, int longitude);
+		 dtCore::RefPtr<osg::Image> MakeBaseColor(osg::HeightField* hf, int latitude, int longitude);
 
 
 		 /**
@@ -446,7 +447,7 @@ namespace dtSOARX
 		 * @param longitude the longitude of the terrain segment
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeBaseLCCColor(osg::HeightField* hf, int latitude, int longitude);
+		 dtCore::RefPtr<osg::Image> MakeBaseLCCColor(osg::HeightField* hf, int latitude, int longitude);
 
 
          
@@ -458,7 +459,7 @@ namespace dtSOARX
           * @param origin the origin of the terrain cell
           * @return the newly created road node
           */
-         osg::Node* MakeRoads(int latitude, int longitude, const osg::Vec3& origin);
+         dtCore::RefPtr<osg::Geode> MakeRoads(int latitude, int longitude, const osg::Vec3& origin);
          
 
 		 /**
@@ -467,7 +468,7 @@ namespace dtSOARX
 		 * @param rgb_selected the RGB color of the LCC type selected
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeLCCImage(osg::Image* src_image, osg::Vec3& rgb_selected);
+		 dtCore::RefPtr<osg::Image> MakeLCCImage(osg::Image* src_image, osg::Vec3& rgb_selected);
 
 		 /**
 		 * Create smoothed grayscale map of the terrain by LCC type
@@ -476,7 +477,7 @@ namespace dtSOARX
 		 * @param rgb_selected the RGB color of the points to smooth (always 0,0,0 - black)
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeFilteredImage(osg::Image* src_image, osg::Vec3& rgb_selected);
+		 dtCore::RefPtr<osg::Image> MakeFilteredImage(osg::Image* src_image, osg::Vec3& rgb_selected);
 
 		 /**
 		 * Use an image to mask-out vegetation probability (set probability to 0%)
@@ -485,7 +486,7 @@ namespace dtSOARX
 		 * @param mask_image the black/white - using LCC type 11 as default
 		 * @return the modified filtered image
 		 */
-		 osg::Image* ApplyMask(osg::Image* src_image, osg::Image* mask_image);
+		 dtCore::RefPtr<osg::Image> ApplyMask(osg::Image* src_image, osg::Image* mask_image);
 
 
 		 /**
@@ -493,28 +494,21 @@ namespace dtSOARX
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeHeightmapImage(osg::HeightField* hf);
+		 dtCore::RefPtr<osg::Image> MakeHeightmapImage(osg::HeightField* hf);
 
 		 /**
 		 * Create slopemap from GDAL-derived heightfield data
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeSlopemapImage(osg::HeightField* hf);
-
-		 /**
-		 * Create slopemap from GDAL-derived heightfield data
-		 * @param hf the GDAL-derived heightfield
-		 * @return the newly created image
-		 */
-		 osg::Image* MakeSlopeAspectImage(osg::HeightField* hf);
+		 dtCore::RefPtr<osg::Image> MakeSlopeAspectImage(osg::HeightField* hf);
 
 		 /**
 		 * Create relative elevation map from GDAL-derived heightfield data
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeRelativeElevationImage(osg::HeightField* hf);
+		 dtCore::RefPtr<osg::Image> MakeRelativeElevationImage(osg::HeightField* hf);
 
 
 		 /**
@@ -610,10 +604,10 @@ namespace dtSOARX
 		  */
 //		 std::vector<dtCore::RefPtr<dtCore::Object> > mObjects;
 
-		 /**
-		  *	  Listing of groups
-		  */
-		 std::vector<dtCore::RefPtr<osg::Group> > mGroups;		 
+//		 /**
+//		  *	  Listing of groups
+//		  */
+//		 std::vector<dtCore::RefPtr<osg::Group> > mGroups;		 
 
          /**
           * The GLSL program object.
@@ -671,19 +665,21 @@ namespace dtSOARX
 		 float mGamma;
 
          /**
-		 * Looks per pixel X.
+		 * Max number of random draws per pixel.
 		 */
-		 float mLooksX;
+		 float mMaxLooks;
 
 		 /**
-		 * Looks per pixel Y.
+		 * Maximum number of objects per geocell.
 		 */
-		 float mLooksY;
+		 float mMaxObjectsPerCell;
 
 		 /**
 		 * Random number seed
 		 */
 		 short mSeed;
+
+		 std::string mImageExtension;
 
 		 /**
 		 * Using DEMs?
@@ -779,32 +775,56 @@ namespace dtSOARX
 		 /**
 		  *	An LCC Cell's data
 		  */
+		 
+		 dtCore::RefPtr<osg::Group> mRootVegeGroup;
+
 		 struct LCCCells
 		 {
 			 /**
 			 *	  Listing/location of objects (plants, trees, etc) 
 			 */
-			 std::vector<osg::PositionAttitudeTransform*> mPATs;
-
+//			 std::vector<osg::PositionAttitudeTransform*> mPATs;
+//			 std::vector<dtCore::RefPtr<osg::PositionAttitudeTransform>> mPATs;
 
 			 /**
 			 * The top node of the vegetation scene graph.
 			 */
 			 dtCore::RefPtr<osg::Group> mRootVegeGroup;
+
+			 /**
+			 *	 Hack to retain scope of quadtree groups
+			 */
+//			 std::vector<osg::Group*> mGroupies;
 		 };
 
 
 		 /**
 		 * Maps loaded segments to LCCCells.
 		 */
-		 std::map<Segment, LCCCells*> mSegmentLCCCellMap;
+		 std::map<Segment, LCCCells> mSegmentLCCCellMap;
 
+
+		 /**
+		 * Describes range of values
+		 */
 		 struct LCCrange
 		 {
 			 float min;
 			 float max;
 			 float sharpness;
 		 };
+
+
+		 /**
+		 * Describes an LCC's geometric model info.
+		 */
+		 struct LCCModel
+		 {
+			 std::string name;
+			 float scale;
+			 dtCore::RefPtr<osg::Group> vegeObject;
+		 };
+
 
 		 /**
 		  *	 LCC type data
@@ -814,9 +834,7 @@ namespace dtSOARX
 			 int idx;
 			 int rgb[3];
 			 std::string name;
-			 std::string model;
-			 float scale;
-			 osg::Group* vegeObject[3];
+			 std::vector<LCCModel> lccmodel;
 			 float aspect;
 			 LCCrange slope;
 			 LCCrange elevation;
@@ -870,11 +888,6 @@ namespace dtSOARX
 
 		 int totalvegecount;
 
-		 /**
-		  *	 Hack to retain scope of quadtree groups
-		  */
-		 std::vector<osg::Group*> mGroupies;
-
 		 void SimplifyTerrain(osg::Vec3& ep);
 		 /**
 		 * Loads the specified configuration file.
@@ -900,7 +913,6 @@ namespace dtSOARX
 		 void AddVegetation(int latitude, int longitude);
 
 
-
 		 /**
 		 * Determine whether vegetation exists at coord x,y
 		 * @param mCimage the LCC type's combined image)
@@ -923,6 +935,17 @@ namespace dtSOARX
 
 
 		 /**
+		 * Determine whether vegetation exists at coord x,y
+		 * @param mCimage the LCC type's combined image)
+		 * @param x the x coordinate to check
+		 * @param y the y coordinate to check
+		 * @param limit the probability rolled
+		 * @return boolean on existence of vegetaton at x,y
+		 */
+		 int GetNumLooks(osg::Image* mCimage, int x, int y, float good_angle, int maxlooks, float maxslope);
+
+
+		 /**
 		 * Create probability map of the likehihood for a particular LCC type
 		 * @param LCCidx LCC image index
 		 * @param h_image the heightmap image
@@ -930,7 +953,7 @@ namespace dtSOARX
 		 * @param r_image the relative elevation image
 		 * @return the newly created image
 		 */
-		 osg::Image* MakeCombinedImage(
+		 dtCore::RefPtr<osg::Image> MakeCombinedImage(
 			 LCCs l,
 			 osg::Image* f_image,			// LCC filtered image
 			 osg::Image* h_image,			// heightmap
