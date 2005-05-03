@@ -9,7 +9,7 @@
 #if defined(__APPLE__)
 #include <sys/socket.h>
 #include <netinet/in.h>
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+#elif !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include <sys/socket.h>
 #include <linux/in.h>
 #endif
@@ -3092,15 +3092,15 @@ throw (
 }
 
 /**
- * Called when an effect is added to the manager.
- *
- * @param effectManager the effect manager that generated
- * the event
- * @param effect the effect object
- */
+* Called when an effect is added to the manager.
+*
+* @param effectManager the effect manager that generated
+* the event
+* @param effect the effect object
+*/
 void RTIConnection::EffectAdded(
-   EffectManager* effectManager,
-   Effect* effect)
+                                EffectManager* effectManager,
+                                Effect* effect)
 {
    if( !mIgnoreEffect && IS_A(effect, Detonation*) )
    {
@@ -3117,14 +3117,14 @@ void RTIConnection::EffectAdded(
 
 
       char encodedDetonationLocation[24],
-           encodedEventIdentifier[5], 
-           encodedWarheadType[2],
-           encodedFuseType[2],
-           encodedMunitionType[8],
-           encodedDetonationResultCode[1],
-           encodedQuantityFired[2],
-           encodedFinalVelocity[12];
-           
+         encodedEventIdentifier[5], 
+         encodedWarheadType[2],
+         encodedFuseType[2],
+         encodedMunitionType[8],
+         encodedDetonationResultCode[1],
+         encodedQuantityFired[2],
+         encodedFinalVelocity[12];
+
 
       sgVec3 vec;
 
@@ -3135,7 +3135,7 @@ void RTIConnection::EffectAdded(
       detonationLocation.SetX(vec[0] + mLocationOffset[0]);
       detonationLocation.SetY(vec[1] + mLocationOffset[1]);
       detonationLocation.SetZ(vec[2] + mLocationOffset[2]);
-     
+
 
       detonationLocation.Encode(encodedDetonationLocation);
 
@@ -3143,21 +3143,21 @@ void RTIConnection::EffectAdded(
          mDetonationLocationParameterHandle,
          encodedDetonationLocation,
          24
-      );
+         );
 
-     finalVelocity.SetX(0);  //test this
-     finalVelocity.SetY(0);  //test this
-     finalVelocity.SetZ(900);  //test this
+      finalVelocity.SetX(0);  //test this
+      finalVelocity.SetY(0);  //test this
+      finalVelocity.SetZ(900);  //test this
 
-     finalVelocity.Encode(encodedFinalVelocity);
-     
-     theParameters->add(
-        mFinalVelocityVectorHandle,
-        encodedFinalVelocity,
-        12
-     );
+      finalVelocity.Encode(encodedFinalVelocity);
 
-     
+      theParameters->add(
+         mFinalVelocityVectorHandle,
+         encodedFinalVelocity,
+         12
+         );
+
+
       eventIdentifier.SetEventIdentifier(mEventIdentifierCounter++);
 
       if(mEventIdentifierCounter == 0)
@@ -3171,7 +3171,7 @@ void RTIConnection::EffectAdded(
          mEventIdentifierParameterHandle,
          encodedEventIdentifier,
          5  //changed this because of error
-      );
+         );
 
       warheadType = 1000; // clamp to HE warhead
 
@@ -3186,7 +3186,7 @@ void RTIConnection::EffectAdded(
          mWarheadTypeParameterHandle,
          encodedWarheadType,
          2
-      );
+         );
 
       *(unsigned short*)(&encodedFuseType[0]) = 1000; // 0 Other
 
@@ -3194,44 +3194,44 @@ void RTIConnection::EffectAdded(
          mFuseTypeParameterHandle,
          encodedFuseType,
          2
-      );
+         );
 
-		unsigned short munType = (unsigned short)detonation->GetType();
+      unsigned short munType = (unsigned short)detonation->GetType();
       EntityType munitionType(2,9,255,2,14,2,0); //Default
 
-		if (munType == 1000)
-		{
-			//munitionType.SetExtra(2);
-			//std::cout<<"HE"<<std::endl;
-		}
-		else if(munType == 2000)
-		{
-			munitionType.SetSpecific(13);
-		}
-		else if(munType == 3000)
-		{
-			munitionType.SetSpecific(18);
-		}
-		else if(munType == 4000)
-		{
+      if (munType == 1000)
+      {
+         //munitionType.SetExtra(2);
+         //std::cout<<"HE"<<std::endl;
+      }
+      else if(munType == 2000)
+      {
+         munitionType.SetSpecific(13);
+      }
+      else if(munType == 3000)
+      {
+         munitionType.SetSpecific(18);
+      }
+      else if(munType == 4000)
+      {
          munitionType.SetExtra(1);
-		}
-		else if(munType == 5000)
-		{
-			munitionType.SetSpecific(3);
-		}
-		else if(munType == 6000)
-		{
-			munitionType.SetSpecific(18);
-		}
-      
+      }
+      else if(munType == 5000)
+      {
+         munitionType.SetSpecific(3);
+      }
+      else if(munType == 6000)
+      {
+         munitionType.SetSpecific(18);
+      }
+
       munitionType.Encode(encodedMunitionType);
 
       theParameters->add(
          mMunitionTypeParameterHandle,
          encodedMunitionType,
          8
-      );
+         );
 
       encodedDetonationResultCode[0] = 5; // Detonation
 
@@ -3239,7 +3239,7 @@ void RTIConnection::EffectAdded(
          mDetonationResultCodeParameterHandle,
          encodedDetonationResultCode,
          1
-      );
+         );
 
       encodedQuantityFired[0] = 0;
       encodedQuantityFired[1] = 1;
@@ -3248,12 +3248,12 @@ void RTIConnection::EffectAdded(
          mQuantityFiredParameterHandle,
          encodedQuantityFired,
          2
-      );
+         );
 
       mRTIAmbassador.sendInteraction(
          mMunitionDetonationClassHandle,
          *theParameters,
          ""
-      );
+         );
    }
 }
