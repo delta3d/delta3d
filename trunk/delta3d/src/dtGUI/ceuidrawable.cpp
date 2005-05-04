@@ -3,9 +3,9 @@
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
-#include <osg/geode>
+#include <osg/Geode>
 #include <osg/Projection>
-#include <osg/matrixtransform>
+#include <osg/MatrixTransform>
 
 using namespace dtCore;
 using namespace dtGUI;
@@ -17,19 +17,21 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 * OpenGLRenderer,and create the OSG nodes.
 */
 CEUIDrawable::CEUIDrawable(int width, int height):
-mUI(NULL),
-mButtonState(0),
-mWidth(width),
-mHeight(height),
-mRenderer(NULL),
-mMouseX(.0f),
-mMouseY(.0f),
-elapsedTime(0.0)
+   stateset(0),
+   osgCEUI(0),
+   mUI(0),
+   mButtonState(0),
+   mWidth(width),
+   mHeight(height),
+   mMouseX(.0f),
+   mMouseY(.0f),
+   mRenderer(0),
+   elapsedTime(0.0)
 {
    RegisterInstance(this);
 
-   mHalfWidth = .5f * mWidth;
-   mHalfHeight = .5f * mHeight;
+   mHalfWidth = mWidth / 2;
+   mHalfHeight = mHeight / 2;
 
    //TODO find something better than GetInstance(0)
    dtCore::Mouse::GetInstance(0)->AddMouseListener(this); 

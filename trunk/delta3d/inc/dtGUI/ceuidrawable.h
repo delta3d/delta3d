@@ -14,8 +14,8 @@
 #include <CEGUI/CEGUISystem.h>
 
 #include <osg/Drawable>
-#include <osg/group>
-#include <osg/copyop>
+#include <osg/Group>
+#include <osg/CopyOp>
 
 namespace dtGUI
 {
