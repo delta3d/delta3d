@@ -287,7 +287,7 @@ namespace dtSOARX
 		 * @param image the handle to the image you want to examine
 		 * @param imagename a descriptive name to call this image
 		 */        
-		 void ImageStats(osg::Image* image, char* imagename);
+		 void ImageStats(const osg::Image* image, char* imagename);
 
 
          /**
@@ -425,7 +425,7 @@ namespace dtSOARX
           * @param hf the heightfield to process
           * @return the newly created image
           */
-         dtCore::RefPtr<osg::Image> MakeBaseGradient(osg::HeightField* hf);
+         dtCore::RefPtr<osg::Image> MakeBaseGradient(const osg::HeightField* hf);
          
          /**
           * Makes the base color texture map for the specified heightfield.
@@ -436,7 +436,7 @@ namespace dtSOARX
           * @return the newly created image
           */
 //         osg::Image* MakeBaseColor(osg::HeightField* hf, int latitude, int longitude);
-		 dtCore::RefPtr<osg::Image> MakeBaseColor(osg::HeightField* hf, int latitude, int longitude);
+		 dtCore::RefPtr<osg::Image> MakeBaseColor(const osg::HeightField* hf, int latitude, int longitude);
 
 
 		 /**
@@ -447,7 +447,7 @@ namespace dtSOARX
 		 * @param longitude the longitude of the terrain segment
 		 * @return the newly created image
 		 */
-		 dtCore::RefPtr<osg::Image> MakeBaseLCCColor(osg::HeightField* hf, int latitude, int longitude);
+		 dtCore::RefPtr<osg::Image> MakeBaseLCCColor(const osg::HeightField* hf, int latitude, int longitude);
 
 
          
@@ -468,7 +468,7 @@ namespace dtSOARX
 		 * @param rgb_selected the RGB color of the LCC type selected
 		 * @return the newly created image
 		 */
-		 dtCore::RefPtr<osg::Image> MakeLCCImage(osg::Image* src_image, osg::Vec3& rgb_selected);
+		 dtCore::RefPtr<osg::Image> MakeLCCImage(const osg::Image* src_image, const osg::Vec3& rgb_selected);
 
 		 /**
 		 * Create smoothed grayscale map of the terrain by LCC type
@@ -477,7 +477,7 @@ namespace dtSOARX
 		 * @param rgb_selected the RGB color of the points to smooth (always 0,0,0 - black)
 		 * @return the newly created image
 		 */
-		 dtCore::RefPtr<osg::Image> MakeFilteredImage(osg::Image* src_image, osg::Vec3& rgb_selected);
+		 dtCore::RefPtr<osg::Image> MakeFilteredImage(const osg::Image* src_image, const osg::Vec3& rgb_selected);
 
 		 /**
 		 * Use an image to mask-out vegetation probability (set probability to 0%)
@@ -486,7 +486,7 @@ namespace dtSOARX
 		 * @param mask_image the black/white - using LCC type 11 as default
 		 * @return the modified filtered image
 		 */
-		 dtCore::RefPtr<osg::Image> ApplyMask(osg::Image* src_image, osg::Image* mask_image);
+		 dtCore::RefPtr<osg::Image> ApplyMask(const osg::Image* src_image, const osg::Image* mask_image);
 
 
 		 /**
@@ -494,21 +494,21 @@ namespace dtSOARX
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
 		 */
-		 dtCore::RefPtr<osg::Image> MakeHeightmapImage(osg::HeightField* hf);
+		 dtCore::RefPtr<osg::Image> MakeHeightmapImage(const osg::HeightField* hf);
 
 		 /**
 		 * Create slopemap from GDAL-derived heightfield data
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
 		 */
-		 dtCore::RefPtr<osg::Image> MakeSlopeAspectImage(osg::HeightField* hf);
+		 dtCore::RefPtr<osg::Image> MakeSlopeAspectImage(const osg::HeightField* hf);
 
 		 /**
 		 * Create relative elevation map from GDAL-derived heightfield data
 		 * @param hf the GDAL-derived heightfield
 		 * @return the newly created image
 		 */
-		 dtCore::RefPtr<osg::Image> MakeRelativeElevationImage(osg::HeightField* hf);
+		 dtCore::RefPtr<osg::Image> MakeRelativeElevationImage(const osg::HeightField* hf);
 
 
 		 /**
@@ -590,7 +590,7 @@ namespace dtSOARX
 		 * @param filename the filename to save the histogram data
 		 * @param binsize the sampling size of the image (i.e. the delta height or slope).
 		 */
-		 void LCCHistogram(osg::Image* LCCbase, osg::Image* image, char* filename, int binsize);
+		 void LCCHistogram(const osg::Image* LCCbase, const osg::Image* image, char* filename, int binsize);
 
 
          
@@ -921,7 +921,7 @@ namespace dtSOARX
 		 * @param limit the probability rolled
 		 * @return boolean on existence of vegetaton at x,y
 		 */
-		 bool GetVegetation(osg::Image* mCimage, int x, int y, int limit);
+		 bool GetVegetation(const osg::Image* mCimage, int x, int y, int limit);
 
 		 /**
 		 * Determine type/age of vegetation type (1-3; young-old).
@@ -931,7 +931,7 @@ namespace dtSOARX
 		 * @param pref_angle the preferred angle of aspect in degrees for optimum growth
 		 * @return the age bias of the vegetation type
 		 */
-		 int GetVegType(osg::Image* mCimage, int x, int y, float good_angle);
+		 int GetVegType(const osg::Image* mCimage, int x, int y, float good_angle);
 
 
 		 /**
@@ -942,7 +942,7 @@ namespace dtSOARX
 		 * @param limit the probability rolled
 		 * @return boolean on existence of vegetaton at x,y
 		 */
-		 int GetNumLooks(osg::Image* mCimage, int x, int y, float good_angle, int maxlooks, float maxslope);
+		 int GetNumLooks(const osg::Image* mCimage, const osg::Image* SLimage, int x, int y, float good_angle, int maxlooks, float maxslope);
 
 
 		 /**
@@ -955,10 +955,10 @@ namespace dtSOARX
 		 */
 		 dtCore::RefPtr<osg::Image> MakeCombinedImage(
 			 LCCs l,
-			 osg::Image* f_image,			// LCC filtered image
-			 osg::Image* h_image,			// heightmap
-			 osg::Image* s_image,			// slopemap image
-			 osg::Image* r_image);			// relative elevation image
+			 const osg::Image* f_image,			// LCC filtered image
+			 const osg::Image* h_image,			// heightmap
+			 const osg::Image* s_image,			// slopemap image
+			 const osg::Image* r_image);			// relative elevation image
 
    };
 };
