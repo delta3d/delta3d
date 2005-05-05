@@ -72,7 +72,9 @@ const char* fragmentShader =
    "  gl_FragColor.rgb *= max(0.0, dot(normal, vec3(gl_LightSource[0].position)));"
    "  float fog;"
    "  const float LOG2E = 1.442695;"   // = 1/log(2)
-   "  fog = exp2(-gl_Fog.density * .3 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
+ //   "  fog = exp2(-gl_Fog.density * .3 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
+   "  fog = exp2(-gl_Fog.density * .8 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
+
    "  fog = clamp(fog, 0.0, 1.0);"
    "  gl_FragColor = mix(gl_Fog.color, gl_FragColor, fog);"
    "}";
@@ -843,7 +845,7 @@ int SOARXTerrain::GetMaxTextureSize()
 * @param binsize the sampling size of the image (i.e. the delta height or slope).
 * Note: images must be the same size
 **/
-void SOARXTerrain::LCCHistogram(osg::Image* LCCbase, osg::Image* image, char* filename, int binsize)
+void SOARXTerrain::LCCHistogram(const osg::Image* LCCbase, const osg::Image* image, char* filename, int binsize)
 {
 //ending pixel positions for Monterey Bay test LCC data
 //	int endx = 541;
@@ -917,7 +919,7 @@ void SOARXTerrain::LCCHistogram(osg::Image* LCCbase, osg::Image* image, char* fi
 * @param image the handle to the image you want to examine
 * @param imagename a descriptive name to call this image
 */
-void SOARXTerrain::ImageStats(osg::Image* image, char* imagename)
+void SOARXTerrain::ImageStats(const osg::Image* image, char* imagename)
 {
 	Notify(INFO, "ImageStats:**********************************");
 
@@ -1661,7 +1663,7 @@ float SOARXTerrain::GetDetailMultiplier()
 * @param limit the limiting value of the probability (i.e. the roll of the dice)
 * @return the value of mUseLCC
 */
-bool SOARXTerrain::GetVegetation(osg::Image* mCimage, int x, int y, int limit)
+bool SOARXTerrain::GetVegetation(const osg::Image* mCimage, int x, int y, int limit)
 {
 	unsigned char* c_data = NULL;
 
@@ -1683,9 +1685,16 @@ bool SOARXTerrain::GetVegetation(osg::Image* mCimage, int x, int y, int limit)
 * @param pref_angle the preferred angle of aspect in degrees for optimum growth
 * @return the age bias of the vegetation type
 */
-int SOARXTerrain::GetNumLooks(osg::Image* SLimage, int x, int y, float good_angle, int maxlooks, float maxslope)
+int SOARXTerrain::GetNumLooks(const osg::Image* mCimage, const osg::Image* SLimage, int x, int y, float good_angle, int maxlooks, float maxslope)
 {
+	unsigned char* c_data = NULL;
+
+	if (mCimage!=NULL) c_data = (unsigned char*)mCimage->data(x,y);
+	if ((c_data[0]==255)&&(c_data[1]==255)&&(c_data[2]==255))
+		return 0;
+
 	unsigned char* s_data = NULL;
+
 	int bin = -1;
 
 	if (SLimage!=NULL) s_data = (unsigned char*)SLimage->data(x,y);
@@ -1752,7 +1761,7 @@ int SOARXTerrain::GetNumLooks(osg::Image* SLimage, int x, int y, float good_angl
 * @param pref_angle the preferred angle of aspect in degrees for optimum growth
 * @return the age bias of the vegetation type
 */
-int SOARXTerrain::GetVegType(osg::Image* mCimage, int x, int y, float good_angle)
+int SOARXTerrain::GetVegType(const osg::Image* mCimage, int x, int y, float good_angle)
 {
 	unsigned char* c_data = NULL;
 	float random_draw;
@@ -1884,7 +1893,7 @@ bool SOARXTerrain::GetLCCStatus()
 * @param rgb_selected the RGB color vector of the LCC type selected
 * @return the newly created image
 */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeLCCImage(osg::Image* src_image, osg::Vec3& rgb_selected)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeLCCImage(const osg::Image* src_image, const osg::Vec3& rgb_selected)
 {
 	dtCore::RefPtr<osg::Image> dst_image = new osg::Image();
 //	int mMaxTextureSize = this->GetMaxTextureSize();
@@ -1946,7 +1955,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeLCCImage(osg::Image* src_image, osg
 * @param rgb_selected the RGB color of the points to smooth (always 0,0,0 - black)
 * @return the newly created image
 */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeFilteredImage(osg::Image* src_image, osg::Vec3& rgb_selected)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeFilteredImage(const osg::Image* src_image, const osg::Vec3& rgb_selected)
 {
 	int width = src_image->s();
 	int height = src_image->t();
@@ -2100,7 +2109,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeFilteredImage(osg::Image* src_image
 * @param mask_image the black/white - using LCC type 11 as default
 * @return the modified filtered image
 */
-dtCore::RefPtr<osg::Image> SOARXTerrain::ApplyMask(osg::Image* src_image, osg::Image* mask_image)
+dtCore::RefPtr<osg::Image> SOARXTerrain::ApplyMask(const osg::Image* src_image, const osg::Image* mask_image)
 {
 	int width = src_image->s();
 	int height = src_image->t();
@@ -2157,7 +2166,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::ApplyMask(osg::Image* src_image, osg::I
 * @param hf the GDAL-derived heightfield
 * @return the newly created image
 */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeHeightmapImage(osg::HeightField* hf)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeHeightmapImage(const osg::HeightField* hf)
 {
 	dtCore::RefPtr<osg::Image> image = new osg::Image;
 
@@ -2230,7 +2239,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeHeightmapImage(osg::HeightField* hf
 * @param hf the GDAL-derived heightfield
 * @return the newly created image
 */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeRelativeElevationImage(osg::HeightField* hf)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeRelativeElevationImage(const osg::HeightField* hf)
 {
 	dtCore::RefPtr<osg::Image> image = new osg::Image;
 
@@ -2302,7 +2311,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeRelativeElevationImage(osg::HeightF
 }
 
 
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeSlopeAspectImage(osg::HeightField* hf)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeSlopeAspectImage(const osg::HeightField* hf)
 {
 	int width = hf->getNumColumns()-1,
 		height = hf->getNumRows()-1;
@@ -2385,10 +2394,10 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeSlopeAspectImage(osg::HeightField* 
 */
 dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 			 LCCs l,
-			 osg::Image* f_image,			// filtered LCC image
-			 osg::Image* h_image,			// heightmap
-			 osg::Image* s_image,			// slopemap image
-			 osg::Image* r_image)  			// relative elevation image
+			 const osg::Image* f_image,			// filtered LCC image
+			 const osg::Image* h_image,			// heightmap
+			 const osg::Image* s_image,			// slopemap image
+			 const osg::Image* r_image)  			// relative elevation image
 {
 
 
@@ -2671,7 +2680,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeDetailScale(int level)
  * @param hf the heightfield to process
  * @return the newly created image
  */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseGradient(osg::HeightField* hf)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseGradient(const osg::HeightField* hf)
 {
    dtCore::RefPtr<osg::Image> image = new osg::Image;
 
@@ -2713,7 +2722,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseGradient(osg::HeightField* hf)
  * @param y the y coordinate of the location to sample
  * @return the interpolated height value
  */
-static float GetInterpolatedHeight(osg::HeightField* hf, double x, double y)
+static float GetInterpolatedHeight(const osg::HeightField* hf, double x, double y)
 {
    int fx = (int)floor(x), cx = (int)ceil(x),
        fy = (int)floor(y), cy = (int)ceil(y);
@@ -2829,7 +2838,7 @@ static void DrawRoadLine(osg::Image* image, float s1,
  * @param longitude the longitude of the terrain segment
  * @return the newly created image
  */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int latitude, int longitude)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseColor(const osg::HeightField* hf, int latitude, int longitude)
 {
    vector<GeospecificImage> images;
    vector<GeospecificImage>::iterator it;
@@ -3079,7 +3088,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseColor(osg::HeightField* hf, int
 * @param longitude the longitude of the terrain segment
 * @return the newly created image
 */
-dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseLCCColor(osg::HeightField* hf, int latitude, int longitude)
+dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseLCCColor(const osg::HeightField* hf, int latitude, int longitude)
 {
 	vector<GeospecificImage> lccimages;
 	vector<GeospecificImage>::iterator it;
@@ -3752,7 +3761,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
    dtCore::RefPtr<osg::HeightField> hf = NULL;
 
    dtCore::RefPtr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
-   options->setObjectCacheHint(osgDB::ImageOptions::CACHE_ALL);
+   //options->setObjectCacheHint(osgDB::ImageOptions::CACHE_ALL);
    osgDB::Registry::instance()->setOptions(options.get());
 
    for(int i=2;i>=0;i--)
@@ -4172,9 +4181,9 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
          dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
 
          dtCore::RefPtr<osg::StateSet> ss = geode->getOrCreateStateSet();
-		 ss->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+		 ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
          ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-         ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+         ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 
          ss->setAttributeAndModes(mProgramObject.get());
 
@@ -4239,8 +4248,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
          dtCore::RefPtr<osg::Texture2D> baseColorTex = new osg::Texture2D(baseColor.get());
 		 baseColorTex->setDataVariance(osg::Object::DYNAMIC); // protect from being optimized away as static state.
-		 baseColorTex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-		 baseColorTex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+//		 baseColorTex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+//		 baseColorTex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
 //         baseColorTex->setUseHardwareMipMapGeneration(true);
 		 baseColorTex->setInternalFormatMode(osg::Texture::USE_S3TC_DXT5_COMPRESSION);
          baseColorTex->setWrap(osg::Texture::WRAP_S, osg::Texture::MIRROR);
@@ -4780,8 +4789,8 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 		return;
 	}
 
-    Notify(DEBUG_INFO, "clear object cache");
-	osgDB::Registry::instance()->clearObjectCache();
+//    Notify(DEBUG_INFO, "clear object cache");
+//	osgDB::Registry::instance()->clearObjectCache();
 
 	float vegedistance = 20000.0f;
 	LCCCells lcccell;
@@ -4797,7 +4806,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 //	sprintf(filename, "%s_%s_%d", longString, latString, ii);
 //	string myfilename = filename;
 
-	for(int i=2;i>=0;i--)
+	for(int i=2;i>=0;i--)   //done to make sure a matching heightfield exists
 	{
 		char soarxName[64];
 		string soarxPath;
@@ -4960,7 +4969,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				{
 					int vegecount = 0;				
 					
-					for (vector<LCCModel>::iterator lm = (*l).lccmodel.begin();		//load up each objects
+					for (vector<LCCModel>::iterator lm = (*l).lccmodel.begin();		//load up each object
 					lm != (*l).lccmodel.end();
 					lm++)
 					{
@@ -4974,7 +4983,13 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
    						(*lm).vegeObject->setDataVariance(osg::Object::STATIC);
 
 						dtCore::RefPtr<osg::StateSet> ss = (*lm).vegeObject->getOrCreateStateSet();
-						ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+						ss->setRenderingHint(osg::StateSet::OPAQUE_BIN);
+
+						ss->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+						ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+						ss->setMode(GL_FOG, osg::StateAttribute::ON);
+
+						ss->removeAttribute(mProgramObject.get());
 
 						/*	// the osgUtil::InsertImpostorsVisitor used lower down to insert impostors
 							// only operators on subclass of Group's, if the model top node is not
@@ -5033,7 +5048,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 					//set image options (to load up correct sized image)
 					dtCore::RefPtr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
-					options->setObjectCacheHint(osgDB::ImageOptions::CACHE_ALL);
+					//options->setObjectCacheHint(osgDB::ImageOptions::CACHE_ALL);
 					options->_destinationImageWindowMode = osgDB::ImageOptions::PIXEL_WINDOW;
 					options->_destinationPixelWindow.set(0,0,mMaxTextureSize,mMaxTextureSize);
 					osgDB::Registry::instance()->setOptions(options.get());
@@ -5048,115 +5063,134 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					{
 						for (int x = 0; x < mMaxTextureSize; x++)
 						{
-							int numLooks = 0;
-							numLooks = GetNumLooks(SLimage.get(), x, y, (*l).aspect, mMaxLooks, (*l).slope.max);
-							if (numLooks == 0) Notify (WARN, "NumLooks = 0");
 
-							for (int ml = 0; ml <numLooks; ml++)
+							int numLooks = GetNumLooks(mCimage.get(), SLimage.get(), x, y, (*l).aspect, mMaxLooks, (*l).slope.max);
+							//if (numLooks == 0) Notify (WARN, "NumLooks = 0");
+
+							if (numLooks)
 							{
 								int scaledx = int(x/scale);
 								int scaledy = int(y/scale);
+								vg = int(scaledx/8)+int(scaledy/8)*128;
 
-								// deterministic version - good for debugging
-								//if (GetVegetation(mCimage.get(), x,y,probabilitylimit) && (vegecount < MAX_VEGE_PER_CELL))
-									
-								// stochastic version - better realism
-								if (GetVegetation(mCimage.get(), x, y,255.0f*(float)rand()/(RAND_MAX+1.0f)) && (vegecount < MAX_VEGE_PER_CELL))
+								for (int ml = 0; ml <numLooks; ml++)
 								{
-//										vg = int(x/8)+int(y/8)*32;
-//										cout << x << "," << y << " = " << vg << endl;
+	//								int scaledx = int(x/scale);
+	//								int scaledy = int(y/scale);
 
-									vg = int(scaledx/8)+int(scaledy/8)*128;
-//										cout << x << "," << y << " = " << vg << endl;
-
-									// Initialize tranform to be used for positioning the plant
-									// assign values for the transform
-									dtCore::RefPtr<osg::PositionAttitudeTransform> vegeXform = new osg::PositionAttitudeTransform();
-//									vegeXform->setName("vegeXform");
-									//vegeXform->setReferenceFrame(osg::Transform::RELATIVE_TO_ABSOLUTE);
-
-									random_x = (float)rand()/(RAND_MAX+1.0f)-0.5f;		// -.5 to .5
-									random_y = (float)rand()/(RAND_MAX+1.0f)-0.5f;		// -.5 to .5
-									random_h = (float)rand()/(RAND_MAX+1.0f);			// 0 to 1.0
-									random_scale = (float)rand()/(RAND_MAX+1.0f)*0.5f;  // 0 to .5
-
-									if ((*l).idx<30)   //limit orientation of urban models
+									// deterministic version - good for debugging
+									//if (GetVegetation(mCimage.get(), x,y,probabilitylimit) && (vegecount < MAX_VEGE_PER_CELL))
+										
+									// stochastic version - better realism
+									if (GetVegetation(mCimage.get(), x, y,255.0f*(float)rand()/(RAND_MAX+1.0f)) && (vegecount < MAX_VEGE_PER_CELL))
 									{
-										random_h = floor(random_h*4.0f)/4.0f;  //0,.25,.50,.75 = 0, 90, 180, 270 
-										deltaz = -.1f;
-									}
+	//										vg = int(x/8)+int(y/8)*32;
+	//										cout << x << "," << y << " = " << vg << endl;
 
-									osg::Quat attitude;
-									attitude.makeRotate(6.28f*random_h, osg::Vec3(0, 0, 1));
-									vegeXform->setAttitude(attitude);
+	//									vg = int(scaledx/8)+int(scaledy/8)*128;
+	//										cout << x << "," << y << " = " << vg << endl;
 
-//bad?										float tempx = cellorigin[0]+(x+random_x*0.95f)*108.7+108.7/mMaxLooks*mx; 
-//bad?										float tempy = cellorigin[1]+(y+random_y*0.95f)*108.7+108.7/mMaxLooks*my; 
-//good										float tempx = cellorigin[0]+(x+random_x*0.95f)*108.7+108.7; 
-//good										float tempy = cellorigin[1]+(y+random_y*0.95f)*108.7+108.7;
+										// Initialize tranform to be used for positioning the plant
+										// assign values for the transform
+										dtCore::RefPtr<osg::PositionAttitudeTransform> vegeXform = new osg::PositionAttitudeTransform();
+	//									vegeXform->setName("vegeXform");
+										//vegeXform->setReferenceFrame(osg::Transform::RELATIVE_TO_ABSOLUTE);
 
-//										random_x = 0;
-//										random_y = 0;
+										random_x = (float)rand()/(RAND_MAX+1.0f)-0.5f;		// -.5 to .5
+										random_y = (float)rand()/(RAND_MAX+1.0f)-0.5f;		// -.5 to .5
+										random_h = (float)rand()/(RAND_MAX+1.0f);			// 0 to 1.0
+										random_scale = (float)rand()/(RAND_MAX+1.0f)*0.5f;  // 0 to .5
 
-									float tempx = cellorigin[0]+(x+.5+random_x*0.95f)*108.7/scale; 
-									float tempy = cellorigin[1]+(y+.5+random_y*0.95f)*108.7/scale;
-
-									// Position of plant:
-									osg::Vec3 vegePosit;
-									vegePosit.set(tempx,tempy,GetHeight(tempx,tempy)+deltaz);
-
-
-//									int whichmodel = GetVegType(mCimage.get(), x, y, (*l).aspect);
-									int whichmodel = int(rand()/(RAND_MAX+1.0f)*(*l).lccmodel.size());		// 0 to size-1
-//									Notify(INFO, "model selected = %i", whichmodel);
-
-									if ((*l).idx>30)     //don't scale urban models
-									{
-										float modelscale = (*l).lccmodel.at(whichmodel).scale;
-										osg::Vec3 vegeScale(1.5*modelscale+random_scale,1.5*modelscale+random_scale,modelscale+random_scale);
-										vegeXform->setScale(vegeScale);
-									}
-
-									// Set the position 
-									vegeXform->setPosition(vegePosit);
-
-									//Add the vegeobject to the PAT
-									vegeXform->addChild((*l).lccmodel.at(whichmodel).vegeObject.get());
-
-									//check collision detection, but only for urban
-									boolean goodposition = true;
-
-									if ((*l).idx<30)
-									{
-										osg::BoundingSphere vegeXformBS = vegeXform->getBound();
-										unsigned int nc = 0;
-										while( (goodposition) && (nc < LeafGroup[vg]->getNumChildren()) )
+										if ((*l).idx<30)   //limit orientation of urban models
 										{
-											goodposition = !(vegeXformBS.intersects(LeafGroup[vg]->getChild(nc)->getBound()));
-											nc++;
+											random_h = floor(random_h*4.0f)/4.0f;  //0,.25,.50,.75 = 0, 90, 180, 270 
+											deltaz = -.1f;
 										}
-									}
 
-									if (goodposition)
-									{
-										LeafGroup[vg]->addChild(vegeXform.get(),0,vegedistance);
-										LeafGroup[vg]->setRange(LeafGroup[vg]->getNumChildren()-1, 0.0f,15000.0f);
+										osg::Quat attitude;
+										attitude.makeRotate(6.28f*random_h, osg::Vec3(0, 0, 1));
+										vegeXform->setAttitude(attitude);
 
-//										lcccell.mPATs.push_back(vegeXform.get());  
+	//bad?										float tempx = cellorigin[0]+(x+random_x*0.95f)*108.7+108.7/mMaxLooks*mx; 
+	//bad?										float tempy = cellorigin[1]+(y+random_y*0.95f)*108.7+108.7/mMaxLooks*my; 
+	//good										float tempx = cellorigin[0]+(x+random_x*0.95f)*108.7+108.7; 
+	//good										float tempy = cellorigin[1]+(y+random_y*0.95f)*108.7+108.7;
 
-										vegecount++;
-									}
-									else
-									{
-//										Notify(NOTICE, "Ouch!  I collided with something in vg%i", vg );
-//										Notify(DEBUG_INFO, "VegeXform number of children = %i", vegeXform->getNumChildren());
-										vegeXform->removeChild(vegeXform->getNumChildren());
-									}
+	//										random_x = 0;
+	//										random_y = 0;
+
+										float tempx = cellorigin[0]+(x+.5+random_x*0.95f)*108.7/scale; 
+										float tempy = cellorigin[1]+(y+.5+random_y*0.95f)*108.7/scale;
+
+										// Position of plant:
+										osg::Vec3 vegePosit;
+										vegePosit.set(tempx,tempy,GetHeight(tempx,tempy)+deltaz);
+
+
+	//									int whichmodel = GetVegType(mCimage.get(), x, y, (*l).aspect);
+										int whichmodel = int(rand()/(RAND_MAX+1.0f)*(*l).lccmodel.size());		// 0 to size-1
+	//									Notify(INFO, "model selected = %i", whichmodel);
+
+										if ((*l).idx>30)     //don't scale urban models
+										{
+											float modelscale = (*l).lccmodel.at(whichmodel).scale;
+											osg::Vec3 vegeScale(1.5*modelscale+random_scale,1.5*modelscale+random_scale,modelscale+random_scale);
+											vegeXform->setScale(vegeScale);
+										}
+
+										// Set the position 
+										vegeXform->setPosition(vegePosit);
+
+										//Add the vegeobject to the PAT
+										vegeXform->addChild((*l).lccmodel.at(whichmodel).vegeObject.get());
+
+										//check collision detection
+										boolean goodposition = true;
+
+										if ((*l).idx<30)		// for urban objects
+										{
+											osg::BoundingSphere vegeXformBS = vegeXform->getBound();
+											unsigned int nc = 0;
+											while( (goodposition) && (nc < LeafGroup[vg]->getNumChildren()) )
+											{
+												goodposition = !(vegeXformBS.intersects(LeafGroup[vg]->getChild(nc)->getBound()));
+												nc++;
+											}
+										}
+										else					// for vegetation objects
+										{
+											osg::BoundingSphere vegeXformBS = vegeXform->getBound();
+											unsigned int nc = 0;
+											while( (goodposition) && (nc < LeafGroup[vg]->getNumChildren()) )
+											{
+												osg::BoundingSphere childBS = LeafGroup[vg]->getChild(nc)->getBound();
+												if ((vegeXformBS._center - childBS._center).length() < (vegeXformBS._radius/4.0f))
+													goodposition = FALSE;
+												nc++;
+											}
+										}
+
+										if (goodposition)
+										{
+											LeafGroup[vg]->addChild(vegeXform.get(),0,vegedistance);
+											LeafGroup[vg]->setRange((LeafGroup[vg]->getNumChildren())-1, 0.0f,15000.0f);
+
+	//										lcccell.mPATs.push_back(vegeXform.get());  
+
+											vegecount++;
+										}
+										else
+										{
+	//										Notify(NOTICE, "Ouch!  I collided with something in vg%i", vg );
+	//										Notify(DEBUG_INFO, "VegeXform number of children = %i", vegeXform->getNumChildren());
+											vegeXform->removeChild(vegeXform->getNumChildren());
+										}
 
 
 
-								}//getvegetation
-							}//ml
+									}//getvegetation
+								}//ml
+							}
 						}//x
 					}//y
 					Notify(INFO, "mCimage count = %i", mCimage->referenceCount());
@@ -5334,7 +5368,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 	mSegmentLCCCellMap[segment] = lcccell;
 
-	Notify(DEBUG_INFO, "clear object cache");
-	osgDB::Registry::instance()->clearObjectCache();
+//	Notify(DEBUG_INFO, "clear object cache");
+//	osgDB::Registry::instance()->clearObjectCache();
  
 }
