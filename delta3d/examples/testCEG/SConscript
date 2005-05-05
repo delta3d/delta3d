@@ -1,0 +1,14 @@
+Import('*')
+
+testSrcs = ['testCEG.cpp', 'main.cpp']
+
+testDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'CEGUIBase', 'xerces-c', 'CEGUIOpenGLRenderer'  ]
+
+if OS == 'windows' :
+   testDeps += ['User32']
+elif OS == 'linux' :
+   testDeps += ['Xxf86vm']
+
+testDeps = [ extLibs[lib] for lib in testDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtutil', 'dtgui' ]
+
+env.Program( 'testCEG', testSrcs, LIBS = testDeps )
