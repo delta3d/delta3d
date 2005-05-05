@@ -4985,9 +4985,9 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 						dtCore::RefPtr<osg::StateSet> ss = (*lm).vegeObject->getOrCreateStateSet();
 						ss->setRenderingHint(osg::StateSet::OPAQUE_BIN);
 
-						ss->setMode(GL_LIGHTING, osg::StateAttribute::ON);
-						ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-						ss->setMode(GL_FOG, osg::StateAttribute::ON);
+						ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+						ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+						ss->setMode(GL_FOG, osg::StateAttribute::OFF);
 
 						ss->removeAttribute(mProgramObject.get());
 
