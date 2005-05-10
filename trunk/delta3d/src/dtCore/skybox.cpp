@@ -27,6 +27,7 @@ mGeode(NULL)
 
 SkyBox::~SkyBox(void)
 {
+   RemoveSender(System::GetSystem());
    DeregisterInstance(this);
 }
 
