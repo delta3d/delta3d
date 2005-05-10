@@ -128,6 +128,16 @@ mSkyDome(0)
 
 Environment::~Environment(void)
 {
+   while (GetNumEffects()>0)
+   {
+      EnvEffect *e = GetEffect(0);
+      if (e)
+      {
+         RemEffect(e);
+         RemoveEffectCache();
+      }
+   }
+
    DeregisterInstance(this);
    delete(mAmbLightTable);
    delete(mDifLightTable);
