@@ -3,17 +3,20 @@
 
 // testCEG.cpp : declares the interface of the application
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4251)
+#endif // _MSC_VER
 
 #include "dtGUI/ceuidrawable.h"
 #include "dtABC/application.h"
 
-class testCEG : public dtABC::Application
+class TestCEGApp : public dtABC::Application
 {
-   DECLARE_MANAGEMENT_LAYER( testCEG )
+   DECLARE_MANAGEMENT_LAYER( TestCEGApp )
 
    public:
-      testCEG( std::string configFilename = "" );
-      ~testCEG();
+      TestCEGApp( std::string configFilename = "" );
+      ~TestCEGApp();
    
       virtual void Config();
 
