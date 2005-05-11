@@ -11,33 +11,33 @@ using namespace dtCore;
 using namespace dtABC;
 using namespace std;
 
-IMPLEMENT_MANAGEMENT_LAYER( testCEG )
+IMPLEMENT_MANAGEMENT_LAYER( TestCEGApp )
 
-testCEG::testCEG( string configFilename )
+TestCEGApp::TestCEGApp( string configFilename )
 : Application( configFilename )
 {
    RegisterInstance( this );
 }
 
 
-testCEG::~testCEG()
+TestCEGApp::~TestCEGApp()
 {
    DeregisterInstance( this );
 }
 
-void testCEG::SetLayoutFilename(std::string filename)
+void TestCEGApp::SetLayoutFilename(std::string filename)
 {
    mLayoutFilename = filename;
 }
 
-void testCEG::Config()
+void TestCEGApp::Config()
 {
    SetDataFilePathList( "..;" + GetDeltaDataPathList() + ";" +
                         (GetDeltaDataPathList()+"/gui/;") );
 
    dtABC::Application::Config();
 
-   GetWindow()->SetWindowTitle("testCEG");
+   GetWindow()->SetWindowTitle("TestCEGApp");
    
    //setup scene here
    ///put something in the background to look at
@@ -62,7 +62,7 @@ void testCEG::Config()
 
 }
 
-void testCEG::KeyPressed(   Keyboard*      keyboard, 
+void TestCEGApp::KeyPressed(   Keyboard*      keyboard, 
                                     Producer::KeyboardKey  key,
                                     Producer::KeyCharacter character )
 {
@@ -80,7 +80,7 @@ void testCEG::KeyPressed(   Keyboard*      keyboard,
 bool OutputHandler(const CEGUI::EventArgs &e)
 {
    CEGUI::Window *w = (CEGUI::Window*)((const CEGUI::WindowEventArgs&)e).window;
-   testCEG::OutputProperties(w);
+   TestCEGApp::OutputProperties(w);
    return true;
 }
 
@@ -105,7 +105,7 @@ bool sliderHandler(const CEGUI::EventArgs& e)
 }
 
 
-void testCEG::BuildGUI(void)
+void TestCEGApp::BuildGUI(void)
 {
    using namespace CEGUI;
 
@@ -194,7 +194,7 @@ void testCEG::BuildGUI(void)
 }
 
 //output all the non-default properties of this window
-void testCEG::OutputProperties(CEGUI::Window *window)
+void TestCEGApp::OutputProperties(CEGUI::Window *window)
 {
    // Log all its properties + values
    CEGUI::PropertySet::PropertyIterator itr = ((CEGUI::PropertySet*)window)->getIterator();

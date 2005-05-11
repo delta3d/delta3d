@@ -19,7 +19,7 @@ int main( int argc, const char* argv[] )
    }
 
    //Instantiate the application and look for the config file
-   RefPtr<testCEG> app = new testCEG();
+   RefPtr<TestCEGApp> app = new TestCEGApp();
 	app->SetLayoutFilename(filename);
 
    app->Config(); //configuring the application
