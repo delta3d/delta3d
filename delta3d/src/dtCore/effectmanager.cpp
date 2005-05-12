@@ -117,6 +117,7 @@ DeltaDrawable(name),
 EffectManager::~EffectManager()
 {
    DeregisterInstance(this);
+   RemoveSender( System::GetSystem() );
 }
 
 /**

@@ -65,6 +65,7 @@ CloudPlane::~CloudPlane()
 {
 	DeregisterInstance(this);
 	Notify(DEBUG_INFO, "CloudPlane: deleting %s", this->GetName().c_str());
+   RemoveSender( System::GetSystem() );
 }
 
 

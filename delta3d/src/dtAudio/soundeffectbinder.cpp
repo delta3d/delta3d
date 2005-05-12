@@ -45,6 +45,7 @@ SoundEffectBinder::SoundEffectBinder( std::string name /*= "SoundEffectBinder"*/
 SoundEffectBinder::~SoundEffectBinder()
 {
    Shutdown();
+   RemoveSender( dtCore::System::GetSystem() );
 }
 
 

@@ -33,6 +33,7 @@ Recorder::Recorder(string name)
 Recorder::~Recorder()
 {
    DeregisterInstance(this);
+   RemoveSender( System::GetSystem() );
 }
 
 /**

@@ -92,6 +92,7 @@ UIDrawable::~UIDrawable(void)
    DeregisterInstance(this);
    
    mNode = NULL;
+   RemoveSender( System::GetSystem() );
 }
 
 void UIDrawable::OnMessage(MessageData *data)
