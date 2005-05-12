@@ -65,6 +65,8 @@ void System::Run()
    }
    Notify(DEBUG_INFO, "System: Exiting...");
    SendMessage("exit");
+   Notify(DEBUG_INFO, "System: Done Exiting.");
+
 }
 
 void System::Start()

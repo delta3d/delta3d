@@ -109,6 +109,7 @@ CloudDome::~CloudDome()
 {
     DeregisterInstance(this);
     Notify(DEBUG_INFO, "CloudDome: deleting %s", this->GetName().c_str());
+    RemoveSender(System::GetSystem());
 }
 
 void CloudDome::loadShaderSource( osgGL2::ShaderObject* obj, std::string fileName)

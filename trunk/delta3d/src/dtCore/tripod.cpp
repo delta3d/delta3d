@@ -24,6 +24,7 @@ mTetherMode(TETHER_PARENT_REL)
 Tripod::~Tripod(void)
 {
     DeregisterInstance(this);
+   RemoveSender( System::GetSystem() );    
 }
 
 void Tripod::SetCamera(Camera *cam)

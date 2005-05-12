@@ -99,6 +99,8 @@ Scene::~Scene()
    dJointGroupDestroy(mContactJointGroupID);
    dSpaceDestroy(mSpaceID);
    dWorldDestroy(mWorldID);
+
+   RemoveSender( System::GetSystem() );
 }
 
 void Scene::AddDrawable( DeltaDrawable *drawable )

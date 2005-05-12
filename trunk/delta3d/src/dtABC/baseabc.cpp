@@ -34,6 +34,7 @@ BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
    Notify(DEBUG_INFO, "destroying baseABC ref:%d", referenceCount());
+   RemoveSender( System::GetSystem() );
 }
 
 

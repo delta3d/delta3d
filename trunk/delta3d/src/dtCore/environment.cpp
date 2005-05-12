@@ -138,11 +138,18 @@ Environment::~Environment(void)
       }
    }
 
+   while (GetNumChildren()>0)
+   {
+      DeltaDrawable *d = GetChild(0);
+      RemoveChild(d);
+   }
+
    DeregisterInstance(this);
    delete(mAmbLightTable);
    delete(mDifLightTable);
    delete(mSpecLightTable);
    delete(mSkyLightTable);
+   RemoveSender( System::GetSystem() );
 }
 
 ///Notifies this object that it has been added to a Scene
