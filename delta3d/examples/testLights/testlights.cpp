@@ -24,9 +24,6 @@ TestLightsApp::Config()
    mWarehouse->LoadFile( "models/warehouse.ive" );
    AddDrawable( mWarehouse.get() );
 
-
-
-
    Transform trans;
 
    // create a global spot light.
@@ -35,11 +32,7 @@ TestLightsApp::Config()
    mGlobalSpot->SetTransform( &trans );
    mGlobalSpot->SetSpotCutoff( 20.0f );
    mGlobalSpot->SetSpotExponent( 50.0f );
-
    GetScene()->AddDrawable( mGlobalSpot.get() );
-
-
-
 
    // add a child to the local light
    mSphere = new Object( "HappySphere" );
@@ -49,42 +42,34 @@ TestLightsApp::Config()
    trans.Set( 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f ); 
    mSphere->SetTransform( &trans );
 
-
-
-
    // create a global positional light.
    mPositional = new PositionalLight( 3, "PositionalLight" );
    mPositional->SetDiffuse( 1.0f, 1.0f, 0.0f, 1.0f ); // yellow light
-   
    mPositional->AddChild( mSphere.get() ); //move sphere along with light
- 
    GetScene()->AddDrawable( mPositional.get() );
    mPositional->SetEnabled( false );
 
-
-
-
    // create an infinite light
    mGlobalInfinite = new InfiniteLight( 4, "GlobalInfiniteLight" );
-
    GetScene()->AddDrawable( mGlobalInfinite.get() );
    mGlobalInfinite->SetEnabled( false );
-
-
 
    // set camera stuff
    trans.Set( 30.0f, -20.0f, 25.0f, 40.0f, -33.0f, 0.0f );
    GetCamera()->SetTransform( &trans );
 
-   sgVec3 camLoc; 
-   sgVec3 origin = { 0.0f, 0.0f, 0.0f };
-
+   osg::Vec3 camLoc, origin;
    trans.GetTranslation( camLoc );
 
    mOmm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
    mOmm->SetTarget( GetCamera() );
-   mOmm->SetDistance( sgDistanceVec3( camLoc, origin ) );
 
+   float distance( 0.0f );
+   for( int i = 0; i < 3; i++ )
+      distance += osg::square( camLoc[i] - origin[i] );
+   distance = sqrt( distance );
+
+   mOmm->SetDistance( distance );
 }
 
 void
@@ -161,14 +146,6 @@ TestLightsApp::PreFrame( const double deltaFrameTime )
    float tp = countTwo;
    
    mGlobalInfinite->SetAzimuthElevation( th, tp ); //change direction
-   Notify( ALWAYS, "Set: (%f,%f)",  th, tp );
-
-   mGlobalInfinite->GetAzimuthElevation( th, tp ); //change direction
-   Notify( ALWAYS, "Get: (%f,%f)",  th, tp );
-
-   mGlobalInfinite->GetAzimuthElevation( th, tp ); //change direction
-   Notify( ALWAYS, "Get: (%f,%f)",  th, tp );
-   std::cout << std::endl;
 }
 
 

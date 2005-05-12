@@ -53,23 +53,24 @@ void Light::SetLightingMode( LightingMode mode )
    SetEnabled( wasEnabled ); 
 }
 
-
 void Light::SetEnabled( bool enabled )
 {
    mEnabled = enabled;
 
-   osg::StateAttribute::Values state;
-
+   unsigned int   state;
    if( mEnabled ) state = osg::StateAttribute::ON;
    else           state = osg::StateAttribute::OFF;
 
-   if( GetLightingMode() == GLOBAL && GetSceneParent() )
-   {
-      osg::Light* osgLight = mLightSource->getLight();
-      GetSceneParent()->GetSceneNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
-   }
-
    mLightSource->setLocalStateSetModes( state );
+
+   osg::Light* osgLight = mLightSource->getLight();
+
+   if( GetLightingMode() == GLOBAL && GetSceneParent() )
+      GetSceneParent()->GetSceneNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
+  
+   //enabled light for all children
+   for( unsigned int i = 0; i < GetNumChildren(); i++ )
+      GetChild(0)->GetOSGNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
 }
 
 void Light::GetAmbient( float& r, float& g, float& b, float& a ) const
