@@ -156,7 +156,19 @@ TestLightsApp::PreFrame( const double deltaFrameTime )
    mPositional->SetTransform( &trans );
    
    mGlobalInfinite->SetDiffuse( redValue, greenValue, blueValue, 1.0f ); //change color
-   mGlobalInfinite->SetDirection( countOne, countTwo, countThree ); //change direction
+   
+   float th = countOne;
+   float tp = countTwo;
+   
+   mGlobalInfinite->SetAzimuthElevation( th, tp ); //change direction
+   Notify( ALWAYS, "Set: (%f,%f)",  th, tp );
+
+   mGlobalInfinite->GetAzimuthElevation( th, tp ); //change direction
+   Notify( ALWAYS, "Get: (%f,%f)",  th, tp );
+
+   mGlobalInfinite->GetAzimuthElevation( th, tp ); //change direction
+   Notify( ALWAYS, "Get: (%f,%f)",  th, tp );
+   std::cout << std::endl;
 }
 
 
