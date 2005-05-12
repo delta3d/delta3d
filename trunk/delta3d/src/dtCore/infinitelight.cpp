@@ -1,7 +1,6 @@
 #include "dtCore/infinitelight.h"
 #include "dtCore/scene.h"
-
-#include "sg.h"
+#include "dtUtil/matrixutil.h"
 
 using namespace dtCore;
 
@@ -39,42 +38,40 @@ InfiniteLight::~InfiniteLight()
    DeregisterInstance(this);
 }
 
-
-void 
-InfiniteLight::SetDirection( float h, float p, float r )
+void InfiniteLight::SetDirection( float h, float p, float r )
 {
-   //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
-   sgMat4 hRot, pRot, rRot;
+   DEPRECATE(  "void InfiniteLight::SetDirection( float h, float p, float r )",
+               "void InfiniteLight::SetAzimuthElevation( float h, float p )")
 
-   sgMakeRotMat4( hRot, h, 0.0f, 0.0f );
-   sgMakeRotMat4( pRot, 0.0f, p, 0.0f );
-   sgMakeRotMat4( rRot, 0.0f, 0.0f, r );
-
-   sgMat4 hpRot, hprRot;
-   sgMultMat4( hpRot, hRot, pRot );
-   sgMultMat4( hprRot, hpRot, rRot );
-
-   sgVec3 xyz;
-   sgVec3 forwardVector = { 0.0f, -1.0f, 0.0f }; 
-
-   sgXformVec3( xyz, forwardVector, hprRot );
-
-   mLightSource->getLight()->setPosition( osg::Vec4( xyz[0], xyz[1], xyz[2], 0.0f ) );
-
+   SetAzimuthElevation( h, p );
 }
 
-void 
-InfiniteLight::GetDirection( float& h, float& p, float& r ) const
+void InfiniteLight::GetDirection( float& h, float& p, float& r ) const
+{
+   DEPRECATE(  "void InfiniteLight::GetDirection( float& h, float& p, float& r )",
+               "void InfiniteLight::GetAzimuthElevation( float h, float p )")
+
+   GetAzimuthElevation( h, p );
+}
+
+void InfiniteLight::SetAzimuthElevation( float az, float el )
+{
+   osg::Matrix hprRot;
+   dtUtil::MatrixUtil::HprToMatrix( hprRot, osg::Vec3( az, el, 0.0f ) );
+
+   osg::Vec3 forwardVector( 0.0f, -1.0f, 0.0f );
+   osg::Vec3 xyz = hprRot.preMult( forwardVector );
+
+   //force w=0.0f to ensure "infinite" light
+   mLightSource->getLight()->setPosition( osg::Vec4( xyz, 0.0f ) );  
+}
+
+void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
 {
    osg::Vec4 position = mLightSource->getLight()->getPosition();
 
-   sgVec3 hpr, xyz;
-   xyz[0] = position[0];
-   xyz[1] = position[1];
-   xyz[2] = position[2];
-   sgHPRfromVec3( hpr, xyz );
+   osg::Vec3 xyz = osg::Vec3( -position[0], -position[1], position[2] );
 
-   h = hpr[0];
-   p = hpr[1];
-   r = hpr[2];
+   az = osg::RadiansToDegrees( -atan2f( xyz[0], xyz[1] ) );
+   el = osg::RadiansToDegrees( -atan2f( xyz[2], sqrt( ( osg::square( xyz[0] ) + osg::square( xyz[1] ) ) ) ) );
 }
