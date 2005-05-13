@@ -92,7 +92,8 @@ void dtCore::Notify(dtCore::NotifySeverity level, const char *fmt, ...)
 {
    char t[255] = {0}; 
    
-   static bool initialized = InitNotifyLevel();
+   //static bool initialized = InitNotifyLevel();
+   InitNotifyLevel();
    
    if (level <= NotifyLevel)
    {

@@ -10,4 +10,4 @@ else:
 dtVisDeps = [ extLibs[lib] for lib in dtVisDeps if extLibs.has_key(lib) ]
 
 
-build_delta3d_lib( 'dtVis', dtVisSrcs, dtVisDeps, ['SG_LIBRARY'] )
+build_delta3d_lib( 'dtvis', dtVisSrcs, dtVisDeps, ['SG_LIBRARY'] )

@@ -12,7 +12,7 @@ if foundLibs.has_key( boostLib ) and foundLibs.has_key( os.path.join('boost','py
 
       testPythonSrcs = ['testpython.cpp']
 
-      testPythonDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'python' ]
+      testPythonDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'python', 'osgGA', 'osgFX', 'osgProducer', 'osgSim' ]
 
       if OS == 'windows' :
          testPythonDeps += ['User32']
