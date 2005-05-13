@@ -102,7 +102,7 @@ void PositionalLight::GetAttenuation( float& constant, float& linear, float& qua
 
 bool PositionalLight::AddChild( DeltaDrawable *child )
 {
-   if ( Transformable::AddChild(child) )
+   if ( DeltaDrawable::AddChild(child) )
    {
       mLightSource->addChild( child->GetOSGNode() );
       return true;
@@ -114,4 +114,6 @@ bool PositionalLight::AddChild( DeltaDrawable *child )
 void PositionalLight::RemoveChild( DeltaDrawable *child )
 {
    mLightSource->removeChild( child->GetOSGNode() );
+
+   DeltaDrawable::RemoveChild(child);
 }
