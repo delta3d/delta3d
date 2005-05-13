@@ -9,6 +9,7 @@
 #include <osg/Group>
 #include <osg/NodeVisitor>
 #include <osgParticle/ModularEmitter>
+#include <osg/Geode>
 
 using namespace dtCore;
 using namespace std;
@@ -110,6 +111,78 @@ public:
       std::vector<osgParticle::ModularEmitter*> emitter;
 };
 
+class psGeodeTransform : public osg::MatrixTransform
+{
+public:
+   class psGeodeTransformCallback : public osg::NodeCallback
+   {
+      virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+      {
+         if ( psGeodeTransform* ps = dynamic_cast<psGeodeTransform*>( node ) )
+         {
+            osg::NodePath& fullNodePath = nv->getNodePath();
+            fullNodePath.pop_back();
+
+            osg::Matrix localCoordMat = osg::computeLocalToWorld( fullNodePath );
+            osg::Matrix inverseOfAccum = osg::Matrix::inverse( localCoordMat );
+
+            ps->setMatrix( inverseOfAccum );
+         }
+         traverse(node, nv); 
+      }
+   };
+
+   psGeodeTransform() {setUpdateCallback( new psGeodeTransformCallback() );}
+
+};
+
+class findGeodeVisitor : public osg::NodeVisitor
+{
+public:
+   findGeodeVisitor() : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
+   {
+      foundGeode = NULL;
+   }
+   virtual void apply(osg::Node &searchNode)
+   {
+      if (osg::Geode* g = dynamic_cast<osg::Geode*> (&searchNode) )
+         foundGeode = g;
+      else
+         traverse(searchNode);
+   }
+   osg::Geode* getGeode() {return foundGeode;}
+protected:
+   osg::Geode* foundGeode;
+};
+
+
+class particleSystemHelper : public osg::Group 
+{ 
+public: 
+   particleSystemHelper(osg::Group* psGroup) : osg::Group(*psGroup) 
+   { 
+      findGeodeVisitor* fg = new findGeodeVisitor(); 
+      accept(*fg); 
+      osg::Geode* psGeode = fg->getGeode(); 
+      psGeodeXForm = new psGeodeTransform(); 
+      this->replaceChild(psGeode, psGeodeXForm); 
+      psGeodeXForm->addChild (psGeode); 
+   } 
+
+
+   void addEffect(osg::Group* psGroup) 
+   { 
+      this->addChild(psGroup); 
+      findGeodeVisitor* fg = new findGeodeVisitor(); 
+      psGroup->accept(*fg); 
+      osg::Geode* psGeode = fg->getGeode(); 
+      psGeodeXForm->addChild(psGeode); 
+      psGroup->removeChild( psGroup->getChildIndex(psGeode) ); 
+   } 
+protected: 
+   psGeodeTransform* psGeodeXForm; 
+}; 
+
 
 /** This method will load the particle effect from a file.  The loaded particle 
   * system will be broken apart, with the Emitter added to the parent 
@@ -133,34 +206,9 @@ osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
          GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren());
       }
 
-      RefPtr<ParticleVisitor> pv = new ParticleVisitor();
-      node->accept(*pv.get());
+      particleSystemHelper *psh = new particleSystemHelper((osg::Group*)mLoadedFile.get());
 
-      //Note: the Emitters are removed from the Particle System group
-      //and added to the mNode (Transform) for repositioning.
-      //The rest of the Particle System gets added to the Scene with *no*
-      //transform nodes above it.
-
-      //get the emitters
-      std::vector<osgParticle::ModularEmitter*> emitters = pv.get()->emitter;
-
-      for(  std::vector<osgParticle::ModularEmitter*>::iterator iter = emitters.begin();
-            iter != emitters.end();
-            iter++ )
-      {
-         RefPtr<osgParticle::ModularEmitter> em = *iter;
-         //remove it from it's current parent
-         em.get()->getParent(0)->removeChild( em.get() );
-
-         //add it as a child to mNode
-         GetMatrixNode()->addChild( em.get() );
-      }
-
-      //add the rest of the PS to the Scene
-      if (mParentScene.valid())
-      {
-         mParentScene.get()->GetSceneNode()->addChild(mLoadedFile.get());
-      }
+      GetMatrixNode()->addChild(psh);
 
       ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
       mLoadedFile->accept(pspv);
@@ -226,20 +274,4 @@ bool ParticleSystem::IsParentRelative()
 {
    return mParentRelative;
 }
-         
-void ParticleSystem::AddedToScene( Scene* scene )
-{
-   if (mParentScene.get() == scene) return;
-
-   if (scene != NULL)
-   {
-      DeltaDrawable::AddedToScene(scene);
-      mParentScene.get()->GetSceneNode()->addChild(mLoadedFile.get());
-   }
-   else
-   {
-      mParentScene.get()->GetSceneNode()->removeChild( mLoadedFile.get() );
-      DeltaDrawable::AddedToScene(scene);
-   }
-
-}
+ 
