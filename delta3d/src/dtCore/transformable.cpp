@@ -159,8 +159,8 @@ bool Transformable::AddChild(DeltaDrawable *child)
  */
 void Transformable::RemoveChild(DeltaDrawable *child)
 {
-   osg::Matrix absMat;
-   GetAbsoluteMatrix( child->GetOSGNode(), absMat );
+   //osg::Matrix absMat;
+   //GetAbsoluteMatrix( child->GetOSGNode(), absMat );
    GetMatrixNode()->removeChild( child->GetOSGNode() );
    DeltaDrawable::RemoveChild(child);
 }
