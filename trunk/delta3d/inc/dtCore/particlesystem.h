@@ -54,16 +54,6 @@ namespace dtCore
 
          ///Load a file from disk
          virtual osg::Node* LoadFile( std::string filename, bool useCache = false);
-
-         ///Supply the Scene this Drawable has been added to
-         /**
-         * Notifies this drawable object that it has been added to
-         * a scene.
-         *
-         * @param scene the scene to which this drawable object has
-         * been added
-         */
-         virtual void AddedToScene( Scene* scene );
          
          /**
           * Enables or disables this particle system.  Particle systems
