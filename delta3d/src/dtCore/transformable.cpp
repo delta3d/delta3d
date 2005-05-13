@@ -80,9 +80,7 @@ void Transformable::SetTransform( Transform *xform, CoordSysEnum cs )
 
          //calc the difference between xform and the parent's world position
          //child * parent^-1
-
-         osg::Matrix::inverse(parentMat);
-         osg::Matrix relMat = newMat * parentMat;
+         osg::Matrix relMat = newMat * osg::Matrix::inverse(parentMat);
 
          //pass the rel matrix to this node
          GetMatrixNode()->setMatrix( relMat );
