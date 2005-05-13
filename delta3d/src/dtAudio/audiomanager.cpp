@@ -115,7 +115,7 @@ AudioManager::~AudioManager()
    DeregisterInstance( this );
 
    // stop all sources
-   for( unsigned int ii(0L); ii < mNumSources; ii++ )
+   for( int ii(0L); ii < mNumSources; ii++ )
    {
       alSourceStop( mSource[ii] );
       alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
@@ -1085,7 +1085,7 @@ AudioManager::ConfigSources( unsigned int num )
    }
 
 
-   for( unsigned int ii(0L); ii < mNumSources; ii++ )
+   for( int ii(0L); ii < mNumSources; ii++ )
    {
       assert( alIsSource( mSource[ii] ) == AL_TRUE );
       mAvailable.push( mSource[ii] );

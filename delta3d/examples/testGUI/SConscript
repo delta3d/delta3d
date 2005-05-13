@@ -2,7 +2,7 @@ Import('*')
 
 testSrcs = ['testgui.cpp']
 
-testDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal' ]
+testDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'osgGA', 'osgFX', 'osgProducer', 'osgSim' ]
 
 if OS == 'windows' :
    testDeps += ['User32']

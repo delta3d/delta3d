@@ -380,7 +380,7 @@ struct Portal
          triangle.mVertices[2] - mPlane.getNormal()
       );
       
-      int portalVerticesWithinTriangle = 0;
+      unsigned int portalVerticesWithinTriangle = 0;
          
       for(i=0;i<mVertices.size();i++)
       {
@@ -1034,6 +1034,8 @@ struct WorkingBSPInternalNode : public WorkingBSPNode
             
             case IntersectsPlane:
                (*it).Split(mPartitioningPlane, abovePortals, belowPortals);
+               break;
+            default:
                break;
          }
       }
@@ -2135,7 +2137,8 @@ void SplitTriangle(const Triangle& triangle,
    
    vector<Vec3> fanEdge;
    
-   unsigned int i, lastVertex;
+   unsigned int i(0);
+   unsigned int lastVertex(0);
    
    for(i=0;i<3;i++)
    {
@@ -2305,6 +2308,8 @@ WorkingBSPNode* BuildTree(const vector<Triangle>& candidateTriangles,
                   
                case IntersectsPlane:
                   trianglesSplitByPlane++;
+                  break;
+               default:
                   break;
             }
          }
@@ -2586,7 +2591,7 @@ void FindPossiblyVisiblePortals()
 {
    unsigned int i, j;
    
-   static int portalsScanned = 0;
+   //static int portalsScanned = 0;
    
    if(noOutside)
    {
