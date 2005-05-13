@@ -69,8 +69,8 @@ void Light::SetEnabled( bool enabled )
       GetSceneParent()->GetSceneNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
   
    //enabled light for all children
-   for( unsigned int i = 0; i < GetNumChildren(); i++ )
-      GetChild(0)->GetOSGNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
+   //for( unsigned int i = 0; i < GetNumChildren(); i++ )
+   //   GetChild(0)->GetOSGNode()->getOrCreateStateSet()->setAssociatedModes( osgLight, state );
 }
 
 void Light::GetAmbient( float& r, float& g, float& b, float& a ) const
