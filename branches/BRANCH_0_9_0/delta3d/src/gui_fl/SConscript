@@ -1,0 +1,21 @@
+Import('*')
+
+gui_flSrcs = [  'gui_fltk.cpp',
+                'guimgr.cpp' ]
+
+if OS == 'darwin':
+    gui_flDeps=[ 'dtcore', 'dtABC', 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX', 'osgProducer', 'glgui', 'isense', 'plibjs', 'osgSim', 'osgDB', 'plibsg', 'plibul', 'tinyxml' ]
+else:
+    gui_flDeps = [ 'fltk', 'OpenThreads', 'osg', 'sg', 'ul', 'Producer', 'tinyxml' ]
+
+if OS == 'windows' :
+   gui_flDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+    
+gui_flDeps = [ extLibs[lib] for lib in gui_flDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   gui_flDeps += [ 'dtcored' ]
+else :
+   gui_flDeps += [ 'dtcore' ]
+                    
+build_delta3d_lib( 'gui_fl', gui_flSrcs, gui_flDeps )

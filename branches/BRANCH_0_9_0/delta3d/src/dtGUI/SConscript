@@ -1,0 +1,21 @@
+Import('*')
+
+dtGuiSrcs = [   'ceuidrawable.cpp',
+                'renderer.cpp',
+                'resourceprovider.cpp' ]
+
+dtGuiDeps=[ 'dtcore', 'osg', 'osgText', 'osgSim','osgUtil', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX' ,'osgDB', 'osgProducer', 'sg', 'ul', 'js', 'Producer', 'OpenThreads', 'tinyxml', 'glgui', 'isense' ]
+
+if OS == 'windows' :
+   dtGuiDeps += [ 'User32' ]
+else :
+   dtGuiDeps += [ 'CEGUIBase', 'xerces-c', 'CEGUIOpenGLRenderer' ]
+    
+dtGuiDeps = [ extLibs[lib] for lib in dtGuiDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' and OS == 'windows' :
+   dtGuiDeps += [ 'dtcored' ]
+else :
+   dtGuiDeps += [ 'dtcore' ]
+
+build_delta3d_lib( 'dtgui', dtGuiSrcs, dtGuiDeps )

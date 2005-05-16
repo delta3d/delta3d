@@ -1,0 +1,14 @@
+Import('*')
+
+dtUtilSrcs = [  'domain.cpp',
+                'matrixutil.cpp',
+                'polardecomp.cpp' ]
+
+dtUtilDeps =[ 'OpenThreads', 'Producer', 'osg', 'sg', 'ul' ]
+
+if OS == 'windows' :
+    dtUtilDeps += ['User32']
+
+dtUtilDeps = [ extLibs[lib] for lib in dtUtilDeps if extLibs.has_key(lib) ]
+
+build_delta3d_lib( 'dtutil', dtUtilSrcs, dtUtilDeps )

@@ -1,0 +1,22 @@
+Import('*')
+
+if env.get('rti') != 0 :
+
+   dtHlaSrcs = [  'dis_types.cpp',
+                  'entity.cpp',
+                  'rticonnection.cpp' ]
+                  
+   dtHlaDeps = [ 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'sg', 'ul', 'Producer', 'tinyxml' ]
+   
+   if OS == 'windows' :
+      dtHlaDeps += ['User32','winsock']
+   
+   dtHlaDeps = [ extLibs[lib] for lib in dtHlaDeps if extLibs.has_key(lib) ] + rtiSLibs
+   
+   if mode == 'debug' :
+      dtHlaDeps += [ 'dtcored' ]
+   else :
+      dtHlaDeps += [ 'dtcore' ]
+      
+   build_delta3d_lib( 'dthla', dtHlaSrcs, dtHlaDeps )
+

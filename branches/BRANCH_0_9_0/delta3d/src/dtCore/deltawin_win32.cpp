@@ -1,0 +1,140 @@
+// window.cpp: implementation of the DeltaWin class.
+//
+//////////////////////////////////////////////////////////////////////
+
+#include "dtCore/deltawin.h"
+#include "dtCore/notify.h"
+
+using namespace dtCore;
+using namespace std;
+
+// Producer::RenderSurface must realized for this to work
+void DeltaWin::SetWindowTitle( const std::string& title )
+{
+   mRenderSurface->setWindowName( title );
+
+   HWND win = mRenderSurface->getWindow();
+   SetWindowText( win, title.c_str() ); 
+}
+
+void DeltaWin::ShowCursor( bool show )
+{
+   mShowCursor = show;
+
+   POINT coords;
+   GetCursorPos(&coords);
+
+   //Then move the cursor to be on our window'
+   int x,y,w,h;
+   GetPosition(&x, &y, &w, &h); 
+   mRenderSurface->positionPointer((x+w)/2, (y+h)/2);
+
+   //Tell Producer
+   mRenderSurface->useCursor(mShowCursor);
+
+   //Then move the cursor back to where it started from
+   SetCursorPos(coords.x, coords.y);
+}
+
+void DeltaWin::SetFullScreenMode( bool enable )
+{
+   mRenderSurface->fullScreen(enable);
+}
+
+ResolutionVec DeltaWin::GetResolutions()
+{
+   HDC hDC = GetDC(GetDesktopWindow());
+
+   Resolution currentRes = GetCurrentResolution();
+   int currentDepth = currentRes.bitDepth;
+
+   DEVMODE dm;
+   ResolutionVec rv;
+
+   int i = 0;
+
+   for( i = 0; EnumDisplaySettings( 0, i, &dm ); i++ )
+   {
+
+      Resolution r = { dm.dmPelsWidth,
+         dm.dmPelsHeight,
+         dm.dmBitsPerPel,
+         dm.dmDisplayFrequency };
+
+      rv.push_back( r );
+   }
+
+   int numResolutions = i;
+
+   ReleaseDC(GetDesktopWindow(), hDC);
+
+   return rv;
+}
+
+bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate ) 
+{
+   bool changeSuccessful = false;
+
+   std::vector<bool> fullScreenVec; //container to store fullScreen state of each RenderSurface
+
+   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+   {
+      DeltaWin* dw = DeltaWin::GetInstance(i);
+
+      //store fullScreen state, then set to false
+      fullScreenVec.push_back(dw->GetFullScreenMode());
+      dw->SetFullScreenMode(false);
+
+      //notify all render surfaces that resolution has changed
+      dw->GetRenderSurface()->SetScreenWidthHeight(   static_cast<unsigned int>(width),
+         static_cast<unsigned int>(height) );
+   }
+
+   DEVMODE dmScreenSettings;                                                           
+   ZeroMemory (&dmScreenSettings, sizeof (DEVMODE));
+
+   dmScreenSettings.dmSize             = sizeof (DEVMODE);             
+   dmScreenSettings.dmPelsWidth        = width;                                        
+   dmScreenSettings.dmPelsHeight       = height;                              
+   dmScreenSettings.dmBitsPerPel       = colorDepth;    
+   dmScreenSettings.dmDisplayFrequency = refreshRate;
+   dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+   if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
+   {
+      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
+   }
+   else
+   {
+      changeSuccessful = true;
+   }
+
+   //change back to original fullScreen state
+   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+   {
+      if(fullScreenVec[i])
+      {
+         DeltaWin::GetInstance(i)->SetFullScreenMode(fullScreenVec[i]);
+      }
+      else
+      {
+         //reset window position
+         int x,y,w,h;
+         DeltaWin::GetInstance(i)->GetPosition(&x,&y,&w,&h);
+         DeltaWin::GetInstance(i)->SetPosition(x,y,w,h);
+      }
+   }
+
+   return changeSuccessful;
+}
+
+Resolution DeltaWin::GetCurrentResolution()
+{
+   HDC hdc = GetDC( GetDesktopWindow() );
+
+   Resolution r  = { GetDeviceCaps(hdc, HORZRES),
+      GetDeviceCaps(hdc, VERTRES),
+      GetDeviceCaps(hdc, BITSPIXEL),
+      GetDeviceCaps(hdc, VREFRESH) };
+   return r;
+}

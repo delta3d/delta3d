@@ -1,0 +1,20 @@
+Import('*')
+
+dtAudioSrcs = [ 'audiomanager.cpp',
+                'listener.cpp',
+                'sound.cpp',
+                'soundeffectbinder.cpp' ]
+                
+dtAudioDeps = [ 'openal', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgProducer', 'osgGA', 'osgTerrain', 'osgParticle', 'osgSim', 'osgFX', 'glgui', 'isense', 'osgDB', 'sg', 'ul', 'js', 'Producer', 'tinyxml']
+
+if OS == 'windows' :
+   dtAudioDeps += [ 'alut', 'User32' ]
+
+dtAudioDeps = [ extLibs[lib] for lib in dtAudioDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtAudioDeps += [ 'dtcored' ]
+else :
+   dtAudioDeps += [ 'dtcore' ]
+
+build_delta3d_lib( 'dtaudio', dtAudioSrcs, dtAudioDeps )

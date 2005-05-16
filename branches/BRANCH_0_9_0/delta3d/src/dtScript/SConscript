@@ -1,0 +1,24 @@
+Import('*')
+
+dtScriptSrcs = [ 'scriptmanager.cpp' ]
+dtScriptDeps = [ 'OpenThreads', 'osg', 'python' ]
+
+dtScriptDeps = [ extLibs[lib] for lib in dtScriptDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtScriptDeps += [ 'dtcored' ]
+else :
+   dtScriptDeps += [ 'dtcore' ]
+
+oldLINK = env['LINKFLAGS']
+
+extraLink = []
+
+if OS == 'windows':
+   extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
+       
+build_delta3d_lib( 'dtscript', dtScriptSrcs, dtScriptDeps, extraLinkFlags = extraLink )
+
+env['LINKFLAGS']
+
+ 

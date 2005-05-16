@@ -1,0 +1,15 @@
+Import('*')
+
+if env.get('rti') :
+
+   hlaStealthDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgSim', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal' ]
+                
+   if OS == 'windows' :
+      hlaStealthDeps += ['User32']
+   elif OS == 'linux' :
+      hlaStealthDeps += ['Xxf86vm']
+
+   hlaStealthDeps = [ extLibs[lib] for lib in hlaStealthDeps if extLibs.has_key(lib) ] + rtiSLibs + [ 'dtcore', 'dtabc', 'dthla', 'dtutil' ]
+
+   hlaStealthViewer = env.Program( 'hlaStealthViewer', 'main.cpp', LIBS = hlaStealthDeps )
+

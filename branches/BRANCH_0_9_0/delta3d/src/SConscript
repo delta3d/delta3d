@@ -1,0 +1,21 @@
+import os
+
+Import('*')
+
+modules = [ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
+
+if OS == 'windows' :
+
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+
+   for module in modules :
+      SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+
+else :
+   
+   for module in modules :
+      SConscript( dirs=[module] )
+   

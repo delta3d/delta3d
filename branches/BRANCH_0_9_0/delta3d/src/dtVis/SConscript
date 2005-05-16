@@ -1,0 +1,13 @@
+Import('*')
+
+dtVisSrcs = [ 'bspcullcallback.cpp' ]
+
+if OS == 'darwin':
+    dtVisDeps=[ 'opengl', 'Producer', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgTerrain', 'osgParticle', 'osgSim', 'osgFX', 'osgDB' ]
+else:
+    dtVisDeps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
+
+dtVisDeps = [ extLibs[lib] for lib in dtVisDeps if extLibs.has_key(lib) ]
+
+
+build_delta3d_lib( 'dtvis', dtVisSrcs, dtVisDeps, ['SG_LIBRARY'] )

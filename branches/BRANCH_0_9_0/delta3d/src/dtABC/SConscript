@@ -1,0 +1,20 @@
+Import('*')
+
+dtAbcSrcs = [   'application.cpp',
+                'baseabc.cpp',
+                'weather.cpp',
+                'widget.cpp' ]
+
+dtAbcDeps=[ 'dtcore', 'osg', 'osgText', 'osgSim','osgUtil', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX' ,'osgDB', 'osgProducer', 'sg', 'ul', 'js', 'Producer', 'OpenThreads', 'tinyxml', 'glgui', 'isense']
+
+if OS == 'windows' :
+   dtAbcDeps += [ 'User32' ]
+    
+dtAbcDeps = [ extLibs[lib] for lib in dtAbcDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   dtAbcDeps += [ 'dtcored' ]
+else :
+   dtAbcDeps += [ 'dtcore' ]
+
+build_delta3d_lib( 'dtabc', dtAbcSrcs, dtAbcDeps )
