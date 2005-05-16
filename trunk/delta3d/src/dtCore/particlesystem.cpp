@@ -274,4 +274,3 @@ bool ParticleSystem::IsParentRelative()
 {
    return mParentRelative;
 }
- 
