@@ -3,25 +3,20 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "soarx/soarxterrain.h"
-
 #include "dtCore/notify.h"
-//#include "dtUtil/visitor.h"
 
 #include <iostream>
 
+#include <osg/Array>
 #include <osg/Geode>
-#include <osgDB/ImageOptions>
-
-//#include <osg/Switch>
-//#include <osgUtil/InsertImpostorsVisitor>
-
 #include <osg/NodeVisitor>
+#include <osg/GLExtensions>
+#include <osgDB/ImageOptions>
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtSOARX;
 using namespace std;
-
 
 //To be used with Imposter code?
 //typedef osg::ref_ptr<osg::Node>	NodePtr;
@@ -29,11 +24,7 @@ using namespace std;
 //typedef NodeContainer::iterator	NodeIterator;
 //NodeContainer					nodes;
 
-
-
-
 IMPLEMENT_MANAGEMENT_LAYER(SOARXTerrain)
-
 
 /**
  * The ODE SOARXTerrain class identifier.
@@ -49,54 +40,6 @@ const double semiMajorAxis = 6378137.0;
  * The reciprocal of the flattening parameter (WGS 84).
  */
 const double flatteningReciprocal = 298.257223563;
-
-
-/**
- * The fragment shader.
- */
-const char* fragmentShader =
-   "uniform sampler2D detailGradient;"
-   "uniform sampler2D detailScale;"
-   "uniform sampler2D baseGradient;"
-   "uniform sampler2D baseColor;"
-   "void main(void)"
-   "{"
-   "  vec4 detail = texture2D(detailGradient, gl_TexCoord[0].st);"
-   "  vec4 scale = texture2D(detailScale, gl_TexCoord[1].st);"
-   "  vec4 base = texture2D(baseGradient, gl_TexCoord[1].st);"
- //"  vec4 combined = (detail - 0.5) * scale + (base - 0.5);" //original Andrejz
-   "  vec4 combined = (detail - 0.5) * scale + 0.5 + (base - 0.5);"
- //"  vec3 normal = normalize(vec3(combined.y, 0.5, combined.z));"
-   "  vec3 normal = gl_NormalMatrix * normalize(vec3(combined.y, 0.5, combined.z));"
-   "  gl_FragColor = texture2D(baseColor, gl_TexCoord[1].st);"
-   "  gl_FragColor.rgb *= max(0.0, dot(normal, vec3(gl_LightSource[0].position)));"
-   "  float fog;"
-   "  const float LOG2E = 1.442695;"   // = 1/log(2)
- //   "  fog = exp2(-gl_Fog.density * .3 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
-   "  fog = exp2(-gl_Fog.density * .8 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);"
-
-   "  fog = clamp(fog, 0.0, 1.0);"
-   "  gl_FragColor = mix(gl_Fog.color, gl_FragColor, fog);"
-   "}";
-
-/*
-long distance(int dx, int dy )
-{
-	unsigned int min, max;   if ( dx < 0 ) dx = -dx;
-	if ( dy < 0 ) dy = -dy;   if ( dx < dy )
-	{
-		min = dx;
-		max = dy;
-	} else {
-		min = dy;
-		max = dx;
-	}   // coefficients equivalent to ( 123/128 * max ) and ( 51/128 * min )
-	//	return ((( max << 8 ) + ( max << 3 ) - ( max << 4 ) - ( max << 1 ) +
-	//		( min << 7 ) - ( min << 5 ) + ( min << 3 ) - ( min << 1 )) >> 8 );
-	double inside = double((dx*dx)+(dy*dy));
-	return sqrt(inside);
-}
-*/
 
 /**
  * The terrain callback class.  Loads terrain segments
@@ -364,16 +307,19 @@ SOARXTerrain::SOARXTerrain(string name)
 
    mNode->setCullingActive(false);
 
-   mProgramObject = new osgGL2::ProgramObject;
+   mProgram = new osg::Program;
 
-   mProgramObject->addShader(
-      new osgGL2::ShaderObject(osgGL2::ShaderObject::FRAGMENT, fragmentShader)
-   );
+   osgDB::FilePathList path = osgDB::getDataFilePathList();
+   std::string soarxDir = std::string( getenv( "DELTA_ROOT" ) ) + "/src/soarx";
+   path.push_back( soarxDir );
+   osgDB::setDataFilePathList( path );
 
-   mProgramObject->setSampler("detailGradient", 0);
-   mProgramObject->setSampler("detailScale", 1);
-   mProgramObject->setSampler("baseGradient", 2);
-   mProgramObject->setSampler("baseColor", 3);
+   std::string terrainFragProg = osgDB::findDataFile( "terrain.frag" );
+
+   osg::Shader* terrainFragShader = new osg::Shader(osg::Shader::FRAGMENT);
+   terrainFragShader->loadShaderSourceFromFile( terrainFragProg.c_str() );
+
+   mProgram->addShader( terrainFragShader );
 
    if(dSOARXTerrainClass == 0)
    {
@@ -4166,8 +4112,6 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 			}  //end else HF is NULL
 		 }
 
-
-
          dtCore::RefPtr<osg::MatrixTransform> mt = new osg::MatrixTransform;
 
          osg::Vec3 origin(
@@ -4180,14 +4124,32 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
          dtCore::RefPtr<osg::Geode> geode = new osg::Geode;
 
-         dtCore::RefPtr<osg::StateSet> ss = geode->getOrCreateStateSet();
-		 ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
-         ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
-         ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+         mGeodeState = geode->getOrCreateStateSet();
+		   mGeodeState->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+         mGeodeState->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+         mGeodeState->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 
-         ss->setAttributeAndModes(mProgramObject.get());
+         osg::Uniform* uniform;
 
-         ss->setTextureAttributeAndModes(0, mDetailGradient[i].get());
+         uniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "detailGradient" );
+         uniform->set(0);
+         mGeodeState->addUniform( uniform );
+
+         uniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "detailScale" );
+         uniform->set(1);
+         mGeodeState->addUniform( uniform );
+
+         uniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "baseGradient" );
+         uniform->set(2);
+         mGeodeState->addUniform( uniform );
+
+         uniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "baseColor" );
+         uniform->set(3);
+         mGeodeState->addUniform( uniform );
+
+         mGeodeState->setAttributeAndModes(mProgram.get());
+
+         mGeodeState->setTextureAttributeAndModes(0, mDetailGradient[i].get());
 
          dtCore::RefPtr<osg::TexGen> detailGradientTexGen = new osg::TexGen;
 
@@ -4221,9 +4183,9 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
          detailGradientTexGen->setPlane(osg::TexGen::S, osg::Plane(dt, 0, 0, 0));
          detailGradientTexGen->setPlane(osg::TexGen::T, osg::Plane(0, 0, -dt, 1));
 
-         ss->setTextureAttributeAndModes(0, detailGradientTexGen.get());
+         mGeodeState->setTextureAttributeAndModes(0, detailGradientTexGen.get());
 
-         ss->setTextureAttributeAndModes(1, mDetailScale[i].get());
+         mGeodeState->setTextureAttributeAndModes(1, mDetailScale[i].get());
 
          dtCore::RefPtr<osg::TexGen> detailScaleTexGen = new osg::TexGen;
 
@@ -4233,29 +4195,24 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
          detailScaleTexGen->setPlane(osg::TexGen::S, osg::Plane(bt, 0, 0, 0));
          detailScaleTexGen->setPlane(osg::TexGen::T, osg::Plane(0, 0, -bt, 1));
 
-         ss->setTextureAttributeAndModes(1, detailScaleTexGen.get());
+         mGeodeState->setTextureAttributeAndModes(1, detailScaleTexGen.get());
 
          dtCore::RefPtr<osg::Texture2D> baseGradientTex = new osg::Texture2D(baseGradient.get());
-		 baseGradientTex->setDataVariance(osg::Object::DYNAMIC); // protect from being optimized away as static state.
-		 baseGradientTex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-		 baseGradientTex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-//         baseGradientTex->setUseHardwareMipMapGeneration(true);
-//		 baseGradientTex->setInternalFormatMode(osg::Texture::USE_S3TC_DXT5_COMPRESSION);
-		 baseGradientTex->setWrap(osg::Texture::WRAP_S, osg::Texture::MIRROR);
+		   baseGradientTex->setDataVariance(osg::Object::DYNAMIC); // protect from being optimized away as static state.
+		   baseGradientTex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+		   baseGradientTex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
+		   baseGradientTex->setWrap(osg::Texture::WRAP_S, osg::Texture::MIRROR);
          baseGradientTex->setWrap(osg::Texture::WRAP_T, osg::Texture::MIRROR);
 
-         ss->setTextureAttributeAndModes(2, baseGradientTex.get());
+         mGeodeState->setTextureAttributeAndModes(2, baseGradientTex.get());
 
          dtCore::RefPtr<osg::Texture2D> baseColorTex = new osg::Texture2D(baseColor.get());
-		 baseColorTex->setDataVariance(osg::Object::DYNAMIC); // protect from being optimized away as static state.
-//		 baseColorTex->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-//		 baseColorTex->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-//         baseColorTex->setUseHardwareMipMapGeneration(true);
-		 baseColorTex->setInternalFormatMode(osg::Texture::USE_S3TC_DXT5_COMPRESSION);
+		   baseColorTex->setDataVariance(osg::Object::DYNAMIC); // protect from being optimized away as static state.
+		   baseColorTex->setInternalFormatMode(osg::Texture::USE_S3TC_DXT5_COMPRESSION);
          baseColorTex->setWrap(osg::Texture::WRAP_S, osg::Texture::MIRROR);
          baseColorTex->setWrap(osg::Texture::WRAP_T, osg::Texture::MIRROR);
 
-         ss->setTextureAttributeAndModes(3, baseColorTex.get());
+         mGeodeState->setTextureAttributeAndModes(3, baseColorTex.get());
 
          SOARXDrawable* soarxd = new SOARXDrawable;
 
@@ -4740,40 +4697,6 @@ void SOARXTerrain::ParseLCCConfiguration(TiXmlElement* configElement)
 
 }
 
-/*
-void SOARXTerrain::SimplifyTerrain(osg::Vec3& ep)
-{
-	vector<osg::Switch*>::iterator it;
-
-	int count = 0;
-
-	if (mGroupies.size()!=0)
-		for(it = mGroupies.begin();
-			it != mGroupies.end();
-			it++)
-		{         
-			osg::BoundingSphere BS = (*it)->getBound();
-			double dist = distance(int(BS._center[0]-ep[0]), int(BS._center[1]-ep[1]));
-
-			(*it)->setAllChildrenOff();
-
-			if (dist < 50000) 
-			{
-				(*it)->setAllChildrenOn();
-//				Notify (INFO, "Setting group %d OFF : dist = %f", count, dist);
-			}
-//			else
-//			{
-//				(*it)->setAllChildrenOn();
-//				Notify (INFO, "Setting group %d ON : dist = %f", count, dist);
-//			}
-
-			count++;
-		}
-}
-*/
-
-
 /**
 * Place the vegetation into cell specified by lat-long.
 *
@@ -4989,7 +4912,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 						ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
 						ss->setMode(GL_FOG, osg::StateAttribute::OFF);
 
-						ss->removeAttribute(mProgramObject.get());
+						ss->removeAttribute(mProgram.get());
 
 						/*	// the osgUtil::InsertImpostorsVisitor used lower down to insert impostors
 							// only operators on subclass of Group's, if the model top node is not
