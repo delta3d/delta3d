@@ -97,8 +97,9 @@ void writeBSPNode(BSPNode* bspNode, osgDB::Output& fw)
       
       fw.moveIn();
       
-      fw.indent() << "PartitioningPlane " << bspin->GetPartitioningPlane() << endl;
-      
+      osg::Vec4 pPlane = bspin->GetPartitioningPlane().asVec4();
+      fw.indent() << "PartitioningPlane " << pPlane[0] << " " << pPlane[1] << " " << pPlane[2] << " " << pPlane[3] << endl;
+
       writeBSPNode(bspin->GetLeftChild(), fw);
       
       writeBSPNode(bspin->GetRightChild(), fw);

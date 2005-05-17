@@ -28,9 +28,6 @@
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
-#undef _AUTOLIBNAME3
-
-
 
 #if   defined(_DEBUG)
 
@@ -38,8 +35,7 @@
       #define  _AUTOLIBNAME1  "dtsoarxd.lib"
    #endif
    
-   #define _AUTOLIBNAME2 "osgGL2d.lib"
-   #define _AUTOLIBNAME3 "gdal_i.lib"
+   #define _AUTOLIBNAME2 "gdal_iD.lib"
    
 #else
 
@@ -47,8 +43,7 @@
       #define  _AUTOLIBNAME1  "dtsoarx.lib"
    #endif
    
-   #define _AUTOLIBNAME2 "osgGL2.lib"
-   #define _AUTOLIBNAME3 "gdal_i.lib"
+   #define _AUTOLIBNAME2 "gdal_i.lib"
    
 #endif
 
@@ -58,7 +53,6 @@
    #endif
 
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
 
 
@@ -68,7 +62,6 @@
 #endif
 
 #pragma  comment( lib, _AUTOLIBNAME2 )
-#pragma  comment( lib, _AUTOLIBNAME3 )
 
 #endif // _WIN32
 
