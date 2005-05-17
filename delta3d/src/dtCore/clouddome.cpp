@@ -42,9 +42,9 @@ CloudDome::CloudDome( int   octaves,
      mWidth(0),
      mHeight(0),
      mSlices(0),
-     Cloud_ProgObj(0),
-     Cloud_VertObj(0),
-     Cloud_FragObj(0),
+     Cloud_Prog(0),
+     Cloud_Vert(0),
+     Cloud_Frag(0),
      mScale(1/mRadius*1000),
      mExponent(exponent),
      mCutoff(cutoff),
@@ -84,9 +84,9 @@ CloudDome::CloudDome( float radius,
      mWidth(0),
      mHeight(0),
      mSlices(0),
-     Cloud_ProgObj(0),
-     Cloud_VertObj(0),
-     Cloud_FragObj(0),
+     Cloud_Prog(0),
+     Cloud_Vert(0),
+     Cloud_Frag(0),
      mScale(1/mRadius*1000),
      mExponent(5.f),
      mCutoff(.5f),
@@ -112,7 +112,7 @@ CloudDome::~CloudDome()
     RemoveSender(System::GetSystem());
 }
 
-void CloudDome::loadShaderSource( osgGL2::ShaderObject* obj, std::string fileName)
+void CloudDome::loadShaderSource( osg::Shader* obj, std::string fileName)
 {
     std::string fqFileName = osgDB::findDataFile(fileName);
     if( fqFileName.length() != 0 )
@@ -216,7 +216,7 @@ void CloudDome::Create()
     mXform = new MoveEarthySkyWithEyePointTransform();
 
     mDome = createDome(mRadius, mSegments);
-    osg::StateSet *mStateSet = mDome->getOrCreateStateSet();
+    osg::StateSet *domeStateSet = mDome->getOrCreateStateSet();
 
     if (mFileName != "")
 	{
@@ -237,8 +237,6 @@ void CloudDome::Create()
 		mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
 	}
 
-
-
     mTex3D = new osg::Texture3D;
     mTex3D->setImage(mImage_3D.get()); 
 
@@ -248,45 +246,62 @@ void CloudDome::Create()
     mTex3D->setWrap(osg::Texture3D::WRAP_T, osg::Texture3D::REPEAT);
     mTex3D->setWrap(osg::Texture3D::WRAP_R, osg::Texture3D::REPEAT);
 
-    mStateSet->setTextureAttributeAndModes(0, mTex3D.get(), osg::StateAttribute::ON);
+    domeStateSet->setTextureAttributeAndModes(0, mTex3D.get(), osg::StateAttribute::ON);
 
     // Blending Function
     // This operates on the fragments AFTER the frag-shader to get alpha blending
     // with the skydome background
     osg::BlendFunc *trans = new osg::BlendFunc();
     trans->setFunction(osg::BlendFunc::SRC_ALPHA ,osg::BlendFunc::ONE_MINUS_SRC_ALPHA);
-    mStateSet->setAttributeAndModes(trans);
+    domeStateSet->setAttributeAndModes(trans);
     
-    osgGL2::ProgramObject* progObj = new osgGL2::ProgramObject;
-    _progObjList.push_back( progObj );
-    mStateSet->setAttributeAndModes(progObj, osg::StateAttribute::ON);
+    osg::Program* progObj = new osg::Program;
+    _progList.push_back( progObj );
+    domeStateSet->setAttributeAndModes(progObj, osg::StateAttribute::ON);
 
     // Set the program objects
-    Cloud_ProgObj = new osgGL2::ProgramObject;
-    _progObjList.push_back( Cloud_ProgObj );
-    Cloud_VertObj = new osgGL2::ShaderObject( osgGL2::ShaderObject::VERTEX );
-    Cloud_FragObj = new osgGL2::ShaderObject( osgGL2::ShaderObject::FRAGMENT );
-    Cloud_ProgObj->addShader( Cloud_FragObj );
-    Cloud_ProgObj->addShader( Cloud_VertObj );
+    Cloud_Prog = new osg::Program;
+    _progList.push_back( Cloud_Prog );
+    Cloud_Vert = new osg::Shader( osg::Shader::VERTEX );
+    Cloud_Frag = new osg::Shader( osg::Shader::FRAGMENT );
+    Cloud_Prog->addShader( Cloud_Frag );
+    Cloud_Prog->addShader( Cloud_Vert );
   
-    loadShaderSource( Cloud_VertObj, "cloud1.vert" );
-    loadShaderSource( Cloud_FragObj, "cloud1.frag" );
+    loadShaderSource( Cloud_Vert, "cloud1.vert" );
+    loadShaderSource( Cloud_Frag, "cloud1.frag" );
 
-    Cloud_ProgObj->setUniform( "Scale",      mScale / 1000 );
-    Cloud_ProgObj->setSampler( "Noise",      0 );  // TODO: Change texture files at runtime
-    Cloud_ProgObj->setUniform( "Offset",     *mOffset);
-    Cloud_ProgObj->setUniform( "CloudColor", *mCloudColor );
-    Cloud_ProgObj->setUniform( "Cutoff",      mCutoff );
-    Cloud_ProgObj->setUniform( "Exponent",    mExponent );
-    Cloud_ProgObj->setUniform( "Bias",        mBias );
+    osg::Uniform* uniform; 
+
+    uniform = new osg::Uniform( "Scale", mScale / 1000 );
+    domeStateSet->addUniform( uniform );   
+
+    uniform = new osg::Uniform( "Cutoff", mCutoff );
+    domeStateSet->addUniform( uniform ); 
+
+    uniform = new osg::Uniform( "Exponent", mExponent );
+    domeStateSet->addUniform( uniform ); 
+
+    uniform = new osg::Uniform( "Bias", mBias );
+    domeStateSet->addUniform( uniform ); 
+
+    //vec3
+    uniform = new osg::Uniform( "Offset", *mOffset);
+    domeStateSet->addUniform( uniform ); 
+
+    uniform= new osg::Uniform( "CloudColor", *mCloudColor );
+    domeStateSet->addUniform( uniform ); 
+
+    //sampler_3d
+    uniform = new osg::Uniform( osg::Uniform::SAMPLER_3D, "Noise" );
+    uniform->set( 0 );  // TODO: Change texture files at runtime
+    domeStateSet->addUniform( uniform );
+
     // TODO: Add the fog uniform parameter
 
-    mStateSet->setAttributeAndModes( Cloud_ProgObj, osg::StateAttribute::ON);
+    domeStateSet->setAttributeAndModes( Cloud_Prog, osg::StateAttribute::ON);
 
     mXform->addChild(mDome.get());
     dynamic_cast<osg::Group*>(mNode.get())->addChild(mXform.get());
-
-
 }
 
 void CloudDome::Repaint(sgVec4 sky_color, sgVec4 fog_color, 
@@ -313,31 +328,35 @@ void CloudDome::Update(const double deltaFrameTime)
 
     mOffset->set( ctime * mSpeedX/10, ctime * mSpeedY/20, 0);
 
+    osg::StateSet* domeStateSet = mDome->getOrCreateStateSet();
+
     if(mEnable)
     {
         if(!shaders_enabled)
         {
-            for( unsigned int i = 0; i < _progObjList.size(); i++ )
+            for( unsigned int i = 0; i < _progList.size(); i++ )
             {
-                _progObjList[i]->enable(true);
+                //_progList[i]->enable(true);
+               domeStateSet->setAttributeAndModes(_progList[i], osg::StateAttribute::ON);
             }
             shaders_enabled = true;
         }
 
         // Set Uniform variables
-        Cloud_ProgObj->setUniform( "Offset",     *mOffset);
-        Cloud_ProgObj->setUniform( "Scale",      mScale/1000);
-        Cloud_ProgObj->setUniform( "Exponent",   mExponent/1000);
-        Cloud_ProgObj->setUniform( "Cutoff",     mCutoff);
-        Cloud_ProgObj->setUniform( "Bias",       mBias);
-        Cloud_ProgObj->setUniform( "CloudColor", *mCloudColor);
+        domeStateSet->getUniform( "Offset" )->set( *mOffset );
+        domeStateSet->getUniform( "Scale" )->set( mScale/1000 );
+        domeStateSet->getUniform( "Exponent" )->set( mExponent/1000 );
+        domeStateSet->getUniform( "Cutoff" )->set( mCutoff );
+        domeStateSet->getUniform( "Bias" )->set( mBias );
+        domeStateSet->getUniform( "CloudColor" )->set( *mCloudColor );
 
     }
     else
     {
-        for( unsigned int i = 0; i < _progObjList.size(); i++ )
+        for( unsigned int i = 0; i < _progList.size(); i++ )
         {
-            _progObjList[i]->enable(false);
+            //_progList[i]->enable(false);
+            domeStateSet->setAttributeAndModes(_progList[i], osg::StateAttribute::OFF);
         }
         shaders_enabled = false;
     }

@@ -72,18 +72,18 @@ void SOARXDrawable::drawImplementation(osg::State& state) const
    mutable_this->Render(state);
 }
 
-bool SOARXDrawable::computeBound() const
+osg::BoundingBox SOARXDrawable::computeBound() const
 {
    float horizontal_size = base_horizontal_resolution * base_size;
+
+   osg::BoundingBox bb = osg::BoundingBox(
+      0, -horizontal_size, -10000,
+      horizontal_size, 0, 10000
+      );
    
-   setBound(
-      osg::BoundingBox(
-         0, -horizontal_size, -10000,
-         horizontal_size, 0, 10000
-      )
-   );
+   setBound( bb );
    
-   return true;
+   return bb;
 }
 
 //______________________________________________________________
