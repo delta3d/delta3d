@@ -22,7 +22,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG;DT_LIBRARY"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,16 +34,18 @@
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osggl2d.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib"
 				OutputFile="..\..\bin\dtcored.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
@@ -83,7 +85,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_NOAUTOLIBMSG;DT_LIBRARY"
 				StringPooling="FALSE"
 				RuntimeLibrary="2"
@@ -96,14 +98,17 @@
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib glgui.lib isense.lib js.lib ode.lib opcode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osggl2.lib osgparticle.lib osgterrain.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib sg.lib tinyxml.lib ul.lib winmm.lib"
+				AdditionalDependencies="dtutil.lib glgui.lib isense.lib js.lib ode.lib opcode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgterrain.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib sg.lib tinyxml.lib ul.lib winmm.lib"
 				OutputFile="..\..\bin\dtcore.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc;libcmt"
 				ImportLibrary="..\..\lib\dtcore.lib"/>
 			<Tool

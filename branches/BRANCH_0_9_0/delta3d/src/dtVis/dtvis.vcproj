@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;OSG_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -28,7 +28,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -36,7 +36,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib osgd.lib osgdbd.lib osgutild.lib OpenThreadsWin32d.lib"
 				OutputFile="../../bin/dtvis_d.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				ImportLibrary="../../lib/dtvis_d.lib"/>
@@ -69,13 +71,13 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;OSG_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -83,7 +85,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="osg.lib osgdb.lib opengl32.lib OpenThreadsWin32.lib"
 				OutputFile="../../bin/dtvis.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				ImportLibrary="../../lib/dtvis.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -27,15 +27,17 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtcored.lib osgd.lib osgUtild.lib osgDBd.lib osgGL2d.lib sg_d.lib tinyxmld.lib ul_d.lib oded.lib opengl32.lib"
+				AdditionalDependencies="gdal_i.lib dtcored.lib osgd.lib osgUtild.lib osgDBd.lib sg_d.lib tinyxmld.lib ul_d.lib oded.lib opengl32.lib"
 				OutputFile="..\..\bin\dtsoarxd.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd; libcmtd; libc"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
@@ -69,21 +71,23 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtcore.lib osg.lib osgUtil.lib osgDB.lib osgGL2.lib sg.lib tinyxml.lib ul.lib ode.lib opengl32.lib"
+				AdditionalDependencies="gdal_i.lib dtcore.lib osg.lib osgUtil.lib osgDB.lib sg.lib tinyxml.lib ul.lib ode.lib opengl32.lib"
 				OutputFile="..\..\bin\dtsoarx.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc; libcmt"
 				ImportLibrary="..\..\lib\dtsoarx.lib"/>
 			<Tool

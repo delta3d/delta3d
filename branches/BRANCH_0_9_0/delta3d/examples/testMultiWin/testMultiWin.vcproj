@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
@@ -28,7 +28,7 @@
 				UsePrecompiledHeader="0"
 				ProgramDataBaseFileName="$(IntDir)/$(ProjectName).pdb"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -36,7 +36,8 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
@@ -71,7 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -80,7 +81,7 @@
 				UsePrecompiledHeader="0"
 				ProgramDataBaseFileName="$(IntDir)/$(ProjectName).pdb"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -88,7 +89,8 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -27,7 +27,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -35,8 +35,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltk.lib"
 				OutputFile="$(OutDir)/Viewer.exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt,libcmtd,msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Viewer.pdb"
@@ -71,13 +72,13 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -86,7 +87,8 @@
 				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib"
 				OutputFile="$(OutDir)/Viewer.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcd.lib;libcmt.lib;libcmtd.lib"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"

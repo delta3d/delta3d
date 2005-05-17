@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -37,9 +37,9 @@
 				Name="VCLinkerTool"
 				ShowProgress="0"
 				OutputFile="$(OutDir)/testClouds.exe"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd,libc;MSVCRT.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testClouds.pdb"
@@ -74,13 +74,13 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -89,8 +89,8 @@
 				AdditionalDependencies=" odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)/testClouds.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="FALSE"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
