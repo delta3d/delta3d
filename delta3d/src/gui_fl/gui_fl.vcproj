@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
@@ -30,7 +30,7 @@
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
@@ -39,7 +39,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtcored.lib producerd.lib sg_d.lib ul_d.lib openthreadswin32d.lib osgd.lib"
 				OutputFile="../../bin/gui_fld.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd; msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
@@ -73,13 +75,13 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -87,7 +89,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtcore.lib producer.lib openthreadswin32.lib osg.lib sg.lib ul.lib"
 				OutputFile="../../bin/gui_fl.dll"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc; libcmt; msvcrtd"
 				ImportLibrary="..\..\lib\gui_fl.lib"/>
 			<Tool
