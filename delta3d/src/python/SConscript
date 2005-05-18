@@ -79,7 +79,7 @@ if foundLibs.has_key( boostLib ) and foundLibs.has_key( os.path.join('boost','py
       pythonDeps = [ 'boost_python', 'python' ]
    
       if OS == 'windows' :
-         pythonDeps += [  'User32' ] #util?
+         pythonDeps += [  'User32' ] 
       
       pythonDeps = [ extLibs[lib] for lib in pythonDeps if extLibs.has_key(lib) ]
 
