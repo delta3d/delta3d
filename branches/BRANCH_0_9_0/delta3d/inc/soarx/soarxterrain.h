@@ -29,41 +29,16 @@
 #ifndef DT_SOARX_TERRAIN
 #define DT_SOARX_TERRAIN
 
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include "dtCore/physical.h"
 
-#include <map>
-#include <sstream>
-
-#include <osg/Drawable>
-#include <osg/Geometry>
-#include <osg/MatrixTransform>
-#include <osg/Node>
-#include <osg/TexEnv>
-#include <osg/TexGen>
 #include <osg/Texture2D>
-#include <osg/Switch>
-#include <osg/PositionAttitudeTransform>
-
 #include <osgDB/FileUtils>
-#include <osgDB/ReadFile>
-#include <osgDB/WriteFile>
-#include <osgDB/Registry>
-
-#include <osg/Program>
-
-#include <osgUtil/TriStripVisitor>
 
 #include <tinyxml.h>
 
-#include <gdal_priv.h>
-#include <gdalwarper.h>
-
-#include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 
 #include "soarx/soarxdrawable.h"
-#include "soarx/soarx_tbuilder.h"
 
 namespace dtSOARX
 {
@@ -310,7 +285,7 @@ namespace dtSOARX
           *
           * @return the OpenSceneGraph node
           */
-         virtual osg::Node* GetOSGNode();
+         //virtual osg::Node* GetOSGNode();
          
          /**
           * Sets the threshold parameter.
@@ -592,7 +567,7 @@ namespace dtSOARX
          /**
           * The container node.
           */
-         dtCore::RefPtr<osg::MatrixTransform> mNode;
+         //dtCore::RefPtr<osg::MatrixTransform> mNode;
          
 		 /**
 		  *	  Listing of objects (plants, trees, etc) 
