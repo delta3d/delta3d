@@ -4,17 +4,23 @@
 
 #include "soarx/soarxterrain.h"
 #include "dtCore/notify.h"
+#include "dtCore/scene.h"
 
-#include <iostream>
+#include <sstream>
 
-#include <osg/Array>
-#include <osg/Geode>
-#include <osg/NodeVisitor>
-#include <osg/GLExtensions>
+#include <osgUtil/CullVisitor>
 #include <osgDB/ImageOptions>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
+#include <osg/Geometry>
+#include <osgUtil/TriStripVisitor>
+#include <osg/TexGen>
+#include <osg/PositionAttitudeTransform>
+
+#include "gdal_priv.h"
+#include "gdalwarper.h"
 
 using namespace dtCore;
-using namespace dtABC;
 using namespace dtSOARX;
 using namespace std;
 
@@ -68,7 +74,7 @@ class dtSOARX::SOARXTerrainCallback : public osg::NodeCallback
       {
          if(mTerrain->mClearFlag)
          {
-            mTerrain->mNode->removeChild(0, mTerrain->mNode->getNumChildren());
+            mTerrain->GetMatrixNode()->removeChild(0, mTerrain->GetMatrixNode()->getNumChildren());
 
             mTerrain->mSegmentDrawableMap.clear();
 
@@ -295,7 +301,7 @@ SOARXTerrain::SOARXTerrain(string name)
    mUpperHeightColorMap[3000.0f].set(1, 1, 1);
    mUpperHeightColorMap[9000.0f].set(1, 1, 1); // Everest
 
-   mNode = new osg::MatrixTransform;
+   //mNode = new osg::MatrixTransform;
 
    mNode->setUpdateCallback(
       new TransformCallback(this)
@@ -351,8 +357,6 @@ SOARXTerrain::~SOARXTerrain()
 //   Notify(DEBUG_INFO, "Destr SOARX");
    //CleanUp();
 	DeregisterInstance(this);
-
-   Notify(DEBUG_INFO, "Deregistered SOARX");
 }
 
 /**
@@ -1541,10 +1545,10 @@ void SOARXTerrain::LoadRoads(string filename,
  *
  * @return the OpenSceneGraph node
  */
-osg::Node* SOARXTerrain::GetOSGNode()
-{
-   return mNode.get();
-}
+//osg::Node* SOARXTerrain::GetOSGNode()
+//{
+//   return mNode.get();
+//}
 
 /**
  * Sets the threshold parameter.
@@ -4243,7 +4247,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
          lod->addChild(mt.get(), 0.0f, mLoadDistance*10);
 
-         mNode->addChild(lod.get());
+         GetMatrixNode()->addChild(lod.get());
 
          mSegmentDrawableMap[segment] = soarxd;
 
@@ -4756,7 +4760,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 			lcccell.mRootVegeGroup->setDataVariance(osg::Object::STATIC);
 //			lcccell.mPATs.reserve(1600000);
 //			lcccell.mGroupies.reserve(2000);
-			mNode->addChild(lcccell.mRootVegeGroup.get());
+         GetMatrixNode()->addChild(lcccell.mRootVegeGroup.get());
 
 
 //			Notify(INFO,"Start size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
