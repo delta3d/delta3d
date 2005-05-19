@@ -111,11 +111,10 @@ void TestCEGApp::BuildGUI(void)
 
    try
    {
-      std::string schemeFileName = osgDB::findDataFile("gui/schemes/TaharezLook.scheme");
+      std::string schemeFileName = osgDB::findDataFile("gui/schemes/WindowsLook.scheme");
 
       SchemeManager::getSingleton().loadScheme(schemeFileName);
-      Imageset *imageset = ImagesetManager::getSingleton().getImageset("TaharezLook");
-      CEGUI::System::getSingleton().setDefaultMouseCursor((utf8*)"TaharezLook", (utf8*)"MouseArrow");
+      CEGUI::System::getSingleton().setDefaultMouseCursor((utf8*)"WindowsLook", (utf8*)"MouseArrow");
       CEGUI::System::getSingleton().setDefaultFont((utf8*)"Tahoma-12");
 
       CEGUI::Window* sheet = WindowManager::getSingleton().createWindow((utf8*)"DefaultGUISheet", (utf8*)"root_wnd");
@@ -132,13 +131,13 @@ void TestCEGApp::BuildGUI(void)
       else
       {
          // background panel
-         StaticImage* panel = (StaticImage*)WindowManager::getSingleton().createWindow((utf8*)"TaharezLook/StaticImage", (utf8*)"Panel 1");
+         StaticImage* panel = (StaticImage*)WindowManager::getSingleton().createWindow((utf8*)"WindowsLook/StaticImage", (utf8*)"Panel 1");
          sheet->addChildWindow(panel);
          panel->setPosition(Point(0.0f, 0.0f));
          panel->setSize(Size(1.f, 1.f));
 
          //Delta3D text
-         StaticText* st = (StaticText*)WindowManager::getSingleton().createWindow("TaharezLook/StaticText","Delta_3D");
+         StaticText* st = (StaticText*)WindowManager::getSingleton().createWindow("WindowsLook/StaticText","Delta_3D");
          panel->addChildWindow(st);
          st->setPosition(Point(0.2f, 0.3f));
          st->setSize(Size(0.6f, 0.2f));
@@ -149,14 +148,14 @@ void TestCEGApp::BuildGUI(void)
          st->setHorizontalFormatting(StaticText::HorzCentred);
 
          // Edit box for text entry
-         Editbox* eb = (Editbox*)WindowManager::getSingleton().createWindow((utf8*)"TaharezLook/Editbox", (utf8*)"EditBox");
+         Editbox* eb = (Editbox*)WindowManager::getSingleton().createWindow((utf8*)"WindowsLook/Editbox", (utf8*)"EditBox");
          panel->addChildWindow(eb);
          eb->setPosition(Point(0.3f, 0.55f));
          eb->setSize(Size(0.4f, 0.1f));
          eb->setText("Editable text box");
 
          //slider
-         Scrollbar* slider = (Scrollbar*)WindowManager::getSingleton().createWindow((utf8*)"TaharezLook/HorizontalScrollbar", (utf8*)"slider1");
+         Scrollbar* slider = (Scrollbar*)WindowManager::getSingleton().createWindow((utf8*)"WindowsLook/HorizontalScrollbar", (utf8*)"slider1");
          panel->addChildWindow(slider);
          slider->setPosition(Point(0.12f, 0.1f));
          slider->setSize(Size(0.76f, 0.05f));
@@ -167,7 +166,7 @@ void TestCEGApp::BuildGUI(void)
          slider->setScrollPosition(255.f);
 
          // quit button
-         PushButton* btn = (PushButton*)WindowManager::getSingleton().createWindow((utf8*)"TaharezLook/Button", (utf8*)"QuitButton");
+         PushButton* btn = (PushButton*)WindowManager::getSingleton().createWindow((utf8*)"WindowsLook/Button", (utf8*)"QuitButton");
          panel->addChildWindow(btn);
          btn->setText((utf8*)"Exit");
          btn->setPosition( Point(0.4f, 0.7f) );
