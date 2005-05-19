@@ -2,13 +2,6 @@ Import('*')
 
 testSrcs = ['testaudio.cpp']
 
-testDeps = [ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'gdal', 'openal', 'osgGA', 'osgFX', 'osgProducer', 'osgSim' ]
+testDeps = [ 'dtcore', 'dtabc', 'dtaudio', 'dtutil' ]
 
-if OS == 'windows' :
-   testDeps += ['User32']
-elif OS == 'linux' :
-   testDeps += ['Xxf86vm']
-
-testDeps = [ extLibs[lib] for lib in testDeps if extLibs.has_key(lib) ] + [ 'dtcore', 'dtabc', 'dtaudio', 'dtutil' ]
-
-env.Program( 'testAudio', testSrcs, LIBS = testDeps )
+BuildProgram( 'testAudio', testSrcs, testDeps )

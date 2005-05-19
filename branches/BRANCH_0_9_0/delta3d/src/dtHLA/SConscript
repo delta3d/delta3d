@@ -6,9 +6,9 @@ if env.get('rti') != 0 :
                   'entity.cpp',
                   'rticonnection.cpp' ]
                   
-   dtHlaDeps = [ 'dtcore' ] + rtiLibs
+   dtHlaDeps = [ 'dtcore', 'osgSim' ] + rtiLibs
    
    if OS == 'windows' :
-      dtHlaDeps += ['User32','winsock']
+      dtHlaDeps += ['winsock']
          
    BuildLib( 'dthla', dtHlaSrcs, dtHlaDeps, ['DT_LIBRARY'] )
