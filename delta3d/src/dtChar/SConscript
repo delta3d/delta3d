@@ -5,9 +5,6 @@ dtCharSrcs = [  'character.cpp' ]
 if OS == 'darwin':
     dtCharDeps=[ 'dtcore', 'cal3d', 'rbody' ] 
 else:
-    dtCharDeps=[ 'dtcore', 'cal3d', 'rbody', 'rvrutils', 'rcfg' ] 
-
-if OS == 'windows' :
-   dtCharDeps += ['User32']
+    dtCharDeps=[ 'dtcore', 'cal3d', 'rbody', 'rvrutils', 'rcfgscript' ] 
     
 BuildLib( 'dtchar', dtCharSrcs, dtCharDeps, ['DT_LIBRARY'] )

@@ -5,9 +5,6 @@ dtAbcSrcs = [   'application.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 
-dtAbcDeps=[ 'dtcore' ]
-
-if OS == 'windows' :
-   dtAbcDeps += [ 'User32' ]
+dtAbcDeps=[ 'dtcore', 'fltk' ]
     
 BuildLib( 'dtabc', dtAbcSrcs, dtAbcDeps, ['DT_LIBRARY'] )

@@ -2,14 +2,7 @@ Import('*')
 
 bspCompilerSrcs = ['splitgeode.cpp', 'main.cpp']
 
-bspCompilerDeps = [ 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'gdal' ]
-                
-if OS == 'windows' :
-   bspCompilerDeps += ['User32']
-elif OS == 'linux' :
-   bspCompilerDeps += ['Xxf86vm']
+bspCompilerDeps = [ 'dtvis' ]
 
-bspCompilerDeps = [ extLibs[lib] for lib in bspCompilerDeps if extLibs.has_key(lib) ] + [ 'dtvis' ]
-
-env.Program( 'bspCompiler', bspCompilerSrcs, LIBS = bspCompilerDeps )
+BuildProgram( 'bspCompiler', bspCompilerSrcs, bspCompilerDeps )
 

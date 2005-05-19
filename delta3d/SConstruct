@@ -11,7 +11,6 @@ from email.MIMEText import MIMEText
 
 # TODO:
 # install headers, libs, to prefix
-# make clean
 # fix dtCore/dtUtil auto-install
 # doxygen
 # make packaged release
@@ -430,33 +429,30 @@ def find_file( findThis, startDirs ) :
          return os.path.join( root, findThis )
    return None
 
-def build_delta3d_lib( name, srcs, deps, defines = [], extraLinkFlags = [] ) :
+def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
-   dtTarget = name
-   if OS == 'windows' and mode == 'debug' :
-      dtTarget += 'd'
-   
-   addToLibs = []
-   addToLink = []
-
-   #expand dependencies
    for lib in deps :
-      while [n for n in deps if n in depsHash[lib] ] is not [] :
-         ExpandDependencies( deps )
-
+      if depsHash.has_key(lib) :
+         for newLib in depsHash[lib] :
+            if not newLib in deps :
+               deps.append(newLib)
+   
    # merge external deps and delta libs
+   # there's probably some function to do this
    allLibs = {}
    for lib_name in dtLibs.keys() :
       allLibs[lib_name] = dtLibs[lib_name]
    for lib_name in extLibs.keys() :
       allLibs[lib_name] = extLibs[lib_name]
-
+      
    # change to platform+mode specific names
    deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
-   
+
+   addToLink = []
    if env.has_key('LINKFLAGS'):
      addToLink = env['LINKFLAGS']
 
+   addToLibs = []
    if OS == 'darwin':
       addToLink.append('$FRAMEWORKSPATH')
       for lib_name in deps:
@@ -477,18 +473,8 @@ def build_delta3d_lib( name, srcs, deps, defines = [], extraLinkFlags = [] ) :
    cppDefines = []
    if env.has_key('CPPDEFINES'):
      cppDefines = env['CPPDEFINES']
-   
-   dtLib = env.SharedLibrary( dtTarget, srcs, CPPDEFINES = cppDefines+['DT_LIBRARY']+defines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-   
-   if OS == 'windows' :
-     env.Install( '#/bin', dtLib[0] ) # .dll
-     env.Install( '#/lib', dtLib[1] ) # .lib, 
-     env.Install( '#/lib', dtLib[2] ) # .exp
-   elif OS == 'linux' :
-     # copy headers
-     env.Install( '#/lib', dtLib )
-   
-   #libs += dtLib[0]
+
+   env.Program( name, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
    
 def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
@@ -498,13 +484,13 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    
    #add dependencies to global index
    depsHash[name] = deps
-
+      
    #expand pre-built libs
    for lib in deps :
-      if depsHash.has_key(lib):
-         deps += depsHash[lib]
-      #if dtLibs.has_key(lib):
-      #   env.Depends(target,lib)
+      if depsHash.has_key(lib) :
+         for newLib in depsHash[lib] :
+            if not newLib in deps :
+               deps.append(newLib)
    
    # merge external deps and delta libs
    # there's probably some function to do this
@@ -556,6 +542,32 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    #add to global list of built libs
    #libs += name
    
+def CheckForBoost() :
+
+   boostHeader = os.path.join('boost','python.hpp')
+
+   if OS == 'windows' :
+      if mode == 'debug' :
+         boostLib = 'boost_python_debug.dll'
+      else :
+         boostLib = 'boost_python.dll'
+   else :
+      boostLib = 'libboost_python.so'
+
+   foundLib = 0
+   for dir in env['LIBPATH'] :
+      if os.path.isfile( os.path.join( dir, boostLib ) ) :
+         foundLib = 1
+         break
+
+   foundHeader = 0
+   for dir in env['CPPPATH'] :
+      if os.path.isfile( os.path.join( dir, boostHeader ) ) :
+         foundHeader = 1
+         break
+
+   return foundHeader and foundLib
+
 ###########
 # Options #
 ###########
@@ -611,12 +623,14 @@ if OS == 'windows' :
      env.Append( LIBPATH = env['ENV']['LIB'].split(os.pathsep) )
 
    # Python stuff
+   vi = sys.version_info   
+   python_version = 'python' + str(vi[0]) + str(vi[1])
+   
    env.Append( CPPPATH = [os.path.join( sys.prefix, 'include' ) ] ) 
    env.Append( LIBPATH = [os.path.join( sys.prefix, 'libs' ) ] ) 
 
 else :
-
-   vi = sys.version_info
+   vi = sys.version_info   
    python_version = 'python' + str(vi[0])+'.'+str(vi[1])
    
    # Python stuff
@@ -630,11 +644,12 @@ env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc', 'CEGUI' ) ] ) # 
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
 
-# Boost Python
+## Boost Python
 if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
-
    env.Append( CPPPATH = [ env.get('boost') ] )
-   env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )   
+   env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )
+   print env['CPPPATH']
+   print env['LIBPATH']
      
  # RTI 
 rtiLibs = []
@@ -658,7 +673,7 @@ if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.pa
             rtiLibs.append( match.group(1) )
 
    if rtiLibPath is not '' :
-      env.Append( LIBPATH = [ os.path.dirname( rtiLibPath ) ] )
+      env.Append( LIBPATH = [ rtiLibPath ] )
 
 Help( opts.GenerateHelpText( env ) )
 opts.Save( 'delta3d.conf', env )
@@ -722,10 +737,6 @@ else:
 
 Help(opts.GenerateHelpText(env))
 
-#srcLibPaths = [ 'src/dtABC', 'src/dtAudio', 'src/dtChar','src/dtCore', 'src/dtHLA', 'src/dtScript', 'src/dtUtil', 'src/dtVis', 'src/gui_fl', 'src/python', 'src/soarx' ]
-
-#env.Append(LIBPATH=[ os.path.abspath(elem) for elem in srcLibPaths ])
-
 if OS == 'linux' :
   env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
@@ -784,7 +795,7 @@ if mode == 'debug' and OS == 'windows' :
 if OS == 'windows' :
    if mode == 'debug' :
       extLibs =  { 
-         'boost_python' : 'boost_python_debug',
+         #'boost_python' : 'boost_python_debug',
          'osg'          : 'osgd',
          'osgDB'        : 'osgDBd',
          'osgUtil'      : 'osgUtild',
@@ -797,7 +808,7 @@ if OS == 'windows' :
          'osgTerrain'   : 'osgTerraind',
          'Producer'     : 'Producerd',
          'OpenThreads'  : 'OpenThreadsWin32d',
-         'python'       : 'python23',
+         'python'       : python_version,
          'cal3d'        : 'cal3d_d',
          'fltk'         : 'fltkd',
          'gdal'         : 'gdal_iD',
@@ -825,7 +836,7 @@ if OS == 'windows' :
      }
    else :
       extLibs = { 
-         'boost_python' : 'boost_python',
+         #'boost_python' : 'boost_python',
          'osg'          : 'osg',
          'osgDB'        : 'osgDB',
          'osgUtil'      : 'osgUtil',
@@ -838,7 +849,7 @@ if OS == 'windows' :
          'osgTerrain'   : 'osgTerrain',
          'Producer'     : 'Producer',
          'OpenThreads'  : 'OpenThreadsWin32',
-         'python'       : 'python23',
+         'python'       :  python_version,
          'cal3d'        : 'cal3d',
          'fltk'         : 'fltk',
          'gdal'         : 'gdal_i',
@@ -867,7 +878,7 @@ if OS == 'windows' :
    
 elif OS == 'linux' :
    extLibs = { 
-      'boost_python' : 'boost_python',
+      #'boost_python' : 'boost_python',
       'osg'          : 'osg',
       'osgDB'        : 'osgDB',
       'osgUtil'      : 'osgUtil',
@@ -879,7 +890,7 @@ elif OS == 'linux' :
       'osgProducer'  : 'osgProducer',
       'osgTerrain'   : 'osgTerrain',
       'Producer'     : 'Producer',
-      'python'       : 'python2.3',
+      'python'       :  python_version,
       'OpenThreads'  : 'OpenThreads',
       'cal3d'        : 'cal3d',
       'fltk'         : 'fltk',
@@ -901,7 +912,7 @@ elif OS == 'linux' :
       }
 elif OS == 'darwin' :
    extLibs = { 
-      'boost_python'   : 'boost_python',
+      #'boost_python'   : 'boost_python',
       'osg'            : 'osg',
       'osgDB'          : 'osgDB',
       'osgUtil'        : 'osgUtil',
@@ -954,7 +965,7 @@ if not env.GetOption('clean') :
    foundLibs['sigslot.h'] = conf.CheckHeader('sigslot.h',language='C++')
 
    #this actually SEARCHES, not good
-   foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp') ,language='C++')
+   #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp') ,language='C++')
    
    env = conf.Finish()
 
@@ -969,6 +980,11 @@ if not env.GetOption('clean') :
        EmailResults()
       
      env.Exit(-1)
+
+# add the rti libs to the external library dictionary, but only
+# after the configure check is complete 
+for lib in rtiLibs :
+   extLibs[lib] = lib
    
 # Documentation generation system
 #doxygenBuilder = Builder(action = 'doxygen $SOURCE')
@@ -978,7 +994,7 @@ if not env.GetOption('clean') :
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'extLibs' , 'BuildLib', 'rtiLibs', 'build_delta3d_lib', 'foundLibs', 'depsHash', 'dtLibs' )
+Export( 'env', 'OS', 'mode', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs' )
 
 Default( None )
 
