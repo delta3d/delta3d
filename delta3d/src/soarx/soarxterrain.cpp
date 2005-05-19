@@ -382,15 +382,17 @@ void SOARXTerrain::CleanUp()
 }
 
 /**
- * Loads the specified configuration file.
+ * Loads the specified configuration file using the data file search paths.
  *
  * @param filename the name of the configuration file to load
+ * @see SetDataFilePathList()
  */
 void SOARXTerrain::LoadConfiguration(string filename)
 {
    TiXmlDocument configuration;
+   std::string fullPath = osgDB::findDataFile(filename);
 
-   if(configuration.LoadFile(filename.c_str()))
+   if(configuration.LoadFile(fullPath.c_str()))
    {
       ParseConfiguration(configuration.RootElement());
    }
@@ -650,13 +652,23 @@ string SOARXTerrain::GetDTEDPath(unsigned int index)
 
 /**
  * Sets the path of the terrain cache.  If the path is unset,
- * terrain data will not be cached.
+ * terrain data will not be cached.  If the path doesn't exist, the folder will
+ * be created.
  *
  * @param path the new path
  */
 void SOARXTerrain::SetCachePath(string path)
 {
    mCachePath = path;
+   if (!osgDB::fileExists(mCachePath))
+   {
+      bool valid = osgDB::makeDirectory(mCachePath);
+      if (!valid)
+      {
+         Notify(WARN, "SOARXTerrain: Can't make cache path '%s'",
+                 mCachePath.c_str());
+      }
+   }
 }
 
 /**
