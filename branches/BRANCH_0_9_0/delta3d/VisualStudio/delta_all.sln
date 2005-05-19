@@ -215,6 +215,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testMultiWin", "..\examples
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testSoarx", "..\examples\testSoarx\testSoarx.vcproj", "{55F6C3C4-0CF8-4A84-9233-C938314C76CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A6562750-F7E3-4CB3-83C2-727F49F88CE0} = {A6562750-F7E3-4CB3-83C2-727F49F88CE0}
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -373,6 +380,10 @@ Global
 		{6FC97D94-9895-43AA-87BB-7206B4E267AA}.Debug.Build.0 = Debug|Win32
 		{6FC97D94-9895-43AA-87BB-7206B4E267AA}.Release.ActiveCfg = Release|Win32
 		{6FC97D94-9895-43AA-87BB-7206B4E267AA}.Release.Build.0 = Release|Win32
+		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Debug.ActiveCfg = Debug|Win32
+		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Debug.Build.0 = Debug|Win32
+		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Release.ActiveCfg = Release|Win32
+		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
