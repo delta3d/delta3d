@@ -807,8 +807,8 @@ Viewer::InitInputDevices( void )
 void
 Viewer::InitObjects( void )
 {
-   Scene*   scene = GetScene();
-   assert( scene );
+   //Scene*   scene = GetScene();
+   //assert( scene );
 
    osgFX::Scribe* scribe   = new osgFX::Scribe;
    assert( scribe );
