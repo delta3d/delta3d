@@ -56,7 +56,7 @@ public:
       RefPtr<Object> obj3 = new Object("GroundCrate");
 
       //load the model files
-      if (!obj1->LoadFile("models/flatdirt.ive")) return;
+      if (!obj1->LoadFile("models/dirt.ive")) return;
       if (!obj2->LoadFile("models/physics_crate.ive")) return; 
       if (!obj3->LoadFile("models/physics_crate.ive")) return; 
 
@@ -78,7 +78,7 @@ public:
       float lz = 1.0f;
 
       //create collision meshes
-      obj1->SetCollisionBox(); 
+      obj1->SetCollisionMesh(); 
       obj2->SetCollisionBox();
       obj3->SetCollisionBox();
 
