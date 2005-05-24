@@ -87,14 +87,18 @@ if CheckForBoost() :
    pythonDtAudioLib = env.SharedLibrary( 'dtaudiobindings', pythonDtAudioSrcs, LIBS = pythonDeps + [dtLibs[ 'dtaudio' ]] )
    pythonDtCharLib = env.SharedLibrary( 'dtcharbindings', pythonDtCharSrcs, LIBS = pythonDeps + [dtLibs[ 'dtchar' ]] )
    pythonGui_flLib = env.SharedLibrary( 'gui_flbindings', pythonGui_flSrcs, LIBS = pythonDeps + [dtLibs[ 'gui_fl' ]] )
+
+   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib )
    
    if env.get('rti') != 0 :
       pythonDtHlaLib = env.SharedLibrary( 'dthlabindings', pythonDtHlaSrcs, LIBS = pythonDeps + [dtLibs[ 'dthla' ]] )
+      env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None
 
    if OS == 'windows' :
       pythonDtSoarxLib = env.SharedLibrary( 'dtsoarxbindings', pythonDtSoarxSrcs, LIBS = pythonDeps + [dtLibs[ 'dtsoarx' ]] )
+      env.Precious( pythonDtSoarxLib )
 
    ################
    # Install libs #

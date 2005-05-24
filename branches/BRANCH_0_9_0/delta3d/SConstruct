@@ -530,6 +530,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
      cppDefines = env['CPPDEFINES']
    
    lib = env.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   env.Precious( lib )
    
    if OS == 'windows' :
      env.Install( '#/bin', lib[0] ) # .dll
@@ -996,6 +997,7 @@ for lib in rtiLibs :
 
 Export( 'env', 'OS', 'mode', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs' )
 
+SConsignFile()
 Default( None )
 
 if OS == 'windows' :
