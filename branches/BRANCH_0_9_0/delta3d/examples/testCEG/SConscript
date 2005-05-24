@@ -1,7 +1,0 @@
-Import('*')
-
-testSrcs = ['testCEG.cpp', 'main.cpp']
-
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtgui' ]
-
-BuildProgram( 'testCEG', testSrcs, testDeps )
