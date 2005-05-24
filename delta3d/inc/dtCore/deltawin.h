@@ -25,7 +25,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/deltarendersurface.h"
 #include "dtCore/keyboard.h"
 #include "dtCore/mouse.h"
 #include "dtCore/refptr.h"
@@ -89,7 +88,7 @@ namespace dtCore
       ///Get the size and position of the DeltaWin
       void GetPosition( int *x, int *y, int *width, int *height );
 
-      ///Get a handle to the underlying DeltaRenderSurface
+      ///Get a handle to the underlying RenderSurface
       Producer::RenderSurface* GetRenderSurface() { return mRenderSurface; }
       
       ///Get a handle to the Keyboard associated with the DeltaWin

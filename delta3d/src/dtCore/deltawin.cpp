@@ -131,7 +131,7 @@ mShowCursor(true)
 
    if(ia) // use the passed InputArea if not NULL
       mKeyboardMouse = new Producer::KeyboardMouse( ia );
-   else // otherwise use the passed DeltaRenderSurface
+   else // otherwise use the passed RenderSurface
       mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
 
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
