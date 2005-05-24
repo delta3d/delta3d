@@ -93,13 +93,13 @@ DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool curso
 {
    RegisterInstance(this);
 
-   mRenderSurface = new DeltaRenderSurface; 
+   mRenderSurface = new Producer::RenderSurface; 
    
    mKeyboard = new Keyboard;
    mMouse = new Mouse;
 
    mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
-   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
    mKeyboardMouse->startThread();
 
    if(!fullScreen)
@@ -116,7 +116,7 @@ DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool curso
 
 }
 
-DeltaWin::DeltaWin( string name, DeltaRenderSurface* rs, Producer::InputArea* ia ) :
+DeltaWin::DeltaWin( string name, Producer::RenderSurface* rs, Producer::InputArea* ia ) :
 Base(name),
 mRenderSurface(rs),
 mKeyboardMouse(0),

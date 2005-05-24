@@ -56,7 +56,7 @@ namespace dtCore
       DeltaWin(   std::string name = "window", int x = 100, int y = 100, int width = 640, 
                   int height = 480, bool cursor = true, bool fullScreen = false );
 
-      DeltaWin(   std::string name, DeltaRenderSurface* rs, Producer::InputArea* ia = 0 );
+      DeltaWin(   std::string name, Producer::RenderSurface* rs, Producer::InputArea* ia = 0 );
 
       virtual ~DeltaWin();
 
@@ -90,7 +90,7 @@ namespace dtCore
       void GetPosition( int *x, int *y, int *width, int *height );
 
       ///Get a handle to the underlying DeltaRenderSurface
-      DeltaRenderSurface* GetRenderSurface() { return mRenderSurface; }
+      Producer::RenderSurface* GetRenderSurface() { return mRenderSurface; }
       
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard* GetKeyboard() { return mKeyboard.get(); }
@@ -109,7 +109,7 @@ namespace dtCore
 
       static int CalcRefreshRate( int width, int height, int dotclock );
       
-      DeltaRenderSurface* mRenderSurface; //changed from straight-up RS
+      Producer::RenderSurface* mRenderSurface; //changed from straight-up RS
       Producer::KeyboardMouse* mKeyboardMouse;
 
       RefPtr<Keyboard> mKeyboard;
