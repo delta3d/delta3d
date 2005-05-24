@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;..\..\ext\inc\CEGUI\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;..\..\ext\inc\CEGUI\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
