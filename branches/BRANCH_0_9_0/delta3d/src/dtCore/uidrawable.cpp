@@ -866,6 +866,7 @@ void UIDrawable::LoadControlProgressBar( ELEMDATA *elem, CUI_ProgressBar *frame)
 
 void UIDrawable::LoadControlResizeButton( ELEMDATA *elem )
 {
+
    float width=0.1,height=0.1;
    unsigned short x = UI_RESIZE_NONE, y = UI_RESIZE_NONE;
 
@@ -930,6 +931,8 @@ void UIDrawable::LoadControlResizeButton( ELEMDATA *elem )
    newframe->SetMinimumSize( width, height );
 
    elem->data= newframe;
+ 
+
 
 }
 void UIDrawable::LoadControlButton( ELEMDATA *elem )
