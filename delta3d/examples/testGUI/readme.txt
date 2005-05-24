@@ -4,11 +4,11 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtGUI
 
 Purpose
 -------
-To demonstrate basic functionality of the UIDrawable GUI class. A SliderBar
+To demonstrate basic functionality of the dtGUI::CEUIDrawable class. A SliderBar
 controls the opacity of the box. "Delta3D" is displayed inside a TextBox.
 An EditableTextBox can be... surprise surprise... edited. The Button exits 
 the application. The cursor also changes to a different icon within the window.
