@@ -222,6 +222,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testSoarx", "..\examples\te
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUI", "..\src\dtGUI\dtGUI.vcproj", "{CF160A9E-61E2-4D81-83AB-C8165BB0678C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -384,6 +389,10 @@ Global
 		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Debug.Build.0 = Debug|Win32
 		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Release.ActiveCfg = Release|Win32
 		{55F6C3C4-0CF8-4A84-9233-C938314C76CD}.Release.Build.0 = Release|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Debug.ActiveCfg = Debug|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Debug.Build.0 = Debug|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.ActiveCfg = Release|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
