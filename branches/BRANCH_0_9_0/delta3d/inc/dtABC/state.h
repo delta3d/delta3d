@@ -40,4 +40,4 @@ namespace dtABC
    };
 }
 
-#endif DELTA_STATE
+#endif // DELTA_STATE
