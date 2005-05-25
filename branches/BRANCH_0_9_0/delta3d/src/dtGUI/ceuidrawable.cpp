@@ -1,3 +1,5 @@
+#include <CEGUI/CEGUI.h>
+
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
@@ -6,9 +8,6 @@
 #include <osg/Geode>
 #include <osg/Projection>
 #include <osg/MatrixTransform>
-
-
-#include <CEGUI/CEGUI.h>
 
 using namespace dtCore;
 using namespace dtGUI;
