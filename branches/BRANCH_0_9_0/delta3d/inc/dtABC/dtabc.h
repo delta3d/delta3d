@@ -24,6 +24,8 @@
 
 #include "dtABC/application.h"
 #include "dtABC/baseabc.h"
+#include "dtABC/state.h"
+#include "dtABC/statemanager.h"
 #include "dtABC/weather.h"
 #include "dtABC/widget.h"
 

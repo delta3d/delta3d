@@ -127,6 +127,15 @@
 				RelativePath=".\baseabc.cpp">
 			</File>
 			<File
+				RelativePath=".\event.cpp">
+			</File>
+			<File
+				RelativePath=".\state.cpp">
+			</File>
+			<File
+				RelativePath=".\statemanager.cpp">
+			</File>
+			<File
 				RelativePath=".\weather.cpp">
 			</File>
 			<File
@@ -147,7 +156,16 @@
 				RelativePath="..\..\inc\dtABC\dtabc.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\dtABC\event.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtABC\fl_dt_window.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtABC\state.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtABC\statemanager.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtABC\weather.h">
