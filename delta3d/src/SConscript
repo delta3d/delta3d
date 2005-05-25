@@ -2,7 +2,7 @@ import os
 
 Import('*')
 
-modules = [ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
+modules = [ 'dtABC', 'dtAudio', 'dtChar', 'dtCore', 'dtGUI', 'dtHLA', 'dtScript', 'dtUtil', 'dtVis', 'gui_fl', 'python', 'soarx' ]
 
 if OS == 'windows' :
 
