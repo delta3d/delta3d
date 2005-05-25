@@ -4,9 +4,6 @@ dtGuiSrcs = [   'ceuidrawable.cpp',
                 'renderer.cpp',
                 'resourceprovider.cpp' ]
 
-dtGuiDeps=[ 'dtcore', 'CEGUIBase', 'xerces-c', 'CEGUIOpenGLRenderer' ]
-
-if OS == 'windows' :
-   dtGuiDeps += [ 'User32' ]
+dtGuiDeps=[ 'dtcore', 'CEGUIBase', 'CEGUIWindowsLook', 'CEGUIOpenGLRenderer', 'xerces-c' ]
     
 BuildLib( 'dtgui', dtGuiSrcs, dtGuiDeps, ['DT_LIBRARY'] )

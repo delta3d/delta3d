@@ -2,6 +2,6 @@ Import('*')
 
 testSrcs = ['testgui.cpp']
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
+testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtgui' ]
 
 BuildProgram( 'testGUI', testSrcs, testDeps )
