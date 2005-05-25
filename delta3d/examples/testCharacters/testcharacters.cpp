@@ -1,7 +1,6 @@
 #include "dtChar/dtchar.h"
 #include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
 
 using namespace dtCore;
 using namespace dtABC;
