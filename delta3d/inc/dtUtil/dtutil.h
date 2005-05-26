@@ -21,10 +21,12 @@
 #ifndef DTUTIL_INCLUDE
 #define DTUTIL_INCLUDE
 
-#include "dtUtil/deprecationmgr.h"
-#include "dtUtil/domain.h"
-#include "dtUtil/matrixutil.h"
-#include "dtUtil/polardecomp.h"
+#include <dtUtil/deprecationmgr.h>
+#include <dtUtil/domain.h>
+#include <dtUtil/enumeration.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/objectfactory.h>
+#include <dtUtil/polardecomp.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
