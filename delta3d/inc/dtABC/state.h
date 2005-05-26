@@ -25,13 +25,13 @@ namespace dtABC
       protected:
 
          ///Called after construction to pass in static data (perhaps from XML)
-         virtual void Config( StateData* data = 0 ) = 0;
+         virtual void Config( StateData* data = 0 ) {}
 
          ///Called after switching into a particular mode.  Used to setup states of the mode before executing main loop.
-         virtual void Enable( Event* data = 0 ) = 0;
+         virtual void Enable( Event* data = 0 ) {}
 
          ///The place to clean up memory when before switching to a different mode
-         virtual void Shutdown() {};
+         virtual void Shutdown() {}
 
          virtual void PreFrame( const double deltaFrameTime ) {}
          virtual void Frame( const double deltaFrameTime ) {}
