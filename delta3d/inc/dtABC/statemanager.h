@@ -82,7 +82,13 @@ namespace dtABC
       	TransitionHandler();
       	~TransitionHandler();
          virtual void startElement(const XMLCh* const, XERCES_CPP_NAMESPACE_QUALIFIER AttributeList&);
+         virtual void endElement(const XMLCh* const name);
+
          virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&);
+      private:
+         State *mFromState;
+         State *mToState;
+         std::string mEventTypeName;
       };
       
    };
