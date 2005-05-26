@@ -1,9 +1,15 @@
 #include <dtCore/system.h>
-
+#include <dtCore/notify.h>
 #include <dtABC/statemanager.h>
+
+#include <osgDB/FileUtils>
+
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/parsers/SAXParser.hpp>
 
 using namespace dtABC;
 using namespace dtCore;
+XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(StateManager)
 
@@ -295,4 +301,118 @@ void StateManager::Print( bool stateBased ) const
          std::cout << event << "(" << fromName << "," << toName << ")" << std::endl;
       }
    }
+}
+
+bool StateManager::Load( std::string filename )
+{
+   bool retVal = false;
+
+   std::string fullFileName = osgDB::findDataFile(filename);
+
+   if (!fullFileName.empty())
+   {
+      ParseFile(fullFileName);
+   }
+   else
+   {
+      Notify(WARN, "StateManager - Can't find file '%s'",filename.c_str());
+      retVal = false;
+   }
+   return retVal;
+}
+
+///Private
+bool StateManager::ParseFile( std::string filename )
+{
+   bool retVal = false;
+   try 
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch (const XMLException& toCatch) 
+   {
+      Notify(WARN) << toCatch.getMessage() << std::endl;
+      return 1;
+   }
+
+
+   SAXParser* parser = new SAXParser();
+   parser->setDoValidation(true);    // optional.
+   parser->setDoNamespaces(true);    // optional
+
+   TransitionHandler* docHandler = new TransitionHandler();
+   parser->setDocumentHandler(docHandler);
+
+   ErrorHandler* errHandler = (ErrorHandler*) docHandler;
+   parser->setErrorHandler(errHandler);
+
+   try 
+   {
+      parser->parse(filename.c_str());
+      retVal = true;
+   }
+   catch (const XMLException& toCatch) 
+   {
+      char* message = XMLString::transcode(toCatch.getMessage());
+      Notify(WARN) << "Exception message is: \n"
+         << message << "\n";
+      XMLString::release(&message);
+      return -1;
+   }
+   catch (const SAXParseException& toCatch) {
+      char* message = XMLString::transcode(toCatch.getMessage());
+      Notify(WARN) << "Exception message is: \n"
+         << message << "\n";
+      XMLString::release(&message);
+      return -1;
+   }
+   catch (...) 
+   {
+      Notify(WARN) << "Unexpected Exception \n" ;
+      return -1;
+   }
+
+   delete parser;
+   delete docHandler;
+
+   return retVal;
+}
+
+
+StateManager::TransitionHandler::TransitionHandler()
+{
+}
+
+StateManager::TransitionHandler::~TransitionHandler()
+{
+}
+
+void StateManager::TransitionHandler::startElement(const XMLCh* const name,
+                                AttributeList& attributes)
+{
+   std::string message = XMLString::transcode(name);
+
+   if (message == "Transition")
+   {
+      std::string eventType = XMLString::transcode(attributes.getValue("Event"));
+      std::string s1Type    = XMLString::transcode(attributes.getValue("From"));
+      std::string s2Type    = XMLString::transcode(attributes.getValue("To"));
+
+      Notify(ALWAYS, "Creating transition: Event:'%s', From:'%s', To:'%s'", 
+            eventType.c_str(), s1Type.c_str(), s2Type.c_str() );
+
+//      State *fromState = new State(s1Type);
+//      State *toState   = new State(s2Type);
+//      AddTransition( eventType, fromState, toState );
+   }
+
+   
+}
+
+void StateManager::TransitionHandler::fatalError(const SAXParseException& exception)
+{
+   char* message = XMLString::transcode(exception.getMessage());
+   Notify(ALWAYS) << "Fatal Error: " << message
+      << " at line: " << exception.getLineNumber()
+      << std::endl;
 }
