@@ -388,25 +388,54 @@ StateManager::TransitionHandler::~TransitionHandler()
 }
 
 void StateManager::TransitionHandler::startElement(const XMLCh* const name,
-                                AttributeList& attributes)
+                                                   AttributeList& attributes)
 {
-   std::string message = XMLString::transcode(name);
+   std::string elementName = XMLString::transcode(name);
 
-   if (message == "Transition")
+   if (elementName == "Transition")
    {
-      std::string eventType = XMLString::transcode(attributes.getValue("Event"));
-      std::string s1Type    = XMLString::transcode(attributes.getValue("From"));
-      std::string s2Type    = XMLString::transcode(attributes.getValue("To"));
+      //start of a Transition
+   }
+   else if (elementName == "Event")
+   {
+      std::string eventTypeName = XMLString::transcode(attributes.getValue("TypeName"));
+      Notify(DEBUG_INFO, "Create event. type:'%s', name:'%s'", eventTypeName.c_str() );
 
-      Notify(ALWAYS, "Creating transition: Event:'%s', From:'%s', To:'%s'", 
-            eventType.c_str(), s1Type.c_str(), s2Type.c_str() );
+      mEventTypeName = eventTypeName;
+   }
+   else if (elementName == "FromState")
+   {
+      std::string stateType = XMLString::transcode(attributes.getValue("Type"));
+      std::string stateName = XMLString::transcode(attributes.getValue("Name"));
 
-//      State *fromState = new State(s1Type);
-//      State *toState   = new State(s2Type);
-//      AddTransition( eventType, fromState, toState );
+      Notify(DEBUG_INFO, "Create FromState. type:'%s', name:'%s' ", 
+             stateType.c_str(), stateName.c_str() );
+
+      mFromState = new State(stateType);
+      mFromState->SetName(stateName);
+
+   }
+   else if (elementName == "ToState")
+   {
+      std::string stateType = XMLString::transcode(attributes.getValue("Type"));
+      std::string stateName = XMLString::transcode(attributes.getValue("Name"));
+
+      Notify(DEBUG_INFO, "Create ToState. type:'%s', name:'%s'",
+             stateType.c_str(), stateName.c_str() );
+
+      mToState = new State(stateType);
+      mToState->SetName(stateName);
    }
 
-   
+   else if (elementName == "StartState")
+   {
+      std::string stateName = XMLString::transcode(attributes.getValue("Name"));
+
+      Notify(DEBUG_INFO, "Set StartState: '%s'", stateName.c_str());
+      //StateManager::Instance()->MakeCurrent( 
+      //       StateManager::Instance()->GetState(stateName) );
+   }
+
 }
 
 void StateManager::TransitionHandler::fatalError(const SAXParseException& exception)
@@ -416,3 +445,20 @@ void StateManager::TransitionHandler::fatalError(const SAXParseException& except
       << " at line: " << exception.getLineNumber()
       << std::endl;
 }
+
+void StateManager::TransitionHandler::endElement(const XMLCh* const name)
+{
+   std::string elementName = XMLString::transcode(name);
+
+   if (elementName == "Transition")
+   {
+      Notify(ALWAYS, "AddTransition('%s', '%s', '%s')",
+        mEventTypeName.c_str(),
+         mFromState->GetName().c_str(),
+         mToState->GetName().c_str() );
+
+      StateManager::Instance()->AddTransition(mEventTypeName, mFromState, mToState );
+   }
+}
+
+
