@@ -9,6 +9,8 @@
 #include <dtABC/state.h>
 #include <dtABC/event.h>
 
+#include <xercesc/sax/HandlerBase.hpp>
+
 namespace dtABC
 {
    ///Controls the switching of modes by starting and stoping the different states.  
@@ -30,6 +32,8 @@ namespace dtABC
 
       static   StateManager*  Instance();
       static   void           Destroy();
+
+               bool           Load( std::string filename );
 
                void           PreFrame( const double deltaFrameTime );
                void           Frame( const double deltaFrameTime );
@@ -69,6 +73,18 @@ namespace dtABC
       bool                                   mSwitch;
       bool                                   mStop;
  
+      bool  ParseFile( std::string filename );
+
+
+      class TransitionHandler : public XERCES_CPP_NAMESPACE_QUALIFIER HandlerBase
+      {
+      public:
+      	TransitionHandler();
+      	~TransitionHandler();
+         virtual void startElement(const XMLCh* const, XERCES_CPP_NAMESPACE_QUALIFIER AttributeList&);
+         virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&);
+      };
+      
    };
 
 }
