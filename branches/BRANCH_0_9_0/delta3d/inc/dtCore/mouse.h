@@ -35,8 +35,8 @@
 
 namespace dtCore
 {
+   class DeltaWin;
    class MouseListener;
-
 
    /**
     * Mouse buttons.
@@ -48,7 +48,6 @@ namespace dtCore
       RightButton
    };
 
-
    /**
     * A mouse device.
     */
@@ -56,30 +55,41 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(Mouse)
 
+      friend class DeltaWin;
+
+   protected:
+      /**
+      * Constructor.
+      *
+      * @param name the instance name
+      */
+      Mouse(Producer::KeyboardMouse* km,std::string name = "mouse");
+
+      /**
+      * Destructor.
+      */
+      virtual ~Mouse();
 
       public:
 
          /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         Mouse(std::string name = "mouse");
-
-         /**
-          * Destructor.
-          */
-         virtual ~Mouse();
-
-         /**
           * Gets the current mouse position.
           *
-          * @param x a pointer to the location in which to store the
+          * @param x a reference to the location in which to store the
           * x coordinate
-          * @param y a pointer to the location in which to store the
+          * @param y a reference to the location in which to store the
           * y coordinate
           */
+         void GetPosition(float& x, float& y);
          void GetPosition(float* x, float* y);
+         
+         /**
+         * Sets the current mouse position.
+         *
+         * @param x the new x coordinate
+         * @param y the new y coordinate
+         */
+         void SetPosition(float x, float y);
 
          /**
           * Gets the state of the specified mouse button.
@@ -103,7 +113,6 @@ namespace dtCore
           */
          void RemoveMouseListener(MouseListener* mouseListener);
 
-
          ///Producer callback methods
          virtual void mouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion );
          virtual void mouseMotion( float, float);
@@ -112,13 +121,14 @@ namespace dtCore
          virtual void doubleButtonPress( float, float, unsigned int );
          virtual void buttonRelease( float, float, unsigned int );
 
-
       private:
 
          /**
           * The list of mouse listeners.
           */
          std::set<MouseListener*> mouseListeners;
+
+         Producer::KeyboardMouse* mKeyboardMouse;
    };
 
 
