@@ -4,19 +4,19 @@
 
 #include "dtCore/mouse.h"
 #include "dtCore/notify.h"
+#include "dtUtil/deprecationmgr.h"
 
 using namespace dtCore;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 
-
 /**
  * Constructor.
  *
  * @param name the instance name
  */
-Mouse::Mouse(string name) : InputDevice(name)
+ Mouse::Mouse(Producer::KeyboardMouse* km,string name) : InputDevice(name), mKeyboardMouse(km)
 {
    RegisterInstance(this);
 
@@ -59,17 +59,38 @@ Mouse::~Mouse()
 }
 
 /**
- * Gets the current mouse position.
- *
- * @param x a pointer to the location in which to store the
- * x coordinate
- * @param y a pointer to the location in which to store the
- * y coordinate
- */
+* Gets the current mouse position.
+*
+* @param x a reference to the location in which to store the
+* x coordinate
+* @param y a reference to the location in which to store the
+* y coordinate
+*/
+void Mouse::GetPosition(float& x, float& y)
+{
+   x = GetAxis(0)->GetState();
+   y = GetAxis(1)->GetState();
+}
 void Mouse::GetPosition(float* x, float* y)
 {
-   (*x) = GetAxis(0)->GetState();
-   (*y) = GetAxis(1)->GetState();
+   DEPRECATE(  "Mouse::GetPosition(float* x, float* y)", 
+               "Mouse::GetPosition(float& x, float& y)" )
+
+   GetPosition(*x,*y);
+}
+
+/**
+* Sets the current mouse position.
+*
+* @param x the new x coordinate
+* @param y the new y coordinate
+*/
+void Mouse::SetPosition(float x, float y)
+{
+   if(mKeyboardMouse)
+   {
+      mKeyboardMouse->positionPointer(x,y);
+   }
 }
 
 /**

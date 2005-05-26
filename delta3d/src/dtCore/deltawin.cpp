@@ -25,7 +25,7 @@ class InputCallback : public Producer::KeyboardMouseCallback
          mMouse->mouseScroll(sm);
       }
 
-       void mouseMotion(float x, float y)
+      void mouseMotion(float x, float y)
       {
          mMouse->mouseMotion( x, y );
       }
@@ -96,9 +96,11 @@ DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool curso
    mRenderSurface = new Producer::RenderSurface; 
    
    mKeyboard = new Keyboard;
-   mMouse = new Mouse;
-
+   
    mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
+
+   mMouse = new Mouse(mKeyboardMouse,"mouse");
+   
    mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
    mKeyboardMouse->startThread();
 
@@ -127,12 +129,13 @@ mShowCursor(true)
    RegisterInstance(this);
    
    mKeyboard = new Keyboard;
-   mMouse = new Mouse;
-
+   
    if(ia) // use the passed InputArea if not NULL
       mKeyboardMouse = new Producer::KeyboardMouse( ia );
    else // otherwise use the passed RenderSurface
       mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
+
+   mMouse = new Mouse(mKeyboardMouse,"mouse");
 
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
    mKeyboardMouse->startThread();
