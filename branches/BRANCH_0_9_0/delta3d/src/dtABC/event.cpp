@@ -2,6 +2,8 @@
 
 using namespace dtABC;
 
+const std::string Event::mType = "default";
+
 Event::Event()
 {
 }

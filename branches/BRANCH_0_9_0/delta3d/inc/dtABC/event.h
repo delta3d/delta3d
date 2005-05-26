@@ -13,7 +13,11 @@ namespace dtABC
 
          Event();
          virtual ~Event();
-         virtual const std::string& GetType() const = 0;
+         virtual const std::string& GetType() const { return mType; }
+      
+      private:
+
+         static const std::string mType;
 
    };
 
