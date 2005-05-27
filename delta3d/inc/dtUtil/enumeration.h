@@ -76,22 +76,18 @@ namespace dtUtil {
         bool operator==(const std::string &rhs) const {
             return this->name == rhs;
         }
-
         ///Overloaded inequality test for this enumeration's string value.
         bool operator!=(const std::string &rhs) const {
-            return this->name != rhs;
+           return this->name != rhs;
         }
-
         ///Overloaded less than test for this enumeration's string value.
         bool operator<(const std::string &rhs) const {
-            return this->name < rhs;
+           return this->name < rhs;
         }
-
         ///Overloaded greater than test for this enumeration's string value.
         bool operator>(const std::string &rhs) const {
             return this->name > rhs;
         }
-
         /**
          * Overloaded less than operator.  This checks the memory addresses of the two
          * enumerations.
@@ -106,11 +102,9 @@ namespace dtUtil {
         bool operator<(const Enumeration &rhs) const {
             return this < &rhs;
         }
-
     protected:
         ///Private virtual desctructor to get rid of compile warning
         virtual ~Enumeration() {};
-
         /**
          * Construct the enumeration.
          *  @note
@@ -121,16 +115,13 @@ namespace dtUtil {
         Enumeration(const std::string &name) {
             this->name = name;
         }
-
     private:
         ///Private assignment operator to enforce enumeration storage by reference.
         Enumeration &operator=(const Enumeration &rhs) { return *this; }
-
         ///String representation of the enumeration.
         std::string name;
         ///Private copy constructor to enforce enumeration storage by reference.
         Enumeration(const Enumeration &rhs) { }
-
         ///Helper method to print enumerations to an output stream.
         friend std::ostream &operator<<(std::ostream &os,
             const Enumeration &e)
@@ -139,8 +130,6 @@ namespace dtUtil {
             return os;
         }
     };
-
-
     /**
      * Helper macros used to create the static data and methods
      * needed to enumerate an enumeration.
@@ -164,10 +153,7 @@ namespace dtUtil {
             }                                         \
             return NULL;                              \
         }
-
     #define IMPLEMENT_ENUM(EnumType)                        \
         std::vector<dtUtil::Enumeration *> EnumType::instances;
-
 }
-
 #endif
