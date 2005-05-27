@@ -150,7 +150,13 @@
 				RelativePath="..\..\inc\dtUtil\dtutil.h">
 			</File>
 			<File
+				RelativePath="..\..\inc\dtUtil\enumeration.h">
+			</File>
+			<File
 				RelativePath="..\..\inc\dtUtil\matrixutil.h">
+			</File>
+			<File
+				RelativePath="..\..\inc\dtUtil\objectfactory.h">
 			</File>
 			<File
 				RelativePath="..\..\inc\dtUtil\polardecomp.h">
