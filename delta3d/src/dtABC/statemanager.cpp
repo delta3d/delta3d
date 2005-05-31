@@ -399,7 +399,7 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
    else if (elementName == "Event")
    {
       std::string eventTypeName = XMLString::transcode(attributes.getValue("TypeName"));
-      Notify(DEBUG_INFO, "Create event. type:'%s', name:'%s'", eventTypeName.c_str() );
+      Notify(DEBUG_INFO, "Create event. typeName:'%s'", eventTypeName.c_str() );
 
       mEventTypeName = eventTypeName;
    }
