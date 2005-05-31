@@ -43,6 +43,7 @@ namespace dtABC
 
                bool           AddState( State* state );
                bool           RemoveState( State* state );
+               State*         GetState( const std::string& name );
 
                bool           AddTransition( std::string eventType, State* from, State* to );
                bool           RemoveTransition( std::string eventType, State* from, State* to );
