@@ -171,6 +171,19 @@ bool StateManager::RemoveState( State* state )
    return false;
 }
 
+State* StateManager::GetState( const std::string& name )
+{
+   for( std::set< RefPtr<State> >::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
+   {
+      if( (*iter)->GetName() == name )
+      {
+         return (*iter).get();
+      }
+   }
+
+   return 0;
+}
+
 bool StateManager::AddTransition( std::string eventType, State* from, State* to )
 {
    //lazy state addition
@@ -426,14 +439,13 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
       mToState = new State(stateType);
       mToState->SetName(stateName);
    }
-
    else if (elementName == "StartState")
    {
       std::string stateName = XMLString::transcode(attributes.getValue("Name"));
 
       Notify(DEBUG_INFO, "Set StartState: '%s'", stateName.c_str());
-      //StateManager::Instance()->MakeCurrent( 
-      //       StateManager::Instance()->GetState(stateName) );
+      StateManager::Instance()->MakeCurrent( 
+         StateManager::Instance()->GetState(stateName) );
    }
 
 }
@@ -460,5 +472,3 @@ void StateManager::TransitionHandler::endElement(const XMLCh* const name)
       StateManager::Instance()->AddTransition(mEventTypeName, mFromState, mToState );
    }
 }
-
-
