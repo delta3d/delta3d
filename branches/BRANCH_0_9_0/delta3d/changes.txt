@@ -5,6 +5,15 @@
 ##############################
 
 ---------
+| 0.9.0 |
+---------
+New Features:
+-Added dtGUI using CEGUI
+
+Major Bug Fixes:
+- Fixed bug with relocating a collision shape
+
+---------
 | 0.8.6 |
 ---------
 
