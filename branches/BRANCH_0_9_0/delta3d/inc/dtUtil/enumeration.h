@@ -147,7 +147,7 @@ namespace dtUtil {
    */
 #define DECLARE_ENUM(EnumType)                          \
 private:                                                \
-   static std::vector<dtDAL::Enumeration *> instances;           \
+   static std::vector<dtUtil::Enumeration *> instances;           \
    static void AddInstance(dtUtil::Enumeration *instance) {       \
    EnumType::instances.push_back(instance);        \
    }                                                   \
