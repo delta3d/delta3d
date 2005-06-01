@@ -143,7 +143,7 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
       
       if oldLIBS != -1:
          context.env.Replace(LIBS = oldLIBS)
-         
+     
       if ret == "":
          context.Result(1)
          return 1
@@ -236,192 +236,6 @@ def _lang2suffix(lang):
 
    return None, None, "Unsupported language: %s" % lang
 
-
-def CheckFramework(context, frameworks, func_name = 'main', header = None, 
-             extra_frameworks = None, extra_libs = None, 
-             call = None, language = None, autoadd = 0):
-   """
-   Configure check for a C or C++ 'frameworks'.  Searches through
-   the list of libraries, until one is found where the test succeeds.
-   Tests if 'func_name' or 'call' exists in the library.  Note: if it exists
-   in another library the test succeeds anyway!
-   Optional 'header' can be defined to include a header file.  If not given a
-   default prototype for 'func_name' is added.
-   Optional 'extra_libs' is a list of library names to be added after
-   'lib_name' in the build command.  To be used for libraries that 'lib_name'
-   depends on.
-   Optional 'call' replaces the call to 'func_name' in the test code.  It must
-   consist of complete C statements, including a trailing ';'.
-   There must either be a 'func_name' or a 'call' argument (or both).
-   'language' should be 'C' or 'C++' and is used to select the compiler.
-   Default is 'C'.
-   Note that this uses the current value of compiler and linker flags, make
-   sure $CFLAGS, $CPPFLAGS and $LIBS are set correctly.
-   Returns an empty string for success, an error message for failure.
-   """
-   if not header:
-      header = ""
-
-   text = """
-         %s """ % (header)
-
-   # Add a function declaration if needed.
-   if func_name and func_name != "main" and not header:
-      text = text + """
-            #ifdef __cplusplus
-            extern "C"
-            #endif
-            char %s();""" % func_name
-
-   # The actual test code.
-   if not call:
-      call = "%s();" % func_name
-   text = text + """
-         int
-         main() {
-         %s
-         return 0;
-         }
-         \n\n""" % call
-
-   i = string.find(call, "\n")
-   if i > 0:
-      calltext = call[:i] + ".."
-   elif call[-1] == ';':
-      calltext = call[:-1]
-   else:
-      calltext = call
-
-   if not SCons.Util.is_List(frameworks):
-      frameworks = [frameworks]
-
-
-   oldLINK = context.env['LINKFLAGS']
-   oldLIBS = context.env['LIBS']
-   for framework_name in frameworks:
-
-      lang, suffix, msg = _lang2suffix(language)
-      if msg:
-         context.Message("Cannot check for framework %s: %s\n" % (framework_name, msg))
-         return msg
-
-      context.Message("Checking for %s in %s framework %s... "
-                  % (calltext, lang, framework_name))
-      if framework_name:
-         l = [ '-framework',  framework_name ]
-         if extra_frameworks:
-            for extra_framework_name in extra_frameworks:
-               l.extend(' -framework ' + extra_framework_name)
-               
-         if extra_libs:
-            context.env.Append(LIBS=extra_libs)
-            
-         context.env.Append(LINKFLAGS=l)
-         sym = "HAVE_LIB" + framework_name
-      else:
-         sym = None
-
-      ret = context.BuildProg(text, suffix)
-
-      _YesNoResult(context, ret, sym, text)
-      if oldLINK != -1 and (not ret or not autoadd):
-         context.env.Replace(LINKFLAGS = oldLINK)
-      
-      if oldLIBS != -1:
-         context.env.Replace(LIBS = oldLIBS)
-         
-      if ret == "":
-         context.Result(1)
-         return 1
-
-   context.Result(ret)
-   return ret
-
-
-def _YesNoResult(context, ret, key, text):
-   """
- Handle the result of a test with a 'yes' or 'no' result.
-   'ret' is the return value: empty if OK, error message when not.
-   'key' is the name of the symbol to be defined (HAVE_foo).
-   'text' is the source code of the program used for testing.
-   """
-   if key:
-      _Have(context, key, not ret)
-   if ret:
-      context.Display("no\n")
-      _LogFailed(context, text, ret)
-   else:
-      context.Display("yes\n")
-
-def _Have(context, key, have):
-   """
-   Store result of a test in context.havedict and context.headerfilename.
-   'key' is a HHAVE_abc\' name.  It is turned into all CAPITALS and ':./' are
-   replaced by an underscore.
-   The value of 'have' can be:
-   1     - Feature is defined, add '#define key'.
-   0     - Feature is not defined, add '/* #undef key */'.
-          Adding 'undef' is what autoconf does.  Not useful for the
-          compiler, but it shows that the test was done.
-   number - Feature is defined to this number '#define key have'.
-          Doesn't work for 0 or 1, use a string then.
-   string - Feature is defined to this string '#define key have'.
-          Give 'have' as is should appear in the header file, include quotes
-          when desired and escape special characters!
-   """
-   key_up = string.upper(key)
-   key_up = string.replace(key_up, ':', '_')
-   key_up = string.replace(key_up, '.', '_')
-   key_up = string.replace(key_up, '/', '_')
-   key_up = string.replace(key_up, ' ', '_')
-   context.havedict[key_up] = have
-   if context.headerfilename:
-      f = open(context.headerfilename, "a")
-      if have == 1:
-         f.write("#define %s\n" % key_up)
-      elif have == 0:
-         f.write("/* #undef %s */\n" % key_up)
-      elif type(have) == IntType:
-         f.write("#define %s %d\n" % (key_up, have))
-      else:
-         f.write("#define %s %s\n" % (key_up, str(have)))
-      f.close()
-
-
-def _LogFailed(context, text, msg):
-   """
-   Write to the log about a failed program.
-   Add line numbers, so that error messages can be understood.
-   """
-   context.Log("Failed program was:\n")
-   lines = string.split(text, '\n')
-   if len(lines) and lines[-1] == '':
-      lines = lines[:-1]           # remove trailing empty line
-   n = 1
-   for line in lines:
-      context.Log("%d: %s\n" % (n, line))
-      n = n + 1
-   context.Log("Error message: %s\n" % msg)
-
-
-# Function to calculate current time for logging
-def CurrentTime() :
-   now = time.localtime()
-   display = time.strftime('%A, %B %d %Y, %X', now)
-   return display
-
-# Function to email the result of the build
-def EmailResults() :
-	file = open('BuildLog.txt', 'r')
-	buffer = MIMEText(file.read())
-	buffer['Subject'] = 'Editor Build Log'
-	file.close()
-
-	s = smtplib.SMTP()
-	s.connect(smtpServer) 
-	s.sendmail(fromAddress, peopleToEmail, buffer.as_string())
-	s.close()
-   
 def find_file( findThis, startDirs ) :
    for startDir in startDirs :
      for root, dirs, files in os.walk( startDir ) :
@@ -475,7 +289,7 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
      cppDefines = env['CPPDEFINES']
 
    env.Program( name, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-   
+
 def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
    target = name
@@ -543,6 +357,34 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    #add to global list of built libs
    #libs += name
    
+
+
+# Function to calculate current time for logging
+def CurrentTime() :
+   now = time.localtime()
+   display = time.strftime('%A, %B %d %Y, %X', now)
+   return display
+
+# Function to email the result of the build
+def EmailResults() :
+	file = open('BuildLog.txt', 'r')
+	buffer = MIMEText(file.read())
+	buffer['Subject'] = 'Editor Build Log'
+	file.close()
+
+	s = smtplib.SMTP()
+	s.connect(smtpServer) 
+	s.sendmail(fromAddress, peopleToEmail, buffer.as_string())
+	s.close()
+   
+def find_file( findThis, startDirs ) :
+   for startDir in startDirs :
+     for root, dirs, files in os.walk( startDir ) :
+       if findThis in files :
+         return os.path.join( root, findThis )
+   return None
+
+   
 def CheckForBoost() :
 
    boostHeader = os.path.join('boost','python.hpp')
@@ -552,8 +394,10 @@ def CheckForBoost() :
          boostLib = 'boost_python_debug.dll'
       else :
          boostLib = 'boost_python.dll'
-   else :
+   elif OS == 'linux' :
       boostLib = 'libboost_python.so'
+   elif OS == 'darwin' :
+      boostLib = 'libboost_python.dylib'
 
    foundLib = 0
    for dir in env['LIBPATH'] :
@@ -641,7 +485,18 @@ else :
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc', 'CEGUI' ) ] ) # path for Crazy Eddie's GUI since they are too cool
-                                                                              #to prefix their #includes with "CEGUI"
+
+
+#add Xerces framework includes in case xerces is a framework
+#since the xerces framework has broken headers.
+#the Crazy eddie's case is similar, but they were wrtten not to have
+#a parent directory, so the framework doesn't really work well with it
+#anyway.
+if OS == 'darwin':
+   env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'Xerces.framework', 'Headers' ) ] )
+   env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'CEGUI.framework', 'Headers' ) ] ) # path for Crazy Eddie's GUI since they are too cool
+   env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'gdal.framework', 'Headers' ) ] ) # gdal since the includes are not done as <gdal/...>
+
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
 
@@ -699,14 +554,14 @@ if mode == 'debug':
    errorLog.write('Build Configuration: Debug\n\n')
    
    if OS == 'windows':
-     env.Append( CPPDEFINES = ['WIN32', '_DEBUG', '_NOAUTOLIBMSG'],
-              CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
-              LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
-   elif OS == 'linux':     
-     env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
-              CXXDEFINES=['DEBUG', '_DEBUG'] )
-   elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_CGL_IMPLEMENTATION__'  ])
+      env.Append( CPPDEFINES = ['WIN32', '_DEBUG', '_NOAUTOLIBMSG'],
+                  CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
+                  LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
+   elif OS == 'linux':      
+      env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
+                  CXXDEFINES=['DEBUG', '_DEBUG'] )
+   elif OS == 'darwin':      
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fvisibility-inlines-hidden', '-ftree-vectorize'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -720,7 +575,7 @@ else:
               CPPDEFINES=['NDEBUG'],
               LINKFLAGS=['-s'] )
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe'], CPPDEFINES=['NDEBUG', '__USE_OSX_CGL_IMPLEMENTATION__'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
    
 if env.get('no_warnings'):
    if OS == 'windows':
@@ -746,7 +601,7 @@ if OS == 'darwin' :
   env.Append(FRAMEWORKSPATH=['-F./ext/Frameworks' ])
   env.Append(CPPFLAGS=['$FRAMEWORKSPATH' ])
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
-  env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
+  env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
   env['SHLIBSUFFIX'] = '.dylib'
 
 launchDir = env.GetLaunchDir()
@@ -760,13 +615,13 @@ launchDir = env.GetLaunchDir()
 
 # do version, config checking
 
-def CheckLibOrFramework(context, lib):
-   result=conf.CheckLib(lib, language = 'C++');
+def CheckLibOrFramework(context, lib, autoadd = 0):
+   result=conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
    
    resultText = 0;
    
    if result == 0 and OS == 'darwin':
-     result = conf.CheckFramework(lib, language = 'C++')
+     result = conf.CheckFramework(lib, language = 'C++', autoadd = autoadd)
      if result != 0:
        resultText = 'framework'
    elif result != 0:
@@ -829,6 +684,8 @@ if OS == 'windows' :
          'rcfgscript'          : 'rcfgscriptd', 
          'rbody'               : 'ReplicantBodyd',
          'tinyxml'             : 'tinyxmld',
+	 'xerces-c'            : 'xerces-c_2D',
+         'xerces-depdom'       : 'xerces-depdom_2D',
          'User32'              : 'User32',
          'Advapi32'            : 'Advapi32',
          'Rpcrt4'              : 'Rpcrt4',
@@ -873,6 +730,8 @@ if OS == 'windows' :
          'rcfgscript'          : 'rcfgscript', 
          'rbody'               : 'ReplicantBody',
          'tinyxml'             : 'tinyxml',
+	 'xerces-c'            : 'xerces-c_2',
+         'xerces-depdom'       : 'xerces-depdom_2',
          'User32'              : 'User32',
          'Advapi32'            : 'Advapi32',
          'Rpcrt4'              : 'Rpcrt4',
@@ -917,6 +776,8 @@ elif OS == 'linux' :
       'rcfgscript'          : 'rcfgscript', 
       'rbody'               : 'rbody',
       'tinyxml'             : 'tinyxml' ,
+      'xerces-c'            : 'xerces-c',
+      'xerces-depdom'       : 'xerces-depdom',
       'Xxf86vm'             : 'Xxf86vm',
       'uuid'                : 'uuid',
       'opengl'              : 'GL'
@@ -924,6 +785,10 @@ elif OS == 'linux' :
 elif OS == 'darwin' :
    extLibs = { 
       #'boost_python'   : 'boost_python',
+      'CEGUIBase'           : 'CEGUI',
+      'CEGUIOpenGLRenderer' : 'OpenGLRenderer',
+      #this is a bundle, so it must be loaded at runtime
+      #'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
       'osg'            : 'osg',
       'osgDB'          : 'osgDB',
       'osgUtil'        : 'osgUtil',
@@ -949,6 +814,7 @@ elif OS == 'darwin' :
       'js'             : 'plibjs',  
       'rbody'          : 'rbody',
       'tinyxml'        : 'tinyxml' ,
+      'xerces-c'       : 'Xerces',
       'opengl'         : 'OpenGL',
       'CoreFoundation' : 'CoreFoundation',
       'IOKit'          : 'IOKit',
@@ -986,6 +852,8 @@ linkOrder = [
    'rcfgscript', 
    'rbody',
    'tinyxml',
+   'xerces-c',
+   'xerces-depdom',
    #'boost_python',
    'CEGUIBase',   
    'CEGUIOpenGLRenderer',
@@ -1010,7 +878,8 @@ conf = Configure(env, custom_tests = {
 if not env.GetOption('clean') :
     
    for lib in linkOrder :
-     foundLibs[extLibs[lib]] = conf.CheckLibOrFramework( extLibs[lib] )       
+     if extLibs.has_key(lib):
+     	foundLibs[extLibs[lib]] = conf.CheckLibOrFramework( extLibs[lib], autoadd = 1 )       
    foundLibs['sigslot.h'] = conf.CheckHeader('sigslot.h',language='C++')
 
    #this actually SEARCHES, not good

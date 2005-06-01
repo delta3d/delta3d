@@ -1,12 +1,11 @@
+#include <CEGUI/CEGUI.h>
+
 #include "dtGUI/dtgui.h"
 #include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
 
-#include <CEGUI/CEGUI.h>
-
 using namespace dtCore;
 using namespace dtABC;
-
 
 /**
 * The application instance.

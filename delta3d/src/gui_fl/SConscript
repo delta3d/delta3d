@@ -3,9 +3,20 @@ Import('*')
 gui_flSrcs = [  'gui_fltk.cpp',
                 'guimgr.cpp' ]
 
-gui_flDeps=[ 'dtcore', 'dtABC', 'fltk' ] 
+if OS == 'darwin':
+    gui_flDeps=[ 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX', 'osgProducer', 'isense', 'js', 'osgSim', 'osgDB', 'sg', 'ul', 'tinyxml', 'Carbon' ]
+else:
+    gui_flDeps = [ 'fltk', 'OpenThreads', 'osg', 'sg', 'ul', 'Producer', 'tinyxml' ]
 
 if OS == 'windows' :
    gui_flDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+
+    
+gui_flDeps = [ extLibs[lib] for lib in gui_flDeps if extLibs.has_key(lib) ]
+
+if mode == 'debug' :
+   gui_flDeps += [ 'dtcored', 'dtabcd' ]
+else :
+   gui_flDeps += [ 'dtcore', 'dtabc' ]
                     
 BuildLib( 'gui_fl', gui_flSrcs, gui_flDeps, ['DT_LIBRARY'] )
