@@ -74,9 +74,9 @@ class DeprecationMgr
          {
             DeprecatedFunction * pFunction = &((*i).second);
 
-            sprintf ( txt, "- Function %s called from %i different places.\n",
+            sprintf ( txt, "- Function %s called from %u different places.\n",
                pFunction->OldFunctionName, 
-               pFunction->CalledFrom.size() );
+               (unsigned)pFunction->CalledFrom.size() );
 
             #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
             OutputDebugString (txt);         

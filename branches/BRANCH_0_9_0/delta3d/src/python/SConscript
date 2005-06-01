@@ -81,7 +81,7 @@ if CheckForBoost() :
       pythonDeps += [  'User32' ] 
       
    pythonDeps = [ extLibs[lib] for lib in pythonDeps if extLibs.has_key(lib) ] + [boostLib]
-   
+
    pythonDtCoreLib = env.SharedLibrary( 'dtcorebindings', pythonDtCoreSrcs, LIBS = pythonDeps + [dtLibs[ 'dtcore']] )
    pythonDtAbcLib = env.SharedLibrary( 'dtabcbindings', pythonDtAbcSrcs, LIBS = pythonDeps + [dtLibs[ 'dtabc' ]] )
    pythonDtAudioLib = env.SharedLibrary( 'dtaudiobindings', pythonDtAudioSrcs, LIBS = pythonDeps + [dtLibs[ 'dtaudio' ]] )

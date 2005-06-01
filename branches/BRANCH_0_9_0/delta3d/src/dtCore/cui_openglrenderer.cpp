@@ -41,7 +41,7 @@ CUI_OpenGLRenderer::CUI_OpenGLRenderer()
 
 	m_maxTexture = 50;
 	m_textures = new unsigned int[m_maxTexture];
-	glGenTextures( m_maxTexture, m_textures );
+	glGenTextures( m_maxTexture, (GLuint*)m_textures );
 	m_numTextures = 0;
 
 	m_pushCount = 0;
@@ -60,7 +60,7 @@ CUI_OpenGLRenderer::CUI_OpenGLRenderer()
 // delete list of texture objects
 CUI_OpenGLRenderer::~CUI_OpenGLRenderer()
 {
-	glDeleteTextures( m_numTextures, m_textures );
+	glDeleteTextures( m_numTextures, (GLuint*)m_textures );
 	delete []m_textures;
 }
 
@@ -70,7 +70,7 @@ CUI_OpenGLRenderer::~CUI_OpenGLRenderer()
 bool CUI_OpenGLRenderer::BeginRendering( double time )
 {
 	v4_i viewport;
-	glGetIntegerv(GL_VIEWPORT, viewport );
+	glGetIntegerv(GL_VIEWPORT, (GLint*)viewport );
 
 	glDisable( GL_LIGHTING );
 	glDisable( GL_DEPTH_TEST );
@@ -91,7 +91,7 @@ int CUI_OpenGLRenderer::LoadTexture( char *filename )
 		temp = m_textures;
 		m_textures = new unsigned int[m_maxTexture*2];
 		memcpy( m_textures, temp, sizeof(unsigned int) * m_maxTexture );
-		glGenTextures( m_maxTexture, &(m_textures[m_maxTexture]) );
+		glGenTextures( m_maxTexture, &(((GLuint*)m_textures)[m_maxTexture]) );
 		delete []temp;
 		m_maxTexture *= 2;
 	}
@@ -186,7 +186,7 @@ bool CUI_OpenGLRenderer::RenderToArea( float minx, float miny, float maxx, float
 
 	if( m_pushCount == 0 )
 	{
-		glGetIntegerv(GL_VIEWPORT, oldarea );
+		glGetIntegerv(GL_VIEWPORT, (GLint*)oldarea );
 	}
 	else
 	{

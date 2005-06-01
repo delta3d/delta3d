@@ -2,6 +2,7 @@ Import('*')
 
 testSrcs = ['testgui.cpp']
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtgui' ]
+testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtgui', 'CEGUIBase', 'CEGUIOpenGLRenderer',
+   'CEGUIWindowsLook' ]
 
 BuildProgram( 'testGUI', testSrcs, testDeps )

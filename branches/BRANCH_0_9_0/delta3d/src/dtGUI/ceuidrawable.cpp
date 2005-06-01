@@ -1,4 +1,4 @@
-#include <CEGUI/CEGUI.h>
+#include <CEGUI.h>
 
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/deltawin.h>
