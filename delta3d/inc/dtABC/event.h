@@ -17,8 +17,8 @@ namespace dtABC
       
       private:
 
-         static const std::string mType;
-
+         const std::string mType;
+         
    };
 
 }
