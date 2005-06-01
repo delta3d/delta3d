@@ -177,7 +177,7 @@ State* StateManager::GetState( const std::string& name )
    {
       if( (*iter)->GetName() == name )
       {
-         return (*iter).get();
+         return const_cast<State*>((*iter).get());
       }
    }
 
