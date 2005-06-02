@@ -84,7 +84,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="osg.lib osgdb.lib opengl32.lib OpenThreadsWin32.lib"
-				OutputFile="../../../dtvis.dll"
+				OutputFile="../../../bin/dtvis.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
