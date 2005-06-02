@@ -8,6 +8,6 @@ dtAbcSrcs = [   'application.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 
-dtAbcDeps=[ 'dtcore', 'fltk', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','sg', 'ul', 'js', 'Producer', 'tinyxml', 'xerces-c', 'xerces-depdom', 'opengl' ]
+dtAbcDeps=[ 'dtcore', 'fltk', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','sg', 'ul', 'js', 'Producer', 'tinyxml', 'xerces-c', 'opengl' ]
     
 BuildLib( 'dtabc', dtAbcSrcs, dtAbcDeps, ['DT_LIBRARY'] )

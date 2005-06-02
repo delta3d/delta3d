@@ -37,6 +37,10 @@ dtCoreSrcs = [ 'base.cpp',
                'pnoise.cpp',
                'pointaxis.cpp',
                'positionallight.cpp',
+               'prof_draw.cpp',
+               'prof_gather.cpp',
+               'profilemgr.cpp',
+               'prof_process.cpp',
                'recorder.cpp',
                'scene.cpp',
                'skybox.cpp',
@@ -59,13 +63,13 @@ dtCoreSrcs = [ 'base.cpp',
 dtCoreDeps=[ 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :
-   dtCoreSrcs.extend( [ 'deltawin_win32.cpp', 'uniqueid_win32.cpp' ] )
+   dtCoreSrcs.extend( [ 'deltawin_win32.cpp', 'uniqueid_win32.cpp', 'prof_win32.cpp' ] )
    dtCoreDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
 elif OS == 'linux':
-   dtCoreSrcs.extend( [ 'deltawin_x11.cpp', 'uniqueid_linux.cpp' ] )
+   dtCoreSrcs.extend( [ 'deltawin_x11.cpp', 'uniqueid_linux.cpp', 'prof_linux.cpp' ] )
    dtCoreDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':
-    dtCoreSrcs.extend(['deltawin_carbon.cpp', 'uniqueid_macosx.cpp'] )
+    dtCoreSrcs.extend(['deltawin_carbon.cpp', 'uniqueid_macosx.cpp', 'prof_linux.cpp' ] ) #mac version?
     dtCoreDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
     
 BuildLib( 'dtcore', dtCoreSrcs, dtCoreDeps, ['DT_LIBRARY'] )
