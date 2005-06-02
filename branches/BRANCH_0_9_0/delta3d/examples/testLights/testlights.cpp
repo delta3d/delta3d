@@ -152,7 +152,9 @@ TestLightsApp::PreFrame( const double deltaFrameTime )
 int 
 main( int argc, const char* argv[] )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testLights/;" +
+                        GetDeltaDataPathList()  );
+
 
    RefPtr<TestLightsApp> app = new TestLightsApp( "config.xml" );
    app->Config();

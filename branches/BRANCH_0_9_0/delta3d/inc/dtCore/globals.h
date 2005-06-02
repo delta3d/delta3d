@@ -30,10 +30,20 @@ namespace dtCore
 {
    ///Set the list of data file paths
    DT_EXPORT void SetDataFilePathList( std::string pathList );
+
+   ///Get the list of data file paths
    DT_EXPORT std::string GetDataFilePathList();
 
-   ///Get the Delta Data path list
+   ///Get the Delta Data path list (equivalent to the DELTA_DATA environment)
    DT_EXPORT std::string GetDeltaDataPathList(void);
+
+   ///Get the root path to Delta3D (equivalent to the DELTA_ROOT environment)
+   DT_EXPORT std::string GetDeltaRootPath(void);
+
+   ///Convienence method to get the supplied environment
+   DT_EXPORT std::string GetEnvironment( std::string env);
+
+
 };
 
 

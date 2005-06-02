@@ -62,7 +62,7 @@ public:
 
       //position the camera
       Transform position;
-      position.Set(0.0f, -10.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+      position.Set(0.0f, -20.0f, 2.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(&position);
 
       //position first falling crate
@@ -310,7 +310,9 @@ std::deque< RefPtr<Object> > TestPhysicsApp::mObjects;
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testPhysics/;" +
+                        GetDeltaDataPathList()  );
+
 
    RefPtr<TestPhysicsApp> app = new TestPhysicsApp( "config.xml" );
 

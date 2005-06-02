@@ -37,6 +37,8 @@ void dtCore::SetDataFilePathList( std::string pathList )
 /*!
 * Get the list of paths that dtCore should use to search for files to load.  Paths
 * are separated with a single ";" on Win32 and a single ":" on Linux.
+* 
+* @see SetDataFilePathList()
 */
 std::string dtCore::GetDataFilePathList()
 {
@@ -61,6 +63,23 @@ std::string dtCore::GetDataFilePathList()
    return pathString;
 }
 
+/** 
+ *  Simple method to return the system environment variable.  If the env var
+ *  is not set, the local path will be returned.
+ *
+ * @param env The system environment variable to be queried
+ * @return The value of the environment variable
+ */
+DT_EXPORT std::string dtCore::GetEnvironment( std::string env)
+{
+   char *ptr;
+   if( (ptr = getenv( env.c_str() )) )
+   {
+      return (std::string(ptr));
+   }
+   else return (std::string("./"));
+}
+
 /*!
  * Get the Delta Data file path.  This comes directly from the environment 
  * variable "DELTA_DATA".  If the environment variable is not set, the local
@@ -68,10 +87,13 @@ std::string dtCore::GetDataFilePathList()
  */
 DT_EXPORT std::string dtCore::GetDeltaDataPathList(void)
 {
-   char *ptr;
-   if( (ptr = getenv( "DELTA_DATA" )) )
-   {
-      return (std::string(ptr));
-   }
-   else return (std::string("./"));
+   return  GetEnvironment("DELTA_DATA") ;
+}
+
+/** If the DELTA_ROOT environment is not set, the local directory will be
+ *  returned.
+ */
+DT_EXPORT std::string dtCore::GetDeltaRootPath(void)
+{
+   return  GetEnvironment("DELTA_ROOT") ;
 }

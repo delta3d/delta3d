@@ -4,7 +4,7 @@
 
 IMPLEMENT_MANAGEMENT_LAYER( MyWindow )
 
-const char* MyWindow::PATH = "../../data;";
+const char* MyWindow::PATH = "/examples/testWidget/;";
 const char* MyWindow::FILE = "models/brdm.ive";
 
 
@@ -44,7 +44,8 @@ MyWindow::show( void )
 {
    MyParent::show();
 
-   std::string path(PATH + dtCore::GetDeltaDataPathList() );
+   std::string path((dtCore::GetDeltaRootPath() + PATH) + dtCore::GetDeltaDataPathList() );
+
    std::string file(FILE);
 
    SendMessage( "setpath", &path );
