@@ -9,5 +9,8 @@ dtAbcSrcs = [   'application.cpp',
                 'widget.cpp' ]
 
 dtAbcDeps=[ 'dtcore', 'fltk', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','sg', 'ul', 'js', 'Producer', 'tinyxml', 'xerces-c', 'opengl' ]
-    
+
+if OS == 'windows' :
+   dtAbcDeps += [ 'User32' ]
+       
 BuildLib( 'dtabc', dtAbcSrcs, dtAbcDeps, ['DT_LIBRARY'] )
