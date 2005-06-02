@@ -176,7 +176,8 @@ int
 main( int argc, const char* argv[] )
 {
    // set the directory to find the sound files & config.xml
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testSound/;" +
+                        GetDeltaDataPathList()  );
 
    RefPtr<TestSoundApp> app = new TestSoundApp("config.xml");
    app->Run();

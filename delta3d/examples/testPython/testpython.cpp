@@ -55,7 +55,8 @@ IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;" + GetDeltaDataPathList());
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testPython/;" +
+                        GetDeltaDataPathList()  );
 
    TestPythonApp* app = new TestPythonApp( "config.xml" );
 

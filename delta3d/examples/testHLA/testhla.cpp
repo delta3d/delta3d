@@ -191,7 +191,8 @@ IMPLEMENT_MANAGEMENT_LAYER( TestHLAApp )
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList("..;" + GetDeltaDataPathList());
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testHLA/;" +
+                        GetDeltaDataPathList()  );
 
    TestHLAApp* app = new TestHLAApp( "config.xml" );
 

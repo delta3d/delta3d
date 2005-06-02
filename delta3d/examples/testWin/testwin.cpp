@@ -678,7 +678,9 @@ TestWinApp::UpdatePosition()
 int 
 main( int argc, char **argv )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testWin/;" +
+                        GetDeltaDataPathList()  );
+
 
    RefPtr<TestWinApp> app = new TestWinApp( "config.xml" );
 

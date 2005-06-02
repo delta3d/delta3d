@@ -118,7 +118,8 @@ IMPLEMENT_MANAGEMENT_LAYER( TestCloudsApp )
 
 int main(int argc, char* argv[])
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testClouds/;" +
+                        GetDeltaDataPathList()  );
    RefPtr<TestCloudsApp> app = new TestCloudsApp( "config.xml" );
    app->Config();
    app->Run();

@@ -103,7 +103,9 @@ void testMultiWin::KeyPressed(   Keyboard*      keyboard,
 main()
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() ); 
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testMultiWin/;" +
+                        GetDeltaDataPathList()  );
+
 
    //Instantiate the application and look for the config file
    RefPtr<testMultiWin> app = new testMultiWin();

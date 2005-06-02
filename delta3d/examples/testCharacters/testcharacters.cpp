@@ -290,7 +290,8 @@ IMPLEMENT_MANAGEMENT_LAYER(TestCharactersApp)
 
 int main()
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testCharacters/;" +
+                        GetDeltaDataPathList()  );
   
    RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
 

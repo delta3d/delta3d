@@ -365,8 +365,10 @@ IMPLEMENT_MANAGEMENT_LAYER(TestInputApp)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() + ";" +
-                         (GetDeltaDataPathList()+"/gui/;") );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testInput/;" +
+                        GetDeltaDataPathList() + ";" +
+                        GetDeltaDataPathList()+"/gui/;" );
+
 
    app = new TestInputApp( "config.xml" );
 

@@ -19,8 +19,9 @@ public:
 
    virtual void Config()
    {
-      SetDataFilePathList( "..;" + GetDeltaDataPathList() + ";" +
-                           (GetDeltaDataPathList()+"/gui/;") );
+      SetDataFilePathList( GetDeltaRootPath() + "/examples/testGUI/;" +
+                           GetDeltaDataPathList() + ";" +
+                           GetDeltaDataPathList()+"/gui/;" );
 
       dtABC::Application::Config();
 
