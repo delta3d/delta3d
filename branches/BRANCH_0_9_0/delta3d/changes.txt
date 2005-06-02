@@ -9,6 +9,7 @@
 ---------
 New Features:
 -Added dtGUI using CEGUI
+-Moved Visual Studio files to the VisualStudio directory
 
 Major Bug Fixes:
 - Fixed bug with relocating a collision shape
