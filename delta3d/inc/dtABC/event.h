@@ -2,8 +2,7 @@
 #define DELTA_EVENT
 
 #include <string>
-#include <dtCore/export.h>
-#include <dtCore/Base.h>
+#include <dtCore/base.h>
 
 namespace dtABC
 {
