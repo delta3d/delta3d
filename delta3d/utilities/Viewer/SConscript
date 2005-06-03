@@ -4,4 +4,7 @@ viewerSrcs = ['main.cpp', 'UserInterface.cxx', 'viewer.cpp', 'viewstate.cpp', 'v
 
 viewerDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
 
+if OS == 'windows' :
+   viewerDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+
 BuildProgram( 'viewer', viewerSrcs, viewerDeps )

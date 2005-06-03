@@ -8,7 +8,9 @@ Import('*')
 
 if CheckForBoost() :
 
-   pythonDtCoreSrcs = [    'basebindings.cpp',
+   pythonSrcs = { 
+   
+            'dtcore' :[    'basebindings.cpp',
                            'camerabindings.cpp',
                            'clouddomebindings.cpp',
                            'cloudplanebindings.cpp',
@@ -52,19 +54,19 @@ if CheckForBoost() :
                            'tripodbindings.cpp',
                            'ufomotionmodelbindings.cpp',
                            'uidrawablebindings.cpp',
-                           'walkmotionmodelbindings.cpp' ]
+                           'walkmotionmodelbindings.cpp' ],
    
-   pythonDtAbcSrcs = [ 'applicationbindings.cpp', 'baseabcbindings.cpp', 'dtabcbindings.cpp', 'weatherbindings.cpp', 'widgetbindings.cpp' ]
+   'dtabc' : [ 'applicationbindings.cpp', 'baseabcbindings.cpp', 'dtabcbindings.cpp', 'weatherbindings.cpp', 'widgetbindings.cpp' ],
     
-   pythonDtAudioSrcs = [ 'audiomanagerbindings.cpp', 'dtaudiobindings.cpp', 'listenerbindings.cpp', 'soundeffectbinderbindings.cpp' ]
+   'dtaudio' : [ 'audiomanagerbindings.cpp', 'dtaudiobindings.cpp', 'listenerbindings.cpp', 'soundeffectbinderbindings.cpp' ],
     
-   pythonDtCharSrcs = [ 'characterbindings.cpp', 'dtcharbindings.cpp' ]
+   'dtchar' : [ 'characterbindings.cpp', 'dtcharbindings.cpp' ],
     
-   pythonGui_flSrcs = [ 'dtguiflbindings.cpp' ]
+   'gui_fl' : [ 'dtguiflbindings.cpp' ],
     
-   pythonDtHlaSrcs = [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ]
+   'dthla' : [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ],
     
-   pythonDtSoarxSrcs = [ 'dtsoarxbindings.cpp', 'soarxterrainbindings.cpp' ]
+   'dtsoarx' : [ 'dtsoarxbindings.cpp', 'soarxterrainbindings.cpp' ] }
     
    ##############
    # Build libs #
@@ -81,23 +83,36 @@ if CheckForBoost() :
       pythonDeps += [  'User32' ] 
       
    pythonDeps = [ extLibs[lib] for lib in pythonDeps if extLibs.has_key(lib) ] + [boostLib]
-
-   pythonDtCoreLib = env.SharedLibrary( 'dtcorebindings', pythonDtCoreSrcs, LIBS = pythonDeps + [dtLibs[ 'dtcore']] )
-   pythonDtAbcLib = env.SharedLibrary( 'dtabcbindings', pythonDtAbcSrcs, LIBS = pythonDeps + [dtLibs[ 'dtabc' ]] )
-   pythonDtAudioLib = env.SharedLibrary( 'dtaudiobindings', pythonDtAudioSrcs, LIBS = pythonDeps + [dtLibs[ 'dtaudio' ]] )
-   pythonDtCharLib = env.SharedLibrary( 'dtcharbindings', pythonDtCharSrcs, LIBS = pythonDeps + [dtLibs[ 'dtchar' ]] )
-   pythonGui_flLib = env.SharedLibrary( 'gui_flbindings', pythonGui_flSrcs, LIBS = pythonDeps + [dtLibs[ 'gui_fl' ]] )
+   
+   if OS == 'windows' and mode == 'debug' :
+      dtCoreBindingsTarget = 'dtcorebindingsd'
+      dtAbcBindingsTarget = 'dtabcbindingsd'
+      dtAudioBindingsTarget = 'dtaudiobindingsd'
+      dtCharBindingsTarget = 'dtcharbindingsd'
+      dtGui_flBindingsTarget = 'gui_flbindingsd'
+   else :
+      dtCoreBindingsTarget = 'dtcorebindings'
+      dtAbcBindingsTarget = 'dtabcbindings'
+      dtAudioBindingsTarget = 'dtaudiobindings'
+      dtCharBindingsTarget = 'dtcharbindings'
+      dtGui_flBindingsTarget = 'gui_flbindings'
+   
+   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtcore'],   LIBS = pythonDeps + [dtLibs['dtcore']] )
+   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtabc'],    LIBS = pythonDeps + [dtLibs['dtabc']] )
+   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtaudio'],  LIBS = pythonDeps + [dtLibs['dtaudio']] )
+   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtchar'],   LIBS = pythonDeps + [dtLibs['dtchar']] )
+   pythonGui_flLib = env.SharedLibrary(  dtGui_flBindingsTarget,  pythonSrcs['gui_fl'],   LIBS = pythonDeps + [dtLibs['gui_fl']] )
 
    env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib )
    
    if env.get('rti') != 0 :
-      pythonDtHlaLib = env.SharedLibrary( 'dthlabindings', pythonDtHlaSrcs, LIBS = pythonDeps + [dtLibs[ 'dthla' ]] )
+      pythonDtHlaLib = env.SharedLibrary( 'dthlabindings', pythonSrcs['dthla'], LIBS = pythonDeps + [dtLibs[ 'dthla' ]] )
       env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None
 
    if OS == 'windows' :
-      pythonDtSoarxLib = env.SharedLibrary( 'dtsoarxbindings', pythonDtSoarxSrcs, LIBS = pythonDeps + [dtLibs[ 'dtsoarx' ]] )
+      pythonDtSoarxLib = env.SharedLibrary( 'dtsoarxbindings', pythonSrcs['dtsoarx'], LIBS = pythonDeps + [dtLibs[ 'dtsoarx' ]] )
       env.Precious( pythonDtSoarxLib )
 
    ################
@@ -123,11 +138,11 @@ if CheckForBoost() :
                      pythonGui_flLib[0] ] )
 
    if pythonDtHlaLib is not None:
-         env.InstallAs( os.path.join('#',dir, 'dtHLA.'.join(suffix)), pythonDtHlaLib[0] )
+         env.InstallAs( os.path.join('#',dir, 'dtHLA.'+suffix), pythonDtHlaLib[0] )
 
    if OS == 'windows' :
       
-      env.InstallAs( os.path.join('#', dir, 'dtSOARX.'.join(suffix)) , pythonDtSoarxLib[0] )
+      env.InstallAs( os.path.join('#', dir, 'dtSOARX.'+suffix) , pythonDtSoarxLib[0] )
       
       env.Install( '#/lib', [ pythonDtCoreLib[1:], \
                               pythonDtAbcLib[1:], \
@@ -138,50 +153,3 @@ if CheckForBoost() :
 
       if pythonDtHlaLib is not None:
          env.Install( '#/bin', pythonDtHlaLib[1:] )
-
-""" 
-   if OS == 'windows':
-      env.InstallAs( [  '#/bin/dtCore.pyd', \
-                        '#/bin/dtABC.pyd', \
-                        '#/bin/dtAudio.pyd', \
-                        '#/bin/dtChar.pyd', \
-                        '#/bin/dtGUIFl.pyd', \
-                        '#/bin/dtSOARX.pyd' ], \
-                     [  pythonDtCoreLib[0], \
-                        pythonDtAbcLib[0], \
-                        pythonDtAudioLib[0], \
-                        pythonDtCharLib[0], \
-                        pythonGui_flLib[0], \
-                        pythonDtSoarxLib[0] ] )  
-                        
-      env.Install( '#/lib', [ pythonDtCoreLib[1:], \
-                              pythonDtAbcLib[1:], \
-                              pythonDtAudioLib[1:], \
-                              pythonDtCharLib[1:], \
-                              pythonGui_flLib[1:], \
-                              pythonDtSoarxLib[1:] ] )
-
-      if pythonDtHlaLib is not None:
-         env.InstallAs( '#/bin/dtHLA.pyd', pythonDtHlaLib[0] )
-         env.Install( '#/bin', pythonDtHlaLib[1:] )
-               
-   elif OS == 'linux':
-
-      print pythonDtCoreLib[0]
-
-      env.InstallAs( [  '#/lib/dtCore.so', \
-                        '#/lib/dtABC.so', \
-                        '#/lib/dtAudio.so', \
-                        '#/lib/dtChar.so', \
-                        '#/lib/dtGUIFl.so' ], \
-                     [ pythonDtCoreLib, \
-                       pythonDtAbcLib, \
-                       pythonDtAudioLib, \
-                       pythonDtCharLib, \
-                       pythonGui_flLib ] ) 
-        
-      if pythonDtHlaLib is not None:
-         env.InstallAs( '#/lib/dtHLA.so', pythonDtHlaLib )
-            
-      #env.InstallAs( '#/lib/dtSOARX.so', pythonDtSoarxLib )
-"""    

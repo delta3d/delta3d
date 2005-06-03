@@ -245,6 +245,10 @@ def find_file( findThis, startDirs ) :
 
 def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
+   target = name
+   if OS == 'windows' and mode == 'debug' :
+      target += 'D'
+
    for lib in deps :
       if depsHash.has_key(lib) :
          for newLib in depsHash[lib] :
@@ -288,24 +292,30 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    if env.has_key('CPPDEFINES'):
      cppDefines = env['CPPDEFINES']
 
-   env.Program( name, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-
+   program = env.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   
+   if OS == 'windows' :
+      env.Install( '#/bin', program[0] ) # .exe
+   
+   # TODO remove old .exes
+   
 def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
    target = name
    if OS == 'windows' and mode == 'debug' :
       target += 'd'
-   
+      
    #add dependencies to global index
    depsHash[name] = deps
    
    #expand pre-built libs
    for lib in deps :
+      env.Depends(target,lib)
       if depsHash.has_key(lib) :
          for newLib in depsHash[lib] :
             if not newLib in deps :
                deps.append(newLib)
-   
+      
    # merge external deps and delta libs
    # there's probably some function to do this
    allLibs = {}
@@ -341,24 +351,19 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
    cppDefines = []
    if env.has_key('CPPDEFINES'):
-     cppDefines = env['CPPDEFINES']
+      cppDefines = env['CPPDEFINES']
    
    lib = env.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
    env.Precious( lib )
    
    if OS == 'windows' :
-     env.Install( '#/bin', lib[0] ) # .dll
-     env.Install( '#/lib', lib[1] ) # .lib, 
-     env.Install( '#/lib', lib[2] ) # .exp
+      env.Install( '#/bin', lib[0] ) # .dll
+      env.Install( '#/lib', lib[1] ) # .lib, 
+      env.Install( '#/lib', lib[2] ) # .exp
    elif OS == 'linux' :
-     # copy headers
-     env.Install( '#/lib', lib )
-
-   #add to global list of built libs
-   #libs += name
+      # TODO: copy headers/lib/bin to prefix on alias install
+      env.Install( '#/lib', lib )
    
-
-
 # Function to calculate current time for logging
 def CurrentTime() :
    now = time.localtime()
@@ -504,8 +509,6 @@ env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependenc
 if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
    env.Append( CPPPATH = [ env.get('boost') ] )
    env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )
-   print env['CPPPATH']
-   print env['LIBPATH']
      
  # RTI 
 rtiLibs = []
@@ -646,8 +649,8 @@ dtLibs = { 'dtabc'    : 'dtabc',
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
-      dtLibs[lib] = lib.join('d')
-
+      dtLibs[lib] = lib + 'd'
+      
 # platform-specific naming of dependencies
 if OS == 'windows' :
    if mode == 'debug' :

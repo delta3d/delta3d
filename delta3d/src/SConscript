@@ -3,7 +3,7 @@ import os
 Import('*')
 
 # order of dependencies...
-modules = [ 'dtUtil', 'dtCore', 'dtABC', 'dtAudio', 'dtChar', 'dtGUI', 'dtHLA', 'dtScript', 'dtVis', 'gui_fl', 'python', 'soarx' ]
+modules = [ 'dtUtil', 'dtCore', 'dtABC', 'dtAudio', 'dtChar', 'dtGUI', 'dtHLA', 'dtScript', 'dtVis', 'gui_fl', 'soarx', 'python' ]
 
 if OS == 'windows' :
 
