@@ -7,11 +7,17 @@
 ---------
 | 0.9.0 |
 ---------
+
 New Features:
--Added dtGUI using CEGUI
+-Added dtGUI using CEGUI (will replace glGUI)
+-Added Xerces XML parser (will replace TinyXML)
+-Updated for OSG 0.9.9
+-New StateManager in dtABC
+-New example: testSOARX
 -Moved Visual Studio files to the VisualStudio directory
 
 Major Bug Fixes:
+- dtAudio now works on Linux!
 - Fixed bug with relocating a collision shape
 
 ---------
