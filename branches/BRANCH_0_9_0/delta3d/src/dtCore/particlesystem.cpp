@@ -120,13 +120,17 @@ public:
       {
          if ( psGeodeTransform* ps = dynamic_cast<psGeodeTransform*>( node ) )
          {
-            osg::NodePath& fullNodePath = nv->getNodePath();
-            fullNodePath.pop_back();
-
-            osg::Matrix localCoordMat = osg::computeLocalToWorld( fullNodePath );
-            osg::Matrix inverseOfAccum = osg::Matrix::inverse( localCoordMat );
-
-            ps->setMatrix( inverseOfAccum );
+            osg::NodePath fullNodePath = nv->getNodePath();
+  
+            if( !fullNodePath.empty() )
+            {
+               fullNodePath.pop_back();
+            
+               osg::Matrix localCoordMat = osg::computeLocalToWorld( fullNodePath );
+               osg::Matrix inverseOfAccum = osg::Matrix::inverse( localCoordMat );
+            
+               ps->setMatrix( inverseOfAccum );
+            }
          }
          traverse(node, nv); 
       }
