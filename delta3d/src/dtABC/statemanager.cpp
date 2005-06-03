@@ -220,6 +220,45 @@ bool StateManager::RemoveTransition( std::string eventType, State* from, State* 
    return false;
 }
 
+const StateManager::EventMap& StateManager::GetTransitions() const
+{
+   return mTransition;
+}
+
+unsigned int StateManager::GetNumOfEvents(const State* from) const
+{
+   unsigned int counter(0);
+   for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
+   {
+      const EventMap::key_type& string_state_pair = (*iter).first;
+      const EventMap::key_type::second_type state = string_state_pair.second;
+      if( state == from )
+      {
+         counter++;
+      }
+   }
+   return counter;
+}
+
+void StateManager::GetEvents(const State* from, std::vector<std::string>& events)
+{
+   /**
+     * Be sure to have correctly resized \param events before calling this function
+     * with the \sa GetNumOfEvents member function.
+     */
+   unsigned int counter(0);
+   for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
+   {
+      const EventMap::key_type& string_state_pair = (*iter).first;
+      const EventMap::key_type::second_type state = string_state_pair.second;
+      if( state == from )
+      {
+         if( events.size() > counter )
+            events[counter++] = string_state_pair.first;
+      }
+   }
+}
+
 State* StateManager::Current()
 {
    return mCurrentState.get();

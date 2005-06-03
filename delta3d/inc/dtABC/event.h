@@ -3,22 +3,24 @@
 
 #include <string>
 #include <dtCore/export.h>
+#include <dtCore/Base.h>
 
 namespace dtABC
 {
 
-   class DT_EXPORT Event
+   class DT_EXPORT Event : public dtCore::Base
    {
       public:
 
          Event();
+         Event(const std::string& mt): mType(mt) {}
          virtual ~Event();
          virtual const std::string& GetType() const { return mType; }
-      
+
       private:
 
-         const std::string mType;
-         
+        const std::string mType;
+
    };
 
 }

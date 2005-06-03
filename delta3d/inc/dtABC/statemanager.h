@@ -20,7 +20,7 @@ namespace dtABC
    {
       DECLARE_MANAGEMENT_LAYER(StateManager)
 
-   private:
+    private:
 
       ///Constructor creates an instance of each state.
       StateManager();
@@ -29,43 +29,50 @@ namespace dtABC
       virtual ~StateManager();
 
    public:
+      typedef std::pair< std::string, dtCore::RefPtr<State> >     EventStatePair;
+      typedef std::map< EventStatePair, dtCore::RefPtr<State> >   EventMap;
 
       static   StateManager*  Instance();
       static   void           Destroy();
 
-               bool           Load( std::string filename );
+      bool           Load( std::string filename );
 
-               void           PreFrame( const double deltaFrameTime );
-               void           Frame( const double deltaFrameTime );
-               void           PostFrame( const double deltaFrameTime );
+      void           PreFrame( const double deltaFrameTime );
+      void           Frame( const double deltaFrameTime );
+      void           PostFrame( const double deltaFrameTime );
 
-               void           OnMessage( MessageData* data );
+      void           OnMessage( MessageData* data );
 
-               bool           AddState( State* state );
-               bool           RemoveState( State* state );
-               State*         GetState( const std::string& name );
+      bool           AddState( State* state );
+      bool           RemoveState( State* state );
+      State*         GetState( const std::string& name );
 
-               bool           AddTransition( std::string eventType, State* from, State* to );
-               bool           RemoveTransition( std::string eventType, State* from, State* to );
+      bool           AddTransition( std::string eventType, State* from, State* to );
+      bool           RemoveTransition( std::string eventType, State* from, State* to );
 
-               ///Returns pointer to current state.
+      /// Returns the transition map
+      inline const   EventMap& GetTransitions() const;
+
+      /// Determines the number of events for the State
+      unsigned int   GetNumOfEvents(const State* from) const;
+
+      /// \brief This method should be used with \sa GetNumOfEvents
+      void           GetEvents(const State* from, std::vector<std::string>& events);
+
+      ///Returns pointer to current state.
       inline   State*         Current();
       inline   const State*   Current() const;
 
-               void           MakeCurrent( State* state );
+      void           MakeCurrent( State* state );
 
-               ///Calls shutdown on currently executing state.
-               void           Stop();
+      ///Calls shutdown on currently executing state.
+      void           Stop();
 
-               //TODO: make this the << operater?
-               ///Prints list of all states and transitions
-               void           Print( bool stateBased = false ) const;
+      //\todo: make this the << operater?
+      ///Prints list of all states and transitions
+      void           Print( bool stateBased = false ) const;
 
    private:
-
-      typedef std::pair< std::string, dtCore::RefPtr<State> >     EventStatePair;
-      typedef std::map< EventStatePair, dtCore::RefPtr<State> >   EventMap;
-
       static dtCore::RefPtr<StateManager>    mManager;
       dtCore::RefPtr<State>                  mCurrentState;
       Event*                                 mLastEvent;
