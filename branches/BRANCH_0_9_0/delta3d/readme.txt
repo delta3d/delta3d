@@ -24,18 +24,19 @@ OpenSceneGraph
 Producer
 OpenThreads
 
-Cal3D
-ConfigScript
+CAL3D
+Crazy Eddie's GUI System
 FLTK
 GDAL
-glGUI
+glGUI 
 Intersense Tracker Library
 OpenAL
 Open Dynamics Engine
-PLIB
+PLIB 
 ReplicantBody
 Signal_Slot	
-TinyXML
+TinyXML 
+Xerces
 
 Thanks for using Delta3D! Please visit our webpage at http://www.delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
@@ -44,7 +45,3 @@ our best to respond as quick as possible.
 Sincerely,
 
 The Delta3D Team
--Erik Johnson
--John Locke
--Chris Osborn
--Matt Prichard
