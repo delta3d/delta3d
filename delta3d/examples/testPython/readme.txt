@@ -28,32 +28,6 @@ Instructions
 
 Win32
 =====
-Install Python 2.3 from:
-   http://www.python.org/2.3.4/
-
-Obtain the Boost library from SourceForge (package 'boost'):
-   http://sourceforge.net/projects/boost/
-
-Decompress Boost.
-
-Open boost_1_31_0/libs/python/build/VisualStudio/boost_python.dsw.
-
-Build boost_python.
-
-Make sure boost_python.dll and boost_python_debug.dll are within a directory in your PATH
-   evironement variable.
-
-Check if the following environement variables are set:
-  PYTHON_ROOT: directory of Python installation
-  PYTHON_LIB_PATH: %PYTHON_ROOT%/libs
-  PYTHON_VERSION: version of your Python installation
-  PYTHONPATH: environement variable contains the directory with the resulting
-              .pyd libraries (most likely delta3d/bin).
-
-Build the Delta3D Python bindings:
-- Open delta3d/src/python/dtPython.sln
-- Build.
-
 To use pre-built testPython: 
 - Go to examples/testPython/Release.
 - Double-click testPython.exe.
@@ -72,7 +46,6 @@ To build from source:
 - Start testPython.
 - At the Python prompt inside the console/terminal type:
    execfile('flyhelo.py')
-
 
 This should make the helo fly in a circle.
 
@@ -95,39 +68,14 @@ testpythongui.py:
 Linux
 =====
 
-Install Python:
-- Check if you have Python installed, type:
-     python -V
-- If it prints out the version number, you are set. 
-- Else install Python 2.3:
-     http://www.python.org/2.3.4/
+Run:
 
-Install Boost Python:
-- Obtain the Boost library from SourceForge (package 'boost'):
-     http://sourceforge.net/projects/boost/
-- Obtain Boost Jam (package 'boost-jam').
-- Decompress the BoostJam archive and place the file 'bjam' in your PATH.
-- Set env. var PYTHON_ROOT to your your python installation (usually /usr or /usr/local)
-- Set env. var PYTHON_VERSION to the 2-part major python version (e.g. 2.3 or 2.4)
-- Go to boost_1_31_0/libs/python/build.
-- Run 'bjam -sTOOLS=gcc'.
-- Copy resulting shared objects to delta3d/ext/lib (non-debug version is
-  already supplied, but hey, you want your own, right?):
-     'cp -d libboost_python.so* $DELTA_ROOT/ext/lib'
-     'cp -d libboost_python_debug.so* $DELTA_ROOT/ext/lib'
+scons boost=/path/to/boost examples/testPython
+ or
+scons boost=/path/to/boost python
 
-Note: If you wish to place the boost_python libraries in a different location,
-      make sure to edit delta3d/src/python/CMakeLists.txt and add that location
-      to the LINK_DIRECTORTIES list.
-
-Build the Python bindings for Delta3D engine:
-- Go to the delta3d root directory.
-- Run 'scons python'
-- Run 'scons install'
-
-Set the PYTHONPATH environement variable to contain $DELTA_LIB.
-
-The testPython example should be built automictally by the above command.
+The testPython example should be built automictally by either of 
+the above commands.
 
 Run 'testPython'.
 
@@ -152,4 +100,3 @@ testpathedcamera.py:
 testpythongui.py:
 - This script uses the Tk toolkit to make a quick GUI.
 - It is unsupported on Linux for now, due to a X11 crash.
-
