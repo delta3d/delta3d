@@ -16,5 +16,5 @@ if OS == 'windows' :
    if OS == 'windows' :
       dtSoarxDeps += [ 'User32' ]
 
-   BuildLib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps, ['DT_LIBARY'] )
+   BuildLib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps, ['DT_LIBRARY'] )
    

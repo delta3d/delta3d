@@ -298,7 +298,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    
    #add dependencies to global index
    depsHash[name] = deps
-      
+   
    #expand pre-built libs
    for lib in deps :
       if depsHash.has_key(lib) :
@@ -642,7 +642,7 @@ dtLibs = { 'dtabc'    : 'dtabc',
            'dtutil'   : 'dtutil',
            'dtvis'    : 'dtvis',
            'gui_fl'   : 'gui_fl',
-           'soarx'    : 'soarx' }
+           'dtsoarx'  : 'dtsoarx' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
