@@ -1,4 +1,4 @@
-Delta3D makes use of Environment Variables to find files when compiling, linking, and at runtime.
+Delta3D makes use of Environment Variables to find files at runtime.
 
 These environment variables should be set prior to using Delta3D:
 
