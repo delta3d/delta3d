@@ -492,7 +492,7 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
 void StateManager::TransitionHandler::fatalError(const SAXParseException& exception)
 {
    char* message = XMLString::transcode(exception.getMessage());
-   Notify(ALWAYS) << "Fatal Error: " << message
+   Notify(WARN) << "Fatal Error: " << message
       << " at line: " << exception.getLineNumber()
       << std::endl;
 }
@@ -503,8 +503,8 @@ void StateManager::TransitionHandler::endElement(const XMLCh* const name)
 
    if (elementName == "Transition")
    {
-      Notify(ALWAYS, "AddTransition('%s', '%s', '%s')",
-        mEventTypeName.c_str(),
+      Notify(DEBUG_INFO, "AddTransition('%s', '%s', '%s')",
+         mEventTypeName.c_str(),
          mFromState->GetName().c_str(),
          mToState->GetName().c_str() );
 
