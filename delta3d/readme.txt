@@ -8,8 +8,8 @@ Welcome to Delta3D! We hope to get you up and running with Delta3D as
 quickly as possible. If you only wish run pre-built applications and have
 already used the Win32 installer, you are ready to rock. 
 
-Go ahead and try out the examples found in the examples/ directory by 
-double-clicking on the .exe files inside the Release folders. 
+Go ahead and try out the examples by running the executables found in
+the bin folder (Win32) or examples/test* (Linux).
 
 There are also several useful utitilies found in the utilities/ folder.
 See the readme.txt in that folder for more details.

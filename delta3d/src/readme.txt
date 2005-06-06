@@ -20,16 +20,21 @@ environment variables.
 Win32 w/ Visual Studio .NET 7.1
 -------------------------------
 
-2. Open VisualStudio/delta_all.sln, build! 
+2. Open VisualStudio/delta.sln, build! This will generate the essential Delta3D
+   libraries that can be built with our distributed dependencies.
 
-   Alternatively, you build use the other solutions:
+3. The rest of the components can be build with their own solutions
+   (dependencies that we do not distribute are listed in parentheses):
    
-   VisualStudio/src/delta.sln             : libraries
-   VisualStudio/src/*/*.sln               : invdividual libraries
-   VisualStudio/src/python/dtpython.sln   : python bindings
-   VisualStudio/examples/examples.sln     : examples
-   VisualStudio/examples/*/*.sln          : individual examples
-   VisualStudio/utilities/*/*.sln         : individual utilities
+   VisualStudio/src/dtHLA/dthla.sln          : HLA library (RTI)
+   VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
+   VisualStudio/src/python/dtpython.sln      : python bindings (Python, BoostPython)
+   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, BoostPython, RTI)
+   VisualStudio/examples/*/*.sln             : individual examples
+   VisualStudio/utilities/*/*.sln            : individual utilities
+ 
+   Or just build EVERYTHING (make sure you have Python, BoostPython, RTI):
+   VisualStudio/delta_all.sln  
 
    dtHLA
    -----
