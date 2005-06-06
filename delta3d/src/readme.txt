@@ -4,25 +4,10 @@
 #                             #
 ###############################
 
-Win32 w/ Visual Studio .NET 7.1
--------------------------------
+See env_vars.txt for information on setting up your Delta3D
+environment variables.
 
-1. Make sure the Delta3D environment variables are set by
-   either the Win32 installer or env_var_setup.exe in 
-   delta3d/utilities. The following variables are set:
-   
-   DELTA_ROOT: path to your Delta3D installation
-   DELTA_DATA: %DELTA_ROOT%\data
-   DELTA_INC:  %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc
-   DELTA_LIB:  %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
-   
-   Also add %DELTA_ROOT%\bin to your PATH.
-
-   These variables are NOT necessary to build within a particular
-   source tree as we use relative pathing. However, most Delta3D
-   applications use these to reference the libraries and data.
-
-2. Check if you have the ext/ and data/ directories already in
+1. Check if you have the ext/ and data/ directories already in
    delta3d/.
    
    If you do not, please download the latest version of
@@ -30,9 +15,12 @@ Win32 w/ Visual Studio .NET 7.1
    Delta3D folder:
 
    delta3d-dependencies 
-   delta3d-data        
+   delta3d-data
 
-3. Open VisualStudio/delta_all.sln, build! 
+Win32 w/ Visual Studio .NET 7.1
+-------------------------------
+
+2. Open VisualStudio/delta_all.sln, build! 
 
    Alternatively, you build use the other solutions:
    
@@ -67,17 +55,20 @@ Win32 w/ Visual Studio .NET 7.1
    dtPython
    --------  
    The Delta3D Python bindings requires the following additional 
-   packages: Python  and boost::Python. 
-   
-   Install Python 2.3 from:
-   http://www.python.org/2.3.4/
+   packages: Python and boost::Python. 
+
+   We've tested with Python 2.3. Version 2.4 SHOULD work, but I haven't
+   tested it myself, so no promises.
+
+   Install Python from:
+   http://www.python.org/
 
    Obtain the Boost library from SourceForge (package 'boost'):
    http://sourceforge.net/projects/boost/
 
    Decompress Boost.
 
-   Open boost_1_31_0/libs/python/build/VisualStudio/boost_python.dsw.
+   Open boost_1_32_0/libs/python/build/VisualStudio/boost_python.dsw.
 
    Build boost_python.
 
@@ -95,50 +86,12 @@ Win32 w/ Visual Studio .NET 7.1
   - Open VisualStudio/src/python/dtPython.sln
   - Build.
 
-Linux 
------
-Tested on: Fedora Core 2, Fedora Core 3 
-SHOULD work on: Debian (Gentoo, Ubuntu), RedHat
+Win32 w/ SCons, Linux
+---------------------
 
-1. Run 'glxinfo | grep direct'.
-   If you get 'direct rendering: yes' skip to 3.
-   Else...
+2. Download SCons from http://www.scons.org .
 
-2. Install OpenGL drivers for your video card.
-
-   For info on how to do this, see:
-
-   ATI:   http://www.fedorafaq.org/#radeon
-   Nvdia: http://www.fedorafaq.org/#nvidia
-
-3. Set the Delta3D environment variables. 
-   
-   DELTA_ROOT: path to your Delta3D installation
-   DELTA_DATA: $DELTA_ROOT/data
-   DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc
-   DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
-
-   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
-
-   Don't forget to 'export' your variables if you are using Bash!
-
-   These variables are NOT necessary to build within a particular
-   source tree as we use relative pathing. However, most Delta3D
-   applications use these to reference the libraries and data.
-
-4. Check if you have the ext/ and data/ directories already in
-   delta3d/.
-   
-   If you do not, please download the latest version of
-   the following packages from Sourceforge and extract them into the
-   Delta3D folder:
-
-   delta3d-dependencies 
-   delta3d-data 
-
-5. Download SCons from http://www.scons.org .
-
-6. You will notice files called SConstruct and SConscript in the delta3d 
+3. You will notice files called SConstruct and SConscript in the delta3d 
    subdirectories. These files are high-level scripts that tell SCons how 
    to build Delta3D.
 
@@ -174,18 +127,18 @@ SHOULD work on: Debian (Gentoo, Ubuntu), RedHat
     boost=path to your boost installation
     rti=path ro your RTI installation
 
+3. To build your own Delta3D apps in SCons, feel free to hack on scons_template
+   as a template for how to use SCons outside our source tree.   
+
    dtPython
    --------
-   Python is installed on almost Linux distribution. 
-   If it ain't get a real distribution ;)
+   The Delta3D Python bindings requires the following additional 
+   packages: Python and boost::Python. 
 
    We've tested with Python 2.3. Version 2.4 SHOULD work, but I haven't
    tested it myself, so no promises.
-   
-   Boost Python can be found on many distributions as well, but the dev
-   package usually instlladed by default. Find an RPM or...
 
-   Install Boost Python (manually):
+   Install Boost Python (Linux w/ bjam, see above for MSVC):
    - Obtain the Boost library from SourceForge (package 'boost'):
      http://sourceforge.net/projects/boost/
    - Obtain Boost Jam (package 'boost-jam').
@@ -203,7 +156,7 @@ SHOULD work on: Debian (Gentoo, Ubuntu), RedHat
    - Go to the delta3d root directory.
    - Run 'scons boost=/path/to/boost python'
 
-   Set the PYTHONPATH environement variable to contain $DELTA_LIB.
+   Set the PYTHONPATH environement variable to contain the var DELTA_LIB.
 
    dtHLA
    -----
