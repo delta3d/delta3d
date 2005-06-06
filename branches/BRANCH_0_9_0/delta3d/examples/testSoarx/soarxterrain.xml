@@ -4,8 +4,8 @@
 	
 	<GeoOrigin latitude="36.58" longitude="-121.85" elevation="0.0"/>
 
+	<DTED path="../data/dted/level0"/>
 	<DTED path="../../../data/dted/level0"/>
-	<DTED path="../../data/dted/level0"/>
 
 <!--
    <Gamma Correction = "1.7"/>
