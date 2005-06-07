@@ -1,5 +1,6 @@
 import glob
 import os 
+import shutil
 import re
 import sys
 import time
@@ -296,7 +297,16 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    
    if OS == 'windows' :
       env.Install( '#/bin', program[0] ) # .exe
-   
+#   if OS == 'darwin' :
+#      appdir = name + '.app'
+#      os.mkdir( appdir, 0755 )
+#      os.mkdir( os.path.join( appdir, 'Contents' )  )
+#      os.mkdir( os.path.join( appdir, 'Contents', 'MacOS' )  )
+#      shutil.copy('Info.plist', os.path.join( appdir, 'Contents' ) )
+#      shutil.copy('PkgInfo', os.path.join( appdir, 'Contents' ) )
+#      env.Install( os.path.join( appdir, 'Contents', 'MacOS' ) , program[0] ) # .exe
+
+
    # TODO remove old .exes
    
 def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
@@ -363,7 +373,9 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    elif OS == 'linux' :
       # TODO: copy headers/lib/bin to prefix on alias install
       env.Install( '#/lib', lib )
-   
+   elif OS == 'darwin' :
+      env.Install( '#/lib', lib )   
+
 # Function to calculate current time for logging
 def CurrentTime() :
    now = time.localtime()
@@ -864,7 +876,7 @@ if OS == 'windows' :
 elif OS == 'darwin' :
    linkOrder = [ 'CoreFoundation', 'IOKit', 'Carbon' ] + linkOrder
 elif OS == 'linux' :
-   linkOrder = linkOrder + [ 'Xxf86vm', 'uuid' ]
+   linkOrder = [ 'Xxf86vm', 'uuid' ] + linkOrder 
 
 foundLibs = {}
 
