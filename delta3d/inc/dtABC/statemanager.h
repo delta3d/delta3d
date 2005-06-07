@@ -34,24 +34,24 @@ namespace dtABC
       typedef dtCore::RefPtr<State>             StatePtr;
       typedef std::pair<std::string, StatePtr>  EventStatePtrPair;
 
-      struct StatePtrLess : std::binary_function<const StatePtr,const StatePtr,bool>
+      struct StatePtrLess : public std::binary_function<StatePtr,StatePtr,bool>
       {
          /** \brief Comparison object that keys off the name of a \class State .
            */
-         bool operator()(const StatePtr lhs,const StatePtr rhs) const
+         bool operator()(const StatePtr& lhs,const StatePtr& rhs) const
          {
-            return ( lhs->GetName() < rhs->GetName() );//&& (lhs->GetType()==rhs->GetType()))
+            return ( lhs->GetName() < rhs->GetName() );//&& (lhs->GetType() < rhs->GetType()))
          }
       };
       typedef std::set<StatePtr,StatePtrLess>                                 StatePtrSet;
 
-      struct EventStatePtrPairLess : std::binary_function<EventStatePtrPair,EventStatePtrPair,bool>
+      struct EventStatePtrPairLess : public std::binary_function<EventStatePtrPair,EventStatePtrPair,bool>
       {
-         /** Re-implement the default comparison algorithm for std::Pairi<T1,T2>::operator<,
+         /** Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
            * \sa http://www.sgi.com/tech/stl/pair.html ,
            * but add smart StatePtr comparison with the StatePtrLess predicate.
            */
-         bool operator()(const EventStatePtrPair x, const EventStatePtrPair y) const
+         bool operator()(const EventStatePtrPair& x, const EventStatePtrPair& y) const
          {
             // try to use the first element
             bool first_less( x.first < y.first );
