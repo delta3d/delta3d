@@ -88,8 +88,10 @@ namespace dtABC
       bool           AddTransition(const std::string& eventType, State* from, State* to );
       bool           RemoveTransition(const std::string& eventType, State* from, State* to );
 
+      /// Returns the set of states
+      inline const   StatePtrSet&   GetStates() const;
       /// Returns the transition map
-      inline const   EventMap& GetTransitions() const;
+      inline const   EventMap&      GetTransitions() const;
 
       /// Determines the number of events for the State
       unsigned int   GetNumOfEvents(const State* from) const;
