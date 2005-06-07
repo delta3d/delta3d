@@ -7,6 +7,9 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/SAXParser.hpp>
 
+#include <functional>  // for std::unary_function
+#include <algorithm>   // for count_if
+
 using namespace dtABC;
 using namespace dtCore;
 XERCES_CPP_NAMESPACE_USE
@@ -259,12 +262,16 @@ void StateManager::GetEvents(const State* from, std::vector<std::string>& events
    for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
    {
       const EventMap::key_type::second_type state = (*iter).first.second;
-      if( state == from )
+      if( state->GetName() == from->GetName() )
       {
          if( events.size() > counter )
             events[counter++] = (*iter).first.first;
+         // else throw exception?
       }
    }
+
+   if( events.size() != counter )
+      assert( 0 );
 }
 
 State* StateManager::Current()
