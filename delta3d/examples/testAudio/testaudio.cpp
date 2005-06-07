@@ -916,7 +916,8 @@ TestAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
 int
 main( int argc, const char* argv[] )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testAudio/;" +
+                        GetDeltaDataPathList()  );
 
    RefPtr<TestAudioApp>  app   = new TestAudioApp( "config.xml" );
 

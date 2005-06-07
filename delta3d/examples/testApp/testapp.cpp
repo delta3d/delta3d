@@ -6,8 +6,10 @@ using namespace dtABC;
 
 int main()
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testApp/;" +
+                        GetDeltaDataPathList()  );
+                        
    RefPtr<Application> app = new Application( "config.xml" );
 
    //load some terrain

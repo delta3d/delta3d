@@ -1,16 +1,20 @@
+#include <CEGUI/CEGUI.h>
+
+#include "dtGUI/dtgui.h"
 #include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
 
-
 using namespace dtCore;
 using namespace dtABC;
-using namespace osg;
-
 
 /**
 * The application instance.
 */
 class TestInputApp* app;
+
+///colors to reflect the button states
+CEGUI::colour kOff(0.f, 0.f, 0.f, 1.f);
+CEGUI::colour kOn(1.f, 0.f, 0.f, 1.f);
 
 /**
 * The input test application.
@@ -114,19 +118,44 @@ public:
 
       GetWindow()->GetPosition(&x, &y, &w, &h);
 
-      mUIDrawable = new UIDrawable(w, h);
+      mUIDrawable = new dtGUI::CEUIDrawable(w, h);
 
-      mUIDrawable->SetWindowResolution(w, h);
+      try
+      {
+         std::string schemeFileName = osgDB::findDataFile("gui/schemes/WindowsLook.scheme");
+         CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
 
-      mGUILoaded = mUIDrawable->LoadGUIFile("gui.xml");
+         CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
+         CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
 
-      if(!mGUILoaded)
-         return;
+         CEGUI::Window* sheet = CEGUI::WindowManager::getSingleton().createWindow("DefaultGUISheet", "root_wnd");
+         CEGUI::System::getSingleton().setGUISheet(sheet);
+          
+         CEGUI::Window *w = CEGUI::WindowManager::getSingleton().loadWindowLayout("gui.xml");
+         if (w != NULL)
+         {
+            mGUILoaded = true;
+            sheet->addChildWindow(w);
+         }
 
-      mUIDrawable->SetCallbackFunc("main", (CUI_UI::callbackfunc)CallbackHandler);
-      mUIDrawable->SetActiveRootFrame("main");
+      }
+      // catch to prevent exit (errors will be logged).
+      catch(CEGUI::Exception &e)
+      {
+         Notify(WARN, "CEGUI::%s", e.getMessage().c_str() );
+      }
 
-      GetScene()->AddDrawable(mUIDrawable.get());
+
+      if(!mGUILoaded)  return;
+       
+      CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+      wm->getWindow("Action 1 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
+      wm->getWindow("Action 2 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
+      wm->getWindow("Action 3 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
+      wm->getWindow("Axis 1 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
+      wm->getWindow("Axis 2 Button")->subscribeEvent(CEGUI::PushButton::EventClicked, &CallbackHandler);
+
+      GetScene()->AddDrawable( mUIDrawable.get() );
    }
 
    bool IsGUILoaded()
@@ -152,23 +181,9 @@ public:
 
       if(b2b != NULL)
       {
-         CUI_Button* b = (CUI_Button*)mUIDrawable->GetUI()->GetFrame(mButtonIndex+1);
+         CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mButtonName);
 
-         std::string desc = b2b->GetSourceButton()->GetDescription();
-
-         //pad with spaces to make formatting look right
-         unsigned int columns = 12;
-         std::string buttonText = "";
-         if( desc.length() < columns )
-         {
-            buttonText = desc;
-            for( unsigned int i = 0; i < (columns - desc.length()); i++)
-               buttonText = buttonText + ' ';
-         }
-         else
-            buttonText = desc;
-
-         b->SetText(buttonText.c_str());
+         b->setText( b2b->GetSourceButton()->GetDescription() );
       }
    }
 
@@ -190,9 +205,9 @@ public:
 
       if(a2a != NULL)
       {
-         CUI_Button* b = (CUI_Button*)mUIDrawable->GetUI()->GetFrame(mAxisIndex+4);
+         CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mAxisName);
 
-         b->SetText(a2a->GetSourceAxis()->GetDescription().c_str());
+         b->setText(a2a->GetSourceAxis()->GetDescription().c_str());
       }
    }
 
@@ -208,98 +223,104 @@ protected:
    {
       Joystick::PollInstances();
 
-      mUIDrawable->GetUI()->GetFrame(6)->SetShader(
-         mUIDrawable->GetShader(
-         mApplicationInputDevice->GetButton(0)->GetState() ?
-         "button_red" : "button"
-         )
-         );
+      {
+         CEGUI::Static *w = (CEGUI::Static*)CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
+         if (mApplicationInputDevice->GetButton(0)->GetState())
+         {
+            w->setBackgroundColours( kOn );
+         }
+         else
+         {
+            w->setBackgroundColours( kOff );
+         }
+      }
 
-      mUIDrawable->GetUI()->GetFrame(7)->SetShader(
-         mUIDrawable->GetShader(
-         mApplicationInputDevice->GetButton(1)->GetState() ?
-         "button_red" : "button"
-         )
-         );
+      {
+         CEGUI::Static *w = (CEGUI::Static*)CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
+         if (mApplicationInputDevice->GetButton(1)->GetState())
+         {
+            w->setBackgroundColours( kOn );
+         }
+         else
+         {
+            w->setBackgroundColours( kOff );
+         }
+      }
 
-      mUIDrawable->GetUI()->GetFrame(8)->SetShader(
-         mUIDrawable->GetShader(
-         mApplicationInputDevice->GetButton(2)->GetState() ?
-         "button_red" : "button"
-         )
-         );
+      {
+         CEGUI::Static *w = (CEGUI::Static*)CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
+         if (mApplicationInputDevice->GetButton(2)->GetState())
+         {
+            w->setBackgroundColours( kOn );
+         }
+         else
+         {
+            w->setBackgroundColours( kOff );
+         }
+      }
 
-      CUI_SliderBar* bar;
 
-      bar = (CUI_SliderBar*)mUIDrawable->GetUI()->GetFrame(9);
+      CEGUI::ProgressBar *bar1 = (CEGUI::ProgressBar*)CEGUI::WindowManager::getSingleton().getWindow("Axis 1 Slider");
+      bar1->setProgress( (mApplicationInputDevice->GetAxis(0)->GetState()+1.f)*0.5f);
 
-      bar->SetValue(
-         (mApplicationInputDevice->GetAxis(0)->GetState()+1.0)*50.0
-         );
 
-      bar = (CUI_SliderBar*)mUIDrawable->GetUI()->GetFrame(10);
+      CEGUI::ProgressBar *bar2 = (CEGUI::ProgressBar*)CEGUI::WindowManager::getSingleton().getWindow("Axis 2 Slider");
+      bar2->setProgress( (mApplicationInputDevice->GetAxis(1)->GetState()+1.f)*0.5f );
 
-      bar->SetValue(
-         (mApplicationInputDevice->GetAxis(1)->GetState()+1.0)*50.0
-         );
    }
 
    /**
    * GUI callback handler.
    */
-   static bool CallbackHandler(int id, int numParam, void* param)
+   static bool CallbackHandler(const CEGUI::EventArgs& e)
    {
-      CUI_Button* button;
-
-      switch(id)
+      CEGUI::Window* w = (CEGUI::Window*)((const CEGUI::WindowEventArgs&)e).window;
+      
+      switch( w->getID() )
       {
       case 1: // Action 1
-         button = 
-            (CUI_Button*)app->mUIDrawable->GetUI()->GetFrame(1);
+
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
-            button->SetText("");
+            w->setText("");
             app->mButtonIndex = 0;
+            app->mButtonName = w->getName().c_str();
          }
          break;
 
       case 2: // Action 2
-         button = 
-            (CUI_Button*)app->mUIDrawable->GetUI()->GetFrame(2);
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
-            button->SetText("");
+            w->setText("");
             app->mButtonIndex = 1;
+            app->mButtonName = w->getName().c_str();
          }
          break;
 
       case 3: // Action 3
-         button = 
-            (CUI_Button*)app->mUIDrawable->GetUI()->GetFrame(3);
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
-            button->SetText("");
+            w->setText("");
             app->mButtonIndex = 2;
+            app->mButtonName = w->getName().c_str();
          }
          break;
 
       case 4: // Axis 1
-         button = 
-            (CUI_Button*)app->mUIDrawable->GetUI()->GetFrame(4);
          if(app->mInputMapper->AcquireAxisMapping(app))
          {
-            button->SetText("");
+            w->setText("");
             app->mAxisIndex = 0;
+            app->mAxisName = w->getName().c_str();
          }
          break;
 
       case 5: // Axis 2
-         button = 
-            (CUI_Button*)app->mUIDrawable->GetUI()->GetFrame(5);
          if(app->mInputMapper->AcquireAxisMapping(app))
          {
-            button->SetText("");
+            w->setText("");
             app->mAxisIndex = 1;
+            app->mAxisName = w->getName().c_str();
          }
          break;
       }
@@ -329,12 +350,13 @@ private:
    /**
    * The user interface.
    */
-   RefPtr<UIDrawable> mUIDrawable;
+   RefPtr<dtGUI::CEUIDrawable> mUIDrawable;
 
    /**
    * The index of the button/axis being mapped.
    */
    int mButtonIndex, mAxisIndex;
+   std::string mButtonName, mAxisName;
    bool mGUILoaded;
 
 };
@@ -343,7 +365,10 @@ IMPLEMENT_MANAGEMENT_LAYER(TestInputApp)
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testInput/;" +
+                        GetDeltaDataPathList() + ";" +
+                        GetDeltaDataPathList()+"/gui/;" );
+
 
    app = new TestInputApp( "config.xml" );
 

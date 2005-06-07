@@ -11,17 +11,10 @@ if OS == 'windows' :
                    'soarxterrain.cpp',
                    'soarx_texture.cpp' ]
 
-   dtSoarxDeps = [ 'gdal', 'osg', 'osgUtil', 'osgDB', 'osgGL2', 'sg', 'tinyxml', 'ul', 'ode', 'OpenGL' ]
+   dtSoarxDeps = [ 'dtcore', 'gdal' ]
    
    if OS == 'windows' :
       dtSoarxDeps += [ 'User32' ]
-      
-   dtSoarxDeps = [ extLibs[lib] for lib in dtSoarxDeps if extLibs.has_key(lib) ]
-      
-   if mode == 'debug' :
-      dtSoarxDeps += [ 'dtcored' ]
-   else :
-      dtSoarxDeps += [ 'dtcore' ]
 
-   build_delta3d_lib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps )
+   BuildLib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps, ['DT_LIBRARY'] )
    

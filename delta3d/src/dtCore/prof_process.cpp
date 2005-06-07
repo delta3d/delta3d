@@ -40,6 +40,10 @@ static int update_cursor;
 ////////////////////////////////////////////////////////////////////////
 
 
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+#define strdup _strdup
+#endif
+
 #ifndef Prof_ENABLED
 static Prof_Zone *expand = NULL;
 
@@ -681,14 +685,14 @@ Prof_Report *Prof_create_report(void)
 #endif
 
    if (speedstep_warning)
-      pob->title[1] = _strdup("WARNING: SpeedStep-like timer inconsistencies detected.  Results are unreliable!");
+      pob->title[1] = strdup("WARNING: SpeedStep-like timer inconsistencies detected.  Results are unreliable!");
    else if (overhead_fraction.values[slot < 3 ? 1 : slot] > 0.04) {
       char buffer[128];
       sprintf(buffer, "estimated %4.2f%% profile overhead--%5.3f microsec/call, %5.4f ms total",
                         overhead_fraction.values[slot] * 100,
                         overhead_cost.values[slot] * 1000000,
                         overhead_time.values[slot] * 1000);
-      pob->title[1] = _strdup(buffer);
+      pob->title[1] = strdup(buffer);
    }
       
 
@@ -748,10 +752,10 @@ Prof_Report *Prof_create_report(void)
       update_cursor = 0;
    }
 
-   pob->header[0] = _strdup("zone");
-   pob->header[1] = _strdup("self");
-   pob->header[2] = _strdup("hier");
-   pob->header[3] = _strdup("count");
+   pob->header[0] = strdup("zone");
+   pob->header[1] = strdup("self");
+   pob->header[2] = strdup("hier");
+   pob->header[3] = strdup("count");
 
    if (cursor < 0) cursor = 0;
    if (cursor >= pob->num_record) cursor = pob->num_record-1;

@@ -6,17 +6,9 @@ if env.get('rti') != 0 :
                   'entity.cpp',
                   'rticonnection.cpp' ]
                   
-   dtHlaDeps = [ 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgUtil', 'osgSim', 'osgText', 'sg', 'ul', 'Producer', 'tinyxml' ]
+   dtHlaDeps = [ 'dtcore', 'osgSim' ] + rtiLibs
    
    if OS == 'windows' :
-      dtHlaDeps += ['User32','winsock']
-   
-   dtHlaDeps = [ extLibs[lib] for lib in dtHlaDeps if extLibs.has_key(lib) ] + rtiSLibs
-   
-   if mode == 'debug' :
-      dtHlaDeps += [ 'dtcored' ]
-   else :
-      dtHlaDeps += [ 'dtcore' ]
-      
-   build_delta3d_lib( 'dthla', dtHlaSrcs, dtHlaDeps )
-
+      dtHlaDeps += ['winsock']
+         
+   BuildLib( 'dthla', dtHlaSrcs, dtHlaDeps, ['DT_LIBRARY'] )

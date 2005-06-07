@@ -3,18 +3,8 @@ Import('*')
 dtCharSrcs = [  'character.cpp' ]
 
 if OS == 'darwin':
-    dtCharDeps=[ 'OpenThreads', 'osg', 'osgText', 'osgSim', 'osgDB', 'osgUtil', 'osgGL2', 'osgFX', 'glgui', 'isense', 'js', 'tinyxml' , 'sg', 'ul', 'Producer', 'cal3d', 'rbody' ] 
+    dtCharDeps=[ 'dtcore', 'cal3d', 'rbody', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ] 
 else:
-    dtCharDeps=[ 'osg', 'osgDB', 'sg', 'ul', 'Producer', 'rbody', 'rvrutils', 'cal3d' ] 
-
-if OS == 'windows' :
-   dtCharDeps += ['User32']
-
-dtCharDeps = [ extLibs[lib] for lib in dtCharDeps if extLibs.has_key(lib) ]
-
-if mode == 'debug' :
-   dtCharDeps += [ 'dtcored' ]
-else :
-   dtCharDeps += [ 'dtcore' ]
+    dtCharDeps=[ 'dtcore', 'cal3d', 'rbody', 'rvrutils', 'rcfgscript' ] 
     
-build_delta3d_lib( 'dtchar', dtCharSrcs, dtCharDeps )
+BuildLib( 'dtchar', dtCharSrcs, dtCharDeps, ['DT_LIBRARY'] )

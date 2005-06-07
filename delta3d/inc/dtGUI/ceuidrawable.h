@@ -20,24 +20,20 @@
 namespace dtGUI
 {
 
-   ///ties the OSG GUI node to a dtCore Drawable
+   ///A DeltaDrawable used to render the CEGUI
 
-   /** The UIDrawable class allows you to associate a glGUI User Interface with
-   * a dtCore::Drawable so it can be added to the dtCore::Scene.
-   * To use, just create an instance of it, then add in the UI elements using
-   * AddFrame(), AddShader(), AddFont(), AddBorder(), etc.
-   * Then add the UIDrawable to the Scene for it to be rendered.
-   * 
-   * Default Shaders will be created and used if the UI elements are added 
-   * without a Shader assigned to it.
-   *
-   * This class will read Keyboard and Mouse events and pass them on to the
-   * CUI_UI for processing.
-   *
-   */
+   /** This class is a derivative of DeltaDrawable and is used to render and 
+    *  manage the CEGUI system.  The CEUIDrawable is responsible for setting
+    *  up the CEGUI system and supplying mouse and keyboard events to the UI.
+    *
+    *  To create a new GUI, instantiate a CEGUIDrawable and add it to the Scene
+    *  using Scene::AddDrawable().  You can then use the CEGUI API to create
+    *  CEGUI::Windows and adjust their properties.
+    * 
+    */
    class DT_EXPORT CEUIDrawable : public dtCore::DeltaDrawable,
-      public dtCore::MouseListener,
-      public dtCore::KeyboardListener
+                                  public dtCore::MouseListener,
+                                  public dtCore::KeyboardListener
    {
 
       ///private class that ties the GUI rendering to an OSG node
@@ -80,37 +76,38 @@ namespace dtGUI
 
       virtual ~CEUIDrawable();
 
-      ///Override to receive messages
-      virtual void OnMessage(MessageData *data);
-
-      ///Get a pointer to the underlying CUI_UI
+      ///Get a pointer to the underlying CEGUI::System
       CEGUI::System* GetUI(void) {return mUI;}
 
-      ///Get a pointer to the underlying CUI_OpenGLRender
-      CEGUI::OpenGLRenderer* GetRenderer(void) const {return mRenderer;}
+      ///Get a pointer to the underlying CEGUI::Renderer
+      CEGUI::Renderer* GetRenderer(void) const {return mRenderer;}
 
       virtual osg::Node* GetOSGNode() {return mNode.get();}
 
-      virtual void MouseMoved(dtCore::Mouse* mouse, float x, float y);
-
-      virtual void MouseDragged(dtCore::Mouse* mouse, float x, float y);
-
-      virtual void ButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button);
-
-      virtual void ButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button);
-
-      virtual void KeyPressed(dtCore::Keyboard* keyboard, 
-         Producer::KeyboardKey key,
-         Producer::KeyCharacter character);
+      ///Display all the properties of the supplied CEGUI::Window
+      static void DisplayProperties(CEGUI::Window *window, bool onlyNonDefault=true);
 
    private:
+      ///pass the mouse moved events to CEGUI
+      virtual void MouseMoved(dtCore::Mouse* mouse, float x, float y);
 
-      osg::StateSet* stateset;
-      osgCEUIDrawable* osgCEUI;
-      //osg::ref_ptr<osg::Group> mNode; ///<Contains the node which renders the UI
+      ///pass the mouse dragged events to CEGUI
+      virtual void MouseDragged(dtCore::Mouse* mouse, float x, float y);
+
+      ///pass the button pressed events to CEGUI
+      virtual void ButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button);
+
+      ///pass the button released events to CEGUI
+      virtual void ButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button);
+
+      ///pass the key pressed events to CEGUI
+      virtual void KeyPressed(dtCore::Keyboard* keyboard, 
+                              Producer::KeyboardKey key,
+                              Producer::KeyCharacter character);
+
+      
+      
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
-      std::string mActiveRootFrame; ///<The name of the active root frame
-      unsigned short mButtonState; ///<The current mouse button state
       int mWidth; ///<the width of the Window
       int mHeight; ///<The height of the Window
       int mHalfWidth; ///<the width of the Window
@@ -118,7 +115,6 @@ namespace dtGUI
       float mMouseX; ///<The current Mouse X position
       float mMouseY; ///<the current Mouse Y position
       Renderer* mRenderer; ///<The opengl renderer we're using
-      double elapsedTime;
    };
 }//namespace dtGUI
 

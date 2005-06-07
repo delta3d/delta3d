@@ -121,8 +121,8 @@ mScene(NULL)
    //set its "default" values in case the user doesn't supply their own
    //later on with SetWindow().
 
-   //mDefaultRenderSurface = dynamic_cast<DeltaRenderSurface*>(mCamera->getRenderSurface());
-   mDefaultRenderSurface = new DeltaRenderSurface;
+   //mDefaultRenderSurface = mCamera->getRenderSurface();
+   mDefaultRenderSurface = new Producer::RenderSurface;
   
    mDefaultRenderSurface->setWindowRectangle( 100, 100, 640, 480 );
    mDefaultRenderSurface->setWindowName("defaultWin");

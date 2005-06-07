@@ -189,7 +189,7 @@ namespace dtCore
       RefPtr<Scene> mScene;
       sgVec4 mClearColor; // The current clear color
 
-      DeltaRenderSurface* mDefaultRenderSurface;
+      Producer::RenderSurface* mDefaultRenderSurface;
       RefPtr<_SceneHandler> mSceneHandler;
 
    };

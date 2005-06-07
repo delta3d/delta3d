@@ -2,13 +2,9 @@ Import('*')
 
 psEditorSrcs = ['main.cpp', 'psEditorGUI.cxx', 'texturepreview.cpp']
 
-psEditorDeps = [ 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'sg', 'ul', 'js', 'Producer', 'gdal', 'fltk' ]
-                
+psEditorDeps = [ 'dtvis', 'dtabc', 'dtcore' ]
+
 if OS == 'windows' :
    psEditorDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
-elif OS == 'linux' :
-   psEditorDeps += ['Xxf86vm']
 
-psEditorDeps = [ extLibs[lib] for lib in psEditorDeps if extLibs.has_key(lib) ] + [ 'dtvis', 'dtabc', 'dtcore' ]
-
-env.Program( 'psEditor', psEditorSrcs, LIBS = psEditorDeps )
+BuildProgram( 'psEditor', psEditorSrcs, psEditorDeps )

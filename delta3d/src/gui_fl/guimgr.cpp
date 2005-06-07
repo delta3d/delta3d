@@ -2,20 +2,23 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "gui_fl/guimgr.h"
-#include "dtCore/transformable.h"
-#include "dtCore/camera.h"
-#include "dtCore/deltadrawable.h"
-#include "dtCore/environment.h"
-#include "dtCore/skydome.h"
-#include "dtCore/clouddome.h"
-#include "dtCore/object.h"
-#include "dtCore/particlesystem.h"
-#include "dtCore/system.h"
-#include "dtCore/infiniteterrain.h"
-#include "dtCore/positionallight.h"
-#include "dtCore/spotlight.h"
-#include "dtABC/dtabc.h"
+#include <gui_fl/guimgr.h>
+#include <dtCore/transformable.h>
+#include <dtCore/camera.h>
+#include <dtCore/deltadrawable.h>
+#include <dtCore/environment.h>
+#include <dtCore/skydome.h>
+#include <dtCore/clouddome.h>
+#include <dtCore/object.h>
+#include <dtCore/particlesystem.h>
+#include <dtCore/system.h>
+#include <dtCore/infiniteterrain.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/spotlight.h>
+#include <dtABC/application.h>
+#include <dtABC/baseabc.h>
+#include <dtABC/weather.h>
+#include <dtABC/widget.h>
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_draw.H>

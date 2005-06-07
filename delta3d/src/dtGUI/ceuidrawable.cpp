@@ -1,3 +1,5 @@
+#include <CEGUI.h>
+
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
@@ -17,16 +19,12 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 * OpenGLRenderer,and create the OSG nodes.
 */
 CEUIDrawable::CEUIDrawable(int width, int height):
-   stateset(0),
-   osgCEUI(0),
    mUI(0),
-   mButtonState(0),
    mWidth(width),
    mHeight(height),
    mMouseX(.0f),
    mMouseY(.0f),
-   mRenderer(0),
-   elapsedTime(0.0)
+   mRenderer(0)
 {
    RegisterInstance(this);
 
@@ -36,8 +34,6 @@ CEUIDrawable::CEUIDrawable(int width, int height):
    //TODO find something better than GetInstance(0)
    dtCore::Mouse::GetInstance(0)->AddMouseListener(this); 
    dtCore::DeltaWin::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
-
-   AddSender( System::GetSystem() );
 
    mRenderer = new dtGUI::Renderer(1024, mWidth, mHeight);
    new CEGUI::System(mRenderer);
@@ -51,12 +47,11 @@ CEUIDrawable::CEUIDrawable(int width, int height):
 
    stateset->setRenderBinDetails(11,"RenderBin");
    stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
-   //stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 
    geod->setStateSet(stateset);
 
-   osgCEUI = new osgCEUIDrawable(mUI);
-   geod->addDrawable(osgCEUI); //add our osg node here
+   osg::ref_ptr<osgCEUIDrawable> osgCEUI = new osgCEUIDrawable(mUI);
+   geod->addDrawable( osgCEUI.get() ); //add our osg node here
 
    osg::MatrixTransform* modelview_abs = new osg::MatrixTransform;
    modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -75,14 +70,10 @@ CEUIDrawable::~CEUIDrawable(void)
    mNode = NULL;
 }
 
-void CEUIDrawable::OnMessage(MessageData *data)
-{
-}
-
 void CEUIDrawable::MouseMoved(Mouse* mouse, float x, float y)
 {
-   if (!mUI)
-      return;
+   if (!mUI) return;
+      
    mMouseX = x - mMouseX;
    mMouseY = y - mMouseY;
    CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
@@ -92,8 +83,8 @@ void CEUIDrawable::MouseMoved(Mouse* mouse, float x, float y)
 
 void CEUIDrawable::MouseDragged(Mouse* mouse, float x, float y)
 {
-   if (!mUI)
-      return;
+   if (!mUI) return;
+     
    mMouseX = x - mMouseX;
    mMouseY = y - mMouseY;
    CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
@@ -137,7 +128,6 @@ void CEUIDrawable::KeyPressed(Keyboard* keyboard,
                                Producer::KeyboardKey key,
                                Producer::KeyCharacter character)
 {
-
    switch(character) 
    {
 	case Producer::KeyChar_BackSpace: CEGUI::System::getSingleton().injectKeyDown(0x0E);  	break;
@@ -145,6 +135,44 @@ void CEUIDrawable::KeyPressed(Keyboard* keyboard,
    
    default: CEGUI::System::getSingleton().injectChar(character); break;
    }
+}
 
-   
+/**  Display the properties associated with the supplied CEGUI::Window to the 
+  *  console.  Useful to find all the text names of the properties and see what
+  *  the current values of the properties are.
+  *
+  * @param window : The window to query the properties of
+  * @param onlyNonDefault : Display only properties that are not default values
+  *                          (default=true)
+  */
+void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
+{
+   // Log all its properties + values
+   CEGUI::PropertySet::PropertyIterator itr = ((CEGUI::PropertySet*)window)->getIterator();
+   while (!itr.isAtEnd()) 
+   {
+      try 
+      {
+         if ( onlyNonDefault && !window->isPropertyDefault(itr.getCurrentKey()) )
+         {
+            {
+               Notify (ALWAYS, "%s, Non Default Prop: %s, %s", window->getName().c_str(),
+                        itr.getCurrentKey().c_str(),
+                        window->getProperty(itr.getCurrentKey()).c_str());
+            }
+         }
+         else if ( !onlyNonDefault )
+         {
+            Notify (ALWAYS, "%s, Prop: %s, %s", window->getName().c_str(),
+                     itr.getCurrentKey().c_str(),
+                     window->getProperty(itr.getCurrentKey()).c_str());
+         }
+      }
+      catch (CEGUI::InvalidRequestException& exception) 
+      {
+         // If something goes wrong, show user
+         Notify(WARN, "InvalidRequestException for %s: %s", itr.getCurrentKey().c_str(), exception.getMessage().c_str());
+      }
+      itr++;
+   }
 }
