@@ -13,8 +13,10 @@ static Prof_Zone_Stack Prof_dummy2 ;
 
 Prof_extern_C Prof_Zone_Stack *Prof_stack = &Prof_dummy2;
 
+#define MAX_PROFILING_ZONES                512
+
 int Prof_num_zones;
-Prof_Zone *Prof_zones[];
+//Prof_Zone *Prof_zones[MAX_PROFILING_ZONES];
 
 #define MAX_HASH_SIZE     65536   // not unlimited, to catch unbalanced BEGIN/END_PROF
 #define INIT_HASH_SIZE    256     // balance resource usage and avoid initial growth

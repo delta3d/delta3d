@@ -128,7 +128,9 @@ IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testMotionModels/;" +
+                        GetDeltaDataPathList()  );
+
 
    RefPtr<TestMotionModelsApp> app = new TestMotionModelsApp( "config.xml" );
 

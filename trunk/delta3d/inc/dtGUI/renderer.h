@@ -2,7 +2,11 @@
 #define DELTA_GUI
 
 #include <dtCore/export.h>
+#ifdef __APPLE__
+#include <OpenGLRenderer/openglrenderer.h>
+#else
 #include <CEGUI/renderers/OpenGLGUIRenderer/openglrenderer.h>
+#endif
 
 #ifdef APIENTRY
 #undef APIENTRY

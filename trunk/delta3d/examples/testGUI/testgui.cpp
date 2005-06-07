@@ -1,191 +1,196 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <CEGUI/CEGUI.h>
 
-CUI_UI *ui = NULL; //global - needed for the callback
+#include <dtGUI/dtgui.h>
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 using namespace dtCore;
 using namespace dtABC;
-using namespace std;
 
-///this is the callback function that gets triggered from the widgets
-static bool mainHandler( int id, int numparam, void *value )
+class TestGUIApp : public dtABC::Application
 {
-   switch(id) 
-   {
-   case 1:   dtCore::System::GetSystem()->Stop();  	break;
-   case 2:
-      {
-         CUI_SliderBar* bar = (CUI_SliderBar*)ui->GetFrame(2);
-
-         ui->GetRenderer()->SetFade(bar->GetValue()/100);
-      }
-      break;
-   default: break;
-   }
-   return false;
-}
-
-class TestGUIApp : public Application
-{
-
-DECLARE_MANAGEMENT_LAYER( TestGUIApp )
-
 public:
-   TestGUIApp( string configFilename = "config.xml" )
-      : 
-   Application( configFilename ),
-      mFilename("")
-   {
-   }
+   TestGUIApp( std::string configFilename = "" ):
+      Application( configFilename )
+      {
+      }
 
-   void Config()
+      ~TestGUIApp() {}
+
+   virtual void Config()
    {
-      Application::Config();
+      SetDataFilePathList( GetDeltaRootPath() + "/examples/testGUI/;" +
+                           GetDeltaDataPathList() + ";" +
+                           GetDeltaDataPathList()+"/gui/;" );
+
+      dtABC::Application::Config();
 
       ///put something in the background to look at
-      helo = new Object( "Helo" );
+      RefPtr<Object> helo = new Object( "Helo" );
       helo->LoadFile( "models/uh-1n.ive" );
       AddDrawable( helo.get() );
 
       ///move the camera up
-      Transform xform(0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f );
+      Transform xform(-30.0f, 0.0f, 0.0f, -90.0f, 0.0f, 0.0f );
       GetCamera()->SetTransform( &xform );
+      GetCamera()->SetClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 
-      //position the helo behind the UI
-      xform.Set( -2.5f, 30.0f, 2.5f, 90.0f, 0.0f, 0.0f );
-      helo->SetTransform( &xform );
-
-      int w,h,x,y;
+      int x,y,w,h;
       GetWindow()->GetPosition(&x, &y, &w, &h);
+      GetWindow()->ShowCursor( false );
 
-      //This will contain all our UI elements
-      drawable = new UIDrawable(w,h);
-      drawable->SetWindowResolution(w,h);
-      ui = drawable->GetUI();
+      mGUI = new dtGUI::CEUIDrawable(w, h);
 
-      if (!mFilename.empty()) //create the GUI w/ XML
-      {
-         if(!drawable->LoadGUIFile(mFilename))
-            return;
-      }
-      else //create the GUI w/ C++
-      {
-         // make some general purpose shaders
-         sgVec4 black_col = { 0.0, 0.0, 0.0, 1.0 };
-         sgVec4 white_col = { 1.0, 1.0, 1.0, 1.0 };
-         sgVec4 trans_col = { 0.0, 0.0, 0.0, 0.0 };
-         drawable->CreateShader( "transparent", trans_col );
+      BuildGUI();
 
-         // fonts
-         drawable->CreateShader( "raster8", white_col, "gui/raster8.rgba" );
-         drawable->CreateShader( "digital_font", black_col, "gui/digital_font.rgba" );
-         drawable->CreateFixedFont("digital_font", "digital_font");
-         drawable->CreateFixedFont("raster8", "raster8");
-
-         // textures
-         drawable->CreateShader( "button", "gui/button.tga" );
-         drawable->CreateShader( "button_hover", "gui/button_hover.tga" );
-         drawable->CreateShader( "button_click", "gui/button_click.tga" );
-         drawable->CreateShader( "cursor", "gui/cursor.rgba" );
-         drawable->CreateShader( "panel", "gui/panel.rgba");
-         drawable->CreateShader( "edit_box", "gui/edit_box.rgb");
-         drawable->CreateShader( "slider_bar", "gui/slider_bar.tga");
-         drawable->CreateShader( "slider", "gui/slider.rgba");
-
-         ///this main frame will contain all the widgets
-         CUI_Frame *mainFrame = new CUI_Frame();
-         mainFrame->SetShader(drawable->GetShader("panel"));
-         drawable->AddRootFrame("main", mainFrame);
-
-         ///display some text
-         CUI_TextBox *title = new CUI_TextBox();
-         title->Move( 0.2, 0.5, 0.8, 0.7 );
-         title->SetSize(8, 1);
-         title->SetTextScale(1.0f);
-         title->SetText( "Delta_3D" );
-         title->SetFont(drawable->GetFont("digital_font") );
-         title->SetShader(drawable->GetShader("transparent"));
-         mainFrame->AddChild( title );
-         drawable->AddFrame( title );
-
-         ///Editable text box
-         CUI_EditableTextBox *etb = new CUI_EditableTextBox();
-         etb->SetFont( drawable->GetFont("raster8") );
-         etb->Move(0.3, 0.35, 0.7, 0.45);
-         etb->SetSize(20,1);
-         etb->SetText("EditableTextBox");
-         etb->SetShader(drawable->GetShader("edit_box"));
-         etb->SetCursorType(UI_CURSOR_BAR);
-         etb->MoveCursor( 15 );
-         mainFrame->AddChild(etb);
-         drawable->AddFrame(etb);
-
-         ///Slider bar to control the transparency of the interface
-         CUI_SliderBar *slide = new CUI_SliderBar ();
-         slide->Move(0.12, 0.8, 0.88, 0.9);
-         slide->SetRange(0.f, 105.f);
-         slide->SetValue(100.f);
-         slide->SetShader(drawable->GetShader("slider"));
-         slide->SetBarShader(drawable->GetShader("slider_bar"));
-         slide->SetFrameID(2);   ///Note the magic ID number - used in the CB
-         mainFrame->AddChild(slide);
-         drawable->AddFrame(slide);
-
-         ///An exit button
-         CUI_Button *exitB = new CUI_Button();
-         exitB->Move(0.4, 0.2, 0.6, 0.3 );
-         exitB->SetShader(ui->GetShader("button"));
-         exitB->SetHoverShader(ui->GetShader("button_hover"));
-         exitB->SetClickShader(ui->GetShader("button_click"));
-         exitB->SetFont( drawable->GetFont("raster8") );
-         exitB->SetText("Exit");
-         exitB->SetTextScale(0.40f);
-         exitB->SetFrameID(1);
-         mainFrame->AddChild(exitB);
-         drawable->AddFrame(exitB);      
-      }
-
-      //hook up the main callback
-      drawable->SetCallbackFunc("main", (CUI_UI::callbackfunc)mainHandler );
-      drawable->SetActiveRootFrame("main");
-
-      ///Add the drawable to the Scene
-      AddDrawable( drawable.get() );
-
-
+      GetScene()->AddDrawable(mGUI.get());
    }
 
-   void SetFilename( string file )
+
+   void SetLayoutFilename(std::string filename)
    {
-      mFilename = file;
+      mLayoutFilename = filename;
    }
 
-   protected:
-   string mFilename;
-   RefPtr<Object> helo;
-   RefPtr<UIDrawable> drawable;
+private:
+   RefPtr<dtGUI::CEUIDrawable> mGUI;
+   std::string mLayoutFilename;
+
+   void BuildGUI(void)
+   {
+      try
+      {
+         std::string schemeFileName = osgDB::findDataFile("gui/schemes/WindowsLook.scheme");
+
+         CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
+         CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
+         CEGUI::System::getSingleton().setDefaultFont("Tahoma-12");
+
+         CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
+
+         CEGUI::Window* sheet = wm->createWindow("DefaultGUISheet", "root_wnd");
+         CEGUI::System::getSingleton().setGUISheet(sheet);
+
+         if (!mLayoutFilename.empty())
+         {
+            //load GUI layout from file
+            CEGUI::Window *w = wm->loadWindowLayout( mLayoutFilename.c_str() );                 
+            sheet->addChildWindow(w);
+         }
+         else
+         {
+            // background panel
+            CEGUI::StaticImage* panel = (CEGUI::StaticImage*)wm->createWindow("WindowsLook/StaticImage", "Panel 1");
+            sheet->addChildWindow(panel);
+            panel->setPosition(CEGUI::Point(0.0f, 0.0f));
+            panel->setSize(CEGUI::Size(1.f, 1.f));
+
+            //Delta3D text
+            CEGUI::StaticText* st = (CEGUI::StaticText*)wm->createWindow("WindowsLook/StaticText","Delta_3D");
+            panel->addChildWindow(st);
+            st->setPosition(CEGUI::Point(0.2f, 0.3f));
+            st->setSize(CEGUI::Size(0.6f, 0.2f));
+            st->setText("Delta 3D");
+            st->setFrameEnabled(false);
+            st->setBackgroundEnabled(false);
+            st->setFont("Digi-48");
+            st->setHorizontalFormatting(CEGUI::StaticText::HorzCentred);
+
+            // Edit box for text entry
+            CEGUI::Editbox* eb = (CEGUI::Editbox*)wm->createWindow("WindowsLook/Editbox", "EditBox");
+            panel->addChildWindow(eb);
+            eb->setPosition(CEGUI::Point(0.3f, 0.55f));
+            eb->setSize(CEGUI::Size(0.4f, 0.1f));
+            eb->setText("Editable text box");
+
+            //slider
+            CEGUI::Scrollbar* slider = (CEGUI::Scrollbar*)wm->createWindow("WindowsLook/HorizontalScrollbar", "slider1");
+            panel->addChildWindow(slider);
+            slider->setPosition(CEGUI::Point(0.12f, 0.1f));
+            slider->setSize(CEGUI::Size(0.76f, 0.05f));
+            slider->setDocumentSize(256.f);
+            slider->setPageSize(16.f);
+            slider->setStepSize(1.f);
+            slider->setOverlapSize(1.f);
+            slider->setScrollPosition(255.f);
+
+            // quit button
+            CEGUI::PushButton* btn = (CEGUI::PushButton*)wm->createWindow("WindowsLook/Button", "QuitButton");
+            panel->addChildWindow(btn);
+            btn->setText("Exit");
+            btn->setPosition( CEGUI::Point(0.4f, 0.7f) );
+            btn->setSize( CEGUI::Size(0.2f, 0.1f) );
+         }
+
+         //hook up subscribers
+         //we'll use the "doubleclick" to print out some Window properties
+         wm->getWindow("Panel 1")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);      
+         wm->getWindow("Delta_3D")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
+         wm->getWindow("EditBox")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
+         wm->getWindow("slider1")->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, &sliderHandler);
+         wm->getWindow("slider1")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
+         wm->getWindow("QuitButton")->subscribeEvent(CEGUI::PushButton::EventClicked, &quitHandler);
+         wm->getWindow("QuitButton")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
+      }
+
+      // catch to prevent exit (errors will be logged).
+      catch(CEGUI::Exception &e)
+      {
+         Notify(WARN, "CEGUI::%s", e.getMessage().c_str() );
+      }
+   }
+
+   //display all the properties of this Window
+   static bool OutputHandler(const CEGUI::EventArgs &e)
+   {
+      CEGUI::Window *w = (CEGUI::Window*)((const CEGUI::WindowEventArgs&)e).window;
+      dtGUI::CEUIDrawable::DisplayProperties(w, false);
+      return true;
+   }
+
+   //quit!
+   static bool quitHandler(const CEGUI::EventArgs& e)
+   {
+      dtABC::Application::GetInstance(0)->Quit();
+      return true;
+   }
+
+   //adjust the alpha of the whole "sheet"
+   static bool sliderHandler(const CEGUI::EventArgs& e)
+   {
+      CEGUI::Scrollbar* slider = (CEGUI::Scrollbar*)((const CEGUI::WindowEventArgs&)e).window;
+
+      float alpha = slider->getScrollPosition()/255.f;
+      CEGUI::Window* sheet=CEGUI::System::getSingleton().getGUISheet();
+
+      if(sheet) sheet->setAlpha(alpha);
+
+      return true;
+   }
 };
 
-IMPLEMENT_MANAGEMENT_LAYER( TestGUIApp )
 
 
 int main( int argc, const char* argv[] )
 {
-   string filename = "";
+   //set data search path to parent directory and delta3d/data
+   SetDataFilePathList( "..;" + GetDeltaDataPathList() ); 
+
+   std::string filename = "";
    if (argc > 1)
    {
       Notify(ALWAYS,"Using GUI file %s...",argv[1]);
       filename = argv[1];
    }
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
 
-   RefPtr<TestGUIApp> app = new TestGUIApp( "config.xml" );
-   app->SetFilename( filename );
+   //Instantiate the application and look for the config file
+   {
+      RefPtr<TestGUIApp> app = new TestGUIApp();
+      app->SetLayoutFilename(filename);
 
-   app->Config();
-   app->Run();
+      app->Config(); //configuring the application
+      app->Run(); // running the simulation loop
+   }
 
    return 0;
 }
-
-

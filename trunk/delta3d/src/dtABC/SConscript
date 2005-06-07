@@ -2,19 +2,15 @@ Import('*')
 
 dtAbcSrcs = [   'application.cpp',
                 'baseabc.cpp',
+                'event.cpp',
+                'state.cpp',
+                'statemanager.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 
-dtAbcDeps=[ 'dtcore', 'osg', 'osgText', 'osgSim','osgUtil', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX' ,'osgDB', 'osgProducer', 'sg', 'ul', 'js', 'Producer', 'OpenThreads', 'tinyxml', 'glgui', 'isense']
+dtAbcDeps=[ 'dtcore', 'fltk', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','sg', 'ul', 'js', 'Producer', 'tinyxml', 'xerces-c', 'opengl' ]
 
 if OS == 'windows' :
    dtAbcDeps += [ 'User32' ]
-    
-dtAbcDeps = [ extLibs[lib] for lib in dtAbcDeps if extLibs.has_key(lib) ]
-
-if mode == 'debug' :
-   dtAbcDeps += [ 'dtcored' ]
-else :
-   dtAbcDeps += [ 'dtcore' ]
-
-build_delta3d_lib( 'dtabc', dtAbcSrcs, dtAbcDeps )
+       
+BuildLib( 'dtabc', dtAbcSrcs, dtAbcDeps, ['DT_LIBRARY'] )

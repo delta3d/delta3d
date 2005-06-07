@@ -43,7 +43,7 @@ namespace dtVis
     * A cull callback that contains a BSP tree with sets of potentially
     * visible geodes in its leaves.
     */
-   class SG_EXPORT BSPCullCallback : public osg::NodeCallback
+   class OSG_EXPORT BSPCullCallback : public osg::NodeCallback
    {
       public:
    
@@ -107,7 +107,7 @@ namespace dtVis
    /**
     * The potentially visible set type.
     */
-   class SG_EXPORT PotentiallyVisibleSet : public osg::Object
+   class OSG_EXPORT PotentiallyVisibleSet : public osg::Object
    {
       public:
          
@@ -162,7 +162,7 @@ namespace dtVis
    /**
     * A BSP tree node.
     */
-   class SG_EXPORT BSPNode : public osg::Referenced
+   class OSG_EXPORT BSPNode : public osg::Referenced
    {
       public:
 
@@ -179,7 +179,7 @@ namespace dtVis
    /**
     * A non-leaf node in the BSP tree.
     */
-   class SG_EXPORT BSPInternalNode : public BSPNode
+   class OSG_EXPORT BSPInternalNode : public BSPNode
    {
       public:
       
@@ -247,7 +247,7 @@ namespace dtVis
    /**
     * A leaf node in the BSP tree.
     */
-   class SG_EXPORT BSPLeafNode : public BSPNode
+   class OSG_EXPORT BSPLeafNode : public BSPNode
    {
       public:
       

@@ -4,6 +4,9 @@
    #include <gl/gl.h>
 
    #pragma warning(disable:4305; disable:4244)
+#elif defined(__APPLE__)
+   #include <OpenGL/gl.h>
+   #include <string.h>
 #else
    #include <GL/gl.h>
    #include <string.h>

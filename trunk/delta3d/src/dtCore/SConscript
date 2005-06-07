@@ -10,7 +10,6 @@ dtCoreSrcs = [ 'base.cpp',
                'cui_openglrenderer.cpp',
                'cui_openglshader.cpp',
                'deltadrawable.cpp',
-               'deltarendersurface.cpp',
                'deltawin.cpp',
                'effectmanager.cpp',
                'enveffect.cpp',
@@ -57,23 +56,16 @@ dtCoreSrcs = [ 'base.cpp',
                'ufomotionmodel.cpp',
                'walkmotionmodel.cpp' ]
 
-dtCoreDeps=[ 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgGL2', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgFX', 'osgProducer', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
+dtCoreDeps=[ 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','gdal', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :
    dtCoreSrcs.extend( [ 'deltawin_win32.cpp', 'uniqueid_win32.cpp' ] )
    dtCoreDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
 elif OS == 'linux':
    dtCoreSrcs.extend( [ 'deltawin_x11.cpp', 'uniqueid_linux.cpp' ] )
-   dtCoreDeps += [ 'uuid' ]
+   dtCoreDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':
-    dtCoreSrcs.extend(['deltawin_carbon.cpp', 'uniqueid_macosx.cpp'] )
+    dtCoreSrcs.extend(['deltawin_carbon.cpp', 'uniqueid_macosx.cpp' ] ) #mac version?
     dtCoreDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
-
-dtCoreDeps = [ extLibs[lib] for lib in dtCoreDeps if extLibs.has_key(lib) ]
-
-if mode == 'debug' :
-   dtCoreDeps += [ 'dtutild' ]
-else :
-   dtCoreDeps += [ 'dtutil' ]
     
-build_delta3d_lib( 'dtcore', dtCoreSrcs, dtCoreDeps )
+BuildLib( 'dtcore', dtCoreSrcs, dtCoreDeps, ['DT_LIBRARY'] )

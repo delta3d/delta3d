@@ -52,7 +52,9 @@ bool DeltaDrawable::AddChild(DeltaDrawable *child)
 */
 void DeltaDrawable::RemoveChild(DeltaDrawable *child)
 {
-   if (!child || child->GetParent()!=this) return;
+   if (!child) return;
+   
+   if ( child->GetParent()!=this && child->GetParent()!=NULL ) return;
 
    unsigned int pos = GetChildIndex( child );
    if (pos < mChildList.size())

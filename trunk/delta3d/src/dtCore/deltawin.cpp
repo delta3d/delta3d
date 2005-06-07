@@ -25,7 +25,7 @@ class InputCallback : public Producer::KeyboardMouseCallback
          mMouse->mouseScroll(sm);
       }
 
-       void mouseMotion(float x, float y)
+      void mouseMotion(float x, float y)
       {
          mMouse->mouseMotion( x, y );
       }
@@ -93,13 +93,15 @@ DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool curso
 {
    RegisterInstance(this);
 
-   mRenderSurface = new DeltaRenderSurface; 
+   mRenderSurface = new Producer::RenderSurface; 
    
    mKeyboard = new Keyboard;
-   mMouse = new Mouse;
-
+   
    mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
-   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
+
+   mMouse = new Mouse(mKeyboardMouse,"mouse");
+   
+   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
    mKeyboardMouse->startThread();
 
    if(!fullScreen)
@@ -116,7 +118,7 @@ DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool curso
 
 }
 
-DeltaWin::DeltaWin( string name, DeltaRenderSurface* rs, Producer::InputArea* ia ) :
+DeltaWin::DeltaWin( string name, Producer::RenderSurface* rs, Producer::InputArea* ia ) :
 Base(name),
 mRenderSurface(rs),
 mKeyboardMouse(0),
@@ -127,12 +129,13 @@ mShowCursor(true)
    RegisterInstance(this);
    
    mKeyboard = new Keyboard;
-   mMouse = new Mouse;
-
+   
    if(ia) // use the passed InputArea if not NULL
       mKeyboardMouse = new Producer::KeyboardMouse( ia );
-   else // otherwise use the passed DeltaRenderSurface
+   else // otherwise use the passed RenderSurface
       mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
+
+   mMouse = new Mouse(mKeyboardMouse,"mouse");
 
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
    mKeyboardMouse->startThread();
