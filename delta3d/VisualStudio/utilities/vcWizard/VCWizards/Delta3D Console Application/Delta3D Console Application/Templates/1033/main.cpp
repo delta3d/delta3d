@@ -4,7 +4,7 @@
 
 using namespace dtCore;
 
-main()
+int main()
 {
    //set data search path to parent directory and delta3d/data
    SetDataFilePathList( "..;" + GetDeltaDataPathList() ); 
