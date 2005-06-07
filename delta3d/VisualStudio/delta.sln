@@ -87,7 +87,7 @@ Global
 		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
-		readme.txt = readme.txt
+		..\src\readme.txt = ..\src\readme.txt
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
