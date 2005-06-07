@@ -1,20 +1,39 @@
-Delta3D makes use of Environment Variables to find files when compiling, linking, and at runtime.
+Delta3D makes use of Environment Variables to find files at runtime. These 
+variables are NOT necessary to build within a particular source tree as we use 
+relative pathing. However, most Delta3D applications use these to reference 
+the libraries and data.
 
-These environment variables should be set prior to using Delta3D:
+Win32
+-----
+Make sure the Delta3D environment variables are set by either the Win32 
+installer or env_var_setup.exe in delta3d/utilities. The following 
+variables are set:
 
 DELTA_ROOT = c:\program files\delta3d  (or wherever Delta3D is installed)
 DELTA_INC  = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc
 DELTA_LIB  = %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
 DELTA_DATA = %DELTA_ROOT%\data
-PATH       = %DELTA_ROOT%\bin;%DELTA_ROOT%\ext\bin
 
+And of course add  %DELTA_ROOT%\bin;%DELTA_ROOT%\ext\bin to your PATH.
 
---Win32--
-To set Environment variables on Window platforms, open My Computer->Propterties->Advanced->Environment Variables.  You can enter the variables system-wide (using the system variables) or User-only (using the User Variables).
+Alternatively you can set them manually by opening:
+   My Computer->Propterties->Advanced->Environment Variables.  
+You can enter the variables system-wide (using the system variables) or User-only 
+(using the User Variables).
 
-You can also set the Environment Variables using the supplied Environment Variable Installer located in the Delta3d\utilities folder.
+Once set, these variables can be used in Visual Studio in the project properties
+ or in the global VC++ directories (Tools->Options->Projects) as shown below:
 
-Once set, these variables can be used in Visual Studio in the project properties or in the global VC++ directories (Tools->Options->Projects) as shown below:
 Include files : $(DELTA_INC) 
 Library files : $(DELTA_LIB)
 
+Linux
+-----
+DELTA_ROOT: path to your Delta3D installation
+DELTA_DATA: $DELTA_ROOT/data
+DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc
+DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
+
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
+
+Don't forget to 'export' your variables if you are using Bash!

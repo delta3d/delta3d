@@ -38,7 +38,7 @@
 #include <osgUtil/CullVisitor>
 #include <osg/Fog>
 
-#include <osgGL2/ProgramObject>
+#include <osg/Program>
 
 namespace dtCore
 {
@@ -46,21 +46,21 @@ namespace dtCore
 	{
 
 	public:
-		DECLARE_MANAGEMENT_LAYER(CloudDome)
+		DECLARE_MANAGEMENT_LAYER( CloudDome )
 
-		CloudDome(int   octaves,
-			      int   frequency,
+		CloudDome(  int   octaves,
+			         int   frequency,
                   float amp,
                   float persistence,
-				  float cutoff,
+				      float cutoff,
                   float exponent,
                   float radius,
-				  int   segments);
+				      int   segments);
 
 
-		CloudDome(float radius,
-				  int   segments,
-				  std::string filename);
+		CloudDome(  float radius,
+				      int   segments,
+				      std::string filename );
 
 		~CloudDome();
 
@@ -77,14 +77,14 @@ namespace dtCore
 		bool getEnable()            { return mEnable; }
 
 		//setters
-		void setScale(float scale)          { mScale        = scale; }
-		void setExponent(float exponent)    { mExponent     = exponent; }
-		void setCutoff(float cutoff)        { mCutoff       = cutoff; }
-		void setSpeedX(float speedX)        { mSpeedX       = speedX; }
-		void setSpeedY(float speedY)        { mSpeedY       = speedY; }
-		void setBias(float bias)            { mBias         = bias; }
-		void setCloudColor(osg::Vec3 *mCC)  { mCloudColor   = mCC; }
-		void setShaderEnable(bool enable)   { mEnable       = enable; }
+		void setScale(float scale)          { mScale      = scale; }
+		void setExponent(float exponent)    { mExponent   = exponent; }
+		void setCutoff(float cutoff)        { mCutoff     = cutoff; }
+		void setSpeedX(float speedX)        { mSpeedX     = speedX; }
+		void setSpeedY(float speedY)        { mSpeedY     = speedY; }
+		void setBias(float bias)            { mBias       = bias; }
+		void setCloudColor(osg::Vec3 *mCC)  { mCloudColor = mCC; }
+		void setShaderEnable(bool enable)   { mEnable     = enable; }
 
 		virtual void Repaint(sgVec4 sky_color, sgVec4 fog_color, 
 			double sun_angle, double sunAzimuth,
@@ -120,11 +120,10 @@ namespace dtCore
 			}
 		};
 
-
 		void Create( void );
 		osg::Geode *createDome(float, int);
 		osg::Image *loadImageFile(std::string);
-		void loadShaderSource( osgGL2::ShaderObject* , std::string );
+		void loadShaderSource( osg::Shader* , std::string );
 		virtual void OnMessage(MessageData *data);
 		void Update(const double deltaFrameTime);
 
@@ -150,10 +149,10 @@ namespace dtCore
 		int mHeight;
 		int mSlices;
 
-		std::vector<osgGL2::ProgramObjectPtr> _progObjList;
-		osgGL2::ProgramObject* Cloud_ProgObj;
-		osgGL2::ShaderObject*  Cloud_VertObj;
-		osgGL2::ShaderObject*  Cloud_FragObj;
+		std::vector<osg::Program*> _progList;
+		osg::Program* Cloud_Prog;
+		osg::Shader*  Cloud_Vert;
+		osg::Shader*  Cloud_Frag;
 
 		// Uniform variables for shaders
 		float mScale;

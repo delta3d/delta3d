@@ -49,7 +49,7 @@ bool UniqueId::operator< ( const UniqueId& rhs ) const
    else
    {
       Notify( WARN, "Could not convert std::string to UniqueId." );
-      return false;
+      return mId < rhs.mId;
    }
 }
 
@@ -67,6 +67,6 @@ bool UniqueId::operator> ( const UniqueId& rhs ) const
    else
    {
       Notify( WARN, "Could not convert std::string to UniqueId." );
-      return false;
+      return mId > rhs.mId;
    }
 }

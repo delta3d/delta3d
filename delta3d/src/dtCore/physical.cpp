@@ -188,7 +188,10 @@ public:
          osg::Drawable* d = node.getDrawable(i);
 
          if(d->supports(mFunctor))
-         {            
+         {
+            mFunctor.mMatrix = 
+               osg::computeLocalToWorld(getNodePath());
+
             d->accept(mFunctor);
          }
       }
@@ -556,11 +559,15 @@ void Physical::SetCollisionMesh(osg::Node* node)
    
    if( node )
    {
+      //the following is a workaround to temporarily bypass this Physical's Transform
+      //At this point, we'll set it temporarily to the Identity so it doesn't affect
+      //our creation of the collision mesh.  This Transform will be accounted
+      //for later in PrePhysicsUpdate().
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<TriangleRecorder> mv;
-      
+            
       node->accept(mv);
    
       if(mMeshVertices != NULL)
@@ -597,8 +604,7 @@ void Physical::SetCollisionMesh(osg::Node* node)
          dCreateTriMesh(0, mTriMeshDataID, NULL, NULL, NULL)
       );
 
-      GetMatrixNode()->setMatrix( oldMatrix );
-      
+      GetMatrixNode()->setMatrix( oldMatrix );      
    }
 }
 
@@ -777,11 +783,11 @@ void Physical::GetInertiaTensor(sgMat3 dest) const
  */
 void Physical::PrePhysicsStepUpdate()
 {
-   if (DynamicsEnabled())   
+   //if (DynamicsEnabled())   
    {
       Transform transform;
       
-      this->GetTransform(&transform);
+      this->GetTransform(&transform, Transformable::ABS_CS);
       
       if(!transform.EpsilonEquals(&mGeomTransform))
       {
@@ -1020,6 +1026,7 @@ void Physical::RenderCollisionGeometry( const bool enable )
             }
             break;
 
+         case dTriMeshClass:
          case dCylinderClass:
          case dPlaneClass:
             {
@@ -1032,7 +1039,7 @@ void Physical::RenderCollisionGeometry( const bool enable )
                //dReal length = dGeomRayGetLength(id);
                //dGeomRayGet(id, start, dir);
             }
-         case dTriMeshClass:
+
          default:
             Notify(WARN, "Physical:Can't render unhandled geometry class:%d",
                dGeomGetClass(id) );

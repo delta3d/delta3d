@@ -56,13 +56,13 @@ public:
       RefPtr<Object> obj3 = new Object("GroundCrate");
 
       //load the model files
-      if (!obj1->LoadFile("models/flatdirt.ive")) return;
+      if (!obj1->LoadFile("models/dirt.ive")) return;
       if (!obj2->LoadFile("models/physics_crate.ive")) return; 
       if (!obj3->LoadFile("models/physics_crate.ive")) return; 
 
       //position the camera
       Transform position;
-      position.Set(0.0f, -10.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+      position.Set(0.0f, -20.0f, 2.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(&position);
 
       //position first falling crate
@@ -78,7 +78,7 @@ public:
       float lz = 1.0f;
 
       //create collision meshes
-      obj1->SetCollisionBox(); 
+      obj1->SetCollisionMesh(); 
       obj2->SetCollisionBox();
       obj3->SetCollisionBox();
 
@@ -98,7 +98,7 @@ public:
       GetScene()->AddDrawable( obj3.get() );
 
       //put the falling crate in the vector of dropped objects
-      mObjects.push(obj2);
+      mObjects.push_back(obj2);
 
       GetScene()->SetGravity(0, 0, -15.f);
 
@@ -125,17 +125,39 @@ protected:
       while( !mToAdd.empty() )
       {
          GetScene()->AddDrawable( mToAdd.front().get() );
-         mObjects.push( mToAdd.front() );
+         mObjects.push_back( mToAdd.front() );
          mToAdd.pop();
       }
       
       while( !mToRemove.empty() )
       {
          GetScene()->RemoveDrawable( mToRemove.front().get() );
-         mObjects.pop();
+         mObjects.pop_front();
          mToRemove.pop();
+      }   
+   }
+
+   //apply some linear and angular velocity dampening
+   void DampenBody( Object *obj, float vScale, float aScale )
+   {
+      dBodyID ID = obj->GetBodyID();
+
+      if( !dBodyIsEnabled( ID ) ) {return;}
+
+      dReal const * V = dBodyGetLinearVel( ID );
+      dBodyAddForce( ID, vScale*V[0], vScale*V[1], vScale*V[2] );
+      dReal const * A = dBodyGetAngularVel( ID );
+      dBodyAddTorque( ID, aScale*A[0], aScale*A[1], aScale*A[2] );
+   }
+
+   virtual void PostFrame( const double deltaFrameTime )
+   {
+      std::deque< RefPtr<Object> >::iterator i;
+      for (i= mObjects.begin(); i!=mObjects.end(); i++)
+      {
+         Object *obj = i->get();
+         DampenBody(obj, -0.03f, -0.04f );
       }
-   
    }
 
    virtual void KeyPressed(dtCore::Keyboard* keyboard, 
@@ -146,7 +168,7 @@ protected:
       {
          while( !mToAdd.empty() )    mToAdd.pop();
          while( !mToRemove.empty() ) mToRemove.pop();
-         while( !mObjects.empty() )  mObjects.pop();
+         while( !mObjects.empty() )  mObjects.pop_front();
  
          this->Quit();
       }
@@ -270,7 +292,7 @@ protected:
 
    static std::queue< RefPtr<Object> > mToAdd;
    static std::queue< RefPtr<Object> > mToRemove;
-   static std::queue< RefPtr<Object> > mObjects;
+   static std::deque< RefPtr<Object> > mObjects;
 
    protected:
    RefPtr<Updater> updater;
@@ -283,12 +305,14 @@ const unsigned int TestPhysicsApp::kLimit = 50;
 
 std::queue< RefPtr<Object> > TestPhysicsApp::mToAdd;
 std::queue< RefPtr<Object> > TestPhysicsApp::mToRemove;
-std::queue< RefPtr<Object> > TestPhysicsApp::mObjects;
+std::deque< RefPtr<Object> > TestPhysicsApp::mObjects;
 
 
 int main( int argc, char **argv )
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testPhysics/;" +
+                        GetDeltaDataPathList()  );
+
 
    RefPtr<TestPhysicsApp> app = new TestPhysicsApp( "config.xml" );
 

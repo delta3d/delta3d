@@ -163,9 +163,9 @@ namespace dtSOARX
    	
 	   virtual void drawImplementation(osg::State& state) const;
    	
-      virtual bool supports(PrimitiveFunctor&) const { return true; }
+      virtual bool supports(osg::PrimitiveFunctor&) const { return true; }
 
-      virtual void accept(PrimitiveFunctor& pf) const { 
+      virtual void accept(osg::PrimitiveFunctor& pf) const { 
          pf.setVertexArray(va_index, (osg::Vec4*)vertex_array);
          pf.drawElements(GL_TRIANGLE_STRIP, ia_index, (GLuint*)index_array);
       }
@@ -213,7 +213,7 @@ namespace dtSOARX
       
    protected:
 	   virtual ~SOARXDrawable();
-	   virtual bool computeBound() const;
+	   virtual osg::BoundingBox computeBound() const;
       
    private:
 	   Vertex GetVertex(i32 x, i32 y);

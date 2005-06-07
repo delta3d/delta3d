@@ -85,9 +85,15 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       fullScreenVec.push_back(dw->GetFullScreenMode());
       dw->SetFullScreenMode(false);
 
-      //notify all render surfaces that resolution has changed
-      dw->GetRenderSurface()->SetScreenWidthHeight(   static_cast<unsigned int>(width),
-         static_cast<unsigned int>(height) );
+      //get "real" screen width and height
+      unsigned int screenHeight;
+      unsigned int screenWidth;
+      dw->GetRenderSurface()->getScreenSize( screenWidth, screenHeight );
+
+      //notify all render surfaces that resolution has changed,
+      //we must pass screenHeight-height to properly place new window
+      dw->GetRenderSurface()->setCustomFullScreenRectangle( 0, screenHeight-height, width, height );
+      
    }
 
    DEVMODE dmScreenSettings;                                                           
@@ -98,7 +104,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    dmScreenSettings.dmPelsHeight       = height;                              
    dmScreenSettings.dmBitsPerPel       = colorDepth;    
    dmScreenSettings.dmDisplayFrequency = refreshRate;
-   dmScreenSettings.dmFields     = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+   dmScreenSettings.dmFields           = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
    if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
    {

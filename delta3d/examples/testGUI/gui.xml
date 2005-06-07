@@ -1,58 +1,32 @@
-<ui>
-   <coordsys name="default" />
-   <polyedgeborder name="default">
-      <point2d x="0" y="0" />
-      <point2d x="1" y="0" />
-      <point2d x="1" y="1" />
-      <point2d x="0" y="1" />
-   </polyedgeborder>
-   
-   <shader name="black" r="0.0" g="0.0" b="0.0" a="1.0" />
-   <shader name="white" r="1.0" g="0.0" b="1.0" a="1.0" />
-   <shader name="transparent" r="0.0" g="0.0" b="0.0" a="0.0" />
-   
-   <shader name="raster8" r="1.0" g="1.0" b="1.0" a="1.0" filename="gui/raster8.rgba" />
-   <shader name="digital_font" r="0.0" g="0.0" b="0.0" a="1.0" filename="gui/digital_font.rgba" />
-   
-   <fixedwidthbitmapfont name="raster8" shader="raster8" characterwidth="16"
-      characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" />
-      
-   <fixedwidthbitmapfont name="digital_font" shader="digital_font" characterwidth="16"
-      characterheight="24" bitmapwidth="256" bitmapheight="256" charactermapoffset="0" /> 
-   
-   
-   <shader name="button" filename="gui/button.tga" />
-   <shader name="button_hover" filename="gui/button_hover.tga" />
-   <shader name="button_click" filename="gui/button_click.tga" />
-   <shader name="cursor" filename="gui/cursor.rgba" />
-   <shader name="panel" filename="gui/panel.rgba" />
-   <shader name="edit_box" filename="gui/edit_box.rgb" />
-   <shader name="slider_bar" filename="gui/slider_bar.tga" />
-   <shader name="slider" filename="gui/slider.rgba" />
-      
-   <rootframe name="main" shader="panel">
-      <rect xmin="0.0" ymin="0.0" xmax="1.0" ymax="1.0" />
-      
-      <textbox text="Delta_3D" shader="transparent" font="digital_font" columns="8" rows="1" textscale="1.0">
-         <rect xmin="0.2" ymin="0.575" xmax="0.8" ymax="0.825" />
-      </textbox>
-      
-      <textbox text="Loaded from XML!" shader="transparent" font="digital_font" columns="16" rows="1" textscale="1.0">
-         <rect xmin="0.2" ymin="0.475" xmax="0.8" ymax="0.575" />
-      </textbox>
-      
-      <edittextbox shader="edit_box" font="raster8" text="EdittableTextBox" columns="20" rows="1" cursortype="bar">
-         <rect xmin="0.3" ymin="0.35" xmax="0.7" ymax="0.45" />
-      </edittextbox>
-      
-      <sliderbar shader="slider" slidershader="slider_bar" rangemin="0.0" rangemax="105.0" frameid="2">
-         <rect xmin="0.12" ymin="0.8" xmax="0.88" ymax="0.9" />
-      </sliderbar>
-      
-      <button shader="button" hovershader="button_hover" clickshader="button_click" font="raster8" text="Exit"
-         textscale="0.4" frameid="1">
-         <rect xmin="0.4" ymin="0.2" xmax="0.6" ymax="0.3" />
-      </button>
-   </rootframe>
-   
-</ui>
+<?xml version="1.0" ?>
+<GUILayout>
+	<Window Type="DefaultWindow" Name="testCEG">
+		<Window Type="WindowsLook/StaticImage" Name="Panel 1">
+			<Property Name="RelativeRect" Value="l:0.000000 t:0.000000 r:1.000000 b:1.000000" />
+			<Window Type="WindowsLook/StaticText" Name="Delta_3D">
+				<Property Name="RelativeRect" Value="l:0.200000 t:0.300000 r:0.800000 b:0.500000" />
+				<Property Name="Text" Value="Delta 3D" />
+				<Property Name="Font" Value="Digi-48" />
+				<Property Name="BackgroundEnabled" Value="False" />
+				<Property Name="FrameEnabled" Value="False" />
+				<Property Name="HorzFormatting" Value="HorzCentred" />
+				</Window>
+			<Window Type="WindowsLook/Editbox" Name="EditBox">
+				<Property Name="RelativeRect" Value="l:0.300000 t:0.550000 r:0.700000 b:0.650000" />
+				<Property Name="Text" Value="Editable text box" />
+				</Window>
+			<Window Type="WindowsLook/HorizontalScrollbar" Name="slider1">
+				<Property Name="RelativeRect" Value="l:0.120000 t:0.100000 r:0.880000 b:0.150000" />
+				<Property Name="DocumentSize" Value="256.0" />
+				<Property Name="PageSize" Value="16.0" />
+				<Property Name="StepSize" Value="1.0" />
+				<Property Name="OverlapSize" Value="1.0" />				
+				<Property Name="ScrollPosition" Value="255.0" />
+				</Window>
+			<Window Type="WindowsLook/Button" Name="QuitButton">
+				<Property Name="RelativeRect" Value="l:0.400000 t:0.700000 r:0.600000 b:0.800000" />
+				<Property Name="Text" Value="Exit" />
+				</Window>
+			</Window>
+		</Window>
+</GUILayout>

@@ -117,7 +117,7 @@ struct VertexAttributes
  * Splits the primitives of a Drawable.
  */
 class SplitFunctor : public Drawable::AttributeFunctor,
-                     public Drawable::PrimitiveFunctor
+                     public osg::PrimitiveFunctor
 {
    public:
       
@@ -930,7 +930,7 @@ void SplitGeode(const Plane& plane,
       osg::ref_ptr<Drawable> drawable = geode->getDrawable(0);
       
       drawable->accept((Drawable::AttributeFunctor&)splitter);
-      drawable->accept((Drawable::PrimitiveFunctor&)splitter);
+      drawable->accept((osg::PrimitiveFunctor&)splitter);
       
       geode->removeDrawable(drawable.get());
       

@@ -72,13 +72,13 @@ Widget::Config( const WinData* d /*= NULL*/ )
 
    if( d != NULL )
    {
-      dtCore::RefPtr<Producer::Camera>         pc = mCamera->GetCamera();
+      dtCore::RefPtr<Producer::Camera> pc = mCamera->GetCamera();
       assert( pc.get() );
 
-      dtCore::RefPtr<DeltaRenderSurface>       rs = new DeltaRenderSurface;
+      dtCore::RefPtr<Producer::RenderSurface> rs = new Producer::RenderSurface;
       assert( rs.get() );
 
-      dtCore::RefPtr<Producer::InputArea>      ia = new Producer::InputArea;
+      dtCore::RefPtr<Producer::InputArea> ia = new Producer::InputArea;
       assert( ia.get() );
       
       rs->setWindow( d->hwnd );
@@ -266,8 +266,6 @@ Widget::Resize( const WinRect* r )
 
    Producer::RenderSurface*   prs   = pcam->getRenderSurface();
    assert( prs );
-
-   //convert to DeltaRenderSurface
 
    prs->setWindowRectangle( r->pos_x, r->pos_y, r->width, r->height, false );
 }

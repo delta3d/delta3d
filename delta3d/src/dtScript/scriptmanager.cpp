@@ -1,7 +1,5 @@
 #include "dtScript/scriptmanager.h"
 
-#include <boost/python/errors.hpp>
-
 using namespace dtScript;
 
 IMPLEMENT_MANAGEMENT_LAYER(ScriptManager)

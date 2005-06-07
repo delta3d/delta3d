@@ -72,7 +72,8 @@ IMPLEMENT_MANAGEMENT_LAYER( TestWeatherApp )
 
 int main(int argc, char* argv[])
 {
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() );
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testWeather/;" +
+                        GetDeltaDataPathList()  );
 
    RefPtr<TestWeatherApp> app = new TestWeatherApp( "config.xml" );
    app->Config();

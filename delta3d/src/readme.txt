@@ -4,21 +4,10 @@
 #                             #
 ###############################
 
-Win32 w/ Visual Studio .NET 7.1
--------------------------------
+See env_vars.txt for information on setting up your Delta3D
+environment variables.
 
-1. Make sure the Delta3D environment variables are set by
-   either the Win32 installer or env_var_setup.exe in 
-   delta3d/utilities. The following variables are set:
-   
-   DELTA_ROOT: path to your Delta3D installation
-   DELTA_DATA: %DELTA_ROOT%\data
-   DELTA_INC:  %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc
-   DELTA_LIB:  %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
-   
-   Also add %DELTA_ROOT%\bin to your PATH.
-
-2. Check if you have the ext/ and data/ directories already in
+1. Check if you have the ext/ and data/ directories already in
    delta3d/.
    
    If you do not, please download the latest version of
@@ -26,22 +15,42 @@ Win32 w/ Visual Studio .NET 7.1
    Delta3D folder:
 
    delta3d-dependencies 
-   delta3d-data        
+   delta3d-data
 
-3. Open src/delta.sln, build!
+Win32 w/ Visual Studio .NET 7.1
+-------------------------------
 
-4. Examples can be built view the examples/examples.sln
-   file.
+2. Open VisualStudio/delta.sln, build! This will generate the essential Delta3D
+   libraries that can be built with our distributed dependencies.
 
-5. Utilities each have their own solution. Open to build.
+3. The rest of the components can be build with their own solutions
+   (dependencies that we do not distribute are listed in parentheses):
+   
+   VisualStudio/src/dtHLA/dthla.sln          : HLA library (RTI)
+   VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
+   VisualStudio/src/python/dtpython.sln      : python bindings (Python, BoostPython)
+   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, BoostPython, RTI)
+   VisualStudio/examples/*/*.sln             : individual examples
+   VisualStudio/utilities/*/*.sln            : individual utilities
+ 
+   Or just build EVERYTHING (make sure you have Python, BoostPython, RTI):
+   VisualStudio/delta_all.sln  
 
    dtHLA
    -----
-   HLA-related modules/examples/utilities require RTI, which
-   we cannot distribute. To build the module dtHLA, example
-   testHLA, and utility hlaStealthViewer, RTI must be installed
-   with the RTI_HOME, RTI_BUILD_TYPE, and RTI_RID_FILE envionment
-   variables set. See examples/testHLA/readme.txt for more information.
+   Requries RTI package to be installed! We cannot distribute RTI with
+   Delta3D, so you are on your own. The dtHLA module is compiled and tested
+   against RTI-S 1.3_D10A although any RTI should work.
+
+   To build the module dtHLA, example testHLA, and utility hlaStealthViewer, 
+   you must add your RTI include and lib paths to your global search
+   directories using :
+
+   Tools->Options->Projects->VC++ Directories
+
+   or to the project settings.
+
+   See examples/testHLA/readme.txt for more information.
    VS solutions are provided for these apps as:
 
    src/dtHLA/dthla.sln
@@ -51,49 +60,43 @@ Win32 w/ Visual Studio .NET 7.1
    dtPython
    --------  
    The Delta3D Python bindings requires the following additional 
-   packages: Python  and boost::Python. 
-   See examples/testPython/readme.txt for more information.
+   packages: Python and boost::Python. 
 
-Linux 
------
-Tested on: Fedora Core 2, Fedora Core 3 
-Kernel <= 2.6.10-1.770_FC3
+   We've tested with Python 2.3. Version 2.4 SHOULD work, but I haven't
+   tested it myself, so no promises.
 
-1. Run 'glxinfo | grep direct'.
-   If you get 'direct rendering: yes' skip to 3.
-   Else...
+   Install Python from:
+   http://www.python.org/
 
-2. Install OpenGL drivers for your video card.
+   Obtain the Boost library from SourceForge (package 'boost'):
+   http://sourceforge.net/projects/boost/
 
-   For info on how to do this, see:
+   Decompress Boost.
 
-   ATI:   http://www.fedorafaq.org/#radeon
-   Nvdia: http://www.fedorafaq.org/#nvidia
+   Open boost_1_32_0/libs/python/build/VisualStudio/boost_python.dsw.
 
-3. Set the Delta3D environment variables. 
-   
-   DELTA_ROOT: path to your Delta3D installation
-   DELTA_DATA: $DELTA_ROOT/data
-   DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc
-   DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
+   Build boost_python.
 
-   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
+   Make sure boost_python.dll and boost_python_debug.dll are within 
+   a directory in your PATH evironement variable.
 
-   Don't forget to 'export' your variables if you are using Bash!
-   
-4. Check if you have the ext/ and data/ directories already in
-   delta3d/.
-   
-   If you do not, please download the latest version of
-   the following packages from Sourceforge and extract them into the
-   Delta3D folder:
+   Check if the following environement variables are set:
+      PYTHON_ROOT     : directory of Python installation
+      PYTHON_LIB_PATH : %PYTHON_ROOT%/libs
+      PYTHON_VERSION  : version of your Python installation
+      PYTHONPATH      : environement variable contains the directory 
+                        with the resulting .pyd libraries (most likely delta3d/bin).
 
-   delta3d-dependencies 
-   delta3d-data 
+   Build the Delta3D Python bindings:
+  - Open VisualStudio/src/python/dtPython.sln
+  - Build.
 
-5. Download SCons from http://www.scons.org .
+Win32 w/ SCons, Linux
+---------------------
 
-6. You will notice files called SConstruct and SConscript in the delta3d 
+2. Download SCons from http://www.scons.org .
+
+3. You will notice files called SConstruct and SConscript in the delta3d 
    subdirectories. These files are high-level scripts that tell SCons how 
    to build Delta3D.
 
@@ -117,23 +120,57 @@ Kernel <= 2.6.10-1.770_FC3
     scons install
 
    Use options include:
-    -Q   - Quiet output.
-    -j N - Number of jobs to use, help for multiple processors.
-    -c   - Clean out the previous build.
+    -Q     - Quiet output.
+    -j N   - Number of jobs to use, help for multiple processors.
+    -c     - Clean out the previous build.
+    --help - Display all options
+
     prefix=path - Path to in which to install Delta3D.
     mode=debug|release - 'debug' builds with debugging symbols.
                          'release' builds with optimizations enabled.
-    noWarnings=1 - Turns off all compiler warnings.
+    no_warnings=1 - Turns off all compiler warnings.
+    boost=path to your boost installation
+    rti=path ro your RTI installation
 
-   The old Cmake file are still around and you can build with them using:
-     cmake .
-     make
+3. To build your own Delta3D apps in SCons, feel free to hack on scons_template
+   as a template for how to use SCons outside our source tree.   
 
    dtPython
    --------
-   Follow instructions in examples/testPython/readme.txt.
+   The Delta3D Python bindings requires the following additional 
+   packages: Python and boost::Python. 
+
+   We've tested with Python 2.3. Version 2.4 SHOULD work, but I haven't
+   tested it myself, so no promises.
+
+   Install Boost Python (Linux w/ bjam, see above for MSVC):
+   - Obtain the Boost library from SourceForge (package 'boost'):
+     http://sourceforge.net/projects/boost/
+   - Obtain Boost Jam (package 'boost-jam').
+   - Decompress the BoostJam archive and place the file 'bjam' in your PATH.
+   - Set env. var PYTHON_ROOT to your your python installation (usually /usr or /usr/local)
+   - Set env. var PYTHON_VERSION to the 2-part major python version (e.g. 2.3 or 2.4)
+   - Go to boost_1_32_0/libs/python/build.
+   - Run 'bjam -sTOOLS=gcc'.
+   - Copy resulting shared objects to delta3d/ext/lib (non-debug version is
+     already supplied, but hey, you want your own, right?):
+     'cp -d libboost_python.so* $DELTA_ROOT/ext/lib'
+     'cp -d libboost_python_debug.so* $DELTA_ROOT/ext/lib'
+
+   Build the Python bindings for Delta3D engine:
+   - Go to the delta3d root directory.
+   - Run 'scons boost=/path/to/boost python'
+
+   Set the PYTHONPATH environement variable to contain the var DELTA_LIB.
 
    dtHLA
    -----
-   Follow instructions in examples/testHLA/readme.txt
+   Requries RTI package to be installed! We cannot distribute RTI with
+   Delta3D, so you are on your own. The dtHLA module is compiled and tested
+   against RTI-S 1.3_D10A although any RTI should work.
 
+   Once your have an RTI installed, run:
+
+   'scons rti=/path/to/rti hla'
+
+   and SCons will magically build dtHLA, testHLA, and hlaStealthViewer.

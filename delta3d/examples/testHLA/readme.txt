@@ -14,17 +14,14 @@ the same federation and verify the location of the cessna on its map.
 
 Note: Requries RTI package to be installed! We cannot distribute RTI with
       Delta3D, so you are on your own.  The dtHLA module is compiled and tested
-      against RTI-S 1.3_D10A.  
+      against RTI-S 1.3_D10A although any RTI should work.
 
 Windows users:
 - If you use a different RTI, you must replace the library name listed in 
   the dthla project settings and supply the include and library paths.
 
 For Linux RTI users:
-- Set the following environment variables:
-  RTI_HOME=path to your RTI installation
-  RTI_INCLUDE=path to your RTI include directory (containing RTI.hh, etc.)
-  RTI_LIB=path to your RTI lib directory
+- Run 'scons rti=/path/to/rti hla'
                           
 Instructions
 ------------
@@ -39,7 +36,7 @@ Win32 Binary:
 
 Linux Source:
 - Go to the delta3d root directory.
-- Run 'scons hla'
+- Run 'scons rti=/path/to/rti hla'
 - This will build dtHLA, testHLA, and hlaStealthViewer.
 
 Controls
