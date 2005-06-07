@@ -1,0 +1,12 @@
+Import('*')
+
+dtUtilSrcs = [  'domain.cpp',
+                'matrixutil.cpp',
+                'polardecomp.cpp' ]
+
+dtUtilDeps =[ 'OpenThreads', 'Producer', 'osg', 'sg', 'ul' ]
+
+if OS == 'windows' :
+    dtUtilDeps += ['User32']
+
+BuildLib( 'dtutil', dtUtilSrcs, dtUtilDeps, ['DT_LIBRARY'] )

@@ -1,0 +1,10 @@
+Import('*')
+
+if OS == 'windows' :
+
+   testSrcs = [ 'testSoarx.cpp','main.cpp' ] 
+
+   testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtsoarx' ]
+
+   BuildProgram( 'testSoarx', testSrcs, testDeps )
+   
