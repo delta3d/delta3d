@@ -1,6 +1,6 @@
+#include <dtABC/statemanager.h>
 #include <dtCore/system.h>
 #include <dtCore/notify.h>
-#include <dtABC/statemanager.h>
 
 #include <osgDB/FileUtils>
 
@@ -21,6 +21,8 @@ StateManager::StateManager()
 :  Base("StateManager"),
    mCurrentState(0),
    mLastEvent(0),
+   mStates(),
+   mTransition(),
    mSwitch(false),
    mStop(false)
 {
@@ -30,8 +32,8 @@ StateManager::StateManager()
 
 // private destructor
 StateManager::~StateManager()
-{ 
-   DeregisterInstance( this );  
+{
+   DeregisterInstance( this );
 }
 
 // create new StateManager and return, if already created just return it
@@ -149,7 +151,7 @@ bool StateManager::RemoveState( State* state )
       //remove transition to and from the remove state
       for( EventMap::iterator iter = mTransition.begin(); iter != mTransition.end(); )
       {
-         EventStatePair pair = (*iter).first;
+         EventStatePtrPair pair = (*iter).first;
 
          State* from = pair.second.get();
          State* to = (*iter).second.get();
@@ -173,7 +175,7 @@ bool StateManager::RemoveState( State* state )
 
 State* StateManager::GetState( const std::string& name )
 {
-   for( std::set< RefPtr<State> >::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
+   for( StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
    {
       if( (*iter)->GetName() == name )
       {
@@ -184,37 +186,47 @@ State* StateManager::GetState( const std::string& name )
    return 0;
 }
 
-bool StateManager::AddTransition( std::string eventType, State* from, State* to )
+bool StateManager::AddTransition(const std::string& eventType, State* from, State* to )
 {
+   /** Returns true if a transition was successfully added. */
    //lazy state addition
    mStates.insert(from);
    mStates.insert(to);
 
-   EventStatePair key = std::make_pair( eventType, from );
-   
-   //if key is not alread in map...
-   if( mTransition.find(key) == mTransition.end() )
+   // sync EventMap with the StatePtrSet algorithm:
+   // 1) check to know if the std::pair<string,State::Ptr> is unique
+   EventMap::key_type test_key( eventType, from );
+   if( mTransition.find( test_key ) == mTransition.end() )
    {
-      //add it
-      mTransition[key] = to;
+      // 2) if that is unique, then check if the State is already in the std::set by using the State's string
+      StatePtrSet::iterator set_iter = mStates.find( from );  // comparison predicate takes care of the string search
+      if( set_iter == mStates.end() )      // 3a) add the new EventMap::value_type
+         mTransition.insert( EventMap::value_type(test_key,to) );
+
+      else                                 // 3b) then use the pointer from the set to form a pair
+      {
+         EventMap::key_type real_key(eventType,*set_iter);
+         mTransition.insert( EventMap::value_type( real_key, to ) );
+      }
+
       return true;
    }
 
    return false;
 }
 
-bool StateManager::RemoveTransition( std::string eventType, State* from, State* to )
+bool StateManager::RemoveTransition(const std::string& eventType, State* from, State* to )
 {
-   EventStatePair key = std::make_pair( eventType, from );
+   /** Returns true if more than one element was removed from the EventMap */
+   EventMap::key_type key( eventType, from );
 
-   //if key is in map...
-   if( mTransition.find(key) != mTransition.end() )
+   // if key is in map...
+   EventMap::iterator iter( mTransition.find(key) );
+   if( iter != mTransition.end() )
    {
       //and if key maps to "to"
-      if( mTransition[key] == to )
-      {
-         return mTransition.erase(key) != 0;
-      }
+      if( iter->second == to )
+         return mTransition.erase(key) > 0;
    }
 
    return false;
@@ -230,12 +242,9 @@ unsigned int StateManager::GetNumOfEvents(const State* from) const
    unsigned int counter(0);
    for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
    {
-      const EventMap::key_type& string_state_pair = (*iter).first;
-      const EventMap::key_type::second_type state = string_state_pair.second;
-      if( state == from )
-      {
+      const EventMap::key_type::second_type state = (*iter).first.second;
+      if( state->GetName() == from->GetName() )
          counter++;
-      }
    }
    return counter;
 }
@@ -249,12 +258,11 @@ void StateManager::GetEvents(const State* from, std::vector<std::string>& events
    unsigned int counter(0);
    for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
    {
-      const EventMap::key_type& string_state_pair = (*iter).first;
-      const EventMap::key_type::second_type state = string_state_pair.second;
+      const EventMap::key_type::second_type state = (*iter).first.second;
       if( state == from )
       {
          if( events.size() > counter )
-            events[counter++] = string_state_pair.first;
+            events[counter++] = (*iter).first.first;
       }
    }
 }
@@ -275,7 +283,7 @@ void StateManager::MakeCurrent( State* state )
 
    if( mCurrentState.valid() )
    {
-      mCurrentState->Enable( mLastEvent );
+      mCurrentState->Enable( mLastEvent.get() );
    }
 }
 
@@ -289,7 +297,7 @@ void StateManager::Print( bool stateBased ) const
    if( stateBased )
    {
       //iterate over all states
-      for( std::set< RefPtr<State> >::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
+      for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
       {
          const State* printState = (*iter).get();
 
@@ -376,8 +384,8 @@ bool StateManager::Load( std::string filename )
 ///Private
 bool StateManager::ParseFile( std::string filename )
 {
-   bool retVal = false;
-   try 
+   bool retVal(false);
+   try
    {
       XMLPlatformUtils::Initialize();
    }
@@ -386,7 +394,6 @@ bool StateManager::ParseFile( std::string filename )
       Notify(WARN) << toCatch.getMessage() << std::endl;
       return 1;
    }
-
 
    SAXParser* parser = new SAXParser();
    parser->setDoValidation(true);    // optional.
@@ -398,7 +405,7 @@ bool StateManager::ParseFile( std::string filename )
    ErrorHandler* errHandler = (ErrorHandler*) docHandler;
    parser->setErrorHandler(errHandler);
 
-   try 
+   try
    {
       parser->parse(filename.c_str());
       retVal = true;
@@ -463,7 +470,9 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
       Notify(DEBUG_INFO, "Create FromState. type:'%s', name:'%s' ", 
              stateType.c_str(), stateName.c_str() );
 
+      //lookup
       mFromState = new State(stateType);
+
       mFromState->SetName(stateName);
 
    }
@@ -508,6 +517,6 @@ void StateManager::TransitionHandler::endElement(const XMLCh* const name)
          mFromState->GetName().c_str(),
          mToState->GetName().c_str() );
 
-      StateManager::Instance()->AddTransition(mEventTypeName, mFromState, mToState );
+      StateManager::Instance()->AddTransition(mEventTypeName, mFromState.get(), mToState.get() );
    }
 }

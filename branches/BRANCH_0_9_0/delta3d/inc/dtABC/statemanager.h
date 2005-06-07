@@ -11,6 +11,8 @@
 
 #include <xercesc/sax/HandlerBase.hpp>
 
+#include <functional>  // for std::binary_predicate
+
 namespace dtABC
 {
    ///Controls the switching of modes by starting and stoping the different states.  
@@ -29,8 +31,44 @@ namespace dtABC
       virtual ~StateManager();
 
    public:
-      typedef std::pair< std::string, dtCore::RefPtr<State> >     EventStatePair;
-      typedef std::map< EventStatePair, dtCore::RefPtr<State> >   EventMap;
+      typedef dtCore::RefPtr<State>             StatePtr;
+      typedef std::pair<std::string, StatePtr>  EventStatePtrPair;
+
+      struct StatePtrLess : std::binary_function<const StatePtr,const StatePtr,bool>
+      {
+         /** \brief Comparison object that keys off the name of a \class State .
+           */
+         bool operator()(const StatePtr lhs,const StatePtr rhs) const
+         {
+            return ( lhs->GetName() < rhs->GetName() );//&& (lhs->GetType()==rhs->GetType()))
+         }
+      };
+      typedef std::set<StatePtr,StatePtrLess>                                 StatePtrSet;
+
+      struct EventStatePtrPairLess : std::binary_function<EventStatePtrPair,EventStatePtrPair,bool>
+      {
+         /** Re-implement the default comparison algorithm for std::Pairi<T1,T2>::operator<,
+           * \sa http://www.sgi.com/tech/stl/pair.html ,
+           * but add smart StatePtr comparison with the StatePtrLess predicate.
+           */
+         bool operator()(const EventStatePtrPair x, const EventStatePtrPair y) const
+         {
+            // try to use the first element
+            bool first_less( x.first < y.first );
+            if( first_less )
+               return true;
+
+            bool first_greater( y.first < x.first );
+            if( first_greater )
+               return false;
+
+            // else, key off the second element, and use the StatePtr comparison
+            StatePtrLess compare_them;
+            return compare_them( x.second,y.second );
+         }
+      };
+
+      typedef std::map<EventStatePtrPair, StatePtr, EventStatePtrPairLess>    EventMap;
 
       static   StateManager*  Instance();
       static   void           Destroy();
@@ -47,8 +85,8 @@ namespace dtABC
       bool           RemoveState( State* state );
       State*         GetState( const std::string& name );
 
-      bool           AddTransition( std::string eventType, State* from, State* to );
-      bool           RemoveTransition( std::string eventType, State* from, State* to );
+      bool           AddTransition(const std::string& eventType, State* from, State* to );
+      bool           RemoveTransition(const std::string& eventType, State* from, State* to );
 
       /// Returns the transition map
       inline const   EventMap& GetTransitions() const;
@@ -75,12 +113,12 @@ namespace dtABC
    private:
       static dtCore::RefPtr<StateManager>    mManager;
       dtCore::RefPtr<State>                  mCurrentState;
-      Event*                                 mLastEvent;
-      std::set< dtCore::RefPtr<State> >      mStates;
+      dtCore::RefPtr<Event>                  mLastEvent;
+      StatePtrSet                            mStates;
       EventMap                               mTransition;
       bool                                   mSwitch;
       bool                                   mStop;
- 
+
       bool  ParseFile( std::string filename );
 
 
@@ -94,8 +132,8 @@ namespace dtABC
 
          virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&);
       private:
-         State *mFromState;
-         State *mToState;
+         dtCore::RefPtr<State> mFromState;
+         dtCore::RefPtr<State> mToState;
          std::string mEventTypeName;
       };
       
