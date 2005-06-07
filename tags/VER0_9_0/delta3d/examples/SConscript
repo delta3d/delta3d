@@ -1,0 +1,38 @@
+import os
+
+Import('*')
+
+modules = [ 'testApp', 
+            'testAudio', 
+            'testCharacters', 
+            'testClouds', 
+            'testEffects', 
+            'testGUI', 
+            'testHLA', 
+            'testInput', 
+            'testLights', 
+            'testMotionModels',
+            'testMultiWin',
+            'testPhysics', 
+            'testPython', 
+            'testSound', 
+            'testWeather', 
+            'testWidget', 
+            'testWin' ]
+
+if OS == 'windows' :
+
+   modules += [ 'testSoarx' ]
+   
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+
+   for module in modules :
+      SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+
+else :
+   
+   for module in modules :
+      SConscript( dirs=[module]  )

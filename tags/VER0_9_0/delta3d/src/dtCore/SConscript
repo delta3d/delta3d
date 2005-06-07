@@ -1,0 +1,71 @@
+import os
+
+Import('*')
+
+dtCoreSrcs = [ 'base.cpp',
+               'camera.cpp',
+               'clouddome.cpp',
+               'cloudplane.cpp',
+               'compass.cpp',
+               'cui_openglrenderer.cpp',
+               'cui_openglshader.cpp',
+               'deltadrawable.cpp',
+               'deltawin.cpp',
+               'effectmanager.cpp',
+               'enveffect.cpp',
+               'environment.cpp',
+               'ephemeris.cpp',
+               'flymotionmodel.cpp',
+               'globals.cpp',
+               'infinitelight.cpp',
+               'infiniteterrain.cpp',
+               'inputdevice.cpp',
+               'inputmapper.cpp',
+               'isector.cpp',
+               'joystick.cpp',
+               'keyboard.cpp',
+               'light.cpp',
+               'loadable.cpp',
+               'logicalinputdevice.cpp',
+               'motionmodel.cpp',
+               'mouse.cpp',
+               'notify.cpp',
+               'object.cpp',
+               'orbitmotionmodel.cpp',
+               'particlesystem.cpp',
+               'physical.cpp',
+               'pnoise.cpp',
+               'pointaxis.cpp',
+               'positionallight.cpp',
+               'recorder.cpp',
+               'scene.cpp',
+               'skybox.cpp',
+               'skydome.cpp',
+               'skydomeshader.cpp',
+               'spotlight.cpp',
+               'stats.cpp',
+               'sunlightshader.cpp',
+               'system.cpp',
+               'terrain.cpp',
+               'timer.cpp',
+               'tracker.cpp',
+               'transform.cpp',
+               'transformable.cpp',
+               'tripod.cpp',
+               'uidrawable.cpp',
+               'ufomotionmodel.cpp',
+               'walkmotionmodel.cpp' ]
+
+dtCoreDeps=[ 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','gdal', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
+
+if OS == 'windows' :
+   dtCoreSrcs.extend( [ 'deltawin_win32.cpp', 'uniqueid_win32.cpp' ] )
+   dtCoreDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+elif OS == 'linux':
+   dtCoreSrcs.extend( [ 'deltawin_x11.cpp', 'uniqueid_linux.cpp' ] )
+   dtCoreDeps += [ 'uuid', 'Xxf86vm' ]
+elif OS == 'darwin':
+    dtCoreSrcs.extend(['deltawin_carbon.cpp', 'uniqueid_macosx.cpp' ] ) #mac version?
+    dtCoreDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
+    
+BuildLib( 'dtcore', dtCoreSrcs, dtCoreDeps, ['DT_LIBRARY'] )
