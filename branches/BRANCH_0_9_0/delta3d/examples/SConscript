@@ -11,7 +11,8 @@ modules = [ 'testApp',
             'testHLA', 
             'testInput', 
             'testLights', 
-            'testMotionModels', 
+            'testMotionModels',
+            'testMultiWin',
             'testPhysics', 
             'testPython', 
             'testSound', 
@@ -20,6 +21,8 @@ modules = [ 'testApp',
             'testWin' ]
 
 if OS == 'windows' :
+
+   modules += [ 'testSoarx' ]
    
    if mode == 'debug' :
       build = 'Debug'
