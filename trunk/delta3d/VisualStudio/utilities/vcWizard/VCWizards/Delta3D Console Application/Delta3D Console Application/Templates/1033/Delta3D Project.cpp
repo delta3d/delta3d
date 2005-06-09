@@ -22,6 +22,8 @@ IMPLEMENT_MANAGEMENT_LAYER( [!output PROJECT_NAME] )
    
 void [!output PROJECT_NAME]::Config()
 {
+   Application::Config();
+   
    GetWindow()->SetWindowTitle("[!output PROJECT_NAME]");
    
    //setup scene here
