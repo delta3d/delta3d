@@ -178,6 +178,12 @@ bool StateManager::RemoveState( State* state )
    return false;
 }
 
+void StateManager::RemoveAllStates()
+{
+   mStates.clear();
+   mTransition.clear();
+}
+
 State* StateManager::GetState( const std::string& name )
 {
    for( StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
@@ -303,74 +309,24 @@ void StateManager::Stop()
    mStop = true;
 }
 
-void StateManager::Print( bool stateBased ) const
+void StateManager::Print(PrintOptions options) const
 {
-   if( stateBased )
+   ///\todo print to Log file instead of only to std::cout
+   if( options == PRINT_STATES )
    {
+      std::cout << "StateManager::set<State> contents:" << std::endl;
       //iterate over all states
+      unsigned int counter(0);
       for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
-      {
-         const State* printState = (*iter).get();
-
-         std::string printStateName = printState->GetName();
-         if( printState == Current() )
-         {
-            printStateName.insert(0,"*");
-         }
-
-         std::cout << printStateName;
-
-         //find all transitions that relate to the state we are currently printing
-         for( EventMap::const_iterator iter =  mTransition.begin(); iter != mTransition.end(); iter++ )
-         {
-            const std::string& event = (*iter).first.first;
-            const State* from = (*iter).first.second.get();
-            const State* to = (*iter).second.get();
-
-            std::string fromName = from->GetName();
-            if( from == Current() )
-            {
-               fromName.insert(0,"*");
-            }
-
-            std::string toName = to->GetName();
-            if( to == Current() )
-            {
-               toName.insert(0,"*");
-            }
-
-            if( from == printState || to == printState )
-            {
-               std::cout << " (" << event << ":" << fromName << ","<< toName << ")";
-            }
-
-         }
-
-         std::cout << std::endl;
-      }
+         std::cout << "State[" << counter++ << "]=" << (*iter)->GetName() << std::endl;
    }
-   else
+   else   // PRINT_TRANSITIONS
    {
-      for( EventMap::const_iterator iter =  mTransition.begin(); iter != mTransition.end(); iter++ )
-      {
-         const std::string& event = (*iter).first.first;
-         const State* from = (*iter).first.second.get();
-         const State* to = (*iter).second.get();
-
-         std::string fromName = from->GetName();
-         if( from == Current() )
-         {
-            fromName.insert(0,"*");
-         }
-
-         std::string toName = to->GetName();
-         if( to == Current() )
-         {
-            toName.insert(0,"*");
-         }
-
-         std::cout << event << "(" << fromName << "," << toName << ")" << std::endl;
-      }
+      std::cout << "StateManager::map<<Event,State> : State> contents:" << std::endl;
+      //iterate over all states
+      unsigned int counter(0);
+      for( EventMap::const_iterator iter = mTransition.begin(); iter != mTransition.end(); iter++ )
+         std::cout << "Transition[" << counter++ << "]=<" << (*iter).first.first << "," << (*iter).first.second->GetName() << "> : " << (*iter).second->GetName() << std::endl;
    }
 }
 

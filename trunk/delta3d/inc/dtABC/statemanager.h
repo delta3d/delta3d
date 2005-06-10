@@ -32,19 +32,23 @@ namespace dtABC
 
    public:
       typedef dtCore::RefPtr<State>             StatePtr;
-      typedef std::pair<std::string, StatePtr>  EventStatePtrPair;
-
-      struct StatePtrLess : public std::binary_function<StatePtr,StatePtr,bool>
+      struct StatePtrCompare : public std::binary_function<StatePtr,StatePtr,bool>
       {
-         /** \brief Comparison object that keys off the name of a \class State .
+         /** StatePtrCompare will make sure the State being added is
+           * unique to the set based on its name AND based on the fact
+           * that the State has a unique place in memory.
+           * This makes sure that no one tried to submit a State that
+           * had the same name as another State, or someone tried to
+           * resubmit a State already in the set by changing its name.
            */
          bool operator()(const StatePtr& lhs,const StatePtr& rhs) const
          {
-            return ( lhs->GetName() < rhs->GetName() );//&& (lhs->GetType() < rhs->GetType()))
+            return lhs.get() != rhs.get() && lhs->GetName() < rhs->GetName();
          }
       };
-      typedef std::set<StatePtr,StatePtrLess>                                 StatePtrSet;
+      typedef std::set<StatePtr,StatePtrCompare>                                 StatePtrSet;
 
+      typedef std::pair<std::string, StatePtr>  EventStatePtrPair;
       struct EventStatePtrPairLess : public std::binary_function<EventStatePtrPair,EventStatePtrPair,bool>
       {
          /** Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
@@ -63,7 +67,7 @@ namespace dtABC
                return false;
 
             // else, key off the second element, and use the StatePtr comparison
-            StatePtrLess compare_them;
+            StatePtrCompare compare_them;
             return compare_them( x.second,y.second );
          }
       };
@@ -82,11 +86,13 @@ namespace dtABC
       void           OnMessage( MessageData* data );
 
       bool           AddState( State* state );
-      bool           RemoveState( State* state );
-      State*         GetState( const std::string& name );
+      bool           RemoveState( State* state );  /// Removes a State from the StatePtrSet and associated transitions from the EventMap
 
       bool           AddTransition(const std::string& eventType, State* from, State* to );
       bool           RemoveTransition(const std::string& eventType, State* from, State* to );
+
+      State*         GetState( const std::string& name );
+      void           RemoveAllStates();
 
       /// Returns the set of states
       inline const   StatePtrSet&   GetStates() const;
@@ -110,7 +116,12 @@ namespace dtABC
 
       //\todo: make this the << operater?
       ///Prints list of all states and transitions
-      void           Print( bool stateBased = false ) const;
+      enum PrintOptions
+      {
+         PRINT_STATES,
+         PRINT_TRANSITIONS
+      };
+      void           Print(PrintOptions options=PRINT_STATES) const;
 
    private:
       static dtCore::RefPtr<StateManager>    mManager;
