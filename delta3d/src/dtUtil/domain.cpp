@@ -94,7 +94,7 @@ Domain::Domain(DomainEnum dtype, float a0, float a1,
 
          // The rest of this is needed for bouncing.         
          radius1Sqr = sgLengthVec3(u);
-         sgVec3 tu; sgScaleVec2(tu, u, 1.f/radius1Sqr);
+         sgVec3 tu; sgScaleVec3(tu, u, 1.f/radius1Sqr);
          radius2Sqr = sgLengthVec3(v);
          sgVec3 tv; sgScaleVec3(tv, v, 1.f/radius2Sqr);
 
