@@ -2,10 +2,6 @@
 
 using namespace dtABC;
 
-Event::Event()
-{
-}
-
 Event::~Event()
 {
 }

@@ -49,10 +49,15 @@ namespace dtUtil
    *	a default constructor.  It will not work with objects that
    *	only have named constructors.
    */
-   template<typename UniqueIdType,typename BaseType,class ltCmp=std::less<UniqueIdType> >
+   template<typename UniqueIdTypeClass,typename BaseTypeClass,typename ltCmpClass=std::less<UniqueIdTypeClass> >
    class ObjectFactory : public osg::Referenced
    {
    public:
+
+      typedef UniqueIdTypeClass UniqueIdType;
+      typedef BaseTypeClass BaseType;
+      typedef ltCmpClass ltCmp;
+
       typedef BaseType *(*createObjectFunc)(); /// Function pointer type for functions creating objects.
       typedef std::map<UniqueIdType,createObjectFunc,ltCmp> ObjectMap;
       typedef typename ObjectMap::iterator ObjTypeItor;

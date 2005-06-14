@@ -23,7 +23,8 @@
 
 #include <string>
 #include <vector>
-#include <dtCore/export.h>
+#include "dtCore/export.h"
+#include "osg/Referenced"  // for base class
 
 //Disable visual C++ compiler warnings that seem to indicate the compiler is
 //getting confused when compiling an enumeration.
@@ -37,7 +38,8 @@ namespace dtUtil {
    * This class represents a type-safe enumeration pattern.  It allows one to
    * also enumerate an enumeration thus looking up values in a list fashion.
    */
-   class DT_EXPORT Enumeration {
+   class DT_EXPORT Enumeration
+   {
    public:
       /**
       * @return the string representation of this enumeration.
