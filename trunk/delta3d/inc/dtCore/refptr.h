@@ -26,6 +26,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <ostream>
 #include <osg/ref_ptr>
 
 namespace dtCore {
@@ -81,6 +82,13 @@ namespace dtCore {
       inline bool operator < (const T* ptr) const { return (_ptr<ptr); }
       inline bool operator > (const T* ptr) const { return (_ptr>ptr); }
 
+      //added for by Delta3D
+      friend inline std::ostream &operator<<(std::ostream &os,
+         const RefPtr& rp)
+      {
+         os << rp._ptr;
+         return os;
+      }
 
       inline T& operator*()  { return *_ptr; }
 
