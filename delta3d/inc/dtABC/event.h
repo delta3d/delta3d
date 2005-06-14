@@ -3,22 +3,26 @@
 
 #include <string>
 #include <dtCore/base.h>
+#include <dtUtil/enumeration.h>
 
 namespace dtABC
 {
 
-   class DT_EXPORT Event : public dtCore::Base
+   class DT_EXPORT Event : public osg::Referenced
    {
       public:
 
-         Event();
-         Event(const std::string& mt): mType(mt) {}
-         virtual ~Event();
-         virtual const std::string& GetType() const { return mType; }
+         typedef dtUtil::Enumeration Type;
 
-      private:
+         Event( const Type* type ) : mType(type) {}
+        
+         virtual const Type* GetType() const { return mType; }
 
-        const std::string mType;
+      protected:
+
+         virtual ~Event() = 0;
+
+         const Type* mType;
 
    };
 

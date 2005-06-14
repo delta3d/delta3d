@@ -17,26 +17,28 @@ IMPLEMENT_MANAGEMENT_LAYER(StateManager)
 RefPtr<StateManager> StateManager::mManager = 0;
 
 // private constructor
+template< typename EventTypeClass, typename T2 >
 StateManager::StateManager()
 :  Base("StateManager"),
    mCurrentState(0),
    mLastEvent(0),
    mStates(),
    mTransition(),
-   mSwitch(false),
-   mStop(false)
+   mSwitch(false)
 {
    RegisterInstance( this );
    AddSender( System::GetSystem() );
 }
 
 // private destructor
+template< typename T1, typename T2 >
 StateManager::~StateManager()
 {
    DeregisterInstance( this );
 }
 
 // create new StateManager and return, if already created just return it
+template< typename T1, typename T2 >
 StateManager* StateManager::Instance()
 {
    if( mManager.get() == 0 )
@@ -47,6 +49,7 @@ StateManager* StateManager::Instance()
    return mManager.get();
 }
 
+template< typename T1, typename T2 >
 void StateManager::Destroy()
 {
    if( mManager.get() )
@@ -55,6 +58,7 @@ void StateManager::Destroy()
    }
 }
 
+template< typename T1, typename T2 >
 void StateManager::PreFrame( const double deltaFrameTime )
 {
    if( mSwitch ) //switch modes between frames
@@ -74,6 +78,7 @@ void StateManager::PreFrame( const double deltaFrameTime )
    }
 }
 
+template< typename T1, typename T2 >
 void StateManager::Frame( const double deltaFrameTime )
 {
    if( mCurrentState.valid() )
@@ -82,6 +87,7 @@ void StateManager::Frame( const double deltaFrameTime )
    }
 }
 
+template< typename T1, typename T2 >
 void StateManager::PostFrame( const double deltaFrameTime )
 {
    if( mCurrentState.valid() )
@@ -89,20 +95,16 @@ void StateManager::PostFrame( const double deltaFrameTime )
       mCurrentState->PostFrame( deltaFrameTime );
    }
 
-   if( mSwitch || mStop ) //shutdown state if switched or stopped
+   if( mSwitch ) //shutdown state if switched or stopped
    {
       if( mCurrentState.valid() )
       {
          mCurrentState->Shutdown();
       }
-
-      if( mStop )
-      {
-         System::GetSystem()->Stop();
-      }
    }
 }
 
+template< typename T1, typename T2 >
 void StateManager::OnMessage( MessageData* data )
 {
    
@@ -134,8 +136,14 @@ void StateManager::OnMessage( MessageData* data )
    }
 }
 
+template< typename T1, typename T2 >
 bool StateManager::AddState( State* state )
 {
+   if( !state )
+   {
+      return false;
+   }
+
    //if we are are not already in the set of states...
    if( mStates.insert(state).second )
    {
@@ -146,8 +154,14 @@ bool StateManager::AddState( State* state )
    return false;
 }
 
+template< typename T1, typename T2 >
 bool StateManager::RemoveState( State* state )
 {
+   if( !state )
+   {
+      return false;
+   }
+
    //if we are already in the set of states...
    if( mStates.erase(state) != 0 )
    {
@@ -178,12 +192,14 @@ bool StateManager::RemoveState( State* state )
    return false;
 }
 
+template< typename T1, typename T2 >
 void StateManager::RemoveAllStates()
 {
    mStates.clear();
    mTransition.clear();
 }
 
+template< typename T1, typename T2 >
 State* StateManager::GetState( const std::string& name )
 {
    for( StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
@@ -197,8 +213,14 @@ State* StateManager::GetState( const std::string& name )
    return 0;
 }
 
-bool StateManager::AddTransition(const std::string& eventType, State* from, State* to )
+template< typename T1, typename T2 >
+bool StateManager::AddTransition( const Event::Type* eventType, State* from, State* to )
 {
+   if( !eventType || !from || !to )
+   {
+      return false;
+   }
+
    /** Returns true if a transition was successfully added. */
    //lazy state addition
    mStates.insert(from);
@@ -218,13 +240,19 @@ bool StateManager::AddTransition(const std::string& eventType, State* from, Stat
    }
 
    // checking the transition map's keys
-   EventMap::key_type key( eventType,realFrom );
+   EventMap::key_type key( eventType, realFrom );
    std::pair<EventMap::iterator,bool> returnpair = mTransition.insert( EventMap::value_type( key , realTo ) );
    return returnpair.second;
 }
 
-bool StateManager::RemoveTransition(const std::string& eventType, State* from, State* to )
+template< typename T1, typename T2 >
+bool StateManager::RemoveTransition( const Event::Type* eventType, State* from, State* to )
 {
+   if( !eventType || !from || !to )
+   {
+      return false;
+   }
+
    /** Returns true if any elements were removed from the EventMap */
    EventMap::key_type key( eventType, from );
 
@@ -240,16 +268,19 @@ bool StateManager::RemoveTransition(const std::string& eventType, State* from, S
    return false;
 }
 
+template< typename T1, typename T2 >
 const StateManager::StatePtrSet& StateManager::GetStates() const
 {
    return mStates;
 }
 
+template< typename T1, typename T2 >
 const StateManager::EventMap& StateManager::GetTransitions() const
 {
    return mTransition;
 }
 
+template< typename T1, typename T2 >
 unsigned int StateManager::GetNumOfEvents(const State* from) const
 {
    unsigned int counter(0);
@@ -262,7 +293,8 @@ unsigned int StateManager::GetNumOfEvents(const State* from) const
    return counter;
 }
 
-void StateManager::GetEvents(const State* from, std::vector<std::string>& events)
+template< typename T1, typename T2 >
+void StateManager::GetEvents(const State* from, std::vector<const Event::Type*>& events)
 {
    /**
      * Be sure to have correctly resized \param events before calling this function
@@ -284,16 +316,19 @@ void StateManager::GetEvents(const State* from, std::vector<std::string>& events
       assert( 0 );
 }
 
+template< typename T1, typename T2 >
 State* StateManager::Current()
 {
    return mCurrentState.get();
 }
 
+template< typename T1, typename T2 >
 const State* StateManager::Current() const
 {
    return mCurrentState.get();
 }
 
+template< typename T1, typename T2 >
 void StateManager::MakeCurrent( State* state )
 {
    mCurrentState = state;
@@ -304,11 +339,7 @@ void StateManager::MakeCurrent( State* state )
    }
 }
 
-void StateManager::Stop()
-{
-   mStop = true;
-}
-
+template< typename T1, typename T2 >
 void StateManager::Print(PrintOptions options) const
 {
    ///\todo print to Log file instead of only to std::cout
@@ -330,6 +361,7 @@ void StateManager::Print(PrintOptions options) const
    }
 }
 
+template< typename T1, typename T2 >
 bool StateManager::Load( std::string filename )
 {
    bool retVal = false;
@@ -349,6 +381,7 @@ bool StateManager::Load( std::string filename )
 }
 
 ///Private
+template< typename T1, typename T2 >
 bool StateManager::ParseFile( std::string filename )
 {
    bool retVal(false);
@@ -404,15 +437,17 @@ bool StateManager::ParseFile( std::string filename )
    return retVal;
 }
 
-
+template< typename T1, typename T2 >
 StateManager::TransitionHandler::TransitionHandler()
 {
 }
 
+template< typename T1, typename T2 >
 StateManager::TransitionHandler::~TransitionHandler()
 {
 }
 
+template< typename T1, typename T2 >
 void StateManager::TransitionHandler::startElement(const XMLCh* const name,
                                                    AttributeList& attributes)
 {
@@ -425,9 +460,9 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
    else if (elementName == "Event")
    {
       std::string eventTypeName = XMLString::transcode(attributes.getValue("TypeName"));
-      Notify(DEBUG_INFO, "Create event. typeName:'%s'", eventTypeName.c_str() );
+      Notify( DEBUG_INFO, "Create event. typeName:'%s'", eventTypeName.c_str() );
 
-      mEventTypeName = eventTypeName;
+      mEventType = EventType::GetValueForName( eventTypeName );
    }
    else if (elementName == "FromState")
    {
@@ -437,8 +472,13 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
       Notify(DEBUG_INFO, "Create FromState. type:'%s', name:'%s' ", 
              stateType.c_str(), stateName.c_str() );
 
-      mFromState = new State(stateType);
-      mFromState->SetName(stateName);
+      dtCore::RefPtr<StateManager::StateFactory> sf = StateManager::Instance();
+      mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+
+      if( mFromState.valid() )
+      {
+         mFromState->SetName(stateName);
+      }
 
    }
    else if (elementName == "ToState")
@@ -449,8 +489,13 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
       Notify(DEBUG_INFO, "Create ToState. type:'%s', name:'%s'",
              stateType.c_str(), stateName.c_str() );
 
-      mToState = new State(stateType);
-      mToState->SetName(stateName);
+      dtCore::RefPtr<StateManager::StateFactory> sf = StateManager::Instance();
+      mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+
+      if( mToState.valid() )
+      {
+         mToState->SetName(stateName);
+      }
    }
    else if (elementName == "StartState")
    {
@@ -463,6 +508,7 @@ void StateManager::TransitionHandler::startElement(const XMLCh* const name,
 
 }
 
+template< typename T1, typename T2 >
 void StateManager::TransitionHandler::fatalError(const SAXParseException& exception)
 {
    char* message = XMLString::transcode(exception.getMessage());
@@ -471,6 +517,7 @@ void StateManager::TransitionHandler::fatalError(const SAXParseException& except
       << std::endl;
 }
 
+template< typename T1, typename T2 >
 void StateManager::TransitionHandler::endElement(const XMLCh* const name)
 {
    std::string elementName = XMLString::transcode(name);
@@ -482,6 +529,6 @@ void StateManager::TransitionHandler::endElement(const XMLCh* const name)
          mFromState->GetName().c_str(),
          mToState->GetName().c_str() );
 
-      StateManager::Instance()->AddTransition(mEventTypeName, mFromState.get(), mToState.get() );
+      AddTransition( mEventType.get(), mFromState.get(), mToState.get() );
    }
 }

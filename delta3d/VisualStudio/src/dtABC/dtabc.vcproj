@@ -133,9 +133,6 @@
 				RelativePath="..\..\..\src\dtABC\state.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtABC\statemanager.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtABC\weather.cpp">
 			</File>
 			<File
