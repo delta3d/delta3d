@@ -2,9 +2,6 @@ Import('*')
 
 dtAbcSrcs = [   'application.cpp',
                 'baseabc.cpp',
-                'event.cpp',
-                'state.cpp',
-                'statemanager.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 

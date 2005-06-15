@@ -20,12 +20,19 @@ namespace dtABC
 
       protected:
 
+         //pure virutal destructor to force abstract class
          virtual ~Event() = 0;
 
          const Type* mType;
 
    };
 
-}
+   //"implementation" of pure virual destructor so compiler is happy
+   Event::~Event() 
+   {
+   }
+
+};
+
 
 #endif //DELTA_EVENT
