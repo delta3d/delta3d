@@ -1,11 +1,9 @@
 #include "teststatemanager.h"     // for app class
 
-#include "dtCore/globals.h"  // for path list functions
-#include "dtCore/notify.h"   // for setnotifylevel and warn
+#include "dtCore/dt.h"
+#include "dtABC/dtABC.h"
 
 #include <iostream>
-#include "dtCore/refptr.h"
-#include "dtCore/system.h"
 
 void Usage()
 {
