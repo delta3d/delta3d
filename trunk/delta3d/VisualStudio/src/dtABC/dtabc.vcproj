@@ -127,6 +127,9 @@
 				RelativePath="..\..\..\src\dtABC\baseabc.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtABC\event.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtABC\state.cpp">
 			</File>
 			<File
