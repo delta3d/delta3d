@@ -38,15 +38,18 @@
 #undef _AUTOLIBNAME5
 #undef _AUTOLIBNAME6
 #undef _AUTOLIBNAME7
+#undef _AUTOLIBNAME8
 
 #if defined(_DEBUG)
    #define _AUTOLIBNAME1   "dtabcd.lib"
    #define _AUTOLIBNAME4   "fltkd.lib"
    #define _AUTOLIBNAME3   "tinyxmld.lib"
+   #define _AUTOLIBNAME8   "xerces-c_2D.lib"
 #else 
    #define _AUTOLIBNAME1   "dtabc.lib"  
    #define _AUTOLIBNAME4   "fltk.lib"
    #define _AUTOLIBNAME3   "tinyxml.lib"
+   #define _AUTOLIBNAME8   "xerces-c_2.lib"
 #endif
 
 #define _AUTOLIBNAME5 "wsock32.lib"
@@ -60,6 +63,7 @@
    #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME6 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME7 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME8 )
 #endif
 
 #pragma  comment( lib, _AUTOLIBNAME1 )
@@ -68,6 +72,7 @@
 #pragma  comment( lib, _AUTOLIBNAME5 )
 #pragma  comment( lib, _AUTOLIBNAME6 )
 #pragma  comment( lib, _AUTOLIBNAME7 )
+#pragma  comment( lib, _AUTOLIBNAME8 )
 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
