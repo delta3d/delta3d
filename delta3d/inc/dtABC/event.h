@@ -27,11 +27,6 @@ namespace dtABC
 
    };
 
-   //"implementation" of pure virual destructor so compiler is happy
-   Event::~Event() 
-   {
-   }
-
 };
 
 
