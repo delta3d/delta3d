@@ -687,7 +687,7 @@ namespace dtABC
       if (elementName == "Transition")
       {
          ///\todo : Is 'elementName' correct here?
-         dtCore::Notify(dtCore::DEBUG_INFO, "AddTransition('%s', '%s', '%s')",elementName.c_str(),mFromState->GetName().c_str(),mToState->GetName().c_str() );
+         dtCore::Notify(dtCore::DEBUG_INFO, "AddTransition('%s', '%s', '%s')", mEventType->GetName().c_str() ,mFromState->GetName().c_str(),mToState->GetName().c_str() );
 
          StateManager<T1,T2>::Instance()->AddTransition( mEventType, mFromState.get(), mToState.get() );
       }
