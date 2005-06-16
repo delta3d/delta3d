@@ -10,7 +10,7 @@ installer or env_var_setup.exe in delta3d/utilities. The following
 variables are set:
 
 DELTA_ROOT = c:\program files\delta3d  (or wherever Delta3D is installed)
-DELTA_INC  = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc
+DELTA_INC  = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI
 DELTA_LIB  = %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
 DELTA_DATA = %DELTA_ROOT%\data
 
@@ -31,7 +31,7 @@ Linux
 -----
 DELTA_ROOT: path to your Delta3D installation
 DELTA_DATA: $DELTA_ROOT/data
-DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc
+DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc:$DELTA_ROOT/ext/inc
 DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
 
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
