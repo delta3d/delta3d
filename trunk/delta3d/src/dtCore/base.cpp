@@ -11,14 +11,12 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Base)
 
-using namespace std;
-
 /**
  * Constructor.
  *
  * @param name the instance name
  */
-Base::Base(string name) : mName(name)
+Base::Base(const std::string& name) : mName(name)
 {
    RegisterInstance(this);
 
@@ -39,7 +37,7 @@ Base::~Base()
  *
  * @param name the new name
  */
-void Base::SetName(string name)
+void Base::SetName(const std::string& name)
 {
    mName = name;
 }
@@ -49,7 +47,7 @@ void Base::SetName(string name)
  *
  * @return the current name
  */
-const string& Base::GetName() const
+const std::string& Base::GetName() const
 {
    return mName;
 }
@@ -74,7 +72,7 @@ void Base::RemoveSender( Base *sender )
   * @param message Optional text message (def = "")
   * @param data Optional void pointer to any user data (def = NULL)
   */
-void Base::SendMessage(string message, void *data)
+void Base::SendMessage(const std::string& message, void *data)
 {
    //make a new MessageData, load it up, and pass it to our signal
    MessageData dataToSend;

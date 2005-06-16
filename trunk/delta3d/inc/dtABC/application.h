@@ -25,6 +25,8 @@
 #include "tinyxml.h"
 #include "dtCore/deltawin.h"
 
+#include <string>
+
 namespace dtABC
 {
    ///Base generic Application class
@@ -55,7 +57,7 @@ namespace dtABC
       virtual  void  Run( void );
 
       ///Generate a default configuration file
-      void  GenerateDefaultConfigFile( void );
+      static std::string  GenerateDefaultConfigFile( void );
 
    protected:
       ///override for preframe 

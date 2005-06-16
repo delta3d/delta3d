@@ -90,7 +90,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         Base(std::string name = "base");
+         Base(const std::string& name = "base");
 
          /**
           * Destructor.
@@ -102,7 +102,7 @@ namespace dtCore
           *
           * @param name the new name
           */
-         void SetName(std::string name);
+         void SetName(const std::string& name);
 
          /**
           * Returns the name of this instance.
@@ -129,7 +129,7 @@ namespace dtCore
           *  @param message Optional string message
           *  @param data Optional pointer to user data
           */
-         void SendMessage(std::string message="", void *data=NULL);
+         void SendMessage(const std::string& message="", void *data=NULL);
    };
 };
 

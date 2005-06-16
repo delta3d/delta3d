@@ -21,10 +21,10 @@ namespace dtCore
    {
    public:
       ///Load a file from disk
-      virtual osg::Node* LoadFile( std::string filename, bool useCache = true);
+      virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
 
       ///Get the filename of the last loaded file
-      std::string GetFilename(void) const {return mFilename;}
+      const std::string& GetFilename(void) const {return mFilename;}
 
    protected:
 	   Loadable(void);

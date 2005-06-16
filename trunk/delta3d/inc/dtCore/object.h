@@ -32,6 +32,8 @@
 #include "dtCore/loadable.h"
 #include "dtCore/physical.h"
 
+#include <string>
+
 namespace dtCore
 {
 
@@ -46,11 +48,11 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Object)
          
       public:
-         Object(std::string name = "Object");
+         Object(const std::string& name = "Object");
          virtual ~Object();
                   
          ///Load a file from disk
-         virtual osg::Node* LoadFile( std::string filename, bool useCache = true);
+         virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
 
          void RecenterGeometryUponLoad( const bool enable = true )
          { mRecenterGeometry = enable; }
