@@ -217,13 +217,15 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
 /** This method writes out all the default attributes from the internal Application
   * members and writes them out to a .xml file ("config.xml").
   */
-void dtABC::Application::GenerateDefaultConfigFile()
+std::string dtABC::Application::GenerateDefaultConfigFile()
 {
-   TiXmlDocument *xmlDoc = new TiXmlDocument( "config.xml" );
-   if (xmlDoc->LoadFile( "config.xml" ))
+   std::string filename("config.xml");
+   TiXmlDocument *xmlDoc = new TiXmlDocument( filename.c_str() );
+   if( xmlDoc->LoadFile( "config.xml" ) )
    {
+      ///\todo Look at this - both of these lines are questionable.
       Notify(WARN, "Application found existing config.xml, delete file before generating a new one.");
-      return;
+      return std::string("");    // commented this line so that the above statement was true.
    }
 
    TiXmlDocument xml( "config.xml" );
@@ -258,4 +260,7 @@ void dtABC::Application::GenerateDefaultConfigFile()
    xml.InsertEndChild( app );
 
    xml.SaveFile();
+
+   //return osgDB::getFilePath(filename);  // from #include <osgDB/FileNameUtils>
+   return filename;
 }

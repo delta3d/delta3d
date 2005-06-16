@@ -10,12 +10,11 @@
 #include "dtCore/loadable.h"
 
 using namespace dtCore;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Object)
 
 
-Object::Object(string name)
+Object::Object(const std::string& name)
 : mRecenterGeometry( false )
 {
    RegisterInstance(this);
@@ -40,7 +39,7 @@ Object::~Object()
  * @param filename : The name of the file to be loaded
  * @param useCache : If true, use OSG's file cache
  */
-osg::Node* Object::LoadFile(string filename, bool useCache)
+osg::Node* Object::LoadFile(const std::string& filename, bool useCache)
 {
    osg::Node *node = NULL;
    node = Loadable::LoadFile(filename, useCache);
