@@ -1,4 +1,6 @@
 #include <dtCore/globals.h>
+#include <dtCore/notify.h>
+#include <stdexcept>
 
 #include <osgDB/FileUtils>
 
@@ -9,29 +11,31 @@
  *
  * @param pathList : The list of all paths to be used to find data files
  */
-void dtCore::SetDataFilePathList( std::string pathList )
+void dtCore::SetDataFilePathList(const std::string& pathList )
 {
+   std::string modpath = pathList;
    for( std::string::size_type i = 0; i < pathList.size(); i++ )
    {
       #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
       try
       {
-         if( pathList.at(i) == ':' && pathList.at(i+1) != '\\' )
+         if( modpath.at(i) == ':' && modpath.at(i+1) != '\\' )
          {
-            pathList.at(i) = ';';
+            modpath.at(i) = ';';
          }
       }
-      catch( std::out_of_range )
-      {}
-      #else
-      if( pathList[i] == ';' )
+      catch( std::out_of_range myexcept)
       {
-         pathList[i] = ':'; 
+         Notify(dtCore::WARN,"dtCore::%s",myexcept.what());
+      }
+      #else
+      if( modpath[i] == ';' )
+      {
+         modpath[i] = ':'; 
       }
       #endif
    }
-   
-   osgDB::setDataFilePathList(pathList);
+   osgDB::setDataFilePathList(modpath);
 }
 
 /*!
