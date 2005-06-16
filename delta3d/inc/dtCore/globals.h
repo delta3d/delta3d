@@ -29,7 +29,7 @@
 namespace dtCore
 {
    ///Set the list of data file paths
-   DT_EXPORT void SetDataFilePathList( std::string pathList );
+   DT_EXPORT void SetDataFilePathList(const std::string& pathList );
 
    ///Get the list of data file paths
    DT_EXPORT std::string GetDataFilePathList();
