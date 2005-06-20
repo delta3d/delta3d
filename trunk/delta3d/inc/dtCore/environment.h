@@ -33,13 +33,13 @@
 namespace dtCore
 {
    ///A unique environment which controls lighting and visibility
-   class DT_EXPORT Environment :  public dtCore::DeltaDrawable
+   class DT_EXPORT Environment : public dtCore::DeltaDrawable
    {
    public:
             DECLARE_MANAGEMENT_LAYER(Environment)
 
-      Environment(const std::string name="Environment");
-      virtual ~Environment(void);
+      Environment( const std::string& name = "Environment" );
+      virtual ~Environment();
 
       enum FogMode {
          LINEAR = 0, ///<Linear fog
@@ -49,7 +49,7 @@ namespace dtCore
       };
 
       ///Notifies this object that it has been added to a Scene
-      virtual void AddedToScene(Scene* scene);
+      virtual void AddedToScene( Scene *scene );
          
       ///Add a DeltaDrawable to be rendered using this Environment's properties.
       virtual bool AddChild( DeltaDrawable *child );
@@ -64,66 +64,66 @@ namespace dtCore
       void RemoveDrawable( DeltaDrawable *drawable );
 
       /// Add an Environmental Effect to the Environment
-      void AddEffect(EnvEffect *effect);
+      void AddEffect( EnvEffect *effect );
 
       /// Remove an EnvEffect from this Environment
-      void RemEffect(EnvEffect *effect);
+      void RemEffect( EnvEffect *effect );
 
       ///Get an Environmental Effect by its index
-      EnvEffect* GetEffect(const int idx) {return mEffectList[idx].get();}
+      EnvEffect* GetEffect( int idx ) { return mEffectList[idx].get(); }
 
       ///Get the number of Environmental Effects in this Environment
-      int GetNumEffects(void) {return mEffectList.size();}
+      int GetNumEffects() { return mEffectList.size(); }
 
       ///Set the base color of the sky
-      void SetSkyColor(sgVec3 color);
-      void GetSkyColor(sgVec3 color) const {sgCopyVec3(color, mSkyColor);}
+      void SetSkyColor( sgVec3 color );
+      void GetSkyColor( sgVec3 color ) const { sgCopyVec3( color, mSkyColor ); }
       
       ///Set the base color of the fog
-      void SetFogColor(sgVec3 color);
-      void GetFogColor(sgVec3 color) const {sgCopyVec3(color, mFogColor);}
+      void SetFogColor( sgVec3 color );
+      void GetFogColor( sgVec3 color ) const { sgCopyVec3( color, mFogColor ); }
 
 	   ///Get the modified color of the fog
-	   void GetModFogColor(sgVec3 color) const {sgCopyVec3(color, mModFogColor);}
+	   void GetModFogColor( sgVec3 color ) const { sgCopyVec3( color, mModFogColor ); }
 
       ///Set the fog mode
-      void SetFogMode(FogMode mode);
-      FogMode GetFogMode() const {return mFogMode;}
+      void SetFogMode( FogMode mode );
+      FogMode GetFogMode() const { return mFogMode; }
 
       ///Supply the advanced fog control values
-      void SetAdvFogCtrl(sgVec3 src) {sgCopyVec3(mAdvFogCtrl, src);}
-      void GetAdvFogCtrl(sgVec3 dst) {sgCopyVec3(dst, mAdvFogCtrl);}
+      void SetAdvFogCtrl( sgVec3 src ) { sgCopyVec3( mAdvFogCtrl, src ); }
+      void GetAdvFogCtrl( sgVec3 dst ) { sgCopyVec3( dst, mAdvFogCtrl ); }
 
       ///Set the fog near value (only used for FogMode::LINEAR
-      void SetFogNear(const float val);
-      float GetFogNear(void)const {return mFogNear;}
+      void SetFogNear( float val );
+      float GetFogNear() const {return mFogNear;}
 
       //Turn the fog on or off
-      void SetFogEnable(bool enable);
-      bool GetFogEnable(void) const {return mFogEnabled;}
+      void SetFogEnable( bool enable );
+      bool GetFogEnable() const {return mFogEnabled;}
 
       ///Set the visibility distance in meters
-      void SetVisibility(float distance);
-      float GetVisibility(void)const {return mVisibility;}
+      void SetVisibility( float distance );
+      float GetVisibility() const {return mVisibility;}
 
       ///Get the current color of the sun
-      void GetSunColor(sgVec3 color) {sgCopyVec3(color, mSunColor);}
+      void GetSunColor( sgVec3 color ) {sgCopyVec3(color, mSunColor);}
 
       ///Get the sun's azimuth and elevation (degrees)
       void GetSunAzEl( float *az, float *el ) {*az=mSunAzimuth; *el=mSunAltitude;}
 
-      void Repaint(void);
+      void Repaint();
 
       ///Set the environment's date and time
-      void SetDateTime( const int yr, const int mo, const int da,
-                        const int hr, const int mi, const int sc);
+      void SetDateTime( int yr, int mo, int da,
+                        int hr, int mi, int sc);
 
       ///Get the current date/time of the environment
       void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc );
 
       ///Set the ephemeris reference lat/long
-      void SetRefLatLong(sgVec2 latLong);
-      void GetRefLatLong(sgVec2 latLong) { sgCopyVec2(latLong, mRefLatLong);}
+      void SetRefLatLong( sgVec2 latLong );
+      void GetRefLatLong( sgVec2 latLong ) { sgCopyVec2( latLong, mRefLatLong );}
 
    private:
       class InterpTable
@@ -192,8 +192,6 @@ namespace dtCore
       SunlightShader *mSunlightShader; ///<pixel shader for light scattering
       SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
       RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be NULL)
-
-      //RefPtr<Scene> mParentScene;///<The Scene the Environment was added to
 
       void UpdateSkyLight(void);
       void UpdateFogColor(void);

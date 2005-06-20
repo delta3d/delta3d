@@ -182,7 +182,7 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
       mEnvironment->SetVisibility(1500.f);
       break;
    default:
-      dtCore::Notify(dtCore::WARN, "Weather: unhandled visibility type");
+      dtCore::Notify( dtCore::WARN, "Weather: unhandled visibility type" );
       break;
    }
    
