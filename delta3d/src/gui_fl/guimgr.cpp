@@ -357,30 +357,41 @@ void UserInterface::SelectInstance (void)
    }
 
    /** CloudDome **/
-   if (CloudDome *cd = dynamic_cast<CloudDome*>(b))
+   //if( const CloudDome *cd = dynamic_cast<CloudDome*>(b) )
+   if( CloudDome *cd = dynamic_cast<CloudDome*>(b) )
    {   
        InstanceClassName->label( "dtCore::CloudDome" );
 
-       cScale->value(cd->getScale());
-       cExponent->value(cd->getExponent());
-       cCutoff->value(cd->getCutoff());
-       cSpeedX->value(cd->getSpeedX());
-       cSpeedY->value(cd->getSpeedY());
-       cBias->value(cd->getBias());
-       if (cd->getEnable())
+       cScale->value(cd->GetScale());
+       cExponent->value(cd->GetExponent());
+       cCutoff->value(cd->GetCutoff());
+       cSpeedX->value(cd->GetSpeedX());
+       cSpeedY->value(cd->GetSpeedY());
+       cBias->value(cd->GetBias());
+       if (cd->GetEnable())
            cEnable->value(1);
        else
            cEnable->value(0);
 
-       osg::Vec3 *ccolor;
-       ccolor = cd->getCloudColor();
+       /*
+       osg::Vec3 ccolor = cd->GetCloudColor();
+       CloudRed->value(ccolor.x());
+       CloudGreen->value(ccolor.y());
+       CloudBlue->value(ccolor.z());
+
+       Fl_Color fc = fl_color_cube( int(ccolor.x()*(FL_NUM_RED-1)),
+                                    int(ccolor.y()*(FL_NUM_GREEN-1)),
+                                    int(ccolor.z()*(FL_NUM_BLUE-1)) );
+                                    */
+
+       osg::Vec3* ccolor = cd->GetCloudColor();
        CloudRed->value(ccolor->x());
        CloudGreen->value(ccolor->y());
        CloudBlue->value(ccolor->z());
 
        Fl_Color fc = fl_color_cube( int(ccolor->x()*(FL_NUM_RED-1)),
-                                    int(ccolor->y()*(FL_NUM_GREEN-1)),
-                                    int(ccolor->z()*(FL_NUM_BLUE-1)) );
+          int(ccolor->y()*(FL_NUM_GREEN-1)),
+          int(ccolor->z()*(FL_NUM_BLUE-1)) );
 
        CloudColorLoadButton->color(fc);      
 
@@ -1155,40 +1166,40 @@ void UserInterface::InfSmoothCDCB(Fl_Check_Button *o)
 void UserInterface::CloudScaleCB(Fl_Value_Slider *o)
 {
    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-   cd->setScale( cScale->value());
+   cd->SetScale( cScale->value());
 }
 
 void UserInterface::CloudCutoffCB(Fl_Value_Slider *o)
 {
    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-   cd->setCutoff( cCutoff->value());
+   cd->SetCutoff( cCutoff->value());
 }
 
 void UserInterface::CloudExponentCB(Fl_Value_Slider *o)
 {
    CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-   cd->setExponent( cExponent->value());
+   cd->SetExponent( cExponent->value());
 }
 
 void UserInterface::CloudWindCB(Fl_Value_Slider *)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-    cd->setSpeedX( cSpeedX->value());
-    cd->setSpeedY( cSpeedY->value());
+    cd->SetSpeedX( cSpeedX->value());
+    cd->SetSpeedY( cSpeedY->value());
        
 }
 
 void UserInterface::CloudEnableCB(Fl_Check_Button *)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-    cd->setShaderEnable( cEnable->value());
+    cd->SetShaderEnable( cEnable->value());
        
 }
 
 void UserInterface::CloudBiasCB(Fl_Value_Slider *)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
-    cd->setBias( cBias->value());
+    cd->SetBias( cBias->value());
        
 }
 
@@ -1212,28 +1223,24 @@ void UserInterface::CloudColorBrowserCB(Fl_Button *)
 
     CloudColorLoadButton->color(cc);
 
-    cd->setCloudColor(new osg::Vec3(CloudRed->value(),
-                        CloudGreen->value(),
-                        CloudBlue->value()));
+    //cd->SetCloudColor( osg::Vec3( CloudRed->value(), CloudGreen->value(), CloudBlue->value() ) );
+    cd->SetCloudColor( new osg::Vec3( CloudRed->value(), CloudGreen->value(), CloudBlue->value() ) );
 }
 
 void UserInterface::CloudColorCB(Fl_Value_Input*)
 {
     CloudDome *cd = dynamic_cast<CloudDome*>(GetSelectedInstance(this));
 
-    osg::Vec3 *ccolor = new osg::Vec3(
-         CloudRed->value(),
-         CloudGreen->value(),
-         CloudBlue->value());
+    osg::Vec3 ccolor( CloudRed->value(), CloudGreen->value(), CloudBlue->value());
 
-    Fl_Color fc = fl_color_cube( int(ccolor->x()*(FL_NUM_RED-1)),
-                                 int(ccolor->y()*(FL_NUM_GREEN-1)),
-                                 int(ccolor->z()*(FL_NUM_BLUE-1)) );
+    Fl_Color fc = fl_color_cube( int(ccolor.x()*(FL_NUM_RED-1)),
+                                 int(ccolor.y()*(FL_NUM_GREEN-1)),
+                                 int(ccolor.z()*(FL_NUM_BLUE-1)) );
       
       CloudColorLoadButton->color(fc);
       CloudColorLoadButton->redraw();
 
-   cd->setCloudColor( ccolor );
+   cd->SetCloudColor( &ccolor );
 }
 
 void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)

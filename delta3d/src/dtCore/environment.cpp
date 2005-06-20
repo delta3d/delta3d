@@ -11,7 +11,7 @@
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
-Environment::Environment(const std::string name):
+Environment::Environment(const std::string& name):
 mAmbLightTable(NULL),
 mDifLightTable(NULL),
 mSpecLightTable(NULL),
@@ -145,10 +145,14 @@ Environment::~Environment(void)
    }
 
    DeregisterInstance(this);
-   delete(mAmbLightTable);
-   delete(mDifLightTable);
-   delete(mSpecLightTable);
-   delete(mSkyLightTable);
+
+   delete mAmbLightTable;
+   delete mDifLightTable;
+   delete mSpecLightTable;
+   delete mSkyLightTable;
+   delete mSunlightShader; 
+   delete mSkyDomeShader; 
+
    RemoveSender( System::GetSystem() );
 }
 
@@ -156,9 +160,9 @@ Environment::~Environment(void)
 void Environment::AddedToScene(Scene* scene)
 {
    DeltaDrawable::AddedToScene( scene );
-   if (scene != NULL)
+
+   if( scene != 0 )
    {
-      //mSkyLight = scene->GetSceneHandler()->GetSceneView()->getLight();
       mSkyLight = scene->GetLight(0);
    }
 }
@@ -166,30 +170,30 @@ void Environment::AddedToScene(Scene* scene)
 // Add an Environmental Effect to the Environment
 void Environment::AddEffect(EnvEffect *effect)
 {
-   if (!effect) return;
+   if(!effect) return;
 
    // we add EnvEffects to our "mEnvEffectNode"
-   if (std::find(mEffectList.begin(), mEffectList.end(), effect)==mEffectList.end())
+   if( std::find( mEffectList.begin(), mEffectList.end(), effect ) == mEffectList.end() )
    {
       //effect doesn't exit so add it to the list
       mEffectList.push_back(effect);
 
-      if (SkyDome *dome = dynamic_cast<SkyDome*>(effect)) //is a SkyDome
+      if( SkyDome *dome = dynamic_cast<SkyDome*>(effect) ) //is a SkyDome
       {
          mSkyDome = dome;
          mEnvEffectNode->addChild( dome->GetOSGNode() ); 
 
          //add the skydome shader to dome's stateset
          short attr = osg::StateAttribute::OFF;
-         if (GetFogMode()==Environment::ADV) attr = osg::StateAttribute::ON;
+         if( GetFogMode()==Environment::ADV ) attr = osg::StateAttribute::ON;
 
          osg::StateSet *state = dome->GetOSGNode()->getOrCreateStateSet();
-         state->setAttributeAndModes(mSkyDomeShader->mLightScatterinVP, attr );
-         state->setAttributeAndModes(mSkyDomeShader->mDomeFP, attr );
+         state->setAttributeAndModes( mSkyDomeShader->mLightScatterinVP, attr );
+         state->setAttributeAndModes( mSkyDomeShader->mDomeFP, attr );
       }
       else
       {
-         mEnvEffectNode->addChild(effect->GetOSGNode());
+         mEnvEffectNode->addChild( effect->GetOSGNode() );
       }
 
       this->Repaint();
@@ -205,12 +209,12 @@ void Environment::AddEffect(EnvEffect *effect)
   * has previously been added, then puts the effect into a holding bin for 
   * removal at a later time.
   */
-void Environment::RemEffect(EnvEffect *effect)
+void Environment::RemEffect( EnvEffect *effect )
 {
-   if (!effect) return;
+   if(!effect) return;
 
-   EnvEffectList::iterator it = std::find(mEffectList.begin(),mEffectList.end(),effect);
-   if (it != mEffectList.end() )
+   EnvEffectList::iterator it = std::find( mEffectList.begin(), mEffectList.end(), effect );
+   if( it != mEffectList.end() )
    {
       //its in our list of effects, so lets mark it for removal
       mToBeRemoved.push_back(effect);
@@ -226,19 +230,19 @@ void Environment::RemEffect(EnvEffect *effect)
 /** Remove any EnvEffects that have been marked for removal.  This method 
   * needs to be called at a scene graph "safe" time.
   */
-void Environment::RemoveEffectCache(void)
+void Environment::RemoveEffectCache()
 {
-   for (EnvEffectList::iterator it=mToBeRemoved.begin();
-      it!= mToBeRemoved.end();
-      it++)
+   for( EnvEffectList::iterator it = mToBeRemoved.begin();
+      it != mToBeRemoved.end();
+      it++ )
    {
       EnvEffect *effect = it->get();
 
       mEnvEffectNode->removeChild( effect->GetOSGNode() );
 
       //also take it out of the Environment's effect list
-      EnvEffectList::iterator itr = std::find(mEffectList.begin(),mEffectList.end(),effect);
-      if (itr != mEffectList.end())
+      EnvEffectList::iterator itr = std::find( mEffectList.begin(), mEffectList.end(), effect );
+      if( itr != mEffectList.end() )
       {
          mEffectList.erase(itr);
       }
@@ -250,45 +254,26 @@ void Environment::RemoveEffectCache(void)
 ///Add a DeltaDrawable to the Scene to be viewed.
 bool Environment::AddChild( DeltaDrawable *child )
 {
-   bool success = DeltaDrawable::AddChild( child );
-
    //we add Drawables to our mDrawableNode
-   if ((child) && (success))
+   if( child && DeltaDrawable::AddChild( child ) )
    {
       mDrawableNode->addChild( child->GetOSGNode() );
-
-      /*
-      if( Physical* physical = dynamic_cast<Physical*>(drawable) )
-      {
-         if (mParentScene.valid())
-         {
-            mParentScene->RegisterPhysical( physical );
-         }
-      }
-      */
-      return (true);
+      return true;
    }
-   else return (false);
+   else
+   {
+      return false;
+   }
 }
 
 ///Remove a DeltaDrawable from the Environment Node.
 void Environment::RemoveChild( DeltaDrawable *child )
 {
 	//we add Drawables to our mDrawableNode
-	if (child)
+	if(child)
 	{
 		mDrawableNode->removeChild( child->GetOSGNode() );
       DeltaDrawable::RemoveChild( child );
-
-      /*
-		if( Physical* physical = dynamic_cast<Physical*>(drawable) )
-		{
-			if (mParentScene.valid())
-			{
-				mParentScene->UnRegisterPhysical(physical);
-			}
-		}
-      */
 	}
 }
 
@@ -297,8 +282,8 @@ void Environment::OnMessage(MessageData *data)
 {
    if (data->message == "preframe")
    {
-       double *deltaFrameTime = (double*)data->userData;
-      Update(*deltaFrameTime);
+      double deltaFrameTime = *reinterpret_cast<double*>( data->userData );
+      Update(deltaFrameTime);
    }
    else if (data->message == "postframe")
    {
@@ -330,7 +315,7 @@ void dtCore::Environment::SetFogColor(sgVec3 color)
    Repaint();
 }
 
-void dtCore::Environment::Repaint(void)
+void dtCore::Environment::Repaint()
 {
    float vis = mVisibility;
    if (!GetFogEnable()) vis = 200000.f;
@@ -403,7 +388,7 @@ void dtCore::Environment::SetFogMode(FogMode mode)
   * LINEAR.  
   * @param val : the near value (meters)
   */
-void dtCore::Environment::SetFogNear(const float val)
+void dtCore::Environment::SetFogNear( float val )
 {
    mFogNear = val;
    if (mFogNear<0.f) mFogNear = 0.f;
@@ -496,7 +481,7 @@ void dtCore::Environment::SetDateTime( const int yr, const int mo, const int da,
    {
       mCurrTime = GetGMT(yr-1900, mo-1, da, hr, mi, sc);
    }
-   Notify(DEBUG_INFO, "Sim time set to:%s", asctime(localtime(&mCurrTime)) );
+   Notify( DEBUG_INFO, "Sim time set to:%s", asctime( localtime(&mCurrTime) ) );
 
    Update(999.99);
 }
@@ -711,7 +696,7 @@ void dtCore::Environment::SetRefLatLong(sgVec2 latLong)
    sgCopyVec2(mRefLatLong, latLong);
 }
 
-void Environment::AddDrawable( DeltaDrawable *drawable)
+void Environment::AddDrawable( DeltaDrawable *drawable )
 {
    DEPRECATE("void Environment::AddDrawable( DeltaDrawable *drawable)",
              "void Environment::AddChild( DeltaDrawable *child )")
@@ -719,7 +704,7 @@ void Environment::AddDrawable( DeltaDrawable *drawable)
    AddChild(drawable);
 }
 
-void Environment::RemoveDrawable( DeltaDrawable *drawable)
+void Environment::RemoveDrawable( DeltaDrawable *drawable )
 {
    DEPRECATE("void Environment::RemoveDrawable( DeltaDrawable *drawable)",
              "void Environment::RemoveChild( DeltaDrawable *child )")

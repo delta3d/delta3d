@@ -39,8 +39,6 @@ public:
       orbit->SetTarget(GetCamera());
    }
 
-
-
    ~TestCloudsApp()
    {
    }
@@ -120,6 +118,7 @@ int main(int argc, char* argv[])
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testClouds/;" +
                         GetDeltaDataPathList()  );
+
    RefPtr<TestCloudsApp> app = new TestCloudsApp( "config.xml" );
    app->Config();
    app->Run();
