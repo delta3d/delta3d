@@ -134,6 +134,9 @@ SunlightShader::SunlightShader()
    greenstein = 0.8 * 1.5; ///< Magic number
 }
 
+SunlightShader::~SunlightShader()
+{
+}
 
 /** Update the shader with new values. 
   *

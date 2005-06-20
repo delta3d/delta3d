@@ -126,6 +126,9 @@ SkyDomeShader::SkyDomeShader()
    greenstein = 0.8 * 1.5; ///< Magic number
 }
 
+SkyDomeShader::~SkyDomeShader()
+{
+}
 
 /** Update the shader with new values. 
   *
