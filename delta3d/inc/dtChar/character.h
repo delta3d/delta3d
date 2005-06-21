@@ -49,7 +49,7 @@ namespace dtChar
           *
           * @param name the instance name
           */
-         Character(std::string name = "character");
+         Character(const std::string& name = "character");
 
          /**
           * Destructor.
@@ -74,7 +74,7 @@ namespace dtChar
           * @param filename the name of the file to load
           * @return true if successful, false if not
           */
-         virtual osg::Node* LoadFile( std::string filename, bool useCache = true );
+         virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true );
 
          /**
           * Sets the rotation of this character.

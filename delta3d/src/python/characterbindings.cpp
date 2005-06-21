@@ -13,16 +13,16 @@ class CharacterWrap : public Character
 {
 public:
 
-   CharacterWrap(PyObject* self, std::string name = "character")
+   CharacterWrap(PyObject* self, const std::string& name = "character")
       : mSelf(self)
    {}
 
-   void LoadFileWrapper1(std::string filename, bool useCache)
+   void LoadFileWrapper1(const std::string& filename, bool useCache)
    {
       Character::LoadFile(filename,useCache);
    }
 
-   void LoadFileWrapper2(std::string filename)
+   void LoadFileWrapper2(const std::string& filename)
    {
       Character::LoadFile(filename);
    }
@@ -42,7 +42,7 @@ void initCharacterBindings()
    Character* (*CharacterGI1)(int) = &Character::GetInstance;
    Character* (*CharacterGI2)(std::string) = &Character::GetInstance;
 
-   class_<Character, bases<Transformable,Loadable>, dtCore::RefPtr<CharacterWrap>, boost::noncopyable >("Character", init<optional<std::string> >())
+   class_<Character, bases<Transformable,Loadable>, dtCore::RefPtr<CharacterWrap>, boost::noncopyable >("Character", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Character::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CharacterGI1, return_internal_reference<>())
@@ -50,7 +50,6 @@ void initCharacterBindings()
       .staticmethod("GetInstance")
       .def("LoadFile", &CharacterWrap::LoadFileWrapper1)
       .def("LoadFile", &CharacterWrap::LoadFileWrapper2)
-      .def("GetFilename", &Character::GetFilename)
       .def("SetRotation", &Character::SetRotation)
       .def("GetRotation", &Character::GetRotation)
       .def("SetVelocity", &Character::SetVelocity)
