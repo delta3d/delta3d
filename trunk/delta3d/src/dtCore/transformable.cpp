@@ -137,15 +137,16 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
  */
 bool Transformable::AddChild(DeltaDrawable *child)
 {
-   bool success = DeltaDrawable::AddChild(child);
-
    //add the child's node to our's
-   if (success) 
+   if( DeltaDrawable::AddChild(child) ) 
    {
       GetMatrixNode()->addChild( child->GetOSGNode() );
       return (true);
    }
-   else return (false);
+   else
+   {
+      return false;
+   }
 
 }
 

@@ -255,7 +255,7 @@ void Environment::RemoveEffectCache()
 bool Environment::AddChild( DeltaDrawable *child )
 {
    //we add Drawables to our mDrawableNode
-   if( child && DeltaDrawable::AddChild( child ) )
+   if( DeltaDrawable::AddChild( child ) )
    {
       mDrawableNode->addChild( child->GetOSGNode() );
       return true;
