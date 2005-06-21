@@ -293,11 +293,17 @@ namespace dtABC
       {
          Event* event = reinterpret_cast<Event*>( data->userData );
 
-         //if the event/current state pair is in our list of transitions, then switch it up!
+         //if the event/current state pair is in our list of transitions..
          if( mTransition.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransition.end() )
          {
+            //then switch it up!
             mLastEvent = event;
             mSwitch = true;
+         }
+         else
+         {
+            //pass it to the current state
+            SendMessage( "event", event );
          }
       }
    }
@@ -485,7 +491,9 @@ namespace dtABC
    template< typename T1, typename T2 >
    void StateManager<T1,T2>::MakeCurrent( State* state )
    {
+      mCurrentState->RemoveSender(this);
       mCurrentState = state;
+      mCurrentState->AddSender(this);
 
       if( mCurrentState.valid() )
       {
