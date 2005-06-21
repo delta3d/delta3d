@@ -33,15 +33,13 @@ namespace dtCore
    public:
       DECLARE_MANAGEMENT_LAYER(EnvEffect)
 
-      EnvEffect(const std::string name=0);
-      virtual ~EnvEffect(void);
+      EnvEffect( const std::string& name = 0 );
+      virtual ~EnvEffect();
 
       /// Must override this to supply the repainting routine
-      virtual void Repaint(sgVec3 skyColor, sgVec3 fogColor,
-                           double sunAngle, double sunAzimuth,
-                           double visibility) = 0;
-
-      //virtual osg::Group *GetNode(void) = 0;
+      virtual void Repaint( sgVec3 skyColor, sgVec3 fogColor,
+                            double sunAngle, double sunAzimuth,
+                            double visibility ) = 0;
 
    };
 }
