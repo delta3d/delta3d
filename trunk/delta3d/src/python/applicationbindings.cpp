@@ -73,5 +73,7 @@ void initApplicationBindings()
       .def("GetInstance", ApplicationGI1, return_internal_reference<>())
       .def("GetInstance", ApplicationGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
+      .def("GenerateDefaultConfigFile", &Application::GenerateDefaultConfigFile)
+      .staticmethod("GenerateDefaultConfigFile")
       .def("Run", &Application::Run);
 }
