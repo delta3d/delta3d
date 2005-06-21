@@ -20,7 +20,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
  *
  * @param name the instance name
  */
-Character::Character(string name)
+Character::Character(const string& name)
    :  mRotation(0.0f),
       mVelocity(0.0f)
 {
@@ -59,7 +59,7 @@ void Character::AddedToScene(Scene* scene)
  *
  * @param filename the name of the file to load
  */
-osg::Node* Character::LoadFile(std::string filename, bool useCache)
+osg::Node* Character::LoadFile(const string& filename, bool useCache)
 {
    mFilename = filename;
    

@@ -13,16 +13,16 @@ class LoadableWrap : public Loadable
 {
 public:
 
-   LoadableWrap(PyObject* self, std::string name = "")
+   LoadableWrap(PyObject* self, const std::string& name = "")
       : mSelf(self)
    {}
 
-   void LoadFileWrapper1(std::string filename, bool useCache)
+   void LoadFileWrapper1(const std::string& filename, bool useCache)
    {
       Loadable::LoadFile(filename,useCache);
    }
    
-   void LoadFileWrapper2(std::string filename)
+   void LoadFileWrapper2(const std::string& filename)
    {
       Loadable::LoadFile(filename);
    }
@@ -37,5 +37,5 @@ void initLoadableBindings()
    class_<Loadable, LoadableWrap*, boost::noncopyable>("Loadable", no_init)
       .def("LoadFile", &LoadableWrap::LoadFileWrapper1 )
       .def("LoadFile", &LoadableWrap::LoadFileWrapper2 )
-      .def("GetFilename", &Loadable::GetFilename );
+      .def("GetFilename", &Loadable::GetFilename, return_internal_reference<>() );
 }

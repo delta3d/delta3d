@@ -196,7 +196,7 @@ protected:
   *                   locate the file.
   * @param useCache : This param gets ignored and is forced to false
   */
-osg::Node* ParticleSystem::LoadFile( std::string filename, bool useCache)
+osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
 {
    osg::Node *node = NULL;
    node = Loadable::LoadFile(filename, false); //force it not to use cache

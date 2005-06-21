@@ -16,12 +16,12 @@ public:
       :  mSelf(self)
    {}
    
-   void LoadFileWrapper1(std::string filename, bool useCache)
+   void LoadFileWrapper1(const std::string& filename, bool useCache)
    {
       ParticleSystem::LoadFile(filename,useCache); 
    }
    
-   void LoadFileWrapper2(std::string filename)
+   void LoadFileWrapper2(const std::string& filename)
    {
       ParticleSystem::LoadFile(filename);
    }
@@ -36,7 +36,7 @@ void initParticleSystemBindings()
    ParticleSystem* (*ParticleSystemGI1)(int) = &ParticleSystem::GetInstance;
    ParticleSystem* (*ParticleSystemGI2)(std::string) = &ParticleSystem::GetInstance;
 
-   class_<ParticleSystem, bases<Transformable, Loadable>, dtCore::RefPtr<ParticleSystemWrap>, boost::noncopyable>("ParticleSystem", init<optional<std::string> >())
+   class_<ParticleSystem, bases<Transformable, Loadable>, dtCore::RefPtr<ParticleSystemWrap>, boost::noncopyable>("ParticleSystem", init<optional<const std::string&> >())
       .def("GetInstanceCount", &ParticleSystem::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ParticleSystemGI1, return_internal_reference<>())

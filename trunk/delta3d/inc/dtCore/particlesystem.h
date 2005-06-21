@@ -53,7 +53,7 @@ namespace dtCore
          virtual ~ParticleSystem();         
 
          ///Load a file from disk
-         virtual osg::Node* LoadFile( std::string filename, bool useCache = false);
+         virtual osg::Node* LoadFile( const std::string& filename, bool useCache = false);
          
          /**
           * Enables or disables this particle system.  Particle systems
