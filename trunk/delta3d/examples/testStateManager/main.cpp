@@ -1,7 +1,7 @@
 #include "teststatemanager.h"     // for app class
 
 #include "dtCore/dt.h"
-#include "dtABC/dtABC.h"
+#include "dtABC/dtabc.h"
 
 #include <iostream>
 

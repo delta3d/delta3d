@@ -21,7 +21,7 @@ IMPLEMENT_MANAGEMENT_LAYER(TestStateManager)
 
 //static member variables
 const int TestStateManager::mBufferSize = 256;
-dtCore::RefPtr<TestStateManager::MyStateManager> TestStateManager::MyStateManager::mManager = 0;
+template<> dtCore::RefPtr<TestStateManager::MyStateManager> TestStateManager::MyStateManager::mManager = 0;
 
 TestStateManager::TestStateManager(const std::string& config): Base( "TestStateManager" ), mStartState(0)
 {
