@@ -22,6 +22,48 @@
 
 namespace dtABC
 {
+   //had to place this outside of the template so gcc won't bitch
+   template<typename T>
+   struct RefPtrWithNameCompare : std::binary_function<T,T,bool>
+   {
+      // RefPtrWithNameCompare will make sure the State being added is
+      // unique to the set based on its name AND based on the fact
+      // that the State has a unique place in memory.
+      // This makes sure that no one tried to submit a State that
+      // had the same name as another State, or someone tried to
+      // resubmit a State already in the set by changing its name.
+      
+      bool operator()(const T& lhs,const T& rhs) const
+      {
+         return lhs.get() != rhs.get() && lhs->GetName() < rhs->GetName();
+      }
+   };
+
+   //had to place this outside of the template so gcc won't bitch
+   template<typename T>
+   struct PairRefPtrWithNameCompare : public std::binary_function<T,T,bool>
+   {
+      /** Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
+       * \sa http://www.sgi.com/tech/stl/pair.html ,
+       * but add smart StatePtr comparison with the StatePtrLess predicate.
+       */
+      bool operator()(const T& x, const T& y) const
+      {
+         // try to use the first element
+         bool first_less( x.first < y.first );
+         if( first_less )
+            return true;
+         
+         bool first_greater( y.first < x.first );
+         if( first_greater )
+            return false;
+         
+         // else, key off the second element, and use the StatePtr comparison
+         RefPtrWithNameCompare<typename T::second_type> compare_them;
+         return compare_them( x.second,y.second );
+      }
+   };
+   
    ///Controls the switching of modes by starting and stoping the different states.  
    ///When a new state is started Config is called and Shutdown is called before 
    ///switching.
@@ -41,53 +83,14 @@ namespace dtABC
       typedef T1 EventType;
       typedef T2 StateType;
    
-      typedef dtCore::RefPtr<State>                      StatePtr;
-      typedef std::pair< const Event::Type*, StatePtr>   EventStatePtrPair;
+      typedef dtCore::RefPtr<State>                       StatePtr;
+      typedef std::pair< const Event::Type*, StatePtr >   EventStatePtrPair;
 
       typedef dtUtil::ObjectFactory< const Event::Type*, Event > EventFactory;
       typedef dtUtil::ObjectFactory< const State::Type*, State > StateFactory;
 
-      struct StatePtrCompare : public std::binary_function<StatePtr,StatePtr,bool>
-      {
-         /** StatePtrCompare will make sure the State being added is
-           * unique to the set based on its name AND based on the fact
-           * that the State has a unique place in memory.
-           * This makes sure that no one tried to submit a State that
-           * had the same name as another State, or someone tried to
-           * resubmit a State already in the set by changing its name.
-           */
-         bool operator()(const StatePtr& lhs,const StatePtr& rhs) const
-         {
-            return lhs.get() != rhs.get() && lhs->GetName() < rhs->GetName();
-         }
-      };
-
-      typedef std::set<StatePtr,StatePtrCompare> StatePtrSet;
-
-      struct EventStatePtrPairCompare : public std::binary_function<EventStatePtrPair,EventStatePtrPair,bool>
-      {
-         /** Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
-           * \sa http://www.sgi.com/tech/stl/pair.html ,
-           * but add smart StatePtr comparison with the StatePtrLess predicate.
-           */
-         bool operator()(const EventStatePtrPair& x, const EventStatePtrPair& y) const
-         {
-            // try to use the first element
-            bool first_less( x.first < y.first );
-            if( first_less )
-               return true;
-
-            bool first_greater( y.first < x.first );
-            if( first_greater )
-               return false;
-
-            // else, key off the second element, and use the StatePtr comparison
-            StatePtrCompare compare_them;
-            return compare_them( x.second,y.second );
-         }
-      };
-
-      typedef std::map<EventStatePtrPair, StatePtr, EventStatePtrPairCompare>    EventMap;
+      typedef std::set< StatePtr, RefPtrWithNameCompare<StatePtr> > StatePtrSet;
+      typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> >    EventMap;
 
       static   StateManager<EventType,StateType>*  Instance();
       static   void                                Destroy();
@@ -108,6 +111,7 @@ namespace dtABC
       bool                    RemoveTransition( const Event::Type* eventType, State* from, State* to );
 
       State*                  GetState( const std::string& name );
+      const State*            GetState( const std::string& name ) const;
       void                    RemoveAllStates();
 
       ///// Returns the set of states
@@ -229,8 +233,9 @@ namespace dtABC
    {
       if( mSwitch ) //switch modes between frames
       {
-         EventMap::key_type key( mLastEvent->GetType(), mCurrentState );
+         EventMap::key_type key( mLastEvent->GetType(), mCurrentState.get() );
          EventMap::iterator iter = mTransition.find( key );
+         
          if( iter != mTransition.end() )
          {
             MakeCurrent( (*iter).second.get() );
@@ -339,6 +344,7 @@ namespace dtABC
       {
          state->RemoveSender(this);
 
+
          //remove transition to and from the remove state
          for( EventMap::iterator iter = mTransition.begin(); iter != mTransition.end(); )
          {
@@ -375,6 +381,20 @@ namespace dtABC
    State* StateManager<T1,T2>::GetState( const std::string& name )
    {
       for( StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
+      {
+         if( (*iter)->GetName() == name )
+         {
+            return const_cast<State*>( (*iter).get() );
+         }
+      }
+
+      return 0;
+   }
+
+   template< typename T1, typename T2 >
+   const State* StateManager<T1,T2>::GetState( const std::string& name ) const
+   {
+      for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
       {
          if( (*iter)->GetName() == name )
          {
@@ -644,7 +664,7 @@ namespace dtABC
 
          dtCore::Notify(dtCore::DEBUG_INFO, "Create FromState. type:'%s', name:'%s' ", stateType.c_str(), stateName.c_str() );
 
-         dtCore::RefPtr<StateManager<T1,T2>::StateFactory> sf = StateManager<T1,T2>::Instance()->GetStateFactory();
+         dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
          mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
          assert(mFromState.get());
 
@@ -661,7 +681,7 @@ namespace dtABC
 
          dtCore::Notify(dtCore::DEBUG_INFO, "Create ToState. type:'%s', name:'%s'", stateType.c_str(), stateName.c_str() );
 
-         dtCore::RefPtr<StateManager<T1,T2>::StateFactory> sf = StateManager::Instance()->GetStateFactory();
+         dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
          mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
          assert(mFromState.get());
 
