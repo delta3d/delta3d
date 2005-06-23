@@ -59,7 +59,7 @@ const std::string& Base::GetName() const
 void Base::AddSender( Base *sender)
 {
    //connect the sender's signal to our slot
-   sender->_sendMessage.connect( this, &Base::OnMessage );
+   sender->_sendMessage.connect_slot( this, &Base::OnMessage );
 }
 
 ///Stop receiving messages from the supplied sender instance
