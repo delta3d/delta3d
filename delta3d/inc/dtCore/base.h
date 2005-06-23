@@ -31,10 +31,9 @@
 #include "dtCore/uniqueid.h"
 #include "dtCore/export.h"
 #include "dtCore/macros.h"
+#include "dtCore/sigslot.h"
 
 #include <osg/Referenced>
-
-#include "sigslot.h"
 
 namespace dtCore
 {
