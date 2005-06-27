@@ -1,0 +1,33 @@
+# Build script for the Dynamic Actor Layer module.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('env','OS','errorLog','mode')
+
+DALEnv = env.Copy()
+DALEnv.Append(CPPDEFINES = ['DT_LIBRARY'])
+
+#DALEnv.Object('inc/dtDAL/dtDAL.h', language='C++')
+
+#DALEnv.Append(CPPFLAGS = ['-include', 'dtDAL.h'])
+
+# Grab all the sources from the DAL source directory.
+sources = glob.glob('*.cpp')
+if mode == 'debug' :
+	lib = DALEnv.SharedLibrary('#lib/dtDALd',sources)
+else :
+	lib = DALEnv.SharedLibrary('#lib/dtDAL',sources)
+
+if (lib == '[]') :
+	result = 'false'
+else :
+	result = 'true'
+
+if (result == 'false') :
+	errorLog.write("Failed to build dtDAL library.\n")
+else :	
+	if OS == 'windows' :
+		env.Install('#bin/',lib[0])
+
+#Return('result')

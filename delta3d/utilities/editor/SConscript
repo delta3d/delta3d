@@ -2,10 +2,7 @@ import os
 
 Import('*')
 
-modules = [ 'bspCompiler',
-            'hlaStealthViewer', 
-            'psEditor',
-            'Viewer' ]
+modules = [ 'src' ]
 
 if OS == 'windows' :
 
@@ -21,5 +18,3 @@ else :
 
    for module in modules :
       SConscript( dirs=[module] )
-
-SConscript( dirs=['editor'] )

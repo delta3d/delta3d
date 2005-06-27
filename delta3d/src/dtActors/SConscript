@@ -1,0 +1,39 @@
+# Build script for the engine actors plugin library.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('env','OS','errorLog','mode')
+
+dtActorsEnv = env.Copy()
+dtActorsEnv.Append(CPPDEFINES = ['DT_PLUGIN'])
+
+if OS == 'darwin':
+   dtActorsEnv['SHLINKFLAGS'] = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
+   dtActorsEnv['SHLIBSUFFIX'] = '.so'
+
+# Grab all the sources from the dtActors source directory.
+sources = glob.glob('*.cpp')
+
+if OS != 'windows':
+	sources.remove('dtedterrainactorproxy.cpp')
+
+if mode == 'debug':
+	dtActorsEnv.Append(LIBS = ['dtDALd'], LIBPATH = '#lib')
+	lib = dtActorsEnv.SharedLibrary('#lib/dtActorsd',sources)
+else:
+	dtActorsEnv.Append(LIBS = ['dtDAL'], LIBPATH = '#lib')
+	lib = dtActorsEnv.SharedLibrary('#lib/dtActors',sources)
+
+if (lib == '[]') :
+	result = 'false'
+else :
+	result = 'true'
+
+if (result == 'false') :
+	errorLog.write("Failed to build the dtActors library.\n")
+else :	
+	if OS == 'windows' :
+		env.Install('#bin',lib[0])
+
+#Return('result')
