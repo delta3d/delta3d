@@ -30,6 +30,8 @@ peopleToEmail = []
 # replcae with your local outgoing SMTP server
 smtpServer = 'mysmtp@server.com'
 
+SetOption('implicit_cache', 1)
+
 # this is who the build email will come from
 fromAddress = 'myaddress@company.com'
 
@@ -401,6 +403,11 @@ def find_file( findThis, startDirs ) :
          return os.path.join( root, findThis )
    return None
 
+def exit_with_error() :
+	sys.stderr.write('Build failed.  See BuildLog.txt for details.\n')
+	errorLog.write('Build Failed: Build ended: ' + CurrentTime() + '\n')
+	errorLog.close()
+	env.Exit(-1)	
    
 def CheckForBoost() :
 
@@ -586,11 +593,13 @@ else:
               CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-     env.Append( CXXFLAGS=['-O2', '-pipe'], #optimizations, pipe object data
+     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden', '-ftree-vectorize'], #optimizations, pipe object data
               CPPDEFINES=['NDEBUG'],
               LINKFLAGS=['-s'] )
+ #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
+
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+     env.Append(CXXFLAGS=['-O2', '-pipe'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
    
 if env.get('no_warnings'):
    if OS == 'windows':
@@ -648,9 +657,11 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
 depsHash = {}
 
 dtLibs = { 'dtabc'    : 'dtabc',
+           'dtActors' : 'dtActors',
            'dtaudio'  : 'dtaudio',
            'dtchar'   : 'dtchar',
            'dtcore'   : 'dtcore',
+           'dtDAL'    : 'dtDAL',
            'dthla'    : 'dthla',
            'dtgui'    : 'dtgui',
            'dtscript' : 'dtscript',
@@ -889,9 +900,10 @@ conf = Configure(env, custom_tests = {
 if not env.GetOption('clean') :
     
    for lib in linkOrder :
-     if extLibs.has_key(lib):
-     	foundLibs[extLibs[lib]] = conf.CheckLibOrFramework( extLibs[lib], autoadd = 1 )       
-   foundLibs['sigslot.h'] = conf.CheckHeader('sigslot.h',language='C++')
+      if extLibs.has_key(lib):
+         foundLibs[extLibs[lib]] = conf.CheckLibOrFramework( extLibs[lib], autoadd = 1 )
+         if foundLibs[extLibs[lib]] == 'framework':
+            env.Append(LINKFLAGS = ' -framework ' + extLibs[lib])
 
    #this actually SEARCHES, not good
    #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp') ,language='C++')
@@ -923,15 +935,12 @@ for lib in rtiLibs :
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs' )
+Export( 'env', 'OS', 'mode', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
 
-SConsignFile()
+env.SConsignFile()
+
 Default( None )
-
-if OS == 'windows' :
-   Default( [ 'lib', 'bin' ] )
-else :
-   Default( [ 'lib' ] )
+Default( [ 'lib', 'bin' ] )
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                   os.path.join(os.getcwd(), 'examples', 'testPython')] )
