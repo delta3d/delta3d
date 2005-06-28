@@ -1,0 +1,110 @@
+# Build script for actual level editor application.
+import glob
+import sys
+import re
+import os
+
+# Import the variables defined in the global SConstruct build script.
+Import ('env','OS','errorLog','mode')
+EditorEnv = env.Copy(tools = ['qt'])
+
+# The function returns a list of header files that contain the Q_OBJECT macro.  These
+# are then passed on the the moc builder.
+def getQObjectHeaders(headers) :
+   passed = []
+   pattern = re.compile("Q_OBJECT")
+
+   for header in headers :
+      f = open(header)
+      while 1 :
+         l = f.readline()
+         if not l :
+            break
+         if re.search(pattern,l):
+            passed.append(header)
+            break   
+      f.close()
+
+   return passed
+
+# Environment settings for Qt
+qtdir = EditorEnv['QTDIR']
+
+EditorEnv['QT_AUTOSCAN'] = 0
+EditorEnv['QT_LIB'] = ''
+EditorEnv['CXXFILESUFFIX'] = '.cpp'
+EditorEnv.Append(CPPDEFINES = ['QT_THREAD_SUPPORT',
+                'QT_CORE_LIB',
+                'QT_GUI_LIB',
+                'QT_SHARED'])
+
+if OS == 'linux':
+   EditorEnv.Append(CPPDEFINES = ['_REENTRANT'])
+elif OS == 'darwin':
+   EditorEnv.Append(CPPDEFINES = ['_REENTRANT'])
+
+EditorEnv.Append(CPPPATH = [qtdir + '/include/QtCore',
+                            qtdir + '/include/QtGui',
+                            qtdir + '/include/QtOpenGL',
+                            '../inc'] )
+
+if mode == 'debug':
+   if OS == 'windows':
+      EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','qtmaind','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','ul_d','sg_d'])   
+   elif OS == 'darwin':
+      EditorEnv.Append(LIBS = ['dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','plibul','plibsg'])
+      EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )
+   else:
+      EditorEnv.Append(LIBS = ['QtCore_debug','QtGui_debug','QtOpenGL_debug','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','plibul','plibsg'])   
+else:
+   if OS == 'windows':
+      EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','qtmain','dtDAL','dtcore','dtaudio','dtchar','dtutil','dtabc','ul','sg'])
+   elif OS == 'darwin':
+      EditorEnv.Append(LIBS = ['dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul','plibsg']) 
+      EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )   
+   else:
+      EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul','plibsg']) 
+
+# First, glob the header directory to obtain a list of potential files to run
+# the moc builder on.
+if OS == 'windows':
+   moc_headers = glob.glob('..\inc\dtEditQt\*.h')
+else:
+   moc_headers = glob.glob('../inc/dtEditQt/*.h')
+
+# Next, grep each header file for the Q_OBJECT macro to determine if moc should be run on 
+# it.
+moc_headers = getQObjectHeaders(moc_headers)
+
+# We want the resulting moc files put in a moc subdirectory under the dtEditQt source
+# directory so we need to modify the pathnames of the sources to create the target output
+# file names.
+moc_targets = []
+for currHeader in moc_headers :
+   if OS == 'windows':
+      parts = currHeader.split("\\")
+      target = "moc\moc_" + parts[len(parts)-1]
+   else:
+      parts = currHeader.split("/")
+      target = "moc/moc_" + parts[len(parts)-1]
+      
+   parts = target.split(".")
+   target = parts[0] + EditorEnv['CXXFILESUFFIX']   
+   moc_targets.append(target)
+   EditorEnv.Moc(target=target, source=currHeader)
+
+# Grab all the sources including the generated moc files..
+sources = glob.glob('*.cpp') + moc_targets
+if mode == 'debug':
+   app = EditorEnv.Program('#bin/editord',sources)
+else:   
+   app = EditorEnv.Program('#bin/editor',sources)
+if (app == '[]') :
+   result = 'false'
+else :
+   result = 'true'
+
+if (result == 'false') :
+   errorLog.write("Failed to build the level editor application.\n")
+
+Return('result')
