@@ -25,12 +25,13 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <tree.h>
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtCore/export.h>
 #include <dtABC/application.h>
+
+#include "dtDAL/tree.h"
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/resourcehelper.h"

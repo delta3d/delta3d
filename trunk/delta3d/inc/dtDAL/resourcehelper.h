@@ -23,12 +23,12 @@
 
 #include <string>
 #include <map>
-#include <tree.h>
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtCore/export.h>
 
+#include "dtDAL/tree.h"
 #include "dtDAL/exception.h"
 #include "dtDAL/fileutils.h"
 #include "dtDAL/resourcetreenode.h"

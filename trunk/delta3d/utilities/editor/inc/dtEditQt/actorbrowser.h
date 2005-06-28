@@ -25,7 +25,8 @@
 #include <QWidget>
 #include <osg/ref_ptr>
 #include <vector>
-#include <tree.h>
+
+#include "dtDAL/tree.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
 #include "dtEditQt/actortypetreewidget.h"
