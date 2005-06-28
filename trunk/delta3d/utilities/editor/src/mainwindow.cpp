@@ -103,8 +103,6 @@ namespace dtEditQt
         fileMenu->addAction(editorActions.actionFileChangeProject);
         fileMenu->addSeparator();
         fileMenu->addMenu(recentProjs);
-        // h4x0r
-        //fileMenu->addMenu(recentMaps);
         fileMenu->addSeparator();
         fileMenu->addAction(editorActions.actionFileExit);
 
@@ -115,6 +113,7 @@ namespace dtEditQt
         editMenu->addAction(editorActions.actionEditDuplicateActor);
         editMenu->addAction(editorActions.actionEditDeleteActor);
         editMenu->addAction(editorActions.actionEditGroundClampActors);
+        editMenu->addAction(editorActions.actionEditGotoActor);
         editMenu->addSeparator();
         editMenu->addAction(editorActions.actionEditMapProperties);
         editMenu->addAction(editorActions.actionEditMapLibraries);
@@ -153,8 +152,10 @@ namespace dtEditQt
         editToolBar = new QToolBar(this);
         editToolBar->setObjectName("EditToolBar");
         editToolBar->setWindowTitle(tr("Edit Toolbar"));
+        editToolBar->setMinimumWidth(4);
         editToolBar->addAction(EditorActions::getInstance().actionEditDuplicateActor);
         editToolBar->addAction(EditorActions::getInstance().actionEditDeleteActor);
+        editToolBar->addAction(EditorActions::getInstance().actionEditGotoActor);
         editToolBar->addAction(EditorActions::getInstance().actionEditGroundClampActors);
         addToolBar(editToolBar);
 
@@ -283,7 +284,7 @@ namespace dtEditQt
 
         EditorActions::getInstance().actionWindowsActorSearch->setEnabled(hasBoth);
         EditorActions::getInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);
-        EditorActions::getInstance().actionWindowsResourceBrowser->setEnabled(hasBoth);
+        EditorActions::getInstance().actionWindowsResourceBrowser->setEnabled(true);
         EditorActions::getInstance().actionWindowsResetWindows->setEnabled(hasBoth);
 
         EditorActions::getInstance().actionHelpAboutEditor->setEnabled(true);
@@ -478,19 +479,19 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onPropertyEditorSelection()
     {
-         propertyWindow->setVisible(EditorActions::getInstance().actionWindowsPropertyEditor->isChecked());
+        propertyWindow->setVisible(EditorActions::getInstance().actionWindowsPropertyEditor->isChecked());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onActorSearchSelection()
     {
-         actorTab->setVisible(EditorActions::getInstance().actionWindowsActorSearch->isChecked());
+        actorTab->setVisible(EditorActions::getInstance().actionWindowsActorSearch->isChecked());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onResourceBrowserSelection()
     {
-         resourceBrowser->setVisible(EditorActions::getInstance().actionWindowsResourceBrowser->isChecked());
+        resourceBrowser->setVisible(EditorActions::getInstance().actionWindowsResourceBrowser->isChecked());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -663,7 +664,7 @@ namespace dtEditQt
                     QMessageBox::critical(this, tr("Failed to load previous context"),
                         tr("Failed to load the previous project context.\n") +
                         tr("This can happen if the last project context\n has been moved, renamed, or deleted."),
-                        tr("Ok"));
+                        tr("OK"));
 
                     //Remove the recent projects entry from the settings object since it
                     //has become somehow corrupted.
@@ -723,7 +724,7 @@ namespace dtEditQt
             {
                 /*if(!dtDAL::FileUtils::GetInstance().FileExists(str))
                 {
-                    QMessageBox::critical(this, tr("Error loading map"), 
+                    QMessageBox::critical(this, tr("Error loading map"),
                         tr("The map ") + str.c_str() + tr(" does not exist or has become corrupted, backup file still retained."));
                     return;
                 }
@@ -732,7 +733,7 @@ namespace dtEditQt
 
                 EditorData::getInstance().getMainWindow()->startWaitCursor();
                 dtDAL::Project::GetInstance().ClearBackup(str);
-                EditorActions::getInstance().changeMaps(EditorData::getInstance().getCurrentMap().get(), 
+                EditorActions::getInstance().changeMaps(EditorData::getInstance().getCurrentMap().get(),
                     &dtDAL::Project::GetInstance().GetMap(str));
                 EditorData::getInstance().addRecentMap(str);
                 EditorData::getInstance().getMainWindow()->endWaitCursor();

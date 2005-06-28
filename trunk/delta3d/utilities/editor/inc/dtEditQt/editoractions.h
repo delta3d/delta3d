@@ -23,8 +23,10 @@
 
 
 #include <QObject>
+#include <vector>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
+#include <dtDAL/actorproxy.h>
 
 class QAction;
 class QActionGroup;
@@ -143,6 +145,9 @@ namespace dtEditQt
     // Action - Edit Clamp actors to ground.
     QAction *actionEditGroundClampActors;
 
+    // Action - Edit - Goto Actor
+    QAction *actionEditGotoActor;
+
     // Action - Edit - Undo
     QAction *actionEditUndo;
 
@@ -246,6 +251,11 @@ namespace dtEditQt
     void slotEditGroundClampActors();
 
     /**
+     * Slot - Edit - Goto Actor. Places the camera at the selected actor. 
+     */
+    void slotEditGotoActor();
+
+    /**
      * Slot - Edit - Undo.  Undoes the last user edit property, delete proxy, or create proxy command.
      */
     void slotEditUndo();
@@ -305,6 +315,11 @@ namespace dtEditQt
     // restarts the autosave
     void slotRestartAutosave();
 
+    // helper method to keep track of the selected actors. this is needed in order to
+    // be able to call the goto actor functionality from the menu. The signal requires
+    // an argument. 
+    void slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> > &actors);
+
   protected:
     /**
      * Protected destructor, but does nothing.  Protected because it's a singleton
@@ -352,6 +367,7 @@ namespace dtEditQt
     void setupWindowActions();
 
     QTimer *timer;
+    std::vector< osg::ref_ptr<dtDAL::ActorProxy> > actors;
 
     ///Singleton instance of this class.
     static osg::ref_ptr<EditorActions> instance;

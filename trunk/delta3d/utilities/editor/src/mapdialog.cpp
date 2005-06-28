@@ -109,7 +109,7 @@ namespace dtEditQt
         if(nameEdit->text().isEmpty() || fileEdit->text().isEmpty()) 
         {
             QMessageBox::critical(this, tr("Map Create Error"),
-                tr("A map must have a valid name and file name"),tr("Ok"));
+                tr("A map must have a valid name and file name"),tr("OK"));
         }
         else
         {

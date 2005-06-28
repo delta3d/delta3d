@@ -1359,6 +1359,8 @@ namespace dtDAL
                 else if (propertyType == DataType::ENUMERATION)
                 {
                     BeginElement(MapXMLConstants::ACTOR_PROPERTY_ENUM_ELEMENT);
+                    //hack to work around strange g++ bug.  Adding this line fixes the problem.
+                    dynamic_cast<const AbstractEnumActorProperty&>(property);
                     AddCharacters(property.GetStringValue());
                     EndElement();
                 }

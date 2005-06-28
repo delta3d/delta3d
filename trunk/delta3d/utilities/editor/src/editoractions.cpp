@@ -62,6 +62,7 @@
 #include "dtDAL/transformableactorproxy.h"
 #include "dtDAL/fileutils.h"
 #include "dtDAL/intersectionquery.h"
+#include "dtDAL/actorproxy.h"
 
 #include <sstream>
 
@@ -88,6 +89,11 @@ namespace dtEditQt
                  this, SLOT(slotPauseAutosave()));
         connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
                  this, SLOT(slotRestartAutosave()));
+        
+        connect(&EditorEvents::getInstance(), 
+            SIGNAL(selectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)), 
+            this, 
+            SLOT(slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)));
 
         timer = new QTimer((QWidget*)EditorData::getInstance().getMainWindow());
         timer->setInterval(saveMilliSeconds);
@@ -106,6 +112,15 @@ namespace dtEditQt
         if (EditorActions::instance.get() == NULL)
             EditorActions::instance = new EditorActions();
         return *(EditorActions::instance.get());
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> > &newActors)
+    {
+        actors.clear();
+        actors.reserve(newActors.size());
+        for(unsigned int i = 0; i < newActors.size(); i++)
+            actors.push_back(newActors[i]);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -195,6 +210,12 @@ namespace dtEditQt
             tr("Moves the currently selected actors' Z value to be in line with whatever is below them."));
         connect(actionEditGroundClampActors,SIGNAL(triggered()),
                 this,SLOT(slotEditGroundClampActors()));
+
+        // Edit - Goto Actor
+        actionEditGotoActor = new QAction(QIcon(UIResources::LARGE_ICON_EDIT_GOTO.c_str()),
+            tr("Goto Actor"), this);
+        actionEditGotoActor->setStatusTip(tr("Places the camera at the selected actor."));
+        connect(actionEditGotoActor, SIGNAL(triggered()), this, SLOT(slotEditGotoActor()));
 
         // Edit - Undo
         actionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"),this);
@@ -293,17 +314,17 @@ namespace dtEditQt
         actionFileRecentProject0->setEnabled(false);
         connect(actionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
 
-        actionFileRecentProject1 = new QAction(tr("(Recent Project 2)"), this);
-        actionFileRecentProject1->setEnabled(false);
-        connect(actionFileRecentProject1, SIGNAL(triggered()), this, SLOT(slotFileRecentProject1()));
-
-        actionFileRecentProject2 = new QAction(tr("(Recent Project 3)"), this);
-        actionFileRecentProject2->setEnabled(false);
-        connect(actionFileRecentProject2, SIGNAL(triggered()), this, SLOT(slotFileRecentProject2()));
-
-        actionFileRecentProject3 = new QAction(tr("(Recent Project 4)"), this);
-        actionFileRecentProject3->setEnabled(false);
-        connect(actionFileRecentProject3, SIGNAL(triggered()), this, SLOT(slotFileRecentProject3()));
+//         actionFileRecentProject1 = new QAction(tr("(Recent Project 2)"), this);
+//         actionFileRecentProject1->setEnabled(false);
+//         connect(actionFileRecentProject1, SIGNAL(triggered()), this, SLOT(slotFileRecentProject1()));
+//
+//         actionFileRecentProject2 = new QAction(tr("(Recent Project 3)"), this);
+//         actionFileRecentProject2->setEnabled(false);
+//         connect(actionFileRecentProject2, SIGNAL(triggered()), this, SLOT(slotFileRecentProject2()));
+//
+//         actionFileRecentProject3 = new QAction(tr("(Recent Project 4)"), this);
+//         actionFileRecentProject3->setEnabled(false);
+//         connect(actionFileRecentProject3, SIGNAL(triggered()), this, SLOT(slotFileRecentProject3()));
 
         itor = EditorData::getInstance().getRecentProjects().begin();
         if(itor == EditorData::getInstance().getRecentProjects().end())
@@ -737,13 +758,13 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditUndo()
     {
-        EditorData::getInstance().getUndoManager().doUndo();   
+        EditorData::getInstance().getUndoManager().doUndo();
     }
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditRedo()
     {
-        EditorData::getInstance().getUndoManager().doRedo();   
+        EditorData::getInstance().getUndoManager().doRedo();
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -802,6 +823,13 @@ namespace dtEditQt
         ViewportManager::getInstance().refreshAllViewports();
 
         EditorData::getInstance().getMainWindow()->endWaitCursor();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotEditGotoActor()
+    {
+        if(actors.size() > 0)
+            EditorEvents::getInstance().emitGotoActor(actors[0]);
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -954,7 +982,7 @@ namespace dtEditQt
         changeMaps(EditorData::getInstance().getCurrentMap().get(),newMap);
     }
 
-    
+
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
 
@@ -1051,7 +1079,7 @@ namespace dtEditQt
                 // Although the map isn't currently modified, it still needs to be saved.
                 // This accounts for when the autosave has fired and the map has had its modified
                 // bool flipped off. Although the map has been backed up, it is still not saved
-                // upon exiting, therefore losing all the data since. 
+                // upon exiting, therefore losing all the data since.
                 dtDAL::Project::GetInstance().SaveMap(*currMap);
             }
 

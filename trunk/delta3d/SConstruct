@@ -252,6 +252,8 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    if OS == 'windows' and mode == 'debug' :
       target += 'D'
 
+   envProg = env.Copy()
+
    for lib in deps :
       if depsHash.has_key(lib) :
          for newLib in depsHash[lib] :
@@ -270,8 +272,8 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
 
    addToLink = []
-   if env.has_key('LINKFLAGS'):
-     addToLink = env['LINKFLAGS']
+   if envProg.has_key('LINKFLAGS'):
+     addToLink = envProg['LINKFLAGS']
 
    addToLibs = []
    if OS == 'darwin':
@@ -292,13 +294,13 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
       addToLibs = deps
 
    cppDefines = []
-   if env.has_key('CPPDEFINES'):
-     cppDefines = env['CPPDEFINES']
+   if envProg.has_key('CPPDEFINES'):
+     cppDefines = envProg['CPPDEFINES']
 
-   program = env.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
    
    if OS == 'windows' :
-      env.Install( '#/bin', program[0] ) # .exe
+      envProg.Install( '#/bin', program[0] ) # .exe
 #   if OS == 'darwin' :
 #      appdir = name + '.app'
 #      os.mkdir( appdir, 0755 )
@@ -306,12 +308,13 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 #      os.mkdir( os.path.join( appdir, 'Contents', 'MacOS' )  )
 #      shutil.copy('Info.plist', os.path.join( appdir, 'Contents' ) )
 #      shutil.copy('PkgInfo', os.path.join( appdir, 'Contents' ) )
-#      env.Install( os.path.join( appdir, 'Contents', 'MacOS' ) , program[0] ) # .exe
+#      envProg.Install( os.path.join( appdir, 'Contents', 'MacOS' ) , program[0] ) # .exe
 
 
    # TODO remove old .exes
    
-def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
+def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
+      overrideShLinkFlags = '',  overrideShLibSuffix = '' ) :
 
    target = name
    if OS == 'windows' and mode == 'debug' :
@@ -320,9 +323,17 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    #add dependencies to global index
    depsHash[name] = deps
    
+   envLib = env.Copy()
+
+   if overrideShLinkFlags != '':
+      envLib[SHLINKFLAGS] = overridShLinkFlags
+   
+   if overrideShLibSuffix != '':
+      envLib[SHLIBSUFFIX] = overridShLibSuffix
+
    #expand pre-built libs
    for lib in deps :
-      env.Depends(target,lib)
+      envLib.Depends(target,lib)
       if depsHash.has_key(lib) :
          for newLib in depsHash[lib] :
             if not newLib in deps :
@@ -340,7 +351,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
 
    addToLink = []
-   if env.has_key('LINKFLAGS'):
+   if envLib.has_key('LINKFLAGS'):
      addToLink = env['LINKFLAGS']
 
    addToLibs = []
@@ -362,21 +373,21 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
       addToLibs = deps
 
    cppDefines = []
-   if env.has_key('CPPDEFINES'):
-      cppDefines = env['CPPDEFINES']
+   if envLib.has_key('CPPDEFINES'):
+      cppDefines = envLib['CPPDEFINES']
    
-   lib = env.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-   env.Precious( lib )
+   lib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   envLib.Precious( lib )
    
    if OS == 'windows' :
-      env.Install( '#/bin', lib[0] ) # .dll
-      env.Install( '#/lib', lib[1] ) # .lib, 
-      env.Install( '#/lib', lib[2] ) # .exp
+      envLib.Install( '#/bin', lib[0] ) # .dll
+      envLib.Install( '#/lib', lib[1] ) # .lib, 
+      envLib.Install( '#/lib', lib[2] ) # .exp
    elif OS == 'linux' :
       # TODO: copy headers/lib/bin to prefix on alias install
-      env.Install( '#/lib', lib )
+      envLib.Install( '#/lib', lib )
    elif OS == 'darwin' :
-      env.Install( '#/lib', lib )   
+      envLib.Install( '#/lib', lib )   
 
 # Function to calculate current time for logging
 def CurrentTime() :
@@ -599,7 +610,7 @@ else:
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-O2', '-pipe'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe', '-march=i686', '-fvisibility-inlines-hidden', '-ftree-vectorize'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
    
 if env.get('no_warnings'):
    if OS == 'windows':
@@ -719,7 +730,8 @@ if OS == 'windows' :
          'opengl'              : 'Opengl32',
          'winsock'             : 'ws2_32',
          'shell32'             : 'shell32',
-         'ole32'               : 'ole32' 
+         'ole32'               : 'ole32',
+         'cppunit'             : 'cppunit' 
      }
    else :
       extLibs = { 
@@ -764,7 +776,8 @@ if OS == 'windows' :
          'opengl'              : 'Opengl32',
          'winsock'             : 'ws2_32',
          'shell32'             : 'shell32',
-         'ole32'               : 'ole32' 
+         'ole32'               : 'ole32', 
+         'cppunit'             : 'cppunit' 
          }
    
 elif OS == 'linux' :
@@ -803,7 +816,8 @@ elif OS == 'linux' :
       'xerces-c'            : 'xerces-c',
       'Xxf86vm'             : 'Xxf86vm',
       'uuid'                : 'uuid',
-      'opengl'              : 'GL'
+      'opengl'              : 'GL',
+      'cppunit'             : 'cppunit' 
       }
 elif OS == 'darwin' :
    extLibs = { 
@@ -842,6 +856,7 @@ elif OS == 'darwin' :
       'CoreFoundation' : 'CoreFoundation',
       'IOKit'          : 'IOKit',
       'Carbon'         : 'Carbon',
+      'cppunit'        : 'cppunit' 
       }
 else :
    extLibs = {}
@@ -952,6 +967,7 @@ env.Alias( 'hla', [ os.path.join(os.getcwd(), 'src', 'dtHLA'),
 SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
+SConscript( dirs=['tests/proxy', 'tests/project', 'tests'] )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')

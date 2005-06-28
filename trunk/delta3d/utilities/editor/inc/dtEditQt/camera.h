@@ -26,17 +26,21 @@
 #include <osg/Vec3>
 #include <osg/Quat>
 #include <osg/Matrix>
+#include <vector>
+#include "dtDAL/transformableactorproxy.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     /**
      * The camera class provides a view into the scene.  It supports orthographic
      * and perspective views.
      */
-	class Camera : public osg::Referenced 
+    class Camera : public osg::Referenced
     {
-	public:
+    public:
+
+        typedef std::vector<osg::ref_ptr<dtDAL::TransformableActorProxy> > AttachmentList;
 
         /**
          * Constructs a new camera.
@@ -44,7 +48,7 @@ namespace dtEditQt
          *  The default camera is set to perspective projection with aspect ratio=1.3, FovY=90,
          *  near clipping plane=1, far clipping plane=10000
          */
-		Camera();
+        Camera();
 
         /**
          * Sets the position of the camera to the position specfied in world coordinates.
@@ -53,7 +57,7 @@ namespace dtEditQt
         void setPosition(const osg::Vec3 &pos);
 
         /**
-         * Moves the camera relative to its current position. (currentPos = currentPos + relPos).
+         * Moves the camera relative to its orientation.
          * @param relPos A vector containing the relative position from the current one.
          */
         void move(const osg::Vec3 &relPos);
@@ -63,24 +67,24 @@ namespace dtEditQt
          * @param degrees Amount of rotation in degrees.
          */
         void pitch(float degrees);
-   
+
         /**
          * Rotates the camera about its up vector.
          * @param degrees Amount of rotation in degrees.
          */
-		void yaw(float degrees);
+        void yaw(float degrees);
 
         /**
          * Rotates the camera about its current view vector.
          * @param degrees Amount of rotation in degrees.
          */
-		void roll(float degrees);
-   
+        void roll(float degrees);
+
         /**
          * Rotates the camera using the given quaternion.
          * @param q The quaternion to rotate by.
          */
-		void rotate(const osg::Quat &q);
+        void rotate(const osg::Quat &q);
 
         /**
          * Zooms in camera.
@@ -90,43 +94,43 @@ namespace dtEditQt
          * @param amount A floating point value slighting less than or greater than 1.0f.
          */
         void zoom(float amount);
-		
+
         /**
          * Gets the current zoom factor.
          * @return The current zoom factor.
          */
-		float getZoom() const {
-			return this->zoomFactor;
-		}		
-		
+        float getZoom() const {
+            return this->zoomFactor;
+        }
+
         /**
          * Resets the camera's rotation quaternion to the identity where the positive Z
          * axis is up, the positive Y axis is forward, and the positive X axis is right.
          */
-		void resetRotation();		
-		
+        void resetRotation();
+
         /**
          * Sets the camera's orthographic viewing parameters and puts this camera into
          * orthographic viewing mode.
-         * @param left 
-         * @param right 
-         * @param bottom 
-         * @param top 
-         * @param near 
-         * @param far 
+         * @param left
+         * @param right
+         * @param bottom
+         * @param top
+         * @param near
+         * @param far
          */
-		void makeOrtho(float left, float right, float bottom, float top,
-			float near, float far);
-			
+        void makeOrtho(float left, float right, float bottom, float top,
+            float near, float far);
+
         /**
          * Sets the camera's perspective viewing parameters and puts this camera into
          * perspective viewing mode.
-         * @param fovY 
-         * @param aspect 
-         * @param near 
-         * @param far 
+         * @param fovY
+         * @param aspect
+         * @param near
+         * @param far
          */
-		void makePerspective(float fovY, float aspect, float near, float far);
+        void makePerspective(float fovY, float aspect, float near, float far);
 
         /**
          * Sets the horizontal aspect ratio of this camera.
@@ -147,43 +151,43 @@ namespace dtEditQt
          * @param value The new value.
          */
         void setFarClipPlane(float value);
-		
+
         /**
          * Gets this camera's current view direction.
          * @return A 3D vector pointing in the direction the camera is facing.
          */
-		osg::Vec3 getViewDir() const;
+        osg::Vec3 getViewDir() const;
 
         /**
          * Gets this camera's current up direction.
          * @return A 3D vector perpendicular to the camera's view direction.
          */
         osg::Vec3 getUpDir() const;
-        
+
         /**
          * Gets this camera's current right direction.
          * @return A 3D vector which is the cross product of the camera's current viewing
          * direction and the current up direction.
          */
-		osg::Vec3 getRightDir() const;
+        osg::Vec3 getRightDir() const;
 
         /**
          * Gets this camera's orientation in a quaternion.
          * @return A quaternion representation of this camera's orientation.
          */
-		const osg::Quat &getOrientation() const {
-			return this->orientation;
-		}
+        const osg::Quat &getOrientation() const {
+            return this->orientation;
+        }
 
         /**
          * Gets the current position of this camera.
          * @return Returns a 3D vector corresponding to this camera's current position
          * in world coordinates.
          */
-		const osg::Vec3 &getPosition() const {
-			return this->position;
-		}
-		
+        const osg::Vec3 &getPosition() const {
+            return this->position;
+        }
+
         /**
          * Gets this camera's current projection matrix.
          * @return The current projection matrix.  This is constructed based on the
@@ -191,14 +195,14 @@ namespace dtEditQt
          * @see makePerspective
          * @see makeOrtho
          */
-		const osg::Matrix &getProjectionMatrix();
-        
+        const osg::Matrix &getProjectionMatrix();
+
         /**
          * Gets the camera's current view matrix.
          * @return The view matrix is generated from its current position and its
          * current orientation.
          */
-		const osg::Matrix &getWorldViewMatrix();
+        const osg::Matrix &getWorldViewMatrix();
 
         /**
          * Forces an update of this camera's projection matrix and modelview
@@ -206,39 +210,65 @@ namespace dtEditQt
          */
         void update();
 
-	protected:
-        
+        /**
+         * Attaches a transformableactorproxy to the camera.
+         * @param proxy The proxy to attach.
+         */
+        void attachActorProxy(dtDAL::TransformableActorProxy *proxy);
+
+        /**
+         * Removes a transformableactorproxy that is currently attached to the camera.
+         * @param proxy The proxy to remove from this camera.
+         */
+        void detachActorProxy(dtDAL::TransformableActorProxy *proxy);
+
+        /**
+         * Removes all actor proxies currently attached to this camera.
+         */
+        void removeAllActorAttachments();
+
+        /**
+         * Invoked when the camera is moved or rotated.  This updates any attachments
+         * on this camera.
+         */
+        void updateActorAttachments();
+
+    protected:
+
         /**
          * Empty destructor.
-         * @return 
+         * @return
          */
-		virtual ~Camera() { }
-		
-	private:
+        virtual ~Camera() { }
+
+    private:
        /**
         * Enumeration of the types of modes the camera can be in.
         */
-	   enum ProjectionType {
-			ORTHOGRAPHIC,
-			PERSPECTIVE
-		};
-				
-		osg::Vec3 position;
-		osg::Quat orientation;
-		
-		osg::Matrix projectionMat;
-		osg::Matrix worldViewMat;
-		
-		float fovY, aspectRatio;
-		float orthoLeft, orthoRight, orthoTop, orthoBottom;
-		float zNear, zFar;
-		float zoomFactor;
-		
-		bool updateProjectionMatrix;
-		bool updateWorldViewMatrix;
-	
-		ProjectionType projType;
-	};
+       enum ProjectionType {
+            ORTHOGRAPHIC,
+            PERSPECTIVE
+        };
+
+        osg::Vec3 position;
+        osg::Quat orientation;
+
+        osg::Matrix projectionMat;
+        osg::Matrix worldViewMat;
+
+        float fovY, aspectRatio;
+        float orthoLeft, orthoRight, orthoTop, orthoBottom;
+        float zNear, zFar;
+        float zoomFactor;
+
+        bool updateProjectionMatrix;
+        bool updateWorldViewMatrix;
+
+        ProjectionType projType;
+
+        ///A list of transformable actor proxies currently attached to the camera.
+        AttachmentList attachedProxies;
+    };
 }
 
 #endif

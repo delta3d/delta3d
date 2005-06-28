@@ -3,31 +3,21 @@ import glob
 import sys
 
 # Import the variables defined in the global SConstruct build script.
-Import ('env','OS','errorLog','mode')
-
-DALEnv = env.Copy()
-DALEnv.Append(CPPDEFINES = ['DT_LIBRARY'])
-
-#DALEnv.Object('inc/dtDAL/dtDAL.h', language='C++')
-
-#DALEnv.Append(CPPFLAGS = ['-include', 'dtDAL.h'])
+Import ('*')
 
 # Grab all the sources from the DAL source directory.
 sources = glob.glob('*.cpp')
-if mode == 'debug' :
-	lib = DALEnv.SharedLibrary('#lib/dtDALd',sources)
-else :
-	lib = DALEnv.SharedLibrary('#lib/dtDAL',sources)
 
-if (lib == '[]') :
-	result = 'false'
-else :
-	result = 'true'
+dtDALDeps =[ 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 'ode', 
+	'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
+	'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody','gdal', 'sg', 'ul', 'js', 
+	'Producer', 'tinyxml', 'opengl' ]
 
-if (result == 'false') :
-	errorLog.write("Failed to build dtDAL library.\n")
-else :	
-	if OS == 'windows' :
-		env.Install('#bin/',lib[0])
-
-#Return('result')
+if OS == 'windows' :
+   dtDALDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+elif OS == 'linux':
+   dtDALDeps += [ 'uuid', 'Xxf86vm' ]
+elif OS == 'darwin':
+   dtDALDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
+    
+BuildLib( 'dtDAL', sources, dtDALDeps, ['DT_LIBRARY'] )

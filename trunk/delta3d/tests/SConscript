@@ -1,0 +1,35 @@
+# Build script for the basic sample application demonstrating map file IO.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+projectEnv = env.Copy()
+
+sources = glob.glob('*.cpp') + glob.glob('project/*Tests.cpp') + glob.glob('proxy/*Test.cpp')
+
+deplibs = ['cppunit']
+
+#convert libs to system name
+deplibs = [ extLibs[lib] for lib in deplibs if extLibs.has_key(lib) ]
+
+projectEnv.Append(LIBS = deplibs)
+
+if mode == 'debug':
+   projectEnv.Append(LIBS = deplibs + ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore'])
+   app = projectEnv.Program('#tests/allTestsd', sources)
+else:
+   projectEnv.Append(LIBS = deplibs + ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore'])
+   app = projectEnv.Program('#tests/allTests', sources)
+
+# Grab all the sources from the dtActors source directory.
+if (app == '[]') :
+	result = 'false'
+else :
+	result = 'true'
+
+if (result == 'false') :
+	errorLog.write("Failed to build the map loader sample application.\n")
+
+Return('result')
