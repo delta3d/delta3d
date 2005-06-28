@@ -168,7 +168,7 @@ namespace dtDAL
         //std::cout << "adding RBODY resource " << srcPath << " as " << newName << "." << std::endl;
 
         FileUtils& fileUtils = FileUtils::GetInstance();
-        FileType ftype = fileUtils.fileInfo(srcPath).fileType;
+        FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
         if (ftype != REGULAR_FILE)
         {
@@ -184,7 +184,7 @@ namespace dtDAL
         //e.g. marine.rbody/marine.rbody
         const std::string& destFile = destDir + FileUtils::PATH_SEPARATOR + resourceFileName;
 
-        fileUtils.CreateDirectoryFromPath(destDir);
+        fileUtils.MakeDirectory(destDir);
 
         fileUtils.FileCopy(srcPath, destFile, true);
 
@@ -313,7 +313,7 @@ namespace dtDAL
         const std::string& srcPath = srcDir + FileUtils::PATH_SEPARATOR + docFileName;
 
         FileUtils& fileUtils = FileUtils::GetInstance();
-        size_t size = fileUtils.fileInfo(srcPath).size;
+        size_t size = fileUtils.GetFileInfo(srcPath).size;
 
         char* xmlWrapperFmt = "<Hack>%s</Hack>";
 
@@ -436,7 +436,7 @@ namespace dtDAL
                     FileUtils& fileUtils = FileUtils::GetInstance();
 
                     //if we found a file in the MAP element, copy it.
-                    if (fileUtils.fileInfo(materialPath).fileType == REGULAR_FILE)
+                    if (fileUtils.GetFileInfo(materialPath).fileType == REGULAR_FILE)
                     {
                         try
                         {

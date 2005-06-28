@@ -48,7 +48,7 @@ extern "C" int errno;
 #endif
 
 
-namespace dtDAL 
+namespace dtDAL
 {
 
     osg::ref_ptr<FileUtils> FileUtils::mInstance;
@@ -59,9 +59,9 @@ namespace dtDAL
     const char FileUtils::PATH_SEPARATOR = '/';
 #endif
     //-----------------------------------------------------------------------
-    bool FileUtils::FileExists( const std::string& strFile ) const 
+    bool FileUtils::FileExists( const std::string& strFile ) const
     {
-        return fileInfo(strFile).fileType != FILE_NOT_FOUND;
+        return GetFileInfo(strFile).fileType != FILE_NOT_FOUND;
     }
 
     //-----------------------------------------------------------------------
@@ -73,7 +73,7 @@ namespace dtDAL
         struct stat tagStat;
         int iCh;
 
-        if( strSrc != strDest ) 
+        if( strSrc != strDest )
         {
 
             if (!FileExists(strSrc))
@@ -82,24 +82,24 @@ namespace dtDAL
 
             //Open the source file for reading.
             pSrcFile = fopen( strSrc.c_str(), "rb" );
-            if( pSrcFile == NULL )  
+            if( pSrcFile == NULL )
             {
                 EXCEPT(ExceptionEnum::ProjectIOException,
                        std::string("Unable to open source file for reading: \"") + strSrc + "\"");
             }
 
             if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), __LINE__, "Source file exists.");
+                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
 
             std::string destFile = strDest;
 
-            FileType ft = fileInfo(strDest).fileType;
+            FileType ft = GetFileInfo(strDest).fileType;
 
             //Check to see if the destination is a file or directory.
-            if (ft == DIRECTORY) 
+            if (ft == DIRECTORY)
             {
                 if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), __LINE__, "Destination is a directory.");
+                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
 
                 //If the file is a directory, append the base name of the source file to the destination
                 //to make the new file name.
@@ -107,14 +107,14 @@ namespace dtDAL
                     destFile = strDest + FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(strSrc);
                 else
                     destFile = strDest + osgDB::getSimpleFileName(strSrc);
-            } 
-            else 
+            }
+            else
             {
                 if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), __LINE__, "Destination is a file.");
+                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
             }
 
-            if (FileExists(destFile) && !bOverwrite) 
+            if (FileExists(destFile) && !bOverwrite)
             {
                 EXCEPT(ExceptionEnum::ProjectIOException,
                        std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"");
@@ -122,7 +122,7 @@ namespace dtDAL
 
             pDestFile = fopen( destFile.c_str(), "wb" );
 
-            if( pDestFile == NULL ) 
+            if( pDestFile == NULL )
             {
                 //make sure to close the source file.
                 fclose(pSrcFile);
@@ -131,12 +131,12 @@ namespace dtDAL
             }
 
             if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), "Destination opened for reading.");
+                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
 
 
             stat( strSrc.c_str(), &tagStat );
 
-            for( long i=0; i<tagStat.st_size; i++ ) 
+            for( long i=0; i<tagStat.st_size; i++ )
             {
                 iCh = fgetc( pSrcFile );
                 fputc( iCh, pDestFile );
@@ -153,19 +153,19 @@ namespace dtDAL
     //-----------------------------------------------------------------------
     void FileUtils::FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const
     {
-        if (fileInfo(strSrc).fileType != REGULAR_FILE)
+        if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
             EXCEPT(ExceptionEnum::ProjectFileNotFound,
                    std::string("Source file was not found or is a Directory: \"") + strSrc + "\"");
 
-        FileType ft = fileInfo(strDest).fileType;
+        FileType ft = GetFileInfo(strDest).fileType;
 
         std::string destFile = strDest;
 
         //Check to see if the destination is a directory.
-        if (ft == DIRECTORY) 
+        if (ft == DIRECTORY)
         {
             if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), __LINE__, "Destination is a directory.");
+                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
 
             //Check to see if the destination is a file or directory.
             if (strDest[strDest.size()-1] != FileUtils::PATH_SEPARATOR)
@@ -173,13 +173,13 @@ namespace dtDAL
             else
                 destFile = strDest + osgDB::getSimpleFileName(strSrc);
 
-            ft = fileInfo(destFile).fileType;
+            ft = GetFileInfo(destFile).fileType;
 
-        } 
-        else 
+        }
+        else
         {
             if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), __LINE__, "Destination is a file.");
+                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
         }
 
         if (ft != FILE_NOT_FOUND && !bOverwrite)
@@ -192,7 +192,7 @@ namespace dtDAL
             return;
 
         if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-            mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), "Rename failed, attempting to copy file and delete the source");
+            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Rename failed, attempting to copy file and delete the source");
 
 
         //copy the file
@@ -206,9 +206,9 @@ namespace dtDAL
     }
 
     //-----------------------------------------------------------------------
-    void FileUtils::FileDelete( const std::string& strFile ) const 
+    void FileUtils::FileDelete( const std::string& strFile ) const
     {
-        FileType ft = fileInfo(strFile).fileType;
+        FileType ft = GetFileInfo(strFile).fileType;
 
         //If the file does not exist, then ignore.
         if (ft == FILE_NOT_FOUND)
@@ -225,12 +225,12 @@ namespace dtDAL
     }
 
     //-----------------------------------------------------------------------
-    const struct FileInfo FileUtils::fileInfo( const std::string& strFile) const 
+    const struct FileInfo FileUtils::GetFileInfo( const std::string& strFile) const
     {
         struct FileInfo info;
 
         struct stat tagStat;
-        if( stat( strFile.c_str(), &tagStat ) != 0 ) 
+        if( stat( strFile.c_str(), &tagStat ) != 0 )
         {
             //EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot open file ") + strFile);
             info.fileType = FILE_NOT_FOUND;
@@ -257,22 +257,22 @@ namespace dtDAL
 
 
     //-----------------------------------------------------------------------
-    void FileUtils::ChangeDirectory(const std::string& path) 
+    void FileUtils::ChangeDirectory(const std::string& path)
     {
         ChangeDirectoryInternal(path);
         mStackOfDirectories.clear();
     }
 
     //-----------------------------------------------------------------------
-    const std::string& FileUtils::GetMyCurrentDirectory() const 
+    const std::string& FileUtils::CurrentDirectory() const
     {
         return mCurrentDirectory;
     }
 
     //-----------------------------------------------------------------------
-    void FileUtils::ChangeDirectoryInternal(const std::string& path) 
+    void FileUtils::ChangeDirectoryInternal(const std::string& path)
     {
-        if (chdir(path.c_str()) == -1) 
+        if (chdir(path.c_str()) == -1)
         {
             EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot open directory ") + path);
         }
@@ -280,23 +280,23 @@ namespace dtDAL
         getcwd(buf, 512);
         mCurrentDirectory = buf;
 
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG)) 
+        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
         {
             std::string message("Changed directory to \"");
             message += mCurrentDirectory;
             message += "\".";
-            mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), message.c_str());
+            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
         }
     }
     //-----------------------------------------------------------------------
     void FileUtils::PushDirectory(const std::string& path)
     {
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG)) 
+        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
         {
             std::string message("Pushing Directory \"");
             message += path;
             message += "\".";
-            mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), message.c_str());
+            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
         }
         std::string old = mCurrentDirectory;
         ChangeDirectoryInternal(path);
@@ -304,22 +304,55 @@ namespace dtDAL
     }
 
     //-----------------------------------------------------------------------
-    void FileUtils::PopDirectory() 
+    void FileUtils::PopDirectory()
     {
-        if(mLogger->IsLevelEnabled(Log::LOG_DEBUG)) 
+        if(mLogger->IsLevelEnabled(Log::LOG_DEBUG))
         {
-            mLogger->LogMessage(Log::LOG_DEBUG, std::string(__FUNCTION__), "Popping Directory.");
+            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Popping Directory.");
         }
-        if (mStackOfDirectories.empty()) 
+
+        if (mStackOfDirectories.empty())
             return;
+
         ChangeDirectoryInternal(mStackOfDirectories.back());
         mStackOfDirectories.pop_back();
     }
 
     //-----------------------------------------------------------------------
-    DirectoryContents FileUtils::DirGetFiles( const std::string& path ) const 
+    const std::string FileUtils::GetAbsolutePath(const std::string& relativePath) const
     {
-        FileInfo ft = fileInfo(path);
+        std::string result;
+        std::string old = mCurrentDirectory;
+        try
+        {
+            if (chdir(relativePath.c_str()) == -1)
+            {
+                EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot open directory ") + relativePath);
+            }
+            char buf[512];
+            getcwd(buf, 512);
+        }
+        catch (const Exception& ex)
+        {
+            if (chdir(old.c_str()) == -1)
+            {
+                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                    "Attempting to reset current directory to \"%s\", but an error occured doing so.", old.c_str());
+            }
+            throw ex;
+        }
+        if (chdir(old.c_str()) == -1)
+        {
+            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                "Attempting to reset current directory to \"%s\", but an error occured doing so.", old.c_str());
+        }
+        return result;
+    }
+
+    //-----------------------------------------------------------------------
+    DirectoryContents FileUtils::DirGetFiles( const std::string& path ) const
+    {
+        FileInfo ft = GetFileInfo(path);
         if (ft.fileType == FILE_NOT_FOUND)
             EXCEPT(ExceptionEnum::ProjectFileNotFound,
                    std::string("Path not Found: \"") + path + "\".");
@@ -337,7 +370,7 @@ namespace dtDAL
         DirectoryContents dirCont = DirGetFiles(path);
 
         for (DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i) {
-            if (fileInfo(path + PATH_SEPARATOR + *i).fileType == DIRECTORY && (*i != ".") && (*i != "..")) {
+            if (GetFileInfo(path + PATH_SEPARATOR + *i).fileType == DIRECTORY && (*i != ".") && (*i != "..")) {
                 vec.push_back(*i);
             }
         }
@@ -345,45 +378,145 @@ namespace dtDAL
         return vec;
     }
 
+
+    void FileUtils::InternalDirCopy(const std::string& srcPath,
+        const std::string& destPath, bool bOverwrite) const
+    {
+        FileType destFileType = GetFileInfo(destPath).fileType;
+
+        if (destFileType == REGULAR_FILE)
+            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                   std::string("The destination path must be a directory: \"") + destPath + "\"");
+
+        if (destFileType == FILE_NOT_FOUND)
+            MakeDirectory(destPath);
+
+        DirectoryContents contents = DirGetFiles(srcPath);
+        for (DirectoryContents::iterator i = contents.begin(); i != contents.end(); ++i)
+        {
+            const std::string& newSrcPath = srcPath + PATH_SEPARATOR + *i;
+            const std::string& newDestPath = destPath + PATH_SEPARATOR + *i;
+            FileInfo fi = GetFileInfo(newSrcPath);
+            if (fi.fileType == DIRECTORY)
+            {
+                InternalDirCopy(newSrcPath, newDestPath, bOverwrite);
+            }
+            else
+            {
+                FileCopy(newSrcPath, newDestPath, bOverwrite);
+            }
+        }
+    }
+
+    //-----------------------------------------------------------------------
+    void FileUtils::DirCopy(const std::string& srcPath,
+        const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const
+    {
+        if (!DirExists(srcPath))
+            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                   std::string("Source directory does not exist: \"") + srcPath + "\"");
+
+        FileType destFileType = GetFileInfo(destPath).fileType;
+
+        if (destFileType == REGULAR_FILE)
+            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                   std::string("The destination path must be a directory: \"") + destPath + "\"");
+
+        bool createDest = destFileType == FILE_NOT_FOUND;
+
+        std::string fullSrcPath = GetAbsolutePath(srcPath);
+        //from here, the code can assume srcPath exists.
+        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source directory \"%s\" exists.", fullSrcPath.c_str());
+
+        std::string fullDestPath;
+
+        if (createDest)
+        {
+            MakeDirectory(destPath);
+            fullDestPath = GetAbsolutePath(destPath);
+            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" has been created.",
+                                    fullDestPath.c_str());
+        }
+        else
+        {
+            fullDestPath = GetAbsolutePath(destPath);
+            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" exists.",
+                                    fullDestPath.c_str());
+
+            if ( (copyContentsOnly && fullSrcPath == fullSrcPath)
+                  || (!copyContentsOnly && fullSrcPath == osgDB::getFilePath(fullDestPath)) )
+            {
+                EXCEPT(ExceptionEnum::ProjectException,
+                       std::string("The source equals the destination: \"") + srcPath + "\"");
+            }
+
+            if (!copyContentsOnly)
+            {
+                const std::string& srcName = osgDB::getSimpleFileName(fullSrcPath);
+                fullDestPath += PATH_SEPARATOR + srcName;
+                if (!DirExists(fullDestPath))
+                    MakeDirectory(fullDestPath);
+
+                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        "Destination directory \"%s\" created - copyContentsOnly is false.",
+                        fullDestPath.c_str());
+            }
+            else
+            {
+                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        "Destination directory \"%s\" exists - copyContentsOnly is true.",
+                        fullDestPath.c_str());
+            }
+        }
+
+
+        InternalDirCopy(fullSrcPath, fullDestPath, bOverwrite);
+    }
+
     //-----------------------------------------------------------------------
     bool FileUtils::DirDelete( const std::string& strDir, bool bRecursive )
     {
-        if (bRecursive) 
+        if (bRecursive)
         {
             if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
                 mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Attempting to recursively delete %s.", strDir.c_str());
-            try 
+            try
             {
                 PushDirectory(strDir);
-                try 
+                try
                 {
                     RecursDeleteDir(true);
-                } 
-                catch(const Exception& ex) 
+                }
+                catch(const Exception& ex)
                 {
                     PopDirectory();
                     throw ex;
                 }
 
                 PopDirectory();
-            } 
-            catch (const Exception& ex) 
+            }
+            catch (const Exception& ex)
             {
                 //if we get a file not found trying to recurse into the top directory
                 //then the directory does not exist, so there is no need to throw an exception.
-                if (ex.TypeEnum() == ExceptionEnum::ProjectFileNotFound && !DirExists(strDir)) 
+                if (ex.TypeEnum() == ExceptionEnum::ProjectFileNotFound && !DirExists(strDir))
                 {
                     if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
                         mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
                     return true;
-                } 
+                }
                 else
                     throw ex;
             }
-        } 
-        else 
+        }
+        else
         {
             if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
                 mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -391,19 +524,19 @@ namespace dtDAL
         }
 
         errno = 0;
-        if( rmdir( strDir.c_str() ) != 0 ) 
+        if( rmdir( strDir.c_str() ) != 0 )
         {
-            if (!bRecursive && errno == ENOTEMPTY) 
+            if (!bRecursive && errno == ENOTEMPTY)
             {
                 return false;
-            } 
-            else if (errno == ENOENT) 
+            }
+            else if (errno == ENOENT)
             {
                 if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
                     mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                     "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
                 return true;
-            } 
+            }
             else
             {
                 EXCEPT(ExceptionEnum::ProjectIOException,
@@ -415,15 +548,15 @@ namespace dtDAL
         return true;
     }
 
-    void FileUtils::CreateDirectoryFromPath(const std::string& strDir) const 
+    void FileUtils::MakeDirectory(const std::string& strDir) const
     {
-        if (!osgDB::makeDirectory(strDir)) 
+        if (!osgDB::makeDirectory(strDir))
         {
-            FileType ft = fileInfo(strDir).fileType;
+            FileType ft = GetFileInfo(strDir).fileType;
             if (ft == REGULAR_FILE)
                 EXCEPT(ExceptionEnum::ProjectIOException, std::string("Cannot create directory. ")
                     + strDir + " is an existing non-directory file.");
-            else if (ft == DIRECTORY) 
+            else if (ft == DIRECTORY)
             {
                 return;
             }
@@ -433,7 +566,7 @@ namespace dtDAL
                 EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot create directory ")
                     + strDir + ". Parent directory doesn't exist.");
             }
-            else 
+            else
             {
                 EXCEPT(ExceptionEnum::ProjectIOException, std::string("Cannot create directory ") + strDir + ".");
             }
@@ -448,9 +581,9 @@ namespace dtDAL
     //};
 
     //-----------------------------------------------------------------------
-    bool FileUtils::DirExists( const std::string& strDir ) const 
+    bool FileUtils::DirExists( const std::string& strDir ) const
     {
-        return fileInfo(strDir).fileType == DIRECTORY;
+        return GetFileInfo(strDir).fileType == DIRECTORY;
     }
 
         //-----------------------------------------------------------------------
@@ -460,13 +593,13 @@ namespace dtDAL
         DirectoryContents dirCont = DirGetFiles(mCurrentDirectory);
 
         //iterate over all of the directory contents.
-        for(DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i) 
+        for(DirectoryContents::const_iterator i = dirCont.begin(); i != dirCont.end(); ++i)
         {
-            FileType ft = fileInfo(*i).fileType;
+            FileType ft = GetFileInfo(*i).fileType;
             if (ft == REGULAR_FILE)
                 //Delete regular files.
                 unlink(i->c_str());
-            else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive ) 
+            else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive )
             {
                 //if it's a directory and it's not the "." or ".." special directories,
                 //change into that directory and recurse.
@@ -482,7 +615,7 @@ namespace dtDAL
     }
 
     //-----------------------------------------------------------------------
-    FileUtils::FileUtils() 
+    FileUtils::FileUtils()
     {
         mLogger = &Log::GetInstance(std::string("FileUtils.cpp"));
         //assign the current directory

@@ -248,7 +248,7 @@ namespace dtEditQt
          * Releases a mouse cursor that has been trapped.  Also makes the cursor
          * visible again.
          */
-        void releaseMouseCursor();
+        void releaseMouseCursor(const QPoint &mousePosition = QPoint(-1,-1));
 
         /**
          * Sets the scene to be rendered by this viewport.
@@ -462,7 +462,7 @@ namespace dtEditQt
          * Saves the original version of the actor rotation or translation values.
          * This is used so that undo/redo can track the old value of a property.
          * @param propName The name of the property to update.
-         * @note 
+         * @note
          *  It clears the list of any previous old values.
          */
         void saveSelectedActorOrigValues(const std::string &propName);
@@ -503,7 +503,7 @@ namespace dtEditQt
 
         // holds the original values of either translation or rotation.  This should
         // be set in BeginEdit and cleared in EndEdit
-        std::vector<std::string> selectedActorOrigValues; 
+        std::vector<std::string> selectedActorOrigValues;
 
         osg::ref_ptr<Delta3DMessageListener> messageListener;
         osg::ref_ptr<ViewportOverlay> overlay;

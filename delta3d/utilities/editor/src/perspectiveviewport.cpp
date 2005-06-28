@@ -32,14 +32,15 @@
 #include "dtDAL/log.h"
 #include "dtDAL/actorproxyicon.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
     class PerspBillBoardUpdateVisitor : public osg::NodeVisitor
     {
     public:
-        PerspBillBoardUpdateVisitor() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN) { }
+        PerspBillBoardUpdateVisitor() :
+            osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN) { }
 
         virtual void apply(osg::Billboard &billBoard) {
             billBoard.setMode(osg::Billboard::POINT_ROT_WORLD);
@@ -77,7 +78,7 @@ namespace dtEditQt
         this->currentMode = &InteractionModeExt::NOTHING;
         this->camera = ViewportManager::getInstance().getWorldViewCamera();
         this->camera->setFarClipPlane(250000.0f);
-        setMoveActorWithCamera(false);
+        setMoveActorWithCamera(false);//EditorData::getInstance().getRigidCamera());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,6 @@ namespace dtEditQt
         //rendering.
         PerspBillBoardUpdateVisitor bv;
         getScene()->GetSceneNode()->accept(bv);
-
         Viewport::renderFrame();
     }
 
@@ -113,12 +113,14 @@ namespace dtEditQt
     void PerspectiveViewport::mousePressEvent(QMouseEvent *e)
     {
         Qt::KeyboardModifiers shiftAndControl = Qt::ControlModifier | Qt::ShiftModifier;
+        //std::cout << *getCamera() << std::endl;
 
         if (getInteractionMode() == Viewport::InteractionMode::CAMERA) {
             if (getEnableKeyBindings()) {
                 if (e->modifiers() == Qt::ShiftModifier) {
                     if (getMoveActorWithCamera()) {
                         beginCameraMode(e);
+                        attachCurrentSelectionToCamera();
                     }
                     else {
                         setActorTranslateMode();
@@ -169,7 +171,7 @@ namespace dtEditQt
     {
         if (getInteractionMode() != Viewport::InteractionMode::SELECT_ACTOR) {
             if (getInteractionMode() == Viewport::InteractionMode::CAMERA) {
-               endCameraMode(e);
+                endCameraMode(e);
             }
             else {
                endActorMode(e);
@@ -198,7 +200,7 @@ namespace dtEditQt
                 return;
 
             if (getMoveActorWithCamera() && e->modifiers() == Qt::ShiftModifier) {
-                moveCameraAndActor(dx,dy);
+                moveCamera(dx,dy);
             }
             else {
                 moveCamera(dx,dy);
@@ -234,6 +236,10 @@ namespace dtEditQt
             return;
         }
 
+        if (getMoveActorWithCamera()) {
+
+        }
+
         setCameraMode();
         trapMouseCursor();
     }
@@ -251,6 +257,8 @@ namespace dtEditQt
             this->currentMode = &InteractionModeExt::NOTHING;
             releaseMouseCursor();
             syncWithModeActions();
+            if (getMoveActorWithCamera() && getCamera() != NULL)
+                getCamera()->removeAllActorAttachments();
         }
     }
 
@@ -278,7 +286,7 @@ namespace dtEditQt
             saveSelectedActorOrigValues("Translation");
         else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
             saveSelectedActorOrigValues("Rotation");
-        
+
         trapMouseCursor();
     }
 
@@ -324,7 +332,7 @@ namespace dtEditQt
             getCamera()->yaw(-dx / getMouseSensitivity());
         }
         else if (*this->currentMode == InteractionModeExt::CAMERA_TRANSLATE) {
-            getCamera()->move(osg::Vec3(0,0,1) *
+            getCamera()->move(getCamera()->getUpDir() *
                               (-dy / getMouseSensitivity()));
             getCamera()->move(getCamera()->getRightDir() *
                               (dx / getMouseSensitivity()));
@@ -332,109 +340,23 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void PerspectiveViewport::moveCameraAndActor(float dx, float dy)
+    void PerspectiveViewport::attachCurrentSelectionToCamera()
     {
-        //Get the old position of the camera so we have a movement delta.
-        osg::Vec3 oldCamLook,newCamLook;
-        osg::Quat rotDelta;
-        osg::Vec3 oldCamPos,transDelta;
-        osg::Matrix rotDeltaMat;
-
-        oldCamLook = getCamera()->getViewDir();
-        oldCamPos = getCamera()->getPosition();
-
-        moveCamera(dx,dy);
-
-        newCamLook = getCamera()->getViewDir();
-        rotDelta.makeRotate(oldCamLook,newCamLook);
-        rotDelta.get(rotDeltaMat);
-        transDelta = getCamera()->getPosition()-oldCamPos;
-
-        //Now get the current actor selection and move it relative to the
-        //camera's position and orientation.
         ViewportOverlay::ActorProxyList::iterator itor;
         ViewportOverlay::ActorProxyList &selection =
-                ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
+            ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
 
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) 
+        if (getCamera() == NULL)
+            return;
+
+        for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtDAL::TransformableActorProxy *tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
-            dtCore::Transformable *transformable =
-                dynamic_cast<dtCore::Transformable *>(proxy->GetActor());
+            dtDAL::TransformableActorProxy *tProxy =
+                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (tProxy != NULL && transformable != NULL)
-            {
-                dtCore::Transform tx;
-                osg::Vec3 toObjFromCam = tProxy->GetTranslation() - getCamera()->getPosition();
-
-
-                osg::Matrix objRotMat;
-                osg::Matrix deltaMat;
-                osg::Quat objRotQuat,camQuat;
-                osg::Vec3 currTrans;
-                osg::Matrix txMat;
-
-                transformable->GetTransform(&tx);
-                tx.Get(txMat);
-
-//                 osg::Matrix mat;
-//                 osg::Matrix offset = osg::Matrix::translate(getCamera()->getPosition());
-//                mat.set(getCamera()->getWorldViewMatrix());
-
-//                 mat.postMult(txMat);
-
-                osg::Matrix camMat;
-
-                camMat.set(getCamera()->getOrientation().inverse());
-                tx.GetRotation(objRotMat);
-                camMat.postMult(objRotMat);
-
-                //tx.Set(mat);
-
-                tx.Set(camMat);
-                transformable->SetTransform(&tx);
-
-//                 camMat.set(rotDelta);
-//                 tx.GetRotation(objRotMat);
-//                 objRotMat *= camMat;
-
-
-//                 transformable->GetTransform(&tx);
-//                 tx.GetRotation(objRotMat);
-//                 objRotMat.get(objRotQuat);
-//                 objRotQuat *= rotDelta;
-//                 objRotMat.set(objRotQuat);
-//                 tx.SetRotation(objRotMat);
-//                 camQuat = getCamera()->getOrientation();
-//
-//                 objRotQuat = objRotQuat - camQuat;
-//                 objRotMat.set(objRotQuat);
-
-  /*
-                currTrans = tProxy->getTranslation();
-                currTrans -= getCamera()->getPosition();
-                currTrans = rotDelta*currTrans;
-                currTrans += getCamera()->getPosition();
-                currTrans += transDelta;
-                currTrans -= getCamera()->getPosition();*/
-
-                //tx.SetTranslation(currTrans);
-                //tx.SetRotation(objRotMat);
-
-//                 tx.GetRotation(currRotation);
-//                 currRotation = objRotMat;
-//                 tx.SetRotation(currRotation);
-
-
-                //transformable->SetTransform(&tx);
-
-//                 currTrans = tProxy->getTranslation();
-//                 currTrans -= getCamera()->getPosition();
-//                 currTrans = rotDelta*currTrans;
-//                 currTrans += getCamera()->getPosition();
-//                 currTrans += transDelta;
-//                 tProxy->setTranslation(currTrans);
+            if (tProxy != NULL) {
+                getCamera()->attachActorProxy(tProxy);
             }
         }
     }
@@ -458,7 +380,8 @@ namespace dtEditQt
         osg::Vec3 currTrans;
         for (itor=selection.begin(); itor!=selection.end(); ++itor) {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtDAL::TransformableActorProxy *tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
+            dtDAL::TransformableActorProxy *tProxy =
+                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
             if (tProxy != NULL) {
                 currTrans = tProxy->GetTranslation();
@@ -473,12 +396,6 @@ namespace dtEditQt
     {
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-
-        //Current actor rotation mode only supports rotating one actor so if a group of
-        //actors is selected, rotation does nothing.
-        if (selection.size() != 1) {
-            return;
-        }
 
         osg::Matrix rot,currRotation;
         osg::Vec3 axis;
@@ -525,33 +442,33 @@ namespace dtEditQt
         const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
-            if (billBoard == NULL) 
+            if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
-            else 
+            else
             {
                 scene->AddDrawable(billBoard->GetDrawable());
             }
         }
-        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR) 
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
         {
             scene->AddDrawable(proxy->GetActor());
         }
-        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) 
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
         {
             scene->AddDrawable(proxy->GetActor());
 
-            if (billBoard == NULL) 
+            if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
-            else 
+            else
             {
                 scene->AddDrawable(billBoard->GetDrawable());
             }
         }
-        else 
+        else
         {
             //If we got here, then the proxy wishes the system to determine how to display
             //the proxy.
@@ -566,7 +483,7 @@ namespace dtEditQt
         dtDAL::TransformableActorProxy *tProxy =
             dynamic_cast<dtDAL::TransformableActorProxy *>(proxy.get());
 
-        if (tProxy != NULL) 
+        if (tProxy != NULL)
         {
             const osg::BoundingSphere &bs = tProxy->GetActor()->GetOSGNode()->getBound();
 
@@ -584,12 +501,23 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void PerspectiveViewport::onEditorPreferencesChanged()
+    {
+        //This functionality has been disabled for the time being.
+        //this->attachActorToCamera = EditorData::getInstance().getRigidCamera();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::connectInteractionModeSlots()
     {
         Viewport::connectInteractionModeSlots();
-        connect(&EditorEvents::getInstance(),
-                SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
+
+        EditorEvents *editorEvents = &EditorEvents::getInstance();
+        connect(editorEvents, SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
                 this,SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));
+
+        connect(editorEvents, SIGNAL(editorPreferencesChanged()),
+                this,SLOT(onEditorPreferencesChanged()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -597,8 +525,11 @@ namespace dtEditQt
     {
         Viewport::disconnectInteractionModeSlots();
 
-        disconnect(&EditorEvents::getInstance(),
-                    SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
+        EditorEvents *editorEvents = &EditorEvents::getInstance();
+        disconnect(editorEvents,SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
                     this,SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));
+
+        disconnect(editorEvents, SIGNAL(editorPreferencesChanged()),
+                this,SLOT(onEditorPreferencesChanged()));
     }
 }

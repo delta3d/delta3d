@@ -81,7 +81,7 @@ namespace dtDAL
     void Project::SetContext(const std::string& path, bool mOpenReadOnly)
     {
         FileUtils& fileUtils = FileUtils::GetInstance();
-        FileType ft = fileUtils.fileInfo(path).fileType;
+        FileType ft = fileUtils.GetFileInfo(path).fileType;
 
         if (mValidContext)
         {
@@ -104,7 +104,7 @@ namespace dtDAL
         {
             try
             {
-                fileUtils.CreateDirectoryFromPath(path);
+                fileUtils.MakeDirectory(path);
                 ft = DIRECTORY;
             }
             catch (const Exception& ex)
@@ -158,7 +158,7 @@ namespace dtDAL
                 {
                     try
                     {
-                        fileUtils.CreateDirectoryFromPath(Project::MAP_DIRECTORY);
+                        fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
                     }
                     catch(const Exception& ex)
                     {
@@ -175,7 +175,7 @@ namespace dtDAL
                 if (!mOpenReadOnly && contentsSet.find(Project::MAP_DIRECTORY) == contentsSet.end())
                     try
                     {
-                        fileUtils.CreateDirectoryFromPath(Project::MAP_DIRECTORY);
+                        fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
                     }
                     catch (const Exception& ex)
                     {
@@ -183,12 +183,12 @@ namespace dtDAL
                         ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
                         EXCEPT(ExceptionEnum::ProjectInvalidContext, ss.str());
                     }
-                else if (fileUtils.fileInfo(Project::MAP_DIRECTORY).fileType != DIRECTORY)
+                else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != DIRECTORY)
                 {
                     std::string s(path);
                     s.append(" is not a valid project directory.  The ");
                     s.append(Project::MAP_DIRECTORY);
-                    if (fileUtils.fileInfo(Project::MAP_DIRECTORY).fileType == REGULAR_FILE)
+                    if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == REGULAR_FILE)
                         s.append(" is not a directory.");
                     else
                         s.append(" does not exist.");
@@ -198,7 +198,7 @@ namespace dtDAL
 
             mValidContext = true;
             std::string oldContext = mContext;
-            mContext = FileUtils::GetInstance().GetMyCurrentDirectory();
+            mContext = FileUtils::GetInstance().CurrentDirectory();
             mContextReadOnly = mOpenReadOnly;
 
             dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + mContext);
@@ -261,7 +261,7 @@ namespace dtDAL
                 {
                     const std::string& f = *i;
                     std::string fp = Project::MAP_DIRECTORY + FileUtils::PATH_SEPARATOR + f;
-                    if (fileUtils.fileInfo(fp).fileType == REGULAR_FILE)
+                    if (fileUtils.GetFileInfo(fp).fileType == REGULAR_FILE)
                     {
                         try
                         {
@@ -298,7 +298,7 @@ namespace dtDAL
         Map* map = NULL;
         try
         {
-            if (fileUtils.fileInfo(fullPath).fileType != REGULAR_FILE)
+            if (fileUtils.GetFileInfo(fullPath).fileType != REGULAR_FILE)
                 EXCEPT(ExceptionEnum::ProjectFileNotFound,
                     std::string("Map file \"") + fullPath + "\" not found.");
 
@@ -847,7 +847,7 @@ namespace dtDAL
         {
             if (!fileUtils.DirExists(backupDir))
             {
-                fileUtils.CreateDirectoryFromPath(backupDir);
+                fileUtils.MakeDirectory(backupDir);
             }
 
             std::string fileName = path + ".backupsaving";
@@ -935,7 +935,7 @@ namespace dtDAL
                 && file.substr(0, fileNameSize) == fileName)
             {
 
-                if (fileUtils.fileInfo(backupDir + FileUtils::PATH_SEPARATOR + file).fileType == REGULAR_FILE)
+                if (fileUtils.GetFileInfo(backupDir + FileUtils::PATH_SEPARATOR + file).fileType == REGULAR_FILE)
                     fileUtils.FileDelete(backupDir + FileUtils::PATH_SEPARATOR + file);
             }
         }
@@ -968,7 +968,7 @@ namespace dtDAL
 
         try
         {
-            FileType ftype = fileUtils.fileInfo(path).fileType;
+            FileType ftype = fileUtils.GetFileInfo(path).fileType;
 
             if (ftype != REGULAR_FILE)
             {

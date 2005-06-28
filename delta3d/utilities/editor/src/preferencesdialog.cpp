@@ -47,7 +47,7 @@ namespace dtEditQt
         QGridLayout *grid   = new QGridLayout(group);
         QHBoxLayout *hLay   = new QHBoxLayout;
         QSpinBox    *spin   = new QSpinBox;
-        QPushButton *ok     = new QPushButton(tr("Ok"));
+        QPushButton *ok     = new QPushButton(tr("OK"));
         QPushButton *cancel = new QPushButton(tr("Cancel"));
         QLabel      *label  = new QLabel(tr("Load Last Project on Startup"));
         color               = new QPushButton;

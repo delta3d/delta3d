@@ -69,7 +69,7 @@ namespace dtEditQt
         gridLayout->addWidget(descEdit,2,1);
 
         //Create the buttons...
-        okButton = new QPushButton(tr("Ok"),this);
+        okButton = new QPushButton(tr("OK"),this);
         QPushButton *cancelButton = new QPushButton(tr("Cancel"),this);
         QHBoxLayout *buttonLayout = new QHBoxLayout;
 

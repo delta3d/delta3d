@@ -27,22 +27,22 @@
 #include "dtDAL/exception.h"
 #include "dtDAL/transformableactorproxy.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
-    class OrthoBillBoardUpdateVisitor : public osg::NodeVisitor 
+    class OrthoBillBoardUpdateVisitor : public osg::NodeVisitor
     {
     public:
         OrthoBillBoardUpdateVisitor(OrthoViewport *viewPort) :
             osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN), viewPort(viewPort) { }
 
-        virtual void apply(osg::Billboard &billBoard) 
+        virtual void apply(osg::Billboard &billBoard)
         {
             if (!viewPort)
                 return;
 
-            if (viewPort->getViewType() == OrthoViewport::OrthoViewType::TOP) 
+            if (viewPort->getViewType() == OrthoViewport::OrthoViewType::TOP)
             {
                 billBoard.setMode(osg::Billboard::AXIAL_ROT);
                 billBoard.setAxis(osg::Vec3(1,0,0));
@@ -410,9 +410,10 @@ namespace dtEditQt
         osg::Vec3 currTrans;
         for (itor=selection.begin(); itor!=selection.end(); ++itor) {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtDAL::TransformableActorProxy *tProxy = dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
+            dtDAL::TransformableActorProxy *tProxy =
+                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (tProxy != NULL) 
+            if (tProxy != NULL)
             {
                 currTrans = tProxy->GetTranslation();
                 currTrans += trans;
@@ -444,13 +445,13 @@ namespace dtEditQt
         else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
             axis = getCamera()->getViewDir();
 
-        for (itor=selection.begin(); itor!=selection.end(); ++itor) 
+        for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
             dtCore::Transformable *transformable =
                 dynamic_cast<dtCore::Transformable *>(proxy->GetActor());
 
-            if (transformable != NULL) 
+            if (transformable != NULL)
             {
                 //Get the current rotation.
                 transformable->GetTransform(&tx);

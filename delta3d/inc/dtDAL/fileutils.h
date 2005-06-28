@@ -28,7 +28,7 @@
 
 #include "dtDAL/log.h"
 
-namespace dtDAL 
+namespace dtDAL
 {
     typedef osgDB::DirectoryContents DirectoryContents;
 
@@ -59,7 +59,7 @@ namespace dtDAL
      * @name FileUtils
      * @brief Singleton class implementing basic file operations.
      */
-    class DT_EXPORT FileUtils : public osg::Referenced 
+    class DT_EXPORT FileUtils : public osg::Referenced
     {
     public:
 
@@ -68,9 +68,9 @@ namespace dtDAL
         /**
          * @return the single instance of this class..
          */
-        static FileUtils& GetInstance() 
+        static FileUtils& GetInstance()
         {
-            if (mInstance == NULL) 
+            if (mInstance == NULL)
             {
                 mInstance = new FileUtils();
             }
@@ -119,7 +119,7 @@ namespace dtDAL
          * @return the fileInfo struct for the given file.
          * @see dtDAL::FileInfo
          */
-        const struct FileInfo fileInfo( const std::string& strFile) const;
+        const struct FileInfo GetFileInfo( const std::string& strFile) const;
 
         /**
          * Changes the current directory to the one given in "path."
@@ -135,7 +135,7 @@ namespace dtDAL
         /**
          * @return the full path to the current directory.
          */
-        const std::string& GetMyCurrentDirectory() const;
+        const std::string& CurrentDirectory() const;
 
         /**
          * Changes the current directory to the one given in "path" and
@@ -155,6 +155,14 @@ namespace dtDAL
         void PopDirectory();
 
         /**
+         * Converts a relative path to an absolute path.
+         * @param relativePath the relative path to convert to absolute.
+         * @return the absolute path.
+         * @throws ExceptionEnum::ProjectFileNotFound if the path does not exist.
+         */
+        const std::string GetAbsolutePath(const std::string& relativePath) const;
+
+        /**
          * @param path the path to the directory to list the contents of.
          * @return a vector of file names.
          * @throws ExceptionEnum::ProjectFileNotFound if the path does not exist.
@@ -167,6 +175,24 @@ namespace dtDAL
          * @throws ExceptionEnum::ProjectFileNotFound if the path does not exist.
          */
         DirectoryContents DirGetSubs( const std::string& path ) const;
+
+        /**
+         * Copys an entire directory.  If destPath exists, then a subdirectory will be created in
+         * destPath with the same name as srcPath unless copyContentsOnly is true, in which case the contents
+         * of srcPath will be copied into destPath.  If destPath does not exist, destPath will be created if
+         * the parent exists and the contents of srcPath will be copied to destPath whether copyContentsOnly
+         * is true or false.
+         *
+         * @param srcPath the source directory to copy.
+         * @param destPath the destination directory.
+         * @param bOverwrite true if this call should overwrite the destination file if it exists.
+         * @param copyContentsOnly true if the contents of srcPath should be copied into destPath
+         *                         rather than create a subdirectory
+         * @throws ExceptionEnum::ProjectFileNotFound if the source file is not found.
+         * @throws ExceptionEnum::ProjectIOException if an error occurs copying the data or bOverwrite was false and a
+         *                                           destination file exists.
+         */
+        void DirCopy(const std::string& srcPath, const std::string& destPath, bool bOverwrite, bool copyContentsOnly = false) const;
 
         /**
          * Deletes a directory.  If bRecursive is true, the directory and all it's contents will
@@ -185,7 +211,7 @@ namespace dtDAL
          * @throws ExceptionEnum::ProjectFileNotFound if the parent path does not exist.
          * @throws ExceptionEnum::ProjectIOException if an error occurs creating the directory
          */
-        void CreateDirectoryFromPath(const std::string& strDir) const;
+        void MakeDirectory(const std::string& strDir) const;
 
         /**
          * @param strDir The directory to check.
@@ -208,6 +234,8 @@ namespace dtDAL
         std::vector<std::string> mStackOfDirectories;
         static const int PATH_BUFFER_SIZE = 512;
         void ChangeDirectoryInternal(const std::string& path);
+        void InternalDirCopy(const std::string& srcPath,
+                             const std::string& destPath, bool bOverwrite) const;
     };
 
 }

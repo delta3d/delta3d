@@ -69,7 +69,7 @@ namespace dtDAL
             const std::string& destCategoryPath) const
         {
             FileUtils& fileUtils = FileUtils::GetInstance();
-            FileType ftype = fileUtils.fileInfo(srcPath).fileType;
+            FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
             if (ftype != REGULAR_FILE)
             {
@@ -148,7 +148,7 @@ namespace dtDAL
             //To work around a weird compiler bug...
             DataType* dt = const_cast<DataType*>(&resourceType);
 
-            FileType fType = FileUtils::GetInstance().fileInfo(filePath).fileType;
+            FileType fType = FileUtils::GetInstance().GetFileInfo(filePath).fileType;
 
             if (ext.empty())
             {
@@ -367,7 +367,7 @@ namespace dtDAL
 
         FileUtils& fileUtils = FileUtils::GetInstance();
 
-        FileType ftype = fileUtils.fileInfo(pathToFile).fileType;
+        FileType ftype = fileUtils.GetFileInfo(pathToFile).fileType;
 
         if (ftype == FILE_NOT_FOUND)
         {
@@ -536,7 +536,7 @@ namespace dtDAL
     core::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(const std::string& path,
         const std::string& category, core::tree<ResourceTreeNode>* parentTree) const
     {
-        FileType ft = FileUtils::GetInstance().fileInfo(path).fileType;
+        FileType ft = FileUtils::GetInstance().GetFileInfo(path).fileType;
         if (ft == REGULAR_FILE)
         {
             EXCEPT(ExceptionEnum::ProjectResourceError, std::string("File: \"")
@@ -546,7 +546,7 @@ namespace dtDAL
         {
             try
             {
-                FileUtils::GetInstance().CreateDirectoryFromPath(path);
+                FileUtils::GetInstance().MakeDirectory(path);
             }
             catch (const Exception& ex)
             {
@@ -645,7 +645,7 @@ namespace dtDAL
         fileUtils.PushDirectory(osgDB::getSimpleFileName(resourcePath));
         try
         {
-            DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.GetMyCurrentDirectory());
+            DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory());
             for (DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
             {
                 if (*j == "." || *j == "..")
@@ -653,7 +653,7 @@ namespace dtDAL
 
                 const std::string& currentFile = *j;
 
-                FileInfo fi = fileUtils.fileInfo(currentFile);
+                FileInfo fi = fileUtils.GetFileInfo(currentFile);
 
                 const ResourceTypeHandler* handler = NULL;
                 //only look for a handler if the file/dir has an extension.

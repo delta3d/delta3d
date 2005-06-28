@@ -21,8 +21,27 @@
 #include <osg/Math>
 #include "dtEditQt/camera.h"
 
-namespace dtEditQt 
+#include <iostream>
+
+namespace dtEditQt
 {
+    std::ostream &operator<<(std::ostream &o, osg::Vec3 v)
+    {
+        o << "[" << v.x() << " , " << v.y() << " , " << v.z() << "]";
+        return o;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    std::ostream &operator<<(std::ostream &o, Camera &c)
+    {
+        o << "Camera: " << std::endl << '\t' << "Position: " <<
+            c.getPosition().x() << "," << c.getPosition().y() << "," << c.getPosition().z() << std::endl <<
+            '\t' << "ViewDir: " << c.getViewDir().x() << "," << c.getViewDir().y() << "," << c.getViewDir().z() << std::endl <<
+            '\t' << "UpDir: " << c.getUpDir().x() << "," << c.getUpDir().y() << "," << c.getUpDir().z() << std::endl <<
+            '\t' << "RightDir: " << c.getRightDir().x() << "," << c.getRightDir().y() << "," << c.getRightDir().z();
+
+        return o;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     Camera::Camera()
@@ -43,6 +62,7 @@ namespace dtEditQt
     void Camera::setPosition(const osg::Vec3 &pos)
     {
         this->position = pos;
+        updateActorAttachments();
         this->updateWorldViewMatrix = true;
     }
 
@@ -50,63 +70,55 @@ namespace dtEditQt
     void Camera::move(const osg::Vec3 &relPos)
     {
         this->position += relPos;
+        updateActorAttachments();
         this->updateWorldViewMatrix = true;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void Camera::pitch(float degrees)
     {
-        osg::Vec3 xAxis;
         osg::Quat q;
-
-        xAxis = this->orientation.conj()*osg::Vec3(1,0,0);
-        q.makeRotate(osg::DegreesToRadians(-degrees),xAxis);
+        q.makeRotate(osg::DegreesToRadians(-degrees),getRightDir());
         rotate(q);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void Camera::yaw(float degrees)
     {
-        osg::Vec3 yAxis;
         osg::Quat q;
-
-        yAxis = osg::Vec3(0,0,1);
-        q.makeRotate(osg::DegreesToRadians(-degrees),yAxis);
+        q.makeRotate(osg::DegreesToRadians(-degrees),osg::Vec3(0,0,1));
         rotate(q);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void Camera::roll(float degrees)
     {
-        osg::Vec3 zAxis;
         osg::Quat q;
-
-        zAxis = this->orientation.conj()*osg::Vec3(0,1,0);
-        q.makeRotate(osg::DegreesToRadians(-degrees),zAxis);
+        q.makeRotate(osg::DegreesToRadians(-degrees),getViewDir());
         rotate(q);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void Camera::makeOrtho(float left, float right, float bottom, float top,
-                        float near, float far)
+                        float nearZ, float farZ)
     {
         this->orthoLeft = left;
         this->orthoRight = right;
         this->orthoBottom = bottom;
         this->orthoTop = top;
-        this->zNear = near;
-        this->zFar = far;
+        this->zNear = nearZ;
+        this->zFar = farZ;
         this->updateProjectionMatrix = true;
         this->projType = ORTHOGRAPHIC;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Camera::makePerspective(float fovY, float aspect, float near, float far)
+    void Camera::makePerspective(float fovY, float aspect, float nearZ, float farZ)
     {
         this->fovY = fovY;
         this->aspectRatio = aspect;
-        this->zNear = near;
-        this->zFar = far;
+        this->zNear = nearZ;
+        this->zFar = farZ;
         this->updateProjectionMatrix = true;
         this->projType = PERSPECTIVE;
     }
@@ -155,21 +167,21 @@ namespace dtEditQt
     {
         this->orientation = q*this->orientation;
         this->updateWorldViewMatrix = true;
+        updateActorAttachments();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void Camera::resetRotation()
     {
-        this->orientation.set(0,0,0,1);
-        pitch(90);
+        this->orientation = osg::Quat(osg::DegreesToRadians(-90.0f),osg::Vec3(1,0,0));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void Camera::zoom(float amount)
     {
         this->zoomFactor *= amount;
-        if (this->zoomFactor < 0.5f)
-            this->zoomFactor = 0.5f;
+        if (this->zoomFactor < 0.2f)
+            this->zoomFactor = 0.2f;
         this->updateProjectionMatrix = true;
     }
 
@@ -178,6 +190,7 @@ namespace dtEditQt
     {
         this->updateProjectionMatrix = true;
         this->updateWorldViewMatrix = true;
+        updateActorAttachments();
         getProjectionMatrix();
         getWorldViewMatrix();
     }
@@ -208,15 +221,113 @@ namespace dtEditQt
     const osg::Matrix &Camera::getWorldViewMatrix()
     {
         if (this->updateWorldViewMatrix) {
-            osg::Matrix tx;
-            osg::Matrix rotate;
-
-            tx.makeTranslate(-this->position);
-            this->orientation.get(rotate);
-            this->worldViewMat = tx*rotate;
+            this->worldViewMat = osg::Matrix::translate(-this->position) *
+                osg::Matrix::rotate(this->orientation);
             this->updateWorldViewMatrix = false;
         }
 
         return this->worldViewMat;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Camera::attachActorProxy(dtDAL::TransformableActorProxy *proxy)
+    {
+         dtCore::Transformable *transformable =
+             dynamic_cast<dtCore::Transformable *>(proxy->GetActor());
+         dtCore::Transform tx;
+         osg::Matrix orig;
+         osg::Vec3 trans;
+
+         transformable->GetTransform(&tx);
+         tx.Get(orig);
+         tx.GetTranslation(trans);
+         std::cout << "Before: " << trans << std::endl;
+
+         orig.postMult(osg::Matrix::inverse(getWorldViewMatrix()));
+
+         tx.Set(orig);
+         tx.GetTranslation(trans);
+         std::cout << "After: " << trans << std::endl;
+         //transformable->SetTransform(&tx);
+
+        this->attachedProxies.push_back(proxy);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Camera::detachActorProxy(dtDAL::TransformableActorProxy *proxy)
+    {
+        AttachmentList::iterator itor;
+        for (itor=this->attachedProxies.begin(); itor!=this->attachedProxies.end(); ++itor)
+        {
+            dtDAL::TransformableActorProxy *toRemove = itor->get();
+            if (toRemove == proxy) {
+                this->attachedProxies.erase(itor);
+                break;
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Camera::removeAllActorAttachments()
+    {
+        this->attachedProxies.clear();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Camera::updateActorAttachments()
+    {
+        if (this->attachedProxies.empty())
+            return;
+
+        AttachmentList::iterator itor;
+        const osg::Matrix camMatrix = osg::Matrix::inverse(getWorldViewMatrix());
+        osg::Matrix proxyMat;
+        dtCore::Transform tx;
+
+        for (itor=this->attachedProxies.begin(); itor!=this->attachedProxies.end(); ++itor)
+        {
+            dtDAL::TransformableActorProxy *tProxy = itor->get();
+            dtCore::Transformable *transformable =
+                dynamic_cast<dtCore::Transformable *>(tProxy->GetActor());
+
+            if (transformable != NULL)
+            {
+                osg::Vec3 trans;
+                osg::Vec3 hpr;
+                osg::Matrix relProxyMat;
+
+                //trans = tProxy->getTranslation();
+                //trans -= this->position;
+
+
+                //First move the actor into camera space.
+//                 transformable->GetTransform(&tx);
+//                 tx.Get(proxyMat);
+//                 relProxyMat = proxyMat * camMatrix;
+//
+//                 proxyMat = getWorldViewMatrix() * relProxyMat;
+//                 tx.Set(proxyMat);
+//                 transformable->SetTransform(&tx);
+
+                //tx.GetTranslation(trans);
+                //tx.GetRotation(hpr);
+
+//                 std::cout << "Before: Trans: " << trans.x() << "," << trans.y() <<
+//                     "," << trans.z() << " Look: " << hpr.x() << "," << hpr.y() <<
+//                     "," << hpr.z() << std::endl;
+
+
+                //proxyMat.postMult(camMatrixInv);
+                //tx.Set(proxyMat);
+
+//                 tx.GetTranslation(trans);
+//                 tx.GetRotation(hpr);
+//                 std::cout << "After: Trans: " << trans.x() << "," << trans.y() <<
+//                     "," << trans.z() << " Look: " << hpr.x() << "," << hpr.y() <<
+//                     "," << hpr.z() << std::endl;
+//
+//                 transformable->SetTransform(&tx);
+            }
+        }
     }
 }

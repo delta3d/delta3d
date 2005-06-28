@@ -19,6 +19,8 @@
 * @author Matthew W. Campbell
 */
 #include <QAction>
+#include <QMouseEvent>
+
 #include "dtEditQt/viewport.h"
 
 #include <osg/StateSet>
@@ -374,10 +376,15 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void Viewport::releaseMouseCursor()
+    void Viewport::releaseMouseCursor(const QPoint &mousePosition)
     {
         setCursor(this->oldMouseCursor);
-        QCursor::setPos(this->oldMouseLocation);
+
+       if (mousePosition.x() != -1 && mousePosition.y() != -1)
+            QCursor::setPos(mousePosition);
+        else
+            QCursor::setPos(this->oldMouseLocation);
+
         this->cacheMouseLocation = true;
     }
 
