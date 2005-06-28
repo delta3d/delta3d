@@ -22,10 +22,9 @@
 #include <sstream>
 #include <iostream>
 
-#include <tree.h>
-
 #include <osgDB/FileNameUtils>
 
+#include "dtDAL/tree.h"
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/resourcetreenode.h"
