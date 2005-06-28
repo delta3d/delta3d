@@ -24,8 +24,10 @@
 #include <QDockWidget>
 #include <osg/ref_ptr>
 #include <vector>
-#include <tree.h>
+
 #include <dtUtil/objectfactory.h>
+
+#include "dtDAL/tree.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/actortype.h"

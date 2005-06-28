@@ -64,10 +64,11 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/log.h"
+#include "dtDAL/tree.h"
+
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <vector>
-#include <tree.h>
 #include <math.h>
 
 
