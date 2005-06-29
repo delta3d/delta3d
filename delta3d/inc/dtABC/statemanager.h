@@ -324,7 +324,7 @@ namespace dtABC
       //if we are are not already in the set of states...
       if( mStates.insert(state).second )
       {
-         state->AddSender(this);
+         //state->AddSender(this);
          return true;
       }
 
