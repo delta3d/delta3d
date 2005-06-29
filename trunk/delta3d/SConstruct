@@ -643,11 +643,10 @@ if OS == 'darwin' :
 launchDir = env.GetLaunchDir()
 
 #############################################
-# Configure: Testing for dependencies vX.X.X
 #
-# osg0.9.8-2, etc.
-# ...
-##############################################
+# Configure: Testing for dependencies...
+#
+#############################################
 
 # do version, config checking
 
