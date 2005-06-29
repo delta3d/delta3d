@@ -57,9 +57,9 @@ void MapTests::setUp() {
 
         logger = &dtDAL::Log::GetInstance();
         logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-        logger = &dtDAL::Log::GetInstance("FileUtils.cpp");
+        logger = &dtDAL::Log::GetInstance("fileutils.cpp");
         logger->SetLogLevel(dtDAL::Log::LOG_ERROR);
-        logger = &dtDAL::Log::GetInstance("MapXML.cpp");
+        logger = &dtDAL::Log::GetInstance("mapxml.cpp");
         logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
 
         logger = &dtDAL::Log::GetInstance(logName);
@@ -477,10 +477,10 @@ void MapTests::testMapSaveAndLoad() {
         map->AddLibrary("dtCreateActors", "1.0");
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry("dtCreateActors");
 
-        dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", "../marine.rbody", "marine",
+        dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", "../../../data/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
 
-        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", "../dirt.ive", "dirt",
+        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", "../../../data/models/dirt.ive", "dirt",
             dtDAL::DataType::STATIC_MESH);
 
         createActors(*map);
