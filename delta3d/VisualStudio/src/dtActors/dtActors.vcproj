@@ -37,7 +37,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
 				AdditionalDependencies="dtDALd.lib Producerd.lib sg_d.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib tinyxmld.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib glGUI_d.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvis_d.lib dtsoarxd.lib xerces-c_2.lib xerces-c_2D.lib"
-				OutputFile="..\..\bin\dtActorsd.dll"
+				OutputFile="..\..\..\bin\dtActorsd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
