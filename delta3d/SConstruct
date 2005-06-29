@@ -481,6 +481,7 @@ opts.AddOptions(
             allowed_values = ( 'debug', 'release' ),
             map = {}, ignorecase = 1 ),
    BoolOption( 'no_warnings', 'Disable all warnings', 0 ),
+   BoolOption( 'unit_tests', 'Perform Unit Tests', 0 ),
    PathOption( 'prefix', 'Directory to install under', os.getcwd() ),
    PackageOption( 'boost', 'Boost installation directory', 'no' ),
    PackageOption( 'rti', 'RTI installation directory', 'no' ),
@@ -967,7 +968,9 @@ env.Alias( 'hla', [ os.path.join(os.getcwd(), 'src', 'dtHLA'),
 SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
-SConscript( dirs=['tests/proxy', 'tests/project', 'tests'] )
+
+if env.get('unit_tests') :
+   SConscript( dirs=['tests/proxy', 'tests/project', 'tests'] )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')
