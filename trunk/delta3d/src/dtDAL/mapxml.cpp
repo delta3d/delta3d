@@ -33,6 +33,7 @@
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/internal/XMLGrammarPoolImpl.hpp>
 
+//#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 
 #include <osg/Vec2f>
@@ -245,8 +246,8 @@ namespace dtDAL
         mXercesParser->setFeature(XMLUni::fgXercesUseCachedGrammarInParse, true);
         mXercesParser->setFeature(XMLUni::fgXercesCacheGrammarFromParse, true);
 
-        //char* schemaFileName = "map.xsd";
-        char* schemaFileName = "../utilities/editor/map.xsd";
+        std::string schemaFileName = osgDB::findDataFile("map.xsd");
+
         if (!FileUtils::GetInstance().FileExists(schemaFileName))
         {
             mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
@@ -254,7 +255,7 @@ namespace dtDAL
             EXCEPT(ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.");
         }
 
-        XMLCh* value = XMLString::transcode(schemaFileName);
+        XMLCh* value = XMLString::transcode(schemaFileName.c_str());
         LocalFileInputSource inputSource(value);
         //cache the schema
         mXercesParser->loadGrammar(inputSource, Grammar::SchemaGrammarType, true);
