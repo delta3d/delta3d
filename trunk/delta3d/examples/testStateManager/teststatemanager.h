@@ -77,7 +77,7 @@ class TestStateManager : public dtCore::Base
 public:
    typedef dtABC::StateManager<MyEventType,MyStateType> MyStateManager;
 
-   TestStateManager(const std::string& config);
+   TestStateManager( const std::string& config = "" );
    virtual ~TestStateManager();
 
 private:
@@ -86,7 +86,7 @@ private:
 
    int GetInput();
    void OnMessage( MessageData* data );
-   EventTypeVector GetEvents(const dtABC::State* state );
+   EventTypeVector GetEvents( const dtABC::State* state );
 
    static const int  mBufferSize;
    dtABC::State*     mStartState;
