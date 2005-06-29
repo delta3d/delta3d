@@ -51,11 +51,11 @@ void ProjectTests::setUp() {
     dtDAL::Project::GetInstance();
     std::string logName("projectTest");
 
-    logger = &dtDAL::Log::GetInstance("Project.cpp");
+    logger = &dtDAL::Log::GetInstance("project.cpp");
     logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-    logger = &dtDAL::Log::GetInstance("FileUtils.cpp");
+    logger = &dtDAL::Log::GetInstance("fileutils.cpp");
     logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-    logger = &dtDAL::Log::GetInstance("MapXML.cpp");
+    logger = &dtDAL::Log::GetInstance("mapxml.cpp");
     logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
 
     logger = &dtDAL::Log::GetInstance(logName);
@@ -69,12 +69,19 @@ void ProjectTests::setUp() {
     fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);
     fileUtils.PopDirectory();
 
+    fileUtils.FileCopy("../../data/models/dirt.ive", ".", false);
+    fileUtils.FileCopy("../../data/models/flatdirt.ive", ".", false);
+
 }
 
 
 void ProjectTests::tearDown() {
     dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+    fileUtils.FileDelete("dirt.ive");
+    fileUtils.FileDelete("flatdirt.ive");
+
     fileUtils.PopDirectory();
+
 }
 
 void ProjectTests::testFileIO() {
@@ -534,14 +541,14 @@ void ProjectTests::testResources() {
         std::string dirtCategory = "fun:bigmamajama";
 
         //add one marine before indexing
-        dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", "../marine.rbody", "",
+        dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", "../../../data/marine/marine.rbody", "",
             dtDAL::DataType::CHARACTER);
 
         //force resources to be indexed.
         p.getAllResources();
 
         //add one marine after indexing
-        dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", "../marine.rbody", "marine",
+        dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", "../../../data/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
 
 
@@ -568,7 +575,7 @@ void ProjectTests::testResources() {
 
         //Done with the marines
 
-        dtDAL::ResourceDescriptor rd = p.AddResource("dirt", std::string("../flatdirt.ive"),
+        dtDAL::ResourceDescriptor rd = p.AddResource("dirt", std::string("../../../data/models/flatdirt.ive"),
             dirtCategory, dtDAL::DataType::STATIC_MESH);
 
         CPPUNIT_ASSERT_MESSAGE("Descriptor id should not be empty.", !rd.GetResourceIdentifier().empty());
@@ -632,13 +639,13 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"") + "fun"
             + "\" should not have been found in the resource tree", treeResult == p.getAllResources().end());
 
-        rd = p.AddResource("pow", std::string("../pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND);
+        rd = p.AddResource("pow", std::string("../../../data/sounds/pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND);
         testResult = p.GetResourcePath(rd);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult ,
             testResult == dtDAL::DataType::SOUND.GetName() + "/tea/money/pow.wav");
 
-        dtDAL::ResourceDescriptor rd1 = p.AddResource("bang", std::string("../bang.wav"),
+        dtDAL::ResourceDescriptor rd1 = p.AddResource("bang", std::string("../../../data/sounds/bang.wav"),
             std::string("tee:cash"), dtDAL::DataType::SOUND);
         testResult = p.GetResourcePath(rd1);
 
