@@ -142,24 +142,6 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\src\dtCore\recorder.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\scene.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\tracker.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\transform.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\transformable.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\system.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtCore\base.cpp">
 			</File>
 			<File
@@ -203,6 +185,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\flymotionmodel.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\fpsmotionmodel.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\globals.cpp">
@@ -268,6 +253,12 @@
 				RelativePath="..\..\..\src\dtCore\positionallight.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\recorder.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\scene.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\skybox.cpp">
 			</File>
 			<File
@@ -286,10 +277,22 @@
 				RelativePath="..\..\..\src\dtCore\sunlightshader.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\system.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\terrain.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\timer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\tracker.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\transform.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\transformable.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\tripod.cpp">
@@ -357,6 +360,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\flymotionmodel.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\fpsmotionmodel.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\globals.h">

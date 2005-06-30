@@ -18,14 +18,14 @@
  *
 */
 
-#ifndef DELTA_WALKMOTIONMODEL
-#define DELTA_WALKMOTIONMODEL
+#ifndef DELTA_FPSMOTIONMODEL
+#define DELTA_FPSMOTIONMODEL
 
-// walkmotionmodel.h: Declaration of the WalkMotionModel class.
+// fpsmotionmodel.h: Declaration of the FPSMotionModel class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/motionmodel.h"
+#include <dtCore/motionmodel.h>
 
 #include <osgUtil/IntersectVisitor>
 
@@ -38,6 +38,7 @@ namespace dtCore
    class Mouse;
    class LogicalInputDevice;
    class ButtonAxisToAxis;
+   class AxisToAxis;
    class Axis;
    class ButtonsToAxis;
    class LogicalAxis;
@@ -45,30 +46,30 @@ namespace dtCore
    /**
     * A motion model that simulates the action of walking or driving.
     */
-   class DT_EXPORT WalkMotionModel : public MotionModel
+   class DT_EXPORT FPSMotionModel : public MotionModel
    {
-      DECLARE_MANAGEMENT_LAYER(WalkMotionModel)
-
-
-      public:
+      DECLARE_MANAGEMENT_LAYER(FPSMotionModel)
 
          //TODO: put Scene* in constructor?
+         //TODO: add jumping
+
+      public:
 
          /**
           * Constructor.
           *
-          * @param keyboard the keyboard instance, or NULL to
+          * @param keyboard the keyboard instance, or 0 to
           * avoid creating default input mappings
-          * @param mouse the mouse instance, or NULL to avoid
+          * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         WalkMotionModel(Keyboard* keyboard = NULL,
-                         Mouse* mouse = NULL);
+         FPSMotionModel(   Keyboard* keyboard = 0,
+                           Mouse* mouse = 0);
 
          /**
           * Destructor.
           */
-         virtual ~WalkMotionModel();
+         virtual ~FPSMotionModel();
          
          /**
           * Sets the active Scene, which is used for ground following.
@@ -83,6 +84,14 @@ namespace dtCore
           * @return the active Scene
           */
          Scene* GetScene();
+
+         /**
+         * Enables or disables this motion model.
+         *
+         * @param enabled true to enable this motion model, false
+         * to disable it
+         */
+         virtual void SetEnabled(bool enabled);
          
          /**
           * Sets the input axes to a set of default mappings for mouse
@@ -117,13 +126,29 @@ namespace dtCore
           */
          void SetTurnLeftRightAxis(Axis* turnLeftRightAxis);
          
-         /**
+		   /**
           * Returns the axis that turns the target left (for negative values)
           * or right (for positive values).
           *
           * @return the current turn left/right axis
           */
          Axis* GetTurnLeftRightAxis();
+		 
+		   /**
+          * Sets the axis looks down (for negative values)
+          * or up (for positive values).
+          *
+          * @param lookUpDownAxis the new look up/down axis
+          */
+         void SetLookUpDownAxis(Axis* lookUpDownAxis);
+         
+		   /**
+          * Returns the axis that looks down (for negative values)
+          * or up (for positive values).
+          *
+          * @return the current look up/down axis
+          */
+         Axis* GetLookUpDownAxis();
          
          /**
           * Sets the axis that sidesteps the target left (for negative values)
@@ -234,21 +259,16 @@ namespace dtCore
           * The default input device.
           */
          RefPtr<LogicalInputDevice> mDefaultInputDevice;
+                  
+         /**
+          * The left/right mouse movement.
+          */
+         AxisToAxis* mLeftRightMouseMovement;
          
          /**
-          * The left button up/down mapping.
+          * The up/down mouse movement.
           */
-         ButtonAxisToAxis* mLeftButtonUpDownMapping;
-         
-         /**
-          * The left button right/left mapping.
-          */
-         ButtonAxisToAxis* mLeftButtonLeftRightMapping;
-         
-         /**
-          * The right button left/right mapping.
-          */
-         ButtonAxisToAxis* mRightButtonLeftRightMapping;
+         AxisToAxis* mUpDownMouseMovement;
          
          /**
           * The arrow key up/down mapping.
@@ -275,6 +295,11 @@ namespace dtCore
           */
          LogicalAxis* mDefaultTurnLeftRightAxis;
          
+		 /**
+          * The default look up/down axis.
+          */
+         LogicalAxis* mDefaultLookUpDownAxis;
+         
          /**
           * The default sidestep left/right axis.
           */
@@ -289,6 +314,11 @@ namespace dtCore
           * The axis that turns the target to the left or right.
           */
          Axis* mTurnLeftRightAxis;
+
+		   /**
+          * The axis that looks up or down.
+          */
+         Axis* mLookUpDownAxis;
          
          /**
           * The axis that sidesteps the target left or right.
@@ -324,8 +354,10 @@ namespace dtCore
           * The current downward speed.
           */
          float mDownwardSpeed;
+
+		 Mouse * mMouse;
    };
 };
 
 
-#endif // DELTA_WALKMOTIONMODEL
+#endif // DELTA_FPSMOTIONMODEL

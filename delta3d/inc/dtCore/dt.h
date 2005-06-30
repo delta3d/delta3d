@@ -34,6 +34,7 @@
 #include "dtCore/enveffect.h"
 #include "dtCore/effectmanager.h"
 #include "dtCore/flymotionmodel.h"
+#include "dtCore/fpsmotionmodel.h"
 #include "dtCore/globals.h"
 #include "dtCore/infinitelight.h"
 #include "dtCore/infiniteterrain.h"
