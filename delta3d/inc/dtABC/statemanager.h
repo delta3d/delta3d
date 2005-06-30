@@ -126,6 +126,11 @@ namespace dtABC
       /////\brief This method should be used with \sa GetNumOfEvents
       void                    GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
+      ///Deprecated GetCurrentState()
+      inline   State*         Current();
+      ///Deprecated for GetCurrentState() const
+      inline   const State*   Current() const;
+
       ///Returns pointer to current state.
       inline   State*         GetCurrentState();
       inline   const State*   GetCurrentState() const;
@@ -511,6 +516,23 @@ namespace dtABC
 
       if( events.size() != counter )
          assert( 0 );
+   }
+
+
+   template< typename T1, typename T2 >
+      State* StateManager<T1,T2>::Current()
+   {
+      DEPRECATE(  "State* StateManager<T1,T2>::Current()",
+                  "State* StateManager<T1,T2>::GetCurrentState()" )
+      return GetCurrentState();
+   }
+
+   template< typename T1, typename T2 >
+      const State* StateManager<T1,T2>::Current() const
+   {
+      DEPRECATE(  "const State* StateManager<T1,T2>::Current() const",
+                  "const State* StateManager<T1,T2>::GetCurrentState() const" )
+      return GetCurrentState();
    }
 
    template< typename T1, typename T2 >
