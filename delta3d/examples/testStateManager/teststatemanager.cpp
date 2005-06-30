@@ -53,7 +53,7 @@ TestStateManager::TestStateManager(const std::string& config): Base( "TestStateM
       sm->MakeCurrent( shell.get() );
    }
 
-   mStartState = sm->Current();
+   mStartState = sm->GetCurrentState();
 }
 
 TestStateManager::~TestStateManager()
@@ -81,7 +81,7 @@ int TestStateManager::GetInput()
       std::cout << "Returning to starting State, ";
       MyStateManager* sm = MyStateManager::Instance();
       sm->MakeCurrent( mStartState );
-      std::cout << sm->Current()->GetName() << "." <<std::endl;
+      std::cout << sm->GetCurrentState()->GetName() << "." <<std::endl;
       return -1;
    }
    else if( strcmp( buffer, "p" ) == 0 )   //\todo take out
@@ -115,7 +115,7 @@ void TestStateManager::OnMessage( MessageData* data )
 {
    if( data->message == "preframe" )
    {
-      const dtABC::State* state = MyStateManager::Instance()->Current();
+      const dtABC::State* state = MyStateManager::Instance()->GetCurrentState();
       std::cout << std::endl << "From the State, " << state->GetName() << ", ";
 
       // iterate over the valid range

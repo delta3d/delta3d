@@ -22,7 +22,7 @@ namespace dtABC
          virtual const Type* GetType() const { return mType; }
 
          ///Called after switching into a particular mode.  Used to setup states of the mode before executing main loop.
-         virtual void Enable( Event* data = 0 ) = 0;
+         virtual void HandleEvent( Event* event = 0 ) = 0;
 
          ///The place to clean up memory when before switching to a different mode
          virtual void Shutdown();
