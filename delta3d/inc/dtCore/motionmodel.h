@@ -50,7 +50,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         MotionModel(std::string name = "MotionModel");
+         MotionModel(const std::string& name = "MotionModel");
 
          /**
           * Destructor.
@@ -77,7 +77,7 @@ namespace dtCore
           * @param enabled true to enable this motion model, false
           * to disable it
           */
-         void SetEnabled(bool enabled);
+         virtual void SetEnabled(bool enabled);
          
          /**
           * Checks whether or not this motion model is enabled.
