@@ -28,9 +28,8 @@ Win32 Binary:
 - Double-click testMotionModels.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testMotionModels: run 'make' from examples/testMotionModels.
+- To build all examples: Run 'scons exaamples' from delta3d/.
+- To build only testMotionModels: run 'scons examples/testMotionModel' from delta3d/.
 - Enter examples/testMotionModels directory.
 - Run 'testMotionModels'.
 
@@ -81,3 +80,10 @@ Orbit Motion Model:
 Left   Mouse Button - Rotate camera
 Right  Mouse Button - Translate camera
 Middle Mouse Button - Zoom camera
+
+FPS Motion Model:
+Passive Mouse Motion - Rotate camera
+W                    - Move forward
+S                    - Move backward
+A                    - Move left
+D                    - Move right
