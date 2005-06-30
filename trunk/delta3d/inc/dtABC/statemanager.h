@@ -275,6 +275,13 @@ namespace dtABC
       }
    }
 
+   /** 
+    * Pass the "preframe", "frame", and "postframe" to the current State.  If 
+    * the message is an "event", then:
+    *  -if the message is from a State, rebroadcast it.
+    *  -if the Event is in the transition table, process the transition
+    *  -otherwise, pass the Event to the current State
+    */
    template< typename T1, typename T2 >
    void StateManager<T1,T2>::OnMessage( MessageData* data )
    {
@@ -298,8 +305,13 @@ namespace dtABC
       {
          Event* event = reinterpret_cast<Event*>( data->userData );
 
+         //if the event came from a State, don't process it, just rebroadcast
+         if (IS_A(data->sender, State*))
+         {
+            SendMessage("event", static_cast<void*>(event));
+         }
          //if the event/current state pair is in our list of transitions...
-         if( mTransition.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransition.end() )
+         else if( mTransition.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransition.end() )
          {
             //then switch it up!
             mLastEvent = event;
@@ -314,6 +326,9 @@ namespace dtABC
       }
    }
 
+   /** Insert the supplied State in to the internal list of States.  Also
+    *  add the State as a message Sender to the StateManager.
+    */
    template< typename T1, typename T2 >
    bool StateManager<T1,T2>::AddState( State* state )
    {
@@ -325,7 +340,8 @@ namespace dtABC
       //if we are are not already in the set of states...
       if( mStates.insert(state).second )
       {
-         //state->AddSender(this);
+         
+         AddSender(state);
          return true;
       }
 
@@ -343,8 +359,8 @@ namespace dtABC
       //if we are already in the set of states...
       if( mStates.erase(state) != 0 )
       {
-         state->RemoveSender(this);
-
+         state->RemoveSender(this); //remove us as a sender
+         RemoveSender(state);       //remove the state as a sender
 
          //remove transition to and from the remove state
          for( EventMap::iterator iter = mTransition.begin(); iter != mTransition.end(); )
@@ -406,6 +422,7 @@ namespace dtABC
       return 0;
    }
 
+   // Returns true if a transition was successfully added.
    template< typename T1, typename T2 >
    bool StateManager<T1,T2>::AddTransition( const Event::Type* eventType, State* from, State* to )
    {
@@ -414,10 +431,9 @@ namespace dtABC
          return false;
       }
 
-      // Returns true if a transition was successfully added.
       //lazy state addition
-      mStates.insert(from);
-      mStates.insert(to);
+      AddState(from);
+      AddState(to);
 
       // checking the set of States
       State* realFrom = GetState( from->GetName() );
