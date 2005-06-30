@@ -4,6 +4,15 @@
 using namespace dtCore;
 using namespace dtABC;
 
+enum MotionModelType
+{
+   WALK = 0L,
+   FLY,
+   UFO,
+   ORBIT,
+   FPS
+};
+
 /**
 * The motion model test application.
 */
@@ -19,46 +28,27 @@ public:
    TestMotionModelsApp( std::string configFile = "config.xml" )
       : Application( configFile )
    {
-
       mTerrain = new InfiniteTerrain;
-      AddDrawable(mTerrain.get());
+      AddDrawable( mTerrain.get() );
 
-      RefPtr<WalkMotionModel> wmm = new WalkMotionModel(
-         GetKeyboard(),
-         GetMouse()
-         );
-      wmm->SetScene(GetScene());
-      mMotionModels[0] = wmm.get();
+      RefPtr<WalkMotionModel> wmm = new WalkMotionModel( GetKeyboard(), GetMouse() );
+      wmm->SetScene( GetScene() );
+      mMotionModels.push_back( wmm.get() );
+
+      mMotionModels.push_back( new FlyMotionModel( GetKeyboard(), GetMouse() ) );
+      mMotionModels.push_back( new UFOMotionModel( GetKeyboard(), GetMouse() ) );
+      mMotionModels.push_back( new OrbitMotionModel( GetKeyboard(), GetMouse() ) );
+    
+      RefPtr<FPSMotionModel> fmm = new FPSMotionModel( GetKeyboard(), GetMouse() );
+      fmm->SetScene( GetScene() );
+      mMotionModels.push_back( fmm.get() );
       
-      mMotionModels[1] = new FlyMotionModel(
-         GetKeyboard(),
-         GetMouse()
-         );
-
-      mMotionModels[2] = new UFOMotionModel(
-         GetKeyboard(),
-         GetMouse()
-         );
-
-      mMotionModels[3] = new OrbitMotionModel(
-         GetKeyboard(),
-         GetMouse()
-         );
-
-      RefPtr<FPSMotionModel> fmm = new FPSMotionModel(
-         GetKeyboard(),
-         GetMouse()
-         );
-      fmm->SetScene(GetScene());
-      mMotionModels[4] = fmm.get();
-      
-      for(int i=0;i<5;i++)
+      for( int i = 0; i < mMotionModels.size(); i++ )
       {  
-         mMotionModels[i]->SetTarget(GetCamera());
-         
+         mMotionModels[i]->SetTarget( GetCamera() );
       }
 
-      SetMotionModel(0);
+      SetMotionModel(WALK);
       Notify(ALWAYS,"Walk");
    }
 
@@ -82,26 +72,23 @@ protected:
       {
       case Producer::Key_1:
          Notify(ALWAYS,"Walk");
-         SetMotionModel(0);
+         SetMotionModel(WALK);
          break;
-
       case Producer::Key_2:
          Notify(ALWAYS,"Fly");
-         SetMotionModel(1);
+         SetMotionModel(FLY);
          break;
-
       case Producer::Key_3:
          Notify(ALWAYS,"UFO");
-         SetMotionModel(2);
+         SetMotionModel(UFO);
          break;
-
       case Producer::Key_4:
          Notify(ALWAYS,"Orbit");
-         SetMotionModel(3);
+         SetMotionModel(ORBIT);
          break;
       case Producer::Key_5:
          Notify(ALWAYS,"FPS");
-         SetMotionModel(4);
+         SetMotionModel(FPS);
          break;
       default:
          break;
@@ -117,15 +104,15 @@ private:
    *
    * @param index the index of the motion model to enable
    */
-   void SetMotionModel(int index)
+   void SetMotionModel( int index )
    {
-      for(int i=0;i<5;i++)
+      for( int i = 0; i < mMotionModels.size(); i++ )
       {
          mMotionModels[i]->SetEnabled(i == index);
       }
 
       //turn off cursor for FPS motion model
-      GetWindow()->ShowCursor(index != 4); 
+      GetWindow()->ShowCursor(index != FPS); 
    }
 
    /**
@@ -136,7 +123,7 @@ private:
    /**
    * The five motion models.
    */
-   RefPtr<MotionModel> mMotionModels[5];
+   std::vector< RefPtr<MotionModel> > mMotionModels;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )
