@@ -17,7 +17,7 @@ IMPLEMENT_MANAGEMENT_LAYER(MotionModel)
  *
  * @param name the instance name
  */
-MotionModel::MotionModel(string name)
+MotionModel::MotionModel(const std::string& name)
    : Base(name),
      mEnabled(true)
 {
