@@ -1,5 +1,5 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -27,9 +27,9 @@ public:
          GetKeyboard(),
          GetMouse()
          );
-      mMotionModels[0] = wmm.get();
       wmm->SetScene(GetScene());
-
+      mMotionModels[0] = wmm.get();
+      
       mMotionModels[1] = new FlyMotionModel(
          GetKeyboard(),
          GetMouse()
@@ -45,9 +45,17 @@ public:
          GetMouse()
          );
 
-      for(int i=0;i<4;i++)
+      RefPtr<FPSMotionModel> fmm = new FPSMotionModel(
+         GetKeyboard(),
+         GetMouse()
+         );
+      fmm->SetScene(GetScene());
+      mMotionModels[4] = fmm.get();
+      
+      for(int i=0;i<5;i++)
       {  
          mMotionModels[i]->SetTarget(GetCamera());
+         
       }
 
       SetMotionModel(0);
@@ -91,6 +99,10 @@ protected:
          Notify(ALWAYS,"Orbit");
          SetMotionModel(3);
          break;
+      case Producer::Key_5:
+         Notify(ALWAYS,"FPS");
+         SetMotionModel(4);
+         break;
       default:
          break;
       }
@@ -107,10 +119,13 @@ private:
    */
    void SetMotionModel(int index)
    {
-      for(int i=0;i<4;i++)
+      for(int i=0;i<5;i++)
       {
          mMotionModels[i]->SetEnabled(i == index);
       }
+
+      //turn off cursor for FPS motion model
+      GetWindow()->ShowCursor(index != 4); 
    }
 
    /**
@@ -119,9 +134,9 @@ private:
    RefPtr<InfiniteTerrain> mTerrain;
 
    /**
-   * The four motion models.
+   * The five motion models.
    */
-   RefPtr<MotionModel> mMotionModels[4];
+   RefPtr<MotionModel> mMotionModels[5];
 };
 
 IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )
