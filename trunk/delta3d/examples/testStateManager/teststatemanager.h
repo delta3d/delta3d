@@ -42,21 +42,21 @@ class Shell : public dtABC::State
 { 
 public:
    Shell( std::string name = "Shell" );
-   virtual void Enable( dtABC::Event* data = 0 ) {}
+   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
 };
 
 class Options : public dtABC::State
 {
 public:
    Options( std::string name = "Options" );
-   virtual void Enable( dtABC::Event* data = 0 ) {}
+   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
 };
 
 class Game : public dtABC::State
 {
 public:
    Game( std::string name = "Game" );
-   virtual void Enable( dtABC::Event* data = 0 ) {}
+   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
 };
 
 class Alt : public dtABC::Event

@@ -127,8 +127,8 @@ namespace dtABC
       void                    GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
       ///Returns pointer to current state.
-      inline   State*         Current();
-      inline   const State*   Current() const;
+      inline   State*         GetCurrentState();
+      inline   const State*   GetCurrentState() const;
 
       void                    MakeCurrent( State* state );
 
@@ -298,7 +298,7 @@ namespace dtABC
       {
          Event* event = reinterpret_cast<Event*>( data->userData );
 
-         //if the event/current state pair is in our list of transitions..
+         //if the event/current state pair is in our list of transitions...
          if( mTransition.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransition.end() )
          {
             //then switch it up!
@@ -308,8 +308,9 @@ namespace dtABC
          else
          {
             //pass it to the current state
-            SendMessage( "event", event );
+            GetCurrentState()->HandleEvent( event );
          }
+         
       }
    }
 
@@ -497,13 +498,13 @@ namespace dtABC
    }
 
    template< typename T1, typename T2 >
-   State* StateManager<T1,T2>::Current()
+   State* StateManager<T1,T2>::GetCurrentState()
    {
       return mCurrentState.get();
    }
 
    template< typename T1, typename T2 >
-   const State* StateManager<T1,T2>::Current() const
+   const State* StateManager<T1,T2>::GetCurrentState() const
    {
       return mCurrentState.get();
    }
@@ -511,13 +512,12 @@ namespace dtABC
    template< typename T1, typename T2 >
    void StateManager<T1,T2>::MakeCurrent( State* state )
    {
-      mCurrentState->RemoveSender(this);
       mCurrentState = state;
-      mCurrentState->AddSender(this);
-
+      
       if( mCurrentState.valid() )
       {
-         mCurrentState->Enable( mLastEvent.get() );
+         //immediately pass the event to the new current state
+         mCurrentState->HandleEvent( mLastEvent.get() );
       }
    }
 
