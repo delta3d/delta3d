@@ -20,6 +20,8 @@
 #include <xercesc/parsers/SAXParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
+#include <dtABC/StateManagerEventType.h>
+
 namespace dtABC
 {
    //had to place this outside of the template so gcc won't bitch
@@ -63,7 +65,7 @@ namespace dtABC
          return compare_them( x.second,y.second );
       }
    };
-   
+
    ///Controls the switching of modes by starting and stoping the different states.  
    ///When a new state is started Config is called and Shutdown is called before 
    ///switching.
@@ -71,6 +73,16 @@ namespace dtABC
    class StateManager : public dtCore::Base
    {
     private:
+       typedef StateManager<T1,T2> ThisType;
+
+       /** An Event class specific to StateManager. */
+       class TransitionOccurredEvent : public dtABC::Event
+       {
+       public:
+          TransitionOccurredEvent() : dtABC::Event(&StateManagerEventType::TRANSITION_OCCURRED) {}
+       protected:
+          virtual ~TransitionOccurredEvent() {}
+       };
 
       ///Constructor creates an instance of each state.
       StateManager();
@@ -83,11 +95,11 @@ namespace dtABC
       typedef T1 EventType;
       typedef T2 StateType;
    
-      typedef dtCore::RefPtr<State>                       StatePtr;
-      typedef std::pair< const Event::Type*, StatePtr >   EventStatePtrPair;
+      typedef dtCore::RefPtr<dtABC::State>                       StatePtr;
+      typedef std::pair< const dtABC::Event::Type*, StatePtr >   EventStatePtrPair;
 
-      typedef dtUtil::ObjectFactory< const Event::Type*, Event > EventFactory;
-      typedef dtUtil::ObjectFactory< const State::Type*, State > StateFactory;
+      typedef dtUtil::ObjectFactory< const dtABC::Event::Type*, dtABC::Event > EventFactory;
+      typedef dtUtil::ObjectFactory< const dtABC::State::Type*, dtABC::State > StateFactory;
 
       typedef std::set< StatePtr, RefPtrWithNameCompare<StatePtr> > StatePtrSet;
       typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> >    EventMap;
@@ -184,7 +196,7 @@ namespace dtABC
          dtCore::RefPtr<State> mToState;
          const Event::Type*    mEventType;
       };
-      
+
    };
 };
 
@@ -240,11 +252,12 @@ namespace dtABC
       {
          EventMap::key_type key( mLastEvent->GetType(), mCurrentState.get() );
          EventMap::iterator iter = mTransition.find( key );
-         
+
          if( iter != mTransition.end() )
          {
             MakeCurrent( (*iter).second.get() );
             mSwitch = false;
+            SendMessage( "event" , new TransitionOccurredEvent() );
          }
       }
 
@@ -327,7 +340,6 @@ namespace dtABC
             //pass it to the current state
             GetCurrentState()->HandleEvent( event );
          }
-         
       }
    }
 
