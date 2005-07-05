@@ -4,6 +4,7 @@ dtAbcSrcs = [   'application.cpp',
                 'baseabc.cpp',
                 'event.cpp',
                 'state.cpp',
+                'statemanagereventtype.cpp',
                 'weather.cpp',
                 'widget.cpp' ]
 
