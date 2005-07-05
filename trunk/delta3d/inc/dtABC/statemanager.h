@@ -716,12 +716,13 @@ namespace dtABC
 
          dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
          mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
-         assert(mFromState.get());
 
          if( mFromState.valid() )
          {
             mFromState->SetName(stateName);
          }
+         else dtCore::Notify(dtCore::WARN, "StateManager Load() can't create FromState '%s'",
+                             stateType.c_str() );
 
       }
       else if (elementName == "ToState")
@@ -733,12 +734,14 @@ namespace dtABC
 
          dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
          mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
-         assert(mFromState.get());
 
          if( mToState.valid() )
          {
             mToState->SetName(stateName);
          }
+         else dtCore::Notify(dtCore::WARN, "StateManager Load() can't create ToState '%s'",
+                             stateType.c_str() );
+
       }
       else if (elementName == "StartState")
       {
