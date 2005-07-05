@@ -93,7 +93,11 @@ namespace dtCore
 
       ///Supply a particular geometry to intersect
 	   void SetGeometry( DeltaDrawable *object);
-      
+
+      /// Get the Hitlist member
+      const osgUtil::IntersectVisitor::HitList& GetHitList() const { return mHitList; }
+      osgUtil::IntersectVisitor::HitList& GetHitList()             { return mHitList; }
+
    private:
 	   DeltaDrawable* mGeometry;
 	   sgVec3 mStartXYZ; ///<The starting xyz
