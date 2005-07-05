@@ -20,7 +20,7 @@
 #include <xercesc/parsers/SAXParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
-#include <dtABC/StateManagerEventType.h>
+#include <dtABC/statemanagereventtype.h>
 
 namespace dtABC
 {
