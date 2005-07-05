@@ -1,7 +1,7 @@
 #ifndef _dtabc_statemanagerevent_
 #define _dtabc_statemanagerevent_
 
-#include "dtABC/Event.h"  // for base class
+#include "dtABC/event.h"  // for base class
 #include <string>
 
 namespace dtABC
