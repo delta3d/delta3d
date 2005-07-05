@@ -671,7 +671,7 @@ namespace dtABC
       }
       catch (...) 
       {
-         dtCore::Notify(dtCore::WARN) << "Unexpected Exception \n" ;
+         dtCore::Notify(dtCore::WARN) << "Statemanager::ParseFile() Unexpected Exception \n" ;
          return -1;
       }
 
