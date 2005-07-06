@@ -18,12 +18,20 @@ namespace dtABC
 
          typedef dtUtil::Enumeration Type;
 
-         State( std::string name, const Type* type );
+         ///Deprecated: Use State( const Type* type, std::string name )
+         State( std::string name, const Type* type )
+         {
+            DEPRECATE(  "State( std::string name, const Type* type )",
+                        "State( const Type* type, std::string name )" )
+            State( type, name );
+         }
+
+         State( const Type* type, std::string name );
          virtual ~State();
 
          virtual const Type* GetType() const { return mType; }
 
-         virtual void HandleEvent( Event* event = 0 ) = 0;
+         virtual void HandleEvent( Event* event ) = 0;
          
          ///Deprecated for virtual void HandleEvent( Event* event = 0 ) 
          virtual void Enable( Event* data = 0 )
