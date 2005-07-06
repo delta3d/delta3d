@@ -22,10 +22,11 @@
 #define __ObjectFactory__h
 
 #include <map>
+#include <iostream>
 #include <sstream>
 //#include "Log.h"
 //#include "Exception.h"
-#include "osg/Referenced"  // for base_class
+#include <osg/Referenced>  // for base_class
 
 namespace dtUtil
 {
