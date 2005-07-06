@@ -18,7 +18,7 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 * of the parent Window.  The constructor will create a new CEUI and 
 * OpenGLRenderer,and create the OSG nodes.
 */
-CEUIDrawable::CEUIDrawable(int width, int height):
+CEUIDrawable::CEUIDrawable(int width, int height, CEGUI::ScriptModule* sm):
    mUI(0),
    mWidth(width),
    mHeight(height),
@@ -36,7 +36,10 @@ CEUIDrawable::CEUIDrawable(int width, int height):
    dtCore::DeltaWin::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
 
    mRenderer = new dtGUI::Renderer(1024, mWidth, mHeight);
-   new CEGUI::System(mRenderer);
+   if( sm )
+      new CEGUI::System(mRenderer,sm);
+   else
+      new CEGUI::System(mRenderer);
    mUI = CEGUI::System::getSingletonPtr();
 
    mNode = new osg::Group();
