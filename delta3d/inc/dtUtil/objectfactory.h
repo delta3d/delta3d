@@ -146,7 +146,6 @@ namespace dtUtil
       }
 
       const ObjectMap& GetMap() const { return objectTypeMap; }
-      ObjectMap& GetMap()             { return objectTypeMap; }
 
    private:
       ///Maps a unique id to a function pointer that when called creates an
