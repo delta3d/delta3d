@@ -17,6 +17,11 @@
 #include <osg/Group>
 #include <osg/CopyOp>
 
+namespace CEGUI
+{
+   class ScriptModule;
+};
+
 namespace dtGUI
 {
 
@@ -72,7 +77,7 @@ namespace dtGUI
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
 
       ///Default constructor - accepts the width and height of window
-      CEUIDrawable(int width=1, int height=1);
+      CEUIDrawable(int width=1, int height=1, CEGUI::ScriptModule* sm=0);
 
       virtual ~CEUIDrawable();
 
