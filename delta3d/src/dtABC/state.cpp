@@ -3,9 +3,7 @@
 using namespace dtABC;
 using namespace dtCore;
 
-//IMPLEMENT_MANAGEMENT_LAYER(State)
-
-State::State( std::string name, const Type* type ) : Base(name), mType(type)
+State::State( const Type* type, std::string name ) : Base(name), mType(type)
 {
 }
 
