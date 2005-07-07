@@ -712,10 +712,23 @@ namespace dtABC
          std::string stateType = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Type"));
          std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
 
-         dtCore::Notify(dtCore::DEBUG_INFO, "Create FromState. type:'%s', name:'%s' ", stateType.c_str(), stateName.c_str() );
-
-         dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
-         mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+         //Do a check to see if a State exists with the same name and type name
+         //If it does, use it, otherwise create a new State
+         State *s = mManager->GetState( stateName );
+         if ( s == 0)
+         {
+            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+         }
+         else if ( s->GetType()->GetName() != stateType )
+         {
+            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+         }
+         else
+         {
+            mFromState = s;
+         }
 
          if( mFromState.valid() )
          {
@@ -730,10 +743,23 @@ namespace dtABC
          std::string stateType = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Type"));
          std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
 
-         dtCore::Notify(dtCore::DEBUG_INFO, "Create ToState. type:'%s', name:'%s'", stateType.c_str(), stateName.c_str() );
-
-         dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
-         mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+         //Do a check to see if a State exists with the same name and type name
+         //If it does, use it, otherwise create a new State
+         State *s = mManager->GetState( stateName );
+         if ( s == 0)
+         {
+            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+         }
+         else if ( s->GetType()->GetName() != stateType )
+         {
+            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
+         }
+         else
+         {
+            mToState = s;
+         }
 
          if( mToState.valid() )
          {
