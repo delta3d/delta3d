@@ -13,9 +13,9 @@ const MyStateType MyStateType::GAME("GAME");
 Alt::Alt() : dtABC::Event( &MyEventType::ALT ) {}
 Start::Start() : dtABC::Event( &MyEventType::START ) {}
 
-Game::Game( std::string name ) : dtABC::State( name, &MyStateType::GAME ) {}
-Shell::Shell( std::string name ) : dtABC::State( name, &MyStateType::SHELL ) {}
-Options::Options( std::string name ) : dtABC::State( name, &MyStateType::OPTIONS ) {}
+Game::Game( std::string name ) : dtABC::State( &MyStateType::GAME, name ) {}
+Shell::Shell( std::string name ) : dtABC::State( &MyStateType::SHELL, name ) {}
+Options::Options( std::string name ) : dtABC::State( &MyStateType::OPTIONS, name ) {}
 
 IMPLEMENT_MANAGEMENT_LAYER(TestStateManager)
 
