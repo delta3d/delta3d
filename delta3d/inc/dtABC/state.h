@@ -18,14 +18,6 @@ namespace dtABC
 
          typedef dtUtil::Enumeration Type;
 
-         ///Deprecated: Use State( const Type* type, std::string name )
-         State( std::string name, const Type* type )
-         {
-            DEPRECATE(  "State( std::string name, const Type* type )",
-                        "State( const Type* type, std::string name )" )
-            State( type, name );
-         }
-
          State( const Type* type, std::string name );
          virtual ~State();
 
