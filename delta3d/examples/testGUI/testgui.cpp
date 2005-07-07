@@ -185,7 +185,7 @@ int main( int argc, const char* argv[] )
 
    //Instantiate the application and look for the config file
    {
-      RefPtr<TestGUIApp> app = new TestGUIApp();
+      RefPtr<TestGUIApp> app = new TestGUIApp("config.xml");
       app->SetLayoutFilename(filename);
 
       app->Config(); //configuring the application
