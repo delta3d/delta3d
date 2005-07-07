@@ -31,7 +31,7 @@ Linux
 -----
 DELTA_ROOT: path to your Delta3D installation
 DELTA_DATA: $DELTA_ROOT/data
-DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc:$DELTA_ROOT/ext/inc
+DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc:$DELTA_ROOT/ext/inc:$DELTA_ROOT/ext/inc/CEGUI
 DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib
 
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
