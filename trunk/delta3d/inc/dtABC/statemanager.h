@@ -323,9 +323,12 @@ namespace dtABC
       {
          Event* event = reinterpret_cast<Event*>( data->userData );
 
-         //if the event came from a State, don't process it, just rebroadcast
+         //We don't want to have the State cause a transition directly.  
          if (IS_A(data->sender, State*))
          {
+            //Note: This should never happen as States don't send "events".
+            //We'll leave this here as a safety in case the State does send
+            //an "event" with the StateManager listening.
             SendMessage("event", static_cast<void*>(event));
          }
          //if the event/current state pair is in our list of transitions...
@@ -356,9 +359,8 @@ namespace dtABC
 
       //if we are are not already in the set of states...
       if( mStates.insert(state).second )
-      {
-         
-         AddSender(state);
+      {             
+         //AddSender(state); States should not communicate directly with the StateManager
          return true;
       }
 
@@ -377,7 +379,7 @@ namespace dtABC
       if( mStates.erase(state) != 0 )
       {
          state->RemoveSender(this); //remove us as a sender
-         RemoveSender(state);       //remove the state as a sender
+         //RemoveSender(state);   States should not communicate directly with the StateManager
 
          //remove transition to and from the remove state
          for( EventMap::iterator iter = mTransition.begin(); iter != mTransition.end(); )
