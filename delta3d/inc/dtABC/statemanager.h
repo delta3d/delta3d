@@ -143,7 +143,7 @@ namespace dtABC
       ///Deprecated for GetCurrentState() const
       inline   const State*   Current() const;
 
-      ///Returns pointer to current state.
+      ///Returns pointer to current state.  Can be NULL.
       inline   State*         GetCurrentState();
       inline   const State*   GetCurrentState() const;
 
@@ -341,7 +341,11 @@ namespace dtABC
          else
          {
             //pass it to the current state
-            GetCurrentState()->HandleEvent( event );
+            State *state = GetCurrentState();
+            if (state!=0)
+            {
+               state->HandleEvent( event );
+            }
          }
       }
    }
@@ -705,8 +709,6 @@ namespace dtABC
       else if (elementName == "Event")
       {
          std::string eventTypeName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("TypeName"));
-         dtCore::Notify( dtCore::DEBUG_INFO, "Create event. typeName:'%s'", eventTypeName.c_str() );
-
          mEventType = EventType::GetValueForName( eventTypeName );
       }
       else if (elementName == "FromState")
