@@ -191,7 +191,7 @@ namespace dtCore
    {
       public:
 
-         virtual ~InputMapperCallback();
+         virtual ~InputMapperCallback() {}
 
          /**
           * Notifies the listener that the button mapping acquisition has
