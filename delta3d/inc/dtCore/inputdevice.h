@@ -316,6 +316,8 @@ namespace dtCore
    {
       public:
 
+         virtual ~ButtonListener() {}
+      
          /**
           * Called when a button's state has changed.
           *
@@ -395,6 +397,8 @@ namespace dtCore
    class DT_EXPORT AxisListener
    {
       public:
+
+         virtual ~AxisListener() {}
       
          /**
           * Called when an axis' state has changed.

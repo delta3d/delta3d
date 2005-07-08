@@ -107,6 +107,8 @@ namespace dtCore
    {
       public:
 
+         virtual ~KeyboardListener() {}
+
          /**
           * Called when a key is pressed.
           *

@@ -136,9 +136,11 @@ namespace dtCore
     * An interface for objects interested in mouse events.
     */
    class DT_EXPORT MouseListener
-   {
+   {   
       public:
 
+         virtual ~MouseListener() {}
+      
          /**
           * Called when a button is pressed.
           *

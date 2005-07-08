@@ -1387,7 +1387,7 @@ void UIDrawable::ParseElement(TiXmlElement *elem)
 
    //Parse this element's children recursively
    TiXmlNode *child = 0;
-   while( child = elem->IterateChildren( child ) )
+   while( (child = elem->IterateChildren( child )) )
    {
       ParseElement(child->ToElement());
    }
