@@ -1,9 +1,10 @@
 Import('*')
 
-dtGuiSrcs = [   'ceuidrawable.cpp',
-                'renderer.cpp',
-                'resourceprovider.cpp' ]
+dtGuiSrcs = [ 'ceuidrawable.cpp',
+              'renderer.cpp',
+              'resourceprovider.cpp',
+              'scriptmodule.cpp' ]
 
 dtGuiDeps=[ 'dtcore', 'CEGUIBase', 'CEGUIWindowsLook', 'CEGUIOpenGLRenderer', 'xerces-c' ]
-    
+
 BuildLib( 'dtgui', dtGuiSrcs, dtGuiDeps, ['DT_LIBRARY'] )
