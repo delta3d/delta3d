@@ -135,6 +135,9 @@
 			<File
 				RelativePath="..\..\..\src\dtGUI\resourceprovider.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtGUI\scriptmodule.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -151,6 +154,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGUI\resourceprovider.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGUI\scriptmodule.h">
 			</File>
 		</Filter>
 		<Filter
