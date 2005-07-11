@@ -1,6 +1,7 @@
 #include <CEGUI.h>
 
 #include <dtGUI/ceuidrawable.h>
+#include <dtGUI/scriptmodule.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
@@ -18,13 +19,14 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 * of the parent Window.  The constructor will create a new CEUI and 
 * OpenGLRenderer,and create the OSG nodes.
 */
-CEUIDrawable::CEUIDrawable(int width, int height, CEGUI::ScriptModule* sm):
+CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
    mUI(0),
    mWidth(width),
    mHeight(height),
    mMouseX(.0f),
    mMouseY(.0f),
-   mRenderer(0)
+   mRenderer(0),
+   mScriptModule(sm)
 {
    RegisterInstance(this);
 
@@ -36,10 +38,11 @@ CEUIDrawable::CEUIDrawable(int width, int height, CEGUI::ScriptModule* sm):
    dtCore::DeltaWin::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
 
    mRenderer = new dtGUI::Renderer(1024, mWidth, mHeight);
-   if( sm )
-      new CEGUI::System(mRenderer,sm);
+   if( mScriptModule )
+      new CEGUI::System(mRenderer,mScriptModule);
    else
       new CEGUI::System(mRenderer);
+
    mUI = CEGUI::System::getSingletonPtr();
 
    mNode = new osg::Group();
@@ -76,7 +79,7 @@ CEUIDrawable::~CEUIDrawable(void)
 void CEUIDrawable::MouseMoved(Mouse* mouse, float x, float y)
 {
    if (!mUI) return;
-      
+
    mMouseX = x - mMouseX;
    mMouseY = y - mMouseY;
    CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
