@@ -4,6 +4,7 @@
 #include <CEGUIScriptModule.h>        // for base class
 #include <map>                        // for std::map type
 #include <string>                     // for std::string type
+#include <dtCore/export.h>
 
 namespace dtGUI
 {
@@ -11,7 +12,7 @@ namespace dtGUI
     * specific application callbacks.  This class requires
     * the GUIHandler to support some interfaces.
     */
-   class ScriptModule : public CEGUI::ScriptModule
+   class DT_EXPORT ScriptModule : public CEGUI::ScriptModule
    {
    public:
       typedef void (*FUNCTION)(const CEGUI::EventArgs &e);
