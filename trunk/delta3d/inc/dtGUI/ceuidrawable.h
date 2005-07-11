@@ -17,13 +17,9 @@
 #include <osg/Group>
 #include <osg/CopyOp>
 
-namespace CEGUI
-{
-   class ScriptModule;
-};
-
 namespace dtGUI
 {
+   class ScriptModule;
 
    ///A DeltaDrawable used to render the CEGUI
 
@@ -77,7 +73,7 @@ namespace dtGUI
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
 
       ///Default constructor - accepts the width and height of window
-      CEUIDrawable(int width=1, int height=1, CEGUI::ScriptModule* sm=0);
+	CEUIDrawable(int width=1, int height=1, dtGUI::ScriptModule* sm=0);
 
       virtual ~CEUIDrawable();
 
@@ -120,6 +116,7 @@ namespace dtGUI
       float mMouseX; ///<The current Mouse X position
       float mMouseY; ///<the current Mouse Y position
       Renderer* mRenderer; ///<The opengl renderer we're using
+      dtGUI::ScriptModule* mScriptModule;
    };
 }//namespace dtGUI
 
