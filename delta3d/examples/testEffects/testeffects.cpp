@@ -32,7 +32,7 @@ public:
 
    virtual void OnMessage(MessageData* data)
    {
-      if(data->message == "frame")
+      if(data->message == "preframe")
       {
          if(mKeyboard->GetKeyState(Producer::Key_Escape))
          {
