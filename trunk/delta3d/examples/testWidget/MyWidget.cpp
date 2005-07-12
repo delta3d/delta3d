@@ -59,7 +59,7 @@ MyWidget::Config( const WinData* d /*= NULL*/ )
 
    InitInputDevices();
 
-   GetScene()->SetNextStatisticsType();
+   GetCamera()->SetNextStatisticsType();
 }
 
 
