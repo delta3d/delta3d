@@ -1,6 +1,11 @@
 #ifndef DT_GUI_SCRIPTMODULE_INCLUDE
 #define DT_GUI_SCRIPTMODULE_INCLUDE
 
+#if defined(_MSC_VER)
+#	pragma warning(push)
+#	pragma warning(disable : 4251)     // for "warning C4251: 'dtGUI::ScriptModule::mCallbacks' : class 'std::map<_Kty,_Ty>' needs to have dll-interface to be used by clients of class 'dtGUI::ScriptModule' "
+#endif
+
 #include <CEGUIScriptModule.h>        // for base class
 #include <map>                        // for std::map type
 #include <string>                     // for std::string type
@@ -35,5 +40,9 @@ namespace dtGUI
       StaticRegistry mCallbacks;
    };
 };
+
+#if defined(_MSC_VER)
+#	pragma warning(pop)
+#endif
 
 #endif  // DT_GUI_SCRIPTMODULE_INCLUDE
