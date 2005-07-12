@@ -35,13 +35,15 @@ class HLAStealthViewerApplication : public Application
        * @param fedFilename the name of the fed file to use
        */
       HLAStealthViewerApplication(string executionName, string fedFilename)
-         : Application("config.xml"),
+         : Application(),
            mExecutionName(executionName),
            mFedFilename(fedFilename)
       {
          GetWindow()->SetWindowTitle("HLA Stealth Viewer");
 
-         SetDataFilePathList("./data;./data/images;../data;../data/images;" + GetDeltaDataPathList());
+         SetDataFilePathList(	GetDeltaRootPath()+"/utilities/hlaStealthViewer/data;"+
+								      GetDeltaRootPath()+"/utilities/hlaStealthViewer/data/images;" + 
+								      GetDeltaDataPathList() );
          
          mEffectManager = new EffectManager;
          
