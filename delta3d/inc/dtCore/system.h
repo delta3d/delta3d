@@ -26,9 +26,8 @@
 //////////////////////////////////////////////////////////////////////
 
 
-
 #include "dtCore/base.h"
-#include "ul.h"
+#include "timer.h"
 
 namespace dtCore
 {
@@ -75,7 +74,7 @@ namespace dtCore
       System(); ///<private
       static System *mSystem;   ///<The System pointer
       static bool mInstanceFlag;///<Have we created a System yet?
-      ulClock  clock;
+	  Timer clock;
 
       ///Stuff to do before the frame. Message: "preframe", delta time in seconds
       void PreFrame( const double deltaFrameTime );
