@@ -53,15 +53,19 @@ void System::Run()
 {
    mRunning = true;
    double deltaFrameTime = 0.f;
+   double clockTime = 0.f;
+   double lastTick = clock.tick();
 
    while (mRunning)
-   {
-      clock.update();
-      deltaFrameTime = clock.getDeltaTime();
+   {	  
+	  clockTime = clock.tick();
+	  deltaFrameTime = clock.delta_s(lastTick, clockTime);
 
       PreFrame(deltaFrameTime);
       Frame(deltaFrameTime);
       PostFrame(deltaFrameTime);
+
+	  lastTick = clockTime;
    }
    Notify(DEBUG_INFO, "System: Exiting...");
    SendMessage("exit");
@@ -76,14 +80,20 @@ void System::Start()
 
 void System::Step()
 {
+   static Timer_t clockTime, last_clockTime, dt;
+
    if( ! mRunning )
       return;
 
-   clock.update();
+   //clock.update();
+   clockTime = clock.tick();
+   dt = clock.delta_s(last_clockTime, clockTime); 
 
-   PreFrame(clock.getDeltaTime());
-   Frame(clock.getDeltaTime());
-   PostFrame(clock.getDeltaTime());
+   PreFrame(dt);
+   Frame(dt);
+   PostFrame(dt);
+
+   last_clockTime = clockTime;
 }
 
 void System::Stop()

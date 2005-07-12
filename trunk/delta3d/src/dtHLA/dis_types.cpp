@@ -1,12 +1,15 @@
 // dis_types.cpp: Implementation of DIS/RPR-FOM data types.
 //
+//
+///\todo Anderegg-  Endian ness should be set in one centralized place instead of repeatedly checked for
+///\todo Anderegg-  Un-Tested for Macintosh 
 //////////////////////////////////////////////////////////////////////
 
-#include "ul.h"
-
-#include "dtHLA/dis_types.h"
+#include <dtHLA/dis_types.h>
+#include <osg/Endian>
 
 using namespace dtHLA;
+using namespace osg;
 
 
 /**
@@ -45,11 +48,12 @@ void EntityIdentifier::Encode(char* buf) const
                   applicationIdentifier = mApplicationIdentifier,
                   entityIdentifier = mEntityIdentifier;
                   
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&siteIdentifier);
-      ulEndianSwap(&applicationIdentifier);
-      ulEndianSwap(&entityIdentifier);
+      swapBytes((char*)(&siteIdentifier), sizeof(short));
+	  swapBytes((char*)(&applicationIdentifier), sizeof(short));
+      swapBytes((char*)(&entityIdentifier), sizeof(short));
+	  //ulEndianSwap(&entityIdentifier);
    }
 
    *(unsigned short *)(&buf[0]) = siteIdentifier;
@@ -68,11 +72,12 @@ void EntityIdentifier::Decode(const char* buf)
                   applicationIdentifier = *(unsigned short*)(&buf[2]),
                   entityIdentifier = *(unsigned short*)(&buf[4]);
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&siteIdentifier);
-      ulEndianSwap(&applicationIdentifier);
-      ulEndianSwap(&entityIdentifier);
+	   swapBytes((char*)(&siteIdentifier), sizeof(short));
+	   swapBytes((char*)(&applicationIdentifier), sizeof(short));
+	   swapBytes((char*)(&entityIdentifier), sizeof(short));
+	   //ulEndianSwap(&entityIdentifier);
    }
    
    mSiteIdentifier = siteIdentifier;
@@ -314,9 +319,9 @@ void EntityType::Encode(char* buf) const
    
    unsigned short country = mCountry;
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&country);
+      swapBytes((char*)(&country), sizeof(short));
    }
 
    *(unsigned short *)(&buf[2]) = country;
@@ -339,9 +344,9 @@ void EntityType::Decode(const char* buf)
 
    unsigned short country = *(unsigned short*)(&buf[2]);
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&country);
+	   swapBytes((char*)(&country), sizeof(short));
    }
    
    mCountry = country;
@@ -520,9 +525,9 @@ void EventIdentifier::Encode(char* buf) const
 {
    unsigned short eventIdentifier = mEventIdentifier;
                   
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {      
-      ulEndianSwap(&eventIdentifier);
+	  swapBytes((char*)(&eventIdentifier), sizeof(short));
    }
 
    
@@ -539,11 +544,11 @@ void EventIdentifier::Decode(const char* buf)
 {
    unsigned short eventIdentifier = *(unsigned short*)(&buf[0]);
 
-   if(ulIsLittleEndian)
-   {
-      
-      ulEndianSwap(&eventIdentifier);
+   if(getCpuByteOrder() == LittleEndian)
+   {      
+	   swapBytes((char*)(&eventIdentifier), sizeof(short));
    }
+
    
    
    mEventIdentifier = eventIdentifier;
@@ -629,7 +634,7 @@ void WorldCoordinate::Encode(char* buf) const
           y = mY,
           z = mZ;
                   
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
       endianSwap(&x);
       endianSwap(&y);
@@ -652,7 +657,7 @@ void WorldCoordinate::Decode(const char* buf)
           y = *(double *)(&buf[8]),
           z = *(double *)(&buf[16]);
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
       endianSwap(&x);
       endianSwap(&y);
@@ -760,11 +765,11 @@ void EulerAngles::Encode(char* buf) const
          theta = mTheta,
          phi = mPhi;
                   
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap((unsigned int *)(&psi));
-      ulEndianSwap((unsigned int *)(&theta));
-      ulEndianSwap((unsigned int *)(&phi));
+      swapBytes((char*)(&psi), sizeof(float));
+      swapBytes((char*)(&theta), sizeof(float));
+      swapBytes((char*)(&phi), sizeof(float));
    }
 
    *(float *)(&buf[0]) = psi;
@@ -783,11 +788,11 @@ void EulerAngles::Decode(const char* buf)
          theta = *(float *)(&buf[4]),
          phi = *(float *)(&buf[8]);
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap((unsigned int *)(&psi));
-      ulEndianSwap((unsigned int *)(&theta));
-      ulEndianSwap((unsigned int *)(&phi));
+	   swapBytes((char*)(&psi), sizeof(float));
+	   swapBytes((char*)(&theta), sizeof(float));
+	   swapBytes((char*)(&phi), sizeof(float));
    }
    
    mPsi = psi;
@@ -892,11 +897,11 @@ void VelocityVector::Encode(char* buf) const
          y = mY,
          z = mZ;
                   
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap((unsigned int *)(&x));
-      ulEndianSwap((unsigned int *)(&y));
-      ulEndianSwap((unsigned int *)(&z));
+	   swapBytes((char*)(&x), sizeof(float));
+	   swapBytes((char*)(&y), sizeof(float));
+	   swapBytes((char*)(&z), sizeof(float));
    }
 
    *(float *)(&buf[0]) = x;
@@ -915,11 +920,11 @@ void VelocityVector::Decode(const char* buf)
          y = *(float *)(&buf[4]),
          z = *(float *)(&buf[8]);
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap((unsigned int *)(&x));
-      ulEndianSwap((unsigned int *)(&y));
-      ulEndianSwap((unsigned int *)(&z));
+      swapBytes((char*)(&x), sizeof(float));
+      swapBytes((char*)(&y), sizeof(float));
+      swapBytes((char*)(&z), sizeof(float));
    }
    
    mX = x;
@@ -1024,11 +1029,11 @@ void ArticulatedParts::Encode(char* buf) const
                 
    float value = mValue;
                   
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&tClass);
-      ulEndianSwap(&typeMetric);
-      ulEndianSwap(&value);
+	  swapBytes((char*)(&tClass), sizeof(int));
+      swapBytes((char*)(&typeMetric), sizeof(int));
+      swapBytes((char*)(&value), sizeof(float));
    }
 
    *(unsigned int *)(&buf[0]) = tClass;
@@ -1048,11 +1053,11 @@ void ArticulatedParts::Decode(const char* buf)
                 
    float value = *(float *)(&buf[8]);
 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&tClass);
-      ulEndianSwap(&typeMetric);
-      ulEndianSwap(&value);
+	   swapBytes((char*)(&tClass), sizeof(int));
+	   swapBytes((char*)(&typeMetric), sizeof(int));
+	   swapBytes((char*)(&value), sizeof(float));
    }
    
    mClass = tClass;
@@ -1161,9 +1166,9 @@ void AttachedParts::Encode(char* buf) const
 {
    unsigned int station = mStation;
                 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&station);
+      swapBytes((char*)(&station), sizeof(int));
    }
 
    *(unsigned int *)(&buf[0]) = station;
@@ -1179,9 +1184,9 @@ void AttachedParts::Decode(const char* buf)
 {
    unsigned int station = *(unsigned int *)(&buf[0]);
       
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&station);
+	   swapBytes((char*)(&station), sizeof(int));
    }
    
    mStation = station;
@@ -1278,9 +1283,9 @@ void ParameterValue::Encode(char* buf) const
 {
    unsigned int articulatedParameterType = mArticulatedParameterType;
                 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&articulatedParameterType);
+      swapBytes((char*)(&articulatedParameterType), sizeof(int));
    }
 
    *(unsigned int *)(&buf[0]) = articulatedParameterType;
@@ -1304,9 +1309,9 @@ void ParameterValue::Decode(const char* buf)
 {
    unsigned int articulatedParameterType = *(unsigned int *)(&buf[0]);
       
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&articulatedParameterType);
+      swapBytes((char*)(&articulatedParameterType), sizeof(int));
    }
    
    mArticulatedParameterType = 
@@ -1429,9 +1434,9 @@ void ArticulatedParameter::Encode(char* buf) const
 {
    unsigned short partAttachedTo = mPartAttachedTo;
                 
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&partAttachedTo);
+      swapBytes((char*)(&partAttachedTo), sizeof(short));
    }
 
    *(unsigned char *)(&buf[0]) = mArticulatedParameterChange;
@@ -1451,9 +1456,9 @@ void ArticulatedParameter::Decode(const char* buf)
    
    unsigned short partAttachedTo = *(unsigned short *)(&buf[2]);
       
-   if(ulIsLittleEndian)
+   if(getCpuByteOrder() == LittleEndian)
    {
-      ulEndianSwap(&partAttachedTo);
+	   swapBytes((char*)(&partAttachedTo), sizeof(short));
    }
    
    mPartAttachedTo = partAttachedTo;

@@ -20,7 +20,6 @@
 
 #include <osgDB/FileUtils>
 
-#include <ul.h>
 
 using namespace std;
 using namespace dtSOARX;
