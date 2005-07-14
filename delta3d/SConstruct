@@ -605,7 +605,7 @@ else:
               CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden', '-ftree-vectorize'], #optimizations, pipe object data
+     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden'], #optimizations, pipe object data
               CPPDEFINES=['NDEBUG'],
               LINKFLAGS=['-s'] )
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
