@@ -34,14 +34,28 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    if( iter != mCallbacks.end() )
    {
       StaticRegistry::value_type::second_type aFunction = (*iter).second;
-      aFunction( ea );
+      mEventQueue.push( FunctionEventArgsPair( aFunction, ea ) );
       return true;
    }
-
    else
    {
       dtCore::Notify(dtCore::WARN,"ScriptModule: function '%s' not found in registry.", handler_name.c_str() );
       return false;
+   }
+}
+
+void ScriptModule::ProcessQueue()
+{
+   while( !mEventQueue.empty() )
+   {
+      FunctionEventArgsPair pair = mEventQueue.front();
+
+      StaticRegistry::value_type::second_type aFunction = pair.first;
+      CEGUI::EventArgs ea = pair.second;
+      
+      aFunction( ea );
+
+      mEventQueue.pop();
    }
 }
 
