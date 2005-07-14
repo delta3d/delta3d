@@ -28,6 +28,8 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
    mRenderer(0),
    mScriptModule(sm)
 {
+   AddSender( System::GetSystem() );
+   
    RegisterInstance(this);
 
    mHalfWidth = mWidth / 2;
@@ -180,5 +182,16 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
          Notify(WARN, "InvalidRequestException for %s: %s", itr.getCurrentKey().c_str(), exception.getMessage().c_str());
       }
       itr++;
+   }
+}
+
+void CEUIDrawable::OnMessage( dtCore::Base::MessageData* data )
+{
+   if( data->message == "postframe" )
+   {
+      if( mScriptModule )
+      {
+         mScriptModule->ProcessQueue();
+      }
    }
 }

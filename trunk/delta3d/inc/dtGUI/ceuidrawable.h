@@ -88,6 +88,8 @@ namespace dtGUI
       ///Display all the properties of the supplied CEGUI::Window
       static void DisplayProperties(CEGUI::Window *window, bool onlyNonDefault=true);
 
+      virtual void OnMessage( dtCore::Base::MessageData* data );
+
    protected: 
       ///pass the mouse moved events to CEGUI
       virtual void MouseMoved(dtCore::Mouse* mouse, float x, float y);

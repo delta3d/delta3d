@@ -8,6 +8,7 @@
 
 #include <CEGUIScriptModule.h>        // for base class
 #include <map>                        // for std::map type
+#include <queue>
 #include <string>                     // for std::string type
 #include <dtCore/export.h>
 
@@ -19,7 +20,9 @@ namespace dtGUI
     */
    class DT_EXPORT ScriptModule : public CEGUI::ScriptModule
    {
+
    public:
+
       typedef void (*FUNCTION)(const CEGUI::EventArgs &e);
       typedef std::map<std::string,FUNCTION> StaticRegistry;
 
@@ -28,6 +31,7 @@ namespace dtGUI
 
       bool AddCallback(const std::string& name, FUNCTION f);
       const StaticRegistry& GetRegistry() const { return mCallbacks; }
+      void ProcessQueue();
 
       // inherited methods
       virtual void executeScriptFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup = "");
@@ -36,8 +40,14 @@ namespace dtGUI
       virtual bool executeScriptedEventHandler(const CEGUI::String& handler_name, const CEGUI::EventArgs& ea);
 
    private:
+
+      typedef std::pair< StaticRegistry::value_type::second_type, CEGUI::EventArgs > FunctionEventArgsPair;
+      typedef std::queue< FunctionEventArgsPair > EventQueue;
+      EventQueue mEventQueue;
+      
       ScriptModule(const ScriptModule&);  // not implemented by design
       StaticRegistry mCallbacks;
+      
    };
 };
 
