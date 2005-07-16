@@ -22,8 +22,14 @@
 #define DOMAIN_INCLUDED
 
 #include "dtCore/export.h"
+#include "dtUtil/deprecationmgr.h"
 
+#include <osg/Vec3>
 #include "sg.h"
+
+#ifdef MSC_VER
+#pragma warning(disable:4251)
+#endif
 
 namespace dtUtil
 {
@@ -47,14 +53,22 @@ namespace dtUtil
       };
 
       DomainEnum type;	// PABoxDomain, PASphereDomain, PAConeDomain...
-      sgVec3 p1, p2;		// Box vertices, Sphere center, Cylinder/Cone e`nds
-      sgVec3 u, v;		// Orthonormal basis vectors for Cylinder/Cone
+      osg::Vec3 p1, p2;		// Box vertices, Sphere center, Cylinder/Cone e`nds
+      osg::Vec3 u, v;		// Orthonormal basis vectors for Cylinder/Cone
       float radius1;		// Outer radius
       float radius2;		// Inner radius
       float radius1Sqr;	// Used for fast Within test of spheres,
       float radius2Sqr;	// and for mag. of u and v vectors for plane.
 
-      void Generate(sgVec3 ) const;
+      void Generate(osg::Vec3&) const;
+      void Generate(sgVec3 v) const
+      {
+         DEPRECATE(  "void Generate(sgVec3) const",
+                     "void Generate(osg::Vec3&) const")
+         osg::Vec3 tmp(v[0], v[1], v[2]);
+         Generate(tmp);
+         v[0] = tmp[0]; v[1] = tmp[1]; v[2] = tmp[2];
+      }
 
       inline Domain(void){};
 

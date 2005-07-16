@@ -289,14 +289,14 @@ Viewer::GetDefaultState( ViewState* vs )
 {
    assert( vs );
 
-   sgVec3   pos      = { DEF_X, DEF_Y, DEF_Z };
-   sgVec3   lookat   = { 0.f, 0.f, 0.f };
-   sgVec3   up       = { 0.f, 0.f, 1.f };
+   osg::Vec3   pos   ( DEF_X, DEF_Y, DEF_Z );
+   osg::Vec3   lookat   ( 0.f, 0.f, 0.f );
+   osg::Vec3   up       ( 0.f, 0.f, 1.f );
 
    Transform   cam;
    cam.SetLookAt( pos, lookat, up );
 
-   float dist(sgDistanceVec3( lookat, pos ));
+   float dist(( lookat - pos ).length());
 
    vs->SetCamPosition( cam, true );
    vs->SetCamPosition( cam, false );
@@ -361,14 +361,14 @@ void Viewer::LoadFile( ViewState* vs )
    // set default cam position for this object based on it's bounding sphere
    osg::BoundingSphere  bs(scribe->getBound());
 
-   sgVec3   pos      = { bs.center().x(), bs.center().y() - bs.radius() * MUL_Y, bs.center().z() + bs.radius() * MUL_Z };
-   sgVec3   lookat   = { bs.center().x(), bs.center().y(), bs.center().z() };
-   sgVec3   up       = { 0.f, 0.f, 1.f };
+   osg::Vec3   pos      ( bs.center().x(), bs.center().y() - bs.radius() * MUL_Y, bs.center().z() + bs.radius() * MUL_Z );
+   osg::Vec3   lookat   ( bs.center().x(), bs.center().y(), bs.center().z() );
+   osg::Vec3   up       ( 0.f, 0.f, 1.f );
 
    Transform   cam;
    cam.SetLookAt( pos, lookat, up );
     
-   float dist(sgDistanceVec3( lookat, pos ));
+   float dist(( lookat - pos ).length());
 
    vs->SetCamPosition( cam, true );
    vs->SetCamPosition( cam, false );

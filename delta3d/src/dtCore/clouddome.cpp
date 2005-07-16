@@ -284,7 +284,7 @@ void CloudDome::Create()
    }
 }
 
-void CloudDome::Repaint(   sgVec4 sky_color, sgVec4 fog_color, 
+void CloudDome::Repaint(   osg::Vec4 sky_color, osg::Vec4 fog_color, 
                            double sun_angle, double sunAzimuth,
                            double vis )
 {

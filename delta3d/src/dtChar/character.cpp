@@ -136,7 +136,7 @@ osg::Node* Character::LoadFile(const string& filename, bool useCache)
       }
       else
       {
-         mBodyNode->setRotation(mRotation*SG_DEGREES_TO_RADIANS);
+         mBodyNode->setRotation(osg::DegreesToRadians(mRotation));
          
          SetVelocity(mVelocity);
          
@@ -157,8 +157,8 @@ void Character::SetRotation(float rotation)
    if(mBodyNode.get() != NULL)
    {
       mBodyNode->setRotation(
-         (rotation - mRotation) * SG_DEGREES_TO_RADIANS
-      );
+         osg::DegreesToRadians(rotation - mRotation)
+         );
    }
    
    // Normalize

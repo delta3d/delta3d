@@ -24,6 +24,9 @@
 //#include <dtCore/base.h>
 //#include <dtCore/positionable.h>
 #include "dtCore/transformable.h"
+#include "dtUtil/deprecationmgr.h"
+
+#include <osg/Vec3>
 
 
 namespace   dtAudio
@@ -74,14 +77,28 @@ namespace   dtAudio
           *
           * @param velocity to set
           */
-         virtual  void  SetVelocity( const sgVec3& velocity )        = 0L;
+         virtual  void  SetVelocity( const osg::Vec3& velocity )        = 0L;
+         //DEPRECATED
+         virtual  void  SetVelocity( const sgVec3& velocity )
+         {
+            DEPRECATE("virtual  void  SetVelocity( const sgVec3& velocity )", "virtual  void  SetVelocity( const osg::Vec3& velocity )")
+            SetVelocity(osg::Vec3(velocity[0], velocity[1], velocity[2]));
+         }
 
          /**
           * Get the velocity of the listener.
           *
           * @param velocity to get
           */
-         virtual  void  GetVelocity( sgVec3& velocity )        const = 0L;
+         virtual  void  GetVelocity( osg::Vec3& velocity )        const = 0L;
+         //DEPRECATED
+         virtual  void  GetVelocity( sgVec3& velocity )        const
+         {
+            DEPRECATE("virtual  void  GetVelocity( sgVec3& velocity ) const", "virtual  void  GetVelocity( osg::Vec3& velocity )")
+            osg::Vec3 tmp;   
+            GetVelocity(osg::Vec3(velocity[0], velocity[1], velocity[2]));
+         }
+
 
          /**
           * Sets the master volume of the listener.

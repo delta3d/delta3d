@@ -1,9 +1,10 @@
 #include <cassert>
 
-#include "dtCore/system.h"
 #include "dtAudio/soundeffectbinder.h"
+#include "dtCore/system.h"
 #include "dtCore/scene.h"
 
+#include <osg/Vec3>
 
 // namespaces
 using namespace dtAudio;
@@ -360,7 +361,7 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
    }
    else
    {
-      sgVec3   pos   = { 0.0f, 0.0f, 0.0f };
+      osg::Vec3 pos ( 0.0f, 0.0f, 0.0f );
       fx->GetPosition( pos );
 
       snd->SetPosition( pos );

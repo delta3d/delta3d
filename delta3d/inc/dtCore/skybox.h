@@ -25,6 +25,8 @@
 #include "dtCore/skydome.h"
 #include "dtCore/refptr.h"
 
+#include <osg/Vec3>
+
 namespace dtCore
 {
 
@@ -76,7 +78,7 @@ public:
    //virtual osg::Group *GetNode(void) {return mNode.get();}
 
    /// Must override this to supply the repainting routine
-   virtual void Repaint(sgVec3 skyColor, sgVec3 fogColor,
+   virtual void Repaint(osg::Vec3 skyColor, osg::Vec3 fogColor,
       double sunAngle, double sunAzimuth,
       double visibility);
 

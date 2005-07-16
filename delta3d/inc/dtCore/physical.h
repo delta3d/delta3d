@@ -26,10 +26,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/transformable.h"
-
+#include "dtUtil/deprecationmgr.h"
 #include <osg/Node>
 #include <osg/Geode>
-#include <sg.h>
+#include <osg/Vec3>
 
 //extern "C" {
    #include <ode/ode.h>
@@ -57,7 +57,7 @@ namespace dtCore
    class DT_EXPORT Physical : public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Physical)
-
+         
       public:
       
          /**
@@ -226,31 +226,54 @@ namespace dtCore
           *
           * @param centerOfGravity the new center of gravity
           */
-         void SetCenterOfGravity(const sgVec3 centerOfGravity);
+         void SetCenterOfGravity(const osg::Vec3& centerOfGravity);
          
-         /**
+         //deprecated version
+         void SetCenterOfGravity(const sgVec3 centerOfGravity)
+         {
+            DEPRECATE("void SetCenterOfGravity(const sgVec3 centerOfGravity)", "void SetCenterOfGravity(const osg::Vec3& centerOfGravity)")
+            SetCenterOfGravity(osg::Vec3(centerOfGravity[0], centerOfGravity[1], centerOfGravity[2]));
+         }
+
+         
+          /**
           * Retrieves this object's center of gravity.
           *
           * @param dest the vector in which to place the center
           * of gravity
-          */
-         void GetCenterOfGravity(sgVec3 dest) const;
+          */         
+         void GetCenterOfGravity(osg::Vec3& dest) const;
+         
+         //deprecated version
+         void GetCenterOfGravity(sgVec3 dest) const
+         {
+            DEPRECATE("void GetCenterOfGravity(sgVec3 dest) const", "void GetCenterOfGravity(osg::Vec3& dest) const")
+            osg::Vec3 tmp;
+            GetCenterOfGravity(tmp);
+            dest[0] = tmp[0]; dest[1] = tmp[1]; dest[2] = tmp[2];
+         }
          
          /**
           * Sets this object's inertia tensor.
           *
-          * @param inertiaTensor the new inertia tensor
+          * @param inertiaTensor the new inertia tensor, uses only the rotation part of the transform matrix
           */
+         void SetInertiaTensor(const osg::Matrix& inertiaTensor);
+         
+         //DEPRECATED
          void SetInertiaTensor(const sgMat3 inertiaTensor);
          
          /**
           * Retrieves this object's inertia tensor.
           *
           * @param dest the matrix in which to place the inertia
-          * tensor
+          * tensor, uses only rotation part of the transform matrix
           */
-         void GetInertiaTensor(sgMat3 dest) const;
+         void GetInertiaTensor(osg::Matrix& mat) const;
          
+         //DEPRECATED
+         void GetInertiaTensor(sgMat3 dest) const;
+
          /**
           * Updates the state of this object just before a physical
           * simulation step.  Should only be called by dtCore::Scene.

@@ -2,6 +2,9 @@
 #include "dtCore/system.h"
 #include "dtCore/camera.h"
 #include "dtCore/notify.h"
+#include "dtCore/transform.h"
+
+#include <osg/Matrix>
 
 using namespace dtCore;
 
@@ -16,14 +19,15 @@ mTetherMode(TETHER_PARENT_REL)
    if (cam != NULL) SetCamera(cam);
    SetAttachToTransformable(trans);
 
-   sgSetCoord(&mOffsetCoord, 0.f, -10.f, 2.f, 0.f, 0.f, 0.f);
-   sgSetVec3(mXYZScale, 1.f, 1.f, 1.f);
-   sgSetVec3(mHPRScale, 1.f, 1.f, 1.f);
+   mPosition.set(0.0f, -10.0f, 2.0f);
+   mHPR.set(0.0f, 0.0f, 0.0f);
+   mXYZScale.set(1.f, 1.f, 1.f);
+   mHPRScale.set(1.f, 1.f, 1.f);
 }
 
 Tripod::~Tripod(void)
 {
-    DeregisterInstance(this);
+   DeregisterInstance(this);
    RemoveSender( System::GetSystem() );    
 }
 
@@ -77,24 +81,11 @@ void Tripod::SetOffset(float x, float y, float z, float h, float p, float r)
 */
 void Tripod::SetScale(float x, float y, float z, float h, float p, float r)
 {
-   sgVec3 xyz = {x,y,z};
-   sgVec3 hpr = {h,p,r};
+   osg::Vec3 xyz(x,y,z);
+   osg::Vec3 hpr(h,p,r);
    SetScale(xyz, hpr);
 }
 
-/** Must be in the range (0.0,1.0)
-*/
-void Tripod::SetScale(sgVec3 xyz, sgVec3 hpr)
-{
-   sgCopyVec3(mXYZScale, xyz);
-   sgCopyVec3(mHPRScale, hpr);
-}
-
-void Tripod::GetScale(sgVec3 xyz, sgVec3 hpr)
-{
-   sgCopyVec3(xyz, mXYZScale);
-   sgCopyVec3(hpr, mHPRScale);
-}
 
 ///Override to receive messages
 void Tripod::OnMessage(MessageData *data)
@@ -116,30 +107,33 @@ void Tripod::Update(double deltaFrameTime) //virtual
 
    Transform parentXform;
    mParent->GetTransform(&parentXform);
-   sgMat4 parentMat;
+   osg::Matrix parentMat;
    parentXform.Get(parentMat);
 
    Transform currXform;
    mCamera->GetTransform(&currXform);
-   sgMat4 currMat;
+   osg::Matrix currMat;
    currXform.Get(currMat);
 
-   sgMat4 newMat;
-   sgMat4 offsetMat;
-   sgMakeCoordMat4(offsetMat, &mOffsetCoord);
-
+   osg::Matrix newMat, offsetMat;
+   Transform trans;
+   trans.Set(mPosition, mHPR, osg::Vec3(1.0f, 1.0f, 1.0f));
+   trans.Get(offsetMat);
+      
    switch(mTetherMode)
    {
    case TETHER_PARENT_REL:
       {
          //transform offset through parent's matrix to get new abs coord
-         sgMultMat4(newMat, parentMat, offsetMat);
+         //sgMultMat4(newMat, parentMat, offsetMat);
+         newMat = parentMat * offsetMat;
       }
       break;
    case TETHER_WORLD_REL:
       {
-         sgCopyMat4(newMat, offsetMat);
-         sgAddVec3(newMat[3], offsetMat[3], parentMat[3]);
+         newMat(0,3) = offsetMat(0,3) + parentMat(0,3);
+         newMat(1,3) = offsetMat(1,3) + parentMat(1,3);
+         newMat(2,3) = offsetMat(2,3) + parentMat(2,3);
       }
       break;
    default: break;
@@ -151,30 +145,45 @@ void Tripod::Update(double deltaFrameTime) //virtual
    {
       Transform targetXform, lookatXform;
       mLookAtTarget.get()->GetTransform(&targetXform);
-      sgVec3 lookAtXYZ, upVec;
-      sgSetVec3(upVec, 0.f, 0.f, 1.f);
+      osg::Vec3 lookAtXYZ, upVec;
+      upVec.set(0.f, 0.f, 1.f);
       targetXform.GetTranslation(lookAtXYZ);
-      lookatXform.SetLookAt(newMat[3], lookAtXYZ, upVec);
+      lookatXform.SetLookAt(osg::Vec3(newMat(0,3), newMat(1,3), newMat(2,3)), lookAtXYZ, upVec);
       lookatXform.Get(newMat);
    }
 
-   const sgVec3 ident = {1.f, 1.f, 1.f};
-   if (!sgEqualVec3(mXYZScale,ident))
+   const osg::Vec3 ident(1.f, 1.f, 1.f);
+    if (mXYZScale != ident)
    {
       //adjust the new xyz using the xyzScale values
-      sgVec3 xyzDiff;
-      sgSubVec3(xyzDiff, newMat[3], currMat[3]);
+      osg::Vec3 xyzDiff(newMat(0,3) - currMat(0,3), newMat(1,3) - currMat(1,3), newMat(2,3) - currMat(2,3));
       xyzDiff[0] *= (mXYZScale[0]*deltaFrameTime)/deltaFrameTime;
       xyzDiff[1] *= (mXYZScale[1]*deltaFrameTime)/deltaFrameTime;
       xyzDiff[2] *= (mXYZScale[2]*deltaFrameTime)/deltaFrameTime;
-      sgAddVec3(newMat[3], xyzDiff, currMat[3]);
+      newMat(0,3) = xyzDiff[0] + currMat(0,3);
+      newMat(1,3) = xyzDiff[1] + currMat(1,3);
+      newMat(2,3) = xyzDiff[2] + currMat(2,3);
    }
 
-   if (!sgEqualVec3(mHPRScale, ident))
+   if (mHPRScale != ident)
    {
-      sgLerpAnglesVec3 ( newMat[0], currMat[0], newMat[0], mHPRScale[0]);
-      sgLerpAnglesVec3 ( newMat[1], currMat[1], newMat[1], mHPRScale[1]);
-      sgLerpAnglesVec3 ( newMat[2], currMat[2], newMat[2], mHPRScale[2]);
+      //sgLerpAnglesVec3 ( newMat[0], currMat[0], newMat[0], mHPRScale[0]);
+      //sgLerpAnglesVec3 ( newMat[1], currMat[1], newMat[1], mHPRScale[1]);
+      //sgLerpAnglesVec3 ( newMat[2], currMat[2], newMat[2], mHPRScale[2]);
+
+      ///\todo- this lerp should not be hard coded
+      newMat(0,0) = currMat(0,0) + mHPRScale[0] * (newMat(0,0) - currMat(0,0));
+      newMat(1,0) = currMat(1,0) + mHPRScale[0] * (newMat(1,0) - currMat(1,0));
+      newMat(2,0) = currMat(2,0) + mHPRScale[0] * (newMat(2,0) - currMat(2,0));
+
+      newMat(0,1) = currMat(0,1) + mHPRScale[1] * (newMat(0,1) - currMat(0,1));
+      newMat(1,1) = currMat(1,1) + mHPRScale[1] * (newMat(1,1) - currMat(1,1));
+      newMat(2,1) = currMat(2,1) + mHPRScale[1] * (newMat(2,1) - currMat(2,1));
+
+      newMat(0,2) = currMat(0,2) + mHPRScale[2] * (newMat(0,2) - currMat(0,2));
+      newMat(1,2) = currMat(1,2) + mHPRScale[2] * (newMat(1,2) - currMat(1,2));
+      newMat(2,2) = currMat(2,2) + mHPRScale[2] * (newMat(2,2) - currMat(2,2));
+         
    }
 
    parentXform.Set(newMat);

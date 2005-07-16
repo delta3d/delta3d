@@ -336,9 +336,9 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->GetTransform(&transform);
       
-      sgVec3 xyz, hpr;
+      osg::Vec3 xyz, hpr, scale;
       
-      transform.Get(xyz, hpr);
+      transform.Get(xyz, hpr, scale);
       
       if(mTurnLeftRightAxis != NULL)
       {
@@ -351,7 +351,7 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       transform.SetRotation(hpr);
       
-      sgVec3 translation;
+      osg::Vec3 translation;
       
       if(mFlyForwardBackwardAxis != NULL)
       {
@@ -371,13 +371,15 @@ void UFOMotionModel::OnMessage(MessageData *data)
             (float)(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
       
-      sgMat4 mat;
+      osg::Matrix mat;
       
       transform.GetRotation(mat);
       
-      sgXformVec3(translation, mat);
+      //sgXformVec3(translation, mat);
+      translation = translation * mat;
       
-      sgAddVec3(xyz, translation);
+      //sgAddVec3(xyz, translation);
+      xyz += translation;
       
       transform.SetTranslation(xyz);
       

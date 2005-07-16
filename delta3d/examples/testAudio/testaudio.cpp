@@ -146,7 +146,7 @@ TestAudioApp::KeyPressed(  Keyboard*       keyboard,
                            Producer::KeyCharacter  character   )
 {
    dtABC::Application::KeyPressed( keyboard, key, character );
-   sgVec3   pos   = { 0.0f, 0.0f, 0.0f };
+   osg::Vec3   pos   ( 0.0f, 0.0f, 0.0f );
 
    switch( key )
    {
@@ -761,14 +761,14 @@ TestAudioApp::InitInputDevices( void )
 void
 TestAudioApp::SetUpCamera( void )
 {
-   sgVec3   pos      = { 0.0f, -150.0f, 30.0f };
-   sgVec3   lookat   = { 0.f, 0.f, 0.f };
-   sgVec3   up       = { 0.f, 0.f, 1.f };
+   osg::Vec3   pos      ( 0.0f, -150.0f, 30.0f );
+   osg::Vec3   lookat   ( 0.f, 0.f, 0.f );
+   osg::Vec3   up       ( 0.f, 0.f, 1.f );
 
    Transform   xform;
    xform.SetLookAt( pos, lookat, up );
 
-   float dist(sgDistanceVec3( lookat, pos ));
+   float dist(( lookat - pos ).length());
 
    Camera*   cam(GetCamera());
    assert( cam );
@@ -797,8 +797,8 @@ TestAudioApp::MoveTheObject( unsigned int obj )
             double            V(cos( double(X++) * D ));
             unsigned int      I((obj==TRUCK)? 1L: 0L);
             Transform xform;
-            sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
-            sgVec3            vel   = { 0.0f, 0.0f, 0.0f };
+            osg::Vec3            pos  ( 0.0f, 0.0f, 0.0f );
+            osg::Vec3            vel  ( 0.0f, 0.0f, 0.0f );
             OBJ_PTR           gfx(mGfxObj[obj]);
 
    // move the vehicle
@@ -807,7 +807,7 @@ TestAudioApp::MoveTheObject( unsigned int obj )
    gfx->GetTransform( &xform );
    xform.GetTranslation( pos );
 
-   pos[I]   = static_cast<SGfloat>(P * 50.0f);
+   pos[I]   = static_cast<double>(P * 50.0f);
 
    xform.SetTranslation( pos );
    gfx->SetTransform( &xform );

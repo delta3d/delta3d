@@ -27,6 +27,9 @@
 
 #include "dtCore/recorder.h"
 #include "dtCore/transformable.h"
+#include "dtUtil/deprecationmgr.h"
+
+#include <osg/Vec3>
 
 
 
@@ -302,42 +305,83 @@ namespace dtAudio
           *
           * @param position to set
           */
-         virtual  void        SetPosition( const sgVec3& position );
+         virtual  void        SetPosition(const osg::Vec3& position);
+         //DEPRECATED
+         virtual  void        SetPosition(const sgVec3& position)
+         {
+            DEPRECATE("virtual void SetPosition(const sgVec3& position)", "virtual void SetPosition(const osg::Vec3 position)")
+            SetPosition(osg::Vec3(position[0], position[1], position[2]));
+         }
 
          /**
           * Get the position of sound.
           *
           * @param position to get
           */
-         virtual  void        GetPosition( sgVec3& position )     const;
+         virtual  void        GetPosition( osg::Vec3& position )     const;
+         //DEPRECATED
+         virtual  void        GetPosition( sgVec3& position )     const
+         {
+            DEPRECATE("virtual void GetPosition( sgVec3& position ) const", "virtual void GetPosition( osg::Vec3& position ) const")
+            osg::Vec3 tmp;
+            GetPosition(tmp);
+            position[0] = tmp[0]; position[1] = tmp[1]; position[2] = tmp[2];
+         }
+
 
          /**
           * Set the direction of sound.
           *
           * @param direction to set
-          */
-         virtual  void        SetDirection( const sgVec3& direction );
+          */         
+         virtual  void        SetDirection( const osg::Vec3& direction );
+         //DEPRECATED
+         virtual  void        SetDirection( const sgVec3& direction )
+         {
+            DEPRECATE("virtual void SetDirection( const sgVec3& direction )", "virtual void SetDirection( const osg::Vec3& direction )")
+            SetDirection(osg::Vec3(direction[0], direction[1], direction[2]));
+         }
 
          /**
           * Get the direction of sound.
           *
           * @param direction to get
           */
-         virtual  void        GetDirection( sgVec3& direction )   const;
+         virtual  void        GetDirection( osg::Vec3& direction )   const;
+         //DEPRECATED
+         virtual  void        GetDirection( sgVec3& direction )   const
+         {
+            DEPRECATE("virtual void GetDirection( sgVec3& direction ) const", "virtual void GetDirection( sgVec3& direction ) const")
+            GetDirection(osg::Vec3(direction[0], direction[1], direction[2]));
+         }
 
          /**
           * Set the velocity of sound.
           *
           * @param velocity to set
           */
-         virtual  void        SetVelocity( const sgVec3& velocity );
+         virtual  void        SetVelocity( const osg::Vec3& velocity );
+         //DEPRECATED
+         virtual  void        SetVelocity( const sgVec3& velocity )
+         {
+            DEPRECATE("virtual void SetVelocity( const sgVec3& velocity )", "virtual void SetVelocity( const osg::Vec3& velocity )")
+            SetVelocity(osg::Vec3(velocity[0], velocity[1], velocity[2]));
+         }
 
          /**
           * Get the velocity of sound.
           *
           * @param velocity to get
           */
-         virtual  void        GetVelocity( sgVec3& velocity )     const;
+         virtual  void        GetVelocity( osg::Vec3& velocity )     const;
+         //DEPRECATED
+         virtual  void        GetVelocity( sgVec3& velocity )     const
+         {
+            DEPRECATE("virtual void GetVelocity( sgVec3& velocity ) const", "virtual void GetVelocity( osg::Vec3& velocity ) const")
+            osg::Vec3 tmp;
+            GetVelocity(tmp);
+            velocity[0] = tmp[0]; velocity[1] = tmp[1]; velocity[2] = tmp[2];
+         }
 
          /**
           * Set the minimum distance that sound plays at max_gain.
@@ -438,9 +482,9 @@ namespace dtAudio
                   void*       mStopCBData;
                   float       mGain;
                   float       mPitch;
-                  sgVec3      mPos;
-                  sgVec3      mDir;
-                  sgVec3      mVelo;
+                  osg::Vec3   mPos;
+                  osg::Vec3   mDir;
+                  osg::Vec3   mVelo;
                   float       mMinDist;
                   float       mMaxDist;
                   float       mRolloff;

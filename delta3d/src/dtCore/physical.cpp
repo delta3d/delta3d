@@ -704,7 +704,7 @@ float Physical::GetMass() const
  *
  * @param centerOfGravity the new center of gravity
  */
-void Physical::SetCenterOfGravity(const sgVec3 centerOfGravity)
+void Physical::SetCenterOfGravity(const osg::Vec3& centerOfGravity)
 {
    mMass.c[0] = centerOfGravity[0];
    mMass.c[1] = centerOfGravity[1];
@@ -722,7 +722,7 @@ void Physical::SetCenterOfGravity(const sgVec3 centerOfGravity)
  * @param dest the vector in which to place the center
  * of gravity
  */
-void Physical::GetCenterOfGravity(sgVec3 dest) const
+void Physical::GetCenterOfGravity(osg::Vec3& dest) const
 {
    dest[0] = mMass.c[0];
    dest[1] = mMass.c[1];
@@ -732,10 +732,34 @@ void Physical::GetCenterOfGravity(sgVec3 dest) const
 /**
  * Sets this object's inertia tensor.
  *
- * @param inertiaTensor the new inertia tensor
+ * @param inertiaTensor the new inertia tensor, only uses the rotation part of the transform matrix
  */
+
+void Physical::SetInertiaTensor(const osg::Matrix& inertiaTensor)
+{
+   mMass.I[0] = inertiaTensor(0,0);
+   mMass.I[1] = inertiaTensor(1,0);
+   mMass.I[2] = inertiaTensor(2,0);
+
+   mMass.I[4] = inertiaTensor(0,1);
+   mMass.I[5] = inertiaTensor(1,1);
+   mMass.I[6] = inertiaTensor(2,1);
+
+   mMass.I[8] = inertiaTensor(0,2);
+   mMass.I[9] = inertiaTensor(1,2);
+   mMass.I[10] = inertiaTensor(2,2);
+
+   if(mBodyID != 0)
+   {
+      dBodySetMass(mBodyID, &mMass);
+   }
+}
+
+//DEPRECATED
 void Physical::SetInertiaTensor(const sgMat3 inertiaTensor)
 {
+   DEPRECATE("void SetInertiaTensor(const sgMat3 inertiaTensor)", "void SetInertiaTensor(const osg::Matrix& inertiaTensor)")
+
    mMass.I[0] = inertiaTensor[0][0];
    mMass.I[1] = inertiaTensor[1][0];
    mMass.I[2] = inertiaTensor[2][0];
@@ -758,10 +782,28 @@ void Physical::SetInertiaTensor(const sgMat3 inertiaTensor)
  * Retrieves this object's inertia tensor.
  *
  * @param dest the matrix in which to place the inertia
- * tensor
+ * tensor, uses only rotation part of the transform matrix
  */
+void Physical::GetInertiaTensor(osg::Matrix& dest) const
+{
+   dest(0,0) = mMass.I[0];
+   dest(1,0) = mMass.I[1];
+   dest(2,0) = mMass.I[2];
+
+   dest(0,1) = mMass.I[4];
+   dest(1,1) = mMass.I[5];
+   dest(2,1) = mMass.I[6];
+
+   dest(0,2) = mMass.I[8];
+   dest(1,2) = mMass.I[9];
+   dest(2,2) = mMass.I[10];
+}
+
+//DEPRECATED
 void Physical::GetInertiaTensor(sgMat3 dest) const
 {
+   DEPRECATE("void GetInertiaTensor(sgMat3 dest) const","void GetInertiaTensor(sgMat3 dest) const")
+
    dest[0][0] = mMass.I[0];
    dest[1][0] = mMass.I[1];
    dest[2][0] = mMass.I[2];
@@ -774,6 +816,7 @@ void Physical::GetInertiaTensor(sgMat3 dest) const
    dest[1][2] = mMass.I[9];
    dest[2][2] = mMass.I[10];
 }
+
 
 /**
  * Updates the state of this object just before a physical

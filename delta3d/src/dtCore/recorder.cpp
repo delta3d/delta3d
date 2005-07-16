@@ -54,9 +54,9 @@ void Recorder::AddSource(Recordable* source)
 
    if(mState == RecorderRecording)
    {
-      mClock.update();
+      mDeltaTime = mClock.tick();
 
-      double timeCode = mClock.getAbsTime();
+      double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
       source->IncrementRecorderCount();
 
@@ -96,7 +96,7 @@ void Recorder::Record()
 
    mNextStateFrame = mTimeCodeStateFrameMap.begin();
 
-   mClock.reset();
+   mStartTime = mClock.tick();
 
    for(set<Recordable*>::iterator it = mSources.begin();
        it != mSources.end();
@@ -123,7 +123,7 @@ void Recorder::Play()
 
    mNextStateFrame = mTimeCodeStateFrameMap.begin();
 
-   mClock.reset();
+   mStartTime = mClock.tick();
 }
 
 /**
@@ -133,9 +133,9 @@ void Recorder::Stop()
 {
    if(mState == RecorderRecording)
    {
-      mClock.update();
+      mDeltaTime = mClock.tick();
 
-      mRecordingLength = mClock.getAbsTime();
+      mRecordingLength = mClock.delta_s(mStartTime, mDeltaTime);
 
       for(set<Recordable*>::iterator it = mSources.begin();
           it != mSources.end();
@@ -280,9 +280,9 @@ void Recorder::OnMessage(MessageData *data)
    if(data->message == "frame" &&
       mState == RecorderPlaying)
    {
-      mClock.update();
+      mDeltaTime = mClock.tick();
 
-      double timeCode = mClock.getAbsTime();
+      double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
       if(timeCode >= mRecordingLength)
       {
@@ -306,9 +306,9 @@ void Recorder::OnMessage(MessageData *data)
 
       if(mSources.count(source) > 0)
       {
-         mClock.update();
+         mDeltaTime = mClock.tick();
 
-         double timeCode = mClock.getAbsTime();
+         double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
          mNextStateFrame = mTimeCodeStateFrameMap.insert(
             mNextStateFrame,

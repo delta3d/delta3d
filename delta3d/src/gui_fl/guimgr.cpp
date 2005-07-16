@@ -23,6 +23,9 @@
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_draw.H>
 
+#include <osg/Vec3>
+#include <osg/Vec4>
+
 using namespace dtCore;
 using namespace dtABC;
 using namespace std;
@@ -120,7 +123,7 @@ void UserInterface::SelectInstance (void)
    if (Camera *c = dynamic_cast<Camera*>(b))
    {
       InstanceClassName->label( "dtCore::Camera" ); 
-      sgVec4 color;
+      osg::Vec4 color;
       c->GetClearColor(color);
       CameraClearRed->value(color[0]);
       CameraClearGreen->value(color[1]);
@@ -233,7 +236,7 @@ void UserInterface::SelectInstance (void)
    {
       InstanceClassName->label( "dtCore::Environment" );
       
-      sgVec4 fColor;
+      osg::Vec3 fColor;
       e->GetFogColor(fColor);
       FogRed->value(fColor[0]);
       FogGreen->value(fColor[1]);
@@ -245,13 +248,13 @@ void UserInterface::SelectInstance (void)
       
       FogColorLoadButton->color(fc);
 
-      sgVec4 bc;
+      osg::Vec3 bc;
       e->GetAdvFogCtrl(bc);
       AdvFogTurbidity->value(bc[0]);
       AdvFogEnergy->value(bc[1]);
       AdvFogMolecules->value(bc[2]);
 
-      sgVec3 sunColor;
+      osg::Vec3 sunColor;
       e->GetSunColor(sunColor);
       EnvSunRed->value(sunColor[0]);
       EnvSunGreen->value(sunColor[1]);
@@ -278,7 +281,7 @@ void UserInterface::SelectInstance (void)
          EnvAdvFogGroup->hide();
          EnvFogColorGroup->show();
       }
-      sgVec3 skyColor;
+      osg::Vec3 skyColor;
       e->GetSkyColor(skyColor);
       SkyRed->value(skyColor[0]);
       SkyGreen->value(skyColor[1]);
@@ -297,7 +300,7 @@ void UserInterface::SelectInstance (void)
       EnvDay->value(da);
       EnvTimeOfDay->value(hr+(mi/60.0)+(sec/3600.0));
 
-      sgVec2 refPos;
+      osg::Vec2 refPos;
       e->GetRefLatLong(refPos);
       EnvRefLat->value(refPos[0]);
       EnvRefLong->value(refPos[1]);
@@ -312,7 +315,7 @@ void UserInterface::SelectInstance (void)
    {
       InstanceClassName->label( "dtCore::SkyDome" );
 
-      sgVec3 color;
+      osg::Vec3 color;
       s->GetBaseColor(color);
       SkyBoxBaseRed->value(color[0]);
       SkyBoxBaseGreen->value(color[1]);
@@ -699,11 +702,11 @@ void UserInterface::CameraClearColorBrowserCB(Fl_Button*)
 
    CameraClearLoadButton->color(fc);
    
-   sgVec4 color = {
+   osg::Vec4 color (
       CameraClearRed->value(),
       CameraClearGreen->value(),
       CameraClearBlue->value(),
-      1.f };
+      1.f );
 
    Camera *c = dynamic_cast<Camera*>(GetSelectedInstance(this));
    c->SetClearColor( color );
@@ -711,11 +714,11 @@ void UserInterface::CameraClearColorBrowserCB(Fl_Button*)
 
 void UserInterface::CameraClearColorCB(Fl_Value_Input* )
 {
-   sgVec4 color = {
+   osg::Vec4 color (
       CameraClearRed->value(),
          CameraClearGreen->value(),
          CameraClearBlue->value(),
-         1.f };
+         1.f );
 
    Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                 int(color[1]*(FL_NUM_GREEN-1)),
@@ -906,11 +909,10 @@ void UserInterface::DrawableRemChildCB( Fl_Button *)
 
 void UserInterface::SkyBoxBaseColorCB(Fl_Value_Input* )
 {
-   sgVec4 color = {
+   osg::Vec3 color(
       SkyBoxBaseRed->value(),
          SkyBoxBaseGreen->value(),
-         SkyBoxBaseBlue->value(),
-         1.f };
+         SkyBoxBaseBlue->value());
 
    Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                 int(color[1]*(FL_NUM_GREEN-1)),
@@ -941,11 +943,10 @@ void UserInterface::SkyBoxBaseColorBrowserCB(Fl_Button*)
 
    SkyBoxBaseColorLoadButton->color(fc);
    
-   sgVec4 color = {
+   osg::Vec3 color(
       SkyBoxBaseRed->value(),
       SkyBoxBaseGreen->value(),
-      SkyBoxBaseBlue->value(),
-      1.f };
+      SkyBoxBaseBlue->value());
 
    SkyDome *c = dynamic_cast<SkyDome*>(GetSelectedInstance(this));
    c->SetBaseColor( color );
@@ -953,21 +954,20 @@ void UserInterface::SkyBoxBaseColorBrowserCB(Fl_Button*)
 
 void UserInterface::EnvAdvFogCB(Fl_Value_Input *)
 {
-   sgVec4 bc;
+   osg::Vec3 bc;
    bc[0] = AdvFogTurbidity->value();
    bc[1] = AdvFogEnergy->value();
    bc[2] = AdvFogMolecules->value();
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetAdvFogCtrl(bc);
+   e->SetAdvFogCtrl(&bc[0]);
 }
 
 void UserInterface::EnvFogColorCB(Fl_Value_Input *)
 {
-      sgVec4 color = {
+   osg::Vec3 color (
       FogRed->value(),
          FogGreen->value(),
-         FogBlue->value(),
-         1.f };
+         FogBlue->value());
 
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                    int(color[1]*(FL_NUM_GREEN-1)),
@@ -977,7 +977,7 @@ void UserInterface::EnvFogColorCB(Fl_Value_Input *)
       FogColorLoadButton->redraw();
     
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetFogColor( color );
+   e->SetFogColor( &color[0] );
 }
 
 void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
@@ -998,14 +998,13 @@ void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
 
    FogColorLoadButton->color(fc);
    
-   sgVec4 color = {
+   osg::Vec3 color (
       FogRed->value(),
       FogGreen->value(),
-      FogBlue->value(),
-      1.f };
+      FogBlue->value());
 
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetFogColor( color );
+   e->SetFogColor( &color[0] );
 }
 
 void UserInterface::EnvFogVisCB(Fl_Value_Input *o)
@@ -1064,11 +1063,10 @@ void UserInterface::EnvSkyColorBrowserCB(Fl_Button *)
 
    SkyColorLoadButton->color(sc);
    
-   sgVec4 color = {
+   osg::Vec3 color (
       SkyRed->value(),
       SkyGreen->value(),
-      SkyBlue->value(),
-      1.f };
+      SkyBlue->value());
 
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
    e->SetSkyColor( color );
@@ -1076,11 +1074,10 @@ void UserInterface::EnvSkyColorBrowserCB(Fl_Button *)
 
 void UserInterface::EnvSkyColorCB(Fl_Value_Input*)
 {
-      sgVec4 color = {
+   osg::Vec3 color (
          SkyRed->value(),
          SkyGreen->value(),
-         SkyBlue->value(),
-         1.f };
+         SkyBlue->value() );
 
       Fl_Color fc = fl_color_cube( int(color[0]*(FL_NUM_RED-1)),
                                    int(color[1]*(FL_NUM_GREEN-1)),
@@ -1090,7 +1087,7 @@ void UserInterface::EnvSkyColorCB(Fl_Value_Input*)
       SkyColorLoadButton->redraw();
     
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetSkyColor( color );
+   e->SetSkyColor( &color[0] );
 }
 
 
@@ -1123,10 +1120,10 @@ void UserInterface::EnvDateTimeCB(Fl_Value_Input *o)
 void UserInterface::EnvRefPosCB(Fl_Value_Input *o)
 {
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   sgVec2 refPos;
+   osg::Vec2 refPos;
    refPos[0] = EnvRefLat->value();
    refPos[1] = EnvRefLong->value();
-   e->SetRefLatLong(refPos);
+   e->SetRefLatLong(&refPos[0]);
 }
 
 void UserInterface::InfRegenerateCB(Fl_Button *o)

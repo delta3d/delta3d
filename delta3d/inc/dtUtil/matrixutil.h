@@ -40,6 +40,7 @@ namespace dtUtil
       static void Print( const osg::Vec4& vec );
 
       static float Clamp( float x, float clampToValue );
+      static float ClampUnity(const float x);
 
       static void Transpose( osg::Matrix& dest, const osg::Matrix& src );
 
@@ -56,7 +57,12 @@ namespace dtUtil
       static void SetRow( osg::Matrix& matrix, const osg::Vec4& vec, int row );
 
       static void HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr );
+      static void PositionAndHprToMatrix( osg::Matrix& rotation, const osg::Vec3& xyz, const osg::Vec3& hpr );
       static void MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation );
+      static void MatrixToHprAndPosition( osg::Vec3& xyz, osg::Vec3& hpr, const osg::Matrix& rotation );
+
+      static void TransformVec3(osg::Vec3& xyz, const osg::Matrix& transformMat);
+      static void TransformVec3(osg::Vec3& vec_in, const osg::Vec3& xyz, const osg::Matrix& transformMat);
 
    };
 }

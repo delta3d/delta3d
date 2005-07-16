@@ -4,6 +4,7 @@
 #include "dtCore/notify.h"
 #include "dtCore/system.h"
 #include "dtCore/mouse.h"
+#include "dtUtil/matrixutil.h"
 
 #include "osg/BlendFunc"
 #include "osg/Geode"
@@ -42,6 +43,7 @@
 #include "psEditorGUI.h"
 
 #include <string.h>
+#include <math.h>
 
 using namespace dtCore;
 using namespace osgParticle;
@@ -2593,14 +2595,15 @@ class OrbitMotionModel : public MouseListener
          mElevation = 22.5f;
          mDistance = 50.0f;
 
-         sgSetVec3(mCenter, 0, 0, 0);
+         mCenter.set(0, 0, 0);
          
          UpdateTargetTransform();
       }
 
       virtual void ButtonPressed(Mouse* mouse, MouseButton button)
       {
-         mouse->GetPosition(&mLastX, &mLastY);
+         mouse->GetPosition(mLastX, 
+            mLastY);
       }
 
       virtual void MouseDragged(Mouse* mouse, float x, float y)
@@ -2629,15 +2632,17 @@ class OrbitMotionModel : public MouseListener
             
             mTarget->GetTransform(&transform);
             
-            sgMat4 mat;
+            osg::Matrix mat;
             
             transform.Get(mat);
             
-            sgVec3 offset = {-dX*mDistance*0.25f, 0, -dY*mDistance*0.25f};
+            osg::Vec3 offset (-dX*mDistance*0.25f, 0, -dY*mDistance*0.25f);
             
-            sgXformVec3(offset, mat);
+            //sgXformVec3(offset, mat);
+            osg::Matrix::transform3x3(offset, mat);
             
-            sgAddVec3(mCenter, offset);
+            //sgAddVec3(mCenter, offset);
+            mCenter += offset;
          }
          
          UpdateTargetTransform();
@@ -2662,9 +2667,9 @@ class OrbitMotionModel : public MouseListener
          Transform transform;
          
          transform.SetTranslation(
-            mCenter[0] + mDistance * sgCos(mElevation) * sgSin(mAzimuth),
-            mCenter[1] + mDistance * sgCos(mElevation) * -sgCos(mAzimuth),
-            mCenter[2] + mDistance * sgSin(mElevation)
+            mCenter[0] + mDistance * cosf(osg::DegreesToRadians(mElevation)) * sinf(osg::DegreesToRadians(mAzimuth)),
+            mCenter[1] + mDistance * cosf(osg::DegreesToRadians(mElevation)) * -cosf(osg::DegreesToRadians(mAzimuth)),
+            mCenter[2] + mDistance * sinf(osg::DegreesToRadians(mElevation))
          );
          
          transform.SetRotation(
@@ -2675,13 +2680,14 @@ class OrbitMotionModel : public MouseListener
          
          mTarget->SetTransform(&transform);
          
-         sgMat4 mat;
+         osg::Matrix mat;
          
          transform.Get(mat);
          
-         sgVec3 vec = {-0.3, 1, -0.225};
+         osg::Vec3 vec (-0.3, 1, -0.225);
          
-         sgXformPnt3(vec, mat);
+         //sgXformPnt3(vec, mat);
+         dtUtil::MatrixUtil::TransformVec3(vec, mat);
          
          osg::Matrix osgMat;
          
@@ -2696,7 +2702,7 @@ class OrbitMotionModel : public MouseListener
 
       float mAzimuth, mElevation, mDistance;
 
-      sgVec3 mCenter;
+      osg::Vec3 mCenter;
       
       float mLastX, mLastY;
 };

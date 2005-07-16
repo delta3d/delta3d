@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib sg_d.lib tinyxmld.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib sg_d.lib ul_d.lib tinyxmld.lib winmm.lib"
 				OutputFile="../../../bin/dtcored.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -15,3 +15,11 @@ EnvEffect::~EnvEffect()
 {
    DeregisterInstance(this);
 }
+
+
+void EnvEffect::Repaint( const osg::Vec3& skyColor, const osg::Vec3& fogColor,
+                     double sunAngle, double sunAzimuth,
+                     double visibility )
+{
+
+}

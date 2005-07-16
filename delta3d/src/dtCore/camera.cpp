@@ -7,6 +7,7 @@
 #include "dtCore/camera.h"
 #include "dtCore/notify.h"
 #include "dtCore/scene.h"
+#include <osg/Matrix>
 
 using namespace dtCore;
 
@@ -198,9 +199,7 @@ void Camera::SetScene(Scene *scene)
    {
       //Copy our camera's clear color into the scene handler cause thats where
       //  the screen actually gets cleared.      
-      osg::Vec4 clearColor;
-      sgCopyVec4(clearColor._v, mClearColor);
-      GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
+      GetSceneHandler()->GetSceneView()->setClearColor( mClearColor );
 
       //assign the supplied scene to the SceneView
       GetSceneHandler()->GetSceneView()->setSceneData( scene->GetSceneNode() );
@@ -210,18 +209,18 @@ void Camera::SetScene(Scene *scene)
 
 void Camera::SetClearColor(float r, float g, float b, float a)
 {
-   sgVec4 color = {r,g,b,a};
-   SetClearColor(color);
+   mClearColor.set(r, g, b, a);
+
+   //tell the scene handler about the change
+   GetSceneHandler()->GetSceneView()->setClearColor(mClearColor);
 }
 
-void Camera::SetClearColor(sgVec4 color)
+void Camera::SetClearColor(const osg::Vec4& color)
 {
-   sgCopyVec4(mClearColor, color);
+   mClearColor = color;
    
    //tell the scene handler about the change
-   osg::Vec4 clearColor;
-   sgCopyVec4(clearColor._v, mClearColor);
-   GetSceneHandler()->GetSceneView()->setClearColor( clearColor );
+   GetSceneHandler()->GetSceneView()->setClearColor(mClearColor);
 }
 
 void Camera::GetClearColor( float *r, float *g, float *b, float *a)

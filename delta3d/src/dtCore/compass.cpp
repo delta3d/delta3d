@@ -1,5 +1,8 @@
+#include <dtCore/compass.h>
+
 #include <cassert>
 
+#include <osg/Vec3>
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Projection>
@@ -8,7 +11,6 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtCore/pointaxis.h>
-#include <dtCore/compass.h>
 #include <dtCore/camera.h>
 
 using namespace   dtCore;
@@ -45,7 +47,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
          Transform   xform;
          mCompass.get()->GetTransform( &xform );
 
-         sgMat4 mat;
+         osg::Matrix mat;
          xform.Get( mat );
 
          dtCore::Camera*   cam   = mCompass->GetCamera();
@@ -54,15 +56,11 @@ class _updateCompassCallback  :  public   osg::NodeCallback
             Transform   cam_xform;
             cam->GetTransform( &cam_xform );
 
-            sgMat4   cam_rot;
-            cam_xform.GetRotation( cam_rot );
+            osg::Matrix   cam_mat;
+            cam_xform.GetRotation( cam_mat );
 
-            sgVec3   cam_pos;
+            osg::Vec3   cam_pos;
             cam_xform.GetTranslation( cam_pos );
-
-
-            osg::Matrix cam_mat( reinterpret_cast<float*>(cam_rot) );
-
 
             osg::Matrix comp_mat = osg::Matrix::identity();
             comp_mat *= osg::Matrix::inverse( cam_mat );
@@ -79,7 +77,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
             abs_xform->setMatrix( comp_mat );
          }
 
-         xformNode->setMatrix( osg::Matrix((float*)mat) );
+         xformNode->setMatrix( mat );
 
          traverse( node, nv );
       }

@@ -33,14 +33,12 @@
   #include <AL/al.h>
 #endif
 
-#include <sg.h>
-
 #include <dtCore/base.h>
 #include <dtCore/transformable.h>
 #include <dtAudio/listener.h>
 #include <dtAudio/sound.h>
 
-
+#include <osg/Vec3>
 
 // forward references
 struct   AudioConfigData;
@@ -245,6 +243,10 @@ namespace   dtAudio
                virtual           ~ListenerObj();
 
                /// set/get listener's velocity
+               virtual  void     SetVelocity( const osg::Vec3& velocity );
+               virtual  void     GetVelocity( osg::Vec3& velocity )  const;
+               
+               //DEPRECIATED
                virtual  void     SetVelocity( const sgVec3& velocity );
                virtual  void     GetVelocity( sgVec3& velocity )  const;
 

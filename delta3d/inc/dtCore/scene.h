@@ -27,7 +27,7 @@
 
 #include <Producer/Camera>
 #include <ode/ode.h>
-#include "sg.h"
+#include <osg/vec3>
 #include "dtCore/base.h"
 #include "dtCore/stats.h"
 #include "dtCore/light.h"
@@ -101,11 +101,11 @@ namespace dtCore
       dWorldID GetWorldID() const;
       
       ///Set the gravity vector
-      void SetGravity(sgVec3 gravity);
+      void SetGravity(osg::Vec3 gravity);
       void SetGravity(float x, float y, float z);
       
       ///Get the gravity vector
-      void GetGravity(sgVec3 vec);
+      void GetGravity(osg::Vec3 vec);
       void GetGravity(float* x, float* y, float* z);
       
       ///Performs collision detection and updates physics
@@ -115,8 +115,8 @@ namespace dtCore
       struct DT_EXPORT CollisionData
       {
          Physical* mBodies[2]; ///<The bodies colliding
-         sgVec3 mLocation; ///<The collision location
-         sgVec3 mNormal; ///<The collision normal
+         osg::Vec3 mLocation; ///<The collision location
+         osg::Vec3 mNormal; ///<The collision normal
          float mDepth; ///<The penetration depth
       };
       
@@ -192,7 +192,7 @@ namespace dtCore
       RefPtr<osg::Group> mSceneNode; ///<This will be our root scene node
       dSpaceID mSpaceID;
       dWorldID mWorldID;
-      sgVec3 mGravity;
+      osg::Vec3 mGravity;
       
       // The time (seconds) for the physics time step. 
       // (default = 0.0, indicating to use the System deltaFrameTime )

@@ -21,13 +21,14 @@
 #ifndef DELTA_SUNLIGHTSHADER
 #define DELTA_SUNLIGHTSHADER
 
-
+#include <osg/Vec2>
 #include <osg/Vec3>
 #include <osg/VertexProgram>
 #include <osg/FragmentProgram>
 #include "sg.h"
 
 #include "dtCore/export.h"
+#include "dtUtil/deprecationmgr.h"
 
 namespace dtCore
 {
@@ -43,8 +44,16 @@ namespace dtCore
       ~SunlightShader();
 
       ///Update the shader with new values
-      void Update(sgVec2 sunDir, sgVec3 eyeXYZ,
+      void Update(const osg::Vec2& sunDir, const osg::Vec3& eyeXYZ,
          float turbidity, float energy, float molecules);
+
+      //deprecated version
+      void Update(sgVec2 sunDir, sgVec3 eyeXYZ,
+         float turbidity, float energy, float molecules)
+      {
+         DEPRECATE("void Update(sgVec2 sunDir, sgVec3 eyeXYZ, float turbidity, float energy, float molecules)", "void Update(const osg::Vec2& sunDir, const osg::Vec3& eyeXYZ, float turbidity, float energy, float molecules)")
+            Update(osg::Vec2(sunDir[0], sunDir[1]), osg::Vec3(eyeXYZ[0], eyeXYZ[1], eyeXYZ[2]), turbidity, energy, molecules);
+      }
 
       osg::VertexProgram *mLightScatterinVP;
       osg::FragmentProgram *mTerrainFP;

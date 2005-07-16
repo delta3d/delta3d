@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib tinyxmld.lib osgSimd.lib ws2_32.lib sg_d.lib osgd.lib osgUtild.lib producerd.lib oded.lib ul_d.lib opengl32.lib osgDBd.lib winmm.lib osgTextd.lib OpenThreadsWin32d.lib librti13d.lib"
+				AdditionalDependencies="dtcored.lib dtutild.lib tinyxmld.lib osgSimd.lib ws2_32.lib sg_d.lib osgd.lib osgUtild.lib producerd.lib oded.lib ul_d.lib opengl32.lib osgDBd.lib winmm.lib osgTextd.lib OpenThreadsWin32d.lib librti13d.lib"
 				OutputFile="../../../bin/dthlad.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib tinyxml.lib osgSim.lib ws2_32.lib sg.lib osg.lib osgUtil.lib producer.lib ode.lib ul.lib opengl32.lib osgDB.lib winmm.lib osgText.lib OpenThreadsWin32.lib librti13.lib"
+				AdditionalDependencies="dtcore.lib dtutil.lib tinyxml.lib osgSim.lib ws2_32.lib sg.lib osg.lib osgUtil.lib producer.lib ode.lib ul.lib opengl32.lib osgDB.lib winmm.lib osgText.lib OpenThreadsWin32.lib librti13.lib"
 				OutputFile="../../../bin/dthla.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -157,12 +157,12 @@ void CloudPlane::Create( void )
    dynamic_cast<osg::Group*>(mNode.get())->addChild(mXform.get());
 
    //init the colors to something believable
-   sgVec4 sky = {1.f, 1.f, 1.f, 1.f};
-   sgVec4 fogColor = {1.f, 1.f, 1.f, 1.f};
+   osg::Vec4 sky (1.f, 1.f, 1.f, 1.f);
+   osg::Vec4 fogColor (1.f, 1.f, 1.f, 1.f);
    Repaint(sky, fogColor, 45.0, 45.0, 10000.0);
 }
 
-void CloudPlane::Repaint(sgVec4 sky_color, sgVec4 fog_color, 
+void CloudPlane::Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
 						 double sun_angle, double sunAzimuth,
 						 double vis)
 {

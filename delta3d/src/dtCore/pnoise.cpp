@@ -10,6 +10,8 @@
 // a 2d texture is created.
 // For pixel format it should be used GL_ALPHA (for a transparency map),
 // GL_LUMINANCE, GL_RGB or GL_RGBA
+
+///\todo Anderegg- make api to be consistent with delta and add 2d noise for efficiency
  
 #include "dtCore/pnoise.h"
 #include "time.h"

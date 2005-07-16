@@ -32,20 +32,24 @@ public:
             
       osg::Light* osgLight = mPositionalLight->GetLightSource()->getLight();
 
-      float x, y, z, h, p, r;
-      trans.Get( &x, &y, &z, &h, &p, &r );
+      float x, y, z, h, p, r, sx, sy, sz;
+      trans.Get( x, y, z, h, p, r, sx, sy, sz );
 
       osg::Vec4 position( x, y, z, 1.0f ); //force positional lighting with w of 1.0f
       osgLight->setPosition( position * osg::Matrix::inverse( absMatrix ) );
 
       //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
-      sgMat4 hRot, pRot, rRot;
+      osg::Matrix hRot, pRot, rRot;
 
-      sgMakeRotMat4( hRot, h, 0.0f, 0.0f );
+      /*sgMakeRotMat4( hRot, h, 0.0f, 0.0f );
       sgMakeRotMat4( pRot, 0.0f, p, 0.0f );
-      sgMakeRotMat4( rRot, 0.0f, 0.0f, r );
+      sgMakeRotMat4( rRot, 0.0f, 0.0f, r );*/
+      dtUtil::MatrixUtil::HprToMatrix(hRot, osg::Vec3(h,      0.0f,   0.0f));
+      dtUtil::MatrixUtil::HprToMatrix(pRot, osg::Vec3(0.0f,   p,      0.0f));
+      dtUtil::MatrixUtil::HprToMatrix(rRot, osg::Vec3(0.0f,   0.0f,   r));
 
-      osg::Matrix rotation = osg::Matrix((float*)hRot) * osg::Matrix((float*)pRot) * osg::Matrix((float*)rRot);
+
+      osg::Matrix rotation = hRot * pRot * rRot;
       osg::Vec3 xyz = rotation.preMult( osg::Vec3( 0.0f, 1.0f, 0.0f ) );
       osgLight->setDirection( xyz );
 

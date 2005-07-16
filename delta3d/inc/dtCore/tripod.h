@@ -24,7 +24,9 @@
 #include "dtCore/transformable.h"
 #include "dtCore/refptr.h"
 #include "dtCore/camera.h"
+#include "dtUtil/deprecationmgr.h"
 
+#include <osg/Vec3>
 #include "sg.h"
 
 namespace dtCore
@@ -65,17 +67,44 @@ namespace dtCore
       
       ///Set the Tripod's offset from the parent Transformable
       void SetOffset(float x, float y, float z, float h, float p, float r);
-      void SetOffset(sgCoord *coord) {sgCopyCoord(&mOffsetCoord, coord);}
+      
+      void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR){mPosition = newPos; mHPR = newHPR;}
+      //DEPRECATED
+      void SetOffset(sgCoord *coord)
+      {
+         DEPRECATE("void SetOffset(sgCoord *coord)", "void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR)")
+         SetOffset(osg::Vec3(coord->xyz[0], coord->xyz[1], coord->xyz[2]), osg::Vec3(coord->hpr[0], coord->hpr[1], coord->hpr[2]));
+      }
 
       ///Get the Tripod's currently used offset coordinates
-      void GetOffset(sgCoord *coord) {sgCopyCoord(coord, &mOffsetCoord);}
+      void GetOffset(osg::Vec3& pos_in, osg::Vec3& hpr_in) const{pos_in = mPosition; hpr_in = mHPR;}
+      //DEPRECATED
+      void GetOffset(sgCoord *coord) 
+      {
+         DEPRECATE("void GetOffset(sgCoord *coord)", "void GetOffset(osg::Vec3& pos_in, osg::Vec3& hpr_in) const")
+         sgSetCoord(coord, mPosition[0], mPosition[1], mPosition[2], mHPR[0], mHPR[1], mHPR[2]);
+      }
 
       ///Set the scaling factors for each degree of freedom (0.0 - 1.0)
       void SetScale(float x, float y, float z, float h, float p, float r);
-      void SetScale(sgVec3 xyz, sgVec3 hpr);
+      
+      void SetScale(const osg::Vec3& xyz, const osg::Vec3& hpr){mXYZScale = xyz; mHPRScale = hpr;}
+      //DEPRECATED
+      void SetScale(sgVec3 xyz, sgVec3 hpr)
+      {
+         DEPRECATE("void SetScale(sgVec3 xyz, sgVec3 hpr)", "void SetScale(const osg::Vec3& xyz, const osg::Vec3& hpr)")
+         SetScale(osg::Vec3(xyz[0], xyz[1], xyz[2]), osg::Vec3(hpr[0], hpr[1], hpr[2]));
+      }
 
       ///Get the currently used scaling factors
-      void GetScale(sgVec3 xyz, sgVec3 hpr);
+      void GetScale(osg::Vec3& xyz, osg::Vec3& hpr){xyz = mXYZScale; hpr = mHPRScale;}
+      //DEPRECATED
+      void GetScale(sgVec3 xyz, sgVec3 hpr)
+      {
+         DEPRECATE("void GetScale(sgVec3 xyz, sgVec3 hpr)", "void GetScale(osg::Vec3 xyz, osg::Vec3 hpr)")
+         xyz[0] = mXYZScale[0]; xyz[1] = mXYZScale[1]; xyz[2] = mXYZScale[2];
+         hpr[0] = mHPRScale[0]; hpr[1] = mHPRScale[1]; hpr[2] = mHPRScale[2];
+      }
 
       enum TetherMode
       {
@@ -99,10 +128,11 @@ namespace dtCore
 
       RefPtr<Camera> mCamera; ///<pointer to the Camera to control
       RefPtr<Transformable> mParent; ///<pointer to the parent Transformable
-      sgCoord mOffsetCoord; ///<The offset values
+      osg::Vec3 mPosition; ///<The position
+      osg::Vec3 mHPR;///<Heading, Pitch, and Roll
       TetherMode mTetherMode; ///<The tethering mode
-      sgVec3 mXYZScale; ///<The scale factors for x,y,z
-      sgVec3 mHPRScale; ///<The scale factors for h,p,r
+      osg::Vec3 mXYZScale; ///<The scale factors for x,y,z
+      osg::Vec3 mHPRScale; ///<The scale factors for h,p,r
       RefPtr<Transformable> mLookAtTarget; ///<the look-at target
    };
    
