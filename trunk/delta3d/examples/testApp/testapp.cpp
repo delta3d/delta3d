@@ -45,9 +45,9 @@ int main()
    
    //adjust the Camera position
    Transform camPos;
-   sgVec3 camXYZ={ 0.f, -50.f, 20.f };
-   sgVec3 lookAtXYZ = { 0.f, 0.f, 0.f };
-   sgVec3 upVec = { 0.f, 0.f, 1.f };
+   osg::Vec3 camXYZ( 0.f, -50.f, 20.f );
+   osg::Vec3 lookAtXYZ ( 0.f, 0.f, 0.f );
+   osg::Vec3 upVec ( 0.f, 0.f, 1.f );
    camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
    app->GetCamera()->SetTransform( &camPos );
 

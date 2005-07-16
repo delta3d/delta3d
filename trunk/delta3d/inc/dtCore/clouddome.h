@@ -30,6 +30,8 @@
 #include <dtCore/refptr.h>
 #include <dtUtil/deprecationmgr.h>
 
+#include <osg/Vec3>
+#include <osg/Vec4>
 #include <osg/Geometry>
 #include <osg/Program>
 #include <osg/Transform>
@@ -92,7 +94,7 @@ namespace dtCore
          mCloudColor = *mCC; 
       }
 
-		virtual void Repaint(sgVec4 sky_color, sgVec4 fog_color, 
+      virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
 			double sun_angle, double sunAzimuth,
 			double vis);
 

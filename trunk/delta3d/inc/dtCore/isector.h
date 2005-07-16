@@ -29,6 +29,9 @@
 
 #include "dtCore/transformable.h"
 #include "dtCore/deltadrawable.h"
+#include "dtUtil/deprecationmgr.h"
+
+#include <osg/Vec3>
 #include <osgUtil/IntersectVisitor>
 
 namespace dtCore
@@ -68,25 +71,57 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Isector)
 
       ///Default constructor
-      Isector(sgVec3 xyz=NULL, sgVec3 dir=NULL);
+      Isector(const osg::Vec3& xyz, const osg::Vec3& dir);
+      Isector(sgVec3 xyz=NULL, sgVec3 dir=NULL)
+      {
+         DEPRECATE("Isector(sgVec3 xyz=NULL, sgVec3 dir=NULL)", "Isector(const osg:Vec3& xyz, const osg::Vec3& dir)")
+         *this = Isector(osg::Vec3(xyz[0], xyz[1], xyz[2]), osg::Vec3(dir[0], dir[1], dir[2]));
+      }
       virtual ~Isector();
 
       ///Set the length of the isector
 	   void SetLength( const float distance);
       
       ///Get the intersected point
-	   void GetHitPoint( sgVec3 xyz, const int pointNum=0 );
+      void GetHitPoint( osg::Vec3& xyz, const int pointNum=0 ) const;
+      //DEPRECATED
+      void GetHitPoint( sgVec3 xyz, const int pointNum=0 )
+      {
+         DEPRECATE("void GetHitPoint( sgVec3 xyz, const int pointNum=0 )", "void GetHitPoint( osg::Vec3& xyz, const int pointNum=0 ) const")
+         osg::Vec3 tmp;
+         GetHitPoint(tmp, pointNum);
+         xyz[0] = tmp[0]; xyz[1] = tmp[1]; xyz[2] = tmp[2];
+      }
 
       ///Get the number of intersected items
-      int GetNumberOfHits(void);
+      int GetNumberOfHits(void) const;
 
       ///Set the direction vector
-	   void SetDirection( sgVec3 dir );
+      void SetDirection( const osg::Vec3& dir );
+      //DEPRECATED
+      void SetDirection( sgVec3 dir )
+      {
+         DEPRECATE("void SetDirection( sgVec3 dir )", "void SetDirection( const osg::Vec3& dir )")
+         SetDirection(osg::Vec3(dir[0], dir[1], dir[2]));
+      }
 
-      ///Set the starting position
-	   void SetStartPosition( sgVec3 xyz );
 
-      void SetEndPosition( sgVec3 endXYZ );
+      ///Set the starting/ending position
+      void SetStartPosition( const osg::Vec3& xyz );
+      void SetEndPosition( const osg::Vec3& endXYZ );
+
+      //DEPRECATED
+      void SetStartPosition( sgVec3 xyz )
+      {
+         DEPRECATE("void SetStartPosition( sgVec3 xyz )", "void SetStartPosition( const osg::Vec3& xyz )")
+         SetStartPosition(osg::Vec3(xyz[0], xyz[1], xyz[2]));
+      }
+      //DEPRECATED
+      void SetEndPosition( sgVec3 endXYZ )
+      {
+         DEPRECATE("void SetEndPosition( sgVec3 endXYZ )", "void SetEndPosition( const osg::Vec3& endXYZ )")
+         SetEndPosition(osg::Vec3(endXYZ[0], endXYZ[1], endXYZ[2]));
+      }
 
       ///Check for intersections
 	   bool Update(void);
@@ -100,9 +135,9 @@ namespace dtCore
 
    private:
 	   DeltaDrawable* mGeometry;
-	   sgVec3 mStartXYZ; ///<The starting xyz
-      sgVec3 mEndXYZ;
-      sgVec3 mDirVec;   ///<The direction vector
+      osg::Vec3 mStartXYZ; ///<The starting xyz
+      osg::Vec3 mEndXYZ;
+      osg::Vec3 mDirVec;   ///<The direction vector
       float mDistance;  ///<The maximum distance for the intersector
       osgUtil::IntersectVisitor::HitList mHitList; ///<The last list of hits
       bool mDirVecSet;

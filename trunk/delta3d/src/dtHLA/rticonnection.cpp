@@ -1,6 +1,7 @@
 // rticonnection.cpp: Implementation of the RTIConnection class.
 //
 //////////////////////////////////////////////////////////////////////
+#include "dtHLA/rticonnection.h"
 
 #include <math.h>
 #include <memory.h>
@@ -17,6 +18,9 @@
 #include "sg.h"
 #include "tinyxml.h"
 
+#include <osg/Vec3>
+#include <osg/Vec4>
+#include <osg/Matrix>
 #include <osg/Material>
 #include <osg/StateSet>
 
@@ -25,8 +29,8 @@
 #include "osgUtil/IntersectVisitor"
 
 #include "dtCore/notify.h"
-#include "dtHLA/rticonnection.h"
 #include "dtCore/system.h"
+#include "dtUtil/matrixutil.h"
 
 using namespace dtCore;
 using namespace dtHLA;
@@ -596,18 +600,22 @@ void RTIConnection::SetGeoOrigin(double latitude, double longitude, double eleva
       mLocationOffset + 2
    );
    
-   sgVec3 xVec = { 1, 0, 0 },
-          zVec = { 0, 0, 1 };
+   osg::Vec3 xVec ( 1, 0, 0 );
+   osg::Vec3 zVec( 0, 0, 1 );
    
-   sgMakeRotMat4(mRotationOffset, 90.0 - latitude, xVec);
+   //sgMakeRotMat4(mRotationOffset, 90.0 - latitude, xVec);
+   mRotationOffset.makeRotate(osg::DegreesToRadians(90.0f - latitude), xVec);
    
-   sgMat4 mat;
+   osg::Matrix mat;
    
-   sgMakeRotMat4(mat, longitude + 90.0, zVec);
+   //sgMakeRotMat4(mat, longitude + 90.0, zVec);
+   mat.makeRotate(osg::DegreesToRadians(longitude + 90.0f), zVec);
    
-   sgPostMultMat4(mRotationOffset, mat);
+   //sgPostMultMat4(mRotationOffset, mat);
+   mRotationOffset = mat * mRotationOffset;
    
-   sgInvertMat4(mRotationOffsetInverse, mRotationOffset);
+   //sgInvertMat4(mRotationOffsetInverse, mRotationOffset);
+   mRotationOffsetInverse.invert(mRotationOffset);
 }
 
 /**
@@ -647,9 +655,11 @@ void RTIConnection::GetOriginLocation(double* x, double* y, double* z) const
  */
 void RTIConnection::SetOriginRotation(float h, float p, float r)
 {
-   sgMakeRotMat4(mRotationOffset, h, p, r);
+   //sgMakeRotMat4(mRotationOffset, h, p, r);
+   dtUtil::MatrixUtil::HprToMatrix(mRotationOffset, osg::Vec3(h, p, r)); 
 
-   sgInvertMat4(mRotationOffsetInverse, mRotationOffset);
+   //sgInvertMat4(mRotationOffsetInverse, mRotationOffset);
+   mRotationOffsetInverse.invert(mRotationOffset);
 }
 
 /**
@@ -661,13 +671,9 @@ void RTIConnection::SetOriginRotation(float h, float p, float r)
  */
 void RTIConnection::GetOriginRotation(float* h, float* p, float* r) const
 {
-   sgCoord coord;
-
-   sgSetCoord(&coord, mRotationOffset);
-
-   *h = coord.hpr[0];
-   *p = coord.hpr[1];
-   *r = coord.hpr[2];
+   osg::Vec3 tmp;
+   dtUtil::MatrixUtil::MatrixToHpr(tmp, mRotationOffset);
+   *h = tmp[0]; *p = tmp[1]; *r = tmp[2];
 }
 
 /**
@@ -718,22 +724,23 @@ unsigned short RTIConnection::GetApplicationIdentifier() const
  * @param theta the theta angle
  * @param phi the phi angle
  */
-void RTIConnection::EulersToMatrix(sgMat4 dst, float psi, float theta, float phi)
+void RTIConnection::EulersToMatrix(osg::Matrix& dst, float psi, float theta, float phi)
 {
-   sgMakeRotMat4(
+   /*sgMakeRotMat4(
       dst, 
-      -psi * SG_RADIANS_TO_DEGREES - 90.0f, 
-      theta * SG_RADIANS_TO_DEGREES,
-      phi * SG_RADIANS_TO_DEGREES
-   );
+      -psi * osg::RadiansToDegrees(1.0) - 90.0f, 
+      theta * osg::RadiansToDegrees(1.0),
+      phi * osg::RadiansToDegrees(1.0)
+   );*/
+   dtUtil::MatrixUtil::HprToMatrix(dst, osg::Vec3(osg::RadiansToDegrees(-psi) - 90.0f, osg::RadiansToDegrees(theta), osg::RadiansToDegrees(phi)));
    
-   dst[0][1] = -dst[0][1];
-   dst[1][1] = -dst[1][1];
-   dst[2][1] = -dst[2][1];
+   dst(0,1) = -dst(0,1);
+   dst(1,1) = -dst(1,1);
+   dst(2,1) = -dst(2,1);
    
-   dst[0][2] = -dst[0][2];
-   dst[1][2] = -dst[1][2];
-   dst[2][2] = -dst[2][2];
+   dst(0,2) = -dst(0,2);
+   dst(1,2) = -dst(1,2);
+   dst(2,2) = -dst(2,2);
 }
 
 /**
@@ -745,9 +752,9 @@ void RTIConnection::EulersToMatrix(sgMat4 dst, float psi, float theta, float phi
  * @param theta the location in which to store the theta angle
  * @param phi the location in which to store the phi angle
  */
-void RTIConnection::MatrixToEulers(sgMat4 src, float* psi, float* theta, float* phi)
+void RTIConnection::MatrixToEulers(osg::Matrix& src, float* psi, float* theta, float* phi)
 {
-   sgMat4 mat;
+   /*sgMat4 mat;
    
    sgCopyMat4(mat, src);
    
@@ -757,15 +764,28 @@ void RTIConnection::MatrixToEulers(sgMat4 src, float* psi, float* theta, float* 
    
    mat[0][2] = -mat[0][2];
    mat[1][2] = -mat[1][2];
-   mat[2][2] = -mat[2][2];
+   mat[2][2] = -mat[2][2];*/
    
-   sgCoord coord;
+   //sgCoord coord;
 
-   sgSetCoord(&coord, mat);
+   //sgSetCoord(&coord, mat);
+   
+   osg::Vec3 coord;
+   osg::Matrix mat = src;
 
-   *psi = (-coord.hpr[0] - 90.0f) * SG_DEGREES_TO_RADIANS;
-   *theta = coord.hpr[1] * SG_DEGREES_TO_RADIANS;
-   *phi = coord.hpr[2] * SG_DEGREES_TO_RADIANS;
+   mat(0,1) = -mat(0,1);
+   mat(1,1) = -mat(1,1);
+   mat(2,1) = -mat(2,1);
+
+   mat(0,2) = -mat(0,2);
+   mat(1,2) = -mat(1,2);
+   mat(2,2) = -mat(2,2);
+
+   dtUtil::MatrixUtil::MatrixToHpr(coord, mat);
+
+   *psi = (-coord[0] - 90.0f) * osg::DegreesToRadians(1.0f);
+   *theta = coord[1] * osg::DegreesToRadians(1.0f);
+   *phi = coord[2] * osg::DegreesToRadians(1.0f);
 }
 
 /**
@@ -803,8 +823,8 @@ void RTIConnection::GeocentricToGeodetic(double x, double y, double z,
    *elevation = p/cos(*latitude) - 
                 a/sqrt(1.0-esqu*pow(sin(*latitude), 2.0));
         
-   *latitude *= SG_RADIANS_TO_DEGREES;
-   *longitude *= SG_RADIANS_TO_DEGREES;
+   *latitude *= osg::RadiansToDegrees(1.0);
+   *longitude *= osg::RadiansToDegrees(1.0);
 }
 
 /*
@@ -1232,8 +1252,8 @@ void RTIConnection::ConvertGeodeticToTransverseMercator (double Latitude,
 void RTIConnection::GeodeticToGeocentric(double latitude, double longitude, double elevation,
                                          double* x, double* y, double* z)
 {
-   double rlatitude = latitude * SG_DEGREES_TO_RADIANS,
-          rlongitude = longitude * SG_DEGREES_TO_RADIANS,
+   double rlatitude = latitude * osg::DegreesToRadians(1.0f),
+          rlongitude = longitude * osg::DegreesToRadians(1.0f),
           a = semiMajorAxis,
           f = 1.0/flatteningReciprocal,
           esqu = 2.0*f - f*f,
@@ -1267,7 +1287,8 @@ void RTIConnection::ClampToGround(Entity* entity)
    
       entity->GetTransform(&transform, Transformable::REL_CS);
    
-      sgVec3 xyz, groundNormal = {0, 0, 1};
+      osg::Vec3 xyz;
+      osg::Vec3 groundNormal(0, 0, 1);
       float HOT = 0.0f;
       
       transform.GetTranslation(xyz);
@@ -1310,28 +1331,32 @@ void RTIConnection::ClampToGround(Entity* entity)
       
       if(groundBased && mGroundClampMode == CLAMP_ELEVATION_AND_ROTATION && !destroyed)
       {
-         sgVec3 oldNormal = { 0, 0, 1 };
-         sgMat4 rotMat;
+         osg::Vec3 oldNormal ( 0, 0, 1 );
+         osg::Matrix rotMat;
          
          transform.GetRotation(rotMat);
          
-         sgXformVec3(oldNormal, rotMat);
+         //sgXformVec3(oldNormal, rotMat);
+         oldNormal = osg::Matrix::transform3x3(oldNormal, rotMat);
          
-         sgVec3 axis;
+         osg::Vec3 axis;
          
-         sgVectorProductVec3(axis, oldNormal, groundNormal);
+         //sgVectorProductVec3(axis, oldNormal, groundNormal);
+         axis = oldNormal ^ groundNormal;
          
-         float angle = sgASin(sgLengthVec3(axis));
+         float angle = osg::RadiansToDegrees(asinf(axis.length()));//sgASin(sgLengthVec3(axis));
          
          if(angle > 0.0001f)
          {
-            sgNormalizeVec3(axis);
+            axis.normalize();
             
-            sgMat4 deltaRot;
+            osg::Matrix deltaRot;
             
-            sgMakeRotMat4(deltaRot, angle, axis);
+            //sgMakeRotMat4(deltaRot, angle, axis);
+            deltaRot.makeRotate(angle, axis);
             
-            sgPostMultMat4(rotMat, deltaRot);
+            //sgPostMultMat4(rotMat, deltaRot);
+            rotMat = deltaRot * rotMat;
             
             transform.SetRotation(rotMat);
          }
@@ -1765,9 +1790,9 @@ void RTIConnection::OnMessage(MessageData *data)
 
       Transform transform;
    
-      sgVec3 vec;
+      osg::Vec3 vec;
 
-      sgMat4 mat;
+      osg::Matrix mat;
 
 
       char encodedEntityIdentifier[6],
@@ -1917,7 +1942,8 @@ void RTIConnection::OnMessage(MessageData *data)
             transform.GetTranslation(vec);
             transform.GetRotation(mat);
 
-            sgXformVec3(vec, mRotationOffset);
+            //sgXformVec3(vec, mRotationOffset);
+            vec = osg::Matrix::transform3x3(vec, mRotationOffset);
 
             worldLocation.SetX(vec[0] + mLocationOffset[0]);
             worldLocation.SetY(vec[1] + mLocationOffset[1]);
@@ -1931,12 +1957,13 @@ void RTIConnection::OnMessage(MessageData *data)
                24
             );
 
-            sgPostMultMat4(mat, mRotationOffset);
+            //sgPostMultMat4(mat, mRotationOffset);
+            mat = mRotationOffset * mat;
 
             float psi, theta, phi;
 
             MatrixToEulers(mat, &psi, &theta, &phi);
-
+            
             orientation.SetPsi(psi);
 
             orientation.SetTheta(theta);
@@ -2324,7 +2351,7 @@ void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *
 
    ghost->SetWorldLocation(wc);
 
-   sgVec3 position;
+   osg::Vec3 position;
 
    if(mGlobeModeEnabled)
    {
@@ -2340,15 +2367,16 @@ void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *
       position[0] = mEasting - mLocationOffset[0];
       position[1] = mNorthing - mLocationOffset[1];
       position[2] = mElevation - mLocationOffset[2];
-      sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
-
+      //sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
+      position = position * mRotationOffsetInverse;
    }
    else
    {
       position[0] = wc.GetX()- mLocationOffset[0];
       position[1] = wc.GetY() - mLocationOffset[1];
       position[2] = wc.GetZ() - mLocationOffset[2];
-      sgXformVec3(position, mRotationOffsetInverse);
+      //sgXformVec3(position, mRotationOffsetInverse);
+      position = position * mRotationOffsetInverse;
       //std::cout<<"X: " <<position[0]<<"Y: " <<position[1]<<"Z: " <<position[2]<<std::endl;  //debugging
    }
 
@@ -2599,7 +2627,7 @@ void RTIConnection::reflectAttributeValues(
 
             ghost->SetWorldLocation(worldCoordinate);
             
-            sgVec3 position;
+            osg::Vec3 position;
             
             if(mGlobeModeEnabled)
             {
@@ -2615,8 +2643,8 @@ void RTIConnection::reflectAttributeValues(
                position[0] = mEasting - mLocationOffset[0];
                position[1] = mNorthing - mLocationOffset[1];
                position[2] = mElevation - mLocationOffset[2];
-               sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
-            
+               //sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
+               position = position * mRotationOffsetInverse;            
 
             }
             else
@@ -2625,7 +2653,8 @@ void RTIConnection::reflectAttributeValues(
                position[1] = worldCoordinate.GetY() - mLocationOffset[1];
                position[2] = worldCoordinate.GetZ() - mLocationOffset[2];
 
-               sgXformVec3(position, mRotationOffsetInverse);
+               //sgXformVec3(position, mRotationOffsetInverse);
+               position = position * mRotationOffsetInverse;
             }
             
             transform.SetTranslation(position);
@@ -2645,7 +2674,7 @@ void RTIConnection::reflectAttributeValues(
 
             ghost->SetOrientation(eulerAngles);
             
-            sgMat4 rotMat;
+            osg::Matrix rotMat;
             
             EulersToMatrix(
                rotMat, 
@@ -2657,12 +2686,14 @@ void RTIConnection::reflectAttributeValues(
 
             if(!mGlobeModeEnabled)
             {
-               sgPostMultMat4(rotMat, mRotationOffsetInverse);
+               //sgPostMultMat4(rotMat, mRotationOffsetInverse);
+               rotMat = mRotationOffsetInverse * rotMat;
             }
 
             if(mUTMModeEnabled) //Added by Mark
             {
-               sgCopyMat4(rotMat, mRotationOffset);
+               //sgCopyMat4(rotMat, mRotationOffset);
+               rotMat = mRotationOffset;
             }
             
             transform.SetRotation(rotMat);
@@ -2785,7 +2816,7 @@ void RTIConnection::reflectAttributeValues(
       }
       else if(handle == mDamageStateAttributeHandle)
       {
-         sgVec3 position;
+         osg::Vec3 position;
          transform.GetTranslation(position);
          unsigned long length;
          char* buf = theAttributes.getValuePointer(i, length);
@@ -2915,7 +2946,7 @@ throw (
       unsigned short quantityFired;
       
       
-      sgVec3 position;
+      osg::Vec3 position;
       
       for(unsigned int i=0;i<theParameters.size();i++)
       {
@@ -2935,7 +2966,8 @@ throw (
                position[1] = detonationLocation.GetY() - mLocationOffset[1];
                position[2] = detonationLocation.GetZ() - mLocationOffset[2];
 
-               sgXformPnt3(position, mRotationOffsetInverse);
+               //sgXformPnt3(position, mRotationOffsetInverse);
+               dtUtil::MatrixUtil::TransformVec3(position, mRotationOffsetInverse);
 
                if(mEffectClampMode)
                   position[2] = mScene->GetHeightOfTerrain( &(position[0]), &(position[1])); 
@@ -3125,11 +3157,12 @@ void RTIConnection::EffectAdded(
          encodedFinalVelocity[12];
 
 
-      sgVec3 vec;
+      osg::Vec3 vec;
 
       detonation->GetPosition(vec);
 
-      sgXformVec3(vec, mRotationOffset);
+      //sgXformVec3(vec, mRotationOffset);
+      vec = vec * mRotationOffset;
 
       detonationLocation.SetX(vec[0] + mLocationOffset[0]);
       detonationLocation.SetY(vec[1] + mLocationOffset[1]);

@@ -114,7 +114,7 @@ public:
       {
          double delta = *(double*)data->userData;
 
-         sgVec3 ownPos, targetPos, vector;
+         osg::Vec3 ownPos, targetPos, vector;
 
          Transform transform;
 
@@ -126,12 +126,12 @@ public:
 
          transform.GetTranslation(targetPos);
 
-         sgSubVec3(vector, targetPos, ownPos);
+         vector = targetPos - ownPos;
 
          vector[2] = 0.0f;
 
-         float len = sgLengthVec3(vector),
-            dir = sgATan2(vector[0], -vector[1]),
+         float len = vector.length(),
+            dir = osg::RadiansToDegrees(atan2(vector[0], -vector[1])),
             rotation = mCharacter->GetRotation(),
             dR = dir - rotation;
 
@@ -206,14 +206,14 @@ public:
       GetScene()->UseSceneLight(false);
 
       iLight1 = new InfiniteLight(1);
-      iLight1->SetDirection( 0, -45,0 );
+      iLight1->SetAzimuthElevation( 0, -45 );
       iLight1->SetAmbient( 1, 1, 1, 0 );
       iLight1->SetDiffuse( 200, 200, 200, 1 );
       iLight1->SetSpecular( 255, 255, 255, 0 );
       iLight1->SetEnabled( true );
 
       iLight2 = new InfiniteLight(2);
-      iLight2->SetDirection( 160, -20, 0 );
+      iLight2->SetAzimuthElevation( 160, -20 );
       iLight2->SetDiffuse( 205, 190, 112, 1 );
       iLight2->SetSpecular( 255, 255, 255, 0 );
       iLight2->SetEnabled( true );
@@ -223,7 +223,7 @@ public:
 
       //position the camera
       Transform position;
-      position.Set( -0.75f, -10.f, 0.5f, 0.f, 0.f, 0.f);
+      position.Set( -0.75f, -10.f, 0.5f, 0.f, 0.f, 0.f, 1.0f, 1.0f, 1.0f);
       GetCamera()->SetTransform( &position );
 
       osg::Vec3 camLoc;
@@ -250,10 +250,10 @@ public:
       guy1 = new Character( "bob" );
       guy2 = new Character( "dave" );
       
-      position.Set(0, 0, 0, 0, 0, 0);
+      position.Set(0, 0, 0, 0, 0, 0, 1.0f, 1.0f, 1.0f);
       guy1->SetTransform(&position);
 
-      position.Set(-2, 0, 0, 0, 0, 0);
+      position.Set(-2, 0, 0, 0, 0, 0, 1.0f, 1.0f, 1.0f);
       guy2->SetTransform(&position);
 
       guy1->LoadFile( "opfor/opfor.rbody" );
@@ -300,3 +300,71 @@ int main()
 
    return 0;
 }
+
+
+/*#include "dtCore/dt.h"
+#include "dtABC/dtabc.h"
+#include "dtChar/dtchar.h"
+
+using namespace dtCore;
+using namespace dtABC;
+using namespace dtChar;
+
+int main()
+{
+   // set the current path to the data path
+   SetDataFilePathList(GetDeltaDataPathList());
+
+   // create our application and environment
+   Application *pApp = new Application("config.xml");
+
+   InfiniteTerrain *pTerrain = new InfiniteTerrain;
+
+   Environment *pEnv = new Environment;
+
+   // create a new character
+   Character *guy = new Character("Horatio");
+
+   // create a tripod to attach the camera to 
+   // the character
+   Tripod *pTripod = new Tripod(pApp->GetCamera(), guy);
+
+   KeyController *pKC = new KeyController(guy, pApp->GetKeyboard());
+
+   pTripod->SetLookAtTarget(guy);
+
+   // a basic flat plane will suffice
+   pTerrain->SetVerticalScale(0.1f);
+
+   pTerrain->Regenerate();
+
+   // add some features to the environment
+   pEnv->AddEffect(new SkyDome);
+
+   pEnv->AddEffect(new CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 1800));
+
+   pApp->GetScene()->AddDrawable(pEnv);
+
+   pApp->GetScene()->AddDrawable(pTerrain);
+
+   // load in the character model and add to the scene
+   if(!guy->LoadFile("marine\\marine.rbody"))
+   {
+      MessageBox(NULL, "Failed to load character model", "Error", MB_OK | MB_ICONSTOP);
+      return -1;
+   }
+
+   pApp->GetScene()->AddDrawable(guy);
+
+   // place the character at the origin
+   guy->SetTransform(new Transform(0, 0, 0, 0, 0, 0));
+
+
+   pApp->Config();
+
+   pApp->Run();
+
+   delete pApp;
+
+   return 0;	
+}*/

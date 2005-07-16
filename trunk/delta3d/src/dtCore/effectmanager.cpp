@@ -1,23 +1,23 @@
 // effectmanager.cpp: Implementation of the EffectManager class.
 //
 //////////////////////////////////////////////////////////////////////
+#include <osg/Matrix>
+#include <osg/MatrixTransform>
+#include <osg/Geode>
+#include <osg/Group>
+#include <osg/NodeVisitor>
 
-#include "osg/Vec3"
-#include "osg/MatrixTransform"
-#include "osg/Geode"
-#include "osg/Group"
-#include "osg/NodeVisitor"
+#include <osgDB/ReadFile>
 
-#include "osgDB/ReadFile"
-
-#include "osgParticle/Emitter"
-#include "osgParticle/Particle"
+#include <osgParticle/Emitter>
+#include <osgParticle/Particle>
 
 #include "dtCore/effectmanager.h"
 #include "dtCore/transformable.h"
 #include "dtCore/notify.h"
 #include "dtCore/system.h"
 #include "dtCore/scene.h"
+#include "dtUtil/matrixutil.h"
 
 using namespace dtCore;
 using namespace std;
@@ -66,7 +66,7 @@ class DetonationUpdateCallback : public osg::NodeCallback
       
       virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
       {
-         sgVec3 position;
+         osg::Vec3 position;
          
          mDetonation->GetPosition(position);
          
@@ -76,11 +76,12 @@ class DetonationUpdateCallback : public osg::NodeCallback
             
             mDetonation->GetParent()->GetTransform(&transform);
             
-            sgMat4 mat;
-            
+            /*sgMat4 mat;
             transform.Get(mat);
-            
-            sgXformPnt3(position, mat);
+            sgXformPnt3(position, mat);*/
+            osg::Matrix mat;
+            transform.Get(mat);
+            dtUtil::MatrixUtil::TransformVec3(position, mat);
          }
 
          PositionVisitor pv = PositionVisitor( osg::Vec3(position[0], position[1], position[2] ) );
@@ -176,7 +177,7 @@ Effect* EffectManager::GetEffect(int index) const
  * none
  * @return a pointer to the detonation object
  */
-Detonation* EffectManager::AddDetonation(sgVec3 position,
+Detonation* EffectManager::AddDetonation(const osg::Vec3& position,
                                          DetonationType type,
                                          double timeToLive,
                                          Transformable* parent)
@@ -530,16 +531,14 @@ bool Effect::IsDying()
  */
 Detonation::Detonation(osg::Node* node,
                        double timeToLive,
-                       sgVec3 position,
+                       const osg::Vec3& position,
                        DetonationType type,
                        Transformable* parent)
    : Effect(node, timeToLive),
      mType(type),
      mParent(parent)
 {
-   mPosition[0] = position[0];
-   mPosition[1] = position[1];
-   mPosition[2] = position[2];
+   mPosition = position;
 }
 
 /**
@@ -547,7 +546,7 @@ Detonation::Detonation(osg::Node* node,
  *
  * @param result a vector to hold the result
  */
-void Detonation::GetPosition(sgVec3 result)
+void Detonation::GetPosition(osg::Vec3& result)
 {
    result[0] = mPosition[0];
    result[1] = mPosition[1];

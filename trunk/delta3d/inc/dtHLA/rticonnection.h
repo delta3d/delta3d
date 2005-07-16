@@ -31,6 +31,7 @@
 #include <string>
 
 #include <osgSim/DOFTransform>
+#include <osg/Matrix>
 
 #include "Producer/Timer"
 
@@ -38,8 +39,6 @@
 
 #include "RTI.hh"
 #include "NullFederateAmbassador.hh"
-
-#include "sg.h"
 
 #include "dtCore/base.h"
 #include "dtHLA/dis_types.h"
@@ -634,7 +633,7 @@ namespace dtHLA
           * @param theta the theta angle
           * @param phi the phi angle
           */
-         static void EulersToMatrix(sgMat4 dst, float psi, float theta, float phi);
+         static void EulersToMatrix(osg::Matrix& dst, float psi, float theta, float phi);
 
          /**
           * Returns the DIS/RPR-FOM Euler angles corresponding to the given rotation
@@ -645,7 +644,7 @@ namespace dtHLA
           * @param theta the location in which to store the theta angle
           * @param phi the location in which to store the phi angle
           */
-         static void MatrixToEulers(sgMat4 src, float* psi, float* theta, float* phi);
+         static void MatrixToEulers(osg::Matrix& src, float* psi, float* theta, float* phi);
 
          /**
           * Converts a set of geocentric coordinates to the equivalent geodetic
@@ -1013,12 +1012,12 @@ namespace dtHLA
          /**
           * The rotation offset matrix.
           */
-         sgMat4 mRotationOffset;
+         osg::Matrix mRotationOffset;
 
          /**
           * The rotation offset matrix inverse.
           */
-         sgMat4 mRotationOffsetInverse;
+         osg::Matrix mRotationOffsetInverse;
 
          /**
           * The IP address of the local machine.

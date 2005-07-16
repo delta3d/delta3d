@@ -16,7 +16,7 @@ SkyDome::SkyDome(std::string name)
    RegisterInstance(this);
 
    mNode = new osg::Group();
-   sgSetVec3(mBaseColor, 0.5f, 0.5f, 0.2f);
+   mBaseColor.set(0.5f, 0.5f, 0.2f);
    Config();
 }
 
@@ -182,13 +182,13 @@ osg::Node* dtCore::SkyDome::MakeDome(void)
 }
 
 
-void dtCore::SkyDome::SetBaseColor(sgVec3 color)
+void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
 {
    osg::Geometry *geom = mGeode->getDrawable(0)->asGeometry();
    osg::Array *array = geom->getColorArray();
    if (array && array->getType() == osg::Array::Vec4ArrayType)
    {
-      sgCopyVec3(mBaseColor, color );
+      mBaseColor.set(color);
 
       osg::Vec4Array *color = static_cast<osg::Vec4Array*>(array);
       for (int i=0; i<19; i++)
@@ -203,13 +203,13 @@ void dtCore::SkyDome::SetBaseColor(sgVec3 color)
  *  90 degrees = high noon
  *  - degrees = below horizon
  */
-void dtCore::SkyDome::Repaint(sgVec4 sky_color, sgVec4 fog_color, 
+void dtCore::SkyDome::Repaint(const osg::Vec3& sky_color, const osg::Vec3& fog_color, 
                            double sun_angle, double sunAzimuth,
                            double vis)
 {
     double diff;
-    sgVec3 outer_param, outer_amt, outer_diff;
-    sgVec3 middle_param, middle_amt, middle_diff;
+    osg::Vec3 outer_param, outer_amt, outer_diff;
+    osg::Vec3 middle_param, middle_amt, middle_diff;
     int i, j;
 
     //rotate the dome to line up with the sun's azimuth.
@@ -219,41 +219,41 @@ void dtCore::SkyDome::Repaint(sgVec4 sky_color, sgVec4 fog_color,
     if ((sun_angle > -10.0)  && (sun_angle < 10.0) )
     {
        // 0.0 - 0.4
-       sgSetVec3( outer_param,
+       outer_param.set(
           (10.0 - fabs(sun_angle)) / 20.0,
           (10.0 - fabs(sun_angle)) / 40.0,
           -(10.0 - fabs(sun_angle)) / 30.0 );
 
-       sgSetVec3( middle_param,
+       middle_param.set(
           (10.0 - fabs(sun_angle)) / 40.0,
           (10.0 - fabs(sun_angle)) / 80.0,
           0.0 );
 
-       sgScaleVec3( outer_diff, outer_param, 1.0 / 9.0 );
+       outer_diff = outer_param / 9.0;
 
-       sgScaleVec3( middle_diff, middle_param, 1.0 / 9.0 );
+       middle_diff = middle_param / 9.0;
     } 
     else 
     {
-       sgSetVec3( outer_param, 0.0, 0.0, 0.0 );
-       sgSetVec3( middle_param, 0.0, 0.0, 0.0 );
+       outer_param.set( 0.0, 0.0, 0.0 );
+       middle_param.set( 0.0, 0.0, 0.0 );
 
-       sgSetVec3( outer_diff, 0.0, 0.0, 0.0 );
-       sgSetVec3( middle_diff, 0.0, 0.0, 0.0 );
+       outer_diff.set( 0.0, 0.0, 0.0 );
+       middle_diff.set( 0.0, 0.0, 0.0 );
     }
 
-    sgCopyVec3( outer_amt, outer_param );
-    sgCopyVec3( middle_amt, middle_param );
+    outer_amt.set( outer_param );
+    middle_amt.set( middle_param );
 
     //
     // First, recaclulate the basic colors
     //
 
-    sgVec4 center_color;
-    sgVec4 upper_color[19];
-    sgVec4 middle_color[19];
-    sgVec4 lower_color[19];
-    sgVec4 bottom_color[19];
+    osg::Vec4 center_color;
+    osg::Vec4 upper_color[19];
+    osg::Vec4 middle_color[19];
+    osg::Vec4 lower_color[19];
+    osg::Vec4 bottom_color[19];
 
     double vis_factor, cvf = vis;
     if (cvf > 20000.f)
@@ -309,8 +309,8 @@ void dtCore::SkyDome::Repaint(sgVec4 sky_color, sgVec4 fog_color,
        }
     }
 
-    sgSetVec3( outer_amt, 0.0, 0.0, 0.0 );
-    sgSetVec3( middle_amt, 0.0, 0.0, 0.0 );
+    outer_amt.set( 0.0, 0.0, 0.0 );
+    middle_amt.set( 0.0, 0.0, 0.0 );
 
     for ( i = 9; i < 19; i++ ) 
     {
@@ -343,7 +343,7 @@ void dtCore::SkyDome::Repaint(sgVec4 sky_color, sgVec4 fog_color,
 
     for ( i = 0; i < 19; i++ ) 
     {
-       sgCopyVec4( bottom_color[i], fog_color );
+       bottom_color[i].set(fog_color[0], fog_color[1], fog_color[2], fog_color[3]);
     }
 
 //    for (i=0; i<19; i++)

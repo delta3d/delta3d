@@ -28,9 +28,13 @@
 #include "dtCore/deltadrawable.h"
 #include "dtCore/mouse.h"
 #include "dtCore/keyboard.h"
+#include "dtUtil/deprecationmgr.h"
 
+#include <osg/Vec2>
+#include <osg/Vec4>
 #include <osg/Drawable>
 #include <osg/Group>
+
 
 #include "UI/CUI_UI.h"
 #include "UI/CUI_ListItem.h"
@@ -130,20 +134,34 @@ namespace dtCore
       void CreateShader(std::string name);
 
       ///Create a Shader that uses a solid color
-      void CreateShader(std::string name, sgVec4 color);
+      void CreateShader(std::string name, const osg::Vec4& color);
+      //Depreciated version
+      void CreateShader(std::string name, sgVec4 color)
+      {
+         DEPRECATE("void CreateShader(std::string name, sgVec4 color)", "void CreateShader(std::string name, osg::Vec4 color)")
+         CreateShader(name, osg::Vec4(color[0], color[1], color[2], color[3]));
+      }
 
       ///Create a Shader that uses a texture
       void CreateShader(std::string name, std::string textureFilename);
 
       ///Create a Shader that uses a color and a texture
-      void CreateShader(std::string name, sgVec4 color, std::string textureFilename);
+      void CreateShader(std::string name, osg::Vec4& color, std::string textureFilename);
+      //depreciated version
+      void CreateShader(std::string name, sgVec4 color, std::string textureFilename)
+      {
+         DEPRECATE("void CreateShader(std::string name, sgVec4 color, std::string textureFilename)", "void CreateShader(std::string name, osg::Vec4 color, std::string textureFilename)")
+         CreateShader(name, osg::Vec4(color[0], color[1], color[2], color[3]), textureFilename);
+      }
 
       ///Get a pointer of an already created Shader
       IUI_Shader *GetShader(std::string name) {return mUI->GetShader(name.c_str());}
          
       ///Create a Border using the supplied coordinates.
+      void CreateBorder(std::string name, osg::Vec2 *coords, const int numCoords);
+      //DEPRECATED
       void CreateBorder(std::string name, sgVec2 *coords, const int numCoords);
-
+      
       ///Get a pointer of an already created Border
       IUI_Border *GetBorder(std::string name) {return mUI->GetBorder(name.c_str()); }
 

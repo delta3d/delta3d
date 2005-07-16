@@ -29,9 +29,8 @@
 #include <map>
 #include <set>
 
-#include <sg.h>
-
 #include <tinyxml.h>
+#include "dtCore/timer.h"
 
 #include "dtCore/base.h"
 
@@ -147,7 +146,8 @@ namespace dtCore
          /**
           * The clock object.
           */
-         ulClock mClock;
+         Timer mClock;
+         Timer_t mDeltaTime, mStartTime;
 
          /**
           * Maps time codes to state frames.

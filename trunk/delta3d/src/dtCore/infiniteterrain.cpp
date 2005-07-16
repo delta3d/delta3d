@@ -5,6 +5,7 @@
 #include "dtCore/infiniteterrain.h"
 #include "dtCore/notify.h"
 #include "dtCore/scene.h"
+#include "dtUtil/matrixutil.h"
 
 #include "osg/CullFace"
 #include "osg/Drawable"
@@ -16,6 +17,10 @@
 #include "osg/PrimitiveSet"
 
 #include "osgDB/ReadFile"
+
+#include <osg/Vec3>
+#include <osg/Vec4>
+#include <osg/Plane>
 
 using namespace dtCore;
 using namespace std;
@@ -415,18 +420,18 @@ float InfiniteTerrain::GetHeight(float x, float y, bool smooth)
  * @param smooth if true, use height of underlying noise function
  * instead of triangle mesh height
  */
-void InfiniteTerrain::GetNormal(float x, float y, sgVec3 normal, bool smooth)
+void InfiniteTerrain::GetNormal(float x, float y, osg::Vec3& normal, bool smooth)
 {
    if(smooth)
    {
       float z = GetHeight(x, y, true);
    
-      sgVec3 v1 = { 0.1f, 0.0f, GetHeight(x + 0.1f, y, true) - z },
-             v2 = { 0.0f, 0.1f, GetHeight(x, y + 0.1f, true) - z };
+      osg::Vec3 v1(0.1f, 0.0f, GetHeight(x + 0.1f, y, true) - z);
+      osg::Vec3 v2(0.0f, 0.1f, GetHeight(x, y + 0.1f, true) - z );
                    
-      sgVectorProductVec3(normal, v1, v2);
+      normal = v1 ^ v2;
             
-      sgNormalizeVec3(normal);
+      normal.normalize();
    }
    else
    {
@@ -445,12 +450,12 @@ void InfiniteTerrain::GetNormal(float x, float y, sgVec3 normal, bool smooth)
                p01 = GetHeight(fx*scale, cy*scale, true),
                p11 = GetHeight(cx*scale, cy*scale, true);
                
-         sgVec3 v1 = { 0.0f, -scale, p00 - p01 },
-                v2 = { scale, 0.0f, p11 - p01 };
+         osg::Vec3 v1(0.0f, -scale, p00 - p01);
+         osg::Vec3 v2(scale, 0.0f, p11 - p01);
          
-         sgVectorProductVec3(normal, v1, v2);
+         normal = v1 ^ v2;
             
-         sgNormalizeVec3(normal);
+         normal.normalize();
       }
       else
       {
@@ -458,12 +463,12 @@ void InfiniteTerrain::GetNormal(float x, float y, sgVec3 normal, bool smooth)
                p10 = GetHeight(cx*scale, fy*scale, true),
                p11 = GetHeight(cx*scale, cy*scale, true);
                
-         sgVec3 v1 = { 0.0f, scale, p11 - p10 },
-                v2 = { -scale, 0.0f, p00 - p10 };
+         osg::Vec3 v1(0.0f, scale, p11 - p10);
+         osg::Vec3 v2(-scale, 0.0f, p00 - p10 );
          
-         sgVectorProductVec3(normal, v1, v2);
+         normal = v1 ^ v2;
             
-         sgNormalizeVec3(normal);
+         normal.normalize();
       }      
    }
 }
@@ -496,7 +501,7 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    int width = mSegmentDivisions + 1,
        height = mSegmentDivisions + 1;
    
-   sgVec2 minimum = { x * mSegmentSize, y * mSegmentSize };
+   osg::Vec2 minimum(x * mSegmentSize, y * mSegmentSize);
           
    //float halfStep = 0.5f * (mSegmentSize / mSegmentDivisions);
    
@@ -523,7 +528,7 @@ void InfiniteTerrain::BuildSegment(int x, int y)
             GetHeight(x, y, true)
          );
          
-         sgVec3 normal;
+         osg::Vec3 normal;
          
          GetNormal(x, y, normal, true);
          
@@ -604,12 +609,12 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
    const dReal* position = dGeomGetPosition(o2);
    const dReal* rotation = dGeomGetRotation(o2);
    
-   sgMat4 mat = {
-      { rotation[0], rotation[4], rotation[8], 0.0f },
-      { rotation[1], rotation[5], rotation[9], 0.0f },
-      { rotation[2], rotation[6], rotation[10], 0.0f },
-      { position[0], position[1], position[2], 1.0f }
-   };
+   osg::Matrix mat(
+      rotation[0], rotation[4], rotation[8], 0.0f,
+      rotation[1], rotation[5], rotation[9], 0.0f,
+      rotation[2], rotation[6], rotation[10], 0.0f,
+      position[0], position[1], position[2], 1.0f
+   );
    
    if(geomClass == dBoxClass)
    {
@@ -621,24 +626,25 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
       lengths[1] *= 0.5f;
       lengths[2] *= 0.5f;
       
-      sgVec3 corners[8] =
+      osg::Vec3 corners[8] =
       {
-         {-lengths[0], -lengths[1], -lengths[2]},
-         {-lengths[0], -lengths[1], +lengths[2]},
-         {-lengths[0], +lengths[1], -lengths[2]},
-         {-lengths[0], +lengths[1], +lengths[2]},
-         {+lengths[0], -lengths[1], -lengths[2]},
-         {+lengths[0], -lengths[1], +lengths[2]},
-         {+lengths[0], +lengths[1], -lengths[2]},
-         {+lengths[0], +lengths[1], +lengths[2]}
+         osg::Vec3(-lengths[0], -lengths[1], -lengths[2]),
+         osg::Vec3(-lengths[0], -lengths[1], +lengths[2]),
+         osg::Vec3(-lengths[0], +lengths[1], -lengths[2]),
+         osg::Vec3(-lengths[0], +lengths[1], +lengths[2]),
+         osg::Vec3(+lengths[0], -lengths[1], -lengths[2]),
+         osg::Vec3(+lengths[0], -lengths[1], +lengths[2]),
+         osg::Vec3(+lengths[0], +lengths[1], -lengths[2]),
+         osg::Vec3(+lengths[0], +lengths[1], +lengths[2])
       };
       
       for(int i=0;i<8 && i<maxContacts;i++)
       {
-         sgXformPnt3(corners[i], mat);
-         
-         sgVec3 point =
-         {
+         //sgXformPnt3(corners[i], mat);         
+         dtUtil::MatrixUtil::TransformVec3(corners[i], mat);
+
+         osg::Vec3 point 
+         (
             corners[i][0], 
             corners[i][1], 
             it->GetHeight(
@@ -646,9 +652,9 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
                corners[i][1], 
                it->mSmoothCollisionsEnabled
             )
-         };
+         );
       
-         sgVec3 normal;
+         osg::Vec3 normal;
       
          it->GetNormal(
             corners[i][0], 
@@ -657,11 +663,10 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
             true
          );
       
-         sgVec4 plane;
+         osg::Plane plane;
+         plane.set(normal, point);
       
-         sgMakePlane(plane, normal, point);
-      
-         float dist = sgDistToPlaneVec3(plane, corners[i]);
+         float dist = plane.distance(corners[i]);
       
          if(dist <= 0.0f)
          {
@@ -688,12 +693,13 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
    {
       dReal radius = dGeomSphereGetRadius(o2);
       
-      sgVec3 center = { 0.0f, 0.0f, 0.0f };
+      osg::Vec3 center(0.0f, 0.0f, 0.0f);
       
-      sgXformPnt3(center, mat);
-      
-      sgVec3 point =
-      {
+      //sgXformPnt3(center, mat);
+      dtUtil::MatrixUtil::TransformVec3(center, mat);
+
+      osg::Vec3 point
+      (
          center[0], 
          center[1], 
          it->GetHeight(
@@ -701,9 +707,9 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
             center[1], 
             it->mSmoothCollisionsEnabled
          )
-      };
+      );
       
-      sgVec3 normal;
+      osg::Vec3 normal;
       
       it->GetNormal(
          center[0], 
@@ -712,11 +718,10 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
          true
       );
       
-      sgVec4 plane;
+      osg::Plane plane;
+      plane.set(normal, point);
       
-      sgMakePlane(plane, normal, point);
-      
-      float dist = sgDistToPlaneVec3(plane, center);
+      float dist = plane.distance(center);
       
       if(dist <= radius && maxContacts >= 1)
       {

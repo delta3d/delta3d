@@ -23,12 +23,17 @@
 
 #include "dtCore/deltadrawable.h"
 #include "dtCore/enveffect.h"
-#include "osg/Group"
-#include "osg/Fog"
 #include "dtCore/sunlightshader.h"
 #include "dtCore/skydomeshader.h"
 #include "dtCore/skydome.h"
 #include "dtCore/scene.h"
+#include "dtUtil/deprecationmgr.h"
+
+
+#include <osg/Vec2>
+#include <osg/Vec3>
+#include <osg/Group>
+#include <osg/Fog>
 
 namespace dtCore
 {
@@ -76,23 +81,76 @@ namespace dtCore
       int GetNumEffects() { return mEffectList.size(); }
 
       ///Set the base color of the sky
-      void SetSkyColor( sgVec3 color );
-      void GetSkyColor( sgVec3 color ) const { sgCopyVec3( color, mSkyColor ); }
+      void SetSkyColor( const osg::Vec3& color );
+      void GetSkyColor( osg::Vec3& color ) const { color = mSkyColor; }
+      
+      //DEPRECIATED
+      void SetSkyColor( sgVec3 color )
+      {
+         DEPRECATE("void SetSkyColor( sgVec3 color )", "void SetSkyColor( const osg::Vec3& color )")
+         SetSkyColor(osg::Vec3(color[0], color[1], color[2]));
+      }
+      void GetSkyColor( sgVec3 color ) const 
+      { 
+         DEPRECATE("void GetSkyColor( sgVec3 color ) const", "void GetSkyColor( osg::Vec3& color ) const") 
+         osg::Vec3 tmp;
+         GetSkyColor(tmp);
+         color[0] = tmp[0]; color[1] = tmp[1]; color[2] = tmp[2];
+      }
       
       ///Set the base color of the fog
-      void SetFogColor( sgVec3 color );
-      void GetFogColor( sgVec3 color ) const { sgCopyVec3( color, mFogColor ); }
+      void SetFogColor( const osg::Vec3& color );
+      void GetFogColor( osg::Vec3& color ) const { color = mFogColor; }
+      
+      //DEPRECATED
+      void SetFogColor( sgVec3 color )
+      {
+         DEPRECATE("void SetFogColor( sgVec3 color )", "void SetFogColor( const osg::Vec3& color )")
+         SetFogColor(osg::Vec3(color[0], color[1], color[2]));
+      }
+      //DEPRECATED
+      void GetFogColor( sgVec3 color ) const 
+      { 
+         DEPRECATE("void GetFogColor( sgVec3 color ) const", "void GetFogColor( osg::Vec3& color ) const")
+         osg::Vec3 tmp;
+         GetFogColor(tmp);
+         color[0] = tmp[0]; color[1] = tmp[1]; color[2] = tmp[2];
+      }
 
 	   ///Get the modified color of the fog
-	   void GetModFogColor( sgVec3 color ) const { sgCopyVec3( color, mModFogColor ); }
+      void GetModFogColor( osg::Vec3& color ) const { color = mModFogColor; }
+      //DEPRECATED
+      void GetModFogColor( sgVec3 color ) const 
+      {
+         DEPRECATE("void GetModFogColor( sgVec3 color )", "void GetModFogColor( osg::Vec3& color )")
+         osg::Vec3 tmp;
+         GetModFogColor(tmp);
+         color[0] = tmp[0]; color[1] = tmp[1]; color[2] = tmp[2];
+      }
 
       ///Set the fog mode
       void SetFogMode( FogMode mode );
       FogMode GetFogMode() const { return mFogMode; }
 
       ///Supply the advanced fog control values
-      void SetAdvFogCtrl( sgVec3 src ) { sgCopyVec3( mAdvFogCtrl, src ); }
-      void GetAdvFogCtrl( sgVec3 dst ) { sgCopyVec3( dst, mAdvFogCtrl ); }
+      void SetAdvFogCtrl( const osg::Vec3& src ) { mAdvFogCtrl = src; }
+      void GetAdvFogCtrl( osg::Vec3& dst ) const{ dst = mAdvFogCtrl; }
+
+      //DEPRECATED
+      void SetAdvFogCtrl( sgVec3 src ) 
+      {
+        DEPRECATE("void SetAdvFogCtrl( sgVec3 src )", "void SetAdvFogCtrl( const osg::Vec3& src )")
+        SetAdvFogCtrl(osg::Vec3(src[0], src[1], src[2]) );
+
+      }
+      //DEPRECATED
+      void GetAdvFogCtrl( sgVec3 dst )
+      {
+         DEPRECATE("void GetAdvFogCtrl( sgVec3 dst )", "void GetAdvFogCtrl( osg::Vec3 dst ) const")
+         osg::Vec3 tmp;
+         GetAdvFogCtrl(tmp);
+         dst[0] = tmp[0]; dst[1] = tmp[1]; dst[2] = tmp[2];
+      }
 
       ///Set the fog near value (only used for FogMode::LINEAR
       void SetFogNear( float val );
@@ -107,7 +165,15 @@ namespace dtCore
       float GetVisibility() const {return mVisibility;}
 
       ///Get the current color of the sun
-      void GetSunColor( sgVec3 color ) {sgCopyVec3(color, mSunColor);}
+      void GetSunColor( osg::Vec3& color ) {color = mSunColor;}
+      //DEPRECATED
+      void GetSunColor( sgVec3 color )
+      {
+         DEPRECATE("void GetSunColor( sgVec3 color )", "void GetSunColor( osg::Vec3& color )")
+         osg::Vec3 tmp;
+         GetSunColor(tmp);
+         color[0] = tmp[0]; color[1] = tmp[1]; color[2] = tmp[2];
+      }
 
       ///Get the sun's azimuth and elevation (degrees)
       void GetSunAzEl( float *az, float *el ) {*az=mSunAzimuth; *el=mSunAltitude;}
@@ -122,8 +188,23 @@ namespace dtCore
       void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc );
 
       ///Set the ephemeris reference lat/long
-      void SetRefLatLong( sgVec2 latLong );
-      void GetRefLatLong( sgVec2 latLong ) { sgCopyVec2( latLong, mRefLatLong );}
+      void SetRefLatLong( const osg::Vec2& latLong );
+      void GetRefLatLong( osg::Vec2& latLong )const{latLong = mRefLatLong;}
+      
+      //DEPRECATED
+      void SetRefLatLong( sgVec2 latLong )
+      {
+         DEPRECATE("void SetRefLatLong( sgVec2 latLong )", "void SetRefLatLong( const osg::Vec2& latLong )")
+         SetRefLatLong(osg::Vec2(latLong[0], latLong[1]));
+      }
+      //DEPRECATED
+      void GetRefLatLong( sgVec2 latLong ) 
+      {
+         DEPRECATE("void GetRefLatLong( sgVec2 latLong ) ", "void SetRefLatLong( sgVec2 latLong )")
+         osg::Vec2 tmp;
+         GetRefLatLong(tmp);
+         latLong[0] = tmp[0]; latLong[1] = tmp[1];
+      }
 
    private:
       class InterpTable
@@ -171,11 +252,11 @@ namespace dtCore
 
       RefPtr<Light> mSkyLight; ///< The sky light
       
-      sgVec3 mSkyColor; ///< The user-set base sky color
-      sgVec3 mModSkyColor; ///<The time-based modified color
-      sgVec3 mFogColor; ///<the user-set base fog color
-      sgVec3 mAdvFogCtrl; ///<values for the advanced fog (Turbidity, Energy, Visibility)
-      sgVec3 mModFogColor; ///<time-based fog modified color
+      osg::Vec3 mSkyColor; ///< The user-set base sky color
+      osg::Vec3 mModSkyColor; ///<The time-based modified color
+      osg::Vec3 mFogColor; ///<the user-set base fog color
+      osg::Vec3 mAdvFogCtrl; ///<values for the advanced fog (Turbidity, Energy, Visibility)
+      osg::Vec3 mModFogColor; ///<time-based fog modified color
       RefPtr<osg::Fog> mFog; ///< The fog adjuster
       float mVisibility; ///<The user-set visibility distance (m)
       bool mFogEnabled; ///< Is the fog enabled?
@@ -184,8 +265,8 @@ namespace dtCore
       
       float mSunAltitude; ///< the current sun altitude (deg, 0=horizon)
       float mSunAzimuth; ///<the current sun azimuth (deg, 0=north)
-      sgVec3 mSunColor; ///<the current color of the sun
-      sgVec2 mRefLatLong;  ///<the ephemeris reference lat/long (deg)
+      osg::Vec3 mSunColor; ///<the current color of the sun
+      osg::Vec2 mRefLatLong;  ///<the ephemeris reference lat/long (deg)
       time_t mCurrTime;   ///< The current time/day of the sim
 
       double mLastUpdate;

@@ -150,26 +150,26 @@ SunlightShader::~SunlightShader()
   *@param molecules: The number of molecules per unit volume (0 = fully opaque,
   *                  2.545e25 looks about right)
   */
-void SunlightShader::Update(sgVec2 sunDir,
-                           sgVec3 eyeXYZ, float turbidity, float energy,
+void SunlightShader::Update(const osg::Vec2& sunDir,
+                            const osg::Vec3& eyeXYZ, float turbidity, float energy,
                            float molecules)
 {
-   sgVec3 sunVec;
+   osg::Vec3 sunVec;
 
-   float cos_alt = cos(sunDir[1]*SG_DEGREES_TO_RADIANS);
-   sunVec[0] = (sin(sunDir[0]*SG_DEGREES_TO_RADIANS) * cos_alt);
-   sunVec[1] = (cos(sunDir[0]*SG_DEGREES_TO_RADIANS) * cos_alt);
-   sunVec[2] = sin(sunDir[1]*SG_DEGREES_TO_RADIANS);
+   float cos_alt = cos(osg::DegreesToRadians(sunDir[1]));
+   sunVec[0] = (sin(osg::DegreesToRadians(sunDir[0])) * cos_alt);
+   sunVec[1] = (cos(osg::DegreesToRadians(sunDir[0])) * cos_alt);
+   sunVec[2] = sin(osg::DegreesToRadians(sunDir[1]));
 
    mLightScatterinVP->setProgramLocalParameter(0, osg::Vec4(eyeXYZ[0], eyeXYZ[1], eyeXYZ[2], 0) );
    mLightScatterinVP->setProgramLocalParameter(1, osg::Vec4( -sunVec[0], -sunVec[1], -sunVec[2], 0));
 
-   float tempMie = 0.434 * ConcentrationFactor(turbidity) * SG_PI * (2 * SG_PI) * (2 * SG_PI) * 0.5;
+   float tempMie = 0.434 * ConcentrationFactor(turbidity) * osg::PI * (2 * osg::PI) * (2 * osg::PI) * 0.5;
    betaMie = osg::Vec3(lambda2[0] * 0.685,lambda2[1] * 0.679,lambda2[2] * 0.67) * tempMie;
 
    //Rayleigh scattering
-   float tempRay = SG_PI * SG_PI * (n * n - 1.0) * (n * n - 1.0) * (6.0 + 3.0 * pn) / (6.0 - 7.0 * pn) / molecules;
-   betaRay = lambda4 * 8.0 * tempRay * SG_PI / 3.0;
+   float tempRay = osg::PI * osg::PI * (n * n - 1.0) * (n * n - 1.0) * (6.0 + 3.0 * pn) / (6.0 - 7.0 * pn) / molecules;
+   betaRay = lambda4 * 8.0 * tempRay * osg::PI / 3.0;
 
    mLightScatterinVP->setProgramLocalParameter(2, osg::Vec4(betaRay,0) );
    mLightScatterinVP->setProgramLocalParameter(3, osg::Vec4(betaMie, 0));

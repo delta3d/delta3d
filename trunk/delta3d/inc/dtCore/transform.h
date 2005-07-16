@@ -44,6 +44,7 @@ namespace dtCore
       virtual void Set( float tx, float ty, float tz, 
                         float h, float p, float r, 
                         float sx, float sy, float sz ); 
+      virtual void Set( const osg::Vec3& xyz, const osg::Vec3& rotation, const osg::Vec3& scale );
       virtual void Set( const osg::Vec3& xyz, const osg::Matrix& rotation, const osg::Vec3& scale );
       virtual void Set( const osg::Matrix& mat );
 
@@ -78,9 +79,10 @@ namespace dtCore
       //Get translation and rotation methods
       void Get( float& tx, float& ty, float& tz, float& h, float& p, float& r, float& sx, float& sy, float& sz ) const;
       void Get( osg::Vec3& xyz, osg::Matrix& rotation, osg::Vec3& scale ) const;
+      void Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale  ) const;
       void Get( osg::Matrix& matrix ) const; 
       
-      ///DEPRECRATED: Use Get( osg::Vec3& xyz, osg::Vec3& hpr, float& scale  )
+      ///DEPRECRATED: Use Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale  ) const
       void Get( sgVec3 xyz, sgVec3 hpr );
       ///DEPRECRATED: Use Get( osg::Matrix& matrix )
       void Get( sgMat4 mat);    

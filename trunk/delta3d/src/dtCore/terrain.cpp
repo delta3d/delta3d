@@ -8,6 +8,8 @@
 #include "dtCore/terrain.h"
 #include "dtCore/notify.h"
 
+#include <math.h>
+
 using namespace dtCore;
 using namespace std;
 
@@ -68,8 +70,8 @@ class dtCore::TerrainCallback : public osg::NodeCallback
          
          mTerrain->LocalToGeodetic(eyepoint, &latitude, &longitude, &elevation);
 
-         float latSize = (mTerrain->GetLoadDistance()/semiMajorAxis)*SG_RADIANS_TO_DEGREES,
-               longSize = latSize/sgCos(latitude);
+         float latSize = osg::RadiansToDegrees(mTerrain->GetLoadDistance()/semiMajorAxis),
+            longSize = latSize/cosf(osg::DegreesToRadians(latitude));
          
          int minLat = (int)floor(latitude-latSize),
              maxLat = (int)floor(latitude+latSize),
@@ -112,21 +114,14 @@ class TransformCallback : public osg::NodeCallback
 
          mTerrain->GetTransform(&transform);
          
-         sgMat4 matrix;
+         osg::Matrix matrix;
 
          transform.Get(matrix);
          
          osg::MatrixTransform* mt = 
             (osg::MatrixTransform*)mTerrain->GetOSGNode();
          
-         mt->setMatrix(
-            osg::Matrix(
-               matrix[0][0], matrix[0][1], matrix[0][2], matrix[0][3],
-               matrix[1][0], matrix[1][1], matrix[1][2], matrix[1][3],
-               matrix[2][0], matrix[2][1], matrix[2][2], matrix[2][3],
-               matrix[3][0], matrix[3][1], matrix[3][2], matrix[3][3]
-            )
-         );
+         mt->setMatrix( matrix );
          
          traverse(node, nv);
       }
@@ -453,8 +448,8 @@ void Terrain::GeocentricToGeodetic(double x, double y, double z,
    *elevation = p/cos(*latitude) - 
                 a/sqrt(1.0-esqu*pow(sin(*latitude), 2.0));
         
-   *latitude *= SG_RADIANS_TO_DEGREES;
-   *longitude *= SG_RADIANS_TO_DEGREES;
+   *latitude *= osg::RadiansToDegrees(1.0f);
+   *longitude *= osg::RadiansToDegrees(1.0f);
 }
 
 /**
@@ -473,8 +468,8 @@ void Terrain::GeocentricToGeodetic(double x, double y, double z,
 void Terrain::GeodeticToGeocentric(double latitude, double longitude, double elevation,
                                    double* x, double* y, double* z)
 {
-   double rlatitude = latitude * SG_DEGREES_TO_RADIANS,
-          rlongitude = longitude * SG_DEGREES_TO_RADIANS,
+   double rlatitude = osg::DegreesToRadians(latitude),
+          rlongitude = osg::DegreesToRadians(longitude),
           a = semiMajorAxis,
           f = 1.0/flatteningReciprocal,
           esqu = 2.0*f - f*f,
@@ -713,11 +708,11 @@ void Terrain::LoadSegment(int latitude, int longitude)
             rr.getHeightField()->setRotation(rot);
             
             rr.getHeightField()->setXInterval(
-               (semiMajorAxis*SG_DEGREES_TO_RADIANS)/(rr.getHeightField()->getNumColumns()-1)
+               (osg::DegreesToRadians(semiMajorAxis))/(rr.getHeightField()->getNumColumns()-1)
             );
             
             rr.getHeightField()->setYInterval(
-               (semiMajorAxis*SG_DEGREES_TO_RADIANS)/(rr.getHeightField()->getNumRows()-1)
+               (osg::DegreesToRadians(semiMajorAxis))/(rr.getHeightField()->getNumRows()-1)
             );
             
             rr.getHeightField()->setOrigin(

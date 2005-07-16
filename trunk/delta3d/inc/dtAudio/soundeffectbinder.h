@@ -26,8 +26,6 @@
 #include <map>
 #include <queue>
 
-#include "sg.h"
-
 #include "dtCore/base.h"
 #include "dtCore/effectmanager.h"
 #include "dtAudio/audiomanager.h"

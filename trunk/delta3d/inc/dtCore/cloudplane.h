@@ -24,8 +24,9 @@
 
 #include "dtCore/enveffect.h"
 #include "dtCore/refptr.h"
-#include "sg.h"
 
+#include <osg/Vec2>
+#include <osg/Vec4>
 #include <osg/Group>
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -55,7 +56,7 @@ namespace dtCore
 
       //virtual osg::Group *GetNode(void) {return mNode.get();}
 
-      virtual void Repaint(sgVec4 sky_color, sgVec4 fog_color, 
+      virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
           double sun_angle, double sunAzimuth,
           double vis);
 
@@ -111,7 +112,7 @@ namespace dtCore
        float mDensity;
        float mHeight;
        int   mTexSize;
-       sgVec4 mSkyColor;
+       osg::Vec4 mSkyColor;
        osg::Vec2 *mWind;
        osg::Vec4 *mCloudColor;
        osg::Vec2Array *mTexCoords;

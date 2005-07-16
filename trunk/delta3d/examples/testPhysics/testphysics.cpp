@@ -62,15 +62,15 @@ public:
 
       //position the camera
       Transform position;
-      position.Set(0.0f, -20.0f, 2.0f, 0.0f, 0.0f, 0.0f);
+      position.Set(0.0f, -20.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
       GetCamera()->SetTransform(&position);
 
       //position first falling crate
-      position.Set(0.55f, 0.0f, 3.0f, 0.0f, 40.0f, 0.0f);
+      position.Set(0.55f, 0.0f, 3.0f, 0.0f, 40.0f, 0.0f, 1.0f, 1.0f, 1.0f);
       obj2->SetTransform( &position );
 
       //position the crate on the ground
-      position.Set(0.0f, 0.f, 0.525f, 0.0f, 0.0f, 0.0f);
+      position.Set(0.0f, 0.f, 0.525f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
       obj3->SetTransform( &position );
 
       float lx = 1.0f;
@@ -111,11 +111,11 @@ public:
       Transform trans;
       GetCamera()->GetTransform(&trans);
 
-      sgVec3 camLoc;
+      osg::Vec3 camLoc;
       trans.GetTranslation( camLoc );
 
-      sgVec3 origin = {0.0f, 0.0f, 0.0f};
-      omm->SetDistance( sgDistanceVec3( camLoc, origin ) );
+      osg::Vec3 origin (0.0f, 0.0f, 0.0f);
+      omm->SetDistance( (camLoc - origin).length() );
    }
 
 protected:

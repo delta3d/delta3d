@@ -2,6 +2,7 @@
 #include <stack>
 
 #include <osgDB/FileUtils>
+#include <osg/Vec3>
 
 #ifdef __APPLE__
   #include <OpenAL/alut.h>
@@ -9,9 +10,9 @@
   #include <AL/alut.h>
 #endif
 
+#include "dtAudio/audiomanager.h"
 #include "dtCore/system.h"
 #include "dtCore/notify.h"
-#include "dtAudio/audiomanager.h"
 #include "dtCore/camera.h"
 
 
@@ -1278,8 +1279,8 @@ AudioManager::PlaySound( SoundObj* snd )
       }
 
       // set initial position and direction
-      sgVec3   pos   = { 0.0f, 0.0f, 0.0f };
-      sgVec3   dir   = { 0.0f, 1.0f, 0.0f };
+      osg::Vec3   pos   ( 0.0f, 0.0f, 0.0f );
+      osg::Vec3   dir   ( 0.0f, 1.0f, 0.0f );
 
       snd->GetPosition( pos );
       snd->GetDirection( dir );
@@ -1639,7 +1640,7 @@ AudioManager::SetPosition( SoundObj* snd )
       return;
    }
 
-   sgVec3   pos;
+   osg::Vec3   pos;
    snd->GetPosition( pos );
 
    ALenum   err(alGetError());
@@ -1667,7 +1668,7 @@ AudioManager::SetDirection( SoundObj* snd )
       return;
    }
 
-   sgVec3   dir;
+   osg::Vec3   dir;
    snd->GetDirection( dir );
 
    ALenum   err(alGetError());
@@ -1695,7 +1696,7 @@ AudioManager::SetVelocity( SoundObj* snd )
       return;
    }
 
-   sgVec3   velo;
+   osg::Vec3   velo;
    snd->GetVelocity( velo );
 
    ALenum   err(alGetError());
@@ -1934,14 +1935,14 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
          return;
 
       dtCore::Transform transform;
-      sgMat4            matrix;
-      sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
-      sgVec3            dir   = { 0.0f, 1.0f, 0.0f };
+      osg::Matrix       matrix;
+      osg::Vec3            pos   ( 0.0f, 0.0f, 0.0f );
+      osg::Vec3            dir   ( 0.0f, 1.0f, 0.0f );
 
       GetTransform( &transform );
       transform.GetTranslation( pos );
       transform.Get( matrix );
-      sgXformVec3( dir, matrix );
+      dir = osg::Matrix::transform3x3(dir, matrix);
 
       SetPosition( pos );
       SetDirection( dir );
@@ -2198,9 +2199,8 @@ AudioManager::ListenerObj::~ListenerObj()
 }
 
 
-
 void
-AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
+AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
 {
    mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
    mVelo[1L]   = static_cast<ALfloat>(velocity[1L]);
@@ -2210,11 +2210,33 @@ AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
 
 
 void
+AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
+{
+   velocity[0L]   = static_cast<double>(mVelo[0L]);
+   velocity[1L]   = static_cast<double>(mVelo[1L]);
+   velocity[2L]   = static_cast<double>(mVelo[2L]);
+}
+
+
+//DEPRECATED
+void
+AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
+{
+   DEPRECATE("void AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )", "void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity ) const")
+   mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
+   mVelo[1L]   = static_cast<ALfloat>(velocity[1L]);
+   mVelo[2L]   = static_cast<ALfloat>(velocity[2L]);
+}
+
+
+//DEPRECATE
+void
 AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
 {
-   velocity[0L]   = static_cast<SGfloat>(mVelo[0L]);
-   velocity[1L]   = static_cast<SGfloat>(mVelo[1L]);
-   velocity[2L]   = static_cast<SGfloat>(mVelo[2L]);
+   DEPRECATE("void AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const", "void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const")
+   velocity[0L]   = static_cast<double>(mVelo[0L]);
+   velocity[1L]   = static_cast<double>(mVelo[1L]);
+   velocity[2L]   = static_cast<double>(mVelo[2L]);
 }
 
 
@@ -2244,7 +2266,7 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
    if( data->message == "frame" )
    {
       dtCore::Transform transform;
-      sgMat4            matrix;
+      osg::Matrix            matrix;
       ALfloat           pos[3L]  = { 0.0f, 0.0f, 0.0f };
 
       union orient
@@ -2259,11 +2281,15 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
       } orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 
       GetTransform( &transform );
-      transform.GetTranslation( pos );
+      osg::Vec3 tmp;
+      transform.GetTranslation( tmp );
+      pos[0] = tmp[0]; pos[1] = tmp[1]; pos[2] = tmp[2];
 
       transform.Get( matrix );
-      sgXformVec3( orient.at, matrix );
-      sgXformVec3( orient.up, matrix );
+      //sgXformVec3( orient.at, matrix );
+      //sgXformVec3( orient.up, matrix );
+      osg::Matrix::transform3x3(osg::Vec3(orient.at[0], orient.at[1], orient.at[2]), matrix);
+      osg::Matrix::transform3x3(osg::Vec3(orient.up[0], orient.up[1], orient.up[2]), matrix);
 
       alListenerfv( AL_POSITION, pos );
       alListenerfv( AL_ORIENTATION, orient.ort );

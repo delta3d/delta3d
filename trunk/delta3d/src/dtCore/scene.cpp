@@ -70,7 +70,7 @@ Scene::Scene( string name, bool useSceneLight )
    
    dSpaceSetCleanup(mSpaceID, 0);
    
-   sgSetVec3(mGravity, 0.0f, 0.0f, 0.0f);
+   mGravity.set(0.0f, 0.0f, 0.0f);
    
    mContactJointGroupID = dJointGroupCreate(0);
    
@@ -273,23 +273,23 @@ float Scene::GetHeightOfTerrain(const float *x, const float *y)
    return HOT;
 }
 
-void Scene::SetGravity(sgVec3 gravity)
+void Scene::SetGravity(osg::Vec3 gravity)
 {
-   sgCopyVec3(mGravity, gravity);
+   mGravity.set(gravity);
    
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
 
 void Scene::SetGravity(float x, float y, float z)
 {
-   sgSetVec3(mGravity, x, y, z);
+   mGravity.set(x, y, z);
    
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
          
-void Scene::GetGravity(sgVec3 vec)
+void Scene::GetGravity(osg::Vec3 vec)
 {
-   sgCopyVec3(vec, mGravity);
+   vec.set(mGravity);
 }
 
 void Scene::GetGravity(float* x, float* y, float* z)
@@ -408,14 +408,12 @@ void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
       
       cd.mBodies[0] = p1;
       cd.mBodies[1] = p2;
-      
-      sgSetVec3(
-         cd.mLocation, 
+    
+      cd.mLocation.set( 
          contactGeoms[0].pos[0], contactGeoms[0].pos[1], contactGeoms[0].pos[2]
       );
       
-      sgSetVec3(
-         cd.mNormal, 
+      cd.mNormal.set( 
          contactGeoms[0].normal[0], contactGeoms[0].normal[1], contactGeoms[0].normal[2]
       );
       

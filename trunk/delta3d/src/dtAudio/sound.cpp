@@ -399,17 +399,18 @@ Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEn
 
    // get new transform, and break up into
    // position and direction for sound object
-   dtCore::Transform transform;
-   sgMat4            matrix;
-   sgVec3            pos   = { 0.0f, 0.0f, 0.0f };
-   sgVec3            dir   = { 0.0f, 1.0f, 0.0f };
+   dtCore::Transform    transform;
+   osg::Matrix          matrix;
+   osg::Vec3            pos( 0.0f, 0.0f, 0.0f );
+   osg::Vec3            dir( 0.0f, 1.0f, 0.0f );
 
    GetTransform( &transform, cs );
 
    transform.GetTranslation( pos );
 
    transform.Get( matrix );
-   sgXformVec3( dir, matrix );
+   dir = osg::Matrix::transform3x3(dir, matrix);
+   //sgXformVec3( dir, matrix );
 
    SetPosition( pos );
    SetDirection( dir );
@@ -421,7 +422,7 @@ Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEn
  * @param position to set
  */
 void
-Sound::SetPosition( const sgVec3& position )
+Sound::SetPosition( const osg::Vec3& position )
 {
    mPos[0L] = position[0L];
    mPos[1L] = position[1L];
@@ -438,7 +439,7 @@ Sound::SetPosition( const sgVec3& position )
  * @param position to get
  */
 void
-Sound::GetPosition( sgVec3& position ) const
+Sound::GetPosition( osg::Vec3& position ) const
 {
    position[0L]   = mPos[0L];
    position[1L]   = mPos[1L];
@@ -453,7 +454,7 @@ Sound::GetPosition( sgVec3& position ) const
  * @param direction to set
  */
 void
-Sound::SetDirection( const sgVec3& direction )
+Sound::SetDirection( const osg::Vec3& direction )
 {
    mDir[0L] = direction[0L];
    mDir[1L] = direction[1L];
@@ -470,7 +471,7 @@ Sound::SetDirection( const sgVec3& direction )
  * @param direction to get
  */
 void
-Sound::GetDirection( sgVec3& direction ) const
+Sound::GetDirection( osg::Vec3& direction ) const
 {
    direction[0L]  = mDir[0L];
    direction[1L]  = mDir[1L];
@@ -485,7 +486,7 @@ Sound::GetDirection( sgVec3& direction ) const
  * @param velocity to set
  */
 void
-Sound::SetVelocity( const sgVec3& velocity )
+Sound::SetVelocity( const osg::Vec3& velocity )
 {
    mVelo[0L]   = velocity[0L];
    mVelo[1L]   = velocity[1L];
@@ -502,7 +503,7 @@ Sound::SetVelocity( const sgVec3& velocity )
  * @param velocity to get
  */
 void
-Sound::GetVelocity( sgVec3& velocity ) const
+Sound::GetVelocity( osg::Vec3& velocity ) const
 {
    velocity[0L]   = mVelo[0L];
    velocity[1L]   = mVelo[1L];

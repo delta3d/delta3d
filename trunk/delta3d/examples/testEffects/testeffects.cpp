@@ -2,6 +2,7 @@
 #include "dtABC/dtabc.h"
 
 #include "Producer/Timer"
+#include <math.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -49,7 +50,7 @@ public:
 
          if(value < delta*0.25f)
          {
-            sgVec3 location;
+            osg::Vec3 location;
 
             location[0] = 100*((float)rand() / RAND_MAX) - 50;
             location[1] = 100*((float)rand() / RAND_MAX) + 50;
@@ -67,12 +68,13 @@ public:
          if(mAngle > 360) mAngle -= 360.0f;
 
          mPosition.Set(
-            40*sgCos(mAngle), 
-            100 + 40*sgSin(mAngle),
+            40*cosf(osg::DegreesToRadians(mAngle)), 
+            100 + 40*sinf(osg::DegreesToRadians(mAngle)),
             0,
             mAngle,
             0,
-            -45.0
+            -45.0,
+            1.0f, 1.0f, 1.0f
             );
 
          mEntity->SetTransform(&mPosition);
@@ -96,7 +98,8 @@ public:
 
          mPosition.Set(
             0.0f, -50.0f, 0.0f,
-            mCameraHeading, mCameraPitch, 0.0f
+            mCameraHeading, mCameraPitch, 0.0f,
+            1.0f, 1.0f, 1.0f
             );
 
          mCamera->SetTransform(&mPosition);
@@ -137,7 +140,7 @@ public:
       Application::Config();
 
       Transform position;
-      position.Set(0.f, -50.f, 0.f, 0.f, 0.f, 0.f);
+      position.Set(0.f, -50.f, 0.f, 0.f, 0.f, 0.f, 1.0f, 1.0f, 1.0f);
       GetCamera()->SetTransform( &position );
 
       entity = new Object("UH-1N");

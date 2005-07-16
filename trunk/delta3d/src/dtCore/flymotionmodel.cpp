@@ -5,6 +5,9 @@
 #include "dtCore/flymotionmodel.h"
 #include "dtCore/scene.h"
 
+#include <osg/Vec3>
+#include <osg/Matrix>
+
 using namespace dtCore;
 using namespace std;
 
@@ -282,9 +285,9 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->GetTransform(&transform);
       
-      sgVec3 xyz, hpr;
+      osg::Vec3 xyz, hpr, scale;
       
-      transform.Get(xyz, hpr);
+      transform.Get(xyz, hpr, scale);
       
       if(mTurnLeftRightAxis != NULL)
       {
@@ -302,7 +305,7 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       transform.SetRotation(hpr);
       
-      sgVec3 translation = {0, 0, 0};
+      osg::Vec3 translation (0, 0, 0);
       
       if(mFlyForwardBackwardAxis != NULL)
       {
@@ -310,13 +313,13 @@ void FlyMotionModel::OnMessage(MessageData *data)
             (float)(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
       
-      sgMat4 mat;
+      osg::Matrix mat;
       
       transform.GetRotation(mat);
       
-      sgXformVec3(translation, mat);
+      translation = osg::Matrix::transform3x3(translation, mat);
       
-      sgAddVec3(xyz, translation);
+      xyz += translation;
       
       transform.SetTranslation(xyz);
       

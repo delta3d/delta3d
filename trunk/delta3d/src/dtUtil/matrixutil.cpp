@@ -87,89 +87,131 @@ void MatrixUtil::SetRow( Matrix& matrix, const Vec4& vec, int row )
 
 void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
 {
-   sgMat4 mat;
+   static float x, y, z, cx, sx, cy, sy, cz, sz;
 
-   sgVec3 sgHpr = { hpr[0], hpr[1], hpr[2] };
+   x = osg::DegreesToRadians(hpr[0]);
+   y = osg::DegreesToRadians(hpr[1]);
+   z = osg::DegreesToRadians(hpr[2]);
 
-   sgMakeCoordMat4( mat, mat[3], sgHpr );
+   cx = cosf(x); 
+   sx = sinf(x); 
+   cy = cosf(y); 
+   sy = sinf(y); 
+   cz = cosf(z); 
+   sz = sinf(z); 
 
-   for( int i = 0; i < 3; i++ )
-      for( int j = 0; j < 3; j++ )
-         rotation(i,j) = mat[i][j];
-   
-   /*
-   //Converted from PLIB's SG library under the LGPL: http://plib.sourceforge.net/
+   rotation(0, 0) = cx * cz - sx * sz * sy;
+   rotation(1, 0) = -sx * cy;
+   rotation(2, 0) = sz * cx + sx * sy * cz;
 
-   osg::Vec3 hprRadians( hpr );
+   rotation(0, 1) = cz * sx + sz * sy * cx ;
+   rotation(1, 1) = cy * cx;
+   rotation(2, 1) = sz * sx - cz * sy * cx;
 
-   for( int i = 0; i < 3; i++ )
-      hprRadians[i] = osg::DegreesToRadians( hprRadians[i] );
+   rotation(0, 2) = cy * sz;
+   rotation(1, 2) = sy;
+   rotation(2, 2) = cy * cz;
 
-   float ch, sh, cp, sp, cr, sr, srsp, crsp, srcp ;
-
-   if ( hprRadians[0] == 0.0f )
-   {
-      ch = 1.0f;
-      sh = 0.0f;
-   }
-   else
-   {
-      sh = osg::RadiansToDegrees( sin( hprRadians[0] ) );
-      ch = osg::RadiansToDegrees( cos( hprRadians[0] ) );
-   }
-
-   if ( hprRadians[1] == 0.0f )
-   {
-      cp = 1.0f;
-      sp = 0.0f;
-   }
-   else
-   {
-      sp = osg::RadiansToDegrees( sin( hprRadians[1] ) );
-      cp = osg::RadiansToDegrees( cos( hprRadians[1] ) );
-   }
-
-   if ( hprRadians[2] == 0.0f )
-   {
-      cr   = 1.0f;
-      sr   = 0.0f;
-      srsp = 0.0f;
-      srcp = 0.0f;
-      crsp = sp;
-   }
-   else
-   {
-      sr   = osg::RadiansToDegrees( sin( hprRadians[2] ) );
-      cr   = osg::RadiansToDegrees( cos( hprRadians[2] ) );
-      srsp = sr * sp;
-      crsp = cr * sp;
-      srcp = sr * cp;
-   }
-
-   rotation(0,0) = ch * cr - sh * srsp;
-   rotation(1,0) = -sh * cp;
-   rotation(2,0) = sr * ch + sh * crsp;
-   rotation(3,0) = 0.0f;
-
-   rotation(0,1) = cr * sh + srsp * ch;
-   rotation(1,1) = ch * cp;
-   rotation(2,1) = sr * sh - crsp * ch;
-   rotation(3,1) = 0.0f;;
-
-   rotation(0,2) = -srcp;
-   rotation(1,2) = sp;
-   rotation(2,2) = cr * cp;
-   rotation(3,2) = 0.0f;
-
-   rotation(0,3) = 0.0f ;
-   rotation(1,3) = 0.0f ;
-   rotation(2,3) = 0.0f ;
-   rotation(3,3) = 1.0f ;
-   */
 }
+
+void MatrixUtil::PositionAndHprToMatrix( osg::Matrix& rotation, const osg::Vec3& xyz, const osg::Vec3& hpr )
+{
+   HprToMatrix(rotation, hpr);
+
+   rotation(3, 0) = xyz[0];
+   rotation(3, 1) = xyz[1];
+   rotation(3, 2) = xyz[2];
+
+}
+
 
 void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 {
+   /*sgMat4 mat;
+
+   for( int i = 0; i < 4; i++ )
+      for( int j = 0; j < 4; j++ )
+         mat[i][j] = rotation(i,j);
+
+   sgCoord pos;
+   sgSetCoord( &pos, mat );
+
+   hpr[0] = pos.hpr[0];
+   hpr[1] = pos.hpr[1];
+   hpr[2] = pos.hpr[2];*/
+
+
+   //implementation converted from plib's sg.cxx
+   //PLIB - A Suite of Portable Game Libraries
+   //Copyright (C) 1998,2002  Steve Baker
+   //For further information visit http://plib.sourceforge.net
+
+   osg::Matrix mat;
+
+   osg::Vec3 col1(rotation(0, 0), rotation(0, 1), rotation(0, 2));
+   double s = col1.length();
+
+   if ( s <= 0.00001 )
+   {
+      hpr.set(0.0f, 0.0f, 0.0f);
+      return ;
+   }
+
+
+   double oneOverS = 1.0f / s;
+   for( int i = 0; i < 3; i++ )
+      for( int j = 0; j < 3; j++ )
+         mat(i, j) = rotation(i, j) * oneOverS;
+   
+
+   hpr[1] = osg::RadiansToDegrees(asin(ClampUnity(mat(1, 2))));
+
+   double cp = cos(osg::DegreesToRadians(hpr[1]));
+
+   if ( cp > -0.00001 && cp < 0.00001 )
+   {
+      double cr = ClampUnity(mat(0,1)); 
+      double sr = ClampUnity(-mat(2,1));
+
+      hpr[0] = 0.0f;
+      hpr[2] = osg::RadiansToDegrees(atan2(sr,cr));
+   }
+   else
+   {
+      cp = 1.0 / cp ;
+      double sr = ClampUnity(-mat(0,2) * cp);
+      double cr = ClampUnity(mat(2,2) * cp);
+      double sh = ClampUnity(-mat(1,0) * cp);
+      double ch = ClampUnity(mat(1,1) * cp);
+
+      if ( (sh == 0.0f && ch == 0.0f) || (sr == 0.0f && cr == 0.0f) )
+      {
+         cr = ClampUnity(mat(0,1));
+         sr = ClampUnity(-mat(2,1));
+
+         hpr[0] = 0.0f;
+      }
+      else
+      {
+        hpr[0] = osg::RadiansToDegrees(atan2(sh, ch));
+      }
+
+      hpr[2] = osg::RadiansToDegrees(atan2(sr, cr));
+   }
+   
+     
+}
+
+float MatrixUtil::ClampUnity(const float x) 
+{
+   if ( x >  1.0f ) return  1.0f;
+   if ( x < -1.0f ) return -1.0f;
+   return x ;
+}
+
+void MatrixUtil::MatrixToHprAndPosition( osg::Vec3& xyz, osg::Vec3& hpr, const osg::Matrix& rotation )
+{
+   
    sgMat4 mat;
 
    for( int i = 0; i < 4; i++ )
@@ -182,58 +224,24 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
    hpr[0] = pos.hpr[0];
    hpr[1] = pos.hpr[1];
    hpr[2] = pos.hpr[2];
-   
-   //Converted from PLIB's SG library: http://plib.sourceforge.net/
 
-   /*
-   osg::Matrix mat;
+   xyz[0] = pos.xyz[0];
+   xyz[1] = pos.xyz[1];
+   xyz[2] = pos.xyz[2];
 
-   float s = GetColumn3( mat, 0 ).length();
-   
-   if ( s <= 0.00001 )
-   {
-      hpr.set( 0.0f, 0.0f, 0.0f );
-      return ;
-   }
+}
 
-   for( int i = 0; i < 4; i++ )
-      for( int j = 0; j < 4; j++ )
-         mat(i,j) = rotation(i,j) / s;
+void MatrixUtil::TransformVec3(osg::Vec3& xyz, const osg::Matrix& transformMat)
+{
+   TransformVec3(xyz, xyz, transformMat);
+}
 
-   hpr[1] = osg::RadiansToDegrees( asin( osg::DegreesToRadians( osg::clampTo( float(mat(1,2)), -1.0f, 1.0f ) ) ) );
+void MatrixUtil::TransformVec3(osg::Vec3& vec_in, const osg::Vec3& xyz, const osg::Matrix& transformMat)
+{
 
-   float cp = osg::RadiansToDegrees( cos( osg::DegreesToRadians( hpr[1] ) ) );
+   vec_in = osg::Matrix::transform3x3(xyz, transformMat);
+   vec_in[0] += transformMat(3,0);
+   vec_in[1] += transformMat(3,1);
+   vec_in[2] += transformMat(3,2);
 
-   if ( cp > -0.00001 && cp < 0.00001 )
-   {
-      float cr = osg::clampTo( float(mat(0,1)), -1.0f, 1.0f  ); 
-      float sr = osg::clampTo( float(-mat(2,1)), -1.0f, 1.0f  );
-
-      hpr[0] = 0.0f ;
-      hpr[2] = osg::RadiansToDegrees( atan2( osg::DegreesToRadians( sr ), osg::DegreesToRadians( cr ) ) );
-   }
-   else
-   {
-      cp = 1.0f / cp ;
-      float sr = osg::clampTo( float(-mat(0,2)) * cp, -1.0f, 1.0f  );
-      float cr = osg::clampTo( float(mat(2,2)) * cp, -1.0f, 1.0f  );
-      float sh = osg::clampTo( float(-mat(1,0)) * cp, -1.0f, 1.0f  );
-      float ch = osg::clampTo( float(mat(1,1)) * cp, -1.0f, 1.0f  );
-
-      if ( (sh == 0.0f && ch == 0.0f) || (sr == 0.0f && cr == 0.0f) )
-      {
-         cr = osg::clampTo( float(mat(0,1)), -1.0f, 1.0f );
-         sr = osg::clampTo( float(-mat(2,1)), -1.0f, 1.0f  );
-
-         hpr[0] = 0.0f ;
-      }
-      else
-      {
-         hpr[0] = osg::RadiansToDegrees( atan2( osg::DegreesToRadians( sh ), osg::DegreesToRadians( ch ) ) );
-      }
-
-      hpr[2] = osg::RadiansToDegrees( atan2( osg::DegreesToRadians( sr ), osg::DegreesToRadians( cr ) ) );
-   }
-   */
-  
 }

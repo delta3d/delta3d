@@ -8,6 +8,8 @@
 
 #include "dtUtil/deprecationmgr.h"
 
+#include <math.h>
+
 using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
@@ -41,13 +43,13 @@ mSkyDome(0)
    dynamic_cast<osg::Group*>(mNode.get())->addChild(mEnvEffectNode.get());
    dynamic_cast<osg::Group*>(mNode.get())->addChild(mDrawableNode.get());
 
-   sgSetVec3(mSkyColor, 0.39f, 0.50f, 0.74f);
-   sgSetVec3(mFogColor, 0.84f, 0.87f, 1.f);
-   sgSetVec3(mAdvFogCtrl, 1.f, 10.f, 2.545 ); //T, E, N
-   sgSetVec3(mSunColor, 1.f, 1.f, 1.f);
-   sgCopyVec3(mModFogColor, mFogColor);
+   mSkyColor.set(0.39f, 0.50f, 0.74f);
+   mFogColor.set(0.84f, 0.87f, 1.f);
+   mAdvFogCtrl.set(1.f, 10.f, 2.545 ); //T, E, N
+   mSunColor.set(1.f, 1.f, 1.f);
+   mModFogColor.set(mFogColor);
    
-   sgSetVec2(mRefLatLong, 36.586944f, -121.842778f);
+   mRefLatLong.set(36.586944f, -121.842778f);
 
    mFog = new osg::Fog();
    osg::StateSet *state = mDrawableNode->getOrCreateStateSet();
@@ -306,9 +308,9 @@ void Environment::OnMessage(MessageData *data)
   * using the time of day.  NOTE: This value is not used for the fog 
   * when the FogMode is ADV, but it still can be used by the EnvEffects.
   */
-void dtCore::Environment::SetFogColor(sgVec3 color)
+void dtCore::Environment::SetFogColor( const osg::Vec3& color )
 {
-   sgCopyVec3(mFogColor, color); // base fog color
+   mFogColor = color; // base fog color
 
    UpdateFogColor(); //tweak color based on sun angle
 
@@ -322,9 +324,8 @@ void dtCore::Environment::Repaint()
 
    //if fog is enabled, use the modified fog color otherwise just use
    //the modified sky color
-   sgVec3 fogColor;
-   sgCopyVec3(fogColor, mModFogColor);
-   if (!GetFogEnable()) sgCopyVec3(fogColor, mModSkyColor);
+   osg::Vec3 fogColor = mModFogColor;
+   if (!GetFogEnable()) fogColor = mModSkyColor;
 
    for (EnvEffectList::iterator it=mEffectList.begin(); it!=mEffectList.end(); it++)
    {
@@ -332,10 +333,10 @@ void dtCore::Environment::Repaint()
    }
 }
 
-void dtCore::Environment::SetSkyColor(sgVec3 color)
+void dtCore::Environment::SetSkyColor( const osg::Vec3& color )
 {
    //what does this do if there is no SkyDome in the Environment?  Clear color?
-   sgCopyVec3(mSkyColor, color);
+   mSkyColor = color;
    Repaint();
 }
 
@@ -535,10 +536,10 @@ void dtCore::Environment::UpdateEnvColors(void)
    float skyBright = mSkyLightTable->Interpolate(mSunAltitude);
 
    //Modify the sky color
-   sgScaleVec3(mModSkyColor, mSkyColor, skyBright);
+   mModSkyColor = mSkyColor * skyBright;
 
    //Modify the fog color based on sky brightness
-   sgScaleVec3(mModFogColor, mFogColor, skyBright);
+   mModFogColor = mFogColor * skyBright;
 }
 
 
@@ -602,9 +603,9 @@ void dtCore::Environment::UpdateSkyLight(void)
       {
          sun->GetLightSource()->getLight()->setPosition(
             osg::Vec4(
-            sgSin(mSunAzimuth)*sgCos(mSunAltitude),
-            sgCos(mSunAzimuth)*sgCos(mSunAltitude),
-            sgSin(mSunAltitude),
+            sinf(osg::DegreesToRadians(mSunAzimuth))*cosf(osg::DegreesToRadians(mSunAltitude)),
+            cosf(osg::DegreesToRadians(mSunAzimuth))*cosf(osg::DegreesToRadians(mSunAltitude)),
+            sinf(osg::DegreesToRadians(mSunAltitude)),
             0.0f )
             );
       }
@@ -661,25 +662,25 @@ void dtCore::Environment::UpdateSunColor(void)
 
    sunFactor = sunFactor/2.f + 0.5f; //1..0
 
-   sgVec3 color;
+   osg::Vec3 color;
    color[1] = sqrtf(sunFactor);
    color[0] = sqrtf(color[1]);
    color[2] = sunFactor * sunFactor;
    color[2] *= color[2];
    
-   sgCopyVec3(mSunColor, color);
+   mSunColor = color;
 }
 
 /** Private method used to pass parameters to the light scattering shader */
 void dtCore::Environment::UpdateShaders()
 {
-   sgVec2 sunDir;
+   osg::Vec2 sunDir;
    GetSunAzEl(&sunDir[0], &sunDir[1]);
 
    Camera *cam  = Camera::GetInstance(0);
    Transform camXform;
    cam->GetTransform( &camXform );
-   sgVec3 xyz;
+   osg::Vec3 xyz;
    camXform.GetTranslation(xyz);
 
    mSunlightShader->Update( sunDir,
@@ -691,9 +692,9 @@ void dtCore::Environment::UpdateShaders()
                            mAdvFogCtrl[2] * 10.0e25 );
 }
 
-void dtCore::Environment::SetRefLatLong(sgVec2 latLong)
+void dtCore::Environment::SetRefLatLong( const osg::Vec2& latLong )
 {
-   sgCopyVec2(mRefLatLong, latLong);
+   mRefLatLong = latLong;
 }
 
 void Environment::AddDrawable( DeltaDrawable *drawable )

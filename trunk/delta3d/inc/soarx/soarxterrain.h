@@ -30,7 +30,9 @@
 #define DT_SOARX_TERRAIN
 
 #include "dtCore/physical.h"
+#include "dtUtil/deprecationmgr.h"
 
+#include <osg/Vec3>
 #include <osg/Texture2D>
 #include <osgDB/FileUtils>
 
@@ -341,7 +343,13 @@ namespace dtSOARX
           * @param y the y coordinate to check
           * @param normal the location at which to store the normal
           */
-         void GetNormal(float x, float y, sgVec3 normal);
+       void GetNormal(float x, float y, osg::Vec3& normal);
+
+       void GetNormal(float x, float y, sgVec3 normal)
+       {
+          DEPRECATE("void GetNormal(float x, float y, sgVec3 normal)", "void GetNormal(float x, float y, osg::Vec3& normal)")
+          GetNormal(x, y, osg::Vec3(normal[0], normal[1], normal[2]));
+       }
         
  
          

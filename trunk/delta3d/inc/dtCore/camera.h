@@ -29,11 +29,12 @@
 #include "dtCore/deltawin.h"
 #include "dtCore/base.h"
 #include "dtCore/scene.h"
+#include "dtUtil/deprecationmgr.h"
 #include "sg.h"
 #include "dtCore/transformable.h"
 #include <osg/FrameStamp>
 #include <osgUtil/SceneView>
-
+#include <osg/Vec4>
 
 namespace dtCore
 {
@@ -122,13 +123,27 @@ namespace dtCore
       void SetClearColor( float r, float g, float b, float a);
 
       ///Set the color non-geometry in the Scene should be drawn (0.0 - 1.0)
-      void SetClearColor( sgVec4 color );
+      void SetClearColor(const osg::Vec4& v);
+      //deprecated version
+      void SetClearColor( sgVec4 color )
+      {
+         DEPRECATE("void SetClearColor( sgVec4 color )", "void SetClearColor(const osg::Vec4& v)")
+         SetClearColor(osg::Vec4(color[0], color[1], color[2], color[3]));
+      }
 
       ///Get the color that non-geometry in the Scene should be rendered
       void GetClearColor( float *r, float *g, float *b, float *a);
       
       ///Get the color that non-geometry in the Scene should be rendered
-      void GetClearColor( sgVec4 color ) {sgCopyVec4(color, mClearColor);}
+      void GetClearColor(osg::Vec4& color) {color = mClearColor;}
+      //deprecated version
+      void GetClearColor(sgVec4 color)
+      {
+         DEPRECATE("void GetClearColor(sgVec4 color)", "void GetClearColor(osg::Vec4 color)")
+         osg::Vec4 tmp;
+         GetClearColor(tmp);     
+         color[0] = tmp[0]; color[1] = tmp[1]; color[2] = tmp[2]; color[3] = tmp[3];
+      };
 
       ///Set Perspective of camera lens
       void SetPerspective( double hfov, double vfov, double nearClip, double farClip );
@@ -187,7 +202,7 @@ namespace dtCore
       RefPtr<Producer::Camera> mCamera; // Handle to the Producer camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
       RefPtr<Scene> mScene;
-      sgVec4 mClearColor; // The current clear color
+      osg::Vec4 mClearColor; // The current clear color
 
       Producer::RenderSurface* mDefaultRenderSurface;
       RefPtr<_SceneHandler> mSceneHandler;

@@ -16,6 +16,9 @@
 #include <osgUtil/TriStripVisitor>
 #include <osg/TexGen>
 #include <osg/PositionAttitudeTransform>
+#include <osg/Vec3>
+#include <osg/Plane>
+
 
 #include "gdal_priv.h"
 #include "gdalwarper.h"
@@ -83,10 +86,10 @@ class dtSOARX::SOARXTerrainCallback : public osg::NodeCallback
 
 		 osg::Vec3 eyepoint = nv->getEyePoint();
 
-         double latitude = (eyepoint[1]/semiMajorAxis)*SG_RADIANS_TO_DEGREES + mTerrain->mOriginLatitude,
-                longitude = (eyepoint[0]/semiMajorAxis)*SG_RADIANS_TO_DEGREES + mTerrain->mOriginLongitude;
+         double latitude = (eyepoint[1]/semiMajorAxis)*osg::RadiansToDegrees(1.0f) + mTerrain->mOriginLatitude,
+                longitude = (eyepoint[0]/semiMajorAxis)*osg::RadiansToDegrees(1.0f) + mTerrain->mOriginLongitude;
 
-         float latSize = (mTerrain->GetLoadDistance()/semiMajorAxis)*SG_RADIANS_TO_DEGREES,
+         float latSize = (mTerrain->GetLoadDistance()/semiMajorAxis)*osg::RadiansToDegrees(1.0f),
                longSize = latSize;
 
          int minLat = (int)floor(latitude-latSize),
@@ -139,21 +142,14 @@ class TransformCallback : public osg::NodeCallback
 
          mTerrain->GetTransform(&transform);
 
-         sgMat4 matrix;
+         osg::Matrix matrix;
 
          transform.Get(matrix);
 
          dtCore::RefPtr<osg::MatrixTransform> mt =
             (osg::MatrixTransform*)mTerrain->GetOSGNode();
 
-         mt->setMatrix(
-            osg::Matrix(
-               matrix[0][0], matrix[0][1], matrix[0][2], matrix[0][3],
-               matrix[1][0], matrix[1][1], matrix[1][2], matrix[1][3],
-               matrix[2][0], matrix[2][1], matrix[2][2], matrix[2][3],
-               matrix[3][0], matrix[3][1], matrix[3][2], matrix[3][3]
-            )
-         );
+         mt->setMatrix(matrix);
 
 //		 Notify(INFO, "%s in transform", (node->getName()).c_str());
 
@@ -1785,8 +1781,8 @@ int SOARXTerrain::GetVegType(const osg::Image* mCimage, int x, int y, float good
 */
 osg::Vec2f SOARXTerrain::GetLongLat(float x, float y)
 {
-   float latitude  = (y/semiMajorAxis)*SG_RADIANS_TO_DEGREES + mOriginLatitude,
-         longitude = (x/semiMajorAxis)*SG_RADIANS_TO_DEGREES + mOriginLongitude;
+   float latitude  = (y/semiMajorAxis)*osg::RadiansToDegrees(1.0f) + mOriginLatitude,
+         longitude = (x/semiMajorAxis)*osg::RadiansToDegrees(1.0f) + mOriginLongitude;
 
    return (osg::Vec2f(longitude,latitude));
 }
@@ -1802,8 +1798,8 @@ osg::Vec2f SOARXTerrain::GetLongLat(float x, float y)
  */
 float SOARXTerrain::GetHeight(float x, float y)
 {
-   int latitude = (int)floor((y/semiMajorAxis)*SG_RADIANS_TO_DEGREES + mOriginLatitude),
-       longitude = (int)floor((x/semiMajorAxis)*SG_RADIANS_TO_DEGREES + mOriginLongitude);
+   int latitude = (int)floor((y/semiMajorAxis)*osg::RadiansToDegrees(1.0f) + mOriginLatitude),
+       longitude = (int)floor((x/semiMajorAxis)*osg::RadiansToDegrees(1.0f) + mOriginLongitude);
 
    Segment segment(latitude, longitude);
 
@@ -1811,8 +1807,8 @@ float SOARXTerrain::GetHeight(float x, float y)
    LoadSegment(latitude, longitude);
 
    return mSegmentDrawableMap[segment]->GetHeight(
-      x - (longitude - mOriginLongitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
-      y - (1 + latitude - mOriginLatitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis
+      x - (longitude - mOriginLongitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
+      y - (1 + latitude - mOriginLatitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis
    );
 }
 
@@ -1823,16 +1819,18 @@ float SOARXTerrain::GetHeight(float x, float y)
  * @param y the y coordinate to check
  * @param normal the location at which to store the normal
  */
-void SOARXTerrain::GetNormal(float x, float y, sgVec3 normal)
+void SOARXTerrain::GetNormal(float x, float y, osg::Vec3& normal)
 {
    float z = GetHeight(x, y);
 
-   sgVec3 v1 = { 0.1f, 0.0f, GetHeight(x + 0.1f, y) - z },
-          v2 = { 0.0f, 0.1f, GetHeight(x, y + 0.1f) - z };
+   osg::Vec3 v1 ( 0.1f, 0.0f, GetHeight(x + 0.1f, y) - z );
+   osg::Vec3 v2 ( 0.0f, 0.1f, GetHeight(x, y + 0.1f) - z );
 
-   sgVectorProductVec3(normal, v1, v2);
+   //sgVectorProductVec3(normal, v1, v2);
+   normal = v1 ^ v2;
 
-   sgNormalizeVec3(normal);
+   //sgNormalizeVec3(normal);
+   normal.normalize();
 }
 
 
@@ -2565,7 +2563,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeDetailGradient(int level)
          break;
    }
 
-   float baseHorizontalResolution = (semiMajorAxis*SG_DEGREES_TO_RADIANS)/(baseSize-1);
+   float baseHorizontalResolution = (semiMajorAxis*osg::DegreesToRadians(1.0f))/(baseSize-1);
 
    float scale = (128.0f*0.0012f)/(baseHorizontalResolution/embeddedSize);
 
@@ -3013,7 +3011,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseColor(const osg::HeightField* h
 
          OGRPoint ogrp1, ogrp2;
 
-         float weight = ((*r).mWidth*image->s())/(SG_DEGREES_TO_RADIANS*semiMajorAxis);
+         float weight = ((*r).mWidth*image->s())/(osg::DegreesToRadians(1.0f)*semiMajorAxis);
 
          for(vector<OGRLineString*>::iterator ls = lineStrings.begin();
              ls != lineStrings.end();
@@ -3201,7 +3199,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseLCCColor(const osg::HeightField
 
 			OGRPoint ogrp1, ogrp2;
 
-			float weight = ((*r).mWidth*lccimage->s())/(SG_DEGREES_TO_RADIANS*semiMajorAxis);
+			float weight = ((*r).mWidth*lccimage->s())/(osg::DegreesToRadians(1.0f)*semiMajorAxis);
 
 			for(vector<OGRLineString*>::iterator ls = lineStrings.begin();
 				ls != lineStrings.end();
@@ -3287,8 +3285,8 @@ static void ClipPolygonToCellBoundaries(WorkingPolygon& polygon)
 
    boundaries[0].set(1, 0, 0, 0);
    boundaries[1].set(0, -1, 0, 0);
-   boundaries[2].set(-1, 0, 0, SG_DEGREES_TO_RADIANS*semiMajorAxis);
-   boundaries[3].set(0, 1, 0, SG_DEGREES_TO_RADIANS*semiMajorAxis);
+   boundaries[2].set(-1, 0, 0, osg::DegreesToRadians(1.0f)*semiMajorAxis);
+   boundaries[3].set(0, 1, 0, osg::DegreesToRadians(1.0f)*semiMajorAxis);
 
    for(int i=0;i<4;i++)
    {
@@ -3474,8 +3472,8 @@ dtCore::RefPtr<osg::Geode> SOARXTerrain::MakeRoads(int latitude, int longitude, 
                distTScale = (*it).mTScale*(*it).mSScale/(*it).mWidth;
 
          osg::BoundingBox bb(
-            -halfWidth, -SG_DEGREES_TO_RADIANS*semiMajorAxis-halfWidth, -10000.0f,
-            SG_DEGREES_TO_RADIANS*semiMajorAxis+halfWidth, halfWidth, 10000.0f
+            -halfWidth, -osg::DegreesToRadians(1.0f)*semiMajorAxis-halfWidth, -10000.0f,
+            osg::DegreesToRadians(1.0f)*semiMajorAxis+halfWidth, halfWidth, 10000.0f
          );
 
          for(vector<OGRLineString*>::iterator ls = lineStrings.begin();
@@ -3493,14 +3491,14 @@ dtCore::RefPtr<osg::Geode> SOARXTerrain::MakeRoads(int latitude, int longitude, 
 
                (*ls)->getPoint(i, &ogrp1);
 
-               v1.mLocation[0] = (ogrp1.getX() - longitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
-               v1.mLocation[1] = (ogrp1.getY() - latitude - 1)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
+               v1.mLocation[0] = (ogrp1.getX() - longitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
+               v1.mLocation[1] = (ogrp1.getY() - latitude - 1)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
                v1.mLocation[2] = 0.0f;
 
                (*ls)->getPoint((i+1)%numPoints, &ogrp2);
 
-               v2.mLocation[0] = (ogrp2.getX() - longitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
-               v2.mLocation[1] = (ogrp2.getY() - latitude - 1)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
+               v2.mLocation[0] = (ogrp2.getX() - longitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
+               v2.mLocation[1] = (ogrp2.getY() - latitude - 1)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
                v2.mLocation[2] = 0.0f;
 
                float t1 = t2;
@@ -3768,8 +3766,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             {
                hf = ResizeHeightField(rr.getHeightField());
 
-               hf->setXInterval((semiMajorAxis*SG_DEGREES_TO_RADIANS)/(hf->getNumColumns()-1));
-               hf->setYInterval((semiMajorAxis*SG_DEGREES_TO_RADIANS)/(hf->getNumRows()-1));
+               hf->setXInterval((semiMajorAxis*osg::DegreesToRadians(1.0f))/(hf->getNumColumns()-1));
+               hf->setYInterval((semiMajorAxis*osg::DegreesToRadians(1.0f))/(hf->getNumRows()-1));
             }
          }
       }
@@ -4131,8 +4129,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
          dtCore::RefPtr<osg::MatrixTransform> mt = new osg::MatrixTransform;
 
          osg::Vec3 origin(
-            (longitude - mOriginLongitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
-            (1 + latitude - mOriginLatitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
+            (longitude - mOriginLongitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
+            (1 + latitude - mOriginLatitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
             -mOriginElevation
          );
 
@@ -4189,7 +4187,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
                break;
          }
 
-         float baseHorizontalResolution = (semiMajorAxis*SG_DEGREES_TO_RADIANS)/(baseSize-1);
+         float baseHorizontalResolution = (semiMajorAxis*osg::DegreesToRadians(1.0f))/(baseSize-1);
 
          int embeddedSize = 1 << (16-baseBits);
 
@@ -4318,12 +4316,12 @@ int SOARXTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
    const dReal* position = dGeomGetPosition(o2);
    const dReal* rotation = dGeomGetRotation(o2);
 
-   sgMat4 mat = {
-      { rotation[0], rotation[4], rotation[8], 0.0f },
-      { rotation[1], rotation[5], rotation[9], 0.0f },
-      { rotation[2], rotation[6], rotation[10], 0.0f },
-      { position[0], position[1], position[2], 1.0f }
-   };
+   osg::Matrix mat(
+       rotation[0], rotation[4], rotation[8], 0.0f,
+       rotation[1], rotation[5], rotation[9], 0.0f,
+       rotation[2], rotation[6], rotation[10], 0.0f,
+       position[0], position[1], position[2], 1.0f 
+   );
 
    if(geomClass == dBoxClass)
    {
@@ -4335,38 +4333,40 @@ int SOARXTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
       lengths[1] *= 0.5f;
       lengths[2] *= 0.5f;
 
-      sgVec3 corners[8] =
+      osg::Vec3 corners[8] =
       {
-         {-lengths[0], -lengths[1], -lengths[2]},
-         {-lengths[0], -lengths[1], +lengths[2]},
-         {-lengths[0], +lengths[1], -lengths[2]},
-         {-lengths[0], +lengths[1], +lengths[2]},
-         {+lengths[0], -lengths[1], -lengths[2]},
-         {+lengths[0], -lengths[1], +lengths[2]},
-         {+lengths[0], +lengths[1], -lengths[2]},
-         {+lengths[0], +lengths[1], +lengths[2]}
+         osg::Vec3(-lengths[0], -lengths[1], -lengths[2]),
+         osg::Vec3(-lengths[0], -lengths[1], +lengths[2]),
+         osg::Vec3(-lengths[0], +lengths[1], -lengths[2]),
+         osg::Vec3(-lengths[0], +lengths[1], +lengths[2]),
+         osg::Vec3(+lengths[0], -lengths[1], -lengths[2]),
+         osg::Vec3(+lengths[0], -lengths[1], +lengths[2]),
+         osg::Vec3(+lengths[0], +lengths[1], -lengths[2]),
+         osg::Vec3(+lengths[0], +lengths[1], +lengths[2])
       };
 
       for(int i=0;i<8 && i<maxContacts;i++)
       {
-         sgXformPnt3(corners[i], mat);
+         //sgXformPnt3(corners[i], mat);
+         dtUtil::MatrixUtil::TransformVec3(corners[i], mat);
 
-         sgVec3 point =
-         {
+         osg::Vec3 point
+         (
             corners[i][0],
             corners[i][1],
             st->GetHeight(corners[i][0], corners[i][1])
-         };
+         );
 
-         sgVec3 normal;
+         osg::Vec3 normal;
 
          st->GetNormal(corners[i][0], corners[i][1], normal);
 
-         sgVec4 plane;
+         osg::Plane plane;
 
-         sgMakePlane(plane, normal, point);
+         //sgMakePlane(plane, normal, point);
+         plane.set(normal, point);
 
-         float dist = sgDistToPlaneVec3(plane, corners[i]);
+         float dist = plane.distance(corners[i]);
 
          if(dist <= 0.0f)
          {
@@ -4393,26 +4393,27 @@ int SOARXTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
    {
       dReal radius = dGeomSphereGetRadius(o2);
 
-      sgVec3 center = { 0.0f, 0.0f, 0.0f };
+      osg::Vec3 center ( 0.0f, 0.0f, 0.0f );
 
-      sgXformPnt3(center, mat);
+      //sgXformPnt3(center, mat);
+      dtUtil::MatrixUtil::TransformVec3(center, mat);
 
-      sgVec3 point =
-      {
+      osg::Vec3 point 
+      (
          center[0],
          center[1],
          st->GetHeight(center[0], center[1])
-      };
+      );
 
-      sgVec3 normal;
+      osg::Vec3 normal;
 
       st->GetNormal(center[0], center[1], normal);
 
-      sgVec4 plane;
+      osg::Plane plane;
 
-      sgMakePlane(plane, normal, point);
+      plane.set(normal, point);
 
-      float dist = sgDistToPlaneVec3(plane, center);
+      float dist = plane.distance(center);
 
       if(dist <= radius && maxContacts >= 1)
       {
@@ -4483,11 +4484,11 @@ void SOARXTerrain::GetAABB(dGeomID g, dReal aabb[6])
    maxLat = (*it).first.mLatitude+1;
    maxLon = (*it).first.mLongitude+1;
 
-   aabb[0] = (minLon - st->mOriginLongitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis;
-   aabb[1] = (minLat - st->mOriginLatitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis;
+   aabb[0] = (minLon - st->mOriginLongitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis;
+   aabb[1] = (minLat - st->mOriginLatitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis;
    aabb[2] = -10000.0f;
-   aabb[3] = (maxLon - st->mOriginLongitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis;
-   aabb[4] = (maxLat - st->mOriginLatitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis;
+   aabb[3] = (maxLon - st->mOriginLongitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis;
+   aabb[4] = (maxLat - st->mOriginLatitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis;
    aabb[5] = 10000.0f;
 
    Notify(INFO) << minLon << " " << minLat << " " << maxLon << " " << maxLat << endl;
@@ -4875,8 +4876,8 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 			//find cell origin
 			osg::Vec3 cellorigin(
-				(longitude - mOriginLongitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
-				(latitude - mOriginLatitude)*SG_DEGREES_TO_RADIANS*semiMajorAxis,
+				(longitude - mOriginLongitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
+				(latitude - mOriginLatitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis,
 				-mOriginElevation
 				);
 //			cout<< cellorigin[0] << "," << cellorigin[1] << "," << cellorigin[2] << endl;
@@ -5309,5 +5310,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 //	Notify(DEBUG_INFO, "clear object cache");
 //	osgDB::Registry::instance()->clearObjectCache();
+ 
+}
  
 }

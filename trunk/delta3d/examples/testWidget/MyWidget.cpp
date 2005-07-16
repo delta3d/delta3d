@@ -80,15 +80,15 @@ MyWidget::ObjectLoaded( dtCore::Object* obj )
 
 
    // set the camera's position based on the scene's bounding sphere
-   sgVec3   eye   = { bs.center().x(), bs.center().y() - bs.radius() * 3.0f, bs.center().z() + bs.radius() * 0.5f };
-   sgVec3   targ  = { bs.center().x(), bs.center().y(), bs.center().z() };
-   sgVec3   up    = { 0.f, 0.f, 1.f };
+   osg::Vec3   eye   (bs.center().x(), bs.center().y() - bs.radius() * 3.0f, bs.center().z() + bs.radius() * 0.5f );
+   osg::Vec3   targ  (bs.center().x(), bs.center().y(), bs.center().z() );
+   osg::Vec3   up    (0.f, 0.f, 1.f );
 
    Transform   pos(0.f, 0.f, 0.f, 0.f, 0.f, 0.f);
    pos.SetLookAt( eye, targ, up );
 
    GetCamera()->SetTransform( &pos );
-   static_cast<OrbitMotionModel*>(mMotionModel.get())->SetDistance( sgDistanceVec3( targ, eye ) );
+   static_cast<OrbitMotionModel*>(mMotionModel.get())->SetDistance( (targ - eye).length() );
 }
 
 

@@ -169,7 +169,7 @@ osg::Node* dtCore::SkyBox::MakeBox(void)
 
 
 /// Must override this to supply the repainting routine
-void SkyBox::Repaint(sgVec3 skyColor, sgVec3 fogColor,
+void SkyBox::Repaint(osg::Vec3 skyColor, osg::Vec3 fogColor,
                      double sunAngle, double sunAzimuth,
                      double visibility)
 {
