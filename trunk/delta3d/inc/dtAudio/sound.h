@@ -352,7 +352,13 @@ namespace dtAudio
          virtual  void        GetDirection( sgVec3& direction )   const
          {
             DEPRECATE("virtual void GetDirection( sgVec3& direction ) const", "virtual void GetDirection( sgVec3& direction ) const")
-            GetDirection(osg::Vec3(direction[0], direction[1], direction[2]));
+
+            osg::Vec3 temp;
+            GetDirection( temp );
+
+            direction[0] = temp[0];
+            direction[1] = temp[1];
+            direction[2] = temp[2];            
          }
 
          /**
@@ -378,6 +384,7 @@ namespace dtAudio
          virtual  void        GetVelocity( sgVec3& velocity )     const
          {
             DEPRECATE("virtual void GetVelocity( sgVec3& velocity ) const", "virtual void GetVelocity( osg::Vec3& velocity ) const")
+
             osg::Vec3 tmp;
             GetVelocity(tmp);
             velocity[0] = tmp[0]; velocity[1] = tmp[1]; velocity[2] = tmp[2];

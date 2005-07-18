@@ -95,8 +95,13 @@ namespace   dtAudio
          virtual  void  GetVelocity( sgVec3& velocity )        const
          {
             DEPRECATE("virtual  void  GetVelocity( sgVec3& velocity ) const", "virtual  void  GetVelocity( osg::Vec3& velocity )")
-            osg::Vec3 tmp;   
-            GetVelocity(osg::Vec3(velocity[0], velocity[1], velocity[2]));
+            osg::Vec3 tmp;
+            GetVelocity(tmp);
+
+            velocity[0] = tmp[0];
+            velocity[1] = tmp[1];
+            velocity[2] = tmp[2];
+            
          }
 
 
