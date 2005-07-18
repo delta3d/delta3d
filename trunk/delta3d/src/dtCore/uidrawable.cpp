@@ -272,7 +272,7 @@ void UIDrawable::LoadResourcePolyBorder( ELEMDATA *elem)
 /** Load a predefined GUI from an XML file.  This routine does not use
  *  any search paths so the fully qualified filename must be supplied.
  */
-bool UIDrawable::LoadGUIFile( std::string filename )
+bool UIDrawable::LoadGUIFile( const std::string& filename )
 {
    std::string path = osgDB::findDataFile(filename);
    
@@ -1562,7 +1562,7 @@ void UIDrawable::EndElement()
   * @param w : width in pixels
   * @param h : height in pixels
   */
-void UIDrawable::SetWindowResolution(const int w, const int h)
+void UIDrawable::SetWindowResolution(int w, int h)
 {
    if (!mUI) return;
    mUI->SetResolution(w, h);
@@ -1572,7 +1572,7 @@ void UIDrawable::SetWindowResolution(const int w, const int h)
 * @param name : the name of this Shader
 * @param color : the RGBA color
 */
-void UIDrawable::CreateShader(std::string name)
+void UIDrawable::CreateShader(const std::string& name)
 {
    mUI->AddShader( name.c_str(), new CUI_OpenGLShader() );
 }
@@ -1581,9 +1581,17 @@ void UIDrawable::CreateShader(std::string name)
  * @param name : the name of this Shader
  * @param color : the RGBA color
  */
-void UIDrawable::CreateShader(std::string name, const osg::Vec4& color)
+void UIDrawable::CreateShader(const std::string& name, const osg::Vec4& color)
 {
-   mUI->AddShader( name.c_str(), new CUI_OpenGLShader(color[0]) );
+   //this is weird, somehow "v4_f temp = &color[0]" doesn't work, probably a const issue
+   
+   v4_f temp;
+   for( int i = 0; i < 4; i++ )
+   {
+      temp[i] = color[i];
+   }
+
+   mUI->AddShader( name.c_str(), new CUI_OpenGLShader(temp) );
 }
 
 /** Create a new Shader with the given name and texture.
@@ -1592,11 +1600,11 @@ void UIDrawable::CreateShader(std::string name, const osg::Vec4& color)
   *                          paths to find the file.
   * @see: dtCore::SetDataFilePathList
   */
-void UIDrawable::CreateShader(std::string name, std::string textureFilename)
+void UIDrawable::CreateShader(const std::string& name, const std::string& textureFilename)
 {
-   mUI->AddShader( name.c_str(), 
-      new CUI_OpenGLShader(
-      mRenderer->LoadTexture((char*)textureFilename.c_str())) );
+   CUI_OpenGLShader* shader = new CUI_OpenGLShader( mRenderer->LoadTexture( const_cast<char*>( textureFilename.c_str() ) ) );
+   mUI->AddShader( name.c_str(), shader );
+                 
 }
 
 /** Create a new Shader with the given name, texture, and color.  This Shader
@@ -1607,10 +1615,16 @@ void UIDrawable::CreateShader(std::string name, std::string textureFilename)
 *                          paths to find the file.
 * @see: dtCore::SetDataFilePathList
 */
-void UIDrawable::CreateShader(std::string name, osg::Vec4& color, std::string textureFilename)
+void UIDrawable::CreateShader(const std::string& name, const osg::Vec4& color, const std::string& textureFilename)
 {
-   mUI->AddShader( name.c_str(),
-      new CUI_OpenGLShader(mRenderer->LoadTexture((char*)textureFilename.c_str()), &color[0] ));
+   v4_f temp;
+   for( int i = 0; i < 4; i++ )
+   {
+      temp[i] = color[i];
+   }
+
+   CUI_OpenGLShader* shader = new CUI_OpenGLShader( mRenderer->LoadTexture( const_cast<char*>( textureFilename.c_str() ) ), temp );
+   mUI->AddShader( name.c_str(), shader );
 }
 
 
@@ -1620,15 +1634,15 @@ void UIDrawable::CreateShader(std::string name, osg::Vec4& color, std::string te
  * @param coords : The Array of 2D coordinates (arranged counterclockwise)
  * @param numCoords : The number of coordinates in the array
  */
-void UIDrawable::CreateBorder(std::string name, osg::Vec2* coords, const int numCoords)
+void UIDrawable::CreateBorder(const std::string& name, osg::Vec2* coords, int numCoords)
 {
   mUI->AddBorder(name.c_str(), new CUI_PolyEdgeBorder((v2_f*)(&coords[0][0]), numCoords));
 }
 
 //DEPRECATED
-void UIDrawable::CreateBorder(std::string name, sgVec2 *coords, const int numCoords)
+void UIDrawable::CreateBorder(const std::string& name, sgVec2 *coords, int numCoords)
 {
-   DEPRECATE("void CreateBorder(std::string name, sgVec2 *coords, const int numCoords)", "void CreateBorder(std::string name, osg::Vec2 *coords, const int numCoords)")
+   DEPRECATE("void CreateBorder(const std::string& name, sgVec2 *coords, int numCoords)", "void CreateBorder(const std::string& name, osg::Vec2 *coords, int numCoords)")
    mUI->AddBorder(name.c_str(), new CUI_PolyEdgeBorder(coords, numCoords));
 }
 
@@ -1643,7 +1657,7 @@ void UIDrawable::CreateBorder(std::string name, sgVec2 *coords, const int numCoo
   * @param yres : The y resolution of the bitmap (pixels)
   * @param startoffset  : Character offset from "!" that the font starts with
   */
-void UIDrawable::CreateFixedFont(std::string name, std::string shader,
+void UIDrawable::CreateFixedFont(const std::string& name, const std::string& shader,
                               int charW, int charH, int xres, int yres,
                               int startoffset)
 {
@@ -1655,7 +1669,7 @@ void UIDrawable::CreateFixedFont(std::string name, std::string shader,
 /** Add a Root Frame to this UI.  There must be at least one Root Frame in the
   * UI.
   */
-void UIDrawable::AddRootFrame( std::string name, CUI_Frame *rootFrame )
+void UIDrawable::AddRootFrame( const std::string& name, CUI_Frame *rootFrame )
 {
    if (!rootFrame->GetShader()) rootFrame->SetShader(GetShader("default"));
 
@@ -1669,7 +1683,7 @@ void UIDrawable::AddRootFrame( std::string name, CUI_Frame *rootFrame )
  * @param rootFrameName : The name of the Root Frame to add the callback to
  * @param func : The static function to use
  */
-void UIDrawable::SetCallbackFunc(std::string rootFrameName, CUI_UI::callbackfunc func)
+void UIDrawable::SetCallbackFunc(const std::string& rootFrameName, CUI_UI::callbackfunc func)
 {
    mUI->SetCallbackFunc(rootFrameName.c_str(), func);
 }
@@ -1689,20 +1703,19 @@ void UIDrawable::AddFrame( CUI_Frame *frame )
     mUI->AddFrame(frame);
  }
 
- void UIDrawable::SetupDefaults(void)
- {
-    mUI->AddCoordSys( "default", new CUI_CoordSys() );
-
-    osg::Vec4 def_col( 0.75, 0.75, 0.75, 1.0 );
-    CreateShader("default", def_col);
-
-    osg::Vec4 hi_col( 0.9, 0.9, 0.9, 1.0 );
-    CreateShader("defaultHi", hi_col);
-
-    osg::Vec4 lo_col( 0.55, 0.55, 0.55, 1.0 );
-    CreateShader("defaultLo", lo_col);
-
-    osg::Vec2 defborder[] = { osg::Vec2(0,0), osg::Vec2(1,0), osg::Vec2(1,1), osg::Vec2(0,1) };
-    CreateBorder( "default", defborder, 4 );
- }
-
+void UIDrawable::SetupDefaults()
+{
+   mUI->AddCoordSys( "default", new CUI_CoordSys() );
+   
+   osg::Vec4 def_col( 0.75, 0.75, 0.75, 1.0 );
+   CreateShader("default", def_col);
+   
+   osg::Vec4 hi_col( 0.9, 0.9, 0.9, 1.0 );
+   CreateShader("defaultHi", hi_col);
+   
+   osg::Vec4 lo_col( 0.55, 0.55, 0.55, 1.0 );
+   CreateShader("defaultLo", lo_col);
+   
+   osg::Vec2 defborder[] = { osg::Vec2(0,0), osg::Vec2(1,0), osg::Vec2(1,1), osg::Vec2(0,1) };
+   CreateBorder( "default", defborder, 4 );
+}
