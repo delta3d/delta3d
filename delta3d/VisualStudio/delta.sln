@@ -31,6 +31,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "src\gui_fl\gui_fl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtsoarx", "src\soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
 	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
