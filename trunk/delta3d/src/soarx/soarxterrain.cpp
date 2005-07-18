@@ -5,6 +5,7 @@
 #include "soarx/soarxterrain.h"
 #include "dtCore/notify.h"
 #include "dtCore/scene.h"
+#include "dtUtil/matrixutil.h"
 
 #include <sstream>
 
@@ -5310,7 +5311,5 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 //	Notify(DEBUG_INFO, "clear object cache");
 //	osgDB::Registry::instance()->clearObjectCache();
- 
-}
  
 }
