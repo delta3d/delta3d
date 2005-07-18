@@ -154,7 +154,7 @@ namespace dtCore
                Transformable* parent = NULL"
                )
                 
-               AddDetonation(osg::Vec3(position[0], position[1], position[2]), type, timeToLive, parent);
+               return AddDetonation(osg::Vec3(position[0], position[1], position[2]), type, timeToLive, parent);
          }
 
          /**
