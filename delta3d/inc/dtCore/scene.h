@@ -27,7 +27,7 @@
 
 #include <Producer/Camera>
 #include <ode/ode.h>
-#include <osg/vec3>
+#include <osg/Vec3>
 #include "dtCore/base.h"
 #include "dtCore/stats.h"
 #include "dtCore/light.h"
