@@ -9,14 +9,23 @@ using namespace boost::python;
 using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GH_overloads, GetHeight, 2, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(GN_overloads, GetNormal, 3, 4)
 
 void initInfiniteTerrainBindings()
 {
    InfiniteTerrain* (*InfiniteTerrainGI1)(int) = &InfiniteTerrain::GetInstance;
    InfiniteTerrain* (*InfiniteTerrainGI2)(std::string) = &InfiniteTerrain::GetInstance;
 
-   class_<InfiniteTerrain, bases<Physical>, dtCore::RefPtr<InfiniteTerrain> >("InfiniteTerrain", init<optional<std::string> >())
+   //hmm, this won't compile with the overloaded bool default parameters, i can't call
+   //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS because there are actually 4 versions.
+   //when we deprecated sg for real, we can replace these function pointers with 
+   //BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS again. -osb
+
+   //void (InfiniteTerrain::*GetNormal1)(float, float, osg::Vec3&) = &InfiniteTerrain::GetNormal;
+   void (InfiniteTerrain::*GetNormal2)(float, float, osg::Vec3&, bool) = &InfiniteTerrain::GetNormal;
+   //void (InfiniteTerrain::*GetNormal3)(float, float, sgVec3) = &InfiniteTerrain::GetNormal;
+   void (InfiniteTerrain::*GetNormal4)(float, float, sgVec3, bool) = &InfiniteTerrain::GetNormal;
+
+   class_<InfiniteTerrain, bases<Physical>, dtCore::RefPtr<InfiniteTerrain> >("InfiniteTerrain", init<optional<const std::string&> >())
       .def("GetInstanceCount", &InfiniteTerrain::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", InfiniteTerrainGI1, return_internal_reference<>())
@@ -36,5 +45,8 @@ void initInfiniteTerrainBindings()
       .def("EnableSmoothCollisions", &InfiniteTerrain::EnableSmoothCollisions)
       .def("SmoothCollisionsEnabled", &InfiniteTerrain::SmoothCollisionsEnabled)
       .def("GetHeight", &InfiniteTerrain::GetHeight, GH_overloads())
-      .def("GetNormal", &InfiniteTerrain::GetNormal, GN_overloads());
+      //.def("GetNormal", GetNormal1)
+      .def("GetNormal", GetNormal2)
+      //.def("GetNormal", GetNormal3)
+      .def("GetNormal", GetNormal4);
 }

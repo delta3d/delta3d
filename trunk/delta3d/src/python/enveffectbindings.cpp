@@ -12,12 +12,12 @@ class EnvEffectWrap : public EnvEffect
 {
    public:
 
-      EnvEffectWrap(PyObject* self, std::string name = "")
+      EnvEffectWrap(PyObject* self, const std::string& name = "")
          : EnvEffect(name),
            mSelf(self)
       {}
 
-      virtual void Repaint(sgVec3 skyColor, sgVec3 fogColor,
+      virtual void Repaint(const osg::Vec3& skyColor, const osg::Vec3& fogColor,
                            double sunAngle, double sunAzimuth,
                            double visibility)
       {
@@ -34,11 +34,11 @@ void initEnvEffectBindings()
    EnvEffect* (*EnvEffectGI1)(int) = &EnvEffect::GetInstance;
    EnvEffect* (*EnvEffectGI2)(std::string) = &EnvEffect::GetInstance;
 
-   class_<EnvEffect, bases<DeltaDrawable>, dtCore::RefPtr<EnvEffectWrap>, boost::noncopyable>("EnvEffect", init<optional<std::string> >())
+   class_<EnvEffect, bases<DeltaDrawable>, dtCore::RefPtr<EnvEffectWrap>, boost::noncopyable>("EnvEffect", init<optional<const std::string&> >())
       .def("GetInstanceCount", &EnvEffect::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EnvEffectGI1, return_internal_reference<>())
       .def("GetInstance", EnvEffectGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("Repaint", &EnvEffect::Repaint);
+      .def("Repaint", &EnvEffectWrap::Repaint);
 }

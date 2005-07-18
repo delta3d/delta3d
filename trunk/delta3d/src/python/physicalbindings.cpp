@@ -74,7 +74,19 @@ void initPhysicalBindings()
    
    void (Physical::*GetMass1)(dMass*) const = &Physical::GetMass;
    float (Physical::*GetMass2)() const = &Physical::GetMass;
-   
+
+   void (Physical::*SetCenterOfGravity1)(const osg::Vec3&) = &Physical::SetCenterOfGravity;
+   void (Physical::*SetCenterOfGravity2)(const sgVec3) = &Physical::SetCenterOfGravity;
+
+   void (Physical::*GetCenterOfGravity1)(osg::Vec3&) const = &Physical::GetCenterOfGravity;
+   void (Physical::*GetCenterOfGravity2)(sgVec3) const = &Physical::GetCenterOfGravity;
+
+   void (Physical::*SetInertiaTensor1)(const osg::Matrix& inertiaTensor) = &Physical::SetInertiaTensor;
+   void (Physical::*SetInertiaTensor2)(const sgMat3 inertiaTensor) = &Physical::SetInertiaTensor;
+
+   void (Physical::*GetInertiaTensor1)(osg::Matrix& mat) const = &Physical::GetInertiaTensor;
+   void (Physical::*GetInertiaTensor2)(sgMat3 dest) const = &Physical::GetInertiaTensor;
+
    class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
       .def("GetGeomID", &Physical::GetGeomID, return_value_policy<return_opaque_pointer>())
       .def("SetBodyID", &Physical::SetBodyID)
@@ -95,10 +107,14 @@ void initPhysicalBindings()
       .def("GetMass", GetMass1)
       .def("SetMass", SetMass2)
       .def("GetMass", GetMass2)
-      .def("SetCenterOfGravity", &Physical::SetCenterOfGravity)
-      .def("GetCenterOfGravity", &Physical::GetCenterOfGravity)
-      .def("SetInertiaTensor", &Physical::SetInertiaTensor)
-      .def("GetInertiaTensor", &Physical::GetInertiaTensor)
+      .def("SetCenterOfGravity", SetCenterOfGravity1)
+      .def("SetCenterOfGravity", SetCenterOfGravity2)
+      .def("GetCenterOfGravity", GetCenterOfGravity1)
+      .def("GetCenterOfGravity", GetCenterOfGravity2)
+      .def("SetInertiaTensor", SetInertiaTensor1)
+      .def("SetInertiaTensor", SetInertiaTensor2)
+      .def("GetInertiaTensor", GetInertiaTensor1)
+      .def("GetInertiaTensor", GetInertiaTensor2)
       .def("PrePhysicsStepUpdate", &Physical::PrePhysicsStepUpdate, &PhysicalWrap::DefaultPrePhysicsStepUpdate)
       .def("FilterContact", &Physical::FilterContact, &PhysicalWrap::DefaultFilterContact)
       .def("PostPhysicsStepUpdate", &Physical::PostPhysicsStepUpdate, &PhysicalWrap::DefaultPostPhysicsStepUpdate)

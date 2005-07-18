@@ -13,16 +13,21 @@ void initSceneBindings()
    Scene* (*SceneGI1)(int) = &Scene::GetInstance;
    Scene* (*SceneGI2)(std::string) = &Scene::GetInstance;
 
-   void (Scene::*SetGravity1)(sgVec3) = &Scene::SetGravity;
+   float (Scene::*GetHeightOfTerrain1)( float x, float y ) = &Scene::GetHeightOfTerrain;
+   float (Scene::*GetHeightOfTerrain2)( const float *x, const float *y ) = &Scene::GetHeightOfTerrain;
+
+   void (Scene::*SetGravity1)(const osg::Vec3&) = &Scene::SetGravity;
    void (Scene::*SetGravity2)(float, float, float) = &Scene::SetGravity;
+   void (Scene::*SetGravity3)(sgVec3) = &Scene::SetGravity;
    
-   void (Scene::*GetGravity1)(sgVec3) = &Scene::GetGravity;
-   void (Scene::*GetGravity2)(float*, float*, float*) = &Scene::GetGravity;
+   void (Scene::*GetGravity1)(osg::Vec3&) const = &Scene::GetGravity;
+   void (Scene::*GetGravity2)(float*, float*, float*) const = &Scene::GetGravity;
+   void (Scene::*GetGravity3)(sgVec3) const = &Scene::GetGravity;
 
    Light* (Scene::*GetLight1)(const int) const = &Scene::GetLight;
-   Light* (Scene::*GetLight2)(const std::string) const = &Scene::GetLight;
+   Light* (Scene::*GetLight2)(const std::string&) const = &Scene::GetLight;
    
-   scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene> >("Scene", init<optional<std::string,bool> >())
+   scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene> >("Scene", init<optional<const std::string&,bool> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SceneGI1, return_internal_reference<>())
@@ -32,13 +37,16 @@ void initSceneBindings()
       .def("AddDrawable", &Scene::AddDrawable)
       .def("RemoveDrawable", &Scene::AddDrawable)
       .def("SetRenderState", &Scene::SetRenderState)
-      .def("GetHeightOfTerrain", &Scene::GetHeightOfTerrain)
+      .def("GetHeightOfTerrain", GetHeightOfTerrain1)
+      .def("GetHeightOfTerrain", GetHeightOfTerrain2)
       .def("GetSpaceID", &Scene::GetSpaceID, return_value_policy<return_opaque_pointer>())
       .def("GetWorldID", &Scene::GetWorldID, return_value_policy<return_opaque_pointer>())
       .def("SetGravity", SetGravity1)
       .def("SetGravity", SetGravity2)
+      .def("SetGravity", SetGravity3)
       .def("GetGravity", GetGravity1)
       .def("GetGravity", GetGravity2)
+      .def("GetGravity", GetGravity3)
       .def("SetPhysicsStepSize", &Scene::SetPhysicsStepSize)
       .def("GetPhysicsStepSize", &Scene::GetPhysicsStepSize)
       .def("GetLight", GetLight1, return_internal_reference<>())
