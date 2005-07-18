@@ -119,74 +119,74 @@ namespace dtCore
       virtual void OnMessage(MessageData *data);
 
       ///Get a pointer to the underlying CUI_UI
-      CUI_UI* GetUI(void) {return mUI;}
+      CUI_UI* GetUI() {return mUI;}
 
       ///Load a xml GUI file and create the UI elements
-      bool LoadGUIFile(std::string filename);
+      bool LoadGUIFile(const std::string& filename);
 
       ///Set the resolution of the DeltaWin this UI is in (pixels)
-      void SetWindowResolution(const int w, const int h);
+      void SetWindowResolution(int w, int h);
 
       ///Get a pointer to the underlying CUI_OpenGLRender
-      CUI_OpenGLRenderer *GetRenderer(void) const {return mRenderer;}
+      CUI_OpenGLRenderer *GetRenderer() const {return mRenderer;}
 
       ///Create a Shader that uses a solid color
-      void CreateShader(std::string name);
+      void CreateShader(const std::string& name);
 
       ///Create a Shader that uses a solid color
-      void CreateShader(std::string name, const osg::Vec4& color);
+      void CreateShader(const std::string& name, const osg::Vec4& color);
       //Depreciated version
-      void CreateShader(std::string name, sgVec4 color)
+      void CreateShader(const std::string& name, sgVec4 color)
       {
-         DEPRECATE("void CreateShader(std::string name, sgVec4 color)", "void CreateShader(std::string name, osg::Vec4 color)")
+         DEPRECATE("void CreateShader(const std::string& name, sgVec4 color)", "void CreateShader(const std::string& name, const osg::Vec4 color)")
          CreateShader(name, osg::Vec4(color[0], color[1], color[2], color[3]));
       }
 
       ///Create a Shader that uses a texture
-      void CreateShader(std::string name, std::string textureFilename);
+      void CreateShader(const std::string& name, const std::string& textureFilename);
 
       ///Create a Shader that uses a color and a texture
-      void CreateShader(std::string name, osg::Vec4& color, std::string textureFilename);
+      void CreateShader(const std::string& name, const osg::Vec4& color, const std::string& textureFilename);
       //depreciated version
-      void CreateShader(std::string name, sgVec4 color, std::string textureFilename)
+      void CreateShader(const std::string& name, sgVec4 color, const std::string& textureFilename)
       {
-         DEPRECATE("void CreateShader(std::string name, sgVec4 color, std::string textureFilename)", "void CreateShader(std::string name, osg::Vec4 color, std::string textureFilename)")
+         DEPRECATE("void CreateShader(const std::string& name, sgVec4 color, const std::string& textureFilename)", "void CreateShader(const std::string& name, osg::Vec4 color, const std::string& textureFilename)")
          CreateShader(name, osg::Vec4(color[0], color[1], color[2], color[3]), textureFilename);
       }
 
       ///Get a pointer of an already created Shader
-      IUI_Shader *GetShader(std::string name) {return mUI->GetShader(name.c_str());}
+      IUI_Shader *GetShader(const std::string& name) {return mUI->GetShader(name.c_str());}
          
       ///Create a Border using the supplied coordinates.
-      void CreateBorder(std::string name, osg::Vec2 *coords, const int numCoords);
+      void CreateBorder(const std::string& name, osg::Vec2 *coords, int numCoords);
       //DEPRECATED
-      void CreateBorder(std::string name, sgVec2 *coords, const int numCoords);
+      void CreateBorder(const std::string& name, sgVec2 *coords, int numCoords);
       
       ///Get a pointer of an already created Border
-      IUI_Border *GetBorder(std::string name) {return mUI->GetBorder(name.c_str()); }
+      IUI_Border *GetBorder(const std::string& name) {return mUI->GetBorder(name.c_str()); }
 
       ///Create a new fixed width font
-      void CreateFixedFont(std::string name, std::string shader,
+      void CreateFixedFont(const std::string& name, const std::string& shader,
                            int charW=16, int charH=24, int xres=256, int yres=256,
                            int startoffset=0);
 
       ///Get a pointer of an already created Font
-      IUI_Font *GetFont(std::string name) {return mUI->GetFont(name.c_str());}         
+      IUI_Font *GetFont(const std::string& name) {return mUI->GetFont(name.c_str());}         
 
       ///Add a Frame to this UI
       void AddFrame(CUI_Frame *frame);
 
       ///Add a Root Frame to this UI.  There must be at least one RootFrame
-      void AddRootFrame( std::string name, CUI_Frame *rootFrame );
+      void AddRootFrame( const std::string& name, CUI_Frame *rootFrame );
 
       ///Select which Root Frame to make active
-      void SetActiveRootFrame(std::string name) {mUI->SetActiveRootFrame(name.c_str()); mActiveRootFrame = name;}
+      void SetActiveRootFrame(const std::string& name) {mUI->SetActiveRootFrame(name.c_str()); mActiveRootFrame = name;}
 
       ///Returns the name of the active root frame
-      std::string GetActiveRootFrame() { return mActiveRootFrame; }
+      const std::string& GetActiveRootFrame() { return mActiveRootFrame; }
       
       ///Supply the calback function for an already created RootFrame
-      void SetCallbackFunc(std::string rootFrameName, CUI_UI::callbackfunc func);
+      void SetCallbackFunc(const std::string& rootFrameName, CUI_UI::callbackfunc func);
 
       virtual osg::Node* GetOSGNode() {return mNode.get();}
 
