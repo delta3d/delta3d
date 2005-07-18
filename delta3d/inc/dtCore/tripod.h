@@ -49,21 +49,21 @@ namespace dtCore
       
       ///Contructor which takes in a optional Camera and Transformable
       Tripod(Camera *cam = NULL, Transformable *trans = NULL);
-      virtual ~Tripod(void);
+      virtual ~Tripod();
 
       ///Supply a Camera to connect to this Tripod
-      void SetCamera( Camera *cam);
-      void SetCamera( const std::string camName);
+      void SetCamera( Camera *cam );
+      void SetCamera( const std::string& camName );
 
       ///Get the currently connected Camera
-      RefPtr<Camera> GetCamera(void)const {return mCamera;}
+      RefPtr<Camera> GetCamera() const {return mCamera;}
 
       ///Attach this Tripod to a Transformable
       void SetAttachToTransformable(Transformable *trans);
-      void SetAttachToTransformable(std::string transName);
+      void SetAttachToTransformable(const std::string& transName);
 
       ///Get the currently connected Transformable
-      RefPtr<Transformable> GetAttachedTransformable(void) const {return mParent;}
+      RefPtr<Transformable> GetAttachedTransformable() const {return mParent;}
       
       ///Set the Tripod's offset from the parent Transformable
       void SetOffset(float x, float y, float z, float h, float p, float r);
@@ -114,7 +114,7 @@ namespace dtCore
 
       ///Set the mode of how the Tripod connects to the parent
       void SetTetherMode( TetherMode mode) {mTetherMode = mode;}
-      TetherMode GetTetherMode(void)const {return mTetherMode;}
+      TetherMode GetTetherMode()const {return mTetherMode;}
 
       ///Point the Tripod at this Transformable
       void SetLookAtTarget(Transformable *target);
@@ -124,7 +124,7 @@ namespace dtCore
       virtual void OnMessage(MessageData *data);
 
       ///Override to implement your own method
-      virtual void Update(const double deltaFrameTime);
+      virtual void Update(double deltaFrameTime);
 
       RefPtr<Camera> mCamera; ///<pointer to the Camera to control
       RefPtr<Transformable> mParent; ///<pointer to the parent Transformable

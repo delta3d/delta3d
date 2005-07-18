@@ -36,7 +36,7 @@ void Tripod::SetCamera(Camera *cam)
    mCamera = cam;
 }
 
-void Tripod::SetCamera(std::string camName)
+void Tripod::SetCamera( const std::string& camName )
 {
    if (camName.size()>0)
    {
@@ -58,7 +58,7 @@ void Tripod::SetAttachToTransformable(Transformable *trans)
    mParent = trans;
 }
 
-void Tripod::SetAttachToTransformable(std::string transName)
+void Tripod::SetAttachToTransformable( const std::string& transName )
 {
    if (transName.size()>0)
    {
@@ -92,7 +92,7 @@ void Tripod::OnMessage(MessageData *data)
 {
    if (data->message == "preframe")
    {
-      Update( *(double*)data->userData );
+      Update( *reinterpret_cast<double*>(data->userData) );
    }
 }
 

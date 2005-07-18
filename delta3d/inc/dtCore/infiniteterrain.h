@@ -59,8 +59,8 @@ namespace dtCore
           * @param name the instance name
           * @param textureImage An image to apply to the terrain
           */
-         InfiniteTerrain(std::string name = "infiniteTerrain",
-                         osg::Image* textureImage = NULL);
+         InfiniteTerrain(const std::string& name = "infiniteTerrain",
+                         osg::Image* textureImage = 0);
 
          /**
           * Destructor.

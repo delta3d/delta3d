@@ -10,7 +10,7 @@ using  namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyDome)
 
-SkyDome::SkyDome(std::string name)
+SkyDome::SkyDome(const std::string& name)
 :EnvEffect(name)
 {
    RegisterInstance(this);
@@ -20,13 +20,13 @@ SkyDome::SkyDome(std::string name)
    Config();
 }
 
-SkyDome::~SkyDome(void)
+SkyDome::~SkyDome()
 {
    DeregisterInstance(this);
 }
 
 // Build the sky dome
-void dtCore::SkyDome::Config(void)
+void dtCore::SkyDome::Config()
 {
    osg::Group *group = new osg::Group();
 
@@ -61,7 +61,7 @@ void dtCore::SkyDome::Config(void)
    dynamic_cast<osg::Group*>(mNode.get())->addChild(group);
 }
 
-osg::Node* dtCore::SkyDome::MakeDome(void)
+osg::Node* dtCore::SkyDome::MakeDome()
 {
    //5 levels with 18 points each spaced 20 degrees apart
 
@@ -144,7 +144,6 @@ osg::Node* dtCore::SkyDome::MakeDome(void)
     geom->setColorArray( &colors );
     geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
 
-
     //osg::Texture2D *tex = new osg::Texture2D;
     //tex->setImage(osgDB::readImageFile("target.bmp"));
 
@@ -155,7 +154,6 @@ osg::Node* dtCore::SkyDome::MakeDome(void)
     dstate->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
     dstate->setMode( GL_CULL_FACE, osg::StateAttribute::ON );
     
-
     // clear the depth to the far plane.
     osg::Depth* depth = new osg::Depth;
     depth->setFunction(osg::Depth::ALWAYS);

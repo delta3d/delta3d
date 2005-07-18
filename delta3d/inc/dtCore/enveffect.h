@@ -27,7 +27,6 @@
 #include <osg/Group>
 #include <osg/Vec3>
 
-//
 ///\todo Make this pure virtual once sg has been removed
 namespace dtCore
 {
@@ -41,9 +40,9 @@ namespace dtCore
       virtual ~EnvEffect();
 
       // Must override this to supply the repainting routine
-      virtual void Repaint( const osg::Vec3& skyColor, const osg::Vec3& fogColor,
-         double sunAngle, double sunAzimuth,
-         double visibility );
+      virtual void Repaint(   const osg::Vec3& skyColor, const osg::Vec3& fogColor,
+                              double sunAngle, double sunAzimuth,
+                              double visibility );
 
       //Depreciated version
       //note: this is a funny situation where the user will override this function

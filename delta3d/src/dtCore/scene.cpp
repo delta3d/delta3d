@@ -46,7 +46,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Scene::Scene( string name, bool useSceneLight )
+Scene::Scene( const string& name, bool useSceneLight )
 : Base(name), mPhysicsStepSize(0.0)
 {
    RegisterInstance(this);
@@ -62,8 +62,8 @@ Scene::Scene( string name, bool useSceneLight )
    AddDrawable( skyLight );
    skyLight->SetEnabled( true );
 
-   mUserNearCallback = NULL;
-   mUserNearCallbackData = NULL;
+   mUserNearCallback = 0;
+   mUserNearCallbackData = 0;
 
    mSpaceID = dHashSpaceCreate(0);
    mWorldID = dWorldCreate();
@@ -127,7 +127,7 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
 {
    mSceneNode.get()->removeChild( drawable->GetOSGNode() );
-   drawable->AddedToScene(NULL);
+   drawable->AddedToScene(0);
 
    unsigned int pos = GetDrawableIndex(drawable);
    if (pos<mAddedDrawables.size())
@@ -205,7 +205,7 @@ void Scene::SetRenderState( Face face, Mode mode )
   */
 void Scene::RegisterPhysical( Physical *physical )
 {
-   if (physical==NULL) return;
+   if (physical==0) return;
 
    dSpaceAdd(mSpaceID, physical->GetGeomID());
 
@@ -243,18 +243,18 @@ void Scene::UnRegisterPhysical( Physical *physical )
  * does an intersection check of the whole scene from (X,Y,10k) to (X,Y,-10k).
  * Any geometry that intersects is considered the "terrain".
  *
- * @param *x : The X location to check for HOT
- * @param *y : The Y location to check for HOT
+ * @param x : The X location to check for HOT
+ * @param y : The Y location to check for HOT
  *
  * @return float  : The found Height of Terrain (or 0 if no intersection)
  */
-float Scene::GetHeightOfTerrain(const float *x, const float *y)
+float Scene::GetHeightOfTerrain( float x, float y )
 {
    float HOT = 0.f;
    osgUtil::IntersectVisitor iv;
    RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
    
-   segDown->set(osg::Vec3(*x, *y, 10000.f),osg::Vec3(*x,*y, -10000.f));
+   segDown->set(osg::Vec3(x, y, 10000.f),osg::Vec3(x,y, -10000.f));
    iv.addLineSegment(segDown.get());
    iv.setTraversalMask(0x0fffffff);
    
@@ -273,30 +273,23 @@ float Scene::GetHeightOfTerrain(const float *x, const float *y)
    return HOT;
 }
 
-void Scene::SetGravity(osg::Vec3 gravity)
+void Scene::SetGravity( const osg::Vec3& gravity )
 {
    mGravity.set(gravity);
    
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
 
-void Scene::SetGravity(float x, float y, float z)
+void Scene::GetGravity( sgVec3 gravity ) const
 {
-   mGravity.set(x, y, z);
-   
-   dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
-}
-         
-void Scene::GetGravity(osg::Vec3 vec)
-{
-   vec.set(mGravity);
-}
+   DEPRECATE("void GetGravity(sgVec3 gravity)","void GetGravity(osg::Vec3& vec)")
 
-void Scene::GetGravity(float* x, float* y, float* z)
-{
-   *x = mGravity[0];
-   *y = mGravity[1];
-   *z = mGravity[2];
+   osg::Vec3 temp;
+   GetGravity(temp);
+
+   gravity[0] = temp[0];
+   gravity[1] = temp[1];
+   gravity[2] = temp[2];
 }
 
 // Get the ODE space ID
@@ -402,7 +395,7 @@ void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
    int numContacts = 
       dCollide(o1, o2, 8, contactGeoms, sizeof(dContactGeom));
    
-   if(numContacts > 0 && p1 != NULL && p2 != NULL)
+   if(numContacts > 0 && p1 != 0 && p2 != 0)
    {
       CollisionData cd;
       
@@ -466,7 +459,7 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
    mUserNearCallbackData = data;
 }
 
-Light* Scene::GetLight( const std::string name ) const
+Light* Scene::GetLight( const std::string& name ) const
 {
    for( int i = 0; i < MAX_LIGHTS; i++ )
    {
@@ -476,7 +469,7 @@ Light* Scene::GetLight( const std::string name ) const
       }
    }
    
-   return NULL;
+   return 0;
 }
 
 
