@@ -15,11 +15,16 @@ void initUIDrawableBindings()
    UIDrawable* (*UIDrawableGI1)(int) = &UIDrawable::GetInstance;
    UIDrawable* (*UIDrawableGI2)(std::string) = &UIDrawable::GetInstance;
 
-   void (UIDrawable::*CreateShader1)(std::string) = &UIDrawable::CreateShader;
-   void (UIDrawable::*CreateShader2)(std::string, sgVec4) = &UIDrawable::CreateShader;
-   void (UIDrawable::*CreateShader3)(std::string, std::string) = &UIDrawable::CreateShader;
-   void (UIDrawable::*CreateShader4)(std::string, sgVec4, std::string) = &UIDrawable::CreateShader;
+   void (UIDrawable::*CreateShader1)(const std::string&) = &UIDrawable::CreateShader;
+   void (UIDrawable::*CreateShader2)(const std::string&, const osg::Vec4&) = &UIDrawable::CreateShader;
+   void (UIDrawable::*CreateShader3)(const std::string&, sgVec4) = &UIDrawable::CreateShader;
+   void (UIDrawable::*CreateShader4)(const std::string&, const std::string&) = &UIDrawable::CreateShader;
+   void (UIDrawable::*CreateShader5)(const std::string&, const osg::Vec4&, const std::string&) = &UIDrawable::CreateShader;
+   void (UIDrawable::*CreateShader6)(const std::string&, sgVec4, const std::string&) = &UIDrawable::CreateShader;
    
+   void (UIDrawable::*CreateBorder1)(const std::string&, osg::Vec2*, int) = &UIDrawable::CreateBorder;
+   void (UIDrawable::*CreateBorder2)(const std::string&, sgVec2*, int) = &UIDrawable::CreateBorder;
+
    class_<UIDrawable, bases<DeltaDrawable,MouseListener,KeyboardListener>, dtCore::RefPtr<UIDrawable> >("UIDrawable", init<optional<int, int> >())
       .def("GetInstanceCount", &UIDrawable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -34,14 +39,17 @@ void initUIDrawableBindings()
       .def("CreateShader", CreateShader2)
       .def("CreateShader", CreateShader3)
       .def("CreateShader", CreateShader4)
+      .def("CreateShader", CreateShader5)
+      .def("CreateShader", CreateShader6)
       .def("GetShader", &UIDrawable::GetShader, return_internal_reference<>())
-      .def("CreateBorder", &UIDrawable::CreateBorder)
+      .def("CreateBorder", CreateBorder1)
+      .def("CreateBorder", CreateBorder2)
       .def("GetBorder", &UIDrawable::GetBorder, return_internal_reference<>())
       .def("CreateFixedFont", &UIDrawable::CreateFixedFont, CFF_overloads())
       .def("GetFont", &UIDrawable::GetFont, return_internal_reference<>())
       .def("AddFrame", &UIDrawable::AddFrame)
       .def("AddRootFrame", &UIDrawable::AddRootFrame)
       .def("SetActiveRootFrame", &UIDrawable::SetActiveRootFrame)
-      .def("GetActiveRootFrame", &UIDrawable::GetActiveRootFrame);
+      .def("GetActiveRootFrame", &UIDrawable::GetActiveRootFrame, return_internal_reference<>());
  
 }
