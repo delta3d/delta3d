@@ -39,10 +39,9 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(SkyDome)
    public:
-      SkyDome(std::string name="SkyDome");
-      virtual ~SkyDome(void);
-      //virtual osg::Group *GetNode(void) {return mNode;}
-
+      SkyDome(const std::string& name="SkyDome");
+      virtual ~SkyDome();
+      
       void SetBaseColor(const osg::Vec3& color);
       //deprecated version
       void SetBaseColor(sgVec3 color)
@@ -79,13 +78,12 @@ namespace dtCore
                  sun_angle, sunAzimuth, vis);      
       }
 
-
    private:
       // Build the sky dome
-      void Config(void);
+      void Config();
 
       //osg::Group *mNode;
-      osg::Node* MakeDome(void);
+      osg::Node* MakeDome();
       osg::Vec3 mBaseColor;
       osg::Geode *mGeode;
 

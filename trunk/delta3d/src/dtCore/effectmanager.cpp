@@ -101,7 +101,7 @@ class DetonationUpdateCallback : public osg::NodeCallback
  *
  * @param name the instance name
  */
-EffectManager::EffectManager(string name) :
+EffectManager::EffectManager(const string& name) :
 DeltaDrawable(name),
    mLastTime(0)
 {
@@ -129,7 +129,7 @@ EffectManager::~EffectManager()
  */
 void EffectManager::AddDetonationTypeMapping(
    DetonationType detonationType,
-   string filename)
+   const string& filename)
 {
    mDetonationTypeFilenameMap[detonationType] = filename;
 }

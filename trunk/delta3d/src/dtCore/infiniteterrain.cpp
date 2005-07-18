@@ -105,7 +105,7 @@ static int dInfiniteTerrainClass = 0;
  *
  * @param name the instance name
  */
-InfiniteTerrain::InfiniteTerrain(string name, osg::Image* textureImage)
+InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
    : mSegmentSize(1000.0f),
      mSegmentDivisions(128),
      mHorizontalScale(0.01f),
@@ -131,9 +131,9 @@ InfiniteTerrain::InfiniteTerrain(string name, osg::Image* textureImage)
    
    ss->setAttribute(mat);
    
-   osg::Image* image = NULL;
+   osg::Image* image = 0;
 
-   if (textureImage != NULL)
+   if (textureImage != 0)
       image = textureImage;
    else 
    {

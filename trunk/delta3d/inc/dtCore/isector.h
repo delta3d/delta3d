@@ -72,7 +72,7 @@ namespace dtCore
 
       ///Default constructor
       Isector(const osg::Vec3& xyz, const osg::Vec3& dir);
-      Isector(sgVec3 xyz=NULL, sgVec3 dir=NULL)
+      Isector(sgVec3 xyz=0, sgVec3 dir=0)
       {
          DEPRECATE("Isector(sgVec3 xyz=NULL, sgVec3 dir=NULL)", "Isector(const osg:Vec3& xyz, const osg::Vec3& dir)")
          *this = Isector(osg::Vec3(xyz[0], xyz[1], xyz[2]), osg::Vec3(dir[0], dir[1], dir[2]));
@@ -80,12 +80,12 @@ namespace dtCore
       virtual ~Isector();
 
       ///Set the length of the isector
-	   void SetLength( const float distance);
+	   void SetLength( float distance );
       
       ///Get the intersected point
-      void GetHitPoint( osg::Vec3& xyz, const int pointNum=0 ) const;
+      void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
       //DEPRECATED
-      void GetHitPoint( sgVec3 xyz, const int pointNum=0 )
+      void GetHitPoint( sgVec3 xyz, int pointNum = 0 ) const
       {
          DEPRECATE("void GetHitPoint( sgVec3 xyz, const int pointNum=0 )", "void GetHitPoint( osg::Vec3& xyz, const int pointNum=0 ) const")
          osg::Vec3 tmp;
@@ -94,7 +94,7 @@ namespace dtCore
       }
 
       ///Get the number of intersected items
-      int GetNumberOfHits(void) const;
+      int GetNumberOfHits() const;
 
       ///Set the direction vector
       void SetDirection( const osg::Vec3& dir );
@@ -124,7 +124,7 @@ namespace dtCore
       }
 
       ///Check for intersections
-	   bool Update(void);
+	   bool Update();
 
       ///Supply a particular geometry to intersect
 	   void SetGeometry( DeltaDrawable *object);

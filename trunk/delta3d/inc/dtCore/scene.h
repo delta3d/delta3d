@@ -28,6 +28,8 @@
 #include <Producer/Camera>
 #include <ode/ode.h>
 #include <osg/Vec3>
+#include <sg.h>
+
 #include "dtCore/base.h"
 #include "dtCore/stats.h"
 #include "dtCore/light.h"
@@ -72,11 +74,11 @@ namespace dtCore
          FILL = GL_FILL
       };
 
-      Scene(std::string name = "scene", bool useSceneLight = true);
+      Scene(const std::string& name = "scene", bool useSceneLight = true);
       virtual ~Scene();
 
       ///Get a pointer to the internal scene node
-      osg::Group  *GetSceneNode(void) {return mSceneNode.get();}
+      osg::Group *GetSceneNode() {return mSceneNode.get();}
       
       ///Add a DeltaDrawable to the Scene to be viewed.
       void AddDrawable( DeltaDrawable* drawable );
@@ -92,7 +94,15 @@ namespace dtCore
       const std::pair<Face,Mode> GetRenderState() const { return std::make_pair( mRenderFace, mRenderMode ); }
      
       ///Get the height of terrain at a given x,y
-      float GetHeightOfTerrain( const float *x, const float *y);
+      float GetHeightOfTerrain( float x, float y );
+
+      float GetHeightOfTerrain( const float *x, const float *y )
+      {
+         DEPRECATE(  "float GetHeightOfTerrain( const float *x, const float *y )",
+                     "float GetHeightOfTerrain( float x, float y )")
+
+         return GetHeightOfTerrain( *x, *y );
+      }
       
       ///Get the ODE space ID
       dSpaceID GetSpaceID() const;
@@ -101,12 +111,23 @@ namespace dtCore
       dWorldID GetWorldID() const;
       
       ///Set the gravity vector
-      void SetGravity(osg::Vec3 gravity);
-      void SetGravity(float x, float y, float z);
-      
+      void SetGravity(const osg::Vec3& gravity);
+      void SetGravity(float x, float y, float z) { SetGravity( osg::Vec3(x,y,z) ); }
+
+      ///DEPRECATED
+      void SetGravity(sgVec3 gravity)
+      {
+         DEPRECATE("void SetGravity(sgVec3 gravity)","void SetGravity(const osg::Vec3& gravity)")
+
+         SetGravity( osg::Vec3( gravity[0], gravity[1], gravity[2] ) );
+      }
+     
       ///Get the gravity vector
-      void GetGravity(osg::Vec3 vec);
-      void GetGravity(float* x, float* y, float* z);
+      void GetGravity(osg::Vec3& vec) const { vec = mGravity; }
+      void GetGravity(float* x, float* y, float* z) const { *x = mGravity[0]; *y = mGravity[1]; *z = mGravity[2]; }
+
+      ///DEPRECATED
+      void GetGravity(sgVec3 gravity) const;
       
       ///Performs collision detection and updates physics
       virtual void OnMessage(MessageData *data);
@@ -121,7 +142,7 @@ namespace dtCore
       };
       
       ///Supply a user-defined collision callback to replace the internal one
-      void SetUserCollisionCallback( dNearCallback *func, void *data=NULL );
+      void SetUserCollisionCallback( dNearCallback *func, void *data=0 );
 
       /** Get the step size of the physics.  The physics will 
       *  be updated numerous times per frame based on this number.  For example,
@@ -130,10 +151,10 @@ namespace dtCore
       *  @return the step size in seconds
       *  @see SetPhysicsStepSize()
       */
-      inline double GetPhysicsStepSize( void ) const { return mPhysicsStepSize; }
+      inline double GetPhysicsStepSize() const { return mPhysicsStepSize; }
 
       /// @see GetPhysicsStepSize()
-      inline void SetPhysicsStepSize( const double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
+      inline void SetPhysicsStepSize( double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
       
       ///Deprecated 3/23/05
       void SetNextStatisticsType() 
@@ -150,13 +171,13 @@ namespace dtCore
       }
 
       /// Register a Physical with the Scene
-      void RegisterPhysical( Physical *physical);
+      void RegisterPhysical( Physical *physical );
 
 		/// UnRegister a Physical with the Scene
-		void UnRegisterPhysical( Physical *physical);
+		void UnRegisterPhysical( Physical *physical );
 
       inline Light* GetLight( const int number ) const { return mLights[ number ]; }
-      Light* GetLight( const std::string name ) const;
+      Light* GetLight( const std::string& name ) const;
 
       inline void RegisterLight( Light* light )
       { 
@@ -165,14 +186,14 @@ namespace dtCore
 
       inline void UnRegisterLight( Light* light )
       { 
-         mLights[ light->GetNumber() ] = NULL; //add to internal array of lights
+         mLights[ light->GetNumber() ] = 0; //add to internal array of lights
       }
 
       ///Use the internal scene light
       void UseSceneLight( bool lightState = true );
 
       ///Get the index number of the supplied drawable
-      inline unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const
+      unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const
       {
          for (unsigned int childNum=0;childNum<mAddedDrawables.size();++childNum)
          {
@@ -182,7 +203,7 @@ namespace dtCore
       }
    
       ///Get the number of Drawables which have been directly added to the Scene
-      int GetNumberOfAddedDrawable(void) const {return mAddedDrawables.size();}     
+      int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}     
 
     private:
       

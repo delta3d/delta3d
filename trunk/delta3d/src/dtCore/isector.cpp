@@ -18,7 +18,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Isector)
  * @param dir : The direction vector of the Isector
  */
  Isector::Isector(const osg::Vec3& xyz, const osg::Vec3& dir):
-mGeometry(NULL),
+mGeometry(0),
 mDistance(10000.f),
 mDirVecSet(false)
 {
@@ -77,7 +77,7 @@ bool Isector::Update()
    
    //if we have specifid geometry, traverse it.  Otherwise just use the
    //first Scene defined.
-   osg::Node *node = NULL;
+   osg::Node *node = 0;
    if (mGeometry)
    {
       node = mGeometry->GetOSGNode();
@@ -144,7 +144,7 @@ void Isector::SetDirection( const osg::Vec3& dir )
  * @param xyz : The xyz position to be filled out [in/out]
  * @param pointNum:  Which intersection point to return [0..GetNumberOfHits()]
  */
-void Isector::GetHitPoint( osg::Vec3& xyz, const int pointNum/* =0  */) const
+void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum/* =0  */) const
 {
    if (pointNum >= GetNumberOfHits()) return;
 
@@ -161,7 +161,7 @@ void Isector::GetHitPoint( osg::Vec3& xyz, const int pointNum/* =0  */) const
  *
  * @param distance : The length of the Isector in meters
  */
-void Isector::SetLength(const float distance)
+void Isector::SetLength(float distance)
 {
    mDistance = distance;
 }
@@ -172,7 +172,7 @@ void Isector::SetLength(const float distance)
  * 
  * @return The number of intersected items
  */
-int Isector::GetNumberOfHits(void) const
+int Isector::GetNumberOfHits() const
 {
    return( mHitList.size() );
 }

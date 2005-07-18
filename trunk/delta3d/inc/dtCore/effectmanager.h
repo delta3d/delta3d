@@ -78,7 +78,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         EffectManager(std::string name = "effectManager");
+         EffectManager(const std::string& name = "effectManager");
 
          /**
           * Destructor.
@@ -91,7 +91,7 @@ namespace dtCore
           * @param detonationType the detonation type to map
           * @param filename the filename corresponding to the detonation type
           */
-         void AddDetonationTypeMapping(DetonationType detonationType, std::string filename);
+         void AddDetonationTypeMapping(DetonationType detonationType, const std::string& filename);
 
          /**
           * Removes the mapping for the given detonation type.
