@@ -212,22 +212,10 @@ float MatrixUtil::ClampUnity(const float x)
 void MatrixUtil::MatrixToHprAndPosition( osg::Vec3& xyz, osg::Vec3& hpr, const osg::Matrix& rotation )
 {
    
-   sgMat4 mat;
-
-   for( int i = 0; i < 4; i++ )
-      for( int j = 0; j < 4; j++ )
-         mat[i][j] = rotation(i,j);
-
-   sgCoord pos;
-   sgSetCoord( &pos, mat );
-
-   hpr[0] = pos.hpr[0];
-   hpr[1] = pos.hpr[1];
-   hpr[2] = pos.hpr[2];
-
-   xyz[0] = pos.xyz[0];
-   xyz[1] = pos.xyz[1];
-   xyz[2] = pos.xyz[2];
+   MatrixToHpr(hpr, rotation);
+   xyz[0] = rotation(3, 0);
+   xyz[1] = rotation(3, 1);
+   xyz[2] = rotation(3, 2);
 
 }
 
