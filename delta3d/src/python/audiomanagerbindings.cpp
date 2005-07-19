@@ -16,6 +16,24 @@ void initAudioManagerBindings()
    Sound* (*SoundGI1)(int) = &Sound::GetInstance;
    Sound* (*SoundGI2)(std::string) = &Sound::GetInstance;
 
+   void (Sound::*SetPosition1)( const osg::Vec3& ) = &Sound::SetPosition;
+   void (Sound::*SetPosition2)( const sgVec3& ) = &Sound::SetPosition;
+
+   void (Sound::*GetPosition1)( osg::Vec3& ) const = &Sound::GetPosition;
+   void (Sound::*GetPosition2)( sgVec3& ) const = &Sound::GetPosition;
+
+   void (Sound::*SetDirection1)( const osg::Vec3& ) = &Sound::SetDirection;
+   void (Sound::*SetDirection2)( const sgVec3& ) = &Sound::SetDirection;
+
+   void (Sound::*GetDirection1)( osg::Vec3& ) const = &Sound::GetDirection;
+   void (Sound::*GetDirection2)( sgVec3& ) const = &Sound::GetDirection;
+
+   void (Sound::*SetVelocity1)( const osg::Vec3& ) = &Sound::SetVelocity;
+   void (Sound::*SetVelocity2)( const sgVec3& ) = &Sound::SetVelocity;
+
+   void (Sound::*GetVelocity1)( osg::Vec3& ) const = &Sound::GetVelocity;
+   void (Sound::*GetVelocity2)( sgVec3& ) const = &Sound::GetVelocity;
+
    {
       scope Sound_scope = class_<Sound, bases<Transformable>, dtCore::RefPtr<Sound>, boost::noncopyable>("Sound", no_init)
          .def("GetInstanceCount", &Sound::GetInstanceCount)
@@ -41,12 +59,18 @@ void initAudioManagerBindings()
          .def("GetGain", &Sound::GetGain)
          .def("SetPitch", &Sound::SetPitch)
          .def("GetPitch", &Sound::GetPitch)
-         .def("SetPosition", &Sound::SetPosition)
-         .def("GetPosition", &Sound::GetPosition)
-         .def("SetDirection", &Sound::SetDirection)
-         .def("GetDirection", &Sound::GetDirection)
-         .def("SetVelocity", &Sound::SetVelocity)
-         .def("GetVelocity", &Sound::GetVelocity)
+         .def("SetPosition", SetPosition1)
+         .def("SetPosition", SetPosition2)
+         .def("GetPosition", GetPosition1)
+         .def("GetPosition", GetPosition2)
+         .def("SetDirection", SetDirection1)
+         .def("SetDirection", SetDirection2)
+         .def("GetDirection", GetDirection1)
+         .def("GetDirection", GetDirection2)
+         .def("SetVelocity", SetVelocity1)
+         .def("SetVelocity", SetVelocity2)
+         .def("GetVelocity", GetVelocity1)
+         .def("GetVelocity", GetVelocity2)
          .def("SetMinDistance", &Sound::SetMinDistance)
          .def("GetMinDistance", &Sound::GetMinDistance)
          .def("SetMaxDistance", &Sound::SetMaxDistance)
