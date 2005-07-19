@@ -43,7 +43,7 @@ public:
       fmm->SetScene( GetScene() );
       mMotionModels.push_back( fmm.get() );
       
-      for( int i = 0; i < mMotionModels.size(); i++ )
+      for( unsigned int i = 0; i < mMotionModels.size(); i++ )
       {  
          mMotionModels[i]->SetTarget( GetCamera() );
       }
@@ -104,9 +104,9 @@ private:
    *
    * @param index the index of the motion model to enable
    */
-   void SetMotionModel( int index )
+   void SetMotionModel( unsigned int index )
    {
-      for( int i = 0; i < mMotionModels.size(); i++ )
+      for( unsigned int i = 0; i < mMotionModels.size(); i++ )
       {
          mMotionModels[i]->SetEnabled(i == index);
       }

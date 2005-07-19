@@ -31,6 +31,7 @@ public:
       orbit->SetTarget( GetCamera() );
 
       GUI *ui = new GUI();
+      ui = ui; //no-op to prevent warning for unused variable
 
  }
 	~TestWeatherApp()

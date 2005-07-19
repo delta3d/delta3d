@@ -1727,6 +1727,8 @@ AudioManager::SetReferenceDistance( SoundObj* snd )
 
    ALfloat  min_dist(static_cast<ALfloat>(snd->GetMinDistance()));
    ALfloat  max_dist(static_cast<ALfloat>(snd->GetMaxDistance()));
+   min_dist = min_dist; //no-op to prevent warnings
+   max_dist = max_dist; //no-op to prevent warnings
    assert( min_dist <= max_dist );
 
    ALenum   err(alGetError());
@@ -1755,6 +1757,8 @@ AudioManager::SetMaximumDistance( SoundObj* snd )
 
    ALfloat  min_dist(static_cast<ALfloat>(snd->GetMinDistance()));
    ALfloat  max_dist(static_cast<ALfloat>(snd->GetMaxDistance()));
+   min_dist = min_dist; //no-op to prevent warnings
+   max_dist = max_dist; //no-op to prevent warnings
    assert( min_dist <= max_dist );
 
    ALenum   err(alGetError());
@@ -1807,6 +1811,8 @@ AudioManager::SetMinimumGain( SoundObj* snd )
 
    ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
    ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
+   min_gain = min_gain; //no-op to prevent warnings
+   max_gain = max_gain; //no-op to prevent warnings
    assert( min_gain <= max_gain );
 
    ALenum   err(alGetError());
@@ -1835,6 +1841,8 @@ AudioManager::SetMaximumGain( SoundObj* snd )
 
    ALfloat  min_gain(static_cast<ALfloat>(snd->GetMinGain()));
    ALfloat  max_gain(static_cast<ALfloat>(snd->GetMaxGain()));
+   min_gain = min_gain; //no-op to prevent warnings
+   max_gain = max_gain; //no-op to prevent warnings
    assert( min_gain <= max_gain );
 
    ALenum   err(alGetError());

@@ -53,13 +53,13 @@ void System::Run()
 {
    mRunning = true;
    double deltaFrameTime = 0.f;
-   double clockTime = 0.f;
-   double lastTick = clock.tick();
+   Timer_t clockTime = 0;
+   Timer_t lastTick = mClock.tick();
 
    while (mRunning)
    {	  
-	  clockTime = clock.tick();
-	  deltaFrameTime = clock.delta_s(lastTick, clockTime);
+	  clockTime = mClock.tick();
+	  deltaFrameTime = mClock.delta_s(lastTick, clockTime);
 
       PreFrame(deltaFrameTime);
       Frame(deltaFrameTime);
@@ -85,9 +85,9 @@ void System::Step()
    if( ! mRunning )
       return;
 
-   //clock.update();
-   clockTime = clock.tick();
-   dt = clock.delta_s(last_clockTime, clockTime); 
+   //mClock.update();
+   clockTime = mClock.tick();
+   dt = static_cast<Timer_t>( mClock.delta_s(last_clockTime, clockTime) ); 
 
    PreFrame(dt);
    Frame(dt);

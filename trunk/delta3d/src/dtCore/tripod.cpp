@@ -71,12 +71,6 @@ void Tripod::SetAttachToTransformable( const std::string& transName )
    }
 }
 
-void Tripod::SetOffset(float x, float y, float z, float h, float p, float r)
-{
-   sgCoord tmp = {x,y,z,h,p,r};
-   SetOffset(&tmp);
-}
-
 /** Must be in the range (0.0,1.0)
 */
 void Tripod::SetScale(float x, float y, float z, float h, float p, float r)

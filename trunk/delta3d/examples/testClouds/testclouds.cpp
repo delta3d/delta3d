@@ -52,7 +52,10 @@ protected:
 case Producer::Key_Escape:    this->Quit();    	 break;
 case Producer::Key_H:
    {
-      GUI *ui = new GUI(); 
+      GUI *ui = new GUI();
+      ui = ui; //to prevent unused variable warnings... we should
+               //change this API so the constructor doesn't display the
+               //GUI by default
    }
    break;
 case Producer::Key_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
