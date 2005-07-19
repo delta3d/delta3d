@@ -142,6 +142,8 @@ void Physical::SetCollisionGeom(dGeomID geom)
    //dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, geom);
+
+   RenderCollisionGeometry(mRenderingGeometry);
 }
 
 /**
@@ -156,6 +158,8 @@ void Physical::SetCollisionSphere(float radius)
    dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateSphere(0, radius) );
+
+   RenderCollisionGeometry(mRenderingGeometry);
 }
 
 /**
@@ -276,7 +280,10 @@ void Physical::SetCollisionSphere( osg::Node* node )
       dGeomTransformSetGeom(mGeomID, subTransformID);
 
       GetMatrixNode()->setMatrix( oldMatrix );
+
+      RenderCollisionGeometry(mRenderingGeometry);
    }
+
 }
 
 /**
@@ -293,6 +300,8 @@ void Physical::SetCollisionBox(float lx, float ly, float lz)
    dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateBox(0, lx, ly, lz) );
+
+   RenderCollisionGeometry(mRenderingGeometry);
 }
 
 /**
@@ -345,6 +354,7 @@ void Physical::SetCollisionBox( osg::Node* node )
             
       dGeomTransformSetGeom(mGeomID, subTransformID);
       
+      RenderCollisionGeometry(mRenderingGeometry);
    }
 }
 
@@ -361,6 +371,8 @@ void Physical::SetCollisionCappedCylinder(float radius, float length)
    dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateCCylinder(0, radius, length) );
+
+   RenderCollisionGeometry(mRenderingGeometry);
 }
 
 /**
@@ -453,6 +465,8 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
       dGeomTransformSetGeom(mGeomID, subTransformID);
 
       GetMatrixNode()->setMatrix( oldMatrix );
+
+      RenderCollisionGeometry(mRenderingGeometry);
    }
 }
 
@@ -468,6 +482,8 @@ void Physical::SetCollisionRay(float length)
    dGeomDisable( mOriginalGeomID );
 
    dGeomTransformSetGeom(mGeomID, dCreateRay(0, length) );
+
+   RenderCollisionGeometry(mRenderingGeometry);
 }
 
 /**
@@ -605,6 +621,8 @@ void Physical::SetCollisionMesh(osg::Node* node)
       );
 
       GetMatrixNode()->setMatrix( oldMatrix );      
+
+      RenderCollisionGeometry(mRenderingGeometry);
    }
 }
 
@@ -993,41 +1011,52 @@ void Physical::PostPhysicsStepUpdate()
 void Physical::RenderCollisionGeometry( const bool enable )
 {
    osg::MatrixTransform *xform = this->GetMatrixNode();
-   if (!xform) return;
 
-   if (enable)
+   if(!xform)
+   {
+      return;
+   }
+
+   mRenderingGeometry = enable;
+   
+   if(enable)
    {
       mGeomGeod = new osg::Geode();
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio(0.5f);
-
+      
       int geomClass = dGeomGetClass( mGeomID ) ;
       dGeomID id = mGeomID;
-
+      
       osg::Matrix absMatrix;
-
-      while ( geomClass == dGeomTransformClass ) 
+      
+      while( geomClass == dGeomTransformClass ) 
       {
          id = dGeomTransformGetGeom(id);
-         if (id == 0) return; //in case we haven't assigned a collision shape yet
+
+         if (id == 0)
+         {
+            return; //in case we haven't assigned a collision shape yet
+         }
+         
          geomClass = dGeomGetClass(id);
          const dReal *pos = dGeomGetPosition(id);
          const dReal *rot = dGeomGetRotation(id);
-
+         
          osg::Matrix tempMatrix;
-
+         
          tempMatrix(0,0) = rot[0];
          tempMatrix(0,1) = rot[1];
          tempMatrix(0,2) = rot[2];
-
+         
          tempMatrix(1,0) = rot[4];
          tempMatrix(1,1) = rot[5];
          tempMatrix(1,2) = rot[6];
-
+         
          tempMatrix(2,0) = rot[8];
          tempMatrix(2,1) = rot[9];
          tempMatrix(2,2) = rot[10];
-
+         
          tempMatrix(3,0) = pos[0];
          tempMatrix(3,1) = pos[1];
          tempMatrix(3,2) = pos[2];
@@ -1035,60 +1064,60 @@ void Physical::RenderCollisionGeometry( const bool enable )
          absMatrix.postMult( tempMatrix );
       }
 
-         switch(dGeomGetClass(id))
-         {
+      switch(dGeomGetClass(id))
+      {
          case dBoxClass:
-            {
-               dVector3 side;
-               dGeomBoxGetLengths(mOriginalGeomID, side);
-               //const dReal *pos = dGeomGetPosition(id);
-               //const dReal *rot = dGeomGetRotation(id);
-               mGeomGeod.get()->addDrawable(
-                  new osg::ShapeDrawable(
+         {
+            dVector3 side;
+            dGeomBoxGetLengths(mOriginalGeomID, side);
+            //const dReal *pos = dGeomGetPosition(id);
+            //const dReal *rot = dGeomGetRotation(id);
+            mGeomGeod.get()->addDrawable(
+               new osg::ShapeDrawable(
                   new osg::Box(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
-                  side[0], side[1], side[2]), hints) );
-            }
-            break;
+                               side[0], side[1], side[2]), hints) );
+         }
+         break;
          case dSphereClass:
-            {
-               dReal rad = dGeomSphereGetRadius(mOriginalGeomID);
-               mGeomGeod.get()->addDrawable(
-                  new osg::ShapeDrawable(
+         {
+            dReal rad = dGeomSphereGetRadius(mOriginalGeomID);
+            mGeomGeod.get()->addDrawable(
+               new osg::ShapeDrawable(
                   new osg::Sphere(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
-                  rad), hints ) );
-            }
-            break;
+                                  rad), hints ) );
+         }
+         break;
          case dCCylinderClass:
-            {
-               dReal radius, length;
-               dGeomCCylinderGetParams(mOriginalGeomID, &radius, &length);
-               mGeomGeod.get()->addDrawable(
-                  new osg::ShapeDrawable(
+         {
+            dReal radius, length;
+            dGeomCCylinderGetParams(mOriginalGeomID, &radius, &length);
+            mGeomGeod.get()->addDrawable(
+               new osg::ShapeDrawable(
                   new osg::Cylinder(osg::Vec3(absMatrix(3,0), absMatrix(3,1), absMatrix(3,2)),
-                  radius, length), hints ) );
-            }
-            break;
-
+                                    radius, length), hints ) );
+         }
+         break;
+         
          case dTriMeshClass:
          case dCylinderClass:
          case dPlaneClass:
-            {
-               //dVector4 result; //a*x+b*y+c*z = d
-               //dGeomPlaneGetParams(id, result);
-            }
+         {
+            //dVector4 result; //a*x+b*y+c*z = d
+            //dGeomPlaneGetParams(id, result);
+         }
          case dRayClass:
-            {
-               //dVector3 start, dir;
-               //dReal length = dGeomRayGetLength(id);
-               //dGeomRayGet(id, start, dir);
-            }
-
+         {
+            //dVector3 start, dir;
+            //dReal length = dGeomRayGetLength(id);
+            //dGeomRayGet(id, start, dir);
+         }
+         
          default:
             Notify(WARN, "Physical:Can't render unhandled geometry class:%d",
-               dGeomGetClass(id) );
+                   dGeomGetClass(id) );
             break;
-         }
-
+      }
+      
       osg::Material *mat = new osg::Material();
       mat->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 0.5f));
       mat->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 1.f));
@@ -1105,16 +1134,17 @@ void Physical::RenderCollisionGeometry( const bool enable )
       ss->setAttributeAndModes(polyoffset,osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
 
       xform->addChild(mGeomGeod.get());
+
    } //end if enabled==true
    else
    {
-      if (mGeomGeod.get() == NULL) return;
-
-      xform->removeChild(mGeomGeod.get());
-      mGeomGeod = NULL;
+      if( mGeomGeod.valid() )
+      {
+         xform->removeChild(mGeomGeod.get());
+         mGeomGeod = 0;
+      }
    }
 
-   mRenderingGeometry = enable;
 }
 
 /** This typically gets called from Scene::AddDrawable().  
