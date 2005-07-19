@@ -140,14 +140,16 @@ protected:
    //apply some linear and angular velocity dampening
    void DampenBody( Object *obj, float vScale, float aScale )
    {
-      dBodyID ID = obj->GetBodyID();
-
-      if( !dBodyIsEnabled( ID ) ) {return;}
-
-      dReal const * V = dBodyGetLinearVel( ID );
-      dBodyAddForce( ID, vScale*V[0], vScale*V[1], vScale*V[2] );
-      dReal const * A = dBodyGetAngularVel( ID );
-      dBodyAddTorque( ID, aScale*A[0], aScale*A[1], aScale*A[2] );
+      if( dBodyID ID = obj->GetBodyID() )
+      {
+         if( dBodyIsEnabled( ID ) )
+         {
+            dReal const * V = dBodyGetLinearVel( ID );
+            dBodyAddForce( ID, vScale*V[0], vScale*V[1], vScale*V[2] );
+            dReal const * A = dBodyGetAngularVel( ID );
+            dBodyAddTorque( ID, aScale*A[0], aScale*A[1], aScale*A[2] );
+         }
+      }
    }
 
    virtual void PostFrame( const double deltaFrameTime )
