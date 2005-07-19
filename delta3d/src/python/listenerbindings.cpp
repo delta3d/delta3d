@@ -14,6 +14,12 @@ void initListenerBindings()
    Listener* (*ListenerGI1)(int) = &Listener::GetInstance;
    Listener* (*ListenerGI2)(std::string) = &Listener::GetInstance;
 
+   void (Listener::*SetVelocity1)( const osg::Vec3& velocity ) = &Listener::SetVelocity;
+   void (Listener::*SetVelocity2)( const sgVec3& velocity ) = &Listener::SetVelocity;
+
+   void (Listener::*GetVelocity1)( osg::Vec3& velocity ) const = &Listener::GetVelocity;
+   void (Listener::*GetVelocity2)( sgVec3& velocity ) const = &Listener::GetVelocity;
+
    class_<Listener, bases<Transformable>, dtCore::RefPtr<Listener>, boost::noncopyable>("Listener", no_init)
       .def("GetInstanceCount", &Listener::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -22,8 +28,10 @@ void initListenerBindings()
       .staticmethod("GetInstance")
       .def("SetTransform", &Listener::SetTransform)
       .def("GetTransform", &Listener::GetTransform)
-      .def("SetVelocity", &Listener::SetVelocity)
-      .def("GetVelocity", &Listener::GetVelocity)
+      .def("SetVelocity", SetVelocity1)
+      .def("SetVelocity", SetVelocity2)
+      .def("GetVelocity", GetVelocity1)
+      .def("GetVelocity", GetVelocity2)
       .def("SetGain", &Listener::SetGain)
       .def("GetGain", &Listener::GetGain);
 }
