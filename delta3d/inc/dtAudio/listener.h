@@ -117,7 +117,7 @@ namespace   dtAudio
           *
           * @return the current volume
           */
-         virtual  float GetGain( void )                        const = 0L;
+         virtual  float GetGain()                        const = 0L;
    };
 };
 
