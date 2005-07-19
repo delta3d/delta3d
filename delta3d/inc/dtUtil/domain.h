@@ -21,23 +21,22 @@
 #ifndef DOMAIN_INCLUDED
 #define DOMAIN_INCLUDED
 
-#include "dtCore/export.h"
-#include "dtUtil/deprecationmgr.h"
+#include <dtCore/export.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec3>
-#include "sg.h"
-
-#ifdef MSC_VER
-#pragma warning(disable:4251)
-#endif
+#include <sg.h>
 
 namespace dtUtil
 {
 
-   struct DT_EXPORT Domain
+   class Domain
    {
+
+   public:
+
       // Type codes for domains
-      enum DomainEnum
+      DT_EXPORT enum DomainEnum
       {
          DPoint = 0, // Single point
          DLine = 1, // Line segment
@@ -52,30 +51,35 @@ namespace dtUtil
          DRectangle = 10 // Rhombus-shaped planar region
       };
 
-      DomainEnum type;	// PABoxDomain, PASphereDomain, PAConeDomain...
-      osg::Vec3 p1, p2;		// Box vertices, Sphere center, Cylinder/Cone e`nds
-      osg::Vec3 u, v;		// Orthonormal basis vectors for Cylinder/Cone
-      float radius1;		// Outer radius
-      float radius2;		// Inner radius
-      float radius1Sqr;	// Used for fast Within test of spheres,
-      float radius2Sqr;	// and for mag. of u and v vectors for plane.
-
-      void Generate(osg::Vec3&) const;
-      void Generate(sgVec3 v) const
+      DT_EXPORT void Generate(osg::Vec3&) const;
+      DT_EXPORT void Generate(sgVec3 mV) const
       {
          DEPRECATE(  "void Generate(sgVec3) const",
-                     "void Generate(osg::Vec3&) const")
-         osg::Vec3 tmp(v[0], v[1], v[2]);
+            "void Generate(osg::Vec3&) const")
+            osg::Vec3 tmp(mV[0], mV[1], mV[2]);
          Generate(tmp);
-         v[0] = tmp[0]; v[1] = tmp[1]; v[2] = tmp[2];
+         mV[0] = tmp[0]; mV[1] = tmp[1]; mV[2] = tmp[2];
       }
 
-      inline Domain(void){};
-
-      Domain( DomainEnum dType,
+      DT_EXPORT Domain( DomainEnum dType,
          float a0=0.0f, float a1=0.0f, float a2=0.0f,
          float a3=0.0f, float a4=0.0f, float a5=0.0f,
          float a6=0.0f, float a7=0.0f, float a8=0.0f);
+
+      DT_EXPORT ~Domain() {}
+
+   private:
+
+      Domain() {};
+
+      DomainEnum mType;	// PABoxDomain, PASphereDomain, PAConeDomain...
+      osg::Vec3 mP1, mP2;		// Box vertices, Sphere center, Cylinder/Cone e`nds
+      osg::Vec3 mU, mV;		// Orthonormal basis vectors for Cylinder/Cone
+      float mRadius1;		// Outer radius
+      float mRadius2;		// Inner radius
+      float mRadius1Sqr;	// Used for fast Within test of spheres,
+      float mRadius2Sqr;	// and for mag. of mU and mV vectors for plane.
+
    };
 }
 #endif

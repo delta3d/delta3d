@@ -40,160 +40,160 @@ Domain::Domain(DomainEnum dtype, float a0, float a1,
                                  float a2, float a3, float a4, float a5,
                                  float a6, float a7, float a8)
 {
-   type = dtype;
-   switch(type)
+   mType = dtype;
+   switch(mType)
    {
    case DPoint:
-      p1.set(a0, a1, a2);
+      mP1.set(a0, a1, a2);
       break;
    case DLine:
       {
-         osg::Vec3 p1(a0, a1, a2);
+         osg::Vec3 mP1(a0, a1, a2);
          osg::Vec3 tmp(a3,a4,a5);
 
-         // p2 is vector from p1 to other endpoint.
-         p2 = tmp - p1;
+         // mP2 is vector from mP1 to other endpoint.
+         mP2 = tmp - mP1;
       }
       break;
    case DBox:
-      // p1 is the min corner. p2 is the max corner.
+      // mP1 is the min corner. mP2 is the max corner.
       if(a0 < a3)
       {
-         p1[0] = a0; p2[0] = a3;
+         mP1[0] = a0; mP2[0] = a3;
       }
       else
       {
-         p1[0] = a3; p2[0] = a0;
+         mP1[0] = a3; mP2[0] = a0;
       }
       if(a1 < a4)
       {
-         p1[1] = a1; p2[1] = a4;
+         mP1[1] = a1; mP2[1] = a4;
       }
       else
       {
-         p1[1] = a4; p2[1] = a1;
+         mP1[1] = a4; mP2[1] = a1;
       }
       if(a2 < a5)
       {
-         p1[2] = a2; p2[2] = a5;
+         mP1[2] = a2; mP2[2] = a5;
       }
       else
       {
-         p1[2] = a5; p2[2] = a2;
+         mP1[2] = a5; mP2[2] = a2;
       }
       break;
    case DTriangle:
       {
-         p1.set(a0, a1, a2);
+         mP1.set(a0, a1, a2);
 
          osg::Vec3 tp2(a3, a4, a5);
          osg::Vec3 tp3(a6, a7, a8);
          
-         u = tp2 - p1;
-         v = tp3 - p1;
+         mU = tp2 - mP1;
+         mV = tp3 - mP1;
 
          // The rest of this is needed for bouncing.         
-         radius1Sqr = u.length();
-         osg::Vec3 tu = u / radius1Sqr; 
-         radius2Sqr = v.length();
-         osg::Vec3 tv = v / radius2Sqr; 
+         mRadius1Sqr = mU.length();
+         osg::Vec3 tu = mU / mRadius1Sqr; 
+         mRadius2Sqr = mV.length();
+         osg::Vec3 tv = mV / mRadius2Sqr; 
 
          // This is the non-unit normal.
-         p2 = tu ^ tv;         
-         p2.normalize();
+         mP2 = tu ^ tv;         
+         mP2.normalize();
 
-         // radius1 stores the d of the plane eqn.
-         radius1 = -(p1 * p2);
+         // mRadius1 stores the d of the plane eqn.
+         mRadius1 = -(mP1 * mP2);
       }
       break;
    case DRectangle:
       {
-         p1.set(a0, a1, a2);
-         u.set(a3, a4, a5);
-         osg::Vec3 v(a6, a7, a8);
+         mP1.set(a0, a1, a2);
+         mU.set(a3, a4, a5);
+         osg::Vec3 mV(a6, a7, a8);
          
          // The rest of this is needed for bouncing.
-         radius1Sqr = u.length();
+         mRadius1Sqr = mU.length();
   
-         osg::Vec3 tu = u / radius1Sqr;
+         osg::Vec3 tu = mU / mRadius1Sqr;
 
-         radius2Sqr = v.length();
+         mRadius2Sqr = mV.length();
 
-         osg::Vec3 tv = v / radius2Sqr; 
+         osg::Vec3 tv = mV / mRadius2Sqr; 
          
-         p2 = tu ^ tv;// This is the non-unit normal.
+         mP2 = tu ^ tv;// This is the non-unit normal.
 
-         p2.normalize(); // Must normalize it.
+         mP2.normalize(); // Must normalize it.
          
-         // radius1 stores the d of the plane eqn.
-         radius1 = -(p1 * p2);         
+         // mRadius1 stores the d of the plane eqn.
+         mRadius1 = -(mP1 * mP2);         
       }
       break;
    case DPlane:
       {
-         p1.set(a0, a1, a2);
-         p1.set( a0, a1, a2);
-         u.set(a3, a4, a5);
-         v.set(a6, a7, a8);
+         mP1.set(a0, a1, a2);
+         mP1.set( a0, a1, a2);
+         mU.set(a3, a4, a5);
+         mV.set(a6, a7, a8);
 
 
          // The rest of this is needed for bouncing.
-         radius1Sqr = u.length();
-         osg::Vec3 tu = u / radius1Sqr;
-         radius2Sqr = v.length();
-         osg::Vec3 tv = v / radius2Sqr;
+         mRadius1Sqr = mU.length();
+         osg::Vec3 tu = mU / mRadius1Sqr;
+         mRadius2Sqr = mV.length();
+         osg::Vec3 tv = mV / mRadius2Sqr;
 
-         p2 = tu ^ tv; // This is the non-unit normal.
-         p2.normalize();// Must normalize it.
+         mP2 = tu ^ tv; // This is the non-unit normal.
+         mP2.normalize();// Must normalize it.
 
-         // radius1 stores the d of the plane eqn.
-         radius1 = -p1 * p2;        
+         // mRadius1 stores the d of the plane eqn.
+         mRadius1 = -mP1 * mP2;        
       }
       break;
    case DSphere:
 
-      p1.set(a0, a1, a2);
+      mP1.set(a0, a1, a2);
       if(a3 > a4)
       {
-         radius1 = a3; radius2 = a4;
+         mRadius1 = a3; mRadius2 = a4;
       }
       else
       {
-         radius1 = a4; radius2 = a3;
+         mRadius1 = a4; mRadius2 = a3;
       }
-      radius1Sqr = radius1 * radius1;
-      radius2Sqr = radius2 * radius2;
+      mRadius1Sqr = mRadius1 * mRadius1;
+      mRadius2Sqr = mRadius2 * mRadius2;
 
       break;
    case DCone:
    case DCylinder:
       {
-         // p2 is a vector from p1 to the other end of cylinder.
-         // p1 is apex of cone.
+         // mP2 is a vector from mP1 to the other end of cylinder.
+         // mP1 is apex of cone.
          
-         p1.set(a0, a1, a2);
+         mP1.set(a0, a1, a2);
          osg::Vec3 tmp(a3, a4, a5);
-         p2 = tmp - p1;
+         mP2 = tmp - mP1;
 
          if(a6 > a7)
          {
-            radius1 = a6; radius2 = a7;
+            mRadius1 = a6; mRadius2 = a7;
          }
          else
          {
-            radius1 = a7; radius2 = a6;
+            mRadius1 = a7; mRadius2 = a6;
          }
-         radius1Sqr = radius1*radius1;
+         mRadius1Sqr = mRadius1*mRadius1;
 
          // Given an arbitrary nonzero vector n, make two orthonormal
-         // vectors u and v forming a frame [u,v,n.normalize()].
-         osg::Vec3 n = p2;
+         // vectors mU and mV forming a frame [mU,mV,n.normalize()].
+         osg::Vec3 n = mP2;
          float p2l2 = n.length2();// Optimize this.
          n.normalize();
 
-         // radius2Sqr stores 1 / (p2.p2)
+         // mRadius2Sqr stores 1 / (mP2.mP2)
          // XXX Used to have an actual if.
-         radius2Sqr = p2l2 ? 1.0f / p2l2 : 0.0f;
+         mRadius2Sqr = p2l2 ? 1.0f / p2l2 : 0.0f;
 
          // Find a vector orthogonal to n.
          osg::Vec3 basis(1.f, 0.f, 0.f);
@@ -202,52 +202,52 @@ Domain::Domain(DomainEnum dtype, float a0, float a1,
 
          // Project away N component, normalize and cross to get
          // second orthonormal vector.
-         //u = basis - n * (basis * n);
+         //mU = basis - n * (basis * n);
          float tmpFloat = basis * n;
          osg::Vec3 tmpv = n * tmpFloat;
-         u = basis - tmpv;
-         u.normalize();
-         v = n ^ u;         
+         mU = basis - tmpv;
+         mU.normalize();
+         mV = n ^ mU;         
       }
       break;
    case DBlob:
       {
-         p1.set(a0, a1, a2);
-         radius1 = a3;
-         float tmp = 1.f/radius1;
-         radius2Sqr = -0.5f*(tmp*tmp);
-         radius2 = (float)ONEOVERSQRT2PI * tmp;     
+         mP1.set(a0, a1, a2);
+         mRadius1 = a3;
+         float tmp = 1.f/mRadius1;
+         mRadius2Sqr = -0.5f*(tmp*tmp);
+         mRadius2 = (float)ONEOVERSQRT2PI * tmp;     
       }
       break;
    case DDisc:
       {
-         p1.set(a0, a1, a2); // Center point         
-         p2.set(a3, a4, a5);// Normal (not used in Within and Generate)
-         p2.normalize();
+         mP1.set(a0, a1, a2); // Center point         
+         mP2.set(a3, a4, a5);// Normal (not used in Within and Generate)
+         mP2.normalize();
 
          if(a6 > a7)
          {
-            radius1 = a6; radius2 = a7;
+            mRadius1 = a6; mRadius2 = a7;
          }
          else
          {
-            radius1 = a7; radius2 = a6;
+            mRadius1 = a7; mRadius2 = a6;
          }
 
          // Find a vector orthogonal to n.
          osg::Vec3 basis(1.f, 0.f, 0.f);
-         if (fabsf(basis * p2) > 0.999)
+         if (fabsf(basis * mP2) > 0.999)
             basis.set(0.f, 1.f, 0.f);
 
          // Project away N component, normalize and cross to get
          // second orthonormal vector.
-         //u = basis - p2 * (basis * p2);
-         float tmp = basis * p2;
-         osg::Vec3 tmpv = p2 * tmp;
-         u = basis - tmpv;
-         u.normalize();
-         v = p2 ^ u;
-         radius1Sqr = -p1 * p2; // D of the plane eqn.
+         //mU = basis - mP2 * (basis * mP2);
+         float tmp = basis * mP2;
+         osg::Vec3 tmpv = mP2 * tmp;
+         mU = basis - tmpv;
+         mU.normalize();
+         mV = mP2 ^ mU;
+         mRadius1Sqr = -mP1 * mP2; // D of the plane eqn.
       }
       break;
    }
@@ -256,19 +256,19 @@ Domain::Domain(DomainEnum dtype, float a0, float a1,
 // Generate a random point uniformly distrbuted within the domain
 void Domain::Generate(osg::Vec3& pos) const
 {
-   switch (type)
+   switch (mType)
    {
    case DPoint:
-      pos.set(p1);
+      pos.set(mP1);
       break;
    case DLine:
-      pos = p1 + (p2 * drand48());
+      pos = mP1 + (mP2 * drand48());
       break;
    case DBox:
       // Scale and translate [0,1] random to fit box
-      pos[0] = p1[0] + (p2[0]-p1[0]) * drand48();
-      pos[1] = p1[1] + (p2[1]-p1[1]) * drand48();
-      pos[2] = p1[2] + (p2[2]-p1[2]) * drand48();
+      pos[0] = mP1[0] + (mP2[0]-mP1[0]) * drand48();
+      pos[1] = mP1[1] + (mP2[1]-mP1[1]) * drand48();
+      pos[2] = mP1[2] + (mP2[2]-mP1[2]) * drand48();
       break;
    case DTriangle:
       {
@@ -276,21 +276,21 @@ void Domain::Generate(osg::Vec3& pos) const
          float r2 = drand48();
          if(r1 + r2 < 1.0f)
          {
-            pos = p1 + (u * r1) + (v * r2);
+            pos = mP1 + (mU * r1) + (mV * r2);
          }
          else
          {
-           pos = p1 + (u * (1.0f-r1)) + (v * (1.0f-r2));
+           pos = mP1 + (mU * (1.0f-r1)) + (mV * (1.0f-r2));
          }
       }
       break;
    case DRectangle:
-      pos = p1 + u * drand48() + v * drand48();
+      pos = mP1 + mU * drand48() + mV * drand48();
       break;
    case DPlane: // How do I sensibly make a point on an infinite plane?
-      //pos = p1;
-      //sgCopyVec3(pos, p1);
-      pos = p1 + (u * drand48())+ (v * drand48());
+      //pos = mP1;
+      //sgCopyVec3(pos, mP1);
+      pos = mP1 + (mU * drand48())+ (mV * drand48());
       break;
    case DSphere:
       {
@@ -302,13 +302,13 @@ void Domain::Generate(osg::Vec3& pos) const
 
          // Scale unit sphere pos by [0..r] and translate
          // (should distribute as r^2 law)
-         if(radius1 == radius2)
+         if(mRadius1 == mRadius2)
          {
-            pos = p1 + pos * radius1;
+            pos = mP1 + pos * mRadius1;
          }
          else
          {
-            pos = p1 + pos * (radius2 + drand48() * (radius1 - radius2));
+            pos = mP1 + pos * (mRadius2 + drand48() * (mRadius1 - mRadius2));
          }
       }
       break;
@@ -316,40 +316,40 @@ void Domain::Generate(osg::Vec3& pos) const
    case DCylinder:
    case DCone:
       {
-         // For a cone, p2 is the apex of the cone.
+         // For a cone, mP2 is the apex of the cone.
          float dist = drand48(); // Distance between base and tip
          float theta = drand48() * 2.0f * float(osg::PI); // Angle around axis
          // Distance from axis
-         float r = radius2 + drand48() * (radius1 - radius2);
+         float r = mRadius2 + drand48() * (mRadius1 - mRadius2);
 
          float x = r * cosf(theta); // Weighting of each frame vector
          float y = r * sinf(theta);
 
          // Scale radius along axis for cones
-         if(type == DCone)
+         if(mType == DCone)
          {
             x *= dist;
             y *= dist;
          }
 
-         pos = p1 + p2 * dist + u * x + v * y;
+         pos = mP1 + mP2 * dist + mU * x + mV * y;
       }
       break;
    case DBlob:
-      pos[0] = p1[0] + NRand(radius1);
-      pos[1] = p1[1] + NRand(radius1);
-      pos[2] = p1[2] + NRand(radius1);
+      pos[0] = mP1[0] + NRand(mRadius1);
+      pos[1] = mP1[1] + NRand(mRadius1);
+      pos[2] = mP1[2] + NRand(mRadius1);
       break;
    case DDisc:
       {
          float theta = drand48() * 2.0f * float(osg::PI); // Angle around normal
          // Distance from center
-         float r = radius2 + drand48() * (radius1 - radius2);
+         float r = mRadius2 + drand48() * (mRadius1 - mRadius2);
 
          float x = r * cosf(theta); // Weighting of each frame vector
          float y = r * sinf(theta);
 
-         pos = p1 + u * x + v * y;
+         pos = mP1 + mU * x + mV * y;
       }
       break;
    default:
