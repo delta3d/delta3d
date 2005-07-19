@@ -66,9 +66,10 @@ namespace dtCore
       RefPtr<Transformable> GetAttachedTransformable() const {return mParent;}
       
       ///Set the Tripod's offset from the parent Transformable
-      void SetOffset(float x, float y, float z, float h, float p, float r);
+      void SetOffset(float x, float y, float z, float h, float p, float r)
+      { SetOffset( osg::Vec3(x,y,z), osg::Vec3(h,p,r) ); }
       
-      void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR){mPosition = newPos; mHPR = newHPR;}
+      void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR) {mPosition = newPos; mHPR = newHPR; }
       //DEPRECATED
       void SetOffset(sgCoord *coord)
       {

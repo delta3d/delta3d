@@ -74,7 +74,7 @@ namespace dtCore
       System(); ///<private
       static System *mSystem;   ///<The System pointer
       static bool mInstanceFlag;///<Have we created a System yet?
-	  Timer clock;
+      Timer mClock;
 
       ///Stuff to do before the frame. Message: "preframe", delta time in seconds
       void PreFrame( const double deltaFrameTime );
