@@ -35,6 +35,15 @@ SetOption('implicit_cache', 1)
 # this is who the build email will come from
 fromAddress = 'myaddress@company.com'
 
+def SGlob(pattern):
+   path = string.replace(GetBuildPath('SConscript'),  'SConscript', '')
+
+   result = []
+   for i in glob.glob(path + pattern):
+      result.append(string.replace(i, path, ''))
+
+   return result 
+
 def _lang2suffix(lang):
    """
    Convert a language name to a suffix.
@@ -272,7 +281,7 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
 
    addToLink = []
-   if envProg.has_key('LINKFLAGS'):
+   if envProg.has_key('LINKFLAGS') and OS == 'windows':
      addToLink = envProg['LINKFLAGS']
 
    addToLibs = []
@@ -326,10 +335,12 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
    envLib = env.Copy()
 
    if overrideShLinkFlags != '':
-      envLib[SHLINKFLAGS] = overridShLinkFlags
+      envLib['SHLINKFLAGS'] = overrideShLinkFlags
    
    if overrideShLibSuffix != '':
-      envLib[SHLIBSUFFIX] = overridShLibSuffix
+      envLib['SHLIBSUFFIX'] = overrideShLibSuffix
+
+   envLib['LIBNAME'] = name
 
    #expand pre-built libs
    for lib in deps :
@@ -351,8 +362,8 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
    deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
 
    addToLink = []
-   if envLib.has_key('LINKFLAGS'):
-     addToLink = env['LINKFLAGS']
+   if envLib.has_key('LINKFLAGS') and OS == 'windows':
+     addToLink = envLib['LINKFLAGS']
 
    addToLibs = []
    if OS == 'darwin':
@@ -592,10 +603,10 @@ if mode == 'debug':
                   CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
                   LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
    elif OS == 'linux':      
-      env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
+      env.Append( CXXFLAGS=['-g', '-O0', '-pipe', '-fvisibility-inlines-hidden'], #deubg info, no optimizations, pipe object data
                   CXXDEFINES=['DEBUG', '_DEBUG'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fvisibility-inlines-hidden', '-ftree-vectorize'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fvisibility-inlines-hidden'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -605,13 +616,13 @@ else:
               CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden'], #optimizations, pipe object data
+     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden', '-ftree-vectorize'], #optimizations, pipe object data
               CPPDEFINES=['NDEBUG'],
               LINKFLAGS=['-s'] )
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe', '-march=i686', '-fvisibility-inlines-hidden', '-ftree-vectorize'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4', '-fvisibility-inlines-hidden', '-ftree-vectorize'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
    
 if env.get('no_warnings'):
    if OS == 'windows':
@@ -639,14 +650,16 @@ if OS == 'darwin' :
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
   env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
   env['SHLIBSUFFIX'] = '.dylib'
+  #env['SHLINKFLAGS'] = '$LINKFLAGS -arch ppc -prebind -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1 -install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 
 launchDir = env.GetLaunchDir()
 
 #############################################
+# Configure: Testing for dependencies vX.X.X
 #
-# Configure: Testing for dependencies...
-#
-#############################################
+# osg0.9.9, etc.
+# ...
+##############################################
 
 # do version, config checking
 
@@ -927,7 +940,7 @@ if not env.GetOption('clean') :
 
    # check if we found all the libraries
    # TODO: it's ok if we are missing boost_python, but make this explicit!
-   if len( foundLibs.keys() ) < len( extLibs.keys() ) - 1 : 
+   if len( foundLibs.keys() ) < len( extLibs.keys() ) - 2  : 
      print 'Build Failed: Missing required libraries'
      errorLog.write('Build Failed: Missing required libraries\n\n')
      errorLog.close()
@@ -950,7 +963,7 @@ for lib in rtiLibs :
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
+Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
 
 env.SConsignFile()
 
@@ -969,7 +982,7 @@ SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
 
 if env.get('unit_tests') :
-   SConscript( dirs=['tests/proxy', 'tests/project', 'tests'] )
+   SConscript( dirs=['tests'] )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')
