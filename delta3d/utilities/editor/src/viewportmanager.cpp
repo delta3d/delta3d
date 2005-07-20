@@ -1,18 +1,18 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine Level Editor
  * Copyright (C) 2005, BMH Associates, Inc.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
+ * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
@@ -22,6 +22,7 @@
 #include <QGLWidget>
 #include <osg/Texture>
 #include "dtDAL/log.h"
+#include "dtDAL/actorproxyicon.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/orthoviewport.h"
 #include "dtEditQt/perspectiveviewport.h"
@@ -29,7 +30,7 @@
 #include "dtEditQt/camera.h"
 #include "dtEditQt/editorevents.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     //Singleton global variable for the library manager.
@@ -46,21 +47,26 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     ViewportManager::ViewportManager()
     {
-        this->shareMasterContext = true;
-        this->masterViewport = NULL;
-        this->masterScene = new dtCore::Scene();
-        this->viewportOverlay = new ViewportOverlay();
-        this->worldCamera = new Camera();
+        shareMasterContext = true;
+        masterViewport = NULL;
+        masterScene = new dtCore::Scene();
+        viewportOverlay = new ViewportOverlay();
+        worldCamera = new Camera();
+        inChangeTransaction = false;
 
-         connect(&EditorEvents::getInstance(),
-                 SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)),
-                 this,
-                 SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)));
+        connect(&EditorEvents::getInstance(),
+                SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)),
+                this,
+                SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)));
 
-         connect(&EditorEvents::getInstance(),SIGNAL(projectChanged()),
-                 this,SLOT(refreshAllViewports()));
-         connect(&EditorEvents::getInstance(),SIGNAL(currentMapChanged()),
-                 this,SLOT(onCurrentMapChanged()));
+        connect(&EditorEvents::getInstance(),SIGNAL(projectChanged()),
+                this,SLOT(refreshAllViewports()));
+        connect(&EditorEvents::getInstance(),SIGNAL(currentMapChanged()),
+                this,SLOT(onCurrentMapChanged()));
+        connect(&EditorEvents::getInstance(), SIGNAL(beginChangeTransaction()), 
+            this, SLOT(onBeginChangeTransaction()));
+        connect(&EditorEvents::getInstance(), SIGNAL(endChangeTransaction()), 
+            this, SLOT(onEndChangeTransaction()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -77,9 +83,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     ViewportManager::~ViewportManager()
     {
-        std::cout << "Destroying viewport manager." << std::endl;
         this->viewportList.clear();
-        std::cout << "Done with viewport manager" << std::endl;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -162,23 +166,23 @@ namespace dtEditQt
     {
         std::map<dtCore::UniqueId,osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator itor;
 
-        for (itor = proxies.begin(); itor != proxies.end(); ++itor) 
+        for (itor = proxies.begin(); itor != proxies.end(); ++itor)
         {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->second.get());
             const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
             dtDAL::ActorProxyIcon *billBoard;
 
-            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON) 
+            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
             {
                 billBoard = proxy->GetBillBoardIcon();
                 if (billBoard != NULL)
                     this->masterScene->RemoveDrawable(billBoard->GetDrawable());
             }
-            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR) 
+            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
             {
                 this->masterScene->RemoveDrawable(proxy->GetActor());
             }
-            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) 
+            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
             {
                 billBoard = proxy->GetBillBoardIcon();
                 if (billBoard != NULL)
@@ -212,18 +216,18 @@ namespace dtEditQt
         const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
         dtDAL::ActorProxyIcon *billBoard = proxy->GetBillBoardIcon();
 
-        if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON) 
+        if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
             this->masterScene->RemoveDrawable(proxy->GetActor());
             this->viewportOverlay->unSelect(proxy->GetActor());
-            if (billBoard == NULL) 
+            if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
-            else 
+            else
             {
                 billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
-                if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable()) 
+                if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
                 {
                     this->masterScene->AddDrawable(billBoard->GetDrawable());
                     this->viewportOverlay->select(billBoard->GetDrawable());
@@ -232,7 +236,7 @@ namespace dtEditQt
         }
         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
         {
-            if (billBoard == NULL) 
+            if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
@@ -242,22 +246,22 @@ namespace dtEditQt
             }
 
             actorIndex = this->masterScene->GetDrawableIndex(proxy->GetActor());
-            if (actorIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable()) 
+            if (actorIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
             {
                 this->masterScene->AddDrawable(proxy->GetActor());
                 this->viewportOverlay->select(proxy->GetActor());
             }
         }
-        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) 
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
         {
-            if (billBoard == NULL) 
+            if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
-            else 
+            else
             {
                 billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
-                if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable()) 
+                if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
                 {
                     this->masterScene->AddDrawable(billBoard->GetDrawable());
                     this->viewportOverlay->select(billBoard->GetDrawable());
@@ -265,7 +269,7 @@ namespace dtEditQt
             }
 
             actorIndex = this->masterScene->GetDrawableIndex(proxy->GetActor());
-            if (actorIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable()) 
+            if (actorIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
             {
                 this->masterScene->AddDrawable(proxy->GetActor());
                 this->viewportOverlay->select(proxy->GetActor());
@@ -276,6 +280,22 @@ namespace dtEditQt
             //the proxy.
         }
 
+        // only redraw if we're doing a single change.  Otherwise, all events will be 
+        // redrawn in the endChangeTransaction
+        if (!inChangeTransaction)
+            refreshAllViewports();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportManager::onBeginChangeTransaction()
+    {
+        inChangeTransaction = true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportManager::onEndChangeTransaction()
+    {
+        inChangeTransaction = false;
         refreshAllViewports();
     }
 

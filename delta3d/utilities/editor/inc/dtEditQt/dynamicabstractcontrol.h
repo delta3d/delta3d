@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -24,6 +24,8 @@
 #include <QObject>
 #include <osg/ref_ptr>
 #include "dtDAL/log.h"
+#include "dtDAL/actorproxy.h"
+#include "dtDAL/actorproperty.h"
 
 class QWidget;
 class QGridLayout;
@@ -262,6 +264,20 @@ namespace dtEditQt
          * @Note - This is purely virtual
          */
         virtual bool updateData(QWidget *widget) = 0;
+
+        /**
+         * When a property changes, we have to update our editor.  It is likely that 
+         * many properties will change with no effect, but if the user is using undo/redo
+         * or is moving an actor in the viewport, then it is possible that they will also
+         * be sitting on the editor for one of the affected values. This gives us a chance
+         * to reflect the change in our editor.
+         * @Note The default implementation does nothing.
+         */
+        virtual void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
+            osg::ref_ptr<dtDAL::ActorProperty> property)
+        {
+            // do nothing
+        }
 
     protected:
         // indicates whether the object has been initialized

@@ -80,7 +80,7 @@ namespace dtCore
          ///The actual signal that gets triggered from SendMessage()
          sigslot::signal1<MessageData *> _sendMessage;
          
-         UniqueId* mId;
+         UniqueId mId;
 
       public:
 
@@ -110,8 +110,8 @@ namespace dtCore
           */
          const std::string& GetName() const;
 
-         void SetUniqueId( const UniqueId* id ) { mId = new UniqueId(*id); };
-         const UniqueId* GetUniqueId() const { return mId; }
+         void SetUniqueId( const UniqueId& id ) { mId = id; };
+         const UniqueId& GetUniqueId() const { return mId; }
 
          ///Override to receive messages
          virtual void OnMessage(MessageData *data) {}

@@ -39,12 +39,12 @@ UniqueId::UniqueId()
    CFRelease(uuid);
 }
 
-bool UniqueId::operator< ( const UniqueId& rhs ) const
-{
-   return mId < rhs.mId ;
-}
-
-bool UniqueId::operator> ( const UniqueId& rhs ) const
-{
-   return mId > rhs.mId ;
-}
+//bool UniqueId::operator< ( const UniqueId& rhs ) const
+//{
+//   return mId < rhs.mId ;
+//}
+//
+//bool UniqueId::operator> ( const UniqueId& rhs ) const
+//{
+//   return mId > rhs.mId ;
+//}

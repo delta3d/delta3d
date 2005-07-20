@@ -7,14 +7,15 @@ Import ('*')
 
 if OS == 'darwin':
    overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-   overrideShSuffix = '.so'
+   overrideShSuffix = '.dylib'
 else:
    overrideShLink = ''
    overrideShSuffix = ''
 
 
 # Grab all the sources from the DAL source directory.
-sources = glob.glob('*.cpp')
+sources = ["baselightactorproxy.cpp","cameraactorproxy.cpp","characteractorproxy.cpp","clouddomeactorproxy.cpp","cloudplaneactorproxy.cpp","deltaobjectactorproxy.cpp","dtedterrainactorproxy.cpp","engineactorregistry.cpp","enveffectactorproxy.cpp","environmentactorproxy.cpp","infinitelightactorproxy.cpp","infiniteterrainactorproxy.cpp","meshterrainactorproxy.cpp","particlesystemactorproxy.cpp","positionallightactorproxy.cpp","skybox.cpp","skyboxactorproxy.cpp","skydomeactorproxy.cpp","soundactorproxy.cpp","spotlightactorproxy.cpp","staticmeshactorproxy.cpp","terrainactorproxy.cpp","triggeractorproxy.cpp"]
+
 
 if OS != 'windows':
 	sources.remove('dtedterrainactorproxy.cpp')
@@ -25,11 +26,16 @@ dtActorsDeps =['dtDAL', 'dtutil', 'dtcore', 'dtchar', 'dtabc', 'glgui', 'isense'
         'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :
-   dtActorsDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+   dtActorsDeps += [ 'dtsoarx', 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
 elif OS == 'linux':
    dtActorsDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':
    dtActorsDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-BuildLib( 'dtActors', sources, dtActorsDeps, ['DT_PLUGIN'], 
+dtActors = BuildLib( 'dtActors', sources, dtActorsDeps, ['DT_PLUGIN'], 
 	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
+
+if OS == 'darwin':
+   Depends(dtActors, '#lib/libdtDAL.dylib')
+   Depends(dtActors, '#lib/dtDAL')
+   

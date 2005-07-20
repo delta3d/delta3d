@@ -35,38 +35,38 @@ UniqueId::UniqueId()
    }
 }
 
-bool UniqueId::operator< ( const UniqueId& rhs ) const
-{
-   GUID lhsGuid;
-   GUID rhsuid;
-
-   if(   UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK &&
-         UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK )
-   {
-      RPC_STATUS status;
-      return UuidCompare( &lhsGuid, &rhsuid, &status ) == -1;
-   }
-   else
-   {
-      Notify( WARN, "Could not convert std::string to UniqueId." );
-      return mId < rhs.mId;
-   }
-}
-
-bool UniqueId::operator> ( const UniqueId& rhs ) const
-{
-   GUID lhsGuid;
-   GUID rhsuid;
-
-   if(   UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK &&
-         UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK )
-   {
-      RPC_STATUS status;
-      return UuidCompare( &lhsGuid, &rhsuid, &status ) == 1;
-   }
-   else
-   {
-      Notify( WARN, "Could not convert std::string to UniqueId." );
-      return mId > rhs.mId;
-   }
-}
+//bool UniqueId::operator< ( const UniqueId& rhs ) const
+//{
+//   GUID lhsGuid;
+//   GUID rhsuid;
+//
+//   if(   UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK &&
+//         UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK )
+//   {
+//      RPC_STATUS status;
+//      return UuidCompare( &lhsGuid, &rhsuid, &status ) == -1;
+//   }
+//   else
+//   {
+//      Notify( WARN, "Could not convert std::string to UniqueId." );
+//      return mId < rhs.mId;
+//   }
+//}
+//
+//bool UniqueId::operator> ( const UniqueId& rhs ) const
+//{
+//   GUID lhsGuid;
+//   GUID rhsuid;
+//
+//   if(   UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( mId.c_str() ) ), &lhsGuid ) == RPC_S_OK &&
+//         UuidFromString( reinterpret_cast<unsigned char*>( const_cast<char*>( rhs.mId.c_str() ) ), &rhsuid ) == RPC_S_OK )
+//   {
+//      RPC_STATUS status;
+//      return UuidCompare( &lhsGuid, &rhsuid, &status ) == 1;
+//   }
+//   else
+//   {
+//      Notify( WARN, "Could not convert std::string to UniqueId." );
+//      return mId > rhs.mId;
+//   }
+//}

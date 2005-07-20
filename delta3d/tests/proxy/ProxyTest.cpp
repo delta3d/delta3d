@@ -32,7 +32,7 @@ ProxyTest::~ProxyTest()
 void ProxyTest::setUp()
 {
     //dtDAL::Project::GetInstance();
-    SetDataFilePathList("../data;" + GetDeltaDataPathList());
+    SetDataFilePathList(dtCore::GetDeltaDataPathList());
     libMgr.GetActorTypes(actors);
     //dtAudio::AudioManager::Instantiate();
     //dtAudio::AudioManager::GetManager()->Config();
@@ -47,13 +47,13 @@ void ProxyTest::tearDown()
 void ProxyTest::testProps(ActorProxy& proxy)
 {
     std::string proxyTypeName = proxy.GetActorType().GetName();
-    vector<ActorProperty*> props;
+    std::vector<ActorProperty*> props;
     proxy.GetPropertyList(props);
     const float epsilon = 0.01f;
 
     for (unsigned int i = 0; i < props.size(); i++)
     {
-        string name = props[i]->GetName();
+        std::string name = props[i]->GetName();
         if (props[i]->GetPropertyType() == DataType::FLOAT)
         {
             FloatActorProperty* prop1 = ((FloatActorProperty*)props[i]);
@@ -150,6 +150,8 @@ void ProxyTest::testProps(ActorProxy& proxy)
 
             for (int x = 0; x < 3; x++)
             {
+                if (x == 1 && name == "Direction")
+                    continue;
                 std::ostringstream ss;
                 ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
                     << "] property: " << name << " - Value: " << result;
@@ -164,8 +166,10 @@ void ProxyTest::testProps(ActorProxy& proxy)
 
             for (int x = 0; x < 3; x++)
             {
+                if (x == 1 && name == "Direction")
+                    continue;
                 std::ostringstream ss;
-                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
@@ -195,7 +199,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
             for (int x = 0; x < 4; x++)
             {
                 std::ostringstream ss;
-                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
@@ -226,7 +230,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
             for (int x = 0; x < 2; x++)
             {
                 std::ostringstream ss;
-                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
@@ -256,7 +260,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
             for (int x = 0; x < 4; x++)
             {
                 std::ostringstream ss;
-                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
@@ -268,13 +272,13 @@ void ProxyTest::testProps(ActorProxy& proxy)
 
 void ProxyTest::compareProxies(ActorProxy& ap1, ActorProxy& ap2)
 {
-    vector<ActorProperty*> props;
+    std::vector<ActorProperty*> props;
     ap1.GetPropertyList(props);
     const float epsilon = 0.01f;
 
     for(unsigned int i = 0; i < props.size(); i++)
     {
-        string str = props[i]->GetName();
+        std::string str = props[i]->GetName();
         ActorProperty* prop2 = ap2.GetProperty(str);
 
         CPPUNIT_ASSERT(prop2 != NULL);
@@ -383,7 +387,7 @@ void ProxyTest::testProxies()
 
     for(unsigned int i = 0; i < actors.size(); i++)
     {
-        proxy = libMgr.CreateActorProxy(actors[i]).get();
+        proxy = libMgr.CreateActorProxy(*actors[i]).get();
         CPPUNIT_ASSERT(proxy != NULL);
         testProps(*proxy);
         osg::ref_ptr<ActorProxy> proxy2 = proxy->Clone();

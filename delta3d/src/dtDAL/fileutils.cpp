@@ -36,8 +36,10 @@ extern "C" int errno;
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <iostream>
 
-#include "osgDB/FileNameUtils"
+
+#include <osgDB/FileNameUtils>
 
 #ifndef S_ISREG
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
@@ -71,7 +73,6 @@ namespace dtDAL
         FILE* pDestFile;
 
         struct stat tagStat;
-        int iCh;
 
         if( strSrc != strDest )
         {
@@ -135,18 +136,23 @@ namespace dtDAL
 
 
             stat( strSrc.c_str(), &tagStat );
-
-            for( long i=0; i<tagStat.st_size; i++ )
+            long i = 0;
+            char buffer[4096]; 
+            while (i<tagStat.st_size)
             {
-                iCh = fgetc( pSrcFile );
-                fputc( iCh, pDestFile );
+                int readCount = fread(buffer, 1, 4096, pSrcFile );
+                if (readCount > 0) 
+                {
+                    fwrite(buffer, 1, readCount, pDestFile );
+                    i += readCount;
+                }
             }
 
             fclose( pDestFile );
             fclose( pSrcFile );
 
         }
-        //if the source equals the destination, this is really a noop.
+        //if the source equals the destination, this method is really a noop.
 
     }
 
@@ -331,6 +337,7 @@ namespace dtDAL
             }
             char buf[512];
             getcwd(buf, 512);
+            result = buf;
         }
         catch (const Exception& ex)
         {
@@ -383,6 +390,7 @@ namespace dtDAL
         const std::string& destPath, bool bOverwrite) const
     {
         FileType destFileType = GetFileInfo(destPath).fileType;
+        //std::cout << "Copying " << srcPath << " to " << destPath << std::endl;
 
         if (destFileType == REGULAR_FILE)
             EXCEPT(ExceptionEnum::ProjectFileNotFound,
@@ -394,12 +402,24 @@ namespace dtDAL
         DirectoryContents contents = DirGetFiles(srcPath);
         for (DirectoryContents::iterator i = contents.begin(); i != contents.end(); ++i)
         {
-            const std::string& newSrcPath = srcPath + PATH_SEPARATOR + *i;
-            const std::string& newDestPath = destPath + PATH_SEPARATOR + *i;
+            if (*i == "." || *i == "..")
+                continue;
+            const std::string newSrcPath = srcPath + PATH_SEPARATOR + *i;
+            const std::string newDestPath = destPath + PATH_SEPARATOR + *i;
             FileInfo fi = GetFileInfo(newSrcPath);
             if (fi.fileType == DIRECTORY)
             {
-                InternalDirCopy(newSrcPath, newDestPath, bOverwrite);
+                if (destPath.size() >= newSrcPath.size() &&
+                    destPath.substr(0, newSrcPath.size()) == newSrcPath &&
+                    (destPath.size() == newSrcPath.size() || destPath[newSrcPath.size()] == PATH_SEPARATOR))
+                {
+                    if (mLogger->IsLevelEnabled(Log::LOG_WARNING))
+                        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can't copy %s into itself.", newSrcPath.c_str());
+                }
+                else
+                {
+                    InternalDirCopy(newSrcPath, newDestPath, bOverwrite);
+                }
             }
             else
             {
@@ -412,6 +432,7 @@ namespace dtDAL
     void FileUtils::DirCopy(const std::string& srcPath,
         const std::string& destPath, bool bOverwrite, bool copyContentsOnly) const
     {
+
         if (!DirExists(srcPath))
             EXCEPT(ExceptionEnum::ProjectFileNotFound,
                    std::string("Source directory does not exist: \"") + srcPath + "\"");
@@ -446,8 +467,8 @@ namespace dtDAL
                 mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" exists.",
                                     fullDestPath.c_str());
 
-            if ( (copyContentsOnly && fullSrcPath == fullSrcPath)
-                  || (!copyContentsOnly && fullSrcPath == osgDB::getFilePath(fullDestPath)) )
+            if ( (copyContentsOnly && fullSrcPath == fullDestPath)
+                  || (!copyContentsOnly && osgDB::getFilePath(fullSrcPath) == fullDestPath) )
             {
                 EXCEPT(ExceptionEnum::ProjectException,
                        std::string("The source equals the destination: \"") + srcPath + "\"");
@@ -617,7 +638,7 @@ namespace dtDAL
     //-----------------------------------------------------------------------
     FileUtils::FileUtils()
     {
-        mLogger = &Log::GetInstance(std::string("FileUtils.cpp"));
+        mLogger = &Log::GetInstance(std::string("fileutils.cpp"));
         //assign the current directory
         ChangeDirectory(".");
     }

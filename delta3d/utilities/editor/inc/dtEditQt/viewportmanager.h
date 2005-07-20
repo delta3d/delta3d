@@ -1,18 +1,18 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine Level Editor
  * Copyright (C) 2005, BMH Associates, Inc.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
+ * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
@@ -182,6 +182,17 @@ namespace dtEditQt
          */
         void refreshScene();
 
+        /**
+         * Starts a transaction, so we wont' do refreshes on every change that's
+         * about to happen
+         */
+        void onBeginChangeTransaction();
+
+        /**
+         * Ends a transaction  - clears the transaction flag and refreshes the viewports
+         */
+        void onEndChangeTransaction();
+
     private:
         ///Singletons shouldn't be created at the user's discretion.
         ViewportManager();
@@ -212,6 +223,8 @@ namespace dtEditQt
         osg::ref_ptr<dtCore::Scene> masterScene;
         osg::ref_ptr<Camera> worldCamera;
         int numTextureUnits;
+        bool inChangeTransaction;
+
     };
 }
 

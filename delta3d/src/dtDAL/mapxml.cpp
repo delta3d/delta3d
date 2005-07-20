@@ -33,13 +33,14 @@
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/internal/XMLGrammarPoolImpl.hpp>
 
-//#include <dtCore/globals.h>
 #include <dtCore/scene.h>
 
 #include <osg/Vec2f>
 #include <osg/Vec2d>
 #include <osg/Vec3f>
 #include <osg/Vec3d>
+
+#include <osgDB/FileNameUtils>
 
 #include "dtDAL/mapxml.h"
 #include "dtDAL/log.h"
@@ -55,7 +56,7 @@ XERCES_CPP_NAMESPACE_USE;
 namespace dtDAL
 {
 
-    const std::string logName("MapXML.cpp");
+    const std::string logName("mapxml.cpp");
 
     /**
      *  This is a simple class that lets us do easy (though not terribly efficient)
@@ -478,7 +479,7 @@ namespace dtDAL
                                         "Creating actor proxy %s with category %s.",
                                         actorTypeName.c_str(), actorTypeCategory.c_str());
 
-                    mActorProxy = LibraryManager::GetInstance().CreateActorProxy(actorType);
+                    mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType);
                     if (mActorProxy == NULL)
                         mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                                             "mActorProxy could not be created for ActorType \"%s\" not found.",

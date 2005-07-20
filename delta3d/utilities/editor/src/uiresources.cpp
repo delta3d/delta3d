@@ -1,18 +1,18 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine Level Editor
  * Copyright (C) 2005, BMH Associates, Inc.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
+ * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
@@ -21,7 +21,7 @@
 #include "dtEditQt/uiresources.h"
 
 
-namespace dtEditQt 
+namespace dtEditQt
 {
    //absolute paths
    //const std::string deltaRoot = "DELTA_ROOT";
@@ -30,6 +30,7 @@ namespace dtEditQt
 
    //relative path from delta3d/bin
    const std::string UIResources::mPrefix("../utilities/editor/icons/");
+   const std::string UIResources::GPL_LICENSE_FILE("../utilities/editor/gpl.txt");
 
    const std::string UIResources::ICON_FILE_NEW_MAP(mPrefix+"newmap_small.png");
    const std::string UIResources::ICON_FILE_OPEN_MAP(mPrefix+"openmap_small.png");
@@ -40,20 +41,20 @@ namespace dtEditQt
    const std::string UIResources::ICON_GROUND_CLAMP(mPrefix+"groundclamp_small.png");
    const std::string UIResources::ICON_EDIT_UNDO(mPrefix+"undo.png");
    const std::string UIResources::ICON_EDIT_REDO(mPrefix+"redo.png");
-   
+
    const std::string UIResources::ICON_TOOLMODE_CAMERA(mPrefix+"cameramode_small.png");
    const std::string UIResources::ICON_TOOLMODE_SELECT(mPrefix+"selectmode_small.png");
    const std::string UIResources::ICON_TOOLMODE_TRANSLATE(mPrefix+"translatemode_small.png");
    const std::string UIResources::ICON_TOOLMODE_ROTATE(mPrefix+"rotatemode_small.png");
-   
+
    const std::string UIResources::ICON_VIEWMODE_TEXTURES(mPrefix+"texturemode_tiny.png");
    const std::string UIResources::ICON_VIEWMODE_LIGHTING(mPrefix+"lightingmode_tiny.png");
    const std::string UIResources::ICON_VIEWMODE_WIREFRAME(mPrefix+"wireframemode_tiny.png");
    const std::string UIResources::ICON_VIEWMODE_TEXTURES_AND_LIGHTING(mPrefix+"texturelightingmode_tiny.png");
-   
+
    const std::string UIResources::ICON_TINY_FOLDER(mPrefix+"folder_tiny.png");
    const std::string UIResources::ICON_TINY_FOLDER_OPEN(mPrefix+"folderopen_tiny.png");
-   
+
    const std::string UIResources::LARGE_ICON_EDIT_DUPLICATE(mPrefix+"duplicate_large.png");
    const std::string UIResources::LARGE_ICON_EDIT_DELETE(mPrefix+"trash_large.png");
    const std::string UIResources::LARGE_ICON_EDIT_GOTO(mPrefix+"goto_large.png");
@@ -64,6 +65,15 @@ namespace dtEditQt
    const std::string UIResources::ICON_SOUND_STOP(mPrefix+"stop_sound.png");
    const std::string UIResources::ICON_SOUND_PLAY(mPrefix+"play_sound.png");
 
+   const std::string UIResources::ICON_SOUND_RESOURCE(mPrefix+"sound_resource.png");
+   const std::string UIResources::ICON_STATICMESH_RESOURCE(mPrefix+"staticmesh_resource.png");
+   const std::string UIResources::ICON_CHARACTER_RESOURCE(mPrefix+"character_resource.png");
+   const std::string UIResources::ICON_TEXTURE_RESOURCE(mPrefix+"texture_resource.png");
+   const std::string UIResources::ICON_PARTICLE_RESOURCE(mPrefix+"particle_resource.png");
+   const std::string UIResources::ICON_TERRAIN_RESOURCE(mPrefix+"terrain_resource.png");
+
+   const std::string UIResources::ICON_ACTOR(mPrefix+"actor_icon.png");
    const std::string UIResources::SPLASH_SCREEN(mPrefix+"splash.png");
-   
+   const std::string UIResources::ICON_APPLICATION(mPrefix+"application_icon.png");
 }
+

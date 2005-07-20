@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -25,17 +25,15 @@
 #include "dtDAL/map.h"
 #include "dtDAL/log.h"
 
-#include <iostream>
-
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     //Singleton global variable for this class.
-	osg::ref_ptr<EditorData> EditorData::instance(NULL);
-	///////////////////////////////////////////////////////////////////////////////
-	EditorData::EditorData()
-	{
-		LOG_INFO("Initializing Editor Data.");
+    osg::ref_ptr<EditorData> EditorData::instance(NULL);
+    ///////////////////////////////////////////////////////////////////////////////
+    EditorData::EditorData()
+    {
+        LOG_INFO("Initializing Editor Data.");
 
         this->mainWindow = NULL;
         this->myMap = NULL;
@@ -43,9 +41,9 @@ namespace dtEditQt
         numRecentProjects = 0;
         loadLastMap = loadLastProject = rigidCamera = true;
         selectionColor = Qt::red;
-	}
+    }
 
-    ///////////////////////////////////////////////////////////////////////////////   
+    ///////////////////////////////////////////////////////////////////////////////
     EditorData::EditorData(const EditorData &rhs)
     {
     }
@@ -55,13 +53,12 @@ namespace dtEditQt
     {
         return *this;
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     EditorData::~EditorData()
     {
-        std::cout << "Destroying data singleton." << std::endl;
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     EditorData &EditorData::getInstance()
     {
@@ -110,5 +107,9 @@ namespace dtEditQt
         this->characterResource = newResource;
     }
     //////////////////////////////////////////////////////////////////////////////
+    void EditorData::setCurrentTerrainResource(dtDAL::ResourceDescriptor newResource)
+    {
+        this->terrainResource = newResource;
+    }
 }
 

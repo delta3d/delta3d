@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -34,9 +34,15 @@
 #include <QGroupBox>
 #include <QList>
 
+#include <osg/Referenced>
+#include <osg/ref_ptr>
+#include <vector>
+
 #include "dtDAL/datatype.h"
 #include "dtDAL/project.h"
 #include "dtDAL/resourcedescriptor.h"
+#include "dtDAL/resourcehelper.h"
+#include "dtDAL/fileutils.h"
 
 class QMainWindow;
 class QVBoxWidget;
@@ -57,7 +63,7 @@ namespace dtEditQt{
         /**
         * ConstrucTOR
         */
-        ResourceImportDialog(QWidget *parent = 0);
+        ResourceImportDialog(QWidget *parent = 0, dtDAL::DataType &dataType = dtDAL::DataType::UNKNOWN);
 
         /**
         * DestrucTOR
@@ -70,27 +76,10 @@ namespace dtEditQt{
         void importDialog();
 
         /**
-        * SetType sets the current resource type
-        * @param DataType
-        */
-        void setType(dtDAL::DataType& myResourceType);
-
-        /**
         * getType grabs the set dataType. This will be useful for terrain selection
         * @return a resource DataType
         */
         dtDAL::DataType *getType(){return resourceType;}
-
-        /**
-        * setFilter sets the current filter for the file dialog
-        * @param QString file filter i.e. "Sounds(*.wav *.mp3)"
-        */
-        void setFilter(const QString myFilter);
-
-        /**
-        * @return QString filter for the file dialog
-        */
-        QString getFilter(){return filter;}
 
         /**
         * setCategory stores the category name
@@ -205,12 +194,16 @@ namespace dtEditQt{
         QString categoryPath;
         QString file;
         QString type;
-        QString filter;
+        QStringList filterList;
         QString fileExt;
         QString lastDirectory;
         dtDAL::ResourceTreeNode *resourceTreeNode;
         dtDAL::DataType *resourceType;
         dtDAL::ResourceDescriptor descriptor;
+        dtDAL::Log *mLogger;
+
+        // filter vector to fill for file types
+        std::vector<osg::ref_ptr<const dtDAL::ResourceTypeHandler> >handler;
 
         bool created;
     };
@@ -339,23 +332,29 @@ namespace dtEditQt{
         {
             // grab an instance to our project
             dtDAL::Project& project = dtDAL::Project::GetInstance();
+            dtDAL::FileUtils& futil = dtDAL::FileUtils::GetInstance();
+
             // full path to our category
             QString fullCategory;
             fullCategory = getCategoryPath();
 
             // Add the users entered text
-            if(!fullCategory.isEmpty()){
+            if(!fullCategory.isEmpty())
+            {
                 fullCategory = fullCategory+":"+categoryEdit->text();
             }
-            else{
+            else
+            {
                 fullCategory = categoryEdit->text();
             }
 
             setCategory(categoryEdit->text());
             setCategoryPath(fullCategory);
 
-            if(create){
-                if(!fullCategory.isEmpty()){
+            if(create)
+            {
+                if(!fullCategory.isEmpty())
+                {
                     project.CreateResourceCategory(fullCategory.toStdString(),*getType());
                 }
             }

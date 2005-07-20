@@ -52,6 +52,13 @@ namespace dtDAL {
         virtual bool HandlesFile(const std::string& path, FileType type) const;
 
         /**
+         * @return A description for this handler.
+         */
+        virtual const std::string& GetTypeHandlerDescription() const {
+            return mDescription;
+        };
+        
+        /**
          * Creates a resource descriptor based on the path to the resource.
          * @param category the category of the resource.
          * @param fileName the name of the file.
@@ -91,6 +98,11 @@ namespace dtDAL {
         virtual bool ResourceIsDirectory() const { return true; }
 
         /**
+         * @return the extension that the resource directory will have when imported
+         */
+        virtual const std::string& GetResourceDirectoryExtension() const { return mResourceDirectoryExtension; };
+        
+        /**
          * @return a map of file extensions and their associated descriptions for rbody.
          */
         virtual const std::map<std::string, std::string>& GetFileFilters() const;
@@ -128,7 +140,9 @@ namespace dtDAL {
         mutable RBodyErrorHandler mXMLErrorHandler;
 
         static const std::string mConfigFileHeader;
-
+        static const std::string mResourceDirectoryExtension;
+        const std::string mDescription;
+        
         void CopyFilesForSections(const std::string& sectionName, const std::string& keyName,
             const std::string& srcDir, const std::string& destDir) const;
         void ParseMaterialAndCopyReferenecedFiles(const std::string& srcDir,

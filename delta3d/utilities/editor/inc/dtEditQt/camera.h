@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -26,7 +26,7 @@
 #include <osg/Vec3>
 #include <osg/Quat>
 #include <osg/Matrix>
-#include <vector>
+#include <list>
 #include "dtDAL/transformableactorproxy.h"
 
 namespace dtEditQt
@@ -39,8 +39,6 @@ namespace dtEditQt
     class Camera : public osg::Referenced
     {
     public:
-
-        typedef std::vector<osg::ref_ptr<dtDAL::TransformableActorProxy> > AttachmentList;
 
         /**
          * Constructs a new camera.
@@ -66,19 +64,19 @@ namespace dtEditQt
          * Rotates the camera about its local x-axis.
          * @param degrees Amount of rotation in degrees.
          */
-        void pitch(float degrees);
+        void pitch(double degrees);
 
         /**
          * Rotates the camera about its up vector.
          * @param degrees Amount of rotation in degrees.
          */
-        void yaw(float degrees);
+        void yaw(double degrees);
 
         /**
          * Rotates the camera about its current view vector.
          * @param degrees Amount of rotation in degrees.
          */
-        void roll(float degrees);
+        void roll(double degrees);
 
         /**
          * Rotates the camera using the given quaternion.
@@ -93,13 +91,13 @@ namespace dtEditQt
          *  1.0f zoom the camera in, where as values less than 1.0f zoom the camera out.
          * @param amount A floating point value slighting less than or greater than 1.0f.
          */
-        void zoom(float amount);
+        void zoom(double amount);
 
         /**
          * Gets the current zoom factor.
          * @return The current zoom factor.
          */
-        float getZoom() const {
+        double getZoom() const {
             return this->zoomFactor;
         }
 
@@ -119,8 +117,8 @@ namespace dtEditQt
          * @param near
          * @param far
          */
-        void makeOrtho(float left, float right, float bottom, float top,
-            float near, float far);
+        void makeOrtho(double left, double right, double bottom, double top,
+            double near, double far);
 
         /**
          * Sets the camera's perspective viewing parameters and puts this camera into
@@ -130,27 +128,27 @@ namespace dtEditQt
          * @param near
          * @param far
          */
-        void makePerspective(float fovY, float aspect, float near, float far);
+        void makePerspective(double fovY, double aspect, double near, double far);
 
         /**
          * Sets the horizontal aspect ratio of this camera.
          * @param ratio The new aspect ratio.
          */
-        void setAspectRatio(float ratio);
+        void setAspectRatio(double ratio);
 
         /**
          * Sets the value of the near clipping plane of this camera.  Anything
          * closer than or behind this point are clipped away.
          * @param value The new value.
          */
-        void setNearClipPlane(float value);
+        void setNearClipPlane(double value);
 
         /**
          * Sets the value of the far clipping plane of this camera.  Anything
          * beyond this point is clipped away.
          * @param value The new value.
          */
-        void setFarClipPlane(float value);
+        void setFarClipPlane(double value);
 
         /**
          * Gets this camera's current view direction.
@@ -175,8 +173,30 @@ namespace dtEditQt
          * Gets this camera's orientation in a quaternion.
          * @return A quaternion representation of this camera's orientation.
          */
-        const osg::Quat &getOrientation() const {
-            return this->orientation;
+        osg::Quat getOrientation() const;
+
+        /**
+         * Gets the current pitch of this camera.
+         * @return The pitch value in degrees.
+         */
+        double getPitch() const {
+            return this->camPitch;
+        }
+
+        /**
+         * Gets the current yaw of this camera.
+         * @return The yaw value in degrees.
+         */
+        double getYaw() const {
+            return this->camYaw;
+        }
+
+        /**
+         * Gets the current roll of this camera.
+         * @return The roll value in degrees.
+         */
+        double getRoll() const {
+            return this->camRoll;
         }
 
         /**
@@ -204,9 +224,12 @@ namespace dtEditQt
          */
         const osg::Matrix &getWorldViewMatrix();
 
+        void getOrthoParams(double &left, double &right, double &bottom, double &top,
+            double &nearZ, double &farZ);
+
         /**
-         * Forces an update of this camera's projection matrix and modelview
-         * matrix.
+         * Updates the camera's viewing and projection matrices.  Also updates
+		 * any actors currently attached to it.
          */
         void update();
 
@@ -233,7 +256,23 @@ namespace dtEditQt
          */
         void updateActorAttachments();
 
+        /**
+         * Returns a count of the number of actor proxies currently attached to this
+         * camera.
+         * @return The number of proxies.
+         */
+        unsigned int getNumActorAttachments() const {
+            return this->attachedProxies.size();
+        }
+
     protected:
+
+        struct ActorAttachment {
+            osg::ref_ptr<dtDAL::TransformableActorProxy> actor;
+            osg::Vec3 positionOffset;
+            osg::Quat rotationOffset;
+            osg::Vec3 initialCameraHPR;
+        };
 
         /**
          * Empty destructor.
@@ -252,14 +291,15 @@ namespace dtEditQt
 
         osg::Vec3 position;
         osg::Quat orientation;
+        double camPitch,camYaw,camRoll;
 
-        osg::Matrix projectionMat;
-        osg::Matrix worldViewMat;
+        osg::Matrixd projectionMat;
+        osg::Matrixd worldViewMat;
 
-        float fovY, aspectRatio;
-        float orthoLeft, orthoRight, orthoTop, orthoBottom;
-        float zNear, zFar;
-        float zoomFactor;
+        double fovY, aspectRatio;
+        double orthoLeft, orthoRight, orthoTop, orthoBottom;
+        double zNear, zFar;
+        double zoomFactor;
 
         bool updateProjectionMatrix;
         bool updateWorldViewMatrix;
@@ -267,7 +307,7 @@ namespace dtEditQt
         ProjectionType projType;
 
         ///A list of transformable actor proxies currently attached to the camera.
-        AttachmentList attachedProxies;
+        std::list<ActorAttachment> attachedProxies;
     };
 }
 

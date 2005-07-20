@@ -1,18 +1,18 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine Level Editor 
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free 
+* Software Foundation; either version 2 of the License, or (at your option) 
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
+* You should have received a copy of the GNU General Public License 
 * along with this library; if not, write to the Free Software Foundation, Inc., 
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
@@ -41,7 +41,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec2ActorProperty *newVectorProp, 
             int whichIndex, const std::string &newLabel)
-            : label(newLabel), elementIndex(whichIndex)
+            : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop = newVectorProp;
@@ -53,7 +53,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec3ActorProperty *newVectorProp, 
             int whichIndex, const std::string &newLabel)
-            : label(newLabel), elementIndex(whichIndex)
+            : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop = NULL;
@@ -65,7 +65,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVectorElementControl::DynamicVectorElementControl(dtDAL::Vec4ActorProperty *newVectorProp, 
             int whichIndex, const std::string &newLabel)
-            : label(newLabel), elementIndex(whichIndex)
+            : label(newLabel), elementIndex(whichIndex), temporaryEditControl(NULL)
     {
 
         vec2Prop = NULL;
@@ -101,12 +101,15 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicVectorElementControl::updateEditorFromModel(QWidget *widget)
     {
-        if (widget != NULL) {
+        if (widget != NULL)
+        {
+            // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
 
             // set the current value from our property
             double value = getValue();
-            editBox->setText(QString::number(value, 'f', NUM_DECIMAL_DIGITS));
+            QString strValue = QString::number(value, 'f', NUM_DECIMAL_DIGITS);
+            editBox->setText(strValue);
             editBox->selectAll();
         }
     }
@@ -116,18 +119,28 @@ namespace dtEditQt
     {
         bool dataChanged = false;
 
-        if (widget != NULL) {
+        if (widget != NULL) 
+        {
+            // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
             bool success = false;
             float result = editBox->text().toFloat(&success);
 
             // set our value to our object
-            if (success) {
-                if (result != getValue()) {
+            if (success)
+            {
+                // Save the data if they are different.  Note, we also need to compare the QString value, 
+                // else we get epsilon differences that cause the map to be marked dirty with no edits :(
+                QString proxyValue = QString::number(getValue(), 'f', NUM_DECIMAL_DIGITS);
+                QString newValue = editBox->text();
+                if (result != getValue() && proxyValue != newValue)
+                {
                     setValue(result);
                     dataChanged = true;
                 }
-            } else {
+            } 
+            else 
+            {
                 LOG_ERROR("updateData() failed to convert our value successfully");
             }
 
@@ -157,21 +170,21 @@ namespace dtEditQt
     {
         // create and init the edit box
         //editBox = new QLineEdit(parent);
-        SubQLineEdit *editBox = new SubQLineEdit (parent, this);
-        QDoubleValidator *validator = new QDoubleValidator(editBox);
+        temporaryEditControl = new SubQLineEdit (parent, this);
+        QDoubleValidator *validator = new QDoubleValidator(temporaryEditControl);
         validator->setDecimals(NUM_DECIMAL_DIGITS);
-        editBox->setValidator(validator);
+        temporaryEditControl->setValidator(validator);
 
         if (!initialized)  {
             LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-            return editBox;
+            return temporaryEditControl;
         }
 
-        updateEditorFromModel(editBox);
+        updateEditorFromModel(temporaryEditControl);
 
-        editBox->setToolTip(getDescription());
+        temporaryEditControl->setToolTip(getDescription());
 
-        return editBox;
+        return temporaryEditControl;
     }
 
 
@@ -294,4 +307,23 @@ namespace dtEditQt
         return updateModelFromEditor(widget);
     }
 
+    void DynamicVectorElementControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
+        osg::ref_ptr<dtDAL::ActorProperty> property)
+    {
+        if (temporaryEditControl != NULL && proxy == this->proxy) 
+        {
+            if (whichType == VEC2 && property == vec2Prop) 
+            {
+                updateEditorFromModel(temporaryEditControl);
+            } 
+            else if (whichType == VEC3 && property == vec3Prop) 
+            {
+                updateEditorFromModel(temporaryEditControl);
+            } 
+            else if (whichType == VEC4 && property == vec4Prop)
+            {
+                updateEditorFromModel(temporaryEditControl);
+            }
+        }
+    }
 }

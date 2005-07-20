@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -28,20 +28,26 @@
 #include <QBoxLayout>
 #include <QComboBox>
 
+#include <map>
+
 #include "dtEditQt/resourceimportdialog.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/project.h"
 #include "dtDAL/fileutils.h"
+#include "dtDAL/log.h"
 
 namespace dtEditQt
 {
     ///////////////////////////////////////////////////////////////////////////////
-    ResourceImportDialog::ResourceImportDialog(QWidget *parent):QDialog(parent)
+    ResourceImportDialog::ResourceImportDialog(QWidget *parent, dtDAL::DataType &dataType):QDialog(parent)
     {
         setWindowTitle(tr("Import Resources"));
         setModal(true);
 
-        // required for correct file path
+        resourceType = &dataType;
+        dtDAL::Log &mLogger = dtDAL::Log::GetInstance();
+
+        // we have to call this here for correct file pathing
         importDialog();
     }
     ///////////////////////////////////////////////////////////////////////////////
@@ -88,7 +94,7 @@ namespace dtEditQt
         typeEdit->setMinimumWidth(200);
 
         // create grid layout for bottom grid area
-        QGridLayout *bottomGrid = new QGridLayout();
+        //QGridLayout *bottomGrid = new QGridLayout();
         QHBoxLayout *hbox = new QHBoxLayout();
 
         importBtn  = new QPushButton("Import", this);
@@ -103,34 +109,49 @@ namespace dtEditQt
         vbox->addWidget(group);
         vbox->addLayout(hbox);
         catEdit->insert(getCategory());
+ 
+        handler.clear();
+        dtDAL::Project& project = dtDAL::Project::GetInstance();
+        project.GetHandlersForDataType(*resourceType,handler);
 
-        // disable fields that are selected
+        // populate the type edit drop down
+        if(handler.size() > 1)
+        {
+            // this list will be our drop down selection items
+            QStringList filterList;
+            filterList.clear();
+
+            // enable our type list
+            typeEdit->setDisabled(false);
+            std::map<std::string, std::string> description;
+            description.clear();
+            for(unsigned i=0; i<handler.size();++i)
+            {
+                filterList.append(handler.at(i)->GetTypeHandlerDescription().c_str());
+            }
+            typeEdit->addItems(filterList);
+        }
+        else
+        {
+            // if we only have 1 item in our list then the drop down
+            // should be disabled.
+            typeEdit->addItem(QString(resourceType->GetName().c_str()));
+            typeEdit->setDisabled(true);
+        }
+
         importBtn->setDisabled(true);
-        typeEdit->setDisabled(true);
-        catEdit->setDisabled(true);
         fileEdit->setDisabled(true);
         nameEdit->setDisabled(true);
-
+        catEdit->setDisabled(true);
+        
         connect(importBtn, SIGNAL(clicked()), this, SLOT(addResource()));
         connect(cancelBtn, SIGNAL(clicked()), this, SLOT(closeImportDialog()));
         connect(fileBtn,SIGNAL(clicked()), this, SLOT(fileDialog()));
     }
     ///////////////////////////////////////////////////////////////////////////////
-    void ResourceImportDialog::setType(dtDAL::DataType &myResourceType)
-    {
-        resourceType = &myResourceType;
-    }
-    ///////////////////////////////////////////////////////////////////////////////
     void ResourceImportDialog::updateData()
     {
         catEdit->insert(getCategory());
-        typeEdit->addItem(QString(resourceType->GetName().c_str()));
-
-    }
-    ///////////////////////////////////////////////////////////////////////////////
-    void ResourceImportDialog::setFilter(const QString myFilter)
-    {
-        filter = myFilter;
     }
     ///////////////////////////////////////////////////////////////////////////////
     // slots:
@@ -145,27 +166,89 @@ namespace dtEditQt
     {
         QStringList list;
         QString context;
-        QDir *fileName = new QDir();
-        
+        bool isTerrain = false;
+
         dtDAL::Project& project = dtDAL::Project::GetInstance();
         context = QString(project.GetContext().c_str());
 
         nameEdit->clear();
         fileEdit->clear();
+
         fileList.clear();
+        filterList.clear();
 
-        // check if we have a filter
-        if(filter.toStdString().empty())
-            return;
-
+        // check if we have a project context
         if(context.isEmpty())
             return;
 
         // if we got this far then create a file dialog
         QFileDialog *fd = new QFileDialog(this);
         fd->setFileMode(QFileDialog::ExistingFiles);
-        fd->setFilter(filter);
         
+        // handle the file filters here
+        handler.clear();
+        project.GetHandlersForDataType(*resourceType,handler);
+            
+        std::map<std::string, std::string> filters;
+        filters.clear();
+        
+        for (unsigned i = 0 ; i < handler.size(); ++i)
+        {
+            // this is required to find the selected terrain group
+            bool found = false;
+
+            std::map<std::string, std::string>::iterator iter;
+            
+            // spin through the filters for the selected combobox
+            if(*resourceType == dtDAL::DataType::TERRAIN)
+            {
+                // if we find our filters than the handler will be updated with the correct file filters
+                // otherwise the loop will end safely when i reaches the handler size
+                while(found != true && i < handler.size())
+                {
+                    if(typeEdit->currentText() == handler.at(i)->GetTypeHandlerDescription().c_str())
+                    {
+                        found = true;
+                        filters = handler.at(i)->GetFileFilters();
+                    }
+                    else
+                    {
+                       ++i;
+                    }
+                }
+            }
+            else
+            {
+                filters = handler.at(i)->GetFileFilters();
+            }
+                                
+            for(iter = filters.begin();iter!=filters.end(); ++iter)
+            {
+                QString filter;
+                filter = "";
+                    
+                filter += iter->second.c_str();
+                if (iter->first.find_first_of('.') == std::string::npos)
+                {
+                    filter += "(*.";
+                }
+                else
+                {
+                    filter += "(";
+                }
+
+                filter += iter->first.c_str();
+                filter += ")";
+                filterList.append(filter);        
+            }
+
+            if(found == true)
+                break;
+        }
+
+        fd->setFilters(filterList);
+        fd->setReadOnly(true);
+
         // put the user in the last known directory if it exists
         if(getLastDirectory().isEmpty())
         {
@@ -175,6 +258,7 @@ namespace dtEditQt
         {
             fd->setDirectory(getLastDirectory());
         }
+        // create the file dialog
         if(fd->exec())
         {
             list = fd->selectedFiles();
@@ -235,8 +319,9 @@ namespace dtEditQt
         QString fullPath;
         QString suffix;
 
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
-       
+        dtDAL::Project &project = dtDAL::Project::GetInstance();
+        dtDAL::FileUtils &fileUtil = dtDAL::FileUtils::GetInstance();
+        
         if(!fileList.isEmpty())
         {
             for(int i=0;i<fileList.size();++i)
@@ -249,10 +334,8 @@ namespace dtEditQt
                 fullPath = fullPath.replace("/",QString(dtDAL::FileUtils::PATH_SEPARATOR));
                 fullPath = fullPath.replace("\\",QString(dtDAL::FileUtils::PATH_SEPARATOR));
 
-                // Strip the extension before we create the display name
-                // for the resource descriptor
                 QFileInfo fi(fullPath);
-                
+     
                 // check this in case our file was renamed
                 if(fileList.size()==1)
                 {
@@ -261,20 +344,28 @@ namespace dtEditQt
                     QFileInfo fi(resourceName);
                     resourceName = fi.baseName();
                     setResourceName(resourceName+"."+suffix);
-                }else
+                }
+                else
                 {
                     resourceName = fi.baseName();
                 }
-                descriptorList.append(project.AddResource(resourceName.toStdString()
-                    ,fullPath.toStdString(),catEdit->text().toStdString(),*this->getType()));
-                /*setDescriptor(project.AddResource(resourceName.toStdString()
-                    ,fullPath.toStdString(),catEdit->text().toStdString(),*this->getType()));
-                */
-                setCategoryPath(catEdit->text());
-                QFileInfo pathOfDir(fullPath);
-                fullPath = pathOfDir.absolutePath();
-                setLastDirectory(fullPath);
+                
+                try
+                {
+                    descriptorList.append(project.AddResource(resourceName.toStdString()
+                        ,fullPath.toStdString(),catEdit->text().toStdString(),*this->getType()));
+                
+                    setCategoryPath(catEdit->text());
+                    QFileInfo pathOfDir(fullPath);
+                    fullPath = pathOfDir.absolutePath();
+                    setLastDirectory(fullPath);
 
+                }
+                catch(const dtDAL::Exception& e)
+                {
+                    mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
+                    throw e;
+                }
             }            
             close();
         }

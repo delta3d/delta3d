@@ -29,13 +29,10 @@
 #include <osg/ref_ptr>
 #include <dtUtil/enumeration.h>
 #include <dtCore/export.h>
-#include "dtDAL/actorproxyicon.h"
 
 namespace dtCore
 {
      class DeltaDrawable;
-     class Transformable;
-     class Scene;
      class UniqueId;
 }
 
@@ -45,6 +42,7 @@ namespace dtDAL
     class ActorType;
     class DataType;
     class ResourceDescriptor;
+    class ActorProxyIcon;
 
     /**
      * This is the base class for all actor proxy objects.  The proxy's
@@ -102,8 +100,16 @@ namespace dtDAL
          */
         ActorProxy();
 
+        /**
+         * Gets the UniqueID object assigned to this actor proxy.
+         * @return The UniqueID.
+         */
         const dtCore::UniqueId& GetId() const;
 
+        /**
+         * Sets the UniqueID mapped to this actor proxy.
+         * @param newId The new ID.
+         */
         void SetId(const dtCore::UniqueId& newId);
 
         /**
@@ -212,7 +218,7 @@ namespace dtDAL
          *      an actor is any class that contains dtCore::DeltaDrawable
          *      in its inheritance tree.
          */
-        virtual dtCore::DeltaDrawable* GetActor() { return mActor.get(); }
+        virtual dtCore::DeltaDrawable* GetActor();
 
         /**
          * Gets the actor who's properties are modeled by this proxy.
@@ -223,7 +229,7 @@ namespace dtDAL
          *      an actor is any class that contains dtCore::DeltaDrawable
          *      in its inheritance tree.
          */
-        virtual const dtCore::DeltaDrawable* GetActor() const { return mActor.get(); }
+        virtual const dtCore::DeltaDrawable* GetActor() const;
 
         /**
          * Sets the billboard icon used to represent this actor proxy.
@@ -231,7 +237,7 @@ namespace dtDAL
          * @note This will only be rendered if the RenderMode is set to
          *  DRAW_BILLBOARD_ICON.
          */
-        virtual void SetBillBoardIcon(ActorProxyIcon *icon) { mBillBoardIcon = icon; }
+        virtual void SetBillBoardIcon(ActorProxyIcon *icon);
 
         /**
          * Gets the billboard icon currently assigned to this actor proxy.

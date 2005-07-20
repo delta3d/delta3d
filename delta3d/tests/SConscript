@@ -7,7 +7,19 @@ Import ('*')
 
 projectEnv = env.Copy()
 
-sources = glob.glob('*.cpp') + glob.glob('project/*Tests.cpp') + glob.glob('proxy/*Test.cpp')
+sources = []
+
+mainSources = glob.glob('*.cpp')
+
+sources += mainSources;
+
+projectSources = glob.glob('project/*Tests.cpp')
+
+sources += projectSources;
+
+proxySources =  glob.glob('proxy/*Test.cpp')
+
+sources += proxySources;
 
 deplibs = ['cppunit']
 
@@ -16,12 +28,35 @@ deplibs = [ extLibs[lib] for lib in deplibs if extLibs.has_key(lib) ]
 
 projectEnv.Append(LIBS = deplibs)
 
+allTestProgram = '#tests/allTests'
+projectTestProgram = '#tests/projectTests'
+proxyTestProgram = '#tests/proxyTests'
+
 if mode == 'debug':
-   projectEnv.Append(LIBS = deplibs + ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore'])
-   app = projectEnv.Program('#tests/allTestsd', sources)
+   allTestProgram = '#tests/allTestsd'
+   projectTestProgram = '#tests/projectTestsd'
+   proxyTestProgram = '#tests/proxyTestsd'
+   
+
+projectEnv.Append(LIBS = deplibs + ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore'])
+app = projectEnv.Program(allTestProgram, sources)
+projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
+proxyapp = projectEnv.Program(proxyTestProgram,  mainSources + proxySources)
+
+
+dtCreateActorLibSources = [ 'project/dtCreateActorLib/ExampleActorLib.cpp', 'project/dtCreateActorLib/ExampleTestPropertyProxy.cpp' ];
+
+if OS == 'darwin':
+   overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
+   overrideShSuffix = '.dylib'
 else:
-   projectEnv.Append(LIBS = deplibs + ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore'])
-   app = projectEnv.Program('#tests/allTests', sources)
+   overrideShLink = ''
+   overrideShSuffix = ''
+
+dtCreateActorsDeps = ['dtDAL']
+
+dtCreateActorsLib = BuildLib( 'dtCreateActors', dtCreateActorLibSources, dtCreateActorsDeps, ['DT_PLUGIN'], 
+	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 # Grab all the sources from the dtActors source directory.
 if (app == '[]') :

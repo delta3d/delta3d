@@ -142,6 +142,9 @@
 				RelativePath="..\..\..\src\dtDAL\datatype.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtDAL\directoryresourcetypehandler.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtDAL\enginepropertytypes.cpp">
 			</File>
 			<File
@@ -209,6 +212,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\datatype.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtDAL\directoryresourcetypehandler.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\enginepropertytypes.h">

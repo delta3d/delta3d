@@ -21,11 +21,12 @@
 
 #include "dtActors/particlesystemactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
+#include "dtDAL/actorproxyicon.h"
 
 using namespace dtCore;
 using namespace dtDAL;
 
-namespace dtActors 
+namespace dtActors
 {
     void ParticleSystemActorProxy::CreateActor()
     {
@@ -71,7 +72,7 @@ namespace dtActors
     //////////////////////////////////////////////////////////////////////////
     dtDAL::ActorProxyIcon* ParticleSystemActorProxy::GetBillBoardIcon()
     {
-        if(!mBillBoardIcon.valid()) 
+        if(!mBillBoardIcon.valid())
         {
             mBillBoardIcon =
                 new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::PARTICLESYSTEM);

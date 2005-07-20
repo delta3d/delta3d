@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -29,6 +29,7 @@
 #include <QCloseEvent>
 #include <QTimer>
 #include <dtCore/uniqueid.h>
+#include <QIcon>
 
 #include "dtDAL/log.h"
 #include "dtDAL/project.h"
@@ -49,6 +50,7 @@
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/projectcontextdialog.h"
+#include "dtEditQt/uiresources.h"
 //#include "dtEditQt/undomanager.h"
 
 #include <osgDB/FileNameUtils>
@@ -78,8 +80,13 @@ namespace dtEditQt
 
         //Make sure some default UI states are correctly initialized.
         EditorActions::getInstance().actionSelectionCamera->setChecked(true);
-        setWindowTitle(tr("Delta3D Level Editor"));
+        setWindowTitle(tr("Delta3D World Editor"));
         EditorData::getInstance().setMainWindow(this);
+        
+        // add the application icon
+        QIcon *icon = new QIcon();
+        icon->addPixmap(QPixmap(UIResources::ICON_APPLICATION.c_str()));
+        setWindowIcon(*icon);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -273,6 +280,7 @@ namespace dtEditQt
 
         EditorActions::getInstance().actionEditDuplicateActor->setEnabled(false);
         EditorActions::getInstance().actionEditDeleteActor->setEnabled(false);
+        EditorActions::getInstance().actionEditGotoActor->setEnabled(false);
         EditorActions::getInstance().actionEditGroundClampActors->setEnabled(false);
         EditorActions::getInstance().actionEditMapProperties->setEnabled(hasBoth);
         EditorActions::getInstance().actionEditMapLibraries->setEnabled(hasBoth);
@@ -384,6 +392,7 @@ namespace dtEditQt
         EditorActions::getInstance().getTimer()->start();
 
         updateWindowTitle();
+        this->perspView->onEditorPreferencesChanged();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -459,7 +468,6 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::closeEvent(QCloseEvent *e)
     {
-        std::cout << "CLOSE EVENT." << std::endl;
         EditorActions::getInstance().wasCancelled = false;
 
         dtDAL::Map *curMap = dtEditQt::EditorData::getInstance().getCurrentMap().get();
@@ -470,9 +478,7 @@ namespace dtEditQt
             return;
         }
 
-        std::cout << "Calling slot file exit." << std::endl;
         dtEditQt::EditorActions::getInstance().slotFileExit();
-
         EditorActions::getInstance().wasCancelled ? e->ignore() : e->accept();
     }
 

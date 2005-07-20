@@ -21,13 +21,14 @@
 
 #include "dtActors/soundactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
+#include "dtDAL/actorproxyicon.h"
 
 #include <dtAudio/dtaudio.h>
 
 using namespace dtAudio;
 using namespace dtDAL;
 
-namespace dtActors 
+namespace dtActors
 {
     SoundActorProxy::~SoundActorProxy()
     {

@@ -37,10 +37,10 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<ActorProxy> ActorPluginRegistry::CreateActorProxy(osg::ref_ptr<ActorType> type)
+    osg::ref_ptr<ActorProxy> ActorPluginRegistry::CreateActorProxy(ActorType& type)
     {
-        osg::ref_ptr<ActorProxy> proxy = mActorFactory->CreateObject(type);
-        proxy->SetActorType(type.get());
+        osg::ref_ptr<ActorProxy> proxy = mActorFactory->CreateObject(osg::ref_ptr<ActorType>(&type));
+        proxy->SetActorType(&type);
         proxy->CreateActor();
         proxy->BuildPropertyMap();
         return proxy;

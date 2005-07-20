@@ -1,18 +1,18 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine Level Editor
  * Copyright (C) 2005, BMH Associates, Inc.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
+ * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
@@ -29,19 +29,20 @@
 #include <QFrame>
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewport.h"
+#include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/orthoviewport.h"
-#include "dtEditQt/borderlayout.h"
 #include "dtEditQt/uiresources.h"
 
 namespace dtEditQt
 {
-
     ///////////////////////////////////////////////////////////////////////////////
     ViewportContainer::ViewportContainer(Viewport *vp, QWidget *parent) : QWidget(parent)
     {
         this->layout = new QVBoxLayout(this);
         this->layout->setMargin(0);
         this->layout->setSpacing(0);
+        this->cameraMovementMenu = NULL;
+        this->cameraSpeedGroup = NULL;
         createActions();
         createToolBar();
         createContextMenu();
@@ -61,6 +62,19 @@ namespace dtEditQt
         this->layout->addWidget(this->viewPort);
         connect(this->viewPort,SIGNAL(renderStyleChanged()),
                 this,SLOT(onViewportRenderStyleChanged()));
+
+        if (this->viewPort->getType() == ViewportManager::ViewportType::PERSPECTIVE)
+            addCameraControlWidget();
+        else {
+            if (this->cameraMovementMenu != NULL) {
+                delete this->cameraMovementMenu;
+                this->cameraMovementMenu = NULL;
+            }
+            if (this->cameraSpeedGroup) {
+                delete this->cameraSpeedGroup;
+                this->cameraSpeedGroup = NULL;
+            }
+        }
 
         //Manually call the slot the first time the viewport is set so the state
         //of the actions are set properly.
@@ -128,15 +142,15 @@ namespace dtEditQt
         this->toolBar->setFixedHeight(25);
 
         QBoxLayout *layout = new QHBoxLayout(this->toolBar);
-        QBoxLayout *buttonLayout = new QHBoxLayout();
+        this->buttonLayout = new QHBoxLayout();
 
         layout->setAlignment(Qt::AlignLeft);
         layout->setSpacing(0);
         layout->setMargin(0);
 
-        buttonLayout->setAlignment(Qt::AlignLeft);
-        buttonLayout->setSpacing(0);
-        buttonLayout->setMargin(1);
+        this->buttonLayout->setAlignment(Qt::AlignLeft);
+        this->buttonLayout->setSpacing(0);
+        this->buttonLayout->setMargin(1);
 
         //Put a label which holds the name of the viewport.
         this->viewportTitle = new QLabel(this->toolBar);
@@ -154,25 +168,25 @@ namespace dtEditQt
         button->setDefaultAction(this->setWireFrameAction);
         button->setAutoRaise(true);
         button->setFocusPolicy(Qt::NoFocus);
-        buttonLayout->addWidget(button);
+        this->buttonLayout->addWidget(button);
 
         button = new QToolButton(this->toolBar);
         button->setDefaultAction(this->setLightingOnlyAction);
         button->setAutoRaise(true);
         button->setFocusPolicy(Qt::NoFocus);
-        buttonLayout->addWidget(button);
+        this->buttonLayout->addWidget(button);
 
         button = new QToolButton(this->toolBar);
         button->setDefaultAction(this->setTexturesOnlyAction);
         button->setAutoRaise(true);
         button->setFocusPolicy(Qt::NoFocus);
-        buttonLayout->addWidget(button);
+        this->buttonLayout->addWidget(button);
 
         button = new QToolButton(this->toolBar);
         button->setDefaultAction(this->setTexturesAndLightingAction);
         button->setAutoRaise(true);
         button->setFocusPolicy(Qt::NoFocus);
-        buttonLayout->addWidget(button);
+        this->buttonLayout->addWidget(button);
 
         this->layout->addWidget(this->toolBar);
     }
@@ -187,6 +201,90 @@ namespace dtEditQt
         styles->addAction(this->setLightingOnlyAction);
         styles->addAction(this->setTexturesAndLightingAction);
         this->contextMenu->addMenu(styles);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::addCameraControlWidget()
+    {
+        if (this->cameraSpeedGroup != NULL)
+            return;
+
+        this->cameraSpeedGroup = new QActionGroup(this);
+
+        this->cameraSpeedSlowest = new QAction(tr("&Slowest"),this->cameraSpeedGroup);
+        this->cameraSpeedSlowest->setCheckable(true);
+        connect(this->cameraSpeedSlowest,SIGNAL(triggered()),this,SLOT(setCameraSpeedSlowest()));
+
+        this->cameraSpeedSlow = new QAction(tr("S&low"),this->cameraSpeedGroup);
+        this->cameraSpeedSlow->setCheckable(true);
+        connect(this->cameraSpeedSlow,SIGNAL(triggered()),this,SLOT(setCameraSpeedSlow()));
+
+        this->cameraSpeedNormal = new QAction(tr("&Normal"),this->cameraSpeedGroup);
+        this->cameraSpeedNormal->setCheckable(true);
+        connect(this->cameraSpeedNormal,SIGNAL(triggered()),this,SLOT(setCameraSpeedNormal()));
+
+        this->cameraSpeedFast = new QAction(tr("&Fast"),this->cameraSpeedGroup);
+        this->cameraSpeedFast->setCheckable(true);
+        connect(this->cameraSpeedFast,SIGNAL(triggered()),this,SLOT(setCameraSpeedFast()));
+
+        this->cameraSpeedFastest = new QAction(tr("F&astest"),this->cameraSpeedGroup);
+        this->cameraSpeedFastest->setCheckable(true);
+        connect(this->cameraSpeedFastest,SIGNAL(triggered()),this,SLOT(setCameraSpeedFastest()));
+
+        this->cameraMovementMenu = new QMenu(tr("Camera Speed"),this->contextMenu);
+        this->cameraMovementMenu->addAction(this->cameraSpeedSlowest);
+        this->cameraMovementMenu->addAction(this->cameraSpeedSlow);
+        this->cameraMovementMenu->addAction(this->cameraSpeedNormal);
+        this->cameraMovementMenu->addAction(this->cameraSpeedFast);
+        this->cameraMovementMenu->addAction(this->cameraSpeedFastest);
+        this->contextMenu->addMenu(this->cameraMovementMenu);
+
+        setCameraSpeedNormal();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::setCameraSpeedSlowest()
+    {
+        if (this->viewPort != NULL) {
+            this->viewPort->setMouseSensitivity(100.0f);
+            this->cameraSpeedSlowest->setChecked(true);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::setCameraSpeedSlow()
+    {
+        if (this->viewPort != NULL) {
+            this->viewPort->setMouseSensitivity(50.0f);
+            this->cameraSpeedSlow->setChecked(true);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::setCameraSpeedNormal()
+    {
+        if (this->viewPort != NULL) {
+            this->viewPort->setMouseSensitivity(10.0f);
+            this->cameraSpeedNormal->setChecked(true);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::setCameraSpeedFast()
+    {
+        if (this->viewPort != NULL) {
+            this->viewPort->setMouseSensitivity(3.0f);
+            this->cameraSpeedFast->setChecked(true);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportContainer::setCameraSpeedFastest()
+    {
+        if (this->viewPort != NULL) {
+            this->viewPort->setMouseSensitivity(0.2f);
+            this->cameraSpeedFastest->setChecked(true);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -28,6 +28,7 @@
 #include <QTreeWidgetItem>
 #include <QContextMenuEvent>
 #include <QPixmap>
+#include <QIcon>
 
 #include "dtEditQt/resourceabstractbrowser.h"
 #include "dtDAL/resourcedescriptor.h"
@@ -65,7 +66,7 @@ namespace dtEditQt
         connect(tree,SIGNAL(doubleClicked(const QModelIndex)),this,SLOT(doubleClickEvent()));
     }
     ///////////////////////////////////////////////////////////////////////////////
-    void ResourceAbstractBrowser::buildResourceTree(dtDAL::DataType &type, QWidget *parent)
+    void ResourceAbstractBrowser::buildResourceTree(dtDAL::DataType &type, QWidget *parent, QIcon *resourceIcon)
     {
         // make sure we have a valid type before we build the tree
         if(!type.GetDisplayName().empty())
@@ -84,10 +85,10 @@ namespace dtEditQt
             // construct our tree
             root = new ResourceTreeWidget(tree);
             root->setText(0,rootName);
-            root->recursivelyCreateResourceTree(iterTree);
+            root->recursivelyCreateResourceTree(iterTree,resourceIcon);
             root->setIfResource(false);
             root->setIcon(0,*icon);
-
+ 
             selection = new ResourceTreeWidget();
             selection->setCategoryName(QString(type.GetName().c_str()));
 
@@ -108,7 +109,6 @@ namespace dtEditQt
             {
                 selection = dynamic_cast<ResourceTreeWidget*>(list[0]);
             }
-
             if(selection != NULL)
             {
                 if(selection->isResource())
@@ -169,7 +169,7 @@ namespace dtEditQt
         tree->clear();
 
         // rebuild the tree
-        buildResourceTree(*resourceType, getCurrentParent());
+        buildResourceTree(*resourceType, getCurrentParent(), &resourceIcon);
 
         // change the selection to the root to be nice
         tree->setCurrentItem(tree->topLevelItem(0));
@@ -453,19 +453,25 @@ namespace dtEditQt
         QString resourceName;
         
         // Setup the import dialog default parameters for this browser
-        importDialog = new ResourceImportDialog(this);
+        importDialog = new ResourceImportDialog(this,*resourceType);
 
         // Grab the filter from the resourceTypeHandler
         if(!fileDialogDir.isEmpty())
         {
             importDialog->setLastDirectory(fileDialogDir);
         }
-        importDialog->setFilter("Resource(*.*)");
-        importDialog->setType(*resourceType);
 
         importDialog->setCategory(selection->getCategoryFullName());
         importDialog->updateData();
-        importDialog->exec();
+
+        try
+        {
+            importDialog->exec();
+        }
+        catch(const dtDAL::Exception& e)
+        {
+            return;
+        }
 
         // This is the current full category path
         categoryPath = QString(selection->getCategoryFullName());
@@ -473,12 +479,8 @@ namespace dtEditQt
         // Importing resources
         if(!importDialog->getResourceFileList().isEmpty())
         {
-        
             QList<QString> files = importDialog->getResourceFileList();
             QList<dtDAL::ResourceDescriptor> descList = importDialog->getDescriptorList();
-            //categoryPath = importDialog->getCategoryPath();
-            //categoryPath = categoryPath.replace("\\",":");
-            //categoryPath = categoryPath.replace("/",":");
 
             std::string categoryRoot = resourceType->GetName();
             QString root = QString(categoryRoot.c_str());
@@ -497,20 +499,23 @@ namespace dtEditQt
                 {
                     resourceName = files.at(i);
                 }
-
-                ResourceTreeWidget *resource = new ResourceTreeWidget(selection);
-                resource->setIfResource(true);
-                resource->setText(0,resourceName);
-                resource->setCategoryName(descList.at(i).GetDisplayName().c_str());
-                resource->setCategoryFullName(descList.at(i).GetResourceIdentifier().c_str());
-                resourcePath = QString(descList.at(i).GetResourceIdentifier().c_str());
-                
-                // create our own resource descriptor
-                dtDAL::ResourceDescriptor *myResource = new dtDAL::ResourceDescriptor(resourceName.toStdString(),resourcePath.toStdString());
-                resource->setResourceDescriptor(*myResource);
-                
-                // change the selection
-                tree->setCurrentItem(resource);
+                if(resourceName!="")
+                {
+                    ResourceTreeWidget *resource = new ResourceTreeWidget(selection);
+                    resource->setIfResource(true);
+                    resource->setText(0,resourceName);
+                    resource->setCategoryName(descList.at(i).GetDisplayName().c_str());
+                    resource->setCategoryFullName(descList.at(i).GetResourceIdentifier().c_str());
+                    resource->setIcon(0,resourceIcon);
+                    resourcePath = QString(descList.at(i).GetResourceIdentifier().c_str());
+                    
+                    // create our own resource descriptor
+                    dtDAL::ResourceDescriptor *myResource = new dtDAL::ResourceDescriptor(resourceName.toStdString(),resourcePath.toStdString());
+                    resource->setResourceDescriptor(*myResource);
+                    
+                    // change the selection
+                    tree->setCurrentItem(resource);
+                }
             }
         }
         // Set the editor data to NULL
@@ -542,6 +547,10 @@ namespace dtEditQt
         {
             EditorData::getInstance().setCurrentCharacterResource(dtDAL::ResourceDescriptor());
         }
+        else if(*resourceType == dtDAL::DataType::TERRAIN)
+        {
+            EditorData::getInstance().setCurrentTerrainResource(dtDAL::ResourceDescriptor());
+        }
     }
     ///////////////////////////////////////////////////////////////////////////////
     void ResourceAbstractBrowser::setEditorDataDescriptor(dtDAL::ResourceDescriptor &descriptor)
@@ -565,6 +574,10 @@ namespace dtEditQt
         else if(*resourceType == dtDAL::DataType::CHARACTER)
         {
             EditorData::getInstance().setCurrentCharacterResource(descriptor);
+        }
+        else if(*resourceType == dtDAL::DataType::TERRAIN)
+        {
+            EditorData::getInstance().setCurrentTerrainResource(descriptor);
         }
     }
     ///////////////////////////////////////////////////////////////////////////////

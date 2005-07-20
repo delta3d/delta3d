@@ -30,6 +30,7 @@
 #include <osgDB/FileNameUtils>
 
 #include <dtCore/dt.h>
+#include <dtCore/globals.h>
 #include <dtABC/application.h>
 
 #include <dtDAL/project.h>
@@ -52,7 +53,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( MapTests );
 
 void MapTests::setUp() {
     try {
-        dtDAL::Project::GetInstance();
+        dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("mapTest");
 
         logger = &dtDAL::Log::GetInstance();
@@ -136,13 +137,14 @@ void MapTests::createActors(dtDAL::Map& map) {
 
   logger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
-  for (unsigned int i=0; i< actors.size(); i++) {
+  for (unsigned int i=0; i< actors.size(); i++) 
+  {
     osg::ref_ptr<dtDAL::ActorProxy> proxy;
 
     logger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__,
       "Creating actor proxy %s with category %s.", actors[i]->GetName().c_str(), actors[i]->GetCategory().c_str());
 
-    proxy = libMgr.CreateActorProxy(actors[i]);
+    proxy = libMgr.CreateActorProxy(*actors[i]);
     snprintf(nameAsString, 21, "%d", nameCounter);
     proxy->SetName(std::string(nameAsString));
     nameCounter++;
@@ -355,7 +357,7 @@ void MapTests::testLibraryMethods() {
         std::string lib2("hello2");
         std::string lib3("hello3");
 
-       map->AddLibrary(lib1, "");
+        map->AddLibrary(lib1, "");
 
         CPPUNIT_ASSERT_MESSAGE(lib1 +" should be added to the map.", map->HasLibrary(lib1));
         CPPUNIT_ASSERT_MESSAGE(lib2 +" should not be added to the map.", !map->HasLibrary(lib2));
@@ -424,6 +426,78 @@ void MapTests::testLibraryMethods() {
         CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
         CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the second lib.", map->GetAllLibraries()[1] == lib2);
 
+    } catch (const dtDAL::Exception& e) {
+        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+    }
+}
+
+void MapTests::testMapLibraryHandling() {
+    try {
+        dtDAL::Project& project = dtDAL::Project::GetInstance();
+
+        project.SetContext("WorkingMapProject");
+
+        std::string mapName("Neato Map");
+        std::string mapFileName("neatomap");
+
+        dtDAL::Map* map = &project.CreateMap(mapName, mapFileName);
+
+        CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
+
+        map->AddLibrary("dtCreateActors", "1.0");
+        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("dtCreateActors");
+
+        createActors(*map);
+    
+        dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        
+        project.SaveMap(*map);
+        
+        project.CloseMap(*map, true);
+
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("dtCreateActors should have been closed.", reg == NULL);
+
+        map = &project.GetMap(mapName);
+        
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        
+        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
+        //hold onto all the proxies so that the actor libraries can't be closed.
+        map->GetAllProxies(proxies);
+        
+        project.CloseMap(*map, true);
+        
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+
+        //cleanup the proxies
+        proxies.clear();
+        
+        map = &project.GetMap(mapName);
+        //create a new map that will ALSO use the same libraries
+        project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary("dtCreateActors", "1.0");
+        
+        createActors(project.GetMap(mapName + "1"));
+        
+        project.CloseMap(*map, true);
+        
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+
+        //when the second map is closed, the libraries should not close if false is passed.
+        project.CloseMap(project.GetMap(mapName + "1"), false);
+
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+
+        //reopen the map and close it with true to make sure the libraries close.
+        project.CloseMap(project.GetMap(mapName), true);
+
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
+        CPPUNIT_ASSERT_MESSAGE("dtCreateActors should have been closed.", reg == NULL);        
     } catch (const dtDAL::Exception& e) {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
@@ -874,7 +948,7 @@ void MapTests::testLoadMapIntoScene() {
         //spin through the scene removing each actor found from the set.
         for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); x++) {
             dtCore::DeltaDrawable* dd = scene.GetDrawable(x);
-            std::set<dtCore::UniqueId>::iterator found = ids.find(*dd->GetUniqueId());
+            std::set<dtCore::UniqueId>::iterator found = ids.find(dd->GetUniqueId());
             //Need to check to see if the actor exists in the set before removing it
             //because this is a test and because the scene could add drawables itself.
             if (found != ids.end()) {

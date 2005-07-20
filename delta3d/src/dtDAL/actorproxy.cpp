@@ -76,13 +76,13 @@ namespace dtDAL
     //////////////////////////////////////////////////////////////////////////
     const dtCore::UniqueId& ActorProxy::GetId() const
     {
-        return *GetActor()->GetUniqueId();
+        return GetActor()->GetUniqueId();
     }
 
     //////////////////////////////////////////////////////////////////////////
     void ActorProxy::SetId(const dtCore::UniqueId& newId)
     {
-        GetActor()->SetUniqueId(&newId);
+        GetActor()->SetUniqueId(newId);
     }
 
 
@@ -96,6 +96,8 @@ namespace dtDAL
     void ActorProxy::SetName(const std::string& name)
     {
         GetActor()->SetName(name);
+		if (mBillBoardIcon.valid())
+			mBillBoardIcon->GetDrawable()->SetName(name);
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -187,12 +189,30 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////////////////////
+    void ActorProxy::SetBillBoardIcon(ActorProxyIcon *icon)
+    {
+        mBillBoardIcon = icon;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     ActorProxyIcon *ActorProxy::GetBillBoardIcon()
     {
-        if(mBillBoardIcon.valid())
+        if(!mBillBoardIcon.valid())
            mBillBoardIcon = new ActorProxyIcon();
 
         return mBillBoardIcon.get();
+    }
+
+	//////////////////////////////////////////////////////////////////////////
+    dtCore::DeltaDrawable *ActorProxy::GetActor()
+    {
+        return mActor.get();
+    }
+
+	//////////////////////////////////////////////////////////////////////////
+    const dtCore::DeltaDrawable *ActorProxy::GetActor() const
+    {
+        return mActor.get();
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -206,7 +226,7 @@ namespace dtDAL
 
         try
         {
-            copy = LibraryManager::GetInstance().CreateActorProxy(mActorType);
+            copy = LibraryManager::GetInstance().CreateActorProxy(*mActorType);
         }
         catch(dtDAL::Exception &e)
         {

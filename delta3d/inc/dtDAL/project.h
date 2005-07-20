@@ -441,7 +441,7 @@ namespace dtDAL
      * @see Project#refresh
      * @return all of the resources known to the project.
      */
-    const core::tree<ResourceTreeNode>& getAllResources() const
+    const core::tree<ResourceTreeNode>& GetAllResources() const
     {
         if (!mResourcesIndexed)
             IndexResources();

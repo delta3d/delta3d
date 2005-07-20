@@ -25,12 +25,12 @@
 #include <dtDAL/plugin_export.h>
 #include "dtActors/deltaobjectactorproxy.h"
 
-namespace osg 
+namespace osg
 {
     class Texture2D;
 }
 
-namespace dtActors 
+namespace dtActors
 {
     /**
      * @class StaticMeshActorProxy
@@ -38,7 +38,7 @@ namespace dtActors
      *  geometry and textures representing an object in the scene such as a chair,
      *  a desk, a tree, a boulder, etc.
      */
-    class DT_PLUGIN_EXPORT StaticMeshActorProxy : public DeltaObjectActorProxy 
+    class DT_PLUGIN_EXPORT StaticMeshActorProxy : public DeltaObjectActorProxy
     {
     public:
 
@@ -46,7 +46,7 @@ namespace dtActors
          * This is a simple class which is used by the texture resource properties to
          * load textures for the static mesh.
          */
-        class TextureEntry : public osg::Referenced 
+        class TextureEntry : public osg::Referenced
         {
         public:
             /**
@@ -105,8 +105,7 @@ namespace dtActors
     protected:
 
         /**
-         * Creates a dtCore::Object and assigns a quasi-unique id to it.
-         * @note This needs to be removed when Delta3D supports UniqueIds.
+         * Creates a dtCore::Object and assigns a default name to it.
          */
         virtual void CreateActor();
 

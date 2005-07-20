@@ -1,20 +1,20 @@
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2005, BMH Associates, Inc. 
+/*
+* Delta3D Open Source Game and Simulation Engine Level Editor
+* Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+* You should have received a copy of the GNU General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * @author Teague Coonan
 */
@@ -35,6 +35,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QContextMenuEvent>
+#include <QIcon>
 
 #include "dtEditQt/staticmeshbrowser.h"
 #include "dtEditQt/resourcetreewidget.h"
@@ -57,14 +58,21 @@
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/camera.h"
+#include "dtEditQt/uiresources.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
     StaticMeshBrowser::StaticMeshBrowser(dtDAL::DataType &type,QWidget *parent)
         : ResourceAbstractBrowser(&type,parent)
     {
+
+        // This sets our resource icon that is visible on leaf nodes
+        resourceIcon = new QIcon();
+        resourceIcon->addPixmap(QPixmap(UIResources::ICON_STATICMESH_RESOURCE.c_str()));
+        ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+
         // create a new scene for the static mesh viewport
         meshScene = new dtCore::Scene();
         previewObject = new dtCore::Object();
@@ -142,7 +150,7 @@ namespace dtEditQt
         QGroupBox *groupBox = new QGroupBox(tr("Static Meshes"));
         QGridLayout *grid = new QGridLayout(groupBox);
         QHBoxLayout *hbox = new QHBoxLayout();
-        
+
         // Checkbox for auto preview
         previewChk = new QCheckBox(tr("Auto Preview"),groupBox);
         connect(previewChk,SIGNAL(stateChanged(int)),this,SLOT(checkBoxSelected()));
@@ -157,7 +165,7 @@ namespace dtEditQt
         hbox->addWidget(previewBtn,0,Qt::AlignRight);
         grid->addLayout(hbox,0,0);
         grid->addWidget(tree,1,0);
-        
+
         return groupBox;
     }
     ///////////////////////////////////////////////////////////////////////////////
@@ -177,20 +185,20 @@ namespace dtEditQt
                 {
                 case Qt::Key_Return :
                     if(selection->isResource()){
-                        selectionChanged();  
+                        selectionChanged();
                         displaySelection();
                     }
                     break;
                 case Qt::Key_Enter:
                     if(selection->isResource()){
-                        selectionChanged();  
+                        selectionChanged();
                         displaySelection();
                     }
                     break;
                 default:
                     return tree->eventFilter(obj,e);
                 }
-            } 
+            }
             else{
                 // pass the event on to the parent class
                 return tree->eventFilter(obj, e);
@@ -228,27 +236,27 @@ namespace dtEditQt
             QString context;
 
             dtDAL::Project &project = dtDAL::Project::GetInstance();
-            
+
             // Find the currently selected tree item
             dtDAL::ResourceDescriptor resource = EditorData::getInstance().getCurrentMeshResource();
 
-            try 
+            try
             {
                 file = QString(project.GetResourcePath(resource).c_str());
                 validFile = true;
-            } 
-            catch (dtDAL::Exception &e) 
+            }
+            catch (dtDAL::Exception &e)
             {
                 validFile = false;
             }
-            
-            if(file != NULL && validFile==true) 
+
+            if(file != NULL && validFile==true)
             {
                 context = QString(project.GetContext().c_str());
                 // The following is performed to comply with linux and windows file systems
                 file = context+"\\"+file;
                 file.replace("\\","/");
-                
+
                 if(meshScene->GetDrawableIndex(previewObject.get())==(unsigned)meshScene->GetNumberOfAddedDrawable()){
                     meshScene->AddDrawable(previewObject.get());
                 }
@@ -283,14 +291,14 @@ namespace dtEditQt
     {
         // This is the abstract base classes original functionality
         ResourceAbstractBrowser::selectionChanged();
-        
+
         // Let's assume that the map could be closed
         setCreateAction->setEnabled(false);
 
         // When any item is selected, clear the scene
         meshScene->RemoveDrawable(previewObject.get());
         perspView->refresh();
-        
+
         if(selection != NULL)
         {
             if(selection->isResource())
@@ -301,7 +309,7 @@ namespace dtEditQt
                     displaySelection();
                 }
                 previewBtn->setDisabled(false);
-                
+
                 if(EditorData::getInstance().getCurrentMap() != NULL)
                 {
                     setCreateAction->setEnabled(true);
@@ -350,49 +358,49 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void StaticMeshBrowser::createActor()
     {
-        
+
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 
         if(selection->isResource())
-        {   
-            
+        {
+
             LOG_INFO("User Created an Actor - Slot");
 
             // if we have an actor type, then create the proxy and emit the signal
             /*
-            * The following code finds the actor type by a hard-coded string for the 
+            * The following code finds the actor type by a hard-coded string for the
             * category and name. This means that if the actor for Static Mesh Object
-            * is changed in any way that the following code will break. This was 
+            * is changed in any way that the following code will break. This was
             * implemented as a quick and dirty solution to assigning meshes to an
-            * actor of this type. 
+            * actor of this type.
             */
-            osg::ref_ptr<dtDAL::ActorType> meshActor = 
-                dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Static Mesh Object");
+            osg::ref_ptr<dtDAL::ActorType> meshActor =
+                dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Static Mesh");
 
             // create our new actor proxy from the mesh actor type that was
             // found by the results of our hard coded search above.
             if(meshActor!=NULL)
             {
-                osg::ref_ptr<dtDAL::ActorProxy> proxy = 
-                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(meshActor); 
-                
+                osg::ref_ptr<dtDAL::ActorProxy> proxy =
+                        dtDAL::LibraryManager::GetInstance().CreateActorProxy(*meshActor.get());
+
                 // check to make sure both the mesh actor and the proxy are valid.
                 // If the user has somehow modified the above hard coded static mesh object
                 // the application could potentially be in a dangerous state.
-                if (proxy.valid()) 
+                if (proxy.valid())
                 {
                     // grab the actor property type
                     dtDAL::ResourceActorProperty *resourceProp = dynamic_cast<dtDAL::ResourceActorProperty *>
                         (proxy->GetProperty("static mesh"));
 
-                    if (resourceProp != NULL) 
+                    if (resourceProp != NULL)
                     {
                         resourceProp->SetValue(&selection->getResourceDescriptor());
                     }
 
                     // add the new proxy to the map
                     osg::ref_ptr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
-                    if (mapPtr.valid()) 
+                    if (mapPtr.valid())
                     {
                         mapPtr->AddProxy(*proxy);
                     }
@@ -402,7 +410,7 @@ namespace dtEditQt
 
                     // Now, let the world that it should select the new actor proxy.
                     std::vector<osg::ref_ptr<dtDAL::ActorProxy> > actors;
-                    
+
                     actors.push_back(proxy);
                     EditorEvents::getInstance().emitActorsSelected(actors);
                 }

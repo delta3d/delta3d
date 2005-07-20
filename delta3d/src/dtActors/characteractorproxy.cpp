@@ -23,6 +23,7 @@
 
 #include "dtActors/characteractorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
+#include "dtDAL/actorproxyicon.h"
 
 using namespace dtDAL;
 using namespace dtChar;

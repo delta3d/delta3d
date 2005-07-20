@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -22,6 +22,11 @@
 #include <QMouseEvent>
 
 #include "dtEditQt/viewport.h"
+#include "dtEditQt/viewportoverlay.h"
+#include "dtEditQt/viewportmanager.h"
+#include "dtEditQt/editoractions.h"
+#include "dtEditQt/editorevents.h"
+#include "dtEditQt/editordata.h"
 
 #include <osg/StateSet>
 #include <osg/PolygonMode>
@@ -31,24 +36,20 @@
 #include <osg/FrameStamp>
 #include <osg/StateSet>
 #include <osg/ClearNode>
+#include <osg/AlphaFunc>
 
 #include <osgUtil/SceneView>
 
 #include <dtCore/scene.h>
-#include <osg/AlphaFunc>
-
 #include <dtCore/system.h>
-#include <dtCore/pointaxis.h>
 
-#include "dtEditQt/viewportoverlay.h"
-#include "dtEditQt/viewportmanager.h"
-#include "dtEditQt/editoractions.h"
-#include "dtEditQt/editorevents.h"
-#include "dtEditQt/editordata.h"
 #include "dtDAL/intersectionquery.h"
 #include "dtDAL/exception.h"
 #include "dtDAL/map.h"
 #include "dtDAL/transformableactorproxy.h"
+#include "dtDAL/actorproxyicon.h"
+
+#include <sstream>
 
 namespace dtEditQt
 {
@@ -74,9 +75,8 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     Viewport::Viewport(ViewportManager::ViewportType &type, const std::string &name,
         QWidget *parent, QGLWidget *shareWith) :
-            QGLWidget(parent,shareWith), name(name), viewPortType(type)
+            QGLWidget(parent,shareWith), inChangeTransaction(false), name(name), viewPortType(type)
     {
-        //this->messageListener = new Delta3DMessageListener(this);
         this->frameStamp = new osg::FrameStamp();
         this->mouseSensitivity = 10.0f;
         this->interactionMode = &InteractionMode::CAMERA;
@@ -127,6 +127,7 @@ namespace dtEditQt
             }
 
             this->scene = scene;
+            //this->scene->GetSceneNode()->setStateSet(this->globalStateSet.get());
         }
     }
 
@@ -186,15 +187,19 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::renderFrame()
     {
-        this->sceneView->setProjectionMatrix(this->camera->getProjectionMatrix());
-        this->sceneView->setViewMatrix(this->camera->getWorldViewMatrix());
+        getCamera()->update();
+        getSceneView()->setProjectionMatrix(getCamera()->getProjectionMatrix());
+        getSceneView()->setViewMatrix(getCamera()->getWorldViewMatrix());
+
+        //Make sure the billboards of any actor proxies are oriented towards the
+        //camera in this viewport.
+        if (getAutoSceneUpdate())
+            updateActorProxyBillboards();
 
         this->frameStamp->setFrameNumber(this->frameStamp->getFrameNumber()+1);
         this->sceneView->update();
         this->sceneView->cull();
         this->sceneView->draw();
-        //mClock.update();
-       //mFrameStamp->setReferenceTime(mClock.getAbsTime() );
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -254,17 +259,21 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void Viewport::pick(int x, int y)
     {
-        unsigned int i;
-
         if (!this->scene.valid())
             EXCEPT(dtDAL::ExceptionEnum::BaseException,
                    "Scene is invalid.  Cannot pick objects from an invalid scene.");
 
         osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
-        if (!currMap.valid())
+        if (!currMap.valid() || getCamera() == NULL)
             return;
 
-        dtDAL::IntersectionQuery query;
+        //Before we do any intersection tests, make sure the billboards are updated
+        //to reflect their orientation in this viewport.
+        getCamera()->update();
+        if (getAutoSceneUpdate())
+            updateActorProxyBillboards();
+
+        dtDAL::IntersectionQuery query(getScene());
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toSelect;
         osg::Vec3 nearPoint,farPoint;
         int yLoc = this->sceneView->getViewport()->height()-y;
@@ -273,47 +282,54 @@ namespace dtEditQt
         query.SetStartPos(nearPoint);
         query.SetDirection(farPoint-nearPoint);
 
-        //Next, run a query on all of the root drawables and stop if an
-        //intersection has been found.
-        for (i=0; (int)i<getScene()->GetNumberOfAddedDrawable(); i++)
-        {
-            query.SetQueryRoot(getScene()->GetDrawable(i));
-            query.Exec();
+        //If we found no intersections no need to continue so emit an empty selection
+        //and return.
+        if (!query.Exec()) {
+            EditorEvents::getInstance().emitActorsSelected(toSelect);
+            return;
         }
 
-        //Get the list of intersected objects.  If no intersection was found,
-        //this list will be empty.
-        std::vector<dtDAL::IntersectionQuery::HitRecord> &hits = query.GetHitList();
+        if (query.GetClosestDeltaDrawable() == NULL) {
+            LOG_ERROR("Intersection query reported an intersection but returned an "
+                    "invalid DeltaDrawable.");
+            return;
+        }
+
+        dtCore::DeltaDrawable *drawable = query.GetClosestDeltaDrawable();
         ViewportOverlay *overlay = ViewportManager::getInstance().getViewportOverlay();
         ViewportOverlay::ActorProxyList &selection = overlay->getCurrentActorSelection();
-        if (!hits.empty()) {
-            dtCore::DeltaDrawable *drawable = hits[0].drawable.get();
 
-            //First see if the selected drawable is an actor.
-            dtDAL::ActorProxy *newSelection = currMap->GetProxyById(*drawable->GetUniqueId());
+        //First see if the selected drawable is an actor.
+        dtDAL::ActorProxy *newSelection = currMap->GetProxyById(drawable->GetUniqueId());
 
-            //If its not an actor then it may be a billboard placeholder for an actor.
-            if (newSelection == NULL) {
-                const std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> > &proxyList =
-                    currMap->GetAllProxies();
-                std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator proxyItor;
+        //If its not an actor then it may be a billboard placeholder for an actor.
+        if (newSelection == NULL) {
+            const std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> > &proxyList =
+                currMap->GetAllProxies();
+            std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator proxyItor;
 
-                for (proxyItor=proxyList.begin(); proxyItor!=proxyList.end(); ++proxyItor) {
-                    dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(proxyItor->second.get());
-                    const dtDAL::ActorProxyIcon *billBoard = proxy->GetBillBoardIcon();
-                    if (billBoard && (billBoard->GetDrawable() == drawable)) {
-                        newSelection = proxy;
-                        break;
-                    }
+            //Loop through the proxies searching for the one with billboard geometry
+            //matching what was selected.
+            for (proxyItor=proxyList.begin(); proxyItor!=proxyList.end(); ++proxyItor) {
+                dtDAL::ActorProxy *proxy =
+                        const_cast<dtDAL::ActorProxy *>(proxyItor->second.get());
+
+                if (proxy->GetRenderMode() == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+                    continue;
+
+                const dtDAL::ActorProxyIcon *billBoard = proxy->GetBillBoardIcon();
+                if (billBoard && billBoard->OwnsDrawable(drawable)) {
+                    newSelection = proxy;
+                    break;
                 }
-            }
+           }
+        }
 
-            if (newSelection) {
-                if (overlay->isActorSelected(newSelection))
-                    overlay->removeActorFromCurrentSelection(newSelection);
-                else
-                    toSelect.push_back(newSelection);
-            }
+        if (newSelection) {
+            if (overlay->isActorSelected(newSelection))
+                overlay->removeActorFromCurrentSelection(newSelection);
+            else
+                toSelect.push_back(newSelection);
         }
 
         //Inform the world what objects were selected and refresh all the viewports
@@ -346,8 +362,6 @@ namespace dtEditQt
                 getCamera()->move(viewDir*-offset*1.5f);
             }
             else {
-                osg::Vec3 right = getCamera()->getRightDir();
-                osg::Vec3 up = getCamera()->getUpDir();
                 getCamera()->setPosition(bs.center());
             }
 
@@ -380,7 +394,7 @@ namespace dtEditQt
     {
         setCursor(this->oldMouseCursor);
 
-       if (mousePosition.x() != -1 && mousePosition.y() != -1)
+        if (mousePosition.x() != -1 && mousePosition.y() != -1)
             QCursor::setPos(mousePosition);
         else
             QCursor::setPos(this->oldMouseLocation);
@@ -426,6 +440,8 @@ namespace dtEditQt
 
         connect(&ge,SIGNAL(gotoActor(osg::ref_ptr<dtDAL::ActorProxy> &)),
                 this,SLOT(onGotoActor(osg::ref_ptr< dtDAL::ActorProxy >&)));
+        connect(&ge,SIGNAL(beginChangeTransaction()), this,SLOT(onBeginChangeTransaction()));
+        connect(&ge,SIGNAL(endChangeTransaction()), this,SLOT(onEndChangeTransaction()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -467,8 +483,9 @@ namespace dtEditQt
             ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         ViewportOverlay::ActorProxyList::iterator itor;
 
-        // clear the old list first
-        selectedActorOrigValues.clear();
+        //Clear the old list first.
+        this->selectedActorOrigValues.erase(propName);
+        std::vector<std::string> savedValues;
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor) {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
@@ -476,9 +493,11 @@ namespace dtEditQt
 
             if (prop != NULL) {
                 std::string oldValue = prop->GetStringValue();
-                selectedActorOrigValues.push_back(oldValue);
+                savedValues.push_back(oldValue);
             }
         }
+
+        this->selectedActorOrigValues[propName] = savedValues;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -487,7 +506,13 @@ namespace dtEditQt
         ViewportOverlay::ActorProxyList &selection =
             ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         ViewportOverlay::ActorProxyList::iterator itor;
+        std::map<std::string,std::vector<std::string> >::iterator saveEntry =
+                this->selectedActorOrigValues.find(propName);
         int oldValueIndex = 0;
+
+        //Make sure we actually saved values for this property.
+        if (saveEntry == this->selectedActorOrigValues.end())
+            return;
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor) {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
@@ -495,12 +520,42 @@ namespace dtEditQt
 
             if (prop != NULL) {
                 // emit the old value before the change so undo/redo can recover.
-                std::string oldValue = selectedActorOrigValues[oldValueIndex];
+                std::string oldValue = saveEntry->second[oldValueIndex];
                 std::string newValue = prop->GetStringValue();
                 EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
                 oldValueIndex++;
 
                 EditorEvents::getInstance().emitActorPropertyChanged(proxy,prop);
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::updateActorProxyBillboards()
+    {
+        dtDAL::Map *currentMap = EditorData::getInstance().getCurrentMap().get();
+        std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
+        std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator itor;
+
+        if (currentMap == NULL || getCamera() == NULL)
+            return;
+
+        currentMap->GetAllProxies(proxies);
+        for (itor=proxies.begin(); itor!=proxies.end(); ++itor)
+        {
+            dtDAL::ActorProxy *proxy = itor->get();
+            const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+
+            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+                renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+            {
+                dtDAL::ActorProxyIcon *billBoard = proxy->GetBillBoardIcon();
+                if (billBoard != NULL)
+                   billBoard->SetRotation(osg::Matrix::rotate(getCamera()->getOrientation().inverse()));
+            }
+            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_AUTO)
+            {
+
             }
         }
     }
@@ -559,6 +614,19 @@ namespace dtEditQt
         this->globalStateSet->setAttributeAndModes(cf,osg::StateAttribute::ON);
 
         this->sceneView->setGlobalStateSet(this->globalStateSet.get());
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::onBeginChangeTransaction()
+    {
+        inChangeTransaction = true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::onEndChangeTransaction()
+    {
+        inChangeTransaction = false;
+        ViewportManager::getInstance().refreshAllViewports();
     }
 
 }

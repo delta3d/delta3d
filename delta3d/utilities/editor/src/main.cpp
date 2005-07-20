@@ -1,3 +1,21 @@
+/*
+ * Delta3D Open Source Game and Simulation Engine Level Editor
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 #include <QApplication>
 #include <QMessageBox>
 #include <QSplashScreen>
@@ -24,20 +42,19 @@ int main(int argc, char *argv[])
 
     try
     {
-       //std::cout << dtEditQt::UIResources::mPrefix << std::endl;
-        std::cout << dtEditQt::UIResources::ICON_FILE_NEW_MAP << std::endl;
-   
         dtDAL::Log::GetInstance().SetLogLevel(dtDAL::Log::LOG_WARNING);
         dtCore::SetDataFilePathList(".;" + dtCore::GetDeltaDataPathList());
 
         //Construct the application...
         dtEditQt::MainWindow mainWindow;
-        dtEditQt::EditorEvents::getInstance().emitEditorInitiationEvent();
 
         //Now that everything is initialized, show the main window.
         mainWindow.show();
+        
         splash->finish(&mainWindow);
         delete splash;
+
+        dtEditQt::EditorEvents::getInstance().emitEditorInitiationEvent();
         mainWindow.setWindowMenuTabsChecked();
 
         dtCore::System::GetSystem()->Start();

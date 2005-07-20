@@ -42,30 +42,38 @@ namespace dtCore
          
          bool operator== ( const UniqueId& rhs ) const { return mId == rhs.mId; }
          bool operator!= ( const UniqueId& rhs ) const { return mId != rhs.mId; }
-         bool operator< ( const UniqueId& rhs ) const;
-         bool operator> ( const UniqueId& rhs ) const;
-
+         bool operator< ( const UniqueId& rhs ) const  { return mId <  rhs.mId; }
+         bool operator> ( const UniqueId& rhs ) const  { return mId >  rhs.mId; }
+             
          const std::string& ToString() const { return mId; }
       
-      protected:
-
+         /**
+          * The assignment operator is public so that unique id's can be changed if they are
+          * member variables.  Use const to control when they are changed.
+          */
          UniqueId& operator=( const UniqueId& rhs )
          { 
-            if( this == &rhs ) 
-               return *this; 
-            
-            mId = rhs.mId; 
-            return *this; 
+             if( this == &rhs ) 
+                 return *this; 
+             
+             mId = rhs.mId; 
+             return *this; 
          }
-
+         
+         /**
+          * The assignment operator is public so that unique id's can be changed if they are
+          * member variables.  Use const to control when they are changed.
+          */
          UniqueId& operator=( const std::string& rhs )
          { 
-            mId = rhs; 
-            return *this;
+             mId = rhs; 
+             return *this;
          }
+    protected:
+
       
          std::string mId;
-
+             
    };
 };
 

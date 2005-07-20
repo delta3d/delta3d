@@ -22,15 +22,17 @@
 #include <sstream>
 #include <iostream>
 
+#include <dtDAL/tree.h>
+
 #include <osgDB/FileNameUtils>
 
-#include "dtDAL/tree.h"
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/fileutils.h"
 #include "dtDAL/stringtokenizer.h"
 #include "dtDAL/rbodyresourcetypehandler.h"
+#include "dtDAL/directoryresourcetypehandler.h"
 #include "dtDAL/resourcehelper.h"
 
 namespace dtDAL
@@ -38,10 +40,9 @@ namespace dtDAL
     class DT_EXPORT DefaultResourceTypeHandler: public ResourceTypeHandler
     {
     public:
-        DefaultResourceTypeHandler(DataType& dataType, const std::map<std::string, std::string>& fileFilters):
-            mDataType(&dataType), mFileFilters(fileFilters)
+        DefaultResourceTypeHandler(DataType& dataType, const std::string& description, const std::map<std::string, std::string>& fileFilters):
+            mDataType(&dataType), mFileFilters(fileFilters), mDescription(description)
         {
-
         }
 
         virtual ~DefaultResourceTypeHandler()
@@ -95,41 +96,102 @@ namespace dtDAL
 
         virtual bool ResourceIsDirectory() const { return false; }
 
+        //this returns false because the resources is not a directory 
+        virtual const std::string& GetResourceDirectoryExtension() const { return mResourceDirExt; };
+
         virtual const std::map<std::string, std::string>& GetFileFilters() const
         {
             return mFileFilters;
+        }
+
+        virtual const std::string& GetTypeHandlerDescription() const 
+        {
+            return mDescription;
         }
 
         virtual const DataType& GetResourceType() const { return *mDataType; }
     private:
         DataType* mDataType;
         std::map<std::string, std::string> mFileFilters;
+        const std::string mResourceDirExt;
+        const std::string mDescription;
     };
 
 
     //////////////////////////////////////////////////////////
     ResourceHelper::ResourceHelper()
     {
-        mLogger = &Log::GetInstance("ResourceHelper.cpp");
+        mLogger = &Log::GetInstance("resourcehelper.cpp");
 
-        std::map<std::string, std::string> defFilter;
-        defFilter.insert(std::make_pair("","Any File"));
         for (std::vector<dtUtil::Enumeration*>::const_iterator i = DataType::Enumerate().begin();
             i != DataType::Enumerate().end(); ++i)
         {
+            std::map<std::string, std::string> defFilter;
+            defFilter.insert(std::make_pair("*","Any File"));
             DataType& d = *static_cast<DataType*>(*i);
             if (d.IsResource())
             {
-                DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, defFilter);
+                std::string description;
+                if (d == DataType::SOUND)
+                {
+                    description = "Sound Files";
+                    defFilter.insert(std::make_pair("wav","Wave audio format"));
+                    defFilter.insert(std::make_pair("aiff","Audio Interchange File Format"));
+                }
+                else if (d == DataType::STATIC_MESH)
+                {
+                    description = "Static Mesh Files";
+                    defFilter.insert(std::make_pair("ive","Open Scene Graph binary scene data."));
+                    defFilter.insert(std::make_pair("flt","Open-Flight model"));
+                    defFilter.insert(std::make_pair("3ds","3D Studio Max"));
+                }
+                else if (d == DataType::TERRAIN)
+                {
+                    description = "Static Mesh Terrain Files";
+                    defFilter.insert(std::make_pair("ive","Open Scene Graph binary terrain."));
+                }
+                else if (d == DataType::TEXTURE)
+                {
+                    description = "Image Files";
+                    defFilter.insert(std::make_pair("png","Portable Network Graphics"));
+                    defFilter.insert(std::make_pair("gif","Graphics Interchange Format"));
+                    defFilter.insert(std::make_pair("tga","Targa"));
+                }
+                DefaultResourceTypeHandler* def = new DefaultResourceTypeHandler(d, description, defFilter);
                 mDefaultTypeHandlers.insert(std::make_pair(&d,
                      osg::ref_ptr<ResourceTypeHandler>(def)));
             }
             std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > extMap;
+
             mTypeHandlers.insert(std::make_pair(&d, extMap));
+            
+            mResourceDirectoryTypeHandlers.insert(std::make_pair(&d, extMap));
         }
 
         //Not yet working properly
         RegisterResourceTypeHander(*new RBodyResourceTypeHandler);
+        
+        std::vector<std::string> fltMasterFiles;
+        fltMasterFiles.push_back("main.flt");
+        fltMasterFiles.push_back("terrain.flt");
+        RegisterResourceTypeHander(*new DirectoryResourceTypeHandler(DataType::TERRAIN,
+                                    "master.flt", "flt", "fltt", "Open Flight Terrains", fltMasterFiles));
+
+        std::vector<std::string> terrexMasterFiles;
+        fltMasterFiles.push_back("main.txp");
+        fltMasterFiles.push_back("master.txp");
+        RegisterResourceTypeHander(*new DirectoryResourceTypeHandler(DataType::TERRAIN,
+                                    "archive.txp", "txp", "terrex", "Terrex Terra Page Terrains", terrexMasterFiles));
+
+        std::vector<std::string> threeDStudioMaxMasterFiles;
+        threeDStudioMaxMasterFiles.push_back("main.3ds");
+        threeDStudioMaxMasterFiles.push_back("master.3ds");
+        //3d studio files often have upper-case extensions.
+        threeDStudioMaxMasterFiles.push_back("main.3DS");
+        threeDStudioMaxMasterFiles.push_back("master.3DS");
+        threeDStudioMaxMasterFiles.push_back("terrain.3DS");
+        RegisterResourceTypeHander(*new DirectoryResourceTypeHandler(DataType::TERRAIN,
+                                    "terrain.3ds", "3ds", "3dst", "3D Studio Max Terrains", threeDStudioMaxMasterFiles));
     }
 
     //////////////////////////////////////////////////////////
@@ -143,47 +205,59 @@ namespace dtDAL
           {
 
             //file and directories handled by handlers MUST have extensions.
-            const std::string& ext = osgDB::getLowerCaseFileExtension(filePath);
+            std::string ext = osgDB::getLowerCaseFileExtension(filePath);
+
+            //there is a bug in the function to get the extension when using relative paths
+            //and the file has no extension.
+            if (ext.find(FileUtils::PATH_SEPARATOR) != std::string::npos)
+                ext.clear();
 
             //To work around a weird compiler bug...
             DataType* dt = const_cast<DataType*>(&resourceType);
 
             FileType fType = FileUtils::GetInstance().GetFileInfo(filePath).fileType;
 
-            if (ext.empty())
+            if (fType == REGULAR_FILE && !ext.empty())
+            {
+                const ResourceTypeHandler* handler = FindHandlerForDataTypeAndExtension(mTypeHandlers, *dt, ext);
+                //ask the handler if it handles the given file.
+                if (handler != NULL && handler->HandlesFile(filePath, fType))
+                    return handler;
+                
+            }
+            else
             {
                 //the file doesn't exist, so we obviously can't check for a datatype.
                 if (fType == FILE_NOT_FOUND)
                 {
                     return NULL;
-
+                    
                 }
                 else if (fType == DIRECTORY)
                 {
-                    //TODO spin through the directory handlers checking for a match.
-                    return NULL;
-                }
-            }
-            else
-            {
-                std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::const_iterator found
-                    = mTypeHandlers.find(dt);
-
-                if (found != mTypeHandlers.end())
-                {
-                    const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& handlerMap = found->second;
-                    std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator extFound = handlerMap.find(ext);
-                    if (extFound != handlerMap.end())
+                    //if we have an extension, look for it in the ResourceDirectoryTypeHandlers
+                    if (!ext.empty())
                     {
+                        const ResourceTypeHandler* handler = FindHandlerForDataTypeAndExtension(mResourceDirectoryTypeHandlers, *dt, ext);
                         //ask the handler if it handles the given file.
-                        if (extFound->second->HandlesFile(filePath, fType))
-                            return extFound->second.get();
+                        if (handler != NULL && handler->HandlesFile(filePath, fType))
+                            return handler;
+                    }
+                    
+                    //if ext is empty or the ResourceDirectoryTypeHandlers map had no matches, look at all
+                    //the directory importers to see if there is a match.
+                    for (std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
+                         i != mDirectoryImportingTypeHandlers.end() && i->first == dt; ++i)
+                    {
+                        if (i->second->HandlesFile(filePath, DIRECTORY))
+                        {
+                            return i->second.get();
+                        }
                     }
                 }
-
-                //otherwise get the handler default handler.
-                return mDefaultTypeHandlers.find(dt)->second.get();
             }
+            //otherwise get the handler default handler.
+            return mDefaultTypeHandlers.find(dt)->second.get();
         }
         else
         {
@@ -192,6 +266,25 @@ namespace dtDAL
         return NULL;
     }
 
+    //////////////////////////////////////////////////////////
+    const ResourceTypeHandler* ResourceHelper::FindHandlerForDataTypeAndExtension(
+        const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch, 
+        DataType& dt, const std::string& ext) const
+    {
+        std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::const_iterator found
+        = mapToSearch.find(&dt);
+        
+        if (found != mapToSearch.end())
+        {
+            const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& handlerMap = found->second;
+            std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator extFound = handlerMap.find(ext);
+            if (extFound != handlerMap.end())
+            {
+                return extFound->second.get();
+            }
+        }
+        return NULL;
+    }
 
     //////////////////////////////////////////////////////////
     void ResourceHelper::GetHandlersForDataType(
@@ -201,12 +294,12 @@ namespace dtDAL
         if (resourceType.IsResource())
         {
             toFill.clear();
-
+            std::set<osg::ref_ptr<const ResourceTypeHandler> > tempSet;
             //so I can use it as a lookup key in the map.
             DataType* dt = const_cast<DataType*>(&resourceType);
 
             //insert the default handler
-            toFill.push_back(osg::ref_ptr<const ResourceTypeHandler>(mDefaultTypeHandlers.find(dt)->second.get()));
+            tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(mDefaultTypeHandlers.find(dt)->second.get()));
 
             //lookup the handlers by type.
             std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::const_iterator found
@@ -218,9 +311,31 @@ namespace dtDAL
                 for (std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
                     i != extMap.end(); ++i)
                 {
-                    toFill.push_back(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
+                    tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
                 }
             }
+            
+            //lookup directory handlers by type.
+            found = mResourceDirectoryTypeHandlers.find(dt);
+            
+            if (found != mTypeHandlers.end())
+            {
+                const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& extMap = found->second;
+                for (std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
+                     i != extMap.end(); ++i)
+                {
+                    tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
+                }
+            }
+
+            //get all directory importers too.
+            for (std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
+                 i != mDirectoryImportingTypeHandlers.end() && i->first == dt; ++i)
+            {
+                tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
+            }
+            
+            toFill.insert(toFill.begin(), tempSet.begin(), tempSet.end());
         }
         else
         {
@@ -279,6 +394,34 @@ namespace dtDAL
                 dt->GetDisplayName().c_str() );
         }
 
+        if (handler.ImportsDirectory())
+            mDirectoryImportingTypeHandlers.insert(std::make_pair(dt, osg::ref_ptr<ResourceTypeHandler>(&handler)));
+        
+        if (handler.ResourceIsDirectory()) 
+        {
+            //get the map for the
+            std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::iterator foundRDMap = mResourceDirectoryTypeHandlers.find(dt);
+            
+            if (foundRDMap != mResourceDirectoryTypeHandlers.end()) 
+            {
+                std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& dirExtMap = foundRDMap->second;
+                
+                std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::iterator dirExtFound = dirExtMap.find(handler.GetResourceDirectoryExtension());
+                if (dirExtFound == dirExtMap.end())
+                {
+                    //actually insert the handler.
+                    dirExtMap.insert(std::make_pair(handler.GetResourceDirectoryExtension(), osg::ref_ptr<ResourceTypeHandler>(&handler)));
+                }
+                else
+                {
+                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                        "Not inserting new handler for resource directory extension \"%s\" because a handler is already registered for it.",
+                                        handler.GetResourceDirectoryExtension().c_str());
+                }
+                
+            }
+                
+        }
     }
 
     //////////////////////////////////////////////////////////

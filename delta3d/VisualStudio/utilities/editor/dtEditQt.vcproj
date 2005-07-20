@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib sg_d.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib tinyxmld.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib glGUI_d.lib js_d.lib isensed.lib dtDALd.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvis_d.lib xerces-c_2.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
+				AdditionalDependencies="Producerd.lib sg_d.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtDALd.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvis_d.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
 				OutputFile="..\..\..\bin\editorD.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
@@ -85,7 +85,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4311;4312"/>
+				DisableSpecificWarnings="4311;4312;4267;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -148,9 +148,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\actortypetreewidget.h">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\borderlayout.h">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\camera.h">
@@ -307,6 +304,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\tabwrapper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\terrainbrowser.h">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\texturebrowser.h">
@@ -489,6 +489,9 @@
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_staticmeshbrowser.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_terrainbrowser.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_texturebrowser.cpp">
 			</File>
 			<File
@@ -528,9 +531,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\actortypetreewidget.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\editor\src\borderlayout.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\camera.cpp">
@@ -684,6 +684,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\tabwrapper.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\terrainbrowser.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\texturebrowser.cpp">

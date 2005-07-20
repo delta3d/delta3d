@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -63,6 +63,7 @@
 #include "dtDAL/fileutils.h"
 #include "dtDAL/intersectionquery.h"
 #include "dtDAL/actorproxy.h"
+#include "dtDAL/actorproxyicon.h"
 
 #include <sstream>
 
@@ -89,10 +90,10 @@ namespace dtEditQt
                  this, SLOT(slotPauseAutosave()));
         connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
                  this, SLOT(slotRestartAutosave()));
-        
-        connect(&EditorEvents::getInstance(), 
-            SIGNAL(selectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)), 
-            this, 
+
+        connect(&EditorEvents::getInstance(),
+            SIGNAL(selectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)),
+            this,
             SLOT(slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)));
 
         timer = new QTimer((QWidget*)EditorData::getInstance().getMainWindow());
@@ -103,7 +104,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     EditorActions::~EditorActions()
     {
-        std::cout << "Destroying editor actions." << std::endl;
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -221,14 +222,12 @@ namespace dtEditQt
         actionEditUndo = new QAction(QIcon(UIResources::ICON_EDIT_UNDO.c_str()), tr("&Undo"),this);
         actionEditUndo->setShortcut(tr("Ctrl+Z"));
         actionEditUndo->setStatusTip(tr("Undoes the last property edit, actor delete, or actor creation."));
-        //actionEditUndo->setEnabled(false);
         connect(actionEditUndo,SIGNAL(triggered()),this,SLOT(slotEditUndo()));
 
         // Edit - Redo
         actionEditRedo = new QAction(QIcon(UIResources::ICON_EDIT_REDO.c_str()), tr("&Redo"),this);
         actionEditRedo->setShortcut(tr("Ctrl+Y"));
         actionEditRedo->setStatusTip(tr("Redoes the previous property edit, actor delete, or actor creation undo command."));
-        //actionEditRedo->setEnabled(false);
         connect(actionEditRedo,SIGNAL(triggered()),this,SLOT(slotEditRedo()));
     }
 
@@ -313,18 +312,6 @@ namespace dtEditQt
         actionFileRecentProject0 = new QAction(tr("(Recent Project 1)"), this);
         actionFileRecentProject0->setEnabled(false);
         connect(actionFileRecentProject0, SIGNAL(triggered()), this, SLOT(slotFileRecentProject0()));
-
-//         actionFileRecentProject1 = new QAction(tr("(Recent Project 2)"), this);
-//         actionFileRecentProject1->setEnabled(false);
-//         connect(actionFileRecentProject1, SIGNAL(triggered()), this, SLOT(slotFileRecentProject1()));
-//
-//         actionFileRecentProject2 = new QAction(tr("(Recent Project 3)"), this);
-//         actionFileRecentProject2->setEnabled(false);
-//         connect(actionFileRecentProject2, SIGNAL(triggered()), this, SLOT(slotFileRecentProject2()));
-//
-//         actionFileRecentProject3 = new QAction(tr("(Recent Project 4)"), this);
-//         actionFileRecentProject3->setEnabled(false);
-//         connect(actionFileRecentProject3, SIGNAL(triggered()), this, SLOT(slotFileRecentProject3()));
 
         itor = EditorData::getInstance().getRecentProjects().begin();
         if(itor == EditorData::getInstance().getRecentProjects().end())
@@ -453,8 +440,6 @@ namespace dtEditQt
             //Finally, change to the requested map.
             osg::ref_ptr<dtDAL::Map> mapRef = newMap;
             EditorData::getInstance().getMainWindow()->checkAndLoadBackup(newMap->GetName());
-            /*changeMaps(EditorData::getInstance().getCurrentMap().get(),newMap);
-            EditorData::getInstance().addRecentMap(newMap->GetName());*/
             newMap->SetModified(false);
         }
 
@@ -643,11 +628,14 @@ namespace dtEditQt
         //Create our offset vector which is used to jitter the cloned
         //proxies providing better feedback to the user.
         osg::Vec3 offset;
-
-         if (worldCam != NULL)
+        if (worldCam != NULL)
             offset = worldCam->getRightDir() * 5;
-         else
+        else
             offset = osg::Vec3(5,0,0);
+
+        // We're about to do a LOT of work, especially if lots of things are select
+        // so, start a change transaction.
+        EditorEvents::getInstance().emitBeginChangeTransaction();
 
         //Once we have a reference to the current selection and the scene,
         //clone each proxy, add it to the scene, make the newly cloned
@@ -657,7 +645,6 @@ namespace dtEditQt
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-
             osg::ref_ptr<dtDAL::ActorProxy> copy = proxy->Clone();
             if (!copy.valid())
             {
@@ -675,11 +662,13 @@ namespace dtEditQt
 
             //Add the new proxy to the map and send out a create event.
             currMap->AddProxy(*copy.get());
+
             EditorEvents::getInstance().emitActorProxyCreated(copy);
 
             //Move the newly duplicated actor to where it is supposed to go.
             if (tProxy != NULL)
                 tProxy->SetTranslation(oldPosition+offset);
+
 
             newSelection.push_back(copy);
         }
@@ -687,6 +676,7 @@ namespace dtEditQt
         //Finally set the newly cloned proxies to be the current selection.
         ViewportManager::getInstance().getViewportOverlay()->setMultiSelectMode(false);
         EditorEvents::getInstance().emitActorsSelected(newSelection);
+        EditorEvents::getInstance().emitEndChangeTransaction();
 
         EditorData::getInstance().getMainWindow()->endWaitCursor();
     }
@@ -708,6 +698,10 @@ namespace dtEditQt
             return;
         }
 
+        // We're about to do a LOT of work, especially if lots of things are select
+        // so, start a change transaction.
+        EditorEvents::getInstance().emitBeginChangeTransaction();
+
         //Once we have a reference to the current selection and the scene,
         //remove each proxy's actor from the scene then remove the proxy from
         //the map.
@@ -721,6 +715,7 @@ namespace dtEditQt
         //Now that we have removed the selected objects, clear the current selection.
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > emptySelection;
         EditorEvents::getInstance().emitActorsSelected(emptySelection);
+        EditorEvents::getInstance().emitEndChangeTransaction();
 
         EditorData::getInstance().getMainWindow()->endWaitCursor();
     }
@@ -783,11 +778,14 @@ namespace dtEditQt
             return;
         }
 
+        // We're about to do a LOT of work, especially if lots of things are select
+        // so, start a change transaction.
+        EditorEvents::getInstance().emitBeginChangeTransaction();
+
         //Iterate through the current selection, trace a ray directly below it.  If there is
         //an intersection, move the current proxy to that point.
         ViewportOverlay::ActorProxyList::iterator itor;
-        dtDAL::IntersectionQuery query;
-        int i;
+        dtDAL::IntersectionQuery query(scene);
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
@@ -803,25 +801,18 @@ namespace dtEditQt
                 query.SetDirection(osg::Vec3(0,0,-1));
                 query.Reset();
 
-                //Find a possible intersection point.
-                for (i=0; (int)i<scene->GetNumberOfAddedDrawable(); i++)
-                {
-                    query.SetQueryRoot(scene->GetDrawable(i));
-                    query.Exec();
-                }
-
-                //If we found an intersection point, move the actor to that location.
-                std::vector<dtDAL::IntersectionQuery::HitRecord> &hits = query.GetHitList();
-                if (!hits.empty())
-                {
-                    osg::Vec3 hitPoint = hits[0].intersectionPoint;
-                    tProxy->SetTranslation(hitPoint);
+                //Find a possible intersection point.  If we find an intersection
+                //point, move the actor to that location.
+                if (query.Exec()) {
+                    osgUtil::IntersectVisitor &iv = query.GetIntersectVisitor();
+                    osg::Vec3 p = iv.getHitList(query.GetLineSegment())[0].getWorldIntersectPoint();
+                    tProxy->SetTranslation(p);
                 }
             }
         }
 
-        ViewportManager::getInstance().refreshAllViewports();
-
+        EditorEvents::getInstance().emitEndChangeTransaction();
+        //ViewportManager::getInstance().refreshAllViewports();
         EditorData::getInstance().getMainWindow()->endWaitCursor();
     }
 
@@ -893,8 +884,6 @@ namespace dtEditQt
             if(EditorData::getInstance().getCurrentMap().valid())
             {
                 dtDAL::Project::GetInstance().SaveMapBackup(*EditorData::getInstance().getCurrentMap());
-                EditorData::getInstance().getCurrentMap()->SetModified(false);
-                EditorData::getInstance().getMainWindow()->updateWindowTitle();
             }
         }
         catch(const dtDAL::Exception &e)
@@ -942,8 +931,6 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotRestartAutosave()
     {
-        /*timer->stop();
-        timer->setInterval(saveMilliSeconds);*/
         timer->start();
     }
 
@@ -1074,15 +1061,6 @@ namespace dtEditQt
 
         if (currMap == NULL || !currMap->IsModified())
         {
-            if (currMap)
-            {
-                // Although the map isn't currently modified, it still needs to be saved.
-                // This accounts for when the autosave has fired and the map has had its modified
-                // bool flipped off. Although the map has been backed up, it is still not saved
-                // upon exiting, therefore losing all the data since.
-                dtDAL::Project::GetInstance().SaveMap(*currMap);
-            }
-
             return QMessageBox::Ignore;
         }
 
@@ -1117,6 +1095,12 @@ namespace dtEditQt
                 slotRestartAutosave();
                 return QMessageBox::Abort;
             }
+        }
+
+        if (result == QMessageBox::No)
+        {
+            if (dtDAL::Project::GetInstance().HasBackup(*currMap))
+                dtDAL::Project::GetInstance().ClearBackup(*currMap);
         }
 
         if (!askPermission)
