@@ -115,7 +115,7 @@ namespace dtDAL
          * proxy object.
          * @throws ExceptionEnum::ObjectFactoryUnknownType
          */
-        osg::ref_ptr<ActorProxy> CreateActorProxy(osg::ref_ptr<ActorType> type);
+        osg::ref_ptr<ActorProxy> CreateActorProxy(ActorType& type);
 
     protected:
         std::string mName;

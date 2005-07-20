@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -187,15 +187,17 @@ namespace dtEditQt
         {
             osg::ref_ptr<dtDAL::ActorProxy> myProxy = (*iter);
 
-            addProxy(myProxy);
+            addProxy(myProxy, false);
 
             //selectedActors.push_back(myProxy);
             row ++;
         }
+
+        updateResultsCount();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorResultsTable::addProxy(osg::ref_ptr<dtDAL::ActorProxy> myProxy)
+    void ActorResultsTable::addProxy(osg::ref_ptr<dtDAL::ActorProxy> myProxy, bool updateCount)
     {
         QString name(myProxy->GetName().c_str());
         QString type(myProxy->GetActorType().GetName().c_str());
@@ -207,7 +209,8 @@ namespace dtEditQt
         item->setText(1, category);
         item->setText(2, type);
 
-        updateResultsCount();
+        if (updateCount)
+            updateResultsCount();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -309,6 +312,7 @@ namespace dtEditQt
         // NOTE - it is very likely that a delete operation also sends a selection event.  It's
         // supposed to.  So we should not have to handle our selection separately.  We'll get
         // an event.
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////

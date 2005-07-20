@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -29,8 +29,6 @@
 #include "dtDAL/log.h"
 #include "dtDAL/map.h"
 
-#include <iostream>
-
 namespace dtEditQt
 {
 
@@ -46,7 +44,6 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     EditorEvents::~EditorEvents()
     {
-        std::cout << "Destroying editor events." << std::endl;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -143,10 +140,24 @@ namespace dtEditQt
     void EditorEvents::emitActorPropertyAboutToChange(osg::ref_ptr<dtDAL::ActorProxy> proxy,
         osg::ref_ptr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
     {
-        // no logging here, just like with property changed. 
+        // no logging here, just like with property changed.
         // note, if this is not sent out before a property changed event (see above)
         // then the undo manager will not treat it as a valid change event and will ignore it
         emit actorPropertyAboutToChange(proxy, property, oldValue, newValue);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void EditorEvents::emitBeginChangeTransaction()
+    {
+        LOG_INFO("Beginning Change Transaction");
+        emit beginChangeTransaction();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void EditorEvents::emitEndChangeTransaction()
+    {
+        LOG_INFO("Ending Change Transaction");
+        emit endChangeTransaction();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

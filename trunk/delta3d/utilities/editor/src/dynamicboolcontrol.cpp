@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -41,6 +41,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicBoolControl::DynamicBoolControl()
+        : temporaryEditControl(NULL)
     {
     }
 
@@ -122,23 +123,22 @@ namespace dtEditQt
         const QStyleOptionViewItem &option, const QModelIndex &index)
     {
         // create and init the combo box
-        //SubQLineEdit *editBox = new SubQLineEdit (parent, this);
-        SubQComboBox *editor = new SubQComboBox(parent, this);
-        editor->addItem(TRUE_LABEL);
-        editor->addItem(FALSE_LABEL);
+        temporaryEditControl = new SubQComboBox(parent, this);
+        temporaryEditControl->addItem(TRUE_LABEL);
+        temporaryEditControl->addItem(FALSE_LABEL);
 
         if (!initialized)  
         {
             LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-            return editor;
+            return temporaryEditControl;
         }
 
-        updateEditorFromModel(editor);
+        updateEditorFromModel(temporaryEditControl);
 
         // set the tooltip
-        editor->setToolTip(getDescription());
+        temporaryEditControl->setToolTip(getDescription());
 
-        return editor;
+        return temporaryEditControl;
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -181,5 +181,15 @@ namespace dtEditQt
         }
 
         return updateModelFromEditor(widget);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicBoolControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
+        osg::ref_ptr<dtDAL::ActorProperty> property)
+    {
+        if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
+        {
+            updateEditorFromModel(temporaryEditControl);
+        }
     }
 }

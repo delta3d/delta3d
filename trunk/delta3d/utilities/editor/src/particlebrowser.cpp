@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -48,16 +48,22 @@
 #include "dtEditQt/resourcetreewidget.h"
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewportmanager.h"
-
 #include "dtEditQt/camera.h"
+#include "dtEditQt/uiresources.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
     ParticleBrowser::ParticleBrowser(dtDAL::DataType &type,QWidget *parent)
         : ResourceAbstractBrowser(&type,parent)
     {
+
+        // This sets our resource icon that is visible on leaf nodes
+        resourceIcon = new QIcon();
+        resourceIcon->addPixmap(QPixmap(UIResources::ICON_PARTICLE_RESOURCE.c_str()));
+        ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+
         // create a new scene for the particle viewport
         particleScene = new dtCore::Scene();
         previewObject = new dtCore::Object();
@@ -67,7 +73,7 @@ namespace dtEditQt
         // setup right mouse click context menu
         createActions();
         createContextMenu();
-        
+
         connect(&EditorEvents::getInstance(),SIGNAL(currentMapChanged()),
             this,SLOT(selectionChanged()));
 
@@ -179,7 +185,7 @@ namespace dtEditQt
     {
         // This is the abstract base classes original functionality
         ResourceAbstractBrowser::selectionChanged();
-        
+
         // Let's assume that the map could be closed
         setCreateAction->setEnabled(false);
 
@@ -204,45 +210,45 @@ namespace dtEditQt
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 
         if(selection->isResource())
-        {   
+        {
 
             LOG_INFO("User Created an Actor - Slot");
 
             // if we have an actor type, then create the proxy and emit the signal
             /*
-            * The following code finds the actor type by a hard-coded string for the 
+            * The following code finds the actor type by a hard-coded string for the
             * category and name. This means that if the actor for Particle System
-            * is changed in any way that the following code will break. This was 
+            * is changed in any way that the following code will break. This was
             * implemented as a quick and dirty solution to assigning particles to an
-            * actor of this type. 
+            * actor of this type.
             */
-            osg::ref_ptr<dtDAL::ActorType> particleActor = 
+            osg::ref_ptr<dtDAL::ActorType> particleActor =
                 dtDAL::LibraryManager::GetInstance().FindActorType("dtcore","Particle System");
 
             // create our new actor proxy from the mesh actor type that was
             // found by the results of our hard coded search above.
             if(particleActor!=NULL)
             {
-                osg::ref_ptr<dtDAL::ActorProxy> proxy = 
-                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(particleActor); 
+                osg::ref_ptr<dtDAL::ActorProxy> proxy =
+                        dtDAL::LibraryManager::GetInstance().CreateActorProxy(*particleActor.get());
 
                 // check to make sure both the mesh actor and the proxy are valid.
                 // If the user has somehow modified the above hard coded static mesh object
                 // the application could potentially be in a dangerous state.
-                if (proxy.valid()) 
+                if (proxy.valid())
                 {
                     // grab the actor property type
                     dtDAL::ResourceActorProperty *resourceProp = dynamic_cast<dtDAL::ResourceActorProperty *>
                         (proxy->GetProperty("particle file"));
 
-                    if (resourceProp != NULL) 
+                    if (resourceProp != NULL)
                     {
                         resourceProp->SetValue(&selection->getResourceDescriptor());
                     }
 
                     // add the new proxy to the map
                     osg::ref_ptr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
-                    if (mapPtr.valid()) 
+                    if (mapPtr.valid())
                     {
                         mapPtr->AddProxy(*proxy);
                     }

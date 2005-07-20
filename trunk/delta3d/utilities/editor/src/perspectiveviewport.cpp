@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -34,23 +34,6 @@
 
 namespace dtEditQt
 {
-
-    ///////////////////////////////////////////////////////////////////////////////
-    class PerspBillBoardUpdateVisitor : public osg::NodeVisitor
-    {
-    public:
-        PerspBillBoardUpdateVisitor() :
-            osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN) { }
-
-        virtual void apply(osg::Billboard &billBoard) {
-            billBoard.setMode(osg::Billboard::POINT_ROT_WORLD);
-            billBoard.setAxis(osg::Vec3(0,0,1));
-            billBoard.setNormal(osg::Vec3(0,-1,0));
-            traverse(billBoard);
-        }
-    };
-    ///////////////////////////////////////////////////////////////////////////////
-
     ///////////////////////////////////////////////////////////////////////////////
     IMPLEMENT_ENUM(PerspectiveViewport::InteractionModeExt);
     const PerspectiveViewport::InteractionModeExt
@@ -78,7 +61,7 @@ namespace dtEditQt
         this->currentMode = &InteractionModeExt::NOTHING;
         this->camera = ViewportManager::getInstance().getWorldViewCamera();
         this->camera->setFarClipPlane(250000.0f);
-        setMoveActorWithCamera(false);//EditorData::getInstance().getRigidCamera());
+        setMoveActorWithCamera(EditorData::getInstance().getRigidCamera());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -87,40 +70,27 @@ namespace dtEditQt
         if (height == 0)
             height = 1;
 
-        getCamera()->setAspectRatio((float)width / (float)height);
+        getCamera()->setAspectRatio((double)width / (double)height);
         Viewport::resizeGL(width,height);
-
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::initializeGL()
     {
         Viewport::initializeGL();
-        setRenderStyle(Viewport::RenderStyle::TEXTURED,false);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    void PerspectiveViewport::renderFrame()
-    {
-        //Make sure the billboards are oriented properly for this view before
-        //rendering.
-        PerspBillBoardUpdateVisitor bv;
-        getScene()->GetSceneNode()->accept(bv);
-        Viewport::renderFrame();
+        setRenderStyle(Viewport::RenderStyle::TEXTURED,false);    
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::mousePressEvent(QMouseEvent *e)
     {
         Qt::KeyboardModifiers shiftAndControl = Qt::ControlModifier | Qt::ShiftModifier;
-        //std::cout << *getCamera() << std::endl;
 
         if (getInteractionMode() == Viewport::InteractionMode::CAMERA) {
             if (getEnableKeyBindings()) {
                 if (e->modifiers() == Qt::ShiftModifier) {
                     if (getMoveActorWithCamera()) {
                         beginCameraMode(e);
-                        attachCurrentSelectionToCamera();
                     }
                     else {
                         setActorTranslateMode();
@@ -185,36 +155,49 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::mouseMoveEvent(QMouseEvent *e)
     {
+        static bool mouseMoving = false;
+        //Moving the mouse back to the center makes the movement recurse
+        //so this is a flag to prevent the recursion
+        if (mouseMoving)
+            return;
+
         QPoint center((x()+width())/2,(y()+height())/2);
         float dx,dy;
 
         dx = (float)(e->pos().x() - center.x());
         dy = (float)(e->pos().y() - center.y());
 
-        if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR) {
-            return;
-        }
-        else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+        if (dx != 0 || dy != 0)
         {
-            if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
+            if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
+            {
                 return;
+            }
+            else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+            {
+                if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
+                    return;
 
-            if (getMoveActorWithCamera() && e->modifiers() == Qt::ShiftModifier) {
                 moveCamera(dx,dy);
             }
-            else {
-                moveCamera(dx,dy);
+            else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
+            {
+               translateCurrentSelection(e,dx,dy);
             }
-        }
-        else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR) {
-           translateCurrentSelection(e,dx,dy);
-        }
-        else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR) {
-            rotateCurrentSelection(e,dx,dy);
+            else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
+            {
+                rotateCurrentSelection(e,dx,dy);
+            }
+
+            //Moving the mouse back to the center makes the movement recurse
+            //so this is a flag to prevent the recursion
+            mouseMoving = true;
+            QCursor::setPos(mapToGlobal(center));
+            mouseMoving = false;
+
+            updateGL();
         }
 
-        QCursor::setPos(mapToGlobal(center));
-        updateGL();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -222,22 +205,25 @@ namespace dtEditQt
     {
         Qt::MouseButtons bothButtons = Qt::LeftButton | Qt::RightButton;
 
-        if (e->buttons() == bothButtons || e->buttons() == Qt::MidButton) {
+        if (getMoveActorWithCamera() && getEnableKeyBindings() &&
+            e->modifiers() == Qt::ShiftModifier &&
+            this->currentMode == &InteractionModeExt::NOTHING)
+        {
+            attachCurrentSelectionToCamera();
+            saveSelectedActorOrigValues("Translation");
+            saveSelectedActorOrigValues("Rotation");
+        }
+
+        if (e->buttons() == bothButtons || e->buttons() == Qt::MidButton)
             this->currentMode = &InteractionModeExt::CAMERA_TRANSLATE;
-        }
-        else if (e->button() == Qt::LeftButton) {
+        else if (e->button() == Qt::LeftButton)
             this->currentMode = &InteractionModeExt::CAMERA_NAVIGATE;
-        }
-        else if (e->button() == Qt::RightButton) {
+        else if (e->button() == Qt::RightButton)
             this->currentMode = &InteractionModeExt::CAMERA_LOOK;
-        }
-        else {
+        else
+        {
             this->currentMode = &InteractionModeExt::NOTHING;
             return;
-        }
-
-        if (getMoveActorWithCamera()) {
-
         }
 
         setCameraMode();
@@ -257,8 +243,20 @@ namespace dtEditQt
             this->currentMode = &InteractionModeExt::NOTHING;
             releaseMouseCursor();
             syncWithModeActions();
-            if (getMoveActorWithCamera() && getCamera() != NULL)
+            if (getMoveActorWithCamera() && getCamera() != NULL &&
+                getEnableKeyBindings() && getCamera()->getNumActorAttachments() != 0)
+            {
+                // we could send hundreds of translation and rotation events, so make sure 
+                // we surround it in a change transaction
+                EditorEvents::getInstance().emitBeginChangeTransaction();
+
+                updateActorSelectionProperty("Translation");
+                updateActorSelectionProperty("Rotation");
+
+                EditorEvents::getInstance().emitEndChangeTransaction();
+
                 getCamera()->removeAllActorAttachments();
+            }
         }
     }
 
@@ -303,11 +301,17 @@ namespace dtEditQt
             this->currentMode = &InteractionModeExt::NOTHING;
             releaseMouseCursor();
 
+            // we could send hundreds of translation and rotation events, so make sure 
+            // we surround it in a change transaction
+            EditorEvents::getInstance().emitBeginChangeTransaction();
+
             //Update the selected actor proxies with their new values.
             if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
                 updateActorSelectionProperty("Translation");
             else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
                 updateActorSelectionProperty("Rotation");
+
+            EditorEvents::getInstance().emitEndChangeTransaction();
 
             //If a modifier key was pressed the current interaction mode was
             //temporarily overridden, so make sure we restore the previous mode.
@@ -319,7 +323,7 @@ namespace dtEditQt
     void PerspectiveViewport::moveCamera(float dx, float dy)
     {
         if (*this->currentMode == InteractionModeExt::CAMERA_NAVIGATE) {
-            getCamera()->yaw(-dx / getMouseSensitivity());
+            getCamera()->yaw(-dx / 10.0f);
 
             //Move along the view direction, however, ignore the z-axis.  This way
             //we can look at the ground but move parallel to it.
@@ -328,8 +332,8 @@ namespace dtEditQt
             getCamera()->move(viewDir);
         }
         else if (*this->currentMode == InteractionModeExt::CAMERA_LOOK) {
-            getCamera()->pitch(-dy / getMouseSensitivity());
-            getCamera()->yaw(-dx / getMouseSensitivity());
+            getCamera()->pitch(-dy / 10.0f);
+            getCamera()->yaw(-dx / 10.0f);
         }
         else if (*this->currentMode == InteractionModeExt::CAMERA_TRANSLATE) {
             getCamera()->move(getCamera()->getUpDir() *
@@ -396,39 +400,26 @@ namespace dtEditQt
     {
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-
-        osg::Matrix rot,currRotation;
-        osg::Vec3 axis;
-        dtCore::Transform tx;
         ViewportOverlay::ActorProxyList::iterator itor;
-
-        if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_X)
-            axis = osg::Vec3(1,0,0);
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Y)
-            axis = osg::Vec3(0,1,0);
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Z)
-            axis = osg::Vec3(0,0,1);
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor) {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtCore::Transformable *transformable =
-                dynamic_cast<dtCore::Transformable *>(proxy->GetActor());
+            dtDAL::TransformableActorProxy *tProxy =
+                    dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (transformable != NULL)
+            if (tProxy != NULL)
             {
-                //Get the current rotation.
-                transformable->GetTransform(&tx);
-                tx.GetRotation(currRotation);
+                osg::Vec3 hpr = tProxy->GetRotation();
+                float delta = dy / getMouseSensitivity();
 
-                //Now multiply our axis of rotation by the current orientation of
-                //the actor to put the rotation axis in the actors coordinate space.
-                axis = axis*currRotation;
-                rot.makeRotate(dy/(getMouseSensitivity()*4),axis);
+                if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_X)
+                    hpr.x() += delta;
+                else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Y)
+                    hpr.y() += delta;
+                else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_Z)
+                    hpr.z() += delta;
 
-                //Rotate the actor and set its new rotation.
-                currRotation *= rot;
-                tx.SetRotation(currRotation);
-                transformable->SetTransform(&tx);
+                tProxy->SetRotation(hpr);
             }
         }
     }
@@ -437,19 +428,18 @@ namespace dtEditQt
     void PerspectiveViewport::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
     {
         dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
-        dtDAL::ActorProxyIcon *billBoard = proxy->GetBillBoardIcon();
+        dtDAL::ActorProxyIcon *billBoard = NULL;
 
         const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
+            billBoard = proxy->GetBillBoardIcon();
             if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
             else
-            {
                 scene->AddDrawable(billBoard->GetDrawable());
-            }
         }
         else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
         {
@@ -459,19 +449,19 @@ namespace dtEditQt
         {
             scene->AddDrawable(proxy->GetActor());
 
+            billBoard = proxy->GetBillBoardIcon();
             if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
             else
-            {
                 scene->AddDrawable(billBoard->GetDrawable());
-            }
         }
         else
         {
             //If we got here, then the proxy wishes the system to determine how to display
-            //the proxy.
+            //the proxy. Currently, not implemented, defaults to DRAW_ACTOR).
+            scene->AddDrawable(proxy->GetActor());
         }
 
         //Get the current position and direction the camera is facing.
@@ -497,14 +487,16 @@ namespace dtEditQt
             tProxy->SetTranslation(pos+(viewDir*offset*2));
         }
 
-        ViewportManager::getInstance().refreshAllViewports();
+        // update the viewports unless we're getting lots of changes back to back, in which
+        // case our super class handles that.
+        if (!inChangeTransaction)
+            ViewportManager::getInstance().refreshAllViewports();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::onEditorPreferencesChanged()
     {
-        //This functionality has been disabled for the time being.
-        //this->attachActorToCamera = EditorData::getInstance().getRigidCamera();
+        this->attachActorToCamera = EditorData::getInstance().getRigidCamera();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

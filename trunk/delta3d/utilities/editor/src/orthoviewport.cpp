@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -20,7 +20,7 @@
 */
 #include <QMouseEvent>
 #include <osg/Math>
-#include <osg/Billboard>
+#include <osg/CullSettings>
 #include "dtEditQt/orthoviewport.h"
 #include "dtEditQt/viewportoverlay.h"
 #include "dtEditQt/editorevents.h"
@@ -29,45 +29,6 @@
 
 namespace dtEditQt
 {
-
-    ///////////////////////////////////////////////////////////////////////////////
-    class OrthoBillBoardUpdateVisitor : public osg::NodeVisitor
-    {
-    public:
-        OrthoBillBoardUpdateVisitor(OrthoViewport *viewPort) :
-            osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN), viewPort(viewPort) { }
-
-        virtual void apply(osg::Billboard &billBoard)
-        {
-            if (!viewPort)
-                return;
-
-            if (viewPort->getViewType() == OrthoViewport::OrthoViewType::TOP)
-            {
-                billBoard.setMode(osg::Billboard::AXIAL_ROT);
-                billBoard.setAxis(osg::Vec3(1,0,0));
-                billBoard.setNormal(osg::Vec3(0,0,-1));
-            }
-            else if (viewPort->getViewType() == OrthoViewport::OrthoViewType::SIDE) {
-                 billBoard.setMode(osg::Billboard::AXIAL_ROT);
-                 billBoard.setAxis(osg::Vec3(0,1,0));
-                 billBoard.setNormal(osg::Vec3(-1,0,0));
-            }
-            else if (viewPort->getViewType() == OrthoViewport::OrthoViewType::FRONT) {
-                 billBoard.setMode(osg::Billboard::AXIAL_ROT);
-                 billBoard.setAxis(osg::Vec3(1,0,0));
-                 billBoard.setNormal(osg::Vec3(0,-1,0));
-                //good
-            }
-
-            traverse(billBoard);
-        }
-
-    private:
-        OrthoViewport *viewPort;
-    };
-    ///////////////////////////////////////////////////////////////////////////////
-
     ///////////////////////////////////////////////////////////////////////////////
     IMPLEMENT_ENUM(OrthoViewport::OrthoViewType);
     const OrthoViewport::OrthoViewType OrthoViewport::OrthoViewType::TOP("TOP");
@@ -107,9 +68,9 @@ namespace dtEditQt
         Viewport::initializeGL();
 
         //We do not want OSG to compute our near and far clipping planes when in
-        //orthographic view.
+        //orthographic view
         getSceneView()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-
+        
         //Default to wireframe view.
         setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
     }
@@ -117,10 +78,10 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::resizeGL(int width, int height)
     {
-        float xDim = (float)width * 0.5f;
-        float yDim = (float)height * 0.5f;
+        double xDim = (double)width * 0.5;
+        double yDim = (double)height * 0.5;
 
-        getCamera()->makeOrtho(-xDim,xDim,-yDim,yDim,-100000.0f,100000.0f);
+        getCamera()->makeOrtho(-xDim,xDim,-yDim,yDim,-5000.0,5000.0);
         Viewport::resizeGL(width,height);
     }
 
@@ -148,16 +109,6 @@ namespace dtEditQt
                        "It has not been initialized.");
             refresh();
         }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    void OrthoViewport::renderFrame()
-    {
-        //Depending on the type of orthographic view this is, rotate the billboards
-        //accordingly.
-        OrthoBillBoardUpdateVisitor bv(this);
-        getScene()->GetSceneNode()->accept(bv);
-        Viewport::renderFrame();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -226,31 +177,50 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::mouseMoveEvent(QMouseEvent *e)
     {
+        static bool mouseMoving = false;
+
+        //Moving the mouse back to the center makes the movement recurse
+        //so this is a flag to prevent the recursion
+        if (mouseMoving)
+            return;
+
         QPoint center((x()+width())/2,(y()+height())/2);
         float dx,dy;
 
         dx = (float)(e->pos().x() - center.x());
         dy = (float)(e->pos().y() - center.y());
 
-        if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR) {
-            return;
-        }
-        else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+        if (dx != 0 || dy != 0)
         {
-            if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
+            if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
+            {
                 return;
+            }
+            else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+            {
+                if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
+                    return;
 
-            moveCamera(dx,dy);
-        }
-        else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR) {
-            translateCurrentSelection(e,dx,dy);
-        }
-        else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR) {
-            rotateCurrentSelection(e,dx,dy);
+                moveCamera(dx,dy);
+            }
+            else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
+            {
+                translateCurrentSelection(e,dx,dy);
+            }
+            else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
+            {
+                rotateCurrentSelection(e,dx,dy);
+            }
+
+            //Moving the mouse back to the center makes the movement recurse
+            //so this is a flag to prevent the recursion
+            mouseMoving = true;
+            QCursor::setPos(mapToGlobal(center));
+            mouseMoving = false;
+
+            refresh();
         }
 
-        QCursor::setPos(mapToGlobal(center));
-        updateGL();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -280,15 +250,15 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void OrthoViewport::wheelEvent(QWheelEvent *e)
     {
-        if (e->delta() > 0)
-           getCamera()->zoom(1.3f);
-        else
-           getCamera()->zoom(0.7f);
-
-        osg::Vec3 nearPoint,farPoint;
-        int xLoc = e->pos().x();
-        int yLoc = getSceneView()->getViewport()->height()-e->pos().y();
-        getSceneView()->projectWindowXYIntoObject(xLoc,yLoc,nearPoint,farPoint);
+         if (e->delta() > 0)
+            getCamera()->zoom(1.3f);
+         else
+            getCamera()->zoom(0.7f);
+//
+//         osg::Vec3 nearPoint,farPoint;
+//         int xLoc = e->pos().x();
+//         int yLoc = getSceneView()->getViewport()->height()-e->pos().y();
+//         getSceneView()->projectWindowXYIntoObject(xLoc,yLoc,nearPoint,farPoint);
 
         //double s = exp( e->delta( ) / 4 * c_sizeFactor );
         //double deltaX = screenToInternalX( e->x( ) );
@@ -303,7 +273,7 @@ namespace dtEditQt
 //         std::cout << "ZoomTo: " << nearPoint << std::endl;
 //         std::cout << "Current Location: " << getCamera()->getPosition() << std::endl;
 //         std::cout << "Current View Dir: " << getCamera()->getViewDir() << std::endl << std::endl;
-        updateGL();
+        refresh();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -374,11 +344,17 @@ namespace dtEditQt
             this->currentMode = &InteractionModeExt::NOTHING;
             releaseMouseCursor();
 
+            // we could send hundreds of translation and rotation events, so make sure
+            // we surround it in a change transaction
+            EditorEvents::getInstance().emitBeginChangeTransaction();
+
             //Update the selected actor proxies with their new values.
             if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
                 updateActorSelectionProperty("Translation");
             else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
                 updateActorSelectionProperty("Rotation");
+
+            EditorEvents::getInstance().emitEndChangeTransaction();
 
             //If a modifier key was pressed the current interaction mode was
             //temporarily overridden, so make sure we restore the previous mode.
@@ -427,45 +403,44 @@ namespace dtEditQt
     {
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
-
-        //Current actor rotation mode only supports rotating one actor so if a group of
-        //actors is selected, rotation does nothing.
-        if (selection.size() != 1)
-            return;
-
-        osg::Matrix rot,currRotation;
-        osg::Vec3 axis;
-        dtCore::Transform tx;
         ViewportOverlay::ActorProxyList::iterator itor;
 
-        if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
-            axis = getCamera()->getRightDir();
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
-            axis = getCamera()->getUpDir();
-        else if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
-            axis = getCamera()->getViewDir();
-
-        for (itor=selection.begin(); itor!=selection.end(); ++itor)
-        {
+        for (itor=selection.begin(); itor!=selection.end(); ++itor) {
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
-            dtCore::Transformable *transformable =
-                dynamic_cast<dtCore::Transformable *>(proxy->GetActor());
+            dtDAL::TransformableActorProxy *tProxy =
+                    dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
 
-            if (transformable != NULL)
+            if (tProxy != NULL)
             {
-                //Get the current rotation.
-                transformable->GetTransform(&tx);
-                tx.GetRotation(currRotation);
+                osg::Vec3 hpr = tProxy->GetRotation();
+                float delta = dy / getMouseSensitivity();
 
-                //Now multiply our axis of rotation by the current orientation of
-                //the actor to put the rotation axis in the actors coordinate space.
-                //axis = axis*currRotation;
-                rot.makeRotate(dy/(getMouseSensitivity()*4),axis);
+                if (*this->viewType == OrthoViewType::TOP) {
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+                        hpr.z() += delta;
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+                        hpr.x() += delta;
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+                        hpr.y() += delta;
+                }
+                else if (*this->viewType == OrthoViewType::SIDE) {
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+                        hpr.x() += delta;
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+                        hpr.y() += delta;
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+                        hpr.z() += delta;
+                }
+                else if (*this->viewType == OrthoViewType::FRONT) {
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_BOTH)
+                        hpr.y() += delta;
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_HORIZ)
+                        hpr.x() += delta;
+                    if (*this->currentMode == InteractionModeExt::ACTOR_AXIS_VERT)
+                        hpr.z() += delta;
+                }
 
-                //Rotate the actor and set its new rotation.
-                currRotation *= rot;
-                tx.SetRotation(currRotation);
-                transformable->SetTransform(&tx);
+                tProxy->SetRotation(hpr);
             }
         }
     }

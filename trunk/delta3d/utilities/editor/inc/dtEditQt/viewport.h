@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -23,6 +23,8 @@
 
 #include <QGLWidget>
 #include <QCursor>
+
+#include <map>
 
 #include <dtCore/base.h>
 #include <dtCore/system.h>
@@ -155,12 +157,6 @@ namespace dtEditQt
         }
 
         /**
-         * Renders the scene as is viewed from the viewport's currently assigned
-         * camera.
-         */
-        virtual void renderFrame();
-
-        /**
          * Tells the viewport whether or not to keep in sync with the rest
          * of the editor UI.
          * @param on If true, use auto interaction mode.
@@ -233,7 +229,7 @@ namespace dtEditQt
          * @param x Horizonal window coordinate.
          * @param y Vertical window coordinate.
          */
-        void pick(int x, int y);
+        virtual void pick(int x, int y);
 
         /**
          * After each mouse move event, this method will reset the cursor position to
@@ -378,6 +374,12 @@ namespace dtEditQt
         ///Moves the camera such that the actor is clearly visible.
         void onGotoActor(osg::ref_ptr<dtDAL::ActorProxy> &proxy);
 
+        // starts a larger transaction to prevent excessive refreshes
+        void onBeginChangeTransaction();
+
+        // ends a transaction and does a final refresh viewports
+        void onEndChangeTransaction();
+
     signals:
         ///This signal is emitted when the render style is changed.
         void renderStyleChanged();
@@ -413,6 +415,12 @@ namespace dtEditQt
          * Called when the viewport needs to redraw itself.
          */
         virtual void paintGL();
+
+        /**
+         * Renders the scene as is viewed from the viewport's currently assigned
+         * camera.
+         */
+        virtual void renderFrame();
 
         /**
          * Returns the underlying scene view that is attached to this viewport.
@@ -468,6 +476,16 @@ namespace dtEditQt
         void saveSelectedActorOrigValues(const std::string &propName);
 
         /**
+         * Spins through the actor proxies currently in the map and if they
+         * are using billboards to represent themselves, orient the billboards
+         * to be inline with the camera.
+         * @note The billboard behavior of OpenSceneGraph was not suitable to
+         *  to the needs of the actor proxy billboards, therefore, a different
+         *  implementation is required.
+         */
+        void updateActorProxyBillboards();
+
+        /**
          * Camera attached to this viewport.
          * @note
          *  This is not created by this viewport.  It must be created by
@@ -475,15 +493,17 @@ namespace dtEditQt
          */
         osg::ref_ptr<Camera> camera;
 
+        /**
+         * Tracks whether we are currently in a batch change transaction
+         */
+        bool inChangeTransaction;
+
     private:
         ///Sets up the initial render state of this viewport.
         void setupInitialRenderState();
 
         ///Allow the viewport manager to have access to the viewport so it can create it.
         friend class ViewportManager;
-
-        ///Allow access directly to the viewport from the frame listener.
-        friend class Delta3DMessageListener;
 
     private:
         float mouseSensitivity;
@@ -501,11 +521,10 @@ namespace dtEditQt
         QPoint oldMouseLocation;
         bool cacheMouseLocation;
 
-        // holds the original values of either translation or rotation.  This should
+        // holds the original values of translation and/or rotation.  This should
         // be set in BeginEdit and cleared in EndEdit
-        std::vector<std::string> selectedActorOrigValues;
+        std::map<std::string,std::vector<std::string> > selectedActorOrigValues;
 
-        osg::ref_ptr<Delta3DMessageListener> messageListener;
         osg::ref_ptr<ViewportOverlay> overlay;
         osg::ref_ptr<dtCore::Scene> scene;
         osg::ref_ptr<osg::FrameStamp> frameStamp;
@@ -520,48 +539,6 @@ namespace dtEditQt
          * a part of the actual scene.
          */
         osg::ref_ptr<osg::Group> rootNodeGroup;
-    };
-
-    /**
-     * This class responds to Delta3D engine events.  These events are then
-     * propagated to the viewport connected to it.
-     */
-    class Delta3DMessageListener : public dtCore::Base {
-        public:
-            /**
-             * Construct the listener and attach to the Delta3D messaging
-             * system.
-             * @param viewPort The viewport that this listener controls.
-             * @return
-             */
-            Delta3DMessageListener(Viewport *viewPort) {
-                this->viewPort = viewPort;
-                AddSender(dtCore::System::GetSystem());
-            }
-
-            /**
-             * Called by the Delta3D engine when engine events occur.
-             * @param data
-             */
-            void OnMessage(MessageData *data) {
-                if (data->message == "frame") {
-                    this->viewPort->makeCurrent();
-                    this->viewPort->renderFrame();
-                }
-            }
-
-        protected:
-            /**
-             * Destroys the listener and removes it from the Delta3D messenging
-             * system.
-             * @return
-             */
-            virtual ~Delta3DMessageListener() {
-                RemoveSender(dtCore::System::GetSystem());
-            }
-
-        private:
-            Viewport *viewPort;
     };
 
 }

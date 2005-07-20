@@ -1,18 +1,18 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine Level Editor 
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free 
+* Software Foundation; either version 2 of the License, or (at your option) 
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
+* You should have received a copy of the GNU General Public License 
 * along with this library; if not, write to the Free Software Foundation, Inc., 
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
@@ -34,7 +34,6 @@ namespace dtEditQt{
         : QTreeWidgetItem(parent)
     {
         //LOG_INFO("Initializing ResourceTree - as a root node (QTreeWidget parent)");
-
     }
     /////////////////////////////////////////////////////////////////////////////////
     ResourceTreeWidget::ResourceTreeWidget(ResourceTreeWidget *parent)
@@ -48,7 +47,7 @@ namespace dtEditQt{
         : QTreeWidgetItem(parent)
     {
         LOG_INFO("Initializing ResourceTreeWidget - Resource node");
-
+        
         resource = false;
         // store the resource assocated with this treeitem
         myResource = newResource;
@@ -66,7 +65,7 @@ namespace dtEditQt{
         return this->myResource;
     }
     ///////////////////////////////////////////////////////////////////////////////
-    void ResourceTreeWidget::recursivelyCreateResourceTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter)
+    void ResourceTreeWidget::recursivelyCreateResourceTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QIcon *resourceIcon)
     { 
         
         QIcon *icon = new QIcon();
@@ -87,7 +86,7 @@ namespace dtEditQt{
                 category->setCategoryFullName(QString(i->getFullCategory().c_str()));
                 category->setCategoryName(QString(i->getNodeText().c_str()));
                 // iterate down the branch until we are finished with this node
-                category->recursivelyCreateResourceTree(i);
+                category->recursivelyCreateResourceTree(i,resourceIcon);
                 category->setIcon(0,*icon);
                 
             }
@@ -97,6 +96,7 @@ namespace dtEditQt{
                 ResourceTreeWidget *innerNode = new ResourceTreeWidget(this,i->getResource());
                 innerNode->setText(0,QString(i->getNodeText().c_str()));
                 innerNode->setIfResource(true);
+                innerNode->setIcon(0,*resourceIcon);
             }
          }
     }

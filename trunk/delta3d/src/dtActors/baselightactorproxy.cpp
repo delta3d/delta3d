@@ -20,6 +20,7 @@
 */
 #include "dtActors/baselightactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
+#include "dtDAL/actorproxyicon.h"
 
 namespace dtActors
 {
@@ -36,7 +37,7 @@ namespace dtActors
         const std::string GROUPNAME = "Light";
 
         dtCore::Light *light = dynamic_cast<dtCore::Light *>(mActor.get());
-        if(!light) 
+        if(!light)
         {
             EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
                 "Actor should be type dtCore::Light.");
@@ -93,7 +94,7 @@ namespace dtActors
     ///////////////////////////////////////////////////////////////////////////////
     dtDAL::ActorProxyIcon* BaseLightActorProxy::GetBillBoardIcon()
     {
-        if(!mBillBoardIcon.valid()) 
+        if(!mBillBoardIcon.valid())
         {
             mBillBoardIcon =
                  new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::LIGHT);

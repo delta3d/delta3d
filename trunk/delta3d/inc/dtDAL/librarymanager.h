@@ -124,7 +124,7 @@ namespace dtDAL
 		 * @throws Throws a ObjectFactoryUnknownType exception if the type
 		 * is unknown.
 		 */
-		osg::ref_ptr<ActorProxy> CreateActorProxy(osg::ref_ptr<ActorType> actorType);
+		osg::ref_ptr<ActorProxy> CreateActorProxy(ActorType& actorType);
 
         /**
          * Gets a registry currently loaded by the library manager.  
@@ -133,6 +133,11 @@ namespace dtDAL
          * @return A handle to the registry or NULL if it is not currently loaded.
          */
         ActorPluginRegistry *GetRegistry(const std::string &name);
+
+        /**
+         * @param actorType the actor type to get the registry for.
+         */
+        ActorPluginRegistry *GetRegistryForType(ActorType& actorType);
 
         /**
          * Determines which platform we are running on and returns a

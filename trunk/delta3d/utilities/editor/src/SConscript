@@ -3,9 +3,10 @@ import glob
 import sys
 import re
 import os
+import string
 
 # Import the variables defined in the global SConstruct build script.
-Import ('env','OS','errorLog','mode')
+Import ('*')
 EditorEnv = env.Copy(tools = ['qt'])
 
 # The function returns a list of header files that contain the Q_OBJECT macro.  These
@@ -14,7 +15,15 @@ def getQObjectHeaders(headers) :
    passed = []
    pattern = re.compile("Q_OBJECT")
 
-   for header in headers :
+   #windows has issues with file paths, and since the headers are based
+   # on the build path, we need to adjust.
+   path = string.replace(GetBuildPath('SConscript'),  'SConscript', '')
+
+   headersFixed = []
+   for i in headers:
+      headersFixed.append(path + i) 
+
+   for header in headersFixed:
       f = open(header)
       while 1 :
          l = f.readline()
@@ -43,22 +52,28 @@ if OS == 'linux':
 elif OS == 'darwin':
    EditorEnv.Append(CPPDEFINES = ['_REENTRANT'])
 
-EditorEnv.Append(CPPPATH = [qtdir + '/include/QtCore',
-                            qtdir + '/include/QtGui',
-                            qtdir + '/include/QtOpenGL',
-                            '../inc'] )
+if OS == 'darwin':
+	EditorEnv.Append(CPPPATH = [qtdir + '/lib/QtCore.framework/Headers',
+                                    qtdir + '/lib/QtGui.framework/Headers',
+                                    qtdir + '/lib/QtOpenGL.framework/Headers',
+                                    '#/utilities/editor/inc'] )
+else:
+	EditorEnv.Append(CPPPATH = [qtdir + '/include/QtCore',
+                                    qtdir + '/include/QtGui',
+                                    qtdir + '/include/QtOpenGL',
+                                    '#/utilities/editor/inc'] )
 
 if mode == 'debug':
    if OS == 'windows':
-      EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','qtmaind','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','ul_d','sg_d'])   
+      EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','ul_d','sg_d'])   
    elif OS == 'darwin':
-      EditorEnv.Append(LIBS = ['dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','plibul','plibsg'])
+      EditorEnv.Append(LIBS = ['dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul','plibsg'])
       EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )
    else:
-      EditorEnv.Append(LIBS = ['QtCore_debug','QtGui_debug','QtOpenGL_debug','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','plibul','plibsg'])   
+      EditorEnv.Append(LIBS = ['QtCore_debug','QtGui_debug','QtOpenGL_debug','dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul','plibsg'])   
 else:
    if OS == 'windows':
-      EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','qtmain','dtDAL','dtcore','dtaudio','dtchar','dtutil','dtabc','ul','sg'])
+      EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','dtDAL','dtcore','dtaudio','dtchar','dtutil','dtabc','ul','sg'])
    elif OS == 'darwin':
       EditorEnv.Append(LIBS = ['dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul','plibsg']) 
       EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )   
@@ -68,9 +83,9 @@ else:
 # First, glob the header directory to obtain a list of potential files to run
 # the moc builder on.
 if OS == 'windows':
-   moc_headers = glob.glob('..\inc\dtEditQt\*.h')
+   moc_headers = SGlob('..\inc\dtEditQt\*.h')
 else:
-   moc_headers = glob.glob('../inc/dtEditQt/*.h')
+   moc_headers = SGlob('../inc/dtEditQt/*.h')
 
 # Next, grep each header file for the Q_OBJECT macro to determine if moc should be run on 
 # it.
@@ -94,7 +109,12 @@ for currHeader in moc_headers :
    EditorEnv.Moc(target=target, source=currHeader)
 
 # Grab all the sources including the generated moc files..
-sources = glob.glob('*.cpp') + moc_targets
+#if OS == 'windows':
+#  sources = ["actorbrowser.cpp","actorglobalbrowser.cpp","actorresultstable.cpp","actorsearcher.cpp","actortab.cpp","actortypetreewidget.cpp","camera.cpp","characterbrowser.cpp","dialoglistselection.cpp","dialogmapproperties.cpp","dynamicabstractcontrol.cpp","dynamicabstractparentcontrol.cpp","dynamicboolcontrol.cpp","dynamiccolorelementcontrol.cpp","dynamiccolorrgbacontrol.cpp","dynamicdoublecontrol.cpp","dynamicenumcontrol.cpp","dynamicfloatcontrol.cpp","dynamicgroupcontrol.cpp","dynamicintcontrol.cpp","dynamiclabelcontrol.cpp","dynamiclongcontrol.cpp","dynamicnamecontrol.cpp","dynamicresourcecontrol.cpp","dynamicstringcontrol.cpp","dynamicvec2control.cpp","dynamicvec3control.cpp","dynamicvec4control.cpp","dynamicvectorelementcontrol.cpp","editoraboutbox.cpp","editoractions.cpp","editordata.cpp","editorevents.cpp","editorsettings.cpp","libraryeditor.cpp","main.cpp","mainwindow.cpp","mapdialog.cpp","mapsaveasdialog.cpp","orthoviewport.cpp","particlebrowser.cpp","perspectiveviewport.cpp","preferencesdialog.cpp","projectbrowser.cpp","projectcontextdialog.cpp","propertyeditor.cpp","propertyeditordelegate.cpp","propertyeditormodel.cpp","propertyeditortreeview.cpp","qtmain_win.cpp","resourceabstractbrowser.cpp","resourcebrowser.cpp","resourceimportdialog.cpp","resourcetreewidget.cpp","soundbrowser.cpp","staticmeshbrowser.cpp","tabcontainer.cpp","tabwrapper.cpp","texturebrowser.cpp","uiresources.cpp","undomanager.cpp","viewport.cpp","viewportcontainer.cpp","viewportmanager.cpp","viewportoverlay.cpp"]
+#  sources += moc_targets
+#else:
+sources = SGlob('*.cpp') + moc_targets
+
 if mode == 'debug':
    app = EditorEnv.Program('#bin/editord',sources)
 else:   
@@ -108,3 +128,4 @@ if (result == 'false') :
    errorLog.write("Failed to build the level editor application.\n")
 
 Return('result')
+"actorbrowser.cpp","actorglobalbrowser.cpp","actorresultstable.cpp","actorsearcher.cpp","actortab.cpp","actortypetreewidget.cpp","borderlayout.cpp","camera.cpp","characterbrowser.cpp","dialoglistselection.cpp","dialogmapproperties.cpp","dynamicabstractcontrol.cpp","dynamicabstractparentcontrol.cpp","dynamicboolcontrol.cpp","dynamiccolorelementcontrol.cpp","dynamiccolorrgbacontrol.cpp","dynamicdoublecontrol.cpp","dynamicenumcontrol.cpp","dynamicfloatcontrol.cpp","dynamicgroupcontrol.cpp","dynamicintcontrol.cpp","dynamiclabelcontrol.cpp","dynamiclongcontrol.cpp","dynamicnamecontrol.cpp","dynamicresourcecontrol.cpp","dynamicstringcontrol.cpp","dynamicvec2control.cpp","dynamicvec3control.cpp","dynamicvec4control.cpp","dynamicvectorelementcontrol.cpp","editoraboutbox.cpp","editoractions.cpp","editordata.cpp","editorevents.cpp","editorsettings.cpp","libraryeditor.cpp","main.cpp","mainwindow.cpp","mapdialog.cpp","mapsaveasdialog.cpp","orthoviewport.cpp","particlebrowser.cpp","perspectiveviewport.cpp","preferencesdialog.cpp","projectbrowser.cpp","projectcontextdialog.cpp","propertyeditor.cpp","propertyeditordelegate.cpp","propertyeditormodel.cpp","propertyeditortreeview.cpp","qtmain_win.cpp","resourceabstractbrowser.cpp","resourcebrowser.cpp","resourceimportdialog.cpp","resourcetreewidget.cpp","soundbrowser.cpp","staticmeshbrowser.cpp","tabcontainer.cpp","tabwrapper.cpp","texturebrowser.cpp","uiresources.cpp","undomanager.cpp","viewport.cpp","viewportcontainer.cpp","viewportmanager.cpp","viewportoverlay.cpp",

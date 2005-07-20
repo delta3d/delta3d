@@ -6,11 +6,11 @@ import sys
 Import ('*')
 
 # Grab all the sources from the DAL source directory.
-sources = glob.glob('*.cpp')
+sources = SGlob('*.cpp')
 
 dtDALDeps =[ 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 'ode', 
 	'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
-	'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody','gdal', 'sg', 'ul', 'js', 
+	'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rcfgscript','rbody','gdal', 'sg', 'ul', 'js', 
 	'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :
@@ -19,5 +19,6 @@ elif OS == 'linux':
    dtDALDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':
    dtDALDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
+
     
 BuildLib( 'dtDAL', sources, dtDALDeps, ['DT_LIBRARY'] )

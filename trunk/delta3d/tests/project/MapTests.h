@@ -30,6 +30,7 @@ class MapTests : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE( MapTests );
     CPPUNIT_TEST( testMapAddRemoveProxies );
     CPPUNIT_TEST( testMapProxySearch );
+    CPPUNIT_TEST( testMapLibraryHandling );
     CPPUNIT_TEST( testLoadMapIntoScene );
     CPPUNIT_TEST( testLoadErrorHandling );
     CPPUNIT_TEST( testMapSaveAndLoad );
@@ -43,6 +44,7 @@ public:
 
     void testMapAddRemoveProxies();
     void testMapProxySearch();
+    void testMapLibraryHandling();
     void testMapSaveAndLoad();
     void testLoadMapIntoScene();
     void testLoadErrorHandling();

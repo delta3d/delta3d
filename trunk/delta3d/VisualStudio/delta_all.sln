@@ -231,6 +231,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUI", "src\dtGUI\dtGUI.vc
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleActorLibrary", "..\examples\ExampleActorLibrary\ExampleActorLibrary.vcproj", "{776B9B6F-C222-4899-84C7-648877FEBEAE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestMap", "..\examples\STAGESampleCode\TestMap\TestMap.vcproj", "{0AD37625-7CF8-42C4-90FF-1F5329B91FAE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80} = {91F7CF8D-9297-426F-B760-7E49EDA92A80}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -397,6 +409,14 @@ Global
 		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Debug.Build.0 = Debug|Win32
 		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.ActiveCfg = Release|Win32
 		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.Build.0 = Release|Win32
+		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Debug.ActiveCfg = Debug|Win32
+		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Debug.Build.0 = Debug|Win32
+		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Release.ActiveCfg = Release|Win32
+		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Release.Build.0 = Release|Win32
+		{0AD37625-7CF8-42C4-90FF-1F5329B91FAE}.Debug.ActiveCfg = Debug|Win32
+		{0AD37625-7CF8-42C4-90FF-1F5329B91FAE}.Debug.Build.0 = Debug|Win32
+		{0AD37625-7CF8-42C4-90FF-1F5329B91FAE}.Release.ActiveCfg = Release|Win32
+		{0AD37625-7CF8-42C4-90FF-1F5329B91FAE}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

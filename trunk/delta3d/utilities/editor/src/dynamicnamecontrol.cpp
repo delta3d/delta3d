@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -22,8 +22,6 @@
 #include "dtEditQt/dynamicnamecontrol.h"
 #include "dtEditQt/dynamicsubwidgets.h"
 #include "dtEditQt/editorevents.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/log.h"
 #include <QGridLayout>
@@ -36,7 +34,11 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicNameControl::DynamicNameControl()
+        : temporaryEditControl(NULL)
     {
+        // listen for name changes so we can update our own edit control
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy>, std::string)),
+            this, SLOT(proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy>, std::string)));
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +52,7 @@ namespace dtEditQt
     {
         if (widget != NULL) 
         {
+            // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
 
             // set the current value from our property
@@ -66,6 +69,7 @@ namespace dtEditQt
 
         if (widget != NULL) 
         {
+            // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
             bool success = false;
 
@@ -99,37 +103,41 @@ namespace dtEditQt
         const QStyleOptionViewItem &option, const QModelIndex &index)
     {
         // create and init the edit box
-        SubQLineEdit *editBox = new SubQLineEdit (parent, this);
+        temporaryEditControl = new SubQLineEdit (parent, this);
 
         if (!initialized)  
         {
             LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-            return editBox;
+            return temporaryEditControl;
         }
 
-        updateEditorFromModel(editBox);
+        updateEditorFromModel(temporaryEditControl);
 
         // set the tooltip
-        editBox->setToolTip(getDescription());
+        temporaryEditControl->setToolTip(getDescription());
 
-        return editBox;
+        return temporaryEditControl;
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicNameControl::getDisplayName()
     {
         return QString("Name");
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicNameControl::getDescription() 
     {
         return QString("A descriptive name for the actor that helps searching in both the editor and in code.  It may help implementaion if this is unique");
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicNameControl::getValueAsString() 
     {
         return QString(tr(proxy->GetName().c_str()));
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
     bool DynamicNameControl::isEditable()
     {
         return true;
@@ -152,5 +160,13 @@ namespace dtEditQt
 
         return updateModelFromEditor(widget);
     }
-
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicNameControl::proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName)
+    {
+        if (temporaryEditControl != NULL && proxy == this->proxy) 
+        {
+            updateEditorFromModel(temporaryEditControl);
+        }
+    }
 }

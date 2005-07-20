@@ -46,10 +46,11 @@
 #include "dtDAL/exception.h"
 #include "dtDAL/stringtokenizer.h"
 #include "dtDAL/librarymanager.h"
+#include "dtDAL/actorproxyicon.h"
 
 namespace dtDAL
 {
-    const std::string Project::LOG_NAME("Project.cpp");
+    const std::string Project::LOG_NAME("project.cpp");
     const std::string Project::MAP_DIRECTORY("maps");
     const std::string Project::MAP_BACKUP_SUB_DIRECTORY("backups");
 
@@ -95,10 +96,22 @@ namespace dtDAL
             mResourcesIndexed = false;
         }
 
+        //save the old context for later.
+        std::string oldContext = mContext;
+
         //unset the current mContext.
         mValidContext = false;
         mContext = "";
         mContextReadOnly = true;
+
+        //remove the old context from the data file path list.
+        std::string searchPath = dtCore::GetDataFilePathList();
+        size_t index = oldContext.empty() ? std::string::npos : searchPath.find(oldContext);
+        if (index != std::string::npos)
+        {
+            searchPath.erase(index, oldContext.size());
+            dtCore::SetDataFilePathList(searchPath);
+        }
 
         if (!mOpenReadOnly)
         {
@@ -197,11 +210,14 @@ namespace dtDAL
             }
 
             mValidContext = true;
-            std::string oldContext = mContext;
             mContext = FileUtils::GetInstance().CurrentDirectory();
             mContextReadOnly = mOpenReadOnly;
+            std::string searchPath = dtCore::GetDataFilePathList();
 
-            dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList() + ":" + mContext);
+            if (searchPath.empty())
+                searchPath = dtCore::GetDeltaDataPathList();
+
+            dtCore::SetDataFilePathList(searchPath + ':' + mContext);
 
             GetMapNames();
         }
@@ -337,6 +353,9 @@ namespace dtDAL
     //////////////////////////////////////////////////////////
     Map& Project::GetMap(const std::string& name)
     {
+        if (!mValidContext)
+            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+
         std::map<std::string, osg::ref_ptr<Map> >::iterator openMapI = mOpenMaps.find(name);
 
         //map is already open.
@@ -361,6 +380,9 @@ namespace dtDAL
     //////////////////////////////////////////////////////////
     Map& Project::OpenMapBackup(const std::string& name)
     {
+        if (!mValidContext)
+            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+
         std::map<std::string, osg::ref_ptr<Map> >::iterator openMapI = mOpenMaps.find(name);
 
         //map is already open.
@@ -386,9 +408,13 @@ namespace dtDAL
         return map;
 
     }
+
     //////////////////////////////////////////////////////////
     Map& Project::CreateMap(const std::string& name, const std::string& fileName)
     {
+        if (!mValidContext)
+            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+
         if (IsReadOnly())
             EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
@@ -471,7 +497,8 @@ namespace dtDAL
                 if (renderMode == ActorProxy::RenderMode::DRAW_AUTO)
                 {
                     //If we got here, then the proxy wishes the system to determine how to display
-                    //the proxy.
+                    //the proxy. (Currently defaults to DRAW_ACTOR.
+                    scene.AddDrawable(proxy.GetActor());
                 }
             }
             else
@@ -481,14 +508,36 @@ namespace dtDAL
             }
         }
 
-        osgUtil::Optimizer o;
-        o.optimize(scene.GetSceneNode(), osgUtil::Optimizer::DEFAULT_OPTIMIZATIONS);
-            //| osgUtil::Optimizer::SPATIALIZE_GROUPS);
+        if (!addBillBoards)
+        {
+            osgUtil::Optimizer o;
+            o.optimize(scene.GetSceneNode(), osgUtil::Optimizer::DEFAULT_OPTIMIZATIONS);
+        }
     }
 
     //////////////////////////////////////////////////////////
     void Project::UnloadUnusedLibraries(Map& mapToClose)
     {
+
+        std::vector<osg::ref_ptr<ActorProxy> > proxies;
+        mapToClose.GetAllProxies(proxies);
+        std::vector<osg::ref_ptr<ActorProxy> >::iterator i = proxies.begin();
+        while (i != proxies.end())
+        {
+            osg::ref_ptr<ActorProxy>& proxy = *i;
+            //if this proxy has a reference count greater than 1
+            //then its library may not close, but 2 is used here because
+            //the vector has a referece to it now.
+            if (proxy != NULL && proxy->referenceCount() <= 2)
+            {
+                i = proxies.erase(i);
+            }
+            else
+            {
+                ++i;
+            }
+        }
+
         //clear the proxies to make sure they are all freed.
         //one should not save AFTER calling this.
         mapToClose.ClearProxies();
@@ -513,12 +562,47 @@ namespace dtDAL
             }
             if (libMayClose)
             {
+                ActorPluginRegistry* aprToClose = 
+                    LibraryManager::GetInstance().GetRegistry(libToClose);
+
                 if (mLogger->IsLevelEnabled(Log::LOG_INFO))
                 {
                     mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
                         "About to unload library named %s.", libToClose.c_str());
                 }
-                LibraryManager::GetInstance().UnloadActorRegistry(libToClose);
+
+                //go through proxies still being held onto outside this library
+                //and see if the currently library is the source of any.
+                for (std::vector<osg::ref_ptr<ActorProxy> >::iterator i = proxies.begin();
+                    i != proxies.end(); ++i)
+                {
+                    osg::ref_ptr<ActorProxy>& proxy = *i;
+                 
+                    try 
+                    {
+                        ActorPluginRegistry* registry = LibraryManager::GetInstance().GetRegistryForType(proxy->GetActorType());
+                        //the proxy is found in the library that is about to close.
+                        if (aprToClose == registry) 
+                        {
+                            libMayClose = false;
+                            if (mLogger->IsLevelEnabled(Log::LOG_INFO))
+                                mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
+                                    "Library %s will not be closed because proxy with type %s and name %s has external references.", 
+                                    proxy->GetActorType().GetName().c_str(), libToClose.c_str(),
+                                    proxy->GetName().c_str());
+                        }
+                    }
+                    catch (const dtDAL::Exception& ex)
+                    {
+                        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                            "Error finding library for actor type %s: %s", 
+                            proxy->GetActorType().GetName().c_str(), ex.What().c_str());
+                    }
+                }
+                
+                //if the library may still close.
+                if (libMayClose)
+                    LibraryManager::GetInstance().UnloadActorRegistry(libToClose);
             }
 
         }

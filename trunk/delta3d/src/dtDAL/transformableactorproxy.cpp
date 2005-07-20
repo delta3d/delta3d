@@ -25,19 +25,18 @@
 #include "dtDAL/actorproxyicon.h"
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>
+#include <dtUtil/matrixutil.h>
 
-using namespace dtCore;
-using namespace dtDAL;
-
-namespace dtDAL 
+namespace dtDAL
 {
     void TransformableActorProxy::BuildPropertyMap()
     {
         const std::string GROUPNAME = "Transformable";
 
-        Transformable *trans = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if(trans == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+                    "dtCore::Transformable\n");
 
         AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
             MakeFunctor(*this, &TransformableActorProxy::SetRotation),
@@ -57,8 +56,8 @@ namespace dtDAL
             "Sets the scale of a transformable.",GROUPNAME));
 
         AddProperty(new BooleanActorProperty("Normal Rescaling", "Normal Rescaling",
-            MakeFunctor(*trans, &Transformable::SetNormalRescaling),
-            MakeFunctorRet(*trans, &Transformable::GetNormalRescaling),
+            MakeFunctor(*trans, &dtCore::Transformable::SetNormalRescaling),
+            MakeFunctorRet(*trans, &dtCore::Transformable::GetNormalRescaling),
             "Enables the automatic scaling of normals when a Transformable is scaled",
             GROUPNAME));
     }
@@ -66,62 +65,95 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     void TransformableActorProxy::SetRotation(const osg::Vec3 &rotation)
     {
-        Transformable *t = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+                    "dtCore::Transformable\n");
 
-        Transform trans;
+        mHPR = rotation;
+
+        //Normalize the rotation.
+        if (mHPR.x() < 0.0f)
+            mHPR.x() += 360.0f;
+        if (mHPR.x() > 360.0f)
+            mHPR.x() -= 360.0f;
+
+        if (mHPR.y() < 0.0f)
+            mHPR.y() += 360.0f;
+        if (mHPR.y() > 360.0f)
+            mHPR.y() -= 360.0f;
+
+        if (mHPR.z() < 0.0f)
+            mHPR.z() += 360.0f;
+        if (mHPR.z() > 360.0f)
+            mHPR.z() -= 360.0f;
+
+        dtCore::Transform trans;
         t->GetTransform(&trans);
-        trans.SetRotation(rotation[2], rotation[0], rotation[1]);
+        trans.SetRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]));
         t->SetTransform(&trans);
 
         //If we have a billboard update its rotation as well.
-        ActorProxyIcon *billBoard = GetBillBoardIcon();
-        if (billBoard != NULL)
-            billBoard->GetDrawable()->SetTransform(&trans);
+        if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+        {
+            ActorProxyIcon *billBoard = GetBillBoardIcon();
+            if (billBoard != NULL)
+                billBoard->SetActorRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]));
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void TransformableActorProxy::SetRotationFromMatrix(const osg::Matrix &rotation)
+    {
+        osg::Vec3 hpr;
+        dtUtil::MatrixUtil::MatrixToHpr(hpr,rotation);        
+        SetRotation(osg::Vec3(hpr[1],hpr[2],hpr[0]));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 TransformableActorProxy::GetRotation()
     {
-        Transformable *t = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+                    "dtCore::Transformable\n");
 
-        Transform trans;
-        t->GetTransform(&trans);
-
-        float h,p,r;
-        trans.GetRotation(h,p,r);
-        return osg::Vec3(p,r,h);
+        return mHPR;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void TransformableActorProxy::SetTranslation(const osg::Vec3 &translation)
     {
-        Transformable *t = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+                    "dtCore::Transformable\n");
 
-        Transform trans;
+        dtCore::Transform trans;
         t->GetTransform(&trans);
         trans.SetTranslation(translation[0], translation[1], translation[2]);
         t->SetTransform(&trans);
 
         //If we have a billboard update its position as well.
-        ActorProxyIcon *billBoard = GetBillBoardIcon();
-        if (billBoard != NULL)
-            billBoard->GetDrawable()->SetTransform(&trans);
+        if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+        {
+            ActorProxyIcon *billBoard = GetBillBoardIcon();
+            if (billBoard != NULL)
+                billBoard->SetPosition(translation);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 TransformableActorProxy::GetTranslation()
     {
-        Transformable *t = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+                    " dtCore::Transformable\n");
 
-        Transform trans;
+        dtCore::Transform trans;
         t->GetTransform(&trans);
         float x, y, z;
         trans.GetTranslation(x, y, z);
@@ -131,29 +163,34 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     void TransformableActorProxy::SetScale(const osg::Vec3 &scale)
     {
-        Transformable *t = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+                    "dtCore::Transformable\n");
 
-        Transform trans;
+        dtCore::Transform trans;
         t->GetTransform(&trans);
         trans.SetScale(scale[0], scale[1], scale[2]);
         t->SetTransform(&trans);
 
         //If we have a billboard update its scale as well.
-        ActorProxyIcon *billBoard = GetBillBoardIcon();
-        if (billBoard != NULL)
-            billBoard->GetDrawable()->SetTransform(&trans);
+        if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
+            GetRenderMode() == ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+        {
+            ActorProxyIcon *billBoard = GetBillBoardIcon();
+            if (billBoard != NULL)
+                billBoard->SetScale(scale);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     osg::Vec3 TransformableActorProxy::GetScale()
     {
-        Transformable *t = dynamic_cast<Transformable*>(mActor.get());
+        dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
 
-        Transform trans;
+        dtCore::Transform trans;
         t->GetTransform(&trans);
         float x, y, z;
         trans.GetScale(x, y, z);

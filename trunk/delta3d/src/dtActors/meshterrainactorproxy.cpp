@@ -22,13 +22,14 @@
 #include "dtActors/meshterrainactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/resourcedescriptor.h"
+#include "dtDAL/actorproxyicon.h"
 
 #include <dtCore/object.h>
 
 using namespace dtCore;
 using namespace dtDAL;
 
-namespace dtActors 
+namespace dtActors
 {
     void MeshTerrainActorProxy::BuildPropertyMap()
     {
@@ -48,14 +49,14 @@ namespace dtActors
     void MeshTerrainActorProxy::LoadFile(const std::string &fileName)
     {
         dtCore::Object *obj = dynamic_cast<dtCore::Object*>(mActor.get());
-        if(!obj) 
+        if(!obj)
         {
             EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
                 "Actor should be type dtCore::Object");
         }
 
         obj->LoadFile(fileName);
-        if (obj->GetOSGNode() == NULL) 
+        if (obj->GetOSGNode() == NULL)
         {
             LOG_ERROR("Error loading terrain mesh file: " + fileName);
         }
@@ -65,7 +66,7 @@ namespace dtActors
     const dtDAL::ActorProxy::RenderMode &MeshTerrainActorProxy::GetRenderMode()
     {
         dtDAL::ResourceDescriptor *resource = GetResource("terrain mesh");
-        if (resource != NULL) 
+        if (resource != NULL)
         {
             if (resource->GetResourceIdentifier().empty() || mActor->GetOSGNode() == NULL)
                 return dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON;
@@ -79,7 +80,7 @@ namespace dtActors
     //////////////////////////////////////////////////////////////////////////
     dtDAL::ActorProxyIcon *MeshTerrainActorProxy::GetBillBoardIcon()
     {
-        if(!mBillBoardIcon.valid()) 
+        if(!mBillBoardIcon.valid())
         {
             mBillBoardIcon =
                 new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::MESHTERRAIN);

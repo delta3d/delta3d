@@ -1,20 +1,20 @@
-/* 
-* Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2005, BMH Associates, Inc. 
+/*
+* Delta3D Open Source Game and Simulation Engine Level Editor
+* Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
-* along with this library; if not, write to the Free Software Foundation, Inc., 
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+* You should have received a copy of the GNU General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * @author Curtiss Murphy
 */
@@ -41,7 +41,7 @@
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/mainwindow.h"
 
-namespace dtEditQt 
+namespace dtEditQt
 {
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -53,9 +53,9 @@ namespace dtEditQt
             this, SLOT(refreshActorTypes()));
         connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryRemoved()),
             this, SLOT(refreshActorTypes()));
-        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()), 
+        connect(&EditorEvents::getInstance(), SIGNAL(currentMapChanged()),
             this, SLOT(refreshActorTypes()));
-        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()), 
+        connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()),
             this, SLOT(refreshActorTypes()));
         connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
             this, SLOT(clearActorTypesTree()));
@@ -75,7 +75,7 @@ namespace dtEditQt
         //vBox->setMargin(3);
 
         // create root
-        tree = new QTreeWidget(groupBox); 
+        tree = new QTreeWidget(groupBox);
         tree->setColumnCount(1);
         connect(tree, SIGNAL(itemSelectionChanged()), this, SLOT(treeSelectionChanged()));
         tree->header()->hide();
@@ -84,7 +84,7 @@ namespace dtEditQt
         createActorBtn = new QPushButton(tr("Create Actor"), this);
         connect(createActorBtn, SIGNAL(clicked()), this, SLOT(createActorPressed()));
 
-        QHBoxLayout *btnLayout = new QHBoxLayout(); 
+        QHBoxLayout *btnLayout = new QHBoxLayout();
         btnLayout->addStretch(1);
         btnLayout->addWidget(createActorBtn);
         btnLayout->addStretch(1);
@@ -99,7 +99,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorBrowser::clearActorTypesTree() 
+    void ActorBrowser::clearActorTypesTree()
     {
         // get the currently open tree branches and current caret position so we
         // can scroll back to it as best as we can later
@@ -111,28 +111,28 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorBrowser::reloadActors() 
+    void ActorBrowser::reloadActors()
     {
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 
         // resets everything and marks the current expansion
         clearActorTypesTree();
 
-        dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes); 
+        dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
 
-        // recreate our root. 
+        // recreate our root.
         rootActorType = new ActorTypeTreeWidget(tree, tr("Actor Types"));
 
         // iterate through the actor types and create all the internal nodes.
-        for(unsigned int i = 0; i < actorTypes.size(); i++) 
+        for(unsigned int i = 0; i < actorTypes.size(); i++)
         {
-            if (actorTypes[i] != NULL) 
+            if (actorTypes[i] != NULL)
             {
                 QString fullCategory(tr(actorTypes[i].get()->GetCategory().c_str()));
 
-                if (!fullCategory.isNull()) 
+                if (!fullCategory.isNull())
                 {
-                    QStringList subCategories = fullCategory.split(tr(ActorTypeTreeWidget::CATEGORY_SEPARATOR.c_str()), 
+                    QStringList subCategories = fullCategory.split(tr(ActorTypeTreeWidget::CATEGORY_SEPARATOR.c_str()),
                         QString::SkipEmptyParts);
                     QMutableStringListIterator *listIterator = new QMutableStringListIterator(subCategories);
                     rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i]);
@@ -148,34 +148,34 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorBrowser::handleEnableCreateActor() 
+    void ActorBrowser::handleEnableCreateActor()
     {
         ActorTypeTreeWidget *selectedWidget = getSelectedActorTreeWidget();
 
         // if we have a leaf, then enable the button
-        if (selectedWidget != NULL && selectedWidget->isLeafNode()) 
+        if (selectedWidget != NULL && selectedWidget->isLeafNode())
         {
             createActorBtn->setEnabled(true);
             return;
         }
 
         // disable the button if we got here.
-        if (createActorBtn != NULL) 
-        { 
+        if (createActorBtn != NULL)
+        {
             createActorBtn->setEnabled(false);
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    ActorTypeTreeWidget *ActorBrowser::getSelectedActorTreeWidget() 
+    ActorTypeTreeWidget *ActorBrowser::getSelectedActorTreeWidget()
     {
         ActorTypeTreeWidget *returnVal = NULL;
 
-        if (tree != NULL) 
+        if (tree != NULL)
         {
             QList<QTreeWidgetItem *> list = tree->selectedItems();
 
-            if (!list.isEmpty()) 
+            if (!list.isEmpty())
             {
                 returnVal = dynamic_cast<ActorTypeTreeWidget*>(list[0]);
             }
@@ -188,9 +188,9 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void ActorBrowser::markCurrentExpansion()
     {
-        if (tree != NULL && rootActorType != NULL) 
+        if (tree != NULL && rootActorType != NULL)
         {
-            // we trap the root node separately to make the tree walking easier. 
+            // we trap the root node separately to make the tree walking easier.
             rootNodeWasExpanded = tree->isItemExpanded(rootActorType);
 
             // clear out previous marks
@@ -207,18 +207,18 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void ActorBrowser::recurseMarkCurrentExpansion(ActorTypeTreeWidget *parent, 
+    void ActorBrowser::recurseMarkCurrentExpansion(ActorTypeTreeWidget *parent,
         core::tree<QString> &currentTree)
     {
-        for (int i = 0; i < parent->childCount(); i++) 
+        for (int i = 0; i < parent->childCount(); i++)
         {
             ActorTypeTreeWidget *child = dynamic_cast<ActorTypeTreeWidget*>(parent->child(i));
 
             // if we have children, then we could potentially be expanded...
-            if (child != NULL && child->childCount() > 0) 
+            if (child != NULL && child->childCount() > 0)
             {
-               
-                if (tree->isItemExpanded(child)) 
+
+                if (tree->isItemExpanded(child))
                 {
                     // add it to our list
                     core::tree<QString> &insertedItem = currentTree.
@@ -235,7 +235,7 @@ namespace dtEditQt
     void ActorBrowser::restorePreviousExpansion()
     {
         if (tree != NULL && rootActorType != NULL) {
-            // re-expand the root node separately to make the tree walking easier. 
+            // re-expand the root node separately to make the tree walking easier.
             if (rootNodeWasExpanded)
                 tree->expandItem(rootActorType);
 
@@ -247,7 +247,7 @@ namespace dtEditQt
     }
 
     /////////////////////////////////////////////////////////////////////////////////
-    void ActorBrowser::recurseRestorePreviousExpansion(ActorTypeTreeWidget *parent, 
+    void ActorBrowser::recurseRestorePreviousExpansion(ActorTypeTreeWidget *parent,
         core::tree<QString> &currentTree)
     {
         // walk through the children...
@@ -285,14 +285,14 @@ namespace dtEditQt
             EditorData::getInstance().getMainWindow()->startWaitCursor();
 
             // create our new object
-            osg::ref_ptr<dtDAL::ActorProxy> proxy = 
-                dtDAL::LibraryManager::GetInstance().CreateActorProxy(selectedWidget->getActorType()); 
+            osg::ref_ptr<dtDAL::ActorProxy> proxy =
+                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType().get());
 
-            if (proxy.valid()) 
+            if (proxy.valid())
             {
                 // add the new proxy to the map
                 osg::ref_ptr<dtDAL::Map> mapPtr = EditorData::getInstance().getCurrentMap();
-                if (mapPtr.valid()) 
+                if (mapPtr.valid())
                 {
                     mapPtr->AddProxy(*(proxy.get()));
                 }
@@ -312,11 +312,11 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorBrowser::treeSelectionChanged() 
+    void ActorBrowser::treeSelectionChanged()
     {
         handleEnableCreateActor();
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     void ActorBrowser::refreshActorTypes()
     {

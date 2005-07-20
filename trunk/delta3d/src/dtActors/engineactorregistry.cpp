@@ -85,7 +85,7 @@ namespace dtActors
         mActorFactory->RegisterType<SpotlightActorProxy>(spotLightActor);
 
         //Static Mesh...
-        dtDAL::ActorType *staticMeshActor = new dtDAL::ActorType("Static Mesh Object",
+        dtDAL::ActorType *staticMeshActor = new dtDAL::ActorType("Static Mesh",
             "dtcore", "Loadable static mesh actor.");
         mActorFactory->RegisterType<StaticMeshActorProxy>(staticMeshActor);
 

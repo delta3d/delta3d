@@ -23,7 +23,7 @@
 #define DELTA_PROJECTTESTS_H
 
 
-#include <tree.h>
+#include <dtDAL/tree.h>
 #include <dtDAL/log.h>
 
 #include <cppunit/extensions/HelperMacros.h>

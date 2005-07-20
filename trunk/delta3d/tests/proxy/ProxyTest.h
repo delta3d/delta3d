@@ -13,11 +13,25 @@
 #include "dtDAL/datatype.h"
 #include "dtActors/baselightactorproxy.h"
 
-using namespace std;
 using namespace dtDAL;
 using namespace dtCore;
 using namespace dtABC;
 
+std::ostream& operator << (std::ostream &o, const osg::Vec3 &vec)
+{
+    o << vec[0] << ' ' << vec[1] << ' ' << vec[2];
+    return o;
+}
+std::ostream& operator << (std::ostream &o, const osg::Vec4 &vec)
+{
+    o << vec[0] << ' ' << vec[1] << ' ' << vec[2] << ' ' << vec[3];
+    return o;
+}
+std::ostream& operator << (std::ostream &o, const osg::Vec2 &vec)
+{
+    o << vec[0] << ' ' << vec[1];
+    return o;
+}
 
 class ProxyTest : public CPPUNIT_NS::TestFixture
 {
@@ -28,25 +42,8 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST_SUITE_END();
 
 private:
-
-    friend ostream& operator << (ostream &o, const osg::Vec3 &vec)
-    {
-        o << vec[0] << ' ' << vec[1] << ' ' << vec[2];
-        return o;
-    }
-    friend ostream& operator << (ostream &o, const osg::Vec4 &vec)
-    {
-        o << vec[0] << ' ' << vec[1] << ' ' << vec[2] << ' ' << vec[3];
-        return o;
-    }
-    friend ostream& operator << (ostream &o, const osg::Vec2 &vec)
-    {
-        o << vec[0] << ' ' << vec[1];
-        return o;
-    }
-
     LibraryManager &libMgr;
-    vector<osg::ref_ptr<ActorType> > actors;
+    std::vector<osg::ref_ptr<ActorType> > actors;
 
     void testProps(ActorProxy& proxy);
     void compareProxies(ActorProxy& ap1, ActorProxy& ap2);

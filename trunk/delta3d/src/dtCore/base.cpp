@@ -19,8 +19,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Base)
 Base::Base(const std::string& name) : mName(name)
 {
    RegisterInstance(this);
-
-   mId = new UniqueId();
 }
 
 /**

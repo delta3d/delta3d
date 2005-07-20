@@ -46,14 +46,23 @@ namespace dtActors
     public:
         typedef std::set<osg::ref_ptr<osg::Texture2D> > TextureList;
 
-        ExtractTexturesVisitor() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN) { }
-        virtual ~ExtractTexturesVisitor() { }
+        ExtractTexturesVisitor() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
+        {
+            mMaxTexCoordArrayCount = 0;
+        }
+
+        virtual ~ExtractTexturesVisitor()
+        {
+
+        }
 
         /**
-         * Searches a geode and its drawables for statesets containing any textures.
+         * Searches a geode for drawables containing texture coordinates.
+         * Based on which texture units the coordinates are mapped to,
+         * appropriate texture slots are extracted.
          * @param geode The geometry node to check.
          */
-        virtual void Apply(osg::Geode &geode)
+        virtual void apply(osg::Geode &geode)
         {
             FindTextures(geode.getStateSet());
             for (unsigned int i=0; i<geode.getNumDrawables(); i++)
@@ -62,12 +71,20 @@ namespace dtActors
                 if (geom != NULL)
                 {
                     FindTextures(geom->getStateSet());
+                    unsigned int texCoordCount = geom->getNumTexCoordArrays();
+                    if (texCoordCount > mMaxTexCoordArrayCount)
+                        mMaxTexCoordArrayCount = texCoordCount;
                 }
             }
 
-            traverse((osg::Node &)geode);
+            traverse(geode);
         }
 
+        /**
+         * Searchs a stateset for texture attributes.  These attributes are then
+         * extracted into a list of textures.
+         * @param ss
+         */
         void FindTextures(osg::StateSet *ss)
         {
             if (ss == NULL)
@@ -75,6 +92,7 @@ namespace dtActors
 
             osg::StateSet::TextureAttributeList texAttribs;
             osg::StateSet::TextureAttributeList::iterator itor;
+//             //unsigned int currTextureCount = mTextureList.size();
 
             texAttribs = ss->getTextureAttributeList();
             for (itor=texAttribs.begin(); itor!=texAttribs.end(); ++itor)
@@ -86,7 +104,7 @@ namespace dtActors
                     if (attribItor->first.first == osg::StateAttribute::TEXTURE)
                     {
                         osg::Texture2D *tex2D =
-                            dynamic_cast<osg::Texture2D *>(attribItor->second.first.get());
+                                dynamic_cast<osg::Texture2D *>(attribItor->second.first.get());
                         if (tex2D != NULL)
                             mTextureList.insert(tex2D);
                     }
@@ -96,13 +114,28 @@ namespace dtActors
             }
         }
 
+        /**
+         * Gets the list of textures found by the visitor.
+         * @return
+         */
         TextureList& GetTextureList()
         {
             return mTextureList;
         }
 
+        /**
+         * Returns the number of texture coordniate arrays found during
+         * the traversal of this visitor.
+         * @return
+         */
+        unsigned int GetMaxTexCoordCount() const
+        {
+            return mMaxTexCoordArrayCount;
+        }
+
     private:
         TextureList mTextureList;
+        unsigned int mMaxTexCoordArrayCount;
     };
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -166,21 +199,23 @@ namespace dtActors
         }
 
         //std::cout << "Writing node file." << std::endl;
-        //osgDB::writeNodeFile(*obj->GetOSGNode(),"tank-loaded.osg");
+        //osgDB::writeNodeFile(*obj->GetOSGNode(),"testtextures.osg");
         //std::cout << "Done writing node file." << std::endl;
 
         //Next, run our visitor over the loaded mesh and extract the texture slots.
-//      const std::string texGroupName = "Textures";
-//      const std::string texPropBaseName = "texture";
-        //ExtractTexturesVisitor tv;
-        //obj->GetOSGNode()->accept(tv);
-
-        //Now dynamically add each texture attribute as a resource property.
-//         ExtractTexturesVisitor::TextureList &texList = tv.getTextureList();
+//         const std::string texGroupName = "Textures";
+//         const std::string texPropBaseName = "Channel";
+//         ExtractTexturesVisitor tv;
+//         obj->GetOSGNode()->accept(tv);
+//
+//         //Now dynamically add each texture attribute as a resource property.
+//         ExtractTexturesVisitor::TextureList &texList = tv.GetTextureList();
 //         ExtractTexturesVisitor::TextureList::iterator texItor;
-//         int count = 0;
+//
 //         std::ostringstream ss;
 //         std::cout << "NumTextures: " << texList.size() << std::endl;
+//         std::cout << "NumTexCoords: " << tv.GetMaxTexCoordCount() << std::endl;
+
 //         for (texItor=texList.begin(); texItor!=texList.end(); ++texItor) {
 //             ss.clear();
 //             ss.str("");

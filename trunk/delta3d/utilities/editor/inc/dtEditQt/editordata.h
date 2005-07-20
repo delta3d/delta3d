@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -103,7 +103,7 @@ namespace dtEditQt
          *
          * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
          * with empty strings.
-         * @see setSoundResource, setMeshResource, setParticleResource
+         * @see setSoundResource, setMeshResource, setParticleResource, setTerrainResource, setCharacterResource
          */
         void setCurrentTextureResource(const dtDAL::ResourceDescriptor selectedResource);
 
@@ -114,7 +114,7 @@ namespace dtEditQt
          *
          * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
          * with empty strings.
-         * @see setSoundResource, setMeshResource, setTextureResource
+         * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
          */
         void setCurrentParticleResource(const dtDAL::ResourceDescriptor selectedResource);
 
@@ -125,9 +125,20 @@ namespace dtEditQt
          *
          * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
          * with empty strings.
-         * @see setSoundResource, setMeshResource, setTextureResource
+         * @see setSoundResource, setMeshResource, setTextureResource, setTerrainResource
          */
         void setCurrentCharacterResource(const dtDAL::ResourceDescriptor selectedResource);
+
+        /**
+         * Sets the currently selected terrain resource.  This is called when the user is
+         * using the resource browser and is selecting resources.  It is used by the
+         * property editor when the user selects 'Use Current'.
+         *
+         * @param The currently selected resource.  If none, then pass in ResourceDescriptor()
+         * with empty strings.
+         * @see setSoundResource, setMeshResource, setTextureResource, setCharacterResource
+         */
+        void setCurrentTerrainResource(const dtDAL::ResourceDescriptor selectedResource);
 
         /**
          * Gets the current grid size.
@@ -187,6 +198,16 @@ namespace dtEditQt
         dtDAL::ResourceDescriptor getCurrentCharacterResource(){return this->characterResource;}
 
         /**
+         * Gets the currently selected Character resource.  This is used by the
+         * property editor when the user selects 'Use Current'.
+         *
+         * @return The currently selected resource descriptor.  Check
+         * resource.getResourceIdentifier().empty() to see if it's actually none.
+         * @see getSoundResource, getMeshResource, getTextureResource, getTerrainResource
+         */
+        dtDAL::ResourceDescriptor getCurrentTerrainResource(){return this->terrainResource;}
+
+        /**
          * Returns a pointer the the main window.
          * @return The main window.
          */
@@ -204,7 +225,7 @@ namespace dtEditQt
          * @note If newDir is empty the directory will not be modified
          * @note The new library path has to be in the system path.
          */
-        inline void setCurrentLibraryDirectory(const std::string &newDir) 
+        inline void setCurrentLibraryDirectory(const std::string &newDir)
         {
             if(!newDir.empty())
                 currentLibraryDirectory = newDir;
@@ -291,14 +312,6 @@ namespace dtEditQt
         }
 
         /**
-         * UndoManager setter
-         */
-        /*inline void setUndoManager(UndoManager *newManager)
-        {
-            undoManager = newManager;
-        }*/
-
-        /**
          * Recent project accessor
          */
         inline std::list<std::string>& getRecentProjects() { return recentProjects; }
@@ -369,6 +382,7 @@ namespace dtEditQt
         dtDAL::ResourceDescriptor textureResource;
         dtDAL::ResourceDescriptor particleResource;
         dtDAL::ResourceDescriptor characterResource;
+        dtDAL::ResourceDescriptor terrainResource;
 
         std::list<std::string> recentMaps;
         std::list<std::string> recentProjects;

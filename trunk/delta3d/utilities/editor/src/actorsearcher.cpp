@@ -1,18 +1,18 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine Level Editor 
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free 
+* Software Foundation; either version 2 of the License, or (at your option) 
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
+* You should have received a copy of the GNU General Public License 
 * along with this library; if not, write to the Free Software Foundation, Inc., 
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
@@ -85,6 +85,7 @@ namespace dtEditQt
         label = new QLabel(tr("Name:"),searchBox);
         label->setAlignment(Qt::AlignRight);
         actorNameEdit = new QLineEdit(searchBox);
+        actorNameEdit->setToolTip(QString("Restrict the search by Actor Name - '*' and '?' are legal wildcards"));
         gridLayout->addWidget(label, 0, 0);
         gridLayout->addWidget(actorNameEdit, 0, 1);
 
@@ -92,6 +93,7 @@ namespace dtEditQt
         label = new QLabel(tr("Category:"),searchBox);
         label->setAlignment(Qt::AlignRight);
         categoryBox = new QComboBox(searchBox);
+        categoryBox->setToolTip(QString("Restrict the search by Actor Category"));
         gridLayout->addWidget(label, 1, 0);
         gridLayout->addWidget(categoryBox, 1, 1);
 
@@ -99,13 +101,7 @@ namespace dtEditQt
         label = new QLabel(tr("Type:"),searchBox);
         label->setAlignment(Qt::AlignRight);
         typeBox = new QComboBox(searchBox);
-        gridLayout->addWidget(label,2, 0);
-        gridLayout->addWidget(typeBox, 2, 1);
-
-        // build the type combo box
-        label = new QLabel(tr("Type:"),searchBox);
-        label->setAlignment(Qt::AlignRight);
-        typeBox = new QComboBox(searchBox);
+        typeBox->setToolTip(QString("Restrict the search by Actor Type"));
         gridLayout->addWidget(label,2, 0);
         gridLayout->addWidget(typeBox, 2, 1);
 
@@ -113,14 +109,17 @@ namespace dtEditQt
         label = new QLabel(tr("Class:"),searchBox);
         label->setAlignment(Qt::AlignRight);
         classBox = new QComboBox(searchBox);
+        classBox->setToolTip(QString("Restrict the search by Actor Class Name (handles superclasses)"));
         gridLayout->addWidget(label, 3, 0);
         gridLayout->addWidget(classBox, 3, 1);
 
         // search btn
         searchBtn = new QPushButton(tr("Search"), searchBox);
+        searchBtn->setToolTip(QString("Searches for Actors using search criteria"));
         connect(searchBtn, SIGNAL(clicked()), this, SLOT(searchPressed()));
         // clear btn
         clearBtn = new QPushButton(tr("Clear Search"), searchBox);
+        clearBtn->setToolTip(QString("Clears search results and search criteria"));
         connect(clearBtn, SIGNAL(clicked()), this, SLOT(refreshAll()));
 
         // build up the button layout
@@ -271,7 +270,9 @@ namespace dtEditQt
 
         // empty out our table before we add stuff
         resultsTable->clearAll();
+        resultsTable->setUpdatesEnabled(false);
         resultsTable->addProxies(foundProxies);
+        resultsTable->setUpdatesEnabled(true);
         //showResults(foundProxies);
 
         EditorData::getInstance().getMainWindow()->endWaitCursor();

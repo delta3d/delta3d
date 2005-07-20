@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -40,6 +40,7 @@ class QAction;
 class QMenu;
 class QTreeWidgetItem;
 class QContextMenuEvent;
+class QIcon;
 
 namespace dtDAL
 {
@@ -190,9 +191,10 @@ namespace dtEditQt
         * @note This builds the resource tree by assigning a name, the data type,
         * and the parent widget
         * @param dtDAL DataType - a simple 2 string resource path and name
+        * @param QIcon resource icon for our leaf nodes
         * @param QWidget the parent of the widget
         */
-        virtual void buildResourceTree(dtDAL::DataType &type, QWidget *parent);
+        virtual void buildResourceTree(dtDAL::DataType &type, QWidget *parent, QIcon *resourceIcon);
 
     protected:
         /**
@@ -249,6 +251,8 @@ namespace dtEditQt
         QAction *setDeleteAction;
         QAction *setCategoryAction;
         QAction *setImportAction;
+
+        QIcon resourceIcon;
     };
 }
 #endif

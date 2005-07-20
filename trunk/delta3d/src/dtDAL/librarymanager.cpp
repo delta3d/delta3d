@@ -27,9 +27,7 @@
 #include <osgDB/FileNameUtils>
 #include <dtCore/scene.h>
 
-#include <iostream>
-
-namespace dtDAL 
+namespace dtDAL
 {
     //Singleton global variable for the library manager.
     osg::ref_ptr<LibraryManager> LibraryManager::mInstance(NULL);
@@ -56,7 +54,7 @@ namespace dtDAL
         //freed in the dynamic libraries since that's where the memory was
         //allocated.
         RegistryMapItor itor = mRegistries.begin();
-        while (itor != mRegistries.end()) 
+        while (itor != mRegistries.end())
         {
             //At this point, we know that the smart pointer holding the registry has a
             //reference count of 1 since the LibraryManager's registry map is the owner
@@ -80,7 +78,7 @@ namespace dtDAL
         //it is, we add it to the manager's list of currently loaded registries.
         //If it is not, we generate a unique name for it and then add it.
         RegistryMapItor regItor = mRegistries.find(libName);
-        if (regItor != mRegistries.end()) 
+        if (regItor != mRegistries.end())
         {
             msg.clear();
             msg.str("");
@@ -89,11 +87,11 @@ namespace dtDAL
             LOG_ERROR(msg.str());
             return;
         }
-        
+
         osgDB::DynamicLibrary *dynLib;
         RegistryEntry newEntry;
         std::string actualLibName;
-        
+
         //Get the system dependent name of the library.
         actualLibName = GetPlatformSpecificLibraryName(libName);
 
@@ -101,14 +99,14 @@ namespace dtDAL
         msg << "Loading actor registry library " << actualLibName;
         LOG_INFO(msg.str());
         dynLib = osgDB::DynamicLibrary::loadLibrary(actualLibName);
-        if (!dynLib) 
+        if (!dynLib)
         {
             msg.clear();
             msg.str("");
             msg << "Unable to load actor registry " << actualLibName;
             EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,msg.str());
         }
-        else 
+        else
         {
             newEntry.dynLib = dynLib;
         }
@@ -121,7 +119,7 @@ namespace dtDAL
 
         //Make sure the plugin actually implemented these functions and they
         //have been exported.
-        if (!createFn) 
+        if (!createFn)
         {
             msg.clear();
             msg.str("");
@@ -130,7 +128,7 @@ namespace dtDAL
             EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,msg.str());
         }
 
-        if (!destroyFn) 
+        if (!destroyFn)
         {
             msg.clear();
             msg.str("");
@@ -154,17 +152,17 @@ namespace dtDAL
         newEntry.registry->RegisterActorTypes();
         newEntry.registry->GetSupportedActorTypes(actorTypes);
         int numUniqueActors = 0;
-        for (unsigned int i=0; i<actorTypes.size(); i++) 
+        for (unsigned int i=0; i<actorTypes.size(); i++)
         {
             ActorTypeMapItor itor = mActors.find(actorTypes[i]);
-            if (itor != mActors.end()) 
+            if (itor != mActors.end())
             {
                 msg.clear();
                 msg.str("");
                 msg << "Duplicate actor type " << *actorTypes[i] << " found. Will not be added.";
                 LOG_ERROR(msg.str());
             }
-            else 
+            else
             {
                 mActors.insert(std::make_pair(actorTypes[i],newEntry.registry));
                 ++numUniqueActors;
@@ -183,7 +181,7 @@ namespace dtDAL
     {
         actorTypes.clear();
         ActorTypeMapItor itor = mActors.begin();
-        while (itor != mActors.end()) 
+        while (itor != mActors.end())
         {
             actorTypes.push_back(itor->first);
             ++itor;
@@ -203,24 +201,13 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<ActorProxy> LibraryManager::CreateActorProxy(osg::ref_ptr<ActorType> actorType)
+    osg::ref_ptr<ActorProxy> LibraryManager::CreateActorProxy(ActorType& actorType)
     {
-        std::ostringstream error;
-
-        //To create an new actor proxy, first we search our map of actor types
-        //to locate the actor registry that knows how to create a proxy of the
-        //requested type.
-        ActorTypeMapItor found = mActors.find(actorType);
-        if (found == mActors.end()) 
-        {
-            error << "Requested actor type: " << actorType->GetName() <<
-                " is unknown or has not been registered.";
-            EXCEPT(ExceptionEnum::ObjectFactoryUnknownType,error.str());
-        }
+        ActorPluginRegistry* apr = GetRegistryForType(actorType);
 
         //Now we know which registry to use, so tell the registry to
         //create the proxy object and return it.
-        osg::ref_ptr<ActorProxy> proxy = found->second->CreateActorProxy(actorType);
+        osg::ref_ptr<ActorProxy> proxy = apr->CreateActorProxy(actorType);
         return proxy;
     }
 
@@ -233,6 +220,27 @@ namespace dtDAL
             return NULL;
         else
             return itor->second.registry.get();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    ActorPluginRegistry *LibraryManager::GetRegistryForType(ActorType& actorType) 
+    {
+        std::ostringstream error;
+
+        //To create an new actor proxy, first we search our map of actor types
+        //to locate the actor registry that knows how to create a proxy of the
+        //requested type.
+        osg::ref_ptr<ActorType> actorTypePtr(&actorType);
+        
+        ActorTypeMapItor found = mActors.find(actorTypePtr);
+        if (found == mActors.end())
+        {
+            error << "Requested actor type: " << actorType.GetName() <<
+                " is unknown or has not been registered.";
+            EXCEPT(ExceptionEnum::ObjectFactoryUnknownType,error.str());
+        }
+        
+        return found->second.get();        
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -69,7 +69,7 @@ namespace dtDAL
             const std::string &desc="") : mName(name), mCategory(category),
             mDescription(desc)
         {
-        	GenerateUniqueId();
+        	   GenerateUniqueId();
         }
 
         /**

@@ -1,18 +1,18 @@
 /*
- * Delta3D Open Source Game and Simulation Engine
+ * Delta3D Open Source Game and Simulation Engine Level Editor
  * Copyright (C) 2005, BMH Associates, Inc.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
+ * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
@@ -25,9 +25,9 @@
 #include <osg/Material>
 #include <osg/CullFace>
 #include <osg/Group>
-#include <osg/Billboard>
 #include <osg/Geometry>
 #include <osg/NodeVisitor>
+#include <osgDB/WriteFile>
 #include <dtCore/transformable.h>
 
 #include "dtDAL/actorproxyicon.h"
@@ -36,74 +36,9 @@
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/editoractions.h"
+#include "dtEditQt/editordata.h"
 
-namespace dtEditQt 
-{
-
-    ///////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * This node visitor is invoked when we select an object in the scene.  This
-     * ensures that the color binding on the object does not affect the wireframe
-     * overlay used to convey selected objects.
-     */
-    class ExtractSelectionVisitor : public osg::NodeVisitor {
-    public:
-
-        /**
-         * Constructs the visitor object.
-         */
-        ExtractSelectionVisitor() : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)
-        {
-            this->copyOp = osg::CopyOp::DEEP_COPY_OBJECTS |
-                           osg::CopyOp::DEEP_COPY_NODES |
-                           osg::CopyOp::DEEP_COPY_DRAWABLES;
-        }
-
-        /**
-         * Empty destructor.
-         */
-        virtual ~ExtractSelectionVisitor() { }
-
-        /**
-         * Overridden to ensure that no action is taken on billboards in the scene.
-         * @param billBoard The billboard scene node.
-         */
-        virtual void apply(osg::Billboard &billBoard) {
-            traverse(billBoard);
-        }
-
-        /**
-         * Copies the incoming geode and turns off any color binding that
-         * may have been set on the copy.
-         * @param geode
-         */
-        virtual void apply(osg::Geode &geode)
-        {
-            osg::Geode *copyGeode = new osg::Geode(geode,this->copyOp);
-            unsigned int i;
-
-            //Make sure we turn off color binding so the wireframe color is
-            //correct.
-            for (i=0; i<copyGeode->getNumDrawables(); i++) {
-                osg::Geometry *geom = copyGeode->getDrawable(i)->asGeometry();
-                if (geom != NULL) {
-                    geom->setColorBinding(osg::Geometry::BIND_OFF);
-                }
-            }
-
-            for (i=0; i<geode.getNumParents(); i++) {
-                geode.getParent(i)->replaceChild(&geode,copyGeode);
-            }
-
-            traverse(*copyGeode);
-        }
-
-    private:
-        osg::CopyOp copyOp;
-    };
-    ///////////////////////////////////////////////////////////////////////////////
-
+namespace dtEditQt {
 
     ///////////////////////////////////////////////////////////////////////////////
     ViewportOverlay::ViewportOverlay()
@@ -135,91 +70,87 @@ namespace dtEditQt
     void ViewportOverlay::onActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors)
     {
         if (actors.empty()) {
-            select(NULL);
-            this->currentActorSelection.clear();
+            clearCurrentSelection();
             EditorActions::getInstance().actionEditDeleteActor->setEnabled(false);
             EditorActions::getInstance().actionEditDuplicateActor->setEnabled(false);
             EditorActions::getInstance().actionEditGroundClampActors->setEnabled(false);
-        }
-        else 
-        {
-            if (!this->multiSelectMode) 
-            {
-                select(NULL);
-                this->currentActorSelection.clear();
-            }
-
-            for (unsigned int i=0; i<actors.size(); i++)
-            {
-                const dtDAL::ActorProxy::RenderMode &renderMode = actors[i]->GetRenderMode();
-                dtDAL::ActorProxyIcon *billBoardIcon = actors[i]->GetBillBoardIcon();
-
-                if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON) 
-                {
-                    if (billBoardIcon != NULL)
-                        select(actors[i]->GetBillBoardIcon()->GetDrawable());
-                    else
-                        LOG_ERROR("ActorProxy: " + actors[i]->GetName() + " has NULL billboard.");
-                }
-                else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR) 
-                {
-                    select(actors[i]->GetActor());
-                }
-                else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) 
-                {
-                    select(actors[i]->GetActor());
-
-                    if (billBoardIcon != NULL)
-                        select(actors[i]->GetBillBoardIcon()->GetDrawable());
-                    else
-                        LOG_ERROR("ActorProxy: " + actors[i]->GetName() + " has NULL billboard.");
-                }
-                else 
-                {
-                    //If we got here, then the proxy wishes the system to determine how to display
-                    //the proxy.
-                }
-
-                this->currentActorSelection.insert(actors[i]);
-            }
-
-            EditorActions::getInstance().actionEditDeleteActor->setEnabled(true);
-            EditorActions::getInstance().actionEditDuplicateActor->setEnabled(true);
-            EditorActions::getInstance().actionEditGroundClampActors->setEnabled(true);
+            EditorActions::getInstance().actionEditGotoActor->setEnabled(false);
+            ViewportManager::getInstance().refreshAllViewports();
+            return;
         }
 
+        if (!this->multiSelectMode)
+            clearCurrentSelection();
+
+        for (unsigned int i=0; i<actors.size(); i++) {
+            const dtDAL::ActorProxy::RenderMode &renderMode = actors[i]->GetRenderMode();
+            dtDAL::ActorProxyIcon *billBoardIcon = NULL;
+
+            if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON) {
+                billBoardIcon = actors[i]->GetBillBoardIcon();
+                if (billBoardIcon != NULL)
+                    select(actors[i]->GetBillBoardIcon()->GetDrawable());
+                else
+                    LOG_ERROR("ActorProxy: " + actors[i]->GetName() + " has NULL billboard.");
+            }
+            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR) {
+                select(actors[i]->GetActor());
+            }
+            else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) {
+                billBoardIcon = actors[i]->GetBillBoardIcon();
+                if (billBoardIcon != NULL)
+                    select(actors[i]->GetBillBoardIcon()->GetDrawable());
+                else
+                    LOG_ERROR("ActorProxy: " + actors[i]->GetName() + " has NULL billboard.");
+
+                select(actors[i]->GetActor());
+            }
+            else {
+                select(actors[i]->GetActor());
+            }
+
+            this->currentActorSelection.insert(actors[i]);
+        }
+
+        EditorActions::getInstance().actionEditDeleteActor->setEnabled(true);
+        EditorActions::getInstance().actionEditDuplicateActor->setEnabled(true);
+        EditorActions::getInstance().actionEditGroundClampActors->setEnabled(true);
+        EditorActions::getInstance().actionEditGotoActor->setEnabled(true);
         ViewportManager::getInstance().refreshAllViewports();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::select(dtCore::DeltaDrawable *drawable)
     {
+        if (drawable == NULL || drawable->GetOSGNode() == NULL)
+            return;
+
         if (!this->selectionDecorator.valid())
             setupSelectionDecorator();
-
-        osg::Group *selectionNode = this->selectionDecorator.get();
-        if (drawable == NULL) {
-            selectionNode->removeChild(0,selectionNode->getNumChildren());
-            this->overlayGroup->removeChild(selectionNode);
-            return;
+        else {
+            if (this->selectionDecorator->containsNode(drawable->GetOSGNode()))
+                return;
         }
 
-        if (selectionNode->containsNode(drawable->GetOSGNode()))
-            return;
+        this->selectionVisitor.setRestoreMode(false);
+        drawable->GetOSGNode()->accept(this->selectionVisitor);
+        this->selectionDecorator->addChild(drawable->GetOSGNode());
 
-        ExtractSelectionVisitor sv;
-        drawable->GetOSGNode()->accept(sv);
-        selectionNode->addChild(drawable->GetOSGNode());
-
-        if (!this->overlayGroup->containsNode(selectionNode))
-            this->overlayGroup->addChild(selectionNode);
+        if (!this->overlayGroup->containsNode(this->selectionDecorator.get()))
+            this->overlayGroup->addChild(this->selectionDecorator.get());
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::unSelect(dtCore::DeltaDrawable *drawable)
     {
+        if (drawable == NULL || drawable->GetOSGNode() == NULL)
+            return;
+
         if (!this->selectionDecorator.valid())
             setupSelectionDecorator();
+
+        this->selectionVisitor.setRestoreMode(true);
+        drawable->GetOSGNode()->accept(this->selectionVisitor);
         this->selectionDecorator->removeChild(drawable->GetOSGNode());
     }
 
@@ -234,60 +165,126 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy *proxy)
+    void ViewportOverlay::removeActorFromCurrentSelection(dtDAL::ActorProxy *proxy, bool clearAll)
     {
         if (!this->selectionDecorator.valid())
             setupSelectionDecorator();
 
         ActorProxyList::iterator itor = this->currentActorSelection.find(proxy);
-        if (itor != this->currentActorSelection.end()) {
-            this->currentActorSelection.erase(itor);
-            if (proxy->GetActor())
-                this->selectionDecorator->removeChild(proxy->GetActor()->GetOSGNode());
+        if (itor == this->currentActorSelection.end())
+            return;
+
+        const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+        dtDAL::ActorProxyIcon *billBoardIcon = NULL;
+
+        //Make sure we remove the correct drawable from the selection list depending
+        //on the render mode of the actor.
+        if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON) {
+            billBoardIcon = proxy->GetBillBoardIcon();
+            if (billBoardIcon != NULL)
+                unSelect(proxy->GetBillBoardIcon()->GetDrawable());
+            else
+                LOG_ERROR("ActorProxy: " + proxy->GetName() + " has NULL billboard.");
         }
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR) {
+            unSelect(proxy->GetActor());
+        }
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON) {
+            billBoardIcon = proxy->GetBillBoardIcon();
+            if (billBoardIcon != NULL)
+                unSelect(proxy->GetBillBoardIcon()->GetDrawable());
+            else
+                LOG_ERROR("ActorProxy: " + proxy->GetName() + " has NULL billboard.");
+
+            unSelect(proxy->GetActor());
+        }
+        else {
+            unSelect(proxy->GetActor());
+        }
+
+        //Finally remove the actor proxy from the selection list.
+        if (clearAll)
+            this->currentActorSelection.erase(itor);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportOverlay::clearCurrentSelection()
+    {
+        ActorProxyList::iterator itor = this->currentActorSelection.begin();
+        while (itor != this->currentActorSelection.end()) {
+            removeActorFromCurrentSelection(const_cast<dtDAL::ActorProxy *>(itor->get()),false);
+            ++itor;
+        }
+
+        this->currentActorSelection.clear();
+        this->selectionVisitor.reset();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::setupSelectionDecorator()
     {
         this->selectionDecorator = new osg::Group();
+        this->selectionMaterial = new osg::Material();
+
         osg::StateSet* ss = new osg::StateSet;
         osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::PROTECTED |
             osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON;
         osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::PROTECTED |
                 osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF;
 
+        //Set the material color using the editor's current preference.
+        QColor qtColor = EditorData::getInstance().getSelectionColor();
+        osg::Vec4 color;
+
+        color.set(qtColor.redF(),qtColor.greenF(),qtColor.blueF(),1.0f);
+        this->selectionMaterial->setDiffuse(osg::Material::FRONT,color);
+        this->selectionMaterial->setDiffuse(osg::Material::BACK,color);
+
+        //Create the required state attributes for wireframe overlay selection.
         osg::PolygonOffset* po = new osg::PolygonOffset;
         osg::PolygonMode *pm = new osg::PolygonMode();
-        osg::Material *mat = new osg::Material();
-        osg::CullFace *cull = new osg::CullFace();
 
-        cull->setMode(osg::CullFace::BACK);
-        pm->setMode(osg::PolygonMode::FRONT,osg::PolygonMode::LINE);
+        pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
         po->setFactor(-1.0f);
         po->setUnits(-1.0f);
-        mat->setDiffuse(osg::Material::FRONT,osg::Vec4(1,0,0,1));
-        mat->setDiffuse(osg::Material::BACK,osg::Vec4(1,0,0,1));
 
-        ss->setAttributeAndModes(cull,turnOn);
-        ss->setAttributeAndModes(mat,turnOn);
-        ss->setAttribute(mat,turnOn);
+        ss->setAttributeAndModes(this->selectionMaterial.get(),turnOn);
+        ss->setAttribute(this->selectionMaterial.get(),turnOn);
         ss->setAttributeAndModes(pm,turnOn);
         ss->setAttributeAndModes(po,turnOn);
         ss->setMode(GL_LIGHTING,turnOff);
-        for (int i=0; i<ViewportManager::getInstance().getNumTextureUnits(); i++)
-          ss->setTextureMode(i,GL_TEXTURE_2D,turnOff);
+        for (int i=0; i<ViewportManager::getInstance().getNumTextureUnits(); i++) {
+            ss->setTextureMode(i,GL_TEXTURE_1D,turnOff);
+            ss->setTextureMode(i,GL_TEXTURE_2D,turnOff);
+            ss->setTextureMode(i,GL_TEXTURE_3D,turnOff);
+        }
 
         this->selectionDecorator->setStateSet(ss);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportOverlay::onEditorPreferencesChanged()
+    {
+        QColor qtColor = EditorData::getInstance().getSelectionColor();
+        osg::Vec4 color;
+
+        if (!this->selectionDecorator.valid())
+            setupSelectionDecorator();
+
+        color.set(qtColor.redF(),qtColor.greenF(),qtColor.blueF(),1.0f);
+        this->selectionMaterial->setDiffuse(osg::Material::FRONT,color);
+        this->selectionMaterial->setDiffuse(osg::Material::BACK,color);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportOverlay::listenForEvents()
     {
         EditorEvents &ge = EditorEvents::getInstance();
-        //EditorActions &ga = EditorActions::getInstance();
 
         connect(&ge,SIGNAL(selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> >&)),
                 this,SLOT(onActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> >&)));
+
+        connect(&ge, SIGNAL(editorPreferencesChanged()),
+                this,SLOT(onEditorPreferencesChanged()));
     }
 }

@@ -22,6 +22,7 @@
 #define _TRANSFORMABLE_ACTOR_PROXY_H_
 
 #include <osg/Vec3>
+#include <osg/Matrix>
 
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/actorproxy.h"
@@ -55,6 +56,8 @@ namespace dtDAL
          * @param rotation the desired rotation
          */
         void SetRotation(const osg::Vec3 &rotation);
+
+        void SetRotationFromMatrix(const osg::Matrix &rotation);
 
         /**
          * Gets the rotation of an object
@@ -97,6 +100,8 @@ namespace dtDAL
          * Initializes the actor.
          */
         virtual void CreateActor() = 0;
+
+        osg::Vec3 mHPR;
     };
 }
 

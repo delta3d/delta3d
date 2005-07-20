@@ -1,18 +1,18 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine Level Editor 
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free 
-* Software Foundation; either version 2.1 of the License, or (at your option) 
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free 
+* Software Foundation; either version 2 of the License, or (at your option) 
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License 
+* You should have received a copy of the GNU General Public License 
 * along with this library; if not, write to the Free Software Foundation, Inc., 
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
@@ -39,13 +39,14 @@
 #include <QRect>
 #include <QColor>
 #include <QPalette>
+#include <QSize>
 
 namespace dtEditQt 
 {
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicResourceControl::DynamicResourceControl()
-        : temporaryEditOnlyTextLabel(NULL), temporaryUseCurrentBtn(NULL)
+        : temporaryEditOnlyTextLabel(NULL), temporaryUseCurrentBtn(NULL), temporaryClearBtn(NULL)
     {
     }
 
@@ -113,6 +114,14 @@ namespace dtEditQt
             {
                 type = dtDAL::DataType::TEXTURE.GetDisplayName().c_str();
             } 
+            else if (myProperty->GetPropertyType() == dtDAL::DataType::TERRAIN) 
+            {
+                type = dtDAL::DataType::TERRAIN.GetDisplayName().c_str();
+            } 
+            else if (myProperty->GetPropertyType() == dtDAL::DataType::PARTICLE_SYSTEM) 
+            {
+                type = dtDAL::DataType::PARTICLE_SYSTEM.GetDisplayName().c_str();
+            } 
             else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
             {
                 type = dtDAL::DataType::CHARACTER.GetDisplayName().c_str();
@@ -169,15 +178,29 @@ namespace dtEditQt
         // set the background color to white so that it sort of blends in with the rest of the controls
         setBackgroundColor(temporaryEditOnlyTextLabel, PropertyEditorTreeView::ROW_COLOR_ODD);
 
-        // button
+        // Use Current button
         temporaryUseCurrentBtn = new SubQPushButton(tr("Use Current"), wrapper, this);
+        // make sure it hold's it's min width.  This is a work around for a wierd QT behavior that 
+        // allowed the button to get really tiny and stupid looking (had 'U' instead of 'Use Current')
+        //QSize size = temporaryUseCurrentBtn->sizeHint();
+        //temporaryUseCurrentBtn->setMinimumWidth(size.width());
         temporaryUseCurrentBtn->setMaximumHeight(18);
         connect(temporaryUseCurrentBtn, SIGNAL(clicked()), this, SLOT(useCurrentPressed()));
         // the button should get focus, not the wrapping widget
         wrapper->setFocusProxy(temporaryUseCurrentBtn);
 
+        // Clear button
+        temporaryClearBtn = new SubQPushButton(tr("Clear"), wrapper, this);
+        //size = temporaryClearBtn->sizeHint();
+        //temporaryClearBtn->setMinimumWidth(size.width());
+        connect(temporaryClearBtn, SIGNAL(clicked()), this, SLOT(clearPressed()));
+        std::string tooltip = myProperty->GetDescription() + " - Clears the current resource";
+        temporaryClearBtn->setToolTip(QString(tr(tooltip.c_str())));
+
         // setup the horizontal layout 
         hBox->addWidget(temporaryUseCurrentBtn);
+        hBox->addSpacing(1);
+        hBox->addWidget(temporaryClearBtn);
         hBox->addSpacing(3);
         hBox->addWidget(temporaryEditOnlyTextLabel);
         hBox->addStretch(1);
@@ -208,6 +231,14 @@ namespace dtEditQt
         {
             return EditorData::getInstance().getCurrentTextureResource();
         } 
+        else if (myProperty->GetPropertyType() == dtDAL::DataType::TERRAIN) 
+        {
+            return EditorData::getInstance().getCurrentTerrainResource();
+        } 
+        else if (myProperty->GetPropertyType() == dtDAL::DataType::PARTICLE_SYSTEM) 
+        {
+            return EditorData::getInstance().getCurrentParticleResource();
+        } 
         else if (myProperty->GetPropertyType() == dtDAL::DataType::CHARACTER) 
         {
             return EditorData::getInstance().getCurrentCharacterResource();
@@ -225,8 +256,14 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     void DynamicResourceControl::handleSubEditDestroy(QWidget *widget)
     {
-        temporaryEditOnlyTextLabel = NULL;
-        temporaryUseCurrentBtn = NULL;
+        // we have to check - sometimes the destructor won't get called before the 
+        // next widget is created.  Then, when it is called, it sets the NEW editor to NULL!
+        if (widget == temporaryEditOnlyTextLabel)
+            temporaryEditOnlyTextLabel = NULL;
+        if (widget == temporaryUseCurrentBtn)
+            temporaryUseCurrentBtn = NULL;
+        if (widget == temporaryClearBtn)
+            temporaryClearBtn = NULL;
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -236,6 +273,8 @@ namespace dtEditQt
             temporaryEditOnlyTextLabel->installEventFilter(filterObj);
         if (temporaryUseCurrentBtn != NULL)
             temporaryUseCurrentBtn->installEventFilter(filterObj);
+        if (temporaryClearBtn != NULL)
+            temporaryClearBtn->installEventFilter(filterObj);
     }
 
 
@@ -267,6 +306,8 @@ namespace dtEditQt
             myProperty->SetValue(&newResource);
 
             // give undo manager the ability to create undo/redo events
+            // technically, we're sending the about to change event AFTER we already 
+            // changed it, but it doesn't matter.  It's the easiest way to get the string value.
             EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
                 oldValue, myProperty->GetStringValue());
 
@@ -281,4 +322,43 @@ namespace dtEditQt
         }
     }
 
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicResourceControl::clearPressed()
+    {
+        dtDAL::ResourceDescriptor *curResource = myProperty->GetValue();
+        bool isCurEmpty = (curResource == NULL || curResource->GetResourceIdentifier().empty());
+
+        if (!isCurEmpty) 
+        {
+            std::string oldValue = myProperty->GetStringValue();
+            myProperty->SetValue(&dtDAL::ResourceDescriptor());
+
+            // give undo manager the ability to create undo/redo events
+            // technically, we're sending the about to change event AFTER we already 
+            // changed it, but it doesn't matter.  It's the easiest way to get the string value.
+            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
+                oldValue, myProperty->GetStringValue());
+
+            // update our label
+            if (temporaryEditOnlyTextLabel !=  NULL) 
+            {
+                temporaryEditOnlyTextLabel->setText(getValueAsString());
+            }
+
+            // notify the world (mostly the viewports) that our property changed
+            EditorEvents::getInstance().emitActorPropertyChanged(proxy, myProperty);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicResourceControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
+        osg::ref_ptr<dtDAL::ActorProperty> property)
+    {
+        // update our label
+        if (temporaryEditOnlyTextLabel != NULL && proxy == this->proxy && property == myProperty) 
+        {
+            temporaryEditOnlyTextLabel->setText(getValueAsString());
+        }
+
+    }
 }

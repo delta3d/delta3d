@@ -20,109 +20,122 @@
 */
 #include "dtDAL/intersectionquery.h"
 #include "dtDAL/exception.h"
+
+#include <dtCore/scene.h>
 #include <stack>
-#include <osgDB/WriteFile>
-#include <osgUtil/IntersectVisitor>
-#include <iostream>
 
-namespace dtDAL 
+namespace dtDAL
 {
-
-    class IntersectionVisitor : public osgUtil::IntersectVisitor 
-    {
-    public:
-        IntersectionVisitor() { }
-        virtual ~IntersectionVisitor() { }
-
-        virtual void apply(osg::Billboard &node) 
-        {
-            osgUtil::IntersectVisitor::apply((osg::Geode &)node);
-        }
-    };
-
     ///////////////////////////////////////////////////////////////////////////////
-    IntersectionQuery::IntersectionQuery() : mStart(0,0,0), mDirection(0,1,0)
+    IntersectionQuery::IntersectionQuery(dtCore::Scene *scene) :
+        mStart(0,0,0), mDirection(0,1,0)
     {
+        mScene = scene;
         mLineSegment = new osg::LineSegment();
         mLineLength = 1000000.0f;
         mUpdateLineSegment = true;
+        mClosestDrawable = NULL;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    IntersectionQuery::IntersectionQuery(const osg::Vec3 &start,
-        const osg::Vec3 &dir) : mStart(start), mDirection(dir)
+    IntersectionQuery::IntersectionQuery(const osg::Vec3 &start, const osg::Vec3 &dir,
+        dtCore::Scene *scene) : mStart(start), mDirection(dir)
     {
+        mScene = scene;
         mLineSegment = new osg::LineSegment();
         mLineLength = 1000000.0f;
         mUpdateLineSegment = true;
+        mClosestDrawable = NULL;
+    }
+
+    IntersectionQuery::IntersectionQuery(dtCore::Scene *scene, const osg::Vec3 &start,
+        const osg::Vec3 &end)
+    {
+        mLineSegment = new osg::LineSegment();
+        mScene = scene;
+
+        mStart = start;
+        mDirection = end-start;
+        mLineLength = mDirection.length();
+        mUpdateLineSegment = true;
+        mClosestDrawable = NULL;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     bool IntersectionQuery::Exec()
     {
-        if(!mSceneRoot.valid()) 
+        if(!mSceneRoot.valid() && !mScene.valid())
         {
             EXCEPT(ExceptionEnum::BaseException,
-                   "Attempting to perform an intersection query on an invalid scene.");
+                   "Attempting to perform an intersection query with no scene or root drawable.");
         }
 
         //Make sure our line segment is correct.
         if(mUpdateLineSegment)
             CalcLineSegment();
 
-        //We could do this recursively, but to save a few clock cycles, lets use
-        //our own stack object and do it in an interative fashion.
-        std::stack<dtCore::DeltaDrawable *> objects;
-        IntersectionVisitor iv;
-        unsigned int i;
-        bool hitFlag = false;
+        if (mSceneRoot.valid())
+            mSceneRoot->GetOSGNode()->accept(mIntersectVisitor);
+        else
+            mScene->GetSceneNode()->accept(mIntersectVisitor);
 
-        objects.push(mSceneRoot.get());
-        iv.addLineSegment(mLineSegment.get());
+        if (mIntersectVisitor.hits()) {
+            osg::NodePath &nodePath = mIntersectVisitor.getHitList(mLineSegment.get())[0].getNodePath();
+            mClosestDrawable = MapNodePathToDrawable(nodePath);
+            return true;
+        }
+        else {
+            mClosestDrawable = NULL;
+            return false;
+        }
+    }
 
-        while (!objects.empty()) 
-        {
-            dtCore::DeltaDrawable *drawable = objects.top();
-            objects.pop();
+    ///////////////////////////////////////////////////////////////////////////////
+    dtCore::DeltaDrawable *IntersectionQuery::MapNodePathToDrawable(osg::NodePath &nodePath)
+    {
+        if ((!mScene.valid() && !mScene.valid()) || nodePath.empty())
+            return NULL;
 
-            //We should only test intersections with leaf nodes in the scene.
-            //So if its an internal node, just push its children on the stack.
-            //If its a leaf node, then test its bounding volume information.
-            if (drawable->GetNumChildren() != 0) 
-            {
-                //Internal node.
-                for (i=0; i<drawable->GetNumChildren(); i++)
-                    objects.push(drawable->GetChild(i));
-            }
-            else 
-            {
-                drawable->GetOSGNode()->accept(iv);
-                if (iv.hits()) 
-                {
-                    HitRecord hit;
-                    hitFlag = true;
-                    hit.drawable = drawable;
-                    hit.ratio = iv.getHitList(mLineSegment.get())[0]._ratio;
-                    hit.intersectionPoint = iv.getHitList(mLineSegment.get())[0].getWorldIntersectPoint();
-                    mHitList.push_back(hit);
-                }
-            }
+        int i;
+        std::set<osg::Node *> nodeCache;
+        osg::NodePath::iterator itor;
+        std::stack<dtCore::DeltaDrawable *> drawables;
+
+        //Create a cache of the nodepath for quicker lookups since we are doing
+        //quite a few.
+        for (itor=nodePath.begin(); itor!=nodePath.end(); ++itor)
+            nodeCache.insert(*itor);
+
+        //In order to find the DeltaDrawable we first check the drawables at the
+        //top level of the scene.  If not found, we check all children of the drawables
+        //for a match.
+        if (mSceneRoot.valid()) {
+            drawables.push(mSceneRoot.get());
+        }
+        else {
+            for (i=0; i<mScene->GetNumberOfAddedDrawable(); i++)
+                drawables.push(mScene->GetDrawable((unsigned)i));
         }
 
-        return hitFlag;
+        while (!drawables.empty()) {
+            dtCore::DeltaDrawable *d = drawables.top();
+            drawables.pop();
+
+            if (nodeCache.find(d->GetOSGNode()) != nodeCache.end())
+                return d;
+
+            for (i=0; (unsigned)i<d->GetNumChildren(); i++)
+                drawables.push(d->GetChild((unsigned)i));
+        }
+
+        return NULL;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void IntersectionQuery::Reset()
     {
-        mHitList.clear();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    std::vector<IntersectionQuery::HitRecord> &IntersectionQuery::GetHitList()
-    {
-        std::sort(mHitList.begin(), mHitList.end());
-        return mHitList;
+        mIntersectVisitor.reset();
+        mClosestDrawable = NULL;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -135,6 +148,7 @@ namespace dtDAL
         //representation to a finite line.
         osg::Vec3 endPoint = mStart + (mDirection*mLineLength);
         mLineSegment->set(mStart,endPoint);
+        mIntersectVisitor.addLineSegment(mLineSegment.get());
         mUpdateLineSegment = false;
     }
 }

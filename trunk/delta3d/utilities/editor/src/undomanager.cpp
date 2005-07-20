@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -86,7 +86,7 @@ namespace dtEditQt
     void UndoManager::onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
         osg::ref_ptr<dtDAL::ActorProperty> property)
     {
-        if (!recursePrevent) 
+        if (!recursePrevent)
         {
             // clear the redo list anytime we add a new item to the undo list.
             clearRedoList();
@@ -98,7 +98,7 @@ namespace dtEditQt
             {
                 // double check the actual property.
                 osg::ref_ptr<UndoPropertyData> propData = aboutToChangeEvent->undoPropData[0];
-                if (propData->propertyName == property->GetName()) 
+                if (propData->propertyName == property->GetName())
                 {
                     // FINALLY, we get to add it to our undo list.
                     undoStack.push(aboutToChangeEvent);
@@ -115,7 +115,7 @@ namespace dtEditQt
     void UndoManager::actorPropertyAboutToChange(osg::ref_ptr<dtDAL::ActorProxy> proxy,
         osg::ref_ptr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue)
     {
-        if (!recursePrevent) 
+        if (!recursePrevent)
         {
             // clear the redo list anytime we add a new item to the undo list.
             clearRedoList();
@@ -142,7 +142,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
     {
-        if (!recursePrevent) 
+        if (!recursePrevent)
         {
             // clear the redo list anytime we add a new item to the undo list.
             clearRedoList();
@@ -162,7 +162,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::onProxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName)
     {
-        if (!recursePrevent) 
+        if (!recursePrevent)
         {
             // clear the redo list anytime we add a new item to the undo list.
             clearRedoList();
@@ -186,7 +186,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy)
     {
-        if (!recursePrevent) 
+        if (!recursePrevent)
         {
             dtDAL::ActorProperty *curProp;
             std::vector<dtDAL::ActorProperty *> propList;
@@ -283,8 +283,8 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::handleUndoRedoNameChange(ChangeEvent *event, dtDAL::ActorProxy *proxy, bool isUndo)
     {
-        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying 
-        // these methods, be VERY careful 
+        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
+        // these methods, be VERY careful
 
         std::string currentName = proxy->GetName();
 
@@ -299,12 +299,12 @@ namespace dtEditQt
         // now turn the undo into a redo event
         event->oldName = currentName;
 
-        if (isUndo) 
+        if (isUndo)
         {
             // add it REDO stack
             redoStack.push(event);
         }
-        else 
+        else
         {
             // add it UNDO stack
             undoStack.push(event);
@@ -316,20 +316,20 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::handleUndoRedoCreateObject(ChangeEvent *event, dtDAL::ActorProxy *proxy, bool isUndo)
     {
-        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying 
-        // these methods, be VERY careful 
+        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
+        // these methods, be VERY careful
 
-        // We are UNDO'ing a create, so we delete it. That means that we add a 
+        // We are UNDO'ing a create, so we delete it. That means that we add a
         // Delete change event to the Undo or redo list.
 
         event->type = ChangeEvent::PROXY_DELETED;
 
-        if (isUndo) 
+        if (isUndo)
         {
             // add it REDO stack
             redoStack.push(event);
         }
-        else 
+        else
         {
             // add it UNDO stack
             undoStack.push(event);
@@ -352,38 +352,38 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::handleUndoRedoDeleteObject(ChangeEvent *event, bool isUndo)
     {
-        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying 
-        // these methods, be VERY careful 
+        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
+        // these methods, be VERY careful
 
-        // Note, it seems a bit backwards, just like the create.  We are UNDO'ing a 
+        // Note, it seems a bit backwards, just like the create.  We are UNDO'ing a
         // delete event.  Which means, we need to recreate the object and set all its
         // properties. Then, we need to add a CREATE change event to the REDO list.
 
-        std::vector<osg::ref_ptr < UndoPropertyData > >::const_iterator undoPropIter; 
+        std::vector<osg::ref_ptr < UndoPropertyData > >::const_iterator undoPropIter;
         osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
 
         // figure out the actor type
         osg::ref_ptr<dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
-            FindActorType(event->actorTypeCategory, event->actorTypeName); 
+            FindActorType(event->actorTypeCategory, event->actorTypeName);
 
-        if (currMap.valid() && actorType.valid()) 
+        if (currMap.valid() && actorType.valid())
         {
             EditorData::getInstance().getMainWindow()->startWaitCursor();
 
             // recreate the actor!
-            osg::ref_ptr<dtDAL::ActorProxy> proxy = 
-                dtDAL::LibraryManager::GetInstance().CreateActorProxy(actorType); 
-            if (proxy.valid()) 
+            osg::ref_ptr<dtDAL::ActorProxy> proxy =
+                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(*actorType.get());
+            if (proxy.valid())
             {
                 // set all of our old properties before telling anyone else about it
-                for (undoPropIter = event->undoPropData.begin(); undoPropIter != event->undoPropData.end(); ++undoPropIter) 
+                for (undoPropIter = event->undoPropData.begin(); undoPropIter != event->undoPropData.end(); ++undoPropIter)
                 {
                     osg::ref_ptr < UndoPropertyData> undoProp = (*undoPropIter);
                     // find the prop on the real actor
                     dtDAL::ActorProperty *actorProp = proxy->GetProperty(undoProp->propertyName);
 
                     // put our value back
-                    if (actorProp != NULL) 
+                    if (actorProp != NULL)
                     {
                         actorProp->SetStringValue(undoProp->oldValue);
                     }
@@ -398,11 +398,11 @@ namespace dtEditQt
 
                 // create our redo event
                 event->type = ChangeEvent::PROXY_CREATED;
-                if (isUndo) 
+                if (isUndo)
                 {
                     redoStack.push(event);
                 }
-                else 
+                else
                 {
                     undoStack.push(event);
                 }
@@ -415,8 +415,8 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     void UndoManager::handleUndoRedoPropertyValue(ChangeEvent *event, dtDAL::ActorProxy *proxy, bool isUndo)
     {
-        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying 
-        // these methods, be VERY careful 
+        // NOTE - The undo/redo methods do both the undo and the redo.  If you are modifying
+        // these methods, be VERY careful
 
         if (event->undoPropData.size() == 0)
             return;
@@ -426,7 +426,7 @@ namespace dtEditQt
         if (propData.valid())
         {
             dtDAL::ActorProperty *property = proxy->GetProperty(propData->propertyName);
-            if (property != NULL) 
+            if (property != NULL)
             {
                 std::string currentValue = property->GetStringValue();
                 property->SetStringValue(propData->oldValue);
@@ -444,12 +444,12 @@ namespace dtEditQt
                 event->type = UndoManager::ChangeEvent::PROPERTY_CHANGED;
                 propData->newValue = propData->oldValue;
                 propData->oldValue = currentValue;
-                if (isUndo) 
+                if (isUndo)
                 {
                     // add it REDO stack
                     redoStack.push(event);
                 }
-                else 
+                else
                 {
                     // add it UNDO stack
                     undoStack.push(event);

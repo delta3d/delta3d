@@ -90,18 +90,20 @@ namespace dtDAL
         const std::string ToString() { return std::string(c_str()); }
     private :
         XMLCh* mData;
-        char*   mLocalForm;
+        char* mLocalForm;
         XMLStringConverter(const XMLStringConverter&) {}
         XMLStringConverter& operator=(const XMLStringConverter&) { return *this;}
     };
 
 
+    const std::string RBodyResourceTypeHandler::mResourceDirectoryExtension("rbody");
     const std::string RBodyResourceTypeHandler::mConfigFileHeader("# ReplicantBody v0.1");
 
     RBodyResourceTypeHandler::RBodyResourceTypeHandler():
-        MATERIAL_ELEMENT(NULL), NUMMAPS_ATTRIBUTE(NULL), MAP_ELEMENT(NULL), mParser(NULL)
+        MATERIAL_ELEMENT(NULL), NUMMAPS_ATTRIBUTE(NULL), MAP_ELEMENT(NULL), 
+        mParser(NULL), mDescription("Replicant Body Characters")
     {
-        mFilters.insert(std::make_pair("rbody","Replicant Body Files"));
+        mFilters.insert(std::make_pair(mResourceDirectoryExtension, "Replicant Body Files"));
 
         mLogger = &Log::GetInstance("RBodyResourceTypeHandler.cpp");
 
@@ -112,7 +114,7 @@ namespace dtDAL
 
     bool RBodyResourceTypeHandler::HandlesFile(const std::string& path, FileType type) const
     {
-        if (osgDB::getLowerCaseFileExtension(path) == "rbody" )
+        if (osgDB::getLowerCaseFileExtension(path) == mResourceDirectoryExtension )
         {
             if (type == REGULAR_FILE)
             {

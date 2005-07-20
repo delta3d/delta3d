@@ -30,15 +30,13 @@
 #include <osgUtil/CullVisitor>
 #include "dtDAL/log.h"
 
-#include <iostream>
-
-namespace dtActors 
+namespace dtActors
 {
     bool SkyBox::SkyBoxEyePointTransform::computeLocalToWorldMatrix(
         osg::Matrix& matrix,osg::NodeVisitor* nv) const
     {
         osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-        if (cv) 
+        if (cv)
         {
             osg::Vec3 eyePointLocal = cv->getEyeLocal();
             matrix.preMult(osg::Matrix::translate(eyePointLocal.x(),eyePointLocal.y(),eyePointLocal.z()));
@@ -52,7 +50,7 @@ namespace dtActors
         osg::Matrix& matrix,osg::NodeVisitor* nv) const
     {
         osgUtil::CullVisitor *cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-        if (cv) 
+        if (cv)
         {
             osg::Vec3 eyePointLocal = cv->getEyeLocal();
             matrix.postMult(osg::Matrix::translate(-eyePointLocal.x(),-eyePointLocal.y(),-eyePointLocal.z()));
@@ -161,7 +159,7 @@ namespace dtActors
         vArray[5] = new osg::Vec3Array(4, coords5);
 
         osg::Geometry *polyGeom[6];
-        for (int side=0; side<6; side++) 
+        for (int side=0; side<6; side++)
         {
             polyGeom[side] = new osg::Geometry();
 

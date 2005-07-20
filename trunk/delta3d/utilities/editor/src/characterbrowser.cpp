@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -42,7 +42,7 @@
 #include "dtEditQt/mainwindow.h"
 
 #include <dtCore/scene.h>
-#include <dtCore/object.h>
+#include <dtChar/character.h>
 
 #include <osg/BoundingSphere>
 
@@ -50,6 +50,7 @@
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/camera.h"
+#include "dtEditQt/uiresources.h"
 
 #include "dtEditQt/characterbrowser.h"
 
@@ -59,9 +60,15 @@ namespace dtEditQt
     CharacterBrowser::CharacterBrowser(dtDAL::DataType &type,QWidget *parent)
         : ResourceAbstractBrowser(&type,parent)
     {
+
+        // This sets our resource icon that is visible on leaf nodes
+        resourceIcon = new QIcon();
+        resourceIcon->addPixmap(QPixmap(UIResources::ICON_CHARACTER_RESOURCE.c_str()));
+        ResourceAbstractBrowser::resourceIcon = *resourceIcon;
+
         // create a new scene for the character viewport
         characterScene = new dtCore::Scene();
-        previewObject = new dtCore::Object();
+        previewObject = new dtChar::Character();
         characterScene->AddDrawable(previewObject.get());
         camera = new Camera();
         camera->makePerspective(60.0f,1.333f,0.1f,100000.0f);
@@ -232,7 +239,7 @@ namespace dtEditQt
 
                 //Load the new file.
                 previewObject->LoadFile(file.toStdString());
-                previewObject->RecenterGeometryUponLoad();
+                //previewObject->RecenterGeometryUponLoad();
                 perspView->refresh();
 
                 //Now we need to get the bounding volume to determine the extents

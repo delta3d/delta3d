@@ -98,15 +98,26 @@ namespace dtDAL
         virtual bool ResourceIsDirectory() const = 0;
 
         /**
+         * @return the extension string or undefined if ResourceIsDirectory if false
+         */
+        virtual const std::string& GetResourceDirectoryExtension() const = 0;
+        
+        /**
          * @note the extensions should not have the "*" in front of them so that they can be used internally.
          * @return a map of file extensions and their associated descriptions that will match this helper.
          */
         virtual const std::map<std::string, std::string>& GetFileFilters() const = 0;
 
         /**
+         * @return A description for this suitable for answering the question "What does this import?"
+         */
+        virtual const std::string& GetTypeHandlerDescription() const = 0;
+        
+        /**
          * @return the resource data type this helper is used with.
          */
         virtual const DataType& GetResourceType() const = 0;
+        
     private:
         //Hide the copy constructor and operator=
         ResourceTypeHandler(const ResourceTypeHandler&){}
@@ -232,6 +243,10 @@ namespace dtDAL
         static osg::ref_ptr<ResourceHelper> mInstance;
         std::map<DataType*, osg::ref_ptr<ResourceTypeHandler> > mDefaultTypeHandlers;
         std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > > mTypeHandlers;
+        //map if directory based resources based on the directory extension.
+        std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > > mResourceDirectoryTypeHandlers;
+        //multimap of resource handlers that import directories.
+        std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> > mDirectoryImportingTypeHandlers;
         Log* mLogger;
 
         //Hide the copy constructor and operator=
@@ -244,6 +259,10 @@ namespace dtDAL
         core::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path,
             const std::string& category = "", core::tree<ResourceTreeNode>* parentTree = NULL) const;
 
+        const ResourceTypeHandler* FindHandlerForDataTypeAndExtension(
+            const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch, 
+            DataType& dt, const std::string& ext) const;
+        
         static core::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
             core::tree<ResourceTreeNode>& resources, const std::string& id);
     };

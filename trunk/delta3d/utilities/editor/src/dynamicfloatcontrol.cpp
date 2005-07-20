@@ -1,18 +1,18 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
+* Delta3D Open Source Game and Simulation Engine Level Editor
 * Copyright (C) 2005, BMH Associates, Inc.
 *
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free
+* Software Foundation; either version 2 of the License, or (at your option)
 * any later version.
 *
-* This library is distributed in the hope that it will be useful, but WITHOUT
+* This program is distributed in the hope that it will be useful, but WITHOUT
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 *
-* You should have received a copy of the GNU Lesser General Public License
+* You should have received a copy of the GNU General Public License
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
@@ -36,6 +36,7 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicFloatControl::DynamicFloatControl()
+        : temporaryEditControl(NULL)
     {
     }
 
@@ -90,8 +91,13 @@ namespace dtEditQt
             float result = editBox->text().toFloat(&success);
 
             // set our value to our object
-            if (success) {
-                if (result != myProperty->GetValue()) 
+            if (success) 
+            {
+                // Save the data if they are different.  Note, we also need to compare the QString value, 
+                // else we get epsilon differences that cause the map to be marked dirty with no edits :(
+                QString proxyValue = QString::number(myProperty->GetValue(), 'f', NUM_DECIMAL_DIGITS);
+                QString newValue = editBox->text();
+                if (result != myProperty->GetValue() && proxyValue != newValue)
                 {
                     // give undo manager the ability to create undo/redo events
                     EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, myProperty, 
@@ -126,23 +132,22 @@ namespace dtEditQt
         const QStyleOptionViewItem &option, const QModelIndex &index)
     {
         // create and init the edit box
-        //editBox = new QLineEdit(parent);
-        SubQLineEdit *editBox = new SubQLineEdit (parent, this);
-        QDoubleValidator *validator = new QDoubleValidator(editBox);
+        temporaryEditControl = new SubQLineEdit (parent, this);
+        QDoubleValidator *validator = new QDoubleValidator(temporaryEditControl);
         validator->setDecimals(NUM_DECIMAL_DIGITS);
-        editBox->setValidator(validator);
+        temporaryEditControl->setValidator(validator);
 
         if (!initialized)  
         {
             LOG_ERROR("Tried to add itself to the parent widget before being initialized");
-            return editBox;
+            return temporaryEditControl;
         }
 
-        updateEditorFromModel(editBox);
+        updateEditorFromModel(temporaryEditControl);
 
-        editBox->setToolTip(getDescription());
+        temporaryEditControl->setToolTip(getDescription());
 
-        return editBox;
+        return temporaryEditControl;
     }
 
     const QString DynamicFloatControl::getDisplayName()
@@ -181,5 +186,15 @@ namespace dtEditQt
         }
 
         return updateModelFromEditor(widget);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicFloatControl::actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
+        osg::ref_ptr<dtDAL::ActorProperty> property)
+    {
+        if (temporaryEditControl != NULL && proxy == this->proxy && property == myProperty) 
+        {
+            updateEditorFromModel(temporaryEditControl);
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     const std::string ActorActorProperty::GetStringValue() const
     {
-        return GetValue()->GetUniqueId()->ToString();
+        return GetValue()->GetUniqueId().ToString();
     }
 
 

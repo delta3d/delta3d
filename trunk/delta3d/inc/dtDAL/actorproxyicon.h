@@ -24,11 +24,17 @@
 #include <map>
 #include <dtUtil/enumeration.h>
 #include <dtCore/export.h>
-#include <dtCore/transformable.h>
+#include <dtCore/deltadrawable.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osg/Vec3>
-//#include "dtDAL/enumeration.h"
+#include <osg/Matrix>
+#include <osg/Group>
+
+namespace dtCore
+{
+    class Transformable;
+}
 
 namespace osg
 {
@@ -43,6 +49,30 @@ namespace dtDAL
     {
     public:
 
+        //Our custom Delta3D drawable.
+        class BillBoardDrawable : public dtCore::DeltaDrawable {
+        public:
+            BillBoardDrawable()
+            {
+                mNode = new osg::Group();
+            }
+
+            virtual bool AddChild(dtCore::DeltaDrawable *child)
+            {
+                dynamic_cast<osg::Group *>(mNode.get())->addChild(child->GetOSGNode());
+                return dtCore::DeltaDrawable::AddChild(child);
+            }
+
+            virtual void RemoveChild(dtCore::DeltaDrawable *child)
+            {
+                dynamic_cast<osg::Group *>(mNode.get())->removeChild(child->GetOSGNode());
+                dtCore::DeltaDrawable::RemoveChild(child);
+            }
+
+        protected:
+            virtual ~BillBoardDrawable() { }
+        };
+
         //These are resources used by the editor to display billboards
         //for the actors that need them.
         static const std::string IMAGE_BILLBOARD_GENERIC;
@@ -54,6 +84,10 @@ namespace dtDAL
         static const std::string IMAGE_BILLBOARD_MESHTERRAIN;
         static const std::string IMAGE_BILLBOARD_PLAYERSTART;
         static const std::string IMAGE_BILLBOARD_TRIGGER;
+
+        //Textures used to display the arrow orientation indicator on the billboard.
+        static const std::string IMAGE_ARROW_HEAD;
+        static const std::string IMAGE_ARROW_BODY;
 
         /**
          * This enumeration enumerates the different types of billboard icons that are
@@ -103,13 +137,22 @@ namespace dtDAL
          * Gets the Delta3D drawable for this proxy icon.
          * @return A Delta3D transformable which is the parent of the billboard geometry.
          */
-        dtCore::Transformable* GetDrawable() { return mIconNode.get(); }
+        dtCore::DeltaDrawable* GetDrawable();
 
         /**
          * Gets the Delta3D drawable for this proxy icon.
          * @return A Delta3D transformable which is the parent of the billboard geometry.
          */
-        const dtCore::Transformable* GetDrawable() const { return mIconNode.get(); }
+        const dtCore::DeltaDrawable* GetDrawable() const;
+
+        bool OwnsDrawable(dtCore::DeltaDrawable *drawable) const;
+
+        void SetPosition(const osg::Vec3 &newPos);
+        void SetRotation(const osg::Matrix &rotMat);
+        void SetActorRotation(const osg::Vec3 &hpr);
+        void SetActorRotation(const osg::Matrix &mat);
+        osg::Matrix GetActorRotation();
+        void SetScale(const osg::Vec3 &newScale);        
 
     protected:
         virtual ~ActorProxyIcon();
@@ -123,6 +166,12 @@ namespace dtDAL
          * and appropriate state to it.
          */
         void CreateBillBoard();
+
+         /**
+          * Creates a geometry node for drawing an arrow.
+          * @return The geometry node.
+          */
+        osg::Group *CreateOrientationArrow();
 
         /**
          * Checks the type of this billboard and loads the appropriate image.
@@ -143,8 +192,15 @@ namespace dtDAL
         ///Type of the billboard icon.
         const IconType *mIconType;
 
+        ///The actual billboard drawable which includes the billboard and an arrow
+        ///depicting its actor's orientation.
+        osg::ref_ptr<dtCore::DeltaDrawable> mBillBoard;
+
         ///The underlying Delta3D drawable object.
         osg::ref_ptr<dtCore::Transformable> mIconNode;
+
+        ///A transformable used to represent an arrow depicting actor rotation.
+        osg::ref_ptr<dtCore::Transformable> mArrowNode;
 
         ///Path to billboard icon files
         static const std::string mPrefix;
