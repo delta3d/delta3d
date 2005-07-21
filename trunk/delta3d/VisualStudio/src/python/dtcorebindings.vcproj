@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python_debug.lib python23.lib"
+				AdditionalDependencies="boost_python_debug.lib python24.lib"
 				OutputFile="../../../bin\dtCore.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python.lib python23.lib"
+				AdditionalDependencies="boost_python.lib python24.lib"
 				OutputFile="../../../bin\dtCore.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
