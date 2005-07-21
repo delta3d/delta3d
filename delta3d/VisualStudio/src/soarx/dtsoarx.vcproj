@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtcored.lib osgd.lib osgUtild.lib osgDBd.lib sg_d.lib tinyxmld.lib ul_d.lib oded.lib opengl32.lib"
+				AdditionalDependencies="gdal_i.lib dtcored.lib dtutild.lib osgd.lib osgUtild.lib osgDBd.lib sg_d.lib tinyxmld.lib ul_d.lib oded.lib opengl32.lib"
 				OutputFile="../../../bin/dtsoarxd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -14,7 +14,7 @@ void MatrixUtil::Print( const Matrix& matrix )
       }
       std::cout << std::endl;
    }
-}        
+}
 
 void MatrixUtil::Print( const Vec3& vec )
 {
@@ -87,30 +87,71 @@ void MatrixUtil::SetRow( Matrix& matrix, const Vec4& vec, int row )
 
 void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
 {
-   static float x, y, z, cx, sx, cy, sy, cz, sz;
 
-   x = osg::DegreesToRadians(hpr[0]);
-   y = osg::DegreesToRadians(hpr[1]);
-   z = osg::DegreesToRadians(hpr[2]);
+   //implementation converted from plib's sg.cxx
+   //PLIB - A Suite of Portable Game Libraries
+   //Copyright (C) 1998,2002  Steve Baker
+   //For further information visit http://plib.sourceforge.net
 
-   cx = cosf(x); 
-   sx = sinf(x); 
-   cy = cosf(y); 
-   sy = sinf(y); 
-   cz = cosf(z); 
-   sz = sinf(z); 
 
-   rotation(0, 0) = cx * cz - sx * sz * sy;
-   rotation(1, 0) = -sx * cy;
-   rotation(2, 0) = sz * cx + sx * sy * cz;
+   static double ch, sh, cp, sp, cr, sr, srsp, crsp, srcp ;
 
-   rotation(0, 1) = cz * sx + sz * sy * cx ;
-   rotation(1, 1) = cy * cx;
-   rotation(2, 1) = sz * sx - cz * sy * cx;
 
-   rotation(0, 2) = cy * sz;
-   rotation(1, 2) = sy;
-   rotation(2, 2) = cy * cz;
+      if ( hpr[0] == 0.0f )
+      {
+         ch = 1.0 ;
+         sh = 1.0 ;
+      }
+      else
+      {
+         sh = sinf(osg::DegreesToRadians(hpr[0]));
+         ch = cosf(osg::DegreesToRadians(hpr[0]));
+      }
+
+      if ( hpr[1] == 0.0f )
+      {
+         cp = 0.0 ;
+         sp = 1.0 ;
+      }
+      else
+      {
+         sp = sinf(osg::DegreesToRadians(hpr[1]));
+         cp = cosf(osg::DegreesToRadians(hpr[1]));
+      }
+
+      if ( hpr[2] == 0.0f )
+      {
+         cr   = 1.0 ;
+         sr   = 0.0 ;
+         srsp = 0.0 ;
+         srcp = 0.0 ;
+         crsp = sp ;
+      }
+      else
+      {
+         sr   = sinf(osg::DegreesToRadians(hpr[2]));
+         cr   = cosf(osg::DegreesToRadians(hpr[2]));
+         srsp = sr * sp ;
+         crsp = cr * sp ;
+         srcp = sr * cp ;
+      }
+
+      rotation(0, 0) = (  ch * cr - sh * srsp ) ;
+      rotation(1, 0) = ( -sh * cp ) ;
+      rotation(2, 0) = (  sr * ch + sh * crsp ) ;
+
+      rotation(0, 1) = ( cr * sh + srsp * ch ) ;
+      rotation(1, 1) = ( ch * cp ) ;
+      rotation(2, 1) = ( sr * sh - crsp * ch ) ;
+
+      rotation(0, 2) = ( -srcp ) ;
+      rotation(1, 2) = (  sp ) ;
+      rotation(2, 2) = (  cr * cp ) ;
+
+      rotation(0, 3) =  0.0;
+      rotation(1, 3) =  0.0;
+      rotation(2, 3) =  0.0;
+	  rotation(3, 3) =  1.0;
 
 }
 
@@ -121,25 +162,11 @@ void MatrixUtil::PositionAndHprToMatrix( osg::Matrix& rotation, const osg::Vec3&
    rotation(3, 0) = xyz[0];
    rotation(3, 1) = xyz[1];
    rotation(3, 2) = xyz[2];
-
 }
 
 
 void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 {
-   /*sgMat4 mat;
-
-   for( int i = 0; i < 4; i++ )
-      for( int j = 0; j < 4; j++ )
-         mat[i][j] = rotation(i,j);
-
-   sgCoord pos;
-   sgSetCoord( &pos, mat );
-
-   hpr[0] = pos.hpr[0];
-   hpr[1] = pos.hpr[1];
-   hpr[2] = pos.hpr[2];*/
-
 
    //implementation converted from plib's sg.cxx
    //PLIB - A Suite of Portable Game Libraries
@@ -162,7 +189,7 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
    for( int i = 0; i < 3; i++ )
       for( int j = 0; j < 3; j++ )
          mat(i, j) = rotation(i, j) * oneOverS;
-   
+
 
    hpr[1] = osg::RadiansToDegrees(asin(ClampUnity(mat(1, 2))));
 
@@ -170,7 +197,7 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 
    if ( cp > -0.00001 && cp < 0.00001 )
    {
-      double cr = ClampUnity(mat(0,1)); 
+      double cr = ClampUnity(mat(0,1));
       double sr = ClampUnity(-mat(2,1));
 
       hpr[0] = 0.0f;
@@ -198,11 +225,11 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 
       hpr[2] = osg::RadiansToDegrees(atan2(sr, cr));
    }
-   
-     
+
+
 }
 
-float MatrixUtil::ClampUnity(const float x) 
+float MatrixUtil::ClampUnity(const float x)
 {
    if ( x >  1.0f ) return  1.0f;
    if ( x < -1.0f ) return -1.0f;
@@ -211,7 +238,7 @@ float MatrixUtil::ClampUnity(const float x)
 
 void MatrixUtil::MatrixToHprAndPosition( osg::Vec3& xyz, osg::Vec3& hpr, const osg::Matrix& rotation )
 {
-   
+
    MatrixToHpr(hpr, rotation);
    xyz[0] = rotation(3, 0);
    xyz[1] = rotation(3, 1);
