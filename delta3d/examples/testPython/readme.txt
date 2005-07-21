@@ -38,9 +38,9 @@ To build from source:
 - Open examples/testPython/testPython.sln.
 - Go to the Tools->Options->Projects->VC++ Directories and select 
   "Show directories for: Include files".
-- Add the Boost include directorie (e.g., "c:\boost_1_31_0") to the "Include" 
+- Add the Boost include directorie (e.g., "c:\boost_1_32_0") to the "Include" 
   section.
-- Boost lib directories (e.g., "C:\boost_1_31_0\libs\python\build\bin-stage") 
+- Boost lib directories (e.g., "C:\boost_1_32_0\libs\python\build\bin-stage") 
   to the "Library files" section.
 - Build testPython.
 - Start testPython.
