@@ -594,7 +594,7 @@ errorLog.write('OS: ' + OS + '\n\n')
 
 # set compiler options for debug/release modes
 
-if mode == 'debug':   
+if mode == 'debug':
    print 'Build Configuration: Debug'
    errorLog.write('Build Configuration: Debug\n\n')
    
@@ -616,7 +616,7 @@ else:
               CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden', '-ftree-vectorize'], #optimizations, pipe object data
+     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden'], #optimizations, pipe object data
               CPPDEFINES=['NDEBUG'],
               LINKFLAGS=['-s'] )
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
