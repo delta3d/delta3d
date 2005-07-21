@@ -26,6 +26,15 @@ For examples try using bsp_gamelevel.ive from data/:
 
 Note: make sure the output 
 
+editor
+------
+This is the long awaited STAGE (aka Simluation, Traning, And Game Editor).
+Check out the delta3d\VisualStudio\utilities\editor\readme.txt for
+instructions on how to build it on windows.
+
+For linux, simply have QTDIR set to your Qt installation and do a:
+'scons .', which should build everything Delta3D has to offer.
+
 hlaStealthViewer
 ----------------
 An simple tool that plots the location of HLA entities on a globe. Use this
@@ -37,7 +46,6 @@ psEditor
 --------
 A Particle System editor. Use this tool to create OSG particle effects in
 real-time. 
-
 
 Viewer
 ------
