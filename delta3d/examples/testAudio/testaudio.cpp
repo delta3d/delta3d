@@ -588,12 +588,7 @@ TestAudioApp::LoadPSFile( const char* fname )
    
    particlesystem->LoadFile( fname, false );
 
-   osg::Node*  filenode = particlesystem->GetOSGNode();
-   assert( filenode );
-
-   filenode->setNodeMask( 0x00000000 );
-
-   AddDrawable( particlesystem );
+   particlesystem->SetEnabled(false);
 
    return   particlesystem;
 }
@@ -848,10 +843,7 @@ TestAudioApp::MakeSmoke( dtAudio::Sound* sound, void* param )
 
       app->mSmokeCountA++;
 
-      osg::Node*  node  = app->mPSysA->GetOSGNode();
-      assert( node );
-
-      node->setNodeMask( 0xFFFFFFFF );
+      app->mPSysA->SetEnabled(true);
       return;
    }
 
@@ -861,10 +853,7 @@ TestAudioApp::MakeSmoke( dtAudio::Sound* sound, void* param )
 
       app->mSmokeCountC++;
 
-      osg::Node*  node  = app->mPSysC->GetOSGNode();
-      assert( node );
-
-      node->setNodeMask( 0xFFFFFFFF );
+      app->mPSysC->SetEnabled(true);
       return;
    }
 }
@@ -891,10 +880,7 @@ TestAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
       if( app->mSmokeCountA )
          return;
 
-      osg::Node*  node  = app->mPSysA->GetOSGNode();
-      assert( node );
-
-      node->setNodeMask( 0x00000000 );
+      app->mPSysA->SetEnabled(false);
    }
 
    if( fname == app->kSoundFile[3L] )
@@ -906,10 +892,7 @@ TestAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
       if( app->mSmokeCountC )
          return;
 
-      osg::Node*  node  = app->mPSysC->GetOSGNode();
-      assert( node );
-
-      node->setNodeMask( 0x00000000 );
+      app->mPSysC->SetEnabled(false);
    }
 }
 
