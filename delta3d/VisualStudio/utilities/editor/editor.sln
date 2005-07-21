@@ -59,10 +59,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "..\..\src\dtVis\dt
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "..\..\examples\UnitTests\UnitTests.vcproj", "{85D210C4-B5EE-4E35-A1C8-8F0F66603308}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testActorLibrary", "..\..\examples\testActorLibrary\testActorLibrary.vcproj", "{776B9B6F-C222-4899-84C7-648877FEBEAE}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -113,10 +109,6 @@ Global
 		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.Build.0 = Debug|Win32
 		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.ActiveCfg = Release|Win32
 		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.Build.0 = Release|Win32
-		{85D210C4-B5EE-4E35-A1C8-8F0F66603308}.Debug.ActiveCfg = Debug|Win32
-		{85D210C4-B5EE-4E35-A1C8-8F0F66603308}.Debug.Build.0 = Debug|Win32
-		{85D210C4-B5EE-4E35-A1C8-8F0F66603308}.Release.ActiveCfg = Release|Win32
-		{85D210C4-B5EE-4E35-A1C8-8F0F66603308}.Release.Build.0 = Release|Win32
 		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Debug.ActiveCfg = Debug|Win32
 		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Debug.Build.0 = Debug|Win32
 		{776B9B6F-C222-4899-84C7-648877FEBEAE}.Release.ActiveCfg = Release|Win32
