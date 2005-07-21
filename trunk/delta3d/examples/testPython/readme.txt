@@ -29,10 +29,10 @@ Instructions
 Win32
 =====
 To use pre-built testPython: 
-- Go to examples/testPython/Release.
+- Go to delta3d/bin.
 - Double-click testPython.exe.
 - At the Python prompt inside the console/terminal type:
-   execfile('../flyhelo.py')
+   execfile('../examples/testPython/flyhelo.py')
 
 To build from source:
 - Open examples/testPython/testPython.sln.
@@ -45,7 +45,7 @@ To build from source:
 - Build testPython.
 - Start testPython.
 - At the Python prompt inside the console/terminal type:
-   execfile('flyhelo.py')
+   execfile('../../../examples/testPython/flyhelo.py')
 
 This should make the helo fly in a circle.
 
