@@ -97,61 +97,61 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
    static double ch, sh, cp, sp, cr, sr, srsp, crsp, srcp ;
 
 
-      if ( hpr[0] == 0.0f )
-      {
-         ch = 1.0 ;
-         sh = 1.0 ;
-      }
-      else
-      {
-         sh = sinf(osg::DegreesToRadians(hpr[0]));
-         ch = cosf(osg::DegreesToRadians(hpr[0]));
-      }
+   if ( hpr[0] == 0.0f )
+   {
+      ch = 1.0 ;
+      sh = 1.0 ;
+   }
+   else
+   {
+      sh = sinf(osg::DegreesToRadians(hpr[0]));
+      ch = cosf(osg::DegreesToRadians(hpr[0]));
+   }
 
-      if ( hpr[1] == 0.0f )
-      {
-         cp = 0.0 ;
-         sp = 1.0 ;
-      }
-      else
-      {
-         sp = sinf(osg::DegreesToRadians(hpr[1]));
-         cp = cosf(osg::DegreesToRadians(hpr[1]));
-      }
+   if ( hpr[1] == 0.0f )
+   {
+      cp = 0.0 ;
+      sp = 1.0 ;
+   }
+   else
+   {
+      sp = sinf(osg::DegreesToRadians(hpr[1]));
+      cp = cosf(osg::DegreesToRadians(hpr[1]));
+   }
 
-      if ( hpr[2] == 0.0f )
-      {
-         cr   = 1.0 ;
-         sr   = 0.0 ;
-         srsp = 0.0 ;
-         srcp = 0.0 ;
-         crsp = sp ;
-      }
-      else
-      {
-         sr   = sinf(osg::DegreesToRadians(hpr[2]));
-         cr   = cosf(osg::DegreesToRadians(hpr[2]));
-         srsp = sr * sp ;
-         crsp = cr * sp ;
-         srcp = sr * cp ;
-      }
+   if ( hpr[2] == 0.0f )
+   {
+      cr   = 1.0 ;
+      sr   = 0.0 ;
+      srsp = 0.0 ;
+      srcp = 0.0 ;
+      crsp = sp ;
+   }
+   else
+   {
+      sr   = sinf(osg::DegreesToRadians(hpr[2]));
+      cr   = cosf(osg::DegreesToRadians(hpr[2]));
+      srsp = sr * sp ;
+      crsp = cr * sp ;
+      srcp = sr * cp ;
+   }
 
-      rotation(0, 0) = (  ch * cr - sh * srsp ) ;
-      rotation(1, 0) = ( -sh * cp ) ;
-      rotation(2, 0) = (  sr * ch + sh * crsp ) ;
+   rotation(0, 0) = (  ch * cr - sh * srsp ) ;
+   rotation(1, 0) = ( -sh * cp ) ;
+   rotation(2, 0) = (  sr * ch + sh * crsp ) ;
 
-      rotation(0, 1) = ( cr * sh + srsp * ch ) ;
-      rotation(1, 1) = ( ch * cp ) ;
-      rotation(2, 1) = ( sr * sh - crsp * ch ) ;
+   rotation(0, 1) = ( cr * sh + srsp * ch ) ;
+   rotation(1, 1) = ( ch * cp ) ;
+   rotation(2, 1) = ( sr * sh - crsp * ch ) ;
 
-      rotation(0, 2) = ( -srcp ) ;
-      rotation(1, 2) = (  sp ) ;
-      rotation(2, 2) = (  cr * cp ) ;
+   rotation(0, 2) = ( -srcp ) ;
+   rotation(1, 2) = (  sp ) ;
+   rotation(2, 2) = (  cr * cp ) ;
 
-      rotation(0, 3) =  0.0;
-      rotation(1, 3) =  0.0;
-      rotation(2, 3) =  0.0;
-	  rotation(3, 3) =  1.0;
+   rotation(0, 3) =  0.0;
+   rotation(1, 3) =  0.0;
+   rotation(2, 3) =  0.0;
+	rotation(3, 3) =  1.0;
 
 }
 
