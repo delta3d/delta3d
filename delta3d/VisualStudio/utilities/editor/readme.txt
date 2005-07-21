@@ -41,14 +41,14 @@ Here we go...
    
 4.	Open a Command window by clicking Start->Run..., and typing 'cmd'
 
-5.	The following commands should be run from the command line (replace the 
-   VisualStudio path with your appropriate path):
+5.	The following commands should be run from the command line (without quotes,
+   and replace the VisualStudio path with your appropriate path):
    
-	cd %QTDIR%
-   qtvars.bat
-   C:\Program File\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat
-	qmake
-   nmake
+	'cd %QTDIR%'
+   'qtvars.bat' (ignore the mention of MinGW in this output of this command)
+   'C:\Program File\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat'
+	'qmake'
+   'nmake'
 
 6. After many many hours, it should be all compiled up and happy.
    Qt is now built with MSVC :)
