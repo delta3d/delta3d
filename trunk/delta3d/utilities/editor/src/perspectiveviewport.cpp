@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -78,7 +79,7 @@ namespace dtEditQt
     void PerspectiveViewport::initializeGL()
     {
         Viewport::initializeGL();
-        setRenderStyle(Viewport::RenderStyle::TEXTURED,false);    
+        setRenderStyle(Viewport::RenderStyle::TEXTURED,false);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -246,7 +247,7 @@ namespace dtEditQt
             if (getMoveActorWithCamera() && getCamera() != NULL &&
                 getEnableKeyBindings() && getCamera()->getNumActorAttachments() != 0)
             {
-                // we could send hundreds of translation and rotation events, so make sure 
+                // we could send hundreds of translation and rotation events, so make sure
                 // we surround it in a change transaction
                 EditorEvents::getInstance().emitBeginChangeTransaction();
 
@@ -301,7 +302,7 @@ namespace dtEditQt
             this->currentMode = &InteractionModeExt::NOTHING;
             releaseMouseCursor();
 
-            // we could send hundreds of translation and rotation events, so make sure 
+            // we could send hundreds of translation and rotation events, so make sure
             // we surround it in a change transaction
             EditorEvents::getInstance().emitBeginChangeTransaction();
 
@@ -425,75 +426,6 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void PerspectiveViewport::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
-    {
-        dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
-        dtDAL::ActorProxyIcon *billBoard = NULL;
-
-        const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
-        if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
-        {
-            billBoard = proxy->GetBillBoardIcon();
-            if (billBoard == NULL)
-            {
-                LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
-            }
-            else
-                scene->AddDrawable(billBoard->GetDrawable());
-        }
-        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
-        {
-            scene->AddDrawable(proxy->GetActor());
-        }
-        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
-        {
-            scene->AddDrawable(proxy->GetActor());
-
-            billBoard = proxy->GetBillBoardIcon();
-            if (billBoard == NULL)
-            {
-                LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
-            }
-            else
-                scene->AddDrawable(billBoard->GetDrawable());
-        }
-        else
-        {
-            //If we got here, then the proxy wishes the system to determine how to display
-            //the proxy. Currently, not implemented, defaults to DRAW_ACTOR).
-            scene->AddDrawable(proxy->GetActor());
-        }
-
-        //Get the current position and direction the camera is facing.
-        osg::Vec3 pos = getCamera()->getPosition();
-        osg::Vec3 viewDir = getCamera()->getViewDir();
-
-        //If the object is a transformable (can have a position in the scene)
-        //add it to the scene in front of the camera.
-        dtDAL::TransformableActorProxy *tProxy =
-            dynamic_cast<dtDAL::TransformableActorProxy *>(proxy.get());
-
-        if (tProxy != NULL)
-        {
-            const osg::BoundingSphere &bs = tProxy->GetActor()->GetOSGNode()->getBound();
-
-            //Position it along the camera's view direction.  The distance from
-            //the camera is the object's bounding volume so it appears
-            //just in front of the camera.  If the object is very large, it is
-            //just created at the origin.
-            float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
-            if (offset <= 0.0f)
-                offset = 10.0f;
-            tProxy->SetTranslation(pos+(viewDir*offset*2));
-        }
-
-        // update the viewports unless we're getting lots of changes back to back, in which
-        // case our super class handles that.
-        if (!inChangeTransaction)
-            ViewportManager::getInstance().refreshAllViewports();
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
     void PerspectiveViewport::onEditorPreferencesChanged()
     {
         this->attachActorToCamera = EditorData::getInstance().getRigidCamera();
@@ -503,10 +435,7 @@ namespace dtEditQt
     void PerspectiveViewport::connectInteractionModeSlots()
     {
         Viewport::connectInteractionModeSlots();
-
         EditorEvents *editorEvents = &EditorEvents::getInstance();
-        connect(editorEvents, SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
-                this,SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));
 
         connect(editorEvents, SIGNAL(editorPreferencesChanged()),
                 this,SLOT(onEditorPreferencesChanged()));
@@ -516,10 +445,7 @@ namespace dtEditQt
     void PerspectiveViewport::disconnectInteractionModeSlots()
     {
         Viewport::disconnectInteractionModeSlots();
-
         EditorEvents *editorEvents = &EditorEvents::getInstance();
-        disconnect(editorEvents,SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
-                    this,SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));
 
         disconnect(editorEvents, SIGNAL(editorPreferencesChanged()),
                 this,SLOT(onEditorPreferencesChanged()));

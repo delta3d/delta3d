@@ -48,6 +48,7 @@ namespace dtDAL
         mClosestDrawable = NULL;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
     IntersectionQuery::IntersectionQuery(dtCore::Scene *scene, const osg::Vec3 &start,
         const osg::Vec3 &end)
     {

@@ -24,49 +24,97 @@
 #include "dtDAL/exception.h"
 #include <dtCore/scene.h>
 
-using namespace dtCore;
-using namespace dtDAL;
-
-namespace dtDAL 
+namespace dtDAL
 {
+    ///////////////////////////////////////////////////////////////////////////////
+    IMPLEMENT_ENUM(PhysicalActorProxy::CollisionGeomType);
+    PhysicalActorProxy::CollisionGeomType
+        PhysicalActorProxy::CollisionGeomType::NONE("NONE");
+    PhysicalActorProxy::CollisionGeomType
+        PhysicalActorProxy::CollisionGeomType::SPHERE("SPHERE");
+    PhysicalActorProxy::CollisionGeomType
+        PhysicalActorProxy::CollisionGeomType::CYLINDER("CYLINDER");
+    PhysicalActorProxy::CollisionGeomType
+        PhysicalActorProxy::CollisionGeomType::CUBE("CUBE");
+    PhysicalActorProxy::CollisionGeomType
+        PhysicalActorProxy::CollisionGeomType::RAY("RAY");
+    PhysicalActorProxy::CollisionGeomType
+        PhysicalActorProxy::CollisionGeomType::MESH("MESH");
+
+
+    ///////////////////////////////////////////////////////////////////////////////
     void PhysicalActorProxy::BuildPropertyMap()
     {
         const std::string GROUPNAME = "Physics";
+        const std::string COLLISION_GROUP = "Collision";
+
         TransformableActorProxy::BuildPropertyMap();
 
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
-        if (phys == NULL) 
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
         {
             EXCEPT(ExceptionEnum::InvalidActorException,
                 "Actor should be type dtCore::Physical.");
         }
 
+        //PHYSICS PROPS...
         AddProperty(new BooleanActorProperty("Enable Dynamics", "Enable Dynamics",
-            MakeFunctor(*phys, &Physical::EnableDynamics),
-            MakeFunctorRet(*phys, &Physical::DynamicsEnabled),
-            "Enables the physics of an object", GROUPNAME));
+            MakeFunctor(*phys, &dtCore::Physical::EnableDynamics),
+            MakeFunctorRet(*phys, &dtCore::Physical::DynamicsEnabled),
+            "Enables physics calculations on this actor.", GROUPNAME));
 
         AddProperty(new FloatActorProperty("Mass", "Mass",
             MakeFunctor(*this, &PhysicalActorProxy::SetMass),
             MakeFunctorRet(*this, &PhysicalActorProxy::GetMass),
-            "Sets the mass of object. Helpful when using your own physics like gravity.",
-            GROUPNAME));
-
-        AddProperty(new BooleanActorProperty("Collision Geometry", "Collision Geometry",
-            MakeFunctor(*this, &PhysicalActorProxy::SetRenderCollisionGeometry),
-            MakeFunctorRet(*this, &PhysicalActorProxy::GetRenderCollisionGeometry),
-            "Enables the rendering of collision geometry", GROUPNAME));
+            "Sets the mass of this actor.",GROUPNAME));
 
         AddProperty(new Vec3ActorProperty("Center of Gravity", "Center of Gravity",
             MakeFunctor(*this, &PhysicalActorProxy::SetCenterOfGravity),
             MakeFunctorRet(*this, &PhysicalActorProxy::GetCenterOfGravity),
-            "Sets the center of gravity of an object", GROUPNAME));
+            "Sets the center of gravity for this actor.", GROUPNAME));
+
+        //COLLISION PROPS...
+        AddProperty(new BooleanActorProperty("Collision Geometry", "Show Collision Geometry",
+            MakeFunctor(*this, &PhysicalActorProxy::SetRenderCollisionGeometry),
+            MakeFunctorRet(*this, &PhysicalActorProxy::GetRenderCollisionGeometry),
+            "Enables/Disables the rendering of collision geometry assigned to this actor.",
+            COLLISION_GROUP));
+
+        AddProperty(new EnumActorProperty<CollisionGeomType>(
+            "Collision Type","Collision Type",
+            MakeFunctor(*this,&PhysicalActorProxy::SetCollisionType),
+            MakeFunctorRet(*this,&PhysicalActorProxy::GetCollisionType),
+            "Sets the type of geometry to use for collision detection",
+            COLLISION_GROUP));
+
+        AddProperty(new FloatActorProperty("Collision Radius","Collision Radius",
+            MakeFunctor(*this,&PhysicalActorProxy::SetCollisionRadius),
+            MakeFunctorRet(*this,&PhysicalActorProxy::GetCollisionRadius),
+            "Sets the radius for collision calculations. This value is used differently "
+            "depending on the type of collision assigned to this actor.  For example, "
+            "if the collision type is set to SPHERE, this will be the sphere's radius.",
+            COLLISION_GROUP));
+
+        AddProperty(new FloatActorProperty("Collision Length","Collision Length",
+            MakeFunctor(*this,&PhysicalActorProxy::SetCollisionLength),
+            MakeFunctorRet(*this,&PhysicalActorProxy::GetCollisionLength),
+            "Sets the length of the collision geometry. This value is used differently "
+            "depending on the type of collision assigned to this actor.  For example, "
+            "if the collision type is set to CYLINDER, this will be the cylinder's length.",
+            COLLISION_GROUP));
+
+        AddProperty(new Vec3ActorProperty("Collision Box","Collision Box",
+            MakeFunctor(*this, &PhysicalActorProxy::SetCollisionBoxDims),
+            MakeFunctorRet(*this, &PhysicalActorProxy::GetCollisionBoxDims),
+            "Sets the size of the bounding box used for collision detection.  This property "
+            "is used if the collision type is set to BOX.",
+            COLLISION_GROUP));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void PhysicalActorProxy::SetMass(float mass)
     {
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
         if (phys == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
 
@@ -74,9 +122,9 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    float PhysicalActorProxy::GetMass()
+    float PhysicalActorProxy::GetMass() const
     {
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
+        const dtCore::Physical *phys = dynamic_cast<const dtCore::Physical*>(mActor.get());
         if (phys == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
 
@@ -86,7 +134,7 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     void PhysicalActorProxy::SetRenderCollisionGeometry(bool enable)
     {
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
         if (phys == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
 
@@ -94,9 +142,9 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    bool PhysicalActorProxy::GetRenderCollisionGeometry()
+    bool PhysicalActorProxy::GetRenderCollisionGeometry() const
     {
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
+        const dtCore::Physical *phys = dynamic_cast<const dtCore::Physical*>(mActor.get());
         if (phys == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
 
@@ -106,27 +154,178 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     void PhysicalActorProxy::SetCenterOfGravity(const osg::Vec3 &g)
     {
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
         if (phys == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
 
-        sgVec3 r;
-        r[0] = g[0]; r[1] = g[1]; r[2] = g[2];
-        phys->SetCenterOfGravity(r);
+        phys->SetCenterOfGravity(g);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::Vec3 PhysicalActorProxy::GetCenterOfGravity()
+    osg::Vec3 PhysicalActorProxy::GetCenterOfGravity() const
     {
-        Physical *phys = dynamic_cast<Physical*>(mActor.get());
+        const dtCore::Physical *phys = dynamic_cast<const dtCore::Physical*>(mActor.get());
         if (phys == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
 
-
         osg::Vec3 r;
-        sgVec3 g;
-        phys->GetCenterOfGravity(g);
-        r[0] = g[0]; r[1] = g[1]; r[2] = g[2];
+        phys->GetCenterOfGravity(r);
         return r;
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetCollisionType(PhysicalActorProxy::CollisionGeomType &type)
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        mCollisionType = &type;
+        if (mCollisionType == &CollisionGeomType::NONE)
+            phys->ClearCollisionGeometry();
+        else if (mCollisionType == &CollisionGeomType::CUBE)
+            SetBoxCollision();
+        else if (mCollisionType == &CollisionGeomType::SPHERE)
+            SetSphereCollision();
+        else if (mCollisionType == &CollisionGeomType::CYLINDER)
+            SetCylinderCollision();
+        else if (mCollisionType == &CollisionGeomType::RAY)
+            SetRayCollision();
+        else if (mCollisionType == &CollisionGeomType::MESH)
+            SetMeshCollision();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    PhysicalActorProxy::CollisionGeomType &PhysicalActorProxy::GetCollisionType()
+    {
+        return *mCollisionType;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetCollisionRadius(float radius)
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        mCollisionRadius = radius;
+        if (mCollisionType == &CollisionGeomType::CYLINDER)
+            SetCylinderCollision();
+        else if (mCollisionType == &CollisionGeomType::SPHERE)
+            SetSphereCollision();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float PhysicalActorProxy::GetCollisionRadius() const
+    {
+        return mCollisionRadius;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetCollisionBoxDims(const osg::Vec3 &dims)
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        mCollisionBoxDims = dims;
+        SetBoxCollision();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    osg::Vec3 PhysicalActorProxy::GetCollisionBoxDims() const
+    {
+        return mCollisionBoxDims;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetCollisionLength(float length)
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        mCollisionLength = length;
+        if (mCollisionType == &CollisionGeomType::CYLINDER)
+            SetCylinderCollision();
+        else if (mCollisionType == &CollisionGeomType::RAY)
+            SetRayCollision();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    float PhysicalActorProxy::GetCollisionLength() const
+    {
+        return mCollisionLength;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetBoxCollision()
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        phys->ClearCollisionGeometry();
+        if (mCollisionBoxDims.x() == 0.0f || mCollisionBoxDims.y() == 0.0f ||
+            mCollisionBoxDims.z() == 0.0f)
+        {
+            phys->SetCollisionBox(NULL);
+        }
+        else
+        {
+            phys->SetCollisionBox(mCollisionBoxDims.x(),mCollisionBoxDims.y(),
+                                  mCollisionBoxDims.z());
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetSphereCollision()
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        phys->ClearCollisionGeometry();
+        if (mCollisionRadius == 0.0f)
+            phys->SetCollisionSphere((osg::Node *)NULL);
+        else
+            phys->SetCollisionSphere(mCollisionRadius);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetCylinderCollision()
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        phys->ClearCollisionGeometry();
+        if (mCollisionRadius == 0.0f || mCollisionLength == 0.0f)
+            phys->SetCollisionCappedCylinder(NULL);
+        else
+            phys->SetCollisionCappedCylinder(mCollisionRadius,mCollisionLength);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetRayCollision()
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        phys->ClearCollisionGeometry();
+        phys->SetCollisionRay(mCollisionLength);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void PhysicalActorProxy::SetMeshCollision()
+    {
+        dtCore::Physical *phys = dynamic_cast<dtCore::Physical*>(mActor.get());
+        if (phys == NULL)
+            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Physical.");
+
+        phys->ClearCollisionGeometry();
+        phys->SetCollisionMesh(NULL);
+    }
+
 }

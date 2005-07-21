@@ -62,9 +62,9 @@ namespace dtActors
         if(!cam)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
-        float r, g, b, a;
-        cam->GetClearColor(&r, &g, &b, &a);
-        return osg::Vec4f(r, g, b, a);
+        osg::Vec4 color;
+        cam->GetClearColor(color);
+        return osg::Vec4f(color);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -74,6 +74,6 @@ namespace dtActors
         if(!cam)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
-        cam->SetClearColor(color[0], color[1], color[2], color[3]);
+        cam->SetClearColor(color);
     }
 }

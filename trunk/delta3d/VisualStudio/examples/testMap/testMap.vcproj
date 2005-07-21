@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="ExampleActorLibrary"
-	ProjectGUID="{776B9B6F-C222-4899-84C7-648877FEBEAE}"
+	Name="testMap"
+	ProjectGUID="{0AD37625-7CF8-42C4-90FF-1F5329B91FAE}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -14,33 +14,34 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_PLUGIN"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4312;4311;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib sg_d.lib ul_d.lib"
-				OutputFile="../../bin/ExampleActorLibraryd.dll"
+				AdditionalDependencies="Producerd.lib sg_d.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib tinyxmld.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib glGUI_d.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvis_d.lib dtDALd.lib dtActorsd.lib"
+				OutputFile="../../../bin/testMapD.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="$(DELTA_LIB);"
+				IgnoreDefaultLibraryNames="libcmt;libcmtd;libcimtd;libcd;msvcrt.lib;libc.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/ExampleActorLibrary.pdb"
+				ProgramDatabaseFile="$(OutDir)/DeltaTest.pdb"
 				SubSystem="1"
-				ImportLibrary="../../lib/ExampleActorLibraryd.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -67,31 +68,31 @@
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(DELTA_INC)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_PLUGIN"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_PLUGIN;"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4311;4312;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib sg.lib ul.lib"
-				OutputFile="../../bin/ExampleActorLibrary.dll"
+				AdditionalDependencies="dtcore.lib dtabc.lib dtchar.lib dtaudio.lib dtutil.lib dtvis.lib dtDAL.lib dtActorsd.lib"
+				OutputFile="../../../bin/testMap.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../lib/ExampleActorLibrary.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -123,22 +124,13 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\tests\project\dtCreateActorLib\ExampleActorLib.cpp">
-			</File>
-			<File
-				RelativePath="..\..\tests\project\dtCreateActorLib\ExampleTestPropertyProxy.cpp">
+				RelativePath="..\..\..\examples\testMap\main.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath="..\..\tests\project\dtCreateActorLib\ExampleActorLib.h">
-			</File>
-			<File
-				RelativePath="..\..\tests\project\dtCreateActorLib\ExampleTestPropertyProxy.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

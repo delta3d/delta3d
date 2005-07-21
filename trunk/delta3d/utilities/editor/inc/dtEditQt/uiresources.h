@@ -1,5 +1,6 @@
 /*
- * Delta3D Open Source Game and Simulation Engine Level Editor
+ * Delta3D Open Source Game and Simulation Engine 
+ * Simulation, Training, and Game Editor (STAGE)
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -75,6 +76,13 @@ namespace dtEditQt
             static const std::string ICON_CHARACTER_RESOURCE;
             static const std::string ICON_PARTICLE_RESOURCE;
             static const std::string ICON_TERRAIN_RESOURCE;
+
+            static const std::string ICON_SOUND_TAB;
+            static const std::string ICON_STATICMESH_TAB;
+            static const std::string ICON_TEXTURE_TAB;
+            static const std::string ICON_CHARACTER_TAB;
+            static const std::string ICON_PARTICLE_TAB;
+            static const std::string ICON_TERRAIN_TAB;
 
             static const std::string ICON_ACTOR;
             static const std::string SPLASH_SCREEN;

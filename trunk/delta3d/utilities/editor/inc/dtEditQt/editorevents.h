@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -70,8 +71,12 @@ namespace dtEditQt
          * (like viewports) should listen for this.  Note that the object may or may not be selected
          * after creation, but that event will be sent separately.         *
          * @param proxy The proxy that was created is sent with the signal.
+         * @param forceNoAdjustments This is used to indicate that a listener of this event should 
+         * not perform edits of the data. This was initially used to prevent the  perspective browser 
+         * from positioning an object that was created by undoing a delete event in front of the camera.
+         * @note The forceNoAdjustments flag is no longer really used.  It has value, but isn't currently used.
          */
-        void emitActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        void emitActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
 
         /**
          * An ActorProxy is about to be destroyed.  The user has previously selected an object and
@@ -188,7 +193,7 @@ namespace dtEditQt
     signals:
         void selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors);
         void gotoActor(osg::ref_ptr<dtDAL::ActorProxy> &actor);
-        void actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        void actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
         void actorProxyAboutToBeDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy);
         void actorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy);
         void editorInitiationEvent();

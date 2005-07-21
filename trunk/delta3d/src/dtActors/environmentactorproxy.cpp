@@ -105,7 +105,7 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
-        //env->AddEffect(effect.get()->GetActor());
+        env->AddEffect(dynamic_cast<EnvEffect*>(effect->GetActor()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -144,9 +144,7 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        sgVec3 col;
-        col[0] = color[0]; col[1] = color[1]; col[2] = color[2];
-        env->SetSkyColor(col);
+        env->SetSkyColor(color);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -156,9 +154,9 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        sgVec3 color;
+        osg::Vec3 color;
         env->GetSkyColor(color);
-        return osg::Vec3(color[0], color[1], color[2]);
+        return color;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -168,9 +166,7 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        sgVec3 col;
-        col[0] = color[0]; col[1] = color[1]; col[2] = color[2];
-        env->SetFogColor(col);
+        env->SetFogColor(color);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -180,9 +176,9 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        sgVec3 color;
+        osg::Vec3 color;
         env->GetFogColor(color);
-        return osg::Vec3(color[0], color[1], color[2]);
+        return color;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -212,9 +208,7 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        sgVec2 l;
-        l[0] = latlong[0]; l[1] = latlong[1]; l[2] = latlong[2];
-        env->SetRefLatLong(l);
+        env->SetRefLatLong(latlong);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -224,8 +218,8 @@ namespace dtActors
         if(!env)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        sgVec2 l;
+        osg::Vec2 l;
         env->GetRefLatLong(l);
-        return osg::Vec2(l[0], l[1]);
+        return l;
     }
 }

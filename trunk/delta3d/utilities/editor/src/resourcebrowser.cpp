@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -31,6 +32,7 @@
 //#include "dtEditQt/characterbrowser.h"
 #include "dtEditQt/terrainbrowser.h"
 #include "dtEditQt/editoractions.h"
+#include "dtEditQt/uiresources.h"
 
 namespace dtEditQt
 {
@@ -71,31 +73,37 @@ namespace dtEditQt
         tabMesh->setWidget(meshWidget);
         tabMesh->setName("Static Mesh");
         tabC->addTab(tabMesh);
+        //tabC->addTab(tabMesh, UIResources::ICON_STATICMESH_TAB.c_str());
 
         // Sound tab
         tabSound->setWidget(soundWidget);
         tabSound->setName("Sound");
         tabC->addTab(tabSound);
+        //tabC->addTab(tabSound, UIResources::ICON_SOUND_TAB.c_str());
 
         // Particle tab
         tabParticle->setWidget(particleWidget);
         tabParticle->setName("Particle");
         tabC->addTab(tabParticle);
+        //tabC->addTab(tabParticle, UIResources::ICON_PARTICLE_TAB.c_str());
 
         // Texture tab
         tabTexture->setWidget(textureWidget);
         tabTexture->setName("Texture");
         tabC->addTab(tabTexture);
+        //tabC->addTab(tabTexture, UIResources::ICON_TEXTURE_TAB.c_str());
 
         //// Character tab
         //tabCharacter->setWidget(characterWidget);
         //tabCharacter->setName("Characters");
         //tabC->addTab(tabCharacter);
+        //tabC->addTab(tabCharacter, UIResources::ICON_CHARACTER_TAB.c_str());
 
         //// Terrain tab
         tabTerrain->setWidget(terrainWidget);
         tabTerrain->setName("Terrain");
         tabC->addTab(tabTerrain);
+        //tabC->addTab(tabTerrain, UIResources::ICON_TERRAIN_TAB.c_str());
     }
     /////////////////////////////////////////////////////////////////////////////////
     QWidget *ResourceBrowser::getWidget()

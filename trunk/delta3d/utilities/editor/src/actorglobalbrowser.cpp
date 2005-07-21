@@ -1,5 +1,6 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine Level Editor 
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -63,8 +64,8 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::getInstance(), SIGNAL(LibraryAboutToBeRemoved()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)), 
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));   
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)), 
+            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));   
         connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)), 
             this, SLOT(onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)));
     }
@@ -115,7 +116,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorGlobalBrowser::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void ActorGlobalBrowser::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         if (!proxy->IsPlaceable())
             resultsTable->addProxy(proxy);

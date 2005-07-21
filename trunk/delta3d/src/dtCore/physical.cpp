@@ -52,13 +52,13 @@ Physical::Physical()
    RegisterInstance(this);
 
    mGeomID = dCreateGeomTransform(0);
-   
+
    dGeomTransformSetCleanup(mGeomID, 1);
-   
+
    dGeomTransformSetInfo(mGeomID, 1);
-   
+
    dMassSetSphere(&mMass, 1.0f, 1.0f);
-   
+
    mTriMeshDataID = dGeomTriMeshDataCreate();
 }
 
@@ -68,14 +68,14 @@ Physical::Physical()
 Physical::~Physical()
 {
    dGeomDestroy(mGeomID);
- 
+
    if(mBodyID != 0)
    {
       dBodyDestroy(mBodyID);
    }
-   
+
    dGeomTriMeshDataDestroy(mTriMeshDataID);
-   
+
    if(mMeshVertices != NULL)
    {
       delete[] mMeshVertices;
@@ -109,13 +109,13 @@ void Physical::SetBodyID(dBodyID bodyID)
    {
       dBodyDestroy(mBodyID);
    }
-   
+
    mBodyID = bodyID;
-   
+
    EnableDynamics(mDynamicsEnabled);
-   
+
    SetMass(&mMass);
-   
+
    dGeomSetBody(mGeomID, mBodyID);
 }
 
@@ -193,7 +193,7 @@ public:
 
          if(d->supports(mFunctor))
          {
-            mFunctor.mMatrix = 
+            mFunctor.mMatrix =
                osg::computeLocalToWorld(getNodePath());
 
             d->accept(mFunctor);
@@ -202,7 +202,7 @@ public:
    }
 };
 /**
-* Determines the cylinder parameters 
+* Determines the cylinder parameters
 */
 class SphereFunctor
 {
@@ -315,7 +315,7 @@ void Physical::SetCollisionBox( osg::Node* node )
 {
    if(node == NULL)
       node = GetOSGNode();
-   
+
    if(node != NULL)
    {
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
@@ -325,12 +325,12 @@ void Physical::SetCollisionBox( osg::Node* node )
       node->accept(bbv);
 
       GetMatrixNode()->setMatrix( oldMatrix );
-      
+
       dGeomID subTransformID = dCreateGeomTransform(0);
-      
+
       dGeomTransformSetCleanup(subTransformID, 1);
 
-      mOriginalGeomID =  dCreateBox( 0, 
+      mOriginalGeomID =  dCreateBox( 0,
          bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
          bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
          bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
@@ -338,7 +338,7 @@ void Physical::SetCollisionBox( osg::Node* node )
 
       dGeomDisable( mOriginalGeomID );
 
-      dGeomTransformSetGeom( subTransformID, dCreateBox( 0, 
+      dGeomTransformSetGeom( subTransformID, dCreateBox( 0,
          bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
          bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
          bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
@@ -351,9 +351,9 @@ void Physical::SetCollisionBox( osg::Node* node )
          bbv.mBoundingBox.center()[1],
          bbv.mBoundingBox.center()[2]
       );
-            
+
       dGeomTransformSetGeom(mGeomID, subTransformID);
-      
+
       RenderCollisionGeometry(mRenderingGeometry);
    }
 }
@@ -376,23 +376,23 @@ void Physical::SetCollisionCappedCylinder(float radius, float length)
 }
 
 /**
- * Determines the cylinder parameters 
+ * Determines the cylinder parameters
  */
 class CylinderFunctor
 {
    public:
 
       float mMinZ, mMaxZ, mRadius;
-      
+
       osg::Matrix mMatrix;
-      
+
       /**
        * Constructor.
        */
       CylinderFunctor()
          : mMinZ(SG_MAX), mMaxZ(-SG_MAX), mRadius(0.0f)
       {}
-      
+
       /**
        * Called once for each visited triangle.
        *
@@ -410,22 +410,22 @@ class CylinderFunctor
          osg::Vec3 tv1 = v1*mMatrix,
                    tv2 = v2*mMatrix,
                    tv3 = v3*mMatrix;
-         
+
          if(tv1[2] < mMinZ) mMinZ = tv1[2];
          else if(tv1[2] > mMaxZ) mMaxZ = tv1[2];
-         
+
          if(tv2[2] < mMinZ) mMinZ = tv2[2];
          else if(tv2[2] > mMaxZ) mMaxZ = tv2[2];
-         
+
          if(tv3[2] < mMinZ) mMinZ = tv3[2];
          else if(tv3[2] > mMaxZ) mMaxZ = tv3[2];
-         
+
          tv1[2] = 0;
          if(tv1.length() > mRadius) mRadius = tv1.length();
-         
+
          tv2[2] = 0;
          if(tv2.length() > mRadius) mRadius = tv2.length();
-         
+
          tv3[2] = 0;
          if(tv2.length() > mRadius) mRadius = tv3.length();
       }
@@ -444,7 +444,7 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
 {
    if( node == NULL )
       node = this->GetOSGNode();
-   
+
    if( node )
    {
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
@@ -452,16 +452,16 @@ void Physical::SetCollisionCappedCylinder(osg::Node* node)
 
       DrawableVisitor<CylinderFunctor> cv;
       node->accept(cv);
-      
+
       dGeomID subTransformID = dCreateGeomTransform(0);
-      
+
       dGeomTransformSetCleanup(subTransformID, 1);
 
       mOriginalGeomID = dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ );
       dGeomDisable( mOriginalGeomID );
 
       dGeomTransformSetGeom( subTransformID, dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ ) );
-      
+
       dGeomTransformSetGeom(mGeomID, subTransformID);
 
       GetMatrixNode()->setMatrix( oldMatrix );
@@ -496,12 +496,12 @@ struct StridedVertex
 
 /**
  * A strided triangle for the ODE triangle mesh collision geometry.
- */   
+ */
 struct StridedTriangle
 {
    int Indices[3];
 };
-   
+
 /**
  * Records visited triangles into an array suitable for passing
  * into ODE's triangle mesh collision detection class.
@@ -513,9 +513,9 @@ class TriangleRecorder
       vector<StridedVertex> mVertices;
 
       vector<StridedTriangle> mTriangles;
-      
+
       osg::Matrix mMatrix;
-      
+
       /**
        * Called once for each visited triangle.
        *
@@ -533,28 +533,28 @@ class TriangleRecorder
          osg::Vec3 tv1 = v1*mMatrix,
                    tv2 = v2*mMatrix,
                    tv3 = v3*mMatrix;
-         
+
          StridedVertex sv1, sv2, sv3;
          StridedTriangle t;
-         
+
          t.Indices[0] = mVertices.size();
          t.Indices[1] = mVertices.size() + 1;
          t.Indices[2] = mVertices.size() + 2;
-         
+
          mTriangles.push_back(t);
-         
+
          sv1.Vertex[0] = tv1[0];
          sv1.Vertex[1] = tv1[1];
          sv1.Vertex[2] = tv1[2];
-         
+
          sv2.Vertex[0] = tv2[0];
          sv2.Vertex[1] = tv2[1];
          sv2.Vertex[2] = tv2[2];
-         
+
          sv3.Vertex[0] = tv3[0];
          sv3.Vertex[1] = tv3[1];
          sv3.Vertex[2] = tv3[2];
-         
+
          mVertices.push_back(sv1);
          mVertices.push_back(sv2);
          mVertices.push_back(sv3);
@@ -572,7 +572,7 @@ void Physical::SetCollisionMesh(osg::Node* node)
 {
    if( node == NULL )
       node = GetOSGNode();
-   
+
    if( node )
    {
       //the following is a workaround to temporarily bypass this Physical's Transform
@@ -583,30 +583,30 @@ void Physical::SetCollisionMesh(osg::Node* node)
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<TriangleRecorder> mv;
-            
+
       node->accept(mv);
-   
+
       if(mMeshVertices != NULL)
       {
          delete[] mMeshVertices;
          delete[] mMeshIndices;
       }
-      
+
       mMeshVertices = new dVector3[mv.mFunctor.mVertices.size()];
       mMeshIndices = new int[mv.mFunctor.mTriangles.size()*3];
-      
+
       memcpy(
-         mMeshVertices, 
-         &mv.mFunctor.mVertices.front(), 
+         mMeshVertices,
+         &mv.mFunctor.mVertices.front(),
          mv.mFunctor.mVertices.size()*sizeof(StridedVertex)
       );
-      
+
       memcpy(
          mMeshIndices,
          &mv.mFunctor.mTriangles.front(),
          mv.mFunctor.mTriangles.size()*sizeof(StridedTriangle)
       );
-      
+
       dGeomTriMeshDataBuildSimple(
          mTriMeshDataID,
          (dReal*)mMeshVertices,
@@ -616,11 +616,11 @@ void Physical::SetCollisionMesh(osg::Node* node)
       );
 
       dGeomTransformSetGeom(
-         mGeomID, 
+         mGeomID,
          dCreateTriMesh(0, mTriMeshDataID, NULL, NULL, NULL)
       );
 
-      GetMatrixNode()->setMatrix( oldMatrix );      
+      GetMatrixNode()->setMatrix( oldMatrix );
 
       RenderCollisionGeometry(mRenderingGeometry);
    }
@@ -632,6 +632,13 @@ void Physical::SetCollisionMesh(osg::Node* node)
 void Physical::ClearCollisionGeometry()
 {
    dGeomTransformSetGeom(mGeomID, 0);
+
+   //If the collision geometry is valid, this implies the user has
+   //enabled render collision geometry.  Therefore, we just remove
+   //the drawables from the geode.  When the user turns off render
+   //collision geometry, that will remove the geode from this node.
+   if (mGeomGeod.valid())
+       mGeomGeod->removeDrawable(0,mGeomGeod->getNumDrawables());
 }
 
 /**
@@ -642,7 +649,7 @@ void Physical::ClearCollisionGeometry()
 void Physical::EnableDynamics(bool enable)
 {
    mDynamicsEnabled = enable;
-   
+
    if(mBodyID != 0)
    {
       if(enable)
@@ -677,7 +684,7 @@ void Physical::SetMass(const dMass* mass)
    mMass = *mass;
 
    if(mBodyID != 0)
-   {   
+   {
       dBodySetMass(mBodyID, &mMass);
    }
 }
@@ -700,7 +707,7 @@ void Physical::GetMass(dMass* mass) const
 void Physical::SetMass(float mass)
 {
    mMass.mass = mass;
-   
+
    if(mBodyID != 0)
    {
       dBodySetMass(mBodyID, &mMass);
@@ -727,7 +734,7 @@ void Physical::SetCenterOfGravity(const osg::Vec3& centerOfGravity)
    mMass.c[0] = centerOfGravity[0];
    mMass.c[1] = centerOfGravity[1];
    mMass.c[2] = centerOfGravity[2];
-   
+
    if(mBodyID != 0)
    {
       dBodySetMass(mBodyID, &mMass);
@@ -781,15 +788,15 @@ void Physical::SetInertiaTensor(const sgMat3 inertiaTensor)
    mMass.I[0] = inertiaTensor[0][0];
    mMass.I[1] = inertiaTensor[1][0];
    mMass.I[2] = inertiaTensor[2][0];
-   
+
    mMass.I[4] = inertiaTensor[0][1];
    mMass.I[5] = inertiaTensor[1][1];
    mMass.I[6] = inertiaTensor[2][1];
-   
+
    mMass.I[8] = inertiaTensor[0][2];
    mMass.I[9] = inertiaTensor[1][2];
    mMass.I[10] = inertiaTensor[2][2];
-   
+
    if(mBodyID != 0)
    {
       dBodySetMass(mBodyID, &mMass);
@@ -825,11 +832,11 @@ void Physical::GetInertiaTensor(sgMat3 dest) const
    dest[0][0] = mMass.I[0];
    dest[1][0] = mMass.I[1];
    dest[2][0] = mMass.I[2];
-   
+
    dest[0][1] = mMass.I[4];
    dest[1][1] = mMass.I[5];
    dest[2][1] = mMass.I[6];
-   
+
    dest[0][2] = mMass.I[8];
    dest[1][2] = mMass.I[9];
    dest[2][2] = mMass.I[10];
@@ -844,48 +851,48 @@ void Physical::GetInertiaTensor(sgMat3 dest) const
  */
 void Physical::PrePhysicsStepUpdate()
 {
-   //if (DynamicsEnabled())   
+   //if (DynamicsEnabled())
    {
       Transform transform;
-      
+
       this->GetTransform(&transform, Transformable::ABS_CS);
-      
+
       if(!transform.EpsilonEquals(&mGeomTransform))
       {
          mGeomTransform = transform;
-         
+
          osg::Matrix rotation;
          osg::Vec3 position, scale;
 
          mGeomTransform.GetTranslation( position );
          mGeomTransform.GetRotation( rotation );
          mGeomTransform.GetScale( scale );
-         
+
          //set translation
          dGeomSetPosition(mGeomID, position[0], position[1], position[2]);
 
          //set rotation
          dMatrix3 dRot;
-         
+
          dRot[0] = rotation(0,0);
          dRot[1] = rotation(1,0);
          dRot[2] = rotation(2,0);
-         
+
          dRot[4] = rotation(0,1);
          dRot[5] = rotation(1,1);
          dRot[6] = rotation(2,1);
-         
+
          dRot[8] = rotation(0,2);
          dRot[9] = rotation(1,2);
          dRot[10] = rotation(2,2);
-         
+
          dGeomSetRotation(mGeomID, dRot);
 
          //set scale
          int geomClass = dGeomGetClass( mGeomID ) ;
          dGeomID id = mGeomID;
 
-         while ( geomClass == dGeomTransformClass ) 
+         while ( geomClass == dGeomTransformClass )
          {
             id = dGeomTransformGetGeom(id);
             if (id == 0) return; //in case we haven't assigned a collision shape yet
@@ -904,9 +911,9 @@ void Physical::PrePhysicsStepUpdate()
 
                   //dGeomBoxGetLengths( id, currentSide );
                   dGeomBoxGetLengths( mOriginalGeomID, originalSide );
-       
+
                   dGeomBoxSetLengths( id, originalSide[0]*scale[0], originalSide[1]*scale[1], originalSide[2]*scale[2] );
-                     
+
                }
                break;
             case dSphereClass:
@@ -987,15 +994,15 @@ void Physical::PostPhysicsStepUpdate()
       const dReal* rotation = dGeomGetRotation(mGeomID);
 
       osg::Matrix newRotation;
-      
+
       newRotation(0,0) = rotation[0];
       newRotation(1,0) = rotation[1];
       newRotation(2,0) = rotation[2];
-         
+
       newRotation(0,1) = rotation[4];
       newRotation(1,1) = rotation[5];
       newRotation(2,1) = rotation[6];
-         
+
       newRotation(0,2) = rotation[8];
       newRotation(1,2) = rotation[9];
       newRotation(2,2) = rotation[10];
@@ -1018,19 +1025,20 @@ void Physical::RenderCollisionGeometry( const bool enable )
    }
 
    mRenderingGeometry = enable;
-   
+
    if(enable)
    {
       mGeomGeod = new osg::Geode();
+      mGeomGeod->setName("__DELTA3D_COLLISION_GEOMETRY");
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio(0.5f);
-      
+
       int geomClass = dGeomGetClass( mGeomID ) ;
       dGeomID id = mGeomID;
-      
+
       osg::Matrix absMatrix;
-      
-      while( geomClass == dGeomTransformClass ) 
+
+      while( geomClass == dGeomTransformClass )
       {
          id = dGeomTransformGetGeom(id);
 
@@ -1038,25 +1046,25 @@ void Physical::RenderCollisionGeometry( const bool enable )
          {
             return; //in case we haven't assigned a collision shape yet
          }
-         
+
          geomClass = dGeomGetClass(id);
          const dReal *pos = dGeomGetPosition(id);
          const dReal *rot = dGeomGetRotation(id);
-         
+
          osg::Matrix tempMatrix;
-         
+
          tempMatrix(0,0) = rot[0];
          tempMatrix(0,1) = rot[1];
          tempMatrix(0,2) = rot[2];
-         
+
          tempMatrix(1,0) = rot[4];
          tempMatrix(1,1) = rot[5];
          tempMatrix(1,2) = rot[6];
-         
+
          tempMatrix(2,0) = rot[8];
          tempMatrix(2,1) = rot[9];
          tempMatrix(2,2) = rot[10];
-         
+
          tempMatrix(3,0) = pos[0];
          tempMatrix(3,1) = pos[1];
          tempMatrix(3,2) = pos[2];
@@ -1097,7 +1105,7 @@ void Physical::RenderCollisionGeometry( const bool enable )
                                     radius, length), hints ) );
          }
          break;
-         
+
          case dTriMeshClass:
          case dCylinderClass:
          case dPlaneClass:
@@ -1111,13 +1119,13 @@ void Physical::RenderCollisionGeometry( const bool enable )
             //dReal length = dGeomRayGetLength(id);
             //dGeomRayGet(id, start, dir);
          }
-         
+
          default:
             Notify(WARN, "Physical:Can't render unhandled geometry class:%d",
                    dGeomGetClass(id) );
             break;
       }
-      
+
       osg::Material *mat = new osg::Material();
       mat->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 0.5f));
       mat->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(1.f,0.f,1.f, 1.f));
@@ -1128,10 +1136,13 @@ void Physical::RenderCollisionGeometry( const bool enable )
       polyoffset->setUnits(-1.0f);
 
       osg::StateSet *ss = mGeomGeod.get()->getOrCreateStateSet();
-      ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
-      ss->setMode(GL_BLEND,osg::StateAttribute::ON);
+      ss->setAttributeAndModes(mat, osg::StateAttribute::OVERRIDE |
+              osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
+      ss->setMode(GL_BLEND,osg::StateAttribute::OVERRIDE |
+              osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
       ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-      ss->setAttributeAndModes(polyoffset,osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
+      ss->setAttributeAndModes(polyoffset,osg::StateAttribute::OVERRIDE |
+              osg::StateAttribute::PROTECTED | osg::StateAttribute::ON);
 
       xform->addChild(mGeomGeod.get());
 
@@ -1147,16 +1158,16 @@ void Physical::RenderCollisionGeometry( const bool enable )
 
 }
 
-/** This typically gets called from Scene::AddDrawable().  
-  * 
+/** This typically gets called from Scene::AddDrawable().
+  *
   * This method perform the standard DeltaDrawable::AddedToScene() functionality
-  * then registers this Physical object with the supplied Scene to create the 
+  * then registers this Physical object with the supplied Scene to create the
   * internal physical properties.
-  * 
+  *
   * If the param scene is NULL, this will unregister this Physical from the
-  * previous parent Scene.  
+  * previous parent Scene.
   * If this Physical already has a parent Scene, it will
-  * first remove itself from the old Scene (Scene::RemoveDrawable()), then 
+  * first remove itself from the old Scene (Scene::RemoveDrawable()), then
   * re-register with the new Scene.
   *
   * @param scene The Scene this Physical has been added to
@@ -1173,11 +1184,11 @@ void Physical::AddedToScene( Scene *scene )
       }
 
       DeltaDrawable::AddedToScene( scene );
-      scene->RegisterPhysical(this); 
+      scene->RegisterPhysical(this);
    }
    else
    {
       if (mParentScene.valid()) mParentScene->UnRegisterPhysical(this);
       DeltaDrawable::AddedToScene( scene );
-   } 
-} 
+   }
+}

@@ -90,7 +90,7 @@ namespace dtActors
         if(cd == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::CloudDome");
 
-        cd->SetCloudColor(const_cast<osg::Vec3*>(&color));
+        cd->SetCloudColor(color);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

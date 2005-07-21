@@ -44,6 +44,8 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxy.h>
 
+#include <rbody/config_error.h>
+
 
 #include "MapTests.h"
 
@@ -68,7 +70,10 @@ void MapTests::setUp() {
         logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
         logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
-        fileUtils.PushDirectory(std::string("project"));
+		std::string currentDir = fileUtils.CurrentDirectory();
+		std::string projectDir("project");
+		if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
+			fileUtils.PushDirectory(projectDir);
 
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
@@ -444,25 +449,25 @@ void MapTests::testMapLibraryHandling() {
 
         CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
 
-        map->AddLibrary("dtCreateActors", "1.0");
-        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("dtCreateActors");
+        map->AddLibrary("testActorLibrary", "1.0");
+        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("testActorLibrary");
 
         createActors(*map);
     
-        dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
         
         project.SaveMap(*map);
         
         project.CloseMap(*map, true);
 
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("dtCreateActors should have been closed.", reg == NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
         map = &project.GetMap(mapName);
         
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
         
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
         //hold onto all the proxies so that the actor libraries can't be closed.
@@ -470,34 +475,34 @@ void MapTests::testMapLibraryHandling() {
         
         project.CloseMap(*map, true);
         
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
         //cleanup the proxies
         proxies.clear();
         
         map = &project.GetMap(mapName);
         //create a new map that will ALSO use the same libraries
-        project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary("dtCreateActors", "1.0");
+        project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary("testActorLibrary", "1.0");
         
         createActors(project.GetMap(mapName + "1"));
         
         project.CloseMap(*map, true);
         
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
         //when the second map is closed, the libraries should not close if false is passed.
         project.CloseMap(project.GetMap(mapName + "1"), false);
 
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("Registry for dtCreateActors should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
 
         //reopen the map and close it with true to make sure the libraries close.
         project.CloseMap(project.GetMap(mapName), true);
 
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("dtCreateActors");
-        CPPUNIT_ASSERT_MESSAGE("dtCreateActors should have been closed.", reg == NULL);        
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);        
     } catch (const dtDAL::Exception& e) {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
@@ -548,8 +553,8 @@ void MapTests::testMapSaveAndLoad() {
         CPPUNIT_ASSERT_MESSAGE("Backups were cleared.  The map should have no backups.",
             !project.HasBackup(*map) && !project.HasBackup(mapName));
 
-        map->AddLibrary("dtCreateActors", "1.0");
-        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("dtCreateActors");
+        map->AddLibrary("testActorLibrary", "1.0");
+        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("testActorLibrary");
 
         dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", "../../../data/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
@@ -618,15 +623,21 @@ void MapTests::testMapSaveAndLoad() {
 
         ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
         dtDAL::ResourceActorProperty& rap = static_cast<dtDAL::ResourceActorProperty&>(*ap);
-        rap.SetValue(&marineRD);
 
-        std::string marineStr = rap.GetStringValue();
-        rap.SetValue(NULL);
-        CPPUNIT_ASSERT(rap.GetValue() == NULL);
-        CPPUNIT_ASSERT(rap.SetStringValue(marineStr));
-        CPPUNIT_ASSERT(rap.GetValue() != NULL);
-        CPPUNIT_ASSERT(*rap.GetValue() == marineRD);
+		try {
+        	rap.SetValue(&marineRD);
 
+        	std::string marineStr = rap.GetStringValue();
+        	rap.SetValue(NULL);
+        	CPPUNIT_ASSERT(rap.GetValue() == NULL);
+        	CPPUNIT_ASSERT(rap.SetStringValue(marineStr));
+        	CPPUNIT_ASSERT(rap.GetValue() != NULL);
+        	CPPUNIT_ASSERT(*rap.GetValue() == marineRD);
+		} catch(const rbody::config_error& ex) {
+            logger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error loading character \"%s\": %s",
+                marineRD.GetResourceIdentifier().c_str(), ex.what());
+            CPPUNIT_FAIL("Error setting marine mesh.");
+        }
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STATIC_MESH);
         ((dtDAL::ResourceActorProperty*)ap)->SetValue(&dirtRD);
@@ -836,21 +847,21 @@ void MapTests::testMapSaveAndLoad() {
         try {
             project.SaveMapAs(*map, newMapName, mapFileName);
             CPPUNIT_FAIL("Calling SaveAs on a map with the same name and filename should fail.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
         try {
             project.SaveMapAs(*map, mapName, mapFileName);
             CPPUNIT_FAIL("Calling SaveAs on a map with the same filename should fail.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
         try {
             project.SaveMapAs(*map, newMapName, "oo");
             CPPUNIT_FAIL("Calling SaveAs on a map with the same name should fail.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
@@ -895,7 +906,7 @@ void MapTests::testLoadErrorHandling() {
 
         createActors(*map);
 
-        //LibraryManager::GetInstance().loadActorRegistry("dtCreateActors");
+        //LibraryManager::GetInstance().loadActorRegistry("testActorLibrary");
 
     } catch (const dtDAL::Exception& e) {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());

@@ -54,9 +54,9 @@ namespace dtActors
         if(!sd)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
 
-        sgVec3 _color;
-        sd->GetBaseColor(_color);
-        return osg::Vec3(_color[0], _color[1], _color[2]);
+        osg::Vec3 color;
+        sd->GetBaseColor(color);
+        return color;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -66,9 +66,7 @@ namespace dtActors
         if(!sd)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
 
-        sgVec3 _color;
-        _color[0] = color[0]; _color[1] = color[1]; _color[2] = color[2];
-        sd->SetBaseColor(_color);
+        sd->SetBaseColor(color);
     }
 
 }

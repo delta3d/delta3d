@@ -147,7 +147,7 @@ void ProjectTests::testFileIO() {
         try {
             fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("The file copy should have failed since it was attempting to overwrite the file and overwriting was disabled.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
@@ -197,7 +197,7 @@ void ProjectTests::testFileIO() {
         try {
             fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("Moving the file should have failed since overwriting was turned off.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
@@ -218,7 +218,7 @@ void ProjectTests::testFileIO() {
             //copy a directory into itself with "copy contents only"
             fileUtils.DirCopy(Dir1, Dir1+ dtDAL::FileUtils::PATH_SEPARATOR + ".."+ dtDAL::FileUtils::PATH_SEPARATOR + Dir1, true, true);
             CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
@@ -226,7 +226,7 @@ void ProjectTests::testFileIO() {
             //copy a directory into the parent without contents, so that it would try to recreate the same directory.
             fileUtils.DirCopy(Dir1, ".", true, false);
             CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 
@@ -235,7 +235,7 @@ void ProjectTests::testFileIO() {
             fileUtils.DirCopy(Dir1, Dir1, true, false);
             //doing it again should do nothing.
             fileUtils.DirCopy(Dir1, Dir1, true, false);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             CPPUNIT_FAIL("DirCopy should be able to copy a directory into itself as a subdirectory.");
         }
 
@@ -243,7 +243,7 @@ void ProjectTests::testFileIO() {
             //copy a directory into the parent without contents, so that it would try to recreate the same directory.
             fileUtils.DirCopy(Dir1, Dir1, false, false);
             CPPUNIT_FAIL("DirCopy should not be able to overwrite files if overwriting is set to false.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
         }
 
         std::string Dir3("recursiveDir");
@@ -314,14 +314,14 @@ void ProjectTests::testFileIO() {
         //Testing the delete functionality tests DirGetFiles
         try {
             CPPUNIT_ASSERT_MESSAGE("Deleting an nonexisten Directory should be ok.", fileUtils.DirDelete("gobbletygook", false) == true);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             CPPUNIT_FAIL("Deleting an nonexisten Directory should be ok.");
         }
 
         //Testing the delete functionality tests DirGetFiles
         try {
             fileUtils.DirDelete(Dir1, false);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtDAL::Exception&) {
             CPPUNIT_FAIL("Deleting non-empty Directory with a non-recursive call should have returned false.");
         }
         CPPUNIT_ASSERT_MESSAGE(Dir1 + " should still exist.", fileUtils.DirExists(Dir1));
@@ -751,7 +751,9 @@ void ProjectTests::testResources() {
         testResult = p.GetResourcePath(rd);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
-            testResult == dtDAL::DataType::STATIC_MESH.GetName() + "/fun/bigmamajama/dirt.ive");
+			testResult == dtDAL::DataType::STATIC_MESH.GetName() + dtDAL::FileUtils::PATH_SEPARATOR 
+			+ "fun" + dtDAL::FileUtils::PATH_SEPARATOR + "bigmamajama" 
+			+ dtDAL::FileUtils::PATH_SEPARATOR + "dirt.ive");
 
 
         for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++) {
@@ -811,14 +813,17 @@ void ProjectTests::testResources() {
         testResult = p.GetResourcePath(rd);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult ,
-            testResult == dtDAL::DataType::SOUND.GetName() + "/tea/money/pow.wav");
+            testResult == dtDAL::DataType::SOUND.GetName() + dtDAL::FileUtils::PATH_SEPARATOR 
+			+ "tea" + dtDAL::FileUtils::PATH_SEPARATOR 
+			+ "money" + dtDAL::FileUtils::PATH_SEPARATOR + "pow.wav");
 
         dtDAL::ResourceDescriptor rd1 = p.AddResource("bang", std::string("../../../data/sounds/bang.wav"),
             std::string("tee:cash"), dtDAL::DataType::SOUND);
         testResult = p.GetResourcePath(rd1);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
-            testResult == dtDAL::DataType::SOUND.GetName() + "/tee/cash/bang.wav");
+            testResult == dtDAL::DataType::SOUND.GetName() + dtDAL::FileUtils::PATH_SEPARATOR + "tee" 
+			+ dtDAL::FileUtils::PATH_SEPARATOR + "cash" + dtDAL::FileUtils::PATH_SEPARATOR + "bang.wav");
 
         p.Refresh();
 
@@ -894,7 +899,7 @@ void ProjectTests::testProject() {
         try {
             p.SetContext(projectDir, true);
             CPPUNIT_FAIL("Project should not have been able to Set the readonly context because it is empty.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtDAL::Exception&) {
             //correct
         }
 

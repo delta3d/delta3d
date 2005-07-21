@@ -1,5 +1,6 @@
 /*
- * Delta3D Open Source Game and Simulation Engine Level Editor
+ * Delta3D Open Source Game and Simulation Engine
+ * Simulation, Training, and Game Editor (STAGE)
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -88,16 +89,15 @@ namespace dtEditQt
             unsigned int i;
             osg::Geode *copyGeode;
 
+            if (geode.getName() == "__DELTA3D_COLLISION_GEOMETRY")
+                return;
+
             if (restoreMode) { //Restore the geodes we made copies of.
                 std::map<osg::ref_ptr<osg::Geode>,osg::ref_ptr<osg::Geode> >::iterator itor =
                         this->selectionCopies.find(&geode);
 
                 if (itor != this->selectionCopies.end()) {
                     replaceGeode(&geode,itor->second.get());
-                    traverse(*itor->second.get());
-                }
-                else {
-                    traverse(geode);
                 }
             }
             else {
@@ -117,7 +117,6 @@ namespace dtEditQt
 
                 //Replace the original geode with the new copy.
                 replaceGeode(&geode,copyGeode);
-                traverse(*copyGeode);
             }
         }
 
