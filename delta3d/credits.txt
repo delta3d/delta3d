@@ -1,0 +1,55 @@
+###########################
+#                         #
+# Delta3D Credits         #
+#                         #
+###########################
+
+----------------------
+| Code Contributions |
+----------------------
+
+Delta3D West (NPS)
+------------------
+Present:
+  Brad Anderegg
+  John K. Grant
+  Erik Johnson
+  Chris Osborn
+  Joe Sullivan
+  Mark Strom
+  Fuzzy Wells
+Past:
+  Andrzej Kapolka
+  J.P. Jamieson
+
+Delta3D East (BMH)
+------------------
+Matt Campbell
+Teague Coonan
+David Guthrie
+Eddie Johnson
+Curtis Murphy
+
+Other contributors
+------------------
+Terry Jordan
+- FPSMotionModel
+Peter Smith
+- MSVS Project Template, Wireframe mode
+
+------------------------------------
+| Project Administration & Support |
+------------------------------------
+
+Curtis Conkey
+- ???
+Rudy Darken
+- ???
+Erik Johnson
+- Technical Lead
+Perry McDowell
+- Executive Director
+Peter Smith
+- Tutorials
+Winter
+- Tutorials
