@@ -1,4 +1,4 @@
-﻿##############################
+##############################
 #                            #
 # Delta3D STAGE :            #
 # Simulation, Training, And  #
@@ -17,12 +17,12 @@ makefile support for MinGW. While we love MinGW, there is no support for
 building Delta3D with it (yet ;). So we had to find a way to compile Qt
 with MSVC. Here's the solution....
 
-You’ll need:
+You'll need:
 -Visual Studio .Net 2003
 -Qt 4.0.0, the windows open-source release 
- http://www.trolltech.com/download/qt/windows.html
+ ftp://ftp.trolltech.com/qt/source/qt-win-opensource-desktop-4.0.0.zip
 -Python
- http://www.python.org
+ http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
 -qt4_msvc_patch.zip
 
 Here we go...
@@ -44,13 +44,14 @@ Here we go...
 5.	The following commands should be run from the command line (replace the 
    VisualStudio path with your appropriate path):
    
-	cd %QTDIR
+	cd %QTDIR%
    qtvars.bat
    C:\Program File\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat
 	qmake
    nmake
 
-6. Woohoo! Qt is now built with MSVC :)
+6. After many many hours, it should be all compiled up and happy.
+   Qt is now built with MSVC :)
 
 7. Ok, onto building the editor. Open:
    delta3d\VisualStudio\utilities\editor\editor.sln
