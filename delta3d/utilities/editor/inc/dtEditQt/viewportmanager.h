@@ -1,5 +1,6 @@
 /*
- * Delta3D Open Source Game and Simulation Engine Level Editor
+ * Delta3D Open Source Game and Simulation Engine
+ * Simulation, Training, and Game Editor (STAGE)
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -106,6 +107,12 @@ namespace dtEditQt
         }
 
         /**
+         * Moves an actor such that it is placed in from of the world view camera.
+         * @param proxy The proxy to place.
+         */
+        void placeProxyInFrontOfCamera(dtDAL::ActorProxy *proxy);
+
+        /**
          * Gets the instance of an overlay object that should be shared between viewports.
          * It stores editor specific scene graph components that should be common amoung
          * the viewports. For example, when an object is selected, it should appear selected
@@ -161,6 +168,13 @@ namespace dtEditQt
          */
         void onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
             osg::ref_ptr<dtDAL::ActorProperty> property);
+
+        /**
+         * This method is invoked when the user has created a new actor proxy.  The method
+         * then inserts the new actor proxy into the current scene.
+         * @param proxy The newly created actor proxy.
+         */
+        void onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
 
         /**
          * Called when the current map being edited has changed.  This causes the scene

@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -293,8 +294,8 @@ namespace dtEditQt
     void EditorActions::setupHelpActions()
     {
         // Help - About Editor
-        actionHelpAboutEditor = new QAction(tr("&About Delta3D Level Editor..."), this);
-        actionHelpAboutEditor->setStatusTip(tr("About Delta3D Level Editor"));
+        actionHelpAboutEditor = new QAction(tr("&About Delta3D Editor..."), this);
+        actionHelpAboutEditor->setStatusTip(tr("About Delta3D Editor"));
         connect(actionHelpAboutEditor, SIGNAL(triggered()), this, SLOT(slotHelpAboutEditor()));
 
         // Help - About QT
@@ -606,8 +607,6 @@ namespace dtEditQt
     {
         LOG_INFO("Duplicating current actor selection.");
 
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
@@ -635,6 +634,7 @@ namespace dtEditQt
 
         // We're about to do a LOT of work, especially if lots of things are select
         // so, start a change transaction.
+        EditorData::getInstance().getMainWindow()->startWaitCursor();
         EditorEvents::getInstance().emitBeginChangeTransaction();
 
         //Once we have a reference to the current selection and the scene,
@@ -663,7 +663,7 @@ namespace dtEditQt
             //Add the new proxy to the map and send out a create event.
             currMap->AddProxy(*copy.get());
 
-            EditorEvents::getInstance().emitActorProxyCreated(copy);
+            EditorEvents::getInstance().emitActorProxyCreated(copy, false);
 
             //Move the newly duplicated actor to where it is supposed to go.
             if (tProxy != NULL)
@@ -686,8 +686,6 @@ namespace dtEditQt
     {
         LOG_INFO("Deleting current actor selection. ");
 
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-
         ViewportOverlay::ActorProxyList &selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
@@ -700,6 +698,7 @@ namespace dtEditQt
 
         // We're about to do a LOT of work, especially if lots of things are select
         // so, start a change transaction.
+        EditorData::getInstance().getMainWindow()->startWaitCursor();
         EditorEvents::getInstance().emitBeginChangeTransaction();
 
         //Once we have a reference to the current selection and the scene,
@@ -767,8 +766,6 @@ namespace dtEditQt
     {
         LOG_INFO("Ground clamping actors.");
 
-        EditorData::getInstance().getMainWindow()->startWaitCursor();
-
         ViewportOverlay::ActorProxyList &selection =
             ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
@@ -780,6 +777,7 @@ namespace dtEditQt
 
         // We're about to do a LOT of work, especially if lots of things are select
         // so, start a change transaction.
+        EditorData::getInstance().getMainWindow()->startWaitCursor();
         EditorEvents::getInstance().emitBeginChangeTransaction();
 
         //Iterate through the current selection, trace a ray directly below it.  If there is
@@ -812,7 +810,6 @@ namespace dtEditQt
         }
 
         EditorEvents::getInstance().emitEndChangeTransaction();
-        //ViewportManager::getInstance().refreshAllViewports();
         EditorData::getInstance().getMainWindow()->endWaitCursor();
     }
 
@@ -896,7 +893,7 @@ namespace dtEditQt
     std::string EditorActions::getWindowName()
     {
         ((QMainWindow*)EditorData::getInstance().getMainWindow())->windowTitle().clear();
-        std::string name = "Delta3D Level Editor";
+        std::string name = "Delta3D Editor";
         std::string projDir;
         std::string temp = dtDAL::Project::GetInstance().GetContext();
         if(temp.empty())

@@ -1,5 +1,6 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine Level Editor 
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -18,6 +19,8 @@
 *
 * @author Teague Coonan
 */
+#include <QIcon>
+#include <QPixmap>
 
 #include "dtEditQt/tabcontainer.h"
 
@@ -27,7 +30,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     TabContainer::TabContainer(QWidget *parent) : QObject(parent)
     {
-        this->tabC = new QTabWidget (parent);
+        tabC = new QTabWidget (parent);
     }
     ///////////////////////////////////////////////////////////////////////////////
     TabContainer::~TabContainer()
@@ -41,21 +44,34 @@ namespace dtEditQt
     void TabContainer::addTab(TabWrapper *myTab)
     {
         // add the tab to the container
-        this->tabC->addTab(myTab->getWidget(), myTab->getName());
+        tabC->addTab(myTab->getWidget(), myTab->getName());
         
         // push the tab into a vector
-        this->tabVector.push_back(myTab);
+        tabVector.push_back(myTab);
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+    void TabContainer::addTab(TabWrapper *myTab, const std::string &tabResource)
+    {
+        QIcon *tabIcon = new QIcon();
+        QString resource = tabResource.c_str();
+        tabIcon->addPixmap(QPixmap(resource));
+
+        // add the tab to the container
+        tabC->addTab(myTab->getWidget(),*tabIcon, myTab->getName());
+        
+        // push the tab into a vector
+        tabVector.push_back(myTab);
     }
     ///////////////////////////////////////////////////////////////////////////////
     void TabContainer::setPosition(Position position)
     {
         // set the position to either top or bottom
-        this->tabC->setTabPosition((QTabWidget::TabPosition)position);
+        tabC->setTabPosition((QTabWidget::TabPosition)position);
     }
     ///////////////////////////////////////////////////////////////////////////////
     QTabWidget *TabContainer::getWidget()
     {
-        return this->tabC;
+        return tabC;
     }
     ///////////////////////////////////////////////////////////////////////////////
 }

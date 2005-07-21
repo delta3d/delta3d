@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -24,6 +25,7 @@
 #include "dtEditQt/editoractions.h"
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/undomanager.h"
+#include "dtEditQt/viewportmanager.h"
 #include "dtCore/uniqueid.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
@@ -62,8 +64,8 @@ namespace dtEditQt
         // trap destry, create, change, and about to change
         connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)),
             this, SLOT(onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)),
+            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));
         connect(&EditorEvents::getInstance(),
             SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>, osg::ref_ptr<dtDAL::ActorProperty>)),
             this, SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>, osg::ref_ptr<dtDAL::ActorProperty>)));
@@ -140,7 +142,7 @@ namespace dtEditQt
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    void UndoManager::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void UndoManager::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         if (!recursePrevent)
         {
@@ -393,7 +395,10 @@ namespace dtEditQt
                 proxy->SetName(event->oldName);
                 currMap->AddProxy(*(proxy.get()));
                 recursePrevent = true;
-                EditorEvents::getInstance().emitActorProxyCreated(proxy);
+                EditorEvents::getInstance().emitBeginChangeTransaction();
+                EditorEvents::getInstance().emitActorProxyCreated(proxy, true);
+                ViewportManager::getInstance().placeProxyInFrontOfCamera(proxy.get());
+                EditorEvents::getInstance().emitEndChangeTransaction();
                 recursePrevent = false;
 
                 // create our redo event

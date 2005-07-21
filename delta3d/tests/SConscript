@@ -37,8 +37,11 @@ if mode == 'debug':
    projectTestProgram = '#tests/projectTestsd'
    proxyTestProgram = '#tests/proxyTestsd'
    
+mainlibs = ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore']
+mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
 
-projectEnv.Append(LIBS = deplibs + ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore'])
+projectEnv.Append(LIBS = deplibs + mainlibs)
+
 app = projectEnv.Program(allTestProgram, sources)
 projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
 proxyapp = projectEnv.Program(proxyTestProgram,  mainSources + proxySources)
@@ -55,7 +58,11 @@ else:
 
 dtCreateActorsDeps = ['dtDAL']
 
-dtCreateActorsLib = BuildLib( 'dtCreateActors', dtCreateActorLibSources, dtCreateActorsDeps, ['DT_PLUGIN'], 
+if OS == 'windows':
+  dtCreateActorsDeps += ['dtActors']
+
+
+dtCreateActorsLib = BuildLib( 'testActorLibrary', dtCreateActorLibSources, dtCreateActorsDeps, ['DT_PLUGIN'], 
 	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 # Grab all the sources from the dtActors source directory.

@@ -3,19 +3,15 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
-#include <dtAudio/dtaudio.h>
 #if defined (WIN32) || defined (_Win32) || defined (__WIN32__)
     #include <soarx/dtsoarx.h>
 #endif
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/datatype.h"
-#include "dtActors/baselightactorproxy.h"
 
 using namespace dtDAL;
 using namespace dtCore;
-using namespace dtABC;
 
 std::ostream& operator << (std::ostream &o, const osg::Vec3 &vec)
 {

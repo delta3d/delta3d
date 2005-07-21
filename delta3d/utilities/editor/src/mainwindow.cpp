@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -80,7 +81,7 @@ namespace dtEditQt
 
         //Make sure some default UI states are correctly initialized.
         EditorActions::getInstance().actionSelectionCamera->setChecked(true);
-        setWindowTitle(tr("Delta3D World Editor"));
+        setWindowTitle(tr("Delta3D Editor"));
         EditorData::getInstance().setMainWindow(this);
         
         // add the application icon
@@ -514,7 +515,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void MainWindow::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void MainWindow::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         EditorData::getInstance().getCurrentMap()->SetModified(true);
         updateWindowTitle();
@@ -568,8 +569,8 @@ namespace dtEditQt
             this, SLOT(onResetWindows()));
         connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)),
             this, SLOT(onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)),
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)),
+            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));
         connect(&EditorEvents::getInstance(),
             SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>, osg::ref_ptr<dtDAL::ActorProperty>)),
             this, SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>, osg::ref_ptr<dtDAL::ActorProperty>)));

@@ -1,5 +1,6 @@
 /*
- * Delta3D Open Source Game and Simulation Engine Level Editor
+ * Delta3D Open Source Game and Simulation Engine
+ * Simulation, Training, and Game Editor (STAGE)
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -54,24 +55,30 @@ namespace dtEditQt
         worldCamera = new Camera();
         inChangeTransaction = false;
 
-        connect(&EditorEvents::getInstance(),
+        EditorEvents *editorEvents = &EditorEvents::getInstance();
+
+        connect(editorEvents, SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)),
+                this,SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));
+
+        connect(editorEvents,
                 SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)),
                 this,
                 SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)));
 
-        connect(&EditorEvents::getInstance(),SIGNAL(projectChanged()),
+        connect(editorEvents,SIGNAL(projectChanged()),
                 this,SLOT(refreshAllViewports()));
-        connect(&EditorEvents::getInstance(),SIGNAL(currentMapChanged()),
+        connect(editorEvents,SIGNAL(currentMapChanged()),
                 this,SLOT(onCurrentMapChanged()));
-        connect(&EditorEvents::getInstance(), SIGNAL(beginChangeTransaction()), 
+        connect(editorEvents, SIGNAL(beginChangeTransaction()),
             this, SLOT(onBeginChangeTransaction()));
-        connect(&EditorEvents::getInstance(), SIGNAL(endChangeTransaction()), 
+        connect(editorEvents, SIGNAL(endChangeTransaction()),
             this, SLOT(onEndChangeTransaction()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     ViewportManager::ViewportManager(const ViewportManager &rhs)
     {
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -280,8 +287,92 @@ namespace dtEditQt
             //the proxy.
         }
 
-        // only redraw if we're doing a single change.  Otherwise, all events will be 
+        // only redraw if we're doing a single change.  Otherwise, all events will be
         // redrawn in the endChangeTransaction
+        if (!inChangeTransaction)
+            refreshAllViewports();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportManager::onActorProxyCreated(
+            osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
+    {
+        dtCore::Scene *scene = this->masterScene.get();
+        dtDAL::ActorProxyIcon *billBoard = NULL;
+
+        const dtDAL::ActorProxy::RenderMode &renderMode = proxy->GetRenderMode();
+        if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
+        {
+            billBoard = proxy->GetBillBoardIcon();
+            if (billBoard == NULL)
+            {
+                LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
+            }
+            else
+                scene->AddDrawable(billBoard->GetDrawable());
+        }
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR)
+        {
+            scene->AddDrawable(proxy->GetActor());
+        }
+        else if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
+        {
+            scene->AddDrawable(proxy->GetActor());
+
+            billBoard = proxy->GetBillBoardIcon();
+            if (billBoard == NULL)
+            {
+                LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
+            }
+            else
+                scene->AddDrawable(billBoard->GetDrawable());
+        }
+        else
+        {
+            //If we got here, then the proxy wishes the system to determine how to display
+            //the proxy. Currently, not implemented, defaults to DRAW_ACTOR).
+            scene->AddDrawable(proxy->GetActor());
+        }
+
+        // update the viewports unless we're getting lots of changes back to back, in which
+        // case our super class handles that.
+        if (!inChangeTransaction)
+            refreshAllViewports();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportManager::placeProxyInFrontOfCamera(dtDAL::ActorProxy *proxy)
+    {
+        //Get the current position and direction the camera is facing.
+        osg::Vec3 pos = getWorldViewCamera()->getPosition();
+        osg::Vec3 viewDir = getWorldViewCamera()->getViewDir();
+
+        //If the object is a transformable (can have a position in the scene)
+        //add it to the scene in front of the camera.
+        dtDAL::TransformableActorProxy *tProxy =
+                dynamic_cast<dtDAL::TransformableActorProxy *>(proxy);
+        dtDAL::ActorProperty *prop = proxy->GetProperty("Translation");
+
+        if (tProxy != NULL && prop != NULL)
+        {
+            const osg::BoundingSphere &bs = tProxy->GetActor()->GetOSGNode()->getBound();
+
+            //Position it along the camera's view direction.  The distance from
+            //the camera is the object's bounding volume so it appears
+            //just in front of the camera.  If the object is very large, it is
+            //just created at the origin.
+            std::string oldValue = prop->GetStringValue();
+
+            float offset = (bs.radius() < 1000.0f) ? bs.radius() : 1.0f;
+            if (offset <= 0.0f)
+                offset = 10.0f;
+            tProxy->SetTranslation(pos+(viewDir*offset*2));
+
+            std::string newValue = prop->GetStringValue();
+            EditorEvents::getInstance().emitActorPropertyAboutToChange(proxy, prop, oldValue, newValue);
+            EditorEvents::getInstance().emitActorPropertyChanged(proxy,prop);
+        }
+
         if (!inChangeTransaction)
             refreshAllViewports();
     }

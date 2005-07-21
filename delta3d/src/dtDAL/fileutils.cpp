@@ -23,12 +23,22 @@
 #   include <windows.h>
 #   include <direct.h>
 #   include <io.h>
+#   define stat64 _stati64
+#   define mkdir(x,y) _mkdir((x))
 extern "C" int errno;
 //Linux and Mac OS X
 #else
 #   include <sys/param.h>
 #   include <errno.h>
 #endif
+
+//this define take from fileutils in osg.
+#if defined( __APPLE__ ) || defined(__CYGWIN__) || defined(__FreeBSD__)
+#define stat64 stat
+#endif
+
+#include <osg/Notify>
+#include <stack>
 
 #include "dtDAL/fileutils.h"
 #include "dtDAL/exception.h"
@@ -60,7 +70,72 @@ namespace dtDAL
 #else
     const char FileUtils::PATH_SEPARATOR = '/';
 #endif
-    //-----------------------------------------------------------------------
+ 
+	//temporary copy of osgDB::makeDirectory because of some bugs in it.
+    bool iMakeDirectory( const std::string &path )
+	{
+		if (path.empty())
+		{
+			osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  cannot create an empty directory" << std::endl;
+			return false;
+		}
+
+		struct stat64 stbuf;
+		if( stat64( path.c_str(), &stbuf ) == 0 )
+		{
+			if( S_ISDIR(stbuf.st_mode))
+				return true;
+			else
+			{
+				osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  "  <<
+						path << " already exists and is not a  directory!" << std::endl;
+				return false;
+			}
+		}
+
+		std::string dir = path;
+		std::stack<std::string> paths;
+		while( true )
+		{
+			if( dir.empty() )
+				break;
+
+			if( stat64( dir.c_str(), &stbuf ) < 0 )
+			{
+				switch( errno )
+				{
+					case ENOENT:
+					case ENOTDIR:
+						paths.push( dir );
+						break;
+
+					default:
+						osg::notify(osg::DEBUG_INFO) <<  "osgDB::makeDirectory(): "  << strerror(errno) << std::endl;
+						return false;
+				}
+			}
+			else
+			{
+				break;
+			}
+			dir = osgDB::getFilePath(std::string(dir));
+		}
+
+		while( !paths.empty() )
+		{
+			std::string dir = paths.top();
+
+			if( mkdir( dir.c_str(), 0755 )< 0 )
+			{
+				osg::notify(osg::DEBUG_INFO) << "osgDB::makeDirectory():  "  << strerror(errno) << std::endl;
+				return false;
+			}
+			paths.pop();
+		}
+		return true;
+	}
+	
+	//-----------------------------------------------------------------------
     bool FileUtils::FileExists( const std::string& strFile ) const
     {
         return GetFileInfo(strFile).fileType != FILE_NOT_FOUND;
@@ -89,67 +164,82 @@ namespace dtDAL
                        std::string("Unable to open source file for reading: \"") + strSrc + "\"");
             }
 
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
+			try 
+			{
+				if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+					mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
 
-            std::string destFile = strDest;
+				std::string destFile = strDest;
 
-            FileType ft = GetFileInfo(strDest).fileType;
+				FileType ft = GetFileInfo(strDest).fileType;
 
-            //Check to see if the destination is a file or directory.
-            if (ft == DIRECTORY)
-            {
-                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
+				//Check to see if the destination is a file or directory.
+				if (ft == DIRECTORY)
+				{
+					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
 
-                //If the file is a directory, append the base name of the source file to the destination
-                //to make the new file name.
-                if (strDest[strDest.size()-1] != FileUtils::PATH_SEPARATOR)
-                    destFile = strDest + FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(strSrc);
-                else
-                    destFile = strDest + osgDB::getSimpleFileName(strSrc);
-            }
-            else
-            {
-                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
-            }
+					//If the file is a directory, append the base name of the source file to the destination
+					//to make the new file name.
+					if (strDest[strDest.size()-1] != FileUtils::PATH_SEPARATOR)
+						destFile = strDest + FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(strSrc);
+					else
+						destFile = strDest + osgDB::getSimpleFileName(strSrc);
+				}
+				else
+				{
+					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
+				}
 
-            if (FileExists(destFile) && !bOverwrite)
-            {
-                EXCEPT(ExceptionEnum::ProjectIOException,
-                       std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"");
-            }
+				if (FileExists(destFile) && !bOverwrite)
+				{
+					EXCEPT(ExceptionEnum::ProjectIOException,
+						std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"");
+				}
 
-            pDestFile = fopen( destFile.c_str(), "wb" );
+				pDestFile = fopen( destFile.c_str(), "wb" );
 
-            if( pDestFile == NULL )
-            {
-                //make sure to close the source file.
-                fclose(pSrcFile);
-                EXCEPT(ExceptionEnum::ProjectIOException,
-                       std::string("Unable to open destination for writing: \"") + destFile + "\"");
-            }
+				if( pDestFile == NULL )
+				{
+					//make sure to close the source file.
+					EXCEPT(ExceptionEnum::ProjectIOException,
+						std::string("Unable to open destination for writing: \"") + destFile + "\"");
+				}
 
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
+				try 
+				{
+
+					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
 
 
-            stat( strSrc.c_str(), &tagStat );
-            long i = 0;
-            char buffer[4096]; 
-            while (i<tagStat.st_size)
-            {
-                int readCount = fread(buffer, 1, 4096, pSrcFile );
-                if (readCount > 0) 
-                {
-                    fwrite(buffer, 1, readCount, pDestFile );
-                    i += readCount;
-                }
-            }
-
-            fclose( pDestFile );
-            fclose( pSrcFile );
+					stat( strSrc.c_str(), &tagStat );
+					long i = 0;
+					char buffer[4096]; 
+					while (i<tagStat.st_size)
+					{
+						int readCount = fread(buffer, 1, 4096, pSrcFile );
+						if (readCount > 0) 
+						{
+							fwrite(buffer, 1, readCount, pDestFile );
+							i += readCount;
+						}
+					}
+					fclose( pDestFile );
+					fclose( pSrcFile );
+				}
+				catch (dtDAL::Exception& ex1)
+				{
+					fclose( pDestFile );
+					throw ex1;
+				}
+			}
+			catch (dtDAL::Exception& ex)
+			{
+				fclose( pSrcFile );
+				throw ex;
+			}
 
         }
         //if the source equals the destination, this method is really a noop.
@@ -571,7 +661,7 @@ namespace dtDAL
 
     void FileUtils::MakeDirectory(const std::string& strDir) const
     {
-        if (!osgDB::makeDirectory(strDir))
+        if (!iMakeDirectory(strDir))
         {
             FileType ft = GetFileInfo(strDir).fileType;
             if (ft == REGULAR_FILE)
@@ -618,8 +708,16 @@ namespace dtDAL
         {
             FileType ft = GetFileInfo(*i).fileType;
             if (ft == REGULAR_FILE)
+			{
                 //Delete regular files.
-                unlink(i->c_str());
+				errno = 0;
+				if (unlink(i->c_str()) < 0) 
+				{
+					EXCEPT(ExceptionEnum::ProjectIOException,
+						std::string("Unable to delete directory \"") + *i + "\":" + strerror(errno));
+					
+				}
+			}
             else if ((*i != ".") && (*i != "..") && ft == DIRECTORY && bRecursive )
             {
                 //if it's a directory and it's not the "." or ".." special directories,
@@ -627,7 +725,23 @@ namespace dtDAL
                 ChangeDirectoryInternal(*i);
                 RecursDeleteDir( true );
                 //now that the directory is empty, remove it.
-                rmdir(i->c_str());
+				errno = 0;
+				if( rmdir( i->c_str() ) != 0 )
+				{
+					if (errno == ENOENT)
+					{
+						if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+							mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+							"Directory %s doesn't exist to delete. Ignoring.", (mCurrentDirectory + PATH_SEPARATOR + *i).c_str());
+						return;
+					}
+					else
+					{
+						EXCEPT(ExceptionEnum::ProjectIOException,
+							std::string("Unable to delete directory \"") + mCurrentDirectory + PATH_SEPARATOR + *i + "\":" + strerror(errno));
+
+					}
+				}
             }
         }
 

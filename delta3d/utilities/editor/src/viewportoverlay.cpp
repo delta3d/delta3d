@@ -1,5 +1,6 @@
 /*
- * Delta3D Open Source Game and Simulation Engine Level Editor
+ * Delta3D Open Source Game and Simulation Engine
+ * Simulation, Training, and Game Editor (STAGE)
  * Copyright (C) 2005, BMH Associates, Inc.
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -135,7 +136,6 @@ namespace dtEditQt {
         this->selectionVisitor.setRestoreMode(false);
         drawable->GetOSGNode()->accept(this->selectionVisitor);
         this->selectionDecorator->addChild(drawable->GetOSGNode());
-
         if (!this->overlayGroup->containsNode(this->selectionDecorator.get()))
             this->overlayGroup->addChild(this->selectionDecorator.get());
     }
@@ -227,8 +227,8 @@ namespace dtEditQt {
         this->selectionMaterial = new osg::Material();
 
         osg::StateSet* ss = new osg::StateSet;
-        osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::PROTECTED |
-            osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON;
+        osg::StateAttribute::GLModeValue turnOn =
+                            osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON;
         osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::PROTECTED |
                 osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF;
 

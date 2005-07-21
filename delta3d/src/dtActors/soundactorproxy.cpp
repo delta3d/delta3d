@@ -165,9 +165,7 @@ namespace dtActors
         if(!snd)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
-        sgVec3 Pos;
-        Pos[0] = dir[0]; Pos[1] = dir[1]; Pos[2] = dir[2];
-        snd->SetDirection(Pos);
+        snd->SetDirection(dir);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -177,9 +175,9 @@ namespace dtActors
         if(!snd)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
-        sgVec3 Pos;
-        snd->GetDirection(Pos);
-        return osg::Vec3(Pos[0], Pos[1], Pos[2]);
+        osg::Vec3 pos;
+        snd->GetDirection(pos);
+        return pos;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -189,9 +187,7 @@ namespace dtActors
         if(!snd)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
-        sgVec3 Pos;
-        Pos[0] = vel[0]; Pos[1] = vel[1]; Pos[2] = vel[2];
-        snd->SetVelocity(Pos);
+        snd->SetVelocity(vel);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -201,9 +197,9 @@ namespace dtActors
         if(!snd)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
-        sgVec3 Pos;
-        snd->GetVelocity(Pos);
-        return osg::Vec3(Pos[0], Pos[1], Pos[2]);
+        osg::Vec3 pos;
+        snd->GetVelocity(pos);
+        return pos;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

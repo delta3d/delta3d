@@ -1,5 +1,6 @@
 /*
-* Delta3D Open Source Game and Simulation Engine Level Editor
+* Delta3D Open Source Game and Simulation Engine
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -99,12 +100,6 @@ namespace dtEditQt
         }
 
     public slots:
-        /**
-         * This method is invoked when the user has created a new actor proxy.  The method
-         * then inserts the new actor proxy into the current scene.
-         * @param proxy The newly created actor proxy.
-         */
-        void onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy);
 
         /**
          * Puts the perspective viewport options in sync with the editor preferences.

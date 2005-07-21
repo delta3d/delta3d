@@ -1,5 +1,6 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine Level Editor 
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -64,8 +65,8 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::getInstance(), SIGNAL(LibraryAboutToBeRemoved()),
             this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)), 
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>)));   
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)), 
+            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));   
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -279,7 +280,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void ActorSearcher::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy)
+    void ActorSearcher::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         EditorData::getInstance().getMainWindow()->startWaitCursor();
 

@@ -198,6 +198,10 @@ namespace dtActors
             return;
         }
 
+        //We need this little hack to ensure that when a mesh is loaded, the collision
+        //properties get updated properly.
+        SetCollisionType(GetCollisionType());
+
         //std::cout << "Writing node file." << std::endl;
         //osgDB::writeNodeFile(*obj->GetOSGNode(),"testtextures.osg");
         //std::cout << "Done writing node file." << std::endl;

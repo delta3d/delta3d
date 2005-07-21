@@ -55,7 +55,7 @@ namespace dtUtil {
       * address.
       */
       bool operator==(const Enumeration &rhs) const {
-         return this == &rhs;
+		  return this->name == rhs.name;
       }
 
       /**

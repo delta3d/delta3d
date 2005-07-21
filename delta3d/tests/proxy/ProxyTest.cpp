@@ -1,22 +1,10 @@
 #include "ProxyTest.h"
-#include "dtActors/particlesystemactorproxy.h"
-#include "dtActors/characteractorproxy.h"
-#include "dtActors/soundactorproxy.h"
-#include "dtActors/infiniteterrainactorproxy.h"
-#include "dtActors/staticmeshactorproxy.h"
-#include "dtActors/spotlightactorproxy.h"
-#include "dtActors/terrainactorproxy.h"
-#include "dtActors/environmentactorproxy.h"
-#include "dtActors/cameraactorproxy.h"
-#include "dtActors/meshterrainactorproxy.h"
 
 #if defined (WIN32) || defined (_Win32) || defined (__WIN32__)
     #include "dtActors/dtedterrainactorproxy.h"
 #endif
 #include "dtActors/infinitelightactorproxy.h"
 
-using namespace dtActors;
-using namespace dtChar;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
 

@@ -1,5 +1,6 @@
 /* 
-* Delta3D Open Source Game and Simulation Engine Level Editor 
+* Delta3D Open Source Game and Simulation Engine 
+* Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc. 
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -28,6 +29,8 @@
 
 #include "dtEditQt/tabwrapper.h"
 
+class QIcon;
+
 namespace dtEditQt 
 {
 
@@ -55,6 +58,14 @@ namespace dtEditQt
         * @param TabWrapper object
         */
         void addTab(TabWrapper *myTab);
+
+        /**
+        * Adds a new tab and uses a tab icon instead of text
+        * @param TabWrapper object
+        * @param std::string that represents a UIResource which is a image sourcefile path
+        */
+        void addTab(TabWrapper *myTab, const std::string &tabResource);
+
         /**
         * Sets the position of the tabs
         * @param Position position
@@ -67,7 +78,6 @@ namespace dtEditQt
         QTabWidget* getWidget();
 
     private:
-        int minw,minh;
         QTabWidget *tabC;
         std::vector<TabWrapper*> tabVector;
         Position position;
