@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python23.lib osgd.lib dtcored.lib OpenThreadsWin32d.lib"
+				AdditionalDependencies="python24.lib osgd.lib dtcored.lib OpenThreadsWin32d.lib"
 				OutputFile="../../../bin/dtscriptd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python23.lib osg.lib dtcore.lib OpenThreadsWin32.lib"
+				AdditionalDependencies="python24.lib osg.lib dtcore.lib OpenThreadsWin32.lib"
 				OutputFile="../../../bin/dtscript.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
