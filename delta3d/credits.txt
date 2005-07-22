@@ -45,7 +45,7 @@ support in the development of the Delta3D Open Source Game and Simulation Engine
   - Soarx Terrain, dtHLA, many, many backbone components
   
   J.P. Jamieson
-  - Audio Manager
+  - Audio Manager, Viewer, FLTK integration
   
   Matt Campbell
   Teague Coonan
