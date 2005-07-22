@@ -388,18 +388,18 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
    if envLib.has_key('CPPDEFINES'):
       cppDefines = envLib['CPPDEFINES']
    
-   lib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-   envLib.Precious( lib )
+   builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   envLib.Precious( builtlib )
    
    if OS == 'windows' :
-      lib = envLib.Install( '#/bin', lib[0] ) # .dll
-      envLib.Install( '#/lib', lib[1] ) # .lib, 
-      envLib.Install( '#/lib', lib[2] ) # .exp
+      lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
+      envLib.Install( '#/lib', builtlib[1] ) # .lib, 
+      envLib.Install( '#/lib', builtlib[2] ) # .exp
    elif OS == 'linux' :
       # TODO: copy headers/lib/bin to prefix on alias install
-      lib = envLib.Install( '#/lib', lib )
+      lib = envLib.Install( '#/lib', builtlib )
    elif OS == 'darwin' :
-      lib = envLib.Install( '#/lib', lib )
+      lib = envLib.Install( '#/lib', builtlib )
   
    return lib   
 
