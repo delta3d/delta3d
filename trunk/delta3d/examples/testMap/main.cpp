@@ -28,7 +28,8 @@ public:
         // 1. Set the project context, just like in the editor
         // 2. Get a reference to the map
         // 3. Load the map into the scene through the project class
-        Project::GetInstance().SetContext("MyContext");
+        std::string contextName = GetDeltaDataPathList() + "/MyContext";
+        Project::GetInstance().SetContext(contextName);
         Map &myMap = Project::GetInstance().GetMap("MyCoolMap");
         Project::GetInstance().LoadMapIntoScene(myMap, *GetScene());
 
@@ -59,20 +60,20 @@ public:
         // Error check
         if(!helicopter)
         {
-            cout << "Failed to locate the helicopter\n";
+            Notify(WARN, "Failed to locate the helicopter");
             Quit();
         }
 
         if(!tree)
         {
-            cout << "Failed to find the tree\n";
+            Notify(WARN, "Failed to find the tree");
             Quit();
         }
 
         // move our tree away a little bit
         tree->SetTransform(new Transform(-50, 0, -1, 0, 0, 0));
         smoke->SetEnabled(true);
-        GetScene()->AddDrawable(explosion);
+        GetScene()->AddDrawable( explosion );
 
         // translate the camera back some
         GetCamera()->SetTransform(new Transform(-25, -100, 0, 0, 0, 0));
@@ -103,17 +104,14 @@ public:
             // causes the app to chug, not to mention doesn't even look like an explosion
             if(bufferExplosion)
             {
-                GetScene()->RemoveDrawable(tree);
                 explosion->AddDetonation(heliPos);
                 bufferExplosion = false;
                 smoke->SetParent(NULL);
-                // Load in the new mesh of the destroyed helicopter
-                helicopter->LoadFile("StaticMeshes/blackhawk.ive");
-                // Since a new mesh was loaded, we have to re-add the smoke as a child
-                helicopter->AddChild(smoke);
+                helicopter->AddChild( smoke );
                 smoke->SetEnabled(true);
+
                 // Make sure to orient the new mesh to match the old one
-                helicopter->SetTransform(new Transform(x, y, 0, 90, 0, 0));
+                helicopter->SetTransform(new Transform(x, y, 0, 90, -30, 0));
             }
         }
 
@@ -127,7 +125,7 @@ public:
     // Re-initialize to default conditions
     void Reset()
     {
-        GetScene()->AddDrawable(tree);
+        GetScene()->AddDrawable( tree );
         helicopter->SetTransform(new Transform(0, 0, 1, 90, 0, 0));
         helicopter->LoadFile("StaticMeshes/uh-1n.ive");
         smoke->SetEnabled(false);
@@ -143,9 +141,10 @@ public:
 private:
 
     WalkMotionModel *wmm;
-    Object *helicopter, *tree;
+    Object *helicopter;
+    Object *tree;
     ParticleSystem *smoke;
-    EffectManager  *explosion;
+    EffectManager *explosion;
     float step;
     bool bufferExplosion;
 };
