@@ -4,6 +4,10 @@
 #                                      #
 ########################################
 
+NOTE! This example is broken on Fedora Core 4. There is some problem
+using glGUI with FC4 or maybe gcc4. Don't worry, this is deprecated
+anyways! Look for the CEGUI version soon.
+
 Uses modules: dtCore, dtABC
 
 Purpose
