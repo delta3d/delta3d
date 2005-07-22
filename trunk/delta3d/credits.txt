@@ -4,52 +4,67 @@
 #                         #
 ###########################
 
+The Delta3D Team would like at acknowledge the following people for their
+support in the development of the Delta3D Open Source Game and Simulation Engine.
+
 ----------------------
-| Code Contributions |
+| Contributors       |
 ----------------------
 
-Delta3D West (NPS)
-------------------
-Present:
-  Brad Anderegg
-  John K. Grant
+--------------------
+| The Delta3D Team |
+--------------------
+  Rudy Darken
+  - Director MOVES Insitute
+
+  Perry McDowell
+  - Executive Director
+
   Erik Johnson
-  Chris Osborn
+  - Lead Engineer
+ 
   Joe Sullivan
+  - The "goto" guy
+  
+  Chris Osborn
+ 
+  Brad Anderegg
+  
+  John K. Grant
+   
   Mark Strom
+  
   Fuzzy Wells
-Past:
+  - GENETICS integration
+  
   Andrzej Kapolka
+  - Soarx Terrain, dtHLA, many, many backbone components
+  
   J.P. Jamieson
+  - Audio Manager
+  
+  Matt Campbell
+  Teague Coonan
+  David Guthrie
+  Eddie Johnson
+  Curtis Murphy
+ 
+  Curtis Conkey
 
-Delta3D East (BMH)
-------------------
-Matt Campbell
-Teague Coonan
-David Guthrie
-Eddie Johnson
-Curtis Murphy
+  Peter Smith
+  - MSVS Project Template, Wireframe mode, Tutorials
+  
+  Ricardo Salvatore
+  - Linux Tutorials
+  
+  Georgios E. Tarantilis
+  - Clouds on the GPU
 
-Other contributors
-------------------
+----------------------
+| Other Contributors |
+----------------------
 Terry Jordan
 - FPSMotionModel
-Peter Smith
-- MSVS Project Template, Wireframe mode
 
-------------------------------------
-| Project Administration & Support |
-------------------------------------
+"Winter"
 
-Curtis Conkey
-- ???
-Rudy Darken
-- ???
-Erik Johnson
-- Technical Lead
-Perry McDowell
-- Executive Director
-Peter Smith
-- Tutorials
-Winter
-- Tutorials
