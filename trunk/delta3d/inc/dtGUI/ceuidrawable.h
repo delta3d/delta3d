@@ -54,7 +54,7 @@ namespace dtGUI
             this->setUseDisplayList(false);
          }
 
-         virtual ~osgCEUIDrawable() {delete CEGUI::System::getSingletonPtr();}  //this could cause problems
+         virtual ~osgCEUIDrawable() {}
 
          virtual Object* cloneType() const { return new osgCEUIDrawable(mUI); }
          virtual Object* clone(const osg::CopyOp& copyop) const { return new osgCEUIDrawable(*this,copyop); }        
