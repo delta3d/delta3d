@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC);C:\Documents and Settings\johnson\Desktop\cppunit\include;"
+				AdditionalIncludeDirectories="$(DELTA_INC);"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC);C:\Documents and Settings\johnson\Desktop\cppunit\include;"
+				AdditionalIncludeDirectories="$(DELTA_INC);"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"

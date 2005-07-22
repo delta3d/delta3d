@@ -34,6 +34,7 @@ using namespace dtCore;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Physical)
+const std::string Physical::COLLISION_GEODE_ID("__DELTA3D_COLLISION_GEOMETRY__");
 
 /**
  * Constructor.
@@ -1029,7 +1030,7 @@ void Physical::RenderCollisionGeometry( const bool enable )
    if(enable)
    {
       mGeomGeod = new osg::Geode();
-      mGeomGeod->setName("__DELTA3D_COLLISION_GEOMETRY");
+      mGeomGeod->setName(Physical::COLLISION_GEODE_ID);
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio(0.5f);
 

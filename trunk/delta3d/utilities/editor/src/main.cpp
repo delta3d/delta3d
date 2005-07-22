@@ -46,14 +46,14 @@ int main(int argc, char *argv[])
         dtDAL::Log::GetInstance().SetLogLevel(dtDAL::Log::LOG_WARNING);
         dtCore::SetDataFilePathList(".;" + dtCore::GetDeltaDataPathList());
 
+        //Now that everything is initialized, show the main window.
         //Construct the application...
         dtEditQt::MainWindow mainWindow;
-
-        //Now that everything is initialized, show the main window.
         mainWindow.show();
         
         splash->finish(&mainWindow);
         delete splash;
+        splash = NULL;
 
         dtEditQt::EditorEvents::getInstance().emitEditorInitiationEvent();
         mainWindow.setWindowMenuTabsChecked();
@@ -68,6 +68,13 @@ int main(int argc, char *argv[])
         e.Print();
         ss << "Exception (" << e.TypeEnum() << "): " << e.What()
             << "\n\tLine: " << e.Line() << " File: " << e.File();
+
+        // hide the splash screen if it's up or you can't see the error!
+        if (splash != NULL) {
+            delete splash;
+            splash = NULL;
+        }
+
         QMessageBox::critical(NULL,"Exception",ss.str().c_str(),
             QMessageBox::Ok,QMessageBox::NoButton);
         return 1;

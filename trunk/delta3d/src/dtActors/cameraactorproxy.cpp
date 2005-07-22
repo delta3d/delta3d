@@ -61,10 +61,10 @@ namespace dtActors
         Camera *cam = dynamic_cast<Camera*>(mActor.get());
         if(!cam)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
-
+        
         osg::Vec4 color;
         cam->GetClearColor(color);
-        return osg::Vec4f(color);
+        return color;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

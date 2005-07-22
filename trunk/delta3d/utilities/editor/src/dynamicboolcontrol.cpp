@@ -136,6 +136,8 @@ namespace dtEditQt
 
         updateEditorFromModel(temporaryEditControl);
 
+        connect(temporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
+
         // set the tooltip
         temporaryEditControl->setToolTip(getDescription());
 
@@ -171,6 +173,15 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     // SLOTS
     /////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicBoolControl::itemSelected(int index) 
+    {
+        if (temporaryEditControl != NULL) 
+        {
+            updateModelFromEditor(temporaryEditControl);
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicBoolControl::updateData(QWidget *widget)

@@ -46,24 +46,11 @@ app = projectEnv.Program(allTestProgram, sources)
 projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
 proxyapp = projectEnv.Program(proxyTestProgram,  mainSources + proxySources)
 
+print testActorsLibrary
 
-dtCreateActorLibSources = [ 'project/dtCreateActorLib/ExampleActorLib.cpp', 'project/dtCreateActorLib/ExampleTestPropertyProxy.cpp' ];
-
-if OS == 'darwin':
-   overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-   overrideShSuffix = '.dylib'
-else:
-   overrideShLink = ''
-   overrideShSuffix = ''
-
-dtCreateActorsDeps = ['dtDAL']
-
-if OS == 'windows':
-  dtCreateActorsDeps += ['dtActors']
-
-
-dtCreateActorsLib = BuildLib( 'testActorLibrary', dtCreateActorLibSources, dtCreateActorsDeps, ['DT_PLUGIN'], 
-	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
+Depends(app, testActorsLibrary)
+Depends(projectapp, testActorsLibrary)
+Depends(proxyapp, testActorsLibrary)
 
 # Grab all the sources from the dtActors source directory.
 if (app == '[]') :
@@ -73,5 +60,6 @@ else :
 
 if (result == 'false') :
 	errorLog.write("Failed to build the map loader sample application.\n")
+	
 
 Return('result')

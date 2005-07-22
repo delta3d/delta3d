@@ -29,7 +29,7 @@
 #include <osg/Referenced>
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <dtCore/transformable.h>
+#include <dtCore/physical.h>
 #include "dtDAL/actorproxy.h"
 #include "dtEditQt/viewportmanager.h"
 
@@ -89,7 +89,7 @@ namespace dtEditQt
             unsigned int i;
             osg::Geode *copyGeode;
 
-            if (geode.getName() == "__DELTA3D_COLLISION_GEOMETRY")
+            if (geode.getName() == dtCore::Physical::COLLISION_GEODE_ID)
                 return;
 
             if (restoreMode) { //Restore the geodes we made copies of.

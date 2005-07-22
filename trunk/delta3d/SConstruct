@@ -122,8 +122,9 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
       frameworks = [frameworks]
 
 
-   oldLINK = context.env['LINKFLAGS']
-   oldLIBS = context.env['LIBS']
+   oldLINK = context.env.get('LINKFLAGS', [])
+   oldLIBS = context.env.get('LIBS', [])
+
    for framework_name in frameworks:
 
       lang, suffix, msg = _lang2suffix(language)
@@ -150,18 +151,18 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
       ret = context.BuildProg(text, suffix)
 
       _YesNoResult(context, ret, sym, text)
-      if oldLINK != -1 and (not ret or not autoadd):
+      if ret != "" or autoadd == 0:
          context.env.Replace(LINKFLAGS = oldLINK)
       
-      if oldLIBS != -1:
+      if oldLIBS != []:
          context.env.Replace(LIBS = oldLIBS)
      
       if ret == "":
          context.Result(1)
          return 1
 
-   context.Result(ret)
-   return ret
+   context.Result(0)
+   return 0
 
 
 def _YesNoResult(context, ret, key, text):
@@ -391,14 +392,16 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
    envLib.Precious( lib )
    
    if OS == 'windows' :
-      envLib.Install( '#/bin', lib[0] ) # .dll
+      lib = envLib.Install( '#/bin', lib[0] ) # .dll
       envLib.Install( '#/lib', lib[1] ) # .lib, 
       envLib.Install( '#/lib', lib[2] ) # .exp
    elif OS == 'linux' :
       # TODO: copy headers/lib/bin to prefix on alias install
-      envLib.Install( '#/lib', lib )
+      lib = envLib.Install( '#/lib', lib )
    elif OS == 'darwin' :
-      envLib.Install( '#/lib', lib )   
+      lib = envLib.Install( '#/lib', lib )
+  
+   return lib   
 
 # Function to calculate current time for logging
 def CurrentTime() :
@@ -664,17 +667,22 @@ launchDir = env.GetLaunchDir()
 # do version, config checking
 
 def CheckLibOrFramework(context, lib, autoadd = 0):
-   result=conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
-   
+      
    resultText = 0;
+
+   if OS == 'darwin':
+      result = conf.CheckFramework(lib, language = 'C++', autoadd = autoadd)
+      if result != 0:
+         resultText = 'framework'
+   else:
+      result = 0
+
+   if result == 0:
+      result=conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
+      if result != 0:
+         resultText = 'sharedLib'
    
-   if result == 0 and OS == 'darwin':
-     result = conf.CheckFramework(lib, language = 'C++', autoadd = autoadd)
-     if result != 0:
-       resultText = 'framework'
-   elif result != 0:
-     resultText = 'sharedLib'
-     
+
    context.Result( result )
    return resultText
 
