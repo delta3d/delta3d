@@ -5,6 +5,16 @@
 ##############################
 
 ---------
+| 0.9.1 |
+---------
+New Features:
+-Added editor!
+-Added dtDAL, dtActors
+-Added examples: testMap, testActorLibrary, testStateManager
+-Added dtGUI::ScriptModule
+-Deprecated sg.lib and ul.lib functionality
+
+---------
 | 0.9.0 |
 ---------
 
