@@ -62,8 +62,8 @@ Win32 w/ Visual Studio .NET 7.1
    The Delta3D Python bindings requires the following additional 
    packages: Python and boost::Python. 
 
-   We've tested with Python 2.3. Version 2.4 SHOULD work, but I haven't
-   tested it myself, so no promises.
+   We've tested with Python 2.3 and 2.4 - currently the project files refer
+   to python24.lib.
 
    Install Python from:
    http://www.python.org/
