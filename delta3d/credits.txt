@@ -49,7 +49,7 @@ support in the development of the Delta3D Open Source Game and Simulation Engine
   Teague Coonan
   David Guthrie
   Eddie Johnson
-  Curtis Murphy
+  Curtiss Murphy
   - STAGE: Simluation, Training, and Game Editor
  
   Curtis Conkey

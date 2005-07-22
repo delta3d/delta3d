@@ -21,4 +21,6 @@ elif OS == 'darwin':
    dtDALDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
     
-BuildLib( 'dtDAL', sources, dtDALDeps, ['DT_LIBRARY'] )
+libdtDAL = BuildLib( 'dtDAL', sources, dtDALDeps, ['DT_LIBRARY'] )
+
+Export ('libdtDAL')

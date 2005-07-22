@@ -144,6 +144,8 @@ namespace dtEditQt
             temporaryEditControl->addItem(QString(enumValue->GetName().c_str()));
         }
 
+        connect(temporaryEditControl, SIGNAL(activated (int)), this, SLOT(itemSelected(int)));
+
         updateEditorFromModel(temporaryEditControl);
 
         // set the tooltip
@@ -182,6 +184,15 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     // SLOTS
     /////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////////
+    void DynamicEnumControl::itemSelected(int index) 
+    {
+        if (temporaryEditControl != NULL) 
+        {
+            updateModelFromEditor(temporaryEditControl);
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicEnumControl::updateData(QWidget *widget)

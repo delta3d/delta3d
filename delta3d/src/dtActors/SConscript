@@ -7,7 +7,7 @@ Import ('*')
 
 if OS == 'darwin':
    overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-   overrideShSuffix = '.dylib'
+   overrideShSuffix = '.so'
 else:
    overrideShLink = ''
    overrideShSuffix = ''
@@ -36,6 +36,5 @@ dtActors = BuildLib( 'dtActors', sources, dtActorsDeps, ['DT_PLUGIN'],
 	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 if OS == 'darwin':
-   Depends(dtActors, '#lib/libdtDAL.dylib')
-   Depends(dtActors, '#lib/dtDAL')
+   Depends(dtActors, libdtDAL)
    

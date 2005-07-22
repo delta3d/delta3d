@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -48,28 +48,32 @@ namespace dtCore
     * detection and the mass of the body.  A Physical instance is not enabled
     * by default and must be enabled by calling EnableDynamics().
     *
-    * Since a Physical is derived from DeltaDrawable, it already has a 
-    * geometry node associated with it.  As such, a collision geometry can be 
-    * assigned to this body by either supplying the shape properties, or by 
+    * Since a Physical is derived from DeltaDrawable, it already has a
+    * geometry node associated with it.  As such, a collision geometry can be
+    * assigned to this body by either supplying the shape properties, or by
     * passing a NULL into the SetCollision*() methods.
-    * 
+    *
     */
    class DT_EXPORT Physical : public Transformable
    {
-      DECLARE_MANAGEMENT_LAYER(Physical)
-         
+       DECLARE_MANAGEMENT_LAYER(Physical)
+
       public:
-      
+
+         ///Used to identify the collision geometry node if RenderCollisionGeometry is
+         ///set to true.
+         static const std::string COLLISION_GEODE_ID;
+
          /**
           * Constructor.
           */
          Physical();
-         
+
          /**
           * Destructor.
           */
          virtual ~Physical();
-           
+
          /**
           * Returns the ODE geometry identifier associated with this
           * object.
@@ -77,7 +81,7 @@ namespace dtCore
           * @return the object's geometry identifier
           */
          dGeomID GetGeomID() const;
-         
+
          /**
           * Sets the ODE body identifier associated with this object.  Should
           * only be called by dtCore::Scene.
@@ -85,7 +89,7 @@ namespace dtCore
           * @param bodyID the new body identifier
           */
          void SetBodyID(dBodyID bodyID);
-         
+
          /**
           * Returns the ODE body identifier associated with this
           * object.
@@ -93,7 +97,7 @@ namespace dtCore
           * @return the object's body identifier
           */
          dBodyID GetBodyID() const;
-         
+
          /**
           * Sets this object's collision geometry to the specified ODE
           * geom.
@@ -101,7 +105,7 @@ namespace dtCore
           * @param geom the new collision geom
           */
          void SetCollisionGeom(dGeomID geom);
-         
+
          /**
           * Sets this object's collision geometry to a sphere with the
           * specified radius.
@@ -109,7 +113,7 @@ namespace dtCore
           * @param radius the radius of the collision sphere
           */
          void SetCollisionSphere(float radius);
-         
+
          /**
           * Sets this object's collision geometry to a sphere with
           * radius derived from the specified OpenSceneGraph node.
@@ -118,7 +122,7 @@ namespace dtCore
           * (if NULL, attempt to use own node)
           */
          void SetCollisionSphere(osg::Node* node = NULL);
-         
+
          /**
           * Sets this object's collision geometry to a box with the
           * specified dimensions.
@@ -128,7 +132,7 @@ namespace dtCore
           * @param lz the length of the box in the z direction
           */
          void SetCollisionBox(float lx, float ly, float lz);
-         
+
          /**
           * Sets this object's collision geometry to a box with parameters
           * derived from the specified OpenSceneGraph node.
@@ -137,7 +141,7 @@ namespace dtCore
           * (if NULL, attempt to use own node)
           */
          void SetCollisionBox(osg::Node* node = NULL);
-         
+
          /**
           * Sets this object's collision geometry to a capped cylinder
           * (oriented along the z axis) with the specified radius and length.
@@ -146,7 +150,7 @@ namespace dtCore
           * @param length the length of the cylinder
           */
          void SetCollisionCappedCylinder(float radius, float length);
-         
+
          /**
           * Sets this object's collision geometry to a capped cylinder with
           * parameters derived from the given OpenSceneGraph node.
@@ -155,7 +159,7 @@ namespace dtCore
           * (if NULL, attempt to use own node)
           */
          void SetCollisionCappedCylinder(osg::Node* node = NULL);
-         
+
          /**
           * Sets this object's collision geometry to a ray (along the z axis)
           * with the specified length.
@@ -163,7 +167,7 @@ namespace dtCore
           * @param length the length of the ray
           */
          void SetCollisionRay(float length);
-         
+
          /**
           * Sets this object's collision geometry to a triangle mesh derived
           * from the given OpenSceneGraph node.
@@ -172,19 +176,19 @@ namespace dtCore
           * (if NULL, attempt to use own node)
           */
          void SetCollisionMesh(osg::Node* node = NULL);
-         
+
          /**
           * Removes any collision geometry specified for this object.
           */
          void ClearCollisionGeometry();
-         
+
          /**
           * Enables or disables dynamics for this object.
           *
           * @param enable true to enable dynamics, false to disable
           */
          void EnableDynamics(bool enable = true);
-         
+
          /**
           * Checks whether or not dynamics are enabled for
           * this object.
@@ -199,35 +203,35 @@ namespace dtCore
           * @param mass a pointer to the mass structure to copy
           */
          void SetMass(const dMass* mass);
-         
+
          /**
           * Retrieves the ODE mass parameters of this object.
           *
           * @param mass a pointer to the mass structure to fill
           */
          void GetMass(dMass* mass) const;
-         
+
          /**
           * Sets the mass of this object.
           *
           * @param mass the new mass, in kilograms
           */
          void SetMass(float mass);
-         
+
          /**
           * Returns the mass of this object.
           *
           * @return the current mass
           */
          float GetMass() const;
-         
+
          /**
           * Sets this object's center of gravity.
           *
           * @param centerOfGravity the new center of gravity
           */
          void SetCenterOfGravity(const osg::Vec3& centerOfGravity);
-         
+
          //deprecated version
          void SetCenterOfGravity(const sgVec3 centerOfGravity)
          {
@@ -235,15 +239,15 @@ namespace dtCore
             SetCenterOfGravity(osg::Vec3(centerOfGravity[0], centerOfGravity[1], centerOfGravity[2]));
          }
 
-         
+
           /**
           * Retrieves this object's center of gravity.
           *
           * @param dest the vector in which to place the center
           * of gravity
-          */         
+          */
          void GetCenterOfGravity(osg::Vec3& dest) const;
-         
+
          //deprecated version
          void GetCenterOfGravity(sgVec3 dest) const
          {
@@ -252,17 +256,17 @@ namespace dtCore
             GetCenterOfGravity(tmp);
             dest[0] = tmp[0]; dest[1] = tmp[1]; dest[2] = tmp[2];
          }
-         
+
          /**
           * Sets this object's inertia tensor.
           *
           * @param inertiaTensor the new inertia tensor, uses only the rotation part of the transform matrix
           */
          void SetInertiaTensor(const osg::Matrix& inertiaTensor);
-         
+
          //DEPRECATED
          void SetInertiaTensor(const sgMat3 inertiaTensor);
-         
+
          /**
           * Retrieves this object's inertia tensor.
           *
@@ -270,7 +274,7 @@ namespace dtCore
           * tensor, uses only rotation part of the transform matrix
           */
          void GetInertiaTensor(osg::Matrix& mat) const;
-         
+
          //DEPRECATED
          void GetInertiaTensor(sgMat3 dest) const;
 
@@ -281,7 +285,7 @@ namespace dtCore
           * to reflect any user-applied transformation.
           */
          virtual void PrePhysicsStepUpdate();
-         
+
          /**
           * Modifies or cancels the specified contact joint definition
           * according to the relationship between this object and the
@@ -293,7 +297,7 @@ namespace dtCore
           * false to cancel it
           */
          virtual bool FilterContact(dContact* contact, Physical* collider);
-         
+
          /**
           * Updates the state of this object just after a physical
           * simulation step.  Should only be called by dtCore::Scene.
@@ -301,9 +305,9 @@ namespace dtCore
           * position into the user-accessible transformation.
           */
          virtual void PostPhysicsStepUpdate();
-         
+
          /** Enable or disable the rendering of the collision geometry.
-          *  This will draw a purple outline of shape the collision 
+          *  This will draw a purple outline of shape the collision
           *  detection routine is using.
           */
          void RenderCollisionGeometry( const bool enable = true );
@@ -327,43 +331,43 @@ namespace dtCore
          * this value to modify the shape of mGeomID.
          */
          dGeomID mOriginalGeomID;
-         
+
          /**
           * The ODE triangle mesh data identifier, if any.
           */
          dTriMeshDataID mTriMeshDataID;
-         
+
          /**
           * The ODE body identifier.
           */
          dBodyID mBodyID;
-         
+
          /**
           * Whether or not dynamics have been enabled for this object.
           */
          bool mDynamicsEnabled;
-         
+
          /**
           * The mass, center of gravity, and inertia tensor of the body.
           */
          dMass mMass;
-         
+
          /**
           * The last geometry transform reported to ODE.
           */
          Transform mGeomTransform;
-         
+
          /**
           * The heap-allocated array of mesh vertices.
           */
          dVector3* mMeshVertices;
-         
+
          /**
           * The heap-allocated array of mesh indices.
           */
          int* mMeshIndices;
 
-         /** 
+         /**
           *  Pointer to the collision geometry representation
           */
          RefPtr<osg::Geode> mGeomGeod;
@@ -390,7 +394,7 @@ public:
    * @param node the geode to visit
    */
    virtual void apply(osg::Geode& node)
-   {     
+   {
       osg::Matrix matrix = osg::computeLocalToWorld(getNodePath());
 
       for(unsigned int i=0;i<node.getNumDrawables();i++)

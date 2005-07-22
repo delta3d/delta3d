@@ -158,11 +158,15 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool BooleanActorProperty::SetStringValue(const std::string& value)
     {
-        std::istringstream stream;
-        stream.str(value);
-        int i;
-        stream >> i;
-        SetValue(i);
+        bool result = false;
+
+        if (value == "true" || value == "True" || value == "1" ||
+            value == "TRUE")
+        {
+            result = true;
+        }
+
+        SetValue(result);
         return true;
     }
 

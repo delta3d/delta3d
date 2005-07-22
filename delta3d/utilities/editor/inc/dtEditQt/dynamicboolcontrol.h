@@ -119,6 +119,11 @@ namespace dtEditQt
         void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
             osg::ref_ptr<dtDAL::ActorProperty> property);
 
+        /**
+         * Called when the user selects an item in the combo box
+         */
+        void itemSelected(int index);
+
     protected:
 
     private: 
