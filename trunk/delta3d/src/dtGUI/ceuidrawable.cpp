@@ -25,7 +25,7 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
    mHeight(height),
    mMouseX(.0f),
    mMouseY(.0f),
-   mRenderer(0),
+   mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
    mScriptModule(sm)
 {
    AddSender( System::GetSystem() );
@@ -39,7 +39,6 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
    dtCore::Mouse::GetInstance(0)->AddMouseListener(this); 
    dtCore::DeltaWin::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
 
-   mRenderer = new dtGUI::Renderer(1024, mWidth, mHeight);
    if( mScriptModule )
       new CEGUI::System(mRenderer,mScriptModule);
    else
@@ -76,6 +75,8 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
 CEUIDrawable::~CEUIDrawable(void)
 {
    mNode = NULL;
+   delete mUI;
+   delete mRenderer;
 }
 
 void CEUIDrawable::MouseMoved(Mouse* mouse, float x, float y)
