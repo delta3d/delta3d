@@ -30,9 +30,11 @@ support in the development of the Delta3D Open Source Game and Simulation Engine
   - Lead Programmer
  
   Brad Anderegg
-  
+  - Programmer
+
   John K. Grant
-   
+  - Programmer
+
   Mark Strom
   - dtHLA bug fixes
   

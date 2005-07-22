@@ -65,7 +65,7 @@ int TestStateManager::GetInput()
 {
    std::cout << "q) Quit" << std::endl
       << "r) Restart" << std::endl
-      << "p) Print StateManager contents" << std::endl;  //\todo take out
+      << "p) Print StateManager contents" << std::endl;
    std::cout << "Send event: ";
 
    char buffer[mBufferSize];
@@ -84,7 +84,7 @@ int TestStateManager::GetInput()
       std::cout << sm->GetCurrentState()->GetName() << "." <<std::endl;
       return -1;
    }
-   else if( strcmp( buffer, "p" ) == 0 )   //\todo take out
+   else if( strcmp( buffer, "p" ) == 0 )
    {
       MyStateManager* mgr = MyStateManager::Instance();
 
@@ -105,6 +105,7 @@ int TestStateManager::GetInput()
          MyStateManager::EventMap::value_type::second_type to = iter->second;
          std::cout << "<" << event->GetName() << "," << from->GetName() << "> : " << to->GetName() << std::endl;
       }
+      return -1;
    }
 
    int choice = atoi(buffer);

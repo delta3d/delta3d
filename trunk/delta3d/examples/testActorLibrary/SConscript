@@ -13,7 +13,7 @@ else:
    overrideShSuffix = ''
 
 # Grab all the sources from the DAL source directory.
-sources = ['testactorlib.cpp', 'testpropertyproxy.cpp']
+sources = ['testActorLib.cpp', 'testPropertyProxy.cpp']
 
 testActorsLibraryDeps =['dtDAL', 'dtutil', 'dtcore', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
