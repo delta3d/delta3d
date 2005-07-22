@@ -76,41 +76,6 @@ ParticleSystem::~ParticleSystem()
 }
 
 
-///find the VariableRateCounter and RadialShooter and store the pointers
-class ParticleVisitor : public osg::NodeVisitor
-{
-public:
-
-   ParticleVisitor():
-      osg::NodeVisitor(TRAVERSE_ALL_CHILDREN) {}
-
-      virtual void apply(osg::Node& node)
-      {
-         osg::Node* nodePtr = &node;
-
-         if( osgParticle::ModularEmitter* me = dynamic_cast<osgParticle::ModularEmitter*>(nodePtr) )
-         {
-            emitter.push_back( me );
-
-            if( osgParticle::VariableRateCounter* counter = dynamic_cast<osgParticle::VariableRateCounter*>(me->getCounter()) )
-            {
-               vrc.push_back( counter );             
-            }
-
-            if( osgParticle::RadialShooter* shooter = dynamic_cast<osgParticle::RadialShooter*>(me->getShooter()) )
-            {
-               rs.push_back( shooter );
-            }            
-         }
-
-         traverse(node);
-      }
-
-      std::vector<osgParticle::VariableRateCounter*> vrc;
-      std::vector<osgParticle::RadialShooter*> rs;
-      std::vector<osgParticle::ModularEmitter*> emitter;
-};
-
 class psGeodeTransform : public osg::MatrixTransform
 {
 public:
@@ -145,18 +110,19 @@ class findGeodeVisitor : public osg::NodeVisitor
 public:
    findGeodeVisitor() : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
    {
-      foundGeode = NULL;
    }
-   virtual void apply(osg::Node &searchNode)
+   virtual void apply(osg::Geode &searchNode)
    {
-      if (osg::Geode* g = dynamic_cast<osg::Geode*> (&searchNode) )
-         foundGeode = g;
-      else
-         traverse(searchNode);
+       foundGeodeVector.push_back(&searchNode);
+
+       traverse(searchNode);
    }
-   osg::Geode* getGeode() {return foundGeode;}
+
+   const std::vector<osg::Geode*> getGeodeVector() {return foundGeodeVector;}
+
 protected:
-   osg::Geode* foundGeode;
+   std::vector<osg::Geode*> foundGeodeVector;
+
 };
 
 
@@ -167,22 +133,22 @@ public:
    { 
       findGeodeVisitor* fg = new findGeodeVisitor(); 
       accept(*fg); 
-      osg::Geode* psGeode = fg->getGeode(); 
-      psGeodeXForm = new psGeodeTransform(); 
-      this->replaceChild(psGeode, psGeodeXForm); 
-      psGeodeXForm->addChild (psGeode); 
+      std::vector<osg::Geode*> psGeodeVector = fg->getGeodeVector(); 
+
+      psGeodeXForm = new psGeodeTransform();
+
+      this->addChild(psGeodeXForm);
+
+      for (std::vector<osg::Geode*>::iterator itr = psGeodeVector.begin();
+         itr != psGeodeVector.end(); 
+         itr++)
+      {
+         this->removeChild( *itr );         
+         psGeodeXForm->addChild( *itr ); 
+      }
+
    } 
 
-
-   void addEffect(osg::Group* psGroup) 
-   { 
-      this->addChild(psGroup); 
-      findGeodeVisitor* fg = new findGeodeVisitor(); 
-      psGroup->accept(*fg); 
-      osg::Geode* psGeode = fg->getGeode(); 
-      psGeodeXForm->addChild(psGeode); 
-      psGroup->removeChild( psGroup->getChildIndex(psGeode) ); 
-   } 
 protected: 
    psGeodeTransform* psGeodeXForm; 
 }; 
