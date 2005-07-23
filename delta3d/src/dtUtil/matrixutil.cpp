@@ -94,7 +94,7 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
    //For further information visit http://plib.sourceforge.net
 
 
-   static double ch, sh, cp, sp, cr, sr, srsp, crsp, srcp ;
+   double ch, sh, cp, sp, cr, sr, srsp, crsp, srcp ;
 
 
    if ( hpr[0] == 0.0f )
