@@ -976,7 +976,11 @@ Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 'BuildLib', '
 env.SConsignFile()
 
 Default( None )
-Default( [ 'lib', 'bin' ] )
+
+if 'qt' in env['TOOLS'] and OS != 'windows' :
+   Default( [ 'lib', 'bin' ] )
+else :
+   Default( [ 'lib' ] )
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                   os.path.join(os.getcwd(), 'examples', 'testPython')] )
