@@ -23,8 +23,8 @@ You'll need:
  ftp://ftp.trolltech.com/qt/source/qt-win-opensource-desktop-4.0.0.zip
 -Python
  http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
--qt4_msvc_patch.zip
-
+-qt4_msvc_patch.zip 
+ (get this from dt_dep_vc7.1_0.4.2.zip inside the ext/ directory)
 
 Building QT4.0 Open Source Version with MSVC
 --------------------------------------------
