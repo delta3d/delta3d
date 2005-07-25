@@ -505,7 +505,7 @@ env = Environment( options = opts )
 
 # append the outside env to ours
 for K in os.environ.keys():
-   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE' ]:
+   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR' ]:
      env['ENV'][K]=SCons.Util.AppendPath( env['ENV'][K], os.environ[K] )
    else:
      env['ENV'][K]=os.environ[K]
@@ -536,6 +536,8 @@ env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc', 'CEGUI' ) ] ) # path for Crazy Eddie's GUI since they are too cool
 
+if env['ENV'].has_key('QTDIR') :
+   env.Append( TOOLS = 'qt' ) 
 
 #add Xerces framework includes in case xerces is a framework
 #since the xerces framework has broken headers.
@@ -981,6 +983,8 @@ env.SConsignFile()
 
 Default( None )
 
+print env['TOOLS']
+print env['ENV']['PATH']
 if 'qt' in env['TOOLS'] and OS != 'windows' :
    Default( [ 'lib', 'bin' ] )
 else :
