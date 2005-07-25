@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+<Application>
+    <Window Name="TestSoarx" Width="1024" Height="768" X="1" Y="1" ShowCursor="1" FullScreen="0" ChangeDisplayResolution="0" PixelDepth="32" />
+    <Scene Name="defaultScene" />
+    <Camera Name="defaultCam" WindowInstance="TestSoarx" SceneInstance="defaultScene" />
+</Application>

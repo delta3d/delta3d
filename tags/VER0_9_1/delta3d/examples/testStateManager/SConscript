@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = [ 'teststatemanager.cpp', 'main.cpp' ]
+
+testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
+
+BuildProgram( 'testStateManager', testSrcs, testDeps )

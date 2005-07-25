@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = ['testmap.cpp']
+
+testDeps =[ 'dtcore', 'dtDAL', 'dtActors'] 
+
+BuildProgram( 'testMap', testSrcs, testDeps )

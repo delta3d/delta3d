@@ -1,0 +1,65 @@
+# Build script for the basic sample application demonstrating map file IO.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+projectEnv = env.Copy()
+
+sources = []
+
+mainSources = glob.glob('*.cpp')
+
+sources += mainSources;
+
+projectSources = glob.glob('project/*Tests.cpp')
+
+sources += projectSources;
+
+proxySources =  glob.glob('proxy/*Test.cpp')
+
+sources += proxySources;
+
+deplibs = ['cppunit']
+
+#convert libs to system name
+deplibs = [ extLibs[lib] for lib in deplibs if extLibs.has_key(lib) ]
+
+projectEnv.Append(LIBS = deplibs)
+
+allTestProgram = '#tests/allTests'
+projectTestProgram = '#tests/projectTests'
+proxyTestProgram = '#tests/proxyTests'
+
+if mode == 'debug':
+   allTestProgram = '#tests/allTestsd'
+   projectTestProgram = '#tests/projectTestsd'
+   proxyTestProgram = '#tests/proxyTestsd'
+   
+mainlibs = ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore']
+mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
+
+projectEnv.Append(LIBS = deplibs + mainlibs)
+
+app = projectEnv.Program(allTestProgram, sources)
+projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
+proxyapp = projectEnv.Program(proxyTestProgram,  mainSources + proxySources)
+
+print testActorsLibrary
+
+Depends(app, testActorsLibrary)
+Depends(projectapp, testActorsLibrary)
+Depends(proxyapp, testActorsLibrary)
+
+# Grab all the sources from the dtActors source directory.
+if (app == '[]') :
+	result = 'false'
+else :
+	result = 'true'
+
+if (result == 'false') :
+	errorLog.write("Failed to build the map loader sample application.\n")
+	
+
+Return('result')

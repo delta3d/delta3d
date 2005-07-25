@@ -1,0 +1,102 @@
+##############################
+#                            #
+# Delta3D: Version Changes   # 
+#                            #
+##############################
+
+---------
+| 0.9.1 |
+---------
+New Features:
+-Added editor!
+-Added dtDAL, dtActors
+-Added examples: testMap, testActorLibrary, testStateManager
+-Added dtGUI::ScriptModule
+-Deprecated sg.lib and ul.lib functionality
+
+---------
+| 0.9.0 |
+---------
+
+New Features:
+-Added dtGUI using CEGUI (will replace glGUI)
+-Added Xerces XML parser (will replace TinyXML)
+-Updated for OSG 0.9.9
+-New StateManager in dtABC
+-New example: testSOARX
+-Moved Visual Studio files to the VisualStudio directory
+
+Major Bug Fixes:
+- dtAudio now works on Linux!
+- Fixed bug with relocating a collision shape
+
+---------
+| 0.8.6 |
+---------
+
+Misc
+- Updated python bindings to reflect changes in Scene and Camera classes.
+- Removed default "-Wall" in SCons build until we can remove all the
+  silly warnings.
+
+Bug fixes:
+- SCons now links with GDAL & osgSim for HLA-related libs+apps.
+- SCons won't exit if RTI environment variables aren't found (they are
+  optional anyways!)
+- SCons exits nicely if the DELTA environment variables aren't found.
+- Fixed bug with clamping of particle effects in HLA environments.
+
+---------
+| 0.8.5 |
+---------
+
+New features:
+- Scaling, non-uniform and uniform
+- Brand new Linux build system using SCons (http://www.scons.org)
+  (Windows support for a SCons Delta3D build coming soon!)
+- Can have multiple cameras and multiple windows
+- Added a dtCore::Timer to compensate for inaccurate osg::Timer in osg0.9.8
+- Created a dtCore::RefPtr based on the osg::ref_ptr
+- dtScript::Script class has moved to dtScript::ScriptManager
+- Camera field of view controls
+- Microsoft Visual Studio Project Template for Delta3D Applications
+
+Bug fixes:
+- Fixed NaN matrix error when using Characters on certain platforms.
+  (Bug 1115629)
+- Our TinyXML lib now does not conflict with CAL3D's integrated TinyXML lib.
+  (Bug 1068290)
+
+ ---
+|0.8|
+ ---
+
+BIG change in the hierarchy! 
+See release notes online for more detail.
+
+New features: 
+-family of Light classes
+-Loadable class 
+-DeltaDrawable::RenderProxyNode
+-Object::RecenterGeometryUponLoad
+-DeprecationMgr class
+-Domain class
+-MatrixUtil class
+-PolarDecomposition class
+-Python Script class
+-Viewer now has icons
+
+Bug fixes:
+-Auto-collision geometry ( with SetCollisionBox, SetCollisionSphere, 
+ SetCollisionMesh, SetCollisionCappedCylinder should all generate correct
+ collision geometry now. (Bug 1110847)
+-All drawables render fine under Linux with auto-collision geometry.
+ (Bug 1068805)
+-Viewer: now you can switch between recently opened files fine
+-testEffects: works on Linux (Bug 1059177)
+-Chracters do not cause other textures  in scene to disappear (Bug 1075403)
+-hlaStealthViewer does not crash after exiting a concurrent testHLA 
+ (Bug 1068186)
+-And many many many more!
+
+
