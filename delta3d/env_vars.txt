@@ -5,9 +5,7 @@ the libraries and data.
 
 Win32
 -----
-Make sure the Delta3D environment variables are set by either the Win32 
-installer or env_var_setup.exe in delta3d/utilities. The following 
-variables are set:
+Make sure the Delta3D environment variables are set:
 
 DELTA_ROOT = c:\program files\delta3d  (or wherever Delta3D is installed)
 DELTA_INC  = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI
