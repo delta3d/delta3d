@@ -578,6 +578,10 @@ if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.pa
 
    if rtiLibPath is not '' :
       env.Append( LIBPATH = [ rtiLibPath ] )
+      if 'rtiada' in rtiLibs :
+         rtiLibs.remove('rtiada')
+      if 'rtiadafedtime' in rtiLibs :
+         rtiLibs.remove('rtiadafedtime')
 
 Help( opts.GenerateHelpText( env ) )
 opts.Save( 'delta3d.conf', env )
