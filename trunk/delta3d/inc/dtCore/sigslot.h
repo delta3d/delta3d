@@ -81,7 +81,7 @@
 #include <set>
 #include <list>
 
-#if defined(_LINUX)
+#if defined(__linux__)
 #   ifndef SIGSLOT_PURE_ISO
 #      define SIGSLOT_PURE_ISO
 #   endif
