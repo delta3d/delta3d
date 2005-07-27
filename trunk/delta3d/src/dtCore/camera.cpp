@@ -7,10 +7,12 @@
 #include "dtCore/camera.h"
 #include "dtCore/notify.h"
 #include "dtCore/scene.h"
+#include <dtUtil/matrixutil.h>
+
 #include <osg/Matrix>
 
 using namespace dtCore;
-
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Camera)
 using namespace std;
@@ -146,30 +148,32 @@ Camera::~Camera()
  */
 void Camera::Frame()
 {
-
    if (mScene != NULL)
    {
       GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
    }
-
 
    //Get our Camera's position, up vector, and look-at vector and pass them
    //to the Producer Camera
    osg::Matrix mat = GetMatrixNode()->getMatrix();
    Transform absXform;
 
-   //GetTransform(&absXform, ABS_CS);
-   //absXform.Get(mat);
-   
-   osg::Vec3 eyePoint(mat(3,0), mat(3,1), mat(3,2));   
-   osg::Vec3 upVec(mat(2,0), mat(2,1), mat(2,2));
-   osg::Vec3 lookVec = upVec ^ osg::Vec3(mat(0,0), mat(0,1), mat(0,2));
+   osg::Matrix absMat;
+   GetAbsoluteMatrix( GetMatrixNode(), absMat );
+
+   osg::Vec3 eyePoint(absMat(3,0), absMat(3,1), absMat(3,2));
+
+   //choose Z as the up vector
+   osg::Vec3 upVec(absMat(2,0), absMat(2,1), absMat(2,2));
+
+   osg::Vec3 lookVec = upVec ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
    osg::Vec3 centerPoint = eyePoint + lookVec * 10.f;
 
+   //sync up Producer's camera with the world matrix for this node
    mCamera->setViewByLookat( eyePoint[0], eyePoint[1], eyePoint[2],
                              centerPoint[0], centerPoint[1], centerPoint[2],
                              upVec[0], upVec[1], upVec[2] );
-
+   
    //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
    //Might cause a problem with multi camera's sharing one RenderSurface
    mCamera->frame(true);
