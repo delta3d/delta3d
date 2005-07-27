@@ -612,10 +612,10 @@ if mode == 'debug':
                   CXXFLAGS = ['/EHsc', '/GR', '/MDd' ], #synchronous exception handling (c-?), run-time type info, multi-threaded debug dll
                   LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
    elif OS == 'linux':      
-      env.Append( CXXFLAGS=['-g', '-O0', '-pipe', '-fvisibility-inlines-hidden'], #deubg info, no optimizations, pipe object data
+      env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
                   CXXDEFINES=['DEBUG', '_DEBUG'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fvisibility-inlines-hidden'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -625,13 +625,13 @@ else:
               CXXFLAGS = ['/EHsc', '/GR', '/MD' ], #synchronous exception handling (c-?), run-time type info, multi-threaded dll
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
-     env.Append( CXXFLAGS=['-O2', '-pipe', '-march=i686', '-fvisibility-inlines-hidden'], #optimizations, pipe object data
+     env.Append( CXXFLAGS=['-O2', '-pipe'], #optimizations, pipe object data
               CPPDEFINES=['NDEBUG'],
               LINKFLAGS=['-s'] )
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4', '-fvisibility-inlines-hidden', '-ftree-vectorize'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
    
 if env.get('no_warnings'):
    if OS == 'windows':
