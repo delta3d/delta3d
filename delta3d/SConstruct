@@ -983,8 +983,6 @@ env.SConsignFile()
 
 Default( None )
 
-print env['TOOLS']
-print env['ENV']['PATH']
 if 'qt' in env['TOOLS'] and OS != 'windows' :
    Default( [ 'lib', 'bin' ] )
 else :
