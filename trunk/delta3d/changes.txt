@@ -5,6 +5,15 @@
 ##############################
 
 ---------
+| 0.9.2 |
+---------
+Bug fixes:
+-Start Menu icon for editor now loads the app correctly
+-Can now add Camera's as children of other Transformables
+-Fixed error in sigslot.h on linux causing apps to hang
+-Build works with gcc3 again
+
+---------
 | 0.9.1 |
 ---------
 New Features:
