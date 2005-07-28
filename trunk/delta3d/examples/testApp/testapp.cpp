@@ -4,25 +4,6 @@
 using namespace dtCore;
 using namespace dtABC;
 
-typedef dtCore::RefPtr<Object> ObjectPtr;
-
-struct ObjectPtrCompare : std::binary_function<ObjectPtr,ObjectPtr,bool>
-{
-   /** StatePtrCompare will make sure the State being added is
-    * unique to the set based on its name AND based on the fact
-    * that the State has a unique place in memory.
-    * This makes sure that no one tried to submit a State that
-    * had the same name as another State, or someone tried to
-    * resubmit a State already in the set by changing its name.
-    */
-   bool operator()(const ObjectPtr& lhs,const ObjectPtr& rhs) const
-   {
-      return lhs.get() != rhs.get() && lhs->GetName() < rhs->GetName();
-   }
-};
-
-typedef std::set<ObjectPtr,ObjectPtrCompare> ObjectPtrSet;
-
 int main()
 {
 
@@ -51,17 +32,6 @@ int main()
    camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
    app->GetCamera()->SetTransform( &camPos );
 
-   ObjectPtrCompare compare_them;
-   compare_them(brdm,terrain);
-
-   ObjectPtrSet objectSet;
-   objectSet.insert(terrain);
-   objectSet.insert(brdm);
-
-   for( ObjectPtrSet::iterator iter = objectSet.begin(); iter != objectSet.end(); iter++ )
-   {
-      std::cout << (*iter)->GetName() << std::endl;    
-   }
    app->Config();
    app->Run();
 
