@@ -653,7 +653,7 @@ if OS == 'linux' :
   env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
-  env.Append(CPPPATH=['/usr/include','/usr/local/include'])
+  env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
   env.Append(FRAMEWORKSPATH=['-F./ext/Frameworks' ])
   env.Append(CPPFLAGS=['$FRAMEWORKSPATH' ])
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')

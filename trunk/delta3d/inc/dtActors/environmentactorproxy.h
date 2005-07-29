@@ -26,6 +26,7 @@
 #include <dtCore/environment.h>
 #include "dtActors/enveffectactorproxy.h"
 #include "dtDAL/exception.h"
+#include "dtUtil/enumeration.h"
 
 namespace dtActors 
 {
@@ -36,6 +37,21 @@ namespace dtActors
     class DT_PLUGIN_EXPORT EnvironmentActorProxy : public dtDAL::ActorProxy 
     {
     public:
+
+        class DT_PLUGIN_EXPORT FogModeEnum : public dtUtil::Enumeration
+        {
+            DECLARE_ENUM(FogModeEnum)
+        public:
+            static FogModeEnum LINEAR;
+            static FogModeEnum EXP;
+            static FogModeEnum EXP2;
+            static FogModeEnum ADV;
+        private:
+            FogModeEnum(const std::string &name) : dtUtil::Enumeration(name)
+            {
+                AddInstance(this);
+            }
+        };
 
         /**
          * Constructor
@@ -64,7 +80,7 @@ namespace dtActors
          */
         osg::Vec3 GetSkyColor();
 
-        /**
+        /**             
          * Sets the fog color
          * @param color The color to Set
          */
@@ -80,13 +96,13 @@ namespace dtActors
          * Sets the fog mode
          * @param mode The desired fog mode
          */
-        void SetFogMode(int);
+        void SetFogMode(FogModeEnum &mode);
 
         /**
          * Gets the fog mode
          * @return The current fog mode
          */
-        int GetFogMode();
+        FogModeEnum& GetFogMode();
 
         /**
          * Sets the lat/long

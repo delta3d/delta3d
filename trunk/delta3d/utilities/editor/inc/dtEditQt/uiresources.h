@@ -35,62 +35,60 @@ namespace dtEditQt
     {
         public:
 
-            static const std::string GPL_LICENSE_FILE;
+            static void staticInitialize();
 
-            static const std::string ICON_FILE_NEW_MAP;
-            static const std::string ICON_FILE_OPEN_MAP;
-            static const std::string ICON_FILE_SAVE;
+            static std::string GPL_LICENSE_FILE;
 
-            static const std::string ICON_EDIT_DUPLICATE;
-            static const std::string ICON_EDIT_DELETE;
-            static const std::string ICON_GROUND_CLAMP;
-            static const std::string ICON_EDIT_UNDO;
-            static const std::string ICON_EDIT_REDO;
+            static std::string ICON_FILE_NEW_MAP;
+            static std::string ICON_FILE_OPEN_MAP;
+            static std::string ICON_FILE_SAVE;
 
-            static const std::string ICON_TOOLMODE_CAMERA;
-            static const std::string ICON_TOOLMODE_SELECT;
-            static const std::string ICON_TOOLMODE_TRANSLATE;
-            static const std::string ICON_TOOLMODE_ROTATE;
+            static std::string ICON_EDIT_DUPLICATE;
+            static std::string ICON_EDIT_DELETE;
+            static std::string ICON_GROUND_CLAMP;
+            static std::string ICON_EDIT_UNDO;
+            static std::string ICON_EDIT_REDO;
 
-            static const std::string ICON_VIEWMODE_TEXTURES;
-            static const std::string ICON_VIEWMODE_LIGHTING;
-            static const std::string ICON_VIEWMODE_WIREFRAME;
-            static const std::string ICON_VIEWMODE_TEXTURES_AND_LIGHTING;
+            static std::string ICON_TOOLMODE_CAMERA;
+            static std::string ICON_TOOLMODE_SELECT;
+            static std::string ICON_TOOLMODE_TRANSLATE;
+            static std::string ICON_TOOLMODE_ROTATE;
 
-            static const std::string ICON_TINY_FOLDER;
-            static const std::string ICON_TINY_FOLDER_OPEN;
+            static std::string ICON_VIEWMODE_TEXTURES;
+            static std::string ICON_VIEWMODE_LIGHTING;
+            static std::string ICON_VIEWMODE_WIREFRAME;
+            static std::string ICON_VIEWMODE_TEXTURES_AND_LIGHTING;
 
-            static const std::string LARGE_ICON_EDIT_DUPLICATE;
-            static const std::string LARGE_ICON_EDIT_DELETE;
-            static const std::string LARGE_ICON_EDIT_GOTO;
-            static const std::string LARGE_ICON_EDIT_IMPORT;
-            static const std::string LARGE_ICON_EDIT_REFRESH;
-            static const std::string LARGE_ICON_EDIT_CATEGORY;
+            static std::string ICON_TINY_FOLDER;
+            static std::string ICON_TINY_FOLDER_OPEN;
 
-            static const std::string ICON_SOUND_STOP;
-            static const std::string ICON_SOUND_PLAY;
+            static std::string LARGE_ICON_EDIT_DUPLICATE;
+            static std::string LARGE_ICON_EDIT_DELETE;
+            static std::string LARGE_ICON_EDIT_GOTO;
+            static std::string LARGE_ICON_EDIT_IMPORT;
+            static std::string LARGE_ICON_EDIT_REFRESH;
+            static std::string LARGE_ICON_EDIT_CATEGORY;
 
-            static const std::string ICON_SOUND_RESOURCE;
-            static const std::string ICON_STATICMESH_RESOURCE;
-            static const std::string ICON_TEXTURE_RESOURCE;
-            static const std::string ICON_CHARACTER_RESOURCE;
-            static const std::string ICON_PARTICLE_RESOURCE;
-            static const std::string ICON_TERRAIN_RESOURCE;
+            static std::string ICON_SOUND_STOP;
+            static std::string ICON_SOUND_PLAY;
 
-            static const std::string ICON_SOUND_TAB;
-            static const std::string ICON_STATICMESH_TAB;
-            static const std::string ICON_TEXTURE_TAB;
-            static const std::string ICON_CHARACTER_TAB;
-            static const std::string ICON_PARTICLE_TAB;
-            static const std::string ICON_TERRAIN_TAB;
+            static std::string ICON_SOUND_RESOURCE;
+            static std::string ICON_STATICMESH_RESOURCE;
+            static std::string ICON_TEXTURE_RESOURCE;
+            static std::string ICON_CHARACTER_RESOURCE;
+            static std::string ICON_PARTICLE_RESOURCE;
+            static std::string ICON_TERRAIN_RESOURCE;
 
-            static const std::string ICON_ACTOR;
-            static const std::string SPLASH_SCREEN;
-            static const std::string ICON_APPLICATION;
+            static std::string ICON_SOUND_TAB;
+            static std::string ICON_STATICMESH_TAB;
+            static std::string ICON_TEXTURE_TAB;
+            static std::string ICON_CHARACTER_TAB;
+            static std::string ICON_PARTICLE_TAB;
+            static std::string ICON_TERRAIN_TAB;
 
-       private:
-
-            static const std::string mPrefix;
+            static std::string ICON_ACTOR;
+            static std::string SPLASH_SCREEN;
+            static std::string ICON_APPLICATION;
     };
 
 }

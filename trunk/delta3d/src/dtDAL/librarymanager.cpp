@@ -22,6 +22,7 @@
 #include "dtDAL/actortype.h"
 #include "dtDAL/log.h"
 #include "dtDAL/exception.h"
+#include "dtDAL/actorproxyicon.h"
 #include <sstream>
 #include <osgDB/Registry>
 #include <osgDB/FileNameUtils>
@@ -35,6 +36,7 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     LibraryManager::LibraryManager()
     {
+        ActorProxyIcon::staticInitialize();
         dtDAL::Log::GetInstance().SetLogLevel(dtDAL::Log::LOG_WARNING);
 
         LOG_INFO("Initializing actor library manager.");

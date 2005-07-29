@@ -48,28 +48,46 @@ namespace dtDAL
     const ActorProxyIcon::IconType ActorProxyIcon::IconType::TRIGGER("TRIGGER_ICON");
     //////////////////////////////////////////////////////////////////////////
 
-    //absolute paths
-    //const std::string deltaRoot = "DELTA_ROOT";
-    //char* ptr = getenv( deltaRoot.c_str() );
-    //const std::string ActorProxyIcon::mPrefix(std::string(ptr) + "/utilities/editor/billboards/");
+    //////////////////////////////////////////////////////////////////////////
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_LIGHT("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_SOUND("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART("");
+    std::string ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER("");
 
-    //relative paths
-    const std::string ActorProxyIcon::mPrefix("../utilities/editor/billboards/");
+    std::string ActorProxyIcon::IMAGE_ARROW_HEAD("");
+    std::string ActorProxyIcon::IMAGE_ARROW_BODY("");
+    //////////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_GENERIC("");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_CHARACTER(mPrefix+"animcharacter.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_STATICMESH(mPrefix+"staticmesh.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_LIGHT(mPrefix+"light.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_SOUND(mPrefix+"sound.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_PARTICLESYSTEM(mPrefix+"particlesystem.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_MESHTERRAIN(mPrefix+"terrain.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_PLAYERSTART(mPrefix+"playerstart.png");
-    const std::string ActorProxyIcon::IMAGE_BILLBOARD_TRIGGER(mPrefix+"trigger.png");
+    void ActorProxyIcon::staticInitialize()
+    {
+        static char* ptr = getenv("DELTA_ROOT");
+        static std::string prefix;
 
-    const std::string ActorProxyIcon::IMAGE_ARROW_HEAD(mPrefix+"arrowhead.png");
-    const std::string ActorProxyIcon::IMAGE_ARROW_BODY(mPrefix+"arrowbody.png");
-    //////////////////////////////////////////////////////////////////////////
+        prefix = std::string(ptr);                
+        if (prefix[prefix.length()-1] == '/' || prefix[prefix.length()-1] == '\\') {
+            prefix = prefix.substr(0,prefix.length()-1);
+        }
+        
+        prefix += "/utilities/editor/billboards/";
+        IMAGE_BILLBOARD_GENERIC = ("");
+        IMAGE_BILLBOARD_CHARACTER = (prefix+"animcharacter.png");
+        IMAGE_BILLBOARD_STATICMESH = (prefix+"staticmesh.png");
+        IMAGE_BILLBOARD_LIGHT = (prefix+"light.png");
+        IMAGE_BILLBOARD_SOUND = (prefix+"sound.png");
+        IMAGE_BILLBOARD_PARTICLESYSTEM = (prefix+"particlesystem.png");
+        IMAGE_BILLBOARD_MESHTERRAIN = (prefix+"terrain.png");
+        IMAGE_BILLBOARD_PLAYERSTART = (prefix+"playerstart.png");
+        IMAGE_BILLBOARD_TRIGGER = (prefix+"trigger.png");
+
+        IMAGE_ARROW_HEAD = (prefix+"arrowhead.png");
+        IMAGE_ARROW_BODY = (prefix+"arrowbody.png");
+    }
 
     //////////////////////////////////////////////////////////////////////////
     ActorProxyIcon::ActorProxyIcon(const IconType &type)
