@@ -3,7 +3,6 @@
 #include <dtGUI/dtgui.h>
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
-#include <iostream>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -24,7 +23,6 @@ public:
                            GetDeltaDataPathList() + ";" +
                            GetDeltaDataPathList()+"/gui/;" );
 
-      std::cout << GetDataFilePathList() << std::endl;
       dtABC::Application::Config();
 
       ///put something in the background to look at
