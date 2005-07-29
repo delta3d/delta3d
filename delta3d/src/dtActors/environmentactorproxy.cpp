@@ -27,6 +27,17 @@ using namespace dtDAL;
 
 namespace dtActors 
 {
+    ///////////////////////////////////////////////////////////////////////////////
+    IMPLEMENT_ENUM(EnvironmentActorProxy::FogModeEnum);
+    EnvironmentActorProxy::FogModeEnum
+        EnvironmentActorProxy::FogModeEnum::LINEAR("LINEAR");
+    EnvironmentActorProxy::FogModeEnum
+        EnvironmentActorProxy::FogModeEnum::EXP("EXP");
+    EnvironmentActorProxy::FogModeEnum
+        EnvironmentActorProxy::FogModeEnum::EXP2("EXP2");
+    EnvironmentActorProxy::FogModeEnum
+        EnvironmentActorProxy::FogModeEnum::ADV("ADV");
+    ///////////////////////////////////////////////////////////////////////////////
     void EnvironmentActorProxy::CreateActor()
     {
         mActor = new dtCore::Environment;
@@ -63,10 +74,10 @@ namespace dtActors
         // Uses a dtCore::Environment::FogMode enumeration to represent
         // the fog mode.
         // Default is EXP2.
-        AddProperty(new IntActorProperty("Fog Mode", "Fog Mode",
+        AddProperty(new EnumActorProperty<EnvironmentActorProxy::FogModeEnum>("Fog Mode", "Fog Mode",
             MakeFunctor(*this, &EnvironmentActorProxy::SetFogMode),
             MakeFunctorRet(*this, &EnvironmentActorProxy::GetFogMode),
-            "Set the mode of the fog associated with the environment.", GROUPNAME));
+            "Sets the mode of the fog associated with the environment.", GROUPNAME));
 
         // This property manipulates the latitude and longitude of an
         // Environment. Uses 2 values to represent the latitude and
@@ -182,30 +193,44 @@ namespace dtActors
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void EnvironmentActorProxy::SetFogMode(int mode)
+    void EnvironmentActorProxy::SetFogMode(EnvironmentActorProxy::FogModeEnum &mode)
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
-        if(!env)
+        if(env == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        env->SetFogMode((dtCore::Environment::FogMode)mode);
+        if(mode == FogModeEnum::LINEAR)
+            env->SetFogMode(Environment::LINEAR);
+        else if(mode == FogModeEnum::EXP)
+            env->SetFogMode(Environment::EXP);
+        else if(mode == FogModeEnum::EXP2)
+            env->SetFogMode(Environment::EXP2);
+        else
+            env->SetFogMode(Environment::ADV);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    int EnvironmentActorProxy::GetFogMode()
+    EnvironmentActorProxy::FogModeEnum& EnvironmentActorProxy::GetFogMode()
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
-        if(!env)
+        if(env == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
-        return env->GetFogMode();
+        if(env->GetFogMode() == Environment::LINEAR)
+            return FogModeEnum::LINEAR;
+        else if(env->GetFogMode() == Environment::EXP)
+            return FogModeEnum::EXP;
+        else if(env->GetFogMode() == Environment::EXP2)
+            return FogModeEnum::EXP2;
+        else
+            return FogModeEnum::ADV;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     void EnvironmentActorProxy::SetRefLatLong(const osg::Vec2 &latlong)
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
-        if(!env)
+        if(env == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         env->SetRefLatLong(latlong);

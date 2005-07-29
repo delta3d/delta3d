@@ -20,68 +20,129 @@
  * @author Matthew W. Campbell
 */
 #include "dtEditQt/uiresources.h"
+#include <stdlib.h>
 
 
 namespace dtEditQt
 {
-   //absolute paths
-   //const std::string deltaRoot = "DELTA_ROOT";
-   //char* ptr = getenv( deltaRoot.c_str() );
-   //const std::string UIResources::mPrefix(std::string(ptr) + "/utilities/editor/icons/");
+    void UIResources::staticInitialize()
+    {        
+        static char* ptr = getenv("DELTA_ROOT");
+        static std::string prefix;
 
-   //relative path from delta3d/bin
-   const std::string UIResources::mPrefix("../utilities/editor/icons/");
-   const std::string UIResources::GPL_LICENSE_FILE("../utilities/editor/gpl.txt");
+        prefix = std::string(ptr);                
+        if (prefix[prefix.length()-1] == '/' || prefix[prefix.length()-1] == '\\') {
+            prefix = prefix.substr(0,prefix.length()-1);
+        }
+        
+        prefix += "/utilities/editor/";
+        UIResources::GPL_LICENSE_FILE = prefix + "gpl.txt";
+        
+        ICON_FILE_NEW_MAP = (prefix+"icons/newmap_small.png");
+        ICON_FILE_OPEN_MAP = (prefix+"icons/openmap_small.png");
+        ICON_FILE_SAVE = (prefix+"icons/savemap_small.png");
 
-   const std::string UIResources::ICON_FILE_NEW_MAP(mPrefix+"newmap_small.png");
-   const std::string UIResources::ICON_FILE_OPEN_MAP(mPrefix+"openmap_small.png");
-   const std::string UIResources::ICON_FILE_SAVE(mPrefix+"savemap_small.png");
+        ICON_EDIT_DUPLICATE = (prefix+"icons/duplicate_small.png");
+        ICON_EDIT_DELETE = (prefix+"icons/trash_small.png");
+        ICON_GROUND_CLAMP = (prefix+"icons/groundclamp_small.png");
+        ICON_EDIT_UNDO = (prefix+"icons/undo.png");
+        ICON_EDIT_REDO = (prefix+"icons/redo.png");
 
-   const std::string UIResources::ICON_EDIT_DUPLICATE(mPrefix+"duplicate_small.png");
-   const std::string UIResources::ICON_EDIT_DELETE(mPrefix+"trash_small.png");
-   const std::string UIResources::ICON_GROUND_CLAMP(mPrefix+"groundclamp_small.png");
-   const std::string UIResources::ICON_EDIT_UNDO(mPrefix+"undo.png");
-   const std::string UIResources::ICON_EDIT_REDO(mPrefix+"redo.png");
+        ICON_TOOLMODE_CAMERA = (prefix+"icons/cameramode_small.png");
+        ICON_TOOLMODE_SELECT = (prefix+"icons/selectmode_small.png");
+        ICON_TOOLMODE_TRANSLATE = (prefix+"icons/translatemode_small.png");
+        ICON_TOOLMODE_ROTATE = (prefix+"icons/rotatemode_small.png");
 
-   const std::string UIResources::ICON_TOOLMODE_CAMERA(mPrefix+"cameramode_small.png");
-   const std::string UIResources::ICON_TOOLMODE_SELECT(mPrefix+"selectmode_small.png");
-   const std::string UIResources::ICON_TOOLMODE_TRANSLATE(mPrefix+"translatemode_small.png");
-   const std::string UIResources::ICON_TOOLMODE_ROTATE(mPrefix+"rotatemode_small.png");
+        ICON_VIEWMODE_TEXTURES = (prefix+"icons/texturemode_tiny.png");
+        ICON_VIEWMODE_LIGHTING = (prefix+"icons/lightingmode_tiny.png");
+        ICON_VIEWMODE_WIREFRAME = (prefix+"icons/wireframemode_tiny.png");
+        ICON_VIEWMODE_TEXTURES_AND_LIGHTING = (prefix+"icons/texturelightingmode_tiny.png");
 
-   const std::string UIResources::ICON_VIEWMODE_TEXTURES(mPrefix+"texturemode_tiny.png");
-   const std::string UIResources::ICON_VIEWMODE_LIGHTING(mPrefix+"lightingmode_tiny.png");
-   const std::string UIResources::ICON_VIEWMODE_WIREFRAME(mPrefix+"wireframemode_tiny.png");
-   const std::string UIResources::ICON_VIEWMODE_TEXTURES_AND_LIGHTING(mPrefix+"texturelightingmode_tiny.png");
+        ICON_TINY_FOLDER = (prefix+"icons/folder_tiny.png");
+        ICON_TINY_FOLDER_OPEN = (prefix+"icons/folderopen_tiny.png");
 
-   const std::string UIResources::ICON_TINY_FOLDER(mPrefix+"folder_tiny.png");
-   const std::string UIResources::ICON_TINY_FOLDER_OPEN(mPrefix+"folderopen_tiny.png");
+        LARGE_ICON_EDIT_DUPLICATE = (prefix+"icons/duplicate_large.png");
+        LARGE_ICON_EDIT_DELETE = (prefix+"icons/trash_large.png");
+        LARGE_ICON_EDIT_GOTO = (prefix+"icons/goto_large.png");
+        LARGE_ICON_EDIT_IMPORT = (prefix+"icons/import_large.png");
+        LARGE_ICON_EDIT_REFRESH = (prefix+"icons/refresh_large.png");
+        LARGE_ICON_EDIT_CATEGORY = (prefix+"icons/category_large.png");
 
-   const std::string UIResources::LARGE_ICON_EDIT_DUPLICATE(mPrefix+"duplicate_large.png");
-   const std::string UIResources::LARGE_ICON_EDIT_DELETE(mPrefix+"trash_large.png");
-   const std::string UIResources::LARGE_ICON_EDIT_GOTO(mPrefix+"goto_large.png");
-   const std::string UIResources::LARGE_ICON_EDIT_IMPORT(mPrefix+"import_large.png");
-   const std::string UIResources::LARGE_ICON_EDIT_REFRESH(mPrefix+"refresh_large.png");
-   const std::string UIResources::LARGE_ICON_EDIT_CATEGORY(mPrefix+"category_large.png");
+        ICON_SOUND_STOP = (prefix+"icons/stop_sound.png");
+        ICON_SOUND_PLAY = (prefix+"icons/play_sound.png");
 
-   const std::string UIResources::ICON_SOUND_STOP(mPrefix+"stop_sound.png");
-   const std::string UIResources::ICON_SOUND_PLAY(mPrefix+"play_sound.png");
+        ICON_SOUND_RESOURCE = (prefix+"icons/sound_resource.png");
+        ICON_STATICMESH_RESOURCE = (prefix+"icons/staticmesh_resource.png");
+        ICON_CHARACTER_RESOURCE = (prefix+"icons/character_resource.png");
+        ICON_TEXTURE_RESOURCE = (prefix+"icons/texture_resource.png");
+        ICON_PARTICLE_RESOURCE = (prefix+"icons/particle_resource.png");
+        ICON_TERRAIN_RESOURCE = (prefix+"icons/terrain_resource.png");
 
-   const std::string UIResources::ICON_SOUND_RESOURCE(mPrefix+"sound_resource.png");
-   const std::string UIResources::ICON_STATICMESH_RESOURCE(mPrefix+"staticmesh_resource.png");
-   const std::string UIResources::ICON_CHARACTER_RESOURCE(mPrefix+"character_resource.png");
-   const std::string UIResources::ICON_TEXTURE_RESOURCE(mPrefix+"texture_resource.png");
-   const std::string UIResources::ICON_PARTICLE_RESOURCE(mPrefix+"particle_resource.png");
-   const std::string UIResources::ICON_TERRAIN_RESOURCE(mPrefix+"terrain_resource.png");
+        ICON_SOUND_TAB = (prefix+"icons/sound_tab.png");
+        ICON_STATICMESH_TAB = (prefix+"icons/staticmesh_tab.png");
+        ICON_CHARACTER_TAB = (prefix+"icons/character_tab.png");
+        ICON_TEXTURE_TAB = (prefix+"icons/texture_tab.png");
+        ICON_PARTICLE_TAB = (prefix+"icons/particle_tab.png");
+        ICON_TERRAIN_TAB = (prefix+"icons/terrain_tab.png");
 
-   const std::string UIResources::ICON_SOUND_TAB(mPrefix+"sound_tab.png");
-   const std::string UIResources::ICON_STATICMESH_TAB(mPrefix+"staticmesh_tab.png");
-   const std::string UIResources::ICON_CHARACTER_TAB(mPrefix+"character_tab.png");
-   const std::string UIResources::ICON_TEXTURE_TAB(mPrefix+"texture_tab.png");
-   const std::string UIResources::ICON_PARTICLE_TAB(mPrefix+"particle_tab.png");
-   const std::string UIResources::ICON_TERRAIN_TAB(mPrefix+"terrain_tab.png");
+        ICON_ACTOR = (prefix+"icons/actor_icon.png");
+        SPLASH_SCREEN = (prefix+"icons/splash.png");
+        ICON_APPLICATION = (prefix+"icons/application_icon.png");
+    }
 
-   const std::string UIResources::ICON_ACTOR(mPrefix+"actor_icon.png");
-   const std::string UIResources::SPLASH_SCREEN(mPrefix+"splash.png");
-   const std::string UIResources::ICON_APPLICATION(mPrefix+"application_icon.png");
+    //STATIC VARS...
+    std::string UIResources::GPL_LICENSE_FILE("");
+
+    std::string UIResources::ICON_FILE_NEW_MAP("");
+    std::string UIResources::ICON_FILE_OPEN_MAP("");
+    std::string UIResources::ICON_FILE_SAVE("");
+
+    std::string UIResources::ICON_EDIT_DUPLICATE("");
+    std::string UIResources::ICON_EDIT_DELETE("");
+    std::string UIResources::ICON_GROUND_CLAMP("");
+    std::string UIResources::ICON_EDIT_UNDO("");
+    std::string UIResources::ICON_EDIT_REDO("");
+
+    std::string UIResources::ICON_TOOLMODE_CAMERA("");
+    std::string UIResources::ICON_TOOLMODE_SELECT("");
+    std::string UIResources::ICON_TOOLMODE_TRANSLATE("");
+    std::string UIResources::ICON_TOOLMODE_ROTATE("");
+
+    std::string UIResources::ICON_VIEWMODE_TEXTURES("");
+    std::string UIResources::ICON_VIEWMODE_LIGHTING("");
+    std::string UIResources::ICON_VIEWMODE_WIREFRAME("");
+    std::string UIResources::ICON_VIEWMODE_TEXTURES_AND_LIGHTING("");
+
+    std::string UIResources::ICON_TINY_FOLDER("");
+    std::string UIResources::ICON_TINY_FOLDER_OPEN("");
+
+    std::string UIResources::LARGE_ICON_EDIT_DUPLICATE("");
+    std::string UIResources::LARGE_ICON_EDIT_DELETE("");
+    std::string UIResources::LARGE_ICON_EDIT_GOTO("");
+    std::string UIResources::LARGE_ICON_EDIT_IMPORT("");
+    std::string UIResources::LARGE_ICON_EDIT_REFRESH("");
+    std::string UIResources::LARGE_ICON_EDIT_CATEGORY("");
+
+    std::string UIResources::ICON_SOUND_STOP("");
+    std::string UIResources::ICON_SOUND_PLAY("");
+
+    std::string UIResources::ICON_SOUND_RESOURCE("");
+    std::string UIResources::ICON_STATICMESH_RESOURCE("");
+    std::string UIResources::ICON_CHARACTER_RESOURCE("");
+    std::string UIResources::ICON_TEXTURE_RESOURCE("");
+    std::string UIResources::ICON_PARTICLE_RESOURCE("");
+    std::string UIResources::ICON_TERRAIN_RESOURCE("");
+
+    std::string UIResources::ICON_SOUND_TAB("");
+    std::string UIResources::ICON_STATICMESH_TAB("");
+    std::string UIResources::ICON_CHARACTER_TAB("");
+    std::string UIResources::ICON_TEXTURE_TAB("");
+    std::string UIResources::ICON_PARTICLE_TAB("");
+    std::string UIResources::ICON_TERRAIN_TAB("");
+
+    std::string UIResources::ICON_ACTOR("");
+    std::string UIResources::SPLASH_SCREEN("");
+    std::string UIResources::ICON_APPLICATION("");  
+
 }
 

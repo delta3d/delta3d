@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
     int result;
     QApplication app(argc, argv);
 
+    dtEditQt::UIResources::staticInitialize();
     QPixmap pixmap(dtEditQt::UIResources::SPLASH_SCREEN.c_str());
     QSplashScreen *splash = new QSplashScreen(pixmap);
     splash->show();

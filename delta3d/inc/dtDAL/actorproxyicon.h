@@ -75,19 +75,19 @@ namespace dtDAL
 
         //These are resources used by the editor to display billboards
         //for the actors that need them.
-        static const std::string IMAGE_BILLBOARD_GENERIC;
-        static const std::string IMAGE_BILLBOARD_CHARACTER;
-        static const std::string IMAGE_BILLBOARD_STATICMESH;
-        static const std::string IMAGE_BILLBOARD_LIGHT;
-        static const std::string IMAGE_BILLBOARD_SOUND;
-        static const std::string IMAGE_BILLBOARD_PARTICLESYSTEM;
-        static const std::string IMAGE_BILLBOARD_MESHTERRAIN;
-        static const std::string IMAGE_BILLBOARD_PLAYERSTART;
-        static const std::string IMAGE_BILLBOARD_TRIGGER;
+        static std::string IMAGE_BILLBOARD_GENERIC;
+        static std::string IMAGE_BILLBOARD_CHARACTER;
+        static std::string IMAGE_BILLBOARD_STATICMESH;
+        static std::string IMAGE_BILLBOARD_LIGHT;
+        static std::string IMAGE_BILLBOARD_SOUND;
+        static std::string IMAGE_BILLBOARD_PARTICLESYSTEM;
+        static std::string IMAGE_BILLBOARD_MESHTERRAIN;
+        static std::string IMAGE_BILLBOARD_PLAYERSTART;
+        static std::string IMAGE_BILLBOARD_TRIGGER;
 
         //Textures used to display the arrow orientation indicator on the billboard.
-        static const std::string IMAGE_ARROW_HEAD;
-        static const std::string IMAGE_ARROW_BODY;
+        static std::string IMAGE_ARROW_HEAD;
+        static std::string IMAGE_ARROW_BODY;
 
         /**
          * This enumeration enumerates the different types of billboard icons that are
@@ -114,6 +114,12 @@ namespace dtDAL
                 AddInstance(this);
             }
         };
+
+        /**
+         * Initializes the paths to the billboard image files.
+         * @note Called from LibraryManager.
+         */
+        static void staticInitialize();
 
         /**
          * Constructs a new actor proxy billboard icon.  This creates the
@@ -201,9 +207,6 @@ namespace dtDAL
 
         ///A transformable used to represent an arrow depicting actor rotation.
         osg::ref_ptr<dtCore::Transformable> mArrowNode;
-
-        ///Path to billboard icon files
-        static const std::string mPrefix;
     };
 }
 
