@@ -137,6 +137,8 @@ namespace dtUtil
          */
         void SetLogLevel(LogMessageType msgType)  { mLevel = msgType; };
 
+        std::string GetLogLevelString( LogMessageType msgType);
+
         /*
          * Retrieve singleton instance of the log class.
          */
