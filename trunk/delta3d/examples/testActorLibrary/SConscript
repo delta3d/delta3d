@@ -13,32 +13,32 @@ else:
    overrideShSuffix = ''
 
 # Grab all the sources from the DAL source directory.
-sources = ['testActorLib.cpp', 'testPropertyProxy.cpp']
+sources = SGlob('*.cpp')
 
-testActorsLibraryDeps =['dtDAL', 'dtutil', 'dtcore', 'ode',
+testActorLibraryDeps =['dtDAL', 'dtutil', 'dtcore', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
         'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'sg', 'ul', 'js',
         'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows':
-   testActorsLibraryDeps += ['dtActors']
+   testActorLibraryDeps += ['dtActors']
 
 if OS == 'windows' :
-   testActorsLibraryDeps += [ 'dtsoarx', 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+   testActorLibraryDeps += [ 'dtsoarx', 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
 elif OS == 'linux':
-   testActorsLibraryDeps += [ 'uuid', 'Xxf86vm' ]
+   testActorLibraryDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':
-   testActorsLibraryDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
+   testActorLibraryDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
 if(OS == 'windows' and mode == 'debug') :
-	testActorsLibrary = BuildLib( 'testActorsLibraryd', sources, testActorsLibraryDeps, ['DT_PLUGIN'], 
+	testActorLibrary = BuildLib( 'testActorLibraryd', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
 		overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 else :
-	testActorsLibrary = BuildLib( 'testActorsLibrary', sources, testActorsLibraryDeps, ['DT_PLUGIN'], 
+	testActorLibrary = BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
 		overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 
 if OS == 'darwin':
-   Depends(testActorsLibrary, libdtDAL)
+   Depends(testActorLibrary, libdtDAL)
 
-Export('testActorsLibrary')
+Export('testActorLibrary')

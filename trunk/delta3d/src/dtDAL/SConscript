@@ -1,5 +1,4 @@
 # Build script for the Dynamic Actor Layer module.
-import glob
 import sys
 
 # Import the variables defined in the global SConstruct build script.
@@ -10,7 +9,8 @@ sources = SGlob('*.cpp')
 
 dtDALDeps =[ 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 'ode', 
 	'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
-	'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rcfgscript','rbody','gdal', 'sg', 'ul', 'js', 
+	'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
+        'cal3d', 'sg', 'ul', 'js', 
 	'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :
