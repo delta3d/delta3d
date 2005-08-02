@@ -1,8 +1,7 @@
 Import('*')
 
-dtUtilSrcs = [  'domain.cpp',
-                'matrixutil.cpp',
-                'polardecomp.cpp' ]
+
+dtUtilSrcs = SGlob('*.cpp')
 
 dtUtilDeps =[ 'OpenThreads', 'Producer', 'osg', 'sg', 'ul' ]
 
