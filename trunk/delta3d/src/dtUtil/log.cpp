@@ -149,7 +149,7 @@ namespace dtUtil
                 break;
         }
 
-        manager->logFile << color
+        manager->logFile << color << GetLogLevelString(msgType) << ": "
                           << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
                           << std::setw(2) << std::setfill('0') << t->tm_min << ":"
                           << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
@@ -158,6 +158,12 @@ namespace dtUtil
             manager->logFile << ":" << line;
 
         manager->logFile << "&gt; " << msg << "</font></b><br>" << std::endl;
+        
+        std::cout << GetLogLevelString(msgType) << ": "
+           << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+           << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+           << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+           << source << ":" << line << ">" << msg << std::endl;
 
         manager->logFile.flush(); //Make sure everything is written, in case of a crash.
     }
@@ -204,12 +210,18 @@ namespace dtUtil
         vsprintf(buffer,msg,list);
         va_end(list);
 
-        manager->logFile << color
+        manager->logFile << color << GetLogLevelString(msgType) << ": "
                           << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
                           << std::setw(2) << std::setfill('0') << t->tm_min << ":"
                           << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-
                           << source << "&gt; " << buffer << "</font></b><br>" << std::endl;
+
+        std::cout << GetLogLevelString(msgType) << ": "
+           << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+           << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+           << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+           << source << ">" << buffer << std::endl;
+
         manager->logFile.flush();
     }
 
@@ -255,12 +267,19 @@ namespace dtUtil
         vsprintf(buffer,msg,list);
         va_end(list);
 
-        manager->logFile << color
+        manager->logFile << color << GetLogLevelString(msgType) << ": "
                           << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
                           << std::setw(2) << std::setfill('0') << t->tm_min << ":"
                           << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-
                           << source << ":" << line << "&gt; " << buffer << "</font></b><br>" << std::endl;
+
+
+        std::cout << GetLogLevelString(msgType) << ": "
+           << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+           << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+           << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+           << source << ":" << line << ">" << buffer << std::endl;
+
         manager->logFile.flush();
     }
 
@@ -293,5 +312,25 @@ namespace dtUtil
 
         return *l;
     }
-}
 
+    //////////////////////////////////////////////////////////////////////////
+    std::string Log::GetLogLevelString( LogMessageType msgType)
+    {
+       std::string lev;
+
+       switch(msgType)
+       {
+       //case dtLog::ALWAYS: std::cout << "Always";  break;
+       case Log::LOG_ERROR:   lev = "Error";   break;
+       case Log::LOG_WARNING: lev = "Warn";    break;
+       //case Log::NOTICE:    lev = "Notice";  break;
+       case Log::LOG_INFO:    lev = "Info";    break;
+       case Log::LOG_DEBUG:   lev = "Debug";   break;
+       default:
+          break;
+       }
+
+       return lev;
+    }
+
+} //end namespace
