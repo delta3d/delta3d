@@ -26,7 +26,7 @@
 #include <osg/Referenced>
 #include <osgDB/FileUtils>
 
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 
 namespace dtDAL
 {
@@ -228,7 +228,7 @@ namespace dtDAL
 
         static osg::ref_ptr<FileUtils> mInstance;
 
-        Log* mLogger;
+        dtUtil::Log* mLogger;
 
         std::string mCurrentDirectory;
         std::vector<std::string> mStackOfDirectories;

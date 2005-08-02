@@ -18,13 +18,13 @@
  *
  * @author Matthew W. Campbell
  */
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include <iomanip>
 #include <iostream>
 #include <stdarg.h>
 #include <time.h>
 
-namespace dtDAL 
+namespace dtUtil 
 {
     const std::string Log::mDefaultName("__+default+__");
 

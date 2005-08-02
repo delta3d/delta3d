@@ -28,7 +28,6 @@
 #include <osg/ClearNode>
 #include <osgDB/ReadFile>
 #include <osgUtil/CullVisitor>
-#include "dtDAL/log.h"
 
 namespace dtActors
 {

@@ -24,7 +24,6 @@
 
 #include "dtEditQt/actortypetreewidget.h"
 #include "dtDAL/librarymanager.h"
-#include "dtDAL/log.h"
 #include "dtEditQt/uiresources.h"
 #include <QStringList>
 

@@ -166,8 +166,8 @@ namespace dtDAL
 
 			try 
 			{
-				if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-					mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
+				if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+					mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source file exists.");
 
 				std::string destFile = strDest;
 
@@ -176,8 +176,8 @@ namespace dtDAL
 				//Check to see if the destination is a file or directory.
 				if (ft == DIRECTORY)
 				{
-					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
+					if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+						mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
 
 					//If the file is a directory, append the base name of the source file to the destination
 					//to make the new file name.
@@ -188,8 +188,8 @@ namespace dtDAL
 				}
 				else
 				{
-					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
+					if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+						mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
 				}
 
 				if (FileExists(destFile) && !bOverwrite)
@@ -210,8 +210,8 @@ namespace dtDAL
 				try 
 				{
 
-					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
+					if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+						mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Destination opened for reading.");
 
 
 					stat( strSrc.c_str(), &tagStat );
@@ -260,8 +260,8 @@ namespace dtDAL
         //Check to see if the destination is a directory.
         if (ft == DIRECTORY)
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a directory.");
 
             //Check to see if the destination is a file or directory.
             if (strDest[strDest.size()-1] != FileUtils::PATH_SEPARATOR)
@@ -274,8 +274,8 @@ namespace dtDAL
         }
         else
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination is a file.");
         }
 
         if (ft != FILE_NOT_FOUND && !bOverwrite)
@@ -287,8 +287,8 @@ namespace dtDAL
         if (rename(strSrc.c_str(), destFile.c_str()) == 0)
             return;
 
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Rename failed, attempting to copy file and delete the source");
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, "Rename failed, attempting to copy file and delete the source");
 
 
         //copy the file
@@ -376,23 +376,23 @@ namespace dtDAL
         getcwd(buf, 512);
         mCurrentDirectory = buf;
 
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
             std::string message("Changed directory to \"");
             message += mCurrentDirectory;
             message += "\".";
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
         }
     }
     //-----------------------------------------------------------------------
     void FileUtils::PushDirectory(const std::string& path)
     {
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
             std::string message("Pushing Directory \"");
             message += path;
             message += "\".";
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, message.c_str());
         }
         std::string old = mCurrentDirectory;
         ChangeDirectoryInternal(path);
@@ -402,9 +402,9 @@ namespace dtDAL
     //-----------------------------------------------------------------------
     void FileUtils::PopDirectory()
     {
-        if(mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+        if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Popping Directory.");
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Popping Directory.");
         }
 
         if (mStackOfDirectories.empty())
@@ -433,14 +433,14 @@ namespace dtDAL
         {
             if (chdir(old.c_str()) == -1)
             {
-                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                     "Attempting to reset current directory to \"%s\", but an error occured doing so.", old.c_str());
             }
             throw ex;
         }
         if (chdir(old.c_str()) == -1)
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Attempting to reset current directory to \"%s\", but an error occured doing so.", old.c_str());
         }
         return result;
@@ -503,8 +503,8 @@ namespace dtDAL
                     destPath.substr(0, newSrcPath.size()) == newSrcPath &&
                     (destPath.size() == newSrcPath.size() || destPath[newSrcPath.size()] == PATH_SEPARATOR))
                 {
-                    if (mLogger->IsLevelEnabled(Log::LOG_WARNING))
-                        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can't copy %s into itself.", newSrcPath.c_str());
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Can't copy %s into itself.", newSrcPath.c_str());
                 }
                 else
                 {
@@ -537,8 +537,8 @@ namespace dtDAL
 
         std::string fullSrcPath = GetAbsolutePath(srcPath);
         //from here, the code can assume srcPath exists.
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source directory \"%s\" exists.", fullSrcPath.c_str());
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Source directory \"%s\" exists.", fullSrcPath.c_str());
 
         std::string fullDestPath;
 
@@ -546,15 +546,15 @@ namespace dtDAL
         {
             MakeDirectory(destPath);
             fullDestPath = GetAbsolutePath(destPath);
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" has been created.",
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" has been created.",
                                     fullDestPath.c_str());
         }
         else
         {
             fullDestPath = GetAbsolutePath(destPath);
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" exists.",
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Destination directory \"%s\" exists.",
                                     fullDestPath.c_str());
 
             if ( (copyContentsOnly && fullSrcPath == fullDestPath)
@@ -571,15 +571,15 @@ namespace dtDAL
                 if (!DirExists(fullDestPath))
                     MakeDirectory(fullDestPath);
 
-                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Destination directory \"%s\" created - copyContentsOnly is false.",
                         fullDestPath.c_str());
             }
             else
             {
-                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Destination directory \"%s\" exists - copyContentsOnly is true.",
                         fullDestPath.c_str());
             }
@@ -594,8 +594,8 @@ namespace dtDAL
     {
         if (bRecursive)
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Attempting to recursively delete %s.", strDir.c_str());
             try
             {
@@ -618,8 +618,8 @@ namespace dtDAL
                 //then the directory does not exist, so there is no need to throw an exception.
                 if (ex.TypeEnum() == ExceptionEnum::ProjectFileNotFound && !DirExists(strDir))
                 {
-                    if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                        mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                         "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
                     return true;
                 }
@@ -629,8 +629,8 @@ namespace dtDAL
         }
         else
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Attempting to delete %s, but not recursively.", strDir.c_str());
         }
 
@@ -643,8 +643,8 @@ namespace dtDAL
             }
             else if (errno == ENOENT)
             {
-                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                     "Directory %s doesn't exist to delete. Ignoring.", strDir.c_str());
                 return true;
             }
@@ -730,8 +730,8 @@ namespace dtDAL
 				{
 					if (errno == ENOENT)
 					{
-						if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-							mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+						if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+							mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
 							"Directory %s doesn't exist to delete. Ignoring.", (mCurrentDirectory + PATH_SEPARATOR + *i).c_str());
 						return;
 					}
@@ -752,7 +752,7 @@ namespace dtDAL
     //-----------------------------------------------------------------------
     FileUtils::FileUtils()
     {
-        mLogger = &Log::GetInstance(std::string("fileutils.cpp"));
+        mLogger = &dtUtil::Log::GetInstance(std::string("fileutils.cpp"));
         //assign the current directory
         ChangeDirectory(".");
     }

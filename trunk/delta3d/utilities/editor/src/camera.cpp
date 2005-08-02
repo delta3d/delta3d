@@ -23,7 +23,7 @@
 #include "dtEditQt/camera.h"
 #include <dtCore/transformable.h>
 #include <dtUtil/matrixutil.h>
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/actorproxyicon.h"
 
 namespace dtEditQt

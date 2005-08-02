@@ -24,7 +24,7 @@
 #include "dtEditQt/dynamicsubwidgets.h"
 #include "dtEditQt/editorevents.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include <QGridLayout>
 #include <QWidget>
 #include <QLabel>

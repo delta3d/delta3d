@@ -25,7 +25,7 @@
 #include <QIcon>
 
 #include "dtEditQt/resourcetreewidget.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtEditQt/uiresources.h"
 
 namespace dtEditQt{

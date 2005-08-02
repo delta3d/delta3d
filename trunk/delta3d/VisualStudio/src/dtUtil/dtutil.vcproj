@@ -130,6 +130,9 @@
 				RelativePath="..\..\..\src\dtUtil\domain.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\log.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\matrixutil.cpp">
 			</File>
 			<File
@@ -151,6 +154,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\enumeration.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\log.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\matrixutil.h">

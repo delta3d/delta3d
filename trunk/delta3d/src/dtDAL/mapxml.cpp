@@ -43,7 +43,7 @@
 #include <osgDB/FileNameUtils>
 
 #include "dtDAL/mapxml.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actorproperty.h"
@@ -118,7 +118,7 @@ namespace dtDAL
         catch (const XMLException& toCatch)
         {
             //if this happens, something is very very wrong.
-            Log::GetInstance(logName).LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            dtUtil::Log::GetInstance(logName).LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Error during parser initialization! %s :\n", XMLStringConverter(toCatch.getMessage()).c_str());
             return;
         }
@@ -138,19 +138,19 @@ namespace dtDAL
             mXercesParser->setContentHandler(&mHandler);
             mXercesParser->setErrorHandler(&mHandler);
             mXercesParser->parse(path.c_str());
-            mLogger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
             osg::ref_ptr<Map> mapRef = mHandler.GetMap();
             mHandler.ClearMap();
             return mapRef.release();
         }
         catch (const OutOfMemoryException&)
         {
-            mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
             EXCEPT(ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
         }
         catch (const XMLException& toCatch)
         {
-            mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                 toCatch.getMessage());
             EXCEPT(ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
@@ -189,7 +189,7 @@ namespace dtDAL
 
                 if (mHandler.HasFoundMapName())
                 {
-                    mLogger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
                     std::string name = mHandler.GetMap()->GetName();
                     mHandler.ClearMap();
                     return name;
@@ -209,7 +209,7 @@ namespace dtDAL
             if (parserNeedsReset)
                 mXercesParser->parseReset(token);
 
-            mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
             EXCEPT(ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
         }
         catch (const XMLException& toCatch)
@@ -217,7 +217,7 @@ namespace dtDAL
             if (parserNeedsReset)
                 mXercesParser->parseReset(token);
 
-            mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                 toCatch.getMessage());
             EXCEPT(ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
@@ -233,7 +233,7 @@ namespace dtDAL
 
     MapParser::MapParser()
     {
-        mLogger = &Log::GetInstance(logName);
+        mLogger = &dtUtil::Log::GetInstance(logName);
 
         mXercesParser = XMLReaderFactory::createXMLReader();
 
@@ -251,7 +251,7 @@ namespace dtDAL
 
         if (!FileUtils::GetInstance().FileExists(schemaFileName))
         {
-            mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                 "Error, unable to load required file \"map.xsd\".  Aborting.");
             EXCEPT(ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.");
         }
@@ -274,14 +274,14 @@ namespace dtDAL
     {
         if (mActorProperty == NULL || mActorPropertyType == NULL || mActorProxy == NULL)
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__, "Call made to isPropertyCorrectType with content handler in incorrect state.");
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Call made to isPropertyCorrectType with content handler in incorrect state.");
             return false;
         }
 
         bool result = mActorProperty->GetPropertyType() == *mActorPropertyType;
         if (!result)
         {
-            mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                "Property %s of actor %s was saved as type %s, but is now of type %s. Data will be ignored",
                                mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
                                mActorPropertyType->GetName().c_str(), mActorProperty->GetPropertyType().GetName().c_str());
@@ -352,9 +352,9 @@ namespace dtDAL
             }
         }
 
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                                "Found characters for element \"%s\" \"%s\"", XMLStringConverter(topEl.c_str()).c_str(), XMLStringConverter(chars).c_str());
         }
     }
@@ -366,7 +366,7 @@ namespace dtDAL
         {
             if (mActorProxy == NULL)
             {
-                mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                     "Actor proxy is NULL, but code has entered the actor property section");
 
             }
@@ -377,7 +377,7 @@ namespace dtDAL
                     std::string propName = XMLStringConverter(chars).ToString();
                     mActorProperty = mActorProxy->GetProperty(propName);
                     if (mActorProperty == NULL)
-                        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                             "In actor property section, actor property object for name \"%s\" was not found, proxy exists.",
                             propName.c_str());
 
@@ -396,7 +396,7 @@ namespace dtDAL
 
                         }
                         if (mActorPropertyType == NULL)
-                            mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                                 "No resource type found for resource type in mMap xml \"%s.\"",
                                                 resourceTypeString.c_str());
                     }
@@ -404,8 +404,8 @@ namespace dtDAL
                     {
                         std::string dataValue = XMLStringConverter(chars).ToString();
 
-                        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Setting value of property %s, property type %s, datatype %s, value %s, element name %s.",
                                 mActorProperty->GetName().c_str(),
                                 mActorProperty->GetPropertyType().GetName().c_str(),
@@ -422,7 +422,7 @@ namespace dtDAL
         {
             if (mActorProxy == NULL)
             {
-                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                     "Encountered the actor name element with value \"%s\", but actor is NULL.",
                     XMLStringConverter(chars).c_str());
             }
@@ -435,7 +435,7 @@ namespace dtDAL
         {
             if (mActorProxy == NULL)
             {
-                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                                     "Encountered the actor id element with value \"%s\", but actor is NULL.",
                                     XMLStringConverter(chars).c_str());
             }
@@ -468,20 +468,20 @@ namespace dtDAL
                     LibraryManager::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
                 if (actorType == NULL)
                 {
-                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                                         "ActorType \"%s\" not found.", actorTypeFullName.c_str());
                     mMissingActorTypes.insert(actorTypeFullName);
                     mIgnoreCurrentActor = true;
                 }
                 else
                 {
-                    mLogger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                         "Creating actor proxy %s with category %s.",
                                         actorTypeName.c_str(), actorTypeCategory.c_str());
 
                     mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType);
                     if (mActorProxy == NULL)
-                        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                                             "mActorProxy could not be created for ActorType \"%s\" not found.",
                                             actorTypeFullName.c_str());
 
@@ -621,7 +621,7 @@ namespace dtDAL
         {
             if (!mActorProperty->SetStringValue(dataValue.c_str()))
             {
-                mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                     "Failed Setting value %s for enumerated property type named %s on actor named %s",
                      dataValue.c_str(), mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str());
             }
@@ -635,7 +635,7 @@ namespace dtDAL
             {
                 if (dataValue != p.GetPropertyType().GetName())
                 {
-                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                         "Save file expected resource property %s on actor named %s to have type %s, but it is %s.",
                         mActorProperty->GetName().c_str(), mActorProxy->GetName().c_str(),
                         dataValue.c_str(), p.GetPropertyType().GetName().c_str());
@@ -668,7 +668,7 @@ namespace dtDAL
 
     void MapContentHandler::startDocument()
     {
-        mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing Map Document Started.\n");
+        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing Map Document Started.\n");
         Reset();
         mMap = new Map("","");
     }
@@ -679,9 +679,9 @@ namespace dtDAL
          const XMLCh* const qname,
          const Attributes& attrs)
     {
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                 "Found element %s", XMLStringConverter(localname).c_str());
         }
 
@@ -785,17 +785,17 @@ namespace dtDAL
             {
                 if (XMLString::compareString(localname, MapXMLConstants::HEADER_ELEMENT) == 0)
                 {
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header\n");
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Header\n");
                     mInHeader = true;
                 }
                 else if (XMLString::compareString(localname, MapXMLConstants::LIBRARIES_ELEMENT) == 0)
                 {
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries\n");
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Libraries\n");
                     mInLibraries = true;
                 }
                 else if (XMLString::compareString(localname, MapXMLConstants::ACTORS_ELEMENT) == 0)
                 {
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Actors\n");
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Actors\n");
                     mInActors = true;
                 }
             }
@@ -803,7 +803,7 @@ namespace dtDAL
         }
         else if (XMLString::compareString(localname, MapXMLConstants::MAP_ELEMENT) == 0)
         {
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Map\n");
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found Map\n");
             mInMap = true;
         }
         mElements.push(xmlCharString(localname));
@@ -816,7 +816,7 @@ namespace dtDAL
 
         if (mElements.empty())
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                "Attempting to pop elements off of stack and the stack is empty."
                                "it should at least contain element %s.",
                                XMLStringConverter(localname).c_str());
@@ -825,16 +825,16 @@ namespace dtDAL
 
         const XMLCh* lname = mElements.top().c_str();
 
-        if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                                "Ending element: \"%s\"", XMLStringConverter(lname).c_str());
         }
 
 
         if (0 != XMLString::compareString(lname, localname))
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Attempting to pop mElements off of stack and the element "
                 "at the top (%s) is not the same as the element ending (%s).",
                 XMLStringConverter(lname).c_str(), XMLStringConverter(localname).c_str());
@@ -852,9 +852,9 @@ namespace dtDAL
             else if (XMLString::compareString(localname, MapXMLConstants::LIBRARY_ELEMENT) == 0)
             {
 
-                if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                 {
-                    mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,
                         "Attempting to add library %s version %s to the library manager.",
                         mLibName.c_str(),
                         mLibVersion.c_str());
@@ -871,18 +871,18 @@ namespace dtDAL
                     mMissingLibraries.push_back(mLibName);
                     if (ExceptionEnum::ProjectResourceError == e.TypeEnum())
                     {
-                        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Error loading library %s version %s in the library manager.  Exception message to follow.",
                             mLibName.c_str(), mLibVersion.c_str());
 
                     }
                     else
                     {
-                        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Unknown exception loading library %s version %s in the library manager.  Exception message to follow.",
                             mLibName.c_str(), mLibVersion.c_str());
                     }
-                    e.LogException(Log::LOG_ERROR, *mLogger);
+                    e.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
                 }
 
             }
@@ -894,7 +894,7 @@ namespace dtDAL
                 mInActors = false;
                 if (mInActor)
                 {
-                    mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                         "Found the closing actors section tag, but the content handler thinks it's still parsing an actor");
                     mInActor = false;
                 }
@@ -923,13 +923,13 @@ namespace dtDAL
 
     void MapContentHandler::endDocument()
     {
-        mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "Parsing Map Document Ended.\n");
     }
 
     void MapContentHandler::error(const SAXParseException& exc)
     {
-        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
             exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
             XMLStringConverter(exc.getSystemId()).c_str(),
@@ -939,7 +939,7 @@ namespace dtDAL
 
     void MapContentHandler::fatalError(const SAXParseException& exc)
     {
-        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
             exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
             XMLStringConverter(exc.getSystemId()).c_str(),
@@ -949,7 +949,7 @@ namespace dtDAL
 
     void MapContentHandler::warning(const SAXParseException& exc)
     {
-        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
             "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
             exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
             XMLStringConverter(exc.getSystemId()).c_str(),
@@ -1010,9 +1010,9 @@ namespace dtDAL
 
     MapContentHandler::MapContentHandler() : mActorProxy(NULL), mActorPropertyType(NULL), mActorProperty(NULL)
     {
-        mLogger = &Log::GetInstance(logName);
-        //mLogger->SetLogLevel(Log::LOG_DEBUG);
-        mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
+        mLogger = &dtUtil::Log::GetInstance(logName);
+        //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
 
     }
 
@@ -1043,7 +1043,7 @@ namespace dtDAL
 
     MapWriter::MapFormatTarget::MapFormatTarget(): mOutFile(NULL)
     {
-        mLogger = &Log::GetInstance(logName);
+        mLogger = &dtUtil::Log::GetInstance(logName);
     }
 
     MapWriter::MapFormatTarget::~MapFormatTarget()
@@ -1070,7 +1070,7 @@ namespace dtDAL
             size_t size = fwrite((char *) toWrite, sizeof(char), (size_t)count, mOutFile);
             if (size < (size_t)count)
             {
-                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                     "Error writing to file.  Write count less than expected.");
             }
 
@@ -1100,7 +1100,7 @@ namespace dtDAL
     MapWriter::MapWriter():
         mFormatter("UTF-8", NULL, &mFormatTarget, XMLFormatter::NoEscapes, XMLFormatter::DefaultUnRep)
     {
-        mLogger = &Log::GetInstance(logName);
+        mLogger = &dtUtil::Log::GetInstance(logName);
     }
 
     MapWriter::~MapWriter()
@@ -1194,9 +1194,9 @@ namespace dtDAL
 				EndElement();
 				BeginElement(MapXMLConstants::ACTOR_NAME_ELEMENT);
 				AddCharacters(proxy.GetName());
-				if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+				if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
 				{
-					mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+					mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
 						"Found Proxy Named: %s", proxy.GetName().c_str());
 				}
 				EndElement();
@@ -1211,9 +1211,9 @@ namespace dtDAL
 					BeginElement(MapXMLConstants::ACTOR_PROPERTY_ELEMENT);
 					BeginElement(MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT);
 					AddCharacters(property.GetName());
-					if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
+					if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
 					{
-						mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+						mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
 							"Found Property Named: %s", property.GetName().c_str());
 					}
 					EndElement();
@@ -1370,7 +1370,7 @@ namespace dtDAL
 					}
 					else
 					{
-						mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+						mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
 							"Unhandled datatype in MapWriter: %s.",
 							propertyType.GetName().c_str());
 					}
@@ -1386,7 +1386,7 @@ namespace dtDAL
 		}
 		catch (dtDAL::Exception& ex) 
 		{
-			mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+			mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
 				"Caught Exception \"%s\" while attempting to save map \"%s\".",
 				ex.What().c_str(), map.GetName().c_str());
 			mFormatTarget.SetOutputFile(NULL);
@@ -1394,7 +1394,7 @@ namespace dtDAL
 		} 
 		catch (...)
 		{
-			mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+			mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
 				"Unknown exception while attempting to save map \"%s\".",
 				map.GetName().c_str());
 			mFormatTarget.SetOutputFile(NULL);

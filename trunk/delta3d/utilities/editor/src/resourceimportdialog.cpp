@@ -35,7 +35,7 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/project.h"
 #include "dtDAL/fileutils.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 
 namespace dtEditQt
 {
@@ -46,7 +46,7 @@ namespace dtEditQt
         setModal(true);
 
         resourceType = &dataType;
-        dtDAL::Log &mLogger = dtDAL::Log::GetInstance();
+        dtUtil::Log &mLogger = dtUtil::Log::GetInstance();
 
         // we have to call this here for correct file pathing
         importDialog();
@@ -364,7 +364,7 @@ namespace dtEditQt
                 }
                 catch(const dtDAL::Exception& e)
                 {
-                    mLogger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
+                    mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
                     throw e;
                 }
             }            

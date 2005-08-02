@@ -113,7 +113,7 @@ namespace dtDAL {
     private:
         const DataType* mDataType;
         std::map<std::string, std::string> mFilters;
-        Log* mLogger;
+        dtUtil::Log* mLogger;
         const std::string mDescription;
         const std::string mMasterFile;
         const std::string mExtension;

@@ -19,7 +19,7 @@
  * @author Matthew W. Campbell
 */
 #include "dtDAL/actorproxy.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/datatype.h"

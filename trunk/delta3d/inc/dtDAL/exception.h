@@ -24,7 +24,7 @@
 #include <string>
 #include <dtCore/export.h>
 #include <dtUtil/enumeration.h>
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 
 namespace dtDAL
 {
@@ -118,21 +118,21 @@ namespace dtDAL
          * logs the exception to the default logger.
          * @param level  The level/type of logging
          */
-        void LogException(Log::LogMessageType level);
+        void LogException(dtUtil::Log::LogMessageType level);
 
         /**
          * logs the exception to the following log level using the logger.
          * @param level  The level/type of logging
          * @param loggerName the name passed to "getInstance" of the Logger.
          */
-        void LogException(Log::LogMessageType level, const std::string& loggerName);
+        void LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName);
 
         /**
          * logs the exception to the following log level using the given logger.
          * @param level  The level/type of logging
          * @param logger the actual log instance used to log.
          */
-        void LogException(Log::LogMessageType level, Log& logger);
+        void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger);
 
     protected:
         ExceptionEnum &mType;

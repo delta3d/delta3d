@@ -121,7 +121,7 @@ namespace dtDAL
     //////////////////////////////////////////////////////////
     ResourceHelper::ResourceHelper()
     {
-        mLogger = &Log::GetInstance("resourcehelper.cpp");
+        mLogger = &dtUtil::Log::GetInstance("resourcehelper.cpp");
 
         for (std::vector<dtUtil::Enumeration*>::const_iterator i = DataType::Enumerate().begin();
             i != DataType::Enumerate().end(); ++i)
@@ -365,7 +365,7 @@ namespace dtDAL
             {
                 if (i->first.empty() || i->first == "*")
                 {
-                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                         "Attempting to insert new default handler by using extension \"%s\" with description \"%s\". Ignoring.",
                         i->first.c_str(), i->second.c_str() );
 
@@ -380,7 +380,7 @@ namespace dtDAL
                 }
                 else
                 {
-                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                         "Not inserting new handler for extension \"%s\" with description \"%s\" because a handler is already registered for it.",
                         i->first.c_str(), i->second.c_str() );
                 }
@@ -389,7 +389,7 @@ namespace dtDAL
         }
         else
         {
-            mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                 "Unable to register type handler because no extension map exists for datatype \"%s\"",
                 dt->GetDisplayName().c_str() );
         }
@@ -414,7 +414,7 @@ namespace dtDAL
                 }
                 else
                 {
-                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                         "Not inserting new handler for resource directory extension \"%s\" because a handler is already registered for it.",
                                         handler.GetResourceDirectoryExtension().c_str());
                 }
@@ -494,8 +494,8 @@ namespace dtDAL
 
         if (resourceTree != NULL)
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                     "Removing resource \"%s\" from the resource tree.",
                     resource.GetResourceIdentifier().c_str());
             RemoveResourceFromTree(*resourceTree, resource);
@@ -537,8 +537,8 @@ namespace dtDAL
 
         if (categoryInTree != NULL)
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                     "Adding new resource \"%s\" to tree.",
                     result.GetResourceIdentifier().c_str());
             categoryInTree->insert(ResourceTreeNode(resourceFileName, category, &result));
@@ -620,8 +620,8 @@ namespace dtDAL
                     //get the tree above this one, and remove the iterator from it.
                     treeIt.out().tree_ref().erase(treeIt);
                 else
-                    if (mLogger->IsLevelEnabled(Log::LOG_WARNING))
-                        mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                             "Attempting to remove category \"%s:%s\" from cached tree, but it wasn't found.",
                            type.GetName().c_str(), category.c_str());
             }
@@ -732,8 +732,8 @@ namespace dtDAL
         }
         else
         {
-            if (mLogger->IsLevelEnabled(Log::LOG_WARNING))
-                mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                     (std::string("Couldn't find resource tree node matching resource: ")
                     + resource.GetResourceIdentifier() + ".").c_str());
         }
@@ -755,8 +755,8 @@ namespace dtDAL
                 //make sure the directory exists before even attempting to parse it.
                 if (!fileUtils.DirExists(dt.GetName()))
                 {
-                    if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                        mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                             (std::string("Resource directory does not exist: ") + dt.GetName() + ".").c_str());
                     continue;
                 }
@@ -834,8 +834,8 @@ namespace dtDAL
                 }
                 else
                 {
-                    if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
-                        mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__, "No hander returned for file %s.",
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "No hander returned for file %s.",
                             currentFile.c_str());
                 }
             }

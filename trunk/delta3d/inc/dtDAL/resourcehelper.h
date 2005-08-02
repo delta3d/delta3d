@@ -247,7 +247,7 @@ namespace dtDAL
         std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > > mResourceDirectoryTypeHandlers;
         //multimap of resource handlers that import directories.
         std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> > mDirectoryImportingTypeHandlers;
-        Log* mLogger;
+        dtUtil::Log* mLogger;
 
         //Hide the copy constructor and operator=
         ResourceHelper(const ResourceHelper&){}

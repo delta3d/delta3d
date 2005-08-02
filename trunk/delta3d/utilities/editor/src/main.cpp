@@ -26,11 +26,11 @@
 #include <dtCore/system.h>
 #include "dtEditQt/mainwindow.h"
 #include "dtEditQt/viewportmanager.h"
-#include "dtDAL/log.h"
 #include "dtDAL/librarymanager.h"
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/editoractions.h"
 #include "dtEditQt/uiresources.h"
+#include <dtUtil/log.h>
 
 int main(int argc, char *argv[])
 {
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        dtDAL::Log::GetInstance().SetLogLevel(dtDAL::Log::LOG_WARNING);
+        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
         dtCore::SetDataFilePathList(".;" + dtCore::GetDeltaDataPathList());
 
         //Now that everything is initialized, show the main window.

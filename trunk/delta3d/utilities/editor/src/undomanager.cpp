@@ -32,7 +32,6 @@
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/map.h"
-#include "dtDAL/log.h"
 #include "dtDAL/project.h"
 #include "dtEditQt/mainwindow.h"
 #include "dtEditQt/undomanager.h"

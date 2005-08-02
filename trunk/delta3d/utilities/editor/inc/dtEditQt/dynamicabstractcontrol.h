@@ -24,7 +24,6 @@
 
 #include <QObject>
 #include <osg/ref_ptr>
-#include "dtDAL/log.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 
