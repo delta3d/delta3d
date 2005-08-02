@@ -30,7 +30,6 @@
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editoractions.h"
 #include "dtDAL/transformableactorproxy.h"
-#include "dtDAL/log.h"
 #include "dtDAL/actorproxyicon.h"
 
 namespace dtEditQt

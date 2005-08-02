@@ -45,7 +45,7 @@
 #include "dtEditQt/editorevents.h"
 #include "dtDAL/exception.h"
 #include "dtDAL/librarymanager.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtEditQt/mainwindow.h"

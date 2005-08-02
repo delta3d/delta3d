@@ -38,7 +38,7 @@
 #include <dtCore/globals.h>
 
 #include "dtDAL/project.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/mapxml.h"
 #include "dtDAL/datatype.h"
@@ -66,7 +66,7 @@ namespace dtDAL
         mParser = new MapParser;
         mWriter = new MapWriter;
         libraryManager = &LibraryManager::GetInstance();
-        mLogger = &Log::GetInstance(Project::LOG_NAME);
+        mLogger = &dtUtil::Log::GetInstance(Project::LOG_NAME);
     }
 
     //////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ namespace dtDAL
 
         if (mMapList.empty())
         {
-            mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                "The list of map names is empty, so the project is preparing to load the list.");
             FileUtils& fileUtils = FileUtils::GetInstance();
             fileUtils.PushDirectory(mContext);
@@ -287,7 +287,7 @@ namespace dtDAL
                         catch (const Exception& e)
                         {
                             std::string error = "Unable to parse " + fp + " with error " + e.What();
-                            mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+                            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
                         }
                     }
                 }
@@ -342,7 +342,7 @@ namespace dtDAL
         catch (const Exception& e)
         {
             std::string error = "Unable to parse " + fullPath + " with error " + e.What();
-            mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
             fileUtils.PopDirectory();
             throw e;
         }
@@ -477,7 +477,7 @@ namespace dtDAL
                     ActorProxyIcon *billBoard = proxy.GetBillBoardIcon();
                     if (billBoard == NULL)
                     {
-                        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Proxy [%s] billboard was NULL.", proxy.GetName().c_str());
                     }
                     else
@@ -551,8 +551,8 @@ namespace dtDAL
                 const Map& toCheck = *j->second;
                 if (&mapToClose != &toCheck && toCheck.HasLibrary(libToClose))
                 {
-                    if (mLogger->IsLevelEnabled(Log::LOG_INFO)) {
-                        mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO)) {
+                        mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                             "Not unloading library %s because it is used by open map named %s.",
                             libToClose.c_str(), toCheck.GetName().c_str());
                     }
@@ -565,9 +565,9 @@ namespace dtDAL
                 ActorPluginRegistry* aprToClose = 
                     LibraryManager::GetInstance().GetRegistry(libToClose);
 
-                if (mLogger->IsLevelEnabled(Log::LOG_INFO))
+                if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
                 {
-                    mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                         "About to unload library named %s.", libToClose.c_str());
                 }
 
@@ -585,8 +585,8 @@ namespace dtDAL
                         if (aprToClose == registry) 
                         {
                             libMayClose = false;
-                            if (mLogger->IsLevelEnabled(Log::LOG_INFO))
-                                mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
+                            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
+                                mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                     "Library %s will not be closed because proxy with type %s and name %s has external references.", 
                                     proxy->GetActorType().GetName().c_str(), libToClose.c_str(),
                                     proxy->GetName().c_str());
@@ -594,7 +594,7 @@ namespace dtDAL
                     }
                     catch (const dtDAL::Exception& ex)
                     {
-                        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Error finding library for actor type %s: %s", 
                             proxy->GetActorType().GetName().c_str(), ex.What().c_str());
                     }
@@ -633,7 +633,7 @@ namespace dtDAL
             }
             catch (const Exception& ex)
             {
-                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving: %s", ex.What().c_str());
+                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving: %s", ex.What().c_str());
             }
             mOpenMaps.erase(j);
         }
@@ -655,7 +655,7 @@ namespace dtDAL
         std::map<std::string, std::string>::iterator i = mMapList.find(map.GetSavedName());
         if (i == mMapList.end())
         {
-            mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                 "Map was found in the list of open maps, but not in map to fileName mapping");
         }
         else
@@ -715,7 +715,7 @@ namespace dtDAL
             }
             else
             {
-                mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                     "Specified map was part of the project, but the map file did not exist.");
             }
         }
@@ -791,7 +791,7 @@ namespace dtDAL
         }
         catch (const Exception& ex)
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving %s as %s: %s",
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving %s as %s: %s",
                 oldMapName.c_str(), newName.c_str(), ex.What().c_str());
         }
     }
@@ -872,7 +872,7 @@ namespace dtDAL
         }
         catch (const Exception& e)
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
             fileUtils.PopDirectory();
             throw e;
         }
@@ -906,7 +906,7 @@ namespace dtDAL
             //if the map in new, the following exception will be thrown
             //so don't print an error in that case.
             if (ex.TypeEnum() != ExceptionEnum::ProjectFileNotFound)
-                mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                     "Error clearing map backups when saving: %s", ex.What().c_str());
         }
     }
@@ -946,7 +946,7 @@ namespace dtDAL
         }
         catch (const Exception& e)
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
             fileUtils.PopDirectory();
             throw e;
         }
@@ -1268,7 +1268,7 @@ namespace dtDAL
 
         if (it  == mResources.end())
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "ERROR: call getResourcesOfType ended with no valid results!");
             EXCEPT(ExceptionEnum::ProjectException, "ERROR: call GetResourcesOfType ended with no valid results!");
         }

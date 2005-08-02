@@ -19,7 +19,7 @@
  * @author Matthew W. Campbell
 */
 #include "dtDAL/exception.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include <iostream>
 
 namespace dtDAL 
@@ -47,7 +47,7 @@ namespace dtDAL
     Exception::Exception(ExceptionEnum &type, const std::string &message, const std::string &filename,
         unsigned int lineNum) : mType(type),mMessage(message),mFileName(filename),mLineNum(lineNum) 
     {
-        LogException(Log::LOG_DEBUG, Log::GetInstance());
+        LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -59,19 +59,19 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(Log::LogMessageType level) 
+    void Exception::LogException(dtUtil::Log::LogMessageType level) 
     {
-        LogException(level,Log::GetInstance());
+        LogException(level,dtUtil::Log::GetInstance());
     }
 
     //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(Log::LogMessageType level, const std::string& loggerName) 
+    void Exception::LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) 
     {
-        LogException(level,Log::GetInstance(loggerName));
+        LogException(level,dtUtil::Log::GetInstance(loggerName));
     }
 
     //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(Log::LogMessageType level, Log& logger) 
+    void Exception::LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) 
     {
         if (logger.IsLevelEnabled(level)) 
         {

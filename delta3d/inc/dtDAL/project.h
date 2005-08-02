@@ -43,7 +43,7 @@ namespace dtDAL
     class Map;
     class MapParser;
     class MapWriter;
-    class Log;
+    class dtUtil::Log;
     class DataType;
     class LibraryManager;
 
@@ -84,7 +84,7 @@ namespace dtDAL
     osg::ref_ptr<LibraryManager> libraryManager;
     ResourceHelper mResourceHelper;
 
-    Log* mLogger;
+    dtUtil::Log* mLogger;
 
     //verifies that a directory exists by creating it if it doesn't and updating the tree.
     core::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path, const std::string& category = "",

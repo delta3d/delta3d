@@ -20,7 +20,7 @@
 */
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actortype.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/exception.h"
 #include "dtDAL/actorproxyicon.h"
 #include <sstream>
@@ -37,7 +37,7 @@ namespace dtDAL
     LibraryManager::LibraryManager()
     {
         ActorProxyIcon::staticInitialize();
-        dtDAL::Log::GetInstance().SetLogLevel(dtDAL::Log::LOG_WARNING);
+        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
 
         LOG_INFO("Initializing actor library manager.");
         #ifdef _DEBUG

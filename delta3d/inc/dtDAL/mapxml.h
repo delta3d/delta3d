@@ -35,6 +35,7 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtCore/export.h>
+#include <dtUtil/log.h>
 
 
 XERCES_CPP_NAMESPACE_USE;
@@ -42,7 +43,7 @@ XERCES_CPP_NAMESPACE_USE;
 namespace dtDAL
 {
     class Map;
-    class Log;
+    class dtUtil::Log;
     class DataType;
     class ActorProxy;
     class ActorProperty;
@@ -320,7 +321,7 @@ namespace dtDAL
         DataType* mActorPropertyType;
         osg::ref_ptr<ActorProperty> mActorProperty;
 
-        Log* mLogger;
+        dtUtil::Log* mLogger;
 
         int mErrorCount;
         int mFatalErrorCount;
@@ -389,7 +390,7 @@ namespace dtDAL
         MapParser& operator=(const MapParser& assignParser);
         MapContentHandler mHandler;
         SAX2XMLReader* mXercesParser;
-        Log* mLogger;
+        dtUtil::Log* mLogger;
     };
 
 
@@ -438,12 +439,12 @@ namespace dtDAL
 
         private:
             FILE* mOutFile;
-            Log*  mLogger;
+            dtUtil::Log*  mLogger;
         };
 
         typedef std::basic_string<XMLCh> xmlCharString;
         static const int indentSize = 4;
-        Log* mLogger;
+        dtUtil::Log* mLogger;
 
         bool mLastCharWasLF;
         std::stack<xmlCharString> mElements;

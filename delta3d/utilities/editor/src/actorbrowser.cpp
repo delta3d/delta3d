@@ -35,7 +35,7 @@
 #include "dtEditQt/actorbrowser.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtDAL/librarymanager.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtEditQt/actortypetreewidget.h"
 #include "dtEditQt/editorevents.h"

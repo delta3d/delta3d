@@ -26,7 +26,6 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/log.h"
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>

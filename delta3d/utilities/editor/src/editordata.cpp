@@ -24,7 +24,7 @@
 #include "dtEditQt/mainwindow.h"
 #include "dtEditQt/editordata.h"
 #include "dtDAL/map.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 
 namespace dtEditQt
 {

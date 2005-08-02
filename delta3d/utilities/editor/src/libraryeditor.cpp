@@ -39,7 +39,7 @@
 #include "dtDAL/actorpluginregistry.h"
 #include "dtDAL/fileutils.h"
 #include "dtDAL/map.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 
 #include <osgDB/FileNameUtils>
 

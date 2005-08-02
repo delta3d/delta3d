@@ -32,7 +32,6 @@
 #include <dtCore/uniqueid.h>
 #include <QIcon>
 
-#include "dtDAL/log.h"
 #include "dtDAL/project.h"
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/fileutils.h"

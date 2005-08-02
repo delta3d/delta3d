@@ -105,7 +105,7 @@ namespace dtDAL
     {
         mFilters.insert(std::make_pair(mResourceDirectoryExtension, "Replicant Body Files"));
 
-        mLogger = &Log::GetInstance("RBodyResourceTypeHandler.cpp");
+        mLogger = &dtUtil::Log::GetInstance("RBodyResourceTypeHandler.cpp");
 
         mXMLErrorHandler.mLogger = mLogger;
     }
@@ -205,7 +205,7 @@ namespace dtDAL
                     }
                     catch (const Exception& ex)
                     {
-                        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Error \"%s\" copying associated rbody resource file %s to %s",
                             ex.What().c_str(), (srcDir + FileUtils::PATH_SEPARATOR + value).c_str(), destDir.c_str());
                         throw ex;
@@ -221,7 +221,7 @@ namespace dtDAL
                 //cause these to crash.
                 if (mParser != NULL)
                 {
-                    mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                         "Parser member of RBodyResourceTypeHandler is not null, but it should be.  This could mean there is a possible memory leak.");
                 }
                 mParser = new XercesDOMParser;
@@ -282,7 +282,7 @@ namespace dtDAL
                 }
                 catch (const Exception& ex)
                 {
-                    mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                    mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                         "Error \"%s\" copying associated rbody resource file %s to %s",
                         ex.What().c_str(), (srcDir + FileUtils::PATH_SEPARATOR + value).c_str(), destDir.c_str());
                     throw ex;
@@ -366,14 +366,14 @@ namespace dtDAL
             doc = mParser->getDocument();
             if (doc == NULL)
             {
-                mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                     "Xerces parser did not parse an document for \"%s\"", srcPath.c_str());
                 return;
             }
 
             if (doc->getDocumentElement() == NULL)
             {
-                mLogger->LogMessage(Log::LOG_INFO, __FUNCTION__, __LINE__,
+                mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                     "Xerces parser did not parse a document with any elements for file \"%s\"", srcPath.c_str());
                 return;
             }
@@ -446,7 +446,7 @@ namespace dtDAL
                         }
                         catch (const Exception& ex)
                         {
-                            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                 "Error \"%s\" copying associated rbody resource file %s to %s",
                                 ex.What().c_str(), (srcPath).c_str(), destDir.c_str());
                             throw ex;
@@ -454,8 +454,8 @@ namespace dtDAL
                     }
                     else
                     {
-                        if (mLogger->IsLevelEnabled(Log::LOG_WARNING))
-                            mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                        if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+                            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                                 "Material file \"%s\" referenced file %s, but it was not found. so it was not copied. The Replicant Body resource will probably not work.",
                                 srcPath.c_str(), materialPath.c_str());
 
@@ -463,8 +463,8 @@ namespace dtDAL
                 }
                 if (foundMaps != numMaps)
                 {
-                    if (mLogger->IsLevelEnabled(Log::LOG_WARNING))
-                        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                    if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_WARNING))
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                             "Material file \"%s\" declared that it contained %d maps, but %d were actually found.",
                             srcPath.c_str(), numMaps, foundMaps);
                 }
@@ -495,7 +495,7 @@ namespace dtDAL
         }
         catch (const Exception& ex)
         {
-            mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Exception thrown attempting to parse and copy referenced file from material file \"%s\": %s",
                 srcPath.c_str(), ex.What().c_str());
             throw ex;
@@ -520,7 +520,7 @@ namespace dtDAL
 
     void RBodyResourceTypeHandler::RBodyErrorHandler::error(const SAXParseException& exc)
     {
-        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
             exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
             XMLStringConverter(exc.getSystemId()).c_str(),
@@ -529,7 +529,7 @@ namespace dtDAL
 
     void RBodyResourceTypeHandler::RBodyErrorHandler::fatalError(const SAXParseException& exc)
     {
-        mLogger->LogMessage(Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
             exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
             XMLStringConverter(exc.getSystemId()).c_str(),
@@ -538,7 +538,7 @@ namespace dtDAL
 
     void RBodyResourceTypeHandler::RBodyErrorHandler::warning(const SAXParseException& exc)
     {
-        mLogger->LogMessage(Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
             "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
             exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
             XMLStringConverter(exc.getSystemId()).c_str(),

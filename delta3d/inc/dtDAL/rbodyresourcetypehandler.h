@@ -25,7 +25,7 @@
 #include <rcfg/ConfigScriptOO.h>
 //xerces xml dom parser
 #include <xercesc/parsers/XercesDOMParser.hpp>
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/datatype.h"
 #include "dtDAL/resourcehelper.h"
 #include <xercesc/sax/ErrorHandler.hpp>
@@ -123,7 +123,7 @@ namespace dtDAL {
             virtual void fatalError (const SAXParseException &exc);
             virtual void resetErrors ();
 
-            Log* mLogger;
+            dtUtil::Log* mLogger;
         };
 
         //these are constants, but they are created and destroyed each time they are used
@@ -133,7 +133,7 @@ namespace dtDAL {
         mutable XMLCh* MAP_ELEMENT;
 
         std::map<std::string, std::string> mFilters;
-        Log* mLogger;
+        dtUtil::Log* mLogger;
 
         mutable rcfg::ConfigScript mRBodyConfig;
         mutable XercesDOMParser* mParser;

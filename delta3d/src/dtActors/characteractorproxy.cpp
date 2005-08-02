@@ -76,7 +76,7 @@ namespace dtActors
         }
         catch(const rbody::config_error& ex)
         {
-            Log::GetInstance().LogMessage(Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error loading character \"%s\": %s",
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error loading character \"%s\": %s",
                 fileName.c_str(), ex.what());
             //HACK -- the actor is broken internally now, so it needs to be deleted.
             std::string oldName = GetName();

@@ -56,7 +56,7 @@
 #include "dtEditQt/preferencesdialog.h"
 #include "dtEditQt/undomanager.h"
 
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"
 #include "dtDAL/exception.h"

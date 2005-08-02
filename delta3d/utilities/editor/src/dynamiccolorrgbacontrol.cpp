@@ -31,7 +31,7 @@
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include <QColorDialog>
 #include <QColor>
 #include <QGridLayout>

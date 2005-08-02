@@ -201,7 +201,7 @@ namespace dtEditQt{
         dtDAL::ResourceTreeNode *resourceTreeNode;
         dtDAL::DataType *resourceType;
         dtDAL::ResourceDescriptor descriptor;
-        dtDAL::Log *mLogger;
+        dtUtil::Log *mLogger;
 
         // filter vector to fill for file types
         std::vector<osg::ref_ptr<const dtDAL::ResourceTypeHandler> >handler;

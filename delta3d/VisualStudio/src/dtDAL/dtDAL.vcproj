@@ -160,9 +160,6 @@
 				RelativePath="..\..\..\src\dtDAL\librarymanager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtDAL\log.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtDAL\map.cpp">
 			</File>
 			<File
@@ -233,9 +230,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\librarymanager.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtDAL\log.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\map.h">

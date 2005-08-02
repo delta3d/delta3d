@@ -22,7 +22,7 @@
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/project.h"
 #include "dtDAL/exception.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/mapxml.h"
 #include "dtDAL/stringtokenizer.h"
@@ -55,8 +55,8 @@ namespace dtDAL
             try
             {
                 std::string path = Project::GetInstance().GetResourcePath(*value);
-                if (Log::GetInstance("EnginePropertyTypes.h").IsLevelEnabled(Log::LOG_DEBUG))
-                    Log::GetInstance("EnginePropertyTypes.h").LogMessage(Log::LOG_DEBUG,
+                if (dtUtil::Log::GetInstance("EnginePropertyTypes.h").IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                    dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_DEBUG,
                         __FUNCTION__, __LINE__,
                         "Path to resource is: %s",
                         path.c_str());
@@ -66,7 +66,7 @@ namespace dtDAL
             {
                 mProxy->SetResource(GetName(), NULL);
                 SetPropFunctor("");
-                Log::GetInstance("EnginePropertyTypes.h").LogMessage(Log::LOG_WARNING,
+                dtUtil::Log::GetInstance("EnginePropertyTypes.h").LogMessage(dtUtil::Log::LOG_WARNING,
                     __FUNCTION__, __LINE__, "Resource %s not found.  Setting property %s to NULL. Error Message %s.",
                     value->GetResourceIdentifier().c_str(), GetName().c_str(), ex.What().c_str());
             }

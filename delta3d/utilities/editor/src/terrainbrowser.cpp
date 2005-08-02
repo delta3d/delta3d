@@ -41,8 +41,6 @@
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/mainwindow.h"
 
-#include "dtDAL/log.h"
-
 #include "dtEditQt/uiresources.h"
 
 #include "dtEditQt/terrainbrowser.h"

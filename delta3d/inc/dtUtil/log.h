@@ -29,7 +29,7 @@
 #include <osg/ref_ptr>
 #include <dtCore/export.h>
 
-namespace dtDAL 
+namespace dtUtil 
 {
 
     /**
@@ -37,28 +37,28 @@ namespace dtDAL
     *   logging is desired, you cannot use this macro.
      */
      #define LOG_DEBUG(msg)\
-        dtDAL::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_DEBUG);
+        dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_DEBUG);
 
      #define LOG_INFO(msg)\
-        dtDAL::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_INFO);
+        dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_INFO);
 
      #define LOG_WARNING(msg)\
-        dtDAL::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_WARNING);
+        dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_WARNING);
 
      #define LOG_ERROR(msg)\
-        dtDAL::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_ERROR);
+        dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ERROR);
 
      #define LOGN_DEBUG(name, msg)\
-        dtDAL::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_DEBUG);
+        dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_DEBUG);
 
      #define LOGN_INFO(name, msg)\
-        dtDAL::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_INFO);
+        dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_INFO);
 
      #define LOGN_WARNING(name, msg)\
-        dtDAL::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_WARNING);
+        dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_WARNING);
 
      #define LOGN_ERROR(name, msg)\
-        dtDAL::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtDAL::Log::LOG_ERROR);
+        dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ERROR);
 
     /**
      * Log class which the engine uses for all of its logging

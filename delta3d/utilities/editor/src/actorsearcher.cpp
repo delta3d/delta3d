@@ -33,7 +33,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
 #include "dtDAL/librarymanager.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtEditQt/actorsearcher.h"
 #include "dtEditQt/actorresultstable.h"

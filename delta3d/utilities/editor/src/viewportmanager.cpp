@@ -22,7 +22,7 @@
 #include <QWidget>
 #include <QGLWidget>
 #include <osg/Texture>
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/actorproxyicon.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/orthoviewport.h"

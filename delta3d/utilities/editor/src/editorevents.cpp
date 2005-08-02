@@ -27,7 +27,7 @@
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editoractions.h"
 #include "dtDAL/actorproxy.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/map.h"
 
 namespace dtEditQt

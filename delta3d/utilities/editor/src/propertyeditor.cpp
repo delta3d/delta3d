@@ -65,7 +65,7 @@
 #include "dtDAL/exception.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/librarymanager.h"
-#include "dtDAL/log.h"
+#include <dtUtil/log.h>
 #include "dtDAL/tree.h"
 
 #include <osg/Referenced>
