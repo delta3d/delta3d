@@ -21,7 +21,7 @@
 #ifndef DELTA_MAPTESTS_H
 #define DELTA_MAPTESTS_H
 
-#include <dtDAL/log.h>
+#include <dtUtil/log.h>
 #include <dtDAL/map.h>
 
 #include <cppunit/extensions/HelperMacros.h>
@@ -52,7 +52,7 @@ public:
     void testWildCard();
 private:
     void createActors(dtDAL::Map& map);
-        dtDAL::Log* logger;
+    dtUtil::Log* logger;
     dtDAL::ActorProperty* getActorProperty(dtDAL::Map& map,
         const std::string& propName, dtDAL::DataType& type, unsigned which = 0);
 };
