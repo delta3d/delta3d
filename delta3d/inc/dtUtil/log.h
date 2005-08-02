@@ -48,6 +48,9 @@ namespace dtUtil
      #define LOG_ERROR(msg)\
         dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ERROR);
 
+     #define LOG_ALWAYS(msg)\
+        dtUtil::Log::GetInstance().LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ALWAYS);
+
      #define LOGN_DEBUG(name, msg)\
         dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_DEBUG);
 
@@ -60,7 +63,10 @@ namespace dtUtil
      #define LOGN_ERROR(name, msg)\
         dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ERROR);
 
-    /**
+     #define LOGN_ALWAYS(name, msg)\
+        dtUtil::Log::GetInstance(name).LogMessage(__FUNCTION__, __LINE__, msg,dtUtil::Log::LOG_ALWAYS);
+    
+   /**
      * Log class which the engine uses for all of its logging
      * needs.  The log file is formatted using html tags,
      * therefore, any browser should display the log without
@@ -78,7 +84,8 @@ namespace dtUtil
             LOG_DEBUG,
             LOG_INFO,
             LOG_WARNING,
-            LOG_ERROR
+            LOG_ERROR,
+            LOG_ALWAYS
         };
 
 

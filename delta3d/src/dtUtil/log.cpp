@@ -147,6 +147,11 @@ namespace dtUtil
             case LOG_WARNING:
                 color = "<b><font color=#808000>";
                 break;
+
+            case LOG_ALWAYS:
+                color = "<b><font color=#000000>";
+                break;
+
         }
 
         manager->logFile << color << GetLogLevelString(msgType) << ": "
@@ -204,6 +209,11 @@ namespace dtUtil
             case LOG_WARNING:
                 color = "<b><font color=#808000>";
                 break;
+
+            case LOG_ALWAYS:
+               color = "<b><font color=#000000>";
+               break;
+
         }
 
         va_start(list,msg);
@@ -261,6 +271,11 @@ namespace dtUtil
             case LOG_WARNING:
                 color = "<b><font color=#808000>";
                 break;
+
+            case LOG_ALWAYS:
+               color = "<b><font color=#000000>";
+               break;
+
         }
 
         va_start(list,msg);
@@ -320,10 +335,9 @@ namespace dtUtil
 
        switch(msgType)
        {
-       //case dtLog::ALWAYS: std::cout << "Always";  break;
+       case Log::LOG_ALWAYS:    lev = "Always";  break;
        case Log::LOG_ERROR:   lev = "Error";   break;
        case Log::LOG_WARNING: lev = "Warn";    break;
-       //case Log::NOTICE:    lev = "Notice";  break;
        case Log::LOG_INFO:    lev = "Info";    break;
        case Log::LOG_DEBUG:   lev = "Debug";   break;
        default:
