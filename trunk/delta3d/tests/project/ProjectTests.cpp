@@ -34,7 +34,7 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
-#include <dtDAL/log.h>
+#include <dtUtil/log.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/exception.h>
 #include <dtDAL/fileutils.h>
@@ -53,17 +53,17 @@ void ProjectTests::setUp() {
         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("projectTest");
 
-        logger = &dtDAL::Log::GetInstance("project.cpp");
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-        logger = &dtDAL::Log::GetInstance("fileutils.cpp");
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-        logger = &dtDAL::Log::GetInstance("mapxml.cpp");
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
+        logger = &dtUtil::Log::GetInstance("project.cpp");
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
-        logger = &dtDAL::Log::GetInstance(logName);
+        logger = &dtUtil::Log::GetInstance(logName);
 
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-        logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
         fileUtils.PushDirectory("project");
 
@@ -625,7 +625,7 @@ void ProjectTests::testResources() {
         time(&currentTime);
         const std::string& utcTime = dtDAL::MapWriter::TimeAsUTC(currentTime);
 
-        logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
+        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
             "Current time as UTC is %s", utcTime.c_str());
 
         std::vector<osg::ref_ptr<const dtDAL::ResourceTypeHandler> > handlers;
@@ -757,7 +757,7 @@ void ProjectTests::testResources() {
 
 
         for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++) {
-            logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found map named %s.", i->c_str());
+            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Found map named %s.", i->c_str());
             //dtDAL::Map& m = p.GetMap(*i);
 
             //maps.Push_back(osg::ref_ptr<dtDAL::Map>(&m));

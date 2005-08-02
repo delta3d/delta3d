@@ -35,7 +35,7 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
-#include <dtDAL/log.h>
+#include <dtUtil/log.h>
 #include <dtDAL/mapxml.h>
 #include <dtDAL/exception.h>
 #include <dtDAL/fileutils.h>
@@ -58,17 +58,17 @@ void MapTests::setUp() {
         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("mapTest");
 
-        logger = &dtDAL::Log::GetInstance();
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-        logger = &dtDAL::Log::GetInstance("fileutils.cpp");
-        logger->SetLogLevel(dtDAL::Log::LOG_ERROR);
-        logger = &dtDAL::Log::GetInstance("mapxml.cpp");
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
+        logger = &dtUtil::Log::GetInstance();
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
+        logger->SetLogLevel(dtUtil::Log::LOG_ERROR);
+        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
-        logger = &dtDAL::Log::GetInstance(logName);
+        logger = &dtUtil::Log::GetInstance(logName);
 
-        logger->SetLogLevel(dtDAL::Log::LOG_DEBUG);
-        logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
+        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
 		std::string currentDir = fileUtils.CurrentDirectory();
 		std::string projectDir("project");
@@ -140,13 +140,13 @@ void MapTests::createActors(dtDAL::Map& map) {
   int nameCounter = 0;
   char nameAsString[21];
 
-  logger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
+  logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
   for (unsigned int i=0; i< actors.size(); i++) 
   {
     osg::ref_ptr<dtDAL::ActorProxy> proxy;
 
-    logger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__,
+    logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
       "Creating actor proxy %s with category %s.", actors[i]->GetName().c_str(), actors[i]->GetCategory().c_str());
 
     proxy = libMgr.CreateActorProxy(*actors[i]);
@@ -154,13 +154,13 @@ void MapTests::createActors(dtDAL::Map& map) {
     proxy->SetName(std::string(nameAsString));
     nameCounter++;
 
-    logger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__,
+    logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
       "Set proxy name to: %s", proxy->GetName().c_str());
 
 
     proxy->GetPropertyList(props);
     for (unsigned int j=0; j<props.size(); j++) {
-      logger->LogMessage(dtDAL::Log::LOG_INFO, __FUNCTION__, __LINE__,
+      logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
         "Property: Name: %s, Type: %s",
             props[j]->GetName().c_str(), props[j]->GetPropertyType().GetName().c_str());
     }
@@ -634,7 +634,7 @@ void MapTests::testMapSaveAndLoad() {
         	CPPUNIT_ASSERT(rap.GetValue() != NULL);
         	CPPUNIT_ASSERT(*rap.GetValue() == marineRD);
 		} catch(const rbody::config_error& ex) {
-            logger->LogMessage(dtDAL::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error loading character \"%s\": %s",
+            logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error loading character \"%s\": %s",
                 marineRD.GetResourceIdentifier().c_str(), ex.what());
             CPPUNIT_FAIL("Error setting marine mesh.");
         }
@@ -717,9 +717,9 @@ void MapTests::testMapSaveAndLoad() {
 
         ap = getActorProperty(*map, "Rotation", dtDAL::DataType::VEC3,1);
 
-        if (logger->IsLevelEnabled(dtDAL::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
             osg::Vec3f val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
-            logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
 
@@ -731,9 +731,9 @@ void MapTests::testMapSaveAndLoad() {
 
         ap = getActorProperty(*map, "Translation", dtDAL::DataType::VEC3, 1);
 
-        if (logger->IsLevelEnabled(dtDAL::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
             osg::Vec3 val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
-            logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
 
@@ -744,9 +744,9 @@ void MapTests::testMapSaveAndLoad() {
             );
         ap = getActorProperty(*map, "Scale", dtDAL::DataType::VEC3, 1);
 
-        if (logger->IsLevelEnabled(dtDAL::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
             osg::Vec3f val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
-            logger->LogMessage(dtDAL::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
 

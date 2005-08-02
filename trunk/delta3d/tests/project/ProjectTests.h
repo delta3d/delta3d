@@ -24,7 +24,7 @@
 
 
 #include <dtDAL/tree.h>
-#include <dtDAL/log.h>
+#include <dtUtil/log.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -53,7 +53,7 @@ public:
     void testReadonlyFailure();
     void testResources();
 private:
-    dtDAL::Log* logger;
+    dtUtil::Log* logger;
     void printTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
     core::tree<dtDAL::ResourceTreeNode>::const_iterator findTreeNodeFromCategory(
         const core::tree<dtDAL::ResourceTreeNode>& currentTree,
