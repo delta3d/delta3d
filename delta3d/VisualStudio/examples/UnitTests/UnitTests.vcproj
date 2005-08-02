@@ -36,7 +36,8 @@
 				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib sg_d.lib ul_d.lib cppunitd.lib"
 				OutputFile="../../../tests/UnitTestsd.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(DELTA_LIB);C:\Documents and Settings\johnson\Desktop\cppunit\lib;"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/UnitTests.pdb"
 				SubSystem="1"
@@ -82,10 +83,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib sg.lib ul.lib cppunit.lib testrunner.lib"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib sg.lib ul.lib cppunit.lib"
 				OutputFile="../../../tests/UnitTests.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB);C:\Documents and Settings\johnson\Desktop\cppunit\lib;"
+				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
