@@ -18,8 +18,8 @@
 *
 * @author William E. Johnson II
 */
-#include "testActorLib.h"
-#include "testPropertyProxy.h"
+#include "testactorlib.h"
+#include "testpropertyproxy.h"
 
 using namespace dtDAL;
 
