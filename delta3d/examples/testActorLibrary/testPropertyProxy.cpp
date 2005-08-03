@@ -18,7 +18,7 @@
  *
  * @author Curtiss Murphy
 */
-#include "testPropertyProxy.h"
+#include "testpropertyproxy.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtActors/deltaobjectactorproxy.h"
 #include "dtCore/scene.h"
