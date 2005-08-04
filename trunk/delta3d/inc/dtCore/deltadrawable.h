@@ -27,7 +27,7 @@
 
 #include "dtCore/base.h"
 #include "dtCore/export.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtCore/refptr.h"
 #include "osg/Node"
 
@@ -112,7 +112,7 @@ namespace dtCore
          virtual void RenderProxyNode( bool enable = true )
          {
             if( mProxyNode == 0 )
-               dtCore::Notify( WARN, "Proxy node is not implemented, overwrite RenderProxyNode." );
+               LOG_WARNING("Proxy node is not implemented, overwrite RenderProxyNode." );
          };
 
    protected:

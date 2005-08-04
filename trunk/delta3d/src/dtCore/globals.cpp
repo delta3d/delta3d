@@ -1,5 +1,5 @@
 #include <dtCore/globals.h>
-#include <dtCore/notify.h>
+#include <dtUtil/log.h>
 #include <stdexcept>
 
 #include <osgDB/FileUtils>
@@ -26,7 +26,7 @@ void dtCore::SetDataFilePathList(const std::string& pathList )
       }
       catch( std::out_of_range myexcept)
       {
-         Notify(dtCore::WARN,"dtCore::%s",myexcept.what());
+         LOG_WARNING(myexcept.what());
       }
       #else
       if( modpath[i] == ';' )

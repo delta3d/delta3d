@@ -7,7 +7,7 @@
 #include "dtCore/physical.h"
 #include "dtCore/transformable.h"
 #include "dtCore/object.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtUtil/polardecomp.h"
 #include "dtUtil/matrixutil.h"
 
@@ -31,6 +31,7 @@
 
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Physical)
@@ -1122,8 +1123,9 @@ void Physical::RenderCollisionGeometry( const bool enable )
          }
 
          default:
-            Notify(WARN, "Physical:Can't render unhandled geometry class:%d",
-                   dGeomGetClass(id) );
+            Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, 
+               "Physical:Can't render unhandled geometry class:%d",
+                dGeomGetClass(id) );
             break;
       }
 

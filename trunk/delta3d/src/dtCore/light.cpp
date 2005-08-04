@@ -1,8 +1,9 @@
 #include "dtCore/light.h"
 #include "dtCore/scene.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Light)
 
@@ -13,7 +14,10 @@ Light::Light( int number, const std::string& name, LightingMode mode )
    SetName( name );
 
    if( number < 0 || number >= MAX_LIGHTS )
-      dtCore::Notify(WARN, "Light number %d is out of bounds, use values 0-7.",number);
+   {
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+         "Light number %d is out of bounds, use values 0-7.",number);
+   }
 
    osg::Light* light = new osg::Light;
    light->setLightNum( number );

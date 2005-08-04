@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
+        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
         dtCore::SetDataFilePathList(".;" + dtCore::GetDeltaDataPathList());
 
         //Now that everything is initialized, show the main window.

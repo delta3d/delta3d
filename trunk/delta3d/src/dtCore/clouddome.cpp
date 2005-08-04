@@ -1,12 +1,14 @@
 #include <dtCore/clouddome.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtUtil/log.h>
 
 #include <osg/BlendFunc>
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(CloudDome)
 
@@ -102,7 +104,6 @@ CloudDome::CloudDome(   float radius,
 CloudDome::~CloudDome()
 {
    DeregisterInstance(this);
-   Notify( DEBUG_INFO, "CloudDome: deleting %s", this->GetName().c_str() );
    RemoveSender( System::GetSystem() );
 }
 
@@ -115,7 +116,8 @@ void CloudDome::LoadShaderSource( osg::Shader* obj, const std::string& fileName 
    }
    else
    {
-      Notify( WARN, "File '%s' not found.", fileName.c_str() );
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, "clouddome.cpp",
+        "File '%s' not found.", fileName.c_str() );
    }
 }
 
@@ -206,8 +208,8 @@ void CloudDome::Create()
       mImage_3D = osgDB::readImageFile(mFileName);
       if(!mImage_3D.valid())
       {
-         dtCore::Notify( WARN, "CloudDome can't load image file." );
-         dtCore::Notify( WARN, "Creating new 128^3 3d texture..." );
+         LOG_WARNING("CloudDome can't load image file." );
+         LOG_WARNING("Creating new 128^3 3d texture..." );
 
          NoiseGenerator noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
          mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
@@ -215,7 +217,7 @@ void CloudDome::Create()
    }
    else
    {
-      dtCore::Notify( ALWAYS, "Creating 128^3 3d texture..." );	
+      LOG_ALWAYS("Creating 128^3 3d texture..." );	
       NoiseGenerator noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
       mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
    }

@@ -5,9 +5,10 @@
 #include <Producer/KeyboardMouse>
 
 #include "dtCore/deltawin.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
@@ -224,7 +225,7 @@ bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &
    }
    else
    {
-      Notify(DEBUG_INFO,"Window size of 0");
+      LOG_DEBUG("Window size of 0");
       return false;
    }
 }

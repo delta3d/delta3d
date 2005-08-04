@@ -8,7 +8,7 @@
 
 #include "dtCore/scene.h"
 #include "dtCore/system.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtCore/infinitelight.h"
 #include "dtCore/positionallight.h"
 #include "dtCore/deltadrawable.h"
@@ -16,29 +16,30 @@
 
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
 // Replacement message handler for ODE 
 extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
-{
-   Notify(NOTICE, msg, ap);  
+{  
+   Log::GetInstance().LogMessage(Log::LOG_INFO, __FILE__, msg, ap);
 }
 
 // Replacement debug handler for ODE  
 extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
 {
-   Notify(FATAL, msg, ap);
-   
+   Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
+
    exit(1);
 }
 
 // Replacement error handler for ODE  
 extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 {
-   Notify(FATAL, msg, ap);
-      
+   Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
+
    exit(1);
 }
 

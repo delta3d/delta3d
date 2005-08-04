@@ -3,11 +3,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/base.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 #include <iostream>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Base)
 
@@ -26,7 +27,9 @@ Base::Base(const std::string& name) : mName(name)
  */
 Base::~Base()
 {
-   Notify( DEBUG_INFO, "Base: Destroying '%s'", GetName().c_str() );
+   Log &log = Log::GetInstance();
+
+   log.LogMessage(Log::LOG_DEBUG, "base.cpp", "Destroying '%s'", GetName().c_str());
    DeregisterInstance(this);
 }
 

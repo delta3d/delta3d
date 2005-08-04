@@ -3,9 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/deltawin.h"
-#include "dtCore/notify.h"
+#include "dtUtil/log.h"
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace std;
 
 // Producer::RenderSurface must realized for this to work
@@ -108,7 +109,10 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
    if ( ChangeDisplaySettings( &dmScreenSettings, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
    {
-      Notify(WARN,"Resolution could not be changed to %dx%d @ %d, %d", width, height, colorDepth, refreshRate );
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+         "Resolution could not be changed to %dx%d @ %d, %d",
+         width, height, colorDepth, refreshRate );
+
    }
    else
    {

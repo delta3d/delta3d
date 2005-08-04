@@ -5,9 +5,9 @@
 #include "Producer/RenderSurface"
 
 #include "dtCore/camera.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/log.h>
 
 #include <osg/Matrix>
 
@@ -45,7 +45,7 @@ mFrameStamp(new osg::FrameStamp())
 
 Camera::_SceneHandler::~_SceneHandler()
 {
-   dtCore::Notify(dtCore::DEBUG_INFO, "Destroying _SceneHandler");
+   LOG_DEBUG("Destroying _SceneHandler");
 }
 
 void Camera::_SceneHandler::clear(Producer::Camera& cam)
@@ -136,7 +136,6 @@ mScene(NULL)
 Camera::~Camera()
 {
    DeregisterInstance(this);
-   Notify(DEBUG_INFO, "Destroying Camera, ref count:%d", this->referenceCount() );
 }
 
 

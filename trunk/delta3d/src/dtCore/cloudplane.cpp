@@ -2,7 +2,6 @@
 #include "dtCore/cloudplane.h"
 #include "dtCore/pnoise.h"
 #include "dtCore/system.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 
 #include <osg/Vec2>
@@ -64,7 +63,6 @@ CloudPlane::CloudPlane( int   octaves,
 CloudPlane::~CloudPlane()
 {
 	DeregisterInstance(this);
-	Notify(DEBUG_INFO, "CloudPlane: deleting %s", this->GetName().c_str());
    RemoveSender( System::GetSystem() );
 }
 

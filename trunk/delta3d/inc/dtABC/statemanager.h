@@ -10,7 +10,7 @@
 #include "osgDB/FileUtils"
 
 #include <dtUtil/objectfactory.h>
-#include <dtCore/notify.h>
+#include <dtUtil/log.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtABC/event.h>
@@ -626,7 +626,8 @@ namespace dtABC
       }
       else
       {
-         dtCore::Notify(dtCore::WARN, "StateManager - Can't find file '%s'",filename.c_str());
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
+               "StateManager - Can't find file '%s'",filename.c_str());
          retVal = false;
       }
       return retVal;
@@ -643,7 +644,8 @@ namespace dtABC
       }
       catch (const XERCES_CPP_NAMESPACE::XMLException& toCatch) 
       {
-         dtCore::Notify(dtCore::WARN) << toCatch.getMessage() << std::endl;
+         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, message);
          return 1;
       }
 
@@ -665,19 +667,19 @@ namespace dtABC
       catch (const XERCES_CPP_NAMESPACE::XMLException& toCatch) 
       {
          char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
-         dtCore::Notify(dtCore::WARN) << "Exception message is: \n" << message << "\n";
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Exception message is '%s",  message );
          XERCES_CPP_NAMESPACE::XMLString::release(&message);
          return -1;
       }
       catch (const XERCES_CPP_NAMESPACE::SAXParseException& toCatch) {
          char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
-         dtCore::Notify(dtCore::WARN) << "Exception message is: \n" << message << "\n";
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Exception message is '%s'", message);
          XERCES_CPP_NAMESPACE::XMLString::release(&message);
          return -1;
       }
       catch (...) 
       {
-         dtCore::Notify(dtCore::WARN) << "Statemanager::ParseFile() Unexpected Exception \n" ;
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Statemanager::ParseFile() Unexpected Exception");
          return -1;
       }
 
@@ -738,8 +740,9 @@ namespace dtABC
          {
             mFromState->SetName(stateName);
          }
-         else dtCore::Notify(dtCore::WARN, "StateManager Load() can't create FromState '%s'",
-                             stateType.c_str() );
+         else dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
+            "StateManager Load() can't create FromState '%s'",
+             stateType.c_str() );
 
       }
       else if (elementName == "ToState")
@@ -769,15 +772,17 @@ namespace dtABC
          {
             mToState->SetName(stateName);
          }
-         else dtCore::Notify(dtCore::WARN, "StateManager Load() can't create ToState '%s'",
-                             stateType.c_str() );
+         else dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
+            "StateManager Load() can't create ToState '%s'",
+            stateType.c_str() );
 
       }
       else if (elementName == "StartState")
       {
          std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
 
-         dtCore::Notify(dtCore::DEBUG_INFO, "Set StartState: '%s'", stateName.c_str());
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__,
+            "Set StartState: '%s'", stateName.c_str());
          StateManager::Instance()->MakeCurrent( StateManager<T1,T2>::Instance()->GetState(stateName) );
       }
 
@@ -787,7 +792,7 @@ namespace dtABC
    void StateManager<T1,T2>::TransitionHandler::fatalError(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
    {
       char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
-      dtCore::Notify(dtCore::WARN) << "Fatal Error: " << message << " at line: " << exception.getLineNumber() << std::endl;
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Fatal Error:%s, at line %d",message, exception.getLineNumber());
    }
 
    template< typename T1, typename T2 >
@@ -798,8 +803,6 @@ namespace dtABC
       if (elementName == "Transition")
       {
          ///\todo : Is 'elementName' correct here?
-         dtCore::Notify(dtCore::DEBUG_INFO, "AddTransition('%s', '%s', '%s')", mEventType->GetName().c_str() ,mFromState->GetName().c_str(),mToState->GetName().c_str() );
-
          StateManager<T1,T2>::Instance()->AddTransition( mEventType, mFromState.get(), mToState.get() );
       }
    }

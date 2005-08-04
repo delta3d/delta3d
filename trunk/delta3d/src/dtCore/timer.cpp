@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
 #include "dtCore/timer.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 using namespace dtCore;
-//using namespace osg;
+using namespace dtUtil;
 using namespace std;
 
 // borrowed from osg/Timer.cpp...
@@ -31,8 +31,8 @@ Timer::Timer()
    else
    {
       _secsPerTick = 1.0;
-      Notify(NOTICE)<<"Error: Timer::Timer() unable to use QueryPerformanceFrequency, "<<std::endl;
-      Notify(NOTICE)<<"timing code will be wrong, Windows error code: "<<GetLastError()<<std::endl;
+      LOG_ERROR("Timer::Timer() unable to use QueryPerformanceFrequency, ");
+      LOG_ERROR("timing code will be wrong.");
    }
 }
 
@@ -45,8 +45,8 @@ Timer_t Timer::tick() const
    }
    else
    {
-      Notify(NOTICE)<<"Error: Timer::Timer() unable to use QueryPerformanceCounter, "<<std::endl;
-      Notify(NOTICE)<<"timing code will be wrong, Windows error code: "<<GetLastError()<<std::endl;
+      LOG_ERROR("Timer::Timer() unable to use QueryPerformanceFrequency, ");
+      LOG_ERROR("timing code will be wrong.");
       return 0;
    }
 }

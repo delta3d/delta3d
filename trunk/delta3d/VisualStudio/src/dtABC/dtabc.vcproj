@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib OpenThreadsWin32d.lib osgd.lib osgdbd.lib producerd.lib sg_d.lib ul_d.lib tinyxmld.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtutild.lib dtcored.lib OpenThreadsWin32d.lib osgd.lib osgdbd.lib producerd.lib sg_d.lib ul_d.lib tinyxmld.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtabcd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib OpenThreadsWin32.lib osg.lib osgdb.lib producer.lib sg.lib ul.lib tinyxml.lib xerces-c_2.lib"
+				AdditionalDependencies="dtutil.lib dtcore.lib OpenThreadsWin32.lib osg.lib osgdb.lib producer.lib sg.lib ul.lib tinyxml.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtabc.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

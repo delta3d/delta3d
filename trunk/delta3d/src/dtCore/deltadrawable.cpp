@@ -1,8 +1,9 @@
 #include "dtCore/deltadrawable.h"
 #include "dtCore/scene.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
@@ -29,8 +30,9 @@ bool DeltaDrawable::AddChild(DeltaDrawable *child)
 {
    if (!CanBeChild(child))
    {
-      Notify(WARN, "DeltaDrawable: '%s' cannot be added as a child to '%s'",
-             child->GetName().c_str(), this->GetName().c_str() );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, 
+         "DeltaDrawable: '%s' cannot be added as a child to '%s'",
+         child->GetName().c_str(), this->GetName().c_str() );
       return (false);
    }
 

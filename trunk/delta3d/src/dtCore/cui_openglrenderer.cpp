@@ -25,9 +25,10 @@ Purpose:
 //#include "glpng.h"
 
 #include <osgDB/ReadFile>
-#include "dtCore/notify.h"
+#include "dtUtil/log.h"
 
 using namespace dtCore;
+using namespace dtUtil;
 
 const unsigned int CUI_OpenGLRenderer::TranslatePrimitive[] = {
 		GL_POLYGON, GL_QUADS, GL_TRIANGLES, GL_LINE_LOOP
@@ -122,7 +123,7 @@ int CUI_OpenGLRenderer::LoadTexture( char *filename )
    osg::Image* img = osgDB::readImageFile(filename);
    if(!img)
    {
-      dtCore::Notify(dtCore::WARN, "Can't load texture file '%s'", filename);
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, "Can't load texture file '%s'", filename);
       return -1;
    }
    img->ensureValidSizeForTexturing(1024);
