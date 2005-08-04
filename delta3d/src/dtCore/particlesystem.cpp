@@ -4,7 +4,7 @@
 
 #include "dtCore/particlesystem.h"
 #include "dtCore/scene.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 #include <osg/Group>
 #include <osg/NodeVisitor>
@@ -12,6 +12,7 @@
 #include <osg/Geode>
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace std;
 
 
@@ -71,7 +72,6 @@ ParticleSystem::ParticleSystem(string name)
  */
 ParticleSystem::~ParticleSystem()
 {
-   Notify(DEBUG_INFO, "ParticleSystem: Destroying %s", GetName().c_str());
    DeregisterInstance(this);
 }
 
@@ -185,7 +185,8 @@ osg::Node* ParticleSystem::LoadFile( const std::string& filename, bool useCache)
    }
    else
    {
-      Notify(WARN, "ParticleSystem: Can't load %s", filename.c_str());
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, 
+               "ParticleSystem: Can't load %s", filename.c_str());
       return NULL;
    }
 

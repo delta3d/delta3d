@@ -1,11 +1,12 @@
 #include "dtCore/loadable.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtCore/refptr.h"
 
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 Loadable::Loadable(void)
 {
@@ -27,7 +28,8 @@ Loadable::~Loadable(void)
 osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
 {   
    mFilename = filename;
-   Notify(DEBUG_INFO, "Loadable:Loading %s...", filename.c_str());
+   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__,
+                                 "Loadable:Loading %s...", filename.c_str());
 
    RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 
@@ -54,7 +56,8 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
    }
    else
    {
-      Notify(WARN, "Loadable: Can't load %s", mFilename.c_str());
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+               "Loadable: Can't load %s", mFilename.c_str() );
       return NULL;
    }
    

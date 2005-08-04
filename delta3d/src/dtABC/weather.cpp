@@ -1,8 +1,9 @@
 #include "dtABC/weather.h"
 #include "dtCore/skydome.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 using namespace dtABC;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Weather)
 
@@ -182,7 +183,7 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
       mEnvironment->SetVisibility(1500.f);
       break;
    default:
-      dtCore::Notify( dtCore::WARN, "Weather: unhandled visibility type" );
+      LOG_WARNING("Weather: unhandled visibility type" );
       break;
    }
    

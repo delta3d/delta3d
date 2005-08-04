@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib producerd.lib osgd.lib osgdbd.lib replicantbodyd.lib sg_d.lib ul_d.lib rvrutilsd.lib cal3d_d.lib"
+				AdditionalDependencies="dtutild.lib dtcored.lib producerd.lib osgd.lib osgdbd.lib replicantbodyd.lib sg_d.lib ul_d.lib rvrutilsd.lib cal3d_d.lib"
 				OutputFile="../../../bin/dtchard.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib producer.lib osg.lib osgdb.lib replicantbody.lib sg.lib ul.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
+				AdditionalDependencies="dtutil.lib dtcore.lib producer.lib osg.lib osgdb.lib replicantbody.lib sg.lib ul.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
 				OutputFile="../../../bin/dtchar.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

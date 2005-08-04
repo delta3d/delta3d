@@ -1,12 +1,13 @@
 #include "dtCore/tripod.h"
 #include "dtCore/system.h"
 #include "dtCore/camera.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtCore/transform.h"
 
 #include <osg/Matrix>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Tripod)
 
@@ -45,7 +46,8 @@ void Tripod::SetCamera( const std::string& camName )
       {
          SetCamera(cam);
       }
-      else Notify(WARN, "Tripod: Can't find Camera %s", camName.c_str());
+      else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+         "Tripod: Can't find Camera %s", camName.c_str());
    }
 }
 
@@ -67,7 +69,8 @@ void Tripod::SetAttachToTransformable( const std::string& transName )
       {
          SetAttachToTransformable(trans);
       }
-      else Notify(WARN, "Tripod: Can't find Transformable %s", transName.c_str());
+      else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+         "Tripod: Can't find Transformable %s", transName.c_str());
    }
 }
 

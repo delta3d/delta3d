@@ -1,5 +1,4 @@
 #include "dtABC/baseabc.h"
-#include "dtCore/notify.h"
 
 
 using namespace   dtABC;
@@ -33,7 +32,6 @@ BaseABC::BaseABC( std::string name /*= "BaseABC"*/ )
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
-   Notify(DEBUG_INFO, "destroying baseABC ref:%d", referenceCount());
    RemoveSender( System::GetSystem() );
 }
 

@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="alut.lib dtcored.lib openal32.lib openthreadswin32d.lib osgd.lib osgdbd.lib producerd.lib sg_d.lib ul_d.lib tinyxmld.lib"
+				AdditionalDependencies="dtutild.lib alut.lib dtcored.lib openal32.lib openthreadswin32d.lib osgd.lib osgdbd.lib producerd.lib sg_d.lib ul_d.lib tinyxmld.lib"
 				OutputFile="../../../bin/dtaudiod.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="alut.lib dtcore.lib openal32.lib openthreadswin32.lib osg.lib osgdb.lib producer.lib sg.lib ul.lib tinyxml.lib"
+				AdditionalDependencies="dtutil.lib alut.lib dtcore.lib openal32.lib openthreadswin32.lib osg.lib osgdb.lib producer.lib sg.lib ul.lib tinyxml.lib"
 				OutputFile="../../../bin/dtaudio.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

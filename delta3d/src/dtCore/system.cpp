@@ -3,11 +3,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/system.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtCore/camera.h"
 
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(System)
 
@@ -67,9 +68,9 @@ void System::Run()
 
 	  lastTick = clockTime;
    }
-   Notify(DEBUG_INFO, "System: Exiting...");
+   LOG_DEBUG("System: Exiting...");
    SendMessage("exit");
-   Notify(DEBUG_INFO, "System: Done Exiting.");
+   LOG_DEBUG("System: Done Exiting.");
 
 }
 

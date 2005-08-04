@@ -7,7 +7,7 @@
 #include <Rpcdce.h>
 
 #include "dtCore/uniqueid.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 using namespace dtCore;
 using namespace std;
@@ -26,12 +26,12 @@ UniqueId::UniqueId()
       }
       else
       {
-         Notify( WARN, "Could not convert UniqueId to std::string." );
+         LOG_WARNING("Could not convert UniqueId to std::string." );
       }
    }
    else
    {
-      Notify( WARN, "Could not generate UniqueId." );
+      LOG_WARNING("Could not generate UniqueId." );
    }
 }
 

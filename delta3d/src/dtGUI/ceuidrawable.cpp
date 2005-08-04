@@ -5,6 +5,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
+#include <dtCore/notify.h>
 
 #include <osg/Geode>
 #include <osg/Projection>

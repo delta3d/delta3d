@@ -6,11 +6,12 @@
 
 #include "dtCore/scene.h"
 #include "dtCore/terrain.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 #include <math.h>
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace std;
 
 
@@ -357,7 +358,7 @@ osg::Vec3 Terrain::HeightColorMap::GetColor(float height)
    }
    else
    {
-      Notify(WARN, "Terrain::HeightColorMap: Must have at least two entries");
+      LOG_WARNING("Terrain::HeightColorMap: Must have at least two entries");
    }
    
    return color;
@@ -768,13 +769,15 @@ void Terrain::LoadSegment(int latitude, int longitude)
          
             mNode->addChild(lod);
          
-            Notify(NOTICE, "Terrain: Loaded %s", path.c_str());
+            Log::GetInstance().LogMessage(Log::LOG_INFO, __FILE__, 
+               "Terrain: Loaded %s", path.c_str());
             
             return;
          }
          else
          {
-            Notify(WARN, "Terrain: Can't load %s", path.c_str());
+            Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
+               "Terrain: Can't load %s", path.c_str());
          }
       }
    }

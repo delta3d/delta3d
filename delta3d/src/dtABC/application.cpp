@@ -1,11 +1,12 @@
 #include "dtABC/application.h"
 #include "dtCore/system.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 #include "osgDB/FileUtils"
 
 using namespace dtABC;
 using namespace dtCore;
+using namespace dtUtil;
 
 
 
@@ -27,7 +28,7 @@ Application::Application(std::string configFilename)
         
       if(foundPath.empty())
       {
-         Notify( WARN,
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__,
             "Application: Can't find config file '%s', using defaults instead.",
             configFilename.c_str() );
          CreateInstances(); //create default window, camera, etc.
@@ -43,7 +44,7 @@ Application::Application(std::string configFilename)
          }
          else
          {
-            Notify(WARN,"Application: Error loading config file, using defaults instead.");
+            LOG_WARNING("Application: Error loading config file, using defaults instead.");
             CreateInstances(); //create default window, camera, etc.
          }
       }
@@ -63,8 +64,7 @@ Application::~Application(void)
    //mWindow->ChangeScreenResolution( mOriginalRes );
    #endif
    
-   DeregisterInstance(this);
-   Notify(DEBUG_INFO, "Destroying application ref:%d", referenceCount());
+   DeregisterInstance(this);   
 }
 
 
@@ -202,13 +202,13 @@ void  Application::ParseConfigFile( TiXmlElement* rootNode )
       if (win != NULL)
          mCamera->SetWindow(win);
       else
-         Notify(WARN, "Application:Can't find instance of DeltaWin '%s'", winInst.c_str() );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, "Application:Can't find instance of DeltaWin '%s'", winInst.c_str() );
 
       Scene* scene = Scene::GetInstance(sceneInst);
       if (scene != NULL)
          mCamera->SetScene(scene);
       else
-         Notify(WARN, "Application:Can't find instance of Scene '%s'", sceneInst.c_str() );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, "Application:Can't find instance of Scene '%s'", sceneInst.c_str() );
    }
 }
 
@@ -224,7 +224,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
    if( xmlDoc->LoadFile( "config.xml" ) )
    {
       ///\todo Look at this - both of these lines are questionable.
-      Notify(WARN, "Application found existing config.xml, delete file before generating a new one.");
+      LOG_WARNING("Application found existing config.xml, delete file before generating a new one.");
       return std::string("");    // commented this line so that the above statement was true.
    }
 

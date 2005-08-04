@@ -1,6 +1,6 @@
 #include "dtCore/environment.h"
 #include "dtCore/system.h"
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 #include "dtCore/camera.h"
 #include "dtCore/ephemeris.h"
 #include "dtCore/physical.h"
@@ -11,6 +11,8 @@
 #include <math.h>
 
 using namespace dtCore;
+using namespace dtUtil;
+
 IMPLEMENT_MANAGEMENT_LAYER(Environment)
 
 Environment::Environment(const std::string& name):
@@ -482,7 +484,8 @@ void dtCore::Environment::SetDateTime( const int yr, const int mo, const int da,
    {
       mCurrTime = GetGMT(yr-1900, mo-1, da, hr, mi, sc);
    }
-   Notify( DEBUG_INFO, "Sim time set to:%s", asctime( localtime(&mCurrTime) ) );
+   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__, "Sim time set to:%s",
+      asctime( localtime(&mCurrTime) ) );
 
    Update(999.99);
 }

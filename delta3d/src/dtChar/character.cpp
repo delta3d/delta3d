@@ -6,7 +6,7 @@
 
 #include "dtCore/scene.h"
 #include "osgDB/FileUtils"
-
+#include <dtCore/notify.h>
 #include "dtChar/character.h"
 
 using namespace dtCore;
