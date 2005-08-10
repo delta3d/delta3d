@@ -29,11 +29,11 @@
 #include <osg/ref_ptr>
 #include <dtUtil/enumeration.h>
 #include <dtCore/export.h>
+#include <dtCore/uniqueid.h>
 
 namespace dtCore
 {
      class DeltaDrawable;
-     class UniqueId;
 }
 
 namespace dtDAL

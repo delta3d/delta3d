@@ -37,17 +37,15 @@
 #include <dtCore/export.h>
 #include <dtUtil/log.h>
 
+#include <dtDAL/map.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/datatype.h>
 
 XERCES_CPP_NAMESPACE_USE;
 
 namespace dtDAL
 {
-    class Map;
-    class dtUtil::Log;
-    class DataType;
-    class ActorProxy;
-    class ActorProperty;
-
     /**
      * @class MapXMLConstants
      * @brief Holds constants for all of the element names in the map XML.
