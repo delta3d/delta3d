@@ -42,14 +42,10 @@
 
 #include <osgDB/FileNameUtils>
 
-#include "dtDAL/mapxml.h"
-#include <dtUtil/log.h>
-#include "dtDAL/map.h"
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/fileutils.h"
+#include <dtDAL/mapxml.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/fileutils.h>
 
 XERCES_CPP_NAMESPACE_USE;
 
