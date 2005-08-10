@@ -102,7 +102,7 @@ namespace dtCore
       static Resolution GetCurrentResolution();
       static bool ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
       static bool ChangeScreenResolution( Resolution res );
-      static int IsValidResolution( ResolutionVec rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
+      static int IsValidResolution( const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
 
    private:
 

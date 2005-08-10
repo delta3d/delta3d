@@ -235,7 +235,7 @@ bool DeltaWin::ChangeScreenResolution( Resolution res )
    return ChangeScreenResolution( res.width, res.height, res.bitDepth, res.refresh );
 }
 
-int DeltaWin::IsValidResolution( ResolutionVec rv, int width, int height, int refreshRate, int colorDepth )
+int DeltaWin::IsValidResolution( const ResolutionVec &rv, int width, int height, int refreshRate, int colorDepth )
 {
    for( unsigned int i = 0; i < rv.size(); i++ )
    {
