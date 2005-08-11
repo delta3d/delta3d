@@ -4,4 +4,4 @@ testSrcs = ['testweather.cpp']
 
 testDeps =[ 'dtcore', 'dtabc', 'dtutil', 'gui_fl' ] 
 
-BuildProgram( 'testWeather', testSrcs, testDeps )
+BuildProgram( '#bin/testWeather', testSrcs, testDeps )

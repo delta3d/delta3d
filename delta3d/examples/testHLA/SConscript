@@ -6,4 +6,4 @@ if env.get('rti') != 0 :
 
    testDeps = [ 'dtcore', 'dtabc', 'dthla', 'dtutil' ]
 
-   BuildProgram( 'testHLA', testSrcs, testDeps )
+   BuildProgram( '#bin/testHLA', testSrcs, testDeps )

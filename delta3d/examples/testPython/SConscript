@@ -8,4 +8,4 @@ if CheckForBoost() :
 
    testPythonDeps = [ 'dtcore', 'dtabc', 'dtutil', 'python' ]
 
-   BuildProgram( 'testPython', testPythonSrcs, testPythonDeps )
+   BuildProgram( '#bin/testPython', testPythonSrcs, testPythonDeps )

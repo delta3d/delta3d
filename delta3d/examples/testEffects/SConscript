@@ -4,4 +4,4 @@ testSrcs = ['testeffects.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
 
-BuildProgram( 'testEffects', testSrcs, testDeps )
+BuildProgram( '#bin/testEffects', testSrcs, testDeps )

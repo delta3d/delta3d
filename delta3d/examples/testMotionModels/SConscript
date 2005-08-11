@@ -4,4 +4,4 @@ testSrcs = ['testmotionmodels.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
 
-BuildProgram( 'testMotionModels', testSrcs, testDeps )
+BuildProgram( '#bin/testMotionModels', testSrcs, testDeps )

@@ -4,4 +4,4 @@ testSrcs = ['testcharacters.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtchar', 'dtutil' ]
 
-BuildProgram( 'testCharacters', testSrcs, testDeps )
+BuildProgram( '#bin/testCharacters', testSrcs, testDeps )

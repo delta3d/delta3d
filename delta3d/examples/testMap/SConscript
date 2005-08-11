@@ -4,4 +4,4 @@ testSrcs = ['testmap.cpp']
 
 testDeps =[ 'dtcore', 'dtDAL'] 
 
-BuildProgram( 'testMap', testSrcs, testDeps )
+BuildProgram( '#bin/testMap', testSrcs, testDeps )

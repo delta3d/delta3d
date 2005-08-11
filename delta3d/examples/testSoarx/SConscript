@@ -6,5 +6,5 @@ if OS == 'windows' :
 
    testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtsoarx' ]
 
-   BuildProgram( 'testSoarx', testSrcs, testDeps )
+   BuildProgram( '#bin/testSoarx', testSrcs, testDeps )
    
