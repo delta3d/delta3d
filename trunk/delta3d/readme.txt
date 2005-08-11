@@ -9,10 +9,10 @@ quickly as possible. If you only wish run pre-built applications and have
 already used the Win32 installer, you are ready to rock. 
 
 Go ahead and try out the examples by running the executables found in
-the bin folder (Win32) or examples/test* (Linux).
+the bin folder.
 
-There are also several useful utitilies found in the utilities/ folder.
-See the readme.txt in that folder for more details.
+There are also several useful utitilies also found in the bin/ folder.
+See the readme.txt in /utilities for more details.
 
 If you are a developer you'll want to build from the source
 which we provide with all our distributions. Please follow instructions

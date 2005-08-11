@@ -80,7 +80,7 @@ the above commands.
 Run 'testPython'.
 
 At the Python prompt inside the console/terminal type:
-   execfile('flyhelo.py')
+   execfile('../examples/testPython/flyhelo.py')
 
 This should make the helo fly in a circle. 
 
