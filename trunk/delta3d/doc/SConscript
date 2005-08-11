@@ -1,0 +1,9 @@
+import os
+
+Import('*')
+
+env.SConscriptChdir(0)
+env.Command( 'html/index.html',
+             'doxyfile.cfg',
+             'cd doc && doxygen doxyfile.cfg',
+             )

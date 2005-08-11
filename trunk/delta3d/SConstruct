@@ -995,6 +995,7 @@ env.Alias( 'hla', [ os.path.join(os.getcwd(), 'src', 'dtHLA'),
                 os.path.join(os.getcwd(), 'examples', 'testHLA'),
                 os.path.join(os.getcwd(), 'utilities', 'hlaStealthViewer') ] )
 
+SConscript( dirs=['doc'] )
 SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
