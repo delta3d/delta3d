@@ -1,4 +1,4 @@
-#include "testWin.h"
+#include "testwin.h"
 #include <dtCore/dt.h>
 #include <dtUtil/dtutil.h>
 #include <dtGUI/dtgui.h>
