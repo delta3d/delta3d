@@ -780,9 +780,6 @@ namespace dtABC
       else if (elementName == "StartState")
       {
          std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
-
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__,
-            "Set StartState: '%s'", stateName.c_str());
          StateManager::Instance()->MakeCurrent( StateManager<T1,T2>::Instance()->GetState(stateName) );
       }
 
