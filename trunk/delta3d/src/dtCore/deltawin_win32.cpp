@@ -42,7 +42,7 @@ void DeltaWin::SetFullScreenMode( bool enable )
    mRenderSurface->fullScreen(enable);
 }
 
-ResolutionVec DeltaWin::GetResolutions()
+DeltaWin::ResolutionVec DeltaWin::GetResolutions()
 {
    HDC hDC = GetDC(GetDesktopWindow());
 
@@ -138,7 +138,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    return changeSuccessful;
 }
 
-Resolution DeltaWin::GetCurrentResolution()
+DeltaWin::Resolution DeltaWin::GetCurrentResolution()
 {
    HDC hdc = GetDC( GetDesktopWindow() );
 
