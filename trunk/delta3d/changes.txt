@@ -11,7 +11,9 @@ Bug fixes:
 -Start Menu icon for editor now loads the app correctly
 -Can now add Camera's as children of other Transformables
 -Fixed error in sigslot.h on linux causing apps to hang
--Build works with gcc3 again
+-Build works with gcc3.3 again
+-Enabled documentation building via SCons: 'scons doc'
+-Deprecated dtCore::Notify for dtUtil::Log
 
 ---------
 | 0.9.1 |
