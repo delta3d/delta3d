@@ -17,15 +17,9 @@ void initDeltaWinBindings()
    DeltaWin* (*DeltaWinGI2)(std::string) = &DeltaWin::GetInstance;
 
    bool (*DeltaWinCSR1)(int,int,int,int) = &DeltaWin::ChangeScreenResolution;
-   bool (*DeltaWinCSR2)(Resolution) = &DeltaWin::ChangeScreenResolution;
-
-   class_<Resolution>("Resolution")
-            .def_readwrite("width", &Resolution::width)
-            .def_readwrite("height", &Resolution::height)
-            .def_readwrite("bitDepth", &Resolution::bitDepth)
-            .def_readwrite("refresh", &Resolution::refresh);
+   bool (*DeltaWinCSR2)(DeltaWin::Resolution) = &DeltaWin::ChangeScreenResolution;
    
-   class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin", init<optional<std::string, int, int, int, int, bool, bool> >())
+   scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin", init<optional<std::string, int, int, int, int, bool, bool> >())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", DeltaWinGI1, return_internal_reference<>())
@@ -47,4 +41,11 @@ void initDeltaWinBindings()
       .def("ChangeScreenResolution", DeltaWinCSR1)
       .def("ChangeScreenResolution", DeltaWinCSR2)
       .def("IsValidResolution", &DeltaWin::IsValidResolution);
+
+   class_<DeltaWin::Resolution>("Resolution")
+      .def_readwrite("width", &DeltaWin::Resolution::width)
+      .def_readwrite("height", &DeltaWin::Resolution::height)
+      .def_readwrite("bitDepth", &DeltaWin::Resolution::bitDepth)
+      .def_readwrite("refresh", &DeltaWin::Resolution::refresh);
+
 }
