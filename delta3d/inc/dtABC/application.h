@@ -78,7 +78,7 @@ namespace dtABC
                ///Read the supplied config file
                void  ParseConfigFile( TiXmlElement* rootNode );
               
-               dtCore::Resolution mOriginalRes;
+               dtCore::DeltaWin::Resolution mOriginalRes;
    };
 }
 

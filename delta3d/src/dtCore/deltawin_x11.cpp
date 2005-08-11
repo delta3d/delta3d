@@ -50,7 +50,7 @@ void DeltaWin::SetFullScreenMode( bool enable )
    mRenderSurface->useBorder(!enable);
 }
 
-ResolutionVec DeltaWin::GetResolutions()
+DeltaWin::ResolutionVec DeltaWin::GetResolutions()
 {
    Display* dpy = XOpenDisplay(NULL);
    int screenNum = DefaultScreen(dpy);
@@ -65,13 +65,13 @@ ResolutionVec DeltaWin::GetResolutions()
       &numResolutions,
       &resolutions );
 
-   ResolutionVec rv;
+   DeltaWin::ResolutionVec rv;
 
    for(int i=0; i < numResolutions; i++)
    {
       int refreshRate = CalcRefreshRate(resolutions[i]->htotal, resolutions[i]->vtotal, resolutions[i]->dotclock );
 
-      Resolution r = { resolutions[i]->hdisplay,
+      DeltaWin::Resolution r = { resolutions[i]->hdisplay,
          resolutions[i]->vdisplay,
          currentRes.bitDepth,
          refreshRate };
@@ -166,7 +166,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    return changeSuccessful;
 }
 
-Resolution DeltaWin::GetCurrentResolution()
+DeltaWin::Resolution DeltaWin::GetCurrentResolution()
 {
    Display* dpy = XOpenDisplay(NULL);
    int screenNum = DefaultScreen(dpy);
@@ -180,6 +180,6 @@ Resolution DeltaWin::GetCurrentResolution()
    int tfreq = CalcRefreshRate( modeline.htotal, modeline.vtotal, dotclock );
    int tdepth = XDefaultDepth( dpy, screenNum );
 
-   Resolution r = { thorz, tvert, tdepth, tfreq };
+   DeltaWin::Resolution r = { thorz, tvert, tdepth, tfreq };
    return r;
 }

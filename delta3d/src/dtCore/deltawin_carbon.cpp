@@ -39,9 +39,9 @@ void DeltaWin::SetFullScreenMode( bool enable )
    mRenderSurface->useBorder(enable);
 }
 
-ResolutionVec DeltaWin::GetResolutions()
+DeltaWin::ResolutionVec DeltaWin::GetResolutions()
 {
-  ResolutionVec rv;
+  DeltaWin::ResolutionVec rv;
   return rv;
 }
 
@@ -50,12 +50,12 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    return false;
 }
 
-Resolution DeltaWin::GetCurrentResolution()
+DeltaWin::Resolution DeltaWin::GetCurrentResolution()
 {
    unsigned w,h;
    //mRenderSurface->getScreenSize(w,h);
    //CFDictionaryRef ref = CGDisplayCurrentMode(mRenderSurface->getDisplay());
    //ref
-   Resolution r = { 1280,854,24,60 };
+   DeltaWin::Resolution r = { 1280,854,24,60 };
    return r;
 }
