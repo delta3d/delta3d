@@ -50,7 +50,7 @@ namespace dtUtil
                 } 
                 else 
                 {
-                    std::cout << "Using file \"delta3d_log.html\" for logging" << std::endl;
+                   //std::cout << "Using file \"delta3d_log.html\" for logging" << std::endl;
                 }
                 //Write a decent header to the html file.
                 logFile << "<html><title>Delta 3D Engine</title><body>" << std::endl;
