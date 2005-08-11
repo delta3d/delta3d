@@ -2,6 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testWin", "testWin.vcproj", "{37B8BAE2-2318-43AD-A052-95D22E2AF605}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C} = {CF160A9E-61E2-4D81-83AB-C8165BB0678C}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
@@ -16,6 +17,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "..\..\src\dtCore\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtutil", "..\..\src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUI", "..\..\src\dtGUI\dtGUI.vcproj", "{CF160A9E-61E2-4D81-83AB-C8165BB0678C}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -41,6 +46,10 @@ Global
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Debug.ActiveCfg = Debug|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Debug.Build.0 = Debug|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.ActiveCfg = Release|Win32
+		{CF160A9E-61E2-4D81-83AB-C8165BB0678C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
