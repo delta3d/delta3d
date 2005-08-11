@@ -4,4 +4,4 @@ testSrcs = ['testlights.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
 
-BuildProgram( 'testLights', testSrcs, testDeps )
+BuildProgram( '#bin/testLights', testSrcs, testDeps )

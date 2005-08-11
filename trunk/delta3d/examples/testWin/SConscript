@@ -4,4 +4,4 @@ testSrcs = ['testwin.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtgui' ]
 
-BuildProgram( 'testWin', testSrcs, testDeps )
+BuildProgram( '#bin/testWin', testSrcs, testDeps )

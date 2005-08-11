@@ -4,5 +4,5 @@ bspCompilerSrcs = ['splitgeode.cpp', 'main.cpp']
 
 bspCompilerDeps = [ 'dtvis' ]
 
-BuildProgram( 'bspCompiler', bspCompilerSrcs, bspCompilerDeps )
+BuildProgram( '#/bin/bspCompiler', bspCompilerSrcs, bspCompilerDeps )
 

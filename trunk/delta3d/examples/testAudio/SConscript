@@ -4,4 +4,4 @@ testSrcs = ['testaudio.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtaudio', 'dtutil' ]
 
-BuildProgram( 'testAudio', testSrcs, testDeps )
+BuildProgram( '#bin/testAudio', testSrcs, testDeps )

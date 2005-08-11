@@ -4,4 +4,4 @@ testSrcs = ['testclouds.cpp']
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'gui_fl' ]
 
-BuildProgram( 'testClouds', testSrcs, testDeps )
+BuildProgram( '#bin/testClouds', testSrcs, testDeps )
