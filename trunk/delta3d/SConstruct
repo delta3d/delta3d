@@ -505,7 +505,7 @@ env = Environment( options = opts )
 
 # append the outside env to ours
 for K in os.environ.keys():
-   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR' ]:
+   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX' ]:
      env['ENV'][K]=SCons.Util.AppendPath( env['ENV'][K], os.environ[K] )
    else:
      env['ENV'][K]=os.environ[K]
@@ -642,9 +642,9 @@ else:
    if OS == 'windows':
      env.Append(CXXFLAGS=['/W3'])
    elif OS == 'linux' or OS == 'darwin':
-     if env['CC'] == 'gcc' or env['CXX'] == 'g++':
+     if env['CC'][:3] == 'gcc' or env['CXX'][:3] == 'g++':
        env.Append(CXXFLAGS=['-Wall'])
-     if env['CXX'] == 'g++':
+     if env['CXX'][:3] == 'g++':
          env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
 Help(opts.GenerateHelpText(env))
