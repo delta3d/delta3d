@@ -36,15 +36,6 @@ namespace Producer
 
 namespace dtCore
 {
-   struct Resolution
-   {
-      int width;
-      int height;
-      int bitDepth;
-      int refresh;
-   };
-
-   typedef std::vector<Resolution> ResolutionVec;
    
    class DT_EXPORT DeltaWin : public Base
    {
@@ -96,6 +87,16 @@ namespace dtCore
 
       ///Get a handle to the Mouse associated with the DeltaWin
       Mouse* GetMouse() { return mMouse.get(); }
+
+      struct Resolution
+      {
+         int width;  ///<In pixels
+         int height; ///<In pixels
+         int bitDepth; ///<number of color bits
+         int refresh; ///<refresh rate in Hz
+      };
+
+      typedef std::vector<Resolution> ResolutionVec;
 
       //TODO: put these into a dtCore::Display class
       static ResolutionVec GetResolutions();              
