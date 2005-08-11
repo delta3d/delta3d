@@ -21,8 +21,7 @@
 #ifndef DELTA_REF_PTR
 #define DELTA_REF_PTR
 
-// Delta3D RefPtr, basically a wrap of the OSG RefPtr but in the dtCore
-// namespace.
+// Delta3D RefPtr, a wrap of the OSG RefPtr but in the dtCore namespace.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -33,7 +32,7 @@ namespace dtCore {
 
    /** Smart pointer for handling referenced counted objects.*/
    template<class T>
-   class RefPtr : public osg::ref_ptr<T>
+   class RefPtr
    {
 
    public:
