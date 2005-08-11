@@ -15,6 +15,8 @@ Bug fixes:
 -Changed dtCore::Notify calls to use dtUtil::Log
  (dtCore::Notify soon to be deprecated)
 -testWin now uses dtGUI
+-All examples & utilities now build to the bin folder
+-New data package dt_data_0.2.1
 
 ---------
 | 0.9.1 |
