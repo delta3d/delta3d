@@ -309,8 +309,6 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
    program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
    
-   if OS == 'windows' :
-      envProg.Install( '#/bin', program[0] ) # .exe
 #   if OS == 'darwin' :
 #      appdir = name + '.app'
 #      os.mkdir( appdir, 0755 )
@@ -319,9 +317,6 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 #      shutil.copy('Info.plist', os.path.join( appdir, 'Contents' ) )
 #      shutil.copy('PkgInfo', os.path.join( appdir, 'Contents' ) )
 #      envProg.Install( os.path.join( appdir, 'Contents', 'MacOS' ) , program[0] ) # .exe
-
-
-   # TODO remove old .exes
    
 def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
       overrideShLinkFlags = '',  overrideShLibSuffix = '' ) :
