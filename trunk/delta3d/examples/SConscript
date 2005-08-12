@@ -3,7 +3,7 @@ import os
 Import('*')
 
 modules = [ 'testActorLibrary',
-		'testApp', 
+            'testApp', 
             'testAudio', 
             'testCharacters', 
             'testClouds', 
@@ -12,11 +12,12 @@ modules = [ 'testActorLibrary',
             'testHLA', 
             'testInput', 
             'testLights', 
-		'testMap',
+            'testMap',
             'testMotionModels',
             'testMultiWin',
             'testPhysics', 
             'testPython', 
+            'testSoarx',
             'testSound',
             'testStateManager',
             'testWeather', 
@@ -24,8 +25,6 @@ modules = [ 'testActorLibrary',
             'testWin' ]
 
 if OS == 'windows' :
-
-   modules += [ 'testSoarx' ]
    
    if mode == 'debug' :
       build = 'Debug'
