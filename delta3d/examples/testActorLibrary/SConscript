@@ -30,13 +30,8 @@ elif OS == 'linux':
 elif OS == 'darwin':
    testActorLibraryDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-if(OS == 'windows' and mode == 'debug') :
-	testActorLibrary = BuildLib( 'testActorLibraryd', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
-		overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
-else :
-	testActorLibrary = BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
-		overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
-
+testActorLibrary = BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
+	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 if OS == 'darwin':
    Depends(testActorLibrary, libdtDAL)
