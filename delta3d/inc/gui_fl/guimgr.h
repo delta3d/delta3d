@@ -70,6 +70,11 @@ public:
    }
 
 private:
+
+   //not implemented by design
+   GUI( const GUI& rhs ); 
+   GUI& operator= ( const GUI& rhs ); 
+
    void Init(void)
    {
       ui->TransformGroup->hide();
@@ -96,7 +101,7 @@ private:
       Fl::run(); //blocking call
       cancel(); //stop the thread
    }
-private:
+
    Fl_Window *win;
    UserInterface *ui;
 };
