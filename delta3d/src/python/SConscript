@@ -90,12 +90,16 @@ if CheckForBoost() and OS != 'darwin' :
       dtAudioBindingsTarget = 'dtaudiobindingsd'
       dtCharBindingsTarget = 'dtcharbindingsd'
       dtGui_flBindingsTarget = 'gui_flbindingsd'
+      dtHlaBindingsTarget = 'dthlabindingsd'
+      dtSoarxBindingsTarget = 'dtsoarxbindingsd'
    else :
       dtCoreBindingsTarget = 'dtcorebindings'
       dtAbcBindingsTarget = 'dtabcbindings'
       dtAudioBindingsTarget = 'dtaudiobindings'
       dtCharBindingsTarget = 'dtcharbindings'
       dtGui_flBindingsTarget = 'gui_flbindings'
+      dtHlaBindingsTarget = 'dthlabindings'
+      dtSoarxBindingsTarget = 'dtsoarxbindings'
    
    pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtcore'],   LIBS = pythonDeps + [dtLibs['dtcore']] )
    pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtabc'],    LIBS = pythonDeps + [dtLibs['dtabc']] )
@@ -106,13 +110,13 @@ if CheckForBoost() and OS != 'darwin' :
    env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib )
    
    if env.get('rti') != 0 :
-      pythonDtHlaLib = env.SharedLibrary( 'dthlabindings', pythonSrcs['dthla'], LIBS = pythonDeps + [dtLibs[ 'dthla' ]] )
+      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dthla'], LIBS = pythonDeps + [dtLibs[ 'dthla' ]] )
       env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None
 
    if OS == 'windows' :
-      pythonDtSoarxLib = env.SharedLibrary( 'dtsoarxbindings', pythonSrcs['dtsoarx'], LIBS = pythonDeps + [dtLibs[ 'dtsoarx' ]] )
+      pythonDtSoarxLib = env.SharedLibrary( dtSoarxBindingsTarget, pythonSrcs['dtsoarx'], LIBS = pythonDeps + [dtLibs[ 'dtsoarx' ]] )
       env.Precious( pythonDtSoarxLib )
 
    ################
