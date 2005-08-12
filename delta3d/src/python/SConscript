@@ -131,21 +131,21 @@ if CheckForBoost() and OS != 'darwin' :
       suffix = 'so'
 
    if mode == 'debug' :
-      dtCorePydTarget = '#'+dir+'dtCored.'+suffix
-      dtAbcPydTarget = '#'+dir+'dtABCd.'+suffix
-      dtAudioPydTarget = '#'+dir+'dtAudiod.'+suffix
-      dtCharPydTarget = '#'+dir+'dtChard.'+suffix
-      dtGUIFlPydTarget = '#'+dir+'dtGUIFld.'+suffix
-      dtSoarxPydTarget = '#'+dir+'dtSOARXd.'+suffix
-      dtHlaPydTarget = '#'+dir+'dtHLAd.'+suffix
+      dtCorePydTarget = '#'+dir+'/dtCored.'+suffix
+      dtAbcPydTarget = '#'+dir+'/dtABCd.'+suffix
+      dtAudioPydTarget = '#'+dir+'/dtAudiod.'+suffix
+      dtCharPydTarget = '#'+dir+'/dtChard.'+suffix
+      dtGUIFlPydTarget = '#'+dir+'/dtGUIFld.'+suffix
+      dtSoarxPydTarget = '#'+dir+'/dtSOARXd.'+suffix
+      dtHlaPydTarget = '#'+dir+'/dtHLAd.'+suffix
    elif mode == 'release' :
-      dtCorePydTarget = '#'+dir+'dtCore.'+suffix
-      dtAbcPydTarget = '#'+dir+'dtABC.'+suffix
-      dtAudioPydTarget = '#'+dir+'dtAudio.'+suffix
-      dtCharPydTarget = '#'+dir+'dtChar.'+suffix
-      dtGUIFlPydTarget = '#'+dir+'dtGUIFl.'+suffix
-      dtSoarxPydTarget = '#'+dir+'dtSOARX.'+suffix
-      dtHlaPydTarget = '#'+dir+'dtHLA.'+suffix
+      dtCorePydTarget = '#'+dir+'/dtCore.'+suffix
+      dtAbcPydTarget = '#'+dir+'/dtABC.'+suffix
+      dtAudioPydTarget = '#'+dir+'/dtAudio.'+suffix
+      dtCharPydTarget = '#'+dir+'/dtChar.'+suffix
+      dtGUIFlPydTarget = '#'+dir+'/dtGUIFl.'+suffix
+      dtSoarxPydTarget = '#'+dir+'/dtSOARX.'+suffix
+      dtHlaPydTarget = '#'+dir+'/dtHLA.'+suffix
   
    env.InstallAs( [  dtCorePydTarget, \
                      dtAbcPydTarget, \
