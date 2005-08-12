@@ -962,10 +962,6 @@ if not env.GetOption('clean') :
 for lib in rtiLibs :
    extLibs[lib] = lib
    
-# Documentation generation system
-#doxygenBuilder = Builder(action = 'doxygen $SOURCE')
-#env.Append(BUILDERS = { 'DoxygenDoc' : doxygenBuilder })
-   
 #################
 # Build Delta3D #
 #################
@@ -974,12 +970,7 @@ Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 'BuildLib', '
 
 env.SConsignFile()
 
-Default( None )
-
-if 'qt' in env['TOOLS'] and OS != 'windows' :
-   Default( [ 'lib', 'bin' ] )
-else :
-   Default( [ 'lib' ] )
+Default( [ 'lib', 'bin' ] )
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                   os.path.join(os.getcwd(), 'examples', 'testPython')] )
