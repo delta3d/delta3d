@@ -151,5 +151,5 @@ if CheckForBoost() and OS != 'darwin' :
                               pythonGui_flLib[1:], \
                               pythonDtSoarxLib[1:] ] )
 
-      if pythonDtSoarxLib is not None:
-         env.Install( '#/bin', pythonDtHlaLib[1:] )
+      if pythonDtHlaLib is not None:
+         env.Install( '#/lib', pythonDtHlaLib[1:] )
