@@ -130,11 +130,28 @@ if CheckForBoost() and OS != 'darwin' :
       dir = 'lib'
       suffix = 'so'
 
-   env.InstallAs( [  os.path.join('#',dir,'dtCore.'+suffix), \
-                     os.path.join('#',dir,'dtABC.'+suffix), \
-                     os.path.join('#',dir,'dtAudio.'+suffix), \
-                     os.path.join('#',dir,'dtChar.'+suffix), \
-                     os.path.join('#',dir,'dtGUIFl.'+suffix) ], \
+   if mode == 'debug' :
+      dtCorePydTarget = '#'+dir+'dtCored.'+suffix
+      dtAbcPydTarget = '#'+dir+'dtABCd.'+suffix
+      dtAudioPydTarget = '#'+dir+'dtAudiod.'+suffix
+      dtCharPydTarget = '#'+dir+'dtChard.'+suffix
+      dtGUIFlPydTarget = '#'+dir+'dtGUIFld.'+suffix
+      dtSoarxPydTarget = '#'+dir+'dtSOARXd.'+suffix
+      dtHlaPydTarget = '#'+dir+'dtHLAd.'+suffix
+   elif mode == 'release' :
+      dtCorePydTarget = '#'+dir+'dtCore.'+suffix
+      dtAbcPydTarget = '#'+dir+'dtABC.'+suffix
+      dtAudioPydTarget = '#'+dir+'dtAudio.'+suffix
+      dtCharPydTarget = '#'+dir+'dtChar.'+suffix
+      dtGUIFlPydTarget = '#'+dir+'dtGUIFl.'+suffix
+      dtSoarxPydTarget = '#'+dir+'dtSOARX.'+suffix
+      dtHlaPydTarget = '#'+dir+'dtHLA.'+suffix
+  
+   env.InstallAs( [  dtCorePydTarget, \
+                     dtAbcPydTarget, \
+                     dtAudioPydTarget, \
+                     dtCharPydTarget, \
+                     dtGUIFlPydTarget ], \
                   [  pythonDtCoreLib[0], \
                      pythonDtAbcLib[0], \
                      pythonDtAudioLib[0], \
@@ -142,11 +159,11 @@ if CheckForBoost() and OS != 'darwin' :
                      pythonGui_flLib[0] ] )
 
    if pythonDtHlaLib is not None:
-         env.InstallAs( os.path.join('#',dir, 'dtHLA.'+suffix), pythonDtHlaLib[0] )
+         env.InstallAs( dtHlaPydTarget, pythonDtHlaLib[0] )
 
    if OS == 'windows' :
       
-      env.InstallAs( os.path.join('#', dir, 'dtSOARX.'+suffix) , pythonDtSoarxLib[0] )
+      env.InstallAs( dtSoarxPydTarget , pythonDtSoarxLib[0] )
       
       env.Install( '#/lib', [ pythonDtCoreLib[1:], \
                               pythonDtAbcLib[1:], \
