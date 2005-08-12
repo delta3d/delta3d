@@ -642,8 +642,6 @@ else:
      if env['CXX'][:3] == 'g++':
          env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
-Help(opts.GenerateHelpText(env))
-
 if OS == 'linux' :
   env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
