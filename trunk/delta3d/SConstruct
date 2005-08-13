@@ -506,9 +506,9 @@ for K in os.environ.keys():
      env['ENV'][K]=os.environ[K]
 
 if os.environ.has_key( 'CC' ) :
-   env.Append( CC = env['ENV']['CC'] )
+   env.Replace( CC = env['ENV']['CC'] )
 if os.environ.has_key( 'CXX' ) :
-   env.Append( CC = env['ENV']['CXX'] )  
+   env.Replace( CC = env['ENV']['CXX'] )  
      
 # don't forget the Visual Studio paths...
 if OS == 'windows' :
