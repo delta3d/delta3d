@@ -57,12 +57,12 @@
 #include "dtEditQt/undomanager.h"
 
 #include <dtUtil/log.h>
+#include <dtCore/isector.h>
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"
 #include "dtDAL/exception.h"
 #include "dtDAL/transformableactorproxy.h"
 #include "dtDAL/fileutils.h"
-#include "dtDAL/intersectionquery.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproxyicon.h"
 
@@ -783,7 +783,7 @@ namespace dtEditQt
         //Iterate through the current selection, trace a ray directly below it.  If there is
         //an intersection, move the current proxy to that point.
         ViewportOverlay::ActorProxyList::iterator itor;
-        dtDAL::IntersectionQuery query(scene);
+        dtCore::Isector query(scene);
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {

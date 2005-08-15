@@ -154,9 +154,6 @@
 				RelativePath="..\..\..\src\dtDAL\fileutils.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtDAL\intersectionquery.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtDAL\librarymanager.cpp">
 			</File>
 			<File
@@ -224,9 +221,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\functor.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtDAL\intersectionquery.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\librarymanager.h">
