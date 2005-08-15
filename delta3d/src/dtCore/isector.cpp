@@ -66,7 +66,7 @@ Isector::Isector(dtCore::Scene *scene, const osg::Vec3 &start,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-bool Isector::Exec()
+bool Isector::Update()
 {
    if(!mSceneRoot.valid() && !mScene.valid())
    {

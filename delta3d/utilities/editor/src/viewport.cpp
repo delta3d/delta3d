@@ -280,12 +280,12 @@ namespace dtEditQt
         int yLoc = this->sceneView->getViewport()->height()-y;
 
         this->sceneView->projectWindowXYIntoObject(x,yLoc,nearPoint,farPoint);
-        query.SetStartPos(nearPoint);
+        query.SetStartPosition(nearPoint);
         query.SetDirection(farPoint-nearPoint);
 
         //If we found no intersections no need to continue so emit an empty selection
         //and return.
-        if (!query.Exec()) {
+        if (!query.Update()) {
             EditorEvents::getInstance().emitActorsSelected(toSelect);
             return;
         }
