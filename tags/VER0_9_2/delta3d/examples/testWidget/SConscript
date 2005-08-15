@@ -1,0 +1,12 @@
+Import('*')
+
+testSrcs = ['MyWidget.cpp', 'MyWindow.cpp', 'TestWidget.cxx' ]
+
+testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
+
+if OS == 'windows' :
+   testDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+elif OS == 'linux' :
+   testDeps += [ 'Xxf86vm' ]
+
+BuildProgram( '#bin/testWidget', testSrcs, testDeps )

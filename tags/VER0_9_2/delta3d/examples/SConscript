@@ -1,0 +1,40 @@
+import os
+
+Import('*')
+
+modules = [ 'testActorLibrary',
+            'testApp', 
+            'testAudio', 
+            'testCharacters', 
+            'testClouds', 
+            'testEffects', 
+            'testGUI', 
+            'testHLA', 
+            'testInput', 
+            'testLights', 
+            'testMap',
+            'testMotionModels',
+            'testMultiWin',
+            'testPhysics', 
+            'testPython', 
+            'testSoarx',
+            'testSound',
+            'testStateManager',
+            'testWeather', 
+            'testWidget', 
+            'testWin' ]
+
+if OS == 'windows' :
+   
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+
+   for module in modules :
+      SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+
+else :
+   
+   for module in modules :
+      SConscript( dirs=[module]  )
