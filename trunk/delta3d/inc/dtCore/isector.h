@@ -105,7 +105,7 @@ namespace dtCore
       * it will take precedence over the currently assigned Delta3D scene.
       * @param drawable The drawable to intersect.
       */
-      void SetQueryRoot(dtCore::DeltaDrawable *drawable) {
+      void SetGeometry(dtCore::DeltaDrawable *drawable) {
          mSceneRoot = drawable;
       }
 
@@ -120,7 +120,7 @@ namespace dtCore
       * Sets the starting position of the intersection ray.
       * @param start The start position.
       */
-      void SetStartPos(const osg::Vec3 &start)
+      void SetStartPosition(const osg::Vec3 &start)
       {
          mStart = start;
          mUpdateLineSegment = true;
@@ -130,9 +130,18 @@ namespace dtCore
       * Gets the starting position of the intersection ray.
       * @return A vector containing the start position of the intersection ray.
       */
-      const osg::Vec3 &GetStartPos() const {
+      const osg::Vec3 &GetStartPosition() const {
          return mStart;
       }
+
+      //sets a new end position
+      void SetEndPosition( const osg::Vec3& endXYZ )
+      {
+         mDirection = endXYZ-mStart;
+         mLineLength = mDirection.length();
+         mUpdateLineSegment = true;
+      }
+
 
       /**
       * Sets the direction of the intersection ray.
@@ -152,6 +161,13 @@ namespace dtCore
          return mDirection;
       }
 
+      ///Set the length of the isector
+      void SetLength( float distance )
+      {
+         mLineLength = distance;
+         mUpdateLineSegment = true;
+      }
+
       ///Get the intersected point
       void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
 
@@ -166,7 +182,7 @@ namespace dtCore
       *  children are candidates for intersection.  If not, all drawables in the scene
       *  are possibilities.
       */
-      bool Exec();
+      bool Update();
 
       /**
       * Resets the intersection query.  Call this in between disjoint intersection

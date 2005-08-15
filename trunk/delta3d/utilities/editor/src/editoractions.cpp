@@ -795,13 +795,13 @@ namespace dtEditQt
             {
                 osg::Vec3 pos = tProxy->GetTranslation();
 
-                query.SetStartPos(pos);
+                query.SetStartPosition(pos);
                 query.SetDirection(osg::Vec3(0,0,-1));
                 query.Reset();
 
                 //Find a possible intersection point.  If we find an intersection
                 //point, move the actor to that location.
-                if (query.Exec()) {
+                if (query.Update()) {
                     osgUtil::IntersectVisitor &iv = query.GetIntersectVisitor();
                     osg::Vec3 p = iv.getHitList(query.GetLineSegment())[0].getWorldIntersectPoint();
                     tProxy->SetTranslation(p);
