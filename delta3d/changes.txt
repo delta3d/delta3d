@@ -17,6 +17,7 @@ Bug fixes:
 -testWin now uses dtGUI
 -All examples & utilities now build to the bin folder
 -New data package dt_data_0.2.1
+-Make some changes to help gcc3.x users.
 
 ---------
 | 0.9.1 |
