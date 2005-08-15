@@ -68,79 +68,171 @@ namespace dtCore
    class DT_EXPORT Isector : public Transformable  
    {
    public:
+
       DECLARE_MANAGEMENT_LAYER(Isector)
 
-      ///Default constructor
-      Isector(const osg::Vec3& xyz, const osg::Vec3& dir);
-      Isector(sgVec3 xyz=0, sgVec3 dir=0)
-      {
-         DEPRECATE("Isector(sgVec3 xyz=NULL, sgVec3 dir=NULL)", "Isector(const osg:Vec3& xyz, const osg::Vec3& dir)")
-         *this = Isector(osg::Vec3(xyz[0], xyz[1], xyz[2]), osg::Vec3(dir[0], dir[1], dir[2]));
-      }
-      virtual ~Isector();
+      /**
+      * Constructs a new intersection query.
+      * @param scene A Delta3D scene to intersect.  If this is NULL, a root
+      *  drawable must be set.
+      * @note The default ray has a starting position of (0,0,0) and a
+      *  direction of (0,1,0).
+      */
+      Isector(dtCore::Scene *scene = NULL);
 
-      ///Set the length of the isector
-	   void SetLength( float distance );
-      
+      /**
+      * Constructs a new intersection query using a ray constructed with the
+      * specified parameters.
+      * @param start The start of the ray.
+      * @param dir The direction the ray is traveling.
+      * @param scene The Delta3D scene to intersect.
+      */
+      Isector(const osg::Vec3 &start, const osg::Vec3 &dir,
+         dtCore::Scene *scene = NULL);
+
+      /**
+      * Constructs a new intersection query using a line segment with the
+      * specified parameters.
+      * @param scene The Delta3D scene to intersect.
+      * @param start The start of the line segment.
+      * @param end The end point of the line segment.
+      */
+      Isector(dtCore::Scene *scene, const osg::Vec3 &start,
+         const osg::Vec3 &end);
+
+      /**
+      * Sets a drawable as the root of the intersection tests.  If this is specified,
+      * it will take precedence over the currently assigned Delta3D scene.
+      * @param drawable The drawable to intersect.
+      */
+      void SetQueryRoot(dtCore::DeltaDrawable *drawable) {
+         mSceneRoot = drawable;
+      }
+
+      /**
+      * Clears the currently assigned root drawable of the intersection tests.
+      */
+      void ClearQueryRoot() {
+         mSceneRoot = NULL;
+      }
+
+      /**
+      * Sets the starting position of the intersection ray.
+      * @param start The start position.
+      */
+      void SetStartPos(const osg::Vec3 &start)
+      {
+         mStart = start;
+         mUpdateLineSegment = true;
+      }
+
+      /**
+      * Gets the starting position of the intersection ray.
+      * @return A vector containing the start position of the intersection ray.
+      */
+      const osg::Vec3 &GetStartPos() const {
+         return mStart;
+      }
+
+      /**
+      * Sets the direction of the intersection ray.
+      * @param dir The direction vector.  This is normalized before being assigned.
+      */
+      void SetDirection(const osg::Vec3 &dir)
+      {
+         mDirection = dir;
+         mUpdateLineSegment = true;
+      }
+
+      /**
+      * Gets the direction of the intersection ray.
+      * @return The direction unit vector.
+      */
+      const osg::Vec3 &GetDirection() const {
+         return mDirection;
+      }
+
       ///Get the intersected point
       void GetHitPoint( osg::Vec3& xyz, int pointNum = 0 ) const;
-      //DEPRECATED
-      void GetHitPoint( sgVec3 xyz, int pointNum = 0 ) const
-      {
-         DEPRECATE("void GetHitPoint( sgVec3 xyz, const int pointNum=0 )", "void GetHitPoint( osg::Vec3& xyz, const int pointNum=0 ) const")
-         osg::Vec3 tmp;
-         GetHitPoint(tmp, pointNum);
-         xyz[0] = tmp[0]; xyz[1] = tmp[1]; xyz[2] = tmp[2];
-      }
 
       ///Get the number of intersected items
       int GetNumberOfHits() const;
 
-      ///Set the direction vector
-      void SetDirection( const osg::Vec3& dir );
-      //DEPRECATED
-      void SetDirection( sgVec3 dir )
-      {
-         DEPRECATE("void SetDirection( sgVec3 dir )", "void SetDirection( const osg::Vec3& dir )")
-         SetDirection(osg::Vec3(dir[0], dir[1], dir[2]));
+
+      /**
+      * Ray traces the scene.
+      * @return True if any intersections were detected.
+      * @note If the query root has been set, only the query root drawable and its
+      *  children are candidates for intersection.  If not, all drawables in the scene
+      *  are possibilities.
+      */
+      bool Exec();
+
+      /**
+      * Resets the intersection query.  Call this in between disjoint intersection
+      * executions.
+      */
+      void Reset();
+
+      /**
+      * Gets the DeltaDrawable that is closest to the query's starting point.
+      * @return A valid DeltaDrawable.
+      */
+      dtCore::DeltaDrawable *GetClosestDeltaDrawable() {
+         return mClosestDrawable.get();
       }
 
-
-      ///Set the starting/ending position
-      void SetStartPosition( const osg::Vec3& xyz );
-      void SetEndPosition( const osg::Vec3& endXYZ );
-
-      //DEPRECATED
-      void SetStartPosition( sgVec3 xyz )
-      {
-         DEPRECATE("void SetStartPosition( sgVec3 xyz )", "void SetStartPosition( const osg::Vec3& xyz )")
-         SetStartPosition(osg::Vec3(xyz[0], xyz[1], xyz[2]));
-      }
-      //DEPRECATED
-      void SetEndPosition( sgVec3 endXYZ )
-      {
-         DEPRECATE("void SetEndPosition( sgVec3 endXYZ )", "void SetEndPosition( const osg::Vec3& endXYZ )")
-         SetEndPosition(osg::Vec3(endXYZ[0], endXYZ[1], endXYZ[2]));
+      /**
+      * Gets the DeltaDrawable that is closest to the query's starting point.
+      * @return A valid DeltaDrawable.
+      */
+      const dtCore::DeltaDrawable *GetClosestDeltaDrawable() const {
+         return mClosestDrawable.get();
       }
 
-      ///Check for intersections
-	   bool Update();
+      /**
+      * Gets the line segment used for this intersection query.
+      * @return
+      */
+      const osg::LineSegment *GetLineSegment() const {
+         return mLineSegment.get();
+      }
 
-      ///Supply a particular geometry to intersect
-	   void SetGeometry( DeltaDrawable *object);
+      /**
+      * Gives access to the underlying intersect visitor.  This is useful when a more
+      * detailed description of the intersection tests are required.
+      * @return
+      */
+      osgUtil::IntersectVisitor &GetIntersectVisitor()
+      {
+         return mIntersectVisitor;
+      }
+
+      /**
+      * Finds the DeltaDrawable that contains the given geometry node.
+      * @param geode The node to search for.
+      * @return A valid DeltaDrawable if one was found or NULL otherwise.
+      */
+      dtCore::DeltaDrawable *MapNodePathToDrawable(osg::NodePath &geode);
 
       /// Get the Hitlist member
       const osgUtil::IntersectVisitor::HitList& GetHitList() const { return mHitList; }
       osgUtil::IntersectVisitor::HitList& GetHitList()             { return mHitList; }
 
+
    private:
-	   DeltaDrawable* mGeometry;
-      osg::Vec3 mStartXYZ; ///<The starting xyz
-      osg::Vec3 mEndXYZ;
-      osg::Vec3 mDirVec;   ///<The direction vector
-      float mDistance;  ///<The maximum distance for the intersector
-      osgUtil::IntersectVisitor::HitList mHitList; ///<The last list of hits
-      bool mDirVecSet;
+      osg::Vec3 mStart;
+      osg::Vec3 mDirection;
+      float mLineLength;
+      bool mUpdateLineSegment;
+
+      osg::ref_ptr<dtCore::Scene> mScene;
+      osg::ref_ptr<osg::LineSegment> mLineSegment;
+      osg::ref_ptr<dtCore::DeltaDrawable> mSceneRoot;
+      osg::ref_ptr<dtCore::DeltaDrawable> mClosestDrawable;
+      osgUtil::IntersectVisitor mIntersectVisitor;
+      osgUtil::IntersectVisitor::HitList mHitList; 
+      void CalcLineSegment();
    };
 }
 

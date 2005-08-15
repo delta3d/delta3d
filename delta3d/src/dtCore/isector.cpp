@@ -1,149 +1,169 @@
-// isector.cpp: implementation of the Isector class.
-//
-//////////////////////////////////////////////////////////////////////
+/*
+* Delta3D Open Source Game and Simulation Engine
+* Copyright (C) 2005, BMH Associates, Inc.
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free
+* Software Foundation; either version 2.1 of the License, or (at your option)
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this library; if not, write to the Free Software Foundation, Inc.,
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+*
+* @author Matthew W. Campbell
+*/
+
 
 #include "dtCore/isector.h"
 #include "dtCore/scene.h"
+#include <stack>
+
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Isector)
 
 
-/*!
- * Default constructor.  Setup default values for internal members. The length
- * of Isector is set to 10000.0. Use the starting xyz and direction if 
- * supplied.   
- *
- * @param xyz : The starting position of the Isector
- * @param dir : The direction vector of the Isector
- */
- Isector::Isector(const osg::Vec3& xyz, const osg::Vec3& dir):
-mGeometry(0),
-mDistance(10000.f),
-mDirVecSet(false)
+   ///////////////////////////////////////////////////////////////////////////////
+   Isector::Isector(dtCore::Scene *scene) :
+mStart(0,0,0), mDirection(0,1,0)
 {
-   RegisterInstance(this);
-   mStartXYZ = xyz;
-   mDirVec = dir;
+   mScene = scene;
+   mLineSegment = new osg::LineSegment();
+   mLineLength = 1000000.0f;
+   mUpdateLineSegment = true;
+   mClosestDrawable = NULL;
 }
 
-Isector::~Isector()
+///////////////////////////////////////////////////////////////////////////////
+Isector::Isector(const osg::Vec3 &start, const osg::Vec3 &dir,
+                                     dtCore::Scene *scene) : mStart(start), mDirection(dir)
 {
-
+   mScene = scene;
+   mLineSegment = new osg::LineSegment();
+   mLineLength = 1000000.0f;
+   mUpdateLineSegment = true;
+   mClosestDrawable = NULL;
 }
 
-
-
-/*!
- * Tell this Isector to intersect with only the supplied DeltaDrawable.  By default,
- * Isector will search the entire Scene.
- *
- * @param *object : The geometry to intersect with
- */
-void Isector::SetGeometry(DeltaDrawable *object)
+///////////////////////////////////////////////////////////////////////////////
+Isector::Isector(dtCore::Scene *scene, const osg::Vec3 &start,
+                                     const osg::Vec3 &end)
 {
-   mGeometry = object;
+   mLineSegment = new osg::LineSegment();
+   mScene = scene;
+
+   mStart = start;
+   mDirection = end-start;
+   mLineLength = mDirection.length();
+   mUpdateLineSegment = true;
+   mClosestDrawable = NULL;
 }
 
-
-/*!
- * Check for intersections using the supplied attributes.  After calling this,
- * the results may be queried using GetHitPoint().
- * @return bool  : True if a valid intersection took place, false otherwise
- */
-bool Isector::Update()
+///////////////////////////////////////////////////////////////////////////////
+bool Isector::Exec()
 {
-   bool retVal = false;
-   osgUtil::IntersectVisitor iv;
-   RefPtr<osg::LineSegment> seg = new osg::LineSegment;
-   
-   osg::Vec3 endPt;
-
-   if (mDirVecSet)
+   if(!mSceneRoot.valid() && !mScene.valid())
    {
-      //make an end point from the start xyz, direction, and distance
-      endPt = mDirVec;
-      endPt *= mDistance;
-      endPt += mStartXYZ;
+      return false;
    }
+
+   //Make sure our line segment is correct.
+   if(mUpdateLineSegment)
+      CalcLineSegment();
+
+   if (mSceneRoot.valid())
+      mSceneRoot->GetOSGNode()->accept(mIntersectVisitor);
    else
-   {
-      endPt = mEndXYZ;
-   }
+      mScene->GetSceneNode()->accept(mIntersectVisitor);
 
-   seg->set(mStartXYZ, endPt);
-   
-   iv.addLineSegment(seg.get());
-   
-   //if we have specifid geometry, traverse it.  Otherwise just use the
-   //first Scene defined.
-   osg::Node *node = 0;
-   if (mGeometry)
-   {
-      node = mGeometry->GetOSGNode();
+   if (mIntersectVisitor.hits()) {
+      mHitList = mIntersectVisitor.getHitList(mLineSegment.get());
+         osg::NodePath &nodePath = mHitList[0].getNodePath();
+      mClosestDrawable = MapNodePathToDrawable(nodePath);
+      return true;
    }
-   else
-   {
-      node = Scene::GetInstance(0)->GetSceneNode();
+   else {
+      mClosestDrawable = NULL;
+      return false;
    }
-
-   node->accept(iv);
-   
-   if (iv.hits())
-   {
-      mHitList = iv.getHitList(seg.get());
-      retVal = true;
-   }
-
-   return retVal;
 }
 
-
-
-
-/*!
- * Set the starting location for the Isector.
- *
- * @param xyz : XYZ in meters
- */
-void Isector::SetStartPosition( const osg::Vec3& xyz )
+///////////////////////////////////////////////////////////////////////////////
+dtCore::DeltaDrawable *Isector::MapNodePathToDrawable(osg::NodePath &nodePath)
 {
-   mStartXYZ = xyz;
+   if ((!mScene.valid() && !mScene.valid()) || nodePath.empty())
+      return NULL;
+
+   int i;
+   std::set<osg::Node *> nodeCache;
+   osg::NodePath::iterator itor;
+   std::stack<dtCore::DeltaDrawable *> drawables;
+
+   //Create a cache of the nodepath for quicker lookups since we are doing
+   //quite a few.
+   for (itor=nodePath.begin(); itor!=nodePath.end(); ++itor)
+      nodeCache.insert(*itor);
+
+   //In order to find the DeltaDrawable we first check the drawables at the
+   //top level of the scene.  If not found, we check all children of the drawables
+   //for a match.
+   if (mSceneRoot.valid()) {
+      drawables.push(mSceneRoot.get());
+   }
+   else {
+      for (i=0; i<mScene->GetNumberOfAddedDrawable(); i++)
+         drawables.push(mScene->GetDrawable((unsigned)i));
+   }
+
+   while (!drawables.empty()) {
+      dtCore::DeltaDrawable *d = drawables.top();
+      drawables.pop();
+
+      if (nodeCache.find(d->GetOSGNode()) != nodeCache.end())
+         return d;
+
+      for (i=0; (unsigned)i<d->GetNumChildren(); i++)
+         drawables.push(d->GetChild((unsigned)i));
+   }
+
+   return NULL;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void Isector::Reset()
+{
+   mIntersectVisitor.reset();
+   mClosestDrawable = NULL;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Isector::CalcLineSegment()
+{
+   //Make sure the current direction vector is normalized.
+   mDirection.normalize();
+
+   //Since we are working with line segments, we need to convert our ray
+   //representation to a finite line.
+   osg::Vec3 endPoint = mStart + (mDirection*mLineLength);
+   mLineSegment->set(mStart,endPoint);
+   mIntersectVisitor.addLineSegment(mLineSegment.get());
+   mUpdateLineSegment = false;
+}
+
+
+
 /*!
-* Set the starting location for the Isector.
+* Get the intersected point since the last call to Update().
 *
-* @param xyz : XYZ in meters
+* @param xyz : The xyz position to be filled out [in/out]
+* @param pointNum:  Which intersection point to return [0..GetNumberOfHits()]
 */
-void Isector::SetEndPosition( const osg::Vec3& endXYZ )
-{
-   mEndXYZ = endXYZ;
-   mDirVecSet = false;
-}
-
-
-/*!
- * Set the direction vector to point the Isector.  Vector will be normalized 
- * internally.
- *
- * @param dir : The direction vector in world coordinates
- */
-void Isector::SetDirection( const osg::Vec3& dir )
-{
-   mDirVec = dir;
-   mDirVec.normalize();
-   
-   mDirVecSet = true;
-}
-
-
-/*!
- * Get the intersected point since the last call to Update().
- *
- * @param xyz : The xyz position to be filled out [in/out]
- * @param pointNum:  Which intersection point to return [0..GetNumberOfHits()]
- */
 void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum/* =0  */) const
 {
    if (pointNum >= GetNumberOfHits()) return;
@@ -155,24 +175,14 @@ void Isector::GetHitPoint( osg::Vec3& xyz, int pointNum/* =0  */) const
 }
 
 
-/*!
- * Set the length of the Isector.  By default, it is set to 10000.  Use this
- * to shorten or lengthen the intersection search.
- *
- * @param distance : The length of the Isector in meters
- */
-void Isector::SetLength(float distance)
-{
-   mDistance = distance;
-}
-
 /*! 
- * Get the number of items that were intersected by this Isector.  Note: 
- * Isector::Update() must be called prior to calling this method.
- * 
- * @return The number of intersected items
- */
+* Get the number of items that were intersected by this Isector.  Note: 
+* Isector::Update() must be called prior to calling this method.
+* 
+* @return The number of intersected items
+*/
 int Isector::GetNumberOfHits() const
 {
    return( mHitList.size() );
 }
+

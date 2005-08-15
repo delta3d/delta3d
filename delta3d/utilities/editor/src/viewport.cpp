@@ -43,8 +43,8 @@
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/isector.h>
 
-#include "dtDAL/intersectionquery.h"
 #include "dtDAL/exception.h"
 #include "dtDAL/map.h"
 #include "dtDAL/transformableactorproxy.h"
@@ -274,7 +274,7 @@ namespace dtEditQt
         if (getAutoSceneUpdate())
             updateActorProxyBillboards();
 
-        dtDAL::IntersectionQuery query(getScene());
+        dtCore::Isector query(getScene());
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toSelect;
         osg::Vec3 nearPoint,farPoint;
         int yLoc = this->sceneView->getViewport()->height()-y;
