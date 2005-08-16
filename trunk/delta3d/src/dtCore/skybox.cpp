@@ -7,7 +7,7 @@
 #include <osg/PolygonMode> ///for wireframe rendering
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
-#include <osg/Texture>
+#include <osg/Image>
 
 using namespace dtCore;
 
@@ -21,8 +21,7 @@ mGeode(NULL)
 
    AddSender(System::GetSystem()); //hook us up to the System
 
-   //need this made so the SkyBox can be added to the Environment
-   mNode = new osg::Group(); 
+   Config(); 
 }
 
 SkyBox::~SkyBox(void)
@@ -37,15 +36,17 @@ SkyBox::~SkyBox(void)
  */
 void dtCore::SkyBox::Config(void)
 {
-   osg::Group *group = new osg::Group();
-
    mXform = new MoveEarthySkyWithEyePointTransform();
 
    mXform->setCullingActive(false);
    mXform->addChild( MakeBox() );
 
-   group->addChild(mXform);
-   dynamic_cast<osg::Group*>(mNode.get())->addChild(group);
+   //Drawing a skybox eliminates the need for clearing the color and depth buffers.
+   osg::ClearNode* clearNode = new osg::ClearNode;
+   clearNode->setRequiresClear(false); //Sky eliminates need for clearing
+   clearNode->addChild(mXform);
+   mNode = clearNode;
+ 
 }
 
 /** Make the box and load the textures */
@@ -112,9 +113,6 @@ osg::Node* dtCore::SkyBox::MakeBox(void)
    };
    osg::Geometry *polyGeom[6];
 
-   osg::Image *image[6];
-   osg::Texture2D *texture[6];
-
    osg::Vec3Array *vArray[6];
    vArray[0] = new osg::Vec3Array(4, coords0);
    vArray[1] = new osg::Vec3Array(4, coords1);
@@ -141,13 +139,15 @@ osg::Node* dtCore::SkyBox::MakeBox(void)
       depth->setRange(1.0,1.0);   
       dstate->setAttributeAndModes(depth,osg::StateAttribute::ON );
       dstate->setMode(GL_FOG, osg::StateAttribute::OFF );
+      dstate->setMode(GL_LIGHTING,osg::StateAttribute::PROTECTED |
+         osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF);
       dstate->setRenderBinDetails(-2,"RenderBin");
 
       //for wireframe rendering
       //   osg::PolygonMode *polymode = new osg::PolygonMode;
       //   polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
       //   dstate->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
-      if (!mTextureFilenameMap[side].empty())
+      /*if (!mTextureFilenameMap[side].empty())
       {
          image[side] = osgDB::readImageFile(mTextureFilenameMap[side].c_str());
 
@@ -159,7 +159,17 @@ osg::Node* dtCore::SkyBox::MakeBox(void)
             texture[side]->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
             dstate->setTextureAttributeAndModes(0, texture[side], osg::StateAttribute::ON);
          }
-      }
+      }*/
+
+      mTextureList[side] = new osg::Texture2D();
+      mTextureList[side]->setUnRefImageDataAfterApply(true);
+      mTextureList[side]->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
+      mTextureList[side]->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
+      mTextureList[side]->setFilter(osg::Texture::MIN_FILTER,
+         osg::Texture::LINEAR_MIPMAP_LINEAR);
+      mTextureList[side]->setFilter(osg::Texture::MAG_FILTER,osg::Texture::LINEAR);
+      dstate->setTextureAttributeAndModes(0,mTextureList[side].get(),
+         osg::StateAttribute::ON);
 
       polyGeom[side]->setStateSet( dstate );
       mGeode->addDrawable(polyGeom[side]);
@@ -180,12 +190,18 @@ void SkyBox::OnMessage(MessageData *data)
 {
    if (data->message == "configure")
    {
-      Config();
+      //this is now done in the constructor
+      //to allow adding textures after construction of skybox
+      //Config();
    }
 }
 
 /** Pass in the filenames for the textures to be applied to the SkyBox.*/
-void dtCore::SkyBox::SetTextureFilename(SkyBoxSideEnum side, std::string filename)
+void dtCore::SkyBox::SetTexture(SkyBoxSideEnum side, std::string filename)
 {
-   mTextureFilenameMap[side] = filename;
+   //mTextureFilenameMap[side] = filename;
+
+   osg::Image *newImage = osgDB::readImageFile(filename);
+   mTextureList[side]->setImage(newImage);
+   mTextureList[side]->dirtyTextureObject();
 }
