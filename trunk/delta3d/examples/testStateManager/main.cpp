@@ -15,7 +15,7 @@ void Usage()
 int main(unsigned int argc, char* argv[])
 {
    dtCore::SetNotifyLevel(dtCore::DEBUG_INFO);
-   //dtCore::SetDataFilePathList( "..;" + dtCore::GetDeltaDataPathList() ); 
+   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testStateManager" );
    dtCore::RefPtr<TestStateManager> app;
 
    if( argc > 1 )
