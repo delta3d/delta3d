@@ -24,31 +24,33 @@
 
 namespace dtABC
 {
-   //had to place this outside of the template so gcc won't bitch
+   //had to place this outside of the template so gcc won't gripe.
+   /** Compares 2 referenced pointer objects by pointer value and name.*/
    template<typename T>
    struct RefPtrWithNameCompare : std::binary_function<T,T,bool>
    {
-      // RefPtrWithNameCompare will make sure the State being added is
-      // unique to the set based on its name AND based on the fact
-      // that the State has a unique place in memory.
-      // This makes sure that no one tried to submit a State that
-      // had the same name as another State, or someone tried to
-      // resubmit a State already in the set by changing its name.
-      
+      /** RefPtrWithNameCompare will make sure the State being added is
+        * unique to the set based on its name AND based on the fact
+        * that the State has a unique place in memory.
+        * This makes sure that no one tried to submit a State that
+        * had the same name as another State, or someone tried to
+        * resubmit a State already in the set by changing its name.
+        */
       bool operator()(const T& lhs,const T& rhs) const
       {
          return lhs.get() != rhs.get() && lhs->GetName() < rhs->GetName();
       }
    };
 
-   //had to place this outside of the template so gcc won't bitch
+   //had to place this outside of the template so gcc won't gripe.
+   /** Compares a pair, but assumes the 2nd type is a referenced pointer.*/
    template<typename T>
    struct PairRefPtrWithNameCompare : public std::binary_function<T,T,bool>
    {
       /** Re-implement the default comparison algorithm for std::pair<T1,T2>::operator<,
-       * \sa http://www.sgi.com/tech/stl/pair.html ,
-       * but add smart StatePtr comparison with the StatePtrLess predicate.
-       */
+        * but add smart StatePtr comparison with the RefPtrWithNameCompare predicate.
+        * \sa http://www.sgi.com/tech/stl/pair.html
+        */
       bool operator()(const T& x, const T& y) const
       {
          // try to use the first element
@@ -60,22 +62,28 @@ namespace dtABC
          if( first_greater )
             return false;
          
-         // else, key off the second element, and use the StatePtr comparison
+         // else, key off the second element, and use the RefPtrWithNameCompare comparison
          RefPtrWithNameCompare<typename T::second_type> compare_them;
          return compare_them( x.second,y.second );
       }
    };
 
-   ///Controls the switching of modes by starting and stoping the different states.  
-   ///When a new state is started Config is called and Shutdown is called before 
-   ///switching.
+   /** \brief A class to manage State transitions due to an Event.
+     *
+     * Controls the switching of modes by starting and stopping the different states.  
+     * When a new state is started Config is called and Shutdown is called before 
+     * switching.  The class is implemented as a singleton.  It derives from dtCore::Base
+     * so that it can fire Events.
+     */
    template< typename T1, typename T2 >
    class StateManager : public dtCore::Base
    {
     private:
-       typedef StateManager<T1,T2> ThisType;
-
-       /** An Event class specific to StateManager. */
+       /** \brief An Event class specific to StateManager. 
+         *
+         * TransitionOccurredEvent is an Event which can be watched
+         * by classes interested in such an Event.
+         */
        class TransitionOccurredEvent : public dtABC::Event
        {
        public:
@@ -87,101 +95,178 @@ namespace dtABC
       ///Constructor creates an instance of each state.
       StateManager();
 
-      ///Calls the destructor for each state instance by iterating mList.
       virtual ~StateManager();
 
    public:
 
+      /** \brief the base event type.*/
       typedef T1 EventType;
-      typedef T2 StateType;
-   
-      typedef dtCore::RefPtr<dtABC::State>                       StatePtr;
-      typedef std::pair< const dtABC::Event::Type*, StatePtr >   EventStatePtrPair;
 
+      /** \brief the base state type.*/
+      typedef T2 StateType;
+
+      /** \brief a convenience typedef.*/
+      typedef dtCore::RefPtr<dtABC::State> StatePtr;
+
+      /** \brief a convenience typedef.*/
+      typedef std::pair< const dtABC::Event::Type*, StatePtr > EventStatePtrPair;
+
+      /** An ObjectFactory used to create concrete instances of user-defined Events.*/
       typedef dtUtil::ObjectFactory< const dtABC::Event::Type*, dtABC::Event > EventFactory;
+
+      /** An ObjectFactory used to create concrete instances of user-defined States.*/
       typedef dtUtil::ObjectFactory< const dtABC::State::Type*, dtABC::State > StateFactory;
 
+      /** The set of unique States.*/
       typedef std::set< StatePtr, RefPtrWithNameCompare<StatePtr> > StatePtrSet;
+
+      /** \brief The map of transitions.
+        * The transition map defined by the unique pair, composed of the 'from' State and the Event,
+        * which maps to a 'to' State.*/
       typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> >    EventMap;
 
-      static   StateManager<EventType,StateType>*  Instance();
-      static   void                                Destroy();
+      /** \brief Creates the singleton's instance.*/
+      static StateManager<EventType,StateType>* Instance();
 
-      bool                    Load( std::string filename );
+      /** \brief Destroys the singleton's instance.*/
+      static void Destroy();
 
-      void                    PreFrame( const double deltaFrameTime );
-      void                    Frame( const double deltaFrameTime );
-      void                    PostFrame( const double deltaFrameTime );
+      /** \brief Loads a transition file.
+        * 
+        * Loads a transition file, which is an XML document, conforming to the Transition schema.
+        */
+      bool Load(const std::string& transitionFile );
 
-      void                    OnMessage( MessageData* data );
+      /** Overloaded for desired actions to occur before drawing.*/
+      void PreFrame( const double deltaFrameTime );
 
-      bool                    AddState( State* state );
-      /// Removes a State from the StatePtrSet and associated transitions from the EventMap
+      /** Overloaded for desired actions to occur during drawing.*/
+      void Frame( const double deltaFrameTime );
+
+      /** Overloaded for desired actions to occur during drawing.*/
+      void PostFrame( const double deltaFrameTime );
+
+      /** Overloaded to handle messages.*/
+      void OnMessage( MessageData* data );
+
+      /** Add a new State to the set of States.*/
+      bool AddState( State* state );
+
+      /** Removes a State from the set of States and associated transitions from the EventMap.*/
       bool                    RemoveState( State* state );  
 
-      bool                    AddTransition( const Event::Type* eventType, State* from, State* to );
-      bool                    RemoveTransition( const Event::Type* eventType, State* from, State* to );
+      /** Add a new transition to the map of transitions.*/
+      bool AddTransition( const Event::Type* eventType, State* from, State* to );
 
-      State*                  GetState( const std::string& name );
-      const State*            GetState( const std::string& name ) const;
-      void                    RemoveAllStates();
+      /** Remove a transition from the map of transitions.*/
+      bool RemoveTransition( const Event::Type* eventType, State* from, State* to );
 
-      ///// Returns the set of states
-      const    StatePtrSet&   GetStates() const { return mStates; }
+      /** Return a non-const State by specifying the name.*/
+      State* GetState( const std::string& name );
 
-      ///Returns the transition map
-      const    EventMap&      GetTransitions() const { return mTransition; }
+      /** Return a const State by specifying its name.*/
+      const State* GetState( const std::string& name ) const;
 
-      /////Determines the number of events for the State
-      unsigned int            GetNumOfEvents(const State* from) const;
+      /** Clear the set of States.*/
+      void RemoveAllStates();
 
-      /////\brief This method should be used with \sa GetNumOfEvents
-      void                    GetEvents(const State* from, std::vector<const Event::Type*>& events);
+      /** Returns the set of states.*/
+      const StatePtrSet& GetStates() const { return mStates; }
 
-      ///Deprecated GetCurrentState()
-      inline   State*         Current();
-      ///Deprecated for GetCurrentState() const
-      inline   const State*   Current() const;
+      /** Returns the transition map.*/
+      const EventMap& GetTransitions() const { return mTransition; }
 
-      ///Returns pointer to current state.  Can be NULL.
-      inline   State*         GetCurrentState();
-      inline   const State*   GetCurrentState() const;
+      /** Determines the number of events for the State.*/
+      unsigned int GetNumOfEvents(const State* from) const;
 
-      void                    MakeCurrent( State* state );
+      /** \brief Fills a vector of Events which cause transitions for the specified State.
+        * @param from is the State of interest.
+        * @param events is an already allocated std::vector of Event::Type pointers.
+        * This method should be used with GetNumOfEvents.
+        * \sa GetNumOfEvents.
+        */
+      void GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
+      /** \brief Returns the 'current' State.  This is deprecated.
+        * This is not the preferred function to use, as GetCurrentState() replaces this.
+        */
+      inline State* Current();
+
+      /** \brief Returns the 'current' State.  This is deprecated.
+        * This is not the preferred function to use, as GetCurrentState() replaces this.
+        */
+      inline const State* Current() const;
+
+      /** Returns a pointer to current state.  Can be NULL. */
+      inline State* GetCurrentState();
+
+      /** Returns a pointer to current state.  Can be NULL. */
+      inline const State* GetCurrentState() const;
+
+      /** Forces the given State to now be the 'current' State.*/
+      void MakeCurrent( State* state );
+
+      /** \brief Register a user defined, concrete Event.
+        * @param T is the user defined, concrete event, to be registered.
+        * @param eventType is the user defined unique identifier for to Event being registered.
+        */
       template<typename T>
-      bool                    RegisterEvent( const Event::Type* eventType );
+      bool RegisterEvent( const Event::Type* eventType );
 
+      /** \brief Register a user defined, concrete State.
+        * @param T is the user defined, concrete State, to be registered.
+        * @param stateType is the user defined unique identifier for to State being registered.
+        */
       template<typename T>
-      bool                    RegisterState( const State::Type* stateType );
+      bool RegisterState( const State::Type* stateType );
 
-      StateFactory*           GetStateFactory() { return mStateFactory.get(); }
-      EventFactory*           GetEventFactory() { return mEventFactory.get(); }
+      /** Return the non-const instance of the StateFactory.*/
+      StateFactory* GetStateFactory() { return mStateFactory.get(); }
 
-      //\todo: make this the << operater?
-      ///Prints list of all states and transitions
+      /** Return the const instance of the StateFactory.*/
+      const StateFactory* GetStateFactory() const { return mStateFactory.get(); }
+
+      /** Return the non-const instance of the StateFactory.*/
+      EventFactory* GetEventFactory() { return mEventFactory.get(); }
+
+      /** Return the const instance of the StateFactory.*/
+      const EventFactory* GetEventFactory() const { return mEventFactory.get(); }
+
+      /** options to be used with the Print function.*/
       enum PrintOptions
       {
          PRINT_STATES,
          PRINT_TRANSITIONS
       };
-      void           Print(PrintOptions options=PRINT_STATES) const;
+
+      /** \brief Print the requested information.
+        * @param options is the desired information.  This can be either PRINT_STATES or PRINT_TRANSITIONS.
+        * \todo: make this the << operater?
+        */
+      void Print(PrintOptions options=PRINT_STATES) const;
 
    private:
 
-      static dtCore::RefPtr< StateManager<EventType,StateType> >  mManager;
-      dtCore::RefPtr<State>                                       mCurrentState;
-      dtCore::RefPtr<Event>                                       mLastEvent;
-      StatePtrSet                                                 mStates;
-      EventMap                                                    mTransition;
-      bool                                                        mSwitch;
-      bool                                                        mStop;
+      static dtCore::RefPtr< StateManager<EventType,StateType> >  mManager; /// The sole instance of this class.
+      dtCore::RefPtr<State>                                       mCurrentState; /// The handle to the current State.
 
-      dtCore::RefPtr<EventFactory>                                mEventFactory;
-      dtCore::RefPtr<StateFactory>                                mStateFactory;
+      /**\todo document this better.*/
+      dtCore::RefPtr<Event>                                       mLastEvent; /// The last Event used causing transition???
+      StatePtrSet                                                 mStates; /// The set of States.
+      EventMap                                                    mTransition; /// The map of transitions.
 
-      bool  ParseFile( std::string filename );
+      /** \todo document this better.*/
+      bool                                                        mSwitch;  /// no idea???
 
+      dtCore::RefPtr<EventFactory>                                mEventFactory;  /// the ObjectFactory of Events.
+      dtCore::RefPtr<StateFactory>                                mStateFactory;  /// the ObjectFactory of States.
+
+      /** Actually the command that parses the transition file.*/
+      bool ParseFile(const std::string& filename );
+
+      /** A class to handle XML elements from the SAX parser.
+        * It is used when ParseFile is called.
+        */
       class TransitionHandler : public XERCES_CPP_NAMESPACE_QUALIFIER HandlerBase
       {
       public:
@@ -517,8 +602,9 @@ namespace dtABC
    void StateManager<T1,T2>::GetEvents(const State* from, std::vector<const Event::Type*>& events)
    {
       /**
-      * Be sure to have correctly resized \param events before calling this function
-      * with the \sa GetNumOfEvents member function.
+      * Be sure to have correctly resized @param Events before calling this function
+      * with the GetNumOfEvents member function.
+      * \sa GetNumOfEvents
       */
       unsigned int counter(0);
       for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
@@ -614,7 +700,7 @@ namespace dtABC
    }
 
    template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::Load( std::string filename )
+   bool StateManager<T1,T2>::Load(const std::string& filename )
    {
       bool retVal = false;
 
@@ -635,7 +721,7 @@ namespace dtABC
 
    ///Private
    template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::ParseFile( std::string filename )
+   bool StateManager<T1,T2>::ParseFile(const std::string& filename )
    {
       bool retVal(false);
       try
