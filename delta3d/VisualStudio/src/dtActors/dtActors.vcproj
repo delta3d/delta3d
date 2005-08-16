@@ -174,9 +174,6 @@
 				RelativePath="..\..\..\src\dtActors\positionallightactorproxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtActors\skybox.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtActors\skyboxactorproxy.cpp">
 			</File>
 			<File
@@ -243,9 +240,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\positionallightactorproxy.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtActors\skybox.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\skyboxactorproxy.h">

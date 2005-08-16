@@ -26,6 +26,8 @@
 #include "dtCore/refptr.h"
 
 #include <osg/Vec3>
+#include <osg/Texture2D>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
@@ -84,8 +86,16 @@ public:
 
    virtual void OnMessage(MessageData *data);
 
-   /// Supply the filename of the texture to load for this side
-   void SetTextureFilename(SkyBoxSideEnum side, std::string filename);
+   /// Set the texture for this side of the skybox
+   void SetTexture(SkyBoxSideEnum side, std::string filename);
+
+   //deprecated because this function name no longer correctly describes what it does 
+   void SetTextureFilename(SkyBoxSideEnum side, std::string filename)
+   {
+      DEPRECATE("void SetTextureFilename(SkyBoxSideEnum side, std::string filename)", "void SetTexture(SkyBoxSideEnum side, std::string filename)")
+      SetTexture(side, filename);
+   }
+
 
 private:
    class MoveEarthySkyWithEyePointTransform : public osg::Transform
@@ -123,7 +133,8 @@ private:
    dtCore::RefPtr<osg::Geode> mGeode;
    void Config(void);
    osg::Node* MakeBox(void);
-   std::map<short, std::string> mTextureFilenameMap; ///<maps side to filename
+   //std::map<short, std::string> mTextureFilenameMap; ///<maps side to filename
+   osg::ref_ptr<osg::Texture2D> mTextureList[6];
 };
 
 }
