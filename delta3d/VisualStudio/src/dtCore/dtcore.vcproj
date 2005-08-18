@@ -301,9 +301,6 @@
 				RelativePath="..\..\..\src\dtCore\ufomotionmodel.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtCore\uidrawable.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtCore\uniqueid_win32.cpp">
 			</File>
 			<File
@@ -483,9 +480,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\ufomotionmodel.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtCore\uidrawable.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\uniqueid.h">
