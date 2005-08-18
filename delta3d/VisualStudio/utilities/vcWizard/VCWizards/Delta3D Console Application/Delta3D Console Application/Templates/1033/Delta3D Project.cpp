@@ -4,14 +4,19 @@
 
 using namespace dtCore;
 using namespace dtABC;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER( [!output PROJECT_NAME] )
 
-[!output PROJECT_NAME]::[!output PROJECT_NAME]( string configFilename )
+[!output PROJECT_NAME]::[!output PROJECT_NAME]( const std::string& configFilename )
 : Application( configFilename )
 {
    RegisterInstance( this );
+
+   //Generating a default config file if there isn't one already
+   if( !osgDB::fileExists( configFilename ) ) 
+   {
+      GenerateDefaultConfigFile();
+   }
 }
 
 
@@ -21,12 +26,12 @@ IMPLEMENT_MANAGEMENT_LAYER( [!output PROJECT_NAME] )
 }
    
 void [!output PROJECT_NAME]::Config()
-{
-   Application::Config();
-   
+{   
    GetWindow()->SetWindowTitle("[!output PROJECT_NAME]");
    
    //setup scene here
+
+   Application::Config();
 }
 
 void [!output PROJECT_NAME]::KeyPressed(   Keyboard*      keyboard, 
