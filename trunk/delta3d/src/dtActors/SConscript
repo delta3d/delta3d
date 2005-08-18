@@ -14,7 +14,7 @@ else:
 
 
 # Grab all the sources from the DAL source directory.
-sources = ["baselightactorproxy.cpp","cameraactorproxy.cpp","characteractorproxy.cpp","clouddomeactorproxy.cpp","cloudplaneactorproxy.cpp","deltaobjectactorproxy.cpp","dtedterrainactorproxy.cpp","engineactorregistry.cpp","enveffectactorproxy.cpp","environmentactorproxy.cpp","infinitelightactorproxy.cpp","infiniteterrainactorproxy.cpp","meshterrainactorproxy.cpp","particlesystemactorproxy.cpp","positionallightactorproxy.cpp","skybox.cpp","skyboxactorproxy.cpp","skydomeactorproxy.cpp","soundactorproxy.cpp","spotlightactorproxy.cpp","staticmeshactorproxy.cpp","terrainactorproxy.cpp","triggeractorproxy.cpp"]
+sources = ["baselightactorproxy.cpp","cameraactorproxy.cpp","characteractorproxy.cpp","clouddomeactorproxy.cpp","cloudplaneactorproxy.cpp","deltaobjectactorproxy.cpp","dtedterrainactorproxy.cpp","engineactorregistry.cpp","enveffectactorproxy.cpp","environmentactorproxy.cpp","infinitelightactorproxy.cpp","infiniteterrainactorproxy.cpp","meshterrainactorproxy.cpp","particlesystemactorproxy.cpp","positionallightactorproxy.cpp","skyboxactorproxy.cpp","skydomeactorproxy.cpp","soundactorproxy.cpp","spotlightactorproxy.cpp","staticmeshactorproxy.cpp","terrainactorproxy.cpp","triggeractorproxy.cpp"]
 
 
 if OS != 'windows':
