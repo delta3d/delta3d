@@ -1,12 +1,12 @@
 #include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
+
 #include <ode/ode.h>
+#include <queue>
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace std;
-
-
 
 class Updater : public Base
 {
