@@ -3,15 +3,15 @@
 
 // [!output PROJECT_NAME].cpp : declares the interface of the application
 
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 class [!output PROJECT_NAME] : public dtABC::Application
 {
    DECLARE_MANAGEMENT_LAYER( [!output PROJECT_NAME] )
 
    public:
-      [!output PROJECT_NAME]( std::string configFilename = "" );
+      [!output PROJECT_NAME]( const std::string& configFilename = "config.xml" );
       ~[!output PROJECT_NAME]();
    
       virtual void Config();
