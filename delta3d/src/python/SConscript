@@ -53,7 +53,6 @@ if CheckForBoost() and OS != 'darwin' :
                            'transformbindings.cpp',
                            'tripodbindings.cpp',
                            'ufomotionmodelbindings.cpp',
-                           'uidrawablebindings.cpp',
                            'walkmotionmodelbindings.cpp' ],
    
    'dtabc' : [ 'applicationbindings.cpp', 'baseabcbindings.cpp', 'dtabcbindings.cpp', 'weatherbindings.cpp', 'widgetbindings.cpp' ],
