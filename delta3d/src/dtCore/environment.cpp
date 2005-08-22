@@ -127,7 +127,7 @@ mSkyDome(0)
 
    Update(999.99);
 
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 Environment::~Environment(void)
@@ -157,7 +157,7 @@ Environment::~Environment(void)
    delete mSunlightShader; 
    delete mSkyDomeShader; 
 
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 ///Notifies this object that it has been added to a Scene

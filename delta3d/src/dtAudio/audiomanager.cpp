@@ -103,7 +103,7 @@ AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
    while( mSoundRecycle.size() )
       mSoundRecycle.pop();
 
-   AddSender( dtCore::System::GetSystem() );
+   AddSender( dtCore::System::Instance() );
 
    alutInit( 0L, NULL );
 }
@@ -182,7 +182,7 @@ AudioManager::~AudioManager()
 
    alutExit();
 
-   RemoveSender( dtCore::System::GetSystem() );
+   RemoveSender( dtCore::System::Instance() );
 }
 
 
@@ -538,7 +538,7 @@ AudioManager::FreeSound( Sound*& sound )
 
    // stop listening to this guys messages
    snd->RemoveSender( this );
-   snd->RemoveSender( dtCore::System::GetSystem() );
+   snd->RemoveSender( dtCore::System::Instance() );
    RemoveSender( snd.get() );
 
    // free the sound's source and buffer
@@ -1044,7 +1044,7 @@ AudioManager::PostFrame( const double deltaFrameTime )
       if (snd.valid())
       {
          snd->RemoveSender( this );
-         snd->RemoveSender( dtCore::System::GetSystem() );
+         snd->RemoveSender( dtCore::System::Instance() );
 
          FreeSource( snd.get() );
       }
@@ -1385,7 +1385,7 @@ AudioManager::PlaySound( SoundObj* snd )
    }
 
    snd->AddSender( this );
-   snd->AddSender( dtCore::System::GetSystem() );
+   snd->AddSender( dtCore::System::Instance() );
    mPlayQueue.push( snd->Source() );
 }
 
@@ -2193,7 +2193,7 @@ AudioManager::ListenerObj::ListenerObj()
    RegisterInstance( this );
 
    Clear();
-   AddSender( dtCore::System::GetSystem() );
+   AddSender( dtCore::System::Instance() );
 }
 
 
@@ -2202,13 +2202,12 @@ AudioManager::ListenerObj::~ListenerObj()
 {
    DeregisterInstance( this );
 
-   RemoveSender( dtCore::System::GetSystem() );
+   RemoveSender( dtCore::System::Instance() );
    Clear();
 }
 
 
-void
-AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
+void AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
 {
    mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
    mVelo[1L]   = static_cast<ALfloat>(velocity[1L]);
@@ -2217,8 +2216,7 @@ AudioManager::ListenerObj::SetVelocity( const osg::Vec3& velocity )
 
 
 
-void
-AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
+void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 {
    velocity[0L]   = static_cast<double>(mVelo[0L]);
    velocity[1L]   = static_cast<double>(mVelo[1L]);
@@ -2227,8 +2225,7 @@ AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 
 
 //DEPRECATED
-void
-AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
+void AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
 {
    DEPRECATE("void AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )", "void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity ) const")
    mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
@@ -2238,8 +2235,7 @@ AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
 
 
 //DEPRECATE
-void
-AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
+void AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
 {
    DEPRECATE("void AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const", "void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const")
    velocity[0L]   = static_cast<double>(mVelo[0L]);
@@ -2249,8 +2245,7 @@ AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
 
 
 
-void
-AudioManager::ListenerObj::SetGain( float gain )
+void AudioManager::ListenerObj::SetGain( float gain )
 {
    // force gain to range from zero to one
    mGain = static_cast<ALfloat>(CLAMP( gain, 0.0f, 1.0f ));
@@ -2258,16 +2253,14 @@ AudioManager::ListenerObj::SetGain( float gain )
 
 
 
-float
-AudioManager::ListenerObj::GetGain( void )   const
+float AudioManager::ListenerObj::GetGain( void )   const
 {
    return   static_cast<float>(mGain);
 }
 
 
 
-void
-AudioManager::ListenerObj::OnMessage( MessageData* data )
+void AudioManager::ListenerObj::OnMessage( MessageData* data )
 {
    assert( data );
 
@@ -2309,16 +2302,14 @@ AudioManager::ListenerObj::OnMessage( MessageData* data )
 
 
 
-//void
-//AudioManager::ListenerObj::SetParent( dtCore::Transformable* parent )
+//void AudioManager::ListenerObj::SetParent( dtCore::Transformable* parent )
 //{
 //   dtCore::Transformable::SetParent( parent );
 //}
 
 
 
-void
-AudioManager::ListenerObj::Clear( void )
+void AudioManager::ListenerObj::Clear( void )
 {
    //dtCore::Transformable* parent(GetParent());
    //if( parent )

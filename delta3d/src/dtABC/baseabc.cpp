@@ -19,7 +19,7 @@ BaseABC::BaseABC( std::string name /*= "BaseABC"*/ )
 {
    RegisterInstance(this);
 
-   System*  sys   = System::GetSystem();
+   System*  sys   = System::Instance();
    assert( sys );
    AddSender( sys );
 }
@@ -32,7 +32,7 @@ BaseABC::BaseABC( std::string name /*= "BaseABC"*/ )
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 
@@ -43,7 +43,7 @@ BaseABC::~BaseABC()
 void
 BaseABC::Config( void )
 {
-   System*  sys   = System::GetSystem();
+   System*  sys   = System::Instance();
    assert( sys );
 
    sys->Config();
@@ -57,7 +57,7 @@ BaseABC::Config( void )
 void
 BaseABC::Quit( void )
 {
-   System::GetSystem()->Stop();
+   System::Instance()->Stop();
 }
 
 

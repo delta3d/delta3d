@@ -43,7 +43,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
    
    mMouse = mouse;
 }
@@ -53,7 +53,7 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
  */
 FPSMotionModel::~FPSMotionModel()
 {
-   RemoveSender(System::GetSystem());
+   RemoveSender(System::Instance());
    
    DeregisterInstance(this);
 }

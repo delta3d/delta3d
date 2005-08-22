@@ -2,20 +2,23 @@
 
 using namespace dtABC;
 
-IMPLEMENT_ENUM(StateManager::EventType);
+// StateManager::EventType stuff
+IMPLEMENT_ENUM(StateManager::EventType)
+StateManager::EventType::EventType(const std::string& name) : Event::Type(name) { AddInstance(this); }
+StateManager::EventType::~EventType() {}
 const StateManager::EventType StateManager::EventType::TRANSITION_OCCURRED("TRANSITION_OCCURRED");
 
+// StateManager implementation
 StateManager::StateManager() : dtCore::Base("StateManager"),
    mCurrentState(0),
    mLastEvent(0),
    mStates(),
-   mTransition(),
-   mSwitch(false)
+   mTransitions(),
+   mSwitch(false),
+   mEventFactory(new EventFactory()),
+   mStateFactory(new StateFactory())
 {
-   AddSender( dtCore::System::GetSystem() );
-
-   mEventFactory = new EventFactory();
-   mStateFactory = new StateFactory();
+   AddSender( dtCore::System::Instance() );
 }
 
 StateManager::~StateManager()
@@ -26,14 +29,18 @@ void StateManager::PreFrame( const double deltaFrameTime )
 {
    if( mSwitch ) //switch modes between frames
    {
-      TransitionMap::key_type key( mLastEvent->GetType(), mCurrentState.get() );
-      TransitionMap::iterator iter = mTransition.find( key );
-
-      if( iter != mTransition.end() )
+      if( mLastEvent.valid() )
       {
-         MakeCurrent( (*iter).second.get() );
-         mSwitch = false;
-         SendMessage( "event" , new TransitionOccurredEvent() );
+         const Event::Type* eventtype = mLastEvent->GetType();
+         TransitionMap::key_type key( eventtype , mCurrentState.get() );
+         TransitionMap::iterator iter = mTransitions.find( key );
+
+         if( iter != mTransitions.end() )
+         {
+            MakeCurrent( (*iter).second.get() );
+            mSwitch = false;
+            SendMessage( "event" , new TransitionOccurredEvent() );
+         }
       }
    }
 
@@ -103,7 +110,7 @@ void StateManager::OnMessage( MessageData* data )
          SendMessage("event", static_cast<void*>(event));
       }
       //if the event/current state pair is in our list of transitions...
-      else if( mTransition.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransition.end() )
+      else if( mTransitions.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransitions.end() )
       {
          //then switch it up!
          mLastEvent = event;
@@ -155,7 +162,7 @@ bool StateManager::RemoveState( State* state )
       //RemoveSender(state);   States should not communicate directly with the StateManager
 
       //remove transition to and from the remove state
-      for( TransitionMap::iterator iter = mTransition.begin(); iter != mTransition.end(); )
+      for( TransitionMap::iterator iter = mTransitions.begin(); iter != mTransitions.end(); )
       {
          EventStatePtrPair pair = (*iter).first;
 
@@ -165,7 +172,7 @@ bool StateManager::RemoveState( State* state )
          //if "from" or "to" states equal the removed state, ditch the transition
          if( from == state || to == state )
          {
-            mTransition.erase(iter++);
+            mTransitions.erase(iter++);
          }
          else
          {
@@ -182,7 +189,7 @@ bool StateManager::RemoveState( State* state )
 void StateManager::RemoveAllStates()
 {
    mStates.clear();
-   mTransition.clear();
+   mTransitions.clear();
 }
 
 State* StateManager::GetState( const std::string& name )
@@ -238,7 +245,7 @@ bool StateManager::AddTransition( const Event::Type* eventType, State* from, Sta
 
    // checking the transition map's keys
    TransitionMap::key_type key( eventType, realFrom );
-   std::pair<TransitionMap::iterator,bool> returnpair = mTransition.insert( TransitionMap::value_type( key , realTo ) );
+   std::pair<TransitionMap::iterator,bool> returnpair = mTransitions.insert( TransitionMap::value_type( key , realTo ) );
    return returnpair.second;
 }
 
@@ -253,51 +260,51 @@ bool StateManager::RemoveTransition( const Event::Type* eventType, State* from, 
    TransitionMap::key_type key( eventType, from );
 
    // if key is in map...
-   TransitionMap::iterator iter( mTransition.find(key) );
-   if( iter != mTransition.end() )
+   TransitionMap::iterator iter( mTransitions.find(key) );
+   if( iter != mTransitions.end() )
    {
       //and if key maps to "to"
       if( iter->second == to )
-         return mTransition.erase(key) > 0;
+         return mTransitions.erase(key) > 0;
    }
 
    return false;
 }
 
-//unsigned int StateManager::GetNumOfEvents(const State* from) const
-//{
-//   unsigned int counter(0);
-//   for(TransitionMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
-//   {
-//      const TransitionMap::key_type::second_type state = (*iter).first.second;
-//      if( state == from )
-//         counter++;
-//   }
-//   return counter;
-//}
-//
-//void StateManager::GetEvents(const State* from, std::vector<const Event::Type*>& events)
-//{
-//   /**
-//   * Be sure to have correctly resized @param Events before calling this function
-//   * with the GetNumOfEvents member function.
-//   * \sa GetNumOfEvents
-//   */
-//   unsigned int counter(0);
-//   for(TransitionMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
-//   {
-//      const TransitionMap::key_type::second_type state = (*iter).first.second;
-//      if( state == from )
-//      {
-//         if( events.size() > counter )
-//            events[counter++] = (*iter).first.first;
-//         // else throw exception?
-//      }
-//   }
-//
-//   if( events.size() != counter )
-//      assert( 0 );
-//}
+unsigned int StateManager::GetNumOfEvents(const State* from) const
+{
+   unsigned int counter(0);
+   for(TransitionMap::const_iterator iter=mTransitions.begin(); iter!=mTransitions.end(); iter++)
+   {
+      const TransitionMap::key_type::second_type state = (*iter).first.second;
+      if( state == from )
+         counter++;
+   }
+   return counter;
+}
+
+void StateManager::GetEvents(const State* from, std::vector<const Event::Type*>& events)
+{
+   /**
+   * Be sure to have correctly resized @param Events before calling this function
+   * with the GetNumOfEvents member function.
+   * \sa GetNumOfEvents
+   */
+   unsigned int counter(0);
+   for(TransitionMap::const_iterator iter=mTransitions.begin(); iter!=mTransitions.end(); iter++)
+   {
+      const TransitionMap::key_type::second_type state = (*iter).first.second;
+      if( state == from )
+      {
+         if( events.size() > counter )
+            events[counter++] = (*iter).first.first;
+         // else throw exception?
+      }
+   }
+
+   if( events.size() != counter )
+      assert( 0 );
+}
 
 State* StateManager::GetCurrentState()
 {
@@ -338,6 +345,6 @@ void StateManager::PrintTransitions() const
 
    //iterate over all states
    unsigned int counter(0);
-   for( TransitionMap::const_iterator iter = mTransition.begin(); iter != mTransition.end(); iter++ )
+   for( TransitionMap::const_iterator iter = mTransitions.begin(); iter != mTransitions.end(); iter++ )
       std::cout << "Transition[" << counter++ << "]=<" << (*iter).first.first->GetName() << "," << (*iter).first.second->GetName() << "> : " << (*iter).second->GetName() << std::endl;
 }

@@ -47,7 +47,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 /**
@@ -55,7 +55,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
  */
 WalkMotionModel::~WalkMotionModel()
 {
-   RemoveSender(System::GetSystem());
+   RemoveSender(System::Instance());
    
    DeregisterInstance(this);
 }

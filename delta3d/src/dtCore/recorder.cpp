@@ -24,7 +24,7 @@ Recorder::Recorder(string name)
 {
    RegisterInstance(this);
 
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 /**
@@ -33,7 +33,7 @@ Recorder::Recorder(string name)
 Recorder::~Recorder()
 {
    DeregisterInstance(this);
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 /**

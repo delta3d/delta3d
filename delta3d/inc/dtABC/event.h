@@ -1,7 +1,6 @@
 #ifndef DELTA_EVENT
 #define DELTA_EVENT
 
-#include <string>
 #include <dtCore/base.h>
 #include <dtUtil/enumeration.h>
 

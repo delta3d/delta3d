@@ -4,92 +4,35 @@
 #include "dtCore/base.h"  // for base class
 #include "dtABC/statemanager.h"
 
-class MyEventType : public dtABC::Event::Type
-{
-   DECLARE_ENUM(MyEventType); 
-public:
-   static const MyEventType ALT;
-   static const MyEventType START;
-private:
-
-   MyEventType( const std::string& name ) : dtABC::State::Type(name)
-   {
-      AddInstance(this); 
-   }	
-};
-
-class MyStateType : public dtABC::State::Type
-{
-
-   DECLARE_ENUM(MyStateType); 
-
-public:
-
-   static const MyStateType SHELL;
-   static const MyStateType OPTIONS;
-   static const MyStateType GAME;
-
-private:
-
-   MyStateType( const std::string& name ) : dtABC::State::Type(name)
-   {
-      AddInstance(this); 
-   }	
-
-};
-
-class Shell : public dtABC::State
-{ 
-public:
-   Shell( std::string name = "Shell" );
-   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
-};
-
-class Options : public dtABC::State
+class StateWalker : public dtCore::Base
 {
 public:
-   Options( std::string name = "Options" );
-   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
-};
+   typedef dtCore::Base BaseClass;
+   typedef std::vector<const dtABC::Event::Type*> EventPtrVec;
 
-class Game : public dtABC::State
-{
-public:
-   Game( std::string name = "Game" );
-   virtual void HandleEvent( dtABC::Event* event = 0 ) {}
-};
+   StateWalker(dtABC::StateManager* gm);
 
-class Alt : public dtABC::Event
-{
-public:
-   Alt();
-};
+   void OnMessage(dtCore::Base::MessageData* msg);
+   void DisplayEventChoicesAndWaitForInput();
 
-class Start : public dtABC::Event
-{
-public:
-   Start();
-};
+   void SetStartState(dtABC::State* start)   { mStartState = start; }
+   const dtABC::State* getStartState() const { return mStartState.get(); }
+   dtABC::State* getStartState()             { return mStartState.get(); }
 
-class TestStateManager : public dtCore::Base
-{
-   DECLARE_MANAGEMENT_LAYER(TestStateManager)
-public:
-   typedef dtABC::StateManager<MyEventType,MyStateType> MyStateManager;
+   void SetStateManager(dtABC::StateManager* mgr)     { mStateManager = mgr; }
+   dtABC::StateManager* GetStateManager()             { return mStateManager.get(); }
+   const dtABC::StateManager* GetStateManager() const { return mStateManager.get(); }
 
-   TestStateManager( const std::string& config = "" );
-   virtual ~TestStateManager();
+protected:
+   virtual ~StateWalker();
+   void DisplayExtraEventChoices(unsigned int index);
+   void HandleExtraEventChoices(unsigned int index_size, unsigned int choice);
+
+   EventPtrVec GetEvents(dtABC::State* from);
 
 private:
-
-   typedef std::vector<const dtABC::Event::Type*> EventTypeVector;
-
-   int GetInput();
-   void OnMessage( MessageData* data );
-   EventTypeVector GetEvents( const dtABC::State* state );
-
-   static const int  mBufferSize;
-   dtABC::State*     mStartState;
+   dtCore::RefPtr<dtABC::StateManager> mStateManager;
+   dtCore::RefPtr<dtABC::State> mStartState;
 };
 
 #endif // DELTA_TESTSTATEMANAGER

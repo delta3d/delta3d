@@ -79,7 +79,7 @@ Scene::Scene( const string& name, bool useSceneLight )
    dSetDebugHandler(ODEDebugHandler);
    dSetErrorHandler(ODEErrorHandler);
    
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 
    //TODO set default render face, mode
 }
@@ -101,7 +101,7 @@ Scene::~Scene()
    dSpaceDestroy(mSpaceID);
    dWorldDestroy(mWorldID);
 
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 void Scene::AddDrawable( DeltaDrawable *drawable )

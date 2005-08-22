@@ -57,13 +57,13 @@ CloudPlane::CloudPlane( int   octaves,
    dynamic_cast<osg::Group*>(mNode.get())->setNodeMask(0xf0000000);
 
 	Create();
-	AddSender(System::GetSystem());
+	AddSender(System::Instance());
 }
 
 CloudPlane::~CloudPlane()
 {
 	DeregisterInstance(this);
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 
