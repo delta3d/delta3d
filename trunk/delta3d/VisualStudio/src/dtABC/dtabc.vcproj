@@ -133,7 +133,7 @@
 				RelativePath="..\..\..\src\dtABC\state.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtABC\statemanagereventtype.cpp">
+				RelativePath="..\..\..\src\dtABC\statemanager.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtABC\weather.cpp">
@@ -166,9 +166,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\statemanager.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtABC\statemanagereventtype.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\weather.h">
