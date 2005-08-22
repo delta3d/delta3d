@@ -19,14 +19,14 @@ mGeode(NULL)
 {
    RegisterInstance(this);
 
-   AddSender(System::GetSystem()); //hook us up to the System
+   AddSender(System::Instance()); //hook us up to the System
 
    Config(); 
 }
 
 SkyBox::~SkyBox(void)
 {
-   RemoveSender(System::GetSystem());
+   RemoveSender(System::Instance());
    DeregisterInstance(this);
 }
 

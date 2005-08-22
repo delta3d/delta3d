@@ -29,7 +29,7 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
    mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
    mScriptModule(sm)
 {
-   AddSender( System::GetSystem() );
+   AddSender( System::Instance() );
    
    RegisterInstance(this);
 

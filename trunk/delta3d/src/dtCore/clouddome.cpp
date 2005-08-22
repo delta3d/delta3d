@@ -55,7 +55,7 @@ CloudDome::CloudDome( int   octaves,
    mNode = new osg::Group();
    mNode->setName( this->GetName() );
    Create();
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 // Constructor with filename of volume texture
@@ -98,13 +98,13 @@ CloudDome::CloudDome(   float radius,
    mNode->setName( this->GetName() );
 
    Create();
-   AddSender( System::GetSystem() );
+   AddSender( System::Instance() );
 }
 
 CloudDome::~CloudDome()
 {
    DeregisterInstance(this);
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 void CloudDome::LoadShaderSource( osg::Shader* obj, const std::string& fileName )

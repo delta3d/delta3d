@@ -109,7 +109,7 @@ DeltaDrawable(name),
    
    mGroup = new osg::Group;
 
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 /**
@@ -118,7 +118,7 @@ DeltaDrawable(name),
 EffectManager::~EffectManager()
 {
    DeregisterInstance(this);
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 /**

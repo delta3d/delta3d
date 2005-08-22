@@ -35,7 +35,7 @@ namespace dtCore
 
    /** The System is used to control the frame-based coordination of all the 
      * dtCore classes.  There is only one instance of the System available and is
-     * always accessable using GetSystem();
+     * always accessable using Instance();
      * Once the application has created all the required instances, System::Run() 
      * can be called and will block until System::Stop() gets called.  By 
      * subscribing to the System, Base derived objects can receive the System 
@@ -52,7 +52,7 @@ namespace dtCore
       void Config(void);
 
       ///Get a pointer to the System
-      static System *GetSystem();
+      static System *Instance();
 
       ///Toggles the running flag to true
       void Start(void);

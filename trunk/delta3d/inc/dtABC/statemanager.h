@@ -90,14 +90,12 @@ namespace dtABC
        };
 
       /// Event::Type instances to be used by StateManager
-      class DT_EXPORT EventType : public dtABC::Event::Type
+      class EventType : public dtABC::Event::Type
       {
          DECLARE_ENUM(EventType);
-      private:
-         EventType(const std::string& name) : dtABC::Event::Type(name)
-         {
-            AddInstance(this); 
-         }
+      protected:
+         EventType(const std::string& name);
+         virtual ~EventType();
 
       public:
          static const EventType TRANSITION_OCCURRED;
@@ -195,10 +193,10 @@ namespace dtABC
       const StatePtrSet& GetStates() const { return mStates; }
 
       /** Returns the transition map.*/
-      const TransitionMap& GetTransitions() const { return mTransition; }
+      const TransitionMap& GetTransitions() const { return mTransitions; }
 
       /** Determines the number of events for the State.*/
-      //unsigned int GetNumOfEvents(const State* from) const;
+      unsigned int GetNumOfEvents(const State* from) const;
 
       /** \brief Fills a vector of Events which cause transitions for the specified State.
         * @param from is the State of interest.
@@ -206,7 +204,7 @@ namespace dtABC
         * This method should be used with GetNumOfEvents.
         * \sa GetNumOfEvents.
         */
-      //void GetEvents(const State* from, std::vector<const Event::Type*>& events);
+      void GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
       /** Returns a pointer to current state.  Can be 0 if no current state is assigned. */
       inline State* GetCurrentState();
@@ -275,18 +273,13 @@ namespace dtABC
       bool ParseFile(const std::string& filename );
 
    private:
-      dtCore::RefPtr<State>                                       mCurrentState; /// The handle to the current State.
-
-      /**\todo document this better.*/
-      dtCore::RefPtr<Event>                                       mLastEvent; /// The last Event used causing transition???
-      StatePtrSet                                                 mStates; /// The set of States.
-      TransitionMap                                               mTransition; /// The map of transitions.
-
-      /** \todo document this better.*/
-      bool                                                        mSwitch;  /// no idea???
-
-      dtCore::RefPtr<EventFactory>                                mEventFactory;  /// the ObjectFactory of Events.
-      dtCore::RefPtr<StateFactory>                                mStateFactory;  /// the ObjectFactory of States.
+      dtCore::RefPtr<State>        mCurrentState;  /// The handle to the current State.
+      dtCore::RefPtr<Event>        mLastEvent;     /// The last Event used causing transition???
+      StatePtrSet                  mStates;        /// The set of States.
+      TransitionMap                mTransitions;   /// The map of transitions.
+      bool                         mSwitch;        /// a helper to know when to actually perform a transition
+      dtCore::RefPtr<EventFactory> mEventFactory;  /// the ObjectFactory of Events.
+      dtCore::RefPtr<StateFactory> mStateFactory;  /// the ObjectFactory of States.
    };
 
    template< typename EventT, typename StateT >

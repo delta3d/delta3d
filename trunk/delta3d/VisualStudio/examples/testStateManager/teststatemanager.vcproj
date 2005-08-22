@@ -34,6 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtabcd.lib dtutild.lib osgd.lib xerces-c_2D.lib osgDBd.lib"
 				OutputFile="../../../bin/testStateManagerD.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -87,6 +88,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtabc.lib dtutil.lib osg.lib xerces-c_2.lib osgDB.lib"
 				OutputFile="../../../bin/testStateManager.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -130,6 +132,12 @@
 				RelativePath="..\..\..\examples\testStateManager\main.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testStateManager\MyEventTypes.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testStateManager\MyStateTypes.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testStateManager\teststatemanager.cpp">
 			</File>
 		</Filter>
@@ -138,13 +146,21 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\..\examples\testStateManager\MyEventTypes.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testStateManager\MyStateTypes.h">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testStateManager\teststatemanager.h">
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			Name="data"
+			Filter="">
+			<File
+				RelativePath="..\..\..\examples\testStateManager\test.xml">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

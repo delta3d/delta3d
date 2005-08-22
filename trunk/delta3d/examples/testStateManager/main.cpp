@@ -1,8 +1,9 @@
 #include "teststatemanager.h"     // for app class
+#include <dtCore/notify.h>
+#include <dtCore/globals.h>
 
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
-#include <dtUtil/dtutil.h>
+#include "MyEventTypes.h"
+#include "MyStateTypes.h"
 
 #include <iostream>
 
@@ -15,19 +16,36 @@ void Usage()
 int main(unsigned int argc, char* argv[])
 {
    dtCore::SetNotifyLevel(dtCore::DEBUG_INFO);
+   dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
    dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testStateManager" );
-   dtCore::RefPtr<TestStateManager> app;
+
+   static dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
+   dtCore::RefPtr<StateWalker> app = new StateWalker( mgr.get() );
 
    if( argc > 1 )
-      app = new TestStateManager(argv[1]);
-   else
    {
-      Usage();
-      app = new TestStateManager();
+      //mgr->Load<MyEventType,MyStateType>( argv[1] );
    }
 
-   dtCore::System::GetSystem()->Config();
-   dtCore::System::GetSystem()->Run();
+   else // load some defaults, but give feedback to user for correct usage.
+   {
+      Usage();
+      dtCore::RefPtr<Game> game = new Game("Game");
+      dtCore::RefPtr<Shell> shell = new Shell("Shell");
+      dtCore::RefPtr<Options> options = new Options("Options");
+
+      mgr->AddTransition( &MyEventType::ALT, shell.get(), options.get() );
+      mgr->AddTransition( &MyEventType::ALT, options.get(), shell.get() );
+      mgr->AddTransition( &MyEventType::START, shell.get(), game.get() );
+      mgr->AddTransition( &MyEventType::START, options.get(), game.get() );
+
+      mgr->MakeCurrent( shell.get() );
+
+      app->SetStartState( mgr->GetCurrentState() );
+   }
+
+   dtCore::System::Instance()->Config();
+   dtCore::System::Instance()->Run();
 
    return 0;
 }

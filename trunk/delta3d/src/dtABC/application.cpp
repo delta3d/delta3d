@@ -74,7 +74,7 @@ Application::~Application(void)
   */
 void  Application::Run( void )
 {
-   System::GetSystem()->Run();
+   System::Instance()->Run();
 }
 
 

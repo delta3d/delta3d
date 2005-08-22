@@ -37,7 +37,7 @@ UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 /**
@@ -45,7 +45,7 @@ UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
  */
 UFOMotionModel::~UFOMotionModel()
 {
-   RemoveSender(System::GetSystem());
+   RemoveSender(System::Instance());
    
    DeregisterInstance(this);
 }

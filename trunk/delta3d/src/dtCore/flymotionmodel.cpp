@@ -39,7 +39,7 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
       SetDefaultMappings(keyboard, mouse);
    }
    
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 }
 
 /**
@@ -47,7 +47,7 @@ FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
  */
 FlyMotionModel::~FlyMotionModel()
 {
-   RemoveSender(System::GetSystem());
+   RemoveSender(System::Instance());
    
    DeregisterInstance(this);
 }

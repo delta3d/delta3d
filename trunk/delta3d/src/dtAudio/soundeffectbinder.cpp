@@ -32,7 +32,7 @@ IMPLEMENT_MANAGEMENT_LAYER(SoundEffectBinder)
 SoundEffectBinder::SoundEffectBinder( std::string name /*= "SoundEffectBinder"*/ )
 :  dtCore::Base(name)
 {
-   dtCore::System*  sys   = dtCore::System::GetSystem();
+   dtCore::System*  sys   = dtCore::System::Instance();
    assert( sys );
 
    AddSender( sys );
@@ -46,7 +46,7 @@ SoundEffectBinder::SoundEffectBinder( std::string name /*= "SoundEffectBinder"*/
 SoundEffectBinder::~SoundEffectBinder()
 {
    Shutdown();
-   RemoveSender( dtCore::System::GetSystem() );
+   RemoveSender( dtCore::System::Instance() );
 }
 
 
