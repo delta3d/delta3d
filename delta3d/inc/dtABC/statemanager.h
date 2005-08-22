@@ -20,8 +20,6 @@
 #include <xercesc/parsers/SAXParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 
-#include <dtABC/statemanagereventtype.h>
-
 namespace dtABC
 {
    //had to place this outside of the template so gcc won't gripe.
@@ -75,8 +73,7 @@ namespace dtABC
      * switching.  The class is implemented as a singleton.  It derives from dtCore::Base
      * so that it can fire Events.
      */
-   template< typename T1, typename T2 >
-   class StateManager : public dtCore::Base
+   class DT_EXPORT StateManager : public dtCore::Base
    {
     private:
        /** \brief An Event class specific to StateManager. 
@@ -87,23 +84,52 @@ namespace dtABC
        class TransitionOccurredEvent : public dtABC::Event
        {
        public:
-          TransitionOccurredEvent() : dtABC::Event(&StateManagerEventType::TRANSITION_OCCURRED) {}
+          TransitionOccurredEvent() : dtABC::Event(&StateManager::EventType::TRANSITION_OCCURRED) {}
        protected:
           virtual ~TransitionOccurredEvent() {}
        };
 
-      ///Constructor creates an instance of each state.
-      StateManager();
+      /// Event::Type instances to be used by StateManager
+      class DT_EXPORT EventType : public dtABC::Event::Type
+      {
+         DECLARE_ENUM(EventType);
+      private:
+         EventType(const std::string& name) : dtABC::Event::Type(name)
+         {
+            AddInstance(this); 
+         }
 
-      virtual ~StateManager();
+      public:
+         static const EventType TRANSITION_OCCURRED;
+      };
+
+      /** A class to handle XML elements from the SAX parser.
+         * It is used when ParseFile is called.
+         */
+      template< typename ET, typename ST >
+      class TransitionHandler : public XERCES_CPP_NAMESPACE_QUALIFIER HandlerBase
+      {
+      public:
+         typedef ET EventType;
+         typedef ST StateType;
+         TransitionHandler(StateManager* sm);
+         ~TransitionHandler();
+
+         virtual void startElement(const XMLCh* const, XERCES_CPP_NAMESPACE_QUALIFIER AttributeList&);
+         virtual void endElement(const XMLCh* const name);
+         virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&);
+
+      private:
+         TransitionHandler(); /// not implemented by design
+         dtCore::RefPtr<StateManager> mManager;
+         dtCore::RefPtr<State> mFromState;
+         dtCore::RefPtr<State> mToState;
+         const Event::Type*    mEventType;
+      };
 
    public:
-
-      /** \brief the base event type.*/
-      typedef T1 EventType;
-
-      /** \brief the base state type.*/
-      typedef T2 StateType;
+      ///Constructor creates an instance of each state.
+      StateManager();
 
       /** \brief a convenience typedef.*/
       typedef dtCore::RefPtr<dtABC::State> StatePtr;
@@ -123,19 +149,7 @@ namespace dtABC
       /** \brief The map of transitions.
         * The transition map defined by the unique pair, composed of the 'from' State and the Event,
         * which maps to a 'to' State.*/
-      typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> >    EventMap;
-
-      /** \brief Creates the singleton's instance.*/
-      static StateManager<EventType,StateType>* Instance();
-
-      /** \brief Destroys the singleton's instance.*/
-      static void Destroy();
-
-      /** \brief Loads a transition file.
-        * 
-        * Loads a transition file, which is an XML document, conforming to the Transition schema.
-        */
-      bool Load(const std::string& transitionFile );
+      typedef std::map< EventStatePtrPair, StatePtr, PairRefPtrWithNameCompare<EventStatePtrPair> > TransitionMap;
 
       /** Overloaded for desired actions to occur before drawing.*/
       void PreFrame( const double deltaFrameTime );
@@ -149,11 +163,18 @@ namespace dtABC
       /** Overloaded to handle messages.*/
       void OnMessage( MessageData* data );
 
+      /** Loads an XML file specifying State Transitions.
+        * The parser will add transitions to this StateManager instance, based on the XML file.
+        * @param filename is the complete file path.
+        */
+      template< typename T1, typename T2 >
+      bool Load(const std::string& filename );
+
       /** Add a new State to the set of States.*/
       bool AddState( State* state );
 
-      /** Removes a State from the set of States and associated transitions from the EventMap.*/
-      bool                    RemoveState( State* state );  
+      /** Removes a State from the set of States and associated transitions from the TransitionMap.*/
+      bool RemoveState( State* state );  
 
       /** Add a new transition to the map of transitions.*/
       bool AddTransition( const Event::Type* eventType, State* from, State* to );
@@ -174,10 +195,10 @@ namespace dtABC
       const StatePtrSet& GetStates() const { return mStates; }
 
       /** Returns the transition map.*/
-      const EventMap& GetTransitions() const { return mTransition; }
+      const TransitionMap& GetTransitions() const { return mTransition; }
 
       /** Determines the number of events for the State.*/
-      unsigned int GetNumOfEvents(const State* from) const;
+      //unsigned int GetNumOfEvents(const State* from) const;
 
       /** \brief Fills a vector of Events which cause transitions for the specified State.
         * @param from is the State of interest.
@@ -185,22 +206,12 @@ namespace dtABC
         * This method should be used with GetNumOfEvents.
         * \sa GetNumOfEvents.
         */
-      void GetEvents(const State* from, std::vector<const Event::Type*>& events);
+      //void GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
-      /** \brief Returns the 'current' State.  This is deprecated.
-        * This is not the preferred function to use, as GetCurrentState() replaces this.
-        */
-      inline State* Current();
-
-      /** \brief Returns the 'current' State.  This is deprecated.
-        * This is not the preferred function to use, as GetCurrentState() replaces this.
-        */
-      inline const State* Current() const;
-
-      /** Returns a pointer to current state.  Can be NULL. */
+      /** Returns a pointer to current state.  Can be 0 if no current state is assigned. */
       inline State* GetCurrentState();
 
-      /** Returns a pointer to current state.  Can be NULL. */
+      /** Returns a pointer to current state.  Can be 0 if no current state is assigned. */
       inline const State* GetCurrentState() const;
 
       /** Forces the given State to now be the 'current' State.*/
@@ -211,14 +222,20 @@ namespace dtABC
         * @param eventType is the user defined unique identifier for to Event being registered.
         */
       template<typename T>
-      bool RegisterEvent( const Event::Type* eventType );
+      bool RegisterEvent( const Event::Type* eventType )
+      {
+         return mEventFactory->RegisterType<T>( eventType );     
+      }
 
       /** \brief Register a user defined, concrete State.
         * @param T is the user defined, concrete State, to be registered.
         * @param stateType is the user defined unique identifier for to State being registered.
         */
       template<typename T>
-      bool RegisterState( const State::Type* stateType );
+      bool RegisterState( const State::Type* stateType )
+      {
+         return mStateFactory->RegisterType<T>( stateType );
+      }
 
       /** Return the non-const instance of the StateFactory.*/
       StateFactory* GetStateFactory() { return mStateFactory.get(); }
@@ -239,489 +256,59 @@ namespace dtABC
          PRINT_TRANSITIONS
       };
 
-      /** \brief Print the requested information.
-        * @param options is the desired information.  This can be either PRINT_STATES or PRINT_TRANSITIONS.
-        * \todo: make this the << operater?
+      /** Print the States names.*/
+      void PrintStates() const;
+
+      /** Print the Transition map.*/
+      void PrintTransitions() const;
+
+   protected:
+      /** The protected virtual destructor for reference counted classes.*/
+      virtual ~StateManager();
+
+      /** The real parsing function.
+        * Called from Load.
+        * @param filename is the file path pointing to the XML file containing State Transitions.
+        * \sa StateManager::Load
         */
-      void Print(PrintOptions options=PRINT_STATES) const;
+      template< typename EventT, typename StateT >
+      bool ParseFile(const std::string& filename );
 
    private:
-
-      static dtCore::RefPtr< StateManager<EventType,StateType> >  mManager; /// The sole instance of this class.
       dtCore::RefPtr<State>                                       mCurrentState; /// The handle to the current State.
 
       /**\todo document this better.*/
       dtCore::RefPtr<Event>                                       mLastEvent; /// The last Event used causing transition???
       StatePtrSet                                                 mStates; /// The set of States.
-      EventMap                                                    mTransition; /// The map of transitions.
+      TransitionMap                                               mTransition; /// The map of transitions.
 
       /** \todo document this better.*/
       bool                                                        mSwitch;  /// no idea???
 
       dtCore::RefPtr<EventFactory>                                mEventFactory;  /// the ObjectFactory of Events.
       dtCore::RefPtr<StateFactory>                                mStateFactory;  /// the ObjectFactory of States.
-
-      /** Actually the command that parses the transition file.*/
-      bool ParseFile(const std::string& filename );
-
-      /** A class to handle XML elements from the SAX parser.
-        * It is used when ParseFile is called.
-        */
-      class TransitionHandler : public XERCES_CPP_NAMESPACE_QUALIFIER HandlerBase
-      {
-      public:
-      	TransitionHandler();
-      	~TransitionHandler();
-         virtual void startElement(const XMLCh* const, XERCES_CPP_NAMESPACE_QUALIFIER AttributeList&);
-         virtual void endElement(const XMLCh* const name);
-
-         virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&);
-      private:
-         dtCore::RefPtr<State> mFromState;
-         dtCore::RefPtr<State> mToState;
-         const Event::Type*    mEventType;
-      };
-
    };
-};
 
-//implementation of template
-namespace dtABC
-{
-   // private constructor
-   template< typename T1, typename T2 >
-   StateManager<T1,T2>::StateManager() : dtCore::Base("StateManager"),
-     mCurrentState(0),
-     mLastEvent(0),
-     mStates(),
-     mTransition(),
-     mSwitch(false)
-   {
-      AddSender( dtCore::System::GetSystem() );
-
-      mEventFactory = new EventFactory();
-      mStateFactory = new StateFactory();
-   }
-
-   // private destructor
-   template< typename T1, typename T2 >
-   StateManager<T1,T2>::~StateManager()
-   {
-   }
-
-   // create new StateManager and return, if already created just return it
-   template< typename T1, typename T2 >
-   StateManager<T1,T2>* StateManager<T1,T2>::Instance()
-   {
-      if( mManager.get() == 0 )
-      {
-         mManager = new StateManager;
-      }
-
-      return mManager.get();
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::Destroy()
-   {
-      if( mManager.get() )
-      {
-         mManager.release();
-      }
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::PreFrame( const double deltaFrameTime )
-   {
-      if( mSwitch ) //switch modes between frames
-      {
-         EventMap::key_type key( mLastEvent->GetType(), mCurrentState.get() );
-         EventMap::iterator iter = mTransition.find( key );
-
-         if( iter != mTransition.end() )
-         {
-            MakeCurrent( (*iter).second.get() );
-            mSwitch = false;
-            SendMessage( "event" , new TransitionOccurredEvent() );
-         }
-      }
-
-      if( mCurrentState.valid() )
-      {
-         mCurrentState->PreFrame( deltaFrameTime );
-      }
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::Frame( const double deltaFrameTime )
-   {
-      if( mCurrentState.valid() )
-      {
-         mCurrentState->Frame( deltaFrameTime );
-      }
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::PostFrame( const double deltaFrameTime )
-   {
-      if( mCurrentState.valid() )
-      {
-         mCurrentState->PostFrame( deltaFrameTime );
-      }
-
-      if( mSwitch ) //shutdown state if switched or stopped
-      {
-         if( mCurrentState.valid() )
-         {
-            mCurrentState->Shutdown();
-         }
-      }
-   }
-
-   /** 
-    * Pass the "preframe", "frame", and "postframe" to the current State.  If 
-    * the message is an "event", then:
-    *  -if the message is from a State, rebroadcast it.
-    *  -if the Event is in the transition table, process the transition
-    *  -otherwise, pass the Event to the current State
-    */
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::OnMessage( MessageData* data )
-   {
-
-      if( data->message == "preframe" )
-      {
-         const double delta = *reinterpret_cast<const double*>(data->userData); 
-         PreFrame(delta);
-      }
-      else if( data->message == "frame" )
-      {
-         const double delta = *reinterpret_cast<const double*>(data->userData); 
-         Frame(delta);
-      }
-      else if( data->message == "postframe" )
-      {
-         const double delta = *reinterpret_cast<const double*>(data->userData); 
-         PostFrame(delta);
-      }
-      else if( data->message == "event" )
-      {
-         Event* event = reinterpret_cast<Event*>( data->userData );
-
-         //We don't want to have the State cause a transition directly.  
-         if (IS_A(data->sender, State*))
-         {
-            //Note: This should never happen as States don't send "events".
-            //We'll leave this here as a safety in case the State does send
-            //an "event" with the StateManager listening.
-            SendMessage("event", static_cast<void*>(event));
-         }
-         //if the event/current state pair is in our list of transitions...
-         else if( mTransition.find( std::make_pair( event->GetType(), mCurrentState ) ) != mTransition.end() )
-         {
-            //then switch it up!
-            mLastEvent = event;
-            mSwitch = true;
-         }
-         else
-         {
-            //pass it to the current state
-            State *state = GetCurrentState();
-            if (state!=0)
-            {
-               state->HandleEvent( event );
-            }
-         }
-      }
-   }
-
-   /** Insert the supplied State in to the internal list of States.  Also
-    *  add the State as a message Sender to the StateManager.
-    */
-   template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::AddState( State* state )
-   {
-      if( !state )
-      {
-         return false;
-      }
-
-      //if we are are not already in the set of states...
-      if( mStates.insert(state).second )
-      {             
-         //AddSender(state); States should not communicate directly with the StateManager
-         return true;
-      }
-
-      return false;
-   }
-
-   template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::RemoveState( State* state )
-   {
-      if( !state )
-      {
-         return false;
-      }
-
-      //if we are already in the set of states...
-      if( mStates.erase(state) != 0 )
-      {
-         state->RemoveSender(this); //remove us as a sender
-         //RemoveSender(state);   States should not communicate directly with the StateManager
-
-         //remove transition to and from the remove state
-         for( EventMap::iterator iter = mTransition.begin(); iter != mTransition.end(); )
-         {
-            EventStatePtrPair pair = (*iter).first;
-
-            State* from = pair.second.get();
-            State* to = (*iter).second.get();
-
-            //if "from" or "to" states equal the removed state, ditch the transition
-            if( from == state || to == state )
-            {
-               mTransition.erase(iter++);
-            }
-            else
-            {
-               iter++;
-            }
-         }
-
-         return true;
-      }
-
-      return false;
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::RemoveAllStates()
-   {
-      mStates.clear();
-      mTransition.clear();
-   }
-
-   template< typename T1, typename T2 >
-   State* StateManager<T1,T2>::GetState( const std::string& name )
-   {
-      for( StatePtrSet::iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
-      {
-         if( (*iter)->GetName() == name )
-         {
-            return const_cast<State*>( (*iter).get() );
-         }
-      }
-
-      return 0;
-   }
-
-   template< typename T1, typename T2 >
-   const State* StateManager<T1,T2>::GetState( const std::string& name ) const
-   {
-      for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
-      {
-         if( (*iter)->GetName() == name )
-         {
-            return (*iter).get();
-         }
-      }
-
-      return 0;
-   }
-
-   // Returns true if a transition was successfully added.
-   template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::AddTransition( const Event::Type* eventType, State* from, State* to )
-   {
-      if( !eventType || !from || !to )
-      {
-         return false;
-      }
-
-      //lazy state addition
-      AddState(from);
-      AddState(to);
-
-      // checking the set of States
-      State* realFrom = GetState( from->GetName() );
-      if( !realFrom )
-      {
-         realFrom = from;
-      }
-
-      State* realTo = GetState( to->GetName() );
-      if( !realTo )
-      {
-         realTo = to;
-      }
-
-      // checking the transition map's keys
-      EventMap::key_type key( eventType, realFrom );
-      std::pair<EventMap::iterator,bool> returnpair = mTransition.insert( EventMap::value_type( key , realTo ) );
-      return returnpair.second;
-   }
-
-   template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::RemoveTransition( const Event::Type* eventType, State* from, State* to )
-   {
-      if( !eventType || !from || !to )
-      {
-         return false;
-      }
-
-      // Returns true if any elements were removed from the EventMap
-      EventMap::key_type key( eventType, from );
-
-      // if key is in map...
-      EventMap::iterator iter( mTransition.find(key) );
-      if( iter != mTransition.end() )
-      {
-         //and if key maps to "to"
-         if( iter->second == to )
-            return mTransition.erase(key) > 0;
-      }
-
-      return false;
-   }
-
-   template< typename T1, typename T2 >
-   unsigned int StateManager<T1,T2>::GetNumOfEvents(const State* from) const
-   {
-      unsigned int counter(0);
-      for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
-      {
-         const EventMap::key_type::second_type state = (*iter).first.second;
-         if( state == from )
-            counter++;
-      }
-      return counter;
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::GetEvents(const State* from, std::vector<const Event::Type*>& events)
-   {
-      /**
-      * Be sure to have correctly resized @param Events before calling this function
-      * with the GetNumOfEvents member function.
-      * \sa GetNumOfEvents
-      */
-      unsigned int counter(0);
-      for(EventMap::const_iterator iter=mTransition.begin(); iter!=mTransition.end(); iter++)
-      {
-         const EventMap::key_type::second_type state = (*iter).first.second;
-         if( state == from )
-         {
-            if( events.size() > counter )
-               events[counter++] = (*iter).first.first;
-            // else throw exception?
-         }
-      }
-
-      if( events.size() != counter )
-         assert( 0 );
-   }
-
-
-   template< typename T1, typename T2 >
-      State* StateManager<T1,T2>::Current()
-   {
-      DEPRECATE(  "State* StateManager<T1,T2>::Current()",
-                  "State* StateManager<T1,T2>::GetCurrentState()" )
-      return GetCurrentState();
-   }
-
-   template< typename T1, typename T2 >
-      const State* StateManager<T1,T2>::Current() const
-   {
-      DEPRECATE(  "const State* StateManager<T1,T2>::Current() const",
-                  "const State* StateManager<T1,T2>::GetCurrentState() const" )
-      return GetCurrentState();
-   }
-
-   template< typename T1, typename T2 >
-   State* StateManager<T1,T2>::GetCurrentState()
-   {
-      return mCurrentState.get();
-   }
-
-   template< typename T1, typename T2 >
-   const State* StateManager<T1,T2>::GetCurrentState() const
-   {
-      return mCurrentState.get();
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::MakeCurrent( State* state )
-   {
-      mCurrentState = state;
-      
-      if( mCurrentState.valid() )
-      {
-         //immediately pass the event to the new current state
-         mCurrentState->HandleEvent( mLastEvent.get() );
-      }
-   }
-
-   template<typename T1, typename T2>
-   template<typename T3>
-   bool StateManager<T1,T2>::RegisterEvent( const Event::Type* eventType )
-   {
-      return mEventFactory->RegisterType<T3>( eventType );     
-   }
-
-   template<typename T1, typename T2>
-   template<typename T3>
-   bool StateManager<T1,T2>::RegisterState( const State::Type* stateType )
-   {
-      return mStateFactory->RegisterType<T3>( stateType );
-   }
-
-   template< typename T1, typename T2 >
-   void StateManager<T1,T2>::Print(PrintOptions options) const
-   {
-      ///\todo print to Log file instead of only to std::cout
-      if( options == PRINT_STATES )
-      {
-         std::cout << "StateManager::set<State> contents:" << std::endl;
-         //iterate over all states
-         unsigned int counter(0);
-         for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
-            std::cout << "State[" << counter++ << "]=" << (*iter)->GetName() << std::endl;
-      }
-      else   // PRINT_TRANSITIONS
-      {
-         std::cout << "StateManager::map<<Event,State> : State> contents:" << std::endl;
-         //iterate over all states
-         unsigned int counter(0);
-         for( EventMap::const_iterator iter = mTransition.begin(); iter != mTransition.end(); iter++ )
-            std::cout << "Transition[" << counter++ << "]=<" << (*iter).first.first << "," << (*iter).first.second->GetName() << "> : " << (*iter).second->GetName() << std::endl;
-      }
-   }
-
-   template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::Load(const std::string& filename )
+   template< typename EventT, typename StateT >
+   bool StateManager::Load(const std::string& filename )
    {
       bool retVal = false;
-
       std::string fullFileName = osgDB::findDataFile(filename);
 
       if (!fullFileName.empty())
       {
-         retVal = ParseFile(fullFileName);
+         retVal = ParseFile<EventT,StateT>(fullFileName);
       }
       else
       {
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
-               "StateManager - Can't find file '%s'",filename.c_str());
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "StateManager - Can't find file '%s'",filename.c_str());
          retVal = false;
       }
       return retVal;
    }
 
-   ///Private
-   template< typename T1, typename T2 >
-   bool StateManager<T1,T2>::ParseFile(const std::string& filename )
+   template< typename EventT, typename StateT >
+   bool StateManager::ParseFile(const std::string& filename )
    {
       bool retVal(false);
       try
@@ -739,7 +326,8 @@ namespace dtABC
       parser->setDoValidation(true);    // optional.
       parser->setDoNamespaces(true);    // optional
 
-      TransitionHandler* docHandler = new TransitionHandler();
+      typedef TransitionHandler<EventT,StateT> XMLElementHandler;
+      XMLElementHandler* docHandler = new XMLElementHandler(this);
       parser->setDocumentHandler(docHandler);
 
       XERCES_CPP_NAMESPACE::ErrorHandler* errHandler = (XERCES_CPP_NAMESPACE::ErrorHandler*) docHandler;
@@ -776,17 +364,17 @@ namespace dtABC
    }
 
    template< typename T1, typename T2 >
-   StateManager<T1,T2>::TransitionHandler::TransitionHandler()
+   StateManager::TransitionHandler<T1,T2>::TransitionHandler(StateManager* sm): mManager(sm)
    {
    }
 
    template< typename T1, typename T2 >
-   StateManager<T1,T2>::TransitionHandler::~TransitionHandler()
+   StateManager::TransitionHandler<T1,T2>::~TransitionHandler()
    {
    }
 
    template< typename T1, typename T2 >
-   void StateManager<T1,T2>::TransitionHandler::startElement(const XMLCh* const name, XERCES_CPP_NAMESPACE::AttributeList& attributes)
+   void StateManager::TransitionHandler<T1,T2>::startElement(const XMLCh* const name, XERCES_CPP_NAMESPACE::AttributeList& attributes)
    {
       std::string elementName = XERCES_CPP_NAMESPACE::XMLString::transcode(name);
 
@@ -796,6 +384,7 @@ namespace dtABC
       }
       else if (elementName == "Event")
       {
+         ///\todo change this to use "Type" because all Enumeration representations should be found via a "Type"
          std::string eventTypeName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("TypeName"));
          mEventType = EventType::GetValueForName( eventTypeName );
       }
@@ -809,12 +398,12 @@ namespace dtABC
          State *s = mManager->GetState( stateName );
          if ( s == 0)
          {
-            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
             mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
          }
          else if ( s->GetType()->GetName() != stateType )
          {
-            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
             mFromState = sf->CreateObject( StateType::GetValueForName( stateType ) );
          }
          else
@@ -829,7 +418,6 @@ namespace dtABC
          else dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
             "StateManager Load() can't create FromState '%s'",
              stateType.c_str() );
-
       }
       else if (elementName == "ToState")
       {
@@ -841,12 +429,12 @@ namespace dtABC
          State *s = mManager->GetState( stateName );
          if ( s == 0)
          {
-            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
             mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
          }
          else if ( s->GetType()->GetName() != stateType )
          {
-            dtCore::RefPtr<StateFactory> sf = mManager->GetStateFactory();
+            dtCore::RefPtr<StateManager::StateFactory> sf = mManager->GetStateFactory();
             mToState = sf->CreateObject( StateType::GetValueForName( stateType ) );
          }
          else
@@ -866,29 +454,29 @@ namespace dtABC
       else if (elementName == "StartState")
       {
          std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
-         StateManager::Instance()->MakeCurrent( StateManager<T1,T2>::Instance()->GetState(stateName) );
+         mManager->MakeCurrent( mManager->GetState(stateName) );
       }
-
    }
 
    template< typename T1, typename T2 >
-   void StateManager<T1,T2>::TransitionHandler::fatalError(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
+   void StateManager::TransitionHandler<T1,T2>::fatalError(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
    {
       char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
       dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Fatal Error:%s, at line %d",message, exception.getLineNumber());
    }
 
    template< typename T1, typename T2 >
-   void StateManager<T1,T2>::TransitionHandler::endElement(const XMLCh* const name)
+   void StateManager::TransitionHandler<T1,T2>::endElement(const XMLCh* const name)
    {
       std::string elementName = XERCES_CPP_NAMESPACE::XMLString::transcode(name);
 
       if (elementName == "Transition")
       {
          ///\todo : Is 'elementName' correct here?
-         StateManager<T1,T2>::Instance()->AddTransition( mEventType, mFromState.get(), mToState.get() );
+         mManager->AddTransition( mEventType, mFromState.get(), mToState.get() );
       }
    }
-}
+
+};  // end dtABC namespace
 
 #endif // DELTA_STATEMANAGER
