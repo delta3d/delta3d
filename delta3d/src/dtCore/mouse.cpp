@@ -203,6 +203,8 @@ void Mouse::passiveMouseMotion(float x, float y)
  */
 void Mouse::buttonPress(float x, float y, unsigned int button)
 {
+   if ((int)button >= GetButtonCount() ) return;
+
    MouseButton mouseButton = (MouseButton)(button-1);
 
    GetButton(mouseButton)->SetState(true);
@@ -224,6 +226,8 @@ void Mouse::buttonPress(float x, float y, unsigned int button)
  */
 void Mouse::doubleButtonPress(float x, float y, unsigned int button)
 {
+   if ((int)button >= GetButtonCount() ) return;
+
    MouseButton mouseButton = (MouseButton)(button-1);
 
    GetButton(mouseButton)->SetState(true);
@@ -245,6 +249,8 @@ void Mouse::doubleButtonPress(float x, float y, unsigned int button)
  */
 void Mouse::buttonRelease(float x, float y, unsigned int button)
 {
+   if ((int)button >= GetButtonCount() ) return;
+
    MouseButton mouseButton = (MouseButton)(button-1);
 
    GetButton(mouseButton)->SetState(false);
