@@ -207,10 +207,10 @@ namespace dtABC
       void GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
       /** Returns a pointer to current state.  Can be 0 if no current state is assigned. */
-      inline State* GetCurrentState();
+      State* GetCurrentState();
 
       /** Returns a pointer to current state.  Can be 0 if no current state is assigned. */
-      inline const State* GetCurrentState() const;
+      const State* GetCurrentState() const;
 
       /** Forces the given State to now be the 'current' State.*/
       void MakeCurrent( State* state );
