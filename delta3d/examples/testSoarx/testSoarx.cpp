@@ -117,7 +117,7 @@ void TestTerrainApp::KeyPressed(dtCore::Keyboard* keyboard,
          break;
 
    case Producer::Key_Escape:
-      System::GetSystem()->Stop();
+      System::Instance()->Stop();
       break;
 
    default: break;

@@ -2224,27 +2224,6 @@ void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 }
 
 
-//DEPRECATED
-void AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )
-{
-   DEPRECATE("void AudioManager::ListenerObj::SetVelocity( const sgVec3& velocity )", "void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity ) const")
-   mVelo[0L]   = static_cast<ALfloat>(velocity[0L]);
-   mVelo[1L]   = static_cast<ALfloat>(velocity[1L]);
-   mVelo[2L]   = static_cast<ALfloat>(velocity[2L]);
-}
-
-
-//DEPRECATE
-void AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const
-{
-   DEPRECATE("void AudioManager::ListenerObj::GetVelocity( sgVec3& velocity )  const", "void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const")
-   velocity[0L]   = static_cast<double>(mVelo[0L]);
-   velocity[1L]   = static_cast<double>(mVelo[1L]);
-   velocity[2L]   = static_cast<double>(mVelo[2L]);
-}
-
-
-
 void AudioManager::ListenerObj::SetGain( float gain )
 {
    // force gain to range from zero to one

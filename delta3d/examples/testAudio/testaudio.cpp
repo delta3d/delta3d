@@ -47,7 +47,7 @@ TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
 {
    SetNotifyLevel(DEBUG_INFO);
 
-   AddSender( System::GetSystem() );
+   AddSender( System::Instance() );
 
    AudioManager::Instantiate();
 
@@ -106,7 +106,7 @@ TestAudioApp::~TestAudioApp()
 
    AudioManager::Destroy();
 
-   RemoveSender( System::GetSystem() );
+   RemoveSender( System::Instance() );
 }
 
 

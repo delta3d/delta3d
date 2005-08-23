@@ -18,11 +18,9 @@ void initSceneBindings()
 
    void (Scene::*SetGravity1)(const osg::Vec3&) = &Scene::SetGravity;
    void (Scene::*SetGravity2)(float, float, float) = &Scene::SetGravity;
-   void (Scene::*SetGravity3)(sgVec3) = &Scene::SetGravity;
    
    void (Scene::*GetGravity1)(osg::Vec3&) const = &Scene::GetGravity;
    void (Scene::*GetGravity2)(float*, float*, float*) const = &Scene::GetGravity;
-   void (Scene::*GetGravity3)(sgVec3) const = &Scene::GetGravity;
 
    Light* (Scene::*GetLight1)(const int) const = &Scene::GetLight;
    Light* (Scene::*GetLight2)(const std::string&) const = &Scene::GetLight;
@@ -43,10 +41,8 @@ void initSceneBindings()
       .def("GetWorldID", &Scene::GetWorldID, return_value_policy<return_opaque_pointer>())
       .def("SetGravity", SetGravity1)
       .def("SetGravity", SetGravity2)
-      .def("SetGravity", SetGravity3)
       .def("GetGravity", GetGravity1)
       .def("GetGravity", GetGravity2)
-      .def("GetGravity", GetGravity3)
       .def("SetPhysicsStepSize", &Scene::SetPhysicsStepSize)
       .def("GetPhysicsStepSize", &Scene::GetPhysicsStepSize)
       .def("GetLight", GetLight1, return_internal_reference<>())

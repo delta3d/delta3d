@@ -41,17 +41,15 @@ class EffectListenerWrap : public EffectListener
       PyObject* mSelf;
 };
 
-//BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AD_overloads, AddDetonation, 1, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AD_overloads, AddDetonation, 1, 4)
 
 void initEffectManagerBindings()
 {
    EffectManager* (*EffectManagerGI1)(int) = &EffectManager::GetInstance;
    EffectManager* (*EffectManagerGI2)(std::string) = &EffectManager::GetInstance;
 
-   //once sg is removed, switch this back to BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS -osb
    Detonation* (EffectManager::*AddDetonation1)( const osg::Vec3&, DetonationType, double, Transformable* ) = &EffectManager::AddDetonation;
-   Detonation* (EffectManager::*AddDetonation2)( sgVec3, DetonationType, double, Transformable* ) = &EffectManager::AddDetonation;
-
+  
    enum_<DetonationType>("DetonationType")
       .value("HighExplosiveDetonation", HighExplosiveDetonation)
       .value("SmokeDetonation", SmokeDetonation)
@@ -69,7 +67,6 @@ void initEffectManagerBindings()
       .def("GetEffect", &EffectManager::GetEffect, return_internal_reference<>())
       //.def("AddDetonation", &EffectManager::AddDetonation, AD_overloads()[return_internal_reference<>()])
       .def("AddDetonation", AddDetonation1, return_internal_reference<>())
-      .def("AddDetonation", AddDetonation2, return_internal_reference<>())
       .def("RemoveEffect", &EffectManager::RemoveEffect)
       .def("AddEffectListener", &EffectManager::AddEffectListener)
       .def("RemoveEffectListener", &EffectManager::RemoveEffectListener);
@@ -86,11 +83,9 @@ void initEffectManagerBindings()
       .def("IsDying", &Effect::IsDying);
       
    void (Detonation::*GetPosition1)(osg::Vec3& res) = &Detonation::GetPosition;
-   void (Detonation::*GetPosition2)(sgVec3 res) = &Detonation::GetPosition;
 
    class_<Detonation, bases<Effect> >("Detonation", init<osg::Node*, double, const osg::Vec3&, DetonationType, Transformable*>())
       .def("GetPosition", GetPosition1)
-      .def("GetPosition", GetPosition2)
       .def("GetType", &Detonation::GetType)
       .def("GetParent", &Detonation::GetParent, return_internal_reference<>());
 }

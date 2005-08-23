@@ -37,7 +37,6 @@
 #include <osgParticle/ParticleSystemUpdater>
 
 #include <osg/Vec3>
-#include "sg.h"
 
 #include "dtCore/deltadrawable.h"
 #include "dtUtil/deprecationmgr.h"
@@ -133,29 +132,6 @@ namespace dtCore
             Transformable* parent = NULL
          );
 
-         //deprecated conversion
-         Detonation* AddDetonation(
-            sgVec3 position,
-            DetonationType type = HighExplosiveDetonation,
-            double timeToLive = 5.0,
-            Transformable* parent = NULL
-            )
-         {
-            DEPRECATE("Detonation* AddDetonation(\
-               sgVec3 position,\
-               DetonationType type = HighExplosiveDetonation,\
-               double timeToLive = 5.0,\
-               Transformable* parent = NULL",
-
-               "Detonation* AddDetonation(\
-               const osg::Vec3& position,\
-               DetonationType type = HighExplosiveDetonation,\
-               double timeToLive = 5.0,\
-               Transformable* parent = NULL"
-               )
-                
-               return AddDetonation(osg::Vec3(position[0], position[1], position[2]), type, timeToLive, parent);
-         }
 
          /**
           * Removes an effect from this manager.
@@ -376,36 +352,7 @@ namespace dtCore
                     DetonationType type,
                     Transformable* parent);
 
-         //deprecated conversion
-         Detonation(osg::Node* node,
-                    double timeToLive,
-                    sgVec3 position,
-                    DetonationType type,
-                    Transformable* parent
-                    )
-                 : Effect(node, timeToLive),
-                   mType(type),
-                   mParent(parent)
-         {
-            DEPRECATE("Detonation(\
-                      osg::Node* node,\
-                      double timeToLive,\
-                      sgVec3 position,\
-                      DetonationType type,\
-                      Transformable* parent",
 
-                      "Detonation(\
-                      osg::Node* node,\
-                      double timeToLive,\
-                      const osg::Vec3& position,\
-                      DetonationType type,\
-                      Transformable* parent"
-                      )
-
-            mPosition = osg::Vec3(position[0], position[1], position[2]);          
-         }
-
-         
          /**
           * Retrieves the position of this detonation.
           *
@@ -413,14 +360,6 @@ namespace dtCore
           */
          void GetPosition(osg::Vec3& res);
 
-         //deprecated version
-         void GetPosition(sgVec3 res)
-         {
-            DEPRECATE("void GetPosition(sgVec3 result)", "void GetPosition(osg::Vec3& result)")
-            osg::Vec3 tmp(res[0], res[1], res[2]);
-            GetPosition(tmp);
-            res[0] = tmp[0]; res[1] = tmp[1]; res[2] = tmp[2];
-         }
 
          /**
           * Returns the type of this detonation.

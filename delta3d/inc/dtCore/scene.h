@@ -28,7 +28,6 @@
 #include <Producer/Camera>
 #include <ode/ode.h>
 #include <osg/Vec3>
-#include <sg.h>
 
 #include "dtCore/base.h"
 #include "dtCore/stats.h"
@@ -114,20 +113,11 @@ namespace dtCore
       void SetGravity(const osg::Vec3& gravity);
       void SetGravity(float x, float y, float z) { SetGravity( osg::Vec3(x,y,z) ); }
 
-      ///DEPRECATED
-      void SetGravity(sgVec3 gravity)
-      {
-         DEPRECATE("void SetGravity(sgVec3 gravity)","void SetGravity(const osg::Vec3& gravity)")
-
-         SetGravity( osg::Vec3( gravity[0], gravity[1], gravity[2] ) );
-      }
      
       ///Get the gravity vector
       void GetGravity(osg::Vec3& vec) const { vec = mGravity; }
       void GetGravity(float* x, float* y, float* z) const { *x = mGravity[0]; *y = mGravity[1]; *z = mGravity[2]; }
 
-      ///DEPRECATED
-      void GetGravity(sgVec3 gravity) const;
       
       ///Performs collision detection and updates physics
       virtual void OnMessage(MessageData *data);

@@ -14,10 +14,8 @@ void initCameraBindings()
    Camera* (*CameraGI2)(std::string) = &Camera::GetInstance;
 
    void (Camera::*SetClearColor1)(float, float, float, float) = &Camera::SetClearColor;
-   void (Camera::*SetClearColor2)(sgVec4) = &Camera::SetClearColor;
 
    void (Camera::*GetClearColor1)(float*, float*, float*, float*) = &Camera::GetClearColor;
-   void (Camera::*GetClearColor2)(sgVec4) = &Camera::GetClearColor;
 
    class_<Camera, bases<Transformable>, dtCore::RefPtr<Camera> >("Camera", init<optional<std::string> >())
       .def("GetInstanceCount", &Camera::GetInstanceCount)
@@ -31,9 +29,7 @@ void initCameraBindings()
       .def("SetScene", &Camera::SetScene, with_custodian_and_ward<1, 2>())
       .def("GetScene", &Camera::GetScene, return_internal_reference<>())
       .def("SetClearColor", SetClearColor1)
-      .def("SetClearColor", SetClearColor2)
       .def("GetClearColor", GetClearColor1)
-      .def("GetClearColor", GetClearColor2)
       .def("SetPerspective", &Camera::SetPerspective)
       .def("SetFrustum", &Camera::SetFrustum)
       .def("SetOrtho", &Camera::SetOrtho)

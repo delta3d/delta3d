@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
         dtEditQt::EditorEvents::getInstance().emitEditorInitiationEvent();
         mainWindow.setWindowMenuTabsChecked();
 
-        dtCore::System::GetSystem()->Start();
+        dtCore::System::Instance()->Start();
         result = app.exec();
-        dtCore::System::GetSystem()->Stop();
+        dtCore::System::Instance()->Stop();
     }
     catch (dtDAL::Exception &e)
     {

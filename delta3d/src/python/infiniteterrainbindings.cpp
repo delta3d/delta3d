@@ -23,7 +23,6 @@ void initInfiniteTerrainBindings()
    //void (InfiniteTerrain::*GetNormal1)(float, float, osg::Vec3&) = &InfiniteTerrain::GetNormal;
    void (InfiniteTerrain::*GetNormal2)(float, float, osg::Vec3&, bool) = &InfiniteTerrain::GetNormal;
    //void (InfiniteTerrain::*GetNormal3)(float, float, sgVec3) = &InfiniteTerrain::GetNormal;
-   void (InfiniteTerrain::*GetNormal4)(float, float, sgVec3, bool) = &InfiniteTerrain::GetNormal;
 
    class_<InfiniteTerrain, bases<Physical>, dtCore::RefPtr<InfiniteTerrain> >("InfiniteTerrain", init<optional<const std::string&> >())
       .def("GetInstanceCount", &InfiniteTerrain::GetInstanceCount)
@@ -46,7 +45,6 @@ void initInfiniteTerrainBindings()
       .def("SmoothCollisionsEnabled", &InfiniteTerrain::SmoothCollisionsEnabled)
       .def("GetHeight", &InfiniteTerrain::GetHeight, GH_overloads())
       //.def("GetNormal", GetNormal1)
-      .def("GetNormal", GetNormal2)
+      .def("GetNormal", GetNormal2);
       //.def("GetNormal", GetNormal3)
-      .def("GetNormal", GetNormal4);
 }

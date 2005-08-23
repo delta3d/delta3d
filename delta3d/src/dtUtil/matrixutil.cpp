@@ -1,5 +1,5 @@
 #include "dtUtil/matrixutil.h"
-#include "sg.h"
+
 
 using namespace dtUtil;
 using namespace osg;

@@ -344,14 +344,6 @@ namespace dtSOARX
           * @param normal the location at which to store the normal
           */
        void GetNormal(float x, float y, osg::Vec3& normal);
-
-       void GetNormal(float x, float y, sgVec3 normal)
-       {
-          DEPRECATE("void GetNormal(float x, float y, sgVec3 normal)", "void GetNormal(float x, float y, osg::Vec3& normal)")
-          GetNormal(x, y, osg::Vec3(normal[0], normal[1], normal[2]));
-       }
-        
- 
          
          /**
           * Determine if we are using LCC data.

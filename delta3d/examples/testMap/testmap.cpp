@@ -97,7 +97,7 @@ public:
         {
             float x, y, z;
             tHeli.GetTranslation(x, y, z);
-            sgVec3 heliPos = {x, y, z};
+            osg::Vec3 heliPos(x, y, z);
 
             // This is somewhat of a hack. The explosion will loop continuously in here
             // because of the conditions on which it is invoked. It eats framerate and 
