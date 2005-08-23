@@ -1,6 +1,6 @@
 Import('*')
 
-testSrcs = [ 'teststatemanager.cpp', 'main.cpp' ]
+testSrcs = SGlob('*.cpp')
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
 
