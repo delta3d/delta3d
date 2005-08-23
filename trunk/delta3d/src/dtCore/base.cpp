@@ -29,7 +29,7 @@ Base::~Base()
 {
    Log &log = Log::GetInstance();
 
-   log.LogMessage(Log::LOG_DEBUG, "base.cpp", "Destroying '%s'", GetName().c_str());
+   log.LogMessage(Log::LOG_DEBUG, __FUNCTION__, "Destroying '%s'", GetName().c_str());
    DeregisterInstance(this);
 }
 
