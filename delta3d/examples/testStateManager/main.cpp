@@ -19,12 +19,12 @@ int main(unsigned int argc, char* argv[])
    dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
    dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testStateManager" );
 
-   static dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
+   dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
    dtCore::RefPtr<StateWalker> app = new StateWalker( mgr.get() );
 
    if( argc > 1 )
    {
-      //mgr->Load<MyEventType,MyStateType>( argv[1] );
+      mgr->Load<MyEventType,MyStateType>( argv[1] );
    }
 
    else // load some defaults, but give feedback to user for correct usage.
