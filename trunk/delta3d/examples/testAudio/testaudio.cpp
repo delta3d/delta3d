@@ -7,6 +7,7 @@
 using namespace   dtCore;
 using namespace   dtABC;
 using namespace   dtAudio;
+using namespace   dtUtil;
 using namespace   std;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestAudioApp )
@@ -44,8 +45,8 @@ TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
    mMotionModel(NULL),
    mSmokeCountA(0L),
    mSmokeCountC(0L)
-{
-   SetNotifyLevel(DEBUG_INFO);
+{  
+   Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
 
    AddSender( System::Instance() );
 
@@ -255,7 +256,8 @@ TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
 {
    assert( fname );
 
-   Notify( ALWAYS, " LoadPlaySound( %s )", fname );
+   Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+      " LoadPlaySound( %s )", fname );
 
    Sound*   snd = AudioManager::GetManager()->NewSound();
    assert( snd );
@@ -304,7 +306,8 @@ TestAudioApp::StopAllSounds( void )
       {
          snd->Stop();
 
-         Notify( ALWAYS, " StopAllSounds( %s )", snd->GetFilename() );
+         Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+            " StopAllSounds( %s )", snd->GetFilename() );
       }
    }
 }
@@ -339,7 +342,8 @@ TestAudioApp::FreeAllStoppedSounds( bool forced /*= false*/ )
       if( snd == NULL )
          continue;
 
-      Notify( ALWAYS, " FreeAllStoppedSounds( %s )", snd->GetFilename() );
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+         " FreeAllStoppedSounds( %s )", snd->GetFilename() );
 
       AudioManager::GetManager()->FreeSound( snd );
       mActive.erase( iter );
@@ -380,7 +384,8 @@ TestAudioApp::ChangeSoundGain( float gain )
 {
    mSndGain = gain;
 
-   Notify( ALWAYS, " ChangeSoundGain( %1.1f )", mSndGain );
+   Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+      " ChangeSoundGain( %1.1f )", mSndGain );
 
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -401,7 +406,8 @@ TestAudioApp::ChangeSoundPitch( float pitch )
 {
    mSndPitch   *= pitch;
 
-   Notify( ALWAYS, " ChangeSoundPitch( %1.4f )", mSndPitch );
+   Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+      " ChangeSoundPitch( %1.4f )", mSndPitch );
 
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -422,7 +428,8 @@ TestAudioApp::ToggleSoundLooping( void )
 {
    mLooping =  !mLooping;
 
-   Notify( ALWAYS, " ToggleSoundLooping( %s )", (mLooping)? "true": "false" );
+   Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+      " ToggleSoundLooping( %s )", (mLooping)? "true": "false" );
 
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -453,11 +460,13 @@ TestAudioApp::PauseAllSounds( void )
 
       if( snd->IsPlaying() )
       {
-         Notify( ALWAYS, " PauseAllSounds( %s ) paused", snd->GetFilename() );
+         Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+            " PauseAllSounds( %s ) paused", snd->GetFilename() );
       }
       else  if( snd->IsPaused() )
       {
-         Notify( ALWAYS, " PauseAllSounds( %s ) un-paused", snd->GetFilename() );
+         Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+            " PauseAllSounds( %s ) un-paused", snd->GetFilename() );
       }
    }
 }
@@ -477,7 +486,8 @@ TestAudioApp::RewindAllSounds( void )
 
       snd->Rewind();
 
-      Notify( ALWAYS, " RewindAllSounds( %s )", snd->GetFilename() );
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+         " RewindAllSounds( %s )", snd->GetFilename() );
    }
 }
 
@@ -522,7 +532,8 @@ TestAudioApp::LoadGfxFile( const char* fname )
    if( filename == "" )
    {
       // still no file name, bail...
-      Notify( WARN, "AudioManager: can't load file %s", fname );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING,__FUNCTION__,
+         "AudioManager: can't load file %s", fname );
       return   NULL;
    }
 
@@ -537,7 +548,8 @@ TestAudioApp::LoadGfxFile( const char* fname )
 
    if( ! fileLoaded )
    {
-      Notify( WARN, "can't load gfx file '%s'", filename.c_str() );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING,__FUNCTION__,
+         "can't load gfx file '%s'", filename.c_str() );
       delete   fileobj;
       return   NULL;
    }
