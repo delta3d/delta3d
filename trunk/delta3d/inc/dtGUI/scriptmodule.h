@@ -6,32 +6,34 @@
 #	pragma warning(disable : 4251)     // for "warning C4251: 'dtGUI::ScriptModule::mCallbacks' : class 'std::map<_Kty,_Ty>' needs to have dll-interface to be used by clients of class 'dtGUI::ScriptModule' "
 #endif
 
-#include <CEGUIScriptModule.h>        // for base class
+#include <dtGUI/basescriptmodule.h>   // for base class
 #include <map>                        // for std::map type
-#include <queue>
+#include <queue>                      // for member
 #include <string>                     // for std::string type
-#include <dtCore/export.h>
 
 namespace dtGUI
 {
-  /** ScriptModule is the binding from CEGUI Events to
-    * specific application callbacks.  This class requires
-    * the GUIHandler to support some interfaces.
+  /** \brief ScriptModule is the binding from CEGUI::Events to specific application callbacks.
+    * Create an instance of this class, and provide it as a parameter during construction of a CEUIDrawable instance.
+    * Add new handlers with the AddCallback function.
     */
-   class DT_EXPORT ScriptModule : public CEGUI::ScriptModule
+   class DT_EXPORT ScriptModule : public BaseScriptModule
    {
-
    public:
-
-      typedef void (*FUNCTION)(const CEGUI::EventArgs &e);
-      typedef std::map<std::string,FUNCTION> StaticRegistry;
+      typedef void (*STATIC_FUNCTION)(const CEGUI::EventArgs &e);
+      typedef std::map<std::string,STATIC_FUNCTION> StaticRegistry;
 
       ScriptModule();
       virtual ~ScriptModule();
 
-      bool AddCallback(const std::string& name, FUNCTION f);
+      /** \brief Add a callback handler.
+        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
+        * @param func is the pointer to the function to be called when the CEGUI::Event is activated.
+        */
+      bool AddCallback(const std::string& name, STATIC_FUNCTION func);
+
+      /** Returns the StaticRegistry.*/
       const StaticRegistry& GetRegistry() const { return mCallbacks; }
-      void ProcessQueue();
 
       // inherited methods
       virtual void executeScriptFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup = "");
@@ -40,14 +42,8 @@ namespace dtGUI
       virtual bool executeScriptedEventHandler(const CEGUI::String& handler_name, const CEGUI::EventArgs& ea);
 
    private:
-
-      typedef std::pair< StaticRegistry::value_type::second_type, CEGUI::EventArgs > FunctionEventArgsPair;
-      typedef std::queue< FunctionEventArgsPair > EventQueue;
-      EventQueue mEventQueue;
-      
       ScriptModule(const ScriptModule&);  // not implemented by design
       StaticRegistry mCallbacks;
-      
    };
 };
 

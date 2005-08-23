@@ -19,7 +19,7 @@
 
 namespace dtGUI
 {
-   class ScriptModule;
+   class BaseScriptModule;
 
    ///A DeltaDrawable used to render the CEGUI
 
@@ -73,8 +73,12 @@ namespace dtGUI
    public:
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
 
-      ///Default constructor - accepts the width and height of window
-	CEUIDrawable(int width=1, int height=1, dtGUI::ScriptModule* sm=0);
+      /** Default constructor
+        * @param width is the width of the window, only relevant upon window realization.
+        * @param height is the width of the window, only relevant upon window realization.
+        * @param sm is a derivation of BaseScriptModule, provide an instance of this to handle CEGUI::Event triggered by CEGUI::Windows.
+        */
+      CEUIDrawable(int width=1, int height=1, dtGUI::BaseScriptModule* sm=0);
 
       virtual ~CEUIDrawable();
 
@@ -88,8 +92,6 @@ namespace dtGUI
 
       ///Display all the properties of the supplied CEGUI::Window
       static void DisplayProperties(CEGUI::Window *window, bool onlyNonDefault=true);
-
-      virtual void OnMessage( dtCore::Base::MessageData* data );
 
    protected: 
       ///pass the mouse moved events to CEGUI
@@ -109,8 +111,6 @@ namespace dtGUI
                               Producer::KeyboardKey key,
                               Producer::KeyCharacter character);
 
-      
-      
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
       int mWidth; ///<the width of the Window
       int mHeight; ///<The height of the Window
@@ -119,7 +119,7 @@ namespace dtGUI
       float mMouseX; ///<The current Mouse X position
       float mMouseY; ///<the current Mouse Y position
       Renderer* mRenderer; ///<The opengl renderer we're using
-      dtGUI::ScriptModule* mScriptModule;
+      dtGUI::BaseScriptModule* mScriptModule;
    };
 }//namespace dtGUI
 

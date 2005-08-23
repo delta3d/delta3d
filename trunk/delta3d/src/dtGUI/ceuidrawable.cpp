@@ -1,7 +1,7 @@
 #include <CEGUI.h>
 
 #include <dtGUI/ceuidrawable.h>
-#include <dtGUI/scriptmodule.h>
+#include <dtGUI/basescriptmodule.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
@@ -20,7 +20,7 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 * of the parent Window.  The constructor will create a new CEUI and 
 * OpenGLRenderer,and create the OSG nodes.
 */
-CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::ScriptModule* sm):
+CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    mUI(0),
    mWidth(width),
    mHeight(height),
@@ -184,16 +184,5 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
          Notify(WARN, "InvalidRequestException for %s: %s", itr.getCurrentKey().c_str(), exception.getMessage().c_str());
       }
       itr++;
-   }
-}
-
-void CEUIDrawable::OnMessage( dtCore::Base::MessageData* data )
-{
-   if( data->message == "postframe" )
-   {
-      if( mScriptModule )
-      {
-         mScriptModule->ProcessQueue();
-      }
    }
 }
