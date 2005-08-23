@@ -6,14 +6,14 @@
 #include "soarx/soarx_generic.h"
 #include "soarx/soarx_image.h"
 
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 #include <iostream>
 
 using namespace std;
 
-using namespace dtCore;
 using namespace dtSOARX;
+using namespace dtUtil;
 
 static Noise n;
 
@@ -58,7 +58,8 @@ int TBuilder::Build(const char* path,
                     osg::HeightField* hf,
                     bool buildDetail)
 {
-   Notify(INFO, "SOARXTerrain: Making base map for %s..", prefix);
+   Log::GetInstance().LogMessage(Log::LOG_INFO, __FUNCTION__, 
+      "SOARXTerrain: Making base map for %s..", prefix);
    
 	//sys->Subscribe("Event.Update", Callback(this, BuildSteps));
 
@@ -194,7 +195,7 @@ int TBuilder::Build(const char* path,
 	
 	if(buildDetail)
 	{
-	   Notify(INFO, "SOARXTerrain: Making detail map...");
+	   LOG_INFO("SOARXTerrain: Making detail map...");
 	   
 	   src_dim.width = detail_size;
       src_dim.height = detail_size;

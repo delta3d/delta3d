@@ -4,13 +4,14 @@
 
 #include <sstream>
 
-#include "dtCore/scene.h"
+#include <dtCore/scene.h>
+#include <dtChar/character.h>
+#include <dtUtil/log.h>
 #include "osgDB/FileUtils"
-#include <dtCore/notify.h>
-#include "dtChar/character.h"
 
 using namespace dtCore;
 using namespace dtChar;
+using namespace dtUtil;
 using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Character)
@@ -67,7 +68,8 @@ osg::Node* Character::LoadFile(const string& filename, bool useCache)
    
    if(path.empty())
    {
-      dtCore::Notify(WARN, "Character: Can't find %s", mFilename.c_str());
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+         "Character: Can't find %s", mFilename.c_str());
       return false;
    }
    else
@@ -132,7 +134,8 @@ osg::Node* Character::LoadFile(const string& filename, bool useCache)
       
       if(mBodyNode.get() == NULL)
       {
-         dtCore::Notify(WARN, "Character: Can't load %s", mFilename.c_str());
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
+             "Character: Can't load %s", mFilename.c_str());
       }
       else
       {

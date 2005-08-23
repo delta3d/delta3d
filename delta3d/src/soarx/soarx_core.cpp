@@ -13,8 +13,6 @@
 #include "soarx/soarxdrawable.h"
 #include "soarx/soarx_camera.h"
 
-#include "dtCore/notify.h"
-
 using namespace dtSOARX;
 
 //______________________________________________________________

@@ -13,8 +13,6 @@
 
 #include <iostream>
 
-#include "dtCore/notify.h"
-
 #include <osg/GL>
 #include <osg/GLExtensions>
 

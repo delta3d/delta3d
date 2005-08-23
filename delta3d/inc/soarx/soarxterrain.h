@@ -370,6 +370,8 @@ namespace dtSOARX
 		 */
 		 void SetLCCVisibility(bool mask);
 
+       dtCore::RefPtr<dtUtil::Log> mLog;
+
          
       private:
 
