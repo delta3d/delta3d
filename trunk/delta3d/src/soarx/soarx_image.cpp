@@ -6,8 +6,6 @@
 #include "soarx/soarx_generic.h"
 #include "soarx/soarx_image.h"
 
-#include "dtCore/notify.h"
-
 using namespace dtSOARX;
 
 //______________________________________________________________

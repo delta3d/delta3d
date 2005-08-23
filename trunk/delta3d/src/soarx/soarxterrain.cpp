@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "soarx/soarxterrain.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 #include "dtUtil/matrixutil.h"
 
@@ -25,6 +24,7 @@
 #include "gdalwarper.h"
 
 using namespace dtCore;
+using namespace dtUtil;
 using namespace dtSOARX;
 using namespace std;
 
@@ -107,13 +107,13 @@ class dtSOARX::SOARXTerrainCallback : public osg::NodeCallback
 			   if (mTerrain->mUseLCC)
 			   {
 					mTerrain->AddVegetation(i,j);
-//					Notify(INFO, "ep[0] = %f, ep[1] = %f", eyepoint[0], eyepoint[1]);
+//					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "ep[0] = %f, ep[1] = %f", eyepoint[0], eyepoint[1]);
 //			        mTerrain->SimplifyTerrain(eyepoint);
 			   }
             }
          }
 
-//		 Notify(INFO, "%s in cull", (node->getName()).c_str());
+//		 mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "%s in cull", (node->getName()).c_str());
 
 		 traverse(node, nv);
       }
@@ -152,7 +152,7 @@ class TransformCallback : public osg::NodeCallback
 
          mt->setMatrix(matrix);
 
-//		 Notify(INFO, "%s in transform", (node->getName()).c_str());
+//		 mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "%s in transform", (node->getName()).c_str());
 
 		 traverse(node,nv);
 	  }
@@ -196,7 +196,7 @@ public:
 		if (cv)
 		{
 			osg::BoundingSphere bs = node->getBound();
-//			if (node->getNodeMask()==2) Notify(INFO, "%s is NodeMasked 2", (node->getName()).c_str());
+//			if (node->getNodeMask()==2) mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "%s is NodeMasked 2", (node->getName()).c_str());
 //			if (node->getBound()._radius == -1) node->dirtyBound();
 
 			osg::Vec3 eyept = cv->getEyeLocal();
@@ -211,11 +211,11 @@ public:
 			osg::Vec3 vLookVector = cv->getLookVectorLocal();
 			osg::Vec3 fsCenter(eyept + vLookVector*(fViewLen*0.5f));
 
-//			Notify(INFO, "fCenter = %f, %f, %f", fCenter[0], fCenter[1], fCenter[2]);
+//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "fCenter = %f, %f, %f", fCenter[0], fCenter[1], fCenter[2]);
 
 			if ((bs._radius+fsRadius) < (cv->getDistanceToEyePoint(bs._center,FALSE)))
 			{
-//				Notify(INFO, "%s is now TOO FAR AWAY", (node->getName()).c_str());
+//				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "%s is now TOO FAR AWAY", (node->getName()).c_str());
 				return;
 			}
 			else
@@ -280,6 +280,7 @@ SOARXTerrain::SOARXTerrain(string name)
 	 totalvegecount(0)
 {
    SetName(name);
+   mLog = &Log::GetInstance();
 
    SetGeoOrigin(0.0, 0.0, 0.0);
 
@@ -351,7 +352,7 @@ SOARXTerrain::SOARXTerrain(string name)
  */
 SOARXTerrain::~SOARXTerrain()
 {
-//   Notify(DEBUG_INFO, "Destr SOARX");
+//   mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Destr SOARX");
    //CleanUp();
 	DeregisterInstance(this);
 }
@@ -467,7 +468,7 @@ void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
 	  {
 		  if((str = element->Attribute("Size")) != NULL)
 		  {
-			  Notify(INFO, "MaxTextureSize = %s", str);
+           mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,  __FUNCTION__, "MaxTextureSize = %s", str );
 			  SetMaxTextureSize(atoi(str));
 		  }
 	  }
@@ -475,7 +476,7 @@ void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
 	  {
 		  if((str = element->Attribute("Correction")) != NULL)
 		  {
-			  Notify(INFO, "GammaCorrect = %s", str);
+			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "GammaCorrect = %s", str);
 			  mGamma = atof(str);
 		  }
 	  }
@@ -483,7 +484,7 @@ void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
 	  {
 		  if((str = element->Attribute("Seed")) != NULL)
 		  {
-			  Notify(INFO, "Random seed = %s", str);
+			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Random seed = %s", str);
 			  mSeed = abs(atoi(str));
 		  }
 	  }
@@ -491,7 +492,7 @@ void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
 	  {
 		  if((str = element->Attribute("Per_Pixel")) != NULL)
 		  {
-			  Notify(INFO, "Looks per pixel = %s", str);
+			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Looks per pixel = %s", str);
 			  mMaxLooks = atoi(str);
 		  }
 	  }
@@ -499,7 +500,7 @@ void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
 	  {
 		  if((str = element->Attribute("Objects")) != NULL)
 		  {
-			  Notify(INFO, "Max objects per geocell = %s", str);
+			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Max objects per geocell = %s", str);
 			  mMaxObjectsPerCell = atoi(str);
 		  }
 	  }
@@ -507,7 +508,7 @@ void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
 	  {
 		  if((str = element->Attribute("Extension")) != NULL)
 		  {
-			  Notify(INFO, "Image Extension = %s", str);
+			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Extension = %s", str);
 			  mImageExtension = str;
 		  }
 	  }
@@ -662,7 +663,7 @@ void SOARXTerrain::SetCachePath(string path)
       bool valid = osgDB::makeDirectory(mCachePath);
       if (!valid)
       {
-         Notify(WARN, "SOARXTerrain: Can't make cache path '%s'",
+         mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__,  "SOARXTerrain: Can't make cache path '%s'",
                  mCachePath.c_str());
       }
    }
@@ -727,7 +728,7 @@ osg::Vec3 SOARXTerrain::HeightColorMap::GetColor(float height)
    }
    else
    {
-      Notify(WARN, "SOARXTerrain::HeightColorMap: Must have at least two entries");
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,  "SOARXTerrain::HeightColorMap: Must have at least two entries");
    }
 
    return color;
@@ -854,7 +855,8 @@ void SOARXTerrain::LCCHistogram(const osg::Image* LCCbase, const osg::Image* ima
 				LCCmisses++;
 			}
 			if (testnumber<10)
-				Notify(INFO, "testnumber = %i, binnumber = %i", testnumber, binnumber);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,
+            "testnumber = %i, binnumber = %i", testnumber, binnumber);
 			testnumber++;
 		}
 	}
@@ -880,25 +882,25 @@ void SOARXTerrain::LCCHistogram(const osg::Image* LCCbase, const osg::Image* ima
 */
 void SOARXTerrain::ImageStats(const osg::Image* image, char* imagename)
 {
-	Notify(INFO, "ImageStats:**********************************");
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "ImageStats:**********************************");
 
 	int width = image->s();
 	int height = image->t();
 	int depth = image->r();
 
-	Notify(INFO, "ImageStats:**********************************");
-	Notify(INFO, "Image Name = %s", imagename);
-	Notify(INFO, "Image Width = %i", width);
-	Notify(INFO, "Image Height = %i", height);
-	Notify(INFO, "Image Depth = %i", depth);
-	Notify(INFO, "Image DataType = %i", image->getDataType());
-	Notify(INFO, "Image Packing = %i", image->getPacking());
-	Notify(INFO, "Image PixelFormat = %i", image->getPixelFormat());
-	Notify(INFO, "Image MipMaps = %i", image->getNumMipmapLevels());
-	Notify(INFO, "Image PixelSize = %i", image->getPixelSizeInBits());  //24 = RGB, 32 = RGBA
-	Notify(INFO, "Image RowSize = %i", image->getRowSizeInBytes());
-	Notify(INFO, "Image ImageSize = %i", image->getImageSizeInBytes());
-	Notify(INFO, "Image TotalSize = %i", image->getTotalSizeInBytes());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "ImageStats:**********************************");
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Name = %s", imagename);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Width = %i", width);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Height = %i", height);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Depth = %i", depth);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image DataType = %i", image->getDataType());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Packing = %i", image->getPacking());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image PixelFormat = %i", image->getPixelFormat());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image MipMaps = %i", image->getNumMipmapLevels());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image PixelSize = %i", image->getPixelSizeInBits());  //24 = RGB, 32 = RGBA
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image RowSize = %i", image->getRowSizeInBytes());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image ImageSize = %i", image->getImageSizeInBytes());
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image TotalSize = %i", image->getTotalSizeInBytes());
 
 /*	UNCOMMENT TO FIND A COLOR AT A PARTICULAR LOCATION
 
@@ -911,15 +913,15 @@ void SOARXTerrain::ImageStats(const osg::Image* image, char* imagename)
 	unsigned char* data = image->data(ix, iy);
 
 	if(image->getPixelFormat() == GL_LUMINANCE)
-		Notify(INFO, "grayscale");
+		mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "grayscale");
 	else
-		Notify(INFO, "RGB color");
+		mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB color");
 
 	color[0] = data[0];
 	color[1] = data[1];
 	color[2] = data[2];
 
-	Notify(INFO, "RGB for %i,%i = %3.0f, %3.0f, %3.0f", ix, iy, color[0], color[1], color[2]);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB for %i,%i = %3.0f, %3.0f, %3.0f", ix, iy, color[0], color[1], color[2]);
 */
 }
 
@@ -954,7 +956,7 @@ void SOARXTerrain::LoadGeospecificLCCImage(string filename, const double* geoTra
 
 			if(!sr.IsSame(&wgs84))
 			{
-				Notify(INFO, "SOARXTerrain: Warping %s to WGS84", filename.c_str());
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Warping %s to WGS84", filename.c_str());
 
 				void* transformArg;
 				double newGeoTransform[6];
@@ -1121,7 +1123,7 @@ void SOARXTerrain::LoadGeospecificLCCImage(string filename, const double* geoTra
 			}
 			else
 			{
-				Notify(WARN, "SOARXTerrain: %s has %d raster bands", filename.c_str(), bands);
+				mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "SOARXTerrain: %s has %d raster bands", filename.c_str(), bands);
 			}
 
 			delete ds;
@@ -1175,7 +1177,7 @@ void SOARXTerrain::LoadGeospecificLCCImage(string filename, const double* geoTra
 	}
 	else
 	{
-		Notify(WARN, "SOARXTerrain: Can't load %s", filename.c_str());
+		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "SOARXTerrain: Can't load %s", filename.c_str());
 	}
 }
 
@@ -1209,7 +1211,7 @@ void SOARXTerrain::LoadGeospecificImage(string filename, const double* geoTransf
 
          if(!sr.IsSame(&wgs84))
          {
-            Notify(INFO, "SOARXTerrain: Warping %s to WGS84", filename.c_str());
+            mLog->LogMessage(Log::LOG_INFO, __FUNCTION__, "SOARXTerrain: Warping %s to WGS84", filename.c_str());
 
             void* transformArg;
             double newGeoTransform[6];
@@ -1376,7 +1378,7 @@ void SOARXTerrain::LoadGeospecificImage(string filename, const double* geoTransf
          }
          else
          {
-            Notify(WARN, "SOARXTerrain: %s has %d raster bands", filename.c_str(), bands);
+            mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "SOARXTerrain: %s has %d raster bands", filename.c_str(), bands);
          }
 
          delete ds;
@@ -1430,7 +1432,7 @@ void SOARXTerrain::LoadGeospecificImage(string filename, const double* geoTransf
    }
    else
    {
-      Notify(WARN, "SOARXTerrain: Can't load %s", filename.c_str());
+      mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "SOARXTerrain: Can't load %s", filename.c_str());
    }
 }
 
@@ -1487,7 +1489,7 @@ void SOARXTerrain::LoadRoads(string filename,
          if(roads.mLayer->GetSpatialRef() != NULL &&
             !wgs84.IsSame(roads.mLayer->GetSpatialRef()))
          {
-            Notify(INFO, "SOARXTerrain: Transforming roads to WGS84...");
+            mLog->LogMessage(Log::LOG_INFO, __FUNCTION__, "SOARXTerrain: Transforming roads to WGS84...");
 
             OGRCoordinateTransformation* ct =
                OGRCreateCoordinateTransformation(roads.mLayer->GetSpatialRef(), &wgs84);
@@ -1503,7 +1505,7 @@ void SOARXTerrain::LoadRoads(string filename,
                   geom->transform(ct);
                }
 			   else
-				   Notify(WARN, "road geom NULL");
+				   mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "road geom NULL");
             }
          }
 
@@ -1518,7 +1520,7 @@ void SOARXTerrain::LoadRoads(string filename,
 
          if(texture != "")
          {
-			Notify(INFO, "Reading road texture");
+			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__, "Reading road texture");
 			dtCore::RefPtr<osg::Image> image = osgDB::readImageFile(texture);
 
             if(image != NULL)
@@ -1533,7 +1535,7 @@ void SOARXTerrain::LoadRoads(string filename,
                roads.mTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
             }
 			else
-				Notify(WARN, "Couldn't find road texture.");
+				mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__,"Couldn't find road texture.");
          }
 
          roads.mWidth = width;
@@ -1546,7 +1548,7 @@ void SOARXTerrain::LoadRoads(string filename,
       }
    }
 
-   Notify(WARN, "SOARXTerrain: Can't load %s", filename.c_str());
+   mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "SOARXTerrain: Can't load %s", filename.c_str());
 }
 
 /**
@@ -1804,7 +1806,7 @@ float SOARXTerrain::GetHeight(float x, float y)
 
    Segment segment(latitude, longitude);
 
-//   Notify(INFO, "Performing GetHeight calculation on Lat = %i, Long = %i", latitude, longitude);
+//   mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Performing GetHeight calculation on Lat = %i, Long = %i", latitude, longitude);
    LoadSegment(latitude, longitude);
 
    return mSegmentDrawableMap[segment]->GetHeight(
@@ -1858,7 +1860,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeLCCImage(const osg::Image* src_imag
 {
 	dtCore::RefPtr<osg::Image> dst_image = new osg::Image();
 //	int mMaxTextureSize = this->GetMaxTextureSize();
-//	Notify(INFO, "within MakeLCCImage: MaxTextureSize = %i", mMaxTextureSize);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "within MakeLCCImage: MaxTextureSize = %i", mMaxTextureSize);
 
 	int width = src_image->s();
 	int height = src_image->t();
@@ -1868,7 +1870,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeLCCImage(const osg::Image* src_imag
 	unsigned char* src_data = NULL;
 	unsigned char* dst_data = NULL;
 
-//	Notify(INFO, "RGB selected for LCC = %3.0f, %3.0f, %3.0f", rgb_selected[0], rgb_selected[1], rgb_selected[2]);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB selected for LCC = %3.0f, %3.0f, %3.0f", rgb_selected[0], rgb_selected[1], rgb_selected[2]);
 
 //	unsigned int hits =0;
 //	unsigned int misses =0;
@@ -1899,11 +1901,11 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeLCCImage(const osg::Image* src_imag
 //				misses++;
 			}
 
-		//			Notify(INFO, "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, color[0], color[1], color[2]);
+		//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, color[0], color[1], color[2]);
 		}
 	}
-//	Notify(INFO, "hits = %i", hits);
-//	Notify(INFO, "misses = %i", misses);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "hits = %i", hits);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "misses = %i", misses);
 
 	return dst_image;
 }
@@ -1922,7 +1924,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeFilteredImage(const osg::Image* src
 	int height = src_image->t();
 
 //	int mMaxTextureSize = this->GetMaxTextureSize();
-//	Notify(INFO, "within MakeFilteredImage: MaxTextureSize = %i", mMaxTextureSize);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "within MakeFilteredImage: MaxTextureSize = %i", mMaxTextureSize);
 
 	dtCore::RefPtr<osg::Image> dst_image = new osg::Image;
 	dst_image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
@@ -1930,7 +1932,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeFilteredImage(const osg::Image* src
 	unsigned char* src_data = NULL;
 	unsigned char* dst_data = NULL;
 
-//	Notify(INFO, "RGB filter selected = %3.0f, %3.0f, %3.0f", rgb_selected[0], rgb_selected[1], rgb_selected[2]);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB filter selected = %3.0f, %3.0f, %3.0f", rgb_selected[0], rgb_selected[1], rgb_selected[2]);
 
 	int border = 3;
 	float value = 0;
@@ -2053,7 +2055,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeFilteredImage(const osg::Image* src
 			dst_data[1]=abs(value/100.0*255.0 - 255.0);
 			dst_data[2]=abs(value/100.0*255.0 - 255.0);
 
-		//			Notify(INFO, "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, dst_data[0], dst_data[1], dst_data[2]);
+		//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, dst_data[0], dst_data[1], dst_data[2]);
 
 		}
 	}
@@ -2079,9 +2081,9 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::ApplyMask(const osg::Image* src_image, 
 
 	if ((width!=width2)||(height!=height2))
 	{
-		Notify(WARN, "Source image size is %i by %i", width, height);
-		Notify(WARN, "Mask image size is %i by %i", width2, height2);
-		Notify(WARN, "Image sizes not identical!  Exitting program.");
+		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "Source image size is %i by %i", width, height);
+		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "Mask image size is %i by %i", width2, height2);
+		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "Image sizes not identical!  Exitting program.");
 		exit(-47);
 	}
 
@@ -2112,7 +2114,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::ApplyMask(const osg::Image* src_image, 
 			dst_data[1]=value;
 			dst_data[2]=value;
 
-			//			Notify(INFO, "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, dst_data[0], dst_data[1], dst_data[2]);
+			//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, dst_data[0], dst_data[1], dst_data[2]);
 		}
 	}
 	src_data = NULL;
@@ -2159,7 +2161,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeHeightmapImage(const osg::HeightFie
 			if(h<0)   h=0.0f;
 
 			if (((y==0)&&(x<2))||((y==0)&&(x>1020)))
-				Notify(INFO, "HEIGHTS:(%i,%i: %10.0f ",x,y,h);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "HEIGHTS:(%i,%i: %10.0f ",x,y,h);
 
 			if ((x==0) || (x== width-1)|| (y==0) || (y==height-1))
 			{
@@ -2262,7 +2264,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeRelativeElevationImage(const osg::H
 		}
 	}
 
-   Notify(INFO, "MaxRel = %5.2f, MinRel = %5.2f", maxrel, minrel);
+   mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "MaxRel = %5.2f, MinRel = %5.2f", maxrel, minrel);
 
    image->ensureValidSizeForTexturing(mMaxTextureSize);
 
@@ -2319,7 +2321,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeSlopeAspectImage(const osg::HeightF
 				if (slope==0) aspect = 0;
 
 				if ((y==512)&&(x>1020))
-					Notify(INFO, "Slope(%i,%i): b=%5.3f, c=%5.3f  slope=%5.3f aspect=%5.3f",x,y,b,c,slope, aspect);
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Slope(%i,%i): b=%5.3f, c=%5.3f  slope=%5.3f aspect=%5.3f",x,y,b,c,slope, aspect);
 			}
 			else
 			{
@@ -2335,7 +2337,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeSlopeAspectImage(const osg::HeightF
 		}
 	}
 
-	Notify(INFO, "Max slope = %5.2f", maxslope);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Max slope = %5.2f", maxslope);
 
 	dst_image->ensureValidSizeForTexturing(mMaxTextureSize);
 
@@ -2362,9 +2364,9 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 {
 
 
-	Notify(INFO, "Making the Combined Image for %i", l.idx);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__, "Making the Combined Image for %i", l.idx);
 
-	if (f_image == NULL) Notify(WARN, "missing filter image" );
+	if (f_image == NULL) mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__, "missing filter image" );
 
 //	int max_height = 128;		// max height for trees
 //	int min_height = 1;			// min height for trees
@@ -2389,7 +2391,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 
 	int scale = im_width/hf_width;
 
-	Notify(INFO, "scale = %i,  image width = %i,  hf width = %i", scale, im_width, hf_width);
+	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__, "scale = %i,  image width = %i,  hf width = %i", scale, im_width, hf_width);
 
 	dtCore::RefPtr<osg::Image> dst_image = new osg::Image;
 	dst_image->allocateImage(im_width, im_height, 1, GL_RGB, GL_UNSIGNED_BYTE);
@@ -2397,7 +2399,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 
     unsigned char* dst_data = NULL;
 
-//	Notify(INFO, "RGB filter selected = %3.0f, %3.0f, %3.0f", rgb_selected[0], rgb_selected[1], rgb_selected[2]);
+//	mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB filter selected = %3.0f, %3.0f, %3.0f", rgb_selected[0], rgb_selected[1], rgb_selected[2]);
 
 	float value = 0;
 	float height_value=0;
@@ -2451,12 +2453,12 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 				float r1= r_data[1];
 				float r2= r_data[2];
 
-				Notify(INFO, "filterdata for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, f_data[0], f_data[1], f_data[2]);
-				Notify(INFO, "slopedata for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, s_data[0], s_data[1], s_data[2]);
-				Notify(INFO, "heightdata for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, h_data[0], h_data[1], h_data[2]);
-				Notify(INFO, "re_data for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, r_data[0], r_data[1], r_data[2]);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "filterdata for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, f_data[0], f_data[1], f_data[2]);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "slopedata for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, s_data[0], s_data[1], s_data[2]);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "heightdata for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, h_data[0], h_data[1], h_data[2]);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "re_data for %i,%i = %3.0f, %3.0f, %3.0f", x/scale, y/scale, r_data[0], r_data[1], r_data[2]);
 				Notify(INFO) << s_data[0] << "," << s_data[1] << "," << s_data[2] << endl;
-				Notify(INFO, " ");
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   " ");
 			}
 */
 			if (value <= 254 )									// nonwhite -> has vegetation possibility
@@ -2473,18 +2475,18 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 					float redelta = relel_value - 128.0f;
 					if (redelta > 0)
 					{						// upward relative elevation (unfavorable)
-//						Notify(INFO, "upperhit = %i, %4.2f", ++upperhit,redelta);
+//						mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "upperhit = %i, %4.2f", ++upperhit,redelta);
 						value = value + 1.5f*redelta;
 					}
 					else
 					{						// downward relevation elevation (favorable)
-//						Notify(INFO, "lowerhit = %i, %4.2f", ++lowerhit, redelta);
+//						mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "lowerhit = %i, %4.2f", ++lowerhit, redelta);
 						value = value + 1.5f*redelta;
 					}
 
 					//float sldelta = s_data[1]/max_slope;
 					value = value + (slope_value/max_slope)*100.0f;		//greater slope is unfavorable (linear)
-//					Notify(INFO, "Changed value by %i for %5.3f", int(1.5f*redelta), relel_value);
+//					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Changed value by %i for %5.3f", int(1.5f*redelta), relel_value);
 				}
 			}
 
@@ -2514,7 +2516,7 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeCombinedImage(
 				dst_data[2] = (unsigned char)clamp(value, 0.0f, 255.0f);  //store probability
 			}
 
-		//			Notify(INFO, "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, dst_data[0], dst_data[1], dst_data[2]);
+		//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "RGB for %i,%i = %3.0f, %3.0f, %3.0f", x, y, dst_data[0], dst_data[1], dst_data[2]);
 
 		}
 	}
@@ -2833,9 +2835,9 @@ dtCore::RefPtr<osg::Image> SOARXTerrain::MakeBaseColor(const osg::HeightField* h
    }
 
   // int mMaxTextureSize = this->GetMaxTextureSize();
-//   Notify(INFO, "within MakeBaseColor: MaxTextureSize = %i", mMaxTextureSize);
+//   mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "within MakeBaseColor: MaxTextureSize = %i", mMaxTextureSize);
 
-//   Notify(INFO, "width = %i, height = %i", width, height);
+//   mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "width = %i, height = %i", width, height);
 
 //   if(width > mMaxTextureSize) width = mMaxTextureSize;
 //   if(height > mMaxTextureSize) height = mMaxTextureSize;
@@ -3712,7 +3714,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
    }
 
 //   mMaxTextureSize = this->GetMaxTextureSize();
-//   Notify(INFO, "Within LoadSegment: MaxTextureSize = %i", mMaxTextureSize);
+//   mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Within LoadSegment: MaxTextureSize = %i", mMaxTextureSize);
 
    char latString[20], longString[20];
 
@@ -3793,7 +3795,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             }
             else
             {
-               Notify(INFO, "SOARXTerrain: Making detail gradient image for level %d...", i);
+               mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making detail gradient image for level %d...", i);
 
                detailGradient = MakeDetailGradient(i);
 
@@ -3806,7 +3808,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             }
             else
             {
-               Notify(INFO, "SOARXTerrain: Making detail scale image for level %d...", i);
+               mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making detail scale image for level %d...", i);
 
                detailScale = MakeDetailScale(i);
 
@@ -3848,7 +3850,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
          }
          else
          {
-            Notify(INFO, "SOARXTerrain: Making base gradient image for %s...", cellName);
+            mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making base gradient image for %s...", cellName);
 
             baseGradient = MakeBaseGradient(hf.get());
 
@@ -3862,7 +3864,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
          }
          else
          {
-            Notify(INFO, "SOARXTerrain: Making base color image for %s...", cellName);
+            mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making base color image for %s...", cellName);
 
             baseColor = MakeBaseColor(hf.get(), latitude, longitude);
 
@@ -3882,13 +3884,13 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 			 }
 			 else
 			 {
-				 Notify(INFO, "SOARXTerrain: Making base LCC color image for %s...", cellName);
+				 mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making base LCC color image for %s...", cellName);
 				 baseLCCColor = MakeBaseLCCColor(hf.get(), latitude, longitude);
 				 baseLCCColor->ensureValidSizeForTexturing(mMaxTextureSize);
 				 osgDB::writeImageFile(*(baseLCCColor.get()), baseLCCColorPath);
 			 }
 		 
-//			 Notify(INFO, "SOARXTerrain: Making Land Cover Classification image for level %d...", i);
+//			 mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making Land Cover Classification image for level %d...", i);
 
 			 for(vector<LCCs>::iterator l = mLCCs.begin();
 						l != mLCCs.end();
@@ -3919,7 +3921,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							}
 							else
 							{
-								Notify(INFO, "SOARXTerrain: Making LCC image for LCC type %s...", idxnum);
+								mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making LCC image for LCC type %s...", idxnum);
 								osg::Vec3 selectedRGB((*l).rgb[0],(*l).rgb[1],(*l).rgb[2]);	
 								LCCimage = MakeLCCImage(baseLCCColor.get(), selectedRGB);
 								LCCimage->ensureValidSizeForTexturing(mMaxTextureSize);
@@ -3928,12 +3930,12 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							
 							//dtCore::RefPtr<osg::Image> LCCfilter;
 							
-							Notify(INFO, "SOARXTerrain: Making LCC smoothed image for LCC type %s...", idxnum);
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making LCC smoothed image for LCC type %s...", idxnum);
 							osg::Vec3 filterRGB(0.0,0.0,0.0);					//select black
 							dtCore::RefPtr<osg::Image> LCCfilter = MakeFilteredImage((LCCimage.get()), filterRGB);
 							LCCfilter->ensureValidSizeForTexturing(mMaxTextureSize);
 
-							Notify(INFO, "LCCimage count = %i", LCCimage->referenceCount());
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "LCCimage count = %i", LCCimage->referenceCount());
 							LCCimage.release();
 							LCCimage.~RefPtr();
 							LCCimage = NULL;
@@ -3943,7 +3945,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							string MaskPath = mCachePath + "/" + cellName + ".lcc.filter." + "11" + mImageExtension;
 							if (osgDB::fileExists(MaskPath))
 							{
-								//Notify(INFO, "Reading the mask image");
+								//mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Reading the mask image");
 //								dtCore::RefPtr<osgDB::ImageOptions> options = new osgDB::ImageOptions;
 								options->_destinationImageWindowMode = osgDB::ImageOptions::PIXEL_WINDOW;
 								options->_destinationPixelWindow.set(0,0,mMaxTextureSize,mMaxTextureSize);
@@ -3960,7 +3962,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							}
 							LCCfilter = ApplyMask(LCCfilter.get(), MaskImage.get());
 
-							Notify(INFO, "MaskImage count = %i", MaskImage->referenceCount());
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "MaskImage count = %i", MaskImage->referenceCount());
 							MaskImage.release();
 							MaskImage.~RefPtr();
 							MaskImage = NULL;
@@ -3968,7 +3970,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 							LCCfilter->ensureValidSizeForTexturing(mMaxTextureSize);
 							osgDB::writeImageFile(*(LCCfilter.get()), LCCfilterPath);
 
-							Notify(INFO, "LCCfilter count = %i", LCCfilter->referenceCount());
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "LCCfilter count = %i", LCCfilter->referenceCount());
 							LCCfilter.release();
 							LCCfilter.~RefPtr();
 							LCCfilter = NULL;
@@ -3983,8 +3985,8 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
 			if(hf.get() != NULL)   // this is normal
 			{
-				//Notify(INFO, "HeightField hf not NULL - this is good!");
-				//Notify(INFO, "hf columns = %i  rows = %i", hf->getNumColumns(),hf->getNumRows());
+				//mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "HeightField hf not NULL - this is good!");
+				//mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "hf columns = %i  rows = %i", hf->getNumColumns(),hf->getNumRows());
 
 				dtCore::RefPtr<osg::Image> HFimage;
 				string HFimagePath = mCachePath + "/" + cellName + ".hf.image" + mImageExtension;
@@ -3994,7 +3996,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 				}
 				else
 				{
-					Notify(INFO, "SOARXTerrain: Making heightmap image for level %d...", i);
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making heightmap image for level %d...", i);
 					HFimage = MakeHeightmapImage(hf.get());
 					HFimage->ensureValidSizeForTexturing(mMaxTextureSize);
 					osgDB::writeImageFile(*(HFimage.get()), HFimagePath);
@@ -4008,7 +4010,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 				}
 				else
 				{
-					Notify(INFO, "SOARXTerrain: Making slopemap image for level %d...", i);
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making slopemap image for level %d...", i);
 //					SLimage = MakeSlopemapImage(hf);
 					SLimage = MakeSlopeAspectImage(hf.get());
 					SLimage->ensureValidSizeForTexturing(mMaxTextureSize);
@@ -4027,7 +4029,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 				}
 				else
 				{
-					Notify(INFO, "SOARXTerrain: Making relative elevation image for level %d...", i);
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making relative elevation image for level %d...", i);
 					REimage = MakeRelativeElevationImage(hf.get());
 					REimage->ensureValidSizeForTexturing(mMaxTextureSize);
 					osgDB::writeImageFile(*(REimage.get()), REimagePath);
@@ -4048,7 +4050,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
 						if(osgDB::fileExists(CimagePath))
 						{
-							Notify(INFO, "SOARXTerrain: Probability map for LCC type %i exists.",idx);
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Probability map for LCC type %i exists.",idx);
 							//mCimage[LCCindices[k]] = osgDB::readImageFile(CimagePath);
 						}
 						else
@@ -4063,27 +4065,27 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
 							dtCore::RefPtr<osg::Image> LCCfilter = osgDB::readImageFile(LCCfilterPath);
 
-//							Notify(DEBUG_INFO, "filter image sizes = %i", LCCfilter->s());
-//							Notify(DEBUG_INFO, "mMaxTextSize = %i", mMaxTextureSize);
+//							mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "filter image sizes = %i", LCCfilter->s());
+//							mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "mMaxTextSize = %i", mMaxTextureSize);
 
 //							dtCore::RefPtr<osg::Image> mCimage;
-							Notify(INFO, "SOARXTerrain: Making probability map for LCC type %i.",idx);
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making probability map for LCC type %i.",idx);
 
-//							Notify(INFO, "Into MakeCombined: LCCfilter count = %i", LCCfilter->referenceCount());
-//							Notify(INFO, "Into MakeCombined: HFimage count = %i", HFimage->referenceCount());
-//							Notify(INFO, "Into MakeCombined: SLimage count = %i", SLimage->referenceCount());
-//							Notify(INFO, "Into MakeCombined: REimage count = %i", REimage->referenceCount());
+//							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Into MakeCombined: LCCfilter count = %i", LCCfilter->referenceCount());
+//							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Into MakeCombined: HFimage count = %i", HFimage->referenceCount());
+//							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Into MakeCombined: SLimage count = %i", SLimage->referenceCount());
+//							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Into MakeCombined: REimage count = %i", REimage->referenceCount());
 
 							dtCore::RefPtr<osg::Image> mCimage = MakeCombinedImage((*l), LCCfilter.get(), HFimage.get(), SLimage.get(), REimage.get());
 							mCimage->ensureValidSizeForTexturing(mMaxTextureSize);
 							osgDB::writeImageFile(*(mCimage.get()), CimagePath);
 
-							Notify(INFO, "LCCfilter count = %i", LCCfilter->referenceCount());
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "LCCfilter count = %i", LCCfilter->referenceCount());
 							LCCfilter.release();
 							LCCfilter.~RefPtr();
 							LCCfilter = NULL;
 
-							Notify(INFO, "mCimage count = %i", mCimage->referenceCount());
+							mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "mCimage count = %i", mCimage->referenceCount());
 							mCimage.release();
 							mCimage.~RefPtr();
 							mCimage = NULL;
@@ -4098,7 +4100,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 			}
 			else			//HF is NULL - this is a potentially bad thing - relying on pre-created images
 			{
-				//Notify(INFO, "HeightField hf is NULL - danger!");
+				//mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "HeightField hf is NULL - danger!");
 
 				for(vector<LCCs>::iterator l = mLCCs.begin();
 					l != mLCCs.end();
@@ -4114,12 +4116,12 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
 
 						if(osgDB::fileExists(CimagePath))
 						{
-//							Notify(DEBUG_INFO, "SOARXTerrain: Combined image for LCC type %i for level %d exists.",idx, i);
+//							mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "SOARXTerrain: Combined image for LCC type %i for level %d exists.",idx, i);
 							//mCimage[LCCindices[k]] = osgDB::readImageFile(CimagePath);
 						}
 						else
 						{
-							Notify(WARN, "Probability map(s) missing and HeightField is NULL.  Exitting.");
+							mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__,  "Probability map(s) missing and HeightField is NULL.  Exitting.");
 							exit(-42);
 						}
 					
@@ -4274,7 +4276,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             }
             else
             {
-               Notify(INFO, "SOARXTerrain: Making roads for %s...", cellName);
+               mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Making roads for %s...", cellName);
 
                roads = MakeRoads(latitude, longitude, origin).get();
 
@@ -4286,7 +4288,7 @@ void SOARXTerrain::LoadSegment(int latitude, int longitude)
             mt->addChild(roads.get());
          }
 
-         Notify(INFO, "SOARXTerrain: Loaded %s", cellName);
+         mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "SOARXTerrain: Loaded %s", cellName);
 
          return;
       }
@@ -4492,7 +4494,9 @@ void SOARXTerrain::GetAABB(dGeomID g, dReal aabb[6])
    aabb[4] = (maxLat - st->mOriginLatitude)*osg::DegreesToRadians(1.0f)*semiMajorAxis;
    aabb[5] = 10000.0f;
 
-   Notify(INFO) << minLon << " " << minLat << " " << maxLon << " " << maxLat << endl;
+   std::ostringstream str;
+   str << minLon << " " << minLat << " " << maxLon << " " << maxLat << endl;
+   LOG_INFO( str.str().c_str() );
 }
 
 /**
@@ -4540,7 +4544,7 @@ void SOARXTerrain::SetLCCVisibility(bool mask)
 	}
 	else
 	{
-		Notify(WARN, "LCC not loaded");
+		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__,  "LCC not loaded");
 	}
 }
 
@@ -4562,7 +4566,7 @@ bool SOARXTerrain::LoadLCCConfiguration(string filename)
 	}
 	else
 	{
-		Notify(WARN, "Can't load %s", filename.c_str());
+		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__,  "Can't load %s", filename.c_str());
 		return false;
 	}
 }
@@ -4593,77 +4597,77 @@ void SOARXTerrain::ParseLCCConfiguration(TiXmlElement* configElement)
 			if((str = DefinitionElement->Attribute("Index")) != NULL)
 			{
 				lcc.idx = atoi(str);
-				Notify(DEBUG_INFO, "Index = %i", lcc.idx);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Index = %i", lcc.idx);
 			}
 			if((str = DefinitionElement->Attribute("R")) != NULL)
 			{
 				lcc.rgb[0]=atoi(str);
-				Notify(DEBUG_INFO, "R = %i", lcc.rgb[0]);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "R = %i", lcc.rgb[0]);
 			}
 			if((str = DefinitionElement->Attribute("G")) != NULL)
 			{
 				lcc.rgb[1]=atoi(str);
-				Notify(DEBUG_INFO, "G = %i", lcc.rgb[1]);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "G = %i", lcc.rgb[1]);
 			}
 			if((str = DefinitionElement->Attribute("B")) != NULL)
 			{
 				lcc.rgb[2]=atoi(str);
-				Notify(DEBUG_INFO, "B = %i", lcc.rgb[2]);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "B = %i", lcc.rgb[2]);
 			}
 			if((str = DefinitionElement->Attribute("Name")) != NULL)
 			{
 				lcc.name = str;
-				Notify(DEBUG_INFO, "name of LCCtype = %s", lcc.name.c_str());
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "name of LCCtype = %s", lcc.name.c_str());
 			}
 			if((str = DefinitionElement->Attribute("SlopeMin")) != NULL)
 			{
 				lcc.slope.min = atof(str);
-				Notify(DEBUG_INFO, "slope min = %5.2f", lcc.slope.min);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope min = %5.2f", lcc.slope.min);
 			}
 			if((str = DefinitionElement->Attribute("SlopeMax")) != NULL)
 			{
 				lcc.slope.max = atof(str);
-				Notify(DEBUG_INFO, "slope max = %5.2f", lcc.slope.max);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope max = %5.2f", lcc.slope.max);
 			}
 			if((str = DefinitionElement->Attribute("SlopeSharpness")) != NULL)
 			{
 				lcc.slope.sharpness = atof(str);
-				Notify(DEBUG_INFO, "slope sharpness = %5.2f", lcc.slope.sharpness);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope sharpness = %5.2f", lcc.slope.sharpness);
 			}
 			if((str = DefinitionElement->Attribute("ElevationMin")) != NULL)
 			{
 				lcc.elevation.min = atof(str);
-				Notify(DEBUG_INFO, "elevation min = %5.2f", lcc.elevation.min);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation min = %5.2f", lcc.elevation.min);
 			}
 			if((str = DefinitionElement->Attribute("ElevationMax")) != NULL)
 			{
 				lcc.elevation.max = atof(str);
-				Notify(DEBUG_INFO, "elevation max = %5.2f", lcc.elevation.max);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation max = %5.2f", lcc.elevation.max);
 			}
 			if((str = DefinitionElement->Attribute("ElevationSharpness")) != NULL)
 			{
 				lcc.elevation.sharpness = atof(str);
-				Notify(DEBUG_INFO, "elevation sharpness = %5.2f", lcc.elevation.sharpness);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation sharpness = %5.2f", lcc.elevation.sharpness);
 			}
 			if((str = DefinitionElement->Attribute("RelativeElevationMin")) != NULL)
 			{
 				lcc.relelevation.min = atof(str);
-				Notify(DEBUG_INFO, "relelevation min = %5.2f", lcc.relelevation.min);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation min = %5.2f", lcc.relelevation.min);
 			}
 			if((str = DefinitionElement->Attribute("RelativeElevationMax")) != NULL)
 			{
 				lcc.relelevation.max = atof(str);
-				Notify(DEBUG_INFO, "relelevation max = %5.2f", lcc.relelevation.max);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation max = %5.2f", lcc.relelevation.max);
 			}
 			if((str = DefinitionElement->Attribute("RelativeElevationSharpness")) != NULL)
 			{
 				lcc.relelevation.sharpness = atof(str);
-				Notify(DEBUG_INFO, "relelevation sharpness = %5.2f", lcc.relelevation.sharpness);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation sharpness = %5.2f", lcc.relelevation.sharpness);
 			}
 			if((str = DefinitionElement->Attribute("Aspect")) != NULL)
 			{
 				lcc.aspect = atof(str);
-				Notify(DEBUG_INFO, "aspect = %5.2f", lcc.aspect);
+				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "aspect = %5.2f", lcc.aspect);
 			}
 
 			
@@ -4681,21 +4685,21 @@ void SOARXTerrain::ParseLCCConfiguration(TiXmlElement* configElement)
 				if((str = ModelElement->Attribute("Name")) != NULL)
 				{
 					model.name = str;
-					Notify(DEBUG_INFO, "name of model = %s", model.name.c_str());
+					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "name of model = %s", model.name.c_str());
 				}
 				if((str = ModelElement->Attribute("Scale")) != NULL)
 				{
 					model.scale = atof(str);
-					Notify(DEBUG_INFO, "scale of model = %5.2f", model.scale);
+					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "scale of model = %5.2f", model.scale);
 				}
 
 				if(osgDB::fileExists("data/" + model.name))
 				{
 					lcc.lccmodel.push_back(model);
-					Notify(DEBUG_INFO, "Found model = %s", model.name.c_str());
+					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Found model = %s", model.name.c_str());
 				}
 				else
-					Notify(DEBUG_INFO, "Couldn't find model = %s", model.name.c_str());
+					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Couldn't find model = %s", model.name.c_str());
 
 				ModelElement= ModelElement->NextSiblingElement("Model");
 
@@ -4704,11 +4708,11 @@ void SOARXTerrain::ParseLCCConfiguration(TiXmlElement* configElement)
 		//if model size = 0, then don't push back, else push back
 		if (lcc.lccmodel.size() != 0)
 		{
-			Notify(INFO, "Using LCCType %i (%s), found %i model(s)", lcc.idx, lcc.name.c_str(), lcc.lccmodel.size());
+			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Using LCCType %i (%s), found %i model(s)", lcc.idx, lcc.name.c_str(), lcc.lccmodel.size());
 			mLCCs.push_back(lcc);
 		}
 		else
-			Notify(DEBUG_INFO, "Ignoring LCCType %i (%s), no models found", lcc.idx, lcc.name.c_str());
+			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Ignoring LCCType %i (%s), no models found", lcc.idx, lcc.name.c_str());
 
 		LCCTypeElement = LCCTypeElement->NextSiblingElement("LCCType");
 	}
@@ -4730,7 +4734,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 		return;
 	}
 
-//    Notify(DEBUG_INFO, "clear object cache");
+//    mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "clear object cache");
 //	osgDB::Registry::instance()->clearObjectCache();
 
 	float vegedistance = 20000.0f;
@@ -4777,8 +4781,8 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
          GetMatrixNode()->addChild(lcccell.mRootVegeGroup.get());
 
 
-//			Notify(INFO,"Start size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
-//			Notify(INFO,"Start size of mGroupies = %i, capacity = %i", lcccell.mGroupies.size(),lcccell.mGroupies.capacity());
+//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,  "Start size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
+//			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,  "Start size of mGroupies = %i, capacity = %i", lcccell.mGroupies.size(),lcccell.mGroupies.capacity());
 
 
 
@@ -4918,7 +4922,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 //						sprintf(qsuffix, "_%d.flt",  q);
 //						string myvegename = (*l).model + qsuffix;
 
-						Notify(DEBUG_INFO, "Loading %s", (*lm).name.c_str());
+						mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Loading %s", (*lm).name.c_str());
 
 						(*lm).vegeObject = static_cast<osg::Group*>(osgDB::readNodeFile((*lm).name));
    						(*lm).vegeObject->setDataVariance(osg::Object::STATIC);
@@ -4980,7 +4984,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 					}
 
-					Notify(INFO, "Placing LCCtype %i '%s'....",(*l).idx, (*l).name.c_str());
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Placing LCCtype %i '%s'....",(*l).idx, (*l).name.c_str());
 
 					// identify which probability map we'll be using
 					char idxnum[3];
@@ -4997,7 +5001,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					//load up that probability map
 					dtCore::RefPtr<osg::Image> mCimage = osgDB::readImageFile(mCimagePath);
 
-//					Notify(DEBUG_INFO, "allocation mode = %i", mCimage.get()->getAllocationMode());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "allocation mode = %i", mCimage.get()->getAllocationMode());
 //					mCimage.get()->setAllocationMode(osg::Image::USE_MALLOC_FREE);
 
 					for (int y = 0; y < mMaxTextureSize; y++)
@@ -5070,7 +5074,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 	//									int whichmodel = GetVegType(mCimage.get(), x, y, (*l).aspect);
 										int whichmodel = int(rand()/(RAND_MAX+1.0f)*(*l).lccmodel.size());		// 0 to size-1
-	//									Notify(INFO, "model selected = %i", whichmodel);
+	//									mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "model selected = %i", whichmodel);
 
 										if ((*l).idx>30)     //don't scale urban models
 										{
@@ -5123,7 +5127,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 										else
 										{
 	//										Notify(NOTICE, "Ouch!  I collided with something in vg%i", vg );
-	//										Notify(DEBUG_INFO, "VegeXform number of children = %i", vegeXform->getNumChildren());
+	//										mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "VegeXform number of children = %i", vegeXform->getNumChildren());
 											vegeXform->removeChild(vegeXform->getNumChildren());
 										}
 
@@ -5134,19 +5138,19 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 							}
 						}//x
 					}//y
-					Notify(INFO, "mCimage count = %i", mCimage->referenceCount());
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "mCimage count = %i", mCimage->referenceCount());
 					mCimage.release();
 					mCimage.release();
 					mCimage.~RefPtr();
 					mCimage = NULL;
 
-					Notify(INFO, "%s count = %i", (*l).name.c_str(), vegecount);
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "%s count = %i", (*l).name.c_str(), vegecount);
 					
 					totalvegecount = totalvegecount + vegecount;
-					Notify(INFO, "Total count = %i", totalvegecount);
+					mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Total count = %i", totalvegecount);
 					
-//					Notify(DEBUG_INFO,"size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
-//					Notify(DEBUG_INFO,"size of mGroupies = %i, capacity = %i", lcccell.mGroupies.size(),lcccell.mGroupies.capacity());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__,"size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__,"size of mGroupies = %i, capacity = %i", lcccell.mGroupies.size(),lcccell.mGroupies.capacity());
 				}
 
 			}
@@ -5168,8 +5172,8 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					if (vegechild > maxchildren)	maxchildren = vegechild;
 					if (vegechild < minchildren)	minchildren = vegechild;
 
-//					Notify(DEBUG_INFO, "%i, %i", vg, vegechild);
-//					Notify(DEBUG_INFO, "Adding VegeGround #%i:%i to Scene; max = %i, min = %i", groupcount++, vg, maxchildren, minchildren);
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "%i, %i", vg, vegechild);
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Adding VegeGround #%i:%i to Scene; max = %i, min = %i", groupcount++, vg, maxchildren, minchildren);
 
 					int whichgroup = 0;
 					int row = int(vg/256);
@@ -5180,7 +5184,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 					else
 						whichgroup = int((toprow-2)/2)*2 + int(row/2)*128 + 2*(row - int(row/2)*2) + 1;
 
-//					if (row < 3) Notify(INFO, "vg = %i, whichgroup = %i", vg, whichgroup);
+//					if (row < 3) mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "vg = %i, whichgroup = %i", vg, whichgroup);
 
 					groupcount++;
 					totalcount = totalcount + vegechild;
@@ -5191,19 +5195,19 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				}
 				else
 				{
-//					Notify(DEBUG_INFO, "LeafGroup[%i] count = %i", vg, LeafGroup[vg]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "LeafGroup[%i] count = %i", vg, LeafGroup[vg]->referenceCount());
 					LeafGroup[vg].release();
 					LeafGroup[vg].~RefPtr();
 					LeafGroup[vg] = NULL;
 				}
 
-//				Notify(DEBUG_INFO, "Adding VegeGround #%i:%i to Scene; max = %i, min = %i", groupcount++, vg, maxchildren, minchildren);
+//				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Adding VegeGround #%i:%i to Scene; max = %i, min = %i", groupcount++, vg, maxchildren, minchildren);
 			}
 
 			if( groupcount != 0 )
-				Notify(INFO, "gc = %i, max = %i, min = %i, ave = %i", groupcount, maxchildren, minchildren, totalcount/groupcount);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "gc = %i, max = %i, min = %i, ave = %i", groupcount, maxchildren, minchildren, totalcount/groupcount);
 			else
-				Notify(INFO, "gc = %i, max = %i, min = %i", groupcount, maxchildren, minchildren);
+				mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "gc = %i, max = %i, min = %i", groupcount, maxchildren, minchildren);
 
 			//delete empty nodes
 			for (int i = 0; i < 4096; i++)
@@ -5211,7 +5215,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				if(QuadGroup64[i]->getNumChildren() == 0)
 				{
 					QuadGroup32[i/4]->removeChild(QuadGroup64[i].get());
-//					Notify(DEBUG_INFO, "QG64[%i] count = %i", i, QuadGroup64[i]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "QG64[%i] count = %i", i, QuadGroup64[i]->referenceCount());
 					QuadGroup64[i].release();
 					QuadGroup64[i].~RefPtr();
 					QuadGroup64[i]=NULL;
@@ -5225,7 +5229,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				if(QuadGroup32[i]->getNumChildren() == 0)
 				{
 					QuadGroup16[i/4]->removeChild(QuadGroup32[i].get());
-//					Notify(DEBUG_INFO, "QG32[%i] count = %i", i, QuadGroup32[i]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "QG32[%i] count = %i", i, QuadGroup32[i]->referenceCount());
 					QuadGroup32[i].release();
 					QuadGroup32[i].~RefPtr();
 					QuadGroup32[i]=NULL;
@@ -5239,7 +5243,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				if(QuadGroup16[i]->getNumChildren() == 0)
 				{
 					QuadGroup8[i/4]->removeChild(QuadGroup16[i].get());
-//					Notify(DEBUG_INFO, "QG16[%i] count = %i", i, QuadGroup16[i]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "QG16[%i] count = %i", i, QuadGroup16[i]->referenceCount());
 					QuadGroup16[i].release();
 					QuadGroup16[i].~RefPtr();
 					QuadGroup16[i]=NULL;
@@ -5252,7 +5256,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				if(QuadGroup8[i]->getNumChildren() == 0)
 				{
 					QuadGroup4[i/4]->removeChild(QuadGroup8[i].get());
-//					Notify(DEBUG_INFO, "QG8[%i] count = %i", i, QuadGroup8[i]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "QG8[%i] count = %i", i, QuadGroup8[i]->referenceCount());
 					QuadGroup8[i].release();
 					QuadGroup8[i].~RefPtr();
 					QuadGroup8[i]=NULL;
@@ -5265,7 +5269,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				if(QuadGroup4[i]->getNumChildren() == 0)
 				{
 					QuadGroup2[i/4]->removeChild(QuadGroup4[i].get());
-//					Notify(DEBUG_INFO, "QG4[%i] count = %i", i, QuadGroup4[i]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "QG4[%i] count = %i", i, QuadGroup4[i]->referenceCount());
 					QuadGroup4[i].release();
 					QuadGroup4[i].~RefPtr();
 					QuadGroup4[i]=NULL;
@@ -5278,7 +5282,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				if(QuadGroup2[i]->getNumChildren() == 0)
 				{
 					lcccell.mRootVegeGroup.get()->removeChild(QuadGroup2[i].get());
-//					Notify(DEBUG_INFO, "QG2[%i] count = %i", i, QuadGroup2[i]->referenceCount());
+//					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "QG2[%i] count = %i", i, QuadGroup2[i]->referenceCount());
 					QuadGroup2[i].release();
 					QuadGroup2[i].~RefPtr();
 					QuadGroup2[i]=NULL;
@@ -5287,7 +5291,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 //					lcccell.mGroupies.push_back(QuadGroup2[i].get());
 			}
 
-			Notify(INFO, "Placement Done!");
+			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Placement Done!");
 
 			osgUtil::Optimizer optimzer;
 //			optimzer.optimize(lcccell.mRootVegeGroup.get());
@@ -5297,11 +5301,11 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 				osgUtil::Optimizer::REMOVE_REDUNDANT_NODES |
 				//osgUtil::Optimizer::FLATTEN_STATIC_TRANSFORMS |
 				osgUtil::Optimizer::CHECK_GEOMETRY);
-			Notify(INFO, "Optimization Done!");
+			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Optimization Done!");
 
 
-//			Notify(DEBUG_INFO,"End size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
-//			Notify(DEBUG_INFO,"End size of mGroupies = %i, capacity = %i", lcccell.mGroupies.size(),lcccell.mGroupies.capacity());
+//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__,"End size of mPats = %i, capacity = %i", lcccell.mPATs.size(),lcccell.mPATs.capacity());
+//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__,"End size of mGroupies = %i, capacity = %i", lcccell.mGroupies.size(),lcccell.mGroupies.capacity());
 
 //			lcccell.mRootVegeGroup.get()->setCullingActive(true);
 		}
@@ -5309,7 +5313,7 @@ void SOARXTerrain::AddVegetation(int latitude, int longitude)
 
 	mSegmentLCCCellMap[segment] = lcccell;
 
-//	Notify(DEBUG_INFO, "clear object cache");
+//	mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "clear object cache");
 //	osgDB::Registry::instance()->clearObjectCache();
  
 }

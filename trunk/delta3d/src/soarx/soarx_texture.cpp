@@ -3,11 +3,12 @@
 #include "soarx/soarxdrawable.h"
 #include "soarx/soarx_image.h"
 
-#include "dtCore/notify.h"
+#include <dtUtil/log.h>
 
 #include <osg/GL>
 
 using namespace dtSOARX;
+using namespace dtUtil;
 
 //______________________________________________________________
 void CreateNormalTexture(GLubyte* t)
@@ -239,5 +240,5 @@ void SOARXDrawable::LoadTextures()
 //	glLoadTexture("normal.png");
 	delete text;
 
-	dtCore::Notify(dtCore::INFO, "Textures loaded.\n");
+	LOG_INFO("Textures loaded.");
 }
