@@ -12,7 +12,6 @@
 
 #include "dtAudio/audiomanager.h"
 #include "dtCore/system.h"
-#include "dtCore/notify.h"
 #include "dtCore/camera.h"
 
 
@@ -35,6 +34,7 @@
 
 // name spaces
 using namespace   dtAudio;
+using namespace   dtUtil;
 using namespace   std;
 
 
@@ -563,7 +563,7 @@ AudioManager::LoadWaveFile( const char* file )
    if( filename == "" )
    {
       // still no file name, bail...
-      dtCore::Notify( dtCore::WARN, "AudioManager: can't load file %s", file );
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file );
       return   false;
    }
 
@@ -588,7 +588,8 @@ AudioManager::LoadWaveFile( const char* file )
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       // somethings wrong with buffers, bail...
-      dtCore::Notify( dtCore::WARN, "AudioManager: alGenBuffers error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alGenBuffers error %d", err );
       delete   bd;
       return   false;
    }
@@ -608,7 +609,8 @@ AudioManager::LoadWaveFile( const char* file )
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       // can't load the wave file, bail...
-      dtCore::Notify( dtCore::WARN, "AudioManager: alutLoadWAVFile error %d on %s", err, file );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alutLoadWAVFile error %d on %s", err, file );
       alDeleteBuffers( 1L, &bd->buf );
       delete   bd;
       return   false;
@@ -620,7 +622,8 @@ AudioManager::LoadWaveFile( const char* file )
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       // can't copy the data??? bail like you've never bailed before...
-      dtCore::Notify( dtCore::WARN, "AudioManager: alBufferData error %d on %s", err, file );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alBufferData error %d on %s", err, file );
       alDeleteBuffers( 1L, &bd->buf );
       alutUnloadWAV( format, data, size, freq );
       delete   bd;
@@ -634,7 +637,8 @@ AudioManager::LoadWaveFile( const char* file )
    {
       // can't unload the wave file?
       // well, ok we just leaked but can continue
-      dtCore::Notify( dtCore::WARN, "AudioManager: alutUnloadWAV error %d on %s", err, file );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alutUnloadWAV error %d on %s", err, file );
    }
 
 
@@ -847,8 +851,6 @@ AudioManager::PreFrame( const double deltaFrameTime )
          SetRolloff( snd.get() );
          continue;
       }
-
-      Notify( dtCore::WARN, "AudioManager: Unknown command:%s", cmd);
    }
 }
 
@@ -899,7 +901,8 @@ AudioManager::Frame( const double deltaFrameTime )
       alGetSourcei( src, AL_SOURCE_STATE, &state );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
          continue;
       }
 
@@ -955,7 +958,8 @@ AudioManager::Frame( const double deltaFrameTime )
       alGetSourcei( src, AL_SOURCE_STATE, &state );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
          continue;
       }
 
@@ -1076,7 +1080,8 @@ AudioManager::ConfigSources( unsigned int num )
    alGenSources( mNumSources, mSource );
    if( ( error = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alGenSources Error %d", error );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alGenSources Error %d", error );
       if( mSource )
       {
          delete   mSource;
@@ -1113,7 +1118,8 @@ AudioManager::ConfigEAX( bool eax )
    // check for EAX support
    if( alIsExtensionPresent( buf ) == AL_FALSE )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: %s is not available", _EaxVer );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: %s is not available", _EaxVer );
       return   false;
    }
 
@@ -1125,7 +1131,8 @@ AudioManager::ConfigEAX( bool eax )
    mEAXSet  = alGetProcAddress( buf );
    if( mEAXSet == NULL )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: %s is not available", _EaxVer );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: %s is not available", _EaxVer );
       return   false;
    }
 
@@ -1137,7 +1144,8 @@ AudioManager::ConfigEAX( bool eax )
    mEAXGet  = alGetProcAddress( buf );
    if( mEAXGet == NULL)
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: %s is not available", _EaxVer );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: %s is not available", _EaxVer );
       mEAXSet  = NULL;
       return   false;
    }
@@ -1217,8 +1225,10 @@ AudioManager::PlaySound( SoundObj* snd )
       if( ! GetSource( snd ) )
       {
          // no source available
-         dtCore::Notify( dtCore::WARN, "AudioManager: play attempt w/o available sources" );
-         dtCore::Notify( dtCore::WARN, "AudioManager: try increasing the number of sources at config time" );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
+            "AudioManager: play attempt w/o available sources" );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: try increasing the number of sources at config time" );
          return;
       }
 
@@ -1232,7 +1242,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alGetSourcei( src, AL_SOURCE_STATE, &state );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
          return;
       }
 
@@ -1257,7 +1268,8 @@ AudioManager::PlaySound( SoundObj* snd )
    alSourcei( src, AL_BUFFER, buf );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_BUFFER) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcei(AL_BUFFER) error %d", err );
       return;
    }
 
@@ -1265,7 +1277,8 @@ AudioManager::PlaySound( SoundObj* snd )
    alSourcei( src, AL_LOOPING, (snd->IsLooping())? AL_TRUE: AL_FALSE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOPING) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcei(AL_LOOPING) error %d", err );
    }
 
    // set source relative flag
@@ -1275,7 +1288,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
       }
 
       // set initial position and direction
@@ -1292,7 +1306,8 @@ AudioManager::PlaySound( SoundObj* snd )
                   static_cast<ALfloat>(pos[2L]) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_POSITION) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
+            "AudioManager: alSource3f(AL_POSITION) error %d", err );
       }
 
       alSource3f( src,
@@ -1302,7 +1317,8 @@ AudioManager::PlaySound( SoundObj* snd )
                   static_cast<ALfloat>(dir[2L]) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_DIRECTION) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSource3f(AL_DIRECTION) error %d", err );
       }
    }
    else
@@ -1311,7 +1327,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
       }
    }
 
@@ -1319,14 +1336,16 @@ AudioManager::PlaySound( SoundObj* snd )
    alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_GAIN) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_GAIN) error %d", err );
    }
 
    // set pitch
    alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_PITCH) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_PITCH) error %d", err );
    }
 
    // set reference distance
@@ -1336,7 +1355,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcef( src, AL_REFERENCE_DISTANCE, static_cast<ALfloat>(snd->GetMinDistance()) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %d", err );
       }
    }
 
@@ -1347,7 +1367,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcef( src, AL_MAX_DISTANCE, static_cast<ALfloat>(snd->GetMaxDistance()) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_DISTANCE) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
+            "AudioManager: alSourcef(AL_MAX_DISTANCE) error %d", err );
       }
    }
 
@@ -1358,7 +1379,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %d", err );
       }
    }
 
@@ -1369,7 +1391,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcef( src, AL_MIN_GAIN, static_cast<ALfloat>(snd->GetMinGain()) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MIN_GAIN) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcef(AL_MIN_GAIN) error %d", err );
       }
    }
 
@@ -1380,7 +1403,8 @@ AudioManager::PlaySound( SoundObj* snd )
       alSourcef( src, AL_MAX_GAIN, static_cast<ALfloat>(snd->GetMaxGain()) );
       if( ( err = alGetError() ) != AL_NO_ERROR )
       {
-         dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_GAIN) error %d", err );
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alSourcef(AL_MAX_GAIN) error %d", err );
       }
    }
 
@@ -1460,7 +1484,8 @@ AudioManager::SetLoop( SoundObj* snd )
    alSourcei( src, AL_LOOPING, AL_TRUE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOP) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcei(AL_LOOP) error %d", err );
       return;
    }
 
@@ -1487,7 +1512,8 @@ AudioManager::ResetLoop( SoundObj* snd )
    alSourcei( src, AL_LOOPING, AL_FALSE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_LOOP) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
+         "AudioManager: alSourcei(AL_LOOP) error %d", err );
       return;
    }
 
@@ -1523,7 +1549,8 @@ AudioManager::SetRelative( SoundObj* snd )
       {
          // stereo!
          // set flag and bail
-         dtCore::Notify(dtCore::WARN, "AudioManager: A stereo Sound can't be positioned in 3D space");
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
+            "AudioManager: A stereo Sound can't be positioned in 3D space");
          snd->ResetState( Sound::POSITION );
          return;
       }
@@ -1542,7 +1569,8 @@ AudioManager::SetRelative( SoundObj* snd )
    alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__, 
+         "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
       return;
    }
 
@@ -1569,7 +1597,8 @@ AudioManager::SetAbsolute( SoundObj* snd )
    alSourcei( src, AL_SOURCE_RELATIVE, AL_FALSE );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcei(AL_SOURCE_RELATIVE) error %d", err );
       return;
    }
 
@@ -1594,7 +1623,8 @@ AudioManager::SetGain( SoundObj* snd )
    alSourcef( src, AL_GAIN, static_cast<ALfloat>(snd->GetGain()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_GAIN) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_GAIN) error %d", err );
       return;
    }
 
@@ -1619,7 +1649,8 @@ AudioManager::SetPitch( SoundObj* snd )
    alSourcef( src, AL_PITCH, static_cast<ALfloat>(snd->GetPitch()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_PITCH) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_PITCH) error %d", err );
       return;
    }
 
@@ -1647,7 +1678,8 @@ AudioManager::SetPosition( SoundObj* snd )
    alSource3f( src, AL_POSITION, static_cast<ALfloat>(pos[0L]), static_cast<ALfloat>(pos[1L]), static_cast<ALfloat>(pos[2L]) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_POSITION) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSource3f(AL_POSITION) error %d", err );
       return;
    }
 
@@ -1675,7 +1707,8 @@ AudioManager::SetDirection( SoundObj* snd )
    alSource3f( src, AL_DIRECTION, static_cast<ALfloat>(dir[0L]), static_cast<ALfloat>(dir[1L]), static_cast<ALfloat>(dir[2L]) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_DIRECTION) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSource3f(AL_DIRECTION) error %d", err );
       return;
    }
 
@@ -1703,7 +1736,8 @@ AudioManager::SetVelocity( SoundObj* snd )
    alSource3f( src, AL_VELOCITY, static_cast<ALfloat>(velo[0L]), static_cast<ALfloat>(velo[1L]), static_cast<ALfloat>(velo[2L]) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSource3f(AL_VELOCITY) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSource3f(AL_VELOCITY) error %d", err );
       return;
    }
 
@@ -1735,7 +1769,8 @@ AudioManager::SetReferenceDistance( SoundObj* snd )
    alSourcef( src, AL_REFERENCE_DISTANCE, min_dist );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_REFERENCE_DISTANCE) error %d", err );
       return;
    }
 }
@@ -1765,7 +1800,8 @@ AudioManager::SetMaximumDistance( SoundObj* snd )
    alSourcef( src, AL_MAX_DISTANCE, max_dist );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_DISTANCE) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_MAX_DISTANCE) error %d", err );
       return;
    }
 }
@@ -1789,7 +1825,8 @@ AudioManager::SetRolloff( SoundObj* snd )
    alSourcef( src, AL_ROLLOFF_FACTOR, static_cast<ALfloat>(snd->GetRolloffFactor()) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_ROLLOFF_FACTOR) error %d", err );
       return;
    }
 }
@@ -1819,7 +1856,8 @@ AudioManager::SetMinimumGain( SoundObj* snd )
    alSourcef( src, AL_MIN_GAIN, min_gain );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MIN_GAIN) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_MIN_GAIN) error %d", err );
       return;
    }
 }
@@ -1849,7 +1887,8 @@ AudioManager::SetMaximumGain( SoundObj* snd )
    alSourcef( src, AL_MAX_GAIN, max_gain );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
-      dtCore::Notify( dtCore::WARN, "AudioManager: alSourcef(AL_MAX_GAIN) error %d", err );
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alSourcef(AL_MAX_GAIN) error %d", err );
       return;
    }
 }
