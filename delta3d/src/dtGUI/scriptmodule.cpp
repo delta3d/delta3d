@@ -4,7 +4,7 @@
 
 using namespace dtGUI;
 
-ScriptModule::ScriptModule(): CEGUI::ScriptModule(), mCallbacks()
+ScriptModule::ScriptModule(): BaseScriptModule(), mCallbacks()
 {
 }
 
@@ -14,12 +14,11 @@ ScriptModule::~ScriptModule()
 
 void ScriptModule::executeScriptFile(const CEGUI::String& filename, const CEGUI::String& resourceGroup)
 {
-   ///\todo Does support need to be added here?
 }
 
 int ScriptModule::executeScriptGlobal(const CEGUI::String& function_name)
 {
-  return 0;  ///\todo Does this need improvement?
+  return 0;
 }
 
 void ScriptModule::executeString(const CEGUI::String& str)
@@ -34,7 +33,7 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    if( iter != mCallbacks.end() )
    {
       StaticRegistry::value_type::second_type aFunction = (*iter).second;
-      mEventQueue.push( FunctionEventArgsPair( aFunction, ea ) );
+      aFunction( ea );
       return true;
    }
    else
@@ -44,22 +43,7 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    }
 }
 
-void ScriptModule::ProcessQueue()
-{
-   while( !mEventQueue.empty() )
-   {
-      FunctionEventArgsPair pair = mEventQueue.front();
-
-      StaticRegistry::value_type::second_type aFunction = pair.first;
-      CEGUI::EventArgs ea = pair.second;
-      
-      aFunction( ea );
-
-      mEventQueue.pop();
-   }
-}
-
-bool ScriptModule::AddCallback(const std::string& name, FUNCTION f)
+bool ScriptModule::AddCallback(const std::string& name, STATIC_FUNCTION f)
 {
    return mCallbacks.insert( StaticRegistry::value_type( name , f ) ).second;
 }
