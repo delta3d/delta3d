@@ -33,6 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtutild.lib"
 				OutputFile="../../../bin/testAudioD.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -83,6 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtutil.lib"
 				OutputFile="../../../bin/testAudio.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
