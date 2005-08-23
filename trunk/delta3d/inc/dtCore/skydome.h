@@ -30,7 +30,6 @@
 #include <osg/Geometry>
 #include <osg/Transform>
 #include <osgUtil/CullVisitor>
-#include "sg.h"
 
 namespace dtCore
 {
@@ -43,41 +42,14 @@ namespace dtCore
       virtual ~SkyDome();
       
       void SetBaseColor(const osg::Vec3& color);
-      //deprecated version
-      void SetBaseColor(sgVec3 color)
-      {
-         DEPRECATE("void SetBaseColor(sgVec3 color)", "void SetBaseColor(const osg::Vec3& color)")
-         SetBaseColor(osg::Vec3(color[0], color[1], color[2]));
-      }
-      
+           
       void GetBaseColor(osg::Vec3& color) const{color.set(mBaseColor);}
-      //deprecated version
-      void GetBaseColor(sgVec3 color) 
-      {
-         DEPRECATE("void GetBaseColor(sgVec3 color)", "void GetBaseColor(osg::Vec3& color)const")
-         osg::Vec3 tmp;
-         GetBaseColor(tmp);
-         color[0] = tmp[0]; color[1] = tmp[1]; color[2] = tmp[2];
-      }
-
-
+    
       virtual void Repaint(const osg::Vec3& sky_color, const osg::Vec3& fog_color, 
          double sun_angle, double sunAzimuth,
          double vis);
 
-      //deprecated version
-      virtual void Repaint(sgVec3 sky_color, sgVec3 fog_color, 
-         double sun_angle, double sunAzimuth,
-         double vis)
-      {
-         DEPRECATE("virtual void Repaint(sgVec3 sky_color, sgVec3 fog_color, double sun_angle, double sunAzimuth,double vis)", 
-                   "virtual void Repaint(const osg::Vec3& sky_color, const osg::Vec3& fog_color, double sun_angle, double sunAzimuth, double vis)")
-
-         Repaint(osg::Vec3(sky_color[0], sky_color[1], sky_color[2]),
-                 osg::Vec3(fog_color[0], fog_color[1], fog_color[2]),
-                 sun_angle, sunAzimuth, vis);      
-      }
-
+   
    private:
       // Build the sky dome
       void Config();

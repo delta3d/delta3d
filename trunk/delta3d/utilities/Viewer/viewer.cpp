@@ -85,7 +85,7 @@ Viewer::~Viewer( void )
 void
 Viewer::Config( const WinData* d /*= NULL*/ )
 {
-   System*  sys   = System::GetSystem();
+   System*  sys   = System::Instance();
    assert( sys );
 
    if( sys->IsRunning() )

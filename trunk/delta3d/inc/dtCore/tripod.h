@@ -28,8 +28,6 @@
 
 #include <osg/Vec3>
 
-/** \deprecated The sg header will not be supported after the 0.9.2 release of delta3d.*/
-#include "sg.h"
 
 namespace dtCore
 {
@@ -73,53 +71,16 @@ namespace dtCore
       
       void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR) {mPosition = newPos; mHPR = newHPR; }
 
-      /** \deprecated This function will not be supported after the 0.9.2 release of delta3d.
-        * Please use the corresponding function by the same name which uses 2 osg::Vec3 instances.
-        */
-      void SetOffset(sgCoord *coord)
-      {
-         DEPRECATE("void SetOffset(sgCoord *coord)", "void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR)")
-         SetOffset(osg::Vec3(coord->xyz[0], coord->xyz[1], coord->xyz[2]), osg::Vec3(coord->hpr[0], coord->hpr[1], coord->hpr[2]));
-      }
-
       ///Get the Tripod's currently used offset coordinates
       void GetOffset(osg::Vec3& pos_in, osg::Vec3& hpr_in) const{pos_in = mPosition; hpr_in = mHPR;}
-
-      /** \deprecated This function will not be supported after the 0.9.2 release of delta3d.
-        * Please use the corresponding function by the same name which uses 2 osg::Vec3 instances.
-        */
-      void GetOffset(sgCoord *coord) 
-      {
-         DEPRECATE("void GetOffset(sgCoord *coord)", "void GetOffset(osg::Vec3& pos_in, osg::Vec3& hpr_in) const")
-         sgSetCoord(coord, mPosition[0], mPosition[1], mPosition[2], mHPR[0], mHPR[1], mHPR[2]);
-      }
 
       ///Set the scaling factors for each degree of freedom (0.0 - 1.0)
       void SetScale(float x, float y, float z, float h, float p, float r);
       
       void SetScale(const osg::Vec3& xyz, const osg::Vec3& hpr){mXYZScale = xyz; mHPRScale = hpr;}
 
-      /** \deprecated This function will not be supported after the 0.9.2 release of delta3d.
-        * Please use the corresponding function by the same name which uses 2 osg::Vec3 instances.
-        */
-      void SetScale(sgVec3 xyz, sgVec3 hpr)
-      {
-         DEPRECATE("void SetScale(sgVec3 xyz, sgVec3 hpr)", "void SetScale(const osg::Vec3& xyz, const osg::Vec3& hpr)")
-         SetScale(osg::Vec3(xyz[0], xyz[1], xyz[2]), osg::Vec3(hpr[0], hpr[1], hpr[2]));
-      }
-
       ///Get the currently used scaling factors
       void GetScale(osg::Vec3& xyz, osg::Vec3& hpr){xyz = mXYZScale; hpr = mHPRScale;}
-
-      /** \deprecated This function will not be supported after the 0.9.2 release of delta3d.
-        * Please use the corresponding function by the same name which uses 2 osg::Vec3 instances.
-        */
-      void GetScale(sgVec3 xyz, sgVec3 hpr)
-      {
-         DEPRECATE("void GetScale(sgVec3 xyz, sgVec3 hpr)", "void GetScale(osg::Vec3 xyz, osg::Vec3 hpr)")
-         xyz[0] = mXYZScale[0]; xyz[1] = mXYZScale[1]; xyz[2] = mXYZScale[2];
-         hpr[0] = mHPRScale[0]; hpr[1] = mHPRScale[1]; hpr[2] = mHPRScale[2];
-      }
 
       enum TetherMode
       {

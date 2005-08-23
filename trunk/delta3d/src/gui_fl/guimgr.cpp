@@ -956,7 +956,7 @@ void UserInterface::EnvAdvFogCB(Fl_Value_Input *)
    bc[1] = AdvFogEnergy->value();
    bc[2] = AdvFogMolecules->value();
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetAdvFogCtrl(&bc[0]);
+   e->SetAdvFogCtrl(bc);
 }
 
 void UserInterface::EnvFogColorCB(Fl_Value_Input *)
@@ -974,7 +974,7 @@ void UserInterface::EnvFogColorCB(Fl_Value_Input *)
       FogColorLoadButton->redraw();
     
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetFogColor( &color[0] );
+   e->SetFogColor(color);
 }
 
 void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
@@ -1001,7 +1001,7 @@ void UserInterface::EnvFogColorBrowserCB(Fl_Button *)
       FogBlue->value());
 
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetFogColor( &color[0] );
+   e->SetFogColor( color );
 }
 
 void UserInterface::EnvFogVisCB(Fl_Value_Input *o)
@@ -1084,7 +1084,7 @@ void UserInterface::EnvSkyColorCB(Fl_Value_Input*)
       SkyColorLoadButton->redraw();
     
    Environment *e = dynamic_cast<Environment*>(GetSelectedInstance(this));
-   e->SetSkyColor( &color[0] );
+   e->SetSkyColor(color);
 }
 
 
@@ -1120,7 +1120,7 @@ void UserInterface::EnvRefPosCB(Fl_Value_Input *o)
    osg::Vec2 refPos;
    refPos[0] = EnvRefLat->value();
    refPos[1] = EnvRefLong->value();
-   e->SetRefLatLong(&refPos[0]);
+   e->SetRefLatLong(refPos);
 }
 
 void UserInterface::InfRegenerateCB(Fl_Button *o)

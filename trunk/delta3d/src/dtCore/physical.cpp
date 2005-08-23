@@ -782,28 +782,6 @@ void Physical::SetInertiaTensor(const osg::Matrix& inertiaTensor)
    }
 }
 
-//DEPRECATED
-void Physical::SetInertiaTensor(const sgMat3 inertiaTensor)
-{
-   DEPRECATE("void SetInertiaTensor(const sgMat3 inertiaTensor)", "void SetInertiaTensor(const osg::Matrix& inertiaTensor)")
-
-   mMass.I[0] = inertiaTensor[0][0];
-   mMass.I[1] = inertiaTensor[1][0];
-   mMass.I[2] = inertiaTensor[2][0];
-
-   mMass.I[4] = inertiaTensor[0][1];
-   mMass.I[5] = inertiaTensor[1][1];
-   mMass.I[6] = inertiaTensor[2][1];
-
-   mMass.I[8] = inertiaTensor[0][2];
-   mMass.I[9] = inertiaTensor[1][2];
-   mMass.I[10] = inertiaTensor[2][2];
-
-   if(mBodyID != 0)
-   {
-      dBodySetMass(mBodyID, &mMass);
-   }
-}
 
 /**
  * Retrieves this object's inertia tensor.
@@ -824,24 +802,6 @@ void Physical::GetInertiaTensor(osg::Matrix& dest) const
    dest(0,2) = mMass.I[8];
    dest(1,2) = mMass.I[9];
    dest(2,2) = mMass.I[10];
-}
-
-//DEPRECATED
-void Physical::GetInertiaTensor(sgMat3 dest) const
-{
-   DEPRECATE("void GetInertiaTensor(sgMat3 dest) const","void GetInertiaTensor(sgMat3 dest) const")
-
-   dest[0][0] = mMass.I[0];
-   dest[1][0] = mMass.I[1];
-   dest[2][0] = mMass.I[2];
-
-   dest[0][1] = mMass.I[4];
-   dest[1][1] = mMass.I[5];
-   dest[2][1] = mMass.I[6];
-
-   dest[0][2] = mMass.I[8];
-   dest[1][2] = mMass.I[9];
-   dest[2][2] = mMass.I[10];
 }
 
 

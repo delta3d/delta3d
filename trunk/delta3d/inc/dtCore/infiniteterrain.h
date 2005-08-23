@@ -30,7 +30,6 @@
 #include <osg/Node>
 #include <osg/Vec3>
 
-#include "sg.h"
 
 #include "dtCore/physical.h"
 #include "dtUtil/deprecationmgr.h"
@@ -190,15 +189,6 @@ namespace dtCore
           */
          void GetNormal(float x, float y, osg::Vec3& normal, bool smooth = false);
  
-         //depreciated version
-         void GetNormal(float x, float y, sgVec3 normal, bool smooth = false)
-         {
-            DEPRECATE("void GetNormal(float x, float y, sgVec3 normal, bool smooth = false)", "void GetNormal(float x, float y, osg::Vec3& normal, bool smooth = false)")
-            osg::Vec3 tmp(normal[0], normal[1], normal[2]);
-            GetNormal(x, y, tmp, smooth);
-            normal[0] = tmp[0]; normal[1] = tmp[1]; normal[2] = tmp[2];
-         }
-            
 
       private:
 

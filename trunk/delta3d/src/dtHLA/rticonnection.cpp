@@ -15,7 +15,6 @@
 #include <linux/in.h>
 #endif
 
-#include "sg.h"
 #include "tinyxml.h"
 
 #include <osg/Vec3>
@@ -79,7 +78,7 @@ RTIConnection::RTIConnection(string name)
 {
    RegisterInstance(this);
    
-   AddSender(System::GetSystem());
+   AddSender(System::Instance());
 
    SetGeoOrigin(0, 0, 0);
 
@@ -148,7 +147,7 @@ throw (RTI::FederateInternalError)
    }
    mObjectHandleGhostDataMap.clear();
 
-   RemoveSender(System::GetSystem());
+   RemoveSender(System::Instance());
    
    DeregisterInstance(this);
 } 

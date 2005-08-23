@@ -17,7 +17,7 @@ public:
       mCharacter(character),
       mKeyboard(keyboard)
    {
-      AddSender(System::GetSystem());
+      AddSender(System::Instance());
 
       mKeyboard->AddKeyboardListener(this);
    }
@@ -68,7 +68,7 @@ public:
       switch(key)
       {
       case Producer::Key_Escape:
-         System::GetSystem()->Stop();
+         System::Instance()->Stop();
          break;
       default:
          break;
@@ -104,7 +104,7 @@ public:
       mCharacter(character),
       mTarget(target)
    {
-      AddSender(System::GetSystem());
+      AddSender(System::Instance());
    }
 
 

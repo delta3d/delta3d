@@ -25,7 +25,6 @@
 #include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec3>
-#include <sg.h>
 
 namespace dtUtil
 {
@@ -52,14 +51,7 @@ namespace dtUtil
       };
 
       DT_EXPORT void Generate(osg::Vec3&) const;
-      DT_EXPORT void Generate(sgVec3 mV) const
-      {
-         DEPRECATE(  "void Generate(sgVec3) const",
-            "void Generate(osg::Vec3&) const")
-            osg::Vec3 tmp(mV[0], mV[1], mV[2]);
-         Generate(tmp);
-         mV[0] = tmp[0]; mV[1] = tmp[1]; mV[2] = tmp[2];
-      }
+      
 
       DT_EXPORT Domain( DomainEnum dType,
          float a0=0.0f, float a1=0.0f, float a2=0.0f,

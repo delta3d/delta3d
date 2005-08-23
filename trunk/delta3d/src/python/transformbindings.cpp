@@ -64,7 +64,7 @@ void initTransformBindings()
       .def("EpsilonEquals", &Transform::EpsilonEquals, EE_overloads());
       */
    
-   void (Transform::*Set1)(float, float, float, float, float, float) = &Transform::Set;
+   void (Transform::*Set1)(float, float, float, float, float, float, float, float, float) = &Transform::Set;
    void (Transform::*SetLookAt1)(float, float, float, float, float, float, float, float, float) = &Transform::SetLookAt;
    void (Transform::*SetTranslation1)(float, float, float) = &Transform::SetTranslation;
    void (Transform::*SetRotation1)(float, float, float) = &Transform::SetRotation;

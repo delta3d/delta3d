@@ -246,9 +246,6 @@ namespace   dtAudio
                virtual  void     SetVelocity( const osg::Vec3& velocity );
                virtual  void     GetVelocity( osg::Vec3& velocity )  const;
                
-               //DEPRECIATED
-               virtual  void     SetVelocity( const sgVec3& velocity );
-               virtual  void     GetVelocity( sgVec3& velocity )  const;
 
                /// set/get listener's gain (master volume)
                virtual  void     SetGain( float gain );

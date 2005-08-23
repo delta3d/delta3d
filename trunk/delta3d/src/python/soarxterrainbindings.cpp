@@ -18,7 +18,6 @@ void initSOARXTerrainBindings()
    SOARXTerrain* (*SOARXTerrainGI2)(std::string) = &SOARXTerrain::GetInstance;
 
    void (SOARXTerrain::*GetNormal1)(float, float, osg::Vec3&) = &SOARXTerrain::GetNormal;
-   void (SOARXTerrain::*GetNormal2)(float, float, sgVec3) = &SOARXTerrain::GetNormal;
 
    scope SOARXTerrain_scope = class_<SOARXTerrain, bases<Transformable, DeltaDrawable, Physical>, dtCore::RefPtr<SOARXTerrain> >("SOARXTerrain", init<optional<std::string> >())
       .def("GetInstanceCount", &SOARXTerrain::GetInstanceCount)
@@ -53,6 +52,5 @@ void initSOARXTerrainBindings()
       .def("SetDetailMultiplier", &SOARXTerrain::SetDetailMultiplier)
       .def("GetDetailMultiplier", &SOARXTerrain::GetDetailMultiplier)
       .def("GetHeight", &SOARXTerrain::GetHeight)
-      .def("GetNormal", GetNormal1)
-      .def("GetNormal", GetNormal2);
+      .def("GetNormal", GetNormal1);
 }

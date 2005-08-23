@@ -232,14 +232,6 @@ namespace dtCore
           */
          void SetCenterOfGravity(const osg::Vec3& centerOfGravity);
 
-         //deprecated version
-         void SetCenterOfGravity(const sgVec3 centerOfGravity)
-         {
-            DEPRECATE("void SetCenterOfGravity(const sgVec3 centerOfGravity)", "void SetCenterOfGravity(const osg::Vec3& centerOfGravity)")
-            SetCenterOfGravity(osg::Vec3(centerOfGravity[0], centerOfGravity[1], centerOfGravity[2]));
-         }
-
-
           /**
           * Retrieves this object's center of gravity.
           *
@@ -248,14 +240,6 @@ namespace dtCore
           */
          void GetCenterOfGravity(osg::Vec3& dest) const;
 
-         //deprecated version
-         void GetCenterOfGravity(sgVec3 dest) const
-         {
-            DEPRECATE("void GetCenterOfGravity(sgVec3 dest) const", "void GetCenterOfGravity(osg::Vec3& dest) const")
-            osg::Vec3 tmp;
-            GetCenterOfGravity(tmp);
-            dest[0] = tmp[0]; dest[1] = tmp[1]; dest[2] = tmp[2];
-         }
 
          /**
           * Sets this object's inertia tensor.
@@ -264,9 +248,6 @@ namespace dtCore
           */
          void SetInertiaTensor(const osg::Matrix& inertiaTensor);
 
-         //DEPRECATED
-         void SetInertiaTensor(const sgMat3 inertiaTensor);
-
          /**
           * Retrieves this object's inertia tensor.
           *
@@ -274,9 +255,6 @@ namespace dtCore
           * tensor, uses only rotation part of the transform matrix
           */
          void GetInertiaTensor(osg::Matrix& mat) const;
-
-         //DEPRECATED
-         void GetInertiaTensor(sgMat3 dest) const;
 
          /**
           * Updates the state of this object just before a physical

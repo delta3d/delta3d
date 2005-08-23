@@ -281,17 +281,6 @@ void Scene::SetGravity( const osg::Vec3& gravity )
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
 
-void Scene::GetGravity( sgVec3 gravity ) const
-{
-   DEPRECATE("void GetGravity(sgVec3 gravity)","void GetGravity(osg::Vec3& vec)")
-
-   osg::Vec3 temp;
-   GetGravity(temp);
-
-   gravity[0] = temp[0];
-   gravity[1] = temp[1];
-   gravity[2] = temp[2];
-}
 
 // Get the ODE space ID
 dSpaceID Scene::GetSpaceID() const

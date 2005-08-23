@@ -23,7 +23,6 @@
 
 #include "dtCore/deltadrawable.h"
 #include "dtUtil/deprecationmgr.h"
-#include "sg.h"
 #include <osg/Group>
 #include <osg/Vec3>
 
@@ -43,26 +42,6 @@ namespace dtCore
       virtual void Repaint(   const osg::Vec3& skyColor, const osg::Vec3& fogColor,
                               double sunAngle, double sunAzimuth,
                               double visibility );
-
-      //Depreciated version
-      //note: this is a funny situation where the user will override this function
-      //and may never know it is deprecated, the call to the proper function will then 
-      //do nothing since the deprecated version is the one overridden
-      //I have not found a good solution to this problem- Anderegg
-      virtual void Repaint( sgVec3 skyColor, sgVec3 fogColor,
-                            double sunAngle, double sunAzimuth,
-                            double visibility )
-      {
-         DEPRECATE("virtual void Repaint(sgVec3 skyColor, const osg::Vec3& fogColor,\
-            double sunAngle, double sunAzimuth,\
-            double visibility ) = 0;",
-            "virtual void Repaint( const osg::Vec3& skyColor, const osg::Vec3& fogColor,\
-            double sunAngle, double sunAzimuth,\
-            double visibility ) = 0;"\
-            )
-
-          Repaint(osg::Vec3(skyColor[0], skyColor[1], skyColor[2]), osg::Vec3(fogColor[0], fogColor[1], fogColor[2]), sunAngle, sunAzimuth, visibility);
-      }
 
    };
 }

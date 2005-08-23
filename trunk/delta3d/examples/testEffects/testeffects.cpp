@@ -24,7 +24,7 @@ public:
       mCameraHeading(0.0f),
       mCameraPitch(0.0f)
    {
-      AddSender(System::GetSystem());
+      AddSender(System::Instance());
 
       mLastTime = mTimer.tick();
 
@@ -37,7 +37,7 @@ public:
       {
          if(mKeyboard->GetKeyState(Producer::Key_Escape))
          {
-            System::GetSystem()->Stop();
+            System::Instance()->Stop();
          }
 
          Producer::Timer_t currentTime = mTimer.tick();

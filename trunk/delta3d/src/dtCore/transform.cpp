@@ -62,44 +62,6 @@ void Transform::Set( const osg::Matrix& mat )
 
 }
 
-void Transform::Set( sgMat4 mat )
-{
-   DEPRECATE(  "void Transform::Set( sgMat4 mat )",
-               "void Transform::Set( const osg::Matrix& mat )" )
-
-   osg::Matrix tempMatrix;
-
-   for( int i = 0; i< 4; i++ )
-      for( int j = 0; j < 4; j++ )
-         tempMatrix(i,j) = mat[i][j];
-
-   Set( tempMatrix );
-}
-
-void Transform::Set( float x, float y, float z, float h, float p, float r )
-{
-   DEPRECATE(  "void Transform::Set( float x, float y, float z, float h, float p, float r )",
-               "void Transform::Set( float tx, float ty, float tz, float h, float p, float r, float sx, float sy, float sz )" )
-
-   Set( x, y, z, h, p, r, mScale[0], mScale[1], mScale[2] );
-}
-
-void Transform::Set( sgVec3 xyz, sgVec3 hpr )
-{
-   DEPRECATE(  "void Transform::Set( sgVec3 xyz, sgVec3 hpr )",
-               "void Transform::Set( const osg::Vec3& xyz, const osg::Matrix& rotation, const osg::Vec3& scale )" )
-
-   Set( xyz[0], xyz[1], xyz[2], hpr[0], hpr[1], hpr[2] , mScale[0], mScale[1], mScale[2] );
-}
-
-void Transform::SetTranslation( sgVec3 xyz )
-{ 
-   DEPRECATE(  "void Transform::SetTranslation( sgVec3 xyz )",
-               "void Transform::SetTranslation( const osg::Vec3& xyz )" )
-
-   mTranslation.set( xyz[0], xyz[1], xyz[2] );
-}
-
 void Transform::SetRotation( float h, float p, float r )
 {
    SetRotation( osg::Vec3( h, p, r ) );
@@ -112,33 +74,6 @@ void Transform::SetRotation( const osg::Vec3& hpr )
    dtUtil::MatrixUtil::HprToMatrix( rotation, hpr );
 
    SetRotation( rotation );
-}
-
-void Transform::SetRotation( sgVec3 hpr )
-{
-   DEPRECATE(  "void Transform::SetRotation( sgVec3 hpr )",
-               "void Transform::SetRotation( const osg::Vec3& hpr )" )
-
-   SetRotation( hpr[0], hpr[1], hpr[2] );
-}
-
-void Transform::SetRotation( sgMat4 rot )
-{
-   DEPRECATE(  "void Transform::SetRotation( sgMat4 rot )",
-               "void Transform::SetRotation( const osg::Matrix& rot )" )
-
-   osg::Matrix tempMatrix;
-
-   for( int i = 0; i< 3; i++ )
-      for( int j = 0; j < 3; j++ )
-         tempMatrix(i,j) = rot[i][j];
-
-   tempMatrix(3,0) = 0.0f;
-   tempMatrix(3,1) = 0.0f;
-   tempMatrix(3,2) = 0.0f;
-   tempMatrix(3,3) = 1.0f;
-
-   SetRotation( tempMatrix );
 }
 
 void Transform::Get( float& tx, float& ty, float& tz, float& h, float& p, float& r, float &sx, float &sy, float &sz ) const
@@ -175,43 +110,6 @@ void Transform::Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale ) const
    scale.set(mScale);
 }
 
-void Transform::Get( sgVec3 xyz, sgVec3 hpr )
-{
-   DEPRECATE(  "void Transform::Get( sgVec3 xyz, sgVec3 hpr )",
-               "void Transform::Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale )" )
-
-   osg::Vec3 osgHpr;
-   GetRotation( osgHpr );
-
-   for( int i = 0; i< 3; i++ )
-   {
-      xyz[i] = mTranslation[i];
-      hpr[i] = osgHpr[i];
-   }
-}     
-
-void Transform::Get( sgMat4 mat )
-{
-   DEPRECATE(  "void Transform::Get( sgMat4 mat )",
-               "void Transform::Get( osg::Matrix& matrix ) " )
-
-   osg::Matrix fullMatrix;
-   Get( fullMatrix );
-
-   for( int i = 0; i< 4; i++ )
-      for( int j = 0; j < 4; j++ )
-         mat[i][j] = fullMatrix(i,j);
-}     
-
-void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r )
-{
-   DEPRECATE(  "void Transform::Get( float *x, float *y, float *z, float *h, float *p, float *r )",
-               "void Transform::Get( float& tx, float&t y, float& tz, float& h, float& p, float& r, float& sx, float& sy, float &sz )" )
-
-   float sx, sy, sz;
-   Get( *x, *y, *z, *h, *p, *r, sx, sy, sz );
-}
-
 void Transform::GetTranslation( float& tx, float& ty, float& tz ) const
 {
    tx = mTranslation[0];
@@ -219,23 +117,6 @@ void Transform::GetTranslation( float& tx, float& ty, float& tz ) const
    tz = mTranslation[2];
 }
 
-
-void Transform::GetTranslation( sgVec3 xyz )
-{ 
-   DEPRECATE(  "void Transform::GetTranslation( sgVec3 xyz )",
-               "void Transform::GetTranslation( osg::Vec3& translation ) " )
-
-   for( int i = 0; i < 3; i++ )
-      xyz[i] = mTranslation[i];
-}
-
-void Transform::GetTranslation( float *x, float *y, float *z )
-{
-   DEPRECATE(  "void Transform::GetTranslation( float *x, float *y, float *z )",
-               "void Transform::GetTranslation( float& x, float& y, float& z )" )
-
-   GetTranslation( *x, *y, *z );
-}
 
 void Transform::GetRotation( float& h, float& p, float& r ) const
 {
@@ -252,34 +133,6 @@ void Transform::GetRotation( osg::Vec3& hpr ) const
    dtUtil::MatrixUtil::MatrixToHpr( hpr, mRotation );
 }
 
-void Transform::GetRotation( float *h, float *p, float *r )
-{
-   DEPRECATE(  "void Transform::GetRotation( float *h, float *p, float *r )",
-               "void Transform::GetRotation( float& h, float& p, float& r )" )
-
-   GetRotation( *h, *p, *r );
-}
-
-void Transform::GetRotation( sgVec3 hpr )
-{ 
-   DEPRECATE(  "void Transform::GetRotation( sgVec3 hpr )",
-               "void Transform::GetRotation( osg::Vec3& rotation )" )
-
-   osg::Vec3 osgHpr;
-   dtUtil::MatrixUtil::MatrixToHpr( osgHpr, mRotation );
-   for( int i = 0; i < 3; i++ )
-      hpr[i] = osgHpr[i];
-}
-
-void Transform::GetRotation( sgMat4 rot )
-{
-   DEPRECATE(  "void Transform::GetRotation( sgMat4 rot )",
-               "void Transform::GetRotation( osg::Matrix& matrix )" )
-
-   for( int i = 0; i< 4; i++ )
-      for( int j = 0; j < 4; j++ )
-         rot[i][j] = mRotation(i,j);
-}
 
 void Transform::GetScale( float& sx, float& sy, float& sz ) const
 {
@@ -320,16 +173,6 @@ void Transform::SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, con
    SetRotation( lookAtMatrix );
    SetTranslation( xyz );
 
-}
-
-void Transform::SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec )
-{
-   DEPRECATE(  "void Transform::SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec )",
-               "void Transform::SetLookAt( sgVec3 xyz, sgVec3 lookAtXYZ, sgVec3 upVec )" )
-
-   SetLookAt(  osg::Vec3( xyz[0], xyz[1], xyz[2] ), 
-               osg::Vec3( lookAtXYZ[0], lookAtXYZ[1], lookAtXYZ[2] ), 
-               osg::Vec3( upVec[0], upVec[1], upVec[2] ) );
 }
 
 void Transform::SetLookAt(float posX, float posY, float posZ,
