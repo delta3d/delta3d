@@ -28,8 +28,8 @@ Loadable::~Loadable(void)
 osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
 {   
    mFilename = filename;
-   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FILE__,
-                                 "Loadable:Loading %s...", filename.c_str());
+   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,
+                                 "Loading '%s'", filename.c_str());
 
    RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
 
@@ -56,8 +56,8 @@ osg::Node* Loadable::LoadFile(const std::string& filename, bool useCache)
    }
    else
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
-               "Loadable: Can't load %s", mFilename.c_str() );
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
+               "Can't load '%s'", mFilename.c_str() );
       return NULL;
    }
    
