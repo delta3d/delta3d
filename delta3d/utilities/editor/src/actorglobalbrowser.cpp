@@ -39,6 +39,7 @@
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/mainwindow.h"
+#include "dtEditQt/typedefs.h"
 
 namespace dtEditQt 
 {
@@ -61,12 +62,12 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::getInstance(), SIGNAL(projectChanged()), 
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(LibraryAboutToBeRemoved()),
+        connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryAboutToBeRemoved()),
             this, SLOT(refreshAll()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)), 
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));   
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)), 
-            this, SLOT(onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)), 
+            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));   
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(proxyRefPtr)), 
+            this, SLOT(onActorProxyDestroyed(proxyRefPtr)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

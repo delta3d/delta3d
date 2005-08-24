@@ -38,8 +38,8 @@ namespace dtEditQt
         : temporaryEditControl(NULL)
     {
         // listen for name changes so we can update our own edit control
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy>, std::string)),
-            this, SLOT(proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy>, std::string)));
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(proxyRefPtr, std::string)),
+            this, SLOT(proxyNameChanged(proxyRefPtr, std::string)));
     }
 
     /////////////////////////////////////////////////////////////////////////////////

@@ -57,13 +57,13 @@ namespace dtEditQt
 
         EditorEvents *editorEvents = &EditorEvents::getInstance();
 
-        connect(editorEvents, SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)),
-                this,SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));
+        connect(editorEvents, SIGNAL(actorProxyCreated(proxyRefPtr, bool)),
+                this,SLOT(onActorProxyCreated(proxyRefPtr, bool)));
 
         connect(editorEvents,
-                SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)),
+                SIGNAL(actorPropertyChanged(proxyRefPtr,propertyRefPtr)),
                 this,
-                SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,osg::ref_ptr<dtDAL::ActorProperty>)));
+                SLOT(onActorPropertyChanged(proxyRefPtr,propertyRefPtr)));
 
         connect(editorEvents,SIGNAL(projectChanged()),
                 this,SLOT(refreshAllViewports()));

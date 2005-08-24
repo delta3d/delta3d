@@ -566,13 +566,13 @@ namespace dtEditQt
             this, SLOT(onMapPropertyChanged()));
         connect(editorActions.actionWindowsResetWindows, SIGNAL(triggered()),
             this, SLOT(onResetWindows()));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)),
-            this, SLOT(onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)));
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)),
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyDestroyed(proxyRefPtr)),
+            this, SLOT(onActorProxyDestroyed(proxyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)),
+            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));
         connect(&EditorEvents::getInstance(),
-            SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>, osg::ref_ptr<dtDAL::ActorProperty>)),
-            this, SLOT(onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>, osg::ref_ptr<dtDAL::ActorProperty>)));
+            SIGNAL(actorPropertyChanged(proxyRefPtr, propertyRefPtr)),
+            this, SLOT(onActorPropertyChanged(proxyRefPtr, propertyRefPtr)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

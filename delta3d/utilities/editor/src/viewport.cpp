@@ -439,8 +439,8 @@ namespace dtEditQt
         connect(ga.actionSelectionTranslateActor,SIGNAL(triggered()),this,SLOT(setActorTranslateMode()));
         connect(ga.actionSelectionRotateActor,SIGNAL(triggered()),this,SLOT(setActorRotateMode()));
 
-        connect(&ge,SIGNAL(gotoActor(osg::ref_ptr<dtDAL::ActorProxy> &)),
-                this,SLOT(onGotoActor(osg::ref_ptr< dtDAL::ActorProxy >&)));
+        connect(&ge,SIGNAL(gotoActor(proxyRefPtr &)),
+                this,SLOT(onGotoActor(proxyRefPtr&)));
         connect(&ge,SIGNAL(beginChangeTransaction()), this,SLOT(onBeginChangeTransaction()));
         connect(&ge,SIGNAL(endChangeTransaction()), this,SLOT(onEndChangeTransaction()));
     }
@@ -457,8 +457,8 @@ namespace dtEditQt
         disconnect(ga.actionSelectionTranslateActor,SIGNAL(triggered()),this,SLOT(setActorTranslateMode()));
         disconnect(ga.actionSelectionRotateActor,SIGNAL(triggered()),this,SLOT(setActorRotateMode()));
 
-        disconnect(&ge,SIGNAL(gotoActor(osg::ref_ptr<dtDAL::ActorProxy> &)),
-                  this,SLOT(onGotoActor(osg::ref_ptr< dtDAL::ActorProxy >&)));
+        disconnect(&ge,SIGNAL(gotoActor(proxyRefPtr &)),
+                  this,SLOT(onGotoActor(proxyRefPtr&)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,7 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtDAL/actorproxy.h>
+#include "dtEditQt/typedefs.h"
 
 class QAction;
 class QActionGroup;
@@ -319,7 +320,7 @@ namespace dtEditQt
     // helper method to keep track of the selected actors. this is needed in order to
     // be able to call the goto actor functionality from the menu. The signal requires
     // an argument. 
-    void slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> > &actors);
+    void slotSelectedActors(proxyRefPtrVector &actors);
 
   protected:
     /**

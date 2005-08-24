@@ -31,6 +31,7 @@
 #include <dtUtil/enumeration.h>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
+#include "dtEditQt/typedefs.h"
 
 class QGLWidget;
 class QWidget;
@@ -166,15 +167,15 @@ namespace dtEditQt
          * @param proxy
          * @param property
          */
-        void onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void onActorPropertyChanged(proxyRefPtr proxy,
+            propertyRefPtr property);
 
         /**
          * This method is invoked when the user has created a new actor proxy.  The method
          * then inserts the new actor proxy into the current scene.
          * @param proxy The newly created actor proxy.
          */
-        void onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
+        void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
 
         /**
          * Called when the current map being edited has changed.  This causes the scene

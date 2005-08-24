@@ -248,7 +248,7 @@ namespace dtEditQt
          * This method is invoked when the user selects actors in the current scene.
          * @param actors A list of the actors that were selected.
          */
-        void onActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors);
+        void onActorsSelected(proxyRefPtrVector &actors);
 
         /**
          * Puts the overlay options in sync with the editor preferences.

@@ -34,6 +34,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtEditQt/camera.h"
 #include "dtEditQt/viewportmanager.h"
+#include "dtEditQt/typedefs.h"
 
 namespace osg
 {
@@ -373,7 +374,7 @@ namespace dtEditQt
         void setActorRotateMode();
 
         ///Moves the camera such that the actor is clearly visible.
-        void onGotoActor(osg::ref_ptr<dtDAL::ActorProxy> &proxy);
+        void onGotoActor(proxyRefPtr &proxy);
 
         // starts a larger transaction to prevent excessive refreshes
         void onBeginChangeTransaction();

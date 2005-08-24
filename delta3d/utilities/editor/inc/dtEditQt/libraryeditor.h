@@ -25,6 +25,8 @@
 
 #include <QDialog>
 #include <vector>
+#include <osg/ref_ptr>
+#include "dtDAL/actorproxy.h"
 
 class QListWidget;
 class QGridLayout;

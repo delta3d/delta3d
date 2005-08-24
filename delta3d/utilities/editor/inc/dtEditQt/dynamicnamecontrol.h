@@ -100,7 +100,7 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget *widget);
 
-        virtual void proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName);
+        virtual void proxyNameChanged(proxyRefPtr proxy, std::string oldName);
 
 
     protected:

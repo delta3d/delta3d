@@ -65,8 +65,8 @@ namespace dtEditQt
             this, SLOT(refreshAll()));
         connect(&EditorEvents::getInstance(), SIGNAL(LibraryAboutToBeRemoved()),
             this, SLOT(refreshAll())); // make sure the table is emptied here or crash!
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)), 
-            this, SLOT(onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy>, bool)));   
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyCreated(proxyRefPtr, bool)), 
+            this, SLOT(onActorProxyCreated(proxyRefPtr, bool)));   
     }
 
     ///////////////////////////////////////////////////////////////////////////////

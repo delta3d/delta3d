@@ -29,7 +29,7 @@
 #include <vector>
 #include <osg/ref_ptr>
 #include "dtDAL/actorproxy.h"
-
+#include "dtEditQt/typedefs.h"
 
 class QGroupBox;
 class QPushButton;
@@ -169,7 +169,7 @@ namespace dtEditQt {
         /**
          * Remove an item from our search results if it's about to be destroyed
          */
-        void actorProxyAboutToBeDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        void actorProxyAboutToBeDestroyed(proxyRefPtr proxy);
 
         /**
          * Handle the selection changed event in the tree table.  Should enable/disable buttons
@@ -181,7 +181,7 @@ namespace dtEditQt {
          * Change our selection if objects get selected somewhere else
          * Note - This slot occurs from EditorEvents.  And is separate from our internal method.
          */
-        void selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors);
+        void selectedActors(proxyRefPtrVector &actors);
 
     private:
         /** 

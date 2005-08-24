@@ -32,6 +32,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/actortype.h"
+#include "dtEditQt/typedefs.h"
 
 class QMainWindow;
 class QTreeWidget;
@@ -74,12 +75,12 @@ namespace dtEditQt
         /**
         * Handles the actor selection changed event message from EditorEvents
         */
-        void handleActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &actors);
+        void handleActorsSelected(proxyRefPtrVector &actors);
 
-        void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void actorPropertyChanged(proxyRefPtr proxy,
+            propertyRefPtr property);
 
-        void proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName);
+        void proxyNameChanged(proxyRefPtr proxy, std::string oldName);
 
     private:
 

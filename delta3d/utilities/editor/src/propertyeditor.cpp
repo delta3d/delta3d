@@ -95,19 +95,19 @@ namespace dtEditQt
         setupUI();
 
         // listen for selection changed event
-        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &)),
-            this, SLOT(handleActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> >&)));
+        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(proxyRefPtrVector &)),
+            this, SLOT(handleActorsSelected(proxyRefPtrVector&)));
 
         // listen for property change events and update the tree.  These can be generated
         // by the viewports, or the tree itself.
-        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,
-            osg::ref_ptr<dtDAL::ActorProperty>)),
-            this, SLOT(actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy>,
-            osg::ref_ptr<dtDAL::ActorProperty>)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorPropertyChanged(proxyRefPtr,
+            propertyRefPtr)),
+            this, SLOT(actorPropertyChanged(proxyRefPtr,
+            propertyRefPtr)));
 
         // listen for name changes so we can update our group box label or handle undo changes
-        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy>, std::string)),
-            this, SLOT(proxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy>, std::string)));
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(proxyRefPtr, std::string)),
+            this, SLOT(proxyNameChanged(proxyRefPtr, std::string)));
 
         controlFactory = new dtUtil::ObjectFactory<dtDAL::DataType *, DynamicAbstractControl>;
 

@@ -116,8 +116,8 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget *widget);
 
-        void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void actorPropertyChanged(proxyRefPtr proxy,
+            propertyRefPtr property);
 
         /**
          * Called when the user selects an item in the combo box

@@ -93,9 +93,9 @@ namespace dtEditQt
                  this, SLOT(slotRestartAutosave()));
 
         connect(&EditorEvents::getInstance(),
-            SIGNAL(selectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)),
+            SIGNAL(selectedActors(proxyRefPtrVector&)),
             this,
-            SLOT(slotSelectedActors(std::vector< osg::ref_ptr<dtDAL::ActorProxy> >&)));
+            SLOT(slotSelectedActors(proxyRefPtrVector&)));
 
         timer = new QTimer((QWidget*)EditorData::getInstance().getMainWindow());
         timer->setInterval(saveMilliSeconds);

@@ -32,6 +32,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
 #include "dtDAL/actorproperty.h"
+#include "dtEditQt/typedefs.h"
 
 namespace dtCore
 {
@@ -105,30 +106,30 @@ namespace dtEditQt
          * @param proxy The proxy that was changed.
          * @param property The property of the proxy that was modified.
          */
-        void onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void onActorPropertyChanged(proxyRefPtr proxy,
+            propertyRefPtr property);
 
         /**
          * An actor property is about to change.  We create the change event object, but 
          * don't add it to the undo list until we get the actual changed event.
          */
-        void actorPropertyAboutToChange(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property, std::string oldValue, std::string newValue);
+        void actorPropertyAboutToChange(proxyRefPtr proxy,
+            propertyRefPtr property, std::string oldValue, std::string newValue);
 
         /**
           * When an actor is created, we add a create event to the undo list.
           */
-        void onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
+        void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
 
         /**
          * When an actor is destroyed, we add a destroy event to the undo list.
          */
-        void onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        void onActorProxyDestroyed(proxyRefPtr proxy);
 
         /**
          * When the name changes, trap this event.
          */        
-        void onProxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName);
+        void onProxyNameChanged(proxyRefPtr proxy, std::string oldName);
 
         /**
          * Called when a map, project, or libraries change.  Clears all undo/redo events.
