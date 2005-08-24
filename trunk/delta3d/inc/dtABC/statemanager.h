@@ -116,6 +116,8 @@ namespace dtABC
          virtual void startElement(const XMLCh* const, XERCES_CPP_NAMESPACE_QUALIFIER AttributeList&);
          virtual void endElement(const XMLCh* const name);
          virtual void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&);
+         virtual void error( const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &exc );
+         virtual void warning( const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException &exc );
 
       private:
          TransitionHandler(); /// not implemented by design
@@ -318,6 +320,7 @@ namespace dtABC
       XERCES_CPP_NAMESPACE::SAXParser* parser = new XERCES_CPP_NAMESPACE::SAXParser();
       parser->setDoValidation(true);    // optional.
       parser->setDoNamespaces(true);    // optional
+      parser->setDoSchema(true);
 
       typedef TransitionHandler<EventT,StateT> XMLElementHandler;
       XMLElementHandler* docHandler = new XMLElementHandler(this);
@@ -334,20 +337,23 @@ namespace dtABC
       catch (const XERCES_CPP_NAMESPACE::XMLException& toCatch) 
       {
          char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Exception message is '%s",  message );
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
+            "Exception message is '%s",  message );
          XERCES_CPP_NAMESPACE::XMLString::release(&message);
-         return -1;
+         retVal = false;
       }
-      catch (const XERCES_CPP_NAMESPACE::SAXParseException& toCatch) {
-         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Exception message is '%s'", message);
-         XERCES_CPP_NAMESPACE::XMLString::release(&message);
-         return -1;
+      catch (const XERCES_CPP_NAMESPACE::SAXParseException& )       
+      {
+         //The error will already be logged by the errorHandler
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__,
+                           "An error occurred while parsing %s", filename.c_str() );         
+         retVal = false;;
       }
       catch (...) 
       {
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Statemanager::ParseFile() Unexpected Exception");
-         return -1;
+         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
+            "Statemanager::ParseFile() Unexpected Exception");
+         retVal = false;
       }
 
       delete parser;
@@ -455,8 +461,29 @@ namespace dtABC
    void StateManager::TransitionHandler<T1,T2>::fatalError(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
    {
       char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "Fatal Error:%s, at line %d",message, exception.getLineNumber());
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__, "Fatal:%s, at line %d",
+                                             message, exception.getLineNumber());
+      throw exception;
    }
+
+   template< typename T1, typename T2 >
+      void StateManager::TransitionHandler<T1,T2>::error(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
+   {
+      char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__, "%s, at line %d",
+                                             message, exception.getLineNumber());
+      throw exception;
+   }
+
+   template< typename T1, typename T2 >
+      void StateManager::TransitionHandler<T1,T2>::warning(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
+   {
+      char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, "---", "%s, at line %d",
+                                              message, exception.getLineNumber());
+
+   }
+
 
    template< typename T1, typename T2 >
    void StateManager::TransitionHandler<T1,T2>::endElement(const XMLCh* const name)
