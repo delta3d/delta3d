@@ -3,6 +3,7 @@
 
 using namespace dtCore;
 using namespace dtABC;
+using namespace dtUtil;
 
 enum MotionModelType
 {
@@ -49,7 +50,7 @@ public:
       }
 
       SetMotionModel(WALK);
-      Notify(ALWAYS,"Walk");
+      LOG_ALWAYS("Walk");
    }
 
 
@@ -71,23 +72,23 @@ protected:
       switch(key)
       {
       case Producer::Key_1:
-         Notify(ALWAYS,"Walk");
+         LOG_ALWAYS("Walk");
          SetMotionModel(WALK);
          break;
       case Producer::Key_2:
-         Notify(ALWAYS,"Fly");
+         LOG_ALWAYS("Fly");
          SetMotionModel(FLY);
          break;
       case Producer::Key_3:
-         Notify(ALWAYS,"UFO");
+         LOG_ALWAYS("UFO");
          SetMotionModel(UFO);
          break;
       case Producer::Key_4:
-         Notify(ALWAYS,"Orbit");
+         LOG_ALWAYS("Orbit");
          SetMotionModel(ORBIT);
          break;
       case Producer::Key_5:
-         Notify(ALWAYS,"FPS");
+         LOG_ALWAYS("FPS");
          SetMotionModel(FPS);
          break;
       default:

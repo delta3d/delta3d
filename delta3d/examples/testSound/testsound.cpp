@@ -7,6 +7,7 @@
 using namespace   dtAudio;
 using namespace   dtABC;
 using namespace   dtCore;
+using namespace   dtUtil;
 using namespace   Producer;
 
 
@@ -140,7 +141,8 @@ TestSoundApp::SoundStartedCB( dtAudio::Sound* sound, void* param )
    assert( sound );
 
    // tell user the sound has started
-   Notify( ALWAYS, " \"%s\" has started", sound->GetFilename() );
+   Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__, 
+      " \"%s\" has started", sound->GetFilename() );
 }
 
 
@@ -158,7 +160,8 @@ TestSoundApp::SoundStoppedCB( dtAudio::Sound* sound, void* param )
    assert( param );
 
    // tell user the sound has stopped
-   Notify( ALWAYS, " \"%s\" has stopped", sound->GetFilename() );
+   Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+      " \"%s\" has stopped", sound->GetFilename() );
 
    // don't free the one sound the app is holding
    if( sound == static_cast<TestSoundApp*>(param)->mSound )
