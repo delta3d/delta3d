@@ -1,7 +1,6 @@
 #include <string>
 
 #include <dtCore/globals.h>
-#include <dtCore/notify.h>
 #include <dtABC/widget.h>
 
 #include "viewstate.h"
@@ -390,10 +389,12 @@ ViewWindow::CommandLine( int argc, char** argv )
             // don't load files until a path has been set
             if( usage )
             {
-               dtCore::Notify(dtCore::NOTICE) << "Usage \"Viewer [/p path [file file...]] [/p path [file file...]]...\"" << std::endl << std::endl;
+               dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,
+                  "Usage \"Viewer [/p path [file file...]] [/p path [file file...]]...\"" );
                usage   = false;
             }
-            dtCore::Notify(dtCore::NOTICE) << "\t\"" << argv[ii] << "\" was not loaded." << std::endl;
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,
+                "\t\"%s\" was not loaded.", argv[ii] );
             continue;
          }
 
