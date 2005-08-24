@@ -398,6 +398,8 @@ namespace dtDAL
       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
       * @throws ExceptionEnum::ProjectIOException if the could not complete because of some sort of IO exception.
       * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
+      * @throws ExceptionEnum::ProjectFileeNotFound if the file to import does not exist.
+      * @throws ExceptionEnum::ProjectResourceError if the file could not be imported if the Datatype is not a resource type.
       */
     const ResourceDescriptor AddResource(const std::string& newName, const std::string& pathToFile, const std::string& category, const DataType& type);
 
@@ -417,6 +419,10 @@ namespace dtDAL
      * @note if the category already exists, this will be a no-op.
      * @param category the category to create.
      * @param type the data type to add the category into.
+     * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+     * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
+     * @throws ExceptionEnum::ProjectIOException if the operation could not complete because of some sort of IO exception.
+     * @throws ExceptionEnum::ProjectResourceError if type is not a resource type.
      */
     void CreateResourceCategory(const std::string& category, const DataType& type);
 
@@ -429,7 +435,7 @@ namespace dtDAL
      *         recursive was false and the category was not empty.
      * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
      * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
-     * @throws ExceptionEnum::ProjectIOException if the could not complete because of some sort of IO exception.
+     * @throws ExceptionEnum::ProjectIOException if the operation could not complete because of some sort of IO exception.
      * @throws ExceptionEnum::ProjectResourceError if the resource could not be removed for reasons other than file io.
      * @throws ExceptionEnum::ProjectFileNotFound on rare occasion, this could possibly be thrown if the file contents
      *              are changed while the recusive delete is occuring.
