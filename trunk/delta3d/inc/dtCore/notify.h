@@ -23,8 +23,11 @@
 
 
 #include <ostream>
+#include <iostream>
 
 #include "dtCore/export.h"
+#include "dtUtil/deprecationmgr.h"
+#include <dtUtil/log.h>
 
 namespace dtCore
 {
@@ -42,15 +45,14 @@ namespace dtCore
    };
    
 
-   ///Set the notification level
+   ///Deprecated 8/23/05
    extern DT_EXPORT void SetNotifyLevel( NotifySeverity severity, 
                                          NotifySeverity osgSeverity = FATAL );
 
-
-   ///Display a notification to the console using printf format
+   ///Deprecated 8/23/05
    extern DT_EXPORT void Notify(NotifySeverity level, const char *fmt, ...);
 
-   ///Display a notification to the console using cout format
+   ///Deprecated 8/23/05
    extern DT_EXPORT std::ostream& Notify(const NotifySeverity severity);
 
 };

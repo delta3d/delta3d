@@ -6,53 +6,29 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-static dtCore::NotifySeverity NotifyLevel = dtCore::NOTICE;
-
-/// Used internally
-static bool InitNotifyLevel()
-{
-   static bool s_NotifyInit = false;
-   
-   if (s_NotifyInit) return true;
-   
-   s_NotifyInit = true;
-   
-   
-   NotifyLevel = dtCore::NOTICE; // Default value  
-      
-   return true;  
-}
 
  
-/*!
- * Set the notify level for outgoing messages.  Optionally set the notify
- * level for OpenSceneGraph messages as well, otherwise only the FATAL will
- * be outputted.
- *
- * @param severity : The level of dtCore messages that should be displayed.
- * @param osgSeverity : The level of OSG messages that should be displayed.
- */
+///Deprecated 8/23/05
 void dtCore::SetNotifyLevel(dtCore::NotifySeverity severity, NotifySeverity osgSeverity)
 {
-   InitNotifyLevel();
-   
-   NotifyLevel = severity;
+   DEPRECATE("void SetNotifyLevel( NotifySeverity severity, NotifySeverity osgSeverity ) ",
+      "dtUtil::Log::SetLogLevel(LogMessageType msgType)" )
 
-   //also set the OSG notify level to match
-   osg::NotifySeverity level;
-   switch (osgSeverity)
-   {
-   case dtCore::ALWAYS: level = osg::ALWAYS;       break;
-   case dtCore::FATAL:  level = osg::FATAL;        break;
-   case dtCore::WARN:   level = osg::WARN;         break;
-   case dtCore::NOTICE: level = osg::NOTICE;       break;
-   case dtCore::INFO:   level = osg::INFO;         break;
-   case dtCore::DEBUG_INFO:  level = osg::DEBUG_INFO;   break;
-   default: level = osg::NOTICE;
+   dtUtil::Log::LogMessageType logType;
+
+   switch(severity) {
+      case ALWAYS: logType = dtUtil::Log::LOG_ALWAYS;  	break;
+      case FATAL: logType = dtUtil::Log::LOG_ERROR;  	break;
+      case WARN: logType = dtUtil::Log::LOG_WARNING;  	break;
+      case NOTICE: logType = dtUtil::Log::LOG_INFO;  	break;
+      case INFO: logType = dtUtil::Log::LOG_INFO;  	break;
+      case DEBUG_INFO: logType = dtUtil::Log::LOG_DEBUG;  	break;
+      default: logType = dtUtil::Log::LOG_INFO;
    }
-   
-   osg::setNotifyLevel(level);
+
+   dtUtil::Log::GetInstance().SetLogLevel(logType);
 }
+
 
 
 
@@ -76,85 +52,41 @@ inline static void PrintSeverity(const dtCore::NotifySeverity level)
    }
 }
 
- 
-
-/*!
- * Notify mechanism can be used to output text to the console.  A global
- * severity level can be set to control what level of output should be
- * displayed.  \n
- * Usage is just like a printf, for example:\n
- * \code  Notify(INFO, "hello world %d", 5); \endcode
- *
- * @param level : Level of severity of the message
- * @param fmt : The format of the message (printf-like)
- */
+///Deprecated 8/23/05
 void dtCore::Notify(dtCore::NotifySeverity level, const char *fmt, ...)
 {
-   char t[255] = {0}; 
-   
-   //static bool initialized = InitNotifyLevel();
-   InitNotifyLevel();
-   
-   if (level <= NotifyLevel)
-   {
-      va_list argptr;
-      va_start( argptr, fmt );
+   DEPRECATE("void dtCore::Notify(NotifySeverity level, const char *fmt, ...)",
+      "void dtUtil::Log::LogMessage(LogMessageType msgType, const std::string &source, const char *msg, ...)");
 
-      #if defined(_WIN32) || defined(WIN32)
-      _vsnprintf(t, sizeof(t), fmt, argptr );
-      #else
-      vsnprintf(t, sizeof(t), fmt, argptr );
-      #endif
-      
-      va_end( argptr );
-      
-      std::cout << "dtCore-";
-      PrintSeverity(level);
-      std::cout << ":" << t << std::endl;
+
+   dtUtil::Log::LogMessageType logType;
+
+   switch(level) {
+      case ALWAYS: logType = dtUtil::Log::LOG_ALWAYS;  	break;
+      case FATAL: logType = dtUtil::Log::LOG_ERROR;  	break;
+      case WARN: logType = dtUtil::Log::LOG_WARNING;  	break;
+      case NOTICE: logType = dtUtil::Log::LOG_INFO;  	break;
+      case INFO: logType = dtUtil::Log::LOG_INFO;  	break;
+      case DEBUG_INFO: logType = dtUtil::Log::LOG_DEBUG;  	break;
+      default: logType = dtUtil::Log::LOG_INFO;
    }
-   
+
+   static char buffer[1024];
+   va_list list;
+   va_start(list, fmt);
+   vsprintf(buffer, fmt, list);
+   va_end(list);
+
+   dtUtil::Log::GetInstance().LogMessage(logType, "---", buffer);
 }
 
 
-#if defined(WIN32) && !(defined(__CYGWIN__) || defined(__MINGW32__))
-static const char* NullStreamName = "nul";
-#else
-static const char* NullStreamName = "/dev/null";
-#endif
-
- 
-/*!
- * Notify mechanism can be used to output text to the console.  A global
- * severity level can be set to control what level of output should be
- * displayed.  \n
- * Usage is just like a cout, for example:\n
- * \code  Notify(INFO) << "hello world " << 5 << std::endl; \endcode
- *
- * @param severity : Level of severity of the message
- */
+///Deprecated 8/23/05
 std::ostream& dtCore::Notify(const dtCore::NotifySeverity severity)
 {
-   // set up global notify null stream for inline notify
-   static std::ofstream s_NotifyNulStream(NullStreamName);
-   
-   static bool initialized = false;
-   if (!initialized) 
-   {
-      std::cerr<<""; // dummy op to force construction of cerr, before a reference is passed back to calling code.
-      std::cout<<""; // dummy op to force construction of cout, before a reference is passed back to calling code.
-      initialized = InitNotifyLevel();
-   }
-   
-   if (severity<=NotifyLevel)
-   {
-      if (severity<=dtCore::WARN) return std::cerr;
-      else 
-      {
-         std::cout << "dtCore-";
-         PrintSeverity(severity);
-         std::cout << ":";
-         return std::cout;
-      }
-   }
-   return s_NotifyNulStream;
+   DEPRECATE("std::ostream& Notify(const NotifySeverity severity)",
+      "void dtUtil::Log::LogMessage(LogMessageType msgType, const std::string &source, const char *msg, ...)")
+
+   return std::cout;
 }
+
