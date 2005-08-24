@@ -2,9 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "soarx/soarxterrain.h"
-#include "dtCore/scene.h"
-#include "dtUtil/matrixutil.h"
+#include <soarx/soarxterrain.h>
+#include <dtCore/globals.h>
+#include <dtCore/scene.h>
+#include <dtUtil/matrixutil.h>
 
 #include <sstream>
 
@@ -313,15 +314,8 @@ SOARXTerrain::SOARXTerrain(string name)
 
    mProgram = new osg::Program;
 
-   osgDB::FilePathList path = osgDB::getDataFilePathList();
-   std::string soarxDir = std::string( getenv( "DELTA_ROOT" ) ) + "/src/soarx";
-   path.push_back( soarxDir );
-   osgDB::setDataFilePathList( path );
-
-   std::string terrainFragProg = osgDB::findDataFile( "terrain.frag" );
-
    osg::Shader* terrainFragShader = new osg::Shader(osg::Shader::FRAGMENT);
-   terrainFragShader->loadShaderSourceFromFile( terrainFragProg.c_str() );
+   terrainFragShader->loadShaderSourceFromFile( GetDeltaRootPath()+"/data/shaders/terrain.frag" );
 
    mProgram->addShader( terrainFragShader );
 
