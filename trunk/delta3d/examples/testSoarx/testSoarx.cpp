@@ -3,6 +3,7 @@
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtSOARX;
+using namespace dtUtil;
 using namespace std;
 
 
@@ -54,7 +55,8 @@ void TestTerrainApp::PreFrame(const double deltaFrameTime)
       mSOARXTerrain->SetThreshold(
          clamp((float)(mSOARXTerrain->GetThreshold() - deltaFrameTime*5.0), 1.0f, 10.0f)
          );
-      Notify(ALWAYS, "Threshold decreased to %5.2f", mSOARXTerrain->GetThreshold());
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+         "Threshold decreased to %5.2f", mSOARXTerrain->GetThreshold());
    }
 
    if(GetKeyboard()->GetKeyState(Producer::Key_equal))
@@ -62,7 +64,8 @@ void TestTerrainApp::PreFrame(const double deltaFrameTime)
       mSOARXTerrain->SetThreshold(
          clamp((float)(mSOARXTerrain->GetThreshold() + deltaFrameTime*5.0), 1.0f, 10.0f)
          );
-      Notify(ALWAYS, "Threshold increased to %5.2f", mSOARXTerrain->GetThreshold());
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__, 
+         "Threshold increased to %5.2f", mSOARXTerrain->GetThreshold());
    }
 
    if(GetKeyboard()->GetKeyState(Producer::Key_bracketleft))
@@ -70,7 +73,8 @@ void TestTerrainApp::PreFrame(const double deltaFrameTime)
       mSOARXTerrain->SetDetailMultiplier(
          clamp((float)(mSOARXTerrain->GetDetailMultiplier() - deltaFrameTime*5.0), 1.0f, 20.0f)
          );
-      Notify(ALWAYS, "Detail decreased to %5.2f", mSOARXTerrain->GetDetailMultiplier());
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__, 
+         "Detail decreased to %5.2f", mSOARXTerrain->GetDetailMultiplier());
    }
 
    if(GetKeyboard()->GetKeyState(Producer::Key_bracketright))
@@ -78,7 +82,8 @@ void TestTerrainApp::PreFrame(const double deltaFrameTime)
       mSOARXTerrain->SetDetailMultiplier(
          clamp((float)(mSOARXTerrain->GetDetailMultiplier() + deltaFrameTime*5.0), 1.0f, 20.0f)
          );
-      Notify(ALWAYS, "Detail increased to %5.2f", mSOARXTerrain->GetDetailMultiplier());
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+         "Detail increased to %5.2f", mSOARXTerrain->GetDetailMultiplier());
    }
 }
 

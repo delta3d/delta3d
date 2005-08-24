@@ -16,7 +16,7 @@
 #include <dtCore/walkmotionmodel.h>
 #include <dtCore/compass.h>
 #include <dtCore/object.h>
-#include <dtCore/notify.h>
+#include <dtUtil/log.h>
 
 #include "viewstate.h"
 #include "viewer.h"
@@ -398,7 +398,7 @@ void Viewer::SaveFileAs( char *filename )
 
    if (osgDB::writeNodeFile(*child, filename))
    {
-      Notify(ALWAYS,"File %s Saved", filename);
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, "File %s Saved", filename);
    }
 }
 
