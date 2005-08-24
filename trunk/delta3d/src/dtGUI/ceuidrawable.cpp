@@ -5,7 +5,6 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
-#include <dtCore/notify.h>
 
 #include <osg/Geode>
 #include <osg/Projection>
@@ -13,6 +12,7 @@
 
 using namespace dtCore;
 using namespace dtGUI;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 
@@ -158,6 +158,8 @@ void CEUIDrawable::KeyPressed(Keyboard* keyboard,
 void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
 {
    // Log all its properties + values
+   dtUtil::Log *log = &dtUtil::Log::GetInstance();
+
    CEGUI::PropertySet::PropertyIterator itr = ((CEGUI::PropertySet*)window)->getIterator();
    while (!itr.isAtEnd()) 
    {
@@ -166,14 +168,16 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
          if ( onlyNonDefault && !window->isPropertyDefault(itr.getCurrentKey()) )
          {
             {
-               Notify (ALWAYS, "%s, Non Default Prop: %s, %s", window->getName().c_str(),
+               log->LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+                        "%s, Non Default Prop: %s, %s", window->getName().c_str(),
                         itr.getCurrentKey().c_str(),
                         window->getProperty(itr.getCurrentKey()).c_str());
             }
          }
          else if ( !onlyNonDefault )
          {
-            Notify (ALWAYS, "%s, Prop: %s, %s", window->getName().c_str(),
+            log->LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+                     "%s, Prop: %s, %s", window->getName().c_str(),
                      itr.getCurrentKey().c_str(),
                      window->getProperty(itr.getCurrentKey()).c_str());
          }
@@ -181,7 +185,8 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
       catch (CEGUI::InvalidRequestException& exception) 
       {
          // If something goes wrong, show user
-         Notify(WARN, "InvalidRequestException for %s: %s", itr.getCurrentKey().c_str(), exception.getMessage().c_str());
+         log->LogMessage(Log::LOG_WARNING, __FUNCTION__,
+            "InvalidRequestException for %s: %s", itr.getCurrentKey().c_str(), exception.getMessage().c_str());
       }
       itr++;
    }

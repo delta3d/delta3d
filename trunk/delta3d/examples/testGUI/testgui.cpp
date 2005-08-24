@@ -6,6 +6,7 @@
 
 using namespace dtCore;
 using namespace dtABC;
+using namespace dtUtil;
 
 class TestGUIApp : public dtABC::Application
 {
@@ -136,7 +137,8 @@ private:
       // catch to prevent exit (errors will be logged).
       catch(CEGUI::Exception &e)
       {
-         Notify(WARN, "CEGUI::%s", e.getMessage().c_str() );
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
+            "CEGUI::%s", e.getMessage().c_str() );
       }
    }
 
@@ -179,7 +181,8 @@ int main( int argc, const char* argv[] )
    std::string filename = "";
    if (argc > 1)
    {
-      Notify(ALWAYS,"Using GUI file %s...",argv[1]);
+      Log::GetInstance().LogMessage(Log::LOG_ALWAYS, __FUNCTION__,
+         "Using GUI file %s...",argv[1]);
       filename = argv[1];
    }
 
