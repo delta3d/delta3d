@@ -6,6 +6,7 @@
 
 using namespace dtCore;
 using namespace dtABC;
+using namespace dtUtil;
 
 /**
 * The application instance.
@@ -142,7 +143,8 @@ public:
       // catch to prevent exit (errors will be logged).
       catch(CEGUI::Exception &e)
       {
-         Notify(WARN, "CEGUI::%s", e.getMessage().c_str() );
+         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
+            "CEGUI::%s", e.getMessage().c_str() );
       }
 
 
