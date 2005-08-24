@@ -281,8 +281,8 @@ namespace dtEditQt {
     {
         EditorEvents &ge = EditorEvents::getInstance();
 
-        connect(&ge,SIGNAL(selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> >&)),
-                this,SLOT(onActorsSelected(std::vector<osg::ref_ptr<dtDAL::ActorProxy> >&)));
+        connect(&ge,SIGNAL(selectedActors(proxyRefPtrVector&)),
+                this,SLOT(onActorsSelected(proxyRefPtrVector&)));
 
         connect(&ge, SIGNAL(editorPreferencesChanged()),
                 this,SLOT(onEditorPreferencesChanged()));

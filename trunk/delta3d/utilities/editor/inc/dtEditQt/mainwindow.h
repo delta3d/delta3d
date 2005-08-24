@@ -28,7 +28,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/map.h"
-
+#include "dtEditQt/typedefs.h"
 
 namespace dtEditQt 
 {
@@ -127,15 +127,14 @@ namespace dtEditQt
          * @param proxy The proxy that was changed.
          * @param property The property of the proxy that was modified.
          */
-        void onActorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void onActorPropertyChanged(proxyRefPtr proxy, propertyRefPtr property);
 
         /// Updates the window title
         void updateWindowTitle();
 
-        void onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
+        void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
 
-        void onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+        void onActorProxyDestroyed(proxyRefPtr proxy);
 
         void onMapPropertyChanged();
 

@@ -137,10 +137,10 @@ namespace dtEditQt
         connect(&EditorEvents::getInstance(), SIGNAL(mapLibraryImported()),
             this, SLOT(clearAll()));
         // Remove search items that are being destroyed
-        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyAboutToBeDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)),
-            this, SLOT(actorProxyAboutToBeDestroyed(osg::ref_ptr<dtDAL::ActorProxy>)));
-        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &)),
-            this, SLOT(selectedActors(std::vector<osg::ref_ptr<dtDAL::ActorProxy> > &)));
+        connect(&EditorEvents::getInstance(), SIGNAL(actorProxyAboutToBeDestroyed(proxyRefPtr)),
+            this, SLOT(actorProxyAboutToBeDestroyed(proxyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(selectedActors(proxyRefPtrVector &)),
+            this, SLOT(selectedActors(proxyRefPtrVector &)));
 
         // make sure buttons and count are correct on start up
         updateResultsCount();

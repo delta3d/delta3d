@@ -26,6 +26,7 @@
 #include <osg/ref_ptr>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
+#include "dtEditQt/typedefs.h"
 
 class QWidget;
 class QGridLayout;
@@ -273,8 +274,8 @@ namespace dtEditQt
          * to reflect the change in our editor.
          * @Note The default implementation does nothing.
          */
-        virtual void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property)
+        virtual void actorPropertyChanged(proxyRefPtr proxy,
+            propertyRefPtr property)
         {
             // do nothing
         }

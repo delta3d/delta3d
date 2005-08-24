@@ -27,6 +27,7 @@
 #include <osg/ref_ptr>
 #include <vector>
 #include "dtDAL/actorproxy.h"
+#include "dtEditQt/typedefs.h"
 
 class QComboBox;
 class QGroupBox;
@@ -65,12 +66,12 @@ namespace dtEditQt
             /** 
              * When a new actor is created, we may have to add to the global list 
              */
-            void onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments);
+            void onActorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
 
             /**
              * Called when an actor proxy is deleted
              */
-            void onActorProxyDestroyed(osg::ref_ptr<dtDAL::ActorProxy> proxy);
+            void onActorProxyDestroyed(proxyRefPtr proxy);
 
         private:
             QGroupBox *resultsGroup();

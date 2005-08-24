@@ -114,8 +114,8 @@ namespace dtEditQt
          */
         virtual bool updateData(QWidget *widget);
 
-        void actorPropertyChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy,
-            osg::ref_ptr<dtDAL::ActorProperty> property);
+        void actorPropertyChanged(proxyRefPtr proxy,
+            propertyRefPtr property);
 
     protected:
 
