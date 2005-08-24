@@ -467,6 +467,8 @@ ViewWindow::KeyboardEventHandler( const KeyboardEvent& ev )
                mContainer->ToggleZXPlane();
             else  if( ( ev.key == ev.KEY_r ) || ( ev.key == ev.KEY_R ) || ( ev.key == ev.KEY_Space ) )
                mContainer->ResetCam();
+            else  if( ev.key == ev.KEY_s )
+               GetCamera()->SetNextStatisticsType();
          }
          break;
 
