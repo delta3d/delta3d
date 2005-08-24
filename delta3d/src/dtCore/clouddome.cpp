@@ -1,4 +1,5 @@
 #include <dtCore/clouddome.h>
+#include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
@@ -254,8 +255,8 @@ void CloudDome::Create()
    mCloudProg->addShader( mCloudFrag.get() );
    mCloudProg->addShader( mCloudVert.get() );
 
-   LoadShaderSource( mCloudVert.get(), "cloud1.vert" );
-   LoadShaderSource( mCloudFrag.get(), "cloud1.frag" );
+   LoadShaderSource( mCloudVert.get(), GetDeltaRootPath()+"/data/shaders/cloud.vert" );
+   LoadShaderSource( mCloudFrag.get(), GetDeltaRootPath()+"/data/shaders/cloud.frag" );
 
    RefPtr<osg::Uniform> scale = new osg::Uniform( "Scale", mScale / 1000 );
    RefPtr<osg::Uniform> cutoff = new osg::Uniform( "Cutoff", mCutoff );
