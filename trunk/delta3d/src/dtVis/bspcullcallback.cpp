@@ -5,7 +5,6 @@
 #include <osgUtil/CullVisitor>
 
 #include "dtVis/bspcullcallback.h"
-#include "dtCore/notify.h"
 
 using namespace dtVis;
 using namespace std;

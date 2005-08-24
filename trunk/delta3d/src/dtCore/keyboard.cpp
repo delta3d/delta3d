@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/keyboard.h"
-#include "dtCore/notify.h"
 
 using namespace dtCore;
 using namespace std;

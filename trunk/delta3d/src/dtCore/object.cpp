@@ -6,7 +6,6 @@
 #include "dtCore/scene.h"
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
-#include "dtCore/notify.h"
 #include "dtCore/loadable.h"
 
 using namespace dtCore;

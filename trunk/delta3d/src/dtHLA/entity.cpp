@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtHLA/entity.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 
 using namespace dtCore;

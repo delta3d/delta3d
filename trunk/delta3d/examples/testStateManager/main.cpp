@@ -1,5 +1,4 @@
 #include "teststatemanager.h"     // for app class
-#include <dtCore/notify.h>
 #include <dtCore/globals.h>
 
 #include "MyEventTypes.h"
@@ -15,7 +14,6 @@ void Usage()
 
 int main(unsigned int argc, char* argv[])
 {
-   dtCore::SetNotifyLevel(dtCore::DEBUG_INFO);
    dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
    dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testStateManager" );
 

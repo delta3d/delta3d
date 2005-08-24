@@ -1,6 +1,6 @@
 #include <dtGUI/scriptmodule.h>
 
-#include <dtCore/notify.h>
+#include <dtUtil/log.h>
 
 using namespace dtGUI;
 
@@ -38,7 +38,8 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    }
    else
    {
-      dtCore::Notify(dtCore::WARN,"ScriptModule: function '%s' not found in registry.", handler_name.c_str() );
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
+         "ScriptModule: function '%s' not found in registry.", handler_name.c_str() );
       return false;
    }
 }

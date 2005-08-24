@@ -1,5 +1,4 @@
 #include "dtCore/skydome.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 
 #include <osg/Depth>

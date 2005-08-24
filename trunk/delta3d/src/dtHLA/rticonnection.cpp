@@ -27,7 +27,6 @@
 
 #include "osgUtil/IntersectVisitor"
 
-#include "dtCore/notify.h"
 #include "dtCore/system.h"
 #include "dtUtil/matrixutil.h"
 

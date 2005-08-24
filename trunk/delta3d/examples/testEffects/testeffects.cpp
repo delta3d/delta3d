@@ -135,8 +135,6 @@ public:
 
    void Config()
    {
-      SetNotifyLevel(DEBUG_INFO);
-
       Application::Config();
 
       Transform position;

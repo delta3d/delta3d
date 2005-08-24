@@ -4,8 +4,6 @@
 
 #include <osg/ShapeDrawable>
 
-#include "dtCore/notify.h"
-
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(PositionalLight)

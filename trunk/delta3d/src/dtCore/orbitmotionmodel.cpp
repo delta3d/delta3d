@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/orbitmotionmodel.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 #include "dtUtil/matrixutil.h"
 
