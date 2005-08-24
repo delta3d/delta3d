@@ -1,5 +1,5 @@
 #include <dtGUI/resourceprovider.h>
-#include <dtCore/notify.h>
+#include <dtUtil/log.h>
 
 #include <osgDB/FileUtils>
 
@@ -23,7 +23,8 @@ void ResourceProvider::loadRawDataContainer(const CEGUI::String& filename, CEGUI
    std::string foundFilename = osgDB::findDataFile(filename.c_str());
    if (foundFilename.empty())
    {
-      dtCore::Notify(dtCore::WARN, "dtGUI::ResourceProvider can't find file '%s'", filename.c_str());
+      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
+         "dtGUI::ResourceProvider can't find file '%s'", filename.c_str());
    }
    else
    {

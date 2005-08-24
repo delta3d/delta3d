@@ -51,7 +51,6 @@
 #include <osgTerrain/HeightFieldNode>
 
 //#include "dtCore/deltadrawable.h"
-//#include "dtCore/notify.h"
 #include "dtCore/transformable.h"
 
 namespace dtCore

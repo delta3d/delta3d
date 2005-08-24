@@ -1,5 +1,4 @@
 #include "dtCore/transform.h"
-#include "dtCore/notify.h"
 #include "dtUtil/matrixutil.h"
 #include "dtUtil/polardecomp.h"
 #include "dtUtil/deprecationmgr.h"

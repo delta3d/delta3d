@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/recorder.h"
-#include "dtCore/notify.h"
 #include "dtCore/system.h"
 
 using namespace std;

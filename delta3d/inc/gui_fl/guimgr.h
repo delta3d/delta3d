@@ -30,7 +30,6 @@
 #include "OpenThreads/Thread"
 #include "../src/gui_fl/gui_fltk.h"
 #include "dtCore/base.h"
-#include "dtCore/notify.h"
 #include "dtCore/scene.h"
 
 

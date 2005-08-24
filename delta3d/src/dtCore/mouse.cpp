@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/mouse.h"
-#include "dtCore/notify.h"
 #include "dtUtil/deprecationmgr.h"
 
 using namespace dtCore;

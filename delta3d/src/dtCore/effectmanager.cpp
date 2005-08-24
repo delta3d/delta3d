@@ -14,7 +14,6 @@
 
 #include "dtCore/effectmanager.h"
 #include "dtCore/transformable.h"
-#include "dtCore/notify.h"
 #include "dtCore/system.h"
 #include "dtCore/scene.h"
 #include "dtUtil/matrixutil.h"
