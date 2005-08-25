@@ -30,11 +30,11 @@
 #include <osg/Vec2d>
 #include <osg/Vec3d>
 
-#include "Noise1.h"
-#include "Noise2.h"
-#include "Noise3.h"
+#include "noise1.h"
+#include "noise2.h"
+#include "noise3.h"
 
-#include "Fractal.h"
+#include "fractal.h"
 
 
 namespace dtUtil
