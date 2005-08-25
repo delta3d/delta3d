@@ -22,7 +22,7 @@ if OS != 'windows':
 
 dtActorsDeps =['dtDAL', 'dtutil', 'dtcore', 'dtchar', 'dtabc', 'glgui', 'isense', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
-        'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody','gdal', 'sg', 'ul', 'js',
+        'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody','gdal', 'ul', 'js',
         'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :

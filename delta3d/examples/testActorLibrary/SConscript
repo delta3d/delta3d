@@ -17,7 +17,7 @@ sources = SGlob('*.cpp')
 
 testActorLibraryDeps =['dtDAL', 'dtutil', 'dtcore', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
-        'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'sg', 'ul', 'js',
+        'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js',
         'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows':
