@@ -123,14 +123,14 @@ void Tripod::Update(double deltaFrameTime) //virtual
       {
          //transform offset through parent's matrix to get new abs coord
          //sgMultMat4(newMat, parentMat, offsetMat);
-         newMat = parentMat * offsetMat;
+         newMat = offsetMat * parentMat;
       }
       break;
    case TETHER_WORLD_REL:
       {
-         newMat(0,3) = offsetMat(0,3) + parentMat(0,3);
-         newMat(1,3) = offsetMat(1,3) + parentMat(1,3);
-         newMat(2,3) = offsetMat(2,3) + parentMat(2,3);
+         newMat(3,0) = offsetMat(3,0) + parentMat(3,0);
+         newMat(3,1) = offsetMat(3,1) + parentMat(3,1);
+         newMat(3,2) = offsetMat(3,2) + parentMat(3,2);
       }
       break;
    default: break;
@@ -145,7 +145,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
       osg::Vec3 lookAtXYZ, upVec;
       upVec.set(0.f, 0.f, 1.f);
       targetXform.GetTranslation(lookAtXYZ);
-      lookatXform.SetLookAt(osg::Vec3(newMat(0,3), newMat(1,3), newMat(2,3)), lookAtXYZ, upVec);
+      lookatXform.SetLookAt(osg::Vec3(newMat(3,0), newMat(3,1), newMat(3,2)), lookAtXYZ, upVec);
       lookatXform.Get(newMat);
    }
 
@@ -153,13 +153,13 @@ void Tripod::Update(double deltaFrameTime) //virtual
     if (mXYZScale != ident)
    {
       //adjust the new xyz using the xyzScale values
-      osg::Vec3 xyzDiff(newMat(0,3) - currMat(0,3), newMat(1,3) - currMat(1,3), newMat(2,3) - currMat(2,3));
+      osg::Vec3 xyzDiff(newMat(3,0) - currMat(3,0), newMat(3,1) - currMat(3,1), newMat(3,2) - currMat(3,2));
       xyzDiff[0] *= (mXYZScale[0]*deltaFrameTime)/deltaFrameTime;
       xyzDiff[1] *= (mXYZScale[1]*deltaFrameTime)/deltaFrameTime;
       xyzDiff[2] *= (mXYZScale[2]*deltaFrameTime)/deltaFrameTime;
-      newMat(0,3) = xyzDiff[0] + currMat(0,3);
-      newMat(1,3) = xyzDiff[1] + currMat(1,3);
-      newMat(2,3) = xyzDiff[2] + currMat(2,3);
+      newMat(3,0) = xyzDiff[0] + currMat(3,0);
+      newMat(3,1) = xyzDiff[1] + currMat(3,1);
+      newMat(3,2) = xyzDiff[2] + currMat(3,2);
    }
 
    if (mHPRScale != ident)
