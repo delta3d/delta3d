@@ -392,7 +392,7 @@ class CylinderFunctor
        * Constructor.
        */
       CylinderFunctor()
-         : mMinZ(SG_MAX), mMaxZ(-SG_MAX), mRadius(0.0f)
+         : mMinZ(FLT_MAX), mMaxZ(-FLT_MAX), mRadius(0.0f)
       {}
 
       /**

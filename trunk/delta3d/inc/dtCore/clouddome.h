@@ -26,7 +26,7 @@
 */
 
 #include <dtCore/enveffect.h>
-#include <dtCore/pnoise.h>
+#include <dtUtil/noisetexture.h>
 #include <dtCore/refptr.h>
 #include <dtUtil/deprecationmgr.h>
 

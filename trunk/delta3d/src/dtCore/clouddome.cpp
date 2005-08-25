@@ -212,14 +212,14 @@ void CloudDome::Create()
          LOG_WARNING("CloudDome can't load image file." );
          LOG_WARNING("Creating new 128^3 3d texture..." );
 
-         NoiseGenerator noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
+         NoiseTexture noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
          mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
       }
    }
    else
    {
       LOG_ALWAYS("Creating 128^3 3d texture..." );	
-      NoiseGenerator noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
+      NoiseTexture noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
       mImage_3D = noise3d.makeNoiseTexture(GL_ALPHA);
    }
 

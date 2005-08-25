@@ -142,34 +142,23 @@ void Transform::GetScale( float& sx, float& sy, float& sz ) const
 
 void Transform::SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, const osg::Vec3& upVec )
 {
-   /*
-   osg::Matrix lookAtMatrix = osg::Matrix::lookAt(xyz, lookAtXYZ, upVec);
+   osg::Matrix mat;
+   osg::Vec3 x,y,z;
 
-   dtUtil::MatrixUtil::SetColumn( lookAtMatrix, osg::Vec4( 0.0f, 0.0f, 0.0f, 1.0f ), 3 ); 
+   y = lookAtXYZ - xyz;
+   z = upVec;
+   x = y ^ z;
+   z = x ^ y;
 
-   SetRotation( lookAtMatrix );
-   SetTranslation( xyz );
-   */
-
-   sgMat4 sgMat;
-   sgVec3 sgXyz, sgLookAtXyz, sgUpVec;
-
-   for( int i = 0; i < 3; i++ )
-   {
-      sgXyz[i] = xyz[i];
-      sgLookAtXyz[i] = lookAtXYZ[i];
-      sgUpVec[i] = upVec[i];
-   }
-
-   sgMakeLookAtMat4( sgMat, sgXyz, sgLookAtXyz, sgUpVec );
+   x.normalize();
+   y.normalize();
+   z.normalize();
    
-   osg::Matrix lookAtMatrix;
+   dtUtil::MatrixUtil::SetColumn(mat, x, 0);
+   dtUtil::MatrixUtil::SetColumn(mat, y, 1);
+   dtUtil::MatrixUtil::SetColumn(mat, z, 2);
 
-   for( int i = 0; i< 3; i++ )
-      for( int j = 0; j < 3; j++ )
-         lookAtMatrix(i,j) = sgMat[i][j];
-
-   SetRotation( lookAtMatrix );
+   SetRotation( mat );
    SetTranslation( xyz );
 
 }

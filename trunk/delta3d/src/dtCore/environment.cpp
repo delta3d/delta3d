@@ -636,12 +636,12 @@ void dtCore::Environment::UpdateFogColor(void)
    double sunRotation = osg::DegreesToRadians(-95.0);
    double heading = osg::DegreesToRadians(-95.0);
 
-   double rotation = -(sunRotation+SGD_PI) - heading;
+   double rotation = -(sunRotation+osg::PI) - heading;
 
    float avf = 1.f - (20000.f - av) / 20000.f;
    float sif = 0.5f - cosf(osg::DegreesToRadians(mSunAltitude)*2.f)/2.f + 0.000001f;
 
-   float rf1  = fabs((rotation-SGD_PI)/SGD_PI); //difference between eyepoint heading and sun heading (rad)
+   float rf1  = fabs((rotation-osg::PI)/osg::PI); //difference between eyepoint heading and sun heading (rad)
    float rf2 = avf * pow(rf1*rf1, 1/sif);
 
    float rf3  = 1.f - rf2;

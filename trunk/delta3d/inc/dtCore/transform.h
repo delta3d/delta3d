@@ -24,7 +24,6 @@
 #include "dtCore/export.h"
 #include "osg/Matrix"
 #include "osg/Vec3"
-#include "sg.h"
 
 namespace dtCore
 {

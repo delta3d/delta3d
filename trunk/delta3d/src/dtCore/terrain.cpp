@@ -6,6 +6,7 @@
 
 #include "dtCore/scene.h"
 #include "dtCore/terrain.h"
+#include "dtUtil/noiseutility.h"
 #include <dtUtil/log.h>
 
 #include <math.h>
@@ -197,7 +198,7 @@ void Terrain::SetGeoOrigin(double latitude, double longitude, double elevation)
    
    GeodeticToGeocentric(
       mOriginLatitude, mOriginLongitude, mOriginElevation,
-      mGeocentricOrigin, mGeocentricOrigin + 1, mGeocentricOrigin + 2
+      &mGeocentricOrigin[0], &mGeocentricOrigin[1], &mGeocentricOrigin[2]
    );
    
    mClearFlag = true;
@@ -497,26 +498,26 @@ void Terrain::LocalToGeodetic(const osg::Vec3& pt,
                               double* longitude,
                               double* elevation)
 {
-   sgdVec3 refPos;
+   osg::Vec3d refPos;
    
    GeodeticToGeocentric(
       mOriginLatitude, mOriginLongitude, mOriginElevation,
-      refPos, refPos + 1, refPos + 2
+      &refPos[0], &refPos[1], &refPos[2]
    );
    
-   sgdVec3 offset = { pt[0], pt[1], pt[2] },
-           xVec = { 1, 0, 0 },
-           zVec = { 0, 0, 1 };
+   osg::Vec3d offset ( pt[0], pt[1], pt[2] ),
+           xVec ( 1, 0, 0 ),
+           zVec ( 0, 0, 1 );
    
-   sgdMat4 mat;
+   osg::Matrix mat;
+
+   mat.makeRotate(osg::DegreesToRadians(90.0 - mOriginLatitude), xVec);
    
-   sgdMakeRotMat4(mat, 90.0 - mOriginLatitude, xVec);
+   osg::Matrix::transform3x3(offset, mat);
    
-   sgdXformVec3(offset, mat);
+   mat.makeRotate(osg::DegreesToRadians(mOriginLongitude + 90.0), zVec);
    
-   sgdMakeRotMat4(mat, mOriginLongitude + 90.0, zVec);
-   
-   sgdXformVec3(offset, mat);
+   osg::Matrix::transform3x3(offset, mat);
    
    GeocentricToGeodetic(
       refPos[0] + offset[0], refPos[1] + offset[1], refPos[2] + offset[2],
@@ -537,28 +538,27 @@ osg::Vec3 Terrain::GeodeticToLocal(double latitude,
                                    double longitude,
                                    double elevation)
 {
-   sgdVec3 pos;
+   osg::Vec3d pos;
    
    GeodeticToGeocentric(
       latitude, longitude, elevation,
-      pos, pos + 1, pos + 2   
+      &pos[0], &pos[1], &pos[2]   
    );
    
-   sgdVec3 xVec = { 1, 0, 0 },
-           zVec = { 0, 0, 1 },
+   osg::Vec3d xVec ( 1, 0, 0 ),
+           zVec ( 0, 0, 1 ),
            offset;
    
-   sgdSubVec3(offset, pos, mGeocentricOrigin);
+   offset = pos- mGeocentricOrigin;
    
-   sgdMat4 mat;
+   osg::Matrix mat;
+   mat.makeRotate(osg::DegreesToRadians(-mOriginLongitude - 90.0), zVec);
    
-   sgdMakeRotMat4(mat, -mOriginLongitude - 90.0, zVec);
+   osg::Matrix::transform3x3(offset, mat);
    
-   sgdXformVec3(offset, mat);
+   mat.makeRotate(osg::DegreesToRadians(mOriginLatitude - 90.0), xVec);
    
-   sgdMakeRotMat4(mat, mOriginLatitude - 90.0, xVec);
-   
-   sgdXformVec3(offset, mat);
+   osg::Matrix::transform3x3(offset, mat);
    
    return osg::Vec3(offset[0], offset[1], offset[2]);
 }
@@ -628,13 +628,13 @@ static osg::Image* makeDetailTextureImage()
    
    unsigned char* ptr = (unsigned char*)image->data();
    
-   sgPerlinNoise_2D texNoise;
+   Noise2f texNoise;
    
    for(int y=0;y<256;y++)
    {
       for(int x=0;x<256;x++)
       {
-         float val = 0.7f + texNoise.getNoise(x*0.1f, y*0.1f)*0.3f;
+         float val = 0.7f + texNoise.GetNoise(osg::Vec2f(x*0.1f, y*0.1f))*0.3f;
          
          *(ptr++) = (unsigned char)(val*255);
          *(ptr++) = (unsigned char)(val*255);

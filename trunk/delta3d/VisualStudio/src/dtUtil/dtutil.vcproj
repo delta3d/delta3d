@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sg_d.lib ul_d.lib openthreadswin32d.lib osgd.lib"
+				AdditionalDependencies="ul_d.lib openthreadswin32d.lib osgd.lib"
 				OutputFile="../../../bin/dtutild.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sg.lib ul.lib openthreadswin32.lib osg.lib"
+				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib"
 				OutputFile="../../../bin/dtutil.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -136,6 +136,9 @@
 				RelativePath="..\..\..\src\dtUtil\matrixutil.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\noisetexture.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\polardecomp.cpp">
 			</File>
 		</Filter>
@@ -156,10 +159,28 @@
 				RelativePath="..\..\..\inc\dtUtil\enumeration.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtUtil\fractal.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtUtil\log.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\matrixutil.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\noise1.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\noise2.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\noise3.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\noisetexture.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\noiseutility.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\objectfactory.h">

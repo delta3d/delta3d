@@ -1,6 +1,6 @@
 
 #include "dtCore/cloudplane.h"
-#include "dtCore/pnoise.h"
+#include "dtUtil/noisetexture.h"
 #include "dtCore/system.h"
 #include "dtCore/scene.h"
 
@@ -72,7 +72,7 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
 
    //float bias = 1.5f;
 
-	NoiseGenerator noise2d(mOctaves, mFrequency, mAmplitude, mPersistence, mTexSize, mTexSize);
+   dtUtil::NoiseTexture noise2d(mOctaves, mFrequency, mAmplitude, mPersistence, mTexSize, mTexSize);
 	mImage = noise2d.makeNoiseTexture(GL_ALPHA);
 
     // Exponentiation of the image

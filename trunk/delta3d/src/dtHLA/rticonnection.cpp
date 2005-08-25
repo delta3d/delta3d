@@ -22,6 +22,7 @@
 #include <osg/Matrix>
 #include <osg/Material>
 #include <osg/StateSet>
+#include <osg/Endian>
 
 #include "osgDB/FileUtils"
 
@@ -57,6 +58,8 @@ const double flatteningReciprocal = 298.257223563;
  * intersection test.
  */
 const osg::Node::NodeMask entityMask = 0x01;
+
+
 
 
 /**
@@ -115,9 +118,9 @@ RTIConnection::RTIConnection(string name)
          mLocalIPAddress = me.sin_addr.s_addr;
          #endif
          
-         if(ulIsLittleEndian)
+         if(osg::getCpuByteOrder() == osg::LittleEndian)
          {
-            ulEndianSwap(&mLocalIPAddress);
+            osg::swapBytes((char*)&mLocalIPAddress, sizeof(mLocalIPAddress));
          }
 
          #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
@@ -1855,9 +1858,9 @@ void RTIConnection::OnMessage(MessageData *data)
 
             *((int*)encodedDamageState) = master->GetDamageState();
             
-            if(ulIsLittleEndian)
+            if(osg::getCpuByteOrder() == osg::LittleEndian)
             {
-               ulEndianSwap((int*)encodedDamageState);
+               osg::swapBytes((char*)encodedDamageState, sizeof(encodedDamageState));
             }
 
             theAttributes->add(
@@ -2820,9 +2823,9 @@ void RTIConnection::reflectAttributeValues(
          char* buf = theAttributes.getValuePointer(i, length);
          damageAttribute = *(unsigned int*)(&buf[0]);
 
-         if(ulIsLittleEndian)
+         if(osg::getCpuByteOrder() == osg::LittleEndian)
          {
-            ulEndianSwap(&damageAttribute);
+            osg::swapBytes((char*)&damageAttribute, sizeof(damageAttribute));
             
          }
 
@@ -2992,9 +2995,9 @@ throw (
             {
                fuseType = *(unsigned short*)(&buf[0]);
 
-               if(ulIsLittleEndian)
+               if(osg::getCpuByteOrder() == osg::LittleEndian)
                {
-                  ulEndianSwap(&fuseType);
+                  osg::swapBytes((char*)&fuseType, sizeof(fuseType));
                }
             }
          }
@@ -3019,9 +3022,9 @@ throw (
             {
                warheadType = *(unsigned short*)(&buf[0]);
 
-               if(ulIsLittleEndian)
+               if(osg::getCpuByteOrder() == osg::LittleEndian)
                {
-                  ulEndianSwap(&warheadType);
+                  osg::swapBytes((char*)&warheadType, sizeof(warheadType));
                }
             }
          }
@@ -3046,9 +3049,9 @@ throw (
             {
                quantityFired = *(unsigned short*)(&buf[0]);
 
-               if(ulIsLittleEndian)
+               if(osg::getCpuByteOrder() == osg::LittleEndian)
                {
-                  ulEndianSwap(&quantityFired);
+                  osg::swapBytes((char*)&quantityFired, sizeof(quantityFired));
                }
             }
          }
@@ -3205,9 +3208,9 @@ void RTIConnection::EffectAdded(
 
       warheadType = 1000; // clamp to HE warhead
 
-      if(ulIsLittleEndian)
+      if(osg::getCpuByteOrder() == osg::LittleEndian)
       {
-         ulEndianSwap(&warheadType);
+         osg::swapBytes((char*)&warheadType, sizeof(warheadType));
       }
 
       *(unsigned short*)(&encodedWarheadType[0]) = warheadType;

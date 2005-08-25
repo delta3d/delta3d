@@ -18,6 +18,8 @@
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
 
+#include <assert.h>
+
 #include "viewstate.h"
 #include "viewer.h"
 

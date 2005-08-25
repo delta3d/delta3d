@@ -53,7 +53,6 @@
 #include "dtCore/particlesystem.h"
 #include "dtCore/positionallight.h"
 #include "dtCore/physical.h"
-#include "dtCore/pnoise.h"
 #include "dtCore/pointaxis.h"
 #include "dtCore/recorder.h"
 #include "dtCore/refptr.h"
@@ -106,7 +105,6 @@
    #endif
 
    #define _AUTOLIBNAME   "Producerd.lib"
-   #define _AUTOLIBNAME1  "sg_d.lib"
    #define _AUTOLIBNAME2  "ul_d.lib"
    #define _AUTOLIBNAME4  "OpenThreadsWin32d.lib"  
    #define _AUTOLIBNAME6  "osgd.lib"
@@ -126,7 +124,6 @@
    #endif
 
    #define _AUTOLIBNAME   "Producer.lib"
-   #define _AUTOLIBNAME1  "sg.lib"
    #define _AUTOLIBNAME2  "ul.lib"
    #define _AUTOLIBNAME4  "OpenThreadsWin32.lib"  
    #define _AUTOLIBNAME6  "osg.lib"
