@@ -36,7 +36,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="dtDALd.lib Producerd.lib  OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib tinyxmld.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib glGUI_d.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvis_d.lib xerces-c_2.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDALd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib tinyxmld.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvis_d.lib xerces-c_2.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtActorsd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"
@@ -90,7 +90,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="dtDAL.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib tinyxml.lib osgUtil.lib ode.lib osgText.lib osgTerrain.lib glGUI.lib js.lib isense.lib dtcore.lib dtabc.lib dtchar.lib dtaudio.lib dtutil.lib dtvis.lib xerces-c_2.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDAL.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib tinyxml.lib osgUtil.lib ode.lib osgText.lib osgTerrain.lib js.lib isense.lib dtcore.lib dtabc.lib dtchar.lib dtaudio.lib dtutil.lib dtvis.lib xerces-c_2.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtActors.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"

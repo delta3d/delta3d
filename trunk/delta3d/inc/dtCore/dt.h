@@ -26,8 +26,6 @@
 #include "dtCore/clouddome.h"
 #include "dtCore/cloudplane.h"
 #include "dtCore/compass.h"
-#include "dtCore/cui_openglrenderer.h"
-#include "dtCore/cui_openglshader.h"
 #include "dtCore/deltadrawable.h"
 #include "dtCore/deltawin.h"
 #include "dtCore/environment.h"
@@ -78,7 +76,6 @@
 // Automatic library inclusion macros that use the #pragma/lib feature
 //
 #undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
 #undef _AUTOLIBNAME3
 #undef _AUTOLIBNAME4
@@ -93,7 +90,6 @@
 #undef _AUTOLIBNAME13
 #undef _AUTOLIBNAME14
 #undef _AUTOLIBNAME15
-#undef _AUTOLIBNAME16
 #undef _AUTOLIBNAME18
 #undef _AUTOLIBNAME19
 #undef _AUTOLIBNAME20
@@ -115,7 +111,6 @@
    #define _AUTOLIBNAME11 "oded.lib"
    #define _AUTOLIBNAME13 "osgTextd.lib"
    #define _AUTOLIBNAME15 "osgTerraind.lib"
-   #define _AUTOLIBNAME16 "glGUI_d.lib"
    #define _AUTOLIBNAME18 "js_d.lib"
    #define _AUTOLIBNAME21 "isensed.lib"
 #else
@@ -134,7 +129,6 @@
    #define _AUTOLIBNAME11 "ode.lib"
    #define _AUTOLIBNAME13 "osgText.lib"
    #define _AUTOLIBNAME15 "osgTerrain.lib"
-   #define _AUTOLIBNAME16 "glGUI.lib"
    #define _AUTOLIBNAME18 "js.lib"
    #define _AUTOLIBNAME21 "isense.lib"
 #endif
@@ -150,7 +144,6 @@
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
    #pragma message( "Will automatically link with " _AUTOLIBNAME )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
@@ -164,7 +157,6 @@
    #pragma message( "Will automatically link with " _AUTOLIBNAME13 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME14 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME15 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME16 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME18 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME19 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME20 )
@@ -176,7 +168,6 @@
 #endif
 
 #pragma comment(lib, _AUTOLIBNAME)
-#pragma comment(lib, _AUTOLIBNAME1)
 #pragma comment(lib, _AUTOLIBNAME2)
 #pragma comment(lib, _AUTOLIBNAME3)
 #pragma comment(lib, _AUTOLIBNAME4)
@@ -190,7 +181,6 @@
 #pragma comment(lib, _AUTOLIBNAME13)
 #pragma comment(lib, _AUTOLIBNAME14)
 #pragma comment(lib, _AUTOLIBNAME15)
-#pragma comment(lib, _AUTOLIBNAME16)
 #pragma comment(lib, _AUTOLIBNAME18)
 #pragma comment(lib, _AUTOLIBNAME19)
 #pragma comment(lib, _AUTOLIBNAME20)

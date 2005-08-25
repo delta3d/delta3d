@@ -32,7 +32,6 @@
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME
-#undef _AUTOLIBNAME1
 #undef _AUTOLIBNAME2
 #undef _AUTOLIBNAME3
 
@@ -40,14 +39,12 @@
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtutild.lib"
    #endif
-   #define _AUTOLIBNAME1 "sg_d.lib"
    #define _AUTOLIBNAME2 "ul_d.lib"
    #define _AUTOLIBNAME3 "osgd.lib"
 #else
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtutil.lib"
    #endif
-   #define _AUTOLIBNAME1 "sg.lib"
    #define _AUTOLIBNAME2 "ul.lib"
    #define _AUTOLIBNAME3 "osg.lib"
 #endif
@@ -58,7 +55,6 @@
       #pragma message( "Will automatically link with " _AUTOLIBNAME )
    #endif
 
-   #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
@@ -66,7 +62,6 @@
 #ifndef DT_LIBRARY
    #pragma comment(lib, _AUTOLIBNAME)
 #endif
-#pragma comment(lib, _AUTOLIBNAME1)
 #pragma comment(lib, _AUTOLIBNAME2)
 #pragma comment(lib, _AUTOLIBNAME3)
 
