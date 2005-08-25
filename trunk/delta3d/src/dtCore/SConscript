@@ -56,7 +56,7 @@ dtCoreSrcs = [ 'base.cpp',
                'ufomotionmodel.cpp',
                'walkmotionmodel.cpp' ]
 
-dtCoreDeps=[ 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','gdal', 'sg', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
+dtCoreDeps=[ 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','gdal', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
 
 if OS == 'windows' :
    dtCoreSrcs.extend( [ 'deltawin_win32.cpp', 'uniqueid_win32.cpp' ] )

@@ -4,9 +4,9 @@ gui_flSrcs = [  'gui_fltk.cpp',
                 'guimgr.cpp' ]
 
 if OS == 'darwin':
-    gui_flDeps=[ 'dtcore', 'dtabc', 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX', 'osgProducer', 'isense', 'js', 'osgSim', 'osgDB', 'sg', 'ul', 'tinyxml', 'Carbon' ]
+    gui_flDeps=[ 'dtcore', 'dtabc', 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgParticle', 'osgTerrain', 'osgFX', 'osgProducer', 'isense', 'js', 'osgSim', 'osgDB', 'ul', 'tinyxml', 'Carbon' ]
 else:
-    gui_flDeps = [ 'dtcore', 'dtabc', 'fltk', 'OpenThreads', 'osg', 'sg', 'ul', 'Producer', 'tinyxml' ]
+    gui_flDeps = [ 'dtcore', 'dtabc', 'fltk', 'OpenThreads', 'osg', 'ul', 'Producer', 'tinyxml' ]
 
 if OS == 'windows' :
    gui_flDeps += [ 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]

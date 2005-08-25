@@ -3,7 +3,7 @@ Import('*')
 
 dtUtilSrcs = SGlob('*.cpp')
 
-dtUtilDeps =[ 'OpenThreads', 'Producer', 'osg', 'sg', 'ul' ]
+dtUtilDeps =[ 'OpenThreads', 'Producer', 'osg', 'ul' ]
 
 if OS == 'windows' :
     dtUtilDeps += ['User32']
