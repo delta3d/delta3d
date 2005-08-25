@@ -8,7 +8,6 @@ class StateWalker : public dtCore::Base
 {
 public:
    typedef dtCore::Base BaseClass;
-   typedef std::vector<const dtABC::Event::Type*> EventPtrVec;
 
    StateWalker(dtABC::StateManager* gm);
 
@@ -27,8 +26,6 @@ protected:
    virtual ~StateWalker();
    void DisplayExtraEventChoices(unsigned int index);
    void HandleExtraEventChoices(unsigned int index_size, unsigned int choice);
-
-   EventPtrVec GetEvents(dtABC::State* from);
 
 private:
    dtCore::RefPtr<dtABC::StateManager> mStateManager;

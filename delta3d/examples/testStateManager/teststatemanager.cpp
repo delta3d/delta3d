@@ -40,24 +40,6 @@ void StateWalker::OnMessage(dtCore::Base::MessageData* msg)
    }
 }
 
-StateWalker::EventPtrVec StateWalker::GetEvents(dtABC::State* from)
-{
-   EventPtrVec events;
-
-   const dtABC::StateManager::TransitionMap& transitions = mStateManager->GetTransitions();
-   unsigned int counter(0);
-   for(dtABC::StateManager::TransitionMap::const_iterator iter=transitions.begin(); iter!=transitions.end(); iter++)
-   {
-      const dtABC::StateManager::TransitionMap::key_type::second_type state = (*iter).first.second;
-      if( state == from )
-      {
-         events.push_back( (*iter).first.first );
-      }
-   }
-
-   return events;
-}
-
 void StateWalker::DisplayEventChoicesAndWaitForInput()
 {
    if( !mStateManager->GetCurrentState() )
@@ -69,7 +51,8 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
 
    std::cout << "For the State, " << mStateManager->GetCurrentState()->GetName() << ", the Event choices are:" << std::endl;
 
-   std::vector<const dtABC::Event::Type*> eventvec = GetEvents( mStateManager->GetCurrentState() );
+   std::vector<const dtABC::Event::Type*> eventvec( mStateManager->GetNumOfEvents( mStateManager->GetCurrentState() ) );
+   mStateManager->GetEvents( mStateManager->GetCurrentState(), eventvec );
    unsigned int esize = eventvec.size();
 
    // display the Event choices for those transitions
@@ -122,8 +105,6 @@ void StateWalker::HandleExtraEventChoices(unsigned int eventvecsize, unsigned in
    if( choice == eventvecsize )
    {
       std::cout << "StateWalker: Quit was chosen." << std::endl;
-
-      ///\todo replace ::Instance() with ::Instance()
       dtCore::System::Instance()->Stop();
    }
 }
