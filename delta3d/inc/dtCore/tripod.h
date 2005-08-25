@@ -21,10 +21,8 @@
 #ifndef DELTA_TRIPOD
 #define DELTA_TRIPOD
 
-#include "dtCore/transformable.h"
-#include "dtCore/refptr.h"
+#include "dtCore/base.h"
 #include "dtCore/camera.h"
-#include "dtUtil/deprecationmgr.h"
 
 #include <osg/Vec3>
 
@@ -40,16 +38,23 @@ namespace dtCore
     *  the Camera to "lag" behind.
     *  Also, the Tripod may be instructed to always point toward another
     *  Transformable.
+    *
+    *  Note: To have a Camera keep a fixed, parent-relative distance from the parent,
+    *  you can simply use the functionality in Transformable and not use the Tripod.
+    *  \code
+    *    myParent->AddChild( myCamera );
+    *    Transform offset(x,y,z,h,p,r);
+    *    myCamera->SetTransform( &offset, Transformable::REL_CS );
+    *  \endcode
     */
-   class DT_EXPORT Tripod : public Transformable
+   class DT_EXPORT Tripod : public Base
    {
    public:
 
       DECLARE_MANAGEMENT_LAYER(Tripod)
       
       ///Contructor which takes in a optional Camera and Transformable
-      Tripod(Camera *cam = NULL, Transformable *trans = NULL);
-      virtual ~Tripod();
+      Tripod(Camera *cam = NULL, Transformable *parent = NULL);
 
       ///Supply a Camera to connect to this Tripod
       void SetCamera( Camera *cam );
@@ -59,11 +64,11 @@ namespace dtCore
       RefPtr<Camera> GetCamera() const {return mCamera;}
 
       ///Attach this Tripod to a Transformable
-      void SetAttachToTransformable(Transformable *trans);
-      void SetAttachToTransformable(const std::string& transName);
+      void SetAttachToTransformable(Transformable *parent);
+      void SetAttachToTransformable(const std::string& parentName);
 
       ///Get the currently connected Transformable
-      RefPtr<Transformable> GetAttachedTransformable() const {return mParent;}
+      RefPtr<Transformable> GetAttachedTransformable() const {return mParentTrans;}
       
       ///Set the Tripod's offset from the parent Transformable
       void SetOffset(float x, float y, float z, float h, float p, float r)
@@ -96,6 +101,9 @@ namespace dtCore
       void SetLookAtTarget(Transformable *target);
 
    protected:
+
+      virtual ~Tripod();
+
       ///Override to receive messages
       virtual void OnMessage(MessageData *data);
 
@@ -103,7 +111,7 @@ namespace dtCore
       virtual void Update(double deltaFrameTime);
 
       RefPtr<Camera> mCamera; ///<pointer to the Camera to control
-      RefPtr<Transformable> mParent; ///<pointer to the parent Transformable
+      RefPtr<Transformable> mParentTrans; ///<pointer to the parent Transformable
       osg::Vec3 mPosition; ///<The position
       osg::Vec3 mHPR;///<Heading, Pitch, and Roll
       TetherMode mTetherMode; ///<The tethering mode
