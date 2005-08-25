@@ -11,14 +11,14 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Tripod)
 
-Tripod::Tripod(Camera *cam, Transformable *trans):
+Tripod::Tripod(Camera *cam, Transformable *parent):
 mTetherMode(TETHER_PARENT_REL)
 {
    RegisterInstance(this);
    
    AddSender(System::Instance());
    if (cam != NULL) SetCamera(cam);
-   SetAttachToTransformable(trans);
+   SetAttachToTransformable(parent);
 
    mPosition.set(0.0f, -10.0f, 2.0f);
    mHPR.set(0.0f, 0.0f, 0.0f);
@@ -55,22 +55,22 @@ void Tripod::SetCamera( const std::string& camName )
   * should be positioned.  The offset values and scale values will then be used
   * to compute the final Camera position/attitude.
   */
-void Tripod::SetAttachToTransformable(Transformable *trans)
+void Tripod::SetAttachToTransformable(Transformable *parent)
 {
-   mParent = trans;
+   mParentTrans = parent;
 }
 
-void Tripod::SetAttachToTransformable( const std::string& transName )
+void Tripod::SetAttachToTransformable( const std::string& parentName )
 {
-   if (transName.size()>0)
+   if (parentName.size()>0)
    {
-      Transformable *trans = Transformable::GetInstance(transName);
+      Transformable *trans = Transformable::GetInstance(parentName);
       if (trans!=NULL)
       {
          SetAttachToTransformable(trans);
       }
       else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
-         "Tripod: Can't find Transformable %s", transName.c_str());
+         "Tripod: Can't find Transformable %s", parentName.c_str());
    }
 }
 
@@ -100,10 +100,10 @@ void Tripod::OnMessage(MessageData *data)
 void Tripod::Update(double deltaFrameTime) //virtual
 {
    //get parent's matrix
-   if (!mParent.valid() || !mCamera.valid()) return;
+   if (!mParentTrans.valid() || !mCamera.valid()) return;
 
    Transform parentXform;
-   mParent->GetTransform(&parentXform);
+   mParentTrans->GetTransform(&parentXform);
    osg::Matrix parentMat;
    parentXform.Get(parentMat);
 
