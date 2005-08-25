@@ -2,7 +2,7 @@
 
 #include <dtCore/globals.h>
 #include <dtABC/widget.h>
-#include <dtdal/fileutils.h>
+#include <dtDAL/fileutils.h>
 
 #include "viewstate.h"
 #include "UserInterface.h"

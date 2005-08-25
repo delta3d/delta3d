@@ -34,7 +34,6 @@ if CheckForBoost() and OS != 'darwin' :
                            'logicalinputdevicebindings.cpp',
                            'motionmodelbindings.cpp',
                            'mousebindings.cpp',
-                           'noisegeneratorbindings.cpp',
                            'objectbindings.cpp',
                            'orbitmotionmodelbindings.cpp',
                            'particlesystembindings.cpp',

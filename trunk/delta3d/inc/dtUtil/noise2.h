@@ -128,7 +128,7 @@ void Noise2<Real, Vector>::BuildTable()
    //duplicate this table for speed
    for(int k = TABLE_SIZE; k < TABLE_SIZE * 2; ++k)
    {
-      m_iPerm[k] = m_iPerm[j- TABLE_SIZE];
+      m_iPerm[k] = m_iPerm[k - TABLE_SIZE];
    }
 }
 
