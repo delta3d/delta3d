@@ -28,6 +28,9 @@
 
 #include <sstream>
 
+#include <osg/Vec2f>
+#include <osg/Vec3d>
+
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Group>
@@ -318,7 +321,7 @@ namespace dtCore
          /**
           * The origin in geocentric coordinates.
           */
-         sgdVec3 mGeocentricOrigin;
+         osg::Vec3d mGeocentricOrigin;
          
          /**
           * The distance from the eyepoint for which terrain will be loaded.

@@ -107,8 +107,8 @@ static int dInfiniteTerrainClass = 0;
 InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
    : mSegmentSize(1000.0f),
      mSegmentDivisions(128),
-     mHorizontalScale(0.01f),
-     mVerticalScale(25.0f),
+     mHorizontalScale(0.0035f),
+     mVerticalScale(20.0f),
      mBuildDistance(3000.0f),
      mSmoothCollisionsEnabled(false),
      mClearFlag(false)
@@ -138,7 +138,7 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
    {
       image = new osg::Image;
 
-      sgPerlinNoise_2D texNoise;
+      dtUtil::Noise2f texNoise;
 
       unsigned char* texture = new unsigned char[256*256*3];
 
@@ -148,7 +148,7 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
       {
          for(int j=0;j<256;j++)
          {
-            float val = 0.7f + texNoise.getNoise(i*0.1f, j*0.1f)*0.3f;
+            float val = 0.7f + texNoise.GetNoise(osg::Vec2f(i*0.1f, j*0.1f))*0.3f;
 
             texture[k++] = 0;
             texture[k++] = (unsigned char)(val*0.5*255);
@@ -224,7 +224,7 @@ InfiniteTerrain::~InfiniteTerrain()
  */
 void InfiniteTerrain::Regenerate()
 {
-   mNoise.regenerate();
+   //mNoise.regenerate();
    
    mClearFlag = true;
 }
@@ -376,7 +376,7 @@ float InfiniteTerrain::GetHeight(float x, float y, bool smooth)
    if(smooth)
    {
       return mVerticalScale * 2.0f *
-             mNoise.getNoise(x * mHorizontalScale, y * mHorizontalScale) - 1.0f;
+         mNoise.FBM(osg::Vec2f((x + mBuildDistance) * mHorizontalScale, (y + mBuildDistance) * mHorizontalScale)) - 1.0f;
    }
    else
    {

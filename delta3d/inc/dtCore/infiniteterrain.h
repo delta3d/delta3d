@@ -32,7 +32,8 @@
 
 
 #include "dtCore/physical.h"
-#include "dtUtil/deprecationmgr.h"
+#include "dtUtil/noiseutility.h"
+
 
 namespace dtCore
 {
@@ -253,7 +254,7 @@ namespace dtCore
          /**
           * The noise object.
           */
-         sgPerlinNoise_2D mNoise;
+         dtUtil::Fractal2f mNoise;
          
          /**
           * The size of each terrain segment.

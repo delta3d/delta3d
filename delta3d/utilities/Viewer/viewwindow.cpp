@@ -2,6 +2,7 @@
 
 #include <dtCore/globals.h>
 #include <dtABC/widget.h>
+#include <dtdal/fileutils.h>
 
 #include "viewstate.h"
 #include "UserInterface.h"
@@ -343,9 +344,7 @@ ViewWindow::CommandLine( int argc, char** argv )
    if (!flag)
    {
       //set our default path to the current working directory
-      char path[512];
-      ulGetCWD(path, strlen(path) );
-      SetPath( path ); 
+      SetPath( dtDAL::FileUtils::GetInstance().CurrentDirectory().c_str()); 
 
       for( int ii(1); ii < argc; ii++ )
       {

@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltk.lib dtutild.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltk.lib dtDALd.lib dtutild.lib"
 				OutputFile="../../../bin/ViewerD.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib dtutil.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib dtDAL.lib dtutil.lib"
 				OutputFile="../../../bin/Viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

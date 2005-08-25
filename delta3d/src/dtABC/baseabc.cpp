@@ -1,5 +1,5 @@
 #include "dtABC/baseabc.h"
-
+#include <assert.h>
 
 using namespace   dtABC;
 using namespace   dtCore;
