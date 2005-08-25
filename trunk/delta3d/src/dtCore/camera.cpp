@@ -6,7 +6,6 @@
 
 #include "dtCore/camera.h"
 #include "dtCore/scene.h"
-#include <dtUtil/matrixutil.h>
 #include <dtUtil/log.h>
 
 #include <osg/Matrix>

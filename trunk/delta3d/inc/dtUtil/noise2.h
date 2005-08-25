@@ -30,6 +30,7 @@ namespace dtUtil
 template <class Real, class Vector>
 class Noise2
 {
+
 public: 
 	Noise2(unsigned int seed = 1023058);
 	~Noise2();
