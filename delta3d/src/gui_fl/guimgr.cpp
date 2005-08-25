@@ -25,7 +25,6 @@
 
 using namespace dtCore;
 using namespace dtABC;
-using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -39,11 +38,11 @@ dtCore::Base *UserInterface::GetSelectedInstance( UserInterface *ui)
 /** Reads the currently selected instance and updates all of its related 
   * widgets.
   */
-void UserInterface::SelectInstance (void)
+void UserInterface::SelectInstance()
 {
    Base *b = GetSelectedInstance(this);
    
-   if (b = dynamic_cast<Base*>(b))
+   if( (b = dynamic_cast<Base*>(b)) )
    {
       BaseName->value( b->GetName().c_str() );
       InstanceClassName->label( "dtCore::Base" ); 
@@ -767,7 +766,7 @@ void UserInterface::WinSizeCB(Fl_Menu_Button *o)
 
    size_t split = size.find("x");
    
-   if (split != string::npos)
+   if (split != std::string::npos)
    {
       width = atoi(size.substr(0, split).c_str());
       height = atoi(size.substr(split+1).c_str());
@@ -813,7 +812,7 @@ void UserInterface::LoadableFileCB( Fl_Input *o)
 
 void UserInterface::LoadableLoadFileCB( Fl_Button *o)
 {
-   string filename = fl_file_chooser("Load File", NULL, NULL, 1);
+   std::string filename = fl_file_chooser("Load File", NULL, NULL, 1);
    
    Loadable *obj = dynamic_cast<Loadable*>(GetSelectedInstance(this));
    obj->LoadFile(filename);
