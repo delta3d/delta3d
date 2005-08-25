@@ -254,7 +254,7 @@ namespace dtCore
          /**
           * The noise object.
           */
-         dtUtil::Fractal2f mNoise;
+         dtUtil::Noise2f mNoise;
          
          /**
           * The size of each terrain segment.
