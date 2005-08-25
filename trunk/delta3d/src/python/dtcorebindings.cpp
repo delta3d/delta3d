@@ -53,7 +53,6 @@ void initTransformBindings();
 void initTransformableBindings();
 void initTripodBindings();
 void initUFOMotionModelBindings();
-void initUIDrawableBindings();
 void initWalkMotionModelBindings();
 
 
@@ -108,7 +107,6 @@ BOOST_PYTHON_MODULE(dtCore)
    initInputMapperBindings();
    initDeltaWinBindings();
    initParticleSystemBindings();
-   initUIDrawableBindings();
    initIsectorBindings();
    initInfiniteTerrainBindings();
 
