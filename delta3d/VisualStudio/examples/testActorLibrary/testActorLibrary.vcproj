@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib sg_d.lib ul_d.lib"
+				AdditionalDependencies="dtCored.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib ul_d.lib"
 				OutputFile="../../../bin/testActorLibraryd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib sg.lib ul.lib"
+				AdditionalDependencies="dtCore.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib ul.lib"
 				OutputFile="../../../bin/testActorLibrary.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"

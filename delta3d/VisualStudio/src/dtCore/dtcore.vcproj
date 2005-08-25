@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib glGUI_d.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib tinyxmld.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="dtutild.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib tinyxmld.lib ul_d.lib winmm.lib"
 				OutputFile="../../../bin/dtcored.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -104,7 +104,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib glgui.lib isense.lib js.lib ode.lib opcode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgterrain.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib tinyxml.lib ul.lib winmm.lib"
+				AdditionalDependencies="dtutil.lib isense.lib js.lib ode.lib opcode.lib opengl32.lib openthreadswin32.lib osg.lib osgdb.lib osgparticle.lib osgterrain.lib osgtext.lib osgutil.lib producer.lib Rpcrt4.lib tinyxml.lib ul.lib winmm.lib"
 				OutputFile="../../../bin/dtcore.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -155,12 +155,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\compass.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\cui_openglrenderer.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtCore\cui_openglshader.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtCore\deltadrawable.cpp">
@@ -321,12 +315,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\compass.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtCore\cui_openglrenderer.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtCore\cui_openglshader.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\deltadrawable.h">
