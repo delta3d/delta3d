@@ -941,10 +941,10 @@ void RTIConnection::ConvertGeocentricToGeodetic (double X, double Y, double Z, d
   double Cos_p1;   /* cos(phi1) */
   double Rn;       /* Earth radius at location */
   double Sum;      /* numerator of cos(phi1) */
-  int At_Pole;     /* indicates location is in polar region */
+  bool At_Pole;     /* indicates location is in polar region */
   double Geocent_b = Geocent_a * (1 - Geocent_f); /* Semi-minor axis of ellipsoid, in meters */
 
-  At_Pole = FALSE;
+  At_Pole = false;
   if (X != 0.0)
   {
     *Longitude = atan2(Y,X);
@@ -961,7 +961,7 @@ void RTIConnection::ConvertGeocentricToGeodetic (double X, double Y, double Z, d
     }
     else
     {
-      At_Pole = TRUE;
+      At_Pole = true;
       *Longitude = 0.0;
       if (Z > 0.0)
       {  /* north pole */
@@ -1004,7 +1004,7 @@ void RTIConnection::ConvertGeocentricToGeodetic (double X, double Y, double Z, d
   {
     *Height = Z / Sin_p1 + Rn * (Geocent_e2 - 1.0);
   }
-  if (At_Pole == FALSE)
+  if (At_Pole == false)
   {
     *Latitude = atan(Sin_p1 / Cos_p1);
   }
