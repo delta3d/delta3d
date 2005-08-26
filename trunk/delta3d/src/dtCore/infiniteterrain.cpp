@@ -105,7 +105,7 @@ static int dInfiniteTerrainClass = 0;
  * @param name the instance name
  */
 InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
-   : mSegmentSize(1000.0f),
+   : mSegmentSize(800.0f),
      mSegmentDivisions(128),
      mHorizontalScale(0.0035f),
      mVerticalScale(30.0f),
@@ -385,14 +385,14 @@ void InfiniteTerrain::SetupColorInfo()
    float difference = mMaxHeight - mMinHeight;
    float increment = difference / 3.0f;
 
-   mMinColorIncrement = (increment * 2.0f) + (increment / 3.0f);
-   mMaxColorIncrement = increment + (increment / 3.0f);
+   mMinColorIncrement = (increment * 2.0f);
+   mMaxColorIncrement = increment;
 
    mIdealHeight = mMinColorIncrement + mMinHeight;
 
    //set the colors to interpolate between
-   mMinColor.set((182.0f / 255.0f), (135.0f / 255.0f), (39.0f / 255.0f));
-   mIdealColor.set((13.0f / 255.0f), (142.0f / 255.0f), (22.0f / 255.0f));
+   mMinColor.set((189.0f / 255.0f), (155.0f / 255.0f), (85.0f / 255.0f));
+   mIdealColor.set((45.0f / 255.0f), (132.0f / 255.0f), (46.0f / 255.0f));
    mMaxColor.set((244.0f / 255.0f), (244.0f / 255.0f), (244.0f / 255.0f));
 
 }
@@ -406,10 +406,12 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
    osg::Vec3* minColor;
    osg::Vec3* maxColor;
 
-   if(height <= mIdealHeight)
+   if(1)//height <= mIdealHeight)
    {
 
       minPercent = (mIdealHeight - height) / mMinColorIncrement;
+      minPercent += 0.2f;
+      if(minPercent > 0.9f) minPercent = 0.9f;
       maxPercent = 1 - minPercent;
       maxColor = &mIdealColor;
       minColor = &mMinColor;
