@@ -108,27 +108,30 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
    : mSegmentSize(1000.0f),
      mSegmentDivisions(128),
      mHorizontalScale(0.0035f),
-     mVerticalScale(20.0f),
+     mVerticalScale(30.0f),
      mBuildDistance(3000.0f),
      mSmoothCollisionsEnabled(false),
      mClearFlag(false)
 {
    SetName(name);
+
+   SetupColorInfo();
    
    //mNode = new osg::Group;
 
    osg::StateSet* ss = mNode->getOrCreateStateSet();
    
    ss->setMode(GL_CULL_FACE, GL_TRUE);
+
    
    osg::Material* mat = new osg::Material;
    
-   mat->setDiffuse(
+   /*mat->setDiffuse(
       osg::Material::FRONT_AND_BACK, 
       osg::Vec4(1, 1, 1, 1)
-   );
+   );*/
    
-   ss->setAttribute(mat);
+   //ss->setAttribute(mat);
    
    osg::Image* image = 0;
 
@@ -150,9 +153,9 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
          {
             float val = 0.7f + texNoise.GetNoise(osg::Vec2f(i*0.1f, j*0.1f))*0.3f;
 
-            texture[k++] = 0;
-            texture[k++] = (unsigned char)(val*0.5*255);
-            texture[k++] = (unsigned char)(val*0.1*255);
+            texture[k++] = (unsigned char)(val*255);
+            texture[k++] = (unsigned char)(val*255);
+            texture[k++] = (unsigned char)(val*255);
          }
       }
 
@@ -169,7 +172,12 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
    tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
    tex->setWrap(osg::Texture::WRAP_T, osg::Texture::REPEAT);
    
+   osg::TexEnv* texenv = new osg::TexEnv;
+   texenv->setMode(osg::TexEnv::MODULATE);
+   //texenv->setColor(osg::Vec4(0.0f,1.0f,1.0f,0.0f));
+
    ss->setTextureAttribute(0, tex);
+   ss->setTextureAttribute(0, texenv);
       
    ss->setTextureMode(
       0, GL_TEXTURE_2D, GL_TRUE
@@ -361,6 +369,72 @@ bool InfiniteTerrain::SmoothCollisionsEnabled() const
 {
    return mSmoothCollisionsEnabled;
 }
+
+
+
+//initializes info used for the GetColor function
+void InfiniteTerrain::SetupColorInfo()
+{
+   //this is set based on the get height function
+   //since the GetNoise will return a value from 0-1
+   //the min and max height could be as follows
+
+   mMinHeight = -2.0f * mVerticalScale;
+   mMaxHeight = 2.0f * mVerticalScale;
+
+   float difference = mMaxHeight - mMinHeight;
+   float increment = difference / 3.0f;
+
+   mMinColorIncrement = (increment * 2.0f) + (increment / 3.0f);
+   mMaxColorIncrement = increment + (increment / 3.0f);
+
+   mIdealHeight = mMinColorIncrement + mMinHeight;
+
+   //set the colors to interpolate between
+   mMinColor.set((182.0f / 255.0f), (135.0f / 255.0f), (39.0f / 255.0f));
+   mIdealColor.set((13.0f / 255.0f), (142.0f / 255.0f), (22.0f / 255.0f));
+   mMaxColor.set((244.0f / 255.0f), (244.0f / 255.0f), (244.0f / 255.0f));
+
+}
+
+//returns an interpolated color based on the height
+osg::Vec4 InfiniteTerrain::GetColor(float height)
+{
+   float r,g,b;
+
+   float minPercent, maxPercent;
+   osg::Vec3* minColor;
+   osg::Vec3* maxColor;
+
+   if(height <= mIdealHeight)
+   {
+
+      minPercent = (mIdealHeight - height) / mMinColorIncrement;
+      maxPercent = 1 - minPercent;
+      maxColor = &mIdealColor;
+      minColor = &mMinColor;
+   }
+   else //height is between ideal and max
+   {
+      maxPercent = (height - mIdealHeight) / mMaxColorIncrement;
+      minPercent = 1 - maxPercent;
+      maxColor = &mMaxColor;
+      minColor = &mIdealColor;
+   }
+
+   r = (*maxColor)[0] * maxPercent;
+   g = (*maxColor)[1] * maxPercent;
+   b = (*maxColor)[2] * maxPercent;
+
+
+   r += (*minColor)[0] * minPercent;
+   g += (*minColor)[1] * minPercent * minPercent;
+   b += (*minColor)[2] * minPercent * minPercent;
+
+   return osg::Vec4(r, g, b, 1.0f);
+   //return osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
          
 /**
  * Determines the height of the terrain at the specified location.
@@ -510,6 +584,9 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    RefPtr<osg::Vec3Array> normals =
       new osg::Vec3Array(width*height);
    
+   RefPtr<osg::Vec4Array> colors =
+      new osg::Vec4Array(width*height);
+
    RefPtr<osg::Vec2Array> textureCoordinates =
       new osg::Vec2Array(width*height);
       
@@ -521,10 +598,12 @@ void InfiniteTerrain::BuildSegment(int x, int y)
       {
          float x = minimum[0] + j * (mSegmentSize / mSegmentDivisions),
                y = minimum[1] + i * (mSegmentSize / mSegmentDivisions);
-               
+         
+         float heightAtXY = GetHeight(x, y, true);
+
          (*vertices)[i*width+j].set(
             x, y,
-            GetHeight(x, y, true)
+            heightAtXY
          );
          
          osg::Vec3 normal;
@@ -533,6 +612,8 @@ void InfiniteTerrain::BuildSegment(int x, int y)
          
          (*normals)[i*width+j].set(normal[0], normal[1], normal[2]);
          
+         (*colors)[i*width+j] = GetColor(heightAtXY);
+
          (*textureCoordinates)[i*width+j].set(x*0.1, y*0.1);
       }
    }
@@ -540,6 +621,8 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    geom->setVertexArray(vertices.get());
    
    geom->setNormalArray(normals.get());
+
+   geom->setColorArray(colors.get());
 
    geom->setTexCoordArray(0, textureCoordinates.get());
    
@@ -559,10 +642,14 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    geom->setVertexIndices(indices.get());
    
    geom->setNormalIndices(indices.get());
+
+   geom->setColorIndices(indices.get());
+
+   geom->setTexCoordIndices(0, indices.get());
    
    geom->setNormalBinding(osg::Geometry::BIND_PER_VERTEX);
    
-   geom->setTexCoordIndices(0, indices.get());
+   geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
    
    for(i=0;i<mSegmentDivisions;i++)
    {

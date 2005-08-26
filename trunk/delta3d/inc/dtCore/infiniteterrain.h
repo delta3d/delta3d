@@ -245,6 +245,14 @@ namespace dtCore
           * @return 1 if it intersects, 0 if it does not
           */
          static int AABBTest(dGeomID o1, dGeomID o2, dReal aabb2[6]);
+
+
+         //returns an interpolated color based on the height
+         osg::Vec4 GetColor(float pHeight);
+
+         //initializes info used for the GetColor function
+         void SetupColorInfo();
+
          
          /**
           * The container node.
@@ -314,6 +322,13 @@ namespace dtCore
           * Flags the segments as needing to be cleared.
           */
          bool mClearFlag;
+
+
+         //added for vertex coloring
+         float mMinHeight, mIdealHeight, mMaxHeight;
+         float mMinColorIncrement, mMaxColorIncrement;
+         osg::Vec3f mMinColor, mIdealColor, mMaxColor;
+
    };
 };
 
