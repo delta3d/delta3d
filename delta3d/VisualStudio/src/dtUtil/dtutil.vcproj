@@ -188,6 +188,9 @@
 			<File
 				RelativePath="..\..\..\inc\dtUtil\polardecomp.h">
 			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\SeamlessNoise.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

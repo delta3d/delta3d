@@ -99,15 +99,15 @@ void Noise2<Real, Vector>::BuildTable()
       Real x = 1.0f  -  ( 2.0f * RAND_PERCENT() );
       Real y = 1.0f  -  ( 2.0f * RAND_PERCENT() );
 
-      if(((x * x) + (y * y)) < 1.0f)
-      {
+      /*if(((x * x) + (y * y)) < 1.0f)
+      {*/
          m_gTable[i] = Vector(x, y);
-         m_gTable[i].normalize();
-      }
+        // m_gTable[i].normalize();
+      /*}
       else 
       {
          --i;
-      }
+      }*/
    }
 
    //create a table of random permuations 

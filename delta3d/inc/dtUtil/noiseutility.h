@@ -34,6 +34,8 @@
 #include "noise2.h"
 #include "noise3.h"
 
+#include "SeamlessNoise.h"
+
 #include "fractal.h"
 
 
@@ -49,18 +51,37 @@ typedef Noise2<double, osg::Vec2d> Noise2d;
 typedef Noise3<float, osg::Vec3f> Noise3f;
 typedef Noise3<double, osg::Vec3d> Noise3d;
 
+typedef SeamlessNoise<float, float, 1, Noise1f> SeamlessNoise1f;
+typedef SeamlessNoise<double, double, 1, Noise1f> SeamlessNoise1d;
+
+typedef SeamlessNoise<float, osg::Vec2f, 2, Noise2f> SeamlessNoise2f;
+typedef SeamlessNoise<double, osg::Vec2d, 2, Noise2d> SeamlessNoise2d;
+
+typedef SeamlessNoise<float, osg::Vec3f, 3, Noise3f > SeamlessNoise3f;
+typedef SeamlessNoise<double, osg::Vec3d, 3, Noise3d> SeamlessNoise3d;
+
 typedef Fractal<float, float, Noise1f> Fractal1f;
-typedef Fractal<double, double, Noise1f> Fractal1d;
+typedef Fractal<double, double, Noise1d> Fractal1d;
 
 typedef Fractal<float, osg::Vec2f, Noise2f> Fractal2f;
 typedef Fractal<double, osg::Vec2d, Noise2d> Fractal2d;
 
-typedef Fractal<float, osg::Vec3f, Noise3f > Fractal3f;
+typedef Fractal<float, osg::Vec3f, Noise3f> Fractal3f;
 typedef Fractal<double, osg::Vec3d, Noise3d> Fractal3d;
 
 
+typedef Fractal<float, float, SeamlessNoise1f> SeamlessFractal1f;
+typedef Fractal<double, double, SeamlessNoise1d> SeamlessFractal1d;
 
-}//dtCore
+typedef Fractal<float, osg::Vec2f, SeamlessNoise2f> SeamlessFractal2f;
+typedef Fractal<double, osg::Vec2d, SeamlessNoise2d> SeamlessFractal2d;
+
+typedef Fractal<float, osg::Vec3f, SeamlessNoise3f> SeamlessFractal3f;
+typedef Fractal<double, osg::Vec3d, SeamlessNoise3d> SeamlessFractal3d;
+
+
+
+}//dtUtil
 
 
 #endif
