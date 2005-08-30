@@ -153,9 +153,9 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
          {
             float val = 0.7f + texNoise.GetNoise(osg::Vec2f(i*0.1f, j*0.1f))*0.3f;
 
-            texture[k++] = (unsigned char)(val*255);
-            texture[k++] = (unsigned char)(val*255);
-            texture[k++] = (unsigned char)(val*255);
+            texture[k++] = (unsigned char)(min( 50 + (val*255), 255));
+            texture[k++] = (unsigned char)(min( 50 + (val*255), 255));
+            texture[k++] = (unsigned char)(min( 50 + (val*255), 255));
          }
       }
 
@@ -391,9 +391,9 @@ void InfiniteTerrain::SetupColorInfo()
    mIdealHeight = mMinColorIncrement + mMinHeight;
 
    //set the colors to interpolate between
-   mMinColor.set((189.0f / 255.0f), (155.0f / 255.0f), (85.0f / 255.0f));
-   mIdealColor.set((45.0f / 255.0f), (132.0f / 255.0f), (46.0f / 255.0f));
-   mMaxColor.set((244.0f / 255.0f), (244.0f / 255.0f), (244.0f / 255.0f));
+   mMinColor.set((89.0f / 255.0f), (80.0f / 255.0f), (67.0f / 255.0f));
+   mIdealColor.set((192.0f / 255.0f), (162.0f / 255.0f), (127.0f / 255.0f));
+   mMaxColor.set((98.0f / 255.0f), (98.0f / 255.0f), (98.0f / 255.0f));
 
 }
 
@@ -408,10 +408,7 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
 
    if(1)//height <= mIdealHeight)
    {
-
-      minPercent = (mIdealHeight - height) / mMinColorIncrement;
-      minPercent += 0.2f;
-      if(minPercent > 0.9f) minPercent = 0.9f;
+      minPercent = min(max(0, (mIdealHeight - height) / mMinColorIncrement), 1.0);
       maxPercent = 1 - minPercent;
       maxColor = &mIdealColor;
       minColor = &mMinColor;
@@ -449,10 +446,15 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
  */
 float InfiniteTerrain::GetHeight(float x, float y, bool smooth)
 {
+   static dtUtil::Noise1f noiseTemp;
+
    if(smooth)
    {
       osg::Vec2f osgvec((x + mBuildDistance) * mHorizontalScale, (y + mBuildDistance) * mHorizontalScale);
-      return mVerticalScale * 2.0f * mNoise.GetNoise(osgvec) - 1.0f;
+      float noiseValue = mNoise.FBM(osgvec, 4);
+      float perc = abs(noiseTemp.GetNoise(noiseValue));
+      noiseValue += (perc * noiseValue) + ((1.0 - perc) * mNoise.Marble(osgvec));
+      return mVerticalScale * 2.0f * noiseValue - 1.0f;
    }
    else
    {

@@ -72,7 +72,7 @@ namespace dtUtil
       
         // Data members
         osg::Image *mImage;
-        Noise3f mNoise;
+        SeamlessNoise3f mNoise;
         int mWidth;
         int mHeight;
         int mSlices;
