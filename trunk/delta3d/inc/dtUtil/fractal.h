@@ -39,11 +39,11 @@ public:
 
    Real Marble(Vector vect_in, int octaves = 1, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f);
 
-   Real RigidMultiFractal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f,Real offset = 0.5f, Real gain = 2.0f);
-
    Real IslandFractal(Vector vect_in, int octaves = 4, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real oscarity = 2.37f);
    
+   Real RigidMultiFractal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real offset = 0.5f, Real gain = 2.0f);
 
+   Real HeteroFracal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real offset = 0.5f);
 
 };
 
@@ -107,7 +107,7 @@ Real Fractal<Real, Vector, Noise>::RigidMultiFractal(Vector vect_in, int octaves
 
    for(int i = 0; i < octaves; i++) 
    {
-      signal = weight * (offset - fabs(GetNoise(vect_in)));
+      signal = weight * (offset - abs(GetNoise(vect_in)));
       weight = signal * gain;
 
       total += signal * amplitude;
@@ -119,6 +119,32 @@ Real Fractal<Real, Vector, Noise>::RigidMultiFractal(Vector vect_in, int octaves
 
 
    return total;
+
+}
+
+template <class Real, class Vector, class Noise>
+Real Fractal<Real, Vector, Noise>::HeteroFracal(Vector vect_in, int octaves, Real freq, Real persistance, Real lacunarity, Real offset)
+{
+
+   Real total = 1.0f;
+   Real amplitude = 1.0f;
+   Real signal = 0.0f;
+   Real weight = 1.0;
+
+   for(int i = 0; i < octaves; i++) 
+   {
+      signal = amplitude * (GetNoise(vect_in) + offset);
+      
+      signal *= total;
+      total += signal;
+
+      vect_in *= freq;
+      freq *= lacunarity;
+      amplitude *= persistance;		
+   }
+
+
+   return (total - 2.0f);
 
 }
 

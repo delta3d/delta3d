@@ -446,15 +446,10 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
  */
 float InfiniteTerrain::GetHeight(float x, float y, bool smooth)
 {
-   static dtUtil::Noise1f noiseTemp;
-
    if(smooth)
    {
       osg::Vec2f osgvec((x + mBuildDistance) * mHorizontalScale, (y + mBuildDistance) * mHorizontalScale);
-      float noiseValue = mNoise.FBM(osgvec, 4);
-      float perc = abs(noiseTemp.GetNoise(noiseValue));
-      noiseValue += (perc * noiseValue) + ((1.0 - perc) * mNoise.Marble(osgvec));
-      return mVerticalScale * 2.0f * noiseValue - 1.0f;
+      return mVerticalScale * 2.0f * mNoise.RigidMultiFractal(osgvec, 4) - 1.0f;
    }
    else
    {
