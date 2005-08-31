@@ -8,7 +8,6 @@ using namespace   dtCore;
 using namespace   dtABC;
 using namespace   dtAudio;
 using namespace   dtUtil;
-using namespace   std;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestAudioApp )
 
@@ -35,7 +34,7 @@ const char*    TestAudioApp::kFxFile[kNumFx] =
 
 
 
-TestAudioApp::TestAudioApp( string configFilename /*= "config.xml"*/ )
+TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ )
 :  Application(configFilename),
    mSndGain(1.0f),
    mSndPitch(1.0f),
@@ -112,8 +111,7 @@ TestAudioApp::~TestAudioApp()
 
 
 
-void
-TestAudioApp::PreFrame( const double deltaFrameTime )
+void TestAudioApp::PreFrame( const double deltaFrameTime )
 {
    Application::PreFrame( deltaFrameTime );
    FlushQueuedSounds();
@@ -554,7 +552,7 @@ TestAudioApp::LoadGfxFile( const char* fname )
       return   NULL;
    }
 
-   if( string(fname) == kGfxFile[1] )
+   if( std::string(fname) == kGfxFile[1] )
    {
       //rotate BRDM 90 degrees
       Transform trans = Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );

@@ -12,12 +12,12 @@ To install and use the Delta3D application wizard follow these steps:
 2. Open the vc7 folder
 
 3. Copy the contents of:
-      delta3d\utilities\vcWizard\VCWizards
+      delta3d\VisualStudio\utilities\vcWizard\VCWizards
    to:
       Microsoft Visual Studio .NET 2003\vc7\VCWizards
 
 4. Copy the contents of:
-      delta3d\utilities\vcWizard\vcprojects
+      delta3d\VisualStudio\utilities\vcWizard\vcprojects
    to:
       Microsoft Visual Studio .NET 2003\vc7\vcprojects
       

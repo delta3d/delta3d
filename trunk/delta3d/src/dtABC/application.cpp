@@ -8,20 +8,15 @@ using namespace dtABC;
 using namespace dtCore;
 using namespace dtUtil;
 
-
-
 IMPLEMENT_MANAGEMENT_LAYER(Application)
-
-
 
 /** public methods */
 /** constructor */
-Application::Application(std::string configFilename)
-   :  BaseABC("Application")
+Application::Application(const std::string& configFilename) :  BaseABC("Application")
 {
    RegisterInstance(this);
-   
-   if ( configFilename != "" )
+
+   if( !configFilename.empty() )
    {
       //  parse config file
       std::string foundPath = osgDB::findDataFile(configFilename);
@@ -33,6 +28,7 @@ Application::Application(std::string configFilename)
             configFilename.c_str() );
          CreateInstances(); //create default window, camera, etc.
       }
+
       else
       {          
          TiXmlDocument *xmlDoc = new TiXmlDocument(foundPath.c_str());

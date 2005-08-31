@@ -4,6 +4,9 @@
 
 #include "dtAudio/sound.h"
 #include "dtCore/scene.h"
+#include "dtUtil/xerceswriter.h"
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMElement.hpp>
 
 
 // definitions
@@ -21,7 +24,7 @@
 
 // namespaces
 using namespace dtAudio;
-using namespace std;
+XERCES_CPP_NAMESPACE_USE
 
 
 
@@ -55,96 +58,113 @@ const char* Sound::kCommand[kNumCommands]   =
 /**
  * Represents a snapshot of the state of a sound.
  */
-class SoundStateFrame : public dtCore::StateFrame
-{
-   /********************************************
-    *
-    * WARNING FROM JPJ (Sep.23,2004)
-    *
-    * SoundStateFrame was a cut/past from
-    * the old dtCore::Sound,  I did not have
-    * time to implement the guts for the new
-    * dtAudio::Sound.  Whomever works on this
-    * code after me beware... and remove this
-    * comment when you fix this.
-    *
-    * So long and thanks for all the fish.
-    *
-    ********************************************/
-   public:
-
-      enum Elements
-      {
-         Playing = 0x01,
-         Gain = 0x02,
-         Pitch = 0x04
-      };
-
-      SoundStateFrame(Sound* source, int validElements, 
-                      bool playing, float gain)
-         : StateFrame(source),
-           mValidElements(validElements),
-           mPlaying(playing),
-           mGain(gain)
-      {}
-
-      virtual void ReapplyToSource()
-      {
-         Sound* source = (Sound*)GetSource();
-
-         if(mValidElements & Playing)
-         {
-            if(mPlaying && !source->IsPlaying())
-            {
-               source->Play();
-            }
-            else if(!mPlaying && source->IsPlaying())
-            {
-               source->Stop();
-            }
-         }
-
-         if(mValidElements & Gain)
-         {
-            source->SetGain(mGain);
-         }
-      }
-
-      virtual TiXmlElement* Serialize() const
-      {
-         TiXmlElement* element = new TiXmlElement("SoundStateFrame");
-
-         char buf[256];
-
-         if(mValidElements & Playing)
-         {
-            element->SetAttribute(
-               "playing",
-               mPlaying ? "true" : "false"
-            );
-         }
-
-         if(mValidElements & Gain)
-         {
-            sprintf(buf, "%g", mGain);
-
-            element->SetAttribute("gain", buf);
-         }
-
-         return element;
-      }
-
-   private:
-
-      int mValidElements;
-      bool mPlaying;
-      float mGain;
-};
-
+//class SoundStateFrame : public dtCore::StateFrame
+//{
+//   /********************************************
+//    *
+//    * WARNING FROM JPJ (Sep.23,2004)
+//    *
+//    * SoundStateFrame was a cut/past from
+//    * the old dtCore::Sound,  I did not have
+//    * time to implement the guts for the new
+//    * dtAudio::Sound.  Whomever works on this
+//    * code after me beware... and remove this
+//    * comment when you fix this.
+//    *
+//    * So long and thanks for all the fish.
+//    *
+//    ********************************************/
+//   public:
+//
+//      enum Elements
+//      {
+//         Playing = 0x01,
+//         Gain = 0x02,
+//         Pitch = 0x04
+//      };
+//
+//      SoundStateFrame(Sound* source, int validElements, 
+//                      bool playing, float gain)
+//         : StateFrame(source),
+//           mValidElements(validElements),
+//           mPlaying(playing),
+//           mGain(gain)
+//      {}
+//
+//      virtual void ReapplyToSource()
+//      {
+//         Sound* source = (Sound*)GetSource();
+//
+//         if(mValidElements & Playing)
+//         {
+//            if(mPlaying && !source->IsPlaying())
+//            {
+//               source->Play();
+//            }
+//            else if(!mPlaying && source->IsPlaying())
+//            {
+//               source->Stop();
+//            }
+//         }
+//
+//         if(mValidElements & Gain)
+//         {
+//            source->SetGain(mGain);
+//         }
+//      }
+//
+//      virtual TiXmlElement* Serialize() const
+//      {
+//         TiXmlElement* element = new TiXmlElement("SoundStateFrame");
+//
+//         char buf[256];
+//
+//         if(mValidElements & Playing)
+//         {
+//            element->SetAttribute(
+//               "playing",
+//               mPlaying ? "true" : "false"
+//            );
+//         }
+//
+//         if(mValidElements & Gain)
+//         {
+//            sprintf(buf, "%g", mGain);
+//
+//            element->SetAttribute("gain", buf);
+//         }
+//
+//         return element;
+//      }
+//
+//   private:
+//
+//      int mValidElements;
+//      bool mPlaying;
+//      float mGain;
+//};
 
 
 IMPLEMENT_MANAGEMENT_LAYER(Sound)
 
+Sound::FrameData::FrameData(): mGain(0.0f), mPitch(0.0f)
+{
+}
+
+Sound::FrameData::FrameData(const FrameData& d): mGain(d.mGain), mPitch(d.mPitch)
+{
+}
+
+Sound::FrameData::~FrameData()
+{
+}
+
+Sound::FrameData& Sound::FrameData::operator =(const FrameData& d)
+{
+   mGain = d.mGain;
+   mPitch = d.mPitch;
+   return *this;
+}
 
 
 /********************************
@@ -167,7 +187,12 @@ Sound::Sound()
    mMaxDist(static_cast<float>(MAX_FLOAT)),
    mRolloff(1.0f),
    mMinGain(0.0f),
-   mMaxGain(1.0f)
+   mMaxGain(1.0f),
+   NAME_STRING(dtUtil::XercesWriter::ConvertToTranscode("Name")),
+   SOUND_STRING(dtUtil::XercesWriter::ConvertToTranscode("Sound")),
+   GAIN_STRING(dtUtil::XercesWriter::ConvertToTranscode("Gain")),
+   PITCH_STRING(dtUtil::XercesWriter::ConvertToTranscode("Pitch")),
+   FLOAT_STRING(dtUtil::XercesWriter::ConvertToTranscode("float"))
 {
    RegisterInstance( this );
 
@@ -193,6 +218,11 @@ Sound::Sound()
 Sound::~Sound()
 {
     DeregisterInstance(this);
+    dtUtil::XercesWriter::ReleaseTranscode(NAME_STRING);
+    dtUtil::XercesWriter::ReleaseTranscode(SOUND_STRING);
+    dtUtil::XercesWriter::ReleaseTranscode(GAIN_STRING);
+    dtUtil::XercesWriter::ReleaseTranscode(PITCH_STRING);
+    dtUtil::XercesWriter::ReleaseTranscode(FLOAT_STRING);
 }
 
 
@@ -202,8 +232,7 @@ Sound::~Sound()
  *
  * @param data the received message
  */
-void
-Sound::OnMessage( MessageData* data )
+void Sound::OnMessage( MessageData* data )
 {
 }
 
@@ -217,8 +246,7 @@ Sound::OnMessage( MessageData* data )
  *
  * @param filename the name of the file to load
  */
-void
-Sound::LoadFile( const char* file )
+void Sound::LoadFile( const char* file )
 {
    mFilename   = file;
    SendMessage( kCommand[LOAD], this );
@@ -229,8 +257,7 @@ Sound::LoadFile( const char* file )
 /**
  * Unloads the specified sound file.
  */
-void
-Sound::UnloadFile( void )
+void Sound::UnloadFile( void )
 {
    SendMessage( kCommand[UNLOAD], this );
 }
@@ -241,8 +268,7 @@ Sound::UnloadFile( void )
  * @param callback function pointer
  * @param user data
  */
-void
-Sound::SetPlayCallback( SoundCB cb, void* param )
+void Sound::SetPlayCallback( CallBack cb, void* param )
 {
    mPlayCB  = cb;
 
@@ -260,8 +286,7 @@ Sound::SetPlayCallback( SoundCB cb, void* param )
  * @param callback function pointer
  * @param user data
  */
-void
-Sound::SetStopCallback( SoundCB cb, void* param )
+void Sound::SetStopCallback( CallBack cb, void* param )
 {
    mStopCB  = cb;
 
@@ -276,8 +301,7 @@ Sound::SetStopCallback( SoundCB cb, void* param )
 /**
  * Tell audio manager to play this sound.
  */
-void
-Sound::Play( void )
+void Sound::Play( void )
 {
    SendMessage( kCommand[PLAY], this );
 }
@@ -287,8 +311,7 @@ Sound::Play( void )
 /**
  * Tell audio manager to pause this sound.
  */
-void
-Sound::Pause( void )
+void Sound::Pause( void )
 {
    SendMessage( kCommand[PAUSE], this );
 }
@@ -298,8 +321,7 @@ Sound::Pause( void )
 /**
  * Tell audio manager to stop this sound.
  */
-void
-Sound::Stop( void )
+void Sound::Stop( void )
 {
    SendMessage( kCommand[STOP], this );
 }
@@ -309,8 +331,7 @@ Sound::Stop( void )
 /**
  * Tell audio manager to rewind this sound.
  */
-void
-Sound::Rewind( void )
+void Sound::Rewind( void )
 {
    SendMessage( kCommand[REWIND], this );
 }
@@ -323,8 +344,7 @@ Sound::Rewind( void )
  * @param looping true to play the sound in a loop, false
  * otherwise
  */
-void
-Sound::SetLooping( bool loop /*= true*/ )
+void Sound::SetLooping( bool loop /*= true*/ )
 {
    if( loop )
       SendMessage( kCommand[LOOP], this );
@@ -339,8 +359,7 @@ Sound::SetLooping( bool loop /*= true*/ )
  *
  * @param gain the new gain
  */
-void
-Sound::SetGain( float gain )
+void Sound::SetGain( float gain )
 {
    // force gain to range from zero to one
    mGain    = CLAMP( gain, 0.0f, 1.0f );
@@ -355,8 +374,7 @@ Sound::SetGain( float gain )
  *
  * @param pitch the new pitch
  */
-void
-Sound::SetPitch( float pitch )
+void Sound::SetPitch( float pitch )
 {
    // force pitch to range from zero+ to two
    // for some reason openAL chokes on 2+
@@ -373,8 +391,7 @@ Sound::SetPitch( float pitch )
  *
  * @param relative true uses distance modeling
  */
-void
-Sound::ListenerRelative( bool relative )
+void Sound::ListenerRelative( bool relative )
 {
    if( relative )
       SendMessage( kCommand[REL], this );
@@ -391,8 +408,7 @@ Sound::ListenerRelative( bool relative )
  * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
-void
-Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEnum cs )
+void Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEnum cs )
 {
    // properly set transform to transformable object
    dtCore::Transformable::SetTransform( xform, cs );
@@ -421,8 +437,7 @@ Sound::SetTransform( dtCore::Transform* xform, dtCore::Transformable::CoordSysEn
  *
  * @param position to set
  */
-void
-Sound::SetPosition( const osg::Vec3& position )
+void Sound::SetPosition( const osg::Vec3& position )
 {
    mPos[0L] = position[0L];
    mPos[1L] = position[1L];
@@ -438,8 +453,7 @@ Sound::SetPosition( const osg::Vec3& position )
  *
  * @param position to get
  */
-void
-Sound::GetPosition( osg::Vec3& position ) const
+void Sound::GetPosition( osg::Vec3& position ) const
 {
    position[0L]   = mPos[0L];
    position[1L]   = mPos[1L];
@@ -453,8 +467,7 @@ Sound::GetPosition( osg::Vec3& position ) const
  *
  * @param direction to set
  */
-void
-Sound::SetDirection( const osg::Vec3& direction )
+void Sound::SetDirection( const osg::Vec3& direction )
 {
    mDir[0L] = direction[0L];
    mDir[1L] = direction[1L];
@@ -470,8 +483,7 @@ Sound::SetDirection( const osg::Vec3& direction )
  *
  * @param direction to get
  */
-void
-Sound::GetDirection( osg::Vec3& direction ) const
+void Sound::GetDirection( osg::Vec3& direction ) const
 {
    direction[0L]  = mDir[0L];
    direction[1L]  = mDir[1L];
@@ -485,8 +497,7 @@ Sound::GetDirection( osg::Vec3& direction ) const
  *
  * @param velocity to set
  */
-void
-Sound::SetVelocity( const osg::Vec3& velocity )
+void Sound::SetVelocity( const osg::Vec3& velocity )
 {
    mVelo[0L]   = velocity[0L];
    mVelo[1L]   = velocity[1L];
@@ -502,8 +513,7 @@ Sound::SetVelocity( const osg::Vec3& velocity )
  *
  * @param velocity to get
  */
-void
-Sound::GetVelocity( osg::Vec3& velocity ) const
+void Sound::GetVelocity( osg::Vec3& velocity ) const
 {
    velocity[0L]   = mVelo[0L];
    velocity[1L]   = mVelo[1L];
@@ -518,8 +528,7 @@ Sound::GetVelocity( osg::Vec3& velocity ) const
  *
  * @param distance set to minimum
  */
-void
-Sound::SetMinDistance( float dist )
+void Sound::SetMinDistance( float dist )
 {
    mMinDist = MAX( 0.0f, dist );
 
@@ -534,8 +543,7 @@ Sound::SetMinDistance( float dist )
  *
  * @param distance set to maximum
  */
-void
-Sound::SetMaxDistance( float dist )
+void Sound::SetMaxDistance( float dist )
 {
    mMaxDist = MAX( 0.0f, dist );
 
@@ -549,8 +557,7 @@ Sound::SetMaxDistance( float dist )
  *
  * @param rollff factor to set
  */
-void
-Sound::SetRolloffFactor( float rolloff )
+void Sound::SetRolloffFactor( float rolloff )
 {
    mRolloff = MAX( 0.0f, rolloff );
 
@@ -591,36 +598,76 @@ Sound::SetMaxGain( float gain )
 
 
 
+Sound::FrameData Sound::CreateFrameData() const
+{
+   FrameData fd;
+   fd.mGain = this->GetGain();
+   fd.mPitch = this->GetPitch();
+   return fd;
+}
+
+void Sound::UseFrameData(const FrameData& fd)
+{
+   this->SetGain( fd.mGain );
+   this->SetPitch( fd.mPitch );
+}
+
+DOMElement* Sound::Serialize(const FrameData& d,XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+{
+   DOMElement* element = doc->createElement( SOUND_STRING );
+
+   ///\warning does this leak the transcode?
+   element->setAttribute( NAME_STRING , dtUtil::XercesWriter::ConvertToTranscode(this->GetName().c_str()) );
+
+   DOMElement* gelement = SerializeGain(d.mGain,doc);
+   DOMElement* pelement = SerializePitch(d.mPitch,doc);
+   element->appendChild( gelement );
+   element->appendChild( pelement );
+
+   return element;
+}
+
+DOMElement* Sound::SerializeGain(float gain, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+{
+   DOMElement* element = doc->createElement( GAIN_STRING );
+   ///\warning does this leak the transcode?
+   element->setAttribute( FLOAT_STRING, dtUtil::XercesWriter::ConvertToTranscode( ToString<float>(gain).c_str() ) );
+   return element;
+}
+
+DOMElement* Sound::SerializePitch(float pitch, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+{
+   DOMElement* element = doc->createElement( PITCH_STRING );
+   ///\warning does this leak the transcode?
+   element->setAttribute( FLOAT_STRING, dtUtil::XercesWriter::ConvertToTranscode( ToString<float>(pitch).c_str() ) );
+   return element;
+}
+
+
 /**
  * Generates and returns a key frame that represents the
  * complete recordable state of this object.
  *
  * @return a new key frame
  */
-dtCore::StateFrame*
-Sound::GenerateKeyFrame( void )
-{
-   /********************************************
-   *
-   * WARNING FROM JPJ (Sep.23,2004)
-   *
-   * GenerateKeyFrame was a cut/past from
-   * the old dtCore::Sound,  I did not have
-   * time to implement the guts for the new
-   * dtAudio::Sound.  Whomever works on this
-   * code after me beware... and remove this
-   * comment when you fix this.
-   *
-   * So long and thanks for all the fish.
-   *
-   ********************************************/
-   return new SoundStateFrame(
-      this, 
-      SoundStateFrame::Playing | SoundStateFrame::Gain,
-      IsPlaying(), 
-      mGain
-   );
-}
+//dtCore::StateFrame* Sound::GenerateKeyFrame( void )
+//{
+//   /********************************************
+//   *
+//   * WARNING FROM JPJ (Sep.23,2004)
+//   *
+//   * GenerateKeyFrame was a cut/past from
+//   * the old dtCore::Sound,  I did not have
+//   * time to implement the guts for the new
+//   * dtAudio::Sound.  Whomever works on this
+//   * code after me beware... and remove this
+//   * comment when you fix this.
+//   *
+//   * So long and thanks for all the fish.
+//   *
+//   ********************************************/
+//   return new SoundStateFrame(this, SoundStateFrame::Playing | SoundStateFrame::Gain,IsPlaying(), mGain);
+//}
 
 /**
  * Deserializes an XML element representing a state frame, turning it
@@ -629,48 +676,47 @@ Sound::GenerateKeyFrame( void )
  * @param element the element that represents the frame
  * @return a newly generated state frame corresponding to the element
  */
-dtCore::StateFrame*
-Sound::DeserializeFrame( TiXmlElement* element )
-{
-   /********************************************
-    *
-    * WARNING FROM JPJ (Sep.23,2004)
-    *
-    * DeserializeFrame was a cut/past from
-    * the old dtCore::Sound,  I did not have
-    * time to implement the guts for the new
-    * dtAudio::Sound.  Whomever works on this
-    * code after me beware... and remove this
-    * comment when you fix this.
-    *
-    *  So long and thanks for all the fish.
-    *
-    ********************************************/
-   int validElements = 0;
-   bool playing = false;
-   float gain = 1.0f;
-
-   const char* buf = element->Attribute("playing");
-
-   if(buf != NULL)
-   {
-      validElements |= SoundStateFrame::Playing;
-
-      if(!strcmp(buf, "true"))
-      {
-         playing = true;
-      }
-   }
-
-   buf = element->Attribute("gain");
-
-   if(buf != NULL)
-   {
-      validElements |= SoundStateFrame::Gain;
-
-      sscanf(buf, "%g", &gain);
-   }
-
-   return new SoundStateFrame(this, validElements, playing, gain);
-}
+//dtCore::StateFrame* Sound::DeserializeFrame( TiXmlElement* element )
+//{
+//   /********************************************
+//    *
+//    * WARNING FROM JPJ (Sep.23,2004)
+//    *
+//    * DeserializeFrame was a cut/past from
+//    * the old dtCore::Sound,  I did not have
+//    * time to implement the guts for the new
+//    * dtAudio::Sound.  Whomever works on this
+//    * code after me beware... and remove this
+//    * comment when you fix this.
+//    *
+//    *  So long and thanks for all the fish.
+//    *
+//    ********************************************/
+//   int validElements = 0;
+//   bool playing = false;
+//   float gain = 1.0f;
+//
+//   const char* buf = element->Attribute("playing");
+//
+//   if(buf != NULL)
+//   {
+//      validElements |= SoundStateFrame::Playing;
+//
+//      if(!strcmp(buf, "true"))
+//      {
+//         playing = true;
+//      }
+//   }
+//
+//   buf = element->Attribute("gain");
+//
+//   if(buf != NULL)
+//   {
+//      validElements |= SoundStateFrame::Gain;
+//
+//      sscanf(buf, "%g", &gain);
+//   }
+//
+//   return new SoundStateFrame(this, validElements, playing, gain);
+//}
 
