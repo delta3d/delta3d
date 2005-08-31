@@ -17,6 +17,7 @@
 #include <dtCore/compass.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
+#include <dtChar/dtchar.h>
 
 #include <assert.h>
 
@@ -329,26 +330,65 @@ void Viewer::LoadFile( ViewState* vs )
 
 
    // create a new p51 object
-   Object*  fileobj  = new Object;
-   assert( fileobj );
+   dtCore::RefPtr<Object>  fileobj  = new Object;
 
    // load the graphics file from disk
    bool fileLoaded = false;
    fileLoaded = fileobj->LoadFile( filename );
+   osg::Node*  filenode = 0;
 
    if (!fileLoaded) 
    {
-      //tell the GUI the file didn't load
-      FileLoaded( false, filename.c_str() );
-      return;
+      //see if it is a replicant body file
+      dtCore::RefPtr<dtChar::Character> pChar = new dtChar::Character;
+      fileLoaded = pChar->LoadFile(filename);
+
+      if(fileLoaded)
+      {
+         filenode = pChar->GetOSGNode();
+
+         /*
+            //this code gets a list of animations from rbody
+            //in order to add support for playback of animations
+            //we will need to save this string and provide a gui
+            //to cycle through animations
+            //NOTE: this code is commented out because
+            //rbody's getActionPrototypeNames is currently 
+            //unimplemented
+            //this is the output
+            //FIXME--Unimplemented
+            //Anderegg
+         */
+
+         /*rbody::OsgBodyNode* bnode = pChar->GetBodyNode();
+         if(bnode)
+         {
+            rbody::Body* body = bnode->getBody();
+            if(body)
+            {
+               std::list<std::string> animationNames;
+               body->getActionPrototypeNames(animationNames);
+               std::cout << animationNames.front().c_str();
+            }
+         }*/
+      }
+      else
+      {
+         //tell the GUI the file didn't load
+         FileLoaded( false, filename.c_str() );
+         return;
+      }
    }
    else 
    {
       //Tell the GUI the file loaded
-      FileLoaded( true, filename.c_str() );
+      filenode = fileobj->GetOSGNode();
    }
 
-   osg::Node*  filenode = fileobj->GetOSGNode();
+   //notify viewer that the file loaded
+   FileLoaded( true, filename.c_str() );
+
+ 
    assert( filenode );
 
 
