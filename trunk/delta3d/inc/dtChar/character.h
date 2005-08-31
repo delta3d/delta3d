@@ -166,6 +166,14 @@ namespace dtChar
          void StopAction(std::string name);
          
 
+         /**
+         * 
+         * Returns a pointer to the rbody osg node
+         *
+         */
+         rbody::OsgBodyNode* GetBodyNode(){return mBodyNode.get();}
+
+
       private:
          
          /**
