@@ -26,6 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "Producer/Camera"
+#include "dtCore/timer.h"
 #include "dtCore/deltawin.h"
 #include "dtCore/base.h"
 #include "dtCore/scene.h"
@@ -92,11 +93,9 @@ namespace dtCore
 
       protected:
          RefPtr<osgUtil::SceneView> mSceneView;
-         Timer mTimer;
-         //osg::Timer mTimer;
+         dtCore::Timer mTimer;
       private:
          RefPtr<osg::FrameStamp> mFrameStamp;
-         //osg::Timer_t mStartTime;
          dtCore::Timer_t mStartTime;
       };
 

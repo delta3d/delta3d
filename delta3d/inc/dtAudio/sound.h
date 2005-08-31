@@ -35,11 +35,6 @@
 
 namespace dtAudio
 {
-   class Sound;
-
-   //! callback function type
-   typedef  void  (*SoundCB)( Sound* sound, void* param );
-
    /** dtAudio::Sound 
     *
     * dtAudio::Sound is a little more than just an interface to an object
@@ -97,39 +92,52 @@ namespace dtAudio
     * That fix has been left to whomever inherits this code.
     *
     */
-   class DT_EXPORT   Sound :  public   dtCore::Transformable,
-                              public   dtCore::Recordable
+   class DT_EXPORT Sound : public dtCore::Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Sound)
+   public:
+      typedef void (*CallBack)(Sound* sound, void* param );  ///callback function type
 
+      struct FrameData
+      {
+         friend Sound;
       public:
-                  enum  Command
-                        {
-                           NONE     = 0L,
-                           LOAD,
-                           UNLOAD,
-                           PLAY,
-                           PAUSE,
-                           STOP,
-                           REWIND,
-                           LOOP,
-                           UNLOOP,
-                           QUEUE,
-                           GAIN,
-                           PITCH,
-                           POSITION,
-                           DIRECTION,
-                           VELOCITY,
-                           ABS,
-                           REL,
-                           MIN_DIST,
-                           MAX_DIST,
-                           ROL_FACT,
-                           MIN_GAIN,
-                           MAX_GAIN,
+         FrameData();
+         ~FrameData();
+         FrameData(const FrameData& d);
+         FrameData& operator =(const FrameData& d);
 
-                           kNumCommands
-                        };
+      private:
+         float mGain, mPitch;
+      };
+
+      enum  Command
+      {
+         NONE     = 0L,
+         LOAD,
+         UNLOAD,
+         PLAY,
+         PAUSE,
+         STOP,
+         REWIND,
+         LOOP,
+         UNLOOP,
+         QUEUE,
+         GAIN,
+         PITCH,
+         POSITION,
+         DIRECTION,
+         VELOCITY,
+         ABS,
+         REL,
+         MIN_DIST,
+         MAX_DIST,
+         ROL_FACT,
+         MIN_GAIN,
+         MAX_GAIN,
+
+         kNumCommands
+      };
 
       public:
          static   const char* kCommand[kNumCommands];
@@ -139,13 +147,13 @@ namespace dtAudio
           * Constructor, user does not create directly
           * instead requests a sound from AudioManager
           */
-                              Sound();
+         Sound();
 
          /**
           * Destructor, user does not delete directly
           * instead frees sound to the AudioManager
           */
-         virtual              ~Sound();
+         virtual ~Sound();
 
          /**
           * Message handler.
@@ -180,7 +188,7 @@ namespace dtAudio
           * @param cb callback function pointer
           * @param param any supplied user data
           */
-         virtual  void        SetPlayCallback( SoundCB cb, void* param );
+         virtual  void        SetPlayCallback( CallBack cb, void* param );
 
          /**
           * Set callback for when sound stops playing.
@@ -188,7 +196,7 @@ namespace dtAudio
           * @param cb callback function pointer
           * @param param any supplied user data
           */
-         virtual  void        SetStopCallback( SoundCB cb, void* param );
+         virtual  void        SetStopCallback( CallBack cb, void* param );
 
          /**
           * Starts playing this sound.
@@ -425,7 +433,7 @@ namespace dtAudio
           *
           * @return a new key frame
           */
-         virtual dtCore::StateFrame*   GenerateKeyFrame( void );
+         FrameData CreateFrameData() const;
 
          /**
           * Deserializes an XML element representing a state frame, turning it
@@ -434,24 +442,41 @@ namespace dtAudio
           * @param element the element that represents the frame
           * @return a newly generated state frame corresponding to the element
           */
-         virtual dtCore::StateFrame*   DeserializeFrame( TiXmlElement* element );
+         void UseFrameData(const FrameData& d);
+
+         /** turns the FrameData into its XML representation.*/
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serialize(const FrameData& d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
 
       protected:
-                  std::string mFilename;
-                  SoundCB     mPlayCB;
-                  void*       mPlayCBData;
-                  SoundCB     mStopCB;
-                  void*       mStopCBData;
-                  float       mGain;
-                  float       mPitch;
-                  osg::Vec3   mPos;
-                  osg::Vec3   mDir;
-                  osg::Vec3   mVelo;
-                  float       mMinDist;
-                  float       mMaxDist;
-                  float       mRolloff;
-                  float       mMinGain;
-                  float       mMaxGain;
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializeGain(float gain, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializePitch(float pitch, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
+
+         /** a helper function.*/
+         template<class T>
+         static std::string ToString(const T& val)
+         {
+            std::ostringstream strm;
+            strm << val;
+            return strm.str();
+         }
+
+      protected:
+         std::string mFilename;
+         CallBack     mPlayCB;
+         void*       mPlayCBData;
+         CallBack     mStopCB;
+         void*       mStopCBData;
+         float       mGain;
+         float       mPitch;
+         osg::Vec3   mPos;
+         osg::Vec3   mDir;
+         osg::Vec3   mVelo;
+         float       mMinDist;
+         float       mMaxDist;
+         float       mRolloff;
+         float       mMinGain;
+         float       mMaxGain;
+         XMLCh*      NAME_STRING, *SOUND_STRING, *GAIN_STRING, *PITCH_STRING, *FLOAT_STRING;
    };
 };
 

@@ -28,6 +28,7 @@
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/objectfactory.h>
 #include <dtUtil/polardecomp.h>
+#include <dtUtil/xerceswriter.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 

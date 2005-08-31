@@ -50,11 +50,11 @@ namespace dtABC
       DECLARE_MANAGEMENT_LAYER(Application)
 
    public:
-      Application( std::string configFilename = "" );
-      virtual        ~Application();
+      Application(const std::string& configFilename = "" );
+      virtual ~Application();
 
       ///Start the Application
-      virtual  void  Run( void );
+      virtual void Run( void );
 
       ///Generate a default configuration file
       static std::string  GenerateDefaultConfigFile( void );

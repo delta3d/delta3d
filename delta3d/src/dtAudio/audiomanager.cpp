@@ -35,8 +35,6 @@
 // name spaces
 using namespace   dtAudio;
 using namespace   dtUtil;
-using namespace   std;
-
 
 
 // helper template functions
@@ -498,7 +496,7 @@ AudioManager::NewSound( void )
    // create a new sound object if we don't have one
    if( snd.get() == NULL )
    {
-      snd   = new SoundObj;
+      snd   = new SoundObj();
       assert( snd.get() );
    }
 

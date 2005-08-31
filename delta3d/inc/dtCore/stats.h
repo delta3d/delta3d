@@ -26,7 +26,6 @@
 #include <osgText/Text>
 #include <osg/Projection>
 #include <osg/Switch>
-//#include <osg/Timer>
 
 #include "dtCore/export.h"
 #include "dtCore/timer.h"
@@ -69,12 +68,7 @@ namespace dtCore
       dtCore::RefPtr<osgUtil::RenderStage> mStage;
       float mFrameRate;
       int mPrintStats;
-      //osg::Timer   mTimer;
       dtCore::Timer mTimer;
-      //osg::Timer_t mInitialTick;
-      //osg::Timer_t mLastFrameTick;
-      //osg::Timer_t mFrameTick;
-      //osg::Timer_t mRegTimes[6];
       dtCore::Timer_t mInitialTick;
       dtCore::Timer_t mLastFrameTick;
       dtCore::Timer_t mFrameTick;

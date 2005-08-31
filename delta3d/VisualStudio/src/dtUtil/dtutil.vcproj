@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ul_d.lib openthreadswin32d.lib osgd.lib"
+				AdditionalDependencies="ul_d.lib openthreadswin32d.lib osgd.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtutild.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib"
+				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtutil.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -141,6 +141,9 @@
 			<File
 				RelativePath="..\..\..\src\dtUtil\polardecomp.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtUtil\xerceswriter.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -190,6 +193,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\SeamlessNoise.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\xerceswriter.h">
 			</File>
 		</Filter>
 		<Filter

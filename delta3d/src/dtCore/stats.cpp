@@ -7,7 +7,6 @@
 
 using namespace osg;
 using namespace osgUtil;
-using namespace std;
 using namespace dtCore;
 
 //------------------------------------------------------------------
