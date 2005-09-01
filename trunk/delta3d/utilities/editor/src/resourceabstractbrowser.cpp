@@ -128,7 +128,7 @@ namespace dtEditQt
     void ResourceAbstractBrowser::removeTreeNode()
     {
         int index;
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
+        //dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         if(selection!=NULL)
         {
@@ -367,11 +367,11 @@ namespace dtEditQt
 
         if(selection)
         {
-            int index;
+	    //int index;
             bool resource;
             QString message;
             QString category;
-            QTreeWidgetItem *parent = selection->parent();
+            //QTreeWidgetItem *parent = selection->parent();
 
             resource = selection->isResource();
 
@@ -441,14 +441,14 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ResourceAbstractBrowser::refreshSelected()
     {
-        ResourceTreeWidget *selection = currentSelection();
+        //ResourceTreeWidget *selection = currentSelection();
         ResourceAbstractBrowser::refreshResourceTree();
     }
     ///////////////////////////////////////////////////////////////////////////////
     void ResourceAbstractBrowser::importSelected()
     {
         ResourceTreeWidget *selection = currentSelection();
-        QTreeWidgetItem *parent = selection->parent();
+        //QTreeWidgetItem *parent = selection->parent();
         QString categoryPath;
         QString resourcePath;
         QString resourceName;
@@ -589,7 +589,7 @@ namespace dtEditQt
     void ResourceAbstractBrowser::createCategory()
     {
         ResourceTreeWidget *selection = currentSelection();
-        QTreeWidgetItem *parent = selection->parent();
+        //QTreeWidgetItem *parent = selection->parent();
 
         QString categoryPath;
         QString newCategory;

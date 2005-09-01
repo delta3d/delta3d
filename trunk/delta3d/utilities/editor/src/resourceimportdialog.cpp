@@ -46,7 +46,7 @@ namespace dtEditQt
         setModal(true);
 
         resourceType = &dataType;
-        dtUtil::Log &mLogger = dtUtil::Log::GetInstance();
+        //dtUtil::Log &mLogger = dtUtil::Log::GetInstance();
 
         // we have to call this here for correct file pathing
         importDialog();
@@ -167,7 +167,7 @@ namespace dtEditQt
     {
         QStringList list;
         QString context;
-        bool isTerrain = false;
+        //bool isTerrain = false;
 
         dtDAL::Project& project = dtDAL::Project::GetInstance();
         context = QString(project.GetContext().c_str());
@@ -321,7 +321,7 @@ namespace dtEditQt
         QString suffix;
 
         dtDAL::Project &project = dtDAL::Project::GetInstance();
-        dtDAL::FileUtils &fileUtil = dtDAL::FileUtils::GetInstance();
+        //dtDAL::FileUtils &fileUtil = dtDAL::FileUtils::GetInstance();
         
         if(!fileList.isEmpty())
         {

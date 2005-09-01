@@ -1,6 +1,8 @@
 #ifndef __NOISE_3_H__
 #define __NOISE_3_H__
 
+#include "dtUtil/mathdefines.h"
+
 /* 
 * Delta3D Open Source Game and Simulation Engine 
 * Copyright (C) 2004 MOVES Institute 
@@ -82,8 +84,8 @@ void Noise3<Real, Vector>::Reseed(unsigned int pSeed)
 template <class Real, class Vector>
 void Noise3<Real, Vector>::BuildTable()
 {
-#define RAND_RANGE(x,y) ((x) + (rand() % (((y) - (x)) + 1 )))
-#define RAND_PERCENT()((rand() & 0x7FFF) / ((float) 0x7FFF))
+/* #define RAND_RANGE(x,y) ((x) + (rand() % (((y) - (x)) + 1 ))) */
+/* #define RAND_PERCENT()((rand() & 0x7FFF) / ((float) 0x7FFF)) */
 
    for(int i = 0; i < TABLE_SIZE; i++)
    {

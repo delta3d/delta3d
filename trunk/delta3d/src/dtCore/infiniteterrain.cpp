@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "dtUtil/mathdefines.h"
 #include "dtCore/infiniteterrain.h"
-#include <minmax.h>
 #include "dtCore/scene.h"
 #include "dtUtil/matrixutil.h"
 
@@ -125,7 +125,7 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
    ss->setMode(GL_CULL_FACE, GL_TRUE);
 
    
-   osg::Material* mat = new osg::Material;
+   //osg::Material* mat = new osg::Material;
    
    /*mat->setDiffuse(
       osg::Material::FRONT_AND_BACK, 
@@ -154,9 +154,9 @@ InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
          {
             float val = 0.7f + texNoise.GetNoise(osg::Vec2f(i*0.1f, j*0.1f))*0.3f;
 
-            texture[k++] = (unsigned char)(min( 50 + (val*255), 255));
-            texture[k++] = (unsigned char)(min( 50 + (val*255), 255));
-            texture[k++] = (unsigned char)(min( 50 + (val*255), 255));
+            texture[k++] = (unsigned char)(MIN( 50 + (val*255), 255));
+            texture[k++] = (unsigned char)(MIN( 50 + (val*255), 255));
+            texture[k++] = (unsigned char)(MIN( 50 + (val*255), 255));
          }
       }
 
@@ -409,7 +409,7 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
 
    if(1)//height <= mIdealHeight)
    {
-      minPercent = min(max(0, (mIdealHeight - height) / mMinColorIncrement), 1.0);
+      minPercent = MIN(MAX(0, (mIdealHeight - height) / mMinColorIncrement), 1.0);
       maxPercent = 1 - minPercent;
       maxColor = &mIdealColor;
       minColor = &mMinColor;

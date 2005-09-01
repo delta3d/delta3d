@@ -30,9 +30,13 @@
 #include <sstream> // for std::ostringstream
 
 #include "dtUtil/xerceswriter.h"
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMElement.hpp>
 #include "dtCore/timer.h"
 #include "dtCore/refptr.h"
 #include "dtCore/base.h"
+#include "dtCore/system.h"
+#include "dtUtil/log.h"
 
 namespace dtCore
 {
@@ -52,10 +56,22 @@ namespace dtCore
    public:
       typedef RecorderableT                                  RecordableType;         /// The type of object of interest.  RecordableTypes know how to create, serialize, and deserialize FrameDataTypes
       typedef FrameDataT                                     FrameDataType;          /// The data to be saved from the object of interest
-      typedef std::vector<typename FrameDataType>            FrameDataContainer;     /// A container to hold each source's frame data
+      typedef std::vector<FrameDataType>                     FrameDataContainer;     /// A container to hold each source's frame data
       typedef std::pair<double,FrameDataContainer>           KeyFrame;               /// The time stamp applied to the entire container of frame data
       typedef std::vector<KeyFrame>                          KeyFrameContainer;      /// The container of KeyFrame data.
       typedef std::vector< dtCore::RefPtr<RecordableType> >  RecordablePtrContainer; /// The container of sources of frame data.
+
+      /** a utility function to convert a basic type into a string.
+        * @param T the type being passed.
+        * @param t the instance of the type to converted.
+        */
+      template<typename T>
+      std::string ToString(T& t) const
+      {
+         std::ostringstream ss;
+	 ss << t;
+	 return ss.str();
+      }
 
       /**
         * Represents the state of a recorder.
@@ -86,6 +102,7 @@ namespace dtCore
          RemoveSender( dtCore::System::Instance() );
       }
 
+   public:
       /**
         * Adds an element to the list of objects to record.
         *
@@ -131,8 +148,8 @@ namespace dtCore
          mStartTime = mClock.tick();
 
          FrameDataContainer sourcedata( mSources.size() );
-         RecordablePtrContainer::iterator iter = mSources.begin();
-         RecordablePtrContainer::iterator enditer = mSources.end();
+         typename RecordablePtrContainer::iterator iter = mSources.begin();
+         typename RecordablePtrContainer::iterator enditer = mSources.end();
          while( iter != enditer )
          {
             // orders framedata the same as sources
@@ -191,17 +208,17 @@ namespace dtCore
          XMLCh* FRAME = dtUtil::XercesWriter::ConvertToTranscode("Frame");
          cleanupxmlstring.push_back( FRAME );
 
-         KeyFrameContainer::iterator kfiter = mKeyFrames.begin();
-         KeyFrameContainer::iterator kfend = mKeyFrames.end();
+         typename KeyFrameContainer::iterator kfiter = mKeyFrames.begin();
+         typename KeyFrameContainer::iterator kfend = mKeyFrames.end();
          while( kfiter != kfend )
          {
             XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* frameelement = doc->createElement( FRAME );
 
             FrameDataContainer& sourcedata = (*kfiter).second;
-            FrameDataContainer::iterator fditer = sourcedata.begin();
+            typename FrameDataContainer::iterator fditer = sourcedata.begin();
 
-            RecordablePtrContainer::iterator srciter = mSources.begin();
-            RecordablePtrContainer::iterator srcend = mSources.end();
+            typename RecordablePtrContainer::iterator srciter = mSources.begin();
+            typename RecordablePtrContainer::iterator srcend = mSources.end();
             while( srciter != srcend )
             {
                // assumes an equal number of framedata iterators for source iterators
@@ -258,8 +275,8 @@ namespace dtCore
                   double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
                   FrameDataContainer sourcedata( mSources.size() );
-                  RecordablePtrContainer::iterator iter = mSources.begin();
-                  RecordablePtrContainer::iterator enditer = mSources.end();
+                  typename RecordablePtrContainer::iterator iter = mSources.begin();
+                  typename RecordablePtrContainer::iterator enditer = mSources.end();
                   while( iter != enditer )
                   {
                      // orders framedata the same as sources
@@ -277,11 +294,11 @@ namespace dtCore
                {
                   // key frame stuff
                   //double timecode = (*mKeyFrameIter).first;
-                  FrameDataContainer::iterator frameiter = (*mKeyFrameIter).second.begin();
+                  typename FrameDataContainer::iterator frameiter = (*mKeyFrameIter).second.begin();
 
                   // sources
-                  RecordablePtrContainer::iterator srciter = mSources.begin();
-                  RecordablePtrContainer::iterator srcend = mSources.end();
+                  typename RecordablePtrContainer::iterator srciter = mSources.begin();
+                  typename RecordablePtrContainer::iterator srcend = mSources.end();
                   while( srciter != srcend )
                   {
                      // assumes sources are ordered the same as framedata

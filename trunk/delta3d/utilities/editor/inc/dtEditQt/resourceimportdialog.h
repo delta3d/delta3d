@@ -333,7 +333,7 @@ namespace dtEditQt{
         {
             // grab an instance to our project
             dtDAL::Project& project = dtDAL::Project::GetInstance();
-            dtDAL::FileUtils& futil = dtDAL::FileUtils::GetInstance();
+            //dtDAL::FileUtils& futil = dtDAL::FileUtils::GetInstance();
 
             // full path to our category
             QString fullCategory;

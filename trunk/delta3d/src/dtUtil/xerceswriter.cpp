@@ -9,7 +9,7 @@
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
-#include <xercesc/dom/DomException.hpp>
+//#include <xercesc/dom/DomException.hpp>
 
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
@@ -150,11 +150,11 @@ void XercesWriter::WriteFile(const std::string& outputfile)
       //XERCES_STD_QUALIFIER cerr << "OutOfMemoryException" << XERCES_STD_QUALIFIER endl;
       LOG_ERROR("When writing file," +outputfile+ ", an OutOfMemoryException occurred.");
    }
-   catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException&)
-   {
-      //XERCES_STD_QUALIFIER cerr << "DOMException code is:  " << e.code << XERCES_STD_QUALIFIER endl;
-      LOG_ERROR("When writing file, " +outputfile+ ", a DOMException occurred");
-   }
+//    catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException&)
+//    {
+//       //XERCES_STD_QUALIFIER cerr << "DOMException code is:  " << e.code << XERCES_STD_QUALIFIER endl;
+//       LOG_ERROR("When writing file, " +outputfile+ ", a DOMException occurred");
+//    }
    catch (...)
    {
       //XERCES_STD_QUALIFIER cerr << "An error occurred creating the document" << XERCES_STD_QUALIFIER endl;
