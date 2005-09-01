@@ -168,6 +168,9 @@
 				RelativePath="..\..\..\inc\dtUtil\log.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtUtil\mathdefines.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtUtil\matrixutil.h">
 			</File>
 			<File
