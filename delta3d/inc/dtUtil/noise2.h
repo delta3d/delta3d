@@ -1,6 +1,7 @@
 #ifndef __NOISE_2_H__
 #define __NOISE_2_H__
 
+#include "dtUtil/mathdefines.h"
 
 /* 
 * Delta3D Open Source Game and Simulation Engine 
@@ -90,9 +91,8 @@ template <class Real, class Vector>
 void Noise2<Real, Vector>::BuildTable()
 {
 
-#define RAND_RANGE(x,y) ((x) + (rand() % (((y) - (x)) + 1 )))
-#define RAND_PERCENT()((rand() & 0x7FFF) / ((float) 0x7FFF))
-
+/* #define RAND_RANGE(x,y) ((x) + (rand() % (((y) - (x)) + 1 ))) */
+/* #define RAND_PERCENT()((rand() & 0x7FFF) / ((float) 0x7FFF)) */
    //create a table of vector gradients
    for(int i = 0; i < TABLE_SIZE; ++i)
    {

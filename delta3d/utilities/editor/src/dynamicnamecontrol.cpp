@@ -72,7 +72,7 @@ namespace dtEditQt
         {
             // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
-            bool success = false;
+            //bool success = false;
 
             // get the data from our control
             std::string result = editBox->text().toStdString();

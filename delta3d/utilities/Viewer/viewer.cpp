@@ -340,7 +340,7 @@ void Viewer::LoadFile( ViewState* vs )
    if (!fileLoaded) 
    {
       //see if it is a replicant body file
-      dtCore::RefPtr<dtChar::Character> pChar = new dtChar::Character;
+     dtCore::RefPtr<dtChar::Character> pChar = new dtChar::Character();
       fileLoaded = pChar->LoadFile(filename);
 
       if(fileLoaded)

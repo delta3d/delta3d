@@ -100,14 +100,12 @@ namespace dtAudio
 
       struct FrameData
       {
-         friend Sound;
       public:
          FrameData();
          ~FrameData();
          FrameData(const FrameData& d);
          FrameData& operator =(const FrameData& d);
 
-      private:
          float mGain, mPitch;
       };
 
