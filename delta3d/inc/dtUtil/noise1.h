@@ -55,6 +55,7 @@ private:
    int            m_iPerm[TABLE_SIZE * 2];
    Vector         m_gTable[TABLE_SIZE];
    
+   Vector start, diff;
 
 };
 
@@ -67,6 +68,8 @@ template <class Real, class Vector>
 Noise1<Real, Vector>::Noise1(unsigned int seed)
 {
    Reseed(seed);
+   start = 25.0f;
+   diff = 5.0f;
 }
 
 template <class Real, class Vector>
@@ -120,10 +123,11 @@ void Noise1<Real, Vector>::BuildTable()
 template <class Real, class Vector>
 void Noise1<Real, Vector>::BuildCoefs(const Vector vect_in)
 {
-   Real iX = floor(vect_in);
+   int iX = int(floor(vect_in));
+   int iX1 = (iX + 1);
 
    m_vCoef[0] = Real(iX);
-   m_vCoef[1] = Real(iX + 1.0);
+   m_vCoef[1] = Real(iX1);
 
    for(int i = 0; i < 2; ++i)
    {
@@ -158,6 +162,7 @@ Real Noise1<Real, Vector>::Lerp(Real x, Real y, Real t)
 template <class Real, class Vector>
 Real Noise1<Real, Vector>::GetNoise(const Vector vect_in)
 {
+
    BuildCoefs(vect_in);
 
    Real gradientValues[2];

@@ -134,22 +134,27 @@ void Noise3<Real, Vector>::BuildTable()
 template <class Real, class Vector>
 void Noise3<Real, Vector>::BuildCoefs(const Vector& vect_in)
 {
-   Real iX, iY, iZ;
-   iX = floor(vect_in[0]);
-   iY = floor(vect_in[1]);
-   iZ = floor(vect_in[2]);
+   int iX, iY, iZ, iX1, iY1, iZ1;
+   iX = int(floor(vect_in[0]));
+   iY = int(floor(vect_in[1]));
+   iZ = int(floor(vect_in[2]));
+
+   iX1 = (iX + 1);
+   iY1 = (iY + 1);
+   iZ1 = (iZ + 1);
+
 
    m_vCoef[0] = Vector(iX, iY, iZ);
-   m_vCoef[1] = Vector(iX + 1.0, iY, iZ);
+   m_vCoef[1] = Vector(iX1, iY, iZ);
 
-   m_vCoef[2] = Vector(iX, iY + 1.0, iZ);
-   m_vCoef[3] = Vector(iX + 1.0, iY + 1.0, iZ);
+   m_vCoef[2] = Vector(iX, iY1, iZ);
+   m_vCoef[3] = Vector(iX1, iY1, iZ);
 
-   m_vCoef[4] = Vector(iX, iY, iZ + 1.0);
-   m_vCoef[5] = Vector(iX + 1.0, iY, iZ + 1.0);
+   m_vCoef[4] = Vector(iX, iY, iZ1);
+   m_vCoef[5] = Vector(iX1, iY, iZ1);
 
-   m_vCoef[6] = Vector(iX, iY + 1.0, iZ + 1.0);
-   m_vCoef[7] = Vector(iX + 1.0, iY + 1.0, iZ + 1.0);
+   m_vCoef[6] = Vector(iX, iY1, iZ1);
+   m_vCoef[7] = Vector(iX1, iY + 1.0, iZ1);
 
    for(int i = 0; i < 8; i++)
    {
