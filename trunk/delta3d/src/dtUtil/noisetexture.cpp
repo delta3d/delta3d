@@ -79,7 +79,7 @@ osg::Image *NoiseTexture::makeNoiseTexture(GLenum format)
         incj = (float)freq / mHeight;
         inck = (float)freq / mWidth;
 
-        mNoise.Initialize(osg::Vec3f(0.0f, 0.0f, 0.0f), osg::Vec3f(mWidth, mHeight, mSlices));
+        mNoise.Initialize(osg::Vec3f(0.0f, 0.0f, 0.0f), osg::Vec3f(freq, freq, freq));
        
         for (i = 0; i < mSlices; ++i, ni[2] += inci, ni[1] =  0)
         {
