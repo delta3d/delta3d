@@ -23,6 +23,7 @@
 * @author Bradley Anderegg
 */
 
+#include <cstdlib>
 
 #include <osg/Vec2f>
 #include <osg/Vec3f>
@@ -34,7 +35,7 @@
 #include "noise2.h"
 #include "noise3.h"
 
-#include "SeamlessNoise.h"
+#include "seamlessnoise.h"
 
 #include "fractal.h"
 

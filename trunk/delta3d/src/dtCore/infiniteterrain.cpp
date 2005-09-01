@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "dtCore/infiniteterrain.h"
+#include <minmax.h>
 #include "dtCore/scene.h"
 #include "dtUtil/matrixutil.h"
 
@@ -449,7 +450,7 @@ float InfiniteTerrain::GetHeight(float x, float y, bool smooth)
    if(smooth)
    {
       osg::Vec2f osgvec((x + mBuildDistance) * mHorizontalScale, (y + mBuildDistance) * mHorizontalScale);
-      return mVerticalScale * 2.0f * mNoise.RigidMultiFractal(osgvec, 4) - 1.0f;
+      return mVerticalScale * 2.0f * mNoise.FBM(osgvec, 4) - 1.0f;
    }
    else
    {
