@@ -25,247 +25,319 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <vector>
+#include <string>
+#include <sstream> // for std::ostringstream
 
-#include <map>
-#include <set>
-
-#include <tinyxml.h>
+#include "dtUtil/xerceswriter.h"
 #include "dtCore/timer.h"
-
+#include "dtCore/refptr.h"
 #include "dtCore/base.h"
 
 namespace dtCore
 {
-   class Recordable;
-   class StateFrame;
-   
-
    /**
-    * Represents the state of a recorder.
+    * \brief A generic utility for recording frame information.
+    * The Recorder class is generic utility used to
+    * record interesting data for instances of arbitrary type.
+    *
+    * @param RecorderableT is a type that supports the interfaces necessary for recording.  This class knows how to create and serialize FrameDataT types.
+    * @param FrameDataT is the type to be stored in memory.
+    *
+    * \todo make sure that adding a new source will invalidate the currently saved feyframes because of the assumed syncronization.
     */
-   enum RecorderState
+   template<typename RecorderableT, typename FrameDataT>
+   class /*DT_EXPORT */Recorder : public dtCore::Base
    {
-      RecorderStopped,
-      RecorderRecording,
-      RecorderPlaying
-   };
+   public:
+      typedef RecorderableT                                  RecordableType;         /// The type of object of interest.  RecordableTypes know how to create, serialize, and deserialize FrameDataTypes
+      typedef FrameDataT                                     FrameDataType;          /// The data to be saved from the object of interest
+      typedef std::vector<typename FrameDataType>            FrameDataContainer;     /// A container to hold each source's frame data
+      typedef std::pair<double,FrameDataContainer>           KeyFrame;               /// The time stamp applied to the entire container of frame data
+      typedef std::vector<KeyFrame>                          KeyFrameContainer;      /// The container of KeyFrame data.
+      typedef std::vector< dtCore::RefPtr<RecordableType> >  RecordablePtrContainer; /// The container of sources of frame data.
 
+      /**
+        * Represents the state of a recorder.
+        */
+      enum RecorderState
+      {
+         Stopped,
+         Recording,
+         Playing
+      };
 
-   /**
-    * A recorder.
-    */
-   class DT_EXPORT Recorder : public Base
-   {
-      DECLARE_MANAGEMENT_LAYER(Recorder)
+      /**
+        * Constructor.
+        *
+        * @param name the instance name
+        */
+      Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped), mWriter()
+      {
+         AddSender( dtCore::System::Instance() );
+      }
 
+   protected:
+      /**
+        * Destructor.
+        */
+      virtual ~Recorder()
+      {
+         RemoveSender( dtCore::System::Instance() );
+      }
 
-      public:
+      /**
+        * Adds an element to the list of objects to record.
+        *
+        * @param source an instance of RecordableType, used to record data.
+        */
+      void AddSource(RecordableType* source)
+      {
+         if( mState == Recording || mState == Playing )
+         {
+            LOG_WARNING("Recorder does not support adding new sources while recording or playing");
+         }
+         else
+         {
+            mSources.push_back( source );
+         }
+      }
 
-         /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         Recorder(std::string name = "recorder");
+      /**
+        * Removes an element from the list of objects to record.
+        *
+        * @param source the source to be removed.
+        *
+        * \todo verify this function is working properly.
+        */
+      void RemoveSource(RecordableType* source)
+      {
+         if( mState == Recording || mState == Playing )
+         {
+            LOG_WARNING("Recorder does not support removing sources while recording or playing");
+         }
+         else
+         {
+            mSources.erase(source);
+         }
+      }
 
-         /**
-          * Destructor.
-          */
-         virtual ~Recorder();
+      /**
+        * Starts recording events.
+        */
+      void Record()
+      {
+         mState = Recording;
+         mStartTime = mClock.tick();
 
-         /**
-          * Adds an element to the list of objects to record.
-          *
-          * @param source the source to add
-          */
-         void AddSource(Recordable* source);
+         FrameDataContainer sourcedata( mSources.size() );
+         RecordablePtrContainer::iterator iter = mSources.begin();
+         RecordablePtrContainer::iterator enditer = mSources.end();
+         while( iter != enditer )
+         {
+            // orders framedata the same as sources
+            sourcedata.push_back( (*iter)->CreateFrameData() );
+            ++iter;
+         }
+         mKeyFrames.push_back( KeyFrame(0.0,sourcedata) );
+      }
 
-         /**
-          * Removes an element from the list of objects to record.
-          *
-          * @param source the source to remove
-          */
-         void RemoveSource(Recordable* source);
+      /**
+        * Starts playing events.
+        */
+      void Play()
+      {
+         mState = Playing;
+      }
 
-         /**
-          * Starts recording events.
-          */
-         void Record();
+      /**
+        * Stops recording or playing events.
+        */
+      void Stop()
+      {
+         if(mState == Recording)
+         {
+            mDeltaTime = mClock.tick();
+         }
 
-         /**
-          * Starts playing events.
-          */
-         void Play();
+         mState = Stopped;
+      }
 
-         /**
-          * Stops recording or playing events.
-          */
-         void Stop();
+      /**
+        * Returns the state of this event recorder (stopped, recording, or playing).
+        *
+        * @return the current state
+        */
+      RecorderState GetState() { return mState; }
 
-         /**
-          * Returns the state of this event recorder (stopped, recording, or playing).
-          *
-          * @return the current state
-          */
-         RecorderState GetState();
+      /**
+        * Saves the recording to the specified file.
+        *
+        * @param filename the name of the file to save
+        *
+        * \todo handle Xerces exceptions.
+        */
+      void SaveFile(const std::string& filename)
+      {
+         mWriter.CreateDocument( "RecordedFrames" );
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = mWriter.GetDocument();
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc->getDocumentElement();
 
-         /**
-          * Saves the recording to the specified file.
-          *
-          * @param filename the name of the file to save
-          */
-         void SaveFile(std::string filename);
+         std::vector<XMLCh*> cleanupxmlstring;
 
-         /**
-          * Loads a recording from the specified file.
-          *
-          * @param filename the name of the file to load
-          */
-         void LoadFile(std::string filename);
+         XMLCh* TIMECODE = dtUtil::XercesWriter::ConvertToTranscode("TimeCode");
+         cleanupxmlstring.push_back( TIMECODE );
 
-         /**
-          * Message handler.
-          *
-          * @param data the received message
-          */
-         virtual void OnMessage(MessageData *data);
+         XMLCh* FRAME = dtUtil::XercesWriter::ConvertToTranscode("Frame");
+         cleanupxmlstring.push_back( FRAME );
 
-         
-      private:
+         KeyFrameContainer::iterator kfiter = mKeyFrames.begin();
+         KeyFrameContainer::iterator kfend = mKeyFrames.end();
+         while( kfiter != kfend )
+         {
+            XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* frameelement = doc->createElement( FRAME );
 
-         /**
-          * The object to record.
-          */
-         std::set<Recordable*> mSources;
+            FrameDataContainer& sourcedata = (*kfiter).second;
+            FrameDataContainer::iterator fditer = sourcedata.begin();
 
-         /**
-          * The state of this recorder.
-          */
-         RecorderState mState;
+            RecordablePtrContainer::iterator srciter = mSources.begin();
+            RecordablePtrContainer::iterator srcend = mSources.end();
+            while( srciter != srcend )
+            {
+               // assumes an equal number of framedata iterators for source iterators
+               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize( (*fditer),doc );
+               frameelement->appendChild( dataelement );
+               ++fditer;
+               ++srciter;
+            }
 
-         /**
-          * The clock object.
-          */
-         Timer mClock;
-         Timer_t mDeltaTime, mStartTime;
+            double timestamp = (*kfiter).first;
+            std::string timestring = ToString<double>( timestamp );
 
-         /**
-          * Maps time codes to state frames.
-          */
-         std::multimap<double, StateFrame*> mTimeCodeStateFrameMap;
+            XMLCh* TIMESTAMP = dtUtil::XercesWriter::ConvertToTranscode(timestring.c_str());
+            cleanupxmlstring.push_back( TIMESTAMP );
 
-         /**
-          * The next state frame to apply.
-          */
-         std::multimap<double, StateFrame*>::iterator mNextStateFrame;
+            frameelement->setAttribute( TIMECODE , TIMESTAMP );
+            root->appendChild( frameelement );
 
-         /**
-          * The length of the recording, in seconds.
-          */
-         double mRecordingLength;
-   };
+            ++kfiter;
+         }
 
+         // write out the file
+         mWriter.WriteFile( filename );
 
-   /**
-    * An interface for recordable objects.  When recordable objects change,
-    * they issue "stateFrame" messages with pointers to StateFrame objects
-    * as their user data.
-    */
-   class DT_EXPORT Recordable
-   {
-      public:
+         // clean up memory
+         dtUtil::XercesWriter::ReleaseTranscode( TIMECODE );
+         dtUtil::XercesWriter::ReleaseTranscode( FRAME );
+         //std::for_each( cleanupxmlstring.begin(), cleanupxmlstring.end(), &dtUtil::XercesWriter::ReleaseTranscode );
+      }
 
-         /**
-          * Constructor.
-          */
-         Recordable();
+      /**
+        * Loads a recording from the specified file.
+        *
+        * @param filename the name of the file to load
+        */
+      void LoadFile(const std::string& filename)
+      {
+      }
 
-         /**
-          * Increments the recorder count.
-          */
-         void IncrementRecorderCount();
+      /**
+        * Message handler.
+        *
+        * @param data the received message
+        */
+      virtual void OnMessage(dtCore::Base::MessageData *data)
+      {
+         switch( mState )
+         {
+         case Recording:
+            {
+               if( data->message == "postframe" )
+               {
+                  mDeltaTime = mClock.tick();
+                  double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
-         /**
-          * Decrements the recorder count.
-          */
-         void DecrementRecorderCount();
+                  FrameDataContainer sourcedata( mSources.size() );
+                  RecordablePtrContainer::iterator iter = mSources.begin();
+                  RecordablePtrContainer::iterator enditer = mSources.end();
+                  while( iter != enditer )
+                  {
+                     // orders framedata the same as sources
+                     sourcedata.push_back( (*iter)->CreateFrameData() );
+                     ++iter;
+                  }
+                  mKeyFrames.push_back( KeyFrame(timeCode,sourcedata) );
+               }
+            } break;
 
-         /**
-          * Checks whether this object is being recorded (that is, whether
-          * the recorder count is greater than zero).
-          *
-          * @return true if this object is being recorded, false
-          * otherwise
-          */
-         bool IsBeingRecorded() const;
+            // plays a frame-by-frame playback, no interpolation for FrameData
+         case Playing:
+            {
+               if( data->message == "preframe" )
+               {
+                  // key frame stuff
+                  //double timecode = (*mKeyFrameIter).first;
+                  FrameDataContainer::iterator frameiter = (*mKeyFrameIter).second.begin();
 
-         /**
-          * Generates and returns a key frame that represents the
-          * complete recordable state of this object.
-          *
-          * @return a new key frame
-          */
-         virtual StateFrame* GenerateKeyFrame() = 0;
+                  // sources
+                  RecordablePtrContainer::iterator srciter = mSources.begin();
+                  RecordablePtrContainer::iterator srcend = mSources.end();
+                  while( srciter != srcend )
+                  {
+                     // assumes sources are ordered the same as framedata
+                     (*srciter)->UseFrameData( (*frameiter) );
+                     ++srciter;
+                     ++frameiter;
+                  }
+               }
+            } break;
+         }
 
-         /**
-          * Deserializes an XML element representing a state frame, turning it
-          * into a new StateFrame instance.
-          *
-          * @param element the element that represents the frame
-          * @return a newly generated state frame corresponding to the element
-          */
-         virtual StateFrame* DeserializeFrame(TiXmlElement* element) = 0;
+      //   if(data->message == "frame" &&
+      //      mState == Playing)
+      //   {
+      //      mDeltaTime = mClock.tick();
 
+      //      double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
-      private:
+      //      if(timeCode >= mRecordingLength)
+      //      {
+      //         mState = RecorderStopped;
+      //      }
+      //      else if(mNextStateFrame != mTimeCodeStateFrameMap.end())
+      //      {
+      //         while(mNextStateFrame != mTimeCodeStateFrameMap.end() &&
+      //               timeCode >= (*mNextStateFrame).first)
+      //         {
+      //            (*mNextStateFrame).second->ReapplyToSource();
 
-         /**
-          * The number of recorders currently recording this object's state.
-          */
-         int mRecorderCount;
-   };
+      //            mNextStateFrame++;
+      //         }
+      //      }
+      //   }
+      //   else if(data->message == "stateFrame" &&
+      //         mState == Recording)
+      //   {
+      //      Recordable* source = dynamic_cast<Recordable*>(data->sender);
 
+      //      if(mSources.count(source) > 0)
+      //      {
+      //         mDeltaTime = mClock.tick();
+      //         double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
+      //         mNextStateFrame = mTimeCodeStateFrameMap.insert( mNextStateFrame, TimeCodeStateFrameMap::value_type(timeCode,(StateFrame*)data->userData) );
+      //      }
+      //   }
+      }
 
-   /**
-    * A recorded state update.
-    */
-   class DT_EXPORT StateFrame
-   {
-      public:
-        
-         /**
-          * Constructor.
-          *
-          * @param source the source of this frame
-          */
-         StateFrame(Recordable* source);
-
-         /**
-          * Returns the source of this frame.
-          *
-          * @return the source of this frame
-          */
-         Recordable* GetSource() const;
-
-         /**
-          * Reapplies this frame to its source.
-          */
-         virtual void ReapplyToSource() = 0;
-
-         /**
-          * Serializes this frame, turning it into an XML element.
-          *
-          * @return an XML element representing the serialized frame
-          */
-         virtual TiXmlElement* Serialize() const = 0;
-
-
-      private:
-
-         /**
-          * The source of this frame.
-          */
-         Recordable* mSource;
+   private:
+      RecordablePtrContainer mSources;                  /// The object to record.
+      RecorderState mState;                             /// The state of this recorder.
+      dtCore::Timer mClock;                                     /// The clock object.
+      dtCore::Timer_t mDeltaTime, mStartTime;
+      KeyFrameContainer mKeyFrames;
+      typename KeyFrameContainer::iterator mKeyFrameIter;
+      dtUtil::XercesWriter mWriter;
+      //dtUtil::XercesReader mReader;
    };
 };
 
