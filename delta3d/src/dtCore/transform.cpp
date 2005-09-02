@@ -154,9 +154,9 @@ void Transform::SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXYZ, con
    y.normalize();
    z.normalize();
    
-   dtUtil::MatrixUtil::SetColumn(mat, x, 0);
-   dtUtil::MatrixUtil::SetColumn(mat, y, 1);
-   dtUtil::MatrixUtil::SetColumn(mat, z, 2);
+   dtUtil::MatrixUtil::SetRow(mat, x, 0);
+   dtUtil::MatrixUtil::SetRow(mat, y, 1);
+   dtUtil::MatrixUtil::SetRow(mat, z, 2);
 
    SetRotation( mat );
    SetTranslation( xyz );

@@ -41,48 +41,48 @@ void MatrixUtil::Transpose( Matrix& dest, const Matrix& src )
          dest(i,j) = src(j,i);
 }
 
-Vec3 MatrixUtil::GetColumn3( const Matrix& matrix, int column )
-{
-   return Vec3f( matrix(column,0), matrix(column,1), matrix(column,2) );
-}
-
-Vec4 MatrixUtil::GetColumn4( const Matrix& matrix, int column )
-{
-   return Vec4f( matrix(column,0), matrix(column,1), matrix(column,2), matrix(column,3) );
-}
+//Vec3 MatrixUtil::GetColumn3( const Matrix& matrix, int column )
+//{
+//   return Vec3f( matrix(column,0), matrix(column,1), matrix(column,2) );
+//}
+//
+//Vec4 MatrixUtil::GetColumn4( const Matrix& matrix, int column )
+//{
+//   return Vec4f( matrix(column,0), matrix(column,1), matrix(column,2), matrix(column,3) );
+//}
 
 Vec3 MatrixUtil::GetRow3( const Matrix& matrix, int row )
 {
-   return Vec3f( matrix(0,row), matrix(1,row), matrix(2,row) );
+   return Vec3f( matrix(row,0), matrix(row, 1), matrix(row,2) );
 }
 
 Vec4 MatrixUtil::GetRow4( const Matrix& matrix, int row )
 {
-   return Vec4f( matrix(0,row), matrix(1,row), matrix(2,row), matrix(3,row) );
+   return Vec4f( matrix(row,0), matrix(row,1), matrix(row,2), matrix(row,3) );
 }
 
-void MatrixUtil::SetColumn( Matrix& matrix, const Vec3& vec, int column )
-{
-   for( int i = 0; i < 3; i++ )
-      matrix(column,i) = vec[i];
-}
-
-void MatrixUtil::SetColumn( Matrix& matrix, const Vec4& vec, int column )
-{
-   for( int i = 0; i < 4; i++ )
-      matrix(column,i) = vec[i];
-}
+//void MatrixUtil::SetColumn( Matrix& matrix, const Vec3& vec, int column )
+//{
+//   for( int i = 0; i < 3; i++ )
+//      matrix(column,i) = vec[i];
+//}
+//
+//void MatrixUtil::SetColumn( Matrix& matrix, const Vec4& vec, int column )
+//{
+//   for( int i = 0; i < 4; i++ )
+//      matrix(column,i) = vec[i];
+//}
 
 void MatrixUtil::SetRow( Matrix& matrix, const Vec3& vec, int row )
 {
    for( int i = 0; i < 3; i++ )
-      matrix(i,row) = vec[i];
+      matrix(row,i) = vec[i];
 }
 
 void MatrixUtil::SetRow( Matrix& matrix, const Vec4& vec, int row )
 {
    for( int i = 0; i < 4; i++ )
-      matrix(i,row) = vec[i];
+      matrix(row, i) = vec[i];
 }
 
 void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )

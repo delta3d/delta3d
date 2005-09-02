@@ -44,14 +44,22 @@ namespace dtUtil
 
       static void Transpose( osg::Matrix& dest, const osg::Matrix& src );
 
-      static osg::Vec3 GetColumn3( const osg::Matrix& matrix, int column );
-      static osg::Vec4 GetColumn4( const osg::Matrix& matrix, int column );
+      /*
+         NOTE:  We are ROW MAJOR so a column doesnt mean anything to us
+         unfortunately the old implementation of Get/Set Row and Get/Set Column
+         were reversed 
+         -I have commented out Get/Set Column to enforce ppl to change that call 
+         to Get/Set Row
+      */
+
+      //static osg::Vec3 GetColumn3( const osg::Matrix& matrix, int column );
+      //static osg::Vec4 GetColumn4( const osg::Matrix& matrix, int column );
 
       static osg::Vec3 GetRow3( const osg::Matrix& matrix, int row );      
       static osg::Vec4 GetRow4( const osg::Matrix& matrix, int row );
       
-      static void SetColumn( osg::Matrix& matrix, const osg::Vec3& vec, int column );
-      static void SetColumn( osg::Matrix& matrix, const osg::Vec4& vec, int column );
+      //static void SetColumn( osg::Matrix& matrix, const osg::Vec3& vec, int column );
+      //static void SetColumn( osg::Matrix& matrix, const osg::Vec4& vec, int column );
 
       static void SetRow( osg::Matrix& matrix, const osg::Vec3& vec, int row );      
       static void SetRow( osg::Matrix& matrix, const osg::Vec4& vec, int row );
