@@ -1,6 +1,11 @@
 #ifndef __SEAMLESS_NOISE_H__
 #define __SEAMLESS_NOISE_H__
 
+#include <osg/Vec3f>
+
+#include "mathdefines.h"
+
+
 /* 
 * Delta3D Open Source Game and Simulation Engine 
 * Copyright (C) 2004 MOVES Institute 
@@ -20,57 +25,40 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 *
 * @author Bradley Anderegg
+* @reference http://mrl.nyu.edu/~perlin/noise/
 */
+
+//the majority of this code has been taken from
+//http://mrl.nyu.edu/~perlin/noise/
 
 
 namespace dtUtil
 {
 
-
-   template <class Real, class Vector, int NumComponents, class Noise>
    class SeamlessNoise
    {
 
    public:
-      
-      SeamlessNoise(){}     
-      ~SeamlessNoise(){}
 
-      void Initialize(const Vector& pStart, const Vector& pDiff){ mStart = pStart; mDiff = pDiff;}
-    
-      Real GetNoise(const Vector& vect_in);
-     
+      SeamlessNoise(int seed = 1023058);
+      ~SeamlessNoise();
+
+      float GetNoise(const osg::Vec3f& vect_in, int repeat = 1);
+
+   private:
+
+      void BuildTable(int seed);
+      float Fade(float t){ return t * t * t * (t * (t * 6 - 15) + 10); }
+      float Grad(int hash, float x, float y, float z);
+
 
    public:
 
-      //data members
-
-      Vector mStart, mDiff;
-
-      Noise mNoise;
 
 
    };
 
 
-   template<class Real, class Vector, int NumComponents, class Noise>
-   Real SeamlessNoise<Real, Vector, NumComponents, Noise>::GetNoise(const Vector& vect_in)
-   {
-      
-      Vector vect = vect_in;
-      
-      for(int i = 0; i < NumComponents; ++i)
-      {
-         while(vect[i] > ((mStart[i] + mDiff[i]) - 1.0))
-            vect[i] -= mDiff[i];
-      }
-
-      return mNoise.GetNoise(vect);
-    
-   }
-
-
-}
+}//namespace dtUtil
 
 #endif //__SEAMLESS_NOISE_H__
-

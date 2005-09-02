@@ -37,15 +37,14 @@ public:
 	~Noise2();
 
    void Reseed(unsigned int seed);
-	Real GetNoise(const Vector vect_in);
+	Real GetNoise(const Vector& vect_in);
   
 private:
 
 	void BuildTable();
-	void BuildCoefs(const Vector vect_in);
-	int Fold(const Vector vect_in);
+	void BuildCoefs(const Vector& vect_in);
+	int Fold(const Vector& vect_in);
 	Real Interp(Real t);
-	Real Lerp(Real x, Real y, Real t);
 
 
    static const int TABLE_SIZE = 256;
@@ -134,17 +133,21 @@ void Noise2<Real, Vector>::BuildTable()
 
 
 template <class Real, class Vector>
-void Noise2<Real, Vector>::BuildCoefs(const Vector vect_in)
+void Noise2<Real, Vector>::BuildCoefs(const Vector& vect_in)
 {
-   Real iX, iY;
+   Real iX, iY, iX1, iY1;
    iX = floor(vect_in[0]);
    iY = floor(vect_in[1]);
 
-   m_vCoef[0] = Vector(iX, iY);
-   m_vCoef[1] = Vector(iX + 1.0, iY);
+   iX1 = iX + Real(1.0);
+   iY1 = iY + Real(1.0);
 
-   m_vCoef[2] = Vector(iX, iY + 1.0);
-   m_vCoef[3] = Vector(iX + 1.0, iY + 1.0);
+
+   m_vCoef[0] = Vector(iX, iY);
+   m_vCoef[1] = Vector(iX1, iY);
+
+   m_vCoef[2] = Vector(iX, iY1);
+   m_vCoef[3] = Vector(iX1, iY1);
 
 
    for(int i = 0; i < 4; i++)
@@ -154,7 +157,7 @@ void Noise2<Real, Vector>::BuildCoefs(const Vector vect_in)
 }
 
 template <class Real, class Vector>
-int Noise2<Real, Vector>::Fold(const Vector vect_in)
+int Noise2<Real, Vector>::Fold(const Vector& vect_in)
 {
    int x = int(vect_in[0]) & (TABLE_SIZE - 1);
    int y = int(vect_in[1]) & (TABLE_SIZE - 1);
@@ -170,15 +173,11 @@ Real Noise2<Real, Vector>::Interp(Real t)
    return Real((6.0 * pow(t, Real(5.0))) - (15.0 * pow(t, Real(4.0))) + (10.0 * pow(t, Real(3.0)))); 
 }
 
-template <class Real, class Vector>
-Real Noise2<Real, Vector>::Lerp(Real x, Real y, Real t)
-{
-   return x + t * (y - x);
-}
+
 
 
 template <class Real, class Vector>
-Real Noise2<Real, Vector>::GetNoise(const Vector vect_in)
+Real Noise2<Real, Vector>::GetNoise(const Vector& vect_in)
 {
    BuildCoefs(vect_in);
 

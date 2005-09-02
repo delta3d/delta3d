@@ -31,6 +31,13 @@
 #define RAND_PERCENT() ((rand() & 0x7FFF) / ((float)0x7FFF))
 
 
+template <typename Real>
+Real Lerp(Real x, Real y, Real t)
+{
+   return x + t * (y - x);
+}
+
+
 //these are taken from
 //http://developer.nvidia.com/object/fast_math_routines.html
 
