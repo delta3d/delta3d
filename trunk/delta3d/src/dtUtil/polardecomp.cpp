@@ -23,9 +23,9 @@ void PolarDecomp::MatBinOpEqualPlus( osg::Matrix& C, const float g1, const osg::
 /** Set MadjT to transpose of inverse of M times determinant of M **/
 void PolarDecomp::AdjointTranspose( const Matrix& M, Matrix& MadjT )
 {
-   MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,1)^MatrixUtil::GetColumn3(M,2), 0);
-   MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,2)^MatrixUtil::GetColumn3(M,0), 1);
-   MatrixUtil::SetColumn( MadjT, MatrixUtil::GetColumn3(M,0)^MatrixUtil::GetColumn3(M,1), 2);
+   MatrixUtil::SetRow( MadjT, MatrixUtil::GetRow3(M,1)^MatrixUtil::GetRow3(M,2), 0);
+   MatrixUtil::SetRow( MadjT, MatrixUtil::GetRow3(M,2)^MatrixUtil::GetRow3(M,0), 1);
+   MatrixUtil::SetRow( MadjT, MatrixUtil::GetRow3(M,0)^MatrixUtil::GetRow3(M,1), 2);
 }
 
 float PolarDecomp::NormInf( const Matrix& M )
@@ -98,7 +98,7 @@ void PolarDecomp::ReflectRows( Matrix& M, const Vec3& u )
 {
    for( int i = 0; i < 3; i++ )
    {
-      float s = u * MatrixUtil::GetColumn3(M,i); 
+      float s = u * MatrixUtil::GetRow3(M,i); 
 
       for( int j = 0; j < 3; j++ ) 
          M(i,j) -= u[j]*s;
@@ -141,7 +141,7 @@ void PolarDecomp::DoRank1( Matrix& M, Matrix& Q )
    MakeReflector(v1, v1); 
    ReflectCols(M, v1);
 
-   Vec3 v2 = MatrixUtil::GetColumn3( M, 2 );
+   Vec3 v2 = MatrixUtil::GetRow3( M, 2 );
    
    MakeReflector(v2, v2); 
    ReflectRows(M, v2);
@@ -172,7 +172,7 @@ void PolarDecomp::DoRank2( Matrix& M, const Matrix& MadjT, Matrix& Q )
    MakeReflector(v1, v1); 
    ReflectCols(M, v1);
 
-   Vec3 v2 = MatrixUtil::GetColumn3(M,0) ^ MatrixUtil::GetColumn3(M,1);
+   Vec3 v2 = MatrixUtil::GetRow3(M,0) ^ MatrixUtil::GetRow3(M,1);
 
    MakeReflector(v2, v2); 
    ReflectRows(M, v2);
@@ -220,11 +220,11 @@ float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix&
    const float TOL = 1.0e-6;
    
    // return and remove translation
-   T = MatrixUtil::GetColumn3( M, 3 );
+   T = MatrixUtil::GetRow3( M, 3 );
    Matrix noTransM = M;
    
    Vec4f newCol = Vec4f( 0.0f, 0.0f, 0.0f, 1.0f );
-   MatrixUtil::SetColumn( noTransM, newCol, 3 );
+   MatrixUtil::SetRow( noTransM, newCol, 3 );
    
    Matrix Mk;
    MatrixUtil::Transpose( Mk, noTransM );
@@ -239,7 +239,7 @@ float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix&
    {
       AdjointTranspose( Mk, MadjTk );
 
-      det = MatrixUtil::GetColumn3(Mk,0) * MatrixUtil::GetColumn3(MadjTk,0);
+      det = MatrixUtil::GetRow3(Mk,0) * MatrixUtil::GetRow3(MadjTk,0);
 
       if ( det == 0.0 )
       {
