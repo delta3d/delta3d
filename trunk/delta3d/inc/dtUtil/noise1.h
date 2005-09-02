@@ -45,7 +45,6 @@ private:
 	void BuildCoefs(const Vector vect_in);
 	int Fold(const Vector vect_in);
 	Real Interp(Real t);
-	Real Lerp(Real x, Real y, Real t);
 
 
    static const int TABLE_SIZE = 256;
@@ -150,12 +149,6 @@ template <class Real, class Vector>
 Real Noise1<Real, Vector>::Interp(Real t)
 {
    return Real((Real(6.0) * pow(t, Real(5.0))) - (Real(15.0) * pow(t, Real(4.0))) + (Real(10.0) * pow(t, Real(3.0)))); 
-}
-
-template <class Real, class Vector>
-Real Noise1<Real, Vector>::Lerp(Real x, Real y, Real t)
-{
-   return x + t * (y - x);
 }
 
 

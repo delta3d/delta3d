@@ -44,8 +44,7 @@ private:
 	void BuildCoefs(const Vector& vect_in);
 	int Fold(const Vector& vect_in);
 	Real Interp(Real t);
-	Real Lerp(Real x, Real y, Real t);
-
+	
 
    static const int TABLE_SIZE = 256;
 
@@ -136,14 +135,14 @@ void Noise3<Real, Vector>::BuildTable()
 template <class Real, class Vector>
 void Noise3<Real, Vector>::BuildCoefs(const Vector& vect_in)
 {
-   int iX, iY, iZ, iX1, iY1, iZ1;
-   iX = int(floor(vect_in[0]));
-   iY = int(floor(vect_in[1]));
-   iZ = int(floor(vect_in[2]));
+   Real iX, iY, iZ, iX1, iY1, iZ1;
+   iX = floor(vect_in[0]);
+   iY = floor(vect_in[1]);
+   iZ = floor(vect_in[2]);
 
-   iX1 = (iX + 1);
-   iY1 = (iY + 1);
-   iZ1 = (iZ + 1);
+   iX1 = (iX + Real(1.0));
+   iY1 = (iY + Real(1.0));
+   iZ1 = (iZ + Real(1.0));
 
 
    m_vCoef[0] = Vector(iX, iY, iZ);
@@ -156,7 +155,7 @@ void Noise3<Real, Vector>::BuildCoefs(const Vector& vect_in)
    m_vCoef[5] = Vector(iX1, iY, iZ1);
 
    m_vCoef[6] = Vector(iX, iY1, iZ1);
-   m_vCoef[7] = Vector(iX1, iY + 1.0, iZ1);
+   m_vCoef[7] = Vector(iX1, iY1, iZ1);
 
    for(int i = 0; i < 8; i++)
    {
@@ -181,12 +180,6 @@ template <class Real, class Vector>
 Real Noise3<Real, Vector>::Interp(Real t)
 {
    return Real((Real(6.0) * pow(t, Real(5.0))) - (Real(15.0) * pow(t, Real(4.0))) + (Real(10.0) * pow(t, Real(3.0)))); 
-}
-
-template <class Real, class Vector>
-Real Noise3<Real, Vector>::Lerp(Real x, Real y, Real t)
-{
-   return x + t * (y - x);
 }
 
 

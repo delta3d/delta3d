@@ -79,15 +79,14 @@ osg::Image *NoiseTexture::makeNoiseTexture(GLenum format)
         incj = (float)freq / mHeight;
         inck = (float)freq / mWidth;
 
-        mNoise.Initialize(osg::Vec3f(0.0f, 0.0f, 0.0f), osg::Vec3f(freq, freq, freq));
-       
+        
         for (i = 0; i < mSlices; ++i, ni[2] += inci, ni[1] =  0)
         {
             for (j = 0; j < mHeight; ++j, ni[1] += incj, ni[0] = 0)
             {
                 for (k = 0; k < mWidth; ++k, ni[0] += inck)
                 {
-                   data = (unsigned char) (((mNoise.GetNoise(osg::Vec3f(ni[0], ni[1], ni[2])) + 1.0) * amp) * 128);
+                   data = (unsigned char) (((mNoise.GetNoise(osg::Vec3f(ni[0], ni[1], ni[2]), freq) + 1.0) * amp) * 128);
 
                     switch(format)
                     {
@@ -144,58 +143,4 @@ osg::Image *NoiseTexture::makeNoiseTexture(GLenum format)
     return mImage;
 }
 
-
-
-/*
-
-// The noise function is used both for 3d and 2d noise (with Z = 0)
-double NoiseTexture::noise(double x, double y, double z, int freq) 
-{
-   int X = (int)floor(x) & 255,              FIND UNIT CUBE THAT 
-   Y = (int)floor(y) & 255,              CONTAINS POINT.     
-   Z = (int)floor(z) & 255;
-
-   x -= floor(x);                         FIND RELATIVE X,Y,Z 
-   y -= floor(y);                         OF POINT IN CUBE.   
-   z -= floor(z);
-
-   double  u = fade(x),                        COMPUTE FADE CURVES 
-   v = fade(y),                        FOR EACH OF X,Y,Z.  
-   w = fade(z);
-
-
-   int Xmod = (X+1) % freq;                    These changes make 
-   int Ymod = (Y+1) % freq;                    tileable noise     
-   int Zmod = (Z+1) % freq;                    (% freq) will wrap the noise 
-
-   int A1 = (p[X]    + Y),
-   A2 = (p[A1]   + Z ),
-   A3 = (p[A1]   + Zmod),
-
-   A4 = (p[X]    + Ymod),
-   A5 = (p[A4]   + Z),
-   A6 = (p[A4]   + Zmod),
-
-   B1 = (p[Xmod] + Y),
-   B2 = (p[B1]   + Z),
-   B3 = (p[B1]   + Zmod),
-
-
-   B4 = (p[Xmod] + Ymod),
-   B5 = (p[B4]   + Z),
-   B6 = (p[B4]   + Zmod);
-
-
-   return lerp(w,                               Trilinear interpolation 
-               lerp(v,
-               lerp(u, grad(p[A2], x, y,   z),   grad(p[B2], x-1, y,   z)),
-               lerp(u, grad(p[A5], x, y-1, z),   grad(p[B5], x-1, y-1, z))),
-
-               lerp(v,
-               lerp(u, grad(p[A3], x, y,   z-1), grad(p[B3], x-1, y,   z-1)),
-               lerp(u, grad(p[A6], x, y-1, z-1), grad(p[B6], x-1, y-1, z-1))));
-
-}
-
-*/
 

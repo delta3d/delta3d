@@ -142,6 +142,9 @@
 				RelativePath="..\..\..\src\dtUtil\polardecomp.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\seamlessnoise.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\xerceswriter.cpp">
 			</File>
 		</Filter>
@@ -195,7 +198,7 @@
 				RelativePath="..\..\..\inc\dtUtil\polardecomp.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtUtil\SeamlessNoise.h">
+				RelativePath="..\..\..\inc\dtUtil\seamlessnoise.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\xerceswriter.h">
