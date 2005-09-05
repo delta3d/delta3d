@@ -130,6 +130,9 @@
 				RelativePath="..\..\..\src\dtUtil\domain.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\DTSingleton.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\log.cpp">
 			</File>
 			<File
@@ -157,6 +160,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\domain.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\DTSingleton.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\dtutil.h">
