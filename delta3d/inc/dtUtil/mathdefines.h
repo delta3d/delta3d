@@ -64,14 +64,14 @@ Real Lerp(Real x, Real y, Real t)
 }
 
 //this floors the int
-__forceinline void FloatToInt(int *int_pointer, float f) 
-{
-      __asm  fld  f
-      __asm  mov  edx,int_pointer
-      __asm  FRNDINT
-      __asm  fistp dword ptr [edx];
-
-}
+//__forceinline void FloatToInt(int *int_pointer, float f) 
+//{
+//      __asm  fld  f
+//      __asm  mov  edx,int_pointer
+//      __asm  FRNDINT
+//      __asm  fistp dword ptr [edx];
+//
+//}
 
 
 
