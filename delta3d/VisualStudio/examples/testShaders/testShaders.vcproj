@@ -19,6 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -34,6 +35,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/testShaders.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/testShaders.pdb"
 				SubSystem="1"
@@ -67,6 +69,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
@@ -79,6 +82,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/testShaders.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
