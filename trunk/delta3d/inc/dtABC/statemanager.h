@@ -167,7 +167,7 @@ namespace dtABC
         * The parser will add transitions to this StateManager instance, based on the XML file.
         * @param filename is the complete file path.
         */
-      template< typename T1, typename T2 >
+      template< typename EventT, typename StateT>
       bool Load(const std::string& filename );
 
       /** Add a new State to the set of States.*/
