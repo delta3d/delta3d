@@ -18,22 +18,6 @@ XercesWriter::XercesWriter(): _implementation(0), _document(0), _CORE(0), _root_
 {
    try
    {
-      XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
-   }
-
-   catch(const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& /*toCatch*/)
-   {
-      /// \todo log this
-
-      //char *pMsg = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(toCatch.getMessage());
-      //XERCES_STD_QUALIFIER cerr << "Error during Xerces-c Initialization.\n"
-      //      << "  Exception message:"
-      //      << pMsg;
-      //XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&pMsg);
-   }
-
-   try
-   {
       XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* impl;
       _CORE = ConvertToTranscode("Core");  // xerces example used "Core", no idea if that is necessary.
       impl = XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationRegistry::getDOMImplementation( _CORE );
@@ -62,9 +46,6 @@ XercesWriter::~XercesWriter()
    // clean up the _implementation stuff
    if( _CORE )
       ReleaseTranscode( _CORE );
-
-   // shutdown the system
-   XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
 }
 
 XMLCh* XercesWriter::ConvertToTranscode(const char* str)
