@@ -107,8 +107,8 @@ public:
       //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 		
 		//set up textures
-		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4.bmp"));//Delta3D-FULL-LOGO02.bmp") );
-		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4Bump.bmp"));//deltaLOGO_nm_50.bmp") );
+		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_color_100.bmp"));
+		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_nm_50.bmp"));
      
 
 		RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
@@ -173,7 +173,7 @@ public:
 
    void Update( const double deltaFrameTime )
    {
-      static float lightRadius = 470.0f;
+      static float lightRadius = 450.0f;
       static float lightHeight = 0.0f;
       static float radPerSec   = osg::DegreesToRadians(30.0f);
       static float totalTime = 0.0f;
@@ -192,8 +192,8 @@ public:
       GetCamera()->GetTransform(&trans);
       trans.GetTranslation(ep);
 
-      ss->getUniform( "lightPos" )->set(osg::Vec4(lp[0], lp[1], lightHeight, 0.0f));
-      ss->getUniform( "eyePosition" )->set(osg::Vec4(ep[0], ep[2], ep[1], 0.0f));
+      ss->getUniform( "lightPos" )->set( osg::Vec4(lp[0], lp[1], lightHeight, 0.0f));
+      ss->getUniform( "eyePosition" )->set(osg::Vec4(ep[0], ep[1], ep[2], 0.0f));
 
    }
 
