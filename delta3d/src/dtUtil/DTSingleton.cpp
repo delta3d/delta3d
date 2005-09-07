@@ -27,7 +27,7 @@ void DTSingleton<T>::DestroyInstance()
 }
 
 template<class T>
-T* DTSingleton<T>::GetInstance()
+T* DTSingleton<T>::Instance()
 {
 	return mInstance;
 }

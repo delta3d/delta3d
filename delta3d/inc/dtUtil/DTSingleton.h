@@ -33,7 +33,7 @@
 // DESCRIPTION: A template singleton 
 //
 // USAGE: DTSingleton<SingletonClass> singleton.... singleton.CreateInstance()
-//			..singleton.GetInstance()->SomeFancyFunction().. singleton.DestroyInstance()
+//			..singleton.Instance()->SomeFancyFunction().. singleton.DestroyInstance()
 //
 // AUTHOR: Bradley Anderegg
 //
@@ -65,7 +65,7 @@ namespace dtUtil
 		static void CreateInstance();
 		static void DestroyInstance();
 
-		static T* GetInstance();
+		static T* Instance();
 
 
 		//operators
