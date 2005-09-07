@@ -14,16 +14,16 @@ varying vec4 v_halfVector;
 
 void main (void)
 {
-
-    vec4 texColor = texture2D(texMap, v_texCoord);
-    vec4 bumpColor = texture2D(normalMap, v_texCoord);
+	vec2 modTex = vec2(v_texCoord.x, -1.0 * v_texCoord.y);
+    vec4 texColor = texture2D(texMap, modTex);
+    vec4 bumpColor = texture2D(normalMap, modTex);
 
     //shift from 0 - 1 to -1 - 1	
     bumpColor *= 2.0;
     bumpColor -= 1.0;
     
     //calculate attenuation
-    float atten = 1.0 / pow(length(v_lvts), .30);
+    float atten = 1.0 / pow(length(v_lvts), 0.30);
     vec4 lvts = normalize(v_lvts);
     float c = dot(bumpColor, lvts);
 
@@ -33,16 +33,15 @@ void main (void)
 	
 	
     //calculate self shadowing term
-    vec4 selfShadow = 3.0 * (dot(bumpColor, lvts));
-    atten *= selfShadow;
+    //vec4 selfShadow = 3.0 * (dot(bumpColor, lvts));
+    //atten *= selfShadow;
     spec *= atten;	 
 
     //calculate and return the final texture color
-    spec = mul(texColor, spec);
-    return (c * dc) + spec;  
+    spec *= texColor;
 
-
-    gl_FragColor = texColor;
+	vec3 color = (c * texColor) + spec;
+    gl_FragColor = vec4(color.xyz, 1.0);
      
 
 }

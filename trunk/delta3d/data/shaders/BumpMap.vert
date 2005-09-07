@@ -4,7 +4,9 @@
 //////////////////////////////////////////////
 
 
-uniform vec3 lightPos;
+uniform vec4 lightPos;
+uniform vec4 eyePosition;
+
 
 
 varying vec2 v_texCoord;
@@ -13,27 +15,27 @@ varying vec4 v_halfVector;
 
 void main(void)
 {
+
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     
     vec4 v0 = gl_Vertex;
     vec4 v1 = gl_MultiTexCoord0;
     vec4 v2 = gl_MultiTexCoord1;
     
-    vec4 normal = gl_Normal;
+    vec4 normal = vec4(gl_Normal.xyz, 0.0);
     
     vec4 tc = gl_MultiTexCoord2;
-    vec4 tc1 = gl_MultiTexCoord3
+    vec4 tc1 = gl_MultiTexCoord3;
     vec4 tc2 = gl_MultiTexCoord4; 
     				   
  
    
     //setup our variables
-    	normal.w = 0.0;
     	vec4 s1 = tc1 - tc;
     	vec4 s2 = tc2 - tc;	
     	vec4 q0 = v1 - v0;
     	vec4 q1 = v2 - v0;
-    	vec4 lv = lightVector - v0;
+    	vec4 lv = lightPos - v0;
     	lv.w = 0.0;
     	vec4 denom =  (-s2.x * s1.y) + (s1.x * s2.y);
     	
@@ -102,9 +104,9 @@ void main(void)
     	normal.w = 0.0;
     		
     	//set output vars
-    	v_texCoord = tc;
-	v_lvts = lvts;
-	v_halfVector = spec;
+    	v_texCoord = tc.xy;
+		v_lvts = lvts;
+		v_halfVector = spec;
    
 }
 
