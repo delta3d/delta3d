@@ -2,9 +2,6 @@ Import('*')
 
 dtCharSrcs = [  'character.cpp' ]
 
-#if OS == 'darwin':
-dtCharDeps=[ 'dtcore', 'cal3d', 'rbody', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ] 
-#else:
-#    dtCharDeps=[ 'dtcore', 'cal3d', 'rbody', 'rvrutils', 'rcfgscript' ] 
+dtCharDeps = [ 'dtcore', 'cal3d', 'rbody', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer', 'tinyxml', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
     
 BuildLib( 'dtchar', dtCharSrcs, dtCharDeps, ['DT_LIBRARY'] )
