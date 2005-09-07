@@ -148,6 +148,9 @@
 				RelativePath="..\..\..\src\dtUtil\seamlessnoise.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\stringutils.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\xerceswriter.cpp">
 			</File>
 		</Filter>

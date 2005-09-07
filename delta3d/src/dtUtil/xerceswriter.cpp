@@ -28,6 +28,7 @@ XercesWriter::XercesWriter(): _implementation(0), _document(0), _CORE(0), _root_
    catch(...)
    {
       ///\todo log the exceptions
+      LOG_ERROR("There was a problem creating a Xerces DOMImplementation.")
       _implementation = 0;
 
       ReleaseTranscode( _CORE );
@@ -38,7 +39,8 @@ XercesWriter::XercesWriter(): _implementation(0), _document(0), _CORE(0), _root_
 XercesWriter::~XercesWriter()
 {
    // clean up the _document stuff
-   _document->release();
+   if( _document )
+      _document->release();
 
    // clean up the document's root string
    ReleaseTranscode( _root_name );

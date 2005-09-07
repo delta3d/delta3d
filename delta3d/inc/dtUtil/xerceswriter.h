@@ -1,5 +1,5 @@
-#ifndef _xml_serializer_xercesc_include_
-#define _xml_serializer_xercesc_include_
+#ifndef DELTA_XERCESWRITER_INC
+#define DELTA_XERCESWRITER_INC
 
 #include <string>
 #include <vector>
@@ -44,4 +44,4 @@ namespace dtUtil
    };
 };
 
-#endif  // _xml_serializer_xercesc_include_
+#endif  // DELTA_XERCESWRITER_INC
