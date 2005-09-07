@@ -36,7 +36,7 @@ public:
 _CV_::_CV_()
 {
 
-	mTexRepeat = 8.0f;
+	mTexRepeat = 2.0f;
 	mSize = 500.0f;
 
 	mVerts = new osg::Vec3Array(36);
@@ -253,8 +253,8 @@ _CV_::_CV_()
    (*mNormals)[8].set (0.0f, 0.0f, -1.0f);
 
    (*mNormals)[9].set (0.0f, 0.0f, -1.0f);
-   (*mNormals)[10].set (0.0f, 0.0f, -1.0);
-   (*mNormals)[11].set (0.0f, 0.0f, -1.0);
+   (*mNormals)[10].set (0.0f, 0.0f, -1.0f);
+   (*mNormals)[11].set (0.0f, 0.0f, -1.0f);
 
 //left
    (*mNormals)[12].set (1.0f, 0.0f, 0.0f);
@@ -314,8 +314,8 @@ _CV_::_CV_()
    (*mTexCoords)[8].set (mTexRepeat, mTexRepeat);
 
    (*mTexCoords)[9].set (0.0f, 0.0f);
-   (*mTexCoords)[10].set (0.0f, 4.0);
-   (*mTexCoords)[11].set (mTexRepeat, 4.0);
+   (*mTexCoords)[10].set (0.0f, mTexRepeat);
+   (*mTexCoords)[11].set (mTexRepeat, mTexRepeat);
 
 //left
    (*mTexCoords)[12].set (0.0f, 0.0f);
@@ -433,7 +433,7 @@ _CV_::_CV_()
 
    (*mTexCoords3)[9].set (mTexRepeat, mTexRepeat);
    (*mTexCoords3)[10].set (0.0f, 0.0);
-   (*mTexCoords3)[11].set (0.0f, 4.0);
+   (*mTexCoords3)[11].set (0.0f, mTexRepeat);
 
 //left
    (*mTexCoords3)[12].set (mTexRepeat, mTexRepeat);
