@@ -29,13 +29,13 @@ void main (void)
 
     vec4 spec = normalize(v_halfVector);
     spec = dot(spec, bumpColor);
-    spec =  3 * max((pow(spec, 2.0) - 0.75), vec4(0.0, 0.0, 0.0, 0.0));
+    spec =  1 * max((pow(spec, 4.0) - 0.75), vec4(0.0, 0.0, 0.0, 0.0));
 	
 	
     //calculate self shadowing term
     //vec4 selfShadow = 3.0 * (dot(bumpColor, lvts));
     //atten *= selfShadow;
-    spec *= atten;	 
+    //spec *= atten;	 
 
     //calculate and return the final texture color
     spec *= texColor;

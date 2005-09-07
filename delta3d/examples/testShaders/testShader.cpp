@@ -38,6 +38,8 @@ public:
 		CreateGeometry();
 		EnableShaders();
 
+      GetCamera()->SetPerspective(90.0f, 70.0f, 1.0f, 5000.0f);
+
       GetScene()->GetSceneNode()->addChild(mGeode.get());
 
 		Transform xform(0.0f, -300.0f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -80,6 +82,14 @@ public:
 		  (*indices)[i] = i;
 		}
 
+      /*RefPtr<osg::IntArray> indices = 
+         new osg::IntArray(6);
+
+      for(int i = 24; i < 32; ++i)
+      {
+         (*indices)[i - 24] = i;
+      }*/
+
 
 		mGeometry->setVertexIndices(indices.get());
 
@@ -107,8 +117,8 @@ public:
       //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 		
 		//set up textures
-		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_color_100.bmp"));
-		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_nm_50.bmp"));
+		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4.bmp"));//deltaLOGO_color_100.bmp"));
+		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4Bump.bmp"));//deltaLOGO_nm_50.bmp"));
      
 
 		RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
@@ -173,7 +183,7 @@ public:
 
    void Update( const double deltaFrameTime )
    {
-      static float lightRadius = 450.0f;
+      static float lightRadius = 900.0f;
       static float lightHeight = 0.0f;
       static float radPerSec   = osg::DegreesToRadians(30.0f);
       static float totalTime = 0.0f;
