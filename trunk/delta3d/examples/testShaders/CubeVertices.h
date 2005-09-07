@@ -36,8 +36,8 @@ public:
 _CV_::_CV_()
 {
 
-	mTexRepeat = 2.0f;
-	mSize = 500.0f;
+	mTexRepeat = 8.0f;
+	mSize = 1000.0f;
 
 	mVerts = new osg::Vec3Array(36);
 	mVerts2 = new osg::Vec3Array(36);
