@@ -27,6 +27,8 @@
 
 #include <vector>
 
+#include <osgDB/FileUtils>
+
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
@@ -95,7 +97,7 @@ namespace dtCore
 
          catch(const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& /*toCatch*/)
          {
-            /// \todo log this
+            LOG_ERROR("There was a problem initializing the Xerces XMLPlatformUtils.");
             /// \todo disable support for loading/saving
 
             //char *pMsg = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(toCatch.getMessage());
@@ -273,6 +275,8 @@ namespace dtCore
         */
       void LoadFile(const std::string& filename)
       {
+         // check to see if the file exits
+         std::string file = osgDB::findDataFile( filename );
          // use sax parsing
          // build a vector of frame data
          XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();
@@ -282,7 +286,7 @@ namespace dtCore
             XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();
             parser->setContentHandler(&handler);
             //parser->setErrorHandler(&handler);
-            parser->parse( XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(filename.c_str()) );
+            parser->parse( XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(file.c_str()) );
             //errorCount = parser->getErrorCount();
          }
          catch (const XERCES_CPP_NAMESPACE_QUALIFIER OutOfMemoryException&)

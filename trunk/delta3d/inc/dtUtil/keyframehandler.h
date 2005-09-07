@@ -5,17 +5,19 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <stack>
 
 namespace dtUtil
 {
    /** \brief A class used for filling KeyFrames, enforces a schema.
-      * KeyFrames
-      *    KeyFrame
-      *       Source
-      *          FrameData
-      *             InternalData
-      *                PotentiallyMoreInternalData
-      */
+     * Typically used by the Recorder class.
+     * KeyFrames
+     *    KeyFrame
+     *       Source
+     *          FrameData
+     *             InternalData
+     *                PotentiallyMoreInternalData
+     */
    template<typename RecordableT,typename FrameDataT>
    class KeyFrameHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
    {
@@ -30,84 +32,160 @@ namespace dtUtil
    private:
       /** A base interface class for the state of the parser.
         * Derived classes can be used to control that actions of the parser.
+        * Each derived class will probably have behavior very unique from the other derived classes.
         */
-      class ActionState : public osg::Referenced
+      class ParserState : public osg::Referenced
       {
       public:
-         ActionState() {}
+         ParserState() {}
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)=0;
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)=0;
 
       protected:
-         virtual ~ActionState() {}
+         virtual ~ParserState() {}
       };
 
       /** Used to control the parsing for sets of key frames.
         */
-      class KeyFramesState : public ActionState
+      class FrameContainerState : public ParserState
       {
       public:
-         KeyFramesState() {}
+         FrameContainerState(KeyFrameContainer& kfc): mKFC(kfc)
+         {
+         }
 
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
          {
+            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
          {
          }
 
+         KeyFrameContainer& GetContainer() { return mKFC; }
+
       protected:
-         virtual ~KeyFramesState() {}
+         virtual ~FrameContainerState() {}
+
+      private:
+         FrameContainerState(); /// not implemented by design
+         KeyFrameContainer& mKFC;
       };
 
       /** Used to control the parsing for of key frames.
         */
-      class KeyFrameState : public ActionState
+      class KeyFrameState : public ParserState
       {
       public:
-         KeyFrameState() {}
+         KeyFrameState(FrameContainerState* fcs): mFCS(fcs), mTimeCodeName("TimeCode"), mTimeStamp(0.0)
+         {
+         }
 
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
          {
+            ///\todo clear the mFDC ? (voting yes)
+            mFDC.clear();
+
+            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
+
+            // try to find the time stamp
+            bool FOUND_TIMESTAMP(false);
+            unsigned int asize = attrs.getLength();
+            for(unsigned int i=0; i<asize; i++)
+            {
+               std::string an = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( attrs.getLocalName(i) );
+               if( an == mTimeCodeName )
+               {
+                  FOUND_TIMESTAMP = true;
+                  std::string av = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( attrs.getValue(i) );
+                  mTimeStamp = dtUtil::ToFloat( av.c_str() );
+                  LOG_INFO("Time stamp = " + av)
+               }
+            }
+
+            if( !FOUND_TIMESTAMP )
+            {
+               LOG_WARNING("Time stamp attribute by name," + mTimeCodeName + " was not found.")
+            }
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
          {
+            // do something with the mTimeStamp
+            mFCS->GetContainer().push_back( KeyFrameContainer::value_type(mTimeStamp,mFDC) );
          }
+
+         FrameDataContainer& GetContainer() { return mFDC; }
 
       protected:
          virtual ~KeyFrameState() {}
+
+      private:
+         KeyFrameState();  /// not implemented by design
+         osg::ref_ptr<FrameContainerState> mFCS;
+         std::string mTimeCodeName;
+         double mTimeStamp;
+         FrameDataContainer mFDC;
       };
 
       /** Used to control the parsing for a source.
         */
-      class SourceState : public ActionState
+      class SourceState : public ParserState
       {
       public:
-         SourceState() {}
+         SourceState(KeyFrameState* kfs): mKFS(kfs), mSource(0)
+         {
+         }
 
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
          {
+            ///\todo find a way to clear off the dom element, maybe make a new one and leak the old one?
+            //mDOMElement->clear();
+
+            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
          {
+            mKFS->GetContainer().push_back( RecordableType::DeSerialize( mDOMElement ) );
          }
+
+         void SetSource(RecordableT* s) { mSource = s; }
 
       protected:
          virtual ~SourceState() {}
+
+      private:
+         SourceState();  /// not implemented by design
+         osg::ref_ptr<KeyFrameState> mKFS;
+         RecordableT* mSource;
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* mDOMElement;
       };
 
       /** Used to control the parsing for the source's frame data.
+        * It builds a DOMElement consisting of FrameData contents, to be de-serialized by the higher level node.
         */
-      class FrameDataState : public ActionState
+      class FrameDataState : public ParserState
       {
       public:
-         FrameDataState() {}
+         FrameDataState(SourceState* ss): mSS(ss)
+         {
+         }
 
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
          {
+            ///\todo modify mParent
+
+            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
@@ -116,17 +194,29 @@ namespace dtUtil
 
       protected:
          virtual ~FrameDataState() {}
+
+      private:
+         FrameDataState();  /// not implemented by design
+         osg::ref_ptr<SourceState> mSS;
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* mParent;
       };
 
    public:
       typedef XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler BaseClass;
       KeyFrameHandler(const RecordablePtrContainer& sources,KeyFrameContainer& kfc): BaseClass(),
-         mSources(sources), mKFC(kfc), mCurrentState(0), mActionStateMap()
+         mSources(sources), mLevel(0), mCurrentState(0), mParserStateMap()
       {
-         mActionStateMap.insert( ActionStateMap::value_type( "KeyFrames", new KeyFramesState() ) );
-         mActionStateMap.insert( ActionStateMap::value_type( "KeyFrame", new KeyFrameState() ) );
-         mActionStateMap.insert( ActionStateMap::value_type( "Source", new SourceState() ) );
-         mActionStateMap.insert( ActionStateMap::value_type( "FrameData", new FrameDataState() ) );
+         // allocate the different parser states
+         osg::ref_ptr<FrameContainerState> fcs = new FrameContainerState(kfc);
+         osg::ref_ptr<KeyFrameState> kfs = new KeyFrameState( fcs.get() );
+         osg::ref_ptr<SourceState> ss = new SourceState( kfs.get() );
+         osg::ref_ptr<FrameDataState> fds = new FrameDataState( ss.get() );
+
+         // stuff the states into a map
+         mParserStateMap.insert( ParserStateMap::value_type( "FrameContainer", fcs.get() ) );
+         mParserStateMap.insert( ParserStateMap::value_type( "KeyFrame", kfs.get() ) );
+         mParserStateMap.insert( ParserStateMap::value_type( "Source", ss.get() ) );
+         mParserStateMap.insert( ParserStateMap::value_type( "FrameData", fds.get() ) );
       }
 
       virtual ~KeyFrameHandler()
@@ -147,7 +237,7 @@ namespace dtUtil
       virtual void startElement(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
       {
          mLevel++;
-         SetActionState( mLevel );
+         SetParserState( mLevel );
          if( mCurrentState )
             mCurrentState->HandleStart( uri, localname, qname, attrs );
       }
@@ -160,7 +250,7 @@ namespace dtUtil
       }
 
    protected:
-      void SetActionState(unsigned int action)
+      void SetParserState(unsigned int action)
       {
          switch( mLevel )
          {
@@ -172,30 +262,33 @@ namespace dtUtil
 
          case 1:  // top level tag, keyframes
             {
-               ActionStateMap::iterator iter = mActionStateMap.find("KeyFrames");
-               if( iter != mActionStateMap.end() )
+               ParserStateMap::iterator iter = mParserStateMap.find("FrameContainer");
+               if( iter != mParserStateMap.end() )
                   mCurrentState = (*iter).second.get();
             } break;
 
          case 2:  // a single keyframe tag
             {
-               ActionStateMap::iterator iter = mActionStateMap.find("KeyFrame");
-               if( iter != mActionStateMap.end() )
+               ParserStateMap::iterator iter = mParserStateMap.find("KeyFrame");
+               if( iter != mParserStateMap.end() )
                   mCurrentState = (*iter).second.get();
             } break;
 
          case 3:
             {
-               ActionStateMap::iterator iter = mActionStateMap.find("Source");
-               if( iter != mActionStateMap.end() )
+               ParserStateMap::iterator iter = mParserStateMap.find("Source");
+               if( iter != mParserStateMap.end() )
+               {
+                  ///\todo HUGE! set the source!
                   mCurrentState = (*iter).second.get();
+               }
             } break;
 
          case 4:
          default:
             {
-               ActionStateMap::iterator iter = mActionStateMap.find("FrameData");
-               if( iter != mActionStateMap.end() )
+               ParserStateMap::iterator iter = mParserStateMap.find("FrameData");
+               if( iter != mParserStateMap.end() )
                   mCurrentState = (*iter).second.get();
             } break;
          };
@@ -205,9 +298,9 @@ namespace dtUtil
       const RecordablePtrContainer& mSources;
       KeyFrameContainer mKFC;
       unsigned int mLevel;
-      typedef std::map<std::string, osg::ref_ptr<ActionState> > ActionStateMap;
-      ActionStateMap mActionStateMap;
-      ActionState* mCurrentState;
+      ParserState* mCurrentState;
+      typedef std::map<std::string, osg::ref_ptr<ParserState> > ParserStateMap;
+      ParserStateMap mParserStateMap;
    }; // end KeyFrameHandler
 
 }; // end namespace dtUtil
