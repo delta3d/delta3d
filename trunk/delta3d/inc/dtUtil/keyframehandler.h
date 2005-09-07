@@ -262,21 +262,21 @@ namespace dtUtil
 
          case 1:  // top level tag, keyframes
             {
-               ParserStateMap::iterator iter = mParserStateMap.find("FrameContainer");
+               ParserIterator iter = mParserStateMap.find("FrameContainer");
                if( iter != mParserStateMap.end() )
                   mCurrentState = (*iter).second.get();
             } break;
 
          case 2:  // a single keyframe tag
             {
-               ParserStateMap::iterator iter = mParserStateMap.find("KeyFrame");
+               ParserIterator iter = mParserStateMap.find("KeyFrame");
                if( iter != mParserStateMap.end() )
                   mCurrentState = (*iter).second.get();
             } break;
 
          case 3:
             {
-               ParserStateMap::iterator iter = mParserStateMap.find("Source");
+               ParserIterator iter = mParserStateMap.find("Source");
                if( iter != mParserStateMap.end() )
                {
                   ///\todo HUGE! set the source!
@@ -287,7 +287,7 @@ namespace dtUtil
          case 4:
          default:
             {
-               ParserStateMap::iterator iter = mParserStateMap.find("FrameData");
+               ParserIterator iter = mParserStateMap.find("FrameData");
                if( iter != mParserStateMap.end() )
                   mCurrentState = (*iter).second.get();
             } break;
@@ -300,6 +300,7 @@ namespace dtUtil
       unsigned int mLevel;
       ParserState* mCurrentState;
       typedef std::map<std::string, osg::ref_ptr<ParserState> > ParserStateMap;
+      typedef typename ParserStateMap::iterator ParserIterator;
       ParserStateMap mParserStateMap;
    }; // end KeyFrameHandler
 
