@@ -76,6 +76,10 @@ namespace dtCore
       static bool mInstanceFlag;///<Have we created a System yet?
       dtCore::Timer mClock;
 
+      //time keeping vars
+      Timer_t mClockTime, mLastClockTime;
+      double mDt;
+
       ///Stuff to do before the frame. Message: "preframe", delta time in seconds
       void PreFrame( const double deltaFrameTime );
 

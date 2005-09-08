@@ -18,6 +18,9 @@ System* System::mSystem = NULL;
 System::System():
 mRunning(false)
 {
+   mClockTime = 0.0;
+   mLastClockTime = mClock.tick();
+   mDt = 0.0;
    RegisterInstance(this);
 }
 
@@ -53,20 +56,18 @@ void System::Frame( const double deltaFrameTime)
 void System::Run()
 {
    mRunning = true;
-   double deltaFrameTime = 0.f;
-   Timer_t clockTime = 0;
-   Timer_t lastTick = mClock.tick();
+   mLastClockTime = mClock.tick();
 
    while (mRunning)
    {	  
-	  clockTime = mClock.tick();
-	  deltaFrameTime = mClock.delta_s(lastTick, clockTime);
+	  mClockTime = mClock.tick();
+	  mDt = mClock.delta_s(mLastClockTime, mClockTime);
 
-      PreFrame(deltaFrameTime);
-      Frame(deltaFrameTime);
-      PostFrame(deltaFrameTime);
+      PreFrame(mDt);
+      Frame(mDt);
+      PostFrame(mDt);
 
-	  lastTick = clockTime;
+	  mLastClockTime = mClockTime;
    }
    LOG_DEBUG("System: Exiting...");
    SendMessage("exit");
@@ -81,20 +82,27 @@ void System::Start()
 
 void System::Step()
 {
-   static Timer_t clockTime, last_clockTime, dt;
+   static bool first = true;
 
-   if( ! mRunning )
+   if(!mRunning)
+   {
       return;
+   }
 
-   //mClock.update();
-   clockTime = mClock.tick();
-   dt = static_cast<Timer_t>( mClock.delta_s(last_clockTime, clockTime) ); 
+   if(first)
+   {
+      mLastClockTime = mClock.tick();
+      first = false;
+   }
 
-   PreFrame(dt);
-   Frame(dt);
-   PostFrame(dt);
+   mClockTime = mClock.tick();
+   mDt = mClock.delta_s(mLastClockTime, mClockTime); 
 
-   last_clockTime = clockTime;
+   PreFrame(mDt);
+   Frame(mDt);
+   PostFrame(mDt);
+
+   mLastClockTime = mClockTime;
 }
 
 void System::Stop()
