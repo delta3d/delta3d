@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;LIBCMTD.lib;LIBCMT.lib;LIBCD.lib;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/testApp.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

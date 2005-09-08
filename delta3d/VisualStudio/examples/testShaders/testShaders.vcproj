@@ -37,7 +37,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB) "
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/testShaders.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

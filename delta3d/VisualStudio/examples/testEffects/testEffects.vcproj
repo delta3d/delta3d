@@ -48,7 +48,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc,libcmt,libcp"
-				ProgramDatabaseFile=".\Release/testEffects.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -112,7 +112,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt.lib; libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/testEffects.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

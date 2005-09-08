@@ -47,7 +47,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/bspCompiler.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				ImportLibrary="../lib/p51visd.lib"
 				TargetMachine="1"/>
@@ -116,7 +116,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc,libcp,libcmt"
-				ProgramDatabaseFile=".\Release/bspCompiler.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				StackReserveSize="0"
 				ImportLibrary="../lib/p51vis.lib"

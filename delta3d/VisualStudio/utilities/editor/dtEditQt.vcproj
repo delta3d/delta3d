@@ -43,7 +43,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtEditQt.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool

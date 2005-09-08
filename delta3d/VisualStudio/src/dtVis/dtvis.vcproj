@@ -40,7 +40,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="../../../lib/dtvis_d.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

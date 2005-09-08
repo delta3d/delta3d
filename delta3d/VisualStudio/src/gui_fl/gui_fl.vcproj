@@ -44,7 +44,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd; msvcrt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="../../../lib/gui_fld.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

@@ -47,7 +47,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd;libcpd;libcmt;msvcrt.lib;libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/psEditor.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -111,7 +111,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc,libcp,libcmt"
-				ProgramDatabaseFile=".\Release/psEditor.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool

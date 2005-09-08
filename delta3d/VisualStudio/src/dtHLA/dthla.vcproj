@@ -41,7 +41,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd; libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="../../../lib/dthlad.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

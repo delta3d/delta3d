@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt,libcmtd,msvcrt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="../../../bin/Viewer.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

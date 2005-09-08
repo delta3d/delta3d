@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="../../../lib/dtchard.lib"
 				TargetMachine="1"/>
