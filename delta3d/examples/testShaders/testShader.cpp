@@ -20,6 +20,7 @@
 
 #include "CubeVertices.h"
 
+
 using namespace dtABC;
 using namespace dtCore;
 
@@ -235,6 +236,7 @@ IMPLEMENT_MANAGEMENT_LAYER( TestShadersApp )
 
 int main(int argc, char* argv[])
 {
+   
 	SetDataFilePathList( GetDeltaRootPath() + "/examples/testShaders/;" +
 		GetDeltaDataPathList()  );
 
@@ -242,5 +244,6 @@ int main(int argc, char* argv[])
 	app->Config();
 	app->Run();
 
+   
 	return 0;
 }
