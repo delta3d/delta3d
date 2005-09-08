@@ -121,7 +121,7 @@ namespace dtABC
 
       private:
          TransitionHandler(); /// not implemented by design
-         dtCore::RefPtr<StateManager> mManager;
+         StateManager* mManager;
          dtCore::RefPtr<State> mFromState;
          dtCore::RefPtr<State> mToState;
          const Event::Type*    mEventType;
@@ -334,25 +334,24 @@ namespace dtABC
          parser->parse(filename.c_str());
          retVal = true;
       }
-      catch (const XERCES_CPP_NAMESPACE::XMLException& toCatch) 
+      catch (const XERCES_CPP_NAMESPACE::XMLException& e)
       {
-         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
-            "Exception message is '%s",  message );
+         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(e.getMessage());
+         LOG_ERROR(std::string("Exception message is: ") + message)
          XERCES_CPP_NAMESPACE::XMLString::release(&message);
          retVal = false;
       }
-      catch (const XERCES_CPP_NAMESPACE::SAXParseException& )       
+      catch (const XERCES_CPP_NAMESPACE::SAXParseException& e)
       {
          //The error will already be logged by the errorHandler
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__,
-                           "An error occurred while parsing %s", filename.c_str() );         
+         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(e.getMessage());
+         LOG_ERROR(std::string("An exception occurred while parsing file, ") + filename + std::string(", with message: ") + message)
+         XERCES_CPP_NAMESPACE::XMLString::release(&message);
          retVal = false;;
       }
       catch (...) 
       {
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FUNCTION__,
-            "Statemanager::ParseFile() Unexpected Exception");
+         LOG_ERROR("An exception occurred while parsing file, " + filename)
          retVal = false;
       }
 
