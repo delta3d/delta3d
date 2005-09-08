@@ -28,7 +28,7 @@
 				UsePrecompiledHeader="0"
 				AssemblerListingLocation="$(IntDir)"
 				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"

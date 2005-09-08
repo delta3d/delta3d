@@ -33,7 +33,7 @@
 				PrecompiledHeaderFile=".\Release/hlaStealthViewer.pch"
 				AssemblerListingLocation="$(IntDir)"
 				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -95,7 +95,7 @@
 				PrecompiledHeaderFile=".\Debug/hlaStealthViewer.pch"
 				AssemblerListingLocation="$(IntDir)"
 				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="3"
