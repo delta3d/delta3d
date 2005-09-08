@@ -26,7 +26,7 @@
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				AssemblerListingLocation=".\Debug/"
+				AssemblerListingLocation="$(IntDir)"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
