@@ -309,7 +309,8 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
    program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
 
-   envProg.Install( '$prefix/share/delta3d/bin', program )
+   if launchDir != env.get('prefix') :
+      envProg.Install( '$prefix/share/delta3d/bin', program )
    
 #   if OS == 'darwin' :
 #      appdir = name + '.app'
@@ -392,13 +393,17 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
       lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
       envLib.Install( '#/lib', builtlib[1] ) # .lib, 
       envLib.Install( '#/lib', builtlib[2] ) # .exp
-      envLib.Install( '$prefix/bin', builtlib[0] )
-      envLib.Install( '$prefix/lib', builtlib[1] )
-      envLib.Install( '$prefix/lib', builtlib[2] )
+
+      if launchDir != env.get('prefix') :
+         envLib.Install( '$prefix/bin', builtlib[0] )
+         envLib.Install( '$prefix/lib', builtlib[1] )
+         envLib.Install( '$prefix/lib', builtlib[2] )
    else:
       # TODO: copy headers to prefix on alias install
       lib = envLib.Install( '#/lib', builtlib )
-      lib = envLib.Install( '$prefix/lib', builtlib )
+
+      if launchDir != env.get('prefix') :
+         lib = envLib.Install( '$prefix/lib', builtlib )
 
    incDirDict = { 'dtabc'    : 'dtABC',
                   'dtActors' : 'dtActors',
@@ -415,7 +420,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
                   'dtsoarx'  : 'soarx' }
 
    #install headers, there's gotta be a cleaner way ;)
-   if incDirDict.has_key(name) :
+   if incDirDict.has_key(name) and launchDir != env.get('prefix') :
       for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
          envLib.InstallAs( '$prefix/include/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )
 
