@@ -308,6 +308,8 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
      cppDefines = envProg['CPPDEFINES']
 
    program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+
+   envProg.Install( '$prefix/share/delta3d/bin', program )
    
 #   if OS == 'darwin' :
 #      appdir = name + '.app'
@@ -390,12 +392,33 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
       lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
       envLib.Install( '#/lib', builtlib[1] ) # .lib, 
       envLib.Install( '#/lib', builtlib[2] ) # .exp
-   elif OS == 'linux' :
-      # TODO: copy headers/lib/bin to prefix on alias install
+      envLib.Install( '$prefix/bin', builtlib[0] )
+      envLib.Install( '$prefix/lib', builtlib[1] )
+      envLib.Install( '$prefix/lib', builtlib[2] )
+   else:
+      # TODO: copy headers to prefix on alias install
       lib = envLib.Install( '#/lib', builtlib )
-   elif OS == 'darwin' :
-      lib = envLib.Install( '#/lib', builtlib )
-  
+      lib = envLib.Install( '$prefix/lib', builtlib )
+
+   incDirDict = { 'dtabc'    : 'dtABC',
+                  'dtActors' : 'dtActors',
+                  'dtaudio'  : 'dtAudio',
+                  'dtchar'   : 'dtChar',
+                  'dtcore'   : 'dtCore',
+                  'dtDAL'    : 'dtDAL',
+                  'dthla'    : 'dtHLA',
+                  'dtgui'    : 'dtGUI',
+                  'dtscript' : 'dtScript',
+                  'dtutil'   : 'dtUtil',
+                  'dtvis'    : 'dtVis',
+                  'gui_fl'   : 'gui_fl',
+                  'dtsoarx'  : 'soarx' }
+
+   #install headers, there's gotta be a cleaner way ;)
+   if incDirDict.has_key(name) :
+      for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
+         envLib.InstallAs( '$prefix/include/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )
+
    return lib   
 
 # Function to calculate current time for logging
@@ -491,11 +514,15 @@ opts.AddOptions(
             map = {}, ignorecase = 1 ),
    BoolOption( 'no_warnings', 'Disable all warnings', 0 ),
    BoolOption( 'unit_tests', 'Perform Unit Tests', 0 ),
-   PathOption( 'prefix', 'Directory to install under', os.getcwd() ),
    PackageOption( 'boost', 'Boost installation directory', 'no' ),
-   PackageOption( 'rti', 'RTI installation directory', 'no' ),
+   PackageOption( 'rti', 'RTI installation directory', 'no' )
 )
-     
+
+if OS == 'windows' :
+   opts.Add( PathOption( 'prefix', 'Directory to install under', os.getcwd() ) )
+else :
+   opts.Add( PathOption( 'prefix', 'Directory to install under', '/usr/local' ) )
+
 env = Environment( options = opts )
 
 # append the outside env to ours
@@ -596,8 +623,8 @@ else:
    print 'Build Failed: Unsupported mode'
    errorLog.write('Build Failed: Unsupportedmode: ' + sys.platform)
    errorLog.close()
-   env.Exit(-1) 
-   
+   env.Exit(-1)
+
 print 'OS: ' + OS
 errorLog.write('OS: ' + OS + '\n\n')
 
@@ -973,6 +1000,8 @@ env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
 env.Alias( 'hla', [ os.path.join(os.getcwd(), 'src', 'dtHLA'),
                 os.path.join(os.getcwd(), 'examples', 'testHLA'),
                 os.path.join(os.getcwd(), 'utilities', 'hlaStealthViewer') ] )
+
+env.Alias( 'install', '$prefix' )
 
 SConscript( dirs=['doc'] )
 SConscript( dirs=['src'] )
