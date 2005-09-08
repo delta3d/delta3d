@@ -34,14 +34,13 @@ void initLoadableBindings();
 void initLogicalInputDeviceBindings();
 void initMotionModelBindings();
 void initMouseBindings();
-void initNoiseGeneratorBindings();
 void initObjectBindings();
 void initOrbitMotionModelBindings();
 void initParticleSystemBindings();
 void initPhysicalBindings();
 void initPointAxisBindings();
 void initPositionalLightBindings();
-void initRecorderBindings();
+//void initRecorderBindings();
 void initSceneBindings();
 void initSpotLightBindings();
 void initSkyBoxBindings();
@@ -117,9 +116,8 @@ BOOST_PYTHON_MODULE(dtCore)
    initOrbitMotionModelBindings();
 
    initCompassBindings();
-   initNoiseGeneratorBindings();
    initPointAxisBindings();
-   initRecorderBindings();
+   //initRecorderBindings();
    initTerrainBindings();
    initEffectManagerBindings();
 
