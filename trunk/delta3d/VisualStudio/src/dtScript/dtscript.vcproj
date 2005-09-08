@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib,$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="python24_d.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/script.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="../../../lib/dtscriptd.lib"
 				TargetMachine="1"/>

@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/testGUI.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

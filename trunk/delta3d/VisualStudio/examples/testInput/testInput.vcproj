@@ -48,7 +48,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcimt,libc,msvcrtd"
-				ProgramDatabaseFile=".\Release/testInput.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -112,7 +112,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt,libcmtd,libcimtd,libcd,libc,msvcrt.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/testInput.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

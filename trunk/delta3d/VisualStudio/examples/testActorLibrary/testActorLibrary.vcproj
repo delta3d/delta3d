@@ -38,7 +38,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/ExampleActorLibrary.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				ImportLibrary="../../../lib/testActorLibraryd.lib"
 				TargetMachine="1"/>

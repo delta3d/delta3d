@@ -43,7 +43,7 @@
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtActors.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="..\..\..\lib\$(TargetName).lib"
 				TargetMachine="1"/>

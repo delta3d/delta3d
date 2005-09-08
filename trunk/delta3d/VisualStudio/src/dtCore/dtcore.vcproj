@@ -48,7 +48,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				ImportLibrary="../../../lib/dtcored.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
