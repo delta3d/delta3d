@@ -82,15 +82,6 @@ public:
 		  (*indices)[i] = i;
 		}
 
-      /*RefPtr<osg::IntArray> indices = 
-         new osg::IntArray(6);
-
-      for(int i = 24; i < 32; ++i)
-      {
-         (*indices)[i - 24] = i;
-      }*/
-
-
 		mGeometry->setVertexIndices(indices.get());
 
 		mGeometry->setNormalIndices(indices.get());
@@ -117,8 +108,8 @@ public:
       //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 		
 		//set up textures
-		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4.bmp"));//deltaLOGO_color_100.bmp"));
-		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4Bump.bmp"));//deltaLOGO_nm_50.bmp"));
+		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_color_100.bmp"));
+		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_nm_200.bmp"));
      
 
 		RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
@@ -210,20 +201,21 @@ public:
 
 	~TestShadersApp()
 	{
+      GetScene()->GetSceneNode()->removeChild(mGeode.get());
 	   RemoveSender( System::Instance() );
 	}
 
 protected:
-	void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
-	{
-		/*switch(key) 
-		{
+	//void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+	//{
+	//	/*switch(key) 
+	//	{
 
-			default:
+	//		default:
 
-				break;
-		}*/
-	}
+	//			break;
+	//	}*/
+	//}
 
 private:
 
