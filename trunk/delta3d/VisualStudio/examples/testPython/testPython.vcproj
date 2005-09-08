@@ -33,7 +33,7 @@
 				PrecompiledHeaderFile=".\Release/testPython.pch"
 				AssemblerListingLocation="$(IntDir)"
 				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -96,7 +96,7 @@
 				PrecompiledHeaderFile=".\Debug/testPython.pch"
 				AssemblerListingLocation="$(IntDir)"
 				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="3"
