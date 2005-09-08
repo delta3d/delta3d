@@ -9,8 +9,9 @@
 
 #include "osgDB/FileUtils"
 
-#include <dtUtil/objectfactory.h>
 #include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
+#include <dtUtil/objectfactory.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtABC/event.h>
@@ -165,6 +166,9 @@ namespace dtABC
 
       /** Loads an XML file specifying State Transitions.
         * The parser will add transitions to this StateManager instance, based on the XML file.
+        *
+        * @param EventT the user defined Event::Type type
+        * @param StateT the user defined State::Type type
         * @param filename is the complete file path.
         */
       template< typename EventT, typename StateT>
@@ -201,10 +205,11 @@ namespace dtABC
       unsigned int GetNumOfEvents(const State* from) const;
 
       /** \brief Fills a vector of Events which cause transitions for the specified State.
-        * @param from is the State of interest.
-        * @param events is an already allocated std::vector of Event::Type pointers.
         * This method should be used with GetNumOfEvents.
         * \sa GetNumOfEvents.
+        *
+        * @param from is the State of interest.
+        * @param events is an already allocated std::vector of Event::Type pointers.
         */
       void GetEvents(const State* from, std::vector<const Event::Type*>& events);
 
@@ -218,6 +223,8 @@ namespace dtABC
       void MakeCurrent( State* state );
 
       /** \brief Register a user defined, concrete Event.
+        * Register the user defined Event so that the EventFactory can create such an Event, especially when needed for XML loading.
+        *
         * @param T is the user defined, concrete event, to be registered.
         * @param eventType is the user defined unique identifier for to Event being registered.
         */
@@ -228,6 +235,8 @@ namespace dtABC
       }
 
       /** \brief Register a user defined, concrete State.
+        * Register the user defined State so that the StateFactory can create such a State, specifically needed for XML loading.
+        *
         * @param T is the user defined, concrete State, to be registered.
         * @param stateType is the user defined unique identifier for to State being registered.
         */
@@ -248,13 +257,6 @@ namespace dtABC
 
       /** Return the const instance of the StateFactory.*/
       const EventFactory* GetEventFactory() const { return mEventFactory.get(); }
-
-      /** options to be used with the Print function.*/
-      enum PrintOptions
-      {
-         PRINT_STATES,
-         PRINT_TRANSITIONS
-      };
 
       /** Print the States names.*/
       void PrintStates() const;
@@ -296,7 +298,7 @@ namespace dtABC
       }
       else
       {
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, "StateManager - Can't find file '%s'",filename.c_str());
+         LOG_WARNING("StateManager - Can't find file " + filename)
          retVal = false;
       }
       return retVal;
@@ -308,16 +310,17 @@ namespace dtABC
       bool retVal(false);
       try
       {
-         XERCES_CPP_NAMESPACE::XMLPlatformUtils::Initialize();
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
       }
-      catch (const XERCES_CPP_NAMESPACE::XMLException& toCatch) 
+      catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e) 
       {
-         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(toCatch.getMessage());
-         dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, message);
+         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
+         LOG_WARNING( message );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &message );
          return 1;
       }
 
-      XERCES_CPP_NAMESPACE::SAXParser* parser = new XERCES_CPP_NAMESPACE::SAXParser();
+      XERCES_CPP_NAMESPACE_QUALIFIER SAXParser* parser = new XERCES_CPP_NAMESPACE_QUALIFIER SAXParser();
       parser->setDoValidation(true);    // optional.
       parser->setDoNamespaces(true);    // optional
       parser->setDoSchema(true);
@@ -326,7 +329,7 @@ namespace dtABC
       XMLElementHandler* docHandler = new XMLElementHandler(this);
       parser->setDocumentHandler(docHandler);
 
-      XERCES_CPP_NAMESPACE::ErrorHandler* errHandler = (XERCES_CPP_NAMESPACE::ErrorHandler*) docHandler;
+      XERCES_CPP_NAMESPACE_QUALIFIER ErrorHandler* errHandler = (XERCES_CPP_NAMESPACE_QUALIFIER ErrorHandler*) docHandler;
       parser->setErrorHandler(errHandler);
 
       try
@@ -334,19 +337,19 @@ namespace dtABC
          parser->parse(filename.c_str());
          retVal = true;
       }
-      catch (const XERCES_CPP_NAMESPACE::XMLException& e)
+      catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e)
       {
-         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(e.getMessage());
+         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
          LOG_ERROR(std::string("Exception message is: ") + message)
-         XERCES_CPP_NAMESPACE::XMLString::release(&message);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&message);
          retVal = false;
       }
-      catch (const XERCES_CPP_NAMESPACE::SAXParseException& e)
+      catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
       {
          //The error will already be logged by the errorHandler
-         char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(e.getMessage());
+         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
          LOG_ERROR(std::string("An exception occurred while parsing file, ") + filename + std::string(", with message: ") + message)
-         XERCES_CPP_NAMESPACE::XMLString::release(&message);
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&message);
          retVal = false;;
       }
       catch (...) 
@@ -372,9 +375,9 @@ namespace dtABC
    }
 
    template< typename T1, typename T2 >
-   void StateManager::TransitionHandler<T1,T2>::startElement(const XMLCh* const name, XERCES_CPP_NAMESPACE::AttributeList& attributes)
+   void StateManager::TransitionHandler<T1,T2>::startElement(const XMLCh* const name, XERCES_CPP_NAMESPACE_QUALIFIER AttributeList& attributes)
    {
-      std::string elementName = XERCES_CPP_NAMESPACE::XMLString::transcode(name);
+      char* elementName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(name);
 
       if (elementName == "Transition")
       {
@@ -383,13 +386,14 @@ namespace dtABC
       else if (elementName == "Event")
       {
          ///\todo change this to use "Type" because all Enumeration representations should be found via a "Type"
-         std::string eventTypeName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("TypeName"));
+         char* eventTypeName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(attributes.getValue("TypeName"));
          mEventType = EventType::GetValueForName( eventTypeName );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &eventTypeName );
       }
       else if (elementName == "FromState")
       {
-         std::string stateType = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Type"));
-         std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
+         char* stateType = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(attributes.getValue("Type"));
+         char* stateName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(attributes.getValue("Name"));
 
          //Do a check to see if a State exists with the same name and type name
          //If it does, use it, otherwise create a new State
@@ -413,14 +417,18 @@ namespace dtABC
          {
             mFromState->SetName(stateName);
          }
-         else dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
-            "StateManager Load() can't create FromState '%s'",
-             stateType.c_str() );
+         else
+         {
+            LOG_WARNING(std::string("Loading can't create FromState, ") + stateType)
+         }
+
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &stateType );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &stateName );
       }
       else if (elementName == "ToState")
       {
-         std::string stateType = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Type"));
-         std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
+         char* stateType = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(attributes.getValue("Type"));
+         char* stateName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(attributes.getValue("Name"));
 
          //Do a check to see if a State exists with the same name and type name
          //If it does, use it, otherwise create a new State
@@ -444,56 +452,65 @@ namespace dtABC
          {
             mToState->SetName(stateName);
          }
-         else dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, __FILE__, 
-            "StateManager Load() can't create ToState '%s'",
-            stateType.c_str() );
+         else
+         {
+            LOG_WARNING(std::string("StateManager Load() can't create ToState, ") + stateType)
+         }
 
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &stateType );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &stateName );
       }
       else if (elementName == "StartState")
       {
-         std::string stateName = XERCES_CPP_NAMESPACE::XMLString::transcode(attributes.getValue("Name"));
+         char* stateName = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(attributes.getValue("Name"));
          mManager->MakeCurrent( mManager->GetState(stateName) );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &stateName );
       }
+
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &elementName );
    }
 
    template< typename T1, typename T2 >
-   void StateManager::TransitionHandler<T1,T2>::fatalError(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
+   void StateManager::TransitionHandler<T1,T2>::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
-      char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__, "Fatal:%s, at line %d",
-                                             message, exception.getLineNumber());
-      throw exception;
+      char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
+      std::string line = dtUtil::ToString<XMLSSize_t>( e.getLineNumber() );
+      LOG_ERROR(std::string("A fatal error occured at line, ") + line + std::string(", with message: ") + message)
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &message );
+      throw e;
    }
 
    template< typename T1, typename T2 >
-      void StateManager::TransitionHandler<T1,T2>::error(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
+   void StateManager::TransitionHandler<T1,T2>::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
-      char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_ERROR, __FUNCTION__, "%s, at line %d",
-                                             message, exception.getLineNumber());
-      throw exception;
+      char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
+      std::string line = dtUtil::ToString<XMLSSize_t>( e.getLineNumber() );
+      LOG_ERROR(std::string("An error occured at line, ") + line + std::string(", with message: ") + message)
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &message );
+      throw e;
    }
 
    template< typename T1, typename T2 >
-      void StateManager::TransitionHandler<T1,T2>::warning(const XERCES_CPP_NAMESPACE::SAXParseException& exception)
+   void StateManager::TransitionHandler<T1,T2>::warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
    {
-      char* message = XERCES_CPP_NAMESPACE::XMLString::transcode(exception.getMessage());
-      dtUtil::Log::GetInstance().LogMessage( dtUtil::Log::LOG_WARNING, "---", "%s, at line %d",
-                                              message, exception.getLineNumber());
-
+      char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
+      std::string line = dtUtil::ToString<XMLSSize_t>( e.getLineNumber() );
+      LOG_WARNING(std::string("An exception occured at line, ") + line + std::string(", with message: ") + message)
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &message );
    }
-
 
    template< typename T1, typename T2 >
    void StateManager::TransitionHandler<T1,T2>::endElement(const XMLCh* const name)
    {
-      std::string elementName = XERCES_CPP_NAMESPACE::XMLString::transcode(name);
+      char* ename = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(name);
+      std::string elementName(ename);
 
       if (elementName == "Transition")
       {
-         ///\todo : Is 'elementName' correct here?
          mManager->AddTransition( mEventType, mFromState.get(), mToState.get() );
       }
+
+      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&ename);
    }
 
 };  // end dtABC namespace

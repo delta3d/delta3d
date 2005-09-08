@@ -1,6 +1,8 @@
 #ifndef DELTA_XERCESWRITER_INC
 #define DELTA_XERCESWRITER_INC
 
+#include <osg/Referenced>   // for base class
+
 #include <string>
 #include <vector>
 
@@ -16,13 +18,17 @@ XERCES_CPP_NAMESPACE_END
 namespace dtUtil
 {
    /** A class that manages one XML document.
+     * \warning The PlatformUtils::Initialize() needs to be called before instantiating this class.
      */
-   class DT_EXPORT XercesWriter
+   class DT_EXPORT XercesWriter : public osg::Referenced
    {
    public:
       XercesWriter();
+
+   protected:
       ~XercesWriter();
 
+   public:
       void CreateDocument(const std::string& rootname);
 
       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() { return _document; }

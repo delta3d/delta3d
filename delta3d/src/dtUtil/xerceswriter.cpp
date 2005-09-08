@@ -81,7 +81,7 @@ void XercesWriter::CreateDocument(const std::string& rootname)
       }
       catch(...)
       {
-         ///\todo log something
+         LOG_ERROR("There was a problem creating a new Xerces DOMDocument.")
       }
    }
 
