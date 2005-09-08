@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="windows-msvc-debug"
+			IntermediateDirectory="windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -68,8 +68,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="windows-msvc-release"
+			IntermediateDirectory="windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
