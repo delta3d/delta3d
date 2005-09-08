@@ -26,12 +26,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "OpenThreads/Thread"
-#include "../src/gui_fl/gui_fltk.h"
-#include "dtCore/base.h"
-#include "dtCore/scene.h"
-
+#include <OpenThreads/Thread>
+#include <gui_fl/gui_fltk.h>
+#include <dtCore/base.h>
+#include <dtCore/scene.h>
 
 ///Creates and manages the UserInterface
 
