@@ -16,7 +16,7 @@ IMPLEMENT_MANAGEMENT_LAYER(LogicalInputDevice)
  *
  * @param name the instance name
  */
-LogicalInputDevice::LogicalInputDevice(string name) : InputDevice(name)
+ LogicalInputDevice::LogicalInputDevice(std::string name) : InputDevice(name)
 {
    RegisterInstance(this);
 }
@@ -35,7 +35,7 @@ LogicalInputDevice::~LogicalInputDevice()
  * @param description a description of the button
  * @param mapping the initial button mapping, or NULL for none
  */
-LogicalButton* LogicalInputDevice::AddButton(string description,
+LogicalButton* LogicalInputDevice::AddButton(std::string description,
                                              ButtonMapping* mapping)
 {
    LogicalButton* button = new LogicalButton(this, description, mapping);
@@ -52,7 +52,7 @@ LogicalButton* LogicalInputDevice::AddButton(string description,
  * @param description a description of the button
  * @param sourceButton the source button
  */
-LogicalButton* LogicalInputDevice::AddButton(string description,
+LogicalButton* LogicalInputDevice::AddButton(std::string description,
                                              Button* sourceButton)
 {
    return AddButton(description, new ButtonToButton(sourceButton));
@@ -74,7 +74,7 @@ void LogicalInputDevice::RemoveButton(LogicalButton* button)
  * @param description a description of the axis
  * @param mapping the initial axis mapping, or NULL for none
  */
-LogicalAxis* LogicalInputDevice::AddAxis(string description,
+LogicalAxis* LogicalInputDevice::AddAxis(std::string description,
                                          AxisMapping* mapping)
 {
    LogicalAxis* axis = new LogicalAxis(this, description, mapping);
@@ -91,7 +91,7 @@ LogicalAxis* LogicalInputDevice::AddAxis(string description,
  * @param description a description of the axis
  * @param sourceAxis the source axis
  */
-LogicalAxis* LogicalInputDevice::AddAxis(string description,
+LogicalAxis* LogicalInputDevice::AddAxis(std::string description,
                                          Axis* sourceAxis)
 {
    return AddAxis(description, new AxisToAxis(sourceAxis));
@@ -115,7 +115,7 @@ void LogicalInputDevice::RemoveAxis(LogicalAxis* axis)
  * @param mapping the initial button mapping
  */
 LogicalButton::LogicalButton(LogicalInputDevice* owner,
-                             string description, 
+                             std::string description, 
                              ButtonMapping *mapping) :
    Button(owner, description),
    mMapping(mapping)
@@ -298,7 +298,7 @@ void ButtonToButton::UpdateTargetButtonState()
  * @param mapping the initial mapping
  */
 LogicalAxis::LogicalAxis(LogicalInputDevice* owner,
-                         string description,
+                         std::string description,
                          AxisMapping* mapping) :
    Axis(owner, description),
    mMapping(mapping)

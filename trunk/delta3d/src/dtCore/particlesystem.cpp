@@ -58,7 +58,7 @@ class ParticleSystemParameterVisitor : public osg::NodeVisitor
  *
  * @param name the instance name
  */
-ParticleSystem::ParticleSystem(string name)
+ParticleSystem::ParticleSystem(std::string name)
    : mEnabled(true),
      mParentRelative(false)
 {

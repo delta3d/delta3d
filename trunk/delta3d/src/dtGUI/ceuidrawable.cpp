@@ -102,7 +102,7 @@ void CEUIDrawable::MouseDragged(Mouse* mouse, float x, float y)
    mMouseY = y;
 }
 
-void CEUIDrawable::ButtonPressed(Mouse* mouse, MouseButton button)
+void CEUIDrawable::ButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button)
 {
       switch(button)
       {
@@ -118,7 +118,7 @@ void CEUIDrawable::ButtonPressed(Mouse* mouse, MouseButton button)
       }
 }
 
-void CEUIDrawable::ButtonReleased(Mouse* mouse, MouseButton button) 
+void CEUIDrawable::ButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button) 
 {
    switch(button)
    {

@@ -68,7 +68,7 @@ namespace dtActors
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void CameraActorProxy::SetClearColor(const osg::Vec4f &color)
+    void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
     {
         Camera *cam = dynamic_cast<Camera*>(mActor.get());
         if(!cam)

@@ -105,7 +105,7 @@ static int dInfiniteTerrainClass = 0;
  *
  * @param name the instance name
  */
-InfiniteTerrain::InfiniteTerrain(const string& name, osg::Image* textureImage)
+InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureImage)
    : mSegmentSize(800.0f),
      mSegmentDivisions(128),
      mHorizontalScale(0.0035f),

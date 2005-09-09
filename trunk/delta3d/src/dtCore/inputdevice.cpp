@@ -16,7 +16,7 @@ IMPLEMENT_MANAGEMENT_LAYER(InputDevice)
  *
  * @param name the instance name
  */
-InputDevice::InputDevice(string name) : Base(name)
+ InputDevice::InputDevice(std::string name) : Base(name)
 {
    RegisterInstance(this);
 }
@@ -209,7 +209,7 @@ void InputDevice::RemoveFeature(InputDeviceFeature* feature)
  * @param owner the owner of this feature
  * @param description a description of this feature
  */
-InputDeviceFeature::InputDeviceFeature(InputDevice* owner, string description) :
+InputDeviceFeature::InputDeviceFeature(InputDevice* owner, std::string description) :
    mOwner(owner),
    mDescription(description)
 {}
@@ -235,7 +235,7 @@ InputDevice* InputDeviceFeature::GetOwner() const
  *
  * @param description the new description
  */
-void InputDeviceFeature::SetDescription(string description)
+void InputDeviceFeature::SetDescription(std::string description)
 {
    mDescription = description;
 }
@@ -245,7 +245,7 @@ void InputDeviceFeature::SetDescription(string description)
  *
  * @return a description of this feature
  */
-string InputDeviceFeature::GetDescription() const
+std::string InputDeviceFeature::GetDescription() const
 {
    return mDescription;
 }
@@ -256,7 +256,7 @@ string InputDeviceFeature::GetDescription() const
  * @param owner the owner of this button
  * @param description a description of this button
  */
-Button::Button(InputDevice* owner, string description) :
+Button::Button(InputDevice* owner, std::string description) :
    InputDeviceFeature(owner, description),
    mState(false)
 {}
@@ -327,7 +327,7 @@ void Button::RemoveButtonListener(ButtonListener* buttonListener)
  * @param owner the owner of this axis
  * @param description a description of this axis
  */
-Axis::Axis(InputDevice* owner, string description) : 
+Axis::Axis(InputDevice* owner, std::string description) : 
    InputDeviceFeature(owner, description),
    mState(0.0)
 {}

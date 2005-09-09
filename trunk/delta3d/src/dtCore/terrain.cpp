@@ -139,7 +139,7 @@ class TransformCallback : public osg::NodeCallback
  *
  * @param name the instance name
  */
-Terrain::Terrain(string name)
+Terrain::Terrain(std::string name)
    : mLoadDistance(30000.0f)
 {
    SetName(name);
@@ -255,7 +255,7 @@ void Terrain::AddDTEDPath(std::string path)
  *
  * @param path the path to remove
  */
-void Terrain::RemoveDTEDPath(string path)
+void Terrain::RemoveDTEDPath(std::string path)
 {
    for(osgDB::FilePathList::iterator it = mDTEDPaths.begin();
        it != mDTEDPaths.end();
@@ -284,7 +284,7 @@ unsigned int Terrain::GetNumDTEDPaths()
  *
  * @param index the index of the path to retrieve
  */
-string Terrain::GetDTEDPath(unsigned int index)
+std::string Terrain::GetDTEDPath(unsigned int index)
 {
    return mDTEDPaths[index];
 }
@@ -295,7 +295,7 @@ string Terrain::GetDTEDPath(unsigned int index)
  *
  * @param path the new path
  */
-void Terrain::SetCachePath(string path)
+void Terrain::SetCachePath(std::string path)
 {
    mCachePath = path;
 }
@@ -305,7 +305,7 @@ void Terrain::SetCachePath(string path)
  *
  * @return the current path
  */
-string Terrain::GetCachePath()
+std::string Terrain::GetCachePath()
 {
    return mCachePath;
 }

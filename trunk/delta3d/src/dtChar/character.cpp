@@ -21,7 +21,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
  *
  * @param name the instance name
  */
-Character::Character(const string& name)
+ Character::Character(const std::string& name)
    :  mRotation(0.0f),
       mVelocity(0.0f)
 {
@@ -60,7 +60,7 @@ void Character::AddedToScene(Scene* scene)
  *
  * @param filename the name of the file to load
  */
-osg::Node* Character::LoadFile(const string& filename, bool useCache)
+osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
 {
    mFilename = filename;
    
@@ -238,7 +238,7 @@ float Character::GetVelocity() const
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteAction(string name,
+void Character::ExecuteAction(std::string name,
                               bool priority,
                               bool force)
 {
@@ -262,7 +262,7 @@ void Character::ExecuteAction(string name,
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteActionWithSpeed(string name, 
+void Character::ExecuteActionWithSpeed(std::string name, 
                                        float speed,
                                        bool priority,
                                        bool force)
@@ -289,7 +289,7 @@ void Character::ExecuteActionWithSpeed(string name,
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteActionWithAngle(string name, 
+void Character::ExecuteActionWithAngle(std::string name, 
                                        float angle,
                                        bool priority, 
                                        bool force)
@@ -317,7 +317,7 @@ void Character::ExecuteActionWithAngle(string name,
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteActionWithSpeedAndAngle(string name, 
+void Character::ExecuteActionWithSpeedAndAngle(std::string name, 
                                                float speed, 
                                                float angle,
                                                bool priority,
@@ -343,7 +343,7 @@ void Character::ExecuteActionWithSpeedAndAngle(string name,
  *
  * @param action the name of the action to stop
  */
-void Character::StopAction(string name)
+void Character::StopAction(std::string name)
 {
    mBodyNode->getBody()->stopAction(name);
 }

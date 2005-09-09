@@ -15,7 +15,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
  *
  * @param name the instance name
  */
-Keyboard::Keyboard(string name) : InputDevice(name)
+ Keyboard::Keyboard(std::string name) : InputDevice(name)
 {
    RegisterInstance(this);
 

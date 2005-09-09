@@ -115,11 +115,11 @@ namespace dtCore
 
          ///Producer callback methods
          virtual void mouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion );
-         virtual void mouseMotion( float, float);
-         virtual void passiveMouseMotion( float, float);
-         virtual void buttonPress( float, float, unsigned int );
-         virtual void doubleButtonPress( float, float, unsigned int );
-         virtual void buttonRelease( float, float, unsigned int );
+         virtual void mouseMotion( float x, float y);
+         virtual void passiveMouseMotion( float x, float y);
+         virtual void buttonPress( float x, float y, unsigned int button );
+         virtual void doubleButtonPress( float x, float y , unsigned int button );
+         virtual void buttonRelease( float x, float y, unsigned int button);
 
       private:
 
