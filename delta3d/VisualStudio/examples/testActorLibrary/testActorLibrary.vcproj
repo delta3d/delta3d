@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_PLUGIN"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,10 +33,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib ul_d.lib"
+				AdditionalDependencies="dtcored.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtutild.lib ul_d.lib"
 				OutputFile="../../../bin/testActorLibraryd.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_PLUGIN"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -83,10 +83,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib ul.lib"
+				AdditionalDependencies="dtcore.lib dtDAL.lib dtActors.lib dtvis.lib dtutil.lib ul.lib"
 				OutputFile="../../../bin/testActorLibrary.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
