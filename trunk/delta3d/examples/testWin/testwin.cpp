@@ -52,14 +52,6 @@ void TestWinApp::PostFrame( const double deltaFrameTime )
    UpdateWidgets();
 }
 
-template<class T>
-std::string ToString(const T& val)
-{
-   std::ostringstream strm;
-   strm << val;
-   return strm.str();
-}
-
 /** Setup the GUI with starting values.  
 */
 void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
