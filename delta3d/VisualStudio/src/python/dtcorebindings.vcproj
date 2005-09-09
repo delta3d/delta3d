@@ -190,9 +190,6 @@
 				RelativePath="..\..\..\src\python\mousebindings.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\python\noisegeneratorbindings.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\python\objectbindings.cpp">
 			</File>
 			<File
