@@ -12,14 +12,14 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\tests\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\tests\windows-msvc-debug"
+			OutputDirectory="..\..\tests\windows-msvc-debug"
+			IntermediateDirectory="..\..\tests\windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC);"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;..\..\ext\inc\CEGUI"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -36,7 +36,7 @@
 				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib sg_d.lib ul_d.lib cppunitd.lib"
 				OutputFile="../../../tests/UnitTestsd.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC);"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;..\..\ext\inc\CEGUI"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -86,7 +86,7 @@
 				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib sg.lib ul.lib cppunit.lib"
 				OutputFile="../../../tests/UnitTests.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
@@ -123,16 +123,16 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\tests\mainTestRunner.cpp">
+				RelativePath="..\..\tests\mainTestRunner.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\project\MapTests.cpp">
+				RelativePath="..\..\tests\project\MapTests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\project\ProjectTests.cpp">
+				RelativePath="..\..\tests\project\ProjectTests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\proxy\ProxyTest.cpp">
+				RelativePath="..\..\tests\proxy\ProxyTest.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -140,13 +140,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\tests\project\MapTests.h">
+				RelativePath="..\..\tests\project\MapTests.h">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\project\ProjectTests.h">
+				RelativePath="..\..\tests\project\ProjectTests.h">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\proxy\ProxyTest.h">
+				RelativePath="..\..\tests\proxy\ProxyTest.h">
 			</File>
 		</Filter>
 		<Filter
