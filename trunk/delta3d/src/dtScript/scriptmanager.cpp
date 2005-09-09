@@ -1,4 +1,5 @@
-#include "dtScript/scriptmanager.h"
+#include <dtScript/scriptmanager.h>
+#include <osgDB/FileUtils>
 
 using namespace dtScript;
 
@@ -17,40 +18,42 @@ ScriptManager::ScriptManager()
 
 ScriptManager::~ScriptManager()
 {
-   if ( mThreadState != NULL ) Py_EndInterpreter( mThreadState );
+   if ( mThreadState != 0 )
+   {
+      Py_EndInterpreter( mThreadState );
+   }
 
    Py_Finalize(); // kill python thread
 
    DeregisterInstance( this );
 }
 
-void 
-ScriptManager::Load( std::string filename )
+void ScriptManager::Load( const std::string& filename )
 {
-   if ( mThreadState != NULL ) Py_EndInterpreter( mThreadState );
+   if( mThreadState != 0 )
+   {
+      Py_EndInterpreter( mThreadState );
+   }
 
    mThreadState = Py_NewInterpreter();
 
    mFilename = filename;
-   mFileObject = PyFile_FromString( const_cast<char*>( mFilename.c_str() ), "r" );
+   mFileObject = PyFile_FromString( const_cast< char* >( mFilename.c_str() ), "r" );
 }
 
-void 
-ScriptManager::Run()
+void ScriptManager::Run( const std::string& filename )
 { 
+   if( osgDB::fileExists( filename ) )
+   {
+      Load( filename);
+   }
+   
    try
    {
-      PyRun_SimpleFile( PyFile_AsFile(mFileObject), const_cast<char*>(mFilename.c_str()) );
+      PyRun_SimpleFile( PyFile_AsFile( mFileObject ), const_cast< char* >( mFilename.c_str() ) );
    }
    catch (...)
    {
       PyErr_Print();
    }
-}
-
-void 
-ScriptManager::Run( std::string filename )
-{ 
-   Load( filename );
-   Run();
 }

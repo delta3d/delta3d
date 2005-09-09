@@ -42,16 +42,13 @@ namespace dtScript
 	public:
 	
 	   ScriptManager();
-	   ~ScriptManager();
+	   virtual ~ScriptManager();
 	   
       ///Load a Python script (.py) into memory
-	   void Load( std::string filename );
-	   
-      ///Execute the loaded Python script
-	   void Run();
+	   void Load( const std::string& filename );
 
-      ///Load a Python script and execute it immediately
-	   void Run( std::string filename );
+      ///Load a Python script and execute it immediately. Use the default paramters to use a pre-loaded script.
+	   void Run( const std::string& filename = "" );
 
    protected:
    
