@@ -67,7 +67,7 @@ const osg::Node::NodeMask entityMask = 0x01;
  *
  * @param name the instance name
  */
-RTIConnection::RTIConnection(string name)
+RTIConnection::RTIConnection(std::string name)
    : Base(name),
      mScene(NULL),
      mEffectManager(NULL),
@@ -161,9 +161,9 @@ throw (RTI::FederateInternalError)
  * @param fedFilename the fed filename
  * @param federateName the name of this federate
  */
-void RTIConnection::JoinFederationExecution(string executionName,
-                                            string fedFilename,
-                                            string federateName)
+void RTIConnection::JoinFederationExecution(std::string executionName,
+                                            std::string fedFilename,
+                                            std::string federateName)
 {
    try
    {
@@ -477,7 +477,7 @@ void RTIConnection::LeaveFederationExecution()  //this is kind of broken
  *
  * @return the execution name
  */
-string RTIConnection::GetExecutionName()
+std::string RTIConnection::GetExecutionName()
 {
    return mExecutionName;
 }
@@ -1571,8 +1571,8 @@ Entity* RTIConnection::GetGhostEntity(int index)
  * @param iconFilename the entity icon filename
  */
 void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
-                                         string modelFilename,
-                                         string iconFilename)
+                                         std::string modelFilename,
+                                         std::string iconFilename)
 {
    mEntityTypeMappings[entityType].mModelFilename = modelFilename;
    mEntityTypeMappings[entityType].mIconFilename = iconFilename;
@@ -1588,10 +1588,10 @@ void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
  * @param iconFilename the entity icon filename
  */
 void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
-                                         string modelFilename,
+                                         std::string modelFilename,
                                          const map<unsigned int, string>&
                                           articulatedPartClassNameMap,
-                                         string iconFilename)
+                                         std::string iconFilename)
 {
    mEntityTypeMappings[entityType].mModelFilename = modelFilename;
    
@@ -1617,7 +1617,7 @@ void RTIConnection::RemoveEntityTypeMapping(const EntityType& entityType)
  * @param filename the name of the file to load
  * @return true if mappings successfully loaded, false otherwise
  */
-bool RTIConnection::LoadEntityTypeMappings(string filename)
+bool RTIConnection::LoadEntityTypeMappings(std::string filename)
 {
    TiXmlDocument doc(osgDB::findDataFile(filename).c_str());
    
@@ -2478,7 +2478,7 @@ throw (
  * @return a pointer to the transform with the specified name, or NULL if no
  * such transform exists
  */
-osgSim::DOFTransform* FindNamedTransform(osg::Node* parent, string name)
+osgSim::DOFTransform* FindNamedTransform(osg::Node* parent, std::string name)
 {
    osgSim::DOFTransform* transform = 
       dynamic_cast<osgSim::DOFTransform*>(parent);

@@ -78,7 +78,7 @@ void Joystick::PollInstances()
  * @param name the instance name
  * @param joystick the underlying PLIB joystick object
  */
-Joystick::Joystick(string name, jsJoystick* joystick)
+Joystick::Joystick(std::string name, jsJoystick* joystick)
    : InputDevice(name),
      mJoystick(joystick)
 {

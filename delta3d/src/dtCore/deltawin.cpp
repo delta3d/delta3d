@@ -84,7 +84,7 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool cursor, bool fullScreen ) :
+DeltaWin::DeltaWin( std::string name, int x, int y, int width, int height, bool cursor, bool fullScreen ) :
    Base(name),
    mRenderSurface(0),
    mKeyboardMouse(0),
@@ -119,7 +119,7 @@ DeltaWin::DeltaWin( string name, int x, int y, int width, int height, bool curso
 
 }
 
-DeltaWin::DeltaWin( string name, Producer::RenderSurface* rs, Producer::InputArea* ia ) :
+DeltaWin::DeltaWin( std::string name, Producer::RenderSurface* rs, Producer::InputArea* ia ) :
 Base(name),
 mRenderSurface(rs),
 mKeyboardMouse(0),

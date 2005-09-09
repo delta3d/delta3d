@@ -18,7 +18,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Entity)
  *
  * @param name the instance name
  */
-Entity::Entity(string name)
+ Entity::Entity(std::string name)
    : Object(name),
      mDamageState(NoDamage)
 {}

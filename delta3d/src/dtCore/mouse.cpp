@@ -15,7 +15,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Mouse)
  *
  * @param name the instance name
  */
- Mouse::Mouse(Producer::KeyboardMouse* km,string name) : InputDevice(name), mKeyboardMouse(km)
+ Mouse::Mouse(Producer::KeyboardMouse* km, std::string name) : InputDevice(name), mKeyboardMouse(km)
 {
    RegisterInstance(this);
 

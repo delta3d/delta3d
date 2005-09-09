@@ -56,7 +56,7 @@ void Tracker::PollInstances()
  * @param name the instance name
  * @param trackerHandle the handle of the tracker device
  */
-Tracker::Tracker(string name, ISD_TRACKER_HANDLE trackerHandle)
+Tracker::Tracker(std::string name, ISD_TRACKER_HANDLE trackerHandle)
    : InputDevice(name),
      mTrackerHandle(trackerHandle)
 {

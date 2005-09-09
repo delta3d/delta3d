@@ -16,7 +16,7 @@ IMPLEMENT_MANAGEMENT_LAYER(InputMapper)
  *
  * @param name the instance name
  */
-InputMapper::InputMapper(string name)
+ InputMapper::InputMapper(std::string name)
    : Base(name),
      mAcquiringButtonMapping(false),
      mAcquiringAxisMapping(false)

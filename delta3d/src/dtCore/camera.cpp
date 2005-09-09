@@ -107,7 +107,7 @@ void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 }
 
 
-Camera::Camera(string name) :
+Camera::Camera(std::string name) :
 mWindow(NULL),
 mScene(NULL)
 {

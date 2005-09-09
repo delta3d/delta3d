@@ -178,7 +178,7 @@ Widget::PostFrame( const double deltaFrameTime )
  * @param data the message to receive
  */
 void
-Widget::OnMessage( MessageData* data )
+Widget::OnMessage( Base::MessageData* data )
 {
    assert( data );
 

@@ -266,7 +266,7 @@ private:
  *
  * @param name the instance name
  */
-SOARXTerrain::SOARXTerrain(string name)
+SOARXTerrain::SOARXTerrain(std::string name)
    : mLoadDistance(10000.0f),
      mThreshold(2.0f),
      mDetailMultiplier(2.0f),
@@ -379,7 +379,7 @@ void SOARXTerrain::CleanUp()
  * @param filename the name of the configuration file to load
  * @see SetDataFilePathList()
  */
-void SOARXTerrain::LoadConfiguration(string filename)
+void SOARXTerrain::LoadConfiguration(std::string filename)
 {
    TiXmlDocument configuration;
    std::string fullPath = osgDB::findDataFile(filename);
@@ -608,7 +608,7 @@ void SOARXTerrain::AddDTEDPath(std::string path)
  *
  * @param path the path to remove
  */
-void SOARXTerrain::RemoveDTEDPath(string path)
+void SOARXTerrain::RemoveDTEDPath(std::string path)
 {
    for(osgDB::FilePathList::iterator it = mDTEDPaths.begin();
        it != mDTEDPaths.end();
@@ -637,7 +637,7 @@ unsigned int SOARXTerrain::GetNumDTEDPaths()
  *
  * @param index the index of the path to retrieve
  */
-string SOARXTerrain::GetDTEDPath(unsigned int index)
+std::string SOARXTerrain::GetDTEDPath(unsigned int index)
 {
    return mDTEDPaths[index];
 }
@@ -649,7 +649,7 @@ string SOARXTerrain::GetDTEDPath(unsigned int index)
  *
  * @param path the new path
  */
-void SOARXTerrain::SetCachePath(string path)
+void SOARXTerrain::SetCachePath(std::string path)
 {
    mCachePath = path;
    if (!osgDB::fileExists(mCachePath))
@@ -668,7 +668,7 @@ void SOARXTerrain::SetCachePath(string path)
  *
  * @return the current path
  */
-string SOARXTerrain::GetCachePath()
+std::string SOARXTerrain::GetCachePath()
 {
    return mCachePath;
 }
@@ -930,7 +930,7 @@ void SOARXTerrain::ImageStats(const osg::Image* image, char* imagename)
 * the geotransform of the image, or NULL to read the geotransform
 * from the image itself
 */
-void SOARXTerrain::LoadGeospecificLCCImage(string filename, const double* geoTransform)
+void SOARXTerrain::LoadGeospecificLCCImage(std::string filename, const double* geoTransform)
 {
 	GeospecificImage gslcc;
 
@@ -1185,7 +1185,7 @@ void SOARXTerrain::LoadGeospecificLCCImage(string filename, const double* geoTra
  * the geotransform of the image, or NULL to read the geotransform
  * from the image itself
  */
-void SOARXTerrain::LoadGeospecificImage(string filename, const double* geoTransform)
+void SOARXTerrain::LoadGeospecificImage(std::string filename, const double* geoTransform)
 {
    GeospecificImage gs;
 
@@ -1443,10 +1443,10 @@ void SOARXTerrain::LoadGeospecificImage(string filename, const double* geoTransf
  * @param sScale the texture s scale
  * @param tScale the texture t scale
  */
-void SOARXTerrain::LoadRoads(string filename,
-                             string query,
+void SOARXTerrain::LoadRoads(std::string filename,
+                             std::string query,
                              float width,
-                             string texture,
+                             std::string texture,
                              float sScale,
                              float tScale)
 {
@@ -4548,7 +4548,7 @@ void SOARXTerrain::SetLCCVisibility(bool mask)
 *
 * @param filename the name of the configuration file to load
 */
-bool SOARXTerrain::LoadLCCConfiguration(string filename)
+bool SOARXTerrain::LoadLCCConfiguration(std::string filename)
 {
 	TiXmlDocument lccconfig;
 

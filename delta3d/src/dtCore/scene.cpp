@@ -47,7 +47,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Scene::Scene( const string& name, bool useSceneLight )
+Scene::Scene( const std::string& name, bool useSceneLight )
 : Base(name), mPhysicsStepSize(0.0)
 {
    RegisterInstance(this);
