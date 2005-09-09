@@ -27,7 +27,7 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				AssemblerListingLocation="$(IntDir)"
-				ObjectFile="$(IntDir)"
+				ObjectFile="$(IntDir)/"
 				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
