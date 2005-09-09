@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="windows-msvc-release"
-			IntermediateDirectory="windows-msvc-release"
+			OutputDirectory="..\..\..\examples\testPython\windows-msvc-release"
+			IntermediateDirectory="..\..\..\examples\testPython\windows-msvc-release"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -77,8 +77,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="windows-msvc-debug"
-			IntermediateDirectory="windows-msvc-debug"
+			OutputDirectory="..\..\..\examples\testPython\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\examples\testPython\windows-msvc-debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"

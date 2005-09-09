@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="windows-msvc-debug"
-			IntermediateDirectory="windows-msvc-debug"
+			OutputDirectory="..\..\..\src\dtCore\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtCore\windows-msvc-debug"
 			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -75,8 +75,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="windows-msvc-release"
-			IntermediateDirectory="windows-msvc-release"
+			OutputDirectory="..\..\..\src\dtCore\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtCore\windows-msvc-release"
 			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"

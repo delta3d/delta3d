@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="windows-msvc-debug"
-			IntermediateDirectory="windows-msvc-debug"
+			OutputDirectory="..\..\..\src\dtVis\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtVis\windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -65,8 +65,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="windows-msvc-release"
-			IntermediateDirectory="windows-msvc-release"
+			OutputDirectory="..\..\..\src\dtVis\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtVis\windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool

@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="windows-msvc-debug"
-			IntermediateDirectory="windows-msvc-debug"
+			OutputDirectory="..\..\..\examples\testMultiWin\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\examples\testMultiWin\windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -66,8 +66,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="windows-msvc-release"
-			IntermediateDirectory="windows-msvc-release"
+			OutputDirectory="..\..\..\examples\testMultiWin\windows-msvc-release"
+			IntermediateDirectory="..\..\..\examples\testMultiWin\windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool

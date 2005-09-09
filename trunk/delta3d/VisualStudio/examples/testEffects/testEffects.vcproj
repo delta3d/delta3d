@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="windows-msvc-release"
-			IntermediateDirectory="windows-msvc-release"
+			OutputDirectory="..\..\..\examples\testEffects\windows-msvc-release"
+			IntermediateDirectory="..\..\..\examples\testEffects\windows-msvc-release"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -78,8 +78,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="windows-msvc-debug"
-			IntermediateDirectory="windows-msvc-debug"
+			OutputDirectory="..\..\..\examples\testEffects\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\examples\testEffects\windows-msvc-debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
