@@ -1,12 +1,12 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
+#include <dtScript/scriptmanager.h>
 
 #include <OpenThreads/Thread>
 #include <boost/python/detail/wrap_python.hpp>
 
 using namespace dtCore;
 using namespace dtABC;
-
 
 /**
 * The Python test application.
@@ -22,7 +22,8 @@ public:
    * Constructor.
    */
    TestPythonApp( std::string configFile = "config.xml" )
-      : Application( configFile )
+      :  Application( configFile ),
+         mScriptManager( 0 )
    {
 
       Object* obj = new Object("UH-1N");
@@ -35,11 +36,36 @@ public:
 
       AddDrawable(obj);
 
-      Py_Initialize();
+      mScriptManager = new dtScript::ScriptManager();
 
+      // Start the interactive python prompt      
+      Py_Initialize();
       start();
    }
-
+   
+   virtual void KeyPressed(   dtCore::Keyboard* keyboard, 
+                              Producer::KeyboardKey key, 
+                              Producer::KeyCharacter character )
+   {
+      switch( key )
+      {
+         case Producer::Key_Escape:
+         {
+            Quit();
+            break;
+         }
+         case Producer::Key_S:
+         {
+            mScriptManager->Run( "../../../examples/testPython/flyhelo.py" );
+            break;
+         }
+         default:
+         {
+         
+         }
+      }   
+   }
+   
    /**
    * The run thread.
    */
@@ -49,6 +75,10 @@ public:
 
       Quit();
    }
+   
+   private:
+   
+      dtCore::RefPtr< dtScript::ScriptManager > mScriptManager;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)
