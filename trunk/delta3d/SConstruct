@@ -664,6 +664,10 @@ else:
 
    elif OS == 'darwin':     
      env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+
+#add to the CPPFLAGS variable if it's set in the environment
+if os.environ.has_key('CPPFLAGS'):
+   env.Append(CPPFLAGS=os.environ['CPPFLAGS'])
    
 if env.get('no_warnings'):
    if OS == 'windows':
@@ -690,6 +694,7 @@ if OS == 'darwin' :
   env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
   env['SHLIBSUFFIX'] = '.dylib'
   #env['SHLINKFLAGS'] = '$LINKFLAGS -arch ppc -prebind -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1 -install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
+
 
 launchDir = env.GetLaunchDir()
 
