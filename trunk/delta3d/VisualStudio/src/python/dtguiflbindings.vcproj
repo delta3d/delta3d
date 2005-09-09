@@ -39,7 +39,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt; libcmtd"
-				ImportLibrary="Debug/dtGUIFlBindings.lib"/>
+				ImportLibrary="..\..\..\lib\dtGUIFlBindingsd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -87,7 +87,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libc; libcmt"
-				ImportLibrary="Release/dtGUIFlBindings.lib"/>
+				ImportLibrary="..\..\..\lib\dtGUIFlBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
