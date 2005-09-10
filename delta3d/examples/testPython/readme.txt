@@ -33,6 +33,8 @@ To use pre-built testPython:
 - Double-click testPython.exe.
 - At the Python prompt inside the console/terminal type:
    execfile('../examples/testPython/flyhelo.py')
+- Alternatively hit the 'S' key to kick off the script automatically using
+  dtScript::ScriptManager
 
 To build from source:
 - Open examples/testPython/testPython.sln.

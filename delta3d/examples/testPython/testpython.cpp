@@ -2,45 +2,33 @@
 #include <dtABC/dtabc.h>
 #include <dtScript/scriptmanager.h>
 
-#include <OpenThreads/Thread>
-#include <boost/python/detail/wrap_python.hpp>
-
 using namespace dtCore;
 using namespace dtABC;
 
-/**
-* The Python test application.
-*/
-class TestPythonApp : public Application,
-   public OpenThreads::Thread
+class TestPythonApp : public Application
 {
    DECLARE_MANAGEMENT_LAYER(TestPythonApp)
 
 public:
 
-   /**
-   * Constructor.
-   */
-   TestPythonApp( std::string configFile = "config.xml" )
+   TestPythonApp( const std::string& configFile = "config.xml" )
       :  Application( configFile ),
          mScriptManager( 0 )
-   {
+   {     
+      Object* obj = new Object( "UH-1N" );
 
-      Object* obj = new Object("UH-1N");
+      obj->LoadFile( "models/uh-1n.ive" );
 
-      obj->LoadFile("models/uh-1n.ive");
-
-      Transform transform(0, 50, 0);
-
-      obj->SetTransform(&transform);
+      Transform transform( 0.0f, 50.0f, 0.0f );
+      obj->SetTransform( &transform );
 
       AddDrawable(obj);
 
       mScriptManager = new dtScript::ScriptManager();
+      
+      // Pre-load the Python script
+      mScriptManager->Load("../../../examples/testPython/flyhelo.py");
 
-      // Start the interactive python prompt      
-      Py_Initialize();
-      start();
    }
    
    virtual void KeyPressed(   dtCore::Keyboard* keyboard, 
@@ -51,12 +39,15 @@ public:
       {
          case Producer::Key_Escape:
          {
+            // Make sure to stop the thread before exiting
+            mScriptManager->Stop();
             Quit();
             break;
          }
          case Producer::Key_S:
          {
-            mScriptManager->Run( "../../../examples/testPython/flyhelo.py" );
+            // Kick off a Python script in its own thread
+            mScriptManager->Run();
             break;
          }
          default:
@@ -66,16 +57,6 @@ public:
       }   
    }
    
-   /**
-   * The run thread.
-   */
-   virtual void run()
-   {
-      PyRun_InteractiveLoop(stdin, "???");
-
-      Quit();
-   }
-   
    private:
    
       dtCore::RefPtr< dtScript::ScriptManager > mScriptManager;
@@ -83,17 +64,15 @@ public:
 
 IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)
 
-int main( int argc, char **argv )
+int main()
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testPython/;" +
                         GetDeltaDataPathList()  );
 
-   TestPythonApp* app = new TestPythonApp( "config.xml" );
+   dtCore::RefPtr< TestPythonApp > app = new TestPythonApp( "config.xml" );
 
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }

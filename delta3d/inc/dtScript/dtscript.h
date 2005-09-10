@@ -31,10 +31,10 @@
 
 #if defined(_DEBUG)
 #define _AUTOLIBNAME1   "dtscriptd.lib"
-#define _AUTOLIBNAME2   "python23.lib"
+#define _AUTOLIBNAME2   "python24.lib"
 #else 
 #define _AUTOLIBNAME1   "dtscript.lib"
-#define _AUTOLIBNAME2   "python23.lib"
+#define _AUTOLIBNAME2   "python24.lib"
 #endif
 
 #ifndef _NOAUTOLIBMSG
