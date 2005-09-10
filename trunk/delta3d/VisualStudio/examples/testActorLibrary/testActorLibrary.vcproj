@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtutild.lib ul_d.lib"
+				AdditionalDependencies="dtcored.lib dtDALd.lib dtActorsd.lib dtvisd.lib dtutild.lib ul_d.lib"
 				OutputFile="../../../bin/testActorLibraryd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

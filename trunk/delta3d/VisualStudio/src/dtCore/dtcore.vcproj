@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtcore"
+	Name="dtCore"
 	ProjectGUID="{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
 	SccProjectName=""
 	SccLocalPath="">

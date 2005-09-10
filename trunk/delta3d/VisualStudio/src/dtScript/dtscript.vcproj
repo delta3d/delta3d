@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtscript"
+	Name="dtScript"
 	ProjectGUID="{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}"
 	Keyword="Win32Proj">
 	<Platforms>

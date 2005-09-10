@@ -199,24 +199,11 @@ public:
 
    }
 
-
 	~TestShadersApp()
 	{
       GetScene()->GetSceneNode()->removeChild(mGeode.get());
 	   RemoveSender( System::Instance() );
 	}
-
-protected:
-	//void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
-	//{
-	//	/*switch(key) 
-	//	{
-
-	//		default:
-
-	//			break;
-	//	}*/
-	//}
 
 private:
 
@@ -238,7 +225,7 @@ int main(int argc, char* argv[])
 {
    
 	SetDataFilePathList( GetDeltaRootPath() + "/examples/testShaders/;" +
-		GetDeltaDataPathList()  );
+		                  GetDeltaDataPathList()  );
 
 	RefPtr<TestShadersApp> app = new TestShadersApp( "config.xml" );
 	app->Config();
