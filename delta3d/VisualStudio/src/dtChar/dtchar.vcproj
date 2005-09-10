@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtchar"
+	Name="dtChar"
 	ProjectGUID="{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
 	Keyword="Win32Proj">
 	<Platforms>

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtaudio"
+	Name="dtAudio"
 	ProjectGUID="{6C9F6D0C-9B74-404F-808B-9E480777F757}"
 	Keyword="Win32Proj">
 	<Platforms>

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtutil"
+	Name="dtUtil"
 	ProjectGUID="{5F516A22-15B8-4160-B032-BDFD78707350}"
 	Keyword="Win32Proj">
 	<Platforms>

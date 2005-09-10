@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtabc"
+	Name="dtABC"
 	ProjectGUID="{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
 	RootNamespace="dtabc"
 	Keyword="Win32Proj">
