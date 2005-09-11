@@ -25,17 +25,22 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/recorder.h"
 #include "dtCore/transformable.h"
 #include "dtUtil/deprecationmgr.h"
 
 #include <osg/Vec3>
 
+#include <xercesc/util/XercesDefs.hpp>
 
+XERCES_CPP_NAMESPACE_BEGIN
+  class DOMElement;
+  class DOMDocument;
+XERCES_CPP_NAMESPACE_END
 
 namespace dtAudio
 {
    /** dtAudio::Sound 
+    * \todo Remove JP's comments.
     *
     * dtAudio::Sound is a little more than just an interface to an object
     * held within (and protected) by the dtAudio::AudioManager.
@@ -98,15 +103,22 @@ namespace dtAudio
    public:
       typedef void (*CallBack)(Sound* sound, void* param );  ///callback function type
 
-      struct FrameData
+      class FrameData : public osg::Referenced
       {
       public:
          FrameData();
-         ~FrameData();
-         FrameData(const FrameData& d);
-         FrameData& operator =(const FrameData& d);
+         FrameData(float gain, float pitch, bool playing);
 
+      protected:
+         ~FrameData();
+
+      private:
+         FrameData(const FrameData& d);              /// not implemented by design
+         FrameData& operator =(const FrameData& d);  /// not implemented by design
+
+         friend Sound;
          float mGain, mPitch;
+         bool mPlaying;
       };
 
       enum  Command
@@ -431,7 +443,7 @@ namespace dtAudio
           *
           * @return a new key frame
           */
-         FrameData CreateFrameData() const;
+         FrameData* CreateFrameData() const;
 
          /**
           * Deserializes an XML element representing a state frame, turning it
@@ -440,23 +452,14 @@ namespace dtAudio
           * @param element the element that represents the frame
           * @return a newly generated state frame corresponding to the element
           */
-         void UseFrameData(const FrameData& d);
+         void UseFrameData(const FrameData* d);
 
          /** turns the FrameData into its XML representation.*/
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serialize(const FrameData& d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serialize(const FrameData* d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
 
       protected:
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializeGain(float gain, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializePitch(float pitch, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
-
-         /** a helper function.*/
-         template<class T>
-         static std::string ToString(const T& val)
-         {
-            std::ostringstream strm;
-            strm << val;
-            return strm.str();
-         }
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializeFloat(float val, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializeBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
 
       protected:
          std::string mFilename;
@@ -474,7 +477,6 @@ namespace dtAudio
          float       mRolloff;
          float       mMinGain;
          float       mMaxGain;
-         XMLCh*      NAME_STRING, *SOUND_STRING, *GAIN_STRING, *PITCH_STRING, *FLOAT_STRING;
    };
 };
 

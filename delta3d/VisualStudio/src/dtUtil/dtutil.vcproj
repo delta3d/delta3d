@@ -148,6 +148,9 @@
 				RelativePath="..\..\..\src\dtUtil\stringutils.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\xerceserrorhandler.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\xerceswriter.cpp">
 			</File>
 		</Filter>
@@ -169,6 +172,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\fractal.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\keyframedecoder.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\keyframehandler.h">
@@ -208,6 +214,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\stringutils.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\xerceserrorhandler.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\xerceswriter.h">

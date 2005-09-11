@@ -10,12 +10,19 @@
 namespace dtUtil
 {
    /** \brief A class used for filling KeyFrames, enforces a schema.
-     * Typically used by the Recorder class.
-     * KeyFrames
+     * Typically would be used by the Recorder class.  Recorder took
+     * the option to use DOM parsing instead of SAX parsing.  If the SAX
+     * parsing is used, this could be a possible algorithm to do parsing,
+     * once complete.
+     *
+     * \todo THIS CLASS IS INCOMPETE
+     *
+     * The potential schema is as follows:
+     * Container
      *    KeyFrame
      *       Source
      *          FrameData
-     *             InternalData
+     *             PotentialInternalData
      *                PotentiallyMoreInternalData
      */
    template<typename RecordableT,typename FrameDataT>
@@ -56,9 +63,9 @@ namespace dtUtil
 
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
          {
-            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
-            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
-            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
+            LOG_DEBUG( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_DEBUG( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_DEBUG( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
@@ -75,7 +82,7 @@ namespace dtUtil
          KeyFrameContainer& mKFC;
       };
 
-      /** Used to control the parsing for of key frames.
+      /** Used to control the parsing of key frames.
         */
       class KeyFrameState : public ParserState
       {
@@ -89,9 +96,9 @@ namespace dtUtil
             ///\todo clear the mFDC ? (voting yes)
             mFDC.clear();
 
-            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
-            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
-            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
+            LOG_INFO( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_INFO( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_INFO( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
 
             // try to find the time stamp
             bool FOUND_TIMESTAMP(false);
@@ -145,11 +152,11 @@ namespace dtUtil
          virtual void HandleStart(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
          {
             ///\todo find a way to clear off the dom element, maybe make a new one and leak the old one?
-            //mDOMElement->clear();
+            //mDOMElement = new XERCES_CPP_NAMESPACE_QUALIFIER DOMElement;
 
-            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
-            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
-            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
+            LOG_WARNING( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_WARNING( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_WARNING( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)
@@ -183,9 +190,9 @@ namespace dtUtil
          {
             ///\todo modify mParent
 
-            LOG_ALWAYS( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
-            LOG_ALWAYS( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
-            LOG_ALWAYS( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
+            LOG_ERROR( std::string("uri = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(uri)) )
+            LOG_ERROR( std::string("local name = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(localname)) )
+            LOG_ERROR( std::string("qname = ") + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(qname)) )
          }
 
          virtual void HandleEnd(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname)

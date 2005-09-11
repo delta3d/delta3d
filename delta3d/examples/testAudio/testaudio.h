@@ -99,6 +99,7 @@ private:
    MM_PTR                        mMotionModel;
    unsigned int                  mSmokeCountA;
    unsigned int                  mSmokeCountC;
+   dtCore::RefPtr<SoundRecorder> mRecorder;
 };
 
 #endif  // DELTA_TEST_AUDIO

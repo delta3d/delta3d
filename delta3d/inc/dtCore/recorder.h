@@ -34,6 +34,8 @@
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/dom/DOMNodeFilter.hpp>           // for Walker settings
 
 #include "dtUtil/xerceswriter.h"
 #include "dtCore/timer.h"
@@ -42,7 +44,11 @@
 #include "dtCore/system.h"
 #include "dtUtil/log.h"
 #include "dtUtil/stringutils.h"
-#include "dtUtil/keyframehandler.h"
+#include "dtUtil/xerceserrorhandler.h"
+#include "dtUtil/keyframedecoder.h"
+
+//#include "dtUtil/keyframehandler.h"
+// @param ContentHandlerT is the type to handle loading XML representations.
 
 namespace dtCore
 {
@@ -55,21 +61,23 @@ namespace dtCore
     *
     * @param RecorderableT is a type that supports the interfaces necessary for recording.  This class knows how to create and serialize FrameDataT types.
     * @param FrameDataT is the type to be stored in memory.
-    * @param ContentHandlerT is the type to handle loading XML representations.
     *
-    * \todo make sure that adding a new source will invalidate the currently saved feyframes because of the assumed syncronization.
+    * \todo Verify that adding a new source will invalidate the currently saved keyframes because of the assumed syncronization.
+    * \todo Make the loading done via a policy class which can impose deserialization interfaces as needed to the RecordableType.
+    * \todo Make the saving done via a policy class which can impose serialization interfaces as needed to the RecordableType.
     */
-   template<typename RecordableT, typename FrameDataT, typename ContentHandlerT=dtUtil::KeyFrameHandler<RecordableT,FrameDataT> >
+   template<typename RecordableT, typename FrameDataT>
    class /*DT_EXPORT */Recorder : public dtCore::Base
    {
    public:
       typedef RecordableT                                    RecordableType;         /// The type of object of interest.  RecordableTypes know how to create, serialize, and deserialize FrameDataTypes.
       typedef FrameDataT                                     FrameDataType;          /// The data to be saved from the object of interest.
-      typedef ContentHandlerT                                ContentHandlerType;     /// The type of algorithm used for parsing XML files.
-      typedef std::vector<FrameDataType>                     FrameDataContainer;     /// A container to hold each source's frame data.
-      typedef std::pair<double,FrameDataContainer>           KeyFrame;               /// The time stamp applied to the entire container of frame data.
+      typedef std::vector< dtCore::RefPtr<FrameDataType> >   FrameDataPtrContainer;  /// A container to hold each source's frame data.
+      typedef std::pair<double,FrameDataPtrContainer>        KeyFrame;               /// The time stamp applied to the entire container of frame data.
       typedef std::vector<KeyFrame>                          KeyFrameContainer;      /// The container of KeyFrame data.
+      typedef typename KeyFrameContainer::iterator           KeyFrameContainerIterator;
       typedef std::vector< dtCore::RefPtr<RecordableType> >  RecordablePtrContainer; /// The container of sources of frame data.
+      //typedef ContentHandlerT                                ContentHandlerType;     /// The type of algorithm used for parsing XML files.
 
       /**
         * Represents the state of a recorder.
@@ -86,7 +94,7 @@ namespace dtCore
         *
         * @param name the instance name
         */
-      Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped), mWriter()
+      Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped), mWriter(0)
       {
          AddSender( dtCore::System::Instance() );
 
@@ -106,6 +114,8 @@ namespace dtCore
             //      << pMsg;
             //XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&pMsg);
          }
+
+         mWriter = new dtUtil::XercesWriter();
       }
 
    protected:
@@ -117,6 +127,7 @@ namespace dtCore
          RemoveSender( dtCore::System::Instance() );
 
          // shutdown the system
+         ///\todo this should not be here.
          XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
       }
 
@@ -165,12 +176,12 @@ namespace dtCore
          mState = Recording;
          mStartTime = mClock.tick();
 
-         FrameDataContainer sourcedata( mSources.size() );
+         FrameDataPtrContainer sourcedata( mSources.size() );
          typename RecordablePtrContainer::iterator iter = mSources.begin();
          typename RecordablePtrContainer::iterator enditer = mSources.end();
          while( iter != enditer )
          {
-            // orders framedata the same as sources
+            // orders framedata the same as sources are ordered in the source container
             sourcedata.push_back( (*iter)->CreateFrameData() );
             ++iter;
          }
@@ -183,6 +194,7 @@ namespace dtCore
       void Play()
       {
          mState = Playing;
+         mKeyFrameIter = mKeyFrames.begin();
       }
 
       /**
@@ -214,8 +226,8 @@ namespace dtCore
         */
       void SaveFile(const std::string& filename)
       {
-         mWriter.CreateDocument( "RecordedFrames" );
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = mWriter.GetDocument();
+         mWriter->CreateDocument( "RecordedFrames" );
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = mWriter->GetDocument();
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc->getDocumentElement();
 
          std::vector<XMLCh*> cleanupxmlstring;
@@ -232,15 +244,15 @@ namespace dtCore
          {
             XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* frameelement = doc->createElement( FRAME );
 
-            FrameDataContainer& sourcedata = (*kfiter).second;
-            typename FrameDataContainer::iterator fditer = sourcedata.begin();
+            FrameDataPtrContainer& sourcedata = (*kfiter).second;
+            typename FrameDataPtrContainer::iterator fditer = sourcedata.begin();
 
             typename RecordablePtrContainer::iterator srciter = mSources.begin();
             typename RecordablePtrContainer::iterator srcend = mSources.end();
             while( srciter != srcend )
             {
                // assumes an equal number of framedata iterators for source iterators
-               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize( (*fditer),doc );
+               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize( (*fditer).get(),doc );
                frameelement->appendChild( dataelement );
                ++fditer;
                ++srciter;
@@ -259,7 +271,7 @@ namespace dtCore
          }
 
          // write out the file
-         mWriter.WriteFile( filename );
+         mWriter->WriteFile( filename );
 
          // clean up memory
          dtUtil::XercesWriter::ReleaseTranscode( TIMECODE );
@@ -268,7 +280,11 @@ namespace dtCore
       }
 
       /**
-        * Loads a recording from the specified file.
+        * \brief Loads a recording from the specified file.
+        * Loads an XML file, using DOM parsing because the nature of deserializing does not work well with SAX parsing.
+        * A container of key frame data is filled from the data in the XML file.
+        *
+        * \todo verify that the number of frames loaded equals the number of frames were (recorded & saved).
         *
         * @param ContentHandlerT is the XML loading handler object type.
         * @param filename the name of the file to load
@@ -277,28 +293,45 @@ namespace dtCore
       {
          // check to see if the file exits
          std::string file = osgDB::findDataFile( filename );
-         // use sax parsing
-         // build a vector of frame data
-         XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();
-         try
+         if( file.empty() )
          {
-            ContentHandlerType handler(mSources,mKeyFrames);
-            XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();
-            parser->setContentHandler(&handler);
-            //parser->setErrorHandler(&handler);
-            parser->parse( XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(file.c_str()) );
-            //errorCount = parser->getErrorCount();
+            LOG_WARNING("The file, " + filename + " was not found.")
+            return;
          }
-         catch (const XERCES_CPP_NAMESPACE_QUALIFIER OutOfMemoryException&)
-         {
-            //XERCES_STD_QUALIFIER cerr << "OutOfMemoryException" << XERCES_STD_QUALIFIER endl;
-         }
-         catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& /*toCatch*/)
-         {
-            //XERCES_STD_QUALIFIER cerr << "\nAn error occurred\n  Error: "
-            //      << StrX(toCatch.getMessage())
-            //      << "\n" << XERCES_STD_QUALIFIER endl;
-         }
+
+         // --- use DOM parsing (completing now) --- //
+         dtUtil::XercesErrorHandler ehandler;
+
+         XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser parser;
+         parser.setErrorHandler( &ehandler );
+         parser.parse( file.c_str() );
+
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = parser.getDocument();
+
+         typedef dtUtil::KeyFrameDecoder<RecordableType,FrameDataType> SourceDecoder;
+         SourceDecoder decoder(mSources,mKeyFrames);
+         decoder.Walk( doc );
+
+         //// --- use sax parsing (NOT COMPLETE) --- //
+         //// build a vector of frame data
+         //XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();
+         //try
+         //{
+         //   ContentHandlerType handler(mSources,mKeyFrames);
+         //   XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();
+         //   parser->setContentHandler(&handler);
+         //   //parser->setErrorHandler(&handler);
+         //   parser->parse( XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(file.c_str()) );
+         //   //errorCount = parser->getErrorCount();
+         //}
+         //catch (const XERCES_CPP_NAMESPACE_QUALIFIER OutOfMemoryException& e)
+         //{
+         //   LOG_ERROR("Out of memory exception occurred while loading file" + file + ", with message: " + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage())) )
+         //}
+         //catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e)
+         //{
+         //   LOG_ERROR("An error occurred while parsing file, " + file + ", with message: " + std::string(XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage())) )
+         //}
       }
 
       /**
@@ -317,7 +350,7 @@ namespace dtCore
                   mDeltaTime = mClock.tick();
                   double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
-                  FrameDataContainer sourcedata( mSources.size() );
+                  FrameDataPtrContainer sourcedata( mSources.size() );
                   typename RecordablePtrContainer::iterator iter = mSources.begin();
                   typename RecordablePtrContainer::iterator enditer = mSources.end();
                   while( iter != enditer )
@@ -330,27 +363,38 @@ namespace dtCore
                }
             } break;
 
-            // plays a frame-by-frame playback, no interpolation for FrameData
+            // for now, this just plays a frame-by-frame playback, no time stamp interpolation for FrameData
          case Playing:
             {
                if( data->message == "preframe" )
                {
-                  // key frame stuff
-                  //double timecode = (*mKeyFrameIter).first;
-                  typename FrameDataContainer::iterator frameiter = (*mKeyFrameIter).second.begin();
-
-                  // sources
-                  typename RecordablePtrContainer::iterator srciter = mSources.begin();
-                  typename RecordablePtrContainer::iterator srcend = mSources.end();
-                  while( srciter != srcend )
+                  if( mKeyFrameIter != mKeyFrames.end() )
                   {
-                     // assumes sources are ordered the same as framedata
-                     (*srciter)->UseFrameData( (*frameiter) );
-                     ++srciter;
-                     ++frameiter;
+                     // key frame stuff
+                     double timecode = (*mKeyFrameIter).first;
+                     typename FrameDataPtrContainer::iterator framedataiter = (*mKeyFrameIter).second.begin();
+
+                     // sources
+                     typename RecordablePtrContainer::iterator srciter = mSources.begin();
+                     typename RecordablePtrContainer::iterator srcend = mSources.end();
+                     while( srciter != srcend )
+                     {
+                        // assumes sources are ordered the same as framedata
+                        (*srciter)->UseFrameData( (*framedataiter).get() );
+                        ++srciter;
+                        ++framedataiter;
+                     }
+                  }
+                  else
+                  {
+                     mState = Stopped;
                   }
                }
             } break;
+
+         default:  // Stopped
+            {
+            }
          }
 
       //   if(data->message == "frame" &&
@@ -395,10 +439,11 @@ namespace dtCore
       dtCore::Timer mClock;                                     /// The clock object.
       dtCore::Timer_t mDeltaTime, mStartTime;
       KeyFrameContainer mKeyFrames;
-      typename KeyFrameContainer::iterator mKeyFrameIter;
-      dtUtil::XercesWriter mWriter;
-      //dtUtil::XercesReader mReader;
+      KeyFrameContainerIterator mKeyFrameIter;
+      osg::ref_ptr<dtUtil::XercesWriter> mWriter;
+      //KeyFrameIter mKeyFrameIter;
    };
+
 };
 
 
