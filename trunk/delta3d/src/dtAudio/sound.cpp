@@ -4,9 +4,11 @@
 
 #include "dtAudio/sound.h"
 #include "dtCore/scene.h"
-#include "dtUtil/xerceswriter.h"
+#include "dtUtil/stringutils.h"
+
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/util/XMLString.hpp>
 
 
 // definitions
@@ -147,23 +149,16 @@ const char* Sound::kCommand[kNumCommands]   =
 
 IMPLEMENT_MANAGEMENT_LAYER(Sound)
 
-Sound::FrameData::FrameData(): mGain(0.0f), mPitch(0.0f)
+Sound::FrameData::FrameData(): mGain(0.0f), mPitch(0.0f), mPlaying(false)
 {
 }
 
-Sound::FrameData::FrameData(const FrameData& d): mGain(d.mGain), mPitch(d.mPitch)
+Sound::FrameData::FrameData(float gain, float pitch, bool playing): mGain(gain), mPitch(pitch), mPlaying(playing)
 {
 }
 
 Sound::FrameData::~FrameData()
 {
-}
-
-Sound::FrameData& Sound::FrameData::operator =(const FrameData& d)
-{
-   mGain = d.mGain;
-   mPitch = d.mPitch;
-   return *this;
 }
 
 
@@ -187,12 +182,7 @@ Sound::Sound()
    mMaxDist(static_cast<float>(MAX_FLOAT)),
    mRolloff(1.0f),
    mMinGain(0.0f),
-   mMaxGain(1.0f),
-   NAME_STRING(dtUtil::XercesWriter::ConvertToTranscode("Name")),
-   SOUND_STRING(dtUtil::XercesWriter::ConvertToTranscode("Sound")),
-   GAIN_STRING(dtUtil::XercesWriter::ConvertToTranscode("Gain")),
-   PITCH_STRING(dtUtil::XercesWriter::ConvertToTranscode("Pitch")),
-   FLOAT_STRING(dtUtil::XercesWriter::ConvertToTranscode("float"))
+   mMaxGain(1.0f)
 {
    RegisterInstance( this );
 
@@ -218,11 +208,6 @@ Sound::Sound()
 Sound::~Sound()
 {
     DeregisterInstance(this);
-    dtUtil::XercesWriter::ReleaseTranscode(NAME_STRING);
-    dtUtil::XercesWriter::ReleaseTranscode(SOUND_STRING);
-    dtUtil::XercesWriter::ReleaseTranscode(GAIN_STRING);
-    dtUtil::XercesWriter::ReleaseTranscode(PITCH_STRING);
-    dtUtil::XercesWriter::ReleaseTranscode(FLOAT_STRING);
 }
 
 
@@ -598,48 +583,73 @@ Sound::SetMaxGain( float gain )
 
 
 
-Sound::FrameData Sound::CreateFrameData() const
+Sound::FrameData* Sound::CreateFrameData() const
 {
-   FrameData fd;
-   fd.mGain = this->GetGain();
-   fd.mPitch = this->GetPitch();
+   bool playing(false);
+   ///\todo Determine if the state of the sound is playing and reflect that here.
+   FrameData* fd = new FrameData(mGain,mPitch,playing);
    return fd;
 }
 
-void Sound::UseFrameData(const FrameData& fd)
+void Sound::UseFrameData(const FrameData* fd)
 {
-   this->SetGain( fd.mGain );
-   this->SetPitch( fd.mPitch );
+   ///\todo set the playing state based on the value of FrameData::mPlaying
+   this->SetGain( fd->mGain );
+   this->SetPitch( fd->mPitch );
 }
 
-DOMElement* Sound::Serialize(const FrameData& d,XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+DOMElement* Sound::Serialize(const FrameData* d,XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
 {
-   DOMElement* element = doc->createElement( SOUND_STRING );
+   XMLCh* SOUND = XMLString::transcode( "Sound" );
+   DOMElement* element = doc->createElement( SOUND );
+   XMLString::release( &SOUND );
 
-   ///\warning does this leak the transcode?
-   element->setAttribute( NAME_STRING , dtUtil::XercesWriter::ConvertToTranscode(this->GetName().c_str()) );
+   XMLCh* MYNAME = XMLString::transcode( this->GetName().c_str() );
+   XMLCh* NAME = XMLString::transcode( "Name" );
+   element->setAttribute( NAME, MYNAME );
+   XMLString::release( &NAME );
+   XMLString::release( &MYNAME );
 
-   DOMElement* gelement = SerializeGain(d.mGain,doc);
-   DOMElement* pelement = SerializePitch(d.mPitch,doc);
+   DOMElement* gelement = SerializeFloat(d->mGain,"Gain",doc);
    element->appendChild( gelement );
+
+   DOMElement* pelement = SerializeFloat(d->mPitch,"Pitch",doc);
    element->appendChild( pelement );
 
+   DOMElement* playelement = SerializeBool(d->mPlaying,"Playing",doc);
+   element->appendChild( playelement );
+
    return element;
 }
 
-DOMElement* Sound::SerializeGain(float gain, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+DOMElement* Sound::SerializeFloat(float value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
 {
-   DOMElement* element = doc->createElement( GAIN_STRING );
-   ///\warning does this leak the transcode?
-   element->setAttribute( FLOAT_STRING, dtUtil::XercesWriter::ConvertToTranscode( ToString<float>(gain).c_str() ) );
+   // make the element
+   XMLCh* NAME = XMLString::transcode( name );
+   DOMElement* element = doc->createElement( NAME );
+   XMLString::release( &NAME );
+
+   // make the attribute
+   XMLCh* FLOAT_STRING = XMLString::transcode( "float" );
+   XMLCh* VALUE = XMLString::transcode( dtUtil::ToString<float>(value).c_str() );
+   element->setAttribute( FLOAT_STRING, VALUE );
+   XMLString::release( &FLOAT_STRING );
+   XMLString::release( &VALUE );
+
    return element;
 }
 
-DOMElement* Sound::SerializePitch(float pitch, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
+DOMElement* Sound::SerializeBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
 {
-   DOMElement* element = doc->createElement( PITCH_STRING );
-   ///\warning does this leak the transcode?
-   element->setAttribute( FLOAT_STRING, dtUtil::XercesWriter::ConvertToTranscode( ToString<float>(pitch).c_str() ) );
+   XMLCh* NAME = XMLString::transcode( name );
+   DOMElement* element = doc->createElement( NAME );
+   XMLString::release( &NAME );
+
+   XMLCh* BOOL_STRING = XMLString::transcode( "bool" );
+   XMLCh* VALUE = XMLString::transcode( dtUtil::ToString<bool>(state).c_str() );
+   element->setAttribute( BOOL_STRING, VALUE );
+   XMLString::release( &BOOL_STRING );
+   XMLString::release( &VALUE );
    return element;
 }
 

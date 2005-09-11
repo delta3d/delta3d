@@ -43,7 +43,8 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    mInputDevice(NULL),
    mMotionModel(NULL),
    mSmokeCountA(0L),
-   mSmokeCountC(0L)
+   mSmokeCountC(0L),
+   mRecorder(new SoundRecorder())
 {  
    Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
 
