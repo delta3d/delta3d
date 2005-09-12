@@ -243,15 +243,32 @@ TestAudioApp::KeyPressed(  Keyboard*       keyboard,
          StopAllSounds();
          break;
 
+      case Producer::Key_R:
+         {
+            if( mRecorder->GetState() == SoundRecorder::Recording )
+            {
+               StopRecording();
+            }
+            else
+            {
+               StartRecording();
+            }
+         } break;
+
+      case Producer::Key_Y:
+         {
+            std::string sfile("soundrecord.xml");
+            LOG_INFO("Saving to file: "+ sfile )
+            mRecorder->SaveFile( sfile );
+            LOG_INFO("...Done saving file: " + sfile)
+         } break;
+
       default:
          break;
    }
 }
 
-
-
-void
-TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
+void TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
 {
    assert( fname );
 
@@ -288,10 +305,7 @@ TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
    }
 }
 
-
-
-void
-TestAudioApp::StopAllSounds( void )
+void TestAudioApp::StopAllSounds( void )
 {
    Sound*   snd(NULL);
    SND_ITR  iter(NULL);
@@ -905,6 +919,18 @@ TestAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
 
       app->mPSysC->SetEnabled(false);
    }
+}
+
+void TestAudioApp::StartRecording()
+{
+   LOG_INFO("Starting Recording.")
+   mRecorder->Record();
+}
+
+void TestAudioApp::StopRecording()
+{
+   LOG_INFO("Stopping Recording.")
+   mRecorder->Stop();
 }
 
 int main( int argc, const char* argv[] )

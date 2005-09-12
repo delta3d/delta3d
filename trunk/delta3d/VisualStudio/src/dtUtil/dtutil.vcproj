@@ -145,6 +145,9 @@
 				RelativePath="..\..\..\src\dtUtil\seamlessnoise.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\serializer.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\stringutils.cpp">
 			</File>
 			<File
@@ -211,6 +214,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\seamlessnoise.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\serializer.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\stringutils.h">

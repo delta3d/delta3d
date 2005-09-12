@@ -4,7 +4,7 @@
 
 #include "dtAudio/sound.h"
 #include "dtCore/scene.h"
-#include "dtUtil/stringutils.h"
+#include "dtUtil/serializer.h"
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
@@ -610,49 +610,17 @@ DOMElement* Sound::Serialize(const FrameData* d,XERCES_CPP_NAMESPACE_QUALIFIER D
    XMLString::release( &NAME );
    XMLString::release( &MYNAME );
 
-   DOMElement* gelement = SerializeFloat(d->mGain,"Gain",doc);
+   DOMElement* gelement = dtUtil::Serializer::Float(d->mGain,"Gain",doc);
    element->appendChild( gelement );
 
-   DOMElement* pelement = SerializeFloat(d->mPitch,"Pitch",doc);
+   DOMElement* pelement = dtUtil::Serializer::Float(d->mPitch,"Pitch",doc);
    element->appendChild( pelement );
 
-   DOMElement* playelement = SerializeBool(d->mPlaying,"Playing",doc);
+   DOMElement* playelement = dtUtil::Serializer::Bool(d->mPlaying,"Playing",doc);
    element->appendChild( playelement );
 
    return element;
 }
-
-DOMElement* Sound::SerializeFloat(float value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
-{
-   // make the element
-   XMLCh* NAME = XMLString::transcode( name );
-   DOMElement* element = doc->createElement( NAME );
-   XMLString::release( &NAME );
-
-   // make the attribute
-   XMLCh* FLOAT_STRING = XMLString::transcode( "float" );
-   XMLCh* VALUE = XMLString::transcode( dtUtil::ToString<float>(value).c_str() );
-   element->setAttribute( FLOAT_STRING, VALUE );
-   XMLString::release( &FLOAT_STRING );
-   XMLString::release( &VALUE );
-
-   return element;
-}
-
-DOMElement* Sound::SerializeBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
-{
-   XMLCh* NAME = XMLString::transcode( name );
-   DOMElement* element = doc->createElement( NAME );
-   XMLString::release( &NAME );
-
-   XMLCh* BOOL_STRING = XMLString::transcode( "bool" );
-   XMLCh* VALUE = XMLString::transcode( dtUtil::ToString<bool>(state).c_str() );
-   element->setAttribute( BOOL_STRING, VALUE );
-   XMLString::release( &BOOL_STRING );
-   XMLString::release( &VALUE );
-   return element;
-}
-
 
 /**
  * Generates and returns a key frame that represents the
