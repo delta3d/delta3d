@@ -8,7 +8,7 @@
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
 
-DOMElement* Serializer::Float(float value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToFloat(float value, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    // make the element
    XMLCh* NAME = XMLString::transcode( name );
@@ -25,7 +25,7 @@ DOMElement* Serializer::Float(float value, char* name, XERCES_CPP_NAMESPACE_QUAL
    return element;
 }
 
-DOMElement* Serializer::Bool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* Serializer::ToBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    XMLCh* NAME = XMLString::transcode( name );
    DOMElement* element = doc->createElement( NAME );

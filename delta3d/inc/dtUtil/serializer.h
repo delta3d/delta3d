@@ -25,8 +25,7 @@
 #ifndef _DTUTIL_SERIALIZER_H_
 #define _DTUTIL_SERIALIZER_H_
 
-#include "dtCore/export.h"
-
+#include <dtCore/export.h>
 #include <xercesc/util/XercesDefs.hpp>
 
 XERCES_CPP_NAMESPACE_BEGIN
@@ -38,21 +37,21 @@ namespace dtUtil
 {
    /** A place to implement functions for serialization.
      */
-   namespace Serializer
+   struct DT_EXPORT Serializer
    {
       /** Creates an XML Node.
         * @param val The important value to be stored.
         * @param name The name of the XML Node to be created.
         * @param doc The Xerces DOMDocument required for creating new XML Nodes.
         */
-      DT_EXPORT XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Float(float val, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToFloat(float val, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
 
       /** Creates an XML Node.
         * @param state The important value to be stored.
         * @param name The name of the XML Node to be created.
         * @param doc The Xerces DOMDocument required for creating new XML Nodes.
         */
-      DT_EXPORT XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Bool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
+      static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* ToBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
    };
 };
 
