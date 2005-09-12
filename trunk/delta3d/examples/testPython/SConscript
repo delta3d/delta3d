@@ -6,6 +6,6 @@ if CheckForBoost() :
 
    testPythonSrcs = ['testpython.cpp']
 
-   testPythonDeps = [ 'dtcore', 'dtabc', 'dtutil', 'python' ]
+   testPythonDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtscript', 'python' ]
 
    BuildProgram( '#bin/testPython', testPythonSrcs, testPythonDeps )
