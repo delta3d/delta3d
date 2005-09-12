@@ -19,8 +19,9 @@
 #include <dtABC/state.h>
 
 #include <xercesc/sax/HandlerBase.hpp>
-#include <xercesc/parsers/SAXParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
+//#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/parsers/SAXParser.hpp>
 
 namespace dtABC
 {

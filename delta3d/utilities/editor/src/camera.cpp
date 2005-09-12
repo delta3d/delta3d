@@ -338,9 +338,6 @@ namespace dtEditQt
         for (itor=this->attachedProxies.begin(); itor!=this->attachedProxies.end(); ++itor)
         {
             dtDAL::TransformableActorProxy *tProxy = itor->actor.get();
-            dtCore::Transformable *transformable;
-            const dtDAL::ActorProxy::RenderMode &renderMode = itor->actor->GetRenderMode();
-            dtDAL::ActorProxyIcon *billBoardIcon = NULL;
             osg::Vec3 deltaHPR,tPos,actorHPR;
             osg::Quat pitchRotate,yawRotate;
             osg::Matrix newRotationMat;

@@ -151,7 +151,6 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     bool DynamicResourceControl::updateModelFromEditor(QWidget *widget)
     {
-        bool dataChanged = false;
         return false;
     }
 

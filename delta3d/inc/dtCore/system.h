@@ -77,7 +77,7 @@ namespace dtCore
       dtCore::Timer mClock;
 
       //time keeping vars
-      Timer_t mClockTime, mLastClockTime;
+      dtCore::Timer_t mClockTime, mLastClockTime;
       double mDt;
 
       ///Stuff to do before the frame. Message: "preframe", delta time in seconds
