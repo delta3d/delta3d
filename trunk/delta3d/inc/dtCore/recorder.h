@@ -46,7 +46,6 @@
 #include "dtUtil/stringutils.h"
 #include "dtUtil/xerceserrorhandler.h"
 #include "dtUtil/keyframedecoder.h"
-
 //#include "dtUtil/keyframehandler.h"
 // @param ContentHandlerT is the type to handle loading XML representations.
 
@@ -61,6 +60,7 @@ namespace dtCore
     *
     * @param RecorderableT is a type that supports the interfaces necessary for recording.  This class knows how to create and serialize FrameDataT types.
     * @param FrameDataT is the type to be stored in memory.
+    * @param ContentHandlerT the type enforcing a parsing algorithm, used to populate key frame data from a file.
     *
     * \todo Verify that adding a new source will invalidate the currently saved keyframes because of the assumed syncronization.
     * \todo Make the loading done via a policy class which can impose deserialization interfaces as needed to the RecordableType.
