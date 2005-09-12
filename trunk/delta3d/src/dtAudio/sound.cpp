@@ -610,13 +610,13 @@ DOMElement* Sound::Serialize(const FrameData* d,XERCES_CPP_NAMESPACE_QUALIFIER D
    XMLString::release( &NAME );
    XMLString::release( &MYNAME );
 
-   DOMElement* gelement = dtUtil::Serializer::Float(d->mGain,"Gain",doc);
+   DOMElement* gelement = dtUtil::Serializer::ToFloat(d->mGain,"Gain",doc);
    element->appendChild( gelement );
 
-   DOMElement* pelement = dtUtil::Serializer::Float(d->mPitch,"Pitch",doc);
+   DOMElement* pelement = dtUtil::Serializer::ToFloat(d->mPitch,"Pitch",doc);
    element->appendChild( pelement );
 
-   DOMElement* playelement = dtUtil::Serializer::Bool(d->mPlaying,"Playing",doc);
+   DOMElement* playelement = dtUtil::Serializer::ToBool(d->mPlaying,"Playing",doc);
    element->appendChild( playelement );
 
    return element;
