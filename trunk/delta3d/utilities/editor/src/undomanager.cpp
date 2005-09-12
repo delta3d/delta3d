@@ -189,7 +189,6 @@ namespace dtEditQt
     {
         if (!recursePrevent)
         {
-            dtDAL::ActorProperty *curProp;
             std::vector<dtDAL::ActorProperty *> propList;
             std::vector<dtDAL::ActorProperty *>::const_iterator propIter;
 

@@ -292,7 +292,6 @@ namespace dtEditQt
         DynamicAbstractControl *newControl;
         std::vector<dtDAL::ActorProperty *>::const_iterator propIter;
         int row = 0;
-        int tempCount = 0;
 
         proxy->GetPropertyList(propList);
 

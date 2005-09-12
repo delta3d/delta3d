@@ -3,6 +3,7 @@
 
 #include "dtUtil/log.h"
 #include "dtUtil/stringutils.h"
+#include <xercesc/dom/DOMTreeWalker.hpp>
 
 namespace dtUtil
 {

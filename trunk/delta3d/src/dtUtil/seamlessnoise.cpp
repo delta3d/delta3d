@@ -88,22 +88,17 @@ float SeamlessNoise::GetNoise(const osg::Vec3f& vect_in, int repeat)
    int Ymod = (Y+1) % repeat;                   
    int Zmod = (Z+1) % repeat;                   
 
-   int A1 = (p[X]    + Y),
-      A2 = (p[p[X]    + Y]   + Z ),
-      A3 = (p[p[X]    + Y]   + Zmod),
+   int A2 = (p[p[X]    + Y]   + Z ),
+       A3 = (p[p[X]    + Y]   + Zmod),
 
-      A4 = (p[X]    + Ymod),
-      A5 = (p[p[X]    + Ymod]   + Z),
-      A6 = (p[p[X]    + Ymod]   + Zmod),
+       A5 = (p[p[X]    + Ymod]   + Z),
+       A6 = (p[p[X]    + Ymod]   + Zmod),
 
-      B1 = (p[Xmod] + Y),
-      B2 = (p[p[Xmod] + Y]   + Z),
-      B3 = (p[p[Xmod] + Y]   + Zmod),
+       B2 = (p[p[Xmod] + Y]   + Z),
+       B3 = (p[p[Xmod] + Y]   + Zmod),
 
-
-      B4 = (p[Xmod] + Ymod),
-      B5 = (p[p[Xmod] + Ymod]   + Z),
-      B6 = (p[p[Xmod] + Ymod]   + Zmod);
+       B5 = (p[p[Xmod] + Ymod]   + Z),
+       B6 = (p[p[Xmod] + Ymod]   + Zmod);
 
 #define LERP(t, a, b) ((a) + (t) * ((b) - (a)))
 

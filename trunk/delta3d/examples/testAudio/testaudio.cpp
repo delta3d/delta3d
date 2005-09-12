@@ -907,8 +907,7 @@ TestAudioApp::StopSmoke( dtAudio::Sound* sound, void* param )
    }
 }
 
-int
-main( int argc, const char* argv[] )
+int main( int argc, const char* argv[] )
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testAudio/;" +
                         GetDeltaDataPathList()  );
@@ -917,6 +916,6 @@ main( int argc, const char* argv[] )
 
    app->Run();
 
-   return   0L;
+   return 0;
 }
 

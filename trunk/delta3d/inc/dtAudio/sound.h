@@ -116,7 +116,7 @@ namespace dtAudio
          FrameData(const FrameData& d);              /// not implemented by design
          FrameData& operator =(const FrameData& d);  /// not implemented by design
 
-         friend Sound;
+         friend class Sound;
          float mGain, mPitch;
          bool mPlaying;
       };

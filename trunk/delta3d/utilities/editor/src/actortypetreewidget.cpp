@@ -146,7 +146,7 @@ namespace dtEditQt
         // if we're at the end of the list, then add the actor to this node. 
         else if (!listIterator->hasNext()) 
         {
-            ActorTypeTreeWidget *leafNode = new ActorTypeTreeWidget(this, actorType);
+	  //ActorTypeTreeWidget *leafNode = new ActorTypeTreeWidget(this, actorType);
             result = true;
         } 
 

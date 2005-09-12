@@ -87,7 +87,6 @@ namespace dtEditQt
         if (widget != NULL) 
         {
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
-            bool success = false;
 
             // get the data from our control
             std::string result = editBox->text().toStdString();
