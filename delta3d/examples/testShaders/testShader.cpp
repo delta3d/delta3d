@@ -109,8 +109,8 @@ public:
       //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 		
 		//set up textures
-		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_color_100.bmp"));
-		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/deltaLOGO_nm_200.bmp"));
+		RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4.bmp"));
+		RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4Bump.bmp"));
      
 
 		RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
