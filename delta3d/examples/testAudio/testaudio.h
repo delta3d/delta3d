@@ -82,6 +82,9 @@ private:
    static void MakeSmoke( dtAudio::Sound* sound, void* param );
    static void StopSmoke( dtAudio::Sound* sound, void* param );
 
+   void StartRecording();
+   void StopRecording();
+
 private:
    SND_LST                       mActive;
    SND_QUE                       mQueued;

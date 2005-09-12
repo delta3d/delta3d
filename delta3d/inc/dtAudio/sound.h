@@ -445,6 +445,11 @@ namespace dtAudio
           */
          FrameData* CreateFrameData() const;
 
+         /** Used by dtCore::Recorder in playback.
+           * @param data The Sound::FrameData containing the Sound's state information.
+           */
+         void UseFrameData(const FrameData* data);
+
          /**
           * Deserializes an XML element representing a state frame, turning it
           * into a new StateFrame instance.
@@ -452,14 +457,10 @@ namespace dtAudio
           * @param element the element that represents the frame
           * @return a newly generated state frame corresponding to the element
           */
-         void UseFrameData(const FrameData* d);
+         FrameData Deserialize(const FrameData* data);
 
          /** turns the FrameData into its XML representation.*/
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serialize(const FrameData* d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
-
-      protected:
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializeFloat(float val, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* SerializeBool(bool state, char* name, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
 
       protected:
          std::string mFilename;
