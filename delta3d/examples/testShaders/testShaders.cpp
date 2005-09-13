@@ -25,7 +25,12 @@ public:
       LoadGeometry();
       EnableShaders();
 
-      Transform xform(0.0f, -3.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+      mMotionModel = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+      mMotionModel->SetAngularRate(0.5f);
+      mMotionModel->SetLinearRate(0.5f);
+      mMotionModel->SetTarget(GetCamera());
+
+      Transform xform(0.0f, -10.0f, 0.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(&xform);
 
    }
@@ -46,6 +51,7 @@ public:
 
       //load the shader file
       mProg = new osg::Program;
+      mDefault = new osg::Program;
 
       RefPtr<osg::Shader> vertexShader = new osg::Shader( osg::Shader::VERTEX );
       RefPtr<osg::Shader> fragmentShader = new osg::Shader( osg::Shader::FRAGMENT );
@@ -58,6 +64,35 @@ public:
       bool fragLoaded = fragmentShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.frag");
 
       ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
+      mEnabled = false;
+   }
+
+
+   virtual void KeyPressed(dtCore::Keyboard* keyboard, 
+      Producer::KeyboardKey key,
+      Producer::KeyCharacter character)
+   {
+      if (key == Producer::Key_Escape)
+      {
+         this->Quit();
+      }
+      else if(key == Producer::Key_space)
+      {
+         osg::StateSet* ss = mObject->GetOSGNode()->getOrCreateStateSet(); 
+
+         if(mEnabled)
+         {
+            ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::OFF );
+            ss->setAttributeAndModes( mDefault.get(), osg::StateAttribute::ON );
+            mEnabled = false;
+         }
+         else
+         {
+            ss->setAttributeAndModes( mDefault.get(), osg::StateAttribute::OFF );
+            ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );            
+            mEnabled = true;
+         }
+      }
    }
 
 
@@ -68,8 +103,13 @@ public:
 
 private:
 
+   RefPtr<dtCore::OrbitMotionModel>          mMotionModel;
    RefPtr<dtCore::Object>                    mObject;
+
    RefPtr<osg::Program>                      mProg; 
+   RefPtr<osg::Program>                      mDefault;
+
+   bool                                      mEnabled;
 
 
 };
