@@ -14,63 +14,80 @@
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
 
-XercesWriter::XercesWriter(): _implementation(0), _document(0), _CORE(0), _root_name(0)
+XercesWriter::XercesWriter(): mImplementation(0), mDocument(0), mCORE(0), mRootName(0)
 {
+   try  // to initialize the xml tools
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg);
+      XMLString::release( &message );
+   }
+   catch(...)
+   {
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
+      return;
+   }
+
    try
    {
       DOMImplementation* impl;
-      _CORE = XMLString::transcode("Core");  // xerces example used "Core", no idea if that is necessary.
-      impl = DOMImplementationRegistry::getDOMImplementation( _CORE );
+      mCORE = XMLString::transcode("Core");  // xerces example used "Core", no idea if that is necessary.
+      impl = DOMImplementationRegistry::getDOMImplementation( mCORE );
 
-      _implementation = impl;
+      mImplementation = impl;
    }
 
    catch(...)
    {
       ///\todo log the exceptions
       LOG_ERROR("There was a problem creating a Xerces DOMImplementation.")
-      _implementation = 0;
+      mImplementation = 0;
 
-      if( _CORE )
+      if( mCORE )
       {
-         XMLString::release( &_CORE );
+         XMLString::release( &mCORE );
       }
-      _CORE = 0;
+      mCORE = 0;
    }
 }
 
 XercesWriter::~XercesWriter()
 {
    // clean up the _document stuff
-   if( _document )
-      _document->release();
+   if( mDocument )
+      mDocument->release();
 
    // clean up the document's root string
-   XMLString::release( &_root_name );
+   XMLString::release( &mRootName );
 
    // clean up the _implementation stuff
-   if( _CORE )
-      XMLString::release( &_CORE );
+   if( mCORE )
+      XMLString::release( &mCORE );
 }
 
 void XercesWriter::CreateDocument(const std::string& rootname)
 {
-   if( _implementation )
+   if( mImplementation )
    {
-      if( _document )
+      if( mDocument )
       {  // blow away the old document
-         _document->release();
+         mDocument->release();
       }
 
-      if( _root_name )
+      if( mRootName )
       {
-         XMLString::release( &_root_name );
+         XMLString::release( &mRootName );
       }
 
       try
       {
-         _root_name = XMLString::transcode( rootname.c_str() );
-         _document = _implementation->createDocument(0,_root_name,0);
+         mRootName = XMLString::transcode( rootname.c_str() );
+         mDocument = mImplementation->createDocument(0,mRootName,0);
       }
       catch(...)
       {
@@ -86,7 +103,7 @@ void XercesWriter::CreateDocument(const std::string& rootname)
 
 void XercesWriter::WriteFile(const std::string& outputfile)
 {
-   if( _implementation )
+   if( mImplementation )
    {  // log it?
    }
    else
@@ -103,7 +120,7 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    {
       OUTPUT = XMLString::transcode( outputfile.c_str() );
       xmlstream = new LocalFileFormatTarget( OUTPUT );
-      writer = _implementation->createDOMWriter();
+      writer = mImplementation->createDOMWriter();
    }
    catch(...)
    {
@@ -122,7 +139,7 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    // write it!
    try
    {
-      writer->writeNode(xmlstream, *_document);
+      writer->writeNode(xmlstream, *mDocument);
    }
    catch (const OutOfMemoryException&)
    {
