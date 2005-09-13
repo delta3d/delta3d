@@ -79,17 +79,19 @@ AttributeSearch::ResultMap AttributeSearch::operator ()(const Attributes& attrs)
    unsigned int n = attrs.getLength();
    for(unsigned int i=0; i<n; i++)
    {
-      char* lname = XMLString::transcode( attrs.getLocalName(i) );
+      char* aname = XMLString::transcode( attrs.getLocalName(i) );
 
       // search all keys for lname
-      SearchKeyVector::iterator iter = std::find( mKeys.begin(), mKeys.end(), lname );
-
-      XMLString::release( &lname );
+      SearchKeyVector::iterator iter = std::find( mKeys.begin(), mKeys.end(), aname );
 
       if( iter != mKeys.end() )
       {
-         rmap.insert( ResultMap::value_type( (*iter) , lname ) );
+         char* aval = XMLString::transcode( attrs.getValue(i) );
+         rmap.insert( ResultMap::value_type( aname , aval ) );
+         XMLString::release( &aval );
       }
+
+      XMLString::release( &aname );
    }
 
    return rmap;

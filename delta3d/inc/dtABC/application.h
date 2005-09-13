@@ -73,6 +73,9 @@ namespace dtABC
       virtual  void  PostFrame( const double deltaFrameTime );
 
    private:
+      /** \brief A class to perform the necessary features while a Xerces SAX parser is operating.
+        * Use this with the Xerces SAX2XMLReader.
+        */
       class AppXMLContentHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
       {
       public:
