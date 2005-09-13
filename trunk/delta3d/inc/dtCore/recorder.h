@@ -94,28 +94,9 @@ namespace dtCore
         *
         * @param name the instance name
         */
-      Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped), mWriter(0)
+      Recorder(const std::string& name = "recorder"): Base(name), mState(Stopped)
       {
          AddSender( dtCore::System::Instance() );
-
-         try
-         {
-            XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
-         }
-
-         catch(const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& /*toCatch*/)
-         {
-            LOG_ERROR("There was a problem initializing the Xerces XMLPlatformUtils.");
-            /// \todo disable support for loading/saving
-
-            //char *pMsg = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(toCatch.getMessage());
-            //XERCES_STD_QUALIFIER cerr << "Error during Xerces-c Initialization.\n"
-            //      << "  Exception message:"
-            //      << pMsg;
-            //XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&pMsg);
-         }
-
-         mWriter = new dtUtil::XercesWriter();
       }
 
    protected:
@@ -176,7 +157,8 @@ namespace dtCore
          mState = Recording;
          mStartTime = mClock.tick();
 
-         FrameDataPtrContainer sourcedata( mSources.size() );
+         FrameDataPtrContainer sourcedata;
+         sourcedata.reserve( mSources.size() );
          typename RecordablePtrContainer::iterator iter = mSources.begin();
          typename RecordablePtrContainer::iterator enditer = mSources.end();
          while( iter != enditer )
@@ -226,8 +208,9 @@ namespace dtCore
         */
       void SaveFile(const std::string& filename)
       {
-         mWriter->CreateDocument( "RecordedFrames" );
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = mWriter->GetDocument();
+         osg::ref_ptr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
+         writer->CreateDocument( "RecordedFrames" );
+         XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc->getDocumentElement();
 
          std::vector<XMLCh*> cleanupxmlstring;
@@ -252,7 +235,8 @@ namespace dtCore
             while( srciter != srcend )
             {
                // assumes an equal number of framedata iterators for source iterators
-               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize( (*fditer).get(),doc );
+               FrameDataType *fdt = (*fditer).get();
+               XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* dataelement = (*srciter)->Serialize( fdt,doc );
                frameelement->appendChild( dataelement );
                ++fditer;
                ++srciter;
@@ -271,7 +255,7 @@ namespace dtCore
          }
 
          // write out the file
-         mWriter->WriteFile( filename );
+         writer->WriteFile( filename );
 
          // clean up memory
          XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMECODE );
@@ -350,14 +334,15 @@ namespace dtCore
                   mDeltaTime = mClock.tick();
                   double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
 
-                  FrameDataPtrContainer sourcedata( mSources.size() );
+                  FrameDataPtrContainer sourcedata;
+                  sourcedata.reserve( mSources.size() );
                   typename RecordablePtrContainer::iterator iter = mSources.begin();
                   typename RecordablePtrContainer::iterator enditer = mSources.end();
                   while( iter != enditer )
                   {
                      // orders framedata the same as sources
                      sourcedata.push_back( (*iter)->CreateFrameData() );
-                     ++iter;
+                     iter++;
                   }
                   mKeyFrames.push_back( KeyFrame(timeCode,sourcedata) );
                }
@@ -384,6 +369,7 @@ namespace dtCore
                         ++srciter;
                         ++framedataiter;
                      }
+                     mKeyFrameIter++;
                   }
                   else
                   {
@@ -440,7 +426,6 @@ namespace dtCore
       dtCore::Timer_t mDeltaTime, mStartTime;
       KeyFrameContainer mKeyFrames;
       KeyFrameContainerIterator mKeyFrameIter;
-      osg::ref_ptr<dtUtil::XercesWriter> mWriter;
       //KeyFrameIter mKeyFrameIter;
    };
 
