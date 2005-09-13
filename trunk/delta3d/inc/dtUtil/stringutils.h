@@ -36,6 +36,9 @@
 #include <vector>  // for member
 #include <map>     // for return argument
 
+#ifdef _MSC_VER
+   #pragma warning( disable:4251 )  
+#endif
 
 XERCES_CPP_NAMESPACE_BEGIN
    class DOMNamedNodeMap;
