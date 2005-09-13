@@ -1,6 +1,6 @@
-#include "BumpMapDrawable.h"
+#include "bumpmapdrawable.h"
 #include <dtCore/globals.h>
-#include "CubeVertices.h"
+#include "cubevertices.h"
 
 BumpMapDrawable::BumpMapDrawable()
 {
