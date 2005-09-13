@@ -84,12 +84,12 @@ ViewWindow::OnMessage( dtCore::Base::MessageData* data )
    assert( data );
 
 
-   if( data->message == msgKeyboardEvent )
-   {
-      assert( data->userData );
-      KeyboardEventHandler( *(reinterpret_cast<KeyboardEvent*>(data->userData)) );
-      return; //
-   }
+   //if( data->message == msgKeyboardEvent )
+   //{
+   //   assert( data->userData );
+   //   KeyboardEventHandler( *(reinterpret_cast<KeyboardEvent*>(data->userData)) );
+   //   return; //
+   //}
 
    MyParent::OnMessage( data );
 }
