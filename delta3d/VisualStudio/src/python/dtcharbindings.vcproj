@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc71-mt-gd-1_33.lib python24.lib"
+				AdditionalDependencies="boost_python_debug.lib python24.lib"
 				OutputFile="../../../bin\dtChard.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc71-mt-1_33.lib python24.lib"
+				AdditionalDependencies="boost_python.lib python24.lib"
 				OutputFile="../../../bin\dtChar.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
