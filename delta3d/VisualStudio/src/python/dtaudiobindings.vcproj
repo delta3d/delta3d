@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python_debug.lib python24.lib"
+				AdditionalDependencies="libboost_python-vc71-mt-gd-1_33.lib python24.lib"
 				OutputFile="../../../bin\dtAudiod.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -81,7 +81,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python.lib python24.lib"
+				AdditionalDependencies="libboost_python-vc71-mt-1_33.lib python24.lib"
 				OutputFile="../../../bin\dtAudio.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
