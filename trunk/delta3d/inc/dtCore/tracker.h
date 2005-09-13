@@ -28,9 +28,13 @@
 
 #include <string>
 
+#ifdef Bool
+#undef Bool
+#endif
+
 #include "isense.h"
 
-#include "dtCore/inputdevice.h"
+#include <dtCore/inputdevice.h>
 
 
 namespace dtCore
