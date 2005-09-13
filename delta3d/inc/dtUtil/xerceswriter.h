@@ -57,19 +57,19 @@ namespace dtUtil
         */
       void CreateDocument(const std::string& rootname);
 
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() { return _document; }
-      const XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() const { return _document; }
+      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() { return mDocument; }
+      const XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() const { return mDocument; }
 
       void WriteFile(const std::string& file);
 
    private:
       XercesWriter(const XercesWriter&); /// not implemented because copying these members would be bad
 
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* _implementation;
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* _document;
+      XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* mImplementation;
+      XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* mDocument;
 
       // string constants
-      XMLCh* _CORE, *_root_name;
+      XMLCh* mCORE, *mRootName;
    };
 };
 

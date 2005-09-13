@@ -26,6 +26,7 @@ Application::Application(const std::string& configFilename) :  BaseABC("Applicat
    if( foundPath.empty() )
    {
       LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
+      GenerateDefaultConfigFile();
       CreateInstances(); //create default window, camera, etc.
    }
 
@@ -130,9 +131,13 @@ bool Application::ParseConfigFile(const std::string& file)
    {
       char* message = XMLString::transcode( e.getMessage() );
       std::string msg(message);
-      LOG_ERROR("An exception occurred when parsing file, " + file + ", with message: " + msg);
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg);
       XMLString::release( &message );
       return false;
+   }
+   catch(...)
+   {
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
    }
 
    SAX2XMLReader* parser;
@@ -159,14 +164,46 @@ bool Application::ParseConfigFile(const std::string& file)
       parser->parse( file.c_str() );
       retval = true;
    }
-   /// \todo catch more specific exceptions and log their messages
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred while parsing file, " + file + ", with message: " + msg)
+      XMLString::release( &message );
+
+      delete parser;
+      return false;
+   }
    catch(...)
    {
       LOG_ERROR("An exception occurred while parsing file, " + file)
+
+      delete parser;
       return false;
    }
 
-   delete parser;
+   try
+   {
+      XMLPlatformUtils::Terminate();
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate() with message: " + msg);
+      XMLString::release( &message );
+
+      delete parser;
+      return false;
+   }
+   catch(...)
+   {
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate()");
+
+      delete parser;
+      return false;
+   }
+
    return retval;
 }
 
@@ -261,7 +298,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
    //scene.SetAttribute( "Name", "defaultScene" );
    //app.InsertEndChild( scene );
    XMLCh* SCENE = XMLString::transcode("Scene");
-   DOMElement* scene = doc->createElement(WINDO);
+   DOMElement* scene = doc->createElement(SCENE);
    XMLString::release( &SCENE );
 
    app->appendChild( scene );
@@ -283,10 +320,10 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
    XMLCh* SCENEINSTANCE = XMLString::transcode("SceneInstance");
    XMLCh* DEFAULTSCENE = XMLString::transcode("DefaultScene");
    camera->setAttribute( WINDOWINSTANCE , DEFAULTWIN );
+   camera->setAttribute( SCENEINSTANCE , DEFAULTSCENE );
    XMLString::release( &WINDOWINSTANCE );
    XMLString::release( &SCENEINSTANCE );
    XMLString::release( &DEFAULTSCENE );
-   camera->setAttribute( SCENEINSTANCE , DEFAULTSCENE );
 
    app->appendChild( camera );
 
@@ -317,8 +354,26 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
    XMLString::release( &ONE );
    XMLString::release( &ZERO );
 
-   //return osgDB::getFilePath(filename);  // from #include <osgDB/FileNameUtils>
-   return filename;
+   // Termination is not needed.
+   //try
+   //{
+   //   XMLPlatformUtils::Terminate();
+   //}
+   //catch(const XMLException& e)
+   //{
+   //   char* message = XMLString::transcode( e.getMessage() );
+   //   std::string msg(message);
+   //   LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate() with message: " + msg);
+   //   XMLString::release( &message );
+   //   return filename;
+   //}
+   //catch(...)
+   //{
+   //   LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate()");
+   //   return filename;
+   //}
+
+   return osgDB::findDataFile(filename);  // from #include <osgDB/FileNameUtils>
 }
 
 void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
