@@ -47,6 +47,7 @@ std::string dtUtil::FindAttributeValueFor(const char* attributeName,
             char* attribvalue = XMLString::transcode( attr->getValue() );
             value = attribvalue;
             XMLString::release( &attribvalue );
+            XMLString::release( &attrname );
             break;
          }
 
