@@ -232,10 +232,10 @@ namespace dtCore
 
          std::vector<XMLCh*> cleanupxmlstring;
 
-         XMLCh* TIMECODE = dtUtil::XercesWriter::ConvertToTranscode("TimeCode");
+         XMLCh* TIMECODE = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("TimeCode");
          cleanupxmlstring.push_back( TIMECODE );
 
-         XMLCh* FRAME = dtUtil::XercesWriter::ConvertToTranscode("Frame");
+         XMLCh* FRAME = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("Frame");
          cleanupxmlstring.push_back( FRAME );
 
          typename KeyFrameContainer::iterator kfiter = mKeyFrames.begin();
@@ -261,7 +261,7 @@ namespace dtCore
             double timestamp = (*kfiter).first;
             std::string timestring = dtUtil::ToString<double>( timestamp );
 
-            XMLCh* TIMESTAMP = dtUtil::XercesWriter::ConvertToTranscode( timestring.c_str() );
+            XMLCh* TIMESTAMP = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( timestring.c_str() );
             cleanupxmlstring.push_back( TIMESTAMP );
 
             frameelement->setAttribute( TIMECODE , TIMESTAMP );
