@@ -21,16 +21,12 @@ public:
    TestShadersApp( std::string configFilename = "config.xml" )
       : Application( configFilename )
    {
+      mTotalTime = 0.0f;
 
       LoadGeometry();
       EnableShaders();
 
-      mMotionModel = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
-      mMotionModel->SetAngularRate(0.5f);
-      mMotionModel->SetLinearRate(0.5f);
-      mMotionModel->SetTarget(GetCamera());
-
-      Transform xform(0.0f, -10.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+      Transform xform(0.0f, -3.0f, 0.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(&xform);
 
    }
@@ -96,6 +92,19 @@ public:
    }
 
 
+   virtual void PreFrame(const double deltaFrameTime )
+   {
+      mTotalTime += deltaFrameTime;
+
+      osg::Matrix rotateMat;
+      rotateMat.makeRotate(osg::DegreesToRadians(30.0f) * mTotalTime, osg::Vec3(0.0f, 0.0f, 1.0f));
+      Transform xform;
+      mObject->GetTransform(&xform);
+      xform.SetRotation(rotateMat);
+      mObject->SetTransform(&xform);
+   }
+
+
    ~TestShadersApp()
    {
     
@@ -103,12 +112,12 @@ public:
 
 private:
 
-   RefPtr<dtCore::OrbitMotionModel>          mMotionModel;
    RefPtr<dtCore::Object>                    mObject;
 
    RefPtr<osg::Program>                      mProg; 
    RefPtr<osg::Program>                      mDefault;
 
+   float                                     mTotalTime;
    bool                                      mEnabled;
 
 
