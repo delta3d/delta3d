@@ -83,7 +83,6 @@
 #undef _AUTOLIBNAME6
 #undef _AUTOLIBNAME7
 #undef _AUTOLIBNAME8
-#undef _AUTOLIBNAME9
 #undef _AUTOLIBNAME10
 #undef _AUTOLIBNAME11
 #undef _AUTOLIBNAME12
@@ -106,7 +105,6 @@
    #define _AUTOLIBNAME6  "osgd.lib"
    #define _AUTOLIBNAME7  "osgDBd.lib"
    #define _AUTOLIBNAME8  "osgParticled.lib"
-   #define _AUTOLIBNAME9  "tinyxmld.lib"
    #define _AUTOLIBNAME10 "osgUtild.lib"
    #define _AUTOLIBNAME11 "oded.lib"
    #define _AUTOLIBNAME13 "osgTextd.lib"
@@ -124,7 +122,6 @@
    #define _AUTOLIBNAME6  "osg.lib"
    #define _AUTOLIBNAME7  "osgDB.lib"
    #define _AUTOLIBNAME8  "osgParticle.lib"
-   #define _AUTOLIBNAME9  "tinyxml.lib"
    #define _AUTOLIBNAME10 "osgUtil.lib"
    #define _AUTOLIBNAME11 "ode.lib"
    #define _AUTOLIBNAME13 "osgText.lib"
@@ -150,7 +147,6 @@
    #pragma message( "Will automatically link with " _AUTOLIBNAME6 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME7 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME8 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME9 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME10 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME11 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME12 )
@@ -174,7 +170,6 @@
 #pragma comment(lib, _AUTOLIBNAME6)
 #pragma comment(lib, _AUTOLIBNAME7)
 #pragma comment(lib, _AUTOLIBNAME8)
-#pragma comment(lib, _AUTOLIBNAME9)
 #pragma comment(lib, _AUTOLIBNAME10)
 #pragma comment(lib, _AUTOLIBNAME11)
 #pragma comment(lib, _AUTOLIBNAME12)
