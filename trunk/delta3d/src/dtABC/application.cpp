@@ -124,6 +124,19 @@ bool Application::ParseConfigFile(const std::string& file)
 
    bool retval(false);
 
+   try  // to initialize the xml tools
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred when parsing file, " + file + ", with message: " + msg);
+      XMLString::release( &message );
+      return false;
+   }
+
    SAX2XMLReader* parser;
    try  // to create a reader
    {
