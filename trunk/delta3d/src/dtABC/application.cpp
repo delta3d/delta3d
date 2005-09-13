@@ -232,7 +232,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
 
    if( !existingfile.empty() )
    {
-      LOG_WARNING("Application found existing configuration file, "+ existingfile + ", delete that file if generating a new one is desired.");
+      LOG_WARNING("Can't generate new configuration file: file already exists: " + existingfile);
       return existingfile;
    }
 
