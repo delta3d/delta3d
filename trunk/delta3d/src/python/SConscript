@@ -69,11 +69,17 @@ if CheckForBoost() and OS != 'darwin' :
    ##############
    # Build libs #
    ##############
-      
-   if OS == 'windows' and mode == 'debug' :
-      boostLib = 'boost_python_debug'
+
+   if mode == 'debug' :
+      if OS == 'windows' :
+         boostLib = 'libboost_python-vc71-mt-gd-1_33'
+      else :
+         boostLib = 'boost_python-gcc-d-1_33'
    else :
-      boostLib = 'boost_python'
+      if OS == 'windows' :
+         boostLib = 'libboost_python-vc71-mt-1_33'
+      else:
+         boostLib = 'boost_python-gcc-1_33'
 
    pythonDeps = [ 'python' ]
    
