@@ -138,6 +138,7 @@ bool Application::ParseConfigFile(const std::string& file)
    catch(...)
    {
       LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
+      return false;
    }
 
    SAX2XMLReader* parser;
