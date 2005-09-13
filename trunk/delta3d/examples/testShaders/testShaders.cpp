@@ -18,7 +18,7 @@ class TestShadersApp : public Application
    DECLARE_MANAGEMENT_LAYER( TestShadersApp )
 
 public:
-   TestShadersApp( std::string configFilename = "config.xml" )
+   TestShadersApp( std::string configFilename = "testshadersconfig.xml" )
       : Application( configFilename )
    {
       mTotalTime = 0.0f;
@@ -28,6 +28,8 @@ public:
 
       Transform xform(0.0f, -3.0f, 0.0f, 0.0f, 0.0f, 0.0f);
       GetCamera()->SetTransform(&xform);
+
+      GetWindow()->SetWindowTitle("testShaders");
 
    }
 
@@ -60,7 +62,7 @@ public:
       bool fragLoaded = fragmentShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.frag");
 
       ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
-      mEnabled = false;
+      mEnabled = true;
    }
 
 
@@ -131,7 +133,7 @@ int main(int argc, char* argv[])
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testShaders/;" +
       GetDeltaDataPathList()  );
 
-   RefPtr<TestShadersApp> app = new TestShadersApp( "config.xml" );
+   RefPtr<TestShadersApp> app = new TestShadersApp( "testshadersconfig.xml" );
    app->Config();
    app->Run();
 
