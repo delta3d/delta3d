@@ -36,8 +36,6 @@
 #include <osg/Texture2D>
 #include <osgDB/FileUtils>
 
-#include <tinyxml.h>
-
 #include <ogrsf_frmts.h>
 
 #include "soarx/soarxdrawable.h"
@@ -79,14 +77,14 @@ namespace dtSOARX
           *
           * @param filename the name of the configuration file to load
           */
-         void LoadConfiguration(std::string filename);
+         void LoadConfiguration(const std::string& filename);
          
          /**
           * Parses the specified XML configuration element.
           *
           * @param configElement the configuration element to parse
           */
-         void ParseConfiguration(TiXmlElement* configElement);
+         void ParseConfiguration(/*TiXmlElement* configElement*/);
          
          /**
           * Sets the location of the origin in geographic coordinates.
@@ -250,7 +248,7 @@ namespace dtSOARX
 		 * the geotransform of the image, or NULL to read the geotransform
 		 * from the image itself
 		 */
-		 void LoadGeospecificLCCImage(std::string filename,
+		 void LoadGeospecificLCCImage(const std::string& filename,
 			 const double* geoTransform = NULL);
  
 
@@ -868,14 +866,14 @@ namespace dtSOARX
 		 *
 		 * @param filename the name of the configuration file to load
 		 */
-		 bool LoadLCCConfiguration(std::string filename);
+		 bool LoadLCCConfiguration(const std::string& filename);
 
 		 /**
 		 * Parses the specified XML configuration element.
 		 *
 		 * @param configElement the configuration element to parse
 		 */
-		 void ParseLCCConfiguration(TiXmlElement* configElement);
+		 void ParseLCCConfiguration(/*TiXmlElement* configElement*/);
 
 
 		 /**

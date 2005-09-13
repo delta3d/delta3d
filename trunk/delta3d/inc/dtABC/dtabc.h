@@ -33,7 +33,6 @@
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #undef _AUTOLIBNAME1
-#undef _AUTOLIBNAME3
 #undef _AUTOLIBNAME4
 #undef _AUTOLIBNAME5
 #undef _AUTOLIBNAME6
@@ -43,12 +42,10 @@
 #if defined(_DEBUG)
    #define _AUTOLIBNAME1   "dtabcd.lib"
    #define _AUTOLIBNAME4   "fltkd.lib"
-   #define _AUTOLIBNAME3   "tinyxmld.lib"
    #define _AUTOLIBNAME8   "xerces-c_2D.lib"
 #else 
    #define _AUTOLIBNAME1   "dtabc.lib"  
    #define _AUTOLIBNAME4   "fltk.lib"
-   #define _AUTOLIBNAME3   "tinyxml.lib"
    #define _AUTOLIBNAME8   "xerces-c_2.lib"
 #endif
 
@@ -58,7 +55,6 @@
 
 #ifndef _NOAUTOLIBMSG
    #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME6 )
@@ -67,7 +63,6 @@
 #endif
 
 #pragma  comment( lib, _AUTOLIBNAME1 )
-#pragma  comment( lib, _AUTOLIBNAME3 )
 #pragma  comment( lib, _AUTOLIBNAME4 )
 #pragma  comment( lib, _AUTOLIBNAME5 )
 #pragma  comment( lib, _AUTOLIBNAME6 )

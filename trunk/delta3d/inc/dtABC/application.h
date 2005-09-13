@@ -22,10 +22,13 @@
 #define DELTA_APPLICATION
 
 #include "dtABC/baseabc.h"
-#include "tinyxml.h"
 #include "dtCore/deltawin.h"
 
 #include <string>
+
+#include <xercesc/sax2/ContentHandler.hpp>  // for a base class
+#include <xercesc/sax2/Attributes.hpp>      // for a parameter
+
 
 namespace dtABC
 {
@@ -69,16 +72,40 @@ namespace dtABC
       ///override for postframe
       virtual  void  PostFrame( const double deltaFrameTime );
 
-
    private:
+      class AppXMLContentHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
+      {
+      public:
+         AppXMLContentHandler(dtABC::Application* app): mApp(app) {}
+         ~AppXMLContentHandler() {}
+
+         // inherited pure virtual functions
+         virtual void characters(const XMLCh* const chars, const unsigned int length) {}
+         virtual void endDocument() {}
+         virtual void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname) {}
+         virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
+         virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
+         virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
+         virtual void startDocument() {}
+         virtual void startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
+         virtual void startPrefixMapping(const	XMLCh* const prefix,const XMLCh* const uri) {}
+         virtual void endPrefixMapping(const XMLCh* const prefix) {}
+         virtual void skippedEntity(const XMLCh* const name) {}
+
+      private:
+         AppXMLContentHandler();   /// not implemented by design
+         dtABC::Application* mApp;
+      };
+
+      friend class AppXMLContentHandler;
 
       ///Create basic instances and set up system hooks
-      virtual  void  CreateInstances( std::string name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
-              
-               ///Read the supplied config file
-               void  ParseConfigFile( TiXmlElement* rootNode );
-              
-               dtCore::DeltaWin::Resolution mOriginalRes;
+      virtual void CreateInstances(const std::string& name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
+
+      /// Read the supplied config file, called from the constructor
+      bool ParseConfigFile(const std::string& file);
+
+      dtCore::DeltaWin::Resolution mOriginalRes;
    };
 }
 

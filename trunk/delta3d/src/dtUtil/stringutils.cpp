@@ -1,5 +1,6 @@
 #include "dtUtil/stringutils.h"
 
+#include <algorithm>
 #include <cstdio>                         // for sscanf
 #include <xercesc/dom/DOMDocument.hpp>    // for xerces DOMDocument, DOMNode
 #include <xercesc/dom/DOMNodeFilter.hpp>  // for xerces parameters
@@ -23,20 +24,20 @@ float dtUtil::ToFloat(const std::string& str)
   * @param node the node with attributes to be searched.
   * @param doc the current document that node exists within.
   */
-std::string dtUtil::GetAttributeValueFor(const char* attributeName,
-                                         XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* node)
+std::string dtUtil::FindAttributeValueFor(const char* attributeName,
+                                          DOMNamedNodeMap* namednodes)
 {
-   std::string value("");
-   if( !node->hasAttributes() )
+   if( !namednodes )
    {
-      return value;
+      LOG_INFO("Searching for attributes in an invalid DOMNamedNodeMap.")
+      return "";
    }
 
-   DOMNamedNodeMap* nnm =  node->getAttributes();
-   unsigned int n = nnm->getLength();
+   std::string value("");
+   unsigned int n = namednodes->getLength();
    for(unsigned int i=0; i<n; i++)
    {
-      DOMNode* namednode = nnm->item(i);
+      DOMNode* namednode = namednodes->item(i);
       if( DOMAttr* attr = static_cast<DOMAttr*>( namednode ) )
       {
          char* attrname = XMLString::transcode( attr->getName() );
@@ -55,3 +56,42 @@ std::string dtUtil::GetAttributeValueFor(const char* attributeName,
 
    return value;
 }
+
+
+using namespace dtUtil;
+
+AttributeSearch::AttributeSearch() : mKeys()
+{
+}
+
+AttributeSearch::AttributeSearch(const SearchKeyVector& k) : mKeys(k)
+{
+}
+
+AttributeSearch::~AttributeSearch()
+{
+}
+
+AttributeSearch::ResultMap AttributeSearch::operator ()(const Attributes& attrs)
+{
+   ResultMap rmap;
+
+   unsigned int n = attrs.getLength();
+   for(unsigned int i=0; i<n; i++)
+   {
+      char* lname = XMLString::transcode( attrs.getLocalName(i) );
+
+      // search all keys for lname
+      SearchKeyVector::iterator iter = std::find( mKeys.begin(), mKeys.end(), lname );
+
+      XMLString::release( &lname );
+
+      if( iter != mKeys.end() )
+      {
+         rmap.insert( ResultMap::value_type( (*iter) , lname ) );
+      }
+   }
+
+   return rmap;
+}
+

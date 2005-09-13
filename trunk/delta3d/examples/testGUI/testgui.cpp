@@ -177,6 +177,7 @@ int main( int argc, const char* argv[] )
 {
    //set data search path to parent directory and delta3d/data
    SetDataFilePathList( "..;" + GetDeltaDataPathList() ); 
+   dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
 
    std::string filename = "";
    if (argc > 1)

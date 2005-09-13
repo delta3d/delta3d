@@ -18,9 +18,9 @@ XercesWriter::XercesWriter(): _implementation(0), _document(0), _CORE(0), _root_
 {
    try
    {
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* impl;
-      _CORE = ConvertToTranscode("Core");  // xerces example used "Core", no idea if that is necessary.
-      impl = XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationRegistry::getDOMImplementation( _CORE );
+      DOMImplementation* impl;
+      _CORE = XMLString::transcode("Core");  // xerces example used "Core", no idea if that is necessary.
+      impl = DOMImplementationRegistry::getDOMImplementation( _CORE );
 
       _implementation = impl;
    }
@@ -31,7 +31,10 @@ XercesWriter::XercesWriter(): _implementation(0), _document(0), _CORE(0), _root_
       LOG_ERROR("There was a problem creating a Xerces DOMImplementation.")
       _implementation = 0;
 
-      ReleaseTranscode( _CORE );
+      if( _CORE )
+      {
+         XMLString::release( &_CORE );
+      }
       _CORE = 0;
    }
 }
@@ -43,21 +46,11 @@ XercesWriter::~XercesWriter()
       _document->release();
 
    // clean up the document's root string
-   ReleaseTranscode( _root_name );
+   XMLString::release( &_root_name );
 
    // clean up the _implementation stuff
    if( _CORE )
-      ReleaseTranscode( _CORE );
-}
-
-XMLCh* XercesWriter::ConvertToTranscode(const char* str)
-{
-   return XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(str);
-}
-
-void XercesWriter::ReleaseTranscode(XMLCh* str)
-{
-   XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&str);
+      XMLString::release( &_CORE );
 }
 
 void XercesWriter::CreateDocument(const std::string& rootname)
@@ -71,12 +64,12 @@ void XercesWriter::CreateDocument(const std::string& rootname)
 
       if( _root_name )
       {
-         ReleaseTranscode( _root_name );
+         XMLString::release( &_root_name );
       }
 
       try
       {
-         _root_name = ConvertToTranscode( rootname.c_str() );
+         _root_name = XMLString::transcode( rootname.c_str() );
          _document = _implementation->createDocument(0,_root_name,0);
       }
       catch(...)
@@ -91,7 +84,6 @@ void XercesWriter::CreateDocument(const std::string& rootname)
    }
 }
 
-///\todo use <i>more</i> exceptions here.
 void XercesWriter::WriteFile(const std::string& outputfile)
 {
    if( _implementation )
@@ -104,15 +96,19 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    }
 
    // make a writer
-   XERCES_CPP_NAMESPACE_QUALIFIER DOMWriter* writer;
-   XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget* xmlstream;
+   DOMWriter* writer;
+   LocalFileFormatTarget* xmlstream;
+   XMLCh* OUTPUT;
    try
    {
-      xmlstream = new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget( ConvertToTranscode(outputfile.c_str()) );
+      OUTPUT = XMLString::transcode( outputfile.c_str() );
+      xmlstream = new LocalFileFormatTarget( OUTPUT );
       writer = _implementation->createDOMWriter();
    }
    catch(...)
    {
+      if( OUTPUT )
+         XMLString::release( &OUTPUT );
       LOG_ERROR("Can not write file, "+ outputfile +", because creation of a writing tools failed.");
       return;
    }
@@ -128,7 +124,7 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    {
       writer->writeNode(xmlstream, *_document);
    }
-   catch (const XERCES_CPP_NAMESPACE_QUALIFIER OutOfMemoryException&)
+   catch (const OutOfMemoryException&)
    {
       //XERCES_STD_QUALIFIER cerr << "OutOfMemoryException" << XERCES_STD_QUALIFIER endl;
       LOG_ERROR("When writing file," +outputfile+ ", an OutOfMemoryException occurred.");

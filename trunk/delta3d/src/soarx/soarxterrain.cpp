@@ -379,15 +379,15 @@ void SOARXTerrain::CleanUp()
  * @param filename the name of the configuration file to load
  * @see SetDataFilePathList()
  */
-void SOARXTerrain::LoadConfiguration(std::string filename)
+void SOARXTerrain::LoadConfiguration(const std::string& filename)
 {
-   TiXmlDocument configuration;
-   std::string fullPath = osgDB::findDataFile(filename);
+   //TiXmlDocument configuration;
+   //std::string fullPath = osgDB::findDataFile(filename);
 
-   if(configuration.LoadFile(fullPath.c_str()))
-   {
-      ParseConfiguration(configuration.RootElement());
-   }
+   //if(configuration.LoadFile(fullPath.c_str()))
+   //{
+   //   ParseConfiguration(configuration.RootElement());
+   //}
 }
 
 /**
@@ -395,150 +395,150 @@ void SOARXTerrain::LoadConfiguration(std::string filename)
  *
  * @param configElement the configuration element to parse
  */
-void SOARXTerrain::ParseConfiguration(TiXmlElement* configElement)
+void SOARXTerrain::ParseConfiguration(/*TiXmlElement* configElement*/)
 {
-   const char* str;
+   //const char* str;
 
-   if((str = configElement->Attribute("cachePath")) != NULL)
-   {
-      SetCachePath(str);
-   }
+   //if((str = configElement->Attribute("cachePath")) != NULL)
+   //{
+   //   SetCachePath(str);
+   //}
 
-   for(TiXmlElement* element = configElement->FirstChildElement();
-       element != NULL;
-       element = element->NextSiblingElement())
-   {
-      if(!strcmp(element->Value(), "GeoOrigin"))
-      {
-         double latitude = 0.0, longitude = 0.0, elevation = 0.0;
+   //for(TiXmlElement* element = configElement->FirstChildElement();
+   //    element != NULL;
+   //    element = element->NextSiblingElement())
+   //{
+   //   if(!strcmp(element->Value(), "GeoOrigin"))
+   //   {
+   //      double latitude = 0.0, longitude = 0.0, elevation = 0.0;
 
-         if((str = element->Attribute("latitude")) != NULL)
-         {
-            sscanf(str, "%lg", &latitude);
-         }
-         if((str = element->Attribute("longitude")) != NULL)
-         {
-            sscanf(str, "%lg", &longitude);
-         }
-         if((str = element->Attribute("elevation")) != NULL)
-         {
-            sscanf(str, "%lg", &elevation);
-         }
+   //      if((str = element->Attribute("latitude")) != NULL)
+   //      {
+   //         sscanf(str, "%lg", &latitude);
+   //      }
+   //      if((str = element->Attribute("longitude")) != NULL)
+   //      {
+   //         sscanf(str, "%lg", &longitude);
+   //      }
+   //      if((str = element->Attribute("elevation")) != NULL)
+   //      {
+   //         sscanf(str, "%lg", &elevation);
+   //      }
 
-         SetGeoOrigin(latitude, longitude, elevation);
-      }
-      else if(!strcmp(element->Value(), "DTED"))
-      {
-         if((str = element->Attribute("path")) != NULL)
-         {
-            AddDTEDPath(str);
-         }
-      }
-	  else if(!strcmp(element->Value(), "DEM"))
-	  {
-		  if((str = element->Attribute("path")) != NULL)
-		  {
-			  mDEMmode = true;
-			  mDEMpath = str;
-		  }
-	  }
-      else if(!strcmp(element->Value(), "LCCImage"))
-      {
-         if((str = element->Attribute("filename")) != NULL)
-         {
-			mUseLCC = LoadLCCConfiguration("data/lccdata.xml");
-            if (mUseLCC) 
-				LoadGeospecificLCCImage(str);
-         }
-      }
-      else if(!strcmp(element->Value(), "GeospecificImage"))
-      {
-         if((str = element->Attribute("filename")) != NULL)
-         {
-            LoadGeospecificImage(str);
-         }
-	  }      
-	  else if(!strcmp(element->Value(), "MaxTexture"))
-	  {
-		  if((str = element->Attribute("Size")) != NULL)
-		  {
-           mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,  __FUNCTION__, "MaxTextureSize = %s", str );
-			  SetMaxTextureSize(atoi(str));
-		  }
-	  }
-	  else if(!strcmp(element->Value(), "Gamma"))
-	  {
-		  if((str = element->Attribute("Correction")) != NULL)
-		  {
-			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "GammaCorrect = %s", str);
-			  mGamma = atof(str);
-		  }
-	  }
-	  else if(!strcmp(element->Value(), "Random"))
-	  {
-		  if((str = element->Attribute("Seed")) != NULL)
-		  {
-			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Random seed = %s", str);
-			  mSeed = abs(atoi(str));
-		  }
-	  }
-	  else if(!strcmp(element->Value(), "Looks"))
-	  {
-		  if((str = element->Attribute("Per_Pixel")) != NULL)
-		  {
-			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Looks per pixel = %s", str);
-			  mMaxLooks = atoi(str);
-		  }
-	  }
-	  else if(!strcmp(element->Value(), "CellMax"))
-	  {
-		  if((str = element->Attribute("Objects")) != NULL)
-		  {
-			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Max objects per geocell = %s", str);
-			  mMaxObjectsPerCell = atoi(str);
-		  }
-	  }
-	  else if(!strcmp(element->Value(), "Image"))
-	  {
-		  if((str = element->Attribute("Extension")) != NULL)
-		  {
-			  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Extension = %s", str);
-			  mImageExtension = str;
-		  }
-	  }
-      else if(!strcmp(element->Value(), "Roads"))
-      {
-         string filename, query("SELECT * FROM *"), texture;
-         float width = 7.0f, sScale = 1.0f, tScale = 1.0f;
+   //      SetGeoOrigin(latitude, longitude, elevation);
+   //   }
+   //   else if(!strcmp(element->Value(), "DTED"))
+   //   {
+   //      if((str = element->Attribute("path")) != NULL)
+   //      {
+   //         AddDTEDPath(str);
+   //      }
+   //   }
+	  //else if(!strcmp(element->Value(), "DEM"))
+	  //{
+		 // if((str = element->Attribute("path")) != NULL)
+		 // {
+			//  mDEMmode = true;
+			//  mDEMpath = str;
+		 // }
+	  //}
+   //   else if(!strcmp(element->Value(), "LCCImage"))
+   //   {
+   //      if((str = element->Attribute("filename")) != NULL)
+   //      {
+			//mUseLCC = LoadLCCConfiguration("data/lccdata.xml");
+   //         if (mUseLCC) 
+			//	LoadGeospecificLCCImage(str);
+   //      }
+   //   }
+   //   else if(!strcmp(element->Value(), "GeospecificImage"))
+   //   {
+   //      if((str = element->Attribute("filename")) != NULL)
+   //      {
+   //         LoadGeospecificImage(str);
+   //      }
+	  //}      
+	  //else if(!strcmp(element->Value(), "MaxTexture"))
+	  //{
+		 // if((str = element->Attribute("Size")) != NULL)
+		 // {
+   //        mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,  __FUNCTION__, "MaxTextureSize = %s", str );
+			//  SetMaxTextureSize(atoi(str));
+		 // }
+	  //}
+	  //else if(!strcmp(element->Value(), "Gamma"))
+	  //{
+		 // if((str = element->Attribute("Correction")) != NULL)
+		 // {
+			//  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "GammaCorrect = %s", str);
+			//  mGamma = atof(str);
+		 // }
+	  //}
+	  //else if(!strcmp(element->Value(), "Random"))
+	  //{
+		 // if((str = element->Attribute("Seed")) != NULL)
+		 // {
+			//  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Random seed = %s", str);
+			//  mSeed = abs(atoi(str));
+		 // }
+	  //}
+	  //else if(!strcmp(element->Value(), "Looks"))
+	  //{
+		 // if((str = element->Attribute("Per_Pixel")) != NULL)
+		 // {
+			//  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Looks per pixel = %s", str);
+			//  mMaxLooks = atoi(str);
+		 // }
+	  //}
+	  //else if(!strcmp(element->Value(), "CellMax"))
+	  //{
+		 // if((str = element->Attribute("Objects")) != NULL)
+		 // {
+			//  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Max objects per geocell = %s", str);
+			//  mMaxObjectsPerCell = atoi(str);
+		 // }
+	  //}
+	  //else if(!strcmp(element->Value(), "Image"))
+	  //{
+		 // if((str = element->Attribute("Extension")) != NULL)
+		 // {
+			//  mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Image Extension = %s", str);
+			//  mImageExtension = str;
+		 // }
+	  //}
+   //   else if(!strcmp(element->Value(), "Roads"))
+   //   {
+   //      string filename, query("SELECT * FROM *"), texture;
+   //      float width = 7.0f, sScale = 1.0f, tScale = 1.0f;
 
-         if((str = element->Attribute("filename")) != NULL)
-         {
-            filename = str;
-         }
-         if((str = element->Attribute("query")) != NULL)
-         {
-            query = str;
-         }
-         if((str = element->Attribute("width")) != NULL)
-         {
-            sscanf(str, "%g", &width);
-         }
-         if((str = element->Attribute("texture")) != NULL)
-         {
-            texture = str;
-         }
-         if((str = element->Attribute("sScale")) != NULL)
-         {
-            sscanf(str, "%g", &sScale);
-         }
-         if((str = element->Attribute("tScale")) != NULL)
-         {
-            sscanf(str, "%g", &tScale);
-         }
+   //      if((str = element->Attribute("filename")) != NULL)
+   //      {
+   //         filename = str;
+   //      }
+   //      if((str = element->Attribute("query")) != NULL)
+   //      {
+   //         query = str;
+   //      }
+   //      if((str = element->Attribute("width")) != NULL)
+   //      {
+   //         sscanf(str, "%g", &width);
+   //      }
+   //      if((str = element->Attribute("texture")) != NULL)
+   //      {
+   //         texture = str;
+   //      }
+   //      if((str = element->Attribute("sScale")) != NULL)
+   //      {
+   //         sscanf(str, "%g", &sScale);
+   //      }
+   //      if((str = element->Attribute("tScale")) != NULL)
+   //      {
+   //         sscanf(str, "%g", &tScale);
+   //      }
 
-         LoadRoads(filename, query, width, texture, sScale, tScale);
-      }
-   }
+   //      LoadRoads(filename, query, width, texture, sScale, tScale);
+   //   }
+   //}
 }
 
 /**
@@ -930,7 +930,7 @@ void SOARXTerrain::ImageStats(const osg::Image* image, char* imagename)
 * the geotransform of the image, or NULL to read the geotransform
 * from the image itself
 */
-void SOARXTerrain::LoadGeospecificLCCImage(std::string filename, const double* geoTransform)
+void SOARXTerrain::LoadGeospecificLCCImage(const std::string& filename, const double* geoTransform)
 {
 	GeospecificImage gslcc;
 
@@ -4548,17 +4548,17 @@ void SOARXTerrain::SetLCCVisibility(bool mask)
 *
 * @param filename the name of the configuration file to load
 */
-bool SOARXTerrain::LoadLCCConfiguration(std::string filename)
+bool SOARXTerrain::LoadLCCConfiguration(const std::string& filename)
 {
-	TiXmlDocument lccconfig;
+	//TiXmlDocument lccconfig;
 
-	if(lccconfig.LoadFile(filename.c_str()))
-	{
-		ParseLCCConfiguration(lccconfig.RootElement());
+	//if(lccconfig.LoadFile(filename.c_str()))
+	//{
+	//	ParseLCCConfiguration(lccconfig.RootElement());
 
-		return true;
-	}
-	else
+	//	return true;
+	//}
+	//else
 	{
 		mLog->LogMessage(Log::LOG_WARNING, __FUNCTION__,  "Can't load %s", filename.c_str());
 		return false;
@@ -4570,146 +4570,146 @@ bool SOARXTerrain::LoadLCCConfiguration(std::string filename)
 	*
 	* @param configElement the configuration element to parse
 	*/
-void SOARXTerrain::ParseLCCConfiguration(TiXmlElement* configElement)
+void SOARXTerrain::ParseLCCConfiguration(/*TiXmlElement* configElement*/)
 {
-	const char* str;
+	//const char* str;
 
-	TiXmlElement* LCCTypeElement = 0;
-	
-	LCCTypeElement = configElement->FirstChildElement("LCCType");
+	//TiXmlElement* LCCTypeElement = 0;
+	//
+	//LCCTypeElement = configElement->FirstChildElement("LCCType");
 
-	while (LCCTypeElement)
-	{
-		LCCs lcc;
-					
-		TiXmlElement* DefinitionElement = 0;
- 
-		DefinitionElement = LCCTypeElement->FirstChildElement( "Definition" );
-		if ( DefinitionElement)
-		{
+	//while (LCCTypeElement)
+	//{
+	//	LCCs lcc;
+	//				
+	//	TiXmlElement* DefinitionElement = 0;
+ //
+	//	DefinitionElement = LCCTypeElement->FirstChildElement( "Definition" );
+	//	if ( DefinitionElement)
+	//	{
 
-			if((str = DefinitionElement->Attribute("Index")) != NULL)
-			{
-				lcc.idx = atoi(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Index = %i", lcc.idx);
-			}
-			if((str = DefinitionElement->Attribute("R")) != NULL)
-			{
-				lcc.rgb[0]=atoi(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "R = %i", lcc.rgb[0]);
-			}
-			if((str = DefinitionElement->Attribute("G")) != NULL)
-			{
-				lcc.rgb[1]=atoi(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "G = %i", lcc.rgb[1]);
-			}
-			if((str = DefinitionElement->Attribute("B")) != NULL)
-			{
-				lcc.rgb[2]=atoi(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "B = %i", lcc.rgb[2]);
-			}
-			if((str = DefinitionElement->Attribute("Name")) != NULL)
-			{
-				lcc.name = str;
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "name of LCCtype = %s", lcc.name.c_str());
-			}
-			if((str = DefinitionElement->Attribute("SlopeMin")) != NULL)
-			{
-				lcc.slope.min = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope min = %5.2f", lcc.slope.min);
-			}
-			if((str = DefinitionElement->Attribute("SlopeMax")) != NULL)
-			{
-				lcc.slope.max = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope max = %5.2f", lcc.slope.max);
-			}
-			if((str = DefinitionElement->Attribute("SlopeSharpness")) != NULL)
-			{
-				lcc.slope.sharpness = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope sharpness = %5.2f", lcc.slope.sharpness);
-			}
-			if((str = DefinitionElement->Attribute("ElevationMin")) != NULL)
-			{
-				lcc.elevation.min = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation min = %5.2f", lcc.elevation.min);
-			}
-			if((str = DefinitionElement->Attribute("ElevationMax")) != NULL)
-			{
-				lcc.elevation.max = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation max = %5.2f", lcc.elevation.max);
-			}
-			if((str = DefinitionElement->Attribute("ElevationSharpness")) != NULL)
-			{
-				lcc.elevation.sharpness = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation sharpness = %5.2f", lcc.elevation.sharpness);
-			}
-			if((str = DefinitionElement->Attribute("RelativeElevationMin")) != NULL)
-			{
-				lcc.relelevation.min = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation min = %5.2f", lcc.relelevation.min);
-			}
-			if((str = DefinitionElement->Attribute("RelativeElevationMax")) != NULL)
-			{
-				lcc.relelevation.max = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation max = %5.2f", lcc.relelevation.max);
-			}
-			if((str = DefinitionElement->Attribute("RelativeElevationSharpness")) != NULL)
-			{
-				lcc.relelevation.sharpness = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation sharpness = %5.2f", lcc.relelevation.sharpness);
-			}
-			if((str = DefinitionElement->Attribute("Aspect")) != NULL)
-			{
-				lcc.aspect = atof(str);
-				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "aspect = %5.2f", lcc.aspect);
-			}
+	//		if((str = DefinitionElement->Attribute("Index")) != NULL)
+	//		{
+	//			lcc.idx = atoi(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Index = %i", lcc.idx);
+	//		}
+	//		if((str = DefinitionElement->Attribute("R")) != NULL)
+	//		{
+	//			lcc.rgb[0]=atoi(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "R = %i", lcc.rgb[0]);
+	//		}
+	//		if((str = DefinitionElement->Attribute("G")) != NULL)
+	//		{
+	//			lcc.rgb[1]=atoi(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "G = %i", lcc.rgb[1]);
+	//		}
+	//		if((str = DefinitionElement->Attribute("B")) != NULL)
+	//		{
+	//			lcc.rgb[2]=atoi(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "B = %i", lcc.rgb[2]);
+	//		}
+	//		if((str = DefinitionElement->Attribute("Name")) != NULL)
+	//		{
+	//			lcc.name = str;
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "name of LCCtype = %s", lcc.name.c_str());
+	//		}
+	//		if((str = DefinitionElement->Attribute("SlopeMin")) != NULL)
+	//		{
+	//			lcc.slope.min = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope min = %5.2f", lcc.slope.min);
+	//		}
+	//		if((str = DefinitionElement->Attribute("SlopeMax")) != NULL)
+	//		{
+	//			lcc.slope.max = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope max = %5.2f", lcc.slope.max);
+	//		}
+	//		if((str = DefinitionElement->Attribute("SlopeSharpness")) != NULL)
+	//		{
+	//			lcc.slope.sharpness = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "slope sharpness = %5.2f", lcc.slope.sharpness);
+	//		}
+	//		if((str = DefinitionElement->Attribute("ElevationMin")) != NULL)
+	//		{
+	//			lcc.elevation.min = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation min = %5.2f", lcc.elevation.min);
+	//		}
+	//		if((str = DefinitionElement->Attribute("ElevationMax")) != NULL)
+	//		{
+	//			lcc.elevation.max = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation max = %5.2f", lcc.elevation.max);
+	//		}
+	//		if((str = DefinitionElement->Attribute("ElevationSharpness")) != NULL)
+	//		{
+	//			lcc.elevation.sharpness = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "elevation sharpness = %5.2f", lcc.elevation.sharpness);
+	//		}
+	//		if((str = DefinitionElement->Attribute("RelativeElevationMin")) != NULL)
+	//		{
+	//			lcc.relelevation.min = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation min = %5.2f", lcc.relelevation.min);
+	//		}
+	//		if((str = DefinitionElement->Attribute("RelativeElevationMax")) != NULL)
+	//		{
+	//			lcc.relelevation.max = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation max = %5.2f", lcc.relelevation.max);
+	//		}
+	//		if((str = DefinitionElement->Attribute("RelativeElevationSharpness")) != NULL)
+	//		{
+	//			lcc.relelevation.sharpness = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "relelevation sharpness = %5.2f", lcc.relelevation.sharpness);
+	//		}
+	//		if((str = DefinitionElement->Attribute("Aspect")) != NULL)
+	//		{
+	//			lcc.aspect = atof(str);
+	//			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "aspect = %5.2f", lcc.aspect);
+	//		}
 
-			
-		}// if Definition
+	//		
+	//	}// if Definition
 
 
-		TiXmlElement* ModelElement = 0;
-				
-		ModelElement = DefinitionElement->NextSiblingElement( "Model" );
+	//	TiXmlElement* ModelElement = 0;
+	//			
+	//	ModelElement = DefinitionElement->NextSiblingElement( "Model" );
 
-		while(ModelElement)
-		{
-				LCCModel model;
+	//	while(ModelElement)
+	//	{
+	//			LCCModel model;
 
-				if((str = ModelElement->Attribute("Name")) != NULL)
-				{
-					model.name = str;
-					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "name of model = %s", model.name.c_str());
-				}
-				if((str = ModelElement->Attribute("Scale")) != NULL)
-				{
-					model.scale = atof(str);
-					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "scale of model = %5.2f", model.scale);
-				}
+	//			if((str = ModelElement->Attribute("Name")) != NULL)
+	//			{
+	//				model.name = str;
+	//				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "name of model = %s", model.name.c_str());
+	//			}
+	//			if((str = ModelElement->Attribute("Scale")) != NULL)
+	//			{
+	//				model.scale = atof(str);
+	//				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "scale of model = %5.2f", model.scale);
+	//			}
 
-				if(osgDB::fileExists("data/" + model.name))
-				{
-					lcc.lccmodel.push_back(model);
-					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Found model = %s", model.name.c_str());
-				}
-				else
-					mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Couldn't find model = %s", model.name.c_str());
+	//			if(osgDB::fileExists("data/" + model.name))
+	//			{
+	//				lcc.lccmodel.push_back(model);
+	//				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Found model = %s", model.name.c_str());
+	//			}
+	//			else
+	//				mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Couldn't find model = %s", model.name.c_str());
 
-				ModelElement= ModelElement->NextSiblingElement("Model");
+	//			ModelElement= ModelElement->NextSiblingElement("Model");
 
-		} //while Model
+	//	} //while Model
 
-		//if model size = 0, then don't push back, else push back
-		if (lcc.lccmodel.size() != 0)
-		{
-			mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Using LCCType %i (%s), found %i model(s)", lcc.idx, lcc.name.c_str(), lcc.lccmodel.size());
-			mLCCs.push_back(lcc);
-		}
-		else
-			mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Ignoring LCCType %i (%s), no models found", lcc.idx, lcc.name.c_str());
+	//	//if model size = 0, then don't push back, else push back
+	//	if (lcc.lccmodel.size() != 0)
+	//	{
+	//		mLog->LogMessage(Log::LOG_INFO, __FUNCTION__,   "Using LCCType %i (%s), found %i model(s)", lcc.idx, lcc.name.c_str(), lcc.lccmodel.size());
+	//		mLCCs.push_back(lcc);
+	//	}
+	//	else
+	//		mLog->LogMessage(Log::LOG_DEBUG,  __FUNCTION__, "Ignoring LCCType %i (%s), no models found", lcc.idx, lcc.name.c_str());
 
-		LCCTypeElement = LCCTypeElement->NextSiblingElement("LCCType");
-	}
+	//	LCCTypeElement = LCCTypeElement->NextSiblingElement("LCCType");
+	//}
 
 }
 
