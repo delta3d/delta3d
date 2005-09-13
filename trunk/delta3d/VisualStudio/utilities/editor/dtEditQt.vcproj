@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtDALd.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvisd.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
-				OutputFile="..\..\..\bin\editorD.exe"
+				OutputFile="..\..\..\bin\STAGED.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
@@ -91,7 +91,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Producer.lib ul.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib tinyxml.lib osgUtil.lib ode.lib osgText.lib osgTerrain.lib js.lib isense.lib dtDAL.lib dtcore.lib dtabc.lib dtchar.lib dtaudio.lib dtutil.lib dtvis.lib QtCore4.lib QtGui4.lib qtmain.lib QtOpenGL4.lib xerces-c_2.lib xerces-c_2D.lib"
-				OutputFile="..\..\..\bin\editor.exe"
+				OutputFile="..\..\..\bin\STAGE.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
 				IgnoreDefaultLibraryNames="libc;libcmt"
