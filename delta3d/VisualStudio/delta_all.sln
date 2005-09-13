@@ -1,38 +1,38 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtabc", "src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtaudio", "src\dtAudio\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAudio", "src\dtAudio\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtchar", "src\dtChar\dtchar.vcproj", "{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtChar", "src\dtChar\dtchar.vcproj", "{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCore", "src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dthla", "src\dtHLA\dthla.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtHLA", "src\dtHLA\dthla.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtscript", "src\dtScript\dtscript.vcproj", "{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtScript", "src\dtScript\dtscript.vcproj", "{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtutil", "src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "src\dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtVis", "src\dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -76,7 +76,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtSOARXBindings", "src\pyth
 		{A6562750-F7E3-4CB3-83C2-727F49F88CE0} = {A6562750-F7E3-4CB3-83C2-727F49F88CE0}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtsoarx", "src\soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtSOARX", "src\soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
@@ -286,6 +286,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testShaders", "examples\tes
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testBumpMap", "examples\testBumpMap\testBumpMap.vcproj", "{F3C3B681-713F-498F-8031-F00E86E38D36}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -476,6 +480,10 @@ Global
 		{3C3FEE6D-F7FE-4D1B-BE27-BBA95AFCC931}.Debug.Build.0 = Debug|Win32
 		{3C3FEE6D-F7FE-4D1B-BE27-BBA95AFCC931}.Release.ActiveCfg = Release|Win32
 		{3C3FEE6D-F7FE-4D1B-BE27-BBA95AFCC931}.Release.Build.0 = Release|Win32
+		{F3C3B681-713F-498F-8031-F00E86E38D36}.Debug.ActiveCfg = Debug|Win32
+		{F3C3B681-713F-498F-8031-F00E86E38D36}.Debug.Build.0 = Debug|Win32
+		{F3C3B681-713F-498F-8031-F00E86E38D36}.Release.ActiveCfg = Release|Win32
+		{F3C3B681-713F-498F-8031-F00E86E38D36}.Release.Build.0 = Release|Win32
 		{F3C3B681-713F-498F-8031-F00E86E38D36}.Debug.ActiveCfg = Debug|Win32
 		{F3C3B681-713F-498F-8031-F00E86E38D36}.Debug.Build.0 = Debug|Win32
 		{F3C3B681-713F-498F-8031-F00E86E38D36}.Release.ActiveCfg = Release|Win32

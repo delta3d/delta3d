@@ -24,13 +24,13 @@
 using namespace dtABC;
 using namespace dtCore;
 
-class TestShadersApp : public Application
+class TestBumpMapApp : public Application
 {
 
-	DECLARE_MANAGEMENT_LAYER( TestShadersApp )
+	DECLARE_MANAGEMENT_LAYER( TestBumpMapApp )
 
 public:
-	TestShadersApp( std::string configFilename = "config.xml" )
+	TestBumpMapApp( std::string configFilename = "config.xml" )
 		: Application( configFilename )
 	{
 
@@ -199,7 +199,7 @@ public:
 
    }
 
-	~TestShadersApp()
+	~TestBumpMapApp()
 	{
       GetScene()->GetSceneNode()->removeChild(mGeode.get());
 	   RemoveSender( System::Instance() );
@@ -219,7 +219,7 @@ private:
 
 };
 
-IMPLEMENT_MANAGEMENT_LAYER( TestShadersApp )
+IMPLEMENT_MANAGEMENT_LAYER( TestBumpMapApp )
 
 int main(int argc, char* argv[])
 {
@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
 	SetDataFilePathList( GetDeltaRootPath() + "/examples/testShaders/;" +
 		                  GetDeltaDataPathList()  );
 
-	RefPtr<TestShadersApp> app = new TestShadersApp( "config.xml" );
+	RefPtr<TestBumpMapApp> app = new TestBumpMapApp( "config.xml" );
 	app->Config();
 	app->Run();
 
