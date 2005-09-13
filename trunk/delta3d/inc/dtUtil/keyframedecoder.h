@@ -98,8 +98,8 @@ namespace dtUtil
                             FrameDataPtrContainer& fdc)
       {
          XERCES_CPP_NAMESPACE_QUALIFIER DOMTreeWalker* sourcewalker = doc->createTreeWalker( fs, XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeFilter::SHOW_ELEMENT, 0, true );
+
          // move the walker to the first source
-         XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* firstchild = sourcewalker->firstChild();  // the first source
          for(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* child=sourcewalker->firstChild();
              child != 0;
              child=sourcewalker->nextSibling())
