@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gned.lib osgd.lib HawkNLD.lib dtUtilD.lib"
+				AdditionalDependencies="gned.lib osgd.lib HawkNLD.lib dtCoreD.lib dtUtilD.lib"
 				OutputFile="../../../bin/dtNetD.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -88,7 +88,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gne.lib osg.lib HawkNL.lib dtUtil.lib"
+				AdditionalDependencies="gne.lib osg.lib HawkNL.lib dtCore.lib dtUtil.lib"
 				OutputFile="../../../bin/dtNet.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
