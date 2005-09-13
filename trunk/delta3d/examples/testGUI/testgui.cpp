@@ -11,12 +11,11 @@ using namespace dtUtil;
 class TestGUIApp : public dtABC::Application
 {
 public:
-   TestGUIApp( std::string configFilename = "" ):
-      Application( configFilename )
-      {
-      }
+   TestGUIApp(const std::string& configFilename = "" ): Application( configFilename )
+   {
+   }
 
-      ~TestGUIApp() {}
+   ~TestGUIApp() {}
 
    virtual void Config()
    {
@@ -48,7 +47,7 @@ public:
    }
 
 
-   void SetLayoutFilename(std::string filename)
+   void SetLayoutFilename(const std::string& filename)
    {
       mLayoutFilename = filename;
    }
@@ -176,7 +175,7 @@ private:
 int main( int argc, const char* argv[] )
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( "..;" + GetDeltaDataPathList() ); 
+   SetDataFilePathList( "..;" + GetDeltaDataPathList()+ ";" + dtCore::GetDeltaRootPath() + "/examples/testGUI" ); 
    dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
 
    std::string filename = "";
