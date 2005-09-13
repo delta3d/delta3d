@@ -80,7 +80,7 @@ namespace dtUtil
             framestamp != 0;
             framestamp = framestampwalker->nextSibling() )
          {
-            std::string val( dtUtil::GetAttributeValueFor("TimeCode", framestamp) );
+            std::string val( dtUtil::FindAttributeValueFor("TimeCode", framestamp->getAttributes()) );
             timeStamp = dtUtil::ToFloat( val );
 
             FrameDataPtrContainer dataToBeFilled;

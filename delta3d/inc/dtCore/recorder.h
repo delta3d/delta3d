@@ -274,8 +274,8 @@ namespace dtCore
          mWriter->WriteFile( filename );
 
          // clean up memory
-         dtUtil::XercesWriter::ReleaseTranscode( TIMECODE );
-         dtUtil::XercesWriter::ReleaseTranscode( FRAME );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMECODE );
+         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &FRAME );
          //std::for_each( cleanupxmlstring.begin(), cleanupxmlstring.end(), &dtUtil::XercesWriter::ReleaseTranscode );
       }
 
