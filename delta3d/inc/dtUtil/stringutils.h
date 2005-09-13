@@ -26,7 +26,7 @@
 #ifndef DELTA_STRING_UTILS_INC
 #define DELTA_STRING_UTILS_INC
 
-#include "dtCore/export.h"
+#include <dtCore/export.h>
 
 #include <string>                       // for parameters
 #include <sstream>                      // for std::ostringstream
