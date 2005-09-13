@@ -461,30 +461,15 @@ def CheckForBoost() :
 
    boostHeader = os.path.join('boost','python.hpp')
 
-   # if OS == 'windows' :
-#       if mode == 'debug' :
-#          boostLib = 'boost_python_debug.dll'
-#       else :
-#          boostLib = 'boost_python.dll'
-#    elif OS == 'linux' :
-#       boostLib = 'libboost_python.so'
-#    elif OS == 'darwin' :
-#       boostLib = 'libboost_python.dylib'
-
-   if mode == 'debug' :
-      if OS == 'windows' :
-         boostLib = 'libboost_python-vc71-mt-gd-1_33'
-      elif OS == 'linux' :
-         boostLib = 'libboost_python-gcc-d-1_33.so'
-      elif OS == 'darwin' :
-         boostLib = 'libboost_python-gcc-d-1_33.dylib' # verify this         
-   else :
-      if OS == 'windows' :
-         boostLib = 'libboost_python-vc71-mt-1_33'
-      elif OS == 'linux' :
-         boostLib = 'libboost_python-gcc-1_33.so'
-      elif OS == 'darwin' :
-         boostLib = 'libboost_python-gcc-1_33.dylib' # verify this         
+   if OS == 'windows' :
+      if mode == 'debug' :
+         boostLib = 'boost_python_debug.dll'
+      else :
+         boostLib = 'boost_python.dll'
+   elif OS == 'linux' :
+      boostLib = 'libboost_python.so'
+   elif OS == 'darwin' :
+      boostLib = 'libboost_python.dylib'
 
    foundLib = 0
    for dir in env['LIBPATH'] :
@@ -601,17 +586,8 @@ env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependenc
 
 ## Boost Python
 if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
-
    env.Append( CPPPATH = [ env.get('boost') ] )
-
-   if OS == 'windows' :
-      env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'bin', 'boost', 'libs', 'python', 'build', 'libboost_python.lib', 'vc-7_1', env.get('mode'), 'threading-multi' ) ] )
-   elif OS == 'linux' :
-      env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'bin', 'boost', 'libs', 'python', 'build', 'libboost_python.so', 'gcc', env.get('mode'), 'shared-linkable-true' ) ] )
-   elif OS == 'darwin' :
-      env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'bin', 'boost', 'libs', 'python', 'build', 'libboost_python.dylib', 'gcc', env.get('mode'), 'shared-linkable-true' ) ] )
-
-   print env['LIBPATH']
+   env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )
      
  # RTI 
 rtiLibs = []
