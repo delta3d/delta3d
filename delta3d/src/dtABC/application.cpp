@@ -26,18 +26,14 @@ Application::Application(const std::string& configFilename) :  BaseABC("Applicat
    if( foundPath.empty() )
    {
       LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
-      GenerateDefaultConfigFile();
-      CreateInstances(); //create default window, camera, etc.
+      foundPath = GenerateDefaultConfigFile();
    }
 
-   else
+   // parse the file
+   if( !ParseConfigFile( foundPath ) )
    {
-      // parse the file
-      if( !ParseConfigFile( foundPath ) )
-      {
-         LOG_WARNING("Application: Error loading config file, using defaults instead.");
-         CreateInstances(); //create default window, camera, etc.
-      }
+      LOG_WARNING("Application: Error loading config file, using defaults instead.");
+      CreateInstances(); //create default window, camera, etc.
    }
 }
 
@@ -309,6 +305,8 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
    XMLCh* SCENE = XMLString::transcode("Scene");
    DOMElement* scene = doc->createElement(SCENE);
    XMLString::release( &SCENE );
+   XMLCh* DEFAULTSCENE = XMLString::transcode("defaultScene");
+   scene->setAttribute( NAME , DEFAULTSCENE );
 
    app->appendChild( scene );
 
@@ -327,9 +325,9 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
 
    XMLCh* WINDOWINSTANCE = XMLString::transcode("WindowInstance");
    XMLCh* SCENEINSTANCE = XMLString::transcode("SceneInstance");
-   XMLCh* DEFAULTSCENE = XMLString::transcode("DefaultScene");
    camera->setAttribute( WINDOWINSTANCE , DEFAULTWIN );
    camera->setAttribute( SCENEINSTANCE , DEFAULTSCENE );
+   XMLString::release( &DEFAULTSCENE );
    XMLString::release( &WINDOWINSTANCE );
    XMLString::release( &SCENEINSTANCE );
    XMLString::release( &DEFAULTSCENE );
@@ -504,15 +502,16 @@ void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
 
    if( ename == "Scene" )
    {
+      dtCore::Scene* scene = mApp->GetScene();
+
       dtUtil::AttributeSearch sceneattrs;
       sceneattrs.GetSearchKeys().push_back("Name");
-
       dtUtil::AttributeSearch::ResultMap results = sceneattrs( attrs );
 
       dtUtil::AttributeSearch::ResultMap::iterator iter = results.find("Name");
       if( iter != results.end() )
       {
-         mApp->GetScene()->SetName( (*iter).second );
+         scene->SetName( (*iter).second );
       }
    }
 

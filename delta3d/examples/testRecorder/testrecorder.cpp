@@ -5,8 +5,6 @@
 
 #include "testrecorder.h"
 #include <dtCore/flymotionmodel.h>
-#include <string>
-#include <sstream>   // for std::istringstream
 
 TestRecorder::TestRecorder(const std::string& config): BaseClass(config),
 mRecorder(new CameraRecorder()), mRecordable(0), mMotionModel(0), mTerrain(new dtCore::InfiniteTerrain()), mFileHandle("recording.xml")
@@ -34,36 +32,33 @@ void TestRecorder::KeyPressed(dtCore::Keyboard* keyboard,
          if( mRecorder->GetState() == CameraRecorder::Recording )
          {
             mRecorder->Stop();  // should probably be called 'StopRecording'
-            std::cout << "stopped recording" << std::endl;
+            LOG_ALWAYS( "Stopped recording" )
          }
 
          else
          {
-            std::cout << "recording now" << std::endl;
+            LOG_ALWAYS("Recording now.")
             mRecorder->Record();
          }
       } break;
 
    case Producer::Key_F:  // save to file
       {
-         LOG_INFO("Saving file " + mFileHandle )
+         LOG_ALWAYS("Saving file " + mFileHandle )
          mRecorder->SaveFile( mFileHandle );
-         LOG_INFO("...Finished saving file " + mFileHandle )
+         LOG_ALWAYS("...Finished saving file " + mFileHandle )
       } break;
 
    case Producer::Key_L:  // load from file
       {
-         std::cout << "enter file name to load: " << std::endl;
-         std::string mfile;
-         std::cin >> mfile;
-         LOG_INFO("Loading file: "+mfile)
-         mRecorder->LoadFile( mfile );
-         LOG_INFO("...done loading file: "+mfile)
+         LOG_ALWAYS("Loading file: " + mFileHandle)
+         mRecorder->LoadFile( mFileHandle );
+         LOG_ALWAYS("...done loading file: " + mFileHandle)
       } break;
 
    case Producer::Key_P:  // play loaded file
       {
-         LOG_INFO("Playing loaded data.")
+         LOG_ALWAYS("Playing loaded data.")
          mRecorder->Play();
       };
 
@@ -87,6 +82,7 @@ void TestRecorder::SetupScene()
 {
    // use the infinite terrain class
    // add it to the scene
+   //dtCore::Scene* scene = GetScene();
    AddDrawable( mTerrain.get() );
 }
 
