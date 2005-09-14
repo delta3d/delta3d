@@ -146,6 +146,14 @@ bool Application::ParseConfigFile(const std::string& file)
    {
       parser = XMLReaderFactory::createXMLReader();
    }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg);
+      XMLString::release( &message );
+      return false;
+   }
    catch(...)
    {
       LOG_ERROR("Could not create a Xerces SAX2XMLReader")

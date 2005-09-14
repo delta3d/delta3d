@@ -15,25 +15,24 @@
 #include <linux/in.h>
 #endif
 
-#include "tinyxml.h"
-
 #include <osg/Vec3>
 #include <osg/Vec4>
 #include <osg/Matrix>
 #include <osg/Material>
 #include <osg/StateSet>
 #include <osg/Endian>
+#include <osgDB/FileUtils>
+#include <osgUtil/IntersectVisitor>
 
-#include "osgDB/FileUtils"
-
-#include "osgUtil/IntersectVisitor"
+#include <xercesc/sax2/XMLReaderFactory.hpp>
 
 #include "dtCore/system.h"
 #include "dtUtil/matrixutil.h"
+#include "dtUtil/xerceserrorhandler.h"
+#include "dtUtil/stringutils.h"
 
-using namespace dtCore;
 using namespace dtHLA;
-using namespace std;
+XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(RTIConnection)
 
@@ -80,7 +79,7 @@ RTIConnection::RTIConnection(std::string name)
 {
    RegisterInstance(this);
    
-   AddSender(System::Instance());
+   AddSender(dtCore::System::Instance());
 
    SetGeoOrigin(0, 0, 0);
 
@@ -88,10 +87,10 @@ RTIConnection::RTIConnection(std::string name)
    mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535)); 
   
    SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
-   
-   //
-   // Code from http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1047083789&id=1045780608
-   //
+
+   /**
+     * \sa http://faq.cprogramming.com/cgi-bin/smartfaq.cgi?answer=1047083789&id=1045780608
+     */
 
    int len;
    sockaddr_in other, me;
@@ -149,7 +148,7 @@ throw (RTI::FederateInternalError)
    }
    mObjectHandleGhostDataMap.clear();
 
-   RemoveSender(System::Instance());
+   RemoveSender(dtCore::System::Instance());
    
    DeregisterInstance(this);
 } 
@@ -430,7 +429,7 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
       mMunitionDetonationClassHandle
    );
 
-   for(set< RefPtr<Entity> >::iterator it = mMasterEntities.begin();
+   for(std::set< dtCore::RefPtr<Entity> >::iterator it = mMasterEntities.begin();
        it != mMasterEntities.end();
        it++)
    {
@@ -487,7 +486,7 @@ std::string RTIConnection::GetExecutionName()
  *
  * @param scene the target scene
  */
-void RTIConnection::SetScene(Scene* scene)
+void RTIConnection::SetScene(dtCore::Scene* scene)
 {
    mScene = scene;
 }
@@ -497,7 +496,7 @@ void RTIConnection::SetScene(Scene* scene)
  *
  * @return the target scene
  */
-Scene* RTIConnection::GetScene()
+dtCore::Scene* RTIConnection::GetScene()
 {
    return mScene.get();
 }
@@ -507,7 +506,7 @@ Scene* RTIConnection::GetScene()
  *
  * @param effectManager the effect manager
  */
-void RTIConnection::SetEffectManager(EffectManager* effectManager)
+void RTIConnection::SetEffectManager(dtCore::EffectManager* effectManager)
 {
    if(mEffectManager != NULL)
    {
@@ -527,7 +526,7 @@ void RTIConnection::SetEffectManager(EffectManager* effectManager)
  *
  * @return the effect manager
  */
-EffectManager* RTIConnection::GetEffectManager()
+dtCore::EffectManager* RTIConnection::GetEffectManager()
 {
    return mEffectManager.get();
 }
@@ -1284,10 +1283,10 @@ void RTIConnection::ClampToGround(Entity* entity)
    
    if((groundBased && mGroundClampMode != NO_CLAMP) || destroyed)
    {
-      Transform transform;
-   
-      entity->GetTransform(&transform, Transformable::REL_CS);
-   
+      dtCore::Transform transform;
+
+      entity->GetTransform(&transform, dtCore::Transformable::REL_CS);
+
       osg::Vec3 xyz;
       osg::Vec3 groundNormal(0, 0, 1);
       float HOT = 0.0f;
@@ -1296,7 +1295,7 @@ void RTIConnection::ClampToGround(Entity* entity)
       
       osgUtil::IntersectVisitor iv;
    
-      RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
+      dtCore::RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
    
       segDown->set(
          osg::Vec3(xyz[0], xyz[1], 10000.f),
@@ -1363,7 +1362,7 @@ void RTIConnection::ClampToGround(Entity* entity)
          }
       }
       
-      entity->SetTransform(&transform, Transformable::REL_CS);
+      entity->SetTransform(&transform, dtCore::Transformable::REL_CS);
    }
 }
 
@@ -1379,7 +1378,7 @@ RTIConnection::EntityTypeMapping* RTIConnection::FindBestMapping(const EntityTyp
    EntityTypeMapping* bestMapping = NULL;
    int bestRank = -1;
    
-   for(map<EntityType, EntityTypeMapping>::iterator it = mEntityTypeMappings.begin();
+   for(std::map<EntityType, EntityTypeMapping>::iterator it = mEntityTypeMappings.begin();
        it != mEntityTypeMappings.end();
        it++)
    {
@@ -1482,7 +1481,7 @@ void RTIConnection::DeregisterMasterEntity(Entity* entity)
 {
    mMasterEntities.erase(entity);
    
-   for(map<RTI::ObjectHandle, MasterData>::iterator it = 
+   for(std::map<RTI::ObjectHandle, MasterData>::iterator it = 
          mObjectHandleMasterDataMap.begin();
        it != mObjectHandleMasterDataMap.end();
        it++)
@@ -1519,7 +1518,7 @@ int RTIConnection::GetMasterEntityCount()
  */
 Entity* RTIConnection::GetMasterEntity(int index)
 {
-   for(set< RefPtr<Entity> >::iterator it = mMasterEntities.begin();
+   for(std::set< dtCore::RefPtr<Entity> >::iterator it = mMasterEntities.begin();
        it != mMasterEntities.end();
        it++)
    {
@@ -1529,7 +1528,7 @@ Entity* RTIConnection::GetMasterEntity(int index)
       }
    }
    
-   return NULL;
+   return 0;
 }
 
 /**
@@ -1550,7 +1549,7 @@ int RTIConnection::GetGhostEntityCount()
  */
 Entity* RTIConnection::GetGhostEntity(int index)
 {
-   for(map<RTI::ObjectHandle, GhostData>::iterator it = mObjectHandleGhostDataMap.begin();
+   for(std::map<RTI::ObjectHandle, GhostData>::iterator it = mObjectHandleGhostDataMap.begin();
        it != mObjectHandleGhostDataMap.end();
        it++)
    {
@@ -1560,7 +1559,7 @@ Entity* RTIConnection::GetGhostEntity(int index)
       }
    }
    
-   return NULL;
+   return 0;
 }
          
 /**
@@ -1571,8 +1570,8 @@ Entity* RTIConnection::GetGhostEntity(int index)
  * @param iconFilename the entity icon filename
  */
 void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
-                                         std::string modelFilename,
-                                         std::string iconFilename)
+                                         const std::string& modelFilename,
+                                         const std::string& iconFilename)
 {
    mEntityTypeMappings[entityType].mModelFilename = modelFilename;
    mEntityTypeMappings[entityType].mIconFilename = iconFilename;
@@ -1588,10 +1587,9 @@ void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
  * @param iconFilename the entity icon filename
  */
 void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
-                                         std::string modelFilename,
-                                         const map<unsigned int, string>&
-                                          articulatedPartClassNameMap,
-                                         std::string iconFilename)
+                                         const std::string& modelFilename,
+                                         const std::map<unsigned int, std::string>& articulatedPartClassNameMap,
+                                         const std::string& iconFilename)
 {
    mEntityTypeMappings[entityType].mModelFilename = modelFilename;
    
@@ -1617,85 +1615,313 @@ void RTIConnection::RemoveEntityTypeMapping(const EntityType& entityType)
  * @param filename the name of the file to load
  * @return true if mappings successfully loaded, false otherwise
  */
-bool RTIConnection::LoadEntityTypeMappings(std::string filename)
+bool RTIConnection::LoadEntityTypeMappings(const std::string& filename)
 {
-   TiXmlDocument doc(osgDB::findDataFile(filename).c_str());
-   
-   if(doc.LoadFile())
+   std::string file = osgDB::findDataFile( filename );
+   if( file.empty() )
    {
-      mEntityTypeMappings.clear();
-      
-      for(TiXmlElement* e = 
-            doc.RootElement()->FirstChildElement("EntityTypeMapping");
-          e != NULL;
-          e = e->NextSiblingElement("EntityTypeMapping"))
-      {
-         EntityType et;
-         
-         int i;
-         const char* val;
-         
-         if(e->Attribute("kind", &i) != NULL)
-         {
-            et.SetKind((unsigned char)i);
-         }
-         if(e->Attribute("domain", &i) != NULL)
-         {
-            et.SetDomain((unsigned char)i);
-         }
-         if(e->Attribute("country", &i) != NULL)
-         {
-            et.SetCountry((unsigned short)i);
-         }
-         if(e->Attribute("category", &i) != NULL)
-         {
-            et.SetCategory((unsigned char)i);
-         }
-         if(e->Attribute("subcategory", &i) != NULL)
-         {
-            et.SetSubcategory((unsigned char)i);
-         }
-         if(e->Attribute("specific", &i) != NULL)
-         {
-            et.SetSpecific((unsigned char)i);
-         }
-         if(e->Attribute("extra", &i) != NULL)
-         {
-            et.SetExtra((unsigned char)i);
-         }
-         
-         if((val = e->Attribute("model")) != NULL)
-         {
-            mEntityTypeMappings[et].mModelFilename = val;
-         }
-         if((val = e->Attribute("icon")) != NULL)
-         {
-            mEntityTypeMappings[et].mIconFilename = val;
-         }
-         
-         for(TiXmlElement* se = 
-               e->FirstChildElement("ArticulatedPart");
-             se != NULL;
-             se = e->NextSiblingElement("ArticulatedPart"))
-         {
-            if(se->Attribute("class", &i) != NULL)
-            {
-               if((val = se->Attribute("name")) != NULL)
-               {
-                  mEntityTypeMappings[et].mArticulatedPartClassNameMap[i] =
-                     val;   
-               }
-            }   
-         }
-      }
-      
-      return true;
-   }
-   else
-   {
+      LOG_WARNING("When attempting to parse file, " + filename + ", file was not.")
       return false;
    }
+
+   LOG_INFO("Parsing configuration file, " + file)
+
+   bool retval(false);
+
+   try  // to initialize the xml tools
+   {
+      XMLPlatformUtils::Initialize();
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg)
+      XMLString::release( &message );
+      return false;
+   }
+   catch(...)
+   {
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
+      return false;
+   }
+
+   SAX2XMLReader* parser;
+   try  // to create a reader
+   {
+      parser = XMLReaderFactory::createXMLReader();
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg)
+      XMLString::release( &message );
+      return false;
+   }
+   catch(...)
+   {
+      LOG_ERROR("Could not create a Xerces SAX2XMLReader")
+      return false;
+   }
+
+   // set the error handler
+   dtUtil::XercesErrorHandler errors;
+   parser->setErrorHandler( &errors );
+
+   // set the content handler
+   RTIEntityContentHandler handler(this);
+   parser->setContentHandler( &handler );
+
+   try  // to parse
+   {
+      mEntityTypeMappings.clear();
+      parser->parse( file.c_str() );
+      retval = true;
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred while parsing file, " + file + ", with message: " + msg)
+      XMLString::release( &message );
+
+      delete parser;
+      return false;
+   }
+   catch(...)
+   {
+      LOG_ERROR("An exception occurred while parsing file, " + file)
+
+      delete parser;
+      return false;
+   }
+
+   try
+   {
+      XMLPlatformUtils::Terminate();
+   }
+   catch(const XMLException& e)
+   {
+      char* message = XMLString::transcode( e.getMessage() );
+      std::string msg(message);
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate() with message: " + msg)
+      XMLString::release( &message );
+
+      delete parser;
+      return false;
+   }
+   catch(...)
+   {
+      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate()")
+
+      delete parser;
+      return false;
+   }
+
+   ///\todo fix this
+   return retval;
 }
+
+void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+{
+   typedef dtUtil::AttributeSearch::ResultMap ResultMap;
+
+   char* tname = XMLString::transcode( localname );
+   std::string elname( tname );
+   XMLString::release( &tname );
+
+   if( elname == "EntityTypeMapping" )
+   {
+      dtUtil::AttributeSearch etmsearch;
+      etmsearch.GetSearchKeys().push_back( "kind" );
+      etmsearch.GetSearchKeys().push_back( "domain" );
+      etmsearch.GetSearchKeys().push_back( "country" );
+      etmsearch.GetSearchKeys().push_back( "category" );
+      etmsearch.GetSearchKeys().push_back( "subcategory" );
+      etmsearch.GetSearchKeys().push_back( "specific" );
+      etmsearch.GetSearchKeys().push_back( "extra" );
+      etmsearch.GetSearchKeys().push_back( "model" );
+      etmsearch.GetSearchKeys().push_back( "icon" );
+
+      ResultMap results = etmsearch( attrs );
+
+      // set up an EntityType based off of the attributes
+      EntityType et;
+
+      ResultMap::iterator iter = results.find( "kind" );
+      if( iter != results.end() )
+      {
+         int kindint = atoi( (*iter).second.c_str() );
+         et.SetKind( unsigned char( kindint ) );
+      }
+
+      iter = results.find( "domain" );
+      if( iter != results.end() )
+      {
+         int domint = atoi( (*iter).second.c_str() );
+         et.SetDomain( unsigned char( domint ) );
+      }
+
+      iter = results.find( "country" );
+      if( iter != results.end() )
+      {
+         int countryint = atoi( (*iter).second.c_str() );
+         et.SetCountry( unsigned short( countryint ) );
+      }
+
+      iter = results.find( "category" );
+      if( iter != results.end() )
+      {
+         int catint = atoi( (*iter).second.c_str() );
+         et.SetCategory( unsigned char( catint ) );
+      }
+
+      iter = results.find( "subcategory" );
+      if( iter != results.end() )
+      {
+         int subcategoryint = atoi( (*iter).second.c_str() );
+         et.SetSubcategory( unsigned char( subcategoryint ) );
+      }
+
+      iter = results.find( "specific" );
+      if( iter != results.end() )
+      {
+         int specificint = atoi( (*iter).second.c_str() );
+         et.SetSpecific( unsigned char( specificint ) );
+      }
+
+      iter = results.find( "extra" );
+      if( iter != results.end() )
+      {
+         int extraint = atoi( (*iter).second.c_str() );
+         et.SetExtra( unsigned char( extraint ) );
+      }
+
+      /** just following the boss's orders and putting xerces in place of tinyxml,
+        * not even worrying about if the old code was working properly.
+        * \todo really think about what is supposed to happen here because this looks like a bad design.
+        */
+      iter = results.find( "model" );
+      if( iter != results.end() )
+      {
+         mCon->mEntityTypeMappings[et].mModelFilename = (*iter).second;
+      }
+
+      /** just following the boss's orders and putting xerces in place of tinyxml,
+        * not even worrying about if the old code was working properly.
+        * \todo really think about what is supposed to happen here because this looks like a bad design.
+        */
+      iter = results.find( "icon" );
+      if( iter != results.end() )
+      {
+         mCon->mEntityTypeMappings[et].mIconFilename = (*iter).second;
+      }
+   }
+
+   if( elname == "ArticulatedPart")
+   {
+      dtUtil::AttributeSearch atpsearch;
+      atpsearch.GetSearchKeys().push_back( "name" );
+      atpsearch.GetSearchKeys().push_back( "class" );
+      ResultMap results = atpsearch( attrs );
+
+      // set up an EntityType based off of the attributes
+      EntityType et;
+
+      /** just following the boss's orders and putting xerces in place of tinyxml,
+        * not even worrying about if the old code was working properly.
+        * \todo really think about what is supposed to happen here because this looks like a bad design.
+        */
+      ResultMap::iterator classiter = results.find( "class" );
+      if( classiter != results.end() )
+      {
+         int classi = atoi( (*classiter).second.c_str() );
+         ResultMap::iterator nameiter = results.find( "nameiter" );
+         if( nameiter != results.end() )
+         {
+            mCon->mEntityTypeMappings[et].mArticulatedPartClassNameMap[classi] = (*nameiter).second.c_str();
+         }
+      }
+   }
+}
+
+   //TiXmlDocument doc(osgDB::findDataFile(filename).c_str());
+   //
+   //if(doc.LoadFile())
+   //{
+   //   mEntityTypeMappings.clear();
+   //   
+   //   for(TiXmlElement* e = 
+   //         doc.RootElement()->FirstChildElement("EntityTypeMapping");
+   //       e != NULL;
+   //       e = e->NextSiblingElement("EntityTypeMapping"))
+   //   {
+   //      EntityType et;
+   //      
+   //      int i;
+   //      const char* val;
+   //      
+   //      if(e->Attribute("kind", &i) != NULL)
+   //      {
+   //         et.SetKind((unsigned char)i);
+   //      }
+   //      if(e->Attribute("domain", &i) != NULL)
+   //      {
+   //         et.SetDomain((unsigned char)i);
+   //      }
+   //      if(e->Attribute("country", &i) != NULL)
+   //      {
+   //         et.SetCountry((unsigned short)i);
+   //      }
+   //      if(e->Attribute("category", &i) != NULL)
+   //      {
+   //         et.SetCategory((unsigned char)i);
+   //      }
+   //      if(e->Attribute("subcategory", &i) != NULL)
+   //      {
+   //         et.SetSubcategory((unsigned char)i);
+   //      }
+   //      if(e->Attribute("specific", &i) != NULL)
+   //      {
+   //         et.SetSpecific((unsigned char)i);
+   //      }
+   //      if(e->Attribute("extra", &i) != NULL)
+   //      {
+   //         et.SetExtra((unsigned char)i);
+   //      }
+   //      
+   //      if((val = e->Attribute("model")) != NULL)
+   //      {
+   //         mEntityTypeMappings[et].mModelFilename = val;
+   //      }
+   //      if((val = e->Attribute("icon")) != NULL)
+   //      {
+   //         mEntityTypeMappings[et].mIconFilename = val;
+   //      }
+   //      
+   //      for(TiXmlElement* se = 
+   //            e->FirstChildElement("ArticulatedPart");
+   //          se != NULL;
+   //          se = e->NextSiblingElement("ArticulatedPart"))
+   //      {
+   //         if(se->Attribute("class", &i) != NULL)
+   //         {
+   //            if((val = se->Attribute("name")) != NULL)
+   //            {
+   //               mEntityTypeMappings[et].mArticulatedPartClassNameMap[i] =
+   //                  val;   
+   //            }
+   //         }   
+   //      }
+   //   }
+   //   
+   //   return true;
+   //}
+   //else
+   //{
+   //   return false;
+   //}
 
 /**
  * Sets the ground clamp mode.
@@ -1789,7 +2015,7 @@ void RTIConnection::OnMessage(MessageData *data)
 
       VelocityVector velocityVector;
 
-      Transform transform;
+      dtCore::Transform transform;
    
       osg::Vec3 vec;
 
@@ -1813,7 +2039,7 @@ void RTIConnection::OnMessage(MessageData *data)
            encodedPowerPlantOn[1];
 
 
-      for(map<RTI::ObjectHandle, MasterData>::iterator m =
+      for(std::map<RTI::ObjectHandle, MasterData>::iterator m =
             mObjectHandleMasterDataMap.begin();
           m != mObjectHandleMasterDataMap.end();
           m++)
@@ -1936,7 +2162,7 @@ void RTIConnection::OnMessage(MessageData *data)
             );
          }
 
-         master->GetTransform(&transform, Transformable::REL_CS);
+         master->GetTransform(&transform, dtCore::Transformable::REL_CS);
 
          if(doHeartbeat || !(*m).second.mTransform.EpsilonEquals(&transform))
          {
@@ -1997,7 +2223,7 @@ void RTIConnection::OnMessage(MessageData *data)
       delete theAttributes;
 
       
-      for(map<RTI::ObjectHandle, GhostData>::iterator g =
+      for(std::map<RTI::ObjectHandle, GhostData>::iterator g =
             mObjectHandleGhostDataMap.begin();
           g != mObjectHandleGhostDataMap.end();
           g++)
@@ -2007,14 +2233,14 @@ void RTIConnection::OnMessage(MessageData *data)
          
          UpdateGhostPosition(dt, gd, ghost);
          
-         const vector<ArticulatedParameter>& params =
+         const std::vector<ArticulatedParameter>& params =
             ghost->GetArticulatedParametersArray();
          
-         map<unsigned int, map<unsigned int, float> > classTypeValueMap;
+         std::map<unsigned int, std::map<unsigned int, float> > classTypeValueMap;
          
-         vector<ArticulatedParameter> newParams;
+         std::vector<ArticulatedParameter> newParams;
          
-         for(vector<ArticulatedParameter>::const_iterator p = params.begin();
+         for(std::vector<ArticulatedParameter>::const_iterator p = params.begin();
              p != params.end();
              p++)
          {
@@ -2175,7 +2401,7 @@ void RTIConnection::OnMessage(MessageData *data)
             }
          }
          
-         for(map<unsigned int, map<unsigned int, float> >::iterator ctvm =
+         for(std::map<unsigned int, std::map<unsigned int, float> >::iterator ctvm =
                classTypeValueMap.begin();
              ctvm != classTypeValueMap.end();
              ctvm++)
@@ -2317,7 +2543,7 @@ void RTIConnection::OnMessage(MessageData *data)
       requiredAttributes->add(mEntityIdentifierAttributeHandle);
       requiredAttributes->add(mEntityTypeAttributeHandle);
 
-      for(set<RTI::ObjectHandle>::iterator objs =
+      for(std::set<RTI::ObjectHandle>::iterator objs =
             mNewlyDiscoveredObjects.begin();
           objs != mNewlyDiscoveredObjects.end();
           objs++)
@@ -2336,11 +2562,11 @@ void RTIConnection::OnMessage(MessageData *data)
 
 void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *ghost)
 {
-   Transform transform;
+   dtCore::Transform transform;
    WorldCoordinate wc;
    VelocityVector vv;
 
-   ghost->GetTransform(&transform, Transformable::REL_CS);
+   ghost->GetTransform(&transform, dtCore::Transformable::REL_CS);
 
    wc = ghost->GetWorldLocation();
 
@@ -2383,7 +2609,7 @@ void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *
 
    transform.SetTranslation(position);
 
-   ghost->SetTransform(&transform, Transformable::REL_CS);
+   ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
 
    ClampToGround(ghost);
 }
@@ -2531,11 +2757,11 @@ void RTIConnection::reflectAttributeValues(
 
    Entity* ghost = ghostData.mEntity.get();
 
-   Transform transform;
+   dtCore::Transform transform;
 
    unsigned int damageAttribute;
 
-   ghost->GetTransform(&transform, Transformable::REL_CS);
+   ghost->GetTransform(&transform, dtCore::Transformable::REL_CS);
 
    
 
@@ -2574,7 +2800,7 @@ void RTIConnection::reflectAttributeValues(
 
             EntityTypeMapping* mapping = FindBestMapping(entityType);
             
-            string filename;
+            std::string filename;
             
             if(mapping != NULL)
             {
@@ -2594,7 +2820,7 @@ void RTIConnection::reflectAttributeValues(
                
                if(mapping != NULL)
                {
-                  for(map<unsigned int, string>::iterator it =
+                  for(std::map<unsigned int, std::string>::iterator it =
                         mapping->mArticulatedPartClassNameMap.begin();
                       it != mapping->mArticulatedPartClassNameMap.end();
                       it++)
@@ -2753,7 +2979,7 @@ void RTIConnection::reflectAttributeValues(
          
          int numParams = length/20;
          
-         vector<ArticulatedParameter> params;
+         std::vector<ArticulatedParameter> params;
          
          params.resize(numParams);
          
@@ -2764,7 +2990,7 @@ void RTIConnection::reflectAttributeValues(
          
          ghost->SetArticulatedParametersArray(params);
          
-         for(vector<ArticulatedParameter>::iterator p = params.begin();
+         for(std::vector<ArticulatedParameter>::iterator p = params.begin();
              p != params.end();
              p++)
          {
@@ -2838,7 +3064,7 @@ void RTIConnection::reflectAttributeValues(
                mIgnoreEffect = true;
                mEffectManager->AddDetonation(
                   position,//position,
-                  SmokeDetonation,
+                  dtCore::SmokeDetonation,
                   60.0
                );
                mIgnoreEffect = false;
@@ -2871,7 +3097,7 @@ void RTIConnection::reflectAttributeValues(
       }
    }
 
-   ghost->SetTransform(&transform, Transformable::REL_CS);
+   ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
    
    ClampToGround(ghost);
 }
@@ -3057,7 +3283,7 @@ throw (
          }
       }
 
-      for(set<DetonationListener*>::iterator it = mDetonationListeners.begin();
+      for(std::set<DetonationListener*>::iterator it = mDetonationListeners.begin();
           it != mDetonationListeners.end();
           it++)
       {
@@ -3115,7 +3341,7 @@ throw (
 
          mEffectManager->AddDetonation(
             position,
-            (DetonationType)expType
+            (dtCore::DetonationType)expType
          );
 
          mIgnoreEffect = false;
@@ -3123,20 +3349,17 @@ throw (
    }
 }
 
-/**
-* Called when an effect is added to the manager.
-*
-* @param effectManager the effect manager that generated
-* the event
-* @param effect the effect object
-*/
-void RTIConnection::EffectAdded(
-                                EffectManager* effectManager,
-                                Effect* effect)
+/** Called when an effect is added to the manager.
+  *
+  * @param effectManager the effect manager that generated
+  * the event
+  * @param effect the effect object
+  */
+void RTIConnection::EffectAdded(dtCore::EffectManager* effectManager, dtCore::Effect* effect)
 {
-   if( !mIgnoreEffect && IS_A(effect, Detonation*) )
+   if( !mIgnoreEffect && IS_A(effect, dtCore::Detonation*) )
    {
-      Detonation* detonation = (Detonation*)effect;
+      dtCore::Detonation* detonation = (dtCore::Detonation*)effect;
 
       RTI::ParameterHandleValuePairSet* theParameters =
          RTI::ParameterSetFactory::create(8);
