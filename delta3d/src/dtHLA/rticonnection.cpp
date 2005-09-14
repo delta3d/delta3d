@@ -1719,7 +1719,6 @@ bool RTIConnection::LoadEntityTypeMappings(const std::string& filename)
       return false;
    }
 
-   ///\todo fix this
    return retval;
 }
 

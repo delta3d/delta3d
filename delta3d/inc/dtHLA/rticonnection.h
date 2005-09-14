@@ -648,7 +648,7 @@ namespace dtHLA
 
          private:
             RTIEntityContentHandler();   /// not implemented by design
-            RTIConnection* mCon;
+            RTIConnection* mCon;         /// The connection which will be affected by XML configuration.
          };
 
          friend class RTIEntityContentHandler;
