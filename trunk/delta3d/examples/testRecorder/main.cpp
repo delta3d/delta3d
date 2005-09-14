@@ -9,16 +9,17 @@
 
 #include "testrecorder.h"
 #include <dtUtil/log.h>
+#include <dtCore/globals.h>
 
 int main(unsigned int argc, char* argv[])
 {
-   dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
+   // This causes a crash when it returns. The std::string allocated inside dtCore::SetDataFilePathList
+   // is having trouble being freed...
 
-   dtCore::RefPtr<TestRecorder> app(0);
-   if( argc > 1 )
-      app = new TestRecorder( argv[1] );
-   else
-      app = new TestRecorder( dtABC::Application::GenerateDefaultConfigFile() );
+   //dtCore::SetDataFilePathList(  dtCore::GetDeltaRootPath() + "/examples/testRecorder/;" +
+   //                              dtCore::GetDeltaDataPathList()  );
+
+   dtCore::RefPtr<TestRecorder> app = new TestRecorder( "config.xml" );
 
    app->Config();
    app->Run();
