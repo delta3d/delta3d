@@ -32,8 +32,9 @@
 
 #include <osgSim/DOFTransform>
 #include <osg/Matrix>
-
-#include "Producer/Timer"
+#include <Producer/Timer>
+#include <xercesc/sax2/ContentHandler.hpp>  // for a base class
+#include <xercesc/sax2/Attributes.hpp>      // for a parameter
 
 #define RTI_USES_STD_FSTREAM
 
@@ -377,8 +378,8 @@ namespace dtHLA
           * @param iconFilename the entity icon filename
           */
          void AddEntityTypeMapping(const EntityType& entityType,
-                                   std::string modelFilename,
-                                   std::string iconFilename = "");
+                                   const std::string& modelFilename,
+                                   const std::string& iconFilename = "");
 
          /**
           * Maps the specified entity type to the given filename.
@@ -390,11 +391,10 @@ namespace dtHLA
           * @param iconFilename the entity icon filename
           */
          void AddEntityTypeMapping(const EntityType& entityType,
-                                   std::string modelFilename,
-                                   const std::map<unsigned int, std::string>&
-                                    articulatedPartClassNameMap,
-                                   std::string iconFilename = "");
-                                   
+                                   const std::string& modelFilename,
+                                   const std::map<unsigned int, std::string>& articulatedPartClassNameMap,
+                                   const std::string& iconFilename = "");
+
          /**
           * Removes the mapping for the given entity type.
           *
@@ -408,7 +408,7 @@ namespace dtHLA
           * @param filename the name of the file to load
           * @return true if mappings successfully loaded, false otherwise
           */
-         bool LoadEntityTypeMappings(std::string filename);
+         bool LoadEntityTypeMappings(const std::string& filename);
 
          /**
           * Ground clamp modes.
@@ -624,8 +624,36 @@ namespace dtHLA
 
 
       private:
+         /** \brief A class to perform the necessary features while a Xerces SAX parser is operating.
+           * Use this with the Xerces SAX2XMLReader.
+           */
+         class RTIEntityContentHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
+         {
+         public:
+            RTIEntityContentHandler(RTIConnection* con): mCon(con) {}
+            ~RTIEntityContentHandler() {}
 
-         /**
+            // inherited pure virtual functions
+            virtual void characters(const XMLCh* const chars, const unsigned int length) {}
+            virtual void endDocument() {}
+            virtual void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname) {}
+            virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
+            virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
+            virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
+            virtual void startDocument() {}
+            virtual void startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
+            virtual void startPrefixMapping(const	XMLCh* const prefix,const XMLCh* const uri) {}
+            virtual void endPrefixMapping(const XMLCh* const prefix) {}
+            virtual void skippedEntity(const XMLCh* const name) {}
+
+         private:
+            RTIEntityContentHandler();   /// not implemented by design
+            RTIConnection* mCon;
+         };
+
+         friend class RTIEntityContentHandler;
+
+        /**
           * Creates a 4x4 rotation matrix from a set of DIS/RPR-FOM Euler angles.
           *
           * @param dst the destination matrix
