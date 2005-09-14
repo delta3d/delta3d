@@ -233,7 +233,7 @@ namespace dtABC
       template<typename T>
       bool RegisterEvent( const Event::Type* eventType )
       {
-         return mEventFactory->RegisterType<T>( eventType );     
+         return mEventFactory->template RegisterType<T>( eventType );     
       }
 
       /** \brief Register a user defined, concrete State.
@@ -245,7 +245,7 @@ namespace dtABC
       template<typename T>
       bool RegisterState( const State::Type* stateType )
       {
-         return mStateFactory->RegisterType<T>( stateType );
+         return mStateFactory->template RegisterType<T>( stateType );
       }
 
       /** Return the non-const instance of the StateFactory.*/
