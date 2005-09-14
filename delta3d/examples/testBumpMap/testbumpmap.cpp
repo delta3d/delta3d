@@ -1,9 +1,7 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
+
 #include "bumpmapdrawable.h"
-
-
 
 using namespace dtABC;
 using namespace dtCore;
@@ -14,7 +12,7 @@ class TestBumpMapApp : public Application
 	DECLARE_MANAGEMENT_LAYER( TestBumpMapApp )
 
 public:
-	TestBumpMapApp( std::string configFilename = "testbumpmapconfig.xml" )
+	TestBumpMapApp( const std::string& configFilename = "config.xml" )
 		: Application( configFilename )
 	{
       mWireframe = false;
@@ -35,8 +33,6 @@ public:
 		GetCamera()->SetTransform(&xform);
 
 	}
-
-
 
    //make the light go in a circle
    void PreFrame( const double deltaFrameTime )
@@ -100,10 +96,9 @@ int main(int argc, char* argv[])
 	SetDataFilePathList( GetDeltaRootPath() + "/examples/testBumpMap/;" +
 		                  GetDeltaDataPathList()  );
 
-	RefPtr<TestBumpMapApp> app = new TestBumpMapApp( "testbumpmapconfig.xml" );
+	RefPtr<TestBumpMapApp> app = new TestBumpMapApp( "config.xml" );
 	app->Config();
 	app->Run();
 
-   
 	return 0;
 }

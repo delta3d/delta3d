@@ -17,7 +17,6 @@
 
 #include <dtCore/deltadrawable.h>
 
-
 using namespace dtCore;
 
 class BumpMapDrawable: public DeltaDrawable
@@ -44,15 +43,6 @@ private:
    RefPtr<osg::Uniform>                      mLightPos; 
    RefPtr<osg::Uniform>                      mEyePos;
 
-
 };
 
-
-
-
-
-
 #endif //__BUMP_MAP_DRAWABLE_H__
-
-
-
