@@ -6,6 +6,19 @@
 #include <osg/Vec3>
 
 
+/*
+   Cube Vertices
+
+   DESC: This data structure encapsulates the data required to generate 
+            tangent space on the GPU for one cube
+
+   NOTE: Each vertex has a normal, 3 verts, and 3 texture coordinates
+            where the two additional verts and tex coords are from the 
+            opposite and adjacent vertices and the standard triangle.
+
+*/
+
+
 typedef struct _CV_
 {
 
