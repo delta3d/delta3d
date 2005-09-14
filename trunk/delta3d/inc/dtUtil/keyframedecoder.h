@@ -105,14 +105,15 @@ namespace dtUtil
              child=sourcewalker->nextSibling())
          {
             XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>( child );
-            FrameDataType* data = DecodeSourceData( element );
+            FrameDataType* data = DecodeSourceData( doc, element );
             fdc.push_back( data );
          }
       }
 
-      FrameDataType* DecodeSourceData(XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e)
+      FrameDataType* DecodeSourceData(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc,
+                                      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e)
       {
-         return mSources[mSourceIndex]->Deserialize( e );
+         return mSources[mSourceIndex]->Deserialize( doc, e );
       }
 
    private:
