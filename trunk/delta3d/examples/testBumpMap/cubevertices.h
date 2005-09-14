@@ -5,7 +5,6 @@
 #include <osg/Vec2>
 #include <osg/Vec3>
 
-
 /*
    Cube Vertices
 
@@ -17,7 +16,6 @@
             opposite and adjacent vertices and the standard triangle.
 
 */
-
 
 typedef struct _CV_
 {
@@ -39,8 +37,7 @@ public:
 	 float mTexRepeat;
 	 float mSize;
 
-}CubeVertices;
-
+} CubeVertices;
 
 //////////////////////////////////////////////////////////////////////////
 //Control Variables
@@ -59,9 +56,6 @@ _CV_::_CV_()
 	mTexCoords = new osg::Vec2Array(36);
 	mTexCoords2 = new osg::Vec2Array(36);
 	mTexCoords3 = new osg::Vec2Array(36);
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 //Verts 1
@@ -122,9 +116,6 @@ _CV_::_CV_()
    (*mVerts)[34].set (mSize, -mSize, -mSize);
    (*mVerts)[35].set (-mSize, -mSize, mSize);
 
-
-
-
 //////////////////////////////////////////////////////////////////////////
 //Verts 2
 //////////////////////////////////////////////////////////////////////////
@@ -184,9 +175,6 @@ _CV_::_CV_()
    (*mVerts2)[34].set (-mSize, -mSize, mSize);
    (*mVerts2)[35].set (mSize, -mSize, mSize);
 
-
-
-
 //////////////////////////////////////////////////////////////////////////
 //Verts 3
 //////////////////////////////////////////////////////////////////////////
@@ -244,9 +232,6 @@ _CV_::_CV_()
    (*mVerts3)[33].set (-mSize, -mSize, mSize);
    (*mVerts3)[34].set (mSize, -mSize, mSize);
    (*mVerts3)[35].set (mSize, -mSize, -mSize);
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 //Normals
@@ -306,9 +291,6 @@ _CV_::_CV_()
    (*mNormals)[34].set (0.0f, 1.0f, 0.0f);
    (*mNormals)[35].set (0.0f, 1.0f, 0.0f);
 
-
-
-
 //////////////////////////////////////////////////////////////////////////
 // Tex Coords1
 //////////////////////////////////////////////////////////////////////////
@@ -367,8 +349,6 @@ _CV_::_CV_()
    (*mTexCoords)[34].set (mTexRepeat, mTexRepeat);
    (*mTexCoords)[35].set (0.0f, 0.0f);
 
-
-
 //////////////////////////////////////////////////////////////////////////
 // TexCoords 2
 //////////////////////////////////////////////////////////////////////////
@@ -425,7 +405,6 @@ _CV_::_CV_()
    (*mTexCoords2)[33].set (mTexRepeat, mTexRepeat);
    (*mTexCoords2)[34].set (0.0f, 0.0f);
    (*mTexCoords2)[35].set (mTexRepeat, 0.0f);
-
 
 //////////////////////////////////////////////////////////////////////////
 // Tex Coords 3
@@ -484,9 +463,6 @@ _CV_::_CV_()
    (*mTexCoords3)[33].set (0.0f, 0.0f);
    (*mTexCoords3)[34].set (mTexRepeat, 0.0f);
    (*mTexCoords3)[35].set (mTexRepeat, mTexRepeat);
-
-
-
 
 }
 

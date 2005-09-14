@@ -1,7 +1,8 @@
 #include "bumpmapdrawable.h"
+#include "cubevertices.h"
+
 #include <osg/PolygonMode>
 #include <dtCore/globals.h>
-#include "cubevertices.h"
 
 BumpMapDrawable::BumpMapDrawable()
 {
@@ -10,13 +11,11 @@ BumpMapDrawable::BumpMapDrawable()
 
 }
 
-
 BumpMapDrawable::~BumpMapDrawable()
 {
 
 
 }
-
 
 void BumpMapDrawable::SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& pEyePos)
 {
@@ -24,7 +23,6 @@ void BumpMapDrawable::SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& p
    ss->getUniform( "lightPos" )->set( osg::Vec4(pLightPos[0], pLightPos[1], pLightPos[2], 0.0f));
    ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[1], pEyePos[2], 0.0f));
 }
-
 
 void BumpMapDrawable::SetWireframe(bool pWireframe)
 {
@@ -45,7 +43,6 @@ void BumpMapDrawable::SetWireframe(bool pWireframe)
 
 }
 
-
 void BumpMapDrawable::Initialize()
 {
 
@@ -55,10 +52,6 @@ void BumpMapDrawable::Initialize()
    osg::Group* grp = dynamic_cast<osg::Group*>(mNode.get());
    grp->addChild(mGeode.get());
 }
-
-
-
-
 
 void BumpMapDrawable::CreateGeometry()
 {
@@ -170,9 +163,3 @@ void BumpMapDrawable::EnableShaders()
 
    ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
 }
-
-
-
-
-
-
