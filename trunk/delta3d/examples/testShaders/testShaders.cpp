@@ -57,9 +57,8 @@ public:
       mProg->addShader( vertexShader.get() );
       mProg->addShader( fragmentShader.get() );
 
-      bool vertLoaded = vertexShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.vert");
-
-      bool fragLoaded = fragmentShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.frag");
+      vertexShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.vert");
+      fragmentShader->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/testshader.frag");
 
       ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
       mEnabled = true;
