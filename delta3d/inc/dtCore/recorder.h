@@ -356,7 +356,7 @@ namespace dtCore
                   if( mKeyFrameIter != mKeyFrames.end() )
                   {
                      // key frame stuff
-                     double timecode = (*mKeyFrameIter).first;
+                     //double timecode = (*mKeyFrameIter).first;
                      typename FrameDataPtrContainer::iterator framedataiter = (*mKeyFrameIter).second.begin();
 
                      // sources
