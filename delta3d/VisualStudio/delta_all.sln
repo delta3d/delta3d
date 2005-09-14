@@ -296,6 +296,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtNet", "src\dtNet\dtNet.vc
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRecorder", "examples\testRecorder\testRecorder.vcproj", "{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -498,6 +502,10 @@ Global
 		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Debug.Build.0 = Debug|Win32
 		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Release.ActiveCfg = Release|Win32
 		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Release.Build.0 = Release|Win32
+		{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}.Debug.ActiveCfg = Debug|Win32
+		{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}.Debug.Build.0 = Debug|Win32
+		{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}.Release.ActiveCfg = Release|Win32
+		{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
