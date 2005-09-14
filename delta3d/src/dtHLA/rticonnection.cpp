@@ -73,9 +73,9 @@ RTIConnection::RTIConnection(std::string name)
      mGlobeModeEnabled(false),
      mUTMModeEnabled(false),
      mGlobeRadius(100.0f),
+     mLocalIPAddress(0x7F000001),
      mGroundClampMode(NO_CLAMP),
-     mEffectClampMode(true),
-     mLocalIPAddress(0x7F000001)
+     mEffectClampMode(true)
 {
    RegisterInstance(this);
    
@@ -1040,7 +1040,7 @@ void RTIConnection::SetTransverseMercatorParameters(double a, double f, double O
   double tn5;
   double dummy_northing;
   double TranMerc_b; /* Semi-minor axis of ellipsoid, in meters */
-  double inv_f = 1 / f;
+  //double inv_f = 1 / f;
   //long Error_Code = TRANMERC_NO_ERROR;
 
   
@@ -1752,49 +1752,49 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
       if( iter != results.end() )
       {
          int kindint = atoi( (*iter).second.c_str() );
-         et.SetKind( unsigned char( kindint ) );
+         et.SetKind( (unsigned char)kindint );
       }
 
       iter = results.find( "domain" );
       if( iter != results.end() )
       {
          int domint = atoi( (*iter).second.c_str() );
-         et.SetDomain( unsigned char( domint ) );
+         et.SetDomain( (unsigned char)domint );
       }
 
       iter = results.find( "country" );
       if( iter != results.end() )
       {
          int countryint = atoi( (*iter).second.c_str() );
-         et.SetCountry( unsigned short( countryint ) );
+         et.SetCountry( (unsigned short)countryint );
       }
 
       iter = results.find( "category" );
       if( iter != results.end() )
       {
          int catint = atoi( (*iter).second.c_str() );
-         et.SetCategory( unsigned char( catint ) );
+         et.SetCategory( (unsigned char)catint );
       }
 
       iter = results.find( "subcategory" );
       if( iter != results.end() )
       {
          int subcategoryint = atoi( (*iter).second.c_str() );
-         et.SetSubcategory( unsigned char( subcategoryint ) );
+         et.SetSubcategory( (unsigned char)subcategoryint );
       }
 
       iter = results.find( "specific" );
       if( iter != results.end() )
       {
          int specificint = atoi( (*iter).second.c_str() );
-         et.SetSpecific( unsigned char( specificint ) );
+         et.SetSpecific( (unsigned char)specificint );
       }
 
       iter = results.find( "extra" );
       if( iter != results.end() )
       {
          int extraint = atoi( (*iter).second.c_str() );
-         et.SetExtra( unsigned char( extraint ) );
+         et.SetExtra( (unsigned char)extraint );
       }
 
       /** just following the boss's orders and putting xerces in place of tinyxml,
@@ -3168,7 +3168,7 @@ throw (
       unsigned short fuseType;
       EntityType munitionType;
       unsigned short warheadType;
-      unsigned char detonationResultCode;
+      unsigned char detonationResultCode = 0;
       unsigned short quantityFired;
       
       
