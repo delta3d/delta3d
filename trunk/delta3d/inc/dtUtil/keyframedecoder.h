@@ -32,12 +32,6 @@ namespace dtUtil
       typedef std::pair<double,FrameDataPtrContainer>        KeyFrame;               /// The time stamp applied to the entire container of frame data.
       typedef std::vector<KeyFrame>                          KeyFrameContainer;      /// The container of KeyFrame data.
       typedef std::vector< dtCore::RefPtr<RecordableType> >  RecordablePtrContainer; /// The container of sources of frame data.
-      //typedef RecordableT                                   RecordableType;
-      //typedef FrameDataT                                    FrameDataType;
-      //typedef std::vector< dtCore::RefPtr<RecordableType> > RecordablePtrContainer;
-      //typedef std::vector<FrameDataType>                    FrameDataPtrContainer;  /// A container to hold each source's frame data.
-      //typedef std::pair<double,FrameDataPtrContainer>       KeyFrame;               /// The time stamp applied to the entire container of frame data.
-      //typedef std::vector<KeyFrame>                         KeyFrameContainer;      /// The container of KeyFrame data.
 
       /** \brief The constructor.
         * @param sources The RecordableType instances that are needed for deserializing the XML information.
@@ -125,3 +119,4 @@ namespace dtUtil
 };
 
 #endif // DTUTIL_KEYFRAME_DECODER_INC
+
