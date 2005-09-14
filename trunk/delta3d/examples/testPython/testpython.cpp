@@ -1,6 +1,6 @@
+#include <dtScript/scriptmanager.h>
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
-#include <dtScript/scriptmanager.h>
 
 using namespace dtCore;
 using namespace dtABC;

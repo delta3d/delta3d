@@ -21,10 +21,10 @@
 #ifndef DELTA_SCRIPT_MANAGER
 #define DELTA_SCRIPT_MANAGER
 
+#include <Python.h>
 #include <dtCore/base.h>
 #include <dtCore/export.h>
 #include <OpenThreads/Thread>
-#include <Python.h>
 
 namespace dtScript
 {
