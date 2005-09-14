@@ -147,9 +147,8 @@ void BumpMapDrawable::EnableShaders()
    mProg->addShader( bumpMapVert.get() );
    mProg->addShader( bumpMapFrag.get() );
 
-   bool vertLoaded = bumpMapVert->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/BumpMap.vert");
-
-   bool fragLoaded = bumpMapFrag->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/BumpMap.frag");
+   bumpMapVert->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/BumpMap.vert");
+   bumpMapFrag->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/BumpMap.frag");
 
    mLightPos = new osg::Uniform(osg::Uniform::FLOAT_VEC4, "lightPos");
    mLightPos->set(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));

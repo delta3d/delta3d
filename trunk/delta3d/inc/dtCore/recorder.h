@@ -293,7 +293,7 @@ namespace dtCore
          XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = parser.getDocument();
 
          typedef dtUtil::KeyFrameDecoder<RecordableType,FrameDataType> SourceDecoder;
-         SourceDecoder decoder(mSources,mKeyFrames);
+	 SourceDecoder decoder(mSources,mKeyFrames);
          decoder.Walk( doc );
 
          //// --- use sax parsing (NOT COMPLETE) --- //

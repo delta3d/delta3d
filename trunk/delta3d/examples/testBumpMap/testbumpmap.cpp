@@ -1,7 +1,7 @@
 #include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
 #include "gui_fl/guimgr.h"
-#include "BumpMapDrawable.h"
+#include "bumpmapdrawable.h"
 
 
 
