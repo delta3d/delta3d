@@ -139,12 +139,19 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    // write it!
    try
    {
-      writer->writeNode(xmlstream, *mDocument);
+      if( !writer->writeNode(xmlstream, *mDocument) )
+      {
+         LOG_ERROR("There was a problem writing file, " + outputfile)
+      }
+
+      writer->release();
+      delete xmlstream;
    }
    catch (const OutOfMemoryException&)
    {
       //XERCES_STD_QUALIFIER cerr << "OutOfMemoryException" << XERCES_STD_QUALIFIER endl;
       LOG_ERROR("When writing file," +outputfile+ ", an OutOfMemoryException occurred.");
+      delete xmlstream;
    }
 //    catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException&)
 //    {
@@ -155,5 +162,6 @@ void XercesWriter::WriteFile(const std::string& outputfile)
    {
       //XERCES_STD_QUALIFIER cerr << "An error occurred creating the document" << XERCES_STD_QUALIFIER endl;
       LOG_ERROR("When writing file," +outputfile+ ", an exception occurred.");
+      delete xmlstream;
    }
 }
