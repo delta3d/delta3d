@@ -42,6 +42,39 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/datatype.h>
 
+// Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
+namespace std
+{
+    template<>
+    struct char_traits<unsigned short>
+    {
+      typedef unsigned short char_type;
+
+        static void 
+        assign(char_type& __c1, const char_type& __c2)
+        { __c1 = __c2; }
+
+        static int
+        compare(const char_type* __s1, const char_type* __s2, size_t __n)
+        {
+            for (;__n > 0; ++__s1, ++__s2, --__n) {
+                if (*__s1 < *__s2) return -1;
+                if (*__s1 > *__s2) return +1;
+            }
+            return 0;
+        }
+
+        static size_t
+        length(const char_type* __s)
+        { size_t __n = 0; while (*__s++) ++__n; return __n; }
+
+        static char_type* 
+        copy(char_type* __s1, const char_type* __s2, size_t __n)
+        {  return static_cast<char_type*>(memcpy(__s1, __s2, __n * sizeof(char_type))); }
+
+    };
+}
+
 XERCES_CPP_NAMESPACE_USE;
 
 namespace dtDAL
