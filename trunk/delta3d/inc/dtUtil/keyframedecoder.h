@@ -79,7 +79,7 @@ namespace dtUtil
 
             FrameDataPtrContainer dataToBeFilled;
             DecodeFrameStamp( doc, framestamp , dataToBeFilled);
-            mKFC.push_back( KeyFrameContainer::value_type( timeStamp, dataToBeFilled ) );
+            mKFC.push_back( typename KeyFrameContainer::value_type( timeStamp, dataToBeFilled ) );
          }
       }
 
