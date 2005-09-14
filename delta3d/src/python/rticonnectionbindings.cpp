@@ -77,8 +77,8 @@ void initRTIConnectionBindings()
    RTIConnection* (*RTIConnectionGI1)(int) = &RTIConnection::GetInstance;
    RTIConnection* (*RTIConnectionGI2)(std::string) = &RTIConnection::GetInstance;
 
-   void (RTIConnection::*AddEntityTypeMapping1)(const EntityType&, std::string, std::string) = &RTIConnection::AddEntityTypeMapping;
-   void (RTIConnection::*AddEntityTypeMapping2)(const EntityType&, std::string, const std::map<unsigned int, std::string>&, std::string) = 
+   void (RTIConnection::*AddEntityTypeMapping1)(const EntityType&, const std::string&, const std::string&) = &RTIConnection::AddEntityTypeMapping;
+   void (RTIConnection::*AddEntityTypeMapping2)(const EntityType&, const std::string&, const std::map<unsigned int, std::string>&, const std::string&) = 
       &RTIConnection::AddEntityTypeMapping;
    
    {
