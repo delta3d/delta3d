@@ -37,7 +37,7 @@ public:
       FrameData(const FrameData& f);             /// not implemented by design
       FrameData& operator =(const FrameData& f); /// not implemented by design
 
-      friend CameraRecorderAdaptor;
+      friend class CameraRecorderAdaptor;
       osg::Matrix mMatrix;
    };
 
