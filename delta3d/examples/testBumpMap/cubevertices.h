@@ -143,6 +143,7 @@ _CV_::_CV_()
    (*mVerts2)[16].set (-mSize, -mSize, mSize);
    (*mVerts2)[17].set (-mSize, -mSize, -mSize);
 
+
 //right
    (*mVerts2)[18].set (mSize, mSize, -mSize);
    (*mVerts2)[19].set (mSize, -mSize, -mSize);
@@ -201,8 +202,8 @@ _CV_::_CV_()
    (*mVerts3)[14].set (-mSize, mSize, mSize);
 
    (*mVerts3)[15].set (-mSize, -mSize, mSize	);
-   (*mVerts3)[16].set (mSize, -mSize, -mSize);
-   (*mVerts3)[17].set (mSize, mSize, -mSize);
+   (*mVerts3)[16].set (-mSize, -mSize, -mSize);
+   (*mVerts3)[17].set (-mSize, mSize, -mSize);
 
 //right
    (*mVerts3)[18].set (mSize, -mSize, -mSize);
