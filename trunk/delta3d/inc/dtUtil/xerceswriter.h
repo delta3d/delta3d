@@ -60,6 +60,10 @@ namespace dtUtil
       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() { return mDocument; }
       const XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() const { return mDocument; }
 
+      /**
+      * This is the call that serializes the XML Tree
+      * @param the filename
+      */
       void WriteFile(const std::string& file);
 
    private:
