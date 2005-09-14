@@ -43,6 +43,7 @@
 #include <dtDAL/datatype.h>
 
 // Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
+#if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
 namespace std
 {
     template<>
@@ -74,6 +75,7 @@ namespace std
 
     };
 }
+#endif
 
 XERCES_CPP_NAMESPACE_USE;
 
