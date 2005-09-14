@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(RTIS_INC)&quot;;..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -38,7 +38,7 @@
 				OutputFile="../../../bin/dthlad.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;$(RTIS_LIB)&quot;;..\..\..\lib;..\..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd; libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -72,7 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(RTIS_INC)&quot;;..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -84,11 +84,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib dtutil.lib osgSim.lib ws2_32.lib osg.lib osgUtil.lib producer.lib ode.lib ul.lib opengl32.lib osgDB.lib winmm.lib osgText.lib OpenThreadsWin32.lib librti13.lib"
+				AdditionalDependencies="dtcore.lib dtutil.lib osgSim.lib ws2_32.lib osg.lib osgUtil.lib producer.lib ode.lib ul.lib opengl32.lib osgDB.lib winmm.lib osgText.lib OpenThreadsWin32.lib librti13.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dthla.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="&quot;$(RTIS_LIB)&quot;;..\..\..\lib;..\..\..\ext\lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc; libcmt"
 				ImportLibrary="../../../lib/dthla.lib"/>
 			<Tool
