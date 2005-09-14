@@ -7,10 +7,21 @@
 namespace dtABC
 {
 
+   /**
+   *  The Event class is specific to the state manager where an
+   *  event is an object whose Type can cause a Transition.
+   *  This class is meant to be derived from, to see a complete
+   *  usage example, goto: testStateManager
+   */
    class DT_EXPORT Event : public osg::Referenced
    {
       public:
 
+         /**
+         * This Type is the internal key to events.
+         * A specific Type is what causes a transition
+         * between states.
+         */
          typedef dtUtil::Enumeration Type;
 
          Event( const Type* type ) : mType(type) {}

@@ -35,6 +35,10 @@
 namespace dtUtil
 {
 
+   /**
+   * SeamlessNoise is a noise class that creates tileable noise
+   *
+   */
    class SeamlessNoise
    {
 
@@ -43,6 +47,11 @@ namespace dtUtil
       SeamlessNoise(int seed = 1023058);
       ~SeamlessNoise();
 
+      /**
+      * @param vect_in, a 3D Vector to hash the noise to, for 2D noise pass in a constant z value
+      * @param repeat, pass in the frequency or the desired resolution to tile the noise in
+      * @return a float from -1 to 1 
+      */
       float GetNoise(const osg::Vec3f& vect_in, int repeat = 1);
 
    private:

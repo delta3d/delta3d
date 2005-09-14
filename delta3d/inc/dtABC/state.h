@@ -23,6 +23,7 @@ namespace dtABC
 
          virtual const Type* GetType() const { return mType; }
 
+         ///This function must be implemented with desired functionality on an event transistion
          virtual void HandleEvent( Event* event ) = 0;
          
          ///Deprecated for virtual void HandleEvent( Event* event = 0 ) 
