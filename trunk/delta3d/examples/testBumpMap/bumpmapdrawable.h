@@ -30,6 +30,7 @@ public:
    void Initialize();
   
    void SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& pEyePos);
+   void SetWireframe(bool pWireframe);
 
 private:
 

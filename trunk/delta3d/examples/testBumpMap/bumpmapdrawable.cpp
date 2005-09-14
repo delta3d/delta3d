@@ -1,4 +1,5 @@
 #include "bumpmapdrawable.h"
+#include <osg/PolygonMode>
 #include <dtCore/globals.h>
 #include "cubevertices.h"
 
@@ -24,6 +25,25 @@ void BumpMapDrawable::SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& p
    ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[1], pEyePos[2], 0.0f));
 }
 
+
+void BumpMapDrawable::SetWireframe(bool pWireframe)
+{
+   osg::StateSet* ss = mGeode->getOrCreateStateSet();
+
+   if(pWireframe)
+   {
+      osg::PolygonMode *polymode = new osg::PolygonMode;
+      polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+      ss->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
+   }
+   else
+   {
+      osg::PolygonMode *polymode = new osg::PolygonMode;
+      polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::FILL);
+      ss->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
+   }
+
+}
 
 
 void BumpMapDrawable::Initialize()

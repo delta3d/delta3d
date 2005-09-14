@@ -4,6 +4,7 @@
 #include "BumpMapDrawable.h"
 
 
+
 using namespace dtABC;
 using namespace dtCore;
 
@@ -16,6 +17,8 @@ public:
 	TestBumpMapApp( std::string configFilename = "testbumpmapconfig.xml" )
 		: Application( configFilename )
 	{
+      mWireframe = false;
+
       GetWindow()->SetWindowTitle("testBumpMap");
       //initialize our drawable
 		mBumpMapDrawable = new BumpMapDrawable();
@@ -60,6 +63,21 @@ public:
 
    }
 
+   virtual void KeyPressed(dtCore::Keyboard* keyboard, 
+      Producer::KeyboardKey key,
+      Producer::KeyCharacter character)
+   {
+      if (key == Producer::Key_Escape)
+      {
+         this->Quit();
+      }
+      else if(key == Producer::Key_space)
+      {  
+         mWireframe = !mWireframe;
+         mBumpMapDrawable->SetWireframe(mWireframe);
+      }
+   }
+
 	~TestBumpMapApp()
 	{
 
@@ -69,6 +87,8 @@ private:
 
 	RefPtr<FlyMotionModel>	                  mMotionModel;
    RefPtr<BumpMapDrawable>                   mBumpMapDrawable;
+
+   bool                                      mWireframe;
 
 };
 
