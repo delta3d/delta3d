@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib dtDAL.lib dtutil.lib"
+				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib dtutil.lib dtDAL.lib"
 				OutputFile="../../../bin/Viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
