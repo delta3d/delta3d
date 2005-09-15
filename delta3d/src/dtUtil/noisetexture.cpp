@@ -3,13 +3,6 @@
 // Modified to support 2d noise and to to be tile-able to every
 // dimension
 
-
-// Notes : width, height and slices parameters of the constructor
-// should be power of 2
-// If slices are not passed in to the constructor (or slices = 1)
-// a 2d texture is created.
-// For pixel format it should be used GL_ALPHA (for a transparency map),
-// GL_LUMINANCE, GL_RGB or GL_RGBA
  
 #include "dtUtil/noisetexture.h"
 #include "time.h"

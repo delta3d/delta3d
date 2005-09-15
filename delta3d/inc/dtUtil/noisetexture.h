@@ -21,12 +21,6 @@
 #ifndef DELTA_NOISETEXTURE
 #define DELTA_NOISETEXTURE
 
-// NoiseTexture.h
-// Based on updated implementation (2002) of Ken Perlin's Noise
-// Modified to support 2d noise and to to be tileable to every
-// dimension
-
-
 #include <math.h>
 #include <stdio.h>
 #include <osg/Image>
@@ -37,12 +31,25 @@
 namespace dtUtil
 {
 
+   /**
+   * Noise Texture is a class that uses SeamlessNoise to generate an osg::Image
+   */
+
     class DT_EXPORT NoiseTexture
     {
     public:
 
         NoiseTexture();
         
+        /**
+        * @param octaves: the number of summations of the noise
+        * @param frequency: the frequency of the noise
+        * @param amp: the amplitude of the noise
+        * @param persistance: the persistance of the noise
+        * @param width: A power of 2, specifying the x resolution
+        * @param height: A power of 2, specifying the y resolution
+        * @param slices: A power of 2, specifying the z resolution, or 1 for 2D textures
+        */
         NoiseTexture( int    octaves,
                         int    frequency,
                         double amp,
@@ -62,6 +69,14 @@ namespace dtUtil
         void setHeight(int h)           { mHeight = h; }
         void setSlices(int s)           { mSlices = s; }
 
+        /**
+        * This function creates the texture
+        * @param format: specifies the format of the texture should be used GL_ALPHA (for a transparency map),
+        *                GL_LUMINANCE, GL_RGB or GL_RGBA
+        *
+        *@return  returns a pointer to the image
+        *
+        */
         osg::Image *makeNoiseTexture(GLenum format);
 
         osg::Image* GetNoiseTexture(){return mImage;}

@@ -40,6 +40,18 @@
 #include "fractal.h"
 
 
+/**
+* NoiseUtility.h contains all necessary defines to use the Noise Library in
+* dtUtil
+*
+* The noise classes are templated to allow varying precision and dimensions
+* ex: for a noise class with floating point precision and two components use Noise2f
+*
+*/
+
+
+
+
 namespace dtUtil
 {
 
