@@ -22,7 +22,6 @@
 #define DTUTIL_INCLUDE
 
 #include <dtUtil/deprecationmgr.h>
-#include <dtUtil/domain.h>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
