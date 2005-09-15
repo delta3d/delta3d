@@ -2,6 +2,8 @@
 #define DTNET_INCLUDE
 
 #include <dtNet/netmgr.h>
+#include <dtNet/connectionserver.h>
+#include <dtNet/connectionlistener.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
@@ -17,7 +19,7 @@
    #endif
 
    #define _AUTOLIBNAME2 "HawkNLD.lib"
-   #define _AUTOLIBNAME2 "gned.lib"
+   #define _AUTOLIBNAME3 "gned.lib"
 #else 
 
    #ifndef DT_LIBRARY  
@@ -25,7 +27,7 @@
    #endif
 
    #define _AUTOLIBNAME2 "HawkNL.lib"
-   #define _AUTOLIBNAME2 "gne.lib"
+   #define _AUTOLIBNAME3 "gne.lib"
 #endif
 
 #ifndef _NOAUTOLIBMSG

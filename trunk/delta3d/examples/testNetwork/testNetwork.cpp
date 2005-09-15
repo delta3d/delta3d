@@ -1,7 +1,6 @@
 // testNetwork.cpp : defines the implementation of the application
 
 #include "testNetwork.h"
-#include  <dtNet/dtnet.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -9,17 +8,33 @@ using namespace dtNet;
 
 IMPLEMENT_MANAGEMENT_LAYER( testNetwork )
 
-testNetwork::testNetwork( const std::string& configFilename )
-: Application( configFilename )
+testNetwork::testNetwork( const std::string &hostName, 
+                          const std::string& configFilename )
+: Application( configFilename ),
+  mHostName(hostName)
 {
    RegisterInstance( this );
 
-   //Generating a default config file if there isn't one already
-   std::string foundPath = osgDB::findDataFile(configFilename);
 
-   if( foundPath.empty() )
+   mNet = new NetMgr();
+
+   std::string logFilename;
+
+   if (mHostName.empty()) logFilename = std::string("server.log");
+   else logFilename = std::string("client.log");
+
+   mNet->InitializeGame("testNetwork", 1.0, logFilename);
+
+
+   if (mHostName.empty())
    {
-      GenerateDefaultConfigFile();
+      mNet->SetupServer(4625);
+      GetWindow()->SetWindowTitle("I'm the Host");
+   }
+   else
+   {
+      mNet->SetupClient( hostName, 4625 );
+      GetWindow()->SetWindowTitle("I'm a Client");
    }
 }
 
@@ -31,7 +46,6 @@ testNetwork::~testNetwork()
    
 void testNetwork::Config()
 {   
-   RefPtr<dtNet::NetMgr> net = new dtNet::NetMgr();
 
    GetWindow()->SetWindowTitle("testNetwork");
    
@@ -68,4 +82,13 @@ void testNetwork::Frame( const double deltaFrameTime )
 void testNetwork::PostFrame( const double deltaFrameTime )
 {
    //called after frame has been rendering, collect information about results from scene interaction here
+}
+
+void testNetwork::Quit()
+{
+   {   
+      mNet->Shutdown();
+   }
+
+   Application::Quit();
 }
