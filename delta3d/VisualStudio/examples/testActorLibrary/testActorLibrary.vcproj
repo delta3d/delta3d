@@ -35,7 +35,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtcored.lib dtDALd.lib dtActorsd.lib dtvisd.lib dtutild.lib ul_d.lib"
 				OutputFile="../../../bin/testActorLibraryd.dll"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"

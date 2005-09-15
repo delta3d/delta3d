@@ -39,7 +39,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtDALd.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvisd.lib xerces-c_2D.lib QtCored4.lib QtGuid4.lib qtmaind.lib QtOpenGLd4.lib"
 				OutputFile="..\..\..\bin\STAGED.exe"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(QTDIR)\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
 				GenerateDebugInformation="TRUE"
