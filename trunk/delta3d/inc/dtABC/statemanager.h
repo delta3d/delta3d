@@ -73,7 +73,7 @@ namespace dtABC
      *
      * Controls the switching of modes by starting and stopping the different states.  
      * When a new state is started Config is called and Shutdown is called before 
-     * switching.  The class is implemented as a singleton.  It derives from dtCore::Base
+     * switching. It derives from dtCore::Base
      * so that it can fire Events.
      */
    class DT_EXPORT StateManager : public dtCore::Base

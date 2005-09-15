@@ -28,6 +28,11 @@
 namespace dtUtil
 {
 
+   /**
+   * An implementation of 3D Gradient Noise
+   *
+   */
+
 template <class Real, class Vector>
 class Noise3
 {

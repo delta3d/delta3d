@@ -26,6 +26,29 @@
 namespace dtUtil
 {
 
+/**
+* Fractal: This class is made to complement the noise classes
+*           where as the noise class hashes vectors to floats between -1 to 1
+*           this class can be used to make summations of the noise
+*           to use this class I recommend including NoiseUtility.h and
+*           using the appropriate typedefs
+*
+* Definitions:
+*                Octaves: The number of successive steps to accumulate noise
+*                Frequency: The fractal dimension, or the number of noise interpolations per Real resolution
+*                Persistance: This defines the how the octaves will be weighted, 
+*                                where the weight at each octave is the persistance ^ octave
+*                Lacunarity: The gap between successive steps, or the rate at which the frequency is changing
+*                Offset: The amount to raise the terrain from sea level
+*                Gain: The scale value for the current noise to multiply into the next octave, used to produce smooth valleys and jagged mountain tops
+*                Oscarity: This convoluted word I made up which appears in IslandFractal, it is used to scale the squared value of the noise function
+*                             higher values make larger differences between peaks and sea level
+*              
+*
+*@sa http://www.texturingandmodeling.com/
+*Note: This book is awesome and is where most of this material came from
+*
+*/
 
 template <class Real, class Vector, class Noise>
 class Fractal: public Noise
@@ -33,16 +56,25 @@ class Fractal: public Noise
 
 public:
 
+   ///FBM: The standard Fractal Brownian Motion summation
    Real FBM(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f);
 
+   ///Turbulence: this should be used for gases, clouds, lava, etc, generates an inconsistent bubbly pattern
    Real Turbulence(Vector vect_in, int octaves = 1, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f);
 
+   ///A basic function that makes a pattern of lines in the x direction that could be interpreted as a marble look
+   ///try to make the output of this swirl, for added realism
    Real Marble(Vector vect_in, int octaves = 1, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f);
 
+   ///This one I made myself which basically just scales the output exponentially to make an island look
    Real IslandFractal(Vector vect_in, int octaves = 4, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real oscarity = 2.37f);
-   
+
+   //this is a n F. Kenton Musgrave function taken and modified from Texturing and Modeling: A Procedural Approach
+   //it attempts to simulate smooth valleys and sea floors with jagged peaks
    Real RigidMultiFractal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real offset = 0.5f, Real gain = 2.0f);
 
+   //another one of F. Kenton Musgrave's from Texturing and Modeling: A Procedural Approach
+   //this is like the one above but the smoother areas are only at the lower levels and it doesnt specifically create ridges
    Real HeteroFracal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real offset = 0.5f);
 
 };

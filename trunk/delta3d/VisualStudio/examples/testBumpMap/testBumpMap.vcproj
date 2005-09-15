@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="testBumpMap"
-	ProjectGUID="{F3C3B681-713F-498F-8031-F00E86E38D36}"
+	ProjectGUID="{2876E90C-70C8-4911-A78F-BE9CF6930F7A}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

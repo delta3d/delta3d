@@ -31,46 +31,49 @@
 
 namespace dtUtil
 {
-
+   /**
+   * PolarDecomp is a class that will take a 4x4 Matrix and break it up into the following components
+   * Rotation, Scale, and Translation
+   */
    class DT_EXPORT PolarDecomp
    {
    public:
-      // Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation
+      /// Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation
       static float Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec3& T );
 
    private:
 
-      // Copy nxn matrix A to C using "gets" for assignment
+      /// Copy nxn matrix A to C using "gets" for assignment
       static void MatCopyMinusEqual( osg::Matrix& C, const osg::Matrix& A );
 
-      // Assign nxn matrix C the element-wise combination of A and B using "op"
+      /// Assign nxn matrix C the element-wise combination of A and B using "op"
       static void MatBinOpEqualPlus( osg::Matrix& C, const float g1, const osg::Matrix& A, const float g2, const osg::Matrix& B );
 
-      // Set MadjT to transpose of inverse of M times determinant of M
+      /// Set MadjT to transpose of inverse of M times determinant of M
       static void AdjointTranspose( const osg::Matrix& M, osg::Matrix& MadjT );
 
       static float NormInf( const osg::Matrix& M );
       static float NormOne( const osg::Matrix& M );
 
-      // Return index of column of M containing maximum abs entry, or -1 if M=0
+      /// Return index of column of M containing maximum abs entry, or -1 if M=0
       static int FindMaxCol( const osg::Matrix& M );
 
-      // Setup u for Household reflection to zero all v components but first
+      /// Setup u for Household reflection to zero all v components but first
       static void MakeReflector( const osg::Vec3& v, osg::Vec3& u );
 
-      // Apply Householder reflection represented by u to column vectors of M
+      /// Apply Householder reflection represented by u to column vectors of M
       static void ReflectCols( osg::Matrix& M, const osg::Vec3& u );
 
-      // Apply Householder reflection represented by u to row vectors of M
+      /// Apply Householder reflection represented by u to row vectors of M
       static void ReflectRows( osg::Matrix& M, const osg::Vec3& u );
 
       // Compute either the 1 or infinity norm of M, depending on tpose
       static float MatNorm( const osg::Matrix& M, const int tpose );
 
-      // Find orthogonal factor Q of rank 1 (or less) M
+      /// Find orthogonal factor Q of rank 1 (or less) M
       static void DoRank1( osg::Matrix& M, osg::Matrix& Q );
 
-      // Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose
+      /// Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose
       static void DoRank2( osg::Matrix& M, const osg::Matrix& MadjT, osg::Matrix& Q );
 
    };

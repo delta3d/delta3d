@@ -30,6 +30,10 @@
 
 namespace dtUtil
 {
+   /**
+   * MatrixUtil is a utility class for operating on an osg::Matrix 
+   *
+   */
 
    class DT_EXPORT MatrixUtil
    {
@@ -39,7 +43,6 @@ namespace dtUtil
       static void Print( const osg::Vec3& vec );
       static void Print( const osg::Vec4& vec );
 
-      static float Clamp( float x, float clampToValue );
       static float ClampUnity(const float x);
 
       static void Transpose( osg::Matrix& dest, const osg::Matrix& src );
@@ -64,12 +67,53 @@ namespace dtUtil
       static void SetRow( osg::Matrix& matrix, const osg::Vec3& vec, int row );      
       static void SetRow( osg::Matrix& matrix, const osg::Vec4& vec, int row );
 
+      /**
+      * Translates Euler angles Heading, pitch, and roll to an osg::Matrix
+      * @param rotation: the matrix whose rotation will be filled
+      * @param hpr: the current Heading, pitch, roll to translate to a matrix
+      */
       static void HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr );
+
+      /**
+      * Translates Euler angles Heading, pitch, and roll to an osg::Matrix
+      * in addition fills in the translation of the matrix
+      * @param rotation: the matrix whose rotation will be filled
+      * @param xyz: the translation to be added to the matrix
+      * @param hpr: the current Heading, pitch, roll to translate to a matrix
+      */
       static void PositionAndHprToMatrix( osg::Matrix& rotation, const osg::Vec3& xyz, const osg::Vec3& hpr );
+
+      /**
+      * Translates the rotation part of an osg::Matrix to Euler Angles
+      * @param hpr: the vector to fill with the Euler Angles
+      * @param rotation: the current rotation matrix
+      */
       static void MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation );
+
+      /**
+      * Translates the rotation part of an osg::Matrix to Euler Angles
+      * As well as the translation to a vector
+      * @param xyz: the vector to fill with the translation part of the matrix
+      * @param hpr: the vector to fill with the Euler Angles
+      * @param rotation: the current rotation matrix
+      */
       static void MatrixToHprAndPosition( osg::Vec3& xyz, osg::Vec3& hpr, const osg::Matrix& rotation );
 
+      /**
+      * This function transforms a point by a 4x4 matrix and stores the result back in the point
+      *
+      * @param xyz: the vector which will be transformed and have the result stored back in to
+      * @param transformMat: the 4x4 matrix which will be used to rotate and translate the point
+      */
       static void TransformVec3(osg::Vec3& xyz, const osg::Matrix& transformMat);
+
+      /**
+      * This function transforms a point by a 4x4 matrix and stores the result into another vector
+      *
+      * @param vec_in: the vector to store the result of the transform
+      * @param xyz: the vector which will be transformed 
+      * @param transformMat: the 4x4 matrix which will be used to rotate and translate the point
+      */
       static void TransformVec3(osg::Vec3& vec_in, const osg::Vec3& xyz, const osg::Matrix& transformMat);
 
    };
