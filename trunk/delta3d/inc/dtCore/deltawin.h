@@ -25,9 +25,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/keyboard.h"
-#include "dtCore/mouse.h"
-#include "dtCore/refptr.h"
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/refptr.h>
 
 namespace Producer
 {

@@ -4,9 +4,8 @@
 
 #include <cassert>
 
-#include "Producer/KeyboardMouse"
-#include "dtCore/deltawin.h"
-
+#include <Producer/KeyboardMouse>
+#include <dtCore/deltawin.h>
 
 using namespace dtCore;
 using namespace std;
