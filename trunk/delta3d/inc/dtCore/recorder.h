@@ -60,8 +60,6 @@ namespace dtCore
     * @param FrameDataT is the type to be stored in memory.
     *
     * \todo Verify that adding a new source will invalidate the currently saved keyframes because of the assumed syncronization.
-    * \todo Make the loading done via a policy class which can impose deserialization interfaces as needed to the RecordableType.
-    * \todo Make the saving done via a policy class which can impose serialization interfaces as needed to the RecordableType.
     */
    template<typename RecordableT, typename FrameDataT>
    class /*DT_EXPORT */Recorder : public dtCore::Base
@@ -113,7 +111,7 @@ namespace dtCore
       const KeyFrameContainer& GetKeyFrames() const { return mKeyFrames; }
 
       /// Returns a vector of the RecordableT sources.
-      const RecordablePtrContainer& GetSources() const { return mKeyFrames; }
+      const RecordablePtrContainer& GetSources() const { return mSources; }
 
       /**
         * Adds an element to the list of objects to record.
