@@ -26,7 +26,7 @@
 
 namespace dtCore
 {
-   /* Delta3D Implementation of OSG's Timer. osg::Timer does not
+   /** Delta3D Implementation of OSG's Timer. osg::Timer does not
    * provide a public API to switch the bool controlling the use
    * of the system clock, and since it's inaccurate, we must flip it.
    */

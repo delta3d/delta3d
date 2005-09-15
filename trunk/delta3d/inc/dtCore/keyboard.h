@@ -86,8 +86,11 @@ namespace dtCore
 
          ///Producer callback methods
          virtual void keyPress( Producer::KeyCharacter );
+         ///Producer callback methods
          virtual void keyRelease( Producer::KeyCharacter );
+         ///Producer callback methods
          virtual void specialKeyPress( Producer::KeyCharacter );
+         ///Producer callback methods
          virtual void specialKeyRelease( Producer::KeyCharacter );
 
 

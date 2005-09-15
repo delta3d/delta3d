@@ -37,6 +37,11 @@
 
 namespace dtCore
 {
+   /**
+   * CloudPlane:  This class can be used to simulate cloud cover
+   *                 it derives from EnvEffect
+   *
+   */
    class DT_EXPORT CloudPlane : public dtCore::EnvEffect
    {
    public:

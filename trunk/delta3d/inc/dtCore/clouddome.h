@@ -40,6 +40,12 @@
 
 namespace dtCore
 {
+   /**
+   * CloudDome:  This class can be used to generate procedural cloud cover
+   * its constructor parameters are fed into SeamlessNoise 
+   *
+   *@see dtUtil::SeamlessNoise
+   */
 	class DT_EXPORT CloudDome : public dtCore::EnvEffect
 	{
 
@@ -103,7 +109,7 @@ namespace dtCore
 		{
 		public:
 
-			//Get the transformation matrix which moves from local coords to world coords.
+			///Get the transformation matrix which moves from local coords to world coords.
 			virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
 			{
 				if (osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv))
@@ -114,7 +120,7 @@ namespace dtCore
 				return true;
 			}
 
-			//Get the transformation matrix which moves from world coords to local coords.
+			///Get the transformation matrix which moves from world coords to local coords.
 			virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
 			{   
 				if (osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv))

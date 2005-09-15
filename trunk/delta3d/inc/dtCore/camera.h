@@ -161,6 +161,7 @@ namespace dtCore
 
       bool GetAutoAspect();
 
+      ///takes a number from 0-1 to set as the aspect ratio
       void SetAspectRatio( double aspectRatio );
 
       double GetAspectRatio();

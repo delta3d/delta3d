@@ -36,7 +36,9 @@ namespace Producer
 
 namespace dtCore
 {
-   
+   /**
+   * DeltaWin: The base window class for delta3D
+   */
    class DT_EXPORT DeltaWin : public Base
    {
       DECLARE_MANAGEMENT_LAYER(DeltaWin)
