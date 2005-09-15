@@ -462,7 +462,7 @@ namespace dtABC
          }
          if( nameiter != results.end() )
          {
-            stateName = (*typeiter).second;
+            stateName = (*nameiter).second;
          }
 
          //Do a check to see if a State exists with the same name and type name
@@ -506,7 +506,7 @@ namespace dtABC
          }
          if( nameiter != results.end() )
          {
-            stateName = (*typeiter).second;
+            stateName = (*nameiter).second;
          }
 
          //Do a check to see if a State exists with the same name and type name
@@ -541,12 +541,13 @@ namespace dtABC
          std::string stateName("default");
          if( nameiter != results.end() )
          {
-            mManager->MakeCurrent( mManager->GetState(stateName) );
+            stateName = (*nameiter).second;
          }
          else
          {
             LOG_ERROR("Transition file not structured properly at Start State, "+ename+", requires a Name attribute.")
          }
+         mManager->MakeCurrent( mManager->GetState(stateName) );
       }
    }
 
