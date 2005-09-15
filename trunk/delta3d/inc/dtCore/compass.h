@@ -66,7 +66,10 @@ namespace dtCore
          virtual  void              GetScreenPosition( float& x, float& y )   const;
          virtual  void              SetScreenPosition( float x, float y );
 
+         ///@return returns a pointer to the current camera
          virtual  dtCore::Camera*      GetCamera( void );
+         
+         //@param stes the current camera
          virtual  void              SetCamera( dtCore::Camera* cam );
 
       private:

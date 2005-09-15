@@ -58,6 +58,8 @@ namespace dtCore
 
       ///Supply a Camera to connect to this Tripod
       void SetCamera( Camera *cam );
+
+      ///set camera by name
       void SetCamera( const std::string& camName );
 
       ///Get the currently connected Camera
@@ -65,6 +67,7 @@ namespace dtCore
 
       ///Attach this Tripod to a Transformable
       void SetAttachToTransformable(Transformable *parent);
+      ///Attach to transformable by name
       void SetAttachToTransformable(const std::string& parentName);
 
       ///Get the currently connected Transformable
@@ -74,6 +77,7 @@ namespace dtCore
       void SetOffset(float x, float y, float z, float h, float p, float r)
       { SetOffset( osg::Vec3(x,y,z), osg::Vec3(h,p,r) ); }
       
+      ///Set the Tripod's offset from the parent Transformable
       void SetOffset(const osg::Vec3& newPos, const osg::Vec3& newHPR) {mPosition = newPos; mHPR = newHPR; }
 
       ///Get the Tripod's currently used offset coordinates
@@ -82,6 +86,7 @@ namespace dtCore
       ///Set the scaling factors for each degree of freedom (0.0 - 1.0)
       void SetScale(float x, float y, float z, float h, float p, float r);
       
+       ///Set the scaling factors for each degree of freedom (0.0 - 1.0)
       void SetScale(const osg::Vec3& xyz, const osg::Vec3& hpr){mXYZScale = xyz; mHPRScale = hpr;}
 
       ///Get the currently used scaling factors

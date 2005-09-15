@@ -92,14 +92,20 @@ namespace dtCore
       ///Get only rotation methods
       void GetRotation( osg::Matrix& rotation ) const { rotation.set( mRotation ); }
 
+      ///fills params with the current scale of the transform
       void GetScale( float& sx, float& sy, float& sz ) const;
+      ///fills params with the current scale of the transform
       void GetScale( osg::Vec3& scale ) const { scale.set( mScale ); }
 
-      void SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec );      
+      ///sets this matrix to be used for to set the camera  view
+      void SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec );  
+      ///sets this matrix to be used for to set the camera  view    
       void SetLookAt(   float posX, float posY, float posZ,
                         float lookAtX, float lookAtY, float lookAtZ,
                         float upVecX, float upVecY, float upVecZ );
 
+      ///checks to see if the param transform is within epsilon of this transform
+      ///slightly more sophisticated as using operator ==
       bool EpsilonEquals( const Transform* transform, float epsilon = 0.0001f ) const;
 
       Transform & operator=(const Transform &);

@@ -47,6 +47,13 @@ namespace dtCore
    public:
       
        DECLARE_MANAGEMENT_LAYER(CloudPlane)
+
+       /**
+       * Constructor: These params initialize the noise function
+       * for a detailed description see dtUtil::Fractal   
+       *
+       *@sa dtUtil::Fractal
+       */
        CloudPlane(int  octaves,
                  float cutoff,
                  int   frequency,
@@ -61,11 +68,13 @@ namespace dtCore
 
       //virtual osg::Group *GetNode(void) {return mNode.get();}
 
+      ///the virtual overloaded draw function
       virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
           double sun_angle, double sunAzimuth,
           double vis);
 
-      float getHeight(void) { return mHeight; };
+      ///@return height of skyplane
+      float GetHeight(void) { return mHeight; };
 
    private:
        class MoveEarthySkyWithEyePointTransform : public osg::Transform

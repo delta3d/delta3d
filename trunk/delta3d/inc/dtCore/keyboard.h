@@ -39,7 +39,7 @@ namespace dtCore
 
 
    /**
-    * A keyboard device.
+    * The interface to the keyboard
     */
    class DT_EXPORT Keyboard : public InputDevice
    {

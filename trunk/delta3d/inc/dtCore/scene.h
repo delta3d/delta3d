@@ -117,11 +117,13 @@ namespace dtCore
       
       ///Set the gravity vector
       void SetGravity(const osg::Vec3& gravity);
+      ///Set the gravity vector
       void SetGravity(float x, float y, float z) { SetGravity( osg::Vec3(x,y,z) ); }
 
      
       ///Get the gravity vector
       void GetGravity(osg::Vec3& vec) const { vec = mGravity; }
+      ///Get the gravity vector
       void GetGravity(float* x, float* y, float* z) const { *x = mGravity[0]; *y = mGravity[1]; *z = mGravity[2]; }
 
       
@@ -172,17 +174,21 @@ namespace dtCore
 		/// UnRegister a Physical with the Scene
 		void UnRegisterPhysical( Physical *physical );
 
+      ///returns a pointer to the light specified by the param number
       inline Light* GetLight( const int number ) const { return mLights[ number ]; }
+      ///returns a pointer to the light specified by the current string
       Light* GetLight( const std::string& name ) const;
 
+      ///registers a light using the light number
       inline void RegisterLight( Light* light )
       { 
          mLights[ light->GetNumber() ] = light; //add to internal array of lights
       }
 
+      ///unreferences the current light, by number, Note: does not erase
       inline void UnRegisterLight( Light* light )
       { 
-         mLights[ light->GetNumber() ] = 0; //add to internal array of lights
+         mLights[ light->GetNumber() ] = 0; 
       }
 
       ///Use the internal scene light

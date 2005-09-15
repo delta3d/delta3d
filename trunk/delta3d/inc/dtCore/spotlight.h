@@ -37,6 +37,13 @@ namespace dtCore
 
    public:
 
+      /**
+      *Constructor
+      *
+      *@param number: the light number, 0-7, this will overright any other light with that number
+      *@param name: a name for the light, defaulted to defaultPositonalLight
+      *@param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
+      */
       SpotLight( int number, const std::string& name = "defaultSpotLight", LightingMode mode = GLOBAL );
 
       ///Copy constructor from an osg::LightSource

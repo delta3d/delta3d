@@ -137,12 +137,15 @@ namespace dtCore
                         double bottom, double top,
                         double nearClip, double farClip );
 
+      ///set orthographic mode
       void SetOrtho( double left, double right,
                         double bottom, double top,
                         double nearClip, double farClip );
 
+      ///enable orthographic mode
       void ConvertToOrtho( float d );
 
+      ///enable perspective mode
       bool ConvertToPerspective( float d );
 
 //      void Apply( float xshear=0.0f, float yshear=0.0 );
@@ -153,8 +156,10 @@ namespace dtCore
 //                      double &bottom, double &top, 
 //                      double &nearClip, double &farClip );
 
+      ///@return HOV
       float GetHorizontalFov();
 
+      ///@return FOV
       float GetVerticalFov();
 
       void SetAutoAspect( bool ar );
@@ -164,6 +169,7 @@ namespace dtCore
       ///takes a number from 0-1 to set as the aspect ratio
       void SetAspectRatio( double aspectRatio );
 
+      ///@return aspect ratio
       double GetAspectRatio();
 
       ///Get a handle to the Producer Lens that this Camera uses
