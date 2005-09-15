@@ -4,4 +4,4 @@ testSrcs = SGlob('*.cpp')
 
 testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
 
-BuildProgram( '#bin/testShader', testSrcs, testDeps )
+BuildProgram( '#bin/testShaders', testSrcs, testDeps )
