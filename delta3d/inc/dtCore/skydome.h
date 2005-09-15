@@ -51,7 +51,7 @@ namespace dtCore
 
    
    private:
-      // Build the sky dome
+      /// Build the sky dome
       void Config();
 
       //osg::Group *mNode;

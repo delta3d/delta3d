@@ -26,7 +26,6 @@
 #include <osg/Group>
 #include <osg/Vec3>
 
-///\todo Make this pure virtual once sg has been removed
 namespace dtCore
 {
    ///A base class for all Environmental Effects
@@ -36,9 +35,9 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(EnvEffect)
 
       EnvEffect( const std::string& name = 0 );
-      virtual ~EnvEffect();
+      virtual ~EnvEffect() = 0;
 
-      // Must override this to supply the repainting routine
+      /// Must override this to supply the repainting routine
       virtual void Repaint(   const osg::Vec3& skyColor, const osg::Vec3& fogColor,
                               double sunAngle, double sunAzimuth,
                               double visibility );

@@ -53,6 +53,12 @@ namespace dtCore
    So use dtCore::Camera::_SceneHandler instead.
    */
    
+   /**
+   *  Scene: This class encapsulates the root of the delta scene graph
+   *
+   *
+   */
+
    class DT_EXPORT Scene : public Base  
    {
       DECLARE_MANAGEMENT_LAYER(Scene)

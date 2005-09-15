@@ -27,7 +27,7 @@
 
 namespace dtCore
 {
-   ///A class that represents a position and attitude in 3D space
+   ////A class that represents a position and attitude in 3D space
    
    class DT_EXPORT Transform
    {
@@ -39,44 +39,57 @@ namespace dtCore
       Transform( const Transform& that );
       virtual ~Transform();
 
-      //Set both translation and rotation methods
+      ///Set both translation and rotation methods
       virtual void Set( float tx, float ty, float tz, 
                         float h, float p, float r, 
                         float sx, float sy, float sz ); 
+      ///Set both translation and rotation methods
       virtual void Set( const osg::Vec3& xyz, const osg::Vec3& rotation, const osg::Vec3& scale );
+      ///Set both translation and rotation methods
       virtual void Set( const osg::Vec3& xyz, const osg::Matrix& rotation, const osg::Vec3& scale );
+      ///Set both translation and rotation methods
       virtual void Set( const osg::Matrix& mat );
 
-      //Set only translation methods
+      ///Set only translation methods
       virtual void SetTranslation( float tx, float ty, float tz ) { mTranslation.set( tx, ty, tz); }
+      ///Set only translation methods
       virtual void SetTranslation( const osg::Vec3& xyz ) { mTranslation.set( xyz ); }
       
       //Set only rotation methods
       virtual void SetRotation( float h, float p, float r );
+      //Set only rotation methods
       virtual void SetRotation( const osg::Vec3& hpr );
+      //Set only rotation methods
       virtual void SetRotation( const osg::Matrix& rotation ) { mRotation.set( rotation ); }
       
       ///Set the uniform scale factor
       virtual void SetScale( float sx, float sy, float sz ) { mScale.set( sx, sy, sz ); }
+      ///Set the uniform scale factor
       virtual void SetScale( const osg::Vec3& scale ) { mScale.set( scale ); }
       
-      //Get translation and rotation methods
+      ///Get translation and rotation methods
       void Get( float& tx, float& ty, float& tz, float& h, float& p, float& r, float& sx, float& sy, float& sz ) const;
+      ///Get translation and rotation methods
       void Get( osg::Vec3& xyz, osg::Matrix& rotation, osg::Vec3& scale ) const;
+      ///Get translation and rotation methods
       void Get( osg::Vec3& xyz, osg::Vec3& hpr, osg::Vec3& scale  ) const;
+      ///Get translation and rotation methods
       void Get( osg::Matrix& matrix ) const; 
       
-      //Get only translation methods
+      ///Get only translation methods
       void GetTranslation( osg::Vec3& translation ) const { translation.set( mTranslation ); }
+      ///Get only translation methods
       void GetTranslation( float& tx, float& ty, float& tz ) const;
 
       float GetTranslationX() const { return mTranslation[0]; }
       float GetTranslationY() const { return mTranslation[0]; }
       float GetTranslationZ() const { return mTranslation[0]; }
     
-      //Get only rotation methods
+      ///Get only rotation methods
       void GetRotation( float& h, float& p, float& r ) const;
+      ///Get only rotation methods
       void GetRotation( osg::Vec3& hpr ) const;
+      ///Get only rotation methods
       void GetRotation( osg::Matrix& rotation ) const { rotation.set( mRotation ); }
 
       void GetScale( float& sx, float& sy, float& sz ) const;

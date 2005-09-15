@@ -51,6 +51,7 @@ namespace dtCore
       virtual bool AddChild( DeltaDrawable *child ); 
       virtual void RemoveChild( DeltaDrawable *child );
 
+      ///Adds the scene to this light, which makes the whole scene use this light
       virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
 
       virtual void RenderProxyNode( bool enable = true ) { Transformable::RenderProxyNode( enable ); }
