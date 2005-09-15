@@ -581,21 +581,26 @@ Sound::SetMaxGain( float gain )
    SendMessage( kCommand[MAX_DIST], this );
 }
 
-
-
 Sound::FrameData* Sound::CreateFrameData() const
 {
-   bool playing(false);
-   ///\todo Determine if the state of the sound is playing and reflect that here.
-   FrameData* fd = new FrameData(mGain,mPitch,playing);
+   FrameData* fd = new FrameData(mGain,mPitch,this->IsPlaying());
    return fd;
 }
 
 void Sound::UseFrameData(const FrameData* fd)
 {
-   ///\todo set the playing state based on the value of FrameData::mPlaying
    this->SetGain( fd->mGain );
    this->SetPitch( fd->mPitch );
+   if( !this->IsPlaying() )
+   {
+      if( fd->mPlaying )
+         this->Play();
+   }
+   else  // sound is playing
+   {
+      if( !fd->mPlaying )
+         this->Stop();
+   }
 }
 
 DOMElement* Sound::Serialize(const FrameData* d,XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const
