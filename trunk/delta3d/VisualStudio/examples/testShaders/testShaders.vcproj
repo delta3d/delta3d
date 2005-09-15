@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="..\..\..\bin\testShadersD.exe"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
