@@ -61,11 +61,40 @@ namespace dtUtil
 
         ~NoiseTexture();
 
+        /*
+        *Sets octaves
+        *@param an int greater than 0
+        */
         void setOctaves(int o)          { mOctaves     = o; }
+        
+        /*
+        *Sets frequency
+        *@param an int greater than 0
+        */
         void setFrequency(int f)        { mFrequency   = f; }
+        
+        /**
+        *Sets amplitude
+        *@param a double greater than 0
+        */
         void setAmplitude(double a)     { mAmplitude   = a; }
+        
+        /**
+        * sets persistence
+        *@param a double from 0-1
+        */
         void setPersistence(double p)   { mPersistence = p; }
+        
+        /**
+        * Sets width
+        * @param texture resolution of x dimension
+        */
         void setWidth(int w)            { mWidth = w; }
+        
+        /**
+        *Sets height
+        *@param texture resolution of y dimension
+        */
         void setHeight(int h)           { mHeight = h; }
         void setSlices(int s)           { mSlices = s; }
 
@@ -79,9 +108,15 @@ namespace dtUtil
         */
         osg::Image *makeNoiseTexture(GLenum format);
 
+        /*
+        *If you need a pointer to the texture you'll find it here
+        *don't call this if you haven't generated the texture yet!
+        *@return returns a pointer to the image created
+        */
         osg::Image* GetNoiseTexture(){return mImage;}
     private:
 
+       ///internal init
         void initNoise(void);
 
       

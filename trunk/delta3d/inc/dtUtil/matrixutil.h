@@ -39,12 +39,19 @@ namespace dtUtil
    {
    public:
 
+      ///Prints a matrix
       static void Print( const osg::Matrix& matrix );  
+      ///Prints a vector
       static void Print( const osg::Vec3& vec );
+      ///Prints a vector
       static void Print( const osg::Vec4& vec );
 
+      ///clamps a float from -1 to 1
       static float ClampUnity(const float x);
 
+      ///transposes a matrix
+      //@param dest: matrix to store result
+      //@param src: matrix to transpose
       static void Transpose( osg::Matrix& dest, const osg::Matrix& src );
 
       /*
