@@ -46,31 +46,34 @@ namespace dtCore
    class DT_EXPORT System : public Base 
    {
    public:
+
       DECLARE_MANAGEMENT_LAYER(System)
 
+      virtual ~System();
+
       ///Perform any configuration required.  Message: "configure"
-      void Config(void);
+      void Config();
 
       ///Get a pointer to the System
       static System *Instance();
 
       ///Toggles the running flag to true
-      void Start(void);
+      void Start();
 
       ///One complete System frame
-      void Step(void);
+      void Step();
 
       ///Stop the System from running
-      void Stop(void);
+      void Stop();
 
       ///Start the System running
-      void Run(void);
+      void Run();
 
       ///Is the system running
-      bool IsRunning(void) const { return mRunning; }
+      bool IsRunning() const { return mRunning; }
 
-      virtual ~System();
    private:
+
       System(); ///<private
       static System *mSystem;   ///<The System pointer
       static bool mInstanceFlag;///<Have we created a System yet?
@@ -89,7 +92,7 @@ namespace dtCore
       ///Stuff to do after the frame.  Message: "postframe", delta time in seconds
       void PostFrame( const double deltaFrameTime );
 
-      bool mRunning; ///<Are we currently running?      
+      bool  mRunning; ///<Are we currently running?      
    };
 };
 

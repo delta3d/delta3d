@@ -4,9 +4,9 @@
 
 #include <cassert>
 
-#include "Producer/KeyboardMouse"
-#include "dtCore/deltawin.h"
-#include "dtCore/notify.h"
+#include <Producer/KeyboardMouse>
+#include <dtCore/deltawin.h>
+#include <dtCore/notify.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>

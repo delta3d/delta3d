@@ -23,7 +23,6 @@ TestWinApp::TestWinApp( string configFilename )
 void TestWinApp::Config()
 {
    dtABC::Application::Config();
-   GetWindow()->SetWindowTitle("TestWinApp");
 
    int x,y,w,h;
    GetWindow()->GetPosition(&x, &y, &w, &h);

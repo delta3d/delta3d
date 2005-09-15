@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/deltawin.h"
-#include "dtUtil/log.h"
+#include <dtCore/deltawin.h>
+#include <dtUtil/log.h>
+#include <Producer/Types>
 
 using namespace dtCore;
 using namespace dtUtil;

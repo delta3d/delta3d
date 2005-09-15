@@ -108,7 +108,7 @@ int main()
 
 
    //Instantiate the application and look for the config file
-   RefPtr<testMultiWin> app = new testMultiWin();
+   RefPtr<testMultiWin> app = new testMultiWin( "config.xml" );
 
    app->Config(); //configuring the application
    app->Run(); // running the simulation loop

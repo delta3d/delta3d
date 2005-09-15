@@ -147,10 +147,9 @@ mShowCursor(true)
 DeltaWin::~DeltaWin()
 {
    mKeyboardMouse->cancel();
+   mKeyboardMouse = 0;
 
-   mKeyboardMouse = NULL;
-
-   mRenderSurface = NULL;
+   mRenderSurface = 0;
 
    DeregisterInstance(this);
 }
