@@ -79,7 +79,7 @@ namespace dtCore
       static bool mInstanceFlag;///<Have we created a System yet?
       dtCore::Timer mClock;
 
-      //time keeping vars
+      ///time keeping vars
       dtCore::Timer_t mClockTime, mLastClockTime;
       double mDt;
 

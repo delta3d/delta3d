@@ -65,7 +65,7 @@ namespace dtCore
          static const std::string COLLISION_GEODE_ID;
 
          /**
-          * Constructor.
+          * Default Constructor.
           */
          Physical();
 
@@ -360,7 +360,7 @@ class BoundingBoxVisitor : public osg::NodeVisitor
 public:
 
    /**
-   * Constructor.
+   * Default Constructor.
    */
    BoundingBoxVisitor()
       : osg::NodeVisitor(osg::NodeVisitor::TRAVERSE_ALL_CHILDREN)

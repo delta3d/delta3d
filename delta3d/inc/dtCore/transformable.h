@@ -72,6 +72,7 @@ namespace dtCore
       virtual osg::MatrixTransform* GetMatrixNode(void)
       { return dynamic_cast<osg::MatrixTransform*>( mNode.get() ); }
 
+      ///render method for an object which may not have geometry
       virtual void RenderProxyNode( bool enable = true );
       
      ///Get the world coordinate matrix from the supplied node

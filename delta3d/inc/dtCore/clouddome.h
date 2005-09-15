@@ -42,9 +42,7 @@ namespace dtCore
 {
    /**
    * CloudDome:  This class can be used to generate procedural cloud cover
-   * its constructor parameters are fed into SeamlessNoise 
-   *
-   *@see dtUtil::SeamlessNoise
+   * 
    */
 	class DT_EXPORT CloudDome : public dtCore::EnvEffect
 	{
@@ -52,6 +50,12 @@ namespace dtCore
 	public:
 		DECLARE_MANAGEMENT_LAYER( CloudDome )
 
+      /**
+      * Constructor: These params initialize the noise function
+      * for a detailed description see dtUtil::Fractal   
+      *
+      *@sa dtUtil::Fractal
+      */
 		CloudDome(  int   octaves,
 			         int   frequency,
                   float amp,
@@ -61,13 +65,18 @@ namespace dtCore
                   float radius,
 				      int   segments);
 
-
+      /**
+      *Constructor
+      *@param radius: the radius of the cloud dome
+      *@param segments: the number of segments in the dome tesselation
+      */
 		CloudDome(  float radius,
 				      int   segments,
 				      const std::string& filename );
 
 		~CloudDome();
 
+     
 		float GetScale()                 const { return mScale; }
 		float GetExponent()              const { return mExponent; }
 		float GetCutoff()                const { return mCutoff; }
@@ -100,6 +109,7 @@ namespace dtCore
          mCloudColor = *mCC; 
       }
 
+      ///the virtual overload draw function
       virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
 			double sun_angle, double sunAzimuth,
 			double vis);

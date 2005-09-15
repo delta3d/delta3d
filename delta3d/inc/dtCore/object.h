@@ -54,6 +54,7 @@ namespace dtCore
          ///Load a file from disk
          virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
 
+         ///recenters the object geometry on LoadFile
          void RecenterGeometryUponLoad( const bool enable = true )
          { mRecenterGeometry = enable; }
 

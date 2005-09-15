@@ -33,6 +33,13 @@ namespace dtCore
 
    public:
 
+      /**
+      *Constructor
+      *
+      *@param number: the light number, 0-7, this will overright any other light with that number
+      *@param name: a name for the light, defaulted to defaultInfiniteLight
+      *@param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
+      */
       InfiniteLight( int number, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL );
 
       ///Copy constructor from an osg::LightSource
@@ -40,7 +47,7 @@ namespace dtCore
       virtual ~InfiniteLight();
 
       //DEPRECRATED: Use SetAzimuthElevation( h, p )
-      //Roll will be ignored as you can't roll a vector ;)
+      ///Roll will be ignored as you can't roll a vector ;)
       void SetDirection( float h, float p, float r );
 
       //DEPRECRATED: Use GetAzimuthElevation( h, p )

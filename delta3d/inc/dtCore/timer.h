@@ -46,8 +46,10 @@ namespace dtCore
       Timer();
       ~Timer() {}
 
+      ///get a static reference to the timer
       static const Timer* instance();
 
+      ///updates the timer
       Timer_t tick() const;
 
       //inline double delta_s( Timer_t t1, Timer_t t2 ) const { return (double)(t2 - t1)*_secsPerTick; }

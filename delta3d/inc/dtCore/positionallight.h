@@ -36,6 +36,13 @@ namespace dtCore
          
          public:
       
+      /**
+      *Constructor
+      *
+      *@param number: the light number, 0-7, this will overright any other light with that number
+      *@param name: a name for the light, defaulted to defaultPositonalLight
+      *@param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
+      */
       PositionalLight( int number, const std::string& name = "defaultPositonalLight", LightingMode mode = GLOBAL );
 
       ///Copy constructor from an osg::LightSource
@@ -46,14 +53,19 @@ namespace dtCore
 
       ///Set that values that control how fast light fades as one moves away from the light
       void SetAttenuation( float constant, float linear, float quadratic );
+
+      ///gets the value of the attenuation which controls how the light fades as objects get farther away
       void GetAttenuation( float& constant, float& linear, float& quadratic );
       
+      ///adds a drawable as a child of this node
       virtual bool AddChild( DeltaDrawable *child ); 
+      ///removes a drawable as a child of this node
       virtual void RemoveChild( DeltaDrawable *child );
 
       ///Adds the scene to this light, which makes the whole scene use this light
       virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
 
+      ///this class renders the light as a sphere for debugging purposes
       virtual void RenderProxyNode( bool enable = true ) { Transformable::RenderProxyNode( enable ); }
 
    };

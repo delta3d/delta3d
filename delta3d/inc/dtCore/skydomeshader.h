@@ -45,7 +45,10 @@ namespace dtCore
       void Update(const osg::Vec2& sunDir,
          float turbidity, float energy, float molecules);
 
+
+      ///our vertex program pointer
       osg::VertexProgram *mLightScatterinVP;
+      ///our fragment program pointer
       osg::FragmentProgram *mDomeFP;
 
    private:

@@ -41,10 +41,13 @@ namespace dtCore
       SkyDome(const std::string& name="SkyDome");
       virtual ~SkyDome();
       
+      ///sets the base color
       void SetBaseColor(const osg::Vec3& color);
            
+      //gets the base color
       void GetBaseColor(osg::Vec3& color) const{color.set(mBaseColor);}
     
+      ///the virtual paint function
       virtual void Repaint(const osg::Vec3& sky_color, const osg::Vec3& fog_color, 
          double sun_angle, double sunAzimuth,
          double vis);
