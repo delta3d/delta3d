@@ -174,9 +174,6 @@
 				RelativePath="..\..\..\inc\dtUtil\keyframedecoder.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtUtil\keyframehandler.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtUtil\log.h">
 			</File>
 			<File

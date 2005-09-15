@@ -41,7 +41,6 @@ XERCES_CPP_NAMESPACE_END
 namespace dtUtil
 {
    /** A class that manages one XML document.
-     * \warning The PlatformUtils::Initialize() needs to be called before instantiating this class.
      */
    class DT_EXPORT XercesWriter : public osg::Referenced
    {
@@ -71,9 +70,6 @@ namespace dtUtil
 
       XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* mImplementation;
       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* mDocument;
-
-      // string constants
-      XMLCh* mCORE, *mRootName;
    };
 };
 
