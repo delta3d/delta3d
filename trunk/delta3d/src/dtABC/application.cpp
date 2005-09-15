@@ -220,17 +220,6 @@ bool Application::ParseConfigFile(const std::string& file)
   */
 std::string dtABC::Application::GenerateDefaultConfigFile()
 {
-   //TiXmlDocument *xmlDoc = new TiXmlDocument( filename.c_str() );
-   //if( xmlDoc->LoadFile( "config.xml" ) )
-   //{
-   //   ///\todo Look at this - both of these lines are questionable.
-   //   LOG_WARNING("Application found existing config.xml, delete file before generating a new one.");
-   //   return std::string("");    // commented this line so that the above statement was true.
-   //}
-   //TiXmlDocument xml( "config.xml" );
-   //TiXmlDeclaration dec( "1.0", "iso-8859-1", "no" );
-   //xml.InsertEndChild( dec );
-
    std::string filename("config.xml");
    std::string existingfile = osgDB::findDataFile( filename );
 
@@ -240,27 +229,13 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
       return existingfile;
    }
 
-   ///\todo find out if we need to initialize the xerces utils before allocating a XercesWriter
    // write out a default config file
    dtCore::RefPtr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
 
-   //TiXmlElement app( "Application" );
    writer->CreateDocument( "Application" );
    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
    DOMElement* app = doc->getDocumentElement();
 
-   //TiXmlElement win( "Window" );
-   //win.SetAttribute( "Name", "defaultWin" );
-   //win.SetAttribute( "X", 100 );
-   //win.SetAttribute( "Y", 100 );
-   //win.SetAttribute( "Width", 640 );
-   //win.SetAttribute( "Height", 480 );
-   //win.SetAttribute( "PixelDepth", 24 ); 
-   //win.SetAttribute( "RefreshRate", 60 ); 
-   //win.SetAttribute( "ShowCursor", 1 );
-   //win.SetAttribute( "FullScreen", 0 );
-   //win.SetAttribute( "ChangeDisplayResolution", 0 );
-   //app.InsertEndChild(win);
    XMLCh* NAME = XMLString::transcode("Name");
    XMLCh* DEFAULTWIN = XMLString::transcode("defaultWin");
 
@@ -299,9 +274,6 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
 
    app->appendChild( windo );
 
-   //TiXmlElement scene( "Scene" );
-   //scene.SetAttribute( "Name", "defaultScene" );
-   //app.InsertEndChild( scene );
    XMLCh* SCENE = XMLString::transcode("Scene");
    DOMElement* scene = doc->createElement(SCENE);
    XMLString::release( &SCENE );
@@ -310,11 +282,6 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
 
    app->appendChild( scene );
 
-   //TiXmlElement cam( "Camera" );
-   //cam.SetAttribute( "Name", "defaultCam" );
-   //cam.SetAttribute( "WindowInstance", "defaultWin" );
-   //cam.SetAttribute( "SceneInstance", "defaultScene" );
-   //app.InsertEndChild( cam );
    XMLCh* CAMERA = XMLString::transcode("Camera");
    DOMElement* camera = doc->createElement(CAMERA);
    XMLString::release( &CAMERA );
@@ -334,9 +301,6 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
 
    app->appendChild( camera );
 
-   //xml.InsertEndChild( app );
-
-   //xml.SaveFile();
    writer->WriteFile( filename );
 
    XMLString::release( &NAME );
@@ -361,25 +325,6 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
    XMLString::release( &ONE );
    XMLString::release( &ZERO );
 
-   // Termination is not needed.
-   //try
-   //{
-   //   XMLPlatformUtils::Terminate();
-   //}
-   //catch(const XMLException& e)
-   //{
-   //   char* message = XMLString::transcode( e.getMessage() );
-   //   std::string msg(message);
-   //   LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate() with message: " + msg);
-   //   XMLString::release( &message );
-   //   return filename;
-   //}
-   //catch(...)
-   //{
-   //   LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate()");
-   //   return filename;
-   //}
-
    return osgDB::findDataFile(filename);  // from #include <osgDB/FileNameUtils>
 }
 
@@ -394,7 +339,7 @@ void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
 
    if( ename == "Window" )
    {
-      // --- attributes --- //
+      // set up some defaults
       std::string name("DefaultApp"), xstring("100"), ystring("100"), wstring("640"), hstring("480"), showstring("1"), fullstring("0");
 
       // search for specific named attributes, append the list of searched strings
@@ -450,56 +395,6 @@ void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
       mApp->CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
    }
 
-   //TiXmlElement* win = rootNode->FirstChildElement( "Window" );
-   //if (win != NULL)
-   //{
-   //   std::string name( "defaultWin" );
-   //   if( const char* nameChar = win->Attribute( "Name" ) )
-   //      name = nameChar;
-
-   //   int width( 640 );
-   //   if( const char* widthChar = win->Attribute( "Width" ) )
-   //      width = atoi( widthChar );
-
-   //   int height( 480 );
-   //   if( const char* heightChar = win->Attribute( "Height" ) )
-   //      height = atoi( heightChar );
-
-   //   int winX( 100 );
-   //   if( const char* winXChar = win->Attribute( "X" ) )
-   //      winX = atoi( winXChar );
-
-   //   int winY( 100 );
-   //   if( const char* winYChar = win->Attribute( "Y" ) )
-   //      winY = atoi( winYChar );
-
-   //   bool showCursor( true );
-   //   if( const char* showCursorChar = win->Attribute( "ShowCursor" ) )
-   //      showCursor = atoi( showCursorChar );
-
-   //   bool fullScreen( false );
-   //   if( const char* fullScreenChar = win->Attribute( "FullScreen" ) )
-   //      fullScreen = atoi( fullScreenChar );
-   //      
-   //   int pixelDepth( 24 );
-   //   if( const char* pixelChar = win->Attribute( "PixelDepth" ) )
-   //      pixelDepth = atoi( pixelChar );
-
-   //   int refreshRate( 60 );
-   //   if( const char* refreshChar    = win->Attribute("RefreshRate") )
-   //      refreshRate = atoi( refreshChar );
-
-   //   bool changeRes( false );
-   //   if( const char* changeResChar  = win->Attribute("ChangeDisplayResolution") )
-   //      changeRes = atoi( changeResChar );
-
-   //   if( changeRes )
-   //      DeltaWin::ChangeScreenResolution( width, height, pixelDepth, refreshRate );
-
-   //   CreateInstances( name, winX, winY, width, height, showCursor, fullScreen );
-
-   //}
-
    if( ename == "Scene" )
    {
       dtCore::Scene* scene = mApp->GetScene();
@@ -515,22 +410,15 @@ void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
       }
    }
 
-   //TiXmlElement*  scene = rootNode->FirstChildElement("Scene");
-   //if (scene != NULL)
-   //{
-   //   std::string name = scene->Attribute("Name");
-
-   //   mScene->SetName(name);
-   //}
-   //
-
    if( ename == "Camera" )
    {
+      // push some keys
       dtUtil::AttributeSearch camattrs;
       camattrs.GetSearchKeys().push_back("Name");
-      //camattrs.GetSearchKeys().push_back("WindowInstance");
-      //camattrs.GetSearchKeys().push_back("SceneInstance");
+      camattrs.GetSearchKeys().push_back("WindowInstance");
+      camattrs.GetSearchKeys().push_back("SceneInstance");
 
+      // do the attribute search, catch the results
       dtUtil::AttributeSearch::ResultMap results = camattrs( attrs );
 
       dtUtil::AttributeSearch::ResultMap::iterator iter = results.find("Name");
@@ -538,26 +426,31 @@ void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
       {
          mApp->GetCamera()->SetName( (*iter).second );
       }
+
+      iter = results.find("WindowInstance");
+      if( iter != results.end() )
+      {
+         if(dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance( (*iter).second) )
+         {
+            mApp->GetCamera()->SetWindow( win );
+         }
+         else
+         {
+            LOG_WARNING("Application:Can't find instance of DeltaWin, " + (*iter).second )
+         }
+      }
+
+      iter = results.find("SceneInstance");
+      if( iter != results.end() )
+      {
+         if(dtCore::Scene* scene = dtCore::Scene::GetInstance( (*iter).second) )
+         {
+            mApp->GetCamera()->SetScene( scene );
+         }
+         else
+         {
+            LOG_WARNING("Application:Can't find instance of Scene, " + (*iter).second )
+         }
+      }
    }
-
-   //TiXmlElement* cam = rootNode->FirstChildElement("Camera");
-   //if (cam != NULL)
-   //{
-   //   std::string name = cam->Attribute("Name");
-   //   std::string winInst = cam->Attribute("WindowInstance");
-   //   std::string sceneInst = cam->Attribute("SceneInstance");
-
-   //   mCamera->SetName(name);
-   //   DeltaWin* win = DeltaWin::GetInstance(winInst);
-   //   if (win != NULL)
-   //      mCamera->SetWindow(win);
-   //   else
-   //      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, "Application:Can't find instance of DeltaWin '%s'", winInst.c_str() );
-
-   //   Scene* scene = Scene::GetInstance(sceneInst);
-   //   if (scene != NULL)
-   //      mCamera->SetScene(scene);
-   //   else
-   //      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FILE__, "Application:Can't find instance of Scene '%s'", sceneInst.c_str() );
-   //}
 }
