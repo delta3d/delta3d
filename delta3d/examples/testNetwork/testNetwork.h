@@ -5,13 +5,14 @@
 
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
+#include <dtNet/dtnet.h>
 
 class testNetwork : public dtABC::Application
 {
    DECLARE_MANAGEMENT_LAYER( testNetwork )
 
    public:
-      testNetwork( const std::string& configFilename = "testnetworkconfig.xml" );
+      testNetwork( const std::string &hostName, const std::string& configFilename = "testnetworkconfig.xml" );
       ~testNetwork();
    
       virtual void Config();
@@ -23,10 +24,12 @@ class testNetwork : public dtABC::Application
       virtual void PreFrame( const double deltaFrameTime );
       virtual void Frame( const double deltaFrameTime );
       virtual void PostFrame( const double deltaFrameTime );
+      virtual void Quit();
 
    private:
-   
-      //place member variables here
+         //place member variables here
+      dtCore::RefPtr<dtNet::NetMgr> mNet;
+      std::string mHostName;
    
 };
 
