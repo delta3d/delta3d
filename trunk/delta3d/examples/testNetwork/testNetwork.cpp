@@ -45,10 +45,7 @@ TestNetwork::~TestNetwork()
 }
    
 void TestNetwork::Config()
-{   
-
-   GetWindow()->SetWindowTitle("TestNetwork");
-   
+{      
    //setup scene here
 
    Application::Config();
