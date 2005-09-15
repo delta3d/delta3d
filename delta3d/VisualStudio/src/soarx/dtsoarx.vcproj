@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtcore.lib osg.lib osgUtil.lib osgDB.lib ul.lib ode.lib opengl32.lib"
+				AdditionalDependencies="gdal_i.lib dtcore.lib dtutil.lib osg.lib osgUtil.lib osgDB.lib ul.lib ode.lib opengl32.lib"
 				OutputFile="../../../bin/dtsoarx.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
