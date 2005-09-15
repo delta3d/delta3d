@@ -109,8 +109,11 @@ namespace dtCore
           * @return the current name
           */
          const std::string& GetName() const;
-
+         
+         ///This sets the unique ID, for general purposes this should not be used
          void SetUniqueId( const UniqueId& id ) { mId = id; };
+
+         ///This class returns an instance the the UniqueID
          const UniqueId& GetUniqueId() const { return mId; }
 
          ///Override to receive messages
