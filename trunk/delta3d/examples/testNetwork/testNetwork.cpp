@@ -6,9 +6,9 @@ using namespace dtCore;
 using namespace dtABC;
 using namespace dtNet;
 
-IMPLEMENT_MANAGEMENT_LAYER( testNetwork )
+IMPLEMENT_MANAGEMENT_LAYER( TestNetwork )
 
-testNetwork::testNetwork( const std::string &hostName, 
+TestNetwork::TestNetwork( const std::string &hostName, 
                           const std::string& configFilename )
 : Application( configFilename ),
   mHostName(hostName)
@@ -23,7 +23,7 @@ testNetwork::testNetwork( const std::string &hostName,
    if (mHostName.empty()) logFilename = std::string("server.log");
    else logFilename = std::string("client.log");
 
-   mNet->InitializeGame("testNetwork", 1.0, logFilename);
+   mNet->InitializeGame("TestNetwork", 1, logFilename);
 
 
    if (mHostName.empty())
@@ -39,22 +39,22 @@ testNetwork::testNetwork( const std::string &hostName,
 }
 
 
-testNetwork::~testNetwork()
+TestNetwork::~TestNetwork()
 {
    DeregisterInstance( this );
 }
    
-void testNetwork::Config()
+void TestNetwork::Config()
 {   
 
-   GetWindow()->SetWindowTitle("testNetwork");
+   GetWindow()->SetWindowTitle("TestNetwork");
    
    //setup scene here
 
    Application::Config();
 }
 
-void testNetwork::KeyPressed(   Keyboard*      keyboard, 
+void TestNetwork::KeyPressed(   Keyboard*      keyboard, 
                                     Producer::KeyboardKey  key,
                                     Producer::KeyCharacter character )
 {
@@ -69,22 +69,22 @@ void testNetwork::KeyPressed(   Keyboard*      keyboard,
    }
 }
 
-void testNetwork::PreFrame( const double deltaFrameTime )
+void TestNetwork::PreFrame( const double deltaFrameTime )
 {
    //called prior to rendering of frame, do you scene updates here
 }
 
-void testNetwork::Frame( const double deltaFrameTime )
+void TestNetwork::Frame( const double deltaFrameTime )
 {
    //called during frame render
 }
 
-void testNetwork::PostFrame( const double deltaFrameTime )
+void TestNetwork::PostFrame( const double deltaFrameTime )
 {
    //called after frame has been rendering, collect information about results from scene interaction here
 }
 
-void testNetwork::Quit()
+void TestNetwork::Quit()
 {
    {   
       mNet->Shutdown();

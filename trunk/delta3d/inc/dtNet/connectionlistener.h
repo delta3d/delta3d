@@ -5,7 +5,7 @@
    #pragma warning( disable:4276 )  
 #endif
 
-#include <gnelib/connectionlistener.h>
+#include <gnelib/ConnectionListener.h>
 #include <dtCore/export.h>
 #include <dtCore/base.h>
 

@@ -413,6 +413,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
                   'dtDAL'    : 'dtDAL',
                   'dthla'    : 'dtHLA',
                   'dtgui'    : 'dtGUI',
+                  'dtNet'    : 'dtNet',
                   'dtscript' : 'dtScript',
                   'dtutil'   : 'dtUtil',
                   'dtvis'    : 'dtVis',
@@ -737,6 +738,7 @@ dtLibs = { 'dtabc'    : 'dtabc',
            'dtDAL'    : 'dtDAL',
            'dthla'    : 'dthla',
            'dtgui'    : 'dtgui',
+           'dtNet'    : 'dtNet',
            'dtscript' : 'dtscript',
            'dtutil'   : 'dtutil',
            'dtvis'    : 'dtvis',
@@ -754,7 +756,7 @@ if OS == 'windows' :
          #'boost_python'        : 'boost_python_debug',
          'CEGUIBase'           : 'CEGUIBase_d',
          'CEGUIOpenGLRenderer' : 'OpenGLGUIRenderer_d',
-         'CEGUIWindowsLook'    : 'CEGUIWindowsLook_d',
+         #'CEGUIWindowsLook'    : 'CEGUIWindowsLook_d',
          'osg'                 : 'osgd',
          'osgDB'               : 'osgDBd',
          'osgUtil'             : 'osgUtild',
@@ -771,6 +773,8 @@ if OS == 'windows' :
          'cal3d'               : 'cal3d_d',
          'fltk'                : 'fltkd',
          'gdal'                : 'gdal_iD',
+         'gne'                 : 'gned',
+         'HawkNL'              : 'HawkNLD',
          'isense'              : 'isensed',
          'openal'              : 'OpenAL32', 
          'alut'                : 'ALut',       
@@ -797,7 +801,7 @@ if OS == 'windows' :
          #'boost_python' : 'boost_python',
          'CEGUIBase'           : 'CEGUIBase',
          'CEGUIOpenGLRenderer' : 'OpenGLGUIRenderer',
-         'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
+         #'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
          'osg'                 : 'osg',
          'osgDB'               : 'osgDB',
          'osgUtil'             : 'osgUtil',
@@ -814,6 +818,8 @@ if OS == 'windows' :
          'cal3d'               : 'cal3d',
          'fltk'                : 'fltk',
          'gdal'                : 'gdal_i',
+         'gne'                 : 'gne',
+         'HawkNL'              : 'HawkNL',
          'isense'              : 'isense',
          'openal'              : 'OpenAL32', 
          'alut'                : 'ALut',       
@@ -841,7 +847,7 @@ elif OS == 'linux' :
       #'boost_python'        : 'boost_python',
       'CEGUIBase'           : 'CEGUIBase',
       'CEGUIOpenGLRenderer' : 'CEGUIOpenGLRenderer',
-      'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
+      #'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
       'osg'                 : 'osg',
       'osgDB'               : 'osgDB',
       'osgUtil'             : 'osgUtil',
@@ -858,6 +864,8 @@ elif OS == 'linux' :
       'cal3d'               : 'cal3d',
       'fltk'                : 'fltk',
       'gdal'                : 'gdal',
+      'gne'                 : 'gne',
+      'HawkNL'              : 'NL',
       'isense'              : 'isense',
       'openal'              : 'openal', 
       'ode'                 : 'ode', 
@@ -870,7 +878,8 @@ elif OS == 'linux' :
       'Xxf86vm'             : 'Xxf86vm',
       'uuid'                : 'uuid',
       'opengl'              : 'GL',
-      'cppunit'             : 'cppunit' 
+      'cppunit'             : 'cppunit',
+      'curses'              : 'curses'
       }
 elif OS == 'darwin' :
    extLibs = { 
@@ -895,6 +904,8 @@ elif OS == 'darwin' :
       'cal3d'          : 'cal3d',
       'fltk'           : 'fltk',
       'gdal'           : 'gdal',
+      'gne'            : 'gne',
+      'HawkNL'         : 'NL',
       'isense'         : 'isense',
       'openal'         : 'OpenAL', 
       'ode'            : 'ode', 
@@ -906,7 +917,8 @@ elif OS == 'darwin' :
       'CoreFoundation' : 'CoreFoundation',
       'IOKit'          : 'IOKit',
       'Carbon'         : 'Carbon',
-      'cppunit'        : 'cppunit' 
+      'cppunit'        : 'cppunit',
+      'curses'         : 'curses'
       }
 else :
    extLibs = {}
@@ -917,6 +929,8 @@ linkOrder = [
    'opengl',
    'xerces-c',
    'gdal',
+   'gne',
+   'HawkNL',
    'osg',
    'osgDB',
    'osgUtil',
@@ -933,23 +947,23 @@ linkOrder = [
    'isense',
    'openal',
    'ode',
-   'ul',
    'js',
+   'ul',
    'rvrutils',
    'rcfgscript', 
    'rbody',
    #'boost_python',
    'CEGUIBase',   
    'CEGUIOpenGLRenderer',
-   'CEGUIWindowsLook'
+   #'CEGUIWindowsLook'
    ]
 
 if OS == 'windows' :
    linkOrder = linkOrder + [ 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ]
 elif OS == 'darwin' :
-   linkOrder = [ 'CoreFoundation', 'IOKit', 'Carbon' ] + linkOrder
+   linkOrder = [ 'CoreFoundation', 'IOKit', 'Carbon', 'curses' ] + linkOrder
 elif OS == 'linux' :
-   linkOrder = [ 'Xxf86vm', 'uuid' ] + linkOrder 
+   linkOrder = [ 'Xxf86vm', 'uuid', 'curses' ] + linkOrder 
 
 foundLibs = {}
 

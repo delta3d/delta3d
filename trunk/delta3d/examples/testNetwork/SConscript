@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = [ 'testNetwork.cpp', 'main.cpp' ]
+
+testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtNet' ]
+
+BuildProgram( '#bin/testNetwork', testSrcs, testDeps )

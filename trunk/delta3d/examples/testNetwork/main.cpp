@@ -22,7 +22,7 @@ int main(int argc, char *argv[] )
       hostName = std::string(argv[1]);
    }
 
-   dtCore::RefPtr<testNetwork> app = new testNetwork( hostName, "testnetworkconfig.xml" );
+   dtCore::RefPtr<TestNetwork> app = new TestNetwork( hostName, "config.xml" );
 
    app->Config(); //configuring the application
    app->Run(); // running the simulation loop

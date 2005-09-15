@@ -1,19 +1,19 @@
-#ifndef DELTA_testNetwork
-#define DELTA_testNetwork
+#ifndef DELTA_TestNetwork
+#define DELTA_TestNetwork
 
-// testNetwork.cpp : declares the interface of the application
+// TestNetwork.cpp : declares the interface of the application
 
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
 #include <dtNet/dtnet.h>
 
-class testNetwork : public dtABC::Application
+class TestNetwork : public dtABC::Application
 {
-   DECLARE_MANAGEMENT_LAYER( testNetwork )
+   DECLARE_MANAGEMENT_LAYER( TestNetwork )
 
    public:
-      testNetwork( const std::string &hostName, const std::string& configFilename = "testnetworkconfig.xml" );
-      ~testNetwork();
+      TestNetwork( const std::string &hostName, const std::string& configFilename = "testnetworkconfig.xml" );
+      ~TestNetwork();
    
       virtual void Config();
 
@@ -33,4 +33,4 @@ class testNetwork : public dtABC::Application
    
 };
 
-#endif // DELTA_testNetwork
+#endif // DELTA_TestNetwork
