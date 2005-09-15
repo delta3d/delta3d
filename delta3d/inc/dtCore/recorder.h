@@ -213,13 +213,8 @@ namespace dtCore
          XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = doc->getDocumentElement();
 
-         std::vector<XMLCh*> cleanupxmlstring;
-
          XMLCh* TIMECODE = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("TimeCode");
-         cleanupxmlstring.push_back( TIMECODE );
-
          XMLCh* FRAME = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode("Frame");
-         cleanupxmlstring.push_back( FRAME );
 
          typename KeyFrameContainer::iterator kfiter = mKeyFrames.begin();
          typename KeyFrameContainer::iterator kfend = mKeyFrames.end();
@@ -246,11 +241,10 @@ namespace dtCore
             std::string timestring = dtUtil::ToString<double>( timestamp );
 
             XMLCh* TIMESTAMP = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( timestring.c_str() );
-            cleanupxmlstring.push_back( TIMESTAMP );
-
             frameelement->setAttribute( TIMECODE , TIMESTAMP );
-            root->appendChild( frameelement );
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMESTAMP );
 
+            root->appendChild( frameelement );
             ++kfiter;
          }
 
@@ -260,7 +254,6 @@ namespace dtCore
          // clean up memory
          XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &TIMECODE );
          XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &FRAME );
-         //std::for_each( cleanupxmlstring.begin(), cleanupxmlstring.end(), &dtUtil::XercesWriter::ReleaseTranscode );
       }
 
       /**
