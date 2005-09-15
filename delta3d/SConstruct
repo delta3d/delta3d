@@ -541,7 +541,7 @@ for K in os.environ.keys():
 if os.environ.has_key( 'CC' ) :
    env.Replace( CC = env['ENV']['CC'] )
 if os.environ.has_key( 'CXX' ) :
-   env.Replace( CC = env['ENV']['CXX'] )  
+   env.Replace( CXX = env['ENV']['CXX'] )  
      
 # don't forget the Visual Studio paths...
 if OS == 'windows' :
