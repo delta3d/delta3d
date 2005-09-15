@@ -15,6 +15,10 @@
 using namespace dtCore;
 using namespace std;
 
+void DeltaWin::KillGLWindow()
+{
+}
+
 // Producer::RenderSurface must realized for this to work
 void DeltaWin::SetWindowTitle( const std::string& title )
 {
