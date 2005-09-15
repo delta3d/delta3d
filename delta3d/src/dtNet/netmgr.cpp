@@ -51,7 +51,9 @@ void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const 
 
    //GNE::Console::initConsole();
 
+   #ifdef _DEBUG
    GNE::initDebug(GNE::DLEVEL1 | GNE::DLEVEL2 | GNE::DLEVEL3 | GNE::DLEVEL4 | GNE::DLEVEL5, logFile.c_str());
+   #endif
 
    mInitialized = true;
 }
