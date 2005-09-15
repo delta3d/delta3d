@@ -111,8 +111,8 @@ void BumpMapDrawable::EnableShaders()
    //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 
    //set up textures
-   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4.bmp"));
-   RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/Textures/Tile4Bump.bmp"));
+   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/tile4.bmp"));
+   RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/tile4bump.bmp"));
 
 
    RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());
@@ -140,8 +140,8 @@ void BumpMapDrawable::EnableShaders()
    mProg->addShader( bumpMapVert.get() );
    mProg->addShader( bumpMapFrag.get() );
 
-   bumpMapVert->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/BumpMap.vert");
-   bumpMapFrag->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/BumpMap.frag");
+   bumpMapVert->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/bumpmap.vert");
+   bumpMapFrag->loadShaderSourceFromFile( GetDeltaRootPath()+ "/data/shaders/bumpmap.frag");
 
    mLightPos = new osg::Uniform(osg::Uniform::FLOAT_VEC4, "lightPos");
    mLightPos->set(osg::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
