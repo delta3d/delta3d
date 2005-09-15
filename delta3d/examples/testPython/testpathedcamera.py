@@ -219,6 +219,12 @@ class TestPathedCameraApplication(Application):
         self.AddDrawable(self.infiniteTerrain)
         self.helo.LoadFile('models/uh-1n.ive')
         self.AddDrawable(self.helo)
+
+        hot = self.GetScene().GetHeightOfTerrain(0.0,0.0)
+        transform = Transform()
+        transform.SetTranslation(0.0,0.0,hot+10.0)
+        self.helo.SetTransform(transform)
+        
         self.spc = SplinePathController(
             self.GetCamera(),
             [ Waypoint(5.0, (0.0, -200.0, 50.0), (0.0, 0.0, 0.0)),
