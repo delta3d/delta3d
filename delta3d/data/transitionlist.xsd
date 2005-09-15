@@ -1,7 +1,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="Event">
 		<xs:complexType>
-			<xs:attribute name="TypeName" use="required"/>
+			<xs:attribute name="Type" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="FromState">
