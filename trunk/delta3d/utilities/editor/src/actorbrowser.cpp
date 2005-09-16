@@ -137,6 +137,7 @@ namespace dtEditQt
                         QString::SkipEmptyParts);
                     QMutableStringListIterator *listIterator = new QMutableStringListIterator(subCategories);
                     rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i]);
+
                 }
             }
 
