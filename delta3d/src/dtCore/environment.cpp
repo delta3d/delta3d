@@ -700,18 +700,3 @@ void dtCore::Environment::SetRefLatLong( const osg::Vec2& latLong )
    mRefLatLong = latLong;
 }
 
-void Environment::AddDrawable( DeltaDrawable *drawable )
-{
-   DEPRECATE("void Environment::AddDrawable( DeltaDrawable *drawable)",
-             "void Environment::AddChild( DeltaDrawable *child )")
-
-   AddChild(drawable);
-}
-
-void Environment::RemoveDrawable( DeltaDrawable *drawable )
-{
-   DEPRECATE("void Environment::RemoveDrawable( DeltaDrawable *drawable)",
-             "void Environment::RemoveChild( DeltaDrawable *child )")
-
-   RemoveChild(drawable);
-}

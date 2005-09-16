@@ -46,13 +46,6 @@ namespace dtCore
       InfiniteLight( const osg::LightSource& source, const std::string& name = "defaultInfiniteLight", LightingMode mode = GLOBAL  );
       virtual ~InfiniteLight();
 
-      //DEPRECRATED: Use SetAzimuthElevation( h, p )
-      ///Roll will be ignored as you can't roll a vector ;)
-      void SetDirection( float h, float p, float r );
-
-      //DEPRECRATED: Use GetAzimuthElevation( h, p )
-      void GetDirection( float& h, float& p, float& r ) const;
-
       ///Change the azimuth and elevation of the light (aka heading and pitch)
       void SetAzimuthElevation( float az, float el );
 

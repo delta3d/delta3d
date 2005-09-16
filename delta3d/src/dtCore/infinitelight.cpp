@@ -38,21 +38,6 @@ InfiniteLight::~InfiniteLight()
    DeregisterInstance(this);
 }
 
-void InfiniteLight::SetDirection( float h, float p, float r )
-{
-   DEPRECATE(  "void InfiniteLight::SetDirection( float h, float p, float r )",
-               "void InfiniteLight::SetAzimuthElevation( float h, float p )")
-
-   SetAzimuthElevation( h, p );
-}
-
-void InfiniteLight::GetDirection( float& h, float& p, float& r ) const
-{
-   DEPRECATE(  "void InfiniteLight::GetDirection( float& h, float& p, float& r )",
-               "void InfiniteLight::GetAzimuthElevation( float h, float p )")
-
-   GetAzimuthElevation( h, p );
-}
 
 void InfiniteLight::SetAzimuthElevation( float az, float el )
 {

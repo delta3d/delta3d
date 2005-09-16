@@ -87,7 +87,6 @@ void initMouseBindings()
    Mouse* (*MouseGI2)(std::string) = &Mouse::GetInstance;
 
    void (Mouse::*MouseGP1)(float&,float&) = &Mouse::GetPosition;
-   void (Mouse::*MouseGP2)(float*,float*) = &Mouse::GetPosition;
 
    enum_<MouseButton>("MouseButton")
       .value("LeftButton", LeftButton)
@@ -102,7 +101,6 @@ void initMouseBindings()
       .def("GetInstance", MouseGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
       .def("GetPosition", MouseGP1)
-      .def("GetPosition", MouseGP2)
       .def("SetPosition", &Mouse::SetPosition)
       .def("GetButtonState", &Mouse::GetButtonState)
       .def("AddMouseListener", &Mouse::AddMouseListener)

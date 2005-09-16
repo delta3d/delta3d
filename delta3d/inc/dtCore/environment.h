@@ -62,11 +62,6 @@ namespace dtCore
 		///Remove a DeltaDrawable added to the Environment.
 		void RemoveChild( DeltaDrawable *child );
 
-      ///Deprecated
-      void AddDrawable( DeltaDrawable *drawable );
-
-      ///Deprecated
-      void RemoveDrawable( DeltaDrawable *drawable );
 
       /// Add an Environmental Effect to the Environment
       void AddEffect( EnvEffect *effect );

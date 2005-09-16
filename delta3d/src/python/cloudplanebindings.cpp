@@ -19,5 +19,5 @@ void initCloudPlaneBindings()
       .def("GetInstance", CloudPlaneGI1, return_internal_reference<>())
       .def("GetInstance", CloudPlaneGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("getHeight", &CloudPlane::getHeight);
+      .def("GetHeight", &CloudPlane::GetHeight);
 }

@@ -81,7 +81,6 @@ namespace dtCore
           * y coordinate
           */
          void GetPosition(float& x, float& y);
-         void GetPosition(float* x, float* y);
          
          /**
          * Sets the current mouse position.

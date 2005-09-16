@@ -26,14 +26,6 @@ namespace dtABC
          ///This function must be implemented with desired functionality on an event transistion
          virtual void HandleEvent( Event* event ) = 0;
 
-         ///Deprecated for virtual void HandleEvent( Event* event = 0 ) 
-         virtual void Enable( Event* data = 0 )
-         {
-            DEPRECATE(  "virtual void Enable( Event* data = 0 )",
-                        "virtual void HandleEvent( Event* event = 0 ) = 0;")
-            HandleEvent(data);
-         }
-
          ///The place to clean up memory when before switching to a different mode
          virtual void Shutdown();
 

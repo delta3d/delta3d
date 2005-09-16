@@ -100,6 +100,6 @@ namespace dtActors
         if(cd == NULL)
             EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::CloudDome");
 
-        return (*cd->GetCloudColor());
+        return cd->GetCloudColor();
     }
 }

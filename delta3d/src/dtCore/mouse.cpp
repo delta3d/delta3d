@@ -70,13 +70,6 @@ void Mouse::GetPosition(float& x, float& y)
    x = GetAxis(0)->GetState();
    y = GetAxis(1)->GetState();
 }
-void Mouse::GetPosition(float* x, float* y)
-{
-   DEPRECATE(  "Mouse::GetPosition(float* x, float* y)", 
-               "Mouse::GetPosition(float& x, float& y)" )
-
-   GetPosition(*x,*y);
-}
 
 /**
 * Sets the current mouse position.
