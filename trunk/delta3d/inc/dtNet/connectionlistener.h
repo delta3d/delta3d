@@ -8,9 +8,12 @@
 #include <gnelib/ConnectionListener.h>
 #include <dtCore/export.h>
 #include <dtCore/base.h>
+#include <dtCore/refptr.h>
 
 namespace dtNet
 {
+   class NetMgr;
+
    class DT_EXPORT ConnectionListener : public GNE::ConnectionListener, public dtCore::Base
    {
    public:
@@ -20,9 +23,9 @@ namespace dtNet
 
       virtual ~ConnectionListener(void);
 
-      static sptr create()
+      static sptr create( NetMgr *netMgr)
       {
-         return sptr( new ConnectionListener() );
+         return sptr( new ConnectionListener(netMgr) );
       }
 
       virtual void onDisconnect( GNE::Connection& conn );
@@ -33,7 +36,7 @@ namespace dtNet
 
       virtual void onConnectFailure( GNE::Connection &conn, const GNE::Error &error);
 
-      virtual void onNewConn( GNE::SyncConnection& conn2);
+      virtual void onNewConn( GNE::SyncConnection& conn);
 
       virtual void onReceive( GNE::Connection& conn );
 
@@ -42,7 +45,9 @@ namespace dtNet
       virtual void onError( GNE::Connection& conn, const GNE::Error& error );
       
    protected:
-      ConnectionListener();
+      ConnectionListener(NetMgr *netMgr);
+   private:
+      dtCore::RefPtr<NetMgr> mNetMgr;
    };
 }
 
