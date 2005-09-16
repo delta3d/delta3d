@@ -492,6 +492,8 @@ static void updateParameterTabs()
 
       Program_Operators->clear();
 
+      psEditor_Program_OperatorsChanged(NULL, NULL);
+
       for(int i=0;i<layers[layer].mModularProgram->numOperators();i++)
       {
          Operator* op = layers[layer].mModularProgram->getOperator(i);
