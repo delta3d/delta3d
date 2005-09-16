@@ -28,12 +28,12 @@ TestNetwork::TestNetwork( const std::string &hostName,
 
    if (mHostName.empty())
    {
-      mNet->SetupServer(4625);
+      mNet->SetupServer(4444);
       GetWindow()->SetWindowTitle("I'm the Host");
    }
    else
    {
-      mNet->SetupClient( hostName, 4625 );
+      mNet->SetupClient( hostName, 4444 );
       GetWindow()->SetWindowTitle("I'm a Client");
    }
 }
@@ -60,7 +60,13 @@ void TestNetwork::KeyPressed(   Keyboard*      keyboard,
       case Producer::Key_Escape:
          Quit();
          break;
-      //make cases for other keys
+      case Producer::Key_P:
+         {
+            GNE::PingPacket ping;
+            mNet->SendPacketToAll(ping);
+         }
+
+         break;
       default:
          break;
    }
