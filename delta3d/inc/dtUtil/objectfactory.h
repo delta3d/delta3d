@@ -24,7 +24,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
-#include <dtUtil/Log.h>
+#include <dtUtil/log.h>
 //#include "Exception.h"
 #include <osg/Referenced>  // for base_class
 
