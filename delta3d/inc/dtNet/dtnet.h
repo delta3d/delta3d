@@ -18,7 +18,7 @@
       #define _AUTOLIBNAME1 "dtNetD.lib"
    #endif
 
-   #define _AUTOLIBNAME2 "HawkNLD.lib"
+   #define _AUTOLIBNAME2 "HawkNL.lib"
    #define _AUTOLIBNAME3 "gned.lib"
 #else 
 

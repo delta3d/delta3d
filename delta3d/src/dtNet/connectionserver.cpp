@@ -8,11 +8,13 @@
 using namespace dtNet;
 using namespace dtUtil;
 
-ConnectionServer::ConnectionServer(int inRate, int outRate):
+ConnectionServer::ConnectionServer(int inRate, int outRate, NetMgr *netMgr):
    GNE::ServerConnectionListener(),
    mInRate(inRate),
-   mOutRate(outRate)
+   mOutRate(outRate),
+   mNetMgr(netMgr)
 {
+   LOG_DEBUG("Creating");
 }
 
 
@@ -24,14 +26,12 @@ ConnectionServer::~ConnectionServer(void)
 
 void ConnectionServer::onListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
 {
-   //mprintf("Connection error: %s\n", error.toString().c_str());
-   //mprintf("  Error received from %s\n", from.toString().c_str());
-   LOG_DEBUG("onListenFailure");
+   mNetMgr->OnListenFailure( error, from, listener );
 }
 
 void ConnectionServer::onListenSuccess(const GNE::ConnectionListener::sptr &listener)
 {
-   LOG_DEBUG("onListenSuccess");
+   if (mNetMgr.valid())  mNetMgr->OnListenSuccess();     
 }
 
 void ConnectionServer::getNewConnectionParams( GNE::ConnectionParams &params )
@@ -39,6 +39,5 @@ void ConnectionServer::getNewConnectionParams( GNE::ConnectionParams &params )
    params.setInRate(mInRate);
    params.setOutRate(mOutRate);
    params.setUnrel(true); //?
-   params.setListener( ConnectionListener::create() );
+   params.setListener( ConnectionListener::create(mNetMgr.get()) );
 }
-

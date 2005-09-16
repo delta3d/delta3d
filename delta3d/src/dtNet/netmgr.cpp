@@ -1,6 +1,6 @@
 #include <dtNet/netmgr.h>
 #include <dtNet/connectionlistener.h>
-
+#include <dtNet/connectionserver.h>
 
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
@@ -22,19 +22,10 @@ NetMgr::~NetMgr(void)
 {
    LOG_DEBUG("Shutting down network...");
 
-   if (mIsServer)
-   {
-      //GNE::shutdownGNE();
-     //mConnectionServer->close();
-   }
-   else
-   {
-   }
-
-   //GNE::ServerConnectionListener::closeAllListeners();
-   //GNE::Connection::disconnectAll();
-   //GNE::Timer::stopAll();
-   //GNE::Thread::requestAllShutdown( GNE::Thread::USER ); 
+   GNE::ServerConnectionListener::closeAllListeners();
+   GNE::Connection::disconnectAll();
+   GNE::Timer::stopAll();
+   GNE::Thread::requestAllShutdown( GNE::Thread::USER ); 
 }
 
 
@@ -49,7 +40,11 @@ void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const 
 
    GNE::setGameInformation(gameName, gameVersion );
 
-   //GNE::Console::initConsole();
+   GNE::GNEProtocolVersionNumber num = GNE::getGNEProtocolVersion();
+
+   Log::GetInstance().LogMessage(Log::LOG_DEBUG, __FUNCTION__,     
+         "Using GNE protocol: %d.%d.%d", num.version, num.subVersion, num.build );
+   
 
    #ifdef _DEBUG
    GNE::initDebug(GNE::DLEVEL1 | GNE::DLEVEL2 | GNE::DLEVEL3 | GNE::DLEVEL4 | GNE::DLEVEL5, logFile.c_str());
@@ -58,7 +53,7 @@ void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const 
    mInitialized = true;
 }
 
-
+//////////////////////////////////////////////////////////////////////////
 bool NetMgr::SetupClient( const std::string &host, int portNum )
 {
    if (!mInitialized)
@@ -81,7 +76,7 @@ bool NetMgr::SetupClient( const std::string &host, int portNum )
 
    LOG_INFO("Connecting to server at:" + address.toString() );
 
-   GNE::ConnectionParams params( ConnectionListener::create() );
+   GNE::ConnectionParams params( ConnectionListener::create(this) );
    params.setUnrel(true);
    params.setInRate(0);
    params.setOutRate(0);
@@ -109,6 +104,7 @@ bool NetMgr::SetupClient( const std::string &host, int portNum )
    return ret;
 }
 
+/////////////// server
 bool NetMgr::SetupServer(int portNum)
 {
    if (!mInitialized)
@@ -120,7 +116,7 @@ bool NetMgr::SetupServer(int portNum)
    bool ret = true;
    mIsServer = true;
 
-   ConnectionServer::sptr mConnectionServer = ConnectionServer::create(0, 0);
+   ConnectionServer::sptr mConnectionServer = ConnectionServer::create(0, 0, this);
 
    if (mConnectionServer->open(portNum))
    {
@@ -144,5 +140,134 @@ bool NetMgr::SetupServer(int portNum)
 
 void NetMgr::Shutdown()
 {
-   GNE::shutdownGNE();
+   if (mIsServer)
+      GNE::shutdownGNE();
+   else
+   {
+      //disconnect all connections
+      ConnectionIterator conns = mConnections.begin();
+      while (conns != mConnections.end())
+      {
+         (*conns).second->disconnectSendAll();
+         ++conns;
+      }
+
+      mConnections.clear();
+   }
+}
+
+void NetMgr::AddConnection(GNE::Connection *connection)
+{
+   mMutex.acquire();
+
+   LOG_DEBUG("Storing connection to:" + connection->getRemoteAddress(true).toString() );
+   mConnections[connection->getRemoteAddress(true).toString()] = connection;
+
+   mMutex.release();
+}
+
+
+void NetMgr::SendPacketToAll( GNE::Packet &packet )
+{
+   ConnectionIterator conns = mConnections.begin();
+   while (conns != mConnections.end())
+   {
+      (*conns).second->stream().writePacket(packet, true);
+      ++conns;
+   }
+}
+
+//virtual
+void NetMgr::OnListenSuccess()
+{
+   LOG_INFO("On Listen success");
+}
+
+//virtual
+void NetMgr::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
+{
+   LOG_ERROR("onListenFailure")
+      //mprintf("Connection error: %s\n", error.toString().c_str());
+      //mprintf("  Error received from %s\n", from.toString().c_str());
+
+}
+
+void NetMgr::OnDisconnect( GNE::Connection &conn)
+{
+   LOG_ALWAYS("onDisconnect");
+   SendMessage("onDisconnect");
+}
+
+void NetMgr::OnExit( GNE::Connection &conn)
+{
+   LOG_ALWAYS("onExit");
+   SendMessage("onExit");
+}
+
+void NetMgr::OnNewConn( GNE::SyncConnection &conn)
+{
+   GNE::Connection &connection = *conn.getConnection();
+
+   AddConnection( &connection );
+
+   SendMessage("onNewConn");
+   LOG_INFO("A new connection was received");
+}
+
+void NetMgr::OnConnect( GNE::SyncConnection &conn)
+{
+   LOG_INFO("Connection to server was successfull");
+   GNE::Connection &connection = *conn.getConnection();
+
+   AddConnection( &connection );
+
+   SendMessage("onConnect");
+}
+
+void NetMgr::OnReceive( GNE::Connection &conn)
+{
+   LOG_ALWAYS("Received packet");
+   SendMessage("onReceive");
+
+   GNE::Packet *next = conn.stream().getNextPacket();
+
+   while (next != NULL)
+   {
+      int type = next->getType();
+
+      if(type == GNE::PingPacket::ID) 
+      {
+         GNE::PingPacket &ping = *((GNE::PingPacket*)next);
+         if (ping.isRequest())
+         {
+            ping.makeReply();
+            conn.stream().writePacket(ping, true);
+         }
+         else
+         {
+            LOG_INFO("Ping: " + ping.getPingInformation().pingTime.toString());
+         }
+      }
+
+      delete next;
+      next = conn.stream().getNextPacket();
+   }
+}
+
+void NetMgr::OnFailure( GNE::Connection &conn, const GNE::Error &error )
+{
+   LOG_ALWAYS("onFailure");
+   SendMessage("onFailure");
+}
+
+void NetMgr::OnError( GNE::Connection &conn, const GNE::Error &error)
+{
+   LOG_ALWAYS("onError");
+   SendMessage("onError");
+}
+
+void NetMgr::OnConnectFailure( GNE::Connection &conn, const GNE::Error &error)
+{
+   LOG_ERROR(error.toString() + "from " + conn.getRemoteAddress(true).toString() );
+   SendMessage("onConnectFailure");
 }
