@@ -383,14 +383,14 @@ void UserInterface::SelectInstance()
                                     int(ccolor.z()*(FL_NUM_BLUE-1)) );
                                     */
 
-       osg::Vec3* ccolor = cd->GetCloudColor();
-       CloudRed->value(ccolor->x());
-       CloudGreen->value(ccolor->y());
-       CloudBlue->value(ccolor->z());
+       osg::Vec3 ccolor = cd->GetCloudColor();
+       CloudRed->value(ccolor.x());
+       CloudGreen->value(ccolor.y());
+       CloudBlue->value(ccolor.z());
 
-       Fl_Color fc = fl_color_cube( int(ccolor->x()*(FL_NUM_RED-1)),
-          int(ccolor->y()*(FL_NUM_GREEN-1)),
-          int(ccolor->z()*(FL_NUM_BLUE-1)) );
+       Fl_Color fc = fl_color_cube( int(ccolor.x()*(FL_NUM_RED-1)),
+          int(ccolor.y()*(FL_NUM_GREEN-1)),
+          int(ccolor.z()*(FL_NUM_BLUE-1)) );
 
        CloudColorLoadButton->color(fc);      
 
@@ -1216,8 +1216,7 @@ void UserInterface::CloudColorBrowserCB(Fl_Button *)
 
     CloudColorLoadButton->color(cc);
 
-    //cd->SetCloudColor( osg::Vec3( CloudRed->value(), CloudGreen->value(), CloudBlue->value() ) );
-    cd->SetCloudColor( new osg::Vec3( CloudRed->value(), CloudGreen->value(), CloudBlue->value() ) );
+    cd->SetCloudColor( osg::Vec3( CloudRed->value(), CloudGreen->value(), CloudBlue->value() ) );
 }
 
 void UserInterface::CloudColorCB(Fl_Value_Input*)
@@ -1233,7 +1232,7 @@ void UserInterface::CloudColorCB(Fl_Value_Input*)
       CloudColorLoadButton->color(fc);
       CloudColorLoadButton->redraw();
 
-   cd->SetCloudColor( &ccolor );
+   cd->SetCloudColor( ccolor );
 }
 
 void UserInterface::WeatherThemeCustomOptionCB( Fl_Round_Button *o)

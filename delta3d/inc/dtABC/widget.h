@@ -110,21 +110,21 @@ namespace dtABC
       ///This method should be called from derived classes
       virtual  void           OnMessage( dtCore::Base::MessageData* data );
 
-   private:
+   public:
       ///Advance a single frame cycle.
-      inline   void           Step( void );
+      virtual   void           Step( void );
 
       ///Handle a window resize event.
-      inline   void           Resize( const dtABC::WinRect* r );
+      virtual   void           Resize( const dtABC::WinRect* r );
 
       ///Handle a mouse events.
-      inline   void           HandleMouseEvent( const MouseEvent& ev );
+      virtual   void           HandleMouseEvent( const MouseEvent& ev );
 
       ///Handle a keyboard events.
-      inline   void           HandleKeyboardEvent( const KeyboardEvent& ev );
+      virtual   void           HandleKeyboardEvent( const KeyboardEvent& ev );
 
       ///Determin if special keyboard event.
-      inline   bool           IsSpecialKeyboardEvent( const KeyboardEvent& ev );
+      virtual   bool           IsSpecialKeyboardEvent( const KeyboardEvent& ev );
    };
 
 
