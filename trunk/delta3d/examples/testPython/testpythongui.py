@@ -391,24 +391,24 @@ class DeltaFrame:
         
     def __init__(self, widget, master):
     
-         self.master = master
+        self.master = master
         
-         self.frame = Frame(master, width=640, height=480, bg="")
-         self.frame.pack(fill=BOTH, expand=1)
+        self.frame = Frame(master, width=640, height=480, bg="")
+        self.frame.pack(fill=BOTH, expand=1)
         
-         self.frame.bind("<Configure>", self.resize)
-         self.frame.bind("<ButtonPress>", self.onButtonPress)
-         self.frame.bind("<ButtonRelease>", self.onButtonRelease)
-         self.frame.bind("<Double-Button>", self.onDoubleButton)
-         self.frame.bind("<Motion>", self.onMotion)
-         self.frame.bind("<KeyPress>", self.onKeyPress)
-         self.frame.bind("<KeyRelease>", self.onKeyRelease)
+        self.frame.bind("<Configure>", self.resize)
+        self.frame.bind("<ButtonPress>", self.onButtonPress)
+        self.frame.bind("<ButtonRelease>", self.onButtonRelease)
+        self.frame.bind("<Double-Button>", self.onDoubleButton)
+        self.frame.bind("<Motion>", self.onMotion)
+        self.frame.bind("<KeyPress>", self.onKeyPress)
+        self.frame.bind("<KeyRelease>", self.onKeyRelease)
         
-         self.frame.focus_set()
+        self.frame.focus_set()
         
-         self.widget = widget
+        self.widget = widget
         
-         self.widget.AddSender(self.widget)
+        self.widget.AddSender(self.widget)
         
     def resize(self, event):
     
@@ -420,14 +420,12 @@ class DeltaFrame:
         winData.height = self.frame.winfo_height()
         
         if self.configured:
-           #self.widget.SendMessage(Widget.msgResize, winData)
-           self.widget.Resize(winData)
+            self.widget.SendMessage(Widget.msgResize, winData)
         else:
-           winData.SetHWND(self.frame.winfo_id())
-           #self.widget.SendMessage(Widget.msgWindowData, winData)
-           self.widget.Config(winData)
-           self.configured = True
-           self.frame.after(1, self.step)
+            winData.SetHWND(self.frame.winfo_id())
+            self.widget.SendMessage(Widget.msgWindowData, winData)
+            self.configured = True
+            self.frame.after(1, self.step)
             
     def onButtonPress(self, event):
 
@@ -440,8 +438,7 @@ class DeltaFrame:
 
         self.buttonStates[mouseEvent.button] = True
         
-        #self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
-        self.widget.HandleMouseEvent(mouseEvent)
+        self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
         
     def onButtonRelease(self, event):
 
@@ -454,8 +451,7 @@ class DeltaFrame:
 
         self.buttonStates[mouseEvent.button] = False
         
-        #self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
-        self.widget.HandleMouseEvent(mouseEvent)
+        self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
         
     def onDoubleButton(self, event):
 
@@ -466,8 +462,7 @@ class DeltaFrame:
         mouseEvent.pos_y = event.y*-2.0/self.frame.winfo_height()+1.0
         mouseEvent.button = event.num
         
-        #self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
-        self.widget.HandleMouseEvent(mouseEvent)
+        self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
         
     def onMotion(self, event):
 
@@ -481,8 +476,7 @@ class DeltaFrame:
         mouseEvent.pos_x = event.x*2.0/self.frame.winfo_width()-1.0
         mouseEvent.pos_y = event.y*-2.0/self.frame.winfo_height()+1.0
         
-        #self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
-        #self.widget.HandleMouseEvent(mouseEvent)
+        self.widget.SendMessage(Widget.msgMouseEvent, mouseEvent)
         
     def onKeyPress(self, event):
 
@@ -491,8 +485,7 @@ class DeltaFrame:
         keyboardEvent.event = KeyboardEvent.KEYDOWN
         keyboardEvent.key = self.keyMappings[event.keysym]
         
-        #self.widget.SendMessage(Widget.msgKeyboardEvent, keyboardEvent)
-        self.widget.HandleKeyboardEvent(keyboardEvent)
+        self.widget.SendMessage(Widget.msgKeyboardEvent, keyboardEvent)
     
     def onKeyRelease(self, event):
 
@@ -501,13 +494,11 @@ class DeltaFrame:
         keyboardEvent.event = KeyboardEvent.KEYUP
         keyboardEvent.key = self.keyMappings[event.keysym]
         
-        #self.widget.SendMessage(Widget.msgKeyboardEvent, keyboardEvent)
-        self.widget.HandleKeyboardEvent(keyboardEvent)
+        self.widget.SendMessage(Widget.msgKeyboardEvent, keyboardEvent)
     
     def step(self):
 
-        #self.widget.SendMessage(Widget.msgStep)
-        self.widget.Step()
+        self.widget.SendMessage(Widget.msgStep)
         self.frame.after(1, self.step)
         
                 
@@ -517,13 +508,17 @@ class TestPythonGUIApplication(Widget):
     angle = 0.0
     
     def Config(self, data):
+        print "Config"
         Widget.Config(self, data)
+        print "Widget config"
         SetDataFilePathList('../../data')
         self.helo = Object('UH-1N')
         self.helo.LoadFile('models/uh-1n.ive')
+        print "loaded file"
         self.AddDrawable(self.helo)
         self.omm = OrbitMotionModel(self.GetKeyboard(), self.GetMouse())
         self.omm.SetTarget(self.GetCamera())
+        print "End"
         
     def Quit(self):
         root.quit()
