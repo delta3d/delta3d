@@ -41,6 +41,4 @@ void XercesErrorHandler::fatalError(const SAXParseException& e)
 
 void XercesErrorHandler::resetErrors()
 {
-   LOG_INFO("Xerces \"resetErrors\" was triggered." )
 }
-

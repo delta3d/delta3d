@@ -35,6 +35,7 @@ namespace dtUtil
    /** \brief Logs Xerces parsing errors.
      * Used with the Xerces SAX2XMLReader.  Create an instance of this class when creating
      * SAX2XMLReader and set it as the error handler with the parser's 'setErrorHandler' method.
+     * This class is used by classes that parse XML files.  It is not needed by client code.
      */
    class DT_EXPORT XercesErrorHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ErrorHandler
    {

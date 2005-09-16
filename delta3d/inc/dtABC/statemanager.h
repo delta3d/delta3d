@@ -363,14 +363,14 @@ namespace dtABC
          parser->setContentHandler( &xmlhandler );
          parser->setErrorHandler( &xmlerror );
 
-         // turn on schema checking
          std::string schemafile = osgDB::findDataFile( "transitionlist.xsd" );
          if( schemafile.empty() )
          {
             LOG_WARNING("Scheme file not found, check your DELTA_DATA environment variable, schema checking disabled.")
          }
-         else
+         else   // turn on schema checking
          {
+            parser->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgXercesSchema, true);
             XMLCh* SCHEMA = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( schemafile.c_str() );
             parser->setProperty( XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
             XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &SCHEMA );
