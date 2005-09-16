@@ -39,7 +39,7 @@ NoiseTexture::~NoiseTexture() {}
 // Note - Do NOT try to create very large 3d textures
 // A 3d texture of 512^3 with only one component (like ALPHA),
 // results in a dds file of 134,217,728 bytes (128 Mbytes)
-osg::Image *NoiseTexture::makeNoiseTexture(GLenum format)
+osg::Image *NoiseTexture::MakeNoiseTexture(GLenum format)
 {
 
     mImage = new osg::Image;

@@ -66,7 +66,7 @@ namespace dtActors
                     "Actor should be type dtCore::InfiniteLight.");
             }
 
-            l->SetDirection(dir[2],dir[0],dir[1]);
+            l->SetAzimuthElevation(dir[2],dir[0]);
         }
 
         /**
@@ -82,9 +82,9 @@ namespace dtActors
                     "Actor should be type dtCore::InfiniteLight.");
             }
 
-            float h,p,r;
-            l->GetDirection(h,p,r);
-            return osg::Vec3(p,r,h);
+            float h,p;
+            l->GetAzimuthElevation(h,p);
+            return osg::Vec3(p, 0.0f, h);
         }
 
     protected:

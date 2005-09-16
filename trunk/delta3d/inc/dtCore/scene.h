@@ -42,16 +42,6 @@ namespace dtCore
    class Transformable;
    class Physical;
 
-   /*
-   Deprecated 3/23/04: dtCore::_SceneHandler
-
-   This was removed to support multi-window, multi-camera
-   funtionality. Since more than one camera+window can be
-   used each dtCore::Camera must have its own
-   Producer::SceneHandler.
-
-   So use dtCore::Camera::_SceneHandler instead.
-   */
    
    /**
    *  Scene: This class encapsulates the root of the delta scene graph
@@ -100,14 +90,6 @@ namespace dtCore
      
       ///Get the height of terrain at a given x,y
       float GetHeightOfTerrain( float x, float y );
-
-      float GetHeightOfTerrain( const float *x, const float *y )
-      {
-         DEPRECATE(  "float GetHeightOfTerrain( const float *x, const float *y )",
-                     "float GetHeightOfTerrain( float x, float y )")
-
-         return GetHeightOfTerrain( *x, *y );
-      }
       
       ///Get the ODE space ID
       dSpaceID GetSpaceID() const;
@@ -154,19 +136,6 @@ namespace dtCore
       /// @see GetPhysicsStepSize()
       inline void SetPhysicsStepSize( double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
       
-      ///Deprecated 3/23/05
-      void SetNextStatisticsType() 
-      {
-         DEPRECATE("void Scene::SetNextStatisticsType()",
-                   "void Camera::SetNextStatisticsType()")
-      }
-
-      ///Deprecated 3/23/05
-      void SetStatisticsType(osgUtil::Statistics::statsType type) 
-      {
-         DEPRECATE("void Scene::SetStatisticsType(osgUtil::Statistics::statsType type)",
-                   "void Camera::SetStatisticsType(osgUtil::Statistics::statsType type)")    
-      }
 
       /// Register a Physical with the Scene
       void RegisterPhysical( Physical *physical );

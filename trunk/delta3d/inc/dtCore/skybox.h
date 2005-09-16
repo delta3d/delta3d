@@ -49,8 +49,8 @@ namespace dtCore
    * texel per pixel correlation.
    * \code
    SkyBox *box = new SkyBox("skyBox");
-   box->SetTextureFilename( SkyBox::SKYBOX_FRONT, "front.bmp");
-   box->SetTextureFilename( SkyBox::SKYBOX_BACK, "back.bmp");
+   box->SetTexture( SkyBox::SKYBOX_FRONT, "front.bmp");
+   box->SetTexture( SkyBox::SKYBOX_BACK, "back.bmp");
    ...
    Environment *env = new Environment("myEnv");
    env->AddEffect( box );
@@ -88,13 +88,6 @@ public:
 
    /// Set the texture for this side of the skybox
    void SetTexture(SkyBoxSideEnum side, std::string filename);
-
-   //deprecated because this function name no longer correctly describes what it does 
-   void SetTextureFilename(SkyBoxSideEnum side, std::string filename)
-   {
-      DEPRECATE("void SetTextureFilename(SkyBoxSideEnum side, std::string filename)", "void SetTexture(SkyBoxSideEnum side, std::string filename)")
-      SetTexture(side, filename);
-   }
 
 
 private:

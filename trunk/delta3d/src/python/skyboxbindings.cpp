@@ -19,7 +19,7 @@ void initSkyBoxBindings()
       .def("GetInstance", SkyBoxGI1, return_internal_reference<>())
       .def("GetInstance", SkyBoxGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("SetTextureFilename", &SkyBox::SetTextureFilename);
+      .def("SetTexture", &SkyBox::SetTexture);
       
    enum_<SkyBox::SkyBoxSideEnum>("SkyBoxSideEnum")
       .value("SKYBOX_FRONT", SkyBox::SKYBOX_FRONT)

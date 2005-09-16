@@ -86,13 +86,6 @@ namespace dtCore
 		osg::Vec3 GetCloudColor()        const { return mCloudColor; } //return-by-value for dtDAL propety types
 		bool GetEnable()                 const { return mEnable; }
 
-      osg::Vec3 *GetCloudColor()
-      {
-         DEPRECATE(  "osg::Vec3* GetCloudColor",
-                     "const osg::Vec3& GetCloudColor()")
-         return &mCloudColor; 
-      }
-
 		void SetScale(float scale)                   { mScale      = scale; }
 		void SetExponent(float exponent)             { mExponent   = exponent; }
 		void SetCutoff(float cutoff)                 { mCutoff     = cutoff; }
@@ -101,13 +94,7 @@ namespace dtCore
 		void SetBias(float bias)                     { mBias       = bias; }
 		void SetCloudColor(const osg::Vec3& mCC)     { mCloudColor = mCC; }
 		void SetShaderEnable(bool enable)            { mEnable     = enable; }
-
-      void SetCloudColor(osg::Vec3 *mCC)
-      { 
-         DEPRECATE(  "void SetCloudColor( osg::Vec3* mCC )",
-                     "void SetCloudColor( const osg::Vec3& mCC )")
-         mCloudColor = *mCC; 
-      }
+   
 
       ///the virtual overload draw function
       virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 

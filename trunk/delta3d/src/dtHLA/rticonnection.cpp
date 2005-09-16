@@ -3196,7 +3196,7 @@ throw (
                dtUtil::MatrixUtil::TransformVec3(position, mRotationOffsetInverse);
 
                if(mEffectClampMode)
-                  position[2] = mScene->GetHeightOfTerrain( &(position[0]), &(position[1])); 
+                  position[2] = mScene->GetHeightOfTerrain(position[0], position[1]); 
             }
          }
          else if(handle == mEventIdentifierParameterHandle)

@@ -42,14 +42,16 @@ namespace dtUtil
         NoiseTexture();
         
         /**
+        * Constructor: For a more detailed listing of these params see dtUtil::Fracal
         * @param octaves: the number of summations of the noise
         * @param frequency: the frequency of the noise
         * @param amp: the amplitude of the noise
         * @param persistance: the persistance of the noise
         * @param width: A power of 2, specifying the x resolution
         * @param height: A power of 2, specifying the y resolution
-        * @param slices: A power of 2, specifying the z resolution, or 1 for 2D textures
-        */
+        * @param slices: A power of 2, specifying the z resolution, or 1 for 2D textures       
+        * @sa dtUtil::Fractal
+       */
         NoiseTexture( int    octaves,
                         int    frequency,
                         double amp,
@@ -65,38 +67,38 @@ namespace dtUtil
         *Sets octaves
         *@param an int greater than 0
         */
-        void setOctaves(int o)          { mOctaves     = o; }
+        void SetOctaves(int o)          { mOctaves     = o; }
         
         /*
         *Sets frequency
         *@param an int greater than 0
         */
-        void setFrequency(int f)        { mFrequency   = f; }
+        void SetFrequency(int f)        { mFrequency   = f; }
         
         /**
         *Sets amplitude
         *@param a double greater than 0
         */
-        void setAmplitude(double a)     { mAmplitude   = a; }
+        void SetAmplitude(double a)     { mAmplitude   = a; }
         
         /**
         * sets persistence
         *@param a double from 0-1
         */
-        void setPersistence(double p)   { mPersistence = p; }
+        void SetPersistence(double p)   { mPersistence = p; }
         
         /**
         * Sets width
         * @param texture resolution of x dimension
         */
-        void setWidth(int w)            { mWidth = w; }
+        void SetWidth(int w)            { mWidth = w; }
         
         /**
         *Sets height
         *@param texture resolution of y dimension
         */
-        void setHeight(int h)           { mHeight = h; }
-        void setSlices(int s)           { mSlices = s; }
+        void SetHeight(int h)           { mHeight = h; }
+        void SetSlices(int s)           { mSlices = s; }
 
         /**
         * This function creates the texture
@@ -106,7 +108,7 @@ namespace dtUtil
         *@return  returns a pointer to the image
         *
         */
-        osg::Image *makeNoiseTexture(GLenum format);
+        osg::Image *MakeNoiseTexture(GLenum format);
 
         /*
         *If you need a pointer to the texture you'll find it here
@@ -115,9 +117,6 @@ namespace dtUtil
         */
         osg::Image* GetNoiseTexture(){return mImage;}
     private:
-
-       ///internal init
-        void initNoise(void);
 
       
         // Data members

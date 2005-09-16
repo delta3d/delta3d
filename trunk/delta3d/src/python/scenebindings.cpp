@@ -14,8 +14,7 @@ void initSceneBindings()
    Scene* (*SceneGI2)(std::string) = &Scene::GetInstance;
 
    float (Scene::*GetHeightOfTerrain1)( float x, float y ) = &Scene::GetHeightOfTerrain;
-   float (Scene::*GetHeightOfTerrain2)( const float *x, const float *y ) = &Scene::GetHeightOfTerrain;
-
+   
    void (Scene::*SetGravity1)(const osg::Vec3&) = &Scene::SetGravity;
    void (Scene::*SetGravity2)(float, float, float) = &Scene::SetGravity;
    
@@ -36,7 +35,6 @@ void initSceneBindings()
       .def("RemoveDrawable", &Scene::AddDrawable)
       .def("SetRenderState", &Scene::SetRenderState)
       .def("GetHeightOfTerrain", GetHeightOfTerrain1)
-      .def("GetHeightOfTerrain", GetHeightOfTerrain2)
       .def("GetSpaceID", &Scene::GetSpaceID, return_value_policy<return_opaque_pointer>())
       .def("GetWorldID", &Scene::GetWorldID, return_value_policy<return_opaque_pointer>())
       .def("SetGravity", SetGravity1)

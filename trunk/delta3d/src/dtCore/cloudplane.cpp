@@ -73,7 +73,7 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
    //float bias = 1.5f;
 
    dtUtil::NoiseTexture noise2d(mOctaves, mFrequency, mAmplitude, mPersistence, mTexSize, mTexSize);
-	mImage = noise2d.makeNoiseTexture(GL_ALPHA);
+	mImage = noise2d.MakeNoiseTexture(GL_ALPHA);
 
     // Exponentiation of the image
     unsigned char *dataPtr = mImage->data();
