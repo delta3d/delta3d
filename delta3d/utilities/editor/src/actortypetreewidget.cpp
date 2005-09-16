@@ -26,7 +26,7 @@
 #include "dtDAL/librarymanager.h"
 #include "dtEditQt/uiresources.h"
 #include <QStringList>
-
+#include <dtUtil/log.h>
 namespace dtEditQt 
 {
 
@@ -37,7 +37,7 @@ namespace dtEditQt
     ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, osg::ref_ptr<dtDAL::ActorType> actorType) 
         : QTreeWidgetItem(parent)
     {
-        //LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node");
+       LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + myActorType->GetName());
 
         myActorType = actorType;    
         categorySegment = (const char *) NULL;
@@ -60,7 +60,7 @@ namespace dtEditQt
     ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, const QString &str)
         : QTreeWidgetItem(parent)
     {
-        //LOG_INFO("Initializing ActorTypeTreeWidget - Internal node");
+       LOG_INFO("Initializing ActorTypeTreeWidget - Internal node:"  + str.toStdString() );
 
         myActorType = NULL;
 
@@ -72,14 +72,13 @@ namespace dtEditQt
         icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
 
         setIcon(0,*icon);
-
     }
 
     ///////////////////////////////////////////////////////////////////////////////
     ActorTypeTreeWidget::ActorTypeTreeWidget(QTreeWidget* parent, const QString &str)
         : QTreeWidgetItem(parent)
     {
-        //LOG_INFO("Initializing ActorTypeTreeWidget - as a root node (QTreeWidget parent)");
+       LOG_INFO("Initializing ActorTypeTreeWidget - as a root node (QTreeWidget parent):"+ str.toStdString());
 
         myActorType = NULL;
 
