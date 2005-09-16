@@ -15,7 +15,7 @@ void Usage()
 int main(unsigned int argc, char* argv[])
 {
    dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testStateManager" );
+   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList()+ ";" + dtCore::GetDeltaRootPath() + "/examples/testStateManager" );
 
    dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
    dtCore::RefPtr<StateWalker> app = new StateWalker( mgr.get() );
