@@ -37,7 +37,7 @@ namespace dtEditQt
     ActorTypeTreeWidget::ActorTypeTreeWidget(ActorTypeTreeWidget* parent, osg::ref_ptr<dtDAL::ActorType> actorType) 
         : QTreeWidgetItem(parent)
     {
-       LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + myActorType->GetName());
+        LOG_INFO("Initializing ActorTypeTreeWidget - leaf Actor Type Node:" + actorType->GetName());
 
         myActorType = actorType;    
         categorySegment = (const char *) NULL;
@@ -145,7 +145,7 @@ namespace dtEditQt
         // if we're at the end of the list, then add the actor to this node. 
         else if (!listIterator->hasNext()) 
         {
-	  //ActorTypeTreeWidget *leafNode = new ActorTypeTreeWidget(this, actorType);
+	         ActorTypeTreeWidget *leafNode = new ActorTypeTreeWidget(this, actorType);
             result = true;
         } 
 
