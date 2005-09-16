@@ -37,7 +37,7 @@ namespace dtDAL
     LibraryManager::LibraryManager()
     {
         ActorProxyIcon::staticInitialize();
-        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
+        //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
 
         LOG_INFO("Initializing actor library manager.");
         #ifdef _DEBUG

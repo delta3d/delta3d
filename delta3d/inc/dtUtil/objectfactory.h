@@ -24,7 +24,7 @@
 #include <map>
 #include <iostream>
 #include <sstream>
-//#include "Log.h"
+#include <dtUtil/Log.h>
 //#include "Exception.h"
 #include <osg/Referenced>  // for base_class
 
@@ -78,7 +78,7 @@ namespace dtUtil
          {
             std::ostringstream ss;
             ss << "Duplicate object type " << id << " found.";
-            //LOG_ERROR(ss.str());
+            LOG_ERROR(ss.str());
             return false;
          }
 

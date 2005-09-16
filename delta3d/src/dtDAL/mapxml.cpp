@@ -677,7 +677,7 @@ namespace dtDAL
     {
         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
-            mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                                 "Found element %s", XMLStringConverter(localname).c_str());
         }
 
@@ -1006,7 +1006,7 @@ namespace dtDAL
 
     MapContentHandler::MapContentHandler() : mActorProxy(NULL), mActorPropertyType(NULL), mActorProperty(NULL)
     {
-        mLogger = &dtUtil::Log::GetInstance(logName);
+        mLogger = &dtUtil::Log::GetInstance();
         //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
 
