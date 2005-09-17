@@ -81,10 +81,6 @@ namespace dtCore
       ///Get only translation methods
       void GetTranslation( float& tx, float& ty, float& tz ) const;
 
-      float GetTranslationX() const { return mTranslation[0]; }
-      float GetTranslationY() const { return mTranslation[0]; }
-      float GetTranslationZ() const { return mTranslation[0]; }
-    
       ///Get only rotation methods
       void GetRotation( float& h, float& p, float& r ) const;
       ///Get only rotation methods
