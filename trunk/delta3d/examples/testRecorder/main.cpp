@@ -13,12 +13,7 @@
 
 int main(unsigned int argc, char* argv[])
 {
-   // This causes a crash when it returns. The std::string allocated inside dtCore::SetDataFilePathList
-   // is having trouble being freed...
-
-   //dtCore::SetDataFilePathList(  dtCore::GetDeltaRootPath() + "/examples/testRecorder/;" +
-   //                              dtCore::GetDeltaDataPathList()  );
-
+   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() );
    dtCore::RefPtr<TestRecorder> app = new TestRecorder( "config.xml" );
 
    app->Config();

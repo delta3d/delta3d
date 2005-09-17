@@ -44,12 +44,12 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
 {
    if( !mStateManager->GetCurrentState() )
    {
-      std::cout << "StateWalker: No valid current State within StateManager, stopping the System." << std::endl;
+      LOG_ERROR("StateWalker: No valid current State within StateManager, stopping the System.")
       dtCore::System::Instance()->Stop();
       return;
    }
 
-   std::cout << "For the State, " << mStateManager->GetCurrentState()->GetName() << ", the Event choices are:" << std::endl;
+   LOG_ALWAYS("For the State, "+mStateManager->GetCurrentState()->GetName()+", the Event choices are:")
 
    std::vector<const dtABC::Event::Type*> eventvec( mStateManager->GetNumOfEvents( mStateManager->GetCurrentState() ) );
    mStateManager->GetEvents( mStateManager->GetCurrentState(), eventvec );
@@ -59,32 +59,35 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
    unsigned int i(0);
    for(; i<esize; i++)
    {
-      std::cout << i << ": " << eventvec[i]->GetName() << std::endl;
+      LOG_ALWAYS( dtUtil::ToString(i) + ": " + eventvec[i]->GetName() )
    }
 
    // print "extra" event choices
    DisplayExtraEventChoices(i);
 
    // --------------------------- handle input --------------------------- //
-   std::cout << "Please choose an Event:";
+   LOG_ALWAYS("Please choose an Event:")
 
    unsigned int eventchoice;
    std::cin >> eventchoice;
-   std::cout << "Your choice was: " << eventchoice << std::endl;
+   LOG_ALWAYS("Your choice was: " + dtUtil::ToString(eventchoice) );
 
    if( eventchoice < esize )
    {
       const dtABC::Event::Type* eventtype = eventvec[eventchoice];
-      std::cout << "StateWalker: Sending Event of type: " << eventtype->GetName() << std::endl;
       dtCore::RefPtr<dtABC::StateManager::EventFactory> ef = mStateManager->GetEventFactory();
       if( ef->IsTypeSupported( eventtype ) )
       {
          dtCore::RefPtr<dtABC::Event> event = ef->CreateObject( eventtype );
-         SendMessage("event", event.get() );
+         if( event.valid() )
+         {
+            LOG_ALWAYS("StateWalker: Sending Event of type: "+eventtype->GetName())
+            SendMessage("event", event.get() );
+         }
       }
       else
       {  // some logging feedback
-         std::cout << "StateWalker: Can not create Event of type: " << eventtype->GetName() << std::endl;
+         LOG_ALWAYS("StateWalker: Can not create Event of type: "+eventtype->GetName() )
       }
    }
 
@@ -97,14 +100,14 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
 // --- "extra" choices --- //
 void StateWalker::DisplayExtraEventChoices(unsigned int index)
 {
-   std::cout << index << ": " << "Quit" << std::endl;
+   LOG_ALWAYS( dtUtil::ToString(index) + ": " + "Quit" )
 }
 
 void StateWalker::HandleExtraEventChoices(unsigned int eventvecsize, unsigned int choice)
 {
    if( choice == eventvecsize )
    {
-      std::cout << "StateWalker: Quit was chosen." << std::endl;
+      LOG_ALWAYS( "StateWalker: Quit was chosen." )
       dtCore::System::Instance()->Stop();
    }
 }

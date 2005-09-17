@@ -4,6 +4,7 @@
 #include "dtUtil/xerceswriter.h"
 #include "dtUtil/xerceserrorhandler.h"
 #include "dtUtil/stringutils.h"
+#include "dtUtil/xercesparser.h"
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -115,101 +116,96 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
   */
 bool Application::ParseConfigFile(const std::string& file)
 {
-   LOG_INFO("Parsing configuration file, " + file)
+   LOG_DEBUG("Parsing configuration file, " + file)
 
-   bool retval(false);
-
-   try  // to initialize the xml tools
-   {
-      XMLPlatformUtils::Initialize();
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg);
-      XMLString::release( &message );
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
-      return false;
-   }
-
-   SAX2XMLReader* parser;
-   try  // to create a reader
-   {
-      parser = XMLReaderFactory::createXMLReader();
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg);
-      XMLString::release( &message );
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("Could not create a Xerces SAX2XMLReader")
-      return false;
-   }
-
-   // set the error handler
-   dtUtil::XercesErrorHandler errors;
-   parser->setErrorHandler( &errors );
-
-   // set the content handler
    AppXMLContentHandler handler(this);
-   parser->setContentHandler( &handler );
+   dtUtil::XercesParser parser;
+   return parser.Parse(file, handler, "application.xsd");
 
-   try  // to parse
-   {
-      parser->parse( file.c_str() );
-      retval = true;
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred while parsing file, " + file + ", with message: " + msg)
-      XMLString::release( &message );
+   //bool retval(false);
 
-      delete parser;
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("An exception occurred while parsing file, " + file)
+   //try  // to initialize the xml tools
+   //{
+   //   XMLPlatformUtils::Initialize();
+   //}
+   //catch(const XMLException& e)
+   //{
+   //   char* message = XMLString::transcode( e.getMessage() );
+   //   std::string msg(message);
+   //   LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg);
+   //   XMLString::release( &message );
+   //   return false;
+   //}
+   //catch(...)
+   //{
+   //   LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
+   //   return false;
+   //}
 
-      delete parser;
-      return false;
-   }
+   //SAX2XMLReader* parser;
+   //try  // to create a reader
+   //{
+   //   parser = XMLReaderFactory::createXMLReader();
 
-   try
-   {
-      XMLPlatformUtils::Terminate();
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate() with message: " + msg);
-      XMLString::release( &message );
+   //   std::string schemafile = osgDB::findDataFile( "application.xsd" );
+   //   if( schemafile.empty() )
+   //   {
+   //      LOG_WARNING("Scheme file not found, check your DELTA_DATA environment variable, schema checking disabled.")
+   //   }
+   //   else   // turn on schema checking
+   //   {
+   //      parser->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgXercesSchema, true);
+   //      XMLCh* SCHEMA = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( schemafile.c_str() );
+   //      parser->setProperty( XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
+   //      XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &SCHEMA );
+   //   }
+   //}
+   //catch(const XMLException& e)
+   //{
+   //   char* message = XMLString::transcode( e.getMessage() );
+   //   std::string msg(message);
+   //   LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg);
+   //   XMLString::release( &message );
+   //   return false;
+   //}
+   //catch(...)
+   //{
+   //   LOG_ERROR("Could not create a Xerces SAX2XMLReader")
+   //   return false;
+   //}
 
-      delete parser;
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate()");
+   //// set the error handler
+   //dtUtil::XercesErrorHandler errors;
+   //parser->setErrorHandler( &errors );
 
-      delete parser;
-      return false;
-   }
+   //// set the content handler
+   //AppXMLContentHandler handler(this);
+   //parser->setContentHandler( &handler );
 
-   return retval;
+   //try  // to parse
+   //{
+   //   parser->parse( file.c_str() );
+   //   retval = true;
+   //}
+   //catch(const XMLException& e)
+   //{
+   //   char* message = XMLString::transcode( e.getMessage() );
+   //   std::string msg(message);
+   //   LOG_ERROR("An exception occurred while parsing file, " + file + ", with message: " + msg)
+   //   XMLString::release( &message );
+
+   //   delete parser;
+   //   return false;
+   //}
+   //catch(...)
+   //{
+   //   LOG_ERROR("An exception occurred while parsing file, " + file)
+
+   //   delete parser;
+   //   return false;
+   //}
+
+   //return retval;
 }
 
 
