@@ -34,7 +34,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Transition" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element ref="StartState"/>
+				<xs:element ref="StartState" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

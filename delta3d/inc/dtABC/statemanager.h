@@ -7,21 +7,19 @@
 #include <map>
 #include <string>
 
-#include "osgDB/FileUtils"
-
+#include <dtCore/base.h>  // for base class
+#include <dtABC/event.h>
+#include <dtABC/state.h>
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
-#include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/objectfactory.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
-#include <dtABC/event.h>
-#include <dtABC/state.h>
+#include <dtUtil/xercesparser.h>
 
+#include <osgDB/FileUtils>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xercesc/util/XMLUni.hpp>
-#include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <xercesc/util/XMLString.hpp>
 
 namespace dtABC
 {
@@ -317,113 +315,23 @@ namespace dtABC
    template< typename EventT, typename StateT >
    bool StateManager::Load(const std::string& filename )
    {
-      bool retVal = false;
       std::string fullFileName = osgDB::findDataFile(filename);
-
-      if (!fullFileName.empty())
-      {
-         retVal = ParseFile<EventT,StateT>(fullFileName);
-      }
-      else
+      if (fullFileName.empty())
       {
          LOG_WARNING("StateManager - Can't find file " + filename)
-         retVal = false;
+         return false;
       }
-      return retVal;
+      return ParseFile<EventT,StateT>(fullFileName);
    }
 
    template< typename EventT, typename StateT >
    bool StateManager::ParseFile(const std::string& filename )
    {
-      bool retVal(false);
-      try  // to inialize the xmlutils
-      {
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
-      }
-      catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e) 
-      {
-         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
-         LOG_ERROR( message )
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &message );
-         return false;
-      }
-      catch(...)
-      {
-         LOG_ERROR("An exception occurred while trying to initialize Xerces.");
-         return false;
-      }
-
       typedef TransitionHandler<EventT,StateT> XMLElementHandler;  // a convenience typedef
-      XMLElementHandler xmlhandler(this);                                // the element handler
-      dtUtil::XercesErrorHandler xmlerror;                         // instantiate the error handler
-      XERCES_CPP_NAMESPACE_QUALIFIER SAX2XMLReader* parser;   // declare the parser
-      try  // to create a reader
-      {
-         parser = XERCES_CPP_NAMESPACE_QUALIFIER XMLReaderFactory::createXMLReader();        // allocate the parser
-         parser->setContentHandler( &xmlhandler );
-         parser->setErrorHandler( &xmlerror );
+      XMLElementHandler handler(this);                             // the element handler
 
-         std::string schemafile = osgDB::findDataFile( "transitionlist.xsd" );
-         if( schemafile.empty() )
-         {
-            LOG_WARNING("Scheme file not found, check your DELTA_DATA environment variable, schema checking disabled.")
-         }
-         else   // turn on schema checking
-         {
-            parser->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgXercesSchema, true);
-            XMLCh* SCHEMA = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( schemafile.c_str() );
-            parser->setProperty( XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
-            XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &SCHEMA );
-         }
-      }
-      catch(const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e)
-      {
-         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode( e.getMessage() );
-         std::string msg(message);
-         LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg);
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &message );
-         return false;
-      }
-      catch(...)
-      {
-         LOG_ERROR("Could not create a Xerces SAX2XMLReader")
-         return false;
-      }
-
-      try  // to parse the file
-      {
-         parser->parse(filename.c_str());
-         retVal = true;
-      }
-      catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e)
-      {
-         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
-         LOG_ERROR(std::string("Exception message is: ") + message)
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&message);
-
-         delete parser;
-         return false;
-      }
-      catch (const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
-      {
-         //The error will already be logged by the errorHandler
-         char* message = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(e.getMessage());
-         LOG_ERROR(std::string("An exception occurred while parsing file, ") + filename + std::string(", with message: ") + message)
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&message);
-
-         delete parser;
-         return false;
-      }
-      catch (...) 
-      {
-         LOG_ERROR("An exception occurred while parsing file, " + filename)
-
-         delete parser;
-         return false;
-      }
-
-      delete parser;
-      return retVal;
+      dtUtil::XercesParser parser;
+      return parser.Parse(filename, handler, "transitions.xsd");
    }
 
    template< typename T1, typename T2 >

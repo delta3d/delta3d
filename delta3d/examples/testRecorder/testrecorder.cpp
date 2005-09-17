@@ -80,9 +80,7 @@ void TestRecorder::SetupCamera()
 
 void TestRecorder::SetupScene()
 {
-   // use the infinite terrain class
-   // add it to the scene
-   //dtCore::Scene* scene = GetScene();
+   // use the infinite terrain class, add it to the scene
    AddDrawable( mTerrain.get() );
 }
 
