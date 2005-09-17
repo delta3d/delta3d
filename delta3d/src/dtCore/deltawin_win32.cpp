@@ -37,27 +37,6 @@ void DeltaWin::KillGLWindow()
    {
       LOG_ERROR( "Release Device Context Failed." );
    }
-
-   // Warning Warning! This may be a bug. Normally, this would test if the
-   // Producer::Window actually belongs to the RenderSurface (i.e. no one
-   // called RenderSurface::setWindow( const Window win ). The variable
-   // _ownWindow is protected in RenderSurface, so technically we could
-   // derive from it and make dtCore::RenderSurface to access it (Deja vu!)
-   // -osb
-
-   //if( _ownWindow )
-   {
-      if( window && !DestroyWindow(window) )
-      {
-         LOG_ERROR( "Could Not Release hWnd." );
-      }
-
-      if( !UnregisterClass( GetWindowTitle().c_str(), GetModuleHandle(0) ) )
-      {
-         LOG_ERROR( "Could Not Unregister Class." );
-      }
-
-   }
 }
 
 // Producer::RenderSurface must realized for this to work
