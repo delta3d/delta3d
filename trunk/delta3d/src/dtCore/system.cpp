@@ -15,7 +15,8 @@ bool System::mInstanceFlag = false;
 System* System::mSystem = NULL;
 
 System::System():
-   mRunning(false)
+   mRunning(false),
+   mShutdownOnWindowClose(true)
 {
    mClockTime = 0.0;
    mLastClockTime = mClock.tick();
@@ -57,10 +58,6 @@ void System::Run()
    mRunning = true;
    mLastClockTime = mClock.tick();
 
-   // Ok, this is bad. Testing all DeltaWin's for active threads definitely 
-   // doesn't need to be in the system loop. Instead we need a callback for
-   // when RenderSurface threads are created & killed so we can count active 
-   // threads. Then this becomes: while( mRunning && mNumWinThreads > 0 )
    while( mRunning )
    {	  
 	   mClockTime = mClock.tick();
@@ -72,13 +69,16 @@ void System::Run()
 
 	   mLastClockTime = mClockTime;
 
-      bool renderSurfaceIsRunning = false;
-      for( int i = 0; i < DeltaWin::GetInstanceCount() && !renderSurfaceIsRunning; i++ )
+      if( mShutdownOnWindowClose )
       {
-         renderSurfaceIsRunning = renderSurfaceIsRunning || DeltaWin::GetInstance(i)->GetRenderSurface()->isRunning();
-      }
+         bool renderSurfaceIsRunning = false;
+         for( int i = 0; i < DeltaWin::GetInstanceCount() && !renderSurfaceIsRunning; i++ )
+         {
+            renderSurfaceIsRunning = renderSurfaceIsRunning || DeltaWin::GetInstance(i)->GetRenderSurface()->isRunning();
+         }
 
-      mRunning = mRunning && renderSurfaceIsRunning;
+         mRunning = mRunning && renderSurfaceIsRunning;
+      }
    }
 
    LOG_DEBUG("System: Exiting...");

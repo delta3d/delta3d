@@ -72,6 +72,25 @@ namespace dtCore
       ///Is the system running
       bool IsRunning() const { return mRunning; }
 
+      /*!
+      * Controls shutdown behavior of the system. Normally the system will only
+      * shutdown if Stop() is called. If this function is called with 'true',
+      * then the system will perform an additional check in the system loop
+      * to see if there are any active windows. If there are none, it will
+      * shutdown. The behavior is set to 'true' by default.
+      *
+      * @param shutdown : If 'shutdown' is true, the system loop will terminate
+      * when the last window is closed. Otherwise, the console and system will
+      * remain open.
+      */
+      void SetShutdownOnWindowClose( bool shutdown ) { mShutdownOnWindowClose = shutdown; }
+
+      /*!
+      * Returns whether or not the system will shutdown upon the last window being
+      * closed.
+      */
+      bool GetShutdownOnWindowClose() const { return mShutdownOnWindowClose; }
+
    private:
 
       System(); ///<private
@@ -93,6 +112,7 @@ namespace dtCore
       void PostFrame( const double deltaFrameTime );
 
       bool  mRunning; ///<Are we currently running?      
+      bool  mShutdownOnWindowClose;
    };
 };
 
