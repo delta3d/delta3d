@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib osdDB.lib xerces-c_2.lib"
+				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib osgDB.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtutil.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
