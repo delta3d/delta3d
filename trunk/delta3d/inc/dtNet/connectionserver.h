@@ -18,7 +18,7 @@ namespace dtNet
 
    class NetMgr;
 
-   class DT_EXPORT ConnectionServer : public GNE::ServerConnectionListener
+   class  ConnectionServer : public GNE::ServerConnectionListener
    {
    protected:
       ConnectionServer(int inRate, int outRate, NetMgr *netMgr );
