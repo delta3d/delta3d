@@ -14,7 +14,7 @@ namespace dtNet
 {
    class NetMgr;
 
-   class DT_EXPORT ConnectionListener : public GNE::ConnectionListener, public dtCore::Base
+   class  ConnectionListener : public GNE::ConnectionListener, public dtCore::Base
    {
    public:
       typedef GNE::SmartPtr<ConnectionListener> sptr;

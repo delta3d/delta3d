@@ -18,7 +18,7 @@
       #define _AUTOLIBNAME1 "dtNetD.lib"
    #endif
 
-   #define _AUTOLIBNAME2 "HawkNL.lib"
+   #define _AUTOLIBNAME2 "NLstaticD.lib"
    #define _AUTOLIBNAME3 "gned.lib"
 #else 
 
@@ -26,7 +26,7 @@
       #define _AUTOLIBNAME1 "dtNet.lib"
    #endif
 
-   #define _AUTOLIBNAME2 "HawkNL.lib"
+   #define _AUTOLIBNAME2 "NLstatic.lib"
    #define _AUTOLIBNAME3 "gne.lib"
 #endif
 

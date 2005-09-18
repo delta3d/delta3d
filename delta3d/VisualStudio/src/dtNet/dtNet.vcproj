@@ -12,15 +12,15 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="windows-msvc-debug"
-			IntermediateDirectory="windows-msvc-debug"
-			ConfigurationType="2"
+			OutputDirectory="..\..\..\src\dtNet\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtNet\windows-msvc-debug"
+			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -33,17 +33,9 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="gned.lib osgd.lib HawkNLD.lib dtCoreD.lib dtUtilD.lib"
-				OutputFile="../../../bin/dtNetD.dll"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				IgnoreDefaultLibraryNames="LIBCMTD"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				SubSystem="1"
-				ImportLibrary="../../../lib/dtNetD.lib"
-				TargetMachine="1"/>
+				Name="VCLibrarianTool"
+				OutputFile="../../../lib/dtNetD.lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -59,22 +51,20 @@
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="windows-msvc-release"
-			IntermediateDirectory="windows-msvc-release"
-			ConfigurationType="2"
+			OutputDirectory="..\..\..\src\dtNet\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtNet\windows-msvc-release"
+			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DTUTIL_EXPORTS;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
@@ -87,19 +77,9 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="gne.lib osg.lib HawkNL.lib dtCore.lib dtUtil.lib"
-				OutputFile="../../../bin/dtNet.dll"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				IgnoreDefaultLibraryNames="LIBCMT"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				ImportLibrary="../../../lib/dtNet.lib"
-				TargetMachine="1"/>
+				Name="VCLibrarianTool"
+				OutputFile="../../../lib/dtNet.lib"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -114,8 +94,6 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
