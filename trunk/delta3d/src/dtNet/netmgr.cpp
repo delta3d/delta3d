@@ -11,6 +11,8 @@ using namespace dtNet;
 using namespace dtUtil;
 
 
+
+
 NetMgr::NetMgr():
 mInitialized(false),
 mIsServer(true)
@@ -37,6 +39,7 @@ void NetMgr::InitializeGame(const std::string &gameName, int gameVersion, const 
       LOG_ERROR("Can't initialize network");
       return;
    }
+
 
    GNE::setGameInformation(gameName, gameVersion );
 
@@ -113,6 +116,8 @@ bool NetMgr::SetupServer(int portNum)
       return false;
    }
 
+   mMutex.acquire();
+
    bool ret = true;
    mIsServer = true;
 
@@ -134,6 +139,7 @@ bool NetMgr::SetupServer(int portNum)
       LOG_INFO("Listening for connections");
    }
 
+   mMutex.release();
    return ret;
 }
 
@@ -166,15 +172,34 @@ void NetMgr::AddConnection(GNE::Connection *connection)
    mMutex.release();
 }
 
+void NetMgr::RemoveConnection(GNE::Connection *connection)
+{
+   mMutex.acquire();
+
+   LOG_DEBUG("Removing connection from:" + connection->getRemoteAddress(true).toString() );
+   
+   ConnectionIterator itr = mConnections.find(connection->getRemoteAddress(true).toString());
+   if (itr != mConnections.end() )
+   {
+      mConnections.erase(itr);
+   }
+
+   mMutex.release();
+}
+
 
 void NetMgr::SendPacketToAll( GNE::Packet &packet )
 {
+   mMutex.acquire();
+
    ConnectionIterator conns = mConnections.begin();
    while (conns != mConnections.end())
    {
       (*conns).second->stream().writePacket(packet, true);
       ++conns;
    }
+
+   mMutex.release();
 }
 
 //virtual
@@ -187,19 +212,18 @@ void NetMgr::OnListenSuccess()
 void NetMgr::OnListenFailure(const GNE::Error& error, const GNE::Address& from, const GNE::ConnectionListener::sptr& listener)
 {
    LOG_ERROR("onListenFailure")
-      //mprintf("Connection error: %s\n", error.toString().c_str());
-      //mprintf("  Error received from %s\n", from.toString().c_str());
-
 }
 
 void NetMgr::OnDisconnect( GNE::Connection &conn)
 {
+   //conn = server connection?
    LOG_ALWAYS("onDisconnect");
    SendMessage("onDisconnect");
 }
 
 void NetMgr::OnExit( GNE::Connection &conn)
 {
+   RemoveConnection(&conn);
    LOG_ALWAYS("onExit");
    SendMessage("onExit");
 }

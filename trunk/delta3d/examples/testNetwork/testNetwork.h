@@ -7,6 +7,9 @@
 #include <dtABC/dtabc.h>
 #include <dtNet/dtnet.h>
 
+#include "mynetwork.h"
+
+
 class TestNetwork : public dtABC::Application
 {
    DECLARE_MANAGEMENT_LAYER( TestNetwork )
@@ -28,8 +31,12 @@ class TestNetwork : public dtABC::Application
 
    private:
          //place member variables here
-      dtCore::RefPtr<dtNet::NetMgr> mNet;
+      dtCore::RefPtr<MyNetwork> mNet;
       std::string mHostName;
+      dtCore::RefPtr<dtCore::Object> mTerrain;
+      dtCore::RefPtr<dtCore::FlyMotionModel> mMotion;
+
+      void SendPosition();
    
 };
 
