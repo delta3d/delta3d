@@ -53,16 +53,17 @@ bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, c
       parser->setContentHandler( &handler );
       parser->setErrorHandler( &xmlerror );
 
-      std::string schemafile = osgDB::findDataFile( "transitionlist.xsd" );
+      std::string schemafile = osgDB::findDataFile( schemafile );
       if( schemafile.empty() )
       {
          LOG_WARNING("Scheme file not found, check your DELTA_DATA environment variable, schema checking disabled.")
       }
       else   // turn on schema checking
       {
+         ///\todo does the sax2parser support checking for features?
          parser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
          parser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
-         //parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
+         parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
          parser->loadGrammar( schemafile.c_str(), Grammar::SchemaGrammarType );
          XMLCh* SCHEMA = XMLString::transcode( schemafile.c_str() );
          parser->setFeature(XMLUni::fgXercesSchema, true);
