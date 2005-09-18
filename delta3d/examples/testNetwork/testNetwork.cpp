@@ -1,12 +1,16 @@
 // testNetwork.cpp : defines the implementation of the application
 
 #include "testNetwork.h"
+#include "packets.h"
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtNet;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestNetwork )
+
+
+
 
 TestNetwork::TestNetwork( const std::string &hostName, 
                           const std::string& configFilename )
@@ -15,8 +19,7 @@ TestNetwork::TestNetwork( const std::string &hostName,
 {
    RegisterInstance( this );
 
-
-   mNet = new NetMgr();
+   mNet = new MyNetwork();
 
    std::string logFilename;
 
@@ -25,6 +28,8 @@ TestNetwork::TestNetwork( const std::string &hostName,
 
    mNet->InitializeGame("TestNetwork", 1, logFilename);
 
+   //must come *after* MgrInit;
+   GNE::PacketParser::defaultRegisterPacket<PositionPacket>();
 
    if (mHostName.empty())
    {
@@ -46,7 +51,13 @@ TestNetwork::~TestNetwork()
    
 void TestNetwork::Config()
 {      
+   mMotion = new FlyMotionModel(GetKeyboard(), GetMouse());
+   mMotion->SetTarget( GetCamera() );
+
    //setup scene here
+   mTerrain = new Object("Terrain");
+   mTerrain->LoadFile("models/dirt.ive");
+   AddDrawable( mTerrain.get() );
 
    Application::Config();
 }
@@ -65,8 +76,12 @@ void TestNetwork::KeyPressed(   Keyboard*      keyboard,
             GNE::PingPacket ping;
             mNet->SendPacketToAll(ping);
          }
-
          break;
+
+      case Producer::Key_F:
+         {
+            SendPosition();
+         }
       default:
          break;
    }
@@ -79,7 +94,8 @@ void TestNetwork::PreFrame( const double deltaFrameTime )
 
 void TestNetwork::Frame( const double deltaFrameTime )
 {
-   //called during frame render
+   //send a packet to tell the network where we're at
+   SendPosition();
 }
 
 void TestNetwork::PostFrame( const double deltaFrameTime )
@@ -89,9 +105,21 @@ void TestNetwork::PostFrame( const double deltaFrameTime )
 
 void TestNetwork::Quit()
 {
-   {   
-      mNet->Shutdown();
-   }
+   mNet->Shutdown();
 
    Application::Quit();
+}
+
+void TestNetwork::SendPosition()
+{
+   //get our new position
+   Transform xform;
+   GetCamera()->GetTransform( &xform );
+   osg::Vec3 xyz;
+   osg::Vec3 hpr;
+   xform.GetTranslation(xyz);
+   xform.GetRotation(hpr);
+
+   PositionPacket packet(xyz, hpr);
+   mNet->SendPacketToAll( packet );
 }

@@ -129,6 +129,12 @@
 				RelativePath="..\..\..\examples\testNetwork\main.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testNetwork\mynetwork.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testNetwork\packets.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testNetwork\testNetwork.cpp">
 			</File>
 		</Filter>
@@ -136,6 +142,12 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\..\examples\testNetwork\mynetwork.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testNetwork\packets.h">
+			</File>
 			<File
 				RelativePath="..\..\..\examples\testNetwork\testNetwork.h">
 			</File>
