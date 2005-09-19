@@ -87,13 +87,19 @@ public:
 
         tree->GetTransform(&tTree);
         helicopter->GetTransform(&tHeli);
-
+        
+        osg::Vec3 tTreeTranslation;
+        tTree.GetTranslation(tTreeTranslation);
+        
+        osg::Vec3 tHeliTranslation;
+        tHeli.GetTranslation(tHeliTranslation);
+        
         // If the helicopter isn't at the tree yet, keep translating...
-        if(tTree.GetTranslationX() < tHeli.GetTranslationX())
+        if(tTreeTranslation.x() < tHeliTranslation.x())
             helicopter->SetTransform(new Transform(step, 0, 1, 90, 0, 0));
 
         // It's there
-        else if(tTree.GetTranslationX() >= tHeli.GetTranslationX())
+        else if(tTreeTranslation.x() >= tHeliTranslation.x())
         {
             float x, y, z;
             tHeli.GetTranslation(x, y, z);
