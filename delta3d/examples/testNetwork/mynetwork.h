@@ -1,7 +1,7 @@
 #ifndef MYNETWORK_INCLUDE
 #define MYNETWORK_INCLUDE
 
-#include <dtnet/netmgr.h>
+#include <dtNet/netmgr.h>
 #include <dtCore/refptr.h>
 #include <dtCore/object.h>
 
