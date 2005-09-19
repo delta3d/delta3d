@@ -1,0 +1,41 @@
+import os
+
+Import('*')
+
+modules = [ 'testActorLibrary',
+            'testApp', 
+            'testAudio',
+            'testBumpMap',
+            'testCharacters',
+            'testClouds',
+            'testEffects',
+            'testGUI',
+            'testHLA',
+            'testInput',
+            'testLights',
+            'testMap',
+            'testMotionModels',
+            'testMultiWin',
+            'testNetwork',
+            'testPhysics',
+            'testPython',
+            'testRecorder',
+            'testShaders',
+            'testSoarx',
+            'testSound',
+            'testStateManager',
+            'testWeather',
+            'testWidget',
+            'testWin' ]
+
+# TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,
+#       problem is that on win32 the c_compiler and cxx_compiler are the same, so there's one
+#       less element in the list, so we can't use an index to find the proper tool. instead we
+#       need to query what scons chooses from the list and actually uses...
+if OS == 'windows' :
+   tool = 'msvc'
+elif OS == 'linux' or OS == 'darwin' :
+   tool = 'g++'
+
+for module in modules :
+   SConscript( dirs=[module], build_dir = os.path.join( module, OS+'-'+tool+'-'+mode ), duplicate = 0 )

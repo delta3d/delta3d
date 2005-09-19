@@ -1,0 +1,784 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <string>} {public
+} 
+
+decl {\#include <FL/Fl_Choice.h>} {public
+} 
+
+decl {\#include <FL/Fl_File_Chooser.h>} {public
+} 
+
+decl {\#include "viewwindow.h"} {public
+} 
+
+decl {\#include "viewstate.h"} {public
+} 
+
+decl {\#define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds,rbody})\\tOSG Files (*.osg)\\tIVE Files (*.ive)\\tFlight Files (*.flt)\\t3ds Export Files (*.3ds)\\trbody Files (*.rbody)"} {public
+} 
+
+decl {class ChoicePopUp;   // forward reference} {public
+} 
+
+class UserInterface {open
+} {
+  decl {int mArgc;} {}
+  decl {char** mArgv;} {}
+  decl {bool mMenusEnabled;} {}
+  Function {UserInterface( int argc = 0L, char** argv = NULL ) : mArgc(argc), mArgv(argv), mMenusEnabled(false)} {} {
+    Fl_Window UIMainWindow {
+      label Viewer open
+      private xywh {612 427 748 536} type Double resizable non_modal visible
+    } {
+      Fl_Menu_Bar UIMenu {open
+        private xywh {0 0 750 24}
+      } {
+        submenu UIMenuFile {
+          label {&File}
+          private xywh {0 0 100 20}
+        } {
+          menuitem UIMenuFileOpen {
+            label {&Open}
+            callback {const char* path	= UIViewWindow->GetPath();
+
+	Fl_File_Chooser	fileChooser( path, kDefFltr, Fl_File_Chooser::SINGLE, "Load File" );
+	fileChooser.preview( 0 );
+	fileChooser.show();
+
+	while( fileChooser.visible() )
+		Fl::wait();
+
+	if( fileChooser.count() > 0 )
+	{
+		UIViewWindow->SetPath( fileChooser.directory() );
+		LoadFile( fileChooser.value() );
+	}}
+            private xywh {0 0 100 20} divider
+          }
+          menuitem UIMenuFileSaveAs {
+            label {&Save As...}
+            callback {char *filename = fl_file_chooser("Save File", 
+	"Geometry Files (*.{osg,ive})\\tOSG Files (*.osg)\\tIVE Files (*.ive)",
+	 UIFileList->text() );
+
+	if (filename != NULL)
+	{
+		SaveFileAs(filename);
+	}}
+            private xywh {10 10 100 20} deactivate divider
+          }
+          menuitem UIMenuFileQuit {
+            label {&Quit}
+            callback {Quit();}
+            private xywh {0 0 100 20}
+          }
+        }
+        submenu UIMenuView {
+          label {&View}
+          private xywh {0 0 100 20} deactivate
+        } {
+          submenu UIMenuViewDisplay {
+            label {&Display}
+            private xywh {0 0 100 20}
+          } {
+            menuitem UIMenuViewDisplayCompass {
+              label {&Compass}
+              callback {UIViewWindow->SetDisplay( ViewState::COMPASS, UIMenuViewDisplayCompass->value() != 0L );
+CompassButton->value( UIMenuViewDisplayCompass->value() != 0L );}
+              private xywh {5 5 100 20} type Toggle divider
+            }
+            menuitem UIMenuViewDisplayXYPlane {
+              label {&XY Plane}
+              callback {UIViewWindow->SetDisplay( ViewState::XY_PLANE, UIMenuViewDisplayXYPlane->value() != 0L );
+XYGridButton->value (UIMenuViewDisplayXYPlane->value() != 0L);}
+              private xywh {5 5 100 20} type Toggle
+            }
+            menuitem UIMenuViewDisplayYZPlane {
+              label {&YZ Plane}
+              callback {UIViewWindow->SetDisplay( ViewState::YZ_PLANE, UIMenuViewDisplayYZPlane->value() != 0L );
+YZGridButton->value( UIMenuViewDisplayYZPlane->value() != 0L );}
+              private xywh {15 15 100 20} type Toggle
+            }
+            menuitem UIMenuViewDisplayZXPlane {
+              label {&ZX Plane}
+              callback {UIViewWindow->SetDisplay( ViewState::ZX_PLANE, UIMenuViewDisplayZXPlane->value() != 0L );
+YZGridButton->value(UIMenuViewDisplayZXPlane->value() != 0L );}
+              private xywh {25 25 100 20} type Toggle
+            }
+          }
+          submenu UIMenuViewScene {
+            label {&Scene}
+            private xywh {0 0 100 20}
+          } {
+            menuitem UIMenuViewScenePolygon {
+              label {&Polygon}
+              callback {bool	on(UIMenuViewScenePolygon->value() != 0L);
+
+	UIViewWindow->SetDisplay( ViewState::SCENEPOLY, on );
+
+	if( on )
+	{
+		UIMenuViewSceneTexture->activate();
+		UIMenuViewSceneLighting->activate();
+	}}
+              private xywh {10 10 100 20} type Radio
+            }
+            menuitem UIMenuViewSceneWireframe {
+              label {&Wireframe}
+              callback {bool	on(UIMenuViewSceneWireframe->value() != 0L);
+
+	UIViewWindow->SetDisplay( ViewState::SCENEWIRE, on );
+
+	if( on )
+	{
+		UIMenuViewSceneTexture->deactivate();
+		UIMenuViewSceneLighting->deactivate();
+	}}
+              private xywh {45 45 100 20} type Radio
+            }
+            menuitem UIMenuViewSceneScribe {
+              label {&Scribe}
+              callback {bool	on(UIMenuViewSceneScribe->value() != 0L);
+
+	UIViewWindow->SetDisplay( ViewState::SCENEPOLY | ViewState::SCENEWIRE, on );
+
+	if( on )
+	{
+		UIMenuViewSceneTexture->activate();
+		UIMenuViewSceneLighting->activate();
+	}}
+              private xywh {55 55 100 20} type Radio divider
+            }
+            menuitem UIMenuViewSceneTexture {
+              label {&Texture}
+              callback {UIViewWindow->SetDisplay( ViewState::SCENETXT, UIMenuViewSceneTexture->value() != 0L );
+TextureButton->value(UIMenuViewSceneTexture->value() != 0L);}
+              private xywh {10 10 100 20} type Toggle
+            }
+            menuitem UIMenuViewSceneLighting {
+              label {&Lighting}
+              callback {UIViewWindow->SetDisplay( ViewState::SCENELIGHT, UIMenuViewSceneLighting->value() != 0L );
+LightingButton->value(UIMenuViewSceneLighting->value() != 0L);}
+              private xywh {10 10 100 20} type Toggle
+            }
+          }
+          submenu UIMenuViewModel {
+            label {&Model}
+            private xywh {0 0 100 20} divider
+          } {
+            menuitem UIMenuViewModelPolygon {
+              label {&Polygon}
+              callback {bool	on(UIMenuViewModelPolygon->value() != 0L);
+
+	UIViewWindow->SetDisplay( ViewState::POLYGON, on );
+
+	if( on )
+	{
+		UIMenuViewModelTexture->activate();
+		UIMenuViewModelLighting->activate();
+	}}
+              private xywh {0 0 100 20} type Radio
+            }
+            menuitem UIMenuViewModelWireframe {
+              label {&Wireframe}
+              callback {bool	on(UIMenuViewModelWireframe->value() != 0L);
+
+	UIViewWindow->SetDisplay( ViewState::WIREFRAME, on );
+
+	if( on )
+	{
+		UIMenuViewModelTexture->deactivate();
+		UIMenuViewModelLighting->deactivate();
+	}}
+              private xywh {35 35 100 20} type Radio
+            }
+            menuitem UIMenuViewModelScribe {
+              label {&Scribe}
+              callback {bool	on(UIMenuViewModelScribe->value() != 0L);
+
+	UIViewWindow->SetDisplay( ViewState::POLYGON | ViewState::WIREFRAME, on );
+
+	if( on )
+	{
+		UIMenuViewModelTexture->activate();
+		UIMenuViewModelLighting->activate();
+	}}
+              private xywh {45 45 100 20} type Radio divider
+            }
+            menuitem UIMenuViewModelTexture {
+              label {&Texture}
+              callback {UIViewWindow->SetDisplay( ViewState::TEXTURE, UIMenuViewModelTexture->value() != 0L );}
+              private xywh {0 0 100 20} type Toggle
+            }
+            menuitem UIMenuViewModelLighting {
+              label {&Lighting}
+              callback {UIViewWindow->SetDisplay( ViewState::LIGHTING, UIMenuViewModelLighting->value() != 0L );}
+              private xywh {0 0 100 20} type Toggle
+            }
+          }
+          menuitem UIMenuViewResetCam {
+            label {&Reset Camera}
+            callback {UIViewWindow->SetDisplay( ViewState::RESET );}
+            private xywh {40 40 100 20}
+          }
+        }
+        submenu UIMenuMotion {
+          label {&Motion}
+          private xywh {0 0 100 20} deactivate
+        } {
+          menuitem UIMenuMotionFly {
+            label {&Fly}
+            callback {UIViewWindow->SetMotion( ViewState::FLY );
+MotionFlyButton->setonly();}
+            private xywh {0 0 100 20} type Radio
+          }
+          menuitem UIMenuMotionOrbit {
+            label {&Orbit}
+            callback {UIViewWindow->SetMotion( ViewState::ORBIT );
+MotionOrbButton->setonly();}
+            private xywh {0 0 100 20} type Radio
+          }
+          menuitem UIMenuMotionUFO {
+            label {&UFO}
+            callback {UIViewWindow->SetMotion( ViewState::UFO );
+MotionUFOButton->setonly();}
+            private xywh {0 0 100 20} type Radio
+          }
+          menuitem UIMenuMotionWalk {
+            label {&Walk}
+            callback {UIViewWindow->SetMotion( ViewState::WALK );
+MotionWalkButton->setonly();}
+            private xywh {10 10 100 20} type Radio divider
+          }
+          menuitem UIMenuMotionJoy1 {
+            label {Joystick &1}
+            callback {UIViewWindow->SetJoystick( ViewState::JOY_1, UIMenuMotionJoy1->value() != 0L );}
+            private xywh {20 20 100 20} type Toggle deactivate
+          }
+          menuitem UIMenuMotionJoy2 {
+            label {Joystick &2}
+            callback {UIViewWindow->SetJoystick( ViewState::JOY_2, UIMenuMotionJoy2->value() != 0L );}
+            private xywh {30 30 100 20} type Toggle deactivate
+          }
+        }
+      }
+      Fl_Choice UIFileList {
+        label {File:}
+        private xywh {36 512 714 23} down_box BORDER_BOX
+        class ChoicePopUp
+      } {}
+      Fl_Tile {} {open
+        xywh {0 23 755 487}
+      } {
+        Fl_Box {} {
+          xywh {10 30 670 475} hide
+          code0 {Fl_Tile *t = (Fl_Tile*)o->parent();}
+          code1 {t->resizable(o);}
+        }
+        Fl_Group ToolBox {open
+          xywh {680 23 67 487} box THIN_DOWN_BOX
+        } {
+          Fl_Button TextureButton {
+            callback {ToggleTextureScene();}
+            tooltip {Toggle Texture} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/texture.png} xywh {695 29 36 36} type Toggle
+            code0 {o->value(1);}
+          }
+          Fl_Button LightingButton {
+            callback {ToggleLightingScene();}
+            tooltip {Toggle Lighting} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/lighting.png} xywh {695 66 36 36} type Toggle
+            code0 {o->value(1);}
+          }
+          Fl_Button CompassButton {
+            callback {ToggleCompass();}
+            tooltip {Toggle Compass} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/compass.png} xywh {695 103 36 36} type Toggle
+            code0 {o->value(1);}
+          }
+          Fl_Button XYGridButton {
+            callback {ToggleXYPlane();}
+            tooltip {Toggle XY Grid} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/xygrid.png} xywh {695 181 36 36} type Toggle
+            code0 {o->value(1);}
+          }
+          Fl_Button YZGridButton {
+            callback {ToggleYZPlane();}
+            tooltip {Toggle YZ grid} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/yzgrid.png} xywh {695 218 36 36} type Toggle
+          }
+          Fl_Button ZXGridButton {
+            callback {ToggleZXPlane();}
+            tooltip {Toggle ZX grid} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/xzgrid.png} xywh {695 255 36 36} type Toggle
+          }
+          Fl_Button WireframeButton {
+            callback {ToggleWireframeScene();}
+            tooltip {Toggle Wireframe/scribe} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/wireframe.png} xywh {695 140 36 36}
+          }
+          Fl_Group {} {
+            xywh {688 290 52 160}
+          } {
+            Fl_Button MotionFlyButton {
+              callback {UIViewWindow->SetMotion( ViewState::FLY );
+UIMenuMotionFly->setonly();}
+              tooltip {Fly Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/fly.png} xywh {695 296 36 36} type Radio
+            }
+            Fl_Button MotionOrbButton {
+              callback {UIViewWindow->SetMotion( ViewState::ORBIT );
+UIMenuMotionOrbit->setonly();}
+              tooltip {Orbit Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/orbit.png} xywh {695 333 36 36} type Radio
+              code0 {o->value(1);}
+            }
+            Fl_Button MotionUFOButton {
+              callback {UIViewWindow->SetMotion( ViewState::UFO );
+UIMenuMotionUFO->setonly();}
+              tooltip {UFO Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/ufo.png} xywh {695 370 36 36} type Radio
+            }
+            Fl_Button MotionWalkButton {
+              callback {UIViewWindow->SetMotion( ViewState::WALK );
+UIMenuMotionWalk->setonly();}
+              tooltip {Walk Motion Model} image {C:/Documents and Settings/ejohnson/My Documents/Projects/Delta3D/0.7.1/delta3d/utilities/Viewer/walk.png} xywh {695 407 36 36} type Radio
+            }
+          }
+          Fl_Button {} {
+            label Reset
+            callback {ResetCam();} selected
+            tooltip {Reset the Camera} xywh {688 450 50 25}
+          }
+        }
+        Fl_Group ViewGroup {open
+          xywh {0 23 680 487} box DOWN_BOX
+        } {
+          Fl_Box UIViewWindow {
+            label ViewWindow
+            private xywh {0 25 680 485}
+            code0 {\#include "viewwindow.h"}
+            class ViewWindow
+          }
+        }
+      }
+    }
+    code {UIViewWindow->Container( this );} {}
+  }
+  Function {Show()} {} {
+    code {UIMainWindow->show();
+	UIViewWindow->CommandLine( mArgc, mArgv );} {}
+  }
+  Function {Quit()} {} {
+    code {UIMainWindow->hide();} {}
+  }
+  Function {LoadFile( std::string pathfile )} {} {
+    code {if( pathfile == "" )
+		return;
+
+	bool fileLoaded = UIViewWindow->LoadFile( pathfile.c_str() );
+	if (fileLoaded)
+	{
+		UIFileList->InsertFile( pathfile, UIViewWindow );
+
+		if( ! mMenusEnabled )
+		{
+			UIMenuView->activate();
+			UIMenuMotion->activate();
+			UIMenuFileSaveAs->activate();
+			mMenusEnabled	= true;
+		}
+	}} {}
+  }
+  Function {SaveFileAs( std::string pathfile )} {} {
+    code {if( pathfile == "" )
+		return;
+
+	bool fileSaved = UIViewWindow->SaveFileAs( pathfile.c_str() );
+	
+	if (fileSaved)
+	{
+
+	}} {}
+  }
+  Function {SelectFile( int indx )} {} {
+    code {UIViewWindow->SelectFile( indx );
+	UIFileList->SelectFile( indx );} {}
+  }
+  Function {UpdateSettings( const ViewState* pViewState )} {} {
+    code {assert( pViewState );
+
+
+	// display items
+	if( pViewState->GetDisplayFlag( ViewState::COMPASS ) )
+		UIMenuViewDisplayCompass->set();
+	else
+		UIMenuViewDisplayCompass->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::XY_PLANE ) )
+		UIMenuViewDisplayXYPlane->set();
+	else
+		UIMenuViewDisplayXYPlane->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::YZ_PLANE ) )
+		UIMenuViewDisplayYZPlane->set();
+	else
+		UIMenuViewDisplayYZPlane->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::ZX_PLANE ) )
+		UIMenuViewDisplayZXPlane->set();
+	else
+		UIMenuViewDisplayZXPlane->clear();
+
+
+	// scene features
+	if( pViewState->GetDisplayFlag( ViewState::SCENEWIRE ) )
+	{
+		UIMenuViewSceneWireframe->set();
+		UIMenuViewSceneTexture->deactivate();
+		UIMenuViewSceneLighting->deactivate();
+	}
+	else
+		UIMenuViewSceneWireframe->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::SCENEPOLY ) )
+	{
+		UIMenuViewScenePolygon->set();
+		UIMenuViewSceneTexture->activate();
+		UIMenuViewSceneLighting->activate();
+	}
+	else
+		UIMenuViewScenePolygon->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::SCENEWIRE )	&&
+	    pViewState->GetDisplayFlag( ViewState::SCENEPOLY )	)
+	{
+		UIMenuViewScenePolygon->clear();
+		UIMenuViewSceneWireframe->clear();
+		UIMenuViewSceneScribe->set();
+	}
+	else
+	{
+		UIMenuViewSceneScribe->clear();
+	}
+
+	if( pViewState->GetDisplayFlag( ViewState::SCENETXT ) )
+		UIMenuViewSceneTexture->set();
+	else
+		UIMenuViewSceneTexture->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::SCENELIGHT ) )
+		UIMenuViewSceneLighting->set();
+	else
+		UIMenuViewSceneLighting->clear();
+
+
+	// model features
+	if( pViewState->GetDisplayFlag( ViewState::WIREFRAME ) )
+	{
+		UIMenuViewModelWireframe->set();
+		UIMenuViewModelTexture->deactivate();
+		UIMenuViewModelLighting->deactivate();
+	}
+	else
+		UIMenuViewModelWireframe->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::POLYGON ) )
+	{
+		UIMenuViewModelPolygon->set();
+		UIMenuViewModelTexture->activate();
+		UIMenuViewModelLighting->activate();
+	}
+	else
+		UIMenuViewModelPolygon->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::WIREFRAME )	&&
+	   pViewState->GetDisplayFlag( ViewState::POLYGON )	)
+	{
+		UIMenuViewModelPolygon->clear();
+		UIMenuViewModelWireframe->clear();
+		UIMenuViewModelScribe->set();
+	}
+	else
+	{
+		UIMenuViewModelScribe->clear();
+	}
+
+	if( pViewState->GetDisplayFlag( ViewState::TEXTURE ) )
+		UIMenuViewModelTexture->set();
+	else
+		UIMenuViewModelTexture->clear();
+
+	if( pViewState->GetDisplayFlag( ViewState::LIGHTING ) )
+		UIMenuViewModelLighting->set();
+	else
+		UIMenuViewModelLighting->clear();
+
+
+	// motion models
+	if( pViewState->GetMotionFlag( ViewState::WALK ) )
+		UIMenuMotionWalk->setonly();
+	else
+		UIMenuMotionWalk->clear();
+
+	if( pViewState->GetMotionFlag( ViewState::FLY ) )
+		UIMenuMotionFly->setonly();
+	else
+		UIMenuMotionFly->clear();
+
+	if( pViewState->GetMotionFlag( ViewState::UFO ) )
+		UIMenuMotionUFO->setonly();
+	else
+		UIMenuMotionUFO->clear();
+
+	if( pViewState->GetMotionFlag( ViewState::ORBIT ) )
+		UIMenuMotionOrbit->setonly();
+	else
+		UIMenuMotionOrbit->clear();
+
+
+	// joysticks
+	if( pViewState->GetJoystickFlag( ViewState::JOY_1 ) )
+		UIMenuMotionJoy1->set();
+	else
+		UIMenuMotionJoy1->clear();
+
+	if( pViewState->GetJoystickFlag( ViewState::JOY_2 ) )
+		UIMenuMotionJoy2->set();
+	else
+		UIMenuMotionJoy2->clear();} {}
+  }
+  Function {ToggleWireframeModel()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewModelPolygon->value() )
+	{
+		UIViewWindow->SetDisplay( ViewState::WIREFRAME, true );
+
+		UIMenuViewModelWireframe->setonly();
+
+		UIMenuViewModelTexture->deactivate();
+		UIMenuViewModelLighting->deactivate();
+
+		return;
+	}
+
+	if( UIMenuViewModelWireframe->value() )
+	{
+		UIViewWindow->SetDisplay( ViewState::POLYGON | ViewState::WIREFRAME, true );
+
+		UIMenuViewModelScribe->setonly();
+
+		UIMenuViewModelTexture->activate();
+		UIMenuViewModelLighting->activate();
+
+		return;
+	}
+
+	if( UIMenuViewModelScribe->value() )
+	{
+		UIViewWindow->SetDisplay( ViewState::POLYGON, true );
+
+		UIMenuViewModelPolygon->setonly();
+
+		UIMenuViewModelTexture->activate();
+		UIMenuViewModelLighting->activate();
+
+		return;
+	}} {}
+  }
+  Function {ToggleWireframeScene()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewScenePolygon->value() )
+	{
+		UIViewWindow->SetDisplay( ViewState::SCENEWIRE, true );
+
+		UIMenuViewSceneWireframe->setonly();
+
+		UIMenuViewSceneTexture->deactivate();
+		UIMenuViewSceneLighting->deactivate();
+
+		return;
+	}
+
+	if( UIMenuViewSceneWireframe->value() )
+	{
+		UIViewWindow->SetDisplay( ViewState::SCENEPOLY | ViewState::SCENEWIRE, true );
+
+		UIMenuViewSceneScribe->setonly();
+
+		UIMenuViewSceneTexture->activate();
+		UIMenuViewSceneLighting->activate();
+
+		return;
+	}
+
+	if( UIMenuViewSceneScribe->value() )
+	{
+		UIViewWindow->SetDisplay( ViewState::SCENEPOLY, true );
+
+		UIMenuViewScenePolygon->setonly();
+
+		UIMenuViewSceneTexture->activate();
+		UIMenuViewSceneLighting->activate();
+
+		return;
+	}} {}
+  }
+  Function {ToggleLightingModel()} {open
+  } {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewModelLighting->active() )
+	{
+		if( UIMenuViewModelLighting->value() )
+		{
+			UIMenuViewModelLighting->clear();
+			UIViewWindow->SetDisplay( ViewState::LIGHTING, false );
+		}
+		else
+		{
+			UIMenuViewModelLighting->set();
+			UIViewWindow->SetDisplay( ViewState::LIGHTING, true );
+		}
+  	}} {}
+  }
+  Function {ToggleLightingScene()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewSceneLighting->active() )
+	{
+		if( UIMenuViewSceneLighting->value() )
+		{
+			UIMenuViewSceneLighting->clear();
+			UIViewWindow->SetDisplay( ViewState::SCENELIGHT, false );
+		}
+		else
+		{
+			UIMenuViewSceneLighting->set();
+			UIViewWindow->SetDisplay( ViewState::SCENELIGHT, true );
+		}
+  	}} {}
+  }
+  Function {ToggleTextureModel()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewModelTexture->active() )
+  	{
+		if( UIMenuViewModelTexture->value() )
+		{
+			UIMenuViewModelTexture->clear();
+			UIViewWindow->SetDisplay( ViewState::LIGHTING, false );
+		}
+		else
+		{
+			UIMenuViewModelTexture->set();
+			UIViewWindow->SetDisplay( ViewState::TEXTURE, true );
+		}
+  	}} {}
+  }
+  Function {ToggleTextureScene()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewSceneTexture->active() )
+  	{
+		if( UIMenuViewSceneTexture->value() )
+		{
+			UIMenuViewSceneTexture->clear();
+			UIViewWindow->SetDisplay( ViewState::SCENETXT, false );
+		}
+		else
+		{
+			UIMenuViewSceneTexture->set();
+			UIViewWindow->SetDisplay( ViewState::SCENETXT, true );
+		}
+  	}} {}
+  }
+  Function {ResetCam()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	UIViewWindow->SetDisplay( ViewState::RESET );} {}
+  }
+  Function {ToggleCompass()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewDisplayCompass->value() )
+	{
+		UIMenuViewDisplayCompass->clear();
+		UIViewWindow->SetDisplay( ViewState::COMPASS, false );
+	}
+	else
+	{
+		UIMenuViewDisplayCompass->set();
+		UIViewWindow->SetDisplay( ViewState::COMPASS, true );
+	}} {}
+  }
+  Function {ToggleXYPlane()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewDisplayXYPlane->value() )
+	{
+		UIMenuViewDisplayXYPlane->clear();
+		UIViewWindow->SetDisplay( ViewState::XY_PLANE, false );
+	}
+	else
+	{
+		UIMenuViewDisplayXYPlane->set();
+		UIViewWindow->SetDisplay( ViewState::XY_PLANE, true );
+	}} {}
+  }
+  Function {ToggleYZPlane()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewDisplayYZPlane->value() )
+	{
+		UIMenuViewDisplayYZPlane->clear();
+		UIViewWindow->SetDisplay( ViewState::YZ_PLANE, false );
+	}
+	else
+	{
+		UIMenuViewDisplayYZPlane->set();
+		UIViewWindow->SetDisplay( ViewState::YZ_PLANE, true );
+	}} {}
+  }
+  Function {ToggleZXPlane()} {} {
+    code {Fl::focus( UIViewWindow );
+
+	if( UIMenuViewDisplayZXPlane->value() )
+	{
+		UIMenuViewDisplayZXPlane->clear();
+		UIViewWindow->SetDisplay( ViewState::ZX_PLANE, false );
+	}
+	else
+	{
+		UIMenuViewDisplayZXPlane->set();
+		UIViewWindow->SetDisplay( ViewState::ZX_PLANE, true );
+	}} {}
+  }
+} 
+
+class ChoicePopUp {: {public Fl_Choice}
+} {
+  Function {ChoicePopUp( int nX, int nY, int nW, int nH, const char* pL = 0 ) : Fl_Choice(nX,nY,nW,nH,pL)} {} {
+    code {} {}
+  }
+  Function {InsertFile( std::string szPathFile, ViewWindow* pViewWindow )} {} {
+    code {// ::add() will mangle the string so we do an "add/replace"
+	int nIndx = Fl_Choice::add( "t" );
+	Fl_Choice::replace( nIndx, szPathFile.c_str() );
+	Fl_Choice::callback( SelectSCB, pViewWindow );
+	Fl_Choice::value( nIndx );
+
+	// call the select callback directly
+	// because the ::value() function won't
+	SelectCB( pViewWindow );} {}
+  }
+  Function {SelectSCB( Fl_Widget* pWidget, void* pViewWindow )} {return_type {static void}
+  } {
+    code {static_cast<ChoicePopUp*>(pWidget)->SelectCB( static_cast<ViewWindow*>(pViewWindow) );} {}
+  }
+  Function {SelectCB( ViewWindow* pViewWindow )} {} {
+    code {if( pViewWindow == NULL )
+		return;
+
+	pViewWindow->SelectFile( Fl_Choice::value() );} {}
+  }
+  Function {SelectFile( int nIndx )} {} {
+    code {Fl_Choice::value( nIndx );
+	Fl_Choice::damage( FL_DAMAGE_ALL  );} {}
+  }
+} 

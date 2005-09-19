@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = ['testsound.cpp']
+
+testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtaudio' ]
+
+BuildProgram( '#bin/testSound', testSrcs, testDeps )
