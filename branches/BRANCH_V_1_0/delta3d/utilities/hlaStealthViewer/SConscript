@@ -1,0 +1,8 @@
+Import('*')
+
+if env.get('rti') :
+
+   hlaStealthDeps = [ 'dtcore', 'dtabc', 'dthla', 'dtutil' ]
+
+   BuildProgram( '#bin/hlaStealthViewer', 'main.cpp', hlaStealthDeps )
+

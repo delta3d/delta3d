@@ -1,0 +1,14 @@
+Import('*')
+
+if env.get('rti') != 0 :
+
+   dtHlaSrcs = [  'dis_types.cpp',
+                  'entity.cpp',
+                  'rticonnection.cpp' ]
+                  
+   dtHlaDeps = [ 'dtcore', 'osgSim' ] + rtiLibs
+   
+   if OS == 'windows' :
+      dtHlaDeps += ['winsock']
+         
+   BuildLib( 'dthla', dtHlaSrcs, dtHlaDeps, ['DT_LIBRARY'] )

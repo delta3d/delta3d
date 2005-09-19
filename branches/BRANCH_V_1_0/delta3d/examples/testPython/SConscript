@@ -1,0 +1,11 @@
+import os
+
+Import('*')
+
+if CheckForBoost() :
+
+   testPythonSrcs = ['testpython.cpp']
+
+   testPythonDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtscript', 'python' ]
+
+   BuildProgram( '#bin/testPython', testPythonSrcs, testPythonDeps )

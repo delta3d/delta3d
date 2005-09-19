@@ -1,0 +1,9 @@
+Import('*')
+
+if env.get('rti') != 0 :
+
+   testSrcs = ['testhla.cpp']
+
+   testDeps = [ 'dtcore', 'dtabc', 'dthla', 'dtutil' ]
+
+   BuildProgram( '#bin/testHLA', testSrcs, testDeps )

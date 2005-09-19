@@ -1,0 +1,7 @@
+Import('*')
+
+dtCharSrcs = [  'character.cpp' ]
+
+dtCharDeps = [ 'dtcore', 'cal3d', 'rbody', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer', 'tinyxml', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
+    
+BuildLib( 'dtchar', dtCharSrcs, dtCharDeps, ['DT_LIBRARY'] )
