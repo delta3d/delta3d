@@ -24,12 +24,12 @@
 #include <osgDB/FileUtils>
 #include <osgUtil/IntersectVisitor>
 
-#include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <xercesc/util/XMLString.hpp>
 
 #include "dtCore/system.h"
 #include "dtUtil/matrixutil.h"
-#include "dtUtil/xerceserrorhandler.h"
 #include "dtUtil/stringutils.h"
+#include "dtUtil/xercesparser.h"
 
 using namespace dtHLA;
 XERCES_CPP_NAMESPACE_USE
@@ -1617,109 +1617,9 @@ void RTIConnection::RemoveEntityTypeMapping(const EntityType& entityType)
  */
 bool RTIConnection::LoadEntityTypeMappings(const std::string& filename)
 {
-   std::string file = osgDB::findDataFile( filename );
-   if( file.empty() )
-   {
-      LOG_WARNING("When attempting to parse file, " + filename + ", file was not.")
-      return false;
-   }
-
-   LOG_INFO("Parsing configuration file, " + file)
-
-   bool retval(false);
-
-   try  // to initialize the xml tools
-   {
-      XMLPlatformUtils::Initialize();
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize() with message: " + msg)
-      XMLString::release( &message );
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Initialize()");
-      return false;
-   }
-
-   SAX2XMLReader* parser;
-   try  // to create a reader
-   {
-      parser = XMLReaderFactory::createXMLReader();
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred during XMLReaderFactory::createXMLReader() with message: " + msg)
-      XMLString::release( &message );
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("Could not create a Xerces SAX2XMLReader")
-      return false;
-   }
-
-   // set the error handler
-   dtUtil::XercesErrorHandler errors;
-   parser->setErrorHandler( &errors );
-
-   // set the content handler
    RTIEntityContentHandler handler(this);
-   parser->setContentHandler( &handler );
-
-   try  // to parse
-   {
-      mEntityTypeMappings.clear();
-      parser->parse( file.c_str() );
-      retval = true;
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred while parsing file, " + file + ", with message: " + msg)
-      XMLString::release( &message );
-
-      delete parser;
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("An exception occurred while parsing file, " + file)
-
-      delete parser;
-      return false;
-   }
-
-   try
-   {
-      XMLPlatformUtils::Terminate();
-   }
-   catch(const XMLException& e)
-   {
-      char* message = XMLString::transcode( e.getMessage() );
-      std::string msg(message);
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate() with message: " + msg)
-      XMLString::release( &message );
-
-      delete parser;
-      return false;
-   }
-   catch(...)
-   {
-      LOG_ERROR("An exception occurred during XMLPlatformUtils::Terminate()")
-
-      delete parser;
-      return false;
-   }
-
-   return retval;
+   dtUtil::XercesParser parser;
+   return parser.Parse(filename, handler);
 }
 
 void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
