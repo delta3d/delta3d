@@ -38,7 +38,7 @@ namespace dtUtil
         * @param kfc The KeyFrameContainer provided will be appended during loading.  If only loaded data
         * is wished to be contained, then the container should be cleared before executing the Walk.
         */
-      KeyFrameDecoder(const RecordablePtrContainer& sources, KeyFrameContainer& kfc): mSources(sources), mKFC(kfc), mSourceIndex(0), mSourcesSize(sources.size())
+      KeyFrameDecoder(const RecordablePtrContainer& sources, KeyFrameContainer& kfc): mSources(sources), mKFC(kfc), mSourcesSize(sources.size())
       {
       }
 
@@ -94,26 +94,34 @@ namespace dtUtil
          XERCES_CPP_NAMESPACE_QUALIFIER DOMTreeWalker* sourcewalker = doc->createTreeWalker( fs, XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeFilter::SHOW_ELEMENT, 0, true );
 
          // move the walker to the first source
+         unsigned int sourceIndex(0);
          for(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* child=sourcewalker->firstChild();
              child != 0;
              child=sourcewalker->nextSibling())
          {
             XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>( child );
-            FrameDataType* data = DecodeSourceData( doc, element );
+            FrameDataType* data = DecodeSourceData( doc, element, sourceIndex );
             fdc.push_back( data );
          }
       }
 
       FrameDataType* DecodeSourceData(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc,
-                                      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e)
+                                      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, unsigned int index)
       {
-         return mSources[mSourceIndex]->Deserialize( doc, e );
+         if( index < mSourcesSize )
+         {
+            return mSources[index]->Deserialize( doc, e );
+         }
+         else
+         {
+            LOG_ERROR("No available recordable source to handle serialization.")
+         }
       }
 
    private:
       const RecordablePtrContainer& mSources;
       KeyFrameContainer& mKFC;
-      unsigned int mSourceIndex, mSourcesSize;
+      unsigned int mSourcesSize;
    };
 
 };
