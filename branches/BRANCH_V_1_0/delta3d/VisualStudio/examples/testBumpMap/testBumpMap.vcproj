@@ -151,6 +151,9 @@
 				RelativePath="..\..\..\data\shaders\BumpMap.vert">
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\examples\testBumpMap\readme.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
