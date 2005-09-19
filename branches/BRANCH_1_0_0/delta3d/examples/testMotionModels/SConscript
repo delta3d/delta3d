@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = ['testmotionmodels.cpp']
+
+testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
+
+BuildProgram( '#bin/testMotionModels', testSrcs, testDeps )
