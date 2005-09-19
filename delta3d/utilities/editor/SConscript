@@ -1,0 +1,20 @@
+import os
+
+Import('*')
+
+modules = [ 'src' ]
+
+if OS == 'windows' :
+
+   if mode == 'debug' :
+      build = 'Debug'
+   else :
+      build = 'Release'
+
+   for module in modules :
+      SConscript( dirs=[module], build_dir = os.path.join( module, build ), duplicate = 0 )
+
+else :
+
+   for module in modules :
+      SConscript( dirs=[module] )

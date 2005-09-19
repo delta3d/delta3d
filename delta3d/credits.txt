@@ -1,0 +1,75 @@
+###########################
+#                         #
+# Delta3D Credits         #
+#                         #
+###########################
+
+The Delta3D Team would like at acknowledge the following people for their
+support in the development of the Delta3D Open Source Game and Simulation Engine.
+
+----------------------
+| Contributors       |
+----------------------
+
+--------------------
+| The Delta3D Team |
+--------------------
+  Rudy Darken
+  - Director MOVES Insitute
+
+  Perry McDowell
+  - Executive Director
+
+  Erik Johnson
+  - Lead Engineer
+ 
+  Joe Sullivan
+  - The "goto" guy
+  
+  Chris Osborn
+  - Lead Programmer
+ 
+  Brad Anderegg
+  - Programmer
+
+  John K. Grant
+  - Programmer
+
+  Mark Strom
+  - dtHLA bug fixes
+  
+  Fuzzy Wells
+  - GENETICS integration
+  
+  Andrzej Kapolka
+  - Soarx Terrain, dtHLA, many, many backbone components
+  
+  J.P. Jamieson
+  - Audio Manager, Viewer, FLTK integration
+  
+  Matt Campbell
+  Teague Coonan
+  David Guthrie
+  Eddie Johnson
+  Curtiss Murphy
+  - STAGE: Simluation, Training, and Game Editor
+ 
+  Curtis Conkey
+
+  Peter Smith
+  - MSVS Project Template, Wireframe mode, Tutorials
+  
+  Ricardo Salvatore
+  - Linux Tutorials
+  
+  Georgios E. Tarantilis
+  - Clouds on the GPU
+
+----------------------
+| Other Contributors |
+----------------------
+Terry Jordan
+- FPSMotionModel
+
+"Winter"
+- Free Microsoft Tool Build Tutorial

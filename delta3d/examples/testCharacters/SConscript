@@ -1,0 +1,7 @@
+Import('*')
+
+testSrcs = ['testcharacters.cpp']
+
+testDeps = [ 'dtcore', 'dtabc', 'dtchar', 'dtutil' ]
+
+BuildProgram( '#bin/testCharacters', testSrcs, testDeps )
