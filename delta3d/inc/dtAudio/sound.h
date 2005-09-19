@@ -87,14 +87,11 @@ namespace dtAudio
     * are always resseting the flag to AL_FALSE.
     *
     *********************       WARNING       ********************
-    ********************* JPJ (Sept. 23 2004) ********************
-    * At the time of this writing, the dtAudio::Sound functions
-    * for the Recording System are just cut&paste from the old
-    * dtCore::Sound objects.  Their guts are obsolete and will
-    * probably cause a crash on their first use.  Sorry, folks, but
-    * I did not have enough time to convert these functions.
-    * That fix has been left to whomever inherits this code.
-    *
+    * The serialization member functions have not been tested.  They
+    * may work well.  Also, the functions require for playback,
+    * CreateFrameData and UseFrameData have not been tested.  They
+    * may be working.  An application was not developed to explicitly
+    * test these functions due to lack of time.
     */
    class DT_EXPORT Sound : public dtCore::Transformable
    {
