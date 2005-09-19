@@ -296,8 +296,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testBumpMap", "examples\tes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtNet", "src\dtNet\dtNet.vcproj", "{B799957E-9AFF-43DD-A46A-6BC98424C6B2}"
 	ProjectSection(ProjectDependencies) = postProject
-		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRecorder", "examples\testRecorder\testRecorder.vcproj", "{E0E704E7-1D16-4A9A-AFE8-3298132F80E2}"
