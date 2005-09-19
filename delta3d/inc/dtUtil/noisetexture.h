@@ -35,11 +35,11 @@ namespace dtUtil
    * Noise Texture is a class that uses SeamlessNoise to generate an osg::Image
    */
 
-    class DT_EXPORT NoiseTexture
+    class NoiseTexture
     {
     public:
 
-        NoiseTexture();
+        DT_EXPORT NoiseTexture();
         
         /**
         * Constructor: For a more detailed listing of these params see dtUtil::Fracal
@@ -52,7 +52,7 @@ namespace dtUtil
         * @param slices: A power of 2, specifying the z resolution, or 1 for 2D textures       
         * @sa dtUtil::Fractal
        */
-        NoiseTexture( int    octaves,
+        DT_EXPORT NoiseTexture( int    octaves,
                         int    frequency,
                         double amp,
                         double persistance,
@@ -61,7 +61,7 @@ namespace dtUtil
                         int    slices = 1 //default for 2d images
             );
 
-        ~NoiseTexture();
+        DT_EXPORT ~NoiseTexture();
 
         /*
         *Sets octaves
@@ -108,7 +108,7 @@ namespace dtUtil
         *@return  returns a pointer to the image
         *
         */
-        osg::Image *MakeNoiseTexture(GLenum format);
+        DT_EXPORT osg::Image *MakeNoiseTexture(GLenum format);
 
         /*
         *If you need a pointer to the texture you'll find it here
