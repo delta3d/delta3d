@@ -39,7 +39,7 @@ class TestLightsApp(Application):
         
         trans = Transform()
         
-        trans.Set( 5.0, 10.0, 2.0, 0.0, 0.0, 0.0 )
+        trans.SetTranslation( Vec3(5.0, 10.0, 2.0) )
         self.mGlobalSpot.SetTransform( trans )
         self.mGlobalSpot.SetSpotCutoff( 20.0 )
         self.mGlobalSpot.SetSpotExponent( 50.0 )
@@ -58,16 +58,16 @@ class TestLightsApp(Application):
         self.mGlobalInfinite.SetEnabled( 1 )
         
         #set camera stuff
-        trans.Set( 30.0, -20.0, 25.0, 40.0, -33.0, 0.0 )
+        trans.SetTranslation( Vec3(30.0, -20.0, 25.0) )
+        trans.SetRotation( Vec3(40.0, -33.0, 0.0 ) )
         self.GetCamera().SetTransform( trans )
         
         origin = [ 0.0, 0.0, 0.0 ]
+
+        xyz = Vec3()
+        trans.GetTranslation(xyz)
         
-        x = trans.GetTranslationX()
-        y = trans.GetTranslationY()
-        z = trans.GetTranslationZ()
-        
-        camLoc = [ x, y, z ]
+        camLoc = [ xyz.x, xyz.y, xyz.z ]
         
         self.mOmm.SetDefaultMappings( self.GetKeyboard(), self.GetMouse() )
         self.mOmm.SetTarget( self.GetCamera() )
@@ -111,11 +111,11 @@ class TestLightsApp(Application):
         #move the global positional light in a circle
         tx = 2*cos( radians(self.countOne) ) + 3.0
         ty = 2*sin( radians(self.countOne) ) + 7.0
-        trans.Set( tx, ty, 2.0, 0.0, 0.0, 0.0 )
+        trans.SetTranslation( Vec3(tx, ty, 2.0) )
         self.mPositional.SetTransform( trans )
         
         self.mGlobalInfinite.SetDiffuse( redValue, greenValue, blueValue, 1.0 ) #change color
-        self.mGlobalInfinite.SetDirection( self.countOne, self.countTwo, self.countThree ) #change direction
+        self.mGlobalInfinite.SetAzimuthElevation( self.countOne, self.countTwo ) #change direction
 
 app = TestLightsApp( 'config.xml' )
 
