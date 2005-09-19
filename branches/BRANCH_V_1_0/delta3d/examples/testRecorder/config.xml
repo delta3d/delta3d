@@ -4,6 +4,6 @@
   <Window X="100" Y="100" Width="800" Height="600" Name="testRecorder" PixelDepth="24" RefreshRate="60" ShowCursor="1" ChangeDisplayResolution="0" FullScreen="0" />
 
   <Scene Name="defaultScene" />
-  <Camera Name="defaultCam" SceneInstance="DefaultScene" WindowInstance="testRecorder"/>
+  <Camera Name="defaultCam" SceneInstance="defaultScene" WindowInstance="testRecorder"/>
 
 </Application>
