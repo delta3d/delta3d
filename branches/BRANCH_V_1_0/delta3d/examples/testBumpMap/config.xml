@@ -5,6 +5,6 @@
 
   <Scene Name="defaultScene"/>
 
-  <Camera Name="defaultCam" SceneInstance="DefaultScene" WindowInstance="testBumpMap"/>
+  <Camera Name="defaultCam" SceneInstance="defaultScene" WindowInstance="testBumpMap"/>
 
 </Application>
