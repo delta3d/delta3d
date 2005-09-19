@@ -329,22 +329,20 @@ void StateManager::MakeCurrent( State* state )
 
 void StateManager::PrintStates() const
 {
-   ///\todo print to Log file instead of only to std::cout
-   std::cout << "StateManager::set<State> contents:" << std::endl;
+   LOG_ALWAYS("StateManager::set<State> contents:")
 
    //iterate over all states
    unsigned int counter(0);
    for( StatePtrSet::const_iterator iter = mStates.begin(); iter != mStates.end(); iter++ )
-      std::cout << "State[" << counter++ << "]=" << (*iter)->GetName() << std::endl;
+      LOG_ALWAYS("State[" + dtUtil::ToString(counter++) + "]=" + (*iter)->GetName() )
 }
 
 void StateManager::PrintTransitions() const
 {
-   ///\todo print to Log file instead of only to std::cout
-   std::cout << "StateManager::map<<Event::Type,State> : State> contents:" << std::endl;
+   LOG_ALWAYS("StateManager::map<<Event::Type,State> : State> contents:" )
 
    //iterate over all states
    unsigned int counter(0);
    for( TransitionMap::const_iterator iter = mTransitions.begin(); iter != mTransitions.end(); iter++ )
-      std::cout << "Transition[" << counter++ << "]=<" << (*iter).first.first->GetName() << "," << (*iter).first.second->GetName() << "> : " << (*iter).second->GetName() << std::endl;
+      LOG_ALWAYS("Transition[" + dtUtil::ToString( counter++ ) + "]=<" + (*iter).first.first->GetName() + "," + (*iter).first.second->GetName() + "> : " + (*iter).second->GetName() )
 }

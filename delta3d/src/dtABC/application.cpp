@@ -111,8 +111,6 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
 
 /** Read an existing data file and setup the internal class
   * members with attributes from the data file.
-  *
-  * \todo does this need to initialize xerces xml utils?
   */
 bool Application::ParseConfigFile(const std::string& file)
 {
@@ -124,8 +122,6 @@ bool Application::ParseConfigFile(const std::string& file)
 
 /** This method writes out all the default attributes from the internal Application
   * members and writes them out to a .xml file ("config.xml").
-  *
-  * \todo clean out the commented code.
   */
 std::string dtABC::Application::GenerateDefaultConfigFile()
 {

@@ -19,8 +19,6 @@
   * TestRecorder is an Application which will allow you to
   * fly around terrain and record the Camera data if desired.
   * The main point is to show how to use the Recorder class.
-  * \todo make 'l' load from a file.
-  * \todo print to the game screen Recorder: ON, or Recorder: OFF
   */
 class TestRecorder : public dtABC::Application
 {

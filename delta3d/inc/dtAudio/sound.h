@@ -40,7 +40,6 @@ XERCES_CPP_NAMESPACE_END
 namespace dtAudio
 {
    /** dtAudio::Sound 
-    * \todo Remove JP's comments.
     *
     * dtAudio::Sound is a little more than just an interface to an object
     * held within (and protected) by the dtAudio::AudioManager.
