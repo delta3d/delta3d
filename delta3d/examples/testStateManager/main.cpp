@@ -17,7 +17,6 @@ int main(unsigned int argc, char* argv[])
    // This is a console app, so we don't want to shutdown if there are no windows.
    dtCore::System::Instance()->SetShutdownOnWindowClose( false );
 
-   dtUtil::Log::GetInstance().SetLogLevel( dtUtil::Log::LOG_DEBUG );
    dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList()+ ";" + dtCore::GetDeltaRootPath() + "/examples/testStateManager" );
 
    dtCore::RefPtr<dtABC::StateManager> mgr = new dtABC::StateManager();
