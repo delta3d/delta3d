@@ -7,6 +7,6 @@ srcfiles = SGlob('*.cpp')
 dtNetDeps=[ 'dtcore', 'dtutil', 'OpenThreads', 'gne', 'HawkNL', 'curses' ]
 
 if OS == 'windows' :
-   dtNetDeps += [ 'User32' ]
+   dtNetDeps += [ 'User32', 'winsock' ]
        
 BuildLib( 'dtNet', srcfiles, dtNetDeps, ['DT_LIBRARY'] )
