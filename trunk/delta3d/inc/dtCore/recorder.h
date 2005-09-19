@@ -58,8 +58,6 @@ namespace dtCore
     *
     * @param RecorderableT is a type that supports the interfaces necessary for recording.  This class knows how to create and serialize FrameDataT types.
     * @param FrameDataT is the type to be stored in memory.
-    *
-    * \todo Verify that adding a new source will invalidate the currently saved keyframes because of the assumed syncronization.
     */
    template<typename RecordableT, typename FrameDataT>
    class /*DT_EXPORT */Recorder : public dtCore::Base
@@ -100,18 +98,20 @@ namespace dtCore
       virtual ~Recorder()
       {
          RemoveSender( dtCore::System::Instance() );
-
-         // shutdown the system
-         ///\todo this should not be here.
-         XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
       }
 
    public:
-      /// Returns a vector of the KeyFrames.
+      /// Returns a const vector of KeyFrames.
       const KeyFrameContainer& GetKeyFrames() const { return mKeyFrames; }
+
+      /// Returns a non const vector of KeyFrames.  Beware of the synchronization of key frames and sources.
+      KeyFrameContainer& GetKeyFrames() { return mKeyFrames; }
 
       /// Returns a vector of the RecordableT sources.
       const RecordablePtrContainer& GetSources() const { return mSources; }
+
+      /// Returns a vector of the RecordableT sources.  Beware of the synchronization of key frames and sources.
+      RecordablePtrContainer& GetSources() { return mSources; }
 
       /**
         * Adds an element to the list of objects to record.
@@ -126,6 +126,7 @@ namespace dtCore
          }
          else
          {
+            mKeyFrames.clear();
             mSources.push_back( source );
          }
       }
@@ -134,8 +135,6 @@ namespace dtCore
         * Removes an element from the list of objects to record.
         *
         * @param source the source to be removed.
-        *
-        * \todo verify this function is working properly.
         */
       void RemoveSource(RecordableType* source)
       {
@@ -145,6 +144,7 @@ namespace dtCore
          }
          else
          {
+            mKeyFrames.clear();
             mSources.erase(source);
          }
       }
@@ -203,8 +203,6 @@ namespace dtCore
         * Saves the recording to the specified file.
         *
         * @param filename the name of the file to save
-        *
-        * \todo handle Xerces exceptions.
         */
       void SaveFile(const std::string& filename)
       {

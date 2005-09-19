@@ -60,7 +60,6 @@ bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, c
       }
       else   // turn on schema checking
       {
-         ///\todo does the sax2parser support checking for features?
          parser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
          parser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
          parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
