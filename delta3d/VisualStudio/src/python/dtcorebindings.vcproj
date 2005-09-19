@@ -196,6 +196,15 @@
 				RelativePath="..\..\..\src\python\orbitmotionmodelbindings.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\python\osgmath.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\osgmatrix.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\osgvec3.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\python\particlesystembindings.cpp">
 			</File>
 			<File
@@ -253,6 +262,12 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\python\dtpython.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\python\heldptr.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\python\osgmath.h">
 			</File>
 		</Filter>
 		<Filter
