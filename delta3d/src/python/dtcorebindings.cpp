@@ -35,9 +35,14 @@ void initMotionModelBindings();
 void initMouseBindings();
 void initObjectBindings();
 void initOrbitMotionModelBindings();
+
+
+#ifndef WIN32
 void initOSGVec3();
 void initOSGMatrix();
 void initOSGMath();
+#endif //WIN32
+
 void initParticleSystemBindings();
 void initPhysicalBindings();
 void initPointAxisBindings();
@@ -78,9 +83,12 @@ BOOST_PYTHON_MODULE(dtCore)
       .value("DEBUG_INFO", DEBUG_INFO)
       .export_values();
 
+
+   #ifndef WIN32
    initOSGVec3();
    initOSGMatrix();
    initOSGMath();
+   #endif //WIN32
 
    initBaseBindings();
    initSystemBindings();
