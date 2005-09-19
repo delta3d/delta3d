@@ -18,26 +18,6 @@ If you are a developer you'll want to build from the source
 which we provide with all our distributions. Please follow instructions
 in src/readme.txt to build the source.
 
-Delta3D is built upon the following other open-source projects:
-
-OpenSceneGraph
-Producer
-OpenThreads
-
-CAL3D
-Crazy Eddie's GUI System
-FLTK
-GDAL
-glGUI 
-Intersense Tracker Library
-OpenAL
-Open Dynamics Engine
-PLIB 
-ReplicantBody
-Signal_Slot	
-TinyXML 
-Xerces
-
 Thanks for using Delta3D! Please visit our webpage at http://www.delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
 our best to respond as quick as possible.
