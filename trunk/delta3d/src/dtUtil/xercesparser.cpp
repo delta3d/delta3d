@@ -53,8 +53,8 @@ bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, c
       parser->setContentHandler( &handler );
       parser->setErrorHandler( &xmlerror );
 
-      std::string schemafile = osgDB::findDataFile( schemafile );
-      if( schemafile.empty() )
+      std::string schema = osgDB::findDataFile( schemafile );
+      if( schema.empty() )
       {
          LOG_WARNING("Scheme file not found, check your DELTA_DATA environment variable, schema checking disabled.")
       }
@@ -64,8 +64,8 @@ bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, c
          parser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
          parser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
          parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
-         parser->loadGrammar( schemafile.c_str(), Grammar::SchemaGrammarType );
-         XMLCh* SCHEMA = XMLString::transcode( schemafile.c_str() );
+         parser->loadGrammar( schema.c_str(), Grammar::SchemaGrammarType );
+         XMLCh* SCHEMA = XMLString::transcode( schema.c_str() );
          parser->setFeature(XMLUni::fgXercesSchema, true);
          parser->setProperty( XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
          XMLString::release( &SCHEMA );
