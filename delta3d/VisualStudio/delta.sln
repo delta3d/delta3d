@@ -1,25 +1,25 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtcore", "src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCore", "src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtabc", "src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtaudio", "src\dtAudio\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAudio", "src\dtAudio\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtchar", "src\dtChar\dtchar.vcproj", "{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtChar", "src\dtChar\dtchar.vcproj", "{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtutil", "src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -29,13 +29,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "src\gui_fl\gui_fl
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtsoarx", "src\soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtSOARX", "src\soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtvis", "src\dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtVis", "src\dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -63,6 +63,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "src\dtDAL\dtDAL.vc
 		{6CB0D175-771B-4592-91A2-C367C61A3381} = {6CB0D175-771B-4592-91A2-C367C61A3381}
 		{91F7CF8D-9297-426F-B760-7E49EDA92A80} = {91F7CF8D-9297-426F-B760-7E49EDA92A80}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtNet", "src\dtNet\dtNet.vcproj", "{B799957E-9AFF-43DD-A46A-6BC98424C6B2}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -115,6 +119,10 @@ Global
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.Build.0 = Debug|Win32
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.ActiveCfg = Release|Win32
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.Build.0 = Release|Win32
+		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Debug.ActiveCfg = Debug|Win32
+		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Debug.Build.0 = Debug|Win32
+		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Release.ActiveCfg = Release|Win32
+		{B799957E-9AFF-43DD-A46A-6BC98424C6B2}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		..\src\readme.txt = ..\src\readme.txt
