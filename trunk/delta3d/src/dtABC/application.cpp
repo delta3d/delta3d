@@ -116,8 +116,6 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
   */
 bool Application::ParseConfigFile(const std::string& file)
 {
-   LOG_DEBUG("Parsing configuration file, " + file)
-
    AppXMLContentHandler handler(this);
    dtUtil::XercesParser parser;
    return parser.Parse(file, handler, "application.xsd");

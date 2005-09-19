@@ -87,7 +87,9 @@ bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, c
 
    try  // to parse the file
    {
-      parser->parse(filename.c_str());
+      LOG_DEBUG("About to parse file: " + filename)
+      parser->parse( filename.c_str() );
+      LOG_DEBUG("...done parsing file: " + filename)
       retVal = true;
    }
    catch (const XMLException& e)
