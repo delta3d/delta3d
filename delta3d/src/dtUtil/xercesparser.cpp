@@ -56,7 +56,7 @@ bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, c
       std::string schema = osgDB::findDataFile( schemafile );
       if( schema.empty() )
       {
-         LOG_WARNING("Scheme file not found, check your DELTA_DATA environment variable, schema checking disabled.")
+         LOG_WARNING("Scheme file, " + schemafile + ", not found, check your DELTA_DATA environment variable, schema checking disabled.")
       }
       else   // turn on schema checking
       {

@@ -331,7 +331,7 @@ namespace dtABC
       XMLElementHandler handler(this);                             // the element handler
 
       dtUtil::XercesParser parser;
-      return parser.Parse(filename, handler, "transitions.xsd");
+      return parser.Parse(filename, handler, "transitionlist.xsd");
    }
 
    template< typename T1, typename T2 >
