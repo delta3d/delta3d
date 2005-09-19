@@ -1617,6 +1617,7 @@ void RTIConnection::RemoveEntityTypeMapping(const EntityType& entityType)
  */
 bool RTIConnection::LoadEntityTypeMappings(const std::string& filename)
 {
+   mEntityTypeMappings.clear();
    RTIEntityContentHandler handler(this);
    dtUtil::XercesParser parser;
    return parser.Parse(filename, handler);
@@ -1697,20 +1698,12 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
          et.SetExtra( (unsigned char)extraint );
       }
 
-      /** just following the boss's orders and putting xerces in place of tinyxml,
-        * not even worrying about if the old code was working properly.
-        * \todo really think about what is supposed to happen here because this looks like a bad design.
-        */
       iter = results.find( "model" );
       if( iter != results.end() )
       {
          mCon->mEntityTypeMappings[et].mModelFilename = (*iter).second;
       }
 
-      /** just following the boss's orders and putting xerces in place of tinyxml,
-        * not even worrying about if the old code was working properly.
-        * \todo really think about what is supposed to happen here because this looks like a bad design.
-        */
       iter = results.find( "icon" );
       if( iter != results.end() )
       {
@@ -1728,10 +1721,6 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
       // set up an EntityType based off of the attributes
       EntityType et;
 
-      /** just following the boss's orders and putting xerces in place of tinyxml,
-        * not even worrying about if the old code was working properly.
-        * \todo really think about what is supposed to happen here because this looks like a bad design.
-        */
       ResultMap::iterator classiter = results.find( "class" );
       if( classiter != results.end() )
       {
@@ -1744,83 +1733,6 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
       }
    }
 }
-
-   //TiXmlDocument doc(osgDB::findDataFile(filename).c_str());
-   //
-   //if(doc.LoadFile())
-   //{
-   //   mEntityTypeMappings.clear();
-   //   
-   //   for(TiXmlElement* e = 
-   //         doc.RootElement()->FirstChildElement("EntityTypeMapping");
-   //       e != NULL;
-   //       e = e->NextSiblingElement("EntityTypeMapping"))
-   //   {
-   //      EntityType et;
-   //      
-   //      int i;
-   //      const char* val;
-   //      
-   //      if(e->Attribute("kind", &i) != NULL)
-   //      {
-   //         et.SetKind((unsigned char)i);
-   //      }
-   //      if(e->Attribute("domain", &i) != NULL)
-   //      {
-   //         et.SetDomain((unsigned char)i);
-   //      }
-   //      if(e->Attribute("country", &i) != NULL)
-   //      {
-   //         et.SetCountry((unsigned short)i);
-   //      }
-   //      if(e->Attribute("category", &i) != NULL)
-   //      {
-   //         et.SetCategory((unsigned char)i);
-   //      }
-   //      if(e->Attribute("subcategory", &i) != NULL)
-   //      {
-   //         et.SetSubcategory((unsigned char)i);
-   //      }
-   //      if(e->Attribute("specific", &i) != NULL)
-   //      {
-   //         et.SetSpecific((unsigned char)i);
-   //      }
-   //      if(e->Attribute("extra", &i) != NULL)
-   //      {
-   //         et.SetExtra((unsigned char)i);
-   //      }
-   //      
-   //      if((val = e->Attribute("model")) != NULL)
-   //      {
-   //         mEntityTypeMappings[et].mModelFilename = val;
-   //      }
-   //      if((val = e->Attribute("icon")) != NULL)
-   //      {
-   //         mEntityTypeMappings[et].mIconFilename = val;
-   //      }
-   //      
-   //      for(TiXmlElement* se = 
-   //            e->FirstChildElement("ArticulatedPart");
-   //          se != NULL;
-   //          se = e->NextSiblingElement("ArticulatedPart"))
-   //      {
-   //         if(se->Attribute("class", &i) != NULL)
-   //         {
-   //            if((val = se->Attribute("name")) != NULL)
-   //            {
-   //               mEntityTypeMappings[et].mArticulatedPartClassNameMap[i] =
-   //                  val;   
-   //            }
-   //         }   
-   //      }
-   //   }
-   //   
-   //   return true;
-   //}
-   //else
-   //{
-   //   return false;
-   //}
 
 /**
  * Sets the ground clamp mode.
@@ -2083,7 +1995,6 @@ void RTIConnection::OnMessage(MessageData *data)
                24
             );
 
-            //sgPostMultMat4(mat, mRotationOffset);
             mat = mRotationOffset * mat;
 
             float psi, theta, phi;
