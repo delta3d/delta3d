@@ -68,6 +68,11 @@ if CheckForBoost() and OS != 'darwin' :
    'dthla' : [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ],
     
    'dtsoarx' : [ 'dtsoarxbindings.cpp', 'soarxterrainbindings.cpp' ] }
+   
+   #TODO: remove this once these compile on win32
+   if OS == 'windows' :
+      for file in ['osgvec3.cpp','osgmath.cpp','osgmatrix.cpp'] :
+         pythonSrcs['dtcore'].remove(file)
     
    ##############
    # Build libs #
