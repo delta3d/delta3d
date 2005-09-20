@@ -21,7 +21,7 @@
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actortype.h"
 #include <dtUtil/log.h>
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/actorproxyicon.h"
 #include <sstream>
 #include <osgDB/Registry>
@@ -239,7 +239,7 @@ namespace dtDAL
         {
             error << "Requested actor type: " << actorType.GetName() <<
                 " is unknown or has not been registered.";
-            EXCEPT(ExceptionEnum::ObjectFactoryUnknownType,error.str());
+            EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,error.str());
         }
         
         return found->second.get();        

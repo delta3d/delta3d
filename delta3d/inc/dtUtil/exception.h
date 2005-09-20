@@ -26,41 +26,13 @@
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
 
-namespace dtDAL
+namespace dtUtil
 {
-
-    class DT_EXPORT ExceptionEnum : public dtUtil::Enumeration
-    {
-        DECLARE_ENUM(ExceptionEnum);
-    public:
-       static ExceptionEnum BaseException;
-
-       static ExceptionEnum ProjectInvalidContext;
-       static ExceptionEnum ProjectReadOnly;
-       static ExceptionEnum ProjectIOException;
-       static ExceptionEnum ProjectFileNotFound;
-       static ExceptionEnum ProjectResourceError;
-       static ExceptionEnum ProjectException;
-
-       static ExceptionEnum MapLoadParsingError;
-       static ExceptionEnum MapSaveError;
-       static ExceptionEnum MapException;
-
-       static ExceptionEnum ObjectFactoryUnknownType;
-
-       static ExceptionEnum InvalidActorException;
-
-    private:
-        ExceptionEnum(const std::string &name) : Enumeration(name)
-        {
-            AddInstance(this);
-        }
-    };
 
     /*
      * Save some typing if the base exception class is thrown.
      */
-    #define EXCEPT(type,str) throw dtDAL::Exception(type, str,__FILE__,__LINE__)
+   #define EXCEPT(type,str) throw dtUtil::Exception(type, str,__FILE__,__LINE__)
 
     /*
      * This is the exception class used throughout the dtDAL module.
@@ -80,7 +52,7 @@ namespace dtDAL
          *  @param linenum - Line number in the file from which the
          *  exception was thrown.
          */
-        Exception(ExceptionEnum &type, const std::string &message, const std::string &filename,
+        Exception(Enumeration &type, const std::string &message, const std::string &filename,
             unsigned int linenum);
 
         /*
@@ -106,7 +78,7 @@ namespace dtDAL
         /**
          * @return the enumerated type of the exception.
          */
-        const ExceptionEnum& TypeEnum() const { return mType; }
+        const Enumeration& TypeEnum() const { return mType; }
 
 
         /**
@@ -135,7 +107,7 @@ namespace dtDAL
         void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger);
 
     protected:
-        ExceptionEnum &mType;
+        Enumeration &mType;
         std::string mMessage, mFileName;
         unsigned int mLineNum;
     };

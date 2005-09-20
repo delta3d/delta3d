@@ -355,7 +355,7 @@ namespace dtEditQt
                     EditorActions::getInstance().refreshRecentProjects();
                     EditorData::getInstance().getMainWindow()->endWaitCursor();
                 }
-                catch (dtDAL::Exception &e)
+                catch (dtUtil::Exception &e)
                 {
                     EditorData::getInstance().getMainWindow()->endWaitCursor();
                     QMessageBox::critical((QWidget *)this,

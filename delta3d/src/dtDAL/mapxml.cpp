@@ -142,18 +142,18 @@ namespace dtDAL
         catch (const OutOfMemoryException&)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-            EXCEPT(ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
+            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
         }
         catch (const XMLException& toCatch)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                 toCatch.getMessage());
-            EXCEPT(ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
         catch (const SAXParseException& toCatch)
         {
             //this will already by logged by the
-            EXCEPT(ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
         return NULL;
     }
@@ -192,12 +192,12 @@ namespace dtDAL
                 }
                 else
                 {
-                    EXCEPT(ExceptionEnum::MapLoadParsingError, "Parser stopped without finding the map name.");
+                    EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Parser stopped without finding the map name.");
                 }
             }
             else
             {
-                EXCEPT(ExceptionEnum::MapLoadParsingError, "Parsing to find the map name did not begin.");
+                EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Parsing to find the map name did not begin.");
             }
         }
         catch (const OutOfMemoryException&)
@@ -206,7 +206,7 @@ namespace dtDAL
                 mXercesParser->parseReset(token);
 
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Ran out of memory parsing!");
-            EXCEPT(ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
+            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Ran out of memory parsing save file.");
         }
         catch (const XMLException& toCatch)
         {
@@ -215,7 +215,7 @@ namespace dtDAL
 
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, "Error during parsing! %ls :\n",
                 toCatch.getMessage());
-            EXCEPT(ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
         catch (const SAXParseException& toCatch)
         {
@@ -223,7 +223,7 @@ namespace dtDAL
                 mXercesParser->parseReset(token);
 
             //this will already by logged by the content handler
-            EXCEPT(ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
+            EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
     }
 
@@ -249,7 +249,7 @@ namespace dtDAL
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                 "Error, unable to load required file \"map.xsd\".  Aborting.");
-            EXCEPT(ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.");
+            EXCEPT(dtDAL::ExceptionEnum::ProjectException, "Error, unable to load required file \"map.xsd\".  Aborting.");
         }
 
         XMLCh* value = XMLString::transcode(schemaFileName.c_str());
@@ -862,10 +862,10 @@ namespace dtDAL
                     mMap->AddLibrary(mLibName, mLibVersion);
                     ClearLibraryValues();
                 }
-                catch (dtDAL::Exception& e)
+                catch (dtUtil::Exception& e)
                 {
                     mMissingLibraries.push_back(mLibName);
-                    if (ExceptionEnum::ProjectResourceError == e.TypeEnum())
+                    if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
                     {
                         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Error loading library %s version %s in the library manager.  Exception message to follow.",
@@ -1109,7 +1109,7 @@ namespace dtDAL
 
         if (outfile == NULL)
         {
-            EXCEPT(ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.");
+            EXCEPT(dtDAL::ExceptionEnum::MapSaveError, std::string("Unable to open map file \"") + filePath + "\" for writing.");
         }
 
         mFormatTarget.SetOutputFile(outfile);
@@ -1380,7 +1380,7 @@ namespace dtDAL
 			//closes the file.
 			mFormatTarget.SetOutputFile(NULL);
 		}
-		catch (dtDAL::Exception& ex) 
+		catch (dtUtil::Exception& ex) 
 		{
 			mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
 				"Caught Exception \"%s\" while attempting to save map \"%s\".",
@@ -1394,7 +1394,7 @@ namespace dtDAL
 				"Unknown exception while attempting to save map \"%s\".",
 				map.GetName().c_str());
 			mFormatTarget.SetOutputFile(NULL);
-			EXCEPT(ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + map.GetName() + ("\"."));
+			EXCEPT(dtDAL::ExceptionEnum::MapSaveError, std::string("Unknown exception saving map \"") + map.GetName() + ("\"."));
 		}
     }
 

@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         result = app.exec();
         dtCore::System::Instance()->Stop();
     }
-    catch (dtDAL::Exception &e)
+    catch (dtUtil::Exception &e)
     {
         std::ostringstream ss;
         e.Print();

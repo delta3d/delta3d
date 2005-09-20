@@ -60,7 +60,7 @@
 #include <dtCore/isector.h>
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/transformableactorproxy.h"
 #include "dtDAL/fileutils.h"
 #include "dtDAL/actorproxy.h"
@@ -424,7 +424,7 @@ namespace dtEditQt
 
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
             }
-            catch(dtDAL::Exception &e)
+            catch(dtUtil::Exception &e)
             {
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
 
@@ -499,7 +499,7 @@ namespace dtEditQt
             dtDAL::Project::GetInstance().SaveMapAs(*myMap, name, strippedName);
             EditorData::getInstance().getMainWindow()->endWaitCursor();
         }
-        catch(const dtDAL::Exception &e)
+        catch(const dtUtil::Exception &e)
         {
             EditorData::getInstance().getMainWindow()->endWaitCursor();
             LOG_ERROR(e.What());
@@ -838,7 +838,7 @@ namespace dtEditQt
                 changeMaps(EditorData::getInstance().getCurrentMap().get(),NULL);
                 dtDAL::Project::GetInstance().SetContext(contextName);
             }
-            catch (dtDAL::Exception &e)
+            catch (dtUtil::Exception &e)
             {
                 QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
                     tr("Error"), tr(e.What().c_str()), tr("OK"));
@@ -883,7 +883,7 @@ namespace dtEditQt
                 dtDAL::Project::GetInstance().SaveMapBackup(*EditorData::getInstance().getCurrentMap());
             }
         }
-        catch(const dtDAL::Exception &e)
+        catch(const dtUtil::Exception &e)
         {
             QMessageBox::critical(NULL, tr("Error"), e.What().c_str(), tr("OK"));
         }
@@ -956,7 +956,7 @@ namespace dtEditQt
         {
             newMap = &dtDAL::Project::GetInstance().GetMap(newMapName);
         }
-        catch (dtDAL::Exception &e)
+        catch (dtUtil::Exception &e)
         {
             QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
                     tr("Map Open Error"), e.What().c_str(), tr("OK"));
@@ -998,7 +998,7 @@ namespace dtEditQt
 
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
             }
-            catch(const dtDAL::Exception &e)
+            catch(const dtUtil::Exception &e)
             {
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
                 QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
@@ -1015,7 +1015,7 @@ namespace dtEditQt
             {
                 newMap = &dtDAL::Project::GetInstance().GetMap(oldMapName);
             }
-            catch (dtDAL::Exception &e)
+            catch (dtUtil::Exception &e)
             {
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
                 QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
@@ -1032,7 +1032,7 @@ namespace dtEditQt
                 dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
                     *(ViewportManager::getInstance().getMasterScene()), true);
             }
-            catch (const dtDAL::Exception &e)
+            catch (const dtUtil::Exception &e)
             {
                 QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
                     tr("Error"), e.What().c_str(), tr("OK"));
@@ -1080,7 +1080,7 @@ namespace dtEditQt
                     getWindowName().c_str());
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
             }
-            catch (dtDAL::Exception &e)
+            catch (dtUtil::Exception &e)
             {
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
                 QString error = "An error occured while saving the map. ";

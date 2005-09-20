@@ -23,7 +23,7 @@
 
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/actorproxy.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtActors/enveffectactorproxy.h"
 #include "dtCore/skydome.h"
 

@@ -188,7 +188,7 @@ namespace dtEditQt
         {
             LibraryManager::GetInstance().LoadActorRegistry(libName);
         }
-        catch(const Exception &e)
+        catch(const dtUtil::Exception &e)
         {
             LOG_ERROR(e.What());
             handleFailure(ERROR_INVALID_LIB, e.What());

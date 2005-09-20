@@ -24,7 +24,7 @@
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/transformableactorproxy.h"
 #include <dtCore/terrain.h>
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtActors 
 {

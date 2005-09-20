@@ -127,6 +127,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtUtil\exception.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\log.cpp">
 			</File>
 			<File
@@ -172,6 +175,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\enumeration.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\exception.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\fractal.h">
