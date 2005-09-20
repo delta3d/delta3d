@@ -32,7 +32,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "src\dtUtil\dtutil
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtVis", "src\dtVis\dtvis.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtBSP", "src\dtBSP\dtbsp.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
