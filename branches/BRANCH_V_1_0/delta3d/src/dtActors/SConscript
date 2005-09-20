@@ -21,7 +21,7 @@ if OS != 'windows':
 deps =[ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText',
         'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody',
-        'gdal', 'ul', 'js', 'Producer', 'opengl', 'dtsoarx', 'User32', 'Advapi32',
+        'gdal', 'ul', 'js', 'Producer', 'opengl', 'dtSOARX', 'User32', 'Advapi32',
         'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
         'Carbon' ]
 
