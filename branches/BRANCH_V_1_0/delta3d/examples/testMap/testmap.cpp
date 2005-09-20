@@ -10,16 +10,13 @@
 using namespace dtCore;
 using namespace dtDAL;
 using namespace dtABC; 
-using namespace std;
 
 class TestApp : public Application
 {
 public:
 
-    TestApp()
+   TestApp() : Application("testMap.xml")
     {
-        SetDataFilePathList(GetDeltaDataPathList());
-
         // Set up a motion model so we may move the camera
         wmm = new WalkMotionModel(GetKeyboard(), GetMouse());
         wmm->SetTarget(GetCamera());
@@ -34,7 +31,7 @@ public:
         Project::GetInstance().LoadMapIntoScene(myMap, *GetScene());
 
         // Get the proxies from the map
-        vector< osg::ref_ptr<ActorProxy> > proxies;
+        std::vector< osg::ref_ptr<ActorProxy> > proxies;
         myMap.FindProxies(proxies, "StaticMesh*");
 
         // Initialization
@@ -60,13 +57,13 @@ public:
         // Error check
         if(!helicopter)
         {
-            cout << "Failed to locate the helicopter\n";
+           std::cout << "Failed to locate the helicopter\n";
             Quit();
         }
 
         if(!tree)
         {
-            cout << "Failed to find the tree\n";
+            std::cout << "Failed to find the tree\n";
             Quit();
         }
 
@@ -155,17 +152,18 @@ private:
 
 int main()
 {
-    RefPtr<TestApp> app;
-    
-    try
-    {
-        app = new TestApp;
-        app->Run();
-    }
-    catch (const Exception &e)
-    {
-        cout << e.What() << '\n';
-    }
+   dtCore::SetDataFilePathList( GetDeltaRootPath() + "/examples/testMap/;" + dtCore::GetDeltaDataPathList() );
+   RefPtr<TestApp> app;
+   
+   try
+   {
+      app = new TestApp;
+      app->Run();
+   }
+   catch (const Exception &e)
+   {
+      std::cout << e.What() << '\n';
+   }
 
-    return 0;
+   return 0;
 }
