@@ -18,12 +18,15 @@ srcs = SGlob( '*.cpp' )
 if OS != 'windows':
    srcs.remove( 'dtedterrainactorproxy.cpp' )
 
-deps =[ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode',
+deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText',
         'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody',
-        'gdal', 'ul', 'js', 'Producer', 'opengl', 'dtSOARX', 'User32', 'Advapi32',
+        'gdal', 'ul', 'js', 'Producer', 'opengl', 'User32', 'Advapi32',
         'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
         'Carbon' ]
+
+if OS == 'windows' :
+   deps += [ 'dtSOARX' ]
 
 dtActors = BuildLib( 'dtActors', srcs, deps, ['DT_PLUGIN'],
                      overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
