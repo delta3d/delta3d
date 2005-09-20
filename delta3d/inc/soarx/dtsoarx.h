@@ -39,7 +39,7 @@ namespace dtSOARX
 #if   defined(_DEBUG)
 
    #ifndef  DT_LIBRARY
-      #define  _AUTOLIBNAME1  "dtsoarxd.lib"
+      #define  _AUTOLIBNAME1  "dtSOARXd.lib"
    #endif
    
    #define _AUTOLIBNAME2 "gdal_iD.lib"
@@ -47,7 +47,7 @@ namespace dtSOARX
 #else
 
    #ifndef  DT_LIBRARY
-      #define  _AUTOLIBNAME1  "dtsoarx.lib"
+      #define  _AUTOLIBNAME1  "dtSOARX.lib"
    #endif
    
    #define _AUTOLIBNAME2 "gdal_i.lib"
