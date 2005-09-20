@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\src\dtVis\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\src\dtVis\windows-msvc-debug"
+			OutputDirectory="..\..\..\src\dtBSP\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtBSP\windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -65,8 +65,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\src\dtVis\windows-msvc-release"
-			IntermediateDirectory="..\..\..\src\dtVis\windows-msvc-release"
+			OutputDirectory="..\..\..\src\dtBSP\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtBSP\windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -119,7 +119,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\dtVis\bspcullcallback.cpp">
+				RelativePath="..\..\..\src\dtBSP\bspcullcallback.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -127,7 +127,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\inc\dtVis\bspcullcallback.h">
+				RelativePath="..\..\..\inc\dtBSP\bspcullcallback.h">
 			</File>
 		</Filter>
 		<Filter

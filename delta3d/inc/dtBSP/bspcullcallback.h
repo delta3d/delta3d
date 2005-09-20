@@ -32,11 +32,11 @@
 #include <osg/NodeCallback>
 #include <osgDB/Registry>
 
-#include "dtCore/refptr.h"
+#include <dtCore/refptr.h>
 
 /** Used by the bspCompiler to calculate the BSP of a given set of geometry.
 */
-namespace dtVis
+namespace dtBSP
 {
    class BSPNode;
    
@@ -66,7 +66,7 @@ namespace dtVis
          /**
           * OSG node class helper macro.
           */
-         META_Object(dtVis, BSPCullCallback);
+         META_Object(dtBSP, BSPCullCallback);
          
          /**
           * Sets the BSP tree associated with this cull callback.
@@ -130,7 +130,7 @@ namespace dtVis
          /**
           * OSG node class helper macro.
           */
-         META_Object(dtVis, PotentiallyVisibleSet);
+         META_Object(dtBSP, PotentiallyVisibleSet);
       
          /**
           * Returns the set of nodes to disable.

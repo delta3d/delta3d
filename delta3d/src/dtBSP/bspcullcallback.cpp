@@ -3,12 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <osgUtil/CullVisitor>
+#include <dtBSP/bspcullcallback.h>
 
-#include "dtVis/bspcullcallback.h"
-
-using namespace dtVis;
+using namespace dtBSP;
 using namespace std;
-
 
 /**
  * Reads a BSP node from the input stream.

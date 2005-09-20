@@ -422,7 +422,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
                   'dtNet'    : 'dtNet',
                   'dtScript' : 'dtScript',
                   'dtUtil'   : 'dtUtil',
-                  'dtBSP'    : 'dtVis',
+                  'dtBSP'    : 'dtBSP',
                   'gui_fl'   : 'gui_fl',
                   'dtSOARX'  : 'soarx' }
 

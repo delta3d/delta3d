@@ -21,10 +21,10 @@
 #include <osgUtil/Optimizer>
 #include <osgUtil/TriStripVisitor>
 
-#include "dtVis/bspcullcallback.h"
+#include <dtBSP/bspcullcallback.h>
 #include "splitgeode.h"
 
-using namespace dtVis;
+using namespace dtBSP;
 using namespace osg;
 using namespace osgDB;
 using namespace osgUtil;
