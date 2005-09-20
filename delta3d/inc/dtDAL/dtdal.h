@@ -58,7 +58,7 @@ namespace dtDAL
 #undef _AUTOLIBNAME
 
 #if defined(_DEBUG)
-#define _AUTOLIBNAME   "dtDALD.lib"
+#define _AUTOLIBNAME   "dtDALd.lib"
    #else 
 #define _AUTOLIBNAME   "dtDAL.lib"  
 #endif

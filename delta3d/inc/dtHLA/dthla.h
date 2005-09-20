@@ -21,7 +21,7 @@
 #ifndef DT_HLA
 #define DT_HLA
 
-#include "dtHLA/rticonnection.h"
+#include <dtHLA/rticonnection.h>
 
 /** Contains the functionality to connect to HLA networks.
 *
@@ -43,7 +43,7 @@ namespace dtHLA
 #if defined(_DEBUG)
 
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME "dthlad.lib"
+      #define  _AUTOLIBNAME "dtHLAd.lib"
    #endif
    
    #define _AUTOLIBNAME3  "osgSimd.lib"
@@ -52,7 +52,7 @@ namespace dtHLA
 #else
 
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME "dthla.lib"
+      #define  _AUTOLIBNAME "dtHLA.lib"
    #endif
    
    #define _AUTOLIBNAME3  "osgSim.lib"

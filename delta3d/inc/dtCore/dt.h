@@ -21,53 +21,52 @@
 #ifndef DELTA_DT
 #define DELTA_DT
 
-
-#include "dtCore/camera.h"
-#include "dtCore/clouddome.h"
-#include "dtCore/cloudplane.h"
-#include "dtCore/compass.h"
-#include "dtCore/deltadrawable.h"
-#include "dtCore/deltawin.h"
-#include "dtCore/environment.h"
-#include "dtCore/enveffect.h"
-#include "dtCore/effectmanager.h"
-#include "dtCore/flymotionmodel.h"
-#include "dtCore/fpsmotionmodel.h"
-#include "dtCore/globals.h"
-#include "dtCore/infinitelight.h"
-#include "dtCore/infiniteterrain.h"
-#include "dtCore/inputdevice.h"
-#include "dtCore/inputmapper.h"
-#include "dtCore/isector.h"
-#include "dtCore/joystick.h"
-#include "dtCore/keyboard.h"
-#include "dtCore/light.h"
-#include "dtCore/logicalinputdevice.h"
-#include "dtCore/motionmodel.h"
-#include "dtCore/mouse.h"
-#include "dtCore/notify.h"
-#include "dtCore/object.h"
-#include "dtCore/orbitmotionmodel.h"
-#include "dtCore/particlesystem.h"
-#include "dtCore/positionallight.h"
-#include "dtCore/physical.h"
-#include "dtCore/pointaxis.h"
-#include "dtCore/recorder.h"
-#include "dtCore/refptr.h"
-#include "dtCore/scene.h"
-#include "dtCore/skybox.h"
-#include "dtCore/skydome.h"
-#include "dtCore/spotlight.h"
-#include "dtCore/stats.h"
-#include "dtCore/terrain.h"
-#include "dtCore/tracker.h"
-#include "dtCore/transform.h"
-#include "dtCore/transformable.h"
-#include "dtCore/tripod.h"
-#include "dtCore/system.h"
-#include "dtCore/ufomotionmodel.h"
-#include "dtCore/uniqueid.h"
-#include "dtCore/walkmotionmodel.h"
+#include <dtCore/camera.h>
+#include <dtCore/clouddome.h>
+#include <dtCore/cloudplane.h>
+#include <dtCore/compass.h>
+#include <dtCore/deltadrawable.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/environment.h>
+#include <dtCore/enveffect.h>
+#include <dtCore/effectmanager.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/fpsmotionmodel.h>
+#include <dtCore/globals.h>
+#include <dtCore/infinitelight.h>
+#include <dtCore/infiniteterrain.h>
+#include <dtCore/inputdevice.h>
+#include <dtCore/inputmapper.h>
+#include <dtCore/isector.h>
+#include <dtCore/joystick.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/light.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/mouse.h>
+#include <dtCore/notify.h>
+#include <dtCore/object.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/particlesystem.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/physical.h>
+#include <dtCore/pointaxis.h>
+#include <dtCore/recorder.h>
+#include <dtCore/refptr.h>
+#include <dtCore/scene.h>
+#include <dtCore/skybox.h>
+#include <dtCore/skydome.h>
+#include <dtCore/spotlight.h>
+#include <dtCore/stats.h>
+#include <dtCore/terrain.h>
+#include <dtCore/tracker.h>
+#include <dtCore/transform.h>
+#include <dtCore/transformable.h>
+#include <dtCore/tripod.h>
+#include <dtCore/system.h>
+#include <dtCore/ufomotionmodel.h>
+#include <dtCore/uniqueid.h>
+#include <dtCore/walkmotionmodel.h>
 
 /** The dtCore namespace contains basic, low-level functionality which is mostly
 * required for all 3D applications.
@@ -103,7 +102,7 @@ namespace dtCore
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME5 "dtcored.lib"
+      #define  _AUTOLIBNAME5 "dtCored.lib"
    #endif
 
    #define _AUTOLIBNAME   "Producerd.lib"
@@ -120,7 +119,7 @@ namespace dtCore
    #define _AUTOLIBNAME21 "isensed.lib"
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME5 "dtcore.lib"
+      #define _AUTOLIBNAME5 "dtCore.lib"
    #endif
 
    #define _AUTOLIBNAME   "Producer.lib"
