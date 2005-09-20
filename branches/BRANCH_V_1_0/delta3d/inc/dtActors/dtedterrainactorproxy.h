@@ -23,7 +23,7 @@
 
 #include "dtDAL/plugin_export.h"
 #include "dtActors/terrainactorproxy.h"
-#include "dtDAL/exception.h"
+#include "dtDAL/exceptionenum.h"
 #include "soarx/dtsoarx.h"
 
 namespace dtActors 
