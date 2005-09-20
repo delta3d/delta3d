@@ -1,0 +1,13 @@
+Import('*')
+
+dtAudioSrcs = [ 'audiomanager.cpp',
+                'listener.cpp',
+                'sound.cpp',
+                'soundeffectbinder.cpp' ]
+                
+dtAudioDeps = [ 'dtcore', 'openal', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer', 'tinyxml', 'opengl' ]
+
+if OS == 'windows' :
+   dtAudioDeps += [ 'alut', 'User32' ]
+
+BuildLib( 'dtaudio', dtAudioSrcs, dtAudioDeps, ['DT_LIBRARY'] )
