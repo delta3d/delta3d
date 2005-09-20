@@ -230,7 +230,6 @@ def _LogFailed(context, text, msg):
       n = n + 1
    context.Log("Error message: %s\n" % msg)
 
-
 def _lang2suffix(lang):
    """
    Convert a language name to a suffix.
@@ -386,10 +385,15 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
    if envLib.has_key('CPPDEFINES'):
       cppDefines = envLib['CPPDEFINES']
    
-   builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   if name != 'dtNet' :
+      builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+   else :
+      builtlib = envLib.StaticLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+      
    envLib.Precious( builtlib )
    
-   if OS == 'windows' :
+   if OS == 'windows' and name != 'dtNet' :
+    
       lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
       envLib.Install( '#/lib', builtlib[1] ) # .lib, 
       envLib.Install( '#/lib', builtlib[2] ) # .exp
