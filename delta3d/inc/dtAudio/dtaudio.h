@@ -26,6 +26,13 @@
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/soundeffectbinder.h>
 
+/** The Audio Library contains functionality for controlling the audio playback
+*  in applications.
+*/
+namespace dtAudio
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */

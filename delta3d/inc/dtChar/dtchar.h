@@ -23,6 +23,15 @@
 
 #include "dtChar/character.h"
 
+/** The Character Library contains classes used to control the rendering of 
+* animated characters.  
+* dtChar uses <A HREF="http://www.vrlab.umu.se/research/replicantbody/">Replicant Body</A>
+* and the <A HREF="http://cal3d.sourceforge.net/">Character Animation Library</A>.
+*/
+namespace dtChar
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME

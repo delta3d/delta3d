@@ -43,6 +43,12 @@
 #include <dtUtil/xercesparser.h>
 #include <dtUtil/xercesutils.h>
 
+/** Contains generic, reusable features which are useful for most applications.
+*/
+namespace dtUtil
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME

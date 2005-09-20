@@ -23,6 +23,12 @@
 
 #include "dtScript/scriptmanager.h"
 
+/** Contains the functionality to call Python scripts from a C++ application.
+*/
+namespace dtScript
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */

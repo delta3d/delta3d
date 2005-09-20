@@ -23,6 +23,13 @@
 
 #include <soarx/soarxterrain.h>
 
+/** Contains functionality to load DTED files and render terrain using the
+ *  SOARX algorithm.
+ */
+namespace dtSOARX
+{
+}
+
 #ifdef _WIN32
 
 /* You may turn off this include message by defining _NOAUTOLIB */

@@ -24,6 +24,14 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtGUI/scriptmodule.h>
 
+/** The dtGUI namespace contains the functionality to render and control OpenGL
+* graphical user interfaces.  dtGUI uses <A HREF="http://www.cegui.org.uk/">CEGUI</A>
+* for high-level control of the widgets.
+*/
+namespace dtGUI
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
