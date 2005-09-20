@@ -2,7 +2,7 @@ Import('*')
 
 if OS == 'windows' :
 
-   dtSoarxSrc = SGlob('*.cpp')
-   dtSoarxDeps = [ 'dtCore', 'gdal', 'User32' ]
+   srcs = SGlob('*.cpp')
+   deps = [ 'dtCore', 'gdal', 'User32' ]
 
-   BuildLib( 'dtSOARX', dtSoarxSrcs, dtSoarxDeps, ['DT_LIBRARY'] )
+   BuildLib( 'dtSOARX', srcs, deps, ['DT_LIBRARY'] )
