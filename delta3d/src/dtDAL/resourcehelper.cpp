@@ -30,7 +30,7 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/fileutils.h"
-#include "dtDAL/stringtokenizer.h"
+#include "dtUtil/stringutils.h"
 #include "dtDAL/rbodyresourcetypehandler.h"
 #include "dtDAL/directoryresourcetypehandler.h"
 #include "dtDAL/resourcehelper.h"
@@ -448,7 +448,7 @@ namespace dtDAL
     {
 
         std::vector<std::string> tokens;
-        StringTokenizer<IsCategorySeparator>::tokenize(tokens, resource.GetResourceIdentifier());
+        dtUtil::StringTokenizer<IsCategorySeparator>::tokenize(tokens, resource.GetResourceIdentifier());
 
         std::string currentPath;
 
@@ -566,7 +566,7 @@ namespace dtDAL
         std::string sofar = type.GetName();
 
         std::vector<std::string> tokens;
-        StringTokenizer<IsCategorySeparator>::tokenize(tokens, category);
+        dtUtil::StringTokenizer<IsCategorySeparator>::tokenize(tokens, category);
         std::string currentCategory;
 
         for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i)
@@ -635,7 +635,7 @@ namespace dtDAL
     {
 
         std::vector<std::string> tokens;
-        StringTokenizer<IsCategorySeparator>::tokenize(tokens, id);
+        dtUtil::StringTokenizer<IsCategorySeparator>::tokenize(tokens, id);
 
         std::string currentCategory;
 

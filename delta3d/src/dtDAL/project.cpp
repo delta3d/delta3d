@@ -43,8 +43,8 @@
 #include "dtDAL/mapxml.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/fileutils.h"
+#include "dtUtil/stringutils.h"
 #include <dtDAL/exceptionenum.h>
-#include "dtDAL/stringtokenizer.h"
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actorproxyicon.h"
 
