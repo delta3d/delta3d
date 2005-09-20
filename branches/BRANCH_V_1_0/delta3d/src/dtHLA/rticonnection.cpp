@@ -1701,12 +1701,14 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
       iter = results.find( "model" );
       if( iter != results.end() )
       {
+         std::string tmp = (*iter).second;
          mCon->mEntityTypeMappings[et].mModelFilename = (*iter).second;
       }
 
       iter = results.find( "icon" );
       if( iter != results.end() )
       {
+         std::string tmp = (*iter).second;
          mCon->mEntityTypeMappings[et].mIconFilename = (*iter).second;
       }
    }

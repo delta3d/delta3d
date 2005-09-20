@@ -62,7 +62,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/datatype.h"
 #include "dtDAL/librarymanager.h"
 #include <dtUtil/log.h>
@@ -386,7 +386,7 @@ namespace dtEditQt
                 }
 
             }
-            catch (dtDAL::Exception &ex)
+            catch (dtUtil::Exception &ex)
             {
                 LOG_ERROR("Failed to create a control for property: " + curProp->GetPropertyType().GetName() +
                     " with error: " + ex.What());

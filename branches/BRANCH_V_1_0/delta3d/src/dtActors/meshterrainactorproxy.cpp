@@ -38,7 +38,7 @@ namespace dtActors
 
         Object *obj = dynamic_cast<Object*> (mActor.get());
         if(!obj)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Object");
 
         AddProperty(new dtDAL::ResourceActorProperty(*this, dtDAL::DataType::TERRAIN,
                     "terrain mesh", "Terrain Mesh", MakeFunctor(*this, &MeshTerrainActorProxy::LoadFile),

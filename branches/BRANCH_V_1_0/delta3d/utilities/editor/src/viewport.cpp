@@ -45,7 +45,7 @@
 #include <dtCore/system.h>
 #include <dtCore/isector.h>
 
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/map.h"
 #include "dtDAL/transformableactorproxy.h"
 #include "dtDAL/actorproxyicon.h"

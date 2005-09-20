@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvisd.lib xerces-c_2.lib xerces-c_2D.lib rcfgscriptd.lib"
+				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtvisd.lib dtutild.lib xerces-c_2.lib xerces-c_2D.lib rcfgscriptd.lib"
 				OutputFile="..\..\..\bin\dtDALd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -148,7 +148,7 @@
 				RelativePath="..\..\..\src\dtDAL\enginepropertytypes.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtDAL\exception.cpp">
+				RelativePath="..\..\..\src\dtDAL\exceptionenum.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtDAL\fileutils.cpp">
@@ -214,7 +214,7 @@
 				RelativePath="..\..\..\inc\dtDAL\enginepropertytypes.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtDAL\exception.h">
+				RelativePath="..\..\..\inc\dtDAL\exceptionenum.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\fileutils.h">

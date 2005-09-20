@@ -5,6 +5,7 @@
 #include <dtCore/dt.h>
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtUtil/exception.h>
 #include <vector>
 
 using namespace dtCore;
@@ -160,7 +161,7 @@ int main()
       app = new TestApp;
       app->Run();
    }
-   catch (const Exception &e)
+   catch (const dtUtil::Exception &e)
    {
       std::cout << e.What() << '\n';
    }

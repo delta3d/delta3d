@@ -39,7 +39,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Sky";
         SkyDome *sd = dynamic_cast<SkyDome*> (mActor.get());
         if(!sd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
 
         AddProperty(new Vec3ActorProperty("Base Color", "Base Color",
             MakeFunctor(*this, &SkyDomeActorProxy::SetBaseColor),
@@ -52,7 +52,7 @@ namespace dtActors
     {
         SkyDome *sd = dynamic_cast<SkyDome*> (mActor.get());
         if(!sd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
 
         osg::Vec3 color;
         sd->GetBaseColor(color);
@@ -64,7 +64,7 @@ namespace dtActors
     {
         SkyDome *sd = dynamic_cast<SkyDome*> (mActor.get());
         if(!sd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::SkyDome");
 
         sd->SetBaseColor(color);
     }

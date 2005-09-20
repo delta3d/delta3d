@@ -18,33 +18,15 @@
  *
  * @author Matthew W. Campbell
 */
-#include "dtDAL/exception.h"
+#include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 #include <iostream>
 
-namespace dtDAL 
+namespace dtUtil 
 {
-    IMPLEMENT_ENUM(ExceptionEnum);
-
-    ExceptionEnum ExceptionEnum::BaseException("Base Exception");
-
-    ExceptionEnum ExceptionEnum::ProjectInvalidContext("Invalid or Not-Set Context Directory.");
-    ExceptionEnum ExceptionEnum::ProjectReadOnly("The Current Project is Read-only.");
-    ExceptionEnum ExceptionEnum::ProjectIOException("File IO Exception");
-    ExceptionEnum ExceptionEnum::ProjectFileNotFound("File Not Found");
-    ExceptionEnum ExceptionEnum::ProjectResourceError("Resource Error");
-    ExceptionEnum ExceptionEnum::ProjectException("General Project Exception");
-
-
-    ExceptionEnum ExceptionEnum::MapLoadParsingError("Error parsing map file.");
-    ExceptionEnum ExceptionEnum::MapSaveError("Error saving map file.");
-    ExceptionEnum ExceptionEnum::MapException("General Map Exception");
-
-    ExceptionEnum ExceptionEnum::ObjectFactoryUnknownType("Unknown Object Type");
-    ExceptionEnum ExceptionEnum::InvalidActorException("Invalid Actor Type");
 
     //////////////////////////////////////////////////////////////////////////
-    Exception::Exception(ExceptionEnum &type, const std::string &message, const std::string &filename,
+    Exception::Exception(Enumeration &type, const std::string &message, const std::string &filename,
         unsigned int lineNum) : mType(type),mMessage(message),mFileName(filename),mLineNum(lineNum) 
     {
         LogException(dtUtil::Log::LOG_DEBUG, dtUtil::Log::GetInstance());

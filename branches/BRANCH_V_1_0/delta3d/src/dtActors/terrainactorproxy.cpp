@@ -75,7 +75,7 @@ namespace dtActors
     {
         Terrain *t = dynamic_cast<Terrain*>(mActor.get());
         if(!t)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
 
         t->SetGeoOrigin(origin[0], origin[1], origin[2]);
     }
@@ -85,7 +85,7 @@ namespace dtActors
     {
         Terrain *t = dynamic_cast<Terrain*>(mActor.get());
         if(!t)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
 
         double la, lo, el;
         t->GetGeoOrigin(&la, &lo, &el);
@@ -97,7 +97,7 @@ namespace dtActors
     {
         Terrain *t = dynamic_cast<Terrain*>(mActor.get());
         if(!t)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
 
         t->SetCachePath(path);
     }
@@ -107,7 +107,7 @@ namespace dtActors
     {
         Terrain *t = dynamic_cast<Terrain*>(mActor.get());
         if(!t)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
 
         return t->GetCachePath();
     }
@@ -117,7 +117,7 @@ namespace dtActors
     {
         dtCore::Terrain *t = dynamic_cast<dtCore::Terrain*>(mActor.get());
         if(!t)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
 
         t->AddDTEDPath(fileName);
     }
@@ -127,7 +127,7 @@ namespace dtActors
     {
         Terrain *t = dynamic_cast<Terrain*>(mActor.get());
         if(!t)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Terrain");
 
         t->RemoveDTEDPath(fileName);
     }

@@ -21,7 +21,7 @@
 
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/project.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/mapxml.h"
@@ -62,7 +62,7 @@ namespace dtDAL
                         path.c_str());
                 SetPropFunctor(path);
             }
-            catch(const Exception& ex)
+            catch(const dtUtil::Exception& ex)
             {
                 mProxy->SetResource(GetName(), NULL);
                 SetPropFunctor("");

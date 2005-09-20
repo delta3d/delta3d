@@ -24,7 +24,7 @@
 #include "dtDAL/plugin_export.h"
 #include "dtActors/positionallightactorproxy.h"
 #include <dtCore/spotlight.h>
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtActors
 {

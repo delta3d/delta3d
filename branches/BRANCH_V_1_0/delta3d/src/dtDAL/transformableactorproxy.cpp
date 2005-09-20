@@ -21,7 +21,7 @@
 
 #include "dtDAL/transformableactorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/actorproxyicon.h"
 #include <dtCore/transformable.h>
 #include <dtCore/scene.h>
@@ -35,7 +35,7 @@ namespace dtDAL
 
         dtCore::Transformable *trans = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if(trans == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                     "dtCore::Transformable\n");
 
         AddProperty(new Vec3ActorProperty("Rotation", "Rotation",
@@ -67,7 +67,7 @@ namespace dtDAL
     {
         dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                     "dtCore::Transformable\n");
 
         mHPR = rotation;
@@ -116,7 +116,7 @@ namespace dtDAL
     {
         dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                     "dtCore::Transformable\n");
 
         return mHPR;
@@ -127,7 +127,7 @@ namespace dtDAL
     {
         dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                     "dtCore::Transformable\n");
 
         dtCore::Transform trans;
@@ -150,7 +150,7 @@ namespace dtDAL
     {
         dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                     " dtCore::Transformable\n");
 
         dtCore::Transform trans;
@@ -165,7 +165,7 @@ namespace dtDAL
     {
         dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type "
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                     "dtCore::Transformable\n");
 
         dtCore::Transform trans;
@@ -188,7 +188,7 @@ namespace dtDAL
     {
         dtCore::Transformable *t = dynamic_cast<dtCore::Transformable*>(mActor.get());
         if (t == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable\n");
 
         dtCore::Transform trans;
         t->GetTransform(&trans);
