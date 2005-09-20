@@ -150,6 +150,9 @@
 				RelativePath="..\..\..\src\dtActors\deltaobjectactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\dtedterrainactorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\engineactorregistry.cpp">
 			</File>
 			<File
@@ -216,6 +219,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\dtactors.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\dtedterrainactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\engineactorregistry.h">
