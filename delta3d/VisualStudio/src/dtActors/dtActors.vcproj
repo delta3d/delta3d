@@ -29,7 +29,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4005;4312;4311;4250;4275;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -83,7 +83,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4005"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
