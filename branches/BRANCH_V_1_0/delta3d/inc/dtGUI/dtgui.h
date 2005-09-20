@@ -40,11 +40,11 @@ namespace dtGUI
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME "dtguid.lib"
+      #define  _AUTOLIBNAME "dtGUId.lib"
    #endif
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME "dtgui.lib"
+      #define _AUTOLIBNAME "dtGUI.lib"
    #endif
 #endif
 

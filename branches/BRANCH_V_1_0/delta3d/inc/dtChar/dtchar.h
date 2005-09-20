@@ -40,13 +40,13 @@ namespace dtChar
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtchard.lib"
+      #define _AUTOLIBNAME  "dtChard.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBodyd.lib"
    #define _AUTOLIBNAME2 "cal3d_d.lib"
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtchar.lib"
+      #define _AUTOLIBNAME  "dtChar.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBody.lib"
    #define _AUTOLIBNAME2 "cal3d.lib"

@@ -57,13 +57,13 @@ namespace dtUtil
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtutild.lib"
+      #define _AUTOLIBNAME  "dtUtild.lib"
    #endif
    #define _AUTOLIBNAME2 "ul_d.lib"
    #define _AUTOLIBNAME3 "osgd.lib"
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtutil.lib"
+      #define _AUTOLIBNAME  "dtUtil.lib"
    #endif
    #define _AUTOLIBNAME2 "ul.lib"
    #define _AUTOLIBNAME3 "osg.lib"

@@ -36,10 +36,10 @@ namespace dtScript
 #undef _AUTOLIBNAME2
 
 #if defined(_DEBUG)
-#define _AUTOLIBNAME1   "dtscriptd.lib"
+#define _AUTOLIBNAME1   "dtScriptd.lib"
 #define _AUTOLIBNAME2   "python24.lib"
 #else 
-#define _AUTOLIBNAME1   "dtscript.lib"
+#define _AUTOLIBNAME1   "dtScript.lib"
 #define _AUTOLIBNAME2   "python24.lib"
 #endif
 
