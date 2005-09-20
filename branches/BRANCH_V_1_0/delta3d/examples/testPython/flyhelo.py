@@ -1,4 +1,5 @@
-from dtCore import *
+from PyDtCore import *
+
 from math import *
 from time import *
 

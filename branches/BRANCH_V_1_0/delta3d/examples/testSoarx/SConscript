@@ -2,9 +2,7 @@ Import('*')
 
 if OS == 'windows' :
 
-   testSrcs = [ 'testSoarx.cpp','main.cpp' ] 
+   srcs = SGlob( '*.cpp' )
+   deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtSOARX' ]
 
-   testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtsoarx' ]
-
-   BuildProgram( '#bin/testSoarx', testSrcs, testDeps )
-   
+   BuildProgram( 'testSoarx', srcs, deps )

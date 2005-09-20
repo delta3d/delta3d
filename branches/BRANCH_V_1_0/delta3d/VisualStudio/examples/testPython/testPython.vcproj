@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtscript.lib odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="dtScript.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile="../../../bin/testPython.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -105,7 +105,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtscriptd.lib odbc32.lib odbccp32.lib winmm.lib python24.lib"
+				AdditionalDependencies="dtScriptd.lib odbc32.lib odbccp32.lib winmm.lib python24.lib"
 				OutputFile="../../../bin/testPythonD.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -2,20 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
+#include <python/dtpython.h>
 
-#include "dtCore/dt.h"
-#include "dtAudio/dtaudio.h"
-
-
-// The individual class bindings
+#include <dtCore/dt.h>
+#include <dtAudio/dtaudio.h>
 
 void initAudioManagerBindings();
 void initListenerBindings();
 void initSoundEffectBinderBindings();
 
-
-BOOST_PYTHON_MODULE(dtAudio)
+BOOST_PYTHON_MODULE(PyDtAudio)
 {
    initAudioManagerBindings();
    initListenerBindings();

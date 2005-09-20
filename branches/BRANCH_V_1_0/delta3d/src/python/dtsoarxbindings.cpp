@@ -2,18 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
+#include <python/dtpython.h>
 
-#include "dtCore/dt.h"
-#include "soarx/dtsoarx.h"
-
-
-// The individual class bindings
+#include <dtCore/dt.h>
+#include <soarx/dtsoarx.h>
 
 void initSOARXTerrainBindings();
 
-
-BOOST_PYTHON_MODULE(dtSOARX)
+BOOST_PYTHON_MODULE(PyDtSOARX)
 {
    initSOARXTerrainBindings();
 }

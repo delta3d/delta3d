@@ -1,10 +1,10 @@
 Import('*')
 
-dtScriptSrcs = [ 'scriptmanager.cpp' ]
-dtScriptDeps = [ 'dtcore', 'python' ]
+srcs = SGlob('*.cpp')
+deps = [ 'dtCore', 'python' ]
 
 extraLink = []
 if OS == 'windows':
    extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
        
-BuildLib( 'dtscript', dtScriptSrcs, dtScriptDeps, ['DT_LIBRARY'], extraLink )
+BuildLib( 'dtScript', srcs, deps, ['DT_LIBRARY'], extraLink )

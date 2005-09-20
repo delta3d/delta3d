@@ -1,8 +1,7 @@
 Import('*')
 
-bspCompilerSrcs = ['splitgeode.cpp', 'main.cpp']
+srcs = SGlob( '*.cpp' )
 
-bspCompilerDeps = [ 'dtvis' ]
+deps = [ 'dtBSP' ]
 
-BuildProgram( '#/bin/bspCompiler', bspCompilerSrcs, bspCompilerDeps )
-
+BuildProgram( 'bspCompiler', srcs, deps )

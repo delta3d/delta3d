@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtabcd.lib dtutild.lib osgd.lib xerces-c_2D.lib osgDBd.lib"
+				AdditionalDependencies="dtABCd.lib dtUtild.lib osgd.lib xerces-c_2D.lib osgDBd.lib"
 				OutputFile="../../../bin/testStateManagerD.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -88,7 +88,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtabc.lib dtutil.lib osg.lib xerces-c_2.lib osgDB.lib"
+				AdditionalDependencies="dtABC.lib dtUtil.lib osg.lib xerces-c_2.lib osgDB.lib"
 				OutputFile="../../../bin/testStateManager.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

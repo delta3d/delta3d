@@ -257,7 +257,7 @@ def find_file( findThis, startDirs ) :
 
 def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
-   target = name
+   target = '#bin/'+name
    if OS == 'windows' and mode == 'debug' :
       target += 'D'
 
@@ -386,9 +386,11 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
       cppDefines = envLib['CPPDEFINES']
    
    if name != 'dtNet' :
-      builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+      builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
+                                       LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
    else :
-      builtlib = envLib.StaticLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+      builtlib = envLib.StaticLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
+                                       LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
       
    envLib.Precious( builtlib )
    
@@ -403,26 +405,26 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
          envLib.Install( '$prefix/lib', builtlib[1] )
          envLib.Install( '$prefix/lib', builtlib[2] )
    else:
-      # TODO: copy headers to prefix on alias install
+
       lib = envLib.Install( '#/lib', builtlib )
 
       if launchDir != env.get('prefix') :
          lib = envLib.Install( '$prefix/lib', builtlib )
 
-   incDirDict = { 'dtabc'    : 'dtABC',
+   incDirDict = { 'dtABC'    : 'dtABC',
                   'dtActors' : 'dtActors',
-                  'dtaudio'  : 'dtAudio',
-                  'dtchar'   : 'dtChar',
-                  'dtcore'   : 'dtCore',
+                  'dtAudio'  : 'dtAudio',
+                  'dtChar'   : 'dtChar',
+                  'dtCore'   : 'dtCore',
                   'dtDAL'    : 'dtDAL',
-                  'dthla'    : 'dtHLA',
-                  'dtgui'    : 'dtGUI',
+                  'dtHLA'    : 'dtHLA',
+                  'dtGUI'    : 'dtGUI',
                   'dtNet'    : 'dtNet',
-                  'dtscript' : 'dtScript',
-                  'dtutil'   : 'dtUtil',
-                  'dtvis'    : 'dtVis',
+                  'dtScript' : 'dtScript',
+                  'dtUtil'   : 'dtUtil',
+                  'dtBSP'    : 'dtVis',
                   'gui_fl'   : 'gui_fl',
-                  'dtsoarx'  : 'soarx' }
+                  'dtSOARX'  : 'soarx' }
 
    #install headers, there's gotta be a cleaner way ;)
    if incDirDict.has_key(name) and launchDir != env.get('prefix') :
@@ -638,8 +640,7 @@ else:
 print 'OS: ' + OS
 errorLog.write('OS: ' + OS + '\n\n')
 
-# set compiler options for debug/release modes
-
+# Set compiler options for debug/release modes
 if mode == 'debug':
    print 'Build Configuration: Debug'
    errorLog.write('Build Configuration: Debug\n\n')
@@ -700,17 +701,11 @@ if OS == 'darwin' :
   env['SHLIBSUFFIX'] = '.dylib'
   #env['SHLINKFLAGS'] = '$LINKFLAGS -arch ppc -prebind -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1 -install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 
-
 launchDir = env.GetLaunchDir()
 
 #############################################
-# Configure: Testing for dependencies vX.X.X
-#
-# osg0.9.9, etc.
-# ...
+# Configure: Testing for dependencies 
 ##############################################
-
-# do version, config checking
 
 def CheckLibOrFramework(context, lib, autoadd = 0):
       
@@ -734,20 +729,20 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
 
 depsHash = {}
 
-dtLibs = { 'dtabc'    : 'dtabc',
+dtLibs = { 'dtABC'    : 'dtABC',
            'dtActors' : 'dtActors',
-           'dtaudio'  : 'dtaudio',
-           'dtchar'   : 'dtchar',
-           'dtcore'   : 'dtcore',
+           'dtAudio'  : 'dtAudio',
+           'dtChar'   : 'dtChar',
+           'dtCore'   : 'dtCore',
            'dtDAL'    : 'dtDAL',
-           'dthla'    : 'dthla',
-           'dtgui'    : 'dtgui',
+           'dtHLA'    : 'dtHLA',
+           'dtGUI'    : 'dtGUI',
            'dtNet'    : 'dtNet',
-           'dtscript' : 'dtscript',
-           'dtutil'   : 'dtutil',
-           'dtvis'    : 'dtvis',
+           'dtScript' : 'dtScript',
+           'dtUtil'   : 'dtUtil',
+           'dtBSP'    : 'dtBSP',
            'gui_fl'   : 'gui_fl',
-           'dtsoarx'  : 'dtsoarx' }
+           'dtSOARX'  : 'dtSOARX' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
@@ -757,10 +752,8 @@ if mode == 'debug' and OS == 'windows' :
 if OS == 'windows' :
    if mode == 'debug' :
       extLibs =  { 
-         #'boost_python'        : 'boost_python_debug',
          'CEGUIBase'           : 'CEGUIBase_d',
          'CEGUIOpenGLRenderer' : 'OpenGLGUIRenderer_d',
-         #'CEGUIWindowsLook'    : 'CEGUIWindowsLook_d',
          'osg'                 : 'osgd',
          'osgDB'               : 'osgDBd',
          'osgUtil'             : 'osgUtild',
@@ -802,10 +795,8 @@ if OS == 'windows' :
      }
    else :
       extLibs = { 
-         #'boost_python' : 'boost_python',
          'CEGUIBase'           : 'CEGUIBase',
          'CEGUIOpenGLRenderer' : 'OpenGLGUIRenderer',
-         #'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
          'osg'                 : 'osg',
          'osgDB'               : 'osgDB',
          'osgUtil'             : 'osgUtil',
@@ -848,10 +839,8 @@ if OS == 'windows' :
    
 elif OS == 'linux' :
    extLibs = { 
-      #'boost_python'        : 'boost_python',
       'CEGUIBase'           : 'CEGUIBase',
       'CEGUIOpenGLRenderer' : 'CEGUIOpenGLRenderer',
-      #'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
       'osg'                 : 'osg',
       'osgDB'               : 'osgDB',
       'osgUtil'             : 'osgUtil',
@@ -887,11 +876,8 @@ elif OS == 'linux' :
       }
 elif OS == 'darwin' :
    extLibs = { 
-      #'boost_python'   : 'boost_python',
       'CEGUIBase'           : 'CEGUI',
       'CEGUIOpenGLRenderer' : 'OpenGLRenderer',
-      #this is a bundle, so it must be loaded at runtime
-      #'CEGUIWindowsLook'    : 'CEGUIWindowsLook',
       'osg'            : 'osg',
       'osgDB'          : 'osgDB',
       'osgUtil'        : 'osgUtil',
@@ -956,11 +942,8 @@ linkOrder = [
    'rvrutils',
    'rcfgscript', 
    'rbody',
-   #'boost_python',
    'CEGUIBase',   
-   'CEGUIOpenGLRenderer',
-   #'CEGUIWindowsLook'
-   ]
+   'CEGUIOpenGLRenderer' ]
 
 if OS == 'windows' :
    linkOrder = linkOrder + [ 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ]
@@ -1011,7 +994,8 @@ for lib in rtiLibs :
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 'BuildLib', 'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
+Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 'BuildLib',
+        'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
 
 env.SConsignFile()
 

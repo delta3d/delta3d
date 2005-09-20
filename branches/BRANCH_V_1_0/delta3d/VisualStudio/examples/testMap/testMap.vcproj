@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvisd.lib dtDALd.lib dtActorsd.lib"
+				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtDALd.lib dtActorsd.lib"
 				OutputFile="../../../bin/testMapD.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB);"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib dtabc.lib dtchar.lib dtaudio.lib dtutil.lib dtvis.lib dtDAL.lib dtActors.lib"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtBSP.lib dtDAL.lib dtActors.lib"
 				OutputFile="../../../bin/testMap.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB)"

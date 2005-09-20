@@ -64,7 +64,4 @@ private:
 
 }//namespace dtDAL
 
-
-
-
 #endif //__EXCEPTION_ENUM_H__
