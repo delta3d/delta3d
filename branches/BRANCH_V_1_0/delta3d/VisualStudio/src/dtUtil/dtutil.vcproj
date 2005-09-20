@@ -154,6 +154,9 @@
 				RelativePath="..\..\..\src\dtUtil\xercesparser.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\xercesutils.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\xerceswriter.cpp">
 			</File>
 		</Filter>
@@ -220,6 +223,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\xercesparser.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\xercesutils.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\xerceswriter.h">

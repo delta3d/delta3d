@@ -5,6 +5,13 @@
 #include <vector>
 #include <iostream>
 
+#include <dtUtil/stringutils.h>
+#include <dtUtil/log.h>
+
+void LOG(const std::string& msg)
+{
+   dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS,"",msg.c_str());
+}
 
 StateWalker::StateWalker(dtABC::StateManager* gm) : BaseClass(), mStateManager(gm), mStartState(0)
 {
@@ -44,12 +51,12 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
 {
    if( !mStateManager->GetCurrentState() )
    {
-      LOG_ERROR("StateWalker: No valid current State within StateManager, stopping the System.")
+      LOG_ERROR("StateWalker: No valid current State within StateManager, stopping the System.");
       dtCore::System::Instance()->Stop();
       return;
    }
 
-   LOG_ALWAYS("For the State, "+mStateManager->GetCurrentState()->GetName()+", the Event choices are:")
+   LOG("For the State, "+mStateManager->GetCurrentState()->GetName()+", the Event choices are:");
 
    std::vector<const dtABC::Event::Type*> eventvec( mStateManager->GetNumOfEvents( mStateManager->GetCurrentState() ) );
    mStateManager->GetEvents( mStateManager->GetCurrentState(), eventvec );
@@ -59,18 +66,18 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
    unsigned int i(0);
    for(; i<esize; i++)
    {
-      LOG_ALWAYS( dtUtil::ToString(i) + ": " + eventvec[i]->GetName() )
+      LOG(dtUtil::ToString(i) + ": " + eventvec[i]->GetName() );
    }
 
    // print "extra" event choices
    DisplayExtraEventChoices(i);
 
    // --------------------------- handle input --------------------------- //
-   LOG_ALWAYS("Please choose an Event:")
+   LOG("Please choose an Event:");
 
    unsigned int eventchoice;
    std::cin >> eventchoice;
-   LOG_ALWAYS("Your choice was: " + dtUtil::ToString(eventchoice) );
+   LOG("Your choice was: " + dtUtil::ToString(eventchoice) );
 
    if( eventchoice < esize )
    {
@@ -81,13 +88,13 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
          dtCore::RefPtr<dtABC::Event> event = ef->CreateObject( eventtype );
          if( event.valid() )
          {
-            LOG_ALWAYS("StateWalker: Sending Event of type: "+eventtype->GetName())
+            LOG("StateWalker: Sending Event of type: "+eventtype->GetName());
             SendMessage("event", event.get() );
          }
       }
       else
       {  // some logging feedback
-         LOG_ALWAYS("StateWalker: Can not create Event of type: "+eventtype->GetName() )
+         LOG("StateWalker: Can not create Event of type: "+eventtype->GetName() );
       }
    }
 
@@ -100,14 +107,14 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
 // --- "extra" choices --- //
 void StateWalker::DisplayExtraEventChoices(unsigned int index)
 {
-   LOG_ALWAYS( dtUtil::ToString(index) + ": " + "Quit" )
+   LOG(dtUtil::ToString(index) + ": " + "Quit" );
 }
 
 void StateWalker::HandleExtraEventChoices(unsigned int eventvecsize, unsigned int choice)
 {
    if( choice == eventvecsize )
    {
-      LOG_ALWAYS( "StateWalker: Quit was chosen." )
+      LOG("StateWalker: Quit was chosen." );
       dtCore::System::Instance()->Stop();
    }
 }

@@ -11,11 +11,11 @@
 #include <dtABC/event.h>
 #include <dtABC/state.h>
 #include <dtUtil/log.h>
-#include <dtUtil/stringutils.h>
 #include <dtUtil/objectfactory.h>
 #include <dtCore/refptr.h>
 #include <dtCore/system.h>
 #include <dtUtil/xercesparser.h>
+#include <dtUtil/xercesutils.h>
 
 #include <osgDB/FileUtils>
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
