@@ -5,6 +5,14 @@
 #include <dtNet/connectionserver.h>
 #include <dtNet/connectionlistener.h>
 
+/** The dtNet namespace contains networking classes.  dtNet is uses
+*  the <A HREF="http://www.gillius.org/gne/">Game Network Engine</A> and 
+*  <A HREF="http://www.hawksoft.com/hawknl/">HawkNL</A> for backbone functionality.
+*/
+namespace dtNet
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIBMSG */

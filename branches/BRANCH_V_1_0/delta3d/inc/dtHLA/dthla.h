@@ -23,6 +23,13 @@
 
 #include "dtHLA/rticonnection.h"
 
+/** Contains the functionality to connect to HLA networks.
+*
+*/
+namespace dtHLA
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 //

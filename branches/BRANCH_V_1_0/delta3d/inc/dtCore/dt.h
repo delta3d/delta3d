@@ -69,6 +69,13 @@
 #include "dtCore/uniqueid.h"
 #include "dtCore/walkmotionmodel.h"
 
+/** The dtCore namespace contains basic, low-level functionality which is mostly
+* required for all 3D applications.
+*/
+namespace dtCore
+{
+}
+
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 

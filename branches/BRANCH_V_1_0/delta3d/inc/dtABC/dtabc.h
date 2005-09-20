@@ -29,6 +29,13 @@
 #include <dtABC/weather.h>
 #include <dtABC/widget.h>
 
+/** The Application Base Classes library contains high-level classes which can
+* be assist greatly in the creation of applications.
+*/
+namespace dtABC
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */

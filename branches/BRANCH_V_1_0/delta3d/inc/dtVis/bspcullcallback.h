@@ -34,6 +34,8 @@
 
 #include "dtCore/refptr.h"
 
+/** Used by the bspCompiler to calculate the BSP of a given set of geometry.
+*/
 namespace dtVis
 {
    class BSPNode;
