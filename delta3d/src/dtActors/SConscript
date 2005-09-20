@@ -12,29 +12,21 @@ else:
    overrideShLink = ''
    overrideShSuffix = ''
 
-
 # Grab all the sources from the DAL source directory.
-sources = ["baselightactorproxy.cpp","cameraactorproxy.cpp","characteractorproxy.cpp","clouddomeactorproxy.cpp","cloudplaneactorproxy.cpp","deltaobjectactorproxy.cpp","dtedterrainactorproxy.cpp","engineactorregistry.cpp","enveffectactorproxy.cpp","environmentactorproxy.cpp","infinitelightactorproxy.cpp","infiniteterrainactorproxy.cpp","meshterrainactorproxy.cpp","particlesystemactorproxy.cpp","positionallightactorproxy.cpp","skyboxactorproxy.cpp","skydomeactorproxy.cpp","soundactorproxy.cpp","spotlightactorproxy.cpp","staticmeshactorproxy.cpp","terrainactorproxy.cpp","triggeractorproxy.cpp"]
-
+srcs = SGlob( '*.cpp' )
 
 if OS != 'windows':
-	sources.remove('dtedterrainactorproxy.cpp')
+   srcs.remove( 'dtedterrainactorproxy.cpp' )
 
-dtActorsDeps =['dtDAL', 'dtutil', 'dtcore', 'dtchar', 'dtabc', 'glgui', 'isense', 'ode',
-        'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
-        'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody','gdal', 'ul', 'js',
-        'Producer', 'tinyxml', 'opengl' ]
+deps =[ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode',
+        'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText',
+        'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody',
+        'gdal', 'ul', 'js', 'Producer', 'opengl', 'dtsoarx', 'User32', 'Advapi32',
+        'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
+        'Carbon' ]
 
-if OS == 'windows' :
-   dtActorsDeps += [ 'dtsoarx', 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-elif OS == 'linux':
-   dtActorsDeps += [ 'uuid', 'Xxf86vm' ]
-elif OS == 'darwin':
-   dtActorsDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
-
-dtActors = BuildLib( 'dtActors', sources, dtActorsDeps, ['DT_PLUGIN'], 
-	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
+dtActors = BuildLib( 'dtActors', srcs, deps, ['DT_PLUGIN'],
+                     overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 if OS == 'darwin':
    Depends(dtActors, libdtDAL)
-   

@@ -1,7 +1,7 @@
 from Tkinter import *
 
-from dtCore import *
-from dtABC import *
+from PyDtCore import *
+from PyDtABC import *
 
 from math import *
 from time import *

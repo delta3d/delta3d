@@ -2,8 +2,7 @@ Import('*')
 
 import glob
 
-srcfiles = SGlob('*.cpp')
-
-dtNetDeps=[]
+srcs = SGlob('*.cpp')
+deps = []
        
-BuildLib( 'dtNet', srcfiles, dtNetDeps, [] )
+BuildLib( 'dtNet', srcs, deps, [] )

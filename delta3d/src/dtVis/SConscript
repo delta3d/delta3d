@@ -1,7 +1,7 @@
 Import('*')
 
-dtVisSrcs = [ 'bspcullcallback.cpp' ]
+srcs = SGlob('*.cpp')
 
-dtVisDeps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
+deps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
 
-BuildLib( 'dtvis', dtVisSrcs, dtVisDeps, ['OSG_LIBRARY'] )
+BuildLib( 'dtBSP', srcs, deps, ['OSG_LIBRARY'] )

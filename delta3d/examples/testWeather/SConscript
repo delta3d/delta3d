@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = ['testweather.cpp']
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'gui_fl' ] 
 
-testDeps =[ 'dtcore', 'dtabc', 'dtutil', 'gui_fl' ] 
-
-BuildProgram( '#bin/testWeather', testSrcs, testDeps )
+BuildProgram( 'testWeather', srcs, deps )

@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib"
+				AdditionalDependencies="dtUtild.lib"
 				OutputFile="../../../bin/testGUID.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib"
+				AdditionalDependencies="dtUtil.lib"
 				OutputFile="../../../bin/testGUI.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

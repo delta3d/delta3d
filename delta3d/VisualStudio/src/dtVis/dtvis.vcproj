@@ -4,7 +4,7 @@
 	Version="7.10"
 	Name="dtVis"
 	ProjectGUID="{6CB0D175-771B-4592-91A2-C367C61A3381}"
-	RootNamespace="dtvis"
+	RootNamespace="dtBSP"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -35,13 +35,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib osgd.lib osgdbd.lib osgutild.lib OpenThreadsWin32d.lib"
-				OutputFile="../../../bin/dtvisd.dll"
+				OutputFile="../../../bin/dtBSPd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				ImportLibrary="../../../lib/dtvisd.lib"/>
+				ImportLibrary="../../../lib/dtBSPd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -84,11 +84,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="osg.lib osgdb.lib opengl32.lib OpenThreadsWin32.lib"
-				OutputFile="../../../bin/dtvis.dll"
+				OutputFile="../../../bin/dtBSP.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				ImportLibrary="../../../lib/dtvis.lib"/>
+				ImportLibrary="../../../lib/dtBSP.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

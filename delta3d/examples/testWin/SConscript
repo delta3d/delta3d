@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = ['testwin.cpp']
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtGUI' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtgui' ]
-
-BuildProgram( '#bin/testWin', testSrcs, testDeps )
+BuildProgram( 'testWin', srcs, deps )

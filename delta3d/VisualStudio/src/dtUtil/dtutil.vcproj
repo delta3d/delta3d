@@ -42,7 +42,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
-				ImportLibrary="../../../lib/dtutild.lib"
+				ImportLibrary="../../../lib/dtUtild.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -86,7 +86,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ul.lib openthreadswin32.lib osg.lib osgDB.lib xerces-c_2.lib"
-				OutputFile="../../../bin/dtutil.dll"
+				OutputFile="../../../bin/dtUtil.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -95,7 +95,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../../lib/dtutil.lib"
+				ImportLibrary="../../../lib/dtUtil.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

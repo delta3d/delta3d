@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib dtutild.lib odbccp32.lib winmm.lib js_d.lib fltkd.lib wsock32.lib comctl32.lib osgParticled.lib osgTextd.lib"
+				AdditionalDependencies="odbc32.lib dtUtild.lib odbccp32.lib winmm.lib js_d.lib fltkd.lib wsock32.lib comctl32.lib osgParticled.lib osgTextd.lib"
 				OutputFile="..\..\..\bin\psEditorD.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -105,7 +105,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib dtutil.lib odbccp32.lib winmm.lib js.lib fltk.lib wsock32.lib comctl32.lib osgParticle.lib osgText.lib"
+				AdditionalDependencies="odbc32.lib dtUtil.lib odbccp32.lib winmm.lib js.lib fltk.lib wsock32.lib comctl32.lib osgParticle.lib osgText.lib"
 				OutputFile="..\..\..\bin\psEditor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

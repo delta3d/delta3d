@@ -8,8 +8,6 @@
 using namespace boost::python;
 using namespace dtCore;
 
-// The individual class bindings
-
 void initBaseBindings();
 void initCameraBindings();
 void initCloudDomeBindings();
@@ -67,7 +65,7 @@ void NotifyWrap(NotifySeverity ns, const char* msg)
    Notify(ns, msg);
 }
 
-BOOST_PYTHON_MODULE(dtCore)
+BOOST_PYTHON_MODULE(PyDtCore)
 {
    def("SetDataFilePathList", SetDataFilePathList);
    def("GetDeltaDataPathList", GetDeltaDataPathList);

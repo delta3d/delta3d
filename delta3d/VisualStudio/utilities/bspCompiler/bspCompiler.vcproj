@@ -111,7 +111,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib fltk.lib wsock32.lib comctl32.lib osgParticle.lib osgText.lib osgDB.lib osg.lib osgUtil.lib dtvis.lib OpenThreadsWin32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib fltk.lib wsock32.lib comctl32.lib osgParticle.lib osgText.lib osgDB.lib osg.lib osgUtil.lib dtBSP.lib OpenThreadsWin32.lib"
 				OutputFile="..\..\..\bin\bspCompiler.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

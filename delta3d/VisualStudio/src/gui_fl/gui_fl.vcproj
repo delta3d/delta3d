@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib dtabcD.lib dtcored.lib producerd.lib ul_d.lib openthreadswin32d.lib osgd.lib"
+				AdditionalDependencies="dtUtild.lib dtabcD.lib dtCored.lib producerd.lib ul_d.lib openthreadswin32d.lib osgd.lib"
 				OutputFile="../../../bin/gui_fld.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -87,7 +87,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib dtabc.lib dtcore.lib producer.lib openthreadswin32.lib osg.lib ul.lib"
+				AdditionalDependencies="dtUtil.lib dtABC.lib dtCore.lib producer.lib openthreadswin32.lib osg.lib ul.lib"
 				OutputFile="../../../bin/gui_fl.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

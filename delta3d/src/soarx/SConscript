@@ -2,19 +2,7 @@ Import('*')
 
 if OS == 'windows' :
 
-   dtSoarxSrcs = [ 'soarx_base.cpp',
-                   'soarx_camera.cpp',
-                   'soarx_core.cpp',
-                   'soarx_image.cpp',
-                   'soarx_render.cpp',
-                   'soarx_tbuilder.cpp',
-                   'soarxterrain.cpp',
-                   'soarx_texture.cpp' ]
+   dtSoarxSrc = SGlob('*.cpp')
+   dtSoarxDeps = [ 'dtCore', 'gdal', 'User32' ]
 
-   dtSoarxDeps = [ 'dtcore', 'gdal' ]
-   
-   if OS == 'windows' :
-      dtSoarxDeps += [ 'User32' ]
-
-   BuildLib( 'dtsoarx', dtSoarxSrcs, dtSoarxDeps, ['DT_LIBRARY'] )
-   
+   BuildLib( 'dtSOARX', dtSoarxSrcs, dtSoarxDeps, ['DT_LIBRARY'] )
