@@ -211,6 +211,9 @@
 				RelativePath="..\..\..\inc\dtDAL\directoryresourcetypehandler.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtDAL\dtdal.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtDAL\enginepropertytypes.h">
 			</File>
 			<File
