@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtVis"
+	Name="dtBSP"
 	ProjectGUID="{6CB0D175-771B-4592-91A2-C367C61A3381}"
 	RootNamespace="dtBSP"
 	Keyword="Win32Proj">
