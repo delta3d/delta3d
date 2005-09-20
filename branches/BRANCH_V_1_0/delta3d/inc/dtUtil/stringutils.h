@@ -18,8 +18,8 @@
  *
 */
 
-/** \file dtUtil/stringutils.h
-  * Utility methods for using strings, often for XML purposes.
+/** \file Utility methods for using strings.
+  * \author David Guthrie
   * \author John K. Grant
   */
 
@@ -28,11 +28,89 @@
 
 #include <dtCore/export.h>
 
-#include <string>                       // for parameters
-#include <sstream>                      // for std::ostringstream
+#include <sstream>         // for std::ostringstream
+#include <algorithm>
+#include <locale>          // for std::locale, std::isspace
+#include <string>
+#include <vector>
+#include <functional>
 
 namespace dtUtil
 {
+   class IsSpace;
+
+   template <class Pred=IsSpace>
+   class StringTokenizer {
+   public:
+      //The predicate should evaluate to true when applied to a separator.
+      static void tokenize(std::vector<std::string>& roResult, std::string const& rostr,
+                           Pred const& roPred=Pred());
+   };
+
+   //The predicate should evaluate to true when applied to a separator.
+   template <class Pred>
+   inline void StringTokenizer<Pred>::tokenize(std::vector<std::string>& roResult,
+                                             std::string const& rostr, Pred const& roPred) {
+      //First clear the results std::vector
+      roResult.clear();
+      std::string::const_iterator it = rostr.begin();
+      std::string::const_iterator itTokenEnd = rostr.begin();
+      while(it != rostr.end()) {
+         //Eat seperators
+         while(roPred(*it))
+         it++;
+         //Find next token
+         itTokenEnd = std::find_if(it, rostr.end(), roPred);
+         //Append token to result
+         if(it < itTokenEnd)
+         roResult.push_back(std::string(it, itTokenEnd));
+         it = itTokenEnd;
+      }
+   }
+
+   /** \brief A functor which tests if a character is whitespace.
+     * This "predicate" needed to have 'state', the locale member.
+     */
+   class IsSpace : public std::unary_function<char, bool>
+   {
+      public:
+         IsSpace(const std::locale& loc=std::locale("english") ) : mLocale(loc) {}
+
+         const std::locale& GetLocale() const { return mLocale; }
+
+         bool operator()(char c) const;
+
+   private:
+      std::locale mLocale;
+   };
+
+   inline bool IsSpace::operator()(char c) const
+   {
+      return std::isspace(c,mLocale);
+   }
+
+   /**
+   * Trims whitespace off the front and end of a string
+   * @param toTrim the string to trim.
+   */
+   inline void trim(std::string& toTrim) {
+      for (std::string::iterator i = toTrim.begin(); i != toTrim.end(); ++i) {
+         if (isspace(*i))
+               i = toTrim.erase(i);
+         else
+               break;
+      }
+
+      for (int i = toTrim.size() - 1; i <= 0; --i) {
+         if (isspace(toTrim[i]))
+               //we can just erase from the end because
+               //it will shorted the part of the string already covered by the loop.
+               toTrim.erase(i);
+         else
+               break;
+      }
+   }
+
    /** a utility function to convert a basic type into a string.
      * @param T the type being passed.
      * @param t the instance of the type to converted.

@@ -25,7 +25,7 @@
 #include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/mapxml.h"
-#include "dtDAL/stringtokenizer.h"
+#include "dtUtil/stringutils.h"
 
 
 namespace dtDAL
@@ -104,7 +104,7 @@ namespace dtDAL
         {
 
             std::vector<std::string> tokens;
-            StringTokenizer<IsSlash> stok;
+            dtUtil::StringTokenizer<IsSlash> stok;
 
             stok.tokenize(tokens, value);
 
@@ -113,8 +113,8 @@ namespace dtDAL
                 std::string displayName(tokens[0]);
                 std::string identifier(tokens[1]);
 
-                trim(identifier);
-                trim(displayName);
+                dtUtil::trim(identifier);
+                dtUtil::trim(displayName);
 
                 ResourceDescriptor descriptor(displayName, identifier);
                 SetValue(&descriptor);
