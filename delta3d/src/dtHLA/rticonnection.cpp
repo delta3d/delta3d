@@ -28,7 +28,7 @@
 
 #include "dtCore/system.h"
 #include "dtUtil/matrixutil.h"
-#include "dtUtil/stringutils.h"
+#include "dtUtil/xercesutils.h"
 #include "dtUtil/xercesparser.h"
 
 using namespace dtHLA;

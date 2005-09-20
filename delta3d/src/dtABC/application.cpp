@@ -3,7 +3,7 @@
 #include "dtUtil/log.h"
 #include "dtUtil/xerceswriter.h"
 #include "dtUtil/xerceserrorhandler.h"
-#include "dtUtil/stringutils.h"
+#include "dtUtil/xercesutils.h"
 #include "dtUtil/xercesparser.h"
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>

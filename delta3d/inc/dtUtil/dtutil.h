@@ -40,6 +40,8 @@
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/xerceswriter.h>
+#include <dtUtil/xercesparser.h>
+#include <dtUtil/xercesutils.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 

@@ -1,4 +1,5 @@
 #include "dtABC/statemanager.h"
+#include <dtUtil/stringutils.h>
 
 using namespace dtABC;
 
