@@ -115,6 +115,7 @@ namespace dtUtil
          else
          {
             LOG_ERROR("No available recordable source to handle serialization.")
+            return NULL;
          }
       }
 
