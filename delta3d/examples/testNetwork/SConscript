@@ -2,6 +2,9 @@ Import('*')
 
 testSrcs = [ 'testNetwork.cpp', 'main.cpp', 'mynetwork.cpp', 'packets.cpp' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtNet' ]
+testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtNet', 'gne', 'HawkNL' ]
+
+if OS == 'windows' :
+   testDeps += [ 'winsock' ]
 
 BuildProgram( '#bin/testNetwork', testSrcs, testDeps )
