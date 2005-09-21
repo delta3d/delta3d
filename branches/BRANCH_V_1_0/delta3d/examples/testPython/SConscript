@@ -7,4 +7,8 @@ if CheckForBoost() :
    srcs = SGlob( '*.cpp' )
    deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtScript', 'python' ]
 
-   BuildProgram( 'testPython', srcs, deps )
+   extraLink = []
+   if OS == 'windows':
+      extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
+
+   BuildProgram( 'testPython', srcs, deps, [], extraLink )
