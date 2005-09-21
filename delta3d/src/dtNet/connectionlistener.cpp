@@ -13,12 +13,12 @@ using namespace dtUtil;
 ConnectionListener::ConnectionListener(NetMgr *netMgr):
 mNetMgr(netMgr)
 {
-   SetName("ConnectionListener");
    LOG_DEBUG("ConnectionListener created.");
 }
 
 ConnectionListener::~ConnectionListener(void)
 {
+   LOG_DEBUG("ConnectionListener destroyed.");
 }
 
 void ConnectionListener::onDisconnect( GNE::Connection& conn )
