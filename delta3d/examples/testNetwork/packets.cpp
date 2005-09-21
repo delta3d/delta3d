@@ -2,11 +2,9 @@
 #include <gnelib/PacketParser.h>
 #include <gnelib/Buffer.h>
 #include "packets.h"
-#include <dtUtil/log.h>
 
 
-using namespace dtUtil;
-
+//our unique ID for this custom packet
 const int PositionPacket::ID = GNE::PacketParser::MIN_USER_ID;
 
 
@@ -27,13 +25,7 @@ GNE::Packet(ID)
 {
    mXYZ = p.mXYZ;
    mHPR = p.mHPR;
-
-//   mXYZ._v[0] = p.mXYZ._v[0];
-//   mXYZ._v[1] = p.mXYZ._v[1];
-//   mXYZ._v[2] = p.mXYZ._v[2];
 }
-
-
 
 void PositionPacket::writePacket(GNE::Buffer &raw) const
 {
@@ -44,9 +36,7 @@ void PositionPacket::writePacket(GNE::Buffer &raw) const
    raw << mHPR._v[0];
    raw << mHPR._v[1];
    raw << mHPR._v[2];
-
 }
-
 
 void PositionPacket::readPacket( GNE::Buffer &raw)
 {
@@ -59,7 +49,7 @@ void PositionPacket::readPacket( GNE::Buffer &raw)
    raw >> mHPR._v[2];
 }
 
-
+///return the size in bytes
 int PositionPacket::getSize() const
 {
    return Packet::getSize() + sizeof(mXYZ) + sizeof(mHPR);

@@ -5,6 +5,9 @@
 #include <dtCore/refptr.h>
 #include <dtCore/object.h>
 
+/** Deriving from NetMgr will allow use to overwrite some virtual methods.
+  * We'll use these methods for controlling our network connections.
+  */
 class MyNetwork : public dtNet::NetMgr
 {
 public:
