@@ -189,7 +189,8 @@ namespace dtCore
          /**
           * Maps detonation types to filenames.
           */
-         std::map< DetonationType, std::string > mDetonationTypeFilenameMap;
+         typedef std::map< DetonationType, std::string > DetonationStringMap;
+         DetonationStringMap mDetonationTypeFilenameMap;
 
          /**
           * The vector of active effects.
