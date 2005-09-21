@@ -14,7 +14,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\..\src\dtABC\dt
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "..\..\src\gui_fl\gui_fl.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspector", "..\..\src\dtInspector\dtinspector.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

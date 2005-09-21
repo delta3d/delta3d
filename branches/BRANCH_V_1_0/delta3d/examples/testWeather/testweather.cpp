@@ -1,6 +1,6 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
+#include <dtInspector/inspector.h>
 
 using namespace dtABC;
 using namespace dtCore;
@@ -30,7 +30,7 @@ public:
       orbit = new dtCore::OrbitMotionModel( GetKeyboard(), GetMouse() );
       orbit->SetTarget( GetCamera() );
 
-      GUI *ui = new GUI();
+      Inspector *ui = new Inspector();
       ui = ui; //no-op to prevent warning for unused variable
 
  }

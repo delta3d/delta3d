@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="windows-1253"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="gui_fl"
-	ProjectGUID="{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
+	Name="dtInspectorBindings"
+	ProjectGUID="{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,40 +12,34 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\src\gui_fl\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\src\gui_fl\windows-msvc-debug"
+			OutputDirectory="..\..\..\src\python\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\python\windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
-				MinimalRebuild="FALSE"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB"
+				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				AssemblerListingLocation="$(IntDir)"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)"
-				WarningLevel="3"
+				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
-				DebugInformationFormat="3"
-				CompileAs="0"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtabcD.lib dtCored.lib producerd.lib ul_d.lib openthreadswin32d.lib osgd.lib"
-				OutputFile="../../../bin/gui_fld.dll"
+				AdditionalDependencies="boost_python_debug.lib python24.lib"
+				OutputFile="../../../bin\PyDtInspectord.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libcmtd; msvcrt"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				ImportLibrary="../../../lib/gui_fld.lib"/>
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
+				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt; libcmtd"
+				ImportLibrary="..\..\..\lib\dtInspectorBindingsd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -69,31 +63,31 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\src\gui_fl\windows-msvc-release"
-			IntermediateDirectory="..\..\..\src\gui_fl\windows-msvc-release"
+			OutputDirectory="..\..\..\src\python\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\python\windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="2"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtABC.lib dtCore.lib producer.lib openthreadswin32.lib osg.lib ul.lib"
-				OutputFile="../../../bin/gui_fl.dll"
+				AdditionalDependencies="boost_python.lib python24.lib"
+				OutputFile="../../../bin\PyDtInspector.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libc; libcmt; msvcrtd"
-				ImportLibrary="../../../lib/gui_fl.lib"/>
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
+				IgnoreDefaultLibraryNames="libc; libcmt"
+				ImportLibrary="..\..\..\lib\dtInspectorBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -124,10 +118,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\gui_fl\gui_fltk.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\gui_fl\guimgr.cpp">
+				RelativePath="..\..\..\src\python\dtinspectorbindings.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -135,19 +126,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\inc\gui_fl\gui_fltk.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\gui_fl\guimgr.h">
+				RelativePath="..\..\..\inc\python\dtpython.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
-			<File
-				RelativePath="..\..\..\src\gui_fl\gui.fl">
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

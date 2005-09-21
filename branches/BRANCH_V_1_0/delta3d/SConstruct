@@ -423,7 +423,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
                   'dtScript' : 'dtScript',
                   'dtUtil'   : 'dtUtil',
                   'dtBSP'    : 'dtBSP',
-                  'gui_fl'   : 'gui_fl',
+                  'dtInspector' : 'dtInspector',
                   'dtSOARX'  : 'soarx' }
 
    #install headers, there's gotta be a cleaner way ;)
@@ -741,7 +741,7 @@ dtLibs = { 'dtABC'    : 'dtABC',
            'dtScript' : 'dtScript',
            'dtUtil'   : 'dtUtil',
            'dtBSP'    : 'dtBSP',
-           'gui_fl'   : 'gui_fl',
+           'dtInspector' : 'dtInspector',
            'dtSOARX'  : 'dtSOARX' }
 
 if mode == 'debug' and OS == 'windows' :

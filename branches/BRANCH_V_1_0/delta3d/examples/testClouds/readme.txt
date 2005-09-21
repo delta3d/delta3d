@@ -33,7 +33,7 @@ Linux Source:
 Controls
 --------
 F1-F5  -  Set visibility (F1:unlimited - F5:close)
-H      -  Bring up gui_fl
+H      -  Bring up the Inspector
 P      -  Turn off cloud dome
 D      -  Turn on cloud dome
 +|-    -  Increase|decrease number of cloud layers

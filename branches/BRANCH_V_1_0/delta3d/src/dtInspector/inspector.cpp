@@ -1,8 +1,8 @@
-// guimgr.cpp: implementation of the GUI class.
+// inspector.cpp: implementation of the Inspector class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <gui_fl/guimgr.h>
+#include <dtInspector/inspector.h>
 #include <dtCore/transformable.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltadrawable.h>
