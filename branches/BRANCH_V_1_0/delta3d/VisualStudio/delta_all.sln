@@ -62,11 +62,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCoreBindings", "src\pytho
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUIFlBindings", "src\python\dtguiflbindings.vcproj", "{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09} = {7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtHLABindings", "src\python\dthlabindings.vcproj", "{A15A3D52-149E-4D94-836E-F051C3B1AC82}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -310,6 +305,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testNetwork", "examples\tes
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspectorBindings", "src\python\dtinspectorbindings.vcproj", "{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09} = {7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -368,10 +368,6 @@ Global
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.Build.0 = Debug|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.ActiveCfg = Release|Win32
 		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.Build.0 = Release|Win32
-		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.ActiveCfg = Debug|Win32
-		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.Build.0 = Debug|Win32
-		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.ActiveCfg = Release|Win32
-		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.Build.0 = Release|Win32
 		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Debug.ActiveCfg = Debug|Win32
 		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Debug.Build.0 = Debug|Win32
 		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Release.ActiveCfg = Release|Win32
@@ -520,6 +516,10 @@ Global
 		{B9C0F01B-55C1-4830-BF31-B17D208A645E}.Debug.Build.0 = Debug|Win32
 		{B9C0F01B-55C1-4830-BF31-B17D208A645E}.Release.ActiveCfg = Release|Win32
 		{B9C0F01B-55C1-4830-BF31-B17D208A645E}.Release.Build.0 = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.ActiveCfg = Debug|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.Build.0 = Debug|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.ActiveCfg = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
