@@ -50,9 +50,6 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(FPSMotionModel)
 
-         //TODO: put Scene* in constructor?
-         //TODO: add jumping
-
       public:
 
          /**

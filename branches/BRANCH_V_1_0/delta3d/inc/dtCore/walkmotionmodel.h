@@ -52,7 +52,6 @@ namespace dtCore
 
       public:
 
-         //TODO: put Scene* in constructor?
 
          /**
           * Constructor.
