@@ -16,6 +16,7 @@ MyNetwork::~MyNetwork(void)
 }
 
 
+///One or more GNE::Packets was received, let's do something with them
 void MyNetwork::OnReceive( GNE::Connection &conn)
 {
    mMutex.acquire();
@@ -28,6 +29,7 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
 
       if(type == GNE::PingPacket::ID) 
       {
+         //it's a PingPacket so lets process it.
          GNE::PingPacket &ping = *((GNE::PingPacket*)next);
          if (ping.isRequest())
          {
@@ -41,6 +43,8 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
       }
       else if (type == PositionPacket::ID) 
       {
+         //aha, this is our custom packet.  Decompose it and move our remote 
+         //player representation.
          PositionPacket *pos = (PositionPacket*)next;
          osg::Vec3 newXYZ = pos->mXYZ;
          osg::Vec3 newHPR = pos->mHPR;
@@ -67,6 +71,7 @@ void MyNetwork::OnConnect( GNE::SyncConnection &conn )
    MakePlayer();
 }
 
+///Create a new player to represent the remote guy
 void MyNetwork::MakePlayer()
 {
    mMutex.acquire();

@@ -4,14 +4,23 @@
 #include <osg/Vec3>
 #include <gnelib/Packet.h>
 
+/** This custom packet will allow us to pass a position and rotation
+ *  through the network connection.
+ *  Two important things to remember:
+ *  1) register the packet with GNE using
+ *     GNE::PacketParser::defaultRegisterPacket<PositionPacket>();
+ *  2) Every custom packet needs a unique ID
+ */
 class PositionPacket : public GNE::Packet
 {
 public:
 
    PositionPacket( osg::Vec3 xyz, osg::Vec3 hpr);
 
+   ///default constructor
    PositionPacket();
 
+   ///copy constructor
    PositionPacket( const PositionPacket &p);
 
    virtual ~PositionPacket() {}
@@ -24,10 +33,8 @@ public:
 
    virtual void readPacket( GNE::Buffer &raw);
 
-
    osg::Vec3 mXYZ;
    osg::Vec3 mHPR;
-
 };
 
 #endif //PACKETS_INCLUDED
