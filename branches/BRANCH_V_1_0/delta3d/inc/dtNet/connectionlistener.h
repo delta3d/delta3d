@@ -26,15 +26,19 @@
 #endif
 
 #include <gnelib/ConnectionListener.h>
-#include <dtCore/export.h>
-#include <dtCore/base.h>
 #include <dtCore/refptr.h>
 
 namespace dtNet
 {
+   ///forward declaration
    class NetMgr;
 
-   class  ConnectionListener : public GNE::ConnectionListener, public dtCore::Base
+   /** Provides the interface to a GNE::Connection.  This class is used internally
+    *  by the NetMgr and is typically not used directly by the end user.
+    *  This class contains a reference to an instance of NetMgr and calls it's
+    *  virtual methods, mimicking the GNE interface.
+    */
+   class  ConnectionListener : public GNE::ConnectionListener
    {
    public:
       typedef GNE::SmartPtr<ConnectionListener> sptr;
@@ -43,6 +47,7 @@ namespace dtNet
 
       virtual ~ConnectionListener(void);
 
+      ///static method used to create a new ConnectionListener
       static sptr create( NetMgr *netMgr)
       {
          return sptr( new ConnectionListener(netMgr) );
@@ -67,7 +72,7 @@ namespace dtNet
    protected:
       ConnectionListener(NetMgr *netMgr);
    private:
-      dtCore::RefPtr<NetMgr> mNetMgr;
+      dtCore::RefPtr<NetMgr> mNetMgr; ///Reference to a NetMgr
    };
 }
 
