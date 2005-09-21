@@ -1,6 +1,5 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 #include <dtCore/object.h>
 

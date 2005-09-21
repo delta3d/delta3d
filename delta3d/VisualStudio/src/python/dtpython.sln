@@ -24,7 +24,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtSOARXBindings", "dtsoarxb
 		{A6562750-F7E3-4CB3-83C2-727F49F88CE0} = {A6562750-F7E3-4CB3-83C2-727F49F88CE0}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGUIFlBindings", "dtguiflbindings.vcproj", "{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspectorBindings", "dtinspectorbindings.vcproj", "{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09} = {7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}
 	EndProjectSection
@@ -38,7 +38,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAudio", "..\dtAudio\dtaud
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gui_fl", "..\gui_fl\gui_fl.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspector", "..\dtInspector\dtinspector.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection

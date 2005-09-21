@@ -18,41 +18,39 @@
  *
 */
 
-#ifndef DELTA_GUIMGR
-#define DELTA_GUIMGR
+#ifndef DELTA_INSPECTOR
+#define DELTA_INSPECTOR
 
-
-// guimgr.h: interface for the GUI class.
+// inspector.h: interface for the GUI class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include <OpenThreads/Thread>
-#include <gui_fl/gui_fltk.h>
+#include <dtInspector/gui_fltk.h>
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
 
 ///Creates and manages the UserInterface
 
-
 /** This class creates and manages a 2D GUI that can interact dynamically with 
   * most dtCore instantiations.
-  * Currently, GUI must be instantiated after all other dtCore classes have been
+  * Currently, Inspector must be instantiated after all other dtCore classes have been
   * created.  The interface will pickup all classes created at that point and
   * render the user interface.
   * NOTE: any instantiated classes that change values during runtime will not
-  * reflect their new values on the GUI.
+  * reflect their new values on the Inspector.
   */
-class DT_EXPORT GUI : public OpenThreads::Thread
+class DT_EXPORT Inspector : public OpenThreads::Thread
 {
 public:  
-   GUI()
+   Inspector()
    {
       ui = new UserInterface();
       win = ui->make_window();
       Init();
       startThread();
    }
-   ~GUI() {}
+   ~Inspector() {}
 
    void Show( bool show=true)
    {
@@ -69,8 +67,8 @@ public:
 private:
 
    //not implemented by design
-   GUI( const GUI& rhs ); 
-   GUI& operator= ( const GUI& rhs ); 
+   Inspector( const Inspector& rhs ); 
+   Inspector& operator= ( const Inspector& rhs ); 
 
    void Init(void)
    {
@@ -113,9 +111,9 @@ private:
 
    #undef _AUTOLIBNAME
    #if defined(_DEBUG)
-      #define _AUTOLIBNAME  "gui_fld.lib"
+      #define _AUTOLIBNAME  "dtInspectord.lib"
    #else
-      #define _AUTOLIBNAME  "gui_fl.lib"
+      #define _AUTOLIBNAME  "dtInspector.lib"
    #endif
 
    #ifndef _NOAUTOLIBMSG
@@ -128,4 +126,4 @@ private:
 
 #endif  // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-#endif // DELTA_GUIMGR
+#endif // DELTA_INSPECTOR

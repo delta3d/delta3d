@@ -1,7 +1,6 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
-
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
+#include <dtInspector/inspector.h>
 
 using namespace dtABC;
 using namespace dtCore;
@@ -53,10 +52,8 @@ protected:
 case Producer::Key_Escape:    this->Quit();    	 break;
 case Producer::Key_H:
    {
-      GUI *ui = new GUI();
-      ui = ui; //to prevent unused variable warnings... we should
-               //change this API so the constructor doesn't display the
-               //GUI by default
+      Inspector *ui = new Inspector();
+      ui->Show(); //to prevent unused variable warnings
    }
    break;
 case Producer::Key_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;

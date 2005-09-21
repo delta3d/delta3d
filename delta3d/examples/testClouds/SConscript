@@ -1,6 +1,6 @@
 Import('*')
 
 srcs = SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'dtUtil', 'gui_fl' ]
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtInspector' ]
 
 BuildProgram( 'testClouds', srcs, deps )
