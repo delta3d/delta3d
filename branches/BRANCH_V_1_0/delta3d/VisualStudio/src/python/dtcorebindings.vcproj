@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="boost_python_debug.lib python24.lib"
-				OutputFile="../../../bin\dtCore.pyd"
+				OutputFile="../../../bin\PyDtCored.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
@@ -82,7 +82,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="boost_python.lib python24.lib"
-				OutputFile="../../../bin\dtCore.pyd"
+				OutputFile="../../../bin\PyDtCore.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
