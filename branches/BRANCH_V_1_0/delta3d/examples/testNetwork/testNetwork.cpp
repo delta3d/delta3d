@@ -33,16 +33,18 @@ TestNetwork::TestNetwork( const std::string &hostName,
    //must come *after* NetMgr::InitializeGame()
    GNE::PacketParser::defaultRegisterPacket<PositionPacket>();
 
+
    ///if no hostname was supplied, create a server, otherwise create a client
    if (mHostName.empty())
    {
       mNet->SetupServer(4444);
-      GetWindow()->SetWindowTitle("I'm the Host");
+      GetWindow()->SetWindowTitle("I'm the Host: " + GetUniqueId().ToString());
    }
+
    else
    {
       mNet->SetupClient( hostName, 4444 );
-      GetWindow()->SetWindowTitle("I'm a Client");
+      GetWindow()->SetWindowTitle("I'm a Client: " + GetUniqueId().ToString());
    }
 }
 
@@ -79,7 +81,7 @@ void TestNetwork::KeyPressed(   Keyboard*      keyboard,
          {
             //send a "ping" packet for latency info
             GNE::PingPacket ping;
-            mNet->SendPacketToAll(ping);
+            mNet->SendPacket("all", ping);
          }
          break;
 
@@ -114,6 +116,6 @@ void TestNetwork::SendPosition()
    xform.GetTranslation(xyz);
    xform.GetRotation(hpr);
 
-   PositionPacket packet(xyz, hpr);
-   mNet->SendPacketToAll( packet );
+   PositionPacket packet(xyz, hpr, GetUniqueId().ToString());
+   mNet->SendPacket("all", packet );
 }

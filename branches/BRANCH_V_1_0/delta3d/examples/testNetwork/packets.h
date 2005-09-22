@@ -15,7 +15,7 @@ class PositionPacket : public GNE::Packet
 {
 public:
 
-   PositionPacket( osg::Vec3 xyz, osg::Vec3 hpr);
+   PositionPacket( osg::Vec3 xyz, osg::Vec3 hpr, const std::string &ownerID);
 
    ///default constructor
    PositionPacket();
@@ -35,6 +35,7 @@ public:
 
    osg::Vec3 mXYZ;
    osg::Vec3 mHPR;
+   std::string mOwnerID;
 };
 
 #endif //PACKETS_INCLUDED

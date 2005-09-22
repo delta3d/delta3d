@@ -48,11 +48,38 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
          PositionPacket *pos = (PositionPacket*)next;
          osg::Vec3 newXYZ = pos->mXYZ;
          osg::Vec3 newHPR = pos->mHPR;
+         std::string ownerID = pos->mOwnerID;
 
          Transform xform;
          xform.SetTranslation(newXYZ);
          xform.SetRotation(newHPR);
-         mOtherPlayer->SetTransform(&xform, Transformable::ABS_CS);
+
+         RefPtr<Object> remoteObj = mOtherPlayerList[ownerID];
+         if (remoteObj !=0 ) 
+         {
+            //the player ID is already in our list so lets update it's position
+            remoteObj->SetTransform(&xform, Transformable::ABS_CS);
+         }
+         else
+         {
+            //this player isn't in our list, so let's create him
+            MakePlayer( ownerID );
+         }
+
+         if( GetIsServer() )
+         {
+            //rebroadcast the packet to all connections except for the 
+            //one who sent the packet in the first place
+            ConnectionIterator conns = mConnections.begin();
+            while (conns != mConnections.end()) 
+            {
+               if (conns->first != conn.getRemoteAddress(true).toString())
+               {
+                  SendPacket(conns->first, *next);
+               }
+               ++conns;
+            }            
+         }            
       }
 
       delete next;
@@ -62,34 +89,19 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
    mMutex.release();
 }
 
-void MyNetwork::OnConnect( GNE::SyncConnection &conn )
-{
-   //do the default NetMgr behavior too
-   NetMgr::OnConnect(conn);
-
-   //make a player to represent the server
-   MakePlayer();
-}
 
 ///Create a new player to represent the remote guy
-void MyNetwork::MakePlayer()
+void MyNetwork::MakePlayer(const std::string ownerID)
 {
    mMutex.acquire();
 
-   mOtherPlayer = new dtCore::Object("other guy");
-   mOtherPlayer->LoadFile("models/uh-1n.ive");
-   Scene::GetInstance(0)->AddDrawable(mOtherPlayer.get());
+   LOG_INFO("making a new remote player named: " + ownerID);
+
+   mOtherPlayerList[ownerID] = new dtCore::Object(ownerID);
+   mOtherPlayerList[ownerID]->LoadFile("models/uh-1n.ive");
+   Scene::GetInstance(0)->AddDrawable( mOtherPlayerList[ownerID].get() );
 
    mMutex.release();
-}
-
-void MyNetwork::OnNewConn( GNE::SyncConnection &conn)
-{
-   //do the default NetMgr behavior too
-   NetMgr::OnNewConn(conn);
-
-   //make a player to represent the connected client
-   MakePlayer();
 }
 
 
@@ -100,8 +112,12 @@ void MyNetwork::OnExit( GNE::Connection &conn)
 
    mMutex.acquire();
 
-   //the other player exited the network, remove his representation
-   Scene::GetInstance(0)->RemoveDrawable(mOtherPlayer.get());
+   //todo: the other player exited the network, remove his representation
 
    mMutex.release();
+}
+
+void MyNetwork::OnDisconnect( GNE::Connection &conn)
+{
+  RemoveConnection(&conn);
 }
