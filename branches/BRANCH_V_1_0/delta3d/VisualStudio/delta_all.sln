@@ -310,6 +310,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspectorBindings", "src\
 		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09} = {7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtutilbindings", "src\python\dtutilbindings.vcproj", "{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -520,6 +524,10 @@ Global
 		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.Build.0 = Debug|Win32
 		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.ActiveCfg = Release|Win32
 		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.Build.0 = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Debug.ActiveCfg = Debug|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Debug.Build.0 = Debug|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Release.ActiveCfg = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
