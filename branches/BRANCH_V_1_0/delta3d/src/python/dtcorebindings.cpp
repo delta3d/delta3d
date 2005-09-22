@@ -19,6 +19,7 @@ void initEffectManagerBindings();
 void initEnvEffectBindings();
 void initEnvironmentBindings();
 void initFlyMotionModelBindings();
+void initFPSMotionModelBindings();
 void initInfiniteLightBindings();
 void initInfiniteTerrainBindings();
 void initInputDeviceBindings();
@@ -68,7 +69,11 @@ void NotifyWrap(NotifySeverity ns, const char* msg)
 BOOST_PYTHON_MODULE(PyDtCore)
 {
    def("SetDataFilePathList", SetDataFilePathList);
+   def("GetDataFilePathList", GetDataFilePathList);
    def("GetDeltaDataPathList", GetDeltaDataPathList);
+   def("GetDeltaRootPath", GetDeltaRootPath);
+   def("GetEnvironment", GetEnvironment);
+
    def("SetNotifyLevel", SetNotifyLevel);
    def("Notify", NotifyWrap);
    

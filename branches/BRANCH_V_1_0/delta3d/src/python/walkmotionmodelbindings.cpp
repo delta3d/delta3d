@@ -35,5 +35,7 @@ void initWalkMotionModelBindings()
       .def("SetMaximumSidestepSpeed", &WalkMotionModel::SetMaximumSidestepSpeed)
       .def("GetMaximumSidestepSpeed", &WalkMotionModel::GetMaximumSidestepSpeed)
       .def("SetHeightAboveTerrain", &WalkMotionModel::SetHeightAboveTerrain)
-      .def("GetHeightAboveTerrain", &WalkMotionModel::GetHeightAboveTerrain);
+      .def("GetHeightAboveTerrain", &WalkMotionModel::GetHeightAboveTerrain)
+      .def("SetMaximumStepUpDistance", &WalkMotionModel::SetMaximumStepUpDistance)
+      .def("GetMaximumStepUpDistance", &WalkMotionModel::GetMaximumStepUpDistance);
 }
