@@ -14,7 +14,7 @@ class ApplicationWrap : public Application
 {
    public:
 
-      ApplicationWrap(PyObject* self, std::string configFilename = "")
+      ApplicationWrap(PyObject* self,const std::string& configFilename = "")
          : Application(configFilename),
            mSelf(self)
       {}
