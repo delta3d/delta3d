@@ -88,26 +88,25 @@ dtCore::Timer_t Stats::UpdateFrameTick()
 
 
 //Select the next statistics type - will wrap around back to NONE
-void Stats::SelectNextType(void)
+void Stats::SelectNextType()
 {
    Statistics::statsType type = Statistics::STAT_NONE;
 
-   switch (mPrintStats) {
-   case Statistics::STAT_NONE: type = Statistics::STAT_FRAMERATE;  	break;
-   case Statistics::STAT_FRAMERATE: type = Statistics::STAT_GRAPHS; 	break;
-   case Statistics::STAT_GRAPHS:  type = Statistics::STAT_PRIMS;  	break;
-   case Statistics::STAT_PRIMS: type = Statistics::STAT_PRIMSPERVIEW;    	break;
-   case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;  break;
-   case Statistics::STAT_PRIMSPERBIN: type = Statistics::STAT_DC;   break;
-   case Statistics::STAT_DC: type = Statistics::STAT_NONE;      break;
-   case Statistics::STAT_RESTART: type = Statistics::STAT_NONE; break;
-   default:
-      break;
+   switch( mPrintStats ) 
+   {
+      case Statistics::STAT_NONE:         type = Statistics::STAT_FRAMERATE;     break;
+      case Statistics::STAT_FRAMERATE:    type = Statistics::STAT_GRAPHS; 	      break;
+      case Statistics::STAT_GRAPHS:       type = Statistics::STAT_PRIMS;  	      break;
+      case Statistics::STAT_PRIMS:        type = Statistics::STAT_PRIMSPERVIEW;  break;
+      case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;   break;
+      case Statistics::STAT_PRIMSPERBIN:  type = Statistics::STAT_DC;            break;
+      case Statistics::STAT_DC:           type = Statistics::STAT_NONE;          break;
+      case Statistics::STAT_RESTART:      type = Statistics::STAT_NONE;          break;
+      default:                                                                   break;
    }
    
    SelectType(type);
 }
-
 
 //------------------------------------------------------------------
 // Stats::selectType
