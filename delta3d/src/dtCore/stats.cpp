@@ -550,7 +550,8 @@ void Stats::InitTexts()
    {//#0
       osg::Geode* geode = new osg::Geode();
       mFrameRateCounterText = new osgText::Text;
-      mFrameRateCounterText->setFont("fonts/arial.ttf");
+      //mFrameRateCounterText->setFont("fonts/arial.ttf");
+      mFrameRateCounterText->setFont("fonts/VeraMono.ttf");
       mFrameRateCounterText->setColor(colorFR);
       mFrameRateCounterText->setPosition(pos);
       mFrameRateCounterText->setAlignment(osgText::Text::BASE_LINE);
@@ -563,7 +564,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+190.f, 1000.f, 0.f);
       mUpdateTimeText = new osgText::Text;
-      mUpdateTimeText->setFont("fonts/arial.ttf");
+      mUpdateTimeText->setFont("fonts/VeraMono.ttf");
       mUpdateTimeText->setColor(colorUpdate);
       mUpdateTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mUpdateTimeText->setPosition(pos);
@@ -577,7 +578,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+450.f, 1000.f, 0.f);
       mCullTimeText = new osgText::Text;
-      mCullTimeText->setFont("fonts/arial.ttf");
+      mCullTimeText->setFont("fonts/VeraMono.ttf");
       mCullTimeText->setColor(colorCull);
       mCullTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mCullTimeText->setPosition(pos);
@@ -591,7 +592,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+700.f, 1000.f, 0.f);
       mDrawTimeText = new osgText::Text;
-      mDrawTimeText->setFont("fonts/arial.ttf");
+      mDrawTimeText->setFont("fonts/VeraMono.ttf");
       mDrawTimeText->setColor(colorDraw);
       mDrawTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mDrawTimeText->setPosition(pos);
@@ -605,7 +606,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+960.f, 1000.f, 0.f);
       mFrameRateTimeText = new osgText::Text;
-      mFrameRateTimeText->setFont("fonts/arial.ttf");
+      mFrameRateTimeText->setFont("fonts/VeraMono.ttf");
       mFrameRateTimeText->setColor(swapColor);
       mFrameRateTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mFrameRateTimeText->setPosition(pos);
@@ -619,7 +620,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos, 880.f, 0.f);
       mPrimTotalsText = new osgText::Text;
-      mPrimTotalsText->setFont("fonts/COURBD.TTF");
+      mPrimTotalsText->setFont("fonts/VeraMono.ttf");
       mPrimTotalsText->setColor(colorPrimTotal);
       mPrimTotalsText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mPrimTotalsText->setPosition(pos);
@@ -629,7 +630,7 @@ void Stats::InitTexts()
 
       pos.set(leftPos, 880.f, 0.f);
       mPrimTypesText = new osgText::Text;
-      mPrimTypesText->setFont("fonts/COURBD.TTF");
+      mPrimTypesText->setFont("fonts/VeraMono.ttf");
       mPrimTypesText->setColor(colorPrimTotal);
       mPrimTypesText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mPrimTypesText->setPosition(pos);
@@ -639,7 +640,7 @@ void Stats::InitTexts()
 
       pos.set(leftPos, 880.f, 0.f);
       mPrimText = new osgText::Text;
-      mPrimText->setFont("fonts/COURBD.TTF");
+      mPrimText->setFont("fonts/VeraMono.ttf");
       mPrimText->setColor(colorPrimTotal);
       mPrimText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mPrimText->setPosition(pos);
@@ -648,7 +649,7 @@ void Stats::InitTexts()
       geode->addDrawable( mPrimText.get() );
 
       mVerticesText = new osgText::Text;
-      mVerticesText->setFont("fonts/COURBD.TTF");
+      mVerticesText->setFont("fonts/VeraMono.ttf");
       mVerticesText->setColor(colorPrimTotal);
       mVerticesText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mVerticesText->setPosition(pos);
@@ -657,7 +658,7 @@ void Stats::InitTexts()
       geode->addDrawable( mVerticesText.get() );
 
       mTrianglesText = new osgText::Text;
-      mTrianglesText->setFont("fonts/COURBD.TTF");
+      mTrianglesText->setFont("fonts/VeraMono.ttf");
       mTrianglesText->setColor(colorPrimTotal);
       mTrianglesText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mTrianglesText->setPosition(pos);
@@ -672,7 +673,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+960.f, 1000.f, 0.f);
       mDcText = new osgText::Text;
-      mDcText->setFont("fonts/arial.ttf");
+      mDcText->setFont("fonts/VeraMono.ttf");
       mDcText->setColor(colorPrimTotal);
       mDcText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mDcText->setPosition(pos);
