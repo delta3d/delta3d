@@ -181,7 +181,7 @@ Detonation* EffectManager::AddDetonation(const osg::Vec3& position,
    if(mDetonationTypeFilenameMap.count(type) > 0)
    {
       RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
-      options->setObjectCacheHint( osgDB::ReaderWriter::Options::CACHE_ALL );
+      options->setObjectCacheHint( osgDB::ReaderWriter::Options::CACHE_IMAGES );
       
       osg::Node* node = osgDB::readNodeFile( mDetonationTypeFilenameMap[type], options.get() );
       
