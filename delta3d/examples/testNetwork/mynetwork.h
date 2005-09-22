@@ -15,14 +15,14 @@ public:
    virtual ~MyNetwork(void);
 
    virtual void OnReceive( GNE::Connection &conn);
-   virtual void OnConnect( GNE::SyncConnection &conn);
-   virtual void OnNewConn( GNE::SyncConnection &conn);
    virtual void OnExit( GNE::Connection &conn);
+   virtual void OnDisconnect( GNE::Connection &conn);
 
 private:
-   dtCore::RefPtr<dtCore::Object> mOtherPlayer;
+   ///a map of player ID strings and their corresponding Object
+   std::map<std::string, dtCore::RefPtr<dtCore::Object> > mOtherPlayerList;
 
-   void MakePlayer();
+   void MakePlayer(const std::string ownerID);
    GNE::Mutex mMutex;
 };
 
