@@ -217,20 +217,27 @@ void NetMgr::RemoveConnection(GNE::Connection *connection)
  * a server, it will send the packet to all existing connections.  If this is
  * a client, typically there will be only one connection: to the server.
  *
+ * @param address : the string representation of the address to send to or "all"
  * @param packet : the GNE::Packet to send to the world
  * @see AddConnection()
  */
-void NetMgr::SendPacketToAll( GNE::Packet &packet )
+void NetMgr::SendPacket( const std::string &address, GNE::Packet &packet )
 {
    mMutex.acquire();
 
-   ConnectionIterator conns = mConnections.begin();
-   while (conns != mConnections.end())
+   if (address != "all")
    {
-      (*conns).second->stream().writePacket(packet, true);
-      ++conns;
+      mConnections[address]->stream().writePacket(packet, true );
    }
-
+   else
+   {
+      ConnectionIterator conns = mConnections.begin();
+      while (conns != mConnections.end())
+      {
+         (*conns).second->stream().writePacket(packet, true);
+         ++conns;
+      }
+   }
    mMutex.release();
 }
 
