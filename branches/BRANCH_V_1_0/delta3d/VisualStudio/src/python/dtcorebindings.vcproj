@@ -154,6 +154,9 @@
 				RelativePath="..\..\..\src\python\flymotionmodelbindings.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\python\fpsmotionmodelbindings.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\python\infinitelightbindings.cpp">
 			</File>
 			<File
