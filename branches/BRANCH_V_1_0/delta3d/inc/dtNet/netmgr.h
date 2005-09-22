@@ -63,11 +63,14 @@ namespace dtNet
       ///Shutdown the networking
       void Shutdown();
 
-      ///Send a packet to all connections
-      void SendPacketToAll( GNE::Packet &packet );
+      ///Send a packet to the given address
+      void SendPacket( const std::string &address, GNE::Packet &packet );
 
       ///Get the number of connections to the network
       int GetNumConnections() const {return mConnections.size(); }
+
+      ///Is this instance setup as a server?
+      bool GetIsServer() const {return mIsServer;}
 
 
       //////////////////////////////////////////////////////////////////////////
@@ -111,8 +114,6 @@ namespace dtNet
 
       ///Remove an existing GNE::Connection from the list of connections
       void RemoveConnection(GNE::Connection *connection);
-
-   private:
 
       bool mInitialized; ///<has the network been inititialed yet?
       bool mIsServer; ///<are we a server?
