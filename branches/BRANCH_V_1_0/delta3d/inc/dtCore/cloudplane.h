@@ -62,19 +62,17 @@ namespace dtCore
                  float density,
                  int   texSize,
                  float height,
-                 std::string name = "CloudPlane");
+                 const std::string& name = "CloudPlane");
       
       ~CloudPlane();
 
-      //virtual osg::Group *GetNode(void) {return mNode.get();}
-
       ///the virtual overloaded draw function
-      virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
-          double sun_angle, double sunAzimuth,
-          double vis);
+      virtual void Repaint(   osg::Vec4 sky_color, osg::Vec4 fog_color, 
+                              double sun_angle, double sunAzimuth,
+                              double vis);
 
       ///@return height of skyplane
-      float GetHeight(void) { return mHeight; };
+      float GetHeight() { return mHeight; };
 
    private:
        class MoveEarthySkyWithEyePointTransform : public osg::Transform
