@@ -38,6 +38,7 @@ void initOrbitMotionModelBindings();
 
 #ifndef WIN32
 void initOSGVec3();
+void initOSGVec4();
 void initOSGMatrix();
 void initOSGMath();
 #endif //WIN32
@@ -89,6 +90,7 @@ BOOST_PYTHON_MODULE(PyDtCore)
 
    #ifndef WIN32
    initOSGVec3();
+   initOSGVec4();
    initOSGMatrix();
    initOSGMath();
    #endif //WIN32
