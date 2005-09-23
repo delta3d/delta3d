@@ -28,7 +28,7 @@ CloudPlane::CloudPlane( int   octaves,
                         float density,
                         int   texSize,
                         float height,
-                        std::string name )
+                        const std::string& name )
    : EnvEffect(name),
      mGeode(0),
      mPlane(0),
