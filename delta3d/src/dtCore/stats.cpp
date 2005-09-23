@@ -4,10 +4,13 @@
 #include <osg/MatrixTransform>
 #include <osg/Projection>
 #include <osg/Switch>
+#include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 using namespace osg;
 using namespace osgUtil;
 using namespace dtCore;
+using namespace dtUtil;
 
 //------------------------------------------------------------------
 // Stats
@@ -97,9 +100,9 @@ void Stats::SelectNextType()
       case Statistics::STAT_NONE:         type = Statistics::STAT_FRAMERATE;     break;
       case Statistics::STAT_FRAMERATE:    type = Statistics::STAT_GRAPHS; 	      break;
       case Statistics::STAT_GRAPHS:       type = Statistics::STAT_PRIMS;  	      break;
-      case Statistics::STAT_PRIMS:        type = Statistics::STAT_PRIMSPERVIEW;  break;
-      case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;   break;
-      case Statistics::STAT_PRIMSPERBIN:  type = Statistics::STAT_DC;            break;
+      case Statistics::STAT_PRIMS:        type = Statistics::STAT_DC;            break;
+      //case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;   break; //not supported
+      //case Statistics::STAT_PRIMSPERBIN:  type = Statistics::STAT_DC;            break; //not supported
       case Statistics::STAT_DC:           type = Statistics::STAT_NONE;          break;
       case Statistics::STAT_RESTART:      type = Statistics::STAT_NONE;          break;
       default:                                                                   break;
@@ -137,7 +140,8 @@ void Stats::SelectType(osgUtil::Statistics::statsType type)
    if ((mPrintStats==Statistics::STAT_PRIMSPERVIEW) ||
       (mPrintStats==Statistics::STAT_PRIMSPERBIN))
    {
-      mPrintStats = Statistics::STAT_DC;
+      //mPrintStats = Statistics::STAT_DC;
+      LOG_WARNING("Statistics 'PRIMPERVIEW/PRIMPERBIN' not supported");
    }
 
    // count depth complexity by incrementing the stencil buffer every
@@ -152,7 +156,11 @@ void Stats::SelectType(osgUtil::Statistics::statsType type)
          glStencilOp(GL_INCR ,GL_INCR ,GL_INCR);
       }                     // skip this option
       else
-         mPrintStats++;
+      {
+         LOG_WARNING("Depth complexity can't be calculated: no stencil planes available");
+         SelectNextType();
+         //mPrintStats++;
+      }
    }
 
    EnableTextNodes(mPrintStats);
