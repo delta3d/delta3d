@@ -18,7 +18,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/operators.hpp>
 #include <boost/python/copy_non_const_reference.hpp>
-#include <python/held_ptr.hpp>
+#include <python/heldptr.h>
 
 using namespace boost::python;
 

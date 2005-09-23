@@ -37,6 +37,7 @@ if CheckForBoost() and OS != 'darwin' :
                      'objectbindings.cpp',
                      'orbitmotionmodelbindings.cpp',
                      'osgvec3.cpp',
+                     'osgvec4.cpp',
                      'osgmath.cpp',
                      'osgmatrix.cpp',
                      'particlesystembindings.cpp',
