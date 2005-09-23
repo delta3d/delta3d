@@ -107,7 +107,7 @@ void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 }
 
 
-Camera::Camera(std::string name) :
+Camera::Camera( const std::string& name) :
 mWindow(NULL),
 mScene(NULL)
 {
@@ -225,12 +225,12 @@ void Camera::SetClearColor(const osg::Vec4& color)
    GetSceneHandler()->GetSceneView()->setClearColor(mClearColor);
 }
 
-void Camera::GetClearColor( float *r, float *g, float *b, float *a)
+void Camera::GetClearColor( float& r, float& g, float& b, float& a )
 {
-   *r = mClearColor[0];
-   *g = mClearColor[1];
-   *b = mClearColor[2];
-   *a = mClearColor[3];
+   r = mClearColor[0];
+   g = mClearColor[1];
+   b = mClearColor[2];
+   a = mClearColor[3];
 }
 
 void Camera::SetPerspective(double hfov, double vfov, double nearClip, double farClip)
@@ -261,23 +261,6 @@ bool Camera::ConvertToPerspective( float d )
    t = mCamera.get()->getLens()->convertToPerspective(d);
    return t;
 }
-
-/*void Camera::Apply( float xshear=0.0f, float yshear=0.0 )
-{
-   mCamera.get()->getLens()->apply(xshear, yshear);
-}*/
-
-/*void Camera::GenerateMatrix( float xshear, float yshear, Matrix::value_type matrix[16] )
-{
-   mCamera.get()->getLens()->generateMatrix(xshear, yshear, Matrix);
-}*/
-
-/*void Camera::GetParams( double &left, double &right, 
-                double &bottom, double &top, 
-                double &nearClip, double &farClip )
-{
-	mCamera.get()->getLens()->getParams(&left, &right, &bottom, &top, &nearClip, &farClip);
-}*/
 
 float Camera::GetHorizontalFov()
 {
