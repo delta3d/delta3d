@@ -99,7 +99,7 @@ namespace dtCore
          dtCore::Timer_t mStartTime;
       };
 
-      Camera(std::string name = "camera");
+      Camera( const std::string& name = "camera");
       virtual ~Camera();
       
       ///Use the supplied DeltaWin to draw into
@@ -124,7 +124,7 @@ namespace dtCore
       void SetClearColor(const osg::Vec4& v);
       
       ///Get the color that non-geometry in the Scene should be rendered
-      void GetClearColor( float *r, float *g, float *b, float *a);
+      void GetClearColor( float& r, float& g, float& b, float& a);
       
       ///Get the color that non-geometry in the Scene should be rendered
       void GetClearColor(osg::Vec4& color) {color = mClearColor;}
@@ -147,14 +147,6 @@ namespace dtCore
 
       ///enable perspective mode
       bool ConvertToPerspective( float d );
-
-//      void Apply( float xshear=0.0f, float yshear=0.0 );
-
-//      void GenerateMatrix( float xshear, float yshear, Matrix::value_type matrix[16] );
-
-//      void GetParams( double &left, double &right, 
-//                      double &bottom, double &top, 
-//                      double &nearClip, double &farClip );
 
       ///@return HOV
       float GetHorizontalFov();
