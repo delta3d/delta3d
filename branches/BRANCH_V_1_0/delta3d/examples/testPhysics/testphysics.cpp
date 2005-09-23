@@ -166,6 +166,11 @@ protected:
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
    {
+      if( key == Producer::Key_S )
+      {
+         GetCamera()->SetNextStatisticsType();
+      }
+      
       if (key == Producer::Key_Escape)
       {
          while( !mToAdd.empty() )    mToAdd.pop();
