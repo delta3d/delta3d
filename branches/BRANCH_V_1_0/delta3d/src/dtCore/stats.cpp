@@ -240,8 +240,9 @@ void Stats::ShowStats()
     osg::Vec4 swap_color(1.0f,0.5f,0.5f,1.0f);
 
     char clin[72];            // buffer to print
-    sprintf(clin,"App %.2f ms.", timeApp);
-    mUpdateTimeText->setText(clin);
+    //disabled the display of app time because it's not currently implemented
+    //sprintf(clin,"App %.2f ms.", timeApp);    
+    mUpdateTimeText->setText("App N/A");  
 
     sprintf(clin,"Cull %.2f ms.", timeCull);
     mCullTimeText->setText(clin);
