@@ -20,3 +20,5 @@ SOURCES += $$SRC_GLOB
 
 INCLUDEPATH = ../../../inc
 INCLUDEPATH += ../../../utilities/editor/inc
+
+

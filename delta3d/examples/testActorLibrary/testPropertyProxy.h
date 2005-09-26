@@ -133,6 +133,24 @@ public:
     * Sets the test value
     * @param value Test value
     */
+    void setReadOnlyTestInt(int value)
+    {
+        myReadOnlyInt = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    int getReadOnlyTestInt()
+    {
+        return myReadOnlyInt;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
     void setTestLong(long value)
     {
         myLong = value;
@@ -205,6 +223,42 @@ public:
     * Sets the test value
     * @param value Test value
     */
+    void setTestVec4f(const osg::Vec4f &value)
+    {
+        myVec4f = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    osg::Vec4d getTestVec4d()
+    {
+        return myVec4d;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
+    void setTestVec4d(const osg::Vec4d &value)
+    {
+        myVec4d = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    osg::Vec4f getTestVec4f()
+    {
+        return myVec4f;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
     void setTestVec2(const osg::Vec2 &value)
     {
         myVec2 = value;
@@ -223,6 +277,42 @@ public:
     * Sets the test value
     * @param value Test value
     */
+    void setTestVec2f(const osg::Vec2f &value)
+    {
+        myVec2f = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    osg::Vec2f getTestVec2f()
+    {
+        return myVec2f;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
+    void setTestVec2d(const osg::Vec2d &value)
+    {
+        myVec2d = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    osg::Vec2d getTestVec2d()
+    {
+        return myVec2d;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
     void setTestVec3(const osg::Vec3 &value)
     {
         myVec3 = value;
@@ -235,6 +325,42 @@ public:
     osg::Vec3 getTestVec3()
     {
         return myVec3;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
+    void setTestVec3f(const osg::Vec3f &value)
+    {
+        myVec3f = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    osg::Vec3f getTestVec3f()
+    {
+        return myVec3f;
+    }
+
+    /**
+    * Sets the test value
+    * @param value Test value
+    */
+    void setTestVec3d(const osg::Vec3d &value)
+    {
+        myVec3d = value;
+    }
+
+    /**
+    * Gets the Test value
+    * @return the test value
+    */
+    osg::Vec3d getTestVec3d()
+    {
+        return myVec3d;
     }
 
     void setTestEnum(TestEnum &mode) {
@@ -284,7 +410,7 @@ protected:
     virtual ~ExampleTestPropertyProxy() { }
 
 private:
-    int myInt;
+    int myInt, myReadOnlyInt;
     float myFloat;
     double myDouble;
     long myLong;
@@ -294,6 +420,12 @@ private:
     osg::Vec2 myVec2;
     osg::Vec3 myVec3;
     osg::Vec4 myVec4;
+    osg::Vec2 myVec2f;
+    osg::Vec3 myVec3f;
+    osg::Vec4 myVec4f;
+    osg::Vec2 myVec2d;
+    osg::Vec3 myVec3d;
+    osg::Vec4 myVec4d;
     osg::Vec4 myColor;
     TestEnum *myEnum;
     std::string mySound;

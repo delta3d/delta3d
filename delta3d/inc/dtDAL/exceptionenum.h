@@ -53,7 +53,7 @@ public:
 
    static ExceptionEnum InvalidActorException;
 
-private:
+protected:
    ExceptionEnum(const std::string &name) : Enumeration(name)
    {
       AddInstance(this);

@@ -39,7 +39,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt; libcmtd"
-				ImportLibrary="..\..\..\lib\dtHLABindingsD.lib"/>
+				ImportLibrary="Debug/dtHLABindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -87,7 +87,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libc; libcmt"
-				ImportLibrary="..\..\..\lib\dtHLABindings.lib"/>
+				ImportLibrary="Release/dtHLABindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

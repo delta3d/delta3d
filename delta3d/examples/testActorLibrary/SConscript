@@ -7,7 +7,7 @@ Import ('*')
 
 if OS == 'darwin':
    overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-   overrideShSuffix = '.so'
+   overrideShSuffix = '.dylib'
 else:
    overrideShLink = ''
    overrideShSuffix = ''
@@ -18,9 +18,12 @@ sources = SGlob('*.cpp')
 testActorLibraryDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenThreads', 'osg',
                         'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
                         'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js',
-                        'Producer', 'opengl', 'dtActors', 'dtSORAX', 'User32',
+                        'Producer', 'opengl', 'dtSORAX', 'User32',
                         'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
                         'CoreFoundation', 'IOKit', 'Carbon' ]
+
+if OS == 'windows':
+   testActorLibraryDeps += ['dtActors']
 
 testActorLibrary = BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
                              overrideShLinkFlags = overrideShLink,
