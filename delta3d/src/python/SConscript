@@ -63,6 +63,8 @@ if CheckForBoost() and OS != 'darwin' :
    'dtAudio' : [ 'audiomanagerbindings.cpp', 'dtaudiobindings.cpp', 'listenerbindings.cpp', 'soundeffectbinderbindings.cpp' ],
     
    'dtChar' : [ 'characterbindings.cpp', 'dtcharbindings.cpp' ],
+
+   'dtDAL'  : [ 'actorproxybindings.cpp' ],
     
    'dtInspector' : [ 'dtinspectorbindings.cpp' ],
     
@@ -96,6 +98,7 @@ if CheckForBoost() and OS != 'darwin' :
       dtAbcBindingsTarget = 'dtABCBindingsd'
       dtAudioBindingsTarget = 'dtAudioBindingsd'
       dtCharBindingsTarget = 'dtCharBindingsd'
+      dtDALBindingsTarget = 'dtDALBindingsd'
       dtInspectorBindingsTarget = 'dtInspectorBindingsd'
       dtHlaBindingsTarget = 'dtHLABindingsd'
       dtSoarxBindingsTarget = 'dtSOARXBindingsd'
@@ -104,6 +107,7 @@ if CheckForBoost() and OS != 'darwin' :
       dtAbcBindingsTarget = 'dtABCBindings'
       dtAudioBindingsTarget = 'dtAudioBindings'
       dtCharBindingsTarget = 'dtCharBindings'
+      dtDALBindingsTarget = 'dtDALBindings'
       dtInspectorBindingsTarget = 'dtInspectorBindings'
       dtHlaBindingsTarget = 'dtHLABindings'
       dtSoarxBindingsTarget = 'dtSOARXBindings'
@@ -112,9 +116,10 @@ if CheckForBoost() and OS != 'darwin' :
    pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = pythonDeps + [dtLibs['dtABC']] )
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = pythonDeps + [dtLibs['dtAudio']] )
    pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = pythonDeps + [dtLibs['dtChar']] )
+   pythonDtDALLib = env.SharedLibrary(  dtDALBindingsTarget,    pythonSrcs['dtDAL'],   LIBS = pythonDeps + [dtLibs['dtDAL']] )
    pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = pythonDeps + [dtLibs['dtInspector']] )
 
-   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtInspectorLib )
+   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtInspectorLib )
    
    if env.get('rti') != 0 :
       pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = pythonDeps + [dtLibs[ 'dtHLA' ]] )
@@ -142,6 +147,7 @@ if CheckForBoost() and OS != 'darwin' :
       dtAbcPydTarget = '#'+dir+'/PyDtABCd.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudiod.'+suffix
       dtCharPydTarget = '#'+dir+'/PyDtChard.'+suffix
+      dtDALPydTarget = '#'+dir+'/PyDtDALd.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspectord.'+suffix
       dtSoarxPydTarget = '#'+dir+'/PyDtSOARXd.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLAd.'+suffix
@@ -150,6 +156,7 @@ if CheckForBoost() and OS != 'darwin' :
       dtAbcPydTarget = '#'+dir+'/PyDtABC.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudio.'+suffix
       dtCharPydTarget = '#'+dir+'/PyDtChar.'+suffix
+      dtDALPydTarget = '#'+dir+'/PyDtDAL.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspector.'+suffix
       dtSoarxPydTarget = '#'+dir+'/PyDtSOARX.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLA.'+suffix
@@ -158,11 +165,13 @@ if CheckForBoost() and OS != 'darwin' :
                      dtAbcPydTarget, \
                      dtAudioPydTarget, \
                      dtCharPydTarget, \
+                     dtDALPydTarget, \
                      dtInspectorPydTarget ], \
                   [  pythonDtCoreLib[0], \
                      pythonDtAbcLib[0], \
                      pythonDtAudioLib[0], \
                      pythonDtCharLib[0], \
+                     pythonDtDALLib[0], \
                      pythonDtInspectorLib[0] ] )
 
    if pythonDtHlaLib is not None:
@@ -176,6 +185,7 @@ if CheckForBoost() and OS != 'darwin' :
                               pythonDtAbcLib[1:], \
                               pythonDtAudioLib[1:], \
                               pythonDtCharLib[1:], \
+                              pythonDtDALLib[1:], \
                               pythonDtInspectorLib[1:], \
                               pythonDtSoarxLib[1:] ] )
 
