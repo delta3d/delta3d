@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="..\..\..\src\dtTerrain\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtTerrain\windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -27,9 +27,9 @@
 				BufferSecurityCheck="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				AssemblerListingLocation="$(IntDir)"
+				ObjectFile="$(IntDir)/"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
@@ -47,7 +47,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/dtTerrain.pdb"
 				SubSystem="0"
-				ImportLibrary="..\..\..\lib\$(TargetName).lib"
+				ImportLibrary="..\..\..\lib\dtTerraind.lib"
 				TargetMachine="0"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -85,7 +85,8 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
+				AssemblerListingLocation="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>
@@ -103,7 +104,7 @@
 				SubSystem="0"
 				OptimizeReferences="0"
 				EnableCOMDATFolding="0"
-				ImportLibrary="..\..\..\lib\$(TargetName).lib"
+				ImportLibrary="..\..\..\lib\dtTerrain.lib"
 				TargetMachine="0"/>
 			<Tool
 				Name="VCMIDLTool"/>
