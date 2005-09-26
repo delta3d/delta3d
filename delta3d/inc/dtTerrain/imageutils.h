@@ -26,7 +26,7 @@
 #include <osgDB/FileUtils>
 #include <dtCore/refptr.h>
 #include <dtCore/physical.h>
-#include <ogrsf_frmts.h>
+//#include <ogrsf_frmts.h>
 #include "dtTerrain/terrain_export.h"
 
 namespace dtTerrain
