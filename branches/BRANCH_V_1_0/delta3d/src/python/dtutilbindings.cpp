@@ -2,13 +2,19 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#include <python/dtpython.h>
+#include <boost/python.hpp>
 
-//#include <dtUtil/dtutil.h>
+void init_NoiseBindings();
+void init_MatrixUtilBindings();
+void init_PolarDecompBindings();
+void init_LogBindings();
 
-//void init_PUTFUNCTIONNAMEHERE_Bindings();
 
-//BOOST_PYTHON_MODULE(PyDtUtil)
-//{
-   //init_PUTFUNCTIONNAMEHERE_Bindings();/
-//}
+BOOST_PYTHON_MODULE(PyDtUtil)
+{
+   init_NoiseBindings();
+   init_MatrixUtilBindings();
+   init_PolarDecompBindings();
+   init_LogBindings();
+}
+

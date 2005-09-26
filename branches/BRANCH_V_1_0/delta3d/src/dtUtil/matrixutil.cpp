@@ -4,15 +4,6 @@
 using namespace dtUtil;
 using namespace osg;
 
-MatrixUtil::MatrixUtil()
-{
-
-}
-
-MatrixUtil::~MatrixUtil()
-{
-
-}
 
 void MatrixUtil::Print( const Matrix& matrix )
 {
