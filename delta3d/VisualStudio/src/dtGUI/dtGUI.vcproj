@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="..\..\..\src\dtGUI\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtGUI\windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtGUI.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
 				ImportLibrary="../../../lib/dtGUId.lib"
 				TargetMachine="1"/>
@@ -67,8 +67,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="..\..\..\src\dtGUI\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtGUI\windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
