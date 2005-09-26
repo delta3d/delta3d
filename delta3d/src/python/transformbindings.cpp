@@ -3,8 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <boost/python.hpp>
+#include <dtCore/transform.h>
 
-#include "dtCore/transform.h"
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;

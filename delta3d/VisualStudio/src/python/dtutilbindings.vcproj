@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="dtutilbindings"
+	Name="dtUtilBindings"
 	ProjectGUID="{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}"
 	Keyword="Win32Proj">
 	<Platforms>
