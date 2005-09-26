@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         std::ostringstream ss;
         e.Print();
         ss << "Exception (" << e.TypeEnum() << "): " << e.What()
-            << "\n\tLine: " << e.Line() << " File: " << e.File();
+            << "\n\tLine: " << e.Line() << " File: " << e.File(); 
 
         // hide the splash screen if it's up or you can't see the error!
         if (splash != NULL) {

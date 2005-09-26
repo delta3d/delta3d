@@ -36,11 +36,11 @@
 #include <dtDAL/map.h>
 #include <dtUtil/log.h>
 #include <dtDAL/mapxml.h>
-#include <dtDAL/exception.h>
+#include <dtUtil/exception.h>
 #include <dtDAL/fileutils.h>
 #include <dtDAL/datatype.h>
 
-#include <dtDAL/stringtokenizer.h>
+#include <dtUtil/stringutils.h>
 
 #include "ProjectTests.h"
 
@@ -79,7 +79,7 @@ void ProjectTests::setUp() {
 
         fileUtils.FileCopy("../../data/models/dirt.ive", ".", false);
         fileUtils.FileCopy("../../data/models/flatdirt.ive", ".", false);
-    } catch (const dtDAL::Exception& ex) {
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 }
@@ -108,7 +108,7 @@ void ProjectTests::testFileIO() {
         //cleanup
         try {
             fileUtils.DirDelete(Dir1, true);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_ASSERT_MESSAGE((ex.What() + ": Error deleting Directory, but file exists.").c_str(),
                 ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
         }
@@ -124,7 +124,7 @@ void ProjectTests::testFileIO() {
 
         try {
             fileUtils.GetFileInfo(file2 + "euaoeuaiao.ao.u");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             //this should throw a file not found.
             CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
             //correct
@@ -147,7 +147,7 @@ void ProjectTests::testFileIO() {
         try {
             fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("The file copy should have failed since it was attempting to overwrite the file and overwriting was disabled.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
@@ -160,7 +160,7 @@ void ProjectTests::testFileIO() {
 
         try {
             fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, true);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
@@ -175,7 +175,7 @@ void ProjectTests::testFileIO() {
 
         try {
             fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
@@ -190,20 +190,20 @@ void ProjectTests::testFileIO() {
         //copy the file back so we can try to move it again with overwriting.
         try {
             fileUtils.FileCopy(Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
         try {
             fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("Moving the file should have failed since overwriting was turned off.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
         try {
             fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, true);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
@@ -218,7 +218,7 @@ void ProjectTests::testFileIO() {
             //copy a directory into itself with "copy contents only"
             fileUtils.DirCopy(Dir1, Dir1+ dtDAL::FileUtils::PATH_SEPARATOR + ".."+ dtDAL::FileUtils::PATH_SEPARATOR + Dir1, true, true);
             CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
@@ -226,7 +226,7 @@ void ProjectTests::testFileIO() {
             //copy a directory into the parent without contents, so that it would try to recreate the same directory.
             fileUtils.DirCopy(Dir1, ".", true, false);
             CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
@@ -235,7 +235,7 @@ void ProjectTests::testFileIO() {
             fileUtils.DirCopy(Dir1, Dir1, true, false);
             //doing it again should do nothing.
             fileUtils.DirCopy(Dir1, Dir1, true, false);
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             CPPUNIT_FAIL("DirCopy should be able to copy a directory into itself as a subdirectory.");
         }
 
@@ -243,7 +243,7 @@ void ProjectTests::testFileIO() {
             //copy a directory into the parent without contents, so that it would try to recreate the same directory.
             fileUtils.DirCopy(Dir1, Dir1, false, false);
             CPPUNIT_FAIL("DirCopy should not be able to overwrite files if overwriting is set to false.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
         }
 
         std::string Dir3("recursiveDir");
@@ -314,24 +314,24 @@ void ProjectTests::testFileIO() {
         //Testing the delete functionality tests DirGetFiles
         try {
             CPPUNIT_ASSERT_MESSAGE("Deleting an nonexisten Directory should be ok.", fileUtils.DirDelete("gobbletygook", false) == true);
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             CPPUNIT_FAIL("Deleting an nonexisten Directory should be ok.");
         }
 
         //Testing the delete functionality tests DirGetFiles
         try {
             fileUtils.DirDelete(Dir1, false);
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             CPPUNIT_FAIL("Deleting non-empty Directory with a non-recursive call should have returned false.");
         }
         CPPUNIT_ASSERT_MESSAGE(Dir1 + " should still exist.", fileUtils.DirExists(Dir1));
         try {
             fileUtils.DirDelete(Dir1, true);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL((ex.What() + ": Deleting non-empty Directory with a non-recursive call should not have generated an Exception.").c_str());
         }
         CPPUNIT_ASSERT_MESSAGE(Dir1 + " should not still exist.", !fileUtils.DirExists(Dir1));
-    } catch (const dtDAL::Exception& ex) {
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 }
@@ -346,7 +346,7 @@ core::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFr
         return currentTree.end();
 
     std::vector<std::string> tokens;
-    dtDAL::StringTokenizer<dtDAL::IsCategorySeparator>::tokenize(tokens, category);
+    dtUtil::StringTokenizer<dtDAL::IsCategorySeparator>::tokenize(tokens, category);
     //if dt == NULL, assume that the datatype name is at the front of the category.
     if (dt != NULL)
         //Push the name of the datetype because it's the top level of the tree.
@@ -404,13 +404,13 @@ void ProjectTests::testReadonlyFailure() {
 
         try {
             p.SetContext(projectDir);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.What());
         }
 
         try {
             p.SetContext(projectDir, true);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to set context. Exception: ") + e.What());
         }
 
@@ -419,27 +419,27 @@ void ProjectTests::testReadonlyFailure() {
 
         try {
             p.Refresh();
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to call refresh: ") + e.What());
         }
 
         try {
             core::tree<dtDAL::ResourceTreeNode> toFill;
             p.GetResourcesOfType(dtDAL::DataType::STATIC_MESH, toFill);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.What());
         }
 
         try {
             p.GetAllResources();
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.What());
         }
 
         try {
             p.DeleteMap("mojo");
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -447,7 +447,7 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.SaveMap("mojo");
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -455,7 +455,7 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.SaveMapAs("mojo", "a", "b");
             CPPUNIT_FAIL("deleteMap should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -465,7 +465,7 @@ void ProjectTests::testReadonlyFailure() {
             p.AddResource("mojo", std::string("../jojo.ive"),
                 std::string("fun:bigmamajama"), dtDAL::DataType::STATIC_MESH);
             CPPUNIT_FAIL("addResource should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -473,7 +473,7 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.RemoveResource(dtDAL::ResourceDescriptor("",""));
             CPPUNIT_FAIL("removeResource should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -481,7 +481,7 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.CreateResourceCategory("name-o", dtDAL::DataType::STRING);
             CPPUNIT_FAIL("createResourceCategory should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -489,7 +489,7 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.RemoveResourceCategory("name-o", dtDAL::DataType::SOUND, true);
             CPPUNIT_FAIL("removeResourceCategory should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -497,7 +497,7 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.CreateMap("name-o", "testFile");
             CPPUNIT_FAIL("createMap should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
@@ -505,11 +505,11 @@ void ProjectTests::testReadonlyFailure() {
         try {
             p.ClearBackup("name-o");
             CPPUNIT_FAIL("clearBackup should not be allowed on a readoly context.");
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_ASSERT_MESSAGE("Exception should have been ExceptionEnum::ProjectReadOnly",
                 e.TypeEnum() == dtDAL::ExceptionEnum::ProjectReadOnly);
         }
-    } catch (const dtDAL::Exception& ex) {
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 }
@@ -524,7 +524,7 @@ void ProjectTests::testCategories() {
 
         try {
             p.SetContext(projectDir);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string(std::string("Project should have been able to set context. Exception: ") + e.What()).c_str());
         }
 
@@ -540,7 +540,7 @@ void ProjectTests::testCategories() {
                 try {
                     p.CreateResourceCategory("littleFoot", d);
                     CPPUNIT_FAIL("Project should not be able to create a category for a primitive type.");
-                } catch (const dtDAL::Exception&) {
+                } catch (const dtUtil::Exception&) {
                     //correct
                 }
             } else {
@@ -591,7 +591,7 @@ void ProjectTests::testCategories() {
 
 
 
-    } catch (const dtDAL::Exception& ex) {
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 
@@ -608,7 +608,7 @@ void ProjectTests::testResources() {
 
         try {
             p.SetContext(projectDir);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL((std::string("Project should have been able to Set context. Exception: ")
                 + e.What()).c_str());
         }
@@ -639,7 +639,7 @@ void ProjectTests::testResources() {
             p.AddResource("mojo", std::string("../jojo.ive"),
                 std::string("fun:bigmamajama"), dtDAL::DataType::STATIC_MESH);
             CPPUNIT_FAIL("The add resource call to add a non-existent file should have failed.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
             //correct otherwise
         }
@@ -648,7 +648,7 @@ void ProjectTests::testResources() {
             p.AddResource("dirt", std::string("../dirt.ive"),
                 std::string("fun:bigmamajama"), dtDAL::DataType::BOOLEAN);
             CPPUNIT_FAIL("The add resource call to add boolean should have failed.");
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             //should not allow a boolean resource to be added.
             CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectResourceError);
             //correct otherwise
@@ -858,7 +858,7 @@ void ProjectTests::testResources() {
         //this should work fine even if the file is deleted.
         p.RemoveResource(rd);
 
-    } catch (const dtDAL::Exception& ex) {
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 
@@ -878,7 +878,7 @@ void ProjectTests::testProject() {
         try {
             p.SetContext(std::string("/:**/../^^jojo/funky/\\\\/,/,.uchor"));
             CPPUNIT_FAIL("Project should not have been able to Set context.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
@@ -887,7 +887,7 @@ void ProjectTests::testProject() {
         if (osgDB::fileExists(projectDir)) {
             try {
                 fileUtils.DirDelete(projectDir, true);
-            } catch (const dtDAL::Exception& ex) {
+            } catch (const dtUtil::Exception& ex) {
                 CPPUNIT_FAIL(ex.What().c_str());
             }
 
@@ -899,13 +899,13 @@ void ProjectTests::testProject() {
         try {
             p.SetContext(projectDir, true);
             CPPUNIT_FAIL("Project should not have been able to Set the readonly context because it is empty.");
-        } catch (const dtDAL::Exception&) {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
         try {
             p.SetContext(projectDir);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.What()).c_str());
         }
 
@@ -917,7 +917,7 @@ void ProjectTests::testProject() {
 
         try {
             p.SetContext(projectDir, true);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.What()).c_str());
         }
 
@@ -930,7 +930,7 @@ void ProjectTests::testProject() {
         std::string projectDir2("Test2Project");
         try {
             p.SetContext(projectDir2);
-        } catch (const dtDAL::Exception& e) {
+        } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string(std::string("Project should have been able to Set context. Exception: ") + e.What()).c_str());
         }
 
@@ -947,14 +947,14 @@ void ProjectTests::testProject() {
 
         try {
             fileUtils.DirDelete(projectDir, true);
-        } catch (const dtDAL::Exception& ex) {
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
 
         CPPUNIT_ASSERT_MESSAGE("The project Directory should have been deleted.", !osgDB::fileExists(projectDir));
 
-    } catch (const dtDAL::Exception& ex) {
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 

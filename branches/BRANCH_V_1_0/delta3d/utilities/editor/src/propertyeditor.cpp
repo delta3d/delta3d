@@ -116,11 +116,17 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicFloatControl>(&(dtDAL::DataType::FLOAT));
         controlFactory->RegisterType<DynamicDoubleControl>(&(dtDAL::DataType::DOUBLE));
         controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3));
+        controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3F));
+        controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3D));
         controlFactory->RegisterType<DynamicIntControl>(&(dtDAL::DataType::INT));
         controlFactory->RegisterType<DynamicLongControl>(&(dtDAL::DataType::LONGINT));
         controlFactory->RegisterType<DynamicBoolControl>(&(dtDAL::DataType::BOOLEAN));
         controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2));
+        controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2F));
+        controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2D));
         controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4));
+        controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4F));
+        controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4D));
         controlFactory->RegisterType<DynamicEnumControl>(&(dtDAL::DataType::ENUMERATION));
         controlFactory->RegisterType<DynamicColorRGBAControl>(&(dtDAL::DataType::RGBACOLOR));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SOUND));
