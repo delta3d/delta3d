@@ -44,25 +44,40 @@ namespace dtUtil
 
    public:
 
-      SeamlessNoise(int seed = 1023058);
+      SeamlessNoise(unsigned int seed = 1023058);
       ~SeamlessNoise();
+
+      /**
+      * Regenerates the random numbers using the given seed
+      * @param new seed value
+      */
+      void Reseed(unsigned int seed);
 
       /**
       * @param vect_in, a 3D Vector to hash the noise to, for 2D noise pass in a constant z value
       * @param repeat, pass in the frequency or the desired resolution to tile the noise in
+      *        if this param is not passed in the default value will be used
       * @return a float from -1 to 1 
       */
-      float GetNoise(const osg::Vec3f& vect_in, int repeat = 1);
+      float GetNoise(const osg::Vec3f& vect_in, int repeat = -1);
+
+
+      /**
+      * The SetRepeat function will allow a user to change the frequency 
+      * the noise function will repeat
+      */
+      void SetRepeat(int pRepeat){mDefaultRepeat = pRepeat;}
 
    private:
 
-      void BuildTable(int seed);
+      void BuildTable(unsigned int seed);
       float Fade(float t){ return t * t * t * (t * (t * 6 - 15) + 10); }
       float Grad(int hash, float x, float y, float z);
 
+      int mDefaultRepeat;
 
    public:
-
+   
 
 
    };
