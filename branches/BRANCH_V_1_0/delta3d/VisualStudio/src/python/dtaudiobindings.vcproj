@@ -39,7 +39,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libcd; libcmt; msvcrt; libcmtd"
-				ImportLibrary="Debug/dtAudioBindings.lib"/>
+				ImportLibrary="..\..\..\lib\dtAudioBindingsd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -87,7 +87,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libc; libcmt"
-				ImportLibrary="Release/dtAudioBindings.lib"/>
+				ImportLibrary="..\..\..\lib\dtAudioBindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
