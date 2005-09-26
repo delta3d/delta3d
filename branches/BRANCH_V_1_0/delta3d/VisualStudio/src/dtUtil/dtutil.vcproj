@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ul_d.lib openthreadswin32d.lib osgd.lib osgDBd.lib xerces-c_2D.lib"
-				OutputFile="../../../bin/dtutild.dll"
+				OutputFile="../../../bin/dtUtild.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

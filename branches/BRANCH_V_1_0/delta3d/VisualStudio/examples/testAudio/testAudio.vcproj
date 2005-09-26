@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtild.lib xerces-c_2D.lib"
-				OutputFile="../../../bin/testAudioD.exe"
+				OutputFile="../../../bin/testAudiod.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

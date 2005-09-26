@@ -106,7 +106,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtScriptd.lib odbc32.lib odbccp32.lib winmm.lib python24.lib"
-				OutputFile="../../../bin/testPythonD.exe"
+				OutputFile="../../../bin/testPythond.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;$(PYTHON_LIB_PATH)"

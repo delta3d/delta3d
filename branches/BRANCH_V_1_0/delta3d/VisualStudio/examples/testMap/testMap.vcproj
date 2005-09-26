@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtDALd.lib dtActorsd.lib"
-				OutputFile="../../../bin/testMapD.exe"
+				OutputFile="../../../bin/testMapd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(DELTA_LIB);"
 				IgnoreDefaultLibraryNames="libcmt;libcmtd;libcimtd;libcd;msvcrt.lib;libc.lib"

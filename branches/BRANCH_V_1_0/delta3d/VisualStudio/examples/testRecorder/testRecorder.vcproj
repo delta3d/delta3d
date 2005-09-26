@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="osgDBd.lib osgd.lib dtCored.lib dtABCd.lib dtUtild.lib xerces-c_2D.lib"
-				OutputFile="$(OutDir)/$(ProjectName).exe"
+				OutputFile="../../../bin/testRecorderd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMTD"
@@ -88,7 +88,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="osgDB.lib osg.lib dtCore.lib dtABC.lib dtUtil.lib xerces-c_2.lib"
-				OutputFile="$(OutDir)/$(ProjectName).exe"
+				OutputFile="../../../bin/testRecorder.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
