@@ -44,11 +44,11 @@ projectEnv.Append(LIBS = deplibs + mainlibs)
 
 app = projectEnv.Program(allTestProgram, sources)
 projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
-proxyapp = projectEnv.Program(proxyTestProgram,  mainSources + proxySources)
+proxyapp   = projectEnv.Program(proxyTestProgram,    mainSources + proxySources)
 
-Depends(app, testActorLibrary)
+Depends(app,        testActorLibrary)
 Depends(projectapp, testActorLibrary)
-Depends(proxyapp, testActorLibrary)
+Depends(proxyapp,   testActorLibrary)
 
 # Grab all the sources from the dtActors source directory.
 if (app == '[]') :
