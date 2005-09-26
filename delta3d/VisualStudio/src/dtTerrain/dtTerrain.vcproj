@@ -126,66 +126,6 @@
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
-		<Configuration
-			Name="dtTerrain|Win32"
-			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc; ..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DT_TERRAIN_LIBRARY"
-				MinimalRebuild="FALSE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				BufferSecurityCheck="TRUE"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtutild.lib dtDALd.lib dtcored.lib dtabcd.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib openthreadswin32d.lib osgd.lib osgdbd.lib osgparticled.lib osgterraind.lib osgtextd.lib osgutild.lib producerd.lib Rpcrt4.lib sg_d.lib ul_d.lib tinyxmld.lib winmm.lib"
-				OutputFile="../../../bin/dtTerraind.dll"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				IgnoreDefaultLibraryNames="libc.lib;libcmt;libcd;libcmtd"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtTerrain.pdb"
-				SubSystem="0"
-				ImportLibrary="..\..\..\lib\$(TargetName).lib"
-				TargetMachine="0"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
-		</Configuration>
 	</Configurations>
 	<References>
 	</References>
