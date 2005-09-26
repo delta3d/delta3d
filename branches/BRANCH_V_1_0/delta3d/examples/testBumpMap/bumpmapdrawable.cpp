@@ -21,7 +21,7 @@ void BumpMapDrawable::SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& p
 {
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->getUniform( "lightPos" )->set( osg::Vec4(pLightPos[0], pLightPos[1], pLightPos[2], 0.0f));
-   ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[1], pEyePos[2], 0.0f));
+   ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[2], pEyePos[2], 0.0f));
 }
 
 void BumpMapDrawable::SetWireframe(bool pWireframe)

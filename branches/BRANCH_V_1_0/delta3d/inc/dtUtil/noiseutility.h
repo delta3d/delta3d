@@ -66,10 +66,6 @@ typedef Noise2<double, osg::Vec2d> Noise2d;
 typedef Noise3<float, osg::Vec3f> Noise3f;
 typedef Noise3<double, osg::Vec3d> Noise3d;
 
-
-typedef Fractal<float, float, Noise1f> Fractal1f;
-typedef Fractal<double, double, Noise1d> Fractal1d;
-
 typedef Fractal<float, osg::Vec2f, Noise2f> Fractal2f;
 typedef Fractal<double, osg::Vec2d, Noise2d> Fractal2d;
 
