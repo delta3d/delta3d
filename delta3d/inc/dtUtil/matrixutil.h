@@ -38,8 +38,6 @@ namespace dtUtil
    class DT_EXPORT MatrixUtil
    {
    public:
-      MatrixUtil();
-      ~MatrixUtil();
 
       ///Prints a matrix
       static void Print( const osg::Matrix& matrix );  

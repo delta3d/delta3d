@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python_debug.lib python24.lib"
+				AdditionalDependencies="boost_python_debug.lib python24.lib dtUtild.lib osgd.lib"
 				OutputFile="../../../bin\PyDtUtild.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python.lib python24.lib"
+				AdditionalDependencies="boost_python.lib python24.lib dtUtil.lib osg.lib"
 				OutputFile="../../../bin\PyDtUtil.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -129,6 +129,18 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
 				RelativePath="..\..\..\src\python\dtutilbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\logbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\matrixutilbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\noisebindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\polardecompbindings.cpp">
 			</File>
 		</Filter>
 		<Filter
