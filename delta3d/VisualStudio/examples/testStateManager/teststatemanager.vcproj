@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtABCd.lib dtUtild.lib osgd.lib xerces-c_2D.lib osgDBd.lib"
-				OutputFile="../../../bin/testStateManagerD.exe"
+				OutputFile="../../../bin/testStateManagerd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
