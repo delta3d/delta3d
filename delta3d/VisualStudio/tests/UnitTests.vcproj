@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib sg_d.lib ul_d.lib cppunitd.lib"
+				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib"
 				OutputFile="../../tests/UnitTestsd.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../lib;../../ext/lib"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtGameManager.lib dtvis.lib dtUtil.lib sg.lib ul.lib cppunit.lib"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib"
 				OutputFile="../../tests/UnitTests.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../lib;../../ext/lib"
