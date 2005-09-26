@@ -350,7 +350,7 @@ namespace dtTerrain
                               {
                                  osg::BoundingSphere childBS = LeafGroup[vg]->getChild(nc)->getBound();
                                  if ((vegeXformBS._center - childBS._center).length() < (vegeXformBS._radius/4.0f))
-                                    goodposition = FALSE;
+                                    goodposition = false;
                                  nc++;
                               }
                            }
