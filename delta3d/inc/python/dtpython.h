@@ -30,7 +30,7 @@
 #endif
 
 #include <dtCore/deltadrawable.h>
-#include <dtCore/RefPtr.h>
+#include <dtCore/refptr.h>
 #include <osg/ref_ptr>
 
 namespace boost
