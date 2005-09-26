@@ -2,8 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/clouddome.h"
+#include <python/dtpython.h>
+#include <dtCore/clouddome.h>
+#include <dtCore/scene.h>
+#include <osg/Geode>
 
 using namespace boost::python;
 using namespace dtCore;

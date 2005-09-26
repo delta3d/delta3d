@@ -24,18 +24,24 @@
 
 #include <boost/python.hpp>
 
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-#include "ode/src/collision_kernel.h"
-#include "ode/src/objects.h"
+#ifndef WIN32
+#include <ode/src/collision_kernel.h>
+#include <ode/src/objects.h>
 #endif
 
-#include "dtCore/dt.h"
+#include <dtCore/deltadrawable.h>
+#include <dtCore/RefPtr.h>
+#include <osg/ref_ptr>
 
 namespace boost
 {
    namespace python
    {
       template <class T> T* get_pointer(const dtCore::RefPtr<T>& p)
+      {
+         return (T*)p.get();
+      }
+      template <class T> T* get_pointer(const osg::ref_ptr<T>& p)
       {
          return (T*)p.get();
       }

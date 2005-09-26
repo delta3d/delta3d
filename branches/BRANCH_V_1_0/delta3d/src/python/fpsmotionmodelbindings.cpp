@@ -1,5 +1,7 @@
-#include "python/dtpython.h"
-#include "dtCore/fpsmotionmodel.h"
+#include <python/dtpython.h>
+#include <dtCore/fpsmotionmodel.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
