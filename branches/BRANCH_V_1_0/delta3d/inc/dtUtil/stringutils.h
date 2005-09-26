@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+/*
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2004 MOVES Institute
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
 */
 
@@ -89,6 +89,17 @@ namespace dtUtil
       return std::isspace(c,mLocale);
    }
 
+   class IsSlash : public std::unary_function<char, bool>
+   {
+       public:
+           bool operator()(char c) const;
+   };
+
+   inline bool IsSlash::operator()(char c) const
+   {
+       return c == '/';
+   }
+
    /**
    * Trims whitespace off the front and end of a string
    * @param toTrim the string to trim.
@@ -109,6 +120,44 @@ namespace dtUtil
          else
                break;
       }
+   }
+
+   /**
+    * A templated function for taking any of the osg vector types and reading the data from a string.
+    * If the string is empty or "NULL" it will set the vector to all 0s. It expects the data to be the proper number
+    * floating point values.  The function will fail if there are not enough values.
+    *
+    * @param value the string data.
+    * @param vec the vector to fill.
+    * @param size the length of the vector since the osg types have no way to query that.
+    * @return true if reading the data was successful or false if not.
+    */
+   template<class VecType>
+           bool ParseVec(const std::string& value, VecType& vec, const unsigned size)
+   {
+       bool result = true;
+       if (value.empty() || value == "NULL")
+       {
+           for (unsigned i = 0; i < size; ++i)
+           {
+               vec[i] = 0.0;
+           }
+       }
+       else
+       {
+           std::istringstream iss(value);
+           unsigned i;
+           for (i = 0; i < size && !iss.eof(); ++i)
+           {
+               iss >> vec[i];
+           }
+
+            //did we run out of data?
+           if (i < size)
+               result = false;
+       }
+
+       return result;
    }
 
    /** a utility function to convert a basic type into a string.

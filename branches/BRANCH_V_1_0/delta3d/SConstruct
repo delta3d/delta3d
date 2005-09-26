@@ -424,6 +424,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
                   'dtUtil'   : 'dtUtil',
                   'dtBSP'    : 'dtBSP',
                   'dtInspector' : 'dtInspector',
+		  'dtTerrain' : 'dtTerrain',
                   'dtSOARX'  : 'soarx' }
 
    #install headers, there's gotta be a cleaner way ;)
@@ -695,7 +696,7 @@ if OS == 'linux' :
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
   env.Append(FRAMEWORKSPATH=['-F./ext/Frameworks' ])
-  env.Append(CPPFLAGS=['$FRAMEWORKSPATH' ])
+  env.Append(CPPFLAGS=' $FRAMEWORKSPATH ' )
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
   env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
   env['SHLIBSUFFIX'] = '.dylib'
@@ -742,6 +743,7 @@ dtLibs = { 'dtABC'    : 'dtABC',
            'dtUtil'   : 'dtUtil',
            'dtBSP'    : 'dtBSP',
            'dtInspector' : 'dtInspector',
+	   'dtTerrain' : 'dtTerrain',
            'dtSOARX'  : 'dtSOARX' }
 
 if mode == 'debug' and OS == 'windows' :

@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\examples\testWeather\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\examples\testWeather\windows-msvc-debug"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -38,7 +38,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT.lib;libcd.lib;libc.lib;libcmtd.lib;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile="$(OutDir)/testWeather.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -64,8 +64,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\examples\testWeather\windows-msvc-release"
-			IntermediateDirectory="..\..\..\examples\testWeather\windows-msvc-release"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool

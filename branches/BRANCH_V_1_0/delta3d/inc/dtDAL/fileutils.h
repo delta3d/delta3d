@@ -222,7 +222,7 @@ namespace dtDAL
     private:
         FileUtils();
 
-        ~FileUtils();
+        virtual ~FileUtils();
 
         void RecursDeleteDir( bool bRecursive );
 

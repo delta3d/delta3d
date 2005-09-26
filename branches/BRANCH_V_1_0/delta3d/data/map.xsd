@@ -108,8 +108,10 @@
       <xsd:element name="colorRGB" type="ColorRGBType" minOccurs="1" maxOccurs="unbounded"/>
       <xsd:element name="colorRGBA" type="ColorRGBAType" minOccurs="1" maxOccurs="unbounded"/>
       <xsd:sequence>
-        <xsd:element name="resourceType" type="xsd:string" />
-        <xsd:element name="resource" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
+        <!--this needs to be fixed to allow listing mutiple resources -->
+      	<xsd:element name="resourceType" type="xsd:string" />
+        <xsd:element name="resourceDisplayName" type="xsd:string" />
+        <xsd:element name="resource" type="xsd:string" />
       </xsd:sequence>
       <xsd:element name="actorId" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
     </xsd:choice>

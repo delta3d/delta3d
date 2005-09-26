@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\examples\testSound\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\examples\testSound\windows-msvc-debug"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory="Debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -39,7 +39,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcD;libcmtD;msvcrt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName)D.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -65,8 +65,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\examples\testSound\windows-msvc-release"
-			IntermediateDirectory="..\..\..\examples\testSound\windows-msvc-release"
+			OutputDirectory=".\Release"
+			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool

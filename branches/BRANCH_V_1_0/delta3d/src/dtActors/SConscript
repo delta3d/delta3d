@@ -7,7 +7,7 @@ Import ('*')
 
 if OS == 'darwin':
    overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-   overrideShSuffix = '.so'
+   overrideShSuffix = '.dylib'
 else:
    overrideShLink = ''
    overrideShSuffix = ''
