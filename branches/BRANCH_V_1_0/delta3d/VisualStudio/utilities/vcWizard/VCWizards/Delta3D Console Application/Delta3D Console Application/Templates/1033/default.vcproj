@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="windows-msvc-debug"
+			IntermediateDirectory="windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -26,7 +26,7 @@
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(IntDir)/$(ProjectName).pdb"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -39,7 +39,7 @@
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -65,8 +65,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="windows-msvc-release"
+			IntermediateDirectory="windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -78,7 +78,7 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(IntDir)/$(ProjectName).pdb"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="0"/>
@@ -91,6 +91,7 @@
 				AdditionalLibraryDirectories="$(DELTA_LIB)"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

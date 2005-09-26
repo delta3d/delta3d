@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="..\..\..\utilities\Viewer\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\utilities\Viewer\windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt,libcmtd,msvcrt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="../../../bin/Viewer.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -66,8 +66,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="..\..\..\utilities\Viewer\windows-msvc-release"
+			IntermediateDirectory="..\..\..\utilities\Viewer\windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
