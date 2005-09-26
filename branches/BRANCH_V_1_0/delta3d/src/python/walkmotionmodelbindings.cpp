@@ -4,7 +4,8 @@
 
 #include <python/dtpython.h>
 #include <dtCore/walkmotionmodel.h>
-
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/scene.h>
 

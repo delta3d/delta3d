@@ -25,10 +25,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/motionmodel.h"
-
+#include <dtCore/motionmodel.h>
 #include <osgUtil/IntersectVisitor>
-
 
 namespace dtCore
 {
