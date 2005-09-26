@@ -730,21 +730,21 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
 
 depsHash = {}
 
-dtLibs = { 'dtABC'    : 'dtABC',
-           'dtActors' : 'dtActors',
-           'dtAudio'  : 'dtAudio',
-           'dtChar'   : 'dtChar',
-           'dtCore'   : 'dtCore',
-           'dtDAL'    : 'dtDAL',
-           'dtHLA'    : 'dtHLA',
-           'dtGUI'    : 'dtGUI',
-           'dtNet'    : 'dtNet',
-           'dtScript' : 'dtScript',
-           'dtUtil'   : 'dtUtil',
-           'dtBSP'    : 'dtBSP',
+dtLibs = { 'dtABC'       : 'dtABC',
+           'dtActors'    : 'dtActors',
+           'dtAudio'     : 'dtAudio',
+           'dtChar'      : 'dtChar',
+           'dtCore'      : 'dtCore',
+           'dtDAL'       : 'dtDAL',
+           'dtHLA'       : 'dtHLA',
+           'dtGUI'       : 'dtGUI',
+           'dtNet'       : 'dtNet',
+           'dtScript'    : 'dtScript',
+           'dtUtil'      : 'dtUtil',
+           'dtBSP'       : 'dtBSP',
            'dtInspector' : 'dtInspector',
-	   'dtTerrain' : 'dtTerrain',
-           'dtSOARX'  : 'dtSOARX' }
+           'dtTerrain'   : 'dtTerrain',
+           'dtSOARX'     : 'dtSOARX' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
@@ -945,7 +945,8 @@ linkOrder = [
    'rcfgscript', 
    'rbody',
    'CEGUIBase',   
-   'CEGUIOpenGLRenderer' ]
+   'CEGUIOpenGLRenderer',
+   'cppunit' ]
 
 if OS == 'windows' :
    linkOrder = linkOrder + [ 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ]
@@ -1019,6 +1020,7 @@ SConscript( dirs=['utilities'] )
 
 if env.get('unit_tests') :
    SConscript( dirs=['tests'] )
+   Default( [ 'tests' ] )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')
