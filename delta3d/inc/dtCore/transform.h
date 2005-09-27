@@ -21,9 +21,9 @@
 #ifndef DELTA_TRANSFORM
 #define DELTA_TRANSFORM
 
-#include "dtCore/export.h"
-#include "osg/Matrix"
-#include "osg/Vec3"
+#include <dtCore/export.h>
+#include <osg/Matrix>
+#include <osg/Vec3>
 
 namespace dtCore
 {
@@ -42,7 +42,7 @@ namespace dtCore
       ///Set both translation and rotation methods
       virtual void Set( float tx, float ty, float tz, 
                         float h, float p, float r, 
-                        float sx, float sy, float sz ); 
+                        float sx = 1.0f, float sy = 1.0f, float sz = 1.0f ); 
       ///Set both translation and rotation methods
       virtual void Set( const osg::Vec3& xyz, const osg::Vec3& rotation, const osg::Vec3& scale );
       ///Set both translation and rotation methods
