@@ -11,6 +11,7 @@ using namespace boost::python;
 using namespace dtCore;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(EE_overloads, EpsilonEquals, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(S_overloads, Set, 6, 9)
 
 void initTransformBindings()
 {
@@ -42,7 +43,7 @@ void initTransformBindings()
    void (Transform::*SetLookAt2)(float, float, float, float, float, float, float, float, float) = &Transform::SetLookAt;
 
    class_<Transform>("Transform", init<optional<float, float, float, float, float, float, float, float, float> >())
-      .def("Set", Set1)
+      .def("Set", Set1, S_overloads())
       .def("Set", Set2)
       .def("Set", Set3)
       .def("Set", Set4)
