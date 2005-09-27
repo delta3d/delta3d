@@ -36,12 +36,12 @@ void initObjectBindings();
 void initOrbitMotionModelBindings();
 
 
-#ifndef WIN32
+//#ifndef WIN32
 void initOSGVec3();
 void initOSGVec4();
 void initOSGMatrix();
 void initOSGMath();
-#endif //WIN32
+//#endif //WIN32
 
 void initParticleSystemBindings();
 void initPhysicalBindings();
@@ -88,12 +88,12 @@ BOOST_PYTHON_MODULE(PyDtCore)
       .export_values();
 
 
-   #ifndef WIN32
-   initOSGVec3();
+   //#ifndef WIN32
+   initOSGVec3();/*
    initOSGVec4();
    initOSGMatrix();
-   initOSGMath();
-   #endif //WIN32
+   initOSGMath();*/
+   //#endif //WIN32
 
    initBaseBindings();
    initSystemBindings();
