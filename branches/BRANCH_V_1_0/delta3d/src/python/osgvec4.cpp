@@ -9,6 +9,11 @@
 // This software is provided "as is" without express or implied warranty,
 // and with no claim as to its suitability for any purpose.
 
+
+//This code has been modified by Delta3D to work within our framework
+//namely removing the namespace PyOsg and some fixes to help the VS Compiler
+
+
 #include <osg/Vec4>
 
 #include <string>
