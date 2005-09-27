@@ -31,7 +31,7 @@ void initProjectBindings()
    void ( Project::*CB2 )( const std::string& ) = &Project::ClearBackup;
 
    class_< Project, dtCore::RefPtr<Project>, boost::noncopyable >( "Project", no_init )
-      .def( "GetInstance", &Project::GetInstance, return_internal_reference<>() )
+      .def( "GetInstance", &Project::GetInstance, return_value_policy<reference_existing_object>() )
       .staticmethod("GetInstance")
       .def( "IsContextValid", &Project::IsContextValid )
       .def( "SetContext", &Project::SetContext, SC_overloads() )
