@@ -17,18 +17,16 @@ void init_LogBindings()
    Log& (*GetInstance1)() = &Log::GetInstance;
    Log& (*GetInstance2)(const std::string&) = &Log::GetInstance;
 
-
    class_<Log, bases<osg::Referenced>, dtCore::RefPtr<Log>, boost::noncopyable>("Log", no_init)
       .def("LogMessage", LogMessage2, LM_overloads())
       .def("LogHorizRule", &Log::LogHorizRule)
       .def("IsLevelEnabled", &Log::IsLevelEnabled)
       .def("SetLogLevel", &Log::SetLogLevel)
       .def("GetLogStringLevel", &Log::GetLogLevelString)
-      .def("GetInstance", GetInstance1, return_internal_reference<>())
-      .def("GetInstance", GetInstance2, return_internal_reference<>())
+      .def("GetInstance", GetInstance1, return_value_policy<reference_existing_object>())
+      .def("GetInstance", GetInstance2, return_value_policy<reference_existing_object>())
       .staticmethod("GetInstance");
       
-
    enum_<Log::LogMessageType>("LogMessageType")
       .value("LOG_DEBUG", Log::LOG_DEBUG)
       .value("LOG_INFO", Log::LOG_INFO)
