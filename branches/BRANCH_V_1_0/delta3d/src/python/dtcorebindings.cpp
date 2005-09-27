@@ -88,12 +88,10 @@ BOOST_PYTHON_MODULE(PyDtCore)
       .export_values();
 
 
-   //#ifndef WIN32
-   initOSGVec3();/*
+   initOSGVec3();
    initOSGVec4();
    initOSGMatrix();
-   initOSGMath();*/
-   //#endif //WIN32
+   initOSGMath();
 
    initBaseBindings();
    initSystemBindings();
