@@ -14,42 +14,42 @@ class TestMap(Application):
       
       Project.GetInstance().SetContext(contextName)
       myMap = Project.GetInstance().GetMap("MyCoolMap")
-      Project.GetInstance().LoadMapIntoScene(myMap, GetScene())
+      Project.GetInstance().LoadMapIntoScene(myMap, self.GetScene())
       
       # Get the proxies from the map
       proxies = []
-      myMap.FindProxies(proxies, "StaticMesh*")
+      #myMap.FindProxies(proxies, "StaticMesh*")
       
       self.helicopter = None
       self.tree = None
       self.smoke = ParticleSystem()
-      self.expolosion = EffectManager()
+      self.explosion = EffectManager()
       self.step = -1.0
       self.bufferExplosion = 1
       
-      smoke.LoadFile("Particles/smoke.osg")
-      explosion.AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg")
+      self.smoke.LoadFile("Particles/smoke.osg")
+      self.explosion.AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg")
       
-      for i in range(0, proxies.size()) :
-         # Find our helicopter by name
-         if proxies[i].GetName() == "StaticMesh0" :
-            helicopter = proxies[i].GetActor()
-         # Find our tree by name
-         if proxies[i].GetName() == "StaticMesh1" :
-            tree = proxies[i].GetActor()
+      #for i in range(0, proxies.size()) :
+      #   # Find our helicopter by name
+      #   if proxies[i].GetName() == "StaticMesh0" :
+      #      self.helicopter = proxies[i].GetActor()
+      #   # Find our tree by name
+      #   if proxies[i].GetName() == "StaticMesh1" :
+      #      self.tree = proxies[i].GetActor()
       
       # Error check
-      if helicopter is None :
+      if self.helicopter is None :
          print "Failed to locate the helicopter\n"
-         Quit()
+         self.Quit()
       
-      if tree is None :
+      if self.tree is None :
          print "Failed to find the tree\n"
-         Quit()
+         self.Quit()
       
       # move our tree away a little bit
-      tree.SetTransform(Transform(-50, 0, -1, 0, 0, 0))
-      smoke.SetEnabled(1)
+      self.tree.SetTransform(Transform(-50, 0, -1, 0, 0, 0))
+      self.smoke.SetEnabled(1)
       self.GetScene().AddDrawable(explosion)
 
       # translate the camera back some
@@ -65,8 +65,8 @@ class TestMap(Application):
       tTree = Transform()
       tHeli = Transform()
 
-      tree.GetTransform(tTree)
-      helicopter.GetTransform(tHeli)
+      self.tree.GetTransform(tTree)
+      self.helicopter.GetTransform(tHeli)
         
       tTreeTranslation = Vec3
       tTree.GetTranslation(tTreeTranslation)
@@ -76,7 +76,7 @@ class TestMap(Application):
         
       # If the helicopter isn't at the tree yet, keep translating...
       if tTreeTranslation.x() < tHeliTranslation.x() :
-         helicopter.SetTransform(Transform(step, 0, 1, 90, 0, 0))
+         self.helicopter.SetTransform(Transform(step, 0, 1, 90, 0, 0))
       # It's there
       elif tTreeTranslation.x() >= tHeliTranslation.x() :    
          x = 0.0
@@ -90,13 +90,13 @@ class TestMap(Application):
          # causes the app to chug, not to mention doesn't even look like an explosion
          if bufferExplosion :
          
-            explosion.AddDetonation(heliPos)
+            self.explosion.AddDetonation(heliPos)
             bufferExplosion = 0
-            smoke.SetParent(None) #?
-            helicopter.AddChild(smoke)
-            smoke.SetEnabled(1)
+            self.smoke.SetParent(None) #?
+            self.helicopter.AddChild(smoke)
+            self.smoke.SetEnabled(1)
             # Make sure to orient the new mesh to match the old one
-            helicopter.SetTransform(Transform(x, y, 0, 90, -30, 0))
+            self.helicopter.SetTransform(Transform(x, y, 0, 90, -30, 0))
             
       # Reset the scene
       #if(GetKeyboard()->GetKeyState(Producer::Key_R))
@@ -115,7 +115,7 @@ class TestMap(Application):
 SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" + 
                         GetDeltaDataPathList() )
 
-app = TestMap()
+app = TestMap('config.xml')
 
 app.Config()
 app.Run()
