@@ -129,12 +129,12 @@ class TestHLAApp : public Application
   DECLARE_MANAGEMENT_LAYER( TestHLAApp )
 
 public:
-   TestHLAApp( std::string configFile = "config.xml" )
+   TestHLAApp( const std::string& configFile = "config.xml" )
       : Application( configFile )
    {
    }
 
-   ~TestHLAApp()
+   virtual ~TestHLAApp()
    {
       mRtic->LeaveFederationExecution();
    }
@@ -177,7 +177,7 @@ public:
       mRtic->SetEffectManager(effectManager);
       mRtic->SetGeoOrigin(34.154, -116.197, 0.0);
 
-      Updater* updater = new Updater( GetKeyboard(), effectManager, entity, GetCamera() );
+      mUpdater = new Updater( GetKeyboard(), effectManager, entity, GetCamera() );
 
       mRtic->JoinFederationExecution();
       mRtic->RegisterMasterEntity(entity);
@@ -187,7 +187,8 @@ public:
          );  
    }
 
-   RTIConnection* mRtic;
+   RefPtr<RTIConnection> mRtic;
+   RefPtr<Updater>       mUpdater;
 
 };
 
@@ -198,12 +199,10 @@ int main( int argc, char **argv )
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testHLA/;" +
                         GetDeltaDataPathList()  );
 
-   TestHLAApp* app = new TestHLAApp( "config.xml" );
+   RefPtr<TestHLAApp> app = new TestHLAApp( "config.xml" );
 
    app->Config();
    app->Run();
-
-   delete app;
 
    return 0;
 }
