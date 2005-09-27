@@ -17,7 +17,7 @@ void init_LogBindings()
    Log& (*GetInstance1)() = &Log::GetInstance;
    Log& (*GetInstance2)(const std::string&) = &Log::GetInstance;
 
-   class_<Log, bases<osg::Referenced>, dtCore::RefPtr<Log>, boost::noncopyable>("Log", no_init)
+   scope Log_scope = class_<Log, Log*, boost::noncopyable>("Log", no_init)
       .def("LogMessage", LogMessage2, LM_overloads())
       .def("LogHorizRule", &Log::LogHorizRule)
       .def("IsLevelEnabled", &Log::IsLevelEnabled)
