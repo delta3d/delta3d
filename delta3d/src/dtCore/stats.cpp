@@ -236,7 +236,7 @@ void Stats::ShowStats()
   {
 
     int sampleIndex = 2;
-    float timeApp=times[sampleIndex].timeApp;
+    //float timeApp=times[sampleIndex].timeApp;
     float timeCull=times[sampleIndex].timeCull;
     float timeDraw=times[sampleIndex].timeDraw;
     float timeFrame=times[sampleIndex].timeFrame;
