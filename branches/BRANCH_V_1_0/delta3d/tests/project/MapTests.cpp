@@ -448,7 +448,8 @@ void MapTests::testLibraryMethods() {
 
 void MapTests::testMapLibraryHandling() {
     try {
-#if defined _DEBUG
+#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         project.SetContext("WorkingMapProject");
@@ -460,25 +461,25 @@ void MapTests::testMapLibraryHandling() {
 
         CPPUNIT_ASSERT_MESSAGE("neatomap.xml should be the name of the map file.", map->GetFileName() == "neatomap.xml");
 
-        map->AddLibrary("testActorLibrary", "1.0");
-        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("testActorLibrary");
+        map->AddLibrary("testActorLibraryd", "1.0");
+        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("testActorLibraryd");
 
         createActors(*map);
     
-        dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
-        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+        dtDAL::ActorPluginRegistry* reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibraryd should not be NULL.", reg != NULL);
         
         project.SaveMap(*map);
         
         project.CloseMap(*map, true);
 
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
         CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
         map = &project.GetMap(mapName);
         
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
-        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibraryd should not be NULL.", reg != NULL);
         
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
         //hold onto all the proxies so that the actor libraries can't be closed.
@@ -486,34 +487,34 @@ void MapTests::testMapLibraryHandling() {
         
         project.CloseMap(*map, true);
         
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
-        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibraryd should not be NULL.", reg != NULL);
 
         //cleanup the proxies
         proxies.clear();
         
         map = &project.GetMap(mapName);
         //create a new map that will ALSO use the same libraries
-        project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary("testActorLibrary", "1.0");
+        project.CreateMap(mapName + "1", mapFileName + "1").AddLibrary("testActorLibraryd", "1.0");
         
         createActors(project.GetMap(mapName + "1"));
         
         project.CloseMap(*map, true);
         
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
-        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibraryd should not be NULL.", reg != NULL);
 
         //when the second map is closed, the libraries should not close if false is passed.
         project.CloseMap(project.GetMap(mapName + "1"), false);
 
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
-        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibrary should not be NULL.", reg != NULL);
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
+        CPPUNIT_ASSERT_MESSAGE("Registry for testActorLibraryd should not be NULL.", reg != NULL);
 
         //reopen the map and close it with true to make sure the libraries close.
         project.CloseMap(project.GetMap(mapName), true);
 
-        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibrary");
-        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL); 
+        reg = dtDAL::LibraryManager::GetInstance().GetRegistry("testActorLibraryd");
+        CPPUNIT_ASSERT_MESSAGE("testActorLibraryd should have been closed.", reg == NULL); 
 #else
        dtDAL::Project& project = dtDAL::Project::GetInstance();
 
@@ -589,7 +590,7 @@ void MapTests::testMapLibraryHandling() {
 
 void MapTests::testMapSaveAndLoad() {
     try {
-#if defined _DEBUG
+#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         project.SetContext("WorkingMapProject");
@@ -633,8 +634,8 @@ void MapTests::testMapSaveAndLoad() {
         CPPUNIT_ASSERT_MESSAGE("Backups were cleared.  The map should have no backups.",
             !project.HasBackup(*map) && !project.HasBackup(mapName));
 
-        map->AddLibrary("testActorLibrary", "1.0");
-        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("testActorLibrary");
+        map->AddLibrary("testActorLibraryd", "1.0");
+        dtDAL::LibraryManager::GetInstance().LoadActorRegistry("testActorLibraryd");
 
         dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", "../../../data/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);

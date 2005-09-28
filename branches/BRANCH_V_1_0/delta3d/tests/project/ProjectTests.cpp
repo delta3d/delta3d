@@ -660,7 +660,7 @@ void ProjectTests::testResources() {
         dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", "../../../data/marine/marine.rbody", "",
             dtDAL::DataType::CHARACTER);
 
-        dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", "../../../data/exampleTerrain", "terrain",
+        dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", "../../../data/models/exampleTerrain", "terrain",
                 dtDAL::DataType::TERRAIN);
 
         //force resources to be indexed.
@@ -671,7 +671,7 @@ void ProjectTests::testResources() {
             dtDAL::DataType::CHARACTER);
 
 
-        dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", "../../../data/exampleTerrain/terrain.3ds", "",
+        dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", "../../../data/models/exampleTerrain/terrain.3ds", "",
                 dtDAL::DataType::TERRAIN);
 
         //printTree(p.GetAllResources());
