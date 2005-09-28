@@ -55,7 +55,7 @@ void init_NoiseBindings()
       .def("Marble", &Fractal2f::Marble, Fractal_Marble())
       .def("IslandFractal", &Fractal2f::IslandFractal, Fractal_Island())
       .def("RigidMultiFractal", &Fractal2f::RigidMultiFractal, Fractal_RigidMultiFractal())
-      .def("HeteroFractal", &Fractal2f::HeteroFracal, Fractal_HeteroFracal());
+      .def("HeteroFractal", &Fractal2f::HeteroFractal, Fractal_HeteroFractal());
 
 
    class_<Fractal3f, Fractal3f*, boost::noncopyable>("Fractal3f")
@@ -64,7 +64,7 @@ void init_NoiseBindings()
       .def("Marble", &Fractal3f::Marble, Fractal_Marble())
       .def("IslandFractal", &Fractal3f::IslandFractal, Fractal_Island())
       .def("RigidMultiFractal", &Fractal3f::RigidMultiFractal, Fractal_RigidMultiFractal())
-      .def("HeteroFractal", &Fractal3f::HeteroFracal, Fractal_HeteroFracal());
+      .def("HeteroFractal", &Fractal3f::HeteroFractal, Fractal_HeteroFractal());
 
 
    //class_<SeamlessFractal, SeamlessFractal*, boost::noncopyable>("SeamlessFractal")

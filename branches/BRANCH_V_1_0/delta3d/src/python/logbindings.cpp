@@ -1,7 +1,7 @@
 #include <dtUtil/log.h>
 #include <boost/python.hpp>
 #include <dtCore/refptr.h>
-#include <python/dtPython.h>
+#include <python/dtpython.h>
 #include <string>
 
 using namespace dtUtil;
