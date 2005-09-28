@@ -110,7 +110,7 @@ Real Fractal<Real, Vector, Noise>::Turbulence(Vector vect_in, int octaves, Real 
 
    for(int i = 0; i < octaves; i++) 
    {
-      total += amplitude * abs(GetNoise(vect_in * freq));
+      total += amplitude * fabs(GetNoise(vect_in * freq));
       freq *= lacunarity;
       amplitude *= persistance;		
    }
@@ -139,7 +139,7 @@ Real Fractal<Real, Vector, Noise>::RigidMultiFractal(Vector vect_in, int octaves
 
    for(int i = 0; i < octaves; i++) 
    {
-      signal = weight * (offset - abs(GetNoise(vect_in)));
+      signal = weight * (offset - fabs(GetNoise(vect_in)));
       weight = signal * gain;
 
       total += signal * amplitude;
