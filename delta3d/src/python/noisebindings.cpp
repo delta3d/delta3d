@@ -12,7 +12,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Fractal_Turbulence, Turbulence, 1, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Fractal_Marble, Marble, 1, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Fractal_Island, IslandFractal, 1, 6)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Fractal_RigidMultiFractal, RigidMultiFractal, 1, 7)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Fractal_HeteroFracal, HeteroFracal, 1, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Fractal_HeteroFractal, HeteroFractal, 1, 6)
 
 
 
