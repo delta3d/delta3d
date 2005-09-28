@@ -2,6 +2,8 @@ from PyDtCore import *
 from PyDtABC import *
 from PyDtDAL import *
 
+import sys
+
 class TestMap(Application):
 
    def Config(self) :
@@ -17,9 +19,15 @@ class TestMap(Application):
       Project.GetInstance().LoadMapIntoScene(myMap, self.GetScene())
       
       # Get the proxies from the map
-      proxies = []
-      #myMap.FindProxies(proxies, "StaticMesh*")
+      proxies = ActorProxyVec()
+
+      # This doesn't work! I can't get Boost.Python to properly
+      # translate between the retrn value of this method:
+      # std::vector< osg::_ref< ActorProxy > > and my own wrapper
+      # ActorProxyVec...
       
+      #myMap.FindProxies(proxies, "StaticMesh*")
+
       self.helicopter = None
       self.tree = None
       self.smoke = ParticleSystem()
@@ -30,23 +38,23 @@ class TestMap(Application):
       self.smoke.LoadFile("Particles/smoke.osg")
       self.explosion.AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg")
       
-      #for i in range(0, proxies.size()) :
-      #   # Find our helicopter by name
-      #   if proxies[i].GetName() == "StaticMesh0" :
-      #      self.helicopter = proxies[i].GetActor()
-      #   # Find our tree by name
-      #   if proxies[i].GetName() == "StaticMesh1" :
-      #      self.tree = proxies[i].GetActor()
+      for actor in proxies :
+         # Find our helicopter by name
+         if actor.GetName() == "StaticMesh0" :
+            self.helicopter = actor.GetActor()
+         # Find our tree by name
+         if actor.GetName() == "StaticMesh1" :
+            self.tree = actor.GetActor()
       
       # Error check
       if self.helicopter is None :
-         print "Failed to locate the helicopter\n"
-         self.Quit()
+         print "Failed to locate the helicopter"
+         sys.exit()
       
       if self.tree is None :
-         print "Failed to find the tree\n"
-         self.Quit()
-      
+         print "Failed to find the tree"
+         sys.exit()
+     
       # move our tree away a little bit
       self.tree.SetTransform(Transform(-50, 0, -1, 0, 0, 0))
       self.smoke.SetEnabled(1)
@@ -99,11 +107,13 @@ class TestMap(Application):
             self.helicopter.SetTransform(Transform(x, y, 0, 90, -30, 0))
             
       # Reset the scene
-      #if(GetKeyboard()->GetKeyState(Producer::Key_R))
-      #    Reset()
+      if GetKeyboard().GetKeyState( KeyboardKey.Key_R ) :
+          Reset()
 
       step -= 0.05
       
+      self.Quit()
+
    def Reset(self) :
       GetScene().AddDrawable(tree);
       self.helicopter.SetTransform(Transform(0, 0, 1, 90, 0, 0))
