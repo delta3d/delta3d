@@ -75,7 +75,7 @@ public:
 
    //another one of F. Kenton Musgrave's from Texturing and Modeling: A Procedural Approach
    //this is like the one above but the smoother areas are only at the lower levels and it doesnt specifically create ridges
-   Real HeteroFracal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real offset = 0.5f);
+   Real HeteroFractal(Vector vect_in, int octaves = 2, Real freq = 1.0f, Real persistance = 0.5f, Real lacunarity = 2.0f, Real offset = 0.5f);
 
 };
 
@@ -155,13 +155,12 @@ Real Fractal<Real, Vector, Noise>::RigidMultiFractal(Vector vect_in, int octaves
 }
 
 template <class Real, class Vector, class Noise>
-Real Fractal<Real, Vector, Noise>::HeteroFracal(Vector vect_in, int octaves, Real freq, Real persistance, Real lacunarity, Real offset)
+Real Fractal<Real, Vector, Noise>::HeteroFractal(Vector vect_in, int octaves, Real freq, Real persistance, Real lacunarity, Real offset)
 {
 
    Real total = 1.0f;
    Real amplitude = 1.0f;
    Real signal = 0.0f;
-   Real weight = 1.0;
 
    for(int i = 0; i < octaves; i++) 
    {
@@ -195,9 +194,9 @@ Real Fractal<Real, Vector, Noise>::IslandFractal(Vector vect_in, int octaves /* 
       pers *= persistance;
    }
 
-   total *= (abs(total * persistance) + (total * total * oscarity));
+   total *= (fabs(total * persistance) + (total * total * oscarity));
 
-   return abs(total);
+   return fabs(total);
 }
 
 
