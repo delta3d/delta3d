@@ -21,10 +21,10 @@
 #ifndef DELTA_APPLICATION
 #define DELTA_APPLICATION
 
-#include "dtABC/baseabc.h"
-#include "dtCore/deltawin.h"
+#include <dtABC/baseabc.h>
+#include <dtCore/deltawin.h>
 
-#include <string>
+//#include <string>
 
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <xercesc/sax2/Attributes.hpp>      // for a parameter
@@ -53,14 +53,14 @@ namespace dtABC
       DECLARE_MANAGEMENT_LAYER(Application)
 
    public:
-      Application(const std::string& configFilename = "" );
+      Application( const std::string& configFilename = "" );
       virtual ~Application();
 
       ///Start the Application
-      virtual void Run( void );
+      virtual void Run();
 
       ///Generate a default configuration file
-      static std::string  GenerateDefaultConfigFile( void );
+      static std::string GenerateDefaultConfigFile();
 
    protected:
       ///override for preframe 
