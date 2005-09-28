@@ -84,8 +84,8 @@ class TestTerrainApp : public dtABC::Application
          
          //Before we load any resources, lets set our origin to correlate to the data we
          //are loading.
-         double lon = -98.0;
-         double lat = 30.0;
+         double lon = -121.85;
+         double lat = 36.58;
          mTerrain->SetOrigin(osg::Vec3d(lat,lon,0.0));
          
          // Add some sample LCC Data
