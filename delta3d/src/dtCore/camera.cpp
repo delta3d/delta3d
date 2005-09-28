@@ -159,19 +159,23 @@ void Camera::Frame()
    osg::Matrix absMat;
    GetAbsoluteMatrix( GetMatrixNode(), absMat );
 
-   osg::Vec3 eyePoint(absMat(3,0), absMat(3,1), absMat(3,2));
-
    //choose Z as the up vector
-   osg::Vec3 upVec(absMat(2,0), absMat(2,1), absMat(2,2));
+   osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
+   osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
+   osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
+   F.normalize();
+   UP.normalize();
 
-   osg::Vec3 lookVec = upVec ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
-   osg::Vec3 centerPoint = eyePoint + lookVec * 10.f;
+   osg::Vec3 s = F ^ UP;
+   osg::Vec3 u = s ^ F;
+   F = -F;
 
-   //sync up Producer's camera with the world matrix for this node
-   mCamera->setViewByLookat( eyePoint[0], eyePoint[1], eyePoint[2],
-                             centerPoint[0], centerPoint[1], centerPoint[2],
-                             upVec[0], upVec[1], upVec[2] );
-   
+   Producer::Matrix m(s[0], u[0], F[0], 0.0,
+      s[1], u[1], F[1], 0.0,
+      s[2], u[2], F[2], 0.0,
+      s*eye, u*eye, F*eye, 1.0);
+   mCamera->setViewByMatrix(m);
+
    //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
    //Might cause a problem with multi camera's sharing one RenderSurface
    mCamera->frame(true);
