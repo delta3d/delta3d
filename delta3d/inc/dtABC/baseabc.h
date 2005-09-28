@@ -38,14 +38,14 @@ namespace   dtABC
       DECLARE_MANAGEMENT_LAYER(BaseABC)
 
    public:
-                     BaseABC( std::string name = "BaseABC" );
+                     BaseABC( const std::string& name = "BaseABC" );
       virtual        ~BaseABC();
 
       ///configure the internal components
-      virtual  void  Config( void );
+      virtual  void  Config();
 
       ///Quit the application (call's system quit)
-      virtual  void  Quit( void );
+      virtual  void  Quit();
 
       ///Add a visual object to the Scene
       virtual  void  AddDrawable( dtCore::DeltaDrawable* obj );
@@ -54,19 +54,19 @@ namespace   dtABC
       virtual  void  RemoveDrawable( dtCore::DeltaDrawable* obj );
       
       ///Get the default Application Window
-      dtCore::DeltaWin*    GetWindow( void )    { return mWindow.get(); }
+      dtCore::DeltaWin*    GetWindow()    { return mWindow.get(); }
 
       ///Get the default Application Camera
-      dtCore::Camera*         GetCamera( void )    { return mCamera.get(); }
+      dtCore::Camera*         GetCamera()    { return mCamera.get(); }
 
       ///Get the default Application Scene
-      dtCore::Scene*          GetScene( void )     { return mScene.get();  }
+      dtCore::Scene*          GetScene()     { return mScene.get();  }
 
       ///Get the default Application Keyboard
-      dtCore::Keyboard*       GetKeyboard( void )  { return mKeyboard.get(); }
+      dtCore::Keyboard*       GetKeyboard()  { return mKeyboard.get(); }
 
       ///Get the default Application Mouse
-      dtCore::Mouse*          GetMouse( void )     { return mMouse.get(); }
+      dtCore::Mouse*          GetMouse()     { return mMouse.get(); }
 
    protected:
       ///Override for preframe

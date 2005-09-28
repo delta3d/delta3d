@@ -1,19 +1,17 @@
-#include "dtABC/baseabc.h"
-#include <assert.h>
+#include <dtABC/baseabc.h>
+#include <cassert>
 
 using namespace   dtABC;
 using namespace   dtCore;
-
-
+using namespace   std;
 
 IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
-
 
 /** Public methods */
 /**
  * Constructors
  */
-BaseABC::BaseABC( std::string name /*= "BaseABC"*/ )
+BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ )
 :  Base(name),
    KeyboardListener()
 {
