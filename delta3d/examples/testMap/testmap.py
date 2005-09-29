@@ -17,16 +17,15 @@ class TestMap(Application):
       Project.GetInstance().SetContext(contextName)
       myMap = Project.GetInstance().GetMap("MyCoolMap")
       Project.GetInstance().LoadMapIntoScene(myMap, self.GetScene())
-      
-      # Get the proxies from the map
-      proxies = ActorProxyVec()
 
       # This doesn't work! I can't get Boost.Python to properly
       # translate between the retrn value of this method:
       # std::vector< osg::_ref< ActorProxy > > and my own wrapper
       # ActorProxyVec...
       
-      #myMap.FindProxies(proxies, "StaticMesh*")
+      # Get the proxies from the map
+      proxies = ActorProxyVector()
+      #proxies = myMap.FindProxies("StaticMesh*")
 
       self.helicopter = None
       self.tree = None
