@@ -108,7 +108,7 @@ class TestTerrainApp : public dtABC::Application
          switch (key)
          {
             case Producer::Key_Return:
-               ShowStatistics();
+               GetCamera()->SetNextStatisticsType();
                break;
                
             case Producer::Key_space:
@@ -179,31 +179,6 @@ class TestTerrainApp : public dtABC::Application
          }
       }
       
-      void ShowStatistics()
-      {
-         static osgUtil::Statistics::statsType currStats = osgUtil::Statistics::STAT_NONE;
-         
-         switch (currStats)
-         {
-            case osgUtil::Statistics::STAT_NONE:
-               currStats = osgUtil::Statistics::STAT_FRAMERATE;
-               break;
-               
-            case osgUtil::Statistics::STAT_FRAMERATE:
-               currStats = osgUtil::Statistics::STAT_PRIMS;
-               break;
-               
-            case osgUtil::Statistics::STAT_PRIMS:
-               currStats = osgUtil::Statistics::STAT_NONE;
-               break;
-               
-            default:
-               break;
-         }
-         
-         GetCamera()->SetStatisticsType(currStats);
-      }
-      
    private:
    
       dtCore::RefPtr<dtCore::FlyMotionModel> mMotionModel;
@@ -214,7 +189,8 @@ class TestTerrainApp : public dtABC::Application
 
 int main(int argc, char *argv[])
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
+   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath()+"/examples/testTerrain/;"
+                               +dtCore::GetDeltaDataPathList());   
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
    dtCore::RefPtr<TestTerrainApp> app;
    
