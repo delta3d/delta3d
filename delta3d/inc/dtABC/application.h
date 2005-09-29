@@ -24,8 +24,6 @@
 #include <dtABC/baseabc.h>
 #include <dtCore/deltawin.h>
 
-//#include <string>
-
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <xercesc/sax2/Attributes.hpp>      // for a parameter
 
