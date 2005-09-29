@@ -1,7 +1,5 @@
 ###########################################################################
-#                                                                         #
 # Delta3D: The Open-Source Engine Supported by the United States Military #
-#                                                                         #
 ###########################################################################
 
 Welcome to Delta3D ! We hope to get you up and running with Delta3D as
@@ -16,7 +14,7 @@ See the readme.txt in /utilities for more details.
 
 If you are a developer you'll want to build from the source
 which we provide with all our distributions. Please follow instructions
-in src/readme.txt to build the source.
+in the below instructions to build the source.
 
 Thanks for using Delta3D! Please visit our webpage at http://www.delta3d.org
 and don't hesistate to use the forums for any problems you may have. We'll do
@@ -27,18 +25,84 @@ Sincerely,
 The Delta3D Team
 
 ########################
-#                      #
 # Building From Source #
-#                      #
 ########################
 
-See env_vars.txt for information on setting up your Delta3D environment variables. 
-Check if you have the ext/ and data/ directories already in delta3d/. If you do not 
-have them, please download the latest version of the following packages for your 
-platform/compiler from SourceForge and extract them into the Delta3D folder:
+Delta3D is a cross-platform open-source set of libraries, and therefore we try to
+support as many platforms and compilers as possible. 
 
-   delta3d-dependencies 
-   delta3d-data
+Here's what we know does works:
+
+Win32 w/ Microsoft Visual Studio .NET 7.1
+Win32 w/ Microsoft Visual C++ Toolkit 2003, .NET Framework SDK 1.1, & SCons
+Linux w/ gcc3.4.x
+Linux w/ gcc4.0.0
+
+Here's what we know doesn't work:
+
+Win32 w/ Microsoft Visual Studio 6.0 (or less)
+Win32 w/ MinGW (coming soon!)
+Win32 w/ Cygwin
+Linux w/ gcc3.3.x
+Linux w/ gcc4.0.1+ (requires a patch to OSG 0.9.9 to work).
+
+Note about Linux distrubutions: We test on Fedora Core 4 but have reports of 
+Delta3D running on Ubuntu, SuSE, Mandriva, & Gentoo. Please contact us if you
+are able to setup repositories for any Linux distribution to ease installation
+for other users.
+
+See env_vars.txt for information on setting up your Delta3D environment variables. 
+
+################
+# Dependencies #
+################
+
+Check if you have the ext/ directory already in delta3d/. If you do not 
+have it, please download the latest version of delta3d-dependencies for
+Win32 or Fedora Core 4 from our SourceForge download site:
+https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125151
+and extract it into the Delta3D folder.
+
+If you are not on Win32 or Fedore Core 4, you will need to either build the depedencies
+yourself or track them down via your favorite package manager. So here's a handy list.
+Oh, and check out http://www.delta3d.org/article.php?story=20050707151113592&topic=docs
+for more detailed info on dependencies (websites, etc.).
+
+Required Libraries
+------------------
+CAL3D 0.10.0
+CppUnit 1.10.2
+Crazy Eddie's GUI System 0.4.0
+FLTK 1.1.6
+Game Networking Engine 0.70
+GDAL 1.2.6
+InterSense Interface Libraries SDK 3.83 (beta)
+HawkNL 1.68
+OpenAL 1.0
+Open Dynamics Engine 0.5
+OSG 0.9.9
+PLIB 1.8.4
+ReplicantBody 2005-07-25
+Xerces 2.6.0
+
+Optional Libraries
+------------------
+Qt 4.0.1 (GPL Version) - Needed for STAGE.
+Boost 1.32 - Needed for Python bindings only.
+Python 2.4 - Needed for Python script support.
+RTI 1.3 - Needed for HLA libraries, utilities, & examples.
+
+################
+# Example Data #
+################
+
+In order to run our examples, you also need our sample data package. It can
+also be found on SourceForge download site:
+https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
+
+########################################
+# Platform-specific build instructions #
+########################################
 
 Win32 w/ Visual Studio .NET 7.1
 -------------------------------
