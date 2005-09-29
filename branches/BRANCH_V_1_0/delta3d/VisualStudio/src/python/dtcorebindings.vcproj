@@ -245,9 +245,6 @@
 				RelativePath="..\..\..\src\python\systembindings.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\python\terrainbindings.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\python\trackerbindings.cpp">
 			</File>
 			<File
