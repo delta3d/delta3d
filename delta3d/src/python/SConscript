@@ -51,7 +51,6 @@ if CheckForBoost() and OS != 'darwin' :
                      'skydomebindings.cpp',
                      'spotlightbindings.cpp',
                      'systembindings.cpp',
-                     'terrainbindings.cpp',
                      'trackerbindings.cpp',
                      'transformablebindings.cpp',
                      'transformbindings.cpp',
