@@ -411,21 +411,20 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
       if launchDir != env.get('prefix') :
          lib = envLib.Install( '$prefix/lib', builtlib )
 
-   incDirDict = { 'dtABC'    : 'dtABC',
-                  'dtActors' : 'dtActors',
-                  'dtAudio'  : 'dtAudio',
-                  'dtChar'   : 'dtChar',
-                  'dtCore'   : 'dtCore',
-                  'dtDAL'    : 'dtDAL',
-                  'dtHLA'    : 'dtHLA',
-                  'dtGUI'    : 'dtGUI',
-                  'dtNet'    : 'dtNet',
-                  'dtScript' : 'dtScript',
-                  'dtUtil'   : 'dtUtil',
-                  'dtBSP'    : 'dtBSP',
+   incDirDict = { 'dtABC'       : 'dtABC',
+                  'dtActors'    : 'dtActors',
+                  'dtAudio'     : 'dtAudio',
+                  'dtChar'      : 'dtChar',
+                  'dtCore'      : 'dtCore',
+                  'dtDAL'       : 'dtDAL',
+                  'dtHLA'       : 'dtHLA',
+                  'dtGUI'       : 'dtGUI',
+                  'dtNet'       : 'dtNet',
+                  'dtScript'    : 'dtScript',
+                  'dtUtil'      : 'dtUtil',
+                  'dtBSP'       : 'dtBSP',
                   'dtInspector' : 'dtInspector',
-		  'dtTerrain' : 'dtTerrain',
-                  'dtSOARX'  : 'soarx' }
+                  'dtTerrain'   : 'dtTerrain' }
 
    #install headers, there's gotta be a cleaner way ;)
    if incDirDict.has_key(name) and launchDir != env.get('prefix') :
@@ -743,8 +742,7 @@ dtLibs = { 'dtABC'       : 'dtABC',
            'dtUtil'      : 'dtUtil',
            'dtBSP'       : 'dtBSP',
            'dtInspector' : 'dtInspector',
-           'dtTerrain'   : 'dtTerrain',
-           'dtSOARX'     : 'dtSOARX' }
+           'dtTerrain'   : 'dtTerrain' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :

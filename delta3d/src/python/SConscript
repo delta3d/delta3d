@@ -71,8 +71,6 @@ if CheckForBoost() and OS != 'darwin' :
     
    'dtHLA' : [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ],
     
-   'dtSOARX' : [ 'dtsoarxbindings.cpp', 'soarxterrainbindings.cpp' ],
-
    'dtUtil' : [ 'dtutilbindings.cpp', 'logbindings.cpp', 'matrixutilbindings.cpp', 'noisebindings.cpp', 'polardecompbindings.cpp' ] }
        
    ##############
@@ -108,7 +106,6 @@ if CheckForBoost() and OS != 'darwin' :
       dtDALBindingsTarget = 'dtDALBindings'
       dtInspectorBindingsTarget = 'dtInspectorBindings'
       dtHlaBindingsTarget = 'dtHLABindings'
-      dtSoarxBindingsTarget = 'dtSOARXBindings'
       dtUtilBindingsTarget = 'dtUtilBindings'
    
    pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = pythonDeps + [dtLibs['dtCore']] )
@@ -126,10 +123,6 @@ if CheckForBoost() and OS != 'darwin' :
       env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None
-
-   if OS == 'windows' :
-      pythonDtSoarxLib = env.SharedLibrary( dtSoarxBindingsTarget, pythonSrcs['dtSOARX'], LIBS = pythonDeps + [dtLibs[ 'dtSOARX' ]] )
-      env.Precious( pythonDtSoarxLib )
 
    ################
    # Install libs #
@@ -149,7 +142,6 @@ if CheckForBoost() and OS != 'darwin' :
       dtCharPydTarget = '#'+dir+'/PyDtChard.'+suffix
       dtDALPydTarget = '#'+dir+'/PyDtDALd.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspectord.'+suffix
-      dtSoarxPydTarget = '#'+dir+'/PyDtSOARXd.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLAd.'+suffix
       dtUtilPydTarget = '#'+dir+'/PyDtUtild.'+suffix
    elif mode == 'release' :
@@ -159,7 +151,6 @@ if CheckForBoost() and OS != 'darwin' :
       dtCharPydTarget = '#'+dir+'/PyDtChar.'+suffix
       dtDALPydTarget = '#'+dir+'/PyDtDAL.'+suffix
       dtInspectorPydTarget = '#'+dir+'/PyDtInspector.'+suffix
-      dtSoarxPydTarget = '#'+dir+'/PyDtSOARX.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLA.'+suffix
       dtUtilPydTarget = '#'+dir+'/PyDtUtil.'+suffix
   
@@ -183,15 +174,12 @@ if CheckForBoost() and OS != 'darwin' :
 
    if OS == 'windows' :
       
-      env.InstallAs( dtSoarxPydTarget , pythonDtSoarxLib[0] )
-      
       env.Install( '#/lib', [ pythonDtCoreLib[1:], \
                               pythonDtAbcLib[1:], \
                               pythonDtAudioLib[1:], \
                               pythonDtCharLib[1:], \
                               pythonDtDALLib[1:], \
                               pythonDtInspectorLib[1:], \
-                              pythonDtSoarxLib[1:], \
                               pythonDtUtilLib[1:] ] )
 
       if pythonDtHlaLib is not None:
