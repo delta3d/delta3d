@@ -58,7 +58,6 @@
 #include <dtCore/skydome.h>
 #include <dtCore/spotlight.h>
 #include <dtCore/stats.h>
-#include <dtCore/terrain.h>
 #include <dtCore/tracker.h>
 #include <dtCore/transform.h>
 #include <dtCore/transformable.h>

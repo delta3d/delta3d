@@ -54,7 +54,6 @@ void initSpotLightBindings();
 void initSkyBoxBindings();
 void initSkyDomeBindings();
 void initSystemBindings();
-void initTerrainBindings();
 void initTrackerBindings();
 void initTransformBindings();
 void initTransformableBindings();
