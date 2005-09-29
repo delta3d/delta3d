@@ -1,8 +1,0 @@
-Import('*')
-
-if OS == 'windows' :
-
-   srcs = SGlob('*.cpp')
-   deps = [ 'dtCore', 'gdal', 'User32' ]
-
-   BuildLib( 'dtSOARX', srcs, deps, ['DT_LIBRARY'] )

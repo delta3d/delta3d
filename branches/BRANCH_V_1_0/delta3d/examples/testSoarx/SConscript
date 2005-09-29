@@ -1,8 +1,0 @@
-Import('*')
-
-if OS == 'windows' :
-
-   srcs = SGlob( '*.cpp' )
-   deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtSOARX' ]
-
-   BuildProgram( 'testSoarx', srcs, deps )
