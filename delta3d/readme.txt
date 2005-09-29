@@ -85,6 +85,8 @@ PLIB 1.8.4
 ReplicantBody 2005-07-25
 Xerces 2.6.0
 
+Linux only: Xxf88vm, uuid, curses.
+
 Optional Libraries
 ------------------
 Qt 4.0.1 (GPL Version) - Needed for STAGE.
