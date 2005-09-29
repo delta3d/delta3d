@@ -3,9 +3,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/dt.h>
-#if defined (WIN32) || defined (_Win32) || defined (__WIN32__)
-    #include <soarx/dtsoarx.h>
-#endif
+
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/datatype.h"
