@@ -31,6 +31,7 @@
 #include "dtTerrain/imageutils.h"
 #include "dtTerrain/lccanalyzer.h"
 
+
 namespace dtTerrain
 {
    //////////////////////////////////////////////////////////////////////////
@@ -538,9 +539,10 @@ namespace dtTerrain
       int hf_width = h_image->s();
       int hf_height = h_image->t();
 
-      int scale = im_width/hf_width;
+      float scale = (float)im_width / (float)hf_width;
+      //int scale = im_width / hf_width;
 
-      mLog->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, "scale = %i,  image width = %i,  hf width = %i", scale, im_width, hf_width);
+      mLog->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, "scale = %f,  image width = %i,  hf width = %i", scale, im_width, hf_width);
 
       dtCore::RefPtr<osg::Image> dst_image = new osg::Image;
       dst_image->allocateImage(im_width, im_height, 1, GL_RGB, GL_UNSIGNED_BYTE);
