@@ -21,12 +21,11 @@ modules = [ 'testActorLibrary',
             'testPython',
             'testRecorder',
             'testShaders',
-            'testSoarx',
             'testSound',
             'testStateManager',
             'testWeather',
             'testWidget',
-	    'testTerrain',
+            'testTerrain',
             'testWin' ]
 
 # TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,
