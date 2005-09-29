@@ -9,6 +9,7 @@
 
 using namespace boost::python;
 using namespace dtCore;
+using namespace dtInspector;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(S_overloads, Show, 0, 1)
 

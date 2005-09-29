@@ -52,7 +52,7 @@ protected:
 case Producer::Key_Escape:    this->Quit();    	 break;
 case Producer::Key_H:
    {
-      Inspector *ui = new Inspector();
+      dtInspector::Inspector *ui = new dtInspector::Inspector();
       ui->Show(); //to prevent unused variable warnings
    }
    break;
