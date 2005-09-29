@@ -81,7 +81,7 @@ if CheckForBoost() and OS != 'darwin' :
    else :
       boostLib = 'boost_python'
 
-   pythonDeps = [ 'python' ]
+   pythonDeps = [ 'python', 'osg' ]
    
    if OS == 'windows' :
       pythonDeps += [  'User32' ] 
