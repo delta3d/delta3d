@@ -1,0 +1,6 @@
+Import('*')
+
+srcs = SGlob('*.cpp')
+deps =[ 'OpenThreads', 'Producer', 'osg', 'osgDB', 'ul', 'xerces-c', 'User32']
+
+BuildLib( 'dtUtil', srcs, deps, ['DT_LIBRARY'] )

@@ -1,0 +1,47 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtHLABindings", "dthlabindings.vcproj", "{A15A3D52-149E-4D94-836E-F051C3B1AC82}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCoreBindings", "dtcorebindings.vcproj", "{17C8B821-1515-4CE5-9C9A-00193C34FF0F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCore", "..\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtHLA", "..\dtHLA\dthla.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Debug.ActiveCfg = Debug|Win32
+		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Debug.Build.0 = Debug|Win32
+		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Release.ActiveCfg = Release|Win32
+		{A15A3D52-149E-4D94-836E-F051C3B1AC82}.Release.Build.0 = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.ActiveCfg = Debug|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.Build.0 = Debug|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.ActiveCfg = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.Build.0 = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.ActiveCfg = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.Build.0 = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.ActiveCfg = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.Build.0 = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
