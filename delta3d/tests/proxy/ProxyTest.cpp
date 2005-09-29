@@ -1,7 +1,7 @@
 #include "ProxyTest.h"
 
 #if defined (WIN32) || defined (_Win32) || defined (__WIN32__)
-    #include "dtActors/dtedterrainactorproxy.h"
+//    #include "dtActors/dtedterrainactorproxy.h"
 #endif
 #include "dtActors/infinitelightactorproxy.h"
 
