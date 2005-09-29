@@ -20,12 +20,12 @@ Note: The camera movement on Linux is a bit jumpy due to a hack that
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open testWin.sln.
 - Build testWidget.
 - Start testWidget.
 
 Win32 Binary:
-- Go to examples/testWidget/Release.
+- Go to \VisualStudio\examples\testWidget\testWidget.sln.
 - Double-click testWidget.exe.
 
 Linux Source:

@@ -16,7 +16,7 @@ Note: When a sound is played on Linux, the application hangs waiting for a
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testSound\testSound.sln.
 - Build testSound.
 - Start testSound.
 

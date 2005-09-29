@@ -23,7 +23,7 @@ can change (and change they do).
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testLights\testLights.sln.
 - Build testLights.
 - Start testLights.
 

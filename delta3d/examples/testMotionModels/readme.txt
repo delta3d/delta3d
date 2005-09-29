@@ -19,7 +19,7 @@ translate, rotation, and zoom).
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testMotionModels.sln.
 - Build testMotionModels.
 - Start testMotionModels.
 

@@ -16,7 +16,7 @@ the application. The cursor also changes to a different icon within the window.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testGUI\testGUI.sln.
 - Build testGUI.
 - Start testGUI.
 - To load from XML: open a command window next to testGUI.exe (in either the Debug

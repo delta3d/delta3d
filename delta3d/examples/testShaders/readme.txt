@@ -14,7 +14,7 @@ to a dtCore::Object.
 Instructions
 ------------
 Win32 Source: 
-- Open VisualStudio/examples/testShaders.sln.
+- Open VisualStudio/examples/testShaders/testShaders.sln.
 - Build testShaders.
 - Start testShaders.
 

@@ -27,7 +27,7 @@ Linux Notes:
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testWin\testWin.sln.
 - Build testWin.
 - Start testWin.
 

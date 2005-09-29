@@ -15,7 +15,7 @@ the second follows the user.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testCharacters\testCharacters.sln.
 - Build testCharacters.
 - Start testCharacters.
 

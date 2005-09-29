@@ -14,7 +14,7 @@ with GLSL.
 Instructions
 ------------
 Win32 Source: 
-- Open VisualStudio/examples/testBumpMap.sln.
+- Open VisualStudio/examples/testBumpMap\testBumpMap.sln.
 - Build testBumpMap.
 - Start testBumpMap.
 

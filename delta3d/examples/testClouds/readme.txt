@@ -15,7 +15,7 @@ Language and requires a graphics card which supports GLSL.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testClouds\testClouds.sln.
 - Build testClouds.
 - Start testClouds.
 
