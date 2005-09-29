@@ -110,7 +110,7 @@ namespace dtTerrain
       mDetailNoise = NULL;
       mSkirtHeight = 200.0f;
       mThresholdValue = 2.0f;
-      mDetailMultiplier = 7.0f;
+      mDetailMultiplier = 3.0f;
             
       mBaseBits = baseBits;
       mDetailBits = 10;
@@ -490,7 +490,7 @@ namespace dtTerrain
    
    //////////////////////////////////////////////////////////////////////////
    void SoarXDrawable::RepairBoundingSphereHierarchy()
-   {
+    {
       unsigned int counterBits;
       unsigned int x,y;
       
@@ -814,7 +814,7 @@ namespace dtTerrain
    bool SoarXDrawable::Active(Vertex &v, unsigned int &planes)
    {
       static unsigned int clipPlanes[] = { 1,2,4,8,16,32 };
-      const int RADIUS_BOOST = 450; //Ad hoc constant for lazy frustum culling.
+      const int RADIUS_BOOST = 2000; //Ad hoc constant for lazy frustum culling.
       const float INV_EMBEDDED_SIZE = 1.0f / (float)mEmbeddedSize;
       int i;
       float dist,proj;
