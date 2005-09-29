@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -24,14 +24,16 @@ Win32 Source:
 - Start testMotionModels.
 
 Win32 Binary:
-- Go to examples/testMotionModels/Release.
+- Go to bin.
 - Double-click testMotionModels.exe.
 
 Linux Source:
-- To build all examples: Run 'scons examples' from delta3d/.
-- To build only testMotionModels: run 'scons examples/testMotionModel' from delta3d/.
-- Enter examples/testMotionModels directory.
-- Run 'testMotionModels'.
+- To build only testMotionModels, from the root delta3d folder:
+  scons bin/testMotionModels
+
+Linux Binary:
+- cd bin
+- ./testMotionModels
 
 Controls
 --------

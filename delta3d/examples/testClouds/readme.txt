@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -15,20 +15,21 @@ Language and requires a graphics card which supports GLSL.
 Instructions
 ------------
 Win32 Source: 
-- Open \VisualStudio\examples\testClouds\testClouds.sln.
+- Open VisualStudio\examples\testClouds\testClouds.sln.
 - Build testClouds.
 - Start testClouds.
 
 Win32 Binary:
-- Go to examples/testClouds/Release.
+- Go to bin.
 - Double-click testClouds.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testClouds: run 'make' from examples/testClouds.
-- Enter examples/testClouds directory.
-- Run 'testClouds'.
+- To build only testClouds, from the root delta3d folder:
+  scons bin/testClouds
+
+Linux Binary:
+- cd bin
+- ./testClouds
 
 Controls
 --------

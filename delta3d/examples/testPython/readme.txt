@@ -4,101 +4,64 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC, dtPython
+Uses modules: dtCore, dtABC, dtPython, dtUtil
 
 Purpose
 -------
 To demonstrate the Python interface to Delta3D. There are several scripts:
 
-flyhelo.py: should be run from the prompt within testPython to fly the 
-            helicopter in a circle.
+flyhelo.py:
+- Should be triggered from testPython by hitting the 'S' key to fly the  helicopter in a circle.
 
-testpathedcamera.py: flies the camera along a series of waypoints.
+testpathedcamera.py:
+- Flies the camera along a series of waypoints.
 
-testPythongui.py: opens a Tk GUI and displays the helo.
-                  Bug: user may need to click on the menu before helo appears.
+testpythongui.py:
+- Opens a Tk GUI and displays the helo. 
+- Bug: user may need to click on the menu before helo appears.
+- Note: this doens't work on Linux due to X11/Tk/Producer problems.
 
-testpython.py: also flies a helo in a circle, but should be run straight from
-               Python instead of within the testPython C++ application.
+testpython.py:
+- Flies a helo in a circle.
+- This should be run straight from Python instead of being triggered
+  from the testPython C++ application.
 
-See instructions for each platform for details.
+There are a few other examples re-implemented in Python:
+- examples/testLights/testlights.py
+- examples/testMap/testmap.py
+- examples/testSound/testsound.py
 
 Instructions
 ------------
 
-Win32
-=====
-To use pre-built testPython: 
-- Go to delta3d/bin.
-- Double-click testPython.exe.
-- At the Python prompt inside the console/terminal type:
-   execfile('../examples/testPython/flyhelo.py')
-- Alternatively hit the 'S' key to kick off the script automatically using
-  dtScript::ScriptManager
-
-To build from source:
+Win32 Source:
 - Open examples/testPython/testPython.sln.
 - Go to the Tools->Options->Projects->VC++ Directories and select 
   "Show directories for: Include files".
 - Add the Boost and Python include directories (e.g., "c:\boost_1_32_0",
-  "C:\Program Files\Python2.4\include") to the "Include"  section.
+  "C:\Program Files\Python2.4\include") to the "Include" section.
 - Add the Boost and Python lib directories (e.g., "C:\boost_1_32_0\libs\python\build\bin-stage", 
   "C:\Program Files\Python2.4\libs") to the "Library files" section.
 - Build testPython.
 - Start testPython.
-- At the Python prompt inside the console/terminal type:
-   execfile('../../../examples/testPython/flyhelo.py')
 
+Win32 Binary:
+- Go to bin.
+- Double-click testPython.exe.
+
+Hit the 'S' key to kick off the script automatically using dtScript::ScriptManager.
 This should make the helo fly in a circle.
-
 Hit escape to exit.
 
-testpython.py: 
-- This file is a seperate Python script that uses Delta3D. 
-- To use it, double-click on testpython.py.
-- The resulting window should also show a helo flying in a circle.
+Linux Source:
+- To build only testPython, from the root delta3d folder:
+  scons && scons bin/testPython
 
-testpathedcamera.py:
-- This script shows how to move a camera along a series of waypoints.
-- To use it, double-click on testpathedcamera.py.
+Linux Binary:
+- cd bin
+- ./testPython
 
-testpythongui.py:
-- This script uses the Tk toolkit (integrated with Python) to make a Delta3D Widget and
-  display the standard helo.
-- To use it, double-click on testpythongui.py.
-
-Linux
-=====
-
-Run:
-
-scons boost=/path/to/boost examples/testPython
- or
-scons boost=/path/to/boost python
-
-The testPython example should be built automictally by either of 
-the above commands.
-
-Run 'testPython'.
-
-At the Python prompt inside the console/terminal type:
-   execfile('../examples/testPython/flyhelo.py')
-
-This should make the helo fly in a circle. 
-
-Hit escape to exit.
-
-testpython.py: 
-- This file is a seperate Python script that uses Delta3D. 
-- To use it, from examples/testPython type:
-     python testpython.py.
-- The resulting window should also show a helo flying in a circle.
-
-testpathedcamera.py:
-- This script shows how to move a camera along a series of waypoints.
-- To use it, from examples/testPython type:
-     python testpathedcamera.py.
-
-testpythongui.py:
-- This script uses the Tk toolkit to make a quick GUI.
-- It is unsupported on Linux for now, due to a X11 crash.
+Controls
+--------
+Esc  - Exit
+S    - Triggers flyhelo.py and makes the helo fly in a circle.

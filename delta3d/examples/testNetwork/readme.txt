@@ -1,33 +1,34 @@
-========================================================================
-    Delta3D Console Application : "testNetwork" Project Overview
-========================================================================
+########################################
+#                                      #
+# Delta3D Examples: testNetwork        #
+#                                      #
+########################################
 
-Delta3D Console Application has created this "testNetwork" project for you as a starting point.
+Uses modules: dtCore, dtABC, dtUtil, dtNet
 
-This file contains a summary of what you will find in each of the files that make up your project.
-testNetwork.vcproj
-    This is the main project file for projects generated using the Delta3D Console 
-    Application Wizard. It already has corect include and source dependencies set
-    for creating a Delta3D Application. 
+Purpose
+-------
 
-main.cpp
-    This optional file exists if you selected to create a simple application in
-    Wizard.  If you did not this file should not exist.  This is the entry point for a console application.  It creates and configures
-    an application and executes the game/simulation loop.
 
-testNetwork.cpp
-    This optional file exists if you selected to create a simple application in
-    Wizard.  If you did not this file should not exist.  It defines the implementation
-    of the application.
+Instructions
+------------
+Win32 Source: 
+- Open VisualStudio\examples\testNetwork\testNetwork.sln.
+- Build testNetwork.
+- Start testNetwork.
 
-testNetwork.h
-    This optional file exists if you selected to create a simple application in
-    Wizard.  If you did not this file should not exist.  It defines the interface
-    of the application.
-    
+Win32 Binary:
+- Go to bin.
+- Double-click testNetwork.exe.
 
-/////////////////////////////////////////////////////////////////////////////
-Other notes: This wizard was designed to work with Delta3D Build 0.8.5 
-             Please check for the latest version at www.delta3d.org
+Linux Source:
+- To build only testNetwork, from the root delta3d folder:
+  scons bin/testNetwork
 
-/////////////////////////////////////////////////////////////////////////////
+Linux Binary:
+- cd bin
+- ./testNetwork
+
+Controls
+--------
+
