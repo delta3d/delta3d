@@ -21,6 +21,6 @@ elif OS == 'darwin':
    dtTerrainDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
     
-libdtTerrain = BuildLib( 'dtTerrain', sources, dtTerrainDeps, ['DT_LIBRARY'] )
+libdtTerrain = BuildLib( 'dtTerrain', sources, dtTerrainDeps, ['DT_TERRAIN_LIBRARY'] )
 
 Export ('libdtTerrain')
