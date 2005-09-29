@@ -189,9 +189,6 @@
 				RelativePath="..\..\..\src\dtActors\staticmeshactorproxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtActors\terrainactorproxy.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp">
 			</File>
 		</Filter>
@@ -258,9 +255,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\staticmeshactorproxy.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtActors\terrainactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\triggeractorproxy.h">
