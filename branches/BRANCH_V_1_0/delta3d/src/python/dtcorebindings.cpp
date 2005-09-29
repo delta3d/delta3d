@@ -136,7 +136,6 @@ BOOST_PYTHON_MODULE(PyDtCore)
    initCompassBindings();
    initPointAxisBindings();
    //initRecorderBindings();
-   initTerrainBindings();
    initEffectManagerBindings();
 
    initLightBindings();
