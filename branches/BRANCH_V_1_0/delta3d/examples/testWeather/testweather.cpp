@@ -30,7 +30,7 @@ public:
       orbit = new dtCore::OrbitMotionModel( GetKeyboard(), GetMouse() );
       orbit->SetTarget( GetCamera() );
 
-      Inspector *ui = new Inspector();
+      dtInspector::Inspector *ui = new dtInspector::Inspector();
       ui = ui; //no-op to prevent warning for unused variable
 
  }

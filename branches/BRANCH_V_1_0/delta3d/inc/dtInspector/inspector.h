@@ -30,76 +30,82 @@
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
 
-///Creates and manages the UserInterface
-
-/** This class creates and manages a 2D GUI that can interact dynamically with 
-  * most dtCore instantiations.
-  * Currently, Inspector must be instantiated after all other dtCore classes have been
-  * created.  The interface will pickup all classes created at that point and
-  * render the user interface.
-  * NOTE: any instantiated classes that change values during runtime will not
-  * reflect their new values on the Inspector.
+/** The dtInspector namespace contains functionality to inspect Delta3D classes
+  * at runtime.
   */
-class DT_EXPORT Inspector : public OpenThreads::Thread
+namespace dtInspector
 {
-public:  
-   Inspector()
+   ///Creates and manages the UserInterface
+
+   /** This class creates and manages a 2D GUI that can interact dynamically with 
+   * most dtCore instantiations.
+   * Currently, Inspector must be instantiated after all other dtCore classes have been
+   * created.  The interface will pickup all classes created at that point and
+   * render the user interface.
+   * NOTE: any instantiated classes that change values during runtime will not
+   * reflect their new values on the Inspector.
+   */
+   class DT_EXPORT Inspector : public OpenThreads::Thread
    {
-      ui = new UserInterface();
-      win = ui->make_window();
-      Init();
-      startThread();
-   }
-   ~Inspector() {}
-
-   void Show( bool show=true)
-   {
-      if (show) ui->MainWindow->show();
-      else ui->MainWindow->hide();
-   }
-
-   bool IsShown(void) 
-   {
-      if (ui->MainWindow->shown()) return true;
-      else return false;
-   }
-
-private:
-
-   //not implemented by design
-   Inspector( const Inspector& rhs ); 
-   Inspector& operator= ( const Inspector& rhs ); 
-
-   void Init(void)
-   {
-      ui->TransformGroup->hide();
-      ui->DrawableGroup->hide();
-      ui->LoadableGroup->hide();
-      ui->CameraGroup->hide();
-      ui->ParticleGroup->hide();
-      
-      for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
+   public:  
+      Inspector()
       {
-         dtCore::Base *o = dtCore::Base::GetInstance(i);
-         ui->InstanceList->add( o->GetName().c_str(), o);
+         ui = new UserInterface();
+         win = ui->make_window();
+         Init();
+         startThread();
       }
-      
+      ~Inspector() {}
 
-      ui->InstanceList->select(1);
-      ui->SelectInstance();
-   }
-   
-   virtual void run() 
-   { 
-      //show the window until it closes, then quit the thread
-      ui->MainWindow->show();
-      Fl::run(); //blocking call
-      cancel(); //stop the thread
-   }
+      void Show( bool show=true)
+      {
+         if (show) ui->MainWindow->show();
+         else ui->MainWindow->hide();
+      }
 
-   Fl_Window *win;
-   UserInterface *ui;
-};
+      bool IsShown(void) 
+      {
+         if (ui->MainWindow->shown()) return true;
+         else return false;
+      }
+
+   private:
+
+      //not implemented by design
+      Inspector( const Inspector& rhs ); 
+      Inspector& operator= ( const Inspector& rhs ); 
+
+      void Init(void)
+      {
+         ui->TransformGroup->hide();
+         ui->DrawableGroup->hide();
+         ui->LoadableGroup->hide();
+         ui->CameraGroup->hide();
+         ui->ParticleGroup->hide();
+
+         for (int i=0; i<dtCore::Base::GetInstanceCount(); i++)
+         {
+            dtCore::Base *o = dtCore::Base::GetInstance(i);
+            ui->InstanceList->add( o->GetName().c_str(), o);
+         }
+
+
+         ui->InstanceList->select(1);
+         ui->SelectInstance();
+      }
+
+      virtual void run() 
+      { 
+         //show the window until it closes, then quit the thread
+         ui->MainWindow->show();
+         Fl::run(); //blocking call
+         cancel(); //stop the thread
+      }
+
+      Fl_Window *win;
+      UserInterface *ui;
+   };
+}//namespace dtInspector
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
