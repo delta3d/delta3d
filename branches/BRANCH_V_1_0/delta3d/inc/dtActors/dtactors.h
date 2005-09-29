@@ -28,7 +28,6 @@
 #include <dtActors/clouddomeactorproxy.h>
 #include <dtActors/cloudplaneactorproxy.h>
 #include <dtActors/deltaobjectactorproxy.h>
-#include <dtActors/dtedterrainactorproxy.h>
 #include <dtActors/engineactorregistry.h>
 #include <dtActors/enveffectactorproxy.h>
 #include <dtActors/environmentactorproxy.h>
