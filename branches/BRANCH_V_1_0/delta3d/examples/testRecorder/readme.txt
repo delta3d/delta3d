@@ -14,7 +14,7 @@ for what is needed to record class instances.
 Instructions
 ------------
 Win32 Source: 
-- Open VisualStudio/examples/testRecorder.sln.
+- Open VisualStudio/examples/testRecorder/testRecorder.sln.
 - Build testRecorder.
 - Start testRecorder.
 

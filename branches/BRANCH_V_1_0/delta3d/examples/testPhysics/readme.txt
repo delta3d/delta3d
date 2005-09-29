@@ -13,7 +13,7 @@ To demonstrate the physics package implemented in Delta3D.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testPhysics\testPhysics.sln.
 - Build testPhysics.
 - Start testPhysics.
 

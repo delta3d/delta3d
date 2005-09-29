@@ -15,7 +15,7 @@ Window #2 has two Cameras.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testMultiWin\testMultiWin.sln.
 - Build testMultiWin.
 - Start testMultiWin.
 

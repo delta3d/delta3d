@@ -15,7 +15,7 @@ axes.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testInput\testInput.sln.
 - Build testInput.
 - Start testInput.
 

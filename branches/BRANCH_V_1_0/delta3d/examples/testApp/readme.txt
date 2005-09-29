@@ -14,7 +14,7 @@ i.e. creating a simple application and setting basic camera parameters.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testApp\testApp.sln.
 - Build testApp.
 - Start testApp.
 

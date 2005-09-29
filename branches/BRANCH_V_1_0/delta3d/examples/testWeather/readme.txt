@@ -18,7 +18,7 @@ Just select the "weather" instance and the weather parameters will be displayed.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\testWeather\testWeather.sln.
 - Build testWeather.
 - Start testWeather.
 

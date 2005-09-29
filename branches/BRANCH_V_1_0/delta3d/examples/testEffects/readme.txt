@@ -14,7 +14,7 @@ well as an explosion particle effect.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open \VisualStudio\examples\testEffects\testEffects.sln.
 - Build testEffects.
 - Start testEffects.
 
