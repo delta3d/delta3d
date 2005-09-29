@@ -86,99 +86,7 @@ class TestTerrainApp : public dtABC::Application
          //are loading.
          double lon = -121.85;
          double lat = 36.58;
-         mTerrain->SetOrigin(osg::Vec3d(lat,lon,0.0));
-         
-         // Add some sample LCC Data
-         std::vector<dtTerrain::LCCType> LCCData;         
-         
-         dtTerrain::LCCType water(11,"water");
-         water.SetRGB(179,161,95);
-         
-         dtTerrain::LCCType snow(12,"snow");
-         snow.SetRGB(171,140,74);
-
-         dtTerrain::LCCType rockSand(31, "rock/sand");
-         rockSand.SetRGB(210,205,192);
-
-         dtTerrain::LCCType quarry(32, "quarries");
-         quarry.SetRGB(175,175,177);
-         
-         dtTerrain::LCCType grassland(71,"grasslands");
-         grassland.SetRGB(253,233,170);
-
-         dtTerrain::LCCType pasture(81,"pasture");
-         pasture.SetRGB(252,246,93);
-
-         dtTerrain::LCCType lowResidential(21,"low residential");
-         lowResidential.SetRGB(179,161,95);
-         lowResidential.SetSlope(0,20,1);
-         lowResidential.SetElevation(5,8000,1);
-         lowResidential.SetRelativeElevation(1,80,1);
-         lowResidential.SetAspect(255);
-         lowResidential.AddModel("models/house2.ive");
-         
-         dtTerrain::LCCType highResidential(22,"high residential");
-         highResidential.SetRGB(247,178,159);
-         highResidential.SetSlope(0,20,1);
-         highResidential.SetElevation(5,2000,1);
-         highResidential.SetRelativeElevation(0,80,1);
-         highResidential.SetAspect(255);
-         highResidential.AddModel("models/house0.ive");
-         highResidential.AddModel("models/house1.ive");
-
-         dtTerrain::LCCType industrial(23,"industrial");
-         industrial.SetRGB(179,168,102);
-         industrial.SetSlope(0,20,1);
-         industrial.SetElevation(5,5000,1);
-         industrial.SetRelativeElevation(0,100,1);
-         industrial.SetAspect(225);
-         industrial.AddModel("models/industry0.ive");
-         industrial.AddModel("models/industry1.ive");
-         industrial.AddModel("models/industry2.ive");
-
-         dtTerrain::LCCType deciduous(41,"deciduous");
-         deciduous.SetRGB(175,150,84);
-         deciduous.SetSlope(0,500,1);
-         deciduous.SetElevation(10,3280,1);
-         deciduous.SetRelativeElevation(0,73,1);
-         deciduous.SetAspect(225);
-         deciduous.AddModel("models/cypress0.ive",1.0);
-         deciduous.AddModel("models/cypress1.ive",1.0);
-         deciduous.AddModel("models/cypress2.ive",1.0);
-
-         dtTerrain::LCCType evergreen(42,"evergreen");
-         evergreen.SetRGB(175,148,81);
-         evergreen.SetSlope(0,500,1);
-         evergreen.SetElevation(10,10400,1);
-         evergreen.SetRelativeElevation(15,73,1);
-         evergreen.SetAspect(255);
-         evergreen.AddModel("models/grape_oregon0.ive",1.0);
-         evergreen.AddModel("models/grape_oregon1.ive",1.0);
-         evergreen.AddModel("models/grape_oregon2.ive",1.0);
-
-         dtTerrain::LCCType forest(43,"mixed forest");
-         forest.SetRGB(181,166,100);
-         forest.SetSlope(0,50,1);
-         forest.SetElevation(10,7280,1);
-         forest.SetRelativeElevation(15,73,1);
-         forest.SetAspect(255);
-         forest.AddModel("models/maple_sugar0.ive",1.0);        
-         forest.AddModel("models/maple_sugar1.ive",1.5);
-
-         LCCData.push_back(water);
-         LCCData.push_back(lowResidential);
-         LCCData.push_back(industrial);
-         LCCData.push_back(deciduous);
-         LCCData.push_back(evergreen);
-         LCCData.push_back(forest);
-
-         // Add a decoration layer
-         dtTerrain::TerrainDecorationLayer* veg = new dtTerrain::VegetationDecorator;
-         
-         // send over the LCCData to the vegetation decorator
-         veg->SetLCCData(LCCData);
-
-         mTerrain->AddDecorationLayer(veg);
+         mTerrain->SetOrigin(osg::Vec3d(lat,lon,0.0));         
          
          mTerrain->LoadResource("dted");
          
@@ -188,7 +96,6 @@ class TestTerrainApp : public dtABC::Application
 
          //Finally add the loaded terrain to the scene.
          GetScene()->AddDrawable(mTerrain.get());    
-         GetCamera()->SetNextStatisticsType();
 
          //Finish all system configuration..
          Config();
