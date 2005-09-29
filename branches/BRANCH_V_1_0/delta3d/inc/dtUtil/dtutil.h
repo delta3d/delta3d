@@ -54,6 +54,7 @@ namespace dtUtil
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME2
 #undef _AUTOLIBNAME3
+#undef _AUTOLIBNAME4
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
@@ -61,12 +62,14 @@ namespace dtUtil
    #endif
    #define _AUTOLIBNAME2 "ul_d.lib"
    #define _AUTOLIBNAME3 "osgd.lib"
+   #define _AUTOLIBNAME4 "xerces-c_2D.lib"
 #else
    #ifndef DT_LIBRARY
       #define _AUTOLIBNAME  "dtUtil.lib"
    #endif
    #define _AUTOLIBNAME2 "ul.lib"
    #define _AUTOLIBNAME3 "osg.lib"
+   #define _AUTOLIBNAME4 "xerces-c_2.lib"
 #endif
 
 
@@ -77,6 +80,7 @@ namespace dtUtil
 
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
 #endif
 
 #ifndef DT_LIBRARY
@@ -84,6 +88,7 @@ namespace dtUtil
 #endif
 #pragma comment(lib, _AUTOLIBNAME2)
 #pragma comment(lib, _AUTOLIBNAME3)
+#pragma comment(lib, _AUTOLIBNAME4)
 
 #endif //win32
 #endif //DTUTIL_INCLUDE
