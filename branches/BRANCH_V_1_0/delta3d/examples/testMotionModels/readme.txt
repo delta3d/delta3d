@@ -28,7 +28,7 @@ Win32 Binary:
 - Double-click testMotionModels.exe.
 
 Linux Source:
-- To build all examples: Run 'scons exaamples' from delta3d/.
+- To build all examples: Run 'scons examples' from delta3d/.
 - To build only testMotionModels: run 'scons examples/testMotionModel' from delta3d/.
 - Enter examples/testMotionModels directory.
 - Run 'testMotionModels'.
