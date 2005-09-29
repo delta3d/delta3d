@@ -9,41 +9,40 @@ using namespace dtDAL;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(FP_overloads, FindProxies, 2, 6)
 
+typedef std::vector< std::string > StringVector;
+typedef std::map< std::string, std::string > StringStringMap;
+
+typedef osg::ref_ptr< ActorProxy > ActorProxyRefPtr;
+typedef std::vector< ActorProxyRefPtr > ActorProxyVector;
+
 void initMapBindings()
 {
-   typedef std::vector< std::string > StringVector;
    class_< StringVector >( "StringVector" )
       .def(vector_indexing_suite< StringVector >())
       ;
-    
-   typedef osg::ref_ptr< ActorProxy > ActorProxyRefPtr;
-   typedef std::vector< ActorProxyRefPtr > ActorProxyVector;
+
    class_< ActorProxyVector >( "ActorProxyVector" )
       .def(vector_indexing_suite< ActorProxyVector >())
       ;
     
-   typedef std::map< dtCore::UniqueId, ActorProxyRefPtr > UniqueIdActorProxyMap;
-   class_< UniqueIdActorProxyMap >( "UniqueIdActorProxyMap" )
-      .def( map_indexing_suite< UniqueIdActorProxyMap >() )
-      ;
-      
-   typedef std::map< std::string, std::string > StringStringMap;
    class_< StringStringMap >( "StringStringMap" )
       .def( map_indexing_suite< StringStringMap >() )
       ;
-      
-   void (Map::*FP1)( ActorProxyVector&, 
-                     const std::string&, 
-                     const std::string&,
-                     const std::string&, 
-                     const std::string&, 
-                     Map::PlaceableFilter) = ( void ( Map::* )(   ActorProxyVector&,
+
+   void (Map::*FP1) ( ActorProxyVector&,
+                      const std::string&,
+                      const std::string&,
+                      const std::string&,
+                      const std::string&,
+                      Map::PlaceableFilter ) = ( void ( Map::* )( ActorProxyVector&,
                                                                   const std::string&,
                                                                   const std::string&,
                                                                   const std::string&,
                                                                   const std::string&,
                                                                   Map::PlaceableFilter ) ) &Map::FindProxies;
-    
+      
+   void (Map::*GAP1) ( ActorProxyVector& ) = ( void ( Map::* )( ActorProxyVector& ) ) &Map::GetAllProxies;
+   
    scope Map_scope = class_< Map, dtCore::RefPtr<Map>, boost::noncopyable >( "Map", no_init )
       .def_readonly( "MAP_FILE_EXTENSION", &Map::MAP_FILE_EXTENSION )
       .def( "GetName", &Map::GetName, return_internal_reference<>() )
@@ -61,7 +60,7 @@ void initMapBindings()
       .def( "GetCreateDateTime", &Map::GetCreateDateTime, return_internal_reference<>() )
       .def( "SetCreateDateTime", &Map::SetCreateDateTime )
       .def( "FindProxies", FP1, FP_overloads() )
-      //.def( "GetAllProxies", &Map::GetAllProxies )
+      .def( "GetAllProxies", GAP1 )
       .def( "AddProxy", &Map::AddProxy, with_custodian_and_ward<1,2>() )
       //.def( "RemoveProxy", &Map::RemoveProxy ) //doesn't recognize friend!
       .def( "ClearProxies", &Map::ClearProxies )
