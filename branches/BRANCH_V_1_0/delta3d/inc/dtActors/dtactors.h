@@ -41,7 +41,6 @@
 #include <dtActors/soundactorproxy.h>
 #include <dtActors/spotlightactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
-#include <dtActors/terrainactorproxy.h>
 #include <dtActors/triggeractorproxy.h>
 
 /** Contains the dtDAL::ActorProxy classes for the core engine classes
