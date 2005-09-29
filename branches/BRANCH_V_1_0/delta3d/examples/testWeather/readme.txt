@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -18,20 +18,21 @@ Just select the "weather" instance and the weather parameters will be displayed.
 Instructions
 ------------
 Win32 Source: 
-- Open \VisualStudio\testWeather\testWeather.sln.
+- Open VisualStudio\testWeather\testWeather.sln.
 - Build testWeather.
 - Start testWeather.
 
 Win32 Binary:
-- Go to examples/testWeather/Release.
+- Go to bin.
 - Double-click testWeather.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testWeather: run 'make' from examples/testWeather.
-- Enter examples/testWeather directory.
-- Run 'testWeather'.
+- To build only testWeather, from the root delta3d folder:
+  scons bin/testWeather
+
+Linux Binary:
+- cd bin
+- ./testWeather
 
 Controls
 --------

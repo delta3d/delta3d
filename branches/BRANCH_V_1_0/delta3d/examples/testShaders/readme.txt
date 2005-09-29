@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -14,7 +14,7 @@ to a dtCore::Object.
 Instructions
 ------------
 Win32 Source: 
-- Open VisualStudio/examples/testShaders/testShaders.sln.
+- Open VisualStudio\examples\testShaders\testShaders.sln.
 - Build testShaders.
 - Start testShaders.
 
@@ -23,17 +23,14 @@ Win32 Binary:
 - Double-click testBumpMap.exe.
 
 Linux Source:
-- To build all examples: Run 'scons examples' from delta3d/.
-- To build only testShaders: run 'scons bin/testShaders' from delta3d/.
-- Enter bin directory.
-- Run 'testShaders'.
+- To build only testShaders, from the root delta3d folder:
+  scons bin/testShaders
+  
+Linux Binary:
+- cd bin
+- ./testShaders
 
 Controls
 --------
 Space - Toggle Shader On/Off
 Esc   - Exit
-
-
-
-Intended use:
-Observe the GLSL shader magic.

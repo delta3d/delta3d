@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -23,20 +23,21 @@ can change (and change they do).
 Instructions
 ------------
 Win32 Source: 
-- Open \VisualStudio\examples\testLights\testLights.sln.
+- Open VisualStudio\examples\testLights\testLights.sln.
 - Build testLights.
 - Start testLights.
 
 Win32 Binary:
-- Go to examples/testLights/Release.
+- Go to bin.
 - Double-click testLights.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testLights: run 'make' from examples/testLights.
-- Enter examples/testLights directory.
-- Run 'testLights'.
+- To build only testLights, from the root delta3d folder:
+  scons bin/testLights
+
+Linux Binary:
+- cd bin
+- ./testLights
 
 Controls
 --------

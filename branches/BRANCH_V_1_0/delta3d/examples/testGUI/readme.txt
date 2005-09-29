@@ -16,26 +16,26 @@ the application. The cursor also changes to a different icon within the window.
 Instructions
 ------------
 Win32 Source: 
-- Open \VisualStudio\examples\testGUI\testGUI.sln.
+- Open VisualStudio\examples\testGUI\testGUI.sln.
 - Build testGUI.
 - Start testGUI.
 - To load from XML: open a command window next to testGUI.exe (in either the Debug
-  or Release folder) and type: testGUI.exe ../gui.xml
+  or Release folder) and type: testGUI.exe ..\examples\testGUI\gui.xml
   
-
 Win32 Binary:
-- Go to examples/testGUI/Release.
+- Go to bin.
 - Double-click testGUI.exe.
 - To load from XML: open a command window next to testGUI.exe (in either the Debug
-  or Release folder) and type: testGUI.exe ../gui.xml
+  or Release folder) and type: testGUI.exe ..\examples\tesGUI\gui.xml
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testGUI: run 'make' from examples/testGUI.
-- Enter examples/testGUI directory.
-- Run 'testGUI'.
-- To load from XML: testGUI.exe gui.xml
+- To build only testGUI, from the root delta3d folder:
+  scons bin/testGUI
+
+Linux Binary:
+- cd bin
+- ./testGUI
+  ./testGUI ../examples/testGUI/gui.xml
 
 Controls
 --------

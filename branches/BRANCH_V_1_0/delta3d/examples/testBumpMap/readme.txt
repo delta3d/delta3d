@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -23,16 +23,17 @@ Win32 Binary:
 - Double-click testBumpMap.exe.
 
 Linux Source:
-- To build all examples: Run 'scons examples' from delta3d/.
-- To build only testBumpMap: run 'scons bin/testBumpMap' from delta3d/.
-- Enter bin directory.
-- Run 'testBumpMap'.
+- To build only testBumpMap, from the root delta3d folder:
+  scons bin/testBumpMap
+
+Linux Binary:
+- cd bin
+- ./testBumpMap
 
 Controls
 --------
 Space - Wireframe
 Esc   - Exit
-
 
 Fly Motion Model:
 Up     -  Look up
@@ -43,6 +44,3 @@ S      -  Move forward
 W      -  Move backward
 Left  Mouse Button - Look up/down, turn left/right
 Right Mouse Button - Move forward/backward
-
-Intended use:
-Observe the pretty bumpmapping.

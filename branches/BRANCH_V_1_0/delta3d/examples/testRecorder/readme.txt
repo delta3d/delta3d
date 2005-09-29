@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -23,10 +23,12 @@ Win32 Binary:
 - Double-click testRecorder.exe.
 
 Linux Source:
-- To build all examples: Run 'scons examples' from delta3d/.
-- To build only testRecorder: run 'scons bin/testRecorder' from delta3d/.
-- Enter bin directory.
-- Run 'testRecorder'.
+- To build only testRecorder, from the root delta3d folder:
+  scons bin/testRecorder
+
+Linux Binary:
+- cd bin
+- ./testRecorder
 
 Controls
 --------
@@ -37,7 +39,10 @@ Controls
 Esc  - Exit
 
 Use arrow keys or hold left mouse button over corresponding areas of the 
-window to move camera based on chosen motion model.
+window to move camera based on chosen motion model. Type 'R' to start recorder, 
+fly around the world a little.  Type 'R' again to stop recorder.  Type 'F' to 
+dump the recording out to file.  Type 'L' to load the recording from file.  
+Type 'P' to watch the recording.
 
 Fly Motion Model:
 Up     -  Look up
@@ -48,8 +53,3 @@ S      -  Move forward
 W      -  Move backward
 Left  Mouse Button - Look up/down, turn left/right
 Right Mouse Button - Move forward/backward
-
-Intended use:
-Type 'R' to start recorder, fly around the world a little.  Type 'R' again
-to stop recorder.  Type 'F' to dump the recording out to file.  Type 'L' to
-load the recording from file.  Type 'P' to watch the recording.

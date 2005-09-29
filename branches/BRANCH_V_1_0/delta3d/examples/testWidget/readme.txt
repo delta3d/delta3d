@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -20,26 +20,24 @@ Note: The camera movement on Linux is a bit jumpy due to a hack that
 Instructions
 ------------
 Win32 Source: 
-- Open testWin.sln.
+- Open VisualStudio\examples\testWidget\testWidget.sln.
 - Build testWidget.
 - Start testWidget.
 
 Win32 Binary:
-- Go to \VisualStudio\examples\testWidget\testWidget.sln.
+- Go to bin.
 - Double-click testWidget.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testWidget: run 'make' from examples/testWidget.
-- Enter examples/testWidget directory.
-- Run 'testWidget'.
+- To build only testWidget, from the root delta3d folder:
+  scons bin/testWidget
+
+Linux Binary:
+- cd bin
+- ./testWidget
 
 Controls
 --------
 Left   Mouse Button  -  Rotate plane
 Right  Mouse Button  -  Translate plane
 Middle Mouse Button  -  Zoom plane
-
-
-
