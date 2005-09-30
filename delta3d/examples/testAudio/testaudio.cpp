@@ -934,7 +934,7 @@ void TestAudioApp::StopRecording()
 int main( int argc, const char* argv[] )
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testAudio/;" +
-                        GetDeltaDataPathList()  );
+                        GetDeltaDataPathList() + ";" + GetDeltaDataPathList()+"/effects/"  );
 
    RefPtr<TestAudioApp>  app   = new TestAudioApp( "config.xml" );
 
