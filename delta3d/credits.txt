@@ -14,31 +14,31 @@ support in the development of the Delta3D Open Source Game and Simulation Engine
 --------------------
 | The Delta3D Team |
 --------------------
-Rudy Darken
+Rudy "Dean Wormer" Darken
 - Director MOVES Insitute
 
-Perry McDowell
+Perry "Bluto" McDowell
 - Executive Director
 
-Erik Johnson
+Erik "Boon" Johnson
 - Lead Engineer
  
-Joe Sullivan
+Joe "Otis" Sullivan
 - The "goto" guy
 
-Chris Osborn
+Chris "D-Day" Osborn
 - Lead Programmer
  
-Brad Anderegg
+Brad "Otter" Anderegg
 - Programmer
 
-John K. Grant
+John "Neidermeyer" Grant
 - Programmer
 
-Will Clapham
+Will "Pinto" Clapham
 - Artist
 
-Mike Dunhour
+Mike "Flounder" Dunhour
 - Artist
 
 Mark Strom
