@@ -51,12 +51,13 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
 {
    if( !mStateManager->GetCurrentState() )
    {
-      LOG_ERROR("StateWalker: No valid current State within StateManager, stopping the System.");
+      LOG_ERROR("No valid current State within StateManager, stopping the System.");
       dtCore::System::Instance()->Stop();
       return;
    }
 
-   LOG("For the State, "+mStateManager->GetCurrentState()->GetName()+", the Event choices are:");
+   LOG("Current State: "+mStateManager->GetCurrentState()->GetName());
+   LOG("The Event choices are:");
 
    std::vector<const dtABC::Event::Type*> eventvec( mStateManager->GetNumOfEvents( mStateManager->GetCurrentState() ) );
    mStateManager->GetEvents( mStateManager->GetCurrentState(), eventvec );
@@ -88,13 +89,13 @@ void StateWalker::DisplayEventChoicesAndWaitForInput()
          dtCore::RefPtr<dtABC::Event> event = ef->CreateObject( eventtype );
          if( event.valid() )
          {
-            LOG("StateWalker: Sending Event of type: "+eventtype->GetName());
+            LOG("Sending Event of type: "+eventtype->GetName());
             SendMessage("event", event.get() );
          }
       }
       else
       {  // some logging feedback
-         LOG("StateWalker: Can not create Event of type: "+eventtype->GetName() );
+         LOG("Can not create Event of type: "+eventtype->GetName() );
       }
    }
 
