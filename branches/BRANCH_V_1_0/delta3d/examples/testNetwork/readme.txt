@@ -37,8 +37,8 @@ Linux Binary:
 
 Controls
 --------
-escape : quit application
-'p'    : send a ping packet to measure network lag
+Esc    -  Quit application
+P      -  Send a ping packet to measure network lag
 
 Fly Motion Model:
 Up     -  Look up
