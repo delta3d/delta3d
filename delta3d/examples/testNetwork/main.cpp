@@ -15,8 +15,6 @@ int main(int argc, char *argv[] )
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testNetwork/;" +
                         GetDeltaDataPathList()  );
 
-
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
    dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_ALWAYS, "",
       "Usage: testNetwork.exe [hostname]");
 

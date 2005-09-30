@@ -46,8 +46,6 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    mSmokeCountC(0L),
    mRecorder(new SoundRecorder())
 {  
-   Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
-
    AddSender( System::Instance() );
 
    AudioManager::Instantiate();

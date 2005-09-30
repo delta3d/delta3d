@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
 {
    dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath()+"/examples/testTerrain/;"
                                +dtCore::GetDeltaDataPathList());   
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
+
    dtCore::RefPtr<TestTerrainApp> app;
    
    try
