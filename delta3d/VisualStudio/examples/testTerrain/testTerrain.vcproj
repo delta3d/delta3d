@@ -81,8 +81,8 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				AssemblerListingLocation="$(IntDir)"
-				ProgramDataBaseFileName="$(IntDir)"
+				AssemblerListingLocation=""
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"/>

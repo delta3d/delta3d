@@ -32,9 +32,9 @@
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile=""
-				AssemblerListingLocation="$(IntDir)"
+				AssemblerListingLocation=""
 				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>

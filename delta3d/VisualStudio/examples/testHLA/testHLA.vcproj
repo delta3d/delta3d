@@ -30,9 +30,9 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/testHLA.pch"
-				AssemblerListingLocation="$(IntDir)"
+				AssemblerListingLocation=""
 				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
