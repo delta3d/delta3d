@@ -44,6 +44,8 @@
 
 #include <dtCore/scene.h>
 #include <dtChar/character.h>
+#include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 #include <osg/BoundingSphere>
 
@@ -223,7 +225,8 @@ namespace dtEditQt
             }
             catch (dtUtil::Exception &e)
             {
-                validFile = false;
+               LOG_WARNING( "Exception in file," + e.File() + ", at line, " + dtUtil::ToString(e.Line()) + ", with message: " + e.What() )
+               validFile = false;
             }
 
             if(validFile == true)
