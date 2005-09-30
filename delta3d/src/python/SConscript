@@ -134,7 +134,7 @@ if CheckForBoost() and OS != 'darwin' :
       dir = 'lib'
       suffix = 'so'
 
-   if mode == 'debug' :
+   if OS == 'windows' and mode == 'debug' :
       dtCorePydTarget = '#'+dir+'/PyDtCored.'+suffix
       dtAbcPydTarget = '#'+dir+'/PyDtABCd.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudiod.'+suffix
@@ -143,7 +143,7 @@ if CheckForBoost() and OS != 'darwin' :
       dtInspectorPydTarget = '#'+dir+'/PyDtInspectord.'+suffix
       dtHlaPydTarget = '#'+dir+'/PyDtHLAd.'+suffix
       dtUtilPydTarget = '#'+dir+'/PyDtUtild.'+suffix
-   elif mode == 'release' :
+   else :
       dtCorePydTarget = '#'+dir+'/PyDtCore.'+suffix
       dtAbcPydTarget = '#'+dir+'/PyDtABC.'+suffix
       dtAudioPydTarget = '#'+dir+'/PyDtAudio.'+suffix
