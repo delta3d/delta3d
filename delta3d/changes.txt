@@ -7,44 +7,45 @@
 ---------
 | 1.0.0 |
 ---------
--New Features:
-Now keeping better track of changes.
-Added support for loading TerraPage files.
-dtNet multiplayer networking has been implemented.
-Replaced TinyXML with Xerces XML.
-SCONS and MSVC both output object files to the same directories.
-Build system now supports 'scons prefix=/path/to/your/dir install'
-All xml parsing now checks against schemas.
-Deprecated methods have been removed from the API.
-Updated all Python bindings to include dtUtil, dtDAL, and osg data types such as Vec3 and Matrix.
-Matrix Utilities are now confirmed to be "row major".
-Fixed bug that caused the motion models not to work in the Viewer.
-Fixed bug that would cause the Particle Editor to crash with multiple layers and a Program assigned.
-Closing the DeltaWin can now optionally also exit the application.
-testRecorder example has been added.
-Fixed Statistics bug that caused Linux applications to crash.
-Noise classes have been added to dtUtil.
-The Recorder class has been completely rewritten so that any class can be recorded, without the need for multiple inheritance.
-Fixes have been submitted to ReplicantBody to correctly ground-clamp the character.
-Changed StateManager's XML schema to require an Event tag to have the 'Type' attribute.
-testNetwork now supports multiple players.
-dtDAL  string utilities are now located in dtUtil.
-Moved Xerces utilities into xercesutils.h.
-dtDAL::Exception has been moved to dtUtil.
-Combined dtDAL::IntersectionQuery's functionality into dtCore::Isector.
-Added testBumpmap example.
-Added testShader example.
-The dtTerrain module has been added.
-SOARX Terrain has been merged into dtTerrain.
-GENETICS has been merged into dtTerrain.
-Most major classes now export Python bindings.
+New Features:
+-Now keeping better track of changes.
+-Added support for loading TerraPage files.
+-dtNet multiplayer networking has been implemented.
+-Replaced TinyXML with Xerces XML.
+-SCons and MSVC both output object files to the same directories.
+-Build system now supports 'scons prefix=/path/to/your/dir install'
+-All XML parsing now checks against schemas.
+-Deprecated methods have been removed from the API.
+-Updated all Python bindings to include dtUtil, dtDAL, and osg data types such as Vec3 and Matrix.
+-Matrix Utilities are now confirmed to be "row major".
+-Closing the DeltaWin now exits the applications by default.
+-The Recorder class has been completely rewritten so that any class can be recorded, without the need for multiple inheritance.
+-testRecorder example has been added.
+-Fixed Statistics bug that caused Linux applications to crash.
+-Noise classes have been added to dtUtil.
+-Changed StateManager's XML schema to require an Event tag to have the 'Type' attribute.
+-testNetwork now supports multiple players.
+-dtDAL string utilities are now located in dtUtil.
+-Moved Xerces utilities into dtUtil/xercesutils.h.
+-dtDAL::Exception has been moved to dtUtil.
+-Combined dtDAL::IntersectionQuery's functionality into dtCore::Isector.
+-Added testBumpMap example.
+-Added testShaders example.
+-Terrain rendering has been rearchitected and implemented as "dtTerrain".
+-SOARX terrain has been merged into dtTerrain.
+-GENETICS has been merged into dtTerrain.
+-Added additional Python examples (testSound.py, testMap.py)
 
--Bug Fixes:
-Fixed crash on exit after using a shader.
-A dtHLA module crash on exit is fixed with the latest RTI-s version.
-Crash on exit from adding shaders to a Scene is fixed by using the latest NVidia drivers.
-Window Installer now doesn't change system fonts when un-installed.
-Fixed a bug that cound cause the StateManager to become invalid after parsing a file.
+Bug Fixes:
+-Fixed crash on exit after using a shader.
+-A Windows dtHLA module crash on exit is fixed with the latest RTI-s version.
+-Crash on exit from adding shaders to a Scene is fixed by using the latest NVidia drivers.
+-Window Installer now doesn't change system fonts when un-installed.
+-Fixed a bug that cound cause the StateManager to become invalid after parsing a file.
+-Fixed bug that caused the motion models not to work in the Viewer.
+-Fixed bug that would cause the Particle Editor to crash with multiple layers and a Program assigned.
+-Fixes have been submitted to ReplicantBody to correctly ground-clamp the character.
+-Many small bugs fixed and optimizations made.
 
 ---------
 | 0.9.2 |
