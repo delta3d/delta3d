@@ -38,7 +38,7 @@ namespace dtEditQt
     //////////////////////////////////////////////////////////////////////////////
     EditorAboutBox::EditorAboutBox(QWidget *parent) : QDialog(parent)
     {
-        setWindowTitle("About Delta3D World Editor");
+        setWindowTitle("About STAGE");
 
         QPixmap splashImage = QPixmap(UIResources::SPLASH_SCREEN.c_str());
         QLabel *splashLabel = new QLabel(this);
@@ -71,7 +71,7 @@ namespace dtEditQt
         QTextEdit *textEdit = new QTextEdit();
 
         textEdit->setReadOnly(true);
-        textEdit->setHtml("<h2><p align=\"center\"><u>The Delta3D World Builder</u></p></h2>"
+        textEdit->setHtml("<h2><p align=\"center\"><u>STAGE: Delta3D's Simulation, Training, and Game Editor</u></p></h2>"
                 "<h4><p align=\"center\">Copyright 2004-2005<br>"
                 "MOVES Institute, Naval Postgraduate School<br>"
                 "700 Dyer Road<br>"
