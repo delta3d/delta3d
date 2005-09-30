@@ -114,8 +114,10 @@ namespace dtDAL
         catch (const XMLException& toCatch)
         {
             //if this happens, something is very very wrong.
-            dtUtil::Log::GetInstance(logName).LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                "Error during parser initialization! %s :\n", XMLStringConverter(toCatch.getMessage()).c_str());
+            char* message = XMLString::transcode( toCatch.getMessage() );
+            std::string msg(message);
+            LOG_ERROR("Error during parser initialization!: "+ msg)
+            XMLString::release( &message );
             return;
         }
     }
@@ -217,7 +219,7 @@ namespace dtDAL
                 toCatch.getMessage());
             EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
-        catch (const SAXParseException& toCatch)
+        catch (const SAXParseException&)
         {
             if (parserNeedsReset)
                 mXercesParser->parseReset(token);
