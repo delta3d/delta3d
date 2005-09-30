@@ -80,7 +80,7 @@ namespace dtEditQt
 
         //Make sure some default UI states are correctly initialized.
         EditorActions::getInstance().actionSelectionCamera->setChecked(true);
-        setWindowTitle(tr("Delta3D Editor"));
+        setWindowTitle(tr("STAGE"));
         EditorData::getInstance().setMainWindow(this);
         
         // add the application icon

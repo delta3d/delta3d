@@ -294,13 +294,13 @@ namespace dtEditQt
     void EditorActions::setupHelpActions()
     {
         // Help - About Editor
-        actionHelpAboutEditor = new QAction(tr("&About Delta3D Editor..."), this);
-        actionHelpAboutEditor->setStatusTip(tr("About Delta3D Editor"));
+        actionHelpAboutEditor = new QAction(tr("&About STAGE..."), this);
+        actionHelpAboutEditor->setStatusTip(tr("About STAGE"));
         connect(actionHelpAboutEditor, SIGNAL(triggered()), this, SLOT(slotHelpAboutEditor()));
 
         // Help - About QT
-        actionHelpAboutQT = new QAction(tr("A&bout QT..."), this);
-        actionHelpAboutQT->setStatusTip(tr("About QT"));
+        actionHelpAboutQT = new QAction(tr("A&bout Qt..."), this);
+        actionHelpAboutQT->setStatusTip(tr("About Qt"));
         connect(actionHelpAboutQT, SIGNAL(triggered()), this, SLOT(slotHelpAboutQT()));
     }
 
@@ -893,7 +893,7 @@ namespace dtEditQt
     std::string EditorActions::getWindowName()
     {
         ((QMainWindow*)EditorData::getInstance().getMainWindow())->windowTitle().clear();
-        std::string name = "Delta3D Editor";
+        std::string name = "STAGE";
         std::string projDir;
         std::string temp = dtDAL::Project::GetInstance().GetContext();
         if(temp.empty())
