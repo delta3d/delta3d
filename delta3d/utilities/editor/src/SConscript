@@ -114,7 +114,7 @@ if 'qt' in env['TOOLS'] :
    sources = SGlob('*.cpp') + moc_targets
    
    if mode == 'debug':
-      app = EditorEnv.Program('#/bin/STAGED',sources)
+      app = EditorEnv.Program('#/bin/STAGEd',sources)
    else:   
       app = EditorEnv.Program('#/bin/STAGE',sources)
    if (app == '[]') :
