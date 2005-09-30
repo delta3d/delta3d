@@ -1,0 +1,7 @@
+Import('*')
+
+if env.get('rti') :
+
+   deps = [ 'dtCore', 'dtABC', 'dtHLA', 'dtUtil' ]
+
+   BuildProgram( 'hlaStealthViewer', 'main.cpp', deps )

@@ -1,0 +1,10 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+
+deps = [ 'dtCore', 'cal3d', 'rbody', 'dtUtil', 'isense', 'ode',
+         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain',
+         'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer',
+         'ul', 'js', 'Producer', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
+    
+BuildLib( 'dtChar', srcs, deps, ['DT_LIBRARY'] )
