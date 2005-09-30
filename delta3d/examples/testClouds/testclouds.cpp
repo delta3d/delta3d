@@ -19,10 +19,12 @@ public:
       terr->SetVerticalScale(25.f);
       terr->Regenerate();
 
+      LOG_ALWAYS("Creating clouds...");
       cd = new CloudDome(6, 2, 0.7, 0.5, 0.7, 5, 5500.f, 20);
       cp[0] = new CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 1800);
       cp[1] = new CloudPlane(6, 0.7, 12, 1, .4, 0.95, 512, 1000);
       cp[2] = new CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
+      LOG_ALWAYS("...done creating clouds.");
 
       weather = new Weather();   
       weather->AddChild(terr.get());
