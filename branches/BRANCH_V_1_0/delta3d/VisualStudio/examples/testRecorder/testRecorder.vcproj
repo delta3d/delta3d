@@ -79,7 +79,7 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				ProgramDataBaseFileName="$(IntDir)/$(ProjectName).pdb"
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="0"/>
