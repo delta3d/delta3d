@@ -29,8 +29,6 @@ class TestLightsApp(Application):
         
         Application.Config( self )
         
-        SetDataFilePathList ( '../../data' )
-        
         self.GetScene().UseSceneLight( 0 )
         
         self.warehouse = Object( "Warehouse" )
@@ -116,6 +114,9 @@ class TestLightsApp(Application):
         
         self.mGlobalInfinite.SetDiffuse( redValue, greenValue, blueValue, 1.0 ) #change color
         self.mGlobalInfinite.SetAzimuthElevation( self.countOne, self.countTwo ) #change direction
+
+SetDataFilePathList( GetDeltaRootPath() + '/examples/testPython/;' +
+                     GetDeltaDataPathList() )
 
 app = TestLightsApp( 'config.xml' )
 
