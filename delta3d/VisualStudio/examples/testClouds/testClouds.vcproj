@@ -35,6 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtUtilD.lib"
 				ShowProgress="0"
 				OutputFile="../../../bin/testCloudsd.exe"
 				LinkIncremental="1"
@@ -86,7 +87,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" odbc32.lib odbccp32.lib"
+				AdditionalDependencies=" odbc32.lib odbccp32.lib dtUtil.lib"
 				OutputFile="../../../bin/testClouds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
