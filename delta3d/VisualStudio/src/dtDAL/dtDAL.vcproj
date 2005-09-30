@@ -256,9 +256,6 @@
 				RelativePath="..\..\..\inc\dtDAL\resourcetreenode.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtDAL\stringtokenizer.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtDAL\transformableactorproxy.h">
 			</File>
 			<File
