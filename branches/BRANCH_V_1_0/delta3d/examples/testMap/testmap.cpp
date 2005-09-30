@@ -153,7 +153,9 @@ private:
 
 int main()
 {
-   dtCore::SetDataFilePathList( GetDeltaRootPath() + "/examples/testMap/;" + dtCore::GetDeltaDataPathList() );
+   dtCore::SetDataFilePathList( GetDeltaRootPath() + "/examples/testMap/;" +
+                                 dtCore::GetDeltaDataPathList() + ";" +
+                                 GetDeltaDataPathList()+"/effects/" );
    RefPtr<TestApp> app;
    
    try
