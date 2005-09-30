@@ -259,7 +259,7 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
    target = '#bin/'+name
    if OS == 'windows' and mode == 'debug' :
-      target += 'D'
+      target += 'd'
 
    envProg = env.Copy()
 
