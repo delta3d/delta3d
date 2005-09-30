@@ -28,23 +28,14 @@ The Delta3D Team
 # Building From Source #
 ########################
 
-Delta3D is a cross-platform open-source set of libraries, and therefore we try to
-support as many platforms and compilers as possible. 
-
-Here's what we know does works:
+Known Here's what we know does works:
 
 Win32 w/ Microsoft Visual Studio .NET 7.1
 Win32 w/ Microsoft Visual C++ Toolkit 2003, .NET Framework SDK 1.1, & SCons
 Linux w/ gcc3.4.x
 Linux w/ gcc4.0.0
 
-Here's what we know doesn't work:
-
-Win32 w/ Microsoft Visual Studio 6.0 (or less)
-Win32 w/ MinGW (coming soon!)
-Win32 w/ Cygwin
-Linux w/ gcc3.3.x
-Linux w/ gcc4.0.1+ (requires a patch to OSG 0.9.9 to work).
+Note: gcc4.0.1+ requires a patch to OSG 0.9.9 to work.
 
 Note about Linux distrubutions: We test on Fedora Core 4 but have reports of 
 Delta3D running on Ubuntu, SuSE, Mandriva, & Gentoo. Please contact us if you
@@ -82,7 +73,7 @@ OpenAL 1.0
 Open Dynamics Engine 0.5
 OSG 0.9.9
 PLIB 1.8.4
-ReplicantBody 2005-07-25
+ReplicantBody 2005-09-28
 Xerces 2.6.0
 
 Linux only: Xxf88vm, uuid, curses.
@@ -101,6 +92,40 @@ RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 In order to run our examples, you also need our sample data package. It can
 also be found on SourceForge download site:
 https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
+
+#########################
+# Environment Variables #
+#########################
+
+Delta3D requires environment variables at runtime (but not at compile-time).
+The Windows installer will set these up for you, but if you use the zip
+package or are on Linux you need to set them youself.
+
+Win32
+-----
+Make sure the Delta3D environment variables are set:
+
+DELTA_ROOT = c:\program files\delta3d  (or wherever Delta3D is installed)
+DELTA_INC  = %DELTA_ROOT%\inc;%DELTA_ROOT%\ext\inc;%DELTA_ROOT%\ext\inc\CEGUI
+DELTA_LIB  = %DELTA_ROOT%\lib;%DELTA_ROOT%\ext\lib
+DELTA_DATA = %DELTA_ROOT%\data
+
+And, of course, add  %DELTA_ROOT%\bin;%DELTA_ROOT%\ext\bin to your PATH.
+
+Once set, these variables can be used in Visual Studio in the project properties
+or in the global VC++ directories (Tools->Options->Projects) as shown below:
+
+Include files : $(DELTA_INC) 
+Library files : $(DELTA_LIB)
+
+Linux
+-----
+DELTA_ROOT: path to your Delta3D installation
+DELTA_DATA: $DELTA_ROOT/data
+DELTA_INC:  $DELTA_ROOT/inc:$DELTA_ROOT/ext/inc:$DELTA_ROOT/ext/inc:$DELTA_ROOT/ext/inc/CEGUI
+DELTA_LIB:  $DELTA_ROOT/lib:$DELTA_ROOT/ext/lib:$DELTA_ROOT/ext/lib/osgPlugins
+
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DELTA_LIB
 
 ########################################
 # Platform-specific build instructions #
@@ -176,8 +201,74 @@ Win32 w/ Visual Studio .NET 7.1
                         with the resulting .pyd libraries (most likely delta3d/bin).
 
    Build the Delta3D Python bindings:
-  - Open VisualStudio/src/python/dtpython.sln
-  - Build.
+   - Open VisualStudio/src/python/dtpython.sln
+   - Build.
+
+   STAGE
+   -----
+   If you want to build STAGE in with Microsoft's compiler (with SCons or VisualStudio),
+   there's a few hoops you must jump through. The problem boils down to this: Trolltech 
+   generously decided to release Qt 4.0.1 under an open-source license, but unfortunately 
+   they only provided makefile support for MinGW. While we love MinGW, there is no support 
+   for building Delta3D with it. 
+
+   So we had to find a way to compile Qt with MSVC. Here's the solution:
+
+   You'll need:
+   -Visual Studio .Net 2003
+   -Qt 4.0.1, the windows open-source release 
+    ftp://ftp.trolltech.com/qt/source/qt-win-opensource-desktop-4.0.1.zip
+   -Python
+    http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
+   -qt4.0.1_msvc_patch.zip 
+    (get this from the Visual Studio dependencies release inside the ext/ directory)
+
+   Building Qt 4.0.1 Open Source Version with MSVC
+   --------------------------------------------
+
+   1. Make sure all of the above software is installed.
+      Qt *must* be installed to C:\Qt\4.0.1
+   
+   2. Add the following environment variables:
+
+      QTDIR=C:\Qt\4.0.1
+      QMAKESPEC=win32-msvc.net
+      Add C:\Qt\4.0.1\bin to your PATH if they aren't there already.
+   
+   3. Extract qt4.0.1_msvc_patch.zip inside the C:\Qt\4.0.1 directory.
+      Overwrite any files with the ones from the patch.
+   
+   4. Open a Command window by clicking Start->Run..., and typing 'cmd'
+
+   5. The following commands should be run from the command line (without quotes,
+      and replace the VisualStudio path with your appropriate path):
+   
+      'cd %QTDIR%'
+      'qtvars.bat' (ignore the mention of MinGW in this output of this command)
+      'C:\Program File\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat'
+      'qmake'
+      'nmake'
+
+   6. After many many hours, it should be all compiled up and happy.
+      Qt is now built with MSVC!
+   
+   
+   Building the Delta3D Editor with MSVC
+   -------------------------------------
+   1. Ok, onto building the editor. Open:
+      delta3d\VisualStudio\utilities\editor\editor.sln
+   
+   2. Now we are going to make sure VisualStudio can find python.exe:
+   
+      Select Tools->Options
+      Select the Projects folder
+      Select VC++ Directories
+      Change 'Show directories for:' to Executable files
+      Add 'C:\Python24' to the list of directories (or whatever you proper path is)
+   
+   3. Build the entire solution.
+
+   4. The STAGE.exe file should now reside in delta3d/bin.  Double-click to run!
 
 Win32 w/ SCons, Linux
 ---------------------
@@ -258,3 +349,4 @@ Win32 w/ SCons, Linux
    'scons rti=/path/to/rti hla'
 
    and SCons will build dtHLA, testHLA, and hlaStealthViewer.
+
