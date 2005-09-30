@@ -23,20 +23,25 @@ Application::Application(const std::string& configFilename) :  BaseABC("Applicat
 {
    RegisterInstance(this);
 
-   std::string foundPath = osgDB::findDataFile(configFilename);
-   if( foundPath.empty() )
+   if( !configFilename.empty() )
    {
-      LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
-      CreateInstances(); //create default window, camera, etc.
+      std::string foundPath = osgDB::findDataFile(configFilename);
+      if( foundPath.empty() )
+      {
+         LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
+         CreateInstances(); //create default window, camera, etc.
+      }
+      else if( !ParseConfigFile( foundPath ) )
+      {
+         LOG_WARNING("Application: Error loading config file, using defaults instead.");
+         CreateInstances(); //create default window, camera, etc.
+      }
    }
-   else if( !ParseConfigFile( foundPath ) )
+   else
    {
-      LOG_WARNING("Application: Error loading config file, using defaults instead.");
       CreateInstances(); //create default window, camera, etc.
    }
 }
-
-
 
 /** destructor */
 Application::~Application(void)
