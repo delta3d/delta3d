@@ -1620,7 +1620,7 @@ bool RTIConnection::LoadEntityTypeMappings(const std::string& filename)
    mEntityTypeMappings.clear();
    RTIEntityContentHandler handler(this);
    dtUtil::XercesParser parser;
-   return parser.Parse(filename, handler);
+   return parser.Parse(filename, handler, "entitytypemappings.xsd");
 }
 
 void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
