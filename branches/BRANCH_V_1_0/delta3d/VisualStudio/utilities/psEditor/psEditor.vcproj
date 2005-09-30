@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib dtUtild.lib odbccp32.lib winmm.lib js_d.lib fltkd.lib wsock32.lib comctl32.lib osgParticled.lib osgTextd.lib"
-				OutputFile="..\..\..\bin\psEditorD.exe"
+				OutputFile="..\..\..\bin\psEditord.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -52,7 +52,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/psEditor.tlb"
+				TypeLibraryName="$(IntDir)/psEditor.tlb"
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -116,7 +116,7 @@
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/psEditor.tlb"
+				TypeLibraryName=".$(IntDir)/psEditor.tlb"
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
