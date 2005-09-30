@@ -36,7 +36,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH)"
 				IgnoreDefaultLibraryNames="libc; libcmt"
-				ImportLibrary="Release/dtHLABindings.lib"/>
+				ImportLibrary="..\..\..\lib\dtHLABindings.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
