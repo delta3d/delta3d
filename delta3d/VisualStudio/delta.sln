@@ -23,12 +23,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "src\dtUtil\dtutil
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtSOARX", "src\soarx\dtsoarx.vcproj", "{A6562750-F7E3-4CB3-83C2-727F49F88CE0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtBSP", "src\dtBSP\dtbsp.vcproj", "{6CB0D175-771B-4592-91A2-C367C61A3381}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -94,18 +88,12 @@ Global
 		{6C9F6D0C-9B74-404F-808B-9E480777F757}.Release.Build.0 = Release|Win32
 		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Debug.ActiveCfg = Debug|Win32
 		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Debug.Build.0 = Debug|Win32
-		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.dtTerrain.ActiveCfg = Debug|Win32
-		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.dtTerrain.Build.0 = Debug|Win32
 		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Release.ActiveCfg = Release|Win32
 		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Release.Build.0 = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.ActiveCfg = Debug|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
-		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Debug.ActiveCfg = Debug|Win32
-		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Debug.Build.0 = Debug|Win32
-		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Release.ActiveCfg = Release|Win32
-		{A6562750-F7E3-4CB3-83C2-727F49F88CE0}.Release.Build.0 = Release|Win32
 		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.ActiveCfg = Debug|Win32
 		{6CB0D175-771B-4592-91A2-C367C61A3381}.Debug.Build.0 = Debug|Win32
 		{6CB0D175-771B-4592-91A2-C367C61A3381}.Release.ActiveCfg = Release|Win32
