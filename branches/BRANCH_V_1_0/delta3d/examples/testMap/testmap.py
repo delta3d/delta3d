@@ -37,27 +37,27 @@ class TestMap(Application):
       self.smoke.LoadFile("Particles/smoke.osg")
       self.explosion.AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg")
       
-      for actor in proxies :
-         # Find our helicopter by name
-         if actor.GetName() == "StaticMesh0" :
-            self.helicopter = actor.GetActor()
-         # Find our tree by name
-         if actor.GetName() == "StaticMesh1" :
-            self.tree = actor.GetActor()
+      #for actor in proxies :
+      #   # Find our helicopter by name
+      #   if actor.GetName() == "StaticMesh0" :
+      #      self.helicopter = actor.GetActor()
+      #   # Find our tree by name
+      #   if actor.GetName() == "StaticMesh1" :
+      #      self.tree = actor.GetActor()
       
       # Error check
-      if self.helicopter is None :
-         print "Failed to locate the helicopter"
-         sys.exit()
-      
-      if self.tree is None :
-         print "Failed to find the tree"
-         sys.exit()
+      #if self.helicopter is None :
+      #   print "Failed to locate the helicopter"
+      #   sys.exit()
+      # 
+      #if self.tree is None :
+      #    print "Failed to find the tree"
+      #    sys.exit()
      
       # move our tree away a little bit
-      self.tree.SetTransform(Transform(-50, 0, -1, 0, 0, 0))
-      self.smoke.SetEnabled(1)
-      self.GetScene().AddDrawable(explosion)
+      #self.tree.SetTransform(Transform(-50, 0, -1, 0, 0, 0))
+      #self.smoke.SetEnabled(1)
+      #self.GetScene().AddDrawable(explosion)
 
       # translate the camera back some
       self.GetCamera().SetTransform(Transform(-25, -100, 0, 0, 0, 0))
@@ -67,52 +67,50 @@ class TestMap(Application):
       self.wmm.SetDefaultMappings( self.GetKeyboard(), self.GetMouse() )
       self.wmm.SetTarget( self.GetCamera() )
    
-   def PreFrame(self, deltaFrameTime) :
+   #def PreFrame(self, deltaFrameTime) :
       
-      tTree = Transform()
-      tHeli = Transform()
+      #tTree = Transform()
+      #tHeli = Transform()
 
-      self.tree.GetTransform(tTree)
-      self.helicopter.GetTransform(tHeli)
+      #self.tree.GetTransform(tTree)
+      #self.helicopter.GetTransform(tHeli)
         
-      tTreeTranslation = Vec3
-      tTree.GetTranslation(tTreeTranslation)
+      #tTreeTranslation = Vec3
+      #tTree.GetTranslation(tTreeTranslation)
        
-      tHeliTranslation = Vec3
-      tHeli.GetTranslation(tHeliTranslation)
+      #tHeliTranslation = Vec3
+      #tHeli.GetTranslation(tHeliTranslation)
         
       # If the helicopter isn't at the tree yet, keep translating...
-      if tTreeTranslation.x() < tHeliTranslation.x() :
-         self.helicopter.SetTransform(Transform(step, 0, 1, 90, 0, 0))
-      # It's there
-      elif tTreeTranslation.x() >= tHeliTranslation.x() :    
-         x = 0.0
-         y = 0.0
-         z = 0.0
-         tHeli.GetTranslation(x, y, z)
-         heliPos = Vec3(x, y, z)
+      #if tTreeTranslation.x() < tHeliTranslation.x() :
+      #   self.helicopter.SetTransform(Transform(step, 0, 1, 90, 0, 0))
+      ## It's there
+      #elif tTreeTranslation.x() >= tHeliTranslation.x() :    
+      #   x = 0.0
+      #   y = 0.0
+      #   z = 0.0
+      #   tHeli.GetTranslation(x, y, z)
+      #   heliPos = Vec3(x, y, z)
 
          # This is somewhat of a hack. The explosion will loop continuously in here
          # because of the conditions on which it is invoked. It eats framerate and 
          # causes the app to chug, not to mention doesn't even look like an explosion
-         if bufferExplosion :
-         
-            self.explosion.AddDetonation(heliPos)
-            bufferExplosion = 0
-            self.smoke.SetParent(None) #?
-            self.helicopter.AddChild(smoke)
-            self.smoke.SetEnabled(1)
-            # Make sure to orient the new mesh to match the old one
-            self.helicopter.SetTransform(Transform(x, y, 0, 90, -30, 0))
+         #if bufferExplosion :
+         # 
+         #   self.explosion.AddDetonation(heliPos)
+         #   bufferExplosion = 0
+         #   self.smoke.SetParent(None) #?
+         #   self.helicopter.AddChild(smoke)
+         #   self.smoke.SetEnabled(1)
+         #   # Make sure to orient the new mesh to match the old one
+         #   self.helicopter.SetTransform(Transform(x, y, 0, 90, -30, 0))
             
       # Reset the scene
-      if GetKeyboard().GetKeyState( KeyboardKey.Key_R ) :
-          Reset()
+      #if GetKeyboard().GetKeyState( KeyboardKey.Key_R ) :
+      #    Reset()
 
-      step -= 0.05
+      #step -= 0.05
       
-      self.Quit()
-
    def Reset(self) :
       GetScene().AddDrawable(tree);
       self.helicopter.SetTransform(Transform(0, 0, 1, 90, 0, 0))
@@ -124,7 +122,7 @@ class TestMap(Application):
 SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" + 
                         GetDeltaDataPathList() )
 
-app = TestMap('config.xml')
+app = TestMap('testMap.xml')
 
 app.Config()
 app.Run()
