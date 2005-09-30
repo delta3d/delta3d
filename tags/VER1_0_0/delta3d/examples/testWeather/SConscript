@@ -1,0 +1,6 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtInspector' ] 
+
+BuildProgram( 'testWeather', srcs, deps )

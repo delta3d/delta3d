@@ -1,0 +1,7 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+
+deps = [ 'dtBSP' ]
+
+BuildProgram( 'bspCompiler', srcs, deps )
