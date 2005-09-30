@@ -111,7 +111,7 @@ void BumpMapDrawable::EnableShaders()
    //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 
    //set up textures
-   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/sheetmetal.bmp"));
+   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/sheetmetal.tga"));
    RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/delta3d_logo_normal_map.tga"));
 
 

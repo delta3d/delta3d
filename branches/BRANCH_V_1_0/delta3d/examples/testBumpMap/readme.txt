@@ -8,8 +8,18 @@ Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
-To provide an example of how to do dot3 bumpmapping
+To provide an example of how to do dot3 normal mapping
 with GLSL.
+
+Definition
+----------
+A normal map provides the per-pixel normals in texture by 
+storing vectors instead of colors, so RGB is really (X,Y,Z).
+The normals define the pertubations of the surface.  Since the
+normals are relative to the surface they are on, the light vector
+must be transformed to this space (tangent space) before doing the 
+lighting calculation.  
+
 
 Instructions
 ------------
