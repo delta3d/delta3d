@@ -11,7 +11,6 @@ def radians(v):
 class TestPythonApplication(Application):
     def Config(self):
         Application.Config(self)
-        SetDataFilePathList('C:/Projects/Delta/Delta1.0/delta3d/data')
         self.helo = Object('UH-1N')
         self.helo.LoadFile('models/uh-1n.ive')
         self.AddDrawable(self.helo)
@@ -29,6 +28,8 @@ class TestPythonApplication(Application):
         self.helo.SetTransform(self.transform)
         self.angle += 45.0*deltaFrameTime
 
+SetDataFilePathList( GetDeltaRootPath() + '/examples/testPython/;' +
+                     GetDeltaDataPathList() )   
 testPythonApp = TestPythonApplication('config.xml')
 
 testPythonApp.Config()
