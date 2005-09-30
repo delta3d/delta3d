@@ -15,7 +15,7 @@ else:
 # Grab all the sources from the DAL source directory.
 srcs = SGlob( '*.cpp' )
 
-deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode',
+deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'isense', 'ode',
         'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText',
         'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody',
         'gdal', 'ul', 'js', 'Producer', 'opengl', 'User32', 'Advapi32',
