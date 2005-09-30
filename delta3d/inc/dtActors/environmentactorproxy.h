@@ -25,7 +25,7 @@
 #include "dtDAL/actorproxy.h"
 #include <dtCore/environment.h>
 #include "dtActors/enveffectactorproxy.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtUtil/enumeration.h"
 
 namespace dtActors 

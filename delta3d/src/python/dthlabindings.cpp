@@ -2,20 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
+#include <python/dtpython.h>
 
-#include "dtCore/dt.h"
-#include "dtHLA/dthla.h"
-
-
-// The individual class bindings
+#include <dtCore/dt.h>
+#include <dtHLA/dthla.h>
 
 void initDISTypeBindings();
 void initEntityBindings();
 void initRTIConnectionBindings();
 
-
-BOOST_PYTHON_MODULE(dtHLA)
+BOOST_PYTHON_MODULE(PyDtHLA)
 {
    initDISTypeBindings();
    initEntityBindings();

@@ -48,6 +48,7 @@
 #include <python/heldptr.h>
 #include <python/osgmath.h>
 
+using namespace osg;
 using namespace boost::python;
 
 namespace {
@@ -80,7 +81,7 @@ std::string RefMatrix_repr(osg::RefMatrix * self)
     return ost.str();
 }
 
-std::string Matrix_str(osg::Matrix * self)
+std::string Matrix_str(Matrix * self)
 {
     std::ostringstream ost;
     ost << "(";
@@ -92,7 +93,7 @@ std::string Matrix_str(osg::Matrix * self)
     return ost.str();
 }
 
-void osgMatrix_setitem(osg::Matrix * self, int idx, float val)
+void osgMatrix_setitem(Matrix * self, int idx, float val)
 {
     if (idx < 0 || idx >= 16) {
         PyErr_SetString(PyExc_IndexError, "range[0,15]");
@@ -102,7 +103,7 @@ void osgMatrix_setitem(osg::Matrix * self, int idx, float val)
     (*self)(idx /4, idx % 4) = val;
 }
 
-float osgMatrix_getitem(osg::Matrix * self, int idx)
+float osgMatrix_getitem(Matrix * self, int idx)
 {
     if (idx < 0 || idx >= 16) {
         PyErr_SetString(PyExc_IndexError, "range[0,15]");
@@ -113,7 +114,7 @@ float osgMatrix_getitem(osg::Matrix * self, int idx)
 }
 
 
-void osgMatrix_set(osg::Matrix * self, tuple matarray)
+void osgMatrix_set(Matrix * self, tuple matarray)
 {
     int elements = len(matarray);
 
@@ -134,7 +135,7 @@ void osgMatrix_set(osg::Matrix * self, tuple matarray)
 #if 0
 // deprecated by brett
 
-float osgMatrix_get(osg::Matrix * self, int row, int col)
+float osgMatrix_get(Matrix * self, int row, int col)
 {
     if (row < 0 || row >= 4 || col < 0 || col >= 4) {
         PyErr_SetString(PyExc_IndexError, "row, col should be between 0..3");
@@ -144,9 +145,9 @@ float osgMatrix_get(osg::Matrix * self, int row, int col)
     return (*self)(row, col);
 }
 
-osg::Matrix createFromTuple(tuple matarray)
+Matrix createFromTuple(tuple matarray)
 {
-    osg::Matrix mat;
+    Matrix mat;
 
     osgMatrix_set(&mat, matarray);
     return mat;
@@ -154,12 +155,12 @@ osg::Matrix createFromTuple(tuple matarray)
 
 #endif
 
-float * asFloats(osg::Matrix * self)
+float * asFloats(Matrix * self)
 {
     return (float *)self;
 }
 
-list asList(osg::Matrix * self)
+list asList(Matrix * self)
 {
     list l;
 
@@ -176,109 +177,109 @@ list asList(osg::Matrix * self)
 void initOSGMatrix()
 {
 
-    class_<osg::Matrix> matrix("Matrix");
+    class_<Matrix> matrix("Matrix");
 
 	matrix
 	.def(init<>())
-	.def(init<const osg::Matrixd&>())
-	.def(init<const osg::Matrixf&>())
+	.def(init<const Matrixd&>())
+	.def(init<const Matrixf&>())
 	//.def(init<double, double, double, double, double, double, double, double, double, double, double, double, double, double, double>())
 	
-	.def("compare", &osg::Matrix::compare)
-	.def("valid", &osg::Matrix::valid)
-	.def("isNaN", &osg::Matrix::isNaN)
-	.def("set", (void (osg::Matrix::*)(const osg::Matrix&)) &osg::Matrix::set)
+	.def("compare", &Matrix::compare)
+	.def("valid", &Matrix::valid)
+	.def("isNaN", &Matrix::isNaN)
+	.def("set", (void (Matrix::*)(const Matrix&)) &Matrix::set)
 	.def("set", &osgMatrix_set)
 
-	//.def("set", (void (osg::Matrix::*)(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double))
-	//                       &osg::Matrix::set)
+	//.def("set", (void (Matrix::*)(double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double))
+	//                       &Matrix::set)
 
-	.def("get", &osg::Matrix::get)
+	.def("get", &Matrix::get)
 	.def("__setitem__", &osgMatrix_setitem)
 	.def("__getitem__", &osgMatrix_getitem)
 
-	.def("makeIdentity", &osg::Matrix::makeIdentity)
-	.def("makeScale", (void (osg::Matrix::*)(const osg::Vec3&))&osg::Matrix::makeScale)
-	.def("makeScale", (void (osg::Matrix::*)(double, double, double))&osg::Matrix::makeScale)
+	.def("makeIdentity", &Matrix::makeIdentity)
+	.def("makeScale", (void (Matrix::*)(const osg::Vec3&))&Matrix::makeScale)
+	.def("makeScale", (void (Matrix::*)(double, double, double))&Matrix::makeScale)
 
-	.def("makeTranslate", (void (osg::Matrix::*)(const osg::Vec3&))&osg::Matrix::makeTranslate)
-	.def("makeTranslate", (void (osg::Matrix::*)(double, double, double))&osg::Matrix::makeTranslate)
+	.def("makeTranslate", (void (Matrix::*)(const osg::Vec3&))&Matrix::makeTranslate)
+	.def("makeTranslate", (void (Matrix::*)(double, double, double))&Matrix::makeTranslate)
 
 	.def("makeRotate",
-		(void (osg::Matrix::*)(const osg::Vec3&, const osg::Vec3&))
-		&osg::Matrix::makeRotate)
+		(void (Matrix::*)(const osg::Vec3&, const osg::Vec3&))
+		&Matrix::makeRotate)
 	.def("makeRotate",
-		(void (osg::Matrix::*)(double, const osg::Vec3&))
-		&osg::Matrix::makeRotate)
+		(void (Matrix::*)(double, const osg::Vec3&))
+		&Matrix::makeRotate)
 	.def("makeRotate",
-		(void (osg::Matrix::*)(double, double, double, double))
-		&osg::Matrix::makeRotate)
+		(void (Matrix::*)(double, double, double, double))
+		&Matrix::makeRotate)
 	.def("makeRotate",
-		(void (osg::Matrix::*)(const osg::Quat&))
-		&osg::Matrix::makeRotate)
+		(void (Matrix::*)(const osg::Quat&))
+		&Matrix::makeRotate)
 	.def("makeRotate",
-		(void (osg::Matrix::*)(double, const osg::Vec3&, double, const osg::Vec3&, double, const osg::Vec3&))
-		&osg::Matrix::makeRotate)
+		(void (Matrix::*)(double, const osg::Vec3&, double, const osg::Vec3&, double, const osg::Vec3&))
+		&Matrix::makeRotate)
 
-	.def("makeOrtho", &osg::Matrix::makeOrtho)
-	.def("getOrtho", &osg::Matrix::getOrtho)
-	.def("makeOrtho2D", &osg::Matrix::makeOrtho2D)
+	.def("makeOrtho", &Matrix::makeOrtho)
+	.def("getOrtho", &Matrix::getOrtho)
+	.def("makeOrtho2D", &Matrix::makeOrtho2D)
 
-	.def("makeFrustum", &osg::Matrix::makeFrustum)
-	.def("getFrustum", &osg::Matrix::getFrustum)
-	.def("makePerspective", &osg::Matrix::makePerspective)
-	.def("getPerspective", &osg::Matrix::getPerspective)
+	.def("makeFrustum", &Matrix::makeFrustum)
+	.def("getFrustum", &Matrix::getFrustum)
+	.def("makePerspective", &Matrix::makePerspective)
+	.def("getPerspective", &Matrix::getPerspective)
 	
 	// hack? forcing to float Vec3 instead of Vec3d
-	.def("makeLookAt", (void (osg::Matrix::*)(const osg::Vec3&, const osg::Vec3&, const osg::Vec3&))
-		&osg::Matrix::makeLookAt)
+	.def("makeLookAt", (void (Matrix::*)(const osg::Vec3&, const osg::Vec3&, const osg::Vec3&))
+		&Matrix::makeLookAt)
 	
-	.def("getLookAt", (void (osg::Matrix::*) (osg::Vec3d&,osg::Vec3d&,osg::Vec3d&, double) const)
-		&osg::Matrix::getLookAt)
+	.def("getLookAt", (void (Matrix::*) (osg::Vec3d&,osg::Vec3d&,osg::Vec3d&, double) const)
+		&Matrix::getLookAt)
 
-	.def("invert", &osg::Matrix::invert)
-	.def("invert_4x4_orig", &osg::Matrix::invert_4x4_orig)
-	.def("invert_4x4_new", &osg::Matrix::invert_4x4_new)
+	.def("invert", &Matrix::invert)
+	.def("invert_4x4_orig", &Matrix::invert_4x4_orig)
+	.def("invert_4x4_new", &Matrix::invert_4x4_new)
 
-	.def("identity",  &osg::Matrix::identity)
+	.def("identity",  &Matrix::identity)
 
-   .def("scale", (osg::Matrix (*)(const osg::Vec3&)) &osg::Matrix::scale )
-	.def("scale", (osg::Matrix (*)(double, double, double)) &osg::Matrix::scale)
-	.def("translate", (osg::Matrix (*)(const osg::Vec3&)) &osg::Matrix::translate)
-	.def("translate",	(osg::Matrix (*)(double, double, double)) &osg::Matrix::translate)
-	.def("rotate",	(osg::Matrix (*)(double, double, double, double)) &osg::Matrix::rotate)
-	.def("rotate",	(osg::Matrix (*)(double, const osg::Vec3&)) &osg::Matrix::rotate)
-	.def("rotate",	(osg::Matrix (*)(double, const osg::Vec3&, double, const osg::Vec3&, double, const osg::Vec3&))	&osg::Matrix::rotate)
-	.def("rotate",	(osg::Matrix (*)(const osg::Quat&)) &osg::Matrix::rotate)
+   .def("scale", (Matrix (*)(const osg::Vec3&)) &Matrix::scale )
+	.def("scale", (Matrix (*)(double, double, double)) &Matrix::scale)
+	.def("translate", (Matrix (*)(const osg::Vec3&)) &Matrix::translate)
+	.def("translate",	(Matrix (*)(double, double, double)) &Matrix::translate)
+	.def("rotate",	(Matrix (*)(double, double, double, double)) &Matrix::rotate)
+	.def("rotate",	(Matrix (*)(double, const osg::Vec3&)) &Matrix::rotate)
+	.def("rotate",	(Matrix (*)(double, const osg::Vec3&, double, const osg::Vec3&, double, const osg::Vec3&))	&Matrix::rotate)
+	.def("rotate",	(Matrix (*)(const osg::Quat&)) &Matrix::rotate)
 
-	.def("inverse",  &osg::Matrix::inverse)
-	.def("ortho",  &osg::Matrix::ortho)
-	.def("ortho2D",  &osg::Matrix::ortho2D)
-	.def("frustum",  &osg::Matrix::frustum)
-	.def("perspective",  &osg::Matrix::perspective)
-	.def("lookAt", (osg::Matrix (*)(const osg::Vec3f&,const osg::Vec3f&,const osg::Vec3f&))	&osg::Matrix::lookAt)
+	.def("inverse",  &Matrix::inverse)
+	.def("ortho",  &Matrix::ortho)
+	.def("ortho2D",  &Matrix::ortho2D)
+	.def("frustum",  &Matrix::frustum)
+	.def("perspective",  &Matrix::perspective)
+	.def("lookAt", (Matrix (*)(const osg::Vec3f&,const osg::Vec3f&,const osg::Vec3f&))	&Matrix::lookAt)
 
-	.def("preMult", (osg::Vec3 (osg::Matrix::*)(const osg::Vec3&) const) &osg::Matrix::preMult)
-	.def("postMult", (osg::Vec3 (osg::Matrix::*)(const osg::Vec3&) const) &osg::Matrix::postMult)
-	.def("preMult", (osg::Vec4 (osg::Matrix::*)(const osg::Vec4&) const) &osg::Matrix::preMult)
-	.def("postMult", (osg::Vec4 (osg::Matrix::*)(const osg::Vec4&) const) &osg::Matrix::postMult)
+	.def("preMult", (osg::Vec3 (Matrix::*)(const osg::Vec3&) const) &Matrix::preMult)
+	.def("postMult", (osg::Vec3 (Matrix::*)(const osg::Vec3&) const) &Matrix::postMult)
+	.def("preMult", (osg::Vec4 (Matrix::*)(const osg::Vec4&) const) &Matrix::preMult)
+	.def("postMult", (osg::Vec4 (Matrix::*)(const osg::Vec4&) const) &Matrix::postMult)
 	.def(self * self)
 	.def(self *= self)
 
-	.def("setTrans", (void (osg::Matrix::*)(double, double, double)) &osg::Matrix::setTrans)
-	.def("setTrans", (void (osg::Matrix::*)(const osg::Vec3&)) &osg::Matrix::setTrans)
-	.def("getTrans", &osg::Matrix::getTrans)
-	.def("getScale", &osg::Matrix::getScale)
+	.def("setTrans", (void (Matrix::*)(double, double, double)) &Matrix::setTrans)
+	.def("setTrans", (void (Matrix::*)(const osg::Vec3&)) &Matrix::setTrans)
+	.def("getTrans", &Matrix::getTrans)
+	.def("getScale", &Matrix::getScale)
 
 	//.def("transform3x3",
-	//                       (static osg::Vec3 (osg::Matrix::transform3x3*)(const osg::Vec3&, const osg::Matrix&)) &osg::Matrix::transform3x3)
+	//                       (static osg::Vec3 (Matrix::transform3x3*)(const osg::Vec3&, const Matrix&)) &Matrix::transform3x3)
 	//.def("transform3x3",
-	//                      (osg::Vec3 (osg::Matrix::*)(const osg::Matrix&, const osg::Vec3&)) &osg::Matrix::transform3x3)
+	//                      (osg::Vec3 (Matrix::*)(const Matrix&, const osg::Vec3&)) &Matrix::transform3x3)
 
 	// the 'work horse' methods
-	.def("mult", &osg::Matrix::mult)
-	.def("preMult", (void (osg::Matrix::*)(const osg::Matrix&)) &osg::Matrix::preMult)
-	.def("postMult", (void (osg::Matrix::*)(const osg::Matrix&)) &osg::Matrix::postMult)
+	.def("mult", &Matrix::mult)
+	.def("preMult", (void (Matrix::*)(const Matrix&)) &Matrix::preMult)
+	.def("postMult", (void (Matrix::*)(const Matrix&)) &Matrix::postMult)
 
 	.def("asFloats", &asFloats, return_value_policy<return_opaque_pointer>())
 	.def("asList", &asList)

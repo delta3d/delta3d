@@ -33,8 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python24.lib osgd.lib osgDBd.lib dtcored.lib OpenThreadsWin32d.lib"
-				OutputFile="../../../bin/dtscriptd.dll"
+				AdditionalDependencies="python24.lib osgd.lib osgDBd.lib dtCored.lib OpenThreadsWin32d.lib"
+				OutputFile="../../../bin/dtScriptd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib,$(PYTHON_LIB_PATH)"
@@ -42,7 +42,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
-				ImportLibrary="../../../lib/dtscriptd.lib"
+				ImportLibrary="../../../lib/dtScriptd.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -85,8 +85,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="python24.lib osg.lib osgDB.lib dtcore.lib OpenThreadsWin32.lib"
-				OutputFile="../../../bin/dtscript.dll"
+				AdditionalDependencies="python24.lib osg.lib osgDB.lib dtCore.lib OpenThreadsWin32.lib"
+				OutputFile="../../../bin/dtScript.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib,$(PYTHON_LIB_PATH)"
@@ -94,7 +94,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../../lib/dtscript.lib"
+				ImportLibrary="../../../lib/dtScript.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

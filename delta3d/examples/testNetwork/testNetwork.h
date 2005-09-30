@@ -24,17 +24,15 @@ class TestNetwork : public dtABC::Application
                                 Producer::KeyboardKey  key,
                                 Producer::KeyCharacter character );
 
-      virtual void PreFrame( const double deltaFrameTime );
       virtual void Frame( const double deltaFrameTime );
-      virtual void PostFrame( const double deltaFrameTime );
       virtual void Quit();
 
    private:
-         //place member variables here
-      dtCore::RefPtr<MyNetwork> mNet;
-      std::string mHostName;
-      dtCore::RefPtr<dtCore::Object> mTerrain;
-      dtCore::RefPtr<dtCore::FlyMotionModel> mMotion;
+         
+      dtCore::RefPtr<MyNetwork> mNet; ///<Reference the NetMgr derived class
+      std::string mHostName; ///<The hostname to connect to (if we're a client)
+      dtCore::RefPtr<dtCore::Object> mTerrain; ///<ground
+      dtCore::RefPtr<dtCore::FlyMotionModel> mMotion; ///<motion model
 
       void SendPosition();
    

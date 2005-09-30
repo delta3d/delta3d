@@ -1,8 +1,9 @@
-from dtCore import *
-from dtABC import *
+from PyDtCore import *
+from PyDtABC import *
+from PyDtUtil import *
 
 from math import *
-from time import *
+import time
 
 def radians(v):
    return v * pi/180.0
@@ -10,7 +11,6 @@ def radians(v):
 class TestPythonApplication(Application):
     def Config(self):
         Application.Config(self)
-        SetDataFilePathList('../../data')
         self.helo = Object('UH-1N')
         self.helo.LoadFile('models/uh-1n.ive')
         self.AddDrawable(self.helo)
@@ -18,16 +18,20 @@ class TestPythonApplication(Application):
         self.angle = 0.0
         
     def PreFrame(self, deltaFrameTime):
+        noise = Noise1f()
         translation = Vec3(40.0*cos(radians(self.angle)),
                            100.0 + 40.0*sin(radians(self.angle)), 
                            0.0)
-        rotation = Vec3(self.angle, 0.0, -45.0)
+        rotation = Vec3(self.angle, 15.0 * noise.GetNoise(time.clock() * 0.70332423), -45.0 + 35.0 * noise.GetNoise(time.clock() * 0.5958992))
         self.transform.SetTranslation(translation)
         self.transform.SetRotation(rotation)
         self.helo.SetTransform(self.transform)
         self.angle += 45.0*deltaFrameTime
 
+SetDataFilePathList( GetDeltaRootPath() + '/examples/testPython/;' +
+                     GetDeltaDataPathList() )   
 testPythonApp = TestPythonApplication('config.xml')
 
 testPythonApp.Config()
 testPythonApp.Run()
+

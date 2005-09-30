@@ -2,8 +2,7 @@ Import('*')
 
 if env.get('rti') != 0 :
 
-   testSrcs = ['testhla.cpp']
+   srcs =  SGlob( '*.cpp' )
+   deps = [ 'dtCore', 'dtABC', 'dtHLA', 'dtUtil' ]
 
-   testDeps = [ 'dtcore', 'dtabc', 'dthla', 'dtutil' ]
-
-   BuildProgram( '#bin/testHLA', testSrcs, testDeps )
+   BuildProgram( 'testHLA', srcs, deps )

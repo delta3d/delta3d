@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = SGlob('*.cpp')
+srcs = SGlob('*.cpp')
+deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
-
-BuildProgram( '#bin/testStateManager', testSrcs, testDeps )
+BuildProgram( 'testStateManager', srcs, deps )

@@ -1,11 +1,6 @@
 Import('*')
 
+srcs = SGlob('*.cpp')
+deps =[ 'OpenThreads', 'Producer', 'osg', 'osgDB', 'ul', 'xerces-c', 'User32']
 
-dtUtilSrcs = SGlob('*.cpp')
-
-dtUtilDeps =[ 'OpenThreads', 'Producer', 'osg', 'ul', 'xerces-c' ]
-
-if OS == 'windows' :
-    dtUtilDeps += ['User32']
-
-BuildLib( 'dtutil', dtUtilSrcs, dtUtilDeps, ['DT_LIBRARY'] )
+BuildLib( 'dtUtil', srcs, deps, ['DT_LIBRARY'] )

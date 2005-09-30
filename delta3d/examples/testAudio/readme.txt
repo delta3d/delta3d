@@ -4,33 +4,32 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC, dtAudio
+Uses modules: dtCore, dtABC, dtAudio, dtUtil
 
 Purpose
 -------
 To demonstrate advanced functionality of the dtAudio module, specfically
 effect binding, panning, dopler effects, gain, pitch changing, and looping. 
 
-Note: When a sound is played on Linux, the application hangs waiting for a
-      message to be received. This is a known bug.
-
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\examples\testAudio\testAudio.sln.
 - Build testAudio.
 - Start testAudio.
 
 Win32 Binary:
-- Go to examples/testAudio/Release.
+- Go to bin.
 - Double-click testAudio.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testAudio: run 'make' from examples/testAudio.
-- Enter examples/testAudio directory.
-- Run 'testAudio'.
+- To build only testAudio, from the root delta3d folder:
+  scons bin/testAudio
+- To run:
+
+Linux Binary:
+- cd bin
+- ./testAudio
 
 Controls
 --------

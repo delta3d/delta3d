@@ -2,8 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/clouddome.h"
+#include <python/dtpython.h>
+#include <dtCore/clouddome.h>
+#include <dtCore/scene.h>
+#include <osg/Geode>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -14,6 +16,7 @@ void initCloudDomeBindings()
    CloudDome* (*CloudDomeGI2)(std::string) = &CloudDome::GetInstance;
 
    class_<CloudDome, bases<EnvEffect>, dtCore::RefPtr<CloudDome> >("CloudDome", init<int, int, float, float, float, float, float, int>())
+      .def(init<float,int,const std::string&>())
       .def("GetInstanceCount", &CloudDome::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CloudDomeGI1, return_internal_reference<>())
@@ -25,7 +28,7 @@ void initCloudDomeBindings()
       .def("GetSpeedX", &CloudDome::GetSpeedX)
       .def("GetSpeedY", &CloudDome::GetSpeedY)
       .def("GetBias", &CloudDome::GetBias)
-      //.def("GetCloudColor", &CloudDome::GetCloudColor, return_internal_reference<>())
+      .def("GetCloudColor", &CloudDome::GetCloudColor)
       .def("GetEnable", &CloudDome::GetEnable)
       .def("SetScale", &CloudDome::SetScale)
       .def("SetExponent", &CloudDome::SetExponent)
@@ -33,6 +36,6 @@ void initCloudDomeBindings()
       .def("SetSpeedX", &CloudDome::SetSpeedX)
       .def("SetSpeedY", &CloudDome::SetSpeedY)
       .def("SetBias", &CloudDome::SetBias)
-      //.def("SetCloudColor", &CloudDome::SetCloudColor)
+      .def("SetCloudColor", &CloudDome::SetCloudColor)
       .def("SetShaderEnable", &CloudDome::SetShaderEnable);
 }

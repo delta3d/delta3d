@@ -2,8 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/walkmotionmodel.h"
+#include <python/dtpython.h>
+#include <dtCore/walkmotionmodel.h>
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -35,5 +39,7 @@ void initWalkMotionModelBindings()
       .def("SetMaximumSidestepSpeed", &WalkMotionModel::SetMaximumSidestepSpeed)
       .def("GetMaximumSidestepSpeed", &WalkMotionModel::GetMaximumSidestepSpeed)
       .def("SetHeightAboveTerrain", &WalkMotionModel::SetHeightAboveTerrain)
-      .def("GetHeightAboveTerrain", &WalkMotionModel::GetHeightAboveTerrain);
+      .def("GetHeightAboveTerrain", &WalkMotionModel::GetHeightAboveTerrain)
+      .def("SetMaximumStepUpDistance", &WalkMotionModel::SetMaximumStepUpDistance)
+      .def("GetMaximumStepUpDistance", &WalkMotionModel::GetMaximumStepUpDistance);
 }

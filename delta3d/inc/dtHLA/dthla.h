@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -21,7 +21,14 @@
 #ifndef DT_HLA
 #define DT_HLA
 
-#include "dtHLA/rticonnection.h"
+#include <dtHLA/rticonnection.h>
+
+/** Contains the functionality to connect to HLA networks.
+*
+*/
+namespace dtHLA
+{
+}
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
@@ -36,7 +43,7 @@
 #if defined(_DEBUG)
 
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME "dthlad.lib"
+      #define  _AUTOLIBNAME "dtHLAd.lib"
    #endif
    
    #define _AUTOLIBNAME3  "osgSimd.lib"
@@ -45,7 +52,7 @@
 #else
 
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME "dthla.lib"
+      #define  _AUTOLIBNAME "dtHLA.lib"
    #endif
    
    #define _AUTOLIBNAME3  "osgSim.lib"

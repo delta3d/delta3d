@@ -8,6 +8,7 @@
 #include <osg/io_utils>
 
 #include <dtUtil/stringutils.h>
+#include <dtUtil/xercesutils.h>
 #include <dtUtil/log.h>
 
 #include <xercesc/dom/DOMDocument.hpp>

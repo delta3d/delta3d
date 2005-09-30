@@ -5,8 +5,12 @@
 #include <osg/FrameStamp>
 #include <osgUtil/IntersectVisitor>
 #include <osg/PolygonMode>
+#include <osgDB/DatabasePager>
+#include <osgDB/Registry>
+#include <osg/FrameStamp>
 
 #include "dtCore/scene.h"
+#include "dtCore/camera.h"
 #include "dtCore/system.h"
 #include <dtUtil/log.h>
 #include "dtCore/infinitelight.h"
@@ -48,7 +52,7 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 //////////////////////////////////////////////////////////////////////
 
 Scene::Scene( const std::string& name, bool useSceneLight )
-: Base(name), mPhysicsStepSize(0.0)
+: Base(name), mPhysicsStepSize(0.0), mPagingEnabled(false), mStartTick(0), mFrameNum(0), mCleanupTime(0.0025), mTargetFrameRate(30.0)
 {
    RegisterInstance(this);
 
@@ -100,6 +104,8 @@ Scene::~Scene()
    dJointGroupDestroy(mContactJointGroupID);
    dSpaceDestroy(mSpaceID);
    dWorldDestroy(mWorldID);
+
+   if(mPagingEnabled) DisablePaging();
 
    RemoveSender( System::Instance() );
 }
@@ -297,10 +303,44 @@ dWorldID Scene::GetWorldID() const
 // Performs collision detection and updates physics
 void Scene::OnMessage(MessageData *data)
 {
+   if(data->message == "postframe")
+   {
+      double cleanup = mCleanupTime;
+      if(mPagingEnabled)
+      {
+         if (osgDB::Registry::instance()->getDatabasePager())
+         {
+             osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
+
+            for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+            {
+               Camera *cam = Camera::GetInstance(camNum);
+
+               osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*(cam->GetSceneHandler()->GetSceneView()->getState()), cleanup);
+               
+               cam->GetSceneHandler()->GetSceneView()->flushDeletedGLObjects(cleanup);
+             }  
+         }
+      }
+   }
 
    if(data->message == "preframe")
    {
       double dt = *(double *)data->userData;
+
+      //if paging is enabled, update pager
+      if(mPagingEnabled)
+      {
+         osg::FrameStamp* frameStamp = new osg::FrameStamp;
+         frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(mStartTick, osg::Timer::instance()->tick()));
+         frameStamp->setFrameNumber(mFrameNum++);
+
+         if (osgDB::Registry::instance()->getDatabasePager())
+         {
+            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp);
+            osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
+         }
+      }
 
       bool usingDeltaStep = false;
 
@@ -467,3 +507,33 @@ void Scene::UseSceneLight( bool lightState )
 { 
    mLights[0]->SetEnabled(lightState);
 }
+
+
+
+void Scene::EnablePaging()
+{
+
+   osgDB::DatabasePager* databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
+   databasePager->setTargetFrameRate(mTargetFrameRate);
+   databasePager->registerPagedLODs( mSceneNode.get() );
+   databasePager->setUseFrameBlock(false);
+
+   for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+   {
+      Camera *cam = Camera::GetInstance(camNum);
+
+      cam->GetSceneHandler()->GetSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
+
+      databasePager->setCompileGLObjectsForContextID(cam->GetSceneHandler()->GetSceneView()->getState()->getContextID(),true);
+   }    
+
+   mStartTick = osg::Timer::instance()->tick();
+   mPagingEnabled = true;
+}
+
+void Scene::DisablePaging()
+{
+   osgDB::Registry::instance()->getDatabasePager()->clear();
+   osgDB::Registry::instance()->setDatabasePager(0);
+}
+

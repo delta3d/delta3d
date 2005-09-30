@@ -19,8 +19,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;..\..\ext\inc\CEGUI"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;"
+				AdditionalIncludeDirectories="../../inc;../../ext/inc"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_GAMEMANAGER_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -33,13 +33,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtvis_d.lib dtUtild.lib sg_d.lib ul_d.lib cppunitd.lib"
-				OutputFile="../../../tests/UnitTestsd.exe"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
+				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib"
+				OutputFile="../../tests/UnitTestsd.exe"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="../../lib;../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile="$(OutDir)/UnitTests.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -65,14 +65,14 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\tests\windows-msvc-release"
-			IntermediateDirectory="..\..\..\tests\windows-msvc-release"
+			OutputDirectory="..\..\tests\windows-msvc-release"
+			IntermediateDirectory="..\..\tests\windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc;..\..\ext\inc\CEGUI"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;"
+				AdditionalIncludeDirectories="..\..\inc;..\..\ext\inc"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_GAMEMANAGER_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -83,10 +83,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtvis.lib dtUtil.lib sg.lib ul.lib cppunit.lib"
-				OutputFile="../../../tests/UnitTests.exe"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib"
+				OutputFile="../../tests/UnitTests.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\lib;..\..\ext\lib"
+				AdditionalLibraryDirectories="../../lib;../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmt"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

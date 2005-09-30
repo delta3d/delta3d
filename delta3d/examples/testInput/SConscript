@@ -1,8 +1,7 @@
 Import('*')
 
-testSrcs = ['testinput.cpp']
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtGUI', 'dtABC', 'dtUtil', 'cal3d',
+             'CEGUIBase', 'CEGUIOpenGLRenderer' ]
 
-testDeps = [ 'dtcore', 'dtgui', 'dtabc', 'dtutil', 'cal3d', 'CEGUIBase', 'CEGUIOpenGLRenderer',
-   'CEGUIWindowsLook' ]
-
-BuildProgram( '#bin/testInput', testSrcs, testDeps )
+BuildProgram( 'testInput', srcs, deps )

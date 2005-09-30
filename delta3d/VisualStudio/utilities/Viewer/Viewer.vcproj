@@ -33,8 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltk.lib dtDALd.lib dtutild.lib"
-				OutputFile="../../../bin/ViewerD.exe"
+				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib fltk.lib dtDALd.lib dtUtild.lib"
+				OutputFile="../../../bin/viewerd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -50,7 +50,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+			Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="VCResourceCompilerTool"/>
 			<Tool
@@ -84,8 +84,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib dtutil.lib dtDAL.lib"
-				OutputFile="../../../bin/Viewer.exe"
+				AdditionalDependencies="wsock32.lib comctl32.lib opengl32.lib dtUtil.lib dtDAL.lib"
+				OutputFile="../../../bin/viewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

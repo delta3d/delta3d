@@ -38,7 +38,8 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVec2Control::DynamicVec2Control()
-        : xElement(NULL), yElement(NULL)
+        : xElement(NULL), yElement(NULL)//, 
+          //myVec2Property(NULL), myVec2fProperty(NULL), myVec2dProperty(NULL)
     {
     }
 
@@ -55,15 +56,43 @@ namespace dtEditQt
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
         if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC2) 
         {
-            myProperty = static_cast<dtDAL::Vec2ActorProperty *>(newProperty);
+            myVec2Property = static_cast<dtDAL::Vec2ActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
             // create X
-            xElement = new DynamicVectorElementControl(myProperty, 0, "X");
+            xElement = new DynamicVectorElementControl(myVec2Property.get(), 0, "X");
             xElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(xElement);
             // create Y
-            yElement = new DynamicVectorElementControl(myProperty, 1, "Y");
+            yElement = new DynamicVectorElementControl(myVec2Property.get(), 1, "Y");
+            yElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(yElement);
+        } 
+        else if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC2F) 
+        {
+            myVec2fProperty = static_cast<dtDAL::Vec2fActorProperty *>(newProperty);
+            DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+
+            // create X
+            xElement = new DynamicVectorElementControl(myVec2fProperty.get(), 0, "X");
+            xElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(xElement);
+            // create Y
+            yElement = new DynamicVectorElementControl(myVec2fProperty.get(), 1, "Y");
+            yElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(yElement);
+        } 
+        else if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC2D) 
+        {
+            myVec2dProperty = static_cast<dtDAL::Vec2dActorProperty *>(newProperty);
+            DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+
+            // create X
+            xElement = new DynamicVectorElementControl(myVec2dProperty.get(), 0, "X");
+            xElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(xElement);
+            // create Y
+            yElement = new DynamicVectorElementControl(myVec2dProperty.get(), 1, "Y");
             yElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(yElement);
         } 
@@ -79,24 +108,61 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec2Control::getDisplayName()
     {
-        return QString(tr(myProperty->GetLabel().c_str()));
+        if(myVec2Property.valid())
+            return QString(tr(myVec2Property->GetLabel().c_str()));
+        else if(myVec2fProperty.valid())
+            return QString(tr(myVec2fProperty->GetLabel().c_str()));
+        else if(myVec2dProperty.valid())
+            return QString(tr(myVec2dProperty->GetLabel().c_str()));
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec2Control::getDescription()
     {
-        std::string tooltip = myProperty->GetDescription() + "  [Type: " +
-            myProperty->GetPropertyType().GetName() + "]";
-        return QString(tr(tooltip.c_str()));
+        if(myVec2Property.valid())
+        {
+            std::string tooltip = myVec2Property->GetDescription() + "  [Type: " +
+                myVec2Property->GetPropertyType().GetName() + "]";
+            return QString(tr(tooltip.c_str()));
+        }
+        else if(myVec2fProperty.valid())
+        {
+            std::string tooltip = myVec2fProperty->GetDescription() + "  [Type: " +
+                myVec2fProperty->GetPropertyType().GetName() + "]";
+            return QString(tr(tooltip.c_str()));
+        }
+        else if(myVec2dProperty.valid())
+        {
+            std::string tooltip = myVec2dProperty->GetDescription() + "  [Type: " +
+                myVec2dProperty->GetPropertyType().GetName() + "]";
+            return QString(tr(tooltip.c_str()));
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec2Control::getValueAsString()
     {
-        const osg::Vec2 &vectorValue = myProperty->GetValue();
+        if(myVec2Property.valid())
+        {
+            const osg::Vec2 &vectorValue = myVec2Property->GetValue();
 
-        return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-            ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) + ")";
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
+        else if(myVec2fProperty.valid())
+        {
+            const osg::Vec2f &vectorValue = myVec2fProperty->GetValue();
+
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
+        else if(myVec2dProperty.valid())
+        {
+            const osg::Vec2d &vectorValue = myVec2dProperty->GetValue();
+
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
     }
 
     bool DynamicVec2Control::isEditable()

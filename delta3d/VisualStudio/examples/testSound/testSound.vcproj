@@ -33,7 +33,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtilD.lib"
-				OutputFile="../../../bin/$(ProjectName)D.exe"
+				OutputFile="../../../bin/testSoundd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -82,8 +82,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib"
-				OutputFile="../../../bin/$(ProjectName).exe"
+				AdditionalDependencies="dtUtil.lib"
+				OutputFile="../../../bin/testSound.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

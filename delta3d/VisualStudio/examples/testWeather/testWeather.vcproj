@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../../../bin/testWeatherD.exe"
+				OutputFile="../../../bin/testWeatherd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT.lib;libcd.lib;libc.lib;libcmtd.lib;msvcrt.lib"

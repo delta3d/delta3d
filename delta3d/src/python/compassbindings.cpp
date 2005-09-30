@@ -2,8 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/compass.h"
+#include <python/dtpython.h>
+#include <dtCore/compass.h>
+#include <dtCore/scene.h>
+#include <dtCore/camera.h>
 
 using namespace boost::python;
 using namespace dtCore;

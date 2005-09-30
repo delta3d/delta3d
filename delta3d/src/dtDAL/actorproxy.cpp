@@ -228,7 +228,7 @@ namespace dtDAL
         {
             copy = LibraryManager::GetInstance().CreateActorProxy(*mActorType);
         }
-        catch(dtDAL::Exception &e)
+        catch(dtUtil::Exception &e)
         {
             error << "Clone of actor proxy: " << GetName() << " failed. Reason was: " << e.What();
             LOG_ERROR(error.str());

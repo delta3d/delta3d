@@ -62,7 +62,7 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/datatype.h"
 #include "dtDAL/librarymanager.h"
 #include <dtUtil/log.h>
@@ -116,11 +116,17 @@ namespace dtEditQt
         controlFactory->RegisterType<DynamicFloatControl>(&(dtDAL::DataType::FLOAT));
         controlFactory->RegisterType<DynamicDoubleControl>(&(dtDAL::DataType::DOUBLE));
         controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3));
+        controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3F));
+        controlFactory->RegisterType<DynamicVec3Control>(&(dtDAL::DataType::VEC3D));
         controlFactory->RegisterType<DynamicIntControl>(&(dtDAL::DataType::INT));
         controlFactory->RegisterType<DynamicLongControl>(&(dtDAL::DataType::LONGINT));
         controlFactory->RegisterType<DynamicBoolControl>(&(dtDAL::DataType::BOOLEAN));
         controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2));
+        controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2F));
+        controlFactory->RegisterType<DynamicVec2Control>(&(dtDAL::DataType::VEC2D));
         controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4));
+        controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4F));
+        controlFactory->RegisterType<DynamicVec4Control>(&(dtDAL::DataType::VEC4D));
         controlFactory->RegisterType<DynamicEnumControl>(&(dtDAL::DataType::ENUMERATION));
         controlFactory->RegisterType<DynamicColorRGBAControl>(&(dtDAL::DataType::RGBACOLOR));
         controlFactory->RegisterType<DynamicResourceControl>(&(dtDAL::DataType::SOUND));
@@ -386,7 +392,7 @@ namespace dtEditQt
                 }
 
             }
-            catch (dtDAL::Exception &ex)
+            catch (dtUtil::Exception &ex)
             {
                 LOG_ERROR("Failed to create a control for property: " + curProp->GetPropertyType().GetName() +
                     " with error: " + ex.What());

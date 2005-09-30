@@ -33,8 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib dtcored.lib producerd.lib osgd.lib osgdbd.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib"
-				OutputFile="../../../bin/dtchard.dll"
+				AdditionalDependencies="dtUtild.lib dtCored.lib producerd.lib osgd.lib osgdbd.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib"
+				OutputFile="../../../bin/dtChard.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
@@ -42,7 +42,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
-				ImportLibrary="../../../lib/dtchard.lib"
+				ImportLibrary="../../../lib/dtChard.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -85,8 +85,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib dtcore.lib producer.lib osg.lib osgdb.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
-				OutputFile="../../../bin/dtchar.dll"
+				AdditionalDependencies="dtUtil.lib dtCore.lib producer.lib osg.lib osgdb.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
+				OutputFile="../../../bin/dtChar.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="../../../lib;..\..\..\ext\lib"
@@ -95,7 +95,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../../lib/dtchar.lib"
+				ImportLibrary="../../../lib/dtChar.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

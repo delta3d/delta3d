@@ -22,7 +22,7 @@
 #define __BaseLightActorProxy__h
 
 #include <dtCore/light.h>
-#include <dtDAL/exception.h>
+#include <dtDAL/exceptionenum.h>
 #include <dtUtil/enumeration.h>
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/actorproxy.h"

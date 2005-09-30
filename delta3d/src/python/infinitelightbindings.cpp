@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/infinitelight.h"
+#include <python/dtpython.h>
+#include <dtCore/infinitelight.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;

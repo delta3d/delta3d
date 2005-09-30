@@ -28,12 +28,12 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\..\bin\testShadersD.exe"
+				OutputFile="..\..\..\bin\testShadersd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
@@ -76,7 +76,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -142,6 +142,9 @@
 				RelativePath="..\..\..\data\shaders\testshader.vert">
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\examples\testShaders\readme.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

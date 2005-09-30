@@ -26,7 +26,7 @@
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"
 #include "dtDAL/actortype.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtDAL 
 {

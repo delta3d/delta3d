@@ -26,7 +26,6 @@
 #include "dtActors/positionallightactorproxy.h"
 #include "dtActors/spotlightactorproxy.h"
 #include "dtActors/characteractorproxy.h"
-#include "dtActors/terrainactorproxy.h"
 #include "dtActors/infiniteterrainactorproxy.h"
 #include "dtActors/environmentactorproxy.h"
 #include "dtActors/triggeractorproxy.h"
@@ -35,7 +34,6 @@
 #include "dtActors/cloudplaneactorproxy.h"
 #include "dtActors/skyboxactorproxy.h"
 #include "dtActors/skydomeactorproxy.h"
-//#include "dtActors/dtedterrainactorproxy.h"
 //#include "dtActors/soundactorproxy.h"
 
 namespace dtActors

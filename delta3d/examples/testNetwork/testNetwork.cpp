@@ -26,20 +26,25 @@ TestNetwork::TestNetwork( const std::string &hostName,
    if (mHostName.empty()) logFilename = std::string("server.log");
    else logFilename = std::string("client.log");
 
+   ///initialize the game name, version number, and a networking log file
    mNet->InitializeGame("TestNetwork", 1, logFilename);
 
-   //must come *after* MgrInit;
+   ///register our custom packet with GNE
+   //must come *after* NetMgr::InitializeGame()
    GNE::PacketParser::defaultRegisterPacket<PositionPacket>();
 
+
+   ///if no hostname was supplied, create a server, otherwise create a client
    if (mHostName.empty())
    {
       mNet->SetupServer(4444);
-      GetWindow()->SetWindowTitle("I'm the Host");
+      GetWindow()->SetWindowTitle("I'm the Host: " + GetUniqueId().ToString());
    }
+
    else
    {
       mNet->SetupClient( hostName, 4444 );
-      GetWindow()->SetWindowTitle("I'm a Client");
+      GetWindow()->SetWindowTitle("I'm a Client: " + GetUniqueId().ToString());
    }
 }
 
@@ -71,26 +76,20 @@ void TestNetwork::KeyPressed(   Keyboard*      keyboard,
       case Producer::Key_Escape:
          Quit();
          break;
+         
       case Producer::Key_P:
          {
+            //send a "ping" packet for latency info
             GNE::PingPacket ping;
-            mNet->SendPacketToAll(ping);
+            mNet->SendPacket("all", ping);
          }
          break;
 
-      case Producer::Key_F:
-         {
-            SendPosition();
-         }
       default:
          break;
    }
 }
 
-void TestNetwork::PreFrame( const double deltaFrameTime )
-{
-   //called prior to rendering of frame, do you scene updates here
-}
 
 void TestNetwork::Frame( const double deltaFrameTime )
 {
@@ -98,18 +97,15 @@ void TestNetwork::Frame( const double deltaFrameTime )
    SendPosition();
 }
 
-void TestNetwork::PostFrame( const double deltaFrameTime )
-{
-   //called after frame has been rendering, collect information about results from scene interaction here
-}
-
 void TestNetwork::Quit()
 {
+   //shutdown the networking
    mNet->Shutdown();
 
    Application::Quit();
 }
 
+///send our position out to all connections
 void TestNetwork::SendPosition()
 {
    //get our new position
@@ -120,6 +116,6 @@ void TestNetwork::SendPosition()
    xform.GetTranslation(xyz);
    xform.GetRotation(hpr);
 
-   PositionPacket packet(xyz, hpr);
-   mNet->SendPacketToAll( packet );
+   PositionPacket packet(xyz, hpr, GetUniqueId().ToString());
+   mNet->SendPacket("all", packet );
 }

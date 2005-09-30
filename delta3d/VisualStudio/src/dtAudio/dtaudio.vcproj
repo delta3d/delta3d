@@ -33,15 +33,15 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib alut.lib dtcored.lib openal32.lib openthreadswin32d.lib osgd.lib osgdbd.lib producerd.lib xerces-c_2D.lib"
-				OutputFile="../../../bin/dtaudiod.dll"
+				AdditionalDependencies="dtUtild.lib alut.lib dtCored.lib openal32.lib openthreadswin32d.lib osgd.lib osgdbd.lib producerd.lib xerces-c_2D.lib"
+				OutputFile="../../../bin/dtAudiod.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc;libcD.lib;libcmtD.lib;msvcrt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				ImportLibrary="../../../lib/dtaudiod.lib"/>
+				ImportLibrary="../../../lib/dtAudiod.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -83,13 +83,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib alut.lib dtcore.lib openal32.lib openthreadswin32.lib osg.lib osgdb.lib producer.lib xerces-c_2.lib"
-				OutputFile="../../../bin/dtaudio.dll"
+				AdditionalDependencies="dtUtil.lib alut.lib dtCore.lib openal32.lib openthreadswin32.lib osg.lib osgdb.lib producer.lib xerces-c_2.lib"
+				OutputFile="../../../bin/dtAudio.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;libcp.lib;msvcrtD.lib"
-				ImportLibrary="../../../lib/dtaudio.lib"/>
+				ImportLibrary="../../../lib/dtAudio.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

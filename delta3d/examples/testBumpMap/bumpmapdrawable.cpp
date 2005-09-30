@@ -21,7 +21,7 @@ void BumpMapDrawable::SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& p
 {
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->getUniform( "lightPos" )->set( osg::Vec4(pLightPos[0], pLightPos[1], pLightPos[2], 0.0f));
-   ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[1], pEyePos[2], 0.0f));
+   ss->getUniform( "eyePosition" )->set(osg::Vec4(pEyePos[0], pEyePos[2], pEyePos[2], 0.0f));
 }
 
 void BumpMapDrawable::SetWireframe(bool pWireframe)
@@ -111,8 +111,8 @@ void BumpMapDrawable::EnableShaders()
    //ss->setMode(osg::StateAttribute::CULLFACE, GL_FRONT);
 
    //set up textures
-   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/tile4.bmp"));
-   RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/tile4bump.bmp"));
+   RefPtr<osg::Image> img1 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/sheetmetal.tga"));
+   RefPtr<osg::Image> img2 = osgDB::readImageFile( std::string(GetDeltaRootPath()+ "/data/textures/delta3d_logo_normal_map.tga"));
 
 
    RefPtr<osg::Texture2D> tex1 = new osg::Texture2D(img1.get());

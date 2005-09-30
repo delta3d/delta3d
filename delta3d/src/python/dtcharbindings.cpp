@@ -2,18 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
+#include <python/dtpython.h>
 
-#include "dtCore/dt.h"
-#include "dtChar/dtchar.h"
-
-
-// The individual class bindings
+#include <dtCore/dt.h>
+#include <dtChar/dtchar.h>
 
 void initCharacterBindings();
 
-
-BOOST_PYTHON_MODULE(dtChar)
+BOOST_PYTHON_MODULE(PyDtChar)
 {
    initCharacterBindings();
 }

@@ -1,12 +1,9 @@
 Import('*')
 
-import glob
+srcs = SGlob('*.cpp')
 
-srcfiles = SGlob('*.cpp')
-
-dtAbcDeps=[ 'dtcore', 'fltk', 'dtutil', 'glgui', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer', 'tinyxml', 'xerces-c', 'opengl' ]
-
-if OS == 'windows' :
-   dtAbcDeps += [ 'User32' ]
+deps = [ 'dtCore', 'fltk', 'dtUtil', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB',
+         'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX',
+         'osgProducer', 'ul', 'js', 'Producer', 'xerces-c', 'opengl', 'User32' ]
        
-BuildLib( 'dtabc', srcfiles, dtAbcDeps, ['DT_LIBRARY'] )
+BuildLib( 'dtABC', srcs, deps, ['DT_LIBRARY'] )

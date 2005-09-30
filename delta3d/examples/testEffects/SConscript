@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = ['testeffects.cpp']
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
-
-BuildProgram( '#bin/testEffects', testSrcs, testDeps )
+BuildProgram( 'testEffects', srcs, deps )

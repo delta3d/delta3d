@@ -1,6 +1,5 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 #include <dtCore/object.h>
 
@@ -23,8 +22,6 @@ public:
    {
       mTotalTime = 0.0f;
 
-      BuggyFunction();
-
       LoadGeometry();
       EnableShaders();
 
@@ -33,13 +30,6 @@ public:
 
       GetWindow()->SetWindowTitle("testShaders");
 
-   }
-
-
-   void BuggyFunction()
-   {
-      DeltaWin::ResolutionVec vec = DeltaWin::GetResolutions();
-      //mRes = vec[0];
    }
 
 

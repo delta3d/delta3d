@@ -7,7 +7,7 @@ Import ('*')
 
 if OS == 'darwin':
    overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
-   overrideShSuffix = '.so'
+   overrideShSuffix = '.dylib'
 else:
    overrideShLink = ''
    overrideShSuffix = ''
@@ -15,23 +15,19 @@ else:
 # Grab all the sources from the DAL source directory.
 sources = SGlob('*.cpp')
 
-testActorLibraryDeps =['dtDAL', 'dtutil', 'dtcore', 'ode',
-        'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
-        'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js',
-        'Producer', 'tinyxml', 'opengl' ]
+testActorLibraryDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenThreads', 'osg',
+                        'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
+                        'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js',
+                        'Producer', 'opengl', 'dtSORAX', 'User32',
+                        'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
+                        'CoreFoundation', 'IOKit', 'Carbon' ]
 
 if OS == 'windows':
    testActorLibraryDeps += ['dtActors']
 
-if OS == 'windows' :
-   testActorLibraryDeps += [ 'dtsoarx', 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-elif OS == 'linux':
-   testActorLibraryDeps += [ 'uuid', 'Xxf86vm' ]
-elif OS == 'darwin':
-   testActorLibraryDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
-
 testActorLibrary = BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
-	overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
+                             overrideShLinkFlags = overrideShLink,
+                             overrideShLibSuffix = overrideShSuffix )
 
 if OS == 'darwin':
    Depends(testActorLibrary, libdtDAL)

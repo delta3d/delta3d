@@ -362,7 +362,7 @@ namespace dtEditQt
                     setLastDirectory(fullPath);
 
                 }
-                catch(const dtDAL::Exception& e)
+                catch(const dtUtil::Exception& e)
                 {
                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
                     throw e;

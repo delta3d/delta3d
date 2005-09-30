@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = ['testclouds.cpp']
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtInspector' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'gui_fl' ]
-
-BuildProgram( '#bin/testClouds', testSrcs, testDeps )
+BuildProgram( 'testClouds', srcs, deps )

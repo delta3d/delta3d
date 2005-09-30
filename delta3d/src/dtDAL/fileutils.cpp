@@ -41,7 +41,7 @@ extern "C" int errno;
 #include <stack>
 
 #include "dtDAL/fileutils.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 #include <string.h>
 #include <sys/types.h>
@@ -153,14 +153,14 @@ namespace dtDAL
         {
 
             if (!FileExists(strSrc))
-                EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                        std::string("Source file does not exist: \"") + strSrc + "\"");
 
             //Open the source file for reading.
             pSrcFile = fopen( strSrc.c_str(), "rb" );
             if( pSrcFile == NULL )
             {
-                EXCEPT(ExceptionEnum::ProjectIOException,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                        std::string("Unable to open source file for reading: \"") + strSrc + "\"");
             }
 
@@ -194,7 +194,7 @@ namespace dtDAL
 
 				if (FileExists(destFile) && !bOverwrite)
 				{
-					EXCEPT(ExceptionEnum::ProjectIOException,
+					EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
 						std::string("Destination file exists, but overwriting is turned off: \"") + destFile + "\"");
 				}
 
@@ -203,7 +203,7 @@ namespace dtDAL
 				if( pDestFile == NULL )
 				{
 					//make sure to close the source file.
-					EXCEPT(ExceptionEnum::ProjectIOException,
+					EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
 						std::string("Unable to open destination for writing: \"") + destFile + "\"");
 				}
 
@@ -229,13 +229,13 @@ namespace dtDAL
 					fclose( pDestFile );
 					fclose( pSrcFile );
 				}
-				catch (dtDAL::Exception& ex1)
+				catch (dtUtil::Exception& ex1)
 				{
 					fclose( pDestFile );
 					throw ex1;
 				}
 			}
-			catch (dtDAL::Exception& ex)
+			catch (dtUtil::Exception& ex)
 			{
 				fclose( pSrcFile );
 				throw ex;
@@ -250,7 +250,7 @@ namespace dtDAL
     void FileUtils::FileMove( const std::string& strSrc, const std::string& strDest, bool bOverwrite ) const
     {
         if (GetFileInfo(strSrc).fileType != REGULAR_FILE)
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("Source file was not found or is a Directory: \"") + strSrc + "\"");
 
         FileType ft = GetFileInfo(strDest).fileType;
@@ -279,7 +279,7 @@ namespace dtDAL
         }
 
         if (ft != FILE_NOT_FOUND && !bOverwrite)
-            EXCEPT(ExceptionEnum::ProjectIOException,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                    std::string("Destination file exists and the call was not set to overwrite: \"") + strDest + "\"");
 
 
@@ -296,7 +296,7 @@ namespace dtDAL
 
         //attempt to delete the original file.
         if(unlink(strSrc.c_str()) != 0)
-            EXCEPT(ExceptionEnum::ProjectIOException,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                    std::string("Unable to delete \"") + strSrc + "\" but file copied to new location.");
 
     }
@@ -311,12 +311,12 @@ namespace dtDAL
             return;
 
         if (ft != REGULAR_FILE)
-            EXCEPT(ExceptionEnum::ProjectIOException,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                    std::string("File \"") + strFile + "\" is a directory.");
 
 
         if( unlink(strFile.c_str()) != 0)
-            EXCEPT(ExceptionEnum::ProjectIOException,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                    std::string("Unable to delete \"") + strFile + "\".");
     }
 
@@ -328,7 +328,7 @@ namespace dtDAL
         struct stat tagStat;
         if( stat( strFile.c_str(), &tagStat ) != 0 )
         {
-            //EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot open file ") + strFile);
+            //EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("Cannot open file ") + strFile);
             info.fileType = FILE_NOT_FOUND;
             return info;
         }
@@ -370,7 +370,7 @@ namespace dtDAL
     {
         if (chdir(path.c_str()) == -1)
         {
-            EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot open directory ") + path);
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("Cannot open directory ") + path);
         }
         char buf[512];
         getcwd(buf, 512);
@@ -423,13 +423,13 @@ namespace dtDAL
         {
             if (chdir(relativePath.c_str()) == -1)
             {
-                EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot open directory ") + relativePath);
+                EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("Cannot open directory ") + relativePath);
             }
             char buf[512];
             getcwd(buf, 512);
             result = buf;
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             if (chdir(old.c_str()) == -1)
             {
@@ -451,10 +451,10 @@ namespace dtDAL
     {
         FileInfo ft = GetFileInfo(path);
         if (ft.fileType == FILE_NOT_FOUND)
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("Path not Found: \"") + path + "\".");
         else if (ft.fileType == REGULAR_FILE)
-            EXCEPT(ExceptionEnum::ProjectIOException,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                    std::string("Path does not specify a directory: \"") + path + "\".");
 
         return osgDB::getDirectoryContents(path);
@@ -483,7 +483,7 @@ namespace dtDAL
         //std::cout << "Copying " << srcPath << " to " << destPath << std::endl;
 
         if (destFileType == REGULAR_FILE)
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("The destination path must be a directory: \"") + destPath + "\"");
 
         if (destFileType == FILE_NOT_FOUND)
@@ -524,13 +524,13 @@ namespace dtDAL
     {
 
         if (!DirExists(srcPath))
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("Source directory does not exist: \"") + srcPath + "\"");
 
         FileType destFileType = GetFileInfo(destPath).fileType;
 
         if (destFileType == REGULAR_FILE)
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("The destination path must be a directory: \"") + destPath + "\"");
 
         bool createDest = destFileType == FILE_NOT_FOUND;
@@ -560,7 +560,7 @@ namespace dtDAL
             if ( (copyContentsOnly && fullSrcPath == fullDestPath)
                   || (!copyContentsOnly && osgDB::getFilePath(fullSrcPath) == fullDestPath) )
             {
-                EXCEPT(ExceptionEnum::ProjectException,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectException,
                        std::string("The source equals the destination: \"") + srcPath + "\"");
             }
 
@@ -604,7 +604,7 @@ namespace dtDAL
                 {
                     RecursDeleteDir(true);
                 }
-                catch(const Exception& ex)
+                catch(const dtUtil::Exception& ex)
                 {
                     PopDirectory();
                     throw ex;
@@ -612,11 +612,11 @@ namespace dtDAL
 
                 PopDirectory();
             }
-            catch (const Exception& ex)
+            catch (const dtUtil::Exception& ex)
             {
                 //if we get a file not found trying to recurse into the top directory
                 //then the directory does not exist, so there is no need to throw an exception.
-                if (ex.TypeEnum() == ExceptionEnum::ProjectFileNotFound && !DirExists(strDir))
+               if (ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound && !DirExists(strDir))
                 {
                     if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -650,7 +650,7 @@ namespace dtDAL
             }
             else
             {
-                EXCEPT(ExceptionEnum::ProjectIOException,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
                     std::string("Unable to delete directory \"") + strDir + "\":" + strerror(errno));
 
             }
@@ -665,7 +665,7 @@ namespace dtDAL
         {
             FileType ft = GetFileInfo(strDir).fileType;
             if (ft == REGULAR_FILE)
-                EXCEPT(ExceptionEnum::ProjectIOException, std::string("Cannot create directory. ")
+                EXCEPT(dtDAL::ExceptionEnum::ProjectIOException, std::string("Cannot create directory. ")
                     + strDir + " is an existing non-directory file.");
             else if (ft == DIRECTORY)
             {
@@ -674,12 +674,12 @@ namespace dtDAL
 
             if (!DirExists(osgDB::getFilePath(strDir)))
             {
-                EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("Cannot create directory ")
+                EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("Cannot create directory ")
                     + strDir + ". Parent directory doesn't exist.");
             }
             else
             {
-                EXCEPT(ExceptionEnum::ProjectIOException, std::string("Cannot create directory ") + strDir + ".");
+                EXCEPT(dtDAL::ExceptionEnum::ProjectIOException, std::string("Cannot create directory ") + strDir + ".");
             }
         }
     }
@@ -713,7 +713,7 @@ namespace dtDAL
 				errno = 0;
 				if (unlink(i->c_str()) < 0) 
 				{
-					EXCEPT(ExceptionEnum::ProjectIOException,
+					EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
 						std::string("Unable to delete directory \"") + *i + "\":" + strerror(errno));
 					
 				}
@@ -737,7 +737,7 @@ namespace dtDAL
 					}
 					else
 					{
-						EXCEPT(ExceptionEnum::ProjectIOException,
+						EXCEPT(dtDAL::ExceptionEnum::ProjectIOException,
 							std::string("Unable to delete directory \"") + mCurrentDirectory + PATH_SEPARATOR + *i + "\":" + strerror(errno));
 
 					}
