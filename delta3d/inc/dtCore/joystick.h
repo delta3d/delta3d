@@ -25,13 +25,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include <string>
-
-#include "js.h"
-
-#include "dtCore/inputdevice.h"
-
+#include <plib/js.h>
+#include <dtCore/inputdevice.h>
 
 namespace dtCore
 {
