@@ -2,21 +2,17 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
+#include <python/dtpython.h>
 
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-
-
-// The individual class bindings
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 void initBaseABCBindings();
 void initApplicationBindings();
 void initWeatherBindings();
 void initWidgetBindings();
 
-
-BOOST_PYTHON_MODULE(dtABC)
+BOOST_PYTHON_MODULE(PyDtABC)
 {
    initBaseABCBindings();
    initApplicationBindings();

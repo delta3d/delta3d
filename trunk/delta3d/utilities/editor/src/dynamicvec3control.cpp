@@ -39,7 +39,8 @@ namespace dtEditQt
 
     ///////////////////////////////////////////////////////////////////////////////
     DynamicVec3Control::DynamicVec3Control()
-        : xElement(NULL), yElement(NULL), zElement(NULL)
+        : xElement(NULL), yElement(NULL), zElement(NULL)//, 
+          //myVec3Property(NULL), myVec3fProperty(NULL), myVec3dProperty(NULL)
     {
     }
 
@@ -56,19 +57,55 @@ namespace dtEditQt
         // all cases in Linux with gcc4.  So we replaced it with a static cast.   
         if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC3)
         {
-            myProperty = static_cast<dtDAL::Vec3ActorProperty *>(newProperty);
+            myVec3Property = static_cast<dtDAL::Vec3ActorProperty *>(newProperty);
             DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
 
             // create X
-            xElement = new DynamicVectorElementControl(myProperty, 0, "X");
+            xElement = new DynamicVectorElementControl(myVec3Property.get(), 0, "X");
             xElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(xElement);
             // create Y
-            yElement = new DynamicVectorElementControl(myProperty, 1, "Y");
+            yElement = new DynamicVectorElementControl(myVec3Property.get(), 1, "Y");
             yElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(yElement);
             // create Z
-            zElement = new DynamicVectorElementControl(myProperty, 2, "Z");
+            zElement = new DynamicVectorElementControl(myVec3Property.get(), 2, "Z");
+            zElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(zElement);
+        } 
+        else if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC3F)
+        {
+            myVec3fProperty = static_cast<dtDAL::Vec3fActorProperty *>(newProperty);
+            DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+
+            // create X
+            xElement = new DynamicVectorElementControl(myVec3fProperty.get(), 0, "X");
+            xElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(xElement);
+            // create Y
+            yElement = new DynamicVectorElementControl(myVec3fProperty.get(), 1, "Y");
+            yElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(yElement);
+            // create Z
+            zElement = new DynamicVectorElementControl(myVec3fProperty.get(), 2, "Z");
+            zElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(zElement);
+        } 
+        else if (newProperty != NULL && newProperty->GetPropertyType() == dtDAL::DataType::VEC3D)
+        {
+            myVec3dProperty = static_cast<dtDAL::Vec3dActorProperty *>(newProperty);
+            DynamicAbstractControl::initializeData(newParent, newModel, newProxy, newProperty);
+
+            // create X
+            xElement = new DynamicVectorElementControl(myVec3dProperty.get(), 0, "X");
+            xElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(xElement);
+            // create Y
+            yElement = new DynamicVectorElementControl(myVec3dProperty.get(), 1, "Y");
+            yElement->initializeData(this, newModel, newProxy, newProperty);
+            children.push_back(yElement);
+            // create Z
+            zElement = new DynamicVectorElementControl(myVec3dProperty.get(), 2, "Z");
             zElement->initializeData(this, newModel, newProxy, newProperty);
             children.push_back(zElement);
         } 
@@ -84,25 +121,70 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec3Control::getDisplayName()
     {
-        return QString(tr(myProperty->GetLabel().c_str()));
+        if(myVec3Property.valid())
+        {
+            return QString(tr(myVec3Property->GetLabel().c_str()));
+        }
+        else if(myVec3fProperty.valid())
+        {
+            return QString(tr(myVec3fProperty->GetLabel().c_str()));
+        }
+        else if(myVec3dProperty.valid())
+        {
+            return QString(tr(myVec3dProperty->GetLabel().c_str()));
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec3Control::getDescription()
     {
-        std::string tooltip = myProperty->GetDescription() + "  [Type: " +
-            myProperty->GetPropertyType().GetName() + "]";
-        return QString(tr(tooltip.c_str()));
+        if(myVec3Property.valid())
+        {
+            std::string tooltip = myVec3Property->GetDescription() + "  [Type: " +
+                myVec3Property->GetPropertyType().GetName() + "]";
+            return QString(tr(tooltip.c_str()));
+        }
+        else if(myVec3fProperty.valid())
+        {
+            std::string tooltip = myVec3fProperty->GetDescription() + "  [Type: " +
+                myVec3fProperty->GetPropertyType().GetName() + "]";
+            return QString(tr(tooltip.c_str()));
+        }
+        else if(myVec3dProperty.valid())
+        {
+            std::string tooltip = myVec3dProperty->GetDescription() + "  [Type: " +
+                myVec3dProperty->GetPropertyType().GetName() + "]";
+            return QString(tr(tooltip.c_str()));
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
     const QString DynamicVec3Control::getValueAsString()
     {
-        const osg::Vec3 &vectorValue = myProperty->GetValue();
+        if(myVec3Property.valid())
+        {
+            const osg::Vec3 &vectorValue = myVec3Property->GetValue();
 
-        return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
-            ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
-            ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
+        else if(myVec3fProperty.valid())
+        {
+            const osg::Vec3f &vectorValue = myVec3fProperty->GetValue();
+
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
+        else if(myVec3dProperty.valid())
+        {
+            const osg::Vec3d &vectorValue = myVec3dProperty->GetValue();
+
+            return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
+                ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
     }
 
     bool DynamicVec3Control::isEditable()

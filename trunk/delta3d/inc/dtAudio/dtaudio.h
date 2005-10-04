@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -26,6 +26,13 @@
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/soundeffectbinder.h>
 
+/** The Audio Library contains functionality for controlling the audio playback
+*  in applications.
+*/
+namespace dtAudio
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */
@@ -33,24 +40,18 @@
 #undef _AUTOLIBNAME2
 #undef _AUTOLIBNAME3
 
-
-
 #if   defined(_DEBUG)
    #ifndef  DT_LIBRARY
-      #define  _AUTOLIBNAME1  "dtaudiod.lib"
+      #define  _AUTOLIBNAME1  "dtAudiod.lib"
    #endif
 #else
    #ifndef  DT_LIBRARY
-      #define  _AUTOLIBNAME1  "dtaudio.lib"
+      #define  _AUTOLIBNAME1  "dtAudio.lib"
    #endif
 #endif
 
-
-
 #define  _AUTOLIBNAME2  "OpenAL32.lib" // Note: Not Debug
 #define  _AUTOLIBNAME3  "ALut.lib"     // Note: Not Debug
-
-
 
 #if   !  defined(_NOAUTOLIBMSG)
    #ifndef  DT_LIBRARY
@@ -60,8 +61,6 @@
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
-
-
 
 #ifndef  DT_LIBRARY
    #pragma  comment( lib, _AUTOLIBNAME1 )

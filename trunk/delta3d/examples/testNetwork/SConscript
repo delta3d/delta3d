@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = [ 'testNetwork.cpp', 'main.cpp', 'mynetwork.cpp', 'packets.cpp' ]
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtNet', 'gne', 'HawkNL', 'winsock', 'curses' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtNet' ]
-
-BuildProgram( '#bin/testNetwork', testSrcs, testDeps )
+BuildProgram( 'testNetwork', srcs, deps )

@@ -4,10 +4,13 @@
 #include <osg/MatrixTransform>
 #include <osg/Projection>
 #include <osg/Switch>
+#include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
 
 using namespace osg;
 using namespace osgUtil;
 using namespace dtCore;
+using namespace dtUtil;
 
 //------------------------------------------------------------------
 // Stats
@@ -88,26 +91,25 @@ dtCore::Timer_t Stats::UpdateFrameTick()
 
 
 //Select the next statistics type - will wrap around back to NONE
-void Stats::SelectNextType(void)
+void Stats::SelectNextType()
 {
    Statistics::statsType type = Statistics::STAT_NONE;
 
-   switch (mPrintStats) {
-   case Statistics::STAT_NONE: type = Statistics::STAT_FRAMERATE;  	break;
-   case Statistics::STAT_FRAMERATE: type = Statistics::STAT_GRAPHS; 	break;
-   case Statistics::STAT_GRAPHS:  type = Statistics::STAT_PRIMS;  	break;
-   case Statistics::STAT_PRIMS: type = Statistics::STAT_PRIMSPERVIEW;    	break;
-   case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;  break;
-   case Statistics::STAT_PRIMSPERBIN: type = Statistics::STAT_DC;   break;
-   case Statistics::STAT_DC: type = Statistics::STAT_NONE;      break;
-   case Statistics::STAT_RESTART: type = Statistics::STAT_NONE; break;
-   default:
-      break;
+   switch( mPrintStats ) 
+   {
+      case Statistics::STAT_NONE:         type = Statistics::STAT_FRAMERATE;     break;
+      case Statistics::STAT_FRAMERATE:    type = Statistics::STAT_GRAPHS; 	      break;
+      case Statistics::STAT_GRAPHS:       type = Statistics::STAT_PRIMS;  	      break;
+      case Statistics::STAT_PRIMS:        type = Statistics::STAT_NONE;           break;
+      //case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;   break; //not supported
+      //case Statistics::STAT_PRIMSPERBIN:  type = Statistics::STAT_DC;            break; //not supported
+      //case Statistics::STAT_DC:           type = Statistics::STAT_NONE;          break; //not supported
+      case Statistics::STAT_RESTART:      type = Statistics::STAT_NONE;          break;
+      default:                                                                   break;
    }
    
    SelectType(type);
 }
-
 
 //------------------------------------------------------------------
 // Stats::selectType
@@ -126,8 +128,8 @@ void Stats::SelectType(osgUtil::Statistics::statsType type)
    mPrintStats = type;
 
    // switch off stencil counting
-   if (mPrintStats==Statistics::STAT_DC) 
-      glDisable(GL_STENCIL_TEST);
+//   if (mPrintStats==Statistics::STAT_DC) 
+//      glDisable(GL_STENCIL_TEST);
 
    if (mPrintStats>=Statistics::STAT_RESTART) 
    {
@@ -138,22 +140,34 @@ void Stats::SelectType(osgUtil::Statistics::statsType type)
    if ((mPrintStats==Statistics::STAT_PRIMSPERVIEW) ||
       (mPrintStats==Statistics::STAT_PRIMSPERBIN))
    {
-      mPrintStats = Statistics::STAT_DC;
+      //mPrintStats = Statistics::STAT_DC;
+      LOG_WARNING("Statistics 'PRIMPERVIEW/PRIMPERBIN' not supported");
    }
 
    // count depth complexity by incrementing the stencil buffer every
    if (mPrintStats==Statistics::STAT_DC)
    {
-      // time a pixel is hit
-      GLint nsten=0;        // Number of stencil planes available
-      glGetIntegerv(GL_STENCIL_BITS , &nsten);
-      if (nsten>0)
+      LOG_WARNING("Depth complexity statistics not supported");
+
+      //depth complexity is currently not supported.
+      //glGetIntegerv(GL_STENCIIL_BITS) causes a crash on Linux
+      if (0) 
       {
-         glEnable(GL_STENCIL_TEST);
-         glStencilOp(GL_INCR ,GL_INCR ,GL_INCR);
-      }                     // skip this option
-      else
-         mPrintStats++;
+         // time a pixel is hit
+         GLint nsten=0;        // Number of stencil planes available
+         glGetIntegerv(GL_STENCIL_BITS , &nsten);
+         if (nsten>0)
+         {
+            glEnable(GL_STENCIL_TEST);
+            glStencilOp(GL_INCR ,GL_INCR ,GL_INCR);
+         }                     // skip this option
+         else
+         {
+            LOG_WARNING("Depth complexity can't be calculated: no stencil planes available");
+            SelectNextType();
+            //mPrintStats++;
+         }
+      }
    }
 
    EnableTextNodes(mPrintStats);
@@ -222,7 +236,7 @@ void Stats::ShowStats()
   {
 
     int sampleIndex = 2;
-    float timeApp=times[sampleIndex].timeApp;
+    //float timeApp=times[sampleIndex].timeApp;
     float timeCull=times[sampleIndex].timeCull;
     float timeDraw=times[sampleIndex].timeDraw;
     float timeFrame=times[sampleIndex].timeFrame;
@@ -233,8 +247,9 @@ void Stats::ShowStats()
     osg::Vec4 swap_color(1.0f,0.5f,0.5f,1.0f);
 
     char clin[72];            // buffer to print
-    sprintf(clin,"App %.2f ms.", timeApp);
-    mUpdateTimeText->setText(clin);
+    //disabled the display of app time because it's not currently implemented
+    //sprintf(clin,"App %.2f ms.", timeApp);    
+    mUpdateTimeText->setText("App N/A");  
 
     sprintf(clin,"Cull %.2f ms.", timeCull);
     mCullTimeText->setText(clin);
@@ -329,65 +344,65 @@ void Stats::ShowStats()
                               // yet more stats - read the depth complexity
   if (mPrintStats==Statistics::STAT_DC)
   {
-    int wid=width, ht=height;      // temporary local screen size - must change during this section
-    if (wid>0 && ht>0)
-    {
-      const int blsize=16;
-                              // buffer to print dc
-      char *clin=new char[wid/blsize+2];
-      char ctext[128];        // buffer to print details
-      float mdc=0;
-      GLubyte *buffer=new GLubyte[wid*ht];
-      if (buffer)
-      {
-                              // no extra bytes at ends of rows- easier to analyse
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
-        glColor3f(.9f,.9f,0.0f);
-        glReadPixels(0,0,wid,ht, GL_STENCIL_INDEX ,GL_UNSIGNED_BYTE, buffer);
-                              // break up screen into blsize*blsize pixel blocks
-        for (int j=0; j<ht; j+=blsize)
-        {
-          char *clpt=clin;    // moves across the clin to display lines of text
-                              // horizontal pixel blocks
-          for (int i=0; i<wid; i+=blsize)
-          {
-            int dc=0;
-            int nav=0;        // number of pixels averaged for DC calc
-            for (int jj=j; jj<j+blsize; jj++)
-            {
-              for (int ii=i; ii<i+blsize; ii++)
-              {
-                if (jj<ht && ii<wid && jj>=0 && ii>=0)
-                {
-                  dc+=buffer[ii+ (ht-jj-1)*wid];
-                  nav++;
-                }
-              }
-            }
-            mdc+=dc;
-                              // fine detail in dc=[0,1]; 0.1 increment in display, space for empty areas
-            if (dc<nav) *clpt= ' '+(10*dc)/nav;
-                              // show 1-9 for DC=1-9; then ascii to 127
-            else if (dc<80*nav) *clpt= '0'+dc/nav;
-            else *clpt= '+';  // too large a DC - use + to show over limit
-            clpt++;
-          }
-          *clpt='\0';
-                              // display average DC over the blsize box
-/**/      //displaytext(0,(int)(0.84f*vh-(j*12)/blsize),clin);
-        }
-        sprintf(ctext, "Pixels hit %.1f Mean DC %.2f: %4d by %4d pixels.", mdc, mdc/(wid*ht), wid, ht);
-/**/    //displaytext(0,(int)(0.86f*vh),ctext);
-        osg::Vec3 pos(0.f, 0.86f*1024, 0.f);
-        mDcText->setPosition(pos);
-        mDcText->setText(ctext);
-
-                              // re-enable stencil buffer counting
-        glEnable(GL_STENCIL_TEST);
-        delete [] buffer;
-      }
-      delete [] clin;
-    }
+//    int wid=width, ht=height;      // temporary local screen size - must change during this section
+//    if (wid>0 && ht>0)
+//    {
+//      const int blsize=16;
+//                              // buffer to print dc
+//      char *clin=new char[wid/blsize+2];
+//      char ctext[128];        // buffer to print details
+//      float mdc=0;
+//      GLubyte *buffer=new GLubyte[wid*ht];
+//      if (buffer)
+//      {
+//                              // no extra bytes at ends of rows- easier to analyse
+//        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+//        glColor3f(.9f,.9f,0.0f);
+//        glReadPixels(0,0,wid,ht, GL_STENCIL_INDEX ,GL_UNSIGNED_BYTE, buffer);
+//                              // break up screen into blsize*blsize pixel blocks
+//        for (int j=0; j<ht; j+=blsize)
+//        {
+//          char *clpt=clin;    // moves across the clin to display lines of text
+//                              // horizontal pixel blocks
+//          for (int i=0; i<wid; i+=blsize)
+//          {
+//            int dc=0;
+//            int nav=0;        // number of pixels averaged for DC calc
+//            for (int jj=j; jj<j+blsize; jj++)
+//            {
+//              for (int ii=i; ii<i+blsize; ii++)
+//              {
+//                if (jj<ht && ii<wid && jj>=0 && ii>=0)
+//                {
+//                  dc+=buffer[ii+ (ht-jj-1)*wid];
+//                  nav++;
+//                }
+//              }
+//            }
+//            mdc+=dc;
+//                              // fine detail in dc=[0,1]; 0.1 increment in display, space for empty areas
+//            if (dc<nav) *clpt= ' '+(10*dc)/nav;
+//                              // show 1-9 for DC=1-9; then ascii to 127
+//            else if (dc<80*nav) *clpt= '0'+dc/nav;
+//            else *clpt= '+';  // too large a DC - use + to show over limit
+//            clpt++;
+//          }
+//          *clpt='\0';
+//                              // display average DC over the blsize box
+///**/      //displaytext(0,(int)(0.84f*vh-(j*12)/blsize),clin);
+//        }
+//        sprintf(ctext, "Pixels hit %.1f Mean DC %.2f: %4d by %4d pixels.", mdc, mdc/(wid*ht), wid, ht);
+///**/    //displaytext(0,(int)(0.86f*vh),ctext);
+//        osg::Vec3 pos(0.f, 0.86f*1024, 0.f);
+//        mDcText->setPosition(pos);
+//        mDcText->setText(ctext);
+//
+//                              // re-enable stencil buffer counting
+//        glEnable(GL_STENCIL_TEST);
+//        delete [] buffer;
+//      }
+//      delete [] clin;
+//    }
   }
 
   glMatrixMode( GL_MODELVIEW );
@@ -550,7 +565,8 @@ void Stats::InitTexts()
    {//#0
       osg::Geode* geode = new osg::Geode();
       mFrameRateCounterText = new osgText::Text;
-      mFrameRateCounterText->setFont("fonts/arial.ttf");
+      //mFrameRateCounterText->setFont("fonts/arial.ttf");
+      mFrameRateCounterText->setFont("fonts/VeraMono.ttf");
       mFrameRateCounterText->setColor(colorFR);
       mFrameRateCounterText->setPosition(pos);
       mFrameRateCounterText->setAlignment(osgText::Text::BASE_LINE);
@@ -563,7 +579,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+190.f, 1000.f, 0.f);
       mUpdateTimeText = new osgText::Text;
-      mUpdateTimeText->setFont("fonts/arial.ttf");
+      mUpdateTimeText->setFont("fonts/VeraMono.ttf");
       mUpdateTimeText->setColor(colorUpdate);
       mUpdateTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mUpdateTimeText->setPosition(pos);
@@ -577,7 +593,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+450.f, 1000.f, 0.f);
       mCullTimeText = new osgText::Text;
-      mCullTimeText->setFont("fonts/arial.ttf");
+      mCullTimeText->setFont("fonts/VeraMono.ttf");
       mCullTimeText->setColor(colorCull);
       mCullTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mCullTimeText->setPosition(pos);
@@ -591,7 +607,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+700.f, 1000.f, 0.f);
       mDrawTimeText = new osgText::Text;
-      mDrawTimeText->setFont("fonts/arial.ttf");
+      mDrawTimeText->setFont("fonts/VeraMono.ttf");
       mDrawTimeText->setColor(colorDraw);
       mDrawTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mDrawTimeText->setPosition(pos);
@@ -605,7 +621,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+960.f, 1000.f, 0.f);
       mFrameRateTimeText = new osgText::Text;
-      mFrameRateTimeText->setFont("fonts/arial.ttf");
+      mFrameRateTimeText->setFont("fonts/VeraMono.ttf");
       mFrameRateTimeText->setColor(swapColor);
       mFrameRateTimeText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mFrameRateTimeText->setPosition(pos);
@@ -619,7 +635,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos, 880.f, 0.f);
       mPrimTotalsText = new osgText::Text;
-      mPrimTotalsText->setFont("fonts/COURBD.TTF");
+      mPrimTotalsText->setFont("fonts/VeraMono.ttf");
       mPrimTotalsText->setColor(colorPrimTotal);
       mPrimTotalsText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mPrimTotalsText->setPosition(pos);
@@ -629,7 +645,7 @@ void Stats::InitTexts()
 
       pos.set(leftPos, 880.f, 0.f);
       mPrimTypesText = new osgText::Text;
-      mPrimTypesText->setFont("fonts/COURBD.TTF");
+      mPrimTypesText->setFont("fonts/VeraMono.ttf");
       mPrimTypesText->setColor(colorPrimTotal);
       mPrimTypesText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mPrimTypesText->setPosition(pos);
@@ -639,7 +655,7 @@ void Stats::InitTexts()
 
       pos.set(leftPos, 880.f, 0.f);
       mPrimText = new osgText::Text;
-      mPrimText->setFont("fonts/COURBD.TTF");
+      mPrimText->setFont("fonts/VeraMono.ttf");
       mPrimText->setColor(colorPrimTotal);
       mPrimText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mPrimText->setPosition(pos);
@@ -648,7 +664,7 @@ void Stats::InitTexts()
       geode->addDrawable( mPrimText.get() );
 
       mVerticesText = new osgText::Text;
-      mVerticesText->setFont("fonts/COURBD.TTF");
+      mVerticesText->setFont("fonts/VeraMono.ttf");
       mVerticesText->setColor(colorPrimTotal);
       mVerticesText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mVerticesText->setPosition(pos);
@@ -657,7 +673,7 @@ void Stats::InitTexts()
       geode->addDrawable( mVerticesText.get() );
 
       mTrianglesText = new osgText::Text;
-      mTrianglesText->setFont("fonts/COURBD.TTF");
+      mTrianglesText->setFont("fonts/VeraMono.ttf");
       mTrianglesText->setColor(colorPrimTotal);
       mTrianglesText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mTrianglesText->setPosition(pos);
@@ -672,7 +688,7 @@ void Stats::InitTexts()
       osg::Geode* geode = new osg::Geode();
       pos.set(leftPos+960.f, 1000.f, 0.f);
       mDcText = new osgText::Text;
-      mDcText->setFont("fonts/arial.ttf");
+      mDcText->setFont("fonts/VeraMono.ttf");
       mDcText->setColor(colorPrimTotal);
       mDcText->setFontResolution((unsigned int)characterSize,(unsigned int)characterSize);
       mDcText->setPosition(pos);
@@ -744,13 +760,14 @@ void Stats::EnableTextNodes(int statsType)
       mSwitch->setValue(6, false);  //
       break;
    case osgUtil::Statistics::STAT_DC:
-      mSwitch->setValue(0, true); //fr  //
-      mSwitch->setValue(1, true); //update //
-      mSwitch->setValue(2, true); //cull //
-      mSwitch->setValue(3, true); //draw //
-      mSwitch->setValue(4, true); //frametime //
-      mSwitch->setValue(5, false);  //
-      mSwitch->setValue(6, true);  //
+      //not currently supported
+//      mSwitch->setValue(0, true); //fr  //
+//      mSwitch->setValue(1, true); //update //
+//      mSwitch->setValue(2, true); //cull //
+//      mSwitch->setValue(3, true); //draw //
+//      mSwitch->setValue(4, true); //frametime //
+//      mSwitch->setValue(5, false);  //
+//      mSwitch->setValue(6, true);  //
       break;
    case osgUtil::Statistics::STAT_RESTART:
       mSwitch->setAllChildrenOff();

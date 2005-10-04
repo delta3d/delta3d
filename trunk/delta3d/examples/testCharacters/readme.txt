@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtChar, dtABC
+Uses modules: dtCore, dtChar, dtABC, dtUtil
 
 Purpose
 -------
@@ -15,20 +15,21 @@ the second follows the user.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\examples\testCharacters\testCharacters.sln.
 - Build testCharacters.
 - Start testCharacters.
 
 Win32 Binary:
-- Go to examples/testCharacters/Release.
+- Go to bin.
 - Double-click testCharacters.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testCharacters: run 'make' from examples/testCharacters.
-- Enter examples/testCharacters directory.
-- Run 'testCharacters'.
+- To build only testCharacters, from the root delta3d folder:
+  scons bin/testCharacters
+  
+Linux Binary:
+- cd bin
+- ./testCharacters
 
 Controls
 --------

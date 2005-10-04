@@ -23,10 +23,13 @@
 #define DELTA_DYNAMICVEC4CONTROL
 
 #include "dtEditQt/dynamicabstractparentcontrol.h"
+#include <osg/ref_ptr>
 
 namespace dtDAL 
 {
     class Vec4ActorProperty;
+    class Vec4fActorProperty;
+    class Vec4dActorProperty;
 }
 
 namespace dtEditQt
@@ -103,7 +106,9 @@ namespace dtEditQt
         // the tool tip type label indicates that the vector is a float or a double
         std::string toolTipTypeLabel;
 
-        dtDAL::Vec4ActorProperty *myProperty;
+        osg::ref_ptr<dtDAL::Vec4ActorProperty> myVec4Property;
+        osg::ref_ptr<dtDAL::Vec4fActorProperty> myVec4fProperty;
+        osg::ref_ptr<dtDAL::Vec4dActorProperty> myVec4dProperty;
     };
 
 }

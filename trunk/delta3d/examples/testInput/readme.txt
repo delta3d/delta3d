@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -15,23 +15,22 @@ axes.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\examples\testInput\testInput.sln.
 - Build testInput.
 - Start testInput.
 
 Win32 Binary:
-- Go to examples/testInput/Release.
+- Go to bin.
 - Double-click testInput.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testInput: run 'make' from examples/testInput.
-- Enter examples/testInput directory.
-- Run 'testInput'.
+- To build only testInput, from the root delta3d folder:
+  scons bin/testInput
+
+Linux Binary:
+- cd bin
+- ./testInput
 
 Controls
 --------
 Esc  -  Exit
-
-

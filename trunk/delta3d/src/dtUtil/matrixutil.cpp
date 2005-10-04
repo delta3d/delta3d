@@ -4,6 +4,7 @@
 using namespace dtUtil;
 using namespace osg;
 
+
 void MatrixUtil::Print( const Matrix& matrix )
 {
    for( int i = 0; i < 4; i++ )

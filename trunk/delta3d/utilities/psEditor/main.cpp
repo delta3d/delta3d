@@ -402,7 +402,8 @@ static void updateParameterTabs()
          textureFile.c_str()
       );
 
-      Particles_TexturePreview->SetTexture(textureFile);
+      if(!textureFile.empty())
+         Particles_TexturePreview->SetTexture(textureFile);
       
       osg::BlendFunc* blend = 
          (osg::BlendFunc*)ss->getAttribute(osg::StateAttribute::BLENDFUNC);

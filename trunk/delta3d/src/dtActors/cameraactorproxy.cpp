@@ -43,7 +43,7 @@ namespace dtActors
 
         Camera *cam = dynamic_cast<Camera*>(mActor.get());
         if(!cam)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
         // This property is used for the manipulation of the clear color
         // of a camera. Uses 4 values in the RGBA format for color
@@ -60,7 +60,7 @@ namespace dtActors
     {
         Camera *cam = dynamic_cast<Camera*>(mActor.get());
         if(!cam)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
         
         osg::Vec4 color;
         cam->GetClearColor(color);
@@ -72,7 +72,7 @@ namespace dtActors
     {
         Camera *cam = dynamic_cast<Camera*>(mActor.get());
         if(!cam)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
         cam->SetClearColor(color);
     }

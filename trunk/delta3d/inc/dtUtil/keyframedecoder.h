@@ -1,8 +1,35 @@
+/* 
+ * Delta3D Open Source Game and Simulation Engine 
+ * Copyright (C) 2004-2005 MOVES Institute 
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free 
+ * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+*/
+
+/** \file dtUtil/keyframedecoder.h
+  * Utility methods for using strings, often for XML purposes.
+  * \author John K. Grant
+  */
+
 #ifndef DTUTIL_KEYFRAME_DECODER_INC
 #define DTUTIL_KEYFRAME_DECODER_INC
 
 #include "dtUtil/log.h"
 #include "dtUtil/stringutils.h"
+#include "dtUtil/xercesutils.h"
+
 #include <xercesc/dom/DOMTreeWalker.hpp>
 
 namespace dtUtil
@@ -38,7 +65,7 @@ namespace dtUtil
         * @param kfc The KeyFrameContainer provided will be appended during loading.  If only loaded data
         * is wished to be contained, then the container should be cleared before executing the Walk.
         */
-      KeyFrameDecoder(const RecordablePtrContainer& sources, KeyFrameContainer& kfc): mSources(sources), mKFC(kfc), mSourceIndex(0), mSourcesSize(sources.size())
+      KeyFrameDecoder(const RecordablePtrContainer& sources, KeyFrameContainer& kfc): mSources(sources), mKFC(kfc), mSourcesSize(sources.size())
       {
       }
 
@@ -94,26 +121,35 @@ namespace dtUtil
          XERCES_CPP_NAMESPACE_QUALIFIER DOMTreeWalker* sourcewalker = doc->createTreeWalker( fs, XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeFilter::SHOW_ELEMENT, 0, true );
 
          // move the walker to the first source
+         unsigned int sourceIndex(0);
          for(XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* child=sourcewalker->firstChild();
              child != 0;
              child=sourcewalker->nextSibling())
          {
             XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>( child );
-            FrameDataType* data = DecodeSourceData( doc, element );
+            FrameDataType* data = DecodeSourceData( doc, element, sourceIndex );
             fdc.push_back( data );
          }
       }
 
       FrameDataType* DecodeSourceData(XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc,
-                                      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e)
+                                      XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* e, unsigned int index)
       {
-         return mSources[mSourceIndex]->Deserialize( doc, e );
+         if( index < mSourcesSize )
+         {
+            return mSources[index]->Deserialize( doc, e );
+         }
+         else
+         {
+            LOG_ERROR("No available recordable source to handle serialization.")
+            return NULL;
+         }
       }
 
    private:
       const RecordablePtrContainer& mSources;
       KeyFrameContainer& mKFC;
-      unsigned int mSourceIndex, mSourcesSize;
+      unsigned int mSourcesSize;
    };
 
 };

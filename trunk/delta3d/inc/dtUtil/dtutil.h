@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -23,30 +23,53 @@
 
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/enumeration.h>
+#include <dtUtil/fractal.h>
+#include <dtUtil/keyframedecoder.h>
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 #include <dtUtil/matrixutil.h>
+#include <dtUtil/noise1.h>
+#include <dtUtil/noise2.h>
+#include <dtUtil/noise3.h>
+#include <dtUtil/noisetexture.h>
+#include <dtUtil/noiseutility.h>
 #include <dtUtil/objectfactory.h>
 #include <dtUtil/polardecomp.h>
+#include <dtUtil/seamlessnoise.h>
+#include <dtUtil/serializer.h>
+#include <dtUtil/stringutils.h>
+#include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/xerceswriter.h>
+#include <dtUtil/xercesparser.h>
+#include <dtUtil/xercesutils.h>
+
+/** Contains generic, reusable features which are useful for most applications.
+*/
+namespace dtUtil
+{
+}
 
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME
 #undef _AUTOLIBNAME2
 #undef _AUTOLIBNAME3
+#undef _AUTOLIBNAME4
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtutild.lib"
+      #define _AUTOLIBNAME  "dtUtild.lib"
    #endif
    #define _AUTOLIBNAME2 "ul_d.lib"
    #define _AUTOLIBNAME3 "osgd.lib"
+   #define _AUTOLIBNAME4 "xerces-c_2D.lib"
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtutil.lib"
+      #define _AUTOLIBNAME  "dtUtil.lib"
    #endif
    #define _AUTOLIBNAME2 "ul.lib"
    #define _AUTOLIBNAME3 "osg.lib"
+   #define _AUTOLIBNAME4 "xerces-c_2.lib"
 #endif
 
 
@@ -57,6 +80,7 @@
 
    #pragma message( "Will automatically link with " _AUTOLIBNAME2 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
+   #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
 #endif
 
 #ifndef DT_LIBRARY
@@ -64,6 +88,7 @@
 #endif
 #pragma comment(lib, _AUTOLIBNAME2)
 #pragma comment(lib, _AUTOLIBNAME3)
+#pragma comment(lib, _AUTOLIBNAME4)
 
 #endif //win32
 #endif //DTUTIL_INCLUDE

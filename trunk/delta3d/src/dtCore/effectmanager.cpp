@@ -75,9 +75,6 @@ class DetonationUpdateCallback : public osg::NodeCallback
             
             mDetonation->GetParent()->GetTransform(&transform);
             
-            /*sgMat4 mat;
-            transform.Get(mat);
-            sgXformPnt3(position, mat);*/
             osg::Matrix mat;
             transform.Get(mat);
             dtUtil::MatrixUtil::TransformVec3(position, mat);
@@ -130,7 +127,7 @@ void EffectManager::AddDetonationTypeMapping(
    DetonationType detonationType,
    const std::string& filename)
 {
-   mDetonationTypeFilenameMap[detonationType] = filename;
+   mDetonationTypeFilenameMap.insert( DetonationStringMap::value_type( detonationType, filename ) );
 }
 
 /**
@@ -183,15 +180,16 @@ Detonation* EffectManager::AddDetonation(const osg::Vec3& position,
 {
    if(mDetonationTypeFilenameMap.count(type) > 0)
    {
-      osg::Node* node = osgDB::readNodeFile(
-         mDetonationTypeFilenameMap[type]);
+      RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
+      options->setObjectCacheHint( osgDB::ReaderWriter::Options::CACHE_IMAGES );
       
-      Detonation* detonation = 
-         new Detonation(node, timeToLive, position, type, parent);
+      osg::Node* node = osgDB::readNodeFile( mDetonationTypeFilenameMap[type], options.get() );
+      
+      Detonation* detonation = new Detonation(node, timeToLive, position, type, parent);
 
-      if(node != NULL) 
+      if(node != 0) 
       {
-         if(parent != NULL)
+         if(parent != 0)
          {
             node->setUpdateCallback(
                new DetonationUpdateCallback(detonation)
@@ -209,7 +207,7 @@ Detonation* EffectManager::AddDetonation(const osg::Vec3& position,
       return detonation;
    }
 
-   return NULL;
+   return 0;
 }
 
 /**

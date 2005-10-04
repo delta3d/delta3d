@@ -166,7 +166,7 @@ namespace dtEditQt
 
     bool DynamicLongControl::isEditable()
     {
-        return true;
+        return !myProperty->IsReadOnly();
     }
 
     /////////////////////////////////////////////////////////////////////////////////

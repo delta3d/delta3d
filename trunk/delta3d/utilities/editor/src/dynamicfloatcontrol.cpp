@@ -171,7 +171,7 @@ namespace dtEditQt
 
     bool DynamicFloatControl::isEditable()
     {
-        return true;
+        return !myProperty->IsReadOnly();
     }
 
     /////////////////////////////////////////////////////////////////////////////////

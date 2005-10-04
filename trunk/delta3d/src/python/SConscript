@@ -10,65 +10,68 @@ if CheckForBoost() and OS != 'darwin' :
 
    pythonSrcs = { 
    
-            'dtcore' :[    'basebindings.cpp',
-                           'camerabindings.cpp',
-                           'clouddomebindings.cpp',
-                           'cloudplanebindings.cpp',
-                           'compassbindings.cpp',
-                           'deltadrawablebindings.cpp',
-                           'deltawinbindings.cpp',
-                           'dtcorebindings.cpp',
-                           'effectmanagerbindings.cpp',
-                           'enveffectbindings.cpp',
-                           'environmentbindings.cpp',
-                           'flymotionmodelbindings.cpp',
-                           'infinitelightbindings.cpp',
-                           'infiniteterrainbindings.cpp',
-                           'inputdevicebindings.cpp',
-                           'inputmapperbindings.cpp',
-                           'isectorbindings.cpp',
-                           'joystickbindings.cpp',
-                           'keyboardbindings.cpp',
-                           'lightbindings.cpp',
-                           'loadablebindings.cpp',
-                           'logicalinputdevicebindings.cpp',
-                           'motionmodelbindings.cpp',
-                           'mousebindings.cpp',
-                           'objectbindings.cpp',
-                           'orbitmotionmodelbindings.cpp',
-                           'osgvec3.cpp',
-                           'osgmath.cpp',
-                           'osgmatrix.cpp',
-                           'particlesystembindings.cpp',
-                           'physicalbindings.cpp',
-                           'pointaxisbindings.cpp',
-                           'positionallightbindings.cpp',
-                           'recorderbindings.cpp',
-                           'scenebindings.cpp',
-                           'skyboxbindings.cpp',
-                           'skydomebindings.cpp',
-                           'spotlightbindings.cpp',
-                           'systembindings.cpp',
-                           'terrainbindings.cpp',
-                           'trackerbindings.cpp',
-                           'transformablebindings.cpp',
-                           'transformbindings.cpp',
-                           'tripodbindings.cpp',
-                           'ufomotionmodelbindings.cpp',
-                           'walkmotionmodelbindings.cpp' ],
+      'dtCore' :[    'basebindings.cpp',
+                     'camerabindings.cpp',
+                     'clouddomebindings.cpp',
+                     'cloudplanebindings.cpp',
+                     'compassbindings.cpp',
+                     'deltadrawablebindings.cpp',
+                     'deltawinbindings.cpp',
+                     'dtcorebindings.cpp',
+                     'effectmanagerbindings.cpp',
+                     'enveffectbindings.cpp',
+                     'environmentbindings.cpp',
+                     'flymotionmodelbindings.cpp',
+                     'infinitelightbindings.cpp',
+                     'infiniteterrainbindings.cpp',
+                     'inputdevicebindings.cpp',
+                     'inputmapperbindings.cpp',
+                     'isectorbindings.cpp',
+                     'joystickbindings.cpp',
+                     'keyboardbindings.cpp',
+                     'lightbindings.cpp',
+                     'loadablebindings.cpp',
+                     'logicalinputdevicebindings.cpp',
+                     'motionmodelbindings.cpp',
+                     'mousebindings.cpp',
+                     'objectbindings.cpp',
+                     'orbitmotionmodelbindings.cpp',
+                     'osgvec2.cpp',
+                     'osgvec3.cpp',
+                     'osgvec4.cpp',
+                     'osgmath.cpp',
+                     'osgmatrix.cpp',
+                     'particlesystembindings.cpp',
+                     'physicalbindings.cpp',
+                     'pointaxisbindings.cpp',
+                     'positionallightbindings.cpp',
+                     'recorderbindings.cpp',
+                     'scenebindings.cpp',
+                     'skyboxbindings.cpp',
+                     'skydomebindings.cpp',
+                     'spotlightbindings.cpp',
+                     'systembindings.cpp',
+                     'trackerbindings.cpp',
+                     'transformablebindings.cpp',
+                     'transformbindings.cpp',
+                     'tripodbindings.cpp',
+                     'ufomotionmodelbindings.cpp',
+                     'walkmotionmodelbindings.cpp' ],
    
-   'dtabc' : [ 'applicationbindings.cpp', 'baseabcbindings.cpp', 'dtabcbindings.cpp', 'weatherbindings.cpp', 'widgetbindings.cpp' ],
+   'dtABC' : [ 'applicationbindings.cpp', 'baseabcbindings.cpp', 'dtabcbindings.cpp', 'weatherbindings.cpp', 'widgetbindings.cpp' ],
     
-   'dtaudio' : [ 'audiomanagerbindings.cpp', 'dtaudiobindings.cpp', 'listenerbindings.cpp', 'soundeffectbinderbindings.cpp' ],
+   'dtAudio' : [ 'audiomanagerbindings.cpp', 'dtaudiobindings.cpp', 'listenerbindings.cpp', 'soundeffectbinderbindings.cpp' ],
     
-   'dtchar' : [ 'characterbindings.cpp', 'dtcharbindings.cpp' ],
+   'dtChar' : [ 'characterbindings.cpp', 'dtcharbindings.cpp' ],
+
+   'dtDAL'  : [ 'actorproxybindings.cpp', 'dtdalbindings.cpp', 'mapbindings.cpp', 'projectbindings.cpp' ],
     
-   'gui_fl' : [ 'dtguiflbindings.cpp' ],
+   'dtInspector' : [ 'dtinspectorbindings.cpp' ],
     
-   'dthla' : [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ],
+   'dtHLA' : [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ],
     
-   'dtsoarx' : [ 'dtsoarxbindings.cpp', 'soarxterrainbindings.cpp' ] }
-    
+   'dtUtil' : [ 'dtutilbindings.cpp', 'logbindings.cpp', 'matrixutilbindings.cpp', 'noisebindings.cpp', 'polardecompbindings.cpp' ] }
+       
    ##############
    # Build libs #
    ##############
@@ -78,7 +81,7 @@ if CheckForBoost() and OS != 'darwin' :
    else :
       boostLib = 'boost_python'
 
-   pythonDeps = [ 'python' ]
+   pythonDeps = [ 'python', 'osg' ]
    
    if OS == 'windows' :
       pythonDeps += [  'User32' ] 
@@ -86,39 +89,39 @@ if CheckForBoost() and OS != 'darwin' :
    pythonDeps = [ extLibs[lib] for lib in pythonDeps if extLibs.has_key(lib) ] + [boostLib]
    
    if OS == 'windows' and mode == 'debug' :
-      dtCoreBindingsTarget = 'dtcorebindingsd'
-      dtAbcBindingsTarget = 'dtabcbindingsd'
-      dtAudioBindingsTarget = 'dtaudiobindingsd'
-      dtCharBindingsTarget = 'dtcharbindingsd'
-      dtGui_flBindingsTarget = 'gui_flbindingsd'
-      dtHlaBindingsTarget = 'dthlabindingsd'
-      dtSoarxBindingsTarget = 'dtsoarxbindingsd'
+      dtCoreBindingsTarget = 'dtCoreBindingsd'
+      dtAbcBindingsTarget = 'dtABCBindingsd'
+      dtAudioBindingsTarget = 'dtAudioBindingsd'
+      dtCharBindingsTarget = 'dtCharBindingsd'
+      dtDALBindingsTarget = 'dtDALBindingsd'
+      dtInspectorBindingsTarget = 'dtInspectorBindingsd'
+      dtHlaBindingsTarget = 'dtHLABindingsd'
+      dtUtilBindingsTarget = 'dtUtilBindingsd'
    else :
-      dtCoreBindingsTarget = 'dtcorebindings'
-      dtAbcBindingsTarget = 'dtabcbindings'
-      dtAudioBindingsTarget = 'dtaudiobindings'
-      dtCharBindingsTarget = 'dtcharbindings'
-      dtGui_flBindingsTarget = 'gui_flbindings'
-      dtHlaBindingsTarget = 'dthlabindings'
-      dtSoarxBindingsTarget = 'dtsoarxbindings'
+      dtCoreBindingsTarget = 'dtCoreBindings'
+      dtAbcBindingsTarget = 'dtABCBindings'
+      dtAudioBindingsTarget = 'dtAudioBindings'
+      dtCharBindingsTarget = 'dtCharBindings'
+      dtDALBindingsTarget = 'dtDALBindings'
+      dtInspectorBindingsTarget = 'dtInspectorBindings'
+      dtHlaBindingsTarget = 'dtHLABindings'
+      dtUtilBindingsTarget = 'dtUtilBindings'
    
-   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtcore'],   LIBS = pythonDeps + [dtLibs['dtcore']] )
-   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtabc'],    LIBS = pythonDeps + [dtLibs['dtabc']] )
-   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtaudio'],  LIBS = pythonDeps + [dtLibs['dtaudio']] )
-   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtchar'],   LIBS = pythonDeps + [dtLibs['dtchar']] )
-   pythonGui_flLib = env.SharedLibrary(  dtGui_flBindingsTarget,  pythonSrcs['gui_fl'],   LIBS = pythonDeps + [dtLibs['gui_fl']] )
+   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = pythonDeps + [dtLibs['dtCore']] )
+   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = pythonDeps + [dtLibs['dtABC']] )
+   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = pythonDeps + [dtLibs['dtAudio']] )
+   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = pythonDeps + [dtLibs['dtChar']] )
+   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = pythonDeps + [dtLibs['dtDAL']] )
+   pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = pythonDeps + [dtLibs['dtInspector']] )
+   pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = pythonDeps + [dtLibs['dtUtil']] )
 
-   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonGui_flLib )
+   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtInspectorLib, pythonDtUtilLib )
    
    if env.get('rti') != 0 :
-      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dthla'], LIBS = pythonDeps + [dtLibs[ 'dthla' ]] )
+      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = pythonDeps + [dtLibs[ 'dtHLA' ]] )
       env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None
-
-   if OS == 'windows' :
-      pythonDtSoarxLib = env.SharedLibrary( dtSoarxBindingsTarget, pythonSrcs['dtsoarx'], LIBS = pythonDeps + [dtLibs[ 'dtsoarx' ]] )
-      env.Precious( pythonDtSoarxLib )
 
    ################
    # Install libs #
@@ -131,47 +134,52 @@ if CheckForBoost() and OS != 'darwin' :
       dir = 'lib'
       suffix = 'so'
 
-   if mode == 'debug' :
-      dtCorePydTarget = '#'+dir+'/dtCored.'+suffix
-      dtAbcPydTarget = '#'+dir+'/dtABCd.'+suffix
-      dtAudioPydTarget = '#'+dir+'/dtAudiod.'+suffix
-      dtCharPydTarget = '#'+dir+'/dtChard.'+suffix
-      dtGUIFlPydTarget = '#'+dir+'/dtGUIFld.'+suffix
-      dtSoarxPydTarget = '#'+dir+'/dtSOARXd.'+suffix
-      dtHlaPydTarget = '#'+dir+'/dtHLAd.'+suffix
-   elif mode == 'release' :
-      dtCorePydTarget = '#'+dir+'/dtCore.'+suffix
-      dtAbcPydTarget = '#'+dir+'/dtABC.'+suffix
-      dtAudioPydTarget = '#'+dir+'/dtAudio.'+suffix
-      dtCharPydTarget = '#'+dir+'/dtChar.'+suffix
-      dtGUIFlPydTarget = '#'+dir+'/dtGUIFl.'+suffix
-      dtSoarxPydTarget = '#'+dir+'/dtSOARX.'+suffix
-      dtHlaPydTarget = '#'+dir+'/dtHLA.'+suffix
+   if OS == 'windows' and mode == 'debug' :
+      dtCorePydTarget = '#'+dir+'/PyDtCored.'+suffix
+      dtAbcPydTarget = '#'+dir+'/PyDtABCd.'+suffix
+      dtAudioPydTarget = '#'+dir+'/PyDtAudiod.'+suffix
+      dtCharPydTarget = '#'+dir+'/PyDtChard.'+suffix
+      dtDALPydTarget = '#'+dir+'/PyDtDALd.'+suffix
+      dtInspectorPydTarget = '#'+dir+'/PyDtInspectord.'+suffix
+      dtHlaPydTarget = '#'+dir+'/PyDtHLAd.'+suffix
+      dtUtilPydTarget = '#'+dir+'/PyDtUtild.'+suffix
+   else :
+      dtCorePydTarget = '#'+dir+'/PyDtCore.'+suffix
+      dtAbcPydTarget = '#'+dir+'/PyDtABC.'+suffix
+      dtAudioPydTarget = '#'+dir+'/PyDtAudio.'+suffix
+      dtCharPydTarget = '#'+dir+'/PyDtChar.'+suffix
+      dtDALPydTarget = '#'+dir+'/PyDtDAL.'+suffix
+      dtInspectorPydTarget = '#'+dir+'/PyDtInspector.'+suffix
+      dtHlaPydTarget = '#'+dir+'/PyDtHLA.'+suffix
+      dtUtilPydTarget = '#'+dir+'/PyDtUtil.'+suffix
   
    env.InstallAs( [  dtCorePydTarget, \
                      dtAbcPydTarget, \
                      dtAudioPydTarget, \
                      dtCharPydTarget, \
-                     dtGUIFlPydTarget ], \
+                     dtDALPydTarget, \
+                     dtInspectorPydTarget, \
+                     dtUtilPydTarget ], \
                   [  pythonDtCoreLib[0], \
                      pythonDtAbcLib[0], \
                      pythonDtAudioLib[0], \
                      pythonDtCharLib[0], \
-                     pythonGui_flLib[0] ] )
+                     pythonDtDALLib[0], \
+                     pythonDtInspectorLib[0], \
+                     pythonDtUtilLib[0] ] )
 
    if pythonDtHlaLib is not None:
          env.InstallAs( dtHlaPydTarget, pythonDtHlaLib[0] )
 
    if OS == 'windows' :
       
-      env.InstallAs( dtSoarxPydTarget , pythonDtSoarxLib[0] )
-      
       env.Install( '#/lib', [ pythonDtCoreLib[1:], \
                               pythonDtAbcLib[1:], \
                               pythonDtAudioLib[1:], \
                               pythonDtCharLib[1:], \
-                              pythonGui_flLib[1:], \
-                              pythonDtSoarxLib[1:] ] )
+                              pythonDtDALLib[1:], \
+                              pythonDtInspectorLib[1:], \
+                              pythonDtUtilLib[1:] ] )
 
       if pythonDtHlaLib is not None:
          env.Install( '#/lib', pythonDtHlaLib[1:] )

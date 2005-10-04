@@ -24,7 +24,7 @@
 #include "dtDAL/plugin_export.h"
 #include "dtDAL/physicalactorproxy.h"
 #include <dtCore/infiniteterrain.h>
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtActors 
 {

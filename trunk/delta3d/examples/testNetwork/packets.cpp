@@ -2,11 +2,9 @@
 #include <gnelib/PacketParser.h>
 #include <gnelib/Buffer.h>
 #include "packets.h"
-#include <dtUtil/log.h>
 
 
-using namespace dtUtil;
-
+//our unique ID for this custom packet
 const int PositionPacket::ID = GNE::PacketParser::MIN_USER_ID;
 
 
@@ -15,11 +13,12 @@ GNE::Packet(ID)
 {
 }
 
-PositionPacket::PositionPacket( osg::Vec3 xyz, osg::Vec3 hpr):
+PositionPacket::PositionPacket( osg::Vec3 xyz, osg::Vec3 hpr, const std::string &ownerID):
 GNE::Packet(ID)
 {
    mXYZ = xyz;
    mHPR = hpr;
+   mOwnerID = ownerID;
 }
 
 PositionPacket::PositionPacket( const PositionPacket &p):
@@ -27,13 +26,8 @@ GNE::Packet(ID)
 {
    mXYZ = p.mXYZ;
    mHPR = p.mHPR;
-
-//   mXYZ._v[0] = p.mXYZ._v[0];
-//   mXYZ._v[1] = p.mXYZ._v[1];
-//   mXYZ._v[2] = p.mXYZ._v[2];
+   mOwnerID = p.mOwnerID;
 }
-
-
 
 void PositionPacket::writePacket(GNE::Buffer &raw) const
 {
@@ -44,9 +38,8 @@ void PositionPacket::writePacket(GNE::Buffer &raw) const
    raw << mHPR._v[0];
    raw << mHPR._v[1];
    raw << mHPR._v[2];
-
+   raw << mOwnerID;
 }
-
 
 void PositionPacket::readPacket( GNE::Buffer &raw)
 {
@@ -57,10 +50,12 @@ void PositionPacket::readPacket( GNE::Buffer &raw)
    raw >> mHPR._v[0];
    raw >> mHPR._v[1];
    raw >> mHPR._v[2];
+   raw >> mOwnerID;
 }
 
-
+///return the size in bytes
 int PositionPacket::getSize() const
 {
-   return Packet::getSize() + sizeof(mXYZ) + sizeof(mHPR);
+   return Packet::getSize() + sizeof(mXYZ) + sizeof(mHPR) + sizeof(mOwnerID);
 }
+

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
         dtCore::SetDataFilePathList(".;" + dtCore::GetDeltaDataPathList());
 
         //Now that everything is initialized, show the main window.
@@ -63,12 +63,12 @@ int main(int argc, char *argv[])
         result = app.exec();
         dtCore::System::Instance()->Stop();
     }
-    catch (dtDAL::Exception &e)
+    catch (dtUtil::Exception &e)
     {
         std::ostringstream ss;
         e.Print();
         ss << "Exception (" << e.TypeEnum() << "): " << e.What()
-            << "\n\tLine: " << e.Line() << " File: " << e.File();
+            << "\n\tLine: " << e.Line() << " File: " << e.File(); 
 
         // hide the splash screen if it's up or you can't see the error!
         if (splash != NULL) {

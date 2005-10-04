@@ -4,7 +4,7 @@
 	Version="7.10"
 	Name="dtABC"
 	ProjectGUID="{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
-	RootNamespace="dtabc"
+	RootNamespace="dtABC"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -34,15 +34,15 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib dtcored.lib OpenThreadsWin32d.lib osgd.lib osgdbd.lib producerd.lib ul_d.lib xerces-c_2D.lib"
-				OutputFile="../../../bin/dtabcd.dll"
+				AdditionalDependencies="dtUtild.lib dtCored.lib OpenThreadsWin32d.lib osgd.lib osgdbd.lib producerd.lib ul_d.lib xerces-c_2D.lib"
+				OutputFile="../../../bin/dtABCd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmtd; libcd; msvcrt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				ImportLibrary="../../../lib/dtabcd.lib"/>
+				ImportLibrary="../../../lib/dtABCd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -84,13 +84,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib dtcore.lib OpenThreadsWin32.lib osg.lib osgdb.lib producer.lib ul.lib xerces-c_2.lib"
-				OutputFile="../../../bin/dtabc.dll"
+				AdditionalDependencies="dtUtil.lib dtCore.lib OpenThreadsWin32.lib osg.lib osgdb.lib producer.lib ul.lib xerces-c_2.lib"
+				OutputFile="../../../bin/dtABC.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc; libcmt; msvcrtd"
-				ImportLibrary="../../../lib/dtabc.lib"/>
+				ImportLibrary="../../../lib/dtABC.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

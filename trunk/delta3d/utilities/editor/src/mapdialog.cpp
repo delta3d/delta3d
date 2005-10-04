@@ -36,7 +36,7 @@
 
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtEditQt
 {
@@ -119,7 +119,7 @@ namespace dtEditQt
                 myMap = &dtDAL::Project::GetInstance().CreateMap(nameEdit->text().toStdString(),
                     fileEdit->text().toStdString());
             }
-            catch(dtDAL::Exception &e) 
+            catch(dtUtil::Exception &e) 
             {
                 QString error = "An error occured while creating the map. ";
                 error += e.What().c_str();

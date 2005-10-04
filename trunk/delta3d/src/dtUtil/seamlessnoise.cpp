@@ -12,9 +12,10 @@ int permutation[256];
 
 
 
-SeamlessNoise::SeamlessNoise(int seed)
+SeamlessNoise::SeamlessNoise(unsigned int seed)
 {
    BuildTable(seed);
+   mDefaultRepeat = 1;
 }
 
 SeamlessNoise::~SeamlessNoise()
@@ -22,7 +23,10 @@ SeamlessNoise::~SeamlessNoise()
 
 }
 
-
+void SeamlessNoise::Reseed(unsigned int seed)
+{
+   BuildTable(seed);
+}
 
 float SeamlessNoise::Grad(int hash, float x, float y, float z)
 {
@@ -33,9 +37,9 @@ float SeamlessNoise::Grad(int hash, float x, float y, float z)
 }
 
 
-void SeamlessNoise::BuildTable(int seed)
+void SeamlessNoise::BuildTable(unsigned int seed)
 {
-   srand((unsigned)seed);
+   srand(seed);
 
    int i, n, j;
 
@@ -66,6 +70,11 @@ void SeamlessNoise::BuildTable(int seed)
 
 float SeamlessNoise::GetNoise(const osg::Vec3f& vect_in, int repeat) 
 {
+   if(repeat == -1) 
+   {
+      repeat = mDefaultRepeat;
+   }
+
    float x = vect_in[0];
    float y = vect_in[1];
    float z = vect_in[2];

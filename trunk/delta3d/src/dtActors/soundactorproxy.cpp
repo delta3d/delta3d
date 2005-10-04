@@ -54,7 +54,7 @@ namespace dtActors
 
         Sound *sound = dynamic_cast<Sound*>(mActor.get());
         if(!sound)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         // This property toggles whether or not a sound loops. A
         // value of true will loop the sound, while a value of false
@@ -152,7 +152,7 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         if(!fileName.empty())
             snd->LoadFile(fileName.c_str());
@@ -163,7 +163,7 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         snd->SetDirection(dir);
     }
@@ -173,7 +173,7 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         osg::Vec3 pos;
         snd->GetDirection(pos);
@@ -185,7 +185,7 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         snd->SetVelocity(vel);
     }
@@ -195,7 +195,7 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         osg::Vec3 pos;
         snd->GetVelocity(pos);
@@ -207,7 +207,7 @@ namespace dtActors
     {
         Sound* snd = dynamic_cast<Sound*>(mActor.get());
         if(!snd)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtAudio::Sound");
 
         snd->Play();
     }

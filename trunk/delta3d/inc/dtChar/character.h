@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -113,7 +113,7 @@ namespace dtChar
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
           */
-         void ExecuteAction(std::string name,
+         void ExecuteAction(const std::string& name,
                             bool priority = true, 
                             bool force = false);
          
@@ -125,7 +125,7 @@ namespace dtChar
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
           */
-         void ExecuteActionWithSpeed(std::string name, 
+         void ExecuteActionWithSpeed(const std::string& name, 
                                      float speed,
                                      bool priority = true,
                                      bool force = false);
@@ -138,7 +138,7 @@ namespace dtChar
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
           */
-         void ExecuteActionWithAngle(std::string name, 
+         void ExecuteActionWithAngle(const std::string& name, 
                                      float angle,
                                      bool priority = true,
                                      bool force = false);
@@ -152,7 +152,7 @@ namespace dtChar
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
           */
-         void ExecuteActionWithSpeedAndAngle(std::string name, 
+         void ExecuteActionWithSpeedAndAngle(const std::string& name, 
                                              float speed, 
                                              float angle,
                                              bool priority = true,
@@ -163,7 +163,7 @@ namespace dtChar
           *
           * @param name the name of the action to stop
           */
-         void StopAction(std::string name);
+         void StopAction(const std::string& name);
          
 
          /**

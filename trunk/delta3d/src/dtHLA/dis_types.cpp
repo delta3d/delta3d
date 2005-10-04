@@ -1,8 +1,6 @@
 // dis_types.cpp: Implementation of DIS/RPR-FOM data types.
 //
 //
-///\todo Anderegg-  Endian ness should be set in one centralized place instead of repeatedly checked for
-///\todo Anderegg-  Un-Tested for Macintosh 
 //////////////////////////////////////////////////////////////////////
 
 #include <dtHLA/dis_types.h>

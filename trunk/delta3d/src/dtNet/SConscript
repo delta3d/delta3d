@@ -2,11 +2,7 @@ Import('*')
 
 import glob
 
-srcfiles = SGlob('*.cpp')
-
-dtNetDeps=[ 'dtcore', 'dtutil', 'OpenThreads', 'gne', 'HawkNL', 'curses' ]
-
-if OS == 'windows' :
-   dtNetDeps += [ 'User32' ]
+srcs = SGlob('*.cpp')
+deps = []
        
-BuildLib( 'dtNet', srcfiles, dtNetDeps, ['DT_LIBRARY'] )
+BuildLib( 'dtNet', srcs, deps, [] )

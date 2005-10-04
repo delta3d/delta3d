@@ -21,11 +21,11 @@
 
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/project.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include <dtUtil/log.h>
 #include "dtDAL/map.h"
 #include "dtDAL/mapxml.h"
-#include "dtDAL/stringtokenizer.h"
+#include "dtUtil/stringutils.h"
 
 
 namespace dtDAL
@@ -47,6 +47,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     void ResourceActorProperty::SetValue(ResourceDescriptor *value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetValue has been called on a property that is read only.");
+            return;
+        }
+
         mProxy->SetResource(GetName(), value);
         if (value == NULL)
             SetPropFunctor("");
@@ -62,7 +68,7 @@ namespace dtDAL
                         path.c_str());
                 SetPropFunctor(path);
             }
-            catch(const Exception& ex)
+            catch(const dtUtil::Exception& ex)
             {
                 mProxy->SetResource(GetName(), NULL);
                 SetPropFunctor("");
@@ -71,19 +77,6 @@ namespace dtDAL
                     value->GetResourceIdentifier().c_str(), GetName().c_str(), ex.What().c_str());
             }
         }
-    }
-
-
-
-    class IsSlash : public std::unary_function<char, bool> {
-    public:
-        bool operator()(char c) const;
-    };
-
-    inline bool IsSlash::operator()(char c) const {
-        // isspace<char> returns true if c is a white-space character
-        // (0x09-0x0D or 0x20)
-        return c == '/';
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -95,6 +88,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool ResourceActorProperty::SetStringValue(const std::string& value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
         bool result = true;
         if (value.empty() || value == "NULL")
         {
@@ -104,7 +103,7 @@ namespace dtDAL
         {
 
             std::vector<std::string> tokens;
-            StringTokenizer<IsSlash> stok;
+            dtUtil::StringTokenizer<dtUtil::IsSlash> stok;
 
             stok.tokenize(tokens, value);
 
@@ -113,8 +112,8 @@ namespace dtDAL
                 std::string displayName(tokens[0]);
                 std::string identifier(tokens[1]);
 
-                trim(identifier);
-                trim(displayName);
+                dtUtil::trim(identifier);
+                dtUtil::trim(displayName);
 
                 ResourceDescriptor descriptor(displayName, identifier);
                 SetValue(&descriptor);
@@ -139,6 +138,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool IntActorProperty::SetStringValue(const std::string& value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
         std::istringstream stream;
         stream.str(value);
         int i;
@@ -158,6 +163,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool BooleanActorProperty::SetStringValue(const std::string& value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
         bool result = false;
 
         if (value == "true" || value == "True" || value == "1" ||
@@ -180,6 +191,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool FloatActorProperty::SetStringValue(const std::string& value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
         std::istringstream stream;
         stream.str(value);
         float i;
@@ -199,6 +216,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool DoubleActorProperty::SetStringValue(const std::string& value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
         std::istringstream stream;
         stream.str(value);
         double i;
@@ -218,6 +241,12 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool LongActorProperty::SetStringValue(const std::string& value)
     {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
         std::istringstream stream;
         stream.str(value);
         long i;
@@ -237,25 +266,20 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool Vec2ActorProperty::SetStringValue(const std::string& value)
     {
-        osg::Vec2 setValue;
-
-        bool result = true;
-        if (value.empty() || value == "NULL")
+        if (IsReadOnly())
         {
-            setValue.set(0.0, 0.0);
-            SetValue(setValue);
-        }
-        else if (sscanf(value.c_str(), "%f %f", &setValue.x(), &setValue.y()) == 2
-            || sscanf(value.c_str(), "%f, %f", &setValue.x(), &setValue.y()) == 2)
-        {
-            SetValue(setValue);
-        }
-        else
-        {
-            result = false;
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
         }
 
-        return result;
+        osg::Vec2 newValue;
+
+        if (dtUtil::ParseVec<osg::Vec2>(value, newValue, 2))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
 
     }
 
@@ -269,27 +293,80 @@ namespace dtDAL
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    bool Vec2fActorProperty::SetStringValue(const std::string& value)
+    {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
+        osg::Vec2f newValue;
+
+        if (dtUtil::ParseVec<osg::Vec2f>(value, newValue, 2))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const std::string Vec2fActorProperty::GetStringValue() const
+    {
+        std::ostringstream stream;
+        osg::Vec2f vec2f = GetValue();
+        stream << vec2f[0] << " " << vec2f[1];
+        return stream.str();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    bool Vec2dActorProperty::SetStringValue(const std::string& value)
+    {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
+        osg::Vec2d newValue;
+
+        if (dtUtil::ParseVec<osg::Vec2d>(value, newValue, 2))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const std::string Vec2dActorProperty::GetStringValue() const
+    {
+        std::ostringstream stream;
+        osg::Vec2d vec2d = GetValue();
+        stream << vec2d[0] << " " << vec2d[1];
+        return stream.str();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     bool Vec3ActorProperty::SetStringValue(const std::string& value)
     {
-        osg::Vec3 setValue;
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+        
+        osg::Vec3 newValue;
 
-        bool result = true;
-        if (value.empty() || value == "NULL")
+        if (dtUtil::ParseVec<osg::Vec3>(value, newValue, 3))
         {
-            setValue.set(0.0, 0.0, 0.0);
-            SetValue(setValue);
+            SetValue(newValue);
+            return true;
         }
-        else if (sscanf(value.c_str(), "%f %f %f", &setValue.x(), &setValue.y(), &setValue.z()) == 3
-            || sscanf(value.c_str(), "%f, %f, %f", &setValue.x(), &setValue.y(), &setValue.z()) == 3)
-        {
-            SetValue(setValue);
-        }
-        else
-        {
-            result = false;
-        }
-
-        return result;
+        else return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -302,27 +379,78 @@ namespace dtDAL
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    bool Vec3fActorProperty::SetStringValue(const std::string& value)
+    {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
+        osg::Vec3f newValue;
+
+        if (dtUtil::ParseVec<osg::Vec3f>(value, newValue, 3))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const std::string Vec3fActorProperty::GetStringValue() const
+    {
+        std::ostringstream stream;
+        osg::Vec3f vec3f = GetValue();
+        stream << vec3f[0] << " " << vec3f[1] << " " << vec3f[2];
+        return stream.str();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    bool Vec3dActorProperty::SetStringValue(const std::string& value)
+    {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
+        osg::Vec3d newValue;
+
+        if (dtUtil::ParseVec<osg::Vec3d>(value, newValue, 3))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const std::string Vec3dActorProperty::GetStringValue() const
+    {
+        std::ostringstream stream;
+        osg::Vec3d vec3d = GetValue();
+        stream << vec3d[0] << " " << vec3d[1] << " " << vec3d[2];
+        return stream.str();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     bool Vec4ActorProperty::SetStringValue(const std::string& value)
     {
-        osg::Vec4 setValue;
-
-        bool result = true;
-        if (value.empty() || value == "NULL")
+        if (IsReadOnly())
         {
-            setValue.set(0.0, 0.0, 0.0, 0.0);
-            SetValue(setValue);
-        }
-        else if (sscanf(value.c_str(), "%f %f %f %f", &setValue.x(), &setValue.y(), &setValue.z(), &setValue.w()) == 4
-            || sscanf(value.c_str(), "%f, %f, %f, %f", &setValue.x(), &setValue.y(), &setValue.z(), &setValue.w()) == 4)
-        {
-            SetValue(setValue);
-        }
-        else
-        {
-            result = false;
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
         }
 
-        return result;
+        osg::Vec4 newValue;
+
+        if (dtUtil::ParseVec<osg::Vec4>(value, newValue, 4))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -335,35 +463,59 @@ namespace dtDAL
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    bool ColorRgbaActorProperty::SetStringValue(const std::string& value)
+    bool Vec4fActorProperty::SetStringValue(const std::string& value)
     {
-        osg::Vec4 setValue;
-
-        bool result = true;
-        if (value.empty() || value == "NULL")
+        if (IsReadOnly())
         {
-            setValue.set(0.0, 0.0, 0.0, 0.0);
-            SetValue(setValue);
-        }
-        else if (sscanf(value.c_str(), "%f %f %f %f", &setValue.x(), &setValue.y(), &setValue.z(), &setValue.w()) == 4
-            || sscanf(value.c_str(), "%f, %f, %f, %f", &setValue.x(), &setValue.y(), &setValue.z(), &setValue.w()) == 4)
-        {
-            SetValue(setValue);
-        }
-        else
-        {
-            result = false;
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
         }
 
-        return result;
+        osg::Vec4f newValue;
+
+        if (dtUtil::ParseVec<osg::Vec4f>(value, newValue, 4))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    const std::string ColorRgbaActorProperty::GetStringValue() const
+    const std::string Vec4fActorProperty::GetStringValue() const
     {
         std::ostringstream stream;
-        osg::Vec4 vec4 = GetValue();
-        stream << vec4[0] << " " << vec4[1] << " " << vec4[2] << " " << vec4[3];
+        osg::Vec4f vec4f = GetValue();
+        stream << vec4f[0] << " " << vec4f[1] << " " << vec4f[2] << " " << vec4f[3];
         return stream.str();
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    bool Vec4dActorProperty::SetStringValue(const std::string& value)
+    {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetStringValue has been called on a property that is read only.");
+            return false;
+        }
+
+        osg::Vec4d newValue;
+
+        if (dtUtil::ParseVec<osg::Vec4d>(value, newValue, 4))
+        {
+            SetValue(newValue);
+            return true;
+        }
+        else return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const std::string Vec4dActorProperty::GetStringValue() const
+    {
+        std::ostringstream stream;
+        osg::Vec4d vec4d = GetValue();
+        stream << vec4d[0] << " " << vec4d[1] << " " << vec4d[2] << " " << vec4d[3];
+        return stream.str();
+    }
+
 }

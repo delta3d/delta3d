@@ -4,8 +4,11 @@ Import('*')
 
 if CheckForBoost() :
 
-   testPythonSrcs = ['testpython.cpp']
+   srcs = SGlob( '*.cpp' )
+   deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtScript', 'python' ]
 
-   testPythonDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtscript', 'python' ]
+   extraLink = []
+   if OS == 'windows':
+      extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
 
-   BuildProgram( '#bin/testPython', testPythonSrcs, testPythonDeps )
+   BuildProgram( 'testPython', srcs, deps, [], extraLink )

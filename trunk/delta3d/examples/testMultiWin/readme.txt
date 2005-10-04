@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -15,22 +15,22 @@ Window #2 has two Cameras.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\examples\testMultiWin\testMultiWin.sln.
 - Build testMultiWin.
 - Start testMultiWin.
 
 Win32 Binary:
-- Go to examples/testMultiWin/Release.
+- Go to bin.
 - Double-click testMultiWin.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testMultiWin: run 'make' from examples/testMultiWin.
-- Enter examples/testMultiWin directory.
-- Run 'testMultiWin'.
+- To build only testMultiWin, from the root delta3d folder:
+  scons bin/testMultiWin
+
+Linux Binary:
+- cd bin
+- ./testMultiWin
 
 Controls
 --------
-
 Esc  -  Exit

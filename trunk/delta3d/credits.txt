@@ -14,56 +14,64 @@ support in the development of the Delta3D Open Source Game and Simulation Engine
 --------------------
 | The Delta3D Team |
 --------------------
-  Rudy Darken
-  - Director MOVES Insitute
+Rudy "Dean Wormer" Darken
+- Director MOVES Insitute
 
-  Perry McDowell
-  - Executive Director
+Perry "Bluto" McDowell
+- Executive Director
 
-  Erik Johnson
-  - Lead Engineer
+Erik "Boon" Johnson
+- Lead Engineer
  
-  Joe Sullivan
-  - The "goto" guy
-  
-  Chris Osborn
-  - Lead Programmer
+Joe "Chip" Sullivan
+- The "goto" guy
+
+Chris "D-Day" Osborn
+- Lead Programmer
  
-  Brad Anderegg
-  - Programmer
+Brad "Otter" Anderegg
+- Programmer
 
-  John K. Grant
-  - Programmer
+John "Neidermeyer" Grant
+- Programmer
 
-  Mark Strom
-  - dtHLA bug fixes
-  
-  Fuzzy Wells
-  - GENETICS integration
-  
-  Andrzej Kapolka
-  - Soarx Terrain, dtHLA, many, many backbone components
-  
-  J.P. Jamieson
-  - Audio Manager, Viewer, FLTK integration
-  
-  Matt Campbell
-  Teague Coonan
-  David Guthrie
-  Eddie Johnson
-  Curtiss Murphy
-  - STAGE: Simluation, Training, and Game Editor
+Will "Pinto" Clapham
+- Artist
+
+Mike "Flounder" Dunhour
+- Artist
+
+Mark Strom
+- dtHLA bug fixes
+
+Fuzzy Wells
+- GENETICS integration
+
+Andrzej Kapolka
+- Soarx Terrain, dtHLA, many, many backbone components
+
+J.P. Jamieson
+- Audio Manager, Viewer, FLTK integration
+
+Matt Campbell
+Teague Coonan
+David Guthrie
+Eddie Johnson
+Curtiss Murphy
+- STAGE: Simluation, Training, and Game Editor
+- dtTerrain
  
-  Curtis Conkey
+Curtis Conkey
+- Project Sponsor, NETC
 
-  Peter Smith
-  - MSVS Project Template, Wireframe mode, Tutorials
-  
-  Ricardo Salvatore
-  - Linux Tutorials
-  
-  Georgios E. Tarantilis
-  - Clouds on the GPU
+Peter Smith
+- MSVS Project Template, Wireframe mode, Tutorials
+
+Ricardo Salvatore
+- Linux Tutorials
+
+Georgios E. Tarantilis
+- Clouds on the GPU
 
 ----------------------
 | Other Contributors |
@@ -73,3 +81,6 @@ Terry Jordan
 
 "Winter"
 - Free Microsoft Tool Build Tutorial
+
+Rudolf Kastl
+- RPM Help, http://newrpms.sunsite.dk/

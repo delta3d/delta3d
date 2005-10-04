@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtABC/baseabc.h"
+#include <python/dtpython.h>
+#include <dtABC/baseabc.h>
 
 using namespace boost::python;
 using namespace dtABC;
@@ -13,8 +13,9 @@ class BaseABCWrap : public BaseABC
 {
    public:
 
-      BaseABCWrap(PyObject* self)
-         : mSelf(self)
+      BaseABCWrap( PyObject* self, const std::string& name )
+         : BaseABC(name),
+           mSelf(self)
       {}
 
       virtual void Config()
@@ -105,7 +106,7 @@ void initBaseABCBindings()
    BaseABC* (*BaseABCGI1)(int) = &BaseABC::GetInstance;
    BaseABC* (*BaseABCGI2)(std::string) = &BaseABC::GetInstance;
 
-   class_<BaseABC, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
+   class_<BaseABC, bases<Base,KeyboardListener,MouseListener>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", BaseABCGI1, return_internal_reference<>())

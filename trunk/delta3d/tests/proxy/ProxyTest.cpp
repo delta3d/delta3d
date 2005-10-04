@@ -1,7 +1,7 @@
 #include "ProxyTest.h"
 
 #if defined (WIN32) || defined (_Win32) || defined (__WIN32__)
-    #include "dtActors/dtedterrainactorproxy.h"
+//    #include "dtActors/dtedterrainactorproxy.h"
 #endif
 #include "dtActors/infinitelightactorproxy.h"
 
@@ -42,6 +42,17 @@ void ProxyTest::testProps(ActorProxy& proxy)
     for (unsigned int i = 0; i < props.size(); i++)
     {
         std::string name = props[i]->GetName();
+        
+        if(props[i]->IsReadOnly())
+        {
+            // Test and make sure you can't set the property
+            ActorProperty *p = props[i];
+            const std::string &str = p->GetStringValue();
+            bool shouldBeFalse = p->SetStringValue(str);
+            CPPUNIT_ASSERT_MESSAGE("Should not have been able to set the string value on an read only property", !shouldBeFalse);
+            continue;
+        }
+
         if (props[i]->GetPropertyType() == DataType::FLOAT)
         {
             FloatActorProperty* prop1 = ((FloatActorProperty*)props[i]);
@@ -152,6 +163,8 @@ void ProxyTest::testProps(ActorProxy& proxy)
             prop1->SetValue(test2);
             CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
 
+            result = prop1->GetValue();
+
             for (int x = 0; x < 3; x++)
             {
                 if (x == 1 && name == "Direction")
@@ -161,6 +174,87 @@ void ProxyTest::testProps(ActorProxy& proxy)
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
+            }
+        }
+
+        else if (props[i]->GetPropertyType() == DataType::VEC3F)
+        {
+            Vec3fActorProperty* prop1 = ((Vec3fActorProperty*)props[i]);
+            osg::Vec3f test(9.0f, 2.0f, 7.34f);
+            if (name == "Direction")
+                //Direction ignores the y rotation because you can't roll a vector.
+                test.y() = 0.0f;
+
+            prop1->SetValue(test);
+            osg::Vec3f result = prop1->GetValue();
+
+            for (int x = 0; x < 3; x++)
+            {
+                if (x == 1 && name == "Direction")
+                    continue;
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                    << "f] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent(result[x], test[x], epsilon));
+            }
+            osg::Vec3f test2(7.0f, 3.0f, -9.25f);
+            std::string stringValue = prop1->GetStringValue();
+            //change the value so we can change it back.
+            prop1->SetValue(test2);
+            CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
+
+            for (int x = 0; x < 3; x++)
+            {
+                if (x == 1 && name == "Direction")
+                    continue;
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
+                    << "f] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent(result[x], test[x], epsilon));
+            }
+        }
+        else if (props[i]->GetPropertyType() == DataType::VEC3D)
+        {
+            Vec3dActorProperty* prop1 = ((Vec3dActorProperty*)props[i]);
+            osg::Vec3d test(9.0, 2.0, 7.34);
+            if (name == "Direction")
+                //Direction ignores the y rotation because you can't roll a vector.
+                test.y() = 0.0;
+
+            prop1->SetValue(test);
+            osg::Vec3d result = prop1->GetValue();
+
+            for (int x = 0; x < 3; x++)
+            {
+                if (x == 1 && name == "Direction")
+                    continue;
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                    << "d] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent((double)result[x], (double)test[x], (double)epsilon));
+            }
+            osg::Vec3d test2(7.0, 3.0, -9.25);
+            std::string stringValue = prop1->GetStringValue();
+            //change the value so we can change it back.
+            prop1->SetValue(test2);
+            CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
+
+            for (int x = 0; x < 3; x++)
+            {
+                if (x == 1 && name == "Direction")
+                    continue;
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
+                    << "d] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent((double)result[x], (double)test[x], (double)epsilon));
             }
         }
         else if (props[i]->GetPropertyType() == DataType::VEC4)
@@ -184,6 +278,8 @@ void ProxyTest::testProps(ActorProxy& proxy)
             prop1->SetValue(test2);
             CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
 
+            result = prop1->GetValue();
+
             for (int x = 0; x < 4; x++)
             {
                 std::ostringstream ss;
@@ -191,6 +287,72 @@ void ProxyTest::testProps(ActorProxy& proxy)
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
+            }
+
+        }
+        else if (props[i]->GetPropertyType() == DataType::VEC4F)
+        {
+            Vec4fActorProperty* prop1 = ((Vec4fActorProperty*)props[i]);
+            osg::Vec4f test(6.0f, 6.0f, 5.0f, 7.3f);
+            prop1->SetValue(test);
+            osg::Vec4f result = prop1->GetValue();
+
+            for (int x = 0; x < 4; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                    << "f] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent(result[x], test[x], epsilon));
+            }
+            osg::Vec4f test2(7.0f, 3.0f, 8.0f, 2.1f);
+            std::string stringValue = prop1->GetStringValue();
+            //change the value so we can change it back.
+            prop1->SetValue(test2);
+            CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
+
+            for (int x = 0; x < 4; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
+                    << "f] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent(result[x], test[x], epsilon));
+            }
+
+        }
+        else if (props[i]->GetPropertyType() == DataType::VEC4D)
+        {
+            Vec4dActorProperty* prop1 = ((Vec4dActorProperty*)props[i]);
+            osg::Vec4d test(6.0, 6.0, 5.0, 7.3);
+            prop1->SetValue(test);
+            osg::Vec4d result = prop1->GetValue();
+
+            for (int x = 0; x < 4; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                    << "d] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent((double)result[x], (double)test[x], (double)epsilon));
+            }
+            osg::Vec4d test2(7.0, 3.0, 8.0, 2.1);
+            std::string stringValue = prop1->GetStringValue();
+            //change the value so we can change it back.
+            prop1->SetValue(test2);
+            CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
+
+            for (int x = 0; x < 4; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
+                    << "d] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent((double)result[x], (double)test[x], (double)epsilon));
             }
 
         }
@@ -215,6 +377,8 @@ void ProxyTest::testProps(ActorProxy& proxy)
             prop1->SetValue(test2);
             CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
 
+            result = prop1->GetValue();
+
             for (int x = 0; x < 2; x++)
             {
                 std::ostringstream ss;
@@ -222,6 +386,70 @@ void ProxyTest::testProps(ActorProxy& proxy)
                     << "] property: " << name << " - Value: " << result;
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                                        osg::equivalent(result[x], test[x], epsilon));
+            }
+        }
+        else if (props[i]->GetPropertyType() == DataType::VEC2F)
+        {
+            Vec2fActorProperty* prop1 = ((Vec2fActorProperty*)props[i]);
+            osg::Vec2f test(9.0f, 2.0f);
+            prop1->SetValue(test);
+            osg::Vec2f result = prop1->GetValue();
+
+            for (int x = 0; x < 2; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                    << "f] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent(result[x], test[x], epsilon));
+            }
+            osg::Vec2f test2(7.0f, 3.0f);
+            std::string stringValue = prop1->GetStringValue();
+            //change the value so we can change it back.
+            prop1->SetValue(test2);
+            CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
+
+            for (int x = 0; x < 2; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
+                    << "f] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent(result[x], test[x], epsilon));
+            }
+        }
+        else if (props[i]->GetPropertyType() == DataType::VEC2D)
+        {
+            Vec2dActorProperty* prop1 = ((Vec2dActorProperty*)props[i]);
+            osg::Vec2d test(9.0, 2.0);
+            prop1->SetValue(test);
+            osg::Vec2d result = prop1->GetValue();
+
+            for (int x = 0; x < 2; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy TEST FAILED: Vec[" << x
+                    << "d] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent((double)result[x], (double)test[x], (double)epsilon));
+            }
+            osg::Vec2d test2(7.0, 3.0);
+            std::string stringValue = prop1->GetStringValue();
+            //change the value so we can change it back.
+            prop1->SetValue(test2);
+            CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
+
+            for (int x = 0; x < 2; x++)
+            {
+                std::ostringstream ss;
+                ss << proxyTypeName << " proxy string TEST FAILED: Vec[" << x
+                    << "d] property: " << name << " - Value: " << result;
+                CPPUNIT_ASSERT_MESSAGE(ss.str(),
+                    osg::equivalent((double)result[x], (double)test[x], (double)epsilon));
             }
         }
         else if (props[i]->GetPropertyType() == DataType::RGBACOLOR)
@@ -244,6 +472,8 @@ void ProxyTest::testProps(ActorProxy& proxy)
             //change the value so we can change it back.
             prop1->SetValue(test2);
             CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
+
+            result = prop1->GetValue();
 
             for (int x = 0; x < 4; x++)
             {

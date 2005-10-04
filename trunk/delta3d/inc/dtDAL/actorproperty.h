@@ -25,7 +25,7 @@
 #include <dtCore/export.h>
 #include "dtDAL/functor.h"
 #include "dtDAL/actorproxy.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtDAL
 {
@@ -252,7 +252,10 @@ namespace dtDAL
          * Sets the value of this property by calling the set functor
          * assigned to this property.
          */
-        virtual void SetValue(SetType value) { SetPropFunctor(value); }
+         virtual void SetValue(SetType value) 
+         { 
+             !IsReadOnly() ? SetPropFunctor(value) : LOG_WARNING("SetValue has been called on a property that is read only.");
+         }
 
         /**
          * Gets the value of this property be calling the get functor

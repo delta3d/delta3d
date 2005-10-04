@@ -21,7 +21,7 @@
 
 #include "dtActors/triggeractorproxy.h"
 #include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include <dtCore/transformable.h>
 
 using namespace dtCore;

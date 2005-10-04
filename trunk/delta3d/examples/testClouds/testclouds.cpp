@@ -1,7 +1,6 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "gui_fl/guimgr.h"
-
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
+#include <dtInspector/inspector.h>
 
 using namespace dtABC;
 using namespace dtCore;
@@ -20,10 +19,12 @@ public:
       terr->SetVerticalScale(25.f);
       terr->Regenerate();
 
+      LOG_ALWAYS("Creating clouds...");
       cd = new CloudDome(6, 2, 0.7, 0.5, 0.7, 5, 5500.f, 20);
       cp[0] = new CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 1800);
       cp[1] = new CloudPlane(6, 0.7, 12, 1, .4, 0.95, 512, 1000);
       cp[2] = new CloudPlane(6, 0.8, 20, 1, .2, 0.96, 512, 600);
+      LOG_ALWAYS("...done creating clouds.");
 
       weather = new Weather();   
       weather->AddChild(terr.get());
@@ -53,10 +54,8 @@ protected:
 case Producer::Key_Escape:    this->Quit();    	 break;
 case Producer::Key_H:
    {
-      GUI *ui = new GUI();
-      ui = ui; //to prevent unused variable warnings... we should
-               //change this API so the constructor doesn't display the
-               //GUI by default
+      dtInspector::Inspector *ui = new dtInspector::Inspector();
+      ui->Show(); //to prevent unused variable warnings
    }
    break;
 case Producer::Key_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;

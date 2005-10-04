@@ -7,7 +7,7 @@
 
 #include <dtCore/camera.h>
 #include <dtUtil/xerceswriter.h>
-#include <dtUtil/stringutils.h>
+#include <dtUtil/xercesutils.h>
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>

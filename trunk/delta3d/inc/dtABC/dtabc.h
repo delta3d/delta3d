@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -29,6 +29,13 @@
 #include <dtABC/weather.h>
 #include <dtABC/widget.h>
 
+/** The Application Base Classes library contains high-level classes which can
+* be assist greatly in the creation of applications.
+*/
+namespace dtABC
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */
@@ -40,11 +47,11 @@
 #undef _AUTOLIBNAME8
 
 #if defined(_DEBUG)
-   #define _AUTOLIBNAME1   "dtabcd.lib"
+   #define _AUTOLIBNAME1   "dtABCd.lib"
    #define _AUTOLIBNAME4   "fltkd.lib"
    #define _AUTOLIBNAME8   "xerces-c_2D.lib"
 #else 
-   #define _AUTOLIBNAME1   "dtabc.lib"  
+   #define _AUTOLIBNAME1   "dtABC.lib"  
    #define _AUTOLIBNAME4   "fltk.lib"
    #define _AUTOLIBNAME8   "xerces-c_2.lib"
 #endif

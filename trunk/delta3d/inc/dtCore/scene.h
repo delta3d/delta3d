@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -176,6 +176,33 @@ namespace dtCore
       ///Get the number of Drawables which have been directly added to the Scene
       int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}     
 
+      /**
+      * Enables paging when called ONLY AFTER a page-able
+      * node has been added to the scene
+      * @note all settings must be made before this call
+      */
+      void EnablePaging();
+      
+      /**
+      *  Disables Paging, after enabled
+      *  called on scene cleanup
+      */
+      void DisablePaging();
+
+
+      /**
+      *  Set's Slice time allocated for scene cleanup
+      *  default 0.0025
+      *  @param allocated cleanup time in seconds
+      */
+      void SetPagingCleanup(double pCleanup){mCleanupTime = pCleanup;}
+
+      /**
+      * Sets target frame rate for database pager, default 60
+      * @param target framerate for paging thread in Frames / Sec
+      */
+      void SetTargetFrameRate(double pTargetFR){mTargetFrameRate = pTargetFR;}
+
     private:
       
       ///ODE collision callback
@@ -205,6 +232,11 @@ namespace dtCore
       Mode mRenderMode;
       Face mRenderFace;
 
+      bool mPagingEnabled;
+      Timer_t mStartTick;
+      unsigned int mFrameNum;
+      double mCleanupTime;
+      double mTargetFrameRate;
    };   
 };
 

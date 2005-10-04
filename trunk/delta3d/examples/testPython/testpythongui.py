@@ -1,7 +1,7 @@
 from Tkinter import *
 
-from dtCore import *
-from dtABC import *
+from PyDtCore import *
+from PyDtABC import *
 
 from math import *
 from time import *
@@ -511,7 +511,6 @@ class TestPythonGUIApplication(Widget):
         print "Config"
         Widget.Config(self, data)
         print "Widget config"
-        SetDataFilePathList('../../data')
         self.helo = Object('UH-1N')
         self.helo.LoadFile('models/uh-1n.ive')
         print "loaded file"
@@ -540,6 +539,8 @@ filemenu = Menu(menu, tearoff=False)
 menu.add_cascade(label="File", menu=filemenu)
 filemenu.add_command(label="Quit", command=root.quit)
 
+SetDataFilePathList( GetDeltaDataPathList() )   
+                     
 testPythonGUIApp = TestPythonGUIApplication()
 
 deltaFrame = DeltaFrame(testPythonGUIApp, root)

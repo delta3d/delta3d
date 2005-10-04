@@ -137,7 +137,7 @@ namespace dtDAL
 
             }
             if (mainSrcFileName.empty())
-                EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                        std::string("No supported master file found in directory:\"") + srcPath + "\".");
             dirToCopy = srcPath;
         }

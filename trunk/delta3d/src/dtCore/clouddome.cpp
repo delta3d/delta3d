@@ -218,7 +218,7 @@ void CloudDome::Create()
    }
    else
    {
-      LOG_ALWAYS("Creating 128^3 3d texture..." );	
+      LOG_DEBUG("Creating 128^3 3d texture..." );	
       NoiseTexture noise3d( mOctaves, mFrequency, mAmplitude, mPersistence, 128, 128, 128 );
       mImage_3D = noise3d.MakeNoiseTexture(GL_ALPHA);
    }
