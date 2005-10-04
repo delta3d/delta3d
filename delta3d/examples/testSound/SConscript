@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = ['testsound.cpp']
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtAudio' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil', 'dtaudio' ]
-
-BuildProgram( '#bin/testSound', testSrcs, testDeps )
+BuildProgram( 'testSound', srcs, deps )

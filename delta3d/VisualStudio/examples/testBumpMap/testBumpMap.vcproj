@@ -33,8 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\..\bin\testBumpMapD.exe"
-				LinkIncremental="2"
+				OutputFile="..\..\..\bin\testBumpMapd.exe"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -151,6 +151,9 @@
 				RelativePath="..\..\..\data\shaders\BumpMap.vert">
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\examples\testBumpMap\readme.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

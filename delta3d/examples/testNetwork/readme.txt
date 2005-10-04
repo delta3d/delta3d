@@ -1,33 +1,51 @@
-========================================================================
-    Delta3D Console Application : "testNetwork" Project Overview
-========================================================================
+########################################
+#                                      #
+# Delta3D Examples: testNetwork        #
+#                                      #
+########################################
 
-Delta3D Console Application has created this "testNetwork" project for you as a starting point.
+Uses modules: dtCore, dtABC, dtUtil, dtNet
 
-This file contains a summary of what you will find in each of the files that make up your project.
-testNetwork.vcproj
-    This is the main project file for projects generated using the Delta3D Console 
-    Application Wizard. It already has corect include and source dependencies set
-    for creating a Delta3D Application. 
+Purpose
+-------
+Provides a simple demonstration of how to use the dtNet module in an application.
+This example creates a host or a client and passes position information to all
+connected players.  The remote players are all represented by the same 3D model.
 
-main.cpp
-    This optional file exists if you selected to create a simple application in
-    Wizard.  If you did not this file should not exist.  This is the entry point for a console application.  It creates and configures
-    an application and executes the game/simulation loop.
+Instructions
+------------
+Running testNetwork with no command line arguments creates a server.  Supplying
+a hostname or IP address on the command line will create a client and try to 
+connect to the host at that address.
 
-testNetwork.cpp
-    This optional file exists if you selected to create a simple application in
-    Wizard.  If you did not this file should not exist.  It defines the implementation
-    of the application.
+Win32 Source: 
+- Open VisualStudio\examples\testNetwork\testNetwork.sln.
+- Build testNetwork.
+- Start testNetwork.
 
-testNetwork.h
-    This optional file exists if you selected to create a simple application in
-    Wizard.  If you did not this file should not exist.  It defines the interface
-    of the application.
-    
+Win32 Binary:
+- Go to bin.
+- Double-click testNetwork.exe.
 
-/////////////////////////////////////////////////////////////////////////////
-Other notes: This wizard was designed to work with Delta3D Build 0.8.5 
-             Please check for the latest version at www.delta3d.org
+Linux Source:
+- To build only testNetwork, from the root delta3d folder:
+  scons bin/testNetwork
 
-/////////////////////////////////////////////////////////////////////////////
+Linux Binary:
+- cd bin
+- ./testNetwork
+
+Controls
+--------
+Esc    -  Quit application
+P      -  Send a ping packet to measure network lag
+
+Fly Motion Model:
+Up     -  Look up
+Down   -  Look down
+Left   -  Turn left
+Right  -  Turn right
+S      -  Move forward
+W      -  Move backward
+Left  Mouse Button - Look up/down, turn left/right
+Right Mouse Button - Move forward/backward

@@ -1,7 +1,6 @@
 Import('*')
 
-testSrcs = SGlob('*.cpp')
+srcs = SGlob('*.cpp')
+deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
 
-testDeps = [ 'dtcore', 'dtabc', 'dtutil' ]
-
-BuildProgram( '#bin/testShaders', testSrcs, testDeps )
+BuildProgram( 'testShaders', srcs, deps )

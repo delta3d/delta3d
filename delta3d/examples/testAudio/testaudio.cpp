@@ -46,8 +46,6 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    mSmokeCountC(0L),
    mRecorder(new SoundRecorder())
 {  
-   Log::GetInstance().SetLogLevel(Log::LOG_DEBUG);
-
    AddSender( System::Instance() );
 
    AudioManager::Instantiate();
@@ -936,7 +934,7 @@ void TestAudioApp::StopRecording()
 int main( int argc, const char* argv[] )
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testAudio/;" +
-                        GetDeltaDataPathList()  );
+                        GetDeltaDataPathList() + ";" + GetDeltaDataPathList()+"/effects/"  );
 
    RefPtr<TestAudioApp>  app   = new TestAudioApp( "config.xml" );
 

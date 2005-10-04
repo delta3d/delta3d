@@ -25,7 +25,7 @@
 #include "dtActors/baselightactorproxy.h"
 #include "dtDAL/transformableactorproxy.h"
 #include <dtCore/positionallight.h>
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 
 namespace dtActors
 {

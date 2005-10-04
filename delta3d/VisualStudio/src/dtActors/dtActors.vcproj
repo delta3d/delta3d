@@ -29,14 +29,14 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4005;4312;4311;4250;4275;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="dtDALd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtcored.lib dtabcd.lib dtchard.lib dtaudiod.lib dtutild.lib dtvisd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDALd.lib Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib osgTerraind.lib js_d.lib isensed.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtBSPd.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtActorsd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"
@@ -83,14 +83,14 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4005"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="TRUE"
-				AdditionalDependencies="dtDAL.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib osgTerrain.lib js.lib isense.lib dtcore.lib dtabc.lib dtchar.lib dtaudio.lib dtutil.lib dtvis.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib osgTerrain.lib js.lib isense.lib dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtBSP.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtActors.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib; ..\..\..\ext\lib"
@@ -189,9 +189,6 @@
 				RelativePath="..\..\..\src\dtActors\staticmeshactorproxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtActors\terrainactorproxy.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp">
 			</File>
 		</Filter>
@@ -216,6 +213,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\dtactors.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\engineactorregistry.h">
@@ -255,9 +255,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\staticmeshactorproxy.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtActors\terrainactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\triggeractorproxy.h">

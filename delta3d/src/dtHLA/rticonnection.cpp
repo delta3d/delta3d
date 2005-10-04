@@ -28,7 +28,7 @@
 
 #include "dtCore/system.h"
 #include "dtUtil/matrixutil.h"
-#include "dtUtil/stringutils.h"
+#include "dtUtil/xercesutils.h"
 #include "dtUtil/xercesparser.h"
 
 using namespace dtHLA;
@@ -1620,7 +1620,7 @@ bool RTIConnection::LoadEntityTypeMappings(const std::string& filename)
    mEntityTypeMappings.clear();
    RTIEntityContentHandler handler(this);
    dtUtil::XercesParser parser;
-   return parser.Parse(filename, handler);
+   return parser.Parse(filename, handler, "entitytypemappings.xsd");
 }
 
 void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
@@ -1701,12 +1701,14 @@ void RTIConnection::RTIEntityContentHandler::startElement(const XMLCh* const uri
       iter = results.find( "model" );
       if( iter != results.end() )
       {
+         std::string tmp = (*iter).second;
          mCon->mEntityTypeMappings[et].mModelFilename = (*iter).second;
       }
 
       iter = results.find( "icon" );
       if( iter != results.end() )
       {
+         std::string tmp = (*iter).second;
          mCon->mEntityTypeMappings[et].mIconFilename = (*iter).second;
       }
    }

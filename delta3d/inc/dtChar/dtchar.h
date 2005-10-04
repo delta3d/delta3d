@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004 MOVES Institute 
+ * Copyright (C) 2004-2005 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -23,6 +23,15 @@
 
 #include "dtChar/character.h"
 
+/** The Character Library contains classes used to control the rendering of 
+* animated characters.  
+* dtChar uses <A HREF="http://www.vrlab.umu.se/research/replicantbody/">Replicant Body</A>
+* and the <A HREF="http://cal3d.sourceforge.net/">Character Animation Library</A>.
+*/
+namespace dtChar
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #undef _AUTOLIBNAME
@@ -31,13 +40,13 @@
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtchard.lib"
+      #define _AUTOLIBNAME  "dtChard.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBodyd.lib"
    #define _AUTOLIBNAME2 "cal3d_d.lib"
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME  "dtchar.lib"
+      #define _AUTOLIBNAME  "dtChar.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBody.lib"
    #define _AUTOLIBNAME2 "cal3d.lib"

@@ -43,6 +43,16 @@ namespace dtDAL
         static DataType UNKNOWN;
 
         /**
+         * Standard 8-bit signed char value.
+         */
+        static DataType CHAR;
+
+        /**
+         * Standard 8-bit unsigned char value.
+         */
+        static DataType UCHAR;
+
+        /**
          * Standard 32-bit floating point value.
          */
         static DataType FLOAT;
@@ -58,9 +68,29 @@ namespace dtDAL
         static DataType INT;
 
         /**
-         * Similar to the INT datatype.
+         * Standard 32-bit unsigned integer value.
+         */
+        static DataType UINT;
+
+        /**
+         * Similar to the long datatype.
          */
         static DataType LONGINT;
+
+        /**
+         * Similar to the unsigned long datatype.
+         */
+        static DataType ULONGINT;
+
+        /**
+         * Similar to the short datatype.
+         */
+        static DataType SHORTINT;
+
+        /**
+         * Similar to the unsigned short datatype.
+         */
+        static DataType USHORTINT;
 
         /**
          * String data type.
@@ -86,6 +116,36 @@ namespace dtDAL
          * A vector of 2 values.
          */
         static DataType VEC2;
+
+        /**
+        * A vector of 4 values.
+        */
+        static DataType VEC4F;
+
+        /**
+        * A vector of 3 values.
+        */
+        static DataType VEC3F;
+
+        /**
+        * A vector of 2 values.
+        */
+        static DataType VEC2F;
+
+        /**
+        * A vector of 4 values.
+        */
+        static DataType VEC4D;
+
+        /**
+        * A vector of 3 values.
+        */
+        static DataType VEC3D;
+
+        /**
+        * A vector of 2 values.
+        */
+        static DataType VEC2D;
 
         /**
          * A color data type with 3 values, Red, Green, and Blue.
@@ -154,19 +214,32 @@ namespace dtDAL
          */
         const std::string &GetDisplayName() { return mDisplayName; }
 
+        /**
+         * Gets the id associated with this datatype
+         */
+        unsigned char GetTypeId() const { return mId; }
+
+        /**
+         * Sets the id of a datatype
+         */
+        void SetTypeId(unsigned char newId) { mId = newId; }
+
     private:
         /**
          * Private constructor which registers a new DataType enumeration
          * with the static list of available DataType enumerations.
          */
-        DataType(const std::string &name, const std::string &displayName, bool resource = false) : dtUtil::Enumeration(name) {
+        DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name) 
+        {
             AddInstance(this);
             mResource = resource;
             mDisplayName = displayName;
+            mId = id;
         }
 
         bool mResource;
         std::string mDisplayName;
+        unsigned char mId;
     };
 }
 

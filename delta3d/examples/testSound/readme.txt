@@ -4,37 +4,33 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC, dtAudio
+Uses modules: dtCore, dtABC, dtAudio, dtUtil
 
 Purpose
 -------
 To demonstrate basic functionality of the dtAudio module.
 
-Note: When a sound is played on Linux, the application hangs waiting for a
-      message to be received. This is a known bug.
-
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\examples\testSound\testSound.sln.
 - Build testSound.
 - Start testSound.
 
 Win32 Binary:
-- Go to examples/testSound/Release.
+- Go to bin.
 - Double-click testSound.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testSound: run 'make' from examples/testSound.
-- Enter examples/testSound directory.
-- Run 'testSound'.
+- To build only testSound, from the root delta3d folder:
+  scons bin/testSound
+
+Linux Binary:
+- cd bin
+- ./testSound
 
 Controls
 --------
 Esc           - Exit
 Space         - Generate multiple sounds
 Any other key - Play a single sound
-
-

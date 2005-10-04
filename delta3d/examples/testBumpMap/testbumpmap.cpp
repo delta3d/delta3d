@@ -37,9 +37,9 @@ public:
    //make the light go in a circle
    void PreFrame( const double deltaFrameTime )
    {
-      static float lightRadius = 900.0f;
-      static float lightHeight = 0.0f;
-      static float radPerSec   = osg::DegreesToRadians(30.0f);
+      static float lightRadius = 850.0f;
+      static float lightHeight = 300.0f;
+      static float radPerSec   = osg::DegreesToRadians(45.0f);
       static float totalTime = 0.0f;
 
       totalTime += deltaFrameTime;

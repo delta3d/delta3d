@@ -1,6 +1,6 @@
-#include "dtChar/dtchar.h"
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtChar/dtchar.h>
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -8,7 +8,6 @@ using namespace dtChar;
 
 class KeyController : public Base, public KeyboardListener
 {
-   DECLARE_MANAGEMENT_LAYER(KeyController)
 
 public:
 
@@ -22,24 +21,23 @@ public:
       mKeyboard->AddKeyboardListener(this);
    }
 
-
    virtual void OnMessage(MessageData *data)
    {
       if(data->message == "preframe")
       {
-         double delta = *(double*)data->userData;
+         double delta = *reinterpret_cast<double*>(data->userData);
 
          float rotation = mCharacter->GetRotation(),
             velocity = 0.0f;
 
          if(mKeyboard->GetKeyState(Producer::Key_Left))
          {
-            rotation += (float)(delta*90.0);
+            rotation += float(delta*90.0);
          }
 
          if(mKeyboard->GetKeyState(Producer::Key_Right))
          {
-            rotation -= (float)(delta*90.0);
+            rotation -= float(delta*90.0);
          }
 
          if(mKeyboard->GetKeyState(Producer::Key_Up))
@@ -60,7 +58,6 @@ public:
       }
    }
 
-
    virtual void KeyPressed(Keyboard* keyboard, 
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
@@ -75,13 +72,6 @@ public:
       }
    }
 
-
-   virtual void KeyReleased(Keyboard* keyboard, 
-      Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
-   {}
-
-
 private:
 
    RefPtr<Character> mCharacter;
@@ -89,15 +79,10 @@ private:
         
 };
 
-IMPLEMENT_MANAGEMENT_LAYER(KeyController)
-
-
 class FollowController : public Base
 {
-   DECLARE_MANAGEMENT_LAYER(FollowController)
-
+ 
 public:
-
 
    FollowController(Character* character, Transformable* target)
       : Base("FollowController"),
@@ -107,33 +92,30 @@ public:
       AddSender(System::Instance());
    }
 
-
    virtual void OnMessage(MessageData *data)
    {
       if(data->message == "preframe")
       {
-         double delta = *(double*)data->userData;
-
-         osg::Vec3 ownPos, targetPos, vector;
+         double delta = *reinterpret_cast<double*>(data->userData);
 
          Transform transform;
 
+         osg::Vec3 ownPos;
          mCharacter->GetTransform(&transform);
-
          transform.GetTranslation(ownPos);
 
+         osg::Vec3 targetPos;
          mTarget->GetTransform(&transform);
-
          transform.GetTranslation(targetPos);
 
-         vector = targetPos - ownPos;
+         osg::Vec3 vector = targetPos - ownPos;
 
          vector[2] = 0.0f;
 
-         float len = vector.length(),
-            dir = osg::RadiansToDegrees(atan2(vector[0], -vector[1])),
-            rotation = mCharacter->GetRotation(),
-            dR = dir - rotation;
+         float len = vector.length();
+         float dir = osg::RadiansToDegrees(atan2(vector[0], -vector[1]));
+         float rotation = mCharacter->GetRotation();
+         float dR = dir - rotation;
 
          if(dR > 180.0f) dR -= 360.0f;
          else if(dR < -180.0f) dR += 360.0f;
@@ -148,19 +130,6 @@ public:
          }
 
          mCharacter->SetRotation(rotation);
-
-         if(dR < -90.0f)
-         {
-            mCharacter->ExecuteActionWithAngle("ACT_LOOK", -90.0);
-         }
-         else if(dR > 90.0f)
-         {
-            mCharacter->ExecuteActionWithAngle("ACT_LOOK", 90.0);
-         }
-         else
-         {
-            mCharacter->ExecuteActionWithAngle("ACT_LOOK", dR);
-         }
 
          if(len > 5.0f)
          {
@@ -177,20 +146,14 @@ public:
       }
    }
 
-
 private:
 
    RefPtr<Character> mCharacter;
    RefPtr<Transformable> mTarget;
 };
 
-IMPLEMENT_MANAGEMENT_LAYER(FollowController)
-
-
 class TestCharactersApp : public dtABC::Application
 {
-
-DECLARE_MANAGEMENT_LAYER(TestCharactersApp)
             
 public:
    TestCharactersApp( std::string configFilename = "config.xml" )
@@ -205,88 +168,73 @@ public:
       //adjust some lighting
       GetScene()->UseSceneLight(false);
 
-      iLight1 = new InfiniteLight(1);
-      iLight1->SetAzimuthElevation( 0, -45 );
-      iLight1->SetAmbient( 1, 1, 1, 0 );
-      iLight1->SetDiffuse( 200, 200, 200, 1 );
-      iLight1->SetSpecular( 255, 255, 255, 0 );
-      iLight1->SetEnabled( true );
+      mInfiniteLight = new InfiniteLight(0);
+      mInfiniteLight->SetAzimuthElevation( 0, -45 );
+      mInfiniteLight->SetDiffuse( 255, 255, 255, 1 );
+      mInfiniteLight->SetSpecular( 255, 255, 255, 1 );
+      mInfiniteLight->SetEnabled( true );
 
-      iLight2 = new InfiniteLight(2);
-      iLight2->SetAzimuthElevation( 160, -20 );
-      iLight2->SetDiffuse( 205, 190, 112, 1 );
-      iLight2->SetSpecular( 255, 255, 255, 0 );
-      iLight2->SetEnabled( true );
-
-      AddDrawable( iLight1.get() );
-      AddDrawable( iLight2.get() );
+      AddDrawable( mInfiniteLight.get() );      
 
       //position the camera
       Transform position;
-      position.Set( -0.75f, -10.f, 0.5f, 0.f, 0.f, 0.f, 1.0f, 1.0f, 1.0f);
+      position.SetTranslation( -0.75f, -10.f, 0.5f );
       GetCamera()->SetTransform( &position );
 
       osg::Vec3 camLoc;
       position.GetTranslation( camLoc );
 
-      osg::Vec3 origin = osg::Vec3(0.0f, 0.0f, 0.0f);
+      osg::Vec3 origin;
 
       //setup a motion model
-      omm = new OrbitMotionModel( GetKeyboard(), GetMouse() );
-      omm->SetTarget( GetCamera() );
+      mMotionModel = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+      mMotionModel->SetTarget( GetCamera() );
 
-      float distnace = sqrt(  osg::square( camLoc[0]-origin[0] ) + 
-                              osg::square( camLoc[1]-origin[1] ) + 
-                              osg::square( camLoc[2]-origin[2] ) );
+      float distance = sqrt(  osg::square( camLoc[0] - origin[0] ) + 
+                              osg::square( camLoc[1] - origin[1] ) + 
+                              osg::square( camLoc[2] - origin[2] ) );
 
-      omm->SetDistance( distnace );
+      mMotionModel->SetDistance( distance );
       
       //load up a terrain
-      terrain = new Object( "Terrain" );
-      terrain->LoadFile( "models/dirt.ive" );
-      AddDrawable( terrain.get() );
+      mTerrain = new Object( "Terrain" );
+      mTerrain->LoadFile( "models/dirt.ive" );
+      AddDrawable( mTerrain.get() );
 
       //create some characters
-      guy1 = new Character( "bob" );
-      guy2 = new Character( "dave" );
+      mOpFor = new Character( "Bob" );
+      mMarine = new Character( "Dave" );
       
-      position.Set(0, 0, 0, 0, 0, 0, 1.0f, 1.0f, 1.0f);
-      guy1->SetTransform(&position);
+      position.SetTranslation( 0.0f, 0.0f, 0.0f );
+      mOpFor->SetTransform( &position);
 
-      position.Set(-2, 0, 0, 0, 0, 0, 1.0f, 1.0f, 1.0f);
-      guy2->SetTransform(&position);
+      position.SetTranslation( -2.0f, 0.0f, 0.0f );
+      mMarine->SetTransform( &position );
 
-      guy1->LoadFile( "opfor/opfor.rbody" );
-      guy2->LoadFile( "marine/marine.rbody" );
+      mOpFor->LoadFile( "opfor/opfor.rbody" );
+      mMarine->LoadFile( "marine/marine.rbody" );
 
-      AddDrawable( guy1.get() );
-      AddDrawable( guy2.get() );
+      AddDrawable( mOpFor.get() );
+      AddDrawable( mMarine.get() );
 
-      //move bob with the keyboard
-      kc = new KeyController( guy1.get(), GetWindow()->GetKeyboard() );
+      //move Bob with the keyboard
+      mKeyController = new KeyController( mOpFor.get(), GetWindow()->GetKeyboard() );
 
-      //have dave follow bob
-      fc = new FollowController( guy2.get(), guy1.get() );
-
+      //have Dave follow Bob
+      mFollowController = new FollowController( mMarine.get(), mOpFor.get() );
    }
 
 protected:
 
-   RefPtr<Object> terrain;
-   RefPtr<InfiniteLight> iLight1;
-   RefPtr<InfiniteLight> iLight2;
-   RefPtr<Character> guy1;
-   RefPtr<Character> guy2;
-   RefPtr<KeyController> kc;
-   RefPtr<FollowController> fc;
-   RefPtr<OrbitMotionModel> omm;
+   RefPtr<Object> mTerrain;
+   RefPtr<InfiniteLight> mInfiniteLight;
+   RefPtr<Character> mOpFor;
+   RefPtr<Character> mMarine;
+   RefPtr<KeyController> mKeyController;
+   RefPtr<FollowController> mFollowController;
+   RefPtr<OrbitMotionModel> mMotionModel;
   
 };
-
-IMPLEMENT_MANAGEMENT_LAYER(TestCharactersApp)
-
-
-        
 
 int main()
 {

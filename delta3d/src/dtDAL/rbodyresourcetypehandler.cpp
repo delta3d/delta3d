@@ -174,7 +174,7 @@ namespace dtDAL
 
         if (ftype != REGULAR_FILE)
         {
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                 std::string("No such file:\"") + srcPath + "\".");
         }
 
@@ -203,7 +203,7 @@ namespace dtDAL
                     {
                         fileUtils.FileCopy(srcDir + FileUtils::PATH_SEPARATOR + value, destDir, true);
                     }
-                    catch (const Exception& ex)
+                    catch (const dtUtil::Exception& ex)
                     {
                         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Error \"%s\" copying associated rbody resource file %s to %s",
@@ -241,7 +241,7 @@ namespace dtDAL
                     //file and put an xrt file a mesh place, it COULD crash if the parser is not created.
                     CopyFilesForSections("Material", "filename", srcDir, destDir);
                 }
-                catch (const dtDAL::Exception& ex)
+                catch (const dtUtil::Exception& ex)
                 {
                     delete mParser;
                     mParser = NULL;
@@ -256,7 +256,7 @@ namespace dtDAL
                 XMLString::release(&NUMMAPS_ATTRIBUTE);
                 XMLString::release(&MAP_ELEMENT);
             }
-            catch (const Exception& ex)
+            catch (const dtUtil::Exception& ex)
             {
                 mRBodyConfig.Close();
                 throw ex;
@@ -280,7 +280,7 @@ namespace dtDAL
                 {
                     fileUtils.FileCopy(srcDir + FileUtils::PATH_SEPARATOR + value, destDir, true);
                 }
-                catch (const Exception& ex)
+                catch (const dtUtil::Exception& ex)
                 {
                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                         "Error \"%s\" copying associated rbody resource file %s to %s",
@@ -444,7 +444,7 @@ namespace dtDAL
                         {
                             fileUtils.FileCopy(materialPath, destDir, true);
                         }
-                        catch (const Exception& ex)
+                        catch (const dtUtil::Exception& ex)
                         {
                             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                 "Error \"%s\" copying associated rbody resource file %s to %s",
@@ -493,7 +493,7 @@ namespace dtDAL
             }
 
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Exception thrown attempting to parse and copy referenced file from material file \"%s\": %s",
@@ -507,7 +507,7 @@ namespace dtDAL
 
         if (!error.empty())
         {
-            EXCEPT(ExceptionEnum::ProjectResourceError,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
                 std::string("Error \"") + error + "\" occurred parsing material file " + srcPath);
         }
     }

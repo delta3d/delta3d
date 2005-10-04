@@ -139,7 +139,7 @@ namespace dtUtil
          {
             std::ostringstream ss;
             std::cout << "ObjectFactory::CreateObject() Unable to create object of type: " << id << " Reason: Unknown type." << std::endl;
-            //EXCEPT(ExceptionEnum::ObjectFactoryUnknownType,ss.str());
+            //EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,ss.str());
             return 0;
          }
 

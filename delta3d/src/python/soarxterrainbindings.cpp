@@ -2,8 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "soarx/soarxterrain.h"
+#include <python/dtpython.h>
+#include <soarx/soarxterrain.h>
+
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;

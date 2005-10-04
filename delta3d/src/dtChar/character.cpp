@@ -238,7 +238,7 @@ float Character::GetVelocity() const
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteAction(std::string name,
+void Character::ExecuteAction(const std::string& name,
                               bool priority,
                               bool force)
 {
@@ -262,7 +262,7 @@ void Character::ExecuteAction(std::string name,
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteActionWithSpeed(std::string name, 
+void Character::ExecuteActionWithSpeed(const std::string& name, 
                                        float speed,
                                        bool priority,
                                        bool force)
@@ -289,7 +289,7 @@ void Character::ExecuteActionWithSpeed(std::string name,
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteActionWithAngle(std::string name, 
+void Character::ExecuteActionWithAngle(const std::string& name, 
                                        float angle,
                                        bool priority, 
                                        bool force)
@@ -317,7 +317,7 @@ void Character::ExecuteActionWithAngle(std::string name,
  * @param priority whether or not the action is high-priority
  * @param force whether or not to force the action
  */
-void Character::ExecuteActionWithSpeedAndAngle(std::string name, 
+void Character::ExecuteActionWithSpeedAndAngle(const std::string& name, 
                                                float speed, 
                                                float angle,
                                                bool priority,
@@ -343,7 +343,7 @@ void Character::ExecuteActionWithSpeedAndAngle(std::string name,
  *
  * @param action the name of the action to stop
  */
-void Character::StopAction(std::string name)
+void Character::StopAction(const std::string& name)
 {
    mBodyNode->getBody()->stopAction(name);
 }

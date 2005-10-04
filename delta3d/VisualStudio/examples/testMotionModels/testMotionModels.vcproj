@@ -31,9 +31,9 @@
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=""
-				AssemblerListingLocation="$(IntDir)"
+				AssemblerListingLocation=""
 				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="0"
@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib dtutil.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib dtUtil.lib"
 				OutputFile="../../../bin/testMotionModels.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -105,8 +105,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib dtutild.lib"
-				OutputFile="../../../bin/testMotionModelsD.exe"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib dtUtild.lib"
+				OutputFile="../../../bin/testMotionModelsd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"

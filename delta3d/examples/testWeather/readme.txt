@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC
+Uses modules: dtCore, dtABC, dtUtil
 
 Purpose
 -------
@@ -12,26 +12,27 @@ To demonstrate the weather features of the dtABC module. Fog can be increased
 or decreased by setting the visibility. The amount of clouds can be changed
 as well. The time of day is determined by your system clock.
 
-The gui_fl debugging window is automatically created to interact with Weather class.
+The Inspector window is automatically created to interact with Weather class.
 Just select the "weather" instance and the weather parameters will be displayed.
 
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\testWeather\testWeather.sln.
 - Build testWeather.
 - Start testWeather.
 
 Win32 Binary:
-- Go to examples/testWeather/Release.
+- Go to bin.
 - Double-click testWeather.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testWeather: run 'make' from examples/testWeather.
-- Enter examples/testWeather directory.
-- Run 'testWeather'.
+- To build only testWeather, from the root delta3d folder:
+  scons bin/testWeather
+
+Linux Binary:
+- cd bin
+- ./testWeather
 
 Controls
 --------

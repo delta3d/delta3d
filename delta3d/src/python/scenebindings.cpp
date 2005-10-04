@@ -33,6 +33,7 @@ void initSceneBindings()
       .def("GetSceneNode", &Scene::GetSceneNode, return_internal_reference<>())
       .def("AddDrawable", &Scene::AddDrawable)
       .def("RemoveDrawable", &Scene::AddDrawable)
+      .def("GetDrawable", &Scene::GetDrawable, return_internal_reference<>())
       .def("SetRenderState", &Scene::SetRenderState)
       .def("GetHeightOfTerrain", GetHeightOfTerrain1)
       .def("GetSpaceID", &Scene::GetSpaceID, return_value_policy<return_opaque_pointer>())
@@ -45,7 +46,9 @@ void initSceneBindings()
       .def("GetPhysicsStepSize", &Scene::GetPhysicsStepSize)
       .def("GetLight", GetLight1, return_internal_reference<>())
       .def("GetLight", GetLight2, return_internal_reference<>())
-      .def("UseSceneLight", &Scene::UseSceneLight);
+      .def("UseSceneLight", &Scene::UseSceneLight)
+      .def("GetDrawableIndex", &Scene::GetDrawableIndex)
+      .def("GetNumberOfAddedDrawable", &Scene::GetNumberOfAddedDrawable);
 
    enum_<Scene::Face>("Face")
       .value("FRONT", Scene::FRONT)

@@ -157,7 +157,7 @@ namespace dtEditQt
 
     bool DynamicStringControl::isEditable()
     {
-        return true;
+        return !myProperty->IsReadOnly();
     }
 
     /////////////////////////////////////////////////////////////////////////////////

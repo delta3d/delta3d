@@ -68,20 +68,20 @@ if 'qt' in env['TOOLS'] :
    
    if mode == 'debug':
       if OS == 'windows':
-         EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd','ul_d','sg_d'])   
+         EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd'])   
       elif OS == 'darwin':
-         EditorEnv.Append(LIBS = ['dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul'])
+         EditorEnv.Append(LIBS = ['dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','plibul'])
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )
       else:
-         EditorEnv.Append(LIBS = ['QtCore_debug','QtGui_debug','QtOpenGL_debug','dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul'])   
+         EditorEnv.Append(LIBS = ['QtCore_debug','QtGui_debug','QtOpenGL_debug','dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','plibul'])   
    else:
       if OS == 'windows':
-         EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','dtDAL','dtcore','dtaudio','dtchar','dtutil','dtabc','ul','sg'])
+         EditorEnv.Append(LIBS = ['QtCore4','QtGui4','QtOpenGL4','dtDAL','dtcore','dtaudio','dtchar','dtutil','dtabc'])
       elif OS == 'darwin':
-         EditorEnv.Append(LIBS = ['dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul']) 
+         EditorEnv.Append(LIBS = ['dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','plibul']) 
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )   
       else:
-         EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtcore','dtutil','dtaudio','dtchar','dtabc','plibul']) 
+         EditorEnv.Append(LIBS = ['QtCore','QtGui','QtOpenGL','dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','plibul']) 
    
    # First, glob the header directory to obtain a list of potential files to run
    # the moc builder on.
@@ -111,17 +111,12 @@ if 'qt' in env['TOOLS'] :
       moc_targets.append(target)
       EditorEnv.Moc(target=target, source=currHeader)
 
-   # Grab all the sources including the generated moc files..
-   #if OS == 'windows':
-   #  sources = ["actorbrowser.cpp","actorglobalbrowser.cpp","actorresultstable.cpp","actorsearcher.cpp","actortab.cpp","actortypetreewidget.cpp","camera.cpp","characterbrowser.cpp","dialoglistselection.cpp","dialogmapproperties.cpp","dynamicabstractcontrol.cpp","dynamicabstractparentcontrol.cpp","dynamicboolcontrol.cpp","dynamiccolorelementcontrol.cpp","dynamiccolorrgbacontrol.cpp","dynamicdoublecontrol.cpp","dynamicenumcontrol.cpp","dynamicfloatcontrol.cpp","dynamicgroupcontrol.cpp","dynamicintcontrol.cpp","dynamiclabelcontrol.cpp","dynamiclongcontrol.cpp","dynamicnamecontrol.cpp","dynamicresourcecontrol.cpp","dynamicstringcontrol.cpp","dynamicvec2control.cpp","dynamicvec3control.cpp","dynamicvec4control.cpp","dynamicvectorelementcontrol.cpp","editoraboutbox.cpp","editoractions.cpp","editordata.cpp","editorevents.cpp","editorsettings.cpp","libraryeditor.cpp","main.cpp","mainwindow.cpp","mapdialog.cpp","mapsaveasdialog.cpp","orthoviewport.cpp","particlebrowser.cpp","perspectiveviewport.cpp","preferencesdialog.cpp","projectbrowser.cpp","projectcontextdialog.cpp","propertyeditor.cpp","propertyeditordelegate.cpp","propertyeditormodel.cpp","propertyeditortreeview.cpp","qtmain_win.cpp","resourceabstractbrowser.cpp","resourcebrowser.cpp","resourceimportdialog.cpp","resourcetreewidget.cpp","soundbrowser.cpp","staticmeshbrowser.cpp","tabcontainer.cpp","tabwrapper.cpp","texturebrowser.cpp","uiresources.cpp","undomanager.cpp","viewport.cpp","viewportcontainer.cpp","viewportmanager.cpp","viewportoverlay.cpp"]
-   #  sources += moc_targets
-   #else:
    sources = SGlob('*.cpp') + moc_targets
    
    if mode == 'debug':
-      app = EditorEnv.Program('#bin/STAGED',sources)
+      app = EditorEnv.Program('#/bin/STAGEd',sources)
    else:   
-      app = EditorEnv.Program('#bin/STAGE',sources)
+      app = EditorEnv.Program('#/bin/STAGE',sources)
    if (app == '[]') :
       result = 'false'
    else :
@@ -131,4 +126,3 @@ if 'qt' in env['TOOLS'] :
       errorLog.write("Failed to build the level editor application.\n")
    
    Return('result')
-   "actorbrowser.cpp","actorglobalbrowser.cpp","actorresultstable.cpp","actorsearcher.cpp","actortab.cpp","actortypetreewidget.cpp","borderlayout.cpp","camera.cpp","characterbrowser.cpp","dialoglistselection.cpp","dialogmapproperties.cpp","dynamicabstractcontrol.cpp","dynamicabstractparentcontrol.cpp","dynamicboolcontrol.cpp","dynamiccolorelementcontrol.cpp","dynamiccolorrgbacontrol.cpp","dynamicdoublecontrol.cpp","dynamicenumcontrol.cpp","dynamicfloatcontrol.cpp","dynamicgroupcontrol.cpp","dynamicintcontrol.cpp","dynamiclabelcontrol.cpp","dynamiclongcontrol.cpp","dynamicnamecontrol.cpp","dynamicresourcecontrol.cpp","dynamicstringcontrol.cpp","dynamicvec2control.cpp","dynamicvec3control.cpp","dynamicvec4control.cpp","dynamicvectorelementcontrol.cpp","editoraboutbox.cpp","editoractions.cpp","editordata.cpp","editorevents.cpp","editorsettings.cpp","libraryeditor.cpp","main.cpp","mainwindow.cpp","mapdialog.cpp","mapsaveasdialog.cpp","orthoviewport.cpp","particlebrowser.cpp","perspectiveviewport.cpp","preferencesdialog.cpp","projectbrowser.cpp","projectcontextdialog.cpp","propertyeditor.cpp","propertyeditordelegate.cpp","propertyeditormodel.cpp","propertyeditortreeview.cpp","qtmain_win.cpp","resourceabstractbrowser.cpp","resourcebrowser.cpp","resourceimportdialog.cpp","resourcetreewidget.cpp","soundbrowser.cpp","staticmeshbrowser.cpp","tabcontainer.cpp","tabwrapper.cpp","texturebrowser.cpp","uiresources.cpp","undomanager.cpp","viewport.cpp","viewportcontainer.cpp","viewportmanager.cpp","viewportoverlay.cpp",

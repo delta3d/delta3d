@@ -43,8 +43,8 @@
 #include "dtDAL/mapxml.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/fileutils.h"
-#include "dtDAL/exception.h"
-#include "dtDAL/stringtokenizer.h"
+#include "dtUtil/stringutils.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actorproxyicon.h"
 
@@ -120,11 +120,11 @@ namespace dtDAL
                 fileUtils.MakeDirectory(path);
                 ft = DIRECTORY;
             }
-            catch (const Exception& ex)
+            catch (const dtUtil::Exception& ex)
             {
                 std::ostringstream ss;
                 ss << "Unable to create directory " << path << ". Error: " << ex.What();
-                EXCEPT(ExceptionEnum::ProjectInvalidContext, ss.str());
+                EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str());
             }
         }
 
@@ -136,14 +136,14 @@ namespace dtDAL
             snprintf(buffer, size, fmt, path.c_str());
             std::string s(buffer);
             delete buffer;
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, s);
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, s);
         }
 
         if (ft == REGULAR_FILE)
         {
             std::string s(path);
             s.append(" is not a directory");
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, s);
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, s);
         }
 
         //from this point on, we know the path is a valid directory, so we now check the structure.
@@ -165,7 +165,7 @@ namespace dtDAL
                 {
                     std::string s(path);
                     s.append(" is not a valid project directory.");
-                    EXCEPT(ExceptionEnum::ProjectInvalidContext, s);
+                    EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, s);
                 }
                 else
                 {
@@ -173,11 +173,11 @@ namespace dtDAL
                     {
                         fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
                     }
-                    catch(const Exception& ex)
+                    catch(const dtUtil::Exception& ex)
                     {
                         std::ostringstream ss;
                         ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-                        EXCEPT(ExceptionEnum::ProjectInvalidContext, ss.str());
+                        EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str());
                     }
                 }
             }
@@ -190,11 +190,11 @@ namespace dtDAL
                     {
                         fileUtils.MakeDirectory(Project::MAP_DIRECTORY);
                     }
-                    catch (const Exception& ex)
+                    catch (const dtUtil::Exception& ex)
                     {
                         std::ostringstream ss;
                         ss << "Unable to create directory " << Project::MAP_DIRECTORY << ". Error: " << ex.What();
-                        EXCEPT(ExceptionEnum::ProjectInvalidContext, ss.str());
+                        EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str());
                     }
                 else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != DIRECTORY)
                 {
@@ -205,7 +205,7 @@ namespace dtDAL
                         s.append(" is not a directory.");
                     else
                         s.append(" does not exist.");
-                    EXCEPT(ExceptionEnum::ProjectInvalidContext, s);
+                    EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, s);
                 }
             }
 
@@ -221,7 +221,7 @@ namespace dtDAL
 
             GetMapNames();
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             FileUtils::GetInstance().PopDirectory();
             throw ex;
@@ -234,7 +234,7 @@ namespace dtDAL
     void Project::Refresh()
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         //clear the references to all the open maps
         mMapList.clear();
@@ -260,7 +260,7 @@ namespace dtDAL
     const std::set<std::string>& Project::GetMapNames()
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (mMapList.empty())
         {
@@ -284,7 +284,7 @@ namespace dtDAL
                             const std::string& mapName = mParser->ParseMapName(fp);
                             mMapList.insert(make_pair(mapName, f));
                         }
-                        catch (const Exception& e)
+                        catch (const dtUtil::Exception& e)
                         {
                             std::string error = "Unable to parse " + fp + " with error " + e.What();
                             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
@@ -292,7 +292,7 @@ namespace dtDAL
                     }
                 }
             }
-            catch (const Exception& ex)
+            catch (const dtUtil::Exception& ex)
             {
                 fileUtils.PopDirectory();
                 throw ex;
@@ -315,14 +315,14 @@ namespace dtDAL
         try
         {
             if (fileUtils.GetFileInfo(fullPath).fileType != REGULAR_FILE)
-                EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                     std::string("Map file \"") + fullPath + "\" not found.");
 
             map = mParser->Parse(fullPath);
 
             if (map == NULL)
             {
-                EXCEPT(ExceptionEnum::MapLoadParsingError,
+                EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError,
                     "Map loading didn't throw an exception, but the result is NULL");
             }
 
@@ -339,7 +339,7 @@ namespace dtDAL
             map->AddMissingActorTypes(mParser->GetMissingActorTypes());
 
         }
-        catch (const Exception& e)
+        catch (const dtUtil::Exception& e)
         {
             std::string error = "Unable to parse " + fullPath + " with error " + e.What();
             mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, error.c_str());
@@ -354,7 +354,7 @@ namespace dtDAL
     Map& Project::GetMap(const std::string& name)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         std::map<std::string, osg::ref_ptr<Map> >::iterator openMapI = mOpenMaps.find(name);
 
@@ -365,7 +365,7 @@ namespace dtDAL
         std::map<std::string,std::string>::iterator i = mMapList.find(name);
 
         if (i == mMapList.end())
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                 std::string("Map named ") + name + " does not exist.");
 
         const std::string& mapFileName = i->second;
@@ -381,7 +381,7 @@ namespace dtDAL
     Map& Project::OpenMapBackup(const std::string& name)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         std::map<std::string, osg::ref_ptr<Map> >::iterator openMapI = mOpenMaps.find(name);
 
@@ -395,7 +395,7 @@ namespace dtDAL
         std::map<std::string,std::string>::iterator i = mMapList.find(name);
 
         if (i == mMapList.end())
-            EXCEPT(ExceptionEnum::ProjectFileNotFound,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                 std::string("Map named ") + name + " does not exist.");
 
         const std::string& mapFileName = i->second;
@@ -413,17 +413,17 @@ namespace dtDAL
     Map& Project::CreateMap(const std::string& name, const std::string& fileName)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         if (name == "")
-            EXCEPT(ExceptionEnum::ProjectException,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectException,
                 "Maps may not have an empty name.");
 
         if (fileName == "")
-            EXCEPT(ExceptionEnum::ProjectException, std::string("Maps may not have an empty fileName."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectException, std::string("Maps may not have an empty fileName."));
 
         //assign it to a refptr so that if I except, it will get deleted
         osg::ref_ptr<Map> map(new Map(fileName, name));
@@ -432,12 +432,12 @@ namespace dtDAL
         {
             if (i->first == name)
             {
-                EXCEPT(ExceptionEnum::ProjectException,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectException,
                     std::string("Map named ") + name + " already exists.");
             }
             else if (i->second == map->GetFileName())
             {
-                EXCEPT(ExceptionEnum::ProjectException,
+                EXCEPT(dtDAL::ExceptionEnum::ProjectException,
                     std::string("A map with file name ") + fileName + " already exists.");
             }
         }
@@ -592,7 +592,7 @@ namespace dtDAL
                                     proxy->GetName().c_str());
                         }
                     }
-                    catch (const dtDAL::Exception& ex)
+                    catch (const dtUtil::Exception& ex)
                     {
                         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                             "Error finding library for actor type %s: %s", 
@@ -612,13 +612,13 @@ namespace dtDAL
     void Project::CloseMap(Map& map, bool unloadLibraries)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         //bool
         std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(map.GetSavedName());
         if (j == mOpenMaps.end() || (j->second.get() != &map))
         {
-            EXCEPT(ExceptionEnum::ProjectInvalidContext,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext,
                 std::string("A map named \"") + map.GetSavedName() + "\" exists, but this is not the instance.");
         }
         else
@@ -631,7 +631,7 @@ namespace dtDAL
             {
                 ClearBackup(map.GetSavedName());
             }
-            catch (const Exception& ex)
+            catch (const dtUtil::Exception& ex)
             {
                 mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving: %s", ex.What().c_str());
             }
@@ -643,10 +643,10 @@ namespace dtDAL
     void Project::DeleteMap(Map& map, bool unloadLibraries)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         CloseMap(map, unloadLibraries);
 
@@ -668,10 +668,10 @@ namespace dtDAL
     void Project::DeleteMap(const std::string& mapName, bool unloadLibraries)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(mapName);
         if (j != mOpenMaps.end())
@@ -688,7 +688,7 @@ namespace dtDAL
         std::map<std::string, std::string>::iterator i = mMapList.find(mapName);
         if (i == mMapList.end())
         {
-            EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + mapName + "\"");
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + mapName + "\"");
         }
         else
         {
@@ -719,7 +719,7 @@ namespace dtDAL
                     "Specified map was part of the project, but the map file did not exist.");
             }
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             fileUtils.PopDirectory();
             throw ex;
@@ -738,10 +738,10 @@ namespace dtDAL
     void Project::SaveMapAs(const std::string& mapName, const std::string& newName, const std::string& newFileName)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         //The map must be loaded to do a saveAs, so we call getMap();
         SaveMapAs(GetMap(mapName), newName, newFileName);
@@ -753,7 +753,7 @@ namespace dtDAL
         CheckMapValidity(map);
 
         if (map.GetSavedName() == newName)
-            EXCEPT(ExceptionEnum::ProjectException, std::string("Map named ")
+            EXCEPT(dtDAL::ExceptionEnum::ProjectException, std::string("Map named ")
                 + map.GetSavedName() + " cannot be saved again as the same name");
 
         std::string newFileNameCopy(newFileName);
@@ -761,14 +761,14 @@ namespace dtDAL
         //compare the file name without the extension.
         if (currentFileName.substr(0, currentFileName.size() - Map::MAP_FILE_EXTENSION.size())
             == newFileNameCopy)
-            EXCEPT(ExceptionEnum::ProjectException, std::string("Map named ") + map.GetSavedName()
+            EXCEPT(dtDAL::ExceptionEnum::ProjectException, std::string("Map named ") + map.GetSavedName()
                 + " cannot be saved as a different map with the same file name.");
 
         for (std::map<std::string,std::string>::const_iterator i = mMapList.begin();
             i != mMapList.end(); ++i )
         {
             if (newFileNameCopy == i->second.substr(0, i->second.size() - Map::MAP_FILE_EXTENSION.size()))
-                EXCEPT(ExceptionEnum::ProjectException, std::string("Map named ")
+                EXCEPT(dtDAL::ExceptionEnum::ProjectException, std::string("Map named ")
                     + map.GetSavedName() + " cannot be saved with file name "
                     + newFileName + " because it matches another map.");
         }
@@ -789,7 +789,7 @@ namespace dtDAL
         {
             ClearBackup(oldMapName);
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Error clearing map backups when saving %s as %s: %s",
                 oldMapName.c_str(), newName.c_str(), ex.What().c_str());
@@ -800,10 +800,10 @@ namespace dtDAL
     void Project::SaveMap(const std::string& mapName)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         std::map<std::string, osg::ref_ptr<Map> >::iterator j = mOpenMaps.find(mapName);
         if (j == mOpenMaps.end())
@@ -818,28 +818,28 @@ namespace dtDAL
     void Project::CheckMapValidity(const Map& map, bool readonlyAllowed) const
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (!readonlyAllowed && IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         std::map<std::string, std::string>::const_iterator i = mMapList.find(map.GetSavedName());
         if (i == mMapList.end())
         {
-            EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + map.GetSavedName() + "\"");
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + map.GetSavedName() + "\"");
         }
 
         std::map<std::string, osg::ref_ptr<Map> >::const_iterator j = mOpenMaps.find(map.GetSavedName());
 
         if (j == mOpenMaps.end())
         {
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("A map named \"") + map.GetSavedName()
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("A map named \"") + map.GetSavedName()
                 + "\" exists but is not currently open.");
 
         }
         else if (j->second.get() != &map)
         {
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("A map named \"") + map.GetSavedName()
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("A map named \"") + map.GetSavedName()
                 + "\" exists, but this is not the instance.");
         }
     }
@@ -853,7 +853,7 @@ namespace dtDAL
         {
             if (mMapList.find(map.GetName()) != mMapList.end())
             {
-                EXCEPT(ExceptionEnum::ProjectException, "You may not save a map with a name that matches another map.");
+                EXCEPT(dtDAL::ExceptionEnum::ProjectException, "You may not save a map with a name that matches another map.");
             }
         }
 
@@ -870,7 +870,7 @@ namespace dtDAL
             //if it's successful, move it to the final file name
             fileUtils.FileMove(fullPathSaving, fullPath, true);
         }
-        catch (const Exception& e)
+        catch (const dtUtil::Exception& e)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
             fileUtils.PopDirectory();
@@ -901,11 +901,11 @@ namespace dtDAL
         {
             ClearBackup(map.GetSavedName());
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             //if the map in new, the following exception will be thrown
             //so don't print an error in that case.
-            if (ex.TypeEnum() != ExceptionEnum::ProjectFileNotFound)
+           if (ex.TypeEnum() != dtDAL::ExceptionEnum::ProjectFileNotFound)
                 mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                     "Error clearing map backups when saving: %s", ex.What().c_str());
         }
@@ -944,7 +944,7 @@ namespace dtDAL
             //when it completes, move the file to the final name.
             fileUtils.FileMove(fileName, finalFileName, true);
         }
-        catch (const Exception& e)
+        catch (const dtUtil::Exception& e)
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, e.What().c_str());
             fileUtils.PopDirectory();
@@ -965,11 +965,11 @@ namespace dtDAL
     bool Project::HasBackup(const std::string& mapName) const
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         std::map< std::string, std::string >::const_iterator found = mMapList.find(mapName);
         if (found == mMapList.end())
-            EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + mapName + "\"");
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + mapName + "\"");
 
         const std::string& fileName = found->second;
 
@@ -991,14 +991,14 @@ namespace dtDAL
     void Project::ClearBackup(const std::string& mapName)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         std::map< std::string, std::string >::iterator found = mMapList.find(mapName);
         if (found == mMapList.end())
-            EXCEPT(ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + mapName + "\"");
+            EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound, std::string("No such map: \"") + mapName + "\"");
 
         std::string& fileName = found->second;
 
@@ -1042,7 +1042,7 @@ namespace dtDAL
     const std::string Project::GetResourcePath(const ResourceDescriptor& resource) const
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         const std::string& path = mResourceHelper.GetResourcePath(resource);
 
@@ -1058,17 +1058,17 @@ namespace dtDAL
             {
                 if (ftype == FILE_NOT_FOUND)
                 {
-                    EXCEPT(ExceptionEnum::ProjectFileNotFound,
+                    EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                         std::string("The specified resource was not found: ") + path);
                 }
                 else if (ftype == DIRECTORY)
                 {
-                    EXCEPT(ExceptionEnum::ProjectResourceError,
+                    EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
                         std::string("The resource identifier does not specify a resource file: ") + path);
                 }
             }
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             //we have to make sure this happens before excepting
             fileUtils.PopDirectory();
@@ -1084,14 +1084,14 @@ namespace dtDAL
     void Project::CreateResourceCategory(const std::string& category, const DataType& type)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         if (!type.IsResource())
         {
-            EXCEPT(ExceptionEnum::ProjectResourceError, std::string("Unable to add resource of type ") + type.GetName()
+            EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, std::string("Unable to add resource of type ") + type.GetName()
                     + ". It is not a resource type.");
         }
 
@@ -1108,7 +1108,7 @@ namespace dtDAL
 
             mResourceHelper.CreateResourceCategory(category, type, dataTypeTree, categoryInTree);
         }
-        catch (const dtDAL::Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             //we have to make sure this happens before excepting
             fileUtils.PopDirectory();
@@ -1123,16 +1123,16 @@ namespace dtDAL
     {
 
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext,
                 std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly,
                 std::string("The context is readonly."));
 
         if (!type.IsResource())
         {
-            EXCEPT(ExceptionEnum::ProjectResourceError, std::string("Unable to add resource of type ") + type.GetName()
+            EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, std::string("Unable to add resource of type ") + type.GetName()
                     + ". It is not a resource type.");
         }
 
@@ -1149,7 +1149,7 @@ namespace dtDAL
 
             result = mResourceHelper.RemoveResourceCategory(category, type, recursive, dataTypeTree);
         }
-        catch (const dtDAL::Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             //we have to make sure this happens before excepting
             fileUtils.PopDirectory();
@@ -1168,16 +1168,16 @@ namespace dtDAL
     {
 
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext,
                 std::string("The context is not valid."));
 
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly,
                 std::string("The context is readonly."));
 
         if (!type.IsResource())
         {
-            EXCEPT(ExceptionEnum::ProjectResourceError,
+            EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
                 std::string("Unable to add resource of type ") + type.GetName()
                     + ". It is not a resource type.");
         }
@@ -1195,7 +1195,7 @@ namespace dtDAL
             result = mResourceHelper.AddResource(newName, pathToFile, category, type, dataTypeTree);
 
         }
-        catch (const dtDAL::Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             //we have to make sure this happens before excepting
             fileUtils.PopDirectory();
@@ -1210,9 +1210,9 @@ namespace dtDAL
     void Project::RemoveResource(const ResourceDescriptor& resource)
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
         if (IsReadOnly())
-            EXCEPT(ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
         FileUtils& fileUtils = FileUtils::GetInstance();
         fileUtils.PushDirectory(mContext);
@@ -1225,7 +1225,7 @@ namespace dtDAL
 
             mResourceHelper.RemoveResource(resource, resourceTree);
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             fileUtils.PopDirectory();
             throw ex;
@@ -1246,7 +1246,7 @@ namespace dtDAL
             mResources.clear();
             mResourceHelper.IndexResources(mResources);
         }
-        catch (const Exception& ex)
+        catch (const dtUtil::Exception& ex)
         {
             fileUtils.PopDirectory();
             throw ex;
@@ -1270,7 +1270,7 @@ namespace dtDAL
         {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "ERROR: call getResourcesOfType ended with no valid results!");
-            EXCEPT(ExceptionEnum::ProjectException, "ERROR: call GetResourcesOfType ended with no valid results!");
+            EXCEPT(dtDAL::ExceptionEnum::ProjectException, "ERROR: call GetResourcesOfType ended with no valid results!");
         }
 
         return it.tree_ref();
@@ -1281,7 +1281,7 @@ namespace dtDAL
     void Project::GetResourcesOfType(const DataType& type, core::tree<ResourceTreeNode>& toFill) const
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
 
         toFill.clear();
         if (!type.IsResource())
@@ -1341,7 +1341,7 @@ namespace dtDAL
     bool Project::IsArchive() const
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
         return false;
     }
 
@@ -1349,7 +1349,7 @@ namespace dtDAL
     bool Project::IsReadOnly() const
     {
         if (!mValidContext)
-            EXCEPT(ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
         return mContextReadOnly;
     }
 

@@ -3,7 +3,7 @@
 #include "dtUtil/log.h"
 #include "dtUtil/xerceswriter.h"
 #include "dtUtil/xerceserrorhandler.h"
-#include "dtUtil/stringutils.h"
+#include "dtUtil/xercesutils.h"
 #include "dtUtil/xercesparser.h"
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>
@@ -23,30 +23,29 @@ Application::Application(const std::string& configFilename) :  BaseABC("Applicat
 {
    RegisterInstance(this);
 
-   std::string foundPath = osgDB::findDataFile(configFilename);
-   if( foundPath.empty() )
+   if( !configFilename.empty() )
    {
-      LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
-      foundPath = GenerateDefaultConfigFile();
+      std::string foundPath = osgDB::findDataFile(configFilename);
+      if( foundPath.empty() )
+      {
+         LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
+         CreateInstances(); //create default window, camera, etc.
+      }
+      else if( !ParseConfigFile( foundPath ) )
+      {
+         LOG_WARNING("Application: Error loading config file, using defaults instead.");
+         CreateInstances(); //create default window, camera, etc.
+      }
    }
-
-   // parse the file
-   if( !ParseConfigFile( foundPath ) )
+   else
    {
-      LOG_WARNING("Application: Error loading config file, using defaults instead.");
       CreateInstances(); //create default window, camera, etc.
    }
 }
 
-
-
 /** destructor */
 Application::~Application(void)
-{
-   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   //mWindow->ChangeScreenResolution( mOriginalRes );
-   #endif
-   
+{  
    DeregisterInstance(this);   
 }
 

@@ -1,5 +1,5 @@
-from dtCore import *
-from dtABC import *
+from PyDtCore import *
+from PyDtABC import *
 
 from math import *
 from time import *
@@ -215,7 +215,6 @@ class TestPathedCameraApplication(Application):
     
     def Config(self):
         Application.Config(self)
-        SetDataFilePathList('../../data');
         self.AddDrawable(self.infiniteTerrain)
         self.helo.LoadFile('models/uh-1n.ive')
         self.AddDrawable(self.helo)
@@ -239,6 +238,9 @@ class TestPathedCameraApplication(Application):
         
     def PreFrame(self, deltaFrameTime):
         self.spc.Update(deltaFrameTime)
+
+SetDataFilePathList( GetDeltaRootPath() + '/examples/testPython/;' +
+                     GetDeltaDataPathList() )
 
 testPathedCameraApp = TestPathedCameraApplication('config.xml')
 

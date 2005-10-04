@@ -14,20 +14,21 @@ well as an explosion particle effect.
 Instructions
 ------------
 Win32 Source: 
-- Open examples/examples.sln.
+- Open VisualStudio\examples\testEffects\testEffects.sln.
 - Build testEffects.
 - Start testEffects.
 
 Win32 Binary:
-- Go to examples/testEffects/Release.
+- Go to bin.
 - Double-click testEffects.exe.
 
 Linux Source:
-- Run 'cmake .' from examples/ directory.
-- To build all examples: run 'make' from examples/
-- To build only testEffects: run 'make' from examples/testEffects.
-- Enter examples/testEffects directory.
-- Run 'testEffects'.
+- To build only testEffects, from the root delta3d folder:
+  scons bin/testEffects
+
+Linux Binary:
+- cd bin
+- ./testEffects
 
 Controls
 --------

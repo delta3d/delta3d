@@ -167,7 +167,7 @@ namespace dtEditQt
 
     bool DynamicDoubleControl::isEditable()
     {
-        return true;
+        return !myProperty->IsReadOnly();
     }
 
     /////////////////////////////////////////////////////////////////////////////////

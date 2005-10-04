@@ -107,7 +107,7 @@ void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 }
 
 
-Camera::Camera(std::string name) :
+Camera::Camera( const std::string& name) :
 mWindow(NULL),
 mScene(NULL)
 {
@@ -159,19 +159,23 @@ void Camera::Frame()
    osg::Matrix absMat;
    GetAbsoluteMatrix( GetMatrixNode(), absMat );
 
-   osg::Vec3 eyePoint(absMat(3,0), absMat(3,1), absMat(3,2));
-
    //choose Z as the up vector
-   osg::Vec3 upVec(absMat(2,0), absMat(2,1), absMat(2,2));
+   osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
+   osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
+   osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
+   F.normalize();
+   UP.normalize();
 
-   osg::Vec3 lookVec = upVec ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
-   osg::Vec3 centerPoint = eyePoint + lookVec * 10.f;
+   osg::Vec3 s = F ^ UP;
+   osg::Vec3 u = s ^ F;
+   F = -F;
 
-   //sync up Producer's camera with the world matrix for this node
-   mCamera->setViewByLookat( eyePoint[0], eyePoint[1], eyePoint[2],
-                             centerPoint[0], centerPoint[1], centerPoint[2],
-                             upVec[0], upVec[1], upVec[2] );
-   
+   Producer::Matrix m(s[0], u[0], F[0], 0.0,
+      s[1], u[1], F[1], 0.0,
+      s[2], u[2], F[2], 0.0,
+      s*eye, u*eye, F*eye, 1.0);
+   mCamera->setViewByMatrix(m);
+
    //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
    //Might cause a problem with multi camera's sharing one RenderSurface
    mCamera->frame(true);
@@ -225,12 +229,12 @@ void Camera::SetClearColor(const osg::Vec4& color)
    GetSceneHandler()->GetSceneView()->setClearColor(mClearColor);
 }
 
-void Camera::GetClearColor( float *r, float *g, float *b, float *a)
+void Camera::GetClearColor( float& r, float& g, float& b, float& a )
 {
-   *r = mClearColor[0];
-   *g = mClearColor[1];
-   *b = mClearColor[2];
-   *a = mClearColor[3];
+   r = mClearColor[0];
+   g = mClearColor[1];
+   b = mClearColor[2];
+   a = mClearColor[3];
 }
 
 void Camera::SetPerspective(double hfov, double vfov, double nearClip, double farClip)
@@ -261,23 +265,6 @@ bool Camera::ConvertToPerspective( float d )
    t = mCamera.get()->getLens()->convertToPerspective(d);
    return t;
 }
-
-/*void Camera::Apply( float xshear=0.0f, float yshear=0.0 )
-{
-   mCamera.get()->getLens()->apply(xshear, yshear);
-}*/
-
-/*void Camera::GenerateMatrix( float xshear, float yshear, Matrix::value_type matrix[16] )
-{
-   mCamera.get()->getLens()->generateMatrix(xshear, yshear, Matrix);
-}*/
-
-/*void Camera::GetParams( double &left, double &right, 
-                double &bottom, double &top, 
-                double &nearClip, double &farClip )
-{
-	mCamera.get()->getLens()->getParams(&left, &right, &bottom, &top, &nearClip, &farClip);
-}*/
 
 float Camera::GetHorizontalFov()
 {

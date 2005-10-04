@@ -2,14 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-
-#include "dtCore/dt.h"
+#include <python/dtpython.h>
+#include <dtCore/dt.h>
 
 using namespace boost::python;
 using namespace dtCore;
-
-// The individual class bindings
 
 void initBaseBindings();
 void initCameraBindings();
@@ -22,6 +19,7 @@ void initEffectManagerBindings();
 void initEnvEffectBindings();
 void initEnvironmentBindings();
 void initFlyMotionModelBindings();
+void initFPSMotionModelBindings();
 void initInfiniteLightBindings();
 void initInfiniteTerrainBindings();
 void initInputDeviceBindings();
@@ -36,9 +34,16 @@ void initMotionModelBindings();
 void initMouseBindings();
 void initObjectBindings();
 void initOrbitMotionModelBindings();
+
+
+//#ifndef WIN32
+void initOSGVec2();
 void initOSGVec3();
+void initOSGVec4();
 void initOSGMatrix();
 void initOSGMath();
+//#endif //WIN32
+
 void initParticleSystemBindings();
 void initPhysicalBindings();
 void initPointAxisBindings();
@@ -49,7 +54,6 @@ void initSpotLightBindings();
 void initSkyBoxBindings();
 void initSkyDomeBindings();
 void initSystemBindings();
-void initTerrainBindings();
 void initTrackerBindings();
 void initTransformBindings();
 void initTransformableBindings();
@@ -63,10 +67,14 @@ void NotifyWrap(NotifySeverity ns, const char* msg)
    Notify(ns, msg);
 }
 
-BOOST_PYTHON_MODULE(dtCore)
+BOOST_PYTHON_MODULE(PyDtCore)
 {
    def("SetDataFilePathList", SetDataFilePathList);
+   def("GetDataFilePathList", GetDataFilePathList);
    def("GetDeltaDataPathList", GetDeltaDataPathList);
+   def("GetDeltaRootPath", GetDeltaRootPath);
+   def("GetEnvironment", GetEnvironment);
+
    def("SetNotifyLevel", SetNotifyLevel);
    def("Notify", NotifyWrap);
    
@@ -79,7 +87,10 @@ BOOST_PYTHON_MODULE(dtCore)
       .value("DEBUG_INFO", DEBUG_INFO)
       .export_values();
 
+
+   initOSGVec2();
    initOSGVec3();
+   initOSGVec4();
    initOSGMatrix();
    initOSGMath();
 
@@ -125,7 +136,6 @@ BOOST_PYTHON_MODULE(dtCore)
    initCompassBindings();
    initPointAxisBindings();
    //initRecorderBindings();
-   initTerrainBindings();
    initEffectManagerBindings();
 
    initLightBindings();

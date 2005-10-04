@@ -43,7 +43,7 @@
 #include "dtDAL/project.h"
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/librarymanager.h"
 #include <dtUtil/log.h>
 #include "dtDAL/map.h"
@@ -246,7 +246,7 @@ namespace dtEditQt
                 file = QString(project.GetResourcePath(resource).c_str());
                 validFile = true;
             }
-            catch (dtDAL::Exception &e)
+            catch (dtUtil::Exception &e)
             {
                 validFile = false;
             }

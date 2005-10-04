@@ -26,5 +26,7 @@ void initSystemBindings()
       .def("Start", &System::Start)
       .def("Step", &System::Step)
       .def("Stop", &System::Stop)
-      .def("IsRunning", &System::IsRunning);
+      .def("IsRunning", &System::IsRunning)
+      .def("SetShutdownOnWindowClose", &System::SetShutdownOnWindowClose)
+      .def("SetShutdownOnWindowClose", &System::GetShutdownOnWindowClose);
 }

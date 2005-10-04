@@ -52,6 +52,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be the actor id.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return false if an actor could not be found with that id.
          */
@@ -126,6 +127,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be the both the unique id and the display string separated by a comma.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return false of the value is not valid.
          */
@@ -163,6 +165,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be a float value as a string.  This will set the value to 0 if it's not valid.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -195,6 +198,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be a double value as a string.  This will set the value to 0 if it's not valid.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -227,6 +231,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be an integer value as a string.  This will set the value to 0 if it's not valid.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -259,6 +264,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be a long value as a string.  This will set the value to 0 if it's not valid.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -326,6 +332,7 @@ namespace dtDAL
 
         /**
          * Does the same thing as SetValue.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -361,6 +368,7 @@ namespace dtDAL
         /**
          * Sets the value of the property based on a string.
          * The string should be a boolean value (true or false) as a string.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true if the value could be parsed.
          */
@@ -480,6 +488,7 @@ namespace dtDAL
         /**
          * the same as SetValueFromString
          * @see #SetValueFromString
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true if the value could be parsed.
          */
@@ -515,6 +524,7 @@ namespace dtDAL
          * Sets the value of the property based on a string.
          * The string should be two floating point values as a strings separated by spaces.
          * This will return false if the values can't be set.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -529,6 +539,80 @@ namespace dtDAL
 
     protected:
         virtual ~Vec2ActorProperty() { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * This actor property represents a vector data member with 2 values.
+    */
+    ////////////////////////////////////////////////////////////////////////////
+    class DT_EXPORT Vec2fActorProperty :
+        public GenericActorProperty<const osg::Vec2f&,osg::Vec2f>
+    {
+    public:
+        Vec2fActorProperty(const std::string &name, const std::string &label,
+            Functor1<const osg::Vec2f&> set, Functor0Ret<osg::Vec2f> get,
+            const std::string &desc = "", const std::string &groupName = "") :
+        GenericActorProperty<const osg::Vec2f&,osg::Vec2f>(name,label,set,get,desc,groupName) { }
+
+        DataType &GetPropertyType() const { return DataType::VEC2F; }
+
+        /**
+        * Sets the value of the property based on a string.
+        * The string should be two floating point values as a strings separated by spaces.
+        * This will return false if the values can't be set.
+        * @note Returns false it the property is read only
+        * @param value the value to set.
+        * @return true
+        */
+        virtual bool SetStringValue(const std::string& value);
+
+
+        /**
+        * @return a string version of the data.  This value can be used when calling SetStringValue.
+        * @see #SetStringValue
+        */
+        virtual const std::string GetStringValue() const;
+
+    protected:
+        virtual ~Vec2fActorProperty() { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * This actor property represents a vector data member with 2 values.
+    */
+    ////////////////////////////////////////////////////////////////////////////
+    class DT_EXPORT Vec2dActorProperty :
+        public GenericActorProperty<const osg::Vec2d&,osg::Vec2d>
+    {
+    public:
+        Vec2dActorProperty(const std::string &name, const std::string &label,
+            Functor1<const osg::Vec2d&> set, Functor0Ret<osg::Vec2d> get,
+            const std::string &desc = "", const std::string &groupName = "") :
+        GenericActorProperty<const osg::Vec2d&,osg::Vec2d>(name,label,set,get,desc,groupName) { }
+
+        DataType &GetPropertyType() const { return DataType::VEC2D; }
+
+        /**
+        * Sets the value of the property based on a string.
+        * The string should be two floating point values as a strings separated by spaces.
+        * This will return false if the values can't be set.
+        * @note Returns false it the property is read only
+        * @param value the value to set.
+        * @return true
+        */
+        virtual bool SetStringValue(const std::string& value);
+
+
+        /**
+        * @return a string version of the data.  This value can be used when calling SetStringValue.
+        * @see #SetStringValue
+        */
+        virtual const std::string GetStringValue() const;
+
+    protected:
+        virtual ~Vec2dActorProperty() { }
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -551,6 +635,7 @@ namespace dtDAL
          * Sets the value of the property based on a string.
          * The string should be three floating point values as a strings separated by spaces.
          * This will return false if the values can't be set.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -564,6 +649,78 @@ namespace dtDAL
         virtual const std::string GetStringValue() const;
     protected:
         virtual ~Vec3ActorProperty() { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * This actor property represents a vector data member with 3 values.
+    */
+    ////////////////////////////////////////////////////////////////////////////
+    class DT_EXPORT Vec3fActorProperty :
+        public GenericActorProperty<const osg::Vec3f&,osg::Vec3f>
+    {
+    public:
+        Vec3fActorProperty(const std::string &name, const std::string &label,
+            Functor1<const osg::Vec3f&> set, Functor0Ret<osg::Vec3f> get,
+            const std::string &desc = "", const std::string &groupName = "") :
+        GenericActorProperty<const osg::Vec3f&,osg::Vec3f>(name,label,set,get,desc,groupName) { }
+
+        DataType &GetPropertyType() const { return DataType::VEC3F; }
+
+        /**
+        * Sets the value of the property based on a string.
+        * The string should be three floating point values as a strings separated by spaces.
+        * This will return false if the values can't be set.
+        * @note Returns false it the property is read only
+        * @param value the value to set.
+        * @return true
+        */
+        virtual bool SetStringValue(const std::string& value);
+
+
+        /**
+        * @return a string version of the data.  This value can be used when calling SetStringValue.
+        * @see #SetStringValue
+        */
+        virtual const std::string GetStringValue() const;
+    protected:
+        virtual ~Vec3fActorProperty() { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * This actor property represents a vector data member with 3 values.
+    */
+    ////////////////////////////////////////////////////////////////////////////
+    class DT_EXPORT Vec3dActorProperty :
+        public GenericActorProperty<const osg::Vec3d&,osg::Vec3d>
+    {
+    public:
+        Vec3dActorProperty(const std::string &name, const std::string &label,
+            Functor1<const osg::Vec3d&> set, Functor0Ret<osg::Vec3d> get,
+            const std::string &desc = "", const std::string &groupName = "") :
+        GenericActorProperty<const osg::Vec3d&,osg::Vec3d>(name,label,set,get,desc,groupName) { }
+
+        DataType &GetPropertyType() const { return DataType::VEC3D; }
+
+        /**
+        * Sets the value of the property based on a string.
+        * The string should be three floating point values as a strings separated by spaces.
+        * This will return false if the values can't be set.
+        * @note Returns false it the property is read only
+        * @param value the value to set.
+        * @return true
+        */
+        virtual bool SetStringValue(const std::string& value);
+
+
+        /**
+        * @return a string version of the data.  This value can be used when calling SetStringValue.
+        * @see #SetStringValue
+        */
+        virtual const std::string GetStringValue() const;
+    protected:
+        virtual ~Vec3dActorProperty() { }
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -586,6 +743,7 @@ namespace dtDAL
          * Sets the value of the property based on a string.
          * The string should be four floating point values as a strings separated by spaces.
          * This will return false if the values can't be set.
+         * @note Returns false it the property is read only
          * @param value the value to set.
          * @return true
          */
@@ -604,35 +762,97 @@ namespace dtDAL
 
     ////////////////////////////////////////////////////////////////////////////
     /**
-     * This actor property represents a vector data member with 4 floats.
+    * This actor property represents a vector data member with 4 values.
+    */
+    ////////////////////////////////////////////////////////////////////////////
+    class DT_EXPORT Vec4fActorProperty :
+        public GenericActorProperty<const osg::Vec4f&,osg::Vec4f>
+    {
+    public:
+        Vec4fActorProperty(const std::string &name, const std::string &label,
+            Functor1<const osg::Vec4f&> set, Functor0Ret<osg::Vec4f> get,
+            const std::string &desc = "", const std::string &groupName = "") :
+        GenericActorProperty<const osg::Vec4f&,osg::Vec4f>(name,label,set,get,desc,groupName) { }
+
+        DataType &GetPropertyType() const { return DataType::VEC4F; }
+
+        /**
+        * Sets the value of the property based on a string.
+        * The string should be four floating point values as a strings separated by spaces.
+        * This will return false if the values can't be set.
+        * @note Returns false it the property is read only
+        * @param value the value to set.
+        * @return true
+        */
+        virtual bool SetStringValue(const std::string& value);
+
+
+        /**
+        * @return a string version of the data.  This value can be used when calling SetStringValue.
+        * @see #SetStringValue
+        */
+        virtual const std::string GetStringValue() const;
+
+    protected:
+        virtual ~Vec4fActorProperty() { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+    * This actor property represents a vector data member with 4 values.
+    */
+    ////////////////////////////////////////////////////////////////////////////
+    class DT_EXPORT Vec4dActorProperty :
+        public GenericActorProperty<const osg::Vec4d&,osg::Vec4d>
+    {
+    public:
+        Vec4dActorProperty(const std::string &name, const std::string &label,
+            Functor1<const osg::Vec4d&> set, Functor0Ret<osg::Vec4d> get,
+            const std::string &desc = "", const std::string &groupName = "") :
+        GenericActorProperty<const osg::Vec4d&,osg::Vec4d>(name,label,set,get,desc,groupName) { }
+
+        DataType &GetPropertyType() const { return DataType::VEC4D; }
+
+        /**
+        * Sets the value of the property based on a string.
+        * The string should be four floating point values as a strings separated by spaces.
+        * This will return false if the values can't be set.
+        * @note Returns false it the property is read only
+        * @param value the value to set.
+        * @return true
+        */
+        virtual bool SetStringValue(const std::string& value);
+
+
+        /**
+        * @return a string version of the data.  This value can be used when calling SetStringValue.
+        * @see #SetStringValue
+        */
+        virtual const std::string GetStringValue() const;
+
+    protected:
+        virtual ~Vec4dActorProperty() { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+     * This actor property represents a color data member with 4 floats.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT ColorRgbaActorProperty :
-        public GenericActorProperty<const osg::Vec4&,osg::Vec4>
+    class DT_EXPORT ColorRgbaActorProperty : public Vec4ActorProperty
     {
     public:
         ColorRgbaActorProperty(const std::string &name, const std::string &label,
             Functor1<const osg::Vec4&> set, Functor0Ret<osg::Vec4> get,
             const std::string &desc = "", const std::string &groupName = "") :
-        GenericActorProperty<const osg::Vec4&,osg::Vec4>(name,label,set,get,desc,groupName) { }
+        Vec4ActorProperty(name,label,set,get,desc,groupName) { }
 
         DataType &GetPropertyType() const { return DataType::RGBACOLOR; }
-
-        /**
-         * Sets the value of the property based on a string.
-         * The string should be four floating point values as a strings separated by spaces.
-         * This will return false if the values can't be set.
-         * @param value the value to set.
-         * @return true
-         */
-        virtual bool SetStringValue(const std::string& value);
-
-
-        /**
-         * @return a string version of the data.  This value can be used when calling SetStringValue.
-         * @see #SetStringValue
-         */
-        virtual const std::string GetStringValue() const;
+        
+        // This is a work around a bug in Visual Studio where the Unit Tests would fail at runtime because
+        // it couldn't find these functions in this class, even though they are inherited. 
+        virtual bool SetStringValue(const std::string& value) { return Vec4ActorProperty::SetStringValue(value); }
+        virtual const std::string GetStringValue() const      { return Vec4ActorProperty::GetStringValue(); } 
 
     protected:
         virtual ~ColorRgbaActorProperty() { }

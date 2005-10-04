@@ -18,7 +18,7 @@ System::System():
    mRunning(false),
    mShutdownOnWindowClose(true)
 {
-   mClockTime = 0.0;
+   mClockTime = 0;
    mLastClockTime = mClock.tick();
    mDt = 0.0;
    RegisterInstance(this);

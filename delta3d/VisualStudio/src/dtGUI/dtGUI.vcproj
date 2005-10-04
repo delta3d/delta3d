@@ -33,8 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib dtutild.lib osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib ul_d.lib"
-				OutputFile="../../../bin/dtguid.dll"
+				AdditionalDependencies="dtCored.lib dtUtild.lib osgd.lib osgDBd.lib openthreadswin32d.lib producerd.lib CEGUIBase_d.lib OpenGLGUIRenderer_d.lib ul_d.lib"
+				OutputFile="../../../bin/dtGUId.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -42,7 +42,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="2"
-				ImportLibrary="../../../lib/dtguid.lib"
+				ImportLibrary="../../../lib/dtGUId.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -85,8 +85,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib dtutil.lib osg.lib osgDB.lib openthreadswin32.lib producer.lib CEGUIBase.lib OpenGLGUIRenderer.lib ul.lib"
-				OutputFile="../../../bin/dtgui.dll"
+				AdditionalDependencies="dtCore.lib dtUtil.lib osg.lib osgDB.lib openthreadswin32.lib producer.lib CEGUIBase.lib OpenGLGUIRenderer.lib ul.lib"
+				OutputFile="../../../bin/dtGUI.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -95,7 +95,7 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../../lib/dtgui.lib"
+				ImportLibrary="../../../lib/dtGUI.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

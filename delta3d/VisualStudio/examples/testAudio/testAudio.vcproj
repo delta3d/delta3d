@@ -33,8 +33,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutild.lib xerces-c_2D.lib"
-				OutputFile="../../../bin/testAudioD.exe"
+				AdditionalDependencies="dtUtild.lib xerces-c_2D.lib"
+				OutputFile="../../../bin/testAudiod.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtutil.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtUtil.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/testAudio.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

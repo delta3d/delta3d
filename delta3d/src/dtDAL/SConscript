@@ -5,22 +5,15 @@ import sys
 Import ('*')
 
 # Grab all the sources from the DAL source directory.
-sources = SGlob('*.cpp')
+srcs = SGlob('*.cpp')
 
-dtDALDeps =[ 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 'ode', 
-	'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
-	'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
-        'cal3d', 'ul', 'js', 
-	'Producer', 'tinyxml', 'opengl' ]
+deps =  [ 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode', 
+          'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText',
+          'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'rbody', 'rvrutils',
+          'rcfgscript', 'gdal', 'cal3d', 'ul', 'js', 'Producer', 'opengl',
+          'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32',
+          'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-if OS == 'windows' :
-   dtDALDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
-elif OS == 'linux':
-   dtDALDeps += [ 'uuid', 'Xxf86vm' ]
-elif OS == 'darwin':
-   dtDALDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
-
-    
-libdtDAL = BuildLib( 'dtDAL', sources, dtDALDeps, ['DT_LIBRARY'] )
+libdtDAL = BuildLib( 'dtDAL', srcs, deps, ['DT_LIBRARY'] )
 
 Export ('libdtDAL')

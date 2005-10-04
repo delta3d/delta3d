@@ -30,6 +30,12 @@ namespace dtDAL
     class Vec3ActorProperty;
     class Vec2ActorProperty;
     class Vec4ActorProperty;
+    class Vec3fActorProperty;
+    class Vec2fActorProperty;
+    class Vec4fActorProperty;
+    class Vec3dActorProperty;
+    class Vec2dActorProperty;
+    class Vec4dActorProperty;
 }
 
 namespace dtEditQt 
@@ -56,6 +62,22 @@ namespace dtEditQt
             const std::string &newLabel);
 
         /**
+         * Constructor - For the Vec2f property
+         *
+         * @Note - We can put data in the constructor because aren't using the factory for this.
+         */
+        DynamicVectorElementControl(dtDAL::Vec2fActorProperty *newVectorProp, int whichIndex, 
+            const std::string &newLabel);
+
+        /**
+         * Constructor - For the Vec2d property
+         *
+         * @Note - We can put data in the constructor because aren't using the factory for this.
+         */
+        DynamicVectorElementControl(dtDAL::Vec2dActorProperty *newVectorProp, int whichIndex, 
+            const std::string &newLabel);
+
+        /**
          * Constructor - For the Vec3 property
          *
          * @Note - We can put data in the constructor because aren't using the factory for this.
@@ -64,11 +86,43 @@ namespace dtEditQt
             const std::string &newLabel);
 
         /**
-         * Constructor - For the Vec3 property
+         * Constructor - For the Vec3f property
+         *
+         * @Note - We can put data in the constructor because aren't using the factory for this.
+         */
+        DynamicVectorElementControl(dtDAL::Vec3fActorProperty *newVectorProp, int whichIndex, 
+            const std::string &newLabel);
+
+        /**
+         * Constructor - For the Vec3d property
+         *
+         * @Note - We can put data in the constructor because aren't using the factory for this.
+         */
+        DynamicVectorElementControl(dtDAL::Vec3dActorProperty *newVectorProp, int whichIndex, 
+            const std::string &newLabel);
+
+        /**
+         * Constructor - For the Vec4 property
          *
          * @Note - We can put data in the constructor because aren't using the factory for this.
          */
         DynamicVectorElementControl(dtDAL::Vec4ActorProperty *newVectorProp, int whichIndex, 
+            const std::string &newLabel);
+
+        /**
+         * Constructor - For the Vec4f property
+         *
+         * @Note - We can put data in the constructor because aren't using the factory for this.
+         */
+        DynamicVectorElementControl(dtDAL::Vec4fActorProperty *newVectorProp, int whichIndex, 
+            const std::string &newLabel);
+
+        /**
+        * Constructor - For the Vec4d property
+        *
+        * @Note - We can put data in the constructor because aren't using the factory for this.
+        */
+        DynamicVectorElementControl(dtDAL::Vec4dActorProperty *newVectorProp, int whichIndex, 
             const std::string &newLabel);
 
         /**
@@ -149,16 +203,22 @@ namespace dtEditQt
     protected:
 
     private: 
-        enum WHICHTYPE {VEC2, VEC3, VEC4} whichType;
+        enum WHICHTYPE {VEC2, VEC2F, VEC2D, VEC3, VEC3F, VEC3D, VEC4, VEC4F, VEC4D} whichType;
 
         bool isVecFloat;
         // the tool tip type label indicates that the vector is a float or a double
         std::string toolTipTypeLabel;
         std::string label;
 
-        dtDAL::Vec2ActorProperty *vec2Prop;
-        dtDAL::Vec3ActorProperty *vec3Prop;
-        dtDAL::Vec4ActorProperty *vec4Prop;
+        dtDAL::Vec2ActorProperty  *vec2Prop;
+        dtDAL::Vec3ActorProperty  *vec3Prop;
+        dtDAL::Vec4ActorProperty  *vec4Prop;
+        dtDAL::Vec2fActorProperty *vec2fProp;
+        dtDAL::Vec3fActorProperty *vec3fProp;
+        dtDAL::Vec4fActorProperty *vec4fProp;
+        dtDAL::Vec2dActorProperty *vec2dProp;
+        dtDAL::Vec3dActorProperty *vec3dProp;
+        dtDAL::Vec4dActorProperty *vec4dProp;
         int elementIndex;
 
         // This pointer is not really in our control.  It is constructed in the createEditor() 

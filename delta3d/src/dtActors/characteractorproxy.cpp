@@ -45,7 +45,7 @@ namespace dtActors
         Character *c = dynamic_cast<Character*>(mActor.get());
 
         if(c == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtChar::Character.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtChar::Character.");
 
         // This property is used for the manipulation of the velocity
         // of a Character. Uses a float type to represent the velocity

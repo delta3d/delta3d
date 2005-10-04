@@ -25,7 +25,7 @@
 #include "dtEditQt/orthoviewport.h"
 #include "dtEditQt/viewportoverlay.h"
 #include "dtEditQt/editorevents.h"
-#include "dtDAL/exception.h"
+#include <dtDAL/exceptionenum.h>
 #include "dtDAL/transformableactorproxy.h"
 
 namespace dtEditQt

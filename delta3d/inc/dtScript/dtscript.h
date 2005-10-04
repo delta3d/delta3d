@@ -1,6 +1,6 @@
 /* 
 * Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004 MOVES Institute 
+* Copyright (C) 2004-2005 MOVES Institute 
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free 
@@ -23,6 +23,12 @@
 
 #include "dtScript/scriptmanager.h"
 
+/** Contains the functionality to call Python scripts from a C++ application.
+*/
+namespace dtScript
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 /* You may turn off this include message by defining _NOAUTOLIB */
@@ -30,10 +36,10 @@
 #undef _AUTOLIBNAME2
 
 #if defined(_DEBUG)
-#define _AUTOLIBNAME1   "dtscriptd.lib"
+#define _AUTOLIBNAME1   "dtScriptd.lib"
 #define _AUTOLIBNAME2   "python24.lib"
 #else 
-#define _AUTOLIBNAME1   "dtscript.lib"
+#define _AUTOLIBNAME1   "dtScript.lib"
 #define _AUTOLIBNAME2   "python24.lib"
 #endif
 

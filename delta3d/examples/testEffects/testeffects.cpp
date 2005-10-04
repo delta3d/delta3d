@@ -181,7 +181,7 @@ IMPLEMENT_MANAGEMENT_LAYER(TestEffectsApp)
 int main( int argc, char **argv )
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testEffects/;" +
-                        GetDeltaDataPathList()  );
+                        GetDeltaDataPathList()+ ";" + GetDeltaDataPathList()+"/effects/"  );
 
    RefPtr<TestEffectsApp> app = new TestEffectsApp( "config.xml" );
    

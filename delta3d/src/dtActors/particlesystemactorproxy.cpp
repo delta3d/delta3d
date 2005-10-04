@@ -41,7 +41,7 @@ namespace dtActors
 
         ParticleSystem *ps = dynamic_cast<ParticleSystem*>(mActor.get());
         if(!ps)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ParticleSystem");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ParticleSystem");
 
         // This property toggles the enabling of a Particle System.
         // A value of true enables the particle system, which in turn

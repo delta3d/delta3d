@@ -49,7 +49,7 @@ namespace dtActors
         const std::string &GROUPNAME = "Global Environment";
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
         // This property manipulates the sky color of an Environment.
         // A SkyDome/SkyBox must be added as an effect to the environment
@@ -114,7 +114,7 @@ namespace dtActors
 
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
         env->AddEffect(dynamic_cast<EnvEffect*>(effect->GetActor()));
     }
@@ -124,7 +124,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
         for(std::vector< osg::ref_ptr<EnvEffectActorProxy> >::iterator it = mEffects.begin();
             it != mEffects.end();
@@ -143,7 +143,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
         return mEffects;
     }
@@ -153,7 +153,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         env->SetSkyColor(color);
     }
@@ -163,7 +163,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         osg::Vec3 color;
         env->GetSkyColor(color);
@@ -175,7 +175,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         env->SetFogColor(color);
     }
@@ -185,7 +185,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         osg::Vec3 color;
         env->GetFogColor(color);
@@ -197,7 +197,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(env == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         if(mode == FogModeEnum::LINEAR)
             env->SetFogMode(Environment::LINEAR);
@@ -214,7 +214,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(env == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         if(env->GetFogMode() == Environment::LINEAR)
             return FogModeEnum::LINEAR;
@@ -231,7 +231,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(env == NULL)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         env->SetRefLatLong(latlong);
     }
@@ -241,7 +241,7 @@ namespace dtActors
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
-            EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment");
 
         osg::Vec2 l;
         env->GetRefLatLong(l);

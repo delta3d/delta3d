@@ -37,18 +37,18 @@ if mode == 'debug':
    projectTestProgram = '#tests/projectTestsd'
    proxyTestProgram = '#tests/proxyTestsd'
    
-mainlibs = ['dtDAL', 'dtutil', 'dtaudio', 'dtabc', 'dtcore']
+mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore']
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
 
 projectEnv.Append(LIBS = deplibs + mainlibs)
 
 app = projectEnv.Program(allTestProgram, sources)
 projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
-proxyapp = projectEnv.Program(proxyTestProgram,  mainSources + proxySources)
+proxyapp   = projectEnv.Program(proxyTestProgram,    mainSources + proxySources)
 
-Depends(app, testActorLibrary)
-Depends(projectapp, testActorLibrary)
-Depends(proxyapp, testActorLibrary)
+#Depends(app,        testActorLibrary)
+#Depends(projectapp, testActorLibrary)
+#Depends(proxyapp,   testActorLibrary)
 
 # Grab all the sources from the dtActors source directory.
 if (app == '[]') :

@@ -1,6 +1,6 @@
 /* 
 * Delta3D Open Source Game and Simulation Engine 
-* Copyright (C) 2004 MOVES Institute 
+* Copyright (C) 2004-2005 MOVES Institute 
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free 
@@ -24,6 +24,14 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtGUI/scriptmodule.h>
 
+/** The dtGUI namespace contains the functionality to render and control OpenGL
+* graphical user interfaces.  dtGUI uses <A HREF="http://www.cegui.org.uk/">CEGUI</A>
+* for high-level control of the widgets.
+*/
+namespace dtGUI
+{
+}
+
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 //
 // Automatic library inclusion macros that use the #pragma/lib feature
@@ -32,11 +40,11 @@
 
 #if defined(_DEBUG)
    #ifndef DT_LIBRARY  
-      #define  _AUTOLIBNAME "dtguid.lib"
+      #define  _AUTOLIBNAME "dtGUId.lib"
    #endif
 #else
    #ifndef DT_LIBRARY
-      #define _AUTOLIBNAME "dtgui.lib"
+      #define _AUTOLIBNAME "dtGUI.lib"
    #endif
 #endif
 
