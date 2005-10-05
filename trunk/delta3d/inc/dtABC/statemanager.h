@@ -90,8 +90,9 @@ namespace dtABC
           virtual ~TransitionOccurredEvent() {}
        };
 
+   public:
       /// Event::Type instances to be used by StateManager
-      class EventType : public dtABC::Event::Type
+      class DT_EXPORT EventType : public dtABC::Event::Type
       {
          DECLARE_ENUM(EventType);
       protected:
@@ -102,6 +103,7 @@ namespace dtABC
          static const EventType TRANSITION_OCCURRED;
       };
 
+   private:
       /** A class to handle XML elements from the SAX parser.
          * It is used when ParseFile is called.
          */
