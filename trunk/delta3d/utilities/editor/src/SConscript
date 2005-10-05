@@ -113,6 +113,10 @@ if 'qt' in env['TOOLS'] :
 
    sources = SGlob('*.cpp') + moc_targets
    
+   # Build the icon
+   if OS == 'windows' :
+      sources += env.RES( '../../dtEditQt.rc' )
+   
    if mode == 'debug':
       app = EditorEnv.Program('#/bin/STAGEd',sources)
    else:   
