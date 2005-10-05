@@ -2,6 +2,10 @@ Import('*')
 
 srcs = SGlob( '*.cpp' ) + SGlob( '*.cxx' )
 
+# Build the icon
+if OS == 'windows' :
+   srcs += env.RES( 'psEditor.rc' )
+
 deps = [ 'dtBSP', 'dtABC', 'dtCore', 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
 
 BuildProgram( 'psEditor', srcs, deps )
