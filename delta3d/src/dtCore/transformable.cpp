@@ -65,13 +65,13 @@ void Transformable::SetTransform( Transform *xform, CoordSysEnum cs )
    osg::Matrix newMat;
    xform->Get( newMat );
 
-   if (cs == ABS_CS)
+   if( cs == ABS_CS )
    {
       //convert the xform into a Relative CS as the MatrixNode is always
       //in relative coords
 
       //if this has a parent
-      if (mParent.valid())
+      if( mParent )
       {
          //get the parent's world position
          osg::Matrix parentMat;

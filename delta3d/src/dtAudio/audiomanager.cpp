@@ -2214,7 +2214,7 @@ AudioManager::SoundObj::Clear( void )
    mStopCB     = NULL;
    mStopCBData = NULL;
 
-   if( mParent.get() )
+   if( mParent )
    {
       mParent->RemoveChild( this );
    }
