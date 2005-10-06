@@ -19,7 +19,7 @@ XERCES_CPP_NAMESPACE_USE
 // -- CameraRecorderAdaptor implementation -- //
 CameraRecorderAdaptor::CameraRecorderAdaptor(dtCore::Camera* cam): BaseClass("CameraRecorderAdaptor"), mCamera(cam)
 {
-   Serializer::intialize();
+   OSGSerializer::intialize();
 }
 
 CameraRecorderAdaptor::~CameraRecorderAdaptor()
@@ -72,7 +72,7 @@ CameraRecorderAdaptor::FrameData* CameraRecorderAdaptor::Deserialize(XERCES_CPP_
       if( cname == "OSGMatrix" )
       {
          LOG_INFO("Attempting to decode: " + cname)
-         fd = new FrameData( Serializer::OSGMatrix( element ) );
+         fd = new FrameData( OSGSerializer::OSGMatrix( element ) );
          break;
       }
    }
@@ -99,7 +99,7 @@ DOMElement* CameraRecorderAdaptor::Serialize(const FrameData* d,XERCES_CPP_NAMES
    ///\warning does this leak the transcode?
    element->setAttribute( NAME , XMLString::transcode(mCamera->GetName().c_str()) );
 
-   DOMElement* matrixelement = Serializer::OSGMatrix(d->mMatrix,doc);
+   DOMElement* matrixelement = OSGSerializer::OSGMatrix(d->mMatrix,doc);
    element->appendChild( matrixelement );
 
    XMLString::release( &NAME );
