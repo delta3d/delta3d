@@ -376,14 +376,12 @@ static void DeleteParticleEmitters(osg::Node* effectNode)
  */
 void EffectManager::OnMessage(MessageData *data)
 {
-   if(data->message == "frame")
+   if(data->message == "preframe")
    {
-      Producer::Timer_t currentTime = mTimer.tick();
+      double delta = *reinterpret_cast<double*>(data->userData);
 
       if(mLastTime != 0)
       {
-         double delta = mTimer.delta_s(mLastTime, currentTime);
-
          set<Effect*> effectsToRemove;
 
          for(vector<Effect*>::iterator it = mEffects.begin();
@@ -438,9 +436,9 @@ void EffectManager::OnMessage(MessageData *data)
          {
             RemoveEffect(*it2);
          }
-      }
+       }
 
-      mLastTime = currentTime;
+       mLastTime += delta;
    }
 }
 
