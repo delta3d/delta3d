@@ -52,7 +52,7 @@ void UserInterface::SelectInstance()
 
    if (DeltaDrawable *d = dynamic_cast<DeltaDrawable*>(b))
    {
-      InstanceClassName->label( "dtCore::DeltaDrawalbe" ); 
+      InstanceClassName->label( "dtCore::DeltaDrawable" ); 
 
       DrawableChildList->clear();
       for (unsigned int childIdx=0; childIdx<d->GetNumChildren(); childIdx++)
