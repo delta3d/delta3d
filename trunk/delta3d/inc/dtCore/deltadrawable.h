@@ -25,11 +25,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/base.h"
-#include "dtCore/export.h"
+#include <dtCore/base.h>
+#include <dtCore/export.h>
 #include <dtUtil/log.h>
-#include "dtCore/refptr.h"
-#include "osg/Node"
+#include <dtCore/refptr.h>
+#include <osg/Node>
 
 namespace dtCore
 {
@@ -68,10 +68,10 @@ namespace dtCore
          ///Override function for derived object to know when attaching to scene
          virtual void SetParent(DeltaDrawable* parent) {mParent=parent;}
 
-         DeltaDrawable* GetParent(void)  {return mParent.get();}
+         DeltaDrawable* GetParent() { return mParent; }
          
          ///Get a pointer to the Scene this Drawable has been added to
-         Scene* GetSceneParent(void);
+         Scene* GetSceneParent();
 
          ///Add a child to this DeltaDrawable
          virtual bool AddChild( DeltaDrawable *child );
@@ -116,11 +116,11 @@ namespace dtCore
          };
 
    protected:
-      DeltaDrawable(std::string name = "DeltaDrawable");
+      DeltaDrawable( const std::string& name = "DeltaDrawable");
       virtual ~DeltaDrawable();
 
       RefPtr<osg::Node> mNode; ///< The node to store anything
-      RefPtr<DeltaDrawable> mParent; ///<Any immediate parent of this instance
+      DeltaDrawable* mParent; ///<Any immediate parent of this instance
 
       typedef std::vector<RefPtr<DeltaDrawable> > ChildList;
       ChildList mChildList;      ///<List of children DeltaDrawable added

@@ -7,8 +7,11 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
-DeltaDrawable::DeltaDrawable(std::string name)
-:  Base(name), 
+DeltaDrawable::DeltaDrawable(const std::string& name)
+:  Base(name),
+   mNode(0),
+   mParent(0), 
+   mParentScene(0),
    mProxyNode(0), 
    mRenderingProxy(false)
 {
@@ -127,7 +130,7 @@ Scene* DeltaDrawable::GetSceneParent()
   */
 void DeltaDrawable::Emancipate() 
 {
-   if (mParent.valid())
+   if( mParent )
    {
       mParent->RemoveChild(this);
    }

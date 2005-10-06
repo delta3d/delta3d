@@ -29,26 +29,21 @@
 #include <ode/ode.h>
 #include <osg/Vec3>
 
-#include "dtCore/base.h"
-#include "dtCore/stats.h"
-#include "dtCore/light.h"
+#include <dtCore/base.h>
+#include <dtCore/stats.h>
+#include <dtCore/light.h>
 
-#include "dtUtil/deprecationmgr.h"
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {         
-   //forward declaration
    class DeltaDrawable;
    class Transformable;
    class Physical;
 
-   
    /**
    *  Scene: This class encapsulates the root of the delta scene graph
-   *
-   *
    */
-
    class DT_EXPORT Scene : public Base  
    {
       DECLARE_MANAGEMENT_LAYER(Scene)
@@ -70,7 +65,6 @@ namespace dtCore
       };
 
       Scene(const std::string& name = "scene", bool useSceneLight = true);
-      virtual ~Scene();
 
       ///Get a pointer to the internal scene node
       osg::Group *GetSceneNode() {return mSceneNode.get();}
@@ -202,6 +196,10 @@ namespace dtCore
       * @param target framerate for paging thread in Frames / Sec
       */
       void SetTargetFrameRate(double pTargetFR){mTargetFrameRate = pTargetFR;}
+   
+   protected:
+
+      virtual ~Scene();
 
     private:
       
