@@ -203,14 +203,9 @@ namespace dtCore
          std::set<EffectListener*> mEffectListeners;
 
          /**
-          * A Producer timer object.
-          */
-         Producer::Timer mTimer;
-
-         /**
           * The last recorded time.
           */
-         Producer::Timer_t mLastTime;
+         double mLastTime;
    };
 
 
