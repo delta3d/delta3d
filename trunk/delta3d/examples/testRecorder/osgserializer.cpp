@@ -19,19 +19,19 @@
 XERCES_CPP_NAMESPACE_USE
 
 // initialize static variables
-Serializer::XMLChRep Serializer::mRep;
-bool Serializer::mInitialized = false;
+OSGSerializer::XMLChRep OSGSerializer::mRep;
+bool OSGSerializer::mInitialized = false;
 
 // implementation
-Serializer::Serializer() {}
+OSGSerializer::OSGSerializer() {}
 
-Serializer::~Serializer()
+OSGSerializer::~OSGSerializer()
 {
    // clean up the caught XMLCh strings
    std::for_each( mRep.begin(), mRep.end(), ReleaseSecond() );
 }
 
-void Serializer::intialize()
+void OSGSerializer::intialize()
 {
    if( mInitialized )
       return;
@@ -70,7 +70,7 @@ void Serializer::intialize()
    mRep.insert( XMLChRep::value_type( "OSGMatrix" , XMLString::transcode("OSGMatrix") ) );
 }
 
-XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serializer::OSGVec3(const osg::Vec3& vec, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* OSGSerializer::OSGVec3(const osg::Vec3& vec, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    DOMElement* element = doc->createElement( mRep["OSGVec3"] );
    ///\warning does this leak the XMLString::transcode strings?
@@ -80,7 +80,7 @@ XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serializer::OSGVec3(const osg::Vec3& 
    return element;
 }
 
-DOMElement* Serializer::OSGVec4(const osg::Vec4& vec, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* OSGSerializer::OSGVec4(const osg::Vec4& vec, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    DOMElement* element = doc->createElement( mRep["OSGVec4"] );
    ///\warning does this leak the XMLString::transcode strings?
@@ -91,7 +91,7 @@ DOMElement* Serializer::OSGVec4(const osg::Vec4& vec, XERCES_CPP_NAMESPACE_QUALI
    return element;
 }
 
-DOMElement* Serializer::OSGQuat(const osg::Quat& quat, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* OSGSerializer::OSGQuat(const osg::Quat& quat, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = doc->createElement( mRep["OSGQuat"] );
    ///\warning does this leak the XMLString::transcode strings?
@@ -102,7 +102,7 @@ DOMElement* Serializer::OSGQuat(const osg::Quat& quat, XERCES_CPP_NAMESPACE_QUAL
    return element;
 }
 
-DOMElement* Serializer::OSGMatrix(const osg::Matrix& mat, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
+DOMElement* OSGSerializer::OSGMatrix(const osg::Matrix& mat, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc)
 {
    XMLCh* OSGMATRIX = XMLString::transcode("OSGMatrix");
    XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* element = doc->createElement( OSGMATRIX );
@@ -119,7 +119,7 @@ DOMElement* Serializer::OSGMatrix(const osg::Matrix& mat, XERCES_CPP_NAMESPACE_Q
    return element;
 }
 
-osg::Matrix Serializer::OSGMatrix(DOMElement* e)
+osg::Matrix OSGSerializer::OSGMatrix(DOMElement* e)
 {
    char* nodename = XMLString::transcode( e->getNodeName() );
    std::string nname( nodename );

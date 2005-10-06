@@ -14,7 +14,6 @@
 #include <osg/Vec4>
 #include <osg/Matrix>
 
-//#include <dtUtil/xerceswriter.h>  // for dtUtil::XercesWriter::ReleaseTranscode, and XERCES types
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 
@@ -23,10 +22,9 @@
   * It maintains a vector of XMLCh* strings created
   * by Xerces, that needs to be cleaned up.
   *
-  * \todo rename to OSGSerializer.
   * \todo rename functions to be overrides of the operator() function.
   */
-class Serializer
+class OSGSerializer
 {
 public:
    typedef std::map<std::string,XMLCh*> XMLChRep;  /// a mapping of XMLCh* representation of a char*
@@ -39,10 +37,10 @@ public:
       }
    };
 
-   Serializer();
-   ~Serializer();
+   OSGSerializer();
+   ~OSGSerializer();
 
-   static void Serializer::intialize();
+   static void OSGSerializer::intialize();
 
    // serializing
    static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* OSGVec3(const osg::Vec3& vec, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);
