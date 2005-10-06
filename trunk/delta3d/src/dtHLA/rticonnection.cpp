@@ -1,7 +1,7 @@
 // rticonnection.cpp: Implementation of the RTIConnection class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "dtHLA/rticonnection.h"
+#include <dtHLA/rticonnection.h>
 
 #include <math.h>
 #include <memory.h>
@@ -26,10 +26,10 @@
 
 #include <xercesc/util/XMLString.hpp>
 
-#include "dtCore/system.h"
-#include "dtUtil/matrixutil.h"
-#include "dtUtil/xercesutils.h"
-#include "dtUtil/xercesparser.h"
+#include <dtCore/system.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/xercesutils.h>
+#include <dtUtil/xercesparser.h>
 
 using namespace dtHLA;
 XERCES_CPP_NAMESPACE_USE
@@ -182,7 +182,8 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    mObjectHandleGhostDataMap.clear();
    mNewlyDiscoveredObjects.clear();
    mObjectsToUpdate.clear();
-   
+
+   //This causes a crash on exit with some versions of RTI-s. Still there on RTI-s D11A.
    mRTIAmbassador.joinFederationExecution(
       federateName.c_str(), executionName.c_str(), this     
    );
