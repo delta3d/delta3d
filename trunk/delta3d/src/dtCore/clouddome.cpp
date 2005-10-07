@@ -14,7 +14,7 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(CloudDome)
 
 // Constructor without volume texture file
-CloudDome::CloudDadsfaome( int   octaves,
+CloudDome::CloudDome( int   octaves,
                      int   frequency,
                      float amp,
                      float persistence,
