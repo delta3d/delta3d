@@ -34,6 +34,7 @@ Controls
 B  -  Drop crate (box)
 C  -  Drop radioactive drum (cylinder)
 S  -  Drop a happy sphere (sphere)
+P  -  Pause
 Esc - Exit
 
 Left   Mouse Button - Rotate camera
