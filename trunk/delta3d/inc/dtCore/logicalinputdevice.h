@@ -40,7 +40,7 @@ namespace dtCore
    /**
     * A logical input device.
     */
-   class DT_EXPORT LogicalInputDevice : public InputDevice
+   class DT_CORE_EXPORT LogicalInputDevice : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(LogicalInputDevice)
 
@@ -112,7 +112,7 @@ namespace dtCore
    /**
     * A logical button.
     */
-   class DT_EXPORT LogicalButton : public Button
+   class DT_CORE_EXPORT LogicalButton : public Button
    {
       public:
 
@@ -155,7 +155,7 @@ namespace dtCore
    /**
     * A mapping for a logical button.
     */
-   class DT_EXPORT ButtonMapping : public osg::Referenced
+   class DT_CORE_EXPORT ButtonMapping : public osg::Referenced
    {
       friend class LogicalButton;
 
@@ -193,7 +193,7 @@ namespace dtCore
    /**
     * Maps a button to a logical button.
     */
-   class DT_EXPORT ButtonToButton : public ButtonMapping,
+   class DT_CORE_EXPORT ButtonToButton : public ButtonMapping,
                                     public ButtonListener
    {
       public:
@@ -272,7 +272,7 @@ namespace dtCore
    /**
     * A logical axis.
     */
-   class DT_EXPORT LogicalAxis : public Axis
+   class DT_CORE_EXPORT LogicalAxis : public Axis
    {
       public:
 
@@ -315,7 +315,7 @@ namespace dtCore
    /**
     * A mapping for a logical axis.
     */
-   class DT_EXPORT AxisMapping : public osg::Referenced
+   class DT_CORE_EXPORT AxisMapping : public osg::Referenced
    {
       friend class LogicalAxis;
 
@@ -353,7 +353,7 @@ namespace dtCore
    /**
     * Maps an axis to a logical axis with an optional linear transformation.
     */
-   class DT_EXPORT AxisToAxis : public AxisMapping,
+   class DT_CORE_EXPORT AxisToAxis : public AxisMapping,
                                 public AxisListener
    {
       public:
@@ -466,7 +466,7 @@ namespace dtCore
     * axis.  The value of the target axis will correspond
     * to the value of the last source axis updated.
     */
-   class DT_EXPORT AxesToAxis : public AxisMapping,
+   class DT_CORE_EXPORT AxesToAxis : public AxisMapping,
                                 public AxisListener
    {
       public:
@@ -565,7 +565,7 @@ namespace dtCore
    /**
     * Maps two buttons to a logical axis.
     */
-   class DT_EXPORT ButtonsToAxis : public AxisMapping,
+   class DT_CORE_EXPORT ButtonsToAxis : public AxisMapping,
                                    public ButtonListener
    {
       public:
@@ -709,7 +709,7 @@ namespace dtCore
     * target axis is equal to the value of the source axis when the
     * source button is pressed (the value is zero otherwise).
     */
-   class DT_EXPORT ButtonAxisToAxis : public AxisMapping,
+   class DT_CORE_EXPORT ButtonAxisToAxis : public AxisMapping,
                                       public ButtonListener,
                                       public AxisListener
    {

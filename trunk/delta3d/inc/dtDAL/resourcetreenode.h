@@ -30,7 +30,7 @@ namespace dtDAL {
      * @class ResourceTreeNode
      * @brief A tree node used when indexing resources.
      */
-    class DT_EXPORT ResourceTreeNode {
+    class DT_DAL_EXPORT ResourceTreeNode {
     public:
         ResourceTreeNode(){}
 

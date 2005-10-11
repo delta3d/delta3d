@@ -46,7 +46,7 @@ namespace dtABC
      * app->Config();
      * app->Run();
      */
-   class DT_EXPORT Application : public dtABC::BaseABC
+   class DT_ABC_EXPORT Application : public dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Application)
 

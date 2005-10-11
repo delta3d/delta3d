@@ -11,7 +11,7 @@ namespace dtGUI
      * for Events triggered by the CEGUI Windows in a GUI scene.
      * \sa dtGUI::ScriptModule.
      */
-   class DT_EXPORT BaseScriptModule : public CEGUI::ScriptModule
+   class DT_GUI_EXPORT BaseScriptModule : public CEGUI::ScriptModule
    {
    public:
       BaseScriptModule() {}

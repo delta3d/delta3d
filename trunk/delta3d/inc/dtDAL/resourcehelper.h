@@ -42,7 +42,7 @@ namespace dtDAL
      * @class ResourceTypeHandler
      * @brief pure virtual class that handles a kind of resource.
      */
-    class DT_EXPORT ResourceTypeHandler: public osg::Referenced
+    class DT_DAL_EXPORT ResourceTypeHandler: public osg::Referenced
     {
     public:
         ResourceTypeHandler() {}
@@ -129,7 +129,7 @@ namespace dtDAL
      * @class ResourceHelper
      * @brief This class is a registry of file types with handlers to allow file type specifice resource handling.
      */
-    class DT_EXPORT ResourceHelper: public osg::Referenced
+    class DT_DAL_EXPORT ResourceHelper: public osg::Referenced
     {
     public:
         ResourceHelper();

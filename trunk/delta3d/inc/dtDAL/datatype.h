@@ -30,7 +30,7 @@ namespace dtDAL
      * The DataType class is an enumeration representing the different datatypes
      * that are supported by the Delta3D engine.
      */
-    class DT_EXPORT DataType : public dtUtil::Enumeration
+    class DT_DAL_EXPORT DataType : public dtUtil::Enumeration
     {
         DECLARE_ENUM(DataType);
     public:

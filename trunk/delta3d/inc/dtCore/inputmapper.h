@@ -43,7 +43,7 @@ namespace dtCore
     * Acquires mappings for logical input device features by listening to
     * a set of devices.
     */
-   class DT_EXPORT InputMapper : public Base,
+   class DT_CORE_EXPORT InputMapper : public Base,
                                  public ButtonListener,
                                  public AxisListener
    {
@@ -187,7 +187,7 @@ namespace dtCore
    /**
     * The input mapper callback interface.
     */
-   class DT_EXPORT InputMapperCallback
+   class DT_CORE_EXPORT InputMapperCallback
    {
       public:
 

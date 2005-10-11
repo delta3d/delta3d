@@ -65,7 +65,7 @@ namespace dtCore
 \endcode
 */
 
-   class DT_EXPORT Isector : public Transformable  
+   class DT_CORE_EXPORT Isector : public Transformable  
    {
    public:
 

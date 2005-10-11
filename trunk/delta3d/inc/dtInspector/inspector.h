@@ -45,7 +45,7 @@ namespace dtInspector
    * NOTE: any instantiated classes that change values during runtime will not
    * reflect their new values on the Inspector.
    */
-   class DT_EXPORT Inspector : public OpenThreads::Thread
+   class DT_INSPECTOR_EXPORT Inspector : public OpenThreads::Thread
    {
    public:  
       Inspector()

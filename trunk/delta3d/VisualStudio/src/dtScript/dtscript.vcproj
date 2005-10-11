@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG;DT_SCRIPT_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -74,7 +74,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_NOAUTOLIBMSG;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_NOAUTOLIBMSG;DT_SCRIPT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"

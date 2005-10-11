@@ -22,8 +22,8 @@
 #define __plugin_export__h
 
 /**
- * This is modeled from the DT_EXPORT macro found in dtCore/export.h.  
- * We define another due to conflicts with using the DT_EXPORT while 
+ * This is modeled from the DT_CORE_EXPORT macro found in dtCore/export.h.  
+ * We define another due to conflicts with using the DT_CORE_EXPORT while 
  * trying to import Delta3D symbols.  The DT_PLUGIN macro should be used
  * in front of any classes that are to be exported from an ActorRegistryPlugin
  * library or any other Delta3D plugin.

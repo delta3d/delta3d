@@ -17,7 +17,7 @@ namespace dtCore
     *  overwritten if the default behavior doesn't support the needs of the derive
     *  class.
     */
-   class DT_EXPORT Loadable
+   class DT_CORE_EXPORT Loadable
    {
    public:
       ///Load a file from disk

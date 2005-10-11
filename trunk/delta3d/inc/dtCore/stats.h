@@ -38,7 +38,7 @@ namespace dtCore
    /** This class is used internally by the Scene to gather and report 
      * statistics on the frame rate, primitive totals, etc.
      */
-   class DT_EXPORT Stats
+   class DT_CORE_EXPORT Stats
    {
    public:
       Stats(osgUtil::SceneView *sv);

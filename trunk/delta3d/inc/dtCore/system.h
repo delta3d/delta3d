@@ -42,7 +42,7 @@ namespace dtCore
      * @see AddListener()
      * @see OnMessage()
      */
-   class DT_EXPORT System : public Base 
+   class DT_CORE_EXPORT System : public Base 
    {
    public:
 

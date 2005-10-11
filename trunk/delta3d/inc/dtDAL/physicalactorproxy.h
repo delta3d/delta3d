@@ -32,7 +32,7 @@ namespace dtDAL
     /**
      * This proxy wraps the Physical Delta3D object.
      */
-    class DT_EXPORT PhysicalActorProxy : public dtDAL::TransformableActorProxy
+    class DT_DAL_EXPORT PhysicalActorProxy : public dtDAL::TransformableActorProxy
     {
     public:
 
@@ -42,7 +42,7 @@ namespace dtDAL
          * proxy such as radius, length, etc. affect the current type
          * of collision geometry.
          */
-        class DT_EXPORT CollisionGeomType : public dtUtil::Enumeration
+        class DT_DAL_EXPORT CollisionGeomType : public dtUtil::Enumeration
         {
             DECLARE_ENUM(CollisionGeomType);
         public:

@@ -41,7 +41,7 @@ namespace dtDAL
      *      Categories of an actor type are represented in a hierarchial dot
      *      notation.  For example, vehicles.trucks.BouncyTruck
      */
-    class DT_EXPORT ActorType : public osg::Referenced 
+    class DT_DAL_EXPORT ActorType : public osg::Referenced 
     {
     public:
         /**

@@ -38,7 +38,7 @@ namespace dtCore
 #endif
 
    /** Time stamper. */
-   class DT_EXPORT Timer : public osg::Timer
+   class DT_CORE_EXPORT Timer : public osg::Timer
    {
 
    public:

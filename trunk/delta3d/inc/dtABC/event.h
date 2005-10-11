@@ -13,7 +13,7 @@ namespace dtABC
    *  This class is meant to be derived from, to see a complete
    *  usage example, goto: testStateManager
    */
-   class DT_EXPORT Event : public osg::Referenced
+   class DT_ABC_EXPORT Event : public osg::Referenced
    {
       public:
 

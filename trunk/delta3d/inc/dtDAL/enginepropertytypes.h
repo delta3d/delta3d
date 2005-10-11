@@ -39,7 +39,7 @@ namespace dtDAL
      */
     ////////////////////////////////////////////////////////////////////////////
     typedef dtCore::DeltaDrawable Actor;
-    class DT_EXPORT ActorActorProperty : public GenericActorProperty<Actor*,Actor*>
+    class DT_DAL_EXPORT ActorActorProperty : public GenericActorProperty<Actor*,Actor*>
     {
     public:
         ActorActorProperty(const std::string &name, const std::string &label,
@@ -73,7 +73,7 @@ namespace dtDAL
      * This actor property represents a resource
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT ResourceActorProperty : public ActorProperty
+    class DT_DAL_EXPORT ResourceActorProperty : public ActorProperty
     {
     public:
         ResourceActorProperty(ActorProxy &actorProxy,
@@ -152,7 +152,7 @@ namespace dtDAL
      * This actor property represents a floating point data member.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT FloatActorProperty : public GenericActorProperty<float,float>
+    class DT_DAL_EXPORT FloatActorProperty : public GenericActorProperty<float,float>
     {
     public:
         FloatActorProperty(const std::string &name, const std::string &label,
@@ -185,7 +185,7 @@ namespace dtDAL
     * This actor property represents a 64-bit precision decimal data member.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT DoubleActorProperty : public GenericActorProperty<double,double>
+    class DT_DAL_EXPORT DoubleActorProperty : public GenericActorProperty<double,double>
     {
     public:
         DoubleActorProperty(const std::string &name, const std::string &label,
@@ -218,7 +218,7 @@ namespace dtDAL
      * This actor property represents a signed integer data member.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT IntActorProperty : public GenericActorProperty<int,int>
+    class DT_DAL_EXPORT IntActorProperty : public GenericActorProperty<int,int>
     {
     public:
         IntActorProperty(const std::string &name, const std::string &label,
@@ -251,7 +251,7 @@ namespace dtDAL
     * This actor property represents a signed long integer data member.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT LongActorProperty : public GenericActorProperty<long,long>
+    class DT_DAL_EXPORT LongActorProperty : public GenericActorProperty<long,long>
     {
     public:
         LongActorProperty(const std::string &name, const std::string &label,
@@ -286,7 +286,7 @@ namespace dtDAL
      * maximum length.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT StringActorProperty : public GenericActorProperty<const std::string &,
+    class DT_DAL_EXPORT StringActorProperty : public GenericActorProperty<const std::string &,
         std::string>
     {
     public:
@@ -355,7 +355,7 @@ namespace dtDAL
      * This actor property represents a boolean data member.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT BooleanActorProperty : public GenericActorProperty<bool,bool>
+    class DT_DAL_EXPORT BooleanActorProperty : public GenericActorProperty<bool,bool>
     {
     public:
         BooleanActorProperty(const std::string &name, const std::string &label,
@@ -390,7 +390,7 @@ namespace dtDAL
      * @note This abstract class exists so that all enumerations can be cast to this and worked with generically.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT AbstractEnumActorProperty
+    class DT_DAL_EXPORT AbstractEnumActorProperty
     {
     public:
 
@@ -509,7 +509,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 2 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec2ActorProperty :
+    class DT_DAL_EXPORT Vec2ActorProperty :
         public GenericActorProperty<const osg::Vec2&,osg::Vec2>
     {
     public:
@@ -546,7 +546,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 2 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec2fActorProperty :
+    class DT_DAL_EXPORT Vec2fActorProperty :
         public GenericActorProperty<const osg::Vec2f&,osg::Vec2f>
     {
     public:
@@ -583,7 +583,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 2 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec2dActorProperty :
+    class DT_DAL_EXPORT Vec2dActorProperty :
         public GenericActorProperty<const osg::Vec2d&,osg::Vec2d>
     {
     public:
@@ -620,7 +620,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 3 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec3ActorProperty :
+    class DT_DAL_EXPORT Vec3ActorProperty :
         public GenericActorProperty<const osg::Vec3&,osg::Vec3>
     {
     public:
@@ -656,7 +656,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 3 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec3fActorProperty :
+    class DT_DAL_EXPORT Vec3fActorProperty :
         public GenericActorProperty<const osg::Vec3f&,osg::Vec3f>
     {
     public:
@@ -692,7 +692,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 3 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec3dActorProperty :
+    class DT_DAL_EXPORT Vec3dActorProperty :
         public GenericActorProperty<const osg::Vec3d&,osg::Vec3d>
     {
     public:
@@ -728,7 +728,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 4 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec4ActorProperty :
+    class DT_DAL_EXPORT Vec4ActorProperty :
         public GenericActorProperty<const osg::Vec4&,osg::Vec4>
     {
     public:
@@ -765,7 +765,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 4 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec4fActorProperty :
+    class DT_DAL_EXPORT Vec4fActorProperty :
         public GenericActorProperty<const osg::Vec4f&,osg::Vec4f>
     {
     public:
@@ -802,7 +802,7 @@ namespace dtDAL
     * This actor property represents a vector data member with 4 values.
     */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT Vec4dActorProperty :
+    class DT_DAL_EXPORT Vec4dActorProperty :
         public GenericActorProperty<const osg::Vec4d&,osg::Vec4d>
     {
     public:
@@ -839,7 +839,7 @@ namespace dtDAL
      * This actor property represents a color data member with 4 floats.
      */
     ////////////////////////////////////////////////////////////////////////////
-    class DT_EXPORT ColorRgbaActorProperty : public Vec4ActorProperty
+    class DT_DAL_EXPORT ColorRgbaActorProperty : public Vec4ActorProperty
     {
     public:
         ColorRgbaActorProperty(const std::string &name, const std::string &label,

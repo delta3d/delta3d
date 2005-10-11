@@ -46,7 +46,7 @@ namespace dtCore
    /**
     * A motion model that simulates the action of walking or driving.
     */
-   class DT_EXPORT FPSMotionModel : public MotionModel
+   class DT_CORE_EXPORT FPSMotionModel : public MotionModel
    {
       DECLARE_MANAGEMENT_LAYER(FPSMotionModel)
 

@@ -41,7 +41,7 @@ namespace dtDAL
 	 * @see ActorType
 	 * @see ActorProxy
 	 */
-	class DT_EXPORT LibraryManager : public osg::Referenced 
+	class DT_DAL_EXPORT LibraryManager : public osg::Referenced 
     {
 	private:
 		/**

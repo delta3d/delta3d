@@ -32,7 +32,7 @@
 namespace dtCore
 {
    ///Conforms to OSF DCE 1.1
-   class DT_EXPORT UniqueId
+   class DT_CORE_EXPORT UniqueId
    {
       public:
 

@@ -46,7 +46,7 @@ namespace dtCore
     *
     * @see Scene::AddDrawable
     */
-   class DT_EXPORT DeltaDrawable : public Base
+   class DT_CORE_EXPORT DeltaDrawable : public Base
    {
       DECLARE_MANAGEMENT_LAYER(DeltaDrawable)
 

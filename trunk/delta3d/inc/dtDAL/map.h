@@ -41,7 +41,7 @@ namespace dtDAL
      * @note you may not create a new map.  Call Project::createMap(...)
      * @see Project
      */
-    class DT_EXPORT Map : public osg::Referenced 
+    class DT_DAL_EXPORT Map : public osg::Referenced 
     {
     public:
         static const std::string MAP_FILE_EXTENSION;

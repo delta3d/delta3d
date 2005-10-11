@@ -45,7 +45,7 @@ namespace dtChar
    /**
     * An animated character.
     */
-   class DT_EXPORT Character : public dtCore::Transformable, public dtCore::Loadable
+   class DT_CHAR_EXPORT Character : public dtCore::Transformable, public dtCore::Loadable
    {
       DECLARE_MANAGEMENT_LAYER(Character)
 

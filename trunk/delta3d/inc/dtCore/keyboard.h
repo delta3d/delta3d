@@ -41,7 +41,7 @@ namespace dtCore
    /**
     * The interface to the keyboard
     */
-   class DT_EXPORT Keyboard : public InputDevice
+   class DT_CORE_EXPORT Keyboard : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(Keyboard)
 
@@ -106,7 +106,7 @@ namespace dtCore
    /**
     * An interface for objects interested in receiving keyboard events.
     */
-   class DT_EXPORT KeyboardListener
+   class DT_CORE_EXPORT KeyboardListener
    {
       public:
 

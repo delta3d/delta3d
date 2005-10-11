@@ -46,7 +46,7 @@ namespace dtCore
    /**
    *  Scene: This class encapsulates the root of the delta scene graph
    */
-   class DT_EXPORT Scene : public Base  
+   class DT_CORE_EXPORT Scene : public Base  
    {
       DECLARE_MANAGEMENT_LAYER(Scene)
 
@@ -107,7 +107,7 @@ namespace dtCore
       virtual void OnMessage(MessageData *data);
       
       ///The user data associated with "collision" messages
-      struct DT_EXPORT CollisionData
+      struct DT_CORE_EXPORT CollisionData
       {
          Physical* mBodies[2]; ///<The bodies colliding
          osg::Vec3 mLocation; ///<The collision location

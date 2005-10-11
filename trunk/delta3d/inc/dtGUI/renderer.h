@@ -19,7 +19,7 @@
 namespace dtGUI
 {
    ///Simple CEGui rendering class based on the CEGUI::OpenGLRender class
-   class DT_EXPORT Renderer : public CEGUI::OpenGLRenderer
+   class DT_GUI_EXPORT Renderer : public CEGUI::OpenGLRenderer
    {
    public:
       Renderer(unsigned int max_quads, int width, int height);

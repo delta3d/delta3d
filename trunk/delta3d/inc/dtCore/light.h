@@ -37,7 +37,7 @@ namespace dtCore
    * An abstract class declaring the base functionality for a vertex light.
    * It's properties are thin wrappers of OpenGL light calls.
    */
-   class DT_EXPORT Light : virtual public DeltaDrawable
+   class DT_CORE_EXPORT Light : virtual public DeltaDrawable
    {
 
       DECLARE_MANAGEMENT_LAYER(Light)

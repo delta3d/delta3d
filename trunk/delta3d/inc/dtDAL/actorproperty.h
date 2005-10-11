@@ -48,7 +48,7 @@ namespace dtDAL
      *  @see DataType
      *  @see GenericActorProperty
      */
-    class DT_EXPORT ActorProperty : public osg::Referenced
+    class DT_DAL_EXPORT ActorProperty : public osg::Referenced
     {
     public:
         /**

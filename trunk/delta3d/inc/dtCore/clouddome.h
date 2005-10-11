@@ -44,7 +44,7 @@ namespace dtCore
    * CloudDome:  This class can be used to generate procedural cloud cover
    * 
    */
-	class DT_EXPORT CloudDome : public dtCore::EnvEffect
+	class DT_CORE_EXPORT CloudDome : public dtCore::EnvEffect
 	{
 
 	public:

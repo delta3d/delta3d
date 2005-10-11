@@ -54,7 +54,7 @@ namespace dtCore
     * passing a NULL into the SetCollision*() methods.
     *
     */
-   class DT_EXPORT Physical : public Transformable
+   class DT_CORE_EXPORT Physical : public Transformable
    {
        DECLARE_MANAGEMENT_LAYER(Physical)
 

@@ -59,7 +59,7 @@ namespace dtDAL
      * @name FileUtils
      * @brief Singleton class implementing basic file operations.
      */
-    class DT_EXPORT FileUtils : public osg::Referenced
+    class DT_DAL_EXPORT FileUtils : public osg::Referenced
     {
     public:
 

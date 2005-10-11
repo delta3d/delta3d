@@ -29,7 +29,7 @@
 namespace dtCore
 {
    ///A base class for all Environmental Effects
-   class DT_EXPORT EnvEffect : public dtCore::DeltaDrawable
+   class DT_CORE_EXPORT EnvEffect : public dtCore::DeltaDrawable
    {
    public:
       DECLARE_MANAGEMENT_LAYER(EnvEffect)

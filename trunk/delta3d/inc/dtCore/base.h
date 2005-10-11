@@ -56,7 +56,7 @@ namespace dtCore
      * RefPtr<Base> mPointerToMyBase;
      * \endcode
      */
-   class DT_EXPORT Base : public sigslot::has_slots<>, public osg::Referenced
+   class DT_CORE_EXPORT Base : public sigslot::has_slots<>, public osg::Referenced
    {
       DECLARE_MANAGEMENT_LAYER(Base)
 
@@ -64,7 +64,7 @@ namespace dtCore
       public:
 
          ///Data that gets passed through SendMessage
-         struct DT_EXPORT MessageData{
+         struct DT_CORE_EXPORT MessageData{
             std::string message;   ///<Textual message
             Base *sender;     ///<Pointer to the sender
             void *userData;   ///<Void pointer to user data

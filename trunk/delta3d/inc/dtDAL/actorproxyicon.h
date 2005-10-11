@@ -45,7 +45,7 @@ namespace osg
 namespace dtDAL
 {
 
-    class DT_EXPORT ActorProxyIcon : public osg::Referenced
+    class DT_DAL_EXPORT ActorProxyIcon : public osg::Referenced
     {
     public:
 
@@ -93,7 +93,7 @@ namespace dtDAL
          * This enumeration enumerates the different types of billboard icons that are
          * supported by default by the level editor.
          */
-        class DT_EXPORT IconType : public dtUtil::Enumeration
+        class DT_DAL_EXPORT IconType : public dtUtil::Enumeration
         {
             DECLARE_ENUM(IconType);
         public:

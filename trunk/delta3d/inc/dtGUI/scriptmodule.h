@@ -17,7 +17,7 @@ namespace dtGUI
     * Create an instance of this class, and provide it as a parameter during construction of a CEUIDrawable instance.
     * Add new handlers with the AddCallback function.
     */
-   class DT_EXPORT ScriptModule : public BaseScriptModule
+   class DT_GUI_EXPORT ScriptModule : public BaseScriptModule
    {
    public:
       typedef void (*STATIC_FUNCTION)(const CEGUI::EventArgs &e);

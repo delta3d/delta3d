@@ -47,7 +47,7 @@ namespace dtCore
     *    myCamera->SetTransform( &offset, Transformable::REL_CS );
     *  \endcode
     */
-   class DT_EXPORT Tripod : public Base
+   class DT_CORE_EXPORT Tripod : public Base
    {
    public:
 

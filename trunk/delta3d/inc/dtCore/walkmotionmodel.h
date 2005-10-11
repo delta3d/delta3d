@@ -43,7 +43,7 @@ namespace dtCore
    /**
     * A motion model that simulates the action of walking or driving.
     */
-   class DT_EXPORT WalkMotionModel : public MotionModel
+   class DT_CORE_EXPORT WalkMotionModel : public MotionModel
    {
       DECLARE_MANAGEMENT_LAYER(WalkMotionModel)
 

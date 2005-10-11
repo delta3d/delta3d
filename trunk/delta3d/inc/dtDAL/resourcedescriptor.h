@@ -29,7 +29,7 @@
 namespace dtDAL 
 {
 
-    class DT_EXPORT ResourceDescriptor 
+    class DT_DAL_EXPORT ResourceDescriptor 
     {
     public:
         static const char DESCRIPTOR_SEPARATOR = ':';

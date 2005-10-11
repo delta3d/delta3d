@@ -54,7 +54,7 @@ namespace dtDAL
     * modify a project including the maps and resource content.  This class is a singleton.  Call
     * the getInstance method for the single instance.
     */
-  class DT_EXPORT Project : public osg::Referenced
+  class DT_DAL_EXPORT Project : public osg::Referenced
   {
   private:
     static osg::ref_ptr<Project> mInstance; //< the instance of the project.

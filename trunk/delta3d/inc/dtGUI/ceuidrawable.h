@@ -32,7 +32,7 @@ namespace dtGUI
     *  CEGUI::Windows and adjust their properties.
     * 
     */
-   class DT_EXPORT CEUIDrawable : public dtCore::DeltaDrawable,
+   class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable,
                                   public dtCore::MouseListener,
                                   public dtCore::KeyboardListener
    {

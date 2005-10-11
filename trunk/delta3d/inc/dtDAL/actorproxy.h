@@ -57,7 +57,7 @@ namespace dtDAL
      *      interface for accessing actor objects.  However, the actor proxy
      *      is the only way to expose actors to the Delta3D Level Editor.
      */
-    class DT_EXPORT ActorProxy : public osg::Referenced
+    class DT_DAL_EXPORT ActorProxy : public osg::Referenced
     {
     public:
 
@@ -66,7 +66,7 @@ namespace dtDAL
          * be rendered in the level editor.  Based on the state of an actor
          * proxy, it can choose to represent itself in these different ways.
          */
-        class DT_EXPORT RenderMode : public dtUtil::Enumeration
+        class DT_DAL_EXPORT RenderMode : public dtUtil::Enumeration
         {
             DECLARE_ENUM(RenderMode);
         public:

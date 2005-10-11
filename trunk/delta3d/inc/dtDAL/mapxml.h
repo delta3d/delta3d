@@ -93,7 +93,7 @@ namespace dtDAL
      * changes the value of these.  They are assumed to be allocated by the memory allocator
      * used internally to xerces and changing them will likely cause memory errors.</p>
      */
-    class DT_EXPORT MapXMLConstants {
+    class DT_DAL_EXPORT MapXMLConstants {
     public:
 
         static const char* const EDITOR_VERSION;
@@ -179,7 +179,7 @@ namespace dtDAL
      * @class MapContentHandler
      * @brief The SAX2 content handler for loading maps.
      */
-    class DT_EXPORT MapContentHandler: public ContentHandler, public ErrorHandler,
+    class DT_DAL_EXPORT MapContentHandler: public ContentHandler, public ErrorHandler,
         public EntityResolver, public osg::Referenced
     {
     public:
@@ -381,7 +381,7 @@ namespace dtDAL
      * @class MapParser
      * @brief front end class for converting an XML map into a map instance.
      */
-    class DT_EXPORT MapParser: public osg::Referenced
+    class DT_DAL_EXPORT MapParser: public osg::Referenced
     {
     public:
 
@@ -431,7 +431,7 @@ namespace dtDAL
      * @class MapWriter
      * @brief Writes a map out to an XML file
      */
-    class DT_EXPORT MapWriter: public osg::Referenced
+    class DT_DAL_EXPORT MapWriter: public osg::Referenced
     {
     public:
         MapWriter();

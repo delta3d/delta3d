@@ -43,7 +43,7 @@ namespace dtCore
    * and has physical properties.
    *
    */
-   class DT_EXPORT Object : public Physical, public Loadable
+   class DT_CORE_EXPORT Object : public Physical, public Loadable
    {
       DECLARE_MANAGEMENT_LAYER(Object)
          
