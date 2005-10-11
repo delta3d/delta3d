@@ -37,7 +37,7 @@
 
 namespace dtDAL
 {
-    class DT_EXPORT DefaultResourceTypeHandler: public ResourceTypeHandler
+    class DT_DAL_EXPORT DefaultResourceTypeHandler: public ResourceTypeHandler
     {
     public:
         DefaultResourceTypeHandler(DataType& dataType, const std::string& description, const std::map<std::string, std::string>& fileFilters):

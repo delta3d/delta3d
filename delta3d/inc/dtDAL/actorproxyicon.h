@@ -23,7 +23,7 @@
 
 #include <map>
 #include <dtUtil/enumeration.h>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include <dtCore/deltadrawable.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>

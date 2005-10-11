@@ -39,21 +39,25 @@ namespace dtGUI
 #undef _AUTOLIBNAME
 
 #if defined(_DEBUG)
-   #ifndef DT_LIBRARY  
+   #ifndef DT_GUI_LIBRARY  
       #define  _AUTOLIBNAME "dtGUId.lib"
    #endif
 #else
-   #ifndef DT_LIBRARY
+   #ifndef DT_GUI_LIBRARY
       #define _AUTOLIBNAME "dtGUI.lib"
    #endif
 #endif
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
+#ifdef DT_GUI_LIBRARY
    #pragma message( "Will automatically link with " _AUTOLIBNAME )
 #endif
+#endif
 
-#pragma comment(lib, _AUTOLIBNAME)
+#ifdef DT_GUI_LIBRARY
+#   pragma comment(lib, _AUTOLIBNAME)
+#endif
 
 #endif //win32
 

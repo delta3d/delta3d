@@ -220,6 +220,9 @@
 				RelativePath="..\..\..\inc\dtDAL\exceptionenum.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtDAL\export.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtDAL\fileutils.h">
 			</File>
 			<File

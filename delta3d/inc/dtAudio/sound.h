@@ -25,8 +25,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/transformable.h"
-#include "dtUtil/deprecationmgr.h"
+#include <dtCore/transformable.h>
+#include <dtUtil/deprecationmgr.h>
+#include <dtAudio/export.h>
 
 #include <osg/Vec3>
 
@@ -93,7 +94,7 @@ namespace dtAudio
     * may be working.  An application was not developed to explicitly
     * test these functions due to lack of time.
     */
-   class DT_EXPORT Sound : public dtCore::Transformable
+   class DT_AUDIO_EXPORT Sound : public dtCore::Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Sound)
    public:

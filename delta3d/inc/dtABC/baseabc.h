@@ -23,13 +23,13 @@
 
 #include <string>
 
-#include "dtCore/keyboard.h"
-#include "dtCore/mouse.h"
-#include "dtCore/deltawin.h"
-#include "dtCore/camera.h"
-#include "dtCore/system.h"
-#include "dtCore/deltadrawable.h"
-
+#include <dtABC/export.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/camera.h>
+#include <dtCore/system.h>
+#include <dtCore/deltadrawable.h>
 
 namespace   dtABC
 {

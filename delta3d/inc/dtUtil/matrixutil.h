@@ -26,7 +26,7 @@
 #include "osg/Matrix"
 #include "osg/Vec3"
 #include "osg/Vec4"
-#include "dtCore/export.h"
+#include "dtUtil/export.h"
 
 namespace dtUtil
 {
@@ -35,7 +35,7 @@ namespace dtUtil
    *
    */
 
-   class DT_EXPORT MatrixUtil
+   class DT_UTIL_EXPORT MatrixUtil
    {
    public:
 

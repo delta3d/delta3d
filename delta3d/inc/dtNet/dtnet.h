@@ -42,7 +42,7 @@ namespace dtNet
 
 #if defined(_DEBUG)
 
-   #ifndef DT_LIBRARY  
+   #ifndef DT_NET_LIBRARY  
       #define _AUTOLIBNAME1 "dtNetD.lib"
    #endif
 
@@ -50,7 +50,7 @@ namespace dtNet
    #define _AUTOLIBNAME3 "gned.lib"
 #else 
 
-   #ifndef DT_LIBRARY  
+   #ifndef DT_NET_LIBRARY  
       #define _AUTOLIBNAME1 "dtNet.lib"
    #endif
 
@@ -60,7 +60,7 @@ namespace dtNet
 
 #ifndef _NOAUTOLIBMSG
 
-   #ifndef DT_LIBRARY
+   #ifndef DT_NET_LIBRARY
       #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
    #endif
 
@@ -68,7 +68,7 @@ namespace dtNet
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
 
-#ifndef DT_LIBRARY
+#ifndef DT_NET_LIBRARY
    #pragma  comment( lib, _AUTOLIBNAME1 )
 #endif
 

@@ -4,6 +4,7 @@
 
 #include <dtUtil/enumeration.h>
 #include <dtUtil/exception.h>
+#include <dtDAL/export.h>
 
 /*
 * Delta3D Open Source Game and Simulation Engine

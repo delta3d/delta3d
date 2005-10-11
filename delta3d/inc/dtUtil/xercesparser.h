@@ -26,7 +26,7 @@
 
 #include <string>
 #include <xercesc/sax2/ContentHandler.hpp>
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 
 namespace dtUtil
 {
@@ -35,7 +35,7 @@ namespace dtUtil
      * must provide a Xerces ContentHandler instance, and the
      * XML data file to be parsed.
      */
-   class DT_EXPORT XercesParser
+   class DT_UTIL_EXPORT XercesParser
    {
    public:
       XercesParser();

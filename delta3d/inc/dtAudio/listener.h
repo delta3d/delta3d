@@ -21,13 +21,11 @@
 #ifndef  DELTA_LISTENER
 #define  DELTA_LISTENER
 
-//#include <dtCore/base.h>
-//#include <dtCore/positionable.h>
-#include "dtCore/transformable.h"
-#include "dtUtil/deprecationmgr.h"
+#include <dtCore/transformable.h>
+#include <dtUtil/deprecationmgr.h>
+#include <dtAudio/export.h>
 
 #include <osg/Vec3>
-
 
 namespace   dtAudio
 {
@@ -54,7 +52,7 @@ namespace   dtAudio
     * manually in scene-space without having to make it a child of another
     * object, but any position updates must then be made manually.
     */
-   class DT_EXPORT Listener :   public  dtCore::Transformable
+   class DT_AUDIO_EXPORT Listener :   public  dtCore::Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Listener)
 

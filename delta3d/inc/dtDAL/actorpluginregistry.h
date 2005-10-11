@@ -24,7 +24,7 @@
 #include <vector>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include <dtUtil/objectfactory.h>
 #include "dtDAL/actortype.h"
 #include "dtDAL/actorproxy.h"

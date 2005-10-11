@@ -215,9 +215,6 @@
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtActors\dtactors.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtActors\engineactorregistry.h">
 			</File>
 			<File

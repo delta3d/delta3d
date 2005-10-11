@@ -25,7 +25,7 @@
 #ifndef DTUTIL_XERCES_ERROR_HANDLER_INC
 #define DTUTIL_XERCES_ERROR_HANDLER_INC
 
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 
 #include <xercesc/sax/ErrorHandler.hpp>       // for base class
 #include <xercesc/sax/SAXParseException.hpp>  // for base class
@@ -37,7 +37,7 @@ namespace dtUtil
      * SAX2XMLReader and set it as the error handler with the parser's 'setErrorHandler' method.
      * This class is used by classes that parse XML files.  It is not needed by client code.
      */
-   class DT_EXPORT XercesErrorHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ErrorHandler
+   class DT_UTIL_EXPORT XercesErrorHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ErrorHandler
    {
    public:
       XercesErrorHandler();

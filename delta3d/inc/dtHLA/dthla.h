@@ -42,7 +42,7 @@ namespace dtHLA
 
 #if defined(_DEBUG)
 
-   #ifndef DT_LIBRARY  
+   #ifndef DT_HLA_LIBRARY  
       #define  _AUTOLIBNAME "dtHLAd.lib"
    #endif
    
@@ -51,7 +51,7 @@ namespace dtHLA
    
 #else
 
-   #ifndef DT_LIBRARY  
+   #ifndef DT_HLA_LIBRARY  
       #define  _AUTOLIBNAME "dtHLA.lib"
    #endif
    
@@ -62,12 +62,17 @@ namespace dtHLA
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
+#ifndef DT_HLA_LIBRARY
 #pragma message( "Will automatically link with " _AUTOLIBNAME )
+#endif // DT_HLA_LIBRARY
 #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #pragma message( "Will automatically link with " _AUTOLIBNAME4 )
 #endif
 
+#ifndef DT_HLA_LIBRARY
 #pragma comment(lib, _AUTOLIBNAME)
+#endif
+
 #pragma comment(lib, _AUTOLIBNAME3)
 #pragma comment(lib, _AUTOLIBNAME4)
 

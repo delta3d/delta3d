@@ -23,7 +23,7 @@
 
 #include <Python.h>
 #include <dtCore/base.h>
-#include <dtCore/export.h>
+#include <dtScript/export.h>
 #include <OpenThreads/Thread>
 
 namespace dtScript

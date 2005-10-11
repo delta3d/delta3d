@@ -25,7 +25,7 @@
 #ifndef _DTUTIL_SERIALIZER_H_
 #define _DTUTIL_SERIALIZER_H_
 
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 #include <xercesc/util/XercesDefs.hpp>
 
 XERCES_CPP_NAMESPACE_BEGIN
@@ -37,7 +37,7 @@ namespace dtUtil
 {
    /** A place to implement functions for serialization.
      */
-   struct DT_EXPORT Serializer
+   struct DT_UTIL_EXPORT Serializer
    {
       /** Creates an XML Node.
         * @param val The important value to be stored.

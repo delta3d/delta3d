@@ -26,7 +26,7 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 
 #include "dtDAL/tree.h"
 #include <dtDAL/exceptionenum.h>

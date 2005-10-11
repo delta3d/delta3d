@@ -34,7 +34,7 @@
 //   class DOMNamedNodeMap;
 //XERCES_CPP_NAMESPACE_END
 
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 
 #include <string>
 #include <vector>                       // for member
@@ -50,14 +50,14 @@ namespace dtUtil
      * @param name the name of the attribute of interest.
      * @param attrs the NamedNodeMap (attributes) to be searched.
      */
-   std::string DT_EXPORT FindAttributeValueFor(const char* name,
+   std::string DT_UTIL_EXPORT FindAttributeValueFor(const char* name,
                                                XERCES_CPP_NAMESPACE_QUALIFIER DOMNamedNodeMap* attrs);
 
    /** \brief Searches a Xerces XML Attribute list for names of interest.
      * Append the search keys with attribute names to search for named attributes.
      * 
      */
-   class DT_EXPORT AttributeSearch
+   class DT_UTIL_EXPORT AttributeSearch
    {
    public:
       typedef std::vector<std::string> SearchKeyVector;

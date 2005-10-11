@@ -27,7 +27,7 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 
 namespace dtUtil 
 {
@@ -72,7 +72,7 @@ namespace dtUtil
      * therefore, any browser should display the log without
      *  any problems.
      */
-    class DT_EXPORT Log : public osg::Referenced 
+    class DT_UTIL_EXPORT Log : public osg::Referenced 
     {
     public:
 

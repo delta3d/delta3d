@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_NOAUTOLIBMSG;DT_NET_LIBRARY"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -64,7 +64,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DT_NET_LIBRARY"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
@@ -129,6 +129,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtNet\dtnet.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtNet\export.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtNet\netmgr.h">

@@ -30,7 +30,7 @@
 #include <vector>
 
 #include <xercesc/util/XercesDefs.hpp>
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 
 XERCES_CPP_NAMESPACE_BEGIN
    class DOMElement;
@@ -42,7 +42,7 @@ namespace dtUtil
 {
    /** A class that manages one XML document.
      */
-   class DT_EXPORT XercesWriter : public osg::Referenced
+   class DT_UTIL_EXPORT XercesWriter : public osg::Referenced
    {
    public:
       XercesWriter();

@@ -26,11 +26,10 @@
 #include <map>
 #include <queue>
 
-#include "dtCore/base.h"
-#include "dtCore/effectmanager.h"
-#include "dtAudio/audiomanager.h"
-
-
+#include <dtCore/base.h>
+#include <dtCore/effectmanager.h>
+#include <dtAudio/audiomanager.h>
+#include <dtAudio/export.h>
 
 // definitions
 #if   !  defined(BIT)
@@ -48,7 +47,7 @@ namespace dtAudio
     * then supply a unique id for an audible effect with the sound-
     * filename.
     */
-   class DT_EXPORT SoundEffectBinder :  public   dtCore::EffectListener, public   dtCore::Base
+   class DT_AUDIO_EXPORT SoundEffectBinder :  public   dtCore::EffectListener, public   dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(SoundEffectBinder)
         

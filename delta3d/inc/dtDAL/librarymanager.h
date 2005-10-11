@@ -22,7 +22,7 @@
 #define __LibraryManager__h
 
 #include <map>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osgDB/DynamicLibrary>
