@@ -32,7 +32,7 @@ namespace dtDAL
 
 
 
-class DT_EXPORT ExceptionEnum : public dtUtil::Enumeration
+class DT_DAL_EXPORT ExceptionEnum : public dtUtil::Enumeration
 {
    DECLARE_ENUM(ExceptionEnum);
 public:

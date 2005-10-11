@@ -34,7 +34,7 @@
 namespace dtCore
 {
    ///A rendered dome that represents the sky
-   class DT_EXPORT SkyDome :  public EnvEffect
+   class DT_CORE_EXPORT SkyDome :  public EnvEffect
    {
       DECLARE_MANAGEMENT_LAYER(SkyDome)
    public:
@@ -62,7 +62,7 @@ namespace dtCore
       osg::Vec3 mBaseColor;
       osg::Geode *mGeode;
 
-      class DT_EXPORT MoveEarthySkyWithEyePointTransform : public osg::Transform
+      class DT_CORE_EXPORT MoveEarthySkyWithEyePointTransform : public osg::Transform
       {
       public:
          float mAzimuth; ///<Rotates the Transform to line up with this amount(deg)

@@ -27,7 +27,7 @@ namespace dtCore
 {
 
    ///Light located an infintie distance from origin, only has direction
-   class DT_EXPORT InfiniteLight : public Light
+   class DT_CORE_EXPORT InfiniteLight : public Light
    {
       DECLARE_MANAGEMENT_LAYER(InfiniteLight)
 

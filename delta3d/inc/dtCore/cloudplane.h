@@ -42,7 +42,7 @@ namespace dtCore
    *                 it derives from EnvEffect
    *
    */
-   class DT_EXPORT CloudPlane : public dtCore::EnvEffect
+   class DT_CORE_EXPORT CloudPlane : public dtCore::EnvEffect
    {
    public:
       

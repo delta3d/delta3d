@@ -65,7 +65,7 @@ namespace dtCore
    /**
     * An effect manager.
     */
-   class DT_EXPORT EffectManager : public DeltaDrawable
+   class DT_CORE_EXPORT EffectManager : public DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(EffectManager)
 
@@ -213,7 +213,7 @@ namespace dtCore
     * An interface for objects interested in the addition and removal
     * of effects from the manager.
     */
-   class DT_EXPORT EffectListener
+   class DT_CORE_EXPORT EffectListener
    {
       public:
       
@@ -246,7 +246,7 @@ namespace dtCore
    /**
     * The base class of all effects.
     */
-   class DT_EXPORT Effect
+   class DT_CORE_EXPORT Effect
    {
       public:
 
@@ -327,7 +327,7 @@ namespace dtCore
    /**
     * A detonation effect.
     */
-   class DT_EXPORT Detonation : public Effect
+   class DT_CORE_EXPORT Detonation : public Effect
    {
       public:
 

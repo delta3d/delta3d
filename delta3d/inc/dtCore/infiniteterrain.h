@@ -43,7 +43,7 @@ namespace dtCore
    /**
     * An infinite terrain surface.
     */
-   class DT_EXPORT InfiniteTerrain : public Physical                                     
+   class DT_CORE_EXPORT InfiniteTerrain : public Physical                                     
    {
       friend class InfiniteTerrainCallback;
       

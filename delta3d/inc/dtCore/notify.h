@@ -46,14 +46,14 @@ namespace dtCore
    
 
    ///Deprecated 8/23/05
-   extern DT_EXPORT void SetNotifyLevel( NotifySeverity severity, 
+   extern DT_CORE_EXPORT void SetNotifyLevel( NotifySeverity severity, 
                                          NotifySeverity osgSeverity = FATAL );
 
    ///Deprecated 8/23/05
-   extern DT_EXPORT void Notify(NotifySeverity level, const char *fmt, ...);
+   extern DT_CORE_EXPORT void Notify(NotifySeverity level, const char *fmt, ...);
 
    ///Deprecated 8/23/05
-   extern DT_EXPORT std::ostream& Notify(const NotifySeverity severity);
+   extern DT_CORE_EXPORT std::ostream& Notify(const NotifySeverity severity);
 
 };
 

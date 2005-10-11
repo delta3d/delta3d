@@ -37,7 +37,7 @@ namespace dtCore
     * A motion model that causes its target to orbit around a point
     * (initially its local origin).
     */
-   class DT_EXPORT OrbitMotionModel : public MotionModel,
+   class DT_CORE_EXPORT OrbitMotionModel : public MotionModel,
                                       public AxisListener
    {
       DECLARE_MANAGEMENT_LAYER(OrbitMotionModel)

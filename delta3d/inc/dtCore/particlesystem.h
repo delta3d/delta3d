@@ -34,7 +34,7 @@ namespace dtCore
    /**
     * A particle system.
     */
-   class DT_EXPORT ParticleSystem : public Transformable, public Loadable
+   class DT_CORE_EXPORT ParticleSystem : public Transformable, public Loadable
    {
       DECLARE_MANAGEMENT_LAYER(ParticleSystem)
 

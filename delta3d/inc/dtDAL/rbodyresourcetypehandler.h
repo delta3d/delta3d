@@ -39,7 +39,7 @@ namespace dtDAL {
      * @class RBodyResourceTypeHandler
      * @brief Resource type handler for importing, removing, and describing Replicant Body resources.
      */
-    class DT_EXPORT RBodyResourceTypeHandler : public ResourceTypeHandler {
+    class DT_DAL_EXPORT RBodyResourceTypeHandler : public ResourceTypeHandler {
     public:
         RBodyResourceTypeHandler();
         virtual ~RBodyResourceTypeHandler();

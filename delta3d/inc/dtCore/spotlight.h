@@ -31,7 +31,7 @@ namespace dtCore
    * By maniupulating the SpotCutoff and SpotExponent you can get lights that
    * look like flashlights, lamps, or even pseudo-laser beams.
    */
-   class DT_EXPORT SpotLight : public PositionalLight
+   class DT_CORE_EXPORT SpotLight : public PositionalLight
    {
       DECLARE_MANAGEMENT_LAYER(SpotLight)
 

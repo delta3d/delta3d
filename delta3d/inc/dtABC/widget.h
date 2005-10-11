@@ -55,7 +55,7 @@ namespace dtABC
     *  This allows the frame cycles to be embedded into a windowing system's
     *  idle event handling loop.
     */
-   class DT_EXPORT Widget :  public   dtABC::BaseABC
+   class DT_ABC_EXPORT Widget :  public   dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Widget)
 
@@ -130,7 +130,7 @@ namespace dtABC
 
 
    ///WinRect struct for passing window dimensions
-   struct DT_EXPORT WinRect
+   struct DT_ABC_EXPORT WinRect
    {
       int   pos_x;                  ///window x position
       int   pos_y;                  ///window y position
@@ -145,7 +145,7 @@ namespace dtABC
 
 
    ///WinData struct for passing window handle and dimensions
-   struct DT_EXPORT WinData   :  public   WinRect
+   struct DT_ABC_EXPORT WinData   :  public   WinRect
    {
       HWND  hwnd;                   ///window handle
 
@@ -158,7 +158,7 @@ namespace dtABC
 
 
    ///MouseEvent struct for passing mouse events
-   struct DT_EXPORT MouseEvent
+   struct DT_ABC_EXPORT MouseEvent
    {
       int   event;                  ///mouse event
       float pos_x;                  ///x coordinate
@@ -191,7 +191,7 @@ namespace dtABC
 
 
    ///KeyboardEvent struct for passing keyboard events
-   struct DT_EXPORT KeyboardEvent
+   struct DT_ABC_EXPORT KeyboardEvent
    {
       int   event;                  ///keyboard event
       int   key;                    ///event key

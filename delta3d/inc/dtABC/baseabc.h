@@ -33,7 +33,7 @@
 
 namespace   dtABC
 {
-   class DT_EXPORT BaseABC  :  public   dtCore::Base,  public   dtCore::KeyboardListener,  public   dtCore::MouseListener
+   class DT_ABC_EXPORT BaseABC  :  public   dtCore::Base,  public   dtCore::KeyboardListener,  public   dtCore::MouseListener
    {
       DECLARE_MANAGEMENT_LAYER(BaseABC)
 

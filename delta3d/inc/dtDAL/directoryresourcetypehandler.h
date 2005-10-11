@@ -29,7 +29,7 @@ namespace dtDAL {
      * @class DirectoryResourceTypeHandler
      * @brief Resource type handler for importing, removing, and describing directory based resources.
      */
-    class DT_EXPORT DirectoryResourceTypeHandler : public ResourceTypeHandler {
+    class DT_DAL_EXPORT DirectoryResourceTypeHandler : public ResourceTypeHandler {
     public:
         DirectoryResourceTypeHandler(const DataType& dataType,
                                      const std::string& masterFile,

@@ -12,7 +12,7 @@ namespace dtABC
    class Event;
 
    ///Base class for allowing the application to switch between different modes such as the splash screen, menu, and the Game.
-   class DT_EXPORT State : public dtCore::Base
+   class DT_ABC_EXPORT State : public dtCore::Base
    {
       public:
 

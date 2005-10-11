@@ -74,7 +74,7 @@ namespace dtABC
      * switching. It derives from dtCore::Base
      * so that it can fire Events.
      */
-   class DT_EXPORT StateManager : public dtCore::Base
+   class DT_ABC_EXPORT StateManager : public dtCore::Base
    {
     private:
        /** \brief An Event class specific to StateManager. 
@@ -92,7 +92,7 @@ namespace dtABC
 
    public:
       /// Event::Type instances to be used by StateManager
-      class DT_EXPORT EventType : public dtABC::Event::Type
+      class DT_ABC_EXPORT EventType : public dtABC::Event::Type
       {
          DECLARE_ENUM(EventType);
       protected:

@@ -29,7 +29,7 @@ namespace dtCore
 {
    ////A class that represents a position and attitude in 3D space
    
-   class DT_EXPORT Transform
+   class DT_CORE_EXPORT Transform
    {
    public:
       

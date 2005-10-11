@@ -42,7 +42,7 @@ namespace dtCore
    /**
     * A tracker device.
     */
-   class DT_EXPORT Tracker : public InputDevice
+   class DT_CORE_EXPORT Tracker : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(Tracker)
 

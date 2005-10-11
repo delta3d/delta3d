@@ -34,7 +34,7 @@ namespace dtCore
    /**
     * A joystick device.
     */
-   class DT_EXPORT Joystick : public InputDevice
+   class DT_CORE_EXPORT Joystick : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(Joystick)
 

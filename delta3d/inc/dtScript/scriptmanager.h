@@ -34,7 +34,7 @@ namespace dtScript
    * kicking off a new thread. Alternatively you can call Run(filename) to load 
    * and execute in one step.
    */
-   class DT_EXPORT ScriptManager :  public dtCore::Base,
+   class DT_SCRIPT_EXPORT ScriptManager :  public dtCore::Base,
                                     public OpenThreads::Thread
 	{
 

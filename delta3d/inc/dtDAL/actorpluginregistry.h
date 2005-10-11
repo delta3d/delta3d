@@ -44,7 +44,7 @@ namespace dtDAL
      * @see ActorType
      * @see ActorProxy
      */
-    class DT_EXPORT ActorPluginRegistry : public osg::Referenced
+    class DT_DAL_EXPORT ActorPluginRegistry : public osg::Referenced
     {
     public:
         /**

@@ -60,7 +60,7 @@ namespace dtCore
     * @param FrameDataT is the type to be stored in memory.
     */
    template<typename RecordableT, typename FrameDataT>
-   class /*DT_EXPORT */Recorder : public dtCore::Base
+   class /*DT_CORE_EXPORT */Recorder : public dtCore::Base
    {
    public:
       typedef RecordableT                                    RecordableType;         /// The type of object of interest.  RecordableTypes know how to create, serialize, and deserialize FrameDataTypes.

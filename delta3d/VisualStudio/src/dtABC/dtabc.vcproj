@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_LIB;DT_ABC_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_LIB;DT_ABC_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"

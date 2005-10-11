@@ -35,7 +35,7 @@ namespace dtCore
    /** This shader is built into the Environment and is used by setting the
      * Environment::FogMode to ADV.
      */
-   class DT_EXPORT SkyDomeShader
+   class DT_CORE_EXPORT SkyDomeShader
    {
    public:
       SkyDomeShader();

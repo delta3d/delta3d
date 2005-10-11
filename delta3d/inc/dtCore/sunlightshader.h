@@ -36,7 +36,7 @@ namespace dtCore
    /** This shader is built into the Environment and is used by setting the
      * Environment::FogMode to ADV.
      */
-   class DT_EXPORT SunlightShader
+   class DT_CORE_EXPORT SunlightShader
    {
    public:
       SunlightShader();
