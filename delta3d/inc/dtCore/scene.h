@@ -35,6 +35,8 @@
 
 #include <dtUtil/deprecationmgr.h>
 
+#include <osgParticle/ParticleSystemUpdater>
+
 namespace dtCore
 {         
    class DeltaDrawable;
@@ -96,12 +98,10 @@ namespace dtCore
       ///Set the gravity vector
       void SetGravity(float x, float y, float z) { SetGravity( osg::Vec3(x,y,z) ); }
 
-     
       ///Get the gravity vector
       void GetGravity(osg::Vec3& vec) const { vec = mGravity; }
       ///Get the gravity vector
       void GetGravity(float* x, float* y, float* z) const { *x = mGravity[0]; *y = mGravity[1]; *z = mGravity[2]; }
-
       
       ///Performs collision detection and updates physics
       virtual void OnMessage(MessageData *data);
@@ -128,8 +128,7 @@ namespace dtCore
       inline double GetPhysicsStepSize() const { return mPhysicsStepSize; }
 
       /// @see GetPhysicsStepSize()
-      inline void SetPhysicsStepSize( double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };
-      
+      inline void SetPhysicsStepSize( double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };    
 
       /// Register a Physical with the Scene
       void RegisterPhysical( Physical *physical );
@@ -183,7 +182,6 @@ namespace dtCore
       */
       void DisablePaging();
 
-
       /**
       *  Set's Slice time allocated for scene cleanup
       *  default 0.0025
@@ -202,6 +200,24 @@ namespace dtCore
       virtual ~Scene();
 
     private:
+
+      class ParticleSystemFreezer : public osg::NodeVisitor
+      {
+         public:
+         
+            ParticleSystemFreezer();
+            void SetFreezing( bool freeze ) { mFreezing = freeze; }
+            bool GetFreezing() const { return mFreezing; }
+             
+            virtual void apply( osg::Node& node );
+         
+         private:
+
+            bool mFreezing;
+
+            typedef std::map< osgParticle::ParticleSystem*, bool > ParticleSystemBoolMap;
+            ParticleSystemBoolMap mPreviousFrozenState;
+      };
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
@@ -235,6 +251,8 @@ namespace dtCore
       unsigned int mFrameNum;
       double mCleanupTime;
       double mTargetFrameRate;
+
+      ParticleSystemFreezer mFreezer;
    };   
 };
 

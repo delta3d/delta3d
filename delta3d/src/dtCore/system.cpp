@@ -16,7 +16,8 @@ System* System::mSystem = NULL;
 
 System::System():
    mRunning(false),
-   mShutdownOnWindowClose(true)
+   mShutdownOnWindowClose(true),
+   mPaused(false)
 {
    mClockTime = 0;
    mLastClockTime = mClock.tick();
@@ -42,10 +43,39 @@ System* System::Instance()
    return mSystem;
 }
 
+void System::SetPause( bool paused )
+{
+   mPaused = paused;
+   
+   if( mPaused )
+   {
+      SendMessage( "pause_start" );
+   }
+   else
+   {
+      SendMessage( "pause_end" );
+   }
+}
+
+bool System::GetPause() const
+{
+   return mPaused;
+}
+
 void System::Frame( const double deltaFrameTime)
 {
-   SendMessage("frame", (void*)&deltaFrameTime);
+   SendMessage( "frame", (void*)&deltaFrameTime );
+   
+   for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
+   {
+      Camera::GetInstance(camIdx)->Frame();
+   }
+}
 
+void System::Pause( const double deltaFrameTime )
+{
+   SendMessage( "pause", (void*)&deltaFrameTime );      
+   
    for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
    {
       Camera::GetInstance(camIdx)->Frame();
@@ -63,9 +93,16 @@ void System::Run()
 	   mClockTime = mClock.tick();
 	   mDt = mClock.delta_s(mLastClockTime, mClockTime);
 
-      PreFrame(mDt);
-      Frame(mDt);
-      PostFrame(mDt);
+      if( mPaused )
+      {
+         Pause(mDt);
+      }
+      else
+      {
+         PreFrame(mDt);
+         Frame(mDt);
+         PostFrame(mDt);
+      }
 
 	   mLastClockTime = mClockTime;
 

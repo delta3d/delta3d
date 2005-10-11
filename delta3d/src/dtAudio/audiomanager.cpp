@@ -293,6 +293,76 @@ AudioManager::OnMessage( MessageData* data )
       return;
    }
 
+   if( data->message == "pause" )
+   {
+      // During a system-wide pause, we want the AudioManager to behave
+      // as normal. In many games, there are sounds that occur during
+      // during a pause, such as background music or GUI clicks. So
+      // here we just call the normal functions all at once.
+      PreFrame( *static_cast<const double*>(data->userData) );
+      Frame( *static_cast<const double*>(data->userData) );
+      PostFrame( *static_cast<const double*>(data->userData) );      
+      return;
+   }
+
+   if( data->message == "pause_start" )
+   {
+      mSoundStateMap.clear();
+      
+      // Pause all sounds that are currently playing, and
+      // save their previous state.
+      for( SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
+      {
+         SoundObj* sob = iter->get();
+
+         if( sob->IsPaused() )
+         {
+            mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, PAUSED ) );
+         }
+         else if( sob->IsPlaying() )
+         {
+            mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, PLAYING ) );
+         }
+         else if( sob->IsStopped() )
+         {
+            mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, STOPPED ) );
+         }
+
+         PauseSound( sob );
+      }
+   }
+
+   if( data->message == "pause_end" )
+   {
+      // Restore all paused sounds to their previous state.
+      for( SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
+      {
+         SoundObj* sob = iter->get();
+         
+         switch( mSoundStateMap[ sob ] )
+         {
+            case PAUSED:
+            {
+               PauseSound( sob );
+               break;
+            }
+            case PLAYING:
+            {
+               PlaySound( sob );
+               break;
+            }
+            case STOPPED:
+            {
+               StopSound( sob );
+               break;
+            }
+            default:
+            {
+               break;
+            }
+         }
+      }
+   }
 
    // sound commands
    if( data->message == Sound::kCommand[Sound::POSITION] )
@@ -1053,7 +1123,147 @@ AudioManager::PostFrame( const double deltaFrameTime )
    }
 }
 
+void
+AudioManager::Pause( const double deltaFrameTime )
+{
+   SRC_LST::iterator             iter(NULL);
+   std::stack<SRC_LST::iterator> stk;
+   ALuint                        src(0L);
+   ALint                         state(AL_STOPPED);
+   ALenum                        err(alGetError());
+   SOB_PTR                       snd(NULL);
 
+   // signal any sources commanded to stop
+   while( mStopQueue.size() )
+   {
+      src   = mStopQueue.front();
+      mStopQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      alSourceStop( src );
+   }
+
+   // start any new sounds and
+   // remove any sounds that have stopped
+   for( iter = mActiveList.begin(); iter != mActiveList.end(); iter++ )
+   {
+      src   = *iter;
+      assert( alIsSource( src ) == AL_TRUE );
+
+      alGetSourcei( src, AL_SOURCE_STATE, &state );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         continue;
+      }
+
+      switch( state )
+      {
+         case  AL_PLAYING:
+         case  AL_PAUSED:
+            // don't need to do anything
+            break;
+         case  AL_STOPPED:
+            {
+               // send stopped message
+               snd   = mSourceMap[src];
+               if( snd.get() )
+               {
+                  SendMessage( Sound::kCommand[Sound::STOP], snd.get() );
+               }
+
+               // save stopped sound iterator for later removal
+               stk.push( iter );
+            }
+            break;
+
+         default:
+            break;
+      }
+   }
+
+   // signal any sources commanded to pause
+   while( mPauseQueue.size() )
+   {
+      src   = mPauseQueue.front();
+      mPauseQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      alGetSourcei( src, AL_SOURCE_STATE, &state );
+      if( ( err = alGetError() ) != AL_NO_ERROR )
+      {
+         Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+            "AudioManager: alGetSourcei(AL_SOURCE_STATE) error %d", err );
+         continue;
+      }
+
+      switch( state )
+      {
+         case  AL_PLAYING:
+            {
+               alSourcePause( src );
+
+               // send pause message
+               snd   = mSourceMap[src];
+               if( snd.get() )
+               {
+                  SendMessage( Sound::kCommand[Sound::PAUSE], snd.get() );
+               }
+            }
+            break;
+
+         case  AL_PAUSED:
+            {
+               alSourcePlay( src );
+
+               // send pause message
+               snd   = mSourceMap[src];
+               if( snd.get() )
+               {
+                  SendMessage( Sound::kCommand[Sound::PLAY], snd.get() );
+               }
+            }
+            break;
+
+         default:
+            break;
+      }
+   }
+
+   // signal any sources commanded to rewind
+   while( mRewindQueue.size() )
+   {
+      src   = mRewindQueue.front();
+      mRewindQueue.pop();
+
+      assert( alIsSource( src ) );
+
+      alSourceRewind( src );
+
+      // send rewind message
+      snd   = mSourceMap[src];
+      if( snd.get() )
+      {
+         SendMessage( Sound::kCommand[Sound::REWIND], snd.get() );
+      }
+   }
+
+
+   std::cout << "paused5" << std::endl;
+   // remove stopped sounds from the active list
+   while( stk.size() )
+   {
+      iter  = stk.top();
+      stk.pop();
+
+      src   = *iter;
+      mStopQueue.push( src );
+      mActiveList.erase( iter );
+   }
+}
 
 bool
 AudioManager::Configured( void ) const
@@ -1994,7 +2204,6 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
 
       return;
    }
-
 
    if( data->userData != this )
       return;

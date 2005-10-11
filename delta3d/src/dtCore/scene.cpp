@@ -47,12 +47,60 @@ extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
    exit(1);
 }
 
+Scene::ParticleSystemFreezer::ParticleSystemFreezer()
+   : osg::NodeVisitor( TRAVERSE_ALL_CHILDREN ),
+     mFreezing( true )
+{
+   // Since we are setting all ParticleSystems to be frozen, we don't care
+   // about the previous state of the last attemp to freeze.
+   if( mFreezing )
+   {
+      mPreviousFrozenState.clear();
+   }
+}
+
+void Scene::ParticleSystemFreezer::apply( osg::Node& node )
+{
+   if( osgParticle::ParticleSystemUpdater* psu = dynamic_cast< osgParticle::ParticleSystemUpdater* >( &node ) )
+   {
+      for( unsigned int i = 0; i < psu->getNumParticleSystems(); i++ )
+      {         
+         if( osgParticle::ParticleSystem* ps = psu->getParticleSystem( i ) )
+         {
+            if( mFreezing )
+            {
+               // Save the previous frozen state of the ParticleSystem, so subsequent attempts
+               // to unfreeze it will bring it back to the way it was.
+               mPreviousFrozenState.insert( ParticleSystemBoolMap::value_type( ps, ps->isFrozen() ) );
+
+               // Allow me to break the ice. My name is Freeze. Learn it well.
+               // For it's the chilling sound of your doom. -Mr. Freeze
+               ps->setFrozen( mFreezing );
+            }
+            else
+            {
+               // Restore the previous state.
+               ps->setFrozen( mPreviousFrozenState[ ps ] );
+            }
+         }
+      }
+   }
+   
+   traverse(node);
+}
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
 Scene::Scene( const std::string& name, bool useSceneLight )
-: Base(name), mPhysicsStepSize(0.0), mPagingEnabled(false), mStartTick(0), mFrameNum(0), mCleanupTime(0.0025), mTargetFrameRate(30.0)
+   : Base(name),
+     mPhysicsStepSize(0.0),
+     mPagingEnabled(false),
+     mStartTick(0),
+     mFrameNum(0),
+     mCleanupTime(0.0025),
+     mTargetFrameRate(30.0)
 {
    RegisterInstance(this);
 
@@ -202,7 +250,6 @@ void Scene::SetRenderState( Face face, Mode mode )
    stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON); 
 }
 
-
 /** Register a Physical with the Scene.  This method is automatically called 
   * when adding Drawables to the Scene.  Typically, this only needs to be 
   * called when a creating a Physical that is not added to the Scene like a
@@ -223,8 +270,6 @@ void Scene::RegisterPhysical( Physical *physical )
    mPhysicalContents.push_back(physical);
 }
 
-
-
 void Scene::UnRegisterPhysical( Physical *physical )
 {
 	dSpaceRemove(mSpaceID, physical->GetGeomID());
@@ -243,7 +288,6 @@ void Scene::UnRegisterPhysical( Physical *physical )
 	}
 
 }
-
 
 /*!
  * Get the height of terrain at the specified (X,Y).  This essentially 
@@ -287,7 +331,6 @@ void Scene::SetGravity( const osg::Vec3& gravity )
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
 
-
 // Get the ODE space ID
 dSpaceID Scene::GetSpaceID() const
 {
@@ -323,8 +366,7 @@ void Scene::OnMessage(MessageData *data)
          }
       }
    }
-
-   if(data->message == "preframe")
+   else if(data->message == "preframe")
    {
       double dt = *(double *)data->userData;
 
@@ -398,8 +440,19 @@ void Scene::OnMessage(MessageData *data)
       if( usingDeltaStep ) //reset physics step size to 0.0 (i.e. use System step size)
          SetPhysicsStepSize( 0.0 );
    }
-
-   else if (data->message == "exit")
+   else if( data->message == "pause_start" )
+   {
+      // Freeze all particle systems.
+      mFreezer.SetFreezing( true );
+      GetSceneNode()->accept( mFreezer );
+   }
+   else if( data->message == "pause_end" )
+   {
+      // Unfreeze all particle systems.
+      mFreezer.SetFreezing( false );
+      GetSceneNode()->accept( mFreezer );
+   }
+   else if(data->message == "exit")
    {
       while (GetNumberOfAddedDrawable()>0)
       {
