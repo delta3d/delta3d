@@ -5,9 +5,11 @@
 #include <sstream>
 
 #include <dtCore/scene.h>
+#include <dtCore/system.h>
 #include <dtChar/character.h>
 #include <dtUtil/log.h>
-#include "osgDB/FileUtils"
+#include <osgDB/FileUtils>
+#include <dtCore/camera.h>
 
 using namespace dtCore;
 using namespace dtChar;
@@ -23,12 +25,17 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
  */
  Character::Character(const std::string& name)
    :  mRotation(0.0f),
-      mVelocity(0.0f)
+      mVelocity(0.0f),
+      mPreviousUpdateMode( rbody::OsgBodyNode::UPDATE_NONE ),
+      mUpdateVisitor( 0 ),
+      mPauseFrameNumber( 0 )
 {
    SetName(name);
    mBodyNode = new rbody::OsgBodyNode(false);
    
    RegisterInstance(this);
+
+   AddSender( System::Instance() );
 }
 
 /**
@@ -147,6 +154,70 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       }
    }
    return mBodyNode.get();
+}
+
+void Character::OnMessage( Base::MessageData* data )
+{
+   // Oh no!!! Here come the rbody haxors!
+   // rbody needs two conditions in order to "pause".
+   // First, it needs to have it's update modes set to UPDATE_NONE.
+   // Second, there needs to be an update traversal performed on the
+   // rbody::OsgBodyNode. Yes, this is silly. So since the update
+   // traversal is shutoff in "pause" mode (all the way over in the
+   // SceneView, we need to make our own little UpdateVisitor with
+   // an incrementing traversal number.
+   
+   if( data->message == "pause" )
+   {
+      if( mBodyNode.valid() )
+      {
+         if( osg::Group* g1 = mBodyNode->asGroup() )
+         {
+            if( osg::Node* n1 = g1->getChild(0) )
+            {
+               if( osg::Group* g2 = n1->asGroup() )
+               {
+                  if( osg::Node* n2 = g2->getChild(0) )
+                  {
+                     if( osg::NodeCallback* callback = n2->getUpdateCallback() )
+                     {
+                        if( !mUpdateVisitor.valid() )
+                        {
+                           mUpdateVisitor = new osgUtil::UpdateVisitor;
+                        }
+                        
+                        mUpdateVisitor->reset();
+                        mUpdateVisitor->setTraversalNumber( mPauseFrameNumber++ );
+                        
+                        (*callback)( n2, mUpdateVisitor.get() );
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+   else if( data->message == "pause_start" )
+   {
+      mPauseFrameNumber = 0;
+
+      if( mBodyNode.valid() )
+      {
+         mPreviousUpdateMode = mBodyNode->getUpdateMode();
+         mBodyNode->setUpdateMode( rbody::OsgBodyNode::UPDATE_NONE );
+         
+         mPreviousInternalUpdateMode = mBodyNode->getInternalUpdateMode();
+         mBodyNode->setInternalUpdateMode( rbody::OsgBodyNode::UPDATE_NONE );
+      }
+   }
+   else if( data->message == "pause_end" )
+   {
+      if( mBodyNode.valid() )
+      {
+         mBodyNode->setUpdateMode( mPreviousUpdateMode );
+         mBodyNode->setInternalUpdateMode( mPreviousInternalUpdateMode );
+      }
+   }
 }
 
 /**

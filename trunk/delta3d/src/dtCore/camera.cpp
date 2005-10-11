@@ -4,8 +4,10 @@
 
 #include "Producer/RenderSurface"
 
-#include "dtCore/camera.h"
-#include "dtCore/scene.h"
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
+#include <osg/NodeVisitor>
 #include <dtUtil/log.h>
 
 #include <osg/Matrix>
@@ -137,8 +139,6 @@ Camera::~Camera()
    DeregisterInstance(this);
 }
 
-
-
 /*!
  * Render the next frame.  This will update the scene graph, cull then geometry,
  * then draw the geometry.
@@ -146,9 +146,9 @@ Camera::~Camera()
  */
 void Camera::Frame()
 {
-   if (mScene != NULL)
+   if( mScene != 0 && !System::Instance()->GetPause() )
    {
-      GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
+       GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
    }
 
    //Get our Camera's position, up vector, and look-at vector and pass them

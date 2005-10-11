@@ -279,6 +279,15 @@ namespace   dtAudio
          typedef  std::queue<SOB_PTR>                 SND_QUE;
          typedef  std::vector<SOB_PTR>                SND_LST;
 
+         enum SoundState
+         {
+            PAUSED,
+            PLAYING,
+            STOPPED
+         };
+      
+         typedef std::map< SoundObj*, SoundState >     SoundObjectStateMap;
+
       private:
          static   MOB_ptr                 _Mgr;
          static   LOB_PTR                 _Mic;
@@ -340,6 +349,7 @@ namespace   dtAudio
          /// stop sending AudioManager messages to sound
          inline   void              PostFrame( const double deltaFrameTime );
 
+         inline   void              Pause( const double deltaFrameTime );
          /// check if manager has been configured
          inline   bool              Configured( void )   const;
 
@@ -419,25 +429,28 @@ namespace   dtAudio
          inline   void              FreeSource( SoundObj* snd );
 
       private:
-                  ALvoid*           mEAXSet;
-                  ALvoid*           mEAXGet;
+                  ALvoid*             mEAXSet;
+                  ALvoid*             mEAXGet;
 
-                  ALsizei           mNumSources;
-                  ALuint*           mSource;
+                  ALsizei             mNumSources;
+                  ALuint*             mSource;
 
-                  SRC_MAP           mSourceMap;
-                  SRC_QUE           mAvailable;
-                  SRC_QUE           mPlayQueue;
-                  SRC_QUE           mPauseQueue;
-                  SRC_QUE           mStopQueue;
-                  SRC_QUE           mRewindQueue;
-                  SRC_LST           mActiveList;
+                  SRC_MAP             mSourceMap;
+                  SRC_QUE             mAvailable;
+                  SRC_QUE             mPlayQueue;
+                  SRC_QUE             mPauseQueue;
+                  SRC_QUE             mStopQueue;
+                  SRC_QUE             mRewindQueue;
+                  SRC_LST             mActiveList;
 
-                  BUF_MAP           mBufferMap;
+                  BUF_MAP             mBufferMap;
 
-                  SND_QUE           mSoundCommand;
-                  SND_QUE           mSoundRecycle;
-                  SND_LST           mSoundList;
+                  SND_QUE             mSoundCommand;
+                  SND_QUE             mSoundRecycle;
+                  SND_LST             mSoundList;
+
+                  SoundObjectStateMap mSoundStateMap; ///Maintains state of each SoundObject
+                                                      ///prior to a system-wide pause message
    };
 };
 

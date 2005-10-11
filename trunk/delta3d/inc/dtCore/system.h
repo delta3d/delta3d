@@ -25,9 +25,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "dtCore/base.h"
-#include "dtCore/timer.h"
+#include <dtCore/base.h>
+#include <dtCore/timer.h>
 
 namespace dtCore
 {
@@ -72,6 +71,9 @@ namespace dtCore
       ///Is the system running
       bool IsRunning() const { return mRunning; }
 
+      void SetPause( bool paused );
+      bool GetPause() const;
+      
       /*!
       * Controls shutdown behavior of the system. Normally the system will only
       * shutdown if Stop() is called. If this function is called with 'true',
@@ -111,8 +113,11 @@ namespace dtCore
       ///Stuff to do after the frame.  Message: "postframe", delta time in seconds
       void PostFrame( const double deltaFrameTime );
 
-      bool  mRunning; ///<Are we currently running?      
-      bool  mShutdownOnWindowClose;
+      void Pause( const double deltaFrameTime );
+
+      bool mRunning; ///<Are we currently running?      
+      bool mShutdownOnWindowClose;
+      bool mPaused; 
    };
 };
 

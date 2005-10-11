@@ -25,12 +25,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+// Undef some common macros so rbody can function.
+#ifdef Status
 #undef Status
-#undef DEBUG
-#include "rbody/osg/ReplicantBodyMgr.h"
+#endif //Status
 
-#include "dtCore/transformable.h"
-#include "dtCore/loadable.h"
+#ifdef DEBUG
+#undef DEBUG
+#endif //DEBUG
+
+#include <rbody/osg/ReplicantBodyMgr.h>
+
+#include <dtCore/transformable.h>
+#include <dtCore/loadable.h>
+#include <osgUtil/UpdateVisitor>
 
 namespace dtChar
 {
@@ -56,8 +64,11 @@ namespace dtChar
           */
          virtual ~Character();
 
-         virtual osg::Node* GetOSGNode() { return dynamic_cast<osg::Node*>(mBodyNode.get()); }
-         virtual osg::MatrixTransform* GetMatrixNode(void) { return dynamic_cast<osg::MatrixTransform*>(mBodyNode.get()); }
+         virtual osg::Node* GetOSGNode()
+         { return dynamic_cast<osg::Node*>(mBodyNode.get()); }
+
+         virtual osg::MatrixTransform* GetMatrixNode()
+         { return dynamic_cast<osg::MatrixTransform*>(mBodyNode.get()); }
 
          /**
           * Notifies this drawable object that it has been added to
@@ -75,6 +86,8 @@ namespace dtChar
           * @return true if successful, false if not
           */
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true );
+
+         virtual void OnMessage( dtCore::Base::MessageData* data );
 
          /**
           * Sets the rotation of this character.
@@ -171,7 +184,7 @@ namespace dtChar
          * Returns a pointer to the rbody osg node
          *
          */
-         rbody::OsgBodyNode* GetBodyNode(){return mBodyNode.get();}
+         rbody::OsgBodyNode* GetBodyNode() {return mBodyNode.get();}
 
 
       private:
@@ -200,6 +213,14 @@ namespace dtChar
           * The character's current walk/run velocity.
           */
          float mVelocity;
+
+         /**
+          * The rbody node's update mode previous to pause.
+          */
+         rbody::OsgBodyNode::UpdateMode mPreviousUpdateMode;
+         rbody::OsgBodyNode::UpdateMode mPreviousInternalUpdateMode;
+         osg::ref_ptr< osgUtil::UpdateVisitor > mUpdateVisitor;
+         int mPauseFrameNumber;
    };
 };
 
