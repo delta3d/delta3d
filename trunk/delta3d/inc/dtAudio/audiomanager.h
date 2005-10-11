@@ -37,6 +37,7 @@
 #include <dtCore/transformable.h>
 #include <dtAudio/listener.h>
 #include <dtAudio/sound.h>
+#include <dtAudio/export.h>
 
 #include <osg/Vec3>
 
@@ -134,7 +135,7 @@ namespace   dtAudio
     * are always resseting the flag to AL_FALSE.
     *
     */
-   class DT_EXPORT AudioManager   :  public   dtCore::Base
+   class DT_AUDIO_EXPORT AudioManager   :  public   dtCore::Base
    {
         DECLARE_MANAGEMENT_LAYER(AudioManager)
 
@@ -457,7 +458,7 @@ namespace   dtAudio
 
 
 // configuration data
-struct DT_EXPORT AudioConfigData
+struct DT_AUDIO_EXPORT AudioConfigData
 {
    enum           DistanceModel
                   {

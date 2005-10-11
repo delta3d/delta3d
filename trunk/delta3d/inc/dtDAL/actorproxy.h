@@ -28,7 +28,7 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtUtil/enumeration.h>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include <dtCore/uniqueid.h>
 
 namespace dtCore

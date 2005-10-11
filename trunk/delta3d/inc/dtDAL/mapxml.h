@@ -34,7 +34,7 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include <dtUtil/log.h>
 
 #include <dtDAL/map.h>

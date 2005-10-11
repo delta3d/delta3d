@@ -22,7 +22,7 @@
 #define __Exception__h
 
 #include <string>
-#include <dtCore/export.h>
+#include <dtUtil/export.h>
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
 
@@ -40,7 +40,7 @@ namespace dtUtil
      * logs them for you.  However, applications using the dtDAL module
      * should excercise proper exception handling.
      */
-    class DT_EXPORT Exception
+    class DT_UTIL_EXPORT Exception
     {
     public:
 

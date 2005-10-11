@@ -22,7 +22,7 @@
 #define __ActorProperty__h
 
 #include <osg/Referenced>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include "dtDAL/functor.h"
 #include "dtDAL/actorproxy.h"
 #include <dtDAL/exceptionenum.h>

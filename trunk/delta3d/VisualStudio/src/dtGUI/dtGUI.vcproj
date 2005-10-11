@@ -153,6 +153,9 @@
 				RelativePath="..\..\..\inc\dtGUI\dtgui.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGUI\export.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtGUI\renderer.h">
 			</File>
 			<File

@@ -21,9 +21,10 @@
 #ifndef DELTA_WEATHER
 #define DELTA_WEATHER
 
-#include "dtCore/base.h"
-#include "dtCore/environment.h"
-#include "dtCore/cloudplane.h"
+#include <dtCore/base.h>
+#include <dtCore/environment.h>
+#include <dtCore/cloudplane.h>
+#include <dtABC/export.h>
 
 namespace dtABC
 {

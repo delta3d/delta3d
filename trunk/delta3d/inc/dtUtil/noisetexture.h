@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <osg/Image>
 #include "dtUtil/noiseutility.h"
-#include "dtCore/export.h"
+#include "dtUtil/export.h"
 
 
 namespace dtUtil
@@ -39,7 +39,7 @@ namespace dtUtil
     {
     public:
 
-        DT_EXPORT NoiseTexture();
+        DT_UTIL_EXPORT NoiseTexture();
         
         /**
         * Constructor: For a more detailed listing of these params see dtUtil::Fracal
@@ -52,7 +52,7 @@ namespace dtUtil
         * @param slices: A power of 2, specifying the z resolution, or 1 for 2D textures       
         * @sa dtUtil::Fractal
        */
-        DT_EXPORT NoiseTexture( int    octaves,
+        DT_UTIL_EXPORT NoiseTexture( int    octaves,
                         int    frequency,
                         double amp,
                         double persistance,
@@ -61,7 +61,7 @@ namespace dtUtil
                         int    slices = 1 //default for 2d images
             );
 
-        DT_EXPORT ~NoiseTexture();
+        DT_UTIL_EXPORT ~NoiseTexture();
 
         /*
         *Sets octaves
@@ -108,7 +108,7 @@ namespace dtUtil
         *@return  returns a pointer to the image
         *
         */
-        DT_EXPORT osg::Image *MakeNoiseTexture(GLenum format);
+        DT_UTIL_EXPORT osg::Image *MakeNoiseTexture(GLenum format);
 
         /*
         *If you need a pointer to the texture you'll find it here

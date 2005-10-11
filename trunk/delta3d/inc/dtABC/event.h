@@ -3,6 +3,7 @@
 
 #include <dtCore/base.h>
 #include <dtUtil/enumeration.h>
+#include <dtABC/export.h>
 
 namespace dtABC
 {

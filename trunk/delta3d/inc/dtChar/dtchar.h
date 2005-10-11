@@ -39,13 +39,13 @@ namespace dtChar
 #undef _AUTOLIBNAME2
 
 #if defined(_DEBUG)
-   #ifndef DT_LIBRARY
+   #ifndef DT_CHAR_LIBRARY
       #define _AUTOLIBNAME  "dtChard.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBodyd.lib"
    #define _AUTOLIBNAME2 "cal3d_d.lib"
 #else
-   #ifndef DT_LIBRARY
+   #ifndef DT_CHAR_LIBRARY
       #define _AUTOLIBNAME  "dtChar.lib"
    #endif
    #define _AUTOLIBNAME1 "ReplicantBody.lib"
@@ -55,7 +55,7 @@ namespace dtChar
 
 #ifndef _NOAUTOLIBMSG
 
-   #ifndef DT_LIBRARY
+   #ifndef DT_CHAR_LIBRARY
       #pragma message( "Will automatically link with " _AUTOLIBNAME )
    #endif
 
@@ -64,7 +64,7 @@ namespace dtChar
 
 #endif
 
-#ifndef DT_LIBRARY
+#ifndef DT_CHAR_LIBRARY
    #pragma comment (lib, _AUTOLIBNAME)
 #endif
 

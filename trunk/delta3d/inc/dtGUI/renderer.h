@@ -1,7 +1,7 @@
 #ifndef DELTA_GUI
 #define DELTA_GUI
 
-#include <dtCore/export.h>
+#include <dtGUI/export.h>
 #ifdef __APPLE__
 #include <OpenGLRenderer/openglrenderer.h>
 #else

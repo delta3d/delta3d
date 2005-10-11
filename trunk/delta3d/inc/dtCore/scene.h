@@ -52,6 +52,24 @@ namespace dtCore
 
    public:
 
+      class DT_CORE_EXPORT ParticleSystemFreezer : public osg::NodeVisitor
+      {
+      public:
+
+         ParticleSystemFreezer();
+         void SetFreezing( bool freeze ) { mFreezing = freeze; }
+         bool GetFreezing() const { return mFreezing; }
+
+         virtual void apply( osg::Node& node );
+
+      private:
+
+         bool mFreezing;
+
+         typedef std::map< osgParticle::ParticleSystem*, bool > ParticleSystemBoolMap;
+         ParticleSystemBoolMap mPreviousFrozenState;
+      };
+
       enum Face 
       {
          FRONT,
@@ -200,24 +218,6 @@ namespace dtCore
       virtual ~Scene();
 
     private:
-
-      class ParticleSystemFreezer : public osg::NodeVisitor
-      {
-         public:
-         
-            ParticleSystemFreezer();
-            void SetFreezing( bool freeze ) { mFreezing = freeze; }
-            bool GetFreezing() const { return mFreezing; }
-             
-            virtual void apply( osg::Node& node );
-         
-         private:
-
-            bool mFreezing;
-
-            typedef std::map< osgParticle::ParticleSystem*, bool > ParticleSystemBoolMap;
-            ParticleSystemBoolMap mPreviousFrozenState;
-      };
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);

@@ -59,9 +59,6 @@ namespace dtABC
    {
       DECLARE_MANAGEMENT_LAYER(Widget)
 
-    
-
-
    public:
       ///Message strings (out going)
       static   const char* msgRedraw;

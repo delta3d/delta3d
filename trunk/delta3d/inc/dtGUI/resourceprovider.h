@@ -1,7 +1,7 @@
 #ifndef RESOURCEPROVIDER_INCLUDED
 #define RESOURCEPROVIDER_INCLUDED
 
-#include <dtCore/export.h>
+#include <dtGUI/export.h>
 #include <CEGUI/CEGUIDefaultResourceProvider.h>
 
 namespace dtGUI

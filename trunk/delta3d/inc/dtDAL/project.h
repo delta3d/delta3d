@@ -28,7 +28,7 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 #include <dtABC/application.h>
 
 #include "dtDAL/tree.h"

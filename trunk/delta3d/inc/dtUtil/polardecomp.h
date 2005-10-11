@@ -27,7 +27,7 @@
 
 #include "osg/Matrix"
 #include "osg/Vec3"
-#include "dtCore/export.h"
+#include "dtUtil/export.h"
 
 namespace dtUtil
 {
@@ -35,7 +35,7 @@ namespace dtUtil
    * PolarDecomp is a class that will take a 4x4 Matrix and break it up into the following components
    * Rotation, Scale, and Translation
    */
-   class DT_EXPORT PolarDecomp
+   class DT_UTIL_EXPORT PolarDecomp
    {
    public:
       /// Find Polar Decomposition of Matrix M: Q=Rotation, S=Scale/Stretch, T=Translation

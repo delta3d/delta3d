@@ -18,21 +18,21 @@
  *
 */
 
-#ifndef DELTA_NET_EXPORT
-#define DELTA_NET_EXPORT
+#ifndef DELTA_UTIL_EXPORT
+#define DELTA_UTIL_EXPORT
 
 // export.h: Export definitions.  Modeled after osg/Export.
 //
 //////////////////////////////////////////////////////////////////////
 
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#   ifdef DT_NET_LIBRARY
-#      define DT_NET_EXPORT
+#   ifdef DT_UTIL_LIBRARY
+#      define DT_UTIL_EXPORT __declspec(dllexport)
 #   else
-#      define DT_NET_EXPORT
-#   endif
+#      define DT_UTIL_EXPORT __declspec(dllimport)
+#   endif 
 #else
-#   define DT_NET_EXPORT
+#   define DT_UTIL_EXPORT
 #endif
 
-#endif // DELTA_NET_EXPORT
+#endif // DELTA_UTIL_EXPORT

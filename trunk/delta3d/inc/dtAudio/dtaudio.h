@@ -41,11 +41,11 @@ namespace dtAudio
 #undef _AUTOLIBNAME3
 
 #if   defined(_DEBUG)
-   #ifndef  DT_LIBRARY
+   #ifndef  DT_AUDIO_LIBRARY
       #define  _AUTOLIBNAME1  "dtAudiod.lib"
    #endif
 #else
-   #ifndef  DT_LIBRARY
+   #ifndef  DT_AUDIO_LIBRARY
       #define  _AUTOLIBNAME1  "dtAudio.lib"
    #endif
 #endif
@@ -54,7 +54,7 @@ namespace dtAudio
 #define  _AUTOLIBNAME3  "ALut.lib"     // Note: Not Debug
 
 #if   !  defined(_NOAUTOLIBMSG)
-   #ifndef  DT_LIBRARY
+   #ifndef  DT_AUDIO_LIBRARY
       #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
    #endif
 
@@ -62,7 +62,7 @@ namespace dtAudio
    #pragma message( "Will automatically link with " _AUTOLIBNAME3 )
 #endif
 
-#ifndef  DT_LIBRARY
+#ifndef  DT_AUDIO_LIBRARY
    #pragma  comment( lib, _AUTOLIBNAME1 )
 #endif
 

@@ -24,7 +24,7 @@
 
 #include <string>
 #include <functional>
-#include <dtCore/export.h>
+#include <dtDAL/export.h>
 
 namespace dtDAL 
 {

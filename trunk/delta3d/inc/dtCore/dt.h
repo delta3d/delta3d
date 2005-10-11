@@ -100,7 +100,7 @@ namespace dtCore
 #undef _AUTOLIBNAME21
 
 #if defined(_DEBUG)
-   #ifndef DT_LIBRARY  
+   #ifndef DT_CORE_LIBRARY  
       #define  _AUTOLIBNAME5 "dtCored.lib"
    #endif
 
@@ -117,7 +117,7 @@ namespace dtCore
    #define _AUTOLIBNAME18 "js_d.lib"
    #define _AUTOLIBNAME21 "isensed.lib"
 #else
-   #ifndef DT_LIBRARY
+   #ifndef DT_CORE_LIBRARY
       #define _AUTOLIBNAME5 "dtCore.lib"
    #endif
 
@@ -163,7 +163,7 @@ namespace dtCore
    #pragma message( "Will automatically link with " _AUTOLIBNAME20 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME21 )
 
-   #ifndef DT_LIBRARY
+   #ifndef DT_CORE_LIBRARY
       #pragma message( "Will automatically link with " _AUTOLIBNAME5 )
    #endif
 #endif
@@ -186,7 +186,7 @@ namespace dtCore
 #pragma comment(lib, _AUTOLIBNAME20)
 #pragma comment(lib, _AUTOLIBNAME21)
 
-#ifndef DT_LIBRARY
+#ifndef DT_CORE_LIBRARY
    #pragma comment(lib, _AUTOLIBNAME5)
 #endif
 

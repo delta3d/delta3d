@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib producerd.lib osgd.lib osgdbd.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib Producerd.lib osgd.lib osgDBd.lib osgUtild.lib replicantbodyd.lib rvrutilsd.lib cal3d_d.lib"
 				OutputFile="../../../bin/dtChard.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib producer.lib osg.lib osgdb.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib Producer.lib osg.lib osgDB.lib osgUtild.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
 				OutputFile="../../../bin/dtChar.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -139,6 +139,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtChar\dtchar.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtChar\export.h">
 			</File>
 		</Filter>
 		<Filter

@@ -39,6 +39,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/loadable.h>
 #include <osgUtil/UpdateVisitor>
+#include <dtChar/export.h>
 
 namespace dtChar
 {

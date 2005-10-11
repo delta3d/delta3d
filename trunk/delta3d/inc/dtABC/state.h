@@ -3,8 +3,8 @@
 
 #include <dtCore/base.h>
 #include <dtUtil/enumeration.h>
-
 #include <dtUtil/deprecationmgr.h>
+#include <dtABC/export.h>
 
 namespace dtABC
 {

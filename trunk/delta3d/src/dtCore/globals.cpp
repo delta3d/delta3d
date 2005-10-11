@@ -74,7 +74,7 @@ std::string dtCore::GetDataFilePathList()
  * @param env The system environment variable to be queried
  * @return The value of the environment variable
  */
-DT_EXPORT std::string dtCore::GetEnvironment( std::string env)
+DT_CORE_EXPORT std::string dtCore::GetEnvironment( std::string env)
 {
    char *ptr;
    if( (ptr = getenv( env.c_str() )) )
@@ -89,7 +89,7 @@ DT_EXPORT std::string dtCore::GetEnvironment( std::string env)
  * variable "DELTA_DATA".  If the environment variable is not set, the local
  * directory will be returned.
  */
-DT_EXPORT std::string dtCore::GetDeltaDataPathList(void)
+DT_CORE_EXPORT std::string dtCore::GetDeltaDataPathList(void)
 {
    return  GetEnvironment("DELTA_DATA") ;
 }
@@ -97,7 +97,7 @@ DT_EXPORT std::string dtCore::GetDeltaDataPathList(void)
 /** If the DELTA_ROOT environment is not set, the local directory will be
  *  returned.
  */
-DT_EXPORT std::string dtCore::GetDeltaRootPath(void)
+DT_CORE_EXPORT std::string dtCore::GetDeltaRootPath(void)
 {
    return  GetEnvironment("DELTA_ROOT") ;
 }

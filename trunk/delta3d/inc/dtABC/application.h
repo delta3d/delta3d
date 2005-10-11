@@ -22,6 +22,7 @@
 #define DELTA_APPLICATION
 
 #include <dtABC/baseabc.h>
+#include <dtABC/export.h>
 #include <dtCore/deltawin.h>
 
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class

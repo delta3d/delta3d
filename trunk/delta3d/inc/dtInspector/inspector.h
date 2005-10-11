@@ -29,6 +29,7 @@
 #include <dtInspector/gui_fltk.h>
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
+#include <dtInspector/export.h>
 
 /** The dtInspector namespace contains functionality to inspect Delta3D classes
   * at runtime.
@@ -113,7 +114,7 @@ namespace dtInspector
 // Automatic library inclusion macros that use the #pragma/lib feature
 //
 
-#ifndef DT_LIBRARY
+#ifndef DT_INSPECTOR_LIBRARY
 
    #undef _AUTOLIBNAME
    #if defined(_DEBUG)
