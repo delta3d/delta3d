@@ -37,6 +37,7 @@ Up     -  Walk character forward
 Left   -  Turn character left
 Right  -  Turn character right
 Shift  -  Hold down to run
+P      -  Pause
 Esc    -  Exit
 
 Left Mouse Button    -  Rotate View

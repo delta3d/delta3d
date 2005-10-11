@@ -1,11 +1,13 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtCore/dt.h>
+#include <dtABC/dtabc.h>
+#include <dtUtil/dtutil.h>
 
 #include <ode/ode.h>
 #include <queue>
 
 using namespace dtCore;
 using namespace dtABC;
+using namespace dtUtil;
 using namespace std;
 
 class Updater : public Base
@@ -24,14 +26,15 @@ public:
       if(data->message == "collision")
       {
          /*
-         Scene::CollisionData* cd = 
-         (Scene::CollisionData*)data->userData;
+         Scene::CollisionData* cd = static_cast< Scene::CollisionData* >( data->userData );
 
-         Notify(NOTICE) << "collision detected between " <<
-         dynamic_cast<Base*>(cd->mBodies[0])->GetName() << " and " <<
-         dynamic_cast<Base*>(cd->mBodies[1])->GetName() << " at (" <<
-         cd->mLocation[0] << ", " << cd->mLocation[1] << ", " <<
-         cd->mLocation[2] << ")" << endl;
+         Log::GetInstance().LogMessage( Log::LOG_INFO, __FUNCTION__,
+                                        "Collision detected between %s and %s at (%f, %f, %f)",
+                                        dynamic_cast<Base*>(cd->mBodies[0])->GetName().c_str(),
+                                        dynamic_cast<Base*>(cd->mBodies[1])->GetName().c_str(),
+                                        cd->mLocation[0],
+                                        cd->mLocation[1],
+                                        cd->mLocation[2] );
          */
       }
    }
@@ -166,126 +169,138 @@ protected:
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
    {
-      if (key == Producer::Key_Escape)
+      switch( key )
       {
-         while( !mToAdd.empty() )    mToAdd.pop();
-         while( !mToRemove.empty() ) mToRemove.pop();
-         while( !mObjects.empty() )  mObjects.pop_front();
- 
-         this->Quit();
-      }
-      
-      if (key == Producer::Key_B)
-      {
-         if( mObjects.size() < kLimit )
+         case Producer::Key_P:
          {
-            RefPtr<Object> box = new Object("box");
-            box->LoadFile("models/physics_crate.ive");
- 
-            Transform xform(random(-2.f,2.f),
-               random(-2.f, 2.f),
-               random(5.f, 10.f),
-               random(0.f, 180.f),
-               random(0.f, 90.f),
-               random(0.f, 90.f)      
-               );
-
-            float randomScale = random(0.5f, 2.0f);
-            xform.SetScale( randomScale, randomScale, randomScale );
-
-            box->SetTransform(&xform);
-
-            float lx = 1.0f;
-            float ly = 1.0f;
-            float lz = 1.0f;
-
-            box->SetCollisionBox();
-
-            dMass mass;
-            dMassSetBox(&mass, 1, lx, ly, lz);
-            box->SetMass(&mass);
-
-            box->EnableDynamics();
+            System::Instance()->SetPause( !System::Instance()->GetPause() );
+            break;
+         }
+         case Producer::Key_Escape :
+         {
+            while( !mToAdd.empty() )    mToAdd.pop();
+            while( !mToRemove.empty() ) mToRemove.pop();
+            while( !mObjects.empty() )  mObjects.pop_front();
             
-            mToAdd.push( box );
+            Quit();
+            break;
          }
-         else
+         case Producer::Key_B :
          {
-            mToRemove.push( mObjects.front() );
-         }
-      }
-      
-      if (key == Producer::Key_S)
-      {
-         if( mObjects.size() < kLimit )
-         {
-            RefPtr<Object> sphere = new Object("sphere");
-            sphere->LoadFile("models/physics_happy_sphere.ive");
+            if( mObjects.size() < kLimit )
+            {
+               RefPtr<Object> box = new Object("box");
+               box->LoadFile("models/physics_crate.ive");
+               
+               Transform xform(random(-2.f,2.f),
+                               random(-2.f, 2.f),
+                               random(5.f, 10.f),
+                               random(0.f, 180.f),
+                               random(0.f, 90.f),
+                               random(0.f, 90.f) );
 
-            Transform xform(random(-2.f,2.f),
-               random(-2.f, 2.f),
-               random(5.f, 10.f),
-               random(0.f, 180.f),
-               random(0.f, 90.f),
-               random(0.f, 90.f));
-
-            float randomScale = random(0.5f, 2.0f);
-            xform.SetScale( randomScale, randomScale, randomScale );
-
-            sphere->SetTransform(&xform);
-
-            float radius = 0.5f;
-
-            sphere->SetCollisionSphere();
+               float randomScale = random(0.5f, 2.0f);
+               xform.SetScale( randomScale, randomScale, randomScale );
+               
+               box->SetTransform(&xform);
             
-            dMass mass;
-            dMassSetSphere(&mass, 1, radius);
-            sphere->SetMass(&mass);
-            sphere->EnableDynamics();
-     
-            mToAdd.push( sphere );
+               float lx = 1.0f;
+               float ly = 1.0f;
+               float lz = 1.0f;
+               
+               box->SetCollisionBox();
+               
+               dMass mass;
+               dMassSetBox(&mass, 1, lx, ly, lz);
+               box->SetMass(&mass);
+               
+               box->EnableDynamics();
+               
+               mToAdd.push( box );
+            }
+            else
+            {
+               mToRemove.push( mObjects.front() );
+            }
+            break;
          }
-         else
-         {         
-            mToRemove.push( mObjects.front() );
-         }
-      }
-      
-      if (key == Producer::Key_C)
-      {
-         if( mObjects.size() < kLimit )
+         case Producer::Key_S :
          {
-            RefPtr<Object> cyl = new Object("cylinder");
-            cyl->LoadFile("models/physics_barrel.ive");
-
-            Transform xform(random(-2.f,2.f),
-               random(-2.f, 2.f),
-               random(5.f, 10.f),
-               random(0.f, 180.f),
-               random(0.f, 90.f),
-               random(0.f, 90.f));
-
-            float randomScale = random(0.5f, 2.0f);
-            xform.SetScale( randomScale, randomScale, randomScale );
-
-            cyl->SetTransform(&xform);
-
-            float radius = 0.321f; 
-            float length = 1.0f;            
-
-            cyl->SetCollisionCappedCylinder();
-
-            dMass mass;
-            dMassSetCappedCylinder(&mass, 1, 2, radius, length);
-            cyl->SetMass(&mass);
-
-            cyl->EnableDynamics();
-
-            mToAdd.push( cyl );
+            if( mObjects.size() < kLimit )
+            {
+               RefPtr<Object> sphere = new Object("sphere");
+               sphere->LoadFile("models/physics_happy_sphere.ive");
+               
+               Transform xform(random(-2.f,2.f),
+                               random(-2.f, 2.f),
+                               random(5.f, 10.f),
+                               random(0.f, 180.f),
+                               random(0.f, 90.f),
+                               random(0.f, 90.f));
+               
+               float randomScale = random(0.5f, 2.0f);
+               xform.SetScale( randomScale, randomScale, randomScale );
+               
+               sphere->SetTransform(&xform);
+               
+               float radius = 0.5f;
+               
+               sphere->SetCollisionSphere();
+               
+               dMass mass;
+               dMassSetSphere(&mass, 1, radius);
+               sphere->SetMass(&mass);
+               sphere->EnableDynamics();
+               
+               mToAdd.push( sphere );
+            }
+            else
+            {         
+               mToRemove.push( mObjects.front() );
+            }
+            break;
          }
-         else
+         case Producer::Key_C :
          {
-            mToRemove.push( mObjects.front() );
+            if( mObjects.size() < kLimit )
+            {
+               RefPtr<Object> cyl = new Object("cylinder");
+               cyl->LoadFile("models/physics_barrel.ive");
+               
+               Transform xform(random(-2.f,2.f),
+                               random(-2.f, 2.f),
+                               random(5.f, 10.f),
+                               random(0.f, 180.f),
+                               random(0.f, 90.f),
+                               random(0.f, 90.f));
+               
+               float randomScale = random(0.5f, 2.0f);
+               xform.SetScale( randomScale, randomScale, randomScale );
+               
+               cyl->SetTransform(&xform);
+               
+               float radius = 0.321f; 
+               float length = 1.0f;            
+               
+               cyl->SetCollisionCappedCylinder();
+               
+               dMass mass;
+               dMassSetCappedCylinder(&mass, 1, 2, radius, length);
+               cyl->SetMass(&mass);
+               
+               cyl->EnableDynamics();
+               
+               mToAdd.push( cyl );
+            }
+            else
+            {
+               mToRemove.push( mObjects.front() );
+            }
+            break;
+         } 
+         default:
+         {
+            break;
          }
       }
    }
@@ -308,7 +323,6 @@ const unsigned int TestPhysicsApp::kLimit = 50;
 std::queue< RefPtr<Object> > TestPhysicsApp::mToAdd;
 std::queue< RefPtr<Object> > TestPhysicsApp::mToRemove;
 std::deque< RefPtr<Object> > TestPhysicsApp::mObjects;
-
 
 int main( int argc, char **argv )
 {

@@ -25,7 +25,7 @@ public:
    {
       if(data->message == "preframe")
       {
-         double delta = *reinterpret_cast<double*>(data->userData);
+         double delta = *static_cast<double*>(data->userData);
 
          float rotation = mCharacter->GetRotation(),
             velocity = 0.0f;
@@ -96,7 +96,7 @@ public:
    {
       if(data->message == "preframe")
       {
-         double delta = *reinterpret_cast<double*>(data->userData);
+         double delta = *static_cast<double*>(data->userData);
 
          Transform transform;
 
@@ -117,8 +117,14 @@ public:
          float rotation = mCharacter->GetRotation();
          float dR = dir - rotation;
 
-         if(dR > 180.0f) dR -= 360.0f;
-         else if(dR < -180.0f) dR += 360.0f;
+         if( dR > 180.0f )
+         {
+            dR -= 360.0f;
+         }
+         else if( dR < -180.0f )
+         {
+            dR += 360.0f;
+         }
 
          if(dR > 0.0f)
          {
@@ -156,7 +162,7 @@ class TestCharactersApp : public dtABC::Application
 {
             
 public:
-   TestCharactersApp( std::string configFilename = "config.xml" )
+   TestCharactersApp( const std::string& configFilename = "config.xml" )
       : Application( configFilename ) 
    {
    }
@@ -223,6 +229,28 @@ public:
       //have Dave follow Bob
       mFollowController = new FollowController( mMarine.get(), mOpFor.get() );
    }
+
+     void KeyPressed( dtCore::Keyboard* keyboard,
+                    Producer::KeyboardKey key,
+                    Producer::KeyCharacter character )
+   {
+      switch( key )
+      {
+         case Producer::Key_P:
+         {
+            System::Instance()->SetPause( !System::Instance()->GetPause() );
+            break;
+         }
+         case Producer::Key_Escape:
+         {
+            Quit();
+            break;
+         }
+         default:
+            break;
+      }
+   }
+
 
 protected:
 
