@@ -1,0 +1,6 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
+
+BuildProgram( 'testEffects', srcs, deps )
