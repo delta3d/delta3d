@@ -76,7 +76,7 @@ namespace dtABC
      */
    class DT_ABC_EXPORT StateManager : public dtCore::Base
    {
-    private:
+   public:
        /** \brief An Event class specific to StateManager. 
          *
          * TransitionOccurredEvent is an Event which can be watched
@@ -90,7 +90,6 @@ namespace dtABC
           virtual ~TransitionOccurredEvent() {}
        };
 
-   public:
       /// Event::Type instances to be used by StateManager
       class DT_ABC_EXPORT EventType : public dtABC::Event::Type
       {

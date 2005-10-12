@@ -29,40 +29,24 @@ using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Isector)
 
 
-   ///////////////////////////////////////////////////////////////////////////////
-   Isector::Isector(dtCore::Scene *scene) :
-mStart(0,0,0), mDirection(0,1,0)
+///////////////////////////////////////////////////////////////////////////////
+Isector::Isector(dtCore::Scene *scene) :
+   mStart(0,0,0), mDirection(0,1,0), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
 {
-   mScene = scene;
-   mLineSegment = new osg::LineSegment();
-   mLineLength = 1000000.0f;
-   mUpdateLineSegment = true;
-   mClosestDrawable = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Isector::Isector(const osg::Vec3 &start, const osg::Vec3 &dir,
-                                     dtCore::Scene *scene) : mStart(start), mDirection(dir)
+Isector::Isector(const osg::Vec3 &start, const osg::Vec3 &dir,dtCore::Scene *scene):
+   mStart(start), mDirection(dir), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
 {
-   mScene = scene;
-   mLineSegment = new osg::LineSegment();
-   mLineLength = 1000000.0f;
-   mUpdateLineSegment = true;
-   mClosestDrawable = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Isector::Isector(dtCore::Scene *scene, const osg::Vec3 &start,
-                                     const osg::Vec3 &end)
+Isector::Isector(dtCore::Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end):
+   mStart(start), mDirection(), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
 {
-   mLineSegment = new osg::LineSegment();
-   mScene = scene;
-
-   mStart = start;
    mDirection = end-start;
    mLineLength = mDirection.length();
-   mUpdateLineSegment = true;
-   mClosestDrawable = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

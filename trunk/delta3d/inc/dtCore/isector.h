@@ -30,6 +30,7 @@
 #include "dtCore/transformable.h"
 #include "dtCore/deltadrawable.h"
 #include "dtUtil/deprecationmgr.h"
+#include "dtCore/scene.h"
 
 #include <osg/Vec3>
 #include <osgUtil/IntersectVisitor>
@@ -87,8 +88,7 @@ namespace dtCore
       * @param dir The direction the ray is traveling.
       * @param scene The Delta3D scene to intersect.
       */
-      Isector(const osg::Vec3 &start, const osg::Vec3 &dir,
-         dtCore::Scene *scene = NULL);
+      Isector(const osg::Vec3 &start, const osg::Vec3 &dir, dtCore::Scene *scene = NULL);
 
       /**
       * Constructs a new intersection query using a line segment with the
@@ -97,8 +97,7 @@ namespace dtCore
       * @param start The start of the line segment.
       * @param end The end point of the line segment.
       */
-      Isector(dtCore::Scene *scene, const osg::Vec3 &start,
-         const osg::Vec3 &end);
+      Isector(dtCore::Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end);
 
       /**
       * Sets a drawable as the root of the intersection tests.  If this is specified,
