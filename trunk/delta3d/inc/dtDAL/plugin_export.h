@@ -18,8 +18,8 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __plugin_export__h
-#define __plugin_export__h
+#ifndef DELTA_PLUGINEXPORT
+#define DELTA_PLUGINEXPORT
 
 /**
  * This is modeled from the DT_CORE_EXPORT macro found in dtCore/export.h.  

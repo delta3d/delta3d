@@ -22,13 +22,46 @@
 #define DELTA_SOARXTERRAINRENDERER
 
 #include <osg/Image>
+#include <osg/StateSet>
+#include <osg/Program>
+#include <osg/PositionAttitudeTransform>
 #include "dtTerrain/terraindatarenderer.h"
 #include "dtTerrain/soarxdrawable.h"
 
 namespace dtTerrain
-{
-   
+{   
    class SoarXDrawable;
+   
+   class DT_TERRAIN_EXPORT SoarXCacheResourceName : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(SoarXCacheResourceName);
+      public:
+      
+         ///Identifier for cached preprocessed vertex data.
+         static const SoarXCacheResourceName VERTEX_DATA;
+         
+         ///Identifier for cached preprocessed noise data for dynamically adding
+         ///noise to terrain vertex data.
+         static const SoarXCacheResourceName DETAIL_VERTEX_NOISE;
+         
+         ///Identifier for the cached preprocessed detail gradient texture used
+         ///to add more detail to the terrain texturing.
+         static const SoarXCacheResourceName DETAIL_GRADIENT_TEXTURE;
+         
+         ///Identifier for the cached preprocessed detail scale map used when
+         ///adding more texture detail to the terrain.
+         static const SoarXCacheResourceName DETAIL_SCALE_MAP;
+         
+         ///Identifier for the cached preprocessed gradient map generated on a per
+         ///tile basis.
+         static const SoarXCacheResourceName BASE_GRADIENT_TEXTURE;
+         
+      protected:
+         SoarXCacheResourceName(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
    
    /**
     * This renderer is an integration/implementation of the SoarX terrain
@@ -44,10 +77,24 @@ namespace dtTerrain
    class DT_TERRAIN_EXPORT SoarXTerrainRenderer : public TerrainDataRenderer
    {
       public:
+         
+         /**
+          * This structure represents a drawable tile.  There is a one-to-one
+          * mapping of drawable entries to paged terrain tiles in the renderer.
+          */
+         struct DrawableEntry
+         {
+            dtCore::RefPtr<SoarXDrawable> drawable;
+            dtCore::RefPtr<osg::Texture2D> baseGradientTexture;
+            dtCore::RefPtr<osg::PositionAttitudeTransform> sceneNode;
+         };            
+         
+         ///Help minimize some typing...
+         typedef std::map<dtCore::RefPtr<PagedTerrainTile>,DrawableEntry> DrawableMap;
       
          ///Used to scale the precalculated gradient values used to render 
          ///the terrain.
-         static  const float GRADIENT_SCALE;
+         static const float GRADIENT_SCALE;
       
          /**
           * Constructs the SoarX renderer.
@@ -56,25 +103,31 @@ namespace dtTerrain
          SoarXTerrainRenderer(const std::string &name="SoarXRenderer");
          
          /**
-          * Initializes SoarX internal data structures using the height field data currently
-          * assigned to it. Also builds the required scene representation so that it can
-          * be rendered correctly.
-          * @note There must be a valid heightfield assigned to the renderer before this
-          *    method is called.  If not, an exception is thrown.
+          * This method constructs a SoarXDrawable for the new terrain
+          * tile that needs to be loaded.
+          * @param tile The new tile.
+          * @see SoarXDrawable
           */
-         virtual void Initialize();
+         void OnLoadTerrainTile(PagedTerrainTile &tile);
+         
+         /**
+          * This method updates an internal map of tiles and drawables
+          * based on what tiles were unloaded from the terrain.
+          * @param tile The tile being unloaded.
+          */
+         void OnUnloadTerrainTile(PagedTerrainTile &tile);
          
          /**
           * Gets the height of the terrain at the specified (x,y) coordinates.
           * @return The height of the terrain at the specified point.
           */
-         virtual float GetHeight(float x, float y);
+         float GetHeight(float x, float y);
          
          /**
           * Gets the normal vector at the specified point.
           * @return A vector perpendicular to terrain at the given point.
           */
-         virtual osg::Vec3 GetNormal(float x, float y);
+         osg::Vec3 GetNormal(float x, float y);
          
          /**
           * Returns a scene node that encapsulates the renderable terrain.  
@@ -83,7 +136,7 @@ namespace dtTerrain
           * @note Initialize() is guarenteed to be called before this method by 
           *    the parent terrain.
           */
-         virtual osg::Group *GetRootDrawable() { return mRootGroupNode.get(); }
+         osg::Group *GetRootDrawable() { return mRootGroupNode.get(); }
          
          /**
           * Sets the detail multiplier on the SoarX drawable.
@@ -142,37 +195,60 @@ namespace dtTerrain
          virtual ~SoarXTerrainRenderer();
          
          /**
-          * Constructs the images required to render and light the terrain.
-          * @param geode The geometry node with which to attach the constructed
-          *    texture maps to.  The geode in this case contains the terrain
-          *    drawable itself.
+          * This method initializes data for this renderer that is shared 
+          * amoungst the terrain tiles.  This includes shaders, textures,
+          * some of which are read from the cache if it exists.
           */
-         void BuildTextureImages(osg::Geode *geode);
+         void InitializeRenderer();
          
          /**
-          * Binds the terrain textures to appropriate GLSL uniforms as well
-          * as creates the fragment shader and attaches it to the terrain node.
-          * @param geode The geometry node with which to attach the shaders to.
-          *    The geode in this case contains the terrain drawable itself.
+          * Creates the GLSL program object.
           */
-         void CreateFragmentShader(osg::Geode *geode);
+         void CreateFragmentShader();
          
          /**
-          * The terrain does not calculate texture coordinates, therefore,
-          * we have to enable TexGen for certain texture units.  This
-          * method creates the planar projection and builds the appropriate
-          * TexGen structures.
-          * @param geode The geometry node with which to attach the shaders to.
-          *    The geode in this case contains the terrain drawable itself.
+          * Configures the specified drawable and stateset to use the proper textures 
+          * and render state for SoarX terrain renderering.
           */
-         void CalculateAutoTexCoordParams(osg::Geode *geode);
+         void SetupRenderState(PagedTerrainTile &tile, DrawableEntry &entry,
+            osg::StateSet &ss);
+         
+         /**
+          * Attempts to load the detail noise data from the terrain cache.  If it
+          * is not present, the data will be generated.
+          */
+         void CheckDetailNoiseCache();
+         
+         /**
+          * Checks the cache for a detail gradient texture.  If found, it will load it
+          * else it will be generated and then cached if enabled.
+          */
+         void CheckDetailGradientCache();         
+         
+         /**
+          * Checks the cache for a detail scale map.  If found, it will load it, else
+          * the data will be generated then cached if enabled.
+          */
+         void CheckDetailScaleCache();
+         
+         /**
+          * This method is called for each tile that is loaded.  It checks to see if
+          * there is a gradient texture in the tile's cache path and if so loads it.
+          * If not, the gradient texture is generated and cached if enabled.
+          */
+         void CheckBaseGradientCache(const PagedTerrainTile &tile, DrawableEntry &entry);
+         
+         /**
+          * Builds an array of noise values used to dynamically add more detail
+          * to the terrain.
+          */
+         void CalculateDetailNoise(); 
          
       private:        
          
-         ///The internal drawable for rendering and managing terrain data
-         ///using the SoarX algorithm.
-         dtCore::RefPtr<SoarXDrawable> mDrawable;
-      
+         ///Maps tiles to drawables.
+         DrawableMap mDrawables;         
+                       
          ///The root renderable for the terrain.
          dtCore::RefPtr<osg::Group> mRootGroupNode; 
          
@@ -180,12 +256,20 @@ namespace dtTerrain
          ///terrain.
          std::string mFragShaderPath;
          
-         ///An image corresponding to the given heightfield.
-         dtCore::RefPtr<osg::Image> mHeightMapImage;
+         float mThreshold;
+         float mDetailMultiplier;
+         
+         ///Noise data used by each terrain tile to add vertex detail when
+         ///zoomed in close to the terrain.
+         float *mDetailNoise;
+         int mDetailNoiseSize;
+         int mDetailNoiseBits;
+         float mDetailVerticalResolution;
+         float mDetailHorizonalResolution;
          
          ///Texture map holding the base gradient texture used
          ///to light the terrain.
-         dtCore::RefPtr<osg::Texture2D> mBaseGradientTexture;
+         //dtCore::RefPtr<osg::Texture2D> mBaseGradientTexture;
          
          ///Texture map holding the detail gradient texture which
          ///is a noise texture repeated across the terrain to add
@@ -196,25 +280,10 @@ namespace dtTerrain
          ///across the terrain adding additional realism.
          dtCore::RefPtr<osg::Texture2D> mDetailScaleTexture;
          
-         /**
-          * Ensures that a heightfield is correct for the SoarX algorithm.
-          * If it is not the correct size, the old heightfield is interpolated
-          * using a bilinear filter.
-          * @param The height field to check.  If it does not need to be 
-          *    resized, this method will return the original.
-          * @return A heightfield of size: nxn where n = (2^k) + 1.
-          * @note k is the closest power of two to the current dimensions.
-          */
-         osg::HeightField *ResizeHeightField(osg::HeightField *oldHF);
-         
-         /**
-          * Gets a bi-linearly interpolated height value from the heightfield.
-          * @param hf The height field to get a value from.
-          * @param x The x coordinate to sample from.
-          * @param y The y coordinate to sample from.
-          * @return The interpolated height value.
-          */
-         float GetInterpolatedHeight(const osg::HeightField *hf, double x, double y);
+         ///Reference to the pixel shader program used to render the SoarX
+         ///terrain tiles.
+         dtCore::RefPtr<osg::Program> mShaderProgram;         
+        
    };   
 }
 

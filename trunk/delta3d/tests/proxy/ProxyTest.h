@@ -2,8 +2,8 @@
 #define _CPP_UNIT_TEST_H_
 
 #include <cppunit/extensions/HelperMacros.h>
+#include <dtCore/refptr.h>
 #include <dtCore/dt.h>
-
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtDAL/datatype.h"
@@ -37,7 +37,7 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
 
 private:
     LibraryManager &libMgr;
-    std::vector<osg::ref_ptr<ActorType> > actors;
+    std::vector<dtCore::RefPtr<ActorType> > actors;
 
     void testProps(ActorProxy& proxy);
     void compareProxies(ActorProxy& ap1, ActorProxy& ap2);

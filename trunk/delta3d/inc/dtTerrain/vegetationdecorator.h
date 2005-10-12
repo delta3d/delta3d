@@ -23,170 +23,191 @@
 
 #include <osg/Vec3>
 #include <osg/Texture2D>
+#include <osg/Node>
+#include <osg/Group>
 #include <dtCore/refptr.h>
+#include <dtCore/globals.h>
+#include "dtUtil/enumeration.h"
 #include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/terraintile.h"
-#include "dtTerrain/lccanalyzer.h"
 #include "dtTerrain/lcctype.h"
-
-//Foward declare necessary OSG classes.
-namespace osg
-{
-   class Node;
-}
+#include "dtTerrain/lccanalyzer.h"
 
 namespace dtTerrain
 {
    /**
-   * This class is the vegetation decorator layer. It is responsible
-   * for processing the probabilities of vegetation placement based on
-   * LCC data recieved from the LCCAnalyzer.
-   */
+    * Defines the exception used by the vegetation decorator.
+    */
+   class DT_TERRAIN_EXPORT VegetationException : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(VegetationException);
+      public:
+      
+         ///Thrown if no LCC data was specified before analyzing occurs.
+         static VegetationException INVALID_LCC_TYPES;
+                  
+      protected:
+         VegetationException(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
+   
+   /**
+    * This class is the vegetation decorator layer. It is responsible
+    * for processing the probabilities of vegetation placement based on
+    * LCC data recieved from the LCCAnalyzer.
+    */
    class DT_TERRAIN_EXPORT VegetationDecorator : public TerrainDecorationLayer
    {
-   public:
-      /**
-      * Constructs a new terrain decoration layer.
-      */
-      VegetationDecorator(const std::string &name="VegetationDecoratorLayer");
+      public:
       
-      /**
-      * 
-      */      
-      void LoadResource(int latitude,int longitude);
-      
-      /**
-      * Inherited from abstract class - not used but required
-      */
-      void LoadResource(const std::string &path){};
-      
-      /**
-      * Determine the scene node of the vegetation layer
-      * @return osg node
-      */
-      osg::Node *GetOSGNode()
-      {
-         return mVegetationNode.get();
-      }
+         ///Help minimize some typing...
+         typedef std::map<dtCore::RefPtr<PagedTerrainTile>,dtCore::RefPtr<osg::Group> > 
+            VegetationMap;
+         
+         /**
+          * Constructs a new terrain decoration layer.
+          */
+         VegetationDecorator(const std::string &name="VegetationDecoratorLayer");
+           
+         /**
+          * Calculates various LCC images and procedurally builds a list
+          * of trees and other vegetation models which are then placed
+          * about the specified terrain tile.
+          */
+         virtual void OnLoadTerrainTile(PagedTerrainTile &tile);
+         
+         /**
+          * Removes the vegetation models from the map of currently
+          * visible tiles/vegetation.
+          */
+         virtual void OnUnloadTerrainTile(PagedTerrainTile &tile);
+         
+         /**
+          * Places the actual vegetation geometry on the terrain.  Note,
+          * the vegetation placement occurs here since it is dependent 
+          * on querying for the height of the terrain in order to place
+          * the vegetation.  The terrain height can only be queried once
+          * it has been loaded by the renderer.  Performing this here
+          * ensures that the renderer has loaded this tile's data.
+          */
+         virtual void OnTerrainTileResident(PagedTerrainTile &tile);
+         
+         /**
+          * Gets the root scenegraph node for the vegetation.
+          * @return A group node holding the vegetation hierarchy for the 
+          *    current visible set of tiles.
+          */
+         virtual osg::Node *GetOSGNode() { return mVegetationNode.get(); }
 
-      /**
-      * Place the vegetation into cell specified by lat-long.
-      * @param latitude the latitude of the origin
-      * @param longitude the longitude of the origin
-      */		 
-      void AddVegetation(int latitude, int longitude);
+         /**
+          * Place the vegetation into cell specified by lat-long.
+          * @param The terrain tile with which to place vegetation.
+          * @return A group node containing the vegetation scene for the 
+          *    specified tile.
+          */		 
+         osg::Group *AddVegetation(PagedTerrainTile &tile);
 
-      /**
-      * Determine whether vegetation exists at coord x,y
-      * @param mCimage the LCC type's combined image)
-      * @param x the x coordinate to check
-      * @param y the y coordinate to check
-      * @param limit the probability rolled
-      * @return boolean on existence of vegetaton at x,y
-      */
-      bool GetVegetation(const osg::Image* mCimage, int x, int y, int limit);
+         /**
+          * Determine whether vegetation exists at coord x,y
+          * @param mCimage the LCC type's combined image)
+          * @param x the x coordinate to check
+          * @param y the y coordinate to check
+          * @param limit the probability rolled
+          * @return boolean on existence of vegetaton at x,y
+          */
+         bool GetVegetation(const osg::Image* mCimage, int x, int y, int limit);
 
-      /**
-      * Determine type/age of vegetation type (1-3; young-old).
-      * @param mCimage the LCC type's combined image)
-      * @param x the x coordinate to check
-      * @param y the y coordinate to check
-      * @param pref_angle the preferred angle of aspect in degrees for optimum growth
-      * @return the age bias of the vegetation type
-      */
-      int GetVegType(const osg::Image* mCimage, int x, int y, float good_angle);
+         /**
+          * Determine type/age of vegetation type (1-3; young-old).
+          * @param mCimage the LCC type's combined image)
+          * @param x the x coordinate to check
+          * @param y the y coordinate to check
+          * @param pref_angle the preferred angle of aspect in degrees for optimum growth
+          * @return the age bias of the vegetation type
+          */
+         int GetVegType(const osg::Image* mCimage, int x, int y, float good_angle);
 
-      /**
-      * Determine whether vegetation exists at coord x,y
-      * @param mCimage the LCC type's combined image)
-      * @param x the x coordinate to check
-      * @param y the y coordinate to check
-      * @param limit the probability rolled
-      * @param maximum look
-      * @param maximum slope
-      * @return boolean on existence of vegetaton at x,y
-      */
-      int GetNumLooks(const osg::Image* mCimage, const osg::Image* SLimage, int x, int y, float good_angle, int maxlooks, float maxslope);
+         /**
+          * Determine whether vegetation exists at coord x,y
+          * @param mCimage the LCC type's combined image)
+          * @param x the x coordinate to check
+          * @param y the y coordinate to check
+          * @param limit the probability rolled
+          * @param maximum look
+          * @param maximum slope
+          * @return boolean on existence of vegetaton at x,y
+          */
+         int GetNumLooks(const osg::Image* mCimage, const osg::Image* SLimage, int x, int y, float good_angle, int maxlooks, float maxslope);
 
-      /**
-      * Sets the vegetations load distance
-      * @param load distance for the vegetation
-      */
-      void SetLoadDistance(float loadDistance)
-      {
-         mLoadDistance = loadDistance;
-      }
+         /**
+          * Sets the vegetations load distance
+          * @param load distance for the vegetation
+          */
+         void SetLoadDistance(const float loadDistance)
+         {
+            mLoadDistance = loadDistance;
+         }
 
-      /**
-      * Sets the distance between vegetation objects
-      * @param distance between vegetation objects
-      */
-      void SetVegeDistance(float vegeDistance)
-      {
-         mVegeDistance = vegeDistance;
-      }
+         /**
+          * Sets the distance between vegetation objects
+          * @param distance between vegetation objects
+          */
+         void SetVegetationDistance(const float distance)
+         {
+            mVegeDistance = distance;
+         }
 
-      /**
-      * Sets the maximum texture size, which is currently used for the placement of vegetation
-      * @param max texture size
-      */
-      void SetMaxTextureSize( int maxTextureSize )
-      {
-         mMaxTextureSize = maxTextureSize;
-      }
+         /**
+          * Sets the maximum texture size, which is currently used for the placement of vegetation
+          * @param max texture size
+         */
+         void SetMaxTextureSize( int maxTextureSize )
+         {
+            mMaxTextureSize = maxTextureSize;
+         }
 
-      /**
-      * This sets the osg group node for the processed decoration layer
-      * @param osg group node for the vegetation decorator
-      */
-      void SetVegetationNode(osg::Group *vegetationNode)
-      {
-         mVegetationNode = vegetationNode;
-      }
+         void SetLCCTypes(std::vector<dtTerrain::LCCType> &lccTypes)
+         {
+            mLCCTypes = lccTypes;
+         }
 
-      /**
-      * This is a list of vegetation types created by the application 
-      * to be used for processing the placement of vegetation. 
-      * @param vector of LCCType objects
-      */ 
-      void SetLCCData(std::vector<dtTerrain::LCCType> lccTypes)
-      {
-         this->mLCCs = lccTypes;
-      }
+         void SetGeospecificImage(const std::string& geoImageFilename)
+         {
+            mGeoImageFilename = geoImageFilename;
+            mLCCAnalyzer.AddGeospecificImage(mGeoImageFilename);
+         }
+   
+         void SetRandomSeed(const int &seed) { mSeed = seed; }
+   
+         void SetMaxObjectsPerCell(const int maxObjects) 
+         { 
+            mMaxObjectsPerCell = maxObjects;
+         }
+   
+      protected:
 
-   protected:
+         /** 
+          * Destructor
+          */
+         virtual ~VegetationDecorator();                 
 
-      /** 
-      * Destructor
-      */
-      virtual ~VegetationDecorator();
-
-   private:
-      std::vector<dtTerrain::LCCType> mLCCs;
-      dtCore::RefPtr<osg::Group> mVegetationNode;
-      float mVegeDistance;
-      std::string mCachePath;
-      int mMaxTextureSize;
-      int mSeed;
-      float mLoadDistance;
-      std::string mImageExtension;
-      int mOriginLongitude;
-      int mOriginLatitude;
-      double mSemiMajorAxis;
-      int mOriginElevation;
-      int mDetailMultiplier;
-      int mMaxLooks;
-      int mMaxObjectsPerCell;
-      int mTotalVegeCount;
-
-      /**
-		* Maps loaded segments to LCCCells.
-		*/
-      std::map<TerrainTile, LCCAnalyzer::LCCCells> mSegmentLCCCellMap;
-
-      dtCore::RefPtr<dtUtil::Log> mLog;
-      int mLongitude;
-      int mLatitude;
+      private:
+         std::vector<dtTerrain::LCCType> mLCCTypes;         
+         LCCAnalyzer mLCCAnalyzer;
+         std::string mGeoImageFilename;
+         
+         dtCore::RefPtr<osg::Group> mVegetationNode;
+         VegetationMap mVegetationMap;
+         
+         float mVegeDistance;
+         int mMaxTextureSize;
+         int mSeed;
+         float mLoadDistance;
+         int mMaxLooks;
+         int mMaxObjectsPerCell;
+         int mTotalVegeCount;
    };
 }
+
 #endif

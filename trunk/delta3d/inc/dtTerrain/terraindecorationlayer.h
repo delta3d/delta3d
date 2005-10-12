@@ -21,15 +21,11 @@
 #ifndef DELTA_TERRAINDECORATIONLAYER
 #define DELTA_TERRAINDECORATIONLAYER
 
+#include <osg/Node>
 #include "dtCore/base.h"
 #include "dtCore/refptr.h"
+#include "dtTerrain/pagedterraintile.h"
 #include "dtTerrain/terrain_export.h"
-#include "dtTerrain/lcctype.h"
-//Foward declare necessary OSG classes.
-namespace osg
-{
-   class Node;
-}
 
 namespace dtTerrain
 {
@@ -51,16 +47,6 @@ namespace dtTerrain
          TerrainDecorationLayer(const std::string &name="TerrainDecorationLayer");
          
          /**
-          * This method is provided for decoration layers that must load external
-          * data in order to generate the required scene data.
-          * @param path A path to a resource.  Could be either a file or directory
-          *    depending on the implementation of a particular decoration layer.
-          */
-         virtual void LoadResource(const std::string &path) = 0;
-         
-         virtual void LoadResource(int latitude, int longitude) = 0;
-
-         /**
           * This method returns the root scene node of the decoration layer
           * scene graph.  This node then gets added as a child to its parent 
           * terrain.
@@ -70,15 +56,47 @@ namespace dtTerrain
          virtual osg::Node *GetOSGNode() = 0;
          
          /**
-          * This method is called if the data reader on this layer's parent 
-          * terrain is changed.  Therefore, if this decoration layer relies on
-          * the heightfield data loaded by the reader, it can update its internal
-          * state here.
-          * @note In other words, this method gets called if a new terrain data
-          *    reader is assigned to the parent terrain or new data is loaded
-          *    into the existing data reader.
+          * This method is called when the parent terrain needs
+          * to load a tile.
+          * @param tile The new tile.  The loader should populate 
+          *    the fields of the tile as appropriate.
+          * @note Should throw an exception if any errors occur.
+          * @note At this point, the terrain tiles have had a chance to load
+          *    data from their cache.  Therefore, readers implementing this
+          *    method may want to check the status of a tile's data before
+          *    loading since it may have been retrieved from the cache.
+          * @note Resources may be looked up using the parent terrain's
+          *    resource path list.  In most cases, the terrain will be
+          *    made aware of any resource locations its readers may need.
+          * @see Terrain
+          * @see PagedTerrainTile
           */
-         virtual void OnTerrainDataReaderChanged() { }
+         virtual void OnLoadTerrainTile(PagedTerrainTile &tile) = 0;
+         
+         /**
+          * This method is called when the parent terrain wishes
+          * to unload a terrain tile from its list of resident tiles.
+          * @param tile The tile being unloaded.
+          * @note Should throw an exception if any errors occur.
+          * @note The default implementation does nothing as most renderers
+          *    will probably only process data and have no need to respond
+          *    to this method, however, it is available if needed.  Also note,
+          *    that the tile itself is responsible for caching its data, however,
+          *    any data a renderer wishes to control may be cached in this method.
+          * @see Terrain
+          * @see PagedTerrainTile
+          */
+         virtual void OnUnloadTerrainTile(PagedTerrainTile &tile) { }
+         
+         /**
+          * This method is called when a tile has been completely loaded by
+          * the terrain reader, terrain renderer, and all decorator layers.
+          * This is useful if certain operations need to be performed on a tile
+          * that is dependent on the tile being fully loaded by all terrain 
+          * components.
+          * @param The tile that was just loaded.
+          */
+         virtual void OnTerrainTileResident(PagedTerrainTile &tile) { }
          
          /**
           * Checks to see if this decoration layer is visible in the scene.
@@ -100,16 +118,14 @@ namespace dtTerrain
           * Gets the terrain object that currently owns this reader.
           * @return A pointer to the parent terrain.
           */
-         dtTerrain::Terrain *GetParentTerrain() { return mParentTerrain.get(); }
+         dtTerrain::Terrain *GetParentTerrain() { return mParentTerrain; }
          
          /**
           * Gets a read-only terrain object that currently owns this reader.
           * @return A const pointer to the parent terrain.
           */
-         const dtTerrain::Terrain *GetParentTerrain() const { return mParentTerrain.get(); }
-
-         virtual void SetLCCData(std::vector<dtTerrain::LCCType> types){}
-         
+         const dtTerrain::Terrain *GetParentTerrain() const { return mParentTerrain; }
+        
       protected:
       
          ///Destroys this decoration layer.
@@ -127,7 +143,7 @@ namespace dtTerrain
           * The terrain object that currently owns this reader.
           * @note Renderer instances can only be assigned to one terrain at a time.
           */
-         dtCore::RefPtr<dtTerrain::Terrain> mParentTerrain;
+         Terrain *mParentTerrain;
          
    };
 

@@ -18,11 +18,7 @@
 *
 * @author Matthew W. Campbell
 */
-#include <dtCore/scene.h>
 #include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/terraindatareader.h"
-#include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/terrain.h"
 
 namespace dtTerrain
 {
@@ -35,7 +31,7 @@ namespace dtTerrain
 
    //////////////////////////////////////////////////////////////////////////    
    TerrainDataRenderer::TerrainDataRenderer(const std::string &name) : 
-      dtCore::Base(name), mHeightField(NULL) 
+      dtCore::Base(name)
    {
       
    }
@@ -44,12 +40,6 @@ namespace dtTerrain
    TerrainDataRenderer::~TerrainDataRenderer()
    {
       
-   }
-
-   //////////////////////////////////////////////////////////////////////////       
-   void TerrainDataRenderer::SetHeightField(osg::HeightField *hf)
-   {
-      mHeightField = hf;
    }
    
 }

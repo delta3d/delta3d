@@ -24,9 +24,10 @@
 #define __ActorBrowser_h
 
 #include <QWidget>
-#include <osg/ref_ptr>
 #include <vector>
+#include <osg/ref_ptr>
 
+#include <dtCore/refptr.h>
 #include "dtDAL/tree.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
@@ -89,7 +90,7 @@ namespace dtEditQt
     
     private:
         // known list of actor types
-        std::vector<osg::ref_ptr<dtDAL::ActorType> > actorTypes;
+        std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
 
         /**
         * Creates the main User Interface for the Actor Browser

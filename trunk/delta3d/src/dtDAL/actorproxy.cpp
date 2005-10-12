@@ -226,7 +226,7 @@ namespace dtDAL
 
         try
         {
-            copy = LibraryManager::GetInstance().CreateActorProxy(*mActorType);
+            copy = LibraryManager::GetInstance().CreateActorProxy(*mActorType).get();
         }
         catch(dtUtil::Exception &e)
         {

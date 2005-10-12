@@ -21,7 +21,7 @@
 #ifndef DELTA_DIRECTORY_RESOURCE_TYPE_HANDLER
 #define DELTA_DIRECTORY_RESOURCE_TYPE_HANDLER
 
-#include <dtDAL/resourcehelper.h>
+#include "dtDAL/resourcehelper.h"
 
 namespace dtDAL {
 

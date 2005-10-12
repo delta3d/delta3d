@@ -471,7 +471,7 @@ namespace dtDAL
             //Make sure we have not tried to load this actor type already and failed.
             if (mMissingActorTypes.find(actorTypeFullName) == mMissingActorTypes.end())
             {
-                osg::ref_ptr<ActorType> actorType =
+                dtCore::RefPtr<ActorType> actorType =
                     LibraryManager::GetInstance().FindActorType(actorTypeCategory, actorTypeName);
                 if (actorType == NULL)
                 {
@@ -486,7 +486,7 @@ namespace dtDAL
                                         "Creating actor proxy %s with category %s.",
                                         actorTypeName.c_str(), actorTypeCategory.c_str());
 
-                    mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType);
+                    mActorProxy = LibraryManager::GetInstance().CreateActorProxy(*actorType).get();
                     if (mActorProxy == NULL)
                         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                                             "mActorProxy could not be created for ActorType \"%s\" not found.",

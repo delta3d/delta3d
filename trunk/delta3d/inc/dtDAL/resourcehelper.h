@@ -26,12 +26,12 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtDAL/export.h>
 
 #include "dtDAL/tree.h"
 #include <dtDAL/exceptionenum.h>
 #include "dtDAL/fileutils.h"
 #include "dtDAL/resourcetreenode.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

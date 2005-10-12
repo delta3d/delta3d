@@ -36,6 +36,7 @@
 #include "dtTerrain/terraindecorationlayer.h"
 #include "dtTerrain/dtedterrainreader.h"
 #include "dtTerrain/imageutils.h"
+#include "dtTerrain/terrain.h"
 
 namespace dtTerrain 
 {
@@ -50,10 +51,10 @@ namespace dtTerrain
    
 
    //////////////////////////////////////////////////////////////////////////    
-   DTEDTerrainReader::DTEDTerrainReader(const DTEDLevelEnum &maxlevel,
+   DTEDTerrainReader::DTEDTerrainReader(const DTEDLevelEnum &level,
       const std::string &name) : TerrainDataReader(name)
    {
-      SetMaxDTEDLevel(maxlevel);
+      SetDTEDLevel(level);
    }
     
    
@@ -61,35 +62,36 @@ namespace dtTerrain
    DTEDTerrainReader::~DTEDTerrainReader()
    {
    }
-    
+   
    //////////////////////////////////////////////////////////////////////////        
-   void DTEDTerrainReader::LoadElevationData(const std::string &dataPath, int lat, int lon)
+   void DTEDTerrainReader::OnLoadTerrainTile(PagedTerrainTile &tile)
    {
       std::ostringstream latSS, lonSS;      
       std::string dtedPath;      
       
+      //If the tile already has a valid heightfield then do nothing.
+      if (tile.GetHeightField() != NULL)
+         return;
+      
       //Convert our latitude and longitude into strings matching the directory
       //structure of DTED data.
+      int lat = (int)floor(tile.GetGeoCoordinates().GetLatitude());
+      int lon = (int)floor(tile.GetGeoCoordinates().GetLongitude());
       latSS << (lat < 0 ? 'S' : 'N') << std::setw(2) << osg::absolute(lat);
       lonSS << (lon < 0 ? 'W' : 'E') << std::setw(3) << std::setfill('0') << osg::absolute(lon);
       
-      int currLevel = GetMaxDTEDLevel().GetNumeral();
-      while (currLevel >= 0)
-      {
-         dtedPath = GetDTEDFilePath(dataPath,latSS.str(),lonSS.str(),currLevel);
-         if (dtedPath != "")
-            break;         
-            
-         currLevel--;
-      }
-      
+      dtedPath = GetDTEDFilePath(latSS.str(),lonSS.str(),GetDTEDLevel().GetNumeral());
+                 
       //If we didn't find any data in the location specified, throw an exception!
-      if (dtedPath == "")
+      if (dtedPath.empty())
          EXCEPT(TerrainDataReaderException::DATA_RESOURCE_NOT_FOUND,
             "Could not find DTED resource to load at (latitude,longitude) = (" +
                latSS.str() + "," + lonSS.str() + ")");
-            
-      //Finally, we can actually load the DTED data into our heightfield.
+               
+      //Finally, we can actually load the DTED data into our heightfield.  Once
+      //the data is loaded into and OSG heightfield, we must convert that into
+      //our internal heightfield representation which is more compact and more
+      //suitable to write to a 16-bit heightmap image.
       dtCore::RefPtr<osgDB::ReaderWriter> gdalReader =
          osgDB::Registry::instance()->getReaderWriterForExtension("gdal");
       
@@ -103,46 +105,74 @@ namespace dtTerrain
          EXCEPT(TerrainDataReaderException::COULD_NOT_READ_DATA,rr.message());
       else
       {
-         mHeightField = rr.getHeightField();  
+         HeightField *hf = ConvertHeightField(rr.getHeightField());
+         float gridSpacing = GeoCoordinates::EQUATORIAL_RADIUS *
+            osg::DegreesToRadians(1.0f);
+         
+         hf->SetXInterval(gridSpacing/(float)(hf->GetNumColumns()-1));
+         hf->SetYInterval(gridSpacing/(float)(hf->GetNumRows()-1));
+         tile.SetHeightField(hf);      
       }
-      
-      LOG_INFO("Loaded DTED resource: " + dtedPath);
    }
    
-   ////////////////////////////////////////////////////////////////////////// 
-   std::string DTEDTerrainReader::GetDTEDFilePath(const std::string &basePath, 
-      const std::string &lat, const std::string &lon, int level)
+   ///////////////////////////////////////////////////////////////////////// 
+   const std::string DTEDTerrainReader::GenerateTerrainTileCachePath(
+      const PagedTerrainTile &tile)
    {
-      std::string lonPath,latPath; 
-      std::ostringstream ss;     
-      osgDB::FilePathList filePaths = osgDB::getDataFilePathList();
-      osgDB::FilePathList::const_iterator pathItor;
+      std::ostringstream ss;
+      GeoCoordinates coords = tile.GetGeoCoordinates();
+      int d,m,s;
       
-      for (pathItor=filePaths.begin(); pathItor!=filePaths.end(); ++pathItor)
-      {  
-         //First find the longitude data path.
-         lonPath = osgDB::findFileInDirectory(lon,*pathItor + "/" + basePath,
-            osgDB::CASE_INSENSITIVE);
-         if (lonPath == "")
-            continue;
+      //First build the latitude string.
+      coords.GetLatitude(d,m,s);
+      if (d < 0)
+         ss << osg::absolute(d) << "-" << m << "-" << s << "_S_";
+      else
+         ss << osg::absolute(d) << "-" << m << "-" << s << "_N_";
+      
+      //Second append the longitude string.
+      coords.GetLongitude(d,m,s);
+      if (d < 0)
+         ss << osg::absolute(d) << "-" << m << "-" << s << "_W_";
+      else
+         ss << osg::absolute(d) << "-" << m << "-" << s << "_E_";
          
-         //Now, see if we can locate the actual DTED file to load based on the given
-         //latitude.
+      //Finally, append the dted level this reader is working with.
+      ss << "dted" << GetDTEDLevel().GetNumeral();      
+      
+      return ss.str();
+   }
+         
+   ///////////////////////////////////////////////////////////////////////// 
+   std::string DTEDTerrainReader::GetDTEDFilePath(const std::string &lat, 
+      const std::string &lon, int level)
+   {   
+      //First find the longitude data path.  This must be done in a loop
+      //since depending on what DTED level we are loading, there may be
+      //multiple longitude folders containing DTED data.
+      std::vector<std::string> pathList;
+      std::vector<std::string>::iterator lonPath;
+      
+      GetParentTerrain()->FindAllResources(lon,pathList);      
+      for (lonPath=pathList.begin(); lonPath!=pathList.end(); ++lonPath)
+      {
+         //Next locate the actual DTED data file.
+         std::ostringstream ss;
          ss << lat << ".dt" << level;
-         latPath = osgDB::findFileInDirectory(ss.str(),lonPath,osgDB::CASE_INSENSITIVE);
-         if (latPath == "")
-            continue;
-         else   
-            return latPath;         
+         std::string latPath = 
+            osgDB::findFileInDirectory(ss.str(),*lonPath,osgDB::CASE_INSENSITIVE);
+        
+         if (!latPath.empty())
+            return latPath;
       }
       
       return std::string();
    }
-      
+   
    ////////////////////////////////////////////////////////////////////////// 
-   void DTEDTerrainReader::SetMaxDTEDLevel(const DTEDLevelEnum &level)
+   void DTEDTerrainReader::SetDTEDLevel(const DTEDLevelEnum &level)
    {
-      mMaxDTEDLevel = &level;      
-   }
-    
+      mDTEDLevel = &level;      
+   }   
+  
 }

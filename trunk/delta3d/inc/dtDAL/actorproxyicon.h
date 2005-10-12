@@ -23,13 +23,13 @@
 
 #include <map>
 #include <dtUtil/enumeration.h>
-#include <dtDAL/export.h>
 #include <dtCore/deltadrawable.h>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <osg/Group>
+#include "dtDAL/export.h"
 
 namespace dtCore
 {

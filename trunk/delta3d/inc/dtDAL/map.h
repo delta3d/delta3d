@@ -27,9 +27,9 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtDAL/export.h>
 
 #include "dtDAL/actorproxy.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL 
 {

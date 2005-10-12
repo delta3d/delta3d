@@ -24,8 +24,8 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 
-#include "dtDAL/plugin_export.h"
 #include "dtDAL/actorproxy.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

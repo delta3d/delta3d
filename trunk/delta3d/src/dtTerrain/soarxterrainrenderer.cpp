@@ -29,9 +29,14 @@
 #include <osg/StateSet>
 #include <osg/Texture2D>
 #include <osg/TexGen>
+#include <osg/PolygonMode>
+#include <osg/CullFace>
+#include <osg/FrontFace>
+#include <osg/io_utils>
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
-#include <osgDB/FileUtils>
+
+#include <dtDAL/fileutils.h>
 
 #include "dtTerrain/terraindatareader.h"
 #include "dtTerrain/terraindecorationlayer.h"
@@ -39,279 +44,213 @@
 #include "dtTerrain/soarxterrainrenderer.h"
 #include "dtTerrain/imageutils.h"
 #include "dtTerrain/soarxdrawable.h"
+#include "dtTerrain/geocoordinates.h"
+#include "dtTerrain/pagedterraintile.h"
+#include "dtTerrain/heightfield.h"
 
 namespace dtTerrain
 {
-   const float SoarXTerrainRenderer::GRADIENT_SCALE = 128.0f;
+   const float SoarXTerrainRenderer::GRADIENT_SCALE = 32.0f;   
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   IMPLEMENT_ENUM(SoarXCacheResourceName);   
+   const SoarXCacheResourceName SoarXCacheResourceName::VERTEX_DATA("rawvertices.dat");
+   const SoarXCacheResourceName SoarXCacheResourceName::DETAIL_VERTEX_NOISE("soarx_renderer_vertexnoise.dat");
+   const SoarXCacheResourceName SoarXCacheResourceName::DETAIL_GRADIENT_TEXTURE("soarx_renderer_detailgradient.rgb");
+   const SoarXCacheResourceName SoarXCacheResourceName::DETAIL_SCALE_MAP("soarx_renderer_scalemap.rgb");
+   const SoarXCacheResourceName SoarXCacheResourceName::BASE_GRADIENT_TEXTURE("basegradient.rgb");
 
    //////////////////////////////////////////////////////////////////////////    
    SoarXTerrainRenderer::SoarXTerrainRenderer(const std::string &name) :
       TerrainDataRenderer(name)
-   {    
-      mFragShaderPath = "shaders/soarxterrain.frag";
+   {
+      mFragShaderPath = "shaders/terrain.frag";
+      mRootGroupNode = new osg::Group();
+      mShaderProgram = NULL;
+      mDetailNoise = NULL;
+      mDetailGradientTexture = NULL;
+      mDetailNoiseBits = 10;
+      mDetailNoiseSize = 1 << mDetailNoiseBits;
+      mDetailVerticalResolution = 0.0012f;
+      mThreshold = 2.0f;
+      mDetailMultiplier = 3.0f;
    }   
    
    //////////////////////////////////////////////////////////////////////////    
    SoarXTerrainRenderer::~SoarXTerrainRenderer()
    {
-      
-   }
+      delete [] mDetailNoise;
+   } 
    
    //////////////////////////////////////////////////////////////////////////    
-   void SoarXTerrainRenderer::Initialize()
+   void SoarXTerrainRenderer::OnLoadTerrainTile(PagedTerrainTile &tile)
    {
-      if (GetHeightField() == NULL)
+      //Before we load a tile, make sure the heightfield is valid AND
+      //make sure the heightfield has valid dimensions. ( (2^n+1) x (2^n+1) )
+      if (tile.GetHeightField() == NULL)
          EXCEPT(TerrainRendererException::INVALID_HEIGHTFIELD_DATA,
-            "Cannot initialize SoarX renderer.  HeightField is NULL.");
+            "Cannot load terrain tile.  HeightField is NULL.");
             
-      //Before we resize the heightfield, convert the orginial to an image.
-      mHeightMapImage = ImageUtils::MakeHeightMapImage(GetHeightField());
-      SetHeightField(ResizeHeightField(GetHeightField()));
+      //TODO CHECK DIMENSIONS!!!
       
-      int baseSize = GetHeightField()->getNumColumns()-1;
-      float gridSpacing = SEMI_MAJOR_AXIS * osg::DegreesToRadians(1.0f);
+      //If this is the first time this renderer is loading a tile, make sure we
+      //have compute the data the renderer needs which is shared amoungst all the
+      //terrain tiles.
+      static bool firstTime = true;
+      if (firstTime)
+      {
+         InitializeRenderer();
+         firstTime = false;
+      }
+       
+      //Each tile gets its own drawable. So we need to construct it and
+      //add it to our drawable map.
+      DrawableEntry newEntry;                 
+      int baseSize = tile.GetHeightField()->GetNumColumns() - 1;
+      
+      //This is probably not the correct method to calculate horizonal
+      //resolution.. it works for now, but probably should be looked into
+      //further.
+      float gridSpacing = GeoCoordinates::EQUATORIAL_RADIUS *
+         osg::DegreesToRadians(1.0f);
+      
       float horizRes;
       int baseBits;
       
-      baseBits = (int)(logf(baseSize) / logf(2.0f));
-      horizRes = gridSpacing / static_cast<float>(baseSize-1);
-      GetHeightField()->setXInterval(horizRes);
-      GetHeightField()->setYInterval(horizRes);
+      baseBits = (int)(logf((float)baseSize) / logf(2.0f));
+      horizRes = gridSpacing / (float)(baseSize-1);
       
-      mDrawable = new SoarXDrawable(baseBits,horizRes);
-      mDrawable->Build(GetHeightField());        
+      newEntry.drawable = new SoarXDrawable(baseBits,horizRes);
+      newEntry.drawable->SetThreshold(mThreshold);
+      newEntry.drawable->SetDetailMultiplier(mDetailMultiplier);
+      newEntry.drawable->SetDetailNoise(mDetailNoiseBits,
+         mDetailVerticalResolution,mDetailNoise);         
+      if (!newEntry.drawable->Build(tile))
+         tile.SetUpdateCache(true);
       
-      //Build the actual scene nodes used to represent the terrain.
-      mRootGroupNode = new osg::Group();
       osg::Geode *geode = new osg::Geode();
-      geode->addDrawable(mDrawable.get());
+      newEntry.sceneNode = new osg::PositionAttitudeTransform();      
+      GeoCoordinates coords = tile.GetGeoCoordinates();
+           
+      CheckBaseGradientCache(tile,newEntry);
+      SetupRenderState(tile,newEntry,*geode->getOrCreateStateSet());
+      newEntry.sceneNode->setPosition(coords.GetCartesianPoint());
+      geode->addDrawable(newEntry.drawable.get());
+      newEntry.sceneNode->addChild(geode);
+      mRootGroupNode->addChild(newEntry.sceneNode.get());
       
-      //Build all the texture maps we need, caching them when 
-      //it makes sense to do so.
-      BuildTextureImages(geode);
-      CalculateAutoTexCoordParams(geode);            
-      
-      //If we have fragment shader capable hardware, create a fragment shader
-      //used to render the terrain.
-      CreateFragmentShader(geode);
-      
-      //Finally, add the node to the group.      
-      mRootGroupNode->addChild(geode);
+      mDrawables.insert(std::make_pair(&tile,newEntry));     
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void SoarXTerrainRenderer::OnUnloadTerrainTile(PagedTerrainTile &tile)
+   {
+      DrawableMap::iterator itor = mDrawables.find(&tile);
+      if (itor != mDrawables.end())
+      {
+         //Cache render data for this tile before removing it from the 
+         //renderer.
+         if (tile.IsCachingEnabled())// && tile.GetUpdateCache())
+         {
+            LOG_INFO("Caching tile data: " + tile.GetCachePath());
+            itor->second.drawable->WriteDataToCache(tile);            
+         }
+         
+         mRootGroupNode->removeChild(itor->second.sceneNode.get());
+         itor->second.sceneNode = NULL;
+         itor->second.drawable = NULL;
+         itor->second.baseGradientTexture = NULL;
+         mDrawables.erase(itor);
+      }
    }
          
    //////////////////////////////////////////////////////////////////////////    
    float SoarXTerrainRenderer::GetHeight(float x, float y)
    {
-      if (!mDrawable)
+      GeoCoordinates coords;
+      int lat,lon;
+      
+      coords.SetCartesianPoint(osg::Vec3(x,y,0));
+      lat = (int)ceil(osg::absolute(coords.GetLatitude()));
+      lon = (int)ceil(osg::absolute(coords.GetLongitude()));
+      if (coords.GetLatitude() < 0.0)
+         lat = -lat;
+      if (coords.GetLongitude() < 0.0)
+         lon = -lon;
+      
+      DrawableMap::iterator itor;
+      for (itor=mDrawables.begin(); itor!=mDrawables.end(); ++itor)
       {
-         LOG_ERROR("Cannot retreive terrain height.  The terrain is not valid.");
-         return 0.0f;
+         int drawableLat = (int)ceil(osg::absolute(itor->first->GetGeoCoordinates().GetLatitude()));
+         int drawableLon = (int)ceil(osg::absolute(itor->first->GetGeoCoordinates().GetLongitude()));
+         
+         if (itor->first->GetGeoCoordinates().GetLatitude() < 0.0)
+            drawableLat = -drawableLat;
+         if (itor->first->GetGeoCoordinates().GetLongitude() < 0.0)
+            drawableLon = -drawableLon;
+         
+         if (drawableLat == lat && drawableLon == lon)
+         {
+            GeoCoordinates testCoords;
+            testCoords.SetLatitude(lat);
+            testCoords.SetLongitude(lon);
+            
+            osg::Vec3 pos = testCoords.GetCartesianPoint();        
+            return itor->second.drawable->GetHeight(x-pos.x(),y-pos.y());
+         }
       }
-      else
-         return mDrawable->GetHeight(x,y);  
+      
+      return 0.0f;
    }
          
    //////////////////////////////////////////////////////////////////////////    
    osg::Vec3 SoarXTerrainRenderer::GetNormal(float x, float y)
    {
-      if (!mDrawable)
-      {
-         LOG_ERROR("Cannot retreive terrain normal.  The terrain is not valid.");
-         return osg::Vec3(0,0,1);
-      }
-      
-      float z = mDrawable->GetHeight(x,y);
+      float z = GetHeight(x,y);
       osg::Vec3 v1,v2,normal;
       
-      v1 = osg::Vec3(0.1f,0.0f,mDrawable->GetHeight(x+0.1f,y) - z);
-      v2 = osg::Vec3(0.0f,0.1f,mDrawable->GetHeight(x,y+0.1f) - z);
+      v1 = osg::Vec3(0.1f,0.0f,GetHeight(x+0.1f,y) - z);
+      v2 = osg::Vec3(0.0f,0.1f,GetHeight(x,y+0.1f) - z);
       
       normal = v1 ^ v2;
       normal.normalize();
-      return normal;
+      return normal;      
    }
    
    //////////////////////////////////////////////////////////////////////////
    void SoarXTerrainRenderer::SetDetailMultiplier(float value)
    {
-      if (mDrawable.valid())
-         mDrawable->SetDetailMultiplier(value);
+      mDetailMultiplier = osg::clampTo(value,1.0f,20.0f);
+      DrawableMap::iterator itor;
+      for (itor=mDrawables.begin(); itor!=mDrawables.end(); ++itor)
+         itor->second.drawable->SetDetailMultiplier(mDetailMultiplier);
    }
 
    //////////////////////////////////////////////////////////////////////////   
    float SoarXTerrainRenderer::GetDetailMultiplier() const
    {
-      if (mDrawable.valid())
-         return mDrawable->GetDetailMultiplier();
-      else
-         return 0.0f;
+      return mDetailMultiplier;
    }
    
    ////////////////////////////////////////////////////////////////////////// 
    void SoarXTerrainRenderer::SetThreshold(float value)
    {
-      if (mDrawable.valid())
-         mDrawable->SetThreshold(value);
+      mThreshold = osg::clampTo(value,1.0f,20.0f);
+      DrawableMap::iterator itor;
+      for (itor=mDrawables.begin(); itor!=mDrawables.end(); ++itor)
+         itor->second.drawable->SetThreshold(mThreshold);
    }
    
    ////////////////////////////////////////////////////////////////////////// 
    float SoarXTerrainRenderer::GetThreshold() const 
    {
-      if (mDrawable.valid())
-         return mDrawable->GetThreshold();
-      else
-         return 0.0f;
+      return mThreshold;
    }
-   
-   //////////////////////////////////////////////////////////////////////////       
-   osg::HeightField *SoarXTerrainRenderer::ResizeHeightField(osg::HeightField *oldHF)
-   {
-      unsigned int width = oldHF->getNumColumns();
-      unsigned int height = oldHF->getNumRows();
-      unsigned int dims;
-      int correctSize;
-
-      //We need to make sure that the dimensions of the heightmap are in fact
-      //(2^n)+1 x (2^n)+1.  If they are not, we need to resize it.
-      dims = osg::maximum(width,height);
-      correctSize = osg::Image::computeNearestPowerOfTwo(dims) + 1;      
-      if (width == (unsigned)correctSize && width == height)
-         return oldHF;
-      
-      //Log some good information.
-      std::ostringstream ss;
-      ss << "Heightfield dimensions (" << width << "," << height << 
-         ") are not (2^n)+1 x (2^n)+1.  Resizing...";
-      LOG_WARNING(ss.str());
-      
-      osg::HeightField *newHF = new osg::HeightField();
-      double x,xStep;
-      double yStep;
-      double y = 0.0;
-
-      newHF->allocate(correctSize,correctSize);
-      xStep = (width-1.0) / (correctSize-1.0);
-      yStep = (height-1.0) / (correctSize-1.0);
-      for (int i=0; i<correctSize; i++)
-      {
-         x = 0.0;
-         for (int j=0; j<correctSize; j++)
-         {
-            float newValue = GetInterpolatedHeight(oldHF,x,y);
-            newHF->setHeight(j,i,newValue);
-            x += xStep;
-         }
          
-         y += yStep;
-      }     
-      
-      return newHF;
-   }
-   
    //////////////////////////////////////////////////////////////////////////
-   void SoarXTerrainRenderer::BuildTextureImages(osg::Geode *geode)
-   {
-      if (geode == NULL)
-      {
-         //todo throw exception...
-         LOG_ERROR("Cannot attach textures to an invalid geode.");
-         return;
-      }
-      
-      osg::StateSet *ss = geode->getOrCreateStateSet();
-      
-      //Create the detail gradient image and load it into a texture map.
-      dtCore::RefPtr<osg::Image> detailGradientMap =
-         osgDB::readImageFile(GetParentTerrain()->GetCachePath() + "/detail_gradient.jpg");
-      if (detailGradientMap == NULL)
-      {
-         LOG_INFO("Building detail gradient map.");
-         detailGradientMap = 
-            ImageUtils::CreateDetailGradientMap(mHeightMapImage->s(),mHeightMapImage->t(),4.0f);
-         osgDB::writeImageFile(*detailGradientMap,GetParentTerrain()->GetCachePath() + 
-            "/detail_gradient.jpg");
-      }
-      else
-      {
-         LOG_INFO("Using cached version of the detail gradient map.");
-      }
-      
-      mDetailGradientTexture = new osg::Texture2D();
-      mDetailGradientTexture->setImage(detailGradientMap.get());
-      mDetailGradientTexture->setFilter(osg::Texture2D::MIN_FILTER,
-         osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-      mDetailGradientTexture->setFilter(osg::Texture2D::MAG_FILTER,
-         osg::Texture2D::LINEAR);
-      mDetailGradientTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
-      mDetailGradientTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);
-      ss->setTextureAttributeAndModes(0,mDetailGradientTexture.get());
-      
-      //Create the detail scale image and load it into a texture map.
-      LOG_INFO("Building detail scale map.");
-      dtCore::RefPtr<osg::Image> detailScaleMap =
-         ImageUtils::CreateDetailScaleMap(mHeightMapImage->s(),mHeightMapImage->t());
-         
-      mDetailScaleTexture = new osg::Texture2D();
-      mDetailScaleTexture->setImage(detailScaleMap.get());
-      mDetailScaleTexture->setFilter(osg::Texture2D::MIN_FILTER,
-         osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-      mDetailScaleTexture->setFilter(osg::Texture2D::MAG_FILTER,
-         osg::Texture2D::LINEAR);
-      mDetailScaleTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
-      mDetailScaleTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);     
-      ss->setTextureAttributeAndModes(1,mDetailScaleTexture.get());
-                 
-      //Create the base gradient image and load it into a texture map.
-      //Create the detail gradient image and load it into a texture map.
-      LOG_INFO("Building base gradient map.");
-      dtCore::RefPtr<osg::Image> baseGradientMap;
-      baseGradientMap = ImageUtils::CreateBaseGradientMap(mHeightMapImage.get(),GRADIENT_SCALE * 
-         mDrawable->GetBaseVerticalResolution() / mDrawable->GetBaseHorizontalResolution()); 
-               
-      mBaseGradientTexture = new osg::Texture2D();
-      mBaseGradientTexture->setImage(baseGradientMap.get());
-      mBaseGradientTexture->setFilter(osg::Texture2D::MIN_FILTER,
-         osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-      mBaseGradientTexture->setFilter(osg::Texture2D::MAG_FILTER,
-         osg::Texture2D::LINEAR);
-      mBaseGradientTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
-      mBaseGradientTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
-      ss->setTextureAttributeAndModes(2,mBaseGradientTexture.get());
-      
-      //The currentl SoarX implementation only uses the first entry in the
-      //custom texture lists. (If available).  This is used as a base image map
-      //for the terrain.  It could be an LCC image, a colormap, or a satellite image.
-      if (!mCustomImageList.empty())
-      {
-         osg::Image *image = mCustomImageList[0].get();
-         if (image == NULL)
-            return;
-         
-         osg::Texture2D *baseColorTexture = new osg::Texture2D();
-         baseColorTexture->setImage(image);
-         baseColorTexture->setFilter(osg::Texture2D::MIN_FILTER,
-            osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-         baseColorTexture->setFilter(osg::Texture2D::MAG_FILTER,
-            osg::Texture2D::LINEAR);
-         baseColorTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
-         baseColorTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);
-         ss->setTextureAttributeAndModes(3,baseColorTexture);
-      }
-   }
-   
-   //////////////////////////////////////////////////////////////////////////
-   void SoarXTerrainRenderer::CreateFragmentShader(osg::Geode *geode)
-   {
-      if (geode == NULL)
-      {
-         LOG_ERROR("Cannot create fragment shader.  A NULL geode was specified.");
-         return;
-      }
-      
-      dtCore::RefPtr<osg::Program> shaderProgram = new osg::Program();
+   void SoarXTerrainRenderer::CreateFragmentShader()
+   {      
       dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
-      osg::StateSet *ss = geode->getOrCreateStateSet();
-      
       std::string shaderPath = osgDB::findDataFile(mFragShaderPath);
       if (shaderPath.empty())
       {
@@ -326,76 +265,384 @@ namespace dtTerrain
             return;
          }
       }
-           
-      shaderProgram->addShader(fragShader.get()); 
       
-      //This following code connects our textures to samplers so the 
-      //fragment shader can access them.
-      osg::Uniform *uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"detailGradient");
-      uniform->set(0);
-      ss->addUniform(uniform);
-      
-      uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"detailScale");
-      uniform->set(1);
-      ss->addUniform(uniform);
-
-      uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseGradient");
-      uniform->set(2);
-      ss->addUniform(uniform);
-      
-      uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseColor");
-      uniform->set(3);
-      ss->addUniform(uniform);
-      
-      //Finally add the shader program to our current state set.
-      ss->setAttributeAndModes(shaderProgram.get());      
+      mShaderProgram = new osg::Program();
+      mShaderProgram->addShader(fragShader.get());
    }
    
    //////////////////////////////////////////////////////////////////////////   
-   void SoarXTerrainRenderer::CalculateAutoTexCoordParams(osg::Geode *geode)
+   void SoarXTerrainRenderer::SetupRenderState(PagedTerrainTile &tile,
+      DrawableEntry &entry, osg::StateSet &ss)
    {
-      if (geode == NULL)
+      ss.setAttributeAndModes(mShaderProgram.get(),osg::StateAttribute::ON |
+         osg::StateAttribute::OVERRIDE);
+      
+      //This following code connects our textures to samplers so the 
+      //fragment shader can access them.      
+      osg::Uniform *uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"detailGradient");
+      uniform->set(0);
+      ss.addUniform(uniform);
+      
+      uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"detailScale");
+      uniform->set(1);
+      ss.addUniform(uniform);
+
+      uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseGradient");
+      uniform->set(2);
+      ss.addUniform(uniform);
+      
+      if (tile.GetBaseTextureImage() != NULL)
       {
-         LOG_ERROR("Cannot calculate texture coordinates.  Geode was NULL.");
-         return;
+         osg::Texture2D *baseColorTexture = new osg::Texture2D();
+         baseColorTexture->setImage(tile.GetBaseTextureImage());
+         baseColorTexture->setFilter(osg::Texture2D::MIN_FILTER,
+            osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+         baseColorTexture->setFilter(osg::Texture2D::MAG_FILTER,
+            osg::Texture2D::LINEAR);
+         baseColorTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
+         baseColorTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
+         ss.setTextureAttributeAndModes(3,baseColorTexture,osg::StateAttribute::ON);
+      
+         uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseColor");
+         uniform->set(3);
+         ss.addUniform(uniform);
       }
       
-      osg::StateSet *ss = geode->getOrCreateStateSet();
+      //Setup our basic render state used for all tiles.
+      osg::CullFace *cf = new osg::CullFace();
+      osg::PolygonMode *pm = new osg::PolygonMode();
+      osg::FrontFace *ff = new osg::FrontFace();
+      
+      ff->setMode(osg::FrontFace::CLOCKWISE);
+      pm->setMode(osg::PolygonMode::FRONT,osg::PolygonMode::FILL);
+      ss.setAttributeAndModes(cf,osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+      ss.setAttributeAndModes(pm,osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+      ss.setAttributeAndModes(ff,osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+      ss.setMode(GL_LIGHTING,osg::StateAttribute::OFF | 
+         osg::StateAttribute::OVERRIDE);
+         
+      //Attach our shared textures...
+      ss.setTextureAttributeAndModes(0,mDetailGradientTexture.get(),
+         osg::StateAttribute::ON);
+      ss.setTextureAttributeAndModes(1,mDetailScaleTexture.get(),osg::StateAttribute::ON);
+      ss.setTextureAttributeAndModes(2,entry.baseGradientTexture.get(),osg::StateAttribute::ON);
+         
+      //Setup automatic texture coordinate generation..
       osg::TexGen *texGen = new osg::TexGen();
       float dt;
       
       //Calculate the planer mapping parameters for the detail gradient texture.
-      dt = 1.0f / (mDrawable->GetDetailHorizontalResolution() * mDrawable->GetDetailSize());
+      dt = 1.0f / (entry.drawable->GetDetailHorizontalResolution() * 
+         (float)entry.drawable->GetDetailSize());
       texGen->setMode(osg::TexGen::OBJECT_LINEAR);
       texGen->setPlane(osg::TexGen::S,osg::Plane(dt,0,0,0));
-      texGen->setPlane(osg::TexGen::T,osg::Plane(0,dt,0,0));
-      ss->setTextureAttributeAndModes(0,texGen);
+      texGen->setPlane(osg::TexGen::T,osg::Plane(0,-dt,0,1));
+      ss.setTextureAttributeAndModes(0,texGen);
       
-      //Calculate the planer mapping parameters for the detail scale texture.
       texGen = new osg::TexGen();
-      dt = 1.0f / (mHeightMapImage->s()*mDrawable->GetBaseHorizontalResolution());
+      dt = 1.0f / ((float)tile.GetHeightField()->GetNumColumns() * 
+            entry.drawable->GetBaseHorizontalResolution());
       texGen->setMode(osg::TexGen::OBJECT_LINEAR);
       texGen->setPlane(osg::TexGen::S,osg::Plane(dt,0,0,0));
-      texGen->setPlane(osg::TexGen::T,osg::Plane(0,dt,0,0));
-      ss->setTextureAttributeAndModes(1,texGen);
+      texGen->setPlane(osg::TexGen::T,osg::Plane(0,-dt,0,1));
+      ss.setTextureAttributeAndModes(1,texGen);
    }
-
-   //////////////////////////////////////////////////////////////////////////   
-   float SoarXTerrainRenderer::GetInterpolatedHeight(const osg::HeightField *hf, 
-      double x, double y)
+     
+   //////////////////////////////////////////////////////////////////////////
+   void SoarXTerrainRenderer::InitializeRenderer()
    {
-      int fx = (int)floor(x), fy = (int)floor(y);
-      int cx = (int)ceil(x), cy = (int)ceil(y);
+      if (mDetailNoise == NULL)
+         CheckDetailNoiseCache();
       
-      double v1 = hf->getHeight(fx,fy);
-      double v2 = hf->getHeight(cx,fy);
-      double v3 = hf->getHeight(fx,cy);
-      double v4 = hf->getHeight(cx,cy);
+      if (!mShaderProgram.valid())
+         CreateFragmentShader();
+         
+      if (!mDetailGradientTexture.valid())
+         CheckDetailGradientCache();
+         
+      if (!mDetailScaleTexture.valid())
+         CheckDetailScaleCache();
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void SoarXTerrainRenderer::CheckDetailNoiseCache()
+   {
+      if (GetParentTerrain()->GetCachePath().empty())
+      {
+         //Since we are not using a cache, just calculate the noise.
+         CalculateDetailNoise();
+         return;
+      }
       
-      double v12 = v1 + (v2-v1)*(x-fx);
-      double v34 = v3 + (v4-v3)*(x-fx);
+      std::string cachePath = GetParentTerrain()->GetCachePath() + "/" +
+         SoarXCacheResourceName::DETAIL_VERTEX_NOISE.GetName();
+             
+      //See if the file already exists, if not, generate the data and save
+      //it to the cache.
+      std::ifstream inFile;
+      inFile.open(cachePath.c_str(),std::ios::in | std::ios::binary);
+      if (!inFile.is_open())
+      {
+         //We need to generate the data.
+         CalculateDetailNoise();
+               
+         //Once we have calculated the noise, cache it immediatly.
+         std::ofstream outFile;
+         outFile.open(cachePath.c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
+         if (!outFile.is_open())
+         {
+            LOG_INFO("Could not open detail vertex noise cache file: " + cachePath);
+         }
+         else
+         {
+            LOG_INFO("Caching detail vertex noise: " + cachePath);
+            outFile.write((char *)&mDetailNoiseBits,sizeof(int));
+            outFile.write((char *)&mDetailNoise[0],
+               sizeof(float)*mDetailNoiseSize*mDetailNoiseSize);
+            outFile.close();
+         }
+      }
+      else
+      {
+         LOG_INFO("Reading detail vertex noise from cache: " + cachePath);
+               
+         int detailBits;
+         inFile.read((char *)&detailBits,sizeof(int));
+         if (detailBits != mDetailNoiseBits)
+         {
+            LOG_INFO("Cache data mismatch in detail vertex noise.  Detail noise sizes "
+               "are not equal.");
+            mDetailNoise = NULL;
+         }
+         else
+         {
+            mDetailNoiseBits = detailBits;
+            mDetailNoiseSize = 1 << mDetailNoiseBits;
+            mDetailNoise = new float[mDetailNoiseSize*mDetailNoiseSize];
+            inFile.read((char *)&mDetailNoise[0],sizeof(float) *
+               mDetailNoiseSize*mDetailNoiseSize);   
+         }
+                     
+         inFile.close();
+      }                     
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void SoarXTerrainRenderer::CheckDetailScaleCache()
+   {
+      dtCore::RefPtr<osg::Image> scaleMapImage;
       
-      return v12 + (v34-v12)*(y-fy);
+      if (GetParentTerrain()->GetCachePath().empty())
+      {
+         //Since we are not using a cache, just calculate the scale map.
+         scaleMapImage = ImageUtils::CreateDetailScaleMap(mDetailNoiseSize,mDetailNoiseSize);
+      }
+      else
+      {
+         //See if the file exists in the cache, if not, create the scale map and cache it.
+         std::string cachePath = GetParentTerrain()->GetCachePath() + "/" +
+            SoarXCacheResourceName::DETAIL_SCALE_MAP.GetName();
+         
+         if (dtDAL::FileUtils::GetInstance().FileExists(cachePath))
+         {
+            LOG_INFO("Reading detail scale map from cache: " + cachePath);
+            scaleMapImage = osgDB::readImageFile(cachePath);
+            if (scaleMapImage == NULL)
+            {
+               LOG_INFO("Unable to load detail gradient from the cache.  Generating instead.");
+               scaleMapImage = ImageUtils::CreateDetailScaleMap(mDetailNoiseSize,mDetailNoiseSize);
+                  
+               //Cache the new gradient texture..
+               osgDB::writeImageFile(*scaleMapImage.get(),cachePath);
+            }
+            else
+            {
+               if (scaleMapImage->s() != mDetailNoiseSize || scaleMapImage->t() != mDetailNoiseSize)
+               {
+                  LOG_INFO("Cache data mismatch in detail scale map.  Detail noise sizes "
+                     "are not equal.  Generating instead.");
+                  scaleMapImage = ImageUtils::CreateDetailScaleMap(mDetailNoiseSize,mDetailNoiseSize);
+                  
+                  //Cache the new gradient texture..
+                  osgDB::writeImageFile(*scaleMapImage.get(),cachePath);
+               }
+            }
+         }
+         else
+         {
+            LOG_INFO("Generating detail gradient texture.");
+            scaleMapImage = ImageUtils::CreateDetailScaleMap(mDetailNoiseSize,mDetailNoiseSize);
+                  
+            //Cache the new gradient texture..
+            osgDB::writeImageFile(*scaleMapImage.get(),cachePath);
+         }
+      }
+      
+       //Now that we have the image, create a texture map from it.
+      mDetailScaleTexture = new osg::Texture2D();
+      mDetailScaleTexture->setImage(scaleMapImage.get());
+      mDetailScaleTexture->setFilter(osg::Texture2D::MIN_FILTER,
+         osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      mDetailScaleTexture->setFilter(osg::Texture2D::MAG_FILTER,
+         osg::Texture2D::LINEAR);
+      mDetailScaleTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
+      mDetailScaleTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void SoarXTerrainRenderer::CheckDetailGradientCache()
+   {
+      dtCore::RefPtr<osg::Image> gradientImage = NULL;
+      
+      if (GetParentTerrain()->GetCachePath().empty())
+      {
+         //Since we are not using a cache, just calculate the gradient.
+         gradientImage = ImageUtils::CreateDetailGradientMap(mDetailNoiseSize,mDetailNoiseSize,
+            4.0f);         
+      }
+      else
+      {
+         //See if the file exists in the cache, if not, create the gradient image and cache it.
+         std::string cachePath = GetParentTerrain()->GetCachePath() + "/" +
+            SoarXCacheResourceName::DETAIL_GRADIENT_TEXTURE.GetName();
+            
+         if (dtDAL::FileUtils::GetInstance().FileExists(cachePath))
+         {
+            LOG_INFO("Reading detail gradient texture from cache: " + cachePath);
+            gradientImage = osgDB::readImageFile(cachePath);
+            if (gradientImage == NULL)
+            {
+               LOG_INFO("Unable to load detail gradient from the cache.  Generating instead.");
+               gradientImage = ImageUtils::CreateDetailGradientMap(mDetailNoiseSize,mDetailNoiseSize,
+                  4.0f);
+                  
+               //Cache the new gradient texture..
+               osgDB::writeImageFile(*gradientImage.get(),cachePath);
+            }
+            else
+            {
+               if (gradientImage->s() != mDetailNoiseSize || gradientImage->t() != mDetailNoiseSize)
+               {
+                  LOG_INFO("Cache data mismatch in detail gradient texture.  Detail noise sizes "
+                     "are not equal.  Generating instead.");
+                  gradientImage = ImageUtils::CreateDetailGradientMap(mDetailNoiseSize,mDetailNoiseSize,
+                     4.0f);
+                  
+                  //Cache the new gradient texture..
+                  osgDB::writeImageFile(*gradientImage.get(),cachePath);
+               }
+            }
+         }
+         else
+         {
+            LOG_INFO("Generating detail gradient texture.");
+            gradientImage = ImageUtils::CreateDetailGradientMap(mDetailNoiseSize,mDetailNoiseSize,
+               4.0f);
+                  
+            //Cache the new gradient texture..
+            osgDB::writeImageFile(*gradientImage.get(),cachePath);
+         }
+      }
+     
+      //Now that we have the image, create a texture map from it.
+      mDetailGradientTexture = new osg::Texture2D();
+      mDetailGradientTexture->setImage(gradientImage.get());
+      mDetailGradientTexture->setFilter(osg::Texture2D::MIN_FILTER,
+         osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      mDetailGradientTexture->setFilter(osg::Texture2D::MAG_FILTER,
+         osg::Texture2D::LINEAR);
+      mDetailGradientTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
+      mDetailGradientTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void SoarXTerrainRenderer::CheckBaseGradientCache(const PagedTerrainTile &tile, 
+      DrawableEntry &entry)
+   {
+      dtCore::RefPtr<osg::Image> baseGradientImage = NULL;
+      float scale = 0.85f;
+      
+      if (tile.GetCachePath().empty())
+      {
+         //Not using the cache so just generate the data.
+         baseGradientImage = ImageUtils::CreateBaseGradientMap(*tile.GetHeightField(),scale);  
+      }
+      else
+      {
+         //See if the file exists in the cache, if not, create the scale map and cache it.
+         std::string cachePath = tile.GetCachePath() + "/" +
+            SoarXCacheResourceName::BASE_GRADIENT_TEXTURE.GetName();
+         
+         if (dtDAL::FileUtils::GetInstance().FileExists(cachePath))
+         {
+            LOG_INFO("Reading base gradient from cache: " + cachePath);
+            baseGradientImage = osgDB::readImageFile(cachePath);
+            if (baseGradientImage == NULL)
+            {
+               LOG_INFO("Unable to load detail gradient from the cache.  Generating instead.");
+               baseGradientImage = ImageUtils::CreateBaseGradientMap(*tile.GetHeightField(),
+                  scale);  
+                  
+               //Cache the new gradient texture..
+               osgDB::writeImageFile(*baseGradientImage.get(),cachePath);
+            }
+            else
+            {
+               int numCols = tile.GetHeightField()->GetNumColumns();
+               int numRows = tile.GetHeightField()->GetNumRows();
+               
+               if (baseGradientImage->s() != (numCols-1) || baseGradientImage->t() != (numRows-1))
+               {
+                  LOG_INFO("Cache data mismatch in base gradiant map.  Dimensions are "
+                     "invalid.  Generating instead.");
+                  baseGradientImage = ImageUtils::CreateBaseGradientMap(*tile.GetHeightField(),
+                     scale); 
+                     
+                  //Cache the new gradient texture..
+                  osgDB::writeImageFile(*baseGradientImage.get(),cachePath);
+               }
+            }
+         }
+         else
+         {
+            LOG_INFO("Generating base gradient texture: " + cachePath);
+            baseGradientImage = ImageUtils::CreateBaseGradientMap(*tile.GetHeightField(),
+               scale);
+                  
+            //Cache the new gradient texture..
+            osgDB::writeImageFile(*baseGradientImage.get(),cachePath);
+         }
+      }     
+      
+      entry.baseGradientTexture = new osg::Texture2D();
+      entry.baseGradientTexture->setImage(baseGradientImage.get());
+      entry.baseGradientTexture->setFilter(osg::Texture2D::MIN_FILTER,
+         osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      entry.baseGradientTexture->setFilter(osg::Texture2D::MAG_FILTER,
+         osg::Texture2D::LINEAR);
+      entry.baseGradientTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
+      entry.baseGradientTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void SoarXTerrainRenderer::CalculateDetailNoise()
+   {
+      //Make sure we allocate our detail noise buffer.
+      mDetailNoise = new float[mDetailNoiseSize*mDetailNoiseSize];
+      
+      //Calculate for each "pixel" in our detail buffer, the noise value at
+      //that location.
+      for (int i=0; i<mDetailNoiseSize; i++)
+      {
+         for (int j=0; j<mDetailNoiseSize; j++)
+         {
+            SoarXDrawable::Index index(j,i);
+            unsigned short value = ImageUtils::CalculateDetailNoise(j,i);
+            index &= (mDetailNoiseSize-1);      
+            mDetailNoise[index.y*mDetailNoiseSize+index.x] = 
+               (value - 32768.0f) * mDetailVerticalResolution;
+         }
+      }     
    }
    
 }

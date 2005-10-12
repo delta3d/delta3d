@@ -25,9 +25,8 @@
 #include <osg/ref_ptr>
 #include <osg/Referenced>
 #include <osgDB/FileUtils>
-
-#include <dtDAL/export.h>
 #include <dtUtil/log.h>
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

@@ -22,6 +22,7 @@
 #define __EngineActorRegistry__h
 
 #include "dtDAL/actorpluginregistry.h"
+#include "dtDAL/plugin_export.h"
 
 namespace dtActors 
 {

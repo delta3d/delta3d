@@ -24,38 +24,34 @@
 
 #include <map>
 #include <string>
-#include <osg/Vec3d>
+#include <queue>
+#include <list>
 #include "dtCore/physical.h"
-#include "dtDAL/exceptionenum.h"
+#include "dtUtil/enumeration.h"
+#include "dtTerrain/geocoordinates.h"
+#include "dtTerrain/pagedterraintilefactory.h"
 #include "dtTerrain/terrain_export.h"
 
 namespace dtTerrain 
 {
-   /**
-    * The length of the semi-major axis (equatorial radius).
-    * (WGS 84)
-    */
-   const float SEMI_MAJOR_AXIS = 6378137.0f;
-   
-   /**
-    * The reciprocal of the flattening parameter. (WGS 84).
-    */
-   const float FLATTENING_RECIPROCAL = 298.257223563f;   
-  
    ///Forward declare the interfaces we need in the terrain.
    class TerrainDataReader;
    class TerrainDataRenderer;
    class TerrainDecorationLayer;
+   class PagedTerrainTile;
    
    /**
     * This class enumerates the different exceptions that can be thrown by
     * terrain instances.
     */
-   class DT_TERRAIN_EXPORT TerrainException : public dtDAL::ExceptionEnum
+   class DT_TERRAIN_EXPORT TerrainException : public dtUtil::Enumeration
    {
       DECLARE_ENUM(TerrainException);
       public:
       
+         ///Thrown if an invalid pointer was encountered during terrain operations.
+         static TerrainException NULL_POINTER;
+         
          ///Thrown if a specified resource could not be read or loaded.
          static TerrainException INVALID_RESOURCE_PATH;
          
@@ -75,36 +71,12 @@ namespace dtTerrain
       protected:
          
          ///Simple enumeration constructor.
-         TerrainException(const std::string &name) : dtDAL::ExceptionEnum(name)
+         TerrainException(const std::string &name) : dtUtil::Enumeration(name)
          {
             AddInstance(this);
          }
    };
    
-   /**
-    * This is a simple enumeration specifiying in what type of coordinate system
-    * the terrain should reference its data.
-    */
-   class DT_TERRAIN_EXPORT TerrainCoordinateSystem : public dtUtil::Enumeration
-   {
-      DECLARE_ENUM(TerrainCoordinateSystem);
-      public:
-         
-         ///Simple X,Y,Z coordinates.     
-         static const TerrainCoordinateSystem CARTESIAN;      
-         
-         ///Latitude, Longitude, and Elevation coordinates.
-         static const TerrainCoordinateSystem GEOGRAPHIC;
-      
-      protected:
-     
-         ///Simple constructor for enumerations.
-         TerrainCoordinateSystem(const std::string &name) : dtUtil::Enumeration(name)
-         {
-            AddInstance(this);
-         }
-   };
-
    /**
     * This is the base terrain class that provides most of the functionlity
     * required for terrain rendering.  This class uses a component or aggregate
@@ -116,7 +88,9 @@ namespace dtTerrain
    class DT_TERRAIN_EXPORT Terrain : public dtCore::Physical
    {
       //Help minimize some typing...
-      typedef std::map<std::string,dtCore::RefPtr<TerrainDecorationLayer> > TerrainLayer;
+      typedef std::map<std::string,dtCore::RefPtr<TerrainDecorationLayer> > TerrainLayerMap;
+      typedef std::map<GeoCoordinates,dtCore::RefPtr<PagedTerrainTile> > TerrainTileMap;
+      
       
       DECLARE_MANAGEMENT_LAYER(Terrain);
       public:
@@ -129,53 +103,52 @@ namespace dtTerrain
          Terrain(const std::string &name="Terrain");
          
          /**
-          * Loads terrain data from the specified resource path.  The resource path
-          * could be a directory or single file, the terrain class does not care.
-          * The TerrainDataReader assigned to this terrain will load the resource
-          * if it supports it.
-          * @param path Path to the resource to load.
-          * @throws Throws TerrainException if any errors occur during resource 
-          *    loading.
-          * @note The terrain is loaded using the current origin.  Therefore, before
-          *    loading terrain resources the origin should be set to the coordinates
-          *    mapping to the region to start in.
-          * @note If this method succeeds, the resource data path will be set to 
-          *    the path given to this method.
+          * Adds a search path to the list of file paths to search for when loading
+          * terrain data or other resources.  This path must be relative to a path
+          * in the Delta3D data path list.
+          * @param The new search path.
           */
-         virtual void LoadResource(const std::string &path);
+         void AddResourcePath(const std::string &path);
          
          /**
-          * Gets the terrain resource path currently being referenced by this terrain.
-          * @return The current data path.
+          * Removes a resource path from the list of known resource paths.
+          * @param path The path to remove.  If it is not currently in the list
+          *    this method does nothing.
           */
-         const std::string &GetResourcePath() const
+         void RemoveResourcePath(const std::string &path);
+         
+         /**
+          * Gets the terrain's current list of resource search paths.
+          * @return The list of string paths.
+          */
+         const std::list<std::string> &GetResourcePathList() const
          {
-            return mDataPath;
+            return mResourcePathList;
          }
          
          /**
-          * Gets the type of coordinate system the terrain is currentl
-          * referencing.
-          * @return The current coordinate system type.
+          * Searches the terrains resource path list for the specified
+          * resource.  The first resource matching the specified path is
+          * returned.
+          * @param The path to the resource to load.  This should be
+          *    either a filename or a path relative to the resource paths
+          *    registered with the terrain.
+          * @return An absolute path to the specified resource.  If the 
+          *    resource was not found, an empty string is returned.
           */
-         const TerrainCoordinateSystem &GetCoordinateSystem() const 
-         { 
-            return *mCoordinateSystem;
-         }
-            
-         /**
-          * Sets the origin of the terrain.  If the terrain coordinate system 
-          * is set to geographic, the origin is interpreted as (latitude, longitude,
-          * and elevation).  If the terrain coordinate system is set to
-          * CARTESIAN the origin is interpreted as (x,y,z).
-          */
-         void SetOrigin(const osg::Vec3d &origin);
+         const std::string FindResource(const std::string &path);
          
          /**
-          * Gets the origin of the terrain.
-          * @return The origin of the terrain.
+          * Searches the terrain resources path list for all resources
+          * matching the specified path.
+          * @path The path to the resource to load.  This should be 
+          *    either a filename or a path relative to the resource paths
+          *    registered with the terrain.
+          * @resourcePaths The result list filled with absolute paths to
+          *    all resources matching the specified path.
           */
-         const osg::Vec3d &GetOrigin() const;
+         void FindAllResources(const std::string &path, 
+            std::vector<std::string> &resourcePaths);
          
          /**
           * Gets the height of the terrain at the given (x,y) coordinates.
@@ -184,14 +157,30 @@ namespace dtTerrain
           */
          float GetHeight(float x, float y);
          
+         virtual void LoadTerrainTile(PagedTerrainTile &newTile);
+         
+         virtual void UnloadTerrainTile(PagedTerrainTile &toRemove);
+         
+         virtual void UnloadAllTerrainTiles();
+         
+         virtual PagedTerrainTile *CreateTerrainTile(const GeoCoordinates &coords);         
+         
+         virtual bool IsTerrainTileResident(const GeoCoordinates &coords);         
+         
+         virtual void EnsureTileVisibility(const std::set<GeoCoordinates> &coordList);
+         
          /**
           * Sets the path of the terrain cache.  The terrain cache is a directory
           * somewhere on the hard drive which is used to store on the fly data
-          * calculations which can then be reused on successive uses.  If this
+          * calculations which can then be reused on successive runs.  If this
           * path is not set, no data caching will occur.
           * @note The directory will be created if it does not already exist.
-          * @note Useful for data readers and/or terrain renderers that need a place
-          *    for temporary data.
+          * @note This path will be the root cache path for any terrain tiles
+          *    that need to have their data cached.  Each tile's cache path
+          *    is a subdirectory of this one.
+          * @note This path should only be used directly when data needs to be
+          *    cached that is independant of a particular terrain tile.  Tile
+          *    specific data should be cached in the tile's cache directory.
           * @param path The path to use for the terrain cache.
           * @throws Exception if the path does not exist and cannot be created.
           */
@@ -199,8 +188,13 @@ namespace dtTerrain
          
          /**
           * Gets the current terrain cache.
+          * @return The base cache path for this terrain.
           */
          const std::string &GetCachePath() const { return mCachePath; }
+         
+         void SetLoadDistance(float value) { mLoadDistance = value; }
+         
+         float GetLoadDistance() const { return mLoadDistance; }
          
          /**
           * Sets the terrain data reader.  This must be set before any terrain can 
@@ -325,25 +319,43 @@ namespace dtTerrain
           *    passed to this method will be destroyed.
           */
          void GetDecorationLayers(std::vector<dtCore::RefPtr<TerrainDecorationLayer> > &layers);
+         
+         void SetTerrainTileFactory(PagedTerrainTileFactory &factory) { mTileFactory = &factory; }
+         
+         PagedTerrainTileFactory *GetTerrainTileFactory() { return mTileFactory.get(); }
+         
+         virtual void OnMessage(dtCore::Base::MessageData *data);
             
       protected:
       
          ///Cleans up the terrain and its components.
          virtual ~Terrain();
+         
+         virtual void PreFrame(double frameTime);
+         
+         virtual void PostFrame(double frameTime);
+   
+         ///List of terrain tiles currently queued up for loading.
+         std::queue<dtCore::RefPtr<PagedTerrainTile> > mTilesToLoadQ;
+         
+         ///List of terrain tiles which are currently loaded into memory.
+         TerrainTileMap mResidentTiles;
+         
+         ///Queue of terrain tiles that need to be cached or destroyed.
+         std::queue<dtCore::RefPtr<PagedTerrainTile> > mTilesToUnloadQ;
    
       private:
          
          ///Full path to the terrain cache directory.
          std::string mCachePath;
          
-         ///Path to the current data this terrain object is working with.
-         std::string mDataPath;
+         ///This specifies a radius which tells the terrain how many terrain tiles 
+         ///to load into memory.
+         float mLoadDistance;
          
-         ///The current coordinate system type.
-         const TerrainCoordinateSystem *mCoordinateSystem;
-         
-         ///The terrain's origin.
-         osg::Vec3d mOrigin;
+         ///List of resource paths used by the terrain, its reader, and its
+         ///renderer to search for data.
+         std::list<std::string> mResourcePathList;
          
          ///The current terrain data reader.
          dtCore::RefPtr<TerrainDataReader> mDataReader;
@@ -351,8 +363,11 @@ namespace dtTerrain
          ///The current terrain data renderer.
          dtCore::RefPtr<TerrainDataRenderer> mDataRenderer;
          
+         ///The current terrain tile creation factory.
+         dtCore::RefPtr<PagedTerrainTileFactory> mTileFactory;
+         
          ///List of the layers currently attached to this terrain.
-         std::map<std::string,dtCore::RefPtr<TerrainDecorationLayer> > mDecorationLayers;
+         TerrainLayerMap mDecorationLayers;         
    };
 
 }

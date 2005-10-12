@@ -21,10 +21,10 @@
 #ifndef _PHYSICAL_ACTOR_PROXY_H_
 #define _PHYSICAL_ACTOR_PROXY_H_
 
-#include "dtDAL/plugin_export.h"
 #include "dtDAL/transformableactorproxy.h"
 #include <dtCore/physical.h>
 #include <dtUtil/enumeration.h>
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

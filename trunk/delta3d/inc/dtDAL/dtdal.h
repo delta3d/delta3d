@@ -44,6 +44,7 @@
 #include <dtDAL/resourcetreenode.h>
 #include <dtDAL/stringtokenizer.h>
 #include <dtDAL/transformableactorproxy.h>
+#include <dtDAL/export.h>
 
 /** The Dynamic Actor Layer contains functionality to support the loading of 
   * map files and Actor Proxy support.

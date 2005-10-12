@@ -29,6 +29,7 @@
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/datatype.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

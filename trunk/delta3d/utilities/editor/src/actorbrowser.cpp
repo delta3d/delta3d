@@ -136,7 +136,7 @@ namespace dtEditQt
                     QStringList subCategories = fullCategory.split(tr(ActorTypeTreeWidget::CATEGORY_SEPARATOR.c_str()),
                         QString::SkipEmptyParts);
                     QMutableStringListIterator *listIterator = new QMutableStringListIterator(subCategories);
-                    rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i]);
+                    rootActorType->recursivelyAddCategoryAndActorTypeAsChildren(listIterator, actorTypes[i].get());
 
                 }
             }
@@ -288,7 +288,7 @@ namespace dtEditQt
 
             // create our new object
             osg::ref_ptr<dtDAL::ActorProxy> proxy =
-                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType().get());
+                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(*selectedWidget->getActorType()).get();
 
             if (proxy.valid())
             {
@@ -301,13 +301,13 @@ namespace dtEditQt
 
                 // let the world know that a new proxy exists
                 EditorEvents::getInstance().emitBeginChangeTransaction();
-                EditorEvents::getInstance().emitActorProxyCreated(proxy, false);
+                EditorEvents::getInstance().emitActorProxyCreated(proxy.get(), false);
                 ViewportManager::getInstance().placeProxyInFrontOfCamera(proxy.get());
                 EditorEvents::getInstance().emitEndChangeTransaction();
 
                 // Now, let the world that it should select the new actor proxy.
                 std::vector<osg::ref_ptr<dtDAL::ActorProxy> > actors;
-                actors.push_back(proxy);
+                actors.push_back(proxy.get());
                 EditorEvents::getInstance().emitActorsSelected(actors);
             }
 
