@@ -16,22 +16,22 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author Matthew W. Campbell
+* @author Matthew W. Campbell and David Guthrie
 */
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actortype.h"
-#include <dtUtil/log.h>
-#include <dtDAL/exceptionenum.h>
+#include "dtDAL/exceptionenum.h"
 #include "dtDAL/actorproxyicon.h"
-#include <sstream>
+#include <dtUtil/log.h>
 #include <osgDB/Registry>
 #include <osgDB/FileNameUtils>
 #include <dtCore/scene.h>
+#include <sstream>
 
 namespace dtDAL
 {
     //Singleton global variable for the library manager.
-    osg::ref_ptr<LibraryManager> LibraryManager::mInstance(NULL);
+    dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
 
     ///////////////////////////////////////////////////////////////////////////////
     LibraryManager::LibraryManager()
@@ -90,34 +90,26 @@ namespace dtDAL
             return;
         }
 
-        osgDB::DynamicLibrary *dynLib;
-        RegistryEntry newEntry;
-        std::string actualLibName;
-
-        //Get the system dependent name of the library.
-        actualLibName = GetPlatformSpecificLibraryName(libName);
-
-        //First, try and load the dynamic library.
-        msg << "Loading actor registry library " << actualLibName;
-        LOG_INFO(msg.str());
-        dynLib = osgDB::DynamicLibrary::loadLibrary(actualLibName);
-        if (!dynLib)
+        dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
+        
+        RegistryEntry newEntry;        
+        
+        try
+        {
+            newEntry.lib = lsm.LoadSharedLibrary(libName);
+        }
+        catch (dtUtil::Exception)
         {
             msg.clear();
             msg.str("");
-            msg << "Unable to load actor registry " << actualLibName;
+            msg << "Unable to load actor registry " << libName;
             EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,msg.str());
         }
-        else
-        {
-            newEntry.dynLib = dynLib;
-        }
-
-        //Now lookup the symbols for creating and destroying the library.
+        
         osgDB::DynamicLibrary::PROC_ADDRESS createFn;
         osgDB::DynamicLibrary::PROC_ADDRESS destroyFn;
-        createFn = dynLib->getProcAddress("CreatePluginRegistry");
-        destroyFn = dynLib->getProcAddress("DestroyPluginRegistry");
+        createFn = newEntry.lib->GetDynamicLibrary().getProcAddress("CreatePluginRegistry");
+        destroyFn = newEntry.lib->GetDynamicLibrary().getProcAddress("DestroyPluginRegistry");
 
         //Make sure the plugin actually implemented these functions and they
         //have been exported.
@@ -156,7 +148,7 @@ namespace dtDAL
         int numUniqueActors = 0;
         for (unsigned int i=0; i<actorTypes.size(); i++)
         {
-            ActorTypeMapItor itor = mActors.find(actorTypes[i]);
+            ActorTypeMapItor itor = mActors.find(dtCore::RefPtr<ActorType>(actorTypes[i].get()));
             if (itor != mActors.end())
             {
                 msg.clear();
@@ -166,7 +158,7 @@ namespace dtDAL
             }
             else
             {
-                mActors.insert(std::make_pair(actorTypes[i],newEntry.registry));
+                mActors.insert(std::make_pair(dtCore::RefPtr<ActorType>(actorTypes[i].get()),newEntry.registry));
                 ++numUniqueActors;
             }
         }
@@ -179,7 +171,7 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void LibraryManager::GetActorTypes(std::vector<osg::ref_ptr<ActorType> > &actorTypes)
+    void LibraryManager::GetActorTypes(std::vector<dtCore::RefPtr<ActorType> > &actorTypes)
     {
         actorTypes.clear();
         ActorTypeMapItor itor = mActors.begin();
@@ -191,10 +183,10 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<ActorType> LibraryManager::FindActorType(const std::string &category,
+    dtCore::RefPtr<ActorType> LibraryManager::FindActorType(const std::string &category,
             const std::string &name)
     {
-        osg::ref_ptr<ActorType> typeToFind = new ActorType(name,category);
+        dtCore::RefPtr<ActorType> typeToFind = new ActorType(name,category);
         ActorTypeMapItor itor = mActors.find(typeToFind);
         if (itor != mActors.end())
             return itor->first;
@@ -203,13 +195,13 @@ namespace dtDAL
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<ActorProxy> LibraryManager::CreateActorProxy(ActorType& actorType)
+    dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(ActorType& actorType)
     {
         ActorPluginRegistry* apr = GetRegistryForType(actorType);
 
         //Now we know which registry to use, so tell the registry to
         //create the proxy object and return it.
-        osg::ref_ptr<ActorProxy> proxy = apr->CreateActorProxy(actorType);
+        dtCore::RefPtr<ActorProxy> proxy = apr->CreateActorProxy(actorType).get();
         return proxy;
     }
 
@@ -232,7 +224,7 @@ namespace dtDAL
         //To create an new actor proxy, first we search our map of actor types
         //to locate the actor registry that knows how to create a proxy of the
         //requested type.
-        osg::ref_ptr<ActorType> actorTypePtr(&actorType);
+        dtCore::RefPtr<ActorType> actorTypePtr(&actorType);
         
         ActorTypeMapItor found = mActors.find(actorTypePtr);
         if (found == mActors.end())
@@ -263,7 +255,7 @@ namespace dtDAL
 
         regEntry.registry->GetSupportedActorTypes(actorTypes);
         for (actorItor=actorTypes.begin(); actorItor!=actorTypes.end(); ++actorItor)
-            mActors.erase(*actorItor);
+            mActors.erase(dtCore::RefPtr<ActorType>(actorItor->get()));
 
         mRegistries.erase(regItor);
 
@@ -286,24 +278,11 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     std::string LibraryManager::GetPlatformSpecificLibraryName(const std::string &libBase)
     {
-        #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-        return libBase + ".dll";
-        #elif defined(__APPLE__)
-        return "lib" + libBase + ".so";
-        #else
-        return "lib" + libBase + ".so";
-        #endif
+        return dtUtil::LibrarySharingManager::GetPlatformSpecificLibraryName(libBase);
     }
-
     ///////////////////////////////////////////////////////////////////////////////
     std::string LibraryManager::GetPlatformIndependentLibraryName(const std::string &libName)
     {
-        std::string iName = osgDB::getStrippedName(libName);
-
-        #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-        return iName;
-        #else
-        return std::string(iName.begin()+3,iName.end());
-        #endif
+        return dtUtil::LibrarySharingManager::GetPlatformIndependentLibraryName(libName);
     }
 }

@@ -22,19 +22,12 @@
 #define DELTA_TERRAINDATARENDERER
 
 #include <osg/Vec3>
-#include <osg/Image>
+#include <osg/Group>
 #include "dtCore/base.h"
 #include "dtCore/refptr.h"
-#include "dtTerrain/terrain_export.h"
 #include "dtDAL/exceptionenum.h"
-
-///Forward declare some OSG classes.
-namespace osg 
-{
-   class Group;
-   class HeightField;
-}
-
+#include "dtTerrain/pagedterraintile.h"
+#include "dtTerrain/terrain_export.h"
 
 namespace dtTerrain
 {
@@ -75,22 +68,43 @@ namespace dtTerrain
       
       public:
          
-         ///Make the code a little more readable.      
-         typedef dtCore::RefPtr<osg::Image> CustomImage;
-      
          /**
           * Constructs the terrain renderer.
           */
          TerrainDataRenderer(const std::string &name = "TerrainRenderer");
             
          /**
-          * Initializes the renderer.  Any data structures that need to be filled or data
-          * calculations/conversions from the height field representation to internal 
-          * data should be done here.  This includes any initial textures, scene nodes, etc.
-          * @note Implementations of this method should throw exceptions if an error
-          *    occurs.
+          * This method is called when the parent terrain needs
+          * to load a tile.
+          * @param tile The new tile.  The loader should populate 
+          *    the fields of the tile as appropriate.
+          * @note Should throw an exception if any errors occur.
+          * @note At this point, the terrain tiles have had a chance to load
+          *    data from their cache.  Therefore, readers implementing this
+          *    method may want to check the status of a tile's data before
+          *    loading since it may have been retrieved from the cache.
+          * @note Resources may be looked up using the parent terrain's
+          *    resource path list.  In most cases, the terrain will be
+          *    made aware of any resource locations its readers may need.
+          * @see Terrain
+          * @see PagedTerrainTile
           */
-         virtual void Initialize() = 0;
+         virtual void OnLoadTerrainTile(PagedTerrainTile &tile) = 0;
+         
+         /**
+          * This method is called when the parent terrain wishes
+          * to unload a terrain tile from its list of resident tiles.
+          * @param tile The tile being unloaded.
+          * @note Should throw an exception if any errors occur.
+          * @note The default implementation does nothing as most renderers
+          *    will probably only process data and have no need to respond
+          *    to this method, however, it is available if needed.  Also note,
+          *    that the tile itself is responsible for caching its data, however,
+          *    any data a renderer wishes to control may be cached in this method.
+          * @see Terrain
+          * @see PagedTerrainTile
+          */
+         virtual void OnUnloadTerrainTile(PagedTerrainTile &tile) { }
          
          /**
           * Gets the height of the terrain at the specified (x,y) coordinates.
@@ -107,77 +121,31 @@ namespace dtTerrain
          /**
           * Returns a scene node that encapsulates the renderable terrain.  This 
           * is the entry point by which the terrain is added to the scene.
-          * @return An OpenSceneGraph group node that contains all the information
-          *    needed to render the terrain.
-          * @note Initialize() is guarenteed to be called before this method by 
-          *    the parent terrain.
+          * @return An OpenSceneGraph group node containing the renderer's 
+          *    scene graph.
+          * @note It is OK to return a group node with no children.  This is 
+          *    most likely the case since this method is called before any tiles
+          *    are inserted in the terrain's load queue.
           */
-         virtual osg::Group *GetRootDrawable() = 0;
-         
-         /**
-          * This method provides an interface for setting custom images to use
-          * during terrain rendering.  This image list may or may not be used
-          * depending on the particular terrain renderer.
-          * @param imageList A list of images to pass along to the renderer.
-          * @note As an example, the SoarXTerrainRenderer currently uses the first
-          *    image as a base texture when rendering the terrain.
-          */         
-         virtual void SetCustomImageList(const std::vector<CustomImage> &imageList)
-         {
-            mCustomImageList = imageList;
-         }
-         
-         /**
-          * Gets the list of custom images currently assigned to this terrain
-          * renderer.
-          * @return A list of images.
-          */
-         const std::vector<CustomImage> &GetCustomImageList() const { return mCustomImageList; }
-         
-         /**
-          * Sets the heightfield that needs to be rendered by this renderer.
-          * @param hf The HeightField data to render.
-          * @note This merely tells the renderer to reference a heightfield. 
-          *    The parent terrain will assign this heightfield before the 
-          *    Initialize() method is called.
-          */
-         void SetHeightField(osg::HeightField *hf);
-         
-         /**
-          * Gets the height field generated from the terrain data.
-          * @return A valid heightfield.
-          */
-         osg::HeightField *GetHeightField() { return mHeightField.get(); }
-         
-         /**
-          * Gets the height field generated from the terrain data.
-          * @return A valid heightfield whos contents cannot be modified.
-          */     
-         const osg::HeightField *GetHeightField() const { return mHeightField.get(); }
-         
+         virtual osg::Group *GetRootDrawable() = 0;       
+                 
          /**
           * Gets the terrain object that currently owns this reader.
           * @return A pointer to the parent terrain.
           */
-         dtTerrain::Terrain *GetParentTerrain() { return mParentTerrain.get(); }
+         Terrain *GetParentTerrain() { return mParentTerrain; }
          
          /**
           * Gets a read-only terrain object that currently owns this reader.
           * @return A const pointer to the parent terrain.
           */
-         const dtTerrain::Terrain *GetParentTerrain() const { return mParentTerrain.get(); }
+         const Terrain *GetParentTerrain() const { return mParentTerrain; }
          
       protected:
       
          ///Empty destructor...
          virtual ~TerrainDataRenderer();
       
-         ///Heightfield data...
-         dtCore::RefPtr<osg::HeightField> mHeightField;
-         
-         ///List of custom images for the renderer to use.
-         std::vector<CustomImage> mCustomImageList;
-         
          ///Allow the terrain to have access to this class.
          friend class Terrain;
          
@@ -187,7 +155,7 @@ namespace dtTerrain
           * The terrain object that currently owns this reader.
           * @note Renderer instances can only be assigned to one terrain at a time.
           */
-         dtCore::RefPtr<dtTerrain::Terrain> mParentTerrain;
+         Terrain *mParentTerrain;
    };
      
      

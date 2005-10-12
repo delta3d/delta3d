@@ -134,6 +134,9 @@
 			<File
 				RelativePath="..\..\tests\proxy\ProxyTest.cpp">
 			</File>
+			<File
+				RelativePath="..\..\tests\util\UtilTests.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

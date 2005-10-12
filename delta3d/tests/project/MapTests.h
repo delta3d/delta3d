@@ -51,6 +51,8 @@ public:
     void testLibraryMethods();
     void testWildCard();
 private:
+    static char* mExampleLibraryName;
+
     void createActors(dtDAL::Map& map);
     dtUtil::Log* logger;
     dtDAL::ActorProperty* getActorProperty(dtDAL::Map& map,

@@ -16,17 +16,17 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
- * @author Matthew W. Campbell
+ * @author Matthew W. Campbell and David Guthrie
 */
-#ifndef __LibraryManager__h
-#define __LibraryManager__h
+#ifndef DELTA_LIBRARY_MANAGER
+#define DELTA_LIBRARY_MANAGER
 
 #include <map>
-#include <dtDAL/export.h>
+#include <dtCore/refptr.h>
+#include <dtUtil/librarysharingmanager.h>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
-#include <osgDB/DynamicLibrary>
 #include "dtDAL/actorpluginregistry.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL 
 {
@@ -61,24 +61,22 @@ namespace dtDAL
 		 * registry entry.
 		 */
 		struct RegistryEntry 
-        {
-            //the platform independant name.
-            std::string libName; 
-            osg::ref_ptr<ActorPluginRegistry> registry;
-			osg::ref_ptr<osgDB::DynamicLibrary> dynLib;
+      {
+         dtCore::RefPtr<ActorPluginRegistry> registry;
+			dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
 			CreatePluginRegistryFn createFn;
 			DestroyPluginRegistryFun destroyFn;
 		};		
 
 	public:
-		typedef std::map<osg::ref_ptr<ActorType>,
-			osg::ref_ptr<ActorPluginRegistry>, ActorType::RefPtrComp> ActorTypeMap;
+		typedef std::map<dtCore::RefPtr<ActorType>,
+			dtCore::RefPtr<ActorPluginRegistry>, ActorType::RefPtrComp> ActorTypeMap;
 		typedef ActorTypeMap::iterator ActorTypeMapItor;
 
 		typedef std::map<std::string, RegistryEntry> RegistryMap;			
 		typedef RegistryMap::iterator RegistryMapItor;
 
-       	/**
+      /**
 		 * Gets the singleton instance of the LibraryManager.
 		 */
 		static LibraryManager &GetInstance();
@@ -93,19 +91,19 @@ namespace dtDAL
 		 */
 		void LoadActorRegistry(const std::string &libName);
 
-        /**
-         * Unloads an actor registry.  This unloads the dynamic library
-         * containing the actor registry implementation and also removes
-         * all the actor types that the registry supported.
-         * @param libName The system independent name of the library to load.
-         */
-        void UnloadActorRegistry(const std::string &libName);            
+      /**
+       * Unloads an actor registry.  This unloads the dynamic library
+       * containing the actor registry implementation and also removes
+       * all the actor types that the registry supported.
+       * @param libName The system independent name of the library to load.
+       */
+      void UnloadActorRegistry(const std::string &libName);            
 
 		/**
 		 * Returns a list of all the actor types the library manager knows how 
 		 * to create.
 		 */
-		void GetActorTypes(std::vector<osg::ref_ptr<ActorType> > &actorTypes);
+		void GetActorTypes(std::vector<dtCore::RefPtr<ActorType> > &actorTypes);
 		
 		/**
 		 * Gets a single actor type that matches the name and category specified.
@@ -113,7 +111,7 @@ namespace dtDAL
 		 * @param name Name of the actor type.
 		 * @return A valid smart pointer if the actor type was found.
 		 */
-		osg::ref_ptr<ActorType> FindActorType(const std::string &category,
+		dtCore::RefPtr<ActorType> FindActorType(const std::string &category,
 											  const std::string &name);
 
 		/**
@@ -124,7 +122,7 @@ namespace dtDAL
 		 * @throws Throws a ObjectFactoryUnknownType exception if the type
 		 * is unknown.
 		 */
-		osg::ref_ptr<ActorProxy> CreateActorProxy(ActorType& actorType);
+		dtCore::RefPtr<ActorProxy> CreateActorProxy(ActorType& actorType);
 
         /**
          * Gets a registry currently loaded by the library manager.  
@@ -174,7 +172,7 @@ namespace dtDAL
 		~LibraryManager();
 
        	///Singleton instance of this class.
-		static osg::ref_ptr<LibraryManager> mInstance;
+		static dtCore::RefPtr<LibraryManager> mInstance;
 
 		///Maps an actor type to the registry that created it.
 		ActorTypeMap mActors;

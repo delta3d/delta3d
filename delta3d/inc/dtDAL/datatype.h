@@ -21,8 +21,8 @@
 #ifndef DELTA_DATATYPES
 #define DELTA_DATATYPES
 
-#include <dtDAL/export.h>
 #include <dtUtil/enumeration.h>
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

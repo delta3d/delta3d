@@ -28,7 +28,6 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtDAL/export.h>
 #include <dtABC/application.h>
 
 #include "dtDAL/tree.h"
@@ -36,6 +35,7 @@
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/resourcehelper.h"
 #include "dtDAL/fileutils.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {
@@ -64,6 +64,11 @@ namespace dtDAL
     static const std::string MAP_BACKUP_SUB_DIRECTORY;
 
     Project();
+    // -----------------------------------------------------------------------
+    //  Unimplemented constructors and operators
+    // -----------------------------------------------------------------------
+    Project(const Project&);
+    Project& operator=(const Project&);
 
     bool mValidContext;
     std::string mContext;

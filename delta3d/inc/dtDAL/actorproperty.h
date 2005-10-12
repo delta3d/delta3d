@@ -18,14 +18,14 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ActorProperty__h
-#define __ActorProperty__h
+#ifndef DELTA_ACTORPROPERTY
+#define DELTA_ACTORPROPERTY
 
 #include <osg/Referenced>
-#include <dtDAL/export.h>
 #include "dtDAL/functor.h"
 #include "dtDAL/actorproxy.h"
-#include <dtDAL/exceptionenum.h>
+#include "dtDAL/exceptionenum.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

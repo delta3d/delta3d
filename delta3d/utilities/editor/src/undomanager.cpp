@@ -364,7 +364,7 @@ namespace dtEditQt
 
         // figure out the actor type
         osg::ref_ptr<dtDAL::ActorType> actorType = dtDAL::LibraryManager::GetInstance().
-            FindActorType(event->actorTypeCategory, event->actorTypeName);
+            FindActorType(event->actorTypeCategory, event->actorTypeName).get();
 
         if (currMap.valid() && actorType.valid())
         {
@@ -372,7 +372,7 @@ namespace dtEditQt
 
             // recreate the actor!
             osg::ref_ptr<dtDAL::ActorProxy> proxy =
-                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(*actorType.get());
+                    dtDAL::LibraryManager::GetInstance().CreateActorProxy(*actorType.get()).get();
             if (proxy.valid())
             {
                 // set all of our old properties before telling anyone else about it

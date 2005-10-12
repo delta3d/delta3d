@@ -18,8 +18,8 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __Enumeration__h
-#define __Enumeration__h
+#ifndef DELTA_ENUMERATION
+#define DELTA_ENUMERATION
 
 #include <string>
 #include <vector>

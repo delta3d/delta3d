@@ -19,13 +19,14 @@
 * @author Matthew W. Campbell
 */
 #include <osg/NodeVisitor>
-#include <osg/PolygonMode>
-#include <osg/CullFace>
-#include <osg/FrontFace>
+
 #include "dtTerrain/soarxdrawable.h"
 #include "dtTerrain/imageutils.h"
 #include "dtTerrain/mathutils.h"
+#include "dtTerrain/terrain.h"
+
 #include "dtUtil/log.h"
+#include "dtCore/scene.h"
 
 #include <osg/Image>
 #include <osg/io_utils>
@@ -33,6 +34,11 @@
 
 #include <iostream>
 #include <sstream>
+
+#include "dtTerrain/terraindecorationlayer.h"
+#include "dtTerrain/terraindatareader.h"
+#include "dtTerrain/soarxterrainrenderer.h"
+#include "dtTerrain/heightfield.h"
 
 namespace dtTerrain
 {
@@ -54,8 +60,11 @@ namespace dtTerrain
          osg::State *state) const
       {
          SoarXDrawable *soarX = dynamic_cast<SoarXDrawable *>(drawable);
-         if (soarX != NULL)         
-            soarX->SetEyePoint(visitor->getEyePoint());     
+         if (soarX != NULL)
+         { 
+            soarX->SetEyePoint(visitor->getEyePoint());            
+         }
+         
          return false;
       }      
    };
@@ -98,6 +107,7 @@ namespace dtTerrain
       //Make sure we disable the use of display lists since the render data
       //is dynamic and computed on the fly.
       setSupportsDisplayList(false);
+      //setUseVertexBufferObjects(true);
       mCurrentPage = 0;
       mVAIndex = 0;
       mIAIndex = 0;
@@ -113,24 +123,19 @@ namespace dtTerrain
       mDetailMultiplier = 3.0f;
             
       mBaseBits = baseBits;
-      mDetailBits = 10;
       mMapBits = 16;
       mEmbeddedBits = mMapBits - mBaseBits;
       
       mMapSize = (1 << mMapBits) + 1;
       mBaseSize = (1 << mBaseBits) + 1;
-      mDetailSize = 1 << mDetailBits;
       mEmbeddedSize = 1 << mEmbeddedBits;
       
       mBaseVerticalResolution = 1.5f;
       mBaseHorizontalResolution = horizontalResolution;
       mBaseVerticalBias = 0.0f;
       mDetailHorizontalResolution = mBaseHorizontalResolution / (float)mEmbeddedSize;
-      mDetailVerticalResolution = 0.0012f;
-      mDetailVerticalBias = -32768.0f * mDetailVerticalResolution;
       
-      mMapLevels = mMapBits << 1;
-      mDetailLevels = mDetailBits << 1;
+      mMapLevels = mMapBits << 1;      
       mBaseLevels = mBaseBits << 1;
 
       //Calculate a lookup table of bounding sphere radii for use
@@ -160,19 +165,7 @@ namespace dtTerrain
       mBaseVertices[9].index = Index(9,c3,c1);
       mBaseVertices[10].index = Index(14,c1,c1);
       mBaseVertices[11].index = Index(19,c1,c3);
-      mBaseVertices[12].index = Index(24,c3,c3);
-      
-      //Create a stateset for this drawable.
-      osg::StateSet *ss = new osg::StateSet();
-      osg::CullFace *cf = new osg::CullFace();
-      osg::PolygonMode *pm = new osg::PolygonMode();
-      osg::FrontFace *ff = new osg::FrontFace();
-      
-      ff->setMode(osg::FrontFace::COUNTER_CLOCKWISE);
-      pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
-      ss->setAttributeAndModes(cf,osg::StateAttribute::ON);
-      ss->setAttributeAndModes(pm,osg::StateAttribute::ON);
-      ss->setAttributeAndModes(ff,osg::StateAttribute::ON);
+      mBaseVertices[12].index = Index(24,c3,c3);     
    }
 
    //////////////////////////////////////////////////////////////////////////       
@@ -197,9 +190,6 @@ namespace dtTerrain
       if (mBaseQRawData != NULL)
          delete [] mBaseQRawData;
          
-      if (mDetailNoise != NULL)
-         delete [] mDetailNoise;
-         
       if (mVertexArray[0] != NULL)
          delete [] mVertexArray[0];
       if (mVertexArray[1] != NULL)
@@ -210,7 +200,6 @@ namespace dtTerrain
          delete [] mIndexArray[1];
          
       mBaseRawData = mBaseQRawData = NULL;
-      mDetailNoise = NULL;
       mVertexArray[0] = mVertexArray[1] = NULL;
       mIndexArray[0] = mIndexArray[1] = NULL;
    }
@@ -232,7 +221,8 @@ namespace dtTerrain
    {
       //This is a terrible hack to get around the fact that we need to 
       //modify the drawable data before actually drawing it even though
-      //this method should not be modifying data, only displaying it.      
+      //this method should not be modifying data, only displaying it.   
+      
       (const_cast<SoarXDrawable *>(this))->Render(state);      
       
       //Use the base class's drawing code to actually push the vertex and index
@@ -288,10 +278,14 @@ namespace dtTerrain
    }
    
    ////////////////////////////////////////////////////////////////////////// 
-   void SoarXDrawable::Build(const osg::HeightField *hf)
+   bool SoarXDrawable::Build(const PagedTerrainTile &tile)
    {
       unsigned int i,j;  
       
+      if (mDetailNoise == NULL)
+         EXCEPT(TerrainException::NULL_POINTER,"MUST specify detail noise data before "
+            "building rendering data structures.  Cannot build tile.");
+            
       Clear();    
       
       //Precalculate our base indices..
@@ -308,42 +302,50 @@ namespace dtTerrain
       mBaseIndices[7] = Index(0,ch);
       mBaseIndices[8] = Index(0,0);
       
-      LOG_INFO("Extracting height values.");
-      mBaseRawData = new RawData[mBaseSize*(mBaseSize+1)];
-      for (i=0; i<hf->getNumRows(); i++)
+      //First, check the cache to see if this data has already been calculated.
+      //If RestoreDataFromCache fails, the code then checks to see what data
+      //was not available and generates it.
+      bool usedCache = true;
+      if (!RestoreDataFromCache(tile))
       {
-         for (j=0; j<hf->getNumColumns(); j++)
+         if (mBaseRawData == NULL)
          {
-            RawData *data = GetRawData(Index(j,i));
-            data->height = (hf->getHeight(j,hf->getNumRows()-i-1)) *
-               mBaseVerticalResolution + mBaseVerticalBias;
-            data->error = 0.0f;
-            data->radius = 0.0f;
-            data->scale = 1.0f;
-         }
-      }
+            LOG_INFO("Generating vertex error values and sphere tree hierarchy.");
+            
+            const HeightField *hf = tile.GetHeightField();
+            mBaseRawData = new RawData[mBaseSize*(mBaseSize+1)];
+            for (i=0; i<hf->GetNumRows(); i++)
+            {
+               for (j=0; j<hf->GetNumColumns(); j++)
+               {
+                  RawData *data = GetRawData(Index(j,i));
+                  data->height = (float)(hf->GetHeight(j,hf->GetNumRows()-i-1)) *
+                     mBaseVerticalResolution + mBaseVerticalBias;
+                  data->error = 0.0f;
+                  data->radius = 0.0f;
+                  data->scale = 1.0f;
+               }
+            }
+         
+            LOG_INFO("Precalculating vertex error values.");
+            CalculateVertexErrors();
       
-      LOG_INFO("Precalculating vertex error values.");
-      CalculateVertexErrors();
+            LOG_INFO("Ensuring proper sphere tree for terrain vertices.");
+            RepairBoundingSphereHierarchy();
+         }        
+            
+         usedCache = false;
+      }      
       
-      LOG_INFO("Ensuring proper sphere tree for terrain vertices.");
-      RepairBoundingSphereHierarchy();
-      
-      LOG_INFO("Allocating buffer data.");
       mVertexArray[0] = new osg::Vec3[BUFFER_SIZE];
-      mVertexArray[1] = new osg::Vec3[BUFFER_SIZE];
-      
+      mVertexArray[1] = new osg::Vec3[BUFFER_SIZE];      
       mIndexArray[0] = new unsigned int[BUFFER_SIZE];
-      mIndexArray[1] = new unsigned int[BUFFER_SIZE];
-      
-      std::ostringstream ss;
-      ss << "Building detail map with dimensions: (" << mDetailSize << ","
-         << mDetailSize << ")";
-      LOG_INFO(ss.str());      
-      CalculateDetailNoise();
+      mIndexArray[1] = new unsigned int[BUFFER_SIZE];      
       
       for (i=0; i<13; i++)
          GetVertex(mBaseVertices[i]);
+      
+      return usedCache;
    }
    
    //////////////////////////////////////////////////////////////////////////
@@ -390,28 +392,7 @@ namespace dtTerrain
          v.radius = v0.radius;
          v.error = v0.error;
       }     
-   }
-   
-   ////////////////////////////////////////////////////////////////////////// 
-   void SoarXDrawable::CalculateDetailNoise()
-   {
-      //Make sure we allocate our detail noise buffer.
-      mDetailNoise = new float[mDetailSize*mDetailSize];
-      
-      //Calculate for each "pixel" in our detail buffer, the noise value at
-      //that location.
-      for (int i=0; i<mDetailSize; i++)
-      {
-         for (int j=0; j<mDetailSize; j++)
-         {
-            Index index(j,i);
-            unsigned short value = ImageUtils::CalculateDetailNoise(j,i);
-            index &= (mDetailSize-1);      
-            mDetailNoise[index.y*mDetailSize+index.x] = 
-               (value - 32768.0f) * mDetailVerticalResolution;
-         }
-      }     
-   }
+   }  
    
    ////////////////////////////////////////////////////////////////////////// 
    void SoarXDrawable::CalculateRadii(float f)
@@ -425,6 +406,18 @@ namespace dtTerrain
       for (i=0; i<64; i++)
          mRadii[i] = mRadii[i] * mRadii[i];
    }
+   
+   //////////////////////////////////////////////////////////////////////////
+   void SoarXDrawable::SetDetailNoise(int detailBits, float detailVerticalResolution,
+      float *detailData)
+   {
+      mDetailNoise = detailData;
+      mDetailBits = detailBits;
+      mDetailSize = 1 << mDetailBits;
+      mDetailLevels = mDetailBits << 1;
+      mDetailVerticalResolution = detailVerticalResolution;
+      mDetailVerticalBias = -32768.0f * mDetailVerticalResolution;
+   }   
    
    ////////////////////////////////////////////////////////////////////////// 
    void SoarXDrawable::CalculateVertexErrors()
@@ -925,6 +918,64 @@ namespace dtTerrain
             return false;
          }
       } 
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   bool SoarXDrawable::RestoreDataFromCache(const PagedTerrainTile &tile)
+   {
+      bool readResult = true;
+      std::ifstream inFile;
+      std::string cachePath = tile.GetCachePath() + "/" +
+         SoarXCacheResourceName::VERTEX_DATA.GetName();
+         
+      //Read the cached precomputed vertex data and precomputed noise data.
+      //If one of them is missing, it will be calculated when this method returns.
+      inFile.open(cachePath.c_str(),std::ios::in | std::ios::binary);
+      if (!inFile.is_open())
+      {
+         LOG_INFO("Vertex data not found in tile cache: " + cachePath);
+         readResult = false;
+      }
+      else
+      {
+         int baseSize;
+         inFile.read((char *)&baseSize,sizeof(int));
+         if (baseSize != mBaseSize)
+         {
+            LOG_INFO("Cache data mismatch in vertex data. Base terrain sizes are not "
+               "equal.");
+            readResult = false;
+         }
+         else
+         {
+            mBaseRawData = new RawData[mBaseSize*(mBaseSize+1)];
+            inFile.read((char *)&mBaseRawData[0],sizeof(RawData)*mBaseSize*(mBaseSize+1));  
+         }            
+         
+         inFile.close();
+      }
+           
+      return readResult;
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void SoarXDrawable::WriteDataToCache(const PagedTerrainTile &tile)
+   {
+      std::ofstream outFile;
+      std::string cachePath = tile.GetCachePath() + "/" + 
+         SoarXCacheResourceName::VERTEX_DATA.GetName();
+      
+      //First write out the precomputed vertex data.   
+      outFile.open(cachePath.c_str(),std::ios::out | std::ios::trunc | std::ios::binary);
+      if (!outFile.is_open())
+      {
+         LOG_ERROR("Unable to cache drawable vertex data to: " + cachePath);
+         return;
+      }
+      
+      outFile.write((char *)&mBaseSize,sizeof(int));
+      outFile.write((char *)&mBaseRawData[0],sizeof(RawData)*mBaseSize*(mBaseSize+1));      
+      outFile.close();     
    }
    
 }

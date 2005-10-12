@@ -490,7 +490,7 @@ def CheckForBoost() :
          foundHeader = 1
          break
 
-   return foundHeader and foundLib
+   return foundHeader != 0 and foundLib != 0
 
 ###########
 # Options #

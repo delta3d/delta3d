@@ -1,8 +1,4 @@
 #include "ProxyTest.h"
-
-#if defined (WIN32) || defined (_Win32) || defined (__WIN32__)
-//    #include "dtActors/dtedterrainactorproxy.h"
-#endif
 #include "dtActors/infinitelightactorproxy.h"
 
 
@@ -176,7 +172,6 @@ void ProxyTest::testProps(ActorProxy& proxy)
                                        osg::equivalent(result[x], test[x], epsilon));
             }
         }
-
         else if (props[i]->GetPropertyType() == DataType::VEC3F)
         {
             Vec3fActorProperty* prop1 = ((Vec3fActorProperty*)props[i]);

@@ -24,8 +24,9 @@
 #include <string>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtDAL/export.h>
+#include <dtCore/refptr.h>
 #include <iostream>
+#include "dtDAL/export.h"
 
 namespace dtDAL 
 {
@@ -58,7 +59,12 @@ namespace dtDAL
             bool operator()(const osg::ref_ptr<ActorType> &id1,
                 const osg::ref_ptr<ActorType> &id2) const
             {
-				return (*id1) < (*id2);
+				    return (*id1) < (*id2);
+            }
+            bool operator()(const dtCore::RefPtr<ActorType> &id1,
+                const dtCore::RefPtr<ActorType> &id2) const
+            {
+                return (*id1) < (*id2);
             }
         };
 

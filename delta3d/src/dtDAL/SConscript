@@ -14,6 +14,6 @@ deps =  [ 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode',
           'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32',
           'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-libdtDAL = BuildLib( 'dtDAL', srcs, deps, ['DT_LIBRARY'] )
+libdtDAL = BuildLib( 'dtDAL', srcs, deps, ['DT_DAL_LIBRARY'] )
 
 Export ('libdtDAL')

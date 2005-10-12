@@ -1,11 +1,3 @@
-#ifndef __EXCEPTION_ENUM_H__
-#define __EXCEPTION_ENUM_H__
-
-
-#include <dtUtil/enumeration.h>
-#include <dtUtil/exception.h>
-#include <dtDAL/export.h>
-
 /*
 * Delta3D Open Source Game and Simulation Engine
 * Copyright (C) 2005, BMH Associates, Inc.
@@ -27,39 +19,43 @@
 * @author Matthew W. Campbell
 */
 
+#ifndef DELTA_EXCEPTION_ENUM
+#define DELTA_EXCEPTION_ENUM
+
+#include <dtUtil/enumeration.h>
+#include <dtUtil/exception.h>
+#include "dtDAL/export.h"
+
+
 namespace dtDAL
 {
-
-
-
-
-class DT_DAL_EXPORT ExceptionEnum : public dtUtil::Enumeration
-{
-   DECLARE_ENUM(ExceptionEnum);
-public:
-   static ExceptionEnum BaseException;
-
-   static ExceptionEnum ProjectInvalidContext;
-   static ExceptionEnum ProjectReadOnly;
-   static ExceptionEnum ProjectIOException;
-   static ExceptionEnum ProjectFileNotFound;
-   static ExceptionEnum ProjectResourceError;
-   static ExceptionEnum ProjectException;
-
-   static ExceptionEnum MapLoadParsingError;
-   static ExceptionEnum MapSaveError;
-   static ExceptionEnum MapException;
-
-   static ExceptionEnum ObjectFactoryUnknownType;
-
-   static ExceptionEnum InvalidActorException;
-
-protected:
-   ExceptionEnum(const std::string &name) : Enumeration(name)
+   class DT_DAL_EXPORT ExceptionEnum : public dtUtil::Enumeration
    {
-      AddInstance(this);
-   }
-};
+      DECLARE_ENUM(ExceptionEnum);
+      public:
+         static ExceptionEnum BaseException;
+
+         static ExceptionEnum ProjectInvalidContext;
+         static ExceptionEnum ProjectReadOnly;
+         static ExceptionEnum ProjectIOException;
+         static ExceptionEnum ProjectFileNotFound;
+         static ExceptionEnum ProjectResourceError;
+         static ExceptionEnum ProjectException;
+
+         static ExceptionEnum MapLoadParsingError;
+         static ExceptionEnum MapSaveError;
+         static ExceptionEnum MapException;
+
+         static ExceptionEnum ObjectFactoryUnknownType;
+
+         static ExceptionEnum InvalidActorException;
+
+      protected:
+         ExceptionEnum(const std::string &name) : Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
 
 
 

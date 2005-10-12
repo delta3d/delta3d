@@ -165,8 +165,8 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ActorSearcher::refreshAll()
     {
-        std::vector<osg::ref_ptr<dtDAL::ActorType> > actorTypes;
-        std::vector<osg::ref_ptr<dtDAL::ActorType> >::const_iterator actorTypesIter;
+        std::vector<dtCore::RefPtr<dtDAL::ActorType> > actorTypes;
+        std::vector<dtCore::RefPtr<dtDAL::ActorType> >::const_iterator actorTypesIter;
         std::set<std::string>::const_iterator setIter;
         dtDAL::Map *map = EditorData::getInstance().getCurrentMap().get();
         QStringList categoryList;
@@ -203,7 +203,7 @@ namespace dtEditQt
             dtDAL::LibraryManager::GetInstance().GetActorTypes(actorTypes);
             for(actorTypesIter = actorTypes.begin(); actorTypesIter != actorTypes.end(); ++actorTypesIter)
             {
-                osg::ref_ptr<dtDAL::ActorType> type = (*actorTypesIter);
+                dtCore::RefPtr<dtDAL::ActorType> type = (*actorTypesIter);
                 // get the cat
                 QString newCat(type->GetCategory().c_str());
                 if (!categoryList.contains(newCat))

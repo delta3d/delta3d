@@ -139,6 +139,11 @@ namespace dtEditQt
             return QString(tr(myVec4fProperty->GetLabel().c_str()));
         else if(myVec4dProperty.valid())
             return QString(tr(myVec4dProperty->GetLabel().c_str()));
+        else
+        {
+           LOG_ERROR("Dynamic Vec 4 control has an invalid property type");
+           return tr("");
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -161,6 +166,11 @@ namespace dtEditQt
             std::string tooltip = myVec4dProperty->GetDescription() + "  [Type: " +
                 myVec4dProperty->GetPropertyType().GetName() + "]";
             return QString(tr(tooltip.c_str()));
+        }
+        else
+        {
+           LOG_ERROR("Dynamic Vec 4 control has an invalid property type");
+           return tr("");
         }
     }
 
@@ -193,6 +203,11 @@ namespace dtEditQt
                 ", X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
                 ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
                 ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
+        else
+        {
+           LOG_ERROR("Dynamic Vec 4 control has an invalid property type");
+           return tr("");
         }
     }
 

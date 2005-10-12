@@ -23,10 +23,13 @@
 
 #include <osg/Geometry>
 #include <dtCore/refptr.h>
+#include "dtTerrain/pagedterraintile.h"
 #include "dtTerrain/terrain_export.h"
 
 namespace dtTerrain
 {   
+   class HeightField;
+   
    /**
     * This class encapsulates the SoarX rendering algorithm itself.  
     * @see SoarXTerrainRenderer
@@ -34,10 +37,6 @@ namespace dtTerrain
    class DT_TERRAIN_EXPORT SoarXDrawable : public osg::Geometry
    {
       public:
-      
-         //Forward declare these classes.  The implementations for them
-         //are in soarxdrawable.cpp
-         class SoarXDrawElementsUInt;
       
          /**
           * This structure represents a location on the terrain's 2D grid.
@@ -139,7 +138,7 @@ namespace dtTerrain
          
          /** 
           * This structure is the raw data on disk.  It may be compressed
-          * or encoded.  The data in this structure is converted to a vertex
+          * or encoded.  The data in this structure is converted to vertex
           * data before it is rendered.
           */
          struct RawData
@@ -153,6 +152,8 @@ namespace dtTerrain
          /**
           * Sets up some default rendering parameters used during the
           * rendering and progressive refinement.
+          * @param baseBits The size of the terrain chunk. (size=(2^baseBits))
+          * @param horizontalResolution The distance between each height value.
           */
          SoarXDrawable(int baseBits, float horizontalResolution);
          
@@ -194,10 +195,14 @@ namespace dtTerrain
          
          /**
           * Builds the internal data structures for use in rendering and managing
-          * the terrain data.
-          * @param hf The heightfield with which to generate the data.
+          * terrain data for a tile.
+          * @param The source terrain tile.
+          * @return True if the data was paged from the tile's cache, false otherwise.
+          * @note This method will load pre-computed data from the tile's cache
+          *    if present.  If the cache is not present, the data will be
+          *    precomputed and then cached if the tile has its caching enabled.
           */
-         void Build(const osg::HeightField *hf);
+         bool Build(const PagedTerrainTile &tile);
          
          /**
           * Clears any memory used by the internal rendering structures.
@@ -281,11 +286,36 @@ namespace dtTerrain
             return mBaseHorizontalResolution;
          }
          
+         /**
+          * Gets the detail map's horizontal resolution.
+          */
          float GetDetailHorizontalResolution() const { return mDetailHorizontalResolution; }
          
+         /**
+          * Sets the noise data used to procedurally generate additional detail 
+          * vertices when rendering the terrain.
+          * @param detailBits The size of the detail data.  The amount of data
+          *    should be (2^detailBits * 2^detailBits).
+          * @param detailVerticalResolution A scale value used when calculating the
+          *    final detail vertex position.
+          * @param detailData The detail noise values.
+          */
+         void SetDetailNoise(int detailBits, float detailVerticalResolution,
+            float *detailData);
+         
+         /**
+          * Gets the detail map's vertical resolution.
+          */
          float GetDetailVerticalResolution() const { return mDetailVerticalResolution; }
          
+         /**
+          * Gets the size of the detail map.
+          */
          int GetDetailSize() const { return mDetailSize; }
+         
+         bool RestoreDataFromCache(const PagedTerrainTile &tile);
+         
+         void WriteDataToCache(const PagedTerrainTile &tile);
          
       protected:
       
@@ -319,13 +349,7 @@ namespace dtTerrain
          Vertex GetVertex(Index index);
          
          ///
-         void CalculateRadii(float f);
-         
-         /**
-          * Builds an array of noise values used to dynamically add more detail
-          * to the terrain.
-          */
-         void CalculateDetailNoise(); 
+         void CalculateRadii(float f);         
          
          /**
           * Ensures that the bounding spheres for each vertex satisfy the 
@@ -397,7 +421,7 @@ namespace dtTerrain
           */
          void GetVertex(Vertex &v);      
          
-      private:
+      private:         
          
          float mThresholdValue;
          float mDetailMultiplier;
@@ -459,10 +483,9 @@ namespace dtTerrain
          
          unsigned int mMapLevels;
          unsigned int mDetailLevels;
-         unsigned int mBaseLevels;   
+         unsigned int mBaseLevels;           
          
-         ///Makes our lives a little easier.
-         friend class SoarXUpdateCallback;
+         friend class SoarXCullCallback;
    };   
    
 }

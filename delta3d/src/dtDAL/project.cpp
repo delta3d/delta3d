@@ -79,6 +79,14 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
+    Project::Project(const Project&) {}
+    //////////////////////////////////////////////////////////
+    Project& Project::operator=(const Project&) 
+    {
+        return *this;
+    }
+
+    //////////////////////////////////////////////////////////
     void Project::SetContext(const std::string& path, bool mOpenReadOnly)
     {
         FileUtils& fileUtils = FileUtils::GetInstance();

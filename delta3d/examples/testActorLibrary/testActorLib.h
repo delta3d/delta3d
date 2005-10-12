@@ -21,7 +21,8 @@
 #ifndef _EXAMPLE_ACTOR_LIB_H_
 #define _EXAMPLE_ACTOR_LIB_H_
 
-#include "dtDAL/actorpluginregistry.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/actorpluginregistry.h>
 
 class DT_PLUGIN_EXPORT ExampleActorLib : public dtDAL::ActorPluginRegistry
 {

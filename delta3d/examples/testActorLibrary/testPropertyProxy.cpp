@@ -41,7 +41,7 @@ const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
 
     ///////////////////////////////////////////////////////////////////////////////
     ExampleTestPropertyProxy::ExampleTestPropertyProxy()
-        : myInt(0), myFloat(0.0), myDouble(0.0), myLong(0), myReadOnlyInt(5), myBool(0), 
+        : myInt(0), myReadOnlyInt(5), myFloat(0.0), myDouble(0.0), myLong(0), myBool(0), 
         myString(""), myEnum(&TestEnum::OPTION1) 
     {
         //static int count = 0;

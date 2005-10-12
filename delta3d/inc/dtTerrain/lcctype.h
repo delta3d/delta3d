@@ -50,7 +50,7 @@ namespace dtTerrain
       {
          std::string name;
          float scale;
-         dtCore::RefPtr<osg::Group> vegetationObject;
+         dtCore::RefPtr<osg::Node> vegetationObject;
       };
 
       /**
@@ -79,7 +79,7 @@ namespace dtTerrain
       */
       int *GetRGB()
       {
-         return &this->rgb[3];
+         return &this->rgb[0];
       }
       
       /**
@@ -190,7 +190,10 @@ namespace dtTerrain
       */
       std::string GetModelName(unsigned int index = 0)
       {
-         return this->models.at(index).name;
+         if (index < models.size())
+            return this->models.at(index).name;
+         else
+            return std::string();
       }
 
       int GetModelNum()
@@ -203,9 +206,12 @@ namespace dtTerrain
       * @return osg group node assigned to the model
 
       */ 
-      dtCore::RefPtr<osg::Group> GetVegetationObject(unsigned int index = 0)
+      osg::Node *GetVegetationObject(unsigned int index = 0)
       {
-         return this->models.at(index).vegetationObject;
+         if (index < models.size())
+            return this->models.at(index).vegetationObject.get();
+         else
+            return NULL;
       }
       
       /**
@@ -213,9 +219,10 @@ namespace dtTerrain
       * @param index of the model
       * @param osg group node of the vegetation object
       */
-      void SetVegetationObject(dtCore::RefPtr<osg::Group> vegetationObject, unsigned int index = 0)
+      void SetVegetationObject(osg::Node *vegetationObject, unsigned int index = 0)
       {
-         this->models.at(index).vegetationObject = vegetationObject;
+         if (index < models.size())
+            this->models.at(index).vegetationObject = vegetationObject;
       }
 
       /**
@@ -225,13 +232,16 @@ namespace dtTerrain
       */
       int GetModelScale(unsigned int index = 0)
       {
-         return (int)this->models.at(index).scale;
-      }
-
-      std::string LCCName;
-      int rgb[3];
+         if (index < models.size())
+            return (int)this->models.at(index).scale;
+         else
+            return 1;
+      }     
 
    private:
+      
+      std::string LCCName;
+      int rgb[3];
       
       // Basic LCC Type information
       unsigned int index;

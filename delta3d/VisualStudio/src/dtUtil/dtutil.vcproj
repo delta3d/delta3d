@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DT_UTIL_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DTUTIL_EXPORTS;DT_UTIL_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -74,7 +74,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DT_UTIL_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DTUTIL_EXPORTS;DT_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -128,6 +128,9 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
 				RelativePath="..\..\..\src\dtUtil\exception.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtUtil\librarysharingmanager.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtUtil\log.cpp">
@@ -187,6 +190,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\keyframedecoder.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\librarysharingmanager.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\log.h">

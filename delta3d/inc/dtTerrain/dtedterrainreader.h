@@ -21,7 +21,10 @@
 #ifndef DELTA_DTEDTERRAINREADER
 #define DELTA_DTEDTERRAINREADER
 
-#include  "dtTerrain/terraindatareader.h"
+#include <osg/Shape>
+
+#include "dtTerrain/terraindatareader.h"
+#include "dtTerrain/heightfield.h"
 
 namespace dtTerrain 
 {
@@ -30,8 +33,8 @@ namespace dtTerrain
     * This data reader loads DTED data mapping to a specified latitude and
     * longitude.  Under the covers this reader uses GDAL to load the actual
     * heightfield values.  Note, to load specific DTED levels, one must
-    * specify the maximum level to load.  If the specified level is not present,
-    * the next highest DTED level will be loaded.
+    * specify the level to load.  By default, the reader will attempt to load
+    * DTED level 1.
     */
    class DT_TERRAIN_EXPORT DTEDTerrainReader : public TerrainDataReader 
    {
@@ -81,62 +84,58 @@ namespace dtTerrain
        
          /**
           * Constructs the terrain reader.
-          * @param maxLevel The maximum level of DTED data to load.  If the maximum
-          *    level is not available, the next highest available dataset will
-          *    be loaded.  By default, the loaded will load the maximum available
-          *    resolution dataset.
-          * @note This may be queried once data is loaded to check to see if the
-          *    specified dataset level was actually available.
+          * @param level The level of DTED data to load.  
           */
-         DTEDTerrainReader(const DTEDLevelEnum &maxlevel = DTEDLevelEnum::FIVE,
+         DTEDTerrainReader(const DTEDLevelEnum &level = DTEDLevelEnum::ONE,
             const std::string &name="DTEDReader");
-         
-         /**
-          * Sets the maximum resolution DTED level to load.  This means that the data
-          * loaded will be as close to the specified level as possible based on 
-          * availability of data, however, will not be anything greater than this
-          * value.
-          * @param level The maximum level of data to load.
-          */
-         void SetMaxDTEDLevel(const DTEDLevelEnum &level);
-         
-         /**
-          * Gets the current maximum DTED level on this loader.
-          * @return An enumeration corresponding to the max level.
-          */
-         const DTEDLevelEnum &GetMaxDTEDLevel() const
-         {
-            return *mMaxDTEDLevel;
-         }
-         
+            
          /**
           * Gets the type of terrain data this reader supports.
           * @return TerrainDataType::DTED.
           */
          const TerrainDataType &GetDataType() const { return TerrainDataType::DTED; }
+         
+         /**
+          * Called by the terrain when a tile needs to be loaded.  This method
+          * will first check the tile's cache for the heightfield.  If it is not
+          * found, this method will load the DTED data for the specified tile.
+          * @param tile The tile to load.  Based on its latitude and longitude
+          *    position and the reader's max DTED level, the appropriate data
+          *    will be loaded.
+          * @note If any errors occur during the load process, the appropriate
+          *    exception is thrown.
+          */
+         virtual void OnLoadTerrainTile(PagedTerrainTile &tile); 
+         
+         /**
+          * This generates the cache path for the specified tile.  The cache path
+          * is equal to: $Latitude_$Longitude_$DTEDLevel.
+          * @param tile The tile with which to generate the path for.
+          * @return A string containing the generated cache path.
+          */
+         const std::string GenerateTerrainTileCachePath(
+            const PagedTerrainTile &tile);       
+         
+         /**
+          * Sets the DTED level to load.
+          * @param level The level of data to load.  By default, this value
+          *    is set to DTEDLevelEnum::ONE.
+          */
+         void SetDTEDLevel(const DTEDLevelEnum &level);
+         
+         /**
+          * Gets the current DTED level this reader is trying to load.
+          * @return An enumeration corresponding to appropriate DTED level.
+          */
+         const DTEDLevelEnum &GetDTEDLevel() const
+         {
+            return *mDTEDLevel;
+         }         
         
       protected:
       
          ///Destroys the terrain reader.
          virtual ~DTEDTerrainReader();
-         
-         /**
-          * Loads a chunk of elevation data corresponding to the given latitude
-          * and longitude.
-          * @param dataPath The path of the file or directory containing the terrain data.
-          * @param lat Latitude of terrain chunk (cell) to load.
-          * @param lon Longitude of the terrain chunk (cell) to load.
-          */
-         virtual void LoadElevationData(const std::string &dataPath, int lat, int lon);
-                
-         /**
-          * Loads a chunk of elevation data corresponding to the given x and y
-          * world coordinates.
-          * @param dataPath The path of the file or directory containing the terrain data.
-          * @param x X absolute world coordinate of the terrain chunk to load.
-          * @param y Y absolute world coordinate of the terrain chunk to load.
-          */
-         virtual void LoadElevationData(const std::string &dataPath, double x, double y) { }
          
          /**
           * Searches the list of file resource paths for DTED data
@@ -146,13 +145,13 @@ namespace dtTerrain
           * @param lon Longitude (ex. w150)
           * @return The full path to the DTED file resource.
           */
-         std::string GetDTEDFilePath(const std::string &basePath, 
-            const std::string &lat, const std::string &lon, int level);
+         std::string GetDTEDFilePath(const std::string &lat, 
+            const std::string &lon, int level);         
       
       private:
       
          ///Current max DTED level to search for when loading data.
-         const DTEDLevelEnum *mMaxDTEDLevel;         
+         const DTEDLevelEnum *mDTEDLevel;     
    };    
 
 }

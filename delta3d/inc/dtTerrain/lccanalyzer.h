@@ -22,117 +22,194 @@
 #ifndef _LCCANALYZER_H
 #define _LCCANALYZER_H
 
+#include <string>
 #include <osg/Vec3>
+#include <osg/Image>
 #include "dtTerrain/terrain_export.h"
 #include "dtTerrain/imageutils.h"
 #include "dtTerrain/lcctype.h"
+#include "dtTerrain/pagedterraintile.h"
 
 namespace dtTerrain
 {
-
+   
    /**
-   * The LCC Analyzer calculates LCC data for use in the
-   * vegetation decorator.
+    * This enumeration identitifies the resources that are cached and managed by the 
+    * vegetation decorator layer.
+    */
+   class DT_TERRAIN_EXPORT LCCAnalyzerResourceName : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(LCCAnalyzerResourceName);
+      public:
+
+         static const LCCAnalyzerResourceName IMAGE_EXT;      
+         static const LCCAnalyzerResourceName BASE_LCC_COLOR;         
+         static const LCCAnalyzerResourceName BASE_COLOR;
+         static const LCCAnalyzerResourceName BASE_FILTER_NAME;
+         static const LCCAnalyzerResourceName LCC_IMAGE_NAME;
+         static const LCCAnalyzerResourceName SLOPE_IMAGE;
+         static const LCCAnalyzerResourceName REL_ELEV_IMAGE;
+         static const LCCAnalyzerResourceName COMPOSITE_LCC_IMAGE;
+         static const LCCAnalyzerResourceName SCENE_GRAPH;
+         
+      protected:
+         LCCAnalyzerResourceName(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
+   
+   /**
+    * Defines the exceptions thrown by the lcc analyzer.
+    */
+   class LCCAnalyzerException : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(LCCAnalyzerException);
+      public:
+      
+         ///Thrown if the user failed to enable caching.  Currently terrain data 
+         ///caching must be enabled for the analyzer to work properly.
+         static LCCAnalyzerException INVALID_CACHE;   
+         
+         ///Thrown if LCC analyzing occurs before valid geographical images are
+         ///assigned to the analyzer.
+         static LCCAnalyzerException NO_VALID_GEO_IMAGES; 
+                  
+      protected:
+         LCCAnalyzerException(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
+   
+   /**
+    * The LCC Analyzer calculates LCC data for use in the
+    * vegetation decorator.
    */
    class DT_TERRAIN_EXPORT LCCAnalyzer
    {
    public:
+      
       /**
-      * Constructor
-      */
+       * Constructor
+       */
       LCCAnalyzer();
 
       /**
-      * Destructor
-      */
+       * Destructor
+       */
       virtual ~LCCAnalyzer();
 
       /**
-      * Makes the base color texture map for the specified heightfield.
-      *
-      * @param hf the heightfield to process
-      * @param latitude the latitude of the terrain segment
-      * @param longitude the longitude of the terrain segment
-      * @return the newly created image
-      */
-      dtCore::RefPtr<osg::Image> MakeBaseLCCColor(const osg::HeightField* hf, int latitude, 
-         int longitude, int mMaxTextureSize,
-         ImageUtils::HeightColorMap mUpperHeightColorMap,
-         ImageUtils::HeightColorMap mLowerHeightColorMap);
+       * Makes the base color texture map for the specified heightfield.
+       * @param hf the heightfield to process
+       * @param latitude the latitude of the terrain segment
+       * @param longitude the longitude of the terrain segment
+       * @return the newly created image
+       */
+      dtCore::RefPtr<osg::Image> MakeBaseLCCColor(const HeightField &hf, int latitude, 
+         int longitude);
 
       /**
-      * Create hit/miss map of the terrain by LCC type
-      * @param src_image the Base Color image with LCC encoded within
-      * @param rgb_selected the RGB color of the LCC type selected
-      * @return the newly created image
-      */
-      dtCore::RefPtr<osg::Image> MakeLCCImage(const osg::Image* src_image, const osg::Vec3& rgb_selected);
+       * Create hit/miss map of the terrain by LCC type
+       * @param src_image the Base Color image with LCC encoded within
+       * @param rgb_selected the RGB color of the LCC type selected
+       * @return the newly created image
+       */
+      dtCore::RefPtr<osg::Image> MakeLCCImage(const osg::Image &src_image, 
+         const osg::Vec3& rgb_selected);
 
-		struct LCCCells
-		{
-		   /**
-			* The top node of the vegetation scene graph.
-			*/
-			dtCore::RefPtr<osg::Group> mRootVegeGroup;
-		};
-
-      /**
-      * A geospecific image.
-      */
-      struct GeospecificImage
-      {
-         dtCore::RefPtr<osg::Image> mImage;
-
-         std::string mFilename;
-
-         int mMinLatitude, mMaxLatitude, mMinLongitude, mMaxLongitude;
-
-         double mGeoTransform[6];
-         double mInverseGeoTransform[6];
-      };
+		/**
+       * Buggy "histogram" of an image by a particular LCC type.
+       *
+       * @param LCCbase the black/white LCC image of picked points of a particular LCC type
+       * @param image the slopemap, heightmap, or relative elevation
+       * @param fileName the filename to save the histogram data
+       * @param binsize the sampling size of the image (i.e. the delta height or slope).
+       */
+      void LCCHistogram(const osg::Image &LCCbase, const osg::Image &image, 
+         const std::string &fileName, int binsize);
 
       /**
-      * Buggy "histogram" of an image by a particular LCC type.
-      *
-      * @param LCCbase the black/white LCC image of picked points of a particular LCC type
-      * @param image the slopemap, heightmap, or relative elevation
-      * @param filename the filename to save the histogram data
-      * @param binsize the sampling size of the image (i.e. the delta height or slope).
-      */
-      void LCCHistogram(const osg::Image* LCCbase, const osg::Image* image, char* filename, int binsize);
-
-      /**
-      * Create probability map of the likehihood for a particular LCC type
-      * @param LCCidx LCC image index
-      * @param h_image the heightmap image
-      * @param s_image the slopemap image
-      * @param r_image the relative elevation image
-      * @return the newly created image
+       * Create probability map of the likehihood for a particular LCC type
+       * @param l The LCC type to calculate probabilities for.
+       * @param hf The heightfield.
+       * @param f_image The masked LCC image containing placement statistics.
+       * @param s_image the slopemap image
+       * @param r_image the relative elevation image
+       * @return the newly created image
       */
       dtCore::RefPtr<osg::Image> MakeCombinedImage(
-         dtTerrain::LCCType l,
-         const osg::Image* f_image,			// LCC filtered image
-         const osg::Image* h_image,			// heightmap
-         const osg::Image* s_image,			// slopemap image
-         const osg::Image* r_image);		    // relative elevation image
-
-      void LoadLCCData(const osg::HeightField* hf,unsigned int latitude, unsigned int longitude, int mMaxTextureSize, char* cellName);
+         dtTerrain::LCCType &l, const HeightField &hf, const osg::Image &f_image,
+         const osg::Image &s_image, const osg::Image &r_image);
+         
+      dtCore::RefPtr<osg::Image> GenerateBaseFilterImage(LCCType &type,
+         const std::string &tileCachePath);
+         
+      void CheckBaseLCCImages(const HeightField &hf, int latitude, int longitude,
+         const std::string &tileCachePath);
+         
+      void LCCAnalyzer::CheckSlopeAndElevationMaps(const HeightField &hf,
+         const std::string &tileCachePath);
+         
+      void ProcessLCCData(const PagedTerrainTile &tile, LCCType &type);
+      
+      void LCCAnalyzer::ComputeProbabilityMap(const HeightField &hf, LCCType &type,
+         int latitude, int longitude, const std::string &tileCachePath);
 
       /**
-      * Sets the LCCTypes 
-      * @param Vector of LCCTypes
-      */
-      void SetLCCData(std::vector<dtTerrain::LCCType> LCCtypes)
+       * Adds a geospecific image to the LCC analyzers list of geo images.
+       * There must be at least one valid LCC geospecific image in this
+       * list, else an exception will be thrown while processing LCC types.
+       * @param filename The name of the geospecific resource.
+       */
+      void AddGeospecificImage(const std::string &fileName)
       {
-         this->mLCCs = LCCtypes;
+         ImageUtils::GeospecificImage newImage;
+         newImage.mFileName = fileName;
+         mGeospecificLCCImages.push_back(newImage);
       }
-
+      
+      /**
+       * Checks the list of currently loaded images to see if the specified
+       * image has already been loaded and processed.
+       * @param fileName The filename of the image.
+       * @return True if already loaded, false otherwise.
+       */
+      bool IsGeoSpecificLCCImageLoaded(const std::string &fileName);
+      
+      /**
+       * Makes sure all the geospecific images that have been added to the
+       * analyzer are loaded and ready for use in the LCC data processing.
+       * @note If an image has already been loaded previously, it will not
+       *    be reloaded.
+       */
+      void LoadAllGeoSpecificImages();      
+      
+      bool OutputDebugImages() { return mOutputDebugImages; }
+      void SetOutputDebugImages(bool value) { mOutputDebugImages = value; }
+      
+      void Clear()
+      {
+         mBaseLCCColorImage = NULL;
+         mBaseColorImage = NULL;
+         mSlopeMap = NULL;
+         mRelativeElevationMap = NULL;
+         mWaterMask = NULL;
+      }
+            
+   private:
+      dtCore::RefPtr<osg::Image> mBaseLCCColorImage;
+      dtCore::RefPtr<osg::Image> mBaseColorImage;
+      dtCore::RefPtr<osg::Image> mSlopeMap;
+      dtCore::RefPtr<osg::Image> mRelativeElevationMap;
+      dtCore::RefPtr<osg::Image> mWaterMask;
+      bool mOutputDebugImages;
+      
+      std::vector<ImageUtils::GeospecificImage> mGeospecificLCCImages;
       ImageUtils::HeightColorMap mUpperHeightColorMap;
       ImageUtils::HeightColorMap mLowerHeightColorMap;
-      std::string mImageExtension;
-      std::string mCachePath;
-      std::vector<dtTerrain::LCCType> mLCCs;
-      
+      unsigned int mMaxImageSize;           
    };
 }
 #endif

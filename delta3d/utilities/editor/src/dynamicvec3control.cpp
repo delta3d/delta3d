@@ -133,6 +133,11 @@ namespace dtEditQt
         {
             return QString(tr(myVec3dProperty->GetLabel().c_str()));
         }
+        else
+        {
+           LOG_ERROR("Dynamic Vec 3 control has an invalid property type");
+           return tr("");
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -155,6 +160,11 @@ namespace dtEditQt
             std::string tooltip = myVec3dProperty->GetDescription() + "  [Type: " +
                 myVec3dProperty->GetPropertyType().GetName() + "]";
             return QString(tr(tooltip.c_str()));
+        }
+        else
+        {
+           LOG_ERROR("Dynamic Vec 3 control has an invalid property type");
+           return tr("");
         }
     }
 
@@ -184,6 +194,11 @@ namespace dtEditQt
             return "(X=" + QString::number(vectorValue.x(), 'f', NUM_DECIMAL_DIGITS) +
                 ", Y=" + QString::number(vectorValue.y(), 'f', NUM_DECIMAL_DIGITS) +
                 ", Z=" + QString::number(vectorValue.z(), 'f', NUM_DECIMAL_DIGITS) + ")";
+        }
+        else
+        {
+           LOG_ERROR("Dynamic Vec 3 control has an invalid property type");
+           return tr("");
         }
     }
 

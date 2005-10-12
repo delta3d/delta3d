@@ -18,8 +18,8 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ActorProxy__h
-#define __ActorProxy__h
+#ifndef DELTA_ACTORPROXY
+#define DELTA_ACTORPROXY
 
 #include <string>
 #include <map>
@@ -28,8 +28,8 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtUtil/enumeration.h>
-#include <dtDAL/export.h>
 #include <dtCore/uniqueid.h>
+#include "dtDAL/export.h"
 
 namespace dtCore
 {

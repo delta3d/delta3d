@@ -26,11 +26,39 @@
 #include <osgDB/FileUtils>
 #include <dtCore/refptr.h>
 #include <dtCore/physical.h>
-//#include <ogrsf_frmts.h>
+#include "dtTerrain/heightfield.h"
 #include "dtTerrain/terrain_export.h"
 
 namespace dtTerrain
 {
+   /**
+    * Defines exceptions that may be thrown from the image utility methods.
+    */
+   class ImageUtilException : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(ImageUtilException);
+      public:
+      
+         static ImageUtilException INVALID_IMAGE_DIMENSIONS;
+         
+         ///Thrown if the geo-specific image is of the wrong format.
+         static ImageUtilException INVALID_RASTER_FORMAT;
+         
+         ///Thrown if the analyzer could not load files needed for processing.
+         static ImageUtilException LOAD_FAILED;
+      
+      protected:
+         ImageUtilException(const std::string &name) : dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+   };
+   
+   /**
+    * This class is a static class containing many methods for creating images
+    * procedurally, concatenating images, and building images from source height
+    * data.
+    */
    class DT_TERRAIN_EXPORT ImageUtils
    {
    public:
@@ -38,8 +66,7 @@ namespace dtTerrain
       struct GeospecificImage
       {
          dtCore::RefPtr<osg::Image> mImage;
-
-         std::string mFilename;
+         std::string mFileName;
 
          int mMinLatitude;
          int mMaxLatitude;
@@ -61,7 +88,7 @@ namespace dtTerrain
          * @param height the height value to map
          * @return the corresponding color
          */
-         osg::Vec3 GetColor(float height);
+         osg::Vec3 GetColor(float height) const;
       };
      
       /**
@@ -70,6 +97,11 @@ namespace dtTerrain
       * @param imagename a descriptive name to call this image
       */        
       static void ImageStats(const osg::Image* image, std::string* imagename);
+      
+      /**
+       *
+       */
+      static void LoadGeospecificLCCImage(ImageUtils::GeospecificImage &gslcc);
       
       /**
        * @param width The target width of the created image.
@@ -85,45 +117,50 @@ namespace dtTerrain
       static unsigned short CalculateDetailNoise(int x, int y);
       
       /**
-       * @param srcImage An 16-bit single channel image representing a heightmap.
+       * Generates a gradient map based on the given heightfield.
+       * @param hf The source heightfield.
        * @param scale The scale value to apply to the resulting gradient calculations.
+       * @return An RGB image encoded with gradient values cooresponding to the 
+       *    specified heightfield.
        */
-      static dtCore::RefPtr<osg::Image> CreateBaseGradientMap(const osg::Image *srcImage,
+      static dtCore::RefPtr<osg::Image> CreateBaseGradientMap(const HeightField &hf,
          float scale);
          
-      
+      /**
+       * Generates a gradient map based on perlin noise.  This can be used to 
+       * procedurally add lighting detail to surfaces.
+       * @param width The width of the image.
+       * @param height The height of the image.
+       * @param float Scale value with with to scale the resulting gradient values.
+       * @return Image containing the gradient map.
+       */
       static dtCore::RefPtr<osg::Image> CreateDetailGradientMap(unsigned int width,
          unsigned int height, float scale);
          
-         
+      /**
+       *
+       */
       static unsigned short CalculateScaleMapNoise(int x, int y);
       
-      
+      /**
+       * Creates a perlin noise map which is useful for adding perturbing existing
+       * noise values in a random fashion.
+       * @param width Width of the image.
+       * @param height Height of the image.
+       * @return An image containing perlin noise based scale values.
+       */
       static dtCore::RefPtr<osg::Image> CreateDetailScaleMap(unsigned int width,
          unsigned int height);
 
       /**
-       * Gets the interpolated height
+       * Create smoothed grayscale map of the terrain by LCC type
+       * Uses weighted next nearest neighbor to "fuzzy"-up the LCCImage data
+       * @param src_image the black/white LCC Image by LCC type
+       * @param rgb_selected the RGB color of the points to smooth (always 0,0,0 - black)
+       * @return the newly created image
        */
-      static float GetInterpolatedHeight(const osg::HeightField* hf, double x, double y);
-      
-      /**
-       * Converts an OSG heightfield into a valid image.
-       * @param hf The OSG heightfield.
-       * @return The newly created image.
-       * @note The format of the image is a 16-bit single channel map.  This
-       *    maps to the format: (GL_LUMINANCE, GL_UNSIGNED_SHORT).
-      */
-      static dtCore::RefPtr<osg::Image> MakeHeightMapImage(const osg::HeightField* hf);
-
-      /**
-      * Create smoothed grayscale map of the terrain by LCC type
-      * Uses weighted next nearest neighbor to "fuzzy"-up the LCCImage data
-      * @param src_image the black/white LCC Image by LCC type
-      * @param rgb_selected the RGB color of the points to smooth (always 0,0,0 - black)
-      * @return the newly created image
-      */
-      static dtCore::RefPtr<osg::Image> MakeFilteredImage(const osg::Image* src_image, const osg::Vec3& rgb_selected);
+      static dtCore::RefPtr<osg::Image> MakeFilteredImage(const osg::Image &src_image, 
+         const osg::Vec3& rgb_selected);
 
       /**
       * Use an image to mask-out vegetation probability (set probability to 0%)
@@ -132,21 +169,40 @@ namespace dtTerrain
       * @param mask_image the black/white - using LCC type 11 as default
       * @return the modified filtered image
       */
-      static dtCore::RefPtr<osg::Image> ApplyMask(const osg::Image* src_image, const osg::Image* mask_image);
+      static dtCore::RefPtr<osg::Image> ApplyMask(const osg::Image &src_image, const osg::Image &mask_image);
 
       /**
-      * Create slopemap from GDAL-derived heightfield data
-      * @param hf the GDAL-derived heightfield
+      * Create a slope map.
+      * @param hf The heightfield heightfield
       * @return the newly created image
       */
-      static dtCore::RefPtr<osg::Image> MakeSlopeAspectImage(const osg::HeightField* hf, int maxTextureSize);
+      static dtCore::RefPtr<osg::Image> MakeSlopeAspectImage(const HeightField &hf);
 
       /**
-      * Create relative elevation map from GDAL-derived heightfield data
-      * @param hf the GDAL-derived heightfield
+      * Creates a relative elevation map.
+      * @param hf The heightfield with which to build the elevation map.
+      * @param scale The amount to scale the resulting values by.
       * @return the newly created image
       */
-      static dtCore::RefPtr<osg::Image> MakeRelativeElevationImage(const osg::HeightField* hf, int maxTextureSize);
+      static dtCore::RefPtr<osg::Image> MakeRelativeElevationImage(const HeightField &hf,
+         float scale);
+
+      /**
+       *
+       */
+      static dtCore::RefPtr<osg::Image> MakeBaseColor(const HeightField &hf, int latitude, 
+         int longitude, const ImageUtils::HeightColorMap &upperHeightColorMap,
+         const ImageUtils::HeightColorMap &lowerHeightColorMap, 
+         std::vector<GeospecificImage> &geospecificImages, float gamma);
+
+      /**
+      * Nearest neighbor geometric image manipulation. This assumes that the original image
+      * is nxn square.
+      * @param srcImage The image to scale.
+      * @return Destination image with the correct power of 2 dimensions.
+      */
+      static dtCore::RefPtr<osg::Image> EnsurePow2Image(const osg::Image *srcImage);
+
    };
    
 }

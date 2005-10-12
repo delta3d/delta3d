@@ -142,6 +142,15 @@
 				RelativePath="..\..\..\src\dtTerrain\fixedpointnoise.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtTerrain\geocoordinates.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtTerrain\geotiffdecorator.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtTerrain\heightfield.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtTerrain\imageutils.cpp">
 			</File>
 			<File
@@ -154,7 +163,7 @@
 				RelativePath="..\..\..\src\dtTerrain\mathutils.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtTerrain\roaddecorator.cpp">
+				RelativePath="..\..\..\src\dtTerrain\pagedterraintile.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtTerrain\soarxdrawable.cpp">
@@ -178,9 +187,6 @@
 				RelativePath="..\..\..\src\dtTerrain\terraindecorationlayer.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtTerrain\terraintile.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtTerrain\vegetationdecorator.cpp">
 			</File>
 		</Filter>
@@ -195,6 +201,15 @@
 				RelativePath="..\..\..\inc\dtTerrain\fixedpointnoise.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtTerrain\geocoordinates.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtTerrain\geotiffdecorator.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtTerrain\heightfield.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtTerrain\imageutils.h">
 			</File>
 			<File
@@ -207,7 +222,10 @@
 				RelativePath="..\..\..\inc\dtTerrain\mathutils.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtTerrain\roaddecorator.h">
+				RelativePath="..\..\..\inc\dtTerrain\pagedterraintile.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtTerrain\pagedterraintilefactory.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtTerrain\soarxdrawable.h">
@@ -232,9 +250,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtTerrain\terraindecorationlayer.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtTerrain\terraintile.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtTerrain\vegetationdecorator.h">

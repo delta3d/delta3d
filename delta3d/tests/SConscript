@@ -21,6 +21,11 @@ proxySources =  glob.glob('proxy/*Test.cpp')
 
 sources += proxySources;
 
+utilSources =  glob.glob('util/*Tests.cpp')
+
+sources += utilSources;
+
+
 deplibs = ['cppunit']
 
 #convert libs to system name
@@ -31,11 +36,13 @@ projectEnv.Append(LIBS = deplibs)
 allTestProgram = '#tests/allTests'
 projectTestProgram = '#tests/projectTests'
 proxyTestProgram = '#tests/proxyTests'
+utilTestProgram = '#tests/utilTests'
 
 if mode == 'debug':
    allTestProgram = '#tests/allTestsd'
    projectTestProgram = '#tests/projectTestsd'
    proxyTestProgram = '#tests/proxyTestsd'
+   utilTestProgram = '#tests/utilTestsd'
    
 mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore']
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
@@ -45,10 +52,12 @@ projectEnv.Append(LIBS = deplibs + mainlibs)
 app = projectEnv.Program(allTestProgram, sources)
 projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
 proxyapp   = projectEnv.Program(proxyTestProgram,    mainSources + proxySources)
+utilapp   = projectEnv.Program(utilTestProgram,      mainSources + utilSources)
 
 #Depends(app,        testActorLibrary)
 #Depends(projectapp, testActorLibrary)
 #Depends(proxyapp,   testActorLibrary)
+#Depends(utilapp,   testActorLibrary)
 
 # Grab all the sources from the dtActors source directory.
 if (app == '[]') :

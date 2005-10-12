@@ -24,11 +24,10 @@
 #include <vector>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtDAL/export.h>
 #include <dtUtil/objectfactory.h>
 #include "dtDAL/actortype.h"
 #include "dtDAL/actorproxy.h"
-#include "dtDAL/plugin_export.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {

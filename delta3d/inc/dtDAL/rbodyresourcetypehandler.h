@@ -30,6 +30,7 @@
 #include "dtDAL/resourcehelper.h"
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
+#include "dtDAL/export.h"
 
 XERCES_CPP_NAMESPACE_USE;
 

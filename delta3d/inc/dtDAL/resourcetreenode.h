@@ -23,6 +23,7 @@
 #define DELTA_RESOURCE_TREE_NODE
 
 #include "dtDAL/resourcedescriptor.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL {
 

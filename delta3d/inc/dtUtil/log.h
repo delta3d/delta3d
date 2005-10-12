@@ -18,8 +18,8 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __Log__h
-#define __Log__h
+#ifndef DELTA_LOG
+#define DELTA_LOG
 
 #include <string>
 #include <map>
