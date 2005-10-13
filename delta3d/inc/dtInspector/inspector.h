@@ -116,18 +116,34 @@ namespace dtInspector
 
 #ifndef DT_INSPECTOR_LIBRARY
 
-   #undef _AUTOLIBNAME
+   #undef _AUTOLIBNAME0
+   #undef _AUTOLIBNAME1
    #if defined(_DEBUG)
-      #define _AUTOLIBNAME  "dtInspectord.lib"
+
+      #ifndef DT_INSPECTOR_LIBRARY
+         #define _AUTOLIBNAME0  "dtInspectord.lib"
+      #endif
+
+      #define _AUTOLIBNAME1  "OpenThreadsWin32d.lib"
    #else
-      #define _AUTOLIBNAME  "dtInspector.lib"
+      #ifndef DT_INSPECTOR_LIBRARY
+         #define _AUTOLIBNAME0  "dtInspector.lib"
+      #endif
+      #define _AUTOLIBNAME1  "OpenThreadsWin32.lib"
    #endif
 
    #ifndef _NOAUTOLIBMSG
-      #pragma message( "Will automatically link with " _AUTOLIBNAME )
+      #ifndef DT_INSPECTOR_LIBRARY
+         #pragma message( "Will automatically link with " _AUTOLIBNAME0 )
+      #endif
+      #pragma message( "Will automatically link with " _AUTOLIBNAME1 )
    #endif
 
-   #pragma comment(lib, _AUTOLIBNAME)
+   #ifndef DT_INSPECTOR_LIBRARY
+      #pragma comment(lib, _AUTOLIBNAME0)
+   #endif
+
+   #pragma comment(lib, _AUTOLIBNAME1)
    
 #endif
 

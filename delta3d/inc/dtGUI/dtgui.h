@@ -50,12 +50,12 @@ namespace dtGUI
 
 /* You may turn off this include message by defining _NOAUTOLIB */
 #ifndef _NOAUTOLIBMSG
-#ifdef DT_GUI_LIBRARY
+#ifndef DT_GUI_LIBRARY
    #pragma message( "Will automatically link with " _AUTOLIBNAME )
 #endif
 #endif
 
-#ifdef DT_GUI_LIBRARY
+#ifndef DT_GUI_LIBRARY
 #   pragma comment(lib, _AUTOLIBNAME)
 #endif
 
