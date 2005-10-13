@@ -454,7 +454,7 @@ void Scene::OnMessage(MessageData *data)
    }
    else if(data->message == "exit")
    {
-      while (GetNumberOfAddedDrawable()>0)
+      while( !mAddedDrawables.empty() )
       {
          DeltaDrawable *d = GetDrawable(0);
          if (d)

@@ -75,6 +75,7 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
 
 CEUIDrawable::~CEUIDrawable(void)
 {
+   RemoveSender( System::Instance() );
    mNode = NULL;
    delete mUI;
    delete mRenderer;
