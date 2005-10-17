@@ -25,20 +25,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/transformable.h"
-#include "dtUtil/deprecationmgr.h"
-#include <osg/Node>
+#include <ode/ode.h>
+#include <ode/collision_trimesh.h>
 #include <osg/Geode>
-#include <osg/Vec3>
-
-//extern "C" {
-   #include <ode/ode.h>
-   #include <ode/collision_trimesh.h>
-//}
-
-#include <osg/NodeVisitor>
-#include <osg/Billboard>
 #include <osg/MatrixTransform>
+#include <osg/NodeVisitor>
+#include <osg/Vec3>
+#include <dtCore/transformable.h>
 
 namespace dtCore
 {

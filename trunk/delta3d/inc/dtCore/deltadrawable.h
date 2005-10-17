@@ -125,7 +125,7 @@ namespace dtCore
       typedef std::vector<RefPtr<DeltaDrawable> > ChildList;
       ChildList mChildList;      ///<List of children DeltaDrawable added
 
-      RefPtr<Scene> mParentScene; ///<The Scene this Drawable was added to
+      Scene* mParentScene; ///<The Scene this Drawable was added to
 
       RefPtr<osg::Node> mProxyNode;
       bool mRenderingProxy;

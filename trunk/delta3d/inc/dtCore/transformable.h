@@ -21,13 +21,10 @@
 #ifndef DELTA_TRANSFORMABLE
 #define DELTA_TRANSFORMABLE
 
-
-
-
-#include "dtCore/deltadrawable.h"
-#include "dtCore/transform.h"
-#include "dtCore/refptr.h"
 #include <osg/MatrixTransform>
+#include <dtCore/deltadrawable.h>
+#include <dtCore/refptr.h>
+#include <dtCore/transform.h>
 
 namespace dtCore
 {

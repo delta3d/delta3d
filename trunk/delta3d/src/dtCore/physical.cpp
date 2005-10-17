@@ -1135,23 +1135,26 @@ void Physical::RenderCollisionGeometry( const bool enable )
   *
   * @param scene The Scene this Physical has been added to
   */
-void Physical::AddedToScene( Scene *scene )
+void Physical::AddedToScene( Scene* scene )
 {
    if( scene )
    {
       //remove us from our existing parent scene, if we already have one.
       //TODO This ends up calling AddedToScene again with a NULL.  Is this bad?
-      if (mParentScene.valid())
+      if( mParentScene )
       {
-         mParentScene->RemoveDrawable(this);
+         mParentScene->RemoveDrawable( this );
       }
 
       DeltaDrawable::AddedToScene( scene );
-      scene->RegisterPhysical(this);
+      scene->RegisterPhysical( this );
    }
    else
    {
-      if (mParentScene.valid()) mParentScene->UnRegisterPhysical(this);
+      if( mParentScene )
+      {
+         mParentScene->UnRegisterPhysical( this );
+      }
       DeltaDrawable::AddedToScene( scene );
    }
 }
