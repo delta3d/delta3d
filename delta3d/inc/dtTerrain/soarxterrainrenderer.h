@@ -168,7 +168,7 @@ namespace dtTerrain
           * when rendering the terrain.
           * @param filePath The path to the shader file.  This path
           *    is relative to the Delta3D data path list. The default
-          *    path is "shaders/soarxterrain.frag".
+          *    path is "shaders/terrain.frag".
           * @note This has no affect if the use of fragment shaders
           *    has been disabled.
           */
