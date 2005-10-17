@@ -97,7 +97,8 @@ void Transform::Get( osg::Vec3& xyz, osg::Matrix& rotation, osg::Vec3& scale ) c
 
 void Transform::Get( osg::Matrix& matrix ) const
 {
-   osg::Matrix fullMatrix = mRotation * osg::Matrix::scale( mScale ) * osg::Matrix::translate( mTranslation );
+   osg::Matrix fullMatrix = mRotation * osg::Matrix::scale( mScale );
+   dtUtil::MatrixUtil::SetRow( fullMatrix, mTranslation, 3 );
 
    matrix.set(fullMatrix);
 }
@@ -115,7 +116,6 @@ void Transform::GetTranslation( float& tx, float& ty, float& tz ) const
    ty = mTranslation[1];
    tz = mTranslation[2];
 }
-
 
 void Transform::GetRotation( float& h, float& p, float& r ) const
 {
