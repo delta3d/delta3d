@@ -42,11 +42,11 @@ bool DeltaDrawable::AddChild(DeltaDrawable *child)
    mChildList.push_back(child);
    child->SetParent(this);
 
-   if (mParentScene.valid())
+   if( mParentScene )
    {
-      child->AddedToScene(mParentScene.get());
+      child->AddedToScene(mParentScene);
    }
-   return (true);
+   return true;
 }
 
 /*!
@@ -120,7 +120,7 @@ void DeltaDrawable::AddedToScene( Scene *scene )
 
 Scene* DeltaDrawable::GetSceneParent()
 {
-   return mParentScene.get();
+   return mParentScene;
 }
 
 /** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.
