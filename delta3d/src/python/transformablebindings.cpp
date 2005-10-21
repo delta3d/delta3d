@@ -9,47 +9,52 @@
 using namespace boost::python;
 using namespace dtCore;
 
-class TransformableWrap : public Transformable
+class TransformableWrap : public Transformable, public wrapper<Transformable>
 {
 public:
 
-   TransformableWrap(PyObject* self)
-      : mSelf(self)
-   {}
-
    virtual void PrePhysicsStepUpdate()
    {
-      call_method<void>(mSelf, "PrePhysicsStepUpdate"); 
+      if( override PrePhysicsStepUpdate = this->get_override("PrePhysicsStepUpdate") )
+      {
+         PrePhysicsStepUpdate();
+      }
+      Transformable::PrePhysicsStepUpdate();
    }
 
    void DefaultPrePhysicsStepUpdate()
    {
-      Transformable::PrePhysicsStepUpdate();
+      this->Transformable::PrePhysicsStepUpdate();
    }
 
    virtual bool FilterContact(dContact* contact, Transformable* collider)
    {
-      return call_method<bool>(mSelf, "FilterContact", contact, collider);
+      if( override FilterContact = this->get_override("FilterContact") )
+      {
+         return FilterContact(contact, collider);
+      }
+      return Transformable::FilterContact(contact, collider);
    }
 
    bool DefaultFilterContact(dContact* contact, Transformable* collider)
    {
-      return Transformable::FilterContact(contact, collider);
+      return this->Transformable::FilterContact(contact, collider);
    }
 
    virtual void PostPhysicsStepUpdate()
    {
-      call_method<void>(mSelf, "PostPhysicsStepUpdate");
+      if( override PostPhysicsStepUpdate = this->get_override("PostPhysicsStepUpdate") )
+      {
+         PostPhysicsStepUpdate();
+      }
+      Transformable::PostPhysicsStepUpdate();
    }
 
    void DefaultPostPhysicsStepUpdate()
    {
-      Transformable::PostPhysicsStepUpdate();
+      this->Transformable::PostPhysicsStepUpdate();
    }
 
-protected:
-
-   PyObject* mSelf;
 };
 
 
@@ -76,7 +81,7 @@ void initTransformableBindings()
    void (Transformable::*SetCollisionCappedCylinder1)(float, float) = &Transformable::SetCollisionCappedCylinder;
    void (Transformable::*SetCollisionCappedCylinder2)(osg::Node*) = &Transformable::SetCollisionCappedCylinder;
 
-   scope Transformable_scope = class_<Transformable, bases<DeltaDrawable>, dtCore::RefPtr<TransformableWrap> >("Transformable", no_init)
+   scope Transformable_scope = class_< TransformableWrap, bases<DeltaDrawable>, RefPtr<TransformableWrap>, boost::noncopyable >("Transformable", no_init)
       .def("GetInstanceCount", &Transformable::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TransformableGI1, return_internal_reference<>())
