@@ -24,10 +24,9 @@
 #include <osg/LightSource>
 #include <osg/LightModel>
 
-#include "dtCore/export.h"
-#include "dtCore/macros.h"
-#include "dtCore/deltadrawable.h"
-
+#include <dtCore/export.h>
+#include <dtCore/macros.h>
+#include <dtCore/deltadrawable.h>
 
 namespace dtCore
 {

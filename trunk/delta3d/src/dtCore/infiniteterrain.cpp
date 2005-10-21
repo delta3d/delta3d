@@ -2,21 +2,21 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtUtil/mathdefines.h"
-#include "dtCore/infiniteterrain.h"
-#include "dtCore/scene.h"
-#include "dtUtil/matrixutil.h"
+#include <dtUtil/mathdefines.h>
+#include <dtCore/infiniteterrain.h>
+#include <dtCore/scene.h>
+#include <dtUtil/matrixutil.h>
 
-#include "osg/CullFace"
-#include "osg/Drawable"
-#include "osg/Geode"
-#include "osg/Geometry"
-#include "osg/Material"
-#include "osg/TexGen"
-#include "osg/Texture2D"
-#include "osg/PrimitiveSet"
+#include <osg/CullFace>
+#include <osg/Drawable>
+#include <osg/Geode>
+#include <osg/Geometry>
+#include <osg/Material>
+#include <osg/TexGen>
+#include <osg/Texture2D>
+#include <osg/PrimitiveSet>
 
-#include "osgDB/ReadFile"
+#include <osgDB/ReadFile>
 
 #include <osg/Vec3>
 #include <osg/Vec4>
@@ -25,9 +25,7 @@
 using namespace dtCore;
 using namespace std;
 
-
 IMPLEMENT_MANAGEMENT_LAYER(InfiniteTerrain)
-
 
 /**
  * The terrain callback class.  Builds terrain segments
@@ -106,13 +104,14 @@ static int dInfiniteTerrainClass = 0;
  * @param name the instance name
  */
 InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureImage)
-   : mSegmentSize(800.0f),
-     mSegmentDivisions(128),
-     mHorizontalScale(0.0035f),
-     mVerticalScale(30.0f),
-     mBuildDistance(3000.0f),
-     mSmoothCollisionsEnabled(false),
-     mClearFlag(false)
+   :  Transformable(name),
+      mSegmentSize(800.0f),
+      mSegmentDivisions(128),
+      mHorizontalScale(0.0035f),
+      mVerticalScale(30.0f),
+      mBuildDistance(3000.0f),
+      mSmoothCollisionsEnabled(false),
+      mClearFlag(false)
 {
    SetName(name);
 
@@ -217,16 +216,6 @@ InfiniteTerrain::~InfiniteTerrain()
 {
    DeregisterInstance(this);
 }
-
-/**
- * Returns this object's OpenSceneGraph node.
- *
- * @return the OpenSceneGraph node
- */
-//osg::Node* InfiniteTerrain::GetOSGNode()
-//{
-//   return mNode.get();
-//}
 
 /**
  * Regenerates the terrain surface.

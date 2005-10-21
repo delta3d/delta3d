@@ -2,23 +2,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/object.h"
-#include "dtCore/scene.h"
+#include <dtCore/object.h>
+#include <dtCore/scene.h>
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
-#include "dtCore/loadable.h"
 
 using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Object)
 
-
 Object::Object(const std::string& name)
-: mRecenterGeometry( false )
+:  Physical(name),
+   mRecenterGeometry( false )
 {
    RegisterInstance(this);
-
-   SetName(name);
 
    osg::StateSet *stateSet = mNode->getOrCreateStateSet();
    stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);

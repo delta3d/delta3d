@@ -9,15 +9,13 @@
 #include <osgDB/Registry>
 #include <osg/FrameStamp>
 
-#include "dtCore/scene.h"
-#include "dtCore/camera.h"
-#include "dtCore/system.h"
+#include <dtCore/scene.h>
+#include <dtCore/camera.h>
+#include <dtCore/system.h>
 #include <dtUtil/log.h>
-#include "dtCore/infinitelight.h"
-#include "dtCore/positionallight.h"
-#include "dtCore/deltadrawable.h"
-#include "dtCore/physical.h"
-
+#include <dtCore/infinitelight.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/physical.h>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -259,34 +257,56 @@ void Scene::SetRenderState( Face face, Mode mode )
   */
 void Scene::RegisterPhysical( Physical *physical )
 {
-   if (physical==0) return;
+   DEPRECATE(  "void Scene::RegisterPhysical( Physical *physical )",
+               "void Scene::RegisterCollidable( Transformable* collidable )")
 
-   dSpaceAdd(mSpaceID, physical->GetGeomID());
+   RegisterCollidable( physical );
+}
 
-   dGeomSetData(physical->GetGeomID(), physical);
+void Scene::RegisterCollidable( Transformable* collidable )
+{
+   if( collidable == 0 )
+   {
+      return;
+   }
 
-   physical->SetBodyID(dBodyCreate(mWorldID));
+   dSpaceAdd( mSpaceID, collidable->GetGeomID() );
 
-   mPhysicalContents.push_back(physical);
+   dGeomSetData( collidable->GetGeomID(), collidable );
+
+   // This should probably be some sort of virtual function.
+   // Or perhaps RegisterPhysical can stick around and only do
+   // this.
+   if( Physical* physical = dynamic_cast<Physical*>(collidable) )
+   {
+      physical->SetBodyID( dBodyCreate( mWorldID ) );
+   }
+
+   mCollidableContents.push_back( collidable );
 }
 
 void Scene::UnRegisterPhysical( Physical *physical )
 {
-	dSpaceRemove(mSpaceID, physical->GetGeomID());
+   DEPRECATE(  "void Scene::UnRegisterPhysical( Physical *physical )",
+               "void Scene::UnRegisterCollidable( Transformable* collidable )")
 
-	//dBodyDestroy(physical->GetBodyID());
+   UnRegisterCollidable( physical );
+}
 
-	for(vector<Physical*>::iterator it = mPhysicalContents.begin();
-		it != mPhysicalContents.end();
-		it++)
-	{
-		if(*it == physical)
-		{
-			mPhysicalContents.erase(it);
-			break;
-		}
-	}
+void Scene::UnRegisterCollidable( Transformable* collidable )
+{
+   dSpaceRemove( mSpaceID, collidable->GetGeomID() );
 
+   for(  TransformableVector::iterator it = mCollidableContents.begin();
+         it != mCollidableContents.end();
+         it++ )
+   {
+      if( *it == collidable )
+      {
+         mCollidableContents.erase( it );
+         break;
+      }
+   }
 }
 
 /*!
@@ -368,7 +388,7 @@ void Scene::OnMessage(MessageData *data)
    }
    else if(data->message == "preframe")
    {
-      double dt = *(double *)data->userData;
+      double dt = *static_cast<double*>(data->userData);
 
       //if paging is enabled, update pager
       if(mPagingEnabled)
@@ -393,13 +413,13 @@ void Scene::OnMessage(MessageData *data)
          usingDeltaStep = true;
       }
 
-      const int numSteps = (int)(dt/mPhysicsStepSize);
+      const int numSteps = int(dt/mPhysicsStepSize);
 
-      vector<Physical*>::iterator it;
+      TransformableVector::iterator it;
       
-      for(it = mPhysicalContents.begin();
-          it != mPhysicalContents.end();
-          it++)
+      for(  it = mCollidableContents.begin();
+            it != mCollidableContents.end();
+            it++ )
       {
          (*it)->PrePhysicsStepUpdate();
       }
@@ -407,9 +427,13 @@ void Scene::OnMessage(MessageData *data)
       for (int i=0; i<numSteps; i++)
       {
          if (mUserNearCallback)
+         {
             dSpaceCollide(mSpaceID, mUserNearCallbackData, mUserNearCallback);
+         }
          else
+         {
             dSpaceCollide(mSpaceID, this, NearCallback);
+         }
 
          dWorldQuickStep(mWorldID, mPhysicsStepSize);
          
@@ -421,17 +445,21 @@ void Scene::OnMessage(MessageData *data)
       if(leftOver > 0.0)
       {   
          if (mUserNearCallback)
+         {
             dSpaceCollide(mSpaceID, mUserNearCallbackData, mUserNearCallback);
+         }
          else
+         {
             dSpaceCollide(mSpaceID, this, NearCallback);
+         }
 
          dWorldStep(mWorldID, leftOver);
          
          dJointGroupEmpty(mContactJointGroupID);
       }
       
-      for(it = mPhysicalContents.begin();
-          it != mPhysicalContents.end();
+      for(it = mCollidableContents.begin();
+          it != mCollidableContents.end();
           it++)
       {
          (*it)->PostPhysicsStepUpdate();
@@ -466,24 +494,28 @@ void Scene::OnMessage(MessageData *data)
 }
 
 // ODE collision callback     
-void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
+void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 {
-   Scene* scene = (Scene*)data;
+   if( data == 0 || o1 == 0 || o2 == 0 )
+   {
+      return;
+   }
+
+   Scene* scene = static_cast<Scene*>(data);
    
-   Physical* p1 = (Physical*)dGeomGetData(o1);
-   Physical* p2 = (Physical*)dGeomGetData(o2);
+   Transformable* c1 = static_cast<Transformable*>( dGeomGetData(o1) );
+   Transformable* c2 = static_cast<Transformable*>( dGeomGetData(o2) );
              
    dContactGeom contactGeoms[8];
    
-   int numContacts = 
-      dCollide(o1, o2, 8, contactGeoms, sizeof(dContactGeom));
+   int numContacts = dCollide( o1, o2, 8, contactGeoms, sizeof(dContactGeom) );
    
-   if(numContacts > 0 && p1 != 0 && p2 != 0)
+   if( numContacts > 0 && c1 != 0 && c2 != 0 )
    {
       CollisionData cd;
       
-      cd.mBodies[0] = p1;
-      cd.mBodies[1] = p2;
+      cd.mBodies[0] = c1;
+      cd.mBodies[1] = c2;
     
       cd.mLocation.set( 
          contactGeoms[0].pos[0], contactGeoms[0].pos[1], contactGeoms[0].pos[2]
@@ -497,11 +529,11 @@ void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
       
       scene->SendMessage("collision", &cd);
       
-      if(p1->DynamicsEnabled() || p2->DynamicsEnabled())
+      if( c1 != 0 || c2 != 0 )
       {
          dContact contact;
       
-         for(int i=0;i<numContacts;i++)
+         for( int i = 0; i < numContacts; i++ )
          {
             contact.surface.mode = dContactMu2 | dContactBounce;
             contact.surface.mu = 1000.0;
@@ -510,20 +542,33 @@ void Scene::NearCallback(void *data, dGeomID o1, dGeomID o2)
             contact.surface.bounce_vel = 0.001;
             
             contact.geom = contactGeoms[i];
+
+            // Make sure to call these both, because in the case of
+            // Trigger, meaningful stuff happens even if the return
+            // is false.
+            bool contactResult1 = c1->FilterContact(&contact, c2);
+            bool contactResult2 = c2->FilterContact(&contact, c1);
        
-            if(p1->FilterContact(&contact, p2) && p2->FilterContact(&contact, p1))
+            if( contactResult1 && contactResult2 )
             {
-               dJointID joint = dJointCreateContact(
-                  scene->mWorldID, 
-                  scene->mContactJointGroupID, 
-                  &contact
-               );
-      
-               dJointAttach(
-                  joint, 
-                  p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
-                  p2->DynamicsEnabled() ? p2->GetBodyID() : 0
-               );
+               // All this also should be in a virtual function.
+               Physical* p1 = dynamic_cast<Physical*>(c1);
+               Physical* p2 = dynamic_cast<Physical*>(c2);
+
+               if( p1 != 0 || p2 != 0 )
+               {
+                  dJointID joint = dJointCreateContact(
+                     scene->mWorldID, 
+                     scene->mContactJointGroupID, 
+                     &contact
+                     );
+
+                  dJointAttach(
+                     joint, 
+                     p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
+                     p2->DynamicsEnabled() ? p2->GetBodyID() : 0
+                     );
+               }
             }
          }
       }
@@ -561,11 +606,8 @@ void Scene::UseSceneLight( bool lightState )
    mLights[0]->SetEnabled(lightState);
 }
 
-
-
 void Scene::EnablePaging()
 {
-
    osgDB::DatabasePager* databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
    databasePager->setTargetFrameRate(mTargetFrameRate);
    databasePager->registerPagedLODs( mSceneNode.get() );
@@ -589,4 +631,3 @@ void Scene::DisablePaging()
    osgDB::Registry::instance()->getDatabasePager()->clear();
    osgDB::Registry::instance()->setDatabasePager(0);
 }
-

@@ -29,27 +29,21 @@
 #include <osg/LOD>
 #include <osg/Node>
 #include <osg/Vec3>
-
-
-#include "dtCore/physical.h"
-#include "dtUtil/noiseutility.h"
-
+#include <dtCore/physical.h>
+#include <dtUtil/noiseutility.h>
 
 namespace dtCore
 {
    class InfiniteTerrainCallback;
    
-   
    /**
     * An infinite terrain surface.
     */
-   class DT_CORE_EXPORT InfiniteTerrain : public Physical                                     
+   class DT_CORE_EXPORT InfiniteTerrain : public Transformable                                     
    {
       friend class InfiniteTerrainCallback;
       
-      
       DECLARE_MANAGEMENT_LAYER(InfiniteTerrain)
-
 
       public:
 
