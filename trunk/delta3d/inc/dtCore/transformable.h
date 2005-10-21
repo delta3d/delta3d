@@ -404,13 +404,13 @@ namespace dtCore
       int* mMeshIndices;
 
       /**
-      *  Pointer to the collision geometry representation
-      */
+       *  Pointer to the collision geometry representation
+       */
       RefPtr<osg::Geode> mGeomGeod;
 
       /**
-      /* If we're rendering the collision geometry.                                                                    
-      */
+       * If we're rendering the collision geometry.                                                                    
+       */
       bool mRenderingGeometry;
 
    };
