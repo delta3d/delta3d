@@ -33,7 +33,6 @@ Physical::~Physical()
       // from STAGE. Left commented out for now.
     
       //dGeomSetBody( 0, mBodyID );
-                                  
       dBodyDestroy(mBodyID);
    }
    

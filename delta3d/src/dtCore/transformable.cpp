@@ -338,9 +338,12 @@ Transformable::CollisionGeomType* Transformable::GetCollisionGeomType() const
 * CYLINDER : ( radius, length )
 * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
 */
-void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions ) const
+void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
 {  
    dimensions.clear();
+   
+   // Sync up ODE with our OSG transforms.
+   PrePhysicsStepUpdate();
 
    // The while loop is repeated here because we need both the type
    // and actual dGeomID of the geometry. GetCollisionGeomType only

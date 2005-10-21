@@ -152,7 +152,8 @@ namespace dtCore
 
       /**
       * Returns the dimensions of collision geometry associated with this
-      * object.
+      * object. Note: This is not const function since it requires an update
+      * to the underlying ODE geometry if we are out of sync with OSG.
       *
       * @param dimensions The dimenstions of the object's collision geometry.
       * What is filled into the vector is dependent on Collision type.
@@ -161,7 +162,7 @@ namespace dtCore
       * CYLINDER : ( radius, length )
       * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
       */
-      void GetCollisionGeomDimensions( std::vector<float>& dimensions ) const;
+      void GetCollisionGeomDimensions( std::vector<float>& dimensions );
 
       /**
       * Sets whether or not collisions detection will be performed.
