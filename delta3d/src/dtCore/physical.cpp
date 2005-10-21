@@ -26,8 +26,14 @@ Physical::~Physical()
 {
    if( mBodyID != 0 )
    {
-      dGeomSetBody( 0, mBodyID ); //Somehow this fixes an ODE crash on exit in STAGE
-                                  //when a StaticMesh actor is assigned a mesh resource.
+      // Somehow this line fixes an ODE crash on exit in STAGE when a StaticMesh 
+      // actor is assigned a mesh resource. However, this breaks normal applications
+      // with Phyiscals in the Scene, causing an ODE crash inside dBodyDestroy.
+      // This leads me to believe there is an issue with removing PhysicalActorProxies
+      // from STAGE. Left commented out for now.
+    
+      //dGeomSetBody( 0, mBodyID );
+                                  
       dBodyDestroy(mBodyID);
    }
    
