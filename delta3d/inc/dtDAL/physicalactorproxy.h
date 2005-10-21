@@ -21,14 +21,12 @@
 #ifndef _PHYSICAL_ACTOR_PROXY_H_
 #define _PHYSICAL_ACTOR_PROXY_H_
 
-#include "dtDAL/transformableactorproxy.h"
+#include <dtDAL/transformableactorproxy.h>
 #include <dtCore/physical.h>
-#include <dtUtil/enumeration.h>
-#include "dtDAL/export.h"
+#include <dtDAL/export.h>
 
 namespace dtDAL
 {
-
     /**
      * This proxy wraps the Physical Delta3D object.
      */
@@ -36,39 +34,12 @@ namespace dtDAL
     {
     public:
 
-        /*
-         * We need an enumeration to allow the user to set which type
-         * of collision geometry to use.  The other properties in this
-         * proxy such as radius, length, etc. affect the current type
-         * of collision geometry.
-         */
-        class DT_DAL_EXPORT CollisionGeomType : public dtUtil::Enumeration
-        {
-            DECLARE_ENUM(CollisionGeomType);
-        public:
-            static CollisionGeomType NONE;
-            static CollisionGeomType SPHERE;
-            static CollisionGeomType CYLINDER;
-            static CollisionGeomType CUBE;
-            static CollisionGeomType RAY;
-            static CollisionGeomType MESH;
-
-        private:
-            CollisionGeomType(const std::string &name) : dtUtil::Enumeration(name)
-            {
-                AddInstance(this);
-            }
-        };
-
         /**
          * Constructor
          */
         PhysicalActorProxy()
         {
             SetClassName("dtCore::Physical");
-            mCollisionType = &CollisionGeomType::NONE;
-            mCollisionRadius = mCollisionLength = 0.0f;
-            mCollisionBoxDims = osg::Vec3(0,0,0);
         }
 
         /**
@@ -89,18 +60,6 @@ namespace dtDAL
         float GetMass() const;
 
         /**
-         * Enables the rendering of an object's collision geometry
-         * @param enable enable rendering
-         */
-        void SetRenderCollisionGeometry(bool enable);
-
-        /**
-         * Determines if an object's collision geometry is rendering
-         * @return If geometry is currently rendering
-         */
-        bool GetRenderCollisionGeometry() const;
-
-        /**
          * Sets the center of gravity of an object
          * @param g the desired center of gravity
          */
@@ -111,56 +70,6 @@ namespace dtDAL
          * @return The current center of gravity
          */
         osg::Vec3 GetCenterOfGravity() const;
-
-        /**
-         * Sets the type of collision geometry to use for this object.
-         * @param type Enumeration depicting the type of collision to use.
-         */
-        void SetCollisionType(CollisionGeomType &type);
-
-        /**
-         * Gets the current collision geometry type.
-         * @return An enumeration of the type of geometry.
-         */
-        CollisionGeomType &GetCollisionType();
-
-        /**
-         * Sets the collision radius.  This is used if either sphere or cylinder collision
-         * geometry is specified.
-         * @param radius The new radius.
-         */
-        void SetCollisionRadius(float radius);
-
-        /**
-         * Gets the current collision radius.
-         * @return The collision radius.
-         */
-        float GetCollisionRadius() const;
-
-        /**
-         * Sets the dimension of the bounding box if box collision is used.
-         * @param dims The new dimensions of the bounding box. (width,depth,height)
-         */
-        void SetCollisionBoxDims(const osg::Vec3 &dims);
-
-        /**
-         * Gets the bounding box volume.
-         * @return The volume defining the bounding box used for collision.
-         */
-        osg::Vec3 GetCollisionBoxDims() const;
-
-        /**
-         * Sets the collision length.  This is used if either cylinder or ray collision
-         * geometry is specified.
-         * @param length The new length.
-         */
-        void SetCollisionLength(float length);
-
-        /**
-         * Get the current collision length.
-         * @return The collision length.
-         */
-        float GetCollisionLength() const;
 
     protected:
 
@@ -174,26 +83,6 @@ namespace dtDAL
          */
         virtual void CreateActor() = 0;
 
-        ///Sets box collision geometry.
-        void SetBoxCollision();
-
-        ///Sets sphere collision geometry.
-        void SetSphereCollision();
-
-        ///Sets cylinder collision geometry.
-        void SetCylinderCollision();
-
-        ///Sets ray collision geometry.
-        void SetRayCollision();
-
-        ///Sets mesh collision geometry.
-        void SetMeshCollision();
-
-    private:
-        osg::Vec3 mCollisionBoxDims;
-        float mCollisionRadius;
-        float mCollisionLength;
-        CollisionGeomType *mCollisionType;
     };
 }
 

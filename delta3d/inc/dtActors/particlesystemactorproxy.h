@@ -21,8 +21,8 @@
 #ifndef DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
 #define DELTA_PARTICLE_SYSTEM_ACTOR_PROXY
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/transformableactorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/transformableactorproxy.h>
 #include <dtCore/particlesystem.h>
 #include <dtDAL/exceptionenum.h>
 

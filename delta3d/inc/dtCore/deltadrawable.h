@@ -26,7 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/base.h>
-#include <dtCore/export.h>
 #include <dtUtil/log.h>
 #include <dtCore/refptr.h>
 #include <osg/Node>
@@ -59,7 +58,7 @@ namespace dtCore
           */
          virtual osg::Node* GetOSGNode() 
          {
-            return (mNode.get());
+            return mNode.get();
          }
          
          ///Supply the Scene this Drawable has been added to

@@ -19,9 +19,9 @@
 * @author William E. Johnson II
 */
 
-#include "dtActors/particlesystemactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtActors/particlesystemactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
 
 using namespace dtCore;
 using namespace dtDAL;

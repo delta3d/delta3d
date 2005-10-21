@@ -24,13 +24,13 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
  * @param name the instance name
  */
  Character::Character(const std::string& name)
-   :  mRotation(0.0f),
+   :  Transformable(name),
+      mRotation(0.0f),
       mVelocity(0.0f),
       mPreviousUpdateMode( rbody::OsgBodyNode::UPDATE_NONE ),
       mUpdateVisitor( 0 ),
       mPauseFrameNumber( 0 )
 {
-   SetName(name);
    mBodyNode = new rbody::OsgBodyNode(false);
    
    RegisterInstance(this);

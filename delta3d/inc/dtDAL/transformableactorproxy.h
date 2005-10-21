@@ -24,85 +24,175 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/export.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/export.h>
+#include <dtCore/transformable.h>
 
 namespace dtDAL
 {
-    /**
-     * This proxy wraps the Transformable Delta3D object.
-     */
-    class DT_DAL_EXPORT TransformableActorProxy : public virtual dtDAL::ActorProxy
-    {
-    public:
+   /**
+   * This proxy wraps the Transformable Delta3D object.
+   */
+   class DT_DAL_EXPORT TransformableActorProxy : public virtual dtDAL::ActorProxy
+   {
+   public:
 
-        /**
-         * Constructor
-         */
-        TransformableActorProxy() { SetClassName("dtCore::Transformable"); }
+      /**
+      * Constructor
+      */
+      TransformableActorProxy()
+      { 
+         SetClassName("dtCore::Transformable");             
+         mCollisionType = &dtCore::Transformable::CollisionGeomType::NONE;
+         mCollisionRadius = mCollisionLength = 0.0f;
+         mCollisionBoxDims = osg::Vec3(0,0,0);
+      }
 
-        /**
-         * Adds the properties that are common to all Delta3D transformable objects.
-         */
-        virtual void BuildPropertyMap();
+      /**
+      * Adds the properties that are common to all Delta3D transformable objects.
+      */
+      virtual void BuildPropertyMap();
 
-        /**
-         * Transformables can be placed in a scene
-         */
-        virtual bool IsPlaceable() const { return true; }
+      /**
+      * Transformables can be placed in a scene
+      */
+      virtual bool IsPlaceable() const { return true; }
 
-        /**
-         * Sets the rotation of an object.
-         * @param rotation the desired rotation
-         */
-        void SetRotation(const osg::Vec3 &rotation);
+      /**
+      * Sets the rotation of an object.
+      * @param rotation the desired rotation
+      */
+      void SetRotation(const osg::Vec3 &rotation);
 
-        void SetRotationFromMatrix(const osg::Matrix &rotation);
+      void SetRotationFromMatrix(const osg::Matrix &rotation);
 
-        /**
-         * Gets the rotation of an object
-         * @return The current rotation vector
-         */
-        osg::Vec3 GetRotation();
+      /**
+      * Gets the rotation of an object
+      * @return The current rotation vector
+      */
+      osg::Vec3 GetRotation();
 
-        /**
-         * Sets the translation of an object
-         * @param translation the desired translation
-         */
-        void SetTranslation(const osg::Vec3 &translation);
+      /**
+      * Sets the translation of an object
+      * @param translation the desired translation
+      */
+      void SetTranslation(const osg::Vec3 &translation);
 
-        /**
-         * Gets the translation of an object
-         * @return The current translation
-         */
-        osg::Vec3 GetTranslation();
+      /**
+      * Gets the translation of an object
+      * @return The current translation
+      */
+      osg::Vec3 GetTranslation();
 
-        /**
-         * Sets the scale of an object
-         * @param scale the desired scale
-         */
-        void SetScale(const osg::Vec3 &scale);
+      /**
+      * Sets the scale of an object
+      * @param scale the desired scale
+      */
+      void SetScale(const osg::Vec3 &scale);
 
-        /**
-         * Gets the scale of an object
-         * @return The current scale vector
-         */
-        osg::Vec3 GetScale();
+      /**
+      * Gets the scale of an object
+      * @return The current scale vector
+      */
+      osg::Vec3 GetScale();
 
-    protected:
+      /**
+      * Enables the rendering of an object's collision geometry
+      * @param enable enable rendering
+      */
+      void SetRenderCollisionGeometry(bool enable);
 
-        /**
-         * Destructor
-         */
-        virtual ~TransformableActorProxy() {}
+      /**
+      * Determines if an object's collision geometry is rendering
+      * @return If geometry is currently rendering
+      */
+      bool GetRenderCollisionGeometry() const;
 
-        /**
-         * Initializes the actor.
-         */
-        virtual void CreateActor() = 0;
+      /**
+      * Sets the type of collision geometry to use for this object.
+      * @param type Enumeration depicting the type of collision to use.
+      */
+      void SetCollisionType(dtCore::Transformable::CollisionGeomType &type);
 
-        osg::Vec3 mHPR;
-    };
+      /**
+      * Gets the current collision geometry type.
+      * @return An enumeration of the type of geometry.
+      */
+      dtCore::Transformable::CollisionGeomType &GetCollisionType();
+
+      /**
+      * Sets the collision radius.  This is used if either sphere or cylinder collision
+      * geometry is specified.
+      * @param radius The new radius.
+      */
+      void SetCollisionRadius(float radius);
+
+      /**
+      * Gets the current collision radius.
+      * @return The collision radius.
+      */
+      float GetCollisionRadius() const;
+
+      /**
+      * Sets the dimension of the bounding box if box collision is used.
+      * @param dims The new dimensions of the bounding box. (width,depth,height)
+      */
+      void SetCollisionBoxDims(const osg::Vec3 &dims);
+
+      /**
+      * Gets the bounding box volume.
+      * @return The volume defining the bounding box used for collision.
+      */
+      osg::Vec3 GetCollisionBoxDims() const;
+
+      /**
+      * Sets the collision length.  This is used if either cylinder or ray collision
+      * geometry is specified.
+      * @param length The new length.
+      */
+      void SetCollisionLength(float length);
+
+      /**
+      * Get the current collision length.
+      * @return The collision length.
+      */
+      float GetCollisionLength() const;
+
+   protected:
+
+      /**
+      * Destructor
+      */
+      virtual ~TransformableActorProxy() {}
+
+      /**
+      * Initializes the actor.
+      */
+      virtual void CreateActor() = 0;
+
+      ///Sets box collision geometry.
+      void SetBoxCollision();
+
+      ///Sets sphere collision geometry.
+      void SetSphereCollision();
+
+      ///Sets cylinder collision geometry.
+      void SetCylinderCollision();
+
+      ///Sets ray collision geometry.
+      void SetRayCollision();
+
+      ///Sets mesh collision geometry.
+      void SetMeshCollision();
+
+      osg::Vec3 mHPR;
+
+   private:
+      osg::Vec3 mCollisionBoxDims;
+      float mCollisionRadius;
+      float mCollisionLength;
+      dtCore::Transformable::CollisionGeomType *mCollisionType;
+   };
 }
 
 #endif

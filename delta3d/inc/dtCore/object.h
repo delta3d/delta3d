@@ -25,25 +25,19 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "dtCore/refptr.h"
-#include <osg/MatrixTransform>
-#include <osg/Geode>
-#include "dtCore/loadable.h"
-#include "dtCore/physical.h"
-
-#include <string>
+#include <dtCore/loadable.h>
+#include <dtCore/physical.h>
 
 namespace dtCore
 {
 
    ///A visual Object with physical properties
 
- /** The Object represents a virtual object which is renderable, movable,
-   * and has physical properties.
-   *
-   */
-   class DT_CORE_EXPORT Object : public Physical, public Loadable
+   /** The Object represents a virtual object which is renderable, movable,
+    *  and has physical properties.
+    *
+    */
+   class DT_CORE_EXPORT Object : public Loadable, public Physical
    {
       DECLARE_MANAGEMENT_LAYER(Object)
          

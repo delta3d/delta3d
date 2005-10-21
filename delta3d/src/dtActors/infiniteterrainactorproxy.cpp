@@ -36,7 +36,7 @@ namespace dtActors
     void InfiniteTerrainActorProxy::BuildPropertyMap()
     {
         const std::string &GROUPNAME = "InfiniteTerrain";
-        PhysicalActorProxy::BuildPropertyMap();
+        TransformableActorProxy::BuildPropertyMap();
 
         InfiniteTerrain *ter = dynamic_cast<InfiniteTerrain*>(mActor.get());
         if(!ter)
@@ -90,6 +90,6 @@ namespace dtActors
         AddProperty(new BooleanActorProperty("Smooth Collision", "Smooth Collision",
             MakeFunctor(*ter, &InfiniteTerrain::EnableSmoothCollisions),
             MakeFunctorRet(*ter, &InfiniteTerrain::SmoothCollisionsEnabled),
-            "Toggles smooth collision between a terrain and other dtCore::Physicals", GROUPNAME));
+            "Toggles smooth collision between a terrain and other dtCore::Transformable", GROUPNAME));
     }
 }

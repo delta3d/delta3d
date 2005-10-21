@@ -29,11 +29,8 @@
 #include <ode/ode.h>
 #include <osg/Vec3>
 
-#include <dtCore/base.h>
 #include <dtCore/stats.h>
 #include <dtCore/light.h>
-
-#include <dtUtil/deprecationmgr.h>
 
 #include <osgParticle/ParticleSystemUpdater>
 
@@ -127,7 +124,7 @@ namespace dtCore
       ///The user data associated with "collision" messages
       struct DT_CORE_EXPORT CollisionData
       {
-         Physical* mBodies[2]; ///<The bodies colliding
+         Transformable* mBodies[2]; ///<The bodies colliding
          osg::Vec3 mLocation; ///<The collision location
          osg::Vec3 mNormal; ///<The collision normal
          float mDepth; ///<The penetration depth
@@ -148,11 +145,15 @@ namespace dtCore
       /// @see GetPhysicsStepSize()
       inline void SetPhysicsStepSize( double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };    
 
-      /// Register a Physical with the Scene
-      void RegisterPhysical( Physical *physical );
+      /// Register a Physical with the Scene (Deprecated)
+      void RegisterPhysical( Physical* physical );
+      /// Register a Transformable with the Scene
+      void RegisterCollidable( Transformable* collidable );
 
-		/// UnRegister a Physical with the Scene
-		void UnRegisterPhysical( Physical *physical );
+		/// UnRegister a Physical with the Scene (Deprecated)
+		void UnRegisterPhysical( Physical* physical );
+      /// UnRegister a Transformable with the Scene
+      void UnRegisterCollidable( Transformable* collidable );
 
       ///returns a pointer to the light specified by the param number
       inline Light* GetLight( const int number ) const { return mLights[ number ]; }
@@ -231,7 +232,8 @@ namespace dtCore
       // (default = 0.0, indicating to use the System deltaFrameTime )
       double mPhysicsStepSize;
       
-      std::vector<Physical*> mPhysicalContents; ///<The physical contents of the scene
+      typedef std::vector< Transformable* > TransformableVector;
+      TransformableVector mCollidableContents; ///<The physical contents of the scene
       
       dJointGroupID mContactJointGroupID; ///<The group that contains all contact joints
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
@@ -240,7 +242,6 @@ namespace dtCore
       Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
 
       typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
-
       DrawableList mAddedDrawables; ///<The list of Drawable directly added
 
       Mode mRenderMode;
