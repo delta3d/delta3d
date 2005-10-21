@@ -485,7 +485,7 @@ namespace dtTerrain
          unsigned int mDetailLevels;
          unsigned int mBaseLevels;           
          
-         friend class SoarXCullCallback;
+         friend struct SoarXCullCallback;
    };   
    
 }
