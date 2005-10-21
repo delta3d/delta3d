@@ -355,9 +355,7 @@ void Transformable::GetCollisionGeomDimensions( std::vector<float>& dimensions )
          geomClass = dGeomGetClass(id);
       }
    }
-
-   id = mOriginalGeomID;
-
+   
    switch( geomClass )
    {
       case dSphereClass :
