@@ -62,8 +62,6 @@ protected:
 
     ~MotionAction();
     MotionAction(const MotionAction&); //not implemented by design
-    MotionAction operator =(const MotionAction&); //not implemented by design
-
 
    /***
    * This function should be called by the derived class
