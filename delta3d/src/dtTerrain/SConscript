@@ -7,11 +7,10 @@ Import ('*')
 # Grab all the sources from the terrain  source directory.
 sources = SGlob('*.cpp')
 
-dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glgui', 'isense', 'ode', 
-	'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
-	'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
-        'cal3d', 'sg', 'ul', 'js', 
-	'Producer', 'opengl' ]
+dtTerrainDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 'isense', 'ode', 
+                 'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil', 
+                 'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript', 'gdal', 
+                 'cal3d', 'ul', 'js', 'Producer', 'opengl' ]
 
 if OS == 'windows' :
    dtTerrainDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
@@ -20,7 +19,6 @@ elif OS == 'linux':
 elif OS == 'darwin':
    dtTerrainDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-    
 libdtTerrain = BuildLib( 'dtTerrain', sources, dtTerrainDeps, ['DT_TERRAIN_LIBRARY'] )
 
 Export ('libdtTerrain')
