@@ -93,7 +93,6 @@ namespace dtCore
 #undef _AUTOLIBNAME12
 #undef _AUTOLIBNAME13
 #undef _AUTOLIBNAME14
-#undef _AUTOLIBNAME15
 #undef _AUTOLIBNAME18
 #undef _AUTOLIBNAME19
 #undef _AUTOLIBNAME20
@@ -113,7 +112,6 @@ namespace dtCore
    #define _AUTOLIBNAME10 "osgUtild.lib"
    #define _AUTOLIBNAME11 "oded.lib"
    #define _AUTOLIBNAME13 "osgTextd.lib"
-   #define _AUTOLIBNAME15 "osgTerraind.lib"
    #define _AUTOLIBNAME18 "js_d.lib"
    #define _AUTOLIBNAME21 "isensed.lib"
 #else
@@ -130,7 +128,6 @@ namespace dtCore
    #define _AUTOLIBNAME10 "osgUtil.lib"
    #define _AUTOLIBNAME11 "ode.lib"
    #define _AUTOLIBNAME13 "osgText.lib"
-   #define _AUTOLIBNAME15 "osgTerrain.lib"
    #define _AUTOLIBNAME18 "js.lib"
    #define _AUTOLIBNAME21 "isense.lib"
 #endif
@@ -157,7 +154,6 @@ namespace dtCore
    #pragma message( "Will automatically link with " _AUTOLIBNAME12 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME13 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME14 )
-   #pragma message( "Will automatically link with " _AUTOLIBNAME15 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME18 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME19 )
    #pragma message( "Will automatically link with " _AUTOLIBNAME20 )
@@ -180,7 +176,6 @@ namespace dtCore
 #pragma comment(lib, _AUTOLIBNAME12)
 #pragma comment(lib, _AUTOLIBNAME13)
 #pragma comment(lib, _AUTOLIBNAME14)
-#pragma comment(lib, _AUTOLIBNAME15)
 #pragma comment(lib, _AUTOLIBNAME18)
 #pragma comment(lib, _AUTOLIBNAME19)
 #pragma comment(lib, _AUTOLIBNAME20)

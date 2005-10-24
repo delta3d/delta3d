@@ -16,7 +16,7 @@ else:
 sources = SGlob('*.cpp')
 
 testActorLibraryDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenThreads', 'osg',
-                        'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil',
+                        'osgDB', 'osgParticle', 'osgText', 'osgUtil',
                         'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js',
                         'Producer', 'opengl', 'dtSORAX', 'User32',
                         'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',

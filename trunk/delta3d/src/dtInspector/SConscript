@@ -3,7 +3,7 @@ Import('*')
 srcs = SGlob( '*.cpp' )
 deps = [ 'dtCore', 'dtABC', 'fltk', 'Producer', 'OpenThreads', 'osg', 'osgDB',
          'osgUtil', 'osgText', 'osgGL2', 'osgGA', 'osgParticle', 'osgSim',
-         'osgTerrain', 'osgFX', 'osgProducer', 'isense', 'js', 'ul', 'Carbon',
+         'osgFX', 'osgProducer', 'isense', 'js', 'ul', 'Carbon',
          'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
                     
 BuildLib( 'dtInspector', srcs, deps, ['DT_LIBRARY'] )
