@@ -135,6 +135,12 @@
 				RelativePath="..\..\..\src\dtActors\baselightactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\beziercontrolleractorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\beziernodeactorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\cameraactorproxy.cpp">
 			</File>
 			<File
@@ -145,6 +151,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\cloudplaneactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\curvenodeactorproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\deltaobjectactorproxy.cpp">
@@ -166,6 +175,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\meshterrainactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\motionactionproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\particlesystemactorproxy.cpp">
@@ -200,6 +212,12 @@
 				RelativePath="..\..\..\inc\dtActors\baselightactorproxy.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtActors\beziercontrolleractorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\beziernodeactorproxy.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtActors\cameraactorproxy.h">
 			</File>
 			<File
@@ -210,6 +228,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\cloudplaneactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\curvenodeactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h">
@@ -231,6 +252,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\meshterrainactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\motionactionactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\particlesystemactorproxy.h">

@@ -38,6 +38,11 @@ void BezierController::SetStartNode(BezierNode* pStart)
    mEndPoint = mPath->GetPath().end();
 }
 
+BezierNode* BezierController::GetStartNode()
+{
+   return mPath->GetStartNode();
+}
+
 void BezierController::OnStart()
 {
    
