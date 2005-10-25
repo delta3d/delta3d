@@ -25,7 +25,6 @@
 #include <QObject>
 #include <map>
 #include <osg/Referenced>
-#include <osg/ref_ptr>
 #include <dtCore/scene.h>
 #include <dtCore/uniqueid.h>
 #include <dtUtil/enumeration.h>
@@ -229,14 +228,14 @@ namespace dtEditQt
             QWidget *parent, QGLWidget *shareWith);
 
     private:
-        static osg::ref_ptr<ViewportManager> instance;
+        static dtCore::RefPtr<ViewportManager> instance;
 
         bool shareMasterContext;
         std::map<std::string,Viewport*> viewportList;
         Viewport *masterViewport;
-        osg::ref_ptr<ViewportOverlay> viewportOverlay;
-        osg::ref_ptr<dtCore::Scene> masterScene;
-        osg::ref_ptr<Camera> worldCamera;
+        dtCore::RefPtr<ViewportOverlay> viewportOverlay;
+        dtCore::RefPtr<dtCore::Scene> masterScene;
+        dtCore::RefPtr<Camera> worldCamera;
         int numTextureUnits;
         bool inChangeTransaction;
 

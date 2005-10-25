@@ -35,7 +35,7 @@ namespace dtEditQt
 {
 
     //Singleton global variable for the library manager.
-    osg::ref_ptr<ViewportManager> ViewportManager::instance(NULL);
+   dtCore::RefPtr<ViewportManager> ViewportManager::instance(NULL);
 
     ///////////////////////////////////////////////////////////////////////////////
     IMPLEMENT_ENUM(ViewportManager::ViewportType);
