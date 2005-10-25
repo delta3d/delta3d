@@ -136,29 +136,49 @@ Scene::Scene( const std::string& name, bool useSceneLight )
 
 Scene::~Scene()
 {
-   while (GetNumberOfAddedDrawable()>0)
+   // Since we are going to destroy all the bodies in our world with dWorldDestroy,
+   // we must remove the references to the bodies associated with their default collision
+   // geoms. Otherwise destroying the world will leave the geoms references bad memory.
+   // This prevents a crash-on-exit in STAGE.
+   for(  TransformableVector::iterator iter = mCollidableContents.begin();
+         iter != mCollidableContents.end();
+         iter++ )
    {
-      DeltaDrawable *d = GetDrawable(0);
-      if (d)
+      if( Physical* physical = dynamic_cast<Physical*>(*iter) )
+      {
+         physical->SetBodyID(0);
+      }
+   }
+
+   dWorldDestroy(mWorldID);
+   dJointGroupDestroy(mContactJointGroupID);
+
+   // Remove the remaining DeltaDrawables from the Scene. This is redundant to help prevent
+   // crash-on-exits. The "exit" message should have the same effect. This must be called 
+   // after the above code that destroys the ODE world.
+   while( !mAddedDrawables.empty() )
+   {
+      if( DeltaDrawable *d = GetDrawable(0) )
       {
          RemoveDrawable(d);
       }
    }
 
-   DeregisterInstance(this);
-
-   dJointGroupDestroy(mContactJointGroupID);
    dSpaceDestroy(mSpaceID);
-   dWorldDestroy(mWorldID);
 
-   if(mPagingEnabled) DisablePaging();
+   DeregisterInstance(this);
+   
+   if(mPagingEnabled)
+   {
+      DisablePaging();
+   }
 
    RemoveSender( System::Instance() );
 }
 
 void Scene::AddDrawable( DeltaDrawable *drawable )
 {
-   // This is modified to put a ref_ptr in the scene
+   // This is modified to put a RefPtr in the scene
    // They are required or when you change the stateset
    // Everything is killed and you get a blank screen.
    // I still pushback the original *drawable 
@@ -168,13 +188,13 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
    drawable->AddedToScene(this);
 
    mAddedDrawables.push_back(drawable);
-   /* 
+   
    // this is the original code
-   mSceneNode->addChild( drawable->GetOSGNode() );
-   drawable->AddedToScene(this);
+   //mSceneNode->addChild( drawable->GetOSGNode() );
+   //drawable->AddedToScene(this);
 
-   mAddedDrawables.push_back(drawable);
-   */
+   //mAddedDrawables.push_back(drawable);
+   
 }
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
@@ -484,8 +504,7 @@ void Scene::OnMessage(MessageData *data)
    {
       while( !mAddedDrawables.empty() )
       {
-         DeltaDrawable *d = GetDrawable(0);
-         if (d)
+         if( DeltaDrawable *d = GetDrawable(0) )
          {
             RemoveDrawable(d);
          }
