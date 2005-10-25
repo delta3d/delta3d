@@ -47,6 +47,8 @@ public:
    */
    void SetStartNode(BezierNode* pStart);
 
+   BezierNode* GetStartNode();
+
 
 protected:
    ~BezierController();

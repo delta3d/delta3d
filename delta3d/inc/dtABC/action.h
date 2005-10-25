@@ -1,7 +1,7 @@
 #ifndef __ACTION_H__
 #define __ACTION_H__
 
-#include <dtCore/base.h>
+#include <dtCore/deltadrawable.h>
 #include "export.h"
 
 /* 
@@ -31,7 +31,7 @@ namespace dtABC
    * An Action is something which happens over time
    */
 
-class DT_ABC_EXPORT Action: public dtCore::Base
+class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
 {
    public:
       Action();

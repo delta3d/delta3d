@@ -44,9 +44,6 @@ class CurveNode: public PathPointConverter
      CurveNode* GetPrev(){return mPrev.get();}
      CurveNode* GetNext(){return mNext.get();}
 
-     const CurveNode* GetPrev() const {return mPrev.get();}
-     const CurveNode* GetNext() const {return mNext.get();}
-
      void SetNext(CurveNode* pNext){mNext = pNext;}
      void SetPrev(CurveNode* pPrev){mPrev = pPrev;}
 
