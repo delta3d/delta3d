@@ -1,8 +1,8 @@
 #ifndef __BEZIER_CONTROLLER_ACTOR_PROXY_H__
 #define __BEZIER_CONTROLLER_ACTOR_PROXY_H__
 
-#include <dtDAL/plugin_export.h>
 #include <dtCore/deltadrawable.h>
+#include <dtDAL/plugin_export.h>
 #include "motionactionactorproxy.h"
 
 
@@ -37,13 +37,13 @@ class DT_PLUGIN_EXPORT BezierControllerActorProxy: public MotionActionActorProxy
 public:
 
    /*virtual*/ void BuildPropertyMap();
-
    void SetActorStartNode(dtCore::DeltaDrawable* pBezierNode);
    dtCore::DeltaDrawable* GetActorStartNode();
+   
+   /*virtual*/ const ActorProxy::RenderMode& GetRenderMode();
 
 protected:
    /*virtual*/ void CreateActor();
-
 
 };
 
