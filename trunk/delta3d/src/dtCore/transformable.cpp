@@ -423,19 +423,23 @@ void Transformable::SetCollisionDetection( bool enabled )
 { 
    if( mGeomID != 0 )
    {
+      
       int geomClass = dGeomGetClass(mGeomID) ;
       dGeomID id = mGeomID;
-      while( geomClass == dGeomTransformClass )
+      while( geomClass == dGeomTransformClass && id != 0 )
       {
          id = dGeomTransformGetGeom(id);
          if( id == 0 )
          {
-            LOG_WARNING( "Collision detection cannot be enabled or disabled because no collision geometry has been set." )
-            return; 
+            Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+               "Collision detection has been set to %d, even though no collision geometry has been set.", enabled );
          }
-         geomClass = dGeomGetClass(id);
+         else
+         {
+            geomClass = dGeomGetClass(id);
+         }
       }
-
+      
       //If we get here then a collision shape has been found.
       //Now we can enable/disable the GeomTransform at the top of the hierarchy.
       //Disabling the collision geometry itself will not prevent the transform
@@ -461,23 +465,6 @@ bool Transformable::GetCollisionDetection() const
 { 
    if( mGeomID != 0 )
    {
-      //First we must verify a collision shape has been set.
-      int geomClass = dGeomGetClass(mGeomID) ;
-      dGeomID id = mGeomID;
-      while( geomClass == dGeomTransformClass )
-      {
-         id = dGeomTransformGetGeom(id);
-         if( id == 0 )
-         {
-            LOG_WARNING( "Collision detection is not enabled because no collision geometry has been set." )
-            return false; 
-         }
-         geomClass = dGeomGetClass(id);
-      }
-
-      //If we get here then a collision shape has been found.
-      //Now we can query the collision transform to see if it's
-      //enabled or disabled.
       return dGeomIsEnabled(mGeomID) == 1;
    }
 
@@ -630,14 +617,21 @@ void Transformable::SetCollisionSphere( osg::Node* node )
       mOriginalGeomID = dCreateSphere( 0, sv.mFunctor.mRadius );
       dGeomDisable( mOriginalGeomID );
 
-      dGeomTransformSetGeom( subTransformID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
+      if( sv.mFunctor.mRadius >= 0 )
+      {
+         dGeomTransformSetGeom( subTransformID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
 
-      dGeomTransformSetGeom(mGeomID, subTransformID);
+         dGeomTransformSetGeom(mGeomID, subTransformID);
 
-      GetMatrixNode()->setMatrix( oldMatrix );
+         GetMatrixNode()->setMatrix( oldMatrix );
 
-      RenderCollisionGeometry(mRenderingGeometry);
-      SetCollisionDetection(true);
+         RenderCollisionGeometry(mRenderingGeometry);
+         SetCollisionDetection(true);
+      }
+      else
+      {
+         LOG_WARNING( "Calculated values for collision sphere size are invalid." )
+      }
    }
 }
 
@@ -688,32 +682,42 @@ void Transformable::SetCollisionBox( osg::Node* node )
 
       dGeomTransformSetCleanup(subTransformID, 1);
 
-      mOriginalGeomID =  dCreateBox( 0,
-         bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
-         bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
-         bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
-         );
+      float lx = bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin();
+      float ly = bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin();
+      float lz = bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin();
 
-      dGeomDisable( mOriginalGeomID );
+      if( lx >= 0.0f && ly >= 0.0f && lz >= 0.0f )
+      {
+         mOriginalGeomID =  dCreateBox( 0, lx, ly, lz );
 
-      dGeomTransformSetGeom( subTransformID, dCreateBox( 0,
-         bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
-         bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
-         bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
-         )
-         );
+         dGeomDisable( mOriginalGeomID );
 
-      dGeomSetPosition(
-         subTransformID,
-         bbv.mBoundingBox.center()[0],
-         bbv.mBoundingBox.center()[1],
-         bbv.mBoundingBox.center()[2]
-         );
+         dGeomTransformSetGeom( subTransformID, dCreateBox( 0,
+            bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin(),
+            bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin(),
+            bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin()
+            )
+            );
 
-         dGeomTransformSetGeom(mGeomID, subTransformID);
+         dGeomSetPosition(
+            subTransformID,
+            bbv.mBoundingBox.center()[0],
+            bbv.mBoundingBox.center()[1],
+            bbv.mBoundingBox.center()[2]
+            );
 
-         RenderCollisionGeometry(mRenderingGeometry);
-         SetCollisionDetection(true);
+            dGeomTransformSetGeom(mGeomID, subTransformID);
+
+            RenderCollisionGeometry(mRenderingGeometry);
+            SetCollisionDetection(true);
+      }
+      else
+      {
+         // This case happens in STAGE when the collision shape property is
+         // parsed _before_ the mesh filename. After the mesh has been
+         // loaded then the box will be recalculated.
+         LOG_WARNING( "Calculated values for collision box are invalid." )
+      }
    }
 }
 
@@ -817,17 +821,27 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 
       dGeomTransformSetCleanup(subTransformID, 1);
 
-      mOriginalGeomID = dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ );
-      dGeomDisable( mOriginalGeomID );
+      float radius = cv.mFunctor.mRadius;
+      float length = cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ;
 
-      dGeomTransformSetGeom( subTransformID, dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ ) );
+      if( radius >= 0 && length >= 0 )
+      {
+         mOriginalGeomID = dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ );
+         dGeomDisable( mOriginalGeomID );
 
-      dGeomTransformSetGeom(mGeomID, subTransformID);
+         dGeomTransformSetGeom( subTransformID, dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ ) );
 
-      GetMatrixNode()->setMatrix( oldMatrix );
+         dGeomTransformSetGeom(mGeomID, subTransformID);
 
-      RenderCollisionGeometry(mRenderingGeometry);
-      SetCollisionDetection(true);
+         GetMatrixNode()->setMatrix( oldMatrix );
+
+         RenderCollisionGeometry(mRenderingGeometry);
+         SetCollisionDetection(true);
+      }
+      else
+      {
+         LOG_WARNING( "Calculated values for collision cylinder are invalid." )
+      }
    }
 }
 
@@ -996,8 +1010,8 @@ void Transformable::SetCollisionMesh(osg::Node* node)
 */
 void Transformable::ClearCollisionGeometry()
 {
-   dGeomTransformSetGeom(mGeomID, 0);
    SetCollisionDetection(false);
+   dGeomTransformSetGeom(mGeomID, 0);
    
    //If the collision geometry is valid, this implies the user has
    //enabled render collision geometry.  Therefore, we just remove
