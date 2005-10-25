@@ -10,7 +10,6 @@ Action::Action()
    mTimeStep = 0.0f;
    mTotalTime = 0.0f;
    mAccumTime = 0.0f;
-   mHasStarted = false;
    mIsRunning = false;
 
    dtCore::System::Instance()->AddSender(this);
@@ -23,7 +22,8 @@ Action::~Action()
 
 void Action::Start()
 {
-   mHasStarted = true;
+   mTotalTime = 0.0f;
+   mAccumTime = 0.0f;
    mIsRunning = true;
    OnStart();
 }
@@ -34,15 +34,12 @@ void Action::Pause()
    OnPause();
 }
 
-void Action::Restart()
+void Action::UnPause()
 {
    mIsRunning = false;
-   mHasStarted = false;
-   mTotalTime = 0.0f;
-   mAccumTime = 0.0f;
-
-   OnRestart();
+   OnUnPause();
 }
+
 
 void Action::OnMessage( MessageData* data )
 {
@@ -55,7 +52,7 @@ void Action::OnMessage( MessageData* data )
 
 void Action::Update(double dt)
 {
-   if(mIsRunning && mHasStarted)
+   if(mIsRunning)
    {
       mTotalTime += dt;
       mAccumTime += dt;

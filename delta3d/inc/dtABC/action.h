@@ -45,10 +45,9 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
 
       void Start();
       void Pause();
-      void Restart();
+      void UnPause();
 
       bool GetIsRunning() const {return mIsRunning;}
-      bool GetHasStarted() const {return mHasStarted;}
 
    protected:
       /*virtual*/ ~Action();
@@ -73,9 +72,9 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
       virtual void OnPause() = 0;
 
       /***
-      * @brief called on Restart()
+      * @brief called on UnPause()
       */
-      virtual void OnRestart() = 0;
+      virtual void OnUnPause() = 0;
 
 
 protected:
@@ -84,7 +83,6 @@ protected:
    float mTimeStep;
    float mTotalTime;
    float mAccumTime;
-   bool mHasStarted;
    bool mIsRunning;
 
 

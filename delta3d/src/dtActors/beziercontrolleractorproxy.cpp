@@ -18,7 +18,7 @@ const ActorProxy::RenderMode& BezierControllerActorProxy::GetRenderMode()
 void BezierControllerActorProxy::CreateActor()
 {
    mActor = new dtABC::BezierController();
-   dynamic_cast<dtABC::BezierController*>(mActor.get())->SetRenderProxyNode(true);
+   dynamic_cast<dtABC::BezierController*>(mActor.get())->RenderProxyNode(true);
 }
 
 
