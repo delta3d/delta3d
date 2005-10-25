@@ -117,7 +117,7 @@ if 'qt' in env['TOOLS'] :
    if OS == 'windows' :
       sources += env.RES( '../../dtEditQt.rc' )
    
-   if mode == 'debug':
+   if mode == 'debug' and OS == 'windows' :
       app = EditorEnv.Program('#/bin/STAGEd',sources)
    else:   
       app = EditorEnv.Program('#/bin/STAGE',sources)
