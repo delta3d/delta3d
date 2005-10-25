@@ -36,48 +36,62 @@ namespace dtABC
 class DT_ABC_EXPORT BezierController: public MotionAction
 {
 
+private:
+   class BezierPathDrawable: public osg::Drawable
+   {
+   public:
+      /*virtual*/ osg::Object* cloneType() const {return 0;}; 
+      /*virtual*/ osg::Object* clone(const osg::CopyOp& copyop) const{return 0;} 
+
+      /*virtual*/ void drawImplementation(osg::State& state) const;
+      void SetPath(BezierController* pPath){mController = pPath;}
+   private:
+      BezierController* mController;
+   };
+
+   friend class BezierPathDrawable;
+
 public:
    BezierController();
    
-
-   /***
-   * This sets the start node for the encapsulated BezierPath
-   * @note the path is created when this node is assigned
-   *     and must be linked with all appropriate child nodes
-   */
+   const BezierNode* GetStartNode() const {return mStartNode.get();}
    void SetStartNode(BezierNode* pStart);
 
-   BezierNode* GetStartNode();
+   /*virtual*/ void RenderProxyNode(bool enable);
 
-   /***
-   * Sets this to use RenderProxyNode from its Path
-   * @return returns the path as a drawable
-   *   that can be added to the scene
-   */
-   void SetRenderProxyNode(bool pEnable);
    
 protected:
    ~BezierController();
    BezierController(const BezierController&); //not implemented by design
    BezierController operator =(const BezierController&); //not implemented by design
 
+   /***
+   * Creates the path using the start node to traverse the curve
+   * the time step and time between nodes is encapsulated by the 
+   * BezierNodes
+   */
+   virtual void CreatePath();
+
    /*virtual*/ bool OnNextStep();
    /*virtual*/ void OnStart();
    /*virtual*/ void OnPause();
+   /*virtual*/ void OnUnPause();
    /*virtual*/ void OnRestart();
-
 
 
 private:
 
-   /***
-   * Holds our actual path
-   */
-   dtCore::RefPtr<BezierPath>                mPath;
+   void MakeSegment(float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4);
+   float BlendFunction(float t, int index);
+   float TangentFunction(float t, int index);
 
-   /***
-   * Holds the current position in our path
-   */
+
+
+   dtCore::RefPtr<BezierNode>                mStartNode;
+
+   BezierPathDrawable                        mDrawable;
+
+   std::list<PathPoint>                      mPath;
    std::list<PathPoint>::const_iterator      mCurrentPoint;
    std::list<PathPoint>::const_iterator      mEndPoint;
 

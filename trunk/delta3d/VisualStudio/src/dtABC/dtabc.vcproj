@@ -133,9 +133,6 @@
 				RelativePath="..\..\..\src\dtABC\beziercontroller.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtABC\bezierpath.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtABC\event.cpp">
 			</File>
 			<File
@@ -175,9 +172,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\beziernode.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtABC\bezierpath.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\curvenode.h">

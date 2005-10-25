@@ -7,14 +7,162 @@ namespace dtABC
 
 BezierController::BezierController()
 {
-   mPath = new BezierPath();
-   mNode = new osg::Group();
+   mDrawable.SetPath(this);
+   osg::Geode* pGeode = new osg::Geode();
+   pGeode->addDrawable(&mDrawable);
+   mProxyNode = pGeode;
 }
 
 BezierController::~BezierController()
 {
 
 }
+
+void BezierController::CreatePath()
+{
+   mPath.clear();
+
+   BezierNode* pCurrentNode = mStartNode->GetBezierInterface();
+   BezierNode* pNextNode = pCurrentNode->GetNext()->GetBezierInterface();
+
+   while(pCurrentNode && pNextNode)
+   {
+      float dt = pCurrentNode->GetStep();
+      float totalTime = pCurrentNode->GetTimeToNext();
+      float multiply = 1.0f / totalTime;
+
+      for(float j = 0; j < totalTime; j+= dt)
+      {
+         //note this is simplified through extending PathPointConverter
+         //which has an implicit conversion from a dtCore::Transformable to a PathPoint
+         MakeSegment(j * multiply, *pCurrentNode, *(pCurrentNode->GetExit()), *(pNextNode->GetEntry()), *pNextNode);
+      }
+
+      pCurrentNode = pNextNode;
+      pNextNode = pCurrentNode->GetNext()->GetBezierInterface();
+   }
+
+}
+
+
+void BezierController::MakeSegment(float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4)
+{
+
+   osg::Vec3 pos, tangent;
+
+   for(int i = 0; i < 3; ++i)
+   {
+      pos[i] = (BlendFunction(inc,0) * p1.GetPosition()[i]) + (BlendFunction(inc,1) * p2.GetPosition()[i]) + (BlendFunction(inc,2) * p3.GetPosition()[i]) + (BlendFunction(inc,3) * p4.GetPosition()[i]); 
+      tangent[i] = (TangentFunction(inc,1) * p2.GetPosition()[i]) + (TangentFunction(inc,2) * p3.GetPosition()[i]) + (TangentFunction(inc,3) * p4.GetPosition()[i]); 
+   }
+
+   osg::Quat quat;
+   quat.slerp(inc, p1.GetOrientation(), p4.GetOrientation());
+
+   mPath.push_back(PathPoint(pos, quat));
+}
+
+
+float BezierController::BlendFunction(float t, int index)
+{
+   float result = 0.0f;
+
+   switch(index)
+   {
+
+   case 0:
+      result = powf(1.0f - t, 3.0f);
+      break;
+
+   case 1:
+      result = 3.0f * t * powf(1.0f - t, 2.0f);
+      break;
+
+   case 2:
+      result = 3.0f * powf(t, 2.0f) * (1.0f - t);
+      break;
+
+   case 3:
+      result = powf(t, 3.0f);
+      break;
+
+
+   default:
+      assert(0);
+      break;
+   }
+
+   return result;
+}
+
+
+
+float BezierController::TangentFunction(float t, int index)
+{
+   float result = 0.0f;
+
+   switch(index)
+   {
+
+   case 1:
+      result = -3.0f + ((3.0f * t) * (2.0f - t));
+      break;
+
+   case 2:
+      result = 3.0f - ( (3.0f * t) * (4.0f + (3.0f * t)) );
+      break;
+
+   case 3:
+      result = 3.0f * powf(t, 2.0f);
+      break;
+
+
+   default:
+      assert(0);
+      break;
+   }
+
+   return result;
+}
+
+
+//our drawable
+void BezierController::BezierPathDrawable::drawImplementation(osg::State& state) const
+{
+
+   std::list<PathPoint>::iterator iter = mController->mPath.begin();
+   std::list<PathPoint>::iterator endOfList = mController->mPath.end();
+
+   glBegin(GL_LINES);
+
+   glColor3f(1.0f, 0.35f, 0.35f);
+
+   while(iter != endOfList)
+   {  
+      osg::Vec3 point = (*iter).GetPosition();
+      glVertex3fv(&point[0]);
+
+      ++iter;
+   }
+
+   glEnd();
+}
+
+
+void BezierController::RenderProxyNode(bool pEnable)
+{
+   if(pEnable)
+   {
+      mNode = mProxyNode.get();
+   }
+   else
+   {
+      mNode = 0;
+   }
+}
+
+
+
 
 
 bool BezierController::OnNextStep()
@@ -28,25 +176,15 @@ bool BezierController::OnNextStep()
 
 void BezierController::SetStartNode(BezierNode* pStart)
 {
-   mPath->SetStartNode(pStart);
-   mPath->CreatePath();
-
-   //since we are creating the path on this assign, we will warn the user
-   // if the path does not contain the valid data yet
-   assert(mPath->GetPath().size() > 0);
-
-   mCurrentPoint = mPath->GetPath().begin();
-   mEndPoint = mPath->GetPath().end();
-}
-
-BezierNode* BezierController::GetStartNode()
-{
-   return mPath->GetStartNode();
+   mStartNode = pStart;
 }
 
 void BezierController::OnStart()
 {
-   
+   CreatePath();
+
+   mCurrentPoint = mPath.begin();
+   mEndPoint = mPath.end();
 }
 
 
@@ -56,26 +194,13 @@ void BezierController::OnPause()
 
 }
 
-void BezierController::OnRestart()
+void BezierController::OnUnPause()
 {
-  mCurrentPoint = mPath->GetPath().begin();
-  mEndPoint = mPath->GetPath().end();
+
+
 }
 
 
-void BezierController::SetRenderProxyNode(bool pEnable)
-{
-   if(pEnable)
-   {
-      mPath->RenderProxyNode(pEnable);
-      dynamic_cast<osg::Group*>(mNode.get())->addChild(mPath->GetOSGNode());
-   }
-   else
-   {
-      mPath->RenderProxyNode(pEnable);
-      dynamic_cast<osg::Group*>(mNode.get())->removeChild(mPath->GetOSGNode());
-   }
-}
 
 }//namespace dtABC
 
