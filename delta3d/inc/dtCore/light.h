@@ -32,6 +32,7 @@ namespace dtCore
 {
    const int MAX_LIGHTS = 8;
 
+   class Scene;
    /**
    * An abstract class declaring the base functionality for a vertex light.
    * It's properties are thin wrappers of OpenGL light calls.
@@ -122,7 +123,7 @@ namespace dtCore
       void GetSpecular( float& r, float& g, float& b, float& a ) const;
 
       ///adds the light to the root node of the scene
-      virtual void AddedToScene( Scene *scene );
+      virtual void AddedToScene( Scene* scene );
 
    protected:
 

@@ -36,9 +36,8 @@
 
 namespace dtCore
 {         
-   class DeltaDrawable;
-   class Transformable;
    class Physical;
+   class Transformable;
 
    /**
    *  Scene: This class encapsulates the root of the delta scene graph
