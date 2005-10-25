@@ -6,7 +6,6 @@
 #include "export.h"
 #include "pathpoint.h"
 #include "beziernode.h"
-#include "bezierpath.h"
 #include "motionaction.h"
 
 /* 
