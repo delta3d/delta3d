@@ -177,7 +177,7 @@
 				RelativePath="..\..\..\src\dtActors\meshterrainactorproxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtActors\motionactionproxy.cpp">
+				RelativePath="..\..\..\src\dtActors\motionactionactorproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\particlesystemactorproxy.cpp">
