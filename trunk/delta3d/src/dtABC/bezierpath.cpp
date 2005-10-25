@@ -1,5 +1,7 @@
 #include <dtABC/bezierpath.h>
+#include <osg/Geode>
 #include <assert.h>
+
 
 
 namespace dtABC
@@ -7,7 +9,10 @@ namespace dtABC
 
 BezierPath::BezierPath()
 {
-
+   mDrawable.SetPath(this);
+   osg::Geode* pGeode = new osg::Geode();
+   pGeode->addDrawable(&mDrawable);
+   mProxyNode = pGeode;
 }
 
 BezierPath::~BezierPath()
@@ -121,6 +126,43 @@ float BezierPath::TangentFunction(float t, int index)
 
    return result;
 }
+
+
+//our drawable
+void BezierPath::BezierPathDrawable::drawImplementation(osg::State& state) const
+{
+
+   std::list<PathPoint>::iterator iter = mBezierPath->mPath.begin();
+   std::list<PathPoint>::iterator endOfList = mBezierPath->mPath.end();
+
+   glBegin(GL_LINES);
+
+   glColor3f(1.0f, 0.35f, 0.35f);
+
+   while(iter != endOfList)
+   {  
+      osg::Vec3 point = (*iter).GetPosition();
+      glVertex3fv(&point[0]);
+
+      ++iter;
+   }
+
+   glEnd();
+}
+
+
+void BezierPath::RenderProxyNode(bool pEnable)
+{
+   if(pEnable)
+   {
+      mNode = mProxyNode.get();
+   }
+   else
+   {
+      mNode = 0;
+   }
+}
+
 
 
 }//namespace dtABC

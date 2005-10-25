@@ -8,6 +8,7 @@ namespace dtABC
 BezierController::BezierController()
 {
    mPath = new BezierPath();
+   mNode = new osg::Group();
 }
 
 BezierController::~BezierController()
@@ -59,6 +60,21 @@ void BezierController::OnRestart()
 {
   mCurrentPoint = mPath->GetPath().begin();
   mEndPoint = mPath->GetPath().end();
+}
+
+
+void BezierController::SetRenderProxyNode(bool pEnable)
+{
+   if(pEnable)
+   {
+      mPath->RenderProxyNode(pEnable);
+      dynamic_cast<osg::Group*>(mNode.get())->addChild(mPath->GetOSGNode());
+   }
+   else
+   {
+      mPath->RenderProxyNode(pEnable);
+      dynamic_cast<osg::Group*>(mNode.get())->removeChild(mPath->GetOSGNode());
+   }
 }
 
 }//namespace dtABC

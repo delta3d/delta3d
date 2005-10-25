@@ -49,7 +49,13 @@ public:
 
    BezierNode* GetStartNode();
 
-
+   /***
+   * Sets this to use RenderProxyNode from its Path
+   * @return returns the path as a drawable
+   *   that can be added to the scene
+   */
+   void SetRenderProxyNode(bool pEnable);
+   
 protected:
    ~BezierController();
    BezierController(const BezierController&); //not implemented by design

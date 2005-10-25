@@ -10,9 +10,15 @@ using namespace dtDAL;
 namespace dtActors
 {
 
+const ActorProxy::RenderMode& BezierControllerActorProxy::GetRenderMode()
+{
+   return ActorProxy::RenderMode::DRAW_ACTOR;
+}
+
 void BezierControllerActorProxy::CreateActor()
 {
    mActor = new dtABC::BezierController();
+   dynamic_cast<dtABC::BezierController*>(mActor.get())->SetRenderProxyNode(true);
 }
 
 

@@ -2,6 +2,7 @@
 #define __BEZIER_PATH_H__
 
 #include <list>
+#include <osg/Drawable>
 #include <dtCore/refptr.h>
 #include <dtCore/deltadrawable.h>
 #include "export.h"
@@ -40,6 +41,20 @@ namespace dtABC
 
 class DT_ABC_EXPORT BezierPath: public dtCore::DeltaDrawable
 {
+private:
+   class BezierPathDrawable: public osg::Drawable
+   {
+      public:
+         /*virtual*/ osg::Object* cloneType() const {return 0;}; 
+         /*virtual*/ osg::Object* clone(const osg::CopyOp& copyop) const{return 0;} 
+
+         /*virtual*/ void drawImplementation(osg::State& state) const;
+         void SetPath(BezierPath* pPath){mBezierPath = pPath;}
+      private:
+         BezierPath* mBezierPath;
+   };
+
+   friend class BezierPathDrawable;
 
 public:
 
@@ -62,6 +77,8 @@ public:
 
    void SetStartNode(BezierNode* pStart){mStartNode = pStart;}
 
+   /*virtual*/ void RenderProxyNode(bool enable);
+
 protected:
   /*virtual*/~BezierPath();
    BezierPath(const BezierPath&); //not implemented by design
@@ -78,6 +95,7 @@ private:
    dtCore::RefPtr<BezierNode> mStartNode;
    std::list<PathPoint> mPath;
 
+   BezierPathDrawable   mDrawable;
 };
 
 
