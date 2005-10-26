@@ -48,7 +48,9 @@ void initSceneBindings()
       .def("GetLight", GetLight2, return_internal_reference<>())
       .def("UseSceneLight", &Scene::UseSceneLight)
       .def("GetDrawableIndex", &Scene::GetDrawableIndex)
-      .def("GetNumberOfAddedDrawable", &Scene::GetNumberOfAddedDrawable);
+      .def("GetNumberOfAddedDrawable", &Scene::GetNumberOfAddedDrawable)
+      .def("EnablePaging", &Scene::EnablePaging)
+      .def("DisablePaging", &Scene::DisablePaging);
 
    enum_<Scene::Face>("Face")
       .value("FRONT", Scene::FRONT)
