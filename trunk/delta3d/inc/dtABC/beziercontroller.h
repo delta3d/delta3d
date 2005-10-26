@@ -2,6 +2,8 @@
 #define __BEZIER_CONTROLLER_H__
 
 #include <list>
+#include <osg/Drawable>
+#include <osg/Geode>
 
 #include "export.h"
 #include "pathpoint.h"

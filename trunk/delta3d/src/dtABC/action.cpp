@@ -1,5 +1,6 @@
 #include <dtABC/action.h>
 #include <dtCore/system.h>
+#include <dtCore/scene.h>
 
 
 namespace dtABC

@@ -4,6 +4,7 @@
 #include <osg/Vec3>
 #include <osg/Matrix>
 #include <dtCore/transformable.h>
+#include <dtUtil/matrixutil.h>
 #include "pathpoint.h"
 
 /* 
@@ -42,13 +43,7 @@ public:
 
    operator PathPoint const()
    {
-      osg::Vec3 point;
-      osg::Matrix rot;
-     
-      mGeomTransform.GetTranslation(point);
-      mGeomTransform.GetRotation(rot);
-
-      return PathPoint(point, rot);      
+      return PathPoint(dtUtil::MatrixUtil::GetRow3(GetMatrixNode()->getMatrix(), 3), GetMatrixNode()->getMatrix());      
    }
 
 protected:

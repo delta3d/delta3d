@@ -1,4 +1,5 @@
 #include <dtABC/beziercontroller.h>
+#include <dtCore/scene.h>
 #include <assert.h>
 
 namespace dtABC
