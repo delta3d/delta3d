@@ -46,14 +46,14 @@ public:
 public:
    MotionAction();
 
-   dtCore::Transformable* GetTargetObject(){return mTargetObject.get();}
+   const dtCore::Transformable* GetTargetObject() const {return mTargetObject.get();}
    void SetTargetObject(dtCore::Transformable* pTarget){mTargetObject = pTarget;}
 
    void SetLocalTransform(const osg::Matrix& mat){mLocalTransform = mat;}
    const osg::Matrix& GetLocalTransform() const {return mLocalTransform;}
 
    
-   dtCore::Transformable* GetParent(){return mParent.get();}
+   const dtCore::Transformable* GetParent() const {return mParent.get();}
    void SetParent(dtCore::Transformable* pParent, PARENT_RELATION pRelation);
    void RemoveParent();
 

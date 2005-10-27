@@ -3,10 +3,10 @@
 #include <dtABC/pathpoint.h>
 #include <dtCore/scene.h>
 
-
 namespace dtABC
 {
 
+  
 MotionAction::MotionAction()
 {
    mLocalTransform.makeScale(osg::Vec3(1.0f, 1.0f, 1.0f));

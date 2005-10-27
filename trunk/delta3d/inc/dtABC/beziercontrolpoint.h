@@ -40,6 +40,7 @@ class BezierControlPoint: public PathPointConverter
 public:
    BezierControlPoint():mParent(0){}
 
+   const BezierNode* GetParent() const {return mParent;}
    void SetParent(BezierNode* pParent){mParent = pParent;}
    
 protected:
