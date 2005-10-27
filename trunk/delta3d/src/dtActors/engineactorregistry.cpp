@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author Matthew W. Campbell
+ * @author Chris Osborn
 */
 #include "dtActors/engineactorregistry.h"
 #include "dtActors/infinitelightactorproxy.h"
@@ -35,6 +36,8 @@
 #include "dtActors/skyboxactorproxy.h"
 #include "dtActors/skydomeactorproxy.h"
 //#include "dtActors/soundactorproxy.h"
+#include <dtActors/triggeractorproxy.h>
+#include <dtActors/proximitytriggeractorproxy.h> 
 
 namespace dtActors
 {
@@ -127,6 +130,13 @@ namespace dtActors
             "dtcore.Environment", "dtCore::CloudPlane Actor.");
         mActorFactory->RegisterType<CloudPlaneActorProxy>(cPlaneActor);
 
+        dtDAL::ActorType* triggerActor = new dtDAL::ActorType("Trigger",
+           "dtABC", "dtABC::Trigger Actor."); 
+        mActorFactory->RegisterType<TriggerActorProxy>(triggerActor);
+
+        dtDAL::ActorType* proxTriggerActor = new dtDAL::ActorType("Proximity Trigger",
+           "dtABC", "dtABC::ProximityTrigger Actor."); 
+        mActorFactory->RegisterType<ProximityTriggerActorProxy>(proxTriggerActor);
 
 //        dtDAL::ActorType *envActor = new dtDAL::ActorType("Environment",
 //             "dtcore.drawable", "dtCore::Environment actor.");
