@@ -36,6 +36,9 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
    RegisterInstance(this);
 
    AddSender( System::Instance() );
+
+   // Default collision category = 12
+   SetCollisionCategoryBits( UNSIGNED_BIT(12) );
 }
 
 /**

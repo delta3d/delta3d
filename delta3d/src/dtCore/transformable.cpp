@@ -59,6 +59,12 @@ Transformable::Transformable( const std::string& name )
    dGeomTransformSetCleanup(mGeomID, 1);
    dGeomTransformSetInfo(mGeomID, 1);
    mTriMeshDataID = dGeomTriMeshDataCreate();
+
+   // Default collision category = 11
+   SetCollisionCategoryBits( UNSIGNED_BIT(11) );
+
+   // By default, collide with all categories.
+   SetCollisionCollideBits( 0xFFFFFFFF );
 }
 
 Transformable::~Transformable()

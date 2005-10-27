@@ -39,13 +39,9 @@ public:
       //rotMatY(h) * rotMatX(p) * rotMatZ(r) * <forward vector>
       osg::Matrix hRot, pRot, rRot;
 
-      /*sgMakeRotMat4( hRot, h, 0.0f, 0.0f );
-      sgMakeRotMat4( pRot, 0.0f, p, 0.0f );
-      sgMakeRotMat4( rRot, 0.0f, 0.0f, r );*/
       dtUtil::MatrixUtil::HprToMatrix(hRot, osg::Vec3(h,      0.0f,   0.0f));
       dtUtil::MatrixUtil::HprToMatrix(pRot, osg::Vec3(0.0f,   p,      0.0f));
       dtUtil::MatrixUtil::HprToMatrix(rRot, osg::Vec3(0.0f,   0.0f,   r));
-
 
       osg::Matrix rotation = hRot * pRot * rRot;
       osg::Vec3 xyz = rotation.preMult( osg::Vec3( 0.0f, 1.0f, 0.0f ) );
@@ -63,6 +59,9 @@ PositionalLight::PositionalLight( int number, const std::string& name, LightingM
    GetMatrixNode()->addChild( mLightSource.get() );
 
    mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
+   
+   // Default collision category = 9
+   SetCollisionCategoryBits( UNSIGNED_BIT(9) );
 }
 
 PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
@@ -71,6 +70,9 @@ PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const 
    GetMatrixNode()->addChild( mLightSource.get() );
 
    mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
+
+   // Default collision category = 9
+   SetCollisionCategoryBits( UNSIGNED_BIT(9) );
 }
 
 PositionalLight::~PositionalLight()

@@ -77,6 +77,9 @@ PointAxis::PointAxis()
 
    ctor();
    SetName( "PointAxis" );
+
+   // Default collision category = 8
+   SetCollisionCategoryBits( UNSIGNED_BIT(8) );
 }
 
 

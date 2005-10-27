@@ -132,6 +132,9 @@ mScene(NULL)
    mDefaultRenderSurface->setWindowName("defaultWin");
 
    SetClearColor( 0.2f, 0.2f, 0.6f, 1.f );
+
+   // Default collision category = 1
+   SetCollisionCategoryBits( UNSIGNED_BIT(1) );
 }
 
 Camera::~Camera()
