@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib OpenThreadsWin32.lib osg.lib osgdb.lib producer.lib ul.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib OpenThreadsWin32.lib OpenGL32.lib osg.lib osgdb.lib producer.lib ul.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtABC.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
