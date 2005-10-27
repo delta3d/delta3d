@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-
 //
 // The "is-a" macro.  Checks whether the first parameter (a pointer) is an
 // instance of the second parameter (a class).
@@ -43,9 +42,10 @@
 //       cout << "Yes, it is." << endl;
 //    }
 //
-
+#ifdef IS_A
+#undef IS_A
+#endif
 #define IS_A(P, T) (dynamic_cast<T>(P)!=NULL)
-
 
 //
 // The management layer declaration macro.  Should be included in the
@@ -53,6 +53,9 @@
 // the class specified as its parameter.
 //
 
+#ifdef DECLARE_MANAGEMENT_LAYER
+#undef DECLARE_MANAGEMENT_LAYER
+#endif
 #define DECLARE_MANAGEMENT_LAYER(T)                \
    private:                                        \
       static std::vector<T*> instances;            \
@@ -70,6 +73,9 @@
 // name of the class specified as its parameter.
 //
 
+#ifdef IMPLEMENT_MANAGEMENT_LAYER
+#undef IMPLEMENT_MANAGEMENT_LAYER
+#endif
 #define IMPLEMENT_MANAGEMENT_LAYER(T)                          \
    std::vector<T*> T::instances;                               \
    void T::RegisterInstance(T* instance)                       \
@@ -105,6 +111,15 @@
       return NULL;                                             \
    }
 
+// Bit-packing helpers
+#ifdef UNSIGNED_BIT
+#undef UNSIGNED_BIT
+#endif
+#define UNSIGNED_BIT(a) (unsigned long(1L<<unsigned long(a)))
 
+#ifdef BIT
+#undef BIT
+#endif
+#define BIT(a) (long(1L<<long(a)))
 
 #endif // DELTA_MACROS

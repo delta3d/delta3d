@@ -2,16 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtHLA/entity.h"
-#include "dtCore/scene.h"
+#include <dtHLA/entity.h>
+#include <dtCore/scene.h>
 
 using namespace dtCore;
 using namespace dtHLA;
 using namespace std;
 
-
 IMPLEMENT_MANAGEMENT_LAYER(Entity)
-
 
 /**
  * Constructor.
@@ -21,7 +19,10 @@ IMPLEMENT_MANAGEMENT_LAYER(Entity)
  Entity::Entity(std::string name)
    : Object(name),
      mDamageState(NoDamage)
-{}
+{
+   // Default collision category = 15
+   SetCollisionCategoryBits( UNSIGNED_BIT(15) );
+}
 
 /**
  * Destructor.

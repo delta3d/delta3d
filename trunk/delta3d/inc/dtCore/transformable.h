@@ -29,21 +29,16 @@
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 
-#ifdef WIN32
-
-// Disable warnings on extern before template instantiation, MSDN approved! -osb
-#pragma warning (disable : 4231)
-
-#ifndef DT_CORE_LIBRARY
-#   define EXPIMP_TEMPLATE extern
-#else
-#   define EXPIMP_TEMPLATE
-#endif
-
-EXPIMP_TEMPLATE template class DT_CORE_EXPORT std::vector<float>;
-
-#endif
-
+// MSDN hack to export STL objects.
+#ifdef WIN32                                       
+#   pragma warning (disable : 4231)                   
+#   ifndef DT_CORE_EXPORT                              
+#      define EXPIMP_TEMPLATE extern                  
+#   else                                              
+#      define EXPIMP_TEMPLATE                         
+#   endif //DT_CORE_EXPORT                                             
+EXPIMP_TEMPLATE template class DT_CORE_EXPORT std::vector<float>;    
+#endif //WIN32                                            
 
 namespace dtCore
 {
@@ -318,20 +313,52 @@ namespace dtCore
        */
       virtual void AddedToScene( Scene* scene );
       
-      /** Set the category bits of this collision geom. Overrides default of 0xFFFF.
+      /** Set the category bits of this collision geom. Here's the defaults:
+       *
+       * dtABC::ProximityTrigger  0
+       *
+       * dtCore::Camera:          1  
+       * dtCore::Compass:         2
+       * dtCore::InfiniteTerrain: 3
+       * dtCore::ISector:         4
+       * dtCore::Object:          5
+       * dtCore::ParticlSsystem:  6
+       * dtCore::Physical:        7
+       * dtCore::PointAxis:       8
+       * dtCore::PositionalLight: 9
+       * dtCore::SpotLight:       10
+       * dtCore::Transformable:   11
+       * 
+       * dtChar::Character:       12
+       * dtAudio::Listener:       13
+       * dtAudio::Sound:          14
+       * dtHLA::Entity:           15
+       * dtTerrain::Terrain:      16
+       * 
        */
       void SetCollisionCategoryBits( unsigned long bits )
       {
          dGeomSetCategoryBits( mGeomID, bits );
       }
       
+      unsigned long GetCollisionCategoryBits() const
+      {
+         return dGeomGetCategoryBits(mGeomID);
+      }
+      
       /** Set the collide bits of this collision geom. If you want this geom to
-       * collide with a geom of category bit 0010 for example, set this collide
-       * bit to at least 0010.
+       * collide with a geom of category bit 00000010 for example, make sure these
+       * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
+       * comes in handy here. UNSIGNED_BIT(4) = 00000100
        */
       void SetCollisionCollideBits( unsigned long bits )
       {
          dGeomSetCollideBits( mGeomID, bits );
+      }
+      
+      unsigned long GetCollisionCollideBits() const
+      {
+         return dGeomGetCollideBits(mGeomID);
       }
       
    protected:

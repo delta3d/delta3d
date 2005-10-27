@@ -139,10 +139,16 @@
 				RelativePath="..\..\..\src\dtABC\motionaction.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtABC\proximitytrigger.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtABC\state.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtABC\statemanager.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtABC\trigger.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtABC\weather.cpp">
@@ -198,10 +204,16 @@
 				RelativePath="..\..\..\inc\dtABC\pathpointconverter.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtABC\proximitytrigger.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtABC\state.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\statemanager.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\trigger.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\weather.h">

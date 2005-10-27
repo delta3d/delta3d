@@ -116,6 +116,9 @@ Compass::Compass( Camera* cam )
 
    //hookup an update callback on this node
    mNode.get()->setUpdateCallback( new _updateCompassCallback( this ) );
+
+   // Default collision category = 2
+   SetCollisionCategoryBits( UNSIGNED_BIT(2) );
 }
 
 

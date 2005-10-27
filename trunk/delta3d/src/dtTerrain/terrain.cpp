@@ -108,6 +108,9 @@ namespace dtTerrain
       mLoadDistance = 30000.0f;      
       SetTerrainTileFactory(*(new PagedTerrainTileFactory()));
       AddSender(dtCore::System::Instance());
+
+      // Default collision category = 16
+      SetCollisionCategoryBits( UNSIGNED_BIT(16) );
    }
    
    //////////////////////////////////////////////////////////////////////////

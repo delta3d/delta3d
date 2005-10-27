@@ -65,6 +65,9 @@ ParticleSystem::ParticleSystem(std::string name)
    SetName(name);
    
    RegisterInstance(this);
+
+   // Default collision category = 6
+   SetCollisionCategoryBits( UNSIGNED_BIT(6) );
 }
 
 /**

@@ -20,8 +20,8 @@
 */
 
 
-#include "dtCore/isector.h"
-#include "dtCore/scene.h"
+#include <dtCore/isector.h>
+#include <dtCore/scene.h>
 #include <stack>
 
 using namespace dtCore;
@@ -33,12 +33,16 @@ IMPLEMENT_MANAGEMENT_LAYER(Isector)
 Isector::Isector(dtCore::Scene *scene) :
    mStart(0,0,0), mDirection(0,1,0), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
 {
+   // Default collision category = 4
+   SetCollisionCategoryBits( UNSIGNED_BIT(4) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 Isector::Isector(const osg::Vec3 &start, const osg::Vec3 &dir,dtCore::Scene *scene):
    mStart(start), mDirection(dir), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)
 {
+   // Default collision category = 4
+   SetCollisionCategoryBits( UNSIGNED_BIT(4) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,6 +51,9 @@ Isector::Isector(dtCore::Scene *scene, const osg::Vec3 &start, const osg::Vec3 &
 {
    mDirection = end-start;
    mLineLength = mDirection.length();
+
+   // Default collision category = 4
+   SetCollisionCategoryBits( UNSIGNED_BIT(4) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

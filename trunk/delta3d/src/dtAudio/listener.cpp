@@ -1,16 +1,11 @@
 #include <dtAudio/listener.h>
-#include "dtCore/scene.h"
-
+#include <dtCore/scene.h>
 
 // namespaces
 using namespace   dtAudio;
 using namespace   dtCore;
 
-
-
 IMPLEMENT_MANAGEMENT_LAYER(Listener)
-
-
 
 /********************************
  ** Protected Member Functions **
@@ -24,6 +19,9 @@ Listener::Listener()
 {
    SetName("Listener");
    RegisterInstance(this);
+
+   // Default collision category = 13
+   SetCollisionCategoryBits( UNSIGNED_BIT(13) );
 }
 
 

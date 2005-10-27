@@ -19,6 +19,9 @@ Object::Object(const std::string& name)
 
    osg::StateSet *stateSet = mNode->getOrCreateStateSet();
    stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
+
+   // Default collision category = 5
+   SetCollisionCategoryBits( UNSIGNED_BIT(5) );
 }
 
 Object::~Object()

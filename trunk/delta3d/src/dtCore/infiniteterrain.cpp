@@ -207,6 +207,9 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
    SetCollisionGeom(geom);
    
    RegisterInstance(this);
+
+   // Default collision category = 3
+   SetCollisionCategoryBits( UNSIGNED_BIT(3) );
 }
 
 /**
