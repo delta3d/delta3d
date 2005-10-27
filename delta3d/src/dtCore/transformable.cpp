@@ -616,15 +616,15 @@ void Transformable::SetCollisionSphere( osg::Node* node )
       DrawableVisitor<SphereFunctor> sv;
       node->accept(sv);
 
-      dGeomID subTransformID = dCreateGeomTransform(0);
-
-      dGeomTransformSetCleanup(subTransformID, 1);
-
-      mOriginalGeomID = dCreateSphere( 0, sv.mFunctor.mRadius );
-      dGeomDisable( mOriginalGeomID );
-
-      if( sv.mFunctor.mRadius >= 0 )
+      if( sv.mFunctor.mRadius > 0 )
       {
+         dGeomID subTransformID = dCreateGeomTransform(0);
+
+         dGeomTransformSetCleanup(subTransformID, 1);
+
+         mOriginalGeomID = dCreateSphere( 0, sv.mFunctor.mRadius );
+         dGeomDisable( mOriginalGeomID );
+
          dGeomTransformSetGeom( subTransformID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
 
          dGeomTransformSetGeom(mGeomID, subTransformID);
@@ -684,16 +684,16 @@ void Transformable::SetCollisionBox( osg::Node* node )
 
       GetMatrixNode()->setMatrix( oldMatrix );
 
-      dGeomID subTransformID = dCreateGeomTransform(0);
-
-      dGeomTransformSetCleanup(subTransformID, 1);
-
       float lx = bbv.mBoundingBox.xMax() - bbv.mBoundingBox.xMin();
       float ly = bbv.mBoundingBox.yMax() - bbv.mBoundingBox.yMin();
       float lz = bbv.mBoundingBox.zMax() - bbv.mBoundingBox.zMin();
 
-      if( lx >= 0.0f && ly >= 0.0f && lz >= 0.0f )
+      if( lx > 0.0f && ly > 0.0f && lz > 0.0f )
       {
+         dGeomID subTransformID = dCreateGeomTransform(0);
+
+         dGeomTransformSetCleanup(subTransformID, 1);
+
          mOriginalGeomID =  dCreateBox( 0, lx, ly, lz );
 
          dGeomDisable( mOriginalGeomID );
@@ -823,15 +823,15 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
       DrawableVisitor<CylinderFunctor> cv;
       node->accept(cv);
 
-      dGeomID subTransformID = dCreateGeomTransform(0);
-
-      dGeomTransformSetCleanup(subTransformID, 1);
-
       float radius = cv.mFunctor.mRadius;
       float length = cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ;
 
-      if( radius >= 0 && length >= 0 )
+      if( radius > 0 && length > 0 )
       {
+         dGeomID subTransformID = dCreateGeomTransform(0);
+
+         dGeomTransformSetCleanup(subTransformID, 1);
+
          mOriginalGeomID = dCreateCCylinder( 0, cv.mFunctor.mRadius, cv.mFunctor.mMaxZ - cv.mFunctor.mMinZ );
          dGeomDisable( mOriginalGeomID );
 
