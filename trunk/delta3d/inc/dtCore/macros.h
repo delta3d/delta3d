@@ -115,7 +115,9 @@
 #ifdef UNSIGNED_BIT
 #undef UNSIGNED_BIT
 #endif
-#define UNSIGNED_BIT(a) (unsigned long(1L<<unsigned long(a)))
+
+// Apparently gcc doesn't like this without the cast...
+#define UNSIGNED_BIT(a) ((unsigned long)(1L<<(unsigned long)(a)))
 
 #ifdef BIT
 #undef BIT
