@@ -41,8 +41,8 @@ class CurveNode: public PathPointConverter
   public:
      CurveNode():mPrev(0), mNext(0), mTimeToNext(0.0f), mStep(0){}
 
-     CurveNode* GetPrev(){return mPrev.get();}
-     CurveNode* GetNext(){return mNext.get();}
+     const CurveNode* GetPrev() const {return mPrev.get();}
+     const CurveNode* GetNext() const {return mNext.get();}
 
      void SetNext(CurveNode* pNext){mNext = pNext;}
      void SetPrev(CurveNode* pPrev){mPrev = pPrev;}
@@ -55,6 +55,7 @@ class CurveNode: public PathPointConverter
 
 
      //overloads to avoid casting
+     virtual const BezierNode* GetBezierInterface() const {return 0;}
      virtual BezierNode* GetBezierInterface(){return 0;}
 
 

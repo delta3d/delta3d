@@ -3,6 +3,7 @@
 
 #include <osg/Vec3>
 #include <osg/Matrix>
+#include <osg/MatrixTransform>
 #include <dtCore/transformable.h>
 #include <dtUtil/matrixutil.h>
 #include "pathpoint.h"
@@ -41,9 +42,10 @@ class PathPointConverter: public dtCore::Transformable
 public:
    PathPointConverter(){}
 
-   operator PathPoint const()
+   PathPoint GetPathPoint()const 
    {
-      return PathPoint(dtUtil::MatrixUtil::GetRow3(GetMatrixNode()->getMatrix(), 3), GetMatrixNode()->getMatrix());      
+      const osg::MatrixTransform* mat = (dynamic_cast<const osg::MatrixTransform*>( mNode.get()));
+      return PathPoint(dtUtil::MatrixUtil::GetRow3(mat->getMatrix(), 3), mat->getMatrix());      
    }
 
 protected:

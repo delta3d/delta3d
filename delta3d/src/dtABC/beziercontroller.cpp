@@ -23,8 +23,8 @@ void BezierController::CreatePath()
 {
    mPath.clear();
 
-   BezierNode* pCurrentNode = mStartNode->GetBezierInterface();
-   BezierNode* pNextNode = pCurrentNode->GetNext()->GetBezierInterface();
+   const BezierNode* pCurrentNode = mStartNode->GetBezierInterface();
+   const BezierNode* pNextNode = pCurrentNode->GetNext()->GetBezierInterface();
 
    while(pCurrentNode && pNextNode)
    {
@@ -36,7 +36,7 @@ void BezierController::CreatePath()
       {
          //note this is simplified through extending PathPointConverter
          //which has an implicit conversion from a dtCore::Transformable to a PathPoint
-         MakeSegment(j * multiply, *pCurrentNode, *(pCurrentNode->GetExit()), *(pNextNode->GetEntry()), *pNextNode);
+         MakeSegment(j * multiply, pCurrentNode->GetPathPoint(), pCurrentNode->GetExit()->GetPathPoint(), pNextNode->GetEntry()->GetPathPoint(), pNextNode->GetPathPoint());
       }
 
       pCurrentNode = pNextNode;
