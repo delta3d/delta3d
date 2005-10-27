@@ -21,14 +21,14 @@
 #ifndef DELTA_TRIGGER
 #define DELTA_TRIGGER
 
-#include <dtCore/base.h>
+#include <dtCore/deltadrawable.h>
 #include <dtCore/refptr.h>
 #include <dtABC/action.h>
 #include <dtABC/export.h>
 
 namespace dtABC
 {
-   class DT_ABC_EXPORT Trigger : public dtCore::Base
+   class DT_ABC_EXPORT Trigger : public dtCore::DeltaDrawable
    {
       DECLARE_MANAGEMENT_LAYER(Trigger)
 

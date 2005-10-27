@@ -6,7 +6,7 @@ using namespace dtABC;
 IMPLEMENT_MANAGEMENT_LAYER(Trigger)
 
 Trigger::Trigger( const std::string& name )
-   :  Base(name),
+   :  DeltaDrawable(name),
       mEnabled(false),
       mTimeDelay(0.0),
       mTimeLeft(mTimeDelay),
