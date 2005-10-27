@@ -10,7 +10,7 @@ if CheckForBoost() and OS != 'darwin' :
 
    pythonSrcs = { 
    
-      'dtCore' :[    'basebindings.cpp',
+      'dtCore' : [   'basebindings.cpp',
                      'camerabindings.cpp',
                      'clouddomebindings.cpp',
                      'cloudplanebindings.cpp',
@@ -45,6 +45,7 @@ if CheckForBoost() and OS != 'darwin' :
                      'physicalbindings.cpp',
                      'pointaxisbindings.cpp',
                      'positionallightbindings.cpp',
+                     
                      'recorderbindings.cpp',
                      'scenebindings.cpp',
                      'skyboxbindings.cpp',
@@ -58,19 +59,39 @@ if CheckForBoost() and OS != 'darwin' :
                      'ufomotionmodelbindings.cpp',
                      'walkmotionmodelbindings.cpp' ],
    
-   'dtABC' : [ 'applicationbindings.cpp', 'baseabcbindings.cpp', 'dtabcbindings.cpp', 'weatherbindings.cpp', 'widgetbindings.cpp' ],
+   'dtABC' : [      'applicationbindings.cpp', 
+                    'baseabcbindings.cpp', 
+                    'dtabcbindings.cpp', 
+                    'proximitytriggerbindings.cpp', 
+                    'weatherbindings.cpp', 
+                    'triggerbindings.cpp', 
+                    'widgetbindings.cpp' ],
     
-   'dtAudio' : [ 'audiomanagerbindings.cpp', 'dtaudiobindings.cpp', 'listenerbindings.cpp', 'soundeffectbinderbindings.cpp' ],
+   'dtAudio' : [    'audiomanagerbindings.cpp', 
+                    'dtaudiobindings.cpp', 
+                    'listenerbindings.cpp', 
+                    'soundeffectbinderbindings.cpp' ],
     
-   'dtChar' : [ 'characterbindings.cpp', 'dtcharbindings.cpp' ],
+   'dtChar' : [     'characterbindings.cpp', 
+                    'dtcharbindings.cpp' ],
 
-   'dtDAL'  : [ 'actorproxybindings.cpp', 'dtdalbindings.cpp', 'mapbindings.cpp', 'projectbindings.cpp' ],
+   'dtDAL'  : [     'actorproxybindings.cpp', 
+                    'dtdalbindings.cpp', 
+                    'mapbindings.cpp', 
+                    'projectbindings.cpp' ],
     
    'dtInspector' : [ 'dtinspectorbindings.cpp' ],
     
-   'dtHLA' : [ 'distypebindings.cpp', 'dthlabindings.cpp', 'entitybindings.cpp', 'rticonnectionbindings.cpp' ],
+   'dtHLA' : [      'distypebindings.cpp', 
+                    'dthlabindings.cpp', 
+                    'entitybindings.cpp', 
+                    'rticonnectionbindings.cpp' ],
     
-   'dtUtil' : [ 'dtutilbindings.cpp', 'logbindings.cpp', 'matrixutilbindings.cpp', 'noisebindings.cpp', 'polardecompbindings.cpp' ] }
+   'dtUtil' : [     'dtutilbindings.cpp', 
+                    'logbindings.cpp', 
+                    'matrixutilbindings.cpp', 
+                    'noisebindings.cpp', 
+                    'polardecompbindings.cpp' ] }
        
    ##############
    # Build libs #

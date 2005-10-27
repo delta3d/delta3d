@@ -76,6 +76,12 @@
 				RelativePath="..\..\..\src\python\dtabcbindings.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\python\proximitytriggerbindings.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\python\triggerbindings.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\python\weatherbindings.cpp">
 			</File>
 			<File
