@@ -17,12 +17,13 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * @author William E. Johnson II
+* @author Chris Osborn
 */
 #ifndef _TRIGGER_ACTOR_PROXY_H_
 #define _TRIGGER_ACTOR_PROXY_H_
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/transformableactorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/transformableactorproxy.h>
 
 namespace dtActors 
 {
@@ -31,37 +32,41 @@ namespace dtActors
      * @class TriggerActorProxy
      * @brief This proxy wraps placeable triggers.
      */
-    class DT_PLUGIN_EXPORT TriggerActorProxy : public dtDAL::TransformableActorProxy 
+    class DT_PLUGIN_EXPORT TriggerActorProxy : public virtual dtDAL::ActorProxy
     {
-    public:
+      public:
 
-        /**
-         * Constructor
+         /**
+          * Constructor
+          */
+         TriggerActorProxy() { SetClassName("dtABC::Trigger"); }
+
+         /**
+         * Trigger cannot have a position in the scene. That's the 
+         * ProximityTrigger's job. The indicatesthat the actor is a 
+         * "global" actor.
+         *
+         * @return False
+         * @see ActorProxy::IsPlaceable()
          */
-        TriggerActorProxy() { SetClassName("dtCore::Trigger"); }
+         virtual bool IsPlaceable() const { return false; }
 
-        /**
-         * Adds the properties that are common to all Delta3D physical objects.
-         */
-        virtual void BuildPropertyMap();
+         /**
+          * Adds the properties that are common to all Delta3D physical objects.
+          */
+         virtual void BuildPropertyMap();
 
-        /**
-         * Determines if the trigger should Fire
-         * @return True if firing condition has been met
-         */
-        bool Fire() const { return false; }
+      protected:
+         
+         /**
+          * Creates a new trigger actor.
+          */
+         virtual void CreateActor();
 
-    protected:
-
-        /**
-         * Creates a new trigger actor.
-         */
-        virtual void CreateActor();
-
-        /**
-         * Destructor
-         */
-        virtual ~TriggerActorProxy() { }
+         /**
+          * Destructor
+          */
+         virtual ~TriggerActorProxy() {}
     };
 }
 
