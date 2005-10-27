@@ -48,9 +48,12 @@ void TestTrigger::Config()
    // Make a yellow light that is local to only the sphere.
    mPositionalLight = new PositionalLight( 0, "PositionalLight" );
    mPositionalLight->SetDiffuse( 1.0f, 1.0f, 0.0f, 1.0f ); 
+   
+   // Somehow, this needs to be called before the change to LightingMode
+   // for it to take effect. Logged as a bug. -osb
+   AddDrawable( mPositionalLight.get() );
    mPositionalLight->SetLightingMode( dtCore::Light::LOCAL );
    mPositionalLight->AddChild( mHappySphere.get() );
-   AddDrawable( mPositionalLight.get() );
    
    // Motion model to walk around the scene.
    mWalkMotionModel = new WalkMotionModel( GetKeyboard(), GetMouse() );
