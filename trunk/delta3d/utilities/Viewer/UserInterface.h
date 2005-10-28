@@ -8,7 +8,7 @@
 #include <FL/Fl_File_Chooser.H>
 #include "viewwindow.h"
 #include "viewstate.h"
-#define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds,rbody})\tOSG Files (*.osg)\tIVE Files (*.ive)\tFlight Files (*.flt)\t3ds Export Files (*.3ds)\trbody Files (*.rbody)"
+#define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds,txp})\tOSG Files (*.osg)\tIVE Files (*.ive)\tFlight Files (*.flt)\t3DS Export Files (*.3ds))\tTerraPage Files (*.txp)"
 class ChoicePopUp;   // forward reference
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
