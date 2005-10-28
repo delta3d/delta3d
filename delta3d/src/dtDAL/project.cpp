@@ -1035,6 +1035,38 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
+    Map* Project::GetMapForActorProxy(const ActorProxy& proxy)
+    {
+        if (!mValidContext)
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+
+        std::map< std::string, osg::ref_ptr<Map> >::iterator i = mOpenMaps.begin();
+        while (i != mOpenMaps.end())
+        {
+            ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
+            if (ap != NULL)
+                return i->second.get();    
+        }
+        return NULL;
+    }
+
+    //////////////////////////////////////////////////////////
+    const Map* Project::GetMapForActorProxy(const ActorProxy& proxy) const
+    {
+        if (!mValidContext)
+            EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
+
+        std::map< std::string, osg::ref_ptr<Map> >::const_iterator i = mOpenMaps.begin();
+        while (i != mOpenMaps.end())
+        {
+            const ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
+            if (ap != NULL)
+                return i->second.get();    
+        }
+        return NULL;
+    }
+
+    //////////////////////////////////////////////////////////
     void Project::GetHandlersForDataType(const DataType& resourceType, std::vector<osg::ref_ptr<const ResourceTypeHandler> >& toFill) const
     {
         mResourceHelper.GetHandlersForDataType(resourceType, toFill);

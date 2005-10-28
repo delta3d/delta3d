@@ -44,7 +44,7 @@ if mode == 'debug':
    proxyTestProgram = '#tests/proxyTestsd'
    utilTestProgram = '#tests/utilTestsd'
    
-mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore']
+mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar']
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
 
 projectEnv.Append(LIBS = deplibs + mainlibs)

@@ -18,8 +18,8 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __ObjectFactory__h
-#define __ObjectFactory__h
+#ifndef DELTA_OBJECT_FACTORY
+#define DELTA_OBJECT_FACTORY
 
 #include <map>
 #include <iostream>
@@ -62,6 +62,7 @@ namespace dtUtil
       typedef BaseType *(*createObjectFunc)(); /// Function pointer type for functions creating objects.
       typedef std::map<UniqueIdType,createObjectFunc,ltCmp> ObjectMap;
       typedef typename ObjectMap::iterator ObjTypeItor;
+      typedef typename ObjectMap::const_iterator ObjTypeItorConst;
       ObjectFactory() {}  // constructor
 
    protected:
@@ -103,8 +104,8 @@ namespace dtUtil
       * @param id The type of object to check for.
       * @return True if the type is supported, false otherwise.
       */
-      bool IsTypeSupported(UniqueIdType id) {
-         ObjTypeItor itor(this->objectTypeMap.find(id));
+      bool IsTypeSupported(UniqueIdType id) const {
+         ObjTypeItorConst itor(this->objectTypeMap.find(id));
          if (itor != this->objectTypeMap.end())
             return true;
          else
@@ -114,12 +115,13 @@ namespace dtUtil
       /**
       * Gets a list of types that this factory knows how to create.
       */
-      void GetSupportedTypes(std::vector<UniqueIdType> &types) {
+      void GetSupportedTypes(std::vector<UniqueIdType> &types) const {
          types.clear();
-         for (ObjTypeItor itor=this->objectTypeMap.begin();
-            itor != this->objectTypeMap.end(); ++itor) {
-               types.push_back(itor->first);
-            }
+         for (ObjTypeItorConst itor=this->objectTypeMap.begin();
+            itor != this->objectTypeMap.end(); ++itor) 
+         {
+            types.push_back(itor->first);
+         }
       }
 
       /**

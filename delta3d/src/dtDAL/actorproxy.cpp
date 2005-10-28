@@ -108,6 +108,13 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////////////////////
+    const ResourceDescriptor* ActorProxy::GetResource(const std::string &name) const
+    {
+        std::map<std::string, ResourceDescriptor>::const_iterator itor = mResourceMap.find(name);
+        return itor != mResourceMap.end() ? &itor->second : NULL;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     void ActorProxy::SetResource(const std::string &name, ResourceDescriptor *source)
     {
         // first, remove the current setting from the map.
@@ -121,11 +128,41 @@ namespace dtDAL
             mResourceMap.insert(std::make_pair(name, *source));
         }
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////
+    const ActorProxy* ActorProxy::GetLinkedActor(const std::string& name) const
+    {
+        std::map<std::string, dtCore::RefPtr<ActorProxy> >::const_iterator itor = mActorProxyMap.find(name);
+        return itor != mActorProxyMap.end() ? itor->second.get() : NULL;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    ActorProxy* ActorProxy::GetLinkedActor(const std::string& name)
+    {
+        std::map<std::string, dtCore::RefPtr<ActorProxy> >::iterator itor = mActorProxyMap.find(name);
+        return itor != mActorProxyMap.end() ? itor->second.get() : NULL;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    void ActorProxy::SetLinkedActor(const std::string& name, ActorProxy* newValue)
+    {
+        // first, remove the current setting from the map.
+        std::map<std::string, dtCore::RefPtr<ActorProxy> >::iterator itor = mActorProxyMap.find(name);
+        if(itor != mActorProxyMap.end())
+            mActorProxyMap.erase(itor);
+
+        // insert the new value, if we have one.
+        if(newValue != NULL)
+        {
+            mActorProxyMap.insert(std::make_pair(name, newValue));
+        }
+    }
 
     //////////////////////////////////////////////////////////////////////////
     void ActorProxy::AddProperty(ActorProperty *newProp)
     {
-        std::map<std::string,osg::ref_ptr<ActorProperty> >::iterator itor =
+        std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
             mPropertyMap.find(newProp->GetName());
         if(itor != mPropertyMap.end())
         {
@@ -143,7 +180,7 @@ namespace dtDAL
     //////////////////////////////////////////////////////////////////////////
     ActorProperty* ActorProxy::GetProperty(const std::string &name)
     {
-        std::map<std::string,osg::ref_ptr<ActorProperty> >::iterator itor =
+        std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
             mPropertyMap.find(name);
 
         if(itor == mPropertyMap.end())
@@ -156,7 +193,7 @@ namespace dtDAL
     void ActorProxy::GetPropertyList(std::vector<const ActorProperty *> &propList) const
     {
         propList.clear();
-        std::map<std::string,osg::ref_ptr<ActorProperty> >::const_iterator itor =
+        std::map<std::string,dtCore::RefPtr<ActorProperty> >::const_iterator itor =
             mPropertyMap.begin();
 
         propList.reserve(mPropertyMap.size());
@@ -171,7 +208,7 @@ namespace dtDAL
     void ActorProxy::GetPropertyList(std::vector<ActorProperty *> &propList)
     {
         propList.clear();
-        std::map<std::string,osg::ref_ptr<ActorProperty> >::iterator itor =
+        std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator itor =
             mPropertyMap.begin();
 
         propList.reserve(mPropertyMap.size());
@@ -204,13 +241,13 @@ namespace dtDAL
     }
 
 	//////////////////////////////////////////////////////////////////////////
-    dtCore::DeltaDrawable *ActorProxy::GetActor()
+    dtCore::DeltaDrawable* ActorProxy::GetActor()
     {
         return mActor.get();
     }
 
 	//////////////////////////////////////////////////////////////////////////
-    const dtCore::DeltaDrawable *ActorProxy::GetActor() const
+    const dtCore::DeltaDrawable* ActorProxy::GetActor() const
     {
         return mActor.get();
     }
@@ -240,7 +277,7 @@ namespace dtDAL
         copy->SetName(GetName());
 
         //Now copy all of the properties from this proxy to the clone.
-        std::map<std::string,osg::ref_ptr<ActorProperty> >::iterator myPropItor,copyPropItor;
+        std::map<std::string,dtCore::RefPtr<ActorProperty> >::iterator myPropItor,copyPropItor;
         copyPropItor = copy->mPropertyMap.begin();
         myPropItor = mPropertyMap.begin();
         while(myPropItor != mPropertyMap.end() && copyPropItor != copy->mPropertyMap.end())

@@ -21,6 +21,7 @@
 /** \file Utility methods for using strings.
   * \author David Guthrie
   * \author John K. Grant
+  * \author William E. Johnson II
   */
 
 #ifndef DELTA_STRING_UTILS_INC
@@ -174,6 +175,8 @@ namespace dtUtil
 
    /** Converts a string to a float.*/
    float DT_UTIL_EXPORT ToFloat(const std::string& d);
+
+   bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
 };
 
 #endif // DELTA_STRING_UTILS_INC

@@ -5,4 +5,4 @@ if env.get('rti') != 0 :
    srcs = SGlob( '*.cpp' )                  
    deps = [ 'dtCore', 'osgSim', 'winsock' ] + rtiLibs
          
-   BuildLib( 'dtHLA', srcs, deps, ['DT_LIBRARY'] )
+   BuildLib( 'dtHLA', srcs, deps, ['DT_HLA_LIBRARY'] )

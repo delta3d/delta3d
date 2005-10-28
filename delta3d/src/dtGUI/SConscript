@@ -3,4 +3,4 @@ Import('*')
 srcs = SGlob( '*.cpp' )
 deps = [ 'dtCore', 'CEGUIBase', 'CEGUIOpenGLRenderer', 'xerces-c' ] 
 
-BuildLib( 'dtGUI', srcs, deps, ['DT_LIBRARY'] )
+BuildLib( 'dtGUI', srcs, deps, ['DT_GUI_LIBRARY'] )

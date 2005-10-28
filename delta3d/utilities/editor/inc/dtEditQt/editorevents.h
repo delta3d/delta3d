@@ -65,7 +65,7 @@ namespace dtEditQt
          * All the viewports should center on this actor.  Each visible should maintain
          * their current focus.
          */
-        void emitGotoActor(proxyRefPtr &actor);
+        void emitGotoActor(proxyRefPtr actor);
 
         /**
          * A new ActorProxy was created in the UI.  Anybody that needs to know about the new object
@@ -193,7 +193,7 @@ namespace dtEditQt
 
     signals:
         void selectedActors(proxyRefPtrVector &actors);
-        void gotoActor(proxyRefPtr &actor);
+        void gotoActor(proxyRefPtr actor);
         void actorProxyCreated(proxyRefPtr proxy, bool forceNoAdjustments);
         void actorProxyAboutToBeDestroyed(proxyRefPtr proxy);
         void actorProxyDestroyed(proxyRefPtr proxy);

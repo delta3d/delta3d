@@ -35,6 +35,8 @@
 #include "dtActors/cloudplaneactorproxy.h"
 #include "dtActors/skyboxactorproxy.h"
 #include "dtActors/skydomeactorproxy.h"
+#include "dtActors/beziernodeactorproxy.h"
+#include "dtActors/beziercontrolpointactorproxy.h"
 //#include "dtActors/soundactorproxy.h"
 #include <dtActors/triggeractorproxy.h>
 #include <dtActors/proximitytriggeractorproxy.h> 
@@ -119,6 +121,16 @@ namespace dtActors
         dtDAL::ActorType *sDomeActor = new dtDAL::ActorType("Sky Dome",
             "dtcore.Environment", "dtCore::SkyDome Actor.");
         mActorFactory->RegisterType<SkyDomeActorProxy>(sDomeActor);
+
+        //BezierNode actor
+        dtDAL::ActorType *bNodeActor = new dtDAL::ActorType("Bezier Node", 
+           "dtcore.BezierNode", "dtCore::BezierNode Actor");
+        mActorFactory->RegisterType<BezierNodeActorProxy>(bNodeActor);
+
+        //BezierControlPoint actor
+        dtDAL::ActorType *bCtrlPntActor = new dtDAL::ActorType("Bezier Control Point", 
+           "dtcore.BezierControlPoint", "dtCore::BezierControlPoint Actor");
+        mActorFactory->RegisterType<BezierControlPointActorProxy>(bCtrlPntActor);
 
         //CloudDome actor...
         //dtDAL::ActorType *cDomeActor = new dtDAL::ActorType("Cloud Dome",

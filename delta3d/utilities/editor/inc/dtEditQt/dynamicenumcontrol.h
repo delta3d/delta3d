@@ -19,8 +19,8 @@
 *
 * @author Curtiss Murphy
 */
-#ifndef DELTA_DYNAMICENUMCONTROL
-#define DELTA_DYNAMICENUMCONTROL
+#ifndef DELTA_DYNAMIC_ENUM_CONTROL
+#define DELTA_DYNAMIC_ENUM_CONTROL
 
 #include "dtEditQt/dynamicabstractcontrol.h"
 #include "dtEditQt/dynamicsubwidgets.h"

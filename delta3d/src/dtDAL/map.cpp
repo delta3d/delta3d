@@ -26,7 +26,9 @@
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"
 #include "dtDAL/actortype.h"
+#include "dtDAL/enginepropertytypes.h"
 #include <dtDAL/exceptionenum.h>
+#include <dtUtil/stringutils.h>
 
 namespace dtDAL 
 {
@@ -195,6 +197,23 @@ namespace dtDAL
         if (i != mProxyMap.end()) 
         {
             mModified = true;
+            std::vector<osg::ref_ptr<ActorProxy> > proxies;
+            GetAllProxies(proxies);
+            for(unsigned int j = 0; j < proxies.size(); j++)
+            {
+               std::vector<ActorProperty*> props;
+               proxies[j]->GetPropertyList(props);
+               for(unsigned int k = 0; k < props.size(); k++)
+               {
+                  if(props[k]->GetPropertyType() == DataType::ACTOR)
+                  {
+                     ActorActorProperty *aap = static_cast<ActorActorProperty*>(props[k]);
+                     if(aap->GetValue() == &proxy)
+                        aap->SetValue(NULL);
+                  }
+                  
+               }
+            }
             mProxyMap.erase(i);
             return true;
         }
@@ -303,84 +322,11 @@ namespace dtDAL
         char* str = new char[sString.size() + 1];
         strcpy(WildChars, sWild.c_str());
         strcpy(str, sString.c_str());
-        bool result = Match(WildChars, str);
+        bool result = dtUtil::Match(WildChars, str);
         delete[] WildChars;
         delete[] str;
         return result;
     }
-
-    bool Map::Match(char* Wildcards, char* str)
-    {
-
-        bool Yes = true;
-
-        //iterate and delete '?' and '*' one by one
-        while(*Wildcards != '\0' && Yes && *str != '\0') 
-        {
-            if (*Wildcards == '?')
-            {
-                str ++;
-            } 
-            else if (*Wildcards == '*')
-            {
-                Yes = Scan(Wildcards, str);
-                Wildcards --;
-            } 
-            else 
-            {
-                Yes = (*Wildcards == *str);
-                str ++;
-            }
-            Wildcards ++;
-        }
-        while (*Wildcards == '*' && Yes)  Wildcards ++;
-
-        return Yes && *str == '\0' && *Wildcards == '\0';
-    }
-
-    // scan '?' and '*'
-    bool Map::Scan(char*& Wildcards, char*& str) 
-    {
-        // remove the '?' and '*'
-        for(Wildcards++; *str != '\0' && (*Wildcards == '?' || *Wildcards == '*'); Wildcards++)
-            if (*Wildcards == '?')
-                str++;
-
-        while ( *Wildcards == '*')
-            Wildcards++;
-
-        // if str is empty and Wildcards has more characters or,
-        // Wildcards is empty, return
-        if (*str == '\0' && *Wildcards != '\0') 
-        {
-            return false;
-
-        } 
-        else if (*str == '\0' && *Wildcards == '\0')
-        {
-            return true;
-        // else search substring
-        } 
-        else 
-        {
-            char* wdsCopy = Wildcards;
-            char* strCopy = str;
-            bool  Yes     = true;
-            do 
-            {
-                if (!Match(Wildcards, str)) strCopy ++;
-                Wildcards = wdsCopy;
-                str       = strCopy;
-                while ((*Wildcards != *str) && (*str != '\0')) str ++;
-                wdsCopy = Wildcards;
-                strCopy = str;
-            } while ((*str != '\0') ? !Match(Wildcards, str) : (Yes = false) != false);
-
-            if (*str == '\0' && *Wildcards == '\0')
-                return true;
-
-            return Yes;
-        }
-    }
-
+    
+    
 }

@@ -34,13 +34,89 @@ namespace dtDAL
     ////////////////////////////////////////////////////////////////////////////
     bool ActorActorProperty::SetStringValue(const std::string& value)
     {
-        return false;
+       if (IsReadOnly())
+         return false;
+       
+       if (value.empty() || value == "NULL")
+       {
+           SetValue(NULL);
+           return true;
+       }
+       
+       dtCore::UniqueId newIdValue = value;
+       try 
+       {
+           Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
+           
+           if (map == NULL)
+           {
+               dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
+                   __FUNCTION__, __LINE__, "Actor does not exist in a map.  Setting property %s with string value failed.",
+                   GetName().c_str());
+               return false;
+           }           
+           
+           ActorProxy* newProxyValue = map->GetProxyById(newIdValue); 
+           if (newProxyValue == NULL)
+           {
+               dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
+                   __FUNCTION__, __LINE__, "Actor with ID %s not found.  Setting property %s with string value failed.",
+                   value.c_str(), GetName().c_str());
+               return false;
+           }
+           
+           SetValue(newProxyValue);
+           return true;
+       }
+       catch (const dtUtil::Exception& ex)
+       {
+           if (ex.TypeEnum() == ExceptionEnum::ProjectInvalidContext)
+           {
+               dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+                   __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
+                   GetName().c_str(), ex.What().c_str());
+           } 
+           else 
+           {
+               dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
+                   __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
+                   GetName().c_str(), ex.What().c_str());
+           }
+           
+       }
+       
+       return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
     const std::string ActorActorProperty::GetStringValue() const
     {
-        return GetValue()->GetUniqueId().ToString();
+        return GetValue() == NULL ? "" : GetValue()->GetId().ToString();
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    void ActorActorProperty::SetValue(ActorProxy* value)
+    {
+        if (IsReadOnly())
+        {
+            LOG_WARNING("SetValue has been called on a property that is read only.");
+            return;
+        }
+
+        SetPropFunctor(value);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const ActorProxy* ActorActorProperty::GetValue() const
+    {
+        return mProxy->GetLinkedActor(GetName());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ActorProxy* ActorActorProperty::GetValue()
+    {
+        return mProxy->GetLinkedActor(GetName());
     }
 
 

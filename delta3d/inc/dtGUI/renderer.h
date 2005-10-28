@@ -3,7 +3,7 @@
 
 #include <dtGUI/export.h>
 #ifdef __APPLE__
-#include <OpenGLRenderer/openglrenderer.h>
+#include <CEGUIOpenGLRenderer/openglrenderer.h>
 #else
 #include <CEGUI/renderers/OpenGLGUIRenderer/openglrenderer.h>
 #endif

@@ -134,10 +134,16 @@ void UtilTests::TestLibrarySharing()
    osgDB::DynamicLibrary* dl1 = &lib1->GetDynamicLibrary(); 
    osgDB::DynamicLibrary* dl2 = &lib2->GetDynamicLibrary(); 
     
+   std::ostringstream oss;
    //One for for the library manager, one for the lsm, and one for each lib variable 
-   CPPUNIT_ASSERT_MESSAGE("The actor lib reference count should be 4", dl1->referenceCount() == 4);
+   oss << "The actor lib reference count should be 4, but it is " <<  dl1->referenceCount(); 
+   
+   CPPUNIT_ASSERT_MESSAGE(oss.str(), dl1->referenceCount() == 4);
+
    //One for the lsm, and one for each lib variable 
-   CPPUNIT_ASSERT_MESSAGE("The example lib reference count should be 3", dl2->referenceCount() == 3);
+   oss.str("");
+   oss << "The example lib reference count should be 3, but it is " <<  dl2->referenceCount(); 
+   CPPUNIT_ASSERT_MESSAGE(oss.str(), dl2->referenceCount() == 3);
    
    CPPUNIT_ASSERT_MESSAGE("The actor libraries in the handles should be the same.", &lib1->GetDynamicLibrary() == &lib1a->GetDynamicLibrary());
    CPPUNIT_ASSERT_MESSAGE("The example actor libraries in the handles should be the same.", &lib2->GetDynamicLibrary() == &lib2a->GetDynamicLibrary());
@@ -145,14 +151,22 @@ void UtilTests::TestLibrarySharing()
    lib1a = NULL;
    lib2a = NULL;
 
-   CPPUNIT_ASSERT_MESSAGE("The actor lib reference count should be 3", dl1->referenceCount() == 3);
-   CPPUNIT_ASSERT_MESSAGE("The example lib reference count should be 2", dl2->referenceCount() == 2);
+   
+   oss.str("");
+   oss << "The actor lib reference count should be 3, but it is " <<  dl1->referenceCount(); 
+   CPPUNIT_ASSERT_MESSAGE(oss.str(), dl1->referenceCount() == 3);
+
+   oss.str("");
+   oss << "The example lib reference count should be 2, but it is " <<  dl2->referenceCount(); 
+   CPPUNIT_ASSERT_MESSAGE(oss.str(), dl2->referenceCount() == 2);
 
    lib1 = NULL;
    //should close the lib.
    lib2 = NULL;
 
-   CPPUNIT_ASSERT_MESSAGE("The actor lib reference count should be 2", dl1->referenceCount() == 2);
+   oss.str("");
+   oss << "The actor lib reference count should be 2, but it is " <<  dl1->referenceCount(); 
+   CPPUNIT_ASSERT_MESSAGE(oss.str(), dl1->referenceCount() == 2);
 
    //should NOT reload.
    lib1 = lsm.LoadSharedLibrary(mActorLibraryName);
@@ -161,7 +175,12 @@ void UtilTests::TestLibrarySharing()
    osgDB::DynamicLibrary* dl3 = &lib1->GetDynamicLibrary(); 
    osgDB::DynamicLibrary* dl4 = &lib2->GetDynamicLibrary(); 
 
-   CPPUNIT_ASSERT_MESSAGE("The actor lib reference count should be 3", dl3->referenceCount() == 3);
+   oss.str("");
+   oss << "The actor lib reference count should be 3, but it is " <<  dl3->referenceCount(); 
+   CPPUNIT_ASSERT_MESSAGE(oss.str(), dl3->referenceCount() == 3);
+
+   oss.str("");
+   oss << "The example lib reference count should be 2, but it is " <<  dl4->referenceCount(); 
    CPPUNIT_ASSERT_MESSAGE("The example lib reference count should be 2", dl4->referenceCount() == 2);
 
    CPPUNIT_ASSERT_MESSAGE("The actor library pointers should be the same.", dl1 == dl3);

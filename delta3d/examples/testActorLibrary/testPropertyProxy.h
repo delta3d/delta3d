@@ -21,12 +21,13 @@
 #ifndef DELTA_EXAMPLETESTPROPERTYPROXY
 #define DELTA_EXAMPLETESTPROPERTYPROXY
 
-#include "dtActors/deltaobjectactorproxy.h"
-#include "dtActors/staticmeshactorproxy.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtUtil/enumeration.h"
-#include "dtDAL/plugin_export.h"
+#include <dtActors/deltaobjectactorproxy.h>
+#include <dtActors/staticmeshactorproxy.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtUtil/enumeration.h>
+#include <dtUtil/log.h>
+#include <dtDAL/plugin_export.h>
 
 using namespace dtActors;
 
@@ -363,12 +364,14 @@ public:
         return myVec3d;
     }
 
-    void setTestEnum(TestEnum &mode) {
+    void setTestEnum(TestEnum &mode) 
+    {
         //dtCore::Light *l = dynamic_cast<dtCore::Light *>(this->actor.get());
         myEnum = &mode;
     }
 
-    TestEnum &getTestEnum() {
+    TestEnum &getTestEnum() 
+    {
         return *myEnum;
     }
 
@@ -390,13 +393,16 @@ public:
         return myColor;
     }
 
-    void setSoundResourceName(const std::string &fileName) {
-        mySound = fileName;
+    void setSoundResourceName(const std::string &fileName) { mySound = fileName;}
+
+    void setTextureResourceName(const std::string &fileName) { myTexture = fileName; }
+
+    void SetTestActor(ActorProxy* proxy) 
+    {
+        this->SetLinkedActor("Test_Actor", proxy);
+        LOG_ALWAYS("ActorProxy set");
     }
 
-    void setTextureResourceName(const std::string &fileName) {
-        myTexture = fileName;
-    }
 
     void loadFile(const std::string &fileName) {
     //    dtCore::Loadable *obj = dynamic_cast<dtCore::Loadable*>(actor.get());

@@ -374,7 +374,7 @@ namespace dtEditQt
         void setActorRotateMode();
 
         ///Moves the camera such that the actor is clearly visible.
-        void onGotoActor(proxyRefPtr &proxy);
+        void onGotoActor(proxyRefPtr proxy);
 
         // starts a larger transaction to prevent excessive refreshes
         void onBeginChangeTransaction();

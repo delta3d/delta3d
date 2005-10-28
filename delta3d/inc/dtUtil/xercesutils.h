@@ -41,8 +41,7 @@
 #include <map>                          // for return argument
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace macros
 #include <xercesc/sax2/Attributes.hpp>  // for parameter
-#include <xercesc/dom/DOMNamedNodeMap.hpp> // for parameter
-
+#include <xercesc/dom/DOM.hpp>          // for DOM support
 namespace dtUtil
 {
    /** A utility that finds the string value for a specifically named attribute when a DOM Node is available.

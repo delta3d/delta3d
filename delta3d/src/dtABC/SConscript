@@ -2,8 +2,8 @@ Import('*')
 
 srcs = SGlob('*.cpp')
 
-deps = [ 'dtCore', 'fltk', 'dtUtil', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB',
+deps = [ 'dtCore', 'fltk', 'dtUtil', 'isense', 'OpenThreads', 'osg', 'osgDB',
          'osgParticle', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX',
          'osgProducer', 'ul', 'js', 'Producer', 'xerces-c', 'opengl', 'User32' ]
        
-BuildLib( 'dtABC', srcs, deps, ['DT_LIBRARY'] )
+BuildLib( 'dtABC', srcs, deps, ['DT_ABC_LIBRARY'] )

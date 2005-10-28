@@ -767,6 +767,12 @@ namespace dtDAL
 
             mActorPropertyType = NULL;
         }
+        else if (*mActorPropertyType == DataType::ACTOR)
+        {
+            //insert the data into this map to make it accessible to assign once the parsing is done.
+            mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
+            mActorPropertyType = NULL;
+        }
         else if (mActorPropertyType->IsResource())
         {
             ResourceActorProperty& p = static_cast<ResourceActorProperty&>(*mActorProperty);
@@ -839,7 +845,7 @@ namespace dtDAL
                 {
                     if (mInActorProperty)
                     {
-                        if (mActorProperty != NULL)
+                        if (mActorProperty != NULL && mActorPropertyType == NULL)
                         {
                             if (XMLString::compareString(localname,
                                                             MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT) == 0)
@@ -903,9 +909,22 @@ namespace dtDAL
                                 mActorPropertyType = &DataType::ENUMERATION;
                             }
                             else if (XMLString::compareString(localname,
+                                                                MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT) == 0)
+                            {
+                                mActorPropertyType = &DataType::ACTOR;
+                            }
+                            else if (XMLString::compareString(localname,
                                                                 MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT) == 0)
                             {
-                                //Need the character contents to know the type.
+                                //Need the character contents to know the type, so this will be 
+                                //handled later.
+                            }
+                            else 
+                            {
+                                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, 
+                                    "Found actor property data element with name %s, but this does not map to a known type.\n", 
+                                    XMLStringConverter(localname).c_str());
+                              
                             }
 
                         }
@@ -1062,6 +1081,7 @@ namespace dtDAL
 
     void MapContentHandler::endDocument()
     {
+        LinkActors();
         mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                            "Parsing Map Document Ended.\n");
     }
@@ -1124,6 +1144,9 @@ namespace dtDAL
 
         ClearLibraryValues();
         ClearActorValues();
+        //This should NOT be done in the Actor Value because this should
+        //be cleared at the start and finish of a document, not between each actor.
+        mActorLinking.clear();
 
         resetErrors();
 
@@ -1144,6 +1167,51 @@ namespace dtDAL
         mActorProperty = NULL;
         mIgnoreCurrentActor = false;
         mDescriptorDisplayName.clear();
+    }
+
+    void MapContentHandler::LinkActors()
+    {
+        for (std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::UniqueId> >::iterator i = mActorLinking.begin();
+            i != mActorLinking.end(); ++i)
+        {
+           dtCore::UniqueId id = i->first;
+           ActorProxy* proxyToModify = mMap->GetProxyById(id);
+           if (proxyToModify == NULL)
+           {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                   "Proxy with ID %s was defined to have an actor propery set, but the proxy does not exist in the new map.", 
+                   id.ToString().c_str());
+               continue;
+           }
+           std::pair<std::string, dtCore::UniqueId> data = i->second;
+           std::string& propertyName = data.first;
+           dtCore::UniqueId& propValueId = data.second;
+           ActorProxy* valueProxy = mMap->GetProxyById(propValueId);           
+           if (valueProxy == NULL)
+           {
+               mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                  "Proxy with ID %s was defined to have actor propery %s set with actor %s, but the proxy does not exist in the new map.",
+                  id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+               continue;
+           }
+           ActorProperty* property = proxyToModify->GetProperty(propertyName);
+           if (property == NULL)
+           {
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                  "Proxy with ID %s was defined to have actor propery %s set with actor %s, but the property does not exist on the proxy.",
+                  id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+               continue;
+           }
+           ActorActorProperty* aap = dynamic_cast<ActorActorProperty*>(property);
+           if (aap == NULL)
+           {
+               mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
+                  "Proxy with ID %s was defined to have actor propery %s set with actor %s, but the property is not an ActorActorProperty.",
+                  id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+               continue;
+           }
+           aap->SetValue(valueProxy);
+        }
     }
 
 
@@ -1436,38 +1504,38 @@ namespace dtDAL
 						EndElement();
 						EndElement();
 					}
-                    else if (propertyType == DataType::VEC2F)
-                    {
-                        BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
-                        const Vec2fActorProperty& p =
-                            static_cast<const Vec2fActorProperty&>(property);
-                        osg::Vec2f val = p.GetValue();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[0]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[1]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        EndElement();
-                    }
-                    else if (propertyType == DataType::VEC2D)
-                    {
-                        BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
-                        const Vec2dActorProperty& p =
-                            static_cast<const Vec2dActorProperty&>(property);
-                        osg::Vec2d val = p.GetValue();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[0]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[1]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        EndElement();
-                    }
+               else if (propertyType == DataType::VEC2F)
+               {
+                   BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
+                   const Vec2fActorProperty& p =
+                       static_cast<const Vec2fActorProperty&>(property);
+                   osg::Vec2f val = p.GetValue();
+                   BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
+                   snprintf(numberConversionBuffer, 512, "%lf", val[0]);
+                   AddCharacters(numberConversionBuffer);
+                   EndElement();
+                   BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
+                   snprintf(numberConversionBuffer, 512, "%lf", val[1]);
+                   AddCharacters(numberConversionBuffer);
+                   EndElement();
+                   EndElement();
+               }
+               else if (propertyType == DataType::VEC2D)
+               {
+                   BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC2_ELEMENT);
+                   const Vec2dActorProperty& p =
+                       static_cast<const Vec2dActorProperty&>(property);
+                   osg::Vec2d val = p.GetValue();
+                   BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
+                   snprintf(numberConversionBuffer, 512, "%lf", val[0]);
+                   AddCharacters(numberConversionBuffer);
+                   EndElement();
+                   BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
+                   snprintf(numberConversionBuffer, 512, "%lf", val[1]);
+                   AddCharacters(numberConversionBuffer);
+                   EndElement();
+                   EndElement();
+               }
 					else if (propertyType == DataType::VEC3)
 					{
 						BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC3_ELEMENT);
@@ -1552,54 +1620,54 @@ namespace dtDAL
 						EndElement();
 						EndElement();
 					}
-                    else if (propertyType == DataType::VEC4F)
-                    {
-                        BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT);
-                        const Vec4fActorProperty& p =
-                            static_cast<const Vec4fActorProperty&>(property);
-                        osg::Vec4f val = p.GetValue();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[0]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[1]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[2]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[3]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        EndElement();
-                    }
-                    else if (propertyType == DataType::VEC4D)
-                    {
-                        BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT);
-                        const Vec4dActorProperty& p =
-                            static_cast<const Vec4dActorProperty&>(property);
-                        osg::Vec4d val = p.GetValue();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[0]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[1]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[2]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
-                        snprintf(numberConversionBuffer, 512, "%lf", val[3]);
-                        AddCharacters(numberConversionBuffer);
-                        EndElement();
-                        EndElement();
-                    }
+               else if (propertyType == DataType::VEC4F)
+               {
+                  BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT);
+                  const Vec4fActorProperty& p =
+                      static_cast<const Vec4fActorProperty&>(property);
+                  osg::Vec4f val = p.GetValue();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[0]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[1]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[2]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[3]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  EndElement();
+               }
+               else if (propertyType == DataType::VEC4D)
+               {
+                  BeginElement(MapXMLConstants::ACTOR_PROPERTY_VEC4_ELEMENT);
+                  const Vec4dActorProperty& p =
+                      static_cast<const Vec4dActorProperty&>(property);
+                  osg::Vec4d val = p.GetValue();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_1_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[0]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_2_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[1]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_3_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[2]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  BeginElement(MapXMLConstants::ACTOR_VEC_4_ELEMENT);
+                  snprintf(numberConversionBuffer, 512, "%lf", val[3]);
+                  AddCharacters(numberConversionBuffer);
+                  EndElement();
+                  EndElement();
+               }
 					else if (propertyType == DataType::RGBACOLOR)
 					{
 						BeginElement(MapXMLConstants::ACTOR_PROPERTY_COLOR_RGBA_ELEMENT);
@@ -1626,12 +1694,18 @@ namespace dtDAL
 					}
 					else if (propertyType == DataType::ENUMERATION)
 					{
-						BeginElement(MapXMLConstants::ACTOR_PROPERTY_ENUM_ELEMENT);
+					   BeginElement(MapXMLConstants::ACTOR_PROPERTY_ENUM_ELEMENT);
 						//hack to work around strange g++ bug.  Adding this line fixes the problem.
-						dynamic_cast<const AbstractEnumActorProperty&>(property);
-						AddCharacters(property.GetStringValue());
-						EndElement();
+					   dynamic_cast<const AbstractEnumActorProperty&>(property);
+					   AddCharacters(property.GetStringValue());
+				      EndElement();
 					}
+               else if (propertyType == DataType::ACTOR)
+               {
+                  BeginElement(MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT);
+                  AddCharacters(property.GetStringValue());
+                  EndElement();
+               }
 					else
 					{
 						mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,

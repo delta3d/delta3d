@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtActorsd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib"
+				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib"
 				OutputFile="../../tests/UnitTestsd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../lib;../../ext/lib"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtActors.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib"
 				OutputFile="../../tests/UnitTests.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../lib;../../ext/lib"
@@ -142,15 +142,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath="..\..\tests\project\MapTests.h">
-			</File>
-			<File
-				RelativePath="..\..\tests\project\ProjectTests.h">
-			</File>
-			<File
-				RelativePath="..\..\tests\proxy\ProxyTest.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

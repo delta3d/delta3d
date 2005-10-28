@@ -108,44 +108,23 @@ namespace dtActors
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void EnvironmentActorProxy::AddEffect(osg::ref_ptr<EnvEffectActorProxy> effect)
+    void EnvironmentActorProxy::AddEffect(dtCore::RefPtr<EnvEffectActorProxy> effect)
     {
-        mEffects.push_back(effect);
-
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
             EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
-        env->AddEffect(dynamic_cast<EnvEffect*>(effect->GetActor()));
+        env->AddEffect(static_cast<EnvEffect*>(effect->GetActor()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void EnvironmentActorProxy::RemoveEffect(osg::ref_ptr<EnvEffectActorProxy> effect)
+    void EnvironmentActorProxy::RemoveEffect(dtCore::RefPtr<EnvEffectActorProxy> effect)
     {
         Environment *env = dynamic_cast<Environment*>(mActor.get());
         if(!env)
             EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
 
-        for(std::vector< osg::ref_ptr<EnvEffectActorProxy> >::iterator it = mEffects.begin();
-            it != mEffects.end();
-            it++)
-        {
-            if((*it) == effect)
-            {
-                mEffects.erase(it);
-                return;
-            }
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////
-    std::vector< osg::ref_ptr<EnvEffectActorProxy> >& EnvironmentActorProxy::GetEffects()
-    {
-        Environment *env = dynamic_cast<Environment*>(mActor.get());
-        if(!env)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Environment.");
-
-        return mEffects;
+        env->RemEffect(static_cast<EnvEffect*>(effect->GetActor()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

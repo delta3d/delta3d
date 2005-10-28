@@ -18,8 +18,8 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ActorType__h
-#define __ActorType__h
+#ifndef DELTA_ACTORTYPE
+#define DELTA_ACTORTYPE
 
 #include <string>
 #include <osg/Referenced>
