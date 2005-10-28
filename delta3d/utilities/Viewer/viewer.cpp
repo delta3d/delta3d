@@ -97,7 +97,7 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 
    Widget::Config( d );
 
-   Scene*   scene = GetScene();
+   Scene* scene = GetScene();
    osg::Group* sceneRoot  = scene->GetSceneNode();
    mViewerNode = new osg::Group();
    sceneRoot->addChild(mViewerNode.get());
@@ -109,7 +109,7 @@ Viewer::Config( const WinData* d /*= NULL*/ )
 
    GetDefaultState( &mCurState );
 
-   Transform   cam;
+   Transform cam;
 
    mCurState.GetCamPosition( cam, true );
 
@@ -137,6 +137,8 @@ Viewer::Config( const WinData* d /*= NULL*/ )
    vs.SetDisplayFlag( ViewState::SCENEPOLY );
    vs.SetDisplayFlag( ViewState::SCENETXT );
    vs.SetDisplayFlag( ViewState::SCENELIGHT );
+
+   scene->EnablePaging();
 }
 
 
