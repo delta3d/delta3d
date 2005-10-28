@@ -1,0 +1,73 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testPython", "testPython.vcproj", "{21B56391-18C2-47CA-BBEE-CDD327BE5C58}"
+	ProjectSection(ProjectDependencies) = postProject
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F} = {17C8B821-1515-4CE5-9C9A-00193C34FF0F}
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5} = {54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+		{4168D2C5-39C3-4368-B152-3C0F6AD1A95F} = {4168D2C5-39C3-4368-B152-3C0F6AD1A95F}
+		{C34553DE-4963-4CAD-BA56-39B550358E87} = {C34553DE-4963-4CAD-BA56-39B550358E87}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCore", "..\..\src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCoreBindings", "..\..\src\python\dtcorebindings.vcproj", "{17C8B821-1515-4CE5-9C9A-00193C34FF0F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\..\src\dtABC\dtabc.vcproj", "{C34553DE-4963-4CAD-BA56-39B550358E87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtScript", "..\..\src\dtScript\dtscript.vcproj", "{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "..\..\src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtilBindings", "..\..\src\python\dtutilbindings.vcproj", "{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{21B56391-18C2-47CA-BBEE-CDD327BE5C58}.Release.ActiveCfg = Release|Win32
+		{21B56391-18C2-47CA-BBEE-CDD327BE5C58}.Release.Build.0 = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.ActiveCfg = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.Build.0 = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.ActiveCfg = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.Build.0 = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.ActiveCfg = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.Build.0 = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.ActiveCfg = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Debug.Build.0 = Debug|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.ActiveCfg = Release|Win32
+		{C34553DE-4963-4CAD-BA56-39B550358E87}.Release.Build.0 = Release|Win32
+		{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}.Debug.ActiveCfg = Debug|Win32
+		{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}.Debug.Build.0 = Debug|Win32
+		{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}.Release.ActiveCfg = Release|Win32
+		{4168D2C5-39C3-4368-B152-3C0F6AD1A95F}.Release.Build.0 = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Release.ActiveCfg = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
