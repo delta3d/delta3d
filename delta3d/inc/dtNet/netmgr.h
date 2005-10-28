@@ -49,7 +49,7 @@ namespace dtNet
    {
    public:
       NetMgr();
-      ~NetMgr();
+      virtual ~NetMgr();
 
       ///Initialize the networking and game environment
       void InitializeGame(const std::string &gameName, int gameVersion, const std::string &logFile );

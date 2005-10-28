@@ -7,30 +7,26 @@
 using namespace dtUtil;
 using namespace dtCore;
 
-MyNetwork::MyNetwork(void)
+MyNetwork::MyNetwork( dtCore::Scene* scene )
+   : mScene(scene)
 {
 }
-
-MyNetwork::~MyNetwork(void)
-{
-}
-
 
 ///One or more GNE::Packets was received, let's do something with them
-void MyNetwork::OnReceive( GNE::Connection &conn)
+void MyNetwork::OnReceive( GNE::Connection &conn )
 {
    mMutex.acquire();
 
-   GNE::Packet *next = conn.stream().getNextPacket();
+   GNE::Packet* next = conn.stream().getNextPacket();
 
-   while (next != NULL)
+   while( next != 0 )
    {
       int type = next->getType();
 
-      if(type == GNE::PingPacket::ID) 
+      if( type == GNE::PingPacket::ID ) 
       {
          //it's a PingPacket so lets process it.
-         GNE::PingPacket &ping = *((GNE::PingPacket*)next);
+         GNE::PingPacket& ping = *static_cast<GNE::PingPacket*>(next);
          if (ping.isRequest())
          {
             ping.makeReply();
@@ -41,11 +37,11 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
             LOG_INFO("Ping: " + ping.getPingInformation().pingTime.toString());
          }
       }
-      else if (type == PositionPacket::ID) 
+      else if( type == PositionPacket::ID )
       {
-         //aha, this is our custom packet.  Decompose it and move our remote 
+         //aha, this is one of our custom packets.  Decompose it and move our remote 
          //player representation.
-         PositionPacket *pos = (PositionPacket*)next;
+         PositionPacket *pos = static_cast<PositionPacket*>(next);
          osg::Vec3 newXYZ = pos->mXYZ;
          osg::Vec3 newHPR = pos->mHPR;
          std::string ownerID = pos->mOwnerID;
@@ -54,11 +50,12 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
          xform.SetTranslation(newXYZ);
          xform.SetRotation(newHPR);
 
-         RefPtr<Object> remoteObj = mOtherPlayerList[ownerID];
-         if (remoteObj !=0 ) 
+         StringObjectMap::iterator iter = mOtherPlayerMap.find(ownerID);
+         
+         if( iter != mOtherPlayerMap.end() ) 
          {
             //the player ID is already in our list so lets update it's position
-            remoteObj->SetTransform(&xform, Transformable::ABS_CS);
+            iter->second->SetTransform(&xform, Transformable::ABS_CS);
          }
          else
          {
@@ -71,7 +68,7 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
             //rebroadcast the packet to all connections except for the 
             //one who sent the packet in the first place
             ConnectionIterator conns = mConnections.begin();
-            while (conns != mConnections.end()) 
+            while(conns != mConnections.end())
             {
                if (conns->first != conn.getRemoteAddress(true).toString())
                {
@@ -81,6 +78,11 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
             }            
          }            
       }
+      else if( type == PlayerQuitPacket::ID )
+      {
+         PlayerQuitPacket* playerQuitPacket = static_cast<PlayerQuitPacket*>(next);
+         mIDsToRemove.push( playerQuitPacket->mPlayerID );
+      }
 
       delete next;
       next = conn.stream().getNextPacket();
@@ -89,35 +91,68 @@ void MyNetwork::OnReceive( GNE::Connection &conn)
    mMutex.release();
 }
 
-
 ///Create a new player to represent the remote guy
-void MyNetwork::MakePlayer(const std::string ownerID)
+void MyNetwork::MakePlayer( const std::string& ownerID )
 {
    mMutex.acquire();
 
-   LOG_INFO("making a new remote player named: " + ownerID);
+   LOG_INFO("Making a new remote player named: " + ownerID)
 
-   mOtherPlayerList[ownerID] = new dtCore::Object(ownerID);
-   mOtherPlayerList[ownerID]->LoadFile("models/uh-1n.ive");
-   Scene::GetInstance(0)->AddDrawable( mOtherPlayerList[ownerID].get() );
+   dtCore::Object* object = new dtCore::Object(ownerID);
+   object->LoadFile("models/uh-1n.ive");
+
+   //Insert the new Objects into our map of IDs->Objects
+   StringObjectMap::value_type value( ownerID,  object );
+   mOtherPlayerMap.insert( value );
+
+   mObjectsToAdd.push( object );
 
    mMutex.release();
 }
 
-
-void MyNetwork::OnExit( GNE::Connection &conn)
+void MyNetwork::OnExit( GNE::Connection &conn )
 {
    //do the default NetMgr behavior too
    NetMgr::OnExit(conn);
-
-   mMutex.acquire();
-
-   //todo: the other player exited the network, remove his representation
-
-   mMutex.release();
 }
 
-void MyNetwork::OnDisconnect( GNE::Connection &conn)
+void MyNetwork::OnDisconnect( GNE::Connection &conn )
 {
-  RemoveConnection(&conn);
+   RemoveConnection(&conn);
+}
+
+void MyNetwork::PreFrame( const double deltaFrameTime )
+{
+   //Process the Objects we wish to add to the scene
+   while( !mObjectsToAdd.empty() )
+   {
+      mScene->AddDrawable( mObjectsToAdd.front().get() );
+
+      //Convert the address to a string for logging.
+      std::ostringstream oss;
+      oss << mObjectsToAdd.front();
+      LOG_INFO( "Added player " + oss.str() + " to the scene." )
+
+      mObjectsToAdd.pop();
+   }
+
+   //Process the Objects we wish to remove from the scene
+   while( !mIDsToRemove.empty() )
+   {
+      StringObjectMap::iterator iter = mOtherPlayerMap.find( mIDsToRemove.front() );
+
+      if( iter != mOtherPlayerMap.end() )
+      {
+         mScene->RemoveDrawable( (iter->second).get() );
+         LOG_INFO( "Removed player " + iter->first + " from the scene." )
+
+         mOtherPlayerMap.erase(iter);
+      }
+      else
+      {
+         LOG_WARNING( "Attempt to remove player " + iter->first + " failed." )
+      }
+
+      mIDsToRemove.pop();
+   }
 }
