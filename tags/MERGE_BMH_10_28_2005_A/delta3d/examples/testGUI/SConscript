@@ -1,0 +1,7 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtGUI',
+             'CEGUIBase', 'CEGUIOpenGLRenderer', 'CEGUIWindowsLook' ]
+
+BuildProgram( 'testGUI', srcs, deps )
