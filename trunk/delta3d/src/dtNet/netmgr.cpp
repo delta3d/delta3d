@@ -234,6 +234,7 @@ void NetMgr::SendPacket( const std::string &address, GNE::Packet &packet )
       ConnectionIterator conns = mConnections.begin();
       while (conns != mConnections.end())
       {
+         //This fails if a connection is broken. We need some error checking here.
          (*conns).second->stream().writePacket(packet, true);
          ++conns;
       }

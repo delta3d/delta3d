@@ -1,5 +1,3 @@
-// testNetwork.cpp : defines the implementation of the application
-
 #include "testNetwork.h"
 #include "packets.h"
 
@@ -7,51 +5,37 @@ using namespace dtCore;
 using namespace dtABC;
 using namespace dtNet;
 
-IMPLEMENT_MANAGEMENT_LAYER( TestNetwork )
-
-
-
-
 TestNetwork::TestNetwork( const std::string &hostName, 
                           const std::string& configFilename )
 : Application( configFilename ),
   mHostName(hostName)
 {
-   RegisterInstance( this );
-
-   mNet = new MyNetwork();
+   mNet = new MyNetwork( GetScene() );
 
    std::string logFilename;
 
    if (mHostName.empty()) logFilename = std::string("server.log");
    else logFilename = std::string("client.log");
 
-   ///initialize the game name, version number, and a networking log file
+   //initialize the game name, version number, and a networking log file
    mNet->InitializeGame("TestNetwork", 1, logFilename);
 
-   ///register our custom packet with GNE
+   //register our custom packet with GNE
    //must come *after* NetMgr::InitializeGame()
    GNE::PacketParser::defaultRegisterPacket<PositionPacket>();
+   GNE::PacketParser::defaultRegisterPacket<PlayerQuitPacket>();
 
-
-   ///if no hostname was supplied, create a server, otherwise create a client
+   //if no hostname was supplied, create a server, otherwise create a client
    if (mHostName.empty())
    {
-      mNet->SetupServer(4444);
+      mNet->SetupServer( 4444 );
       GetWindow()->SetWindowTitle("I'm the Host: " + GetUniqueId().ToString());
    }
-
    else
    {
       mNet->SetupClient( hostName, 4444 );
       GetWindow()->SetWindowTitle("I'm a Client: " + GetUniqueId().ToString());
    }
-}
-
-
-TestNetwork::~TestNetwork()
-{
-   DeregisterInstance( this );
 }
    
 void TestNetwork::Config()
@@ -90,6 +74,10 @@ void TestNetwork::KeyPressed(   Keyboard*      keyboard,
    }
 }
 
+void TestNetwork::PreFrame( const double deltaFrameTime )
+{
+   mNet->PreFrame( deltaFrameTime );
+}
 
 void TestNetwork::Frame( const double deltaFrameTime )
 {
@@ -99,13 +87,17 @@ void TestNetwork::Frame( const double deltaFrameTime )
 
 void TestNetwork::Quit()
 {
+   //notify everyone else we are quitting
+   PlayerQuitPacket packet( GetUniqueId().ToString() );
+   mNet->SendPacket( "all", packet );
+
    //shutdown the networking
    mNet->Shutdown();
 
    Application::Quit();
 }
 
-///send our position out to all connections
+//send our position out to all connections
 void TestNetwork::SendPosition()
 {
    //get our new position
@@ -116,6 +108,6 @@ void TestNetwork::SendPosition()
    xform.GetTranslation(xyz);
    xform.GetRotation(hpr);
 
-   PositionPacket packet(xyz, hpr, GetUniqueId().ToString());
-   mNet->SendPacket("all", packet );
+   PositionPacket packet( xyz, hpr, GetUniqueId().ToString() );
+   mNet->SendPacket( "all", packet );
 }
