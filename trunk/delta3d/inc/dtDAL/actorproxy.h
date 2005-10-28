@@ -29,6 +29,7 @@
 #include <osg/ref_ptr>
 #include <dtUtil/enumeration.h>
 #include <dtCore/uniqueid.h>
+#include <dtCore/refptr.h>
 #include "dtDAL/export.h"
 
 namespace dtCore
@@ -150,6 +151,13 @@ namespace dtDAL
         const std::set<std::string>& GetClassHierarchy() const { return mClassNameSet; }
 
         /**
+         * This is a shortcut to avoid having to dynamic cast to a GameActorProxy.  
+         * It should only be overridded by dtGame::GameActorProxy.
+         * @return true if this proxy is an instance of dtGame::GameActorProxy
+         */
+        virtual bool IsGameActorProxy() const { return false; }
+
+        /**
          * Adds a new property to the this proxy's list of properties.
          * @note
          *      Properties must have unique names, therefore, if a property
@@ -167,12 +175,20 @@ namespace dtDAL
         ActorProperty* GetProperty(const std::string &name);
 
         /**
-         * Gets a property of the requested name.
+         * Gets a ResourceDescriptor of the requested property name.
          * @param name Name of the resouce to retrieve.
          * @return A pointer to the resource descripter or NULL if it
          * is not found.
          */
         ResourceDescriptor* GetResource(const std::string &name);
+
+        /**
+         * Gets a ResourceDescriptor of the requested property name.
+         * @param name Name of the resouce to retrieve.
+         * @return A pointer to the resource descripter or NULL if it
+         * is not found.
+         */
+        const ResourceDescriptor* GetResource(const std::string &name) const;
 
         /**
          * Sets a resource in the map
@@ -182,10 +198,33 @@ namespace dtDAL
         void SetResource(const std::string &name, ResourceDescriptor *source);
 
         /**
+         * Gets a property of the requested name.
+         * @param name Name of the actor actor property to retrieve.
+         * @return A pointer to the ActorProxy or NULL if it
+         * is not found.
+         */
+        const ActorProxy* GetLinkedActor(const std::string &name) const;
+
+        /**
+         * Gets a property of the requested name.
+         * @param name Name of the actor actor property to retrieve.
+         * @return A pointer to the ActorProxy or NULL if it
+         * is not found.
+         */
+        ActorProxy* GetLinkedActor(const std::string &name);
+
+        /**
+         * Sets an actor proxy in the map
+         * @param name The name of the property to set
+         * @param value The pointer to new proxy value
+         */
+        void SetLinkedActor(const std::string& name, ActorProxy* newValue);
+
+        /**
          * Gets a list of the properties currently registered for this
          * actor proxy.
          */
-        void GetPropertyList(std::vector<ActorProperty *> &propList);
+        void GetPropertyList(std::vector<ActorProperty *>& propList);
 
         /**
          * Gets a const list of the properties currently registered for this
@@ -315,10 +354,13 @@ namespace dtDAL
 
     private:
         ///Map of properties.
-        std::map<std::string,osg::ref_ptr<ActorProperty> > mPropertyMap;
+        std::map<std::string, dtCore::RefPtr<ActorProperty> > mPropertyMap;
 
-        /// Map of resources
+        /// Map of propery names to resource values
         std::map<std::string, ResourceDescriptor> mResourceMap;
+
+        /// Map of property names to actor proxy values
+        std::map<std::string, dtCore::RefPtr<ActorProxy> > mActorProxyMap;
 
         /// Set of class names
         std::set<std::string> mClassNameSet;

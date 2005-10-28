@@ -257,7 +257,11 @@ def find_file( findThis, startDirs ) :
 
 def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
-   target = '#bin/'+name
+   if OS == "darwin":
+      target = '#bin/' + name + '.app/Contents/MacOS/' + name      
+   else:
+      target = '#bin/' + name
+
    if OS == 'windows' and mode == 'debug' :
       target += 'd'
 
@@ -309,17 +313,13 @@ def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
    program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
 
    if launchDir != env.get('prefix') :
-      envProg.Install( '$prefix/share/delta3d/bin', program )
-   
-#   if OS == 'darwin' :
-#      appdir = name + '.app'
-#      os.mkdir( appdir, 0755 )
-#      os.mkdir( os.path.join( appdir, 'Contents' )  )
-#      os.mkdir( os.path.join( appdir, 'Contents', 'MacOS' )  )
-#      shutil.copy('Info.plist', os.path.join( appdir, 'Contents' ) )
-#      shutil.copy('PkgInfo', os.path.join( appdir, 'Contents' ) )
-#      envProg.Install( os.path.join( appdir, 'Contents', 'MacOS' ) , program[0] ) # .exe
-   
+      if OS == 'darwin':
+         envProg.Install( '$prefix/share/delta3d/bin/' + name + '.app/Contents/MacOS/', program )
+         #envProg.Install( '$prefix/share/delta3d/bin/' + name + '.app/Contents/', '#bin/' )
+      else:
+         envProg.Install( '$prefix/share/delta3d/bin', program )
+            
+
 def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
       overrideShLinkFlags = '',  overrideShLibSuffix = '' ) :
 
@@ -699,7 +699,8 @@ if OS == 'darwin' :
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
   env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
   env['SHLIBSUFFIX'] = '.dylib'
-  #env['SHLINKFLAGS'] = '$LINKFLAGS -arch ppc -prebind -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1 -install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
+  env['SHLINKFLAGS'] = '$LINKFLAGS -arch ppc -prebind -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1' 
+   #-install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 
 launchDir = env.GetLaunchDir()
 
@@ -874,7 +875,7 @@ elif OS == 'linux' :
 elif OS == 'darwin' :
    extLibs = { 
       'CEGUIBase'           : 'CEGUI',
-      'CEGUIOpenGLRenderer' : 'OpenGLRenderer',
+      'CEGUIOpenGLRenderer' : 'CEGUIOpenGLRenderer',
       'osg'            : 'osg',
       'osgDB'          : 'osgDB',
       'osgUtil'        : 'osgUtil',

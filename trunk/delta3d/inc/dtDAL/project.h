@@ -35,6 +35,7 @@
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/resourcehelper.h"
 #include "dtDAL/fileutils.h"
+#include "dtDAL/actorproxy.h"
 #include "dtDAL/export.h"
 
 namespace dtDAL
@@ -364,6 +365,20 @@ namespace dtDAL
      * @param mapName the name of the map to clear the backups for.
      */
     void ClearBackup(const std::string& mapName);
+
+    /**
+     * This will search all open maps until is finds the one that contains the given proxy.
+     * @return the map that contains a given actor proxy or NULL if it's not found.
+     * @param proxy the proxy to search for.
+     */
+    Map* GetMapForActorProxy(const ActorProxy& proxy);
+
+    /**
+     * This will search all open maps until is finds the one that contains the given proxy.
+     * @return the map that contains a given actor proxy or NULL if it's not found.
+     * @param proxy the proxy to search for.
+     */
+    const Map* GetMapForActorProxy(const ActorProxy& proxy) const;
 
     /**
      * @param resourceType the type of resource.  The datatype passed in MUST be a resource type.

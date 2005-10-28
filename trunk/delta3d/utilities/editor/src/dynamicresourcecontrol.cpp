@@ -331,7 +331,7 @@ namespace dtEditQt
         if (!isCurEmpty) 
         {
             std::string oldValue = myProperty->GetStringValue();
-            myProperty->SetValue(&dtDAL::ResourceDescriptor());
+            myProperty->SetValue(NULL);
 
             // give undo manager the ability to create undo/redo events
             // technically, we're sending the about to change event AFTER we already 

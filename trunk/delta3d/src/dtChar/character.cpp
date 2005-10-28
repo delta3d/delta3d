@@ -74,13 +74,33 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
 {
    mFilename = filename;
    
+   //clear out the children.
+   if (GetMatrixNode()->getNumChildren() != 0)
+   {
+      GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren() );
+   }
+
    string path = osgDB::findDataFile(mFilename);
    
    if(path.empty())
    {
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__,
-         "Character: Can't find %s", mFilename.c_str());
-      return false;
+      if (mFilename.empty())
+         Log::GetInstance("character.cpp").
+            LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                       "Character: Clearing character model.");
+      else
+         Log::GetInstance("character.cpp").
+            LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+                       "Character: Can't find file \"%s\". Clearing character model.", 
+                       mFilename.c_str());
+      osg::Matrix mat;
+      if (mBodyNode.valid())
+      {
+         mat = mBodyNode->getMatrix();
+      }
+      
+      mBodyNode = new rbody::OsgBodyNode(false);
+      mBodyNode->setMatrix(mat);
    }
    else
    {
@@ -107,7 +127,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       if (mBodyNode.valid())
       {
          mat = mBodyNode->getMatrix();
-        mBodyNode = NULL;
+         mBodyNode = NULL;
       }
 
       mBodyNode = rbody::ReplicantBodyMgr::instance()->createCharacter(
@@ -116,46 +136,49 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
          mCollisionRootNode.get()
       );
 
-      //HACK: Somehow fixes bug where multi-textures models drop their textures when
-      //      a character is in the scene. Weird. Please someone fix this fo' real!
-      for( unsigned int i = 0; i < mBodyNode->getNumChildren(); i++ )
-      {
-         osg::MatrixTransform* scale = dynamic_cast<osg::MatrixTransform*>( mBodyNode->getChild(i) );
-
-         for( unsigned int j = 0; j < scale->getNumChildren(); j++ )
-         {
-            osg::Geode* geode = dynamic_cast<osg::Geode*>( scale->getChild(j) );
-
-            for( unsigned int k = 0; k < geode->getNumDrawables(); k++ )
-            {
-               osg::Drawable* drawable = dynamic_cast<osg::Drawable*>( geode->getDrawable(k) );
-
-               osg::StateSet* stateSet = drawable->getOrCreateStateSet();
-               stateSet->setMode(GL_TEXTURE_COORD_ARRAY, osg::StateAttribute::OFF);
-            }
-         }
-      }
-
-      mBodyNode->setMatrix(mat);
-
-      mBodyNode->setUpdateMode(  rbody::OsgBodyNode::UPDATE_ANIMATION | 
-                                 rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
-                                 rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );
-      
       if(mBodyNode.get() == NULL)
       {
-         Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, 
-             "Character: Can't load %s", mFilename.c_str());
-      }
-      else
+         Log::GetInstance("character.cpp").
+            LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+                       "Character: Can't load \"%s\", creating empty node.", mFilename.c_str());
+         mBodyNode = new rbody::OsgBodyNode(false);
+         mBodyNode->setMatrix(mat);
+      } 
+      else 
       {
+         //HACK: Somehow fixes bug where multi-textures models drop their textures when
+         //      a character is in the scene. Weird. Please someone fix this fo' real!
+         for( unsigned int i = 0; i < mBodyNode->getNumChildren(); i++ )
+         {
+            osg::MatrixTransform* scale = dynamic_cast<osg::MatrixTransform*>( mBodyNode->getChild(i) );
+
+            for( unsigned int j = 0; j < scale->getNumChildren(); j++ )
+            {
+               osg::Geode* geode = dynamic_cast<osg::Geode*>( scale->getChild(j) );
+
+               for( unsigned int k = 0; k < geode->getNumDrawables(); k++ )
+               {
+                  osg::Drawable* drawable = dynamic_cast<osg::Drawable*>( geode->getDrawable(k) );
+
+                  osg::StateSet* stateSet = drawable->getOrCreateStateSet();
+                  stateSet->setMode(GL_TEXTURE_COORD_ARRAY, osg::StateAttribute::OFF);
+               }
+            }
+         }
+
+         mBodyNode->setMatrix(mat);
+
+         mBodyNode->setUpdateMode(  rbody::OsgBodyNode::UPDATE_ANIMATION | 
+                                    rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
+                                    rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );
+         
          mBodyNode->setRotation(osg::DegreesToRadians(mRotation));
          
          SetVelocity(mVelocity);
          
-         dynamic_cast<osg::Group*>(mNode.get())->addChild(mBodyNode.get());
       }
    }
+   dynamic_cast<osg::Group*>(mNode.get())->addChild(mBodyNode.get());
    return mBodyNode.get();
 }
 

@@ -170,5 +170,10 @@ const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
         AddProperty(new ResourceActorProperty(*this, DataType::TEXTURE, "Test_Texture_Resource", "Texture",
             MakeFunctor(*this, &ExampleTestPropertyProxy::setTextureResourceName),
             "An example texture resource property", GROUPNAME));
+
+        AddProperty(new ActorActorProperty(*this, "Test_Actor", "Test Actor",
+            MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestActor),
+            "dtCore::Transformable",
+            "An example linked actor property", GROUPNAME));
     }
 

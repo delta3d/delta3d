@@ -135,6 +135,12 @@
 				RelativePath="..\..\..\src\dtActors\baselightactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\beziercontrolpointactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\beziernodeactorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\cameraactorproxy.cpp">
 			</File>
 			<File
@@ -201,6 +207,12 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\dtActors\baselightactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\beziercontrolpointactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\beziernodeactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\cameraactorproxy.h">

@@ -19,8 +19,8 @@
 *
 * @author Curtiss Murphy
 */
-#ifndef __PropertyEditor__h
-#define __PropertyEditor__h
+#ifndef DELTA_PROPERTY_EDITOR
+#define DELTA_PROPERTY_EDITOR
 
 #include <QDockWidget>
 #include <osg/ref_ptr>

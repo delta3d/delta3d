@@ -135,14 +135,14 @@ namespace dtDAL
         }
 
         /**
-         * This needs to change to const, but the underlying implementation currently prevents it.
+         * Searches all open maps to find the proxy with the given unique id.
          * @param id the id of the proxy to return.
          * @return the proxy found or NULL if it was not found.  This should be stored in a ref_ptr once received.
          */
         ActorProxy* GetProxyById(const dtCore::UniqueId& id);
 
         /**
-         * This needs to change to const, but the underlying implementation currently prevents it.
+         * Searches all open maps to find the proxy with the given unique id.
          * @param id the id of the proxy to return.
          * @return the proxy found or NULL if it was not found.  This should be stored in a ref_ptr once received.
          */
@@ -151,35 +151,35 @@ namespace dtDAL
         /**
          * non-const search for proxies.
          * @param container The container to fill.
-         * @param mName The mName of the proxy to find or empty string to not use the mName.
+         * @param name The name of the proxy to find or empty string to not use the name.
          * @param category The category of the proxy to find, this will also find proxies in subcategories. Use empty string to ignore.
-         * @param typemName The mName of the proxy actor type. Use empty string or omit the parameter to ignore the type.
-         * @param classmName The mName of the actor class to match. It will match this as a superclass.
+         * @param typeName The name of the proxy actor type. Use empty string or omit the parameter to ignore the type.
+         * @param className The name of the actor class to match. It will match this as a superclass.
          * @param placeable set to Placeable to search for only proxys that return true for isPlaceable,
          *                  NonPlaceable for false, or Either for both.
          */
         void FindProxies(std::vector<osg::ref_ptr<ActorProxy> >& container,
-                         const std::string& mName,
+                         const std::string& name,
                          const std::string& category = std::string(""),
-                         const std::string& typemName = std::string(""),
-                         const std::string& classmName = std::string(""),
+                         const std::string& typeName = std::string(""),
+                         const std::string& className = std::string(""),
                          PlaceableFilter placeable = Either);
 
         /**
          * Const version of find for methods that may need to find a proxy only to read values.
          * @param container The container to fill, note that it holds const ActorProxy.
-         * @param mName The mName of the proxy to find or empty string to not use the mName.
+         * @param name The name of the proxy to find or empty string to not use the name.
          * @param category The category of the proxy to find, this will also find proxies in subcategories.
          *                  Use empty string to ignore.
-         * @param typemName The mName of the proxy actor type. Use empty string or omit the parameter to ignore the type.
-         * @param classmName The mName of the actor class to match. It will match this as a superclass.
+         * @param typeName The name of the proxy actor type. Use empty string or omit the parameter to ignore the type.
+         * @param className The name of the actor class to match. It will match this as a superclass.
          * @param placeable set to Placeable to search for only proxys that return true for isPlaceable,
          *                  NonPlaceable for false, or Either for both.
          */
         void FindProxies(std::vector<osg::ref_ptr<const ActorProxy> >& container,
-                         const std::string& mName, const std::string& category = std::string(""),
-                         const std::string& typemName = std::string(""),
-                         const std::string& classmName = std::string(""),
+                         const std::string& name, const std::string& category = std::string(""),
+                         const std::string& typeName = std::string(""),
+                         const std::string& className = std::string(""),
                          PlaceableFilter placeable = Either) const;
 
         /**

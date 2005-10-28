@@ -168,6 +168,9 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicabstractparentcontrol.h">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicactorcontrol.h">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dynamicboolcontrol.h">
 			</File>
 			<File
@@ -372,6 +375,9 @@
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicabstractparentcontrol.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicactorcontrol.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_dynamicboolcontrol.cpp">
 			</File>
 			<File
@@ -552,6 +558,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dynamicabstractparentcontrol.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\utilities\editor\src\dynamicactorcontrol.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dynamicboolcontrol.cpp">

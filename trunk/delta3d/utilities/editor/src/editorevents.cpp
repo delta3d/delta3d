@@ -55,7 +55,7 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void EditorEvents::emitGotoActor(osg::ref_ptr<dtDAL::ActorProxy>  &actor)
+    void EditorEvents::emitGotoActor(osg::ref_ptr<dtDAL::ActorProxy> actor)
     {
         LOG_INFO("Emitting UI event - [gotoActor]");
         emit gotoActor(actor);

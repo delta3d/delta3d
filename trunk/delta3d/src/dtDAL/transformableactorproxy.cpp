@@ -139,6 +139,8 @@ namespace dtDAL
             if (billBoard != NULL)
                 billBoard->SetActorRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]));
         }
+
+        OnRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]), rotation);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -170,6 +172,8 @@ namespace dtDAL
 
         dtCore::Transform trans;
         t->GetTransform(&trans);
+        osg::Vec3 oldTrans;
+        trans.GetTranslation(oldTrans);
         trans.SetTranslation(translation[0], translation[1], translation[2]);
         t->SetTransform(&trans);
 
@@ -181,6 +185,8 @@ namespace dtDAL
             if (billBoard != NULL)
                 billBoard->SetPosition(translation);
         }
+
+        OnTranslation(oldTrans, translation);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -208,6 +214,8 @@ namespace dtDAL
 
         dtCore::Transform trans;
         t->GetTransform(&trans);
+        osg::Vec3 oldScale;
+        trans.GetScale(oldScale);
         trans.SetScale(scale[0], scale[1], scale[2]);
         t->SetTransform(&trans);
 
@@ -219,6 +227,8 @@ namespace dtDAL
             if (billBoard != NULL)
                 billBoard->SetScale(scale);
         }
+
+        OnScale(oldScale, scale);
     }
 
     ///////////////////////////////////////////////////////////////////////////////

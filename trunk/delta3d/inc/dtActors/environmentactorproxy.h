@@ -120,25 +120,16 @@ namespace dtActors
          * Adds an effect to the environment
          * @param effect The effect to add
          */
-        void AddEffect(osg::ref_ptr<EnvEffectActorProxy> effect);
+        void AddEffect(dtCore::RefPtr<EnvEffectActorProxy> effect);
 
         /**
          * Removes an effect from the list
          * @param effect The effect to remove
          */
-        void RemoveEffect(osg::ref_ptr<EnvEffectActorProxy> effect);
-
-        /**
-         * Retrieves the list of effects the environment contains
-         * @return The list of effects
-         */
-        std::vector< osg::ref_ptr<EnvEffectActorProxy> >& GetEffects();
+        void RemoveEffect(dtCore::RefPtr<EnvEffectActorProxy> effect);
 
     private:
-        /**
-         * The list of effects for the environment
-         */
-        std::vector< osg::ref_ptr<EnvEffectActorProxy> > mEffects;
+      
 
     protected:
 

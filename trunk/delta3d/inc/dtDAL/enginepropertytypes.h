@@ -16,7 +16,7 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author Matthew W. Campbell
+* @author Matthew W. Campbell, David Guthrie, William E. Johnson
 */
 #ifndef DELTA_ENGINE_PROPERTY_TYPES
 #define DELTA_ENGINE_PROPERTY_TYPES
@@ -39,23 +39,69 @@ namespace dtDAL
      * This actor property represents an actor
      */
     ////////////////////////////////////////////////////////////////////////////
-    typedef dtCore::DeltaDrawable Actor;
-    class DT_DAL_EXPORT ActorActorProperty : public GenericActorProperty<Actor*,Actor*>
+    class DT_DAL_EXPORT ActorActorProperty : public ActorProperty
     {
     public:
-        ActorActorProperty(const std::string &name, const std::string &label,
-            Functor1<Actor*> set, Functor0Ret<Actor*> get,
-            const std::string &desc = "", const std::string &groupName = "") :
-        GenericActorProperty<Actor*,Actor*>(name,label,set,get,desc,groupName) { }
+        ActorActorProperty(ActorProxy &actorProxy,
+                         const std::string& name,
+                         const std::string& label,
+                         Functor1<ActorProxy*> Set,
+                         const std::string& desiredActorClass = "",
+                         const std::string& desc = "",
+                         const std::string& groupName = "") :
+                         ActorProperty(name, label, desc, groupName),
+                         mProxy(&actorProxy),
+                         SetPropFunctor(Set),
+                         mDesiredActorClass(desiredActorClass)
+        {
 
-        DataType &GetPropertyType() const { return DataType::ACTOR; }
+        }
+
+        DataType& GetPropertyType() const { return DataType::ACTOR; }
+
+        /**
+         * Copies a ResourceActorProperty value to this one from the property
+         * specified. This method fails if otherProp is not a ResourceActorProperty.
+         * @param otherProp The property to copy the value from.
+         */
+        virtual void CopyFrom(ActorProperty* otherProp)
+        {
+            ActorActorProperty *prop = dynamic_cast<ActorActorProperty *>(otherProp);
+            if (prop != NULL)
+                SetValue(prop->GetValue());
+            else
+                LOG_ERROR("Property types are incompatible. Cannot make a copy.");
+        }
+
+        /**
+        * Sets the value of this property by calling the set functor
+        * assigned to this property.
+        * Hack for the resource class
+        * @param value the value to set or NULL to clear it.  The passed in pointer is
+        * not stored.  The values are extracted and stored in a separate object.
+        */
+        void SetValue(ActorProxy* value);
+
+        /**
+        * Gets the value proxy assiged to this property.
+        * Hack for the resource class
+        * @return the currently set ActorProxy for this property.
+        */
+        ActorProxy* GetValue();
+
+        /**
+        * Gets the value proxy assiged to this property.
+        * Hack for the resource class
+        * @return the currently set ActorProxy for this property.
+        */
+        const ActorProxy* GetValue() const;
 
         /**
          * Sets the value of the property based on a string.
-         * The string should be the actor id.
+         * The string should be the both the unique id and the display string separated by a comma.
          * @note Returns false it the property is read only
          * @param value the value to set.
-         * @return false if an actor could not be found with that id.
+         * @return false if the value does not reference an existing proxy or the proxy is of the wrong class.
          */
         virtual bool SetStringValue(const std::string& value);
 
@@ -65,6 +111,14 @@ namespace dtDAL
          */
         virtual const std::string GetStringValue() const;
 
+        /**
+         * @return the class of proxy this expects so that the UI can filter the list.
+         */
+        const std::string& GetDesiredActorClass() const { return mDesiredActorClass; }
+    private:
+        ActorProxy *mProxy;
+        Functor1<ActorProxy*> SetPropFunctor;
+        std::string mDesiredActorClass;
     protected:
         virtual ~ActorActorProperty() { }
     };

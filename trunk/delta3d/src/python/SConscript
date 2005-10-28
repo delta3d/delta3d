@@ -6,7 +6,7 @@ Import('*')
 # Delcare src files #
 #####################
 
-if CheckForBoost() and OS != 'darwin' :
+if CheckForBoost() and OS != 'darwin':
 
    pythonSrcs = { 
    

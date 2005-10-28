@@ -130,8 +130,8 @@ namespace dtUtil
       private:
          static dtCore::RefPtr<LibrarySharingManager> mInstance;
 
-      	LibrarySharingManager();
-      	virtual ~LibrarySharingManager();
+      	 LibrarySharingManager();
+      	 virtual ~LibrarySharingManager();
          //map of the platform independent name to the actual library
          std::map<std::string, dtCore::RefPtr<osgDB::DynamicLibrary> > mLibraries;
 

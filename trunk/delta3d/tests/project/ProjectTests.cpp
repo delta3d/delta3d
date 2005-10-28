@@ -39,10 +39,45 @@
 #include <dtUtil/exception.h>
 #include <dtDAL/fileutils.h>
 #include <dtDAL/datatype.h>
+#include <dtDAL/tree.h>
 
 #include <dtUtil/stringutils.h>
 
-#include "ProjectTests.h"
+#include <dtUtil/log.h>
+
+#include <cppunit/extensions/HelperMacros.h>
+
+namespace dtDAL {
+    class ResourceTreeNode;
+    class DataType;
+}
+
+class ProjectTests : public CPPUNIT_NS::TestFixture
+{
+    CPPUNIT_TEST_SUITE( ProjectTests );
+    CPPUNIT_TEST( testReadonlyFailure );
+    CPPUNIT_TEST( testProject );
+    CPPUNIT_TEST( testFileIO );
+    CPPUNIT_TEST( testCategories );
+    CPPUNIT_TEST( testResources );
+    CPPUNIT_TEST_SUITE_END();
+
+public:
+    void setUp();
+    void tearDown();
+
+    void testProject();
+    void testFileIO();
+    void testCategories();
+    void testReadonlyFailure();
+    void testResources();
+private:
+    dtUtil::Log* logger;
+    void printTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
+    core::tree<dtDAL::ResourceTreeNode>::const_iterator findTreeNodeFromCategory(
+        const core::tree<dtDAL::ResourceTreeNode>& currentTree,
+        const dtDAL::DataType* dt, const std::string& category) const;
+};
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( ProjectTests );
@@ -511,7 +546,10 @@ void ProjectTests::testReadonlyFailure() {
         }
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
+    } catch (const std::exception &e) {
+       CPPUNIT_FAIL(std::string("Caught an exception of type") + typeid(e).name() + " with message " + e.what());
     }
+
 }
 
 void ProjectTests::testCategories() {
@@ -593,6 +631,8 @@ void ProjectTests::testCategories() {
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
+    } catch (const std::exception& ex) {
+        CPPUNIT_FAIL(ex.what());        
     }
 
 }
@@ -860,6 +900,8 @@ void ProjectTests::testResources() {
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
+    } catch (const std::exception& ex) {
+        CPPUNIT_FAIL(ex.what());        
     }
 
 }
@@ -956,6 +998,8 @@ void ProjectTests::testProject() {
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
+    } catch (const std::exception& ex) {
+        CPPUNIT_FAIL(ex.what());        
     }
 
 }

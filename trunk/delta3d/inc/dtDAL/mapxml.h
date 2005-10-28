@@ -24,6 +24,7 @@
 
 #include <string>
 #include <stack>
+#include <map>
 
 #include <xercesc/sax2/ContentHandler.hpp>
 #include <xercesc/sax/ErrorHandler.hpp>
@@ -35,6 +36,7 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtUtil/log.h>
+#include <dtCore/uniqueid.h>
 
 #include <dtDAL/map.h>
 #include <dtDAL/actorproperty.h>
@@ -77,7 +79,7 @@ namespace std
 }
 #endif
 
-XERCES_CPP_NAMESPACE_USE;
+namespace xerces_dt = XERCES_CPP_NAMESPACE;
 
 namespace dtDAL
 {
@@ -179,8 +181,8 @@ namespace dtDAL
      * @class MapContentHandler
      * @brief The SAX2 content handler for loading maps.
      */
-    class DT_DAL_EXPORT MapContentHandler: public ContentHandler, public ErrorHandler,
-        public EntityResolver, public osg::Referenced
+    class DT_DAL_EXPORT MapContentHandler: public xerces_dt::ContentHandler, public xerces_dt::ErrorHandler,
+        public xerces_dt::EntityResolver, public osg::Referenced
     {
     public:
 
@@ -221,7 +223,7 @@ namespace dtDAL
         /**
         * @see Locator
         */
-        virtual void setDocumentLocator(const Locator* const locator);
+        virtual void setDocumentLocator(const xerces_dt::Locator* const locator);
 
         /**
         * Any map held onto by a previous parsing will be deleted here and new map created.
@@ -234,10 +236,10 @@ namespace dtDAL
         */
         virtual void startElement
             (
-            const   XMLCh*  const  uri,
-            const   XMLCh*  const  localname,
-            const   XMLCh*  const  qname,
-            const Attributes& attrs
+            const XMLCh*  const  uri,
+            const XMLCh*  const  localname,
+            const XMLCh*  const  qname,
+            const xerces_dt::Attributes& attrs
             );
 
         /**
@@ -263,7 +265,7 @@ namespace dtDAL
         /**
         * @see EntityResolver#resolveEntity
         */
-        virtual InputSource* resolveEntity(
+        virtual xerces_dt::InputSource* resolveEntity(
             const XMLCh* const publicId,
             const XMLCh* const systemId);
 
@@ -272,25 +274,25 @@ namespace dtDAL
         /** @name Default implementation of the ErrorHandler interface */
         //@{
         /**
-        * @see ErrorHandler#warning
-        * @see SAXParseException#SAXParseException
+        * @see xerces_dt::ErrorHandler#warning
+        * @see xerces_dt::SAXParseException#SAXParseException
         */
-        virtual void error(const SAXParseException& exc);
+        virtual void error(const xerces_dt::SAXParseException& exc);
 
         /**
-        * @see ErrorHandler#fatalError
-        * @see SAXParseException#SAXParseException
+        * @see xerces_dt::ErrorHandler#fatalError
+        * @see xerces_dt::SAXParseException#SAXParseException
         */
-        virtual void fatalError(const SAXParseException& exc);
+        virtual void fatalError(const xerces_dt::SAXParseException& exc);
 
         /**
-        * @see ErrorHandler#warning
-        * @see SAXParseException#SAXParseException
+        * @see xerces_dt::ErrorHandler#warning
+        * @see xerces_dt::SAXParseException#SAXParseException
         */
-        virtual void warning(const SAXParseException& exc);
+        virtual void warning(const xerces_dt::SAXParseException& exc);
 
         /**
-        * @see ErrorHandler#resetErrors
+        * @see xerces_dt::ErrorHandler#resetErrors
         */
         virtual void resetErrors();
 
@@ -345,14 +347,18 @@ namespace dtDAL
         std::vector<std::string> mMissingLibraries;
         std::set<std::string> mMissingActorTypes;
 
+        //data for actor linking is not completely available until all actors have been created, so it
+        //is stored until the end.
+        std::multimap<dtCore::UniqueId, std::pair<std::string, dtCore::UniqueId> > mActorLinking;
+
         std::string mCurrentPropName;
         bool mCurrentPropIsVector;
 
         std::string mDescriptorDisplayName;
 
-        osg::ref_ptr<ActorProxy> mActorProxy;
+        dtCore::RefPtr<ActorProxy> mActorProxy;
         DataType* mActorPropertyType;
-        osg::ref_ptr<ActorProperty> mActorProperty;
+        dtCore::RefPtr<ActorProperty> mActorProperty;
 
         dtUtil::Log* mLogger;
 
@@ -374,6 +380,8 @@ namespace dtDAL
         void ActorCharacters(const XMLCh* const chars);
         //parses the text data from the xml and stores it in the property.
         void ParseData(std::string& dataValue);
+        //processes the mActorLinking multimap to set ActorActorProperties.
+        void LinkActors();
 
     };
 
@@ -422,7 +430,7 @@ namespace dtDAL
         MapParser(const MapParser& copyParser);
         MapParser& operator=(const MapParser& assignParser);
         MapContentHandler mHandler;
-        SAX2XMLReader* mXercesParser;
+        xerces_dt::SAX2XMLReader* mXercesParser;
         dtUtil::Log* mLogger;
     };
 
@@ -454,7 +462,7 @@ namespace dtDAL
             virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
     private:
 
-        class MapFormatTarget: public XMLFormatTarget
+        class MapFormatTarget: public xerces_dt::XMLFormatTarget
         {
         public:
             MapFormatTarget();
@@ -466,7 +474,7 @@ namespace dtDAL
             virtual void writeChars(
                                     const XMLByte* const toWrite,
                                     const unsigned int count,
-                                    XMLFormatter* const formatter);
+                                    xerces_dt::XMLFormatter* const formatter);
 
             virtual void flush();
 
@@ -483,7 +491,7 @@ namespace dtDAL
         std::stack<xmlCharString> mElements;
 
         MapFormatTarget mFormatTarget;
-        XMLFormatter mFormatter;
+        xerces_dt::XMLFormatter mFormatter;
 
         //writes out the open tags for a new element including indentation.
         void BeginElement(const XMLCh* const name, const XMLCh* const attributes = NULL);

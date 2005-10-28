@@ -55,7 +55,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
 
 DeltaWin::Resolution DeltaWin::GetCurrentResolution()
 {
-   unsigned w,h;
+   //unsigned w,h;
    //mRenderSurface->getScreenSize(w,h);
    //CFDictionaryRef ref = CGDisplayCurrentMode(mRenderSurface->getDisplay());
    //ref

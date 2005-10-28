@@ -29,6 +29,7 @@
 #include "dtUtil/log.h"
 #include "dtUtil/stringutils.h"
 #include "dtUtil/xercesutils.h"
+#include "dtCore/refptr.h"
 
 #include <xercesc/dom/DOMTreeWalker.hpp>
 

@@ -42,7 +42,6 @@
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourcehelper.h>
 #include <dtDAL/resourcetreenode.h>
-#include <dtDAL/stringtokenizer.h>
 #include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/export.h>
 

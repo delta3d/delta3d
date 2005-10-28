@@ -292,7 +292,7 @@ namespace dtEditQt
 
         EditorActions::getInstance().actionWindowsActorSearch->setEnabled(hasBoth);
         EditorActions::getInstance().actionWindowsPropertyEditor->setEnabled(hasBoth);
-        EditorActions::getInstance().actionWindowsResourceBrowser->setEnabled(true);
+        EditorActions::getInstance().actionWindowsResourceBrowser->setEnabled(hasBoth);
         EditorActions::getInstance().actionWindowsResetWindows->setEnabled(hasBoth);
 
         EditorActions::getInstance().actionHelpAboutEditor->setEnabled(true);
@@ -304,6 +304,7 @@ namespace dtEditQt
         resourceBrowser->setEnabled(hasProject);
         mainViewportParent->setEnabled(hasBoth);
         editMenu->setEnabled(hasBoth);
+        windowMenu->setEnabled(hasBoth);
         selectionMenu->setEnabled(hasBoth);
     }
 
