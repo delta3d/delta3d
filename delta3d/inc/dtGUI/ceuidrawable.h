@@ -88,10 +88,19 @@ namespace dtGUI
       ///Get a pointer to the underlying CEGUI::Renderer
       CEGUI::Renderer* GetRenderer(void) const {return mRenderer;}
 
-      virtual osg::Node* GetOSGNode() {return mNode.get();}
+      //virtual osg::Node* GetOSGNode() {return mNode.get();}
+
+      /// Attaches the Delta3D child's OSG graphics Node
+      bool AddChild(DeltaDrawable *child);
 
       ///Display all the properties of the supplied CEGUI::Window
       static void DisplayProperties(CEGUI::Window *window, bool onlyNonDefault=true);
+
+      /// Not usually needed, but this getter is provided for unusual scenarios.
+      osg::Projection* GetProjectionNode() { return mProjection.get(); }
+
+      /// Not usually needed, but this getter is provided for unusual scenarios.
+      osg::MatrixTransform* GetTransformNode() { return mTransform.get(); }
 
    protected: 
       ///pass the mouse moved events to CEGUI
@@ -120,6 +129,8 @@ namespace dtGUI
       float mMouseY; ///<the current Mouse Y position
       Renderer* mRenderer; ///<The opengl renderer we're using
       dtGUI::BaseScriptModule* mScriptModule;
+      osg::ref_ptr<osg::Projection> mProjection;
+      osg::ref_ptr<osg::MatrixTransform> mTransform;
    };
 }//namespace dtGUI
 

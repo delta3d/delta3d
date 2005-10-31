@@ -27,7 +27,9 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    mMouseX(.0f),
    mMouseY(.0f),
    mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
-   mScriptModule(sm)
+   mScriptModule(sm),
+   mProjection(new osg::Projection(osg::Matrix::ortho2D(0,width,0,height))),
+   mTransform(new osg::MatrixTransform(osg::Matrix::identity()))
 {
    AddSender( System::Instance() );
    
@@ -47,7 +49,6 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
 
    mUI = CEGUI::System::getSingletonPtr();
 
-   mNode = new osg::Group();
    osg::Geode *geod = new osg::Geode();
 
    osg::StateSet* stateset = geod->getOrCreateStateSet();
@@ -61,16 +62,12 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    osg::ref_ptr<osgCEUIDrawable> osgCEUI = new osgCEUIDrawable(mUI);
    geod->addDrawable( osgCEUI.get() ); //add our osg node here
 
-   osg::MatrixTransform* modelview_abs = new osg::MatrixTransform;
-   modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-   modelview_abs->setMatrix(osg::Matrix::identity());
-   modelview_abs->addChild(geod);
+   mTransform->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
+   mTransform->addChild( geod );
 
-   osg::Projection* projection = new osg::Projection();
-   projection->setMatrix(osg::Matrix::ortho2D(0,mWidth,0,mHeight)); //fix this
-   projection->addChild(modelview_abs);
+   mProjection->addChild( mTransform.get() );
 
-   dynamic_cast<osg::Group*>(mNode.get())->addChild(projection);
+   mNode = mProjection.get();
 }
 
 CEUIDrawable::~CEUIDrawable(void)
@@ -79,6 +76,17 @@ CEUIDrawable::~CEUIDrawable(void)
    mNode = NULL;
    delete mUI;
    delete mRenderer;
+}
+
+bool CEUIDrawable::AddChild(DeltaDrawable *child)
+{
+   // Add the child's graphics node to our's
+   if( DeltaDrawable::AddChild(child) ) 
+   {
+      mTransform->addChild( child->GetOSGNode() );
+      return true;
+   }
+   return false;
 }
 
 void CEUIDrawable::MouseMoved(Mouse* mouse, float x, float y)
