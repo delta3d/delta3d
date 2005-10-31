@@ -435,12 +435,7 @@ void Transformable::SetCollisionDetection( bool enabled )
       while( geomClass == dGeomTransformClass && id != 0 )
       {
          id = dGeomTransformGetGeom(id);
-         if( id == 0 )
-         {
-            Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-               "Collision detection has been set to %d, even though no collision geometry has been set.", enabled );
-         }
-         else
+         if( id != 0 )
          {
             geomClass = dGeomGetClass(id);
          }
