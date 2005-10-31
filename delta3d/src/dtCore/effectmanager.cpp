@@ -378,7 +378,7 @@ void EffectManager::OnMessage(MessageData *data)
 {
    if(data->message == "preframe")
    {
-      double delta = *reinterpret_cast<double*>(data->userData);
+      double delta = *static_cast<double*>(data->userData);
 
       if(mLastTime != 0)
       {

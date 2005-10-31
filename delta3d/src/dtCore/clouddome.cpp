@@ -297,7 +297,7 @@ void CloudDome::OnMessage( MessageData *data )
 {
    if (data->message == "preframe")
    {
-      double deltaFrameTime = *reinterpret_cast<double*>(data->userData);
+      double deltaFrameTime = *static_cast<double*>(data->userData);
       Update(deltaFrameTime);
    }
 }

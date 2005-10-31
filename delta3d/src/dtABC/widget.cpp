@@ -191,38 +191,38 @@ Widget::OnMessage( Base::MessageData* data )
    if( data->message == msgMouseEvent )
    {
       assert( data->userData );
-      HandleMouseEvent( *(reinterpret_cast<MouseEvent*>(data->userData)) );
+      HandleMouseEvent( *(static_cast<MouseEvent*>(data->userData)) );
       return;
    }
 
    if( data->message == msgKeyboardEvent )
    {
       assert( data->userData );
-      HandleKeyboardEvent( *(reinterpret_cast<KeyboardEvent*>(data->userData)) );
+      HandleKeyboardEvent( *(static_cast<KeyboardEvent*>(data->userData)) );
       return;
    }
 
    if( data->message == msgResize )
    {
-      Resize( reinterpret_cast<WinRect*>(data->userData) );
+      Resize( static_cast<WinRect*>(data->userData) );
       return;
    }
 
    if( data->message == msgAddDrawable )
    {
-      AddDrawable( reinterpret_cast<dtCore::DeltaDrawable*>(data->userData) );
+      AddDrawable( static_cast<dtCore::DeltaDrawable*>(data->userData) );
       return;
    }
 
    if( data->message == msgSetPath )
    {
-      SetPath( *(reinterpret_cast<std::string*>(data->userData)) );
+      SetPath( *(static_cast<std::string*>(data->userData)) );
       return;
    }
 
    if( data->message == msgWindowData )
    {
-      Config( reinterpret_cast<WinData*>(data->userData) );
+      Config( static_cast<WinData*>(data->userData) );
       return;
    }
 
