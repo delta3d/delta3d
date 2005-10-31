@@ -363,7 +363,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      double deltaFrameTime = *reinterpret_cast<double*>(data->userData);
+      double deltaFrameTime = *static_cast<double*>(data->userData);
 
       Transform transform;
 

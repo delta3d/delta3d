@@ -85,22 +85,22 @@ void StateManager::OnMessage( MessageData* data )
 {
    if( data->message == "preframe" )
    {
-      const double delta = *reinterpret_cast<const double*>(data->userData); 
+      const double delta = *static_cast<const double*>(data->userData); 
       PreFrame(delta);
    }
    else if( data->message == "frame" )
    {
-      const double delta = *reinterpret_cast<const double*>(data->userData); 
+      const double delta = *static_cast<const double*>(data->userData); 
       Frame(delta);
    }
    else if( data->message == "postframe" )
    {
-      const double delta = *reinterpret_cast<const double*>(data->userData); 
+      const double delta = *static_cast<const double*>(data->userData); 
       PostFrame(delta);
    }
    else if( data->message == "event" )
    {
-      Event* event = reinterpret_cast<Event*>( data->userData );
+      Event* event = static_cast<Event*>( data->userData );
 
       //We don't want to have the State cause a transition directly.  
       if (IS_A(data->sender, State*))

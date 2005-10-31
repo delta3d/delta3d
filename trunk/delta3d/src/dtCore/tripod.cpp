@@ -89,7 +89,7 @@ void Tripod::OnMessage(MessageData *data)
 {
    if (data->message == "preframe")
    {
-      Update( *reinterpret_cast<double*>(data->userData) );
+      Update( *static_cast<double*>(data->userData) );
    }
 }
 

@@ -28,7 +28,7 @@ MyWidget::OnMessage( MessageData* data )
    {
       assert( data->userData );
 
-      std::string filename = *(reinterpret_cast<std::string*>(data->userData));
+      std::string filename = *(static_cast<std::string*>(data->userData));
       assert( filename != "" );
 
       Object*  obj   = new Object(filename);
@@ -43,7 +43,7 @@ MyWidget::OnMessage( MessageData* data )
 
    if( data->message == "fileloaded" )
    {
-      ObjectLoaded( reinterpret_cast<dtCore::Object*>(data->userData) );
+      ObjectLoaded( static_cast<dtCore::Object*>(data->userData) );
       return;
    }
 
