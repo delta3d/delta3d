@@ -28,7 +28,7 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <dtABC/application.h>
+#include <dtCore/scene.h>
 
 #include "dtDAL/tree.h"
 #include "dtDAL/resourcedescriptor.h"
