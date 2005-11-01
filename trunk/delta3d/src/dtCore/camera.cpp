@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Producer/RenderSurface"
+#include <Producer/RenderSurface>
 
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
@@ -142,46 +142,72 @@ Camera::~Camera()
    DeregisterInstance(this);
 }
 
+void Camera::SetEnabled( bool enabled )
+{
+   if( enabled )
+   {
+      mCamera->enable();
+   }
+   else
+   {
+      mCamera->disable();
+   }
+}
+
+bool Camera::GetEnabled()
+{
+   // This function cannot be const since Producer::Camera::isEnabled()
+   // is not const.
+   return mCamera->isEnabled();
+}
+
 /*!
  * Render the next frame.  This will update the scene graph, cull then geometry,
  * then draw the geometry.
- *
  */
 void Camera::Frame()
 {
-   if( mScene != 0 && !System::Instance()->GetPause() )
+   // Only do our normal Camera stuff if it is enabled.
+   // If Producer::Camera::frame is never called, our cull callback
+   // will never be called either.
+   if( GetEnabled() )
    {
-       GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
+      if( mScene != 0 && !System::Instance()->GetPause() )
+      {
+         // TODO: Investigate double updates when we have multiple camera.
+         // Anything with an update callback may be called twice!
+         GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
+      }
+      
+      //Get our Camera's position, up vector, and look-at vector and pass them
+      //to the Producer Camera
+      osg::Matrix mat = GetMatrixNode()->getMatrix();
+      Transform absXform;
+      
+      osg::Matrix absMat;
+      GetAbsoluteMatrix( GetMatrixNode(), absMat );
+      
+      //choose Z as the up vector
+      osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
+      osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
+      osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
+      F.normalize();
+      UP.normalize();
+      
+      osg::Vec3 s = F ^ UP;
+      osg::Vec3 u = s ^ F;
+      F = -F;
+      
+      Producer::Matrix m(s[0], u[0], F[0], 0.0,
+                         s[1], u[1], F[1], 0.0,
+                         s[2], u[2], F[2], 0.0,
+                         s*eye, u*eye, F*eye, 1.0);
+      mCamera->setViewByMatrix(m);
+      
+      //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
+      //Might cause a problem with multi camera's sharing one RenderSurface
+      mCamera->frame(true);
    }
-
-   //Get our Camera's position, up vector, and look-at vector and pass them
-   //to the Producer Camera
-   osg::Matrix mat = GetMatrixNode()->getMatrix();
-   Transform absXform;
-
-   osg::Matrix absMat;
-   GetAbsoluteMatrix( GetMatrixNode(), absMat );
-
-   //choose Z as the up vector
-   osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
-   osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
-   osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
-   F.normalize();
-   UP.normalize();
-
-   osg::Vec3 s = F ^ UP;
-   osg::Vec3 u = s ^ F;
-   F = -F;
-
-   Producer::Matrix m(s[0], u[0], F[0], 0.0,
-      s[1], u[1], F[1], 0.0,
-      s[2], u[2], F[2], 0.0,
-      s*eye, u*eye, F*eye, 1.0);
-   mCamera->setViewByMatrix(m);
-
-   //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
-   //Might cause a problem with multi camera's sharing one RenderSurface
-   mCamera->frame(true);
 }
 
 void Camera::SetWindow(DeltaWin *win)

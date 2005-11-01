@@ -25,13 +25,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Producer/Camera"
-#include "dtCore/timer.h"
-#include "dtCore/deltawin.h"
-#include "dtCore/base.h"
-#include "dtCore/scene.h"
-#include "dtUtil/deprecationmgr.h"
-#include "dtCore/transformable.h"
+#include <Producer/Camera>
+#include <dtCore/timer.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/base.h>
+#include <dtCore/scene.h>
+#include <dtUtil/deprecationmgr.h>
+#include <dtCore/transformable.h>
 #include <osg/FrameStamp>
 #include <osgUtil/SceneView>
 #include <osg/Vec4>
@@ -99,8 +99,14 @@ namespace dtCore
          dtCore::Timer_t mStartTime;
       };
 
-      Camera( const std::string& name = "camera");
+      Camera( const std::string& name = "camera" );
       virtual ~Camera();
+
+      ///Enabled or disable this Camera. Disabled Cameras will not render.
+      void SetEnabled( bool enabled );
+
+      ///Is this Camera enabled?
+      bool GetEnabled();
       
       ///Use the supplied DeltaWin to draw into
 	   void SetWindow( DeltaWin *win );
