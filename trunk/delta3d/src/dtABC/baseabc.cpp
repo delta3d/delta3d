@@ -172,16 +172,7 @@ void BaseABC::CreateInstances()
 
 void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
 {
-   const std::set<std::string>& classNames = map.GetProxyActorClasses();
-   
-   for( std::set<std::string>::iterator iter = classNames.begin();
-        iter != classNames.end();
-        iter++ )
-   {
-      std::cout << *iter << std::endl;
-   }
-   
-   if( classNames.count("dtCore::Camera") > 0 )
+   if(  map.GetProxyActorClasses().count("dtCore::Camera") > 0 )
    {
       //We have a Camera actor, therefore let's disable our default BaseABC Camera
       mCamera->SetEnabled(false);
