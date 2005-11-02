@@ -30,6 +30,12 @@
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtCore/deltadrawable.h>
+#include <dtDAL/project.h>
+
+namespace dtDAL
+{
+   class Map;
+}
 
 namespace   dtABC
 {
@@ -67,6 +73,33 @@ namespace   dtABC
 
       ///Get the default Application Mouse
       dtCore::Mouse*          GetMouse()     { return mMouse.get(); }
+      
+      /**
+       * Loads a map by name into an application.  If the map is already opened, the currently
+       * loaded map will be reused. If there is a Camera contained within your Map, the default
+       * Camera in BaseABC will be disabled.
+       * @param name The name of the map to load.
+       * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+       * @return the map that was loaded into the scene.
+       * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
+       * @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
+       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       */
+      dtDAL::Map& LoadMap( const std::string& name, bool addBillBoards = false )
+      {
+         dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
+         LoadMap( map, addBillBoards );
+         return map;
+      }
+      
+      /**
+       * Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
+       * Camera in BaseABC will be disabled.
+       * @param map The map to load into the scene
+       * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
+       */
+      void LoadMap( dtDAL::Map& map, bool addBillBoards = false );
 
    protected:
       ///Override for preframe

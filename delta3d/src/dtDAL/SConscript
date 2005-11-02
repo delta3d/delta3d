@@ -7,7 +7,7 @@ Import ('*')
 # Grab all the sources from the DAL source directory.
 srcs = SGlob('*.cpp')
 
-deps =  [ 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'isense', 'ode', 
+deps =  [ 'dtUtil', 'dtCore', 'dtChar', 'isense', 'ode', 
           'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',
           'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'rbody', 'rvrutils',
           'rcfgscript', 'gdal', 'cal3d', 'ul', 'js', 'Producer', 'opengl',

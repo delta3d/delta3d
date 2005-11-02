@@ -1,4 +1,5 @@
 #include <dtABC/baseabc.h>
+#include <dtDAL/map.h>
 #include <cassert>
 
 using namespace   dtABC;
@@ -154,8 +155,7 @@ BaseABC::KeyReleased(   dtCore::Keyboard*          keyboard,
 /**
  * Create the basic instances
  */
-void
-BaseABC::CreateInstances( void )
+void BaseABC::CreateInstances()
 {
    // create the scene
    mScene   = new dtCore::Scene("defaultScene");
@@ -168,4 +168,24 @@ BaseABC::CreateInstances( void )
 
    // attach camera to the scene
    mCamera->SetScene( mScene.get() );
+}
+
+void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
+{
+   const std::set<std::string>& classNames = map.GetProxyActorClasses();
+   
+   for( std::set<std::string>::iterator iter = classNames.begin();
+        iter != classNames.end();
+        iter++ )
+   {
+      std::cout << *iter << std::endl;
+   }
+   
+   if( classNames.count("dtCore::Camera") > 0 )
+   {
+      //We have a Camera actor, therefore let's disable our default BaseABC Camera
+      mCamera->SetEnabled(false);
+   }
+   
+   dtDAL::Project::GetInstance().LoadMapIntoScene( map, *GetScene(), addBillBoards );
 }

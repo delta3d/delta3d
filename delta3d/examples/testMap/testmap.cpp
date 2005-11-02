@@ -29,7 +29,13 @@ public:
         std::string contextName = GetDeltaDataPathList() + "/demoMap";
         Project::GetInstance().SetContext(contextName);
         Map &myMap = Project::GetInstance().GetMap("MyCoolMap");
-        Project::GetInstance().LoadMapIntoScene(myMap, *GetScene());
+
+        //Since we are in an Application we can simply call...
+        LoadMap(myMap);
+
+        // But if wanted to load the map into another Scene we would
+        // have to call:
+        // Project::GetInstance().LoadMapIntoScene(myMap, *GetScene());
 
         // Get the proxies from the map
         std::vector< osg::ref_ptr<ActorProxy> > proxies;
