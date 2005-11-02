@@ -16,7 +16,7 @@ class TestMap(Application):
       
       Project.GetInstance().SetContext(contextName)
       myMap = Project.GetInstance().GetMap("MyCoolMap")
-      Project.GetInstance().LoadMapIntoScene(myMap, self.GetScene())
+      self.LoadMap(myMap)
 
       # This doesn't work! I can't get Boost.Python to properly
       # translate between the retrn value of this method:
@@ -25,7 +25,7 @@ class TestMap(Application):
       
       # Get the proxies from the map
       proxies = ActorProxyVector()
-      #proxies = myMap.FindProxies("StaticMesh*")
+      #myMap.FindProxies(proxies,"StaticMesh*")
 
       self.helicopter = None
       self.tree = None
