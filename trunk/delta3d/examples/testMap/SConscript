@@ -1,6 +1,8 @@
 Import('*')
 
 srcs =  SGlob( '*.cpp' )
-deps =[ 'dtCore', 'dtDAL'] 
+deps =[ 'dtABC', 'dtActors' ] 
+
+Depends( 'testMap', 'dtActors' )
 
 BuildProgram( 'testMap', srcs, deps )
