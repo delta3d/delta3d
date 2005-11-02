@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib OpenThreadsWin32d.lib OpenGL32.lib osgd.lib osgdbd.lib producerd.lib ul_d.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtDALd.lib dtUtild.lib dtCored.lib OpenThreadsWin32d.lib OpenGL32.lib osgd.lib osgdbd.lib producerd.lib ul_d.lib xerces-c_2D.lib"
 				OutputFile="../../../bin/dtABCd.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib OpenThreadsWin32.lib OpenGL32.lib osg.lib osgdb.lib producer.lib ul.lib xerces-c_2.lib"
+				AdditionalDependencies="dtDAL.lib dtUtil.lib dtCore.lib OpenThreadsWin32.lib OpenGL32.lib osg.lib osgdb.lib producer.lib ul.lib xerces-c_2.lib"
 				OutputFile="../../../bin/dtABC.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
