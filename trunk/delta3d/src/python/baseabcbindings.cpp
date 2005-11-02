@@ -4,6 +4,7 @@
 
 #include <python/dtpython.h>
 #include <dtABC/baseabc.h>
+#include <dtDAL/map.h>
 
 using namespace boost::python;
 using namespace dtABC;
@@ -101,11 +102,16 @@ class BaseABCWrap : public BaseABC
       PyObject* mSelf;
 };
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LoadMap_overloads, LoadMap, 1, 2)
+
 void initBaseABCBindings()
 {
    BaseABC* (*BaseABCGI1)(int) = &BaseABC::GetInstance;
    BaseABC* (*BaseABCGI2)(std::string) = &BaseABC::GetInstance;
 
+   dtDAL::Map& (BaseABC::*LoadMap1)( const std::string&, bool ) = &BaseABC::LoadMap;
+   void (BaseABC::*LoadMap2)( dtDAL::Map&, bool ) = &BaseABC::LoadMap;
+   
    class_<BaseABC, bases<Base,KeyboardListener,MouseListener>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -120,5 +126,8 @@ void initBaseABCBindings()
       .def("GetCamera", &BaseABC::GetCamera, return_internal_reference<>())
       .def("GetScene", &BaseABC::GetScene, return_internal_reference<>())
       .def("GetKeyboard", &BaseABC::GetKeyboard, return_internal_reference<>())
-      .def("GetMouse", &BaseABC::GetMouse, return_internal_reference<>());
+      .def("GetMouse", &BaseABC::GetMouse, return_internal_reference<>())
+      .def("LoadMap", LoadMap1, LoadMap_overloads()[return_internal_reference<>()])
+      .def("LoadMap", LoadMap2, LoadMap_overloads())
+      ;
 }
