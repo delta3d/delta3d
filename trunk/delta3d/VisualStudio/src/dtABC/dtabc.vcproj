@@ -154,9 +154,6 @@
 				RelativePath="..\..\..\src\dtABC\trigger.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtABC\tripodaction.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtABC\weather.cpp">
 			</File>
 			<File
