@@ -139,12 +139,6 @@ namespace dtActors
            "dtcore.Action", "dtABC::BezierController Actor");
         mActorFactory->RegisterType<BezierControllerActorProxy>(bCtrllerActor);
 
-
-        //CloudDome actor...
-        //dtDAL::ActorType *cDomeActor = new dtDAL::ActorType("Cloud Dome",
-        //    "dtcore.Environment", "dtCore::CloudDome Actor.");
-        //mActorFactory->RegisterType<CloudDomeActorProxy>(cDomeActor);
-
         //CloudPlane actor...
         dtDAL::ActorType *cPlaneActor = new dtDAL::ActorType("Cloud Plane",
             "dtcore.Environment", "dtCore::CloudPlane Actor.");
@@ -159,18 +153,8 @@ namespace dtActors
         mActorFactory->RegisterType<ProximityTriggerActorProxy>(proxTriggerActor);
 
         dtDAL::ActorType* autoTriggerActor = new dtDAL::ActorType("AutoTrigger",
-           "dtABC", "dtABC::AutoTrigger Actor."); 
+           "dtcore.Triggers", "dtABC::AutoTrigger Actor."); 
         mActorFactory->RegisterType<AutoTriggerActorProxy>(autoTriggerActor);
-
-//        dtDAL::ActorType *envActor = new dtDAL::ActorType("Environment",
-//             "dtcore.drawable", "dtCore::Environment actor.");
-//         this->actorFactory.registerType<EnvironmentActorProxy>(envActor);
-//
-        //this->actorFactory.registerType<DTEDTerrainActorProxy      >(dtedActor);
-        /*this->actorFactory.registerType<CloudDomeActorProxy        >(cDomeActor);
-        this->actorFactory.registerType<CloudPlaneActorProxy       >(cPlaneActor);
-        this->actorFactory.registerType<SkyDomeActorProxy          >(sDomeActor);*/
-        //this->actorFactory.registerType<SoundActorProxy          >(sndActor);
 
         dtDAL::ActorType* cameraActor = new dtDAL::ActorType("Camera",
            "dtcore", "dtCore::Camera Actor.");
