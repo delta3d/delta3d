@@ -222,9 +222,6 @@
 				RelativePath="..\..\..\inc\dtABC\trigger.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtABC\tripodaction.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtABC\weather.h">
 			</File>
 			<File
