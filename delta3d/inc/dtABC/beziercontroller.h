@@ -39,6 +39,15 @@ class DT_ABC_EXPORT BezierController: public MotionAction
 {
 
 private:
+
+   typedef struct 
+   {
+      PathPoint mPoint;
+      float mTime;
+
+   }PathData;
+
+   
    class BezierPathDrawable: public osg::Drawable
    {
    public:
@@ -49,14 +58,15 @@ private:
          mController = bd.GetController();
       }
 
-
       BezierPathDrawable(){setUseDisplayList(false);}
    
       /*virtual*/ void drawImplementation(osg::State& state) const;
       void SetPath(BezierController* pPath){mController = pPath;}
       BezierController* GetController()const{return mController;}
+   
    private:
-      BezierController* mController;
+      BezierController*                     mController;
+      mutable std::list<PathData>           mPath;
    };
 
    friend class BezierPathDrawable;
@@ -81,6 +91,9 @@ public:
 
    void CheckCreatePath();
 
+   void GetCopyPath(std::list<PathData>& pPathIn) const{pPathIn = mPath;}
+
+ 
 protected:
    ~BezierController();
    BezierController(const BezierController&); //not implemented by design
@@ -96,21 +109,27 @@ protected:
 
 private:
 
-   void MakeSegment(float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4);
+   bool GetPathChanged() const{return mPathChanged;}
+   void SetPathChanged(bool b){mPathChanged = b;}
+
+
+   void MakeSegment(float time, float inc, const PathPoint& p1, const PathPoint& p2, const PathPoint& p3, const PathPoint& p4);
    float BlendFunction(float t, int index);
    float TangentFunction(float t, int index);
 
 
 
+   bool                                      mRenderGeode;
+   bool                                      mPathChanged;
    dtCore::RefPtr<BezierNode>                mStartNode;
    dtCore::RefPtr<osg::Geode>                mGeode;
-   bool                                      mRenderGeode;
 
    dtCore::RefPtr<BezierPathDrawable>        mDrawable;
 
-   std::list<PathPoint>                      mPath;
-   std::list<PathPoint>::const_iterator      mCurrentPoint;
-   std::list<PathPoint>::const_iterator      mEndPoint;
+   const PathData*                          mLastPathPoint;
+   std::list<PathData>                      mPath;
+   std::list<PathData>::const_iterator      mCurrentPoint;
+   std::list<PathData>::const_iterator      mEndPoint;
 
 };
 
