@@ -138,11 +138,11 @@ namespace dtActors
         mActorFactory->RegisterType<CloudPlaneActorProxy>(cPlaneActor);
 
         dtDAL::ActorType* triggerActor = new dtDAL::ActorType("Trigger",
-           "dtABC", "dtABC::Trigger Actor."); 
+           "dtcore.Triggers", "dtABC::Trigger Actor."); 
         mActorFactory->RegisterType<TriggerActorProxy>(triggerActor);
 
         dtDAL::ActorType* proxTriggerActor = new dtDAL::ActorType("Proximity Trigger",
-           "dtABC", "dtABC::ProximityTrigger Actor."); 
+           "dtcore.Triggers", "dtABC::ProximityTrigger Actor."); 
         mActorFactory->RegisterType<ProximityTriggerActorProxy>(proxTriggerActor);
 
         dtDAL::ActorType* cameraActor = new dtDAL::ActorType("Camera",
