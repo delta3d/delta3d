@@ -29,7 +29,8 @@
 #include <dtActors/characteractorproxy.h>
 #include <dtActors/infiniteterrainactorproxy.h>
 #include <dtActors/environmentactorproxy.h>
-#include <dtActors/triggeractorproxy.h>
+#include <dtActors/autotriggeractorproxy.h> 
+#include <dtActors/beziercontrolleractorproxy.h>
 #include <dtActors/meshterrainactorproxy.h>
 #include <dtActors/clouddomeactorproxy.h>
 #include <dtActors/cloudplaneactorproxy.h>
@@ -40,6 +41,7 @@
 #include <dtActors/triggeractorproxy.h>
 #include <dtActors/proximitytriggeractorproxy.h>
 #include <dtActors/cameraactorproxy.h>
+
 
 namespace dtActors
 {
@@ -124,13 +126,24 @@ namespace dtActors
 
         //BezierNode actor
         dtDAL::ActorType *bNodeActor = new dtDAL::ActorType("Bezier Node", 
-           "dtcore.BezierNode", "dtCore::BezierNode Actor");
+           "dtcore.Curve", "dtABC::BezierNode Actor");
         mActorFactory->RegisterType<BezierNodeActorProxy>(bNodeActor);
 
         //BezierControlPoint actor
         dtDAL::ActorType *bCtrlPntActor = new dtDAL::ActorType("Bezier Control Point", 
-           "dtcore.BezierControlPoint", "dtCore::BezierControlPoint Actor");
+           "dtcore.Curve", "dtABC::BezierControlPoint Actor");
         mActorFactory->RegisterType<BezierControlPointActorProxy>(bCtrlPntActor);
+
+        //BezierController actor
+        dtDAL::ActorType *bCtrllerActor = new dtDAL::ActorType("Bezier Controller", 
+           "dtcore.Action", "dtABC::BezierController Actor");
+        mActorFactory->RegisterType<BezierControllerActorProxy>(bCtrllerActor);
+
+
+        //CloudDome actor...
+        //dtDAL::ActorType *cDomeActor = new dtDAL::ActorType("Cloud Dome",
+        //    "dtcore.Environment", "dtCore::CloudDome Actor.");
+        //mActorFactory->RegisterType<CloudDomeActorProxy>(cDomeActor);
 
         //CloudPlane actor...
         dtDAL::ActorType *cPlaneActor = new dtDAL::ActorType("Cloud Plane",
@@ -145,9 +158,22 @@ namespace dtActors
            "dtcore.Triggers", "dtABC::ProximityTrigger Actor."); 
         mActorFactory->RegisterType<ProximityTriggerActorProxy>(proxTriggerActor);
 
+        dtDAL::ActorType* autoTriggerActor = new dtDAL::ActorType("AutoTrigger",
+           "dtABC", "dtABC::AutoTrigger Actor."); 
+        mActorFactory->RegisterType<AutoTriggerActorProxy>(autoTriggerActor);
+
+//        dtDAL::ActorType *envActor = new dtDAL::ActorType("Environment",
+//             "dtcore.drawable", "dtCore::Environment actor.");
+//         this->actorFactory.registerType<EnvironmentActorProxy>(envActor);
+//
+        //this->actorFactory.registerType<DTEDTerrainActorProxy      >(dtedActor);
+        /*this->actorFactory.registerType<CloudDomeActorProxy        >(cDomeActor);
+        this->actorFactory.registerType<CloudPlaneActorProxy       >(cPlaneActor);
+        this->actorFactory.registerType<SkyDomeActorProxy          >(sDomeActor);*/
+        //this->actorFactory.registerType<SoundActorProxy          >(sndActor);
+
         dtDAL::ActorType* cameraActor = new dtDAL::ActorType("Camera",
            "dtcore", "dtCore::Camera Actor.");
         mActorFactory->RegisterType<CameraActorProxy>(cameraActor);
-
     }
 }

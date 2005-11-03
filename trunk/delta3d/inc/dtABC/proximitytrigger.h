@@ -101,6 +101,10 @@ namespace dtABC
       */
       virtual bool FilterContact( dContact* contact, Transformable* collider );
 
+
+      void SetTimeDelay(float delay){mTrigger->SetTimeDelay(delay);}
+      float GetTimeDelay()const{return mTrigger->GetTimeDelay();}
+
    protected:
 
       void SetTraversalNumber( int number ) { mLastTraversalNumber = number; }

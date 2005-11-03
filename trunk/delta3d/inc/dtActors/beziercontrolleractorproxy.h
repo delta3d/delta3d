@@ -1,7 +1,10 @@
-#ifndef __BEZIER_CONTROL_POINT_H__
-#define __BEZIER_CONTROL_POINT_H__
+#ifndef __BEZIER_CONTROLLER_ACTOR_PROXY_H__
+#define __BEZIER_CONTROLLER_ACTOR_PROXY_H__
 
-#include "pathpointconverter.h"
+#include <dtCore/deltadrawable.h>
+#include <dtDAL/plugin_export.h>
+#include <dtABC/beziernode.h>
+#include "motionactionactorproxy.h"
 
 
 /* 
@@ -25,37 +28,33 @@
 * @author Bradley Anderegg
 */
 
-
-namespace dtABC
+namespace dtActors
 {
-   class BezierNode;
 
 
-/***
-* class BezierControlPoint is encapsulated by BezierPath
-* and acts as an entry or exit control to the curve
-*/
-class BezierControlPoint: public PathPointConverter
+class DT_PLUGIN_EXPORT BezierControllerActorProxy: public MotionActionActorProxy
 {
+
 public:
-   BezierControlPoint():mParent(0){}
+   BezierControllerActorProxy(){SetClassName("dtABC::BezierController");}
+   /*virtual*/ bool IsPlaceable() const {return false;};
+   /*virtual*/ void BuildPropertyMap();
 
-   const BezierNode* GetParent() const {return mParent;}
-   BezierNode* GetParent() {return mParent;}
-   void SetParent(BezierNode* pParent){mParent = pParent;}
+   const dtABC::BezierNode* GetActorStartNode() const;
+   void SetActorStartNode(ActorProxy* pBezierNode);
    
-protected:
-   ~BezierControlPoint(){};
-   BezierControlPoint(const BezierControlPoint&); //not implemented by design
-   BezierControlPoint operator=(const BezierControlPoint&); //not implemented by design
 
-private:
-   BezierNode* mParent;
+   /*virtual*/ //const ActorProxy::RenderMode& GetRenderMode();
+
+protected:
+   /*virtual*/ void CreateActor();
+   static int mNumControllers;
 
 };
 
 
-}//namespace dtABC
 
-#endif //__BEZIER_CONTROL_POINT_H__
+}//namespace dtActors
+
+#endif //__BEZIER_CONTROLLER_ACTOR_PROXY_H__
 

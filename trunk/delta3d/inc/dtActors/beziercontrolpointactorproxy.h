@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author William E. Johnson II
+ * @author Bradley Anderegg
  */
 #ifndef DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY
 #define DELTA_BEZIER_CONTROL_POINT_ACTOR_PROXY
@@ -25,35 +26,10 @@
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtCore/transformable.h>
+#include <dtABC/beziercontrolpoint.h>
+#include <dtABC/beziernode.h>
 
-// Foward declarations
-class BezierNode;
 
-// Temp class
-class BezierControlPoint : public dtCore::Transformable
-{
-   public:
-      /// Constructor
-      BezierControlPoint() : mBezierNode(NULL) { }
-   
-      /// Destructor
-      virtual ~BezierControlPoint() {}
-
-      /**
-        * Sets the BezierNode of this BezierControlPoint
-        * @param node The new node
-        */
-      void SetBezierNode(BezierNode *node) { mBezierNode = node; }
-
-      /**
-        * Gets the BezierNode of this BezierNode
-        * @return The node
-        */
-      const BezierNode* GetBezierNode() const { return mBezierNode; }
-       
-   private:
-      BezierNode *mBezierNode;
-};
 
 namespace dtActors
 {
@@ -63,13 +39,19 @@ namespace dtActors
          /// Constructor
          BezierControlPointActorProxy()
          {
-            SetClassName("BezierControlPoint");
+            SetClassName("dtABC::BezierControlPoint");
          }
 
          /**
            * Builds the properties associated with this actor proxy
            */
          void BuildPropertyMap();
+
+         /**
+         * Cameras can be placed in a scene
+         */
+         virtual bool IsPlaceable() const { return true; }
+
 
          /**
           * Sets the bezier node of this actor proxy
@@ -81,7 +63,15 @@ namespace dtActors
           * Gets the bezier node of this actor proxy
           * @return The bezier node
           */
-         const BezierNode* GetBezierNode() const;
+         const dtABC::BezierNode* GetBezierNode() const;
+
+
+         dtDAL::ActorProxyIcon * GetBillBoardIcon();
+         const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+
+         /*virtual*/ void OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+         /*virtual*/ void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+         /*virtual*/ void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
 
       protected:
          /// Destructor
@@ -90,7 +80,10 @@ namespace dtActors
          }
 
          /// Creates the actor this proxy abstracts
-         void CreateActor() { mActor = new BezierControlPoint; }
+         void CreateActor();
+
+
+         static int mNumControlPoints;
     };
 }
 

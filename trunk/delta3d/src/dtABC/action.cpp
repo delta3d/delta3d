@@ -13,19 +13,24 @@ Action::Action()
    mAccumTime = 0.0f;
    mIsRunning = false;
 
-   dtCore::System::Instance()->AddSender(this);
+   AddSender(dtCore::System::Instance());
+
 }
 
 Action::~Action()
 {
-   dtCore::System::Instance()->RemoveSender(this);
+   RemoveSender(dtCore::System::Instance());
 }
 
 void Action::Start()
 {
+   //we cannot be started after we are already running
+   if(mIsRunning) return;
+
    mTotalTime = 0.0f;
    mAccumTime = 0.0f;
    mIsRunning = true;
+   if(mTimeStep < 0.000001f) mTimeStep = 0.05f;
    OnStart();
 }
 
@@ -37,7 +42,7 @@ void Action::Pause()
 
 void Action::UnPause()
 {
-   mIsRunning = false;
+   mIsRunning = true;
    OnUnPause();
 }
 
@@ -58,7 +63,7 @@ void Action::Update(double dt)
       mTotalTime += dt;
       mAccumTime += dt;
 
-      while(mAccumTime >= mTimeStep)
+      while(mAccumTime >= mTimeStep && mIsRunning)
       {
          bool lastEvent = !(OnNextStep());
 

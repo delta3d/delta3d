@@ -127,6 +127,9 @@
 				RelativePath="..\..\..\src\dtABC\application.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtABC\autotrigger.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtABC\baseabc.cpp">
 			</File>
 			<File
@@ -151,6 +154,9 @@
 				RelativePath="..\..\..\src\dtABC\trigger.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtABC\tripodaction.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtABC\weather.cpp">
 			</File>
 			<File
@@ -166,6 +172,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\application.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\autotrigger.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\baseabc.h">
@@ -214,6 +223,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\trigger.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\tripodaction.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\weather.h">

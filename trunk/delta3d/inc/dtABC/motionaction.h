@@ -60,7 +60,7 @@ public:
 
 protected:
 
-    ~MotionAction();
+    virtual ~MotionAction();
     MotionAction(const MotionAction&); //not implemented by design
 
    /***

@@ -44,15 +44,20 @@ class CurveNode: public PathPointConverter
      const CurveNode* GetPrev() const {return mPrev.get();}
      const CurveNode* GetNext() const {return mNext.get();}
 
-     void SetNext(CurveNode* pNext){mNext = pNext;}
-     void SetPrev(CurveNode* pPrev){mPrev = pPrev;}
+     CurveNode* GetPrev() {return mPrev.get();}
+     CurveNode* GetNext() {return mNext.get();}
+
+     void SetNext(CurveNode* pNext){mNext = pNext; mDirtyFlag = true;}
+     void SetPrev(CurveNode* pPrev){mPrev = pPrev; mDirtyFlag = true;}
 
      float GetTimeToNext() const {return mTimeToNext;}
      float GetStep() const {return mStep;}
 
-     void SetTimeToNext(float pTimeToNext){mTimeToNext = pTimeToNext;}
-     void SetStep(float pStep){mStep = pStep;}
+     void SetTimeToNext(float pTimeToNext){mTimeToNext = pTimeToNext; mDirtyFlag = true;}
+     void SetStep(float pStep){mStep = pStep; mDirtyFlag = true;}
 
+     void SetDirtyFlag(bool pDirty){mDirtyFlag = pDirty;};
+     bool GetDirtyFlag() const {return mDirtyFlag;};
 
      //overloads to avoid casting
      virtual const BezierNode* GetBezierInterface() const {return 0;}
@@ -70,6 +75,8 @@ class CurveNode: public PathPointConverter
 
    float mTimeToNext;
    float mStep;
+   
+   bool mDirtyFlag;
 
 };
 

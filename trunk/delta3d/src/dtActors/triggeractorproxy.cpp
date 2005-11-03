@@ -32,6 +32,11 @@ namespace dtActors
    void TriggerActorProxy::CreateActor()
    {
       mActor = new Trigger;
+
+      static int mNumTriggers = 0;
+      std::ostringstream ss;
+      ss << "Trigger" << mNumTriggers++;
+      SetName(ss.str());
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -55,8 +60,27 @@ namespace dtActors
          dtDAL::MakeFunctorRet(*trigger,&Trigger::GetTimeDelay),
          "After this trigger has been fired it will wait this amount of time before starting its action.", GROUPNAME));
 
-      //AddProperty(new dtDAL::ActorActorProperty("Action","Action",
-      //   dtDAL::MakeFunctor(*trigger,&Trigger::SetAction),
-      //   "Sets the action which this Trigger will start.", GROUPNAME));
+      AddProperty(new dtDAL::ActorActorProperty(*this, "Action","Action",
+         dtDAL::MakeFunctor(*this,&TriggerActorProxy::SetAction),
+         "dtABC::Action", "Sets the action which this Trigger will start."));
+   }
+
+   void TriggerActorProxy::SetAction( dtDAL::ActorProxy* action )
+   {
+      SetLinkedActor("Action", action);
+
+      dtABC::Trigger * trigger = dynamic_cast<dtABC::Trigger*>( mActor.get() );
+      if( trigger == 0 )
+      {
+         EXCEPT(dtDAL::ExceptionEnum::BaseException,"Expected a Trigger actor.");
+      }
+
+      dtABC::Action* a = NULL;
+      if(action)
+      {
+         a = dynamic_cast<dtABC::Action*>(action->GetActor());
+      }
+
+      trigger->SetAction(a);      
    }
 }

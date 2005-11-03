@@ -132,7 +132,16 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtActors\actionactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\autotriggeractorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\baselightactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\beziercontrolleractorproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\beziercontrolpointactorproxy.cpp">
@@ -174,6 +183,9 @@
 				RelativePath="..\..\..\src\dtActors\meshterrainactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\motionactionactorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\particlesystemactorproxy.cpp">
 			</File>
 			<File
@@ -200,13 +212,25 @@
 			<File
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\tripodactionactorproxy.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\..\inc\dtActors\actionactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\autotriggeractorproxy.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtActors\baselightactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\beziercontrolleractorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\beziercontrolpointactorproxy.h">
@@ -248,6 +272,9 @@
 				RelativePath="..\..\..\inc\dtActors\meshterrainactorproxy.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtActors\motionactionactorproxy.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtActors\particlesystemactorproxy.h">
 			</File>
 			<File
@@ -273,6 +300,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\triggeractorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\tripodactionactorproxy.h">
 			</File>
 		</Filter>
 		<Filter

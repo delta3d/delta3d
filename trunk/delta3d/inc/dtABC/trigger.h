@@ -43,7 +43,7 @@ namespace dtABC
       void SetEnabled( bool enabled ) { mEnabled = enabled; }
       bool GetEnabled() const { return mEnabled; }
 
-      void SetTimeDelay( double timeDelay ) { mTimeDelay = timeDelay; }
+      void SetTimeDelay( double timeDelay ) { mTimeDelay = timeDelay; mTimeLeft = mTimeDelay; }
       double GetTimeDelay() const { return mTimeDelay; }
 
       double GetTimeLeft() const { return mTimeLeft; }

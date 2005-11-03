@@ -6,6 +6,7 @@
 #include <osg/Geode>
 
 #include "export.h"
+#include <osg/Object>
 #include "pathpoint.h"
 #include "beziernode.h"
 #include "motionaction.h"
@@ -41,11 +42,19 @@ private:
    class BezierPathDrawable: public osg::Drawable
    {
    public:
-      /*virtual*/ osg::Object* cloneType() const {return 0;}; 
-      /*virtual*/ osg::Object* clone(const osg::CopyOp& copyop) const{return 0;} 
+      
+      META_Object(dtABC, BezierPathDrawable);
+      BezierPathDrawable(const BezierPathDrawable& bd, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY)
+      {
+         mController = bd.GetController();
+      }
 
+
+      BezierPathDrawable(){setUseDisplayList(false);}
+   
       /*virtual*/ void drawImplementation(osg::State& state) const;
       void SetPath(BezierController* pPath){mController = pPath;}
+      BezierController* GetController()const{return mController;}
    private:
       BezierController* mController;
    };
@@ -61,17 +70,22 @@ public:
    /*virtual*/ void RenderProxyNode(bool enable);
 
    
-protected:
-   ~BezierController();
-   BezierController(const BezierController&); //not implemented by design
-   BezierController operator =(const BezierController&); //not implemented by design
-
    /***
    * Creates the path using the start node to traverse the curve
    * the time step and time between nodes is encapsulated by the 
    * BezierNodes
    */
    virtual void CreatePath();
+
+   /*virtual*/ osg::Node* GetOSGNode(); 
+
+   void CheckCreatePath();
+
+protected:
+   ~BezierController();
+   BezierController(const BezierController&); //not implemented by design
+   BezierController operator =(const BezierController&); //not implemented by design
+
 
    /*virtual*/ bool OnNextStep();
    /*virtual*/ void OnStart();
@@ -89,8 +103,10 @@ private:
 
 
    dtCore::RefPtr<BezierNode>                mStartNode;
+   dtCore::RefPtr<osg::Geode>                mGeode;
+   bool                                      mRenderGeode;
 
-   BezierPathDrawable                        mDrawable;
+   dtCore::RefPtr<BezierPathDrawable>        mDrawable;
 
    std::list<PathPoint>                      mPath;
    std::list<PathPoint>::const_iterator      mCurrentPoint;
