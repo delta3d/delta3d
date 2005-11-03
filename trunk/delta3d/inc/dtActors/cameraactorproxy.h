@@ -23,58 +23,70 @@
 
 #include <osg/Vec4>
 
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/transformableactorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/transformableactorproxy.h>
 #include <dtDAL/exceptionenum.h>
 
 namespace dtActors 
 {
-    /**
-     * @class CameraActorProxy
-     * @brief This proxy wraps the Camera Delta3D object.
-     */
-    class DT_PLUGIN_EXPORT CameraActorProxy : public dtDAL::TransformableActorProxy
-    {
-    public:
+   /**
+   * @class CameraActorProxy
+   * @brief This proxy wraps the Camera Delta3D object.
+   */
+   class DT_PLUGIN_EXPORT CameraActorProxy : public dtDAL::TransformableActorProxy
+   {
+   public:
 
-        /**
-         * Constructor
-         */
-        CameraActorProxy() { SetClassName("dtCore::Camera"); }
+      /**
+      * Constructor
+      */
+      CameraActorProxy() { SetClassName("dtCore::Camera"); }
 
-        /**
-         * Adds the properties that are common to all Delta3D camera objects.
-         */
-        virtual void BuildPropertyMap();
+      /**
+      * Adds the properties that are common to all Delta3D camera objects.
+      */
+      virtual void BuildPropertyMap();
 
-        /**
-         * Cameras can be placed in a scene
-         */
-        virtual bool IsPlaceable() const { return true; }
+      /**
+      * Cameras can be placed in a scene
+      */
+      virtual bool IsPlaceable() const { return true; }
 
-        /**
-         * Gets the camera's clear color
-         * @return The current clear color
-         */
-        osg::Vec4 GetClearColor();
+      virtual const dtDAL::ActorProxy::RenderMode& GetRenderMode()
+      {
+         return dtDAL::ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON;
+      }
 
-        /**
-         * Sets the clear color
-         * @param color The color to set
-         */
-        void SetClearColor(const osg::Vec4 &color);
+      /**
+      * Gets the billboard used to represent static meshes if this proxy's
+      * render mode is RenderMode::DRAW_BILLBOARD_ICON.
+      * @return
+      */
+      dtDAL::ActorProxyIcon* GetBillBoardIcon();
 
-    protected:
+      /**
+      * Gets the camera's clear color
+      * @return The current clear color
+      */
+      osg::Vec4 GetClearColor();
 
-        /**
-         * Initializes the actor
-         */
-        virtual void CreateActor();
+      /**
+      * Sets the clear color
+      * @param color The color to set
+      */
+      void SetClearColor(const osg::Vec4 &color);
 
-        /**
-         * Destructor
-         */
-        virtual ~CameraActorProxy() {}
-    };
+   protected:
+
+      /**
+      * Initializes the actor
+      */
+      virtual void CreateActor();
+
+      /**
+      * Destructor
+      */
+      virtual ~CameraActorProxy() {}
+   };
 }
 #endif

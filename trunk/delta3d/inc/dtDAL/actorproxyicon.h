@@ -84,6 +84,7 @@ namespace dtDAL
         static std::string IMAGE_BILLBOARD_MESHTERRAIN;
         static std::string IMAGE_BILLBOARD_PLAYERSTART;
         static std::string IMAGE_BILLBOARD_TRIGGER;
+        static std::string IMAGE_BILLBOARD_CAMERA;
 
         //Textures used to display the arrow orientation indicator on the billboard.
         static std::string IMAGE_ARROW_HEAD;
@@ -107,6 +108,7 @@ namespace dtDAL
             static const IconType MESHTERRAIN;
             static const IconType PLAYERSTART;
             static const IconType TRIGGER;
+            static const IconType CAMERA;
 
         protected:
             IconType(const std::string &name) : Enumeration(name)

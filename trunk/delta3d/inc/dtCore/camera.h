@@ -71,13 +71,13 @@ namespace dtCore
 
          virtual void clear(Producer::Camera& cam);
 
-         void ClearImplementation( Producer::Camera& cam);
+         void ClearImplementation( Producer::Camera& cam );
 
          /** 
          *  Prepare the scene by sorting, and
          *  ordering for optimal rendering
          */
-         virtual void cull( Producer::Camera &cam);
+         virtual void cull( Producer::Camera &cam );
 
          void CullImplementation( Producer::Camera &cam );
 
@@ -85,7 +85,7 @@ namespace dtCore
          *  The draw() method must be implemented by
          *  the derived class for rendering the scene
          */
-         virtual void draw( Producer::Camera &cam);
+         virtual void draw( Producer::Camera &cam );
 
          void DrawImplementation( Producer::Camera &cam );
 
@@ -112,16 +112,19 @@ namespace dtCore
 	   void SetWindow( DeltaWin *win );
 
       ///Get the supplied DeltaWin (could be NULL)
-      DeltaWin *GetWindow(void) {return mWindow.get();}
+      DeltaWin *GetWindow() { return mWindow.get(); }
 
       ///Redraw the view
-	   void Frame( void );
+	   void Frame();
 
       ///Supply the Scene this Camera should render
       void SetScene( Scene *scene );
 
-      ///Get the supplied Scene
-      Scene *GetScene(void) const {return (Scene*)mScene.get();}
+      ///Get a non-const version of the supplied Scene
+      Scene* GetScene() { return mScene.get(); }
+
+      ///Get a const version of the supplied Scene
+      const Scene* GetScene() const { return mScene.get(); }
 
       ///Set the color non-geometry in the Scene should be drawn (0.0 - 1.0)
       void SetClearColor( float r, float g, float b, float a);
@@ -133,18 +136,18 @@ namespace dtCore
       void GetClearColor( float& r, float& g, float& b, float& a);
       
       ///Get the color that non-geometry in the Scene should be rendered
-      void GetClearColor(osg::Vec4& color) {color = mClearColor;}
+      void GetClearColor(osg::Vec4& color) { color = mClearColor; }
       
       ///Set Perspective of camera lens
       void SetPerspective( double hfov, double vfov, double nearClip, double farClip );
 
       ///Set view frustrum of camera lens
-      void SetFrustum( double left, double right,
+      void SetFrustum(  double left, double right,
                         double bottom, double top,
                         double nearClip, double farClip );
 
       ///set orthographic mode
-      void SetOrtho( double left, double right,
+      void SetOrtho(    double left, double right,
                         double bottom, double top,
                         double nearClip, double farClip );
 
@@ -171,15 +174,18 @@ namespace dtCore
       double GetAspectRatio();
 
       ///Get a handle to the Producer Lens that this Camera uses
-      Producer::Camera::Lens *GetLens(void) {return mCamera.get()->getLens();}
-      
-      ///Get a handle to the underlying Producer::Camera
-      Producer::Camera *GetCamera(void)const {return (Producer::Camera*)mCamera.get();};
+      Producer::Camera::Lens *GetLens() { return mCamera->getLens(); }
 
-      _SceneHandler *GetSceneHandler(void) {return mSceneHandler.get();}
+      ///Get a non-const handle to the underlying Producer::Camera
+      Producer::Camera* GetCamera() { return mCamera.get(); }
+      
+      ///Get a const handle to the underlying Producer::Camera
+      const Producer::Camera* GetCamera() const { return mCamera.get(); }
+
+      _SceneHandler *GetSceneHandler() { return mSceneHandler.get(); }
 
       ///Display the next statistics mode
-      void SetNextStatisticsType() {mSceneHandler->mStats->SelectNextType();}     
+      void SetNextStatisticsType() { mSceneHandler->mStats->SelectNextType(); }     
 
       ///Display the supplied statistics type
       void SetStatisticsType(osgUtil::Statistics::statsType type) 
@@ -197,8 +203,6 @@ namespace dtCore
       RefPtr<_SceneHandler> mSceneHandler;
 
    };
-   
-};
-
+}
 
 #endif // DELTA_CAMERA

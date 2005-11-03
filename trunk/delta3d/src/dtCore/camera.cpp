@@ -18,11 +18,9 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(Camera)
 using namespace std;
 
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
 
 Camera::_SceneHandler::_SceneHandler(bool useSceneLight):
 mSceneView(new osgUtil::SceneView()),
@@ -62,7 +60,7 @@ void Camera::_SceneHandler::ClearImplementation( Producer::Camera &cam )
    //So lets not do anything clearing here, ok?
 }
 
-void Camera::_SceneHandler::cull( Producer::Camera &cam) 
+void Camera::_SceneHandler::cull( Producer::Camera &cam ) 
 {
    //call osg cull here         
    CullImplementation( cam );
@@ -92,7 +90,7 @@ void Camera::_SceneHandler::CullImplementation(Producer::Camera &cam)
    mStats->SetTime(Stats::TIME_AFTER_CULL);
 }
 
-void Camera::_SceneHandler::draw( Producer::Camera &cam) 
+void Camera::_SceneHandler::draw( Producer::Camera &cam ) 
 {
    //call osg draw here
    DrawImplementation( cam );
@@ -109,12 +107,12 @@ void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 }
 
 
-Camera::Camera( const std::string& name) :
-mWindow(NULL),
-mScene(NULL)
+Camera::Camera( const std::string& name )
+   :  Transformable(name),
+      mWindow(0),
+      mScene(0)
 {
    RegisterInstance(this);
-   SetName(name);
 
    mCamera = new Producer::Camera();
 
@@ -124,8 +122,6 @@ mScene(NULL)
    //A Producer Camera has a default RenderSurface (a "window") so lets
    //set its "default" values in case the user doesn't supply their own
    //later on with SetWindow().
-
-   //mDefaultRenderSurface = mCamera->getRenderSurface();
    mDefaultRenderSurface = new Producer::RenderSurface;
   
    mDefaultRenderSurface->setWindowRectangle( 100, 100, 640, 480 );
@@ -170,9 +166,9 @@ void Camera::Frame()
    // Only do our normal Camera stuff if it is enabled.
    // If Producer::Camera::frame is never called, our cull callback
    // will never be called either.
-   if( GetEnabled() )
+   if( GetEnabled() && mWindow.valid() )
    {
-      if( mScene != 0 && !System::Instance()->GetPause() )
+      if( mScene.valid() && !System::Instance()->GetPause() )
       {
          // TODO: Investigate double updates when we have multiple camera.
          // Anything with an update callback may be called twice!
@@ -206,29 +202,32 @@ void Camera::Frame()
       
       //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
       //Might cause a problem with multi camera's sharing one RenderSurface
+
       mCamera->frame(true);
    }
 }
 
-void Camera::SetWindow(DeltaWin *win)
+void Camera::SetWindow( DeltaWin* win )
 {
    mWindow = win;
-   if (mWindow == NULL)
+
+   if( mWindow == 0 )
    {
-      mCamera.get()->setRenderSurface( mDefaultRenderSurface );
+      mCamera->setRenderSurface( mDefaultRenderSurface );
    }
    else
    {
-      mCamera.get()->setRenderSurface( mWindow.get()->GetRenderSurface() );
+      mCamera->setRenderSurface( mWindow->GetRenderSurface() );
    }
 }
 
 void Camera::SetScene(Scene *scene)
 {
    mScene = scene;
-   if (mScene == NULL)
+
+   if(mScene == 0)
    {
-      mCamera->setSceneHandler( NULL);
+      mCamera->setSceneHandler(0);
    }
    else
    {
@@ -268,67 +267,67 @@ void Camera::GetClearColor( float& r, float& g, float& b, float& a )
 
 void Camera::SetPerspective(double hfov, double vfov, double nearClip, double farClip)
 {
-	mCamera.get()->getLens()->setPerspective(hfov, vfov, nearClip, farClip);
+	mCamera->getLens()->setPerspective(hfov, vfov, nearClip, farClip);
 
 }
 
 void Camera::SetFrustum(double left, double right, double bottom, double top, double nearClip, double farClip)
 {
-   mCamera.get()->getLens()->setFrustum(left, right, bottom, top, nearClip, farClip);
+   mCamera->getLens()->setFrustum(left, right, bottom, top, nearClip, farClip);
 
 }
 
 void Camera::SetOrtho( double left, double right, double bottom, double top, double nearClip, double farClip )
 {
-   mCamera.get()->getLens()->setOrtho(left, right, bottom, top, nearClip, farClip);
+   mCamera->getLens()->setOrtho(left, right, bottom, top, nearClip, farClip);
 }
 
 void Camera::ConvertToOrtho( float d )
 {
-   mCamera.get()->getLens()->convertToOrtho(d);
+   mCamera->getLens()->convertToOrtho(d);
 }
 
 bool Camera::ConvertToPerspective( float d )
 {
    bool t;
-   t = mCamera.get()->getLens()->convertToPerspective(d);
+   t = mCamera->getLens()->convertToPerspective(d);
    return t;
 }
 
 float Camera::GetHorizontalFov()
 {
    float hfov = 0.0f;
-   hfov = mCamera.get()->getLens()->getHorizontalFov();
+   hfov = mCamera->getLens()->getHorizontalFov();
    return hfov;
 }
 
 float Camera::GetVerticalFov()
 {
    float vfov = 0.0f;
-   vfov = mCamera.get()->getLens()->getVerticalFov();
+   vfov = mCamera->getLens()->getVerticalFov();
    return vfov;
 }
 
 void Camera::SetAutoAspect( bool ar )
 {
-   mCamera.get()->getLens()->setAutoAspect(ar);
+   mCamera->getLens()->setAutoAspect(ar);
 }
 
 bool Camera::GetAutoAspect()
 {
    bool ar;
-   ar = mCamera.get()->getLens()->getAutoAspect();
+   ar = mCamera->getLens()->getAutoAspect();
    return ar;
 }
 
 void Camera::SetAspectRatio( double aspectRatio )
 {
-	mCamera.get()->getLens()->setAspectRatio(aspectRatio);
+	mCamera->getLens()->setAspectRatio(aspectRatio);
 }
 
 double Camera::GetAspectRatio()
 {
 	double aspectRatio;
-	aspectRatio = mCamera.get()->getLens()->getAspectRatio();
+	aspectRatio = mCamera->getLens()->getAspectRatio();
 	return aspectRatio;
 }
