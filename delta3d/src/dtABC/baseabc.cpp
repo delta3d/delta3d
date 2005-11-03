@@ -98,15 +98,15 @@ BaseABC::OnMessage( MessageData* data )
 {
    if( data->message == "preframe" )
    {
-      PreFrame( *(double*)data->userData );
+      PreFrame( *static_cast<double*>(data->userData) );
    }
    else if( data->message == "frame" )
    {
-      Frame( *(double*)data->userData );
+      Frame( *static_cast<double*>(data->userData) );
    }
    else if( data->message == "postframe" )
    {
-      PostFrame( *(double*)data->userData );
+      PostFrame( *static_cast<double*>(data->userData) );
    }
 }
 
@@ -172,10 +172,31 @@ void BaseABC::CreateInstances()
 
 void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
 {
-   if(  map.GetProxyActorClasses().count("dtCore::Camera") > 0 )
+   typedef std::vector< osg::ref_ptr< dtDAL::ActorProxy > > ActorProxyVector;
+   ActorProxyVector proxies;
+   map.FindProxies(proxies, "*", "dtcore", "Camera");
+
+   bool atLeastOneEnabled(false);
+   for(  ActorProxyVector::iterator iter = proxies.begin();
+         iter != proxies.end();
+         iter++ )
    {
-      //We have a Camera actor, therefore let's disable our default BaseABC Camera
+      if( dtCore::Camera* camera = dynamic_cast< dtCore::Camera* >( (*iter)->GetActor() ) )
+      {
+         camera->SetScene( GetScene() );
+         camera->SetWindow( GetWindow() );
+
+         atLeastOneEnabled = camera->GetEnabled();
+      }
+   }
+
+   if( atLeastOneEnabled )
+   {
+      //At least one Camera from the map is enabled,
+      //therefore let's disable our default BaseABC Camera
       mCamera->SetEnabled(false);
+
+      LOG_INFO( "At least one Camera is our map is enabled, so the default Camera in BaseABC has been disabled." )
    }
    
    dtDAL::Project::GetInstance().LoadMapIntoScene( map, *GetScene(), addBillBoards );

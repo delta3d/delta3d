@@ -18,8 +18,9 @@
 *
 * @author William E. Johnson II
 */
-#include "dtActors/cameraactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtActors/cameraactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
 
 #include <dtCore/camera.h>
 
@@ -33,6 +34,17 @@ namespace dtActors
     void CameraActorProxy::CreateActor()
     {
         mActor = new dtCore::Camera;
+
+        static int actorCount = 0;
+        std::ostringstream ss;
+        ss << "Camera" << actorCount++;
+        SetName(ss.str());
+        
+        Camera *cam = dynamic_cast<Camera*>(mActor.get());
+        if(!cam)
+           EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+
+        cam->SetEnabled(false);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -45,6 +57,11 @@ namespace dtActors
         if(!cam)
             EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
+        AddProperty( new BooleanActorProperty("Enable", "Enabled",
+           MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
+           MakeFunctorRet(*cam, &dtCore::Camera::GetEnabled),
+           "Enables or disables this camera at runtime", GROUPNAME));
+
         // This property is used for the manipulation of the clear color
         // of a camera. Uses 4 values in the RGBA format for color
         // representation. All values are clamped between 0 - 1.
@@ -53,6 +70,17 @@ namespace dtActors
             MakeFunctor(*this, &dtActors::CameraActorProxy::SetClearColor),
             MakeFunctorRet(*this, &dtActors::CameraActorProxy::GetClearColor),
             "Sets the camera's clear color, which can be thought of as the background color", GROUPNAME));
+    }
+
+    dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
+    {
+       if(!mBillBoardIcon.valid())
+       {
+          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::CAMERA);
+       }
+
+       return mBillBoardIcon.get();
+       
     }
 
     ///////////////////////////////////////////////////////////////////////////////

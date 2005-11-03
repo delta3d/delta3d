@@ -19,27 +19,27 @@
  * @author Matthew W. Campbell
  * @author Chris Osborn
 */
-#include "dtActors/engineactorregistry.h"
-#include "dtActors/infinitelightactorproxy.h"
-#include "dtActors/deltaobjectactorproxy.h"
-#include "dtActors/staticmeshactorproxy.h"
-#include "dtActors/particlesystemactorproxy.h"
-#include "dtActors/positionallightactorproxy.h"
-#include "dtActors/spotlightactorproxy.h"
-#include "dtActors/characteractorproxy.h"
-#include "dtActors/infiniteterrainactorproxy.h"
-#include "dtActors/environmentactorproxy.h"
-#include "dtActors/triggeractorproxy.h"
-#include "dtActors/meshterrainactorproxy.h"
-#include "dtActors/clouddomeactorproxy.h"
-#include "dtActors/cloudplaneactorproxy.h"
-#include "dtActors/skyboxactorproxy.h"
-#include "dtActors/skydomeactorproxy.h"
-#include "dtActors/beziernodeactorproxy.h"
-#include "dtActors/beziercontrolpointactorproxy.h"
-//#include "dtActors/soundactorproxy.h"
+#include <dtActors/engineactorregistry.h>
+#include <dtActors/infinitelightactorproxy.h>
+#include <dtActors/deltaobjectactorproxy.h>
+#include <dtActors/staticmeshactorproxy.h>
+#include <dtActors/particlesystemactorproxy.h>
+#include <dtActors/positionallightactorproxy.h>
+#include <dtActors/spotlightactorproxy.h>
+#include <dtActors/characteractorproxy.h>
+#include <dtActors/infiniteterrainactorproxy.h>
+#include <dtActors/environmentactorproxy.h>
 #include <dtActors/triggeractorproxy.h>
-#include <dtActors/proximitytriggeractorproxy.h> 
+#include <dtActors/meshterrainactorproxy.h>
+#include <dtActors/clouddomeactorproxy.h>
+#include <dtActors/cloudplaneactorproxy.h>
+#include <dtActors/skyboxactorproxy.h>
+#include <dtActors/skydomeactorproxy.h>
+#include <dtActors/beziernodeactorproxy.h>
+#include <dtActors/beziercontrolpointactorproxy.h>
+#include <dtActors/triggeractorproxy.h>
+#include <dtActors/proximitytriggeractorproxy.h>
+#include <dtActors/cameraactorproxy.h>
 
 namespace dtActors
 {
@@ -132,11 +132,6 @@ namespace dtActors
            "dtcore.BezierControlPoint", "dtCore::BezierControlPoint Actor");
         mActorFactory->RegisterType<BezierControlPointActorProxy>(bCtrlPntActor);
 
-        //CloudDome actor...
-        //dtDAL::ActorType *cDomeActor = new dtDAL::ActorType("Cloud Dome",
-        //    "dtcore.Environment", "dtCore::CloudDome Actor.");
-        //mActorFactory->RegisterType<CloudDomeActorProxy>(cDomeActor);
-
         //CloudPlane actor...
         dtDAL::ActorType *cPlaneActor = new dtDAL::ActorType("Cloud Plane",
             "dtcore.Environment", "dtCore::CloudPlane Actor.");
@@ -150,14 +145,9 @@ namespace dtActors
            "dtABC", "dtABC::ProximityTrigger Actor."); 
         mActorFactory->RegisterType<ProximityTriggerActorProxy>(proxTriggerActor);
 
-//        dtDAL::ActorType *envActor = new dtDAL::ActorType("Environment",
-//             "dtcore.drawable", "dtCore::Environment actor.");
-//         this->actorFactory.registerType<EnvironmentActorProxy>(envActor);
-//
-        //this->actorFactory.registerType<DTEDTerrainActorProxy      >(dtedActor);
-        /*this->actorFactory.registerType<CloudDomeActorProxy        >(cDomeActor);
-        this->actorFactory.registerType<CloudPlaneActorProxy       >(cPlaneActor);
-        this->actorFactory.registerType<SkyDomeActorProxy          >(sDomeActor);*/
-        //this->actorFactory.registerType<SoundActorProxy          >(sndActor);
+        dtDAL::ActorType* cameraActor = new dtDAL::ActorType("Camera",
+           "dtcore", "dtCore::Camera Actor.");
+        mActorFactory->RegisterType<CameraActorProxy>(cameraActor);
+
     }
 }

@@ -18,6 +18,9 @@ void initCameraBindings()
    
    void (Camera::*GetClearColor1)(float&, float&, float&, float&) = &Camera::GetClearColor;
    void (Camera::*GetClearColor2)(osg::Vec4&) = &Camera::GetClearColor;
+
+   Scene* (Camera::*GetScene2)() = &Camera::GetScene;
+   const Scene* (Camera::*GetScene1)() const = &Camera::GetScene;
    
    class_<Camera, bases<Transformable>, dtCore::RefPtr<Camera> >("Camera", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Camera::GetInstanceCount)
@@ -31,7 +34,8 @@ void initCameraBindings()
       .def("GetWindow", &Camera::GetWindow, return_internal_reference<>())
       .def("Frame", &Camera::Frame)
       .def("SetScene", &Camera::SetScene, with_custodian_and_ward<1, 2>())
-      .def("GetScene", &Camera::GetScene, return_internal_reference<>())
+      .def("GetScene", GetScene1, return_internal_reference<>())
+      .def("GetScene", GetScene2, return_internal_reference<>())
       .def("SetClearColor", SetClearColor1)
       .def("SetClearColor", SetClearColor2)
       .def("GetClearColor", GetClearColor1)
