@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author William E. Johnson II
+ * @author Bradley Anderegg
  */
 #ifndef DELTA_BEZIER_NODE_ACTOR_PROXY
 #define DELTA_BEZIER_NODE_ACTOR_PROXY
@@ -25,82 +26,10 @@
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtCore/transformable.h>
+#include <dtABC/beziernode.h>
+#include <dtABC/beziercontrolpoint.h>
 #include "dtActors/beziercontrolpointactorproxy.h"
 
-class BezierNode : public dtCore::Transformable
-{
-   public:
-      /// Constructor
-      BezierNode() : mControlPoint(NULL), mNext(NULL), mPrevious(NULL), mTime(0.0f) 
-      { 
-      }
-      /// Destructor
-      virtual ~BezierNode() { }
-
-      /**
-        * Sets the time of this BezierNode
-        * @param time The new time
-        */
-      void SetTime(float time) { mTime = time; }
-
-      /**
-        * Gets the time of this BezierNode
-        * @return The time
-        */
-      float GetTime() const { return mTime; }
-
-      /**
-        * Gets the control point of this BezierNode
-        * @return The control point
-        */
-      const BezierControlPoint* GetBezierControlPoint() const { return mControlPoint.get(); }
-
-      /**
-        * Gets the next node of this
-        * @return The next node
-        */
-      const BezierNode* GetNextBezierNode() const { return mNext.get(); }
-
-      /**
-        * Gets the next node of this
-        * @return The next node
-        */
-      const BezierNode* GetPreviousBezierNode() const { return mPrevious.get(); }
-
-      // These functions are actor properties and should only be set by the proxy
-      /**
-       * Sets the control point of this BezierNode
-       * @param controlPoint The new control point
-       */
-      void SetBezierControlPoint(BezierControlPoint *controlPoint) 
-      { 
-         if (mControlPoint != NULL)
-            mControlPoint->SetBezierNode(NULL);
-         mControlPoint = controlPoint;
-         if (mControlPoint != NULL)
-            mControlPoint->SetBezierNode(this);
-      }
-      /**
-       * Sets the next node of this BeizerNode
-       * @param node The new node
-       */
-      void SetNextBezierNode(BezierNode *node) 
-      {
-         mNext = node;
-      }
-      /**
-       * Sets the next node of this BeizerNode
-       * @param node The new node
-       */
-      void SetPreviousBezierNode(BezierNode *node) 
-      { 
-         mPrevious = node;
-      }
-   private:
-      dtCore::RefPtr<BezierControlPoint> mControlPoint;
-      dtCore::RefPtr<BezierNode> mNext, mPrevious;
-      float mTime;
-};
 
 namespace dtActors
 {
@@ -110,7 +39,7 @@ namespace dtActors
          /// Constructor
          BezierNodeActorProxy()
          {
-            SetClassName("BezierNode");
+            SetClassName("dtABC::BezierNode");
          }
 
          /**
@@ -119,10 +48,22 @@ namespace dtActors
          virtual void BuildPropertyMap();
 
          /**
-          * Sets the bezier control point on this proxy's actor
-          * @param controlPoint The controlPoint to set
+         * Cameras can be placed in a scene
+         */
+         virtual bool IsPlaceable() const { return true; }
+
+
+         /**
+          * Sets the bezier control point on enter for this proxy's actor
+          * @param controlPoint The entry controlPoint to set
           */
-         void SetBezierControlPoint(ActorProxy *controlPoint);
+         void SetBezierEntryControlPoint(ActorProxy *controlPoint);
+
+         /**
+         * Sets the bezier control point on exit for this proxy's actor
+         * @param controlPoint The exit controlPoint to set
+         */
+         void SetBezierExitControlPoint(ActorProxy *controlPoint);
 
          /**
           * Sets the next bezier node on this proxy's actor
@@ -140,40 +81,64 @@ namespace dtActors
           * Gets the next node on this proxy's actor
           * @return The node
           */
-         const BezierNode* GetNextBezierNode() const 
+         const dtABC::BezierNode* GetNextBezierNode() const 
          {
-            const BezierNode *bn = dynamic_cast<const BezierNode*> (mActor.get());
+            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
             if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type BezierNode");
+               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
             
-            return bn->GetNextBezierNode();
+            return bn->GetNext()->GetBezierInterface();
          }
 
          /**
           * Gets the previous node on this proxy's actor
           * @return The node
           */
-         const BezierNode* GetPreviousBezierNode() const 
+         const dtABC::BezierNode* GetPreviousBezierNode() const 
          {
-            const BezierNode *bn = dynamic_cast<const BezierNode*> (mActor.get());
+            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
             if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type BezierNode");
+               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
 
-            return bn->GetPreviousBezierNode();
+            return bn->GetPrev()->GetBezierInterface();
          }
 
          /**
-          * Gets the bezier control point on this proxy's actor
-          * @param controlPoint The controlPoint to set
+          * Gets the entry bezier control point on this proxy's actor
+          * @return controlPoint The entry controlPoint for this proxy's actor
           */
-         const BezierControlPoint* GetBezierControlPoint() const 
+         const dtABC::BezierControlPoint* GetBezierEntryControlPoint() const 
          {
-            const BezierNode *bn = dynamic_cast<const BezierNode*> (mActor.get());
+            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
             if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type BezierNode");
-            
-            return bn->GetBezierControlPoint();
+               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+
+            return bn->GetEntry();
          }
+
+         /**
+         * Gets the exit bezier control point on this proxy's actor
+         * @return controlPoint The exit controlPoint for this proxy's actor
+         */
+         const dtABC::BezierControlPoint* GetBezierExitControlPoint() const 
+         {
+            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
+            if(bn == NULL)
+               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+
+            return bn->GetExit();
+         }
+
+         dtDAL::ActorProxyIcon * GetBillBoardIcon();
+
+
+         const dtDAL::ActorProxy::RenderMode& GetRenderMode();
+
+         /*virtual*/ void OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+         /*virtual*/ void OnRotation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+         /*virtual*/ void OnTranslation(const osg::Vec3 &oldValue, const osg::Vec3 &newValue);
+
+
 
       protected:
 
@@ -183,10 +148,9 @@ namespace dtActors
          }
       
          /// Creates the actor that this proxy abstracts
-         virtual void CreateActor()
-         {
-            mActor = new BezierNode;
-         }  
+         virtual void CreateActor();
+
+         static int mNumNodes;
    };
 }
 

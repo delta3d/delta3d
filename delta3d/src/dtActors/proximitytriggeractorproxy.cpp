@@ -37,7 +37,10 @@ namespace dtActors
       ProximityTrigger* trigger = new ProximityTrigger;
       mActor = trigger;
 
-      SetName( "ProximityTrigger" );
+      static int mNumTriggers = 0;
+      std::ostringstream ss;
+      ss << "ProximityTrigger" << mNumTriggers++;
+      SetName(ss.str());
 
       // Find & set default collision shape and dimensions.
       Transformable::CollisionGeomType* type = trigger->GetCollisionGeomType();
@@ -86,9 +89,15 @@ namespace dtActors
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ProximityTrigger");
       }
 
-      //AddProperty(new dtDAL::ActorActorProperty("Action","Action",
-      //   dtDAL::MakeFunctor(*trigger,&ProximityTriggerActor::SetAction),
-      //   "Sets the action which this Proximity Trigger will start.", GROUPNAME));
+      AddProperty(new dtDAL::ActorActorProperty(*this, "Action","Action",
+         dtDAL::MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
+         "dtABC::Action","Sets the action which this Proximity Trigger will start."));
+
+      AddProperty(new dtDAL::FloatActorProperty("Time Delay","Time Delay",
+         dtDAL::MakeFunctor(*trigger,&ProximityTrigger::SetTimeDelay),
+         dtDAL::MakeFunctorRet(*trigger,&ProximityTrigger::GetTimeDelay),
+         "After this trigger has been fired it will wait this amount of time before starting its action.", "dtABC::AutoTrigger"));
+
    }
    
    //////////////////////////////////////////////////////////////////////////
@@ -103,14 +112,22 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void ProximityTriggerActorProxy::SetAction( Action* action )
+   void ProximityTriggerActorProxy::SetAction( ActorProxy* action )
    {
+      SetLinkedActor("Action", action);
+
       dtABC::ProximityTrigger* proximityTrigger = dynamic_cast<dtABC::ProximityTrigger*>( mActor.get() );
       if( proximityTrigger == 0 )
       {
          EXCEPT(dtDAL::ExceptionEnum::BaseException,"Expected a ProximityTrigger actor.");
       }
+      
+      dtABC::Action* a = NULL;
+      if(action)
+      {
+         a = dynamic_cast<dtABC::Action*>(action->GetActor());
+      }
 
-      proximityTrigger->GetTrigger()->SetAction(action);      
+      proximityTrigger->GetTrigger()->SetAction(a);      
    }
 }

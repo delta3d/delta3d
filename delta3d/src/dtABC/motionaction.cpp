@@ -96,13 +96,8 @@ void MotionAction::StepObject(const PathPoint& cp)
       }
       break;
    }
-   
-   //this is very inefficient but until we can
-   //fix the dtCore::Transform and dtCore::Transformable API
-   //we are stuck with it :(
-   dtCore::Transform newTrans;
-   newTrans.Set(mLocalTransform * pTransform);
-   mTargetObject->SetTransform(&newTrans);
+
+   mTargetObject->GetMatrixNode()->setMatrix(mLocalTransform * pTransform);
 }
 
 

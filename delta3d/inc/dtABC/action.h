@@ -49,6 +49,9 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
 
       bool GetIsRunning() const {return mIsRunning;}
 
+      void SetTimeStep(float dt){mTimeStep = dt;}
+      float GetTimeStep(){return mTimeStep;}
+
    protected:
       /*virtual*/ ~Action();
       Action(const Action&); //not implemented by design
