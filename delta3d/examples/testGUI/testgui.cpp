@@ -15,19 +15,16 @@ public:
    {
    }
 
-   ~TestGUIApp() {}
+   virtual ~TestGUIApp() {}
 
    virtual void Config()
    {
-      SetDataFilePathList( GetDeltaRootPath() + "/examples/testGUI/;" +
-                           GetDeltaDataPathList() + ";" +
-                           GetDeltaDataPathList()+"/gui/;" );
 
       dtABC::Application::Config();
 
       ///put something in the background to look at
       RefPtr<Object> helo = new Object( "Helo" );
-      helo->LoadFile( "models/uh-1n.ive" );
+      //helo->LoadFile( "models/uh-1n.ive" );
       AddDrawable( helo.get() );
 
       ///move the camera up
@@ -60,7 +57,7 @@ private:
    {
       try
       {
-         std::string schemeFileName = osgDB::findDataFile("gui/schemes/WindowsLook.scheme");
+         std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLook.scheme");
 
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -175,7 +172,13 @@ private:
 int main( int argc, const char* argv[] )
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( "..;" + GetDeltaDataPathList()+ ";" + dtCore::GetDeltaRootPath() + "/examples/testGUI" ); 
+
+   std::string guifilespath(  dtCore::GetDeltaDataPathList() + ";" +
+                              dtCore::GetDeltaDataPathList()+"/gui/;" + 
+                              dtCore::GetDeltaRootPath() + "/examples/testGUI" );
+
+   dtCore::SetDataFilePathList( guifilespath );
+
 
    std::string filename = "";
    if (argc > 1)

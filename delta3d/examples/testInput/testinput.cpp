@@ -23,8 +23,6 @@ CEGUI::colour kOn(1.f, 0.f, 0.f, 1.f);
 class TestInputApp : public Application,
    public InputMapperCallback
 {
-   DECLARE_MANAGEMENT_LAYER(TestInputApp)
-
 
 public:
 
@@ -123,7 +121,7 @@ public:
 
       try
       {
-         std::string schemeFileName = osgDB::findDataFile("gui/schemes/WindowsLook.scheme");
+         std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLook.scheme");
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
 
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -363,14 +361,11 @@ private:
 
 };
 
-IMPLEMENT_MANAGEMENT_LAYER(TestInputApp)
-
 int main( int argc, char **argv )
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testInput/;" +
                         GetDeltaDataPathList() + ";" +
                         GetDeltaDataPathList()+"/gui/;" );
-
 
    app = new TestInputApp( "config.xml" );
 
