@@ -72,6 +72,10 @@ private:
    friend class BezierPathDrawable;
 
 public:
+
+   ///Used to identify the BezierController.
+   static const std::string BEZIER_CONTROLLER_GEODE_ID;
+
    BezierController();
    
    const BezierNode* GetStartNode() const {return mStartNode.get();}
