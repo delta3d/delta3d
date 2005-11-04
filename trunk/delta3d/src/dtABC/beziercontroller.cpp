@@ -8,6 +8,7 @@
 namespace dtABC
 {
 
+const std::string BezierController::BEZIER_CONTROLLER_GEODE_ID("__DELTA3D_BEZIER_CONTROLLER__");
 
 BezierController::BezierController()
 {
@@ -17,6 +18,7 @@ BezierController::BezierController()
    mDrawable = new BezierPathDrawable;
    mDrawable->SetPath(this);
    mGeode = new osg::Geode();
+   mGeode->setName(BEZIER_CONTROLLER_GEODE_ID);
    mGeode->addDrawable(mDrawable.get());
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
