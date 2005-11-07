@@ -24,7 +24,7 @@ public:
 
       ///put something in the background to look at
       RefPtr<Object> helo = new Object( "Helo" );
-      //helo->LoadFile( "models/uh-1n.ive" );
+      helo->LoadFile( "models/uh-1n.ive" );
       AddDrawable( helo.get() );
 
       ///move the camera up
