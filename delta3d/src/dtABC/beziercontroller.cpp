@@ -212,9 +212,6 @@ bool BezierController::OnNextStep()
    if(!mLastPathPoint) return false;
 
 
-   const PathPoint& p0 = (*mCurrentPoint).mPoint;
-   float currentTime0 = (*mCurrentPoint).mTime;
-
    while(mCurrentPoint != mEndPoint && mTotalTime > (*mCurrentPoint).mTime)
    {
       mLastPathPoint = &(*mCurrentPoint);
