@@ -1,6 +1,6 @@
 /*
 * Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
+* Copyright (C) 2005, MOVES Institute & BMH Associates, Inc.
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * @author William E. Johnson II
+* @author Chris Osborn
 */
 #ifndef DELTA_CAMERA_ACTOR_PROXY
 #define DELTA_CAMERA_ACTOR_PROXY
