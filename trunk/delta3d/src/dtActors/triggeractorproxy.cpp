@@ -16,7 +16,8 @@
 * along with this library; if not, write to the Free Software Foundation, Inc.,
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
-* @author William E. Johnson II, Chris Osborn
+* @author William E. Johnson II
+* @author Chris Osborn
 */
 
 #include <dtActors/triggeractorproxy.h> 
@@ -69,16 +70,17 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      dtABC::Trigger * trigger = dynamic_cast<dtABC::Trigger*>( mActor.get() );
+      dtABC::Trigger* trigger = dynamic_cast<dtABC::Trigger*>( mActor.get() );
       if( trigger == 0 )
       {
          EXCEPT(dtDAL::ExceptionEnum::BaseException,"Expected a Trigger actor.");
       }
 
-      dtABC::Action* a = NULL;
-      if(action)
+      dtABC::Action* a(0);
+      
+      if( action != 0 )
       {
-         a = dynamic_cast<dtABC::Action*>(action->GetActor());
+         a = dynamic_cast<dtABC::Action*>( action->GetActor() );
       }
 
       trigger->SetAction(a);      

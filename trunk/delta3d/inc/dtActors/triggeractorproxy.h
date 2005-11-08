@@ -43,10 +43,10 @@ namespace dtActors
 
          /**
          * Trigger cannot have a position in the scene. That's the 
-         * ProximityTrigger's job. The indicatesthat the actor is a 
+         * ProximityTrigger's job. The indicates that the actor is a 
          * "global" actor.
          *
-         * @return False
+         * @return false
          * @see ActorProxy::IsPlaceable()
          */
          virtual bool IsPlaceable() const { return false; }

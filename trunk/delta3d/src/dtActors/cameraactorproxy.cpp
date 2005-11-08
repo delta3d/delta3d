@@ -1,6 +1,6 @@
 /*
 * Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
+* Copyright (C) 2005, MOVES Institute & BMH Associates, Inc.
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@
 * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 *
 * @author William E. Johnson II
+* @author Chris Osborn
 */
 #include <dtActors/cameraactorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
@@ -26,82 +27,79 @@
 
 using namespace dtCore;
 using namespace dtDAL;
+using namespace dtActors;
 
-namespace dtActors 
+///////////////////////////////////////////////////////////////////////////////
+void CameraActorProxy::CreateActor()
 {
+   mActor = new dtCore::Camera;
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void CameraActorProxy::CreateActor()
-    {
-        mActor = new dtCore::Camera;
+   static int actorCount = 0;
+   std::ostringstream ss;
+   ss << "Camera" << actorCount++;
+   SetName(ss.str());
 
-        static int actorCount = 0;
-        std::ostringstream ss;
-        ss << "Camera" << actorCount++;
-        SetName(ss.str());
-        
-        Camera *cam = dynamic_cast<Camera*>(mActor.get());
-        if(!cam)
-           EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+   Camera *cam = dynamic_cast<Camera*>(mActor.get());
+   if(!cam)
+      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
-        cam->SetEnabled(false);
-    }
+   cam->SetEnabled(false);
+}
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void CameraActorProxy::BuildPropertyMap()
-    {
-        const std::string &GROUPNAME = "Camera";
-        TransformableActorProxy::BuildPropertyMap();
+///////////////////////////////////////////////////////////////////////////////
+void CameraActorProxy::BuildPropertyMap()
+{
+   const std::string &GROUPNAME = "Camera";
+   TransformableActorProxy::BuildPropertyMap();
 
-        Camera *cam = dynamic_cast<Camera*>(mActor.get());
-        if(!cam)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+   Camera *cam = dynamic_cast<Camera*>(mActor.get());
+   if(!cam)
+      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
-        AddProperty( new BooleanActorProperty("Enable", "Enabled",
-           MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
-           MakeFunctorRet(*cam, &dtCore::Camera::GetEnabled),
-           "Enables or disables this camera at runtime", GROUPNAME));
+   AddProperty( new BooleanActorProperty("Enable", "Enabled",
+      MakeFunctor(*cam, &dtCore::Camera::SetEnabled),
+      MakeFunctorRet(*cam, &dtCore::Camera::GetEnabled),
+      "Enables or disables this camera at runtime", GROUPNAME));
 
-        // This property is used for the manipulation of the clear color
-        // of a camera. Uses 4 values in the RGBA format for color
-        // representation. All values are clamped between 0 - 1.
-        // Default is 0, 0, 1, 0 (blue)
-        AddProperty(new ColorRgbaActorProperty("Clear Color", "Clear Color",
-            MakeFunctor(*this, &dtActors::CameraActorProxy::SetClearColor),
-            MakeFunctorRet(*this, &dtActors::CameraActorProxy::GetClearColor),
-            "Sets the camera's clear color, which can be thought of as the background color", GROUPNAME));
-    }
+   // This property is used for the manipulation of the clear color
+   // of a camera. Uses 4 values in the RGBA format for color
+   // representation. All values are clamped between 0 - 1.
+   // Default is 0, 0, 1, 0 (blue)
+   AddProperty(new ColorRgbaActorProperty("Clear Color", "Clear Color",
+      MakeFunctor(*this, &dtActors::CameraActorProxy::SetClearColor),
+      MakeFunctorRet(*this, &dtActors::CameraActorProxy::GetClearColor),
+      "Sets the camera's clear color, which can be thought of as the background color", GROUPNAME));
+}
 
-    dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
-    {
-       if(!mBillBoardIcon.valid())
-       {
-          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::CAMERA);
-       }
+dtDAL::ActorProxyIcon* CameraActorProxy::GetBillBoardIcon()
+{
+   if(!mBillBoardIcon.valid())
+   {
+      mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::CAMERA);
+   }
 
-       return mBillBoardIcon.get();
-       
-    }
+   return mBillBoardIcon.get();
 
-    ///////////////////////////////////////////////////////////////////////////////
-    osg::Vec4f CameraActorProxy::GetClearColor()
-    {
-        Camera *cam = dynamic_cast<Camera*>(mActor.get());
-        if(!cam)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
-        
-        osg::Vec4 color;
-        cam->GetClearColor(color);
-        return color;
-    }
+}
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
-    {
-        Camera *cam = dynamic_cast<Camera*>(mActor.get());
-        if(!cam)
-            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+///////////////////////////////////////////////////////////////////////////////
+osg::Vec4f CameraActorProxy::GetClearColor()
+{
+   Camera *cam = dynamic_cast<Camera*>(mActor.get());
+   if(!cam)
+      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
 
-        cam->SetClearColor(color);
-    }
+   osg::Vec4 color;
+   cam->GetClearColor(color);
+   return color;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void CameraActorProxy::SetClearColor(const osg::Vec4 &color)
+{
+   Camera *cam = dynamic_cast<Camera*>(mActor.get());
+   if(!cam)
+      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be dtCore::Camera.");
+
+   cam->SetClearColor(color);
 }
