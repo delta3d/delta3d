@@ -166,45 +166,72 @@ void Camera::Frame()
    // Only do our normal Camera stuff if it is enabled.
    // If Producer::Camera::frame is never called, our cull callback
    // will never be called either.
-   if( GetEnabled() && mWindow.valid() )
+   if( !GetEnabled() )
    {
-      if( mScene.valid() && !System::Instance()->GetPause() )
-      {
-         // TODO: Investigate double updates when we have multiple camera.
-         // Anything with an update callback may be called twice!
-         GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
-      }
-      
-      //Get our Camera's position, up vector, and look-at vector and pass them
-      //to the Producer Camera
-      osg::Matrix mat = GetMatrixNode()->getMatrix();
-      Transform absXform;
-      
-      osg::Matrix absMat;
-      GetAbsoluteMatrix( GetMatrixNode(), absMat );
-      
-      //choose Z as the up vector
-      osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
-      osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
-      osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
-      F.normalize();
-      UP.normalize();
-      
-      osg::Vec3 s = F ^ UP;
-      osg::Vec3 u = s ^ F;
-      F = -F;
-      
-      Producer::Matrix m(s[0], u[0], F[0], 0.0,
-                         s[1], u[1], F[1], 0.0,
-                         s[2], u[2], F[2], 0.0,
-                         s*eye, u*eye, F*eye, 1.0);
-      mCamera->setViewByMatrix(m);
-      
-      //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
-      //Might cause a problem with multi camera's sharing one RenderSurface
-
-      mCamera->frame(true);
+      return;
    }
+
+   // We also do not want to perform frame if we do not have a valid
+   // window.
+   if( !mWindow.valid() )
+   {
+      // This is a special case for dtABC::Widget. Normally a Window will
+      // be set via SetWindow (wow). But when a Widget is configured it
+      // creates a DeltaWin, but does not directly call SetWindow. Instead
+      // it creates its own Producer::RenderSurface and never tells poor
+      // ol' Camera. However it does set the Producer::Window handle on
+      // the RenderSurface we are using. So if SetWindow is never called
+      // (i.e. !mWindow.valid()) let's check if we have a valid
+      // Producer::Window.
+      Producer::Window pWindow(0);
+      
+      if( Producer::RenderSurface* rs = mCamera->getRenderSurface() )
+      {
+         pWindow = rs->getWindow();
+      }
+
+      if( pWindow == 0 )
+      {
+         return;
+      }
+   }
+      
+   if( mScene.valid() && !System::Instance()->GetPause() )
+   {
+      // TODO: Investigate double updates when we have multiple camera.
+      // Anything with an update callback may be called twice!
+      GetSceneHandler()->GetSceneView()->update(); //osgUtil::SceneView update
+   }
+   
+   //Get our Camera's position, up vector, and look-at vector and pass them
+   //to the Producer Camera
+   osg::Matrix mat = GetMatrixNode()->getMatrix();
+   Transform absXform;
+   
+   osg::Matrix absMat;
+   GetAbsoluteMatrix( GetMatrixNode(), absMat );
+   
+   //choose Z as the up vector
+   osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
+   osg::Vec3 UP(absMat(2,0), absMat(2,1), absMat(2,2));
+   osg::Vec3 F = UP ^ osg::Vec3(absMat(0,0), absMat(0,1), absMat(0,2));
+   F.normalize();
+   UP.normalize();
+   
+   osg::Vec3 s = F ^ UP;
+   osg::Vec3 u = s ^ F;
+   F = -F;
+   
+   Producer::Matrix m(s[0], u[0], F[0], 0.0,
+                      s[1], u[1], F[1], 0.0,
+                      s[2], u[2], F[2], 0.0,
+                      s*eye, u*eye, F*eye, 1.0);
+   mCamera->setViewByMatrix(m);
+   
+   //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
+   //Might cause a problem with multi camera's sharing one RenderSurface
+
+   mCamera->frame(true);
 }
 
 void Camera::SetWindow( DeltaWin* win )
