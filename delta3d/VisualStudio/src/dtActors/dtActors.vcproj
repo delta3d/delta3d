@@ -212,6 +212,9 @@
 			<File
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\tripodactorproxy.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -297,6 +300,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\triggeractorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\tripodactorproxy.h">
 			</File>
 		</Filter>
 		<Filter
