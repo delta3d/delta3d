@@ -41,7 +41,7 @@
 #include <dtActors/triggeractorproxy.h>
 #include <dtActors/proximitytriggeractorproxy.h>
 #include <dtActors/cameraactorproxy.h>
-
+#include <dtActors/tripodactorproxy.h>
 
 namespace dtActors
 {
@@ -159,5 +159,9 @@ namespace dtActors
         dtDAL::ActorType* cameraActor = new dtDAL::ActorType("Camera",
            "dtcore", "dtCore::Camera Actor.");
         mActorFactory->RegisterType<CameraActorProxy>(cameraActor);
+
+        dtDAL::ActorType* tripodActor = new dtDAL::ActorType("Tripod",
+           "dtcore", "dtCore::Tripod Actor.");
+        mActorFactory->RegisterType<TripodActorProxy>(tripodActor);
     }
 }
