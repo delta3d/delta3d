@@ -1838,8 +1838,9 @@ namespace dtDAL
     //// Constant Initialization ////////////////////////
     /////////////////////////////////////////////////////
 
-
-    const char* const MapXMLConstants::EDITOR_VERSION = "0.1";
+    //Would be nice to have this come from an API call...
+    const char* const MapXMLConstants::EDITOR_VERSION = "1.1.0";
+   
     const char* const MapXMLConstants::SCHEMA_VERSION = "1.0";
 
     XMLCh* MapXMLConstants::END_XML_ELEMENT = NULL;
