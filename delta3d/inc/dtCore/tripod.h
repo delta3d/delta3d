@@ -61,7 +61,6 @@ namespace dtCore
       ///set camera by name
       void SetCamera( const std::string& camName );
 
-      /*
       RefPtr<Camera> GetCamera() const
       {
          DEPRECATE(  "RefPtr<Camera> GetCamera()",
@@ -69,7 +68,6 @@ namespace dtCore
 
          return mCamera;
       }
-      */
 
       ///Get a non-const pointer to the currently connected Camera
       Camera* GetCamera() {return mCamera.get();}
@@ -80,7 +78,6 @@ namespace dtCore
       ///Attach to transformable by name
       void SetAttachToTransformable(const std::string& parentName);
 
-      /*
       RefPtr<Transformable> GetAttachedTransformable() const
       {
          DEPRECATE(  "RefPtr<Transformable> GetAttachedTransformable()",
@@ -88,7 +85,6 @@ namespace dtCore
 
          return mParentTrans;
       }
-      */
 
       ///Get a non-const pointer to the currently connected Transformable
       Transformable* GetAttachedTransformable() {return mParentTrans.get();}

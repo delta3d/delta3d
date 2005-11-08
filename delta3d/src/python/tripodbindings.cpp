@@ -15,9 +15,13 @@ void initTripodBindings()
 
    void (Tripod::*SetCamera1)(Camera*) = &Tripod::SetCamera;
    void (Tripod::*SetCamera2)(const std::string&) = &Tripod::SetCamera;
+
+   Camera* (Tripod::*GetCamera1)() = &Tripod::GetCamera;
    
    void (Tripod::*SetAttachToTransformable1)(Transformable*) = &Tripod::SetAttachToTransformable;
    void (Tripod::*SetAttachToTransformable2)(const std::string&) = &Tripod::SetAttachToTransformable;
+
+   Transformable* (Tripod::*GetAttachedTransformable1)() = &Tripod::GetAttachedTransformable;
 
    void (Tripod::*SetOffset1)(float, float, float, float, float, float) = &Tripod::SetOffset;
    void (Tripod::*SetOffset2)(const osg::Vec3&, const osg::Vec3&) = &Tripod::SetOffset;
@@ -28,6 +32,8 @@ void initTripodBindings()
    void (Tripod::*SetScale2)(const osg::Vec3&, const osg::Vec3&) = &Tripod::SetScale;
 
    void (Tripod::*GetScale1)(osg::Vec3&, osg::Vec3&) = &Tripod::GetScale;
+
+   Transformable* (Tripod::*GetLookAtTarget1)() = &Tripod::GetLookAtTarget;
    
    scope Tripod_scope = class_<Tripod, bases<Transformable>, dtCore::RefPtr<Tripod> >("Tripod", init<optional<Camera*, Transformable*> >())
       .def("GetInstanceCount", &Tripod::GetInstanceCount)
@@ -37,10 +43,10 @@ void initTripodBindings()
       .staticmethod("GetInstance")
       .def("SetCamera", SetCamera1)
       .def("SetCamera", SetCamera2)
-      .def("GetCamera", &Tripod::GetCamera)
+      .def("GetCamera", GetCamera1, return_internal_reference<>())
       .def("SetAttachToTransformable", SetAttachToTransformable1)
       .def("SetAttachToTransformable", SetAttachToTransformable2)
-      .def("GetAttachedTransformable", &Tripod::GetAttachedTransformable)
+      .def("GetAttachedTransformable", GetAttachedTransformable1, return_internal_reference<>())
       .def("SetOffset", SetOffset1)
       .def("SetOffset", SetOffset2)
       .def("GetOffset", GetOffset1)
@@ -49,7 +55,9 @@ void initTripodBindings()
       .def("GetScale", GetScale1)
       .def("SetTetherMode", &Tripod::SetTetherMode)
       .def("GetTetherMode", &Tripod::GetTetherMode)
-      .def("SetLookAtTarget", &Tripod::SetLookAtTarget);
+      .def("SetLookAtTarget", &Tripod::SetLookAtTarget)
+      .def("GetLookAtTarget", GetLookAtTarget1, return_internal_reference<>())
+      ;
       
    enum_<Tripod::TetherMode>("TetherMode")
       .value("TETHER_PARENT_REL", Tripod::TETHER_PARENT_REL)
