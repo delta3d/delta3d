@@ -22,7 +22,7 @@ void initMapBindings()
       ;
 
    class_< ActorProxyVector >( "ActorProxyVector" )
-      .def(vector_indexing_suite< ActorProxyVector >())
+      .def(vector_indexing_suite< ActorProxyVector, true >())
       ;
     
    class_< StringStringMap >( "StringStringMap" )
