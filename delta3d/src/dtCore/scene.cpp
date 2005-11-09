@@ -323,6 +323,10 @@ void Scene::UnRegisterCollidable( Transformable* collidable )
    {
       if( *it == collidable )
       {
+         if( Physical* physical = dynamic_cast<Physical*>(*it) )
+         {
+            physical->SetBodyID(0);
+         }
          mCollidableContents.erase( it );
          break;
       }
