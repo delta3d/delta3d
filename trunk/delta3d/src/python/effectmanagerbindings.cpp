@@ -49,8 +49,6 @@ void initEffectManagerBindings()
 {
    EffectManager* (*EffectManagerGI1)(int) = &EffectManager::GetInstance;
    EffectManager* (*EffectManagerGI2)(std::string) = &EffectManager::GetInstance;
-
-   Detonation* (EffectManager::*AddDetonation1)( const osg::Vec3&, DetonationType, double, Transformable* ) = &EffectManager::AddDetonation;
   
    enum_<DetonationType>("DetonationType")
       .value("HighExplosiveDetonation", HighExplosiveDetonation)
