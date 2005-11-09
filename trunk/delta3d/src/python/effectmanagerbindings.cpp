@@ -68,7 +68,6 @@ void initEffectManagerBindings()
       .def("GetEffectCount", &EffectManager::GetEffectCount)
       .def("GetEffect", &EffectManager::GetEffect, return_internal_reference<>())
       .def("AddDetonation", &EffectManager::AddDetonation, AD_overloads()[return_internal_reference<>()])
-      //.def("AddDetonation", AddDetonation1, return_internal_reference<>())
       .def("RemoveEffect", &EffectManager::RemoveEffect)
       .def("AddEffectListener", &EffectManager::AddEffectListener)
       .def("RemoveEffectListener", &EffectManager::RemoveEffectListener);
