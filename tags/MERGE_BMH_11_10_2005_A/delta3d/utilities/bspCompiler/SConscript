@@ -1,0 +1,11 @@
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+
+# Build the icon
+if OS == 'windows' :
+   srcs += env.RES( 'bspCompiler.rc' )
+
+deps = [ 'dtBSP' ]
+
+BuildProgram( 'bspCompiler', srcs, deps )
