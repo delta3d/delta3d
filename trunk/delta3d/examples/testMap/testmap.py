@@ -112,8 +112,9 @@ class TestMap(Application):
       self.step = -0.00001
       self.bufferExplosion = 1
 
-SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" + 
-                        GetDeltaDataPathList() )
+SetDataFilePathList (   GetDeltaRootPath() + "/examples/testMap/;" +
+                        GetDeltaDataPathList() + ";" +
+                        GetDeltaDataPathList() + "/demoMap/Particles" )
 
 app = TestMap('testMap.xml')
 
