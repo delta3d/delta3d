@@ -4,7 +4,7 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
 
-
+using namespace dtCore;
 using namespace dtABC;
 using namespace dtDAL;
 
@@ -18,8 +18,6 @@ namespace dtActors
    MotionActionActorProxy::ParentRelationEnum MotionActionActorProxy::ParentRelationEnum::FOLLOW_PARENT("FOLLOW_PARENT");
    MotionActionActorProxy::ParentRelationEnum MotionActionActorProxy::ParentRelationEnum::TRACK_AND_FOLLOW("TRACK_AND_FOLLOW");
 
-
-
    bool MotionActionActorProxy::IsPlaceable()
    {
       return false;
@@ -29,38 +27,39 @@ namespace dtActors
    {
       ActionActorProxy::BuildPropertyMap();
 
-      dtABC::MotionAction* mo = dynamic_cast<dtABC::MotionAction*>(mActor.get());
+      MotionAction* mo = dynamic_cast<MotionAction*>(mActor.get());
 
       if(!mo)
       {
           EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtABC::MotionAction");
       }
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Target Object", "Target Object",
+      AddProperty(new ActorActorProperty(*this, "Target Object", "Target Object",
          MakeFunctor(*this, &MotionActionActorProxy::SetActorTargetObject),
+         MakeFunctorRet(*this, &MotionActionActorProxy::GetActorTargetObject),
          "dtCore::Transformable",
          "Sets the object to be moved when this action is triggered"));
 
    }
 
-
-   const dtCore::Transformable* MotionActionActorProxy::GetActorTargetObject() const
+   DeltaDrawable* MotionActionActorProxy::GetActorTargetObject()
    {
-      const MotionAction *ma = dynamic_cast<const MotionAction*> (mActor.get());
-      if(!ma)
+      MotionAction* mo = dynamic_cast< MotionAction* >( mActor.get() );
+
+      if( mo == 0 )
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::MotionAction");
+         EXCEPT( ExceptionEnum::InvalidActorException, "Actor should be type dtABC::MotionAction" );
       }
 
-      return ma->GetTargetObject();
+      return mo->GetTargetObject();
    }
 
    void MotionActionActorProxy::SetActorTargetObject(ActorProxy* node)
    {
       SetLinkedActor("Target Object", node);
 
-      dtABC::MotionAction* ma = dynamic_cast<dtABC::MotionAction*>(mActor.get());
-      dtCore::Transformable* trans = dynamic_cast<dtCore::Transformable*>(node->GetActor());
+      MotionAction* ma = dynamic_cast<MotionAction*>(mActor.get());
+      Transformable* trans = dynamic_cast<Transformable*>(node->GetActor());
 
       if(!ma)
       {

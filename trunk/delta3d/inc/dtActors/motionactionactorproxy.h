@@ -64,7 +64,7 @@ public:
 
    void SetActorTargetObject(ActorProxy* pDrawable);
 
-   const dtCore::Transformable* GetActorTargetObject() const;
+   dtCore::DeltaDrawable* GetActorTargetObject();
 
 };
 

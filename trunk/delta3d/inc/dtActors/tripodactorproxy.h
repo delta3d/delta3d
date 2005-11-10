@@ -78,6 +78,12 @@ namespace dtActors
       void SetCamera( dtDAL::ActorProxy* cameraProxy );
 
       /**
+      * Gets the camera which this tripod is moving
+      * @return the camera which the tripod is moving
+      */
+      dtCore::DeltaDrawable* GetCamera();
+
+      /**
       * Sets the transformable (i.e. parent) which this tripod will
       * move the camera in relation to
       * @param transformableProxy the parent transformable
@@ -85,10 +91,23 @@ namespace dtActors
       void SetAttachToTransformable( dtDAL::ActorProxy* transformableProxy );
 
       /**
+      * Gets the transformable (i.e. parent) which this tripod is
+      * moving the camera in relation to
+      * @return the parent transformable
+      */
+      dtCore::DeltaDrawable* GetAttachedTransformable();
+
+      /**
       * Sets the transformable you wish to target the parent at
       * @param targetProxy the desired target
       */
       void SetLookAtTarget( dtDAL::ActorProxy* targetProxy );
+
+      /**
+      * Gets the transformable which the parent is targeted at
+      * @return the target
+      */
+      dtCore::DeltaDrawable* GetLookAtTarget();
 
       /**
       * Sets the rotation offset from the parent

@@ -81,53 +81,25 @@ namespace dtActors
           * Gets the next node on this proxy's actor
           * @return The node
           */
-         const dtABC::BezierNode* GetNextBezierNode() const 
-         {
-            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
-            if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
-            
-            return bn->GetNext()->GetBezierInterface();
-         }
+         dtCore::DeltaDrawable* GetNextBezierNode();
 
          /**
           * Gets the previous node on this proxy's actor
           * @return The node
           */
-         const dtABC::BezierNode* GetPreviousBezierNode() const 
-         {
-            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
-            if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
-
-            return bn->GetPrev()->GetBezierInterface();
-         }
+         dtCore::DeltaDrawable* GetPreviousBezierNode();
 
          /**
           * Gets the entry bezier control point on this proxy's actor
           * @return controlPoint The entry controlPoint for this proxy's actor
           */
-         const dtABC::BezierControlPoint* GetBezierEntryControlPoint() const 
-         {
-            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
-            if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
-
-            return bn->GetEntry();
-         }
+         dtCore::DeltaDrawable* GetBezierEntryControlPoint();
 
          /**
          * Gets the exit bezier control point on this proxy's actor
          * @return controlPoint The exit controlPoint for this proxy's actor
          */
-         const dtABC::BezierControlPoint* GetBezierExitControlPoint() const 
-         {
-            const dtABC::BezierNode *bn = dynamic_cast<const dtABC::BezierNode*> (mActor.get());
-            if(bn == NULL)
-               EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
-
-            return bn->GetExit();
-         }
+         dtCore::DeltaDrawable* GetBezierExitControlPoint();
 
          dtDAL::ActorProxyIcon * GetBillBoardIcon();
 

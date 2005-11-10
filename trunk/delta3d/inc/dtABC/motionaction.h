@@ -46,6 +46,7 @@ public:
 public:
    MotionAction();
 
+   dtCore::Transformable* GetTargetObject() { return mTargetObject.get(); }
    const dtCore::Transformable* GetTargetObject() const {return mTargetObject.get();}
    void SetTargetObject(dtCore::Transformable* pTarget){mTargetObject = pTarget;}
 

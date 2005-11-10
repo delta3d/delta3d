@@ -77,6 +77,11 @@ namespace dtActors
         */
         void SetAction( dtDAL::ActorProxy* action );
 
+        /**
+        * Wrapper to get the Action on the internal Trigger.
+        */
+        dtCore::DeltaDrawable* GetAction();
+
     protected:
 
         /**

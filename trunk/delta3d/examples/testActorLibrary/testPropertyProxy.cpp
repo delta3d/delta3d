@@ -173,6 +173,7 @@ const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
 
         AddProperty(new ActorActorProperty(*this, "Test_Actor", "Test Actor",
             MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestActor),
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestActor),
             "dtCore::Transformable",
             "An example linked actor property", GROUPNAME));
     }

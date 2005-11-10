@@ -78,6 +78,7 @@ public:
 
    BezierController();
    
+   BezierNode* GetStartNode() {return mStartNode.get();}
    const BezierNode* GetStartNode() const {return mStartNode.get();}
    void SetStartNode(BezierNode* pStart);
 

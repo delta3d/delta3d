@@ -40,10 +40,9 @@ public:
    /*virtual*/ bool IsPlaceable() const {return false;};
    /*virtual*/ void BuildPropertyMap();
 
-   const dtABC::BezierNode* GetActorStartNode() const;
+   dtCore::DeltaDrawable* GetActorStartNode();
    void SetActorStartNode(ActorProxy* pBezierNode);
    
-
    /*virtual*/ //const ActorProxy::RenderMode& GetRenderMode();
 
 protected:

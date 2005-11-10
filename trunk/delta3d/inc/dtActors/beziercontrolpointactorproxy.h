@@ -63,7 +63,7 @@ namespace dtActors
           * Gets the bezier node of this actor proxy
           * @return The bezier node
           */
-         const dtABC::BezierNode* GetBezierNode() const;
+         dtCore::DeltaDrawable* GetBezierNode();
 
 
          dtDAL::ActorProxyIcon * GetBillBoardIcon();

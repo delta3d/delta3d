@@ -65,14 +65,17 @@ void TripodActorProxy::BuildPropertyMap()
 
    AddProperty(new ActorActorProperty(*this, "Camera", "Camera",
       MakeFunctor(*this,&TripodActorProxy::SetCamera),
+      MakeFunctorRet(*this,&TripodActorProxy::GetCamera),
       "dtCore::Camera", "Sets the camera which this tripod will offset."));
    
    AddProperty(new ActorActorProperty(*this, "Parent", "Parent",
       MakeFunctor(*this,&TripodActorProxy::SetAttachToTransformable),
+      MakeFunctorRet(*this,&TripodActorProxy::GetAttachedTransformable),
       "dtCore::Transformable", "Sets the Transformable which this Tripod will follow."));
    
    AddProperty(new ActorActorProperty(*this, "Look-At Target", "Look-At Target",
       MakeFunctor(*this,&TripodActorProxy::SetLookAtTarget),
+      MakeFunctorRet(*this,&TripodActorProxy::GetLookAtTarget),
       "dtCore::Transformable", "Sets the Transformable which this Tripod will point the Camera at."));
    
    AddProperty(new Vec3ActorProperty("Rotation Offset", "Rotation Offset",
@@ -104,14 +107,14 @@ void TripodActorProxy::BuildPropertyMap()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetCamera( dtDAL::ActorProxy* cameraProxy )
+void TripodActorProxy::SetCamera( ActorProxy* cameraProxy )
 {
    SetLinkedActor( "Camera", cameraProxy );
 
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( dtDAL::ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
    }
 
    Camera* camera(0);
@@ -125,14 +128,26 @@ void TripodActorProxy::SetCamera( dtDAL::ActorProxy* cameraProxy )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetAttachToTransformable( dtDAL::ActorProxy* transformableProxy )
+DeltaDrawable* TripodActorProxy::GetCamera()
+{
+   Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
+   if( tripod == 0 )
+   {
+      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+   }
+
+   return tripod->GetCamera();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void TripodActorProxy::SetAttachToTransformable( ActorProxy* transformableProxy )
 {
    SetLinkedActor( "Parent", transformableProxy );
 
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( dtDAL::ExceptionEnum::BaseException,"Expected a Tripod actor." );
+      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
    }
 
    Transformable* parent(0);
@@ -146,14 +161,26 @@ void TripodActorProxy::SetAttachToTransformable( dtDAL::ActorProxy* transformabl
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void TripodActorProxy::SetLookAtTarget( dtDAL::ActorProxy* targetProxy )
+DeltaDrawable* TripodActorProxy::GetAttachedTransformable()
+{
+   Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
+   if( tripod == 0 )
+   {
+      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+   }
+
+   return tripod->GetAttachedTransformable();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void TripodActorProxy::SetLookAtTarget( ActorProxy* targetProxy )
 {
    SetLinkedActor( "Look-At Target", targetProxy );
 
    Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
    if( tripod == 0 )
    {
-      EXCEPT( dtDAL::ExceptionEnum::BaseException, "Expected a dtCore::Tripod actor." );
+      EXCEPT( ExceptionEnum::BaseException, "Expected a dtCore::Tripod actor." );
    }
 
    Transformable* target(0);
@@ -164,6 +191,18 @@ void TripodActorProxy::SetLookAtTarget( dtDAL::ActorProxy* targetProxy )
    }
 
    tripod->SetLookAtTarget(target);         
+}
+
+///////////////////////////////////////////////////////////////////////////////
+DeltaDrawable* TripodActorProxy::GetLookAtTarget()
+{
+   Tripod* tripod = dynamic_cast< Tripod* >( mActor.get() );
+   if( tripod == 0 )
+   {
+      EXCEPT( ExceptionEnum::BaseException,"Expected a Tripod actor." );
+   }
+
+   return tripod->GetLookAtTarget();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

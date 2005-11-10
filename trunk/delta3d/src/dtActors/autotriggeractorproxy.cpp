@@ -45,36 +45,48 @@ namespace dtActors
       AutoTrigger* trigger = dynamic_cast<AutoTrigger*>(mActor.get());
       if(!trigger)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::AutoTrigger");
+         EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::AutoTrigger");
       }
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Action","Action",
-         dtDAL::MakeFunctor(*this ,&AutoTriggerActorProxy::SetAction),
+      AddProperty(new ActorActorProperty(*this, "Action","Action",
+         MakeFunctor(*this ,&AutoTriggerActorProxy::SetAction),
+         MakeFunctorRet(*this ,&AutoTriggerActorProxy::GetAction),
          "dtABC::Action","Sets the action which this Auto Trigger will start."));
 
-      AddProperty(new dtDAL::FloatActorProperty("Time Delay","Time Delay",
-         dtDAL::MakeFunctor(*trigger,&AutoTrigger::SetTimeDelay),
-         dtDAL::MakeFunctorRet(*trigger,&AutoTrigger::GetTimeDelay),
+      AddProperty(new FloatActorProperty("Time Delay","Time Delay",
+         MakeFunctor(*trigger,&AutoTrigger::SetTimeDelay),
+         MakeFunctorRet(*trigger,&AutoTrigger::GetTimeDelay),
          "After this trigger has been fired it will wait this amount of time before starting its action.", "dtABC::AutoTrigger"));
 
+   }
+
+   DeltaDrawable* AutoTriggerActorProxy::GetAction()
+   {
+      AutoTrigger* autoTrigger = dynamic_cast<AutoTrigger*>( mActor.get() );
+      if( autoTrigger == 0 )
+      {
+         EXCEPT(ExceptionEnum::BaseException,"Expected an AutoTrigger actor.");
+      }
+
+      return autoTrigger->GetTrigger()->GetAction();  
    }
 
    void AutoTriggerActorProxy::SetAction( ActorProxy* action )
    {
       SetLinkedActor("Action", action);
 
-      dtABC::AutoTrigger* proximityTrigger = dynamic_cast<dtABC::AutoTrigger*>( mActor.get() );
-      if( proximityTrigger == 0 )
+      AutoTrigger* autoTrigger = dynamic_cast<AutoTrigger*>( mActor.get() );
+      if( autoTrigger == 0 )
       {
-         EXCEPT(dtDAL::ExceptionEnum::BaseException,"Expected an AutoTrigger actor.");
+         EXCEPT(ExceptionEnum::BaseException,"Expected an AutoTrigger actor.");
       }
 
-      dtABC::Action* a = NULL;
+      Action* a = NULL;
       if(action)
       {
-         a = dynamic_cast<dtABC::Action*>(action->GetActor());
+         a = dynamic_cast<Action*>(action->GetActor());
       }
 
-      proximityTrigger->GetTrigger()->SetAction(a);      
+      autoTrigger->GetTrigger()->SetAction(a);      
    }
 }
