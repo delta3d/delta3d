@@ -397,10 +397,12 @@ public:
 
     void setTextureResourceName(const std::string &fileName) { myTexture = fileName; }
 
-    ActorProxy* GetTestActor() 
+    dtCore::DeltaDrawable* GetTestActor() 
     {
        LOG_ALWAYS("ActorProxy get");
-       return this->GetLinkedActor("Test_Actor");
+       
+       ActorProxy* proxy = GetLinkedActor("Test_Actor");
+       return proxy->GetActor();
     }
 
     void SetTestActor(ActorProxy* proxy) 
