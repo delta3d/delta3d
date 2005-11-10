@@ -416,6 +416,9 @@
 				RelativePath="..\..\..\inc\dtCore\scene.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtCore\sigslot.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtCore\skybox.h">
 			</File>
 			<File
