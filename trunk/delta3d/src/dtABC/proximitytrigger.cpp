@@ -19,8 +19,8 @@ ProximityTrigger::ProximityTrigger( const std::string& name )
    // Give a default collision shape and size.
    SetCollisionSphere(5.0f);
 
-   // By default, we don't want the trigger itself to hit any other
-   // transformables.
+   // By default, we want the trigger itself to collide with anything
+   SetCollisionCollideBits(0xFFFFFFFF);
    SetCollisionCategoryBits(0);
 
    // Set the update callback which keeps track of traversal numbers.

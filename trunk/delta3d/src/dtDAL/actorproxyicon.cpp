@@ -150,6 +150,12 @@ namespace dtDAL
       osg::Group *arrow = CreateOrientationArrow();
       mArrowNode = new dtCore::Transformable();
       mArrowNode->GetMatrixNode()->addChild(arrow);
+
+      osg::Group *arrowUp = CreateOrientationArrow();
+      mArrowNodeUp = new dtCore::Transformable();
+      mArrowNodeUp->GetMatrixNode()->addChild(arrowUp);
+
+
       mIconNode = new dtCore::Transformable();
       osg::Geode *billBoard = new osg::Geode();
       billBoard->addDrawable(geom);
@@ -158,6 +164,9 @@ namespace dtDAL
       mBillBoard = new BillBoardDrawable();
       mBillBoard->AddChild(mIconNode.get());
       mBillBoard->AddChild(mArrowNode.get());
+      mBillBoard->AddChild(mArrowNodeUp.get());
+
+      SetActorRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -177,7 +186,7 @@ namespace dtDAL
    {
       return  mBillBoard->GetUniqueId() == drawable->GetUniqueId() ||
          mIconNode->GetUniqueId() == drawable->GetUniqueId() ||
-         mArrowNode->GetUniqueId() == drawable->GetUniqueId();
+         mArrowNode->GetUniqueId() == drawable->GetUniqueId() || mArrowNodeUp->GetUniqueId() == drawable->GetUniqueId();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -192,6 +201,10 @@ namespace dtDAL
       mArrowNode->GetTransform(&trans);
       trans.SetTranslation(newPos);
       mArrowNode->SetTransform(&trans);
+
+      mArrowNodeUp->GetTransform(&trans);
+      trans.SetTranslation(newPos);
+      mArrowNodeUp->SetTransform(&trans);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -210,6 +223,11 @@ namespace dtDAL
       mArrowNode->GetTransform(&tx);
       tx.SetRotation(hpr);
       mArrowNode->SetTransform(&tx);
+     
+      tx.SetRotation(osg::Vec3(hpr[0], hpr[1] + 90.0f, hpr[2]));
+
+      mArrowNodeUp->SetTransform(&tx);
+      
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -219,6 +237,12 @@ namespace dtDAL
       mArrowNode->GetTransform(&tx);
       tx.SetRotation(mat);
       mArrowNode->SetTransform(&tx);
+      osg::Vec3 hpr;
+      tx.GetRotation(hpr);
+      hpr[1] += 90.0f;
+      tx.SetRotation(hpr);
+
+      mArrowNodeUp->SetTransform(&tx);
    }
 
    //////////////////////////////////////////////////////////////////////////
