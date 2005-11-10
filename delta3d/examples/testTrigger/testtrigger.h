@@ -48,7 +48,8 @@ class TestTrigger : public dtABC::Application
          virtual ~LightAction() {}
          LightAction( const LightAction& ); // Not implemented by design
 
-         virtual bool OnNextStep()  { return true; }
+         //returning false will tell this not to update again
+         virtual bool OnNextStep()  { return false; }
 
          virtual void OnStart();
 

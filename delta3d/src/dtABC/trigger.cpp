@@ -45,7 +45,10 @@ void Trigger::Update( double time )
 
       if( mTimeLeft <= 0 )
       {
-         mActionToFire->Start();
+         if(mActionToFire.valid())
+         {
+            mActionToFire->Start();
+         }
          mTimeLeft = mTimeDelay;
          RemoveSender( dtCore::System::Instance() );
       }

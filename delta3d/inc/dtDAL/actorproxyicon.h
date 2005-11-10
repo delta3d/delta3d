@@ -209,6 +209,9 @@ namespace dtDAL
 
         ///A transformable used to represent an arrow depicting actor rotation.
         osg::ref_ptr<dtCore::Transformable> mArrowNode;
+
+        ///A transformable used to represent an arrow depicting actor up vector.
+        osg::ref_ptr<dtCore::Transformable> mArrowNodeUp;
     };
 }
 
