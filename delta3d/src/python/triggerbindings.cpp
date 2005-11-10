@@ -9,6 +9,8 @@ void initTriggerBindings()
    Trigger* (*TriggerGI1)(int) = &Trigger::GetInstance;
    Trigger* (*TriggerGI2)(std::string) = &Trigger::GetInstance;
 
+   Action* (Trigger::*GetAction1)() = &Trigger::GetAction;
+
    class_< Trigger, bases<dtCore::DeltaDrawable>, dtCore::RefPtr<Trigger>, boost::noncopyable >( "Trigger", init< optional< const std::string& > >() )
       .def( "GetInstanceCount", &Trigger::GetInstanceCount )
       .staticmethod("GetInstanceCount" )
@@ -22,6 +24,6 @@ void initTriggerBindings()
       .def( "GetTimeLeft", &Trigger::GetTimeLeft )
       .def( "Fire", &Trigger::Fire )
       .def( "SetAction", &Trigger::SetAction )
-      .def( "GetAction", &Trigger::GetAction, return_internal_reference<>() )
+      .def( "GetAction", GetAction1, return_internal_reference<>() )
       ;
 }
