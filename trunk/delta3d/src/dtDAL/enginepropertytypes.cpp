@@ -119,6 +119,17 @@ namespace dtDAL
         return mProxy->GetLinkedActor(GetName());
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    dtCore::DeltaDrawable* ActorActorProperty::GetRealActor()
+    {
+       return GetActorFunctor();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const dtCore::DeltaDrawable* ActorActorProperty::GetRealActor() const
+    {
+       return GetActorFunctor();
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     void ResourceActorProperty::SetValue(ResourceDescriptor *value)

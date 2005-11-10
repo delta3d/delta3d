@@ -46,12 +46,14 @@ namespace dtDAL
                          const std::string& name,
                          const std::string& label,
                          Functor1<ActorProxy*> Set,
+                         Functor0Ret<dtCore::DeltaDrawable*> Get, 
                          const std::string& desiredActorClass = "",
                          const std::string& desc = "",
                          const std::string& groupName = "") :
                          ActorProperty(name, label, desc, groupName),
                          mProxy(&actorProxy),
                          SetPropFunctor(Set),
+                         GetActorFunctor(Get), 
                          mDesiredActorClass(desiredActorClass)
         {
 
@@ -97,6 +99,18 @@ namespace dtDAL
         const ActorProxy* GetValue() const;
 
         /**
+         * Gets the drawable that this property is representing
+         * @return The actor
+         */
+        dtCore::DeltaDrawable* GetRealActor();
+
+        /**
+        * Gets the drawable that this property is representing
+        * @return The actor
+        */
+        const dtCore::DeltaDrawable* GetRealActor() const;
+
+        /**
          * Sets the value of the property based on a string.
          * The string should be the both the unique id and the display string separated by a comma.
          * @note Returns false it the property is read only
@@ -118,6 +132,7 @@ namespace dtDAL
     private:
         ActorProxy *mProxy;
         Functor1<ActorProxy*> SetPropFunctor;
+        Functor0Ret<dtCore::DeltaDrawable*> GetActorFunctor;
         std::string mDesiredActorClass;
     protected:
         virtual ~ActorActorProperty() { }
