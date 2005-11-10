@@ -215,10 +215,13 @@ namespace dtActors
       if(bn == NULL)
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
 
-      dtABC::BezierNode* nbn = dynamic_cast<dtABC::BezierNode*> (node->GetActor());
-      if(nbn == NULL)
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
- 
+      dtABC::BezierNode* nbn = NULL;
+      if(node)
+      {
+         nbn = dynamic_cast<dtABC::BezierNode*> (node->GetActor());
+         if(nbn == NULL)
+            EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+      }
 
       //set the actual node on the control point.      
       bn->SetNext(nbn);

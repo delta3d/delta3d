@@ -23,6 +23,8 @@ BezierController::BezierController()
    osg::StateSet* ss = mGeode->getOrCreateStateSet();
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
    mRenderGeode = false;
+
+   mNode = new osg::Group;
 }
 
 BezierController::~BezierController()
@@ -195,15 +197,14 @@ void BezierController::CheckCreatePath()
 void BezierController::RenderProxyNode(bool pEnable)
 {
   mRenderGeode = pEnable;
-}
-
-
-osg::Node* BezierController::GetOSGNode()
-{
-   if(mRenderGeode)
-      return mGeode.get();
-   else
-      return NULL;
+  if(mRenderGeode)
+  {
+     dynamic_cast<osg::Group*>(mNode.get())->addChild(mGeode.get());
+  }
+  else
+  {
+     dynamic_cast<osg::Group*>(mNode.get())->removeChild(mGeode.get());
+  }
 }
 
 

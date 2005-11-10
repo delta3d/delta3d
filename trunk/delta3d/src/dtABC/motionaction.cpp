@@ -9,7 +9,7 @@ namespace dtABC
   
 MotionAction::MotionAction()
 {
-   mLocalTransform.makeScale(osg::Vec3(1.0f, 1.0f, 1.0f));
+   
 }
 
 MotionAction::~MotionAction()
@@ -17,7 +17,7 @@ MotionAction::~MotionAction()
 
 }
 
-void MotionAction::SetParent(dtCore::Transformable* pParent, PARENT_RELATION pRelation)
+void MotionAction::SetParentAndRelation(dtCore::Transformable* pParent, PARENT_RELATION pRelation)
 {
    mParent = pParent;
    mParentRelation = pRelation;
@@ -28,6 +28,28 @@ void MotionAction::SetParent(dtCore::Transformable* pParent, PARENT_RELATION pRe
    trans.GetTranslation(mInitialParentPos);
 }
 
+
+void MotionAction::SetParent(dtCore::Transformable* pParent)
+{
+   mParent = pParent;
+   if(mParent.valid())
+   {
+      dtCore::Transform trans;
+      mParent->GetTransform(&trans);
+      trans.GetTranslation(mInitialParentPos);
+   }
+}
+
+void MotionAction::SetParentRelation(PARENT_RELATION pRelation)
+{
+   mParentRelation = pRelation;
+}
+
+void MotionAction::RemoveParent()
+{
+   mParent = NULL;
+   mParentRelation = NO_RELATION;
+}
 
 void MotionAction::StepObject(const PathPoint& cp)
 {
@@ -97,7 +119,9 @@ void MotionAction::StepObject(const PathPoint& cp)
       break;
    }
 
-   mTargetObject->GetMatrixNode()->setMatrix(mLocalTransform * pTransform);
+   osg::Matrix local;
+   mLocalTransform.Get(local);
+   mTargetObject->GetMatrixNode()->setMatrix(local * pTransform);
 }
 
 

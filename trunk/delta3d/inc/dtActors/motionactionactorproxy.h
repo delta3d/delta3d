@@ -63,9 +63,22 @@ public:
    /*virtual*/ bool IsPlaceable();
 
    void SetActorTargetObject(ActorProxy* pDrawable);
-
    dtCore::DeltaDrawable* GetActorTargetObject();
 
+   void SetActorParentObject(ActorProxy* proxy);
+   dtCore::DeltaDrawable* GetActorParentObject();
+
+   void SetActorParentRelation(ParentRelationEnum& e);
+   ParentRelationEnum& GetActorParentRelation();
+
+   void SetRotation(const osg::Vec3 &rotation);
+   osg::Vec3 GetRotation();
+
+   void SetTranslation(const osg::Vec3 &translation);
+   osg::Vec3 GetTranslation();
+
+   void SetScale(const osg::Vec3 &scale);
+   osg::Vec3 GetScale();
 };
 
 }//namespace dtActors

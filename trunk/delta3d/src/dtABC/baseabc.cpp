@@ -186,7 +186,8 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
          camera->SetScene( GetScene() );
          camera->SetWindow( GetWindow() );
 
-         atLeastOneEnabled = camera->GetEnabled();
+         atLeastOneEnabled = camera->GetEnabled() || atLeastOneEnabled;
+        
       }
    }
 

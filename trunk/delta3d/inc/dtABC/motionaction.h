@@ -41,7 +41,7 @@ public:
    * TRACK is used to keep an orientation relative to parent
    * FOLLOW translates with the parent
    */
-   enum PARENT_RELATION{TRACK_PARENT = 1, FOLLOW_PARENT, TRACK_AND_FOLLOW};
+   enum PARENT_RELATION{NO_RELATION = 0, TRACK_PARENT, FOLLOW_PARENT, TRACK_AND_FOLLOW};
 
 public:
    MotionAction();
@@ -50,12 +50,17 @@ public:
    const dtCore::Transformable* GetTargetObject() const {return mTargetObject.get();}
    void SetTargetObject(dtCore::Transformable* pTarget){mTargetObject = pTarget;}
 
-   void SetLocalTransform(const osg::Matrix& mat){mLocalTransform = mat;}
-   const osg::Matrix& GetLocalTransform() const {return mLocalTransform;}
+   void SetLocalTransform(const dtCore::Transform& mat){mLocalTransform = mat;}
+   const dtCore::Transform& GetLocalTransform() const {return mLocalTransform;}
 
    
    const dtCore::Transformable* GetParent() const {return mParent.get();}
-   void SetParent(dtCore::Transformable* pParent, PARENT_RELATION pRelation);
+   dtCore::Transformable* GetParent() {return mParent.get();}
+
+   void SetParentAndRelation(dtCore::Transformable* pParent, PARENT_RELATION pRelation);
+   void SetParent(dtCore::Transformable* pParent);
+   PARENT_RELATION GetParentRelation(){return mParentRelation;}
+   void SetParentRelation(PARENT_RELATION pRelation);
    void RemoveParent();
 
 
@@ -68,10 +73,6 @@ protected:
    * This function should be called by the derived class
    * which sets the transform of the object according
    * to parent and parent relation
-   *
-   * @note we use a PathPoint because we are only interested 
-   *        in a translation and orientation, without the headache
-   *        of using the transform API
    */
    void StepObject(const PathPoint& p);
 
@@ -88,7 +89,7 @@ protected:
    * The local transform allows us to keep the same relative transform
    * on update, if we want a scale or offset from origin, etc.
    */
-   osg::Matrix                               mLocalTransform;
+   dtCore::Transform                         mLocalTransform;
   
    /***
    * The TargetObject is the object we are moving
@@ -101,7 +102,7 @@ protected:
    */
    dtCore::RefPtr<dtCore::Transformable>     mParent;
    osg::Vec3                                 mInitialParentPos;  
-   unsigned int                              mParentRelation;
+   PARENT_RELATION                           mParentRelation;
 
 };
 
