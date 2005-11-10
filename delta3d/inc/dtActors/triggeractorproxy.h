@@ -57,6 +57,7 @@ namespace dtActors
          virtual void BuildPropertyMap();
 
          void SetAction( dtDAL::ActorProxy* action );
+         dtCore::DeltaDrawable* GetAction();
 
       protected:
          

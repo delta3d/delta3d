@@ -58,19 +58,27 @@ namespace dtActors
          "The Time step in seconds to interpolate between this node and the next"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Entry Control Point", "Entry Control Point", 
-         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetBezierEntryControlPoint), "dtABC::BezierControlPoint", 
+         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetBezierEntryControlPoint),
+         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetBezierEntryControlPoint),
+         "dtABC::BezierControlPoint", 
          "Sets the control point on this node from entry"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Exit Control Point", "Exit Control Point", 
-         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetBezierExitControlPoint), "dtABC::BezierControlPoint", 
+         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetBezierExitControlPoint),
+         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetBezierExitControlPoint),
+         "dtABC::BezierControlPoint", 
          "Sets the control point on this node on exit"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Next Bezier Node", "Next Bezier Node", 
-         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetNextBezierNode), "dtABC::BezierNode",
+         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetNextBezierNode), 
+         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetNextBezierNode), 
+         "dtABC::BezierNode",
          "Sets the next node on this node"));
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Previous Bezier Node", "Previous Bezier Node", 
-         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetPreviousBezierNode), "dtABC::BezierNode",
+         dtDAL::MakeFunctor(*this, &BezierNodeActorProxy::SetPreviousBezierNode), 
+         dtDAL::MakeFunctorRet(*this, &BezierNodeActorProxy::GetPreviousBezierNode), 
+         "dtABC::BezierNode",
          "Sets the previous node on this node"));
    }
 
@@ -265,6 +273,49 @@ namespace dtActors
       //whew! (wipes sweat from brow)
    }
 
+   dtCore::DeltaDrawable* BezierNodeActorProxy::GetNextBezierNode()
+   {
+      dtABC::BezierNode* bn = dynamic_cast< dtABC::BezierNode* >( GetActor() );
+      if( bn == 0 )
+      {
+         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+      }
+
+      return bn->GetNext();
+   }
+
+   dtCore::DeltaDrawable* BezierNodeActorProxy::GetPreviousBezierNode()
+   {  
+      dtABC::BezierNode* bn = dynamic_cast< dtABC::BezierNode* >( GetActor() );
+      if( bn == 0 )
+      {
+         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+      }
+
+      return bn->GetPrev();
+   }
+
+   dtCore::DeltaDrawable* BezierNodeActorProxy::GetBezierEntryControlPoint()
+   {
+      dtABC::BezierNode* bn = dynamic_cast< dtABC::BezierNode* >( GetActor() );
+      if( bn == 0 )
+      {
+         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+      }
+
+      return bn->GetEntry();
+   }
+
+   dtCore::DeltaDrawable* BezierNodeActorProxy::GetBezierExitControlPoint()
+   {
+      dtABC::BezierNode* bn = dynamic_cast< dtABC::BezierNode* >( GetActor() );
+      if( bn == 0 )
+      {
+         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierNode");
+      }
+
+      return bn->GetExit();
+   }
 
    const dtDAL::ActorProxy::RenderMode& BezierNodeActorProxy::GetRenderMode()
    {

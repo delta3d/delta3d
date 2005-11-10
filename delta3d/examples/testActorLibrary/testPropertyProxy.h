@@ -397,6 +397,12 @@ public:
 
     void setTextureResourceName(const std::string &fileName) { myTexture = fileName; }
 
+    ActorProxy* GetTestActor() 
+    {
+       LOG_ALWAYS("ActorProxy get");
+       return this->GetLinkedActor("Test_Actor");
+    }
+
     void SetTestActor(ActorProxy* proxy) 
     {
         this->SetLinkedActor("Test_Actor", proxy);

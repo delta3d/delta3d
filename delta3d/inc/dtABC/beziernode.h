@@ -41,8 +41,11 @@ class BezierNode: public CurveNode
 public:
    BezierNode(){mDirtyFlag = true;};
 
-   const BezierControlPoint* GetEntry() const{return mEntry.get();}
-   const BezierControlPoint* GetExit() const{return mExit.get();}
+   BezierControlPoint* GetEntry() { return mEntry.get(); }
+   const BezierControlPoint* GetEntry() const { return mEntry.get(); }
+
+   BezierControlPoint* GetExit() { return mExit.get(); }
+   const BezierControlPoint* GetExit() const { return mExit.get(); }
 
    void SetEntry(BezierControlPoint* pEntry) {mEntry = pEntry; mDirtyFlag = true;}
    void SetExit(BezierControlPoint* pExit) {mExit = pExit; mDirtyFlag = true;}

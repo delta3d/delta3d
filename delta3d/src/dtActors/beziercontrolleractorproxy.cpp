@@ -19,8 +19,8 @@ int BezierControllerActorProxy::mNumControllers = 0;
 
 void BezierControllerActorProxy::CreateActor()
 {
-   mActor = new dtABC::BezierController();
-   dynamic_cast<dtABC::BezierController*>(mActor.get())->RenderProxyNode(true);
+   mActor = new BezierController();
+   dynamic_cast<BezierController*>(mActor.get())->RenderProxyNode(true);
    
    std::ostringstream ss;
    ss << "Controller" << mNumControllers++;
@@ -32,7 +32,7 @@ void BezierControllerActorProxy::BuildPropertyMap()
 {
    MotionActionActorProxy::BuildPropertyMap();
 
-   dtABC::BezierController* bc = dynamic_cast<dtABC::BezierController*>(mActor.get());
+   BezierController* bc = dynamic_cast<BezierController*>(mActor.get());
 
    if(!bc)
    {
@@ -41,22 +41,23 @@ void BezierControllerActorProxy::BuildPropertyMap()
 
    AddProperty(new dtDAL::ActorActorProperty(*this, "Start Node", "Start Node",
       MakeFunctor(*this, &BezierControllerActorProxy::SetActorStartNode),
+      MakeFunctorRet(*this, &BezierControllerActorProxy::GetActorStartNode),
       "dtABC::BezierNode",
       "Sets the start node to be used for this path" ));
 
 }
 
-const dtABC::BezierNode* BezierControllerActorProxy::GetActorStartNode() const
+dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
 {
-   const dtABC::BezierController *bc = dynamic_cast<const BezierController*> (mActor.get());
-   if(!bc)
+   BezierController* bc = dynamic_cast<BezierController*>(mActor.get());
+
+   if( bc == 0 )
    {
-      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::MotionAction");
+      EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor of invalid type, should be a BezierController");
    }
 
    return bc->GetStartNode();
 }
-
 
 void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
 {
@@ -73,7 +74,7 @@ void BezierControllerActorProxy::SetActorStartNode(ActorProxy* node)
       }
    }
 
-   dtABC::BezierController* bc = dynamic_cast<dtABC::BezierController*>(mActor.get());
+   BezierController* bc = dynamic_cast<BezierController*>(mActor.get());
 
    if(!bc)
    {

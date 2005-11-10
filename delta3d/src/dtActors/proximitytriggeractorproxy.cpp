@@ -86,26 +86,27 @@ namespace dtActors
       ProximityTrigger *trigger = dynamic_cast<ProximityTrigger*>(mActor.get());
       if(!trigger)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ProximityTrigger");
+         EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ProximityTrigger");
       }
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Action","Action",
-         dtDAL::MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
-         "dtABC::Action","Sets the action which this Proximity Trigger will start."));
+      AddProperty(new ActorActorProperty(*this, "Action","Action",
+         MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
+         MakeFunctorRet(*this ,&ProximityTriggerActorProxy::GetAction),
+         "Action","Sets the action which this Proximity Trigger will start."));
 
-      AddProperty(new dtDAL::FloatActorProperty("Time Delay","Time Delay",
-         dtDAL::MakeFunctor(*trigger,&ProximityTrigger::SetTimeDelay),
-         dtDAL::MakeFunctorRet(*trigger,&ProximityTrigger::GetTimeDelay),
+      AddProperty(new FloatActorProperty("Time Delay","Time Delay",
+         MakeFunctor(*trigger,&ProximityTrigger::SetTimeDelay),
+         MakeFunctorRet(*trigger,&ProximityTrigger::GetTimeDelay),
          "After this trigger has been fired it will wait this amount of time before starting its action.", "dtABC::AutoTrigger"));
 
    }
    
    //////////////////////////////////////////////////////////////////////////
-   dtDAL::ActorProxyIcon* ProximityTriggerActorProxy::GetBillBoardIcon()
+   ActorProxyIcon* ProximityTriggerActorProxy::GetBillBoardIcon()
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::TRIGGER);
+         mBillBoardIcon = new ActorProxyIcon(ActorProxyIcon::IconType::TRIGGER);
       }
 
       return mBillBoardIcon.get();
@@ -116,18 +117,29 @@ namespace dtActors
    {
       SetLinkedActor("Action", action);
 
-      dtABC::ProximityTrigger* proximityTrigger = dynamic_cast<dtABC::ProximityTrigger*>( mActor.get() );
+      ProximityTrigger* proximityTrigger = dynamic_cast<ProximityTrigger*>( mActor.get() );
       if( proximityTrigger == 0 )
       {
-         EXCEPT(dtDAL::ExceptionEnum::BaseException,"Expected a ProximityTrigger actor.");
+         EXCEPT(ExceptionEnum::BaseException,"Expected a ProximityTrigger actor.");
       }
       
-      dtABC::Action* a = NULL;
+      Action* a = NULL;
       if(action)
       {
-         a = dynamic_cast<dtABC::Action*>(action->GetActor());
+         a = dynamic_cast<Action*>(action->GetActor());
       }
 
       proximityTrigger->GetTrigger()->SetAction(a);      
+   }
+
+   DeltaDrawable* ProximityTriggerActorProxy::GetAction()
+   {
+      ProximityTrigger* proximityTrigger = dynamic_cast<ProximityTrigger*>( mActor.get() );
+      if( proximityTrigger == 0 )
+      {
+         EXCEPT(ExceptionEnum::BaseException,"Expected a ProximityTrigger actor.");
+      }
+
+      return proximityTrigger->GetTrigger()->GetAction();
    }
 }

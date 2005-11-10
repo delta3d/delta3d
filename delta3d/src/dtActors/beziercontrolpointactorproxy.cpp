@@ -89,11 +89,13 @@ namespace dtActors
       //whew! (wipes sweat from brow)
    }
 
-   const dtABC::BezierNode* BezierControlPointActorProxy::GetBezierNode() const
+   dtCore::DeltaDrawable* BezierControlPointActorProxy::GetBezierNode()
    {
-      const dtABC::BezierControlPoint *bcp = dynamic_cast<const dtABC::BezierControlPoint*> (mActor.get());
-      if(bcp == NULL)
+      dtABC::BezierControlPoint* bcp = dynamic_cast<dtABC::BezierControlPoint*>( mActor.get() );
+      if( bcp == 0 )
+      {
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::BezierControlPoint");
+      }
 
       return bcp->GetParent();
    }
@@ -107,7 +109,9 @@ namespace dtActors
       dtDAL::TransformableActorProxy::BuildPropertyMap();
 
       AddProperty(new dtDAL::ActorActorProperty(*this, "Bezier Node", "Bezier Node", 
-         dtDAL::MakeFunctor(*this, &BezierControlPointActorProxy::SetBezierNode), "dtABC::BezierNode", 
+         dtDAL::MakeFunctor(*this, &BezierControlPointActorProxy::SetBezierNode),
+         dtDAL::MakeFunctorRet(*this, &BezierControlPointActorProxy::GetBezierNode), 
+         "dtABC::BezierNode", 
          "Sets the Bezier Node of this proxy"));
    }
 

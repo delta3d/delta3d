@@ -51,6 +51,8 @@ namespace dtABC
       void Fire();
 
       void SetAction( Action* action ) { mActionToFire = action; }
+
+      Action* GetAction() { return mActionToFire.get(); }
       const Action* GetAction() const { return mActionToFire.get(); }
 
    private:

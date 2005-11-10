@@ -48,41 +48,53 @@ namespace dtActors
       Trigger *trigger = dynamic_cast<Trigger*>(mActor.get());
       if(!trigger)
       {
-         EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtABC::Trigger");
+         EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be type dtABC::Trigger");
       }
 
-      AddProperty(new dtDAL::BooleanActorProperty("Enable","Enabled",
-         dtDAL::MakeFunctor(*trigger,&Trigger::SetEnabled),
-         dtDAL::MakeFunctorRet(*trigger,&Trigger::GetEnabled),
+      AddProperty(new BooleanActorProperty("Enable","Enabled",
+         MakeFunctor(*trigger,&Trigger::SetEnabled),
+         MakeFunctorRet(*trigger,&Trigger::GetEnabled),
          "Sets whether or not the trigger is enabled in the scene.", GROUPNAME));
 
-      AddProperty(new dtDAL::DoubleActorProperty("Time Delay","Time Delay",
-         dtDAL::MakeFunctor(*trigger,&Trigger::SetTimeDelay),
-         dtDAL::MakeFunctorRet(*trigger,&Trigger::GetTimeDelay),
+      AddProperty(new DoubleActorProperty("Time Delay","Time Delay",
+         MakeFunctor(*trigger,&Trigger::SetTimeDelay),
+         MakeFunctorRet(*trigger,&Trigger::GetTimeDelay),
          "After this trigger has been fired it will wait this amount of time before starting its action.", GROUPNAME));
 
-      AddProperty(new dtDAL::ActorActorProperty(*this, "Action","Action",
-         dtDAL::MakeFunctor(*this,&TriggerActorProxy::SetAction),
+      AddProperty(new ActorActorProperty(*this, "Action","Action",
+         MakeFunctor(*this,&TriggerActorProxy::SetAction),
+         MakeFunctorRet(*this,&TriggerActorProxy::GetAction),
          "dtABC::Action", "Sets the action which this Trigger will start."));
    }
 
-   void TriggerActorProxy::SetAction( dtDAL::ActorProxy* action )
+   void TriggerActorProxy::SetAction( ActorProxy* action )
    {
       SetLinkedActor("Action", action);
 
-      dtABC::Trigger* trigger = dynamic_cast<dtABC::Trigger*>( mActor.get() );
+      Trigger* trigger = dynamic_cast<Trigger*>( mActor.get() );
       if( trigger == 0 )
       {
-         EXCEPT(dtDAL::ExceptionEnum::BaseException,"Expected a Trigger actor.");
+         EXCEPT(ExceptionEnum::BaseException,"Expected a Trigger actor.");
       }
 
-      dtABC::Action* a(0);
+      Action* a(0);
       
       if( action != 0 )
       {
-         a = dynamic_cast<dtABC::Action*>( action->GetActor() );
+         a = dynamic_cast<Action*>( action->GetActor() );
       }
 
       trigger->SetAction(a);      
+   }
+
+   dtCore::DeltaDrawable* TriggerActorProxy::GetAction()
+   {
+      Trigger* trigger = dynamic_cast<Trigger*>( mActor.get() );
+      if( trigger == 0 )
+      {
+         EXCEPT(ExceptionEnum::BaseException,"Expected a Trigger actor.");
+      }
+
+      return trigger->GetAction();
    }
 }
