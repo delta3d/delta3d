@@ -314,7 +314,7 @@ void TripodActorProxy::SetTranslationScaleOffset( const osg::Vec3& scale )
    osg::Vec3 oldXYZ;
    osg::Vec3 hpr;
    tripod->GetScale( oldXYZ, hpr );
-   tripod->SetOffset( scale, hpr );
+   tripod->SetScale( scale, hpr );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -345,9 +345,9 @@ void TripodActorProxy::SetRotationScaleOffset( const osg::Vec3& scale )
    }
 
    osg::Vec3 xyz;
-   osg::Vec3 oldHPR;
-   tripod->GetScale( xyz, oldHPR );
-   tripod->SetOffset( xyz, scale );
+   osg::Vec3 oldScale;
+   tripod->GetScale( xyz, oldScale );
+   tripod->SetScale( xyz, scale );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

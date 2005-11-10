@@ -29,7 +29,7 @@ void Action::Start()
 
    mTotalTime = 0.0f;
    mAccumTime = 0.0f;
-   if(mTimeStep < 0.000001f) mTimeStep = 0.05f;
+   if(mTimeStep < 0.000001f) mTimeStep = float(1.0 / 60.0);
    OnStart();
    mIsRunning = true;
 }
@@ -49,9 +49,9 @@ void Action::UnPause()
 
 void Action::OnMessage( MessageData* data )
 {
-   if( data->message == "postframe" )
+   if( data->message == "preframe" )
    {
-      Update( 1.0 / 60.0 );//*(double*)data->userData );
+      Update(*(double*)data->userData );
    }
 }
 

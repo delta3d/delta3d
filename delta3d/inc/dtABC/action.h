@@ -82,7 +82,7 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
 
 protected:
 
-   //variables
+   //variables 
    float mTimeStep;
    float mTotalTime;
    float mAccumTime;

@@ -83,7 +83,7 @@ public:
    void SetStartNode(BezierNode* pStart);
 
    /*virtual*/ void RenderProxyNode(bool enable);
-
+   bool GetRenderProxyNode(){return mRenderGeode;}
    
    /***
    * Creates the path using the start node to traverse the curve
@@ -91,8 +91,6 @@ public:
    * BezierNodes
    */
    virtual void CreatePath();
-
-   /*virtual*/ osg::Node* GetOSGNode(); 
 
    void CheckCreatePath();
 

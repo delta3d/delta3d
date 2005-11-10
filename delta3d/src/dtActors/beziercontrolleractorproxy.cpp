@@ -45,6 +45,12 @@ void BezierControllerActorProxy::BuildPropertyMap()
       "dtABC::BezierNode",
       "Sets the start node to be used for this path" ));
 
+
+   AddProperty(new BooleanActorProperty("Render Path", "Render Path",
+      MakeFunctor(*bc, &BezierController::RenderProxyNode),
+      MakeFunctorRet(*bc, &BezierController::GetRenderProxyNode),
+      "Toggles Rendering of the Path.", "Controller"));
+
 }
 
 dtCore::DeltaDrawable* BezierControllerActorProxy::GetActorStartNode()
