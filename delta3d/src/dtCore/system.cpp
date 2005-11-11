@@ -186,6 +186,8 @@ void System::CameraFrame()
    // call Frame(true) or Frame(false). Ug. Definitely room for
    // efficiency here. -osb, 2005-11-10
 
+   mRenderSurfaceCameraMap.clear();
+
    for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
    {
       Camera* cam = Camera::GetInstance(camIdx);
