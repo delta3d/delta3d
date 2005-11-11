@@ -27,9 +27,17 @@
 
 #include <dtCore/base.h>
 #include <dtCore/timer.h>
+#include <map>
+
+namespace Producer
+{
+   class RenderSurface;
+}
 
 namespace dtCore
 {
+   class Camera;
+   
    /// Performs high-level frame coordination
 
    /** The System is used to control the frame-based coordination of all the 
@@ -115,9 +123,17 @@ namespace dtCore
 
       void Pause( const double deltaFrameTime );
 
+      ///Intenal helper that calls Producer::Camera::frame(bool doSwap)
+      ///with the proper value for doSwap.
+      void CameraFrame();
+
       bool mRunning; ///<Are we currently running?      
       bool mShutdownOnWindowClose;
-      bool mPaused; 
+      bool mPaused;
+      
+      typedef std::map< Producer::RenderSurface*, Camera* > RenderSurfaceCameraMap;
+      RenderSurfaceCameraMap mRenderSurfaceCameraMap;
+
    };
 };
 
