@@ -160,8 +160,10 @@ bool Camera::GetEnabled()
 /*!
  * Render the next frame.  This will update the scene graph, cull then geometry,
  * then draw the geometry.
+ * @param lastCamera Pass true if this is the last camera drawn this frame,
+ * otherwise false.
  */
-void Camera::Frame()
+void Camera::Frame( bool lastCamera )
 {
    // Only do our normal Camera stuff if it is enabled.
    // If Producer::Camera::frame is never called, our cull callback
@@ -228,10 +230,7 @@ void Camera::Frame()
                       s*eye, u*eye, F*eye, 1.0);
    mCamera->setViewByMatrix(m);
    
-   //TODO should only call frame(true) if this camera is the last camera assigned to this RenderSurface
-   //Might cause a problem with multi camera's sharing one RenderSurface
-
-   mCamera->frame(true);
+   mCamera->frame(lastCamera);
 }
 
 void Camera::SetWindow( DeltaWin* win )

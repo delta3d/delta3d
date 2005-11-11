@@ -114,8 +114,12 @@ namespace dtCore
       ///Get the supplied DeltaWin (could be NULL)
       DeltaWin *GetWindow() { return mWindow.get(); }
 
-      ///Redraw the view
-	   void Frame();
+      /** 
+       *  Redraw the view.
+       *  @param lastCamera Pass true if this is the last camera
+       *  rendered this frame number, otherwise false.
+       */
+	   void Frame( bool lastCamera );
 
       ///Supply the Scene this Camera should render
       void SetScene( Scene *scene );
