@@ -419,9 +419,9 @@ namespace dtTerrain
          unsigned int hits =0;
          unsigned int misses =0;
 
-         for(int y=0;y<=height;++y)
+         for(int y=0;y<height;++y)
          {
-            for(int x=0;x<=width;++x)
+            for(int x=0;x<width;++x)
             {
                src_data = (unsigned char*)src_image.data(x,y);
                dst_data = (unsigned char*)dst_image->data(x,y);
