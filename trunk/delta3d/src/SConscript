@@ -5,7 +5,7 @@ Import('*')
 # order of dependencies...
 modules = [ 'dtUtil', 'dtCore', 'dtABC', 'dtAudio', 'dtChar', 'dtGUI', 'dtHLA',
             'dtScript', 'dtNet', 'dtBSP', 'dtInspector', 'dtDAL', 'dtActors',
-            'dtTerrain', 
+            'dtTerrain', 'dtGame', 
 	  'python']
 
 # TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,

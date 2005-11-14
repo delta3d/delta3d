@@ -106,14 +106,14 @@ namespace dtUtil
    * @param toTrim the string to trim.
    */
    inline void trim(std::string& toTrim) {
-      for (std::string::iterator i = toTrim.begin(); i != toTrim.end(); ++i) {
+      for (std::string::iterator i = toTrim.begin(); i != toTrim.end();) {
          if (isspace(*i))
                i = toTrim.erase(i);
          else
                break;
       }
 
-      for (int i = toTrim.size() - 1; i <= 0; --i) {
+      for (int i = (int)(toTrim.size() - 1); i >= 0; --i) {
          if (isspace(toTrim[i]))
                //we can just erase from the end because
                //it will shorted the part of the string already covered by the loop.

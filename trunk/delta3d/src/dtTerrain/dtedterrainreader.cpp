@@ -64,14 +64,14 @@ namespace dtTerrain
    }
    
    //////////////////////////////////////////////////////////////////////////        
-   void DTEDTerrainReader::OnLoadTerrainTile(PagedTerrainTile &tile)
+   bool DTEDTerrainReader::OnLoadTerrainTile(PagedTerrainTile &tile)
    {
       std::ostringstream latSS, lonSS;      
       std::string dtedPath;      
       
       //If the tile already has a valid heightfield then do nothing.
       if (tile.GetHeightField() != NULL)
-         return;
+         return true;
       
       //Convert our latitude and longitude into strings matching the directory
       //structure of DTED data.
@@ -84,9 +84,11 @@ namespace dtTerrain
                  
       //If we didn't find any data in the location specified, throw an exception!
       if (dtedPath.empty())
-         EXCEPT(TerrainDataReaderException::DATA_RESOURCE_NOT_FOUND,
-            "Could not find DTED resource to load at (latitude,longitude) = (" +
-               latSS.str() + "," + lonSS.str() + ")");
+      {
+         //LOG_ERROR("Could not find DTED resource to load at (latitude,longitude) = (" +
+         //      latSS.str() + "," + lonSS.str() + ")");
+         return false;
+      }
                
       //Finally, we can actually load the DTED data into our heightfield.  Once
       //the data is loaded into and OSG heightfield, we must convert that into
@@ -113,6 +115,8 @@ namespace dtTerrain
          hf->SetYInterval(gridSpacing/(float)(hf->GetNumRows()-1));
          tile.SetHeightField(hf);      
       }
+      
+      return true;
    }
    
    ///////////////////////////////////////////////////////////////////////// 

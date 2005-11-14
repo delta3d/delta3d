@@ -203,11 +203,7 @@ namespace dtTerrain
                      goodcolor = imgcolor;
                }
             }
-
-            color[0] = pow(goodcolor[0],1.0f/0.85f);
-            color[1] = pow(goodcolor[1],1.0f/0.85f);
-            color[2] = pow(goodcolor[2],1.0f/0.85f);
-            
+           
             *(ptr++) = (unsigned char)osg::clampTo(color[0]*255.0f, 0.0f, 255.0f);  
             *(ptr++) = (unsigned char)osg::clampTo(color[1]*255.0f, 0.0f, 255.0f);  
             *(ptr++) = (unsigned char)osg::clampTo(color[2]*255.0f, 0.0f, 255.0f);  

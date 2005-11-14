@@ -13,18 +13,21 @@ mainSources = glob.glob('*.cpp')
 
 sources += mainSources;
 
-projectSources = glob.glob('project/*Tests.cpp')
+projectSources = glob.glob('project/*tests.cpp')
 
 sources += projectSources;
 
-proxySources =  glob.glob('proxy/*Test.cpp')
+proxySources =  glob.glob('proxy/*tests.cpp')
 
 sources += proxySources;
 
-utilSources =  glob.glob('util/*Tests.cpp')
+utilSources =  glob.glob('util/*tests.cpp')
 
 sources += utilSources;
 
+gmSources =  glob.glob('gamemanager/*tests.cpp')
+
+sources += gmSources;
 
 deplibs = ['cppunit']
 
@@ -37,14 +40,16 @@ allTestProgram = '#tests/allTests'
 projectTestProgram = '#tests/projectTests'
 proxyTestProgram = '#tests/proxyTests'
 utilTestProgram = '#tests/utilTests'
+gmTestProgram = '#tests/gmTests'
 
 if mode == 'debug':
    allTestProgram = '#tests/allTestsd'
    projectTestProgram = '#tests/projectTestsd'
    proxyTestProgram = '#tests/proxyTestsd'
    utilTestProgram = '#tests/utilTestsd'
+   gmTestProgram = '#tests/gmTestsd'
    
-mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar']
+mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar', 'dtGame']
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
 
 projectEnv.Append(LIBS = deplibs + mainlibs)
@@ -53,6 +58,7 @@ app = projectEnv.Program(allTestProgram, sources)
 projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
 proxyapp   = projectEnv.Program(proxyTestProgram,    mainSources + proxySources)
 utilapp   = projectEnv.Program(utilTestProgram,      mainSources + utilSources)
+gmapp   = projectEnv.Program(gmTestProgram,          mainSources + gmSources)
 
 #Depends(app,        testActorLibrary)
 #Depends(projectapp, testActorLibrary)

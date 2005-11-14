@@ -81,6 +81,16 @@ void System::Run()
    mRunning = true;
    mLastClockTime = mClock.tick();
 
+   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+   {
+      Producer::RenderSurface* rs = DeltaWin::GetInstance(i)->GetRenderSurface();
+      rs->useConfigEventThread(false);
+      rs->realize();
+      rs->waitForRealize();
+      rs->fullScreen(false);
+      rs->startThread();
+   }
+   
    while( mRunning )
    {	  
 	   mClockTime = mClock.tick();

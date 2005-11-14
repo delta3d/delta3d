@@ -30,6 +30,12 @@
 namespace dtTerrain
 {
    
+   /**
+    * This class is a terrain texturing decorator that supports the mapping of
+    * geospecific images onto terrain tiles.  A user may add as many geospecific
+    * images as they wish and the appropriate image region will be loaded and 
+    * assigned to the terrain tile as needed.
+    */
    class DT_TERRAIN_EXPORT GeoTiffDecorator : public TerrainDecorationLayer
    {
       public:
@@ -61,10 +67,22 @@ namespace dtTerrain
             mImageList.push_back(newImage);
          }
          
+         /**
+          * Loads any images in the image list.
+          */
          void LoadAllGeoSpecificImages();
          
+         /**
+          * Calculates an image based on the curret geospecific image set.
+          * @param lat The latitude to build an image for.
+          * @param lon The longitude to build an image for.
+          */
          osg::Image *CalculateBaseImage(int lat, int lon);
          
+         /**
+          * Sets the image dimensions for the resulting terrain tile base
+          * texture.
+          */
          void SetResultingImageDimensions(unsigned int w, unsigned int h)
          {
             mResultImageWidth = w;

@@ -72,7 +72,6 @@ namespace dtTerrain
          int mMaxLatitude;
          int mMinLongitude;
          int mMaxLongitude;
-
          double mGeoTransform[6];
          double mInverseGeoTransform[6];
       };
@@ -188,12 +187,19 @@ namespace dtTerrain
          float scale);
 
       /**
-       *
+       * Generates an image which maps the height value in the heightfield to
+       * a color value given by one of the two color maps.
+       * @param hf The heightfield with which to map colors.
+       * @param upperHeightColorMap The color values to map the height values which
+       *    are above 0 (sea-level).
+       * @param lowerHeightColorMap The color values to map the height values which are
+       *    are below or equal to zero.
+       * @param gamma Gamma correction value.  Greater than 1.0 to brighten, less than
+       *    1.0 to darken.
        */
-      static dtCore::RefPtr<osg::Image> MakeBaseColor(const HeightField &hf, int latitude, 
-         int longitude, const ImageUtils::HeightColorMap &upperHeightColorMap,
-         const ImageUtils::HeightColorMap &lowerHeightColorMap, 
-         std::vector<GeospecificImage> &geospecificImages, float gamma);
+      static dtCore::RefPtr<osg::Image> MakeBaseColor(const HeightField &hf, 
+         const ImageUtils::HeightColorMap &upperHeightColorMap,
+         const ImageUtils::HeightColorMap &lowerHeightColorMap, float gamma=1.0f);
 
       /**
       * Nearest neighbor geometric image manipulation. This assumes that the original image
@@ -202,7 +208,6 @@ namespace dtTerrain
       * @return Destination image with the correct power of 2 dimensions.
       */
       static dtCore::RefPtr<osg::Image> EnsurePow2Image(const osg::Image *srcImage);
-
    };
    
 }

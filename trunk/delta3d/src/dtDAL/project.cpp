@@ -656,11 +656,12 @@ namespace dtDAL
         if (IsReadOnly())
             EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
+        // Do not access the map variable again after this line, it will be corrupted
+        std::string mapSavedName = map.GetSavedName();
+
         CloseMap(map, unloadLibraries);
 
-        std::string mapFileName = map.GetFileName();
-
-        std::map<std::string, std::string>::iterator i = mMapList.find(map.GetSavedName());
+        std::map<std::string, std::string>::iterator i = mMapList.find(mapSavedName);
         if (i == mMapList.end())
         {
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,

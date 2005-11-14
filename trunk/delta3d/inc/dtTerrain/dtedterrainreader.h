@@ -105,7 +105,7 @@ namespace dtTerrain
           * @note If any errors occur during the load process, the appropriate
           *    exception is thrown.
           */
-         virtual void OnLoadTerrainTile(PagedTerrainTile &tile); 
+         virtual bool OnLoadTerrainTile(PagedTerrainTile &tile); 
          
          /**
           * This generates the cache path for the specified tile.  The cache path

@@ -359,7 +359,7 @@ namespace dtDAL
         bool mModified;
         //typedef std::multimap<std::string, osg::ref_ptr<ActorProxy> > ProxiesByClassMap;
         std::string mName;
-        //The mName set when it was created/last saved.
+        //The name set when it was created/last saved.
         std::string mSavedName;
         std::string mFileName;
         std::string mDescription;

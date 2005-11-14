@@ -127,7 +127,7 @@ namespace dtTerrain
           * @see Terrain
           * @see PagedTerrainTile
           */
-         virtual void OnLoadTerrainTile(PagedTerrainTile &tile) = 0;
+         virtual bool OnLoadTerrainTile(PagedTerrainTile &tile) = 0;
          
          /**
           * This method is called when the parent terrain wishes

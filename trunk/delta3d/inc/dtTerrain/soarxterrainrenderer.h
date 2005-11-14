@@ -24,7 +24,7 @@
 #include <osg/Image>
 #include <osg/StateSet>
 #include <osg/Program>
-#include <osg/PositionAttitudeTransform>
+#include <osg/MatrixTransform>
 #include "dtTerrain/terraindatarenderer.h"
 #include "dtTerrain/soarxdrawable.h"
 
@@ -86,7 +86,7 @@ namespace dtTerrain
          {
             dtCore::RefPtr<SoarXDrawable> drawable;
             dtCore::RefPtr<osg::Texture2D> baseGradientTexture;
-            dtCore::RefPtr<osg::PositionAttitudeTransform> sceneNode;
+            dtCore::RefPtr<osg::MatrixTransform> sceneNode;
          };            
          
          ///Help minimize some typing...

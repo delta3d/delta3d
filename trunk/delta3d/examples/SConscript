@@ -3,6 +3,7 @@ import os
 Import('*')
 
 modules = [ 'testActorLibrary',
+            'testGameActorLibrary',
             'testApp', 
             'testAudio',
             'testBumpMap',

@@ -43,7 +43,8 @@ namespace dtTerrain
       public:
 
          static const LCCAnalyzerResourceName IMAGE_EXT;      
-         static const LCCAnalyzerResourceName BASE_LCC_COLOR;         
+         static const LCCAnalyzerResourceName BASE_LCC_COLOR; 
+         static const LCCAnalyzerResourceName WATER_MASK;          
          static const LCCAnalyzerResourceName BASE_COLOR;
          static const LCCAnalyzerResourceName BASE_FILTER_NAME;
          static const LCCAnalyzerResourceName LCC_IMAGE_NAME;
@@ -111,13 +112,16 @@ namespace dtTerrain
          int longitude);
 
       /**
-       * Create hit/miss map of the terrain by LCC type
-       * @param src_image the Base Color image with LCC encoded within
-       * @param rgb_selected the RGB color of the LCC type selected
-       * @return the newly created image
+       * Creates a mask image based on this LCC type where a hit corresponds to
+       * a black pixel and white corresponds to a miss.
+       * @param src_image Image containing LCC coloration data.
+       * @param r Red pixel color value with which to create the mask.
+       * @param g Green pixel color value with which to create the mask.
+       * @param b Blue pixel color value with which to create the mask.
+       * @return The mask image.
        */
-      dtCore::RefPtr<osg::Image> MakeLCCImage(const osg::Image &src_image, 
-         const osg::Vec3& rgb_selected);
+      dtCore::RefPtr<osg::Image> MakeLCCMask(const osg::Image &src_image, 
+         unsigned char r, unsigned char g, unsigned char b);
 
 		/**
        * Buggy "histogram" of an image by a particular LCC type.
@@ -146,15 +150,15 @@ namespace dtTerrain
       dtCore::RefPtr<osg::Image> GenerateBaseFilterImage(LCCType &type,
          const std::string &tileCachePath);
          
-      void CheckBaseLCCImages(const HeightField &hf, int latitude, int longitude,
+      bool CheckBaseLCCImages(const HeightField &hf, int latitude, int longitude,
          const std::string &tileCachePath);
          
-      void LCCAnalyzer::CheckSlopeAndElevationMaps(const HeightField &hf,
+      void CheckSlopeAndElevationMaps(const HeightField &hf,
          const std::string &tileCachePath);
          
-      void ProcessLCCData(const PagedTerrainTile &tile, LCCType &type);
+      bool ProcessLCCData(const PagedTerrainTile &tile, LCCType &type);
       
-      void LCCAnalyzer::ComputeProbabilityMap(const HeightField &hf, LCCType &type,
+      void ComputeProbabilityMap(const HeightField &hf, LCCType &type,
          int latitude, int longitude, const std::string &tileCachePath);
 
       /**
@@ -186,13 +190,42 @@ namespace dtTerrain
        */
       void LoadAllGeoSpecificImages();      
       
+      /**
+       * Gets whether or not inter-process images processed during
+       * LCC analysis are saved for review.
+       * @return True if images are saved, false otherwise.
+       */
       bool OutputDebugImages() { return mOutputDebugImages; }
+      
+      /**
+       * Sets whether or not inter-process images processed during
+       * LCC analysis are saved for review.
+       * @param value True if images should be saved, false otherwise.
+       */
       void SetOutputDebugImages(bool value) { mOutputDebugImages = value; }
       
+      /**
+       * Sets the maximum size of the images constructed during LCC analysis.
+       * @param newSize The size in pixels of the image.
+       * @note The default is 1024.  Increasing this value will result
+       *    in more accurate vegetation computations; however, will dramatically
+       *    increase the time taken to generate the necessary data.
+       */
+      void SetMaxImageSize(unsigned int newSize) { mImageSize = newSize; }
+      
+      /**
+       * Gets the current maximum image size used during LCC analysis.
+       * @return The current image size.
+       */
+      unsigned int GetImageSize() const { return mImageSize; }
+      
+      /**
+       * Clears all data cached in this analyzer.  This should be called before
+       * processing a different tile or region.
+       */
       void Clear()
       {
          mBaseLCCColorImage = NULL;
-         mBaseColorImage = NULL;
          mSlopeMap = NULL;
          mRelativeElevationMap = NULL;
          mWaterMask = NULL;
@@ -200,16 +233,13 @@ namespace dtTerrain
             
    private:
       dtCore::RefPtr<osg::Image> mBaseLCCColorImage;
-      dtCore::RefPtr<osg::Image> mBaseColorImage;
       dtCore::RefPtr<osg::Image> mSlopeMap;
       dtCore::RefPtr<osg::Image> mRelativeElevationMap;
       dtCore::RefPtr<osg::Image> mWaterMask;
-      bool mOutputDebugImages;
-      
       std::vector<ImageUtils::GeospecificImage> mGeospecificLCCImages;
-      ImageUtils::HeightColorMap mUpperHeightColorMap;
-      ImageUtils::HeightColorMap mLowerHeightColorMap;
-      unsigned int mMaxImageSize;           
+     
+      unsigned int mImageSize; 
+      bool mOutputDebugImages;
    };
 }
 #endif

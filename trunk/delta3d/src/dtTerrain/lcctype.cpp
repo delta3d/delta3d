@@ -19,38 +19,65 @@
 * @author Teague Coonan
 */
 
-#include <dtCore/refptr.h>
-#include <dtCore/deltadrawable.h>
-#include <dtCore/scene.h>
-#include <osg/Image>
-#include <dtUtil/log.h>
-#include "dtTerrain/mathutils.h"
-#include "dtTerrain/imageutils.h"
 #include "dtTerrain/lcctype.h"
+
 namespace dtTerrain
 {
+   
    //////////////////////////////////////////////////////////////////////////
-   LCCType::LCCType(unsigned int index, std::string name)
+   LCCType::LCCType(unsigned int index, const std::string &name)
    {
-      this->LCCName = name;
-      this->index = index;
+      mLCCName = name;
+      mIndex = index;
+      mRGB[0] = mRGB[1] = mRGB[2] = 0;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   LCCType::~LCCType()
-   {
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   void LCCType::AddModel(std::string name, float scale)
+   void LCCType::AddModel(const std::string &name, float scale)
    {
       // create a new model
-      LCCModel model;
-      model.name = name;
-      model.scale = scale;
+      LCCModel newModel;
+      
+      newModel.name = name;
+      newModel.scale = scale;
       
       // add it to our list of models for this vegetation type
-      models.push_back(model);
+      mModels.insert(std::make_pair(newModel.name,newModel));
    }
-
+   
+   //////////////////////////////////////////////////////////////////////////
+   void LCCType::RemoveModel(const std::string &name)
+   {
+      std::map<std::string,LCCModel>::iterator itor = mModels.find(name);
+      if (itor != mModels.end())
+         mModels.erase(itor);
+   }
+      
+   //////////////////////////////////////////////////////////////////////////
+   LCCType::LCCModel *LCCType::GetModel(const std::string &name)
+   {
+      std::map<std::string,LCCModel>::iterator itor = mModels.find(name);
+      if (itor != mModels.end())
+         return &itor->second;
+      else
+         return NULL;
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   LCCType::LCCModel *LCCType::GetModel(unsigned int index)
+   {
+      if (index >= mModels.size())
+         return NULL;
+         
+      std::map<std::string,LCCModel>::iterator itor = mModels.begin();
+      unsigned int i = 0;
+      while (i < index)
+      {
+         ++itor;
+         ++i;
+      }
+      
+      return &itor->second;
+   }  
+      
 }

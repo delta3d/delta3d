@@ -74,7 +74,12 @@ namespace dtTerrain
       if (mData.capacity() == 0)
          EXCEPT(HeightFieldException::INVALID_HEIGHTFIELD,"Height field data is null.");
          
-      if (c >= mNumColumns || r >= mNumRows)
+      if (c >= mNumColumns)
+         c = mNumColumns-1;
+      if (r >= mNumRows)
+         r = mNumRows-1;
+         
+      /*if (c >= mNumColumns || r >= mNumRows)
       {
          std::ostringstream errorString;
          errorString << "Cannot retrieve height value. The given c,r (" << c << ","
@@ -82,7 +87,7 @@ namespace dtTerrain
             << mNumRows << ").";
             
          EXCEPT(HeightFieldException::OUT_OF_BOUNDS,errorString.str());
-      }
+      }*/
       
       return mData[c+(r*mNumColumns)];      
    }

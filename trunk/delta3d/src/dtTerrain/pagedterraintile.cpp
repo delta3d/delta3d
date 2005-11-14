@@ -57,7 +57,7 @@ namespace dtTerrain
    //////////////////////////////////////////////////////////////////////////
    PagedTerrainTile::~PagedTerrainTile()
    {
-      std::cout << "Destroying tile..." << std::endl;
+   
    }
    
    //////////////////////////////////////////////////////////////////////////
@@ -81,8 +81,6 @@ namespace dtTerrain
    {
       if (!IsCachingEnabled() || !GetUpdateCache())
          return;
-         
-      std::cout << "Caching to: " << mCachePath << std::endl;
       
       //Cache the heightfield.
       if (mHeightField.valid() && mHeightField->GetNumColumns() != 0 &&
@@ -123,8 +121,6 @@ namespace dtTerrain
    {
       if (!IsCachingEnabled())
          return;
-      
-      std::cout << "Caching from: " << mCachePath << std::endl;
       
       //Attempt to load the heightfield if it is present.
       std::ifstream inFile;

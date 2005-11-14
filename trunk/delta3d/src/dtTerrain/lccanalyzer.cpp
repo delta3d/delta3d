@@ -48,9 +48,9 @@ namespace dtTerrain
    
    //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(LCCAnalyzerResourceName);
-   const LCCAnalyzerResourceName LCCAnalyzerResourceName::IMAGE_EXT(".jpg");
+   const LCCAnalyzerResourceName LCCAnalyzerResourceName::IMAGE_EXT(".bmp");
    const LCCAnalyzerResourceName LCCAnalyzerResourceName::BASE_LCC_COLOR("baselcc");         
-   const LCCAnalyzerResourceName LCCAnalyzerResourceName::BASE_COLOR("basecolor");
+   const LCCAnalyzerResourceName LCCAnalyzerResourceName::WATER_MASK("water_mask");
    const LCCAnalyzerResourceName LCCAnalyzerResourceName::BASE_FILTER_NAME("lcc_filter");   
    const LCCAnalyzerResourceName LCCAnalyzerResourceName::LCC_IMAGE_NAME("lcc_image");
    const LCCAnalyzerResourceName LCCAnalyzerResourceName::SLOPE_IMAGE("slope");
@@ -62,20 +62,8 @@ namespace dtTerrain
    //////////////////////////////////////////////////////////////////////////
    LCCAnalyzer::LCCAnalyzer()
    {
-      mMaxImageSize = 2048;
-      mOutputDebugImages = false;
-      
-      mLowerHeightColorMap[-11000.0f].set(0, 0, 0); // Marianas Trench
-      mLowerHeightColorMap[0.0f].set(0, 0.3, 0.6);
-
-      mUpperHeightColorMap[0.0f].set(0.647, 0.482, 0.224);
-      mUpperHeightColorMap[300.0f].set(0.710, 0.647, 0.388);
-      mUpperHeightColorMap[600.0f].set(0.741, 0.741, 0.482);
-      mUpperHeightColorMap[1200.0f].set(0.290, 0.612, 0.290);
-      mUpperHeightColorMap[2000.0f].set(0.482, 0.741, 0.322);
-      mUpperHeightColorMap[2500.0f].set(0.647, 0.809, 0.518);
-      mUpperHeightColorMap[3000.0f].set(1, 1, 1);
-      mUpperHeightColorMap[9000.0f].set(1, 1, 1); // Everest
+      mOutputDebugImages = false;     
+      mImageSize = 1024;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -84,7 +72,7 @@ namespace dtTerrain
    }
    
    //////////////////////////////////////////////////////////////////////////
-   void LCCAnalyzer::ProcessLCCData(const PagedTerrainTile &tile, LCCType &type)
+   bool LCCAnalyzer::ProcessLCCData(const PagedTerrainTile &tile, LCCType &type)
    {
       if (!tile.IsCachingEnabled())
          EXCEPT(LCCAnalyzerException::INVALID_CACHE,"Must enable terrain caching for "
@@ -98,7 +86,7 @@ namespace dtTerrain
          LCCAnalyzerResourceName::COMPOSITE_LCC_IMAGE.GetName() << type.GetIndex() <<
          LCCAnalyzerResourceName::IMAGE_EXT.GetName();
       if (osgDB::fileExists(ss.str()))
-         return;      
+         return true;      
       
       //If not, go through the LOONG process of generating the probability map.           
       const HeightField *hf = tile.GetHeightField();
@@ -108,15 +96,21 @@ namespace dtTerrain
       //Before we can process an lcc type, we need to make sure there are base
       //lcc images which are required to start the probability calculations.
       if (mGeospecificLCCImages.empty())
-         EXCEPT(LCCAnalyzerException::NO_VALID_GEO_IMAGES,"Must specifiy at least "
-            "one valid geographic image for use by the LCC analyzer.");
-      LoadAllGeoSpecificImages();
-      CheckBaseLCCImages(*hf,latitude,longitude,tile.GetCachePath());
+      {
+         LOG_WARNING("Must specifiy at least one valid geographic image for use "
+          "by the LCC analyzer.");
+         return false;
+      }
+      
+      LoadAllGeoSpecificImages();      
+      if (!CheckBaseLCCImages(*hf,latitude,longitude,tile.GetCachePath()))
+         return false;
       
       //Now we can continue processing the required images for the specified
       //LCC type.
       LOG_INFO("Computing probability map for: " + tile.GetCachePath());
-      ComputeProbabilityMap(*hf,type,latitude,longitude,tile.GetCachePath());      
+      ComputeProbabilityMap(*hf,type,latitude,longitude,tile.GetCachePath());   
+      return true;   
    }
    
    //////////////////////////////////////////////////////////////////////////
@@ -152,32 +146,16 @@ namespace dtTerrain
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void LCCAnalyzer::CheckBaseLCCImages(const HeightField &hf, int latitude, int longitude,
+   bool LCCAnalyzer::CheckBaseLCCImages(const HeightField &hf, int latitude, int longitude,
       const std::string &tileCachePath)
    {     
-      if (!mBaseColorImage.valid())
-      {
-         //Generate the base color image.
-         LOG_INFO("Generating base color map.");
-         mBaseColorImage = ImageUtils::MakeBaseColor(hf,latitude,longitude, 
-            mUpperHeightColorMap,mLowerHeightColorMap,mGeospecificLCCImages,0.25);   
-            
-         if (OutputDebugImages())
-         {
-            std::string baseColorPath = tileCachePath + "/" +
-               LCCAnalyzerResourceName::BASE_COLOR.GetName() + 
-               LCCAnalyzerResourceName::IMAGE_EXT.GetName();   
-      
-            LOG_INFO("Writing base color map to cache: " + baseColorPath);
-            osgDB::writeImageFile(*mBaseColorImage.get(),baseColorPath);
-         }
-      }    
-
       if (!mBaseLCCColorImage.valid())
       {
          //Generate the base lcc color image.
          LOG_INFO("Generating base LCC color map.");         
-         mBaseLCCColorImage = MakeBaseLCCColor(hf,latitude,longitude);     
+         mBaseLCCColorImage = MakeBaseLCCColor(hf,latitude,longitude);
+         if (mBaseLCCColorImage == NULL)
+            return false;     
       
          if (OutputDebugImages())
          {  
@@ -194,9 +172,21 @@ namespace dtTerrain
       {
          //Generate a water LCC filter.
          LOG_INFO("Generating water mask image.");
-         mWaterMask = MakeLCCImage(*mBaseLCCColorImage.get(),osg::Vec3(110.0f,130.0f,177.0f));
-         mWaterMask = ImageUtils::MakeFilteredImage(*mWaterMask.get(),osg::Vec3(0,0,0));   
+         mWaterMask = MakeLCCMask(*mBaseLCCColorImage.get(),110,130,177);
+         mWaterMask = ImageUtils::MakeFilteredImage(*mWaterMask.get(),osg::Vec3(0,0,0));
+         
+         if (OutputDebugImages())
+         {  
+            std::string waterMaskPath = tileCachePath + "/" + 
+               LCCAnalyzerResourceName::WATER_MASK.GetName() + 
+               LCCAnalyzerResourceName::IMAGE_EXT.GetName();
+            
+            LOG_INFO("Writing water mask image to cache: " + waterMaskPath);
+            osgDB::writeImageFile(*mWaterMask.get(),waterMaskPath);     
+         }            
       }
+      
+      return true;
    }
    
    //////////////////////////////////////////////////////////////////////////
@@ -229,7 +219,6 @@ namespace dtTerrain
       const std::string &tileCachePath)
    {
       std::ostringstream fileNameSS;
-      osg::Vec3 selectedRGB;
       int idx = type.GetIndex();
       
       //First we need a base filter.         
@@ -237,12 +226,9 @@ namespace dtTerrain
       dtCore::RefPtr<osg::Image> lccImage;
                     
       LOG_INFO("Generating LCC image.");
-      int *rgb = type.GetRGB();
-      if (rgb != NULL)
-         selectedRGB.set(rgb[0],rgb[1],rgb[2]);
-      else
-         selectedRGB.set(0,0,0); 
-      lccImage = MakeLCCImage(*mBaseLCCColorImage.get(), selectedRGB);
+      unsigned char r,g,b;
+      type.GetRGB(r,g,b);
+      lccImage = MakeLCCMask(*mBaseLCCColorImage.get(),r,g,b);
          
       if (OutputDebugImages())
       {
@@ -292,7 +278,9 @@ namespace dtTerrain
       for (itor=mGeospecificLCCImages.begin(); itor!=mGeospecificLCCImages.end(); ++itor)
       {
          if (itor->mImage == NULL)
+         {
             ImageUtils::LoadGeospecificLCCImage(*itor);
+         }
       }     
    }   
    
@@ -300,109 +288,79 @@ namespace dtTerrain
    dtCore::RefPtr<osg::Image> LCCAnalyzer::MakeBaseLCCColor(const HeightField &hf,
       int latitude, int longitude)
    {
-      std::vector<ImageUtils::GeospecificImage> lccimages;
-      std::vector<ImageUtils::GeospecificImage>::iterator it;
-
-      int width = hf.GetNumColumns()-1;
-      int height = hf.GetNumRows()-1;
+      std::vector<ImageUtils::GeospecificImage> currRegionImages;
+      std::vector<ImageUtils::GeospecificImage>::iterator itor;
+      unsigned int width,height;
 
       // LCC data used for this particular terrain tile
-      for(it = mGeospecificLCCImages.begin();
-         it != mGeospecificLCCImages.end();
-         it++)
-      {
-        
-         if(latitude >= (*it).mMinLatitude && latitude <= (*it).mMaxLatitude &&
-            longitude >= (*it).mMinLongitude && longitude <= (*it).mMaxLongitude)
+      width = height = mImageSize;
+      for(itor = mGeospecificLCCImages.begin(); itor!=mGeospecificLCCImages.end(); ++itor)
+      {      
+         if(latitude >= itor->mMinLatitude && latitude <= itor->mMaxLatitude &&
+            longitude >= itor->mMinLongitude && longitude <= itor->mMaxLongitude)
          {
-            lccimages.push_back(*it);
-
-            width = osg::maximum(width,
-               osg::Image::computeNearestPowerOfTwo((int)osg::absolute(1.0/(*it).mGeoTransform[1])));
-
-
-            height = osg::maximum(height,            
-               osg::Image::computeNearestPowerOfTwo((int)osg::absolute(1.0/(*it).mGeoTransform[5])));
+            currRegionImages.push_back(*itor);
          }
       }
-
-      dtCore::RefPtr<osg::Image> lccimage = new osg::Image;
-      lccimage->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
-      unsigned char* ptr = (unsigned char*)lccimage->data();
-
-      float heightVal;
-      osg::Vec3 c1, c2, c3, c4, c12, c34, color, coord;
-
-      double latStep = 1.0/height, lonStep = 1.0/width,
-         lat = latitude+latStep*0.5, lon,
-         sStep = (hf.GetNumColumns()-1.0)/width, tStep = (hf.GetNumRows()-1.0)/height,
-         s, t = tStep*0.5;
-
-      for(int y=0;y<height;y++)
+      
+      //If we do not have any LCC data for this latitude/longitude region no use
+      //in proceeding.
+      if (currRegionImages.empty())
       {
-         lon = longitude + lonStep*0.5;
-         s = sStep*0.5;
+         LOG_WARNING("No available LCC data for current latitude/longitude cell.");
+         return NULL;
+      }
+      
+      dtCore::RefPtr<osg::Image> lccImage = new osg::Image();
+      lccImage->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
+      unsigned char *data = (unsigned char *)lccImage->data();
 
-         for(int x=0;x<width;x++)
+      osg::Vec3 color;
+      float latStep = 1.0f/height, lonStep = 1.0f/width;
+      float currLat = latitude, currLon;
+     
+      for(unsigned int y=0; y<height; y++)
+      {
+         currLon = longitude;
+         for(unsigned int x=0; x<width; x++)
          {
-            heightVal = hf.GetInterpolatedHeight(s,t);
-            if(heightVal > 0.0f)
-            {
-               color = mUpperHeightColorMap.GetColor(heightVal);
-            }
-            else
-            {
-               color = mLowerHeightColorMap.GetColor(heightVal);
-            }
+            //Calculate the value at this pixel using LCC color data.
+            color = osg::Vec3(0,0,0);
+            for(itor = currRegionImages.begin(); itor!=currRegionImages.end(); ++itor)
+            {    
+               int iX = (int)(itor->mInverseGeoTransform[0] +
+                  (itor->mInverseGeoTransform[1]*currLon) +
+                  (itor->mInverseGeoTransform[2]*currLat));
 
-            for(it = lccimages.begin(); it != lccimages.end(); ++it)
-            {
-               double x = (*it).mInverseGeoTransform[0] +
-                  (*it).mInverseGeoTransform[1]*lon +
-                  (*it).mInverseGeoTransform[2]*lat,
-                  y = (*it).mInverseGeoTransform[3] +
-                  (*it).mInverseGeoTransform[4]*lon +
-                  (*it).mInverseGeoTransform[5]*lat;
-
-               int fx = (int)floor(x), fy = (int)floor(y),
-                  cx = (int)ceil(x), cy = (int)ceil(y);
-               int ix = (int)x, iy = (int)y;
-
-               if(fx >= 0 && cx < (*it).mImage->s() && fy >= 0 && cy < (*it).mImage->t())
+               int iY = (int)(itor->mInverseGeoTransform[3] +
+                  (itor->mInverseGeoTransform[4]*currLon) +
+                  (itor->mInverseGeoTransform[5]*currLat));
+           
+               if(iX >= 0 && iY >= 0 && iX < itor->mImage->s() && iY < itor->mImage->t())
                {
-                  unsigned char* data = (*it).mImage->data(ix, iy);
-                  if((*it).mImage->getPixelFormat() == GL_LUMINANCE)
-                  {
-                     color[0] *= (data[0]/255.0f);
-                     color[1] *= (data[0]/255.0f);
-                     color[2] *= (data[0]/255.0f);
-                  }
-                  else
-                  {
-                     color[0] = (data[0]/255.0f);
-                     color[1] = (data[1]/255.0f);
-                     color[2] = (data[2]/255.0f);
-                  }
-               }
+                  unsigned char *srcData = itor->mImage->data(iX,iY);                  
+                  color[0] = (srcData[0]/255.0f);
+                  color[1] = (srcData[1]/255.0f);
+                  color[2] = (srcData[2]/255.0f);
+               }               
             }
 
-            *(ptr++) = (unsigned char)(color[0]*255);
-            *(ptr++) = (unsigned char)(color[1]*255);
-            *(ptr++) = (unsigned char)(color[2]*255);
+            *(data++) = (unsigned char)(color[0]*255);
+            *(data++) = (unsigned char)(color[1]*255);
+            *(data++) = (unsigned char)(color[2]*255);
 
-            lon += lonStep;
-            s += sStep;
+            currLon += lonStep; 
          }
 
-         lat += latStep;
-         t += tStep;
+         currLat += latStep;
       }
-      return lccimage;
+      
+      return lccImage;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<osg::Image> LCCAnalyzer::MakeLCCImage(const osg::Image &src_image, 
-      const osg::Vec3& rgb_selected)
+   dtCore::RefPtr<osg::Image> LCCAnalyzer::MakeLCCMask(const osg::Image &src_image, 
+      unsigned char r, unsigned char g, unsigned char b)
    {
       dtCore::RefPtr<osg::Image> dst_image = new osg::Image();
 
@@ -410,40 +368,28 @@ namespace dtTerrain
       {
          int width = src_image.s();
          int height = src_image.t();
-
-         dst_image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
-
          unsigned char* src_data = NULL;
          unsigned char* dst_data = NULL;
 
-         unsigned int hits =0;
-         unsigned int misses =0;
-
-         for(int y=0;y<height;++y)
+         dst_image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
+         for(int y=0; y<height; y++)
          {
-            for(int x=0;x<width;++x)
+            for(int x=0; x<width; x++)
             {
                src_data = (unsigned char*)src_image.data(x,y);
                dst_data = (unsigned char*)dst_image->data(x,y);
 
-               if ((src_data[0] == rgb_selected[0]) &&
-                  (src_data[1] == rgb_selected[1]) &&
-                  (src_data[2] == rgb_selected[2]))
+               if (src_data[0] == r && src_data[1] == g && src_data[2] == b)
                {
-
                   dst_data[0]=0;
                   dst_data[1]=0;
                   dst_data[2]=0;
-
-                  hits++;
                }
                else
                {
                   dst_data[0]=255;
                   dst_data[1]=255;
                   dst_data[2]=255;
-
-                  misses++;
                }
             }
          }

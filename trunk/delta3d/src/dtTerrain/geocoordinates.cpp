@@ -132,8 +132,8 @@ namespace dtTerrain
    {
       if (mUpdateCartesianPoint)
       {
-         mCartesianPoint.x() = (mLongitude * EQUATORIAL_RADIUS) / osg::RadiansToDegrees(1.0);
-         mCartesianPoint.y() = -(mLatitude * EQUATORIAL_RADIUS) / osg::RadiansToDegrees(1.0);
+         mCartesianPoint.x() = (mLongitude * EQUATORIAL_RADIUS) * osg::DegreesToRadians(1.0);
+         mCartesianPoint.y() = (-mLatitude * EQUATORIAL_RADIUS) * osg::DegreesToRadians(1.0);
          mCartesianPoint.z() = mAltitude;        
          mUpdateCartesianPoint = false;
       }

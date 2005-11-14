@@ -103,7 +103,7 @@ namespace dtEditQt
             
             std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies = GetActorProxies(myProperty->GetDesiredActorClass());
 
-            myProperty->SetValue(index < proxies.size() ? proxies[index].get() : NULL);
+            myProperty->SetValue((unsigned int)index < proxies.size() ? proxies[index].get() : NULL);
             dataChanged = true;
          }
       }

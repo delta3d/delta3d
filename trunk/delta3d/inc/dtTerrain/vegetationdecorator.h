@@ -22,15 +22,13 @@
 #define DELTA_VEGETATIONDECORATOR
 
 #include <osg/Vec3>
-#include <osg/Texture2D>
-#include <osg/Node>
 #include <osg/Group>
-#include <dtCore/refptr.h>
-#include <dtCore/globals.h>
+#include <osg/Image>
+#include "dtCore/refptr.h"
 #include "dtUtil/enumeration.h"
 #include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/lcctype.h"
 #include "dtTerrain/lccanalyzer.h"
+#include "dtTerrain/lcctype.h"
 
 namespace dtTerrain
 {
@@ -44,6 +42,10 @@ namespace dtTerrain
       
          ///Thrown if no LCC data was specified before analyzing occurs.
          static VegetationException INVALID_LCC_TYPES;
+         
+         ///Thrown if the slope-aspect image could not be loaded when processing vegetation
+         ///placement.
+         static VegetationException INVALID_SLOPE_ASPECT_IMAGE;
                   
       protected:
          VegetationException(const std::string &name) : dtUtil::Enumeration(name)
@@ -106,7 +108,7 @@ namespace dtTerrain
           * @return A group node containing the vegetation scene for the 
           *    specified tile.
           */		 
-         osg::Group *AddVegetation(PagedTerrainTile &tile);
+         dtCore::RefPtr<osg::Group> AddVegetation(PagedTerrainTile &tile);
 
          /**
           * Determine whether vegetation exists at coord x,y
@@ -116,7 +118,7 @@ namespace dtTerrain
           * @param limit the probability rolled
           * @return boolean on existence of vegetaton at x,y
           */
-         bool GetVegetation(const osg::Image* mCimage, int x, int y, int limit);
+         bool GetVegetation(osg::Image &mCimage, int x, int y, int limit);
 
          /**
           * Determine type/age of vegetation type (1-3; young-old).
@@ -138,16 +140,9 @@ namespace dtTerrain
           * @param maximum slope
           * @return boolean on existence of vegetaton at x,y
           */
-         int GetNumLooks(const osg::Image* mCimage, const osg::Image* SLimage, int x, int y, float good_angle, int maxlooks, float maxslope);
-
-         /**
-          * Sets the vegetations load distance
-          * @param load distance for the vegetation
-          */
-         void SetLoadDistance(const float loadDistance)
-         {
-            mLoadDistance = loadDistance;
-         }
+         int GetNumLooks(const osg::Image &compositeImage,
+            const osg::Image &slopeMap, int x, int y, float good_angle, 
+            int maxlooks, float maxslope);
 
          /**
           * Sets the distance between vegetation objects
@@ -155,16 +150,7 @@ namespace dtTerrain
           */
          void SetVegetationDistance(const float distance)
          {
-            mVegeDistance = distance;
-         }
-
-         /**
-          * Sets the maximum texture size, which is currently used for the placement of vegetation
-          * @param max texture size
-         */
-         void SetMaxTextureSize( int maxTextureSize )
-         {
-            mMaxTextureSize = maxTextureSize;
+            mVegetationDistance = distance;
          }
 
          void SetLCCTypes(std::vector<dtTerrain::LCCType> &lccTypes)
@@ -180,13 +166,24 @@ namespace dtTerrain
    
          void SetRandomSeed(const int &seed) { mSeed = seed; }
    
-         void SetMaxObjectsPerCell(const int maxObjects) 
-         { 
-            mMaxObjectsPerCell = maxObjects;
-         }
+         /**
+          * Sets the limit on the number of vegetation models placed per terrain
+          * tile.
+          * @param newMax The new limit.
+          */
+         void SetMaxVegetationPerCell(int newMax) { mMaxVegetationPerCell = newMax; } 
+         
+         /**
+          * Gets a reference to the LCCAnlyzer.
+          * @return The LCCAnalyzer for this vegetation decorator.
+          */
+         LCCAnalyzer &GetLCCAnalyzer() { return mLCCAnalyzer; }
    
       protected:
 
+         dtCore::RefPtr<osg::Group> BuildVegetationForType(osg::Image &compositeImage, osg::Image &slopeMap,
+            osg::Vec3 &cellOrigin, LCCType &type);
+         
          /** 
           * Destructor
           */
@@ -200,13 +197,11 @@ namespace dtTerrain
          dtCore::RefPtr<osg::Group> mVegetationNode;
          VegetationMap mVegetationMap;
          
-         float mVegeDistance;
-         int mMaxTextureSize;
+         float mVegetationDistance;
          int mSeed;
-         float mLoadDistance;
          int mMaxLooks;
-         int mMaxObjectsPerCell;
-         int mTotalVegeCount;
+         int mMaxVegetationPerCell;
+         int mCellVegetationCount;
    };
 }
 

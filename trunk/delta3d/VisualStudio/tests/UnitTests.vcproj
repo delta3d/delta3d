@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="UnitTests"
 	ProjectGUID="{85D210C4-B5EE-4E35-A1C8-8F0F66603308}"
+	RootNamespace="UnitTests"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -123,19 +124,34 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\tests\util\deprecationmgrtests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tests\util\enumerationtests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tests\util\exceptiontests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tests\util\logtests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\tests\mainTestRunner.cpp">
 			</File>
 			<File
-				RelativePath="..\..\tests\project\MapTests.cpp">
+				RelativePath="..\..\tests\project\maptests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\tests\project\ProjectTests.cpp">
+				RelativePath="..\..\tests\project\projecttests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\tests\proxy\ProxyTest.cpp">
+				RelativePath="..\..\tests\proxy\proxytests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\tests\util\UtilTests.cpp">
+				RelativePath="..\..\tests\util\stringutiltests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\tests\util\utiltests.cpp">
 			</File>
 		</Filter>
 		<Filter

@@ -128,13 +128,13 @@ namespace dtTerrain
       if (!newEntry.drawable->Build(tile))
          tile.SetUpdateCache(true);
       
-      osg::Geode *geode = new osg::Geode();
-      newEntry.sceneNode = new osg::PositionAttitudeTransform();      
       GeoCoordinates coords = tile.GetGeoCoordinates();
+      osg::Geode *geode = new osg::Geode();
+      newEntry.sceneNode = new osg::MatrixTransform();      
+      newEntry.sceneNode->setMatrix(osg::Matrix::translate(coords.GetCartesianPoint()));
            
       CheckBaseGradientCache(tile,newEntry);
       SetupRenderState(tile,newEntry,*geode->getOrCreateStateSet());
-      newEntry.sceneNode->setPosition(coords.GetCartesianPoint());
       geode->addDrawable(newEntry.drawable.get());
       newEntry.sceneNode->addChild(geode);
       mRootGroupNode->addChild(newEntry.sceneNode.get());
@@ -283,12 +283,8 @@ namespace dtTerrain
       uniform->set(0);
       ss.addUniform(uniform);
       
-      uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"detailScale");
-      uniform->set(1);
-      ss.addUniform(uniform);
-
       uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseGradient");
-      uniform->set(2);
+      uniform->set(1);
       ss.addUniform(uniform);
       
       if (tile.GetBaseTextureImage() != NULL)
@@ -301,10 +297,10 @@ namespace dtTerrain
             osg::Texture2D::LINEAR);
          baseColorTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
          baseColorTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
-         ss.setTextureAttributeAndModes(3,baseColorTexture,osg::StateAttribute::ON);
+         ss.setTextureAttributeAndModes(2,baseColorTexture,osg::StateAttribute::ON);
       
          uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseColor");
-         uniform->set(3);
+         uniform->set(2);
          ss.addUniform(uniform);
       }
       
@@ -324,8 +320,7 @@ namespace dtTerrain
       //Attach our shared textures...
       ss.setTextureAttributeAndModes(0,mDetailGradientTexture.get(),
          osg::StateAttribute::ON);
-      ss.setTextureAttributeAndModes(1,mDetailScaleTexture.get(),osg::StateAttribute::ON);
-      ss.setTextureAttributeAndModes(2,entry.baseGradientTexture.get(),osg::StateAttribute::ON);
+      ss.setTextureAttributeAndModes(1,entry.baseGradientTexture.get(),osg::StateAttribute::ON);
          
       //Setup automatic texture coordinate generation..
       osg::TexGen *texGen = new osg::TexGen();
@@ -360,8 +355,8 @@ namespace dtTerrain
       if (!mDetailGradientTexture.valid())
          CheckDetailGradientCache();
          
-      if (!mDetailScaleTexture.valid())
-         CheckDetailScaleCache();
+      //if (!mDetailScaleTexture.valid())
+      //   CheckDetailScaleCache();
    }
    
    ////////////////////////////////////////////////////////////////////////// 
@@ -551,8 +546,8 @@ namespace dtTerrain
          osg::Texture2D::LINEAR_MIPMAP_LINEAR);
       mDetailGradientTexture->setFilter(osg::Texture2D::MAG_FILTER,
          osg::Texture2D::LINEAR);
-      mDetailGradientTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::MIRROR);
-      mDetailGradientTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::MIRROR);
+      mDetailGradientTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::REPEAT);
+      mDetailGradientTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::REPEAT);
    }
    
    ////////////////////////////////////////////////////////////////////////// 

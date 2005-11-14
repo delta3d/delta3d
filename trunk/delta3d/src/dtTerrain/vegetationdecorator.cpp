@@ -42,15 +42,15 @@ namespace dtTerrain
     
    //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(VegetationException);
-   VegetationException VegetationException::INVALID_LCC_TYPES("INVALID_LCC_TYPES");   
+   VegetationException VegetationException::INVALID_LCC_TYPES("INVALID_LCC_TYPES");
+   VegetationException VegetationException::INVALID_SLOPE_ASPECT_IMAGE("INVALID_SLOPE_ASPECT_IMAGE");
    
    
    //////////////////////////////////////////////////////////////////////////
    VegetationDecorator::VegetationDecorator(const std::string &name) : TerrainDecorationLayer(name)
    {
-      mMaxLooks=1;
-      mMaxTextureSize=1024;
-      mTotalVegeCount=0;
+      mMaxLooks=4;
+      mMaxVegetationPerCell = 2000;
       mVegetationNode = new osg::Group();
    }
 
@@ -73,7 +73,10 @@ namespace dtTerrain
       mLCCAnalyzer.Clear();
       std::vector<dtTerrain::LCCType>::iterator itor;
       for (itor=mLCCTypes.begin(); itor!=mLCCTypes.end(); ++itor)
-         mLCCAnalyzer.ProcessLCCData(tile,*itor);
+      {
+         if (!mLCCAnalyzer.ProcessLCCData(tile,*itor))
+            break;
+      }      
       mLCCAnalyzer.Clear();    
    }
    
@@ -91,16 +94,16 @@ namespace dtTerrain
    //////////////////////////////////////////////////////////////////////////       
    void VegetationDecorator::OnTerrainTileResident(PagedTerrainTile &tile)
    {
-      osg::Group *newVegetationGroup = AddVegetation(tile);
-      mVegetationNode->addChild(newVegetationGroup);
-      mVegetationMap.insert(std::make_pair(&tile,newVegetationGroup));
+      dtCore::RefPtr<osg::Group> newVegetationGroup = AddVegetation(tile);
+              
+      mVegetationNode->addChild(newVegetationGroup.get());
+      mVegetationMap.insert(std::make_pair(&tile,newVegetationGroup.get()));
    }
    
    //////////////////////////////////////////////////////////////////////////    
-   osg::Group *VegetationDecorator::AddVegetation(PagedTerrainTile &tile)
+   dtCore::RefPtr<osg::Group> VegetationDecorator::AddVegetation(PagedTerrainTile &tile)
    {
-      dtUtil::Log &log = dtUtil::Log::GetInstance();
-   
+      //const int MAX_VEGE_GROUPS_PER_CELL = 16384;
       std::string sceneGraphFile = tile.GetCachePath() + "/" +
          LCCAnalyzerResourceName::SCENE_GRAPH.GetName();
          
@@ -115,412 +118,204 @@ namespace dtTerrain
       }
 
       LOG_INFO("Could not find existing data in the cache.  Generating instead...");
-      osg::Group *rootVegetationGroup = new osg::Group();
-      rootVegetationGroup->setName("mRootVegeGroup");
-      rootVegetationGroup->setDataVariance(osg::Object::STATIC);
-
-      //create quadtree
-      char myname[20];
-      int i;
-      dtCore::RefPtr<osg::Group> QuadGroup2[4];
-      for (i = 0; i < 4; i++)
-      {
-         sprintf(myname, "QuadGroup2[%i]",i);
-         QuadGroup2[i] = new osg::Group;
-         QuadGroup2[i]->setName(myname);
-         QuadGroup2[i]->dirtyBound();
-         rootVegetationGroup->addChild(QuadGroup2[i].get());
-      }
-      dtCore::RefPtr<osg::Group>  QuadGroup4[16];
-      for (i = 0; i < 16; i++)
-      {
-         sprintf(myname, "QuadGroup4[%i]",i);
-         QuadGroup4[i] = new osg::Group;
-         QuadGroup4[i]->setName(myname);
-         QuadGroup4[i]->dirtyBound();
-         QuadGroup2[i/4]->addChild(QuadGroup4[i].get());
-      }
-      dtCore::RefPtr<osg::Group>  QuadGroup8[64];
-      for (i = 0; i < 64; i++)
-      {
-         sprintf(myname, "QuadGroup8[%i]",i);
-         QuadGroup8[i] = new osg::Group;
-         QuadGroup8[i]->setName(myname);
-         QuadGroup8[i]->dirtyBound();
-         QuadGroup4[i/4]->addChild(QuadGroup8[i].get());
-      }
-      dtCore::RefPtr<osg::Group>  QuadGroup16[256];
-      for (i = 0; i < 256; i++)
-      {
-         sprintf(myname, "QuadGroup16[%i]",i);
-         QuadGroup16[i] = new osg::Group;
-         QuadGroup16[i]->setName(myname);
-         QuadGroup16[i]->dirtyBound();
-         QuadGroup8[i/4]->addChild(QuadGroup16[i].get());
-      }
-      dtCore::RefPtr<osg::Group>  QuadGroup32[1024];
-      for (i = 0; i < 1024; i++)
-      {
-         sprintf(myname, "QuadGroup32[%i]",i);
-         QuadGroup32[i] = new osg::Group;
-         QuadGroup32[i]->setName(myname);
-         QuadGroup32[i]->dirtyBound();
-         QuadGroup16[i/4]->addChild(QuadGroup32[i].get());
-      }
-
-      dtCore::RefPtr<osg::Group>  QuadGroup64[4096];
-      for (i = 0; i < 4096; i++)
-      {
-         sprintf(myname, "QuadGroup64[%i]",i);
-         QuadGroup64[i] = new osg::Group;
-         QuadGroup64[i]->setName(myname);
-         QuadGroup64[i]->dirtyBound();
-         QuadGroup32[i/4]->addChild(QuadGroup64[i].get());
-      }
-
-      // constants
-      const int MAX_VEGE_PER_CELL = mMaxObjectsPerCell;
-      const int MAX_VEGE_GROUPS_PER_CELL = 16384;
+      dtCore::RefPtr<osg::Group> rootVegetationGroup = new osg::Group();
       
-      // do once variables
-      float deltaz = -.75f;
-      float random_x = 0.0f, random_y=0.0f, random_h=0.0f, random_scale=0.0f;
-      
-      int scale = 4;// int(mMaxTextureSize/1024);
+      //float deltaZ = -.75f;
+      //float randomX = 0.0f, randomY = 0.0f, randomH = 0.0f, randomScale = 0.0f;      
+      //int scale = 4;
 
-      //set up random number seed
-      if (mSeed!= 0)
-      {
-         srand(static_cast<unsigned>(mSeed));
-      }
+      //Set up random number seed
+      if (mSeed != 0)
+       srand(static_cast<unsigned>(mSeed));
       else
-      {
          srand(static_cast<unsigned>(time(NULL)));
-      }
 
-      //find cell origin
+      //Calculate the origin of this cell for vegetation placement.
       GeoCoordinates coords = tile.GetGeoCoordinates();
-      osg::Vec3 cellorigin = coords.GetCartesianPoint();
-      std::cout << "ORIGIN=========>: " << std::setw(3) << std::setprecision(3) << cellorigin << std::endl;
-      std::cout << "ORIGINLATLON===========>:" << coords.GetLatitude() << "," << coords.GetLongitude() << std::endl;
-
-      //create LeafGroups (these hold a bunch of objects in the smallest atomic unit)
-      dtCore::RefPtr<osg::LOD> LeafGroup[MAX_VEGE_GROUPS_PER_CELL];
-
-      int vg;
-      for (vg = 0; vg < MAX_VEGE_GROUPS_PER_CELL; vg++)
-      {
-         sprintf(myname, "LeafGroup[%i]",vg);
-         LeafGroup[vg] = new osg::LOD();
-         LeafGroup[vg]->setName(myname);
-         LeafGroup[vg]->setDataVariance(osg::Object::STATIC);
-      }
-
-      // get slope (aspect) image info
-      std::string SLimagePath = tile.GetCachePath() + "/" + 
+      osg::Vec3 cellOrigin = coords.GetCartesianPoint();
+      
+      //Get slope (aspect) image.
+      std::string slopePath = tile.GetCachePath() + "/" + 
             LCCAnalyzerResourceName::SLOPE_IMAGE.GetName() + 
             LCCAnalyzerResourceName::IMAGE_EXT.GetName();     
 
-      dtCore::RefPtr<osg::Image> SLimage = osgDB::readImageFile(SLimagePath);
-
-      for(std::vector<LCCType>::iterator l = mLCCTypes.begin();		//cycle through all the LCC types
-         l != mLCCTypes.end();
-         ++l)
+      //Load the cached slope image.  If this could not be found, return an
+      //empty group.  This could happen if the vegetation lcc data was not 
+      //available for the current region.
+      dtCore::RefPtr<osg::Image> slopeImage = osgDB::readImageFile(slopePath);      
+      if (!slopeImage.valid())
       {
-         // Make sure we have models to place for this vegetation type
-         if ((*l).GetModelNum() > 0)
-         {
-            int vegecount = 0;				
-
-            // pre load our models from all LCC types contained in mLCCs
-            for(i=0; i < (*l).GetModelNum(); ++i)
-            {
-               log.LogMessage(dtUtil::Log::LOG_INFO,  __FUNCTION__, "Loading %s", (*l).GetModelName(i).c_str());
-                              
-               // Make sure we can load a model before try and add it's node
-               osg::Node *vegeNode = osgDB::readNodeFile((*l).GetModelName(i));
-               if (vegeNode != NULL)
-               {
-                  osg::StateSet *ss = vegeNode->getOrCreateStateSet();
-                  ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
-                  ss->setMode(GL_CULL_FACE,osg::StateAttribute::ON);
-                  vegeNode->setDataVariance(osg::Object::STATIC);
-                  (*l).SetVegetationObject(vegeNode,i);
-               }
-               else
-               {
-                  log.LogMessage(dtUtil::Log::LOG_ERROR,__FUNCTION__,"Could not load the model.");
-               }                  
-            }
-
-            log.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,   "Placing LCCtype %i '%s'....",(*l).GetIndex(), (*l).GetLCCName().c_str());
-
-            // identify which probability map we'll be using
-            std::ostringstream fileNameSS;
-            fileNameSS << tile.GetCachePath() << "/" <<
-               LCCAnalyzerResourceName::COMPOSITE_LCC_IMAGE.GetName() << l->GetIndex() <<
+         LOG_WARNING("Could not find slope map image.  Cannot generate vegetation.")
+         return NULL;
+      }
+      
+      //The total number of vegetation objects is capped per cell.  This may be adjusted
+      //if performance is low.
+      //@see SetMaxVegetationPerCell()
+      mCellVegetationCount = 0;
+      std::vector<LCCType>::iterator itor;
+      for (itor=mLCCTypes.begin(); itor!=mLCCTypes.end(); ++itor)
+      {
+         std::ostringstream fileNameSS;
+         fileNameSS << tile.GetCachePath() << "/" <<
+            LCCAnalyzerResourceName::COMPOSITE_LCC_IMAGE.GetName() << itor->GetIndex() <<
                LCCAnalyzerResourceName::IMAGE_EXT.GetName();
       
-            std::string mCimagePath = fileNameSS.str();           
-
-            //load up the probability map
-            dtCore::RefPtr<osg::Image> mCimage = osgDB::readImageFile(mCimagePath);
-
-            for (int y = 0; y < mCimage->t(); y++)
-            {
-               for (int x = 0; x < mCimage->s(); x++)
-               {
-                  int numLooks = GetNumLooks(mCimage.get(), SLimage.get(), x, y, (*l).GetAspect(), mMaxLooks, (*l).GetMaxSlope());
-
-                  if (numLooks)
-                  {
-                     int scaledx = int(x/scale);
-                     int scaledy = int(y/scale);
-                     vg = int(scaledx/8)+int(scaledy/8)*128;
-
-                     for (int ml = 0; ml <numLooks; ml++)
-                     {
-                        // deterministic version - good for debugging
-                        //if (GetVegetation(mCimage.get(), x,y,probabilitylimit) && (vegecount < MAX_VEGE_PER_CELL))
-
-                        // stochastic version - better realism
-                        if (GetVegetation(mCimage.get(), x, y,(int)(255.0f*(float)rand()/(RAND_MAX+1.0f))) && (vegecount < MAX_VEGE_PER_CELL))
-                        {
-                           // Initialize tranform to be used for positioning the plant
-                           // assign values for the transform
-                           dtCore::RefPtr<osg::PositionAttitudeTransform> vegeXform = new osg::PositionAttitudeTransform();
-
-                           random_x = (float)rand()/(RAND_MAX+1.0f)-0.5f;		// -.5 to .5
-                           random_y = (float)rand()/(RAND_MAX+1.0f)-0.5f;		// -.5 to .5
-                           random_h = (float)rand()/(RAND_MAX+1.0f);			   // 0 to 1.0
-                           random_scale = (float)rand()/(RAND_MAX+1.0f)*0.5f; // 0 to .5
-                           
-                           //limit orientation of urban models
-                           if ((*l).GetIndex()<30)   
-                           {
-                              random_h = floor(random_h*4.0f)/4.0f;  //0,.25,.50,.75 = 0, 90, 180, 270 
-                              deltaz = -.1f;
-                           }
-
-                           osg::Quat attitude;
-                           attitude.makeRotate(6.28f*random_h, osg::Vec3(0, 0, 1));
-                           vegeXform->setAttitude(attitude);
-
-                           float tempx = cellorigin[0]+(x+.5+random_x*0.95f)*108.7/scale; 
-                           float tempy = cellorigin[1]+(y+.5+random_y*0.95f)*108.7/scale;
-
-                           // Position of the vegetation
-                           osg::Vec3 vegePosit;
-
-                           // Grab the height of our terrain at the vegetation point in question
-                           float height = GetParentTerrain()->GetHeight(tempx, tempy);
-                           vegePosit.set(tempx,tempy,height+deltaz);
-                         
-                           //randomly select the models to use for this lcc type
-                           int whichmodel = int(rand()/(RAND_MAX+1.0f)*(*l).GetModelNum());
-                           
-                           if ((*l).GetIndex()>30)     //don't scale urban models
-                           {
-                              // using our random model index for this type create a random scale
-                              float modelscale = (*l).GetModelScale(whichmodel);
-                              osg::Vec3 vegeScale(1.5*modelscale+random_scale,1.5*modelscale+random_scale,modelscale+random_scale);
-                              vegeXform->setScale(vegeScale);
-                           }
-
-                           // Set the position 
-                           vegeXform->setPosition(vegePosit);
-
-                           // Add the Randomly selected model for this vegetation type
-                           vegeXform->addChild((*l).GetVegetationObject(whichmodel));
-
-                           //check collision detection
-                           bool goodposition = true;
-                           
-                           // for urban objects
-                           if ((*l).GetIndex()<30)		
-                           {
-                              osg::BoundingSphere vegeXformBS = vegeXform->getBound();
-                              unsigned int nc = 0;
-                              while( (goodposition) && (nc < LeafGroup[vg]->getNumChildren()) )
-                              {
-                                 goodposition = !(vegeXformBS.intersects(LeafGroup[vg]->getChild(nc)->getBound()));
-                                 nc++;
-                              }
-                           }
-                           else					
-                              // for vegetation objects
-                           {
-                              osg::BoundingSphere vegeXformBS = vegeXform->getBound();
-                              unsigned int nc = 0;
-                              while( (goodposition) && (nc < LeafGroup[vg]->getNumChildren()) )
-                              {
-                                 osg::BoundingSphere childBS = LeafGroup[vg]->getChild(nc)->getBound();
-                                 if ((vegeXformBS._center - childBS._center).length() < (vegeXformBS._radius/4.0f))
-                                    goodposition = false;
-                                 nc++;
-                              }
-                           }
-
-                           if (goodposition)
-                           {
-                              LeafGroup[vg]->addChild(vegeXform.get(),0,20000.0f);
-                              LeafGroup[vg]->setRange((LeafGroup[vg]->getNumChildren())-1, 0.0f,15000.0f);
-                              vegecount++;
-                           }
-                           else
-                           {
-                              vegeXform->removeChild(vegeXform->getNumChildren());
-                           }
-                        }//getvegetation
-                     }//ml
-                  }
-               }//x
-            }//y
-           
-            mCimage.release();
-            mCimage.release();
-            mCimage.~RefPtr();
-            mCimage = NULL;
-
-            mTotalVegeCount = mTotalVegeCount + vegecount;
-            log.LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,   "Total count = %i", mTotalVegeCount);
-         }
-      }
-
-      //stats counters
-      int groupcount = 0;
-      int maxchildren = 0;
-      int minchildren = 999;
-      int vegechild = 0;			
-      int totalcount = 0;
-
-      //only add in groups that are non-empty
-      for (int vg = 0; vg < MAX_VEGE_GROUPS_PER_CELL; ++vg)
-      {
-         vegechild = LeafGroup[vg]->getNumChildren();
-
-         if (vegechild != 0)
+         dtCore::RefPtr<osg::Image> compositeImage = osgDB::readImageFile(fileNameSS.str());
+         if (!compositeImage.valid())
          {
-            if (vegechild > maxchildren)	maxchildren = vegechild;
-            if (vegechild < minchildren)	minchildren = vegechild;
-
-            int whichgroup = 0;
-            int row = int(vg/256);
-            int toprow = (vg-int(vg/128)*128);
-
-            if (int(vg/2)*2 == int(vg/4)*4)
-               whichgroup = int(toprow/2)*2 + int(row/2)*128 + 2*(row - int(row/2)*2);
-            else
-               whichgroup = int((toprow-2)/2)*2 + int(row/2)*128 + 2*(row - int(row/2)*2) + 1;
-
-            groupcount++;
-            totalcount = totalcount + vegechild;
-            QuadGroup64[whichgroup]->addChild(LeafGroup[vg].get());
+            LOG_WARNING("Could not find composite LCC image: " + fileNameSS.str());
+            LOG_WARNING("Unable to generate vegetation for LCC type: " + itor->GetLCCName());
+            continue;
          }
          else
          {
-            LeafGroup[vg].release();
-            LeafGroup[vg].~RefPtr();
-            LeafGroup[vg] = NULL;
+            LOG_INFO("Loaded composite image for LCC type: " + itor->GetLCCName());
          }
-      }
+         
+         //Preload the models used for this LCC type.
+         dtCore::RefPtr<osg::Group> newVegetation = NULL;
+         if (itor->GetNumberOfModels() != 0)
+         {
+            newVegetation = BuildVegetationForType(*compositeImage.get(),
+               *slopeImage.get(),cellOrigin,*itor);
+               
+            if (newVegetation != NULL)
+            {
+               //std::cout << "VEGE COUNT: " << mCellVegetationCount << std::endl;
+               LOG_INFO("Spatially partitioning vegetation.");
+               osgUtil::Optimizer optimizer;
+               optimizer.optimize(newVegetation.get(),osgUtil::Optimizer::FLATTEN_STATIC_TRANSFORMS
+                  | osgUtil::Optimizer::SPATIALIZE_GROUPS);
+               LOG_INFO("Done partitioning.");
+               rootVegetationGroup->addChild(newVegetation.get());
+            }
+            else
+               LOG_WARNING("Could not generate vegetation for LCC type: " + itor->GetLCCName());
+         }                       
+      } 
       
-      //if( groupcount != 0 )
-      //   mLog->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,   "gc = %i, max = %i, min = %i, ave = %i", groupcount, maxchildren, minchildren, totalcount/groupcount);
-      //else
-      //   mLog->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,   "gc = %i, max = %i, min = %i", groupcount, maxchildren, minchildren);
-
-      //delete empty nodes
-      for (int i = 0; i < 4096; i++)
-      {
-         if(QuadGroup64[i]->getNumChildren() == 0)
-         {
-            QuadGroup32[i/4]->removeChild(QuadGroup64[i].get());
-            QuadGroup64[i].release();
-            QuadGroup64[i].~RefPtr();
-            QuadGroup64[i]=NULL;
-         }
-      }
-
-      for (int i = 0; i < 1024; i++)
-      {
-         if(QuadGroup32[i]->getNumChildren() == 0)
-         {
-            QuadGroup16[i/4]->removeChild(QuadGroup32[i].get());
-            QuadGroup32[i].release();
-            QuadGroup32[i].~RefPtr();
-            QuadGroup32[i]=NULL;
-         }
-      }
-
-      for (int i = 0; i < 256; i++)
-      {
-         if(QuadGroup16[i]->getNumChildren() == 0)
-         {
-            QuadGroup8[i/4]->removeChild(QuadGroup16[i].get());
-            QuadGroup16[i].release();
-            QuadGroup16[i].~RefPtr();
-            QuadGroup16[i]=NULL;
-         }
-      }
-      for (int i = 0; i < 64; i++)
-      {
-         if(QuadGroup8[i]->getNumChildren() == 0)
-         {
-            QuadGroup4[i/4]->removeChild(QuadGroup8[i].get());
-            QuadGroup8[i].release();
-            QuadGroup8[i].~RefPtr();
-            QuadGroup8[i]=NULL;
-         }
-      }
-      for (int i = 0; i < 16; i++)
-      {
-         if(QuadGroup4[i]->getNumChildren() == 0)
-         {
-            QuadGroup2[i/4]->removeChild(QuadGroup4[i].get());
-            QuadGroup4[i].release();
-            QuadGroup4[i].~RefPtr();
-            QuadGroup4[i]=NULL;
-         }
-      }
-      for (int i = 0; i < 4; i++)
-      {
-         if(QuadGroup2[i]->getNumChildren() == 0)
-         {
-            rootVegetationGroup->removeChild(QuadGroup2[i].get());
-            QuadGroup2[i].release();
-            QuadGroup2[i].~RefPtr();
-            QuadGroup2[i]=NULL;
-         }
-      }
-      
-      LOG_INFO("Optimizing vegetation placement.");
-      osgUtil::Optimizer optimizer;
-      optimizer.optimize(rootVegetationGroup,
-         osgUtil::Optimizer::SHARE_DUPLICATE_STATE |
-         osgUtil::Optimizer::MERGE_GEOMETRY |
-         osgUtil::Optimizer::REMOVE_REDUNDANT_NODES |
-         osgUtil::Optimizer::FLATTEN_STATIC_TRANSFORMS |
-         osgUtil::Optimizer::CHECK_GEOMETRY);
-      LOG_INFO("Done optimizing.");
-      
-      LOG_INFO("Caching the generated vegetation scene graph.");
-      osgDB::writeNodeFile(*rootVegetationGroup,sceneGraphFile);
+      std::ostringstream ss;
+      ss << "Total vegetation placed in this tile: " << mCellVegetationCount; 
+      LOG_INFO(ss.str());
+           
       return rootVegetationGroup;
-   }
+   }  
 
    //////////////////////////////////////////////////////////////////////////
-   bool VegetationDecorator::GetVegetation(const osg::Image* mCimage, int x, int y, int limit)
+   dtCore::RefPtr<osg::Group> VegetationDecorator::BuildVegetationForType(
+      osg::Image &compositeImage, osg::Image &slopeMap, osg::Vec3 &cellOrigin, LCCType &type)
    {
-      unsigned char* c_data = NULL;
+      dtCore::RefPtr<osg::Group> newGroup = new osg::Group();
+      unsigned int i;
+      
+      LOG_INFO("Building vegetation for LCC: " + type.GetLCCName());
+         
+      for (i=0; i<type.GetNumberOfModels(); i++)
+      {
+         LCCType::LCCModel *currModel = type.GetModel(i);
+           
+         LOG_INFO("Loading model file: " + currModel->name);
+         currModel->sceneNode = osgDB::readNodeFile(currModel->name);
+         if (!currModel->sceneNode.valid())
+         {
+            LOG_WARNING("Could not load model file: " + currModel->name);
+         }
+         else
+         {
+            osg::StateSet *ss = currModel->sceneNode->getOrCreateStateSet();
+            ss->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+            ss->setMode(GL_CULL_FACE,osg::StateAttribute::ON);
+         }
+      }
+      
+      int x,y;
+      for (y=0; y<compositeImage.t(); y++)
+      {
+         for (x=0; x<compositeImage.s(); x++)
+         {
+            int numLooks = GetNumLooks(compositeImage,slopeMap,x,y,type.GetAspect(),
+               mMaxLooks,type.GetMaxSlope());
+               
+            //int scaledx = int(x/scale);
+            //int scaledy = int(y/scale);
+            //vg = int(scaledx/8)+int(scaledy/8)*128;
 
-      if (mCimage!=NULL) c_data = (unsigned char*)mCimage->data(x,y);
-      else return false;
+            for (int currLook=0; currLook<numLooks; currLook++)
+            {
+               if (mCellVegetationCount > mMaxVegetationPerCell)
+                  break;
+               
+               float randomX, randomY, randomScale;
+               float randomHeading;
+                  
+               //Deterministic version - good for debugging
+               //if (GetVegetation(compositeImage,x,y,probabilitylimit))
 
-      if (abs(c_data[1] - c_data[2]) < 15)   //fudge factor to account for JPEG compression artifacts
-         return (c_data[1] <= limit);
-      else
-         return false;
+               //Stochastic version - better realism
+               int probability = (int)(255.0f*(float)rand()/RAND_MAX+1.0f);                  
+               if (!GetVegetation(compositeImage,x,y,probability))
+                  continue;
+
+               dtCore::RefPtr<osg::PositionAttitudeTransform> xForm = 
+                  new osg::PositionAttitudeTransform();
+
+               randomX = (float)rand()/(RAND_MAX+1.0f)-0.5f;     // -.5 to .5
+               randomY = (float)rand()/(RAND_MAX+1.0f)-0.5f;     // -.5 to .5
+               randomHeading = (float)rand()/(RAND_MAX+1.0f);          // 0 to 1.0
+               randomScale = (float)rand()/(RAND_MAX+1.0f)*0.5f; // 0 to .5
+                        
+               //limit orientation of urban models
+               if (type.GetIndex() < 30)   
+                  randomHeading = floorf(randomHeading*4.0f)/4.0f;
+
+               osg::Quat orientation;
+               orientation.makeRotate(osg::PI*randomHeading, osg::Vec3(0,0,1));
+               xForm->setAttitude(orientation);
+
+               //float tempx = cellorigin[0]+(x+.5+random_x*0.95f)*108.7/scale; 
+               //float tempy = cellorigin[1]+(y+.5+random_y*0.95f)*108.7/scale;
+
+               // Position of the vegetation
+               osg::Vec3 vegetationPosition;
+               float xPos,yPos,height;
+               
+               xPos = cellOrigin.x() + ((float)x+randomX+0.95f)*108.5f;
+               yPos = cellOrigin.y() + ((float)y+randomY+0.95f)*108.5f;             
+               height = GetParentTerrain()->GetHeight(xPos,yPos);
+               vegetationPosition.set(xPos,yPos,height);
+               xForm->setPosition(vegetationPosition);
+               
+               //randomly select the models to use for this lcc type
+               int whichModel = int(rand()/(RAND_MAX+1.0f)*type.GetNumberOfModels());
+               
+               if (type.GetIndex() > 30)
+               {
+                  float modelScale = type.GetModel(whichModel)->scale;
+                  osg::Vec3 vegetationScale;
+                  
+                  vegetationScale.x() = 1.5f*modelScale+randomScale;
+                  vegetationScale.y() = 1.5f*modelScale+randomScale;
+                  vegetationScale.z() = modelScale+randomScale;
+                  xForm->setScale(vegetationScale);
+               }               
+               
+               //Add the Randomly selected model for this vegetation type
+               xForm->addChild(type.GetModel(whichModel)->sceneNode.get());
+               newGroup->addChild(xForm.get());               
+               mCellVegetationCount++;
+            }
+         }
+      }
+      
+      return newGroup;
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
+   bool VegetationDecorator::GetVegetation(osg::Image &compositeImage, int x, int y, int limit)
+   {
+      unsigned char *cData = (unsigned char*)compositeImage.data(x,y);
+      return (cData[1] <= limit);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -579,46 +374,38 @@ namespace dtTerrain
    }
 
    //////////////////////////////////////////////////////////////////////////
-   int VegetationDecorator::GetNumLooks(const osg::Image* mCimage, const osg::Image* SLimage, int x, int y, float goodAngle, int maxlooks, float maxslope)
+   int VegetationDecorator::GetNumLooks(const osg::Image &compositeImage,
+      const osg::Image &slopeMap, int x, int y, float goodAngle, int maxlooks, float maxslope)
    {
       unsigned char *c_data = NULL;
 
-      if(mCimage!=NULL)
-      {
-         c_data = (unsigned char*)mCimage->data(x,y);
-         if ((c_data[0]==255)&&(c_data[1]==255)&&(c_data[2]==255))
-            return 0;
-      }
+      c_data = (unsigned char*)compositeImage.data(x,y);
+      if ((c_data[0]==255)&&(c_data[1]==255)&&(c_data[2]==255))
+         return 0;
 
       unsigned char *s_data = NULL;
       int bin = -1;
 
-      if (SLimage!=NULL)
+      s_data = (unsigned char*)slopeMap.data(x,y);
+      float my_angle = (s_data[2]/255.0f)*360.0f;
+      float diff = fabs(goodAngle - my_angle);
+      float slope = s_data[1];
+      maxslope = (maxslope/90.0f) * 255.0f;	
+
+      if (slope > maxslope/2.0f)
       {
-      
-         s_data = (unsigned char*)SLimage->data(x,y);
-      
-      
-         float my_angle = (s_data[2]/255.0f)*360.0f;
-         float diff = fabs(goodAngle - my_angle);
-         float slope = s_data[1];
-         maxslope = (maxslope/90.0f) * 255.0f;	
-
-         if (slope > maxslope/2.0f)
-         {
-            if ((diff <= 45) || (diff >= 315))
-               bin = 2;				// biased towards older vegetation
-            else if (diff >= 135)
-               bin = 0;				// biased toward younger vegetation
-            else
-               bin = 1;				// no bias
-         }
+         if ((diff <= 45) || (diff >= 315))
+            bin = 2;				// biased towards older vegetation
+         else if (diff >= 135)
+            bin = 0;				// biased toward younger vegetation
          else
-         {
-            bin = 1;
-         }
+            bin = 1;				// no bias
       }
-
+      else
+      {
+         bin = 1;
+      }
+      
       switch (bin)
       {
       case 0:						// bad aspect angle
