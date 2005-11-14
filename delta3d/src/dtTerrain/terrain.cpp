@@ -93,7 +93,7 @@ namespace dtTerrain
             //Inform the terrain of the tile set that should be visible for this
             //frame.
             mTerrain->EnsureTileVisibility(residentTileLocations);  
-            traverse(node,nv);         
+            traverse(node,nv);     
          }
          
       private:
@@ -440,7 +440,11 @@ namespace dtTerrain
          //Second, tell the terrain reader we need to load the tile.
          try
          {
-            mDataReader->OnLoadTerrainTile(*currTile);
+            if (!mDataReader->OnLoadTerrainTile(*currTile))
+            {
+               mTilesToLoadQ.pop();
+               continue;
+            }
          }
          catch (dtUtil::Exception &ex)
          {
@@ -488,7 +492,6 @@ namespace dtTerrain
             try
             {
                GeoCoordinates c = currTile->GetGeoCoordinates();
-               std::cout << "TILE ORIGIN: " << c.GetCartesianPoint() << std::endl;
                layerItor->second->OnTerrainTileResident(*currTile);   
             }
             catch (dtUtil::Exception &ex)

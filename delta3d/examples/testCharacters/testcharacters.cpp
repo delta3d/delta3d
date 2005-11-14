@@ -1,6 +1,7 @@
 #include <dtChar/dtchar.h>
 #include <dtCore/dt.h>
 #include <dtABC/dtabc.h>
+#include <iostream>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -271,6 +272,10 @@ int main()
   
    RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
 
+   DeltaWin::Resolution r = DeltaWin::GetCurrentResolution();
+   
+   std::cout << r.width << " "  << r.height << " " << r.bitDepth << " " << r.refresh << std::endl;
+   
    app->Config();
    app->Run();
 

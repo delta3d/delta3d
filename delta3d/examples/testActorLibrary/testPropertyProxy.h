@@ -399,7 +399,7 @@ public:
 
     dtCore::DeltaDrawable* GetTestActor() 
     {
-       LOG_ALWAYS("ActorProxy get");
+       //LOG_ALWAYS("ActorProxy get");
        
        ActorProxy* proxy = GetLinkedActor("Test_Actor");
        return proxy->GetActor();
@@ -410,7 +410,6 @@ public:
         this->SetLinkedActor("Test_Actor", proxy);
         LOG_ALWAYS("ActorProxy set");
     }
-
 
     void loadFile(const std::string &fileName) {
     //    dtCore::Loadable *obj = dynamic_cast<dtCore::Loadable*>(actor.get());

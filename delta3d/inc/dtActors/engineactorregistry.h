@@ -18,8 +18,8 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __EngineActorRegistry__h
-#define __EngineActorRegistry__h
+#ifndef DELTA_ENGINE_ACTOR_REGISTRY
+#define DELTA_ENGINE_ACTOR_REGISTRY
 
 #include "dtDAL/actorpluginregistry.h"
 #include "dtDAL/plugin_export.h"

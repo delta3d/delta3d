@@ -70,8 +70,6 @@ namespace dtCore
              return *this;
          }
     protected:
-
-      
          std::string mId;
              
    };

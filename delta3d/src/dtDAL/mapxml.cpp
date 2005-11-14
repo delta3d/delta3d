@@ -46,6 +46,7 @@
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/fileutils.h>
+#include <dtUtil/stringutils.h>
 
 XERCES_CPP_NAMESPACE_USE;
 
@@ -770,7 +771,12 @@ namespace dtDAL
         else if (*mActorPropertyType == DataType::ACTOR)
         {
             //insert the data into this map to make it accessible to assign once the parsing is done.
-            mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
+            dtUtil::trim(dataValue);
+            if (!dataValue.empty() && dataValue != "NULL")
+            {
+                mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
+               
+            }
             mActorPropertyType = NULL;
         }
         else if (mActorPropertyType->IsResource())
@@ -1179,18 +1185,25 @@ namespace dtDAL
            if (proxyToModify == NULL)
            {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                   "Proxy with ID %s was defined to have an actor propery set, but the proxy does not exist in the new map.", 
+                   "Proxy with ID %s was defined to have an actor property set, but the proxy does not exist in the new map.", 
                    id.ToString().c_str());
                continue;
            }
            std::pair<std::string, dtCore::UniqueId> data = i->second;
            std::string& propertyName = data.first;
            dtCore::UniqueId& propValueId = data.second;
+           if (propValueId.ToString().empty()) 
+           {
+               mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
+                                  "Proxy with ID %s was defined to have actor property %s set, but the id is empty.",
+                                  id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
+              
+           }
            ActorProxy* valueProxy = mMap->GetProxyById(propValueId);           
            if (valueProxy == NULL)
            {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                  "Proxy with ID %s was defined to have actor propery %s set with actor %s, but the proxy does not exist in the new map.",
+                  "Proxy with ID %s was defined to have actor property %s set with actor %s, but the proxy does not exist in the new map.",
                   id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
                continue;
            }
@@ -1198,7 +1211,7 @@ namespace dtDAL
            if (property == NULL)
            {
                mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
-                  "Proxy with ID %s was defined to have actor propery %s set with actor %s, but the property does not exist on the proxy.",
+                  "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property does not exist on the proxy.",
                   id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
                continue;
            }
@@ -1206,7 +1219,7 @@ namespace dtDAL
            if (aap == NULL)
            {
                mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__,
-                  "Proxy with ID %s was defined to have actor propery %s set with actor %s, but the property is not an ActorActorProperty.",
+                  "Proxy with ID %s was defined to have actor property %s set with actor %s, but the property is not an ActorActorProperty.",
                   id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
                continue;
            }
@@ -1838,9 +1851,8 @@ namespace dtDAL
     //// Constant Initialization ////////////////////////
     /////////////////////////////////////////////////////
 
-    //Would be nice to have this come from an API call...
+
     const char* const MapXMLConstants::EDITOR_VERSION = "1.1.0";
-   
     const char* const MapXMLConstants::SCHEMA_VERSION = "1.0";
 
     XMLCh* MapXMLConstants::END_XML_ELEMENT = NULL;

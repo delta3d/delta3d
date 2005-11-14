@@ -45,6 +45,43 @@ namespace dtTerrain
    ImageUtilException ImageUtilException::LOAD_FAILED("LOAD_FAILED");
    
    //////////////////////////////////////////////////////////////////////////
+   osg::Vec3 ImageUtils::HeightColorMap::GetColor(float height) const
+   {
+      osg::Vec3 color;
+
+      if(size() >= 2)
+      {
+         const_iterator c1, c2 = upper_bound(height);
+
+         if(c2 == begin())
+         {
+            c1 = c2;
+            ++c2;
+         }
+         else if(c2 == end())
+         {
+            c2--;
+            c1 = c2;
+            c1--;
+         }
+         else
+         {
+            c1 = c2;
+            c1--;
+         }
+         
+         float t = (height - c1->first) / (c2->first - c1->first);
+         color = c1->second + (c2->second - c1->second)*t;
+      }
+      else
+      {
+         LOG_WARNING("HeightColorMap must have at least two entries.");
+      }
+      
+      return color;
+   }
+   
+   //////////////////////////////////////////////////////////////////////////
    unsigned short ImageUtils::CalculateDetailNoise(int x, int y)
    {
       static int a[] = { 0, 0, 0, 0, 2048, 1024, 512, 256, 96, 58 };
@@ -98,30 +135,47 @@ namespace dtTerrain
          LOG_ERROR("Cannot create base gradient map.  HeightField data is invalid.");
          return NULL;
       }
+      
+      unsigned int width = osg::Image::computeNearestPowerOfTwo(hf.GetNumColumns());
+      unsigned int height = osg::Image::computeNearestPowerOfTwo(hf.GetNumRows());            
 
-      dtCore::RefPtr<osg::Image> image = new osg::Image();                  
-      unsigned int width = hf.GetNumColumns()-1;
-      unsigned int height = hf.GetNumRows()-1;    
-
-      image->allocateImage(width,height,1,GL_RGB,GL_UNSIGNED_BYTE);
-      unsigned char *dstData = image->data();
+      dtCore::RefPtr<osg::Image> image = new osg::Image();
+      image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
+      
+      unsigned char *dstData = image->data();      
+      float sStep = (float)hf.GetNumColumns()/(float)width;
+      float tStep = (float)hf.GetNumRows()/(float)height;
+      float s,t;
+      
+      t = tStep*0.5f;      
       for (unsigned int i=0; i<height; i++)
       {
+         s = sStep*0.5f;
          for (unsigned int j=0; j<width; j++)
          {
-            float h = hf.GetHeight(j,i);
-            float right = hf.GetHeight(j+1,i);
-            float top = hf.GetHeight(j,i+1);
+            float h = hf.GetInterpolatedHeight(s,t);
+            float right = hf.GetInterpolatedHeight(s+sStep,t);
+            float top = hf.GetInterpolatedHeight(s,t+tStep);
 
-            osg::Vec3 grad(0.0f,(h-right)*scale,(h-top)*scale);
-            //grad.normalize();
+            osg::Vec3 grad((h-right)*0.01,(h-top)*0.01,1);
+            grad.normalize();
 
-            *(dstData++) = (unsigned char)osg::clampBetween((grad.x())+128.0f,0.0f,255.0f);
-            *(dstData++) = (unsigned char)osg::clampBetween((grad.y())+128.0f,0.0f,255.0f);
-            *(dstData++) = (unsigned char)osg::clampBetween((grad.z())+128.0f,0.0f,255.0f); 
+            //*(dstData++) = (unsigned char)osg::clampBetween((grad.x())+128.0f,0.0f,255.0f);
+            //*(dstData++) = (unsigned char)osg::clampBetween((grad.y())+128.0f,0.0f,255.0f);
+            //*(dstData++) = (unsigned char)osg::clampBetween((grad.z())+128.0f,0.0f,255.0f); 
+            grad += osg::Vec3(1,1,1);
+            grad /= 2.0f;
+            *(dstData++) = (unsigned char)osg::clampBetween((grad.x())*255.0f,0.0f,255.0f);
+            *(dstData++) = (unsigned char)osg::clampBetween((grad.y())*255.0f,0.0f,255.0f);
+            *(dstData++) = (unsigned char)osg::clampBetween((grad.z())*255.0f,0.0f,255.0f); 
+            
+            s += sStep;
          }
+         
+         t += tStep;
       }
 
+      //image = EnsurePow2Image(image.get());
       return image;
    }
 
@@ -144,18 +198,24 @@ namespace dtTerrain
       {
          for (unsigned int j=0; j<width; j++)
          {
-            unsigned short h = CalculateDetailNoise(j,i);
+            float h = CalculateDetailNoise(j,i);
             float gx,gy;
 
             gx = (float)CalculateDetailNoise(j+1,i);
             gy = (float)CalculateDetailNoise(j,i+1);
 
-            gx = ((((gx-h) * scale) + 32768.0f) / 65536.0f) * 255.0f;
-            gy = ((((gy-h) * scale) + 32768.0f) / 65536.0f) * 255.0f;      
+            gx = (h-gx) * 0.0005f;//((((gx-h) * scale) + 32768.0f) / 65536.0f);
+            gy = (h-gy) * 0.0005f;//((((gy-h) * scale) + 32768.0f) / 65536.0f);      
+            //std::cout << "h,gx,gy: " << h << "," << gx << "," << gy << std::endl;
+            
+            osg::Vec3 grad = osg::Vec3(gx,gy,1.0f);
+            grad.normalize();
+            grad += osg::Vec3(1,1,1);
+            grad /= 2.0f;
 
-            *(imageData++) = 0;
-            *(imageData++) = (unsigned char)osg::clampTo(gx,0.0f,255.0f);
-            *(imageData++) = (unsigned char)osg::clampTo(gy,0.0f,255.0f);
+            *(imageData++) = (unsigned char)osg::clampBetween(grad.x()*255.0f,0.0f,255.0f);
+            *(imageData++) = (unsigned char)osg::clampBetween(grad.y()*255.0f,0.0f,255.0f);
+            *(imageData++) = (unsigned char)osg::clampBetween(grad.z()*255.0f,0.0f,255.0f);
          }
       }
 
@@ -270,43 +330,7 @@ namespace dtTerrain
       }
 
       return dstImage;
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   osg::Vec3 ImageUtils::HeightColorMap::GetColor(float height) const
-   {
-      osg::Vec3 color;
-
-      if(size() >= 2)
-      {
-         const_iterator c1, c2 = upper_bound(height);
-
-         if(c2 == begin())
-         {
-            c1 = c2;
-            ++c2;
-         }
-         else if(c2 == end())
-         {
-            c2--;
-            c1 = c2;
-            c1--;
-         }
-         else
-         {
-            c1 = c2;
-            c1--;
-         }
-         float t = (height-(*c1).first)/((*c2).first-(*c1).first);
-         color = (*c1).second + ((*c2).second-(*c1).second)*t;
-      }
-      else
-      {
-         LOG_WARNING("HeightColorMap must have at least two entries.");
-      }
-      
-      return color;
-   }
+   }  
 
    //////////////////////////////////////////////////////////////////////////
    void ImageUtils::ImageStats(const osg::Image* image, std::string* imagename)
@@ -574,9 +598,6 @@ namespace dtTerrain
       float h = 0.0f;
       float averageheight = 0.0f;
 
-      float maxrel = 0;
-      float minrel = 999;
-
       for(unsigned int y=1; y<hf.GetNumRows()-1; y++)
       {
          for(unsigned int x=1; x<hf.GetNumColumns()-1; x++)
@@ -595,11 +616,6 @@ namespace dtTerrain
             relative = h-averageheight;
             relativenorm = relative/(sqrt(averageheight*averageheight+1));
 
-            if (relative > maxrel)
-               maxrel = relative;
-            if (relative < minrel)
-               minrel = relative;
-
             *(ptr++) = (unsigned char)osg::clampTo(relative*scale+128.0f, 0.0f, 255.0f);
             *(ptr++) = (unsigned char)osg::clampTo(relative*scale+128.0f, 0.0f, 255.0f);
             *(ptr++) = (unsigned char)osg::clampTo(relative*scale+128.0f, 0.0f, 255.0f);
@@ -611,156 +627,56 @@ namespace dtTerrain
    }
 
    //////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<osg::Image> ImageUtils::MakeBaseColor(const HeightField &hf, int latitude, 
-         int longitude, const ImageUtils::HeightColorMap &upperHeightColorMap,
+   dtCore::RefPtr<osg::Image> ImageUtils::MakeBaseColor(const HeightField &hf, 
+         const ImageUtils::HeightColorMap &upperHeightColorMap,
          const ImageUtils::HeightColorMap &lowerHeightColorMap, 
-         std::vector<GeospecificImage> &geospecificImages, float gamma)
+         float gamma)
    {
-      std::vector<GeospecificImage> images;
-      std::vector<GeospecificImage>::iterator it;
+      int width = osg::Image::computeNearestPowerOfTwo(hf.GetNumColumns());
+      int height = osg::Image::computeNearestPowerOfTwo(hf.GetNumRows());            
 
-      int width = hf.GetNumColumns()-1;
-      int height = hf.GetNumRows()-1;
-
-      for(it = geospecificImages.begin(); it != geospecificImages.end(); ++it)
-      {
-         if(latitude >= (*it).mMinLatitude && latitude <= (*it).mMaxLatitude &&
-            longitude >= (*it).mMinLongitude && longitude <= (*it).mMaxLongitude)
-         {
-            images.push_back(*it);
-
-            width = osg::maximum(width, 
-               osg::Image::computeNearestPowerOfTwo((int)osg::absolute(1.0/(*it).mGeoTransform[1])));
-
-            height = osg::maximum(height,
-               osg::Image::computeNearestPowerOfTwo((int)osg::absolute(1.0/(*it).mGeoTransform[5])));
-         }
-      }
-
-      dtCore::RefPtr<osg::Image> image = new osg::Image;
+      dtCore::RefPtr<osg::Image> image = new osg::Image();
       image->allocateImage(width, height, 1, GL_RGB, GL_UNSIGNED_BYTE);
+      
       unsigned char* ptr = (unsigned char*)image->data();
-
-      float heightVal, l1, l2, l3, l4, l12, l34;
-      osg::Vec3 c1, c2, c3, c4, c12, c34, color, coord, imgcolor, goodcolor;
-      const osg::Vec3 black(0, 0, 0);
-      const osg::Vec3 ltblack(20, 20, 20);
-
-      double latStep = 1.0/height, lonStep = 1.0/width;
-      double lat = latitude+latStep*0.5, lon;
-      double sStep = (hf.GetNumColumns()-1.0)/width, tStep = (hf.GetNumRows()-1.0)/height;
-      double s, t = tStep*0.5;
-
-      for(int y=0;y<height;y++)
+      double sStep = hf.GetNumColumns()/width, tStep = hf.GetNumRows()/height;
+      float s,t;
+      
+      t = tStep*0.5f;
+      for(int y=0; y<height; y++)
       {
-         lon = longitude + lonStep*0.5;
-         s = sStep*0.5;
-
-         for(int x=0;x<width;x++)
+         s = sStep*0.5f;
+         for(int x=0; x<width; x++)
          {
-            goodcolor.set(0.0,0.0,0.0);
-            color.set(0.0,0.0,0.0);
-
-            //find color based on imagery
-            for(it = images.begin();it != images.end();it++)
+            float heightVal;
+            osg::Vec3 color;
+            
+            //Map the height value to the color map.
+            heightVal = hf.GetInterpolatedHeight(s,t);
+            if(heightVal > 0.0f)
             {
-               double x = (*it).mInverseGeoTransform[0] +
-                  (*it).mInverseGeoTransform[1]*lon +
-                  (*it).mInverseGeoTransform[2]*lat,
-                  y = (*it).mInverseGeoTransform[3] +
-                  (*it).mInverseGeoTransform[4]*lon +
-                  (*it).mInverseGeoTransform[5]*lat;
-
-               int fx = (int)floor(x), fy = (int)floor(y),
-                  cx = (int)ceil(x), cy = (int)ceil(y);
-               int ix = (int)x, iy = (int)y;
-
-               if(fx >= 0 && cx < (*it).mImage->s() && fy >= 0 && cy < (*it).mImage->t())
-               {
-                  float ax = (float)(x - fx), ay = (float)(y - fy);
-
-                  unsigned char* data = (*it).mImage->data(ix, iy);
-
-                  if((*it).mImage->getPixelFormat() == GL_LUMINANCE)
-                  {
-                     data = (*it).mImage->data(fx, fy);
-                     l1 = data[0]/255.0f;
-
-                     data = (*it).mImage->data(cx, fy);
-                     l2 = data[0]/255.0f;
-
-                     data = (*it).mImage->data(fx, cy);
-                     l3 = data[0]/255.0f;
-
-                     data = (*it).mImage->data(cx, cy);
-                     l4 = data[0]/255.0f;
-
-                     if ((l1!=0.0)&&(l2!=0.0)&&(l3!=0.0)&&(l4!=0.0))
-                     {
-                        l12 = l1*(1.0f-ax) + l2*ax;
-                        l34 = l3*(1.0f-ax) + l4*ax;
-                        imgcolor *= (l12*(1.0f-ay) + l34*ay); 
-                     }
-                     else
-                        imgcolor = black;
-                  }
-                  else
-                  {
-                     data = (*it).mImage->data(fx, fy);
-                     c1.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
-
-                     data = (*it).mImage->data(cx, fy);
-                     c2.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
-
-                     data = (*it).mImage->data(fx, cy);
-                     c3.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
-
-                     data = (*it).mImage->data(cx, cy);
-                     c4.set(data[0]/255.0f, data[1]/255.0f, data[2]/255.0f);
-
-                     if ((c1!=black)&&(c2!=black)&&(c3!=black)&&(c4!=black))
-                     {
-                        c12 = c1*(1.0f-ax) + c2*ax;
-                        c34 = c3*(1.0f-ax) + c4*ax;
-                        imgcolor = c12*(1.0f-ay) + c34*ay;
-                     }
-                     else
-                        imgcolor = black;
-                  }
-                  if (imgcolor!=black)
-                     goodcolor = imgcolor;
-               }
-            }
-
-            if (goodcolor == black)  // not able to find a non-black imagery color
-            {
-               //find color based on height
-               heightVal = hf.GetInterpolatedHeight(s,t);
-               if(heightVal > 0.0f)
-               {
-                  color = upperHeightColorMap.GetColor(heightVal);
-               }
-               else
-               {
-                  color = lowerHeightColorMap.GetColor(heightVal);
-               }
+               color = upperHeightColorMap.GetColor(heightVal);
             }
             else
             {
-               color[0] = pow(goodcolor[0],1.0f/gamma);
-               color[1] = pow(goodcolor[1],1.0f/gamma);
-               color[2] = pow(goodcolor[2],1.0f/gamma);
+               color = lowerHeightColorMap.GetColor(heightVal);
             }
-
+            
+            //If gamma adjustment was requested perform the operation.
+            if (gamma != 1.0f)
+            {
+               color[0] = powf(color[0],1.0f/gamma);
+               color[1] = powf(color[1],1.0f/gamma);
+               color[2] = powf(color[2],1.0f/gamma);
+            }
+            
             *(ptr++) = (unsigned char)osg::clampTo(color[0]*255.0f, 0.0f, 255.0f);  
             *(ptr++) = (unsigned char)osg::clampTo(color[1]*255.0f, 0.0f, 255.0f);  
             *(ptr++) = (unsigned char)osg::clampTo(color[2]*255.0f, 0.0f, 255.0f);  
 
-            lon += lonStep;            
             s += sStep;            
          }
 
-         lat += latStep;
          t += tStep;
       }
       
@@ -780,6 +696,7 @@ namespace dtTerrain
       {
          //If GDAL did not parse the image, lets try and read it as a normal
          //image.
+         LOG_WARNING("Could not parse image using GDAL.  Attempting normal image load.");
          gslcc.mImage = osgDB::readImageFile(gslcc.mFileName.c_str());         
       }
       else
@@ -844,14 +761,26 @@ namespace dtTerrain
             ds = newDS;
          }
 
-         ds->GetGeoTransform(gslcc.mGeoTransform);
+         //Get the geographical transformation matrix and compute the extents
+         //of the geographic image.
+         ds->GetGeoTransform(gslcc.mGeoTransform);  
+                 
+         gslcc.mMinLongitude = (int)floor(gslcc.mGeoTransform[0]);
+         gslcc.mMaxLongitude = (int)ceil(gslcc.mGeoTransform[0] + 
+            gslcc.mGeoTransform[1]*ds->GetRasterXSize());
+            
+         gslcc.mMaxLatitude = (int)ceil(gslcc.mGeoTransform[3]);         
+         gslcc.mMinLatitude = (int)floor(gslcc.mGeoTransform[3] + 
+            gslcc.mGeoTransform[5]*ds->GetRasterYSize());
+         
+         //Convert the geographical image to a normal image data.
          width = ds->GetRasterXSize();
          height = ds->GetRasterYSize();
-
          int bands = ds->GetRasterCount();
+         
          if(bands == 1)
          {
-            gslcc.mImage = new osg::Image;
+            gslcc.mImage = new osg::Image();
             GDALColorTableH hCT = GDALGetRasterColorTable(ds->GetRasterBand(1));
             if(hCT != NULL) //color palette exists
             {
@@ -903,6 +832,7 @@ namespace dtTerrain
             std::ostringstream error;
             error << "Image file: " << gslcc.mFileName << " has an invalid raster format. NumBands = " 
                << bands;
+            delete ds;
             EXCEPT(ImageUtilException::INVALID_RASTER_FORMAT,error.str());
          }
 
@@ -917,33 +847,19 @@ namespace dtTerrain
          EXCEPT(ImageUtilException::LOAD_FAILED,"Failed to load: " + errorFile);
       }
          
-      gslcc.mMinLatitude = gslcc.mMinLongitude = 999;
-      gslcc.mMaxLatitude = gslcc.mMaxLongitude = -999;
+      double d = gslcc.mGeoTransform[1]*gslcc.mGeoTransform[5] - 
+         gslcc.mGeoTransform[2]*gslcc.mGeoTransform[4];
 
-      for(i=0; i<4; i++)
-      {
-         x = (i & 1) ? 0 : width-1,
-         y = (i & 2) ? 0 : height-1;
-
-         int longitude = (int)floor(gslcc.mGeoTransform[0] + x*gslcc.mGeoTransform[1] + y*gslcc.mGeoTransform[2]);
-         int latitude = (int)floor(gslcc.mGeoTransform[3] + x*gslcc.mGeoTransform[4] + y*gslcc.mGeoTransform[5]);
-
-         gslcc.mMinLatitude = osg::minimum(latitude, gslcc.mMinLatitude);
-         gslcc.mMinLongitude = osg::minimum(longitude, gslcc.mMinLongitude);
-         gslcc.mMaxLatitude = osg::maximum(latitude, gslcc.mMaxLatitude);
-         gslcc.mMaxLongitude = osg::maximum(longitude, gslcc.mMaxLongitude);
-      }
-
-      double d = gslcc.mGeoTransform[1]*gslcc.mGeoTransform[5]-gslcc.mGeoTransform[2]*gslcc.mGeoTransform[4];
-     
-      gslcc.mInverseGeoTransform[0] = 
-         (gslcc.mGeoTransform[2]*gslcc.mGeoTransform[3]-gslcc.mGeoTransform[5]*gslcc.mGeoTransform[0])/d;
+      gslcc.mInverseGeoTransform[0] =
+         (gslcc.mGeoTransform[2]*gslcc.mGeoTransform[3] - 
+          gslcc.mGeoTransform[5]*gslcc.mGeoTransform[0])/d;
 
       gslcc.mInverseGeoTransform[1] = gslcc.mGeoTransform[5]/d;
       gslcc.mInverseGeoTransform[2] = -gslcc.mGeoTransform[2]/d;
 
-      gslcc.mInverseGeoTransform[3] = 
-         (gslcc.mGeoTransform[4]*gslcc.mGeoTransform[0]-gslcc.mGeoTransform[1]*gslcc.mGeoTransform[3])/d;
+      gslcc.mInverseGeoTransform[3] =
+         (gslcc.mGeoTransform[4]*gslcc.mGeoTransform[0] - 
+          gslcc.mGeoTransform[1]*gslcc.mGeoTransform[3])/d;
 
       gslcc.mInverseGeoTransform[4] = -gslcc.mGeoTransform[4]/d;
       gslcc.mInverseGeoTransform[5] = gslcc.mGeoTransform[1]/d;

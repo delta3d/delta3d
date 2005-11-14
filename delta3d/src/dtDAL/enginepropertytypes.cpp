@@ -94,6 +94,17 @@ namespace dtDAL
         return GetValue() == NULL ? "" : GetValue()->GetId().ToString();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    dtCore::DeltaDrawable* ActorActorProperty::GetRealActor()
+    {
+       return GetActorFunctor();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    const dtCore::DeltaDrawable* ActorActorProperty::GetRealActor() const
+    {
+       return GetActorFunctor();
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     void ActorActorProperty::SetValue(ActorProxy* value)
@@ -117,18 +128,6 @@ namespace dtDAL
     ActorProxy* ActorActorProperty::GetValue()
     {
         return mProxy->GetLinkedActor(GetName());
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    dtCore::DeltaDrawable* ActorActorProperty::GetRealActor()
-    {
-       return GetActorFunctor();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    const dtCore::DeltaDrawable* ActorActorProperty::GetRealActor() const
-    {
-       return GetActorFunctor();
     }
 
     ////////////////////////////////////////////////////////////////////////////

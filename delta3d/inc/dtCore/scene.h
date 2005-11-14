@@ -90,6 +90,9 @@ namespace dtCore
 
       ///Remove a DeltaDrawable from the Scene
       void RemoveDrawable( DeltaDrawable *drawable );
+      
+      ///clears the scene.
+      void RemoveAllDrawables();
 
       ///Get a handle to the DeltaDrawable with the supplied index number
       DeltaDrawable* GetDrawable(unsigned int i) {return mAddedDrawables[i].get(); }

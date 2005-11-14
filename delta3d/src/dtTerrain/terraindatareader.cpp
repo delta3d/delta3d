@@ -85,6 +85,8 @@ namespace dtTerrain
          correctSize = osg::Image::computeNearestPowerOfTwo(dims);
       else if (*mResizePolicy == HeightFieldResizePolicy::NEAREST_POWER_OF_TWO_PLUS_ONE)
          correctSize = osg::Image::computeNearestPowerOfTwo(dims) + 1;
+      else
+         return hf;
       
       //Make sure the width and height are equal and that the heightfield
       //meets the current resize policy.
@@ -98,24 +100,22 @@ namespace dtTerrain
       LOG_DEBUG(ss.str());
       
       osg::HeightField *newHF = new osg::HeightField();
-      double x,xStep;
-      double yStep;
-      double y = 0.0;
-
       newHF->allocate(correctSize,correctSize);
-      xStep = (width-1.0) / (correctSize-1.0);
-      yStep = (height-1.0) / (correctSize-1.0);
-      for (int i=0; i<correctSize; i++)
+      
+      float aspectRatio = (float)height/(float)correctSize;
+      width = correctSize;
+      height = correctSize;
+     
+      if(aspectRatio != 0)
       {
-         x = 0.0;
-         for (int j=0; j<correctSize; j++)
+         for(unsigned int y=0; y<height; y++)
          {
-            float newValue = GetInterpolatedHeight(hf,x,y);
-            newHF->setHeight(j,i,newValue);
-            x += xStep;
+            for(unsigned int x=0; x<width; x++)
+            {
+               float height = hf->getHeight((int)(x*aspectRatio),(int)(y*aspectRatio));
+               newHF->setHeight(x,y,height);
+            }
          }
-         
-         y += yStep;
       }     
       
       return newHF;     
