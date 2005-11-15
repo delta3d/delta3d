@@ -92,7 +92,7 @@ namespace dtActors
       AddProperty(new ActorActorProperty(*this, "Action","Action",
          MakeFunctor(*this ,&ProximityTriggerActorProxy::SetAction),
          MakeFunctorRet(*this ,&ProximityTriggerActorProxy::GetAction),
-         "Action","Sets the action which this Proximity Trigger will start."));
+         "dtABC::Action","Sets the action which this Proximity Trigger will start."));
 
       AddProperty(new FloatActorProperty("Time Delay","Time Delay",
          MakeFunctor(*trigger,&ProximityTrigger::SetTimeDelay),

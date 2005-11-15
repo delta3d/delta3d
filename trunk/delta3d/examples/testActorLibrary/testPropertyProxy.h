@@ -21,6 +21,14 @@
 #ifndef DELTA_EXAMPLETESTPROPERTYPROXY
 #define DELTA_EXAMPLETESTPROPERTYPROXY
 
+<<<<<<< testPropertyProxy.h
+#include "dtActors/deltaobjectactorproxy.h"
+#include "dtActors/staticmeshactorproxy.h"
+#include "dtUtil/enumeration.h"
+#include "dtDAL/actorproxy.h"
+#include "dtDAL/enginepropertytypes.h"
+#include "dtDAL/plugin_export.h"
+=======
 #include <dtActors/deltaobjectactorproxy.h>
 #include <dtActors/staticmeshactorproxy.h>
 #include <dtDAL/actorproxy.h>
@@ -28,6 +36,7 @@
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
 #include <dtDAL/plugin_export.h>
+>>>>>>> 1.3
 
 using namespace dtActors;
 

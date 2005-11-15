@@ -81,6 +81,9 @@ void System::Run()
    mRunning = true;
    mLastClockTime = mClock.tick();
 
+   //this loop is a workaround for problems on Mac OS X where startThread is not called
+   //in the render surface, which makes "isRunning" return false
+   //it should be removed once the OSX bugs with RS are fixed.
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
    {
       Producer::RenderSurface* rs = DeltaWin::GetInstance(i)->GetRenderSurface();
