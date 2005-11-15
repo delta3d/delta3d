@@ -32,7 +32,7 @@ namespace dtGame
    class ActorDeletedMessage;
    class GameActorProxy;
 
-   class DT_GAMEMANAGER_EXPORT DefaultMessageProcessor : public GMComponent
+   class DT_GAME_EXPORT DefaultMessageProcessor : public GMComponent
    {
       public:
 

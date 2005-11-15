@@ -39,7 +39,7 @@
 namespace dtGame 
 {
    
-   class DT_GAMEMANAGER_EXPORT DataStreamException : public dtDAL::ExceptionEnum 
+   class DT_GAME_EXPORT DataStreamException : public dtDAL::ExceptionEnum 
    {
       DECLARE_ENUM(DataStreamException);
       public:
@@ -56,11 +56,11 @@ namespace dtGame
          }
    };
 
-   class DT_GAMEMANAGER_EXPORT DataStream 
+   class DT_GAME_EXPORT DataStream 
    {
       public:
 
-         class DT_GAMEMANAGER_EXPORT SeekTypeEnum : public dtUtil::Enumeration 
+         class DT_GAME_EXPORT SeekTypeEnum : public dtUtil::Enumeration 
          {
             DECLARE_ENUM(SeekTypeEnum);
             

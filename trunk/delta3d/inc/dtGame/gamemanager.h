@@ -46,7 +46,7 @@ namespace dtGame
 {
    class Message;
 
-   class DT_GAMEMANAGER_EXPORT GameManager : public dtCore::Base 
+   class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
       public:
 

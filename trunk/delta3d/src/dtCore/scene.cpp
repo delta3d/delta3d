@@ -156,13 +156,7 @@ Scene::~Scene()
    // Remove the remaining DeltaDrawables from the Scene. This is redundant to help prevent
    // crash-on-exits. The "exit" message should have the same effect. This must be called 
    // after the above code that destroys the ODE world.
-   while( !mAddedDrawables.empty() )
-   {
-      if( DeltaDrawable *d = GetDrawable(0) )
-      {
-         RemoveDrawable(d);
-      }
-   }
+   RemoveAllDrawables();
 
    dSpaceDestroy(mSpaceID);
 
@@ -206,6 +200,17 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
    if (pos<mAddedDrawables.size())
    {
       mAddedDrawables.erase( mAddedDrawables.begin()+pos );                           
+   }
+}
+
+void Scene::RemoveAllDrawables()
+{
+   while( !mAddedDrawables.empty() )
+   {
+      if( DeltaDrawable *d = GetDrawable(0) )
+      {
+         RemoveDrawable(d);
+      }
    }
 }
 
@@ -506,13 +511,7 @@ void Scene::OnMessage(MessageData *data)
    }
    else if(data->message == "exit")
    {
-      while( !mAddedDrawables.empty() )
-      {
-         if( DeltaDrawable *d = GetDrawable(0) )
-         {
-            RemoveDrawable(d);
-         }
-      }
+      RemoveAllDrawables();
    }
 }
 

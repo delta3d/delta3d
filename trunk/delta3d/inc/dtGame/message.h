@@ -38,7 +38,7 @@ namespace dtGame
    class DataStream;
    class MessageType;
    
-   class DT_GAMEMANAGER_EXPORT Message : public osg::Referenced
+   class DT_GAME_EXPORT Message : public osg::Referenced
    {
       public:
          Message();

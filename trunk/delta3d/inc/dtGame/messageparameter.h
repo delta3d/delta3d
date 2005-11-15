@@ -46,7 +46,7 @@ namespace dtGame
    /**
     * @class MessageParameter
     */
-   class DT_GAMEMANAGER_EXPORT MessageParameter : public osg::Referenced
+   class DT_GAME_EXPORT MessageParameter : public osg::Referenced
    {
       public:
       
@@ -636,7 +636,7 @@ namespace dtGame
    /**
     * @class ResourceMessageParameter
     */
-   class DT_GAMEMANAGER_EXPORT ResourceMessageParameter: public MessageParameter
+   class DT_GAME_EXPORT ResourceMessageParameter: public MessageParameter
    {
       public:
          ResourceMessageParameter(const dtDAL::DataType& type, const std::string &name): 

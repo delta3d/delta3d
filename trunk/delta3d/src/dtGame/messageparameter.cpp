@@ -170,6 +170,10 @@ namespace dtGame {
             std::vector<std::string> tokens;
             dtUtil::StringTokenizer<dtUtil::IsSlash> stok;
 
+            #ifdef _MSC_VER
+            stok = stok; // to prevent MSVC unused variable warning.
+            #endif
+
             stok.tokenize(tokens, value);
 
             if (tokens.size() == 2)

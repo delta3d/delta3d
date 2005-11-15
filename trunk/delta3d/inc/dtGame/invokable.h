@@ -37,7 +37,7 @@ namespace dtGame
     * a Functor that takes 1 parameter, the message, and returns nothing.  The method must take a const Method reference. 
     * @see dtGame::Message
     */
-   class DT_GAMEMANAGER_EXPORT Invokable : public osg::Referenced
+   class DT_GAME_EXPORT Invokable : public osg::Referenced
    {
       public:
       	Invokable(const std::string& name, dtDAL::Functor1<const Message&> toInvoke);

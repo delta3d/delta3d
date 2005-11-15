@@ -39,11 +39,11 @@ namespace dtCore
 
 namespace dtGame
 {
-   class DT_GAMEMANAGER_EXPORT MessageFactory : public osg::Referenced
+   class DT_GAME_EXPORT MessageFactory : public osg::Referenced
    {
       public:
 
-         class DT_GAMEMANAGER_EXPORT MessageFactoryException : public dtUtil::Enumeration
+         class DT_GAME_EXPORT MessageFactoryException : public dtUtil::Enumeration
          {
             DECLARE_ENUM(MessageFactoryException);
             public:

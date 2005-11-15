@@ -34,7 +34,7 @@ namespace dtGame
 {
    class GameManager;
 
-   class DT_GAMEMANAGER_EXPORT GMComponent : public osg::Referenced
+   class DT_GAME_EXPORT GMComponent : public osg::Referenced
    {
       public:
 
