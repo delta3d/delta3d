@@ -280,6 +280,10 @@ void StringUtilTests::TestTokenizer()
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing Tokenizer.\n");
       std::vector<std::string> tokens;
       dtUtil::StringTokenizer<dtUtil::IsSpace> tokenizer;
+
+      #ifdef _MSC_VER
+      tokenizer = tokenizer; // Silence unsed variable warning in MSVC.
+      #endif
       
       std::string tokString = "";
       tokenizer.tokenize(tokens, tokString);
