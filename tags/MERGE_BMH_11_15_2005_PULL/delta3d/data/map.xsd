@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="delta3dMap"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+  <xsd:annotation>
+    <xsd:documentation xml:lang="en">
+      Delta3D map save file schema
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="map" type="MapType"/>
+
+  <xsd:complexType name="MapType">
+    <xsd:sequence>
+      <xsd:element name="header" type="HeaderType"/>
+      <xsd:element name="libraries" type="LibrariesType"/>
+      <xsd:element name="actors" type="ActorsType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="HeaderType">
+    <xsd:sequence>
+      <xsd:element name="name"   type="xsd:string"/>
+      <xsd:element name="description" type="xsd:string"/>
+      <xsd:element name="author"   type="xsd:string"/>
+      <xsd:element name="comment"  type="xsd:string" minOccurs="0"/>
+      <xsd:element name="copyright" type="xsd:string" minOccurs="0"/>
+      <xsd:element name="createTimestamp" type="xsd:dateTime"/>
+      <xsd:element name="lastUpdateTimestamp" type="xsd:dateTime"/>
+      <xsd:element name="editorVersion" type="xsd:string"/>
+      <!-- map won't validate unless the version number is correct -->
+      <xsd:element name="schemaVersion" type="xsd:string" fixed="1.0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="LibrariesType">
+    <xsd:sequence>
+      <xsd:element name="library" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="version" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ActorsType">
+    <xsd:sequence>
+      <xsd:element name="actor" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="type" type="xsd:string" />
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+
+            <xsd:element name="property" minOccurs="0" maxOccurs="unbounded" type="PropertyType"/>
+
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="PropertyType">
+    <xsd:sequence>
+        <xsd:element name="name" type="xsd:string" />
+        <xsd:choice>
+          <xsd:element name="string" type="xsd:string" />
+          <xsd:element name="enumerated" type="xsd:string"/>
+          <xsd:element name="float" type="xsd:float"/>
+          <xsd:element name="double" type="xsd:double"/>
+          <xsd:element name="integer" type="xsd:int"/>
+          <xsd:element name="long" type="xsd:long"/>
+          <xsd:element name="vec4" type="Vec4Type" />
+          <xsd:element name="vec3" type="Vec3Type" />
+          <xsd:element name="vec2" type="Vec2Type"/>
+          <xsd:element name="boolean" type="xsd:boolean"/>
+          <xsd:element name="colorRGB" type="ColorRGBType"/>
+          <xsd:element name="colorRGBA" type="ColorRGBAType"/>
+          <xsd:sequence>
+            <xsd:element name="resourceType" type="xsd:string" />
+            <xsd:element name="resourceDisplayName" type="xsd:string" />
+            <xsd:element name="resource" type="xsd:string" />
+          </xsd:sequence>
+          <xsd:element name="actorId" type="xsd:string" />
+          <xsd:element name="vector" type="VectorType"/>
+        </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="VectorType">
+    <xsd:choice>
+      <xsd:element name="string" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="enumerated" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="float" type="xsd:float" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="double" type="xsd:double" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="integer" type="xsd:int" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="long" type="xsd:long" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="vec3" type="Vec4Type" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="vec3" type="Vec3Type" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="vec2" type="Vec2Type" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="boolean" type="xsd:boolean" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="colorRGB" type="ColorRGBType" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:element name="colorRGBA" type="ColorRGBAType" minOccurs="1" maxOccurs="unbounded"/>
+      <xsd:sequence>
+        <!--this needs to be fixed to allow listing mutiple resources -->
+      	<xsd:element name="resourceType" type="xsd:string" />
+        <xsd:element name="resourceDisplayName" type="xsd:string" />
+        <xsd:element name="resource" type="xsd:string" />
+      </xsd:sequence>
+      <xsd:element name="actorId" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="Vec2Type">
+    <xsd:all>
+      <xsd:element name="value1" type="xsd:double" />
+      <xsd:element name="value2" type="xsd:double" />
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="Vec3Type">
+    <xsd:all>
+      <xsd:element name="value1" type="xsd:double" />
+      <xsd:element name="value2" type="xsd:double" />
+      <xsd:element name="value3" type="xsd:double" />
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="Vec4Type">
+    <xsd:all>
+      <xsd:element name="value1" type="xsd:double" />
+      <xsd:element name="value2" type="xsd:double" />
+      <xsd:element name="value3" type="xsd:double" />
+      <xsd:element name="value4" type="xsd:double" />
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="ColorRGBType">
+    <xsd:all>
+      <xsd:element name="valueR" type="xsd:float" />
+      <xsd:element name="valueG" type="xsd:float" />
+      <xsd:element name="valueB" type="xsd:float" />
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="ColorRGBAType">
+    <xsd:all>
+      <xsd:element name="valueR" type="xsd:float" />
+      <xsd:element name="valueG" type="xsd:float" />
+      <xsd:element name="valueB" type="xsd:float" />
+      <xsd:element name="valueA" type="xsd:float" />
+    </xsd:all>
+  </xsd:complexType>
+
+</xsd:schema>
