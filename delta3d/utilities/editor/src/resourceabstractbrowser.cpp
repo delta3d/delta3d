@@ -469,7 +469,7 @@ namespace dtEditQt
         {
             importDialog->exec();
         }
-        catch(const dtUtil::Exception& e)
+        catch(const dtUtil::Exception&)
         {
             return;
         }

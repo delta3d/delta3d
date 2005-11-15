@@ -114,7 +114,7 @@ void ExceptionTests::TestThrow()
       throw dtUtil::Exception(TestEnumType::ENUM, "Test throw", "enumerationtests.cpp", __LINE__);
       
    }
-   catch (const dtUtil::Exception& e)
+   catch (const dtUtil::Exception&)
    {
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Caught Exception!.\n");
    }

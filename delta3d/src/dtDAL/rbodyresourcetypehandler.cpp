@@ -475,7 +475,7 @@ namespace dtDAL
         {
             error = "OutOfMemoryException";
         }
-        catch (const XMLException& e)
+        catch (const XMLException&)
         {
             error = "XMLException";
         }
