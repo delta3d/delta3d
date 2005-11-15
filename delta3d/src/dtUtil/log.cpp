@@ -69,6 +69,7 @@ namespace dtUtil
 
         ~LogManager() 
         {
+            mInstances.clear();
             //std::cout << "BEING DESTROYED - LogManager" << std::endl;
             //std::cout.flush();
             if (logFile.is_open())
