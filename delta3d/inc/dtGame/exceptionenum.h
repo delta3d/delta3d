@@ -27,7 +27,7 @@
 namespace dtGame
 {
 
-   class DT_GAMEMANAGER_EXPORT ExceptionEnum : public dtUtil::Enumeration
+   class DT_GAME_EXPORT ExceptionEnum : public dtUtil::Enumeration
    {
       DECLARE_ENUM(ExceptionEnum);
       public:

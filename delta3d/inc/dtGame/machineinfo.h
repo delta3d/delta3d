@@ -30,7 +30,7 @@ namespace dtGame
    /**
     * @class A data class representing basic machine information.
     */
-   class DT_GAMEMANAGER_EXPORT MachineInfo : public osg::Referenced
+   class DT_GAME_EXPORT MachineInfo : public osg::Referenced
    {
       public:
 

@@ -26,7 +26,7 @@
 
 namespace dtGame
 {
-   class DT_GAMEMANAGER_EXPORT TickMessage : public Message
+   class DT_GAME_EXPORT TickMessage : public Message
    {
       public:
 
@@ -93,7 +93,7 @@ namespace dtGame
          
    };
 
-   class DT_GAMEMANAGER_EXPORT TimerElapsedMessage : public Message
+   class DT_GAME_EXPORT TimerElapsedMessage : public Message
    {
       public:
 
@@ -146,7 +146,7 @@ namespace dtGame
 
    };
 
-   class DT_GAMEMANAGER_EXPORT MapLoadedMessage : public Message
+   class DT_GAME_EXPORT MapLoadedMessage : public Message
    {
       public:
 
@@ -172,7 +172,7 @@ namespace dtGame
       
    };
 
-   class DT_GAMEMANAGER_EXPORT ActorPublishedMessage : public Message
+   class DT_GAME_EXPORT ActorPublishedMessage : public Message
    {
       public:
 
@@ -187,7 +187,7 @@ namespace dtGame
          virtual ~ActorPublishedMessage() { }
    };
 
-   class DT_GAMEMANAGER_EXPORT ActorDeletedMessage : public Message
+   class DT_GAME_EXPORT ActorDeletedMessage : public Message
    {
       public:
 
@@ -202,7 +202,7 @@ namespace dtGame
          virtual ~ActorDeletedMessage() { }
    };
 
-   class DT_GAMEMANAGER_EXPORT NetServerRejectMessage : public Message
+   class DT_GAME_EXPORT NetServerRejectMessage : public Message
    {
       public:
 
@@ -229,7 +229,7 @@ namespace dtGame
          
    };
 
-   class DT_GAMEMANAGER_EXPORT RestartMessage : public Message
+   class DT_GAME_EXPORT RestartMessage : public Message
    {
       public:
 
@@ -256,7 +256,7 @@ namespace dtGame
          virtual ~RestartMessage() {};
    };
 
-   class DT_GAMEMANAGER_EXPORT ServerMessageRejected : public Message
+   class DT_GAME_EXPORT ServerMessageRejected : public Message
    {
       public:
 
@@ -282,7 +282,7 @@ namespace dtGame
          virtual ~ServerMessageRejected() {}
    };
 
-   class DT_GAMEMANAGER_EXPORT CommandLoadMapMessage : public Message
+   class DT_GAME_EXPORT CommandLoadMapMessage : public Message
    {
       public:
 
@@ -309,7 +309,7 @@ namespace dtGame
 
    };
 
-   class DT_GAMEMANAGER_EXPORT RequestLoadMapMessage : public Message
+   class DT_GAME_EXPORT RequestLoadMapMessage : public Message
    {
       public:
 

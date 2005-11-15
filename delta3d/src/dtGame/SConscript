@@ -22,6 +22,6 @@ elif OS == 'darwin':
    dtGameDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
     
-dtGameManagerLib = BuildLib( 'dtGameManager', sources, dtGameDeps, ['DT_GAMEMANAGER_LIBRARY'] )
+dtGameManagerLib = BuildLib( 'dtGame', sources, dtGameDeps, ['DT_GAME_LIB'] )
 
 Export('dtGameManagerLib')

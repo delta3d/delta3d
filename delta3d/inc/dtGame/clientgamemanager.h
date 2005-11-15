@@ -33,7 +33,7 @@ namespace dtGame
 {
    class ClientNetworkComponent;
 
-   class DT_GAMEMANAGER_EXPORT ClientGameManager : public GameManager
+   class DT_GAME_EXPORT ClientGameManager : public GameManager
    {
       public:
       

@@ -425,7 +425,7 @@ def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
                   'dtBSP'       : 'dtBSP',
                   'dtInspector' : 'dtInspector',
                   'dtTerrain'   : 'dtTerrain',
-		  'dtGameManager': 'dtGame' }
+                  'dtGame'      : 'dtGame' }
 
    #install headers, there's gotta be a cleaner way ;)
    if incDirDict.has_key(name) and launchDir != env.get('prefix') :
@@ -745,7 +745,7 @@ dtLibs = { 'dtABC'       : 'dtABC',
            'dtBSP'       : 'dtBSP',
            'dtInspector' : 'dtInspector',
            'dtTerrain'   : 'dtTerrain', 
-           'dtGame'      : 'dtGameManager' }
+           'dtGame'      : 'dtGame' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :

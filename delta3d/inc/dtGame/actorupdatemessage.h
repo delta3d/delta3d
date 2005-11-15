@@ -40,7 +40,7 @@ namespace dtGame
    /**
     * Class the represents messages that are related to actors
     */
-   class DT_GAMEMANAGER_EXPORT ActorUpdateMessage : public Message
+   class DT_GAME_EXPORT ActorUpdateMessage : public Message
    {
       public:
 

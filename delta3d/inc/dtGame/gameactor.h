@@ -39,7 +39,7 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-   class DT_GAMEMANAGER_EXPORT GameActor : public dtCore::Physical
+   class DT_GAME_EXPORT GameActor : public dtCore::Physical
    {
       public:
          /// Constructor
@@ -110,12 +110,12 @@ namespace dtGame
     * Game Manager
     * @see dtGame::GameManager
     */
-	class DT_GAMEMANAGER_EXPORT GameActorProxy : public dtDAL::PhysicalActorProxy
+	class DT_GAME_EXPORT GameActorProxy : public dtDAL::PhysicalActorProxy
 	{
 		public:
 
          /// Internal class to represent the ownership of an actor proxy
-         class DT_GAMEMANAGER_EXPORT Ownership : public dtUtil::Enumeration
+         class DT_GAME_EXPORT Ownership : public dtUtil::Enumeration
          {
             DECLARE_ENUM(Ownership);
             public:

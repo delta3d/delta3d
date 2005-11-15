@@ -162,10 +162,10 @@ namespace dtGame
          for (unsigned i = 0; i < toFill.size(); ++i)
          {
             std::pair<GameActorProxy*, std::string >& listener = toFill[i];
-            Invokable* i = listener.first->GetInvokable(listener.second);
-            if (i != NULL)
+            Invokable* invokable = listener.first->GetInvokable(listener.second);
+            if (invokable != NULL)
             {
-               i->Invoke(*message);
+               invokable->Invoke(*message);
             }
             else
             {
@@ -183,10 +183,10 @@ namespace dtGame
             for (unsigned i = 0; i < toFill.size(); ++i)
             {
                std::pair<GameActorProxy*, std::string >& listener = toFill[i];
-               Invokable* i = listener.first->GetInvokable(listener.second);
-               if (i != NULL)
+               Invokable* invokable = listener.first->GetInvokable(listener.second);
+               if (invokable != NULL)
                {
-                  i->Invoke(*message);
+                  invokable->Invoke(*message);
                }
                else
                {

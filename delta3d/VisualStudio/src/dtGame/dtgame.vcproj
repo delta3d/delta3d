@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="GameManager"
+	Name="dtGame"
 	ProjectGUID="{A768B050-B0CF-454C-BE75-9F31E1ECF85F}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -12,35 +12,37 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="..\..\..\src\dtGame\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\src\dtGame\windows-msvc-debug"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_ROOT)/GameManager/inc;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_USRDLL;DT_GAMEMANAGER_LIBRARY"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIB"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				AssemblerListingLocation="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcored.lib dtUtild.lib dtvis_d.lib dtDALd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib"
-				OutputFile="../../bin/dtgamemanagerd.dll"
-				LinkIncremental="0"
-				AdditionalLibraryDirectories="$(DELTA_LIB)$(DELTA_ROOT)/GameManager/lib;"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib"
+				OutputFile="..\..\..\bin\dtGamed.dll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/GameManager.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="0"
-				ImportLibrary="../../lib/dtgamemanagerd.lib"
+				ImportLibrary="..\..\..\lib\dtGamed.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -65,33 +67,35 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="..\..\..\src\dtGame\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtGame\windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC);$(DELTA_ROOT)/GameManager/inc;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;_USRDLL;DT_GAMEMANAGER_LIBRARY"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
+				AssemblerListingLocation="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtcore.lib dtUtil.lib dtDAL.lib osg.lib OpenThreadsWin32.lib Producer.lib"
-				OutputFile="../../bin/dtgamemanager.dll"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib osg.lib OpenThreadsWin32.lib Producer.lib"
+				OutputFile="..\..\..\bin\dtGame.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB);$(DELTA_ROOT)/GameManager/lib;"
-				GenerateDebugInformation="TRUE"
-				SubSystem="1"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
+				GenerateDebugInformation="FALSE"
+				SubSystem="0"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="../../lib/dtgamemanager.lib"
+				ImportLibrary="..\..\..\lib\dtGame.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -123,52 +127,52 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\src\dtGame\actorupdatemessage.cpp">
+				RelativePath="..\..\..\src\dtGame\actorupdatemessage.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\basemessages.cpp">
+				RelativePath="..\..\..\src\dtGame\basemessages.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\clientgamemanager.cpp">
+				RelativePath="..\..\..\src\dtGame\clientgamemanager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\datastream.cpp">
+				RelativePath="..\..\..\src\dtGame\datastream.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\defaultmessageprocessor.cpp">
+				RelativePath="..\..\..\src\dtGame\defaultmessageprocessor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\exceptionenum.cpp">
+				RelativePath="..\..\..\src\dtGame\exceptionenum.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\gameactor.cpp">
+				RelativePath="..\..\..\src\dtGame\gameactor.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\gamemanager.cpp">
+				RelativePath="..\..\..\src\dtGame\gamemanager.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\gmcomponent.cpp">
+				RelativePath="..\..\..\src\dtGame\gmcomponent.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\invokable.cpp">
+				RelativePath="..\..\..\src\dtGame\invokable.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\message.cpp">
+				RelativePath="..\..\..\src\dtGame\message.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\messagefactory.cpp">
+				RelativePath="..\..\..\src\dtGame\messagefactory.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\messageparameter.cpp">
+				RelativePath="..\..\..\src\dtGame\messageparameter.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\messagetype.cpp">
+				RelativePath="..\..\..\src\dtGame\messagetype.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\rulescomponent.cpp">
+				RelativePath="..\..\..\src\dtGame\rulescomponent.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\dtGame\servergamemanager.cpp">
+				RelativePath="..\..\..\src\dtGame\servergamemanager.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -176,58 +180,58 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\inc\dtGame\actorupdatemessage.h">
+				RelativePath="..\..\..\inc\dtGame\actorupdatemessage.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\basemessages.h">
+				RelativePath="..\..\..\inc\dtGame\basemessages.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\clientgamemanager.h">
+				RelativePath="..\..\..\inc\dtGame\clientgamemanager.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\datastream.h">
+				RelativePath="..\..\..\inc\dtGame\datastream.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\defaultmessageprocessor.h">
+				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\exceptionenum.h">
+				RelativePath="..\..\..\inc\dtGame\exceptionenum.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\gameactor.h">
+				RelativePath="..\..\..\inc\dtGame\gameactor.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\gamemanager.h">
+				RelativePath="..\..\..\inc\dtGame\gamemanager.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\gamemanager_export.h">
+				RelativePath="..\..\..\inc\dtGame\gamemanager_export.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\gmcomponent.h">
+				RelativePath="..\..\..\inc\dtGame\gmcomponent.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\invokable.h">
+				RelativePath="..\..\..\inc\dtGame\invokable.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\machineinfo.h">
+				RelativePath="..\..\..\inc\dtGame\machineinfo.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\message.h">
+				RelativePath="..\..\..\inc\dtGame\message.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\messagefactory.h">
+				RelativePath="..\..\..\inc\dtGame\messagefactory.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\messageparameter.h">
+				RelativePath="..\..\..\inc\dtGame\messageparameter.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\messagetype.h">
+				RelativePath="..\..\..\inc\dtGame\messagetype.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\rulescomponent.h">
+				RelativePath="..\..\..\inc\dtGame\rulescomponent.h">
 			</File>
 			<File
-				RelativePath="..\..\inc\dtGame\servergamemanager.h">
+				RelativePath="..\..\..\inc\dtGame\servergamemanager.h">
 			</File>
 		</Filter>
 		<Filter

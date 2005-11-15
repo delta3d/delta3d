@@ -105,7 +105,7 @@ namespace dtGame
                if (mp != NULL)
                   mp->FromString(property.GetStringValue());
             }
-            catch (const dtUtil::Exception& ex)
+            catch (const dtUtil::Exception&)
             {
                //hmm, someone should not have added a property already.
                update.GetUpdateParameter(property.GetName());

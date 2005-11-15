@@ -30,7 +30,7 @@ namespace dtGame
     * Class that enumerates the message types used by the GameManager
     * @see class dtGame::GameManager
     */
-   class DT_GAMEMANAGER_EXPORT MessageType : public dtUtil::Enumeration
+   class DT_GAME_EXPORT MessageType : public dtUtil::Enumeration
    {
       DECLARE_ENUM(MessageType);
       public:

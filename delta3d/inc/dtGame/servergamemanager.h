@@ -28,7 +28,7 @@ namespace dtGame
    class MachineInfo;
    class ServerNetworkComponent;
 
-   class DT_GAMEMANAGER_EXPORT ServerGameManager : public GameManager
+   class DT_GAME_EXPORT ServerGameManager : public GameManager
    {
       public:
 

@@ -33,7 +33,7 @@ namespace dtGame
    class ActorDeletedMessage;
    class ActorUpdateMessage;
 
-   class DT_GAMEMANAGER_EXPORT RulesComponent : public GMComponent
+   class DT_GAME_EXPORT RulesComponent : public GMComponent
    {
       public:
 
