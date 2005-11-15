@@ -153,7 +153,7 @@ namespace dtDAL
                 toCatch.getMessage());
             EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");
         }
-        catch (const SAXParseException& toCatch)
+        catch (const SAXParseException&)
         {
             //this will already by logged by the
             EXCEPT(dtDAL::ExceptionEnum::MapLoadParsingError, "Error while parsing map file. See log for more information.");

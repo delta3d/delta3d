@@ -246,7 +246,7 @@ namespace dtEditQt
                 file = QString(project.GetResourcePath(resource).c_str());
                 validFile = true;
             }
-            catch (dtUtil::Exception &e)
+            catch (dtUtil::Exception &)
             {
                 validFile = false;
             }
