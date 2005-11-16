@@ -450,7 +450,7 @@ int Stats::WritePrims( const int ypos, osgUtil::Statistics& stats)
     unsigned int totalNumPrimives = 0;
     unsigned int totalNumIndices = 0;
     unsigned int totalNumTriangles = 0;
-    osgUtil::Statistics::PrimitiveValueMap::iterator pItr;   // TODO: In OSG post-0.9.9, this class is
+    osgUtil::Statistics::PrimtiveValueMap::iterator pItr;   // TODO: In OSG post-0.9.9, this class is
                                                             // called PrimitiveValueMap (spelling correction)
     for(pItr=stats._primitiveCount.begin(); pItr!=stats._primitiveCount.end(); ++pItr)
     {
