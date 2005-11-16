@@ -1,5 +1,7 @@
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
+#include <dtABC/application.h>
+#include <dtCore/globals.h>
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/object.h>
 
 #include "bumpmapdrawable.h"
 
@@ -8,8 +10,6 @@ using namespace dtCore;
 
 class TestBumpMapApp : public Application
 {
-
-	DECLARE_MANAGEMENT_LAYER( TestBumpMapApp )
 
 public:
 	TestBumpMapApp( const std::string& configFilename = "config.xml" )
@@ -74,9 +74,8 @@ public:
       }
    }
 
-	~TestBumpMapApp()
+	virtual ~TestBumpMapApp()
 	{
-
 	}
 
 private:
@@ -87,8 +86,6 @@ private:
    bool                                      mWireframe;
 
 };
-
-IMPLEMENT_MANAGEMENT_LAYER( TestBumpMapApp )
 
 int main(int argc, char* argv[])
 {

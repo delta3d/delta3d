@@ -1,12 +1,9 @@
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
-
+#include <dtABC/application.h>
+#include <dtCore/globals.h>
 #include <dtCore/object.h>
-
 #include <osg/Drawable>
 #include <osg/PrimitiveSet>
 #include <osg/Program>
-
 
 using namespace dtABC;
 using namespace dtCore;
@@ -14,10 +11,8 @@ using namespace dtCore;
 class TestShadersApp : public Application
 {
 
-   DECLARE_MANAGEMENT_LAYER( TestShadersApp )
-
 public:
-   TestShadersApp( std::string configFilename = "testshadersconfig.xml" )
+   TestShadersApp( const std::string& configFilename = "testshadersconfig.xml" )
       : Application( configFilename )
    {
       mTotalTime = 0.0f;
@@ -29,16 +24,13 @@ public:
       GetCamera()->SetTransform(&xform);
 
       GetWindow()->SetWindowTitle("testShaders");
-
    }
-
 
    void LoadGeometry()
    {
-      mObject = new dtCore::Object;
+      mObject = new dtCore::Object("Happy Sphere");
       mObject->LoadFile("models/physics_happy_sphere.ive");
       AddDrawable(mObject.get());
-
    }
 
    void EnableShaders()
@@ -62,7 +54,6 @@ public:
       ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );
       mEnabled = true;
    }
-
 
    virtual void KeyPressed(dtCore::Keyboard* keyboard, 
       Producer::KeyboardKey key,
@@ -91,7 +82,6 @@ public:
       }
    }
 
-
    virtual void PreFrame(const double deltaFrameTime )
    {
       mTotalTime += deltaFrameTime;
@@ -104,10 +94,8 @@ public:
       mObject->SetTransform(&xform);
    }
 
-
-   ~TestShadersApp()
+   virtual ~TestShadersApp()
    {
-    
    }
 
 private:
@@ -123,18 +111,15 @@ private:
    DeltaWin::Resolution                      mRes;
 };
 
-IMPLEMENT_MANAGEMENT_LAYER( TestShadersApp )
-
 int main(int argc, char* argv[])
 {
 
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testShaders/;" +
-      GetDeltaDataPathList()  );
+                        GetDeltaDataPathList()  );
 
    RefPtr<TestShadersApp> app = new TestShadersApp( "testshadersconfig.xml" );
    app->Config();
    app->Run();
-
 
    return 0;
 }
