@@ -176,7 +176,8 @@ private:
 int main()
 {
    dtCore::SetDataFilePathList( GetDeltaRootPath() + "/examples/testMap/;" +
-                                GetDeltaDataPathList() );
+                                GetDeltaDataPathList() + ";" +
+                                GetDeltaDataPathList() + "/demoMap/Particles;" );
    RefPtr<TestMap> app;
    
    try
