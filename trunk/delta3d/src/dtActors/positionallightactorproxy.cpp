@@ -19,8 +19,9 @@
 * @author William E. Johnson II
 */
 
-#include "dtActors/positionallightactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtActors/positionallightactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
 
 namespace dtActors 
 {
@@ -44,5 +45,16 @@ namespace dtActors
             MakeFunctor(*this, &dtActors::PositionalLightActorProxy::SetAttenuation),
             MakeFunctorRet(*this, &dtActors::PositionalLightActorProxy::GetAttenuation),
             "Sets a light's attenuation.",GROUPNAME));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    dtDAL::ActorProxyIcon* PositionalLightActorProxy::GetBillBoardIcon()
+    {
+       if( !mBillBoardIcon.valid() )
+       {
+          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::LIGHT);
+       }
+
+       return mBillBoardIcon.get();
     }
 }
