@@ -2505,6 +2505,8 @@ class GeodeCollector : public NodeVisitor
       }
 };
 
+
+
 /**
  * Flattens the transform and state of a Geode by acculumating the
  * transforms/states along the node path.
@@ -2542,27 +2544,21 @@ void FlattenGeodeTransformAndState(NodePath& path)
    
    unsigned int i, j;
    
-   for(i=0;i<geode->getNumDrawables();i++)
+   for( i = 0; i < geode->getNumDrawables(); i++ )
    {
-      Geometry* geometry = dynamic_cast<Geometry*>(geode->getDrawable(i));
-      
-      if(geometry != NULL)
+      if( Geometry* geometry = geode->getDrawable(i)->asGeometry() )
       {
-         Vec3Array* v3a = dynamic_cast<Vec3Array*>(geometry->getVertexArray());
-         
-         if(v3a != NULL)
+         if( Vec3Array* vertexArray = dynamic_cast< osg::Vec3Array* >( geometry->getVertexArray() ) )
          {
-            for(j=0;j<v3a->size();j++)
+            for( j = 0; j < vertexArray->size(); j++ )
             {
-               (*v3a)[j] = (*v3a)[j]*matrix;
+               (*vertexArray)[j] = (*vertexArray)[j]*matrix;
             }
          }
          
-         v3a = geometry->getNormalArray();
-            
-         if(v3a != NULL)
+         if( Vec3Array* v3a = dynamic_cast< osg::Vec3Array* >( geometry->getNormalArray() ) )
          {
-            for(j=0;j<v3a->size();j++)
+            for( j = 0; j < v3a->size(); j++ )
             {
                (*v3a)[j] = Matrix::transform3x3((*v3a)[j], matrix);
             }
