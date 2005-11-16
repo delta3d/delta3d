@@ -26,10 +26,20 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <OpenThreads/Thread>
-#include <dtInspector/gui_fltk.h>
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
 #include <dtInspector/export.h>
+
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#endif
+
+#include <dtInspector/gui_fltk.h>
+
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
 /** The dtInspector namespace contains functionality to inspect Delta3D classes
   * at runtime.

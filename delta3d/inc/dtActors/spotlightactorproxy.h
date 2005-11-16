@@ -52,6 +52,15 @@ namespace dtActors
         virtual bool IsPlaceable() const { return true; }
 
         /**
+        * Gets the billboard icon for lights. Normally this wouldn't be here
+        * as it's inherited from BaseLightActorProxy. But since this inheritence
+        * chain uses virtual inheritence and MSVC spits a warning, this should
+        * quell it.
+        * @return The billboard icon common to all lights.
+        */
+        virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+
+        /**
          * Gets the current render mode for spotlights.
          * @return ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON.
          */

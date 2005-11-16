@@ -7,9 +7,16 @@
 #include "dtABC/dtabc.h"
 #include <cassert>
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#endif
+
 #include "UserInterface.h"
 
-
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
 int
 main( int argc, char** argv )

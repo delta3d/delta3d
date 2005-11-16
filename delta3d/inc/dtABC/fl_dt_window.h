@@ -23,13 +23,20 @@
 
 #include <cassert>
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#endif
+
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
+
 #include "dtABC/widget.h"
-
-
 
 template<class T>
 class Fl_DT_Window  :  public   T, public   Fl_Window

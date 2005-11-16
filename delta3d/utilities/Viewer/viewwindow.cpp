@@ -5,10 +5,18 @@
 #include <dtDAL/fileutils.h>
 
 #include "viewstate.h"
-#include "UserInterface.h"
 #include "viewwindow.h"
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#endif
 
+#include "UserInterface.h"
+
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
 /// namespaces
 using namespace   dtABC;

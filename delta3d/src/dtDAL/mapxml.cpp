@@ -25,6 +25,11 @@
 #include <time.h>
 #include <math.h>
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#endif
+
 #include <xercesc/util/XMLUniDefs.hpp>
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
@@ -32,6 +37,10 @@
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/internal/XMLGrammarPoolImpl.hpp>
+
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
 #include <dtCore/scene.h>
 

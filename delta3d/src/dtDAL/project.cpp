@@ -24,12 +24,21 @@
 #include <set>
 #include <stdio.h>
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4267) // for warning C4267: 'argument' : conversion from 'size_t' to 'const unsigned int', possible loss of data
+#endif
+
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/TransService.hpp>
 #include <xercesc/sax2/SAX2XMLReader.hpp>
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/util/XMLUni.hpp>
+
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
 #include <osgDB/FileNameUtils>
 

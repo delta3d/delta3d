@@ -18,8 +18,9 @@
 *
 * @author William E. Johnson II
 */
-#include "dtActors/spotlightactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtActors/spotlightactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/actorproxyicon.h>
 
 using namespace dtCore;
 using namespace dtDAL;
@@ -59,5 +60,16 @@ namespace dtActors
             dtDAL::MakeFunctor(*sl, &dtCore::SpotLight::SetSpotExponent),
             dtDAL::MakeFunctorRet(*sl, &dtCore::SpotLight::GetSpotExponent),
             "Sets the concentration of the light in the center of its cone.", GROUPNAME));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    dtDAL::ActorProxyIcon* SpotlightActorProxy::GetBillBoardIcon()
+    {
+       if( !mBillBoardIcon.valid() )
+       {
+          mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::LIGHT);
+       }
+
+       return mBillBoardIcon.get();
     }
 }

@@ -16,9 +16,19 @@
 #include <dtCore/positionallight.h>
 #include <dtCore/spotlight.h>
 #include <dtABC/weather.h>
+
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#endif
+
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_draw.H>
+
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
 #include <osg/Vec3>
 #include <osg/Vec4>
