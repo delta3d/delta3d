@@ -594,7 +594,7 @@ AudioManager::FreeSound( Sound*& sound )
       return;
 
    // remove sound from list
-   SND_LST::iterator iter(NULL);
+   SND_LST::iterator iter;
    for( iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
    {
       if( snd != *iter )
