@@ -111,16 +111,16 @@ namespace dtTerrain
       //This is probably not the correct method to calculate horizonal
       //resolution.. it works for now, but probably should be looked into
       //further.
-      float gridSpacing = GeoCoordinates::EQUATORIAL_RADIUS *
+      double gridSpacing = GeoCoordinates::EQUATORIAL_RADIUS *
          osg::DegreesToRadians(1.0f);
       
-      float horizRes;
+      double horizRes;
       int baseBits;
       
-      baseBits = (int)(logf((float)baseSize) / logf(2.0f));
-      horizRes = gridSpacing / (float)(baseSize-1);
+      baseBits = (int)(logf((float)baseSize) / logf(2.0f));    
+      horizRes = gridSpacing / (double)(1 << baseBits);
       
-      newEntry.drawable = new SoarXDrawable(baseBits,horizRes);
+      newEntry.drawable = new SoarXDrawable(baseBits,(float)horizRes);
       newEntry.drawable->SetThreshold(mThreshold);
       newEntry.drawable->SetDetailMultiplier(mDetailMultiplier);
       newEntry.drawable->SetDetailNoise(mDetailNoiseBits,
@@ -131,7 +131,9 @@ namespace dtTerrain
       GeoCoordinates coords = tile.GetGeoCoordinates();
       osg::Geode *geode = new osg::Geode();
       newEntry.sceneNode = new osg::MatrixTransform();      
-      newEntry.sceneNode->setMatrix(osg::Matrix::translate(coords.GetCartesianPoint()));
+      
+      osg::Vec3 origin = coords.GetCartesianPoint();
+      newEntry.sceneNode->setMatrix(osg::Matrix::translate(origin));
            
       CheckBaseGradientCache(tile,newEntry);
       SetupRenderState(tile,newEntry,*geode->getOrCreateStateSet());
