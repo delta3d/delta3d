@@ -55,6 +55,9 @@ namespace dtABC
       Action* GetAction() { return mActionToFire.get(); }
       const Action* GetAction() const { return mActionToFire.get(); }
 
+      int GetTimesActive() const{return mTimesActive;}
+      void SetTimesActive(float pTimesActive){mTimesActive = pTimesActive;}
+
    private:
 
       void Update( double time );
@@ -64,6 +67,7 @@ namespace dtABC
       bool mEnabled;
       double mTimeDelay;
       double mTimeLeft;
+      int mTimesActive, mTimesTriggered;
       dtCore::RefPtr<Action> mActionToFire;
 
    };
