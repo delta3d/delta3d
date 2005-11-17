@@ -56,7 +56,7 @@ namespace dtABC
       const Action* GetAction() const { return mActionToFire.get(); }
 
       int GetTimesActive() const{return mTimesActive;}
-      void SetTimesActive(float pTimesActive){mTimesActive = pTimesActive;}
+      void SetTimesActive(int pTimesActive){mTimesActive = pTimesActive;}
 
    private:
 
