@@ -685,9 +685,15 @@ else:
    if OS == 'windows':
      env.Append(CXXFLAGS=['/W3'])
    elif OS == 'linux' or OS == 'darwin':
-     if env['CC'][:3] == 'gcc' or env['CXX'][:3] == 'g++':
-       env.Append(CXXFLAGS=['-Wall'])
-     if env['CXX'][:3] == 'g++':
+      if env['CC'][:3] == 'gcc' or env['CXX'][:3] == 'g++':
+         env.Append(CXXFLAGS=['-Wall'])
+         if env.has_key('CCVERSION') :
+            if env['CCVERSION'][:1] >= 4 :
+               env.Append(CXXFLAGS=['-ftree-vectorize'])
+         if env.has_key('CXXVERSION') :
+            if env['CXXVERSION'][:1] >= 4 :
+               env.Append(CXXFLAGS=['-ftree-vectorize'])
+      if env['CXX'][:3] == 'g++':
          env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
 if OS == 'linux' :
