@@ -1,0 +1,8 @@
+Import('*')
+
+srcs =  SGlob( '*.cpp' )
+deps =[ 'dtABC', 'dtActors' ] 
+
+Depends( 'testMap', 'dtActors' )
+
+BuildProgram( 'testMap', srcs, deps )

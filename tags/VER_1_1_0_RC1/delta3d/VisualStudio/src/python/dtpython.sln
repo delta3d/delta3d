@@ -1,0 +1,133 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCoreBindings", "dtCoreBindings.vcproj", "{17C8B821-1515-4CE5-9C9A-00193C34FF0F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABCBindings", "dtabcbindings.vcproj", "{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCharBindings", "dtcharbindings.vcproj", "{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80} = {91F7CF8D-9297-426F-B760-7E49EDA92A80}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAudioBindings", "dtaudiobindings.vcproj", "{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C9F6D0C-9B74-404F-808B-9E480777F757} = {6C9F6D0C-9B74-404F-808B-9E480777F757}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspectorBindings", "dtinspectorbindings.vcproj", "{89FA50C3-B575-42EE-9EA7-E4E4ED193813}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09} = {7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCore", "..\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtAudio", "..\dtAudio\dtaudio.vcproj", "{6C9F6D0C-9B74-404F-808B-9E480777F757}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtInspector", "..\dtInspector\dtinspector.vcproj", "{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtChar", "..\dtChar\dtchar.vcproj", "{91F7CF8D-9297-426F-B760-7E49EDA92A80}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtilBindings", "dtutilbindings.vcproj", "{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\dtDAL\dtDAL.vcproj", "{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C9F6D0C-9B74-404F-808B-9E480777F757} = {6C9F6D0C-9B74-404F-808B-9E480777F757}
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80} = {91F7CF8D-9297-426F-B760-7E49EDA92A80}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDALBindings", "dtdalbindings.vcproj", "{DCA6E500-A5D4-496E-9B0A-B22790AD6611}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "..\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Debug.ActiveCfg = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.ActiveCfg = Release|Win32
+		{17C8B821-1515-4CE5-9C9A-00193C34FF0F}.Release.Build.0 = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Debug.ActiveCfg = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release.ActiveCfg = Release|Win32
+		{537ADD2A-2558-46E6-B40F-27AAE5DAEAA2}.Release.Build.0 = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Debug.ActiveCfg = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release.ActiveCfg = Release|Win32
+		{20E80313-6099-4F8B-BB4E-E164F4ABEEC4}.Release.Build.0 = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Debug.ActiveCfg = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Release.ActiveCfg = Release|Win32
+		{0D2F6673-29DD-492F-8ABD-6BCA7925F2DE}.Release.Build.0 = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Debug.ActiveCfg = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.ActiveCfg = Release|Win32
+		{89FA50C3-B575-42EE-9EA7-E4E4ED193813}.Release.Build.0 = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.ActiveCfg = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.Build.0 = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.ActiveCfg = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.Build.0 = Release|Win32
+		{6C9F6D0C-9B74-404F-808B-9E480777F757}.Debug.ActiveCfg = Debug|Win32
+		{6C9F6D0C-9B74-404F-808B-9E480777F757}.Debug.Build.0 = Debug|Win32
+		{6C9F6D0C-9B74-404F-808B-9E480777F757}.Release.ActiveCfg = Release|Win32
+		{6C9F6D0C-9B74-404F-808B-9E480777F757}.Release.Build.0 = Release|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug.ActiveCfg = Debug|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Debug.Build.0 = Debug|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release.ActiveCfg = Release|Win32
+		{7F7CF9FA-EFB9-4DD0-964E-0562DBED2C09}.Release.Build.0 = Release|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Debug.ActiveCfg = Debug|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Debug.Build.0 = Debug|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Release.ActiveCfg = Release|Win32
+		{91F7CF8D-9297-426F-B760-7E49EDA92A80}.Release.Build.0 = Release|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.ActiveCfg = Debug|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.Build.0 = Debug|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Release.ActiveCfg = Release|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Release.Build.0 = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Debug.ActiveCfg = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Release.ActiveCfg = Release|Win32
+		{54256297-8E22-4BA6-BF57-4FE4CDD0DCB5}.Release.Build.0 = Release|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.ActiveCfg = Debug|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.Build.0 = Debug|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.ActiveCfg = Release|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.Build.0 = Release|Win32
+		{DCA6E500-A5D4-496E-9B0A-B22790AD6611}.Release.ActiveCfg = Release|Win32
+		{DCA6E500-A5D4-496E-9B0A-B22790AD6611}.Release.Build.0 = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.ActiveCfg = Debug|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
