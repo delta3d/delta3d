@@ -481,8 +481,9 @@ private:
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
-   //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
+   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ";" +
+                                dtCore::GetDeltaRootPath() + "/examples/testTerrain" );
+   
    dtCore::RefPtr<TestTerrainApp> app;
    
    // use an ArgumentParser object to manage the program arguments.
