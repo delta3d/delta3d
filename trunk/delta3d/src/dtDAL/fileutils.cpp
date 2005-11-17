@@ -23,6 +23,7 @@
 #   include <windows.h>
 #   include <direct.h>
 #   include <io.h>
+#   include <errno.h>
 #   define stat64 _stati64
 #   define mkdir(x,y) _mkdir((x))
 extern "C" int errno;
