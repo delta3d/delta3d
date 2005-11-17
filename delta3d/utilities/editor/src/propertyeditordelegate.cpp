@@ -80,7 +80,7 @@ namespace dtEditQt
                 if (ke->key() == Qt::Key_Left || ke->key() == Qt::Key_Right) {
                     // if we have a push button, ignore hte left and right buttons
                     QWidget *widget = static_cast<QWidget*>(object);
-                    if (QPushButton *btn= qobject_cast<QPushButton*>(widget)) {
+                    if (qobject_cast<QPushButton*>(widget)) {
                         event->ignore();
                         return true;
                     }
@@ -91,7 +91,7 @@ namespace dtEditQt
                     QWidget *widget = static_cast<QWidget*>(object);
                     if (QSpinBox *spinBox = qobject_cast<QSpinBox*>(widget)) {
                         spinBox->interpretText();
-                    } else if (QComboBox *comboBox= qobject_cast<QComboBox*>(widget)) {
+                    } else if (qobject_cast<QComboBox*>(widget)) {
                         // pass  the event onto the combo box, then commit
                         bool result = QItemDelegate::eventFilter(object, event);
                         emit commitData(widget);

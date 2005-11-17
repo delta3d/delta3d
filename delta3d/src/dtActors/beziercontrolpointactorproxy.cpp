@@ -42,7 +42,7 @@ namespace dtActors
    void BezierControlPointActorProxy::SetBezierNode(ActorProxy *node)
    {
 
-      ActorProxy* old = GetLinkedActor("Bezier Node");
+      //ActorProxy* old = GetLinkedActor("Bezier Node");
       //set the linked actor proxy for safe-keeping
       SetLinkedActor("Bezier Node", node);
 
