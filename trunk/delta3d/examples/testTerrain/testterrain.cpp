@@ -114,8 +114,8 @@ public:
       {
          //This is temporaily required because of a bug in the culling of
          //terrain and vegetation combinations.
-         GetCamera()->GetSceneHandler()->GetSceneView()->setCullingMode(
-            osg::CullSettings::NO_CULLING);
+         //GetCamera()->GetSceneHandler()->GetSceneView()->setCullingMode(
+         //   osg::CullSettings::NO_CULLING);
          
          mLCCType = CreateLCCType();  
          mVeg = new dtTerrain::VegetationDecorator;
@@ -232,8 +232,8 @@ public:
       shrubland.AddModel("models/Grape_oregon_8_1.flt/Grape_oregon_8_1.flt",3.0);
 
       LCCType.push_back(water);
-      LCCType.push_back(lowResidential);
-      LCCType.push_back(highResidential);
+      //LCCType.push_back(lowResidential);
+      //LCCType.push_back(highResidential);
       //LCCType.push_back(industrial);
       LCCType.push_back(deciduous);
       LCCType.push_back(evergreen);
@@ -486,8 +486,6 @@ int main(int argc, char **argv)
                                 dtCore::GetDeltaRootPath() + "/examples/testTerrain" );
 
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
-   
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
    dtCore::RefPtr<TestTerrainApp> app;
    
@@ -513,36 +511,45 @@ int main(int argc, char **argv)
       arguments.getApplicationUsage()->write(std::cout);
       return 1;
    }
-   
-   if (arguments.argc()<=1)
-   {
-      arguments.getApplicationUsage()->write(std::cout);
-      return 1;
-   }
 
    int level;
    double latitude;
    double longitude;
    std::string cachePath;
    std::string resourcePath;
+   bool vegetation(false);
    std::string geospecific;
    std::string drapeImagePath;
-
-   arguments.read("-c",cachePath);
-   arguments.read("-r",resourcePath);
-   arguments.read("--dted",level,latitude,longitude);
-   arguments.read("--geo",geospecific);
-   arguments.read("--geodrape",drapeImagePath);
    
-   // any option left unread are converted into errors to write out later.
-   arguments.reportRemainingOptionsAsUnrecognized();
-   
-   // report any errors if they have occured when parsing the program aguments.
-   if (arguments.errors())
+   if (arguments.argc()<=1)
    {
-      arguments.writeErrorMessages(std::cout);
-      return 1;
-   } 
+      level = 0;
+      latitude = 36.96;
+      longitude = -121.96;
+      cachePath = "cache";
+      resourcePath = "dted/level0";
+      vegetation = true;
+      geospecific = dtCore::GetDeltaDataPathList() + "/textures/newmb_lcc.tif";
+   }
+   else
+   {
+      arguments.read("-c",cachePath);
+      arguments.read("-r",resourcePath);
+      arguments.read("--dted",level,latitude,longitude);
+      arguments.read("--geo",geospecific);
+      arguments.read("--geodrape",drapeImagePath);
+      vegetation = arguments.read("--enable-vegetation");
+
+      // any option left unread are converted into errors to write out later.
+      arguments.reportRemainingOptionsAsUnrecognized();
+
+      // report any errors if they have occured when parsing the program aguments.
+      if (arguments.errors())
+      {
+         arguments.writeErrorMessages(std::cout);
+         return 1;
+      }
+   }
 
    try
    {
@@ -553,12 +560,7 @@ int main(int argc, char **argv)
       app->SetDTEDLevel(level);
       app->SetLatitude(latitude);
       app->SetLongitude(longitude);
-      
-      if (arguments.read("--enable-vegetation"))
-         app->SetEnableVegetation(true);
-      else
-         app->SetEnableVegetation(false);
-      
+      app->SetEnableVegetation(vegetation);
       app->SetGeospecificDrapePath(drapeImagePath);
       app->CreateTerrain();
       app->Config();
