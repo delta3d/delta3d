@@ -28,7 +28,7 @@
 #include <osg/ref_ptr>
 
 #include <dtCore/refptr.h>
-#include "dtDAL/tree.h"
+#include <dtUtil/tree.h>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
 #include "dtEditQt/actortypetreewidget.h"
@@ -118,7 +118,7 @@ namespace dtEditQt
         // when we reload actor types.  We walk the tree and look for 
         // expanded items.  For each one, we add it to this tree.  Then, we walk 
         // back through this tree to reexpand items later
-        core::tree<QString> expandedActorTypeNames; 
+        dtUtil::tree<QString> expandedActorTypeNames; 
         bool rootNodeWasExpanded;
         int lastScrollBarLocation;
 
@@ -133,7 +133,7 @@ namespace dtEditQt
          * recursive method to support markCurrentExpansion().
          */
         void recurseMarkCurrentExpansion(ActorTypeTreeWidget *parent, 
-            core::tree<QString> &currentTree);
+            dtUtil::tree<QString> &currentTree);
 
         /**
          * Attempts to re-expand previously expanded actor types.  This is a nicity for the user
@@ -145,7 +145,7 @@ namespace dtEditQt
          * Recursive method to support restorePreviousExpansion().
          */
         void recurseRestorePreviousExpansion(ActorTypeTreeWidget *parent, 
-            core::tree<QString> &currentTree);
+            dtUtil::tree<QString> &currentTree);
     };
 }
 

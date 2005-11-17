@@ -27,6 +27,7 @@
 #include "dtEditQt/resourcetreewidget.h"
 #include <dtUtil/log.h>
 #include "dtEditQt/uiresources.h"
+#include <dtDAL/tree.h>
 
 namespace dtEditQt{
 

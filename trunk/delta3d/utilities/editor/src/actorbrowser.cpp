@@ -210,7 +210,7 @@ namespace dtEditQt
 
     /////////////////////////////////////////////////////////////////////////////////
     void ActorBrowser::recurseMarkCurrentExpansion(ActorTypeTreeWidget *parent,
-        core::tree<QString> &currentTree)
+        dtUtil::tree<QString> &currentTree)
     {
         for (int i = 0; i < parent->childCount(); i++)
         {
@@ -223,7 +223,7 @@ namespace dtEditQt
                 if (tree->isItemExpanded(child))
                 {
                     // add it to our list
-                    core::tree<QString> &insertedItem = currentTree.
+                    dtUtil::tree<QString> &insertedItem = currentTree.
                         insert(child->getCategoryOrName()).tree_ref();
 
                     // recurse on the child with the new tree
@@ -250,10 +250,10 @@ namespace dtEditQt
 
     /////////////////////////////////////////////////////////////////////////////////
     void ActorBrowser::recurseRestorePreviousExpansion(ActorTypeTreeWidget *parent,
-        core::tree<QString> &currentTree)
+        dtUtil::tree<QString> &currentTree)
     {
         // walk through the children...
-        for (core::tree<QString>::const_iterator iter = currentTree.in(); iter != currentTree.end(); ++iter) {
+        for (dtUtil::tree<QString>::const_iterator iter = currentTree.in(); iter != currentTree.end(); ++iter) {
             QString name = (*iter);
 
             // Try to find a control with this name in our model

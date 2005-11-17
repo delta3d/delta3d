@@ -31,7 +31,6 @@
 #include "dtDAL/project.h"
 #include <osg/ref_ptr>
 
-
 namespace dtEditQt{
 
     class ResourceTreeNode;
@@ -82,7 +81,7 @@ namespace dtEditQt{
         * Recursive function to construct the tree
         * @param An iterator of a tree that contains ResourceTreeNode
         */
-        void recursivelyCreateResourceTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator &iter, QIcon *resourceIcon = 0);
+        void recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator &iter, QIcon *resourceIcon = 0);
 
         /**
         * This returns a boolean if the current resource is in fact a resource

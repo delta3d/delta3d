@@ -67,7 +67,7 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/librarymanager.h"
 #include <dtUtil/log.h>
-#include "dtDAL/tree.h"
+#include <dtUtil/tree.h>
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
@@ -425,7 +425,7 @@ namespace dtEditQt
 
     /////////////////////////////////////////////////////////////////////////////////
     void PropertyEditor::recurseMarkCurrentExpansion(DynamicAbstractControl *parent,
-        core::tree<QString> &currentTree)
+        dtUtil::tree<QString> &currentTree)
     {
         for (int i = 0; i < parent->getChildCount(); i++)
         {
@@ -438,7 +438,7 @@ namespace dtEditQt
                 if (propertyTree->isExpanded(index))
                 {
                     // add it to our list
-                    core::tree<QString> &insertedItem = currentTree.
+                    dtUtil::tree<QString> &insertedItem = currentTree.
                         insert(child->getDisplayName()).tree_ref();
 
                     // recurse on the child with the new tree
@@ -463,10 +463,10 @@ namespace dtEditQt
 
     /////////////////////////////////////////////////////////////////////////////////
     void PropertyEditor::recurseRestorePreviousExpansion(DynamicAbstractControl *parent,
-        core::tree<QString> &currentTree)
+        dtUtil::tree<QString> &currentTree)
     {
         // walk through the children...
-        for (core::tree<QString>::const_iterator iter = currentTree.in(); iter != currentTree.end(); ++iter)
+        for (dtUtil::tree<QString>::const_iterator iter = currentTree.in(); iter != currentTree.end(); ++iter)
         {
             QString name = (*iter);
 

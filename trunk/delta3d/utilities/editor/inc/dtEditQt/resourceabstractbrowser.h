@@ -227,7 +227,7 @@ namespace dtEditQt
         QString *context;
         QString fileDialogDir;
 
-        core::tree<dtDAL::ResourceTreeNode> iterTree;
+        dtUtil::tree<dtDAL::ResourceTreeNode> iterTree;
         dtDAL::ResourceDescriptor *selectedDescriptor;
         dtDAL::DataType *resourceType;
         ResourceTree *tree;

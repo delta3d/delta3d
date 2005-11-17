@@ -27,7 +27,7 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 
-#include "dtDAL/tree.h"
+#include <dtUtil/tree.h>
 #include <dtDAL/exceptionenum.h>
 #include "dtDAL/fileutils.h"
 #include "dtDAL/resourcetreenode.h"
@@ -173,7 +173,7 @@ namespace dtDAL
          * @note The current directory must be the top of the project.
          * @param tree the tree of resources to fill.
          */
-        void IndexResources(core::tree<ResourceTreeNode>& tree) const;
+        void IndexResources(dtUtil::tree<ResourceTreeNode>& tree) const;
 
         /**
          * Creates a resource category.  The current directory should be
@@ -187,8 +187,8 @@ namespace dtDAL
          * @return the file path to the category relative to the project context.
          */
         const std::string CreateResourceCategory(const std::string& category, const DataType& type,
-            core::tree<ResourceTreeNode>* dataTypeTree,
-            core::tree<ResourceTreeNode>*& categoryInTree) const;
+            dtUtil::tree<ResourceTreeNode>* dataTypeTree,
+            dtUtil::tree<ResourceTreeNode>*& categoryInTree) const;
 
         /**
          * Removes a category. This method expects the current directory to be the root of the project
@@ -206,7 +206,7 @@ namespace dtDAL
          *              are changed while the recusive delete is occuring.
          */
         bool RemoveResourceCategory(const std::string& category,
-            const DataType& type, bool recursive, core::tree<ResourceTreeNode>* dataTypeTree) const;
+            const DataType& type, bool recursive, dtUtil::tree<ResourceTreeNode>* dataTypeTree) const;
 
         /**
          * Removes a resource and updates the tree.
@@ -215,7 +215,7 @@ namespace dtDAL
          * @param resourceTree the tree to update or NULL to ignore.
          */
         void RemoveResource(const ResourceDescriptor& resource,
-            core::tree<ResourceTreeNode>* resourceTree) const;
+            dtUtil::tree<ResourceTreeNode>* resourceTree) const;
 
         /**
          * Adds a new resource to the current project and updates the tree.
@@ -229,14 +229,14 @@ namespace dtDAL
          */
         const ResourceDescriptor AddResource(const std::string& newName,
             const std::string& pathToFile, const std::string& category,
-            const DataType& type, core::tree<ResourceTreeNode>* dataTypeTree) const;
+            const DataType& type, dtUtil::tree<ResourceTreeNode>* dataTypeTree) const;
 
         /**
          * Removes a resource from the tree.  This is called by removeResource.
          * @param resourceTree the tree of resources.
          * @param resource the resource descriptor for the resource to remove.
          */
-        void RemoveResourceFromTree(core::tree<ResourceTreeNode>& resourceTree,
+        void RemoveResourceFromTree(dtUtil::tree<ResourceTreeNode>& resourceTree,
             const ResourceDescriptor& resource) const;
 
     private:
@@ -253,18 +253,18 @@ namespace dtDAL
         ResourceHelper(const ResourceHelper&){}
         ResourceHelper& operator=(const ResourceHelper&) { return *this; }
 
-        void IndexResources(FileUtils& fileUtils, core::tree<ResourceTreeNode>::iterator& i,
+        void IndexResources(FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
             const DataType& dt, const std::string& categoryPath, const std::string& category) const;
 
-        core::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path,
-            const std::string& category = "", core::tree<ResourceTreeNode>* parentTree = NULL) const;
+        dtUtil::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path,
+            const std::string& category = "", dtUtil::tree<ResourceTreeNode>* parentTree = NULL) const;
 
         const ResourceTypeHandler* FindHandlerForDataTypeAndExtension(
             const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch, 
             DataType& dt, const std::string& ext) const;
         
-        static core::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
-            core::tree<ResourceTreeNode>& resources, const std::string& id);
+        static dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
+            dtUtil::tree<ResourceTreeNode>& resources, const std::string& id);
     };
 
 }

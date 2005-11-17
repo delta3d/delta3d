@@ -30,7 +30,7 @@
 #include <osg/ref_ptr>
 #include <dtCore/scene.h>
 
-#include "dtDAL/tree.h"
+#include <dtUtil/tree.h>
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/resourcehelper.h"
@@ -81,7 +81,7 @@ namespace dtDAL
     mutable std::set<std::string> mMapNames; //< The list of map names.
 
     std::map<std::string, osg::ref_ptr<Map> > mOpenMaps; //< A vector of the maps currently loaded.
-    mutable core::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
+    mutable dtUtil::tree<ResourceTreeNode> mResources; //< a tree of all the resources.  This is more of a cache.
 
     osg::ref_ptr<MapParser> mParser;
     osg::ref_ptr<MapWriter> mWriter;
@@ -93,8 +93,8 @@ namespace dtDAL
     dtUtil::Log* mLogger;
 
     //verifies that a directory exists by creating it if it doesn't and updating the tree.
-    core::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path, const std::string& category = "",
-        core::tree<ResourceTreeNode>* parentTree = NULL);
+    dtUtil::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path, const std::string& category = "",
+        dtUtil::tree<ResourceTreeNode>* parentTree = NULL);
 
     //internal handling for saving a map.
     void InternalSaveMap(Map& map);
@@ -107,7 +107,7 @@ namespace dtDAL
     void UnloadUnusedLibraries(Map& mapToClose);
 
     //internal method to get the pointer to the subtree for a given datatype.
-    core::tree<ResourceTreeNode>& GetResourcesOfType(const DataType& datatype) const;
+    dtUtil::tree<ResourceTreeNode>& GetResourcesOfType(const DataType& datatype) const;
     //Checks to see if a map is actually one the current project knows about.
     void CheckMapValidity(const Map& map, bool allowReadonly = false) const;
     //re-reads the map names from project.
@@ -117,7 +117,7 @@ namespace dtDAL
     //recursive helper method for the other indexResources
     //The category AND the categoryPath are passed so that
     //they won't have to be converted on every recursive call.
-    void IndexResources(FileUtils& fileUtils, core::tree<ResourceTreeNode>::iterator& i,
+    void IndexResources(FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
         const DataType& dt, const std::string& categoryPath,const std::string& category) const;
 
     //Gets the list of backup map files.
@@ -125,7 +125,7 @@ namespace dtDAL
 
     //searches the resource tree for a category node and returns
     //an iterator to it or resources.end() if not found.
-    core::tree<ResourceTreeNode>::iterator FindTreeNodeFromCategory(
+    dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFromCategory(
         const DataType* dt, const std::string& category) const;
 
 
@@ -133,8 +133,8 @@ namespace dtDAL
         return Project::MAP_DIRECTORY + FileUtils::PATH_SEPARATOR + Project::MAP_BACKUP_SUB_DIRECTORY;
     }
     //Later
-/*    core::tree<ResourceTreeNode>* getMatchingBranch(
-        core::tree<ResourceTreeNode>::iterator level,
+/*    dtUtil::tree<ResourceTreeNode>* getMatchingBranch(
+        dtUtil::tree<ResourceTreeNode>::iterator level,
         const DataType& type,
         const std::string& partialName,
         const std::string& extension) const;*/
@@ -467,7 +467,7 @@ namespace dtDAL
      * @see Project#refresh
      * @return all of the resources known to the project.
      */
-    const core::tree<ResourceTreeNode>& GetAllResources() const
+    const dtUtil::tree<ResourceTreeNode>& GetAllResources() const
     {
         if (!mResourcesIndexed)
             IndexResources();
@@ -480,10 +480,10 @@ namespace dtDAL
      * @param toFill The tree to fill with the results.
      * @return all of the resources known to the project of the given type.
      */
-    void GetResourcesOfType(const DataType& type, core::tree<ResourceTreeNode>& toFill) const;
+    void GetResourcesOfType(const DataType& type, dtUtil::tree<ResourceTreeNode>& toFill) const;
 
     //Add later
-//     void findResources(core::tree<ResourceTreeNode> toFill,
+//     void findResources(dtUtil::tree<ResourceTreeNode> toFill,
 //         const DataType& type,
 //         const std::string& partialName,
 //         const std::string& extension) const;
