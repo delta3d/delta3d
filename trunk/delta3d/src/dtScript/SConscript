@@ -7,4 +7,4 @@ extraLink = []
 if OS == 'windows':
    extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
        
-BuildLib( 'dtScript', srcs, deps, ['DT_LIBRARY'], extraLink )
+BuildLib( 'dtScript', srcs, deps, ['DT_SCRIPT_LIBRARY'], extraLink )
