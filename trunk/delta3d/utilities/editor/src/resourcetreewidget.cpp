@@ -27,7 +27,6 @@
 #include "dtEditQt/resourcetreewidget.h"
 #include <dtUtil/log.h>
 #include "dtEditQt/uiresources.h"
-#include <dtDAL/tree.h>
 
 namespace dtEditQt{
 
@@ -67,14 +66,14 @@ namespace dtEditQt{
         return this->myResource;
     }
     ///////////////////////////////////////////////////////////////////////////////
-    void ResourceTreeWidget::recursivelyCreateResourceTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QIcon *resourceIcon)
+    void ResourceTreeWidget::recursivelyCreateResourceTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter, QIcon *resourceIcon)
     { 
         
         QIcon *icon = new QIcon();
         icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER_OPEN.c_str()),QIcon::Normal,QIcon::On);
         icon->addPixmap(QPixmap(UIResources::ICON_TINY_FOLDER.c_str()),QIcon::Normal,QIcon::Off);
 
-        for (core::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+        for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
             i != iter.tree_ref().end();
             ++i)
         {
