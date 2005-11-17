@@ -52,7 +52,7 @@ New Features
 
 Bug Fixes
 ---------
--Client geometry is now removed from Scene when the client disconnects.
+-testNetwork client geometry is now removed from Scene when the client disconnects.
 
 -Fixed an occassional crash in testNetwork when a client connects.
 
@@ -64,7 +64,7 @@ Bug Fixes
 
 -Fixed incorrectly shaded SOARX terrain in dtTerrain.
 
--Fixed geometry seems in dtTerrain.
+-Fixed geometry seams in dtTerrain.
 
 -Setting data file path list to contain $DELTA_DATA/gui will allow proper
  loading of all CEGUI elements.
