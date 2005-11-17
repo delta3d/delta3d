@@ -1,0 +1,235 @@
+##############################
+#                            #
+# Delta3D: Version Changes   # 
+#                            #
+##############################
+
+---------
+| 1.1.0 |
+---------
+
+New Features
+------------
+-The GameManager. The new dtGame namespace can be used to easily communicate
+ between actors in your game. It also provides an entry point for After-Action
+ Review and rules enforcement.
+
+-dtCore::Camera can now be enabled or disabled.
+
+-Map loading through dtABC::BaseABC::LoadMap will automciatlly hook your map up 
+ with the default Scene and also set the default DeltaWin to any Cameras in the
+ map.
+
+-Bezier curves can now be created and edited directly in STAGE.
+
+-dtCore::System now has pause functionality.
+
+-Added support for Triggers and Actions, with associated Actor Proxies in 
+ dtActors.
+
+-Tripod Actor Proxy support in dtActors.
+
+-dtGUI::CEUIDrawable can now have children DeltaDrawables. This places the 
+ children in the same coorindate system as the 2D GUI.
+
+-dtDAL/tree.h moved to dtUtil/tree.h.
+
+-Added ability to set collision bits and collision groups. This allows selective
+ collisions between classes or instances. Especially useful for ProximityTrigger.
+
+-dtABC::StateManager::EventType is now public. This means one can listen for 
+ state transition events.
+
+-Added TerraPage support to the Viewer.
+
+-testTerrain now uses models from the Delta3D Asset Library for vegetation 
+ placement.
+
+-New dependency package including InterSense SDK recompiled for MSVS 2003 & PLIB
+ headers moved to a subdirectory.
+
+-New data package 1.1.0. Includes new data for testTerrain.
+
+Bug Fixes
+---------
+-testNetwork client geometry is now removed from Scene when the client disconnects.
+
+-Fixed an occassional crash in testNetwork when a client connects.
+
+-All DeltaDrawables now contain normal pointers to their parent Scene instead of
+ RefPtrs. The allows the Scene to be properly destroyed without circular 
+ references.
+
+-Fixed flickering when two Cameras overlapped on one Window.
+
+-Fixed incorrectly shaded SOARX terrain in dtTerrain.
+
+-Fixed geometry seams in dtTerrain.
+
+-Setting data file path list to contain $DELTA_DATA/gui will allow proper
+ loading of all CEGUI elements.
+
+-Updated all MSVS solultions to have correct dependencies.
+
+-Fixed nearly all warnings on MSVC.
+
+-Python bindings for Map::FindProxies now works. 
+ Check out examples/testMap/testmap.py!
+
+---------
+| 1.0.0 |
+---------
+New Features:
+-Now keeping better track of changes.
+-Added support for loading TerraPage files.
+-dtNet multiplayer networking has been implemented.
+-Replaced TinyXML with Xerces XML.
+-SCons and MSVC both output object files to the same directories.
+-Build system now supports 'scons prefix=/path/to/your/dir install'
+-All XML parsing now checks against schemas.
+-Deprecated methods have been removed from the API.
+-Updated all Python bindings to include dtUtil, dtDAL, and osg data types such
+ as Vec3 and Matrix.
+-Matrix Utilities are now confirmed to be "row major".
+-Closing the DeltaWin now exits the applications by default.
+-The Recorder class has been completely rewritten so that any class can be
+ recorded, without the need for multiple inheritance.
+-testRecorder example has been added.
+-Fixed Statistics bug that caused Linux applications to crash.
+-Noise classes have been added to dtUtil.
+-Changed StateManager's XML schema to require an Event tag to have the 'Type' 
+ attribute.
+-testNetwork now supports multiple players.
+-dtDAL string utilities are now located in dtUtil.
+-Moved Xerces utilities into dtUtil/xercesutils.h.
+-dtDAL::Exception has been moved to dtUtil.
+-Combined dtDAL::IntersectionQuery's functionality into dtCore::Isector.
+-Added testBumpMap example.
+-Added testShaders example.
+-Terrain rendering has been rearchitected and implemented as "dtTerrain".
+-SOARX terrain has been merged into dtTerrain.
+-GENETICS has been merged into dtTerrain.
+-Added additional Python examples (testSound.py, testMap.py)
+
+Bug Fixes:
+-Fixed crash on exit after using a shader.
+-A Windows dtHLA module crash on exit is fixed with the latest RTI-s version.
+-Crash on exit from adding shaders to a Scene is fixed by using the latest NVidia drivers.
+-Window Installer now doesn't change system fonts when un-installed.
+-Fixed a bug that cound cause the StateManager to become invalid after parsing a file.
+-Fixed bug that caused the motion models not to work in the Viewer.
+-Fixed bug that would cause the Particle Editor to crash with multiple layers and a Program assigned.
+-Fixes have been submitted to ReplicantBody to correctly ground-clamp the character.
+-Many small bugs fixed and optimizations made.
+
+---------
+| 0.9.2 |
+---------
+Bug fixes:
+-Start Menu icon for editor now loads the app correctly
+-Can now add Camera's as children of other Transformables
+-Fixed error in sigslot.h on linux causing apps to hang
+-Enabled documentation building via SCons: 'scons doc'
+-Changed dtCore::Notify calls to use dtUtil::Log
+ (dtCore::Notify soon to be deprecated)
+-testWin now uses dtGUI
+-All examples & utilities now build to the bin folder
+-New data package dt_data_0.2.1
+-Make some changes to help gcc3.x users.
+
+---------
+| 0.9.1 |
+---------
+New Features:
+-Added editor!
+-Added dtDAL, dtActors
+-Added examples: testMap, testActorLibrary, testStateManager
+-Added dtGUI::ScriptModule
+-Deprecated sg.lib and ul.lib functionality
+
+---------
+| 0.9.0 |
+---------
+
+New Features:
+-Added dtGUI using CEGUI (will replace glGUI)
+-Added Xerces XML parser (will replace TinyXML)
+-Updated for OSG 0.9.9
+-New StateManager in dtABC
+-New example: testSOARX
+-Moved Visual Studio files to the VisualStudio directory
+
+Major Bug Fixes:
+- dtAudio now works on Linux!
+- Fixed bug with relocating a collision shape
+
+---------
+| 0.8.6 |
+---------
+
+Misc
+- Updated python bindings to reflect changes in Scene and Camera classes.
+- Removed default "-Wall" in SCons build until we can remove all the
+  silly warnings.
+
+Bug fixes:
+- SCons now links with GDAL & osgSim for HLA-related libs+apps.
+- SCons won't exit if RTI environment variables aren't found (they are
+  optional anyways!)
+- SCons exits nicely if the DELTA environment variables aren't found.
+- Fixed bug with clamping of particle effects in HLA environments.
+
+---------
+| 0.8.5 |
+---------
+
+New features:
+- Scaling, non-uniform and uniform
+- Brand new Linux build system using SCons (http://www.scons.org)
+  (Windows support for a SCons Delta3D build coming soon!)
+- Can have multiple cameras and multiple windows
+- Added a dtCore::Timer to compensate for inaccurate osg::Timer in osg0.9.8
+- Created a dtCore::RefPtr based on the osg::ref_ptr
+- dtScript::Script class has moved to dtScript::ScriptManager
+- Camera field of view controls
+- Microsoft Visual Studio Project Template for Delta3D Applications
+
+Bug fixes:
+- Fixed NaN matrix error when using Characters on certain platforms.
+  (Bug 1115629)
+- Our TinyXML lib now does not conflict with CAL3D's integrated TinyXML lib.
+  (Bug 1068290)
+
+ ---
+|0.8|
+ ---
+
+BIG change in the hierarchy! 
+See release notes online for more detail.
+
+New features: 
+-family of Light classes
+-Loadable class 
+-DeltaDrawable::RenderProxyNode
+-Object::RecenterGeometryUponLoad
+-DeprecationMgr class
+-Domain class
+-MatrixUtil class
+-PolarDecomposition class
+-Python Script class
+-Viewer now has icons
+
+Bug fixes:
+-Auto-collision geometry ( with SetCollisionBox, SetCollisionSphere, 
+ SetCollisionMesh, SetCollisionCappedCylinder should all generate correct
+ collision geometry now. (Bug 1110847)
+-All drawables render fine under Linux with auto-collision geometry.
+ (Bug 1068805)
+-Viewer: now you can switch between recently opened files fine
+-testEffects: works on Linux (Bug 1059177)
+-Chracters do not cause other textures  in scene to disappear (Bug 1075403)
+-hlaStealthViewer does not crash after exiting a concurrent testHLA 
+ (Bug 1068186)
+-And many many many more!
+
+
