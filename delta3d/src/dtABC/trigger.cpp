@@ -10,6 +10,8 @@ Trigger::Trigger( const std::string& name )
       mEnabled(false),
       mTimeDelay(0.0),
       mTimeLeft(mTimeDelay),
+      mTimesActive(1),
+      mTimesTriggered(0),
       mActionToFire(0)
 {
    RegisterInstance(this);
@@ -31,9 +33,10 @@ void Trigger::OnMessage( dtCore::Base::MessageData* data )
 
 void Trigger::Fire()
 {
-   if( mEnabled )
+   if( mTimesTriggered < mTimesActive && mEnabled )
    {  
       AddSender( dtCore::System::Instance() );
+      ++mTimesTriggered;
    }
 }
 
