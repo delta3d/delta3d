@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#ifdef WIN32
+
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
 #include <Producer/Types>
@@ -178,3 +180,5 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
       GetDeviceCaps(hdc, VREFRESH) };
    return r;
 }
+
+#endif //WIN32

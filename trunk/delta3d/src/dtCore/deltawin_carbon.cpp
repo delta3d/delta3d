@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#ifdef __APPLE__
+
 #include <cassert>
 
 #include <Producer/Types>
@@ -110,3 +112,6 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
    DeltaWin::Resolution result = { w,h, depth, refresh };
    return result;
 }
+
+#endif // __APPLE__
+
