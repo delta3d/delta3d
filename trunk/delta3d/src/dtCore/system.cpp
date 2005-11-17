@@ -206,7 +206,11 @@ void System::CameraFrame()
    for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
    {
       Camera* cam = Camera::GetInstance(camIdx);
-      mRenderSurfaceCameraMap[ cam->GetCamera()->getRenderSurface() ] = cam;
+
+      if( cam->GetEnabled() )
+      {
+         mRenderSurfaceCameraMap[ cam->GetCamera()->getRenderSurface() ] = cam;
+      }
    }
    
    for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
