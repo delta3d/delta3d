@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtCored.lib dtChard.lib dtUtild.lib dtBSPd.lib xerces-c_2.lib xerces-c_2D.lib rcfgscriptd.lib"
+				AdditionalDependencies="Producerd.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib dtCored.lib dtChard.lib dtUtild.lib xerces-c_2D.lib rcfgscriptd.lib"
 				OutputFile="..\..\..\bin\dtDALd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Producer.lib ul.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib osgText.lib js.lib isense.lib dtCore.lib dtChar.lib dtUtil.lib dtBSP.lib xerces-c_2.lib xerces-c_2D.lib rcfgscript.lib"
+				AdditionalDependencies="Producer.lib OpenThreadsWin32.lib osg.lib osgDB.lib osgParticle.lib osgUtil.lib ode.lib dtCore.lib dtChar.lib dtUtil.lib xerces-c_2D.lib rcfgscript.lib"
 				OutputFile="..\..\..\bin\dtDAL.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
