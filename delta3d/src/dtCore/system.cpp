@@ -81,6 +81,7 @@ void System::Run()
    mRunning = true;
    mLastClockTime = mClock.tick();
 
+   #ifdef __APPLE__
    //this loop is a workaround for problems on Mac OS X where startThread is not called
    //in the render surface, which makes "isRunning" return false
    //it should be removed once the OSX bugs with RS are fixed.
@@ -93,6 +94,7 @@ void System::Run()
       rs->fullScreen(false);
       rs->startThread();
    }
+   #endif //__APPLE__
    
    while( mRunning )
    {	  
