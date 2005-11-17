@@ -172,8 +172,8 @@ public:
       lowResidential.SetElevation(5,2000,1);
       lowResidential.SetRelativeElevation(0,80,1);
       lowResidential.SetAspect(255);
-      lowResidential.AddModel("models/house0.ive");
       lowResidential.AddModel("models/house1.ive");
+      lowResidential.AddModel("models/house3.ive");
 
       dtTerrain::LCCType highResidential(22,"high residential");
       highResidential.SetRGB(247,178,159);
@@ -188,9 +188,9 @@ public:
       industrial.SetElevation(5,2000,1);
       industrial.SetRelativeElevation(0,80,1);
       industrial.SetAspect(225);
-      industrial.AddModel("models/industry0.ive");
-      industrial.AddModel("models/industry1.ive");
-      industrial.AddModel("models/industry2.ive");
+      //industrial.AddModel("models/industry0.ive");
+      //industrial.AddModel("models/industry1.ive");
+      //industrial.AddModel("models/industry2.ive");
 
       dtTerrain::LCCType deciduous(41,"deciduous");
       deciduous.SetRGB(134,200,127);
@@ -198,8 +198,9 @@ public:
       deciduous.SetElevation(10,1280,1);
       deciduous.SetRelativeElevation(15,73,1);
       deciduous.SetAspect(225);
-      deciduous.AddModel("models/maple_sugar0.ive",4.0);
-      deciduous.AddModel("models/maple_sugar1.ive",4.0);
+      deciduous.AddModel("models/Maple_silver_alone_16_1.flt/Maple_silver_alone_16_1.flt",4.0);
+      deciduous.AddModel("models/Maple_silver_alone_21_1.flt/Maple_silver_alone_21_1.flt",4.0);
+      deciduous.AddModel("models/Maple_silver_alone_32_1.flt/Maple_silver_alone_32_1.flt",4.0);
 
       dtTerrain::LCCType evergreen(42,"evergreen");
       evergreen.SetRGB(56,129,78);
@@ -207,9 +208,9 @@ public:
       evergreen.SetElevation(10,1400,1);
       evergreen.SetRelativeElevation(15,73,1);
       evergreen.SetAspect(255);
-      evergreen.AddModel("models/cypress0.ive",3.5);
-      evergreen.AddModel("models/cypress1.ive",3.5);
-      evergreen.AddModel("models/cypress2.ive",3.5);
+      evergreen.AddModel("models/Bull_bay_25_1.flt/Bull_bay_25_1.flt",3.5);
+      evergreen.AddModel("models/Bull_bay_32_1.flt/Bull_bay_32_1.flt",3.5);
+      evergreen.AddModel("models/Bull_bay_37_1.flt/Bull_bay_37_1.flt",3.5);
 
       dtTerrain::LCCType forest(43,"mixed forest");
       forest.SetRGB(212,231,177);
@@ -217,8 +218,8 @@ public:
       forest.SetElevation(10,1280,1);
       forest.SetRelativeElevation(15,73,1);
       forest.SetAspect(255);
-      forest.AddModel("models/grape_oregon2.ive",2.5);        
-      forest.AddModel("models/maple_sugar1.ive",2.5);
+      forest.AddModel("models/Grape_oregon_4_1.flt/Grape_oregon_4_1.flt",2.5);        
+      forest.AddModel("models/Maple_silver_alone_21_1.flt/Maple_silver_alone_21_1.flt",2.5);
 
       dtTerrain::LCCType shrubland(51,"shrubland");
       shrubland.SetRGB(220,202,143);
@@ -226,13 +227,13 @@ public:
       shrubland.SetElevation(15,2000,1);
       shrubland.SetRelativeElevation(15,73,1);
       shrubland.SetAspect(255);
-      shrubland.AddModel("models/grape_oregon0.ive",3.0);
-      shrubland.AddModel("models/grape_oregon1.ive",3.0);
-      shrubland.AddModel("models/grape_oregon2.ive",3.0);
+      shrubland.AddModel("models/Grape_oregon_4_1.flt/Grape_oregon_4_1.flt",3.0);
+      shrubland.AddModel("models/Grape_oregon_6_1.flt/Grape_oregon_6_1.flt",3.0);
+      shrubland.AddModel("models/Grape_oregon_8_1.flt/Grape_oregon_8_1.flt",3.0);
 
       LCCType.push_back(water);
-      //LCCType.push_back(lowResidential);
-      //LCCType.push_back(highResidential);
+      LCCType.push_back(lowResidential);
+      LCCType.push_back(highResidential);
       //LCCType.push_back(industrial);
       LCCType.push_back(deciduous);
       LCCType.push_back(evergreen);
