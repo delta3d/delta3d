@@ -33,16 +33,15 @@ Known Here's what we know does works:
 Win32 w/ Microsoft Visual Studio .NET 7.1
 Win32 w/ Microsoft Visual C++ Toolkit 2003, .NET Framework SDK 1.1, & SCons
 Linux w/ gcc3.4.x
-Linux w/ gcc4.0.0
+Linux w/ gcc4.0.x
 
-Note: gcc4.0.1+ requires a patch to OSG 0.9.9 to work.
+Note: gcc4.0.1+ requires a patch to OSG 0.9.9 to work. We've applied this
+patch already in our distributed Linux dependencies.
 
 Note about Linux distrubutions: We test on Fedora Core 4 but have reports of 
 Delta3D running on Ubuntu, SuSE, Mandriva, & Gentoo. Please contact us if you
 are able to setup repositories for any Linux distribution to ease installation
 for other users.
-
-See env_vars.txt for information on setting up your Delta3D environment variables. 
 
 ################
 # Dependencies #
