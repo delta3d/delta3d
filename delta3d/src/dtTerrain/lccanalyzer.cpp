@@ -293,7 +293,8 @@ namespace dtTerrain
       unsigned int width,height;
 
       // LCC data used for this particular terrain tile
-      width = height = mImageSize;
+      //Need to use mImageSize!
+      width=height=osg::Image::computeNearestPowerOfTwo(hf.GetNumColumns());
       for(itor = mGeospecificLCCImages.begin(); itor!=mGeospecificLCCImages.end(); ++itor)
       {      
          if(latitude >= itor->mMinLatitude && latitude <= itor->mMaxLatitude &&

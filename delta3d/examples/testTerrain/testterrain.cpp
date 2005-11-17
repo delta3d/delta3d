@@ -484,6 +484,8 @@ int main(int argc, char **argv)
 {
    dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() + ";" +
                                 dtCore::GetDeltaRootPath() + "/examples/testTerrain" );
+
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
    
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
