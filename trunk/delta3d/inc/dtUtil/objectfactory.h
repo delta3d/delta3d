@@ -22,6 +22,7 @@
 #define DELTA_OBJECT_FACTORY
 
 #include <map>
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <dtUtil/log.h>
