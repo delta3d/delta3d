@@ -25,7 +25,7 @@ testGameActorLibraryDeps =[ 'dtGame', 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenT
 if OS == 'windows':
    testGameActorLibraryDeps += ['dtActors']
 
-testGameActorLibrary = BuildLib( 'testGameActorLibrary', sources, testGameActorLibraryDeps, ['DT_PLUGIN'], 
+testGameActorLibrary = BuildLib( 'testGameActorLibrary', sources, testGameActorLibraryDeps, ['DT_EXAMPLE_LIBRARY'], 
                              overrideShLinkFlags = overrideShLink,
                              overrideShLibSuffix = overrideShSuffix )
 
