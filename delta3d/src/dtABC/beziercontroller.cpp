@@ -93,7 +93,7 @@ void BezierController::MakeSegment(float time, float inc, const PathPoint& p1, c
    }
 
    osg::Quat quat;
-   quat.slerp(inc, p1.GetOrientation(), p4.GetOrientation());
+   quat.slerp(1.0 - inc, p4.GetOrientation(), p1.GetOrientation());
 
    PathData pd;
    pd.mTime = time;
@@ -229,6 +229,7 @@ bool BezierController::OnNextStep()
    if(mCurrentPoint == mEndPoint)
    {
       StepObject(mLastPathPoint->mPoint);
+      mPath.clear();
       return false;
    }
 
