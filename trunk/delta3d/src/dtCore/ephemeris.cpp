@@ -97,7 +97,7 @@ static void sunpos( double mjd, double *lsn, double *rsn)
 
    a = 62.55209472000015*t;
    b = 360*(a-(int)a);
-   a1 = osg::DegreesToRadians(1.0)*153.23+b;
+   a1 = osg::DegreesToRadians(1.0)*(153.23+b);
    a = 125.1041894*t;
    b = 360*(a-(int)a);
    b1 = osg::DegreesToRadians(1.0)*(216.57+b);
