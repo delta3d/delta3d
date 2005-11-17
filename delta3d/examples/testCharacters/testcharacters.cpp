@@ -271,10 +271,6 @@ int main()
                         GetDeltaDataPathList()  );
   
    RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
-
-   DeltaWin::Resolution r = DeltaWin::GetCurrentResolution();
-   
-   std::cout << r.width << " "  << r.height << " " << r.bitDepth << " " << r.refresh << std::endl;
    
    app->Config();
    app->Run();
