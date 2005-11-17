@@ -8,40 +8,47 @@
 | 1.1.0 |
 ---------
 New Features:
+-The GameManager. The new dtGame namespace can be used to easily communicate
+ between actors in your game. It also provides an entry point for After-Action
+ Review and rules enforcement.
 -dtCore::Camera can now be enabled or disabled.
 -Map loading through dtABC::BaseABC::LoadMap will automciatlly hook your map up 
- with the default Scene and also set the default DeltaWin to any Cameras in the map.
+ with the default Scene and also set the default DeltaWin to any Cameras in the
+ map.
 -Bezier curves can now be created and edited directly in STAGE.
 -dtCore::System now has pause functionality.
--Added support for Triggers and Actions, with associated Actor Proxies in dtActors.
+-Added support for Triggers and Actions, with associated Actor Proxies in 
+ dtActors.
 -Tripod Actor Proxy support in dtActors.
 -dtGUI::CEUIDrawable can now have children DeltaDrawables. This places the 
  children in the same coorindate system as the 2D GUI.
 -dtDAL/tree.h moved to dtUtil/tree.h.
 -Added ability to set collision bits and collision groups. This allows selective
  collisions between classes or instances. Especially useful for ProximityTrigger.
--dtABC::StateManager::EventType is now public. This means one can listen for state 
- transition events.
+-dtABC::StateManager::EventType is now public. This means one can listen for 
+ state transition events.
 -Added TerraPage support to the Viewer.
--testTerrain now uses models from the Delta3D Asset Library for vegetation placement.
--New dependency package including InterSense SDK recompiled for MSVS 2003 & PLIB 
+-testTerrain now uses models from the Delta3D Asset Library for vegetation 
+ placement.
+-New dependency package including InterSense SDK recompiled for MSVS 2003 & PLIB
  headers moved to a subdirectory.
 -New data package 1.1.0. Includes new data for testTerrain.
--Mircosoft Visual Studio 2005 support (reported, not internally tested).
 
 Bug Fixes:
 -Client geometry is now removed from Scene when the client disconnects.
 -Fixed an occassional crash in testNetwork when a client connects.
--All DeltaDrawables now contain normal pointers to their parent Scene instead of 
- RefPtrs. The allows the Scene to be properly destroyed without circular references.
+-All DeltaDrawables now contain normal pointers to their parent Scene instead of
+ RefPtrs. The allows the Scene to be properly destroyed without circular 
+ references.
 -Fixed flickering when two Cameras overlapped on one Window.
 -Fixed incorrectly shaded SOARX terrain in dtTerrain.
 -Fixed geometry seems in dtTerrain.
--Setting data file path list to contain $DELTA_DATA/gui will allow proper loading of 
- all CEGUI elements.
+-Setting data file path list to contain $DELTA_DATA/gui will allow proper
+ loading of all CEGUI elements.
 -Updated all MSVS solultions to have correct dependencies.
 -Fixed nearly all warnings on MSVC.
--Many many more...
+-Python bindings for Map::FindProxies now works. 
+ Check out examples/testMap/testmap.py!
 
 ---------
 | 1.0.0 |
@@ -55,14 +62,17 @@ New Features:
 -Build system now supports 'scons prefix=/path/to/your/dir install'
 -All XML parsing now checks against schemas.
 -Deprecated methods have been removed from the API.
--Updated all Python bindings to include dtUtil, dtDAL, and osg data types such as Vec3 and Matrix.
+-Updated all Python bindings to include dtUtil, dtDAL, and osg data types such
+ as Vec3 and Matrix.
 -Matrix Utilities are now confirmed to be "row major".
 -Closing the DeltaWin now exits the applications by default.
--The Recorder class has been completely rewritten so that any class can be recorded, without the need for multiple inheritance.
+-The Recorder class has been completely rewritten so that any class can be
+ recorded, without the need for multiple inheritance.
 -testRecorder example has been added.
 -Fixed Statistics bug that caused Linux applications to crash.
 -Noise classes have been added to dtUtil.
--Changed StateManager's XML schema to require an Event tag to have the 'Type' attribute.
+-Changed StateManager's XML schema to require an Event tag to have the 'Type' 
+ attribute.
 -testNetwork now supports multiple players.
 -dtDAL string utilities are now located in dtUtil.
 -Moved Xerces utilities into dtUtil/xercesutils.h.
