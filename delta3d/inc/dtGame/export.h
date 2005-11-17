@@ -30,7 +30,7 @@
  * preprocessor #defines.
  */
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
-#  ifdef DT_GAME_LIB
+#  ifdef DT_GAME_LIBRARY
 #    define DT_GAME_EXPORT __declspec(dllexport)
 #  else
 #	  define DT_GAME_EXPORT __declspec(dllimport)
