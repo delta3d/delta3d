@@ -1150,8 +1150,8 @@ namespace dtDAL
 
         try
         {
-            core::tree<ResourceTreeNode>* categoryInTree;
-            core::tree<ResourceTreeNode>* dataTypeTree = NULL;
+            dtUtil::tree<ResourceTreeNode>* categoryInTree;
+            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
 
             if (mResourcesIndexed)
                 dataTypeTree = &GetResourcesOfType(type);
@@ -1193,7 +1193,7 @@ namespace dtDAL
 
         try
         {
-            core::tree<ResourceTreeNode>* dataTypeTree = NULL;
+            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
             if (mResourcesIndexed)
                 dataTypeTree = &GetResourcesOfType(type);
 
@@ -1238,7 +1238,7 @@ namespace dtDAL
         ResourceDescriptor result;
         try
         {
-            core::tree<ResourceTreeNode>* dataTypeTree = NULL;
+            dtUtil::tree<ResourceTreeNode>* dataTypeTree = NULL;
             if (mResourcesIndexed)
                 dataTypeTree = &GetResourcesOfType(type);
 
@@ -1269,7 +1269,7 @@ namespace dtDAL
         try
         {
 
-            core::tree<ResourceTreeNode>* resourceTree = NULL;
+            dtUtil::tree<ResourceTreeNode>* resourceTree = NULL;
             if (mResourcesIndexed)
                 resourceTree = &mResources;
 
@@ -1307,14 +1307,14 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    core::tree<ResourceTreeNode>& Project::GetResourcesOfType(const DataType& dataType) const
+    dtUtil::tree<ResourceTreeNode>& Project::GetResourcesOfType(const DataType& dataType) const
     {
 
         if (!mResourcesIndexed)
             IndexResources();
 
         ResourceTreeNode tr(dataType.GetName(), "");
-        core::tree<ResourceTreeNode>::iterator it = mResources.find(tr);
+        dtUtil::tree<ResourceTreeNode>::iterator it = mResources.find(tr);
 
         if (it  == mResources.end())
         {
@@ -1328,7 +1328,7 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    void Project::GetResourcesOfType(const DataType& type, core::tree<ResourceTreeNode>& toFill) const
+    void Project::GetResourcesOfType(const DataType& type, dtUtil::tree<ResourceTreeNode>& toFill) const
     {
         if (!mValidContext)
             EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, std::string("The context is not valid."));
@@ -1341,42 +1341,42 @@ namespace dtDAL
 
     }
 
-//     void Project::findmResources(core::tree<ResourceTreeNode> toFill,
+//     void Project::findmResources(dtUtil::tree<ResourceTreeNode> toFill,
 //         const DataType& type,
 //         const std::string& partialName,
 //         const std::string& extension) const {
 //
 //         toFill.clear();
 //
-//         core::tree<ResourceTreeNode>::const_iterator it = mResources.begin();
+//         dtUtil::tree<ResourceTreeNode>::const_iterator it = mResources.begin();
 //         for (; it != mResources.end(); ++it) {
 //             if (it->isCategory() && it->getNodeText() == type.getName()) {
 //
-//                 core::tree<ResourceTreeNode>* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
+//                 dtUtil::tree<ResourceTreeNode>* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
 //
-//                 //core::tree<ResourceTreeNode>*
+//                 //dtUtil::tree<ResourceTreeNode>*
 //             }
 //         }
 //     }
 
 
 //Later
-/*    core::tree<ResourceTreeNode>* Project::getMatchingBranch(
-        core::tree<ResourceTreeNode>::const_iterator level,
+/*    dtUtil::tree<ResourceTreeNode>* Project::getMatchingBranch(
+        dtUtil::tree<ResourceTreeNode>::const_iterator level,
         const DataType& type,
         const std::string& partialName,
         const std::string& extension) const {
 
-        core::tree<ResourceTreeNode>::iterator it = level;
+        dtUtil::tree<ResourceTreeNode>::iterator it = level;
         for (; it != mResources.end(); ++it) {
             if (it->isCategory() && it->getNodeText() == type.getName()) {
 
-                core::tree<ResourceTreeNode>* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
+                dtUtil::tree<ResourceTreeNode>* matchingBranch = getMatchingBranch(it.in(), type, partialName, extension);
 
 
             } else if ((extension != "" && it->getResource().getExtension() == extension) &&
                         (partialName != "" && it->getResource().getResourceName().find(partialName) < std::string::npos) ){
-                core::tree<ResourceTreeNode>* node = new core::tree<ResourceTreeNode>;
+                dtUtil::tree<ResourceTreeNode>* node = new dtUtil::tree<ResourceTreeNode>;
                 node->data(*it);
                 return node;
             }

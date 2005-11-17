@@ -22,8 +22,6 @@
 #include <sstream>
 #include <iostream>
 
-#include <dtDAL/tree.h>
-
 #include <osgDB/FileNameUtils>
 
 #include "dtDAL/resourcedescriptor.h"
@@ -444,7 +442,7 @@ namespace dtDAL
 
     //////////////////////////////////////////////////////////
     void ResourceHelper::RemoveResource(const ResourceDescriptor& resource,
-        core::tree<ResourceTreeNode>* resourceTree) const
+        dtUtil::tree<ResourceTreeNode>* resourceTree) const
     {
 
         std::vector<std::string> tokens;
@@ -505,7 +503,7 @@ namespace dtDAL
     //////////////////////////////////////////////////////////
     const ResourceDescriptor ResourceHelper::AddResource(const std::string& newName,
         const std::string& pathToFile, const std::string& category,
-        const DataType& type, core::tree<ResourceTreeNode>*  dataTypeTree) const
+        const DataType& type, dtUtil::tree<ResourceTreeNode>*  dataTypeTree) const
     {
 
         FileUtils& fileUtils = FileUtils::GetInstance();
@@ -518,7 +516,7 @@ namespace dtDAL
                 std::string("No such file:\"") + pathToFile + "\".");
         }
 
-        core::tree<ResourceTreeNode>* categoryInTree;
+        dtUtil::tree<ResourceTreeNode>* categoryInTree;
 
         //create or get the path to the resource category
         std::string resourcePath = CreateResourceCategory(category, type,
@@ -549,13 +547,13 @@ namespace dtDAL
 
     //////////////////////////////////////////////////////////
     const std::string ResourceHelper::CreateResourceCategory(const std::string& category, const DataType& type,
-        core::tree<ResourceTreeNode>* dataTypeTree,
-        core::tree<ResourceTreeNode>*& categoryInTree) const
+        dtUtil::tree<ResourceTreeNode>* dataTypeTree,
+        dtUtil::tree<ResourceTreeNode>*& categoryInTree) const
     {
 
         VerifyDirectoryExists(type.GetName());
 
-        core::tree<ResourceTreeNode>* currentLevelTree;
+        dtUtil::tree<ResourceTreeNode>* currentLevelTree;
         if (dataTypeTree != NULL)
         {
             currentLevelTree = dataTypeTree;
@@ -589,7 +587,7 @@ namespace dtDAL
     //////////////////////////////////////////////////////////
     bool ResourceHelper::RemoveResourceCategory(const std::string& category,
         const DataType& type, bool recursive,
-        core::tree<ResourceTreeNode>* dataTypeTree) const
+        dtUtil::tree<ResourceTreeNode>* dataTypeTree) const
     {
         bool result = true;
         //start with the datetype name
@@ -615,7 +613,7 @@ namespace dtDAL
             result = fileUtils.DirDelete(sofar, recursive);
             if (result && dataTypeTree != NULL)
             {
-                core::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodeFor(*dataTypeTree, category);
+                dtUtil::tree<ResourceTreeNode>::iterator treeIt = FindTreeNodeFor(*dataTypeTree, category);
                 if (treeIt != dataTypeTree->end())
                     //get the tree above this one, and remove the iterator from it.
                     treeIt.out().tree_ref().erase(treeIt);
@@ -630,8 +628,8 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    core::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
-        core::tree<ResourceTreeNode>& resources, const std::string& id)
+    dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
+        dtUtil::tree<ResourceTreeNode>& resources, const std::string& id)
     {
 
         std::vector<std::string> tokens;
@@ -639,7 +637,7 @@ namespace dtDAL
 
         std::string currentCategory;
 
-        core::tree<ResourceTreeNode>::iterator ti = resources.tree_iterator();
+        dtUtil::tree<ResourceTreeNode>::iterator ti = resources.tree_iterator();
 
         for (std::vector<std::string>::iterator i = tokens.begin(); i != tokens.end(); ++i)
         {
@@ -657,7 +655,7 @@ namespace dtDAL
                 else
                     currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
 
-            core::tree<ResourceTreeNode>::iterator temp = ti.tree_ref().find(ResourceTreeNode(*i, currentCategory));
+            dtUtil::tree<ResourceTreeNode>::iterator temp = ti.tree_ref().find(ResourceTreeNode(*i, currentCategory));
 
             //if it hasn't been found, check to see if the current node represents a non-category
             //node
@@ -676,8 +674,8 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    core::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(const std::string& path,
-        const std::string& category, core::tree<ResourceTreeNode>* parentTree) const
+    dtUtil::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(const std::string& path,
+        const std::string& category, dtUtil::tree<ResourceTreeNode>* parentTree) const
     {
         FileType ft = FileUtils::GetInstance().GetFileInfo(path).fileType;
         if (ft == REGULAR_FILE)
@@ -704,7 +702,7 @@ namespace dtDAL
         {
             std::string lastPathPart = osgDB::getSimpleFileName(path);
             ResourceTreeNode newNode(lastPathPart, category);
-            core::tree<ResourceTreeNode>::iterator iter= parentTree->find(newNode);
+            dtUtil::tree<ResourceTreeNode>::iterator iter= parentTree->find(newNode);
             if (iter == parentTree->end())
                 return parentTree->insert(newNode).tree_ptr();
             else
@@ -716,18 +714,18 @@ namespace dtDAL
 
     //////////////////////////////////////////////////////////
     void ResourceHelper::RemoveResourceFromTree(
-        core::tree<ResourceTreeNode>& resourceTree,
+        dtUtil::tree<ResourceTreeNode>& resourceTree,
         const ResourceDescriptor& resource) const
     {
 
         //find the category node from that string.
-        core::tree<ResourceTreeNode>::iterator resIt = FindTreeNodeFor(resourceTree, resource.GetResourceIdentifier());
+        dtUtil::tree<ResourceTreeNode>::iterator resIt = FindTreeNodeFor(resourceTree, resource.GetResourceIdentifier());
 
         if (resIt != resourceTree.end() && !resIt->isCategory())
         {
             //find the resource node in category
             //Note: this is to remove the "const"
-            core::tree<ResourceTreeNode>::iterator treeIt = resIt.out();
+            dtUtil::tree<ResourceTreeNode>::iterator treeIt = resIt.out();
             treeIt.tree_ref().erase(resIt);
         }
         else
@@ -740,7 +738,7 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    void ResourceHelper::IndexResources(core::tree<ResourceTreeNode>& tree) const
+    void ResourceHelper::IndexResources(dtUtil::tree<ResourceTreeNode>& tree) const
     {
         FileUtils& fileUtils = FileUtils::GetInstance();
         for (std::vector<dtUtil::Enumeration *>::const_iterator i = DataType::Enumerate().begin();
@@ -750,7 +748,7 @@ namespace dtDAL
             if (dt.IsResource())
             {
                 ResourceTreeNode newNode(dt.GetName(), "");
-                core::tree<ResourceTreeNode>::iterator dataTypeTree = tree.insert(newNode);
+                dtUtil::tree<ResourceTreeNode>::iterator dataTypeTree = tree.insert(newNode);
 
                 //make sure the directory exists before even attempting to parse it.
                 if (!fileUtils.DirExists(dt.GetName()))
@@ -777,7 +775,7 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    void ResourceHelper::IndexResources(FileUtils& fileUtils, core::tree<ResourceTreeNode>::iterator& i,
+    void ResourceHelper::IndexResources(FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
         const DataType& dt, const std::string& categoryPath, const std::string& category) const
     {
         std::string resourcePath = categoryPath;
@@ -821,7 +819,7 @@ namespace dtDAL
 
                     ResourceTreeNode newNode(currentFile,newCategory);
 
-                    core::tree<ResourceTreeNode>::iterator subTree = i.tree_ref().insert(newNode);
+                    dtUtil::tree<ResourceTreeNode>::iterator subTree = i.tree_ref().insert(newNode);
 
                     IndexResources(fileUtils, subTree, dt, newCategoryPath, newCategory);
                 }

@@ -28,7 +28,7 @@
 
 #include <dtUtil/objectfactory.h>
 
-#include "dtDAL/tree.h"
+#include <dtUtil/tree.h>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/actortype.h"
@@ -104,7 +104,7 @@ namespace dtEditQt
         // when we change selected actors.  We walk the property tree and look for
         // expanded items.  For each one, we add it to the tree.  Then, we walk
         // back through this tree to reexpand items.
-        core::tree<QString> expandedTreeNames;
+        dtUtil::tree<QString> expandedTreeNames;
         int lastScrollBarLocation;
         int lastHeaderPosition;
 
@@ -143,7 +143,7 @@ namespace dtEditQt
          * recursive method to support markCurrentExpansion().
          */
         void recurseMarkCurrentExpansion(DynamicAbstractControl *parent,
-            core::tree<QString> &currentTree);
+            dtUtil::tree<QString> &currentTree);
 
         /**
          * Attempts to re-expand previously expanded tree nodes.  This is a nicity for the user
@@ -155,7 +155,7 @@ namespace dtEditQt
         /**
          * Recursive method to support restorePreviousExpansion().
          */
-        void recurseRestorePreviousExpansion(DynamicAbstractControl *parent, core::tree<QString> &currentTree);
+        void recurseRestorePreviousExpansion(DynamicAbstractControl *parent, dtUtil::tree<QString> &currentTree);
 
         /// Called on the close event
         void closeEvent(QCloseEvent *e);
