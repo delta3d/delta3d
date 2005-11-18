@@ -54,7 +54,8 @@ private:
 };
 
 PositionalLight::PositionalLight( int number, const std::string& name, LightingMode mode )
-   : Light( number, name, mode )
+   :  Light( number, name, mode ),
+      Transformable(name)
 {
    GetMatrixNode()->addChild( mLightSource.get() );
 

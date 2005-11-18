@@ -8,7 +8,9 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(Light)
 
 Light::Light( int number, const std::string& name, LightingMode mode )
-: mLightingMode( mode ), mEnabled ( false )
+:  DeltaDrawable(name),
+   mLightingMode( mode ), 
+   mEnabled ( false )
 {
    RegisterInstance( this );
    SetName( name );
