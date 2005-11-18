@@ -49,6 +49,13 @@ Transformable::Transformable( const std::string& name )
       mGeomGeod(0),
       mRenderingGeometry(false)
 {
+   // Haxor! In Transformable we virutally derive from DeltaDrawable 
+   // in order to avoid collisions in PositionalLight (diamond o' death
+   // baby!). Unfortunately, the "name" paramter in the constructor
+   // is not passed up the chain in this situation. Bummer. Instead
+   // we have to overwrite it aftewards when we get to this constructor.
+   SetName(name);
+
    RegisterInstance(this);
    mNode = new osg::MatrixTransform;
 
