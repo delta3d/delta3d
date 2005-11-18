@@ -55,7 +55,24 @@ namespace dtABC
       Action* GetAction() { return mActionToFire.get(); }
       const Action* GetAction() const { return mActionToFire.get(); }
 
+      /**
+       * Gets the number of times this trigger will activate before
+       * becoming disabled. Negative value indicates an infinite
+       * number of activations.
+       *
+       * @return The number of times this trigger will activate before
+       * disabling.
+      */
       int GetTimesActive() const{return mTimesActive;}
+
+      /**
+       * Sets the number of times this trigger will activate before
+       * becoming disabled. 
+       *
+       * @param pTimesActive The number of times this trigger will activate
+       * before becoming disabled. For an infinite number of times, set
+       * the value to be negative.
+       */
       void SetTimesActive(int pTimesActive){mTimesActive = pTimesActive;}
 
    private:

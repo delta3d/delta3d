@@ -77,6 +77,9 @@ void TestTrigger::Config()
    // Assign our custom action to the internal trigger.
    mProximityTrigger->GetTrigger()->SetAction( new LightAction( mPositionalLight.get() ) );
 
+   // Make the trigger activate an unlimited number of times.
+   mProximityTrigger->GetTrigger()->SetTimesActive(-1);
+
    // Let's attach the trigger to the sphere, just in case we want to move the sphere.
    mHappySphere->AddChild( mProximityTrigger.get() );
    

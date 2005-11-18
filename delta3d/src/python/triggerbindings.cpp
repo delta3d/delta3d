@@ -25,5 +25,7 @@ void initTriggerBindings()
       .def( "Fire", &Trigger::Fire )
       .def( "SetAction", &Trigger::SetAction )
       .def( "GetAction", GetAction1, return_internal_reference<>() )
+      .def( "GetTimesActive", &Trigger::GetTimesActive )
+      .def( "SetTimesActive", &Trigger::SetTimesActive )
       ;
 }
