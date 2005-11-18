@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
@@ -37,7 +37,7 @@
 				AdditionalDependencies="dtCored.lib dtABCd.lib dtUtild.lib osgDBd.lib osgd.lib"
 				OutputFile="$(OutDir)/$(ProjectName)d.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -72,7 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -90,7 +90,7 @@
 				AdditionalDependencies="dtCore.lib dtABC.lib dtUtil.lib osgDB.lib osg.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile=""
