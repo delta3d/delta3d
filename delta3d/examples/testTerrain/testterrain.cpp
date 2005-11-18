@@ -528,8 +528,8 @@ int main(int argc, char **argv)
       longitude = -121.96;
       cachePath = "cache";
       resourcePath = "dted/level0";
-      vegetation = true;
-      geospecific = dtCore::GetDeltaDataPathList() + "/textures/newmb_lcc.tif";
+      vegetation = false;
+      geospecific = "";
    }
    else
    {
