@@ -37,5 +37,5 @@ void initLoadableBindings()
    class_<Loadable, LoadableWrap*, boost::noncopyable>("Loadable", no_init)
       .def("LoadFile", &LoadableWrap::LoadFileWrapper1 )
       .def("LoadFile", &LoadableWrap::LoadFileWrapper2 )
-      .def("GetFilename", &Loadable::GetFilename, return_internal_reference<>() );
+      .def("GetFilename", &Loadable::GetFilename, return_value_policy<copy_const_reference>() );
 }
