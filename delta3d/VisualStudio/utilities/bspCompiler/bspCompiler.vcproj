@@ -117,7 +117,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc,libcp,libcmt"
-				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				ProgramDatabaseFile=""
 				SubSystem="1"
 				StackReserveSize="0"
 				ImportLibrary="../lib/p51vis.lib"
