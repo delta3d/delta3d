@@ -14,8 +14,9 @@ class ObjectWrap : public Object
 {
    public:
 
-      ObjectWrap(PyObject* self, const std::string& name = "")
-         : mSelf(self)
+      ObjectWrap(PyObject* self, const std::string& name = "Object")
+         : Object(name),
+           mSelf(self)
       {}
 
       void LoadFileWrapper1(const std::string& filename, bool useCache)
@@ -42,7 +43,8 @@ void initObjectBindings()
 
    // ObjectWrap* should probably be a dtCore::RefPtr<ObjectWrap>, but that causes a big fat crash
    // on exit on Linux: *** glibc detected *** python: double free or corruption (out): 0xb64054d0 ***
-   class_<Object, bases<Physical>, ObjectWrap*, boost::noncopyable>("Object", init<optional<const std::string&> >())
+   //class_<Object, bases<Physical>, ObjectWrap*, boost::noncopyable>("Object", init<optional<const std::string&> >())
+   class_<Object, bases<Physical>, RefPtr<ObjectWrap>, boost::noncopyable>("Object", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Object::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", ObjectGI1, return_internal_reference<>())
