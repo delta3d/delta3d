@@ -47,10 +47,13 @@ Command Line Options
 
 With no options, the following values are set by default:
 --dted 0 36.96 -121.96
---enable-vegetation
---geo $DELTA_DATA/textures/newmb_lcc.tif
 -c cache
 -r dted/level0
+
+Note: If you enable-vegetation by default this program uses models from our 
+3D Asset Library: Vegetation. You can find the models here:
+
+http://sourceforge.net/projects/delta3d
 
 Controls
 --------
