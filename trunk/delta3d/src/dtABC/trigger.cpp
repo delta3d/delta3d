@@ -33,10 +33,18 @@ void Trigger::OnMessage( dtCore::Base::MessageData* data )
 
 void Trigger::Fire()
 {
-   if( mTimesTriggered < mTimesActive && mEnabled )
-   {  
-      AddSender( dtCore::System::Instance() );
-      ++mTimesTriggered;
+   if( mEnabled )
+   {
+      if( mTimesActive < 0 )
+      {
+         //Infintie activations
+         AddSender( dtCore::System::Instance() );
+      }
+      else if( mTimesTriggered < mTimesActive )
+      {
+         AddSender( dtCore::System::Instance() );
+         ++mTimesTriggered;
+      }
    }
 }
 
