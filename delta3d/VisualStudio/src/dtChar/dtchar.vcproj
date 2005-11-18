@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib Producer.lib osg.lib osgDB.lib osgUtild.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib Producer.lib osg.lib osgDB.lib osgUtil.lib replicantbody.lib OpenThreadsWin32.lib rvrutils.lib cal3d.lib"
 				OutputFile="../../../bin/dtChar.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
