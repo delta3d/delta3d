@@ -28,7 +28,7 @@ The Delta3D Team
 # Building From Source #
 ########################
 
-Known Here's what we know does works:
+Here's what we know does works:
 
 Win32 w/ Microsoft Visual Studio .NET 7.1
 Win32 w/ Microsoft Visual C++ Toolkit 2003, .NET Framework SDK 1.1, & SCons
