@@ -14,7 +14,6 @@
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtCore/infinitelight.h>
-#include <dtCore/positionallight.h>
 #include <dtCore/physical.h>
 
 using namespace dtCore;
