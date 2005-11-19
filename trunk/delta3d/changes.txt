@@ -51,7 +51,7 @@ New Features
 -New dependency package including InterSense SDK recompiled for MSVS 2003 & PLIB
  headers moved to a subdirectory.
 
--New data package 1.1.0. Includes new data for testTerrain.
+-New data package 1.1.0.
 
 Bug Fixes
 ---------
