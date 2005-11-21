@@ -30,6 +30,13 @@
 
 namespace dtDAL
 {
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
+   static const std::string ACTOR_LIBRARY("dtActorsd");
+#else
+   static const std::string ACTOR_LIBRARY("dtActors");
+#endif
+   
+   
     //Singleton global variable for the library manager.
     dtCore::RefPtr<LibraryManager> LibraryManager::mInstance(NULL);
 
@@ -40,11 +47,7 @@ namespace dtDAL
         //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
 
         LOG_INFO("Initializing actor library manager.");
-        #ifdef _DEBUG
-        LoadActorRegistry("dtActorsd");
-        #else
-        LoadActorRegistry("dtActors");
-        #endif
+        LoadActorRegistry(ACTOR_LIBRARY);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -208,7 +211,18 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     ActorPluginRegistry *LibraryManager::GetRegistry(const std::string &name)
     {
-        RegistryMapItor itor = mRegistries.find(name);
+       dtUtil::Log& logger = dtUtil::Log::GetInstance("librarymanager.cpp");
+       if (logger.IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+       {
+          for (RegistryMapItor i = mRegistries.begin(); i != mRegistries.end(); ++i)
+          {
+             logger.LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                               "Library manager contains has loaded registry library %s", 
+                               i->first.c_str());
+          }          
+       }
+       
+       RegistryMapItor itor = mRegistries.find(name);
 
         if (itor == mRegistries.end())
             return NULL;
@@ -240,6 +254,11 @@ namespace dtDAL
     ///////////////////////////////////////////////////////////////////////////////
     void LibraryManager::UnloadActorRegistry(const std::string &libName)
     {
+        if (libName == ACTOR_LIBRARY)
+        {
+            LOG_DEBUG("Unloading the default actor library.");
+        }
+                      
         RegistryMapItor regItor = mRegistries.find(libName);
 
         if (regItor == mRegistries.end())

@@ -151,13 +151,18 @@ void MapTests::tearDown()
         //for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); i++) {
         //    dtDAL::Project::GetInstance().deleteMap(*i);
         //}
-
+        
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
         if (fileUtils.DirExists(rbodyToDelete))
             fileUtils.DirDelete(rbodyToDelete, true);
         else if (fileUtils.FileExists(rbodyToDelete))
-            fileUtils.FileDelete(rbodyToDelete);
+           fileUtils.FileDelete(rbodyToDelete);
+        
+        if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
+        {
+           dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
+        }
 
     } catch (const dtUtil::Exception& e) {
         fileUtils.PopDirectory();
@@ -415,7 +420,10 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
             if (prop != NULL) 
             {
                 if (prop->GetPropertyType() == type && which-- == 0)
-                    return prop;
+                {
+                   LOGN_ALWAYS("maptests.cpp", proxy->GetActorType().GetName());
+                   return prop;                   
+                }
             }
         } 
         else 
@@ -677,7 +685,6 @@ void MapTests::testMapSaveAndLoad() {
         dtDAL::ActorActorProperty* aap = static_cast<dtDAL::ActorActorProperty*>(ap);
         const std::string& className = aap->GetDesiredActorClass();
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toFill;
-        
         //Do a search for the class name.
         map->FindProxies(toFill, "", "", "", className);
         
@@ -745,7 +752,7 @@ void MapTests::testMapSaveAndLoad() {
         if (eap->GetList().size() > 1)
            eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin()+1)));
         else
-           std::cout << "Enum only has one value." << std::endl;
+           logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Enum only has one value.");
 
 #if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__) 
         ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
@@ -864,7 +871,11 @@ void MapTests::testMapSaveAndLoad() {
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
 
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f",
+        ss.str("");
+        ss << ((dtDAL::Vec3ActorProperty*)ap)->GetValue()[0] << " " ;
+        ss << ((dtDAL::Vec3ActorProperty*)ap)->GetValue()[1] << " " ;
+        ss << ((dtDAL::Vec3ActorProperty*)ap)->GetValue()[2];
+                CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f the value is " + ss.str(),
             osg::equivalent(((dtDAL::Vec3ActorProperty*)ap)->GetValue()[0], testVec3_2[0], 1e-2f)
             && osg::equivalent(((dtDAL::Vec3ActorProperty*)ap)->GetValue()[1], testVec3_2[1], 1e-2f)
             && osg::equivalent(((dtDAL::Vec3ActorProperty*)ap)->GetValue()[2], testVec3_2[2], 1e-2f)
@@ -1124,9 +1135,11 @@ void MapTests::testMapSaveAndLoad() {
         project.DeleteMap(*map, true);
     } catch (const dtUtil::Exception& e) {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    } catch (const std::exception& ex) {
-        CPPUNIT_FAIL(ex.what());        
-    }
+    } 
+//    catch (const std::exception& ex) {
+//        LOGN_ERROR("maptests.cpp", ex.what());
+//        throw ex;
+//    }
 }
 
 void MapTests::testLoadErrorHandling() {
