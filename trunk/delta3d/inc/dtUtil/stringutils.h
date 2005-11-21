@@ -75,7 +75,13 @@ namespace dtUtil
    class IsSpace : public std::unary_function<char, bool>
    {
       public:
-         IsSpace(const std::locale& loc=std::locale("english") ) : mLocale(loc) {}
+         #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+            IsSpace(const std::locale& loc=std::locale("english") ) : mLocale(loc) {}
+         #elif defined (__APPLE__) 
+            IsSpace(const std::locale& loc=std::locale("C") ) : mLocale(loc) {}
+         #else
+            IsSpace(const std::locale& loc=std::locale("en_US.UTF-8") ) : mLocale(loc) {}
+         #endif
 
          const std::locale& GetLocale() const { return mLocale; }
 

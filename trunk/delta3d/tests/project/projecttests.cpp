@@ -39,7 +39,7 @@
 #include <dtUtil/exception.h>
 #include <dtDAL/fileutils.h>
 #include <dtDAL/datatype.h>
-#include <dtUtil/tree.h>
+#include <dtDAL/tree.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -73,9 +73,9 @@ public:
     void testResources();
 private:
     dtUtil::Log* logger;
-    void printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
-    dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator findTreeNodeFromCategory(
-        const dtUtil::tree<dtDAL::ResourceTreeNode>& currentTree,
+    void printTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
+    core::tree<dtDAL::ResourceTreeNode>::const_iterator findTreeNodeFromCategory(
+        const core::tree<dtDAL::ResourceTreeNode>& currentTree,
         const dtDAL::DataType* dt, const std::string& category) const;
 };
 
@@ -373,8 +373,8 @@ void ProjectTests::testFileIO() {
 
 
 
-dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFromCategory(
-    const dtUtil::tree<dtDAL::ResourceTreeNode>& currentTree,
+core::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFromCategory(
+    const core::tree<dtDAL::ResourceTreeNode>& currentTree,
     const dtDAL::DataType* dt, const std::string& category) const {
 
     if (dt != NULL && !dt->IsResource())
@@ -389,7 +389,7 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
 
     std::string currentCategory;
 
-    dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ti = currentTree.tree_iterator();
+    core::tree<dtDAL::ResourceTreeNode>::const_iterator ti = currentTree.tree_iterator();
 
     for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i) {
         if (ti == currentTree.end())
@@ -411,7 +411,7 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
     return ti;
 }
 
-void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter) {
+void ProjectTests::printTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter) {
     for (unsigned tabs = 0; tabs < iter.level(); ++tabs)
         std::cout << "\t";
 
@@ -423,7 +423,7 @@ void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_
 
     std::cout << std::endl;
 
-    for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+    for (core::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
         i != iter.tree_ref().end();
         ++i) {
         printTree(i);
@@ -459,7 +459,7 @@ void ProjectTests::testReadonlyFailure() {
         }
 
         try {
-            dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
+            core::tree<dtDAL::ResourceTreeNode> toFill;
             p.GetResourcesOfType(dtDAL::DataType::STATIC_MESH, toFill);
         } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.What());
@@ -546,9 +546,10 @@ void ProjectTests::testReadonlyFailure() {
         }
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
-    } catch (const std::exception &e) {
-       CPPUNIT_FAIL(std::string("Caught an exception of type") + typeid(e).name() + " with message " + e.what());
     }
+//    catch (const std::exception &e) {
+//       CPPUNIT_FAIL(std::string("Caught an exception of type") + typeid(e).name() + " with message " + e.what());
+//    }
 
 }
 
@@ -631,9 +632,10 @@ void ProjectTests::testCategories() {
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
-    } catch (const std::exception& ex) {
-        CPPUNIT_FAIL(ex.what());        
-    }
+    }  
+//    catch (const std::exception& ex) {
+//        CPPUNIT_FAIL(ex.what());        
+//    }
 
 }
 
@@ -716,15 +718,15 @@ void ProjectTests::testResources() {
 
         //printTree(p.GetAllResources());
 
-        dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
+        core::tree<dtDAL::ResourceTreeNode> toFill;
         p.GetResourcesOfType(dtDAL::DataType::CHARACTER, toFill);
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
             findTreeNodeFromCategory(toFill, NULL, "");
 
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
             + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
 
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
             marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine.rbody", marineCategory->getFullCategory(), &marineRD));
 
 
@@ -733,7 +735,7 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"marine")
                 + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
 
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marine2Resource =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator marine2Resource =
             marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine2.rbody", marineCategory->getFullCategory(), &marine2RD));
 
         CPPUNIT_ASSERT_MESSAGE("The marine resource should have been found.", marineResource != p.GetAllResources().end());
@@ -751,13 +753,13 @@ void ProjectTests::testResources() {
         //Done with the marines
 
         p.GetResourcesOfType(dtDAL::DataType::TERRAIN, toFill);
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrainCategory =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator terrainCategory =
                 findTreeNodeFromCategory(toFill, NULL, "");
 
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
                 + "\" should have been found in the resource tree", terrainCategory != p.GetAllResources().end());
 
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrain2Resource =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator terrain2Resource =
                 terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain2", terrainCategory->getFullCategory(), &terrain2RD));
 
 
@@ -766,7 +768,7 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"terrain")
                 + "\" should have been found in the resource tree", terrainCategory != p.GetAllResources().end());
 
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrain1Resource =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator terrain1Resource =
                 terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain1", terrainCategory->getFullCategory(), &terrain1RD));
 
         CPPUNIT_ASSERT_MESSAGE("The terrain2 resource should have been found.", terrain2Resource != p.GetAllResources().end());
@@ -808,7 +810,7 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE("The head of the tree should be static mesh",
             toFill.data().getNodeText() == dtDAL::DataType::STATIC_MESH.GetName());
 
-        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator treeResult =
+        core::tree<dtDAL::ResourceTreeNode>::const_iterator treeResult =
             findTreeNodeFromCategory(p.GetAllResources(),
             &dtDAL::DataType::STATIC_MESH, dirtCategory);
 
@@ -867,7 +869,7 @@ void ProjectTests::testResources() {
 
         p.Refresh();
 
-        //const dtUtil::tree<dtDAL::ResourceTreeNode>& allTree = p.GetAllResources();
+        //const core::tree<dtDAL::ResourceTreeNode>& allTree = p.GetAllResources();
 
         //printTree(allTree.tree_iterator());
 
@@ -900,9 +902,10 @@ void ProjectTests::testResources() {
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
-    } catch (const std::exception& ex) {
-        CPPUNIT_FAIL(ex.what());        
-    }
+    } 
+//    catch (const std::exception& ex) {
+//        CPPUNIT_FAIL(ex.what());        
+//    }
 
 }
 
@@ -998,9 +1001,10 @@ void ProjectTests::testProject() {
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
-    } catch (const std::exception& ex) {
-        CPPUNIT_FAIL(ex.what());        
-    }
+    } 
+//    catch (const std::exception& ex) {
+//        CPPUNIT_FAIL(ex.what());        
+//    }
 
 }
 
