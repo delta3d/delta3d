@@ -11,6 +11,7 @@ extern Fl_Menu_Bar *MainMenu;
 extern void psEditorGUI_New(Fl_Menu_*, void*);
 extern void psEditorGUI_Open(Fl_Menu_*, void*);
 extern void psEditorGUI_Import(Fl_Menu_*, void*);
+extern void psEditorGUI_LoadReference(Fl_Menu_*, void*);
 extern void psEditorGUI_Save(Fl_Menu_*, void*);
 extern void psEditorGUI_SaveAs(Fl_Menu_*, void*);
 extern void psEditorGUI_Quit(Fl_Menu_*, void*);

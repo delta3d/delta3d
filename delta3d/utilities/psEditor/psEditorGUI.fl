@@ -12,13 +12,13 @@ Function {make_window()} {open
 } {
   Fl_Window {} {
     label {Particle System Editor} open
-    xywh {134 24 1408 594} type Double resizable visible
+    xywh {174 495 1408 594} type Double resizable visible
   } {
     Fl_Menu_Bar MainMenu {open
       xywh {5 5 1400 25}
     } {
       submenu {} {
-        label {&File}
+        label {&File} open
         xywh {10 10 100 20}
       } {
         menuitem {} {
@@ -32,7 +32,7 @@ Function {make_window()} {open
           xywh {10 10 100 20}
         }
         submenu {} {
-          label {Open &Previous} open
+          label {Open &Previous}
           xywh {10 10 100 20}
         } {
           menuitem {} {
@@ -60,6 +60,11 @@ Function {make_window()} {open
           label {&Import...}
           callback psEditorGUI_Import
           xywh {5 5 100 20} divider
+        }
+        menuitem {} {
+          label {&Load Reference...}
+          callback psEditorGUI_LoadReference selected
+          xywh {15 15 100 20} divider
         }
         menuitem {} {
           label {&Save}
@@ -106,11 +111,11 @@ Function {make_window()} {open
     Fl_Tile {} {open
       xywh {5 35 1405 555} box UP_FRAME
     } {
-      Fl_Group {} {open
+      Fl_Group {} {
         xywh {719 35 185 290} box DOWN_BOX
       } {
         Fl_Box {} {
-          label resizebox selected
+          label resizebox
           xywh {845 75 53 180} hide resizable
         }
         Fl_Button {} {
@@ -145,7 +150,7 @@ Function {make_window()} {open
       } {
         Fl_Group {} {
           label Particles
-          xywh {904 60 490 515}
+          xywh {904 60 490 515} hide
         } {
           Fl_Choice Particles_Alignment {
             label Alignment
@@ -362,7 +367,7 @@ Function {make_window()} {open
         }
         Fl_Group {} {
           label Placer
-          xywh {904 60 490 515} hide
+          xywh {904 60 490 515}
         } {
           Fl_Group SegmentPlacerParameters {
             label {Segment Placer Parameters}
