@@ -91,6 +91,12 @@ static osg::MatrixTransform* xzGridTransform;
  */
 static osg::Group* particleSystemGroup = NULL;
 
+
+/**
+ * A pointer to the background reference 3D model.
+ */
+static osg::ref_ptr<osg::Node> referenceModel;
+
 /**
  * A single particle system in the particle system group.
  */
@@ -996,6 +1002,40 @@ void psEditorGUI_Import(Fl_Menu_*, void*)
       std::string name = filename;
       LoadFile(name, true);
    }
+}
+
+/// Load a file to display as a reference 3D object
+void psEditorGUI_LoadReference(Fl_Menu_*, void*)
+{
+   char* filename =
+      fl_file_chooser(
+      "Load",
+      "Geometry Files (*.{osg,ive})\tOSG Files (*.osg)\tIVE Files (*.ive)",
+      particleSystemFilename.c_str(),
+      1
+      );
+
+   if (filename != NULL)
+   {
+      std::string name = filename;
+      if (referenceModel.valid())
+      {
+         //remove the existing one from the scene
+        sceneGroup->removeChild(referenceModel.get());
+      }
+
+      referenceModel = osgDB::readNodeFile(name);
+
+      if (referenceModel.valid())
+      {
+         sceneGroup->addChild( referenceModel.get() );
+      }
+      else
+      {
+         fl_alert("Can't load geometry file: %s", name.c_str());
+      }
+   }
+
 }
 
 void psEditorGUI_Save(Fl_Menu_*, void*)
