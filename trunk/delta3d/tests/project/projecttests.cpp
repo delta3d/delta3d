@@ -39,7 +39,7 @@
 #include <dtUtil/exception.h>
 #include <dtDAL/fileutils.h>
 #include <dtDAL/datatype.h>
-#include <dtDAL/tree.h>
+#include <dtUtil/tree.h>
 
 #include <dtUtil/stringutils.h>
 
@@ -73,9 +73,9 @@ public:
     void testResources();
 private:
     dtUtil::Log* logger;
-    void printTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
-    core::tree<dtDAL::ResourceTreeNode>::const_iterator findTreeNodeFromCategory(
-        const core::tree<dtDAL::ResourceTreeNode>& currentTree,
+    void printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter);
+    dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator findTreeNodeFromCategory(
+        const dtUtil::tree<dtDAL::ResourceTreeNode>& currentTree,
         const dtDAL::DataType* dt, const std::string& category) const;
 };
 
@@ -373,8 +373,8 @@ void ProjectTests::testFileIO() {
 
 
 
-core::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFromCategory(
-    const core::tree<dtDAL::ResourceTreeNode>& currentTree,
+dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFromCategory(
+    const dtUtil::tree<dtDAL::ResourceTreeNode>& currentTree,
     const dtDAL::DataType* dt, const std::string& category) const {
 
     if (dt != NULL && !dt->IsResource())
@@ -389,7 +389,7 @@ core::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFr
 
     std::string currentCategory;
 
-    core::tree<dtDAL::ResourceTreeNode>::const_iterator ti = currentTree.tree_iterator();
+    dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ti = currentTree.tree_iterator();
 
     for (std::vector<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i) {
         if (ti == currentTree.end())
@@ -411,7 +411,7 @@ core::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNodeFr
     return ti;
 }
 
-void ProjectTests::printTree(const core::tree<dtDAL::ResourceTreeNode>::const_iterator& iter) {
+void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter) {
     for (unsigned tabs = 0; tabs < iter.level(); ++tabs)
         std::cout << "\t";
 
@@ -423,7 +423,7 @@ void ProjectTests::printTree(const core::tree<dtDAL::ResourceTreeNode>::const_it
 
     std::cout << std::endl;
 
-    for (core::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
+    for (dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator i = iter.tree_ref().in();
         i != iter.tree_ref().end();
         ++i) {
         printTree(i);
@@ -459,7 +459,7 @@ void ProjectTests::testReadonlyFailure() {
         }
 
         try {
-            core::tree<dtDAL::ResourceTreeNode> toFill;
+            dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
             p.GetResourcesOfType(dtDAL::DataType::STATIC_MESH, toFill);
         } catch (const dtUtil::Exception& e) {
             CPPUNIT_FAIL(std::string("Project should have been able to call GetResourcesOfType: ") + e.What());
@@ -718,15 +718,15 @@ void ProjectTests::testResources() {
 
         //printTree(p.GetAllResources());
 
-        core::tree<dtDAL::ResourceTreeNode> toFill;
+        dtUtil::tree<dtDAL::ResourceTreeNode> toFill;
         p.GetResourcesOfType(dtDAL::DataType::CHARACTER, toFill);
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineCategory =
             findTreeNodeFromCategory(toFill, NULL, "");
 
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
             + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
 
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marineResource =
             marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine.rbody", marineCategory->getFullCategory(), &marineRD));
 
 
@@ -735,7 +735,7 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"marine")
                 + "\" should have been found in the resource tree", marineCategory != p.GetAllResources().end());
 
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator marine2Resource =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator marine2Resource =
             marineCategory.tree_ref().find(dtDAL::ResourceTreeNode("marine2.rbody", marineCategory->getFullCategory(), &marine2RD));
 
         CPPUNIT_ASSERT_MESSAGE("The marine resource should have been found.", marineResource != p.GetAllResources().end());
@@ -753,13 +753,13 @@ void ProjectTests::testResources() {
         //Done with the marines
 
         p.GetResourcesOfType(dtDAL::DataType::TERRAIN, toFill);
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator terrainCategory =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrainCategory =
                 findTreeNodeFromCategory(toFill, NULL, "");
 
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"")
                 + "\" should have been found in the resource tree", terrainCategory != p.GetAllResources().end());
 
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator terrain2Resource =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrain2Resource =
                 terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain2", terrainCategory->getFullCategory(), &terrain2RD));
 
 
@@ -768,7 +768,7 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"terrain")
                 + "\" should have been found in the resource tree", terrainCategory != p.GetAllResources().end());
 
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator terrain1Resource =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator terrain1Resource =
                 terrainCategory.tree_ref().find(dtDAL::ResourceTreeNode("terrain1", terrainCategory->getFullCategory(), &terrain1RD));
 
         CPPUNIT_ASSERT_MESSAGE("The terrain2 resource should have been found.", terrain2Resource != p.GetAllResources().end());
@@ -810,7 +810,7 @@ void ProjectTests::testResources() {
         CPPUNIT_ASSERT_MESSAGE("The head of the tree should be static mesh",
             toFill.data().getNodeText() == dtDAL::DataType::STATIC_MESH.GetName());
 
-        core::tree<dtDAL::ResourceTreeNode>::const_iterator treeResult =
+        dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator treeResult =
             findTreeNodeFromCategory(p.GetAllResources(),
             &dtDAL::DataType::STATIC_MESH, dirtCategory);
 
@@ -869,7 +869,7 @@ void ProjectTests::testResources() {
 
         p.Refresh();
 
-        //const core::tree<dtDAL::ResourceTreeNode>& allTree = p.GetAllResources();
+        //const dtUtil::tree<dtDAL::ResourceTreeNode>& allTree = p.GetAllResources();
 
         //printTree(allTree.tree_iterator());
 
