@@ -2509,13 +2509,20 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
       GetTransform( &transform );
       osg::Vec3 tmp;
       transform.GetTranslation( tmp );
-      pos[0] = tmp[0]; pos[1] = tmp[1]; pos[2] = tmp[2];
+      pos[0] = tmp[0]; 
+      pos[1] = tmp[1]; 
+      pos[2] = tmp[2];
 
       transform.Get( matrix );
-      //sgXformVec3( orient.at, matrix );
-      //sgXformVec3( orient.up, matrix );
-      osg::Matrix::transform3x3(osg::Vec3(orient.at[0], orient.at[1], orient.at[2]), matrix);
-      osg::Matrix::transform3x3(osg::Vec3(orient.up[0], orient.up[1], orient.up[2]), matrix);
+
+      osg::Vec3 transformedOrientation = osg::Matrix::transform3x3(osg::Vec3(orient.at[0], orient.at[1], orient.at[2]), matrix);
+      orient.at[0] = transformedOrientation[0];
+      orient.at[1] = transformedOrientation[1];
+      orient.at[2] = transformedOrientation[2];
+      osg::Vec3 transformedUp = osg::Matrix::transform3x3(osg::Vec3(orient.up[0], orient.up[1], orient.up[2]), matrix);
+      orient.up[0] = transformedUp[0];
+      orient.up[1] = transformedUp[1];
+      orient.up[2] = transformedUp[2];
 
       alListenerfv( AL_POSITION, pos );
       alListenerfv( AL_ORIENTATION, orient.ort );
