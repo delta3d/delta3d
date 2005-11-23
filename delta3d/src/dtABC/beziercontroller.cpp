@@ -89,7 +89,7 @@ void BezierController::MakeSegment(float time, float inc, const PathPoint& p1, c
    for(int i = 0; i < 3; ++i)
    {
       pos[i] = (BlendFunction(inc,0) * p1.GetPosition()[i]) + (BlendFunction(inc,1) * p2.GetPosition()[i]) + (BlendFunction(inc,2) * p3.GetPosition()[i]) + (BlendFunction(inc,3) * p4.GetPosition()[i]); 
-      tangent[i] = (TangentFunction(inc,1) * p2.GetPosition()[i]) + (TangentFunction(inc,2) * p3.GetPosition()[i]) + (TangentFunction(inc,3) * p4.GetPosition()[i]); 
+      //tangent[i] = (TangentFunction(inc,1) * p2.GetPosition()[i]) + (TangentFunction(inc,2) * p3.GetPosition()[i]) + (TangentFunction(inc,3) * p4.GetPosition()[i]); 
    }
 
    osg::Quat quat;
