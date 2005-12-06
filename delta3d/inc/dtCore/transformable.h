@@ -108,7 +108,7 @@ namespace dtCore
       virtual void RemoveChild( DeltaDrawable* child );
 
       ///Set the Transform to reposition this Transformable
-      virtual void SetTransform( Transform* xform, CoordSysEnum cs = ABS_CS );
+      virtual void SetTransform(const Transform* xform, CoordSysEnum cs = ABS_CS );
 
       ///Get the current Transform of this Transformable
       virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS );
