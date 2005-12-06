@@ -121,7 +121,7 @@ bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
  * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
-void Transformable::SetTransform( Transform *xform, CoordSysEnum cs )
+void Transformable::SetTransform(const Transform *xform, CoordSysEnum cs )
 {
    osg::Matrix newMat;
    xform->Get( newMat );
