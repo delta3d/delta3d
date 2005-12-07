@@ -53,13 +53,14 @@ namespace dtUtil
                                                XERCES_CPP_NAMESPACE_QUALIFIER DOMNamedNodeMap* attrs);
 
    /** \brief Searches a Xerces XML Attribute list for names of interest.
-     * Append the search keys with attribute names to search for named attributes.
-     * 
+     * A helper used when searching with a known string.  e.g. "mystring", "Type", "Name", or "Value"
      */
    class DT_UTIL_EXPORT AttributeSearch
    {
    public:
+      ///\deprecated not needed anymore since this class now searches all Attributes by design.
       typedef std::vector<std::string> SearchKeyVector;
+
       typedef std::map<std::string,std::string> ResultMap;
 
       AttributeSearch();
@@ -69,8 +70,13 @@ namespace dtUtil
 
       ~AttributeSearch();
 
+      /// \deprecated functor searches all Attributes now.
       void SetSearchKeys(const SearchKeyVector& k) { mKeys = k; }
+
+      /// \deprecated functor searches all Attributes now.
       SearchKeyVector& GetSearchKeys() { return mKeys; }
+
+      /// \deprecated functor searches all Attributes now.
       const SearchKeyVector& GetSearchKeys() const { return mKeys; }
 
       /** searches for all keys on each attribute.
