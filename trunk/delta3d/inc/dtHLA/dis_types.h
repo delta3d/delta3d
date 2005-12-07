@@ -212,7 +212,8 @@ namespace dtHLA
           * @return true if this object is less than the parameter,
           * false otherwise
           */
-         bool operator<(const EntityType& entityType) const;
+         bool operator<( const EntityType& entityType) const;
+         bool operator==( const EntityType& rhs ) const;
 
          /**
           * Ranks the match between this entity type and another.
