@@ -5,6 +5,7 @@
 #include <Producer/RenderSurface>
 
 #include <dtCore/camera.h>
+#include <dtCore/cameragroup.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <osg/NodeVisitor>
@@ -107,8 +108,11 @@ void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 }
 
 
+CameraGroup* Camera::mCameraGroup = new CameraGroup;
+
 Camera::Camera( const std::string& name )
    :  Transformable(name),
+      mFrameBin(0),
       mWindow(0),
       mScene(0)
 {
@@ -131,11 +135,22 @@ Camera::Camera( const std::string& name )
 
    // Default collision category = 1
    SetCollisionCategoryBits( UNSIGNED_BIT(1) );
+
+   mCameraGroup->AddCamera(this);
 }
 
 Camera::~Camera()
 {
    DeregisterInstance(this);
+}
+
+void Camera::SetFrameBin( unsigned int frameBin )
+{ 
+   mCameraGroup->RemoveCamera(this);
+
+   mFrameBin = frameBin; 
+
+   mCameraGroup->AddCamera(this);
 }
 
 void Camera::SetEnabled( bool enabled )

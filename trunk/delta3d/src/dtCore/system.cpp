@@ -5,6 +5,7 @@
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 #include <dtCore/camera.h>
+#include <dtCore/cameragroup.h>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -201,6 +202,7 @@ void System::CameraFrame()
    // call Frame(true) or Frame(false). Ug. Definitely room for
    // efficiency here. -osb, 2005-11-10
 
+   /*
    mRenderSurfaceCameraMap.clear();
 
    for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
@@ -227,4 +229,7 @@ void System::CameraFrame()
          cam->Frame(true);
       }
    }
+   */
+
+   Camera::GetCameraGroup()->Frame();
 }

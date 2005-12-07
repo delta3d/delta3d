@@ -55,6 +55,10 @@ namespace dtCore
     *  The Frame() method must be called once per frame.  This will update the
     *  scene, then cull and draw the visual objects.
     */
+
+   class CameraGroup;
+   
+
    class DT_CORE_EXPORT Camera : public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Camera)
@@ -101,6 +105,11 @@ namespace dtCore
 
       Camera( const std::string& name = "camera" );
       virtual ~Camera();
+
+      void SetFrameBin( unsigned int frameBin );
+      unsigned int GetFrameBin() const { return mFrameBin; }
+
+      static CameraGroup* GetCameraGroup() { return mCameraGroup; }
 
       ///Enabled or disable this Camera. Disabled Cameras will not render.
       void SetEnabled( bool enabled );
@@ -198,6 +207,10 @@ namespace dtCore
       }
 
    private:
+
+      unsigned int mFrameBin;
+      static CameraGroup* mCameraGroup;
+
       RefPtr<Producer::Camera> mCamera; // Handle to the Producer camera
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
       RefPtr<Scene> mScene;

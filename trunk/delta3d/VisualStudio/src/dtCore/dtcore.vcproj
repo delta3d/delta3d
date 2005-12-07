@@ -148,6 +148,9 @@
 				RelativePath="..\..\..\src\dtCore\camera.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\cameragroup.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\clouddome.cpp">
 			</File>
 			<File
@@ -300,6 +303,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\camera.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\cameragroup.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\clouddome.h">
