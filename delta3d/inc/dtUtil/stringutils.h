@@ -182,6 +182,8 @@ namespace dtUtil
    /** Converts a string to a float.*/
    float DT_UTIL_EXPORT ToFloat(const std::string& d);
 
+   unsigned int DT_UTIL_EXPORT ToUnsignedInt(const std::string& u);
+
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
 };
 
