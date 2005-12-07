@@ -1562,6 +1562,25 @@ Entity* RTIConnection::GetGhostEntity(int index)
    
    return 0;
 }
+
+/**
+* Returns the ghost entity with the specified handle.
+*
+* @param handle the RTI::ObjectHandle
+* @return the ghost entity with the specified handle.
+*/
+Entity* RTIConnection::GetGhostEntity( RTI::ObjectHandle handle )
+{
+   std::map<RTI::ObjectHandle, GhostData>::iterator iter;
+   iter = mObjectHandleGhostDataMap.find(handle);
+
+   if( iter != mObjectHandleGhostDataMap.end() )
+   {
+      return (*iter).second.mEntity.get();
+   }
+
+   return 0;
+}
          
 /**
  * Maps the specified entity type to the given filename.
@@ -2370,6 +2389,22 @@ void RTIConnection::OnMessage(MessageData *data)
       mNewlyDiscoveredObjects.clear();
 
       delete requiredAttributes;
+   }
+}
+
+void RTIConnection::AddGhostEntity( RTI::ObjectHandle handle, GhostData ghost )
+{
+   mObjectHandleGhostDataMap.insert( std::make_pair( handle, ghost ) );
+   mNewlyDiscoveredObjects.insert(handle);
+}
+
+void RTIConnection::RemoveGhostEntity( RTI::ObjectHandle handle )
+{
+   if( mObjectHandleGhostDataMap.erase(handle) == 0 )
+   {
+      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING,__FUNCTION__,__LINE__,
+         "Can't remove GhostEntity:%d.  It is not registered with RTIConnection",
+         handle );
    }
 }
 
