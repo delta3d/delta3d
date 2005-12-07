@@ -220,7 +220,7 @@ bool EntityType::operator<(const EntityType& entityType) const
 bool EntityType::operator==( const EntityType& rhs ) const
 {
    return mKind == rhs.mKind && mDomain == rhs.mDomain &&
-      mCountry == rhs.mCountry && mCategory == rhs.mCountry &&
+      mCountry == rhs.mCountry && mCategory == rhs.mCategory &&
       mCategory == rhs.mCategory && mSubcategory == rhs.mSubcategory &&
       mSpecific == rhs.mSpecific && mExtra == rhs.mExtra;
 }
