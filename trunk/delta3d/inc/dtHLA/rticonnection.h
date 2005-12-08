@@ -786,10 +786,7 @@ namespace dtHLA
          void ClampToGround(Entity* entity);
          
 
-         protected:
-         RTI::RTIambassador& GetRTIAmbassador() { return mRTIAmbassador; }
 
-         private:
          /**
           * The RTI ambassador.
           */
@@ -801,7 +798,6 @@ namespace dtHLA
           */
          std::string mExecutionName;
 
-         protected:
          /**
           * The base entity class handle.
           */
@@ -1006,8 +1002,6 @@ namespace dtHLA
          */
 
          RTI::ParameterHandle mTargetObjectIdentifierHandle;
-
-         private:
          /**
           * The scene in which to create ghost entities.
           */
@@ -1152,7 +1146,6 @@ namespace dtHLA
           */
          std::set< dtCore::RefPtr<Entity> > mMasterEntities;
          
-         protected:
          /**
           * An internal structure for data associated with ghost entities.
           */
@@ -1169,12 +1162,6 @@ namespace dtHLA
             std::map<unsigned int, osgSim::DOFTransform*>
                mArticulatedPartClassTransformMap;
          };
-
-         void AddGhostEntity( RTI::ObjectHandle handle, GhostData ghost );
-         void RemoveGhostEntity( RTI::ObjectHandle handle );
-         Entity* GetGhostEntity( RTI::ObjectHandle handle );
-
-         private:
 
          ///Private method to update an entity's position
          void UpdateGhostPosition(const double dt, GhostData &gd, Entity *ghost);
@@ -1214,6 +1201,8 @@ namespace dtHLA
           * The set of object handles discovered in the last tick.
           */
          std::set<RTI::ObjectHandle> mNewlyDiscoveredObjects;
+
+         std::set<Entity*> mNewEntities;
 
          /**
           * The set of objects for which to provide updates.
