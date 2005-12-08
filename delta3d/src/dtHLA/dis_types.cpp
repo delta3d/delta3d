@@ -25,6 +25,20 @@ EntityIdentifier::EntityIdentifier(unsigned short siteIdentifier,
      mEntityIdentifier(entityIdentifier)
 {}
 
+bool EntityIdentifier::operator!=( const EntityIdentifier& rhs ) const
+{
+   return   mSiteIdentifier != rhs.mSiteIdentifier ||
+            mApplicationIdentifier != rhs.mApplicationIdentifier ||
+            mEntityIdentifier != rhs.mEntityIdentifier;
+}
+
+bool EntityIdentifier::operator==( const EntityIdentifier& rhs ) const
+{
+   return   mSiteIdentifier == rhs.mSiteIdentifier &&
+            mApplicationIdentifier == rhs.mApplicationIdentifier &&
+            mEntityIdentifier == rhs.mEntityIdentifier;
+}
+
 /**
  * Returns the encoded length of this object.
  *
@@ -217,12 +231,20 @@ bool EntityType::operator<(const EntityType& entityType) const
    }
 }
 
+bool EntityType::operator!=( const EntityType& rhs ) const
+{
+   return   mKind != rhs.mKind || mDomain != rhs.mDomain ||
+            mCountry != rhs.mCountry || mCategory != rhs.mCategory || 
+            mSubcategory != rhs.mSubcategory || mSpecific != rhs.mSpecific || 
+            mExtra != rhs.mExtra;
+}
+
 bool EntityType::operator==( const EntityType& rhs ) const
 {
-   return mKind == rhs.mKind && mDomain == rhs.mDomain &&
-      mCountry == rhs.mCountry && mCategory == rhs.mCategory &&
-      mCategory == rhs.mCategory && mSubcategory == rhs.mSubcategory &&
-      mSpecific == rhs.mSpecific && mExtra == rhs.mExtra;
+   return   mKind == rhs.mKind && mDomain == rhs.mDomain &&
+            mCountry == rhs.mCountry && mCategory == rhs.mCategory && 
+            mSubcategory == rhs.mSubcategory && mSpecific == rhs.mSpecific && 
+            mExtra == rhs.mExtra;
 }
 
 /**
