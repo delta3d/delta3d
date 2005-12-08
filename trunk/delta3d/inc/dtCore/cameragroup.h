@@ -37,7 +37,7 @@ namespace dtCore
 
    class DT_CORE_EXPORT CameraGroup : osg::Referenced
    {
-      friend Camera;
+      friend class Camera;
 
    public:
 
