@@ -139,13 +139,17 @@ RTIConnection::RTIConnection(std::string name)
 RTIConnection::~RTIConnection()
 throw (RTI::FederateInternalError)        
 {
-   for(  std::map<RTI::ObjectHandle, GhostData>::iterator it = 
+   if( mScene != 0 )
+   {
+      for(  std::map<RTI::ObjectHandle, GhostData>::iterator it = 
          mObjectHandleGhostDataMap.begin();
          it != mObjectHandleGhostDataMap.end();
-         it++ )
-   {
-      mScene->RemoveDrawable( (*it).second.mEntity.get() ); 
+      it++ )
+      {
+         mScene->RemoveDrawable( (*it).second.mEntity.get() ); 
+      }
    }
+
    mObjectHandleGhostDataMap.clear();
 
    RemoveSender(dtCore::System::Instance());
@@ -1562,25 +1566,6 @@ Entity* RTIConnection::GetGhostEntity(int index)
    
    return 0;
 }
-
-/**
-* Returns the ghost entity with the specified handle.
-*
-* @param handle the RTI::ObjectHandle
-* @return the ghost entity with the specified handle.
-*/
-Entity* RTIConnection::GetGhostEntity( RTI::ObjectHandle handle )
-{
-   std::map<RTI::ObjectHandle, GhostData>::iterator iter;
-   iter = mObjectHandleGhostDataMap.find(handle);
-
-   if( iter != mObjectHandleGhostDataMap.end() )
-   {
-      return (*iter).second.mEntity.get();
-   }
-
-   return 0;
-}
          
 /**
  * Maps the specified entity type to the given filename.
@@ -2392,22 +2377,6 @@ void RTIConnection::OnMessage(MessageData *data)
    }
 }
 
-void RTIConnection::AddGhostEntity( RTI::ObjectHandle handle, GhostData ghost )
-{
-   mObjectHandleGhostDataMap.insert( std::make_pair( handle, ghost ) );
-   mNewlyDiscoveredObjects.insert(handle);
-}
-
-void RTIConnection::RemoveGhostEntity( RTI::ObjectHandle handle )
-{
-   if( mObjectHandleGhostDataMap.erase(handle) == 0 )
-   {
-      dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_WARNING,__FUNCTION__,__LINE__,
-         "Can't remove GhostEntity:%d.  It is not registered with RTIConnection",
-         handle );
-   }
-}
-
 void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *ghost)
 {
    dtCore::Transform transform;
@@ -2459,7 +2428,10 @@ void RTIConnection::UpdateGhostPosition(const double dt, GhostData &gd, Entity *
 
    ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
 
-   ClampToGround(ghost);
+   if( mScene != 0 )
+   {
+      ClampToGround(ghost);
+   }
 }
 
 /**
@@ -2495,6 +2467,7 @@ void RTIConnection::discoverObjectInstance(
    }
 
    mNewlyDiscoveredObjects.insert(theObject);
+   mNewEntities.insert(ghost);
 }
 
 /**
@@ -2610,8 +2583,6 @@ void RTIConnection::reflectAttributeValues(
    unsigned int damageAttribute;
 
    ghost->GetTransform(&transform, dtCore::Transformable::REL_CS);
-
-   
 
    for(unsigned int i=0;i<theAttributes.size();i++)
    {
@@ -2947,7 +2918,21 @@ void RTIConnection::reflectAttributeValues(
 
    ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
    
-   ClampToGround(ghost);
+   if( mScene != 0 )
+   {
+      ClampToGround(ghost);
+   }
+
+   std::set<Entity*>::iterator iter = mNewEntities.find(ghost);
+   if( iter != mNewEntities.end() )
+   {
+      if(   ghost->GetEntityIdentifier() != EntityIdentifier() &&
+            ghost->GetEntityType() != EntityType() )
+      {
+         SendMessage( "entity_discovered", ghost );
+         mNewEntities.erase(iter);
+      }
+   }
 }
 
 /**
@@ -2988,8 +2973,17 @@ throw (
             RTI::FederateInternalError
          )        
 {
-   mScene->RemoveDrawable( mObjectHandleGhostDataMap[ theObject ].mEntity.get() ); //ADDED BY OSB
+   Entity* entity = mObjectHandleGhostDataMap[ theObject ].mEntity.get();
+
+   if( mScene != 0 )
+   {
+      mScene->RemoveDrawable( entity ); 
+   }
+
+   SendMessage( "entity_removed", entity );
+
    mObjectHandleGhostDataMap.erase( theObject );
+
 }
 
 /**
@@ -3044,8 +3038,10 @@ throw (
                //sgXformPnt3(position, mRotationOffsetInverse);
                dtUtil::MatrixUtil::TransformVec3(position, mRotationOffsetInverse);
 
-               if(mEffectClampMode)
+               if(mEffectClampMode && mScene != 0)
+               {
                   position[2] = mScene->GetHeightOfTerrain(position[0], position[1]); 
+               }
             }
          }
          else if(handle == mEventIdentifierParameterHandle)
