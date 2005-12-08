@@ -93,6 +93,9 @@ namespace dtHLA
                           unsigned short applicationIdentifier = 0,
                           unsigned short entityIdentifier = 0);
          
+         bool operator!=( const EntityIdentifier& rhs ) const;
+         bool operator==( const EntityIdentifier& rhs ) const;
+
          /**
           * Returns the encoded length of this object.
           *
@@ -213,6 +216,8 @@ namespace dtHLA
           * false otherwise
           */
          bool operator<( const EntityType& entityType) const;
+
+         bool operator!=( const EntityType& rhs ) const;
          bool operator==( const EntityType& rhs ) const;
 
          /**
