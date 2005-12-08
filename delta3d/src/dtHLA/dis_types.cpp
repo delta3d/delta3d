@@ -25,6 +25,26 @@ EntityIdentifier::EntityIdentifier(unsigned short siteIdentifier,
      mEntityIdentifier(entityIdentifier)
 {}
 
+bool EntityIdentifier::operator<( const EntityIdentifier& entityId) const
+{
+   if(mApplicationIdentifier != entityId.mApplicationIdentifier)
+   {
+      return mApplicationIdentifier < entityId.mApplicationIdentifier;
+   }
+   else if(mApplicationIdentifier != entityId.mApplicationIdentifier)
+   {
+      return mApplicationIdentifier < entityId.mApplicationIdentifier;
+   }
+   else if(mEntityIdentifier != entityId.mEntityIdentifier)
+   {
+      return mEntityIdentifier < entityId.mEntityIdentifier;
+   }
+   else
+   {
+      return false;
+   }
+}
+
 bool EntityIdentifier::operator!=( const EntityIdentifier& rhs ) const
 {
    return   mSiteIdentifier != rhs.mSiteIdentifier ||

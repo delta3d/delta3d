@@ -92,6 +92,17 @@ namespace dtHLA
          EntityIdentifier(unsigned short siteIdentifier = 0,
                           unsigned short applicationIdentifier = 0,
                           unsigned short entityIdentifier = 0);
+
+         /**
+         * Compares this object to another of its type.  Imposes
+         * a total ordering, allowing this object to be used as a
+         * map key.
+         *
+         * @param entityId the object to compare this to
+         * @return true if this object is less than the parameter,
+         * false otherwise
+         */
+         bool operator<( const EntityIdentifier& entityId) const;
          
          bool operator!=( const EntityIdentifier& rhs ) const;
          bool operator==( const EntityIdentifier& rhs ) const;
