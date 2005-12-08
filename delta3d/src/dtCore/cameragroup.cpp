@@ -41,7 +41,6 @@ void CameraGroup::Frame()
          frameKeyIter != mFrameBinMap.end();
          ++frameKeyIter )
    {
-      unsigned int currentBin = frameKeyIter->first;
       CameraSet& currentCameraSet = frameKeyIter->second;
 
       // For each bin number, loop over all cameras in the bin
