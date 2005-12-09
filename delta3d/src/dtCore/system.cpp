@@ -187,49 +187,5 @@ void System::Config()
 
 void System::CameraFrame()
 {
-   // Ok, bear with me here folks...
-   //
-   // The problem: Case 130:  Camera::Frame might be incompatible with multiple
-   // cameras sharing one RenderSurface.
-   //
-   // The solution: Only call Producer::Camera::frame(true) on the _last_
-   // camera to be rendered for each RenderSurface.
-   //
-   // The problem with the solution: To figure out which camera is the last
-   // per RenderSurface, we first have to loop over all the camera and
-   // use a map to find the last one per RenderSurface. Then we have to
-   // loops over the cameras _again_ with our additional knowledge and
-   // call Frame(true) or Frame(false). Ug. Definitely room for
-   // efficiency here. -osb, 2005-11-10
-
-   /*
-   mRenderSurfaceCameraMap.clear();
-
-   for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
-   {
-      Camera* cam = Camera::GetInstance(camIdx);
-
-      if( cam->GetEnabled() )
-      {
-         mRenderSurfaceCameraMap[ cam->GetCamera()->getRenderSurface() ] = cam;
-      }
-   }
-   
-   for( int camIdx = 0; camIdx < Camera::GetInstanceCount(); camIdx++ )
-   {
-      Camera* cam = Camera::GetInstance(camIdx);
-
-      RenderSurfaceCameraMap::iterator iter = mRenderSurfaceCameraMap.find( cam->GetCamera()->getRenderSurface() );
-      if( iter->second != cam )
-      {
-         cam->Frame(false);
-      }
-      else
-      {
-         cam->Frame(true);
-      }
-   }
-   */
-
    Camera::GetCameraGroup()->Frame();
 }
