@@ -111,7 +111,7 @@ namespace dtCore
       virtual void SetTransform(const Transform* xform, CoordSysEnum cs = ABS_CS );
 
       ///Get the current Transform of this Transformable
-      virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS );
+      virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
 
       ///Convenience function to return back the internal matrix transform node
       virtual osg::MatrixTransform* GetMatrixNode()
