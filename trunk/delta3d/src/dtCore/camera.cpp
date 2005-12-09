@@ -165,11 +165,10 @@ void Camera::SetEnabled( bool enabled )
    }
 }
 
-bool Camera::GetEnabled()
+///\todo Do not need to const_cast with OSG 1.0
+bool Camera::GetEnabled() const
 {
-   // This function cannot be const since Producer::Camera::isEnabled()
-   // is not const.
-   return mCamera->isEnabled();
+   return const_cast<Producer::Camera*>(mCamera.get())->isEnabled();
 }
 
 /*!
