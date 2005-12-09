@@ -6,6 +6,7 @@
 #include <math.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <ctime>
 
 #if defined(__APPLE__)
 #include <sys/socket.h>
@@ -82,6 +83,8 @@ RTIConnection::RTIConnection(std::string name)
    AddSender(dtCore::System::Instance());
 
    SetGeoOrigin(0, 0, 0);
+
+   srand(unsigned(time(0)));
 
    mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
    mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535)); 
