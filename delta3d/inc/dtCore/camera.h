@@ -115,7 +115,7 @@ namespace dtCore
       void SetEnabled( bool enabled );
 
       ///Is this Camera enabled?
-      bool GetEnabled();
+      bool GetEnabled() const;
       
       ///Use the supplied DeltaWin to draw into
 	   void SetWindow( DeltaWin *win );
