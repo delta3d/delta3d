@@ -94,7 +94,7 @@ Transformable::~Transformable()
  * @param wcMat : The supplied matrix to return with world coordinates
  * @return successfully or not
  */
-bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
+bool Transformable::GetAbsoluteMatrix(osg::Node* node, osg::Matrix& wcMatrix )
 {
    getWCofNodeVisitor vis( wcMatrix );
 
@@ -164,17 +164,20 @@ void Transformable::SetTransform(const Transform *xform, CoordSysEnum cs )
  * @param cs : Optional parameter to select either the absolute world coordinate
  *             or the parent relative coordinate (default == ABS_CS)
  */
-void Transformable::GetTransform( Transform *xform, CoordSysEnum cs )
+void Transformable::GetTransform( Transform *xform, CoordSysEnum cs ) const
 {
    osg::Matrix newMat;
 
+   //yes, we know this sucks, but we can't have a const visitor :(
+   osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>( const_cast<osg::Node*>(mNode.get()) );
+
    if( cs ==ABS_CS )
    { 
-     GetAbsoluteMatrix( GetMatrixNode(), newMat );     
+      GetAbsoluteMatrix( mt, newMat );     
    }
    else if( cs == REL_CS )
    {
-     newMat = GetMatrixNode()->getMatrix();
+     newMat = mt->getMatrix();
    }
 
    xform->Set( newMat );
