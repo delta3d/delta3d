@@ -83,13 +83,13 @@ bool dtUtil::Match(char* Wildcards, char* str)
 float dtUtil::ToFloat(const std::string& str)
 {
    float tmp(0.0f);
-   int retval = sscanf(str.c_str(), " %f", &tmp);
+   sscanf(str.c_str(), " %f", &tmp);
    return tmp;
 }
 
 unsigned int dtUtil::ToUnsignedInt(const std::string& str)
 {
    unsigned int tmp(0);
-   int retval = sscanf(str.c_str(), " %u", &tmp);
+   sscanf(str.c_str(), " %u", &tmp);
    return tmp;
 }
