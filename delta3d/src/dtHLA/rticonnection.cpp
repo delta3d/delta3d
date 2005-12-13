@@ -178,8 +178,10 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
          osgDB::findDataFile(fedFilename).c_str()
       );
    }
-   catch(RTI::FederationExecutionAlreadyExists feae)
-   {}
+   catch( RTI::FederationExecutionAlreadyExists& )
+   {
+      LOG_INFO("Federation "+executionName+" already exists.")
+   }
    
    mIgnoreEffect = false;
    mEntityIdentifierCounter = 1;
@@ -190,7 +192,13 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    mNewlyDiscoveredObjects.clear();
    mObjectsToUpdate.clear();
 
-   //This causes a crash on exit with some versions of RTI-s. Still there on RTI-s D11A.
+   // This causes a crash on exit with some versions of RTI-s. 
+   // Still there on RTI-s D11A. Caused by an array-size mismatch
+   // between DVTE.fed/RPR-FOM.fed and RTI-s_1.3_D11A.rid.
+   //
+   // Workaround is to rename the "HyperSpace" space in the .rid file
+   // or outride remove it from the .fed file. Bug has been submitted
+   // to LHM and is scheduled to be fixed in version D13.
    mRTIAmbassador.joinFederationExecution(
       federateName.c_str(), executionName.c_str(), this     
    );
