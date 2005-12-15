@@ -188,8 +188,10 @@ void UserInterface::SelectInstance()
             break;
          }
       }
-
       
+      unsigned int num = c->GetFrameBin();
+      CamFrameBin->value(num);
+
       CameraGroup->show();
    }
    else CameraGroup->hide();
@@ -755,6 +757,19 @@ void UserInterface::CameraWinCB( Fl_Choice *o )
    DeltaWin *win = (DeltaWin*)menu[o->value()].user_data();
    cam->SetWindow( win );
 
+}
+
+void UserInterface::CamStatisticsCB( Fl_Button *o)
+{
+   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   cam->SetNextStatisticsType();
+}
+
+void UserInterface::CameraFrameBinCB(Fl_Value_Input *o)
+{
+   Camera *cam = dynamic_cast<Camera*>(GetSelectedInstance(this));
+   unsigned int num = (unsigned int)o->value();
+   cam->SetFrameBin(num);
 }
 
 void UserInterface::WinPosCB( Fl_Value_Input *o)
@@ -1666,3 +1681,4 @@ void UserInterface::ParticleEnabledCB( Fl_Check_Button *o)
       ps->SetEnabled(false);
    }
 }
+

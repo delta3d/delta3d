@@ -163,6 +163,20 @@ void UserInterface::cb_CameraWinChoice(Fl_Choice* o, void* v) {
   ((UserInterface*)(o->parent()->parent()->user_data()))->cb_CameraWinChoice_i(o,v);
 }
 
+inline void UserInterface::cb_Next_i(Fl_Button* o, void* v) {
+  ((UserInterface*)v)->CamStatisticsCB(o);
+}
+void UserInterface::cb_Next(Fl_Button* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_Next_i(o,v);
+}
+
+inline void UserInterface::cb_CamFrameBin_i(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)v)->CameraFrameBinCB(o);
+}
+void UserInterface::cb_CamFrameBin(Fl_Value_Input* o, void* v) {
+  ((UserInterface*)(o->parent()->parent()->user_data()))->cb_CamFrameBin_i(o,v);
+}
+
 inline void UserInterface::cb_WinPosW_i(Fl_Value_Input* o, void* v) {
   ((UserInterface*)v)->WinPosCB(o);
 }
@@ -768,25 +782,25 @@ Fl_Double_Window* UserInterface::make_window() {
   { Fl_Double_Window* o = MainWindow = new Fl_Double_Window(545, 555, "dtCore");
     w = o;
     o->user_data((void*)(this));
-    { Fl_Browser* o = InstanceList = new Fl_Browser(15, 25, 145, 100);
+    { Fl_Browser* o = InstanceList = new Fl_Browser(10, 5, 220, 120);
       o->type(1);
       o->callback((Fl_Callback*)cb_InstanceList, (void*)(this));
     }
-    { Fl_Box* o = InstanceClassName = new Fl_Box(210, 15, 300, 30);
+    { Fl_Box* o = InstanceClassName = new Fl_Box(235, 15, 300, 30);
       o->box(FL_BORDER_BOX);
       o->color((Fl_Color)46);
       o->labelfont(2);
       o->labelsize(18);
     }
-    { Fl_Group* o = BaseGroup = new Fl_Group(195, 60, 295, 65);
+    { Fl_Group* o = BaseGroup = new Fl_Group(235, 60, 300, 65);
       o->box(FL_ENGRAVED_FRAME);
       o->align(FL_ALIGN_TOP_LEFT);
-      { Fl_Input* o = BaseName = new Fl_Input(250, 65, 230, 25, "Name:");
+      { Fl_Input* o = BaseName = new Fl_Input(295, 65, 230, 25, "Name:");
         o->tooltip("The name of this instance");
         o->callback((Fl_Callback*)cb_BaseName, (void*)(this));
         o->when(FL_WHEN_ENTER_KEY);
       }
-      { Fl_Value_Output* o = BaseReferenceCount = new Fl_Value_Output(250, 95, 60, 25, "Ref:");
+      { Fl_Value_Output* o = BaseReferenceCount = new Fl_Value_Output(295, 95, 60, 25, "Ref:");
         o->tooltip("The current reference count");
       }
       o->end();
@@ -906,39 +920,46 @@ Fl_Double_Window* UserInterface::make_window() {
       }
       o->end();
     }
-    { Fl_Group* o = CameraGroup = new Fl_Group(185, 265, 325, 120);
+    { Fl_Group* o = CameraGroup = new Fl_Group(10, 265, 530, 120);
       o->box(FL_ENGRAVED_FRAME);
       o->align(FL_ALIGN_TOP_LEFT);
       o->hide();
-      { Fl_Group* o = new Fl_Group(195, 290, 130, 85, "Clear Color");
+      { Fl_Group* o = new Fl_Group(225, 290, 130, 85, "Clear Color");
         o->box(FL_THIN_DOWN_FRAME);
-        { Fl_Value_Input* o = CameraClearRed = new Fl_Value_Input(245, 295, 45, 25, "Red:");
+        { Fl_Value_Input* o = CameraClearRed = new Fl_Value_Input(275, 295, 45, 25, "Red:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_CameraClearRed, (void*)(this));
         }
-        { Fl_Value_Input* o = CameraClearGreen = new Fl_Value_Input(245, 320, 45, 25, "Green:");
+        { Fl_Value_Input* o = CameraClearGreen = new Fl_Value_Input(275, 320, 45, 25, "Green:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_CameraClearGreen, (void*)(this));
         }
-        { Fl_Value_Input* o = CameraClearBlue = new Fl_Value_Input(245, 345, 45, 25, "Blue:");
+        { Fl_Value_Input* o = CameraClearBlue = new Fl_Value_Input(275, 345, 45, 25, "Blue:");
           o->step(0.01);
           o->value(8.888);
           o->callback((Fl_Callback*)cb_CameraClearBlue, (void*)(this));
         }
-        { Fl_Button* o = CameraClearLoadButton = new Fl_Button(295, 295, 25, 75, "...");
+        { Fl_Button* o = CameraClearLoadButton = new Fl_Button(325, 295, 25, 75, "...");
           o->callback((Fl_Callback*)cb_CameraClearLoadButton, (void*)(this));
         }
         o->end();
       }
-      { Fl_Choice* o = CameraSceneChoice = new Fl_Choice(390, 280, 110, 25, "Scene:");
+      { Fl_Choice* o = CameraSceneChoice = new Fl_Choice(420, 280, 110, 25, "Scene:");
         o->down_box(FL_BORDER_BOX);
         o->callback((Fl_Callback*)cb_CameraSceneChoice, (void*)(this));
       }
-      { Fl_Choice* o = CameraWinChoice = new Fl_Choice(390, 315, 110, 25, "Window:");
+      { Fl_Choice* o = CameraWinChoice = new Fl_Choice(420, 315, 110, 25, "Window:");
         o->down_box(FL_BORDER_BOX);
         o->callback((Fl_Callback*)cb_CameraWinChoice, (void*)(this));
+      }
+      { Fl_Button* o = new Fl_Button(115, 290, 80, 25, "Next Stats");
+        o->callback((Fl_Callback*)cb_Next, (void*)(this));
+      }
+      { Fl_Value_Input* o = CamFrameBin = new Fl_Value_Input(140, 335, 55, 25, "Frame Bin:");
+        o->callback((Fl_Callback*)cb_CamFrameBin, (void*)(this));
+        o->deactivate();
       }
       o->end();
     }
