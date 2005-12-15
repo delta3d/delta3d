@@ -33,6 +33,8 @@
 #ifdef _MSC_VER
 #	pragma warning(push)
 #	pragma warning(disable : 4244) // for warning C4244: '=' : conversion from 'short' to 'uchar', possible loss of data
+#	pragma warning(disable : 4311) // for warning C4311: 'type cast' : pointer truncation from 'void *const ' to 'long'
+#	pragma warning(disable : 4312) // for warning C4312: 'type cast' : conversion from 'long' to 'void *' of greater size
 #endif
 
 #include <dtInspector/gui_fltk.h>
