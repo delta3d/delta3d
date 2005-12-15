@@ -14,28 +14,28 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {464 85 545 555} type Double visible
+      xywh {726 67 545 555} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
         callback {((UserInterface*)v)->SelectInstance()}
-        xywh {15 25 145 100} type Select
+        xywh {10 5 220 120} type Select
       }
       Fl_Box InstanceClassName {
-        private xywh {210 15 300 30} box BORDER_BOX color 46 labelfont 2 labelsize 18
+        private xywh {235 15 300 30} box BORDER_BOX color 46 labelfont 2 labelsize 18
       }
       Fl_Group BaseGroup {
-        xywh {195 60 295 65} box ENGRAVED_FRAME align 5
+        xywh {235 60 300 65} box ENGRAVED_FRAME align 5
       } {
         Fl_Input BaseName {
           label {Name:}
           user_data this
           callback {((UserInterface*)v)->BaseNameCB(o)}
-          private tooltip {The name of this instance} xywh {250 65 230 25} when 8
+          private tooltip {The name of this instance} xywh {295 65 230 25} when 8
         }
         Fl_Value_Output BaseReferenceCount {
           label {Ref:}
-          tooltip {The current reference count} xywh {250 95 60 25}
+          tooltip {The current reference count} xywh {295 95 60 25}
         }
       }
       Fl_Group DrawableGroup {
@@ -62,7 +62,7 @@ class UserInterface {open
         }
       }
       Fl_Group TransformGroup {
-        label Transformable open selected
+        label Transformable
         xywh {245 145 295 105} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Value_Input TransformX {
@@ -153,50 +153,62 @@ class UserInterface {open
           xywh {500 265 25 25}
         }
       }
-      Fl_Group CameraGroup {
-        xywh {185 265 325 120} box ENGRAVED_FRAME align 5 hide
+      Fl_Group CameraGroup {selected
+        xywh {10 265 530 120} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Group {} {
           label {Clear Color}
-          xywh {195 290 130 85} box THIN_DOWN_FRAME
+          xywh {225 290 130 85} box THIN_DOWN_FRAME
         } {
           Fl_Value_Input CameraClearRed {
             label {Red:}
             user_data this
             callback {((UserInterface*)v)->CameraClearColorCB(o)}
-            private xywh {245 295 45 25} step 0.01 value 8.888
+            private xywh {275 295 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input CameraClearGreen {
             label {Green:}
             user_data this
             callback {((UserInterface*)v)->CameraClearColorCB(o)}
-            private xywh {245 320 45 25} step 0.01 value 8.888
+            private xywh {275 320 45 25} step 0.01 value 8.888
           }
           Fl_Value_Input CameraClearBlue {
             label {Blue:}
             user_data this
             callback {((UserInterface*)v)->CameraClearColorCB(o)}
-            private xywh {245 345 45 25} step 0.01 value 8.888
+            private xywh {275 345 45 25} step 0.01 value 8.888
           }
           Fl_Button CameraClearLoadButton {
             label {...}
             user_data this
             callback {((UserInterface*)v)->CameraClearColorBrowserCB(o)}
-            private xywh {295 295 25 75}
+            private xywh {325 295 25 75}
           }
         }
         Fl_Choice CameraSceneChoice {
           label {Scene:}
           user_data this
-          callback {((UserInterface*)v)->CameraSceneCB(o)} open
-          private xywh {390 280 110 25} down_box BORDER_BOX
+          callback {((UserInterface*)v)->CameraSceneCB(o)}
+          private xywh {420 280 110 25} down_box BORDER_BOX
         } {}
         Fl_Choice CameraWinChoice {
           label {Window:}
           user_data this
-          callback {((UserInterface*)v)->CameraWinCB(o)} open
-          private xywh {390 315 110 25} down_box BORDER_BOX
+          callback {((UserInterface*)v)->CameraWinCB(o)}
+          private xywh {420 315 110 25} down_box BORDER_BOX
         } {}
+        Fl_Button {} {
+          label {Next Stats}
+          user_data this
+          callback {((UserInterface*)v)->CamStatisticsCB(o)}
+          xywh {115 290 80 25}
+        }
+        Fl_Value_Input CamFrameBin {
+          label {Frame Bin:}
+          user_data this
+          callback {((UserInterface*)v)->CameraFrameBinCB(o)}
+          xywh {140 335 55 25} deactivate
+        }
       }
       Fl_Group WindowGroup {
         xywh {175 165 320 260} box ENGRAVED_FRAME align 5 hide
@@ -378,7 +390,7 @@ class UserInterface {open
         Fl_Choice EnvFogMode {
           label {Fog Mode:}
           user_data this
-          callback {((UserInterface*)v)->EnvFogModeCB(o)}
+          callback {((UserInterface*)v)->EnvFogModeCB(o)} open
           xywh {244 322 101 25} down_box BORDER_BOX
         } {
           menuitem {} {
@@ -1006,6 +1018,8 @@ class UserInterface {open
   decl {void LightSpotCB(Fl_Value_Input*);} {}
   decl {void ParticleRelativeCB(Fl_Check_Button*);} {}
   decl {void ParticleEnabledCB(Fl_Check_Button*);} {}
+  decl {void CamStatisticsCB(Fl_Button*);} {}
+  decl {void CameraFrameBinCB(Fl_Value_Input*);} {}
 } 
 
 decl {\#pragma comment(lib, "fltk.lib")} {public

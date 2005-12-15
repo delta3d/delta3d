@@ -113,6 +113,13 @@ private:
   Fl_Choice *CameraWinChoice;
   inline void cb_CameraWinChoice_i(Fl_Choice*, void*);
   static void cb_CameraWinChoice(Fl_Choice*, void*);
+  inline void cb_Next_i(Fl_Button*, void*);
+  static void cb_Next(Fl_Button*, void*);
+public:
+  Fl_Value_Input *CamFrameBin;
+private:
+  inline void cb_CamFrameBin_i(Fl_Value_Input*, void*);
+  static void cb_CamFrameBin(Fl_Value_Input*, void*);
 public:
   Fl_Group *WindowGroup;
 private:
@@ -531,12 +538,10 @@ private:
   void LightSpotCB(Fl_Value_Input*);
   void ParticleRelativeCB(Fl_Check_Button*);
   void ParticleEnabledCB(Fl_Check_Button*);
+  void CamStatisticsCB(Fl_Button*);
+  void CameraFrameBinCB(Fl_Value_Input*);
 };
-
-#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #pragma comment(lib, "fltk.lib")
 #pragma comment(lib, "wsock32.lib")
 #pragma comment(lib, "comctl32.lib")
-#endif
-
 #endif
