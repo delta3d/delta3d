@@ -1,0 +1,8 @@
+Import('*')
+
+import glob
+
+srcs = SGlob('*.cpp')
+deps = []
+       
+BuildLib( 'dtNet', srcs, deps, [] )
