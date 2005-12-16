@@ -2,6 +2,7 @@
 
 #ifndef gui_fltk_h
 #define gui_fltk_h
+
 #include <FL/Fl.H>
 #include "dtCore/base.h"
 ///Do not create directly - use dtCore::GUI instead
@@ -541,7 +542,11 @@ private:
   void CamStatisticsCB(Fl_Button*);
   void CameraFrameBinCB(Fl_Value_Input*);
 };
-#pragma comment(lib, "fltk.lib")
-#pragma comment(lib, "wsock32.lib")
-#pragma comment(lib, "comctl32.lib")
-#endif
+
+#ifdef _MSC_VER
+#   pragma comment(lib, "fltk.lib")
+#   pragma comment(lib, "wsock32.lib")
+#   pragma comment(lib, "comctl32.lib")
+#endif // _MSC_VER
+
+#endif //gui_fltk_h
