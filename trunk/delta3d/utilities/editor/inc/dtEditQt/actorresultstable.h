@@ -23,12 +23,12 @@
 #ifndef DELTA_ACTORRESULTSTABLE
 #define DELTA_ACTORRESULTSTABLE
 
-#include <QWidget>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
+#include <QtGui/QWidget>
+#include <QtGui/QTreeWidget>
+#include <QtGui/QTreeWidgetItem>
 #include <vector>
 #include <osg/ref_ptr>
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
 
 class QGroupBox;

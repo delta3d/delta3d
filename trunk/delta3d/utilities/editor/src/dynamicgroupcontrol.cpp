@@ -25,7 +25,7 @@
 //#include "dtDAL/actorproxy.h"
 //#include "dtDAL/ActorProperty.h"
 //#include "dtDAL/EnginePropertyTypes.h"
-#include <QWidget>
+#include <QtGui/QWidget>
 
 namespace dtEditQt 
 {

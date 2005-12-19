@@ -28,9 +28,9 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
-#include <QGridLayout>
-#include <QWidget>
-#include <QIntValidator>
+#include <QtGui/QGridLayout>
+#include <QtGui/QWidget>
+#include <QtGui/QIntValidator>
 
 namespace dtEditQt 
 {

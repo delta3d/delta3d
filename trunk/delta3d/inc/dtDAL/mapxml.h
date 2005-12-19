@@ -502,6 +502,12 @@ namespace dtDAL
         void AddCharacters(const std::string& string);
 
         void AddIndent();
+        
+        //disable copy constructor
+        MapWriter(const MapWriter& toCopy): mFormatter("UTF-8", NULL, &mFormatTarget, xerces_dt::XMLFormatter::NoEscapes, xerces_dt::XMLFormatter::DefaultUnRep) {}
+        //disable operator = 
+        MapWriter& operator=(const MapWriter& assignTo) { return *this;}
+        
 
     };
 

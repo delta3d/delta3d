@@ -32,19 +32,19 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
-#include <QColorDialog>
-#include <QColor>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPainter>
-#include <QPaintDevice>
-#include <QPaintEngine>
-#include <QPushButton>
-#include <QSize>
-#include <QStyleOptionViewItem>
-#include <QWidget>
+#include <QtGui/QColorDialog>
+#include <QtGui/QColor>
+#include <QtGui/QGridLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPainter>
+#include <QtGui/QPaintDevice>
+#include <QtGui/QPaintEngine>
+#include <QtGui/QPushButton>
+#include <QtCore/QSize>
+#include <QtGui/QStyleOptionViewItem>
+#include <QtGui/QWidget>
 
 namespace dtEditQt {
 

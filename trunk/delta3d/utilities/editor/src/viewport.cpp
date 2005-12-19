@@ -19,8 +19,8 @@
 *
 * @author Matthew W. Campbell
 */
-#include <QAction>
-#include <QMouseEvent>
+#include <QtGui/QAction>
+#include <QtGui/QMouseEvent>
 
 #include "dtEditQt/viewport.h"
 #include "dtEditQt/viewportoverlay.h"
@@ -197,10 +197,35 @@ namespace dtEditQt
         if (getAutoSceneUpdate())
             updateActorProxyBillboards();
 
-        this->frameStamp->setFrameNumber(this->frameStamp->getFrameNumber()+1);
+        if(ViewportManager::getInstance().IsPagingEnabled())
+        {
+           if (osgDB::Registry::instance()->getDatabasePager())
+           {
+              osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
+              osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
+           }
+        }
+
+        frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::getInstance().GetStartTick(), osg::Timer::instance()->tick()));
+        frameStamp->setFrameNumber(frameStamp->getFrameNumber()+1);
+
+
         this->sceneView->update();
         this->sceneView->cull();
         this->sceneView->draw();
+
+        if(ViewportManager::getInstance().IsPagingEnabled())
+        {
+           if(osgDB::Registry::instance()->getDatabasePager())
+           {
+              osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
+
+              double cleanupTime = ViewportManager::getInstance().getMasterScene()->GetPagingCleanup();
+              osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*sceneView->getState(), cleanupTime);
+
+              sceneView->flushDeletedGLObjects(cleanupTime);  
+           }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

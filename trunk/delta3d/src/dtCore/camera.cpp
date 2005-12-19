@@ -141,6 +141,7 @@ Camera::Camera( const std::string& name )
 
 Camera::~Camera()
 {
+   mCameraGroup->RemoveCamera(this);
    DeregisterInstance(this);
 }
 

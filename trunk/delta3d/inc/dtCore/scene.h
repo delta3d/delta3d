@@ -203,12 +203,18 @@ namespace dtCore
       */
       void DisablePaging();
 
+      /// Returns if paging is enabled
+      inline bool IsPagingEnabled() const { return mPagingEnabled; }
+
       /**
       *  Set's Slice time allocated for scene cleanup
       *  default 0.0025
       *  @param allocated cleanup time in seconds
       */
       void SetPagingCleanup(double pCleanup){mCleanupTime = pCleanup;}
+
+      /// Get the cleanup time for paging
+      double GetPagingCleanup() { return mCleanupTime; }
 
       /**
       * Sets target frame rate for database pager, default 60

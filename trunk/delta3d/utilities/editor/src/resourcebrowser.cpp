@@ -20,7 +20,7 @@
 * @author Teague Coonan
 */
 
-#include <QAction>
+#include <QtGui/QAction>
 
 #include "dtEditQt/resourcebrowser.h"
 #include "dtEditQt/tabcontainer.h"

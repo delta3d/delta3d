@@ -19,18 +19,18 @@
 *
 * @author Matthew W. Campbell
 */
-#include <QApplication>
-#include <QMenu>
-#include <QMenuBar>
-#include <QToolBar>
-#include <QDockWidget>
-#include <QSplitter>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QCloseEvent>
-#include <QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QMenu>
+#include <QtGui/QMenuBar>
+#include <QtGui/QToolBar>
+#include <QtGui/QDockWidget>
+#include <QtGui/QSplitter>
+#include <QtGui/QStatusBar>
+#include <QtGui/QMessageBox>
+#include <QtGui/QCloseEvent>
+#include <QtCore/QTimer>
 #include <dtCore/uniqueid.h>
-#include <QIcon>
+#include <QtGui/QIcon>
 
 #include "dtDAL/project.h"
 #include "dtDAL/librarymanager.h"
@@ -515,6 +515,13 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
+    void MainWindow::onActorProxyNameChanged(osg::ref_ptr<dtDAL::ActorProxy> proxy, std::string oldName)
+    {
+        EditorData::getInstance().getCurrentMap()->SetModified(true);
+        updateWindowTitle();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
     void MainWindow::onActorProxyCreated(osg::ref_ptr<dtDAL::ActorProxy> proxy, bool forceNoAdjustments)
     {
         EditorData::getInstance().getCurrentMap()->SetModified(true);
@@ -574,6 +581,8 @@ namespace dtEditQt
         connect(&EditorEvents::getInstance(),
             SIGNAL(actorPropertyChanged(proxyRefPtr, propertyRefPtr)),
             this, SLOT(onActorPropertyChanged(proxyRefPtr, propertyRefPtr)));
+        connect(&EditorEvents::getInstance(), SIGNAL(proxyNameChanged(proxyRefPtr, std::string)), 
+           this, SLOT(onActorProxyNameChanged(proxyRefPtr, std::string)));
     }
 
     ///////////////////////////////////////////////////////////////////////////////

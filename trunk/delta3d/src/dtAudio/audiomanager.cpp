@@ -11,9 +11,9 @@
 #endif
 
 #include "dtAudio/audiomanager.h"
-#include "dtCore/system.h"
-#include "dtCore/camera.h"
-
+#include <dtCore/system.h>
+#include <dtCore/camera.h>
+#include <dtUtil/log.h>
 
 #if   defined(WIN32) | defined(_WIN32)
 #pragma warning( disable : 4800 )
@@ -1252,7 +1252,7 @@ AudioManager::Pause( const double deltaFrameTime )
    }
 
 
-   std::cout << "paused5" << std::endl;
+   LOGN_ALWAYS("audiomanager.cpp", "paused5");
    // remove stopped sounds from the active list
    while( stk.size() )
    {

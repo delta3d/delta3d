@@ -20,16 +20,16 @@
 * @author Curtiss Murphy
 */
 
-#include <QComboBox>
-#include <QDirModel>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QHeaderView>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QStringList>
-#include <QTreeView>
+#include <QtGui/QComboBox>
+#include <QtGui/QDirModel>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtCore/QStringList>
+#include <QtGui/QTreeView>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
 #include "dtDAL/librarymanager.h"

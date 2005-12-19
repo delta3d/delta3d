@@ -22,4 +22,4 @@ if OS != 'darwin':
    srcs.remove( 'deltawin_carbon.cpp' )
    srcs.remove( 'uniqueid_macosx.cpp' )
     
-BuildLib( 'dtCore', srcs, deps, ['DT_CORE_LIBRARY', 'NOMINMAX'] )
+env.BuildLib( 'dtCore', srcs, deps, ['DT_CORE_LIBRARY', 'NOMINMAX'] )

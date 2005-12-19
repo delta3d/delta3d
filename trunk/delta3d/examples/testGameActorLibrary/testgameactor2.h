@@ -29,7 +29,7 @@ class DT_EXAMPLE_EXPORT TestGameActor2 : public dtGame::GameActor
    public:
    
       /// Constructor
-      TestGameActor2();
+      TestGameActor2(dtGame::GameActorProxy& proxy);
    
       /// Destructor
       virtual ~TestGameActor2();

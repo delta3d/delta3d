@@ -90,7 +90,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib,$(PYTHON_LIB_PATH)"
-				GenerateDebugInformation="FALSE"
+				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -135,6 +135,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\dtScript\dtscript.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtScript\export.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtScript\scriptmanager.h">

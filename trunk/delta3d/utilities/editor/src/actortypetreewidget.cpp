@@ -20,12 +20,12 @@
 * @author Curtiss Murphy
 */
 
-#include <QIcon>
+#include <QtGui/QIcon>
 
 #include "dtEditQt/actortypetreewidget.h"
 #include "dtDAL/librarymanager.h"
 #include "dtEditQt/uiresources.h"
-#include <QStringList>
+#include <QtCore/QStringList>
 #include <dtUtil/log.h>
 namespace dtEditQt 
 {

@@ -19,7 +19,7 @@
  *
  * @author Matthew W. Campbell
 */
-#include <QAction>
+#include <QtGui/QAction>
 
 #include <osg/PolygonMode>
 #include <osg/PolygonOffset>

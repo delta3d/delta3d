@@ -10,4 +10,4 @@ if env.get('rti') :
 
    deps = [ 'dtCore', 'dtABC', 'dtHLA', 'dtUtil'  ]
 
-   BuildProgram( 'hlaStealthViewer', srcs, deps )
+   env.BuildProgram( 'hlaStealthViewer', srcs, deps )

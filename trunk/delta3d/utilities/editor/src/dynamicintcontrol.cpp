@@ -28,11 +28,11 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
-#include <QGridLayout>
-#include <QWidget>
-#include <QLabel>
-#include <QLineEdit>
-#include <QIntValidator>
+#include <QtGui/QGridLayout>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QIntValidator>
 
 namespace dtEditQt 
 {

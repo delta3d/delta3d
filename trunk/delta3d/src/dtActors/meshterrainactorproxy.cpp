@@ -55,8 +55,7 @@ namespace dtActors
                 "Actor should be type dtCore::Object");
         }
 
-        obj->LoadFile(fileName);
-        if (obj->GetOSGNode() == NULL)
+        if (obj->LoadFile(fileName) == NULL)
         {
             LOG_ERROR("Error loading terrain mesh file: " + fileName);
         }

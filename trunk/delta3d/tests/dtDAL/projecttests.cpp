@@ -34,16 +34,14 @@
 
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
+#include <dtUtil/tree.h>
 #include <dtUtil/log.h>
-#include <dtDAL/mapxml.h>
 #include <dtUtil/exception.h>
+#include <dtUtil/stringutils.h>
+#include <dtDAL/mapxml.h>
 #include <dtDAL/fileutils.h>
 #include <dtDAL/datatype.h>
-#include <dtUtil/tree.h>
 
-#include <dtUtil/stringutils.h>
-
-#include <dtUtil/log.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
@@ -100,7 +98,7 @@ void ProjectTests::setUp() {
 //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 //        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
-        fileUtils.PushDirectory("project");
+        fileUtils.PushDirectory("dtDAL");
 
         fileUtils.PushDirectory("WorkingProject");
         fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);

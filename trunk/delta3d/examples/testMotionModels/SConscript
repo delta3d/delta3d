@@ -3,4 +3,4 @@ Import('*')
 srcs = SGlob( '*.cpp' )
 deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
 
-BuildProgram( 'testMotionModels', srcs, deps )
+env.BuildProgram( 'testMotionModels', srcs, deps )

@@ -25,10 +25,10 @@
 #include "dtEditQt/editorevents.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
-#include <QGridLayout>
-#include <QWidget>
-#include <QLabel>
-#include <QLineEdit>
+#include <QtGui/QGridLayout>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
 
 namespace dtEditQt 
 {

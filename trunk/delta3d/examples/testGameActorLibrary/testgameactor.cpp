@@ -34,7 +34,7 @@ TestGameActorProxy1::TestGameActorProxy1():ticksEnabled(false)
    SetClassName("TestGameActor1");
 }
 
-TestGameActorProxy1::~TestGameActorProxy1()
+TestGameActorProxy1::~TestGameActorProxy1() 
 {
 
 }
@@ -47,6 +47,15 @@ void TestGameActorProxy1::BuildPropertyMap()
       dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetOneIsFired), 
       dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::OneIsFired), 
       "Sets/Gets if this actor has fired.", ""));
+
+   AddProperty(new dtDAL::IntActorProperty("Local Tick Count", "The number of tick messages received", 
+      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickLocals), 
+      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickLocals), 
+      "Sets/Gets the number of local tick messages counted.", ""));
+   AddProperty(new dtDAL::IntActorProperty("Remote Tick Count", "The number of tick messages received", 
+      dtDAL::MakeFunctor(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::SetTickRemotes), 
+      dtDAL::MakeFunctorRet(static_cast<TestGameActor1&>(GetGameActor()), &TestGameActor1::GetTickRemotes), 
+      "Sets/Gets the number of remote tick messages counted.", ""));
 }
 
 void TestGameActorProxy1::BuildInvokables()
@@ -62,7 +71,10 @@ void TestGameActorProxy1::BuildInvokables()
    AddInvokable(*new dtGame::Invokable("Toggle Ticks", 
       dtDAL::MakeFunctor(*this, &TestGameActorProxy1::ToggleTicks)));
    
-   //enable receiving tick messages.
+   //register local tick handles.  
+   //This is just to test local handler registration.  If you want to
+   //register to receive tick messages, you would override OnEnteredWorld()
+   //and add code like GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::TICK_LOCAL, *this, "Tick Local")
    RegisterMessageHandler(dtGame::MessageType::TICK_LOCAL, "Tick Local");
    RegisterMessageHandler(dtGame::MessageType::TICK_REMOTE, "Tick Remote");
    ticksEnabled = true;
@@ -70,7 +82,7 @@ void TestGameActorProxy1::BuildInvokables()
 
 void TestGameActorProxy1::CreateActor()
 {
-   mActor = new TestGameActor1();
+   mActor = new TestGameActor1(*this);
 }
 
 void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
@@ -91,7 +103,7 @@ void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
 ////////////////////////////////////////////////////////////////////
 // Actor Code
 ////////////////////////////////////////////////////////////////////
-TestGameActor1::TestGameActor1(): fired(false), tickLocals(0), tickRemotes(0)
+TestGameActor1::TestGameActor1(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy), fired(false), tickLocals(0), tickRemotes(0)
 {
 }
 
@@ -112,10 +124,12 @@ void TestGameActor1::Reset(const dtGame::Message& message)
 
 void TestGameActor1::TickLocal(const dtGame::Message& tickMessage)
 {
+   std::cout << "TickLocal" << std::endl;
    tickLocals++;
 }
 
 void TestGameActor1::TickRemote(const dtGame::Message& tickMessage)
 {
+      std::cout << "TickRemote" << std::endl;
    tickRemotes++;
 }

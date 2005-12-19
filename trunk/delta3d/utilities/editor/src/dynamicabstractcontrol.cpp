@@ -25,12 +25,12 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtEditQt/editorevents.h"
-#include <QColor> 
-#include <QPalette>
-#include <QWidget>
-#include <QPainter>
-#include <QSize>
-#include <QStyleOptionViewItem>
+#include <QtGui/QColor> 
+#include <QtGui/QPalette>
+#include <QtGui/QWidget>
+#include <QtGui/QPainter>
+#include <QtCore/QSize>
+#include <QtGui/QStyleOptionViewItem>
 
 namespace dtEditQt 
 {

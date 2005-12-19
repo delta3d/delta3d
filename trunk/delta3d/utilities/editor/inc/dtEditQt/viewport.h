@@ -19,11 +19,11 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __Viewport__h
-#define __Viewport__h
+#ifndef DELTA_STAGE_VIEWPORT
+#define DELTA_STAGE_VIEWPORT
 
-#include <QGLWidget>
-#include <QCursor>
+#include <QtOpenGL/QGLWidget>
+#include <QtGui/QCursor>
 
 #include <map>
 
@@ -31,7 +31,7 @@
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
 #include <dtUtil/enumeration.h>
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/actorproxy.h>
 #include "dtEditQt/camera.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/typedefs.h"

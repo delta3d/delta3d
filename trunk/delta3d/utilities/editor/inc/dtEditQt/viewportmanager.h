@@ -19,17 +19,18 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ViewportManager__h
-#define __ViewportManager__h
+#ifndef DELTA_VIEWPORTMANAGER
+#define DELTA_VIEWPORTMANAGER
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <map>
 #include <osg/Referenced>
 #include <dtCore/scene.h>
 #include <dtCore/uniqueid.h>
 #include <dtUtil/enumeration.h>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtCore/timer.h>
 #include "dtEditQt/typedefs.h"
 
 class QGLWidget;
@@ -159,6 +160,16 @@ namespace dtEditQt
             return this->numTextureUnits;
         }
 
+        /// Returns if database paging is enabled
+        bool IsPagingEnabled() const { return isPagingEnabled; }
+
+        /// Sets is database paging is enabled
+        void EnablePaging(bool enable); 
+        
+        dtCore::Timer_t GetStartTick() { return startTick; }
+
+        void SetStartTick(unsigned int time) { startTick = time; }
+
     public slots:
         /**
          * Called when an actor property has changed.  This method simply tells the
@@ -207,7 +218,7 @@ namespace dtEditQt
          */
         void onEndChangeTransaction();
 
-    private:
+     private:
         ///Singletons shouldn't be created at the user's discretion.
         ViewportManager();
         ViewportManager(const ViewportManager &rhs);
@@ -237,9 +248,9 @@ namespace dtEditQt
         dtCore::RefPtr<dtCore::Scene> masterScene;
         dtCore::RefPtr<Camera> worldCamera;
         int numTextureUnits;
-        bool inChangeTransaction;
-
-    };
+        bool inChangeTransaction, isPagingEnabled;
+        dtCore::Timer_t startTick;
+    };   
 }
 
 #endif

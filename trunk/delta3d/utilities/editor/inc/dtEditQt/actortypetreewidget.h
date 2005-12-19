@@ -19,13 +19,13 @@
 *
 * @author Curtiss Murphy
 */
-#ifndef __ActorTypeTreeWidget__h
-#define __ActorTypeTreeWidget__h
+#ifndef DELTA_ACTORTYPETREEWIDGET
+#define DELTA_ACTORTYPETREEWIDGET
 
-#include <QTreeWidgetItem>
-#include <QTreeWidget>
+#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QTreeWidget>
 #include <osg/ref_ptr>
-#include "dtDAL/actortype.h"
+#include <dtDAL/actortype.h>
 
 namespace dtEditQt {
 

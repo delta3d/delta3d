@@ -22,7 +22,7 @@ deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'isense', 'o
         'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
         'Carbon' ]
 
-dtActors = BuildLib( 'dtActors', srcs, deps, ['DT_PLUGIN'],
+dtActors = env.BuildLib( 'dtActors', srcs, deps, ['DT_PLUGIN'],
                      overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
 
 if OS == 'darwin':

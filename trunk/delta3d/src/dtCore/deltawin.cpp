@@ -103,7 +103,8 @@ DeltaWin::DeltaWin( std::string name, int x, int y, int width, int height, bool 
    mMouse = new Mouse(mKeyboardMouse,"mouse");
    
    mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
-   mKeyboardMouse->startThread();
+   //mKeyboardMouse->setAutoRepeatMode(false);
+   //mKeyboardMouse->startThread();
 
    if(!fullScreen)
    {
@@ -139,7 +140,8 @@ mShowCursor(true)
    mMouse = new Mouse(mKeyboardMouse,"mouse");
 
    mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
-   mKeyboardMouse->startThread();
+   //mKeyboardMouse->startThread();
+   //mKeyboardMouse->setAutoRepeatMode(false);
 
    ShowCursor();
 }
@@ -179,6 +181,13 @@ const std::string& DeltaWin::GetWindowTitle() const
 {
    return mRenderSurface->getWindowName();
 }
+
+void DeltaWin::Update()
+{
+   if (mKeyboardMouse && !mKeyboardMouse->isRunning())
+      mKeyboardMouse->update(*mKeyboardMouse->getCallback());
+}
+
 
 /*!
  * Calculate the screen coordinates given a window coordinate. Screen

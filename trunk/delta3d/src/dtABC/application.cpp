@@ -19,7 +19,7 @@ XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(Application)
 
-Application::Application(const std::string& configFilename) :  BaseABC("Application")
+Application::Application(const std::string& configFilename) : BaseABC("Application")
 {
    RegisterInstance(this);
 

@@ -56,7 +56,8 @@ namespace dtActors
             if(!ps)
                 EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::ParticleSystem");
 
-            ps->LoadFile(fileName);
+            if(!ps->LoadFile(fileName))
+               LOG_ERROR("Could not load the file" + fileName);
         }
 
         /**

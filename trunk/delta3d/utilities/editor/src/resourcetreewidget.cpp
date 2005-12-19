@@ -19,10 +19,10 @@
 *
 * @author Teague Coonan
 */
-#include <QString>
-#include <QList>
-#include <QPixmap>
-#include <QIcon>
+#include <QtCore/QString>
+#include <QtCore/QList>
+#include <QtGui/QPixmap>
+#include <QtGui/QIcon>
 
 #include "dtEditQt/resourcetreewidget.h"
 #include <dtUtil/log.h>

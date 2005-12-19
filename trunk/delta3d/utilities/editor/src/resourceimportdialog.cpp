@@ -19,22 +19,22 @@
 *
 * @author Teague Coonan
 */
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QLabel>
-#include <QGroupBox>
-#include <QGridLayout>
-#include <QBoxLayout>
-#include <QComboBox>
+#include <QtGui/QFileDialog>
+#include <QtCore/QFileInfo>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QLabel>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QBoxLayout>
+#include <QtGui/QComboBox>
 
 #include <map>
 
 #include "dtEditQt/resourceimportdialog.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/project.h"
-#include "dtDAL/fileutils.h"
+#include <dtDAL/datatype.h>
+#include <dtDAL/project.h>
+#include <dtDAL/fileutils.h>
 #include <dtUtil/log.h>
 
 namespace dtEditQt

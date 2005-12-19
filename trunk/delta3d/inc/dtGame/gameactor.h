@@ -33,6 +33,8 @@ namespace dtGame
    class Message;
    class ActorUpdateMessage;
    class GameManager;
+   
+   class GameActorProxy;
    /**
     * @class GameActor
     * This class will be the main base class for actors being used by the
@@ -43,28 +45,38 @@ namespace dtGame
    {
       public:
          /// Constructor
-   		GameActor();
+   		GameActor(GameActorProxy& proxy);
              
          /// Destructor
    		virtual ~GameActor();
-                	
+         
+         /**
+          * @return the GameActorProxy for this game actor.
+          */
+         GameActorProxy& GetGameActorProxy() { return *mProxy; }
+
+         /**
+          * @return the GameActorProxy for this game actor.
+          */
+         const GameActorProxy& GetGameActorProxy() const { return *mProxy; }
+                	                  
          /** 
           * Returns if the actor is remote
           * @return True is the actor is remote, false if not
           */
-         inline bool IsRemote() const { return isRemote; }
+         inline bool IsRemote() const { return mRemote; }
    	
          /**
           * Returns is the actor is published
           * @return True is the actor is published, false if not
           */
-         inline bool IsPublished() const { return isPublished; }
+         inline bool IsPublished() const { return mPublished; }
       	
          /**
           * Method for handling local ticks.  This will called by the "Tick Local" invokable.
           * This is designed to be registered to receive TICK_LOCAL messages, but that registration is not done
           * be default
-          * @see GameActorProxy#RegisterMessageHandler
+          * @see GameManager#RegisterGlobalMessageListener
           * @param tickMessage the actual message
           */
          virtual void TickLocal(const Message& tickMessage);
@@ -73,10 +85,11 @@ namespace dtGame
           * Method for handling remote ticks.  This will called by the "Tick Remote" invokable
           * This is designed to be registered to receive TICK_REMOTE messages, but that registration is not done
           * be default
-          * @see GameActorProxy#RegisterMessageHandler
+          * @see GameManager#RegisterGlobalMessageListener
           * @param tickMessage the actual message
           */
          virtual void TickRemote(const Message& tickMessage);
+         
 
       protected:
    
@@ -91,17 +104,19 @@ namespace dtGame
           * Sets is an actor is remote
           * @param remote Should be true is the actor is remote, false if not
           */
-         inline void SetRemote(bool remote) { isRemote    = remote;    }
+         void SetRemote(bool remote) { mRemote = remote; }
       		
          /** 
           * Sets is an actor is published
           * @param remote Should be true is the actor is published, false if not
           */
-         inline void SetPublished(bool published) { isPublished = published; }
-   
+         void SetPublished(bool published) { mPublished = published; }
+            
          friend class GameActorProxy;
-         bool isPublished;
-         bool isRemote;
+         GameActorProxy* mProxy;
+         
+         bool mPublished;
+         bool mRemote;
    };
 		
    /**
@@ -203,26 +218,35 @@ namespace dtGame
           * Gets a list of the invokables currently registered for this
           * Game actor proxy.
           */
-         void GetInvokableList(std::vector<Invokable*>& toFill);
+         void GetInvokables(std::vector<Invokable*>& toFill);
 
          /**
           * Gets a const list of the invokables currently registered for this
           * Game actor proxy.
           */
-         void GetInvokableList(std::vector<const Invokable*>& toFill) const;
+         void GetInvokables(std::vector<const Invokable*>& toFill) const;
          
          /**
           * Populates an update message from the actor proxy.
           * @param update The message to populate.
           * @param propNames  the properties to include in the message.
           */
-         void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames);
+         virtual void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) throw();
           
          /**
           * Populates an update message from the actor proxy.  It will add all property values to the message.
           * @param update The message to populate.
           */
-         void PopulateActorUpdate(ActorUpdateMessage& update);
+         virtual void PopulateActorUpdate(ActorUpdateMessage& update) throw();
+
+         /**
+          * Takes and actor update message and applys the parameter values to change the 
+          * the property values of the this actor proxy.  This is virtual so it can be extended
+          * or replaced to accomodate special behavior or special subclasses of actor update.
+          * 
+          * @param msg the message to apply.
+          */
+         virtual void ApplyActorUpdate(const ActorUpdateMessage& msg) throw(); 
          
          /**
           * Get all of the invokables registered for a given message type.
@@ -268,6 +292,12 @@ namespace dtGame
       protected:
          
          /**
+          * Instantiates the actor that the proxy abstracts.
+          * This must ALSO call SetGameActorProxy
+          */
+         virtual void CreateActor() = 0;
+
+         /**
           * Called when an actor is first placed in the "world"
           */
          virtual void OnEnteredWorld() { }	
@@ -276,11 +306,6 @@ namespace dtGame
          void UnregisterMessageHandler(const MessageType& type, const std::string& invokableName);   
 		
       private:
-
-         /**
-          * Instantiates the actor that the proxy abstracts
-          */
-         virtual void CreateActor() { mActor = new GameActor; }
              
          /**
           * Populates an update message from the actor proxy.
@@ -288,7 +313,7 @@ namespace dtGame
           * @param propNames the list of properties to include in the message.
           * @param limitProperties true if the propNames list should be respected or false if all properties should added.
           */
-         void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties);
+         void PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties) throw();
 	
          /** 
           * Sets if the actor is remote by invoking the actor implementation

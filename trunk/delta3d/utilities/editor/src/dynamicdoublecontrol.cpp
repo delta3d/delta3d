@@ -28,9 +28,9 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
-#include <QWidget>
-#include <QLineEdit>
-#include <QDoubleValidator>
+#include <QtGui/QWidget>
+#include <QtGui/QLineEdit>
+#include <QtGui/QDoubleValidator>
 
 namespace dtEditQt 
 {

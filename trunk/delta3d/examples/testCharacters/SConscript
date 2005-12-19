@@ -3,4 +3,4 @@ Import('*')
 srcs = SGlob( '*.cpp' )
 deps = [ 'dtCore', 'dtABC', 'dtChar', 'dtUtil' ]
 
-BuildProgram( 'testCharacters', srcs, deps )
+env.BuildProgram( 'testCharacters', srcs, deps )

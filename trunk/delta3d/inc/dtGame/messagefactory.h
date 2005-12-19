@@ -24,6 +24,8 @@
 #include <osg/Referenced>
 #include <vector>
 #include <map>
+#include <dtCore/refptr.h>
+#include <sstream>
 #include <dtUtil/objectfactory.h>
 #include <dtUtil/enumeration.h>
 #include "dtGame/export.h"
@@ -31,15 +33,9 @@
 #include "dtGame/message.h"
 #include "dtGame/machineinfo.h"
 
-namespace dtCore
-{
-   template <typename T>
-   class RefPtr;
-}
-
 namespace dtGame
 {
-   class DT_GAME_EXPORT MessageFactory : public osg::Referenced
+   class DT_GAME_EXPORT MessageFactory
    {
       public:
 
@@ -61,8 +57,8 @@ namespace dtGame
          MessageFactory(const std::string &name, const MachineInfo& machine, const std::string &desc = "");
 
          /// Destructor
-         virtual ~MessageFactory();
-
+         ~MessageFactory();
+         
          /**
           * Function in which all supported message types will be registered
           * @param The type to register
@@ -102,19 +98,19 @@ namespace dtGame
          void GetSupportedMessageTypes(std::vector<const MessageType*> &vec) throw();
 
          /**
-          * Returns a MessageType to the corresponding id
-          * @return A pointer to the MessageType
+          * Returns a MessageType for the corresponding id.
+          * @note this throws an exception rather than returning a NULL pointer when the id is not found because 
+          *       One should never call this with an invalid id.
+          * @return A reference to the MessageType
+          * @throws dtUtil::Exception with enum MessageFactoryException::TYPE_NOT_REGISTERED if the type is not found.
           */
-         const MessageType* GetMessageTypeById(const unsigned short id) const throw()
-         {
-            std::map<unsigned short, const MessageType*>::const_iterator itor = mIdMap.find(id);
-            if (itor == mIdMap.end())
-            {
-               LOG_ERROR("This id was not found in the message type map");
-               return NULL;
-            }
-            return itor->second;
-         }
+         const MessageType &GetMessageTypeById(unsigned short id) const throw(dtUtil::Exception);
+
+         /**
+          * Returns a MessageType for the corresponding name
+          * @return A pointer to the MessageType or NULL if there was no matching message type.
+          */
+         const MessageType* GetMessageTypeByName(const std::string& name) const throw();
 
          /**
           * Creates a message from the factory
@@ -132,7 +128,7 @@ namespace dtGame
           * @throws dtUtil::Exception if the message cannot be cloned.
           */
          dtCore::RefPtr<Message> CloneMessage(const Message& msg) throw(dtUtil::Exception);
-
+         
       private:
 
          std::string mName, mDescription;
@@ -148,7 +144,11 @@ namespace dtGame
    void MessageFactory::RegisterMessageType(const MessageType &type)
    {
       if (mIdMap.find(type.GetId()) != mIdMap.end())
-         EXCEPT(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED, "This message type has already been registered");
+      {
+         std::ostringstream ss;
+         ss << "A MessageType with id " << type.GetId() << " has already been registered.";
+         EXCEPT(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED, ss.str());
+      }
       
       mMessageFactory->RegisterType<T>(&type);
       

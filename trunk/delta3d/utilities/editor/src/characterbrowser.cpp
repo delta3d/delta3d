@@ -20,21 +20,21 @@
 * @author Teague Coonan
 */
 
-#include <QDir>
-#include <QHeaderView>
+#include <QtCore/QDir>
+#include <QtGui/QHeaderView>
 
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QSplitter>
-#include <QString>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
+#include <QtGui/QSplitter>
+#include <QtCore/QString>
 
-#include <QGroupBox>
+#include <QtGui/QGroupBox>
 
-#include <QPushButton>
-#include <QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
 
-#include <QAction>
-#include <QContextMenuEvent>
+#include <QtGui/QAction>
+#include <QtGui/QContextMenuEvent>
 
 #include "dtEditQt/resourcetreewidget.h"
 #include "dtDAL/project.h"

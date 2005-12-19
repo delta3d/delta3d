@@ -10,4 +10,4 @@ if OS != 'darwin':
 
    deps = [ 'dtBSP', 'dtABC', 'dtCore', 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
 
-   BuildProgram( 'psEditor', srcs, deps )
+   env.BuildProgram( 'psEditor', srcs, deps, buildAppBundle = 0 )

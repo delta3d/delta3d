@@ -41,25 +41,25 @@ namespace dtUtil
     }
 
     //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(dtUtil::Log::LogMessageType level) 
+    void Exception::LogException(dtUtil::Log::LogMessageType level) const
     {
         LogException(level,dtUtil::Log::GetInstance());
     }
 
     //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) 
+    void Exception::LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) const
     {
         LogException(level,dtUtil::Log::GetInstance(loggerName));
     }
 
     //////////////////////////////////////////////////////////////////////////
-    void Exception::LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) 
+    void Exception::LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const
     {
         if (logger.IsLevelEnabled(level)) 
         {
             logger.LogMessage(level,__FUNCTION__, __LINE__,
                     "Exception Thrown: %s File: %s  Line: %d  Type: %s",
-                    mMessage.c_str(),mFileName.c_str(),mLineNum,
+                    mMessage.c_str(), mFileName.c_str(), mLineNum,
                     mType.GetName().c_str());
         }
 

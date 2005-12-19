@@ -22,16 +22,16 @@
 
 #include "dtEditQt/editoraboutbox.h"
 #include "dtEditQt/uiresources.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QPixmap>
-#include <QTextEdit>
-#include <QTabWidget>
-#include <QTextStream>
-#include <QFile>
-#include <QIcon>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QLabel>
+#include <QtGui/QPixmap>
+#include <QtGui/QTextEdit>
+#include <QtGui/QTabWidget>
+#include <QtCore/QTextStream>
+#include <QtCore/QFile>
+#include <QtGui/QIcon>
 
 namespace dtEditQt
 {

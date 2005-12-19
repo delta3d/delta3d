@@ -23,28 +23,34 @@
 
 namespace dtGame
 {
-   float TickMessage::GetDeltaSimTime()
+   float TickMessage::GetDeltaSimTime() const
    {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("DeltaSimTime"));
+      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("DeltaSimTime"));
       return mp->GetValue(); 
    }
 
-   float TickMessage::GetDeltaRealTime()
+   float TickMessage::GetDeltaRealTime() const
    {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("DeltaRealTime"));
+      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("DeltaRealTime"));
       return mp->GetValue();
    }
 
-   float TickMessage::GetSimTimeScale()
+   float TickMessage::GetSimTimeScale() const
    {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("SimTimeScale"));
+      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("SimTimeScale"));
       return mp->GetValue();
    }
 
-   long TickMessage::GetSimTimeOfDay()
+   double TickMessage::GetSimulationTime() const
    {
-      LongIntMessageParameter *mp = static_cast<LongIntMessageParameter*>(GetParameter("SimTimeOfDay"));
+      const DoubleMessageParameter *mp = static_cast<const DoubleMessageParameter*>(GetParameter("SimulationTime"));
       return mp->GetValue();
+   }
+
+   void TickMessage::SetSimulationTime(double newSimulationTime)
+   {
+      DoubleMessageParameter *mp = static_cast<DoubleMessageParameter*>(GetParameter("SimulationTime"));
+      mp->SetValue(newSimulationTime);
    }
 
    void TickMessage::SetDeltaSimTime(float newTime)
@@ -65,27 +71,17 @@ namespace dtGame
       mp->SetValue(newScale);
    }
 
-   void TickMessage::SetSimTimeOfDay(long newTimeOfDay)
-   {
-      LongIntMessageParameter *mp = static_cast<LongIntMessageParameter*>(GetParameter("SimTimeOfDay"));
-      mp->SetValue(newTimeOfDay);
-   }
+   //////////////////////////////////////////////////////////////////////////////
 
-   const std::string& TimerElapsedMessage::GetTimerName()
+   const std::string& TimerElapsedMessage::GetTimerName() const
    {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("TimerName"));
+      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("TimerName"));
       return mp->GetValue();
    }
 
-   long TimerElapsedMessage::GetSimTimeOfDay()
+   float TimerElapsedMessage::GetLateTime() const
    {
-      LongIntMessageParameter *mp = static_cast<LongIntMessageParameter*>(GetParameter("SimTimeOfDay"));
-      return mp->GetValue();
-   } 
-
-   float TimerElapsedMessage::GetLateTime()
-   {
-      FloatMessageParameter *mp = static_cast<FloatMessageParameter*> (GetParameter("LateTime"));
+      const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*> (GetParameter("LateTime"));
       return mp->GetValue();
    }
 
@@ -95,19 +91,49 @@ namespace dtGame
       mp->SetValue(name);
    }
 
-   void TimerElapsedMessage::SetSimTimeOfDay(long newTime)
-   {  
-      LongIntMessageParameter *mp = static_cast<LongIntMessageParameter*> (GetParameter("SimTimeOfDay"));
-      mp->SetValue(newTime);
-   }
-
    void TimerElapsedMessage::SetLateTime(float newTime)
    {
       FloatMessageParameter *mp = static_cast<FloatMessageParameter*> (GetParameter("LateTime"));
       mp->SetValue(newTime);
    }
 
-   const std::string& MapLoadedMessage::GetLoadedMapName()
+   //////////////////////////////////////////////////////////////////////////////
+   float TimeChangeMessage::GetTimeScale() const
+   {
+      return static_cast<const FloatMessageParameter*>(GetParameter("TimeScale"))->GetValue();
+   }
+
+   void TimeChangeMessage::SetTimeScale(float newTimeScale)
+   {
+      FloatMessageParameter *mp = static_cast<FloatMessageParameter*>(GetParameter("TimeScale"));
+      mp->SetValue(newTimeScale);
+   }
+
+   double TimeChangeMessage::GetSimulationTime() const
+   {
+      return static_cast<const DoubleMessageParameter*>(GetParameter("SimulationTime"))->GetValue();
+   }
+
+   void TimeChangeMessage::SetSimulationTime(double newSimulationTime)
+   {
+      DoubleMessageParameter *mp = static_cast<DoubleMessageParameter*>(GetParameter("SimulationTime"));
+      mp->SetValue(newSimulationTime);
+   }
+
+   double TimeChangeMessage::GetSimulationClockTime() const
+   {
+      return static_cast<const DoubleMessageParameter*>(GetParameter("SimulationClockTime"))->GetValue();
+   }
+
+   void TimeChangeMessage::SetSimulationClockTime(double newSimClockTime)
+   {
+      DoubleMessageParameter *mp = static_cast<DoubleMessageParameter*>(GetParameter("SimulationClockTime"));
+      mp->SetValue(newSimClockTime);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+
+   const std::string& MapLoadedMessage::GetLoadedMapName() const
    {
       const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("LoadedMapName"));
       return mp->GetValue();
@@ -119,9 +145,11 @@ namespace dtGame
       mp->SetValue(name);
    }
 
-   const std::string& NetServerRejectMessage::GetRejectionMessage()
+   //////////////////////////////////////////////////////////////////////////////
+
+   const std::string& NetServerRejectMessage::GetRejectionMessage() const
    {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("RejectionMessage"));
+      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("RejectionMessage"));
       return mp->GetValue();
    }
 
@@ -131,9 +159,11 @@ namespace dtGame
       mp->SetValue(msg);
    }
 
-   const std::string& RestartMessage::GetReason()
+   //////////////////////////////////////////////////////////////////////////////
+
+   const std::string& RestartMessage::GetReason() const
    {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("Reason"));
+      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("Reason"));
       return mp->GetValue();
    }
 
@@ -143,9 +173,11 @@ namespace dtGame
       mp->SetValue(reason);
    }
 
-   const std::string& ServerMessageRejected::GetCause()
+   //////////////////////////////////////////////////////////////////////////////
+
+   const std::string& ServerMessageRejected::GetCause() const
    {
-      StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("Cause"));
+      const StringMessageParameter *mp = static_cast<const StringMessageParameter*> (GetParameter("Cause"));
       return mp->GetValue();
    }
 

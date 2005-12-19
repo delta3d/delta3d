@@ -36,6 +36,7 @@
 #include <osgDB/FileNameUtils>
 #include "dtDAL/rbodyresourcetypehandler.h"
 #include "dtDAL/fileutils.h"
+#include <dtUtil/xercesutils.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
 #define snprintf _snprintf
@@ -45,56 +46,6 @@ XERCES_CPP_NAMESPACE_USE;
 
 namespace dtDAL
 {
-
-    /**
-     *  This is a simple class that lets us do easy (though not terribly efficient)
-     *  trancoding of XMLCh data to local code page for display.  This code was take from
-     *  the xerces-c 2.6 samples
-     *  <p>
-     *  It's main reason for existing is to allow short and quick translations for printing out debugging info.
-     *  </p>
-     */
-    class XMLStringConverter
-    {
-    public :
-        XMLStringConverter(const XMLCh* const charData): mData(NULL), mLocalForm(NULL)
-        {
-            if (charData != NULL)
-            {
-                mData = new XMLCh[XMLString::stringLen(charData) + 1];
-                XMLString::copyString(mData, charData);
-            }
-        }
-
-        ~XMLStringConverter()
-        {
-            delete[] mData;
-            if (mLocalForm != NULL)
-                XMLString::release(&mLocalForm);
-        }
-
-        /**
-        * returns the XMLCh string as a char*
-         */
-        const char* c_str()
-        {
-            if (mData == NULL)
-                return "";
-
-            if (mLocalForm == NULL)
-                mLocalForm = XMLString::transcode(mData);
-
-            return mLocalForm;
-        }
-
-        const std::string ToString() { return std::string(c_str()); }
-    private :
-        XMLCh* mData;
-        char* mLocalForm;
-        XMLStringConverter(const XMLStringConverter&) {}
-        XMLStringConverter& operator=(const XMLStringConverter&) { return *this;}
-    };
-
 
     const std::string RBodyResourceTypeHandler::mResourceDirectoryExtension("rbody");
     const std::string RBodyResourceTypeHandler::mConfigFileHeader("# ReplicantBody v0.1");
@@ -522,27 +473,27 @@ namespace dtDAL
     {
         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-            exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
-            XMLStringConverter(exc.getSystemId()).c_str(),
-            XMLStringConverter(exc.getMessage()).c_str());
+            exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getMessage()).c_str());
     }
 
     void RBodyResourceTypeHandler::RBodyErrorHandler::fatalError(const SAXParseException& exc)
     {
         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-            exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
-            XMLStringConverter(exc.getSystemId()).c_str(),
-            XMLStringConverter(exc.getMessage()).c_str());
+            exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getMessage()).c_str());
     }
 
     void RBodyResourceTypeHandler::RBodyErrorHandler::warning(const SAXParseException& exc)
     {
         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
             "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
-            exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
-            XMLStringConverter(exc.getSystemId()).c_str(),
-            XMLStringConverter(exc.getMessage()).c_str());
+            exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getMessage()).c_str());
     }
 
     void RBodyResourceTypeHandler::RBodyErrorHandler::resetErrors()

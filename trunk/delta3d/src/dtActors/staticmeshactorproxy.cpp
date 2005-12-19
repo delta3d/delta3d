@@ -191,8 +191,8 @@ namespace dtActors
         }
 
         //First load the mesh.
-        obj->LoadFile(fileName);
-        if (obj->GetOSGNode() == NULL)
+        
+        if (obj->LoadFile(fileName) == NULL)
         {
             LOG_ERROR("Error loading mesh file: " + fileName);
             return;

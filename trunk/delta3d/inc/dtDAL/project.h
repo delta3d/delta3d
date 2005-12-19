@@ -217,15 +217,16 @@ namespace dtDAL
      * @param name The name of the map to load.
      * @param scene The application to add the proxy objects to.
      * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+     * @param enablePaging pass true to enable paging in the scene
      * @return the map that was loaded into the scene.
      * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
      * @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
      * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
      */
-    Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false)
+    Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)
     {
         Map& m = GetMap(name);
-        LoadMapIntoScene(m, scene, addBillBoards);
+        LoadMapIntoScene(m, scene, addBillBoards, enablePaging);
         return m;
     }
 
@@ -234,9 +235,10 @@ namespace dtDAL
      * @param map The map to load into the scene
      * @param scene the scene to load the map into
      * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+     * @param enablePaging pass true to enable paging in the scene
      * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
      */
-    void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false);
+    void LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true);
 
     /**
      * Creates a new map and saves it.

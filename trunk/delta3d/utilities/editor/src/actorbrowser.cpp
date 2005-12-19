@@ -20,17 +20,17 @@
 * @author Curtiss Murphy
 */
 
-#include <QDirModel>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QHeaderView>
-#include <QLabel>
-#include <QPushButton>
-#include <QScrollArea>
-#include <QScrollBar>
-#include <QStringList>
-#include <QTreeView>
-#include <QTreeWidget>
+#include <QtGui/QDirModel>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QScrollArea>
+#include <QtGui/QScrollBar>
+#include <QtCore/QStringList>
+#include <QtGui/QTreeView>
+#include <QtGui/QTreeWidget>
 
 #include "dtEditQt/actorbrowser.h"
 #include "dtEditQt/viewportmanager.h"

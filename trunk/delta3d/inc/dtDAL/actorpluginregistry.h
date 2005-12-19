@@ -18,8 +18,8 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ActorPluginRegistry__h
-#define __ActorPluginRegistry__h
+#ifndef DELTA_ACTOR_PLUGIN_REGISTRY
+#define DELTA_ACTOR_PLUGIN_REGISTRY
 
 #include <vector>
 #include <osg/Referenced>

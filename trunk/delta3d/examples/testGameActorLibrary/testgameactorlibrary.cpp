@@ -21,6 +21,7 @@
 #include "testgameactorlibrary.h"
 #include "testgameactor.h"
 #include "testgameactor2.h"
+#include "testplayer.h"
 #include <dtCore/scene.h>
 #include <dtGame/datastream.h>
 #include <dtGame/messageparameter.h>
@@ -45,12 +46,14 @@ TestGameActorLibrary::TestGameActorLibrary() : dtDAL::ActorPluginRegistry("TestG
 void TestGameActorLibrary::RegisterActorTypes()
 {
    dtDAL::ActorType *test1 = new dtDAL::ActorType("Test1Actor", "ExampleActors", 
-      "These are example actors");
-   
+      "These are example actors");   
    mActorFactory->RegisterType<TestGameActorProxy1> (test1);
 
    dtDAL::ActorType *test2 = new dtDAL::ActorType("Test2Actor", "ExampleActors", 
       "These are example actors");
-
    mActorFactory->RegisterType<TestGameActorProxy2> (test2);      
+   
+   dtDAL::ActorType *player = new dtDAL::ActorType("TestPlayer","ExampleActors",
+      "Simple player actor.");
+   mActorFactory->RegisterType<TestPlayerProxy>(player);
 }

@@ -19,17 +19,17 @@
 *
 * @author William E. Johnson II
 */
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QListWidgetItem>
-#include <QListWidget>
-#include <QStringList>
-#include <QMainWindow>
-#include <QGroupBox>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QMessageBox>
+#include <QtGui/QFileDialog>
+#include <QtGui/QListWidgetItem>
+#include <QtGui/QListWidget>
+#include <QtCore/QStringList>
+#include <QtGui/QMainWindow>
+#include <QtGui/QGroupBox>
 
 #include "dtEditQt/libraryeditor.h"
 #include "dtEditQt/editordata.h"

@@ -19,8 +19,8 @@
 *
 * @author Teague Coonan
 */
-#include <QIcon>
-#include <QPixmap>
+#include <QtGui/QIcon>
+#include <QtGui/QPixmap>
 
 #include "dtEditQt/tabcontainer.h"
 

@@ -28,8 +28,8 @@
 #include <dtDAL/exceptionenum.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <QPushButton>
-#include <QHBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QHBoxLayout>
 
 namespace dtEditQt
 {

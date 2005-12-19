@@ -46,6 +46,8 @@ namespace dtGame
          ///Exception enumeration used when actors are in invalid states and code can't continue.
          static ExceptionEnum INVALID_ACTOR_STATE;
 
+         ///Game applcation was unable to initialize for some reason.
+         static ExceptionEnum GAME_APPLICATION_CONFIG_ERROR;
       protected:
          ExceptionEnum(const std::string &name) : Enumeration(name)
          {

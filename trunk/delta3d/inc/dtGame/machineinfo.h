@@ -108,7 +108,7 @@ namespace dtGame
           * Sets the unique id of a machine info
           * @param The new unique id
           */
-         void SetUniqueId(dtCore::UniqueId &newId) { mUniqueId = newId; }
+         void SetUniqueId(const dtCore::UniqueId &newId) { mUniqueId = newId; }
 
          MachineInfo& operator=(const MachineInfo& assignFrom) 
          {
@@ -141,7 +141,7 @@ namespace dtGame
             return mUniqueId > compareTo.mUniqueId;
          }
       private:
-         ~MachineInfo() {}
+         virtual ~MachineInfo() {}
          
          std::string mName;
          dtCore::UniqueId mUniqueId;

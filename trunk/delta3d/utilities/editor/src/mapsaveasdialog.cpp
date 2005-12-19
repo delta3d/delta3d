@@ -22,17 +22,17 @@
 
 #include "dtEditQt/mapsaveasdialog.h"
 
-#include <QGroupBox>
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTextEdit>
-#include <QValidator>
-#include <QPushButton>
-#include <QCloseEvent>
-#include <QMessageBox>
-#include <QGroupBox>
-#include <QLabel>
+#include <QtGui/QGroupBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QTextEdit>
+#include <QtGui/QValidator>
+#include <QtGui/QPushButton>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QMessageBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QLabel>
 
 #include "dtDAL/project.h"
 #include "dtDAL/map.h"

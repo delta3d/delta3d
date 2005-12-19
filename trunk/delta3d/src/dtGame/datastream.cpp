@@ -43,7 +43,25 @@ namespace dtGame
    DataStream::DataStream(): mBufferSize(0), mBufferCapacity(16), mReadPos(0), mWritePos(0)
    {
       mBuffer = new char[this->mBufferCapacity];
-      isLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;      
+      isLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;   
+      mAutoFreeBuffer = true;   
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   DataStream::DataStream(char *buffer, unsigned int bufferSize, bool autoFree)
+   {
+      if (bufferSize == 0)
+         EXCEPT(DataStreamException::BUFFER_INVALID,"Buffer size cannot be zero.");
+         
+      if (buffer == NULL)
+         EXCEPT(DataStreamException::BUFFER_INVALID,"Source buffer is not valid.");
+         
+      mBufferSize = bufferSize;
+      mBufferCapacity = bufferSize;
+      mReadPos = mWritePos = 0;
+      mBuffer = buffer;
+      mAutoFreeBuffer = autoFree;
+      isLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -66,6 +84,7 @@ namespace dtGame
          mBuffer = new char[mBufferCapacity];
          mWritePos = rhs.mWritePos;
          mReadPos = rhs.mReadPos;
+         mAutoFreeBuffer = rhs.mAutoFreeBuffer;
 
          if (mBufferSize > 0)
             memcpy(&rhs.mBuffer[0],&mBuffer[0],mBufferSize);
@@ -77,7 +96,8 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    DataStream::~DataStream()
    {
-      delete [] mBuffer;
+      if (mAutoFreeBuffer)
+         delete [] mBuffer;
    }
 
 

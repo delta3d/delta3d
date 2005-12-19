@@ -134,6 +134,24 @@ namespace dtGame {
       return param;
    }
    
+   const std::string BooleanMessageParameter::ToString() const 
+   {
+      const char* result = GetValue() ? "true" : "false";
+      return result;
+   }
+  
+   bool BooleanMessageParameter::FromString(const std::string &value) 
+   {  
+      bool result = false;
+      if (value == "true" || value == "True" || value == "1" || value == "TRUE")
+      {
+          result = true;
+      }
+      SetValue(result);
+      return true;            
+   }
+
+   
    void ResourceMessageParameter::ToDataStream(DataStream &stream) const 
    {
       stream.Write(mDescriptor.GetResourceIdentifier());
@@ -176,19 +194,27 @@ namespace dtGame {
 
             stok.tokenize(tokens, value);
 
+            std::string displayName;
+            std::string identifier;
+
             if (tokens.size() == 2)
             {
-                std::string displayName(tokens[0]);
-                std::string identifier(tokens[1]);
-
-                dtUtil::trim(identifier);
-                dtUtil::trim(displayName);
-
-                dtDAL::ResourceDescriptor descriptor(displayName, identifier);
-                SetValue(&descriptor);
+               displayName = tokens[0];
+               identifier = tokens[1];
             }
             else
-                result = false;
+            {
+               //assume the value is a descriptor and use it for both the 
+               //data and the display name.
+               displayName = tokens[0];
+               identifier = tokens[0];
+            }
+            
+            dtUtil::trim(identifier);
+            dtUtil::trim(displayName);
+
+            dtDAL::ResourceDescriptor descriptor(displayName, identifier);
+            SetValue(&descriptor);
         }
 
         return result;

@@ -29,7 +29,7 @@
 #include "dtDAL/datatype.h"
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
-#include <QWidget>
+#include <QtGui/QWidget>
 
 
 namespace dtEditQt 

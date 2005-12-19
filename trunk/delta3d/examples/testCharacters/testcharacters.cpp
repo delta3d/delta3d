@@ -171,7 +171,6 @@ public:
    void Config()
    {
       Application::Config();
-
       //adjust some lighting
       GetScene()->UseSceneLight(false);
 
@@ -271,7 +270,7 @@ int main()
                         GetDeltaDataPathList()  );
   
    RefPtr<TestCharactersApp> app = new TestCharactersApp( "config.xml" );
-   
+
    app->Config();
    app->Run();
 

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- * @author William E. Johnson II
+ * @author William E. Johnson II and David Guthrie
  */
 #ifndef DELTA_BASEMESSAGES
 #define DELTA_BASEMESSAGES
@@ -36,38 +36,26 @@ namespace dtGame
             AddParameter(new FloatMessageParameter("DeltaSimTime"));
             AddParameter(new FloatMessageParameter("DeltaRealTime"));
             AddParameter(new FloatMessageParameter("SimTimeScale"));
-            AddParameter(new LongIntMessageParameter("SimTimeOfDay"));
+            AddParameter(new DoubleMessageParameter("SimulationTime"));
          }
          
          /**
           * Gets the delta sim time variable associated with this message
           * @return The deltaSimTime
           */
-         float GetDeltaSimTime();
+         float GetDeltaSimTime() const;
 
-         /**
-          * Gets the delta real time variable associated with this message
-          * @return The deltaRealTime
-          */
-         float GetDeltaRealTime();
-
-         /**
-          * Gets the sim time scale variable associated with this message
-          * @return The simTimeScale
-          */
-         float GetSimTimeScale();
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
-         long GetSimTimeOfDay();
-         
          /**
           * Sets the delta sim time variable associated with this message
           * @param The new time
           */
          void SetDeltaSimTime(float newTime);
+
+         /**
+          * Gets the delta real time variable associated with this message
+          * @return The deltaRealTime
+          */
+         float GetDeltaRealTime() const;
 
          /**
           * Sets the delta real time variable associated with this message
@@ -76,16 +64,30 @@ namespace dtGame
          void SetDeltaRealTime(float newTime);
 
          /**
+          * Gets the sim time scale variable associated with this message
+          * @return The simTimeScale
+          */
+         float GetSimTimeScale() const;
+
+         /**
           * Sets the sim time scale variable associated with this message
           * @param the new scale
           */
          void SetSimTimeScale(float newScale);
 
          /**
-          * Sets the sim time of day variable associated with this message
-          * @param The new simTimeOfDay
+          * Gets the simulation time
+          * @return The current value of simulation time.
           */
-         void SetSimTimeOfDay(long newTimeOfDay);
+         double GetSimulationTime() const;
+
+         /**
+          * Sets the simulation time
+          * @param newTime the new time to set
+          */
+         void SetSimulationTime(double newSimulationTime);
+         
+
       protected:
          /// Destructor
          virtual ~TickMessage() { }
@@ -101,7 +103,6 @@ namespace dtGame
          TimerElapsedMessage() : Message()
          {
             AddParameter(new StringMessageParameter("TimerName"));
-            AddParameter(new LongIntMessageParameter("SimTimeOfDay"));
             AddParameter(new FloatMessageParameter("LateTime"));
          }
 
@@ -109,19 +110,13 @@ namespace dtGame
           * Gets the sim time of day variable associated with this message
           * @return The simTimeOfDay
           */
-         const std::string& GetTimerName();
+         const std::string& GetTimerName() const;
 
          /**
           * Gets the sim time of day variable associated with this message
           * @return The simTimeOfDay
           */
-         long GetSimTimeOfDay();
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
-         float GetLateTime();
+         float GetLateTime() const;
 
          /**
           * Gets the sim time of day variable associated with this message
@@ -133,16 +128,65 @@ namespace dtGame
           * Gets the sim time of day variable associated with this message
           * @return The simTimeOfDay
           */
-         void SetSimTimeOfDay(long newTime);
-
-         /**
-          * Gets the sim time of day variable associated with this message
-          * @return The simTimeOfDay
-          */
          void SetLateTime(float newTime);
       protected:
          /// Destructor
          virtual ~TimerElapsedMessage() { }
+
+   };
+
+
+   class DT_GAME_EXPORT TimeChangeMessage : public Message
+   {
+      public:
+
+         /// Constructor
+         TimeChangeMessage() : Message()
+         {
+            AddParameter(new FloatMessageParameter("TimeScale", 1.0f));
+            AddParameter(new DoubleMessageParameter("SimulationTime"));
+            AddParameter(new DoubleMessageParameter("SimulationClockTime"));
+         }
+
+         /**
+          * Gets the time scale
+          * @return The current value of time scale.
+          */
+         float GetTimeScale() const;
+
+         /**
+          * Sets the time scale
+          * @param newTimeScale the new time scale to set
+          */
+         void SetTimeScale(float newTimeScale);
+
+         /**
+          * Gets the simulation time
+          * @return The current value of simulation time.
+          */
+         double GetSimulationTime() const;
+
+         /**
+          * Sets the simulation time
+          * @param newTime the new time to set
+          */
+         void SetSimulationTime(double newTime);
+
+         /**
+          * Gets the simulated clock time.  That is, the wall clock date/time of the simulation
+          * @return The current value of the simulation clock time.
+          */
+         double GetSimulationClockTime() const;
+
+         /**
+          * Sets the simulated clock time.  That is, the wall clock date/time of the simulation
+          * @param newSimClockTime the new simulatied clock time to set
+          */
+         void SetSimulationClockTime(double newSimClockTime);
+
+      protected:
+         /// Destructor
+         virtual ~TimeChangeMessage() { }
 
    };
 
@@ -159,7 +203,7 @@ namespace dtGame
          /**
           * Gets the name of the map that was loaded
           */
-         const std::string& GetLoadedMapName();
+         const std::string& GetLoadedMapName() const;
 
          /**
           * Sets the name of the map that was loaded
@@ -216,7 +260,7 @@ namespace dtGame
           * Gets the rejection reason of the message
           * @return The message string
           */
-         const std::string& GetRejectionMessage();
+         const std::string& GetRejectionMessage() const;
 
          /**
           * Sets the rejection message 
@@ -243,7 +287,7 @@ namespace dtGame
           * Gets the reason why the restart occured
           * @return The reason
           */
-         const std::string& GetReason();
+         const std::string& GetReason() const;
 
          /**
           * Sets the restart reason
@@ -270,7 +314,7 @@ namespace dtGame
           * Retrieves the reason for the rejection
           * @return The cause
           */
-         const std::string& GetCause();
+         const std::string& GetCause() const;
 
          /**
           * Sets the reason for the rejection
@@ -295,7 +339,7 @@ namespace dtGame
          /**
          * Gets the name of the map that was loaded
          */
-         const std::string& GetMapName();
+         const std::string& GetMapName() const;
 
          /**
          * Sets the name of the map that was loaded
@@ -322,7 +366,7 @@ namespace dtGame
          /**
           * Gets the name of the map that was loaded
           */
-         const std::string& GetRequestedMapName();
+         const std::string& GetRequestedMapName() const;
 
          /**
           * Sets the name of the map that was loaded
