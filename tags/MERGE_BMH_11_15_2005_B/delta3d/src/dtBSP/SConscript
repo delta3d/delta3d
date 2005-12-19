@@ -1,0 +1,7 @@
+Import('*')
+
+srcs = SGlob('*.cpp')
+
+deps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
+
+env.BuildLib( 'dtBSP', srcs, deps, ['OSG_LIBRARY'] )
