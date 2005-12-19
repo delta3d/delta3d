@@ -9,4 +9,4 @@ if OS == 'windows' :
 viewerDeps = [ 'dtDAL', 'dtCore', 'dtABC', 'dtUtil', 'dtChar',
                'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
 
-BuildProgram( 'viewer', viewerSrcs, viewerDeps )
+env.BuildProgram( 'viewer', viewerSrcs, viewerDeps, buildAppBundle = 0 )

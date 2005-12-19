@@ -22,6 +22,7 @@
 #include "dtGame/messagefactory.h"
 #include "dtGame/message.h"
 #include "dtGame/basemessages.h"
+#include "dtGame/loggermessages.h"
 #include "dtGame/actorupdatemessage.h"
 #include <dtCore/refptr.h>
 
@@ -41,17 +42,56 @@ namespace dtGame
       mMessageFactory = new dtUtil::ObjectFactory<const MessageType*, Message>;
       
       //base messages
-      RegisterMessageType<dtGame::TickMessage>(dtGame::MessageType::TICK_LOCAL);
-      RegisterMessageType<dtGame::TickMessage>(dtGame::MessageType::TICK_REMOTE);
-      RegisterMessageType<dtGame::TimerElapsedMessage>(dtGame::MessageType::INFO_TIMER_ELAPSED);
-      RegisterMessageType<dtGame::MapLoadedMessage>(dtGame::MessageType::INFO_MAP_LOADED);
-      RegisterMessageType<dtGame::NetServerRejectMessage>(dtGame::MessageType::NETSERVER_REJECT_CONNECTION);
-      RegisterMessageType<dtGame::RestartMessage>(dtGame::MessageType::COMMAND_RESTART);
-      RegisterMessageType<dtGame::ServerMessageRejected>(dtGame::MessageType::SERVER_REQUEST_REJECTED);
-      RegisterMessageType<dtGame::ActorUpdateMessage>(dtGame::MessageType::INFO_ACTOR_CREATED);
-      RegisterMessageType<dtGame::ActorUpdateMessage>(dtGame::MessageType::INFO_ACTOR_UPDATED);
-      RegisterMessageType<dtGame::ActorUpdateMessage>(dtGame::MessageType::INFO_ACTOR_DELETED);
-      RegisterMessageType<dtGame::ActorPublishedMessage>(dtGame::MessageType::INFO_ACTOR_PUBLISHED);
+      RegisterMessageType<TickMessage>(MessageType::TICK_LOCAL);
+      RegisterMessageType<TickMessage>(MessageType::TICK_REMOTE);
+      RegisterMessageType<TimerElapsedMessage>(MessageType::INFO_TIMER_ELAPSED);
+      RegisterMessageType<MapLoadedMessage>(MessageType::INFO_MAP_LOADED);
+
+      RegisterMessageType<Message>(MessageType::INFO_PAUSED);
+      RegisterMessageType<Message>(MessageType::INFO_RESUMED);
+      RegisterMessageType<RestartMessage>(MessageType::INFO_RESTARTED);
+      RegisterMessageType<TimeChangeMessage>(MessageType::INFO_TIME_CHANGED);
+      
+      RegisterMessageType<NetServerRejectMessage>(MessageType::NETSERVER_REJECT_CONNECTION);
+
+      RegisterMessageType<Message>(MessageType::COMMAND_PAUSE);
+      RegisterMessageType<Message>(MessageType::COMMAND_RESUME);
+      RegisterMessageType<RestartMessage>(MessageType::COMMAND_RESTART);
+      RegisterMessageType<TimeChangeMessage>(MessageType::COMMAND_SET_TIME);
+
+      RegisterMessageType<ServerMessageRejected>(MessageType::SERVER_REQUEST_REJECTED);
+      RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_CREATED);
+      RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_UPDATED);
+      RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_DELETED);
+      RegisterMessageType<ActorPublishedMessage>(MessageType::INFO_ACTOR_PUBLISHED);
+
+
+      RegisterMessageType<Message>(MessageType::REQUEST_PAUSE);
+      RegisterMessageType<Message>(MessageType::REQUEST_RESUME);
+      RegisterMessageType<RestartMessage>(MessageType::REQUEST_RESTART);
+      RegisterMessageType<TimeChangeMessage>(MessageType::REQUEST_SET_TIME);
+
+      
+      //Logger messages.
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_KEYFRAMES);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_LOGFILES);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_TAGS);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_GET_STATUS);
+      RegisterMessageType<dtGame::LogCaptureKeyframeMessage>(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME);
+      RegisterMessageType<dtGame::LogInsertTagMessage>(dtGame::MessageType::LOG_REQ_INSERT_TAG);
+      RegisterMessageType<dtGame::LogDeleteLogfileMessage>(dtGame::MessageType::LOG_REQ_DELETE_LOG);
+      RegisterMessageType<dtGame::LogSetLogfileMessage>(dtGame::MessageType::LOG_REQ_SET_LOGFILE);
+      RegisterMessageType<dtGame::LogSetAutoKeyframeIntervalMessage>
+         (dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL);
+      //   static const MessageType LOG_INFO_KEYFRAMES;
+      //   static const MessageType LOG_INFO_LOGFILES;
+      //   static const MessageType LOG_INFO_TAGS;
+      RegisterMessageType<dtGame::LogStatusMessage>(dtGame::MessageType::LOG_INFO_STATUS);
+      RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS);
+      RegisterMessageType<dtGame::LogEndLoadKeyframeMessage>(dtGame::MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS);
    }
 
    MessageFactory::~MessageFactory()
@@ -80,8 +120,8 @@ namespace dtGame
       }
       msg->SetMessageType(msgType);
       msg->SetSource(*mMachine);
-      //default the message to be for the current machine.
-      msg->SetDestination(mMachine.get());
+      //default the message to be unknown.
+      msg->SetDestination(NULL);
       return msg;
    }
    
@@ -91,6 +131,11 @@ namespace dtGame
       try 
       {
          msg.CopyDataTo(*theClone);
+         if (msg.GetCausingMessage() != NULL)
+         {
+            dtCore::RefPtr<Message> causingClone = CloneMessage(*msg.GetCausingMessage());
+            theClone->SetCausingMessage(causingClone.get());
+         }
       }
       catch (const dtUtil::Exception& ex)
       {
@@ -103,4 +148,28 @@ namespace dtGame
       return theClone;
    }
    
+   const MessageType &MessageFactory::GetMessageTypeById(unsigned short id) const throw(dtUtil::Exception)
+   {
+      std::map<unsigned short, const MessageType*>::const_iterator itor = mIdMap.find(id);
+      if (itor == mIdMap.end())
+      {
+         std::ostringstream ss;
+         ss << "Message ID: " << id << " was not found in the message "
+            "type map.";
+         EXCEPT(MessageFactoryException::TYPE_NOT_REGISTERED,ss.str());
+      }
+       
+      return *itor->second;
+   }
+   
+   const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const throw()
+   {
+      for (std::map<unsigned short, const MessageType*>::const_iterator i = mIdMap.begin(); i != mIdMap.end(); ++i)
+      {
+         if (i->second->GetName() == name)
+            return i->second;
+      }
+      
+      return NULL;       
+   }
 }

@@ -28,7 +28,7 @@ if os.sys.platform == 'win32' :
 
 # set compiler options
 env.Append( CPPPATH    = [ '/usr/X11R6/include' ] + env['ENV']['DELTA_INC'].split( os.pathsep ) ) 
-env.Append( CXXDEFINES = [] ) # for debug mode, add 'DEBUG' and '_DEBUG'
+env.Append( CXXDEFINES = ['SIGSLOT_PURE_ISO'] ) # for debug mode, add 'DEBUG' and '_DEBUG'
 env.Append( CXXFLAGS   = [ '-O2', '-pipe', '-Wall' ]) # for debug mode, add '-g' and replace '-O2' with 'O0'
 env.Append( LIBPATH    = [ '/usr/X11R6/lib' ] + env['ENV']['DELTA_LIB'].split( os.pathsep) ) 
 

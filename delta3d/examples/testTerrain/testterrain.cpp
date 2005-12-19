@@ -22,8 +22,8 @@
 #include <dtABC/dtabc.h>
 #include <dtCore/refptr.h>
 #include <dtCore/flymotionmodel.h>
-#include <dtCore/clouddome.h>
 #include <dtCore/globals.h>
+#include <dtCore/skybox.h>
 #include <dtTerrain/terrain.h>
 #include <dtTerrain/dtedterrainreader.h>
 #include <dtTerrain/soarxterrainrenderer.h>
@@ -45,7 +45,9 @@ public:
    {
       mTerrainClamp = false;
       mFlyFast = false;
-      mFogEnable = true;
+      mSkyBoxEnable = false;
+      mCloudPlaneEnable = false;
+      mFogEnable = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -145,15 +147,24 @@ public:
          mTerrain->AddDecorationLayer(geoTiffDecorator);
       }
 
-      // Add the terrain to our environment    
-      dtABC::Weather *weather = new dtABC::Weather();
-      weather->SetTheme(dtABC::Weather::THEME_FAIR);
-      weather->SetBasicVisibilityType(dtABC::Weather::VIS_UNLIMITED);
+      //dtABC::Weather *weather = new dtABC::Weather();
+      //weather->SetTheme(dtABC::Weather::THEME_FAIR);
+      //weather->SetBasicVisibilityType(dtABC::Weather::VIS_MODERATE);
+    
+      mSkyBox = new dtCore::SkyBox("skyBox");
+      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_FRONT, "skybox/front.bmp");
+      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_BACK, "skybox/back.bmp");
+      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_TOP, "skybox/top.bmp");
+      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_BOTTOM, "skybox/bottom.bmp");
+      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_LEFT, "skybox/left.bmp");
+      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_RIGHT, "skybox/right.bmp");
       
-      mEnvironment = weather->GetEnvironment();
-      mEnvironment->SetVisibility(75000.0f);
+      mCloudPlane = new dtCore::CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 6000);
+      mEnvironment = new dtCore::Environment();
+      //mEnvironment = weather->GetEnvironment();
+      mEnvironment->SetVisibility(6000.0f);
       mEnvironment->SetDateTime(2005,3,7,14,0,0);
-      
+     
       mEnvironment->AddChild(mTerrain.get());
       GetScene()->AddDrawable(mEnvironment.get());
    }
@@ -281,7 +292,28 @@ public:
          mFlyFast = true;
          mMotionModel->SetMaximumFlySpeed(2500);
          break;     
-      
+      case Producer::Key_C:
+         mCloudPlaneEnable =!mCloudPlaneEnable;
+         if(mCloudPlaneEnable)
+         {         
+            mEnvironment->RemEffect(mSkyBox.get());
+            mEnvironment->AddEffect(mCloudPlane.get());
+         }
+         else
+         {
+            mEnvironment->RemEffect(mCloudPlane.get());
+         }
+      case Producer::Key_B:
+         mSkyBoxEnable = !mSkyBoxEnable;
+         if(mSkyBoxEnable)
+         {
+            mEnvironment->RemEffect(mCloudPlane.get());
+            mEnvironment->AddEffect(mSkyBox.get());
+         }
+         else
+         {      
+            mEnvironment->RemEffect(mSkyBox.get());
+         }
       default:
          dtABC::Application::KeyPressed(keyBoard,key,character);
          break;
@@ -344,7 +376,7 @@ public:
          ss << "Detail Multiplier increased to: " << mRenderer->GetDetailMultiplier();
          LOG_INFO(ss.str());
       }
-         
+      
       //Ground clamp our camera...
       if (mTerrainClamp)
       {
@@ -444,6 +476,12 @@ private:
    // Environment
    dtCore::RefPtr<dtCore::Environment> mEnvironment;
 
+   // Cloud Plane
+   dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
+
+   // SkyBox
+   dtCore::RefPtr<dtCore::SkyBox> mSkyBox;
+
    // Vegetation Decorator
    dtCore::RefPtr<dtTerrain::VegetationDecorator> mVeg;
    
@@ -474,6 +512,8 @@ private:
 
    bool mTerrainClamp,mFlyFast;
    bool mFogEnable;
+   bool mCloudPlaneEnable;
+   bool mSkyBoxEnable;
    float mFogNear;
    bool mEnableVegetation;
 };

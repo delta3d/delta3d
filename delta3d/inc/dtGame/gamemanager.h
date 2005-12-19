@@ -28,10 +28,12 @@
 #include "dtGame/gmcomponent.h"
 #include "dtGame/gameactor.h"
 #include "dtGame/messagefactory.h"
+#include "dtGame/message.h"
 #include "dtGame/machineinfo.h"
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
+#include <dtCore/timer.h>
 #include <dtDAL/librarymanager.h>
 #include <dtUtil/log.h>
 
@@ -44,10 +46,12 @@ namespace dtDAL
 
 namespace dtGame 
 {
-   class Message;
+   //class Message;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
+      DECLARE_MANAGEMENT_LAYER(GameManager)
+
       public:
 
          /// Constructor
@@ -168,7 +172,7 @@ namespace dtGame
           * @param The actor type to create.
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
-         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType);
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType) throw(dtUtil::Exception);
 
          /**
           * Adds an actor to the list of actors that the game manager knows about
@@ -197,6 +201,7 @@ namespace dtGame
           * Removes a game actor from the game manager.
           * The actor is not actually removed until the end of the current frame so that
           * messages can propogate.  
+          * An INFO_ACTOR_DELETE message is only sent if the actor is local.
           * @param The actor to remove
           */
          void DeleteActor(GameActorProxy& gameActorProxy);
@@ -205,8 +210,9 @@ namespace dtGame
           * Removes all game actors and actors from the game manager
           * Currently all actors are removed immediately, but this should not be 
           * assumed to be true going forward.
+          * INFO_ACTOR_DELETE messages are only sent for local actors.
           */
-         void DeleteAllActors();
+         void DeleteAllActors() { DeleteAllActors(true); }
 
          /**
           * Removes an actor from the game manager
@@ -221,6 +227,16 @@ namespace dtGame
           */
          void GetActorTypes(std::vector<const dtDAL::ActorType*> &vec) const;
 
+         /**
+          * Gets the number of game actors currently managed by this game
+          * manager.
+          * @return The number of game actors in the system.
+          */
+         unsigned int GetNumGameActors() const
+         {
+            return mGameActorProxyMap.size();
+         }
+         
          /**
           * Retrieves all the game actors added to the GM
           * @param toFill The vector to fill
@@ -289,10 +305,12 @@ namespace dtGame
 
          /**
           * Changes the map being used by the Game Manager
-          * @param The name of the map
+          * @param mapName The name of the map
+          * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
+          *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
           */
-         void ChangeMap(const std::string &mapName) throw(dtUtil::Exception);
+         void ChangeMap(const std::string &mapName, bool enableDatabasePaging = true) throw(dtUtil::Exception);
 
          /**
           * Sets the timer of the game mananger.  It will send out a timer message when it expires.
@@ -329,7 +347,7 @@ namespace dtGame
 
          /**
           * Sets the scene member of the class
-          * @param The new scene
+          * @param The new scene to assign
           */
          void SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
 
@@ -338,7 +356,7 @@ namespace dtGame
           * @return mFactory he message factory
           * @see class dtGame::MessageFactory
           */
-         MessageFactory& GetMessageFactory() { return mFactory; } 
+         MessageFactory& GetMessageFactory()  { return mFactory; } 
 
          /**
           * Retrieves the message factor that is controlled by the GameManager
@@ -350,15 +368,31 @@ namespace dtGame
          const MachineInfo& GetMachineInfo() const { return *mMachineInfo; }
          MachineInfo& GetMachineInfo() { return *mMachineInfo; }
          
-         /// @return the scale of realtime the GameManager is running at.
-         float GetTimeScale() const { return mTimeScale; }
+         const std::string& GetCurrentMap() const { return mLoadedMap; }
          
-         /** 
-          * Sets this GameManager to run at the new time scale.
-          * @param newTimeScale the new time scale for simulation time.
+         /// @return the scale of realtime the GameManager is running at.
+         float GetTimeScale() const;
+                  
+         /**
+          * @return the current simulation time
+          * @see dtCore::System#GetSimulationTime
           */
-         void SetTimeScale(float newTimeScale) { mTimeScale = newTimeScale; }   
+         double GetSimulationTime() const;
 
+         /**
+          * @return the current simulation wall-clock time
+          * @see dtCore::System#GetSimulationClockTime
+          */
+         dtCore::Timer_t GetSimulationClockTime() const;
+         
+         /**
+          * Change the time settings.
+          * @param newTime The new simulation time.
+          * @param newTimeScale the new simulation time progression as a factor of real time.
+          * @param newClockTime  The new simulation wall-clock time.
+          */
+         void ChangeTimeSettings(double newTime, float newTimeScale, dtCore::Timer_t newClockTime);
+         
          /**
           * Get all of the GameActorProxies registered to receive all messages of a certain type.
           * @param type the message type to query for.
@@ -419,6 +453,30 @@ namespace dtGame
           * @param proxy
           */
          void UnregisterAllMessageListenersForActor(GameActorProxy& proxy);
+         
+         /**
+          * @return true if the GameManager is paused
+          */
+         bool IsPaused() const { return mPaused; }
+         
+         /**
+          * Pauses or unpauses this GameManager.
+          * @param pause true of false if this GM should be paused. If this value is 
+          *              the same as the current state, this call is a noop.
+          */
+         void SetPaused(bool pause);
+
+         /**
+          * Handles a reject message.  This is typically called by a component (usually server side)
+          * when it has determined that a request message is invalid and it needs to reject it.
+          * The method creates a ServerMessageRejected - SERVER_REQUEST_REJECTED message.  If the 
+          * reasonMessage has a MachineInfo that indicates it came from this server, then this method
+          * does a ProcessMessage on the new rejected message.  Otherwise, it does a SendMessage.
+          * The resulting reject message will eventually make its way back to the source client-component.
+          * @param toReject the Message that you are trying to reject.
+          * @param rejectDescription A text message describing why the message was rejected.
+          */
+         void RejectMessage(const dtGame::Message &reasonMessage, const std::string &rejectDescription);
 
       protected:
 
@@ -435,12 +493,21 @@ namespace dtGame
 
          /**
           * Implements the functionality that will happen on the PreFrame event
-          * @param deltaTime the change in real time since the last frame.
+          * @param deltaSimTime the change in simulation time since the last frame.
+          * @param deltaRealTime the change in real time since the last frame.
           */
-         virtual void PreFrame(double deltaTime);
+         virtual void PreFrame(double deltaSimTime, double deltaRealTime);
 
          /// Implements the functionality that will happen on the PostFrame event
          virtual void PostFrame();
+
+         /**
+          * Removes all game actors and actors from the game manager
+          * Currently all actors are removed immediately, but this should not be 
+          * assumed to be true going forward.
+          * @param sendMessage true if the message about deleting should be sent.
+          */
+         void DeleteAllActors(bool sendMessage);
       
       private:
 
@@ -459,12 +526,11 @@ namespace dtGame
          std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
          std::queue<dtCore::RefPtr<const Message> > mProcessMessageQueue;
          dtCore::RefPtr<dtCore::Scene> mScene;
-         MessageFactory mFactory;
          dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
+         MessageFactory mFactory;
          
-         float mTimeScale;
-         //seconds since the start of the simulation unless overridden.
-         double mSimulationTime;
+         bool mPaused;
+         std::string mLoadedMap;
    };
 }
 

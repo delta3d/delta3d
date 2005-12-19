@@ -107,7 +107,7 @@ namespace dtGame
           * Constructs the actor property.  Note, that functor objects must be
           * specified and match the set and get types of the GenericActorProperty.
           */
-         GenericMessageParameter(const std::string &name) : MessageParameter(name) { }         
+         GenericMessageParameter(const std::string &name, const ParamType& defaultValue) : MessageParameter(name), mValue(defaultValue) {}         
         
          /**
           * This method allows a generic property of any type to be copied from
@@ -165,7 +165,7 @@ namespace dtGame
    class PODMessageParameter: public GenericMessageParameter<ParamType>
    {
       public:
-         PODMessageParameter(const std::string &name) : GenericMessageParameter<ParamType>(name) {}
+         PODMessageParameter(const std::string &name, const ParamType& defaultValue) : GenericMessageParameter<ParamType>(name, defaultValue) {}
          virtual const std::string ToString() const 
          {
             std::ostringstream stream;
@@ -191,11 +191,17 @@ namespace dtGame
    /**
     * @class BooleanMessageParameter 
     */
-   class BooleanMessageParameter: public PODMessageParameter<bool>
+   class DT_GAME_EXPORT BooleanMessageParameter: public PODMessageParameter<bool>
    {
       public:
-         BooleanMessageParameter(const std::string &name) : PODMessageParameter<bool>(name) {}
+         BooleanMessageParameter(const std::string &name, bool defaultValue = false) : PODMessageParameter<bool>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::BOOLEAN; }
+
+         ///overridden to return "true" and "false"
+         virtual const std::string ToString() const;
+        
+         ///overridden to accept "true" and other such strings as well as numbers.
+         virtual bool FromString(const std::string &value);
       protected:
          virtual ~BooleanMessageParameter() {}   
    };
@@ -206,8 +212,9 @@ namespace dtGame
    class UnsignedCharMessageParameter: public PODMessageParameter<unsigned char>
    {
       public:
-         UnsignedCharMessageParameter(const std::string &name) : PODMessageParameter<unsigned char>(name) {}
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::INT; }
+         UnsignedCharMessageParameter(const std::string &name, unsigned char defaultValue = 0) 
+            : PODMessageParameter<unsigned char>(name, defaultValue) {}
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::UCHAR; }
       protected:
          virtual ~UnsignedCharMessageParameter() {}   
    };
@@ -218,8 +225,8 @@ namespace dtGame
    class ShortIntMessageParameter: public PODMessageParameter<short>
    {
       public:
-         ShortIntMessageParameter(const std::string &name) : PODMessageParameter<short>(name) {}
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::INT; }
+         ShortIntMessageParameter(const std::string &name, short defaultValue = 0) : PODMessageParameter<short>(name, defaultValue) {}
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::SHORTINT; }
       protected:
          virtual ~ShortIntMessageParameter() {}   
    };
@@ -230,8 +237,8 @@ namespace dtGame
    class UnsignedShortIntMessageParameter: public PODMessageParameter<unsigned short>
    {
       public:
-         UnsignedShortIntMessageParameter(const std::string &name) : PODMessageParameter<unsigned short>(name) {}
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::INT; }
+         UnsignedShortIntMessageParameter(const std::string &name, unsigned short defaultValue = 0) : PODMessageParameter<unsigned short>(name, defaultValue) {}
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::USHORTINT; }
       protected:
          virtual ~UnsignedShortIntMessageParameter() {}   
    };
@@ -242,8 +249,8 @@ namespace dtGame
    class UnsignedIntMessageParameter: public PODMessageParameter<unsigned int>
    {
       public:
-         UnsignedIntMessageParameter(const std::string &name) : PODMessageParameter<unsigned int>(name) {}
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::INT; }
+         UnsignedIntMessageParameter(const std::string &name, unsigned int defaultValue = 0) : PODMessageParameter<unsigned int>(name, defaultValue) {}
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::UINT; }
       protected:
          virtual ~UnsignedIntMessageParameter() {}   
    };
@@ -254,7 +261,7 @@ namespace dtGame
    class IntMessageParameter: public PODMessageParameter<int>
    {
       public:
-         IntMessageParameter(const std::string &name) : PODMessageParameter<int>(name) {}
+         IntMessageParameter(const std::string &name, int defaultValue = 0) : PODMessageParameter<int>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::INT; }
       protected:
          virtual ~IntMessageParameter() {} 	
@@ -266,8 +273,9 @@ namespace dtGame
    class UnsignedLongIntMessageParameter: public PODMessageParameter<unsigned long>
    {
       public:
-         UnsignedLongIntMessageParameter(const std::string &name) : PODMessageParameter<unsigned long>(name) {}
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::LONGINT; }
+         UnsignedLongIntMessageParameter(const std::string &name, unsigned long defaultValue = 0) 
+            : PODMessageParameter<unsigned long>(name, defaultValue) {}
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::ULONGINT; }
       protected:
          virtual ~UnsignedLongIntMessageParameter() {}   
    };
@@ -278,7 +286,7 @@ namespace dtGame
    class LongIntMessageParameter: public PODMessageParameter<long>
    {
       public:
-         LongIntMessageParameter(const std::string &name) : PODMessageParameter<long>(name) {}
+         LongIntMessageParameter(const std::string &name, long defaultValue = 0) : PODMessageParameter<long>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::LONGINT; }
       protected:
          virtual ~LongIntMessageParameter() {}   
@@ -290,7 +298,7 @@ namespace dtGame
    class FloatMessageParameter: public PODMessageParameter<float>
    {
    public:
-      FloatMessageParameter(const std::string &name) : PODMessageParameter<float>(name) {}
+      FloatMessageParameter(const std::string &name, float defaultValue = 0.0) : PODMessageParameter<float>(name, defaultValue) {}
       virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::FLOAT; }
    protected:
       virtual ~FloatMessageParameter() {}   
@@ -302,7 +310,7 @@ namespace dtGame
    class DoubleMessageParameter: public PODMessageParameter<double>
    {
    public:
-      DoubleMessageParameter(const std::string &name) : PODMessageParameter<double>(name) {}
+      DoubleMessageParameter(const std::string &name, double defaultValue = 0.0) : PODMessageParameter<double>(name, defaultValue) {}
       virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::DOUBLE; }
    protected:
       virtual ~DoubleMessageParameter() {}   
@@ -314,7 +322,7 @@ namespace dtGame
    class StringMessageParameter: public GenericMessageParameter<std::string>
    {
       public:
-         StringMessageParameter(const std::string& name) : GenericMessageParameter<std::string>(name) {}
+         StringMessageParameter(const std::string& name, const std::string& defaultValue = "") : GenericMessageParameter<std::string>(name, defaultValue) {}
          virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::STRING; }
          
          virtual const std::string ToString() const 
@@ -340,7 +348,7 @@ namespace dtGame
    class EnumMessageParameter: public GenericMessageParameter<std::string>
    {
       public:
-         EnumMessageParameter(const std::string& name) : GenericMessageParameter<std::string>(name) {}
+         EnumMessageParameter(const std::string& name, const std::string& defaultValue = "") : GenericMessageParameter<std::string>(name, defaultValue) {}
          virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ENUMERATION; }
          
          virtual const std::string ToString() const 
@@ -365,7 +373,7 @@ namespace dtGame
    class ActorMessageParameter: public GenericMessageParameter<dtCore::UniqueId>
    {
       public:
-         ActorMessageParameter(const std::string& name) : GenericMessageParameter<dtCore::UniqueId>(name) {}
+         ActorMessageParameter(const std::string& name, const dtCore::UniqueId& defaultValue = dtCore::UniqueId("")) : GenericMessageParameter<dtCore::UniqueId>(name, defaultValue) {}
          virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ACTOR; }
          
          virtual const std::string ToString() const 
@@ -391,7 +399,7 @@ namespace dtGame
    class VecMessageParameter: public GenericMessageParameter<ParamType>
    {
       protected:
-         VecMessageParameter(const std::string &name) : GenericMessageParameter<ParamType>(name) {}
+         VecMessageParameter(const std::string &name, const ParamType& defaultValue) : GenericMessageParameter<ParamType>(name, defaultValue) {}
          virtual ~VecMessageParameter() {}   
   
          bool InternalFromString(const std::string &value, unsigned size) 
@@ -413,7 +421,8 @@ namespace dtGame
    class Vec2MessageParameter: public VecMessageParameter<osg::Vec2>
    {
       public:
-         Vec2MessageParameter(const std::string &name) : VecMessageParameter<osg::Vec2>(name) {}
+         Vec2MessageParameter(const std::string &name, const osg::Vec2& defaultValue = osg::Vec2(0.0,0.0)) 
+            : VecMessageParameter<osg::Vec2>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2; }
          
          virtual const std::string ToString() const 
@@ -438,7 +447,8 @@ namespace dtGame
    class Vec2fMessageParameter: public VecMessageParameter<osg::Vec2f>
    {
       public:
-         Vec2fMessageParameter(const std::string &name) : VecMessageParameter<osg::Vec2f>(name) {}
+         Vec2fMessageParameter(const std::string &name, const osg::Vec2f& defaultValue = osg::Vec2f(0.0,0.0)) 
+            : VecMessageParameter<osg::Vec2f>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2F; }
          
          virtual const std::string ToString() const 
@@ -463,7 +473,8 @@ namespace dtGame
    class Vec2dMessageParameter: public VecMessageParameter<osg::Vec2d>
    {
       public:
-         Vec2dMessageParameter(const std::string &name) : VecMessageParameter<osg::Vec2d>(name) {}
+         Vec2dMessageParameter(const std::string &name, const osg::Vec2d& defaultValue = osg::Vec2d(0.0,0.0)) 
+            : VecMessageParameter<osg::Vec2d>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2D; }
          
          virtual const std::string ToString() const 
@@ -489,7 +500,8 @@ namespace dtGame
    class Vec3MessageParameter: public VecMessageParameter<osg::Vec3>
    {
       public:
-         Vec3MessageParameter(const std::string &name) : VecMessageParameter<osg::Vec3>(name) {}
+         Vec3MessageParameter(const std::string &name, const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0)) 
+            : VecMessageParameter<osg::Vec3>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3; }
          
          virtual const std::string ToString() const 
@@ -514,7 +526,8 @@ namespace dtGame
    class Vec3fMessageParameter: public VecMessageParameter<osg::Vec3f>
    {
       public:
-         Vec3fMessageParameter(const std::string &name) : VecMessageParameter<osg::Vec3f>(name) {}
+         Vec3fMessageParameter(const std::string &name, const osg::Vec3f& defaultValue = osg::Vec3f(0.0, 0.0, 0.0)) 
+            : VecMessageParameter<osg::Vec3f>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3F; }
          
          virtual const std::string ToString() const 
@@ -539,7 +552,8 @@ namespace dtGame
    class Vec3dMessageParameter: public VecMessageParameter<osg::Vec3d>
    {
       public:
-         Vec3dMessageParameter(const std::string &name) : VecMessageParameter<osg::Vec3d>(name) {}
+         Vec3dMessageParameter(const std::string &name, const osg::Vec3d& defaultValue = osg::Vec3d(0.0, 0.0, 0.0)) 
+            : VecMessageParameter<osg::Vec3d>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3D; }
          
          virtual const std::string ToString() const 
@@ -564,7 +578,8 @@ namespace dtGame
    class Vec4MessageParameter: public VecMessageParameter<osg::Vec4>
    {
       public:
-         Vec4MessageParameter(const std::string &name) : VecMessageParameter<osg::Vec4>(name) {}
+         Vec4MessageParameter(const std::string &name, const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0)) 
+            : VecMessageParameter<osg::Vec4>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4; }
          
          virtual const std::string ToString() const 
@@ -589,7 +604,8 @@ namespace dtGame
    class Vec4fMessageParameter: public VecMessageParameter<osg::Vec4f>
    {
       public:
-         Vec4fMessageParameter(const std::string &name) : VecMessageParameter<osg::Vec4f>(name) {}
+         Vec4fMessageParameter(const std::string &name, const osg::Vec4f& defaultValue = osg::Vec4f(0.0, 0.0, 0.0, 0.0)) 
+            : VecMessageParameter<osg::Vec4f>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4F; }
          
          virtual const std::string ToString() const 
@@ -614,7 +630,8 @@ namespace dtGame
    class Vec4dMessageParameter: public VecMessageParameter<osg::Vec4d>
    {
       public:
-         Vec4dMessageParameter(const std::string &name) : VecMessageParameter<osg::Vec4d>(name) {}
+         Vec4dMessageParameter(const std::string &name, const osg::Vec4d& defaultValue = osg::Vec4d(0.0, 0.0, 0.0, 0.0))
+            : VecMessageParameter<osg::Vec4d>(name, defaultValue) {}
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4D; }
          
          virtual const std::string ToString() const 

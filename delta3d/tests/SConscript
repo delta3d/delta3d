@@ -1,4 +1,4 @@
-# Build script for the basic sample application demonstrating map file IO.
+# Build script for the unit tests.
 import glob
 import sys
 
@@ -7,72 +7,45 @@ Import ('*')
 
 projectEnv = env.Copy()
 
-sources = []
+#there will be one program per test dir here plus an all tests.
+#To add a new one, add a new one, simply put the directory 
+#in this list, put your test cpp files in with the names "*tests.cpp"
+#and the files will be added to both allTests and to a test just
+#for the new set of files.
+suites = ['dtCore', 'dtDAL', 'dtGame', 'dtUtil']
 
+sources = {}
 mainSources = glob.glob('*.cpp')
+sources['all'] = mainSources + []
 
-sources += mainSources;
+for suite in suites:
+   #get the sources for each program
+   sources[suite] = glob.glob(suite + '/*tests.cpp')
+   #add the sources to the allTests program
+   sources['all'] += sources[suite]
+   #add the "main" source files.
+   sources[suite] += mainSources  
 
-projectSources = glob.glob('project/*tests.cpp')
-
-sources += projectSources;
-
-proxySources =  glob.glob('proxy/*tests.cpp')
-
-sources += proxySources;
-
-utilSources =  glob.glob('util/*tests.cpp')
-
-sources += utilSources;
-
-gmSources =  glob.glob('gamemanager/*tests.cpp')
-
-sources += gmSources;
-
-deplibs = ['cppunit']
-
-#convert libs to system name
-deplibs = [ extLibs[lib] for lib in deplibs if extLibs.has_key(lib) ]
-
-projectEnv.Append(LIBS = deplibs)
-
-allTestProgram = '#tests/allTests'
-projectTestProgram = '#tests/projectTests'
-proxyTestProgram = '#tests/proxyTests'
-utilTestProgram = '#tests/utilTests'
-gmTestProgram = '#tests/gmTests'
-
-if mode == 'debug':
-   allTestProgram = '#tests/allTestsd'
-   projectTestProgram = '#tests/projectTestsd'
-   proxyTestProgram = '#tests/proxyTestsd'
-   utilTestProgram = '#tests/utilTestsd'
-   gmTestProgram = '#tests/gmTestsd'
-   
-mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar', 'dtGame']
+mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar', 'dtGame', 'cppunit'] 
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
+projectEnv.Append(LIBS = mainlibs)
 
-projectEnv.Append(LIBS = deplibs + mainlibs)
+programs = {}
 
-app = projectEnv.Program(allTestProgram, sources)
-projectapp = projectEnv.Program(projectTestProgram,  mainSources + projectSources)
-proxyapp   = projectEnv.Program(proxyTestProgram,    mainSources + proxySources)
-utilapp   = projectEnv.Program(utilTestProgram,      mainSources + utilSources)
-gmapp   = projectEnv.Program(gmTestProgram,          mainSources + gmSources)
+result = 'true'
 
-#Depends(app,        testActorLibrary)
-#Depends(projectapp, testActorLibrary)
-#Depends(proxyapp,   testActorLibrary)
-#Depends(utilapp,   testActorLibrary)
+#create all the program names base on the sets of sources.
+for prog in sources.keys():
+   programs[prog] = '#tests/' + prog + 'Tests'
 
-# Grab all the sources from the dtActors source directory.
-if (app == '[]') :
-	result = 'false'
-else :
-	result = 'true'
-
-if (result == 'false') :
-	errorLog.write("Failed to build the map loader sample application.\n")
-	
+   #add the "d" at the end for windows
+   if mode == 'debug' and OS == 'windows':
+      programs[prog] += 'd'
+   #create the program
+   app = projectEnv.Program(programs[prog], sources[prog])
+   
+   if (app == '[]') :
+      result = 'false'
+      errorLog.write("Failed to build test program " + programs[prog] + ".\n")
 
 Return('result')

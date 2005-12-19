@@ -25,10 +25,12 @@
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/globals.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/actortype.h>
 #include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/project.h>
 #include <dtGame/datastream.h>
 #include <dtGame/messageparameter.h>
 #include <dtGame/machineinfo.h>
@@ -44,6 +46,14 @@
 #include <dtGame/defaultmessageprocessor.h>
 
 #include <cppunit/extensions/HelperMacros.h>
+
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #include <Windows.h>
+   #define sleep(milliseconds) Sleep((milliseconds))
+#else
+   #include <unistd.h>
+   #define sleep(milliseconds) usleep(((milliseconds) * 1000))
+#endif
 
 class GameManagerTests : public CPPUNIT_NS::TestFixture 
 {
@@ -116,13 +126,22 @@ public:
    {
       dtCore::RefPtr<ParamType> param = new ParamType("a");
       
+      VecType r = param->GetValue();
+      for (int i = 0; i < size; ++i) 
+      {
+         //everything has to be mode a double in the "equivalent" calls because 
+         //otherwise the float versions get some c++ ambiguity problems.
+         CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0's", 
+            osg::equivalent(0.0, (double)r[i], 1e-2));
+      }
+      
       VecType c;
       for (int i = 0; i < size; ++i)
       {
          c[i] = i * 32.3;
       }
       param->SetValue(c);
-      VecType r = param->GetValue();
+      r = param->GetValue();
       for (int i = 0; i < size; ++i) 
       {
          //everything has to be mode a double in the "equivalent" calls because 
@@ -156,6 +175,18 @@ public:
          CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", 
             osg::equivalent((double)param->GetValue()[i], (double)param2->GetValue()[i], 1e-2));   
       }
+      
+      dtGame::DataStream ds;
+      dtCore::RefPtr<ParamType> param3 = new ParamType("b");
+      
+      param->ToDataStream(ds);
+      param3->FromDataStream(ds);
+      for (int i = 0; i < size; ++i) 
+      {
+         //std::cout << param->GetValue()[i] << " " << param3->GetValue()[i] << std::endl;
+         CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", 
+            osg::equivalent((double)param->GetValue()[i], (double)param3->GetValue()[i], 1e-2));   
+      }
    }
 
 
@@ -169,7 +200,7 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameManagerTests);
 
-#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GameManagerTests::mTestGameActorLibrary="testGameActorLibraryd";
 char* GameManagerTests::mTestActorLibrary="testActorLibraryd";
 #else
@@ -179,26 +210,39 @@ char* GameManagerTests::mTestActorLibrary="testActorLibrary";
 
 void GameManagerTests::setUp()
 {
-   dtUtil::Log* logger;
-   logger = &dtUtil::Log::GetInstance("MessageParameter");
-   logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
- 
-   dtCore::Scene* scene = new dtCore::Scene();
-   mManager = new dtGame::GameManager(*scene);
-   mManager->LoadActorRegistry(mTestGameActorLibrary);
-   mManager->LoadActorRegistry(mTestActorLibrary);
-     
+   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
+   try 
+   {
+      dtUtil::Log* logger;
+      logger = &dtUtil::Log::GetInstance("MessageParameter");
+      //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+    
+      dtCore::Scene* scene = new dtCore::Scene();
+      mManager = new dtGame::GameManager(*scene);
+      mManager->LoadActorRegistry(mTestGameActorLibrary);
+      mManager->LoadActorRegistry(mTestActorLibrary);
+      dtCore::System::Instance()->Start();
+   } 
+   catch (const dtUtil::Exception& e) 
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
+          
 }
 
 void GameManagerTests::tearDown()
 {
-   try {
-      mManager->DeleteAllActors();
-      mManager->UnloadActorRegistry(mTestGameActorLibrary);
-      mManager->UnloadActorRegistry(mTestActorLibrary);  
-      mManager = NULL;  
-   } catch (const dtUtil::Exception& e) {
-      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   if (mManager.valid())
+   {
+      try {
+         dtCore::System::Instance()->Start();
+         mManager->DeleteAllActors();
+         mManager->UnloadActorRegistry(mTestGameActorLibrary);
+         mManager->UnloadActorRegistry(mTestActorLibrary);  
+         mManager = NULL;  
+      } catch (const dtUtil::Exception& e) {
+         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+      }
    }
 }
 
@@ -219,6 +263,7 @@ void GameManagerTests::TestDataStream()
    const osg::Vec2f      v2(1, 2);
    const osg::Vec3d      v3(1, 2, 3);
    const osg::Vec4f      v4(1, 2, 3, 4);
+   const dtCore::UniqueId id;
    //unsigned int bufferSize    =  ds.GetBufferCapacity();
 
    try
@@ -237,6 +282,8 @@ void GameManagerTests::TestDataStream()
       osg::Vec4f     tempVec4(0, 0, 0, 0);
       std::string    tempStr;
       std::string    tempStr2;
+      float          tempFloat2  = 0.0f;
+      dtCore::UniqueId tempId("");
 
       std::string    longTestString;
       longTestString.reserve(2000);
@@ -253,7 +300,10 @@ void GameManagerTests::TestDataStream()
       ds << uchar;
       ds << flo;
       ds << str;
+      ds << id;
       ds << longTestString;
+      //make sure something after a string can be read.
+      ds << flo;
 
       ds >> tempBool1;
       ds >> tempBool2;
@@ -265,7 +315,9 @@ void GameManagerTests::TestDataStream()
       ds >> tempUChar;
       ds >> tempFloat;
       ds >> tempStr;
+      ds >> tempId;
       ds >> tempStr2;
+      ds >> tempFloat2;
 
       CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a bool out", tempBool1 == boolean1);
       CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a bool out", tempBool2 == boolean2);
@@ -277,7 +329,9 @@ void GameManagerTests::TestDataStream()
       CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read an unsigned char out", tempUChar == uchar);
       CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a float out", tempFloat == flo);
       CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a short string out", tempStr == str);
+      CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a unique id", tempId == id);
       CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a long string out", tempStr2 == longTestString);
+      CPPUNIT_ASSERT_MESSAGE("DataStream should be able to read a float out after a string", tempFloat2 == flo);
 
       ds.Rewind();
 
@@ -311,8 +365,8 @@ void GameManagerTests::TestResourceMessageParameter()
    CPPUNIT_ASSERT_MESSAGE("MessageParameter should return the value that was set", c == *r);
    
    std::string holder = param->ToString();
-   dtDAL::ResourceDescriptor temp(dtDAL::DataType::STATIC_MESH.GetName() + ":helloA", 
-      dtDAL::DataType::STATIC_MESH.GetName() + ":helloA");
+   std::string testValue = dtDAL::DataType::STATIC_MESH.GetName() + ":helloA";
+   dtDAL::ResourceDescriptor temp(testValue, testValue);
    param->SetValue(&temp);
    param->FromString(holder);
 
@@ -323,11 +377,27 @@ void GameManagerTests::TestResourceMessageParameter()
    dtCore::RefPtr<dtGame::ResourceMessageParameter> param2 = new dtGame::ResourceMessageParameter(dtDAL::DataType::STATIC_MESH, "b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", *param->GetValue() == *param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::ResourceMessageParameter> param3 = new dtGame::ResourceMessageParameter(dtDAL::DataType::STATIC_MESH, "b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should not be NULL", param->GetValue() != NULL);
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter copy should not be NULL", param3->GetValue() != NULL);   
+   CPPUNIT_ASSERT(*param->GetValue() == *param3->GetValue());
+
+   CPPUNIT_ASSERT(param->FromString(testValue));
+   r = param->GetValue();
+   CPPUNIT_ASSERT_MESSAGE("Setting the resource descriptor with a single string value should work.", 
+      *r == temp);
 }
 
 void GameManagerTests::TestStringMessageParameter()
 {
    dtCore::RefPtr<dtGame::StringMessageParameter>  param = new dtGame::StringMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to empty", param->GetValue() == "");
+   
    std::string c("doofus");
    param->SetValue(c);
    std::string r = param->GetValue();
@@ -343,11 +413,21 @@ void GameManagerTests::TestStringMessageParameter()
    dtCore::RefPtr<dtGame::StringMessageParameter> param2 = new dtGame::StringMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::StringMessageParameter> param3 = new dtGame::StringMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
+
 }
 
 void GameManagerTests::TestEnumMessageParameter()
 {
    dtCore::RefPtr<dtGame::EnumMessageParameter>  param = new dtGame::EnumMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to empty", param->GetValue() == "");
+
    std::string c("doofus");
    param->SetValue(c);
    std::string r = param->GetValue();
@@ -363,12 +443,21 @@ void GameManagerTests::TestEnumMessageParameter()
    dtCore::RefPtr<dtGame::EnumMessageParameter> param2 = new dtGame::EnumMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::EnumMessageParameter> param3 = new dtGame::EnumMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 
 void GameManagerTests::TestBooleanMessageParameter()
 {
    dtCore::RefPtr<dtGame::BooleanMessageParameter>  param = new dtGame::BooleanMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to false", param->GetValue() == false);
+
    bool c = true;
    param->SetValue(c);
    bool r = param->GetValue();
@@ -389,11 +478,23 @@ void GameManagerTests::TestBooleanMessageParameter()
    dtCore::RefPtr<dtGame::BooleanMessageParameter> param2 = new dtGame::BooleanMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   param->SetValue(false);
+   dtCore::RefPtr<dtGame::BooleanMessageParameter> param3 = new dtGame::BooleanMessageParameter("b", true);
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestUnsignedCharMessageParameter()
 {
+   //std::cout << "CURTISS TEST TEST TEST TEST TEST CURTISS TEST TEST TEST TEST TEST CURTISS TEST TEST TEST TEST TEST CURTISS TEST TEST TEST TEST TEST CURTISS TEST TEST TEST TEST TEST ";
+
    dtCore::RefPtr<dtGame::UnsignedCharMessageParameter>  param = new dtGame::UnsignedCharMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    unsigned char c = 201;
    param->SetValue(c);
    unsigned char r = param->GetValue();
@@ -409,11 +510,20 @@ void GameManagerTests::TestUnsignedCharMessageParameter()
    dtCore::RefPtr<dtGame::UnsignedCharMessageParameter> param2 = new dtGame::UnsignedCharMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::UnsignedCharMessageParameter> param3 = new dtGame::UnsignedCharMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestUnsignedIntMessageParameter()
 {
    dtCore::RefPtr<dtGame::UnsignedIntMessageParameter>  param = new dtGame::UnsignedIntMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    unsigned int c = 201;
    param->SetValue(c);
    unsigned int r = param->GetValue();
@@ -429,11 +539,20 @@ void GameManagerTests::TestUnsignedIntMessageParameter()
    dtCore::RefPtr<dtGame::UnsignedIntMessageParameter> param2 = new dtGame::UnsignedIntMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::UnsignedIntMessageParameter> param3 = new dtGame::UnsignedIntMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestIntMessageParameter()
 {
    dtCore::RefPtr<dtGame::IntMessageParameter>  param = new dtGame::IntMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    int c = 201;
    param->SetValue(c);
    int r = param->GetValue();
@@ -449,11 +568,20 @@ void GameManagerTests::TestIntMessageParameter()
    dtCore::RefPtr<dtGame::IntMessageParameter> param2 = new dtGame::IntMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::IntMessageParameter> param3 = new dtGame::IntMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestUnsignedLongIntMessageParameter()
 {
    dtCore::RefPtr<dtGame::UnsignedLongIntMessageParameter>  param = new dtGame::UnsignedLongIntMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    unsigned long c = 201;
    param->SetValue(c);
    unsigned long r = param->GetValue();
@@ -469,11 +597,20 @@ void GameManagerTests::TestUnsignedLongIntMessageParameter()
    dtCore::RefPtr<dtGame::UnsignedLongIntMessageParameter> param2 = new dtGame::UnsignedLongIntMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::UnsignedLongIntMessageParameter> param3 = new dtGame::UnsignedLongIntMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestLongIntMessageParameter()
 {
    dtCore::RefPtr<dtGame::LongIntMessageParameter>  param = new dtGame::LongIntMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    long c = 201;
    param->SetValue(c);
    long r = param->GetValue();
@@ -489,11 +626,20 @@ void GameManagerTests::TestLongIntMessageParameter()
    dtCore::RefPtr<dtGame::LongIntMessageParameter> param2 = new dtGame::LongIntMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::LongIntMessageParameter> param3 = new dtGame::LongIntMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestUnsignedShortIntMessageParameter()
 {
    dtCore::RefPtr<dtGame::UnsignedShortIntMessageParameter>  param = new dtGame::UnsignedShortIntMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    unsigned short c = 201;
    param->SetValue(c);
    unsigned short r = param->GetValue();
@@ -509,11 +655,20 @@ void GameManagerTests::TestUnsignedShortIntMessageParameter()
    dtCore::RefPtr<dtGame::UnsignedShortIntMessageParameter> param2 = new dtGame::UnsignedShortIntMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::UnsignedShortIntMessageParameter> param3 = new dtGame::UnsignedShortIntMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestShortIntMessageParameter()
 {
    dtCore::RefPtr<dtGame::ShortIntMessageParameter>  param = new dtGame::ShortIntMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0", param->GetValue() == 0);
+
    short c = 201;
    param->SetValue(c);
    short r = param->GetValue();
@@ -529,11 +684,20 @@ void GameManagerTests::TestShortIntMessageParameter()
    dtCore::RefPtr<dtGame::ShortIntMessageParameter> param2 = new dtGame::ShortIntMessageParameter("b");
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", param->GetValue() == param2->GetValue());   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::ShortIntMessageParameter> param3 = new dtGame::ShortIntMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(param->GetValue() == param3->GetValue());
 }
 
 void GameManagerTests::TestFloatMessageParameter()
 {
    dtCore::RefPtr<dtGame::FloatMessageParameter>  param = new dtGame::FloatMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0.0", osg::equivalent(param->GetValue(), 0.0f, 1e-2f));
+
    float c = 201.32;
    param->SetValue(c);
    float r = param->GetValue();
@@ -552,11 +716,20 @@ void GameManagerTests::TestFloatMessageParameter()
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", 
       osg::equivalent(param->GetValue(), param2->GetValue(), 1e-2f));   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::FloatMessageParameter> param3 = new dtGame::FloatMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(osg::equivalent(param->GetValue(), param3->GetValue(), 1e-2f));
 }
 
 void GameManagerTests::TestDoubleMessageParameter()
 {
    dtCore::RefPtr<dtGame::DoubleMessageParameter>  param = new dtGame::DoubleMessageParameter("a");
+   CPPUNIT_ASSERT_MESSAGE("MessageParameter should default to 0.0", osg::equivalent(param->GetValue(), 0.0, 1e-2));
+
    double c = 201.32;
    param->SetValue(c);
    double r = param->GetValue();
@@ -575,6 +748,13 @@ void GameManagerTests::TestDoubleMessageParameter()
    param2->CopyFrom(*param);
    CPPUNIT_ASSERT_MESSAGE("Copied parameter should match the original.", 
       osg::equivalent(param->GetValue(), param2->GetValue(), 1e-2));   
+
+   dtGame::DataStream ds;
+   dtCore::RefPtr<dtGame::DoubleMessageParameter> param3 = new dtGame::DoubleMessageParameter("b");
+   
+   param->ToDataStream(ds);
+   param3->FromDataStream(ds);
+   CPPUNIT_ASSERT(osg::equivalent(param->GetValue(), param3->GetValue(), 1e-2));
 }
 
 void GameManagerTests::TestVec2MessageParameters()
@@ -867,9 +1047,8 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
          //have to send a from event to make the actor get deleted
-         double deltaTime[2] = {0.3, 0.3}; 
-         
-         dtCore::System::Instance()->SendMessage("preframe", deltaTime);
+         sleep(10);
+         dtCore::System::Instance()->Step();
          
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindGameActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to NULL", proxy->GetGameManager() == NULL);
@@ -923,16 +1102,12 @@ void GameManagerTests::TestAddActor()
          CPPUNIT_ASSERT_MESSAGE("The proxy should still be in the game manager", mManager->FindGameActorById(proxy->GetId()) != NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should not have the GameManager pointer set to NULL", proxy->GetGameManager() != NULL);
          //have to send a from event to make the actor get deleted
-         double deltaTime[2] = {0.3, 0.3}; 
-         
-         dtCore::System::Instance()->SendMessage("preframe", deltaTime);
+         sleep(10);
+         dtCore::System::Instance()->Step();
          
          CPPUNIT_ASSERT_MESSAGE("The proxy should not still be in the game manager", mManager->FindGameActorById(proxy->GetId()) == NULL);
          CPPUNIT_ASSERT_MESSAGE("The proxy should have the GameManager pointer set to NULL", proxy->GetGameManager() == NULL);
       }
    }
-
-   
 }
-
 

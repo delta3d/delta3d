@@ -26,11 +26,11 @@
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/enginepropertytypes.h"
-#include <QGridLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QString>
-#include <QWidget>
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtCore/QString>
+#include <QtGui/QWidget>
 
 namespace dtEditQt 
 {

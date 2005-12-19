@@ -20,18 +20,18 @@
 * @author Curtiss Murphy
 */
 
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QHeaderView>
-#include <QKeyEvent>
-#include <QLabel>
-#include <QPushButton>
-#include <QSize>
-#include <QStringList>
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QTreeView>
-#include <QTreeWidgetItem>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHeaderView>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtCore/QSize>
+#include <QtCore/QStringList>
+#include <QtGui/QTableWidget>
+#include <QtGui/QTableWidgetItem>
+#include <QtGui/QTreeView>
+#include <QtGui/QTreeWidgetItem>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actortype.h"
 #include "dtDAL/librarymanager.h"

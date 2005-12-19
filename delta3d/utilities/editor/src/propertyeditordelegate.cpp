@@ -33,8 +33,8 @@
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QMessageBox>
 #include <QtGui/QLabel>
-#include <QComboBox>
-#include <QPushButton>
+#include <QtGui/QComboBox>
+#include <QtGui/QPushButton>
 
 #include <QtGui/qdrawutil.h>
 #include <QtCore/qdebug.h>

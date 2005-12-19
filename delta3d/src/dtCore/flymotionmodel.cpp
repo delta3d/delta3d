@@ -279,7 +279,8 @@ void FlyMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      double dtCore = *(double*)data->userData;
+      double *messageData = (double *)data->userData;
+      double dtCore = messageData[1];
       
       Transform transform;
       

@@ -16,6 +16,8 @@ bool System::mInstanceFlag = false;
 System* System::mSystem = NULL;
 
 System::System():
+   mSimulationTime(0.0),
+   mTimeScale(1.0f),
    mRunning(false),
    mShutdownOnWindowClose(true),
    mPaused(false)
@@ -46,6 +48,10 @@ System* System::Instance()
 
 void System::SetPause( bool paused )
 {
+   //don't send out a message unless it actually changes.
+   if (mPaused == paused)
+      return;
+      
    mPaused = paused;
    
    if( mPaused )
@@ -63,16 +69,17 @@ bool System::GetPause() const
    return mPaused;
 }
 
-void System::Frame( const double deltaFrameTime)
+void System::Frame(const double deltaSimTime, const double deltaRealTime)
 {
-   SendMessage( "frame", (void*)&deltaFrameTime );
+   double userData[2] = { deltaSimTime, deltaRealTime };
+   SendMessage( "frame", userData );
 
    CameraFrame();
 }
 
-void System::Pause( const double deltaFrameTime )
+void System::Pause( const double deltaRealTime )
 {
-   SendMessage( "pause", (void*)&deltaFrameTime );      
+   SendMessage( "pause", (void*)&deltaRealTime );      
    
    CameraFrame();
 }
@@ -80,12 +87,12 @@ void System::Pause( const double deltaFrameTime )
 void System::Run()
 {
    mRunning = true;
+   mSimulationTime = 0.0;
    mLastClockTime = mClock.tick();
+   mSimulationClockTime = mLastClockTime;
 
-   #ifdef __APPLE__
-   //this loop is a workaround for problems on Mac OS X where startThread is not called
-   //in the render surface, which makes "isRunning" return false
-   //it should be removed once the OSX bugs with RS are fixed.
+   //This should have been ifdef'd, not commented out.
+#ifdef __APPLE__   
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
    {
       Producer::RenderSurface* rs = DeltaWin::GetInstance(i)->GetRenderSurface();
@@ -95,22 +102,26 @@ void System::Run()
       rs->fullScreen(false);
       rs->startThread();
    }
-   #endif //__APPLE__
-   
+#endif   
    while( mRunning )
    {	  
 	   mClockTime = mClock.tick();
 	   mDt = mClock.delta_s(mLastClockTime, mClockTime);
-
+                       
       if( mPaused )
       {
          Pause(mDt);
       }
       else
       {
-         PreFrame(mDt);
-         Frame(mDt);
-         PostFrame(mDt);
+         //scale time.
+         double mSimDt = mDt * mTimeScale;         
+         mSimulationTime += mSimDt;
+         mSimulationClockTime += (dtCore::Timer_t)(mSimDt * 1000000); 
+
+         PreFrame(mSimDt, mDt);
+         Frame(mSimDt, mDt);
+         PostFrame(mSimDt, mDt);
       }
 
 	   mLastClockTime = mClockTime;
@@ -125,6 +136,12 @@ void System::Run()
 
          mRunning = mRunning && renderSurfaceIsRunning;
       }
+      
+      for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+      {
+         DeltaWin::GetInstance(i)->Update();
+      }
+      
    }
 
    LOG_DEBUG("System: Exiting...");
@@ -142,12 +159,12 @@ void System::Step()
 {
    static bool first = true;
 
-   if( !mRunning )
+   if ( !mRunning )
    {
       return;
    }
 
-   if(first)
+   if (first)
    {
       mLastClockTime = mClock.tick();
       first = false;
@@ -156,9 +173,22 @@ void System::Step()
    mClockTime = mClock.tick();
    mDt = mClock.delta_s(mLastClockTime, mClockTime); 
 
-   PreFrame(mDt);
-   Frame(mDt);
-   PostFrame(mDt);
+
+   if( mPaused )
+   {
+      Pause(mDt);
+   }
+   else
+   {
+      //scale time.
+      double mSimDt = mDt * mTimeScale;
+      mSimulationTime += mSimDt;
+      mSimulationClockTime += (dtCore::Timer_t)(mSimDt * 1000000); 
+
+      PreFrame(mSimDt, mDt);
+      Frame(mSimDt, mDt);
+      PostFrame(mSimDt, mDt);
+   }
 
    mLastClockTime = mClockTime;
 }
@@ -168,14 +198,16 @@ void System::Stop()
    mRunning = false;
 }
 
-void System::PreFrame( const double deltaFrameTime )
+void System::PreFrame( const double deltaSimTime, const double deltaRealTime )
 {
-   SendMessage("preframe", (void*)&deltaFrameTime);
+   double userData[2] = { deltaSimTime, deltaRealTime };
+   SendMessage("preframe", userData);
 }
 
-void System::PostFrame( const double deltaFrameTime )
+void System::PostFrame( const double deltaSimTime, const double deltaRealTime )
 {
-   SendMessage("postframe", (void*)&deltaFrameTime);
+   double userData[2] = { deltaSimTime, deltaRealTime };
+   SendMessage("postframe", userData);
 }
 
 void System::Config()
@@ -187,5 +219,5 @@ void System::Config()
 
 void System::CameraFrame()
 {
-   Camera::GetCameraGroup()->Frame();
+  Camera::GetCameraGroup()->Frame();
 }

@@ -32,7 +32,8 @@
 #pragma warning(disable:4251)
 #endif
 
-namespace dtUtil {
+namespace dtUtil 
+{
 
    /**
    * This class represents a type-safe enumeration pattern.  It allows one to
@@ -44,7 +45,8 @@ namespace dtUtil {
       /**
       * @return the string representation of this enumeration.
       */
-      const std::string &GetName() const {
+      const std::string &GetName() const 
+      {
          return this->name;
       }
 
@@ -54,7 +56,8 @@ namespace dtUtil {
       * safe and efficient to compare enumeration objects based on their memory
       * address.
       */
-      bool operator==(const Enumeration &rhs) const {
+      bool operator==(const Enumeration &rhs) const 
+      {
 		  return this->name == rhs.name;
       }
 
@@ -62,7 +65,8 @@ namespace dtUtil {
       * Inequality test for an enumeration.
       * @see operator==
       */
-      bool operator!=(const Enumeration &rhs) const {
+      bool operator!=(const Enumeration &rhs) const 
+      {
          return this != &rhs;
       }
 
@@ -75,22 +79,26 @@ namespace dtUtil {
       *  Uses the STL string compare method implying that the rules for string
       *  equality are the same as they are for the STL string compare method.
       */
-      bool operator==(const std::string &rhs) const {
+      bool operator==(const std::string &rhs) const 
+      {
          return this->name == rhs;
       }
 
       ///Overloaded inequality test for this enumeration's string value.
-      bool operator!=(const std::string &rhs) const {
+      bool operator!=(const std::string &rhs) const 
+      {
          return this->name != rhs;
       }
 
       ///Overloaded less than test for this enumeration's string value.
-      bool operator<(const std::string &rhs) const {
+      bool operator<(const std::string &rhs) const 
+      {
          return this->name < rhs;
       }
 
       ///Overloaded greater than test for this enumeration's string value.
-      bool operator>(const std::string &rhs) const {
+      bool operator>(const std::string &rhs) const 
+      {
          return this->name > rhs;
       }
 
@@ -105,7 +113,8 @@ namespace dtUtil {
       *  this methods works fine.  However, it really does not make sense to use
       *  this method of comparison in other circumstances.
       */
-      bool operator<(const Enumeration &rhs) const {
+      bool operator<(const Enumeration &rhs) const 
+      {
          return this < &rhs;
       }
 
@@ -150,21 +159,25 @@ namespace dtUtil {
 #define DECLARE_ENUM(EnumType)                          \
 private:                                                \
    static std::vector<dtUtil::Enumeration *> instances;           \
-   static void AddInstance(dtUtil::Enumeration *instance) {       \
-   EnumType::instances.push_back(instance);        \
+   static void AddInstance(dtUtil::Enumeration *instance) \
+   {                                                  \
+      EnumType::instances.push_back(instance);        \
    }                                                   \
 public:                                                 \
    static const std::vector<dtUtil::Enumeration *> &Enumerate() {       \
-   return EnumType::instances;                     \
+      return EnumType::instances;                     \
    }                                                   \
    \
-   static Enumeration* GetValueForName(const std::string& name) {\
-   for(unsigned i = 0; i < instances.size(); i++) { \
-   if(name == instances[i]->GetName()) { \
-   return instances[i];              \
-   }                                     \
-   }                                         \
-   return NULL;                              \
+   static Enumeration* GetValueForName(const std::string& name) \
+   {                                                  \
+      for(unsigned i = 0; i < instances.size(); i++) \
+      {                                      \
+         if(name == instances[i]->GetName()) \
+         {                                   \
+            return instances[i];              \
+         }                                     \
+      }                                         \
+      return NULL;                              \
    }
 
 #define IMPLEMENT_ENUM(EnumType)                        \

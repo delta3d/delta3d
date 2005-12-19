@@ -473,7 +473,7 @@ namespace dtDAL
     }
 
     //////////////////////////////////////////////////////////
-    void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards)
+    void Project::LoadMapIntoScene(Map& map, dtCore::Scene& scene, bool addBillBoards, bool enablePaging)
     {
         CheckMapValidity(map, true);
         std::vector<osg::ref_ptr<ActorProxy> > container;
@@ -499,7 +499,7 @@ namespace dtDAL
                     }
                     else
                     {
-                        scene.AddDrawable(billBoard->GetDrawable());
+                       scene.AddDrawable(billBoard->GetDrawable());
                     }
 
                 }
@@ -523,6 +523,14 @@ namespace dtDAL
                 //if we aren't drawing billboards, then the actors should always be in the scene.
                 scene.AddDrawable(proxy.GetActor());
             }
+        }
+
+        if(enablePaging)
+        {
+           if(scene.IsPagingEnabled())
+              scene.DisablePaging();
+           
+           scene.EnablePaging();
         }
 
         if (!addBillBoards)

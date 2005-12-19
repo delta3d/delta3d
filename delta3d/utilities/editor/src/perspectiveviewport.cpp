@@ -19,8 +19,8 @@
 *
 * @author Matthew W. Campbell
 */
-#include <QMouseEvent>
-#include <QAction>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QAction>
 #include <sstream>
 #include <osg/Billboard>
 #include <osgDB/WriteFile>

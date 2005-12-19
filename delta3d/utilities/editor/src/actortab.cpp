@@ -28,8 +28,8 @@
 #include "dtEditQt/actorglobalbrowser.h"
 #include "dtEditQt/editoractions.h"
 
-#include <QWidget>
-#include <QAction>
+#include <QtGui/QWidget>
+#include <QtGui/QAction>
 
 namespace dtEditQt 
 {

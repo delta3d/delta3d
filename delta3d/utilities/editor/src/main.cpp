@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-#include <QApplication>
-#include <QMessageBox>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
 #include <QSplashScreen>
-#include <QPixmap>
+#include <QtGui/QPixmap>
 #include <sstream>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_WARNING);
+        dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
         dtCore::SetDataFilePathList(".;" + dtCore::GetDeltaDataPathList());
 
         //Now that everything is initialized, show the main window.

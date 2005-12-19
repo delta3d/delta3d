@@ -19,7 +19,7 @@
 *
 * @author Matthew W. Campbell
 */
-#include <QMouseEvent>
+#include <QtGui/QMouseEvent>
 #include <osg/Math>
 #include <osg/CullSettings>
 #include "dtEditQt/orthoviewport.h"

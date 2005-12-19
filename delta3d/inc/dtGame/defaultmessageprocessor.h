@@ -28,8 +28,10 @@ namespace dtGame
    class GameManager;
    class Message;
    class TickMessage;
+   class TimeChangeMessage;
    class ActorUpdateMessage;
    class ActorDeletedMessage;
+   class RestartMessage;
    class GameActorProxy;
 
    class DT_GAME_EXPORT DefaultMessageProcessor : public GMComponent
@@ -55,32 +57,33 @@ namespace dtGame
           * Processes a tick message
           * @param msg The message
           */
-         virtual void ProcessTick(const TickMessage &msg);
+         virtual void ProcessTick(const TickMessage &msg) {}
 
          /**
           * Processes a local create message
           * @param msg The message
           */
-         virtual void ProcessLocalCreateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessLocalCreateActor(const ActorUpdateMessage &msg) {}
 
          /**
           * Processes an local actor update message
           * @param msg The message
           */
-         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage &msg);
+         virtual void ProcessLocalUpdateActor(const ActorUpdateMessage &msg) {}
 
          /**
           * Processes a local actor delete message
           * @param msg The message
           */
-         virtual void ProcessLocalDeleteActor(const ActorDeletedMessage &msg);
+         virtual void ProcessLocalDeleteActor(const ActorDeletedMessage &msg) {}
 
          /**
           * Processes a remote create actor message
           * @param msg The message
-          * @return A pointer to the newly created GameActorProxy, or NULL if error
+          * @return A pointer to the newly created GameActorProxy.
+          * @throws dtUtil::Exception if it was unable to create the proper actor.
           */
-         virtual GameActorProxy* ProcessRemoteCreateActor(const ActorUpdateMessage &msg);
+         virtual dtCore::RefPtr<GameActorProxy> ProcessRemoteCreateActor(const ActorUpdateMessage &msg) throw (dtUtil::Exception);
 
          /**
           * Processes a remote update actor message
@@ -111,6 +114,32 @@ namespace dtGame
           * @param msg The message
           */
          void ProcessDeleteActor(const ActorDeletedMessage &msg);
+
+         /**
+          * Called when a pause command message is received.
+          * @param msg the pause message.
+          */
+         virtual void ProcessPauseCommand(const Message& msg);
+          
+         /**
+          * Called when a resume command message is received.
+          * @param msg the resume message.
+          */
+         virtual void ProcessResumeCommand(const Message& msg);
+
+         /**
+          * Called when a restart command message is received.
+          * This should be overridden to handle restarting the game, 
+          * whatever that means to the current game or simulation.
+          * @param msg the restart message.
+          */
+         virtual void ProcessRestartCommand(const RestartMessage& msg) {}
+
+         /**
+          * Called when a time change command message is received.
+          * @param msg the message to change the time settings.
+          */
+         virtual void ProcessTimeChangeCommand(const TimeChangeMessage& msg);
 
          /**
           * Processes an unhandled local message

@@ -55,7 +55,7 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( UtilTests );
 
-#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* UtilTests::mExampleLibraryName="testActorLibraryd";
 char* UtilTests::mActorLibraryName="dtActorsd";
 #else
@@ -71,7 +71,10 @@ void UtilTests::setUp()
         std::string logName("UtilTests");
 
         logger = &dtUtil::Log::GetInstance();
-        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+        
+        //ensure the example library is unloaded.
+        dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
 
     }
     catch (const dtUtil::Exception& e)
@@ -110,7 +113,12 @@ void UtilTests::TestLibrarySharing()
    std::vector<dtCore::RefPtr<dtDAL::ActorType> > actors;
    std::vector<dtDAL::ActorProperty *> props;
 
+   CPPUNIT_ASSERT(libMgr.GetRegistry(mActorLibraryName) != NULL);
+   
    libMgr.GetActorTypes(actors);
+   
+   CPPUNIT_ASSERT(actors.size() > 0);
+   
    
    //make it initialize.
    dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
@@ -131,11 +139,14 @@ void UtilTests::TestLibrarySharing()
    dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib1a = lsm.LoadSharedLibrary(mActorLibraryName);
    dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib2a = lsm.LoadSharedLibrary(mExampleLibraryName);
      
+   CPPUNIT_ASSERT(&lib1->GetDynamicLibrary() == &lib1a->GetDynamicLibrary());
+   CPPUNIT_ASSERT(&lib2->GetDynamicLibrary() == &lib2a->GetDynamicLibrary());
+   
    osgDB::DynamicLibrary* dl1 = &lib1->GetDynamicLibrary(); 
    osgDB::DynamicLibrary* dl2 = &lib2->GetDynamicLibrary(); 
     
    std::ostringstream oss;
-   //One for for the library manager, one for the lsm, and one for each lib variable 
+   //the library manager doesn't hold one, one is for the lsm, and one for each lib variable 
    oss << "The actor lib reference count should be 4, but it is " <<  dl1->referenceCount(); 
    
    CPPUNIT_ASSERT_MESSAGE(oss.str(), dl1->referenceCount() == 4);

@@ -629,26 +629,37 @@ void Scene::UseSceneLight( bool lightState )
 
 void Scene::EnablePaging()
 {
-   osgDB::DatabasePager* databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
-   databasePager->setTargetFrameRate(mTargetFrameRate);
-   databasePager->registerPagedLODs( mSceneNode.get() );
-   databasePager->setUseFrameBlock(false);
-
-   for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+   if(Camera::GetInstanceCount() > 0)
    {
-      Camera *cam = Camera::GetInstance(camNum);
+      osgDB::DatabasePager* databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
+      databasePager->setTargetFrameRate(mTargetFrameRate);
+      databasePager->registerPagedLODs( mSceneNode.get() );
+      databasePager->setUseFrameBlock(false);
 
-      cam->GetSceneHandler()->GetSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
+      for (int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+      {
+         Camera *cam = Camera::GetInstance(camNum);
 
-      databasePager->setCompileGLObjectsForContextID(cam->GetSceneHandler()->GetSceneView()->getState()->getContextID(),true);
-   }    
+         cam->GetSceneHandler()->GetSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
 
-   mStartTick = osg::Timer::instance()->tick();
-   mPagingEnabled = true;
+         databasePager->setCompileGLObjectsForContextID(cam->GetSceneHandler()->GetSceneView()->getState()->getContextID(),true);
+      }    
+
+      mStartTick = osg::Timer::instance()->tick();
+      mPagingEnabled = true;
+   }
 }
 
 void Scene::DisablePaging()
 {
-   osgDB::Registry::instance()->getDatabasePager()->clear();
-   osgDB::Registry::instance()->setDatabasePager(0);
+   if(mPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != NULL)
+   {
+      osgDB::Registry::instance()->getDatabasePager()->clear();
+      osgDB::Registry::instance()->setDatabasePager(NULL);
+      mPagingEnabled = false;
+   }
+   else
+   {
+      LOG_ERROR("DisablePaging was called when paging wasn't enabled");
+   }
 }

@@ -7,6 +7,9 @@ import time
 import smtplib
 import string
 import SCons.Util
+import macosx
+import SCons.Util
+from SCons.Script.SConscript import SConsEnvironment
 
 from email.MIMEText import MIMEText
 
@@ -35,6 +38,8 @@ SetOption('implicit_cache', 1)
 # this is who the build email will come from
 fromAddress = 'myaddress@company.com'
 
+########################
+
 def SGlob(pattern):
    path = string.replace(GetBuildPath('SConscript'),  'SConscript', '')
 
@@ -43,6 +48,8 @@ def SGlob(pattern):
       result.append(string.replace(i, path, ''))
 
    return result 
+
+########################
 
 def _lang2suffix(lang):
    """
@@ -62,6 +69,7 @@ def _lang2suffix(lang):
 
    return None, None, "Unsupported language: %s" % lang
 
+########################
 
 def CheckFramework(context, frameworks, func_name = 'main', header = None, 
              extra_frameworks = None, extra_libs = None, 
@@ -164,6 +172,7 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
    context.Result(0)
    return 0
 
+########################
 
 def _YesNoResult(context, ret, key, text):
    """
@@ -179,6 +188,8 @@ def _YesNoResult(context, ret, key, text):
       _LogFailed(context, text, ret)
    else:
       context.Display("yes\n")
+
+########################
 
 def _Have(context, key, have):
    """
@@ -214,6 +225,7 @@ def _Have(context, key, have):
          f.write("#define %s %s\n" % (key_up, str(have)))
       f.close()
 
+########################
 
 def _LogFailed(context, text, msg):
    """
@@ -230,23 +242,7 @@ def _LogFailed(context, text, msg):
       n = n + 1
    context.Log("Error message: %s\n" % msg)
 
-def _lang2suffix(lang):
-   """
-   Convert a language name to a suffix.
-   When 'lang' is empty or None C is assumed.
-   Returns a tuple (lang, suffix, None) when it works.
-   For an unrecognized language returns (None, None, msg).
-   Where:
-      lang   = the unified language name
-      suffix = the suffix, including the leading dot
-      msg   = an error message
-   """
-   if not lang or lang in ["C", "c"]:
-      return ("C", ".c", None)
-   if lang in ["c++", "C++", "cpp", "CXX", "cxx"]:
-      return ("C++", ".cpp", None)
-
-   return None, None, "Unsupported language: %s" % lang
+########################
 
 def find_file( findThis, startDirs ) :
    for startDir in startDirs :
@@ -255,190 +251,231 @@ def find_file( findThis, startDirs ) :
          return os.path.join( root, findThis )
    return None
 
-def BuildProgram( name, srcs, deps, extraDefines = [], extraLinkFlags = [] ) :
 
-   if OS == "darwin":
-      target = '#bin/' + name + '.app/Contents/MacOS/' + name      
-   else:
-      target = '#bin/' + name
+##############################
 
-   if OS == 'windows' and mode == 'debug' :
-      target += 'd'
+def TOOL_BUNDLE(env):
 
-   envProg = env.Copy()
+########################
 
-   for lib in deps :
-      if depsHash.has_key(lib) :
-         for newLib in depsHash[lib] :
-            if not newLib in deps :
-               deps.append(newLib)
-   
-   # merge external deps and delta libs
-   # there's probably some function to do this
-   allLibs = {}
-   for lib_name in dtLibs.keys() :
-      allLibs[lib_name] = dtLibs[lib_name]
-   for lib_name in extLibs.keys() :
-      allLibs[lib_name] = extLibs[lib_name]
-      
-   # change to platform+mode specific names
-   deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
-
-   addToLink = []
-   if envProg.has_key('LINKFLAGS') and OS == 'windows':
-     addToLink = envProg['LINKFLAGS']
-
-   addToLibs = []
-   if OS == 'darwin':
-      addToLink.append('$FRAMEWORKSPATH')
-      for lib_name in deps:
-        if foundLibs.has_key(lib_name):
-          if foundLibs[lib_name] == 'framework':
-            #print "found " + lib_name + " as a framework"
-            addToLink.append('-framework')
-            addToLink.append(lib_name)
-          else:
-            #print "found " + lib_name + " as a shared lib"
-            addToLibs.append(lib_name)
-        else:
-          #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
-          addToLibs.append(lib_name);
-   else:
-      addToLibs = deps
-
-   cppDefines = []
-   if envProg.has_key('CPPDEFINES'):
-     cppDefines = envProg['CPPDEFINES']
-
-   program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-
-   if launchDir != env.get('prefix') :
-      if OS == 'darwin':
-         envProg.Install( '$prefix/share/delta3d/bin/' + name + '.app/Contents/MacOS/', program )
-         #envProg.Install( '$prefix/share/delta3d/bin/' + name + '.app/Contents/', '#bin/' )
-      else:
-         envProg.Install( '$prefix/share/delta3d/bin', program )
-            
-
-def BuildLib( name, srcs, deps, extraDefines = [], extraLinkFlags = [],
-      overrideShLinkFlags = '',  overrideShLibSuffix = '' ) :
-
-   target = name
-   if OS == 'windows' and mode == 'debug' :
-      target += 'd'
-      
-   #add dependencies to global index
-   depsHash[name] = deps
-   
-   envLib = env.Copy()
-
-   if overrideShLinkFlags != '':
-      envLib['SHLINKFLAGS'] = overrideShLinkFlags
-   
-   if overrideShLibSuffix != '':
-      envLib['SHLIBSUFFIX'] = overrideShLibSuffix
-
-   envLib['LIBNAME'] = name
-
-   #expand pre-built libs
-   for lib in deps :
-      envLib.Depends(target,lib)
-      if depsHash.has_key(lib) :
-         for newLib in depsHash[lib] :
-            if not newLib in deps :
-               deps.append(newLib)
-      
-   # merge external deps and delta libs
-   # there's probably some function to do this
-   allLibs = {}
-   for lib_name in dtLibs.keys() :
-      allLibs[lib_name] = dtLibs[lib_name]
-   for lib_name in extLibs.keys() :
-      allLibs[lib_name] = extLibs[lib_name]
-      
-   # change to platform+mode specific names
-   deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
-
-   addToLink = []
-   if envLib.has_key('LINKFLAGS') and OS == 'windows':
-     addToLink = envLib['LINKFLAGS']
-
-   addToLibs = []
-   if OS == 'darwin':
-      addToLink.append('$FRAMEWORKSPATH')
-      for lib_name in deps:
-        if foundLibs.has_key(lib_name):
-          if foundLibs[lib_name] == 'framework':
-            #print "found " + lib_name + " as a framework"
-            addToLink.append('-framework')
-            addToLink.append(lib_name)
-          else:
-            #print "found " + lib_name + " as a shared lib"
-            addToLibs.append(lib_name)
-        else:
-          #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
-          addToLibs.append(lib_name);
-   else:
-      addToLibs = deps
-
-   cppDefines = []
-   if envLib.has_key('CPPDEFINES'):
-      cppDefines = envLib['CPPDEFINES']
-   
-   if name != 'dtNet' :
-      builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
-                                       LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-   else :
-      builtlib = envLib.StaticLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
-                                       LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
-      
-   envLib.Precious( builtlib )
-   
-   if OS == 'windows' and name != 'dtNet' :
+    def BuildProgram(env,  name, srcs, deps, extraDefines = [], extraLinkFlags = [], buildAppBundle = 1) :
     
-      lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
-      envLib.Install( '#/lib', builtlib[1] ) # .lib, 
-      envLib.Install( '#/lib', builtlib[2] ) # .exp
+       target = '#bin/' + name
+    
+       if OS == 'windows' and mode == 'debug' :
+          target += 'd'
+    
+       envProg = env.Copy()
+    
+       for lib in deps :
+          if depsHash.has_key(lib) :
+             for newLib in depsHash[lib] :
+                if not newLib in deps :
+                   deps.append(newLib)
+       
+       # merge external deps and delta libs
+       # there's probably some function to do this
+       allLibs = {}
+       for lib_name in dtLibs.keys() :
+          allLibs[lib_name] = dtLibs[lib_name]
+       for lib_name in extLibs.keys() :
+          allLibs[lib_name] = extLibs[lib_name]
+          
+       # change to platform+mode specific names
+       deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
+    
+       addToLink = []
+       if envProg.has_key('LINKFLAGS') and OS == 'windows':
+         addToLink = envProg['LINKFLAGS']
+    
+       addToLibs = []
+       if OS == 'darwin':
+          addToLink.append('$FRAMEWORKSPATH')
+          for lib_name in deps:
+            if foundLibs.has_key(lib_name):
+              if foundLibs[lib_name] == 'framework':
+                #print "found " + lib_name + " as a framework"
+                addToLink.append('-framework')
+                addToLink.append(lib_name)
+              else:
+                #print "found " + lib_name + " as a shared lib"
+                addToLibs.append(lib_name)
+            else:
+              #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
+              addToLibs.append(lib_name);
+       else:
+          addToLibs = deps
+    
+       cppDefines = []
+       if envProg.has_key('CPPDEFINES'):
+         cppDefines = envProg['CPPDEFINES']
+    
+       program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+    
+       if OS == 'darwin' and buildAppBundle:
+          env ['VERSION_NUM'] = "1.2.0"
+          env ['VERSION_NAME'] = name + '.app'
+          bundle = env.MakeBundle ('#Applications/' + name + '.app', target,
+                                  'old.delta3d.' + name,
+                                  '#macosx/Info.plist',
+                                  'APPL',
+                                  'Dt3D',
+                                  '#macosx/icons/Default.icns')
+          env.Default (bundle)
+    
+          inst = env.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
+       elif launchDir != env.get('prefix') :
+          envProg.Install( '$prefix/share/delta3d/bin', program )
+                    
+########################
+    
+    def BuildLib(env, name, srcs, deps, extraDefines = [], extraLinkFlags = [],
+          overrideShLinkFlags = '',  overrideShLibSuffix = '' ) :
+    
+       target = name
+       if OS == 'windows' and mode == 'debug' :
+          target += 'd'
+          
+       #add dependencies to global index
+       depsHash[name] = deps
+       
+       envLib = env.Copy()
+    
+       if overrideShLinkFlags != '':
+          envLib['SHLINKFLAGS'] = overrideShLinkFlags
+       
+       if overrideShLibSuffix != '':
+          envLib['SHLIBSUFFIX'] = overrideShLibSuffix
+    
+       envLib['LIBNAME'] = name
+    
+       #expand pre-built libs
+       for lib in deps :
+          envLib.Depends(target,lib)
+          if depsHash.has_key(lib) :
+             for newLib in depsHash[lib] :
+                if not newLib in deps :
+                   deps.append(newLib)
+          
+       # merge external deps and delta libs
+       # there's probably some function to do this
+       allLibs = {}
+       for lib_name in dtLibs.keys() :
+          allLibs[lib_name] = dtLibs[lib_name]
+       for lib_name in extLibs.keys() :
+          allLibs[lib_name] = extLibs[lib_name]
+          
+       # change to platform+mode specific names
+       deps = [ allLibs[lib] for lib in deps if allLibs.has_key(lib) ]
+    
+       addToLink = []
+       if envLib.has_key('LINKFLAGS') and OS == 'windows':
+         addToLink = envLib['LINKFLAGS']
+    
+       addToLibs = []
+       if OS == 'darwin':
+          addToLink.append('$FRAMEWORKSPATH')
+          for lib_name in deps:
+            if foundLibs.has_key(lib_name):
+              if foundLibs[lib_name] == 'framework':
+                #print "found " + lib_name + " as a framework"
+                addToLink.append('-framework')
+                addToLink.append(lib_name)
+              else:
+                #print "found " + lib_name + " as a shared lib"
+                addToLibs.append(lib_name)
+            else:
+              #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
+              addToLibs.append(lib_name);
+       else:
+          addToLibs = deps
+    
+       cppDefines = []
+       if envLib.has_key('CPPDEFINES'):
+          cppDefines = envLib['CPPDEFINES']
+       
+       if name != 'dtNet' :
+          builtlib = envLib.SharedLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
+                                           LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+       else :
+          builtlib = envLib.StaticLibrary( target, srcs, CPPDEFINES = cppDefines + extraDefines,
+                                           LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
+          
+       envLib.Precious( builtlib )
+       
+       if OS == 'windows' and name != 'dtNet' :
+        
+          lib = envLib.Install( '#/bin', builtlib[0] ) # .dll
+          envLib.Install( '#/lib', builtlib[1] ) # .lib, 
+          envLib.Install( '#/lib', builtlib[2] ) # .exp
+    
+          if launchDir != env.get('prefix') :
+             envLib.Install( '$prefix/bin', builtlib[0] )
+             envLib.Install( '$prefix/lib', builtlib[1] )
+             envLib.Install( '$prefix/lib', builtlib[2] )
+       else:
+    
+          lib = envLib.Install( '#/lib', builtlib )
+    
+          if launchDir != env.get('prefix') :
+             lib = envLib.Install( '$prefix/lib', builtlib )
+    
+       incDirDict = { 'dtABC'       : 'dtABC',
+                      'dtActors'    : 'dtActors',
+                      'dtAudio'     : 'dtAudio',
+                      'dtChar'      : 'dtChar',
+                      'dtCore'      : 'dtCore',
+                      'dtDAL'       : 'dtDAL',
+                      'dtHLA'       : 'dtHLA',
+                      'dtGUI'       : 'dtGUI',
+                      'dtNet'       : 'dtNet',
+                      'dtScript'    : 'dtScript',
+                      'dtUtil'      : 'dtUtil',
+                      'dtBSP'       : 'dtBSP',
+                      'dtInspector' : 'dtInspector',
+                      'dtTerrain'   : 'dtTerrain',
+                      'dtGame'      : 'dtGame' }
+    
+       #install headers, there's gotta be a cleaner way ;)
+       if incDirDict.has_key(name) and launchDir != env.get('prefix') :
+          for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
+             envLib.InstallAs( '$prefix/include/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )
+    
+       return lib   
 
-      if launchDir != env.get('prefix') :
-         envLib.Install( '$prefix/bin', builtlib[0] )
-         envLib.Install( '$prefix/lib', builtlib[1] )
-         envLib.Install( '$prefix/lib', builtlib[2] )
-   else:
+########################
 
-      lib = envLib.Install( '#/lib', builtlib )
+    def _lang2suffix(lang):
+       """
+       Convert a language name to a suffix.
+       When 'lang' is empty or None C is assumed.
+       Returns a tuple (lang, suffix, None) when it works.
+       For an unrecognized language returns (None, None, msg).
+       Where:
+          lang   = the unified language name
+          suffix = the suffix, including the leading dot
+          msg    = an error message
+       """
+       if not lang or lang in ["C", "c"]:
+          return ("C", ".c", None)
+       if lang in ["c++", "C++", "cpp", "CXX", "cxx"]:
+          return ("C++", ".cpp", None)
+    
+       return None, None, "Unsupported language: %s" % lang
+    # This is not a regular Builder; it's a wrapper function.
+    # So just make it available as a method of Environment.
+    SConsEnvironment.BuildProgram = BuildProgram
+    SConsEnvironment.BuildLib = BuildLib
 
-      if launchDir != env.get('prefix') :
-         lib = envLib.Install( '$prefix/lib', builtlib )
-
-   incDirDict = { 'dtABC'       : 'dtABC',
-                  'dtActors'    : 'dtActors',
-                  'dtAudio'     : 'dtAudio',
-                  'dtChar'      : 'dtChar',
-                  'dtCore'      : 'dtCore',
-                  'dtDAL'       : 'dtDAL',
-                  'dtHLA'       : 'dtHLA',
-                  'dtGUI'       : 'dtGUI',
-                  'dtNet'       : 'dtNet',
-                  'dtScript'    : 'dtScript',
-                  'dtUtil'      : 'dtUtil',
-                  'dtBSP'       : 'dtBSP',
-                  'dtInspector' : 'dtInspector',
-                  'dtTerrain'   : 'dtTerrain',
-                  'dtGame'      : 'dtGame' }
-
-   #install headers, there's gotta be a cleaner way ;)
-   if incDirDict.has_key(name) and launchDir != env.get('prefix') :
-      for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
-         envLib.InstallAs( '$prefix/include/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )
-
-   return lib   
+############################
 
 # Function to calculate current time for logging
 def CurrentTime() :
    now = time.localtime()
    display = time.strftime('%A, %B %d %Y, %X', now)
    return display
+
+########################
 
 # Function to email the result of the build
 def EmailResults() :
@@ -451,7 +488,9 @@ def EmailResults() :
 	s.connect(smtpServer) 
 	s.sendmail(fromAddress, peopleToEmail, buffer.as_string())
 	s.close()
-   
+	
+########################
+
 def find_file( findThis, startDirs ) :
    for startDir in startDirs :
      for root, dirs, files in os.walk( startDir ) :
@@ -459,12 +498,16 @@ def find_file( findThis, startDirs ) :
          return os.path.join( root, findThis )
    return None
 
+########################
+
 def exit_with_error() :
 	sys.stderr.write('Build failed.  See BuildLog.txt for details.\n')
 	errorLog.write('Build Failed: Build ended: ' + CurrentTime() + '\n')
 	errorLog.close()
 	env.Exit(-1)	
    
+########################
+
 def CheckForBoost() :
 
    boostHeader = os.path.join('boost','python.hpp')
@@ -518,6 +561,13 @@ else :
    errorLog.close()
    env.Exit(-1) 
 
+tools = ["default"]
+
+if OS == 'darwin':
+   tools.append(macosx.TOOL_BUNDLE)
+
+tools.append(TOOL_BUNDLE)
+
 # some basic command-line options
 optCache = 'options.cache'
 opts = Options(optCache)
@@ -536,7 +586,7 @@ if OS == 'windows' :
 else :
    opts.Add( PathOption( 'prefix', 'Directory to install under', '/usr/local' ) )
 
-env = Environment( options = opts )
+env = Environment( options = opts, tools = tools )
 
 # append the outside env to ours
 for K in os.environ.keys():
@@ -652,9 +702,10 @@ if mode == 'debug':
                   LINKFLAGS = ['/NODEFAULTLIB:LIBCMTD', '/NODEFAULTLIB:LIBCD'] ) 
    elif OS == 'linux':      
       env.Append( CXXFLAGS=['-g', '-O0', '-pipe'], #deubg info, no optimizations, pipe object data
-                  CXXDEFINES=['DEBUG', '_DEBUG'] )
+                  #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
+		  CPPDEFINES=['SIGSLOT_PURE_ISO'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['DEBUG', '_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'  ])
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -665,12 +716,12 @@ else:
               LINKFLAGS = ['/NODEFAULTLIB:LIBCMT', '/NODEFAULTLIB:LIBC'] )  
    elif OS == 'linux':
      env.Append( CXXFLAGS=['-O2', '-pipe'], #optimizations, pipe object data
-              CPPDEFINES=['NDEBUG'],
+              CPPDEFINES=['NDEBUG', 'SIGSLOT_PURE_ISO'],
               LINKFLAGS=['-s'] )
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'  ])
 
 #add to the CPPFLAGS variable if it's set in the environment
 if os.environ.has_key('CPPFLAGS'):
@@ -999,12 +1050,14 @@ for lib in rtiLibs :
 # Build Delta3D #
 #################
 
-Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 'BuildLib',
-        'BuildProgram', 'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
+Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost', 
+    'rtiLibs', 'foundLibs', 'depsHash', 'dtLibs', 'errorLog' )
 
 env.SConsignFile()
 
 Default( [ 'lib', 'bin' ] )
+if OS == 'darwin':
+   Default(['Applications'])
 
 env.Alias( 'python', [ os.path.join(os.getcwd(), 'src', 'python'),
                   os.path.join(os.getcwd(), 'examples', 'testPython')] )
@@ -1020,7 +1073,7 @@ SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
 
-if env.get('unit_tests') :
+if env.get('unit_tests') or mode == 'debug' :
    SConscript( dirs=['tests'] )
    Default( [ 'tests' ] )
 

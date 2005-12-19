@@ -47,29 +47,29 @@ namespace dtGame
       
       if(msg.GetMessageType() == MessageType::TICK_LOCAL)
       {
-         ProcessTick((TickMessage&)msg);
+         ProcessTick(static_cast<const TickMessage&>(msg));
       }
       else if(msg.GetMessageType() == MessageType::TICK_REMOTE)
       {
-         ProcessTick((TickMessage&)msg);
+         ProcessTick(static_cast<const TickMessage&>(msg));
       }
       else if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
       {
          GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
          if(ga && ga->IsPublished())
-            ProcessPublishActor((ActorPublishedMessage&)msg);
+            ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg));
       }
       else if(msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
       {
          GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
          if(ga && ga->IsPublished())
-            ProcessDeleteActor((ActorDeletedMessage&)msg);
+            ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
       }
       else if(msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
       {
          GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
          if(ga && ga->IsPublished())
-            ProcessUpdateActor((ActorUpdateMessage&)msg);
+            ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
       }
       else
       {
@@ -99,8 +99,7 @@ namespace dtGame
       if(gap != NULL)
       {
          dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
-         newMsg->SetDestination(NULL);
-         gap->PopulateActorUpdate((ActorUpdateMessage&)*newMsg);
+         gap->PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
          GetGameManager()->SendMessage(*newMsg);
       }
       else
@@ -114,9 +113,7 @@ namespace dtGame
       {
          try
          {
-            dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CloneMessage(msg);
-            newMsg->SetDestination(NULL);
-            GetGameManager()->SendMessage(*newMsg);
+            GetGameManager()->SendMessage(msg);
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -125,7 +122,8 @@ namespace dtGame
          }
       }
       else
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a delete actor message from an actor that isn't part of the GameManager");
+         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+            "Received a delete actor message from an actor that isn't part of the GameManager");
    }
 
    void RulesComponent::ProcessUpdateActor(const ActorUpdateMessage &msg)
@@ -133,9 +131,7 @@ namespace dtGame
       GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
       if(gap != NULL)
       {
-         dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED);
-         gap->PopulateActorUpdate((ActorUpdateMessage&)*newMsg);
-         GetGameManager()->SendMessage(*newMsg);
+         GetGameManager()->SendMessage(msg);
       }
       else
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a update actor message from an actor that isn't part of the GameManager");

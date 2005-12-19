@@ -19,28 +19,29 @@
 *
 * @author Teague Coonan
 */
-#include <QDir>
-#include <QHeaderView>
+#include <QtCore/QDir>
+#include <QtGui/QHeaderView>
 
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QString>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
+#include <QtCore/QString>
 
-#include <QGroupBox>
+#include <QtGui/QGroupBox>
 
-#include <QPushButton>
-#include <QPixmap>
-#include <QIcon>
+#include <QtGui/QPushButton>
+#include <QtGui/QPixmap>
+#include <QtGui/QIcon>
 
-#include <QAction>
-#include <QContextMenuEvent>
+#include <QtGui/QAction>
+#include <QtGui/QContextMenuEvent>
 
 #include "dtEditQt/soundbrowser.h"
 #include "dtEditQt/resourcetreewidget.h"
-#include "dtDAL/project.h"
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/uiresources.h"
+
+#include <dtDAL/project.h>
 
 namespace dtEditQt 
 {

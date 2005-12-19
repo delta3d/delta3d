@@ -56,63 +56,14 @@
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/fileutils.h>
 #include <dtUtil/stringutils.h>
+#include <dtUtil/xercesutils.h>
 
 XERCES_CPP_NAMESPACE_USE;
 
 namespace dtDAL
 {
 
-    const std::string logName("mapxml.cpp");
-
-    /**
-     *  This is a simple class that lets us do easy (though not terribly efficient)
-     *  trancoding of XMLCh data to local code page for display.  This code was take from
-     *  the xerces-c 2.6 samples
-     *  <p>
-     *  It's main reason for existing is to allow short and quick translations for printing out debugging info.
-     *  </p>
-     */
-    class XMLStringConverter
-    {
-    public :
-        XMLStringConverter(const XMLCh* const charData): mData(NULL), mLocalForm(NULL)
-        {
-            if (charData != NULL)
-            {
-                mData = new XMLCh[XMLString::stringLen(charData) + 1];
-                XMLString::copyString(mData, charData);
-            }
-        }
-
-        ~XMLStringConverter()
-        {
-            delete[] mData;
-            if (mLocalForm != NULL)
-                XMLString::release(&mLocalForm);
-        }
-
-        /**
-        * returns the XMLCh string as a char*
-         */
-        const char* c_str()
-        {
-            if (mData == NULL)
-                return "";
-
-            if (mLocalForm == NULL)
-                mLocalForm = XMLString::transcode(mData);
-
-            return mLocalForm;
-        }
-
-        const std::string ToString() { return std::string(c_str()); }
-    private :
-        XMLCh* mData;
-        char*   mLocalForm;
-        XMLStringConverter(const XMLStringConverter&) {}
-        XMLStringConverter& operator=(const XMLStringConverter&) { return *this;}
-    };
-
+    static const std::string logName("mapxml.cpp");
 
     /////////////////////////////////////////////////////////////////
     void MapParser::StaticInit()
@@ -315,29 +266,29 @@ namespace dtDAL
             {
                 if (topEl == MapXMLConstants::MAP_NAME_ELEMENT)
                 {
-                    mMap->SetName(XMLStringConverter(chars).ToString());
+                    mMap->SetName(dtUtil::XMLStringConverter(chars).ToString());
                     //this flag is only used when the parser is just looking for the map name.
                     mFoundMapName = true;
                 }
                 else if (topEl == MapXMLConstants::DESCRIPTION_ELEMENT)
                 {
-                    mMap->SetDescription(XMLStringConverter(chars).ToString());
+                    mMap->SetDescription(dtUtil::XMLStringConverter(chars).ToString());
                 }
                 else if (topEl == MapXMLConstants::AUTHOR_ELEMENT)
                 {
-                    mMap->SetAuthor(XMLStringConverter(chars).ToString());
+                    mMap->SetAuthor(dtUtil::XMLStringConverter(chars).ToString());
                 }
                 else if (topEl == MapXMLConstants::COMMENT_ELEMENT)
                 {
-                    mMap->SetComment(XMLStringConverter(chars).ToString());
+                    mMap->SetComment(dtUtil::XMLStringConverter(chars).ToString());
                 }
                 else if (topEl == MapXMLConstants::COPYRIGHT_ELEMENT)
                 {
-                    mMap->SetCopyright(XMLStringConverter(chars).ToString());
+                    mMap->SetCopyright(dtUtil::XMLStringConverter(chars).ToString());
                 }
                 else if (topEl == MapXMLConstants::CREATE_TIMESTAMP_ELEMENT)
                 {
-                    mMap->SetCreateDateTime(XMLStringConverter(chars).ToString());
+                    mMap->SetCreateDateTime(dtUtil::XMLStringConverter(chars).ToString());
                 }
                 else if (topEl == MapXMLConstants::LAST_UPDATE_TIMESTAMP_ELEMENT)
                 {
@@ -356,11 +307,11 @@ namespace dtDAL
             {
                 if (topEl == MapXMLConstants::LIBRARY_NAME_ELEMENT)
                 {
-                    mLibName = XMLStringConverter(chars).ToString();
+                    mLibName = dtUtil::XMLStringConverter(chars).ToString();
                 }
                 else if (topEl == MapXMLConstants::LIBRARY_VERSION_ELEMENT)
                 {
-                    mLibVersion = XMLStringConverter(chars).ToString();
+                    mLibVersion = dtUtil::XMLStringConverter(chars).ToString();
                 }
             }
             else if (mInActors && mInActor && !mIgnoreCurrentActor)
@@ -372,7 +323,7 @@ namespace dtDAL
         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-                               "Found characters for element \"%s\" \"%s\"", XMLStringConverter(topEl.c_str()).c_str(), XMLStringConverter(chars).c_str());
+                               "Found characters for element \"%s\" \"%s\"", dtUtil::XMLStringConverter(topEl.c_str()).c_str(), dtUtil::XMLStringConverter(chars).c_str());
         }
     }
 
@@ -391,7 +342,7 @@ namespace dtDAL
             {
                 if (topEl == MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT)
                 {
-                    std::string propName = XMLStringConverter(chars).ToString();
+                    std::string propName = dtUtil::XMLStringConverter(chars).ToString();
                     mActorProperty = mActorProxy->GetProperty(propName);
                     if (mActorProperty == NULL)
                         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
@@ -403,7 +354,7 @@ namespace dtDAL
                 {
                     if (topEl == MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT)
                     {
-                        std::string resourceTypeString = XMLStringConverter(chars).ToString();
+                        std::string resourceTypeString = dtUtil::XMLStringConverter(chars).ToString();
                         for (std::vector<dtUtil::Enumeration*>::const_iterator i = DataType::Enumerate().begin();
                                 i != DataType::Enumerate().end(); i++)
                         {
@@ -419,7 +370,7 @@ namespace dtDAL
                     }
                     else if (mActorPropertyType != NULL)
                     {
-                        std::string dataValue = XMLStringConverter(chars).ToString();
+                        std::string dataValue = dtUtil::XMLStringConverter(chars).ToString();
 
                         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
                             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -427,7 +378,7 @@ namespace dtDAL
                                 mActorProperty->GetName().c_str(),
                                 mActorProperty->GetPropertyType().GetName().c_str(),
                                 mActorPropertyType->GetName().c_str(),
-                                dataValue.c_str(), XMLStringConverter(topEl.c_str()).c_str());
+                                dataValue.c_str(), dtUtil::XMLStringConverter(topEl.c_str()).c_str());
 
                         //we now have the property, the type, and the data.
                         ParseData(dataValue);
@@ -441,11 +392,11 @@ namespace dtDAL
             {
                 mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                     "Encountered the actor name element with value \"%s\", but actor is NULL.",
-                    XMLStringConverter(chars).c_str());
+                    dtUtil::XMLStringConverter(chars).c_str());
             }
             else
             {
-                mActorProxy->SetName(XMLStringConverter(chars).ToString());
+                mActorProxy->SetName(dtUtil::XMLStringConverter(chars).ToString());
             }
         }
         else if (topEl == MapXMLConstants::ACTOR_ID_ELEMENT)
@@ -454,14 +405,14 @@ namespace dtDAL
             {
                 mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                                     "Encountered the actor id element with value \"%s\", but actor is NULL.",
-                                    XMLStringConverter(chars).c_str());
+                                    dtUtil::XMLStringConverter(chars).c_str());
             }
             else
-                mActorProxy->SetId(dtCore::UniqueId(XMLStringConverter(chars).ToString()));
+                mActorProxy->SetId(dtCore::UniqueId(dtUtil::XMLStringConverter(chars).ToString()));
         }
         else if (topEl == MapXMLConstants::ACTOR_TYPE_ELEMENT)
         {
-            std::string actorTypeFullName = XMLStringConverter(chars).ToString();
+            std::string actorTypeFullName = dtUtil::XMLStringConverter(chars).ToString();
             size_t index = actorTypeFullName.find_last_of('.');
 
             std::string actorTypeCategory;
@@ -842,7 +793,7 @@ namespace dtDAL
         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                                "Found element %s", XMLStringConverter(localname).c_str());
+                                "Found element %s", dtUtil::XMLStringConverter(localname).c_str());
         }
 
         if (mInMap)
@@ -866,7 +817,7 @@ namespace dtDAL
                                                             MapXMLConstants::ACTOR_PROPERTY_BOOLEAN_ELEMENT) == 0)
                             {
 
-                                                                mActorPropertyType = &DataType::BOOLEAN;
+                                mActorPropertyType = &DataType::BOOLEAN;
                             }
                             else if (XMLString::compareString(localname,
                                                                 MapXMLConstants::ACTOR_PROPERTY_FLOAT_ELEMENT) == 0)
@@ -938,7 +889,7 @@ namespace dtDAL
                             {
                                 mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, 
                                     "Found actor property data element with name %s, but this does not map to a known type.\n", 
-                                    XMLStringConverter(localname).c_str());
+                                    dtUtil::XMLStringConverter(localname).c_str());
                               
                             }
 
@@ -992,7 +943,7 @@ namespace dtDAL
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                "Attempting to pop elements off of stack and the stack is empty."
                                "it should at least contain element %s.",
-                               XMLStringConverter(localname).c_str());
+                               dtUtil::XMLStringConverter(localname).c_str());
             return;
         }
 
@@ -1001,7 +952,7 @@ namespace dtDAL
         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
-                               "Ending element: \"%s\"", XMLStringConverter(lname).c_str());
+                               "Ending element: \"%s\"", dtUtil::XMLStringConverter(lname).c_str());
         }
 
 
@@ -1010,7 +961,7 @@ namespace dtDAL
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                 "Attempting to pop mElements off of stack and the element "
                 "at the top (%s) is not the same as the element ending (%s).",
-                XMLStringConverter(lname).c_str(), XMLStringConverter(localname).c_str());
+                dtUtil::XMLStringConverter(lname).c_str(), dtUtil::XMLStringConverter(localname).c_str());
         }
 
         if (mInHeader)
@@ -1035,11 +986,14 @@ namespace dtDAL
 
                 try
                 {
-                    LibraryManager::GetInstance().LoadActorRegistry(mLibName);
+                    if (LibraryManager::GetInstance().GetRegistry(mLibName) == NULL)
+                    {
+                       LibraryManager::GetInstance().LoadActorRegistry(mLibName);                       
+                    }
                     mMap->AddLibrary(mLibName, mLibVersion);
                     ClearLibraryValues();
                 }
-                catch (dtUtil::Exception& e)
+                catch (const dtUtil::Exception& e)
                 {
                     mMissingLibraries.push_back(mLibName);
                     if (dtDAL::ExceptionEnum::ProjectResourceError == e.TypeEnum())
@@ -1105,9 +1059,9 @@ namespace dtDAL
     {
         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-            exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
-            XMLStringConverter(exc.getSystemId()).c_str(),
-            XMLStringConverter(exc.getMessage()).c_str());
+            exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getMessage()).c_str());
         throw exc;
     }
 
@@ -1115,9 +1069,9 @@ namespace dtDAL
     {
         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
-            exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
-            XMLStringConverter(exc.getSystemId()).c_str(),
-            XMLStringConverter(exc.getMessage()).c_str());
+            exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getMessage()).c_str());
         throw exc;
     }
 
@@ -1125,9 +1079,9 @@ namespace dtDAL
     {
         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
             "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
-            exc.getColumnNumber(), XMLStringConverter(exc.getPublicId()).c_str(),
-            XMLStringConverter(exc.getSystemId()).c_str(),
-            XMLStringConverter(exc.getMessage()).c_str());
+            exc.getColumnNumber(), dtUtil::XMLStringConverter(exc.getPublicId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getSystemId()).c_str(),
+            dtUtil::XMLStringConverter(exc.getMessage()).c_str());
     }
 
     void MapContentHandler::resetDocument()

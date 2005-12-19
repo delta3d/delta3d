@@ -101,6 +101,45 @@ namespace dtCore
       */
       bool GetShutdownOnWindowClose() const { return mShutdownOnWindowClose; }
 
+      /**
+       * @return the scale of realtime at which the simulation time is running.
+       */
+      double GetTimeScale() const { return mTimeScale; }
+
+      /**
+       * @return the scale of realtime at which the simulation time is running.
+       */
+      void SetTimeScale(double newTimeScale) { mTimeScale = newTimeScale; }
+      
+      /**
+       * @note the clock time is a 64 bit int in milliseconds
+       * @return the current real clock
+       */
+      dtCore::Timer_t GetRealClockTime() const { return mClockTime; };
+
+      /**
+       * @note the simulation clock time is a 64 bit int in milliseconds
+       * @return the current simulation clock
+       */
+      dtCore::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; };
+      
+      /**
+       * Sets the simulation wall clock time.  This is used for things like time of day.
+       * @param newTime the new time in microseconds, like the real clock time.
+       */
+      void SetSimulationClockTime(dtCore::Timer_t newTime) { mSimulationClockTime = newTime; }
+
+      /**
+       * The simulation time starts at 0 at the beginning of the simulation.
+       * @return the simulation time in seconds.
+       */
+      double GetSimulationTime() const { return mSimulationTime; }
+      
+      /**
+       * Sets the simulation time.  It is assumed that part of the simulation is using this exact value to keep track of things.
+       * @param newTime the new time in seconds since the start of the simulation for the simualtion time.
+       */
+      void SetSimulationTime(double newTime) { mSimulationTime = newTime; }
    private:
 
       System(); ///<private
@@ -109,19 +148,33 @@ namespace dtCore
       dtCore::Timer mClock;
 
       ///time keeping vars
-      dtCore::Timer_t mClockTime, mLastClockTime;
+      dtCore::Timer_t mClockTime, mSimulationClockTime, mLastClockTime;
+      double mSimulationTime;
+      double mTimeScale;
       double mDt;
 
-      ///Stuff to do before the frame. Message: "preframe", delta time in seconds
-      void PreFrame( const double deltaFrameTime );
+      /**
+       * Stuff to do before the frame. Message: "preframe", delta real and time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void PreFrame(const double deltaSimTime, const double deltaRealTime);
 
-      ///Render the Camera, etc.  Message: "frame", delta time in seconds
-      void Frame(  const double deltaFrameTime );
+      /**
+       * Render the Camera, etc.  Message: "frame", delta time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void Frame(const double deltaSimTime, const double deltaRealTime);
 
-      ///Stuff to do after the frame.  Message: "postframe", delta time in seconds
-      void PostFrame( const double deltaFrameTime );
+      /** 
+       * Stuff to do after the frame.  Message: "postframe", delta time in seconds
+       * @param deltaSimTime The change in simulation time is seconds.
+       * @param deltaRealTime The change in real time in seconds.
+       */
+      void PostFrame(const double deltaSimTime, const double deltaRealTime);
 
-      void Pause( const double deltaFrameTime );
+      void Pause( const double deltaRealTime );
 
       ///Intenal helper that calls Producer::Camera::frame(bool doSwap)
       ///with the proper value for doSwap.

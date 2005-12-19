@@ -37,6 +37,8 @@ namespace dtCore
       public:
 
          UniqueId();
+         UniqueId(const UniqueId& toCopy) { mId = toCopy.mId; }
+            
          UniqueId( const std::string& stringId ) : mId( stringId ) {}
          virtual ~UniqueId() {}
          

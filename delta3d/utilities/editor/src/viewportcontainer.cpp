@@ -19,15 +19,15 @@
  *
  * @author Matthew W. Campbell
 */
-#include <QAction>
-#include <QIcon>
-#include <QToolButton>
-#include <QLabel>
-#include <QMenu>
-#include <QContextMenuEvent>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QFrame>
+#include <QtGui/QAction>
+#include <QtGui/QIcon>
+#include <QtGui/QToolButton>
+#include <QtGui/QLabel>
+#include <QtGui/QMenu>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QFrame>
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewport.h"
 #include "dtEditQt/viewportmanager.h"

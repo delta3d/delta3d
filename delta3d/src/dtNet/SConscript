@@ -5,4 +5,4 @@ import glob
 srcs = SGlob('*.cpp')
 deps = []
        
-BuildLib( 'dtNet', srcs, deps, [] )
+env.BuildLib( 'dtNet', srcs, deps, [] )

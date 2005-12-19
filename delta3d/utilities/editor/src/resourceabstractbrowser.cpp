@@ -19,17 +19,17 @@
 *
 * @author Teague Coonan
 */
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QHeaderView>
-#include <QHBoxLayout>
-#include <QList>
-#include <QMenu>
-#include <QAction>
-#include <QTreeWidgetItem>
-#include <QContextMenuEvent>
-#include <QPixmap>
-#include <QIcon>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHeaderView>
+#include <QtGui/QHBoxLayout>
+#include <QtCore/QList>
+#include <QtGui/QMenu>
+#include <QtGui/QAction>
+#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QPixmap>
+#include <QtGui/QIcon>
 
 #include "dtEditQt/resourceabstractbrowser.h"
 #include "dtDAL/resourcedescriptor.h"

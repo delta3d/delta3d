@@ -7,4 +7,4 @@ deps = [ 'dtCore', 'cal3d', 'rbody', 'dtUtil', 'isense',
          'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer',
          'ul', 'js', 'Producer', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
     
-BuildLib( 'dtChar', srcs, deps, ['DT_CHAR_LIBRARY'] )
+env.BuildLib( 'dtChar', srcs, deps, ['DT_CHAR_LIBRARY'] )

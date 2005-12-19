@@ -18,16 +18,98 @@
  *
  * @author William E. Johnson II
  */
-
 #include "dtGame/actorupdatemessage.h"
 #include "dtGame/exceptionenum.h"
 #include <dtDAL/datatype.h>
 
 namespace dtGame
 {
-   ActorUpdateMessage::ActorUpdateMessage() : Message() {}
+   ActorUpdateMessage::ActorUpdateMessage() : Message() 
+   {
+      AddParameter(new StringMessageParameter("Name"));
+      AddParameter(new StringMessageParameter("Actor Type Name"));
+      AddParameter(new StringMessageParameter("Actor Type Category"));
+   }
 
    ActorUpdateMessage::~ActorUpdateMessage() {}
+
+   void ActorUpdateMessage::ToString(std::string& toFill) const
+   {
+      Message::ToString(toFill);
+
+      for(std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mPropertyList.begin(); 
+         i != mPropertyList.end(); ++i)
+      {
+         toFill.append(i->second->ToString());
+         toFill.append(1, '\n');
+      }
+   }
+
+   void ActorUpdateMessage::FromString(const std::string &source)
+   {
+      Message::FromString(source);
+
+      std::istringstream iss(source);
+      for(std::map<std::string,dtCore::RefPtr<MessageParameter> >::iterator i = mPropertyList.begin(); 
+         i != mPropertyList.end(); ++i)
+      {
+         std::string line;
+         std::getline(iss, line);
+         i->second->FromString(line);
+      }      
+   }
+
+   void ActorUpdateMessage::ToDataStream(DataStream& stream) const
+   {
+      Message::ToDataStream(stream);
+
+      // Write out the size of the list so we know how many times to loop in FromDataStream
+      stream << (unsigned int)mPropertyList.size();
+
+      for(std::map<std::string,dtCore::RefPtr<MessageParameter> >::const_iterator i = mPropertyList.begin(); 
+         i != mPropertyList.end(); ++i)
+      {
+         stream << i->second->GetDataType().GetTypeId();
+         stream << i->second->GetName();
+         i->second->ToDataStream(stream);
+      }
+   }
+
+   void ActorUpdateMessage::FromDataStream(DataStream& stream)
+   {
+      Message::FromDataStream(stream);
+     
+      // Read in the size of the stream
+      unsigned int size;
+      stream >> size;
+
+      for(unsigned short int i = 0; i < size; i++)
+      {
+         unsigned char id;
+         stream >> id;
+         dtDAL::DataType *type = NULL;
+
+         for(unsigned int j = 0; j < dtDAL::DataType::Enumerate().size(); j++)
+         {
+            if(static_cast<dtDAL::DataType*>(dtDAL::DataType::Enumerate()[j])->GetTypeId() == id)
+            {
+               type = static_cast<dtDAL::DataType*>(dtDAL::DataType::Enumerate()[j]);
+               break;
+            }
+         }
+         if(type == NULL) //|| type == &dtDAL::DataType::UNKNOWN)
+            EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION, "The datatype was not found in the stream\n");
+
+         std::string name;
+         stream >> name;
+         
+         dtCore::RefPtr<MessageParameter> param = GetUpdateParameter(name);
+         if (param == NULL)
+            param = AddUpdateParameter(name, *type);
+
+         param->FromDataStream(stream);
+      }
+   }
 
    MessageParameter* ActorUpdateMessage::AddUpdateParameter(const std::string &name, 
                                                             const dtDAL::DataType &type) throw(dtUtil::Exception)
@@ -57,10 +139,24 @@ namespace dtGame
       return itor == mPropertyList.end() ? NULL : itor->second.get();
    }
 
+   const MessageParameter* ActorUpdateMessage::GetUpdateParameter(const std::string &name) const throw() 
+   {
+      std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator itor = mPropertyList.find(name);
+      return itor == mPropertyList.end() ? NULL : itor->second.get();
+   }
+
    void ActorUpdateMessage::GetUpdateParameters(std::vector<MessageParameter*> &toFill) throw()
    {
       toFill.clear();
       for(std::map<std::string, dtCore::RefPtr<MessageParameter> >::iterator itor = mPropertyList.begin();
+          itor != mPropertyList.end(); ++itor)
+          toFill.push_back(itor->second.get());
+   }
+
+   void ActorUpdateMessage::GetUpdateParameters(std::vector<const MessageParameter*> &toFill) const throw()
+   {
+      toFill.clear();
+      for(std::map<std::string, dtCore::RefPtr<MessageParameter> >::const_iterator itor = mPropertyList.begin();
           itor != mPropertyList.end(); ++itor)
           toFill.push_back(itor->second.get());
    }

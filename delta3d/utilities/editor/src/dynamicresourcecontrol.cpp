@@ -33,14 +33,14 @@
 #include "dtDAL/enginepropertytypes.h"
 #include <dtUtil/log.h>
 #include "dtDAL/resourcedescriptor.h"
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QWidget>
-#include <QRect>
-#include <QColor>
-#include <QPalette>
-#include <QSize>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QWidget>
+#include <QtCore/QRect>
+#include <QtGui/QColor>
+#include <QtGui/QPalette>
+#include <QtCore/QSize>
 
 namespace dtEditQt 
 {

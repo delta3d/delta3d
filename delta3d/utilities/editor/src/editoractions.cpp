@@ -21,20 +21,20 @@
 */
 #include "dtEditQt/editoractions.h"
 
-#include <QApplication>
-#include <QAction>
-#include <QIcon>
-#include <QActionGroup>
-#include <QMainWindow>
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QVBoxLayout>
-#include <QListWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QSettings>
-#include <QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QAction>
+#include <QtGui/QIcon>
+#include <QtGui/QActionGroup>
+#include <QtGui/QMainWindow>
+#include <QtGui/QMessageBox>
+#include <QtGui/QFileDialog>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QListWidget>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QTextEdit>
+#include <QtCore/QSettings>
+#include <QtCore/QTimer>
 
 #include <osgDB/FileNameUtils>
 
@@ -994,6 +994,7 @@ namespace dtEditQt
             {
                 EditorEvents::getInstance().emitLibraryAboutToBeRemoved();
                 dtDAL::Project::GetInstance().CloseMap(*oldMap,true);
+                ViewportManager::getInstance().EnablePaging(false);
                 EditorEvents::getInstance().emitMapLibraryRemoved();
 
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
@@ -1029,8 +1030,12 @@ namespace dtEditQt
         {
             try
             {
-                dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
-                    *(ViewportManager::getInstance().getMasterScene()), true);
+               dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
+                    *(ViewportManager::getInstance().getMasterScene()), true, false);
+
+               if(ViewportManager::getInstance().IsPagingEnabled())
+                  ViewportManager::getInstance().EnablePaging(false);
+               ViewportManager::getInstance().EnablePaging(true);
             }
             catch (const dtUtil::Exception &e)
             {

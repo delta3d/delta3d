@@ -23,10 +23,10 @@
 #ifndef DELTA_ACTORGLOBALBROWSER
 #define DELTA_ACTORGLOBALBROWSER
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include <osg/ref_ptr>
 #include <vector>
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
 
 class QComboBox;

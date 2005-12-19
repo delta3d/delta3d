@@ -71,6 +71,8 @@ namespace dtCore
       bool GetFullScreenMode() { return mRenderSurface->isFullScreen(); }
       
       void KillGLWindow();
+      
+      void Update();
 
       ///The the title on the DeltaWin border
       void SetWindowTitle( const std::string& title );

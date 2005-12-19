@@ -23,14 +23,14 @@
 #include "dtEditQt/dialogmapproperties.h"
 #include "dtEditQt/editorevents.h"
 
-#include <QGroupBox>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QTextEdit>
-#include <QLabel>
-#include <QGridLayout>
-#include <QMessageBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QTextEdit>
+#include <QtGui/QLabel>
+#include <QtGui/QGridLayout>
+#include <QtGui/QMessageBox>
 
 namespace dtEditQt 
 {

@@ -11,4 +11,4 @@ if CheckForBoost() :
    if OS == 'windows':
       extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
 
-   BuildProgram( 'testPython', srcs, deps, [], extraLink )
+   env.BuildProgram( 'testPython', srcs, deps, [], extraLink )

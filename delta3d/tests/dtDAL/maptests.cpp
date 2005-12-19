@@ -84,7 +84,7 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( MapTests );
 
-#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* MapTests::mExampleLibraryName="testActorLibraryd";
 #else
 char* MapTests::mExampleLibraryName="testActorLibrary";
@@ -108,9 +108,9 @@ void MapTests::setUp() {
 //        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 //        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
-		  std::string currentDir = fileUtils.CurrentDirectory();
-		  std::string projectDir("project");
-		  if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
+        std::string currentDir = fileUtils.CurrentDirectory();
+        std::string projectDir("dtDAL");
+        if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
             fileUtils.PushDirectory(projectDir);
 
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");

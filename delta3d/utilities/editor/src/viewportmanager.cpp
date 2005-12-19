@@ -19,9 +19,11 @@
  *
  * @author Matthew W. Campbell
 */
-#include <QWidget>
-#include <QGLWidget>
+#include <QtGui/QWidget>
+#include <QtOpenGL/QGLWidget>
 #include <osg/Texture>
+#include <osgDB/DatabasePager>
+#include <osgDB/Registry>
 #include <dtUtil/log.h>
 #include "dtDAL/actorproxyicon.h"
 #include "dtEditQt/viewportmanager.h"
@@ -54,8 +56,10 @@ namespace dtEditQt
         viewportOverlay = new ViewportOverlay();
         worldCamera = new Camera();
         inChangeTransaction = false;
+        isPagingEnabled = false;
+        startTick = 0;
 
-        EditorEvents *editorEvents = &EditorEvents::getInstance();
+        EditorEvents* editorEvents = &EditorEvents::getInstance();
 
         connect(editorEvents, SIGNAL(actorProxyCreated(proxyRefPtr, bool)),
                 this,SLOT(onActorProxyCreated(proxyRefPtr, bool)));
@@ -213,6 +217,39 @@ namespace dtEditQt
             else
                 this->numTextureUnits = 2;
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportManager::EnablePaging(bool enable)
+    {
+       if(enable)
+       {
+          osgDB::DatabasePager *databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
+          databasePager->setTargetFrameRate(60);
+          databasePager->registerPagedLODs(masterScene->GetSceneNode());
+          databasePager->setUseFrameBlock(false);
+
+          for(std::map<std::string, Viewport*>::iterator i = viewportList.begin(); i != viewportList.end();
+             ++i)
+          {
+             i->second->getSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
+
+             databasePager->setCompileGLObjectsForContextID(i->second->getSceneView()->getState()->getContextID(),true);
+          }
+          startTick = osg::Timer::instance()->tick();
+          isPagingEnabled = true;
+          LOG_INFO("Paging is enabled");
+       }
+       else
+       {
+          if(isPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != NULL)
+          {
+             osgDB::Registry::instance()->getDatabasePager()->clear();
+             osgDB::Registry::instance()->setDatabasePager(NULL);
+             isPagingEnabled = false;
+          }
+          LOG_INFO("Paging is disabled");
+       }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

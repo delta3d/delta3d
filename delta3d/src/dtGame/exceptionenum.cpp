@@ -25,12 +25,9 @@ namespace dtGame
    IMPLEMENT_ENUM(ExceptionEnum);
 
    ExceptionEnum ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION("General Game Manager Exception");
-
-   ExceptionEnum ExceptionEnum::INVALID_PARAMETER("Invalid method parameter");
-   
+   ExceptionEnum ExceptionEnum::INVALID_PARAMETER("Invalid method parameter");   
    ExceptionEnum ExceptionEnum::UNKNOWN_ACTOR_TYPE("Unknown actor type");
-   ExceptionEnum ExceptionEnum::ACTOR_IS_REMOTE("Actor is remote");
-   
+   ExceptionEnum ExceptionEnum::ACTOR_IS_REMOTE("Actor is remote");   
    ExceptionEnum ExceptionEnum::INVALID_ACTOR_STATE("Invalid Actor State");
-
+   ExceptionEnum ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR("Game Application Config Failed.");
 }

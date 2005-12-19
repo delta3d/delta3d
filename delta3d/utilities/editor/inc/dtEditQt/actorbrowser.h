@@ -20,17 +20,17 @@
 * @author Curtiss Murphy
 */
 
-#ifndef __ActorBrowser_h
-#define __ActorBrowser_h
+#ifndef DELTA_ACTOR_BROWSER
+#define DELTA_ACTOR_BROWSER
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include <vector>
 #include <osg/ref_ptr>
 
 #include <dtCore/refptr.h>
 #include <dtUtil/tree.h>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actortype.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
 #include "dtEditQt/actortypetreewidget.h"
 
 class QGroupBox;

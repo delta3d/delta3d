@@ -3,4 +3,4 @@ Import('*')
 srcs = [ 'testphysics.cpp' ]
 deps = [ 'dtCore', 'dtABC', 'dtUtil' ]
 
-BuildProgram( 'testPhysics', srcs, deps )
+env.BuildProgram( 'testPhysics', srcs, deps )

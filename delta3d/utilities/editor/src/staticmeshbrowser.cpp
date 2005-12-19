@@ -20,46 +20,47 @@
 * @author Teague Coonan
 */
 
-#include <QDir>
-#include <QHeaderView>
+#include <QtCore/QDir>
+#include <QtGui/QHeaderView>
 
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QSplitter>
-#include <QString>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
+#include <QtGui/QSplitter>
+#include <QtCore/QString>
 
-#include <QGroupBox>
+#include <QtGui/QGroupBox>
 
-#include <QPushButton>
-#include <QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
 
-#include <QAction>
-#include <QMenu>
-#include <QContextMenuEvent>
-#include <QIcon>
+#include <QtGui/QAction>
+#include <QtGui/QMenu>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QIcon>
 
 #include "dtEditQt/staticmeshbrowser.h"
 #include "dtEditQt/resourcetreewidget.h"
-#include "dtDAL/project.h"
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
-#include <dtDAL/exceptionenum.h>
-#include "dtDAL/librarymanager.h"
-#include <dtUtil/log.h>
-#include "dtDAL/map.h"
-#include "dtDAL/enginepropertytypes.h"
 #include "dtEditQt/mainwindow.h"
-
-#include <dtCore/scene.h>
-#include <dtCore/object.h>
-
-#include <osg/BoundingSphere>
-
 #include "dtEditQt/perspectiveviewport.h"
 #include "dtEditQt/viewportcontainer.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/camera.h"
 #include "dtEditQt/uiresources.h"
+
+#include <dtDAL/project.h>
+#include <dtDAL/exceptionenum.h>
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/map.h>
+#include <dtDAL/enginepropertytypes.h>
+
+#include <dtCore/scene.h>
+#include <dtCore/object.h>
+
+#include <dtUtil/log.h>
+
+#include <osg/BoundingSphere>
 
 namespace dtEditQt
 {

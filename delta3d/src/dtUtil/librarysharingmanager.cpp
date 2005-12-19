@@ -123,7 +123,13 @@ namespace dtUtil
          }
 
       }
-
+      if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+         std::ostringstream ss;
+         ss << itor->second->referenceCount();
+         LOG_DEBUG(ss.str());         
+      }
+      
       return new InternalLibraryHandle(itor->first, *itor->second);
    }
 

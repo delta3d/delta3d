@@ -42,8 +42,54 @@
 #include <xercesc/util/XercesDefs.hpp>  // for xerces namespace macros
 #include <xercesc/sax2/Attributes.hpp>  // for parameter
 #include <xercesc/dom/DOM.hpp>          // for DOM support
+#include <xercesc/util/XMLString.hpp>   // for XML String
+
 namespace dtUtil
 {
+    /**
+     *  This is a simple class that lets us do easy (though not terribly efficient)
+     *  trancoding of XMLCh data to local code page for display.  This code was take from
+     *  the xerces-c 2.6 samples
+     *  <p>
+     *  It's main reason for existing is to allow short and quick translations for printing out debugging info.
+     *  </p>
+     */
+    class XMLStringConverter
+    {
+    public :
+        XMLStringConverter(const XMLCh* const charData): mLocalForm(NULL)
+        {
+            if (charData != NULL)
+            {
+                mLocalForm = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(charData);
+            }
+        }
+
+        ~XMLStringConverter()
+        {
+            if (mLocalForm != NULL)
+                XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&mLocalForm);
+        }
+
+        /**
+         * @return the XMLCh string as a char*
+         */
+        const char* c_str()
+        {
+            if (mLocalForm == NULL)
+               return "";
+
+            return mLocalForm;
+        }
+
+        const std::string ToString() { return std::string(c_str()); }
+    private :
+        char* mLocalForm;
+        XMLStringConverter(const XMLStringConverter&) {}
+        XMLStringConverter& operator=(const XMLStringConverter&) { return *this;}
+    };
+
+
    /** A utility that finds the string value for a specifically named attribute when a DOM Node is available.
      * Needed for DOM Document traversal.
      * @param name the name of the attribute of interest.

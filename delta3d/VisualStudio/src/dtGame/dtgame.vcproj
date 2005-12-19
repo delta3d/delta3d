@@ -26,8 +26,8 @@
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				AssemblerListingLocation=""
-				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
+				AssemblerListingLocation="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -75,14 +75,15 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;_USRDLL;DT_GAME_LIBRARY"
+				MinimalRebuild="FALSE"
+				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
-				AssemblerListingLocation=""
-				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
+				AssemblerListingLocation="$(IntDir)"
+				ProgramDataBaseFileName="$(IntDir)"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="0"/>
+				Detect64BitPortabilityProblems="TRUE"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -90,9 +91,12 @@
 				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib osg.lib OpenThreadsWin32.lib Producer.lib"
 				OutputFile="..\..\..\bin\dtGame.dll"
 				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
-				GenerateDebugInformation="FALSE"
-				SubSystem="0"
+				IgnoreDefaultLibraryNames="LIBCMT"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				ImportLibrary="..\..\..\lib\dtGame.lib"
@@ -133,6 +137,9 @@
 				RelativePath="..\..\..\src\dtGame\basemessages.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\binarylogstream.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\clientgamemanager.cpp">
 			</File>
 			<File
@@ -157,6 +164,24 @@
 				RelativePath="..\..\..\src\dtGame\invokable.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\logcontroller.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\loggermessages.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\logkeyframeindex.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\logstatus.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\logstream.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\logtagindex.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\message.cpp">
 			</File>
 			<File
@@ -174,6 +199,9 @@
 			<File
 				RelativePath="..\..\..\src\dtGame\servergamemanager.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\serverloggercomponent.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -184,6 +212,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\basemessages.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\binarylogstream.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\clientgamemanager.h">
@@ -198,19 +229,43 @@
 				RelativePath="..\..\..\inc\dtGame\exceptionenum.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGame\export.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtGame\gameactor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\gamemanager.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtGame\gamemanager_export.h">
-			</File>
-			<File
 				RelativePath="..\..\..\inc\dtGame\gmcomponent.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\invokable.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logcontroller.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\loggermessages.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logkeyframe.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logkeyframeindex.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logstatus.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logstream.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logtag.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\logtagindex.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\machineinfo.h">
@@ -232,6 +287,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\servergamemanager.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\serverloggercomponent.h">
 			</File>
 		</Filter>
 		<Filter

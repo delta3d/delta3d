@@ -66,13 +66,13 @@ void TestGameActorProxy2::BuildPropertyMap()
 
 void TestGameActorProxy2::CreateActor()
 {
-   mActor = new TestGameActor2();
+   mActor = new TestGameActor2(*this);
 }
 
 /////////////////////////////////////////////////////
 // Actor code
 /////////////////////////////////////////////////////
-TestGameActor2::TestGameActor2(): mActorDeletedCount(0), mActorPublishedCount(0),
+TestGameActor2::TestGameActor2(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy), mActorDeletedCount(0), mActorPublishedCount(0),
    mMapLoadedCount(0)
 {
 

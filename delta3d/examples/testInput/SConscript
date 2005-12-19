@@ -4,4 +4,4 @@ srcs = SGlob( '*.cpp' )
 deps = [ 'dtCore', 'dtGUI', 'dtABC', 'dtUtil', 'cal3d',
              'CEGUIBase', 'CEGUIOpenGLRenderer' ]
 
-BuildProgram( 'testInput', srcs, deps )
+env.BuildProgram( 'testInput', srcs, deps )

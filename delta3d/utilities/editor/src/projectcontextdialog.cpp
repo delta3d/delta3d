@@ -22,16 +22,16 @@
 
 #include "dtEditQt/projectcontextdialog.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QGroupBox>
-#include <QGridLayout>
-#include <QLineEdit>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QCloseEvent>
-#include <QLabel>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QGroupBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QLineEdit>
+#include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QLabel>
 
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"

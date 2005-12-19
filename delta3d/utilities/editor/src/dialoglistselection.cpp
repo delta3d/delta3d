@@ -22,12 +22,12 @@
 
 #include "dtEditQt/dialoglistselection.h"
 
-#include <QStringList>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QGroupBox>
-#include <QListWidget>
+#include <QtCore/QStringList>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QGroupBox>
+#include <QtGui/QListWidget>
 
 namespace dtEditQt 
 {

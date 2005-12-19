@@ -8,7 +8,7 @@ Import ('*')
 # Grab all the sources from the source directory.
 sources = SGlob('*.cpp')
 
-dtGameDeps =[ 'dtDAL', 'dtutil', 'dtcore', 'dtchar', 'dtaudio', 'dtabc', 'glgui', 'isense', 'ode', 
+dtGameDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtAudio', 'dtABC', 'isense', 
 		'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgTerrain', 'osgText', 'osgUtil', 
 		'osgGA', 'osgSim', 'osgFX', 'osgProducer','rbody', 'rvrutils', 'rcfgscript','gdal', 
         	'cal3d', 'sg', 'ul', 'js', 'xerces-c', 'openal',
@@ -22,6 +22,6 @@ elif OS == 'darwin':
    dtGameDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
     
-dtGameManagerLib = BuildLib( 'dtGame', sources, dtGameDeps, ['DT_GAME_LIBRARY'] )
+dtGameManagerLib = env.BuildLib( 'dtGame', sources, dtGameDeps, ['DT_GAME_LIBRARY'] )
 
 Export('dtGameManagerLib')

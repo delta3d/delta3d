@@ -76,6 +76,16 @@ namespace dtGame
          };
 
          DataStream();
+         
+         /**
+          * Constructs the datastream using an existing byte buffer.
+          * @param buffer The existing valid buffer.
+          * @param bufferSize The size in bytes of the buffer.
+          * @param autoFree If true, the buffer's memory is freed when the DataStream 
+          *    instance gets destructed.  If false, the caller is responsible for freeing
+          *    the associated buffer memory.
+          */
+         DataStream(char *buffer, unsigned int bufferSize, bool autoFree=true);
          DataStream(const DataStream &rhs);
          DataStream &operator=(const DataStream &rhs);
          virtual ~DataStream();
@@ -196,6 +206,8 @@ namespace dtGame
 
          void Seekp(unsigned int offset, const SeekTypeEnum &type);
          void Seekg(unsigned int offset, const SeekTypeEnum &type);
+         
+         const char *GetBuffer() { return mBuffer; }
 
       private:
          bool isLittleEndian;
@@ -205,6 +217,7 @@ namespace dtGame
          char *mBuffer;
          unsigned int mBufferSize, mBufferCapacity;
          unsigned int mReadPos,mWritePos;
+         bool mAutoFreeBuffer;
     };
 
 }

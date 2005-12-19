@@ -19,12 +19,12 @@
 *
 * @author Curtiss Murphy
 */
-#ifndef _ActorTab_H
-#define _ActorTab_H
+#ifndef DELTA_ACTORTAB
+#define DELTA_ACTORTAB
 
-#include <QObject>
-#include <QDockWidget>
-#include <QMainWindow>
+#include <QtCore/QObject>
+#include <QtGui/QDockWidget>
+#include <QtGui/QMainWindow>
 
 class QWidget;
 

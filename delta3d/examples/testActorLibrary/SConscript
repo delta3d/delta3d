@@ -25,7 +25,7 @@ testActorLibraryDeps =[ 'dtDAL', 'dtUtil', 'dtCore', 'ode', 'OpenThreads', 'osg'
 if OS == 'windows':
    testActorLibraryDeps += ['dtActors']
 
-testActorLibrary = BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
+testActorLibrary = env.BuildLib( 'testActorLibrary', sources, testActorLibraryDeps, ['DT_PLUGIN'], 
                              overrideShLinkFlags = overrideShLink,
                              overrideShLibSuffix = overrideShSuffix )
 

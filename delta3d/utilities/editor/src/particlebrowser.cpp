@@ -22,19 +22,19 @@
 
 //had to add this header to make it compile in linux
 //not sure why.
-#include <QHeaderView>
+#include <QtGui/QHeaderView>
 
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QString>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
+#include <QtCore/QString>
 
-#include <QAction>
-#include <QMenu>
-#include <QContextMenuEvent>
+#include <QtGui/QAction>
+#include <QtGui/QMenu>
+#include <QtGui/QContextMenuEvent>
 
-#include <QGroupBox>
+#include <QtGui/QGroupBox>
 
-#include <QPushButton>
+#include <QtGui/QPushButton>
 
 #include <dtCore/scene.h>
 #include <dtCore/object.h>

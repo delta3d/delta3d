@@ -22,7 +22,7 @@
 
 #include "dtEditQt/dynamicabstractparentcontrol.h"
 #include "dtEditQt/propertyeditormodel.h"
-#include <QModelIndex>
+#include <QtCore/QModelIndex>
 
 namespace dtEditQt 
 {

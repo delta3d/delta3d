@@ -28,7 +28,7 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
 {
    public:
       /// Constructor
-      TestGameActor1();
+      TestGameActor1(dtGame::GameActorProxy& proxy);
 
       /// Destructor
       virtual ~TestGameActor1();
@@ -48,10 +48,16 @@ class DT_EXAMPLE_EXPORT TestGameActor1 : public dtGame::GameActor
       
       bool OneIsFired() const { return fired; }
       void SetOneIsFired(bool newValue) { fired = newValue; }
+      
+      int GetTickLocals() const { return tickLocals; }
+      void SetTickLocals(int newTickLocals) { tickLocals = newTickLocals; }
+
+      int GetTickRemotes() const { return tickRemotes; }
+      void SetTickRemotes(int newTickRemotes) { tickRemotes = newTickRemotes; }
    private:
       bool fired;
-      unsigned tickLocals;
-      unsigned tickRemotes;
+      int tickLocals;
+      int tickRemotes;
 };
 
 class DT_EXAMPLE_EXPORT TestGameActorProxy1 : public dtGame::GameActorProxy

@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author Curtiss Murphy
-*/
+ */
 #include "testPropertyProxy.h"
 #include "dtDAL/enginepropertytypes.h"
 #include "dtActors/deltaobjectactorproxy.h"

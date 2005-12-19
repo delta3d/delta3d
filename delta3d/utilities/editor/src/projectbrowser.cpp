@@ -22,13 +22,13 @@
 
 #include "dtEditQt/projectbrowser.h"
 
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QGroupBox>
-#include <QTreeView>
-#include <QDirModel>
-#include <QHeaderView>
+#include <QtGui/QGridLayout>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QGroupBox>
+#include <QtGui/QTreeView>
+#include <QtGui/QDirModel>
+#include <QtGui/QHeaderView>
 
 namespace dtEditQt 
 {

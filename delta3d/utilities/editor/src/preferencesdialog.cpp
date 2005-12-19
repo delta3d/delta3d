@@ -20,20 +20,20 @@
 * @author William E. Johnson II
 */
 
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QCheckBox>
-#include <QSpinBox>
-#include <QColorDialog>
-#include <QLabel>
-#include <QPushButton>
-#include <QTimer>
-#include <QIcon>
-#include <QPixmap>
-#include <QColor>
-#include <QPalette>
-#include <QGroupBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QCheckBox>
+#include <QtGui/QSpinBox>
+#include <QtGui/QColorDialog>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtCore/QTimer>
+#include <QtGui/QIcon>
+#include <QtGui/QPixmap>
+#include <QtGui/QColor>
+#include <QtGui/QPalette>
+#include <QtGui/QGroupBox>
 
 #include "dtEditQt/preferencesdialog.h"
 #include "dtEditQt/editordata.h"

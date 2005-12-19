@@ -20,11 +20,11 @@
 * @author Curtiss Murphy
 */
 
-#include <QWidget>
-#include <QGridLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QDoubleValidator>
+#include <QtGui/QWidget>
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QDoubleValidator>
 #include <osg/Vec3>
 #include "dtEditQt/dynamicvec3control.h"
 #include "dtEditQt/dynamicvectorelementcontrol.h"

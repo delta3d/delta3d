@@ -38,6 +38,7 @@ namespace dtGame
          static const MessageType UNKNOWN;
          static const MessageType TICK_LOCAL;
          static const MessageType TICK_REMOTE;
+
          static const MessageType INFO_TIMER_ELAPSED;
          static const MessageType INFO_ACTOR_CREATED;
          static const MessageType INFO_ACTOR_PUBLISHED;
@@ -45,34 +46,68 @@ namespace dtGame
          static const MessageType INFO_ACTOR_UPDATED;
          static const MessageType INFO_CLIENT_CONNECTED;
          static const MessageType INFO_MAP_LOADED;
-         static const MessageType NETCLIENT_REQUEST_CONNECTION;
-         static const MessageType NETCLIENT_NOTIFY_DISCONNECT;
-         static const MessageType NETSERVER_ACCEPT_CONNECTION;
-         static const MessageType NETSERVER_REJECT_CONNECTION;
+         static const MessageType INFO_PAUSED;
+         static const MessageType INFO_RESUMED;
+         static const MessageType INFO_RESTARTED;
+         static const MessageType INFO_TIME_CHANGED;
+
          static const MessageType COMMAND_LOAD_MAP;
          static const MessageType COMMAND_PAUSE;
          static const MessageType COMMAND_RESUME;
          static const MessageType COMMAND_RESTART;
+         static const MessageType COMMAND_SET_TIME;
+
          static const MessageType REQUEST_LOAD_MAP;
+         static const MessageType REQUEST_PAUSE;
+         static const MessageType REQUEST_RESUME;
+         static const MessageType REQUEST_RESTART;
+         static const MessageType REQUEST_SET_TIME;
+
          static const MessageType SERVER_REQUEST_REJECTED;
+
+         static const MessageType NETCLIENT_REQUEST_CONNECTION;
+         static const MessageType NETCLIENT_NOTIFY_DISCONNECT;
+         static const MessageType NETSERVER_ACCEPT_CONNECTION;
+         static const MessageType NETSERVER_REJECT_CONNECTION;
+         
+         //LOGGER MESSAGES
+         static const MessageType LOG_REQ_CHANGESTATE_PLAYBACK;
+         static const MessageType LOG_REQ_CHANGESTATE_RECORD;
+         static const MessageType LOG_REQ_CHANGESTATE_IDLE;
+         static const MessageType LOG_REQ_CAPTURE_KEYFRAME; // data
+         static const MessageType LOG_REQ_GET_KEYFRAMES;
+         static const MessageType LOG_REQ_GET_LOGFILES;
+         static const MessageType LOG_REQ_GET_TAGS;
+         static const MessageType LOG_REQ_GET_STATUS;
+         static const MessageType LOG_REQ_INSERT_TAG; // DATA
+         static const MessageType LOG_REQ_DELETE_LOG; // DATA
+         static const MessageType LOG_REQ_SET_LOGFILE; // DATA
+         static const MessageType LOG_REQ_SET_AUTOKEYFRAMEINTERVAL; // DATA
+         static const MessageType LOG_INFO_KEYFRAMES; // DATA
+         static const MessageType LOG_INFO_LOGFILES; // DATA
+         static const MessageType LOG_INFO_TAGS; // DATA
+         //static const MessageType LOG_INFO_ERROR; ??????
+         static const MessageType LOG_INFO_STATUS; // DATA
+         static const MessageType LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS;
+         static const MessageType LOG_COMMAND_END_LOADKEYFRAME_TRANS; // data
 
          /**
           * Gets the category of this message type
           * @return The category
           */
-         inline std::string& GetCategory() { return category; }
+         const std::string& GetCategory() { return category; }
 
          /**
           * Gets the description of this message type
           * @return The description
           */
-         inline std::string& GetDescription() { return description; }
+         const std::string& GetDescription() { return description; }
 
          /**
           * Gets the id of this message type
           * @return The id
           */
-         inline const unsigned short GetId() const { return mId; }
+         unsigned short GetId() const { return mId; }
 
          /**
           * Sets the category of this message type

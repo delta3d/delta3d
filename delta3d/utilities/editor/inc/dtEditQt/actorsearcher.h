@@ -23,11 +23,11 @@
 #ifndef DELTA_ACTORSEARCHER
 #define DELTA_ACTORSEARCHER
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include <vector>
 #include <osg/ref_ptr>
 #include <dtCore/refptr.h>
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
 
 class QComboBox;

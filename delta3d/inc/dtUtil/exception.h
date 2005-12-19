@@ -90,21 +90,21 @@ namespace dtUtil
          * logs the exception to the default logger.
          * @param level  The level/type of logging
          */
-        void LogException(dtUtil::Log::LogMessageType level);
+        void LogException(dtUtil::Log::LogMessageType level) const;
 
         /**
          * logs the exception to the following log level using the logger.
          * @param level  The level/type of logging
          * @param loggerName the name passed to "getInstance" of the Logger.
          */
-        void LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName);
+        void LogException(dtUtil::Log::LogMessageType level, const std::string& loggerName) const;
 
         /**
          * logs the exception to the following log level using the given logger.
          * @param level  The level/type of logging
          * @param logger the actual log instance used to log.
          */
-        void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger);
+        void LogException(dtUtil::Log::LogMessageType level, dtUtil::Log& logger) const;
 
     protected:
         Enumeration &mType;

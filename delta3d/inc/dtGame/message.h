@@ -43,7 +43,20 @@ namespace dtGame
       public:
          Message();
           
+         
+         /**
+          * This should write all of the subclass specific data to the string .
+          * The base class data will be read by the caller before it calls this method.
+          * @param toFill the string to fill.
+          */
          virtual void ToString(std::string& toFill) const;
+
+         /**
+          * This should read all of the subclass specific data from the string.
+          * By default, it reads all of the message parameters.
+          * The base class data will be set by the caller when it creates the object.
+          * @param source the string to pull the data from.
+          */
          virtual void FromString(const std::string &source); 
 
          /**
@@ -61,21 +74,73 @@ namespace dtGame
           */
          virtual void FromDataStream(DataStream& stream);
          
+         /**
+          * Non-const version of getter to return a message parameter by name.
+          * @return the parameter specified or NULL of non exists.
+          * @param name The name of the message parameter to return.
+          */
          MessageParameter* GetParameter(const std::string &name);
+
+         /**
+          * Const version of getter to return a message parameter by name.
+          * @return the parameter specified or NULL of non exists.
+          * @param name The name of the message parameter to return.
+          */
          const MessageParameter *GetParameter(const std::string &name) const;
 
+         /**
+          * This getter, not the class of the object, determines what type the message is.
+          * @return the message type enumeration for this message.
+          */
          const MessageType& GetMessageType() const { return *mMessageType; }
 
+         /**
+          * Assigns the unique id of the actor sending the message. This should not be set if the message is sent
+          * by the GM or a component.  It's intended for actor to actor messages.
+          * @param newId the new id of the sending actor.
+          */
          void SetSendingActorId(const dtCore::UniqueId &newId) { mSendingActorId = newId; }
+
+         /**
+          * Assigns the unique id of the actor the message is about or to. This should not be set if the message is not about
+          * an specific actor.
+          * @param newId the new id of the actor this message is about or to.
+          */
          void SetAboutActorId(const dtCore::UniqueId &newId)   { mAboutActorId   = newId; }
 
+         /**
+          * @return the actor that send the message.  This may be an empty unique id, which means there was no sending actor.
+          */
          const dtCore::UniqueId& GetSendingActorId() const { return mSendingActorId; }
+
+         /**
+          * @note Actors can register invokables on themselves for message types. If they do this, any message of that type
+          * with the about actor set to the id of the actor is send to it.
+          * @return the actor this message is about.  This may be an empty unique id, which means there is no about actor.
+          */
          const dtCore::UniqueId& GetAboutActorId()   const { return mAboutActorId;   }
 
+         /**
+          * @note The source is set by the message factory.
+          * @return the machine infor for this message.  This returns a reference because it may NOT be null.
+          */
          const MachineInfo& GetSource() const      { return *mSource;      }
+         /**
+          * @note This is NOT set by the message factory.
+          * @return the destination machine information.  This returns a pointer because it defaults to null.
+          */
          const MachineInfo* GetDestination() const { return mDestination.get(); }
 
+         /**
+          * Reassigns the Source.  
+          * @param the machine info to assign as the source.  It is a reference so that it may not be NULL.
+          */
          void SetSource(const MachineInfo &mi)      { mSource      = &mi; }
+
+         /**
+          * Reassigns the destination.  
+          * @param the machine info to assign as the destination.  It is a pointer so that it may be NULL.
+          */
          void SetDestination(const MachineInfo* mi) { mDestination = mi; }
          
          /**
@@ -87,8 +152,31 @@ namespace dtGame
           */
          virtual void CopyDataTo(Message& msg) const throw(dtUtil::Exception);
       
+         /**
+          * Assigns the message that caused this message.  This is used for replies, errors, and rejection messages.  
+          * @param causingMessage the message that caused this message to be send.
+          */
+         void SetCausingMessage(const Message* causingMessage)
+         {
+            mCausingMessage = causingMessage;
+         }
+
+         /**
+          * This is used for replies, errors, and rejection messages.  
+          * @return the message that caused this message to be send.
+          */
+         const Message* GetCausingMessage() const
+         {
+            return mCausingMessage.get();
+         }
+
       protected:
-         void AddParameter(MessageParameter *param);
+         /**
+          * Adds a parameter to this message. This method is protected because only a message class
+          * should add parameters to itself.
+          * @param param the new parameter to add.
+          */
+         void AddParameter(MessageParameter* param);
          virtual ~Message() { }
          
       private:
@@ -110,6 +198,8 @@ namespace dtGame
          dtCore::UniqueId mSendingActorId, mAboutActorId;
          
          std::map<std::string,dtCore::RefPtr<MessageParameter> > mParameterList;
+         
+         dtCore::RefPtr<const Message> mCausingMessage;
     };
 
 }

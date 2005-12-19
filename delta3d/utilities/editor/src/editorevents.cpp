@@ -19,9 +19,9 @@
 *
 * @author Matthew W. Campbell
 */
-#include <QMainWindow>
-#include <QTimer>
-#include <QMessageBox>
+#include <QtGui/QMainWindow>
+#include <QtCore/QTimer>
+#include <QtGui/QMessageBox>
 
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/editordata.h"

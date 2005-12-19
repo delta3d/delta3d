@@ -41,6 +41,14 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #include <Windows.h>
+   #define sleep(milliseconds) Sleep((milliseconds))
+#else
+   #include <unistd.h>
+   #define sleep(milliseconds) usleep(((milliseconds) * 1000))
+#endif
+
 class GameActorTests : public CPPUNIT_NS::TestFixture 
 {
    CPPUNIT_TEST_SUITE(GameActorTests);
@@ -71,7 +79,7 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameActorTests);
 
-#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GameActorTests::mTestGameActorLibrary="testGameActorLibraryd";
 char* GameActorTests::mTestActorLibrary="testActorLibraryd";
 #else
@@ -81,21 +89,36 @@ char* GameActorTests::mTestActorLibrary="testActorLibrary";
 
 void GameActorTests::setUp()
 {
-   dtUtil::Log* logger;
-   logger = &dtUtil::Log::GetInstance("MessageParameter");
-   logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-    
-   dtCore::Scene* scene = new dtCore::Scene();
-   mManager = new dtGame::GameManager(*scene);
-   mManager->LoadActorRegistry(mTestGameActorLibrary);
-     
+   try 
+   {
+      dtUtil::Log* logger;
+      logger = &dtUtil::Log::GetInstance("MessageParameter");
+      //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+       
+      dtCore::Scene* scene = new dtCore::Scene();
+      mManager = new dtGame::GameManager(*scene);
+      mManager->LoadActorRegistry(mTestGameActorLibrary);
+      dtCore::System::Instance()->Start();
+   } 
+   catch (const dtUtil::Exception& e) 
+   {
+      CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
+   }
+   catch (const std::exception& ex)  
+   {
+      CPPUNIT_FAIL(std::string("Error: ") + ex.what());
+   }  
 }
 
 void GameActorTests::tearDown()
 {
-   mManager->DeleteAllActors();
-   mManager->UnloadActorRegistry(mTestGameActorLibrary);
-   mManager = NULL;  
+   if (mManager.valid())
+   {
+      dtCore::System::Instance()->Stop();
+      mManager->DeleteAllActors();
+      mManager->UnloadActorRegistry(mTestGameActorLibrary);
+      mManager = NULL;  
+   }
 }
 
 
@@ -126,7 +149,8 @@ void GameActorTests::TestGameActorProxy()
       dtCore::RefPtr<dtDAL::ActorProxy> proxy = mManager->CreateActor(*actorType);
       dtCore::RefPtr<dtGame::GameActorProxy> gap = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
 
-      CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap != NULL);
+      CPPUNIT_ASSERT_MESSAGE("GameActorProxy should not be NULL", gap != NULL);
+      CPPUNIT_ASSERT_MESSAGE("GameActor should have a reference to the proxy", &gap->GetGameActor().GetGameActorProxy() == gap.get());
 
       dtGame::GameActor *p = dynamic_cast<dtGame::GameActor*> (&gap->GetGameActor());
 
@@ -161,7 +185,7 @@ void GameActorTests::TestInvokables()
       CPPUNIT_ASSERT_MESSAGE("ActorProxy should not be NULL", gap != NULL);
 
       std::vector<dtGame::Invokable*> toFill;
-      gap->GetInvokableList(toFill);
+      gap->GetInvokables(toFill);
       CPPUNIT_ASSERT_MESSAGE("The actor should have at least 2 invokables",toFill.size() >= 5); 
       dtGame::Invokable* iF = gap->GetInvokable("Fire One");
       dtGame::Invokable* iR = gap->GetInvokable("Reset");
@@ -228,6 +252,26 @@ void GameActorTests::TestInvokableMessageRegistration()
  
       CPPUNIT_ASSERT_MESSAGE("There should be one handler for tick local", toFill1.size() == 0);
       CPPUNIT_ASSERT_MESSAGE("There should be one handler for tick remote", toFill2.size() == 0);
+      
+      iToggle->Invoke(*message);
+      
+      //now to actually fire them...
+      //need a dummy message
+      message = mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::TICK_LOCAL);
+      //so it will reach the actor
+      message->SetAboutActorId(gap->GetId());
+      //this will remove the invokables registration.
+      mManager->AddActor(*gap, false, false);
+      mManager->ProcessMessage(*message);
+
+      CPPUNIT_ASSERT_MESSAGE("Zero local ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 0);
+      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
+
+      sleep(10);
+      dtCore::System::Instance()->Step();
+      
+      CPPUNIT_ASSERT_MESSAGE("One local tick should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Local Tick Count"))->GetValue() == 1);
+      CPPUNIT_ASSERT_MESSAGE("Zero remote ticks should have been received.", static_cast<dtDAL::IntActorProperty*>(gap->GetProperty("Remote Tick Count"))->GetValue() == 0);
             
    }
    catch (const dtUtil::Exception &e)
@@ -297,9 +341,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       //actors are not removed immediately
       CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) != NULL);
       
-      double deltaTime[2] = {0.3, 0.3}; 
-            
-      dtCore::System::Instance()->SendMessage("preframe", deltaTime);
+      sleep(10);
+      dtCore::System::Instance()->Step();
       
       //Actor should be removed by now.
       CPPUNIT_ASSERT(mManager->FindGameActorById(gap1->GetId()) == NULL);
@@ -325,7 +368,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       //add a load map message again.
       mManager->ProcessMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
 
-      dtCore::System::Instance()->SendMessage("preframe", deltaTime);
+      sleep(10);
+      dtCore::System::Instance()->Step();
 
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);
@@ -335,7 +379,8 @@ void GameActorTests::TestGlobalInvokableMessageRegistration()
       mManager->UnregisterGlobalMessageListener(
          dtGame::MessageType::INFO_MAP_LOADED, *gap2, iTestListener->GetName());
       mManager->ProcessMessage(*mManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED));
-      dtCore::System::Instance()->SendMessage("preframe", deltaTime);
+      sleep(10);
+      dtCore::System::Instance()->Step();
 
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Deleted Count"))->GetValue() == 2);
       CPPUNIT_ASSERT(static_cast<dtDAL::IntActorProperty*>(gap2->GetProperty("Actor Published Count"))->GetValue() == 1);

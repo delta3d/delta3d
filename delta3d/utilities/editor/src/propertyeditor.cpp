@@ -21,20 +21,18 @@
 */
 #include "dtEditQt/actortypetreewidget.h"
 
-#include <QLabel>
-#include <QGridLayout>
-//#include <QVBoxWidget>
-#include <QScrollArea>
-#include <QScrollBar>
-#include <QTreeWidget>
-//#include <QGridWidget>
-#include <QStringList>
-#include <QMainWindow>
-#include <QHeaderView>
-#include <QGroupBox>
-#include <QTreeView>
-#include <QAction>
-#include <QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QGridLayout>
+#include <QtGui/QScrollArea>
+#include <QtGui/QScrollBar>
+#include <QtGui/QTreeWidget>
+#include <QtCore/QStringList>
+#include <QtGui/QMainWindow>
+#include <QtGui/QHeaderView>
+#include <QtGui/QGroupBox>
+#include <QtGui/QTreeView>
+#include <QtGui/QAction>
+#include <QtGui/QHeaderView>
 #include <dtCore/deltadrawable.h>
 #include "dtEditQt/global.h"
 #include "dtEditQt/dynamicabstractcontrol.h"
@@ -60,6 +58,7 @@
 #include "dtEditQt/propertyeditor.h"
 #include "dtEditQt/propertyeditormodel.h"
 #include "dtEditQt/propertyeditortreeview.h"
+#include "dtEditQt/viewportmanager.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"
 #include "dtDAL/enginepropertytypes.h"
@@ -492,6 +491,14 @@ namespace dtEditQt
         osg::ref_ptr<dtDAL::ActorProperty> property)
     {
         propertyTree->viewport()->update();
+
+        if(property->GetPropertyType() == dtDAL::DataType::TERRAIN)
+        {
+           if(ViewportManager::getInstance().IsPagingEnabled())
+              ViewportManager::getInstance().EnablePaging(true);
+           
+           ViewportManager::getInstance().EnablePaging(true);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////

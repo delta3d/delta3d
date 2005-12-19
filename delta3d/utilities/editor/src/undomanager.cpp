@@ -20,7 +20,7 @@
 * @author Curtiss Murphy
 */
 
-#include <QAction>
+#include <QtGui/QAction>
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editoractions.h"
 #include "dtEditQt/editorevents.h"

@@ -25,11 +25,11 @@
 #include "dtEditQt/propertyeditortreeview.h"
 #include "dtEditQt/propertyeditordelegate.h"
 #include <QtCore/qdebug.h>
-#include <QItemDelegate>
-#include <qheaderview.h>
-#include <qpainter.h>
-#include <qscrollbar.h>
-#include <QAbstractItemModel>
+#include <QtGui/QItemDelegate>
+#include <QtGui/qheaderview.h>
+#include <QtGui/qpainter.h>
+#include <QtGui/qscrollbar.h>
+#include <QtCore/QAbstractItemModel>
 
 namespace dtEditQt 
 {
