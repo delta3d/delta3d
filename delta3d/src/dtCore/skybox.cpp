@@ -10,6 +10,7 @@
 #include <osg/Image>
 
 using namespace dtCore;
+using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyBox)
 
@@ -202,6 +203,11 @@ void dtCore::SkyBox::SetTexture(SkyBoxSideEnum side, std::string filename)
    //mTextureFilenameMap[side] = filename;
 
    osg::Image *newImage = osgDB::readImageFile(filename);
+   if (newImage == 0)
+   {
+      Log::GetInstance().LogMessage(Log::LOG_ERROR,__FUNCTION__, 
+         "Can't load texture file '%s'.",filename.c_str() );
+   }
    mTextureList[side]->setImage(newImage);
    mTextureList[side]->dirtyTextureObject();
 }
