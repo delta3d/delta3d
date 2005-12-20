@@ -927,7 +927,7 @@ AudioManager::PreFrame( const double deltaFrameTime )
 void
 AudioManager::Frame( const double deltaFrameTime )
 {
-   SRC_LST::iterator             iter(NULL);
+   SRC_LST::iterator             iter;
    std::stack<SRC_LST::iterator> stk;
    ALuint                        src(0L);
    ALint                         state(AL_STOPPED);
@@ -1126,7 +1126,7 @@ AudioManager::PostFrame( const double deltaFrameTime )
 void
 AudioManager::Pause( const double deltaFrameTime )
 {
-   SRC_LST::iterator             iter(NULL);
+   SRC_LST::iterator             iter;
    std::stack<SRC_LST::iterator> stk;
    ALuint                        src(0L);
    ALint                         state(AL_STOPPED);
