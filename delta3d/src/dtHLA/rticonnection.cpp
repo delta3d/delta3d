@@ -199,9 +199,19 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    // Workaround is to rename the "HyperSpace" space in the .rid file
    // or outride remove it from the .fed file. Bug has been submitted
    // to LHM and is scheduled to be fixed in version D13.
-   mRTIAmbassador.joinFederationExecution(
-      federateName.c_str(), executionName.c_str(), this     
-   );
+
+   try
+   {
+      mRTIAmbassador.joinFederationExecution(
+         federateName.c_str(), executionName.c_str(), this     
+      );
+   }
+   catch( rti13::FederateAlreadyExecutionMember& )
+   {
+      LOG_WARNING("Federate, "+federateName+", tried to connect to Federation, "+
+                  executionName+", more than once. Multiple attempts are ignored.")
+      return;
+   }
 
    mExecutionName = executionName;
    
