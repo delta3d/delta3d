@@ -24,6 +24,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;C:\Projects\delta\deps\osg\OSG_OP_OT-1.0-rc5\OpenSceneGraph\include;C:\Projects\delta\deps\osg\OSG_OP_OT-1.0-rc5\OpenThreads\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"

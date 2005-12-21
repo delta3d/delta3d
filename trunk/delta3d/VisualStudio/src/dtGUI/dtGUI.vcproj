@@ -75,6 +75,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;..\..\..\ext\inc\CEGUI\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_NOAUTOLIBMSG;_USRDLL;DT_GUI_LIBRARY"
+				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
