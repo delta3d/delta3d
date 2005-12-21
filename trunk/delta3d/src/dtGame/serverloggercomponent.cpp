@@ -216,7 +216,7 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &e) { } // ignore it.  Already failed, nothing we can do }
+            catch(const dtUtil::Exception&) { } // ignore it.  Already failed, nothing we can do }
          }
 
          // notify the world of our new status - even after an error
@@ -271,7 +271,7 @@ namespace dtGame
             {
                mLogStream->Close();
             }
-            catch(const dtUtil::Exception &e) { } // ignore it.  Already failed, nothing we can do }
+            catch(const dtUtil::Exception&) { } // ignore it.  Already failed, nothing we can do }
          }
 
          // notify the world of our new status - even after an error
