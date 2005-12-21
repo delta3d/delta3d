@@ -66,14 +66,12 @@ osg::Node* dtCore::SkyDome::MakeDome()
 
     int i, j;
     float lev[] = { -9.0, 0.0, 7.2, 15.0, 90.0  };
-    float cc[][4] =
+    float cc[][3] =
     {
         { 0.15, 0.25, 0.1 },
         { 0.6, 0.6, 0.7 },
         { 0.4, 0.4, 0.7 },
         { 0.2, 0.2, 0.6 },
-        { 0.1, 0.1, 0.6 },
-        { 0.1, 0.1, 0.6 },
         { 0.1, 0.1, 0.6 },
     };
     float x, y, z;
@@ -86,8 +84,6 @@ osg::Node* dtCore::SkyDome::MakeDome()
     osg::Vec3Array& coords = *(new osg::Vec3Array(19*nlev));
 
     osg::Vec4Array& colors = *(new osg::Vec4Array(19*nlev));
-
-    //osg::Vec2Array& tcoords = *(new osg::Vec2Array(19*nlev));
     
     int ci = 0;
 
@@ -112,10 +108,7 @@ osg::Node* dtCore::SkyDome::MakeDome()
 //            colors[ci][0] = 0.5f;
 //            colors[ci][1] = 0.5f;
 //            colors[ci][2] = 0.5;
-           colors[ci][3] = 1.f;
-
-            //tcoords[ci][0] = (float)j/18.0;
-            //tcoords[ci][1] = (float)i/(float)(nlev-1);
+            colors[ci][3] = 1.f;
 
             ci++;
         }
@@ -138,35 +131,23 @@ osg::Node* dtCore::SkyDome::MakeDome()
     }
     
     geom->setVertexArray( &coords );
-    //geom->setTexCoordArray( 0, &tcoords );
-
     geom->setColorArray( &colors );
     geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
 
-    //osg::Texture2D *tex = new osg::Texture2D;
-    //tex->setImage(osgDB::readImageFile("target.bmp"));
-
     osg::StateSet *dstate = new osg::StateSet;
 
-    //dstate->setTextureAttributeAndModes(0, tex, osg::StateAttribute::OFF );
-    //dstate->setTextureAttribute(0, new osg::TexEnv );
     dstate->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
     dstate->setMode( GL_CULL_FACE, osg::StateAttribute::ON );
     
     // clear the depth to the far plane.
     osg::Depth* depth = new osg::Depth;
     depth->setFunction(osg::Depth::ALWAYS);
-    //depth->setRange(1.0,1.0);
     depth->setWriteMask(false);   
     dstate->setAttributeAndModes(depth,osg::StateAttribute::ON );
     dstate->setMode(GL_FOG, osg::StateAttribute::OFF );
+    dstate->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::OFF|osg::StateAttribute::PROTECTED);
 
     dstate->setRenderBinDetails(-2,"RenderBin");
-
-    //for wireframe rendering
-    //osg::PolygonMode *polymode = new osg::PolygonMode;
-    //polymode->setMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-    //dstate->setAttributeAndModes(polymode, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
 
     geom->setStateSet( dstate );
 
