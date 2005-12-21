@@ -114,6 +114,9 @@ osg::Node* dtCore::SkyBox::MakeBox(void)
    };
    osg::Geometry *polyGeom[6];
 
+   osg::Vec4Array *colors = new osg::Vec4Array(1);
+   (*colors)[0] = osg::Vec4(1.f, 1.f, 1.f, 1.f);
+
    osg::Vec3Array *vArray[6];
    vArray[0] = new osg::Vec3Array(4, coords0);
    vArray[1] = new osg::Vec3Array(4, coords1);
@@ -129,6 +132,8 @@ osg::Node* dtCore::SkyBox::MakeBox(void)
       polyGeom[side]->setVertexArray(vArray[side]);
       polyGeom[side]->setTexCoordArray(0, new osg::Vec2Array(4, tCoords));
       polyGeom[side]->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4));
+      polyGeom[side]->setColorArray(colors);
+      polyGeom[side]->setColorBinding(osg::Geometry::BIND_OVERALL);
 
       osg::StateSet *dstate = new osg::StateSet;
       dstate->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
