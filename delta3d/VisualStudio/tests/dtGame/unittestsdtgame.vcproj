@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="unittestsdtgame"
+	Name="UnitTestsDtGame"
 	ProjectGUID="{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
 	RootNamespace="unittestsdtgame"
 	Keyword="Win32Proj">
@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_GAMEMANAGER_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -29,14 +29,14 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4101;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib dtGamed.lib osgd.lib"
-				OutputFile="../../../tests/unittestsdtgame.exe"
+				OutputFile="../../../tests/UnitTestsDtGamed.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
@@ -73,9 +73,11 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(DELTA_INC)"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_GAMEMANAGER_LIBRARY"
+				StringPooling="TRUE"
 				RuntimeLibrary="2"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -86,9 +88,9 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib dtGame.lib xerces-c_2.lib osg.lib"
-				OutputFile="$(OutDir)/unittestsdtgame.exe"
+				OutputFile="../../../tests/UnitTestsDtGame.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(DELTA_LIB)"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

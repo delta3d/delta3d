@@ -20,6 +20,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_NOAUTOLIBMSG"
+				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"

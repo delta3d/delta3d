@@ -41,7 +41,7 @@
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
-				SubSystem="2"
+				SubSystem="0"
 				ImportLibrary="../../../lib/dtUtild.lib"
 				TargetMachine="1"/>
 			<Tool
@@ -75,6 +75,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_WINDOWS;_USRDLL;DT_UTIL_LIBRARY"
+				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -91,8 +92,8 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt"
-				GenerateDebugInformation="TRUE"
-				SubSystem="2"
+				GenerateDebugInformation="FALSE"
+				SubSystem="0"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				ImportLibrary="../../../lib/dtUtil.lib"
