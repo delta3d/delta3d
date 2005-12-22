@@ -152,7 +152,11 @@ void CEUIDrawable::KeyPressed(Keyboard* keyboard,
 	case Producer::KeyChar_BackSpace: CEGUI::System::getSingleton().injectKeyDown(0x0E);  	break;
 	case Producer::KeyChar_Return: CEGUI::System::getSingleton().injectKeyDown(0x1C);  	break;
    
-   default: CEGUI::System::getSingleton().injectChar(character); break;
+   default:
+      {
+         CEGUI::System::getSingleton().injectKeyDown( static_cast<CEGUI::uint>(key) );
+         CEGUI::System::getSingleton().injectChar(character);
+      } break;
    }
 }
 
@@ -200,3 +204,9 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
       itr++;
    }
 }
+
+void CEUIDrawable::MouseScrolled(dtCore::Mouse* mouse, int change)
+{
+   CEGUI::System::getSingleton().injectMouseWheelChange( (float)change );
+}
+

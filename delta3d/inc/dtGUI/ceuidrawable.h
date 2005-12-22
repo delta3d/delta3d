@@ -120,6 +120,8 @@ namespace dtGUI
                               Producer::KeyboardKey key,
                               Producer::KeyCharacter character);
 
+      virtual void MouseScrolled(dtCore::Mouse* mouse, int change);
+
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
       int mWidth; ///<the width of the Window
       int mHeight; ///<The height of the Window
