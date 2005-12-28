@@ -31,9 +31,13 @@ mFrameStamp(new osg::FrameStamp())
    mSceneView->setDefaults(); //osg::SceneView
 
    if(useSceneLight)
+   {
       mSceneView->setLightingMode(osgUtil::SceneView::SKY_LIGHT);
+   }
    else
+   {
       mSceneView->setLightingMode(osgUtil::SceneView::NO_SCENEVIEW_LIGHT);
+   }
 
    mSceneView->setFrameStamp(mFrameStamp.get());
 
@@ -114,7 +118,10 @@ Camera::Camera( const std::string& name )
    :  Transformable(name),
       mFrameBin(0),
       mWindow(0),
-      mScene(0)
+      mScene(0),
+      mAddedToSceneGraph(false),
+      mDefaultRenderSurface(0),
+      mSceneHandler(0)
 {
    RegisterInstance(this);
 
@@ -166,10 +173,9 @@ void Camera::SetEnabled( bool enabled )
    }
 }
 
-///\todo Do not need to const_cast with OSG 1.0
 bool Camera::GetEnabled() const
 {
-   return const_cast<Producer::Camera*>(mCamera.get())->isEnabled();
+   return mCamera->isEnabled();
 }
 
 /*!
@@ -224,9 +230,38 @@ void Camera::Frame( bool lastCamera )
    //to the Producer Camera
    osg::Matrix mat = GetMatrixNode()->getMatrix();
    Transform absXform;
-   
+
+   // Get the absolute matrix but make sure to use the CameraNode in
+   // computing it.
    osg::Matrix absMat;
-   GetAbsoluteMatrix( GetMatrixNode(), absMat );
+
+   // If this dtCore::Camera has been added to a dtCore::Scene, we must not
+   // use the top osg::CameraNode in our matrix calculations, otherwise it
+   // will be applied twice. If this instance of dtCore::Camera is NOT in 
+   // a dtCore::Scene, we must apply the osg::CameraNode matrix here.
+   if( mAddedToSceneGraph )
+   {
+      // Find the transform in World coorindates, but leave out
+      // the osg::CameraNode.
+      Transformable::GetAbsoluteMatrix( GetMatrixNode(), absMat );
+   }
+   else
+   {
+      osg::NodePathList nodePathList = GetMatrixNode()->getParentalNodePaths();
+
+      if( !nodePathList.empty() )
+      {
+         osg::NodePath nodePath = nodePathList[0];
+
+         // Find the transform in World coorindates, but leave
+         // on the osg::CameraNode.
+         absMat.set( osg::computeLocalToWorld(nodePath) );
+      }
+      else
+      {
+         LOG_WARNING("Finding NodePath of Camera's subgraph failed.")
+      }
+   }
    
    //choose Z as the up vector
    osg::Vec3 eye(-absMat(3,0), -absMat(3,1), -absMat(3,2));
@@ -371,4 +406,11 @@ double Camera::GetAspectRatio()
 	double aspectRatio;
 	aspectRatio = mCamera->getLens()->getAspectRatio();
 	return aspectRatio;
+}
+
+void Camera::AddedToScene( Scene* scene )
+{
+   mAddedToSceneGraph = bool(scene != 0);
+   
+   Transformable::AddedToScene(scene);
 }

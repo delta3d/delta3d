@@ -16,6 +16,8 @@
 #include <osg/Transform>
 #include <osg/TriangleFunctor>
 
+#include <cassert>
+
 using namespace dtCore;
 using namespace dtUtil;
 
@@ -96,11 +98,32 @@ Transformable::~Transformable()
  */
 bool Transformable::GetAbsoluteMatrix(osg::Node* node, osg::Matrix& wcMatrix )
 {
-   getWCofNodeVisitor vis( wcMatrix );
+   if( node != 0 )
+   {
+      osg::NodePathList nodePathList = node->getParentalNodePaths();
 
-   node->accept( vis );
+      if( !nodePathList.empty() )
+      {
+         osg::NodePath nodePath = nodePathList[0];
 
-   return true;
+         // \TODO: This makes me feel nauseous... It would probably
+         // be better to drop in a pointer to the CameraNode. This is the
+         // only way I know how to get it.
+         //
+         // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
+         //
+         //-osb
+         if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
+         {
+            nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
+         }
+
+         wcMatrix.set( osg::computeLocalToWorld(nodePath) );
+         return true;
+      }
+   }
+   
+   return false;
 }
 
 /*!
@@ -169,7 +192,8 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs ) const
    osg::Matrix newMat;
 
    //yes, we know this sucks, but we can't have a const visitor :(
-   osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>( const_cast<osg::Node*>(mNode.get()) );
+   //osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>( const_cast<osg::Node*>(mNode.get()) );
+   osg::MatrixTransform* mt = const_cast<osg::MatrixTransform*>( GetMatrixNode() );
 
    if( cs ==ABS_CS )
    { 
@@ -202,7 +226,7 @@ bool Transformable::AddChild(DeltaDrawable *child)
    if( DeltaDrawable::AddChild(child) ) 
    {
       GetMatrixNode()->addChild( child->GetOSGNode() );
-      return (true);
+      return true;
    }
    else
    {
@@ -543,8 +567,19 @@ public:
 
          if(d->supports(mFunctor))
          {
-            mFunctor.mMatrix =
-               osg::computeLocalToWorld(getNodePath());
+            osg::NodePath nodePath = getNodePath();
+            // \TODO: This makes me feel nauseous... It would probably
+            // be better to drop in a pointer to the CameraNode. This is the
+            // only way I know how to get it.
+            //
+            // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
+            //
+            //-osb
+            if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
+            {
+               nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
+            }
+            mFunctor.mMatrix = osg::computeLocalToWorld(nodePath);
 
             d->accept(mFunctor);
          }
