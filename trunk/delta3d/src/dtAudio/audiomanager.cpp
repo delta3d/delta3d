@@ -1316,12 +1316,7 @@ AudioManager::ConfigEAX( bool eax )
    if( ! eax )
       return   false;
 
-   // copy strings because
-   // funcs don't take const char
-   ALubyte  buf[32L];
-   memset( buf, 0L, 32L );
-   memcpy( buf, _EaxVer, MIN( strlen( _EaxVer ), size_t(32L) ) );
-
+   ALchar*  buf(0);
 
    // check for EAX support
    if( alIsExtensionPresent( buf ) == AL_FALSE )
@@ -1333,9 +1328,6 @@ AudioManager::ConfigEAX( bool eax )
 
 
    // get the eax-set function
-   memset( buf, 0L, 32L );
-   memcpy( buf, _EaxSet, MIN( strlen( _EaxSet ), size_t(32L) ) );
-
    mEAXSet  = alGetProcAddress( buf );
    if( mEAXSet == NULL )
    {
@@ -1346,9 +1338,6 @@ AudioManager::ConfigEAX( bool eax )
 
 
    // get the eax-get function
-   memset( buf, 0L, 32L );
-   memcpy( buf, _EaxGet, MIN( strlen( _EaxGet ), size_t(32L) ) );
-
    mEAXGet  = alGetProcAddress( buf );
    if( mEAXGet == NULL)
    {

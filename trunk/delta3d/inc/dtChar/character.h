@@ -66,10 +66,24 @@ namespace dtChar
          virtual ~Character();
 
          virtual osg::Node* GetOSGNode()
-         { return dynamic_cast<osg::Node*>(mBodyNode.get()); }
+         { 
+            return mBodyNode.get();
+         }
+
+         virtual const osg::Node* GetOSGNode() const
+         {
+            return mBodyNode.get();
+         }
 
          virtual osg::MatrixTransform* GetMatrixNode()
-         { return dynamic_cast<osg::MatrixTransform*>(mBodyNode.get()); }
+         {
+            return mBodyNode.get();
+         }
+
+         virtual const osg::MatrixTransform* GetMatrixNode() const
+         {
+            return mBodyNode.get() ;
+         }
 
          /**
           * Notifies this drawable object that it has been added to

@@ -61,6 +61,11 @@ namespace dtCore
             return mNode.get();
          }
          
+         virtual const osg::Node* GetOSGNode() const
+         {
+            return mNode.get();
+         }
+
          ///Supply the Scene this Drawable has been added to
          virtual void AddedToScene( Scene* scene );
 

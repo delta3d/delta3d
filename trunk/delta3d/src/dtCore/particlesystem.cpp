@@ -93,7 +93,19 @@ public:
             if( !fullNodePath.empty() )
             {
                fullNodePath.pop_back();
-            
+
+               // \TODO: This makes me feel nauseous... It would probably
+               // be better to drop in a pointer to the CameraNode. This is the
+               // only way I know how to get it.
+               //
+               // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
+               //
+               //-osb
+               if( std::string( fullNodePath[0]->className() ) == std::string("CameraNode") )
+               {
+                  fullNodePath = osg::NodePath( fullNodePath.begin()+1, fullNodePath.end() );
+               }
+
                osg::Matrix localCoordMat = osg::computeLocalToWorld( fullNodePath );
                osg::Matrix inverseOfAccum = osg::Matrix::inverse( localCoordMat );
             

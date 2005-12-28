@@ -206,6 +206,15 @@ namespace dtCore
         mSceneHandler->mStats->SelectType(type);
       }
 
+      /** 
+      * Supply the Scene this Camera has been added to. Normally this
+      * is done inside dtCore::Scene. So you should probably never have 
+      * to call this.
+      *
+      * @param scene The Scene to which this Camera is being added to.
+      */
+      virtual void AddedToScene( Scene* scene );
+
    private:
 
       unsigned int mFrameBin;
@@ -215,6 +224,7 @@ namespace dtCore
       RefPtr<DeltaWin> mWindow; // The currently assigned DeltaWin
       RefPtr<Scene> mScene;
       osg::Vec4 mClearColor; // The current clear color
+      bool mAddedToSceneGraph;
 
       Producer::RenderSurface* mDefaultRenderSurface;
       RefPtr<_SceneHandler> mSceneHandler;

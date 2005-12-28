@@ -114,13 +114,23 @@ namespace dtCore
       virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
 
       ///Convenience function to return back the internal matrix transform node
+      ///Convenience function to return back the internal matrix transform node
       virtual osg::MatrixTransform* GetMatrixNode()
       { return dynamic_cast<osg::MatrixTransform*>( mNode.get() ); }
+
+      virtual const osg::MatrixTransform* GetMatrixNode() const
+      { return dynamic_cast<const osg::MatrixTransform*>( mNode.get() ); }
 
       ///Render method for an object which may not have geometry
       virtual void RenderProxyNode( bool enable = true );
       
-      ///Get the world coordinate matrix from the supplied node
+      /**
+       * Gets the world coordinate matrix for the supplied node.
+       *
+       * @param node The node to start from
+       * @param wcMatrix The matrix to fill
+       * @return Success
+       */
       static bool GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix );
 
       ///Automatically rescales normals if you scale your objects.
@@ -370,33 +380,6 @@ namespace dtCore
 
    private:
 
-      class getWCofNodeVisitor : public osg::NodeVisitor
-      {
-         public:
-            getWCofNodeVisitor( osg::Matrix& matrix ):
-               osg::NodeVisitor(NodeVisitor::TRAVERSE_PARENTS),
-               wcMatrix(matrix),
-               done(false)
-            {}
-
-            virtual void apply(osg::Node &node)
-            {
-               if (!done)
-               {
-                  if ( 0 == node.getNumParents() )
-                  {
-                     wcMatrix.set( osg::computeLocalToWorld(this->getNodePath()) );
-                     done = true;
-                  }
-                  traverse(node);
-               }
-            }
-
-         private:
-            osg::Matrix& wcMatrix;
-            bool done;
-      };
-
       /**
       * Determines whether or not collisions with other Transformables
       * will be handled. If this is solid, other Transformable should
@@ -458,11 +441,24 @@ namespace dtCore
       */
       virtual void apply(osg::Geode& node)
       {
-         osg::Matrix matrix = osg::computeLocalToWorld(getNodePath());
-
-         for(unsigned int i=0;i<node.getNumDrawables();i++)
+         osg::NodePath nodePath = getNodePath();
+         // \TODO: This makes me feel nauseous... It would probably
+         // be better to drop in a pointer to the CameraNode. This is the
+         // only way I know how to get it.
+         //
+         // dtCore::Camera::GetSceneHandler()->GetSceneView()->getRenderStage()->getCameraNode()
+         //
+         //-osb
+         if( std::string( nodePath[0]->className() ) == std::string("CameraNode") )
          {
-            for(unsigned int j=0;j<8;j++)
+            nodePath = osg::NodePath( nodePath.begin()+1, nodePath.end() );
+         }
+
+         osg::Matrix matrix = osg::computeLocalToWorld(nodePath);
+
+         for( unsigned int i = 0; i < node.getNumDrawables(); ++i )
+         {
+            for( unsigned int j = 0; j < 8; ++j )
             {
                mBoundingBox.expandBy( node.getDrawable(i)->getBound().corner(j) * matrix );
             }
