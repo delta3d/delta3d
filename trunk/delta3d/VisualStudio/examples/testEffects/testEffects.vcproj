@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="osg.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile="../../../bin/testEffects.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -106,7 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="osgd.lib odbc32.lib odbccp32.lib winmm.lib"
 				OutputFile="../../../bin/testEffectsd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
