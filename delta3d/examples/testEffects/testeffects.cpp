@@ -1,8 +1,10 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-
-#include "Producer/Timer"
-#include <math.h>
+#include <dtABC/application.h>
+#include <dtCore/effectmanager.h>
+#include <dtCore/globals.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/object.h>
+#include <dtCore/particlesystem.h>
+#include <cmath>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -11,11 +13,9 @@ class Updater : public Base
 {
 public:
 
-   DECLARE_MANAGEMENT_LAYER(Updater)
-
-   Updater(Keyboard* keyboard, EffectManager* effectManager, 
-      Object* entity, dtCore::Camera* camera)
-      : Base("updater"),
+   Updater( Keyboard* keyboard, EffectManager* effectManager, 
+            Object* entity, dtCore::Camera* camera)
+    : Base("Updater"),
       mKeyboard(keyboard),
       mEffectManager(effectManager),
       mEntity(entity),
@@ -24,37 +24,29 @@ public:
       mCameraHeading(0.0f),
       mCameraPitch(0.0f)
    {
-      AddSender(System::Instance());
-
-      mLastTime = mTimer.tick();
-
-      srand( (unsigned int)mLastTime );
+      AddSender( System::Instance() );
    }
 
-   virtual void OnMessage(MessageData* data)
+   virtual void OnMessage( MessageData* data )
    {
-      if(data->message == "preframe")
+      if( data->message == "preframe" )
       {
-         if(mKeyboard->GetKeyState(Producer::Key_Escape))
+         if( mKeyboard->GetKeyState(Producer::Key_Escape) )
          {
             System::Instance()->Stop();
          }
 
-         Producer::Timer_t currentTime = mTimer.tick();
+         const double delta = *static_cast<const double*>( data->userData );
 
-         float delta = (float)mTimer.delta_s(mLastTime, currentTime);
+         float value = float(rand()) / RAND_MAX;
 
-         mLastTime = currentTime;
-
-         float value = (float)rand() / RAND_MAX;
-
-         if(value < delta*0.25f)
+         if( value < delta*0.25f )
          {
             osg::Vec3 location;
 
-            location[0] = 100*((float)rand() / RAND_MAX) - 50;
-            location[1] = 100*((float)rand() / RAND_MAX) + 50;
-            location[2] = 100*((float)rand() / RAND_MAX) - 50;
+            location[0] = 100*( float(rand()) / RAND_MAX ) - 50;
+            location[1] = 100*( float(rand()) / RAND_MAX ) + 50;
+            location[2] = 100*( float(rand()) / RAND_MAX ) - 50;
 
             mEffectManager->AddDetonation(
                location,
@@ -62,14 +54,16 @@ public:
                );
          }
 
- 
          mAngle = mAngle + 45.0f*delta;
 
-         if(mAngle > 360) mAngle -= 360.0f;
+         if( mAngle > 360 )
+         {
+            mAngle -= 360.0f;
+         }
 
          mPosition.Set(
-            40*cosf(osg::DegreesToRadians(mAngle)), 
-            100 + 40*sinf(osg::DegreesToRadians(mAngle)),
+            40*cosf( osg::DegreesToRadians(mAngle) ), 
+            100 + 40*sinf( osg::DegreesToRadians(mAngle) ),
             0,
             mAngle,
             0,
@@ -79,19 +73,19 @@ public:
 
          mEntity->SetTransform(&mPosition);
 
-         if(mKeyboard->GetKeyState(Producer::Key_Up))
+         if( mKeyboard->GetKeyState(Producer::Key_Up) )
          {
             mCameraPitch += delta*45.0;
          }
-         if(mKeyboard->GetKeyState(Producer::Key_Down))
+         if( mKeyboard->GetKeyState(Producer::Key_Down) )
          {
             mCameraPitch -= delta*45.0;
          }
-         if(mKeyboard->GetKeyState(Producer::Key_Left))
+         if( mKeyboard->GetKeyState(Producer::Key_Left) )
          {
             mCameraHeading += delta*45.0;
          }
-         if(mKeyboard->GetKeyState(Producer::Key_Right))
+         if( mKeyboard->GetKeyState(Producer::Key_Right) )
          {
             mCameraHeading -= delta*45.0;
          }
@@ -113,27 +107,22 @@ private:
    RefPtr<EffectManager> mEffectManager;
    RefPtr<Object> mEntity;
    RefPtr<Camera> mCamera;
-   Producer::Timer mTimer;
-   Producer::Timer_t mLastTime;
    Transform mPosition;
    float mAngle;
    float mCameraHeading;
    float mCameraPitch;
 };
 
-IMPLEMENT_MANAGEMENT_LAYER(Updater)
-
 class TestEffectsApp : public dtABC::Application
 {
-   DECLARE_MANAGEMENT_LAYER(TestEffectsApp)
 
 public:
-   TestEffectsApp( std::string configFilename = "config.xml" )
+   TestEffectsApp( const std::string& configFilename = "config.xml" )
       : Application( configFilename )
    {
    }
 
-   void Config()
+   virtual void Config()
    {
       Application::Config();
 
@@ -150,14 +139,11 @@ public:
 
       entity->AddChild(smoke.get());
 
-
       effectManager = new EffectManager;
-
       effectManager->AddDetonationTypeMapping(
          HighExplosiveDetonation,
          "effects/explosion.osg"
          );
-
       effectManager->AddDetonationTypeMapping(
          SmokeDetonation,
          "effects/smoke.osg"
@@ -165,7 +151,10 @@ public:
 
       AddDrawable( effectManager.get() );
 
-      updater = new Updater(GetKeyboard(), effectManager.get(), entity.get(), GetCamera());
+      updater = new Updater(  GetKeyboard(), 
+                              effectManager.get(), 
+                              entity.get(), 
+                              GetCamera());
 
    }
 
@@ -175,8 +164,6 @@ public:
    RefPtr<Updater> updater;
 
 };
-
-IMPLEMENT_MANAGEMENT_LAYER(TestEffectsApp)
 
 int main( int argc, char **argv )
 {
