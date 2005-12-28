@@ -178,7 +178,12 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
          
       }
    }
-   dynamic_cast<osg::Group*>(mNode.get())->addChild(mBodyNode.get());
+   
+   if( osg::Group* group = mNode->asGroup() )
+   {
+      group->addChild( mBodyNode.get() );
+   }
+
    return mBodyNode.get();
 }
 
