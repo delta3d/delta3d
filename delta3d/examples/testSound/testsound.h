@@ -55,7 +55,7 @@ public:
    *
    * @param configuration file name
    */
-   TestSoundApp( std::string configFilename = "config.xml" );
+   TestSoundApp( const std::string& configFilename = "config.xml" );
 
    /**
    * Destructor.

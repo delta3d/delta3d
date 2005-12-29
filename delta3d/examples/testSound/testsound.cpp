@@ -27,7 +27,7 @@ IMPLEMENT_MANAGEMENT_LAYER( TestSoundApp )
 *
 * @param configuration file name
 */
-TestSoundApp::TestSoundApp( std::string configFilename /*= "config.xml"*/ )
+TestSoundApp::TestSoundApp( const std::string& configFilename /*= "config.xml"*/ )
 :  Application(configFilename),
 mSound(NULL)
 {
@@ -37,8 +37,8 @@ mSound(NULL)
 
    // pre-load the sound files
    // (an optional optimization)
-   AudioManager::GetManager()->LoadWaveFile( kSoundFile1 );
-   AudioManager::GetManager()->LoadWaveFile( kSoundFile2 );
+   AudioManager::GetManager()->LoadFile( kSoundFile1 );
+   AudioManager::GetManager()->LoadFile( kSoundFile2 );
 
    // get a single sound from the manager
    // and load the sound file into it
