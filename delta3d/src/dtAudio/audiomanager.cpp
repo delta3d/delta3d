@@ -10,9 +10,10 @@
   #include <AL/alut.h>
 #endif
 
-#include "dtAudio/audiomanager.h"
+#include <dtAudio/audiomanager.h>
 #include <dtCore/system.h>
 #include <dtCore/camera.h>
+#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 
 #if   defined(WIN32) | defined(_WIN32)
@@ -31,21 +32,13 @@
 #endif
 
 
-
 // name spaces
 using namespace   dtAudio;
 using namespace   dtUtil;
 
 
-// helper template functions
 template <class   T>
-T  MIN( T a, T b )         {  return   (a<b)?a:b;        }
-
-template <class   T>
-T  MAX( T a, T b )         {  return   (a>b)?a:b;        }
-
-template <class   T>
-T  CLAMP( T x, T l, T h )  {  return   MAX(MIN(x,h),l);  }
+T  CLAMP( T x, T l, T h ) {  return std::max( std::min(x,h), l ); }
 
 
 
@@ -158,17 +151,9 @@ AudioManager::~AudioManager()
    }
    mBufferMap.clear();
 
-//   SOB_PTR  snd(NULL);
    for( SND_LST::iterator iter(mSoundList.begin()); iter != mSoundList.end(); iter++ )
    {
-//      snd   = *iter;
       *iter = NULL;
-
-//      if( snd == NULL )
-//         continue;
-
-//      delete   snd;
-//      snd   = NULL;
    }
    mSoundList.clear();
 
@@ -618,38 +603,34 @@ AudioManager::FreeSound( Sound*& sound )
    mSoundRecycle.push( snd );
 }
 
-
-
 bool
-AudioManager::LoadWaveFile( const char* file )
+AudioManager::LoadFile( const std::string& file )
 {
-   if( file == NULL )
+   if( file.empty() )
+   {
       // no file name, bail...
-      return   false;
+      return false;
+   }
 
-   std::string filename = osgDB::findDataFile( file );
-   if( filename == "" )
+   std::string filename = osgDB::findDataFile(file);
+   if( filename.empty() )
    {
       // still no file name, bail...
-      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file );
-      return   false;
+      Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file.c_str() );
+      return false;
    }
 
    BufferData* bd = mBufferMap[file];
-   if( bd != NULL )
+   if( bd != 0 )
+   {
       // file already loaded, bail...
-      return   false;
+      return false;
+   }
 
    bd = new BufferData;
-   assert( bd );
 
-   ALenum      err(alGetError());
-   ALenum      format(ALenum(0L));
-   ALvoid*     data(NULL);
-   ALsizei     size(0L);
-   ALsizei     freq(0L);
-   ALbyte      fname[256L];
-
+   // Clear the errors
+   ALenum err( alGetError() );
 
    // create buffer for the wave file
    alGenBuffers( 1L, &bd->buf );
@@ -657,63 +638,214 @@ AudioManager::LoadWaveFile( const char* file )
    {
       // somethings wrong with buffers, bail...
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alGenBuffers error %d", err );
+                                     "AudioManager: alGenBuffers error %d", err );
       delete   bd;
       return   false;
    }
 
+   ALenum format(0);
+   ALsizei size(0);
+   ALfloat freq(0);
 
-   // load the wave file
-   unsigned int   len = MIN( filename.size(), size_t(255L) );
+   ALvoid* data(0);
+   #ifdef __APPLE__
+
+   // Man, are we still in the dark ages here???
+   // Copy the std::string to a frickin' ALByte array...
+   ALbyte  fname[256L];
+   unsigned int len = std::min( filename.size(), size_t(255L) );
    memcpy( fname, filename.c_str(), len );
    fname[len]  = 0L;
    
-#ifdef __APPLE__
-   alutLoadWAVFile( fname, &format, &data, &size, &freq );
-#else   
-   alutLoadWAVFile( fname, &format, &data, &size, &freq, &bd->loop );
-#endif
-   
-   if( ( err = alGetError() ) != AL_NO_ERROR )
+   alutLoadWAVFile( fname, &format, &data, &size, &freq ); //Upgrade bi-atch!
+   #else
+   data = alutLoadMemoryFromFile( filename.c_str(), &format, &size, &freq );
+   #endif
+
+   if( data == 0 )
    {
+      err = alutGetError();
       // can't load the wave file, bail...
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alutLoadWAVFile error %d on %s", err, file );
+         "AudioManager: alutLoadMemoryFromFile error %d on %s", err, file.c_str() );
       alDeleteBuffers( 1L, &bd->buf );
-      delete   bd;
-      return   false;
+      delete bd;
+      return false;
    }
 
-
-   // copy wave file to the buffer
-   alBufferData( bd->buf, format, data, size, freq );
+   alBufferData( bd->buf, format, data, size, ALsizei(freq) );
    if( ( err = alGetError() ) != AL_NO_ERROR )
    {
       // can't copy the data??? bail like you've never bailed before...
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alBufferData error %d on %s", err, file );
+         "AudioManager: alBufferData error 0x%X on %s", err, file.c_str() );
       alDeleteBuffers( 1L, &bd->buf );
-      alutUnloadWAV( format, data, size, freq );
-      delete   bd;
+      free(data);
+      
+      delete bd;
+      return false;
+   }
+
+   free(data);
+
+   mBufferMap[file] = bd;
+   bd->file = mBufferMap.find(file)->first.c_str();
+
+   return true;
+}
+
+bool
+AudioManager::UnloadFile( const std::string& file )
+{
+   if( file.empty() )
+   {
+      // no file name, bail...
+      return false;
+   }
+
+   BUF_MAP::iterator iter = mBufferMap.find(file);
+   if( iter == mBufferMap.end() )
+   {
+      // file is not loaded, bail...
+      return false;
+   }
+
+   BufferData* bd = iter->second;
+   if( bd == 0 )
+   {
+      // bd should never be NULL
+      // this code should never run
+      mBufferMap.erase(iter);
+      return false;
+   }
+
+   if( bd->use )
+   {
+      // buffer still in use, don't remove buffer
       return   false;
    }
 
+   alDeleteBuffers( 1L, &bd->buf );
+   delete bd;
 
-   // unload the wave file
-   alutUnloadWAV( format, data, size, freq );
-   if( ( err = alGetError() ) != AL_NO_ERROR )
-   {
-      // can't unload the wave file?
-      // well, ok we just leaked but can continue
-      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
-         "AudioManager: alutUnloadWAV error %d on %s", err, file );
-   }
+   mBufferMap.erase(iter);
+   return true;
+}
+
+bool
+AudioManager::LoadWaveFile( const char* file )
+{
+   DEPRECATE( "bool AudioManager::LoadWaveFile( const char* file )",
+              "bool AudioManager::LoadFile( const std::string& file )" )
+   return LoadFile(file);
+   
+//    if( file == NULL )
+//       // no file name, bail...
+//       return   false;
+
+//    std::string filename = osgDB::findDataFile( file );
+//    if( filename == "" )
+//    {
+//       // still no file name, bail...
+//       Log::GetInstance().LogMessage(Log::LOG_WARNING, __FUNCTION__, "AudioManager: can't load file %s", file );
+//       return   false;
+//    }
+
+//    BufferData* bd = mBufferMap[file];
+//    if( bd != NULL )
+//       // file already loaded, bail...
+//       return   false;
+
+//    bd = new BufferData;
+//    assert( bd );
+
+//    ALenum      err(alGetError());
+//    ALenum      format(ALenum(0L));
+//    ALvoid*     data(NULL);
+//    ALsizei     size(0L);
+//    //ALfloat     freq(0.0f);
+//    ALsizei     freq(0L);
+//    ALbyte      fname[256L];
 
 
-   // store this buffer in the map by name
-   mBufferMap[file]  = bd;
-   bd->file          = mBufferMap.find( file )->first.c_str();
-   return   true;
+//    // create buffer for the wave file
+//    alGenBuffers( 1L, &bd->buf );
+//    if( ( err = alGetError() ) != AL_NO_ERROR )
+//    {
+//       // somethings wrong with buffers, bail...
+//       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+//          "AudioManager: alGenBuffers error %d", err );
+//       delete   bd;
+//       return   false;
+//    }
+
+
+//    // load the wave file
+//    unsigned int   len = MIN( filename.size(), size_t(255L) );
+//    memcpy( fname, filename.c_str(), len );
+//    fname[len]  = 0L;
+   
+// #ifdef __APPLE__
+//    alutLoadWAVFile( fname, &format, &data, &size, &freq );
+// #else   
+//    alutLoadWAVFile( fname, &format, &data, &size, &freq, &bd->loop );
+// #endif
+
+// //    data = alutLoadMemoryFromFile( filename.c_str(), &format, &size, &freq );
+// //    if( data == 0 )
+// //    {
+// //       err = alutGetError();
+// //       // can't load the wave file, bail...
+// //       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+// //          "AudioManager: alutLoadWAVFile error %d on %s", err, file );
+// //       alDeleteBuffers( 1L, &bd->buf );
+// //       delete   bd;
+// //       return   false;
+// //    }
+   
+//     if( ( err = alGetError() ) != AL_NO_ERROR )
+//     {
+//        // can't load the wave file, bail...
+//        Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+//           "AudioManager: alutLoadWAVFile error %d on %s", err, file );
+//        alDeleteBuffers( 1L, &bd->buf );
+//        delete   bd;
+//        return   false;
+//     }
+
+
+//    ALsizei freqSize(0L);
+//    // copy wave file to the buffer
+//    alBufferData( bd->buf, format, data, size, freq );
+//    if( ( err = alGetError() ) != AL_NO_ERROR )
+//    {
+//       // can't copy the data??? bail like you've never bailed before...
+//       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+//          "AudioManager: alBufferData error %d on %s", err, file );
+//       alDeleteBuffers( 1L, &bd->buf );
+//       alutUnloadWAV( format, data, size, freq );
+      
+//       delete   bd;
+//       return   false;
+//    }
+
+
+//    // unload the wave file
+//    alutUnloadWAV( format, data, size, freq );
+//    //free(data);
+//     if( ( err = alGetError() ) != AL_NO_ERROR )
+//     {
+//        // can't unload the wave file?
+//        // well, ok we just leaked but can continue
+//        Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+//           "AudioManager: alutUnloadWAV error %d on %s", err, file );
+//     }
+
+
+//    // store this buffer in the map by name
+//    mBufferMap[file]  = bd;
+//    bd->file          = mBufferMap.find( file )->first.c_str();
+//    return   true;
 }
 
 
@@ -721,33 +853,10 @@ AudioManager::LoadWaveFile( const char* file )
 bool
 AudioManager::UnloadWaveFile( const char* file )
 {
-   if( file == NULL )
-      // no file name, bail...
-      return   false;
+   DEPRECATE( "bool AudioManager::UnloadWaveFile( const char* file )",
+              "bool AudioManager::UnloadFile( const std::string& file )" )
 
-   BUF_MAP::iterator iter  = mBufferMap.find( file );
-   if( iter == mBufferMap.end() )
-      // file is not loaded, bail...
-      return   false;
-
-   BufferData* bd = iter->second;
-   if( bd == NULL )
-   {
-      // bd should never be NULL
-      // this code should never run
-      mBufferMap.erase( iter );
-      return   false;
-   }
-
-   if( bd->use )
-      // buffer still in use, don't remove buffer
-      return   false;
-
-   alDeleteBuffers( 1L, &bd->buf );
-   delete   bd;
-
-   mBufferMap.erase( iter );
-   return   true;
+   return UnloadFile(file);
 }
 
 
@@ -1313,41 +1422,61 @@ AudioManager::ConfigSources( unsigned int num )
 bool
 AudioManager::ConfigEAX( bool eax )
 {
-   if( ! eax )
-      return   false;
+   if( !eax )
+   {
+      return false;
+   }
 
-   ALchar*  buf(0);
+   #ifdef __APPLE__
+   ALubyte buf[32L];
+   memset( buf, 0L, 32L );
+   memcpy( buf, _EaxVer, std::min( strlen(_EaxVer), size_t(32L) ) );
+   #else
+   const ALchar* buf = _EaxVer;
+   #endif
 
    // check for EAX support
-   if( alIsExtensionPresent( buf ) == AL_FALSE )
+   if( alIsExtensionPresent(buf) == AL_FALSE )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: %s is not available", _EaxVer );
       return   false;
    }
 
-
+   #ifdef __APPLE__
+   memset( buf, 0L, 32L );
+   memcpy( buf, _EaxSet, std::min( strlen(_EaxSet), size_t(32L) ) );
+   #else
+   buf = _EaxSet;
+   #endif
+   
    // get the eax-set function
-   mEAXSet  = alGetProcAddress( buf );
-   if( mEAXSet == NULL )
+   mEAXSet = alGetProcAddress(buf);
+   if( mEAXSet == 0 )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: %s is not available", _EaxVer );
       return   false;
    }
-
-
+   
+   #ifdef __APPLE__
+   memset( buf, 0L, 32L );
+   memcpy( buf, _EaxGet, std::min( strlen(_EaxGet), size_t(32L) ) );
+   #else
+   buf = _EaxVer;
+   #endif
+   
    // get the eax-get function
-   mEAXGet  = alGetProcAddress( buf );
-   if( mEAXGet == NULL)
+   mEAXGet = alGetProcAddress(buf);
+   if( mEAXGet == 0 )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: %s is not available", _EaxVer );
-      mEAXSet  = NULL;
-      return   false;
+      mEAXSet = 0;
+      return false;
    }
 
-   return   true;
+   return true;
 }
 
 
