@@ -55,7 +55,7 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
 
    for( unsigned int ii(0L); ii < kNumSoundFiles; ii++ )
    {
-      AudioManager::GetManager()->LoadWaveFile( kSoundFile[ii] );
+      AudioManager::GetManager()->LoadFile( kSoundFile[ii] );
    }
 
    mMic  = AudioManager::GetListener();
