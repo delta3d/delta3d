@@ -298,7 +298,7 @@ namespace   dtAudio
          static   const AudioConfigData   _DefCfg;
 
       private:
-                                    AudioManager( std::string name = "audiomanager" );
+                                    AudioManager( const std::string& name = "audiomanager" );
          virtual                    ~AudioManager();
 
       public:
