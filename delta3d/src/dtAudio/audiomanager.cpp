@@ -59,7 +59,7 @@ IMPLEMENT_MANAGEMENT_LAYER(AudioManager)
 
 // public member functions
 // default consructor
-AudioManager::AudioManager( std::string name /*= "audiomanager"*/ )
+AudioManager::AudioManager( const std::string& name /*= "audiomanager"*/ )
 :  Base(name),
    mEAXSet(NULL),
    mEAXGet(NULL),
