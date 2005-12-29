@@ -2,7 +2,7 @@ Import('*')
 
 srcs = SGlob( '*.cpp' )
                 
-deps = [ 'dtCore', 'openal', 'dtUtil', 'isense', 'OpenThreads',
+deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
          'osg', 'osgDB', 'osgParticle', 'osgText', 'osgUtil',
          'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer',
          'opengl', 'alut', 'User32' ]

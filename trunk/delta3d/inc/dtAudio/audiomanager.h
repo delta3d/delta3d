@@ -330,11 +330,18 @@ namespace   dtAudio
          /// free a sound (recycle it) that the user is finish with
                   void              FreeSound( Sound*& sound );
 
-         /// pre-load a wave sound into a buffer
+         /// Deprecated for LoadFile.
                   bool              LoadWaveFile( const char* file );
 
-         /// un-load a wave sound from a buffer (if use-count is zero)
+         /// Deprecated for UnloadFile.
                   bool              UnloadWaveFile( const char* file );
+
+         ///Pre-load a sound file into a buffer. We still only support .wav's
+         ///but .ogg support is coming soon!
+                  bool              LoadFile( const std::string& file );
+
+         /// un-load a sound file from a buffer (if use-count is zero)
+                  bool              UnloadFile( const std::string& file );
 
       private:
          /// process commands of all sounds in the command queue
