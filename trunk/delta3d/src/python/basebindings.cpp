@@ -2,16 +2,32 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/base.h"
+#include <python/dtpython.h>
+#include <dtCore/base.h>
 
 using namespace boost::python;
 using namespace boost::python::detail;
 using namespace dtCore;
 
+// Since void* has no real type, and Python requires strong typing,
+// we call upon the VoodooPython... err.. BoostPython spirits to guide
+// us through the conflict. Basically, we are creating a pseudo-type,
+// void_, that will take the place of a void* in the Python world.
+// So then we wrap SendMessage and MessageData to use void_'s in Python.
+//
+// -osb
+struct void_;
+
 class BaseWrap : public Base
 {
    public:
+
+      struct MessageDataWrap
+      {
+         std::string message;
+         Base* sender;
+         void_* userData;
+      };
 
       BaseWrap(PyObject* self)
          : mSelf(self)
@@ -27,12 +43,18 @@ class BaseWrap : public Base
          Base::OnMessage(data);
       }
 
+      void SendMessageWrap( const std::string& message="", void_* data = 0 )
+      {
+         SendMessage( message, data );
+      }
+
    protected:
 
       PyObject* mSelf;
 };
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SM_overloads, SendMessage, 0, 2)
+BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(void_);
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SM_overloads, SendMessageWrap, 0, 2)
 
 void initBaseBindings()
 {
@@ -50,10 +72,12 @@ void initBaseBindings()
       .def("OnMessage", &Base::OnMessage, &BaseWrap::DefaultOnMessage)
       .def("AddSender", &Base::AddSender)
       .def("RemoveSender", &Base::RemoveSender)
-      .def("SendMessage", &Base::SendMessage, SM_overloads());
+      .def("SendMessage", &BaseWrap::SendMessageWrap, SM_overloads())
+      ;
 
-   class_<Base::MessageData>("MessageData")
-      .def_readwrite("message", &Base::MessageData::message)
-      .def_readwrite("sender", &Base::MessageData::sender)
-      .def_readwrite("userData", &Base::MessageData::userData);
+   class_<BaseWrap::MessageDataWrap>("MessageData")
+      .def_readwrite("message", &BaseWrap::MessageDataWrap::message)
+      .def_readwrite("sender", &BaseWrap::MessageDataWrap::sender)
+      .def_readwrite("userData", &BaseWrap::MessageDataWrap::userData)
+      ;
 }
