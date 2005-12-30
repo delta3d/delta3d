@@ -7,4 +7,4 @@ deps = [ 'dtCore', 'openal', 'alut', 'dtUtil', 'isense', 'OpenThreads',
          'osgGA', 'osgSim', 'osgFX', 'osgProducer', 'ul', 'js', 'Producer',
          'opengl', 'alut', 'User32' ]
 
-env.BuildLib( 'dtAudio', srcs, deps, ['DT_AUDIO_LIBRARY,NOMINMAX'] )
+env.BuildLib( 'dtAudio', srcs, deps, ['DT_AUDIO_LIBRARY','NOMINMAX'] )
