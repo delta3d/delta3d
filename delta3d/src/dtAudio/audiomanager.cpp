@@ -645,29 +645,35 @@ AudioManager::LoadFile( const std::string& file )
 
    ALenum format(0);
    ALsizei size(0);
-   ALfloat freq(0);
-
    ALvoid* data(0);
-   #ifdef __APPLE__
 
+   #ifdef __APPLE__
    // Man, are we still in the dark ages here???
    // Copy the std::string to a frickin' ALByte array...
-   ALbyte  fname[256L];
+   ALbyte fname[256L];
    unsigned int len = std::min( filename.size(), size_t(255L) );
    memcpy( fname, filename.c_str(), len );
-   fname[len]  = 0L;
+   fname[len] = 0L;
    
+   ALsizei freq(0);
    alutLoadWAVFile( fname, &format, &data, &size, &freq ); //Upgrade bi-atch!
    #else
+   ALfloat freq(0);
    data = alutLoadMemoryFromFile( filename.c_str(), &format, &size, &freq );
    #endif
 
    if( data == 0 )
    {
-      err = alutGetError();
-      // can't load the wave file, bail...
+      #ifdef __APPLE__ 
+      Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
+         "AudioManager: alutLoadWAVFile error on %s", file.c_str() );
+      #else
+      err = alutGetError(); // This function ain't in OSX's OpenAL yet.
+      // Can't load the wave file, bail...
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: alutLoadMemoryFromFile error %d on %s", err, file.c_str() );
+      #endif // __APPLE__
+
       alDeleteBuffers( 1L, &bd->buf );
       delete bd;
       return false;
@@ -686,7 +692,17 @@ AudioManager::LoadFile( const std::string& file )
       return false;
    }
 
+   // The ALUT documentation says you are "free" to free the allocated
+   // memory after it has been copied to the OpenAL buffer. See: 
+   // http://www.openal.org/openal_webstf/specs/alut.html#alutLoadMemoryFromFile
+   // This works fine on Linux, but crashes with a heap error on Windows. 
+   // This is probably a Windows implementation bug, so let's just leak a
+   // bit in the meantime. Hope you bought your Timberlands...
+   // -osb
+
+   #ifndef WIN32
    free(data);
+   #endif
 
    mBufferMap[file] = bd;
    bd->file = mBufferMap.find(file)->first.c_str();
