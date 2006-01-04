@@ -58,7 +58,7 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
 {
    try
    {
-      std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLook.scheme");
+      std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLookSkin.scheme");
 
       CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
       CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
