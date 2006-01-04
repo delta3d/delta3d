@@ -1,0 +1,87 @@
+# ReplicantBody v0.1
+
+path "./opfor"
+skeleton "Skeleton.CSF"
+default_act "ACT_STAND"
+scale 1.00
+foot_offset 0.15 // Before scaling
+
+// Bones used when calculating character speed
+ContactBones {
+   bone_name "Bip02 L Foot"
+   bone_name "Bip02 R Foot"
+}
+
+// Bones from which you can get the direction
+DirectionBones {
+   head_bone "Bip02 Head"
+}
+
+Animation {
+   name "Breath"
+   filename "Breath.CAF"
+   act_name "ACT_STAND"
+   act_weight 1.0
+   speed 0.0
+   is_looped 1
+}
+
+Animation {
+   name "Walk"
+   filename "Walk.CAF"
+   act_name "ACT_WALK"
+   act_weight 1.0
+   speed 2.0
+   is_looped 1
+}
+
+Animation {
+   name "Run"
+   filename "Run.CAF"
+   act_name "ACT_RUN"
+   act_weight 1.0
+   speed 4.0
+   is_looped 1
+}
+
+Animation {
+   name "LowWalk"
+   filename "LowWalk.CAF"
+   act_name "ACT_LowWalk"
+   act_weight 1.0
+   speed 1.0
+   is_looped 1
+}
+
+Mesh {
+   name "HEADb"
+   filename "HEADb.CMF"
+   is_default 1
+}
+
+Mesh {
+   name "BODYb"
+   filename "BODYb.CMF"
+   is_default 1
+}
+
+Material {
+   filename "HEADb.CRF"
+}
+
+Material {
+   filename "BODYb.CRF"
+}
+
+MaterialSet {
+   name "body"
+   is_default 1
+   Connection {
+      thread_id 0
+      material_id 0
+   }
+   Connection {
+      thread_id 1
+      material_id 0
+   }
+}
