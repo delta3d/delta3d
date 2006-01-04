@@ -1,6 +1,0 @@
-Import('*')
-
-srcs = SGlob( '*.cpp' )
-deps = [ 'dtCore', 'CEGUIBase', 'CEGUIOpenGLRenderer', 'xerces-c' ] 
-
-env.BuildLib( 'dtGUI', srcs, deps, ['DT_GUI_LIBRARY'] )
