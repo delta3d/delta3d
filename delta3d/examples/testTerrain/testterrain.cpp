@@ -19,11 +19,11 @@
 * @author Matthew W. Campbell
 */
 #include <osg/ApplicationUsage>
-#include <dtABC/dtabc.h>
+#include <dtABC/application.h>
+#include <dtABC/weather.h>
 #include <dtCore/refptr.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/globals.h>
-#include <dtCore/skybox.h>
 #include <dtTerrain/terrain.h>
 #include <dtTerrain/dtedterrainreader.h>
 #include <dtTerrain/soarxterrainrenderer.h>
@@ -35,19 +35,17 @@
 #include <dtTerrain/lcctype.h>
 #include <dtTerrain/geotiffdecorator.h>
 #include <dtTerrain/colormapdecorator.h>
+#include <sstream>
 
 class TestTerrainApp : public dtABC::Application
 {
 public:
 
    //////////////////////////////////////////////////////////////////////////
-   TestTerrainApp() : dtABC::Application("config.xml")
+   TestTerrainApp() : dtABC::Application("config.xml"),
+      mTerrainClamp(false),
+      mFlyFast(false)
    {
-      mTerrainClamp = false;
-      mFlyFast = false;
-      mSkyBoxEnable = false;
-      mCloudPlaneEnable = false;
-      mFogEnable = false;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -113,12 +111,7 @@ public:
 
       // Add the vegetation decorator layer if enabled.
       if (mEnableVegetation)
-      {
-         //This is temporaily required because of a bug in the culling of
-         //terrain and vegetation combinations.
-         //GetCamera()->GetSceneHandler()->GetSceneView()->setCullingMode(
-         //   osg::CullSettings::NO_CULLING);
-         
+      {        
          mLCCType = CreateLCCType();  
          mVeg = new dtTerrain::VegetationDecorator;
 
@@ -147,21 +140,11 @@ public:
          mTerrain->AddDecorationLayer(geoTiffDecorator);
       }
 
-      //dtABC::Weather *weather = new dtABC::Weather();
-      //weather->SetTheme(dtABC::Weather::THEME_FAIR);
-      //weather->SetBasicVisibilityType(dtABC::Weather::VIS_MODERATE);
+      dtABC::Weather *weather = new dtABC::Weather();
+      weather->SetTheme(dtABC::Weather::THEME_FAIR);
+      weather->SetBasicVisibilityType(dtABC::Weather::VIS_MODERATE);
     
-      mSkyBox = new dtCore::SkyBox("skyBox");
-      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_FRONT, "skybox/front.bmp");
-      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_BACK, "skybox/back.bmp");
-      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_TOP, "skybox/top.bmp");
-      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_BOTTOM, "skybox/bottom.bmp");
-      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_LEFT, "skybox/left.bmp");
-      mSkyBox->SetTexture(dtCore::SkyBox::SKYBOX_RIGHT, "skybox/right.bmp");
-      
-      mCloudPlane = new dtCore::CloudPlane(6, 0.5, 6, 1, .3, 0.96, 256, 6000);
-      mEnvironment = new dtCore::Environment();
-      //mEnvironment = weather->GetEnvironment();
+      mEnvironment = weather->GetEnvironment();
       mEnvironment->SetVisibility(6000.0f);
       mEnvironment->SetDateTime(2005,3,7,14,0,0);
      
@@ -176,6 +159,10 @@ public:
 
       dtTerrain::LCCType water(11,"water");
       water.SetRGB(110,130,177);
+
+      // The models referenced here are not distributed with the Delta3D
+      // example-data package due to size constraints. The code remains
+      // here as an example of how to load your own models for LCCTypes.
 
       dtTerrain::LCCType lowResidential(21,"low residential");
       lowResidential.SetRGB(253,229,228);
@@ -199,10 +186,10 @@ public:
       industrial.SetElevation(5,2000,1);
       industrial.SetRelativeElevation(0,80,1);
       industrial.SetAspect(225);
-      //industrial.AddModel("models/industry0.ive");
-      //industrial.AddModel("models/industry1.ive");
-      //industrial.AddModel("models/industry2.ive");
-
+      industrial.AddModel("models/industry0.ive");
+      industrial.AddModel("models/industry1.ive");
+      industrial.AddModel("models/industry2.ive");
+      
       dtTerrain::LCCType deciduous(41,"deciduous");
       deciduous.SetRGB(134,200,127);
       deciduous.SetSlope(0,50,1);
@@ -292,28 +279,6 @@ public:
          mFlyFast = true;
          mMotionModel->SetMaximumFlySpeed(2500);
          break;     
-      case Producer::Key_C:
-         mCloudPlaneEnable =!mCloudPlaneEnable;
-         if(mCloudPlaneEnable)
-         {         
-            mEnvironment->RemEffect(mSkyBox.get());
-            mEnvironment->AddEffect(mCloudPlane.get());
-         }
-         else
-         {
-            mEnvironment->RemEffect(mCloudPlane.get());
-         }
-      case Producer::Key_B:
-         mSkyBoxEnable = !mSkyBoxEnable;
-         if(mSkyBoxEnable)
-         {
-            mEnvironment->RemEffect(mCloudPlane.get());
-            mEnvironment->AddEffect(mSkyBox.get());
-         }
-         else
-         {      
-            mEnvironment->RemEffect(mSkyBox.get());
-         }
       default:
          dtABC::Application::KeyPressed(keyBoard,key,character);
          break;
@@ -347,7 +312,7 @@ public:
       //neccessary.
       if(GetKeyboard()->GetKeyState(Producer::Key_minus))
       {
-         mRenderer->SetThreshold((float)mRenderer->GetThreshold() - deltaFrameTime*5.0f);
+         mRenderer->SetThreshold(float(mRenderer->GetThreshold()) - deltaFrameTime*5.0f);
          ss.str("");
          ss << "Threshold decreased to: " << mRenderer->GetThreshold();
          LOG_INFO(ss.str());
@@ -355,7 +320,7 @@ public:
       
       if(GetKeyboard()->GetKeyState(Producer::Key_equal))
       {
-         mRenderer->SetThreshold((float)mRenderer->GetThreshold() + deltaFrameTime*5.0f);
+         mRenderer->SetThreshold(float(mRenderer->GetThreshold()) + deltaFrameTime*5.0f);
          ss.str("");
          ss << "Threshold increased to: " << mRenderer->GetThreshold();
          LOG_INFO(ss.str());
@@ -363,7 +328,7 @@ public:
       
       if(GetKeyboard()->GetKeyState(Producer::Key_bracketright))
       {
-         mRenderer->SetDetailMultiplier((float)mRenderer->GetDetailMultiplier() - deltaFrameTime*5.0f);
+         mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) - deltaFrameTime*5.0f);
          ss.str("");
          ss << "Detail Multiplier decreased to: " << mRenderer->GetDetailMultiplier();
          LOG_INFO(ss.str());
@@ -371,7 +336,7 @@ public:
       
       if(GetKeyboard()->GetKeyState(Producer::Key_bracketleft))
       {
-         mRenderer->SetDetailMultiplier((float)mRenderer->GetDetailMultiplier() + deltaFrameTime*5.0f);
+         mRenderer->SetDetailMultiplier(float(mRenderer->GetDetailMultiplier()) + deltaFrameTime*5.0f);
          ss.str("");
          ss << "Detail Multiplier increased to: " << mRenderer->GetDetailMultiplier();
          LOG_INFO(ss.str());
@@ -476,12 +441,6 @@ private:
    // Environment
    dtCore::RefPtr<dtCore::Environment> mEnvironment;
 
-   // Cloud Plane
-   dtCore::RefPtr<dtCore::CloudPlane> mCloudPlane;
-
-   // SkyBox
-   dtCore::RefPtr<dtCore::SkyBox> mSkyBox;
-
    // Vegetation Decorator
    dtCore::RefPtr<dtTerrain::VegetationDecorator> mVeg;
    
@@ -510,9 +469,8 @@ private:
    double mLatitude;
    double mLongitude;
 
-   bool mTerrainClamp,mFlyFast;
-   bool mFogEnable;
-   bool mCloudPlaneEnable;
+   bool mTerrainClamp;
+   bool mFlyFast;
    bool mSkyBoxEnable;
    float mFogNear;
    bool mEnableVegetation;
