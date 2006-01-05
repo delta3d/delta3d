@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_iD.lib dtUtild.lib dtCored.lib dtDALd.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib producerd.lib Rpcrt4.lib ul_d.lib winmm.lib"
+				AdditionalDependencies="gdal_i.lib dtUtild.lib dtCored.lib dtDALd.lib isensed.lib js_d.lib oded.lib opcode.lib opengl32.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgTextd.lib osgUtild.lib producerd.lib Rpcrt4.lib ul_d.lib winmm.lib"
 				OutputFile="../../../bin/dtTerraind.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
