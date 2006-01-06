@@ -518,7 +518,7 @@ def CheckForBoost() :
       else :
          boostLib = 'boost_python.dll'
    elif OS == 'linux' :
-      boostLib = 'libboost_python.so'
+      boostLib = 'libboost_python-gcc.so'
    elif OS == 'darwin' :
       boostLib = 'libboost_python.dylib'
 
@@ -533,6 +533,16 @@ def CheckForBoost() :
       if os.path.isfile( os.path.join( dir, boostHeader ) ) :
          foundHeader = 1
          break
+
+   # If we don't find the lib name for Boost.Python 1.33 onward,
+   # try the old library name instead...
+   #if OS == 'linux' and foundLib == 0 :
+   #   boostLib = 'libboost_python.so'
+
+   #   for dir in env['LIBPATH'] :
+   #      if os.path.isfile( os.path.join( dir, boostLib ) ) :
+   #         foundLib = 1
+   #         break
 
    return foundHeader != 0 and foundLib != 0
 
