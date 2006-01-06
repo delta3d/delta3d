@@ -23,11 +23,7 @@
 
 #include <dtCore/object.h>
 #include <dtCore/orbitmotionmodel.h>
-#include <dtDAL/actorproxy.h>
 #include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/map.h>
-#include <dtDAL/project.h>
-#include <dtDAL/transformableactorproxy.h>
 #include <dtGame/clientgamemanager.h>
 #include <dtGame/serverloggercomponent.h>
 #include <dtGame/binarylogstream.h>
@@ -41,7 +37,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 LoggerApplication::LoggerApplication() : 
-   dtABC::Application("testLogger.xml"),
+   dtABC::Application("testloggerconfig.xml"),
    mClientGM(0),
    mLogController(0),
    mPlayerIsValid(false),
