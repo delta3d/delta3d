@@ -24,7 +24,8 @@
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-   dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());   
+   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testLogger/;" +
+                                dtCore::GetDeltaDataPathList());   
    dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_ERROR /*LOG_DEBUG*/);
    dtCore::RefPtr<LoggerApplication> app;
    
