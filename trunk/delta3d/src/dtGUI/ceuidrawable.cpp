@@ -247,6 +247,9 @@ void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
          //update with the new size
          SetRenderingSize(w, h);
       }
+
+      const double deltaTime = *static_cast<const double*>(data->userData);
+      GetUI()->injectTimePulse( static_cast<float>(deltaTime) );
    }
 }
 
