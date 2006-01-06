@@ -22,11 +22,21 @@
 #define DELTA_TESTLOGGER_H
 
 #include <dtABC/application.h>
-#include <dtCore/flymotionmodel.h>
-#include <dtGame/clientgamemanager.h>
-#include <dtGame/serverloggercomponent.h>
-#include <dtGame/logcontroller.h>
 #include <dtGame/logstatus.h>
+#include <dtGame/message.h>
+
+namespace dtCore
+{
+   class OrbitMotionModel;
+}
+
+namespace dtGame
+{
+   class ClientGameManager;
+   class GameActorProxy;
+   class ServerLoggerComponent;
+   class LogController;
+}
 
 class LoggerApplication : public dtABC::Application
 {         
@@ -51,11 +61,11 @@ class LoggerApplication : public dtABC::Application
       void PreFrame(const double deltaFrameTime);
       
       dtCore::RefPtr<dtGame::GameActorProxy> CreateNewMovingActor
-         (const std::string &meshName, const float velocity, const float turnRate, bool bSetLocation);
+         (const std::string &meshName, float velocity, float turnRate, bool bSetLocation);
       
-      float random(float min,float max) 
+      float Random(float min,float max) 
       { 
-         return min + (max-min)*(float)rand()/(float)RAND_MAX; 
+         return min + (max-min)*float(rand())/float(RAND_MAX); 
       }
 
 private:
@@ -64,7 +74,7 @@ private:
     
       bool mPlayerIsValid; // set to hide him during playback and such.  
       dtCore::RefPtr<dtGame::GameActorProxy> mPlayer;
-      dtCore::RefPtr<dtCore::FlyMotionModel> mMotionModel;
+      dtCore::RefPtr<dtCore::OrbitMotionModel> mMotionModel;
 
       CameraMode mCameraMode;      
       bool mKeyIsPressed;
