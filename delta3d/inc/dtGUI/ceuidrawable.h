@@ -137,7 +137,15 @@ namespace dtGUI
                               Producer::KeyCharacter character);
 
       virtual void MouseScrolled(dtCore::Mouse* mouse, int change);
-
+      
+      /**
+       * Determines the CEGUI scancode that corresponds to the specified Producer::KeyboardKey.
+       *
+       * @param key the key to map
+       * @return the corresponding CEGUI key scancode
+       */
+      static CEGUI::Key::Scan KeyboardKeyToKeyScan( Producer::KeyboardKey key );
+      
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
       int mWidth; ///<the width of the Window
       int mHeight; ///<The height of the Window
