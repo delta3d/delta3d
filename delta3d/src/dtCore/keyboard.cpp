@@ -2,20 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/keyboard.h"
+#include <dtCore/keyboard.h>
 
 using namespace dtCore;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
-
 
 /**
  * Constructor.
  *
  * @param name the instance name
  */
- Keyboard::Keyboard(std::string name) : InputDevice(name)
+ Keyboard::Keyboard(const std::string& name) : InputDevice(name)
 {
    RegisterInstance(this);
 
@@ -884,11 +882,11 @@ void Keyboard::keyPress(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(true);
 
-   for(set<KeyboardListener*>::iterator it = keyboardListeners.begin();
+   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
        it != keyboardListeners.end();
        it++)
    {
-      (*it)->KeyPressed(this, kk, kc);
+      (*it)->HandleKeyPressed(this, kk, kc);
    }
 }
 
@@ -903,11 +901,11 @@ void Keyboard::keyRelease(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(false);
 
-   for(set<KeyboardListener*>::iterator it = keyboardListeners.begin();
+   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
        it != keyboardListeners.end();
        it++)
    {
-      (*it)->KeyReleased(this, kk, kc);
+      (*it)->HandleKeyReleased(this, kk, kc);
    }
 }
 
@@ -922,11 +920,11 @@ void Keyboard::specialKeyPress(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(true);
 
-   for(set<KeyboardListener*>::iterator it = keyboardListeners.begin();
+   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
        it != keyboardListeners.end();
        it++)
    {
-      (*it)->KeyPressed(this, kk, kc);
+      (*it)->HandleKeyPressed(this, kk, kc);
    }
 }
 
@@ -941,10 +939,64 @@ void Keyboard::specialKeyRelease(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(false);
 
-   for(set<KeyboardListener*>::iterator it = keyboardListeners.begin();
+   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
        it != keyboardListeners.end();
        it++)
    {
-      (*it)->KeyReleased(this, kk, kc);
+      (*it)->HandleKeyReleased(this, kk, kc);
    }
+}
+
+/**
+ * Called when a key is pressed. 
+ *
+ * @param keyboard the source of the event
+ * @param key the key pressed
+ * @param character the corresponding character
+ * @return true if this KeyboardListener handled the event. The
+ * Keyboard calling this function is responsbile for using this
+ * return value or not.
+ */
+bool KeyboardListener::HandleKeyPressed( Keyboard* keyboard,
+                                         Producer::KeyboardKey key,
+                                         Producer::KeyCharacter character )
+{
+   KeyPressed( keyboard, key, character );
+   return true;
+}
+
+/**
+ * Called when a key is released.
+ *
+ * @param keyboard the source of the event
+ * @param key the key released
+ * @param character the corresponding character
+ * @return true if this KeyboardListener handled the event. The
+ * Keyboard calling this function is responsbile for using this
+ * return value or not.
+ */
+bool KeyboardListener::HandleKeyReleased( Keyboard* keyboard,
+                                          Producer::KeyboardKey key,
+                                          Producer::KeyCharacter character )
+{
+   KeyReleased( keyboard, key, character );
+   return true;   
+}
+
+/**
+ * Called when a key is typed.
+ *
+ * @param keyboard the source of the event
+ * @param key the key typed
+ * @param character the corresponding character
+ * @return true if this KeyboardListener handled the event. The
+ * Keyboard calling this function is responsbile for using this
+ * return value or not.
+ */
+bool KeyboardListener::HandleKeyTyped( Keyboard* keyboard,
+                                       Producer::KeyboardKey key,
+                                       Producer::KeyCharacter character )
+{
+   KeyTyped( keyboard, key, character );
+   return true;  
 }

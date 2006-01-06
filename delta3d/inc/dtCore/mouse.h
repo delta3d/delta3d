@@ -29,9 +29,9 @@
 #include <set>
 #include <string>
 
-#include "Producer/KeyboardMouse"
-#include "dtCore/inputdevice.h"
-
+#include <Producer/KeyboardMouse>
+#include <dtCore/inputdevice.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
@@ -63,7 +63,7 @@ namespace dtCore
       *
       * @param name the instance name
       */
-      Mouse(Producer::KeyboardMouse* km,std::string name = "mouse");
+      Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
 
       /**
       * Destructor.
@@ -151,16 +151,46 @@ namespace dtCore
           * @param mouse the source of the event
           * @param button the button pressed
           */
-         virtual void ButtonPressed(Mouse* mouse, MouseButton button) {}
-
+         virtual void ButtonPressed(Mouse* mouse, MouseButton button)
+         {
+            DEPRECATE("void ButtonPressed(Mouse* mouse, MouseButton button)",
+                      "bool HandleButtonPressed(Mouse* mouse, MouseButton button)")
+         }
+      
+         /**
+          * Called when a button is pressed.
+          *
+          * @param mouse the source of the event
+          * @param button the button pressed
+          * @return true if this MouseListener handled the event. The
+          * Mouse calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleButtonPressed(Mouse* mouse, MouseButton button);
+      
          /**
           * Called when a button is released.
           *
           * @param mouse the source of the event
           * @param button the button released
           */
-         virtual void ButtonReleased(Mouse* mouse, MouseButton button) {}
-
+         virtual void ButtonReleased(Mouse* mouse, MouseButton button)
+         {
+            DEPRECATE("void ButtonReleased(Mouse* mouse, MouseButton button)",
+                      "bool HandleButtonReleased(Mouse* mouse, MouseButton button)")
+         }
+      
+         /**
+          * Called when a button is released.
+          *
+          * @param mouse the source of the event
+          * @param button the button released
+          * @return true if this MouseListener handled the event. The
+          * Mouse calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleButtonReleased(Mouse* mouse, MouseButton button);
+      
          /**
           * Called when a button is clicked.
           *
@@ -168,8 +198,24 @@ namespace dtCore
           * @param button the button clicked
           * @param clickCount the click count
           */
-         virtual void ButtonClicked(Mouse* mouse, MouseButton button, int clickCount) {}
-
+         virtual void ButtonClicked(Mouse* mouse, MouseButton button, int clickCount)
+         {
+            DEPRECATE("void ButtonClicked(Mouse* mouse, MouseButton button, int clickCount)",
+                      "bool HandleButtonClicked(Mouse* mouse, MouseButton button, int clickCount)")
+         }
+      
+         /**
+          * Called when a button is clicked.
+          *
+          * @param mouse the source of the event
+          * @param button the button clicked
+          * @param clickCount the click count
+          * @return true if this MouseListener handled the event. The
+          * Mouse calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleButtonClicked(Mouse* mouse, MouseButton button, int clickCount);
+            
          /**
           * Called when the mouse pointer is moved.
           *
@@ -177,8 +223,24 @@ namespace dtCore
           * @param x the x coordinate
           * @param y the y coordinate
           */
-         virtual void MouseMoved(Mouse* mouse, float x, float y) {}
-
+         virtual void MouseMoved(Mouse* mouse, float x, float y)
+         {
+            DEPRECATE("void MouseMoved(Mouse* mouse, float x, float y)",
+                      "bool HandleMouseMoved(Mouse* mouse, float x, float y)")
+         }
+      
+         /**
+          * Called when the mouse pointer is moved.
+          *
+          * @param mouse the source of the event
+          * @param x the x coordinate
+          * @param y the y coordinate
+          * @return true if this MouseListener handled the event. The
+          * Mouse calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleMouseMoved(Mouse* mouse, float x, float y);
+            
          /**
           * Called when the mouse pointer is dragged.
           *
@@ -186,17 +248,47 @@ namespace dtCore
           * @param x the x coordinate
           * @param y the y coordinate
           */
-         virtual void MouseDragged(Mouse* mouse, float x, float y) {}
-
+         virtual void MouseDragged(Mouse* mouse, float x, float y)
+         {
+            DEPRECATE("void MouseDragged(Mouse* mouse, float x, float y)",
+                      "bool HandleMouseDragged(Mouse* mouse, float x, float y)")
+         }
+      
+         /**
+          * Called when the mouse pointer is dragged.
+          *
+          * @param mouse the source of the event
+          * @param x the x coordinate
+          * @param y the y coordinate
+          * @return true if this MouseListener handled the event. The
+          * Mouse calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleMouseDragged(Mouse* mouse, float x, float y);
+            
          /**
           * Called when the mouse is scrolled.
           *
           * @param mouse the source of the event
           * @param delta the scroll delta (+1 for up one, -1 for down one)
           */
-         virtual void MouseScrolled(Mouse* mouse, int delta) {}
-   };
-};
+         virtual void MouseScrolled(Mouse* mouse, int delta)
+         {
+            DEPRECATE("void MouseScrolled(Mouse* mouse, int delta)",
+                      "bool HandleMouseScrolled(Mouse* mouse, int delta)")
+         }
 
+         /**
+          * Called when the mouse is scrolled.
+          *
+          * @param mouse the source of the event
+          * @param delta the scroll delta (+1 for up one, -1 for down one)
+          * @return true if this MouseListener handled the event. The
+          * Mouse calling this function is responsbile for using this
+          * return value or not.
+          */
+        virtual bool HandleMouseScrolled(Mouse* mouse, int delta);
+   };
+}
 
 #endif // DELTA_MOUSE
