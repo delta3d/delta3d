@@ -965,7 +965,7 @@ elif OS == 'darwin' :
       'HawkNL'         : 'NL',
       'isense'         : 'isense',
       'openal'         : 'OpenAL', 
-      'alut'           : 'alut',       
+#      'alut'           : 'alut',  # OSX is still on a staic alut     
       'ode'            : 'ode', 
       'ul'             : 'plibul', 
       'js'             : 'plibjs',  
