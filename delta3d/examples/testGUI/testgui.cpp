@@ -32,11 +32,9 @@ public:
       GetCamera()->SetTransform( &xform );
       GetCamera()->SetClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 
-      int x,y,w,h;
-      GetWindow()->GetPosition(&x, &y, &w, &h);
       GetWindow()->ShowCursor( false );
 
-      mGUI = new dtGUI::CEUIDrawable(w, h);
+      mGUI = new dtGUI::CEUIDrawable(GetWindow());
 
       BuildGUI();
 
