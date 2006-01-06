@@ -19,6 +19,9 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 /** The constructor.  Supply the width and height
 * of the parent Window.  The constructor will create a new CEUI and 
 * OpenGLRenderer,and create the OSG nodes.
+* The user must manually notify CEGUIDrawable if the parent DeltaWin changes
+* size.
+* @see SetRenderingSize()
 */
 CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    mUI(0),
@@ -29,18 +32,55 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
    mScriptModule(sm),
    mProjection(new osg::Projection(osg::Matrix::ortho2D(0,width,0,height))),
-   mTransform(new osg::MatrixTransform(osg::Matrix::identity()))
+   mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
+   mWindow(DeltaWin::GetInstance(0)),
+   mAutoResize(false)
+{
+   //throw exception if win == NULL
+   Config();
+}
+
+
+/** The supplied DeltaWin will automatically be monitored for size change and pass the new
+  * size onto the CEGUI Renderer.
+  * @param win : The DeltaWin to monitor for size change
+  * @param sm : The ScriptModule to use for CEGUI script processing
+  */
+CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
+   mUI(0),
+   mWidth(1024),
+   mHeight(1280),
+   mMouseX(.0f),
+   mMouseY(.0f),
+   mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
+   mScriptModule(sm),
+   mProjection(new osg::Projection(osg::Matrix::ortho2D(0,mWidth,0,mHeight))),
+   mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
+   mWindow(win),
+   mAutoResize(true)
+{
+   //throw exception if win == NULL
+   Config();
+}
+
+CEUIDrawable::~CEUIDrawable(void)
+{
+   RemoveSender( System::Instance() );
+   mNode = NULL;
+   delete mUI;
+   delete mRenderer;
+}
+
+void CEUIDrawable::Config()
 {
    AddSender( System::Instance() );
    
    RegisterInstance(this);
 
-   mHalfWidth = mWidth / 2;
-   mHalfHeight = mHeight / 2;
+   SetRenderingSize(mWidth, mHeight);
 
-   //TODO find something better than GetInstance(0)
-   dtCore::Mouse::GetInstance(0)->AddMouseListener(this); 
-   dtCore::DeltaWin::GetInstance(0)->GetKeyboard()->AddKeyboardListener(this);
+   mWindow->GetMouse()->AddMouseListener(this); 
+   mWindow->GetKeyboard()->AddKeyboardListener(this);
 
    if( mScriptModule )
       new CEGUI::System(mRenderer,mScriptModule);
@@ -68,14 +108,6 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    mProjection->addChild( mTransform.get() );
 
    mNode = mProjection.get();
-}
-
-CEUIDrawable::~CEUIDrawable(void)
-{
-   RemoveSender( System::Instance() );
-   mNode = NULL;
-   delete mUI;
-   delete mRenderer;
 }
 
 bool CEUIDrawable::AddChild(DeltaDrawable *child)
@@ -155,7 +187,7 @@ void CEUIDrawable::KeyPressed(Keyboard* keyboard,
    default:
       {
          CEGUI::System::getSingleton().injectKeyDown( static_cast<CEGUI::uint>(key) );
-         CEGUI::System::getSingleton().injectChar(character);
+         CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(character) );
       } break;
    }
 }
@@ -208,5 +240,48 @@ void CEUIDrawable::DisplayProperties(CEGUI::Window *window, bool onlyNonDefault)
 void CEUIDrawable::MouseScrolled(dtCore::Mouse* mouse, int change)
 {
    CEGUI::System::getSingleton().injectMouseWheelChange( (float)change );
+}
+
+
+void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
+{
+   if( data->message == "preframe" )
+   {  
+      if (GetAutoResizing() == true)
+      {
+         if (!mWindow.valid()) return;
+
+         int x,y,w,h;
+
+         mWindow->GetPosition(&x, &y, &w, &h);
+         
+         //if window is the same size, don't do anything
+         if (w == mWidth && h == mHeight) return;
+
+         //update with the new size
+         SetRenderingSize(w, h);
+      }
+   }
+}
+
+/** Set the width and height of the rendering area.  Typically this is just the size
+ *  of the DeltaWin the GUI is being rendered in.  If AutoResizing is enabled, these values
+ *  will be overwritten.  Disable AutoResizing to manually control the rendered area.
+ * @see SetAutoResizing()
+ * @param width : the width of the rendered area (pixels)
+ * @param height : the heigh tof hte rendered area (pixels)
+ */
+void CEUIDrawable::SetRenderingSize( int width, int height )
+{
+   mWidth = width;
+   mHeight = height;
+
+   mHalfWidth = mWidth / 2;
+   mHalfHeight = mHeight / 2;
+
+   CEGUI::Size s(mWidth, mHeight);
+
+   CEGUI::OpenGLRenderer *rend = static_cast<CEGUI::OpenGLRenderer*>(this->GetRenderer());
+   rend->setDisplaySize(s);
 }
 
