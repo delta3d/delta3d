@@ -100,7 +100,7 @@ if CheckForBoost() and OS != 'darwin':
    if OS == 'windows' and mode == 'debug' :
       boostLib = 'boost_python_debug'
    else :
-      boostLib = 'boost_python'
+      boostLib = 'boost_python-gcc'
 
    pythonDeps = [ 'python', 'osg' ]
    
