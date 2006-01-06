@@ -29,14 +29,13 @@
 #include <set>
 #include <string>
 
-#include "Producer/KeyboardMouse"
-#include "dtCore/inputdevice.h"
-
+#include <Producer/KeyboardMouse>
+#include <dtCore/inputdevice.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
    class KeyboardListener;
-
 
    /**
     * The interface to the keyboard
@@ -53,7 +52,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         Keyboard(std::string name = "keyboard");
+         Keyboard(const std::string& name = "keyboard");
 
          /**
           * Destructor.
@@ -113,39 +112,90 @@ namespace dtCore
          virtual ~KeyboardListener() {}
 
          /**
-          * Called when a key is pressed.
+          * Called when a key is pressed. DEPRECATED.
           *
           * @param keyboard the source of the event
           * @param key the key pressed
           * @param character the corresponding character
           */
-         virtual void KeyPressed(Keyboard* keyboard, 
-                                 Producer::KeyboardKey key,
-                                 Producer::KeyCharacter character) {}
-
+         virtual void KeyPressed( Keyboard* keyboard, 
+                                  Producer::KeyboardKey key,
+                                  Producer::KeyCharacter character )
+         {
+            DEPRECATE("void KeyPressed( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )",
+                      "bool HandleKeyPressed( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )")
+         }
+      
+         /**
+          * Called when a key is pressed. 
+          *
+          * @param keyboard the source of the event
+          * @param key the key pressed
+          * @param character the corresponding character
+          * @return true if this KeyboardListener handled the event. The
+          * Keyboard calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleKeyPressed( Keyboard* keyboard, 
+                                        Producer::KeyboardKey key,
+                                        Producer::KeyCharacter character );
+         /**
+          * Called when a key is released. DEPRECATED.
+          *
+          * @param keyboard the source of the event
+          * @param key the key released
+          * @param character the corresponding character
+         */
+         virtual void KeyReleased( Keyboard* keyboard, 
+                                   Producer::KeyboardKey key,
+                                   Producer::KeyCharacter character )
+         {
+            DEPRECATE("void KeyReleased( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )",
+                      "bool HandleKeyReleased( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )")
+         }
+      
          /**
           * Called when a key is released.
           *
           * @param keyboard the source of the event
           * @param key the key released
           * @param character the corresponding character
-         */
-         virtual void KeyReleased(Keyboard* keyboard, 
-                                  Producer::KeyboardKey key,
-                                  Producer::KeyCharacter character) {}
-
+          * @return true if this KeyboardListener handled the event. The
+          * Keyboard calling this function is responsbile for using this
+          * return value or not.
+          */
+         virtual bool HandleKeyReleased( Keyboard* keyboard, 
+                                         Producer::KeyboardKey key,
+                                         Producer::KeyCharacter character );
+         /**
+          * Called when a key is typed. DEPRECATED.
+          *
+          * @param keyboard the source of the event
+          * @param key the key typed
+          * @param character the corresponding character
+          */
+         virtual void KeyTyped( Keyboard* keyboard, 
+                                Producer::KeyboardKey key,
+                                Producer::KeyCharacter character )
+         {
+            DEPRECATE("void KeyTyped( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )",
+                      "bool HandleKeyTyped( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )")
+         }
+      
          /**
           * Called when a key is typed.
           *
           * @param keyboard the source of the event
           * @param key the key typed
           * @param character the corresponding character
+          * @return true if this KeyboardListener handled the event. The
+          * Keyboard calling this function is responsbile for using this
+          * return value or not.
           */
-         virtual void KeyTyped(Keyboard* keyboard, 
-                               Producer::KeyboardKey key,
-                               Producer::KeyCharacter character) {}
+         virtual bool HandleKeyTyped( Keyboard* keyboard, 
+                                      Producer::KeyboardKey key,
+                                      Producer::KeyCharacter character );
    };
-};
-
+}
 
 #endif // DELTA_KEYBOARD
