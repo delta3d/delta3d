@@ -30,6 +30,9 @@ namespace dtGUI
     *  To create a new GUI, instantiate a CEGUIDrawable and add it to the Scene
     *  using Scene::AddDrawable().  You can then use the CEGUI API to create
     *  CEGUI::Windows and adjust their properties.
+    *
+    *  NOTE: The CEGUIDrawable class must be instantiated *after* the application
+    *  has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
     * 
     */
    class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable,
@@ -78,7 +81,10 @@ namespace dtGUI
         * @param height is the width of the window, only relevant upon window realization.
         * @param sm is a derivation of BaseScriptModule, provide an instance of this to handle CEGUI::Event triggered by CEGUI::Windows.
         */
-      CEUIDrawable(int width=1, int height=1, dtGUI::BaseScriptModule* sm=0);
+      CEUIDrawable(int width=1024, int height=768, dtGUI::BaseScriptModule* sm=0);
+
+      ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
+      CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm=0);
 
       virtual ~CEUIDrawable();
 
@@ -87,8 +93,6 @@ namespace dtGUI
 
       ///Get a pointer to the underlying CEGUI::Renderer
       CEGUI::Renderer* GetRenderer(void) const {return mRenderer;}
-
-      //virtual osg::Node* GetOSGNode() {return mNode.get();}
 
       /// Attaches the Delta3D child's OSG graphics Node
       bool AddChild(DeltaDrawable *child);
@@ -102,7 +106,19 @@ namespace dtGUI
       /// Not usually needed, but this getter is provided for unusual scenarios.
       osg::MatrixTransform* GetTransformNode() { return mTransform.get(); }
 
+      /// Manually set the size of the rendering area (in pixels)
+      void SetRenderingSize( int width, int height );
+
+      /// Automatically notify CEGUI of DeltaWin resizes (enabled by default)
+      void SetAutoResizing(bool enable=true) {mAutoResize=enable;}
+      
+      bool GetAutoResizing() const {return mAutoResize;}
+
+
    protected: 
+
+      void OnMessage(dtCore::Base::MessageData *data);
+
       ///pass the mouse moved events to CEGUI
       virtual void MouseMoved(dtCore::Mouse* mouse, float x, float y);
 
@@ -133,6 +149,13 @@ namespace dtGUI
       dtGUI::BaseScriptModule* mScriptModule;
       osg::ref_ptr<osg::Projection> mProjection;
       osg::ref_ptr<osg::MatrixTransform> mTransform;
+      dtCore::RefPtr<dtCore::DeltaWin> mWindow; ///<The window this UI is being rendered in
+
+   private:
+      ///setup the internals
+      void Config();
+
+      bool mAutoResize; ///<Automatically tell CEGUI about DeltaWin size changes?
    };
 }//namespace dtGUI
 
