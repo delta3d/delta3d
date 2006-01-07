@@ -27,6 +27,8 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
    mUI(0),
    mWidth(width),
    mHeight(height),
+   mMouseX(.0f),
+   mMouseY(.0f),
    mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
    mScriptModule(sm),
    mProjection(new osg::Projection(osg::Matrix::ortho2D(0,width,0,height))),
@@ -48,6 +50,8 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    mUI(0),
    mWidth(1024),
    mHeight(1280),
+   mMouseX(.0f),
+   mMouseY(.0f),
    mRenderer(new dtGUI::Renderer(1024, mWidth, mHeight)),
    mScriptModule(sm),
    mProjection(new osg::Projection(osg::Matrix::ortho2D(0,mWidth,0,mHeight))),
@@ -120,6 +124,12 @@ bool CEUIDrawable::AddChild(DeltaDrawable *child)
 void CEUIDrawable::MouseMoved(Mouse* mouse, float x, float y)
 {
    if (!mUI) return;
+
+   mMouseX = x - mMouseX;
+   mMouseY = y - mMouseY;
+   CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
+   mMouseX = x;
+   mMouseY = y;
 
    CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight);
 }
@@ -696,6 +706,9 @@ void CEUIDrawable::SetRenderingSize( int width, int height )
 {
    mWidth = width;
    mHeight = height;
+
+   mHalfWidth = mWidth / 2;
+   mHalfHeight = mHeight / 2;
 
    CEGUI::Size s(mWidth, mHeight);
 
