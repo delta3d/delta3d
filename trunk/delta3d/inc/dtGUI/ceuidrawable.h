@@ -149,6 +149,11 @@ namespace dtGUI
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
       int mWidth; ///<the width of the Window
       int mHeight; ///<The height of the Window
+      int mHalfWidth; ///<the width of the Window
+      int mHalfHeight; ///<The height of the Window
+      float mMouseX; ///<The current Mouse X position
+      float mMouseY; ///<the current Mouse Y position
+
       Renderer* mRenderer; ///<The opengl renderer we're using
       dtGUI::BaseScriptModule* mScriptModule;
       osg::ref_ptr<osg::Projection> mProjection;
