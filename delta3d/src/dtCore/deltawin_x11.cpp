@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#if defined(__GNUG__) && !defined(WIN32) && !defined(__APPLE__)
+
 #include <cassert>
 
 #include <Producer/KeyboardMouse>
@@ -187,3 +189,5 @@ DeltaWin::Resolution DeltaWin::GetCurrentResolution()
    DeltaWin::Resolution r = { thorz, tvert, tdepth, tfreq };
    return r;
 }
+
+#endif // defined(__GNUG__) && !defined(WIN32) && !defined(__APPLE__)

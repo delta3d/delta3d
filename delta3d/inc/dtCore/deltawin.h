@@ -25,13 +25,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtCore/base.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/refptr.h>
 
 namespace Producer
 {
+   class InputArea;
    class KeyboardMouse;
+   class RenderSurface;
 }
 
 namespace dtCore
@@ -45,10 +48,39 @@ namespace dtCore
 
    public:
 
-      DeltaWin(   std::string name = "window", int x = 100, int y = 100, int width = 640, 
-                  int height = 480, bool cursor = true, bool fullScreen = false );
+      /** 
+       * Constructor
+       *
+       * @param the name of the class as well as the window title
+       * @param x the location of the window in pixels
+       * @param y the location of the window in pixels
+       * @param width the width of the window in pixels
+       * @param height the height of the window in pixels
+       * @param cursor true if you wish to use the default cursor, false if not
+       * @param fullscreen true if this window should be displayed fullscreen
+       */
+      DeltaWin( const std::string& name = "window", int x = 100, int y = 100, int width = 640, 
+                int height = 480, bool cursor = true, bool fullScreen = false );
 
-      DeltaWin(   std::string name, Producer::RenderSurface* rs, Producer::InputArea* ia = 0 );
+      /** 
+      * Constructor
+      *
+      * @param the name of the class as well as the window title
+      * @param rs if you have created your own Producer::RenderSurface and wish to use it
+      * with this instance of DeltaWin, pass it in here.
+      * @param ia if you have your own Producer::InputArea, pass it here. If 0 is passed, then
+      * it will use the RenderSurface as the input area.
+      */
+      DeltaWin( const std::string& name, Producer::RenderSurface* rs, Producer::InputArea* ia = 0 );
+
+      /** 
+      * Constructor
+      *
+      * @param the name of the class as well as the window title
+      * @param keyboard a custom keyboard
+      * @param mouse a custom mouse
+      */
+      DeltaWin( const std::string& name, Keyboard* keyboard, Mouse* mouse );
 
       virtual ~DeltaWin();
 
@@ -62,13 +94,13 @@ namespace dtCore
       void ShowCursor( bool show = true );
       
       ///Is the cursor being drawn or not?
-      bool GetShowCursor() { return mShowCursor; }
+      bool GetShowCursor() const { return mShowCursor; }
 
       ///Set the full screen mode.  If enabled, this will resize the window to fill the display and remove the window border.
       void SetFullScreenMode( bool enable = true );
   
       ///Is the window currently in fullscreen mode?
-      bool GetFullScreenMode() { return mRenderSurface->isFullScreen(); }
+      bool GetFullScreenMode() const;
       
       void KillGLWindow();
       
@@ -84,15 +116,22 @@ namespace dtCore
 
       ///Get the size and position of the DeltaWin
       void GetPosition( int *x, int *y, int *width, int *height );
+      void GetPosition( int& x, int& y, int& width, int& height );
 
       ///Get a handle to the underlying RenderSurface
       Producer::RenderSurface* GetRenderSurface() { return mRenderSurface; }
+      const Producer::RenderSurface* GetRenderSurface() const { return mRenderSurface; }
       
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard* GetKeyboard() { return mKeyboard.get(); }
+      const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
+
+      void SetKeyboard( Keyboard* keyboard );
+      void SetMouse( Mouse* mouse );
 
       ///Get a handle to the Mouse associated with the DeltaWin
       Mouse* GetMouse() { return mMouse.get(); }
+      const Mouse* GetMouse() const { return mMouse.get(); }
 
       struct Resolution
       {

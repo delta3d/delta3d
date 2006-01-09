@@ -4,12 +4,14 @@
 
 #include <Producer/KeyboardMouse>
 
-#include "dtCore/deltawin.h"
+#include <dtCore/deltawin.h>
+#include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
+
+#include <cassert>
 
 using namespace dtCore;
 using namespace dtUtil;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
@@ -84,65 +86,82 @@ class InputCallback : public Producer::KeyboardMouseCallback
 //////////////////////////////////////////////////////////////////////
 
 
-DeltaWin::DeltaWin( std::string name, int x, int y, int width, int height, bool cursor, bool fullScreen ) :
+DeltaWin::DeltaWin(  const std::string& name, 
+                     int x, int y, 
+                     int width, int height, 
+                     bool cursor, bool fullScreen ) :
    Base(name),
-   mRenderSurface(0),
+   mRenderSurface( new Producer::RenderSurface ),
+   mKeyboardMouse( new Producer::KeyboardMouse( mRenderSurface ) ),
+   mKeyboard( new Keyboard ),
+   mMouse( new Mouse(mKeyboardMouse,"mouse") ),
+   mShowCursor(true)
+{
+   RegisterInstance(this);
+   
+   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
+
+   if(!fullScreen)
+   {
+      SetPosition( x, y, width, height );
+   }
+
+   SetWindowTitle(name);
+   ShowCursor(cursor);
+
+}
+
+DeltaWin::DeltaWin(  const std::string& name, 
+                     Producer::RenderSurface* rs, 
+                     Producer::InputArea* ia ) :
+   Base(name), 
+   mRenderSurface(rs),
    mKeyboardMouse(0),
-   mKeyboard(0),
+   mKeyboard( new Keyboard ),
    mMouse(0),
    mShowCursor(true)
 {
    RegisterInstance(this);
 
-   mRenderSurface = new Producer::RenderSurface; 
-   
-   mKeyboard = new Keyboard;
-   
-   mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
-
-   mMouse = new Mouse(mKeyboardMouse,"mouse");
-   
-   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
-   //mKeyboardMouse->setAutoRepeatMode(false);
-   //mKeyboardMouse->startThread();
-
-   if(!fullScreen)
-   {
-      SetPosition(x, y, width, height);
-   }
-   else
-   {
-   }
-
-   SetName( name );
-   SetWindowTitle(name.c_str());
-   ShowCursor( cursor );
-
-}
-
-DeltaWin::DeltaWin( std::string name, Producer::RenderSurface* rs, Producer::InputArea* ia ) :
-Base(name),
-mRenderSurface(rs),
-mKeyboardMouse(0),
-mKeyboard(0),
-mMouse(0),
-mShowCursor(true)
-{
-   RegisterInstance(this);
-   
-   mKeyboard = new Keyboard;
+   // \TODO: Throw exception if NULL RenderSurface is passed
+   assert( mRenderSurface != 0 );
    
    if(ia) // use the passed InputArea if not NULL
-      mKeyboardMouse = new Producer::KeyboardMouse( ia );
+   {
+      mKeyboardMouse = new Producer::KeyboardMouse(ia);
+   }
    else // otherwise use the passed RenderSurface
-      mKeyboardMouse = new Producer::KeyboardMouse( mRenderSurface );
+   {
+      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
+   }
 
-   mMouse = new Mouse(mKeyboardMouse,"mouse");
+   mMouse = new Mouse( mKeyboardMouse, "mouse" );
 
-   mKeyboardMouse->setCallback( new InputCallback(mKeyboard.get(), mMouse.get()) );
-   //mKeyboardMouse->startThread();
-   //mKeyboardMouse->setAutoRepeatMode(false);
+   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
 
+   SetWindowTitle(name);
+   ShowCursor();
+}
+
+DeltaWin::DeltaWin(  const std::string& name, 
+                     dtCore::Keyboard* keyboard, 
+                     dtCore::Mouse* mouse ) :
+   Base(name),
+   mRenderSurface( new Producer::RenderSurface ),
+   mKeyboardMouse( new Producer::KeyboardMouse(mRenderSurface) ),
+   mKeyboard(keyboard),
+   mMouse(mouse),
+   mShowCursor(true)
+{
+   // \TODO: Throw exception if NULL Keyboard or Mouse is passed
+   assert( mKeyboard.valid() );
+   assert( mMouse.valid() );
+
+   RegisterInstance(this);
+
+   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
+
+   SetWindowTitle(name);
    ShowCursor();
 }
 
@@ -155,6 +174,12 @@ DeltaWin::~DeltaWin()
    mRenderSurface = 0;
 
    DeregisterInstance(this);
+}
+
+///Is the window currently in fullscreen mode?
+bool DeltaWin::GetFullScreenMode() const
+{ 
+   return mRenderSurface->isFullScreen();
 }
 
 /** Set the position and size of the DeltaWin in screen coordinates
@@ -170,11 +195,30 @@ void DeltaWin::SetPosition( int x, int y, int width, int height )
 
 void DeltaWin::GetPosition( int *x, int *y,int *width, int *height )
 {
+   DEPRECATE(  "void GetPosition( int *x, int *y,int *width, int *height )",
+               "void GetPosition( int& x, int& y, int& width, int& height )")
+   GetPosition( *x, *y, *width, *height );
+}
+
+void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )
+{
    unsigned int w, h;
-   
-   mRenderSurface->getWindowRectangle( *x, *y, w, h );
-   *width = w;
-   *height = h;
+
+   mRenderSurface->getWindowRectangle( x, y, w, h );
+   width = w;
+   height = h;
+}
+
+void DeltaWin::SetKeyboard( Keyboard* keyboard )
+{
+   assert( keyboard != 0 );
+   mKeyboard = keyboard;
+}
+
+void DeltaWin::SetMouse( Mouse* mouse )
+{
+   assert( mouse != 0 );
+   mMouse = mouse;
 }
 
 const std::string& DeltaWin::GetWindowTitle() const
@@ -184,8 +228,10 @@ const std::string& DeltaWin::GetWindowTitle() const
 
 void DeltaWin::Update()
 {
-   if (mKeyboardMouse && !mKeyboardMouse->isRunning())
-      mKeyboardMouse->update(*mKeyboardMouse->getCallback());
+   if( mKeyboardMouse && !mKeyboardMouse->isRunning() )
+   {
+      mKeyboardMouse->update( *mKeyboardMouse->getCallback() );
+   }
 }
 
 
