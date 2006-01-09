@@ -25,8 +25,13 @@ void initDeltaWinBindings()
    bool (*DeltaWinCSR1)(int,int,int,int) = &DeltaWin::ChangeScreenResolution;
    bool (*DeltaWinCSR2)(DeltaWin::Resolution) = &DeltaWin::ChangeScreenResolution;
 
-   
-   scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin", init<optional<std::string, int, int, int, int, bool, bool> >())
+   void (DeltaWin::*GP1)( int&, int&, int&, int& ) = &DeltaWin::GetPosition;
+   Keyboard* (DeltaWin::*GK1)() = &DeltaWin::GetKeyboard;
+   Mouse* (DeltaWin::*GM1)() = &DeltaWin::GetMouse;
+      
+   scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin")
+      .def(init<optional<const std::string&, int, int, int, int, bool, bool> >())
+      .def(init<const std::string,dtCore::Keyboard*,dtCore::Mouse*>())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", DeltaWinGI1, return_internal_reference<>())
@@ -42,10 +47,11 @@ void initDeltaWinBindings()
       .def("SetWindowTitle", &DeltaWin::SetWindowTitle)
       .def("GetWindowTitle", &DeltaWin::GetWindowTitle, return_internal_reference<>())
       .def("SetPosition", &DeltaWin::SetPosition)
-      .def("GetPosition", &DeltaWin::GetPosition)
-      .def("GetRenderSurface", &DeltaWin::GetRenderSurface, return_internal_reference<>())
-      .def("GetKeyboard", &DeltaWin::GetKeyboard, return_internal_reference<>())
-      .def("GetMouse", &DeltaWin::GetMouse, return_internal_reference<>())
+      .def("GetPosition", GP1)
+      .def("GetKeyboard", GK1, return_internal_reference<>())
+      .def("GetMouse", GM1, return_internal_reference<>())
+      .def("SetKeyboard",&DeltaWin::SetKeyboard)
+      .def("SetMouse",&DeltaWin::SetMouse)
       .def("GetCurrentResolution", &DeltaWin::GetCurrentResolution)
       .def("ChangeScreenResolution", DeltaWinCSR1)
       .def("ChangeScreenResolution", DeltaWinCSR2)
