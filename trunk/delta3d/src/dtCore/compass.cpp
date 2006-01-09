@@ -220,7 +220,7 @@ Compass::SetWindow( dtCore::DeltaWin* win )
    int   w(0L);
    int   h(0L);
 
-   win->GetPosition( &x, &y, &w, &h );
+   win->GetPosition( x, y, w, h );
    assert( w > 0 );
    assert( h > 0 );
 

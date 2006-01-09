@@ -1,8 +1,8 @@
-#include "dtCore/tripod.h"
-#include "dtCore/system.h"
-#include "dtCore/camera.h"
+#include <dtCore/camera.h>
+#include <dtCore/system.h>
+#include <dtCore/transform.h>
+#include <dtCore/tripod.h>
 #include <dtUtil/log.h>
-#include "dtCore/transform.h"
 
 #include <osg/Matrix>
 

@@ -6,7 +6,6 @@
 
 #include <cassert>
 
-#include <Producer/Types>
 #include <Producer/KeyboardMouse>
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>

@@ -6,7 +6,7 @@
 
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>
-#include <Producer/Types>
+#include <Producer/RenderSurface>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -59,7 +59,7 @@ void DeltaWin::ShowCursor( bool show )
 
    //Then move the cursor to be on our window'
    int x,y,w,h;
-   GetPosition(&x, &y, &w, &h); 
+   GetPosition(x, y, w, h); 
    mRenderSurface->positionPointer((x+w)/2, (y+h)/2);
 
    //Tell Producer
