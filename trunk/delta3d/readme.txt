@@ -35,9 +35,6 @@ Win32 w/ Microsoft Visual C++ Toolkit 2003, .NET Framework SDK 1.1, & SCons
 Linux w/ gcc3.4.x
 Linux w/ gcc4.0.x
 
-Note: gcc4.0.1+ requires a patch to OSG 0.9.9 to work. We've applied this
-patch already in our distributed Linux dependencies.
-
 Note about Linux distrubutions: We test on Fedora Core 4 but have reports of 
 Delta3D running on Ubuntu, SuSE, Mandriva, & Gentoo. Please contact us if you
 are able to setup repositories for any Linux distribution to ease installation
@@ -58,19 +55,22 @@ yourself or track them down via your favorite package manager. So here's a handy
 Oh, and check out http://www.delta3d.org/article.php?story=20050707151113592&topic=docs
 for more detailed info on dependencies (websites, etc.).
 
-Required Libraries
+The versions below are what we test against. Older ones may or may not work.
+Set the Depedencies page on http://www.delta3d.org for more info.
+
+Required Libraries 
 ------------------
 CAL3D 0.10.0
 CppUnit 1.10.2
-Crazy Eddie's GUI System 0.4.0
+Crazy Eddie's GUI System 0.4.1
 FLTK 1.1.6
 Game Networking Engine 0.70
-GDAL 1.2.6
+GDAL 1.3.1
 InterSense Interface Libraries SDK 3.83 (beta)
 HawkNL 1.68
-OpenAL 1.0
+OpenAL 0.0.8 (spec 1.1)
 Open Dynamics Engine 0.5
-OSG 0.9.9
+OSG 1.0
 PLIB 1.8.4
 ReplicantBody 2005-09-28
 Xerces 2.6.0
@@ -79,8 +79,8 @@ Linux only: Xxf88vm, uuid, curses.
 
 Optional Libraries
 ------------------
-Qt 4.0.1 (GPL Version) - Needed for STAGE.
-Boost 1.32 - Needed for Python bindings only.
+Qt 4.1.0 (GPL Version) - Needed for STAGE.
+Boost 1.33.1 - Needed for Python bindings only.
 Python 2.4 - Needed for Python script support.
 RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 
@@ -181,11 +181,9 @@ Win32 w/ Visual Studio .NET 7.1
    Obtain the Boost library from SourceForge (package 'boost'):
    http://sourceforge.net/projects/boost/
 
-   *NOTE*: We do not support Boost 1.33 at this time!
-   
    Decompress Boost.
 
-   Open boost_1_32_0/libs/python/build/VisualStudio/boost_python.dsw.
+   Open boost_1_33_1/libs/python/build/VisualStudio/boost_python.dsw.
 
    Build boost_python.
 
@@ -215,40 +213,24 @@ Win32 w/ Visual Studio .NET 7.1
 
    You'll need:
    -Visual Studio .Net 2003
-   -Qt 4.0.1, the windows open-source release 
+   -Qt 4.1.0, the windows open-source release 
     ftp://ftp.trolltech.com/qt/source/qt-win-opensource-desktop-4.0.1.zip
    -Python
     http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
-   -qt4.0.1_msvc_patch.zip 
+   -acs4qt41.zip 
     (get this from the Visual Studio dependencies release inside the ext/ directory)
 
-   Building Qt 4.0.1 Open Source Version with MSVC
+   Building Qt 4.1.0 Open Source Version with MSVC
    --------------------------------------------
 
    1. Make sure all of the above software is installed.
-      Qt *must* be installed to C:\Qt\4.0.1
    
-   2. Add the following environment variables:
-
-      QTDIR=C:\Qt\4.0.1
-      QMAKESPEC=win32-msvc.net
-      Add C:\Qt\4.0.1\bin to your PATH if they aren't there already.
-   
-   3. Extract qt4.0.1_msvc_patch.zip inside the C:\Qt\4.0.1 directory.
+   2. Extract acs4qt41.zip inside your Qt directory.
       Overwrite any files with the ones from the patch.
-   
-   4. Open a Command window by clicking Start->Run..., and typing 'cmd'
 
-   5. The following commands should be run from the command line (without quotes,
-      and replace the VisualStudio path with your appropriate path):
+   3. Follow instructions for the patch with its readme.
    
-      'cd %QTDIR%'
-      'qtvars.bat' (ignore the mention of MinGW in this output of this command)
-      'C:\Program File\Microsoft Visual Studio .NET 2003\Common7\Tools\vsvars32.bat'
-      'qmake'
-      'nmake'
-
-   6. After many many hours, it should be all compiled up and happy.
+   4. After many many hours, it should be all compiled up and happy.
       Qt is now built with MSVC!
    
    
@@ -307,6 +289,7 @@ Win32 w/ SCons, Linux
     mode=debug|release - 'debug' builds with debugging symbols.
                          'release' builds with optimizations enabled.
     no_warnings=1 - Turns off all compiler warnings.
+    unit_tests=1 - Build unit tests.
     boost=path to your boost installation
     rti=path ro your RTI installation
 
