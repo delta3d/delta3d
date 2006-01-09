@@ -190,17 +190,19 @@ namespace dtCore
       void Reset();
 
       /**
-      * Gets the DeltaDrawable that is closest to the query's starting point.
-      * @return A valid DeltaDrawable.
-      */
+       * Gets the DeltaDrawable that is closest to the query's starting point 
+       * along the intersection ray.
+       * @return A valid DeltaDrawable.
+       */
       dtCore::DeltaDrawable *GetClosestDeltaDrawable() {
          return mClosestDrawable.get();
       }
 
       /**
-      * Gets the DeltaDrawable that is closest to the query's starting point.
-      * @return A valid DeltaDrawable.
-      */
+       * Gets the DeltaDrawable that is closest to the query's starting point 
+       * along the intersection ray.
+       * @return A valid DeltaDrawable.
+       */
       const dtCore::DeltaDrawable *GetClosestDeltaDrawable() const {
          return mClosestDrawable.get();
       }
@@ -230,9 +232,19 @@ namespace dtCore
       */
       dtCore::DeltaDrawable *MapNodePathToDrawable(osg::NodePath &geode);
 
-      /// Get the Hitlist member
+      /**
+       * Get the Hitlist member. Do not assume this list is sorted based on distance from
+       * the starting point.
+       * @return a const reference to the entire hit list
+       */
       const osgUtil::IntersectVisitor::HitList& GetHitList() const { return mHitList; }
-      osgUtil::IntersectVisitor::HitList& GetHitList()             { return mHitList; }
+
+      /**
+       * Get the Hitlist member. Do not assume this list is sorted based on distance from
+       * the starting point.
+       * @return a non-const reference to the entire hit list
+       */
+      osgUtil::IntersectVisitor::HitList& GetHitList() { return mHitList; }
 
 
    private:
