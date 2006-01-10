@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib ul_d.lib cppunitd.lib xerces-c_2d.lib osgd.lib osgDBd.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib oded.lib cppunitd.lib xerces-c_2d.lib osgd.lib osgDBd.lib"
 				OutputFile="../../../tests/UnitTestsDtCored.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib ul.lib cppunit.lib xerces-c_2.lib osg.lib osgDB.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib ode.lib cppunit.lib xerces-c_2.lib osg.lib osgDB.lib"
 				OutputFile="../../../tests/UnitTestsDtCore.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
