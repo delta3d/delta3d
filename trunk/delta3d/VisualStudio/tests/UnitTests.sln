@@ -10,6 +10,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
@@ -26,6 +27,30 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\src\dtDAL\dtDAL
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "..\src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
 	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtCore", "dtCore\unittestsdtcore.vcproj", "{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtDAL", "dtDAL\unittestsdtdal.vcproj", "{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtGame", "dtGame\unittestsdtgame.vcproj", "{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A768B050-B0CF-454C-BE75-9F31E1ECF85F} = {A768B050-B0CF-454C-BE75-9F31E1ECF85F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtUtil", "dtUtil\unittestsdtutil.vcproj", "{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGame", "..\src\dtGame\dtgame.vcproj", "{A768B050-B0CF-454C-BE75-9F31E1ECF85F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
 Global
@@ -54,6 +79,26 @@ Global
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
 		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.ActiveCfg = Debug|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.Build.0 = Debug|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.ActiveCfg = Release|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.Build.0 = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.ActiveCfg = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.ActiveCfg = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.ActiveCfg = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Debug.ActiveCfg = Debug|Win32
+		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Debug.Build.0 = Debug|Win32
+		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Release.ActiveCfg = Release|Win32
+		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
