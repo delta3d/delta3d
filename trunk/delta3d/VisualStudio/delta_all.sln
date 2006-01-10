@@ -362,6 +362,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtUtil", "tests\dt
 		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtCore", "tests\dtCore\unittestsdtcore.vcproj", "{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -597,6 +601,10 @@ Global
 		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
 		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
 		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.ActiveCfg = Debug|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.Build.0 = Debug|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.ActiveCfg = Release|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
