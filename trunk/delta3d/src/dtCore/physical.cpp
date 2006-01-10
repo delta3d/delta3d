@@ -41,9 +41,9 @@ Physical::~Physical()
  *
  * @param bodyID the new body identifier
  */
-void Physical::SetBodyID(dBodyID bodyID)
+void Physical::SetBodyID( dBodyID bodyID )
 {
-   if(mBodyID != 0)
+   if( mBodyID != 0 )
    {
       dBodyDestroy(mBodyID);
    }
@@ -54,7 +54,18 @@ void Physical::SetBodyID(dBodyID bodyID)
 
    SetMass(&mMass);
 
-   dGeomSetBody(GetGeomID(), mBodyID);
+   if( mBodyID != 0 )
+   {
+      // Copy position and rotation of geometry over to 
+      const dReal* position = dGeomGetPosition( GetGeomID() );
+      dBodySetPosition( mBodyID, position[0], position[1], position[2] );
+      const dReal* rotation = dGeomGetRotation( GetGeomID() );
+      dBodySetRotation( mBodyID, rotation );
+   }
+
+   // This wipes out all previous transforms on the geom, so
+   // that's why we had to copy them into the body first.
+   dGeomSetBody( GetGeomID(), mBodyID );
 }
 
 /**

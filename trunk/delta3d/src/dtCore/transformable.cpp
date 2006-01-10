@@ -96,7 +96,7 @@ Transformable::~Transformable()
  * @param wcMat : The supplied matrix to return with world coordinates
  * @return successfully or not
  */
-bool Transformable::GetAbsoluteMatrix(osg::Node* node, osg::Matrix& wcMatrix )
+bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
 {
    if( node != 0 )
    {
@@ -144,7 +144,7 @@ bool Transformable::GetAbsoluteMatrix(osg::Node* node, osg::Matrix& wcMatrix )
  * @param cs : Optional parameter describing the coordinate system of xform
  *             Defaults to ABS_CS.
  */
-void Transformable::SetTransform(const Transform *xform, CoordSysEnum cs )
+void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
 {
    osg::Matrix newMat;
    xform->Get( newMat );
@@ -195,7 +195,7 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs ) const
    //osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>( const_cast<osg::Node*>(mNode.get()) );
    osg::MatrixTransform* mt = const_cast<osg::MatrixTransform*>( GetMatrixNode() );
 
-   if( cs ==ABS_CS )
+   if( cs == ABS_CS )
    { 
       GetAbsoluteMatrix( mt, newMat );     
    }
@@ -517,6 +517,9 @@ void Transformable::SetCollisionGeom(dGeomID geom)
    dGeomTransformSetGeom(mGeomID, geom);
 
    RenderCollisionGeometry(mRenderingGeometry);
+
+   // Sync-up the transforms on mGeomID
+   PrePhysicsStepUpdate();
 }
 
 /**
@@ -534,6 +537,9 @@ void Transformable::SetCollisionSphere(float radius)
 
    RenderCollisionGeometry(mRenderingGeometry);
    SetCollisionDetection(true);
+
+   // Sync-up the transforms on mGeomID
+   PrePhysicsStepUpdate();
 }
 
 /**
@@ -650,29 +656,37 @@ void Transformable::SetCollisionSphere( osg::Node* node )
 
    if( node )
    {
+      // Hmm, do we even need this here? I think this is a hack
+      // to overcome a bug in DrawableVisitor... -osb
       osg::Matrix oldMatrix = GetMatrixNode()->getMatrix();
       GetMatrixNode()->setMatrix( osg::Matrix::identity() );
 
       DrawableVisitor<SphereFunctor> sv;
       node->accept(sv);
 
+      GetMatrixNode()->setMatrix( oldMatrix );
+
       if( sv.mFunctor.mRadius > 0 )
       {
-         dGeomID subTransformID = dCreateGeomTransform(0);
+         //dGeomID subTransformID = dCreateGeomTransform(0);
 
-         dGeomTransformSetCleanup(subTransformID, 1);
+         //dGeomTransformSetCleanup(subTransformID, 1);
 
          mOriginalGeomID = dCreateSphere( 0, sv.mFunctor.mRadius );
          dGeomDisable( mOriginalGeomID );
 
-         dGeomTransformSetGeom( subTransformID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
+         //dGeomTransformSetGeom( subTransformID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
+         dGeomTransformSetGeom( mGeomID, dCreateSphere( 0, sv.mFunctor.mRadius ) );
 
-         dGeomTransformSetGeom(mGeomID, subTransformID);
+         //dGeomTransformSetGeom(mGeomID, subTransformID);
 
-         GetMatrixNode()->setMatrix( oldMatrix );
+         //GetMatrixNode()->setMatrix( oldMatrix );
 
          RenderCollisionGeometry(mRenderingGeometry);
          SetCollisionDetection(true);
+
+         // Sync-up the transforms on mGeomID
+         PrePhysicsStepUpdate();
       }
       else
       {
@@ -698,6 +712,9 @@ void Transformable::SetCollisionBox(float lx, float ly, float lz)
 
    RenderCollisionGeometry(mRenderingGeometry);
    SetCollisionDetection(true);
+
+   // Sync-up the transforms on mGeomID
+   PrePhysicsStepUpdate();
 }
 
 /**
@@ -752,10 +769,12 @@ void Transformable::SetCollisionBox( osg::Node* node )
             bbv.mBoundingBox.center()[2]
             );
 
-            dGeomTransformSetGeom(mGeomID, subTransformID);
+         dGeomTransformSetGeom(mGeomID, subTransformID);
 
-            RenderCollisionGeometry(mRenderingGeometry);
-            SetCollisionDetection(true);
+         RenderCollisionGeometry(mRenderingGeometry);
+         SetCollisionDetection(true);
+
+         PrePhysicsStepUpdate();
       }
       else
       {
@@ -783,6 +802,9 @@ void Transformable::SetCollisionCappedCylinder(float radius, float length)
 
    RenderCollisionGeometry(mRenderingGeometry);
    SetCollisionDetection(true);
+
+   // Sync-up the transforms on mGeomID
+   PrePhysicsStepUpdate();
 }
 
 /**
@@ -883,6 +905,9 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
 
          RenderCollisionGeometry(mRenderingGeometry);
          SetCollisionDetection(true);
+
+         // Sync-up the transforms on mGeomID
+         PrePhysicsStepUpdate();
       }
       else
       {
@@ -906,6 +931,9 @@ void Transformable::SetCollisionRay(float length)
 
    RenderCollisionGeometry(mRenderingGeometry);
    SetCollisionDetection(true);
+
+   // Sync-up the transforms on mGeomID
+   PrePhysicsStepUpdate();
 }
 
 /**
