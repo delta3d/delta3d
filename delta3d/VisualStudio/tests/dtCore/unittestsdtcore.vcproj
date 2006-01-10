@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../../tests/dtDAL/windows-msvc-debug"
-			IntermediateDirectory="../../../tests/dtDAL/windows-msvc-debug"
+			OutputDirectory="../../../tests/dtCore/windows-msvc-debug"
+			IntermediateDirectory="../../../tests/dtCore/windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -64,8 +64,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../../tests/dtDAL/windows-msvc-release"
-			IntermediateDirectory="../../../tests/dtDAL/windows-msvc-release"
+			OutputDirectory="../../../tests/dtCore/windows-msvc-release"
+			IntermediateDirectory="../../../tests/dtCore/windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -126,6 +126,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\scenetests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtCore\transformabletests.cpp">
 			</File>
 		</Filter>
 		<Filter
