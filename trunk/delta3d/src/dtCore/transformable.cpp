@@ -42,7 +42,6 @@ Transformable::CollisionGeomType::MESH("MESH");
 
 Transformable::Transformable( const std::string& name )
    :  DeltaDrawable(name),
-      mSolid(true),
       mGeomID(0),
       mOriginalGeomID(0),
       mTriMeshDataID(0),
@@ -67,6 +66,7 @@ Transformable::Transformable( const std::string& name )
    mGeomID = dCreateGeomTransform(0); //Add support for more spaces.
    dGeomTransformSetCleanup(mGeomID, 1);
    dGeomTransformSetInfo(mGeomID, 1);
+   dGeomDisable(mGeomID);
    mTriMeshDataID = dGeomTriMeshDataCreate();
 
    // Default collision category = 11

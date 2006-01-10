@@ -381,13 +381,6 @@ namespace dtCore
    private:
 
       /**
-      * Determines whether or not collisions with other Transformables
-      * will be handled. If this is solid, other Transformable should
-      * not be allowed to move through it.
-      */
-      bool mSolid;
-
-      /**
       * The ODE geometry identifier of the geometry transform.
       */
       dGeomID mGeomID;
