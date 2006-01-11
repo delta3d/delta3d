@@ -147,7 +147,7 @@ bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
 void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
 {
    osg::Matrix newMat;
-   xform->Get( newMat );
+   xform->Get(newMat);
 
    if( cs == ABS_CS )
    {
@@ -155,7 +155,7 @@ void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
       //in relative coords
 
       //if this has a parent
-      if( mParent )
+      if(mParent)
       {
          //get the parent's world position
          osg::Matrix parentMat;
@@ -166,18 +166,20 @@ void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
          osg::Matrix relMat = newMat * osg::Matrix::inverse(parentMat);
 
          //pass the rel matrix to this node
-         GetMatrixNode()->setMatrix( relMat );
+         GetMatrixNode()->setMatrix(relMat);
       }
       else 
       {
          //pass the xform to the this node
-         GetMatrixNode()->setMatrix( newMat );
+         GetMatrixNode()->setMatrix(newMat);
       }
    }
    else if( cs == REL_CS )
    {
-     GetMatrixNode()->setMatrix( newMat );
+     GetMatrixNode()->setMatrix(newMat);
    }
+
+   PrePhysicsStepUpdate();
 }
 
 /*!
