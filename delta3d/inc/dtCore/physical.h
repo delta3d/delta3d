@@ -56,8 +56,10 @@ namespace dtCore
       public:
 
          /**
-          * Sets the ODE body identifier associated with this object.  Should
-          * only be called by dtCore::Scene.
+          * Sets the ODE body identifier associated with this object. Should
+          * only be called by dtCore::Scene. If you call this outside the 
+          * content of Scene be warning that any transformations you have 
+          * on bodyID will be removed.
           *
           * @param bodyID the new body identifier
           */
