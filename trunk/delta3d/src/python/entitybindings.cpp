@@ -10,12 +10,39 @@ using namespace boost::python;
 using namespace dtCore;
 using namespace dtHLA;
 
+// We need to wrap Object so LoadFile does not return an osg::Node
+// since Python doesn't know what one is!
+class EntityWrap : public Entity
+{
+   public:
+
+      EntityWrap(PyObject* self, const std::string& name = "Entity")
+         : Entity(name),
+           mSelf(self)
+      {}
+
+      void LoadFileWrapper1(const std::string& filename, bool useCache)
+      {
+         Entity::LoadFile(filename,useCache);
+      }
+   
+      void LoadFileWrapper2(const std::string& filename)
+      {
+         Entity::LoadFile(filename);
+      }
+      
+   protected:
+
+      PyObject* mSelf;
+};
+
+
 void initEntityBindings()
 {
    Entity* (*EntityGI1)(int) = &Entity::GetInstance;
    Entity* (*EntityGI2)(std::string) = &Entity::GetInstance;
 
-   class_<Entity, bases<Object>, dtCore::RefPtr<Entity> >("Entity", init<optional<std::string> >())
+   class_<Entity, bases<Object>, dtCore::RefPtr<EntityWrap>, boost::noncopyable >("Entity", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Entity::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EntityGI1, return_internal_reference<>())
@@ -38,5 +65,8 @@ void initEntityBindings()
       .def("SetArticulatedParametersArray", &Entity::SetArticulatedParametersArray)
       .def("GetArticulatedParametersArray", &Entity::GetArticulatedParametersArray, return_internal_reference<>())
       .def("SetDamageState", &Entity::SetDamageState)
-      .def("GetDamageState", &Entity::GetDamageState);
+      .def("GetDamageState", &Entity::GetDamageState)
+      .def("LoadFile", &EntityWrap::LoadFileWrapper1 )
+      .def("LoadFile", &EntityWrap::LoadFileWrapper2 )
+      ;
 }
