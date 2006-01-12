@@ -34,6 +34,10 @@
 
 int main(int argc, char *argv[])
 {
+   dtCore::SetDataFilePathList(  ".;" +
+                                 dtCore::GetDeltaDataPathList() + ";" +
+                                 dtCore::GetDeltaRootPath() + "/utilities/editor" ) ;
+
     int result;
     QApplication app(argc, argv);
 
@@ -45,10 +49,7 @@ int main(int argc, char *argv[])
     try
     {
         dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_INFO);
-        dtCore::SetDataFilePathList(".;" +
-                                    dtCore::GetDeltaDataPathList() + ";" +
-                                    dtCore::GetDeltaRootPath() + "/utilities/editor/billboards/") ;
-
+        
         //Now that everything is initialized, show the main window.
         //Construct the application...
         dtEditQt::MainWindow mainWindow;

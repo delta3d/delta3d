@@ -44,9 +44,14 @@ namespace osg
 
 namespace dtDAL
 {
-
+    // Forward declaration for a friend :)
+    class Project;
+   
     class DT_DAL_EXPORT ActorProxyIcon : public osg::Referenced
     {
+       // Project needs to call LoadImages
+       friend class Project;
+
     public:
 
         //Our custom Delta3D drawable.
@@ -165,16 +170,20 @@ namespace dtDAL
     protected:
         virtual ~ActorProxyIcon();
 
+        /**
+        * Helper method assigns a texture and appropriate state to the billboard.
+        * This should only be called be dtDAL::Project (which is a friend).
+        */
+        void LoadImages();
     private:
         ActorProxyIcon &operator=(const ActorProxyIcon &rhs);
         ActorProxyIcon(const ActorProxyIcon &rhs);
 
         /**
-         * Helper method which builds the billboard geometry and assigns a texture
-         * and appropriate state to it.
+         * Helper method which builds the billboard geometry.
          */
         void CreateBillBoard();
-
+ 
          /**
           * Creates a geometry node for drawing an arrow.
           * @return The geometry node.
@@ -212,6 +221,15 @@ namespace dtDAL
 
         ///A transformable used to represent an arrow depicting actor up vector.
         osg::ref_ptr<dtCore::Transformable> mArrowNodeUp;
+
+        ///A state set containing the icon's texture.
+        osg::ref_ptr<osg::StateSet> mIconStateSet;
+
+        ///A state set containing the orientation arrow's cone texture.
+        osg::ref_ptr<osg::StateSet> mConeStateSet;
+
+        ///A state set containing the orientation arrow's cylinder texture.
+        osg::ref_ptr<osg::StateSet> mCylinderStateSet;
     };
 }
 
