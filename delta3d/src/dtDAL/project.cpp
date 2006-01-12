@@ -492,6 +492,15 @@ namespace dtDAL
                     renderMode == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON)
                 {
                     ActorProxyIcon *billBoard = proxy.GetBillBoardIcon();
+
+                    // Load the textures for the billboard and orientation arrow.
+                    // This is only done here so the files will only be loaded when
+                    // they are actually going to be rendered. Previously this was
+                    // done inside ActorProxyIcon's constructor, even if billboards
+                    // will never be displayed. It was broken out and placed here
+                    // to fix that. -osb
+                    billBoard->LoadImages();
+
                     if (billBoard == NULL)
                     {
                         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,

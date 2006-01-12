@@ -235,7 +235,9 @@ namespace dtDAL
     ActorProxyIcon *ActorProxy::GetBillBoardIcon()
     {
         if(!mBillBoardIcon.valid())
+        {
            mBillBoardIcon = new ActorProxyIcon();
+        }
 
         return mBillBoardIcon.get();
     }

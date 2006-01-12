@@ -69,22 +69,25 @@ namespace dtDAL
    void ActorProxyIcon::staticInitialize()
    {
       IMAGE_BILLBOARD_GENERIC = ("");
-      IMAGE_BILLBOARD_CHARACTER = ("animcharacter.png");
-      IMAGE_BILLBOARD_STATICMESH = ("staticmesh.png");
-      IMAGE_BILLBOARD_LIGHT = ("light.png");
-      IMAGE_BILLBOARD_SOUND = ("sound.png");
-      IMAGE_BILLBOARD_PARTICLESYSTEM = ("particlesystem.png");
-      IMAGE_BILLBOARD_MESHTERRAIN = ("terrain.png");
-      IMAGE_BILLBOARD_PLAYERSTART = ("playerstart.png");
-      IMAGE_BILLBOARD_TRIGGER = ("trigger.png");
-      IMAGE_BILLBOARD_CAMERA = ("camera.png");
+      IMAGE_BILLBOARD_CHARACTER = ("billboards/animcharacter.png");
+      IMAGE_BILLBOARD_STATICMESH = ("billboards/staticmesh.png");
+      IMAGE_BILLBOARD_LIGHT = ("billboards/light.png");
+      IMAGE_BILLBOARD_SOUND = ("billboards/sound.png");
+      IMAGE_BILLBOARD_PARTICLESYSTEM = ("billboards/particlesystem.png");
+      IMAGE_BILLBOARD_MESHTERRAIN = ("billboards/terrain.png");
+      IMAGE_BILLBOARD_PLAYERSTART = ("billboards/playerstart.png");
+      IMAGE_BILLBOARD_TRIGGER = ("billboards/trigger.png");
+      IMAGE_BILLBOARD_CAMERA = ("billboards/camera.png");
 
-      IMAGE_ARROW_HEAD = ("arrowhead.png");
-      IMAGE_ARROW_BODY = ("arrowbody.png");
+      IMAGE_ARROW_HEAD = ("billboards/arrowhead.png");
+      IMAGE_ARROW_BODY = ("billboards/arrowbody.png");
    }
 
    //////////////////////////////////////////////////////////////////////////
-   ActorProxyIcon::ActorProxyIcon(const IconType &type)
+   ActorProxyIcon::ActorProxyIcon(const IconType &type) :
+      mIconStateSet(0),
+      mConeStateSet(0),
+      mCylinderStateSet(0)
    {
       mIconType = &type;
       mIconNode = NULL;
@@ -120,23 +123,18 @@ namespace dtDAL
       osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OFF |
          osg::StateAttribute::PROTECTED |
          osg::StateAttribute::OVERRIDE;
-      osg::Image *image = GetBillBoardImage();
 
-      //Create the texture object and quad geometry for our billboard.
-      osg::StateSet *ss = new osg::StateSet();
+      //Create the quad geometry for our billboard.
+      mIconStateSet = new osg::StateSet();
       osg::PolygonMode *pm = new osg::PolygonMode();
-      osg::Texture2D *texture = new osg::Texture2D();
       osg::Geometry *geom = CreateGeom(osg::Vec3(-1.0f,0.0f,-1.0f),
          osg::Vec3(2.0f,0.0f,0.0f),osg::Vec3(0.0f,0.0f,2.0f));
 
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
-      texture->setImage(image);
-      texture->setUnRefImageDataAfterApply(true);
 
-      ss->setTextureAttributeAndModes(0,texture,turnOn);
-      ss->setMode(GL_LIGHTING,turnOff);
-      ss->setAttributeAndModes(pm,turnOn);
-      geom->setStateSet(ss);
+      mIconStateSet->setMode(GL_LIGHTING,turnOff);
+      mIconStateSet->setAttributeAndModes(pm,turnOn);
+      geom->setStateSet(mIconStateSet.get());
 
       osg::Group *arrow = CreateOrientationArrow();
       mArrowNode = new dtCore::Transformable();
@@ -145,7 +143,6 @@ namespace dtDAL
       osg::Group *arrowUp = CreateOrientationArrow();
       mArrowNodeUp = new dtCore::Transformable();
       mArrowNodeUp->GetMatrixNode()->addChild(arrowUp);
-
 
       mIconNode = new dtCore::Transformable();
       osg::Geode *billBoard = new osg::Geode();
@@ -158,6 +155,53 @@ namespace dtDAL
       mBillBoard->AddChild(mArrowNodeUp.get());
 
       SetActorRotation(osg::Vec3(0.0f, 0.0f, 0.0f));
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   void ActorProxyIcon::LoadImages()
+   {
+      osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::ON |
+         osg::StateAttribute::PROTECTED |
+         osg::StateAttribute::OVERRIDE;
+      osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OVERRIDE |
+         osg::StateAttribute::PROTECTED |
+         osg::StateAttribute::OFF;
+
+      osg::Image *image = GetBillBoardImage();
+
+      // Create the texture object for our billboard
+      osg::Texture2D *texture = new osg::Texture2D();
+      texture->setImage(image);
+      texture->setUnRefImageDataAfterApply(true);
+      mIconStateSet->setTextureAttributeAndModes(0,texture,turnOn);
+
+      // Orientation Arrow
+      osg::TexMat *texMat = new osg::TexMat();
+      osg::Texture2D *tex;
+
+      osg::PolygonMode *pm = new osg::PolygonMode();
+      pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
+
+      image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_HEAD);
+      tex = new osg::Texture2D(image);
+      tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+      tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
+      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
+      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      mConeStateSet->setTextureAttributeAndModes(0,tex,turnOn);
+      mConeStateSet->setAttributeAndModes(pm,turnOn);
+      mConeStateSet->setMode(GL_LIGHTING,turnOff);
+
+      image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_BODY);
+      tex = new osg::Texture2D(image);
+      texMat->setMatrix(osg::Matrix::scale(5,7,0.0f));
+      tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
+      tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
+      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
+      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      mCylinderStateSet->setTextureAttributeAndModes(0,tex,turnOn);
+      mCylinderStateSet->setAttributeAndModes(pm,turnOn);
+      mCylinderStateSet->setMode(GL_LIGHTING,turnOff);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -289,8 +333,8 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    osg::Group *ActorProxyIcon::CreateOrientationArrow()
    {
-      osg::StateSet *coneSS = new osg::StateSet();
-      osg::StateSet *cylinderSS = new osg::StateSet();
+      mConeStateSet = new osg::StateSet();
+      mCylinderStateSet = new osg::StateSet();
 
       osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::OVERRIDE |
          osg::StateAttribute::PROTECTED |
@@ -306,27 +350,6 @@ namespace dtDAL
       osg::PolygonMode *pm = new osg::PolygonMode();
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
-      image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_HEAD);
-      tex = new osg::Texture2D(image);
-      tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
-      tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
-      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-      coneSS->setTextureAttributeAndModes(0,tex,turnOn);
-      coneSS->setAttributeAndModes(pm,turnOn);
-      coneSS->setMode(GL_LIGHTING,turnOff);
-
-      image = osgDB::readImageFile(ActorProxyIcon::IMAGE_ARROW_BODY);
-      tex = new osg::Texture2D(image);
-      texMat->setMatrix(osg::Matrix::scale(5,7,0.0f));
-      tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
-      tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
-      tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
-      cylinderSS->setTextureAttributeAndModes(0,tex,turnOn);
-      cylinderSS->setAttributeAndModes(pm,turnOn);
-      cylinderSS->setMode(GL_LIGHTING,turnOff);
-
       osg::TessellationHints *tessHints = new osg::TessellationHints();
       tessHints->setTessellationMode(osg::TessellationHints::USE_TARGET_NUM_FACES);
       tessHints->setTargetNumFaces(50);
@@ -338,7 +361,7 @@ namespace dtDAL
       osg::ShapeDrawable *cylinder = new osg::ShapeDrawable(new osg::Cylinder(),tessHints);
 
       cylinderGeode->addDrawable(cylinder);
-      cylinderGeode->setStateSet(cylinderSS);
+      cylinderGeode->setStateSet(mCylinderStateSet.get());
       cylinderTx->setMatrix(osg::Matrix::scale(osg::Vec3(0.1f,0.1f,2)) *
          osg::Matrix::rotate(osg::DegreesToRadians(90.0f),osg::Vec3(1,0,0)) *
          osg::Matrix::translate(osg::Vec3(0,1.1f,0)));
@@ -349,7 +372,7 @@ namespace dtDAL
       osg::ShapeDrawable *cone = new osg::ShapeDrawable(new osg::Cone(),tessHints);
 
       coneGeode->addDrawable(cone);
-      coneGeode->setStateSet(coneSS);
+      coneGeode->setStateSet(mConeStateSet.get());
       coneTx->setMatrix(osg::Matrix::scale(osg::Vec3(0.35f,0.35f,0.85f)) *
          osg::Matrix::rotate(osg::DegreesToRadians(-90.0f),osg::Vec3(1,0,0)) *
          osg::Matrix::translate(osg::Vec3(0,2.1f,0)));
