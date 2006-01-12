@@ -68,28 +68,19 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    void ActorProxyIcon::staticInitialize()
    {
-      static char* ptr = getenv("DELTA_ROOT");
-      static std::string prefix;
-
-      prefix = std::string(ptr);                
-      if (prefix[prefix.length()-1] == '/' || prefix[prefix.length()-1] == '\\') {
-         prefix = prefix.substr(0,prefix.length()-1);
-      }
-
-      prefix += "/utilities/editor/billboards/";
       IMAGE_BILLBOARD_GENERIC = ("");
-      IMAGE_BILLBOARD_CHARACTER = (prefix+"animcharacter.png");
-      IMAGE_BILLBOARD_STATICMESH = (prefix+"staticmesh.png");
-      IMAGE_BILLBOARD_LIGHT = (prefix+"light.png");
-      IMAGE_BILLBOARD_SOUND = (prefix+"sound.png");
-      IMAGE_BILLBOARD_PARTICLESYSTEM = (prefix+"particlesystem.png");
-      IMAGE_BILLBOARD_MESHTERRAIN = (prefix+"terrain.png");
-      IMAGE_BILLBOARD_PLAYERSTART = (prefix+"playerstart.png");
-      IMAGE_BILLBOARD_TRIGGER = (prefix+"trigger.png");
-      IMAGE_BILLBOARD_CAMERA = (prefix+"camera.png");
+      IMAGE_BILLBOARD_CHARACTER = ("animcharacter.png");
+      IMAGE_BILLBOARD_STATICMESH = ("staticmesh.png");
+      IMAGE_BILLBOARD_LIGHT = ("light.png");
+      IMAGE_BILLBOARD_SOUND = ("sound.png");
+      IMAGE_BILLBOARD_PARTICLESYSTEM = ("particlesystem.png");
+      IMAGE_BILLBOARD_MESHTERRAIN = ("terrain.png");
+      IMAGE_BILLBOARD_PLAYERSTART = ("playerstart.png");
+      IMAGE_BILLBOARD_TRIGGER = ("trigger.png");
+      IMAGE_BILLBOARD_CAMERA = ("camera.png");
 
-      IMAGE_ARROW_HEAD = (prefix+"arrowhead.png");
-      IMAGE_ARROW_BODY = (prefix+"arrowbody.png");
+      IMAGE_ARROW_HEAD = ("arrowhead.png");
+      IMAGE_ARROW_BODY = ("arrowbody.png");
    }
 
    //////////////////////////////////////////////////////////////////////////
