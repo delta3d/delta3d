@@ -8,7 +8,6 @@
 #include <dtCore/cameragroup.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <osg/NodeVisitor>
 #include <dtUtil/log.h>
 
 #include <osg/Matrix>
