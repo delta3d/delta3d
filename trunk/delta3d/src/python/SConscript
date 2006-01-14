@@ -127,10 +127,8 @@ if CheckForBoost() :
          else:
             #print "Didn't find " + lib_name + ".  Defaulting to shared lib."
             addToLibs.append(lib_name);
-      else:
-         addToLibs = pythonDeps
-   
-   addToLibs = [boostLib,'plibjs','plibul','isense','python2.3','ode']
+   else:
+      addToLibs = pythonDeps
    
    if OS == 'windows' and mode == 'debug' :
       dtCoreBindingsTarget = 'dtCoreBindingsd'
