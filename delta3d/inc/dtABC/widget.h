@@ -35,11 +35,7 @@
 #endif
 
 #include <dtABC/baseabc.h>
-
-#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-typedef Producer::Window HWND;
-#endif
-
+#include <Producer/Types>
 
 #if   !  defined(BIT)
    ///BIT  helper definition for enumerated values and bit packing
@@ -156,9 +152,9 @@ namespace dtABC
    ///WinData struct for passing window handle and dimensions
    struct DT_ABC_EXPORT WinData   :  public   WinRect
    {
-      HWND  hwnd;                   ///window handle
+      Producer::Window  hwnd;                   ///window handle
 
-      WinData( HWND hw = 0L, int x = 0L, int y = 0L, int w = 640L, int h = 480L );
+      WinData( Producer::Window hw = 0L, int x = 0L, int y = 0L, int w = 640L, int h = 480L );
       WinData( const WinData& that );
       WinData( const WinRect& that );
       WinData& operator=( const WinData& that );

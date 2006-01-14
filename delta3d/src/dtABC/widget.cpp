@@ -489,7 +489,7 @@ WinRect::operator=( const WinRect& that )
  * @param w width
  * @param h height
  */
-WinData::WinData( HWND hw, int x, int y, int w, int h )
+WinData::WinData( Producer::Window hw, int x, int y, int w, int h )
 :  WinRect(x,y,w,h),
    hwnd(hw)
 {
