@@ -336,17 +336,6 @@ namespace dtDAL
       mConeStateSet = new osg::StateSet();
       mCylinderStateSet = new osg::StateSet();
 
-      osg::StateAttribute::GLModeValue turnOn = osg::StateAttribute::OVERRIDE |
-         osg::StateAttribute::PROTECTED |
-         osg::StateAttribute::ON;
-      osg::StateAttribute::GLModeValue turnOff = osg::StateAttribute::OVERRIDE |
-         osg::StateAttribute::PROTECTED |
-         osg::StateAttribute::OFF;
-
-      osg::TexMat *texMat = new osg::TexMat();
-      osg::Image *image;
-      osg::Texture2D *tex;
-
       osg::PolygonMode *pm = new osg::PolygonMode();
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
