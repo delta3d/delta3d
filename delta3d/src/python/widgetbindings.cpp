@@ -85,7 +85,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
 void SetWinDataHWND(WinData* winData, long hwnd)
 {
-   winData->hwnd = (HWND)hwnd;
+   winData->hwnd = (Producer::Window)hwnd;
 }
 
 long GetWinDataHWND(WinData* winData)
@@ -139,7 +139,10 @@ void initWidgetBindings()
       .def_readonly("msgSetPath", &Widget::msgSetPath)
       .def_readonly("msgWindowData", &Widget::msgWindowData)
       .def_readonly("msgQuit", &Widget::msgQuit)
+      #ifndef __APPLE__
+      // Boost.Python on OSX cannot handle using the Producer::Window type :(
       .def("Config", &Widget::Config, &WidgetWrap::DefaultConfig)
+      #endif
       .def("Quit", &Widget::Quit, &WidgetWrap::DefaultQuit)
       .def("SetPath", &Widget::SetPath)
       .def("SendMessage", SendEmptyMessage)
@@ -147,18 +150,22 @@ void initWidgetBindings()
       .def("SendMessage", SendKeyboardMessage)
       .def("SendMessage", SendResizeMessage)
       .def("SendMessage", SendWindowDataMessage);
-      
+ 
    class_<WinRect>("WinRect", init<optional<int, int, int, int> >())
       .def_readwrite("pos_x", &WinRect::pos_x)
       .def_readwrite("pos_y", &WinRect::pos_y)
       .def_readwrite("width", &WinRect::width)
       .def_readwrite("height", &WinRect::height);
-      
-   class_<WinData, bases<WinRect> >("WinData", init<optional<HWND, int, int, int, int> >())
+
+   #ifndef __APPLE__   
+   // Boost.Python on OSX cannot handle using the Producer::Window type :(
+   class_<WinData, bases<WinRect> >("WinData", init<optional<Producer::Window, int, int, int, int> >())
       .def_readwrite("hwnd", &WinData::hwnd)
       .def("SetHWND", SetWinDataHWND)
       .def("GetHWND", GetWinDataHWND);
-   
+      ;
+   #endif
+      
    {   
       scope MouseEvent_scope = class_<MouseEvent>("MouseEvent", init<optional<int, float, float, int> >())
          .def_readwrite("event", &MouseEvent::event)
