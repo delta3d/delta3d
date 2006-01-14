@@ -520,7 +520,7 @@ def CheckForBoost() :
    elif OS == 'linux' :
       boostLib = 'libboost_python-gcc.so'
    elif OS == 'darwin' :
-      boostLib = 'libboost_python.dylib'
+      boostLib = 'libboost_python-1_33_1.dylib'
 
    foundLib = 0
    for dir in env['LIBPATH'] :
@@ -956,7 +956,7 @@ elif OS == 'darwin' :
       'osgGA'          : 'osgGA',
       'osgProducer'    : 'osgProducer',
       'Producer'       : 'Producer',
-      'python'         : 'Python',
+      'python'         : python_version,
       'OpenThreads'    : 'OpenThreads',
       'cal3d'          : 'cal3d',
       'fltk'           : 'fltk',
