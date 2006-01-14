@@ -48,9 +48,9 @@ void initPhysicalBindings()
    void (Physical::*GetInertiaTensor1)(osg::Matrix& mat) const = &Physical::GetInertiaTensor;
 
    class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
-      .def("GetGeomID", &Physical::GetGeomID, return_value_policy<return_opaque_pointer>())
-      .def("SetBodyID", &Physical::SetBodyID)
-      .def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
+      //.def("GetGeomID", &Physical::GetGeomID, return_value_policy<return_opaque_pointer>())
+      //.def("SetBodyID", &Physical::SetBodyID)
+      //.def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
       .def("EnableDynamics", &Physical::EnableDynamics, ED_overloads())
       .def("DynamicsEnabled", &Physical::DynamicsEnabled)
       .def("SetMass", SetMass1)
