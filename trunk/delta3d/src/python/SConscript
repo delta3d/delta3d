@@ -104,13 +104,13 @@ if CheckForBoost() :
    elif OS == 'darwin' :
       boostLib = 'boost_python-1_33_1'
 
-   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode']
+   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul']
    
    if OS == 'windows' :
       pythonDeps += [  'User32' ] 
       
    pythonDeps = [ extLibs[lib] for lib in pythonDeps if extLibs.has_key(lib) ] + [boostLib]
-   
+
    addToLink = []
    addToLibs = []
    if OS == 'darwin':
@@ -129,7 +129,7 @@ if CheckForBoost() :
             addToLibs.append(lib_name);
    else:
       addToLibs = pythonDeps
-   
+
    if OS == 'windows' and mode == 'debug' :
       dtCoreBindingsTarget = 'dtCoreBindingsd'
       dtAbcBindingsTarget = 'dtABCBindingsd'
