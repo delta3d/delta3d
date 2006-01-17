@@ -333,8 +333,15 @@ namespace dtDAL
    //////////////////////////////////////////////////////////////////////////
    osg::Group *ActorProxyIcon::CreateOrientationArrow()
    {
-      mConeStateSet = new osg::StateSet();
-      mCylinderStateSet = new osg::StateSet();
+      if( !mConeStateSet.valid() )
+      {
+         mConeStateSet = new osg::StateSet();
+      }
+
+      if( !mCylinderStateSet.valid() )
+      {
+         mCylinderStateSet = new osg::StateSet();
+      }
 
       osg::PolygonMode *pm = new osg::PolygonMode();
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
