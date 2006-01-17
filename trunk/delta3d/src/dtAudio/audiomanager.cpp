@@ -647,7 +647,14 @@ AudioManager::LoadFile( const std::string& file )
    ALsizei size(0);
    ALvoid* data(0);
 
-   #ifdef __APPLE__
+   // We are trying to support the new version of ALUT as well as the old intergated
+   // version. So we have two cases: DEPRECATED and NON-DEPRECATED.
+
+   // This is not defined in ALUT prior to version 1.
+   #ifndef ALUT_API_MAJOR_VERSION 
+
+   // DEPRECATED version for ALUT < 1.0.0
+
    // Man, are we still in the dark ages here???
    // Copy the std::string to a frickin' ALByte array...
    ALbyte fname[256L];
@@ -656,15 +663,23 @@ AudioManager::LoadFile( const std::string& file )
    fname[len] = 0L;
    
    ALsizei freq(0);
-   alutLoadWAVFile( fname, &format, &data, &size, &freq ); //Upgrade bi-atch!
+   #ifdef __APPLE__
+   alutLoadWAVFile( fname, &format, &data, &size, &freq );
    #else
+   alutLoadWAVFile( fname, &format, &data, &size, &freq, &bd->loop );
+   #endif // __APPLE__
+   
+   #else
+
+   // NON-DEPRECATED version for ALUT >= 1.0.0
    ALfloat freq(0);
    data = alutLoadMemoryFromFile( filename.c_str(), &format, &size, &freq );
-   #endif
+
+   #endif // ALUT_API_MAJOR_VERSION 
 
    if( data == 0 )
    {
-      #ifdef __APPLE__ 
+      #ifndef ALUT_API_MAJOR_VERSION
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: alutLoadWAVFile error on %s", file.c_str() );
       #else
@@ -672,7 +687,7 @@ AudioManager::LoadFile( const std::string& file )
       // Can't load the wave file, bail...
       Log::GetInstance().LogMessage( Log::LOG_WARNING, __FUNCTION__,
          "AudioManager: alutLoadMemoryFromFile error %d on %s", err, file.c_str() );
-      #endif // __APPLE__
+      #endif // ALUT_API_MAJOR_VERSION 
 
       alDeleteBuffers( 1L, &bd->buf );
       delete bd;
@@ -1335,7 +1350,7 @@ AudioManager::ConfigEAX( bool eax )
       return false;
    }
 
-   #ifdef __APPLE__
+   #ifndef AL_VERSION_1_1
    ALubyte buf[32L];
    memset( buf, 0L, 32L );
    memcpy( buf, _EaxVer, std::min( strlen(_EaxVer), size_t(32L) ) );
@@ -1351,7 +1366,7 @@ AudioManager::ConfigEAX( bool eax )
       return   false;
    }
 
-   #ifdef __APPLE__
+   #ifndef AL_VERSION_1_1
    memset( buf, 0L, 32L );
    memcpy( buf, _EaxSet, std::min( strlen(_EaxSet), size_t(32L) ) );
    #else
@@ -1367,7 +1382,7 @@ AudioManager::ConfigEAX( bool eax )
       return   false;
    }
    
-   #ifdef __APPLE__
+   #ifndef AL_VERSION_1_1
    memset( buf, 0L, 32L );
    memcpy( buf, _EaxGet, std::min( strlen(_EaxGet), size_t(32L) ) );
    #else
