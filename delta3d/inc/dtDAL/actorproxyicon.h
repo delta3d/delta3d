@@ -42,6 +42,11 @@ namespace osg
     class Image;
 }
 
+namespace dtEditQt
+{
+   class ViewportManager;
+}
+
 namespace dtDAL
 {
     // Forward declaration for a friend :)
@@ -49,8 +54,9 @@ namespace dtDAL
    
     class DT_DAL_EXPORT ActorProxyIcon : public osg::Referenced
     {
-       // Project needs to call LoadImages
+       // Project & ViewportManager need to call LoadImages
        friend class Project;
+       friend class dtEditQt::ViewportManager;
 
     public:
 

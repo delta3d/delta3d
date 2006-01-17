@@ -270,6 +270,7 @@ namespace dtEditQt
             }
             else
             {
+               //billBoard->LoadImages(); //?
                 billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
                 if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
                 {
@@ -304,6 +305,7 @@ namespace dtEditQt
             }
             else
             {
+               //billBoard->LoadImages(); //?
                 billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
                 if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
                 {
@@ -341,6 +343,14 @@ namespace dtEditQt
         if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_BILLBOARD_ICON)
         {
             billBoard = proxy->GetBillBoardIcon();
+
+            // Load the textures for the billboard and orientation arrow.
+            // This is only done here so the files will only be loaded when
+            // they are actually going to be rendered. Previously this was
+            // done inside ActorProxyIcon's constructor, even if billboards
+            // will never be displayed. It was broken out and placed here
+            // to fix that. -osb
+            billBoard->LoadImages();
             if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
@@ -357,6 +367,14 @@ namespace dtEditQt
             scene->AddDrawable(proxy->GetActor());
 
             billBoard = proxy->GetBillBoardIcon();
+
+            // Load the textures for the billboard and orientation arrow.
+            // This is only done here so the files will only be loaded when
+            // they are actually going to be rendered. Previously this was
+            // done inside ActorProxyIcon's constructor, even if billboards
+            // will never be displayed. It was broken out and placed here
+            // to fix that. -osb
+            billBoard->LoadImages();
             if (billBoard == NULL)
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
