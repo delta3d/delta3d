@@ -25,65 +25,111 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <map>
-#include <set>
 #include <string>
 
-#include <osgSim/DOFTransform>
 #include <osg/Matrix>
+#include <osg/Math>
 
-#include "dtUtil/export.h"
+#include <dtUtil/export.h>
+#include <dtUtil/enumeration.h>
 
-const double PI = 3.14159265358979323e0;         /* PI */
-const double MIN_LAT = ( (-80.5 * PI) / 180.0 ); /* -80.5 degrees in radians    */
-const double MAX_LAT = ( (84.5 * PI) / 180.0 );  /* 84.5 degrees in radians     */
-const double MIN_EASTING = 100000;
-const double MAX_EASTING = 900000;
-const double MIN_NORTHING = 0;
-const double MAX_NORTHING = 10000000;
-const double MAX_DELTA_LONG  = ((PI * 90)/180.0);    /* 90 degrees in radians */
-const double MIN_SCALE_FACTOR = 0.3;
-const double MAX_SCALE_FACTOR = 3.0;
-const double PI_OVER_2 = (PI / 2.0e0);
-const double COS_67P5 = 0.38268343236508977;  /* cosine of 67.5 degrees */
-const double AD_C     =  1.0026000;            /* Toms region 1 constant */
-
-static double TranMerc_a = 6378137.0;         /* Semi-major axis of ellipsoid i meters */
-static double TranMerc_es = 0.0066943799901413800; /* Eccentricity (0.08181919084262188000) squared */
-/* Isometeric to geodetic latitude parameters, default to WGS 84 */
-static double TranMerc_ap = 6367449.1458008;
-static double TranMerc_bp = 16038.508696861;
-static double TranMerc_cp = 16.832613334334;
-static double TranMerc_dp = 0.021984404273757;
-static double TranMerc_ep = 3.1148371319283e-005;
-
-inline double SPHTMD(double Latitude)
-{
-   return ((double) (TranMerc_ap * Latitude 
-      - TranMerc_bp * sin(2.e0 * Latitude) + TranMerc_cp * sin(4.e0 * Latitude) 
-      - TranMerc_dp * sin(6.e0 * Latitude) + TranMerc_ep * sin(8.e0 * Latitude)));
-}
-
-inline double SPHSN(double Latitude) 
-{
-   return ((double) (TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
-}
-
-inline double DENOM(double Latitude)
-{ 
-   return ((double) (sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))));
-}
-
-inline double SPHSR(double Latitude) 
-{
-   return ((double) (TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));
-}
 
 namespace dtUtil
 {
+   class Log;
+   
+   const double MIN_LAT = ( (-80.5 * osg::PI) / 180.0 ); /* -80.5 degrees in radians    */
+   const double MAX_LAT = ( (84.5 * osg::PI) / 180.0 );  /* 84.5 degrees in radians     */
+   const double MIN_EASTING = 100000;
+   const double MAX_EASTING = 900000;
+   const double MIN_NORTHING = 0;
+   const double MAX_NORTHING = 10000000;
+   const double MAX_DELTA_LONG  = ((osg::PI * 90)/180.0);    /* 90 degrees in radians */
+   const double MIN_SCALE_FACTOR = 0.3;
+   const double MAX_SCALE_FACTOR = 3.0;
+   const double COS_67P5 = 0.38268343236508977;  /* cosine of 67.5 degrees */
+   const double AD_C     =  1.0026000;            /* Toms region 1 constant */
+
+   const double UTM_a = 6378137.0;         /* Semi-major axis of ellipsoid in meters  */
+   const double UTM_f = 1 / 298.257223563; /* Flattening of ellipsoid                 */
+   //static long   UTM_Override = 0;          /* Zone override flag                      */
+   /**
+    * The reciprocal of the flattening parameter (WGS 84).
+    */
+   const double flatteningReciprocal = 298.257223563;
+         
+   /**
+    * The length of the semi-major axis, in meters (WGS 84).
+    */
+   const double semiMajorAxis = 6378137.0;
+
+   /* Ellipsoid parameters, default to WGS 84 */
+   const double Geocent_a = 6378137.0;          /* Semi-major axis of ellipsoid in meters */
+   const double Geocent_f = 1 / flatteningReciprocal;  /* Flattening of ellipsoid           */
+   
+   const double Geocent_e2 = 0.0066943799901413800;   /* Eccentricity squared  */
+   const double Geocent_ep2 = 0.00673949675658690300; /* 2nd eccentricity squared */
+   
+         
+   class DT_UTIL_EXPORT IncomingCoordinateType : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(IncomingCoordinateType);
+      
+      public:
+         //Defines coordinates as XYZ based on the center of the earth with the z-axis
+         //down, x going through the prime meridian in the equatorial plane, and y 90 degrees of it.
+         //Rotation is based on the refenence point in the center of the earth.
+         static const IncomingCoordinateType GEOCENTRIC;
+         
+         //Uses the WGS84 flattening parameters and coordinates are in latitde, longitude, and elevation.
+         //Rotation is based on the UTM zone.
+         static const IncomingCoordinateType GEODETIC;
+         
+         //Coordinates are base on zones in the earth and offsets within that zone. This is terrain
+         //centric coordinates and each zone is treated like it's a flat plate.
+         //Rotation is in reference to the terrain.
+         static const IncomingCoordinateType UTM;
+         
+      private:
+         IncomingCoordinateType(const std::string& name): dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+         virtual ~IncomingCoordinateType() {}
+   };
+   
+   class DT_UTIL_EXPORT LocalCoordinateType : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(LocalCoordinateType);
+      
+      public:
+         //The local terrain is a globe or part of a globe so that the XYZ coordinates
+         //should be mapped around it.
+         static const LocalCoordinateType GLOBE;
+         
+         //the terrain is a flat plain
+         static const LocalCoordinateType CARTESIAN;
+         
+      private:
+         LocalCoordinateType(const std::string& name): dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+         virtual ~LocalCoordinateType() {}
+   };
+
+   template <typename T>
+   inline T safeASIN(T x)
+   {
+      return ((x) < -1.0 ? (-0.5*osg::PI) : ((x) > 1.0) ? (0.5*osg::PI) : (asin(x)));
+   }
+   
    class DT_UTIL_EXPORT Coordinates
    {
       public:
+      
+         Coordinates();
+         virtual ~Coordinates();
          
          /**
           * Sets the location of the origin in geodetic coordinates.
@@ -93,6 +139,14 @@ namespace dtUtil
           * @param elevation the elevation of the origin
           */
          void SetGeoOrigin(double latitude, double longitude, double elevation);
+
+         /**
+          * Creates a rotation offset matrix used when converting rotations
+          * from geocentric one relative to the zone of the given latitude and longitude.
+          * The given parameters, expected to be in degrees, will be used to find out the zone of
+          * the terrain which will be used as the actual point of reference. 
+          */
+         void SetGeoOriginRotation(double latitude, double longitude);
          
          /**
           * Sets the location of the origin in geocentric coordinates.
@@ -103,6 +157,7 @@ namespace dtUtil
           */
          void SetOriginLocation(double x, double y, double z);
          
+         
          /**
           * Retrieves the location of the origin in geocentric coordinates.
           *
@@ -110,7 +165,7 @@ namespace dtUtil
           * @param y the location in which to store the y coordinate
           * @param z the location in which to store the z coordinate
           */
-         void GetOriginLocation(double* x, double* y, double* z) const;
+         void GetOriginLocation(double& x, double& y, double& z) const;
          
          /**
           * Sets the rotation of the origin relative to geocentric coordinates.
@@ -128,7 +183,66 @@ namespace dtUtil
           * @param p the location in which to store the geocentric pitch
           * @param r the location in which to store the geocentric roll
           */
-         void GetOriginRotation(float* h, float* p, float* r) const;
+         void GetOriginRotation(float& h, float& p, float& r) const;
+         
+         const osg::Matrix& GetOriginRotationMatrix() const;
+         
+         const osg::Matrix& GetOriginRotationMatrixInverse() const;
+
+         const IncomingCoordinateType& GetIncomingCoordinateType() { return *mIncomingCoordinateType; }
+
+         void SetIncomingCoordinateType(const IncomingCoordinateType& incomingCoordType)
+         {
+            mIncomingCoordinateType = &incomingCoordType;  
+         }
+         
+         const LocalCoordinateType& GetLocalCoordinateType() { return *mLocalCoordinateType; }
+
+         void SetLocalCoordinateType(const LocalCoordinateType& localCoordType)
+         {
+            mLocalCoordinateType = &localCoordType;  
+         }
+         
+         /* Sets the globe radius.
+          *
+          * @param radius the new radius
+          */
+         void SetGlobeRadius(float radius);
+         
+         /**
+          * Returns the globe radius.
+          *
+          * @return the current globe radius
+          */
+         float GetGlobeRadius() const;
+         
+         /**
+          * Converts XYZ coordinates to a local translation vector based on the current
+          * configuration.
+          * @param loc the location as 3 doubles.
+          * @return the x y z location is local space.
+          */
+         const osg::Vec3 ConvertToLocalTranslation(const osg::Vec3d& loc);
+
+         /**
+          * Converts XYZ coordinates to a remote location vector based on the current
+          * configuration.
+          * @param translation the local x,y,z translation to convert.
+          * @return the location as a vec3d
+          */
+         const osg::Vec3d ConvertToRemoteTranslation(const osg::Vec3& translation);
+
+         /**
+          * Converts php coordinates in radians to a local rotation heading, pitch, roll in degrees
+          * based on the current configuration.
+          */
+         const osg::Vec3 ConvertToLocalRotation(double psi, double theta, double phi) const;
+
+         /**
+          * Converts hpr coordinates in degrees to a remote rotation psi, theta, phi in radians
+          * based on the current configuration.
+          */
+         const osg::Vec3d ConvertToRemoteRotation(const osg::Vec3& hpr) const;
          
          /**
           * Creates a 4x4 rotation matrix from a set of DIS/RPR-FOM Euler angles.
@@ -149,8 +263,13 @@ namespace dtUtil
           * @param theta the location in which to store the theta angle
           * @param phi the location in which to store the phi angle
           */
-         static void MatrixToEulers(osg::Matrix& src, float* psi, float* theta, float* phi);
+         static void MatrixToEulers(const osg::Matrix& src, float& psi, float& theta, float& phi) ;
          
+         /*
+          * invert the z axis
+          */
+         static void ZFlop(osg::Matrix& toFlop);
+
          /**
           * Converts a set of geocentric coordinates to the equivalent geodetic
           * coordinates.  Uses the formula given at
@@ -165,7 +284,7 @@ namespace dtUtil
           * @param elevation the location in which to store the geodetic elevation
           */
          static void GeocentricToGeodetic(double x, double y, double z,
-                                          double* latitude, double* longitude, double* elevation);
+                                          double& latitude, double& longitude, double& elevation);
          
          /*
           * The function ConvertGeodeticToUTM converts geodetic (latitude and
@@ -180,8 +299,8 @@ namespace dtUtil
           * @param   Easting           : Easting (X) in meters               (output)
           * @param   Northing          : Northing (Y) in meters              (output)
           */
-         void ConvertGeodeticToUTM (double Latitude, double Longitude, long   *Zone, 
-                                    char   *Hemisphere, double *Easting, double *Northing); 
+         void ConvertGeodeticToUTM (double Latitude, double Longitude, long& Zone, 
+                                    char  &Hemisphere, double& Easting, double& Northing); 
          
          /*
           * The function ConvertGeocentricToGeodetic converts geocentric
@@ -200,7 +319,7 @@ namespace dtUtil
           * Geocentric to Geodetic Coordinate Conversion', by Ralph Toms, Feb 1996
           */
          void ConvertGeocentricToGeodetic (double X, double Y, double Z,
-                                           double *Latitude, double *Longitude, double *Height);
+                                           double& Latitude, double& Longitude, double& Height);
          
          /*
           * The function SetTranverseMercatorParameters receives the ellipsoid
@@ -234,7 +353,7 @@ namespace dtUtil
           * @param   Northing      : Northing/Y in meters                        (output)
           */
          void ConvertGeodeticToTransverseMercator (double Latitude, double Longitude,
-                                                   double *Easting, double *Northing);
+                                                   double& Easting, double& Northing) const;
          
          /**
           * Converts a set of geodetic coordinates to the equivalent geocentric
@@ -250,7 +369,48 @@ namespace dtUtil
           * @param z the location in which to store the geocentric z coordinate
           */
          static void GeodeticToGeocentric(double latitude, double longitude, double elevation,
-                                          double* x, double* y, double* z);
+                                          double& x, double& y, double& z);
+         
+      private:
+         
+         Log* mLogger;
+         
+         const LocalCoordinateType* mLocalCoordinateType;
+         const IncomingCoordinateType* mIncomingCoordinateType;
+         
+         double TranMerc_a;         /* Semi-major axis of ellipsoid i meters */
+         double TranMerc_es; /* Eccentricity (0.08181919084262188000) squared */
+      
+         /* Isometeric to geodetic latitude parameters, default to WGS 84 */
+         double TranMerc_ap;
+         double TranMerc_bp;
+         double TranMerc_cp;
+         double TranMerc_dp;
+         double TranMerc_ep;
+      
+         /* Transverse_Mercator projection Parameters */
+         double TranMerc_Origin_Lat;           /* Latitude of origin in radians */
+         double TranMerc_Origin_Long;          /* Longitude of origin in radians */
+         double TranMerc_False_Northing;       /* False northing in meters */
+         double TranMerc_False_Easting;        /* False easting in meters */
+         double TranMerc_Scale_Factor;         /* Scale factor  */
+         
+         /* Maximum variance for easting and northing values for WGS 84. */
+         double TranMerc_Delta_Easting;
+         double TranMerc_Delta_Northing;
+      
+         /* Ellipsoid Parameters, default to WGS 84  */
+         double TranMerc_f;      /* Flattening of ellipsoid  */
+         double TranMerc_ebs;   /* Second Eccentricity squared */
+
+         long     mZone;
+         char     mHemisphere;
+         double   mEasting;
+         double   mNorthing;
+         
+         ///The radius of the globe if the local coordinates are in globe mode.
+         float mGlobeRadius;
+  
          /**
           * The location of the origin in geocentric coordinates.
           */
@@ -265,19 +425,38 @@ namespace dtUtil
           * The rotation offset matrix inverse.
           */
          osg::Matrix mRotationOffsetInverse;
+                  
+         double SPHTMD(double Latitude) const;         
+         double SPHSN(double Latitude) const; 
+         double DENOM(double Latitude) const;
+         double SPHSR(double Latitude) const; 
          
-      private:
-         
-         long     mZone;
-         char     mHemisphere;
-         double   mEasting;
-         double   mNorthing;
-         double   mLat;
-         double   mLong;
-         double   mElevation;
-         
+         Coordinates(const Coordinates& handler) {}
+         Coordinates& operator=(const Coordinates& handler) { return *this; }
+
    };
+
+   inline double Coordinates::SPHTMD(double Latitude) const
+   {
+      return (double(TranMerc_ap * Latitude 
+         - TranMerc_bp * sin(2.e0 * Latitude) + TranMerc_cp * sin(4.e0 * Latitude) 
+         - TranMerc_dp * sin(6.e0 * Latitude) + TranMerc_ep * sin(8.e0 * Latitude)));
+   }
+   
+   inline double Coordinates::SPHSN(double Latitude) const
+   {
+      return (double(TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
+   }
+   
+   inline double Coordinates::DENOM(double Latitude) const
+   { 
+      return (double(sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))));
+   }
+   
+   inline double Coordinates::SPHSR(double Latitude) const
+   {
+      return (double(TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));
+   }
 };
 
-#endif // DELTA_RTICONNECTION
-
+#endif
