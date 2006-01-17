@@ -22,7 +22,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;C:\Projects\delta\deps\osg\OSG_OP_OT-1.0-rc5\OpenSceneGraph\include;C:\Projects\delta\deps\osg\OSG_OP_OT-1.0-rc5\OpenThreads\include"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -45,7 +45,7 @@
 				OutputFile="..\..\..\bin\bspCompilerd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib;C:\Projects\delta\deps\osg\OSG_OP_OT-1.0-rc5\OpenSceneGraph\lib;C:\Projects\delta\deps\osg\OSG_OP_OT-1.0-rc5\OpenThreads\lib\win32"
+				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcd,libcpd,libcmt"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
