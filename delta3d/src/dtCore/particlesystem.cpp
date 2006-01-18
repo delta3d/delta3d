@@ -84,6 +84,10 @@ class psGeodeTransform : public osg::MatrixTransform
 public:
    class psGeodeTransformCallback : public osg::NodeCallback
    {
+	   //\NOTE: This is triggered once per camera which may
+	   // be inefficient, we may want to look into this later
+	   // to ensure this happens once per frame, 
+	   // instead of once per camera per frame
       virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
       {
          if ( psGeodeTransform* ps = dynamic_cast<psGeodeTransform*>( node ) )
