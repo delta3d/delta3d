@@ -29,6 +29,7 @@
 
 #include <osg/Matrix>
 #include <osg/Math>
+#include <osg/Vec3>
 
 #include <dtUtil/export.h>
 #include <dtUtil/enumeration.h>
