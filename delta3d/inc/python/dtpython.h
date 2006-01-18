@@ -24,11 +24,6 @@
 
 #include <boost/python.hpp>
 
-#ifndef WIN32
-#include <ode/src/collision_kernel.h>
-#include <ode/src/objects.h>
-#endif
-
 #include <dtCore/deltadrawable.h>
 #include <dtCore/refptr.h>
 #include <osg/ref_ptr>
