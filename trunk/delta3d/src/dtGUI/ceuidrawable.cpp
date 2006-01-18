@@ -24,6 +24,7 @@ IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 * @see SetRenderingSize()
 */
 CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
+   DeltaDrawable("CEUIDrawable"),
    mUI(0),
    mWidth(width),
    mHeight(height),
@@ -47,6 +48,7 @@ CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
   * @param sm : The ScriptModule to use for CEGUI script processing
   */
 CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
+   DeltaDrawable("CEUIDrawable"),
    mUI(0),
    mWidth(1024),
    mHeight(1280),
@@ -66,6 +68,11 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
 CEUIDrawable::~CEUIDrawable(void)
 {
    RemoveSender( System::Instance() );
+   DeregisterInstance(this);
+
+   mWindow->GetMouse()->RemoveMouseListener(this); 
+   mWindow->GetKeyboard()->RemoveKeyboardListener(this);
+   
    mNode = NULL;
    delete mUI;
    delete mRenderer;
