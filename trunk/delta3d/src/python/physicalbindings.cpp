@@ -32,6 +32,7 @@ class PhysicalWrap : public Physical
 };
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ED_overloads, EnableDynamics, 0, 1)
+BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(dxBody);
 
 void initPhysicalBindings()
 {
@@ -48,9 +49,8 @@ void initPhysicalBindings()
    void (Physical::*GetInertiaTensor1)(osg::Matrix& mat) const = &Physical::GetInertiaTensor;
 
    class_<Physical, bases<Transformable>, dtCore::RefPtr<PhysicalWrap>, boost::noncopyable>("Physical", no_init)
-      //.def("GetGeomID", &Physical::GetGeomID, return_value_policy<return_opaque_pointer>())
-      //.def("SetBodyID", &Physical::SetBodyID)
-      //.def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
+      .def("SetBodyID", &Physical::SetBodyID)
+      .def("GetBodyID", &Physical::GetBodyID, return_value_policy<return_opaque_pointer>())
       .def("EnableDynamics", &Physical::EnableDynamics, ED_overloads())
       .def("DynamicsEnabled", &Physical::DynamicsEnabled)
       .def("SetMass", SetMass1)

@@ -66,6 +66,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SCCC_overloads, SetCollisionCappedCylinde
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SCM_overloads, SetCollisionMesh, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(RCG_overloads, RenderCollisionGeometry, 0, 1)
 
+BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(dxGeom);
+
 void initTransformableBindings()
 {
    Transformable* (*TransformableGI1)(int) = &Transformable::GetInstance;
@@ -93,7 +95,8 @@ void initTransformableBindings()
       .def("RenderProxyNode", &Transformable::RenderProxyNode, RPN_overloads())
       .def("SetNormalRescaling", &Transformable::SetNormalRescaling)
       .def("GetNormalRescaling", &Transformable::GetNormalRescaling)
-      //.def("SetCollisionGeom", &Transformable::SetCollisionGeom)
+      .def("GetGeomID", &Transformable::GetGeomID, return_value_policy<return_opaque_pointer>())
+      .def("SetCollisionGeom", &Transformable::SetCollisionGeom)
       .def("SetCollisionSphere", SetCollisionSphere1)
       .def("SetCollisionSphere", SetCollisionSphere2, SCS_overloads())
       .def("SetCollisionBox", SetCollisionBox1)
@@ -104,7 +107,7 @@ void initTransformableBindings()
       .def("SetCollisionMesh", &Transformable::SetCollisionMesh, SCM_overloads())
       .def("ClearCollisionGeometry", &Transformable::ClearCollisionGeometry)
       .def("PrePhysicsStepUpdate", &Transformable::PrePhysicsStepUpdate, &TransformableWrap::DefaultPrePhysicsStepUpdate)
-      //.def("FilterContact", &Transformable::FilterContact, &TransformableWrap::DefaultFilterContact)
+      .def("FilterContact", &Transformable::FilterContact, &TransformableWrap::DefaultFilterContact)
       .def("PostPhysicsStepUpdate", &Transformable::PostPhysicsStepUpdate, &TransformableWrap::DefaultPostPhysicsStepUpdate)
       .def("RenderCollisionGeometry", &Transformable::RenderCollisionGeometry)
       .def("GetRenderCollisionGeometry", &Transformable::GetRenderCollisionGeometry)

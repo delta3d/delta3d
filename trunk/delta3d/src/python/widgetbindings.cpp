@@ -83,15 +83,9 @@ class WidgetWrap : public Widget
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(C_overloads, Config, 0, 1)
 
-void SetWinDataHWND(WinData* winData, long hwnd)
-{
-   winData->hwnd = (Producer::Window)hwnd;
-}
-
-long GetWinDataHWND(WinData* winData)
-{
-   return (long)winData->hwnd;
-}
+#if defined(_OSX_AGL_IMPLEMENTATION)
+BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(OpaqueWindowPtr)
+#endif
 
 void SendEmptyMessage(Base* base, std::string message)
 {
@@ -139,10 +133,7 @@ void initWidgetBindings()
       .def_readonly("msgSetPath", &Widget::msgSetPath)
       .def_readonly("msgWindowData", &Widget::msgWindowData)
       .def_readonly("msgQuit", &Widget::msgQuit)
-      #ifndef __APPLE__
-      // Boost.Python on OSX cannot handle using the Producer::Window type :(
       .def("Config", &Widget::Config, &WidgetWrap::DefaultConfig)
-      #endif
       .def("Quit", &Widget::Quit, &WidgetWrap::DefaultQuit)
       .def("SetPath", &Widget::SetPath)
       .def("SendMessage", SendEmptyMessage)
@@ -157,15 +148,10 @@ void initWidgetBindings()
       .def_readwrite("width", &WinRect::width)
       .def_readwrite("height", &WinRect::height);
 
-   #ifndef __APPLE__   
-   // Boost.Python on OSX cannot handle using the Producer::Window type :(
    class_<WinData, bases<WinRect> >("WinData", init<optional<Producer::Window, int, int, int, int> >())
       .def_readwrite("hwnd", &WinData::hwnd)
-      .def("SetHWND", SetWinDataHWND)
-      .def("GetHWND", GetWinDataHWND);
       ;
-   #endif
-      
+   
    {   
       scope MouseEvent_scope = class_<MouseEvent>("MouseEvent", init<optional<int, float, float, int> >())
          .def_readwrite("event", &MouseEvent::event)
