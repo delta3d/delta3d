@@ -1,8 +1,11 @@
 #include <CEGUI/CEGUI.h>
 
-#include "dtGUI/dtgui.h"
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtABC/application.h>
+#include <dtCore/globals.h>
+#include <dtCore/inputmapper.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/joystick.h>
+#include <dtGUI/ceuidrawable.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -29,7 +32,7 @@ public:
    /**
    * Constructor.
    */
-   TestInputApp( std::string configFile = "config.xml" )
+   TestInputApp( const std::string& configFile = "config.xml" )
       : Application( configFile ),
       mGUILoaded(false)
    {
@@ -121,7 +124,7 @@ public:
 
       try
       {
-         std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLook.scheme");
+         std::string schemeFileName = osgDB::findDataFile("schemes/WindowsLookSkin.scheme");
          CEGUI::SchemeManager::getSingleton().loadScheme(schemeFileName);
 
          CEGUI::System::getSingleton().setDefaultMouseCursor("WindowsLook", "MouseArrow");
@@ -172,14 +175,11 @@ public:
    */
    virtual void ButtonMappingAcquired(ButtonMapping* mapping)
    {
-      LogicalButton* button = 
-         (LogicalButton*)mApplicationInputDevice->GetButton(mButtonIndex);
+      LogicalButton* button = static_cast<LogicalButton*>(mApplicationInputDevice->GetButton(mButtonIndex));
 
       button->SetMapping(mapping);
 
-      ButtonToButton* b2b = dynamic_cast<ButtonToButton*>(mapping);
-
-      if(b2b != NULL)
+      if( ButtonToButton* b2b = dynamic_cast<ButtonToButton*>(mapping) )
       {
          CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mButtonName);
 
@@ -196,14 +196,11 @@ public:
    */
    virtual void AxisMappingAcquired(AxisMapping* mapping)
    {
-      LogicalAxis* axis =
-         (LogicalAxis*)mApplicationInputDevice->GetAxis(mAxisIndex);
+      LogicalAxis* axis = static_cast<LogicalAxis*>(mApplicationInputDevice->GetAxis(mAxisIndex));
 
       axis->SetMapping(mapping);
 
-      AxisToAxis* a2a = dynamic_cast<AxisToAxis*>(mapping);
-
-      if(a2a != NULL)
+      if( AxisToAxis* a2a = dynamic_cast<AxisToAxis*>(mapping) )
       {
          CEGUI::Window *b = CEGUI::WindowManager::getSingleton().getWindow(mAxisName);
 
@@ -224,7 +221,7 @@ protected:
       Joystick::PollInstances();
 
       {
-         CEGUI::Static *w = (CEGUI::Static*)CEGUI::WindowManager::getSingleton().getWindow("Checkbox6");
+         CEGUI::Static *w = static_cast<CEGUI::Static*>(CEGUI::WindowManager::getSingleton().getWindow("Checkbox6"));
          if (mApplicationInputDevice->GetButton(0)->GetState())
          {
             w->setBackgroundColours( kOn );
@@ -236,7 +233,7 @@ protected:
       }
 
       {
-         CEGUI::Static *w = (CEGUI::Static*)CEGUI::WindowManager::getSingleton().getWindow("Checkbox7");
+         CEGUI::Static *w = static_cast<CEGUI::Static*>(CEGUI::WindowManager::getSingleton().getWindow("Checkbox7"));
          if (mApplicationInputDevice->GetButton(1)->GetState())
          {
             w->setBackgroundColours( kOn );
@@ -248,7 +245,7 @@ protected:
       }
 
       {
-         CEGUI::Static *w = (CEGUI::Static*)CEGUI::WindowManager::getSingleton().getWindow("Checkbox8");
+         CEGUI::Static *w = static_cast<CEGUI::Static*>(CEGUI::WindowManager::getSingleton().getWindow("Checkbox8"));
          if (mApplicationInputDevice->GetButton(2)->GetState())
          {
             w->setBackgroundColours( kOn );
@@ -260,11 +257,11 @@ protected:
       }
 
 
-      CEGUI::ProgressBar *bar1 = (CEGUI::ProgressBar*)CEGUI::WindowManager::getSingleton().getWindow("Axis 1 Slider");
+      CEGUI::ProgressBar *bar1 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 1 Slider"));
       bar1->setProgress( (mApplicationInputDevice->GetAxis(0)->GetState()+1.f)*0.5f);
 
 
-      CEGUI::ProgressBar *bar2 = (CEGUI::ProgressBar*)CEGUI::WindowManager::getSingleton().getWindow("Axis 2 Slider");
+      CEGUI::ProgressBar *bar2 = static_cast<CEGUI::ProgressBar*>(CEGUI::WindowManager::getSingleton().getWindow("Axis 2 Slider"));
       bar2->setProgress( (mApplicationInputDevice->GetAxis(1)->GetState()+1.f)*0.5f );
 
    }
@@ -274,7 +271,7 @@ protected:
    */
    static bool CallbackHandler(const CEGUI::EventArgs& e)
    {
-      CEGUI::Window* w = (CEGUI::Window*)((const CEGUI::WindowEventArgs&)e).window;
+      CEGUI::Window* w = static_cast<const CEGUI::WindowEventArgs&>(e).window;
       
       switch( w->getID() )
       {
