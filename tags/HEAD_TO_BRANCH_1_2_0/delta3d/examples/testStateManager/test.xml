@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransitionList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../data/transitionlist.xsd">
+	<Transition>
+		<Event Type="ALT"/>
+		<FromState Type="SHELL" Name="Shell"/>
+		<ToState Type="OPTIONS" Name="Options"/>
+	</Transition>
+	
+	<Transition>
+		<Event Type="ALT"/>
+		<FromState Type="OPTIONS" Name="Options"/>
+		<ToState Type="SHELL" Name="Shell"/>
+	</Transition>
+	
+	<Transition>
+	   <Event Type="START" />
+		<FromState Type="SHELL" Name="Shell"/>
+		<ToState Type="GAME" Name="Game"/>
+	</Transition>
+	
+	<Transition>
+		<Event Type="START"/>
+		<FromState Type="OPTIONS" Name="Options"/>
+		<ToState Type="GAME" Name="Game"/>
+	</Transition>
+	
+	<StartState Name="Shell"/>
+</TransitionList>

@@ -1,0 +1,29 @@
+# Build script for the Dynamic Actor Layer module.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+if OS == 'darwin':
+   overrideShLink = '$LINKFLAGS -bundle -flat_namespace -undefined suppress'
+   overrideShSuffix = '.dylib'
+else:
+   overrideShLink = ''
+   overrideShSuffix = ''
+
+# Grab all the sources from the DAL source directory.
+srcs = SGlob( '*.cpp' )
+
+deps = [ 'dtDAL', 'dtUtil', 'dtCore', 'dtChar', 'dtABC', 'dtAudio', 'isense', 'ode',
+        'OpenThreads', 'osg', 'osgDB', 'osgParticle', 'osgText',
+        'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer','cal3d','rbody',
+        'gdal', 'ul', 'js', 'Producer', 'opengl', 'User32', 'Advapi32',
+        'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit',
+        'Carbon' ]
+
+dtActors = env.BuildLib( 'dtActors', srcs, deps, ['DT_PLUGIN'],
+                     overrideShLinkFlags = overrideShLink, overrideShLibSuffix = overrideShSuffix )
+
+if OS == 'darwin':
+   Depends(dtActors, libdtDAL)
