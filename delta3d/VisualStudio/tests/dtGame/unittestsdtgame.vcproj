@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib dtGamed.lib osgd.lib"
+				AdditionalDependencies="dtCored.lib dtDALd.lib dtUtild.lib cppunitd.lib dtGamed.lib osgd.lib"
 				OutputFile="../../../tests/UnitTestsDtGamed.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -81,13 +81,13 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4101;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib dtGame.lib xerces-c_2.lib osg.lib"
+				AdditionalDependencies="dtCore.lib dtDAL.lib dtUtil.lib cppunit.lib dtGame.lib osg.lib"
 				OutputFile="../../../tests/UnitTestsDtGame.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
