@@ -759,6 +759,11 @@ else:
 
 if OS == 'linux' :
   env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
+
+  localCEGUIPath = '/usr/local/include/CEGUI'
+  if os.path.exists( localCEGUIPath ) and os.path.isdir( localCEGUIPath ) :
+     env.Append(CPPPATH=[localCEGUIPath])
+  
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
