@@ -591,12 +591,20 @@ opts.AddOptions(
    PackageOption( 'rti', 'RTI installation directory', 'no' )
 )
 
+def CommaConverter( value ) :
+   return value.split(',')
+
+opts.Add( 'cpppath', 'Additional include directories (comma delimited)', converter=CommaConverter  )
+opts.Add( 'libpath', 'Additional library directories (comma delimited)', converter=CommaConverter  )
+
 if OS == 'windows' :
    opts.Add( PathOption( 'prefix', 'Directory to install under', os.getcwd() ) )
 else :
    opts.Add( PathOption( 'prefix', 'Directory to install under', '/usr/local' ) )
 
 env = Environment( options = opts, tools = tools )
+
+print env.get('include')
 
 # append the outside env to ours
 for K in os.environ.keys():
@@ -609,11 +617,6 @@ if os.environ.has_key( 'CC' ) :
    env.Replace( CC = env['ENV']['CC'] )
 if os.environ.has_key( 'CXX' ) :
    env.Replace( CXX = env['ENV']['CXX'] )  
-
-if env['ENV'].has_key('CPPPATH') :
-   env.Append( CPPPATH = env['ENV']['CPPPATH'] )
-if env['ENV'].has_key('LIBPATH') :
-   env.Append( LIBPATH = env['ENV']['LIBPATH'] )
      
 # don't forget the Visual Studio paths...
 if OS == 'windows' :
@@ -640,6 +643,9 @@ else :
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc', 'CEGUI' ) ] ) # path for Crazy Eddie's GUI since they are too cool
+
+env.Append( CPPPATH = env.get('cpppath') )
+env.Append( LIBPATH = env.get('libpath') )
 
 if env['ENV'].has_key('QTDIR') :
    env.Append( TOOLS = 'qt' ) 
