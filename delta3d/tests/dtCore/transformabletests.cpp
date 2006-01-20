@@ -130,9 +130,9 @@ void TransformableTests::TestSetTransform()
    // Position
    const dReal* odePosition = dGeomGetPosition(geomID);
    CPPUNIT_ASSERT_MESSAGE( "ODE position should be (0.0f,0.0f,0.0f)",
-      osg::equivalent( odePosition[0], 0.0f, 1e-2f ) && 
-      osg::equivalent( odePosition[1], 0.0f, 1e-2f ) && 
-      osg::equivalent( odePosition[2], 0.0f, 1e-2f ) );
+      osg::equivalent( float(odePosition[0]), 0.0f, 1e-2f ) && 
+      osg::equivalent( float(odePosition[1]), 0.0f, 1e-2f ) && 
+      osg::equivalent( float(odePosition[2]), 0.0f, 1e-2f ) );
 
    // Rotation
    const dReal* odeRotation = dGeomGetRotation(geomID);

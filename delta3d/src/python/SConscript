@@ -104,7 +104,7 @@ if CheckForBoost() :
    elif OS == 'darwin' :
       boostLib = 'boost_python-1_33_1'
 
-   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d']
+   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d', 'rbody']
    
    if OS == 'windows' :
       pythonDeps += [  'User32' ] 
