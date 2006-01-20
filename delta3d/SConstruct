@@ -600,7 +600,7 @@ env = Environment( options = opts, tools = tools )
 
 # append the outside env to ours
 for K in os.environ.keys():
-   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX' ]:
+   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX', 'CPPPATH', 'LIBPATH' ]:
      env['ENV'][K]=SCons.Util.AppendPath( env['ENV'][K], os.environ[K] )
    else:
      env['ENV'][K]=os.environ[K]
@@ -609,6 +609,11 @@ if os.environ.has_key( 'CC' ) :
    env.Replace( CC = env['ENV']['CC'] )
 if os.environ.has_key( 'CXX' ) :
    env.Replace( CXX = env['ENV']['CXX'] )  
+
+if env['ENV'].has_key('CPPPATH') :
+   env.Append( CPPPATH = env['ENV']['CPPPATH'] )
+if env['ENV'].has_key('LIBPATH') :
+   env.Append( LIBPATH = env['ENV']['LIBPATH'] )
      
 # don't forget the Visual Studio paths...
 if OS == 'windows' :
@@ -763,7 +768,7 @@ if OS == 'linux' :
   localCEGUIPath = '/usr/local/include/CEGUI'
   if os.path.exists( localCEGUIPath ) and os.path.isdir( localCEGUIPath ) :
      env.Append(CPPPATH=[localCEGUIPath])
-  
+
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
