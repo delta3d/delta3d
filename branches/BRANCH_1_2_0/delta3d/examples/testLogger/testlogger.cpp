@@ -45,7 +45,7 @@ LoggerApplication::LoggerApplication() :
    mMotionModel(0),
    mCameraMode(CAM_FOLLOW_PLAYER),
    mKeyIsPressed(false),
-   mSimSpeedFactor(1.0)
+   mSimSpeedFactor(1.0f)
 {
    srand(static_cast<unsigned>(time(NULL)));
 }
@@ -87,7 +87,7 @@ void LoggerApplication::Config()
 //////////////////////////////////////////////////////////////////////////
 void LoggerApplication::SetupScene()
 {
-   mPlayer = CreateNewMovingActor("models/physics_happy_sphere.ive", 0.0, 0.0, false);
+   mPlayer = CreateNewMovingActor("models/physics_happy_sphere.ive", 0.0f, 0.0f, false);
    mPlayerIsValid = true;
 
    dtCore::Object *terrain = new dtCore::Object();
@@ -123,19 +123,19 @@ LoggerApplication::CreateNewMovingActor(const std::string &meshName, float veloc
       }
 
       // rescale our object to make it neat.
-      zScale = Random(.80, 1.20);
-      xScale = Random(.80, 1.20) * zScale;
-      yScale = Random(.80, 1.20) * zScale;
+      zScale = Random(0.80f, 1.2f);
+      xScale = Random(0.80f, 1.2f) * zScale;
+      yScale = Random(0.80f, 1.2f) * zScale;
       object->SetScale(osg::Vec3(xScale, yScale, zScale));
 
       // set initial random rotation (X = pitch, Y = roll, Z = yaw) for non rotating objects
       // don't change rotating objects cause the movement will follow the rotation, which may 
       // look wierd.
-      if (turnRate == 0.0)
+      if (turnRate == 0.0f)
       {
-         xRot = Random(-5, 5);
-         yRot = Random(-5, 5);
-         zRot = Random(0, 360);
+         xRot = Random(-5.0f, 5.0f);
+         yRot = Random(-5.0f, 5.0f);
+         zRot = Random(0.0f, 360.0f);
          object->SetRotation(osg::Vec3(xRot, yRot, zRot));
       }
    }
@@ -189,6 +189,8 @@ void LoggerApplication::SetCameraMode(CameraMode mode)
       {
          mMotionModel = new dtCore::OrbitMotionModel(GetKeyboard(),GetMouse());
          mMotionModel->SetTarget(GetCamera());
+         dtCore::Transform tx(0.0f,-10.0f,0.0f);
+         GetCamera()->SetTransform(&tx);
       }
       
       mMotionModel->SetEnabled(true);      
@@ -197,7 +199,7 @@ void LoggerApplication::SetCameraMode(CameraMode mode)
    {
       mMotionModel->SetEnabled(false);
       mPlayer->GetGameActor().AddChild(GetCamera());
-      dtCore::Transform tx(0,10,0,0,0,0);
+      dtCore::Transform tx(0.0f,10.0f,0.0f);
       GetCamera()->SetTransform(&tx,dtCore::Transformable::REL_CS);
    }
 }
@@ -253,9 +255,9 @@ void LoggerApplication::KeyPressed(dtCore::Keyboard *keyBoard,
          break;
 
       case Producer::Key_bracketleft:
-         mSimSpeedFactor = mSimSpeedFactor * 0.9;
-         if (mSimSpeedFactor < 0.10)
-            mSimSpeedFactor = 0.10;
+         mSimSpeedFactor = mSimSpeedFactor * 0.9f;
+         if (mSimSpeedFactor < 0.10f)
+            mSimSpeedFactor = 0.10f;
          else 
          {
             ss << "Decreasing Game Manager Speed to [" << mSimSpeedFactor << "]X Realtime.";
@@ -267,9 +269,9 @@ void LoggerApplication::KeyPressed(dtCore::Keyboard *keyBoard,
          break;
 
       case Producer::Key_bracketright:
-         mSimSpeedFactor = mSimSpeedFactor * 1.20;
-         if (mSimSpeedFactor > 10.0)
-            mSimSpeedFactor = 10.0;
+         mSimSpeedFactor = mSimSpeedFactor * 1.20f;
+         if (mSimSpeedFactor > 10.0f)
+            mSimSpeedFactor = 10.0f;
          else 
          {
             ss << "Increasing Game Manager Speed to [" << mSimSpeedFactor << "]X Realtime.";
@@ -281,7 +283,7 @@ void LoggerApplication::KeyPressed(dtCore::Keyboard *keyBoard,
          break;
 
       case Producer::Key_0:
-         mSimSpeedFactor = 1.0;
+         mSimSpeedFactor = 1.0f;
          ss << "Resetting Game Manager Speed to [" << mSimSpeedFactor << "] == Realtime.";
          std::cout << ss.str() << std::endl;
          mClientGM->ChangeTimeSettings(mClientGM->GetSimulationTime(), 
@@ -293,23 +295,23 @@ void LoggerApplication::KeyPressed(dtCore::Keyboard *keyBoard,
          break;
 
       case Producer::Key_B:
-         turn = Random(-0.60, 0.60);
+         turn = Random(-0.60f, 0.60f);
          if (turn < 0.1f && turn > -0.1f) 
             turn = 0.1f;
          
-         velocity = Random(-12.0, 12.00);
+         velocity = Random(-12.0f, 12.0f);
          if (velocity < 0.5f && velocity > -0.5f) 
             velocity = 0.0f;
          
-         chance = Random(0.0, 1.0);
+         chance = Random(0.0, 1.0f);
    
          // make only some of them move cause it causes problems computing 
          // the intersection with the ground. (Performance bug..)
-         chance2 = Random(0.0, 1.0);
-         if (chance2 <= 0.75)
+         chance2 = Random(0.0f, 1.0f);
+         if (chance2 <= 0.75f)
             velocity = 0.0f;
          
-         if (chance <= 0.5)
+         if (chance <= 0.5f)
             obj = CreateNewMovingActor("models/physics_crate.ive",velocity,turn,true);
          else
             obj = CreateNewMovingActor("models/physics_barrel.ive",velocity,turn,true);
