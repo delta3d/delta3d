@@ -422,7 +422,7 @@ class DeltaFrame:
         if self.configured:
             self.widget.SendMessage(Widget.msgResize, winData)
         else:
-            winData.SetHWND(self.frame.winfo_id())
+            winData.hwnd = self.frame.winfo_id()
             self.widget.SendMessage(Widget.msgWindowData, winData)
             self.configured = True
             self.frame.after(1, self.step)
