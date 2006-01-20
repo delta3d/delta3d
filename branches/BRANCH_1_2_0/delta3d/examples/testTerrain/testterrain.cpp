@@ -142,10 +142,8 @@ public:
 
       dtABC::Weather *weather = new dtABC::Weather();
       weather->SetTheme(dtABC::Weather::THEME_FAIR);
-      weather->SetBasicVisibilityType(dtABC::Weather::VIS_MODERATE);
-    
+      
       mEnvironment = weather->GetEnvironment();
-      mEnvironment->SetVisibility(6000.0f);
       mEnvironment->SetDateTime(2005,3,7,14,0,0);
      
       mEnvironment->AddChild(mTerrain.get());
