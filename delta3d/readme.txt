@@ -214,7 +214,7 @@ Win32 w/ Visual Studio .NET 7.1
    You'll need:
    -Visual Studio .Net 2003
    -Qt 4.1.0, the windows open-source release 
-    ftp://ftp.trolltech.com/qt/source/qt-win-opensource-desktop-4.0.1.zip
+    ftp://ftp.trolltech.com/qt/source/qt-win-opensource-src-4.0.1.zip
    -Python
     http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
    -acs4qt41.zip 
