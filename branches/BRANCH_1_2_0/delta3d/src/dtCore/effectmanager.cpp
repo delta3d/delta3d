@@ -12,17 +12,15 @@
 #include <osgParticle/Emitter>
 #include <osgParticle/Particle>
 
-#include "dtCore/effectmanager.h"
-#include "dtCore/transformable.h"
-#include "dtCore/system.h"
-#include "dtCore/scene.h"
-#include "dtUtil/matrixutil.h"
+#include <dtCore/effectmanager.h>
+#include <dtCore/transformable.h>
+#include <dtCore/system.h>
+#include <dtCore/scene.h>
+#include <dtUtil/matrixutil.h>
 
 using namespace dtCore;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(EffectManager)
-
 
 /**
  * A visitor class that finds matrix transforms and sets their
@@ -224,7 +222,7 @@ void EffectManager::AddEffect(Effect* effect)
       mGroup->addChild(effect->GetNode());
    }
    
-   for(set<EffectListener*>::iterator it = mEffectListeners.begin();
+   for(std::set<EffectListener*>::iterator it = mEffectListeners.begin();
        it != mEffectListeners.end();
        it++)
    {
@@ -239,7 +237,7 @@ void EffectManager::AddEffect(Effect* effect)
  */
 void EffectManager::RemoveEffect(Effect* effect)
 {
-   for(vector<Effect*>::iterator it = mEffects.begin();
+   for(std::vector<Effect*>::iterator it = mEffects.begin();
        it != mEffects.end();
        it++)
    {
@@ -249,7 +247,7 @@ void EffectManager::RemoveEffect(Effect* effect)
 
          mEffects.erase(it);
 
-         for(set<EffectListener*>::iterator it2 = 
+         for(std::set<EffectListener*>::iterator it2 = 
                mEffectListeners.begin();
              it2 != mEffectListeners.end();
              it2++)
@@ -344,7 +342,7 @@ static void DeleteParticleEmitters(osg::Node* effectNode)
 {
    if(osg::Group* group = dynamic_cast<osg::Group*>(effectNode))
    {
-      vector<osg::Node*> nodesToRemove;
+      std::vector<osg::Node*> nodesToRemove;
 
       for(unsigned int i=0;i<group->getNumChildren();i++)
       {
@@ -360,7 +358,7 @@ static void DeleteParticleEmitters(osg::Node* effectNode)
          }
       }
 
-      for(vector<osg::Node*>::iterator it = nodesToRemove.begin();
+      for(std::vector<osg::Node*>::iterator it = nodesToRemove.begin();
           it != nodesToRemove.end();
           it++)
       {
@@ -382,9 +380,9 @@ void EffectManager::OnMessage(MessageData *data)
 
       if(mLastTime != 0)
       {
-         set<Effect*> effectsToRemove;
+         std::set<Effect*> effectsToRemove;
 
-         for(vector<Effect*>::iterator it = mEffects.begin();
+         for(std::vector<Effect*>::iterator it = mEffects.begin();
              it != mEffects.end();
              it++)
          {
@@ -430,7 +428,7 @@ void EffectManager::OnMessage(MessageData *data)
             }
          }
 
-         for(set<Effect*>::iterator it2 = effectsToRemove.begin();
+         for(std::set<Effect*>::iterator it2 = effectsToRemove.begin();
              it2 != effectsToRemove.end();
              it2++)
          {

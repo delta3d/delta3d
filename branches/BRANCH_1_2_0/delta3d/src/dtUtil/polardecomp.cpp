@@ -1,11 +1,10 @@
-#include "dtUtil/polardecomp.h"
-#include "dtUtil/matrixutil.h"
+#include <dtUtil/polardecomp.h>
+#include <dtUtil/matrixutil.h>
 
 using namespace dtUtil;
-using namespace osg;
 
 /** Copy nxn matrix A to C using "gets" for assignment **/
-void PolarDecomp::MatCopyMinusEqual( Matrix& C, const Matrix& A )
+void PolarDecomp::MatCopyMinusEqual( osg::Matrix& C, const osg::Matrix& A )
 {
    for( int i = 0; i < 3; i++ ) 
       for( int j = 0; j < 3; j++ )
@@ -21,24 +20,24 @@ void PolarDecomp::MatBinOpEqualPlus( osg::Matrix& C, const float g1, const osg::
 }
 
 /** Set MadjT to transpose of inverse of M times determinant of M **/
-void PolarDecomp::AdjointTranspose( const Matrix& M, Matrix& MadjT )
+void PolarDecomp::AdjointTranspose( const osg::Matrix& M, osg::Matrix& MadjT )
 {
    MatrixUtil::SetRow( MadjT, MatrixUtil::GetRow3(M,1)^MatrixUtil::GetRow3(M,2), 0);
    MatrixUtil::SetRow( MadjT, MatrixUtil::GetRow3(M,2)^MatrixUtil::GetRow3(M,0), 1);
    MatrixUtil::SetRow( MadjT, MatrixUtil::GetRow3(M,0)^MatrixUtil::GetRow3(M,1), 2);
 }
 
-float PolarDecomp::NormInf( const Matrix& M )
+float PolarDecomp::NormInf( const osg::Matrix& M )
 {
    return MatNorm( M, 0 );
 }
-float PolarDecomp::NormOne( const Matrix& M ) 
+float PolarDecomp::NormOne( const osg::Matrix& M ) 
 {
    return MatNorm( M, 1 );
 }
 
 /** Return index of column of M containing maximum abs entry, or -1 if M=0 **/
-int PolarDecomp::FindMaxCol( const Matrix& M )
+int PolarDecomp::FindMaxCol( const osg::Matrix& M )
 {
    float abs;
    
@@ -66,7 +65,7 @@ int PolarDecomp::FindMaxCol( const Matrix& M )
 }
 
 /** Setup u for Household reflection to zero all v components but first **/
-void PolarDecomp::MakeReflector( const Vec3& v, Vec3& u )
+void PolarDecomp::MakeReflector( const osg::Vec3& v, osg::Vec3& u )
 {
    float s = sqrt( v*v );
 
@@ -82,7 +81,7 @@ void PolarDecomp::MakeReflector( const Vec3& v, Vec3& u )
 }
 
 /** Apply Householder reflection represented by u to column vectors of M **/
-void PolarDecomp::ReflectCols( Matrix& M, const Vec3& u )
+void PolarDecomp::ReflectCols( osg::Matrix& M, const osg::Vec3& u )
 {
    for( int i = 0; i < 3; i++ ) 
    {
@@ -94,7 +93,7 @@ void PolarDecomp::ReflectCols( Matrix& M, const Vec3& u )
 }
 
 /** Apply Householder reflection represented by u to row vectors of M **/
-void PolarDecomp::ReflectRows( Matrix& M, const Vec3& u )
+void PolarDecomp::ReflectRows( osg::Matrix& M, const osg::Vec3& u )
 {
    for( int i = 0; i < 3; i++ )
    {
@@ -106,7 +105,7 @@ void PolarDecomp::ReflectRows( Matrix& M, const Vec3& u )
 }
 
 /** Compute either the 1 or infinity norm of M, depending on tpose **/
-float PolarDecomp::MatNorm( const Matrix& M, const int tpose )
+float PolarDecomp::MatNorm( const osg::Matrix& M, const int tpose )
 {
    float sum;
 
@@ -126,7 +125,7 @@ float PolarDecomp::MatNorm( const Matrix& M, const int tpose )
 }
 
 /** Find orthogonal factor Q of rank 1 (or less) M **/
-void PolarDecomp::DoRank1( Matrix& M, Matrix& Q )
+void PolarDecomp::DoRank1( osg::Matrix& M, osg::Matrix& Q )
 {
    Q.makeIdentity();
 
@@ -136,12 +135,12 @@ void PolarDecomp::DoRank1( Matrix& M, Matrix& Q )
    if( col < 0 ) 
       return; /* Rank is 0 */
       
-   Vec3 v1 = MatrixUtil::GetRow3( M, col );
+   osg::Vec3 v1 = MatrixUtil::GetRow3( M, col );
 
    MakeReflector(v1, v1); 
    ReflectCols(M, v1);
 
-   Vec3 v2 = MatrixUtil::GetRow3( M, 2 );
+   osg::Vec3 v2 = MatrixUtil::GetRow3( M, 2 );
    
    MakeReflector(v2, v2); 
    ReflectRows(M, v2);
@@ -156,7 +155,7 @@ void PolarDecomp::DoRank1( Matrix& M, Matrix& Q )
 }
 
 /** Find orthogonal factor Q of rank 2 (or less) M using adjoint transpose **/
-void PolarDecomp::DoRank2( Matrix& M, const Matrix& MadjT, Matrix& Q )
+void PolarDecomp::DoRank2( osg::Matrix& M, const osg::Matrix& MadjT, osg::Matrix& Q )
 {
    /* If rank(M) is 2, we should find a non-zero column in MadjT */
    int col = FindMaxCol(MadjT);
@@ -167,12 +166,12 @@ void PolarDecomp::DoRank2( Matrix& M, const Matrix& MadjT, Matrix& Q )
       return;
    } /* Rank<2 */
 
-   Vec3 v1 = MatrixUtil::GetRow3( MadjT, col );
+   osg::Vec3 v1 = MatrixUtil::GetRow3( MadjT, col );
    
    MakeReflector(v1, v1); 
    ReflectCols(M, v1);
 
-   Vec3 v2 = MatrixUtil::GetRow3(M,0) ^ MatrixUtil::GetRow3(M,1);
+   osg::Vec3 v2 = MatrixUtil::GetRow3(M,0) ^ MatrixUtil::GetRow3(M,1);
 
    MakeReflector(v2, v2); 
    ReflectRows(M, v2);
@@ -221,18 +220,18 @@ float PolarDecomp::Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix&
    
    // return and remove translation
    T = MatrixUtil::GetRow3( M, 3 );
-   Matrix noTransM = M;
+   osg::Matrix noTransM = M;
    
-   Vec4f newCol = Vec4f( 0.0f, 0.0f, 0.0f, 1.0f );
+   osg::Vec4 newCol = osg::Vec4( 0.0f, 0.0f, 0.0f, 1.0f );
    MatrixUtil::SetRow( noTransM, newCol, 3 );
    
-   Matrix Mk;
+   osg::Matrix Mk;
    MatrixUtil::Transpose( Mk, noTransM );
 
    float M_one = NormOne( Mk );  
    float M_inf = NormInf( Mk );
    
-   Matrix MadjTk, Ek;
+   osg::Matrix MadjTk, Ek;
    float det, MadjT_one, MadjT_inf, E_one, gamma, g1, g2;
 
    do

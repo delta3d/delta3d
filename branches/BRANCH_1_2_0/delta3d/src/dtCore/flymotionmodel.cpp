@@ -2,18 +2,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/flymotionmodel.h"
-#include "dtCore/scene.h"
+#include <dtCore/flymotionmodel.h>
+#include <dtCore/scene.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
 
 using namespace dtCore;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
-
 
 /**
  * Constructor.
@@ -61,7 +58,7 @@ FlyMotionModel::~FlyMotionModel()
  */
 void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(mDefaultInputDevice.get() == NULL)
+   if(!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice;
       
@@ -279,8 +276,7 @@ void FlyMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      double *messageData = (double *)data->userData;
-      double dtCore = messageData[1];
+      const double delta = *static_cast<const double *>(data->userData);
       
       Transform transform;
       
@@ -292,26 +288,23 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       if(mTurnLeftRightAxis != NULL)
       {
-         hpr[0] -= 
-            (float)(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
+         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * delta);
       }
       
       if(mTurnUpDownAxis != NULL)
       {
-         hpr[1] +=
-            (float)(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * dtCore);
+         hpr[1] += float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
       }
       
       hpr[2] = 0.0f;
       
       transform.SetRotation(hpr);
       
-      osg::Vec3 translation (0, 0, 0);
+      osg::Vec3 translation;
       
       if(mFlyForwardBackwardAxis != NULL)
       {
-         translation[1] = 
-            (float)(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * dtCore);
+         translation[1] = float(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * delta);
       }
       
       osg::Matrix mat;

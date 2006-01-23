@@ -18,7 +18,6 @@
 
 using namespace dtCore;
 using namespace dtUtil;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 

@@ -29,10 +29,12 @@
 #include <dtCore/timer.h>
 #include <map>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
 {
    class RenderSurface;
 }
+/// @endcond
 
 namespace dtCore
 {

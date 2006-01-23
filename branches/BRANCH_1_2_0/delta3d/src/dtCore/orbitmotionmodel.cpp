@@ -2,19 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/orbitmotionmodel.h"
-#include "dtCore/scene.h"
-#include "dtUtil/matrixutil.h"
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/scene.h>
+#include <dtUtil/matrixutil.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
 
 using namespace dtCore;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(OrbitMotionModel)
-
 
 /**
  * Constructor.
@@ -67,7 +64,7 @@ OrbitMotionModel::~OrbitMotionModel()
  */
 void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(mDefaultInputDevice.get() == NULL)
+   if(!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice;
       
@@ -385,7 +382,7 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
          
          dtUtil::MatrixUtil::TransformVec3(focus, mat);
          
-         hpr[0] -= (float)(delta * mAngularRate);
+         hpr[0] -= float(delta * mAngularRate);
          
          osg::Vec3 offset( 0.0f, -mDistance, 0.0f );
          
@@ -406,7 +403,7 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
          //sgXformPnt3(focus, mat);
          dtUtil::MatrixUtil::TransformVec3(focus, mat);
          
-         hpr[1] += (float)(delta * mAngularRate);
+         hpr[1] += float(delta * mAngularRate);
          
          if(hpr[1] < -89.9f)
          {
@@ -419,15 +416,13 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
          
          osg::Vec3 offset ( 0.0f, -mDistance, 0.0f );
          
-         //sgMakeCoordMat4(mat, focus, hpr);
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
          
-         //sgXformPnt3(xyz, offset, mat);
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
       }
       else if(axis == mDistanceAxis)
       {
-         float distDelta = -(float)(delta * mDistance * mLinearRate);
+         float distDelta = -float(delta * mDistance * mLinearRate);
          
          if(mDistance + distDelta < 1.0f)
          {
@@ -438,13 +433,10 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
          
          osg::Matrix mat;
          
-         //sgMakeRotMat4(mat, hpr);
          dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
          
-         //sgXformVec3(translation, mat);
          translation = osg::Matrix::transform3x3(translation, mat);
-         
-         //sgAddVec3(xyz, translation);
+
          xyz += translation;
          
          mDistance += distDelta;
@@ -453,20 +445,17 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
       {
          osg::Vec3 translation
          (
-            -(float)(delta * mDistance * mLinearRate),
+            -float(delta * mDistance * mLinearRate),
             0.0f,
             0.0f
          );
          
          osg::Matrix mat;
          
-         //sgMakeRotMat4(mat, hpr);
          dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
          
-         //sgXformVec3(translation, mat);
          translation = osg::Matrix::transform3x3(translation, mat);
          
-         //sgAddVec3(xyz, translation);
          xyz += translation;
       }
       else if(axis == mUpDownTranslationAxis)
@@ -475,18 +464,15 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
          (
             0.0f,
             0.0f,
-            -(float)(delta * mDistance * mLinearRate)
+            -float(delta * mDistance * mLinearRate)
          );
          
          osg::Matrix mat;
          
-         //sgMakeRotMat4(mat, hpr);
          dtUtil::MatrixUtil::HprToMatrix(mat, hpr);
          
-         //sgXformVec3(translation, mat);
          translation = osg::Matrix::transform3x3(translation, mat);
          
-         //sgAddVec3(xyz, translation);
          xyz += translation;
       }
       

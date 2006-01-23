@@ -60,13 +60,6 @@ namespace dtCore
           * Destructor.
           */
          virtual ~InfiniteTerrain();
-
-         /**
-          * Returns this object's OpenSceneGraph node.
-          *
-          * @return the OpenSceneGraph node
-          */
-         //virtual osg::Node* GetOSGNode();
          
          /**
           * Regenerates the terrain surface.
@@ -246,12 +239,6 @@ namespace dtCore
 
          //initializes info used for the GetColor function
          void SetupColorInfo();
-
-         
-         /**
-          * The container node.
-          */
-         //RefPtr<osg::Group> mNode;
          
          /**
           * The noise object.
@@ -321,10 +308,9 @@ namespace dtCore
          //added for vertex coloring
          float mMinHeight, mIdealHeight, mMaxHeight;
          float mMinColorIncrement, mMaxColorIncrement;
-         osg::Vec3f mMinColor, mIdealColor, mMaxColor;
+         osg::Vec3 mMinColor, mIdealColor, mMaxColor;
 
    };
 };
-
 
 #endif // DELTA_INFINITETERRAIN

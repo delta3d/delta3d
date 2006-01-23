@@ -77,11 +77,11 @@ namespace dtAudio
                typedef  std::vector<SfxObj*> SFX_LST;
 
             public:
-                                 SfxObj( std::string name = "sfxobj" );
+                                 SfxObj( const std::string& name = "sfxobj" );
                virtual           ~SfxObj();
 
                         void     SetList( SFX_LST* list );
-                        Sound*   GetSound( void )        const {  return   mSnd; }
+                        Sound*   GetSound()        const {  return   mSnd; }
 
             private:
                         Sound*   mSnd;
@@ -89,7 +89,7 @@ namespace dtAudio
          };
 
       public:
-                              SoundEffectBinder( std::string name = "soundeffectbinder" );
+                              SoundEffectBinder( const std::string& name = "soundeffectbinder" );
          virtual              ~SoundEffectBinder();
 
          /**
@@ -102,7 +102,7 @@ namespace dtAudio
          /**
           * Shutdown the SoundEffectBinder.
           */
-         virtual  void        Shutdown( void );
+         virtual  void        Shutdown();
 
          /**
           * Adds an effect manager whos effects we'll monitor.
