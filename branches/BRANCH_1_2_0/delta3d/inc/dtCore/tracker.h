@@ -28,9 +28,10 @@
 
 #include <string>
 
-//#ifdef Bool
-//#undef Bool
-//#endif
+// Hack to compensate for typedef collision on gcc.
+#ifdef Bool
+#undef Bool
+#endif
 
 #include <isense.h>
 #include <dtCore/inputdevice.h>
