@@ -1,26 +1,18 @@
-// testMultiWin.cpp : defines the implementation of the application
+// TestMultiWin.cpp : defines the implementation of the application
 
-#include "testMultiWin.h"
+#include "TestMultiWin.h"
+#include <dtCore/object.h>
+#include <dtCore/globals.h>
 
 using namespace dtCore;
 using namespace dtABC;
-using namespace std;
 
-IMPLEMENT_MANAGEMENT_LAYER( testMultiWin )
-
-testMultiWin::testMultiWin( string configFilename )
+TestMultiWin::TestMultiWin( const std::string& configFilename )
 : Application( configFilename )
 {
-   RegisterInstance( this );
 }
 
-
-testMultiWin::~testMultiWin()
-{
-   DeregisterInstance( this );
-}
-   
-void testMultiWin::Config()
+void TestMultiWin::Config()
 {
    //call the parent Config()
    dtABC::Application::Config();
@@ -83,7 +75,7 @@ void testMultiWin::Config()
    }
 }
 
-void testMultiWin::KeyPressed(   Keyboard*      keyboard, 
+void TestMultiWin::KeyPressed(   Keyboard*      keyboard, 
                                     Producer::KeyboardKey  key,
                                     Producer::KeyCharacter character )
 {
@@ -103,12 +95,12 @@ void testMultiWin::KeyPressed(   Keyboard*      keyboard,
 int main()
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testMultiWin/;" +
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/TestMultiWin/;" +
                         GetDeltaDataPathList()  );
 
 
    //Instantiate the application and look for the config file
-   RefPtr<testMultiWin> app = new testMultiWin( "config.xml" );
+   RefPtr<TestMultiWin> app = new TestMultiWin( "config.xml" );
 
    app->Config(); //configuring the application
    app->Run(); // running the simulation loop

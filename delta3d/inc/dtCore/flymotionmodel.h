@@ -26,12 +26,12 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "dtCore/keyboard.h"
-#include "dtCore/mouse.h"
-#include "dtCore/logicalinputdevice.h"
-#include "dtCore/motionmodel.h"
-#include "dtCore/inputdevice.h"
-#include "dtCore/system.h"
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/inputdevice.h>
+#include <dtCore/system.h>
 
 namespace dtCore
 {
@@ -41,7 +41,6 @@ namespace dtCore
    class DT_CORE_EXPORT FlyMotionModel : public MotionModel
    {
       DECLARE_MANAGEMENT_LAYER(FlyMotionModel)
-
 
       public:
 

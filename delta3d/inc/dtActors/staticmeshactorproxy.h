@@ -23,12 +23,14 @@
 
 #include <osg/Texture2D>
 #include <dtDAL/plugin_export.h>
-#include "dtActors/deltaobjectactorproxy.h"
+#include <dtActors/deltaobjectactorproxy.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
     class Texture2D;
 }
+/// @endcond
 
 namespace dtActors
 {

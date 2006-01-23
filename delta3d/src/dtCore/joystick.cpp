@@ -2,23 +2,19 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtCore/joystick.h>
+
 #include <iostream>
 #include <sstream>
 
-#include "dtCore/joystick.h"
-
 using namespace dtCore;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(Joystick)
-
 
 /**
  * The maximum number of joystick buttons.
  */
 const int maxJoystickButtons = 16;
-
 
 /**
  * Creates instances of Joystick corresponding to each
@@ -35,7 +31,7 @@ void Joystick::CreateInstances()
 
       if(joystick->notWorking() == JS_FALSE)
       {
-         ostringstream buf;
+         std::ostringstream buf;
 
          buf << "joystick " << i;
 
@@ -86,7 +82,7 @@ Joystick::Joystick(std::string name, jsJoystick* joystick)
 
    for(int i=0;i<maxJoystickButtons;i++)
    {
-      ostringstream buf;
+      std::ostringstream buf;
 
       buf << GetName() << " button " << i;
 
@@ -97,7 +93,7 @@ Joystick::Joystick(std::string name, jsJoystick* joystick)
 
    for(int j=0;j<mJoystick->getNumAxes();j++)
    {
-      ostringstream buf;
+      std::ostringstream buf;
 
       buf << GetName() << " axis " << j;
 

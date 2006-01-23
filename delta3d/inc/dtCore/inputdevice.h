@@ -30,10 +30,8 @@
 #include <string>
 #include <vector>
 
-#include "dtCore/refptr.h"
-
-#include "dtCore/base.h"
-
+#include <dtCore/base.h>
+#include <dtCore/refptr.h>
 
 namespace dtCore
 {
@@ -42,7 +40,6 @@ namespace dtCore
    class ButtonListener;
    class Axis;
    class AxisListener;
-
 
    /**
     * Represents an input device.
@@ -63,7 +60,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         InputDevice(std::string name = "InputDevice");
+         InputDevice(const std::string& name = "InputDevice");
 
          /**
           * Destructor.
@@ -207,7 +204,7 @@ namespace dtCore
           * @param owner the owner of this feature
           * @param description a description of this feature
           */
-         InputDeviceFeature(InputDevice* owner, std::string description);
+         InputDeviceFeature(InputDevice* owner, const std::string& description);
 
          /**
           * Destructor.
@@ -226,7 +223,7 @@ namespace dtCore
           *
           * @param description the new description
           */
-         void SetDescription(std::string description);
+         void SetDescription(const std::string& description);
 
          /**
           * Returns a description of this feature.
@@ -263,7 +260,7 @@ namespace dtCore
           * @param owner the owner of this button
           * @param description a description of this button
           */
-         Button(InputDevice* owner, std::string description);
+         Button(InputDevice* owner, const std::string& description);
 
          /**
           * Sets the state of this button.
@@ -344,7 +341,7 @@ namespace dtCore
           * @param owner the owner of this axis
           * @param description a description of this axis
           */
-         Axis(InputDevice* owner, std::string description);
+         Axis(InputDevice* owner, const std::string& description);
 
          /**
           * Sets the state of this axis.  The delta value is used to

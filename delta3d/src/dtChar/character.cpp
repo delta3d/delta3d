@@ -14,7 +14,6 @@
 using namespace dtCore;
 using namespace dtChar;
 using namespace dtUtil;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Character)
 
@@ -80,7 +79,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren() );
    }
 
-   string path = osgDB::findDataFile(mFilename);
+   std::string path = osgDB::findDataFile(mFilename);
    
    if(path.empty())
    {
@@ -110,7 +109,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       putenv("REPLICANTBODY_FILE_PATH=."); 
       
       // Find a unique name for the instance
-      string name = GetName();
+      std::string name = GetName();
       
       for(int i = 2;
           rbody::ReplicantBodyMgr::instance()->findCharacter(name) != NULL;
@@ -136,7 +135,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
          mCollisionRootNode.get()
       );
 
-      if(mBodyNode.get() == NULL)
+      if(!mBodyNode.valid())
       {
          Log::GetInstance("character.cpp").
             LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, 
@@ -259,11 +258,9 @@ void Character::OnMessage( Base::MessageData* data )
  */
 void Character::SetRotation(float rotation)
 {
-   if(mBodyNode.get() != NULL)
+   if( mBodyNode.valid() )
    {
-      mBodyNode->setRotation(
-         osg::DegreesToRadians(rotation - mRotation)
-         );
+      mBodyNode->setRotation( osg::DegreesToRadians(rotation - mRotation) );
    }
    
    // Normalize
@@ -297,8 +294,7 @@ void Character::SetVelocity(float velocity)
    
       float walkSpeed;
       
-      rbody::ActionRequest* walk = 
-         mBodyNode->getBody()->getActionPrototype("ACT_WALK");
+      rbody::ActionRequest* walk = mBodyNode->getBody()->getActionPrototype("ACT_WALK");
          
       walkSpeed = walk->getPropertyFloat("speed");
       
@@ -344,9 +340,7 @@ void Character::ExecuteAction(const std::string& name,
                               bool priority,
                               bool force)
 {
-   rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name);
-   
-   if(action != NULL)
+   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
@@ -369,9 +363,7 @@ void Character::ExecuteActionWithSpeed(const std::string& name,
                                        bool priority,
                                        bool force)
 {
-   rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name);
-   
-   if(action != NULL)
+   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
@@ -396,9 +388,7 @@ void Character::ExecuteActionWithAngle(const std::string& name,
                                        bool priority, 
                                        bool force)
 {
-   rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name);
-   
-   if(action != NULL)
+   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
@@ -425,9 +415,7 @@ void Character::ExecuteActionWithSpeedAndAngle(const std::string& name,
                                                bool priority,
                                                bool force)
 {
-   rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name);
-   
-   if(action != NULL)
+   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       

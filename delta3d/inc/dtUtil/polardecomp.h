@@ -25,9 +25,9 @@
 
 #include <iostream>
 
-#include "osg/Matrix"
-#include "osg/Vec3"
-#include "dtUtil/export.h"
+#include <osg/Matrix>
+#include <osg/Vec3>
+#include <dtUtil/export.h>
 
 namespace dtUtil
 {
@@ -42,16 +42,16 @@ namespace dtUtil
       static float Decompose( const osg::Matrix& M, osg::Matrix& Q, osg::Matrix& S, osg::Vec3& T );
 
    private:
-
+      
       /// Copy nxn matrix A to C using "gets" for assignment
       static void MatCopyMinusEqual( osg::Matrix& C, const osg::Matrix& A );
-
+      
       /// Assign nxn matrix C the element-wise combination of A and B using "op"
       static void MatBinOpEqualPlus( osg::Matrix& C, const float g1, const osg::Matrix& A, const float g2, const osg::Matrix& B );
-
+      
       /// Set MadjT to transpose of inverse of M times determinant of M
       static void AdjointTranspose( const osg::Matrix& M, osg::Matrix& MadjT );
-
+      
       static float NormInf( const osg::Matrix& M );
       static float NormOne( const osg::Matrix& M );
 

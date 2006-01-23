@@ -30,12 +30,14 @@
 #include <dtCore/mouse.h>
 #include <dtCore/refptr.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
 {
    class InputArea;
    class KeyboardMouse;
    class RenderSurface;
 }
+/// @endcond
 
 namespace dtCore
 {

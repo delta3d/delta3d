@@ -26,10 +26,12 @@
 #include <map>
 #include <set>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
 {
    class RenderSurface;
 }
+/// @endcond
 
 namespace dtCore
 {
