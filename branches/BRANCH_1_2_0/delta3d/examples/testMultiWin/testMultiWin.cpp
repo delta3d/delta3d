@@ -95,7 +95,7 @@ void TestMultiWin::KeyPressed(   Keyboard*      keyboard,
 int main()
 {
    //set data search path to parent directory and delta3d/data
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/TestMultiWin/;" +
+   SetDataFilePathList( GetDeltaRootPath() + "/examples/testMultiWin/;" +
                         GetDeltaDataPathList()  );
 
 
