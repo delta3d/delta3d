@@ -1,6 +1,6 @@
 // TestMultiWin.cpp : defines the implementation of the application
 
-#include "TestMultiWin.h"
+#include "testMultiWin.h"
 #include <dtCore/object.h>
 #include <dtCore/globals.h>
 
