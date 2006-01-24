@@ -40,7 +40,7 @@
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
-				ImportLibrary="../lib/testActorLibraryD.lib"
+				ImportLibrary="../../../lib/testGameActorLibraryd.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -99,7 +99,7 @@
 				OptimizeReferences="0"
 				EnableCOMDATFolding="0"
 				EntryPointSymbol=""
-				ImportLibrary="../lib/testActorLibrary.lib"
+				ImportLibrary="../../../lib/testGameActorLibrary.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
