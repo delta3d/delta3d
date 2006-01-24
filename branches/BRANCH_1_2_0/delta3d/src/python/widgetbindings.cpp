@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtABC/widget.h"
+#include <python/dtpython.h>
+#include <dtABC/widget.h>
 
 using namespace boost::python;
 using namespace dtABC;
@@ -112,6 +112,19 @@ void SendWindowDataMessage(Base* base, std::string message, WinData* userData)
    base->SendMessage(message, userData);
 }
 
+// Windows needs the long to HWND* conversion done ahead of time
+#ifdef WIN32
+void SetWinDataHWND(WinData* winData, long hwnd)
+{
+   winData->hwnd = Producer::Window(hwnd);
+}
+
+long GetWinDataHWND(WinData* winData)
+{
+   return long(winData->hwnd);
+}
+#endif
+
 void initWidgetBindings()
 {
    Widget* (*WidgetGI1)(int) = &Widget::GetInstance;
@@ -149,7 +162,12 @@ void initWidgetBindings()
       .def_readwrite("height", &WinRect::height);
 
    class_<WinData, bases<WinRect> >("WinData", init<optional<Producer::Window, int, int, int, int> >())
+      #ifdef WIN32
+      // Windows needs the long to HWND* conversion done ahead of time
+      .add_property("hwnd", &GetWinDataHWND, &SetWinDataHWND) 
+      #else
       .def_readwrite("hwnd", &WinData::hwnd)
+      #endif
       ;
    
    {   
