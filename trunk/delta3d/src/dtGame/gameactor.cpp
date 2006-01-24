@@ -372,7 +372,10 @@ namespace dtGame
             (i != mMessageHandlers.end()) && (*i->first == type); ++i)
       {
          if (i->second->GetName() == invokableName)
+         {
             mMessageHandlers.erase(i);
+            break;
+         }
       }
       
    }
