@@ -57,7 +57,6 @@
 			</Window>
 			<Window Type="WindowsLook/ProgressBar" Name="Axis 1 Slider">
 				<Property Name="RelativeRect" Value="l:0.7 t:0.25 r:0.9 b:0.35" />
-				<Property Name="MaximumValue" Value="100.0" />
 			</Window>
 			
 			<Window Type="WindowsLook/StaticText" Name="Axis 2">
@@ -72,7 +71,6 @@
 			</Window>
 			<Window Type="WindowsLook/ProgressBar" Name="Axis 2 Slider">
 				<Property Name="RelativeRect" Value="l:0.7 t:0.1 r:0.9 b:0.2" />
-				<Property Name="MaximumValue" Value="100.0" />
 			</Window>
 	
 
