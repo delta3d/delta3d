@@ -62,7 +62,7 @@ public:
    /*virtual*/ void BuildPropertyMap();
    /*virtual*/ bool IsPlaceable();
 
-   void SetActorTargetObject(ActorProxy* pDrawable);
+   void SetActorTargetObject(ActorProxy* node);
    dtCore::DeltaDrawable* GetActorTargetObject();
 
    void SetActorParentObject(ActorProxy* proxy);

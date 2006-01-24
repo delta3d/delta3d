@@ -40,18 +40,17 @@ namespace dtCore
 {
    class Camera;
    
-   /// Performs high-level frame coordination
-
-   /** The System is used to control the frame-based coordination of all the 
-     * dtCore classes.  There is only one instance of the System available and is
-     * always accessable using Instance();
-     * Once the application has created all the required instances, System::Run() 
-     * can be called and will block until System::Stop() gets called.  By 
-     * subscribing to the System, Base derived objects can receive the System 
-     * messages "preframe", "frame", "postframe", and "configure".
-     * @see AddListener()
-     * @see OnMessage()
-     */
+   /** 
+    * Performs high-level frame coordination. The System is used to control the frame-based coordination of all the 
+    * dtCore classes.  There is only one instance of the System available and is
+    * always accessable using Instance();
+    * Once the application has created all the required instances, System::Run() 
+    * can be called and will block until System::Stop() gets called.  By 
+    * subscribing to the System, Base derived objects can receive the System 
+    * messages "preframe", "frame", "postframe", and "configure".
+    * @see AddListener()
+    * @see OnMessage()
+    */
    class DT_CORE_EXPORT System : public Base 
    {
    public:

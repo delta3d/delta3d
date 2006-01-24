@@ -21,8 +21,8 @@
 #ifndef DELTA_LOGGERMESSAGES
 #define DELTA_LOGGERMESSAGES
 
-#include "dtGame/message.h"
-#include "dtGame/messageparameter.h"
+#include <dtGame/message.h>
+#include <dtGame/messageparameter.h>
 
 namespace dtGame
 {
@@ -37,14 +37,14 @@ namespace dtGame
     * The same message is used for status for all states, so not all parameters will always be relevant.
     * Note that this message wraps the status params with a LogStatus object.
     * @par
-    *    Related Message Types: LOG_INFO_STATUS</br>
-    *    Parameter: CurrentSimTime: The server's current sim time (always set, any state, double).</br>
-    *    Parameter: ActiveMap: The current loaded map (may be empty, any state, string).</br>
-    *    Parameter: LogFile: The current log file (may be empty, any state, string).</br>
-    *    Parameter: AutoRecordKeyframeInterval: Interval between automatic keyframes. Zero means no auto keyframes. (record only, double).</br>
-    *    Parameter: EstPlaybackTimeRemaining: Estimated time remaining for playback of cur file (playback only, double).</br>
-    *    Parameter: CurrentRecordDuration: Current length of the active recoring (record only, double).</br>
-    *    Parameter: NumRecordedMessages: Number of messages logged in current recording (record only, unsigned long).</br>
+    *    Related Message Types: LOG_INFO_STATUS\n
+    *    Parameter: CurrentSimTime: The server's current sim time (always set, any state, double).\n
+    *    Parameter: ActiveMap: The current loaded map (may be empty, any state, string).\n
+    *    Parameter: LogFile: The current log file (may be empty, any state, string).\n
+    *    Parameter: AutoRecordKeyframeInterval: Interval between automatic keyframes. Zero means no auto keyframes. (record only, double).\n
+    *    Parameter: EstPlaybackTimeRemaining: Estimated time remaining for playback of cur file (playback only, double).\n
+    *    Parameter: CurrentRecordDuration: Current length of the active recoring (record only, double).\n
+    *    Parameter: NumRecordedMessages: Number of messages logged in current recording (record only, unsigned long).\n
     */
    class DT_GAME_EXPORT LogStatusMessage : public Message
    {      
@@ -75,10 +75,10 @@ namespace dtGame
     * current log file.  This can only be sent during IDLE state (can't change the log
     * file while you are currently replaying or recording).
     * @par
-    *    Related Message Types: LOG_REQ_SET_LOGFILE</br>
+    *    Related Message Types: LOG_REQ_SET_LOGFILE\n
     *    Parameter: LogFileName : Logical name of the log.  This could be concatenated with
     *       other custom naming identifiers (including a file extension) depending on a 
-    *       particular LogStream implementation.</br>
+    *       particular LogStream implementation.\n
     */
    class DT_GAME_EXPORT LogSetLogfileMessage : public Message
    {      
@@ -120,10 +120,10 @@ namespace dtGame
     * This can only be sent during IDLE state (can't be deleting logs 
     * while you are currently replaying or recording).  
     * @par
-    *    Related Message Types: LOG_REQ_DELETE_LOG</br>
+    *    Related Message Types: LOG_REQ_DELETE_LOG\n
     *    Parameter: LogFileName : Logical name of the log.  This could be concatenated with
     *       other custom naming identifiers (including a file extension) depending on a 
-    *       particular LogStream implementation.</br>
+    *       particular LogStream implementation.\n
     */
    class DT_GAME_EXPORT LogDeleteLogfileMessage : public Message
    {      
@@ -169,11 +169,11 @@ namespace dtGame
     * Playback depending on the server implementation or the current logstream implementation. 
     * Note that this wraps the tag params with a LogTag object.
     * @par
-    *    Related Message Types: LOG_REQ_INSERT_TAG</br>
-    *    Parameter: TagName: Simple name of the tag (may be blank).</br>
-    *    Parameter: TagDescription: Longer Description of the tag (may be blank).</br>
-    *    Parameter: UniqueId: Unique ID for the Tag object (required).</br>
-    *    Parameter: SimTime: The simulation time that the tag was created (double).</br>
+    *    Related Message Types: LOG_REQ_INSERT_TAG\n
+    *    Parameter: TagName: Simple name of the tag (may be blank).\n
+    *    Parameter: TagDescription: Longer Description of the tag (may be blank).\n
+    *    Parameter: UniqueId: Unique ID for the Tag object (required).\n
+    *    Parameter: SimTime: The simulation time that the tag was created (double).\n
     */
    class DT_GAME_EXPORT LogInsertTagMessage : public Message
    {      
@@ -209,12 +209,12 @@ namespace dtGame
     * the current logstream implementation.  
     * Note that this message wraps the keyframe params with a LogKeyframe object.
     * @par
-    *    Related Message Types: LOG_REQ_CAPTURE_KEYFRAME</br>
-    *    Parameter: KeyframeName: Simple name of the keyframe (may be blank).</br>
-    *    Parameter: KeyframeDescription: Longer Description of the keyframe (may be blank).</br>
-    *    Parameter: UniqueId: Unique ID for the Keyframe object (required).</br>
-    *    Parameter: SimTime: The simulation time that the Keyframe was created (required - double).</br>
-    *    Parameter: ActiveMap: The map name that was current when the keyframe was snapshotted (required).</br>
+    *    Related Message Types: LOG_REQ_CAPTURE_KEYFRAME\n
+    *    Parameter: KeyframeName: Simple name of the keyframe (may be blank).\n
+    *    Parameter: KeyframeDescription: Longer Description of the keyframe (may be blank).\n
+    *    Parameter: UniqueId: Unique ID for the Keyframe object (required).\n
+    *    Parameter: SimTime: The simulation time that the Keyframe was created (required - double).\n
+    *    Parameter: ActiveMap: The map name that was current when the keyframe was snapshotted (required).\n
     */
    class DT_GAME_EXPORT LogCaptureKeyframeMessage : public Message
    {      
@@ -246,8 +246,8 @@ namespace dtGame
     * generate a periodic keyframe. If you use this at all, it is strongly recommended that 
     * you set this interval to be VERY large (like 5 or 10 minutes). Only relevant for record.
     * @par
-    *    Related Message Types: LOG_REQ_SET_AUTOKEYFRAMEINTERVAL</br>
-    *    Parameter: AutoKeyframeInterval: Interval in seconds (record state only, double)</br>
+    *    Related Message Types: LOG_REQ_SET_AUTOKEYFRAMEINTERVAL\n
+    *    Parameter: AutoKeyframeInterval: Interval in seconds (record state only, double)\n
     */
    class DT_GAME_EXPORT LogSetAutoKeyframeIntervalMessage : public Message
    {      
@@ -289,9 +289,9 @@ namespace dtGame
     * that a load keyframe is done.  It has the success/failure status.
     * This can only be sent during a PLAYBACK state.
     * @par
-    *    Related Message Types: LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS</br>
-    *    Parameter: SuccessFlag : True if success, false if failure. </br>
-    *    Parameter: FailureReason : May have a reason if successflag is false. </br>
+    *    Related Message Types: LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS\n
+    *    Parameter: SuccessFlag : True if success, false if failure. \n
+    *    Parameter: FailureReason : May have a reason if successflag is false. \n
     */
    class DT_GAME_EXPORT LogEndLoadKeyframeMessage : public Message
    {      
