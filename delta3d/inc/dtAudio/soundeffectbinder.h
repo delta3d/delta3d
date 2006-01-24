@@ -138,7 +138,7 @@ namespace dtAudio
           *
           * @param fxType the effect type to map
           * @param value to map
-          * @param minimum range if true, else maximum range
+          * @param minimum_range if true, else maximum range
           */
          virtual  void        AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range = true );
 
@@ -146,7 +146,7 @@ namespace dtAudio
           * Removes the specified effect type's audible range value.
           *
           * @param fxType the effect type to map
-          * @param minimum range if true, else maximum range
+          * @param minimum_range if true, else maximum range
           */
          virtual  void        RemoveEffectTypeRange( unsigned int fxType, bool minimum_range = true );
 

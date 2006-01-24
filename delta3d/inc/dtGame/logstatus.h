@@ -51,7 +51,8 @@ namespace dtGame
    };
 
    /**
-    * @class LogStatus A simple data class for basic Log Status information. This class has 
+    * @class LogStatus 
+    * A simple data class for basic Log Status information. This class has 
     * a copy constructor plus the = operator.
     */
    class DT_GAME_EXPORT LogStatus

@@ -16,12 +16,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
-
-/** \file dtUtil/stringutils.h
-  * Utility methods for using strings, often for XML purposes.
-  * \author John K. Grant
-  */
+ * @author John K. Grant
+ */
 
 #ifndef DELTA_XERCES_UTILS_INC
 #define DELTA_XERCES_UTILS_INC
@@ -29,10 +25,6 @@
 #ifdef _MSC_VER
    #pragma warning( disable:4251 )  
 #endif
-
-//XERCES_CPP_NAMESPACE_BEGIN
-//   class DOMNamedNodeMap;
-//XERCES_CPP_NAMESPACE_END
 
 #include <dtUtil/export.h>
 
@@ -47,12 +39,11 @@
 namespace dtUtil
 {
     /**
-     *  This is a simple class that lets us do easy (though not terribly efficient)
-     *  trancoding of XMLCh data to local code page for display.  This code was take from
-     *  the xerces-c 2.6 samples
-     *  <p>
-     *  It's main reason for existing is to allow short and quick translations for printing out debugging info.
-     *  </p>
+     * Utility methods for using strings, often for XML purposes.
+     * This is a simple class that lets us do easy (though not terribly efficient)
+     * trancoding of XMLCh data to local code page for display.  This code was take from
+     * the xerces-c 2.6 samples \n It's main reason for existing is to allow short and quick 
+     * translations for printing out debugging info.
      */
     class XMLStringConverter
     {
@@ -92,10 +83,10 @@ namespace dtUtil
 
    /** A utility that finds the string value for a specifically named attribute when a DOM Node is available.
      * Needed for DOM Document traversal.
-     * @param name the name of the attribute of interest.
+     * @param attributeName the name of the attribute of interest.
      * @param attrs the NamedNodeMap (attributes) to be searched.
      */
-   std::string DT_UTIL_EXPORT FindAttributeValueFor(const char* name,
+   std::string DT_UTIL_EXPORT FindAttributeValueFor(const char* attributeName,
                                                XERCES_CPP_NAMESPACE_QUALIFIER DOMNamedNodeMap* attrs);
 
    /** \brief Searches a Xerces XML Attribute list for names of interest.

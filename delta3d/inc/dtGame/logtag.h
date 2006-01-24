@@ -28,7 +28,8 @@
 namespace dtGame
 {
    /**
-    * @class LogTag A simple data class for basic Log Tag information. This class has 
+    * @class LogTag 
+    * A simple data class for basic Log Tag information. This class has 
     * a copy constructor plus ==, !=, =, <, and > operators.
     */
    class DT_GAME_EXPORT LogTag 

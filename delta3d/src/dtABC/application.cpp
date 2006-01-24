@@ -235,7 +235,7 @@ std::string dtABC::Application::GenerateDefaultConfigFile()
 void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
                                                      const XMLCh* const localname,
                                                      const XMLCh* const qname,
-                                                     const Attributes& attrs)
+                                                     const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
 {
    char* elementname = XMLString::transcode( localname );
    std::string ename( elementname );

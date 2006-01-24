@@ -28,7 +28,8 @@
 namespace dtGame
 {
    /**
-    * @class LogKeyframe A simple data class for basic Log Keyframe information. This class has 
+    * @class LogKeyframe 
+    * A simple data class for basic Log Keyframe information. This class has 
     * a copy constructor plus ==, !=, =, <, and > operators.
     */
    class DT_GAME_EXPORT LogKeyframe

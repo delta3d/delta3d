@@ -53,13 +53,13 @@ namespace dtCore
       /** 
        * Constructor
        *
-       * @param the name of the class as well as the window title
+       * @param name the name of the class as well as the window title
        * @param x the location of the window in pixels
        * @param y the location of the window in pixels
        * @param width the width of the window in pixels
        * @param height the height of the window in pixels
        * @param cursor true if you wish to use the default cursor, false if not
-       * @param fullscreen true if this window should be displayed fullscreen
+       * @param fullScreen true if this window should be displayed fullscreen
        */
       DeltaWin( const std::string& name = "window", int x = 100, int y = 100, int width = 640, 
                 int height = 480, bool cursor = true, bool fullScreen = false );
