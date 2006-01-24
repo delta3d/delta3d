@@ -9,8 +9,8 @@ already used the Win32 installer, you are ready to rock.
 Go ahead and try out the examples by running the executables found in
 the bin folder.
 
-There are also several useful utitilies also found in the bin/ folder.
-See the readme.txt in /utilities for more details.
+There are also several useful utitilies also found in the delta3d/bin folder.
+See the readme.txt in delta3d/utilities for more details.
 
 If you are a developer you'll want to build from the source
 which we provide with all our distributions. Please follow instructions
@@ -21,7 +21,6 @@ and don't hesistate to use the forums for any problems you may have. We'll do
 our best to respond as quick as possible.
 
 Sincerely,
-
 The Delta3D Team
 
 ########################
@@ -47,7 +46,7 @@ for other users.
 Check if you have the ext/ directory already in delta3d/. If you do not 
 have it, please download the latest version of delta3d-dependencies for
 Win32 or Fedora Core 4 from our SourceForge download site:
-https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125151
+http://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125151
 and extract it into the Delta3D folder.
 
 If you are not on Win32 or Fedore Core 4, you will need to either build the depedencies
@@ -142,7 +141,7 @@ Win32 w/ Visual Studio .NET 7.1
    VisualStudio/src/dtHLA/dthla.sln          : HLA library (RTI)
    VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
    VisualStudio/src/python/dtpython.sln      : python bindings (Python, Boost.Python)
-   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, BoostPython, RTI)
+   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, Boost.Python, RTI)
    VisualStudio/examples/*/*.sln             : individual examples
    VisualStudio/utilities/*/*.sln            : individual utilities
  
@@ -217,7 +216,7 @@ Win32 w/ Visual Studio .NET 7.1
    -acs4qt401p3.zip
     (get this from the Visual Studio dependencies release inside the ext/ directory)
 
-   Building Qt 4.1.0 Open Source Version with MSVC
+   Building Qt 4.0.1 Open Source Version with MSVC
    --------------------------------------------
 
    1. Make sure all of the above software is installed.
@@ -226,16 +225,21 @@ Win32 w/ Visual Studio .NET 7.1
       Overwrite any files with the ones from the patch.
       
    3. Follow instructions for the patch with its readme.
-   
+      Which should go something like this...
+      
    4. Open a cmd shell.
    
    5. Run:
       C:\Program Files\Microsoft Visual Studio .NET 2003
       \Common7\Tools\vsvars32.bat
-
-   6. Run qconfigure.
+      
+   6. Set your QTDIR environment variable to point to your Qt directory.
    
-   7. After many many hours, it should be all compiled up and happy.
+   7. Set QMAKESPEC to %QTDIR%\mkspecs\win32-msvc.net.
+
+   8. Run qconfigure.
+   
+   9. After many many hours, it should be all compiled up and happy.
       Qt is now built with MSVC!
    
    
