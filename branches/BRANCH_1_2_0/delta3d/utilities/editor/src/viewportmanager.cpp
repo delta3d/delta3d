@@ -270,7 +270,7 @@ namespace dtEditQt
             }
             else
             {
-               //billBoard->LoadImages(); //?
+                billBoard->LoadImages();
                 billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
                 if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
                 {
@@ -305,7 +305,7 @@ namespace dtEditQt
             }
             else
             {
-               //billBoard->LoadImages(); //?
+                billBoard->LoadImages();
                 billBoardIndex = this->masterScene->GetDrawableIndex(billBoard->GetDrawable());
                 if (billBoardIndex == (unsigned)this->masterScene->GetNumberOfAddedDrawable())
                 {
