@@ -208,40 +208,27 @@ Win32 w/ Visual Studio .NET 7.1
    So we had to find a way to compile Qt with MSVC. Here's the solution:
 
    You'll need:
-   -Visual Studio .Net 2003
+   -Visual Studio .NET 2003
    -Qt 4.0.1, the windows open-source release 
-    ftp://ftp.trolltech.com/qt/source/qt-win-opensource-src-4.0.1.zip
+    (ftp://ftp.trolltech.com/qt/source/qt-win-opensource-src-4.0.1.zip)
    -Python
-    http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
+    (http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi)
    -acs4qt401p3.zip
-    (get this from the Visual Studio dependencies release inside the ext/ directory)
-
+    (http://sourceforge.net/project/showfiles.php?group_id=49109& 
+     package_id=165202&release_id=360271), or from the Visual Studio dependencies release inside
+     the ext/ directory)
+   
    Building Qt 4.0.1 Open Source Version with MSVC
-   --------------------------------------------
-
+   -----------------------------------------------
    1. Make sure all of the above software is installed.
    
    2. Extract acs4qt401p3.zip inside your Qt directory.
       Overwrite any files with the ones from the patch.
       
    3. Follow instructions for the patch with its readme.
-      Which should go something like this...
-      
-   4. Open a cmd shell.
    
-   5. Run:
-      C:\Program Files\Microsoft Visual Studio .NET 2003
-      \Common7\Tools\vsvars32.bat
-      
-   6. Set your QTDIR environment variable to point to your Qt directory.
-   
-   7. Set QMAKESPEC to %QTDIR%\mkspecs\win32-msvc.net.
-
-   8. Run qconfigure.
-   
-   9. After many many hours, it should be all compiled up and happy.
+   4. After many many hours, it should be all compiled up and happy.
       Qt is now built with MSVC!
-   
    
    Building the Delta3D Editor with MSVC
    -------------------------------------
@@ -342,4 +329,3 @@ Win32 w/ SCons, Linux
    'scons rti=/path/to/rti hla'
 
    and SCons will build dtHLA, testHLA, and hlaStealthViewer.
-
