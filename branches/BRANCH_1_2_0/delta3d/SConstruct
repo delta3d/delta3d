@@ -165,12 +165,9 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
       if oldLIBS != []:
          context.env.Replace(LIBS = oldLIBS)
      
-      if ret == "":
-         context.Result(1)
-         return 1
 
-   context.Result(0)
-   return 0
+   context.Result(not ret)
+   return not ret
 
 ########################
 
@@ -726,7 +723,7 @@ if mode == 'debug':
                   #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
 		  CPPDEFINES=['SIGSLOT_PURE_ISO'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'  ])
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ])
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -742,7 +739,7 @@ else:
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ])
 
 #add to the CPPFLAGS variable if it's set in the environment
 if os.environ.has_key('CPPFLAGS'):
@@ -778,6 +775,7 @@ if OS == 'linux' :
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
+  env['FRAMEWORKS'] = ""
   env.Append(FRAMEWORKSPATH=['-F./ext/Frameworks' ])
   env.Append(CPPFLAGS=' $FRAMEWORKSPATH ' )
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
@@ -798,19 +796,18 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
 
    if OS == 'darwin':
       result = conf.CheckFramework(lib, language = 'C++', autoadd = autoadd)
-      if result != 0:
+      if result:
          resultText = 'framework'
    else:
-      result = 0
+      result = False
 
-   if result == 0:
-      result=conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
-      if result != 0:
+   if not result:
+      result = conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
+      if result:
          resultText = 'sharedLib'
-   
 
-   context.Result( result )
-   return resultText
+
+   context.Result(result )
 
 depsHash = {}
 
