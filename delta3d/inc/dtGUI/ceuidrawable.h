@@ -136,6 +136,11 @@ namespace dtGUI
                               Producer::KeyboardKey key,
                               Producer::KeyCharacter character);
 
+      ///pass the key released event to CEGUI
+      virtual void KeyReleased(dtCore::Keyboard* keyboard,
+                               Producer::KeyboardKey key,
+                               Producer::KeyCharacter character);
+
       virtual void MouseScrolled(dtCore::Mouse* mouse, int change);
       
       /**
