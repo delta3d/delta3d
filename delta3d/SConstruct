@@ -510,14 +510,11 @@ def CheckForBoost() :
    boostHeader = os.path.join('boost','python.hpp')
 
    if OS == 'windows' :
-      if mode == 'debug' :
-         boostLib = 'boost_python_debug.dll'
-      else :
-         boostLib = 'boost_python.dll'
+      boostLib = 'boost_python-vc71-mt.lib'
    elif OS == 'linux' :
-      boostLib = 'libboost_python-gcc.so'
+      boostLib = 'libboost_python-gcc-mt.so'
    elif OS == 'darwin' :
-      boostLib = 'libboost_python-1_33_1.dylib'
+      boostLib = 'libboost_python-gcc-mt.dylib'
 
    foundLib = 0
    for dir in env['LIBPATH'] :
@@ -601,8 +598,6 @@ else :
 
 env = Environment( options = opts, tools = tools )
 
-print env.get('include')
-
 # append the outside env to ours
 for K in os.environ.keys():
    if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX', 'CPPPATH', 'LIBPATH' ]:
@@ -658,13 +653,24 @@ if OS == 'darwin':
    env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'gdal.framework', 'Headers' ) ] ) # gdal since the includes are not done as <gdal/...>
 
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
-env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
+
+extPath = os.path.join( os.getcwd(), 'ext', 'lib' )
+if os.path.exists(extPath) :
+   env.Append( LIBPATH = [extPath] ) # Dependencies libs
 
 ## Boost Python
-if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
+if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) :
+  
    env.Append( CPPPATH = [ env.get('boost') ] )
-   env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )
-     
+   
+   libPath = os.path.join( env.get('boost'), 'lib' )
+   if os.path.exists(libPath) :
+      env.Append( LIBPATH = [libPath] )
+   else :
+      stagePath = os.path.join(env.get('boost'),'stage','lib')
+      if os.path.exists(stagePath) :
+         env.Append( LIBPATH = [stagePath] )
+         
  # RTI 
 rtiLibs = []
 if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.path.isdir( env.get('rti') ) :
