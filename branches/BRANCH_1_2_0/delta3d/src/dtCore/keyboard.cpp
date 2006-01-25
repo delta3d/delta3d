@@ -444,11 +444,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
 Keyboard::~Keyboard()
 {
    DeregisterInstance(this);
-
-   for(int i=0;i<GetFeatureCount();i++)
-   {
-      delete GetFeature(i);
-   }
 }
 
 /**
