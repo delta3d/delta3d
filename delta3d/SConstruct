@@ -159,7 +159,7 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
       ret = context.BuildProg(text, suffix)
 
       _YesNoResult(context, ret, sym, text)
-      if ret != "" or autoadd == 0:
+      if ret or autoadd == 0:
          context.env.Replace(LINKFLAGS = oldLINK)
       
       if oldLIBS != []:
@@ -290,6 +290,7 @@ def TOOL_BUNDLE(env):
           addToLink.append('$FRAMEWORKSPATH')
           for lib_name in deps:
             if foundLibs.has_key(lib_name):
+              print lib_name + " is a " + foundLibs[lib_name] 
               if foundLibs[lib_name] == 'framework':
                 #print "found " + lib_name + " as a framework"
                 addToLink.append('-framework')
@@ -310,18 +311,18 @@ def TOOL_BUNDLE(env):
        program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
     
        if OS == 'darwin' and buildAppBundle:
-          env ['VERSION_NUM'] = "1.2.0"
-          env ['VERSION_NAME'] = name + '.app'
-          bundle = env.MakeBundle ('#Applications/' + name + '.app', target,
+          envProg ['VERSION_NUM'] = "1.2.0"
+          envProg ['VERSION_NAME'] = name + '.app'
+          bundle = envProg.MakeBundle ('#Applications/' + name + '.app', target,
                                   'old.delta3d.' + name,
                                   '#macosx/Info.plist',
                                   'APPL',
                                   'Dt3D',
                                   '#macosx/icons/Default.icns')
-          env.Default (bundle)
+          envProg.Default (bundle)
     
-          inst = env.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
-       elif launchDir != env.get('prefix') :
+          inst = envProg.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
+       elif launchDir != envProg.get('prefix') :
           envProg.Install( '$prefix/share/delta3d/bin', program )
                     
 ########################
@@ -783,7 +784,7 @@ if OS == 'linux' :
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
-  env['FRAMEWORKS'] = ""
+  env['FRAMEWORKS'] = []
   env.Append(FRAMEWORKSPATH=['-F./ext/Frameworks' ])
   env.Append(CPPFLAGS=' $FRAMEWORKSPATH ' )
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
@@ -814,8 +815,8 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
       if result:
          resultText = 'sharedLib'
 
-
    context.Result(result )
+   return resultText
 
 depsHash = {}
 
@@ -1055,8 +1056,8 @@ if not env.GetOption('clean') :
    for lib in linkOrder :
       if extLibs.has_key(lib):
          foundLibs[extLibs[lib]] = conf.CheckLibOrFramework( extLibs[lib], autoadd = 1 )
-         if foundLibs[extLibs[lib]] == 'framework':
-            env.Append(LINKFLAGS = ' -framework ' + extLibs[lib])
+         #if foundLibs[extLibs[lib]] == 'framework':
+         #   env.Append(LINKFLAGS = ' -framework ' + extLibs[lib])
 
    #this actually SEARCHES, not good
    #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp') ,language='C++')
