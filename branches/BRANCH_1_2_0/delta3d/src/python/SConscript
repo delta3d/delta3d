@@ -97,12 +97,10 @@ if CheckForBoost() :
    # Build libs #
    ##############
       
-   if OS == 'windows' and mode == 'debug' :
-      boostLib = 'boost_python_debug'
-   elif OS == 'linux' :
-      boostLib = 'boost_python-gcc'
-   elif OS == 'darwin' :
-      boostLib = 'boost_python-1_33_1'
+   if OS == 'windows' :
+      boostLib = 'boost_python-vc71-mt'
+   else :
+      boostLib = 'boost_python-gcc-mt'
 
    pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d', 'rbody']
    
