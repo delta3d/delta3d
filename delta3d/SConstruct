@@ -859,7 +859,7 @@ if OS == 'windows' :
          'python'              : python_version,
          'cal3d'               : 'cal3d_d',
          'fltk'                : 'fltkd',
-         'gdal'                : 'gdal_iD',
+         'gdal'                : 'gdal_i',
          'gne'                 : 'gned',
          'HawkNL'              : 'NLstaticD',
          'isense'              : 'isensed',
