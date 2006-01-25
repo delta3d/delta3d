@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCored.lib dtDALd.lib cppunit.lib osg.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib cppunit.lib osg.lib xerces-c_2.lib"
 				OutputFile="../../../tests/UnitTestsDtUtil.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
