@@ -2,8 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Producer/KeyboardMouse>
-
 #include <dtCore/deltawin.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
@@ -15,71 +13,69 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
-class InputCallback : public Producer::KeyboardMouseCallback
+DeltaWin::InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
 {
-   public:
+}
 
-      InputCallback(Keyboard* keyboard, Mouse* mouse)
-         : mKeyboard(keyboard), mMouse(mouse)
-      {}
+void DeltaWin::InputCallback::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
+{
+   mMouse->mouseScroll(sm);
+}
 
-      void mouseScroll(ScrollingMotion sm)
-      {
-         mMouse->mouseScroll(sm);
-      }
+void DeltaWin::InputCallback::mouseMotion(float x, float y)
+{
+   mMouse->mouseMotion( x, y );
+}
 
-      void mouseMotion(float x, float y)
-      {
-         mMouse->mouseMotion( x, y );
-      }
+void DeltaWin::InputCallback::passiveMouseMotion(float x, float y)
+{
+   mMouse->passiveMouseMotion( x, y );
+}
 
-      void passiveMouseMotion(float x, float y)
-      {
-         mMouse->passiveMouseMotion( x, y );
-      }
+void DeltaWin::InputCallback::buttonPress(float x, float y, unsigned int button)
+{
+   mMouse->buttonPress(x, y, button);
+}
 
-      void buttonPress(float x, float y, unsigned int button)
-      {
-         mMouse->buttonPress(x, y, button);
-      }
+void DeltaWin::InputCallback::doubleButtonPress(float x, float y, unsigned int button)
+{
+   mMouse->doubleButtonPress(x, y, button);
+}
 
-      void doubleButtonPress(float x, float y, unsigned int button)
-      {
-         mMouse->doubleButtonPress(x, y, button);
-      }
+void DeltaWin::InputCallback::buttonRelease(float x, float y, unsigned int button)
+{
+   mMouse->buttonRelease(x, y, button);
+}
 
-      void buttonRelease(float x, float y, unsigned int button)
-      {
-         mMouse->buttonRelease(x, y, button);
-      }
+void DeltaWin::InputCallback::keyPress(Producer::KeyCharacter kc)
+{
+   mKeyboard->keyPress(kc);
+}
 
-      void keyPress(Producer::KeyCharacter kc)
-      {
-         mKeyboard->keyPress(kc);
-      }
+void DeltaWin::InputCallback::keyRelease(Producer::KeyCharacter kc)
+{
+   mKeyboard->keyRelease(kc);
+}
 
-      void keyRelease(Producer::KeyCharacter kc)
-      {
-         mKeyboard->keyRelease(kc);
-      }
+void DeltaWin::InputCallback::specialKeyPress(Producer::KeyCharacter kc)
+{
+   mKeyboard->specialKeyPress(kc);
+}
 
-      void specialKeyPress(Producer::KeyCharacter kc)
-      {
-         mKeyboard->specialKeyPress(kc);
-      }
+void DeltaWin::InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
+{
+   mKeyboard->specialKeyRelease(kc);
+}
 
-      void specialKeyRelease(Producer::KeyCharacter kc)
-      {
-         mKeyboard->specialKeyRelease(kc);
-      }
+void DeltaWin::InputCallback::SetKeyboard(Keyboard* kb)
+{
+   mKeyboard = kb;
+}
 
-
-   private:
-
-      RefPtr<Keyboard> mKeyboard;
-      RefPtr<Mouse> mMouse;
-};
-
+void DeltaWin::InputCallback::SetMouse(Mouse* m)
+{
+   mMouse = m;
+}
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -95,11 +91,12 @@ DeltaWin::DeltaWin(  const std::string& name,
    mKeyboardMouse( new Producer::KeyboardMouse( mRenderSurface ) ),
    mKeyboard( new Keyboard ),
    mMouse( new Mouse(mKeyboardMouse,"mouse") ),
-   mShowCursor(true)
+   mShowCursor(true),
+   mInputCallback(new InputCallback( mKeyboard.get(), mMouse.get() ))
 {
    RegisterInstance(this);
-   
-   mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
+
+   mKeyboardMouse->setCallback( mInputCallback.get() );
 
    if(!fullScreen)
    {
@@ -108,7 +105,6 @@ DeltaWin::DeltaWin(  const std::string& name,
 
    SetWindowTitle(name);
    ShowCursor(cursor);
-
 }
 
 DeltaWin::DeltaWin(  const std::string& name, 
@@ -119,7 +115,8 @@ DeltaWin::DeltaWin(  const std::string& name,
    mKeyboardMouse(0),
    mKeyboard( new Keyboard ),
    mMouse(0),
-   mShowCursor(true)
+   mShowCursor(true),
+   mInputCallback(0)
 {
    RegisterInstance(this);
 
@@ -137,6 +134,7 @@ DeltaWin::DeltaWin(  const std::string& name,
 
    mMouse = new Mouse( mKeyboardMouse, "mouse" );
 
+   mInputCallback = new InputCallback( mKeyboard.get(), mMouse.get() );
    mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
 
    SetWindowTitle(name);
@@ -213,12 +211,14 @@ void DeltaWin::SetKeyboard( Keyboard* keyboard )
 {
    assert( keyboard != 0 );
    mKeyboard = keyboard;
+   mInputCallback->SetKeyboard( mKeyboard.get() );
 }
 
 void DeltaWin::SetMouse( Mouse* mouse )
 {
    assert( mouse != 0 );
    mMouse = mouse;
+   mInputCallback->SetMouse( mMouse.get() );
 }
 
 const std::string& DeltaWin::GetWindowTitle() const

@@ -29,6 +29,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/refptr.h>
+#include <Producer/KeyboardMouse>   // for InputCallback's base class
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
@@ -164,8 +165,33 @@ namespace dtCore
 
       bool mShowCursor;
  
+      class InputCallback : public Producer::KeyboardMouseCallback
+      {
+      public:
+         InputCallback(Keyboard* keyboard, Mouse* mouse);
+
+         // virtual methods
+         void mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm);
+         void mouseMotion(float x, float y);
+         void passiveMouseMotion(float x, float y);
+         void buttonPress(float x, float y, unsigned int button);
+         void doubleButtonPress(float x, float y, unsigned int button);
+         void buttonRelease(float x, float y, unsigned int button);
+         void keyPress(Producer::KeyCharacter kc);
+         void keyRelease(Producer::KeyCharacter kc);
+         void specialKeyPress(Producer::KeyCharacter kc);
+         void specialKeyRelease(Producer::KeyCharacter kc);
+
+         void SetKeyboard(Keyboard* kb);
+         void SetMouse(Mouse* m);
+
+      private:
+         RefPtr<Keyboard> mKeyboard;
+         RefPtr<Mouse> mMouse;
+      };
+
+      RefPtr<InputCallback> mInputCallback;
    };
-  
 };
 
 #endif // DELTA_DELTA_WIN
