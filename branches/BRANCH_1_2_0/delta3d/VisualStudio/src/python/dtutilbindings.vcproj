@@ -31,7 +31,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python.lib python24.lib dtUtil.lib osg.lib"
+				AdditionalDependencies="boost_python-vc71-mt.lib python24.lib dtUtil.lib osg.lib"
 				OutputFile="../../../bin\PyDtUtil.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
