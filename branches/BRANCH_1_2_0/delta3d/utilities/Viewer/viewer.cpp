@@ -830,11 +830,6 @@ Viewer::InitInputDevices( void )
    omm->SetLeftRightTranslationAxis( secondaryLeftAndRight );
    omm->SetUpDownTranslationAxis( secondaryUpAndDown );
 
-   #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
-   omm->SetAngularRate(0.75);
-   omm->SetLinearRate(0.025f);
-   #endif
-   
    mMotionModel[ORBIT]  = omm;
 
 
