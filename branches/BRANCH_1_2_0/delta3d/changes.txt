@@ -5,6 +5,54 @@
 ##############################
 
 ---------
+| 1.2.0 |
+---------
+
+New Features
+------------
+-Coorindate system conversion utilities 
+
+-Support for new dependency versions
+ -OpenSceneGraph 1.0
+ -OpenAL 0.0.8
+ -Boost 1.33 and 1.33.1
+ -CEGUI 0.4.1
+
+-New data package 1.2.0
+
+-MacOS X builds will generate application bundles (requires pre-release of SCons 0.97)
+
+-Mousewheel support in dtGUI
+
+-New build script options:
+  cpppath=additional include directories (comma delimited)
+  libpath=additional library directories (comma delimited)
+
+Bug Fixes
+---------
+-Collision geometry is correctly set immediately after calls to SetCollisionBox, etc.
+ (previously this did not happen until the first PreFrame).
+
+-Plugged memory leak when using database paging.
+
+-Removed dependency on DELTA_ROOT environment variable when loading maps.
+
+-dtHLA::Entity::LoadFile works correctly in Python.
+
+-Can add InfiniteTerrains to the Scene in Python.
+
+-Fixed examples/testPython/testpythongui.py example (using Delta3D w/ Tkinter) to work on
+ Windows and Linux.
+ 
+-Producer keyboard events are properly injected into dtGUI.
+
+-Python bindings work on MacOS X.
+
+-Many little build scripts fixes, should help MacOS X and older versions of gcc.
+
+-dtGUI responds correctly to Producer window size changes
+
+---------
 | 1.1.0 |
 ---------
 
