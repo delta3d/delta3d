@@ -97,14 +97,16 @@ if CheckForBoost() :
    # Build libs #
    ##############
       
-   if OS == 'windows' and mode == 'debug' :
-      boostLib = 'boost_python_debug'
-   elif OS == 'linux' :
-      boostLib = 'boost_python-gcc'
+   if OS == 'windows' :
+      boostLib = 'boost_python-vc71-mt'
    elif OS == 'darwin' :
+      # This only has a hard-coded version since Boost.Python does not output
+      # with the same file naming convention as other platform (as of 1.33.1)
       boostLib = 'boost_python-1_33_1'
-
-   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d']
+   else :
+      boostLib = 'boost_python-gcc-mt'
+   
+   pythonDeps = ['osg','Producer','OpenThreads','xerces-c','python','osgUtil','osgText','osgParticle','osgDB','ode','js','isense','ul','cal3d','rbody','rvrutils','rcfgscript']
    
    if OS == 'windows' :
       pythonDeps += [  'User32' ] 

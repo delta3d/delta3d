@@ -40,7 +40,7 @@
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/unittestsdtutil.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -66,8 +66,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="../../../tests/dtUtil/windows-msvc-release"
+			IntermediateDirectory="../../../tests/dtUtil/windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -85,12 +85,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCored.lib dtDALd.lib cppunit.lib osg.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib cppunit.lib osg.lib xerces-c_2.lib"
 				OutputFile="../../../tests/UnitTestsDtUtil.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

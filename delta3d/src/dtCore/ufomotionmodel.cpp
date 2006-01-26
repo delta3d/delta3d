@@ -2,15 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/ufomotionmodel.h"
-#include "dtCore/scene.h"
+#include <dtCore/ufomotionmodel.h>
+#include <dtCore/scene.h>
 
 using namespace dtCore;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(UFOMotionModel)
-
 
 /**
  * Constructor.
@@ -59,7 +56,7 @@ UFOMotionModel::~UFOMotionModel()
  */
 void UFOMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(mDefaultInputDevice.get() == NULL)
+   if(!mDefaultInputDevice.valid())
    {
       mDefaultInputDevice = new LogicalInputDevice;
       
@@ -330,7 +327,7 @@ void UFOMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      double dtCore = *(double*)data->userData;
+      const double dtCore = *static_cast<const double*>(data->userData);
       
       Transform transform;
       
@@ -342,8 +339,7 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       if(mTurnLeftRightAxis != NULL)
       {
-         hpr[0] -= 
-            (float)(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
+         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
       }
       
       hpr[1] = 0.0f;
@@ -375,10 +371,8 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       transform.GetRotation(mat);
       
-      //sgXformVec3(translation, mat);
       translation = translation * mat;
       
-      //sgAddVec3(xyz, translation);
       xyz += translation;
       
       transform.SetTranslation(xyz);

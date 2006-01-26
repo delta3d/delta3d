@@ -76,9 +76,9 @@ class TestLightsApp(Application):
     def PreFrame(self, deltaFrameTime):
     
         #increment some values at different rates
-        self.countOne +=0.5
-        self.countTwo += 0.6
-        self.countThree += 0.7
+        self.countOne += 50.0*deltaFrameTime
+        self.countTwo += 60.0*deltaFrameTime
+        self.countThree += 70.0*deltaFrameTime
         
         #cap at 360
         if( self.countOne > 360.0 ):

@@ -788,7 +788,7 @@ namespace dtDAL
          const XMLCh* const uri,
          const XMLCh* const localname,
          const XMLCh* const qname,
-         const Attributes& attrs)
+         const xerces_dt::Attributes& attrs)
     {
         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
         {
@@ -1055,7 +1055,7 @@ namespace dtDAL
                            "Parsing Map Document Ended.\n");
     }
 
-    void MapContentHandler::error(const SAXParseException& exc)
+    void MapContentHandler::error(const xerces_dt::SAXParseException& exc)
     {
         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
@@ -1065,7 +1065,7 @@ namespace dtDAL
         throw exc;
     }
 
-    void MapContentHandler::fatalError(const SAXParseException& exc)
+    void MapContentHandler::fatalError(const xerces_dt::SAXParseException& exc)
     {
         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
             "FATAL-ERROR %d:%d - %s:%s - %s", exc.getLineNumber(),
@@ -1075,7 +1075,7 @@ namespace dtDAL
         throw exc;
     }
 
-    void MapContentHandler::warning(const SAXParseException& exc)
+    void MapContentHandler::warning(const xerces_dt::SAXParseException& exc)
     {
         mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
             "WARNING %d:%d - %s:%s - %s", exc.getLineNumber(),
@@ -1215,7 +1215,7 @@ namespace dtDAL
     void MapContentHandler::processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
 
 
-    void MapContentHandler::setDocumentLocator(const Locator* const locator) {}
+    void MapContentHandler::setDocumentLocator(const xerces_dt::Locator* const locator) {}
 
     InputSource* MapContentHandler::resolveEntity(const XMLCh* const publicId, const XMLCh* const systemId)
     {
@@ -1245,7 +1245,7 @@ namespace dtDAL
     void MapWriter::MapFormatTarget::writeChars(
                                                 const XMLByte* const toWrite,
                                                 const unsigned int count,
-                                                XMLFormatter* const formatter)
+                                                xerces_dt::XMLFormatter* const formatter)
     {
 
         if (mOutFile != NULL)

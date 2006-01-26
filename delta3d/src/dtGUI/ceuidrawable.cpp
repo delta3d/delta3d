@@ -186,8 +186,18 @@ void CEUIDrawable::KeyPressed(Keyboard* keyboard,
    {
       CEGUI::System::getSingleton().injectKeyDown(scanKey);
    }
-   
+
    CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(character) );   
+}
+
+void CEUIDrawable::KeyReleased(Keyboard* keyboard, 
+                               Producer::KeyboardKey key,
+                               Producer::KeyCharacter character)
+{
+   if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
+   {
+      CEGUI::System::getSingleton().injectKeyDown(scanKey);
+   }
 }
 
 /**  Display the properties associated with the supplied CEGUI::Window to the 

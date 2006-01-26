@@ -3,20 +3,20 @@
 
 #include <CEGUI/CEGUI.h>
 
-#include "dtABC/application.h"
+#include <dtABC/application.h>
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/deltawin.h>
 
-class TestWinApp   :  public   dtABC::Application
+class TestWinApp : public dtABC::Application
 {
 
 public:
-
-   TestWinApp( std::string configFilename = "config.xml" );
+   TestWinApp( const std::string& configFilename = "config.xml" );
+protected:
    ~TestWinApp() {};
+public:
 
    virtual void Config();
-
    virtual void PostFrame( const double deltaFrameTime );
 
 private:

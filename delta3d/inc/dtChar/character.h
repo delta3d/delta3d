@@ -137,7 +137,7 @@ namespace dtChar
          /**
           * Executes a character action.
           *
-          * @param action the name of the action to execute
+          * @param name the name of the action to execute
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
           */

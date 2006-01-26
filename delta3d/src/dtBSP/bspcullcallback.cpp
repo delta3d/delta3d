@@ -6,7 +6,6 @@
 #include <dtBSP/bspcullcallback.h>
 
 using namespace dtBSP;
-using namespace std;
 
 /**
  * Reads a BSP node from the input stream.
@@ -86,16 +85,15 @@ bool BSPCullCallback_readLocalData(osg::Object& obj, osgDB::Input& fr)
  */
 void writeBSPNode(BSPNode* bspNode, osgDB::Output& fw)
 {
-   BSPInternalNode* bspin = dynamic_cast<BSPInternalNode*>(bspNode);
-   
-   if(bspin != NULL)
+  
+   if( BSPInternalNode* bspin = dynamic_cast<BSPInternalNode*>(bspNode) )
    {
-      fw.indent() << "BSPInternalNode {" << endl;
+      fw.indent() << "BSPInternalNode {" << std::endl;
       
       fw.moveIn();
       
       osg::Vec4 pPlane = bspin->GetPartitioningPlane().asVec4();
-      fw.indent() << "PartitioningPlane " << pPlane[0] << " " << pPlane[1] << " " << pPlane[2] << " " << pPlane[3] << endl;
+      fw.indent() << "PartitioningPlane " << pPlane[0] << " " << pPlane[1] << " " << pPlane[2] << " " << pPlane[3] << std::endl;
 
       writeBSPNode(bspin->GetLeftChild(), fw);
       
@@ -103,7 +101,7 @@ void writeBSPNode(BSPNode* bspNode, osgDB::Output& fw)
       
       fw.moveOut();
       
-      fw.indent() << "}" << endl;
+      fw.indent() << "}" << std::endl;
    }
    else
    {
@@ -111,7 +109,7 @@ void writeBSPNode(BSPNode* bspNode, osgDB::Output& fw)
    
       fw.indent() << "BSPLeafNode {";
       
-      fw << endl;
+      fw << std::endl;
          
       fw.moveIn();
       
@@ -119,7 +117,7 @@ void writeBSPNode(BSPNode* bspNode, osgDB::Output& fw)
       
       fw.moveOut();
       
-      fw.indent() << "}" << endl;
+      fw.indent() << "}" << std::endl;
    }
 } 
 
@@ -173,7 +171,7 @@ bool PotentiallyVisibleSet_readLocalData(osg::Object& obj, osgDB::Input& fr)
       
       while(!fr.matchSequence("}"))
       {
-         dtCore::RefPtr<osg::Node> node = dynamic_cast<osg::Node*>(
+         osg::ref_ptr<osg::Node> node = dynamic_cast<osg::Node*>(
             fr.readObject()
          );
          
@@ -192,7 +190,7 @@ bool PotentiallyVisibleSet_readLocalData(osg::Object& obj, osgDB::Input& fr)
       
       while(!fr.matchSequence("}"))
       {
-         dtCore::RefPtr<osg::Node> node = dynamic_cast<osg::Node*>(
+         osg::ref_ptr<osg::Node> node = dynamic_cast<osg::Node*>(
             fr.readObject()
          );
          
@@ -217,19 +215,19 @@ bool PotentiallyVisibleSet_readLocalData(osg::Object& obj, osgDB::Input& fr)
  */
 bool PotentiallyVisibleSet_writeLocalData(const osg::Object& obj, osgDB::Output& fw)
 {
-   osg::Object& mut_obj = (osg::Object&)obj;
+   const osg::Object& mut_obj = static_cast<const osg::Object&>(obj);
    
-   PotentiallyVisibleSet& pvs = dynamic_cast<PotentiallyVisibleSet&>(mut_obj);
+   const PotentiallyVisibleSet& pvs = dynamic_cast<const PotentiallyVisibleSet&>(mut_obj);
    
    fw.indent() << "NodesToDisable {";
       
    if(pvs.GetNodesToDisable().size() > 0)
    {
-      fw << endl;
+      fw << std::endl;
       
       fw.moveIn();
    
-      for(NodeSet::iterator it = pvs.GetNodesToDisable().begin();
+      for(NodeSet::const_iterator it = pvs.GetNodesToDisable().begin();
           it != pvs.GetNodesToDisable().end();
           it++)
       {
@@ -241,17 +239,17 @@ bool PotentiallyVisibleSet_writeLocalData(const osg::Object& obj, osgDB::Output&
       fw.indent();
    }
    
-   fw << "}" << endl;
+   fw << "}" << std::endl;
    
    fw.indent() << "NodesToEnable {";
    
    if(pvs.GetNodesToEnable().size() > 0)
    {
-      fw << endl;
+      fw << std::endl;
       
       fw.moveIn();
    
-      for(NodeSet::iterator it = pvs.GetNodesToEnable().begin();
+      for(NodeSet::const_iterator it = pvs.GetNodesToEnable().begin();
           it != pvs.GetNodesToEnable().end();
           it++)
       {
@@ -263,7 +261,7 @@ bool PotentiallyVisibleSet_writeLocalData(const osg::Object& obj, osgDB::Output&
       fw.indent();
    }
    
-   fw << "}" << endl;
+   fw << "}" << std::endl;
    
    return true;
 }
@@ -326,7 +324,7 @@ BSPNode* BSPCullCallback::GetBSPTree()
  */
 void BSPCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
-   if(mBSPTree.get() != NULL)
+   if(mBSPTree.valid())
    {
       PotentiallyVisibleSet* pvs = 
          mBSPTree->GetPotentiallyVisibleSet(nv->getEyePoint());
@@ -337,7 +335,7 @@ void BSPCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
           it != pvs->GetNodesToDisable().end();
           it++)
       {
-         dtCore::RefPtr<osg::Node> nrp = (*it);
+         osg::ref_ptr<osg::Node> nrp = (*it);
          nrp->setNodeMask(0x0);
       }
       
@@ -345,7 +343,7 @@ void BSPCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
           it != pvs->GetNodesToEnable().end();
           it++)
       {
-         dtCore::RefPtr<osg::Node> nrp = (*it);
+         osg::ref_ptr<osg::Node> nrp = (*it);
          nrp->setNodeMask(0xFFFFFFFF);
       }
    }
@@ -384,6 +382,16 @@ NodeSet& PotentiallyVisibleSet::GetNodesToDisable()
 }
 
 /**
+* Returns the set of nodes to disable.
+*
+* @return the set of nodes to disable
+*/
+const NodeSet& PotentiallyVisibleSet::GetNodesToDisable() const
+{
+   return mNodesToDisable;
+}
+
+/**
  * Returns the set of nodes to enable.
  *
  * @return the set of nodes to enable
@@ -393,6 +401,15 @@ NodeSet& PotentiallyVisibleSet::GetNodesToEnable()
    return mNodesToEnable;
 }         
 
+/**
+* Returns the set of nodes to enable.
+*
+* @return the set of nodes to enable
+*/
+const NodeSet& PotentiallyVisibleSet::GetNodesToEnable() const
+{
+   return mNodesToEnable;
+}    
 
 /**
  * Constructor.

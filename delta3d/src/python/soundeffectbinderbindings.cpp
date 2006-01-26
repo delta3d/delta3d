@@ -14,7 +14,7 @@ void initSoundEffectBinderBindings()
    SoundEffectBinder* (*SoundEffectBinderGI1)(int) = &SoundEffectBinder::GetInstance;
    SoundEffectBinder* (*SoundEffectBinderGI2)(std::string) = &SoundEffectBinder::GetInstance;
 
-   class_<SoundEffectBinder, bases<Base>, dtCore::RefPtr<SoundEffectBinder> >("SoundEffectBinder", init<optional<std::string> >())
+   class_<SoundEffectBinder, bases<Base>, dtCore::RefPtr<SoundEffectBinder> >("SoundEffectBinder", init<optional<const std::string&> >())
       .def("GetInstanceCount", &SoundEffectBinder::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SoundEffectBinderGI1, return_internal_reference<>())

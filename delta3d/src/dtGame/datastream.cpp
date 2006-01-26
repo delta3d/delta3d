@@ -247,16 +247,16 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DataStream::Write(unsigned int i)
+   void DataStream::Write(unsigned i)
    {
-      if (mWritePos + sizeof(unsigned int) > mBufferCapacity)
+      if (mWritePos + sizeof(unsigned) > mBufferCapacity)
          ResizeBuffer();
 
       if (isLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
-      *((unsigned int *)(&mBuffer[mWritePos])) = i;
-      mWritePos += sizeof(unsigned int);
+      *((unsigned*)(&mBuffer[mWritePos])) = i;
+      mWritePos += sizeof(unsigned);
       if (mWritePos > mBufferSize)
          mBufferSize = mWritePos;
    }

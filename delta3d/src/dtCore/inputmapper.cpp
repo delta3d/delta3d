@@ -2,21 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/inputmapper.h"
+#include <dtCore/inputmapper.h>
 
 using namespace dtCore;
-using namespace std;
-using namespace osg;
 
 IMPLEMENT_MANAGEMENT_LAYER(InputMapper)
-
 
 /**
  * Constructor.
  *
  * @param name the instance name
  */
- InputMapper::InputMapper(std::string name)
+ InputMapper::InputMapper(const std::string& name)
    : Base(name),
      mAcquiringButtonMapping(false),
      mAcquiringAxisMapping(false)
@@ -52,7 +49,7 @@ void InputMapper::AddDevice(InputDevice* device)
  */
 void InputMapper::RemoveDevice(InputDevice* device)
 {
-   for(vector< RefPtr<InputDevice> >::iterator it = mDevices.begin();
+   for(std::vector< RefPtr<InputDevice> >::iterator it = mDevices.begin();
        it != mDevices.end();
        it++)
    {
@@ -211,8 +208,6 @@ void InputMapper::AxisStateChanged(Axis* axis,
    {
       mAcquiringAxisMapping = false;
    
-      mCallback->AxisMappingAcquired(
-         new AxisToAxis(axis)
-      );
+      mCallback->AxisMappingAcquired( new AxisToAxis(axis) );
    }
 }

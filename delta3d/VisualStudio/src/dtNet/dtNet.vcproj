@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="../../../lib/dtNetD.lib"
+				OutputFile="../../../lib/dtNetd.lib"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

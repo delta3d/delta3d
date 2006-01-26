@@ -21,9 +21,14 @@
 #ifndef DELTA_ENGINE_ACTOR_REGISTRY
 #define DELTA_ENGINE_ACTOR_REGISTRY
 
-#include "dtDAL/actorpluginregistry.h"
-#include "dtDAL/plugin_export.h"
+#include <dtDAL/actorpluginregistry.h>
+#include <dtDAL/plugin_export.h>
 
+/** 
+ * @namespace dtActors 
+ * An actor library representing most of the classes from dtCore and dtABC. 
+ * This DLL is intended to be loaded dynamically from STAGE.
+ */
 namespace dtActors 
 {
 

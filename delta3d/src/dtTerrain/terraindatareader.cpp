@@ -24,8 +24,8 @@
 #include <climits>
 #include <iomanip>
 
-#include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/terraindatareader.h"
+#include <dtTerrain/terraindatarenderer.h>
+#include <dtTerrain/terraindatareader.h>
 
 namespace dtTerrain
 {
@@ -122,8 +122,9 @@ namespace dtTerrain
    }
    
    //////////////////////////////////////////////////////////////////////////   
-   float TerrainDataReader::GetInterpolatedHeight(const osg::HeightField *hf, 
-      float x, float y)
+   float TerrainDataReader::GetInterpolatedHeight( const osg::HeightField *hf, 
+                                                   float x, 
+                                                   float y )
    {
       int fx = (int)floor(x), fy = (int)floor(y);
       int cx = (int)ceil(x), cy = (int)ceil(y);

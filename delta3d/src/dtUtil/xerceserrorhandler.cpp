@@ -16,7 +16,7 @@ XercesErrorHandler::~XercesErrorHandler()
 {
 }
 
-void XercesErrorHandler::warning(const SAXParseException& e)
+void XercesErrorHandler::warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
 {
    char* msg = XMLString::transcode(e.getMessage());
    std::string line = ToString( e.getLineNumber() );
@@ -24,7 +24,7 @@ void XercesErrorHandler::warning(const SAXParseException& e)
    XMLString::release( &msg );
 }
 
-void XercesErrorHandler::error(const SAXParseException& e)
+void XercesErrorHandler::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
 {
    char* msg = XMLString::transcode(e.getMessage());
    std::string line = dtUtil::ToString( e.getLineNumber() );
@@ -32,7 +32,7 @@ void XercesErrorHandler::error(const SAXParseException& e)
    XMLString::release( &msg );
 }
 
-void XercesErrorHandler::fatalError(const SAXParseException& e)
+void XercesErrorHandler::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& e)
 {
    char* msg = XMLString::transcode(e.getMessage());
    std::string line = dtUtil::ToString( e.getLineNumber() );

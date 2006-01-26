@@ -1,11 +1,10 @@
 #include <iostream>
 #include <string>
-#include "dtCore/timer.h"
+#include <dtCore/timer.h>
 #include <dtUtil/log.h>
 
 using namespace dtCore;
 using namespace dtUtil;
-using namespace std;
 
 // borrowed from osg/Timer.cpp...
 

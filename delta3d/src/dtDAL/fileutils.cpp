@@ -26,7 +26,14 @@
 #   include <errno.h>
 #   define stat64 _stati64
 #   define mkdir(x,y) _mkdir((x))
-extern "C" int errno;
+
+#   if defined(_MT) || defined(_DLL)
+       _CRTIMP extern int * __cdecl _errno(void);
+#      define errno   (*_errno())
+#   else   /* ndef _MT && ndef _DLL */
+       _CRTIMP extern int errno;
+#   endif  /* _MT || _DLL */ 
+
 //Linux and Mac OS X
 #else
 #   include <sys/param.h>

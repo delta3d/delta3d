@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_GAMEMANAGER_LIBRARY"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -35,13 +35,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib dtGamed.lib osgd.lib"
+				AdditionalDependencies="dtCored.lib dtDALd.lib dtUtild.lib cppunitd.lib dtGamed.lib osgd.lib"
 				OutputFile="../../../tests/UnitTestsDtGamed.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/unittestsdtgame.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -67,32 +67,32 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="../../../tests/dtGame/windows-msvc-release"
+			IntermediateDirectory="../../../tests/dtGame/windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;DT_GAMEMANAGER_LIBRARY"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				DisableSpecificWarnings="4101;"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib dtGame.lib xerces-c_2.lib osg.lib"
+				AdditionalDependencies="dtCore.lib dtDAL.lib dtUtil.lib cppunit.lib dtGame.lib osg.lib"
 				OutputFile="../../../tests/UnitTestsDtGame.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

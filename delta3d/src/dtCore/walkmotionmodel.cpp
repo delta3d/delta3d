@@ -2,22 +2,19 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/walkmotionmodel.h"
-#include "dtCore/scene.h"
-#include "dtCore/keyboard.h"
-#include "dtCore/mouse.h"
-#include "dtCore/logicalinputdevice.h"
-#include "dtCore/inputdevice.h"
-#include "dtCore/system.h"
+#include <dtCore/walkmotionmodel.h>
+#include <dtCore/scene.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/inputdevice.h>
+#include <dtCore/system.h>
 
 #include <osg/Vec3>
 
 using namespace dtCore;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(WalkMotionModel)
-
 
 /**
  * Constructor.

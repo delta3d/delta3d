@@ -1,6 +1,6 @@
-###########################################################################
-# Delta3D: The Open-Source Engine Supported by the United States Military #
-###########################################################################
+########################################
+# Delta3D: The Open-Source Game Engine #
+########################################
 
 Welcome to Delta3D ! We hope to get you up and running with Delta3D as
 quickly as possible. If you only wish run pre-built applications and have
@@ -9,8 +9,8 @@ already used the Win32 installer, you are ready to rock.
 Go ahead and try out the examples by running the executables found in
 the bin folder.
 
-There are also several useful utitilies also found in the bin/ folder.
-See the readme.txt in /utilities for more details.
+There are also several useful utitilies also found in the delta3d/bin folder.
+See the readme.txt in delta3d/utilities for more details.
 
 If you are a developer you'll want to build from the source
 which we provide with all our distributions. Please follow instructions
@@ -21,7 +21,6 @@ and don't hesistate to use the forums for any problems you may have. We'll do
 our best to respond as quick as possible.
 
 Sincerely,
-
 The Delta3D Team
 
 ########################
@@ -47,41 +46,41 @@ for other users.
 Check if you have the ext/ directory already in delta3d/. If you do not 
 have it, please download the latest version of delta3d-dependencies for
 Win32 or Fedora Core 4 from our SourceForge download site:
-https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125151
+http://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125151
 and extract it into the Delta3D folder.
 
 If you are not on Win32 or Fedore Core 4, you will need to either build the depedencies
 yourself or track them down via your favorite package manager. So here's a handy list.
-Oh, and check out http://www.delta3d.org/article.php?story=20050707151113592&topic=docs
-for more detailed info on dependencies (websites, etc.).
 
-The versions below are what we test against. Older ones may or may not work.
-Set the Depedencies page on http://www.delta3d.org for more info.
+See the Depedencies page on http://www.delta3d.org for more info on version compatibility.
 
 Required Libraries 
 ------------------
-CAL3D 0.10.0
-CppUnit 1.10.2
-Crazy Eddie's GUI System 0.4.1
-FLTK 1.1.6
-Game Networking Engine 0.70
-GDAL 1.3.1
-InterSense Interface Libraries SDK 3.83 (beta)
-HawkNL 1.68
-OpenAL 0.0.8 (spec 1.1)
-Open Dynamics Engine 0.5
-OSG 1.0
-PLIB 1.8.4
-ReplicantBody 2005-09-28
-Xerces 2.6.0
+CAL3D
+CppUnit
+Crazy Eddie's GUI System
+FLTK
+Game Networking Engine
+GDAL
+InterSense Interface Libraries SDK
+HawkNL
+OpenAL
+ALUT
+Open Dynamics Engine
+OpenThreads
+OpenSceneGraph
+Producer
+PLIB
+ReplicantBody
+Xerces
 
 Linux only: Xxf88vm, uuid, curses.
 
 Optional Libraries
 ------------------
-Qt 4.1.0 (GPL Version) - Needed for STAGE.
-Boost 1.33.1 - Needed for Python bindings only.
-Python 2.4 - Needed for Python script support.
+Qt 4.x - Needed for STAGE.
+Boost - Needed for Python bindings only.
+Python - Needed for Python script support.
 RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 
 ################
@@ -90,7 +89,7 @@ RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 
 In order to run our examples, you also need our sample data package. It can
 also be found on SourceForge download site:
-https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
+http://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
 
 #########################
 # Environment Variables #
@@ -142,7 +141,7 @@ Win32 w/ Visual Studio .NET 7.1
    VisualStudio/src/dtHLA/dthla.sln          : HLA library (RTI)
    VisualStudio/src/dtScript/dtscript.sln    : library to run python scripts (Python)
    VisualStudio/src/python/dtpython.sln      : python bindings (Python, Boost.Python)
-   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, BoostPython, RTI)
+   VisualStudio/src/python/dthlabindings.sln : python HLA bindings (Python, Boost.Python, RTI)
    VisualStudio/examples/*/*.sln             : individual examples
    VisualStudio/utilities/*/*.sln            : individual utilities
  
@@ -153,7 +152,7 @@ Win32 w/ Visual Studio .NET 7.1
    -----
    Requries RTI package to be installed! We cannot distribute RTI with
    Delta3D, so you are on your own. The dtHLA module is compiled and tested
-   against RTI-S 1.3_D11A although any RTI should work.
+   against RTI-S 1.3_D11A although any RTI supporting spec 1.3 should work.
 
    To build the module dtHLA, example testHLA, and utility hlaStealthViewer, 
    you must add your RTI include and lib paths to the project settings or to
@@ -169,70 +168,90 @@ Win32 w/ Visual Studio .NET 7.1
 
    dtPython
    --------  
-   The Delta3D Python bindings requires the following additional 
+   Building the Delta3D Python bindings requires the following additional 
    packages: Python and Boost.Python. 
 
-   We've tested with Python 2.3 and 2.4 - currently the project files refer
-   to python24.lib.
-
-   Install Python from:
-   http://www.python.org/
-
-   Obtain the Boost library from SourceForge (package 'boost'):
-   http://sourceforge.net/projects/boost/
-
-   Decompress Boost.
-
-   Open boost_1_33_1/libs/python/build/VisualStudio/boost_python.dsw.
-
-   Build boost_python.
-
-   Make sure boost_python.dll and boost_python_debug.dll are within 
-   a directory in your PATH evironement variable.
-
-   Check if the following environement variables are set:
+   1. First let's install Python from: http://www.python.org/
+   
+   2. Next, check if the following environement variables are set:
       PYTHON_ROOT     : directory of Python installation
       PYTHON_LIB_PATH : %PYTHON_ROOT%/libs
       PYTHON_VERSION  : version of your Python installation
-      PYTHONPATH      : environement variable contains the directory 
-                        with the resulting .pyd libraries (most likely delta3d/bin).
 
-   Build the Delta3D Python bindings:
-   - Open VisualStudio/src/python/dtpython.sln
-   - Build.
+   2. Ok, that was easy :) Now the hard part: installing Boost. Feel
+      free to cross-reference with their "Getting Started" guide:
+      http://www.boost.org/more/getting_started.html   
+      
+      Obtain the Boost library from SourceForge (package 'boost'):
+      http://sourceforge.net/projects/boost/
+      
+   3. Unzip Boost. The directory will look something like "boost_1_33_1"
+   
+   4. Obtain the Boost-Jam executable from SourceForge (package 'boost-jam')
+   
+   5. Unzip Boost-Jam ('bjam.exe') and place it somewhere in your PATH or
+      into your Boost directory
+  
+   6. Open a cmd shell and navigate to your Boost directory.
+   
+   7. Run 'bjam stage'. This will build the entire set of Boost libraries to
+      a directory called 'boost_1_33_1\stage\lib'. Make sure to add this directory 
+      to your PATH environment variable so Windows can find the Boost.Python DLLs 
+      at runtime.
+   
+      Unfortunately, doing a specific Boost.Python build ends up with wrong
+      filenames (probably a bug in their build system), so you must do a full
+      build :(
+   
+   8. Open a solution contain the project files for the Delta3D Python bindings:
+      -delta3d\VisualStudio\src\python\dtpython.sln or
+      -delta3d\VisualStudio\delta_all.sln.
+      
+   9. Before building...
+   
+      -Select Tools->Options
+      -Select the Projects folder
+      -Select VC++ Directories
+      -Change 'Show directories for:' to Include files
+      -Add your Boost directory to the list
+      -Change 'Show directories for:' to Library files
+      -Add 'boost_1_33_1/stage/lib' (or whatever your proper path is)to the list
+   
+   10. Build!
+   
+   11. Make sure the .pyd libraries were built into delta3d\bin. If not, rinse and repeat.
+   
+   12. Set your PYTHONPATH environement variable contains the directory with the resulting 
+       .pyd libraries (most likely delta3d/bin).
 
    STAGE
    -----
    If you want to build STAGE in with Microsoft's compiler (with SCons or VisualStudio),
    there's a few hoops you must jump through. The problem boils down to this: Trolltech 
-   generously decided to release Qt 4.0.1 under an open-source license, but unfortunately 
+   generously decided to release Qt 4 under an open-source license, but unfortunately 
    they only provided makefile support for MinGW. While we love MinGW, there is no support 
    for building Delta3D with it. 
 
    So we had to find a way to compile Qt with MSVC. Here's the solution:
 
    You'll need:
-   -Visual Studio .Net 2003
-   -Qt 4.1.0, the windows open-source release 
-    ftp://ftp.trolltech.com/qt/source/qt-win-opensource-desktop-4.0.1.zip
-   -Python
-    http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi
-   -acs4qt41.zip 
-    (get this from the Visual Studio dependencies release inside the ext/ directory)
-
-   Building Qt 4.1.0 Open Source Version with MSVC
-   --------------------------------------------
-
+   -Visual Studio .NET 2003
+   -Qt 4.x, the windows open-source release (http://www.trolltech.com)
+   -Python (http://www.python.org/)
+   -QtWin/Free patch for Qt 4.x (http://sourceforge.net/projects/qtwin/), 
+    or from the Visual Studio dependencies release inside the ext/ directory)
+   
+   Building Qt 4.x Open Source Version with MSVC
+   -----------------------------------------------
    1. Make sure all of the above software is installed.
    
-   2. Extract acs4qt41.zip inside your Qt directory.
+   2. Extract the QtWin/Free patch inside your Qt directory.
       Overwrite any files with the ones from the patch.
-
+      
    3. Follow instructions for the patch with its readme.
    
    4. After many many hours, it should be all compiled up and happy.
       Qt is now built with MSVC!
-   
    
    Building the Delta3D Editor with MSVC
    -------------------------------------
@@ -292,6 +311,8 @@ Win32 w/ SCons, Linux
     unit_tests=1 - Build unit tests.
     boost=path to your boost installation
     rti=path ro your RTI installation
+    cpppath=additional include directories (comma delimited)
+    libpath=additional library directories (comma delimited)
 
 3. To build your own Delta3D apps in SCons, feel free to hack on scons_template
    as a template for how to use SCons outside our source tree.   
@@ -308,7 +329,7 @@ Win32 w/ SCons, Linux
    - Decompress the BoostJam archive and place the file 'bjam' in your PATH.
    - Set env. var PYTHON_ROOT to your your python installation (usually /usr or /usr/local)
    - Set env. var PYTHON_VERSION to the 2-part major python version (e.g. 2.3 or 2.4)
-   - Go to boost_1_32_0/libs/python/build.
+   - Go to boost_1_33_1/libs/python/build.
    - Run 'bjam -sTOOLS=gcc'.
    - Root up and 'bjam install'
 
@@ -331,4 +352,3 @@ Win32 w/ SCons, Linux
    'scons rti=/path/to/rti hla'
 
    and SCons will build dtHLA, testHLA, and hlaStealthViewer.
-

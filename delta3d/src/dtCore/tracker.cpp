@@ -2,15 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtCore/tracker.h>
 #include <sstream>
 
-#include "dtCore/tracker.h"
-
 using namespace dtCore;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Tracker)
-
 
 /**
  * Creates instances of Tracker corresponding to each
@@ -56,7 +53,7 @@ void Tracker::PollInstances()
  * @param name the instance name
  * @param trackerHandle the handle of the tracker device
  */
-Tracker::Tracker(std::string name, ISD_TRACKER_HANDLE trackerHandle)
+Tracker::Tracker(const std::string& name, ISD_TRACKER_HANDLE trackerHandle)
    : InputDevice(name),
      mTrackerHandle(trackerHandle)
 {
@@ -64,7 +61,7 @@ Tracker::Tracker(std::string name, ISD_TRACKER_HANDLE trackerHandle)
 
    for(int i=0;i<ISD_MAX_STATIONS;i++)
    {
-      ostringstream bufs[6];
+      std::ostringstream bufs[6];
 
       bufs[0] << GetName() << " station " << i << ", x axis";
 

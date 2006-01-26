@@ -451,7 +451,7 @@ namespace dtAudio
           * Deserializes an XML element representing a state frame, turning it
           * into a new StateFrame instance.
           *
-          * @param element the element that represents the frame
+          * @param data the element that represents the frame
           * @return a newly generated state frame corresponding to the element
           */
          FrameData Deserialize(const FrameData* data);

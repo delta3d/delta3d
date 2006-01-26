@@ -11,7 +11,6 @@
 #include <dtCore/system.h>
 
 using namespace dtCore;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
 
@@ -363,7 +362,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      double deltaFrameTime = *static_cast<double*>(data->userData);
+      const double deltaFrameTime = *static_cast<const double*>(data->userData);
 
       Transform transform;
 

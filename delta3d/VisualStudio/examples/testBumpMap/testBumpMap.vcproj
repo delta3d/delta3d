@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\examples\testShaders\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\examples\testShaders\windows-msvc-debug"
+			OutputDirectory="..\..\..\examples\testBumpMap\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\examples\testBumpMap\windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -64,8 +64,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\examples\testShaders\windows-msvc-release"
-			IntermediateDirectory="..\..\..\examples\testShaders\windows-msvc-release"
+			OutputDirectory="..\..\..\examples\testBumpMap\windows-msvc-release"
+			IntermediateDirectory="..\..\..\examples\testBumpMap\windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool

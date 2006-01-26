@@ -268,7 +268,7 @@ class TestLogStream : public dtGame::LogStream
 CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
 
-#if defined (_DEBUG) && defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibraryd";
 char* GMLoggerTests::mTestActorLibrary="testActorLibraryd";
 #else

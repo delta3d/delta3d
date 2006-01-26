@@ -26,13 +26,13 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "dtCore/refptr.h"
+#include <dtCore/refptr.h>
 
 #include <OpenThreads/Thread>
 
-#include "dtCore/base.h"
-#include "dtCore/inputdevice.h"
-#include "dtCore/logicalinputdevice.h"
+#include <dtCore/base.h>
+#include <dtCore/inputdevice.h>
+#include <dtCore/logicalinputdevice.h>
 
 namespace dtCore
 {
@@ -43,9 +43,9 @@ namespace dtCore
     * Acquires mappings for logical input device features by listening to
     * a set of devices.
     */
-   class DT_CORE_EXPORT InputMapper : public Base,
-                                 public ButtonListener,
-                                 public AxisListener
+   class DT_CORE_EXPORT InputMapper :  public Base,
+                                       public ButtonListener,
+                                       public AxisListener
    {
       DECLARE_MANAGEMENT_LAYER(InputMapper)
       
@@ -57,7 +57,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         InputMapper(std::string name = "InputMapper");
+         InputMapper(const std::string& name = "InputMapper");
          
          /**
           * Destructor.

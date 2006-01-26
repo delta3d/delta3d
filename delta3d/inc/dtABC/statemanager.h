@@ -193,9 +193,8 @@ namespace dtABC
 
       /** Loads an XML file specifying State Transitions.
         * The parser will add transitions to this StateManager instance, based on the XML file.
+        * EventT is the user defined Event::Type type and StateT is the user defined State::Type type.
         *
-        * @param EventT the user defined Event::Type type
-        * @param StateT the user defined State::Type type
         * @param filename is the complete file path.
         */
       template< typename EventT, typename StateT>
@@ -251,8 +250,7 @@ namespace dtABC
 
       /** \brief Register a user defined, concrete Event.
         * Register the user defined Event so that the EventFactory can create such an Event, especially when needed for XML loading.
-        *
-        * @param T is the user defined, concrete event, to be registered.
+        * T is the user defined, concrete event, to be registered.
         * @param eventType is the user defined unique identifier for to Event being registered.
         */
       template<typename T>
@@ -263,8 +261,7 @@ namespace dtABC
 
       /** \brief Register a user defined, concrete State.
         * Register the user defined State so that the StateFactory can create such a State, specifically needed for XML loading.
-        *
-        * @param T is the user defined, concrete State, to be registered.
+        * T is the user defined, concrete State, to be registered.
         * @param stateType is the user defined unique identifier for to State being registered.
         */
       template<typename T>

@@ -1,19 +1,18 @@
 #ifndef DELTA_testMultiWin
 #define DELTA_testMultiWin
 
-// testMultiWin.cpp : declares the interface of the application
+// TestMultiWin.cpp : declares the interface of the application
 
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtABC/application.h>
 
-class testMultiWin : public dtABC::Application
+class TestMultiWin : public dtABC::Application
 {
-   DECLARE_MANAGEMENT_LAYER( testMultiWin )
+   public:
+      TestMultiWin( const std::string& configFilename = "" );
+   protected:
+      virtual ~TestMultiWin() {}
 
    public:
-      testMultiWin( std::string configFilename = "" );
-      ~testMultiWin();
-   
       virtual void Config();
 
       virtual void KeyPressed(  dtCore::Keyboard*      keyboard, 

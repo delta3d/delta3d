@@ -9,7 +9,6 @@
 #include <xercesc/util/XMLUni.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/OutOfMemoryException.hpp>
-//#include <xercesc/dom/DomException.hpp>
 
 XERCES_CPP_NAMESPACE_USE
 using namespace dtUtil;
