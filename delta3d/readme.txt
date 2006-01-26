@@ -89,7 +89,7 @@ RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 
 In order to run our examples, you also need our sample data package. It can
 also be found on SourceForge download site:
-https://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
+http://sourceforge.net/project/showfiles.php?group_id=113203&package_id=125206
 
 #########################
 # Environment Variables #
@@ -168,34 +168,61 @@ Win32 w/ Visual Studio .NET 7.1
 
    dtPython
    --------  
-   The Delta3D Python bindings requires the following additional 
+   Building the Delta3D Python bindings requires the following additional 
    packages: Python and Boost.Python. 
 
-   Install Python from:
-   http://www.python.org/
-
-   Obtain the Boost library from SourceForge (package 'boost'):
-   http://sourceforge.net/projects/boost/
-
-   Decompress Boost.
-
-   Open boost_1_33_1/libs/python/build/VisualStudio/boost_python.dsw.
-
-   Build boost_python.
-
-   Make sure boost_python.dll and boost_python_debug.dll are within 
-   a directory in your PATH evironement variable.
-
-   Check if the following environement variables are set:
+   1. First let's install Python from: http://www.python.org/
+   
+   2. Next, check if the following environement variables are set:
       PYTHON_ROOT     : directory of Python installation
       PYTHON_LIB_PATH : %PYTHON_ROOT%/libs
       PYTHON_VERSION  : version of your Python installation
-      PYTHONPATH      : environement variable contains the directory 
-                        with the resulting .pyd libraries (most likely delta3d/bin).
 
-   Build the Delta3D Python bindings:
-   - Open VisualStudio/src/python/dtpython.sln
-   - Build.
+   2. Ok, that was easy :) Now the hard part: installing Boost. Feel
+      free to cross-reference with their "Getting Started" guide:
+      http://www.boost.org/more/getting_started.html   
+      
+      Obtain the Boost library from SourceForge (package 'boost'):
+      http://sourceforge.net/projects/boost/
+      
+   3. Unzip Boost. The directory will look something like "boost_1_33_1"
+   
+   4. Obtain the Boost-Jam executable from SourceForge (package 'boost-jam')
+   
+   5. Unzip Boost-Jam ('bjam.exe') and place it somewhere in your PATH or
+      into your Boost directory
+  
+   6. Open a cmd shell and navigate to your Boost directory.
+   
+   7. Run 'bjam stage'. This will build the entire set of Boost libraries to
+      a directory called 'boost_1_33_1\stage\lib'. Make sure to add this directory 
+      to your PATH environment variable so Windows can find the Boost.Python DLLs 
+      at runtime.
+   
+      Unfortunately, doing a specific Boost.Python build ends up with wrong
+      filenames (probably a bug in their build system), so you must do a full
+      build :(
+   
+   8. Open a solution contain the project files for the Delta3D Python bindings:
+      -delta3d\VisualStudio\src\python\dtpython.sln or
+      -delta3d\VisualStudio\delta_all.sln.
+      
+   9. Before building...
+   
+      -Select Tools->Options
+      -Select the Projects folder
+      -Select VC++ Directories
+      -Change 'Show directories for:' to Include files
+      -Add your Boost directory to the list
+      -Change 'Show directories for:' to Library files
+      -Add 'boost_1_33_1/stage/lib' (or whatever your proper path is)to the list
+   
+   10. Build!
+   
+   11. Make sure the .pyd libraries were built into delta3d\bin. If not, rinse and repeat.
+   
+   12. Set your PYTHONPATH environement variable contains the directory with the resulting 
+       .pyd libraries (most likely delta3d/bin).
 
    STAGE
    -----
@@ -209,20 +236,16 @@ Win32 w/ Visual Studio .NET 7.1
 
    You'll need:
    -Visual Studio .NET 2003
-   -Qt 4.0.1, the windows open-source release 
-    (ftp://ftp.trolltech.com/qt/source/qt-win-opensource-src-4.0.1.zip)
-   -Python
-    (http://www.python.org/ftp/python/2.4.1/python-2.4.1.msi)
-   -acs4qt401p3.zip
-    (http://sourceforge.net/project/showfiles.php?group_id=49109& 
-     package_id=165202&release_id=360271), or from the Visual Studio dependencies release inside
-     the ext/ directory)
+   -Qt 4.x, the windows open-source release (http://www.trolltech.com)
+   -Python (http://www.python.org/)
+   -QtWin/Free patch for Qt 4.x (http://sourceforge.net/projects/qtwin/), 
+    or from the Visual Studio dependencies release inside the ext/ directory)
    
-   Building Qt 4.0.1 Open Source Version with MSVC
+   Building Qt 4.x Open Source Version with MSVC
    -----------------------------------------------
    1. Make sure all of the above software is installed.
    
-   2. Extract acs4qt401p3.zip inside your Qt directory.
+   2. Extract the QtWin/Free patch inside your Qt directory.
       Overwrite any files with the ones from the patch.
       
    3. Follow instructions for the patch with its readme.
