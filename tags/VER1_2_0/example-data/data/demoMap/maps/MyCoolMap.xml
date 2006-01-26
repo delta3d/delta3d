@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="delta3dMap" xsi:schemaLocation="delta3dMap map.xsd">
+
+    <header>
+
+        <name>MyCoolMap</name>
+
+        <description></description>
+
+        <author></author>
+
+        <comment></comment>
+
+        <copyright></copyright>
+
+        <createTimestamp>2005-07-20T15:24:07.0-05:00</createTimestamp>
+
+        <lastUpdateTimestamp>2005-07-20T15:26:39.0-05:00</lastUpdateTimestamp>
+
+        <editorVersion>0.1</editorVersion>
+
+        <schemaVersion>1.0</schemaVersion>
+
+    </header>
+
+    <libraries></libraries>
+
+    <actors>
+
+        <actor>
+
+            <type>dtcore.Static Mesh</type>
+
+            <id>39c7f896-d8a9-493f-87dd-4d155cdf13b3</id>
+
+            <name>StaticMesh0</name>
+
+            <property>
+
+                <name>Center of Gravity</name>
+
+                <vec3>
+
+                    <value1>0.000000</value1>
+
+                    <value2>0.000000</value2>
+
+                    <value3>0.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Collision Geometry</name>
+
+                <boolean>false</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Enable Dynamics</name>
+
+                <boolean>false</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Mass</name>
+
+                <float>4.18879</float>
+
+            </property>
+
+            <property>
+
+                <name>Normal Rescaling</name>
+
+                <boolean>true</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Rotation</name>
+
+                <vec3>
+
+                    <value1>0.000000</value1>
+
+                    <value2>0.000000</value2>
+
+                    <value3>71.700005</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Scale</name>
+
+                <vec3>
+
+                    <value1>1.000000</value1>
+
+                    <value2>1.000000</value2>
+
+                    <value3>1.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Translation</name>
+
+                <vec3>
+
+                    <value1>-1.204427</value1>
+
+                    <value2>6.992940</value2>
+
+                    <value3>-0.995956</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>static mesh</name>
+
+                <resourceType>StaticMeshes</resourceType>
+
+                <resourceDisplayName>StaticMeshes::uh-1n.ive</resourceDisplayName>
+
+                <resource>StaticMeshes::uh-1n.ive</resource>
+
+            </property>
+
+        </actor>
+
+        <actor>
+
+            <type>dtcore.Static Mesh</type>
+
+            <id>3ee83bce-267b-441e-ba2a-59b55c9c3373</id>
+
+            <name>StaticMesh1</name>
+
+            <property>
+
+                <name>Center of Gravity</name>
+
+                <vec3>
+
+                    <value1>0.000000</value1>
+
+                    <value2>0.000000</value2>
+
+                    <value3>0.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Collision Geometry</name>
+
+                <boolean>false</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Enable Dynamics</name>
+
+                <boolean>false</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Mass</name>
+
+                <float>4.18879</float>
+
+            </property>
+
+            <property>
+
+                <name>Normal Rescaling</name>
+
+                <boolean>true</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Rotation</name>
+
+                <vec3>
+
+                    <value1>0.000000</value1>
+
+                    <value2>0.000000</value2>
+
+                    <value3>0.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Scale</name>
+
+                <vec3>
+
+                    <value1>1.000000</value1>
+
+                    <value2>1.000000</value2>
+
+                    <value3>1.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Translation</name>
+
+                <vec3>
+
+                    <value1>-34.544418</value1>
+
+                    <value2>17.843115</value2>
+
+                    <value3>-1.023567</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>static mesh</name>
+
+                <resourceType>StaticMeshes</resourceType>
+
+                <resourceDisplayName>StaticMeshes::cypress1.ive</resourceDisplayName>
+
+                <resource>StaticMeshes::cypress1.ive</resource>
+
+            </property>
+
+        </actor>
+
+        <actor>
+
+            <type>dtcore.Environment.Sky Box</type>
+
+            <id>4f0db0e3-80ab-4171-a446-168a8838dabb</id>
+
+            <name>SkyBox</name>
+
+            <property>
+
+                <name>Back Texture</name>
+
+                <resourceType>Textures</resourceType>
+
+                <resourceDisplayName>Textures::back.jpg</resourceDisplayName>
+
+                <resource>Textures::back.jpg</resource>
+
+            </property>
+
+            <property>
+
+                <name>Bottom Texture</name>
+
+                <resourceType>Textures</resourceType>
+
+                <resourceDisplayName>Textures::bottom.jpg</resourceDisplayName>
+
+                <resource>Textures::bottom.jpg</resource>
+
+            </property>
+
+            <property>
+
+                <name>Front Texture</name>
+
+                <resourceType>Textures</resourceType>
+
+                <resourceDisplayName>Textures::front.jpg</resourceDisplayName>
+
+                <resource>Textures::front.jpg</resource>
+
+            </property>
+
+            <property>
+
+                <name>Left Texture</name>
+
+                <resourceType>Textures</resourceType>
+
+                <resourceDisplayName>Textures::left.jpg</resourceDisplayName>
+
+                <resource>Textures::left.jpg</resource>
+
+            </property>
+
+            <property>
+
+                <name>Right Texture</name>
+
+                <resourceType>Textures</resourceType>
+
+                <resourceDisplayName>Textures::right.jpg</resourceDisplayName>
+
+                <resource>Textures::right.jpg</resource>
+
+            </property>
+
+            <property>
+
+                <name>Top Texture</name>
+
+                <resourceType>Textures</resourceType>
+
+                <resourceDisplayName>Textures::top.jpg</resourceDisplayName>
+
+                <resource>Textures::top.jpg</resource>
+
+            </property>
+
+        </actor>
+
+        <actor>
+
+            <type>dtcore.Terrain.Infinite Terrain</type>
+
+            <id>f6dd81f9-0adf-46f8-a815-f4490f378e30</id>
+
+            <name>infiniteTerrain</name>
+
+            <property>
+
+                <name>Build Distance</name>
+
+                <float>3000</float>
+
+            </property>
+
+            <property>
+
+                <name>Collision Geometry</name>
+
+                <boolean>false</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Horizontal Scale</name>
+
+                <float>0.01</float>
+
+            </property>
+
+            <property>
+
+                <name>Normal Rescaling</name>
+
+                <boolean>true</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Rotation</name>
+
+                <vec3>
+
+                    <value1>0.000000</value1>
+
+                    <value2>0.000000</value2>
+
+                    <value3>0.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Scale</name>
+
+                <vec3>
+
+                    <value1>1.000000</value1>
+
+                    <value2>1.000000</value2>
+
+                    <value3>1.000000</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Segment Divisions</name>
+
+                <integer>128</integer>
+
+            </property>
+
+            <property>
+
+                <name>Segment Size</name>
+
+                <float>1000</float>
+
+            </property>
+
+            <property>
+
+                <name>Smooth Collision</name>
+
+                <boolean>false</boolean>
+
+            </property>
+
+            <property>
+
+                <name>Translation</name>
+
+                <vec3>
+
+                    <value1>0.000000</value1>
+
+                    <value2>19.999998</value2>
+
+                    <value3>-0.000001</value3>
+
+                </vec3>
+
+            </property>
+
+            <property>
+
+                <name>Vertical Scale</name>
+
+                <float>0.1</float>
+
+            </property>
+
+        </actor>
+
+    </actors>
+
+</map>
+
