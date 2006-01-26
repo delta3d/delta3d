@@ -1,0 +1,51 @@
+# Build script for the unit tests.
+import glob
+import sys
+
+# Import the variables defined in the global SConstruct build script.
+Import ('*')
+
+projectEnv = env.Copy()
+
+#there will be one program per test dir here plus an all tests.
+#To add a new one, add a new one, simply put the directory 
+#in this list, put your test cpp files in with the names "*tests.cpp"
+#and the files will be added to both allTests and to a test just
+#for the new set of files.
+suites = ['dtCore', 'dtDAL', 'dtGame', 'dtUtil']
+
+sources = {}
+mainSources = glob.glob('*.cpp')
+sources['all'] = mainSources + []
+
+for suite in suites:
+   #get the sources for each program
+   sources[suite] = glob.glob(suite + '/*tests.cpp')
+   #add the sources to the allTests program
+   sources['all'] += sources[suite]
+   #add the "main" source files.
+   sources[suite] += mainSources  
+
+mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar', 'dtGame', 'cppunit'] 
+mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
+projectEnv.Append(LIBS = mainlibs)
+
+programs = {}
+
+result = 'true'
+
+#create all the program names base on the sets of sources.
+for prog in sources.keys():
+   programs[prog] = '#tests/' + prog + 'Tests'
+
+   #add the "d" at the end for windows
+   if mode == 'debug' and OS == 'windows':
+      programs[prog] += 'd'
+   #create the program
+   app = projectEnv.Program(programs[prog], sources[prog])
+   
+   if (app == '[]') :
+      result = 'false'
+      errorLog.write("Failed to build test program " + programs[prog] + ".\n")
+
+Return('result')
