@@ -13,6 +13,8 @@ Note: Mostly the IVE binary versions of the models are used in our examples.
 History
 -------
 
+1.2.0 Upgraded gui data files for CEGUI 0.4.1
+
 1.1.0 Moved Level 0 DTED data into data/dted/level0 so testTerrain
       can find it.
       Updated CEGUI schemas/looks to use paths relative to data/gui.
