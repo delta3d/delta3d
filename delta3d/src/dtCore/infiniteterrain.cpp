@@ -12,18 +12,13 @@
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/Material>
+#include <osg/Plane>
 #include <osg/TexGen>
 #include <osg/Texture2D>
 #include <osg/PrimitiveSet>
-
 #include <osgDB/ReadFile>
 
-#include <osg/Vec3>
-#include <osg/Vec4>
-#include <osg/Plane>
-
 using namespace dtCore;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(InfiniteTerrain)
 
@@ -73,8 +68,8 @@ class dtCore::InfiniteTerrainCallback : public osg::NodeCallback
             for(float j=0.0f;j<=bd2;j+=mTerrain->mSegmentSize)
             {
                mTerrain->BuildSegment(
-                  (int)((x + i)/mTerrain->mSegmentSize),
-                  (int)((y + j)/mTerrain->mSegmentSize)
+                  int((x + i)/mTerrain->mSegmentSize),
+                  int((y + j)/mTerrain->mSegmentSize)
                );
             }
          }
@@ -116,27 +111,17 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
    SetName(name);
 
    SetupColorInfo();
-   
-   //mNode = new osg::Group;
 
    osg::StateSet* ss = mNode->getOrCreateStateSet();
    
    ss->setMode(GL_CULL_FACE, GL_TRUE);
-
-   
-   //osg::Material* mat = new osg::Material;
-   
-   /*mat->setDiffuse(
-      osg::Material::FRONT_AND_BACK, 
-      osg::Vec4(1, 1, 1, 1)
-   );*/
-   
-   //ss->setAttribute(mat);
    
    osg::Image* image = 0;
 
    if (textureImage != 0)
+   {
       image = textureImage;
+   }
    else 
    {
       image = new osg::Image;
@@ -164,9 +149,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
          texture, osg::Image::USE_NEW_DELETE
          );
    }
-   
-   //image->computeMipMaps();
-      
+        
    osg::Texture2D* tex = new osg::Texture2D(image);
       
    tex->setWrap(osg::Texture::WRAP_S, osg::Texture::REPEAT);
@@ -174,7 +157,6 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
    
    osg::TexEnv* texenv = new osg::TexEnv;
    texenv->setMode(osg::TexEnv::MODULATE);
-   //texenv->setColor(osg::Vec4(0.0f,1.0f,1.0f,0.0f));
 
    ss->setTextureAttribute(0, tex);
    ss->setTextureAttribute(0, texenv);
@@ -224,9 +206,7 @@ InfiniteTerrain::~InfiniteTerrain()
  * Regenerates the terrain surface.
  */
 void InfiniteTerrain::Regenerate()
-{
-   //mNoise.regenerate();
-   
+{ 
    mClearFlag = true;
 }
 
@@ -363,8 +343,6 @@ bool InfiniteTerrain::SmoothCollisionsEnabled() const
    return mSmoothCollisionsEnabled;
 }
 
-
-
 //initializes info used for the GetColor function
 void InfiniteTerrain::SetupColorInfo()
 {
@@ -399,20 +377,10 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
    osg::Vec3* minColor;
    osg::Vec3* maxColor;
 
-   if(1)//height <= mIdealHeight)
-   {
-      minPercent = MIN(MAX(0, (mIdealHeight - height) / mMinColorIncrement), 1.0);
-      maxPercent = 1 - minPercent;
-      maxColor = &mIdealColor;
-      minColor = &mMinColor;
-   }
-   else //height is between ideal and max
-   {
-      maxPercent = (height - mIdealHeight) / mMaxColorIncrement;
-      minPercent = 1 - maxPercent;
-      maxColor = &mMaxColor;
-      minColor = &mIdealColor;
-   }
+   minPercent = std::min<float>(std::max<float>(0.0f, (mIdealHeight - height) / mMinColorIncrement), 1.0f);
+   maxPercent = 1 - minPercent;
+   maxColor = &mIdealColor;
+   minColor = &mMinColor;
 
    r = (*maxColor)[0] * maxPercent;
    g = (*maxColor)[1] * maxPercent;
@@ -424,10 +392,8 @@ osg::Vec4 InfiniteTerrain::GetColor(float height)
    b += (*minColor)[2] * minPercent * minPercent;
 
    return osg::Vec4(r, g, b, 1.0f);
-   //return osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 }
-
-         
+   
 /**
  * Determines the height of the terrain at the specified location.
  *
@@ -568,8 +534,6 @@ void InfiniteTerrain::BuildSegment(int x, int y)
    
    osg::Vec2 minimum(x * mSegmentSize, y * mSegmentSize);
           
-   //float halfStep = 0.5f * (mSegmentSize / mSegmentDivisions);
-   
    RefPtr<osg::Vec3Array> vertices = 
       new osg::Vec3Array(width*height);
    
@@ -717,8 +681,7 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
       };
       
       for(int i=0;i<8 && i<maxContacts;i++)
-      {
-         //sgXformPnt3(corners[i], mat);         
+      {     
          dtUtil::MatrixUtil::TransformVec3(corners[i], mat);
 
          osg::Vec3 point 
@@ -772,8 +735,7 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
       dReal radius = dGeomSphereGetRadius(o2);
       
       osg::Vec3 center(0.0f, 0.0f, 0.0f);
-      
-      //sgXformPnt3(center, mat);
+
       dtUtil::MatrixUtil::TransformVec3(center, mat);
 
       osg::Vec3 point

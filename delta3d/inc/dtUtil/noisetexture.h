@@ -24,16 +24,15 @@
 #include <math.h>
 #include <stdio.h>
 #include <osg/Image>
-#include "dtUtil/noiseutility.h"
-#include "dtUtil/export.h"
-
+#include <dtUtil/noiseutility.h>
+#include <dtUtil/export.h>
 
 namespace dtUtil
 {
 
    /**
-   * Noise Texture is a class that uses SeamlessNoise to generate an osg::Image
-   */
+    * Noise Texture is a class that uses SeamlessNoise to generate an osg::Image
+    */
 
     class NoiseTexture
     {
@@ -42,16 +41,16 @@ namespace dtUtil
         DT_UTIL_EXPORT NoiseTexture();
         
         /**
-        * Constructor: For a more detailed listing of these params see dtUtil::Fracal
-        * @param octaves: the number of summations of the noise
-        * @param frequency: the frequency of the noise
-        * @param amp: the amplitude of the noise
-        * @param persistance: the persistance of the noise
-        * @param width: A power of 2, specifying the x resolution
-        * @param height: A power of 2, specifying the y resolution
-        * @param slices: A power of 2, specifying the z resolution, or 1 for 2D textures       
-        * @sa dtUtil::Fractal
-       */
+         * Constructor: For a more detailed listing of these params see dtUtil::Fracal
+         * @param octaves the number of summations of the noise
+         * @param frequency the frequency of the noise
+         * @param amp the amplitude of the noise
+         * @param persistance the persistance of the noise
+         * @param width A power of 2, specifying the x resolution
+         * @param height A power of 2, specifying the y resolution
+         * @param slices A power of 2, specifying the z resolution, or 1 for 2D textures       
+         * @sa dtUtil::Fractal
+         */
         DT_UTIL_EXPORT NoiseTexture( int    octaves,
                         int    frequency,
                         double amp,
@@ -63,63 +62,68 @@ namespace dtUtil
 
         DT_UTIL_EXPORT ~NoiseTexture();
 
-        /*
-        *Sets octaves
-        *@param an int greater than 0
-        */
+        /**
+         * Sets octaves
+         * @param o an int greater than 0
+         */
         void SetOctaves(int o)          { mOctaves     = o; }
         
-        /*
-        *Sets frequency
-        *@param an int greater than 0
-        */
+        /**
+         * Sets frequency
+         * @param f an int greater than 0
+         */
         void SetFrequency(int f)        { mFrequency   = f; }
         
         /**
-        *Sets amplitude
-        *@param a double greater than 0
-        */
+         * Sets amplitude
+         * @param a a double greater than 0
+         */
         void SetAmplitude(double a)     { mAmplitude   = a; }
         
         /**
-        * sets persistence
-        *@param a double from 0-1
-        */
+         * sets persistence
+         * @param p a double from 0-1
+         */
         void SetPersistence(double p)   { mPersistence = p; }
         
         /**
-        * Sets width
-        * @param texture resolution of x dimension
-        */
+         * Sets width
+         * @param w texture resolution of x dimension
+         */
         void SetWidth(int w)            { mWidth = w; }
         
         /**
-        *Sets height
-        *@param texture resolution of y dimension
-        */
+         * Sets height
+         * @param h texture resolution of y dimension
+         */
         void SetHeight(int h)           { mHeight = h; }
+
+        /**
+         * Sets slices
+         * @param s the number of slices
+         */
         void SetSlices(int s)           { mSlices = s; }
 
         /**
-        * This function creates the texture
-        * @param format: specifies the format of the texture should be used GL_ALPHA (for a transparency map),
-        *                GL_LUMINANCE, GL_RGB or GL_RGBA
-        *
-        *@return  returns a pointer to the image
-        *
-        */
+         * This function creates the texture
+         * @param format specifies the format of the texture should be used GL_ALPHA (for a transparency map),
+         * GL_LUMINANCE, GL_RGB or GL_RGBA
+         *
+         * @return  returns a pointer to the image
+         *
+         */
         DT_UTIL_EXPORT osg::Image *MakeNoiseTexture(GLenum format);
 
-        /*
-        *If you need a pointer to the texture you'll find it here
-        *don't call this if you haven't generated the texture yet!
-        *@return returns a pointer to the image created
-        */
+        /**
+         * If you need a pointer to the texture you'll find it here
+         * don't call this if you haven't generated the texture yet!
+         *
+         * @return returns a pointer to the image created
+         */
         osg::Image* GetNoiseTexture(){return mImage;}
+
     private:
 
-      
-        // Data members
         osg::Image *mImage;
         SeamlessNoise mNoise;
         int mWidth;
@@ -132,6 +136,5 @@ namespace dtUtil
 
     };
 }
-
 
 #endif // DELTA_PNOISE

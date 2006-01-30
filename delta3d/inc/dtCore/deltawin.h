@@ -29,13 +29,16 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/refptr.h>
+#include <Producer/KeyboardMouse>   // for InputCallback's base class
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
 {
    class InputArea;
    class KeyboardMouse;
    class RenderSurface;
 }
+/// @endcond
 
 namespace dtCore
 {
@@ -51,13 +54,13 @@ namespace dtCore
       /** 
        * Constructor
        *
-       * @param the name of the class as well as the window title
+       * @param name the name of the class as well as the window title
        * @param x the location of the window in pixels
        * @param y the location of the window in pixels
        * @param width the width of the window in pixels
        * @param height the height of the window in pixels
        * @param cursor true if you wish to use the default cursor, false if not
-       * @param fullscreen true if this window should be displayed fullscreen
+       * @param fullScreen true if this window should be displayed fullscreen
        */
       DeltaWin( const std::string& name = "window", int x = 100, int y = 100, int width = 640, 
                 int height = 480, bool cursor = true, bool fullScreen = false );
@@ -162,8 +165,33 @@ namespace dtCore
 
       bool mShowCursor;
  
+      class InputCallback : public Producer::KeyboardMouseCallback
+      {
+      public:
+         InputCallback(Keyboard* keyboard, Mouse* mouse);
+
+         // virtual methods
+         void mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm);
+         void mouseMotion(float x, float y);
+         void passiveMouseMotion(float x, float y);
+         void buttonPress(float x, float y, unsigned int button);
+         void doubleButtonPress(float x, float y, unsigned int button);
+         void buttonRelease(float x, float y, unsigned int button);
+         void keyPress(Producer::KeyCharacter kc);
+         void keyRelease(Producer::KeyCharacter kc);
+         void specialKeyPress(Producer::KeyCharacter kc);
+         void specialKeyRelease(Producer::KeyCharacter kc);
+
+         void SetKeyboard(Keyboard* kb);
+         void SetMouse(Mouse* m);
+
+      private:
+         RefPtr<Keyboard> mKeyboard;
+         RefPtr<Mouse> mMouse;
+      };
+
+      RefPtr<InputCallback> mInputCallback;
    };
-  
 };
 
 #endif // DELTA_DELTA_WIN

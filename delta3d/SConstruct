@@ -159,18 +159,15 @@ def CheckFramework(context, frameworks, func_name = 'main', header = None,
       ret = context.BuildProg(text, suffix)
 
       _YesNoResult(context, ret, sym, text)
-      if ret != "" or autoadd == 0:
+      if ret or autoadd == 0:
          context.env.Replace(LINKFLAGS = oldLINK)
       
       if oldLIBS != []:
          context.env.Replace(LIBS = oldLIBS)
      
-      if ret == "":
-         context.Result(1)
-         return 1
 
-   context.Result(0)
-   return 0
+   context.Result(not ret)
+   return not ret
 
 ########################
 
@@ -293,6 +290,7 @@ def TOOL_BUNDLE(env):
           addToLink.append('$FRAMEWORKSPATH')
           for lib_name in deps:
             if foundLibs.has_key(lib_name):
+              print lib_name + " is a " + foundLibs[lib_name] 
               if foundLibs[lib_name] == 'framework':
                 #print "found " + lib_name + " as a framework"
                 addToLink.append('-framework')
@@ -313,18 +311,18 @@ def TOOL_BUNDLE(env):
        program = envProg.Program( target, srcs, CPPDEFINES = cppDefines + extraDefines, LIBS = addToLibs, LINKFLAGS = addToLink + extraLinkFlags )
     
        if OS == 'darwin' and buildAppBundle:
-          env ['VERSION_NUM'] = "1.2.0"
-          env ['VERSION_NAME'] = name + '.app'
-          bundle = env.MakeBundle ('#Applications/' + name + '.app', target,
+          envProg ['VERSION_NUM'] = "1.2.0"
+          envProg ['VERSION_NAME'] = name + '.app'
+          bundle = envProg.MakeBundle ('#Applications/' + name + '.app', target,
                                   'old.delta3d.' + name,
                                   '#macosx/Info.plist',
                                   'APPL',
                                   'Dt3D',
                                   '#macosx/icons/Default.icns')
-          env.Default (bundle)
+          envProg.Default (bundle)
     
-          inst = env.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
-       elif launchDir != env.get('prefix') :
+          inst = envProg.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
+       elif launchDir != envProg.get('prefix') :
           envProg.Install( '$prefix/share/delta3d/bin', program )
                     
 ########################
@@ -511,17 +509,16 @@ def exit_with_error() :
 def CheckForBoost() :
 
    boostHeader = os.path.join('boost','python.hpp')
-
+   
    if OS == 'windows' :
-      if mode == 'debug' :
-         boostLib = 'boost_python_debug.dll'
-      else :
-         boostLib = 'boost_python.dll'
-   elif OS == 'linux' :
-      boostLib = 'libboost_python-gcc.so'
-   elif OS == 'darwin' :
+      boostLib = 'boost_python-vc71-mt.lib'
+   elif OS == 'darwin' : 
+      # This only has a hard-coded version since Boost.Python does not output
+      # with the same file naming convention as other platform (as of 1.33.1)
       boostLib = 'libboost_python-1_33_1.dylib'
-
+   else :
+      boostLib = 'libboost_python-gcc-mt.so'
+      
    foundLib = 0
    for dir in env['LIBPATH'] :
       if os.path.isfile( os.path.join( dir, boostLib ) ) :
@@ -591,6 +588,12 @@ opts.AddOptions(
    PackageOption( 'rti', 'RTI installation directory', 'no' )
 )
 
+def CommaConverter( value ) :
+   return value.split(',')
+
+opts.Add( 'cpppath', 'Additional include directories (comma delimited)', converter=CommaConverter  )
+opts.Add( 'libpath', 'Additional library directories (comma delimited)', converter=CommaConverter  )
+
 if OS == 'windows' :
    opts.Add( PathOption( 'prefix', 'Directory to install under', os.getcwd() ) )
 else :
@@ -600,7 +603,7 @@ env = Environment( options = opts, tools = tools )
 
 # append the outside env to ours
 for K in os.environ.keys():
-   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX' ]:
+   if K in env['ENV'].keys() and K in [ 'PATH', 'LD_LIBRARY_PATH', 'LIB', 'INCLUDE', 'QTDIR', 'CC', 'CXX', 'CPPPATH', 'LIBPATH' ]:
      env['ENV'][K]=SCons.Util.AppendPath( env['ENV'][K], os.environ[K] )
    else:
      env['ENV'][K]=os.environ[K]
@@ -636,6 +639,9 @@ env.Append( CPPPATH = [os.path.join( os.getcwd(), 'inc' ) ] ) # Delta3D includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc' ) ] ) # Dependencies includes
 env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'inc', 'CEGUI' ) ] ) # path for Crazy Eddie's GUI since they are too cool
 
+env.Append( CPPPATH = env.get('cpppath') )
+env.Append( LIBPATH = env.get('libpath') )
+
 if env['ENV'].has_key('QTDIR') :
    env.Append( TOOLS = 'qt' ) 
 
@@ -650,13 +656,24 @@ if OS == 'darwin':
    env.Append( CPPPATH = [os.path.join( os.getcwd(), 'ext', 'Frameworks', 'gdal.framework', 'Headers' ) ] ) # gdal since the includes are not done as <gdal/...>
 
 env.Append( LIBPATH = [os.path.join( os.getcwd(), 'lib' ) ] ) # Delta3D libs
-env.Append( LIBPATH = [os.path.join( os.getcwd(), 'ext', 'lib' ) ] ) # Dependencies libs
+
+extPath = os.path.join( os.getcwd(), 'ext', 'lib' )
+if os.path.exists(extPath) :
+   env.Append( LIBPATH = [extPath] ) # Dependencies libs
 
 ## Boost Python
-if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) and os.path.isdir( env.get('boost') ) :
+if env.get('boost') not in [ 0, 1 ] and os.path.exists( env.get('boost') ) :
+  
    env.Append( CPPPATH = [ env.get('boost') ] )
-   env.Append( LIBPATH = [ os.path.join( env.get('boost'), 'libs', 'python', 'build', 'bin-stage' ) ] )
-     
+   
+   libPath = os.path.join( env.get('boost'), 'lib' )
+   if os.path.exists(libPath) :
+      env.Append( LIBPATH = [libPath] )
+   else :
+      stagePath = os.path.join(env.get('boost'),'stage','lib')
+      if os.path.exists(stagePath) :
+         env.Append( LIBPATH = [stagePath] )
+         
  # RTI 
 rtiLibs = []
 if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.path.isdir( env.get('rti') ) :
@@ -715,7 +732,7 @@ if mode == 'debug':
                   #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
 		  CPPDEFINES=['SIGSLOT_PURE_ISO'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'  ])
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ])
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -731,7 +748,7 @@ else:
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO'  ])
+     env.Append(CXXFLAGS=['-Os', '-pipe', '-mtune=G4'], CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ])
 
 #add to the CPPFLAGS variable if it's set in the environment
 if os.environ.has_key('CPPFLAGS'):
@@ -759,9 +776,15 @@ else:
 
 if OS == 'linux' :
   env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
+
+  localCEGUIPath = '/usr/local/include/CEGUI'
+  if os.path.exists( localCEGUIPath ) and os.path.isdir( localCEGUIPath ) :
+     env.Append(CPPPATH=[localCEGUIPath])
+
   env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
+  env['FRAMEWORKS'] = []
   env.Append(FRAMEWORKSPATH=['-F./ext/Frameworks' ])
   env.Append(CPPFLAGS=' $FRAMEWORKSPATH ' )
   env.Append(LINKFLAGS='$FRAMEWORKSPATH')
@@ -782,18 +805,17 @@ def CheckLibOrFramework(context, lib, autoadd = 0):
 
    if OS == 'darwin':
       result = conf.CheckFramework(lib, language = 'C++', autoadd = autoadd)
-      if result != 0:
+      if result:
          resultText = 'framework'
    else:
-      result = 0
+      result = False
 
-   if result == 0:
-      result=conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
-      if result != 0:
+   if not result:
+      result = conf.CheckLib(lib, language = 'C++', autoadd = autoadd);
+      if result:
          resultText = 'sharedLib'
-   
 
-   context.Result( result )
+   context.Result(result )
    return resultText
 
 depsHash = {}
@@ -838,7 +860,7 @@ if OS == 'windows' :
          'python'              : python_version,
          'cal3d'               : 'cal3d_d',
          'fltk'                : 'fltkd',
-         'gdal'                : 'gdal_iD',
+         'gdal'                : 'gdal_i',
          'gne'                 : 'gned',
          'HawkNL'              : 'NLstaticD',
          'isense'              : 'isensed',
@@ -1034,8 +1056,8 @@ if not env.GetOption('clean') :
    for lib in linkOrder :
       if extLibs.has_key(lib):
          foundLibs[extLibs[lib]] = conf.CheckLibOrFramework( extLibs[lib], autoadd = 1 )
-         if foundLibs[extLibs[lib]] == 'framework':
-            env.Append(LINKFLAGS = ' -framework ' + extLibs[lib])
+         #if foundLibs[extLibs[lib]] == 'framework':
+         #   env.Append(LINKFLAGS = ' -framework ' + extLibs[lib])
 
    #this actually SEARCHES, not good
    #foundLibs[ os.path.join('boost','python.hpp') ] = conf.CheckHeader( os.path.join('boost','python.hpp') ,language='C++')

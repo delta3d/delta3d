@@ -2,9 +2,8 @@
 #include <dtDAL/map.h>
 #include <cassert>
 
-using namespace   dtABC;
-using namespace   dtCore;
-using namespace   std;
+using namespace dtABC;
+using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
 
@@ -39,8 +38,7 @@ BaseABC::~BaseABC()
 /**
  * Configure the system and messages.
  */
-void
-BaseABC::Config( void )
+void BaseABC::Config()
 {
    System*  sys   = System::Instance();
    assert( sys );
@@ -53,8 +51,7 @@ BaseABC::Config( void )
 /**
  * Stop the system render loop.
  */
-void
-BaseABC::Quit( void )
+void BaseABC::Quit()
 {
    System::Instance()->Stop();
 }
@@ -66,8 +63,7 @@ BaseABC::Quit( void )
  *
  * @param obj the object to add to the scene
  */
-void
-BaseABC::AddDrawable( DeltaDrawable* obj )
+void BaseABC::AddDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    mScene->AddDrawable( obj );
@@ -79,8 +75,7 @@ BaseABC::AddDrawable( DeltaDrawable* obj )
  *
  * @param obj the object to remove from the scene
  */
-void
-BaseABC::RemoveDrawable( DeltaDrawable* obj )
+void BaseABC::RemoveDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    mScene->RemoveDrawable( obj );
@@ -93,20 +88,19 @@ BaseABC::RemoveDrawable( DeltaDrawable* obj )
  *
  * @param data the render event message
  */
-void
-BaseABC::OnMessage( MessageData* data )
+void BaseABC::OnMessage( MessageData* data )
 {
    if( data->message == "preframe" )
    {
-      PreFrame( *static_cast<double*>(data->userData) );
+      PreFrame( *static_cast<const double*>(data->userData) );
    }
    else if( data->message == "frame" )
    {
-      Frame( *static_cast<double*>(data->userData) );
+      Frame( *static_cast<const double*>(data->userData) );
    }
    else if( data->message == "postframe" )
    {
-      PostFrame( *static_cast<double*>(data->userData) );
+      PostFrame( *static_cast<const double*>(data->userData) );
    }
 }
 
@@ -119,10 +113,9 @@ BaseABC::OnMessage( MessageData* data )
  * @param key the producer key-code
  * @param character producer character
  */
-void
-BaseABC::KeyPressed( dtCore::Keyboard*          keyboard, 
-                     Producer::KeyboardKey   key,
-                     Producer::KeyCharacter  character )
+void BaseABC::KeyPressed(  dtCore::Keyboard*       keyboard, 
+                           Producer::KeyboardKey   key,
+                           Producer::KeyCharacter  character )
 {
    switch (key)
    {

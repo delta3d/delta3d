@@ -10,7 +10,6 @@
 
 using namespace dtCore;
 using namespace dtUtil;
-using namespace std;
 
 // Inspired by KillGLWindow in Producer's RenderSurface_Win32, unfortunately,
 // we can't call it directly...

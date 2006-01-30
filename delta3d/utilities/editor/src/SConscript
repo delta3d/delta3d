@@ -68,7 +68,7 @@ if 'qt' in env['TOOLS'] :
    
    if mode == 'debug':
       if OS == 'windows':
-         EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtcored','dtutild','dtaudiod','dtchard','dtabcd'])   
+         EditorEnv.Append(LIBS = ['QtCored4','QtGuid4','QtOpenGLd4','dtDALd','dtCored','dtUtild','dtAudiod','dtChard','dtABCd'])   
       elif OS == 'darwin':
          EditorEnv.Append(LIBS = ['dtDAL','dtCore','dtUtil','dtAudio','dtChar','dtABC','plibul'])
          EditorEnv.Append(LINKFLAGS = ' -F' + qtdir + '/lib -framework QtCore -framework QtGui -framework QtOpenGL ' )

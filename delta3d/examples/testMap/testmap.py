@@ -100,14 +100,12 @@ class TestMap(Application):
             
       # Reset the scene
       if self.GetKeyboard().GetKeyState( KeyboardKey.Key_R ) :
-          Reset()
+          self.Reset()
 
       self.step -= 0.05
       
    def Reset(self) :
-      self.GetScene().AddDrawable(tree);
       self.helicopter.SetTransform(Transform(0, 0, 1, 90, 0, 0))
-      self.helicopter.LoadFile("StaticMeshes/uh-1n.ive")
       self.smoke.SetEnabled(0)
       self.step = -0.00001
       self.bufferExplosion = 1

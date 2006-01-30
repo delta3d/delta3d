@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtABCd.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtABCd.lib osgd.lib Producerd.lib osgUtild.lib"
 				OutputFile="../../../bin/testMultiWind.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -89,7 +89,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib osg.lib Producer.lib osgUtil.lib"
 				OutputFile="../../../bin/testMultiWin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

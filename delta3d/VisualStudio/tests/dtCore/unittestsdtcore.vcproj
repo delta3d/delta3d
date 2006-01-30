@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTLIBMSG"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -35,10 +35,10 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtCored.lib dtUtild.lib oded.lib cppunitd.lib xerces-c_2d.lib osgd.lib osgDBd.lib"
 				OutputFile="../../../tests/UnitTestsDtCored.exe"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/unittestsdtcore.pdb"
+				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool

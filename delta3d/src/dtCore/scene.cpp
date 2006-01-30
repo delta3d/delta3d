@@ -18,7 +18,6 @@
 
 using namespace dtCore;
 using namespace dtUtil;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
@@ -421,13 +420,13 @@ void Scene::OnMessage(MessageData *data)
       //if paging is enabled, update pager
       if(mPagingEnabled)
       {
-         osg::FrameStamp* frameStamp = new osg::FrameStamp;
+		  osg::ref_ptr<osg::FrameStamp> frameStamp = new osg::FrameStamp;
          frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(mStartTick, osg::Timer::instance()->tick()));
          frameStamp->setFrameNumber(mFrameNum++);
 
          if (osgDB::Registry::instance()->getDatabasePager())
          {
-            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp);
+            osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
             osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
          }
       }

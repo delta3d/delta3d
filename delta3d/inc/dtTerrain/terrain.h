@@ -32,6 +32,9 @@
 #include "dtTerrain/pagedterraintilefactory.h"
 #include "dtTerrain/terrain_export.h"
 
+/** 
+ * An extensible library for rendering terrain databases.
+ */
 namespace dtTerrain 
 {
    ///Forward declare the interfaces we need in the terrain.

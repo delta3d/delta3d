@@ -41,7 +41,7 @@ public:
    /*virtual*/ void BuildPropertyMap();
 
    dtCore::DeltaDrawable* GetActorStartNode();
-   void SetActorStartNode(ActorProxy* pBezierNode);
+   void SetActorStartNode(ActorProxy* node);
    
    /*virtual*/ //const ActorProxy::RenderMode& GetRenderMode();
 

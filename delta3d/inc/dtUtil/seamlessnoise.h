@@ -49,13 +49,13 @@ namespace dtUtil
 
       /**
       * Regenerates the random numbers using the given seed
-      * @param new seed value
+      * @param seed new seed value
       */
       void Reseed(unsigned int seed);
 
       /**
-      * @param vect_in, a 3D Vector to hash the noise to, for 2D noise pass in a constant z value
-      * @param repeat, pass in the frequency or the desired resolution to tile the noise in
+      * @param vect_in a 3D Vector to hash the noise to, for 2D noise pass in a constant z value
+      * @param repeat pass in the frequency or the desired resolution to tile the noise in
       *        if this param is not passed in the default value will be used
       * @return a float from -1 to 1 
       */

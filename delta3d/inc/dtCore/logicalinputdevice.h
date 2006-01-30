@@ -25,9 +25,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "dtCore/inputdevice.h"
-
+#include <dtCore/inputdevice.h>
 
 namespace dtCore
 {
@@ -36,14 +34,12 @@ namespace dtCore
    class LogicalAxis;
    class AxisMapping;
 
-
    /**
     * A logical input device.
     */
    class DT_CORE_EXPORT LogicalInputDevice : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(LogicalInputDevice)
-
 
       public:
 
@@ -52,7 +48,7 @@ namespace dtCore
           *
           * @param name the instance name
           */
-         LogicalInputDevice(std::string name = "LogicalInputDevice");
+         LogicalInputDevice(const std::string& name = "LogicalInputDevice");
 
          /**
           * Destructor.
@@ -65,7 +61,7 @@ namespace dtCore
           * @param description a description of the button
           * @param mapping the initial button mapping, or NULL for none
           */
-         LogicalButton* AddButton(std::string description, ButtonMapping* mapping = NULL);
+         LogicalButton* AddButton(const std::string& description, ButtonMapping* mapping = NULL);
 
          /**
           * Adds a new logical button to this device.  Equivalent to AddButton(description,
@@ -74,7 +70,7 @@ namespace dtCore
           * @param description a description of the button
           * @param sourceButton the source button
           */
-         LogicalButton* AddButton(std::string description, Button* sourceButton);
+         LogicalButton* AddButton(const std::string& description, Button* sourceButton);
          
          /**
           * Removes a logical button from this device.
@@ -89,7 +85,7 @@ namespace dtCore
           * @param description a description of the axis
           * @param mapping the initial axis mapping, or NULL for none
           */
-         LogicalAxis* AddAxis(std::string description, AxisMapping* mapping = NULL);
+         LogicalAxis* AddAxis(const std::string& description, AxisMapping* mapping = NULL);
 
          /**
           * Adds a new logical axis.  Equivalent to AddAxis(description,
@@ -98,7 +94,7 @@ namespace dtCore
           * @param description a description of the axis
           * @param sourceAxis the source axis
           */
-         LogicalAxis* AddAxis(std::string description, Axis* sourceAxis);
+         LogicalAxis* AddAxis(const std::string& description, Axis* sourceAxis);
          
          /**
           * Removes a logical axis from this device.
@@ -124,7 +120,7 @@ namespace dtCore
           * @param mapping the initial button mapping
           */
          LogicalButton(LogicalInputDevice* owner,
-                       std::string description, 
+                       const std::string& description, 
                        ButtonMapping *mapping);
 
          /**
@@ -284,7 +280,7 @@ namespace dtCore
           * @param mapping the initial mapping
           */
          LogicalAxis(LogicalInputDevice* owner,
-                     std::string description,
+                     const std::string& description,
                      AxisMapping* mapping);
 
          /**
@@ -353,8 +349,8 @@ namespace dtCore
    /**
     * Maps an axis to a logical axis with an optional linear transformation.
     */
-   class DT_CORE_EXPORT AxisToAxis : public AxisMapping,
-                                public AxisListener
+   class DT_CORE_EXPORT AxisToAxis :   public AxisMapping,
+                                       public AxisListener
    {
       public:
 
@@ -466,8 +462,8 @@ namespace dtCore
     * axis.  The value of the target axis will correspond
     * to the value of the last source axis updated.
     */
-   class DT_CORE_EXPORT AxesToAxis : public AxisMapping,
-                                public AxisListener
+   class DT_CORE_EXPORT AxesToAxis :   public AxisMapping,
+                                       public AxisListener
    {
       public:
          
@@ -565,8 +561,8 @@ namespace dtCore
    /**
     * Maps two buttons to a logical axis.
     */
-   class DT_CORE_EXPORT ButtonsToAxis : public AxisMapping,
-                                   public ButtonListener
+   class DT_CORE_EXPORT ButtonsToAxis :   public AxisMapping,
+                                          public ButtonListener
    {
       public:
 
@@ -709,9 +705,9 @@ namespace dtCore
     * target axis is equal to the value of the source axis when the
     * source button is pressed (the value is zero otherwise).
     */
-   class DT_CORE_EXPORT ButtonAxisToAxis : public AxisMapping,
-                                      public ButtonListener,
-                                      public AxisListener
+   class DT_CORE_EXPORT ButtonAxisToAxis :   public AxisMapping,
+                                             public ButtonListener,
+                                             public AxisListener
    {
       public:
       

@@ -820,9 +820,16 @@ namespace dtGame
             //second is a pair.
             //second.first is the game actor proxy to receive the message second.second is the name of the invokable
             if (itorInner->second.first.get() == &proxy && itorInner->second.second == invokableName)
-               itor->second.erase(itorInner);
-               
-            ++itorInner;
+            {
+               std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator toDelete =
+                  itorInner;
+               ++itorInner;
+               itor->second.erase(toDelete);
+            }
+            else 
+            {
+               ++itorInner;
+            }
          }
          
       }

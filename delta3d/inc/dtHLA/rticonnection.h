@@ -77,6 +77,7 @@
 #if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 typedef unsigned int SOCKET;
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 typedef struct win_addr {
   union {
     struct {
@@ -88,6 +89,7 @@ typedef struct win_addr {
     unsigned long S_addr;
   } S_un;
 } win_addr;
+/// @endcond 
 
 #else
 typedef int socklen_t;

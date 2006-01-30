@@ -444,11 +444,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
 Keyboard::~Keyboard()
 {
    DeregisterInstance(this);
-
-   for(int i=0;i<GetFeatureCount();i++)
-   {
-      delete GetFeature(i);
-   }
 }
 
 /**
@@ -470,7 +465,7 @@ bool Keyboard::GetKeyState(Producer::KeyboardKey key)
  */
 void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
 {
-   keyboardListeners.insert(keyboardListener);
+   mKeyboardListeners.insert(keyboardListener);
 }
 
 /**
@@ -480,7 +475,7 @@ void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
  */
 void Keyboard::RemoveKeyboardListener(KeyboardListener* keyboardListener)
 {
-   keyboardListeners.erase(keyboardListener);
+   mKeyboardListeners.erase(keyboardListener);
 }
 
 /**
@@ -489,7 +484,7 @@ void Keyboard::RemoveKeyboardListener(KeyboardListener* keyboardListener)
  * @param kc the character to map
  * @return the corresponding key
  */
-static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc)
+Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter kc)
 {
    switch(kc)
    {
@@ -882,8 +877,8 @@ void Keyboard::keyPress(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(true);
 
-   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
-       it != keyboardListeners.end();
+   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+       it != mKeyboardListeners.end();
        it++)
    {
       (*it)->HandleKeyPressed(this, kk, kc);
@@ -901,8 +896,8 @@ void Keyboard::keyRelease(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(false);
 
-   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
-       it != keyboardListeners.end();
+   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+       it != mKeyboardListeners.end();
        it++)
    {
       (*it)->HandleKeyReleased(this, kk, kc);
@@ -920,8 +915,8 @@ void Keyboard::specialKeyPress(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(true);
 
-   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
-       it != keyboardListeners.end();
+   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+       it != mKeyboardListeners.end();
        it++)
    {
       (*it)->HandleKeyPressed(this, kk, kc);
@@ -939,8 +934,8 @@ void Keyboard::specialKeyRelease(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(false);
 
-   for(std::set<KeyboardListener*>::iterator it = keyboardListeners.begin();
-       it != keyboardListeners.end();
+   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+       it != mKeyboardListeners.end();
        it++)
    {
       (*it)->HandleKeyReleased(this, kk, kc);

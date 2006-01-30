@@ -28,9 +28,8 @@
 
 #include <string>
 
-#include "dtHLA/dis_types.h"
-#include "dtCore/object.h"
-
+#include <dtHLA/dis_types.h>
+#include <dtCore/object.h>
 
 namespace dtHLA
 {
@@ -41,7 +40,6 @@ namespace dtHLA
    {
       DECLARE_MANAGEMENT_LAYER(Entity)
 
-
       public:
 
          /**
@@ -49,7 +47,7 @@ namespace dtHLA
           *
           * @param name the instance name
           */
-         Entity(std::string name = "Entity");
+         Entity(const std::string& name = "Entity");
 
          /**
           * Destructor.

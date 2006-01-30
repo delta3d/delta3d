@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/particlesystem.h"
-#include "dtCore/scene.h"
+#include <dtCore/particlesystem.h>
+#include <dtCore/scene.h>
 #include <dtUtil/log.h>
 
 #include <osg/Group>
@@ -13,13 +13,8 @@
 
 using namespace dtCore;
 using namespace dtUtil;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(ParticleSystem)
-
-
-
 
 /**
  * A visitor class that applies a set of particle system parameters.

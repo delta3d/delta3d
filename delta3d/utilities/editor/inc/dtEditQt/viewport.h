@@ -36,12 +36,14 @@
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/typedefs.h"
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
     class FrameStamp;
     class StateSet;
     class ClearNode;
 }
+/// @endcond
 
 namespace dtCore
 {

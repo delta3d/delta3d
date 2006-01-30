@@ -24,11 +24,11 @@
 #include <osg/Vec3>
 #include <osg/Group>
 #include <osg/Image>
-#include "dtCore/refptr.h"
-#include "dtUtil/enumeration.h"
-#include "dtTerrain/terraindecorationlayer.h"
-#include "dtTerrain/lccanalyzer.h"
-#include "dtTerrain/lcctype.h"
+#include <dtCore/refptr.h>
+#include <dtUtil/enumeration.h>
+#include <dtTerrain/terraindecorationlayer.h>
+#include <dtTerrain/lccanalyzer.h>
+#include <dtTerrain/lcctype.h>
 
 namespace dtTerrain
 {
@@ -130,19 +130,13 @@ namespace dtTerrain
           */
          int GetVegType(const osg::Image* mCimage, int x, int y, float good_angle);
 
-         /**
-          * Determine whether vegetation exists at coord x,y
-          * @param mCimage the LCC type's combined image)
-          * @param x the x coordinate to check
-          * @param y the y coordinate to check
-          * @param limit the probability rolled
-          * @param maximum look
-          * @param maximum slope
-          * @return boolean on existence of vegetaton at x,y
-          */
-         int GetNumLooks(const osg::Image &compositeImage,
-            const osg::Image &slopeMap, int x, int y, float good_angle, 
-            int maxlooks, float maxslope);
+         int GetNumLooks(  const osg::Image &compositeImage,
+                           const osg::Image &slopeMap, 
+                           int x, 
+                           int y, 
+                           float good_angle, 
+                           int maxlooks, 
+                           float maxslope);
 
          /**
           * Sets the distance between vegetation objects

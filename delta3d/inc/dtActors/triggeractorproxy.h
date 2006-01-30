@@ -29,8 +29,7 @@ namespace dtActors
 {
 
     /**
-     * @class TriggerActorProxy
-     * @brief This proxy wraps placeable triggers.
+     * This proxy wraps placeable triggers.
      */
     class DT_PLUGIN_EXPORT TriggerActorProxy : public virtual dtDAL::ActorProxy
     {

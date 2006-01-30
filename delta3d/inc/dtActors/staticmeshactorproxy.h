@@ -23,26 +23,29 @@
 
 #include <osg/Texture2D>
 #include <dtDAL/plugin_export.h>
-#include "dtActors/deltaobjectactorproxy.h"
+#include <dtActors/deltaobjectactorproxy.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
     class Texture2D;
 }
+/// @endcond
 
 namespace dtActors
 {
     /**
      * @class StaticMeshActorProxy
-     * @brief This proxy represents a static mesh.  A static mesh contains
-     *  geometry and textures representing an object in the scene such as a chair,
-     *  a desk, a tree, a boulder, etc.
+     * This proxy represents a static mesh. A static mesh contains geometry and 
+     * textures representing an object in the scene such as a chair,a desk, a 
+     * tree, a boulder, etc.
      */
     class DT_PLUGIN_EXPORT StaticMeshActorProxy : public DeltaObjectActorProxy
     {
     public:
 
         /**
+         * @class TextureEntry
          * This is a simple class which is used by the texture resource properties to
          * load textures for the static mesh.
          */
@@ -69,9 +72,6 @@ namespace dtActors
             osg::ref_ptr<osg::Texture2D> mTexture;
         };
 
-        /**
-         * Constructor
-         */
         StaticMeshActorProxy() { SetClassName("dtCore::Object"); }
 
         /**
