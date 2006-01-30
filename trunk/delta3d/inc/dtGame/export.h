@@ -27,7 +27,7 @@
  * trying to import Delta3D symbols.  The DT_GAME_LIB macro should be used
  * in front of any classes that are to be exported from the terrain library.
  * Also note that DT_GAME_LIB should be defined in the compiler 
- * preprocessor #defines.
+ * preprocessor defines.
  */
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
 #  ifdef DT_GAME_LIBRARY

@@ -28,14 +28,13 @@
 
 #include <string>
 
+// Hack to compensate for typedef collision on gcc.
 #ifdef Bool
 #undef Bool
 #endif
 
-#include "isense.h"
-
+#include <isense.h>
 #include <dtCore/inputdevice.h>
-
 
 namespace dtCore
 {
@@ -80,7 +79,7 @@ namespace dtCore
           * @param name the instance name
           * @param trackerHandle the handle of the tracker device
           */
-         Tracker(std::string name, ISD_TRACKER_HANDLE trackerHandle);
+         Tracker(const std::string& name, ISD_TRACKER_HANDLE trackerHandle);
 
          /**
           * Destructor.

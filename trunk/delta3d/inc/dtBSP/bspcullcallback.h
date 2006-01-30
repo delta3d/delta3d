@@ -32,8 +32,6 @@
 #include <osg/NodeCallback>
 #include <osgDB/Registry>
 
-#include <dtCore/refptr.h>
-
 /** Used by the bspCompiler to calculate the BSP of a given set of geometry.
 */
 namespace dtBSP
@@ -96,14 +94,14 @@ namespace dtBSP
          /**
           * The root node of the BSP tree.
           */
-         dtCore::RefPtr<BSPNode> mBSPTree;
+         osg::ref_ptr<BSPNode> mBSPTree;
    };
    
    
    /**
     * A set of OSG node references.
     */
-   typedef std::set< dtCore::RefPtr<osg::Node> > NodeSet;
+   typedef std::set< osg::ref_ptr<osg::Node> > NodeSet;
    
    
    /**
@@ -138,6 +136,7 @@ namespace dtBSP
           * @return the set of nodes to disable
           */
          NodeSet& GetNodesToDisable();
+         const NodeSet& GetNodesToDisable() const;
          
          /**
           * Returns the set of nodes to enable.
@@ -145,6 +144,7 @@ namespace dtBSP
           * @return the set of nodes to enable
           */
          NodeSet& GetNodesToEnable();
+         const NodeSet& GetNodesToEnable() const;
          
          
       private:
@@ -237,12 +237,12 @@ namespace dtBSP
          /**
           * The left child of this node.
           */
-         dtCore::RefPtr<BSPNode> mLeftChild;
+         osg::ref_ptr<BSPNode> mLeftChild;
          
          /**
           * The right child of this node.
           */
-         dtCore::RefPtr<BSPNode> mRightChild;
+         osg::ref_ptr<BSPNode> mRightChild;
    };
    
    
@@ -282,7 +282,7 @@ namespace dtBSP
          /**
           * The potentially visible set for this leaf node.
           */
-         dtCore::RefPtr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
+         osg::ref_ptr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
    };
 };
 

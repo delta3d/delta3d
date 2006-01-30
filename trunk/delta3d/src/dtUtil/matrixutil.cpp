@@ -1,11 +1,8 @@
-#include "dtUtil/matrixutil.h"
-
+#include <dtUtil/matrixutil.h>
 
 using namespace dtUtil;
-using namespace osg;
 
-
-void MatrixUtil::Print( const Matrix& matrix )
+void MatrixUtil::Print( const osg::Matrix& matrix )
 {
    for( int i = 0; i < 4; i++ )
    {
@@ -17,7 +14,7 @@ void MatrixUtil::Print( const Matrix& matrix )
    }
 }
 
-void MatrixUtil::Print( const Vec3& vec )
+void MatrixUtil::Print( const osg::Vec3& vec )
 {
    for( int i = 0; i < 3; i++ )
    {
@@ -26,7 +23,7 @@ void MatrixUtil::Print( const Vec3& vec )
    std::cout << std::endl;
 }
 
-void MatrixUtil::Print( const Vec4& vec )
+void MatrixUtil::Print( const osg::Vec4& vec )
 {
    for( int i = 0; i < 4; i++ )
    {
@@ -35,52 +32,30 @@ void MatrixUtil::Print( const Vec4& vec )
    std::cout << std::endl;
 }
 
-void MatrixUtil::Transpose( Matrix& dest, const Matrix& src )
+void MatrixUtil::Transpose( osg::Matrix& dest, const osg::Matrix& src )
 {
    for( int i = 0; i < 4; i++ )
       for( int j = 0; j < 4; j++ )
          dest(i,j) = src(j,i);
 }
 
-//Vec3 MatrixUtil::GetColumn3( const Matrix& matrix, int column )
-//{
-//   return Vec3f( matrix(column,0), matrix(column,1), matrix(column,2) );
-//}
-//
-//Vec4 MatrixUtil::GetColumn4( const Matrix& matrix, int column )
-//{
-//   return Vec4f( matrix(column,0), matrix(column,1), matrix(column,2), matrix(column,3) );
-//}
-
-Vec3 MatrixUtil::GetRow3( const Matrix& matrix, int row )
+osg::Vec3 MatrixUtil::GetRow3( const osg::Matrix& matrix, int row )
 {
-   return Vec3f( matrix(row,0), matrix(row, 1), matrix(row,2) );
+   return osg::Vec3( matrix(row,0), matrix(row, 1), matrix(row,2) );
 }
 
-Vec4 MatrixUtil::GetRow4( const Matrix& matrix, int row )
+osg::Vec4 MatrixUtil::GetRow4( const osg::Matrix& matrix, int row )
 {
-   return Vec4f( matrix(row,0), matrix(row,1), matrix(row,2), matrix(row,3) );
+   return osg::Vec4( matrix(row,0), matrix(row,1), matrix(row,2), matrix(row,3) );
 }
 
-//void MatrixUtil::SetColumn( Matrix& matrix, const Vec3& vec, int column )
-//{
-//   for( int i = 0; i < 3; i++ )
-//      matrix(column,i) = vec[i];
-//}
-//
-//void MatrixUtil::SetColumn( Matrix& matrix, const Vec4& vec, int column )
-//{
-//   for( int i = 0; i < 4; i++ )
-//      matrix(column,i) = vec[i];
-//}
-
-void MatrixUtil::SetRow( Matrix& matrix, const Vec3& vec, int row )
+void MatrixUtil::SetRow( osg::Matrix& matrix, const osg::Vec3& vec, int row )
 {
    for( int i = 0; i < 3; i++ )
       matrix(row,i) = vec[i];
 }
 
-void MatrixUtil::SetRow( Matrix& matrix, const Vec4& vec, int row )
+void MatrixUtil::SetRow( osg::Matrix& matrix, const osg::Vec4& vec, int row )
 {
    for( int i = 0; i < 4; i++ )
       matrix(row, i) = vec[i];

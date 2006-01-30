@@ -16,7 +16,6 @@ using namespace dtCore;
 using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(Camera)
-using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

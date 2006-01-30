@@ -34,16 +34,12 @@ namespace dtABC
 namespace dtActors 
 {
     /**
-     * @class TriggerActorProxy
-     * @brief This proxy wraps placeable triggers.
+     * This proxy wraps placeable triggers.
      */
     class DT_PLUGIN_EXPORT ProximityTriggerActorProxy : public dtDAL::TransformableActorProxy 
     {
     public:
 
-        /**
-         * Constructor
-         */
         ProximityTriggerActorProxy() { SetClassName("dtABC::ProximityTrigger"); }
 
         /**

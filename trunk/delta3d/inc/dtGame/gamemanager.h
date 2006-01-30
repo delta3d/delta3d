@@ -44,6 +44,9 @@ namespace dtDAL
    class ActorPluginRegistry;
 }
 
+/** 
+ * A high-level library that manages interaction between game actors.
+ */
 namespace dtGame 
 {
    //class Message;

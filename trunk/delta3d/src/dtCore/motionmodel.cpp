@@ -2,15 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/motionmodel.h"
-#include "dtCore/scene.h"
+#include <dtCore/motionmodel.h>
+#include <dtCore/scene.h>
 
 using namespace dtCore;
-using namespace std;
-
 
 IMPLEMENT_MANAGEMENT_LAYER(MotionModel)
-
 
 /**
  * Constructor.

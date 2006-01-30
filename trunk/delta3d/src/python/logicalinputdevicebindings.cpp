@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/logicalinputdevice.h"
+#include <python/dtpython.h>
+#include <dtCore/logicalinputdevice.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -16,13 +16,13 @@ void initLogicalInputDeviceBindings()
    LogicalInputDevice* (*LogicalInputDeviceGI1)(int) = &LogicalInputDevice::GetInstance;
    LogicalInputDevice* (*LogicalInputDeviceGI2)(std::string) = &LogicalInputDevice::GetInstance;
 
-   LogicalButton* (LogicalInputDevice::*AddButton1)(std::string, ButtonMapping*) = &LogicalInputDevice::AddButton;
-   LogicalButton* (LogicalInputDevice::*AddButton2)(std::string, Button*) = &LogicalInputDevice::AddButton;
+   LogicalButton* (LogicalInputDevice::*AddButton1)(const std::string&, ButtonMapping*) = &LogicalInputDevice::AddButton;
+   LogicalButton* (LogicalInputDevice::*AddButton2)(const std::string&, Button*) = &LogicalInputDevice::AddButton;
    
-   LogicalAxis* (LogicalInputDevice::*AddAxis1)(std::string, AxisMapping*) = &LogicalInputDevice::AddAxis;
-   LogicalAxis* (LogicalInputDevice::*AddAxis2)(std::string, Axis*) = &LogicalInputDevice::AddAxis;
+   LogicalAxis* (LogicalInputDevice::*AddAxis1)(const std::string&, AxisMapping*) = &LogicalInputDevice::AddAxis;
+   LogicalAxis* (LogicalInputDevice::*AddAxis2)(const std::string&, Axis*) = &LogicalInputDevice::AddAxis;
    
-   class_<LogicalInputDevice, bases<InputDevice>, dtCore::RefPtr<LogicalInputDevice> >("LogicalInputDevice", init<optional<std::string> >())
+   class_<LogicalInputDevice, bases<InputDevice>, dtCore::RefPtr<LogicalInputDevice> >("LogicalInputDevice", init<optional<const std::string&> >())
       .def("GetInstanceCount", &LogicalInputDevice::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", LogicalInputDeviceGI1, return_internal_reference<>())

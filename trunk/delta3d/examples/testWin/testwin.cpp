@@ -1,7 +1,8 @@
 #include "testwin.h"
-#include <dtCore/dt.h>
-#include <dtUtil/dtutil.h>
-#include <dtGUI/dtgui.h>
+
+#include <dtGUI/scriptmodule.h>
+#include <dtCore/globals.h>
+#include <dtUtil/stringutils.h>
 
 #include <sstream>
 
@@ -11,14 +12,11 @@ using namespace dtCore;
 using namespace dtABC;
 using namespace dtGUI;
 using namespace dtUtil;
-using namespace std;
 
-
-TestWinApp::TestWinApp( string configFilename )
+TestWinApp::TestWinApp( const std::string& configFilename )
 : Application( configFilename )
 {
 }
-
 
 void TestWinApp::Config()
 {
@@ -26,7 +24,7 @@ void TestWinApp::Config()
 
    int x,y,w,h;
    GetWindow()->GetPosition(&x, &y, &w, &h);
-   GetWindow()->ShowCursor( false );
+   GetWindow()->ShowCursor(false);
    ScriptModule *sm = new ScriptModule();
 
    mGUI = new dtGUI::CEUIDrawable( w, h, sm);
@@ -54,7 +52,7 @@ void TestWinApp::PostFrame( const double deltaFrameTime )
 /** Setup the GUI with starting values.  
 */
 void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
-                        DeltaWin::Resolution &currentRes)
+                           DeltaWin::Resolution &currentRes)
 {
    try
    {
@@ -69,7 +67,7 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
       CEGUI::Window *sheet = wm->loadWindowLayout("testWinLayout.xml");
       CEGUI::System::getSingleton().setGUISheet(sheet);
       sheet->setUserData( static_cast<TestWinApp*>(this) );
-      CEGUI::MultiColumnList *list = (CEGUI::MultiColumnList*)wm->getWindow("List");
+      CEGUI::MultiColumnList *list = static_cast<CEGUI::MultiColumnList*>(wm->getWindow("List"));
 
       int rowNum = 0;
       std::string str;
@@ -80,7 +78,7 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
       {         
          list->addRow();
 
-         str = ToString<int>( (*itr).width);
+         str = ToString<int>( (*itr).width );
          CEGUI::ListboxTextItem *item = new CEGUI::ListboxTextItem( str );
          item->setTextColours( CEGUI::colour(0.f, 0.f, 0.f) );
          item->setSelectionColours( CEGUI::colour(1.f, 0.f, 0.f) );
@@ -129,10 +127,10 @@ void TestWinApp::BuildGUI( DeltaWin::ResolutionVec &resolutions,
          list->setItemSelectState(CEGUI::MCLGridRef(idx, 0), true );
       }
 
-      CEGUI::Checkbox *check = (CEGUI::Checkbox*)wm->getWindow("FullscreenToggle");
+      CEGUI::Checkbox *check = static_cast<CEGUI::Checkbox*>(wm->getWindow("FullscreenToggle"));
       check->setSelected( GetWindow()->GetFullScreenMode() );
 
-      CEGUI::Editbox *title = (CEGUI::Editbox*)wm->getWindow("WindowTitle");
+      CEGUI::Editbox *title = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowTitle"));
       title->setText( GetWindow()->GetWindowTitle() );
 
    }
@@ -158,13 +156,13 @@ void TestWinApp::UpdateWidgets()
       // if something is different, update the widgets
       lastX = x; lastY =y; lastW = w; lastH = h;
 
-      CEGUI::Editbox *wBox = (CEGUI::Editbox*)wm->getWindow("WindowWidth");
+      CEGUI::Editbox *wBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowWidth"));
       wBox->setText( ToString(w).c_str() );
-      CEGUI::Editbox *hBox = (CEGUI::Editbox*)wm->getWindow("WindowHeight");
+      CEGUI::Editbox *hBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowHeight"));
       hBox->setText( ToString(h).c_str() );
-      CEGUI::Editbox *xBox = (CEGUI::Editbox*)wm->getWindow("WindowPosX");
+      CEGUI::Editbox *xBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosX"));
       xBox->setText( ToString(x).c_str() );
-      CEGUI::Editbox *yBox = (CEGUI::Editbox*)wm->getWindow("WindowPosY");
+      CEGUI::Editbox *yBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosY"));
       yBox->setText( ToString(y).c_str() );
    }
 }
@@ -172,7 +170,7 @@ void TestWinApp::UpdateWidgets()
 void TestWinApp::FullScreenToggleCB(const CEGUI::EventArgs &e)
 {
    TestWinApp *app = static_cast<TestWinApp*>(CEGUI::System::getSingleton().getGUISheet()->getUserData());
-   CEGUI::Checkbox *check = (CEGUI::Checkbox*)CEGUI::WindowManager::getSingleton().getWindow("FullscreenToggle");
+   CEGUI::Checkbox *check = static_cast<CEGUI::Checkbox*>(CEGUI::WindowManager::getSingleton().getWindow("FullscreenToggle"));
    app->GetWindow()->SetFullScreenMode( check->isSelected() );
 }
 
@@ -184,16 +182,16 @@ void TestWinApp::WindowPositionCB( const CEGUI::EventArgs &e)
 
    int x,y,w,h;
 
-   CEGUI::Editbox *wBox = (CEGUI::Editbox*)wm->getWindow("WindowWidth");
+   CEGUI::Editbox *wBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowWidth"));
    w = atoi( wBox->getText().c_str() );
 
-   CEGUI::Editbox *hBox = (CEGUI::Editbox*)wm->getWindow("WindowHeight");
+   CEGUI::Editbox *hBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowHeight"));
    h = atoi( hBox->getText().c_str() );
 
-   CEGUI::Editbox *xBox = (CEGUI::Editbox*)wm->getWindow("WindowPosX");
+   CEGUI::Editbox *xBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosX"));
    x = atoi( xBox->getText().c_str() );
 
-   CEGUI::Editbox *yBox = (CEGUI::Editbox*)wm->getWindow("WindowPosY");
+   CEGUI::Editbox *yBox = static_cast<CEGUI::Editbox*>(wm->getWindow("WindowPosY"));
    y = atoi( yBox->getText().c_str() );
 
    app->GetWindow()->SetPosition(x, y, w, h );
@@ -203,13 +201,13 @@ void TestWinApp::WindowTitleCB( const CEGUI::EventArgs &e)
 {
    TestWinApp *app = static_cast<TestWinApp*>(CEGUI::System::getSingleton().getGUISheet()->getUserData());
 
-   CEGUI::Editbox *box = (CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("WindowTitle");
+   CEGUI::Editbox *box = static_cast<CEGUI::Editbox*>(CEGUI::WindowManager::getSingleton().getWindow("WindowTitle"));
    app->GetWindow()->SetWindowTitle( box->getText().c_str() );
 }
 
 void TestWinApp::ChangeResolutionCB( const CEGUI::EventArgs &e)
 {
-   CEGUI::MultiColumnList *list = (CEGUI::MultiColumnList*)CEGUI::WindowManager::getSingleton().getWindow("List");
+   CEGUI::MultiColumnList *list = static_cast<CEGUI::MultiColumnList*>(CEGUI::WindowManager::getSingleton().getWindow("List"));
 
    CEGUI::ListboxItem *item = list->getFirstSelectedItem();
 

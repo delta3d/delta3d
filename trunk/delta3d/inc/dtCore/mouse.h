@@ -125,12 +125,13 @@ namespace dtCore
          ///Producer callback methods
          virtual void buttonRelease( float x, float y, unsigned int button);
 
-      private:
+      protected:
 
          /**
           * The list of mouse listeners.
           */
-         std::set<MouseListener*> mouseListeners;
+         typedef std::set<MouseListener*> MouseListenerSet;
+         MouseListenerSet mMouseListeners;
 
          Producer::KeyboardMouse* mKeyboardMouse;
    };

@@ -26,7 +26,7 @@ public:
    {
       if(data->message == "preframe")
       {
-         double delta = *static_cast<double*>(data->userData);
+         const double delta = *static_cast<const double*>(data->userData);
 
          float rotation = mCharacter->GetRotation(),
             velocity = 0.0f;
@@ -50,7 +50,7 @@ public:
             }
             else
             {
-               velocity += 1.0f;
+               velocity += 1.5f;
             }
          }
 
@@ -97,7 +97,7 @@ public:
    {
       if(data->message == "preframe")
       {
-         double delta = *static_cast<double*>(data->userData);
+         const double delta = *static_cast<const double*>(data->userData);
 
          Transform transform;
 

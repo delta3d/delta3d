@@ -418,11 +418,10 @@ class DeltaFrame:
         winData.pos_y = self.frame.winfo_y()
         winData.width = self.frame.winfo_width()
         winData.height = self.frame.winfo_height()
-        
         if self.configured:
             self.widget.SendMessage(Widget.msgResize, winData)
         else:
-            winData.SetHWND(self.frame.winfo_id())
+            winData.hwnd = self.frame.winfo_id()
             self.widget.SendMessage(Widget.msgWindowData, winData)
             self.configured = True
             self.frame.after(1, self.step)
@@ -508,16 +507,12 @@ class TestPythonGUIApplication(Widget):
     angle = 0.0
     
     def Config(self, data):
-        print "Config"
         Widget.Config(self, data)
-        print "Widget config"
         self.helo = Object('UH-1N')
         self.helo.LoadFile('models/uh-1n.ive')
-        print "loaded file"
         self.AddDrawable(self.helo)
         self.omm = OrbitMotionModel(self.GetKeyboard(), self.GetMouse())
         self.omm.SetTarget(self.GetCamera())
-        print "End"
         
     def Quit(self):
         root.quit()

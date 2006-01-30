@@ -2,21 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/inputdevice.h"
+#include <dtCore/inputdevice.h>
 
 using namespace dtCore;
-using namespace std;
-using namespace osg;
 
 IMPLEMENT_MANAGEMENT_LAYER(InputDevice)
-
 
 /**
  * Constructor.
  *
  * @param name the instance name
  */
- InputDevice::InputDevice(std::string name) : Base(name)
+ InputDevice::InputDevice(const std::string& name) : Base(name)
 {
    RegisterInstance(this);
 }
@@ -162,7 +159,7 @@ void InputDevice::AddFeature(InputDeviceFeature* feature)
 */
 void InputDevice::RemoveFeature(InputDeviceFeature* feature)
 {
-   for(vector< RefPtr<InputDeviceFeature> >::iterator it = mFeatures.begin();
+   for(std::vector< RefPtr<InputDeviceFeature> >::iterator it = mFeatures.begin();
        it != mFeatures.end();
        it++)
    {
@@ -172,7 +169,7 @@ void InputDevice::RemoveFeature(InputDeviceFeature* feature)
 
          if(IS_A(feature, Button*))
          {
-            for(vector< RefPtr<Button> >::iterator bit = mButtons.begin();
+            for(std::vector< RefPtr<Button> >::iterator bit = mButtons.begin();
                 bit != mButtons.end();
                 bit++)
             {
@@ -186,7 +183,7 @@ void InputDevice::RemoveFeature(InputDeviceFeature* feature)
 
          if(IS_A(feature, Axis*))
          {
-            for(vector< RefPtr<Axis> >::iterator ait = mAxes.begin();
+            for(std::vector< RefPtr<Axis> >::iterator ait = mAxes.begin();
                 ait != mAxes.end();
                 ait++)
             {
@@ -209,7 +206,7 @@ void InputDevice::RemoveFeature(InputDeviceFeature* feature)
  * @param owner the owner of this feature
  * @param description a description of this feature
  */
-InputDeviceFeature::InputDeviceFeature(InputDevice* owner, std::string description) :
+InputDeviceFeature::InputDeviceFeature(InputDevice* owner, const std::string& description) :
    mOwner(owner),
    mDescription(description)
 {}
@@ -235,7 +232,7 @@ InputDevice* InputDeviceFeature::GetOwner() const
  *
  * @param description the new description
  */
-void InputDeviceFeature::SetDescription(std::string description)
+void InputDeviceFeature::SetDescription(const std::string& description)
 {
    mDescription = description;
 }
@@ -256,7 +253,7 @@ std::string InputDeviceFeature::GetDescription() const
  * @param owner the owner of this button
  * @param description a description of this button
  */
-Button::Button(InputDevice* owner, std::string description) :
+Button::Button(InputDevice* owner, const std::string& description) :
    InputDeviceFeature(owner, description),
    mState(false)
 {}
@@ -272,7 +269,7 @@ void Button::SetState(bool state)
    {
       mState = state;
 
-      set<ButtonListener*>::iterator it;
+      std::set<ButtonListener*>::iterator it;
       
       for(it = mButtonListeners.begin();
           it != mButtonListeners.end();
@@ -327,13 +324,13 @@ void Button::RemoveButtonListener(ButtonListener* buttonListener)
  * @param owner the owner of this axis
  * @param description a description of this axis
  */
-Axis::Axis(InputDevice* owner, std::string description) : 
+Axis::Axis(InputDevice* owner, const std::string& description) : 
    InputDeviceFeature(owner, description),
    mState(0.0)
 {}
 
 /**
- * Sets the state of this axis.  The delta value is used to indicate
+ * std::sets the state of this axis.  The delta value is used to indicate
  * stateless motion, such as mouse scrolling.
  *
  * @param axis the new state
@@ -347,7 +344,7 @@ void Axis::SetState(double state, double delta)
 
       mState = state;
 
-      set<AxisListener*>::iterator it;
+      std::set<AxisListener*>::iterator it;
       
       for(it = mAxisListeners.begin();
           it != mAxisListeners.end();

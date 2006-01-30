@@ -31,14 +31,16 @@
 #include <osg/Geometry>
 #include <dtCore/transformable.h>
 #include <dtABC/beziercontroller.h>
-#include "dtDAL/actorproxy.h"
-#include "dtEditQt/viewportmanager.h"
+#include <dtDAL/actorproxy.h>
+#include <dtEditQt/viewportmanager.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
     class Material;
     class Group;
 }
+/// @endcond
 
 namespace dtEditQt
 {

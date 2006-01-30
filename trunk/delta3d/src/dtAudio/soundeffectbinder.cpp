@@ -1,14 +1,13 @@
 #include <cassert>
 
-#include "dtAudio/soundeffectbinder.h"
-#include "dtCore/system.h"
-#include "dtCore/scene.h"
+#include <dtAudio/soundeffectbinder.h>
+#include <dtCore/system.h>
+#include <dtCore/scene.h>
 
 #include <osg/Vec3>
 
 // namespaces
 using namespace dtAudio;
-using namespace std;
 
 
 
@@ -29,7 +28,7 @@ IMPLEMENT_MANAGEMENT_LAYER(SoundEffectBinder)
  *
  * @param name the instance name
  */
-SoundEffectBinder::SoundEffectBinder( std::string name /*= "SoundEffectBinder"*/ )
+SoundEffectBinder::SoundEffectBinder( const std::string& name /*= "SoundEffectBinder"*/ )
 :  dtCore::Base(name)
 {
    dtCore::System*  sys   = dtCore::System::Instance();
@@ -68,7 +67,7 @@ SoundEffectBinder::Initialize( dtCore::EffectManager* fxMgr /*= NULL*/ )
 * Shutdown the SoundEffectBinder.
 */
 void 
-SoundEffectBinder::Shutdown( void )
+SoundEffectBinder::Shutdown()
 {
    mQueued.clear();
    mDone.clear();
@@ -544,7 +543,7 @@ SoundEffectBinder::StopCB( Sound* sound, void* param )
  *
  * @param name the instance name
  */
-SoundEffectBinder::SfxObj::SfxObj( std::string name /*= "sfxobj"*/ )
+SoundEffectBinder::SfxObj::SfxObj( const std::string& name /*= "sfxobj"*/ )
 :  Base(name),
    mSnd(NULL),
    mList(NULL)

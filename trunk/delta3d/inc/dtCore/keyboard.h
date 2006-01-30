@@ -82,7 +82,6 @@ namespace dtCore
           */
          void RemoveKeyboardListener(KeyboardListener* keyboardListener);
 
-
          ///Producer callback methods
          virtual void keyPress( Producer::KeyCharacter );
          ///Producer callback methods
@@ -92,13 +91,16 @@ namespace dtCore
          ///Producer callback methods
          virtual void specialKeyRelease( Producer::KeyCharacter );
 
+      protected:
 
-      private:
+         static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc);
+
+         typedef std::set<KeyboardListener*> KeyboardListenerSet;
 
          /**
           * The set of keyboard listeners.
           */
-         std::set<KeyboardListener*> keyboardListeners;
+         KeyboardListenerSet mKeyboardListeners;
    };
 
    

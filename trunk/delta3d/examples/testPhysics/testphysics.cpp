@@ -1,14 +1,15 @@
-#include <dtCore/dt.h>
-#include <dtABC/dtabc.h>
-#include <dtUtil/dtutil.h>
+#include <dtABC/application.h>
+#include <dtCore/object.h>
+#include <dtCore/globals.h>
+#include <dtCore/orbitmotionmodel.h>
 
 #include <ode/ode.h>
+#include <cassert>
 #include <queue>
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtUtil;
-using namespace std;
 
 class Updater : public Base
 {

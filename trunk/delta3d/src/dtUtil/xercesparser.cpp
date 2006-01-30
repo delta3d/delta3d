@@ -21,7 +21,9 @@ XercesParser::~XercesParser()
 {
 }
 
-bool XercesParser::Parse(const std::string& datafile, ContentHandler& handler, const std::string& schemafile)
+bool XercesParser::Parse(  const std::string& datafile, 
+                           XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler& handler, 
+                           const std::string& schemafile)
 {
    std::string filename = osgDB::findDataFile( datafile );
    if( filename.empty() )

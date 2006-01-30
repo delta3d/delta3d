@@ -2,21 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/logicalinputdevice.h"
+#include <dtCore/logicalinputdevice.h>
 
 using namespace dtCore;
-using namespace std;
-using namespace osg;
 
 IMPLEMENT_MANAGEMENT_LAYER(LogicalInputDevice)
-
 
 /**
  * Constructor.
  *
  * @param name the instance name
  */
- LogicalInputDevice::LogicalInputDevice(std::string name) : InputDevice(name)
+ LogicalInputDevice::LogicalInputDevice(const std::string& name) : InputDevice(name)
 {
    RegisterInstance(this);
 }
@@ -35,7 +32,7 @@ LogicalInputDevice::~LogicalInputDevice()
  * @param description a description of the button
  * @param mapping the initial button mapping, or NULL for none
  */
-LogicalButton* LogicalInputDevice::AddButton(std::string description,
+LogicalButton* LogicalInputDevice::AddButton(const std::string& description,
                                              ButtonMapping* mapping)
 {
    LogicalButton* button = new LogicalButton(this, description, mapping);
@@ -52,7 +49,7 @@ LogicalButton* LogicalInputDevice::AddButton(std::string description,
  * @param description a description of the button
  * @param sourceButton the source button
  */
-LogicalButton* LogicalInputDevice::AddButton(std::string description,
+LogicalButton* LogicalInputDevice::AddButton(const std::string& description,
                                              Button* sourceButton)
 {
    return AddButton(description, new ButtonToButton(sourceButton));
@@ -74,7 +71,7 @@ void LogicalInputDevice::RemoveButton(LogicalButton* button)
  * @param description a description of the axis
  * @param mapping the initial axis mapping, or NULL for none
  */
-LogicalAxis* LogicalInputDevice::AddAxis(std::string description,
+LogicalAxis* LogicalInputDevice::AddAxis(const std::string& description,
                                          AxisMapping* mapping)
 {
    LogicalAxis* axis = new LogicalAxis(this, description, mapping);
@@ -91,7 +88,7 @@ LogicalAxis* LogicalInputDevice::AddAxis(std::string description,
  * @param description a description of the axis
  * @param sourceAxis the source axis
  */
-LogicalAxis* LogicalInputDevice::AddAxis(std::string description,
+LogicalAxis* LogicalInputDevice::AddAxis(const std::string& description,
                                          Axis* sourceAxis)
 {
    return AddAxis(description, new AxisToAxis(sourceAxis));
@@ -115,12 +112,12 @@ void LogicalInputDevice::RemoveAxis(LogicalAxis* axis)
  * @param mapping the initial button mapping
  */
 LogicalButton::LogicalButton(LogicalInputDevice* owner,
-                             std::string description, 
+                             const std::string& description, 
                              ButtonMapping *mapping) :
    Button(owner, description),
    mMapping(mapping)
 {
-   if(mMapping.get() != NULL)
+   if(mMapping.valid())
    {
       mMapping->SetTargetButton(this);
    }
@@ -133,14 +130,14 @@ LogicalButton::LogicalButton(LogicalInputDevice* owner,
  */
 void LogicalButton::SetMapping(ButtonMapping* mapping)
 {
-   if(mMapping.get() != NULL)
+   if(mMapping.valid())
    {
       mMapping->SetTargetButton(NULL);
    }
 
    mMapping = mapping;
 
-   if(mMapping.get() != NULL)
+   if(mMapping.valid())
    {
       mMapping->SetTargetButton(this);
    }
@@ -183,7 +180,7 @@ ButtonToButton::ButtonToButton(Button* sourceButton) :
  */
 ButtonToButton::~ButtonToButton()
 {
-   if(mSourceButton.get() != NULL)
+   if(mSourceButton.valid())
    {
       mSourceButton->RemoveButtonListener(this);
    }
@@ -196,14 +193,14 @@ ButtonToButton::~ButtonToButton()
  */
 void ButtonToButton::SetSourceButton(Button* sourceButton)
 {
-   if(mSourceButton.get() != NULL)
+   if(mSourceButton.valid())
    {
       mSourceButton->RemoveButtonListener(this);
    }
 
    mSourceButton = sourceButton;
 
-   if(mSourceButton.get() != NULL && mTargetButton.get() != NULL)
+   if(mSourceButton.valid() && mTargetButton.valid())
    {
       mSourceButton->AddButtonListener(this);
    }
@@ -230,9 +227,9 @@ void ButtonToButton::SetTargetButton(LogicalButton* targetButton)
 {
    mTargetButton = targetButton;
 
-   if(mSourceButton.get() != NULL)
+   if(mSourceButton.valid())
    {
-      if(mTargetButton.get() != NULL)
+      if(mTargetButton.valid())
       {
          mSourceButton->AddButtonListener(this);
       }
@@ -266,7 +263,7 @@ void ButtonToButton::ButtonStateChanged(Button* button,
                                         bool oldState,
                                         bool newState)
 {
-   if(mTargetButton.get() != NULL)
+   if(mTargetButton.valid())
    {
       mTargetButton->SetState(newState);
    }
@@ -277,11 +274,11 @@ void ButtonToButton::ButtonStateChanged(Button* button,
  */
 void ButtonToButton::UpdateTargetButtonState()
 {
-   if(mTargetButton.get() != NULL)
+   if(mTargetButton.valid())
    {
       bool state = false;
 
-      if(mSourceButton.get() != NULL)
+      if(mSourceButton.valid())
       {
          state = mSourceButton->GetState();
       }
@@ -298,12 +295,12 @@ void ButtonToButton::UpdateTargetButtonState()
  * @param mapping the initial mapping
  */
 LogicalAxis::LogicalAxis(LogicalInputDevice* owner,
-                         std::string description,
+                         const std::string& description,
                          AxisMapping* mapping) :
    Axis(owner, description),
    mMapping(mapping)
 {
-   if(mMapping.get() != NULL)
+   if(mMapping.valid())
    {
       mMapping->SetTargetAxis(this);
    }
@@ -316,14 +313,14 @@ LogicalAxis::LogicalAxis(LogicalInputDevice* owner,
  */
 void LogicalAxis::SetMapping(AxisMapping* mapping)
 {
-   if(mMapping.get() != NULL)
+   if(mMapping.valid())
    {
       mMapping->SetTargetAxis(NULL);
    }
 
    mMapping = mapping;
 
-   if(mMapping.get() != NULL)
+   if(mMapping.valid())
    {
       mMapping->SetTargetAxis(this);
    }
@@ -370,7 +367,7 @@ AxisToAxis::AxisToAxis(Axis* sourceAxis, double scale, double offset)
  */
 AxisToAxis::~AxisToAxis()
 {
-   if(mSourceAxis.get() != NULL)
+   if(mSourceAxis.valid())
    {
       mSourceAxis->RemoveAxisListener(this);
    }
@@ -383,14 +380,14 @@ AxisToAxis::~AxisToAxis()
  */
 void AxisToAxis::SetSourceAxis(Axis* sourceAxis)
 {
-   if(mSourceAxis.get() != NULL)
+   if(mSourceAxis.valid())
    {
       mSourceAxis->RemoveAxisListener(this);
    }
 
    mSourceAxis = sourceAxis;
 
-   if(mSourceAxis.get() != NULL && mTargetAxis.get() != NULL)
+   if(mSourceAxis.valid() && mTargetAxis.valid())
    {
       mSourceAxis->AddAxisListener(this);
    }
@@ -417,7 +414,7 @@ void AxisToAxis::SetTargetAxis(LogicalAxis* targetAxis)
 {
    mTargetAxis = targetAxis;
 
-   if(mSourceAxis.get() != NULL && mTargetAxis.get() != NULL)
+   if(mSourceAxis.valid() && mTargetAxis.valid())
    {
       mSourceAxis->AddAxisListener(this);
    }
@@ -480,7 +477,7 @@ void AxisToAxis::AxisStateChanged(Axis* axis,
                                   double newState, 
                                   double delta)
 {
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
       mTargetAxis->SetState(newState*mScale + mOffset, delta*mScale);
    }
@@ -491,11 +488,11 @@ void AxisToAxis::AxisStateChanged(Axis* axis,
  */
 void AxisToAxis::UpdateTargetAxisState()
 {
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
       double value = 0.0;
 
-      if(mSourceAxis.get() != NULL)
+      if(mSourceAxis.valid())
       {
          value = mSourceAxis->GetState();
       }
@@ -531,7 +528,7 @@ AxesToAxis::AxesToAxis(Axis* firstSourceAxis,
  */
 AxesToAxis::~AxesToAxis()
 {
-   for(vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
+   for(std::vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
        it != mSourceAxes.end();
        it++)
    {
@@ -560,7 +557,7 @@ void AxesToAxis::AddSourceAxis(Axis* sourceAxis)
  */
 void AxesToAxis::RemoveSourceAxis(Axis* sourceAxis)
 {
-   for(vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
+   for(std::vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
        it != mSourceAxes.end();
        it++)
    {
@@ -633,7 +630,7 @@ void AxesToAxis::AxisStateChanged(Axis* axis,
                                   double newState, 
                                   double delta)
 {
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
       mTargetAxis->SetState(newState, delta);
    }
@@ -644,13 +641,11 @@ void AxesToAxis::AxisStateChanged(Axis* axis,
  */
 void AxesToAxis::UpdateTargetAxisState()
 {
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
       if(mSourceAxes.size() == 0)
       {
-         mTargetAxis->SetState(
-            mSourceAxes[mSourceAxes.size()-1]->GetState()
-         );
+         mTargetAxis->SetState( mSourceAxes[mSourceAxes.size()-1]->GetState() );
       }
       else
       {
@@ -689,12 +684,12 @@ ButtonsToAxis::ButtonsToAxis(Button* firstSourceButton,
  */
 ButtonsToAxis::~ButtonsToAxis()
 {
-   if(mFirstSourceButton.get() != NULL)
+   if(mFirstSourceButton.valid())
    {
       mFirstSourceButton->RemoveButtonListener(this);
    }
 
-   if(mSecondSourceButton.get() != NULL)
+   if(mSecondSourceButton.valid())
    {
       mSecondSourceButton->RemoveButtonListener(this);
    }
@@ -709,12 +704,12 @@ ButtonsToAxis::~ButtonsToAxis()
 void ButtonsToAxis::SetSourceButtons(Button* firstSourceButton,
                                      Button* secondSourceButton)
 {
-   if(mFirstSourceButton.get() != NULL)
+   if(mFirstSourceButton.valid())
    {
       mFirstSourceButton->RemoveButtonListener(this);
    }
 
-   if(mSecondSourceButton.get() != NULL)
+   if(mSecondSourceButton.valid())
    {
       mSecondSourceButton->RemoveButtonListener(this);
    }
@@ -722,14 +717,14 @@ void ButtonsToAxis::SetSourceButtons(Button* firstSourceButton,
    mFirstSourceButton = firstSourceButton;
    mSecondSourceButton = secondSourceButton;
 
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
-      if(mFirstSourceButton.get() != NULL)
+      if(mFirstSourceButton.valid())
       {
          mFirstSourceButton->AddButtonListener(this);
       }
 
-      if(mSecondSourceButton.get() != NULL)
+      if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->AddButtonListener(this);
       }
@@ -762,26 +757,26 @@ void ButtonsToAxis::SetTargetAxis(LogicalAxis* targetAxis)
 {
    mTargetAxis = targetAxis;
 
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
-      if(mFirstSourceButton.get() != NULL)
+      if(mFirstSourceButton.valid())
       {
          mFirstSourceButton->AddButtonListener(this);
       }
 
-      if(mSecondSourceButton.get() != NULL)
+      if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->AddButtonListener(this);
       }
    }
    else
    {
-      if(mFirstSourceButton.get() != NULL)
+      if(mFirstSourceButton.valid())
       {
          mFirstSourceButton->RemoveButtonListener(this);
       }
 
-      if(mSecondSourceButton.get() != NULL)
+      if(mSecondSourceButton.valid())
       {
          mSecondSourceButton->RemoveButtonListener(this);
       }
@@ -856,17 +851,17 @@ void ButtonsToAxis::ButtonStateChanged(Button* button,
  */
 void ButtonsToAxis::UpdateTargetAxisState()
 {
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
       bool firstButtonState = false,
            secondButtonState = false;
 
-      if(mFirstSourceButton.get() != NULL)
+      if(mFirstSourceButton.valid())
       {
          firstButtonState = mFirstSourceButton->GetState();
       }
 
-      if(mSecondSourceButton.get() != NULL)
+      if(mSecondSourceButton.valid())
       {
          secondButtonState = mSecondSourceButton->GetState();
       }
@@ -903,12 +898,12 @@ ButtonAxisToAxis::ButtonAxisToAxis(Button* sourceButton, Axis* sourceAxis)
  */
 ButtonAxisToAxis::~ButtonAxisToAxis()
 {
-   if(mSourceButton.get() != NULL)
+   if(mSourceButton.valid())
    {
       mSourceButton->RemoveButtonListener(this);
    }
 
-   if(mSourceAxis.get() != NULL)
+   if(mSourceAxis.valid())
    {
       mSourceAxis->RemoveAxisListener(this);
    }
@@ -921,14 +916,14 @@ ButtonAxisToAxis::~ButtonAxisToAxis()
  */
 void ButtonAxisToAxis::SetSourceButton(Button* sourceButton)
 {
-   if(mSourceButton.get() != NULL)
+   if(mSourceButton.valid())
    {
       mSourceButton->RemoveButtonListener(this);
    }
    
    mSourceButton = sourceButton;
    
-   if(mSourceButton.get() != NULL)
+   if(mSourceButton.valid())
    {
       mSourceButton->AddButtonListener(this);
    }
@@ -953,14 +948,14 @@ Button* ButtonAxisToAxis::GetSourceButton()
  */
 void ButtonAxisToAxis::SetSourceAxis(Axis* sourceAxis)
 {
-   if(mSourceAxis.get() != NULL)
+   if(mSourceAxis.valid())
    {
       mSourceAxis->RemoveAxisListener(this);
    }
    
    mSourceAxis = sourceAxis;
    
-   if(mSourceAxis.get() != NULL)
+   if(mSourceAxis.valid())
    {
       mSourceAxis->AddAxisListener(this);
    }
@@ -987,26 +982,26 @@ void ButtonAxisToAxis::SetTargetAxis(LogicalAxis* targetAxis)
 {
    mTargetAxis = targetAxis;
    
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
-      if(mSourceButton.get() != NULL)
+      if(mSourceButton.valid())
       {
          mSourceButton->AddButtonListener(this);
       }
 
-      if(mSourceAxis.get() != NULL)
+      if(mSourceAxis.valid())
       {
          mSourceAxis->AddAxisListener(this);
       }
    }
    else
    {
-      if(mSourceButton.get() != NULL)
+      if(mSourceButton.valid())
       {
          mSourceButton->RemoveButtonListener(this);
       }
 
-      if(mSourceAxis.get() != NULL)
+      if(mSourceAxis.valid())
       {
          mSourceAxis->RemoveAxisListener(this);
       }
@@ -1052,8 +1047,8 @@ void ButtonAxisToAxis::AxisStateChanged(Axis* axis,
                                         double newState, 
                                         double delta)
 {
-   if(mTargetAxis.get() != NULL &&
-      mSourceButton.get() != NULL &&
+   if(mTargetAxis.valid() &&
+      mSourceButton.valid() &&
       mSourceButton->GetState())
    {
       mTargetAxis->SetState(newState, delta);
@@ -1065,10 +1060,10 @@ void ButtonAxisToAxis::AxisStateChanged(Axis* axis,
  */
 void ButtonAxisToAxis::UpdateTargetAxisState()
 {
-   if(mTargetAxis.get() != NULL)
+   if(mTargetAxis.valid())
    {
-      if(mSourceButton.get() != NULL &&
-         mSourceAxis.get() != NULL &&
+      if(mSourceButton.valid() &&
+         mSourceAxis.valid() &&
          mSourceButton->GetState())
       {
          mTargetAxis->SetState(mSourceAxis->GetState());

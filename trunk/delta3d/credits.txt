@@ -48,7 +48,7 @@ Fuzzy Wells
 - GENETICS integration
 
 Andrzej Kapolka
-- Soarx Terrain, dtHLA, many, many backbone components
+- Original SOARX terrain implementation, dtHLA, many, many backbone components
 
 J.P. Jamieson
 - Audio Manager, Viewer, FLTK integration
@@ -61,6 +61,9 @@ Curtiss Murphy
 - STAGE: Simluation, Training, and Game Editor
 - dtTerrain
 - dtGame
+ 
+Roy Newton
+- Unit Tests
  
 Curtis Conkey
 - Project Sponsor, NETC

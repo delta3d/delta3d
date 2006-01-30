@@ -36,6 +36,7 @@ namespace dtCore
     class Transformable;
 }
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
     class Geometry;
@@ -46,6 +47,7 @@ namespace dtEditQt
 {
    class ViewportManager;
 }
+/// @endcond
 
 namespace dtDAL
 {

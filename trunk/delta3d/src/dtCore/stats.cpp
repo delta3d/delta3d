@@ -1,4 +1,4 @@
-#include "dtCore/stats.h"
+#include <dtCore/stats.h>
 #include <osg/BlendFunc>
 #include <osg/Geode>
 #include <osg/MatrixTransform>
@@ -7,8 +7,6 @@
 #include <dtUtil/log.h>
 #include <dtUtil/stringutils.h>
 
-using namespace osg;
-using namespace osgUtil;
 using namespace dtCore;
 using namespace dtUtil;
 
@@ -17,7 +15,7 @@ using namespace dtUtil;
 //------------------------------------------------------------------
 Stats::Stats(osgUtil::SceneView *sv)
 {
-   mPrintStats = Statistics::STAT_NONE;            // gwm change from bool was : false;
+   mPrintStats = osgUtil::Statistics::STAT_NONE;            // gwm change from bool was : false;
    mInitialTick = mTimer.tick();
    mFrameTick = mInitialTick;
    mFrameRate=0;                   // added by gwm to display fram Rate smoothed
@@ -90,21 +88,21 @@ dtCore::Timer_t Stats::UpdateFrameTick()
 }
 
 
-//Select the next statistics type - will wrap around back to NONE
+//Select the next osgUtil::Statistics type - will wrap around back to NONE
 void Stats::SelectNextType()
 {
-   Statistics::statsType type = Statistics::STAT_NONE;
+   osgUtil::Statistics::statsType type = osgUtil::Statistics::STAT_NONE;
 
    switch( mPrintStats ) 
    {
-      case Statistics::STAT_NONE:         type = Statistics::STAT_FRAMERATE;     break;
-      case Statistics::STAT_FRAMERATE:    type = Statistics::STAT_GRAPHS; 	      break;
-      case Statistics::STAT_GRAPHS:       type = Statistics::STAT_PRIMS;  	      break;
-      case Statistics::STAT_PRIMS:        type = Statistics::STAT_NONE;           break;
-      //case Statistics::STAT_PRIMSPERVIEW: type = Statistics::STAT_PRIMSPERBIN;   break; //not supported
-      //case Statistics::STAT_PRIMSPERBIN:  type = Statistics::STAT_DC;            break; //not supported
-      //case Statistics::STAT_DC:           type = Statistics::STAT_NONE;          break; //not supported
-      case Statistics::STAT_RESTART:      type = Statistics::STAT_NONE;          break;
+      case osgUtil::Statistics::STAT_NONE: type = osgUtil::Statistics::STAT_FRAMERATE;     break;
+      case osgUtil::Statistics::STAT_FRAMERATE: type = osgUtil::Statistics::STAT_GRAPHS; 	      break;
+      case osgUtil::Statistics::STAT_GRAPHS: type = osgUtil::Statistics::STAT_PRIMS;  	      break;
+      case osgUtil::Statistics::STAT_PRIMS: type = osgUtil::Statistics::STAT_NONE;           break;
+      //case osgUtil::Statistics::STAT_PRIMSPERVIEW: type = osgUtil::Statistics::STAT_PRIMSPERBIN;   break; //not supported
+      //case osgUtil::Statistics::STAT_PRIMSPERBIN: type = osgUtil::Statistics::STAT_DC;            break; //not supported
+      //case osgUtil::Statistics::STAT_DC: type = osgUtil::Statistics::STAT_NONE;          break; //not supported
+      case osgUtil::Statistics::STAT_RESTART: type = osgUtil::Statistics::STAT_NONE;          break;
       default:                                                                   break;
    }
    
@@ -121,33 +119,35 @@ void Stats::SelectType(osgUtil::Statistics::statsType type)
 
    if (mProjection->getNumParents() == 0)
    {
-      osg::Group *gr = (osg::Group*)mSV->getSceneData();
-      if (gr) gr->addChild(mProjection.get());
+      if ( osg::Group *gr = mSV->getSceneData()->asGroup() )
+      {
+         gr->addChild(mProjection.get());
+      }
    }
 
    mPrintStats = type;
 
    // switch off stencil counting
-//   if (mPrintStats==Statistics::STAT_DC) 
+//   if (mPrintStats==osgUtil::Statistics::STAT_DC) 
 //      glDisable(GL_STENCIL_TEST);
 
-   if (mPrintStats>=Statistics::STAT_RESTART) 
+   if (mPrintStats>=osgUtil::Statistics::STAT_RESTART) 
    {
-      mPrintStats=Statistics::STAT_NONE;
+      mPrintStats=osgUtil::Statistics::STAT_NONE;
    }
 
    // skip over these stats
-   if ((mPrintStats==Statistics::STAT_PRIMSPERVIEW) ||
-      (mPrintStats==Statistics::STAT_PRIMSPERBIN))
+   if ((mPrintStats==osgUtil::Statistics::STAT_PRIMSPERVIEW) ||
+      (mPrintStats==osgUtil::Statistics::STAT_PRIMSPERBIN))
    {
-      //mPrintStats = Statistics::STAT_DC;
-      LOG_WARNING("Statistics 'PRIMPERVIEW/PRIMPERBIN' not supported");
+      //mPrintStats = osgUtil::Statistics::STAT_DC;
+      LOG_WARNING("osgUtil::Statistics 'PRIMPERVIEW/PRIMPERBIN' not supported");
    }
 
    // count depth complexity by incrementing the stencil buffer every
-   if (mPrintStats==Statistics::STAT_DC)
+   if (mPrintStats==osgUtil::Statistics::STAT_DC)
    {
-      LOG_WARNING("Depth complexity statistics not supported");
+      LOG_WARNING("Depth complexity osgUtil::Statistics not supported");
 
       //depth complexity is currently not supported.
       //glGetIntegerv(GL_STENCIIL_BITS) causes a crash on Linux
@@ -230,9 +230,9 @@ void Stats::ShowStats()
     mFrameRateCounterText->setText(clin);
   }
                               // more stats - graphs this time
-  if (mPrintStats>=Statistics::STAT_GRAPHS  && 
-      mPrintStats!=Statistics::STAT_PRIMSPERVIEW  && 
-      mPrintStats!=Statistics::STAT_PRIMSPERBIN)
+  if (mPrintStats>=osgUtil::Statistics::STAT_GRAPHS  && 
+      mPrintStats!=osgUtil::Statistics::STAT_PRIMSPERVIEW  && 
+      mPrintStats!=osgUtil::Statistics::STAT_PRIMSPERBIN)
   {
 
     int sampleIndex = 2;
@@ -303,23 +303,23 @@ void Stats::ShowStats()
     glLineWidth(1.0f);
   }
                               // yet more stats - add triangles, number of strips...
-  if (mPrintStats==Statistics::STAT_PRIMS)
+  if (mPrintStats==osgUtil::Statistics::STAT_PRIMS)
   {
     /* 
      * Use the new renderStage.  Required mods to RenderBin.cpp, and RenderStage.cpp (add getPrims)
      * also needed to define a new class called Statistic (see osgUtil/Statistic).
      * RO, July 2001.
      */
-    Statistics primStats;
+    osgUtil::Statistics primStats;
     mStage->getPrims(&primStats);
                             // full print out required
-    primStats.setType(Statistics::STAT_PRIMS);
+    primStats.setType(osgUtil::Statistics::STAT_PRIMS);
     WritePrims((int)(0.86f*1024),primStats);
     maxbins=(primStats.getBins()>maxbins)?primStats.getBins():maxbins;
  
   }
                               // more stats - add triangles, number of strips... as seen per bin
-  if (mPrintStats==Statistics::STAT_PRIMSPERBIN)
+  if (mPrintStats==osgUtil::Statistics::STAT_PRIMSPERBIN)
   {
     /* 
      * Use the new renderStage.  Required mods to RenderBin.cpp, and RenderStage.cpp (add getPrims)
@@ -327,7 +327,7 @@ void Stats::ShowStats()
      * RO, July 2001.
      */
                               // array of bin stats
-    Statistics *primStats=new Statistics[maxbins];
+    osgUtil::Statistics *primStats=new osgUtil::Statistics[maxbins];
     mStage->getPrims(primStats, maxbins);
 
     int nbinsUsed=(primStats[0].getBins()<maxbins)?primStats[0].getBins():maxbins;
@@ -335,14 +335,14 @@ void Stats::ShowStats()
     for (int i=0; i<nbinsUsed; i++)
     {
                               // cuts out vertices & triangles to save space on screen
-      primStats[i].setType(Statistics::STAT_PRIMSPERBIN);
+      primStats[i].setType(osgUtil::Statistics::STAT_PRIMSPERBIN);
       ntop+=WritePrims((int)(0.86f*1024-ntop),primStats[i]);
     }
     maxbins=(primStats[0].getBins()>maxbins)?primStats[0].getBins():maxbins;
     delete [] primStats;   // free up
   }
                               // yet more stats - read the depth complexity
-  if (mPrintStats==Statistics::STAT_DC)
+  if (mPrintStats==osgUtil::Statistics::STAT_DC)
   {
 //    int wid=width, ht=height;      // temporary local screen size - must change during this section
 //    if (wid>0 && ht>0)

@@ -366,7 +366,7 @@ namespace dtUtil
           * @param longitude the geodetic longitude
           * @param elevation the geodetic elevation
           * @param x the location in which to store the geocentric x coordinate
-          * @parma y the location in which to store the geocentric y coordinate
+          * @param y the location in which to store the geocentric y coordinate
           * @param z the location in which to store the geocentric z coordinate
           */
          static void GeodeticToGeocentric(double latitude, double longitude, double elevation,

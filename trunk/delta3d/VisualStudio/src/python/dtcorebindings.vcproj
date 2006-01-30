@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python.lib python24.lib"
+				AdditionalDependencies="boost_python-vc71-mt.lib python24.lib"
 				OutputFile="../../../bin\PyDtCore.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -18,10 +18,11 @@
  *
 */
 
-/** \file Utility methods for using strings.
-  * \author David Guthrie
-  * \author John K. Grant
-  * \author William E. Johnson II
+/** @file 
+  * Utility methods for using strings.
+  * @author David Guthrie
+  * @author John K. Grant
+  * @author William E. Johnson II
   */
 
 #ifndef DELTA_STRING_UTILS_INC
@@ -170,10 +171,12 @@ namespace dtUtil
        return result;
    }
 
-   /** a utility function to convert a basic type into a string.
-     * @param T the type being passed.
-     * @param t the instance of the type to converted.
-     */
+   /** 
+    * A utility function to convert a basic type into a string. Use
+    * template argument T for the type you'd like to convert.
+    *
+    * @param t the instance of the type to converted.
+    */
    template<typename T>
    std::string ToString(const T& t)
    {

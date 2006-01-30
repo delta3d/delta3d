@@ -7,7 +7,6 @@
 
 using namespace dtCore;
 using namespace dtHLA;
-using namespace std;
 
 IMPLEMENT_MANAGEMENT_LAYER(Entity)
 
@@ -16,7 +15,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Entity)
  *
  * @param name the instance name
  */
- Entity::Entity(std::string name)
+ Entity::Entity(const std::string& name)
    : Object(name),
      mDamageState(NoDamage)
 {
