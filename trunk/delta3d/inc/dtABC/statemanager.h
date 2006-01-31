@@ -85,9 +85,17 @@ namespace dtABC
        class TransitionOccurredEvent : public dtABC::Event
        {
        public:
-          TransitionOccurredEvent() : dtABC::Event(&StateManager::EventType::TRANSITION_OCCURRED) {}
+          TransitionOccurredEvent(State* from, State* to) : dtABC::Event(&StateManager::EventType::TRANSITION_OCCURRED),
+             mFrom(from), mTo(to)
+          {
+          }
+
+          dtCore::RefPtr<const State> mFrom, mTo;
+
        protected:
-          virtual ~TransitionOccurredEvent() {}
+          virtual ~TransitionOccurredEvent()
+          {
+          }
        };
 
       /// Event::Type instances to be used by StateManager
@@ -343,8 +351,6 @@ namespace dtABC
       XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release( &elementName );
 
       dtUtil::AttributeSearch attrsearch;
-      attrsearch.GetSearchKeys().push_back( "Type" );
-      attrsearch.GetSearchKeys().push_back( "Name" );
       dtUtil::AttributeSearch::ResultMap results = attrsearch( attrs );
 
       dtUtil::AttributeSearch::ResultMap::iterator typeiter = results.find("Type");

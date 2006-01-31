@@ -707,7 +707,7 @@ namespace dtEditQt
         ViewportOverlay::ActorProxyList::iterator itor;
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
-            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy *>(itor->get());
+            dtDAL::ActorProxy *proxy = (itor->get());
             deleteProxy(proxy, currMap);
         }
 

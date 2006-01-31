@@ -29,12 +29,11 @@ void ScriptModule::executeString(const CEGUI::String& str)
  * This function is called by CEGUI::System when a CEGUI::Window throws an CEGUI::Event*/
 bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name, const CEGUI::EventArgs& ea)
 {
-   StaticRegistry::iterator iter = mCallbacks.find( handler_name.c_str() );
+   CallbackRegistry::iterator iter = mCallbacks.find( handler_name.c_str() );
    if( iter != mCallbacks.end() )
    {
-      StaticRegistry::value_type::second_type aFunction = (*iter).second;
-      aFunction( ea );
-      return true;
+      CallbackRegistry::value_type::second_type aFunction = (*iter).second;
+      return aFunction( ea );
    }
    else
    {
@@ -44,7 +43,16 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    }
 }
 
+///\todo deprecate manager this
 bool ScriptModule::AddCallback(const std::string& name, STATIC_FUNCTION f)
 {
-   return mCallbacks.insert( StaticRegistry::value_type( name , f ) ).second;
+   HandlerFunctor hf( f );
+   return mCallbacks.insert( CallbackRegistry::value_type( name , hf ) ).second;
 }
+
+bool ScriptModule::AddCallback(const std::string& name, const HandlerFunctor& callback)
+{
+   return mCallbacks.insert( CallbackRegistry::value_type( name , callback ) ).second;
+}
+
+
