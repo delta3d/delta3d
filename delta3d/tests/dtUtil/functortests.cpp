@@ -1,6 +1,6 @@
 /*
 * Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
+* Copyright (C) 2006 MOVES Institute
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -107,7 +107,6 @@ private:
    struct A
    {
       int f0def() { return 2; }
-      int f0defconst() const { return 3; }
       int f1def(int i) { return i; }
       static int f2defstatic(int i, long j) { return i + j; }
       int f2def(int i, long j) { return i + j; }
@@ -116,21 +115,6 @@ private:
       int f2defconstvolatile(int i, long j) const volatile { return i + j; }
       virtual int f2defvirt(int i, long j) { return i + j; }
       virtual int f2defvirtconst(int i, long j) const { return i + j; } 
-   };
-
-   struct TestMemberCounter
-   {
-      int mCount;
-
-      TestMemberCounter() :
-         mCount(0)
-      {
-      }
-
-      void f0def() { mCount++; }
-      void f0defconst() const { FunctorTests::mGlobalCounter++; }
-      void f1def(int i) { mCount += i; }
-      void f1defconst(int i) const { FunctorTests::mGlobalCounter += i; }
    };
 
    struct C : public A
@@ -171,27 +155,16 @@ private:
       }
    };
 
-   dtUtil::Log* mLogger;
-
    typedef Functor<int, TYPELIST_0()> Functor0;
    Functor0 f0;
 
    typedef Functor<int, TYPELIST_1(int)> Functor1;
    typedef Functor<int, TYPELIST_2(int, long)> Functor2;
 
-   TestMemberCounter mMemberCounter;
-
-   public:
-   static int mGlobalCounter;
-
 };
 
-int FunctorTests::mGlobalCounter = 0;
 long FunctorTests::FunT::instances_ = 0;
 long FunctorTests::FunBig::instances_ = 0;
-
-static void voidf0def() { FunctorTests::mGlobalCounter++; }
-static void voidf1def(int i) { FunctorTests::mGlobalCounter += i; }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FunctorTests);
 
@@ -199,16 +172,12 @@ CPPUNIT_TEST_SUITE_REGISTRATION(FunctorTests);
 void FunctorTests::setUp() 
 {
    f0 = Functor0(&f0def);
-   mMemberCounter.mCount = 0;
-
-   mGlobalCounter = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void FunctorTests::tearDown() 
 {
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 void FunctorTests::TestNonMemberFunctors()
