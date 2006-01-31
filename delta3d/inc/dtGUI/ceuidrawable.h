@@ -119,6 +119,14 @@ namespace dtGUI
 
       void OnMessage(dtCore::Base::MessageData *data);
 
+      virtual bool HandleMouseMoved(dtCore::Mouse* mouse, float x, float y);
+      virtual bool HandleMouseDragged(dtCore::Mouse* mouse, float x, float y);
+      virtual bool HandleButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button);
+      virtual bool HandleButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button);
+      virtual bool HandleKeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
+      virtual bool HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
+      virtual bool HandleMouseScrolled(dtCore::Mouse* mouse, int delta);
+
       ///pass the mouse moved events to CEGUI
       virtual void MouseMoved(dtCore::Mouse* mouse, float x, float y);
 

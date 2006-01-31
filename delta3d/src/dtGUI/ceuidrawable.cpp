@@ -733,3 +733,86 @@ void CEUIDrawable::SetRenderingSize( int width, int height )
    rend->setDisplaySize(s);
 }
 
+bool CEUIDrawable::HandleMouseMoved(dtCore::Mouse* mouse, float x, float y)
+{
+   mMouseX = x - mMouseX;
+   mMouseY = y - mMouseY;
+   CEGUI::System::getSingleton().injectMouseMove(mMouseX * mHalfWidth, mMouseY * -mHalfHeight);
+   mMouseX = x;
+   mMouseY = y;
+
+   return CEGUI::System::getSingleton().injectMousePosition( ((x+1)*0.5f)*mWidth, ((-y+1)*0.5f)*mHeight);
+}
+
+bool CEUIDrawable::HandleMouseDragged(dtCore::Mouse* mouse, float x, float y)
+{
+   return HandleMouseMoved(mouse, x, y);
+}
+
+bool CEUIDrawable::HandleButtonPressed(Mouse* mouse, MouseButton button)
+{
+   switch( button )
+   {
+   case LeftButton:
+      return CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::LeftButton);
+      break;
+   case RightButton:
+      return CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::RightButton);
+      break;
+   case MiddleButton:
+      return CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MiddleButton);
+      break;
+   }
+
+   return false;
+}
+
+bool CEUIDrawable::HandleButtonReleased(Mouse* mouse, MouseButton button)
+{
+   switch(button)
+   {
+   case LeftButton:
+      {
+         return CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::LeftButton);
+      }  break;
+
+   case RightButton:
+      {
+         return CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::RightButton);
+      }  break;
+
+   case MiddleButton:
+      {
+         return CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::MiddleButton);
+      }  break;
+   }
+
+   return false;
+}
+
+bool CEUIDrawable::HandleKeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar)
+{
+   if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
+   {
+      CEGUI::System::getSingleton().injectKeyDown(scanKey);
+   }
+
+   return CEGUI::System::getSingleton().injectChar( static_cast<CEGUI::utf32>(kchar) );   
+}
+
+bool CEUIDrawable::HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar)
+{
+   bool handled(false);
+   if( CEGUI::Key::Scan scanKey = KeyboardKeyToKeyScan(key) )
+   {
+      handled = CEGUI::System::getSingleton().injectKeyUp(scanKey);
+   }
+
+   return handled;
+}
+
+bool CEUIDrawable::HandleMouseScrolled(dtCore::Mouse* mouse, int delta)
+{
+   return CEGUI::System::getSingleton().injectMouseWheelChange( (float)delta );
+}
+

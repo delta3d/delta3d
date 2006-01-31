@@ -38,9 +38,11 @@ void StateManager::PreFrame( const double deltaFrameTime )
 
          if( iter != mTransitions.end() )
          {
-            MakeCurrent( (*iter).second.get() );
+            State* to = (*iter).second.get();
+            TransitionOccurredEvent* event = new TransitionOccurredEvent( mCurrentState.get() , to );
+            MakeCurrent( to );
             mSwitch = false;
-            SendMessage( "event" , new TransitionOccurredEvent() );
+            SendMessage( "event" , event );
          }
       }
    }

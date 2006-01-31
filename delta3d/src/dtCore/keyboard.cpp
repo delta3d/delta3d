@@ -17,425 +17,115 @@ IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
 {
    RegisterInstance(this);
 
-   AddFeature(
-      new Button(this, "Unknown")
-   );
-
-   AddFeature(
-      new Button(this, "Esc")
-   );
-
-   AddFeature(
-      new Button(this, "F1")
-   );
-
-   AddFeature(
-      new Button(this, "F2")
-   );
-
-   AddFeature(
-      new Button(this, "F3")
-   );
-
-   AddFeature(
-      new Button(this, "F4")
-   );
-
-   AddFeature(
-      new Button(this, "F5")
-   );
-
-   AddFeature(
-      new Button(this, "F6")
-   );
-
-   AddFeature(
-      new Button(this, "F7")
-   );
-
-   AddFeature(
-      new Button(this, "F8")
-   );
-
-   AddFeature(
-      new Button(this, "F9")
-   );
-
-   AddFeature(
-      new Button(this, "F10")
-   );
-
-   AddFeature(
-      new Button(this, "F11")
-   );
-
-   AddFeature(
-      new Button(this, "F12")
-   );
-
-   AddFeature(
-      new Button(this, "`")
-   );
-
-   AddFeature(
-      new Button(this, "1")
-   );
-
-   AddFeature(
-      new Button(this, "2")
-   );
-
-   AddFeature(
-      new Button(this, "3")
-   );
-
-   AddFeature(
-      new Button(this, "4")
-   );
-
-   AddFeature(
-      new Button(this, "5")
-   );
-
-   AddFeature(
-      new Button(this, "6")
-   );
-
-   AddFeature(
-      new Button(this, "7")
-   );
-
-   AddFeature(
-      new Button(this, "8")
-   );
-
-   AddFeature(
-      new Button(this, "9")
-   );
-
-   AddFeature(
-      new Button(this, "0")
-   );
-
-   AddFeature(
-      new Button(this, "-")
-   );
-
-   AddFeature(
-      new Button(this, "=")
-   );
-
-   AddFeature(
-      new Button(this, "Backspace")
-   );
-
-   AddFeature(
-      new Button(this, "Tab")
-   );
-
-   AddFeature(
-      new Button(this, "A")
-   );
-
-   AddFeature(
-      new Button(this, "B")
-   );
-
-   AddFeature(
-      new Button(this, "C")
-   );
-
-   AddFeature(
-      new Button(this, "D")
-   );
-
-   AddFeature(
-      new Button(this, "E")
-   );
-
-   AddFeature(
-      new Button(this, "F")
-   );
-
-   AddFeature(
-      new Button(this, "G")
-   );
-
-   AddFeature(
-      new Button(this, "H")
-   );
-
-   AddFeature(
-      new Button(this, "I")
-   );
-
-   AddFeature(
-      new Button(this, "J")
-   );
-
-   AddFeature(
-      new Button(this, "K")
-   );
-
-   AddFeature(
-      new Button(this, "L")
-   );
-
-   AddFeature(
-      new Button(this, "M")
-   );
-
-   AddFeature(
-      new Button(this, "N")
-   );
-
-   AddFeature(
-      new Button(this, "O")
-   );
-
-   AddFeature(
-      new Button(this, "P")
-   );
-
-   AddFeature(
-      new Button(this, "Q")
-   );
-
-   AddFeature(
-      new Button(this, "R")
-   );
-
-   AddFeature(
-      new Button(this, "S")
-   );
-
-   AddFeature(
-      new Button(this, "T")
-   );
-
-   AddFeature(
-      new Button(this, "U")
-   );
-
-   AddFeature(
-      new Button(this, "V")
-   );
-
-   AddFeature(
-      new Button(this, "W")
-   );
-
-   AddFeature(
-      new Button(this, "X")
-   );
-
-   AddFeature(
-      new Button(this, "Y")
-   );
-
-   AddFeature(
-      new Button(this, "Z")
-   );
-
-   AddFeature(
-      new Button(this, "[")
-   );
-
-   AddFeature(
-      new Button(this, "]")
-   );
-
-   AddFeature(
-      new Button(this, "\\")
-   );
-
-   AddFeature(
-      new Button(this, "Caps Lock")
-   );
-
-   AddFeature(
-      new Button(this, ";")
-   );
-
-   AddFeature(
-      new Button(this, "'")
-   );
-
-   AddFeature(
-      new Button(this, "Enter")
-   );
-
-   AddFeature(
-      new Button(this, "Left Shift")
-   );
-
-   AddFeature(
-      new Button(this, ",")
-   );
-
-   AddFeature(
-      new Button(this, ".")
-   );
-
-   AddFeature(
-      new Button(this, "/")
-   );
-
-   AddFeature(
-      new Button(this, "Right Shift")
-   );
-
-   AddFeature(
-      new Button(this, "Left Ctrl")
-   );
-
-   AddFeature(
-      new Button(this, "Left Super")
-   );
-
-   AddFeature(
-      new Button(this, "Space")
-   );
-
-   AddFeature(
-      new Button(this, "Left Alt")
-   );
-
-   AddFeature(
-      new Button(this, "Right Alt")
-   );
-
-   AddFeature(
-      new Button(this, "Right Super")
-   );
-
-   AddFeature(
-      new Button(this, "Menu")
-   );
-
-   AddFeature(
-      new Button(this, "Right Ctrl")
-   );
-
-   AddFeature(
-      new Button(this, "Print Screen")
-   );
-
-   AddFeature(
-      new Button(this, "Scroll Lock")
-   );
-
-   AddFeature(
-      new Button(this, "Pause")
-   );
-
-   AddFeature(
-      new Button(this, "Home")
-   );
-
-   AddFeature(
-      new Button(this, "Page Up")
-   );
-
-   AddFeature(
-      new Button(this, "End")
-   );
-
-   AddFeature(
-      new Button(this, "Page Down")
-   );
-
-   AddFeature(
-      new Button(this, "Delete")
-   );
-
-   AddFeature(
-      new Button(this, "Insert")
-   );
-
-   AddFeature(
-      new Button(this, "Left")
-   );
-
-   AddFeature(
-      new Button(this, "Up")
-   );
-
-   AddFeature(
-      new Button(this, "Right")
-   );
-
-   AddFeature(
-      new Button(this, "Down")
-   );
-
-   AddFeature(
-      new Button(this, "Num Lock")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad /")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad *")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad -")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad +")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 7")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 8")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 9")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 4")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 5")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 6")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 1")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 2")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 3")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad 0")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad .")
-   );
-
-   AddFeature(
-      new Button(this, "Keypad Enter")
-   );
+   AddFeature(new Button(this, "Unknown"));
+   AddFeature(new Button(this, "Esc"));
+   AddFeature(new Button(this, "F1"));
+   AddFeature(new Button(this, "F2"));
+   AddFeature(new Button(this, "F3"));
+   AddFeature(new Button(this, "F4"));
+   AddFeature(new Button(this, "F5"));
+   AddFeature(new Button(this, "F6"));
+   AddFeature(new Button(this, "F7"));
+   AddFeature(new Button(this, "F8"));
+   AddFeature(new Button(this, "F9"));
+   AddFeature(new Button(this, "F10"));
+   AddFeature(new Button(this, "F11"));
+   AddFeature(new Button(this, "F12"));
+   AddFeature(new Button(this, "`"));
+
+   AddFeature(new Button(this, "1"));
+   AddFeature(new Button(this, "2"));
+   AddFeature(new Button(this, "3"));
+   AddFeature(new Button(this, "4"));
+   AddFeature(new Button(this, "5"));
+   AddFeature(new Button(this, "6"));
+   AddFeature(new Button(this, "7"));
+   AddFeature(new Button(this, "8"));
+   AddFeature(new Button(this, "9"));
+   AddFeature(new Button(this, "0"));
+   AddFeature(new Button(this, "-"));
+   AddFeature(new Button(this, "="));
+
+   AddFeature(new Button(this, "Backspace"));
+   AddFeature(new Button(this, "Tab"));
+   AddFeature(new Button(this, "A"));
+   AddFeature(new Button(this, "B"));
+   AddFeature(new Button(this, "C"));
+   AddFeature(new Button(this, "D"));
+   AddFeature(new Button(this, "E"));
+   AddFeature(new Button(this, "F"));
+   AddFeature(new Button(this, "G"));
+   AddFeature(new Button(this, "H"));
+   AddFeature(new Button(this, "I"));
+   AddFeature(new Button(this, "J"));
+   AddFeature(new Button(this, "K"));
+   AddFeature(new Button(this, "L"));
+   AddFeature(new Button(this, "M"));
+   AddFeature(new Button(this, "N"));
+   AddFeature(new Button(this, "O"));
+   AddFeature(new Button(this, "P"));
+   AddFeature(new Button(this, "Q"));
+   AddFeature(new Button(this, "R"));
+   AddFeature(new Button(this, "S"));
+   AddFeature(new Button(this, "T"));
+   AddFeature(new Button(this, "U"));
+   AddFeature(new Button(this, "V"));
+   AddFeature(new Button(this, "W"));
+   AddFeature(new Button(this, "X"));
+   AddFeature(new Button(this, "Y"));
+   AddFeature(new Button(this, "Z"));
+
+   AddFeature(new Button(this, "["));
+   AddFeature(new Button(this, "]"));
+   AddFeature(new Button(this, "\\"));
+   AddFeature(new Button(this, "Caps Lock"));
+   AddFeature(new Button(this, ";"));
+   AddFeature(new Button(this, "'"));
+   AddFeature(new Button(this, "Enter"));
+   AddFeature(new Button(this, "Left Shift"));
+   AddFeature(new Button(this, ","));
+   AddFeature(new Button(this, "."));
+   AddFeature(new Button(this, "/"));
+   AddFeature(new Button(this, "Right Shift"));
+   AddFeature(new Button(this, "Left Ctrl"));
+   AddFeature(new Button(this, "Left Super"));
+   AddFeature(new Button(this, "Space"));
+   AddFeature(new Button(this, "Left Alt"));
+   AddFeature(new Button(this, "Right Alt"));
+   AddFeature(new Button(this, "Right Super"));
+   AddFeature(new Button(this, "Menu"));
+   AddFeature(new Button(this, "Right Ctrl"));
+   AddFeature(new Button(this, "Print Screen"));
+   AddFeature(new Button(this, "Scroll Lock"));
+   AddFeature(new Button(this, "Pause"));
+   AddFeature(new Button(this, "Home"));
+   AddFeature(new Button(this, "Page Up"));
+   AddFeature(new Button(this, "End"));
+   AddFeature(new Button(this, "Page Down"));
+   AddFeature(new Button(this, "Delete"));
+   AddFeature(new Button(this, "Insert"));
+   AddFeature(new Button(this, "Left"));
+   AddFeature(new Button(this, "Up"));
+   AddFeature(new Button(this, "Right"));
+   AddFeature(new Button(this, "Down"));
+   AddFeature(new Button(this, "Num Lock"));
+
+   AddFeature(new Button(this, "Keypad /"));
+   AddFeature(new Button(this, "Keypad *"));
+   AddFeature(new Button(this, "Keypad -"));
+   AddFeature(new Button(this, "Keypad +"));
+   AddFeature(new Button(this, "Keypad 7"));
+   AddFeature(new Button(this, "Keypad 8"));
+   AddFeature(new Button(this, "Keypad 9"));
+   AddFeature(new Button(this, "Keypad 4"));
+   AddFeature(new Button(this, "Keypad 5"));
+   AddFeature(new Button(this, "Keypad 6"));
+   AddFeature(new Button(this, "Keypad 1"));
+   AddFeature(new Button(this, "Keypad 2"));
+   AddFeature(new Button(this, "Keypad 3"));
+   AddFeature(new Button(this, "Keypad 0"));
+   AddFeature(new Button(this, "Keypad ."));
+   AddFeature(new Button(this, "Keypad Enter"));
 }
 
 /**

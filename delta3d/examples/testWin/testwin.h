@@ -28,10 +28,10 @@ private:
 
    void UpdateWidgets();
 
-   static void FullScreenToggleCB(const CEGUI::EventArgs &e);
-   static void WindowPositionCB(const CEGUI::EventArgs &e);
-   static void WindowTitleCB( const CEGUI::EventArgs &e);
-   static void ChangeResolutionCB( const CEGUI::EventArgs &e);
+   bool FullScreenToggleCB(const CEGUI::EventArgs &e);
+   bool WindowPositionCB(const CEGUI::EventArgs &e);
+   bool WindowTitleCB( const CEGUI::EventArgs &e);
+   bool ChangeResolutionCB( const CEGUI::EventArgs &e);
 };
 
 #endif // DELTA_TESTWINAPP
