@@ -196,6 +196,21 @@
 				RelativePath="..\..\..\inc\dtUtil\fractal.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtUtil\funbind.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\funcall.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\functor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\funtraits.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\generic.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtUtil\keyframedecoder.h">
 			</File>
 			<File

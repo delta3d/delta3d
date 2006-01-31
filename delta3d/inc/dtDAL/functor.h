@@ -21,6 +21,8 @@
 #ifndef __Functor__h
 #define __Functor__h
 
+#include <dtUtil/functor.h>
+
 namespace dtDAL 
 {
 
@@ -42,9 +44,9 @@ namespace dtDAL
      *    Functor2Ret - Function with 2 parameters and a return value. <br>
      *    Functor3Ret - Function with 3 parameters and a return value. <br>
      *    Functor4Ret - Function with 4 parameters and a return value. <br>
-     *    Functors with no return value should be created using the makeFunctor
+     *    Functors with no return value should be created using the MakeFunctor
      *    function.  The functors with a return value should be created using
-     *    the makeFunctorRet function. Each function has three versions for each
+     *    the MakeFunctorRet function. Each function has three versions for each
      *    of the functor types.  These versions support const class member functions,
      *    non-const class member functions, and regular functions.  Once created,
      *    a functor can be treated like an ordinary function since each functor has
@@ -131,6 +133,13 @@ namespace dtDAL
             MemFunc &memFunc(*(MemFunc*)(void *)(functor.getMemFunc()));
             (callee->*memFunc)();
         }
+
+        typedef dtUtil::Functor<void, TYPELIST_0()> UtilFunctor0;
+        UtilFunctor0 ToUtilFunctor()
+        {
+            return UtilFunctor0((MemFunc*)(void *)(getMemFunc()));
+        }
+        
     };
 
     /**
@@ -178,7 +187,6 @@ namespace dtDAL
     {
         return FunctionFunctor0<TRT (*)()>(f);
     }
-
 
     ////////////////////////////////FUNCTOR1////////////////////////////////////
     /**

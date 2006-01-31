@@ -137,6 +137,9 @@
 				RelativePath="..\..\..\tests\dtUtil\exceptiontests.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\tests\dtUtil\functortests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\dtUtil\logtests.cpp">
 			</File>
 			<File
