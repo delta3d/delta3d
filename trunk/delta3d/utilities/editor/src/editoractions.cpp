@@ -707,7 +707,9 @@ namespace dtEditQt
         ViewportOverlay::ActorProxyList::iterator itor;
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
-            dtDAL::ActorProxy *proxy = (itor->get());
+           // \TODO: Find out why this const_cast is necessary. It compiles without
+           // it on MSVC 7.1, but not on gcc4.0.2 -osb
+            dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
             deleteProxy(proxy, currMap);
         }
 
