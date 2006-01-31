@@ -120,8 +120,13 @@ private:
 	template <class T, class V>
 	typename FunImplBase::VTable* _init(V const& v)
 	{
-		FunImplBase* pimpl = val_.template init<T>(v);
-		pimpl; // throw away pimpl, we don't need it in this implementation
+      // gcc obviously complained about the below code due to unused variables
+      // so I'm removing it for now. As long as the unit tests pass, we should
+      // be good. -osb
+		//FunImplBase* pimpl = val_.template init<T>(v);
+      //pimpl;
+		val_.template init<T>(v);
+		// throw away pimpl, we don't need it in this implementation
 		static typename FunImplBase::VTable vtbl =
 		{
 			&T::Destroy,
@@ -147,16 +152,16 @@ private:
 	{
 		template <typename V> inline static T* init(Typeless& val, V const& v) { return val.template init<T>(v); }
 		inline static void destroy(Typeless const& val) { val.template destroy<T>(); }
-		inline static T const& get(Typeless const& val) { return val.get<T>(); }
-		inline static T& get(Typeless& val) { return val.get<T>(); }
+		inline static T const& get(Typeless const& val) { return val.template get<T>(); }
+		inline static T& get(Typeless& val) { return val.template get<T>(); }
 	};
 	template <typename T>
 	struct NewAlloc
 	{
 		template <typename V> inline static T* init(Typeless& val, V const& v) { return *val.template init<T*>(new T(v)); }
-		inline static void destroy(Typeless const& val) { delete val.get<T*>(); }
-		inline static T const& get(Typeless const& val) { return *val.get<T const*>(); }
-		inline static T& get(Typeless& val) { return *val.get<T*>(); }
+		inline static void destroy(Typeless const& val) { delete val.template get<T*>(); }
+		inline static T const& get(Typeless const& val) { return *val.template get<T const*>(); }
+		inline static T& get(Typeless& val) { return *val.template get<T*>(); }
 	};
 	template <typename T>
 	struct SelectStored 
