@@ -27,6 +27,7 @@
 #include <dtUtil/functor.h>
 #include <dtUtil/funbind.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <osg/Math>
 
 using namespace dtUtil;
 
@@ -359,7 +360,8 @@ void FunctorTests::TestBinding()
    // test binding
    typedef TYPELIST_3(int, char, double) TestTL3;
    Functor<double, TestTL3> bfun3(&bf3);
-   CPPUNIT_ASSERT(bfun3(1, 'A', 2.1) == bf3(1, 'A', 2.1));
+   CPPUNIT_ASSERT( osg::equivalent( bfun3(1, 'A', 2.1), bf3(1, 'A', 2.1) ) );
+   
    typedef TYPELIST_2(Int2Type<0>, Int2Type<2>) TestIdsTL;
    typedef BoundTL2<TestTL3, TestIdsTL>::Result TestBTL2;
    typedef UnboundTL2<TestTL3, TestIdsTL>::Result TestUBTL2;
@@ -375,19 +377,19 @@ void FunctorTests::TestBinding()
       Binder<Functor<char, TestTL3>, CreateTL<Int2Type<0>, Int2Type<2> >::Type>::Outgoing bfun11(&bf1);
       CPPUNIT_ASSERT(bfun11('A') == bf1('A'));
       Functor<double, TestUBTL2> bfun12 = Bind<0, 2>(bfun3, 1, 2.1);
-      CPPUNIT_ASSERT(bfun12('A') == bf3(1, 'A', 2.1));
+      CPPUNIT_ASSERT( osg::equivalent( bfun12('A'), bf3(1, 'A', 2.1) ) );
       Functor<double, TYPELIST_1(char)> bfun13 = Bind<0, 2>(bfun3, 1, 2.1);
-      CPPUNIT_ASSERT(bfun13('A') == bf3(1, 'A', 2.1));
+      CPPUNIT_ASSERT( osg::equivalent( bfun13('A'), bf3(1, 'A', 2.1) ) );
       Functor<double, TYPELIST_2(char, double)> bfun14 = Bind<0>(bfun3, 1);
-      CPPUNIT_ASSERT(bfun14('A', 2.1) == bf3(1, 'A', 2.1));
+      CPPUNIT_ASSERT( osg::equivalent( bfun14('A', 2.1), bf3(1, 'A', 2.1) ) );
    }
    {
       Functor<double, TYPELIST_2(char, double)> bfunbig = Bind<0, 2, 4>(Functor<double, TYPELIST_5(int, char, int, double, int)>(&bf5), 1, 2, 3);
-      CPPUNIT_ASSERT(bfunbig('A', 2.1) == bf5(1, 'A', 2, 2.1, 3));
+      CPPUNIT_ASSERT( osg::equivalent( bfunbig('A', 2.1), bf5(1, 'A', 2, 2.1, 3) ) );
       Functor<double, TYPELIST_0()> bfun0 = Bind<0, 1, 2, 3, 4>(Functor<double, TYPELIST_5(int, char, int, double, int)>(&bf5), 1, 'A', 2, 2.1, 3);
-      CPPUNIT_ASSERT(bfun0() == bf5(1, 'A', 2, 2.1, 3));
+      CPPUNIT_ASSERT( osg::equivalent( bfun0(), bf5(1, 'A', 2, 2.1, 3) ) );
       Functor<double, TYPELIST_5(int, char, int, double, int)> bfun5 = Bind<>(Functor<double, TYPELIST_5(int, char, int, double, int)>(&bf5));
-      CPPUNIT_ASSERT(bfun5(1, 'A', 2, 2.1, 3) == bf5(1, 'A', 2, 2.1, 3));
+      CPPUNIT_ASSERT( osg::equivalent( bfun5(1, 'A', 2, 2.1, 3), bf5(1, 'A', 2, 2.1, 3) ) );
    }
 }
 

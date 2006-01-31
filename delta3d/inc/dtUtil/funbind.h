@@ -164,7 +164,6 @@ public:
     Binder(Incoming fun, BoundPTL bound) : fun_(fun), bound_(bound) {}
 	//typedef Functor<typename Incoming::ResultType, UnboundParamsTL, typename Incoming::Checking, Incoming::size> Outgoing;
 	typedef Functor<typename Incoming::ResultType, UnboundParamsTL> Outgoing;
-	typedef typename Incoming::ResultType ResultType;
 	typedef typename UnboundHelper<Incoming, BoundIdsTL>::Parm1 Parm1;
 	typedef typename UnboundHelper<Incoming, BoundIdsTL>::Parm2 Parm2;
 	typedef typename UnboundHelper<Incoming, BoundIdsTL>::Parm3 Parm3;
