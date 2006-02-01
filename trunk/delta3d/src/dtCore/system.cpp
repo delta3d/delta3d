@@ -84,6 +84,53 @@ void System::Pause( const double deltaRealTime )
    CameraFrame();
 }
 
+///private
+void System::SystemStep()
+{
+   mClockTime = mClock.tick();
+   mDt = mClock.delta_s(mLastClockTime, mClockTime);
+
+   if( mPaused )
+   {
+      Pause(mDt);
+   }
+   else
+   {
+      //scale time.
+      double mSimDt = mDt * mTimeScale;         
+      mSimulationTime += mSimDt;
+      mSimulationClockTime += (dtCore::Timer_t)(mSimDt * 1000000); 
+
+      PreFrame(mSimDt, mDt);
+      Frame(mSimDt, mDt);
+      PostFrame(mSimDt, mDt);
+   }
+
+   mLastClockTime = mClockTime;
+}
+
+void System::StepWindow()
+{
+   SystemStep();
+
+   if( mShutdownOnWindowClose )
+   {
+      bool renderSurfaceIsRunning = false;
+      for( int i = 0; i < DeltaWin::GetInstanceCount() && !renderSurfaceIsRunning; i++ )
+      {
+         renderSurfaceIsRunning = renderSurfaceIsRunning || DeltaWin::GetInstance(i)->GetRenderSurface()->isRunning();
+      }
+
+      mRunning = mRunning && renderSurfaceIsRunning;
+   }
+
+   for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
+   {
+      DeltaWin::GetInstance(i)->Update();
+   }
+}
+
+
 void System::Run()
 {
    mRunning = true;
@@ -105,49 +152,13 @@ void System::Run()
 #endif   
    while( mRunning )
    {	  
-	   mClockTime = mClock.tick();
-	   mDt = mClock.delta_s(mLastClockTime, mClockTime);
-                       
-      if( mPaused )
-      {
-         Pause(mDt);
-      }
-      else
-      {
-         //scale time.
-         double mSimDt = mDt * mTimeScale;         
-         mSimulationTime += mSimDt;
-         mSimulationClockTime += (dtCore::Timer_t)(mSimDt * 1000000); 
-
-         PreFrame(mSimDt, mDt);
-         Frame(mSimDt, mDt);
-         PostFrame(mSimDt, mDt);
-      }
-
-	   mLastClockTime = mClockTime;
-
-      if( mShutdownOnWindowClose )
-      {
-         bool renderSurfaceIsRunning = false;
-         for( int i = 0; i < DeltaWin::GetInstanceCount() && !renderSurfaceIsRunning; i++ )
-         {
-            renderSurfaceIsRunning = renderSurfaceIsRunning || DeltaWin::GetInstance(i)->GetRenderSurface()->isRunning();
-         }
-
-         mRunning = mRunning && renderSurfaceIsRunning;
-      }
-      
-      for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
-      {
-         DeltaWin::GetInstance(i)->Update();
-      }
-      
+      SystemStep();
+      StepWindow();     
    }
 
    LOG_DEBUG("System: Exiting...");
    SendMessage("exit");
    LOG_DEBUG("System: Done Exiting.");
-
 }
 
 void System::Start()
@@ -170,27 +181,7 @@ void System::Step()
       first = false;
    }
 
-   mClockTime = mClock.tick();
-   mDt = mClock.delta_s(mLastClockTime, mClockTime); 
-
-
-   if( mPaused )
-   {
-      Pause(mDt);
-   }
-   else
-   {
-      //scale time.
-      double mSimDt = mDt * mTimeScale;
-      mSimulationTime += mSimDt;
-      mSimulationClockTime += (dtCore::Timer_t)(mSimDt * 1000000); 
-
-      PreFrame(mSimDt, mDt);
-      Frame(mSimDt, mDt);
-      PostFrame(mSimDt, mDt);
-   }
-
-   mLastClockTime = mClockTime;
+   SystemStep();
 }
 
 void System::Stop()

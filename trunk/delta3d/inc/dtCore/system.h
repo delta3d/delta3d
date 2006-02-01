@@ -68,8 +68,19 @@ namespace dtCore
       ///Toggles the running flag to true
       void Start();
 
-      ///One complete System frame
+      /** Performs one System frame step, but does not perform any
+       *  DeltaWin processing.  Use this call if the DeltaWin is embedded inside a
+       *  GUI package (QT, FLTK, etc.)
+       *  Emits the "preframe", "frame", and "postframe" messages.  Requires the
+       *  Start() method is called first.
+       */
       void Step();
+
+      /** Performs one complete frame step and performs DeltaWin processing.  This is
+       *  usefull if you wish to control the entire System's frame processing.
+       *  Emits the "preframe", "frame", and "postframe" messages. 
+       */
+      void StepWindow();
 
       ///Stop the System from running
       void Stop();
@@ -180,6 +191,9 @@ namespace dtCore
       ///Intenal helper that calls Producer::Camera::frame(bool doSwap)
       ///with the proper value for doSwap.
       void CameraFrame();
+
+      ///One System frame
+      void SystemStep();
 
       bool mRunning; ///<Are we currently running?      
       bool mShutdownOnWindowClose;
