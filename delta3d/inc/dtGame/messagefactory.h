@@ -150,7 +150,7 @@ namespace dtGame
          EXCEPT(MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED, ss.str());
       }
       
-      mMessageFactory->RegisterType<T>(&type);
+      mMessageFactory->template RegisterType<T>(&type);
       
       mIdMap.insert(std::make_pair(type.GetId(), &type));
    }

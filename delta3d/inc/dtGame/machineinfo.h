@@ -141,9 +141,10 @@ namespace dtGame
          {
             return mUniqueId > compareTo.mUniqueId;
          }
-      private:
+      protected:
          virtual ~MachineInfo() {}
          
+      private:
          std::string mName;
          dtCore::UniqueId mUniqueId;
          std::string mHostName;
