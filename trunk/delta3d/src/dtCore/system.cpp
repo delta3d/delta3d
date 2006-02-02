@@ -79,7 +79,7 @@ void System::Frame(const double deltaSimTime, const double deltaRealTime)
 
 void System::Pause( const double deltaRealTime )
 {
-   SendMessage( "pause", (void*)&deltaRealTime );      
+   SendMessage( "pause", &deltaRealTime );      
    
    CameraFrame();
 }
@@ -99,7 +99,7 @@ void System::SystemStep()
       //scale time.
       double mSimDt = mDt * mTimeScale;         
       mSimulationTime += mSimDt;
-      mSimulationClockTime += (dtCore::Timer_t)(mSimDt * 1000000); 
+      mSimulationClockTime += dtCore::Timer_t(mSimDt * 1000000); 
 
       PreFrame(mSimDt, mDt);
       Frame(mSimDt, mDt);
