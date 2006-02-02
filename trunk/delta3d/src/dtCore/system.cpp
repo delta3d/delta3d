@@ -79,7 +79,7 @@ void System::Frame(const double deltaSimTime, const double deltaRealTime)
 
 void System::Pause( const double deltaRealTime )
 {
-   SendMessage( "pause", &deltaRealTime );      
+   SendMessage( "pause", const_cast<double*>(&deltaRealTime) );      
    
    CameraFrame();
 }
