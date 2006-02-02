@@ -397,22 +397,22 @@ void SkyBox::CubeMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& 
 	{
 		case SkyBox::SKYBOX_FRONT:
 			{
-				newSide = SkyBox::SKYBOX_FRONT;
+				newSide = SkyBox::SKYBOX_TOP;
 				break;
 			}
 		case SkyBox::SKYBOX_BACK:
 			{
-				newSide = SkyBox::SKYBOX_RIGHT;
+				newSide = SkyBox::SKYBOX_BOTTOM;
 				break;
 			}
 		case SkyBox::SKYBOX_RIGHT:
 			{
-				newSide = SkyBox::SKYBOX_BOTTOM;
+				newSide = SkyBox::SKYBOX_FRONT;
 				break;
 			}
 		case SkyBox::SKYBOX_LEFT:
 			{
-				newSide = SkyBox::SKYBOX_TOP;
+				newSide = SkyBox::SKYBOX_RIGHT;
 				break;
 			}
 		case SkyBox::SKYBOX_TOP:
@@ -606,50 +606,8 @@ void dtCore::SkyBox::FixedFunctionProfile::SetTexture(SkyBox::SkyBoxSideEnum sid
          "Can't load texture file '%s'.",filename.c_str() );
    }
 
-   int newSide = side;
-   switch(newSide)
-   {
-   case SkyBox::SKYBOX_FRONT:
-	   {
-		   newSide = SkyBox::SKYBOX_RIGHT;
-		   break;
-	   }
-   case SkyBox::SKYBOX_BACK:
-	   {
-		   newSide = SkyBox::SKYBOX_LEFT;
-		   break;
-	   }
-   case SkyBox::SKYBOX_RIGHT:
-	   {
-		   newSide = SkyBox::SKYBOX_BACK;
-		   break;
-	   }
-   case SkyBox::SKYBOX_LEFT:
-	   {
-		   newSide = SkyBox::SKYBOX_FRONT;
-		   break;
-	   }
-   case SkyBox::SKYBOX_TOP:
-	   {
-		   newSide = SkyBox::SKYBOX_TOP;
-		   break;
-	   }
-   case SkyBox::SKYBOX_BOTTOM:
-	   {
-		   newSide = SkyBox::SKYBOX_BOTTOM;
-		   break;
-	   }
-   default:
-	   {
-		   break;
-	   }
-
-   }
-
-
-
-   mTextureList[newSide]->setImage(newImage);
-   mTextureList[newSide]->dirtyTextureObject();
+   mTextureList[side]->setImage(newImage);
+   mTextureList[side]->dirtyTextureObject();
 }
 
 
