@@ -43,9 +43,9 @@ IMPLEMENT_MANAGEMENT_LAYER(SkyBox)
 
 SkyBox::SkyBox(const std::string& name, RenderProfileEnum pRenderProfile):
 EnvEffect(name),
+mRenderProfilePreference(pRenderProfile),
 mRenderProfile(0),
-mInitializedTextures(false),
-mRenderProfilePreference(pRenderProfile)
+mInitializedTextures(false)
 {
    RegisterInstance(this);
 
