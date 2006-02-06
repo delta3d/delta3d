@@ -30,7 +30,7 @@
 #include <osg/Texture2D>
 #include <osg/Group>
 #include <dtUtil/deprecationmgr.h>
-
+#include <osg/TextureCubeMap>
 
 namespace dtCore
 {
@@ -65,8 +65,9 @@ namespace dtCore
    */
 class DT_CORE_EXPORT SkyBox :  public EnvEffect
 {
+protected:
    class RenderProfile;
-
+private:
    DECLARE_MANAGEMENT_LAYER(SkyBox)
 
 public:
@@ -118,11 +119,11 @@ public:
    void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
 
-private:
+protected:
 	
-	void Config();
-	void CheckHardware();
-	void SetRenderProfile(RenderProfileEnum pRenderProfile);
+	virtual void Config();
+	virtual void CheckHardware();
+	virtual void SetRenderProfile(RenderProfileEnum pRenderProfile);
 
 	RenderProfileEnum mRenderProfilePreference;
 	bool mSupportedProfiles[RP_COUNT];
@@ -132,11 +133,10 @@ private:
 	std::string mTexList[6];
 	bool mTexPreSetList[6];
 
-private:
 
 	///this is a custom drawable for the AngularMapProfile
 	///and the CubeMapProfile
-	class SkyBoxDrawable: public osg::Drawable
+	class DT_CORE_EXPORT SkyBoxDrawable: public osg::Drawable
 	{
 	public:
 
@@ -163,7 +163,7 @@ private:
 
 	///this class will use an angular map or light probe
 	///to act as a skybox
-	class AngularMapProfile: public SkyBox::RenderProfile
+	class DT_CORE_EXPORT AngularMapProfile: public SkyBox::RenderProfile
 	{
 	protected:
 		class UpdateViewCallback: public osg::NodeCallback
@@ -190,7 +190,7 @@ private:
 		void Config(osg::Group*);
 		void SetTexture(SkyBoxSideEnum side, const std::string& filename);	
 
-	private:
+	protected:
 
 		void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
 
@@ -204,7 +204,7 @@ private:
 
 	///this class will use a 2D ortho quad and lookup
 	///into a cubemap to find the texture value
-	class CubeMapProfile: public SkyBox::RenderProfile
+	class DT_CORE_EXPORT CubeMapProfile: public SkyBox::RenderProfile
 	{
 	protected:
 		class UpdateViewCallback: public osg::NodeCallback
@@ -230,7 +230,7 @@ private:
 		void Config(osg::Group*);
 		void SetTexture(SkyBoxSideEnum side, const std::string& filename);	
 
-	private:
+	protected:
 		void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
 
 		osg::ref_ptr<osg::Geode>			mGeode;
@@ -242,7 +242,7 @@ private:
 
 	///this render profile will render the skybox as usual with the
 	///fixed function pipeline
-	class FixedFunctionProfile: public SkyBox::RenderProfile
+	class DT_CORE_EXPORT FixedFunctionProfile: public SkyBox::RenderProfile
 	{
 		class MoveEarthySkyWithEyePointTransform;
 
@@ -251,7 +251,7 @@ private:
 		void Config(osg::Group* pNode);
 		void SetTexture(SkyBox::SkyBoxSideEnum side, const std::string& filename);
 
-	private:
+	protected:
 
 		osg::Node* MakeBox();
 
