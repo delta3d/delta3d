@@ -45,7 +45,7 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    mSmokeCountA(0L),
    mSmokeCountC(0L),
    mRecorder(new SoundRecorder())
-{  
+{
    AddSender( System::Instance() );
 
    AudioManager::Instantiate();
@@ -306,7 +306,7 @@ void TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
 void TestAudioApp::StopAllSounds( void )
 {
    Sound*   snd(NULL);
-   SND_ITR  iter(NULL);
+   SND_ITR  iter;
    for( iter = mActive.begin(); iter != mActive.end(); iter++ )
    {
       snd   = *iter;
@@ -328,7 +328,7 @@ void TestAudioApp::StopAllSounds( void )
 void
 TestAudioApp::FreeAllStoppedSounds( bool forced /*= false*/ )
 {
-   SND_ITR              iter(NULL);
+   SND_ITR              iter;
    std::stack<SND_ITR>  stk;
    Sound*               snd(NULL);
 
@@ -399,7 +399,7 @@ TestAudioApp::ChangeSoundGain( float gain )
       " ChangeSoundGain( %1.1f )", mSndGain );
 
    Sound*   snd(NULL);
-   SND_ITR  iter(NULL);
+   SND_ITR  iter;
 
    for( iter = mActive.begin(); iter != mActive.end(); iter++ )
    {
@@ -421,7 +421,7 @@ TestAudioApp::ChangeSoundPitch( float pitch )
       " ChangeSoundPitch( %1.4f )", mSndPitch );
 
    Sound*   snd(NULL);
-   SND_ITR  iter(NULL);
+   SND_ITR  iter;
 
    for( iter = mActive.begin(); iter != mActive.end(); iter++ )
    {
@@ -443,7 +443,7 @@ TestAudioApp::ToggleSoundLooping( void )
       " ToggleSoundLooping( %s )", (mLooping)? "true": "false" );
 
    Sound*   snd(NULL);
-   SND_ITR  iter(NULL);
+   SND_ITR  iter;
 
    for( iter = mActive.begin(); iter != mActive.end(); iter++ )
    {
@@ -460,7 +460,7 @@ void
 TestAudioApp::PauseAllSounds( void )
 {
    Sound*   snd(NULL);
-   SND_ITR  iter(NULL);
+   SND_ITR  iter;
    for( iter = mActive.begin(); iter != mActive.end(); iter++ )
    {
       snd   = *iter;
@@ -488,7 +488,7 @@ void
 TestAudioApp::RewindAllSounds( void )
 {
    Sound*   snd(NULL);
-   SND_ITR  iter(NULL);
+   SND_ITR  iter;
    for( iter = mActive.begin(); iter != mActive.end(); iter++ )
    {
       snd   = *iter;
@@ -606,9 +606,9 @@ ParticleSystem*
 TestAudioApp::LoadPSFile( const char* fname )
 {
    ParticleSystem*   particlesystem = new ParticleSystem;
-   
+
    assert( particlesystem );
-   
+
    particlesystem->LoadFile( fname, false );
 
    particlesystem->SetEnabled(false);

@@ -205,7 +205,7 @@ void MatrixUtil::MatrixToHpr( osg::Vec3& hpr, const osg::Matrix& rotation )
 
 }
 
-float MatrixUtil::ClampUnity(const float x)
+float MatrixUtil::ClampUnity( float x )
 {
    if ( x >  1.0f ) return  1.0f;
    if ( x < -1.0f ) return -1.0f;
