@@ -1,6 +1,3 @@
-#ifndef __FRACTAL_H__
-#define __FRACTAL_H__
-
 /* 
 * Delta3D Open Source Game and Simulation Engine 
 * Copyright (C) 2004-2005 MOVES Institute 
@@ -22,6 +19,8 @@
 * @author Bradley Anderegg
 */
 
+#ifndef __FRACTAL_H__
+#define __FRACTAL_H__
 
 namespace dtUtil
 {
