@@ -28,10 +28,10 @@ void initDeltaWinBindings()
    void (DeltaWin::*GP1)( int&, int&, int&, int& ) = &DeltaWin::GetPosition;
    Keyboard* (DeltaWin::*GK1)() = &DeltaWin::GetKeyboard;
    Mouse* (DeltaWin::*GM1)() = &DeltaWin::GetMouse;
-      
+
    scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin")
       .def(init<optional<const std::string&, int, int, int, int, bool, bool> >())
-      .def(init<const std::string,dtCore::Keyboard*,dtCore::Mouse*>())
+      .def(init<const std::string&,dtCore::Keyboard*,dtCore::Mouse*>())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", DeltaWinGI1, return_internal_reference<>())
