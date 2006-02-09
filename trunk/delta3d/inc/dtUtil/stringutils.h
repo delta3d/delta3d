@@ -23,6 +23,7 @@
   * @author David Guthrie
   * @author John K. Grant
   * @author William E. Johnson II
+  * @author Chris Osborn
   */
 
 #ifndef DELTA_STRING_UTILS_INC
@@ -187,6 +188,8 @@ namespace dtUtil
 
    /** Converts a string to a float.*/
    float DT_UTIL_EXPORT ToFloat(const std::string& d);
+
+   double DT_UTIL_EXPORT ToDouble(const std::string& str);
    
    unsigned int DT_UTIL_EXPORT ToUnsignedInt(const std::string& u);
    

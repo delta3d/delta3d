@@ -87,6 +87,13 @@ float dtUtil::ToFloat(const std::string& str)
    return tmp;
 }
 
+double dtUtil::ToDouble(const std::string& str)
+{
+   double tmp(0.0);
+   sscanf(str.c_str(), " %lf", &tmp);
+   return tmp;
+}
+
 unsigned int dtUtil::ToUnsignedInt(const std::string& str)
 {
    unsigned int tmp(0);
