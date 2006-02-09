@@ -38,6 +38,7 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST( TestMatch );
    CPPUNIT_TEST( TestTokenizer );
    CPPUNIT_TEST( TestParseVec );
+   CPPUNIT_TEST( TestToPrimitives );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -68,6 +69,11 @@ class StringUtilTests : public CPPUNIT_NS::TestFixture {
        * Tests ParseVec 
        */
       void TestParseVec();
+
+      /**
+       * Tests ToFloat, ToUnsignedInt, ToDouble 
+       */
+      void TestToPrimitives();
    
    private:
       dtUtil::Log* mLogger;         
@@ -427,4 +433,26 @@ void StringUtilTests::TestParseVec()
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void StringUtilTests::TestToPrimitives()
+{
+   const std::string threePointFourString("3.4");
+   const float threePointFourFloat(3.4f);
+   const double threePointFourDouble(3.4);
+   
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToFloat.\n");
+   float floatValue = dtUtil::ToFloat(threePointFourString);
+   CPPUNIT_ASSERT( osg::equivalent( threePointFourFloat, floatValue ) );
+
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToDouble.\n");
+   double doubleValue = dtUtil::ToDouble(threePointFourString);
+   CPPUNIT_ASSERT( osg::equivalent( threePointFourDouble, doubleValue ) );
+
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToUnsignedInt.\n");
+   const std::string threeString("3");
+   const unsigned int threeInt(3);
+
+   unsigned int unsignedValue = dtUtil::ToUnsignedInt(threeString);
+   CPPUNIT_ASSERT( threeInt == unsignedValue );
+}
 
