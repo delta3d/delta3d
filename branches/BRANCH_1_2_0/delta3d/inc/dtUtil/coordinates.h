@@ -25,15 +25,17 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <map>
+#include <set>
 #include <string>
 
+#include <osgSim/DOFTransform>
 #include <osg/Matrix>
 #include <osg/Math>
-#include <osg/Vec3>
 
-#include <dtUtil/export.h>
-#include <dtUtil/enumeration.h>
-
+#include "dtUtil/export.h"
+#include "dtUtil/enumeration.h"
+#include "dtUtil/mathdefines.h"
 
 namespace dtUtil
 {
@@ -51,9 +53,6 @@ namespace dtUtil
    const double COS_67P5 = 0.38268343236508977;  /* cosine of 67.5 degrees */
    const double AD_C     =  1.0026000;            /* Toms region 1 constant */
 
-   const double UTM_a = 6378137.0;         /* Semi-major axis of ellipsoid in meters  */
-   const double UTM_f = 1 / 298.257223563; /* Flattening of ellipsoid                 */
-   //static long   UTM_Override = 0;          /* Zone override flag                      */
    /**
     * The reciprocal of the flattening parameter (WGS 84).
     */
@@ -64,13 +63,20 @@ namespace dtUtil
     */
    const double semiMajorAxis = 6378137.0;
 
-   /* Ellipsoid parameters, default to WGS 84 */
-   const double Geocent_a = 6378137.0;          /* Semi-major axis of ellipsoid in meters */
-   const double Geocent_f = 1 / flatteningReciprocal;  /* Flattening of ellipsoid           */
+   /* Ellipsoid parameters in WGS 84 */
+   const double Geocent_a = semiMajorAxis;  /* Semi-major axis of ellipsoid in meters */
+   const double Geocent_f = 1 / flatteningReciprocal; /* Flattening of ellipsoid           */
    
-   const double Geocent_e2 = 0.0066943799901413800;   /* Eccentricity squared  */
-   const double Geocent_ep2 = 0.00673949675658690300; /* 2nd eccentricity squared */
+   const double Geocent_e2 = (2.0 - Geocent_f) * Geocent_f;   /* Eccentricity squared  */
+   const double Geocent_ep2 = Geocent_e2 / (1.0 - Geocent_e2); /* 2nd eccentricity squared */
+   const double Geocent_ef = Geocent_f / (2.0 - Geocent_f);
+   const double Geocent_ef_3 = Geocent_ef * Geocent_ef * Geocent_ef;
+   const double Geocent_ef_4 = Geocent_ef_3 * Geocent_ef;
+   const double Geocent_e2_2 = Geocent_e2 * Geocent_e2;
+   const double Geocent_e2_3 = Geocent_e2_2* Geocent_e2;
    
+   ///Scale used in UTM calculations.
+   const double CentralMeridianScale = 0.9996;
          
    class DT_UTIL_EXPORT IncomingCoordinateType : public dtUtil::Enumeration
    {
@@ -104,11 +110,10 @@ namespace dtUtil
       DECLARE_ENUM(LocalCoordinateType);
       
       public:
-         //The local terrain is a globe or part of a globe so that the XYZ coordinates
-         //should be mapped around it.
+         ///The local terrain is a globe or part of a globe so that the XYZ coordinates should be mapped around it.
          static const LocalCoordinateType GLOBE;
          
-         //the terrain is a flat plain
+         ///the terrain is a flat plain
          static const LocalCoordinateType CARTESIAN;
          
       private:
@@ -131,6 +136,7 @@ namespace dtUtil
       
          Coordinates();
          virtual ~Coordinates();
+         
          
          /**
           * Sets the location of the origin in geodetic coordinates.
@@ -218,6 +224,17 @@ namespace dtUtil
          float GetGlobeRadius() const;
          
          /**
+          * @return the currently set UTM zone.
+          */
+         unsigned long GetUTMZone() { return mZone; }
+         
+         /**
+          * Set the UTM zone to be used when converting coodinates from cartesian (Assumed to be UTM) to lat/lon.
+          * @param zone the utm zone.  If it's not between 1 and 60 inclusive, it will be clamped. 
+          */
+         void SetUTMZone(unsigned long zone) { CLAMP(zone, 1L, 60L); mZone = zone; };
+         
+         /**
           * Converts XYZ coordinates to a local translation vector based on the current
           * configuration.
           * @param loc the location as 3 doubles.
@@ -287,7 +304,7 @@ namespace dtUtil
          static void GeocentricToGeodetic(double x, double y, double z,
                                           double& latitude, double& longitude, double& elevation);
          
-         /*
+         /**
           * The function ConvertGeodeticToUTM converts geodetic (latitude and
           * longitude) coordinates to UTM projection (zone, hemisphere, easting and
           * northing) coordinates according to the current ellipsoid and UTM zone
@@ -300,27 +317,50 @@ namespace dtUtil
           * @param   Easting           : Easting (X) in meters               (output)
           * @param   Northing          : Northing (Y) in meters              (output)
           */
-         void ConvertGeodeticToUTM (double Latitude, double Longitude, long& Zone, 
+         void ConvertGeodeticToUTM(double Latitude, double Longitude, unsigned long& Zone, 
                                     char  &Hemisphere, double& Easting, double& Northing); 
+
+         /**
+          * The function ConvertUTMToGeodetic converts UTM projection (zone, easting and
+          * northing) to geodetic (latitude and longitude) coordinates according to the current ellipsoid 
+          * and UTM zone override parameters.
+          *
+          * @param   zone              : UTM zone                            (input)
+          * @param   easting           : Easting (X) in meters               (input)
+          * @param   northing          : Northing (Y) in meters              (input)
+          * @param   latitude          : Latitude in radians                 (output)
+          * @param   longitude         : Longitude in radians                (output)
+          */
+         static void ConvertUTMToGeodetic(long zone, double easting, double northing, double& latitude, double& longitude); 
          
-         /*
+         /**
+          * Calculates the proper UTM zone based on the latitude and longitude.
+          * 
+          * @param latitude the latitude position for the zone.
+          * @param longitude the longitude position for the zone.
+          * @param ewZone the east west zone number.  This the normal UTM zone used in calculations.
+          * @praam nsZone the north-south zone letter.
+          */
+         static void CalculateUTMZone(double latitude, double longitude, unsigned long& ewZone, char& nsZone);
+         
+         /**
           * The function ConvertGeocentricToGeodetic converts geocentric
           * coordinates (X, Y, Z) to geodetic coordinates (latitude, longitude, 
           * and height), according to the current ellipsoid parameters.
           * Code taken from http://earth-info.nga.mil/GandG/geotrans/
           *
-          * @param   X         : Geocentric X coordinate, in meters.         (input)
-          * @param   Y         : Geocentric Y coordinate, in meters.         (input)
-          * @param   Z         : Geocentric Z coordinate, in meters.         (input)
-          * @param   Latitude  : Calculated latitude value in radians.       (output)
-          * @param   Longitude : Calculated longitude value in radians.      (output)
-          * @param   Height    : Calculated height value, in meters.         (output)
+          * @param   x         : Geocentric X coordinate, in meters.         (input)
+          * @param   y         : Geocentric Y coordinate, in meters.         (input)
+          * @param   z         : Geocentric Z coordinate, in meters.         (input)
+          * @param   phi       : Calculated latitude value in radians.       (output)
+          * @param   lambda    : Calculated longitude value in radians.      (output)
+          * @param   elevation : Calculated height value, in meters.         (output)
           *
           * The method used here is derived from 'An Improved Algorithm for
           * Geocentric to Geodetic Coordinate Conversion', by Ralph Toms, Feb 1996
           */
-         void ConvertGeocentricToGeodetic (double X, double Y, double Z,
-                                           double& Latitude, double& Longitude, double& Height);
+         static void ConvertGeocentricToGeodetic (double x, double y, double z,
+                                           double& phi, double& lambda, double& elevation);
          
          /*
           * The function SetTranverseMercatorParameters receives the ellipsoid
@@ -362,15 +402,29 @@ namespace dtUtil
           * <A HREF="http://www.colorado.edu/geography/gcraft/notes/datum/datum_f.html">
           * http://www.colorado.edu/geography/gcraft/notes/datum/datum_f.html</A>.
           *
-          * @param latitude the geodetic latitude
-          * @param longitude the geodetic longitude
+          * @param phi the geodetic latitude in radians
+          * @param lambda the geodetic longitude in radians
           * @param elevation the geodetic elevation
           * @param x the location in which to store the geocentric x coordinate
-          * @param y the location in which to store the geocentric y coordinate
+          * @parma y the location in which to store the geocentric y coordinate
           * @param z the location in which to store the geocentric z coordinate
           */
-         static void GeodeticToGeocentric(double latitude, double longitude, double elevation,
+         static void GeodeticToGeocentric(double phi, double lambda, double elevation,
                                           double& x, double& y, double& z);
+
+         /**
+          * Converts degrees to mils
+          * @param degrees The degrees to convert
+          */
+         static unsigned int DegreesToMils(const float degrees);
+
+         /**
+          * Converts mils to degrees
+          * @param mils The mils to convert
+          * @note If mils is greater than 6400 then it will be clamped
+          * to 6400 implicitly
+          */
+         static float MilsToDegrees(const unsigned int mils);
          
       private:
          
@@ -432,32 +486,35 @@ namespace dtUtil
          double DENOM(double Latitude) const;
          double SPHSR(double Latitude) const; 
          
-         Coordinates(const Coordinates& handler) {}
-         Coordinates& operator=(const Coordinates& handler) { return *this; }
+      public:
 
+         Coordinates& operator = (const Coordinates &rhs);
+         bool operator == (const Coordinates &rhs);
+         Coordinates(const Coordinates &rhs) { *this = rhs; }
    };
 
    inline double Coordinates::SPHTMD(double Latitude) const
    {
-      return (double(TranMerc_ap * Latitude 
+      return ((double) (TranMerc_ap * Latitude 
          - TranMerc_bp * sin(2.e0 * Latitude) + TranMerc_cp * sin(4.e0 * Latitude) 
          - TranMerc_dp * sin(6.e0 * Latitude) + TranMerc_ep * sin(8.e0 * Latitude)));
    }
    
    inline double Coordinates::SPHSN(double Latitude) const
    {
-      return (double(TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
+      return ((double) (TranMerc_a / sqrt( 1.e0 - TranMerc_es * pow(sin(Latitude), 2))));
    }
    
    inline double Coordinates::DENOM(double Latitude) const
    { 
-      return (double(sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))));
+      return ((double) (sqrt(1.e0 - TranMerc_es * pow(sin(Latitude),2))));
    }
    
    inline double Coordinates::SPHSR(double Latitude) const
    {
-      return (double(TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));
+      return ((double) (TranMerc_a * (1.e0 - TranMerc_es) / pow(DENOM(Latitude), 3)));
    }
 };
 
 #endif
+
