@@ -101,7 +101,7 @@ namespace dtDAL
          * @return the extension string or undefined if ResourceIsDirectory if false
          */
         virtual const std::string& GetResourceDirectoryExtension() const = 0;
-        
+
         /**
          * @note the extensions should not have the "*" in front of them so that they can be used internally.
          * @return a map of file extensions and their associated descriptions that will match this helper.
@@ -112,12 +112,12 @@ namespace dtDAL
          * @return A description for this suitable for answering the question "What does this import?"
          */
         virtual const std::string& GetTypeHandlerDescription() const = 0;
-        
+
         /**
          * @return the resource data type this helper is used with.
          */
         virtual const DataType& GetResourceType() const = 0;
-        
+
     private:
         //Hide the copy constructor and operator=
         ResourceTypeHandler(const ResourceTypeHandler&){}
@@ -260,10 +260,10 @@ namespace dtDAL
             const std::string& category = "", dtUtil::tree<ResourceTreeNode>* parentTree = NULL) const;
 
         const ResourceTypeHandler* FindHandlerForDataTypeAndExtension(
-            const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch, 
+            const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch,
             DataType& dt, const std::string& ext) const;
-        
-        static dtUtil::tree<ResourceTreeNode>::iterator ResourceHelper::FindTreeNodeFor(
+
+        static dtUtil::tree<ResourceTreeNode>::iterator FindTreeNodeFor(
             dtUtil::tree<ResourceTreeNode>& resources, const std::string& id);
     };
 
