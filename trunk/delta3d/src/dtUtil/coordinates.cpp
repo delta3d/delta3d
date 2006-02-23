@@ -2,6 +2,7 @@
 #include "dtUtil/coordinates.h"
 #include "dtUtil/log.h"
 #include "dtUtil/stringutils.h"
+#include <dtUtil/deprecationmgr.h>
 
 #include <stdio.h>
 
@@ -661,6 +662,17 @@ namespace dtUtil
       ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting, Northing);
       
    } /* END OF Convert_Geodetic_To_UTM */
+
+   void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
+      long& Zone, char& Hemisphere, double& Easting, double& Northing)
+   {
+      DEPRECATE(  "void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude, long& Zone, char& Hemisphere, double& Easting, double& Northing)",
+                  "void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude, unsigned long& Zone, char& Hemisphere, double& Easting, double& Northing)")
+
+      unsigned long tempZone;
+      ConvertGeodeticToUTM(Latitude,Longitude,tempZone,Hemisphere,Easting,Northing);
+      Zone = tempZone;
+   }
   
    void Coordinates::ConvertUTMToGeodetic (long zone, double easting, double northing, double& latitude, double& longitude)
    {

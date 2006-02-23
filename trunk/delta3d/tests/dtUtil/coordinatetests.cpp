@@ -17,6 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author David Guthrie
+ * @author Chris Osborn
  */
 
 #include <dtUtil/log.h>
@@ -29,16 +30,18 @@
 #include <osg/io_utils>
 
 /**
- * @class DeprecationMgrTests
- * @brief Unit tests for the deprecation manager
+ * @class CoordinateTests
+ * @brief Unit tests for the Coordinate conversion class
  */
-class CoordinateTests : public CPPUNIT_NS::TestFixture {
+class CoordinateTests : public CPPUNIT_NS::TestFixture
+{
    CPPUNIT_TEST_SUITE( CoordinateTests );
    CPPUNIT_TEST( TestConfigure );   
    CPPUNIT_TEST( TestGeocentricToCartesianConversions );   
    CPPUNIT_TEST( TestUTMToCartesianConversions );   
    CPPUNIT_TEST( TestUTMZoneCalculations );
    CPPUNIT_TEST( TestMilConversions );
+   CPPUNIT_TEST( TestConvertGeodeticToUTM );  
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -51,6 +54,8 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture {
       void TestUTMZoneCalculations();
       void TestMilConversions();
       void TestOperators();
+      void TestConvertGeodeticToUTM();
+
 
    private:
       void CheckMilsConversion(float degrees, unsigned expectedMils, float expectedReverseDegrees);
@@ -358,11 +363,8 @@ void CoordinateTests::TestMilConversions()
 void CoordinateTests::TestOperators()
 {
    dtUtil::Coordinates *coords1 = new dtUtil::Coordinates;
-   
    dtUtil::Coordinates coords2;
-
    CPPUNIT_ASSERT_MESSAGE("The coordinates should be equal", *coords1 == coords2);
-
    coords1->SetGeoOrigin(5, 4, 3);
    coords1->SetGeoOriginRotation(3.23, 4.213454);
    coords1->SetGlobeRadius(3);
@@ -373,18 +375,73 @@ void CoordinateTests::TestOperators()
    coords1->SetTransverseMercatorParameters(1, 2, 3, 4, 5, 6, 7);
    coords1->SetUTMZone(8765);
    CPPUNIT_ASSERT_MESSAGE("The coordinates should NOT be equal", !(*coords1 == coords2));
-
    delete coords1;
    coords1 = NULL;
    coords1 = new dtUtil::Coordinates(coords2);
    CPPUNIT_ASSERT_MESSAGE("The copy contructor should have set the values correctly", *coords1 == coords2);
-
    delete coords1;
    coords1 = NULL;
    *coords1 = coords2;
-
    CPPUNIT_ASSERT_MESSAGE("The assignment operator should have set the values correctly", *coords1 == coords2);
-
    delete coords1;
    coords1 = NULL;
+}
+
+void CoordinateTests::TestConvertGeodeticToUTM()
+{
+   // Data converted with "Geographic/UTM Coordinate Converter"
+   // http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html
+   //
+   // Truth UTM data taken from 29 Palms survey points
+
+   const double epsilon = 0.001;
+
+   {
+      long lovePuppyZone;
+      char lovePuppyHemisphere;
+      double lovePuppyEasting;
+      double lovePuppyNorthing;
+
+      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.49524520922253), 
+                                       osg::DegreesToRadians(-115.92735241604716), 
+         lovePuppyZone, lovePuppyHemisphere, lovePuppyEasting, lovePuppyNorthing );
+
+      //CPPUNIT_ASSERT_EQUAL( '11S', lovePuppyZone ) //How to convert to long?
+      CPPUNIT_ASSERT_EQUAL( 'N', lovePuppyHemisphere );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 598480.2, lovePuppyEasting, epsilon );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 3817592.11, lovePuppyNorthing, epsilon );
+
+   }
+
+   {
+      long dacoZone;
+      char dacoHemisphere;
+      double dacoEasting;
+      double dacoNorthing;
+
+      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.30906708995865), 
+                                       osg::DegreesToRadians(-116.03105100289258),
+         dacoZone, dacoHemisphere, dacoEasting, dacoNorthing );
+
+      //CPPUNIT_ASSERT_EQUAL( '11S', dacoZone ) //How to convert to long?
+      CPPUNIT_ASSERT_EQUAL( 'N', dacoHemisphere );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 589156.53, dacoEasting, epsilon );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 3796850.54, dacoNorthing, epsilon );
+   }
+   
+   {
+      long fatbackZone;
+      char fatbackHemisphere;
+      double fatbackEasting;
+      double fatbackNorthing;
+
+      converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.383765465383945), 
+                                       osg::DegreesToRadians(-115.96319687438611),
+         fatbackZone, fatbackHemisphere, fatbackEasting, fatbackNorthing );
+
+      //CPPUNIT_ASSERT_EQUAL( '11S', fatbackZone ) //How to convert to long?
+      CPPUNIT_ASSERT_EQUAL( 'N', fatbackHemisphere );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 595315.70, fatbackEasting, epsilon );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( 3805195.52, fatbackNorthing, epsilon );
+   }
 }

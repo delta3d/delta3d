@@ -320,6 +320,9 @@ namespace dtUtil
          void ConvertGeodeticToUTM(double Latitude, double Longitude, unsigned long& Zone, 
                                     char  &Hemisphere, double& Easting, double& Northing); 
 
+         void ConvertGeodeticToUTM(double Latitude, double Longitude, long& Zone, 
+                                    char  &Hemisphere, double& Easting, double& Northing); 
+
          /**
           * The function ConvertUTMToGeodetic converts UTM projection (zone, easting and
           * northing) to geodetic (latitude and longitude) coordinates according to the current ellipsoid 
