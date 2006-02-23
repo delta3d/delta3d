@@ -23,10 +23,8 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/coordinates.h>
 #include <dtUtil/matrixutil.h>
-#include <dtCore/refptr.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <iostream>
-#include <osg/io_utils>
+#include <osg/Vec3>
 
 /**
  * @class DeprecationMgrTests
@@ -37,8 +35,6 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST( TestConfigure );   
    CPPUNIT_TEST( TestGeocentricToCartesianConversions );   
    CPPUNIT_TEST( TestUTMToCartesianConversions );   
-   CPPUNIT_TEST( TestUTMZoneCalculations );
-   CPPUNIT_TEST( TestMilConversions );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -47,13 +43,9 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture {
 
       void TestConfigure(); 
       void TestGeocentricToCartesianConversions();   
-      void TestUTMToCartesianConversions();  
-      void TestUTMZoneCalculations();
-      void TestMilConversions();
-      void TestOperators();
+      void TestUTMToCartesianConversions();   
 
    private:
-      void CheckMilsConversion(float degrees, unsigned expectedMils, float expectedReverseDegrees);
       
       dtUtil::Log* mLogger; 
       dtUtil::Coordinates* converter;
@@ -140,7 +132,6 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
    
    converter->SetOriginLocation(562078.225268, 3788040.632974, -32.0);
    converter->SetGeoOriginRotation(34.231594444, -116.32595);
-
    {
       osg::Vec3d testLoc(-2321639.117695, -4740372.413446, 3569341.066936);
       osg::Vec3 testRot(1.11445f, -0.970783f, 3.1415926f);
@@ -154,17 +145,6 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
       CPPUNIT_ASSERT(osg::equivalent(resultRot[0], 0.481796f, 1e-4f) 
          && osg::equivalent(resultRot[1], -0.143669f, 1e-4f) 
          && osg::equivalent(resultRot[2], 0.705452f, 1e-4f));
-
-      osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
-      osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
-
-      CPPUNIT_ASSERT(osg::equivalent(resultBack.x(), testLoc.x(), 1e-2) 
-         && osg::equivalent(resultBack.y(), testLoc.y(), 1e-2) 
-         && osg::equivalent(resultBack.z(), testLoc.z(), 1e-2));
-      CPPUNIT_ASSERT(osg::equivalent(resultRotBack[0], testRot[0], 1e-2f) 
-         && osg::equivalent(resultRotBack[1],  testRot[1], 1e-2f) 
-         && osg::equivalent(resultRotBack[2], testRot[2], 1e-2f));
-
    }   
 
    {
@@ -181,96 +161,9 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
       CPPUNIT_ASSERT(osg::equivalent(resultRot[0], -148.562f, 1e-3f) 
          && osg::equivalent(resultRot[1], -3.71684f, 1e-4f) 
          && osg::equivalent(resultRot[2], 1.4174f, 1e-4f));
-
-      osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
-      osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
-
-      CPPUNIT_ASSERT(osg::equivalent(resultBack.x(), testLoc.x(), 1e-2) 
-         && osg::equivalent(resultBack.y(), testLoc.y(), 1e-2) 
-         && osg::equivalent(resultBack.z(), testLoc.z(), 1e-2));
-      CPPUNIT_ASSERT(osg::equivalent(resultRotBack[0], testRot[0], 1e-2f) 
-         && osg::equivalent(resultRotBack[1],  testRot[1], 1e-2f) 
-         && osg::equivalent(resultRotBack[2], testRot[2], 1e-2f));
-
    }
-   
 }
 
-void CoordinateTests::TestUTMZoneCalculations()
-{
-   unsigned long ewZone;
-   char nsZone;
-   
-   dtUtil::Coordinates::CalculateUTMZone(38.9, -41.4, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 24);
-   CPPUNIT_ASSERT(nsZone == 'S');
-   
-   dtUtil::Coordinates::CalculateUTMZone(-12.1, -126.4, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 9);
-   CPPUNIT_ASSERT(nsZone == 'L');
-
-   dtUtil::Coordinates::CalculateUTMZone(-12.1, 170.3, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 59);
-   CPPUNIT_ASSERT(nsZone == 'L');
-
-   dtUtil::Coordinates::CalculateUTMZone(-12.3, 67.3, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 42);
-   CPPUNIT_ASSERT(nsZone == 'L');
-
-   dtUtil::Coordinates::CalculateUTMZone(-40.5, -134.4, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 8);
-   CPPUNIT_ASSERT(nsZone == 'G');
-
-   dtUtil::Coordinates::CalculateUTMZone(7.933, -83.8, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 17);
-   CPPUNIT_ASSERT(nsZone == 'N');
-
-   dtUtil::Coordinates::CalculateUTMZone(8.0034, -7.4, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 29);
-   CPPUNIT_ASSERT(nsZone == 'P');
-
-   dtUtil::Coordinates::CalculateUTMZone(-78.3, 121.4, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 51);
-   CPPUNIT_ASSERT(nsZone == 'C');
-
-   //special cases
-   dtUtil::Coordinates::CalculateUTMZone(59.1, 5.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 32);
-   CPPUNIT_ASSERT(nsZone == 'V');
-
-   dtUtil::Coordinates::CalculateUTMZone(68.32, 5.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 31);
-   CPPUNIT_ASSERT(nsZone == 'W');
-
-   dtUtil::Coordinates::CalculateUTMZone(42.1, 5.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 31);
-   CPPUNIT_ASSERT(nsZone == 'T');
-
-   dtUtil::Coordinates::CalculateUTMZone(77.1, 6.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 31);
-   CPPUNIT_ASSERT(nsZone == 'X');
-
-   dtUtil::Coordinates::CalculateUTMZone(83.3, 13.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 33);
-   CPPUNIT_ASSERT(nsZone == 'X');
-
-   dtUtil::Coordinates::CalculateUTMZone(80.3, 23.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 35);
-   CPPUNIT_ASSERT(nsZone == 'X');
-
-   dtUtil::Coordinates::CalculateUTMZone(77.3, 31.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 35);
-   CPPUNIT_ASSERT(nsZone == 'X');
-
-   dtUtil::Coordinates::CalculateUTMZone(77.3, 23.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 35);
-   CPPUNIT_ASSERT(nsZone == 'X');
-
-   dtUtil::Coordinates::CalculateUTMZone(77.3, 35.2, ewZone, nsZone);
-   CPPUNIT_ASSERT(ewZone == 37);
-   CPPUNIT_ASSERT(nsZone == 'X');
-}
-   
 void CoordinateTests::TestUTMToCartesianConversions()
 {
    converter->SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
@@ -326,65 +219,4 @@ void CoordinateTests::TestUTMToCartesianConversions()
 
 }
 
-void CoordinateTests::CheckMilsConversion(float degrees, unsigned expectedMils, float expectedReverseDegrees)
-{
-   unsigned mils;
-   float reverseDegrees;
-   
-   mils = dtUtil::Coordinates::DegreesToMils(degrees);
-   
-   reverseDegrees = dtUtil::Coordinates::MilsToDegrees(mils);
-   
-   std::ostringstream ss;
 
-   ss << "The conversion to mils for " << degrees << " should be " << expectedMils << " but it is " << mils << std::endl;   
-   CPPUNIT_ASSERT_MESSAGE(ss.str(), mils == expectedMils);
-   ss.str("");
-
-   ss << "The conversion to back to degress for " << mils << " mils should be " << expectedReverseDegrees << " but it is " << reverseDegrees << std::endl;      
-   CPPUNIT_ASSERT_MESSAGE(ss.str(), expectedReverseDegrees == reverseDegrees);   
-}
-
-void CoordinateTests::TestMilConversions()
-{
-   CheckMilsConversion(360.0f, 0, 360.0f);
-   CheckMilsConversion(180.0f, 3200, 180.0f);
-   CheckMilsConversion(-180.0f, 3200, 180.0f);
-   CheckMilsConversion(-90.0f, 1600, 270.0f);
-   CheckMilsConversion(90.0f, 4800, 90.0f);
-   CheckMilsConversion(0.0f, 6400, 0.0f);
-}
-
-void CoordinateTests::TestOperators()
-{
-   dtUtil::Coordinates *coords1 = new dtUtil::Coordinates;
-   
-   dtUtil::Coordinates coords2;
-
-   CPPUNIT_ASSERT_MESSAGE("The coordinates should be equal", *coords1 == coords2);
-
-   coords1->SetGeoOrigin(5, 4, 3);
-   coords1->SetGeoOriginRotation(3.23, 4.213454);
-   coords1->SetGlobeRadius(3);
-   coords1->SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
-   coords1->SetLocalCoordinateType(dtUtil::LocalCoordinateType::GLOBE);
-   coords1->SetOriginLocation(4, 3, 1);
-   coords1->SetOriginRotation(908, 78967, 7865);
-   coords1->SetTransverseMercatorParameters(1, 2, 3, 4, 5, 6, 7);
-   coords1->SetUTMZone(8765);
-   CPPUNIT_ASSERT_MESSAGE("The coordinates should NOT be equal", !(*coords1 == coords2));
-
-   delete coords1;
-   coords1 = NULL;
-   coords1 = new dtUtil::Coordinates(coords2);
-   CPPUNIT_ASSERT_MESSAGE("The copy contructor should have set the values correctly", *coords1 == coords2);
-
-   delete coords1;
-   coords1 = NULL;
-   *coords1 = coords2;
-
-   CPPUNIT_ASSERT_MESSAGE("The assignment operator should have set the values correctly", *coords1 == coords2);
-
-   delete coords1;
-   coords1 = NULL;
-}
