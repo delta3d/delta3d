@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="testHLA"
+	RootNamespace="testHLA"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -40,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="dtABC.lib dtCore.lib dtDAL.lib dtHLA.lib osg.lib"
 				OutputFile="../../../bin/testHLA.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -104,6 +105,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtABCd.lib dtCored.lib dtDALd.lib dtHLAd.lib osgd.lib"
 				OutputFile="../../../bin/testHLAd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
