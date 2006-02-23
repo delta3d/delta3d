@@ -27,7 +27,10 @@ bool XercesParser::Parse(  const std::string& datafile,
 {
    std::string filename = osgDB::findDataFile( datafile );
    if( filename.empty() )
+   {
+      LOG_ERROR("Can't find file: " + datafile);
       return false;
+   }
 
    bool retVal(false);
    try  // to inialize the xmlutils
@@ -55,21 +58,24 @@ bool XercesParser::Parse(  const std::string& datafile,
       parser->setContentHandler( &handler );
       parser->setErrorHandler( &xmlerror );
 
-      std::string schema = osgDB::findDataFile( schemafile );
-      if( schema.empty() )
+      if (!schemafile.empty())
       {
-         LOG_WARNING("Scheme file, " + schemafile + ", not found, check your DELTA_DATA environment variable, schema checking disabled.")
-      }
-      else   // turn on schema checking
-      {
-         parser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
-         parser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
-         parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
-         parser->loadGrammar( schema.c_str(), Grammar::SchemaGrammarType );
-         XMLCh* SCHEMA = XMLString::transcode( schema.c_str() );
-         parser->setFeature(XMLUni::fgXercesSchema, true);
-         parser->setProperty( XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
-         XMLString::release( &SCHEMA );
+         std::string schema = osgDB::findDataFile( schemafile );
+         if( schema.empty() )
+         {
+            LOG_WARNING("Scheme file, " + schemafile + ", not found, check your DELTA_DATA environment variable, schema checking disabled.")
+         }
+         else   // turn on schema checking
+         {
+            parser->setFeature(XMLUni::fgXercesSchema, true);                  // enables schema checking.
+            parser->setFeature(XMLUni::fgSAX2CoreValidation, true);            // posts validation errors.
+            parser->setFeature(XMLUni::fgXercesValidationErrorAsFatal, true);  // does not allow parsing if schema is not fulfilled.
+            parser->loadGrammar( schema.c_str(), Grammar::SchemaGrammarType );
+            XMLCh* SCHEMA = XMLString::transcode( schema.c_str() );
+            parser->setFeature(XMLUni::fgXercesSchema, true);
+            parser->setProperty( XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, SCHEMA );
+            XMLString::release( &SCHEMA );
+         }
       }
    }
    catch(const XMLException& e)
