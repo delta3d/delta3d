@@ -44,8 +44,8 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(Keyboard)
 
-
       public:
+         typedef std::list<KeyboardListener*> KeyboardListenerList;
 
          /**
           * Constructor.
@@ -69,7 +69,7 @@ namespace dtCore
          bool GetKeyState(Producer::KeyboardKey key);
 
          /**
-          * Adds a listener for keyboard events.
+          * Pushes a listener for keyboard events to the back of the container.
           *
           * @param keyboardListener the listener to add
           */
@@ -91,16 +91,18 @@ namespace dtCore
          ///Producer callback methods
          virtual void specialKeyRelease( Producer::KeyCharacter );
 
+         // not implemented because clients should not be manipulating the container directly.
+         //KeyboardList& GetListeners() { return mKeyboardListeners; }
+         const KeyboardListenerList& GetListeners() const { return mKeyboardListeners; }
+
       protected:
 
          static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc);
 
-         typedef std::set<KeyboardListener*> KeyboardListenerSet;
-
          /**
           * The set of keyboard listeners.
           */
-         KeyboardListenerSet mKeyboardListeners;
+         KeyboardListenerList mKeyboardListeners;
    };
 
    

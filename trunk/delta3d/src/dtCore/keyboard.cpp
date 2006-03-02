@@ -155,7 +155,7 @@ bool Keyboard::GetKeyState(Producer::KeyboardKey key)
  */
 void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
 {
-   mKeyboardListeners.insert(keyboardListener);
+   mKeyboardListeners.push_back( keyboardListener );
 }
 
 /**
@@ -165,7 +165,7 @@ void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
  */
 void Keyboard::RemoveKeyboardListener(KeyboardListener* keyboardListener)
 {
-   mKeyboardListeners.erase(keyboardListener);
+   mKeyboardListeners.remove(keyboardListener);
 }
 
 /**
@@ -567,7 +567,7 @@ void Keyboard::keyPress(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(true);
 
-   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
        it != mKeyboardListeners.end();
        it++)
    {
@@ -586,7 +586,7 @@ void Keyboard::keyRelease(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(false);
 
-   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
        it != mKeyboardListeners.end();
        it++)
    {
@@ -605,7 +605,7 @@ void Keyboard::specialKeyPress(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(true);
 
-   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
        it != mKeyboardListeners.end();
        it++)
    {
@@ -624,7 +624,7 @@ void Keyboard::specialKeyRelease(Producer::KeyCharacter kc)
 
    GetButton(kk)->SetState(false);
 
-   for(KeyboardListenerSet::iterator it = mKeyboardListeners.begin();
+   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
        it != mKeyboardListeners.end();
        it++)
    {
