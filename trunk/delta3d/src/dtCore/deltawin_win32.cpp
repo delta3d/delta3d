@@ -108,6 +108,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    bool changeSuccessful = false;
 
    std::vector<bool> fullScreenVec; //container to store fullScreen state of each RenderSurface
+   std::vector<unsigned int> screenHeightVec; 
 
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
    {
@@ -118,13 +119,18 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       dw->SetFullScreenMode(false);
 
       //get "real" screen width and height
-      unsigned int screenHeight;
-      unsigned int screenWidth;
-      dw->GetRenderSurface()->getScreenSize( screenWidth, screenHeight );
+
+      unsigned int sWidth, sHeight;    
+      dw->GetRenderSurface()->getScreenSize( sWidth, sHeight );
+      
+      screenHeightVec.push_back(sHeight);
 
       //notify all render surfaces that resolution has changed,
       //we must pass screenHeight-height to properly place new window
-      dw->GetRenderSurface()->setCustomFullScreenRectangle( 0, screenHeight-height, width, height );
+      if(unsigned(height) < screenHeightVec[0])
+      {
+         dw->GetRenderSurface()->setCustomFullScreenRectangle( 0, screenHeightVec[0] - height, width, height );
+      }
       
    }
 
@@ -153,6 +159,11 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
    //change back to original fullScreen state
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
    {
+      if(unsigned(height) > screenHeightVec[i])
+      {
+         DeltaWin::GetInstance(i)->GetRenderSurface()->setCustomFullScreenRectangle( 0, 0, width, height );
+      }
+
       if(fullScreenVec[i])
       {
          DeltaWin::GetInstance(i)->SetFullScreenMode(fullScreenVec[i]);
