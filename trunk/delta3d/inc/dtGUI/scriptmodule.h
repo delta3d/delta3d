@@ -23,7 +23,7 @@ namespace dtGUI
    public:
       ///\todo test to know if this typedef can support just NonMemberFunction, not requiring them to be static.
       typedef bool (*STATIC_FUNCTION)(const CEGUI::EventArgs &e);
-      typedef dtUtil::Functor<bool,TYPELIST_1(CEGUI::EventArgs)> HandlerFunctor;
+      typedef dtUtil::Functor<bool,TYPELIST_1(const CEGUI::EventArgs&)> HandlerFunctor;
       typedef std::map<std::string,HandlerFunctor> CallbackRegistry;
 
       ScriptModule();
