@@ -32,6 +32,7 @@
 #include <osg/PolygonMode> ///for wireframe rendering
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
+#include <osgDB/FileUtils>
 #include <osg/Image>
 #include <osg/VertexProgram>
 #include <dtCore/globals.h>
@@ -259,8 +260,12 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 	osg::ref_ptr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
 	osg::ref_ptr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
 
-	vertShader->loadShaderSourceFromFile(dtCore::GetDeltaDataPathList() + "/shaders/AngularMapSkyBox.vert");
-	fragShader->loadShaderSourceFromFile(dtCore::GetDeltaDataPathList() + "/shaders/AngularMapSkyBox.frag");
+   std::string vertFile = osgDB::findDataFile("/shaders/AngularMapSkyBox.vert");
+   std::string fragFile = osgDB::findDataFile("/shaders/AngularMapSkyBox.frag");
+
+   vertShader->loadShaderSourceFromFile(vertFile);
+   fragShader->loadShaderSourceFromFile(fragFile);
+
 
 	mProgram->addShader(vertShader.get());
 	mProgram->addShader(fragShader.get());
@@ -364,8 +369,11 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 	mProgram->addShader(vertShader.get());
 	mProgram->addShader(fragShader.get());
 
-	vertShader->loadShaderSourceFromFile(dtCore::GetDeltaDataPathList() + "/shaders/CubeMapSkyBox.vert");
-	fragShader->loadShaderSourceFromFile(dtCore::GetDeltaDataPathList() + "/shaders/CubeMapSkyBox.frag");
+   std::string vertFile = osgDB::findDataFile("/shaders/CubeMapSkyBox.vert");
+   std::string fragFile = osgDB::findDataFile("/shaders/CubeMapSkyBox.frag");
+
+	vertShader->loadShaderSourceFromFile(vertFile);
+	fragShader->loadShaderSourceFromFile(fragFile);
 
 	osg::ref_ptr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_CUBE, "cubeMap");
 	tex->set(0);
