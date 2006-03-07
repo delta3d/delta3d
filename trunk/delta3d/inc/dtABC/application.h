@@ -71,6 +71,9 @@ namespace dtABC
       ///override for postframe
       virtual  void  PostFrame( const double deltaFrameTime );
 
+      ///Create basic instances and set up system hooks
+      virtual void CreateInstances(const std::string& name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
+
    private:
       /** \brief A class to perform the necessary features while a Xerces SAX parser is operating.
         * Use this with the Xerces SAX2XMLReader.
@@ -101,8 +104,6 @@ namespace dtABC
 
       friend class AppXMLContentHandler;
 
-      ///Create basic instances and set up system hooks
-      virtual void CreateInstances(const std::string& name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
 
       /// Read the supplied config file, called from the constructor
       bool ParseConfigFile(const std::string& file);
