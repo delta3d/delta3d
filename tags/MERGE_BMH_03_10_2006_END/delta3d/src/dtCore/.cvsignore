@@ -1,0 +1,9 @@
+linux-g++-release
+linux-g++-debug
+windows-msvc-release
+windows-msvc-debug
+
+linux-g++-debug
+windows-msvc-release
+windows-msvc-debug
+

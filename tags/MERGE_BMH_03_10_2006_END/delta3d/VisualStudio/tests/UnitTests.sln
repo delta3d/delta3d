@@ -1,0 +1,99 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtABC", "..\src\dtABC\dtabc.vcproj", "{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtCore", "..\src\dtCore\dtcore.vcproj", "{E8B2FBBF-19C9-4814-9F30-90FE0A036232}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtUtil", "..\src\dtUtil\dtutil.vcproj", "{5F516A22-15B8-4160-B032-BDFD78707350}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtDAL", "..\src\dtDAL\dtDAL.vcproj", "{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F516A22-15B8-4160-B032-BDFD78707350} = {5F516A22-15B8-4160-B032-BDFD78707350}
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittestsdtactors", "dtActors\unittestsdtactors.vcproj", "{14A49BBF-6E94-4F08-81A8-469E5A050632}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtCore", "dtCore\unittestsdtcore.vcproj", "{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtDAL", "dtDAL\unittestsdtdal.vcproj", "{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtGame", "dtGame\unittestsdtgame.vcproj", "{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtUtil", "dtUtil\unittestsdtutil.vcproj", "{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtActors", "..\src\dtActors\dtActors.vcproj", "{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.ActiveCfg = Debug|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Debug.Build.0 = Debug|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Release.ActiveCfg = Release|Win32
+		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}.Release.Build.0 = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.ActiveCfg = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Debug.Build.0 = Debug|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.ActiveCfg = Release|Win32
+		{E8B2FBBF-19C9-4814-9F30-90FE0A036232}.Release.Build.0 = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.ActiveCfg = Debug|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Debug.Build.0 = Debug|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.ActiveCfg = Release|Win32
+		{5F516A22-15B8-4160-B032-BDFD78707350}.Release.Build.0 = Release|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.ActiveCfg = Debug|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Debug.Build.0 = Debug|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.ActiveCfg = Release|Win32
+		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A}.Release.Build.0 = Release|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Debug.ActiveCfg = Debug|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Debug.Build.0 = Debug|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Release.ActiveCfg = Release|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Release.Build.0 = Release|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.ActiveCfg = Debug|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.Build.0 = Debug|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.ActiveCfg = Release|Win32
+		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.Build.0 = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.ActiveCfg = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.ActiveCfg = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.ActiveCfg = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Debug.Build.0 = Debug|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.ActiveCfg = Release|Win32
+		{EAE929FC-3F32-41A9-ADF3-DC9B1319CFCF}.Release.Build.0 = Release|Win32
+		{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}.Debug.ActiveCfg = Debug|Win32
+		{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}.Debug.Build.0 = Debug|Win32
+		{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}.Release.ActiveCfg = Release|Win32
+		{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
