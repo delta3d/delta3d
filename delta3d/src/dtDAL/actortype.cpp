@@ -17,15 +17,40 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  * @author Matthew W. Campbell
-*/
+ */
 #include "dtDAL/actortype.h"
 
 namespace dtDAL 
 {
 
-	///////////////////////////////////////////////////////////////////////////////
-	void ActorType::GenerateUniqueId()
-	{
-		mUniqueId = mName + mCategory;
-	}
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorType::GenerateUniqueId()
+   {
+      mUniqueId = mName + mCategory;
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   bool ActorType::InstanceOf(const ActorType &rhs)
+   {
+      if (rhs == *this)
+         return true;
+         
+      const ActorType *parent = GetParentActorType();
+      while (parent != NULL)
+      {
+         if (*parent == rhs)
+            return true;
+         parent = parent->GetParentActorType();         
+      }
+      
+      return false;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   bool ActorType::InstanceOf(const std::string &category, const std::string &name)
+   {
+      dtCore::RefPtr<ActorType> typeToCheck = new ActorType(name,category);
+      return InstanceOf(*typeToCheck);
+   }
+   
 }

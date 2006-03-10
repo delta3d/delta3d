@@ -14,6 +14,10 @@ deps =  [ 'dtUtil', 'dtCore', 'dtChar', 'isense', 'ode',
           'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32',
           'uuid', 'Xxf86vm', 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-libdtDAL = env.BuildLib( 'dtDAL', srcs, deps, ['DT_DAL_LIBRARY'] )
+defines = []
+if OS == 'windows':
+   defines = ['DT_DAL_LIBRARY']
+
+libdtDAL = env.BuildLib( 'dtDAL', srcs, deps, defines, prefixHeader = "inc/prefix/dtdalprefix.h" )
 
 Export ('libdtDAL')

@@ -43,8 +43,9 @@ namespace dtGame
    DataStream::DataStream(): mBufferSize(0), mBufferCapacity(16), mReadPos(0), mWritePos(0)
    {
       mBuffer = new char[this->mBufferCapacity];
-      isLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;   
-      mAutoFreeBuffer = true;   
+      mIsLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;   
+      mAutoFreeBuffer = true;
+      mForceLittleEndian = false;
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,8 @@ namespace dtGame
       mReadPos = mWritePos = 0;
       mBuffer = buffer;
       mAutoFreeBuffer = autoFree;
-      isLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;
+      mIsLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;
+      mForceLittleEndian = false;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -85,6 +87,8 @@ namespace dtGame
          mWritePos = rhs.mWritePos;
          mReadPos = rhs.mReadPos;
          mAutoFreeBuffer = rhs.mAutoFreeBuffer;
+         mForceLittleEndian = rhs.mForceLittleEndian;
+         mIsLittleEndian = rhs.mIsLittleEndian;
 
          if (mBufferSize > 0)
             memcpy(&rhs.mBuffer[0],&mBuffer[0],mBufferSize);
@@ -138,6 +142,29 @@ namespace dtGame
       if (mWritePos > mBufferSize)
          mBufferSize = mWritePos;
    }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   void DataStream::Read(char& c)
+   {
+      if (mReadPos + sizeof(char) > mBufferSize)
+          EXCEPT(DataStreamException::BUFFER_READ_ERROR,
+            "Buffer underflow detected.");
+
+      c = *((char *)(&mBuffer[mReadPos]));
+      mReadPos += sizeof(char);
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   void DataStream::Write(char c)
+   {
+      if (mWritePos + sizeof(char) > mBufferCapacity)
+         ResizeBuffer();
+
+      *((char *)(&mBuffer[mWritePos])) = c;
+      mWritePos += sizeof(char);
+      if (mWritePos > mBufferSize)
+         mBufferSize = mWritePos;
+   }
 
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Read(short& s)
@@ -148,9 +175,9 @@ namespace dtGame
 
       s = *((short *)(&mBuffer[mReadPos]));
       
-      if (isLittleEndian)
-         osg::swapBytes((char*)&s, sizeof(s));
-         
+      if (mForceLittleEndian ^ mIsLittleEndian)
+         osg::swapBytes((char *)&s,sizeof(s));
+                  
       mReadPos += sizeof(short);
    }
 
@@ -160,7 +187,7 @@ namespace dtGame
       if (mWritePos + sizeof(short) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&s, sizeof(s));
 
       *((short *)(&mBuffer[mWritePos])) = s;
@@ -178,7 +205,7 @@ namespace dtGame
 
       s = *((unsigned short *)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&s, sizeof(s));
 
       mReadPos += sizeof(unsigned short);
@@ -190,7 +217,7 @@ namespace dtGame
       if (mWritePos + sizeof(unsigned short) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&s, sizeof(s));
 
       *((unsigned short *)(&mBuffer[mWritePos])) = s;
@@ -209,7 +236,7 @@ namespace dtGame
 
       i = *((int *)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       mReadPos += sizeof(int);
@@ -221,7 +248,7 @@ namespace dtGame
       if (mWritePos + sizeof(int) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       *((int *)(&mBuffer[mWritePos])) = i;
@@ -240,23 +267,23 @@ namespace dtGame
 
       i = *((unsigned*)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       mReadPos += sizeof(unsigned);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void DataStream::Write(unsigned i)
+   void DataStream::Write(unsigned int i)
    {
-      if (mWritePos + sizeof(unsigned) > mBufferCapacity)
+      if (mWritePos + sizeof(unsigned int) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
-      *((unsigned*)(&mBuffer[mWritePos])) = i;
-      mWritePos += sizeof(unsigned);
+      *((unsigned int *)(&mBuffer[mWritePos])) = i;
+      mWritePos += sizeof(unsigned int);
       if (mWritePos > mBufferSize)
          mBufferSize = mWritePos;
    }
@@ -270,7 +297,7 @@ namespace dtGame
 
       i = *((long *)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       mReadPos += sizeof(long);
@@ -282,7 +309,7 @@ namespace dtGame
       if (mWritePos + sizeof(long) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       *((long *)(&mBuffer[mWritePos])) = i;
@@ -301,7 +328,7 @@ namespace dtGame
 
       i = *((unsigned long*)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       mReadPos += sizeof(unsigned long);
@@ -313,7 +340,7 @@ namespace dtGame
       if (mWritePos + sizeof(unsigned long) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&i, sizeof(i));
 
       *((unsigned long *)(&mBuffer[mWritePos])) = i;
@@ -331,7 +358,7 @@ namespace dtGame
 
       f = *((float *)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&f, sizeof(f));
 
       mReadPos += sizeof(float);
@@ -343,7 +370,7 @@ namespace dtGame
       if (mWritePos + sizeof(float) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&f, sizeof(f));
 
       *((float *)(&mBuffer[mWritePos])) = f;
@@ -361,7 +388,7 @@ namespace dtGame
 
       d = *((double *)(&mBuffer[mReadPos]));
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&d, sizeof(d));
 
       mReadPos += sizeof(double);
@@ -373,7 +400,7 @@ namespace dtGame
       if (mWritePos + sizeof(double) > mBufferCapacity)
          ResizeBuffer();
 
-      if (isLittleEndian)
+      if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char*)&d, sizeof(d));
 
       *((double *)(&mBuffer[mWritePos])) = d;

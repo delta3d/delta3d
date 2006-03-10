@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtGamed.lib osgd.lib osgDBd.lib osgUtild.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtGamed.lib dtActorsd.lib osgd.lib osgDBd.lib osgUtild.lib"
 				OutputFile="../../../bin/testGameActorLibraryd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -89,7 +89,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtGame.lib osg.lib osgDB.lib osgUtil.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtGame.lib dtActors.lib osg.lib osgDB.lib osgUtil.lib"
 				OutputFile="../../../bin/testGameActorLibrary.dll"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libc,libcmt"
@@ -131,6 +131,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\countertaskactor.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactor.cpp">
 			</File>
 			<File
@@ -147,6 +150,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\countertaskactor.h">
+			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\export.h">
 			</File>

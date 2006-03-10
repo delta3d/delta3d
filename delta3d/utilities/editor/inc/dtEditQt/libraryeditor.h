@@ -20,13 +20,13 @@
 * @author William E. Johnson II
 */
 
-#ifndef _LIBRARY_EDITOR_H_
-#define _LIBRARY_EDITOR_H_
+#ifndef DELTA_LIBRARY_EDITOR
+#define DELTA_LIBRARY_EDITOR
 
-#include <QDialog>
+#include <QtGui/QDialog>
 #include <vector>
 #include <osg/ref_ptr>
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/actorproxy.h>
 
 class QListWidget;
 class QGridLayout;

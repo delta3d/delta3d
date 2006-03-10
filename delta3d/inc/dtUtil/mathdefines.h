@@ -1,11 +1,15 @@
-#ifndef __MATHDEFINES_H__
-#define __MATHDEFINES_H__
+#ifndef DELTA_MATHDEFINES
+#define DELTA_MATHDEFINES
 
 
 //math defines
 
 ///returns absolute value
-#define ABS(x) (( (x) < 0) ? (-1.0f * (x)) : (x))
+template <typename num>
+num ABS(num x)
+{
+    return (( x < 0) ? ((num)(-1.0) * x) : x);
+}
 
 ///min and max defines
 #ifndef MIN
@@ -16,10 +20,14 @@
 #define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif // MAX
 
-#define CLAMP(x, a, b)\
-   if((x) < (a)) (x) = (a);\
-   if((x) > (b)) (x) = (b);
-
+template <typename num, typename rangeNum>
+num& CLAMP(num& x, const rangeNum low, const rangeNum high)
+{
+   if (x < (num)(low)) x = (num)(low);
+   if (x > (num)(high)) x = (num)(high);
+   
+   return x;
+}
 
 ///a random integer within a specified range
 #define RAND_RANGE(min, max) ((min) + (rand() % (((max) - (min)) + 1)))

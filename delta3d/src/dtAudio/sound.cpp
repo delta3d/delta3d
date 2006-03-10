@@ -5,6 +5,8 @@
 #include <dtAudio/sound.h>
 #include <dtCore/scene.h>
 #include <dtUtil/serializer.h>
+#include <dtUtil/mathdefines.h>
+
 
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
@@ -27,20 +29,6 @@
 // namespaces
 using namespace dtAudio;
 XERCES_CPP_NAMESPACE_USE
-
-
-
-// helper template functions
-template <class   T>
-T  MIN( T a, T b )         {  return   (a<b)?a:b;        }
-
-template <class   T>
-T  MAX( T a, T b )         {  return   (a>b)?a:b;        }
-
-template <class   T>
-T  CLAMP( T x, T l, T h )  {  return   MAX(MIN(x,h),l);  }
-
-
 
 // static member variables
 const char* Sound::kCommand[kNumCommands]   =
@@ -258,7 +246,8 @@ void Sound::SetLooping( bool loop /*= true*/ )
 void Sound::SetGain( float gain )
 {
    // force gain to range from zero to one
-   mGain    = CLAMP( gain, 0.0f, 1.0f );
+   CLAMP( gain, 0.0f, 1.0f );
+   mGain = gain;
 
    SendMessage( kCommand[GAIN], this );
 }
@@ -275,7 +264,8 @@ void Sound::SetPitch( float pitch )
    // force pitch to range from zero+ to two
    // for some reason openAL chokes on 2+
    // also, openAL states zero to be invalid
-   mPitch   = CLAMP( pitch, 0.000001f, 2.0f );
+   CLAMP( pitch, 0.000001f, 2.0f );
+   mPitch = pitch;
 
    SendMessage( kCommand[PITCH], this );
 }
@@ -471,7 +461,8 @@ void Sound::SetRolloffFactor( float rolloff )
 void
 Sound::SetMinGain( float gain )
 {
-   mMinDist = CLAMP( gain, 0.0f, 1.0f );
+   CLAMP( gain, 0.0f, 1.0f );
+   mMinDist = gain;
 
    SendMessage( kCommand[MIN_DIST], this );
 }
@@ -487,7 +478,8 @@ Sound::SetMinGain( float gain )
 void
 Sound::SetMaxGain( float gain )
 {
-   mMaxDist = CLAMP( gain, 0.0f, 1.0f );
+   CLAMP( gain, 0.0f, 1.0f );
+   mMaxDist = gain;
 
    SendMessage( kCommand[MAX_DIST], this );
 }

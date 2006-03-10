@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -25,89 +25,101 @@
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/export.h"
 
-namespace dtDAL {
+namespace dtDAL 
+{
 
-    /**
-     * @class ResourceTreeNode
-     * @brief A tree node used when indexing resources.
-     */
-    class DT_DAL_EXPORT ResourceTreeNode {
-    public:
-        ResourceTreeNode(){}
+   /**
+    * @class ResourceTreeNode
+    * @brief A tree node used when indexing resources.
+    */
+   class DT_DAL_EXPORT ResourceTreeNode 
+   {
+      public:
+         ResourceTreeNode() {}
 
-        ResourceTreeNode(const std::string& nodeText,
-            const std::string& fullCategory, ResourceDescriptor* resource = NULL):
-            nodeText(nodeText), fullCategory(fullCategory) {
-            if (resource == NULL) {
-                category = true;
-            } else {
-                category = false;
-                this->resource = *resource;
+         ResourceTreeNode(const std::string& nodeText,
+                        const std::string& fullCategory, ResourceDescriptor* resource = NULL):
+            nodeText(nodeText), fullCategory(fullCategory) 
+         {
+            if (resource == NULL) 
+            {
+               category = true;
+            } 
+            else
+            {
+               category = false;
+               this->resource = *resource;
             }
-        }
+         }
 
-        ResourceTreeNode(const ResourceTreeNode& toCopy) {
+         ResourceTreeNode(const ResourceTreeNode& toCopy) 
+         {
             this->resource = toCopy.resource;
             this->nodeText = toCopy.nodeText;
             this->category = toCopy.category;
             this->fullCategory = toCopy.fullCategory;
-        }
+         }
 
-        ResourceTreeNode& operator=(const ResourceTreeNode& toAssign) {
+         ResourceTreeNode& operator=(const ResourceTreeNode& toAssign) 
+         {
             this->resource = toAssign.resource;
             this->nodeText = toAssign.nodeText;
             this->category = toAssign.category;
             this->fullCategory = toAssign.fullCategory;
             return *this;
-        }
+         }
 
-        bool operator==(const ResourceTreeNode& toCompare) const {
+         bool operator==(const ResourceTreeNode& toCompare) const 
+         {
             if (category)
-                return this->nodeText == toCompare.nodeText &&
-                    this->category == toCompare.category;
+               return this->nodeText == toCompare.nodeText &&
+                  this->category == toCompare.category;
             else
-                return this->resource == toCompare.resource &&
-                    this->category == toCompare.category;
-        }
+               return this->resource == toCompare.resource &&
+                  this->category == toCompare.category;
+         }
 
-        bool operator>(const ResourceTreeNode& toCompare) const {
+         bool operator>(const ResourceTreeNode& toCompare) const 
+         {
             if (isCategory())
-                return this->nodeText > toCompare.nodeText;
+               return this->nodeText > toCompare.nodeText;
             return this->resource > toCompare.resource;
-        }
+         }
 
-        bool operator<(const ResourceTreeNode& toCompare) const {
+         bool operator<(const ResourceTreeNode& toCompare) const 
+         {
             if (isCategory())
-                return this->nodeText < toCompare.nodeText;
+
+               return this->nodeText < toCompare.nodeText;
             return this->resource < toCompare.resource;
-        }
+         }
 
-        /**
-         * @return true if this tree node represents a category, false for a resource.
-         */
-        bool isCategory() const { return category; }
+         /**
+          * @return true if this tree node represents a category, false for a resource.
+          */
+         bool isCategory() const { return category; }
 
-        /**
-         * @return the display text for the tree node.
-         */
-        const std::string& getNodeText() const { return nodeText; }
+         /**
+          * @return the display text for the tree node.
+          */
+         const std::string& getNodeText() const { return nodeText; }
 
 
-        /**
-         * @return the full category for this tree node, not including the datatype.
-         */
-        const std::string& getFullCategory() const { return fullCategory; }
+         /**
+          * @return the full category for this tree node, not including the datatype.
+          */
+         const std::string& getFullCategory() const { return fullCategory; }
 
-        /**
-         * @return the resource descriptor.  This descriptor is dataless if the node is a category.
-         */
-        const ResourceDescriptor& getResource() const { return resource; }
-    private:
-        std::string nodeText;
-        std::string fullCategory;
-        ResourceDescriptor resource;
-        bool category;
-    };
+         /**
+          * @return the resource descriptor.  This descriptor is dataless if the node is a category.
+          */
+         const ResourceDescriptor& getResource() const { return resource; }
+      private:
+         std::string nodeText;
+         std::string fullCategory;
+         ResourceDescriptor resource;
+         bool category;
+   };
 }
 
 #endif

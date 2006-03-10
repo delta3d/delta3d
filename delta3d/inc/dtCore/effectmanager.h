@@ -34,7 +34,6 @@
 #include <Producer/Timer>
 #include <osg/Node>
 #include <osg/Group>
-#include <osgParticle/ParticleSystemUpdater>
 
 #include <osg/Vec3>
 

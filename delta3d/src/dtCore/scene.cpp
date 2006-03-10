@@ -8,6 +8,9 @@
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
 #include <osg/FrameStamp>
+#include <osgParticle/ParticleSystemUpdater>
+
+#include <ode/ode.h>
 
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>

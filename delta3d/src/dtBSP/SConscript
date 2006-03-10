@@ -4,4 +4,8 @@ srcs = SGlob('*.cpp')
 
 deps = [ 'opengl', 'OpenThreads', 'osg', 'osgDB', 'osgUtil' ] 
 
-env.BuildLib( 'dtBSP', srcs, deps, ['OSG_LIBRARY'] )
+defines = []
+if OS == 'windows':
+   defines = ['OSG_LIBRARY']
+
+env.BuildLib( 'dtBSP', srcs, deps, defines )

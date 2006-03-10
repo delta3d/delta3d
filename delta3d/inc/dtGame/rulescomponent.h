@@ -38,7 +38,7 @@ namespace dtGame
       public:
 
          /// Constructor
-         RulesComponent();
+         RulesComponent(const std::string& name = "rules");
 
          /**
           * Processes messages sent from the Game Manager

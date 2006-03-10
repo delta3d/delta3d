@@ -19,10 +19,10 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __OrthoViewport__h
-#define __OrthoViewport__h
+#ifndef DELTA_ORTHO_VIEWPORT
+#define DELTA_ORTHO_VIEWPORT
 
-#include <QCursor>
+#include <QtGui/QCursor>
 #include <dtUtil/enumeration.h>
 #include "dtEditQt/viewport.h"
 

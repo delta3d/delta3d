@@ -1,9 +1,13 @@
 #ifndef LOADABLE_INCLUDED
 #define LOADABLE_INCLUDED
 
+#include <string>
 #include "dtCore/export.h"
-#include "osg/Node"
-#include <iostream>
+
+namespace osg
+{
+   class Node;
+}
 
 namespace dtCore
 {

@@ -124,16 +124,16 @@ namespace dtCore
       void SetTimeScale(double newTimeScale) { mTimeScale = newTimeScale; }
       
       /**
-       * @note the clock time is a 64 bit int in milliseconds
+       * @note the clock time is a 64 bit int in microseconds
        * @return the current real clock
        */
-      dtCore::Timer_t GetRealClockTime() const { return mClockTime; };
+      dtCore::Timer_t GetRealClockTime() const { return mClockTime; }
 
       /**
-       * @note the simulation clock time is a 64 bit int in milliseconds
+       * @note the simulation clock time is a 64 bit int in microseconds
        * @return the current simulation clock
        */
-      dtCore::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; };
+      dtCore::Timer_t GetSimulationClockTime() const { return mSimulationClockTime; }
       
       /**
        * Sets the simulation wall clock time.  This is used for things like time of day.

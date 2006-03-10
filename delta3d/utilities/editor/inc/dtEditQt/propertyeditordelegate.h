@@ -23,7 +23,7 @@
 #ifndef DELTA_PROPERTYEDITORDELEGATE
 #define DELTA_PROPERTYEDITORDELEGATE
 
-#include <QItemDelegate>
+#include <QtGui/QItemDelegate>
 //#include <QAbstractItemDelegate>
 #include "dtEditQt/dynamicabstractcontrol.h"
 

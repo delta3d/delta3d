@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -21,6 +21,11 @@
 #ifndef DELTA_RBODY_RESOURCE_TYPE_HANDLER
 #define DELTA_RBODY_RESOURCE_TYPE_HANDLER
 
+//remove this definition because it breaks ConfigScriptOO.h
+#ifdef Status
+#undef Status
+#endif
+
 //rbody file handler.
 #include <rcfg/ConfigScriptOO.h>
 //xerces xml dom parser
@@ -34,90 +39,92 @@
 
 XERCES_CPP_NAMESPACE_USE;
 
-namespace dtDAL {
+namespace dtDAL 
+{
 
-    /**
-     * @class RBodyResourceTypeHandler
-     * @brief Resource type handler for importing, removing, and describing Replicant Body resources.
-     */
-    class DT_DAL_EXPORT RBodyResourceTypeHandler : public ResourceTypeHandler {
-    public:
-        RBodyResourceTypeHandler();
-        virtual ~RBodyResourceTypeHandler();
+   /**
+    * @class RBodyResourceTypeHandler
+    * @brief Resource type handler for importing, removing, and describing Replicant Body resources.
+    */
+   class DT_DAL_EXPORT RBodyResourceTypeHandler : public ResourceTypeHandler 
+   {
+      public:
+         RBodyResourceTypeHandler();
+         virtual ~RBodyResourceTypeHandler();
 
-        /**
-         * @param path The full path to the file or directory to check.
-         * @param type The filetype, whether a directory or file.
-         * @return true if the file name refers to an rbody file.
-         */
-        virtual bool HandlesFile(const std::string& path, FileType type) const;
+         /**
+          * @param path The full path to the file or directory to check.
+          * @param type The filetype, whether a directory or file.
+          * @return true if the file name refers to an rbody file.
+          */
+         virtual bool HandlesFile(const std::string& path, FileType type) const;
 
-        /**
-         * @return A description for this handler.
-         */
-        virtual const std::string& GetTypeHandlerDescription() const {
+         /**
+          * @return A description for this handler.
+          */
+         virtual const std::string& GetTypeHandlerDescription() const {
             return mDescription;
-        };
-        
-        /**
-         * Creates a resource descriptor based on the path to the resource.
-         * @param category the category of the resource.
-         * @param fileName the name of the file.
-         * @return The resource descriptor base on the path to the resource.
-         */
-        virtual ResourceDescriptor CreateResourceDescriptor(const std::string& category, const std::string& fileName) const;
+         };
+           
+         /**
+          * Creates a resource descriptor based on the path to the resource.
+          * @param category the category of the resource.
+          * @param fileName the name of the file.
+          * @return The resource descriptor base on the path to the resource.
+          */
+         virtual ResourceDescriptor CreateResourceDescriptor(const std::string& category, const std::string& fileName) const;
 
-        /**
-         * Import a resource into a project given the file, and the path.  THe path can be
-         * retrieved by calling ResourceHelper::createResourceCategory
-         * @see ResourceHelper#createResourceCategory
-         * @param newName the name to give the resource.  This should not include the extension.
-         * @param srcPath the path to the file or directory to import
-         * @param destCategoryPath the full path to the destination.  This must exist already.
-         * @throws ExceptionEnum::ProjectFileNotFound if source of destination files do not exist.
-         * @throws ExceptionEnum::ProjectIOException if an error occurs copying the data.
-         * @return the display fileName associated with this resource
-         */
-        virtual const std::string ImportResourceToPath(const std::string& newName,
-            const std::string& srcPath, const std::string& destCategoryPath) const;
+         /**
+          * Import a resource into a project given the file, and the path.  THe path can be
+          * retrieved by calling ResourceHelper::createResourceCategory
+          * @see ResourceHelper#createResourceCategory
+          * @param newName the name to give the resource.  This should not include the extension.
+          * @param srcPath the path to the file or directory to import
+          * @param destCategoryPath the full path to the destination.  This must exist already.
+          * @throws ExceptionEnum::ProjectFileNotFound if source of destination files do not exist.
+          * @throws ExceptionEnum::ProjectIOException if an error occurs copying the data.
+          * @return the display fileName associated with this resource
+          */
+         virtual const std::string ImportResourceToPath(const std::string& newName,
+                                                        const std::string& srcPath, const std::string& destCategoryPath) const;
 
-        /**
-         * removes a resource.  The current directory will be the root of the project when this
-         * is called.
-         * @param resourcePath path to the file the file getResourcePath returns
-         */
-        virtual void RemoveResource(const std::string& resourcePath) const;
+         /**
+          * removes a resource.  The current directory will be the root of the project when this
+          * is called.
+          * @param resourcePath path to the file the file getResourcePath returns
+          */
+         virtual void RemoveResource(const std::string& resourcePath) const;
 
-        /**
-         * @return false.  A file will be selected to import.
-         */
-        virtual bool ImportsDirectory() const { return false; }
+         /**
+          * @return false.  A file will be selected to import.
+          */
+         virtual bool ImportsDirectory() const { return false; }
 
-        /**
-         * @return true.  Rbody resources are imported into a directory to hold all of the files.
-         */
-        virtual bool ResourceIsDirectory() const { return true; }
+         /**
+          * @return true.  Rbody resources are imported into a directory to hold all of the files.
+          */
+         virtual bool ResourceIsDirectory() const { return true; }
 
-        /**
-         * @return the extension that the resource directory will have when imported
-         */
-        virtual const std::string& GetResourceDirectoryExtension() const { return mResourceDirectoryExtension; };
-        
-        /**
-         * @return a map of file extensions and their associated descriptions for rbody.
-         */
-        virtual const std::map<std::string, std::string>& GetFileFilters() const;
+         /**
+          * @return the extension that the resource directory will have when imported
+          */
+         virtual const std::string& GetResourceDirectoryExtension() const { return mResourceDirectoryExtension; };
+           
+         /**
+          * @return a map of file extensions and their associated descriptions for rbody.
+          */
+         virtual const std::map<std::string, std::string>& GetFileFilters() const;
 
-        /**
-         * @return DataType::Character
-         */
-        virtual const DataType& GetResourceType() const { return DataType::CHARACTER; };
+         /**
+          * @return DataType::Character
+          */
+         virtual const DataType& GetResourceType() const { return DataType::CHARACTER; };
 
-    private:
+      private:
 
-        class RBodyErrorHandler : public ErrorHandler
-        {
-        public:
+         class RBodyErrorHandler : public ErrorHandler
+         {
+         public:
 
             virtual void warning (const SAXParseException &exc);
             virtual void error (const SAXParseException &exc);
@@ -125,31 +132,31 @@ namespace dtDAL {
             virtual void resetErrors ();
 
             dtUtil::Log* mLogger;
-        };
+         };
 
-        //these are constants, but they are created and destroyed each time they are used
-        //so to work around a xerces issue.
-        mutable XMLCh* MATERIAL_ELEMENT;
-        mutable XMLCh* NUMMAPS_ATTRIBUTE;
-        mutable XMLCh* MAP_ELEMENT;
+         //these are constants, but they are created and destroyed each time they are used
+         //so to work around a xerces issue.
+         mutable XMLCh* MATERIAL_ELEMENT;
+         mutable XMLCh* NUMMAPS_ATTRIBUTE;
+         mutable XMLCh* MAP_ELEMENT;
 
-        std::map<std::string, std::string> mFilters;
-        dtUtil::Log* mLogger;
+         std::map<std::string, std::string> mFilters;
+         dtUtil::Log* mLogger;
 
-        mutable rcfg::ConfigScript mRBodyConfig;
-        mutable XercesDOMParser* mParser;
-        mutable RBodyErrorHandler mXMLErrorHandler;
+         mutable rcfg::ConfigScript mRBodyConfig;
+         mutable XercesDOMParser* mParser;
+         mutable RBodyErrorHandler mXMLErrorHandler;
 
-        static const std::string mConfigFileHeader;
-        static const std::string mResourceDirectoryExtension;
-        const std::string mDescription;
-        
-        void CopyFilesForSections(const std::string& sectionName, const std::string& keyName,
-            const std::string& srcDir, const std::string& destDir) const;
-        void ParseMaterialAndCopyReferenecedFiles(const std::string& srcDir,
-            const std::string& docFileName, const std::string& destDir) const;
+         static const std::string mConfigFileHeader;
+         static const std::string mResourceDirectoryExtension;
+         const std::string mDescription;
+           
+         void CopyFilesForSections(const std::string& sectionName, const std::string& keyName,
+                                 const std::string& srcDir, const std::string& destDir) const;
+         void ParseMaterialAndCopyReferenecedFiles(const std::string& srcDir,
+                                                   const std::string& docFileName, const std::string& destDir) const;
 
-    };
+   };
 
 }
 

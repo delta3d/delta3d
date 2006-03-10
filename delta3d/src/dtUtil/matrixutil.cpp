@@ -98,7 +98,7 @@ void MatrixUtil::HprToMatrix( osg::Matrix& rotation, const osg::Vec3& hpr )
    if ( hpr[2] == 0.0f )
    {
       cr   = 1.0 ;
-      sr   = 0.0 ;
+      sr   = 0.0 ; 
       srsp = 0.0 ;
       srcp = 0.0 ;
       crsp = sp ;

@@ -37,6 +37,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <osg/io_utils>
 
 namespace dtUtil
 {
@@ -86,28 +87,33 @@ namespace dtUtil
          #endif
 
          const std::locale& GetLocale() const { return mLocale; }
-
-         bool operator()(char c) const;
+         bool operator()(char c) const { return std::isspace(c,mLocale); }
 
    private:
       std::locale mLocale;
    };
 
-   inline bool IsSpace::operator()(char c) const
-   {
-      return std::isspace(c,mLocale);
-   }
-
+   /**
+    * Determines if the current character is a forward slash.
+    */
    class IsSlash : public std::unary_function<char, bool>
    {
        public:
-           bool operator()(char c) const;
+           bool operator()(char c) const { return c == '/'; }
    };
-
-   inline bool IsSlash::operator()(char c) const
+      
+   /**
+    * Generic string delimeter check function class.  Based on the character
+    * passed to the constructor, this class will check for that character.
+    */
+   class IsDelimeter : public std::unary_function<char,bool>
    {
-       return c == '/';
-   }
+      public:
+         IsDelimeter(char delim) : mDelimeter(delim) { }
+         bool operator()(char c) const { return c == mDelimeter; }         
+      private:
+         char mDelimeter;
+   };
 
    /**
    * Trims whitespace off the front and end of a string
@@ -115,6 +121,9 @@ namespace dtUtil
    */
    inline void trim(std::string& toTrim) 
    {
+      if(toTrim.empty())
+         return;
+
       for (std::string::iterator i = toTrim.begin(); i != toTrim.end();) 
       {
          if (isspace(*i))
@@ -123,7 +132,7 @@ namespace dtUtil
                break;
       }
 
-      for (int i = (int)(toTrim.size() - 1); i >= 0; --i) 
+      for (unsigned int i = (toTrim.size() - 1); i >= 0; --i) 
       {
          if (isspace(toTrim[i]))
                //we can just erase from the end because
@@ -142,35 +151,40 @@ namespace dtUtil
     * @param value the string data.
     * @param vec the vector to fill.
     * @param size the length of the vector since the osg types have no way to query that.
+    * @param numberPrecision This value indicates how much precision the numbers will
+    *    contain when read from the string.  (setprecision on std::istream)
     * @return true if reading the data was successful or false if not.
     */
    template<class VecType>
-           bool ParseVec(const std::string& value, VecType& vec, const unsigned size)
+   bool ParseVec(const std::string& value, VecType& vec, unsigned size,
+      unsigned numberPrecision=16)
    {
-       bool result = true;
-       if (value.empty() || value == "NULL")
-       {
-           for (unsigned i = 0; i < size; ++i)
-           {
-               vec[i] = 0.0;
-           }
-       }
-       else
-       {
-           std::istringstream iss(value);
-           unsigned i;
-           for (i = 0; i < size && !iss.eof(); ++i)
-           {
-               iss >> vec[i];
-           }
+      bool result = true;
+      unsigned int i;
+       
+      if (value.empty() || value == "NULL")
+      {
+         for (i = 0; i < size; ++i)
+         {
+            vec[i] = 0.0;
+         }
+      }
+      else
+      {
+         std::istringstream iss(value);
+         iss.precision(numberPrecision);
+         for (i = 0; i < size && !iss.eof(); ++i)
+         {
+            iss >> vec[i];
+         }
 
-            //did we run out of data?
-           if (i < size)
-               result = false;
-       }
+         //did we run out of data?
+         if (i < size)
+            result = false;
+      }
 
-       return result;
-   }
+      return result;
+   }   
 
    /** 
     * A utility function to convert a basic type into a string. Use

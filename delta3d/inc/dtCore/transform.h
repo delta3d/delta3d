@@ -80,18 +80,24 @@ namespace dtCore
       void GetTranslation( osg::Vec3& translation ) const { translation.set( mTranslation ); }
       ///Get only translation methods
       void GetTranslation( float& tx, float& ty, float& tz ) const;
-
+      ///@return the translation vector.
+      osg::Vec3& GetTranslation() { return mTranslation; }      
+      
       ///Get only rotation methods
       void GetRotation( float& h, float& p, float& r ) const;
       ///Get only rotation methods
       void GetRotation( osg::Vec3& hpr ) const;
       ///Get only rotation methods
       void GetRotation( osg::Matrix& rotation ) const { rotation.set( mRotation ); }
+      ///Get only rotation matrix.  This returns the actual stored matrix.
+      osg::Matrix& GetRotation() { return mRotation; }
 
       ///fills params with the current scale of the transform
       void GetScale( float& sx, float& sy, float& sz ) const;
       ///fills params with the current scale of the transform
       void GetScale( osg::Vec3& scale ) const { scale.set( mScale ); }
+      ///@return the scale vector.
+      osg::Vec3& GetScale() { return mScale; }      
 
       ///sets this matrix to be used for to set the camera  view
       void SetLookAt( const osg::Vec3& xyz, const osg::Vec3& lookAtXyz, const osg::Vec3& upVec );  

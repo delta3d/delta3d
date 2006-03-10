@@ -18,7 +18,17 @@
  *
  * @author David Guthrie
  */
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+  #include <Io.h>
+  #include <Windows.h>
+  #include <Winbase.h>
+#else
+  #include <dlfcn.h>
+#endif
+
 #include <sstream>
+#include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 #include "dtUtil/librarysharingmanager.h"
 
@@ -35,38 +45,111 @@ namespace dtUtil
       
    }  
    
-   class InternalLibraryHandle: public LibrarySharingManager::LibraryHandle 
+   class InternalLibraryHandle : public LibrarySharingManager::LibraryHandle 
    {
       public:
-         InternalLibraryHandle(const std::string& libName, osgDB::DynamicLibrary& lib): 
-            LibrarySharingManager::LibraryHandle(), mLibName(libName), mLibrary(&lib) {}
+         InternalLibraryHandle(const std::string& libName, HANDLE libHandle, bool close): 
+            LibrarySharingManager::LibraryHandle(), mLibName(libName), mHandle(libHandle), mClose(close)  {}
+         
+         ///Loads the library and returns a ref pointer to it.  This will not reload libraries that are already
+         ///loaded.
+         static dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LoadLibrary(const std::string& libraryName)
+         {
+            HANDLE handle = NULL;
+            
+            std::string fullLibraryName = osgDB::findLibraryFile(libraryName);            
+            if (fullLibraryName.empty())
+               fullLibraryName = libraryName;
+            
+            //close is only used in windows so that it can be false if the lib is already
+            //loaded and a handle is found for it.  Freeing a library that is linked it at
+            //compile time would be bad.
+            bool close = true;
+            
+#if defined(WIN32) && !defined(__CYGWIN__)
+            //see if the library is already loaded because windows will load libraries multiple times.
+            handle = GetModuleHandle( libraryName.c_str() );
+            if (handle != NULL)
+               close = false;
+            else
+               handle = ::LoadLibrary( fullLibraryName.c_str() );
+            
+            if (handle == NULL)
+               LOG_ERROR("Unable to load library \"" + fullLibraryName + ".\"");
+
+#else
+            // dlopen will not work with files in the current directory unless
+            // they are prefaced with './'  (DB - Nov 5, 2003).
+            std::string localLibraryName;
+            if( fullLibraryName == osgDB::getSimpleFileName( fullLibraryName ) )
+               localLibraryName = "./" + fullLibraryName;
+            else
+               localLibraryName = fullLibraryName;
+            
+            handle = dlopen( localLibraryName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+            if( handle == NULL )
+               LOG_ERROR("Error loading library \"" + fullLibraryName + "\" with dlopen(): " + dlerror());
+            
+#endif
+            if (handle != NULL) return new InternalLibraryHandle(fullLibraryName, handle, close);
+            
+            return NULL;
+         }
+         
+         virtual LibrarySharingManager::LibraryHandle::HANDLE GetHandle() const 
+         {
+            return mHandle;
+         }
+
+         ///Looks up a function symbol
+         virtual LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS FindSymbol(const std::string& symbolName) const
+         {
+            if (mHandle==NULL) return NULL;
+#if defined(WIN32) && !defined(__CYGWIN__)
+            return (LibraryHandle::SYMBOL_ADDRESS)GetProcAddress( (HMODULE)mHandle,
+                                                                 symbolName.c_str() );
+#else
+            void* sym = dlsym( mHandle,  symbolName.c_str() );
+            if (sym == NULL) {
+               LOG_WARNING("Failed looking up \"" + symbolName + "\" in library \"" + GetLibName() + "\": " + dlerror() );
+            }
+            return sym;
+#endif            
+         }
          
          virtual const std::string& GetLibName() const
          {
             return mLibName;
          } 
 
-         virtual osgDB::DynamicLibrary& GetDynamicLibrary()
-         {
-            return *mLibrary;
-         }
 
-         virtual const osgDB::DynamicLibrary& GetDynamicLibrary() const 
-         {
-            return *mLibrary;
-         }
-         
+      protected:
          virtual ~InternalLibraryHandle() 
          {
-            //break the handle
-            mLibrary = NULL;
+            if (mHandle != NULL)
+            {
+               LOG_INFO("Closing DynamicLibrary: " + mLibName);
+#if defined(WIN32) && !defined(__CYGWIN__)
+               if (mClose)
+                  FreeLibrary((HMODULE)mHandle);
+#else // other unix
+               dlclose(mHandle);
+#endif    
+            }
             release();
          }
-                  
+      
       private:
          std::string mLibName;
-         dtCore::RefPtr<osgDB::DynamicLibrary> mLibrary;
-                      
+         HANDLE mHandle;
+         bool mClose;
+         /// disable default constructor.
+         InternalLibraryHandle(): LibrarySharingManager::LibraryHandle()  {}
+         /// disable copy constructor.
+         InternalLibraryHandle(const InternalLibraryHandle&): LibrarySharingManager::LibraryHandle()  {}
+         /// disable copy operator.
+         InternalLibraryHandle& operator=(const InternalLibraryHandle&) { return *this; }
+                  
    };
 
 
@@ -94,10 +177,10 @@ namespace dtUtil
    dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const std::string& libName) 
    throw(dtUtil::Exception)
    {
-      osgDB::DynamicLibrary *dynLib;
+      dtCore::RefPtr<LibrarySharingManager::LibraryHandle> dynLib;
         
         
-      std::map<std::string, dtCore::RefPtr<osgDB::DynamicLibrary> >::iterator itor = mLibraries.find(libName);
+      std::map<std::string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(libName);
       if (itor == mLibraries.end())
       {
          std::string actualLibName;
@@ -108,7 +191,7 @@ namespace dtUtil
          //First, try and load the dynamic library.
          msg << "Loading library " << actualLibName;
          LOG_INFO(msg.str());
-         dynLib = osgDB::DynamicLibrary::loadLibrary(actualLibName);
+         dynLib = InternalLibraryHandle::LoadLibrary(actualLibName);
          if (dynLib == NULL)
          {
             msg.clear();
@@ -119,18 +202,23 @@ namespace dtUtil
          }
          else
          {
-            itor = mLibraries.insert(std::make_pair(libName, dtCore::RefPtr<osgDB::DynamicLibrary>(dynLib))).first;
+            itor = mLibraries.insert(std::make_pair(libName, dtCore::RefPtr<LibrarySharingManager::LibraryHandle>(dynLib))).first;
          }
 
       }
+      else
+      {
+         dynLib = itor->second;
+      }
+      
       if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
       {
          std::ostringstream ss;
-         ss << itor->second->referenceCount();
+         ss << dynLib->referenceCount();
          LOG_DEBUG(ss.str());         
       }
       
-      return new InternalLibraryHandle(itor->first, *itor->second);
+      return dynLib;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -139,7 +227,7 @@ namespace dtUtil
       if (handle == NULL)
          return;
          
-      std::map<std::string, dtCore::RefPtr<osgDB::DynamicLibrary> >::iterator itor = mLibraries.find(handle->GetLibName());
+      std::map<std::string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(handle->GetLibName());
       if (itor != mLibraries.end()) 
       {
          //if the the reference in the data structure is the last reference, then erase the library, causing it to be
@@ -155,7 +243,7 @@ namespace dtUtil
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
          return libBase + ".dll";
       #elif defined(__APPLE__)
-         return "lib" + libBase + ".so";
+         return "lib" + libBase + ".dylib";
       #else
          return "lib" + libBase + ".so";
       #endif

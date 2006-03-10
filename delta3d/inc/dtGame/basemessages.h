@@ -129,6 +129,7 @@ namespace dtGame
           * @return The simTimeOfDay
           */
          void SetLateTime(float newTime);
+         
       protected:
          /// Destructor
          virtual ~TimerElapsedMessage() { }

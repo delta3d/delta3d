@@ -1,13 +1,13 @@
 Import('*')
 
 #this doesn't compile for some odd reason is OS X
-if OS != 'darwin':
-   srcs = SGlob( '*.cpp' ) + SGlob( '*.cxx' )
+#if OS != 'darwin':
+srcs = SGlob( '*.cpp' ) + SGlob( '*.cxx' )
 
-   # Build the icon
-   if OS == 'windows' :
-      srcs += env.RES( 'psEditor.rc' )
+# Build the icon
+if OS == 'windows' :
+   srcs += env.RES( 'psEditor.rc' )
 
-   deps = [ 'dtBSP', 'dtABC', 'dtCore', 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
+deps = [ 'dtBSP', 'dtABC', 'dtCore', 'User32', 'Gdi32', 'shell32', 'Advapi32', 'ole32' ]
 
-   env.BuildProgram( 'psEditor', srcs, deps, buildAppBundle = 0 )
+env.BuildProgram( 'psEditor', srcs, deps, buildAppBundle = 0 )

@@ -19,13 +19,13 @@
 *
 * @author Teague Coonan
 */
-#ifndef __ResourceBrowser__h
-#define __ResourceBrowser__h
+#ifndef DELTA_RESOURCE_BROWSER
+#define DELTA_RESOURCE_BROWSER
 
-#include <QWidget>
-#include <QDockWidget>
-#include <QMainWindow>
-#include <QObject>
+#include <QtGui/QWidget>
+#include <QtGui/QDockWidget>
+#include <QtGui/QMainWindow>
+#include <QtCore/QObject>
 
 namespace dtEditQt 
 {

@@ -50,10 +50,10 @@
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
-   #define sleep(milliseconds) Sleep((milliseconds))
+   #define SLEEP(milliseconds) Sleep((milliseconds))
 #else
    #include <unistd.h>
-   #define sleep(milliseconds) usleep(((milliseconds) * 1000))
+   #define SLEEP(milliseconds) usleep(((milliseconds) * 1000))
 #endif
 
 class MessageTests : public CPPUNIT_NS::TestFixture 
@@ -191,7 +191,7 @@ void MessageTests::setUp()
       mGameManager->LoadActorRegistry(mTestActorLibrary);
       dtCore::System::Instance()->Start();
       
-      dtDAL::Project::GetInstance().SetContext("gamemanager/TestGameProject");
+      dtDAL::Project::GetInstance().SetContext("dtGame/TestGameProject");
    }
    catch (const dtUtil::Exception& ex)
    {
@@ -231,7 +231,7 @@ void MessageTests::tearDown()
    
    try 
    {
-      dtDAL::FileUtils::GetInstance().DirDelete("gamemanager/TestGameProject", true);
+      dtDAL::FileUtils::GetInstance().DirDelete("dtGame/TestGameProject", true);
    }
    catch (const dtUtil::Exception& e) 
    {
@@ -435,6 +435,7 @@ void MessageTests::TestMessageFactory()
       factory.GetMessageTypeById(dtGame::MessageType::NETSERVER_REJECT_CONNECTION.GetId());
       factory.GetMessageTypeById(dtGame::MessageType::COMMAND_RESTART.GetId());
       factory.GetMessageTypeById(dtGame::MessageType::SERVER_REQUEST_REJECTED.GetId());
+      factory.GetMessageTypeById(dtGame::MessageType::INFO_PLAYER_ENTERED_WORLD.GetId());
 
       dtCore::RefPtr<dtGame::Message> tickMsg = factory.CreateMessage(dtGame::MessageType::TICK_LOCAL);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a tick local message", tickMsg != NULL);
@@ -452,6 +453,8 @@ void MessageTests::TestMessageFactory()
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a restart message", restartMsg != NULL);
       dtCore::RefPtr<dtGame::Message> serverMsg = factory.CreateMessage(dtGame::MessageType::SERVER_REQUEST_REJECTED);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a server message rejected message", serverMsg != NULL);
+      dtCore::RefPtr<dtGame::Message> playerMsg = factory.CreateMessage(dtGame::MessageType::INFO_PLAYER_ENTERED_WORLD);
+      CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a player entered world message", playerMsg != NULL);
      
       CPPUNIT_ASSERT_MESSAGE("Tick message's type should have been set correctly", tickMsg->GetMessageType() == dtGame::MessageType::TICK_REMOTE);
       CPPUNIT_ASSERT_MESSAGE("Timer elapsed message's type should have been set correctly", timerMsg->GetMessageType() == dtGame::MessageType::INFO_TIMER_ELAPSED);
@@ -525,7 +528,7 @@ void MessageTests::TestMessageDelivery()
    {
       dtCore::RefPtr<TestComponent> tc = new TestComponent();
 
-      mGameManager->AddComponent(*tc);
+      mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
 
       dtCore::RefPtr<dtGame::Message> msg = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED);
 
@@ -545,7 +548,7 @@ void MessageTests::TestMessageDelivery()
       mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 1.5, mGameManager->GetSimulationClockTime());
       
       tc->reset();
-      sleep(10);
+      SLEEP(10);
       dtCore::System::Instance()->Step();
       for (unsigned i = 0; i < tc->GetReceivedProcessMessages().size(); ++i)
       {
@@ -592,8 +595,8 @@ void MessageTests::TestActorPublish()
       TestComponent* tc = new TestComponent();
       dtGame::RulesComponent* rc = new dtGame::RulesComponent();
 
-      mGameManager->AddComponent(*tc);
-      mGameManager->AddComponent(*rc);
+      mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
+      mGameManager->AddComponent(*rc, dtGame::GameManager::ComponentPriority::NORMAL);
 
       CPPUNIT_ASSERT(tc->GetGameManager() != NULL);
       CPPUNIT_ASSERT(rc->GetGameManager() != NULL);
@@ -625,7 +628,7 @@ void MessageTests::TestActorPublish()
 
       mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 1.5, mGameManager->GetSimulationClockTime());
       tc->reset();
-      sleep(10);
+      SLEEP(10);
       dtCore::System::Instance()->Step();
       for (unsigned i = 0; i < tc->GetReceivedProcessMessages().size(); ++i)
       {
@@ -660,7 +663,7 @@ void MessageTests::TestActorPublish()
       CPPUNIT_ASSERT(sendPublishedMsg == NULL);
       
       //Another Frame...
-      sleep(10);
+      SLEEP(10);
       dtCore::System::Instance()->Step();
       
       CPPUNIT_ASSERT(tc->GetReceivedSendMessages().size() > 0);
@@ -693,14 +696,14 @@ void MessageTests::TestActorPublish()
 void MessageTests::TestPauseResume()
 {
    TestComponent* tc = new TestComponent();
-   mGameManager->AddComponent(*tc);
+   mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
    
    mGameManager->SetPaused(true);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", mGameManager->IsPaused());
    CPPUNIT_ASSERT_MESSAGE("System should be paused.", dtCore::System::Instance()->GetPause());
    
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    dtCore::RefPtr<const dtGame::Message> processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
@@ -712,7 +715,7 @@ void MessageTests::TestPauseResume()
    dtCore::Timer_t oldSimClockTime = mGameManager->GetSimulationClockTime();
    double oldSimTime = mGameManager->GetSimulationTime();
 
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
 
    dtCore::RefPtr<const dtGame::Message> processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
@@ -739,7 +742,7 @@ void MessageTests::TestPauseResume()
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", !mGameManager->IsPaused());
    CPPUNIT_ASSERT_MESSAGE("System should be paused.", !dtCore::System::Instance()->GetPause());
    
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
@@ -753,14 +756,14 @@ void MessageTests::TestPauseResume()
 void MessageTests::TestPauseResumeSystem()
 {
    TestComponent* tc = new TestComponent();
-   mGameManager->AddComponent(*tc);
+   mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
    
    dtCore::System::Instance()->SetPause(true);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", mGameManager->IsPaused());
    CPPUNIT_ASSERT_MESSAGE("System should be paused.", dtCore::System::Instance()->GetPause());
    
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    dtCore::RefPtr<const dtGame::Message> processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
@@ -775,7 +778,7 @@ void MessageTests::TestPauseResumeSystem()
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should be paused.", !mGameManager->IsPaused());
    CPPUNIT_ASSERT_MESSAGE("System should be paused.", !dtCore::System::Instance()->GetPause());
    
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    processPausedMsg = tc->FindProcessMessageOfType(dtGame::MessageType::INFO_PAUSED);
@@ -790,14 +793,14 @@ void MessageTests::TestPauseResumeSystem()
 void MessageTests::TestRejectMessage()
 {
    TestComponent* tc = new TestComponent();
-   mGameManager->AddComponent(*tc);
+   mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    tc->reset();
 
    // reject some message - any ole message will do.
 
    dtCore::RefPtr<dtGame::Message> msg = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::REQUEST_PAUSE);
    mGameManager->RejectMessage(*msg, "test reason");
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
 
    // message should have been processed (not sent)
@@ -826,7 +829,7 @@ void MessageTests::TestRejectMessage()
    //msg2->SetDestination(&(*testMachine));
    msg2->SetSource(*testMachine);
    mGameManager->RejectMessage(*msg2, "test reason2");
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
 
    // message should have been sent (not processed)
@@ -853,13 +856,16 @@ void MessageTests::TestRejectMessage()
 void MessageTests::TestTimeScaling()
 {
    TestComponent* tc = new TestComponent();
-   mGameManager->AddComponent(*tc);
+   mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
    
    double oldSimTime = mGameManager->GetSimulationTime();
-   mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 4.0f, mGameManager->GetSimulationClockTime());
+   mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 4.0f, dtCore::System::Instance()->GetRealClockTime());
    CPPUNIT_ASSERT_MESSAGE("The time scale should be 4.0.", osg::equivalent(4.0f, mGameManager->GetTimeScale()));
-   sleep(10);
+   CPPUNIT_ASSERT_MESSAGE("The simulation clock time should match the realtime clock.", 
+      mGameManager->GetSimulationClockTime() == dtCore::System::Instance()->GetRealClockTime());
+   dtCore::Timer_t oldSimClockTime = mGameManager->GetSimulationClockTime(); 
+   SLEEP(10);
    dtCore::System::Instance()->Step();
 
    dtCore::RefPtr<const dtGame::Message> processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
@@ -878,16 +884,19 @@ void MessageTests::TestTimeScaling()
                           osg::equivalent(tickLocal->GetDeltaSimTime(), 
                           tickLocal->GetDeltaRealTime() * tickLocal->GetSimTimeScale(), 1e-8f));
    CPPUNIT_ASSERT_MESSAGE("Simulation time should have changed by the delta sim time amount", 
-                          osg::equivalent(oldSimTime + tickLocal->GetDeltaSimTime(), tickLocal->GetSimulationTime(), 1e-8));
+                          osg::equivalent(oldSimTime + tickLocal->GetDeltaSimTime(), tickLocal->GetSimulationTime(), 1e-6));
    CPPUNIT_ASSERT_MESSAGE("Simulation elapsed time should be 4 times the real time", 
                           osg::equivalent(tickRemote->GetDeltaSimTime(), tickRemote->GetDeltaRealTime() * tickRemote->GetSimTimeScale(), 1e-8f));
    CPPUNIT_ASSERT_MESSAGE("Simulation time should have changed by the delta sim time amount", 
-                          osg::equivalent(oldSimTime + tickRemote->GetDeltaSimTime(), tickRemote->GetSimulationTime(), 1e-8));
+                          osg::equivalent(oldSimTime + tickRemote->GetDeltaSimTime(), tickRemote->GetSimulationTime(), 1e-6));
+
+   CPPUNIT_ASSERT_MESSAGE("Simulation clock time should have changed by the delta sim time amount", 
+                          osg::equivalent(double(oldSimClockTime + dtCore::Timer_t(tickLocal->GetDeltaSimTime() * 1e6)), double(mGameManager->GetSimulationClockTime()), 100.0));
    
    tc->reset();
 
-   mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 1.9f, mGameManager->GetSimulationClockTime());
-   sleep(10);
+   mGameManager->ChangeTimeSettings(mGameManager->GetSimulationTime(), 0.5f, mGameManager->GetSimulationClockTime());
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
@@ -899,8 +908,8 @@ void MessageTests::TestTimeScaling()
    tickLocal = static_cast<const dtGame::TickMessage*>(processTickLocalMsg.get()); 
    tickRemote = static_cast<const dtGame::TickMessage*>(processTickLocalMsg.get()); 
 
-   CPPUNIT_ASSERT_MESSAGE("Simulation elapsed time should be half the real time", osg::equivalent(tickLocal->GetDeltaSimTime(), tickLocal->GetDeltaRealTime() * 1.9f, 1e-8f));
-   CPPUNIT_ASSERT_MESSAGE("Simulation elapsed time should be half the real time", osg::equivalent(tickRemote->GetDeltaSimTime(), tickRemote->GetDeltaRealTime() * 1.9f, 1e-8f));
+   CPPUNIT_ASSERT_MESSAGE("Simulation elapsed time should be half the real time", osg::equivalent(tickLocal->GetDeltaSimTime(), tickLocal->GetDeltaRealTime() * 0.5f, 1e-8f));
+   CPPUNIT_ASSERT_MESSAGE("Simulation elapsed time should be half the real time", osg::equivalent(tickRemote->GetDeltaSimTime(), tickRemote->GetDeltaRealTime() * 0.5f, 1e-8f));
 
    tc->reset();
 }
@@ -908,14 +917,14 @@ void MessageTests::TestTimeScaling()
 void MessageTests::TestTimeChange()
 {
    TestComponent* tc = new TestComponent();
-   mGameManager->AddComponent(*tc);
+   mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
    
    const double newTime = 222233.03;
    dtCore::Timer_t oldSimClock = mGameManager->GetSimulationClockTime();
    
    mGameManager->ChangeTimeSettings(newTime, 0.5f, oldSimClock);
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
 
    dtCore::RefPtr<const dtGame::Message> processTickLocalMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
@@ -945,7 +954,8 @@ void MessageTests::TestTimeChange()
    //std::cout << tickLocal->GetDeltaSimTime() << std::endl;
    
    CPPUNIT_ASSERT_MESSAGE("The GM should have the proper sim time.", osg::equivalent(newTime + (double)tickLocal->GetDeltaSimTime(),  mGameManager->GetSimulationTime()  , 1e-8));
-   CPPUNIT_ASSERT_MESSAGE("The GM should have the proper sim clock time.", oldSimClock + (dtCore::Timer_t)(1000000.0 * (double)tickLocal->GetDeltaSimTime()) == mGameManager->GetSimulationClockTime());
+   // the divide by 256 is to allow for some rounding error.
+   CPPUNIT_ASSERT_MESSAGE("The GM should have the proper sim clock time.", (oldSimClock + (dtCore::Timer_t)(1000000.0 * (double)tickLocal->GetDeltaSimTime())) / 256 == mGameManager->GetSimulationClockTime() / 256);
    CPPUNIT_ASSERT_MESSAGE("The GM should have the proper time scale.", osg::equivalent(0.5f,  mGameManager->GetTimeScale(), 1e-2f));
    tc->reset();
 
@@ -964,15 +974,15 @@ void MessageTests::TestChangeMap()
    project.CloseMap(*map);
    
    TestComponent& tc = *new TestComponent();
-   mGameManager->AddComponent(tc);
-   mGameManager->ChangeMap(mapName, false);
+   mGameManager->AddComponent(tc, dtGame::GameManager::ComponentPriority::NORMAL);
+   mGameManager->ChangeMap(mapName, false, false);
    
    std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
    mGameManager->GetAllActors(toFill);
    
    CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
       
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    CPPUNIT_ASSERT_MESSAGE("The number of actors in the GM should match the map.", numActors == toFill.size());
@@ -1012,7 +1022,7 @@ void MessageTests::TestChangeMapErrorConditions()
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext("../tests/project/WorkingProject");
+      dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
       mGameManager->ChangeMap("");
       CPPUNIT_FAIL("The game manager should not have been able to change to an empty string");
    }
@@ -1023,7 +1033,7 @@ void MessageTests::TestChangeMapErrorConditions()
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext("../tests/project/WorkingProject");
+      dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
       mGameManager->ChangeMap("This map does not exist");
       CPPUNIT_FAIL("The game manager should not have been able to set the map");
    }
@@ -1034,7 +1044,7 @@ void MessageTests::TestChangeMapErrorConditions()
 
    try
    {
-      dtDAL::Project::GetInstance().SetContext("../tests/project/WorkingProject");
+      dtDAL::Project::GetInstance().SetContext("dtGame/WorkingProject");
       mGameManager->ChangeMap("../examples/testMap/testMap");
    }
    catch(const dtUtil::Exception &e) 
@@ -1048,20 +1058,20 @@ void MessageTests::TestChangeMapErrorConditions()
 void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
 {
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
-   mGameManager->AddComponent(defMsgProcessor);
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
    
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
    dtCore::RefPtr<dtGame::Message> pauseCommand = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_PAUSE);
    mGameManager->ProcessMessage(*pauseCommand);
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be paused.", mGameManager->IsPaused());
    
    dtCore::RefPtr<dtGame::Message> resumeCommand = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_RESUME);
    mGameManager->ProcessMessage(*resumeCommand);
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be resumed.", !mGameManager->IsPaused());
@@ -1081,7 +1091,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalActorUpdates()
 void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote)
 {
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
-   mGameManager->AddComponent(defMsgProcessor);
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::HIGHEST);
    
    dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
    
@@ -1131,7 +1141,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
 
    mGameManager->ProcessMessage(*actorUpdateMsg);
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    if (remote)
    {
@@ -1161,7 +1171,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalActorDeletes()
 void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote)
 {
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
-   mGameManager->AddComponent(defMsgProcessor);
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
    
    dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
    
@@ -1186,7 +1196,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
    actorDeleteMsg->SetAboutActorId(gap->GetId());
 
    mGameManager->ProcessMessage(*actorDeleteMsg);
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
 
    if (remote)
@@ -1213,7 +1223,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalActorCreates()
 void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote)
 {
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
-   mGameManager->AddComponent(defMsgProcessor);
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::NORMAL);
    
    dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
    
@@ -1262,7 +1272,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    
    CPPUNIT_ASSERT(mGameManager->FindGameActorById(gap->GetId()) == NULL);
    
-   sleep(10);
+   SLEEP(10);
    dtCore::System::Instance()->Step();
    
    dtCore::RefPtr<dtGame::GameActorProxy> gapRemote = mGameManager->FindGameActorById(gap->GetId());

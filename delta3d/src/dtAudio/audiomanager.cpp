@@ -15,6 +15,7 @@
 #include <dtCore/camera.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
+#include <dtUtil/mathdefines.h>
 
 #if   defined(WIN32) | defined(_WIN32)
 #pragma warning( disable : 4800 )
@@ -35,11 +36,6 @@
 // name spaces
 using namespace   dtAudio;
 using namespace   dtUtil;
-
-
-template <class   T>
-T  CLAMP( T x, T l, T h ) {  return std::max( std::min(x,h), l ); }
-
 
 
 AudioManager::MOB_ptr   AudioManager::_Mgr(NULL);
@@ -107,10 +103,13 @@ AudioManager::~AudioManager()
    DeregisterInstance( this );
 
    // stop all sources
-   for( ALsizei ii(0); ii < mNumSources; ii++ )
+   if(mSource)
    {
-      alSourceStop( mSource[ii] );
-      alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+      for( ALsizei ii(0); ii < mNumSources; ii++ )
+      { 
+         alSourceStop( mSource[ii] );
+         alSourcei( mSource[ii], AL_BUFFER, AL_NONE );
+      }
    }
 
    // delete the sources
@@ -151,10 +150,10 @@ AudioManager::~AudioManager()
    }
    mBufferMap.clear();
 
-   for( SND_LST::iterator iter(mSoundList.begin()); iter != mSoundList.end(); iter++ )
-   {
-      *iter = NULL;
-   }
+   //for( SND_LST::iterator iter(mSoundList.begin()); iter != mSoundList.end(); iter++ )
+   //{
+   //   *iter = NULL;
+   //}
    mSoundList.clear();
 
    while( mSoundCommand.size() )
@@ -2514,7 +2513,8 @@ void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 void AudioManager::ListenerObj::SetGain( float gain )
 {
    // force gain to range from zero to one
-   mGain = static_cast<ALfloat>(CLAMP( gain, 0.0f, 1.0f ));
+   CLAMP( gain, 0.0f, 1.0f );
+   mGain = static_cast<ALfloat>(gain);
 }
 
 

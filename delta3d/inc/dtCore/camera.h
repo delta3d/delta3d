@@ -26,6 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <Producer/Camera>
+#include <dtCore/stats.h>
 #include <dtCore/timer.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/base.h>

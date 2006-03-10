@@ -24,10 +24,10 @@
 
 #include "dtEditQt/dynamicabstractcontrol.h"
 #include "dtEditQt/propertyeditormodel.h"
-#include <QAbstractItemModel>
+#include <QtCore/QAbstractItemModel>
 
-#include <QTreeView>
-#include <QColor>
+#include <QtGui/QTreeView>
+#include <QtGui/QColor>
 
 namespace dtEditQt 
 {

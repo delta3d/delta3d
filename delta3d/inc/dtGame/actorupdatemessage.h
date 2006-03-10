@@ -22,7 +22,6 @@
 #ifndef DELTA_ACTORUPDATEMESSAGE
 #define DELTA_ACTORUPDATEMESSAGE
 
-#include <vector>
 #include <map>
 #include <dtUtil/exception.h>
 #include "dtGame/message.h"

@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="testLogger"
+	Name="testAAR"
 	ProjectGUID="{8A63969B-307E-4B7B-8851-EB9059D6E82A}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\examples\testLogger\windows-msvc-debug"
-			IntermediateDirectory="..\..\..\examples\testLogger\windows-msvc-debug"
+			OutputDirectory="..\..\..\examples\testAAR\windows-msvc-debug"
+			IntermediateDirectory="..\..\..\examples\testAAR\windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Producerd.lib ul_d.lib OpenThreadsWin32d.lib osgd.lib osgDBd.lib osgParticled.lib osgUtild.lib oded.lib osgTextd.lib js_d.lib isensed.lib dtCored.lib dtABCd.lib dtChard.lib dtAudiod.lib dtUtild.lib dtBSPd.lib dtDALd.lib dtActorsd.lib dtGamed.lib"
-				OutputFile="../../../bin/testLoggerd.exe"
+				OutputFile="../../../bin/testAARd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="libcmt;libcmtd;libcimtd;libcd;msvcrt.lib;libc.lib"
@@ -66,8 +66,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\examples\testLogger\windows-msvc-release"
-			IntermediateDirectory="..\..\..\examples\testLogger\windows-msvc-release"
+			OutputDirectory="..\..\..\examples\testAAR\windows-msvc-release"
+			IntermediateDirectory="..\..\..\examples\testAAR\windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -87,7 +87,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtCore.lib dtABC.lib dtChar.lib dtAudio.lib dtUtil.lib dtBSP.lib dtDAL.lib dtActors.lib dtGame.lib"
-				OutputFile="../../../bin/testLogger.exe"
+				OutputFile="../../../bin/testAAR.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
@@ -126,10 +126,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\examples\testLogger\main.cpp">
+				RelativePath="..\..\..\examples\testAAR\main.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\examples\testLogger\testlogger.cpp">
+				RelativePath="..\..\..\examples\testAAR\testaar.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -137,7 +137,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath="..\..\..\examples\testLogger\testlogger.h">
+				RelativePath="..\..\..\examples\testAAR\testaar.h">
 			</File>
 		</Filter>
 		<Filter

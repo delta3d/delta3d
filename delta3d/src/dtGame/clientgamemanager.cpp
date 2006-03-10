@@ -19,6 +19,7 @@
  * @author William E. Johnson II
  */
 #include "dtGame/clientgamemanager.h"
+#include "dtGame/gmcomponent.h"
 #include <dtCore/scene.h>
 
 namespace dtGame

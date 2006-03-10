@@ -30,15 +30,15 @@
 #include <dtUtil/enumeration.h>
 
 // MSDN hack to export STL objects.
-#ifdef WIN32                                       
-#   pragma warning (disable : 4231)                   
-#   ifndef DT_CORE_EXPORT                              
-#      define EXPIMP_TEMPLATE extern                  
-#   else                                              
-#      define EXPIMP_TEMPLATE                         
-#   endif //DT_CORE_EXPORT                                             
-EXPIMP_TEMPLATE template class DT_CORE_EXPORT std::vector<float>;    
-#endif //WIN32                                            
+//#ifdef WIN32                                       
+//#   pragma warning (disable : 4231)                   
+//#   ifndef DT_CORE_EXPORT                              
+//#      define EXPIMP_TEMPLATE extern                  
+//#   else                                              
+//#      define EXPIMP_TEMPLATE                         
+//#   endif //DT_CORE_EXPORT                                             
+//EXPIMP_TEMPLATE template class DT_CORE_EXPORT std::vector<float>;    
+//#endif //WIN32                                            
 
 namespace dtCore
 {

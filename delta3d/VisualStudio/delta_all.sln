@@ -325,15 +325,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtGame", "src\dtGame\dtgame
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testLogger", "examples\testLogger\testLogger.vcproj", "{8A63969B-307E-4B7B-8851-EB9059D6E82A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
-		{A768B050-B0CF-454C-BE75-9F31E1ECF85F} = {A768B050-B0CF-454C-BE75-9F31E1ECF85F}
-		{D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C} = {D1B34D72-1FCC-45E4-8CA7-BFF9C7D7689C}
-		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
-		{FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A} = {FD79E7C7-15CE-49BC-B7C6-EFE5B4564B1A}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGameActorLibrary", "examples\testGameActorLibrary\testGameActorLibrary.vcproj", "{F74370BD-A29D-4502-823D-68C2D6FF3C5E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F4AF0428-087E-4AE9-BAB2-B18E910DF67A} = {F4AF0428-087E-4AE9-BAB2-B18E910DF67A}
@@ -361,6 +352,22 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtCore", "tests\dtCore\unittestsdtcore.vcproj", "{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testAAR", "examples\testAAR\testAAR.vcproj", "{8A63969B-307E-4B7B-8851-EB9059D6E82A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittestsdtactors", "tests\dtActors\unittestsdtactors.vcproj", "{14A49BBF-6E94-4F08-81A8-469E5A050632}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittestdthlagm", "tests\dtHLAGM\unittestdthlagm.vcproj", "{8F56325D-411A-49D3-BAA9-FD46C6B80FD8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtHLAGM", "src\dtHLAGM\dtHLAGM.vcproj", "{C094C032-3742-43FA-92C8-BED2C0449DDB}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -574,10 +581,6 @@ Global
 		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Debug.Build.0 = Debug|Win32
 		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Release.ActiveCfg = Release|Win32
 		{A768B050-B0CF-454C-BE75-9F31E1ECF85F}.Release.Build.0 = Release|Win32
-		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Debug.ActiveCfg = Debug|Win32
-		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Debug.Build.0 = Debug|Win32
-		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Release.ActiveCfg = Release|Win32
-		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Release.Build.0 = Release|Win32
 		{F74370BD-A29D-4502-823D-68C2D6FF3C5E}.Debug.ActiveCfg = Debug|Win32
 		{F74370BD-A29D-4502-823D-68C2D6FF3C5E}.Debug.Build.0 = Debug|Win32
 		{F74370BD-A29D-4502-823D-68C2D6FF3C5E}.Release.ActiveCfg = Release|Win32
@@ -598,6 +601,22 @@ Global
 		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Debug.Build.0 = Debug|Win32
 		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.ActiveCfg = Release|Win32
 		{130F71AE-FCCF-4FEE-915A-65AAF7106BA7}.Release.Build.0 = Release|Win32
+		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Debug.ActiveCfg = Debug|Win32
+		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Debug.Build.0 = Debug|Win32
+		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Release.ActiveCfg = Release|Win32
+		{8A63969B-307E-4B7B-8851-EB9059D6E82A}.Release.Build.0 = Release|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Debug.ActiveCfg = Debug|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Debug.Build.0 = Debug|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Release.ActiveCfg = Release|Win32
+		{14A49BBF-6E94-4F08-81A8-469E5A050632}.Release.Build.0 = Release|Win32
+		{8F56325D-411A-49D3-BAA9-FD46C6B80FD8}.Debug.ActiveCfg = Debug|Win32
+		{8F56325D-411A-49D3-BAA9-FD46C6B80FD8}.Debug.Build.0 = Debug|Win32
+		{8F56325D-411A-49D3-BAA9-FD46C6B80FD8}.Release.ActiveCfg = Release|Win32
+		{8F56325D-411A-49D3-BAA9-FD46C6B80FD8}.Release.Build.0 = Release|Win32
+		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Debug.ActiveCfg = Debug|Win32
+		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Debug.Build.0 = Debug|Win32
+		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Release.ActiveCfg = Release|Win32
+		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

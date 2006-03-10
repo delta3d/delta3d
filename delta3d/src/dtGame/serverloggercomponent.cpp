@@ -24,11 +24,17 @@
 #include "dtGame/messagetype.h"
 #include "dtGame/gamemanager.h"
 #include "dtGame/actorupdatemessage.h"
+#include "dtGame/machineinfo.h"
+#include "dtGame/logstream.h"
+#include "dtGame/basemessages.h"
+#include "dtGame/loggermessages.h"
+#include "dtDAL/fileutils.h"
 #include <sstream>
 
 namespace dtGame
 {
    const std::string DEFAULT_LOGNAME = "D3DDefaultMessageLog";
+   const std::string ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME = "ServerLoggerKeyframeTimer";
    
    //////////////////////////////////////////////////////////////////////////
    ServerLoggerComponent::ServerLoggerComponent(LogStream &logStream) :
@@ -36,6 +42,7 @@ namespace dtGame
    {
       mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_IDLE);
       mLogStream = &logStream;
+      SetLogDirectory(".");
 
       mNextMessage = NULL;
       mNextMessageSimTime = 0.0;
@@ -83,18 +90,23 @@ namespace dtGame
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_GET_KEYFRAMES)
       {
+         HandleRequestGetKeyFrames(message);
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_GET_LOGFILES)
       {
+         HandleRequestGetLogs(message);
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_GET_TAGS)
       {
+         HandleRequestGetTags(message);
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_INSERT_TAG)
       {
+         HandleRequestInsertTag(static_cast<const LogInsertTagMessage&>(message));
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_DELETE_LOG)
       {
+         HandleRequestDeleteLogFile(message);
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_SET_LOGFILE)
       {
@@ -102,6 +114,7 @@ namespace dtGame
       }
       else if (message.GetMessageType() == MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)
       {
+         HandleRequestSetAutoKeyframeInterval(message);        
       }
       else if (message.GetMessageType() == MessageType::INFO_MAP_LOADED)
       {
@@ -109,6 +122,33 @@ namespace dtGame
       }
       else
       {
+         //One last step before passing the message to the log stream is to check
+         //to see if this is a timer message for the auto keyframe capture.  If so,
+         //perform a keyframe capture.
+         if (message.GetMessageType() == MessageType::INFO_TIMER_ELAPSED)
+         {
+            const TimerElapsedMessage &timerMsg = 
+               static_cast<const TimerElapsedMessage&>(message);
+           
+            if (timerMsg.GetTimerName() == ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME)
+            {
+               if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD) 
+               {
+                  GetGameManager()->RejectMessage(message, "Server Logger Component - Error: Attempted to "
+                     "auto-capture keyframe while not in a record state.");
+               }
+               else
+               {                             
+                  LogKeyframe autoKeyFrame;
+                  autoKeyFrame.SetActiveMap(mLogStatus.GetActiveMap());
+                  autoKeyFrame.SetName("AutoKeyFrame");
+                  autoKeyFrame.SetDescription("Auto captured keyframe.");
+                  autoKeyFrame.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
+                  DumpKeyFrame(autoKeyFrame);
+               }
+            }
+         }
+         
          //If its not a message intended for the logger, it gets logged to the stream.         
          DoRecordMessage(message);
       }      
@@ -190,7 +230,8 @@ namespace dtGame
             if (mLogStatus.GetLogFile() == "")
                mLogStatus.SetLogFile(DEFAULT_LOGNAME);
 
-            mLogStream->Create(mLogStatus.GetLogFile());
+            mLogStream->Create(mLogDirectory,mLogStatus.GetLogFile());
+            mLogCache.insert(mLogStatus.GetLogFile());
             
             // insert first keyframe
             LogKeyframe firstKeyframe;
@@ -204,6 +245,13 @@ namespace dtGame
             mLogStatus.SetNumRecordedMessages(0);
             mLogStatus.SetCurrentRecordDuration(0.0);
             mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_RECORD);
+            
+            //If the auto capture keyframe is active, start a timer.
+            if (mLogStatus.GetAutoRecordKeyframeInterval() != 0.0)
+            {
+               GetGameManager()->SetTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME,NULL,
+                  mLogStatus.GetAutoRecordKeyframeInterval(),true);
+            }
          }
          catch(const dtUtil::Exception &e) 
          {
@@ -251,7 +299,7 @@ namespace dtGame
             //Open the log file and read the first keyframe entry.  This contains the
             //initial state of the recorded simulation contained within the log.
             std::vector<LogKeyframe> kfList;
-            mLogStream->Open(mLogStatus.GetLogFile());       
+            mLogStream->Open(mLogDirectory,mLogStatus.GetLogFile());       
             mLogStream->GetKeyFrameIndex(kfList);
             if (kfList.empty())
                EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed log.  No initial "
@@ -305,7 +353,169 @@ namespace dtGame
          DoSendStatusMessage(NULL);
       }
    }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void ServerLoggerComponent::HandleRequestGetLogs(const Message &message)
+   {
+      DoRecordMessage(message);
+      
+      dtCore::RefPtr<LogAvailableLogsMessage> response = 
+            static_cast<LogAvailableLogsMessage*>(GetGameManager()->GetMessageFactory().
+                  CreateMessage(MessageType::LOG_INFO_LOGFILES).get());      
+      try 
+      {
+         std::vector<std::string> logList;
+         mLogStream->GetAvailableLogs(mLogDirectory,logList);
+         response->SetLogList(logList);
+         
+         //Update our cache to reflect the most recent query.
+         mLogCache.clear();
+         for (unsigned int i=0; i<logList.size(); i++)
+            mLogCache.insert(logList[i]);
+      }
+      catch (dtUtil::Exception &e)
+      {
+         GetGameManager()->RejectMessage(message, 
+            "Server Logger Component - Could not retrieve log file list " + e.What());
+      }
+      
+      GetGameManager()->ProcessMessage(*response.get());
+      GetGameManager()->SendMessage(*response.get());
+   }
 
+   //////////////////////////////////////////////////////////////////////////    
+   void ServerLoggerComponent::HandleRequestSetAutoKeyframeInterval(const Message &message)
+   {
+      DoRecordMessage(message);
+      const LogSetAutoKeyframeIntervalMessage &actual = 
+         static_cast<const LogSetAutoKeyframeIntervalMessage&>(message);
+              
+      //Need to create a timer that fires according to the autokeyframe interval.
+      //We actually do not create it here, but when recording begins.  To handle the
+      //request message we clear any old timers, validate the incoming data, and 
+      //inform the world of the change in status.  Once recording begins, the timer
+      //will get set.
+      float kfTime = actual.GetAutoKeyframeInterval();
+      if (kfTime < 0.0f)
+      {
+         GetGameManager()->RejectMessage(message, 
+            "Server Logger Component - Auto Keyframe interval must be greater than or "
+             "equal to zero.");
+      }       
+       
+      //Update the logger status and inform the world of the change.     
+      GetGameManager()->ClearTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME,NULL);
+      mLogStatus.SetAutoRecordKeyframeInterval(actual.GetAutoKeyframeInterval());
+      DoSendStatusMessage(NULL);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void ServerLoggerComponent::HandleRequestGetKeyFrames(const Message &message)
+   {
+      DoRecordMessage(message);
+      
+      dtCore::RefPtr<LogGetKeyframeListMessage> response = 
+            static_cast<LogGetKeyframeListMessage*>(GetGameManager()->GetMessageFactory().
+                  CreateMessage(MessageType::LOG_INFO_KEYFRAMES).get());      
+      try 
+      {
+         std::vector<LogKeyframe> kfList;
+         mLogStream->GetKeyFrameIndex(kfList);
+         response->SetKeyframeList(kfList);
+      }
+      catch (dtUtil::Exception &e)
+      {
+         GetGameManager()->RejectMessage(message, 
+            "Server Logger Component - Could not retrieve key frame index: " + e.What());
+      }
+      
+      GetGameManager()->ProcessMessage(*response.get());
+      GetGameManager()->SendMessage(*response.get());
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void ServerLoggerComponent::HandleRequestGetTags(const Message &message)
+   {
+      DoRecordMessage(message);
+      
+      dtCore::RefPtr<LogGetTagListMessage> response = 
+            static_cast<LogGetTagListMessage*>(GetGameManager()->GetMessageFactory().
+                  CreateMessage(MessageType::LOG_INFO_TAGS).get());      
+      try 
+      {
+         std::vector<LogTag> tagList;
+         mLogStream->GetTagIndex(tagList);
+         response->SetTagList(tagList);
+      }
+      catch (dtUtil::Exception &e)
+      {
+         GetGameManager()->RejectMessage(message, 
+            "Server Logger Component - Could not retrieve tags index: " + e.What());
+      }
+      
+      GetGameManager()->ProcessMessage(*response.get());
+      GetGameManager()->SendMessage(*response.get());
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void ServerLoggerComponent::HandleRequestInsertTag(const LogInsertTagMessage &message)
+   {
+      DoRecordMessage(message);
+      if (mLogStatus.GetStateEnum() != LogStateEnumeration::LOGGER_STATE_RECORD) 
+      {
+         GetGameManager()->RejectMessage(message, "Server Logger Component - Error: Attempted to capture keyframe "
+            " while not in a record state.");
+      }
+      else
+      {
+         try
+         {
+            LogTag tag = message.GetTag();   
+            
+            if (tag.GetCaptureKeyframe())
+            {
+               LogKeyframe kf;
+               kf.SetName(tag.GetName() + "keyframecapture");
+               kf.SetDescription(tag.GetDescription());
+               kf.SetActiveMap(mLogStatus.GetActiveMap());
+               kf.SetSimTimeStamp(mLogStatus.GetCurrentSimTime());
+               kf.SetTagUniqueId(tag.GetUniqueId());
+               DumpKeyFrame(kf);
+               tag.SetKeyframeUniqueId(kf.GetUniqueId());
+            }
+            
+            mLogStream->InsertTag(tag);
+         }
+         catch (dtUtil::Exception &e)
+         {
+            GetGameManager()->RejectMessage(message, 
+               "Server Logger Component - Could not retrieve tags index: " + e.What());
+         }                  
+      }
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   void ServerLoggerComponent::HandleRequestDeleteLogFile(const Message &message)
+   {
+      DoRecordMessage(message);
+      
+      const LogDeleteLogfileMessage &actual = 
+         static_cast<const LogDeleteLogfileMessage&>(message);
+                     
+      try 
+      {
+         mLogStream->Delete(mLogDirectory,actual.GetLogFileName());
+         
+         //Update our cache.
+         std::set<std::string>::iterator itor = mLogCache.find(actual.GetLogFileName());
+         mLogCache.erase(itor);
+      }
+      catch (dtUtil::Exception &e)
+      {
+         GetGameManager()->RejectMessage(message, 
+            "Server Logger Component - Could not delete log: " + e.What());
+      }
+   }
    
    ////////////////////////////////////////////////////////////////////////// 
    void ServerLoggerComponent::ProcessTickMessage(const TickMessage &message)
@@ -314,9 +524,8 @@ namespace dtGame
       std::ostringstream ss;
 
       // at a minimum, store the current time on our log status.  
-      mLogStatus.SetCurrentSimTime(message.GetSimulationTime());      
-
-      // playback anyone?
+      mLogStatus.SetCurrentSimTime(message.GetSimulationTime());
+      
       if (mLogStatus.GetStateEnum() == LogStateEnumeration::LOGGER_STATE_PLAYBACK)
       {
          if (!mLogStream.valid() || mLogStream->IsEndOfStream())
@@ -424,10 +633,37 @@ namespace dtGame
    ////////////////////////////////////////////////////////////////////////// 
    void ServerLoggerComponent::SetToIdleState()
    {
+      GetGameManager()->ClearTimer(ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME,NULL);
       mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_IDLE);
       mLogStatus.SetCurrentRecordDuration(0.0);
       mLogStatus.SetEstPlaybackTimeRemaining(0.0);
       mLogStatus.SetNumRecordedMessages(0);
+   }
+   
+   ////////////////////////////////////////////////////////////////////////// 
+   bool ServerLoggerComponent::SetLogDirectory(const std::string &dir)
+   {
+      //Make sure we remove any trailing slashes from the path.
+      std::string newPath = dir;
+      if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
+         newPath = newPath.substr(0,newPath.length()-1);
+      
+      newPath = dtDAL::FileUtils::GetInstance().GetAbsolutePath(newPath);
+      if (!dtDAL::FileUtils::GetInstance().DirExists(newPath))
+      {
+         try 
+         {
+            dtDAL::FileUtils::GetInstance().MakeDirectory(newPath);
+         }
+         catch (dtUtil::Exception &ex)
+         {
+            ex.LogException(dtUtil::Log::LOG_ERROR);
+            return false;
+         }         
+      }
+      
+      mLogDirectory = dir;
+      return true;      
    }
  
    ////////////////////////////////////////////////////////////////////////// 
@@ -438,7 +674,14 @@ namespace dtGame
        
        //Inserting a keyframe into the log stream effectively marks the beginning
        //of a new keyframe.  So mark it, and start writing messages.
-       mLogStream->InsertKeyFrame(kf);
+       try
+       {
+         mLogStream->InsertKeyFrame(kf);
+       }
+       catch (dtUtil::Exception &e)
+       {
+         return;
+       }
        
        //The first message to write is a begin keyframe transaction message.
        dtCore::RefPtr<Message> kfMsg = 

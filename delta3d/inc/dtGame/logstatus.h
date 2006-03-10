@@ -186,25 +186,16 @@ namespace dtGame
           * Only relevant during Record.  Only set by the server logger component.
           * @param The num messages recorded by the server.
           */
-         void SetNumRecordedMessages(unsigned long newNumRecordedMessages) { mNumRecordedMessages = newNumRecordedMessages; }      
+         void SetNumRecordedMessages(unsigned long newNumRecordedMessages) 
+         { 
+            mNumRecordedMessages = newNumRecordedMessages; 
+         }     
          
-
-         LogStatus& operator=(const LogStatus& assignFrom) 
-         {
-            if (&assignFrom == this)
-               return *this;
-
-            mStateEnum = assignFrom.mStateEnum;
-            mCurrentSimTime = assignFrom.mCurrentSimTime;
-            mActiveMap = assignFrom.mActiveMap;
-            mLogFile = assignFrom.mLogFile;
-            mAutoRecordKeyframeInterval = assignFrom.mAutoRecordKeyframeInterval;
-            mEstPlaybackTimeRemaining = assignFrom.mEstPlaybackTimeRemaining;
-            mCurrentRecordDuration = assignFrom.mCurrentRecordDuration;
-            mNumRecordedMessages = assignFrom.mNumRecordedMessages;
-            return *this;
-         }
-         
+         /**
+          * Prints the log status to a stream.
+          * @param stream Standard stream
+          * @param me The log status object to print.
+          */
          friend std::ostream &operator<<(std::ostream &stream,const LogStatus &me)
          {
             stream << "LogStatus: State[" << me.mStateEnum->GetName() <<

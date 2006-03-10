@@ -23,26 +23,26 @@
 
 namespace dtDAL 
 {
-    const std::string ResourceDescriptor::GetExtension() const 
-    {
-        std::string ext;
-        std::size_t index = mResourceIdentifier.find_last_of('.');
-        //we want everything AFTER the ., so we need to see if the
-        //the result is between the 0 and next to the last element.
-        if (index >= 0 && index < mResourceIdentifier.size()-1)
-            ext = mResourceIdentifier.substr(index+1);
-        return ext;
-    }
+   const std::string ResourceDescriptor::GetExtension() const 
+   {
+      std::string ext;
+      std::size_t index = mResourceIdentifier.find_last_of('.');
+      //we want everything AFTER the ., so we need to see if the
+      //the result is between the 0 and next to the last element.
+      if (index >= 0 && index < mResourceIdentifier.size()-1)
+         ext = mResourceIdentifier.substr(index+1);
+      return ext;
+   }
 
-    const std::string ResourceDescriptor::GetResourceName() const 
-    {
-        std::string name;
-        std::size_t index = mDisplayName.find_last_of(DESCRIPTOR_SEPARATOR);
-        //we want everything AFTER the separator, so we need to see if the
-        //the result is between the 0 and next to the last element.
-        if (index >= 0 && index < mDisplayName.size()-1)
-            name = mDisplayName.substr(index+1);
-        return name;
-    }
+   const std::string ResourceDescriptor::GetResourceName() const 
+   {
+      std::string name;
+      std::size_t index = mDisplayName.find_last_of(DESCRIPTOR_SEPARATOR);
+      //we want everything AFTER the separator, so we need to see if the
+      //the result is between the 0 and next to the last element.
+      if (index >= 0 && index < mDisplayName.size()-1)
+         name = mDisplayName.substr(index+1);
+      return name;
+   }
 
 }

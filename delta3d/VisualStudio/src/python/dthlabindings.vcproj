@@ -18,7 +18,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;$(PYTHON_ROOT)\include;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_NOAUTOLIBMSG"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"

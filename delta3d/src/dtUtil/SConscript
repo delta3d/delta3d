@@ -3,4 +3,8 @@ Import('*')
 srcs = SGlob('*.cpp')
 deps =[ 'OpenThreads', 'Producer', 'osg', 'osgDB', 'ul', 'xerces-c', 'User32']
 
-env.BuildLib( 'dtUtil', srcs, deps, ['DT_UTIL_LIBRARY'] )
+defines = []
+if OS == 'windows':
+   defines = ['DT_UTIL_LIBRARY']
+
+env.BuildLib( 'dtUtil', srcs, deps, defines, prefixHeader = "inc/prefix/dtutilprefix.h")

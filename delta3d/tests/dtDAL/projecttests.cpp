@@ -919,7 +919,7 @@ void ProjectTests::testProject() {
 
 
         try {
-            p.SetContext(std::string("/:**/../^^jojo/funky/\\\\/,/,.uchor"));
+            p.SetContext(std::string("/usr/:**/../^^jojo/funky/\\\\/,/,.uchor"));
             CPPUNIT_FAIL("Project should not have been able to Set context.");
         } catch (const dtUtil::Exception&) {
             //correct

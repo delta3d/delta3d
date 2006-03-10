@@ -1,10 +1,12 @@
 #include "dtABC/application.h"
-#include "dtCore/system.h"
-#include "dtUtil/log.h"
-#include "dtUtil/xerceswriter.h"
-#include "dtUtil/xerceserrorhandler.h"
-#include "dtUtil/xercesutils.h"
-#include "dtUtil/xercesparser.h"
+
+#include <dtCore/stats.h>
+#include <dtCore/system.h>
+#include <dtUtil/log.h>
+#include <dtUtil/xerceswriter.h>
+#include <dtUtil/xerceserrorhandler.h>
+#include <dtUtil/xercesutils.h>
+#include <dtUtil/xercesparser.h>
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/dom/DOMDocument.hpp>

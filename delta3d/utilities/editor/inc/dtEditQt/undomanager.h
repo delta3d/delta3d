@@ -24,14 +24,14 @@
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
-#include <QObject>
+#include <QtCore/QObject>
 #include <vector>
 #include <stack>
 #include <string>
 #include <list>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actortype.h"
-#include "dtDAL/actorproperty.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actortype.h>
+#include <dtDAL/actorproperty.h>
 #include "dtEditQt/typedefs.h"
 
 namespace dtCore

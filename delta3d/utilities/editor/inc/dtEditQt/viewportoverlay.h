@@ -19,12 +19,12 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ViewportOverlay__h
-#define __ViewportOverlay__h
+#ifndef DELTA_VIEWPORT_OVERLAY
+#define DELTA_VIEWPORT_OVERLAY
 
 #include <set>
 #include <map>
-#include <QObject>
+#include <QtCore/QObject>
 #include <osg/ref_ptr>
 #include <osg/Referenced>
 #include <osg/Geode>
@@ -32,13 +32,13 @@
 #include <dtCore/transformable.h>
 #include <dtABC/beziercontroller.h>
 #include <dtDAL/actorproxy.h>
-#include <dtEditQt/viewportmanager.h>
+#include "dtEditQt/viewportmanager.h"
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-    class Material;
-    class Group;
+   class Material;
+   class Group;
 }
 /// @endcond
 

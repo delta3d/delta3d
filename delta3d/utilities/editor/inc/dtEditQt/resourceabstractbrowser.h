@@ -20,19 +20,19 @@
 * @author Teague Coonan
 */
 
-#ifndef _ResourceAbstractBrowser_h
-#define _ResourceAbstractBrowser_h
+#ifndef DELTA_RESOURCE_ABSTRACT_BROWSER
+#define DELTA_RESOURCE_ABSTRACT_BROWSER
 
-#include <QString>
-#include <QWidget>
-#include <QMessageBox>
+#include <QtCore/QString>
+#include <QtGui/QWidget>
+#include <QtGui/QMessageBox>
 
-#include <QPushButton>
+#include <QtGui/QPushButton>
 
-#include "dtDAL/project.h"
+#include <dtDAL/project.h>
+#include <dtDAL/datatype.h>
 #include "dtEditQt/editordata.h"
 #include "dtEditQt/editorevents.h"
-#include "dtDAL/datatype.h"
 #include "dtEditQt/resourceimportdialog.h"
 
 class QPushButton;

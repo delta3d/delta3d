@@ -134,7 +134,6 @@ void System::StepWindow()
 void System::Run()
 {
    mRunning = true;
-   mSimulationTime = 0.0;
    mLastClockTime = mClock.tick();
    mSimulationClockTime = mLastClockTime;
 
@@ -178,6 +177,7 @@ void System::Step()
    if (first)
    {
       mLastClockTime = mClock.tick();
+      mSimulationClockTime = mLastClockTime;
       first = false;
    }
 

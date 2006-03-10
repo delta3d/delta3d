@@ -86,6 +86,14 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          )
       );
       
+      Axis* rightButtonLeftAndRight = mDefaultInputDevice->AddAxis(
+         "right mouse button left/right",
+         mRightButtonLeftRightMapping = new ButtonAxisToAxis(
+            mouse->GetButton(RightButton),
+            mouse->GetAxis(0)
+         )
+      );
+   
       Axis* arrowKeysUpAndDown = mDefaultInputDevice->AddAxis(
          "arrow keys up/down",
          mArrowKeysUpDownMapping = new ButtonsToAxis(
@@ -103,16 +111,29 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       );
       
       Axis* wsKeysUpAndDown = mDefaultInputDevice->AddAxis(
-         "w/s keys up/down",
+         "w/s keys stafe forward/back",
          mWSKeysUpDownMapping = new ButtonsToAxis(
             keyboard->GetButton(Producer::Key_S),
             keyboard->GetButton(Producer::Key_W)
          )
       );
       
+      Axis* adKeysStrafeLeftAndRight = mDefaultInputDevice->AddAxis(
+         "a/d keys strafe left/right",
+         mADKeysLeftRightMapping = new ButtonsToAxis(
+            keyboard->GetButton(Producer::Key_A),
+            keyboard->GetButton(Producer::Key_D)
+         )
+      );
+      
       mDefaultFlyForwardBackwardAxis = mDefaultInputDevice->AddAxis(
          "default fly forward/backward",
          new AxesToAxis(wsKeysUpAndDown, rightButtonUpAndDown)
+      );
+      
+      mDefaultFlyLeftRightAxis = mDefaultInputDevice->AddAxis(
+         "default fly left/right",
+         new AxesToAxis(adKeysStrafeLeftAndRight, rightButtonLeftAndRight)
       );
       
       mDefaultTurnLeftRightAxis = mDefaultInputDevice->AddAxis(
@@ -136,6 +157,9 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mRightButtonUpDownMapping->SetSourceButton(mouse->GetButton(RightButton));
       mRightButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
       
+      mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(RightButton));
+      mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
+      
       mArrowKeysUpDownMapping->SetSourceButtons(
          keyboard->GetButton(Producer::Key_Down),
          keyboard->GetButton(Producer::Key_Up)
@@ -150,9 +174,16 @@ void FlyMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
          keyboard->GetButton(Producer::Key_S),
          keyboard->GetButton(Producer::Key_W)
       );
+
+      mADKeysLeftRightMapping->SetSourceButtons(
+         keyboard->GetButton(Producer::Key_A),
+         keyboard->GetButton(Producer::Key_D)
+      );
    }
    
    SetFlyForwardBackwardAxis(mDefaultFlyForwardBackwardAxis);
+      
+   SetFlyLeftRightAxis(mDefaultFlyLeftRightAxis);
       
    SetTurnLeftRightAxis(mDefaultTurnLeftRightAxis);
          
@@ -179,6 +210,18 @@ void FlyMotionModel::SetFlyForwardBackwardAxis(Axis* flyForwardBackwardAxis)
 Axis* FlyMotionModel::GetFlyForwardBackwardAxis()
 {
    return mFlyForwardBackwardAxis;
+}
+
+////////////////////////////////////////////////////////////////////////////
+void FlyMotionModel::SetFlyLeftRightAxis(Axis* flyLeftRightAxis)
+{
+   mFlyLeftRightAxis = flyLeftRightAxis;
+}
+
+////////////////////////////////////////////////////////////////////////////
+Axis* FlyMotionModel::GetFlyLeftRightAxis()
+{
+   return mFlyLeftRightAxis;
 }
 
 /**
@@ -305,6 +348,11 @@ void FlyMotionModel::OnMessage(MessageData *data)
       if(mFlyForwardBackwardAxis != NULL)
       {
          translation[1] = float(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * delta);
+      }
+      
+      if(mFlyLeftRightAxis != NULL)
+      {
+         translation[0] = float(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * delta);
       }
       
       osg::Matrix mat;

@@ -256,7 +256,7 @@ namespace dtEditQt {
         for (int i=0; i<ViewportManager::getInstance().getNumTextureUnits(); i++) {
             ss->setTextureMode(i,GL_TEXTURE_1D,turnOff);
             ss->setTextureMode(i,GL_TEXTURE_2D,turnOff);
-            ss->setTextureMode(i,GL_TEXTURE_3D,turnOff);
+            //ss->setTextureMode(i,GL_TEXTURE_3D,turnOff);
         }
 
         this->selectionDecorator->setStateSet(ss);

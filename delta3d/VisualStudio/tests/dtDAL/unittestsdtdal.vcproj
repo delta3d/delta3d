@@ -136,9 +136,6 @@
 			<File
 				RelativePath="..\..\..\tests\dtDAL\projecttests.cpp">
 			</File>
-			<File
-				RelativePath="..\..\..\tests\dtDAL\proxytests.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -19,10 +19,10 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __ViewportContainer__h
-#define __ViewportContainer__h
+#ifndef DELTA_VIEWPORT_CONTAINER
+#define DELTA_VIEWPORT_CONTAINER
 
-#include <QWidget>
+#include <QtGui/QWidget>
 #include "dtEditQt/viewport.h"
 
 class QAction;

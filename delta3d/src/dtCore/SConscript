@@ -10,6 +10,12 @@ deps=[ 'dtUtil', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle',
        'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
        'CoreFoundation', 'IOKit', 'Carbon' ]
 
+defines = []
+
+if OS == 'windows':
+   defines = ['DT_CORE_LIBRARY', 'NOMINMAX']
+
+
 if OS != 'windows' :
    srcs.remove( 'deltawin_win32.cpp' )
    srcs.remove( 'uniqueid_win32.cpp' )
@@ -22,4 +28,4 @@ if OS != 'darwin':
    srcs.remove( 'deltawin_carbon.cpp' )
    srcs.remove( 'uniqueid_macosx.cpp' )
     
-env.BuildLib( 'dtCore', srcs, deps, ['DT_CORE_LIBRARY', 'NOMINMAX'] )
+env.BuildLib( 'dtCore', srcs, deps,  defines, prefixHeader = 'inc/prefix/dtcoreprefix.h')

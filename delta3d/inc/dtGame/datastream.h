@@ -81,6 +81,10 @@ namespace dtGame
           * Constructs the datastream using an existing byte buffer.
           * @param buffer The existing valid buffer.
           * @param bufferSize The size in bytes of the buffer.
+          * @param reverseByteSwapping If this flag is true, the buffer will treat
+          *    its contents as little endian by default instead of big endian.  This is 
+          *    useful if working with file data where the file is always in little endian
+          *    format.
           * @param autoFree If true, the buffer's memory is freed when the DataStream 
           *    instance gets destructed.  If false, the caller is responsible for freeing
           *    the associated buffer memory.
@@ -95,6 +99,9 @@ namespace dtGame
 
          DataStream& operator>>(unsigned char& value) { Read(value); return *this;}
          DataStream& operator<<(unsigned char value) { Write(value); return *this; }
+         
+         DataStream& operator>>(char& value) { Read(value); return *this;}
+         DataStream& operator<<(char value) { Write(value); return *this; }
          
          DataStream& operator>>(short& value) { Read(value); return *this; }
          DataStream& operator<<(short value) { Write(value); return *this; }
@@ -149,6 +156,9 @@ namespace dtGame
 
          void Read(unsigned char& c);
          void Write(unsigned char c);
+         
+         void Read(char& c);
+         void Write(char c);
 
          void Read(short& s);
          void Write(short s);
@@ -207,10 +217,25 @@ namespace dtGame
          void Seekp(unsigned int offset, const SeekTypeEnum &type);
          void Seekg(unsigned int offset, const SeekTypeEnum &type);
          
-         const char *GetBuffer() { return mBuffer; }
+         const char *GetBuffer() { return mBuffer; }         
+         
+         /**
+          * Gets the endian'ness of the current platform.
+          * @return True if little endian, false if big endian.
+          */
+         bool IsLittleEndian() const { return mIsLittleEndian; }
+         
+         /**
+          * Forces the stream to interpret its data contents as little endian.
+          * @param force True if the stream should interpret its contents as little endian.
+          * @note This is useful when working with binary files that are gaurenteed to be little
+          *    endian.  The particular file loading code can therefore, read the file contents
+          *    into the data stream and on big endian machines, byte swapping will occur
+          *    automatically.
+          */         
+         void SetForceLittleEndian(bool force) { mForceLittleEndian = force; }      
 
       private:
-         bool isLittleEndian;
          void ResizeBuffer();
 
       private:
@@ -218,6 +243,8 @@ namespace dtGame
          unsigned int mBufferSize, mBufferCapacity;
          unsigned int mReadPos,mWritePos;
          bool mAutoFreeBuffer;
+         bool mIsLittleEndian;
+         bool mForceLittleEndian;
     };
 
 }

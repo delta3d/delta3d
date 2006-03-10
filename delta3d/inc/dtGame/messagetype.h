@@ -21,8 +21,9 @@
 #ifndef DELTA_MESSAGETYPE
 #define DELTA_MESSAGETYPE
 
-#include "dtGame/message.h"
-#include "dtGame/messageparameter.h"
+#include <string>
+#include <dtUtil/enumeration.h>
+#include <dtGame/export.h>
 
 namespace dtGame
 {
@@ -39,6 +40,7 @@ namespace dtGame
          static const MessageType TICK_LOCAL;
          static const MessageType TICK_REMOTE;
 
+         ///Sent when a timer time
          static const MessageType INFO_TIMER_ELAPSED;
          static const MessageType INFO_ACTOR_CREATED;
          static const MessageType INFO_ACTOR_PUBLISHED;
@@ -50,6 +52,9 @@ namespace dtGame
          static const MessageType INFO_RESUMED;
          static const MessageType INFO_RESTARTED;
          static const MessageType INFO_TIME_CHANGED;
+         
+         ///Message sent when a player enters the world.  The Actor deleted message can be used when the player leaves.
+         static const MessageType INFO_PLAYER_ENTERED_WORLD;
 
          static const MessageType COMMAND_LOAD_MAP;
          static const MessageType COMMAND_PAUSE;
@@ -86,7 +91,6 @@ namespace dtGame
          static const MessageType LOG_INFO_KEYFRAMES; // DATA
          static const MessageType LOG_INFO_LOGFILES; // DATA
          static const MessageType LOG_INFO_TAGS; // DATA
-         //static const MessageType LOG_INFO_ERROR; ??????
          static const MessageType LOG_INFO_STATUS; // DATA
          static const MessageType LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS;
          static const MessageType LOG_COMMAND_END_LOADKEYFRAME_TRANS; // data

@@ -362,7 +362,9 @@ void FPSMotionModel::OnMessage(MessageData *data)
       IsEnabled() && 
       data->message == "preframe")
    {
-      const double deltaFrameTime = *static_cast<const double*>(data->userData);
+      //use the real change in time, not the simulated time change
+      //see dtCore::System for the difference.
+      const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
 
       Transform transform;
 

@@ -19,15 +19,15 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __MainWindow__h
-#define __MainWindow__h
+#ifndef DELTA_MAIN_WINDOW
+#define DELTA_MAIN_WINDOW
 
-#include <QMainWindow>
+#include <QtGui/QMainWindow>
 #include <osg/ref_ptr>
 #include <dtCore/uniqueid.h>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/map.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/map.h>
 #include "dtEditQt/typedefs.h"
 
 namespace dtEditQt 

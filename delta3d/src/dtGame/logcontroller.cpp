@@ -45,9 +45,24 @@ namespace dtGame
    {
       if (message.GetMessageType() == MessageType::LOG_INFO_STATUS) 
       {
-         const dtGame::LogStatusMessage *statusMsg = (const dtGame::LogStatusMessage *) &message;
-         mLastKnownStatus = statusMsg->GetStatus();
+         const LogStatusMessage &statusMsg = static_cast<const LogStatusMessage&>(message);
+         mLastKnownStatus = statusMsg.GetStatus();
          _receivedStatus(mLastKnownStatus);
+      }
+      else if (message.GetMessageType() == MessageType::LOG_INFO_LOGFILES)
+      {
+         const LogAvailableLogsMessage &logsMsg = static_cast<const LogAvailableLogsMessage&>(message);
+         mLastKnownLogList = logsMsg.GetLogList();
+      }
+      else if (message.GetMessageType() == MessageType::LOG_INFO_KEYFRAMES)
+      {
+         const LogGetKeyframeListMessage &kfListMsg = static_cast<const LogGetKeyframeListMessage&>(message);
+         mLastKnownKeyframeList = kfListMsg.GetKeyframeList();
+      }
+      else if (message.GetMessageType() == MessageType::LOG_INFO_TAGS)
+      {
+         const LogGetTagListMessage &tagListMsg = static_cast<const LogGetTagListMessage&>(message);
+         mLastKnownTagList = tagListMsg.GetTagList();
       }
       else if (message.GetMessageType() == MessageType::SERVER_REQUEST_REJECTED)
       {
@@ -192,7 +207,7 @@ namespace dtGame
    }
 
    //////////////////////////////////////////////////////////////////////////
-   void LogController::RequestSetAutoKeyframeInterval(const double interval)
+   void LogController::RequestSetAutoKeyframeInterval(double interval)
    {
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL);

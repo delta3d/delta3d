@@ -19,11 +19,11 @@
 *
 * @author Curtiss Murphy
 */
-#ifndef __EditorActions__h
-#define __EditorActions__h
+#ifndef DELTA_EDTIOR_ACTIONS
+#define DELTA_EDTIOR_ACTIONS
 
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <vector>
 #include <osg/Referenced>
 #include <osg/ref_ptr>

@@ -27,7 +27,7 @@
 
 namespace dtGame
 {
-   RulesComponent::RulesComponent() : GMComponent()
+   RulesComponent::RulesComponent(const std::string& name) : GMComponent(name)
    {
       logger = &dtUtil::Log::GetInstance("rulescomponent.cpp");
    }

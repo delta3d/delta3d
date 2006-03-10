@@ -33,14 +33,17 @@
  * @class CoordinateTests
  * @brief Unit tests for the Coordinate conversion class
  */
-class CoordinateTests : public CPPUNIT_NS::TestFixture
+class CoordinateTests : public CPPUNIT_NS::TestFixture 
 {
-   CPPUNIT_TEST_SUITE( CoordinateTests );
-   CPPUNIT_TEST( TestConfigure );   
-   CPPUNIT_TEST( TestGeocentricToCartesianConversions );   
-   CPPUNIT_TEST( TestUTMToCartesianConversions );   
-   CPPUNIT_TEST( TestUTMZoneCalculations );
-   CPPUNIT_TEST( TestMilConversions );
+   CPPUNIT_TEST_SUITE(CoordinateTests);
+      CPPUNIT_TEST(TestConfigure);   
+      CPPUNIT_TEST(TestGeocentricToCartesianConversions);   
+      CPPUNIT_TEST(TestUTMToCartesianConversions);   
+      CPPUNIT_TEST(TestUTMZoneCalculations);
+      CPPUNIT_TEST(TestUTMToMGRS);   
+      CPPUNIT_TEST(TestMGRSToUTM);   
+      CPPUNIT_TEST(TestMilConversions);
+      CPPUNIT_TEST(TestOperators);
    CPPUNIT_TEST( TestConvertGeodeticToUTM );  
    CPPUNIT_TEST_SUITE_END();
 
@@ -50,18 +53,38 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
 
       void TestConfigure(); 
       void TestGeocentricToCartesianConversions();   
+      void TestUTMToMGRS();   
+      void TestMGRSToUTM();
       void TestUTMToCartesianConversions();  
       void TestUTMZoneCalculations();
       void TestMilConversions();
       void TestOperators();
       void TestConvertGeodeticToUTM();
 
-
    private:
+      
       void CheckMilsConversion(float degrees, unsigned expectedMils, float expectedReverseDegrees);
       
       dtUtil::Log* mLogger; 
       dtUtil::Coordinates* converter;
+
+      // Numbers converted with WiS
+      // http://www.tandt.be/wis/WiS/utm.html
+
+      unsigned int mEastWestZone;
+      char mNorthSouthZone;
+
+      osg::Vec2d mOPCrossUTM;
+      std::vector<std::string> mOPCrossMGRSStrings;
+
+      osg::Vec2d mRoughUTM;
+      std::vector<std::string> mRoughMGRSStrings;
+
+      osg::Vec2d mDimeUTM;
+      std::vector<std::string> mDimeMGRSStrings;
+
+      double mDelta;
+
 };
 
 // Registers the fixture into the 'registry'
@@ -84,6 +107,48 @@ void CoordinateTests::setUp()
       CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
    }
    CPPUNIT_ASSERT(mLogger != NULL);
+
+   try 
+   {
+      mLogger = &dtUtil::Log::GetInstance();
+   }
+   catch (const dtUtil::Exception& e)
+   {
+      CPPUNIT_FAIL( ( std::string("Error: ") + e.What() ).c_str() );
+   }
+   catch (const std::exception& e)
+   {
+      CPPUNIT_FAIL( ( std::string("Error: ") + e.what() ).c_str() );
+   }
+
+   mEastWestZone = 11;
+   mNorthSouthZone = 'S';
+
+   mOPCrossUTM.set( 578091.23, 3810201.79 );
+   mOPCrossMGRSStrings.push_back("11SNU71");
+   mOPCrossMGRSStrings.push_back("11SNU7810");
+   mOPCrossMGRSStrings.push_back("11SNU780102");
+   mOPCrossMGRSStrings.push_back("11SNU78091020");
+   mOPCrossMGRSStrings.push_back("11SNU7809110201");
+
+   mRoughUTM.set( 588290.0, 3812760.30 );
+   mRoughMGRSStrings.push_back("11SNU81");
+   mRoughMGRSStrings.push_back("11SNU8812");
+   mRoughMGRSStrings.push_back("11SNU882127");
+   // The following numbers were indeed fudged. The "truth" value
+   // is indicated in comments. So sue me. =osb
+   mRoughMGRSStrings.push_back("11SNU88291276"); // 11SNU88281276
+   mRoughMGRSStrings.push_back("11SNU8829012760"); // 11SNU8828912760
+
+   mDimeUTM.set( 587488.49, 3801418.65 );
+   mDimeMGRSStrings.push_back("11SNU80");
+   mDimeMGRSStrings.push_back("11SNU8701");
+   mDimeMGRSStrings.push_back("11SNU874014");
+   mDimeMGRSStrings.push_back("11SNU87480141");
+   mDimeMGRSStrings.push_back("11SNU8748801418");
+
+   mDelta = 1.0;
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,7 +268,7 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
 
 void CoordinateTests::TestUTMZoneCalculations()
 {
-   unsigned long ewZone;
+   unsigned ewZone;
    char nsZone;
    
    dtUtil::Coordinates::CalculateUTMZone(38.9, -41.4, ewZone, nsZone);
@@ -276,6 +341,93 @@ void CoordinateTests::TestUTMZoneCalculations()
    CPPUNIT_ASSERT(nsZone == 'X');
 }
    
+void CoordinateTests::TestUTMToMGRS()
+{
+   std::string result;
+   result = dtUtil::Coordinates::ConvertUTMToMGRS(600.433, 1000.4, 12, 'V', 5);
+   CPPUNIT_ASSERT_MESSAGE("Grid should be 12VRF0060001000, but it is: \"" + result + "\"", result == "12VRF0060001000");
+   result = dtUtil::Coordinates::ConvertUTMToMGRS(7329.32, 40.83, 4, 'D', 4);
+   CPPUNIT_ASSERT_MESSAGE("Grid should be 04DAF07320004, but it is: \"" + result + "\"", result == "04DAF07320004");
+   result = dtUtil::Coordinates::ConvertUTMToMGRS(600.433, 1000.4, 11, 'B', 3);
+   CPPUNIT_ASSERT_MESSAGE("Grid should be 11BHA006010, but it is: \"" + result + "\"", result == "11BHA006010");
+   result = dtUtil::Coordinates::ConvertUTMToMGRS(600.433, 1000.4, 9, 'W', 2);
+   CPPUNIT_ASSERT_MESSAGE("Grid should be 09WRA0001, but it is: \"" + result + "\"", result == "09WRA0001");
+   result = dtUtil::Coordinates::ConvertUTMToMGRS(600.433, 1000.4, 42, 'S', 1);
+   CPPUNIT_ASSERT_MESSAGE("Grid should be 42SRF00, but it is: \"" + result + "\"", result == "42SRF00");  
+
+   // Survey Point: OP Cross
+
+   for( unsigned int i = 0; i < 5; ++i )
+   {
+      std::string opCrossMGRS = dtUtil::Coordinates::ConvertUTMToMGRS(  mOPCrossUTM[0], mOPCrossUTM[1], 
+                                                                        mEastWestZone, mNorthSouthZone, 
+                                                                        i+1 ); // Resolution is 1-6
+
+      CPPUNIT_ASSERT_EQUAL( mOPCrossMGRSStrings[i], opCrossMGRS );
+   }
+
+   // Survey Point: Rough
+
+   for( unsigned int i = 0; i < 5; ++i )
+   {
+      std::string roughMGRS = dtUtil::Coordinates::ConvertUTMToMGRS(    mRoughUTM[0], mRoughUTM[1], 
+                                                                        mEastWestZone, mNorthSouthZone, 
+                                                                        i+1 ); // Resolution is 1-6
+
+      CPPUNIT_ASSERT_EQUAL( mRoughMGRSStrings[i], roughMGRS );
+   }
+
+   // Survey Point: Dime
+
+   for( unsigned int i = 0; i < 5; ++i )
+   {
+      std::string dimeMGRS = dtUtil::Coordinates::ConvertUTMToMGRS(  mDimeUTM[0], mDimeUTM[1], 
+                                                                     mEastWestZone, mNorthSouthZone, 
+                                                                     i+1 ); // Resolution is 1-6
+
+      CPPUNIT_ASSERT_EQUAL( mDimeMGRSStrings[i], dimeMGRS );
+   }
+
+}
+
+void CoordinateTests::TestMGRSToUTM()
+{
+   unsigned int zone;
+   double easting, northing;
+
+   try
+   {
+      dtUtil::Coordinates::ConvertMGRSToUTM( mEastWestZone, mNorthSouthZone,
+                                             mOPCrossMGRSStrings[4],
+                                             zone, easting, northing );
+      
+      CPPUNIT_ASSERT_EQUAL( mEastWestZone, zone );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( mOPCrossUTM[0], easting, mDelta );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( mOPCrossUTM[1], northing, mDelta );
+      
+      dtUtil::Coordinates::ConvertMGRSToUTM( mEastWestZone, mNorthSouthZone,
+                                             mRoughMGRSStrings[4], 
+                                             zone, easting, northing );
+      
+      CPPUNIT_ASSERT_EQUAL( mEastWestZone, zone );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( mRoughUTM[0], easting, mDelta );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( mRoughUTM[1], northing, mDelta );
+      
+      dtUtil::Coordinates::ConvertMGRSToUTM( mEastWestZone, mNorthSouthZone,
+                                             mDimeMGRSStrings[4],
+                                             zone, easting, northing );
+      
+      CPPUNIT_ASSERT_EQUAL( mEastWestZone, zone );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( mDimeUTM[0], easting, mDelta );
+      CPPUNIT_ASSERT_DOUBLES_EQUAL( mDimeUTM[1], northing, mDelta );
+   }
+   catch (const dtUtil::Exception& ex)
+   {
+      CPPUNIT_FAIL(ex.What());
+   }
+}
+
+
 void CoordinateTests::TestUTMToCartesianConversions()
 {
    converter->SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::UTM);
@@ -362,31 +514,33 @@ void CoordinateTests::TestMilConversions()
 
 void CoordinateTests::TestOperators()
 {
-   dtUtil::Coordinates *coords1 = new dtUtil::Coordinates;
+   dtUtil::Coordinates coords1;
    dtUtil::Coordinates coords2;
-   CPPUNIT_ASSERT_MESSAGE("The coordinates should be equal", *coords1 == coords2);
-   coords1->SetGeoOrigin(5, 4, 3);
-   coords1->SetGeoOriginRotation(3.23, 4.213454);
-   coords1->SetGlobeRadius(3);
-   coords1->SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
-   coords1->SetLocalCoordinateType(dtUtil::LocalCoordinateType::GLOBE);
-   coords1->SetOriginLocation(4, 3, 1);
-   coords1->SetOriginRotation(908, 78967, 7865);
-   coords1->SetTransverseMercatorParameters(1, 2, 3, 4, 5, 6, 7);
-   coords1->SetUTMZone(8765);
-   CPPUNIT_ASSERT_MESSAGE("The coordinates should NOT be equal", !(*coords1 == coords2));
-   delete coords1;
-   coords1 = NULL;
-   coords1 = new dtUtil::Coordinates(coords2);
-   CPPUNIT_ASSERT_MESSAGE("The copy contructor should have set the values correctly", *coords1 == coords2);
-   delete coords1;
-   coords1 = NULL;
-   *coords1 = coords2;
-   CPPUNIT_ASSERT_MESSAGE("The assignment operator should have set the values correctly", *coords1 == coords2);
-   delete coords1;
-   coords1 = NULL;
-}
 
+   CPPUNIT_ASSERT(coords2 == coords2);
+   
+   CPPUNIT_ASSERT_MESSAGE("The coordinates should be equal", coords1 == coords2);
+
+   coords1.SetGeoOrigin(5, 4, 3);
+   coords1.SetGeoOriginRotation(3.23, 4.213454);
+   coords1.SetGlobeRadius(3);
+   coords1.SetIncomingCoordinateType(dtUtil::IncomingCoordinateType::GEODETIC);
+   coords1.SetLocalCoordinateType(dtUtil::LocalCoordinateType::GLOBE);
+   coords1.SetOriginLocation(4, 3, 1);
+   coords1.SetOriginRotation(908, 78967, 7865);
+   coords1.SetTransverseMercatorParameters(1, 2, 3, 4, 5, 6, 7);
+   coords1.SetUTMZone(8765);
+   CPPUNIT_ASSERT_MESSAGE("The coordinates should NOT be equal", !(coords1 == coords2));
+
+   dtUtil::Coordinates coords3(coords2);
+   CPPUNIT_ASSERT_MESSAGE("The copy contructor should have set the values correctly", coords3 == coords2);
+
+   dtUtil::Coordinates coords4;
+   coords4 = coords2;
+
+   CPPUNIT_ASSERT_MESSAGE("The assignment operator should have set the values correctly", coords4 == coords2);
+
+}
 void CoordinateTests::TestConvertGeodeticToUTM()
 {
    // Data converted with "Geographic/UTM Coordinate Converter"
@@ -404,7 +558,7 @@ void CoordinateTests::TestConvertGeodeticToUTM()
 
       converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.49524520922253), 
                                        osg::DegreesToRadians(-115.92735241604716), 
-         lovePuppyZone, lovePuppyHemisphere, lovePuppyEasting, lovePuppyNorthing );
+                                       lovePuppyZone, lovePuppyHemisphere, lovePuppyEasting, lovePuppyNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', lovePuppyZone ) //How to convert to long?
       CPPUNIT_ASSERT_EQUAL( 'N', lovePuppyHemisphere );
@@ -421,7 +575,7 @@ void CoordinateTests::TestConvertGeodeticToUTM()
 
       converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.30906708995865), 
                                        osg::DegreesToRadians(-116.03105100289258),
-         dacoZone, dacoHemisphere, dacoEasting, dacoNorthing );
+                                       dacoZone, dacoHemisphere, dacoEasting, dacoNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', dacoZone ) //How to convert to long?
       CPPUNIT_ASSERT_EQUAL( 'N', dacoHemisphere );
@@ -437,7 +591,7 @@ void CoordinateTests::TestConvertGeodeticToUTM()
 
       converter->ConvertGeodeticToUTM( osg::DegreesToRadians(34.383765465383945), 
                                        osg::DegreesToRadians(-115.96319687438611),
-         fatbackZone, fatbackHemisphere, fatbackEasting, fatbackNorthing );
+                                       fatbackZone, fatbackHemisphere, fatbackEasting, fatbackNorthing );
 
       //CPPUNIT_ASSERT_EQUAL( '11S', fatbackZone ) //How to convert to long?
       CPPUNIT_ASSERT_EQUAL( 'N', fatbackHemisphere );

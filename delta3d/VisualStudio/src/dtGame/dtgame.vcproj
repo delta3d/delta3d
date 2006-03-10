@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib"
 				OutputFile="..\..\..\bin\dtGamed.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -89,7 +89,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib osg.lib OpenThreadsWin32.lib Producer.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib OpenThreadsWin32.lib Producer.lib"
 				OutputFile="..\..\..\bin\dtGame.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -147,6 +147,9 @@
 				RelativePath="..\..\..\src\dtGame\datastream.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\deadreckoningcomponent.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\defaultmessageprocessor.cpp">
 			</File>
 			<File
@@ -154,6 +157,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\gameactor.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\gameapplication.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\gamemanager.cpp">
@@ -203,6 +209,9 @@
 			<File
 				RelativePath="..\..\..\src\dtGame\serverloggercomponent.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\taskcomponent.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -224,6 +233,9 @@
 				RelativePath="..\..\..\inc\dtGame\datastream.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGame\deadreckoningcomponent.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
 			</File>
 			<File
@@ -234,6 +246,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\gameactor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\gameapplication.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\gamemanager.h">
@@ -291,6 +306,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\serverloggercomponent.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\taskcomponent.h">
 			</File>
 		</Filter>
 		<Filter

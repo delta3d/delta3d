@@ -19,10 +19,10 @@
 *
 * @author Curtiss Murphy
 */
-#ifndef __EditorData__h
-#define __EditorData__h
+#ifndef DELTA_EDITOR_DATA
+#define DELTA_EDITOR_DATA
 
-#include <QColor>
+#include <QtGui/QColor>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <vector>
@@ -30,7 +30,7 @@
 #include <list>
 #include "dtEditQt/undomanager.h"
 
-#include "dtDAL/project.h"
+#include <dtDAL/project.h>
 
 namespace dtDAL
 {

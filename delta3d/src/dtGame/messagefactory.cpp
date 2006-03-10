@@ -65,6 +65,8 @@ namespace dtGame
       RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_DELETED);
       RegisterMessageType<ActorPublishedMessage>(MessageType::INFO_ACTOR_PUBLISHED);
 
+      RegisterMessageType<Message>(MessageType::INFO_PLAYER_ENTERED_WORLD);
+
 
       RegisterMessageType<Message>(MessageType::REQUEST_PAUSE);
       RegisterMessageType<Message>(MessageType::REQUEST_RESUME);
@@ -86,9 +88,9 @@ namespace dtGame
       RegisterMessageType<dtGame::LogSetLogfileMessage>(dtGame::MessageType::LOG_REQ_SET_LOGFILE);
       RegisterMessageType<dtGame::LogSetAutoKeyframeIntervalMessage>
          (dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL);
-      //   static const MessageType LOG_INFO_KEYFRAMES;
-      //   static const MessageType LOG_INFO_LOGFILES;
-      //   static const MessageType LOG_INFO_TAGS;
+      RegisterMessageType<dtGame::LogAvailableLogsMessage>(dtGame::MessageType::LOG_INFO_LOGFILES);
+      RegisterMessageType<dtGame::LogGetKeyframeListMessage>(dtGame::MessageType::LOG_INFO_KEYFRAMES);
+      RegisterMessageType<dtGame::LogGetTagListMessage>(dtGame::MessageType::LOG_INFO_TAGS);
       RegisterMessageType<dtGame::LogStatusMessage>(dtGame::MessageType::LOG_INFO_STATUS);
       RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS);
       RegisterMessageType<dtGame::LogEndLoadKeyframeMessage>(dtGame::MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS);

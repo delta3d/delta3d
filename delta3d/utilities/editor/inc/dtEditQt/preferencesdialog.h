@@ -20,10 +20,10 @@
 * @author William E. Johnson II
 */
 
-#ifndef _PREFERENCES_DIALOG_H_
-#define _PREFERENCES_DIALOG_H_
+#ifndef DELTA_PREFERENCES_DIALOG
+#define DELTA_PREFERENCES_DIALOG
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QCheckBox;
 class QPushButton;

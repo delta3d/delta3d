@@ -28,21 +28,6 @@
 using namespace dtDAL;
 using namespace dtCore;
 
-std::ostream& operator << (std::ostream &o, const osg::Vec3 &vec)
-{
-    o << vec[0] << ' ' << vec[1] << ' ' << vec[2];
-    return o;
-}
-std::ostream& operator << (std::ostream &o, const osg::Vec4 &vec)
-{
-    o << vec[0] << ' ' << vec[1] << ' ' << vec[2] << ' ' << vec[3];
-    return o;
-}
-std::ostream& operator << (std::ostream &o, const osg::Vec2 &vec)
-{
-    o << vec[0] << ' ' << vec[1];
-    return o;
-}
 
 class ProxyTest : public CPPUNIT_NS::TestFixture
 {
@@ -108,11 +93,15 @@ void ProxyTest::testProps(ActorProxy& proxy)
     std::string proxyTypeName = proxy.GetActorType().GetName();
     std::vector<ActorProperty*> props;
     proxy.GetPropertyList(props);
-    const float epsilon = 0.01f;
+    const float epsilon = 0.0001f;
 
     for (unsigned int i = 0; i < props.size(); i++)
     {
         std::string name = props[i]->GetName();
+        props[i]->SetNumberPrecision(24);
+        CPPUNIT_ASSERT(props[i]->GetNumberPrecision() == 24);
+        props[i]->SetNumberPrecision(16);
+        CPPUNIT_ASSERT(props[i]->GetNumberPrecision() == 16);
         
         if(props[i]->IsReadOnly())
         {
@@ -127,36 +116,42 @@ void ProxyTest::testProps(ActorProxy& proxy)
         if (props[i]->GetPropertyType() == DataType::FLOAT)
         {
             FloatActorProperty* prop1 = ((FloatActorProperty*)props[i]);
-            prop1->SetValue(1.3f);
+            
+            float value1 = 1.3323233f;
+            prop1->SetValue(value1);
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                + " should have value 1.3, but it is: " + props[i]->GetStringValue(),
-                osg::equivalent(prop1->GetValue(), 1.3f, (float)epsilon));
+                + " should have value 1.3323233f, but it is: " + props[i]->GetStringValue(),
+                osg::equivalent(prop1->GetValue(), value1, (float)epsilon));
 
             std::string stringValue = prop1->GetStringValue();
             //set some other value so we can test the string can set it back.
-            prop1->SetValue(17.28f);
+            float value2 = 17.3238392f;
+            prop1->SetValue(value2);
             CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
 
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                + " should have value 1.3, but it is: " + props[i]->GetStringValue(),
-                osg::equivalent(prop1->GetValue(), 1.3f, (float)epsilon));
+                + " should have value 1.3323233f, but it is: " + props[i]->GetStringValue(),
+                osg::equivalent(prop1->GetValue(), value1, (float)epsilon));
         }
         else if (props[i]->GetPropertyType() == DataType::DOUBLE)
         {
             DoubleActorProperty* prop1 = ((DoubleActorProperty*)props[i]);
-            prop1->SetValue(1.3);
+
+            double value1 = 1.3323233;
+            prop1->SetValue(value1);
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                + " should have value 1.3, but it is: " + props[i]->GetStringValue(),
-                osg::equivalent(prop1->GetValue(), 1.3, (double)epsilon));
+                + " should have value 1.3323233, but it is: " + props[i]->GetStringValue(),
+                osg::equivalent(prop1->GetValue(), value1, (double)epsilon));
 
             std::string stringValue = prop1->GetStringValue();
             //set some other value so we can test the string can set it back.
-            prop1->SetValue(17.28);
+            double value2 = 17.3238392;
+            prop1->SetValue(value2);
             CPPUNIT_ASSERT(prop1->SetStringValue(stringValue));
 
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                + " should have value 1.3, but it is: " + props[i]->GetStringValue(),
-                osg::equivalent(prop1->GetValue(), 1.3, (double)epsilon));
+                + " should have value 1.3323233, but it is: " + props[i]->GetStringValue(),
+                osg::equivalent(prop1->GetValue(), value1, (double)epsilon));
         }
         else if (props[i]->GetPropertyType() == DataType::INT)
         {
@@ -303,7 +298,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC3F)
         {
             Vec3fActorProperty* prop1 = ((Vec3fActorProperty*)props[i]);
-            osg::Vec3f test(9.0f, 2.0f, 7.34f);
+            osg::Vec3f test(9.037829f, 2.02322f, 7.34324f);
             if (name == "Direction")
                 //Direction ignores the y rotation because you can't roll a vector.
                 test.y() = 0.0f;
@@ -321,7 +316,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
                 CPPUNIT_ASSERT_MESSAGE(ss.str(),
                     osg::equivalent(result[x], test[x], epsilon));
             }
-            osg::Vec3f test2(7.0f, 3.0f, -9.25f);
+            osg::Vec3f test2(7.0667f, 3.08595f, -9.2555950f);
             std::string stringValue = prop1->GetStringValue();
             //change the value so we can change it back.
             prop1->SetValue(test2);
@@ -343,7 +338,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC3D)
         {
             Vec3dActorProperty* prop1 = ((Vec3dActorProperty*)props[i]);
-            osg::Vec3d test(9.0, 2.0, 7.34);
+            osg::Vec3f test(9.037829, 2.02322, 7.34324);
             if (name == "Direction")
                 //Direction ignores the y rotation because you can't roll a vector.
                 test.y() = 0.0;
@@ -383,7 +378,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC4)
         {
             Vec4ActorProperty* prop1 = ((Vec4ActorProperty*)props[i]);
-            osg::Vec4 test(6.0f, 6.0f, 5.0f, 7.3f);
+            osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
             prop1->SetValue(test);
             osg::Vec4 result = prop1->GetValue();
 
@@ -416,7 +411,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC4F)
         {
             Vec4fActorProperty* prop1 = ((Vec4fActorProperty*)props[i]);
-            osg::Vec4f test(6.0f, 6.0f, 5.0f, 7.3f);
+            osg::Vec4f test(9.037829f, 2.02322f, 7.34324f, 7.2936299f);
             prop1->SetValue(test);
             osg::Vec4f result = prop1->GetValue();
 
@@ -449,7 +444,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC4D)
         {
             Vec4dActorProperty* prop1 = ((Vec4dActorProperty*)props[i]);
-            osg::Vec4d test(6.0, 6.0, 5.0, 7.3);
+            osg::Vec4d test(9.037829, 2.02322, 7.34324, 7.2936299);
             prop1->SetValue(test);
             osg::Vec4d result = prop1->GetValue();
 
@@ -482,7 +477,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC2)
         {
             Vec2ActorProperty* prop1 = ((Vec2ActorProperty*)props[i]);
-            osg::Vec2 test(9.0f, 2.0f);
+            osg::Vec2 test(9.35320f, 2.0323f);
             prop1->SetValue(test);
             osg::Vec2 result = prop1->GetValue();
 
@@ -514,7 +509,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC2F)
         {
             Vec2fActorProperty* prop1 = ((Vec2fActorProperty*)props[i]);
-            osg::Vec2f test(9.0f, 2.0f);
+            osg::Vec2 test(9.35320f, 2.0323f);
             prop1->SetValue(test);
             osg::Vec2f result = prop1->GetValue();
 
@@ -546,7 +541,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::VEC2D)
         {
             Vec2dActorProperty* prop1 = ((Vec2dActorProperty*)props[i]);
-            osg::Vec2d test(9.0, 2.0);
+            osg::Vec2 test(9.35320, 2.0323);
             prop1->SetValue(test);
             osg::Vec2d result = prop1->GetValue();
 
@@ -578,7 +573,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         else if (props[i]->GetPropertyType() == DataType::RGBACOLOR)
         {
             ColorRgbaActorProperty* prop1 = ((ColorRgbaActorProperty*)props[i]);
-            osg::Vec4 test(6.0f, 6.0f, 5.0f, 7.3f);
+            osg::Vec4 test(6.1335543f, 0.3523333f, 5.05345f, 7323.3f);
             prop1->SetValue(test);
             osg::Vec4 result = prop1->GetValue();
 

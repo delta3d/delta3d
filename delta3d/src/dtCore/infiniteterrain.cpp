@@ -13,6 +13,7 @@
 #include <osg/Geometry>
 #include <osg/Material>
 #include <osg/Plane>
+#include <osg/TexEnv>
 #include <osg/TexGen>
 #include <osg/Texture2D>
 #include <osg/PrimitiveSet>

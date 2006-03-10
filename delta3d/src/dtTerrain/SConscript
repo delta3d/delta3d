@@ -13,13 +13,16 @@ dtTerrainDeps =[ 'dtDAL', 'dtutil', 'dtCore', 'dtChar', 'dtaudio', 'dtabc', 'glg
         'cal3d', 'sg', 'ul', 'js', 
 	'Producer', 'opengl' ]
 
+defines = []
+
 if OS == 'windows' :
    dtTerrainDeps += [ 'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32' ]
+   defines = ['DT_TERRAIN_LIBRARY']
 elif OS == 'linux':
    dtTerrainDeps += [ 'uuid', 'Xxf86vm' ]
 elif OS == 'darwin':
    dtTerrainDeps += [ 'CoreFoundation', 'IOKit', 'Carbon' ]
 
-libdtTerrain = env.BuildLib( 'dtTerrain', sources, dtTerrainDeps, ['DT_TERRAIN_LIBRARY'] )
+libdtTerrain = env.BuildLib( 'dtTerrain', sources, dtTerrainDeps, defines)
 
 Export ('libdtTerrain')

@@ -19,10 +19,10 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __EditorEvents__hpp
-#define __EditorEvents__hpp
+#ifndef DELTA_EDITOR_EVENTS
+#define DELTA_EDITOR_EVENTS
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <vector>

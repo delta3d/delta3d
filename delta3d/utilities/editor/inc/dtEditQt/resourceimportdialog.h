@@ -20,30 +20,30 @@
 * @author Teague Coonan
 */
 
-#ifndef _ResourceImportDialog_h
-#define _ResourceImportDialog_h
+#ifndef DELTA_RESOURCE_IMPORT_DIALOG
+#define DELTA_RESOURCE_IMPORT_DIALOG
 
-#include <QStringList>
-#include <QPushButton>
-#include <QString>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QLineEdit>
-#include <QLabel>
-#include <QDialog>
-#include <QGroupBox>
-#include <QList>
+#include <QtCore/QStringList>
+#include <QtGui/QPushButton>
+#include <QtCore/QString>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QGridLayout>
+#include <QtGui/QLineEdit>
+#include <QtGui/QLabel>
+#include <QtGui/QDialog>
+#include <QtGui/QGroupBox>
+#include <QtCore/QList>
 
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <vector>
 
-#include "dtDAL/datatype.h"
-#include "dtDAL/project.h"
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/resourcehelper.h"
-#include "dtDAL/fileutils.h"
+#include <dtDAL/datatype.h>
+#include <dtDAL/project.h>
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/resourcehelper.h>
+#include <dtDAL/fileutils.h>
 
 class QMainWindow;
 class QVBoxWidget;

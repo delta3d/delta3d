@@ -86,6 +86,22 @@ namespace dtCore
          Axis* GetFlyForwardBackwardAxis();
          
          /**
+          * Sets the axis that moves the target left (for positive
+          * values) or right (for negative values).
+          *
+          * @param flyLeftRightAxis the new left/right axis
+          */
+         void SetFlyLeftRightAxis(Axis* flyLeftRightAxis);
+         
+         /**
+          * Returns the axis that moves the target left (for positive
+          * values) or right (for negative values).
+          *
+          * @return the current left/right axis
+          */
+         Axis* GetFlyLeftRightAxis();
+         
+         /**
           * Sets the axis that turns the target left (for negative values)
           * or right (for positive values).
           *
@@ -176,6 +192,11 @@ namespace dtCore
          ButtonAxisToAxis* mRightButtonUpDownMapping;
          
          /**
+          * The right button left/right mapping.
+          */
+         ButtonAxisToAxis* mRightButtonLeftRightMapping;
+         
+         /**
           * The arrow key up/down mapping.
           */
          ButtonsToAxis* mArrowKeysUpDownMapping;
@@ -186,14 +207,24 @@ namespace dtCore
          ButtonsToAxis* mArrowKeysLeftRightMapping;
          
          /**
-          * The w/s key up/down mapping.
+          * The w/s key forward/backward mapping.
           */
          ButtonsToAxis* mWSKeysUpDownMapping;
+         
+         /**
+          * The a/d key strafe left/right mapping.
+          */
+         ButtonsToAxis* mADKeysLeftRightMapping;
          
          /**
           * The default fly forward/backward axis.
           */
          LogicalAxis* mDefaultFlyForwardBackwardAxis;
+         
+         /**
+          * The default fly left/right axis.
+          */
+         LogicalAxis* mDefaultFlyLeftRightAxis;
          
          /**
           * The default turn left/right axis.
@@ -209,6 +240,11 @@ namespace dtCore
           * The axis that moves the target forwards or backwards.
           */
          Axis* mFlyForwardBackwardAxis;
+         
+         /**
+          * The axis that moves the target left or right.
+          */
+         Axis* mFlyLeftRightAxis;
          
          /**
           * The axis that turns the target left or right.

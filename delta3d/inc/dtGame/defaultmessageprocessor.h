@@ -25,7 +25,6 @@
 
 namespace dtGame
 {
-   class GameManager;
    class Message;
    class TickMessage;
    class TimeChangeMessage;
@@ -39,7 +38,7 @@ namespace dtGame
       public:
 
          /// Constructor
-         DefaultMessageProcessor();
+         DefaultMessageProcessor(const std::string& name = "default");
 
          /**
           * Called publicily from other classes to process a message and 

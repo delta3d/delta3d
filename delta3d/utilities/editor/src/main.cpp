@@ -19,14 +19,14 @@
  */
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
-#include <QSplashScreen>
+#include <QtGui/QSplashScreen>
 #include <QtGui/QPixmap>
 #include <sstream>
 #include <dtCore/globals.h>
 #include <dtCore/system.h>
 #include "dtEditQt/mainwindow.h"
 #include "dtEditQt/viewportmanager.h"
-#include "dtDAL/librarymanager.h"
+#include <dtDAL/librarymanager.h>
 #include "dtEditQt/editorevents.h"
 #include "dtEditQt/editoractions.h"
 #include "dtEditQt/uiresources.h"
