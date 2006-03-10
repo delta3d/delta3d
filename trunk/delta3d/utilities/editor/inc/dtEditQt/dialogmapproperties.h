@@ -19,10 +19,10 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __DialogMapProperties__h
-#define __DialogMapProperties__h
+#ifndef DELTA_DIALOG_MAP_PROPERTIES
+#define DELTA_DIALOG_MAP_PROPERTIES
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QLineEdit;
 class QTextEdit;

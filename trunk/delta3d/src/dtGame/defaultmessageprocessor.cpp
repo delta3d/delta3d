@@ -34,7 +34,7 @@
 
 namespace dtGame
 {
-   DefaultMessageProcessor::DefaultMessageProcessor() : GMComponent()
+   DefaultMessageProcessor::DefaultMessageProcessor(const std::string& name) : GMComponent(name)
    {
 
    }
@@ -97,14 +97,14 @@ namespace dtGame
       const std::string catName = msg.GetActorTypeCategory();
 
       dtCore::RefPtr<dtDAL::ActorProxy> ap;
-     dtCore::RefPtr<dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
-     if (type == NULL)
-        EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
+      dtCore::RefPtr<dtDAL::ActorType> type = GetGameManager()->FindActorType(catName, typeName);
+      if (type == NULL)
+         EXCEPT(dtGame::ExceptionEnum::INVALID_PARAMETER, "The actor type parameters with value \"" 
            + catName + "." +  typeName + "\" are invalid because no such actor type is registered.");
            
-     ap = GetGameManager()->CreateActor(*type);
-     //Change the id to match the one this is ghosting.
-     ap->SetId(msg.GetAboutActorId());
+      ap = GetGameManager()->CreateActor(*type);
+      //Change the id to match the one this is ghosting.
+      ap->SetId(msg.GetAboutActorId());
          
       if (!ap->IsGameActorProxy())
       {
@@ -158,8 +158,8 @@ namespace dtGame
             try
             {
                dtCore::RefPtr<GameActorProxy> gap = ProcessRemoteCreateActor(msg);
+               gap->ApplyActorUpdate(msg);
                GetGameManager()->AddActor(*gap, true, false);
-               ProcessRemoteUpdateActor(msg);
             }
             catch (const dtUtil::Exception& ex)
             {
@@ -206,7 +206,7 @@ namespace dtGame
       }
       else
       {
-         LOG_ERROR("Message received for an invalid proxy");
+         LOG_DEBUG("Message received for an unknown proxy");
          return;
       }
    }

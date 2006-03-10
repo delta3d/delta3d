@@ -48,6 +48,9 @@ namespace dtGame
 
          ///Game applcation was unable to initialize for some reason.
          static ExceptionEnum GAME_APPLICATION_CONFIG_ERROR;
+
+         ///Used when an error occures working with the dead reckoing component.
+         static ExceptionEnum DEAD_RECKONING_EXCEPTION;
       protected:
          ExceptionEnum(const std::string &name) : Enumeration(name)
          {

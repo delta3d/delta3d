@@ -32,7 +32,6 @@ bool XercesParser::Parse(  const std::string& datafile,
       return false;
    }
 
-   bool retVal(false);
    try  // to inialize the xmlutils
    {
       XMLPlatformUtils::Initialize();
@@ -92,6 +91,7 @@ bool XercesParser::Parse(  const std::string& datafile,
       return false;
    }
 
+   bool retVal(false);
    try  // to parse the file
    {
       LOG_DEBUG("About to parse file: " + filename)
@@ -104,9 +104,6 @@ bool XercesParser::Parse(  const std::string& datafile,
       char* message = XMLString::transcode(e.getMessage());
       LOG_ERROR(std::string("Exception message is: ") + message)
       XMLString::release(&message);
-
-      delete parser;
-      return false;
    }
    catch (const SAXParseException& e)
    {
@@ -114,16 +111,10 @@ bool XercesParser::Parse(  const std::string& datafile,
       char* message = XMLString::transcode(e.getMessage());
       LOG_ERROR(std::string("An exception occurred while parsing file, ") + filename + std::string(", with message: ") + message)
       XMLString::release(&message);
-
-      delete parser;
-      return false;
    }
    catch (...) 
    {
       LOG_ERROR("An exception occurred while parsing file, " + filename)
-
-      delete parser;
-      return false;
    }
 
    delete parser;

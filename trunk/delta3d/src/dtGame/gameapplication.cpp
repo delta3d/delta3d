@@ -63,10 +63,10 @@ namespace dtGame
          EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str());
       }
         
-      osgDB::DynamicLibrary::PROC_ADDRESS createAddr;
-      osgDB::DynamicLibrary::PROC_ADDRESS destroyAddr;
-      createAddr = mEntryPointLib->GetDynamicLibrary().getProcAddress("CreateGameEntryPoint");
-      destroyAddr = mEntryPointLib->GetDynamicLibrary().getProcAddress("DestroyGameEntryPoint");
+      dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createAddr;
+      dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyAddr;
+      createAddr = mEntryPointLib->FindSymbol("CreateGameEntryPoint");
+      destroyAddr = mEntryPointLib->FindSymbol("DestroyGameEntryPoint");
 
       //Make sure the plugin actually implemented these functions and they
       //have been exported.

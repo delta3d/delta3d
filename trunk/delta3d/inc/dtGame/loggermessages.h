@@ -160,6 +160,167 @@ namespace dtGame
          virtual ~LogDeleteLogfileMessage() { }
    };
    
+   /**
+    * This message class is sent from the ServerLoggerComponent to the log controller
+    * specifying the list of keyframes in the current log.
+    * @par
+    *    Related Message Types: LOG_REQ_GET_KEYFRAMES</br>
+    *    Parameter: KeyframeList: </br>
+    */
+   class DT_GAME_EXPORT LogGetKeyframeListMessage : public Message
+   {
+      public:
+      
+         /**
+          * Construct - Adds the message parameters for this message to the
+          * parameter list.
+          */
+         LogGetKeyframeListMessage();
+         
+         /**
+          * Gets the list of keyframes this message contains.
+          * @return A list of keyframe objects.
+          */
+         const std::vector<LogKeyframe> &GetKeyframeList() const { return mKeyframeList; }         
+         
+         /**
+          * Overloaded to update the internal cached keyframe list.
+          * @param source The string to deserialized into a message.
+          */
+         virtual void FromString(const std::string &source)
+         {
+            Message::FromString(source);
+            UpdateInternalKeyframeList();
+         }
+         
+         /**
+          * Overloaded to update the internal cached keyframe list.
+          * @param stream The stream to deserialized into a message.
+          */
+         virtual void FromDataStream(DataStream &stream)
+         {
+            Message::FromDataStream(stream);
+            UpdateInternalKeyframeList();
+         }
+         
+         /**
+          * Sets the list of keyframes this message contains.
+          * @param kfList The list of keyframes to package into a message.
+          */
+         void SetKeyframeList(const std::vector<LogKeyframe> &kfList);    
+                  
+      protected:      
+         virtual ~LogGetKeyframeListMessage();
+         void UpdateInternalKeyframeList();
+         
+      private:
+         std::vector<LogKeyframe> mKeyframeList;
+         
+   };
+   
+   /**
+    * This message class is sent from the ServerLoggerComponent to the log controller
+    * specifying the list of tags in the current log.
+    * @par
+    *    Related Message Types: LOG_REQ_GET_TAGS</br>
+    *    Parameter: TagList: </br>
+    */
+   class DT_GAME_EXPORT LogGetTagListMessage : public Message
+   {
+      public:
+      
+         /**
+          * Construct - Adds the message parameters for this message to the
+          * parameter list.
+          */
+         LogGetTagListMessage();
+         
+         /**
+          * Gets the list of tags this message contains.
+          * @return A list of strings corresponding to keyframes.
+          */
+         const std::vector<LogTag> &GetTagList() const
+         {
+            return mTagList;
+         }
+         
+         /**
+          * Overloaded to update the internal cached tags list.
+          * @param source The string to deserialized into a message.
+          */
+         virtual void FromString(const std::string &source)
+         {
+            Message::FromString(source);
+            UpdateInternalTagList();
+         }
+         
+         /**
+          * Overloaded to update the internal cached tags list.
+          * @param stream The stream to deserialized into a message.
+          */
+         virtual void FromDataStream(DataStream &stream)
+         {
+            Message::FromDataStream(stream);
+            UpdateInternalTagList();
+         }
+         
+         /**
+          * Sets the list of logs this message contains.
+          * @param logList The list of logs.
+          */
+         void SetTagList(const std::vector<LogTag> &tagList);    
+                  
+      protected:      
+         virtual ~LogGetTagListMessage();
+         void UpdateInternalTagList();
+         
+      private:
+         std::vector<LogTag> mTagList;
+   };
+   
+   /**
+    * This message class is sent from the ServerLoggerComponent to the log controller
+    * specifying the current logs available.
+    * @par
+    *    Related Message Types: LOG_REQ_GET_LOGFILES</br>
+    *    Parameter: LogList: List of strings corresponding to the list of 
+    *       available logs.<br>
+    */
+   class DT_GAME_EXPORT LogAvailableLogsMessage : public Message
+   {      
+      public:
+            
+         /*
+          * Construct - Adds the message parameters for this message to the parameter
+          * list.
+          */            
+         LogAvailableLogsMessage();
+         
+         /**
+          * Gets the list of logs this message contains.
+          * @return A list of strings corresponding to logs.
+          */
+         const std::vector<std::string> &GetLogList() const
+         {
+            const StringMessageParameter *p =
+               static_cast<const StringMessageParameter*>(GetParameter("LogList"));
+            return p->GetValueList();
+         }
+         
+         /**
+          * Sets the list of logs this message contains.
+          * @param logList The list of logs.
+          */
+         void SetLogList(const std::vector<std::string> &logList)
+         {
+            StringMessageParameter *p =
+               static_cast<StringMessageParameter*>(GetParameter("LogList"));
+            p->SetValueList(logList);
+         }    
+                  
+      protected:      
+         virtual ~LogAvailableLogsMessage() { }
+   };   
      
    /**
     * This message class is sent to the ServerLoggerComponent to insert a tag. 
@@ -273,7 +434,7 @@ namespace dtGame
           * Sets the auto keyframe interval
           * @param interval the auto keyframe interval.
           */
-         void SetAutoKeyframeInterval(const double interval)
+         void SetAutoKeyframeInterval(double interval)
          {
             DoubleMessageParameter *p = 
                static_cast<DoubleMessageParameter*>(GetParameter("AutoKeyframeInterval"));

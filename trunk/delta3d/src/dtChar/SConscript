@@ -6,5 +6,10 @@ deps = [ 'dtCore', 'cal3d', 'rbody', 'dtUtil', 'isense',
          'OpenThreads', 'osg', 'osgDB', 'osgParticle',
          'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX', 'osgProducer',
          'ul', 'js', 'Producer', 'opengl', 'rbody', 'rvrutils', 'rcfgscript' ] 
+
+defines = []
+if OS == 'windows':
+   defines = ['DT_CHAR_LIBRARY']
+
     
-env.BuildLib( 'dtChar', srcs, deps, ['DT_CHAR_LIBRARY'] )
+env.BuildLib( 'dtChar', srcs, deps, defines )

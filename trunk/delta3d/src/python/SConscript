@@ -151,18 +151,24 @@ if CheckForBoost() :
       dtHlaBindingsTarget = 'dtHLABindings'
       dtUtilBindingsTarget = 'dtUtilBindings'
    
-   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink )
-   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [dtLibs['dtABC'],dtLibs['dtCore'],dtLibs['dtDAL']], LINKFLAGS = addToLink )
-   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [dtLibs['dtAudio'],dtLibs['dtCore']], LINKFLAGS = addToLink )
-   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [dtLibs['dtChar'],dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink )
-   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtDAL'],dtLibs['dtCore']], LINKFLAGS = addToLink )
-   pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [dtLibs['dtInspector'],dtLibs['dtCore']], LINKFLAGS = addToLink )
-   pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [dtLibs['dtUtil']], LINKFLAGS = addToLink )
-
-   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtUtilLib )
+   prefixHeaderFlags = ""
+   if OS != 'windows' and env['usePrefixHeaders']:
+   	prefixHeaderFlags = " -include inc/prefix/dtprefix.h "
+   
+   pythonCPPFlags = env['CPPFLAGS'] + prefixHeaderFlags
+   
+   pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [dtLibs['dtABC'],dtLibs['dtCore'],dtLibs['dtDAL']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [dtLibs['dtAudio'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtCharLib = env.SharedLibrary(  dtCharBindingsTarget,    pythonSrcs['dtChar'],   LIBS = addToLibs + [dtLibs['dtChar'],dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtDALLib = env.SharedLibrary(   dtDALBindingsTarget,     pythonSrcs['dtDAL'],    LIBS = addToLibs + [dtLibs['dtDAL'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtInspectorLib = env.SharedLibrary(  dtInspectorBindingsTarget,  pythonSrcs['dtInspector'],   LIBS = addToLibs + [dtLibs['dtInspector'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   pythonDtUtilLib = env.SharedLibrary(  dtUtilBindingsTarget,    pythonSrcs['dtUtil'],   LIBS = addToLibs + [dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
+   
+   env.Precious( pythonDtCoreLib, pythonDtAbcLib, pythonDtAudioLib, pythonDtCharLib, pythonDtDALLib, pythonDtInspectorLib, pythonDtUtilLib )
    
    if env.get('rti') != 0 :
-      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [dtLibs[ 'dtHLA' ]] )
+      pythonDtHlaLib = env.SharedLibrary( dtHlaBindingsTarget, pythonSrcs['dtHLA'], LIBS = addToLibs + [dtLibs[ 'dtHLA' ]], CPPFLAGS=pythonCPPFlags )
       env.Precious( pythonDtHlaLib )
    else :
       pythonDtHlaLib = None

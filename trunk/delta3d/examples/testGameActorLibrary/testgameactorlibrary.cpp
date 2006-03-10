@@ -22,6 +22,7 @@
 #include "testgameactor.h"
 #include "testgameactor2.h"
 #include "testplayer.h"
+#include "countertaskactor.h"
 #include <dtCore/scene.h>
 #include <dtGame/datastream.h>
 #include <dtGame/messageparameter.h>
@@ -32,9 +33,9 @@ extern "C" DT_EXAMPLE_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
    return new TestGameActorLibrary;
 }
 
-extern "C" DT_EXAMPLE_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
+extern "C" DT_EXAMPLE_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry* registry)
 {
-   if(registry)
+   if (registry != NULL)
       delete registry;
 }
 
@@ -56,4 +57,25 @@ void TestGameActorLibrary::RegisterActorTypes()
    dtDAL::ActorType *player = new dtDAL::ActorType("TestPlayer","ExampleActors",
       "Simple player actor.");
    mActorFactory->RegisterType<TestPlayerProxy>(player);
+   
+   //This is the actor type for the task actor located in dtActors.  All custom
+   //subclasses should at the very least be a sub actor type of this one.
+   const dtDAL::ActorType *taskParent = new dtDAL::ActorType("Task Actor","dtcore.Tasks");
+   
+   dtDAL::ActorType *counterTask = new dtDAL::ActorType("Counter Task","ExampleActors","Example "
+      "task actor that provides a simple counter of something happening.",taskParent);
+   mActorFactory->RegisterType<CounterTaskActorProxy>(counterTask);
+
+   dtDAL::ActorType *hla1 = new dtDAL::ActorType("Tank", "TestHLA", 
+      "These are test HLA mapping actors");
+   mActorFactory->RegisterType<TestGameActorProxy2> (hla1);      
+
+   dtDAL::ActorType *hla2 = new dtDAL::ActorType("Jet", "TestHLA", 
+      "These are test HLA mapping actors");
+   mActorFactory->RegisterType<TestGameActorProxy2> (hla2);      
+
+   dtDAL::ActorType *hla3 = new dtDAL::ActorType("Helicopter", "TestHLA", 
+      "These are test HLA mapping actors");
+   mActorFactory->RegisterType<TestGameActorProxy2> (hla3);      
+
 }

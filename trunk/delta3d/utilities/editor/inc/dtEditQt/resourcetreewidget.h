@@ -20,15 +20,15 @@
 * @author Teague Coonan
 */
 
-#ifndef _ResourceTreeWidget_h
-#define _ResourceTreeWidget_h
+#ifndef DELTA_RESOURCE_TREE_WIDGET
+#define DELTA_RESOURCE_TREE_WIDGET
 
-#include <QList>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QIcon>
+#include <QtCore/QList>
+#include <QtGui/QTreeWidget>
+#include <QtGui/QTreeWidgetItem>
+#include <QtGui/QIcon>
 
-#include "dtDAL/project.h"
+#include <dtDAL/project.h>
 #include <osg/ref_ptr>
 
 namespace dtEditQt{

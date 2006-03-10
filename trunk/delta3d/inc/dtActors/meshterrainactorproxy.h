@@ -38,7 +38,7 @@ namespace dtActors
         /**
          * Constructor
          */
-        MeshTerrainActorProxy() { SetClassName("dtCore::Object"); }
+        MeshTerrainActorProxy();
 
         /**
          * Adds the properties that are common to all mesh terrain objects.
@@ -52,7 +52,7 @@ namespace dtActors
          *  and other geometry, mesh terrains have a special resource of type
          *  DataType::TERRAIN.
          */
-        void LoadFile(const std::string &fileName);
+        virtual void LoadFile(const std::string &fileName);
 
         /**
          * Gets the method by which this terrain mesh is rendered.
@@ -69,14 +69,6 @@ namespace dtActors
          * @return
          */
         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
-
-    protected:
-
-        /**
-         * Destructor
-         */
-        virtual ~MeshTerrainActorProxy() { }
-
     };
 }
 

@@ -21,6 +21,8 @@
 // dtpython.h: Private header file for bindings.
 //
 //////////////////////////////////////////////////////////////////////
+#ifndef DELTA_PYTHON
+#define DELTA_PYTHON
 
 #include <boost/python.hpp>
 
@@ -56,3 +58,4 @@ namespace boost
       }
    }
 }
+#endif

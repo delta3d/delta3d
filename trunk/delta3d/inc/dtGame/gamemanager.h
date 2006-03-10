@@ -25,7 +25,7 @@
 #include <map>
 #include <queue>
 #include "dtGame/export.h"
-#include "dtGame/gmcomponent.h"
+//#include "dtGame/gmcomponent.h"
 #include "dtGame/gameactor.h"
 #include "dtGame/messagefactory.h"
 #include "dtGame/message.h"
@@ -50,12 +50,43 @@ namespace dtDAL
 namespace dtGame 
 {
    //class Message;
+   class GMComponent;
 
    class DT_GAME_EXPORT GameManager : public dtCore::Base 
    {
-      DECLARE_MANAGEMENT_LAYER(GameManager)
+      DECLARE_MANAGEMENT_LAYER(GameManager);
 
       public:
+      
+         class DT_GAME_EXPORT ComponentPriority : public dtUtil::Enumeration
+         {
+            DECLARE_ENUM(ComponentPriority);
+            public:
+               ///Highest possible priority.  Components with this priority will get messages first.
+               static const ComponentPriority HIGHEST;
+      
+               ///Higher priority.  Components with this priority will get messages after HIGHEST, but before any others.
+               static const ComponentPriority HIGHER;
+               
+               ///Normal priority.  Components with this priority will get messages after any HIGHER priority, but before LOWER.
+               static const ComponentPriority NORMAL;
+               
+               ///Lower priority.  Components with this priority will get messages after any NORMAL or HIGHER priority, but before LOWEST.
+               static const ComponentPriority LOWER;
+      
+               ///Lowest priority.  Components with this priority will get messages after all others.
+               static const ComponentPriority LOWEST;
+      
+               ///@return the order id.  The higher the priority, the lower the number.
+               unsigned int GetOrderId() const { return mOrderId; }
+      
+            protected:
+               ComponentPriority(const std::string &name, unsigned int orderId) : Enumeration(name), mOrderId(orderId)
+               {
+                  AddInstance(this);
+               }
+               unsigned int mOrderId;
+         };
 
          /// Constructor
          GameManager(dtCore::Scene &scene);
@@ -148,8 +179,9 @@ namespace dtGame
           * Adds a component to the list of components the game mananger
           * will communicate with
           * @param The component to add
+          * @param priority the priority of the component.  This translates into the order of message delivery.
           */
-         void AddComponent(GMComponent& component);
+         void AddComponent(GMComponent& component, const ComponentPriority& priority);
 
          /**
           * Removes a component to the list of components the game mananger
@@ -200,29 +232,38 @@ namespace dtGame
           */
          void PublishActor(GameActorProxy& gameActorProxy);
 
-         /**
-          * Removes a game actor from the game manager.
-          * The actor is not actually removed until the end of the current frame so that
-          * messages can propogate.  
-          * An INFO_ACTOR_DELETE message is only sent if the actor is local.
-          * @param The actor to remove
+          /**
+          * Removes all game actors and actors from the game manager
+          * Currently all actors are removed immediately, but this should not be 
+          * assumed to be true going forward.
+          * INFO_ACTOR_DELETE messages are only sent for local actors.
+          * @note This method causes delete messages to be sent for all actors 
+          *    that need to be deleted.  If an immediate delete or clear of the 
+          *    game manager is required call this method with a true flag.
           */
-         void DeleteActor(GameActorProxy& gameActorProxy);
+         void DeleteAllActors() { DeleteAllActors(false); }
+
+         /**
+          * Removes an actor or game actor from the game manager.
+          * Game actors are not actually removed until the end of the current frame so that
+          * messages can propogate.  Regular actor proxies are removed immediately.  
+          * An INFO_ACTOR_DELETE message is only sent if it's a game actor and is local.
+          * @param The actor to remove
+           */
+         void DeleteActor(dtDAL::ActorProxy& actorProxy);
 
          /**
           * Removes all game actors and actors from the game manager
           * Currently all actors are removed immediately, but this should not be 
           * assumed to be true going forward.
-          * INFO_ACTOR_DELETE messages are only sent for local actors.
+          * @param immediate False if the message about deleting should be sent, if
+          *    true, this method will clear all actor management related lists thus
+          *    "immediately" removing all actors from the game manager.  Calling this
+          *    method with "true" is useful for complete game state changes such as 
+          *    map changes.
           */
-         void DeleteAllActors() { DeleteAllActors(true); }
-
-         /**
-          * Removes an actor from the game manager
-          * @param The actor to remove
-          */
-         void DeleteActor(dtDAL::ActorProxy& actorProxy);
-
+         void DeleteAllActors(bool immediate);
+         
          /**
           * Returns a list of actor types that have been registered with the
           * game manager
@@ -308,33 +349,36 @@ namespace dtGame
 
          /**
           * Changes the map being used by the Game Manager
-          * @param mapName The name of the map
+          * @param mapName       The name of the map to load.
+          * @param addBillboards optional parameter that defaults to false that says whether or not proxy billboards should be 
+          *                      added to the scene.  This should only be true for debugging purposes.
           * @param enableDatabasePaging optional parameter to enable database paging for paged LODs usually used in
           *                             large terrain databases.  Passing false will not disable paging if it is already enabled.
           * @throws ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION if an actor is flagged as a game actor, but is not a GameActorProxy.
           */
-         void ChangeMap(const std::string &mapName, bool enableDatabasePaging = true) throw(dtUtil::Exception);
+         void ChangeMap(const std::string &mapName, bool addBillboards = false, bool enableDatabasePaging = true) throw(dtUtil::Exception);
 
          /**
-          * Sets the timer of the game mananger.  It will send out a timer message when it expires.
+          * Sets a timer on the game mananger.  It will send out a timer message when it expires.
           * @param name The name of the timer
-          * @param aboutActor the actor to put in the about field of the message.
-          * @param time The time of the timer in milliseconds
+          * @param aboutActor the actor to put in the about field of the message.  If this
+          *    is NULL, the timer is a "global" timer in that it is not bound to any
+          *    particular actor.  This is generally only useful if components need to use the
+          *    timer functionality of the game manager.
+          * @param time The time of the timer in seconds.
           * @param repeat True to repeat the timer, false if once only
           * @param realTime True if this time should use real time, or false if it should use simulation time.
           */
-         void SetTimer(
-            const std::string& name, 
-            GameActorProxy& aboutActor, 
-            float time, 
-            bool repeat = false, 
-            bool realTime = false);
+         void SetTimer(const std::string& name, const GameActorProxy* aboutActor, float time, 
+            bool repeat = false, bool realTime = false);
 
          /**
           * Removes the timer with the given name.  If no timer by that name exists, this is a no-op.
           * @param name the name of the timer to remove.
+          * @param proxy The proxy this timer is associated with or NULL if the timer
+          *    was registered as a "global" timer.
           */
-         void ClearTimer(const std::string& name);
+         void ClearTimer(const std::string& name, const GameActorProxy *proxy);
 
          /**
           * Accessor to the scene member of the class
@@ -355,6 +399,24 @@ namespace dtGame
          void SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
 
          /**
+          * Gets the interval (in seconds) used for writing out GM Statistics. This 
+          * is usually a debug setting that can be used to see how much work the GM is doing
+          * as compared to how much work your scene is doing.  If this is > 0, and the 
+          * appropriate log level is on, the GM will output statistics periodically
+          * Default is 0.
+          */
+         int GetStatisticsInterval() { return mStatisticsInterval; }
+
+         /**
+          * Sets the interval (in seconds) used for writing out GM Statistics. This 
+          * is usually a debug setting that can be used to see how much work the GM is doing
+          * as compared to how much work your scene is doing.  If this is > 0, and the 
+          * appropriate log level is on, the GM will output statistics periodically
+          * @param The new interval (in seconds).  <=0 turns off statistics logging
+          */
+         void SetStatisticsInterval(const int statisticsInterval) { mStatisticsInterval = statisticsInterval; }
+
+         /**
           * Retrieves the message factor that is controlled by the GameManager
           * @return mFactory he message factory
           * @see class dtGame::MessageFactory
@@ -368,12 +430,27 @@ namespace dtGame
           */
          const MessageFactory& GetMessageFactory() const { return mFactory; } 
          
+         /**
+          * Gets the const version of the machine info
+          * @return mMachineInfo
+          */
          const MachineInfo& GetMachineInfo() const { return *mMachineInfo; }
+         
+         /**
+          * Non const version to get the machine info
+          * @return mMachineInfo
+          */
          MachineInfo& GetMachineInfo() { return *mMachineInfo; }
          
+         /**
+          * Gets the name of the currently loaded map
+          * @return mLoadedMap
+          */
          const std::string& GetCurrentMap() const { return mLoadedMap; }
          
-         /// @return the scale of realtime the GameManager is running at.
+         /**
+          * @return The scale of realtime the GameManager is running at.
+          */
          float GetTimeScale() const;
                   
          /**
@@ -388,6 +465,12 @@ namespace dtGame
           */
          dtCore::Timer_t GetSimulationClockTime() const;
          
+         /**
+          * @return The current real clock time
+          * @see dtCore::System#GetRealClockTime
+          */
+         dtCore::Timer_t GetRealClockTime() const;
+
          /**
           * Change the time settings.
           * @param newTime The new simulation time.
@@ -487,9 +570,16 @@ namespace dtGame
          {
             std::string name;
             dtCore::UniqueId aboutActor;
-            double time;
+            dtCore::Timer_t time;
             bool repeat;
-            bool realTime;
+            dtCore::Timer_t interval;
+
+            bool operator < (const TimerInfo &rhs) const
+            {
+               if (time == rhs.time)
+                  return this < &rhs;
+               return time < rhs.time; 
+            }
          };
 
          dtUtil::Log* mLogger;
@@ -502,25 +592,42 @@ namespace dtGame
          virtual void PreFrame(double deltaSimTime, double deltaRealTime);
 
          /// Implements the functionality that will happen on the PostFrame event
-         virtual void PostFrame();
-
-         /**
-          * Removes all game actors and actors from the game manager
-          * Currently all actors are removed immediately, but this should not be 
-          * assumed to be true going forward.
-          * @param sendMessage true if the message about deleting should be sent.
-          */
-         void DeleteAllActors(bool sendMessage);
+         virtual void PostFrame();        
       
       private:
 
+         std::set<TimerInfo>& GetSimulationTimerList() { return mSimulationTimers; }
+
+         /**
+          * Private helper method to process the timers. This is called from PreFrame
+          * @param listToProcess The timer list to process 
+          * @param clockTime The time to use
+          * @note The clock time should correspond to the list to be processed
+          */
+         void ProcessTimers(std::set<TimerInfo> &listToProcess, dtCore::Timer_t clockTime);
+         
+         /**
+          * Removes the proxy from the scene
+          * @param proxy the proxy to remove from the scene.
+          */
+         void RemoveActorFromScene(dtDAL::ActorProxy& proxy);
+
+         /**
+          * Internal timer statistics calculation.  Computes what percent the partial time 
+          * is of the total time. Basically (1.0 - ((total - partial) / total)) * 100.
+          * Result is truncated to something like: 98.5, 42.3, ... 
+          * @param total The total value used to determine the percentage
+          * @param partial The partial amount that we are using for the percentage
+          */
+         float ComputeStatsPercent(dtCore::Timer_t total, dtCore::Timer_t partial);
+      
          dtCore::RefPtr<MachineInfo> mMachineInfo; 
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
          std::vector<dtCore::RefPtr<GameActorProxy> > mDeleteList;
 
-         std::multimap<std::string, TimerInfo> mTimers;
+         std::set<TimerInfo> mSimulationTimers, mRealTimeTimers;
 
          std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > mGlobalMessageListeners;
          std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > > mActorMessageListeners;
@@ -534,6 +641,21 @@ namespace dtGame
          
          bool mPaused;
          std::string mLoadedMap;
+         int mStatisticsInterval;
+
+         // statistics data
+         dtCore::Timer_t mStatsLastFragmentDump;
+         long mStatsNumProcMessages;
+         long mStatsNumSendMessages;
+         long mStatsNumFrames;
+         dtCore::Timer_t mStatsCumGMProcessTime;
+         
+         // -----------------------------------------------------------------------
+         //  Unimplemented constructors and operators
+         // -----------------------------------------------------------------------
+         GameManager(const GameManager&);
+         GameManager& operator=(const GameManager&);
+         
    };
 }
 

@@ -22,36 +22,35 @@
 #ifndef DELTA_GMCOMPONENT
 #define DELTA_GMCOMPONENT
 
+#include <string>
 #include "dtGame/export.h"
 #include "dtGame/message.h"
 #include "dtGame/messageparameter.h"
-#include <osg/Referenced>
+#include "dtGame/gamemanager.h"
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
-
+#include <dtCore/base.h>
 
 namespace dtGame
 {
-   class GameManager;
-
-   class DT_GAME_EXPORT GMComponent : public osg::Referenced
+   class DT_GAME_EXPORT GMComponent : public dtCore::Base
    {
       public:
 
          /// Constructor
-         GMComponent();
+         GMComponent(const std::string& name = "GMComponent");
 
          /// Destructor
          virtual ~GMComponent();
 
          /**
-          * Sends a message
+          * handles a sent a message
           * @param The message
           */
          virtual void SendMessage(const Message& message);
 
          /**
-          * Processes a message
+          * handles a processed a message
           * @param The message
           */
          virtual void ProcessMessage(const Message& message);
@@ -70,6 +69,11 @@ namespace dtGame
           */
          GameManager* GetGameManager() { return mParent; }
          
+         /**
+          * Get the priority of this component.
+          * @return the value of the priority.  It is only valid when GetGameManager() is not NULL.
+          */
+         const GameManager::ComponentPriority& GetComponentPriority() const { return *mPriority; };
          
       private:
          friend class GameManager;
@@ -78,8 +82,21 @@ namespace dtGame
           * @see dtGame::GameManager
           */
          void SetGameManager(GameManager* gameManager) { mParent = gameManager; }
+         /**
+          * Sets the component priority on this component.
+          * @see dtGame::GameManager::ComponentPriority
+          */
+         void SetComponentPriority(const GameManager::ComponentPriority& newPriority) { mPriority = &newPriority; }
 
          GameManager* mParent;
+         const GameManager::ComponentPriority* mPriority;
+         
+         // -----------------------------------------------------------------------
+         //  Unimplemented constructors and operators
+         // -----------------------------------------------------------------------
+         GMComponent(const GMComponent&) {}
+         GMComponent& operator=(const GMComponent&) {return *this;}
+         
    };
 }
 #endif

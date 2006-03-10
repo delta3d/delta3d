@@ -22,7 +22,7 @@
 #ifndef DELTA_DYNAMICABSTRACTCONTROL
 #define DELTA_DYNAMICABSTRACTCONTROL
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <osg/ref_ptr>
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproperty.h"

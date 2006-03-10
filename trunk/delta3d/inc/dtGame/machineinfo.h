@@ -31,7 +31,7 @@ namespace dtGame
     * @class MachineInfo 
     * A data class representing basic machine information.
     */
-   class DT_GAME_EXPORT MachineInfo : public osg::Referenced
+   class MachineInfo : public osg::Referenced
    {
       public:
 
@@ -42,13 +42,13 @@ namespace dtGame
           * Gets the name of a machine info
           * @return The name
           */
-         const std::string& GetName() const      { return mName; }
+         const std::string& GetName() const { return mName; }
 
          /**
           * Gets the host name of a machine info
           * @return The host name
           */
-         const std::string& GetHostName() const  { return mHostName; }
+         const std::string& GetHostName() const { return mHostName; }
 
          /**
           * Gets the ip address of a machine info

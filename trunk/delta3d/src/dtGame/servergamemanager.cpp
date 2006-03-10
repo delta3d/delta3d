@@ -21,6 +21,7 @@
 
 #include "dtGame/servergamemanager.h"
 #include "dtGame/machineinfo.h"
+#include "dtGame/gmcomponent.h"
 #include <dtCore/scene.h>
 
 namespace dtGame

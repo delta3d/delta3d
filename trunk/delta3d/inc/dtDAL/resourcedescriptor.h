@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -29,63 +29,63 @@
 namespace dtDAL 
 {
 
-    class DT_DAL_EXPORT ResourceDescriptor 
-    {
-    public:
-        static const char DESCRIPTOR_SEPARATOR = ':';
+   class DT_DAL_EXPORT ResourceDescriptor 
+   {
+      public:
+         static const char DESCRIPTOR_SEPARATOR = ':';
 
-        ResourceDescriptor() {}
+         ResourceDescriptor() {}
 
-        ResourceDescriptor(const std::string& displayName, const std::string& resourceIdentifier):
+         ResourceDescriptor(const std::string& displayName, const std::string& resourceIdentifier):
             mDisplayName(displayName), mResourceIdentifier(resourceIdentifier) {}
 
-        ResourceDescriptor(const ResourceDescriptor& toCopy) 
-        {
+         ResourceDescriptor(const ResourceDescriptor& toCopy) 
+         {
             mDisplayName = toCopy.mDisplayName;
             mResourceIdentifier = toCopy.mResourceIdentifier;
-        }
+         }
 
-        ResourceDescriptor& operator=(const ResourceDescriptor& toAssign) 
-        {
-            mDisplayName = toAssign.mDisplayName;
-            mResourceIdentifier = toAssign.mResourceIdentifier;
-            return *this;
-        }
+         ResourceDescriptor& operator=(const ResourceDescriptor& toAssign) 
+            {
+               mDisplayName = toAssign.mDisplayName;
+               mResourceIdentifier = toAssign.mResourceIdentifier;
+               return *this;
+            }
 
-        bool operator==(const ResourceDescriptor& toCompare) const 
-        {
+         bool operator==(const ResourceDescriptor& toCompare) const 
+         {
             return mResourceIdentifier == toCompare.mResourceIdentifier;
-        }
+         }
 
-        bool operator>(const ResourceDescriptor& toCompare) const 
-        {
+         bool operator>(const ResourceDescriptor& toCompare) const 
+         {
             return mResourceIdentifier > toCompare.mResourceIdentifier;
-        }
+         }
 
-        bool operator<(const ResourceDescriptor& toCompare) const 
-        {
+         bool operator<(const ResourceDescriptor& toCompare) const 
+         {
             return mResourceIdentifier < toCompare.mResourceIdentifier;
-        }
+         }
 
-        const std::string& GetDisplayName() const { return mDisplayName; }
-        const std::string& GetResourceIdentifier() const { return mResourceIdentifier; }
-        const std::string  GetExtension() const;
-        const std::string  GetResourceName() const;
-    private:
-        std::string mDisplayName;
-        std::string mResourceIdentifier;
-    };
+         const std::string& GetDisplayName() const { return mDisplayName; }
+         const std::string& GetResourceIdentifier() const { return mResourceIdentifier; }
+         const std::string  GetExtension() const;
+         const std::string  GetResourceName() const;
+      private:
+         std::string mDisplayName;
+         std::string mResourceIdentifier;
+   };
 
-    class IsCategorySeparator : public std::unary_function<char, bool> 
-    {
-    public:
-        bool operator()(char c) const;
-    };
+   class IsCategorySeparator : public std::unary_function<char, bool> 
+   {
+      public:
+         bool operator()(char c) const;
+   };
 
-    inline bool IsCategorySeparator::operator()(char c) const 
-    {
-        return c == ResourceDescriptor::DESCRIPTOR_SEPARATOR;
-    }
+   inline bool IsCategorySeparator::operator()(char c) const 
+   {
+      return c == ResourceDescriptor::DESCRIPTOR_SEPARATOR;
+   }
 
 }
 

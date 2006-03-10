@@ -104,16 +104,80 @@ namespace dtCore
       * it will take precedence over the currently assigned Delta3D scene.
       * @param drawable The drawable to intersect.
       */
-      void SetGeometry(dtCore::DeltaDrawable *drawable) {
+      void SetGeometry(dtCore::DeltaDrawable *drawable) 
+      {
          mSceneRoot = drawable;
       }
 
       /**
       * Clears the currently assigned root drawable of the intersection tests.
       */
-      void ClearQueryRoot() {
+      void ClearQueryRoot() 
+      {
          mSceneRoot = NULL;
       }
+
+      /**
+       * @return the root of the scene to query.  It will return if this is using the entire scene.
+       */
+      dtCore::DeltaDrawable* GetQueryRoot() 
+      {
+         return mSceneRoot.get();
+      }
+
+      /**
+       * @return the root of the scene to query.  It will return if this is using the entire scene.
+       */
+      const dtCore::DeltaDrawable* GetQueryRoot() const {
+         return mSceneRoot.get();
+      }
+
+      ///Sets the scene to use as the base for the scene query.
+      void SetScene(dtCore::Scene* newScene)
+      {
+         mScene = newScene;
+      }
+      
+      ///@return the scene being queried.
+      dtCore::Scene* GetScene()
+      {
+         return mScene.get();
+      }
+
+      ///@return the scene being queried.
+      const dtCore::Scene* GetScene() const
+      {
+         return mScene.get();
+      }
+
+      /**
+       * Sets the eyepoint.  This is used for LOD calculations when doing intersections.
+       * @param the eye point
+       */
+      void SetEyePoint(const osg::Vec3& newEyePoint)
+      {
+         mIntersectVisitor.setEyePoint(newEyePoint);
+         mUpdateLineSegment = true;
+      }
+
+      /**
+      * Gets the starting position of the intersection ray.
+      * @return A vector containing the start position of the intersection ray.
+      */
+      const osg::Vec3 GetEyePoint() const 
+      {
+         return mIntersectVisitor.getEyePoint();
+      }
+
+      /**
+       * Sets if this Isector should consider the eye point for LOD calculations when
+       * doing the intersection or if it should ignore it and always use the highest LOD when intersecting.S
+       */
+      void SetUseEyePoint(bool newValue);
+
+      ///@return true if the eye point is being considered for LOD calculation when doing an intersection.
+      bool GetUseEyePoint() const;
+
 
       /**
       * Sets the starting position of the intersection ray.
@@ -129,7 +193,8 @@ namespace dtCore
       * Gets the starting position of the intersection ray.
       * @return A vector containing the start position of the intersection ray.
       */
-      const osg::Vec3 &GetStartPosition() const {
+      const osg::Vec3 &GetStartPosition() const 
+      {
          return mStart;
       }
 
@@ -156,7 +221,8 @@ namespace dtCore
       * Gets the direction of the intersection ray.
       * @return The direction unit vector.
       */
-      const osg::Vec3 &GetDirection() const {
+      const osg::Vec3 &GetDirection() const 
+      {
          return mDirection;
       }
 
@@ -165,6 +231,12 @@ namespace dtCore
       {
          mLineLength = distance;
          mUpdateLineSegment = true;
+      }
+
+      ///Get the length of the isector
+      float GetLength() const
+      {
+         return mLineLength;
       }
 
       ///Get the intersected point

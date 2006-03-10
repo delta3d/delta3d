@@ -8,6 +8,8 @@
 #include <osg/Projection>
 #include <osgText/Text>
 
+#include <dtUtil/mathdefines.h>
+
 #include <dtCore/deltawin.h>
 #include <dtCore/transform.h>
 #include <dtCore/pointaxis.h>
@@ -15,14 +17,6 @@
 
 using namespace   dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Compass)
-
-
-
-// typedefs and definitions
-#if   !  defined(CLAMP)
-#define  CLAMP(x,min,max)   ((x<min)?min:((x>max)?max:x))
-#endif
-
 
 
 // callback functor objects
@@ -145,9 +139,12 @@ Compass::GetScreenPosition( float& x, float& y )   const
 void
 Compass::SetScreenPosition( float x, float y )
 {
-   mScreenX = CLAMP( x, MIN_SCREEN_X, MAX_SCREEN_X );
-   mScreenY = CLAMP( y, MIN_SCREEN_Y, MAX_SCREEN_Y );
+   CLAMP( x, MIN_SCREEN_X, MAX_SCREEN_X );
+   CLAMP( y, MIN_SCREEN_Y, MAX_SCREEN_Y );
+   mScreenX = x;
+   mScreenY = y;
 }
+
 
 
 

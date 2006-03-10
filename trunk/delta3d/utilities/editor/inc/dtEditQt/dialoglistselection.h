@@ -19,10 +19,10 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __DialogListSelection__h
-#define __DialogListSelection__h
+#ifndef DELTA_DIALOG_LIST_SELECTION
+#define DELTA_DIALOG_LIST_SELECTION
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QStringList;
 class QListWidget;

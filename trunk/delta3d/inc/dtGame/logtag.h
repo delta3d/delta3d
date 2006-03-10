@@ -39,15 +39,11 @@ namespace dtGame
          virtual ~LogTag() {}
 
          // Constructor
-         LogTag() : mSimTimeStamp(0) { }
-
-         // Copy Constructor
-         LogTag(const LogTag& toCopy) 
-         { 
-            mName = toCopy.mName;
-            mDescription = toCopy.mDescription;
-            mUniqueId = toCopy.mUniqueId;
-            mSimTimeStamp = toCopy.mSimTimeStamp;
+         LogTag()
+         {
+            mSimTimeStamp = 0.0;
+            mKeyframeId = dtCore::UniqueId("");
+            mCaptureKeyframe = true;
          }
 
          /**
@@ -98,6 +94,33 @@ namespace dtGame
           * @param The new unique id
           */
          void SetUniqueId(const dtCore::UniqueId &newId) { mUniqueId = newId; }
+         
+         /**
+          * Sets the id of the keyframe associated with this tag.
+          * @param newId Valid id of a keyframe or an empty id if no
+          *    keyframe is associated with this tag.
+          */
+         void SetKeyframeUniqueId(const dtCore::UniqueId &newId) { mKeyframeId = newId; }
+         
+         /**
+          * Gets the id of the keyframe associated with this tag.
+          * @return A valid identifier if a keyframe is present or an empty
+          *    identifier if no keyframe is present.
+          */
+         const dtCore::UniqueId &GetKeyframeUniqueId() const {return mKeyframeId; }
+         
+         /**
+          * Sets whether or not this tag should tell the system to capture
+          * a keyframe when it is inserted into the log stream.
+          * @param flag True if a keyframe should be captured.
+          */
+         void SetCaptureKeyframe(bool flag) { mCaptureKeyframe = flag; }
+         
+         /**
+          * Gets whether or not this tag has a keyframe associated with it.
+          * @return True if the tag has a keyframe, false otherwise.
+          */
+         bool GetCaptureKeyframe() const { return mCaptureKeyframe; }
 
          bool operator==(const LogTag& compareTo) const
          {
@@ -118,25 +141,14 @@ namespace dtGame
          {
             return mUniqueId > compareTo.mUniqueId;
          }
-
-         LogTag& operator=(const LogTag& assignFrom) 
-         {
-            if (&assignFrom == this)
-               return *this;
-
-            mName = assignFrom.mName;
-            mDescription = assignFrom.mDescription;
-            mUniqueId = assignFrom.mUniqueId;
-            mSimTimeStamp = assignFrom.mSimTimeStamp;
-            return *this;
-         }
-         
-      private:
-         
+                         
+      private:         
          std::string mName;
          std::string mDescription;
          dtCore::UniqueId mUniqueId;
+         dtCore::UniqueId mKeyframeId;
          double mSimTimeStamp;
+         bool mCaptureKeyframe;
    };
 }
 

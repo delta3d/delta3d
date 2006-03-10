@@ -20,10 +20,10 @@
 * @author William E. Johnson II
 */
 
-#ifndef _MAP_DIALOG_H_
-#define _MAP_DIALOG_H_
+#ifndef DELTA_MAP_DIALOG
+#define DELTA_MAP_DIALOG
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QLineEdit;
 class QCloseEvent;

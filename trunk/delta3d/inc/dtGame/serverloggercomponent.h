@@ -21,15 +21,20 @@
 #ifndef DELTA_SERVERLOGGERCOMPONENT
 #define DELTA_SERVERLOGGERCOMPONENT
 
+#include <set>
 #include <dtCore/refptr.h>
 #include "dtGame/gmcomponent.h"
-#include "dtGame/logstream.h"
-#include "dtGame/loggermessages.h"
-#include "dtGame/basemessages.h"
 #include "dtGame/logstatus.h"
 
 namespace dtGame 
 {
+   class LogStream;
+   class Message;
+   class MachineInfo;
+   class TickMessage;
+   class LogKeyframe;
+   class LogCaptureKeyframeMessage;
+   class LogInsertTagMessage;
    
    /**
     * This is a GameManager component that servers as the primary component 
@@ -44,6 +49,8 @@ namespace dtGame
    class DT_GAME_EXPORT ServerLoggerComponent : public GMComponent
    {      
       public:
+      
+         static const std::string AUTO_KEYFRAME_TIMER_NAME;
          
          /**
           * Constructs the logger component.
@@ -65,6 +72,21 @@ namespace dtGame
           * @return A constant reference to the log stream interface.
           */
          const LogStream &GetLogStream() const { return *mLogStream.get(); }
+         
+         /**
+          * Sets the current directory where the server logger component stores
+          * its log files.  If the directory does not exist it will be created.
+          * @param dir A directory to store the logs.  Can be either a relative 
+          *    or absolute directory.
+          * @note By default, the current directory is the log directory.
+          */
+         bool SetLogDirectory(const std::string &dir);
+         
+         /**
+          * Gets the current log directory.
+          * @return A string containing the current log directory.
+          */
+         const std::string &GetLogDirectory() const { return mLogDirectory; }
          
       protected:
       
@@ -133,9 +155,49 @@ namespace dtGame
          
          /**
           * Handles the request to set the log file message.
-          * @param message the message that came in from ProcessMessage()
+          * @param message The message that came in from ProcessMessage()
           */
          void HandleRequestSetLogFile(const Message &message);
+         
+         /**
+          * Handles the request to remove a log from the server's list of logs.
+          * @param message The Message that came in from ProcessMessage()
+          */
+         void HandleRequestDeleteLogFile(const Message &message);
+         
+         /**
+          * Handles the request to get the server's available logs
+          * @param message The message that came in from ProcessMessage()
+          */
+         void HandleRequestGetLogs(const Message &message);
+         
+         /**
+          * Handles the request to get the list of tags currently present in
+          * the current log.
+          * @param message The message that came in from ProcessMessage()
+          */
+         void HandleRequestGetTags(const Message &message);
+         
+         /**
+          * Handles the request to tag the log stream at the specified
+          * location.
+          * @param message The message that came from ProcessMessage()
+          */
+         void HandleRequestInsertTag(const LogInsertTagMessage &message);
+         
+         /**
+          * Handles the request to get the list of keyframes currently present in
+          * the current log.
+          * @param message The incoming request message.
+          */
+         void HandleRequestGetKeyFrames(const Message &message);
+         
+         /**
+          * Handles the request to set the current auto keyframe capture 
+          * interval.
+          * @param message The incoming request message.
+          */
+         void HandleRequestSetAutoKeyframeInterval(const Message &message);
 
          /**
           * Lots of methods send out a status, so make one method to do it
@@ -172,6 +234,13 @@ namespace dtGame
          // bogus machine info.  Over time, this will probably be more sophisticated. 
          // The GM and network components will probably have to know about it.
          dtCore::RefPtr<MachineInfo> mLogComponentMachineInfo; 
+         
+         //The relative directory containing all the log files available to the
+         //server logger component.
+         std::string mLogDirectory;
+         
+         //Cached list of available log files.
+         std::set<std::string> mLogCache;      
    };
 
 }

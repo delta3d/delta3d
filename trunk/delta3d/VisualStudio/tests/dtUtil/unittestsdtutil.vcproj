@@ -149,9 +149,6 @@
 				RelativePath="..\..\..\tests\dtUtil\stringutiltests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtUtil\utiltests.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\tests\dtUtil\xercestests.cpp">
 			</File>
 		</Filter>

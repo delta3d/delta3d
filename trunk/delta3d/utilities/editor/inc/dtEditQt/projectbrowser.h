@@ -20,10 +20,10 @@
 * @author Teague Coonan
 */
 
-#ifndef __ProjectBrowser_h
-#define __ProjectBrowser_h
+#ifndef DELTA_PROJECT_BROWSER
+#define DELTA_PROJECT_BROWSER
 
-#include <QWidget>
+#include <QtGui/QWidget>
 
 class QGroupBox;
 class QPushButton;

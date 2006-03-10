@@ -1,23 +1,23 @@
 /*
-* Delta3D Open Source Game and Simulation Engine
-* Copyright (C) 2005, BMH Associates, Inc.
-*
-* This library is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Lesser General Public License as published by the Free
-* Software Foundation; either version 2.1 of the License, or (at your option)
-* any later version.
-*
-* This library is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Lesser General Public License
-* along with this library; if not, write to the Free Software Foundation, Inc.,
-* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*
-* @author Matthew W. Campbell
-*/
+ * Delta3D Open Source Game and Simulation Engine
+ * Copyright (C) 2005, BMH Associates, Inc.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * @author Matthew W. Campbell
+ */
 
 #include "dtDAL/actorproxyicon.h"
 #include "dtCore/scene.h"
@@ -128,7 +128,7 @@ namespace dtDAL
       mIconStateSet = new osg::StateSet();
       osg::PolygonMode *pm = new osg::PolygonMode();
       osg::Geometry *geom = CreateGeom(osg::Vec3(-1.0f,0.0f,-1.0f),
-         osg::Vec3(2.0f,0.0f,0.0f),osg::Vec3(0.0f,0.0f,2.0f));
+                                       osg::Vec3(2.0f,0.0f,0.0f),osg::Vec3(0.0f,0.0f,2.0f));
 
       pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
 
@@ -359,8 +359,8 @@ namespace dtDAL
       cylinderGeode->addDrawable(cylinder);
       cylinderGeode->setStateSet(mCylinderStateSet.get());
       cylinderTx->setMatrix(osg::Matrix::scale(osg::Vec3(0.1f,0.1f,2)) *
-         osg::Matrix::rotate(osg::DegreesToRadians(90.0f),osg::Vec3(1,0,0)) *
-         osg::Matrix::translate(osg::Vec3(0,1.1f,0)));
+                            osg::Matrix::rotate(osg::DegreesToRadians(90.0f),osg::Vec3(1,0,0)) *
+                            osg::Matrix::translate(osg::Vec3(0,1.1f,0)));
       cylinderTx->addChild(cylinderGeode);
 
       osg::Geode *coneGeode = new osg::Geode();
@@ -370,8 +370,8 @@ namespace dtDAL
       coneGeode->addDrawable(cone);
       coneGeode->setStateSet(mConeStateSet.get());
       coneTx->setMatrix(osg::Matrix::scale(osg::Vec3(0.35f,0.35f,0.85f)) *
-         osg::Matrix::rotate(osg::DegreesToRadians(-90.0f),osg::Vec3(1,0,0)) *
-         osg::Matrix::translate(osg::Vec3(0,2.1f,0)));
+                        osg::Matrix::rotate(osg::DegreesToRadians(-90.0f),osg::Vec3(1,0,0)) *
+                        osg::Matrix::translate(osg::Vec3(0,2.1f,0)));
       coneTx->addChild(coneGeode);
 
       osg::Group *group = new osg::Group();
@@ -382,8 +382,8 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////////////////////
    osg::Geometry *ActorProxyIcon::CreateGeom(const osg::Vec3 &corner,
-      const osg::Vec3 &width,
-      const osg::Vec3 &height)
+                                             const osg::Vec3 &width,
+                                             const osg::Vec3 &height)
    {
       osg::Geometry *geom = new osg::Geometry;
 

@@ -24,25 +24,25 @@
 namespace dtDAL
 {
 
-    ///////////////////////////////////////////////////////////////////////////////
-    void ActorPluginRegistry::GetSupportedActorTypes(std::vector<osg::ref_ptr<ActorType> > &actors)
-    {
-        mActorFactory->GetSupportedTypes(actors);
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   void ActorPluginRegistry::GetSupportedActorTypes(std::vector<osg::ref_ptr<ActorType> > &actors)
+   {
+      mActorFactory->GetSupportedTypes(actors);
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    bool ActorPluginRegistry::IsActorTypeSupported(osg::ref_ptr<ActorType> type)
-    {
-        return mActorFactory->IsTypeSupported(type);
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   bool ActorPluginRegistry::IsActorTypeSupported(osg::ref_ptr<ActorType> type)
+   {
+      return mActorFactory->IsTypeSupported(type);
+   }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    osg::ref_ptr<ActorProxy> ActorPluginRegistry::CreateActorProxy(ActorType& type)
-    {
-        osg::ref_ptr<ActorProxy> proxy = mActorFactory->CreateObject(osg::ref_ptr<ActorType>(&type));
-        proxy->SetActorType(&type);
-        proxy->CreateActor();
-        proxy->BuildPropertyMap();
-        return proxy;
-    }
+   ///////////////////////////////////////////////////////////////////////////////
+   osg::ref_ptr<ActorProxy> ActorPluginRegistry::CreateActorProxy(ActorType& type)
+   {
+      osg::ref_ptr<ActorProxy> proxy = mActorFactory->CreateObject(osg::ref_ptr<ActorType>(&type));
+      proxy->SetActorType(&type);
+      proxy->CreateActor();
+      proxy->BuildPropertyMap();
+      return proxy;
+   }
 }

@@ -20,10 +20,10 @@
 * @author William E. Johnson II
 */
 
-#ifndef _MAP_SAVE_AS_DIALOG_H_
-#define _MAP_SAVE_AS_DIALOG_H_
+#ifndef DELTA_MAP_SAVE_AS_DIALOG
+#define DELTA_MAP_SAVE_AS_DIALOG
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QLineEdit;
 class QTextEdit;

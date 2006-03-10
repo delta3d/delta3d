@@ -26,9 +26,10 @@
 
 class DT_PLUGIN_EXPORT ExampleActorLib : public dtDAL::ActorPluginRegistry
 {
-public:
-    ExampleActorLib();
-    void RegisterActorTypes();
+   public:
+      ExampleActorLib();
+      void RegisterActorTypes();
+             
 };
 
 

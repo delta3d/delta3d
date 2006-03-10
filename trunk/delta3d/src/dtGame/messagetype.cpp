@@ -40,6 +40,8 @@ namespace dtGame
    const MessageType MessageType::INFO_RESUMED("Resumed", "Info", "Sent when a game manager resumes from a paused state", 18);
    const MessageType MessageType::INFO_RESTARTED("Restarted", "Info", "Sent when a game manager restarts the game or simulation", 19);
    const MessageType MessageType::INFO_TIME_CHANGED("Simulation Time Changed", "Info", "Sent when a game manager changes the simulation time.", 20);
+
+   const MessageType MessageType::INFO_PLAYER_ENTERED_WORLD("Player entered world", "Info", "Sent when the player of a game enters the world.", 30);
    
    const MessageType MessageType::COMMAND_LOAD_MAP("Load Map", "Command", "Tells the recipient to load a new map", 50);
    const MessageType MessageType::COMMAND_PAUSE("Pause", "Command", "Tells the recipient to pause the game or simulation", 51);

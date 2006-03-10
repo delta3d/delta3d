@@ -1,10 +1,12 @@
+#include <math.h>
+#include <stdio.h>
+
 #include "dtUtil/matrixutil.h"
 #include "dtUtil/coordinates.h"
 #include "dtUtil/log.h"
 #include "dtUtil/stringutils.h"
-#include <dtUtil/deprecationmgr.h>
+#include "dtUtil/deprecationmgr.h"
 
-#include <stdio.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #define snprintf _snprintf
@@ -21,6 +23,8 @@ namespace dtUtil
    const LocalCoordinateType LocalCoordinateType::GLOBE("World Coordinate");
    const LocalCoordinateType LocalCoordinateType::CARTESIAN("Euler Angle");
 
+   IMPLEMENT_ENUM(CoordinateConversionExceptionEnum);
+   CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
 
    Coordinates::Coordinates(): mLocalCoordinateType(&LocalCoordinateType::CARTESIAN), 
       mIncomingCoordinateType(&IncomingCoordinateType::UTM), 
@@ -90,9 +94,6 @@ namespace dtUtil
       TranMerc_f              = rhs.TranMerc_f;
       TranMerc_ebs            = rhs.TranMerc_ebs;
       mZone                   = rhs.mZone;
-      mHemisphere             = rhs.mHemisphere;
-      mEasting                = rhs.mEasting;
-      mNorthing               = rhs.mNorthing;
       mGlobeRadius            = rhs.mGlobeRadius;
 
       memcpy(mLocationOffset, rhs.mLocationOffset, sizeof(double) * 3);
@@ -105,6 +106,9 @@ namespace dtUtil
 
    bool Coordinates::operator == (const Coordinates &rhs)
    {
+      if (this == &rhs)
+         return true;
+      
       if(mLogger != rhs.mLogger)
          return false;
       if(mLocalCoordinateType != rhs.mLocalCoordinateType)
@@ -144,12 +148,6 @@ namespace dtUtil
       if(TranMerc_ebs != rhs.TranMerc_ebs)
          return false;
       if(mZone != rhs.mZone)
-         return false;
-      if(mHemisphere != rhs.mHemisphere)
-         return false;
-      if(mEasting != rhs.mEasting)
-         return false;
-      if(mNorthing != rhs.mNorthing)
          return false;
       if(mGlobeRadius != rhs.mGlobeRadius)
          return false;
@@ -193,7 +191,7 @@ namespace dtUtil
 
    void Coordinates::SetGeoOriginRotation(double latitude, double longitude)
    {
-      unsigned long zone;
+      unsigned zone;
       double easting, northing;      
       char hemisphere;
       
@@ -295,7 +293,7 @@ namespace dtUtil
          if (*mIncomingCoordinateType == IncomingCoordinateType::GEOCENTRIC)
          {
             double lat, lon, elevation, easting, northing;      
-            unsigned long zone;
+            unsigned zone;
             char hemisphere;
             
             ConvertGeocentricToGeodetic(loc[0], loc[1], loc[2],lat,lon,elevation);
@@ -304,7 +302,7 @@ namespace dtUtil
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, "Incoming lat lon: %lf, %lf", 
                   osg::RadiansToDegrees(lat), osg::RadiansToDegrees(lon));
 
-            ConvertGeodeticToUTM(lat,lon, zone, hemisphere, easting, northing);
+            ConvertGeodeticToUTM(lat, lon, zone, hemisphere, easting, northing);
             
             double originX,originY,originZ;
             GetOriginLocation(originX,originY,originZ);
@@ -317,7 +315,7 @@ namespace dtUtil
          {
             //This code is not yet unit tested
             double easting, northing;      
-            unsigned long zone;
+            unsigned zone;
             char hemisphere;
             
             ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), zone, hemisphere, easting, northing);
@@ -329,7 +327,24 @@ namespace dtUtil
             position[2] = loc[2] - originZ;
             
          }
-         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM)
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
+         {
+            //This code is not yet unit tested
+            double easting, northing;      
+            unsigned zone;
+            char hemisphere;
+            
+            ConvertGeodeticToUTM(osg::DegreesToRadians(loc[0]), osg::DegreesToRadians(loc[1]), zone, hemisphere, easting, northing);
+            
+            double originX,originY,originZ;
+            GetOriginLocation(originX,originY,originZ);
+            position[0] = easting - originX;
+            position[1] = northing - originY;
+            position[2] = loc[2] - originZ;
+            
+         }
+         else if (*mIncomingCoordinateType == IncomingCoordinateType::UTM
+            || *mIncomingCoordinateType == IncomingCoordinateType::GEODETIC)
          {
             double originX, originY, originZ;
             GetOriginLocation(originX, originY, originZ);
@@ -630,7 +645,23 @@ namespace dtUtil
    }
   
    void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
-                                           unsigned long& Zone, char& Hemisphere, double& Easting, double& Northing)
+                                           long& Zone, char& Hemisphere, 
+                                           double& Easting, double& Northing)
+   {
+      DEPRECATE("void Coordinates::ConvertGeodeticToUTM (double Latitude, "
+                "double Longitude, long& Zone, char& Hemisphere, double& Easting, "
+                "double& Northing)",
+                "void Coordinates::ConvertGeodeticToUTM (double Latitude, "
+                "double Longitude, unsigned long& Zone, char& Hemisphere, "
+                "double& Easting, double& Northing)");
+
+      unsigned tempZone;
+      ConvertGeodeticToUTM(Latitude,Longitude,tempZone,Hemisphere,Easting,Northing);
+                           Zone = tempZone;
+   }
+
+   void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
+                                           unsigned& Zone, char& Hemisphere, double& Easting, double& Northing)
    {
       double Origin_Latitude = 0.0;
       double Central_Meridian = 0.0;
@@ -662,19 +693,8 @@ namespace dtUtil
       ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting, Northing);
       
    } /* END OF Convert_Geodetic_To_UTM */
-
-   void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
-      long& Zone, char& Hemisphere, double& Easting, double& Northing)
-   {
-      DEPRECATE(  "void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude, long& Zone, char& Hemisphere, double& Easting, double& Northing)",
-                  "void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude, unsigned long& Zone, char& Hemisphere, double& Easting, double& Northing)")
-
-      unsigned long tempZone;
-      ConvertGeodeticToUTM(Latitude,Longitude,tempZone,Hemisphere,Easting,Northing);
-      Zone = tempZone;
-   }
   
-   void Coordinates::ConvertUTMToGeodetic (long zone, double easting, double northing, double& latitude, double& longitude)
+   void Coordinates::ConvertUTMToGeodetic (unsigned zone, double easting, double northing, double& latitude, double& longitude)
    {
       double phai;               /* resulting latitude in radians           */
       double lamda;              /* resutling longitude in radians          */
@@ -706,11 +726,13 @@ namespace dtUtil
       else
          adj_northing = northing;
 
-      /* Calculate longitude of the central meridian */
+      /* Calculate longitude of the central meridian.  Zone is converted to an int in the calculation because 
+       * it is valid for the calculation to go below zero.
+       */
       if ( zone < 31 )
-         lamda0 = double( ( zone * 6 ) - 183);
+         lamda0 = double( ( int(zone) * 6 ) - 183);
       else
-         lamda0 = double( ( ( zone - 31 ) * 6 ) + 3 );
+         lamda0 = double( ( ( int(zone) - 31 ) * 6 ) + 3 );
 
       /* convert to radians */
       lamda0 = osg::DegreesToRadians(lamda0);
@@ -766,7 +788,7 @@ namespace dtUtil
       
    }
 
-   void Coordinates::CalculateUTMZone(double latitude, double longitude, unsigned long& ewZone, char& nsZone)
+   void Coordinates::CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone)
    {
       CLAMP(latitude, -80.0, 84.0);
 
@@ -816,6 +838,291 @@ namespace dtUtil
       else /* 80 to 84 are also grid 'X' */
          nsZone = 'X';
             
+   }
+  
+   const std::string Coordinates::ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
+                                                   char northSouthZone, unsigned resolution) throw(dtUtil::Exception)
+   {
+       static long resolutionDivisor[6] = {100000, 10000, 1000, 100, 10, 1};
+       static char gridLetters[24] =  {'A', 'B', 'C', 'D', 'E', 'F',
+                                       'G', 'H', 'J', 'K', 'L', 'M',
+                                       'N', 'P', 'Q', 'R', 'S', 'T',
+                                       'U', 'V', 'W', 'X', 'Y', 'Z'};
+   
+       // Intermediate parameters needed to build milgrid string 
+       char    eastingLetter;
+       char    northingLetter;
+       char    formatString[20];
+       char    mgrsString[255];
+       double offset;
+       int   eastingNum;
+       int   northingNum;
+   
+       //resolution must be 0-5
+       if (resolution < 0 || resolution > 5)
+          EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                 "The resolution for the mgrs conversion must be between 0 and 5 inclusive.");            
+
+       // Calculate east-west 100,000 km square grid designator       
+       // Note that origin repeats every 3 zones (18 degrees)         
+       // Note that the 8 results from there being 8*3 or 24 letters!
+       int index = (((eastWestZone - 1) % 3) * 8) + (int)(easting / 100000) - 1;
+       CLAMP(index, 0, 23);
+       eastingLetter = gridLetters[index];
+   
+       // Calculate north-south 100,000 km square grid designator        
+       // Note: origin alternates between even/odd UTM zones and repeats 
+       //       every 2,000,000 meters                                   
+       if (eastWestZone % 2)
+         offset = fmod(northing, 2000000.0);
+       else
+         offset = fmod(northing + 500000.0, 2000000.0);
+
+       index = (int)(offset / 100000.0);
+       CLAMP(index, 0, 23);   
+       northingLetter = gridLetters[index];
+   
+       eastingNum  = (((long)easting)  % 100000) / resolutionDivisor[resolution];
+       northingNum = (((long)northing) % 100000) / resolutionDivisor[resolution];
+   
+       snprintf(formatString, 20, "%%02d%%c%%c%%c%%0%ud%%0%ud", resolution,
+               resolution);
+       snprintf(mgrsString, 255, formatString, eastWestZone, northSouthZone,
+               eastingLetter, northingLetter, eastingNum, northingNum);
+       
+       std::string result(mgrsString);
+       trim(result);
+       return result;
+   }
+
+   void Coordinates::ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,      
+                                      const std::string& mgrs,
+                                      unsigned& zone, double& easting, double& northing )
+      throw(dtUtil::Exception)
+   {
+      //Numbers used to scale utm to meters
+      static long resolutionDivisor[6] = {100000, 10000, 1000, 100, 10, 1};
+
+      char z_char;
+
+      // Is it too long?
+      if ( mgrs.length() > 15 )
+         EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                "The MGRS string must be no longer that 12 digits.");
+
+      std::string working;
+      if( (mgrs.length() % 2) != 0 )
+      {
+         if (! (isdigit(mgrs[0]) &&
+                isdigit(mgrs[1]) &&
+                isalpha(mgrs[2]) ) )
+            EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                   "The string must begin with 2 digits followed by a letter.");
+
+         zone = 10*(mgrs[0] - '0') + (mgrs[1] - '0');
+         z_char = mgrs[2];
+         working = mgrs.substr(3);
+      }
+      else
+      {
+         zone = defaultZone;
+         z_char = defaultZoneLetter;
+         working = mgrs;
+      } 
+
+      // Are the first two characters letters?
+      if (!(isalpha( working[0] ) && isalpha( working[1] )) )
+         EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                "The intra-zone grid designations must be letters.");            
+         
+
+      // Are the rest of the characters numbers?
+      for( unsigned int i = 2; i < working.length(); i++ )
+      {
+         if (!isdigit(working[i]))
+            EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                   "All characters following the zone designations must be digits.");            
+      }
+
+      // Passed preliminary error checking, go ahead and parse the string
+
+      //calculate the length of each position number
+      size_t numLen = (working.length() - 2) / 2;
+      char control[20];
+      char e_char, n_char;
+      int e_num, n_num;
+      sprintf( control, "%%c%%c%%%ud%%%ud", numLen, numLen );
+      int sscanf_return = sscanf( working.c_str(), control, &e_char, &n_char, &e_num, &n_num );
+      if (sscanf_return != 4)
+         EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 
+                "Internal error when parsing input.  Check input syntax: " + mgrs);            
+
+      // The string has passed error checking.
+
+      // convert lower to upper case for leading chars
+      if( islower(z_char) )
+      {
+         z_char = toupper(z_char);
+      }
+      if( islower(e_char) )
+      {
+         e_char = toupper(e_char);
+      }
+      if( islower(n_char) )
+      {
+         n_char = toupper(n_char);
+      }
+
+      e_num *= resolutionDivisor[numLen];
+      n_num *= resolutionDivisor[numLen];
+
+      // If we get here, we're using single world-wide datum (WGS84)
+      // Calculate northing
+      northing = n_char - 'A';
+      if( n_char > 'O' )
+      {
+         northing--;
+      }
+      if( n_char > 'I' )
+      {
+         northing--;
+      }
+
+      northing *= 100000;
+      northing += n_num;
+
+      if( !(zone % 2) )
+      {
+         northing -= 500000;
+
+         if( northing < 0 )
+         {
+            northing += 2000000;
+         }
+      }
+
+      // Things get hokey here, but there's no way around it because of the
+      // definition of MilGrid. *sigh*
+      float deg_base = float(z_char - 'A' - 3);
+
+      if( z_char > 'O' )
+      {
+         deg_base--;
+      }
+
+      if( z_char > 'I' )
+      {
+         deg_base--;
+      }
+
+      deg_base *= 8.0;
+      deg_base -= 72.0;
+
+      if( deg_base >= 0 )
+      {
+         if( deg_base >= 71.64 )
+         {
+            northing += 8000000;
+         }
+         else if( deg_base >= 53.91 )
+         {
+            if( deg_base > 63 && northing < 1000000 )
+            {
+               northing += 8000000;
+            }
+            else
+            {
+               northing += 6000000;
+            }
+         }
+         else if( deg_base >= 36.02 )
+         {
+            if( deg_base > 45 && northing < 1000000 )
+            {
+               northing += 6000000;
+            }
+            else
+            {
+               northing += 4000000;
+            }
+         }
+         else if( deg_base >= 18.03 )
+         {
+            if( deg_base > 28 && northing < 1000000 )
+            {
+               northing += 4000000;
+            }
+            else
+            {
+               northing += 2000000;
+            }
+         }
+         else if( deg_base > 10 && northing < 1000000 )
+         {
+            northing += 2000000;
+         }
+      }
+      else
+      {
+         if( deg_base >= -18.03 )
+         {
+            northing += 8000000;
+         }
+         else if( deg_base >= -36.02 )
+         {
+            if( deg_base > -28 && northing < 1000000 )
+            {
+               northing += 8000000;
+            }
+            else
+            {
+               northing += 6000000;
+            }
+         }
+         else if( deg_base >= -53.91 )
+         {
+            if( deg_base > -45 && northing < 1000000 )
+            {
+               northing += 6000000;
+            }
+            else
+            {
+               northing += 4000000;
+            }
+         }
+         else if( deg_base >= -71.64 )
+         {
+            if( deg_base > -63.0 && northing < 1000000 )
+            {
+               northing += 4000000;
+            }
+            else
+            {
+               northing += 2000000;
+            }
+         }
+         else if( deg_base > -81 && northing < 1000000 )
+         {
+            northing += 2000000;
+         }
+      }
+
+      // Calculate easting
+      easting = e_char - 'A';
+
+      if( e_char > 'O' )
+      {
+         easting--;
+      }
+      if( e_char > 'I' )
+      {
+         easting--;
+      }
+      easting++;
+      easting -= (((zone - 1) % 3) * 8);
+      easting *= 100000;
+      easting += e_num;
+
    }
   
    void Coordinates::ConvertGeocentricToGeodetic (double x, double y, double z,

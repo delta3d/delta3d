@@ -22,16 +22,16 @@
 #ifndef DELTA_PROPERTY_EDITOR
 #define DELTA_PROPERTY_EDITOR
 
-#include <QDockWidget>
+#include <QtGui/QDockWidget>
 #include <osg/ref_ptr>
 #include <vector>
 
 #include <dtUtil/objectfactory.h>
 
 #include <dtUtil/tree.h>
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/actortype.h"
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/actortype.h>
 #include "dtEditQt/typedefs.h"
 
 class QMainWindow;

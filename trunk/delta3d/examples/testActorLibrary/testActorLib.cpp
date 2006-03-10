@@ -25,13 +25,13 @@ using namespace dtDAL;
 
 extern "C" DT_PLUGIN_EXPORT ActorPluginRegistry* CreatePluginRegistry()
 {
-    return new ExampleActorLib;
+   return new ExampleActorLib;
 }
 
 extern "C" DT_PLUGIN_EXPORT void DestroyPluginRegistry(ActorPluginRegistry *registry)
 {
-    if(registry)
-        delete registry;
+   if (registry != NULL)
+      delete registry;
 }
 
 ExampleActorLib::ExampleActorLib() : ActorPluginRegistry("ExampleActors")

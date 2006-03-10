@@ -19,12 +19,12 @@
 *
 * @author Teague Coonan
 */
-#ifndef __TabContainer_h
-#define __TabContainer_h
+#ifndef DELTA_TAB_CONTAINER
+#define DELTA_TAB_CONTAINER
 
-#include <QObject>
-#include <QString>
-#include <QTabWidget>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtGui/QTabWidget>
 #include <vector>
 
 #include "dtEditQt/tabwrapper.h"

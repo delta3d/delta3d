@@ -1,7 +1,8 @@
 #include "dtCore/loadable.h"
-#include <dtUtil/log.h>
 #include "dtCore/refptr.h"
+#include <dtUtil/log.h>
 
+#include <osg/Node>
 #include <osgDB/ReadFile>
 #include <osgDB/Registry>
 

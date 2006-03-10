@@ -19,19 +19,19 @@
 * @author Matthew W. Campbell
 */
 #include <dtCore/globals.h>
-#include "testlogger.h"
+#include "testaar.h"
 
 //////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath()+"/examples/testLogger/;" +
-                                dtCore::GetDeltaDataPathList());   
-   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_ERROR /*LOG_DEBUG*/);
-   dtCore::RefPtr<LoggerApplication> app;
+   dtCore::SetDataFilePathList(dtCore::GetDeltaRootPath() + "/examples/testAAR/;" +
+      dtCore::GetDeltaDataPathList());   
    
+   dtCore::RefPtr<AARApplication> app;   
+   dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_ERROR /*LOG_DEBUG*/);
    try 
    {
-      app = new LoggerApplication();
+      app = new AARApplication();
       app->Config();
       app->Run();
    }

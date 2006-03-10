@@ -1,4 +1,4 @@
-/* 
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine 
  * Copyright (C) 2004 MOVES Institute 
  *
@@ -35,6 +35,7 @@
 
 #include "dtUtil/export.h"
 #include "dtUtil/enumeration.h"
+#include "dtUtil/exception.h"
 #include "dtUtil/mathdefines.h"
 
 namespace dtUtil
@@ -124,6 +125,25 @@ namespace dtUtil
          virtual ~LocalCoordinateType() {}
    };
 
+   class DT_UTIL_EXPORT CoordinateConversionExceptionEnum : public dtUtil::Enumeration
+   {
+      DECLARE_ENUM(CoordinateConversionExceptionEnum);
+      
+      public:
+         /**
+          * Thrown when the input to a conversion function is invalid
+          */
+         static CoordinateConversionExceptionEnum INVALID_INPUT;
+                  
+      private:
+         CoordinateConversionExceptionEnum(const std::string& name): dtUtil::Enumeration(name)
+         {
+            AddInstance(this);
+         }
+         virtual ~CoordinateConversionExceptionEnum() {}
+   };
+
+
    template <typename T>
    inline T safeASIN(T x)
    {
@@ -136,6 +156,7 @@ namespace dtUtil
       
          Coordinates();
          virtual ~Coordinates();
+         
          
          
          /**
@@ -210,7 +231,8 @@ namespace dtUtil
             mLocalCoordinateType = &localCoordType;  
          }
          
-         /* Sets the globe radius.
+         /**
+          * Sets the globe radius.
           *
           * @param radius the new radius
           */
@@ -226,14 +248,14 @@ namespace dtUtil
          /**
           * @return the currently set UTM zone.
           */
-         unsigned long GetUTMZone() { return mZone; }
+         unsigned GetUTMZone() { return mZone; }
          
          /**
           * Set the UTM zone to be used when converting coodinates from cartesian (Assumed to be UTM) to lat/lon.
           * @param zone the utm zone.  If it's not between 1 and 60 inclusive, it will be clamped. 
           */
-         void SetUTMZone(unsigned long zone) { CLAMP(zone, 1L, 60L); mZone = zone; };
-         
+         void SetUTMZone(unsigned zone) { CLAMP(zone, 1L, 60L); mZone = zone; };
+                  
          /**
           * Converts XYZ coordinates to a local translation vector based on the current
           * configuration.
@@ -317,24 +339,24 @@ namespace dtUtil
           * @param   Easting           : Easting (X) in meters               (output)
           * @param   Northing          : Northing (Y) in meters              (output)
           */
-         void ConvertGeodeticToUTM(double Latitude, double Longitude, unsigned long& Zone, 
+         void ConvertGeodeticToUTM(double Latitude, double Longitude, unsigned& Zone, 
                                     char  &Hemisphere, double& Easting, double& Northing); 
-
+         ///older deprecated method.
          void ConvertGeodeticToUTM(double Latitude, double Longitude, long& Zone, 
-                                    char  &Hemisphere, double& Easting, double& Northing); 
+                                   char  &Hemisphere, double& Easting, double& Northing); 
 
          /**
           * The function ConvertUTMToGeodetic converts UTM projection (zone, easting and
           * northing) to geodetic (latitude and longitude) coordinates according to the current ellipsoid 
           * and UTM zone override parameters.
           *
-          * @param   zone              : UTM zone                            (input)
+          * @param   zone              : UTM zone (east west)                (input)
           * @param   easting           : Easting (X) in meters               (input)
           * @param   northing          : Northing (Y) in meters              (input)
           * @param   latitude          : Latitude in radians                 (output)
           * @param   longitude         : Longitude in radians                (output)
           */
-         static void ConvertUTMToGeodetic(long zone, double easting, double northing, double& latitude, double& longitude); 
+         static void ConvertUTMToGeodetic(unsigned zone, double easting, double northing, double& latitude, double& longitude); 
          
          /**
           * Calculates the proper UTM zone based on the latitude and longitude.
@@ -344,8 +366,31 @@ namespace dtUtil
           * @param ewZone the east west zone number.  This the normal UTM zone used in calculations.
           * @praam nsZone the north-south zone letter.
           */
-         static void CalculateUTMZone(double latitude, double longitude, unsigned long& ewZone, char& nsZone);
+         static void CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone);
          
+         /**
+          * Converts UTM coordinates to MGRS coordinates and returns the value as a string.
+          *
+          * @param easting the UTM easting value
+          * @param northing the UTM northing value
+          * @param eastWestZone the east/west zone number (1 - 60)
+          * @param northSouthZone the north/sound zone letter (A-Z omitting I and O)
+          * @param resolution the resolution number.  It should be 0-5 for resolutions
+          *        of 100000 meters to 1 meter in powers of 10.  
+          */
+         static const std::string ConvertUTMToMGRS(double easting, double northing, unsigned eastWestZone,
+                                                   char northSouthZone, unsigned resolution) throw(dtUtil::Exception);
+         
+
+         /**
+          * @throws dtUtil::Exception if the string is not in a valid format.
+          */
+         static void ConvertMGRSToUTM(unsigned defaultZone, char defaultZoneLetter,      
+                                      const std::string& mgrs, unsigned& zone, 
+                                      double& easting, double& northing)
+            throw(dtUtil::Exception);
+         
+
          /**
           * The function ConvertGeocentricToGeodetic converts geocentric
           * coordinates (X, Y, Z) to geodetic coordinates (latitude, longitude, 
@@ -461,10 +506,7 @@ namespace dtUtil
          double TranMerc_f;      /* Flattening of ellipsoid  */
          double TranMerc_ebs;   /* Second Eccentricity squared */
 
-         long     mZone;
-         char     mHemisphere;
-         double   mEasting;
-         double   mNorthing;
+         unsigned mZone;
          
          ///The radius of the globe if the local coordinates are in globe mode.
          float mGlobeRadius;

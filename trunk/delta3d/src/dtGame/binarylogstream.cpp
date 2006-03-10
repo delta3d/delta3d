@@ -22,6 +22,7 @@
 #include "dtGame/binarylogstream.h"
 #include "dtGame/messagetype.h"
 #include "dtUtil/exception.h"
+#include "dtDAL/fileutils.h"
 
 #include <iostream>
 
@@ -81,13 +82,18 @@ namespace dtGame
    }
    
    //////////////////////////////////////////////////////////////////////////
-   void BinaryLogStream::Create(const std::string &logResourceName)
+   void BinaryLogStream::Create(const std::string &logsPath, const std::string &logResourceName)
    {
       //Make sure the stream is not already open.
       Close();
       
+      //Make sure we remove any trailing slashes from the cache path.
+      std::string newPath = logsPath;
+      if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
+         newPath = newPath.substr(0,newPath.length()-1);
+      
       //Create the messages file...
-      mMessagesFileName = logResourceName;
+      mMessagesFileName = newPath + "/" + logResourceName;
       mMessagesFileName += BinaryLogStream::MESSAGE_DB_EXT;
       mMessagesFile = fopen(mMessagesFileName.c_str(),"wb");
       if (mMessagesFile == NULL)
@@ -95,7 +101,7 @@ namespace dtGame
             " database file: " + mMessagesFileName);    
                   
       //Create the index tables file...      
-      mIndexTablesFileName = logResourceName;
+      mIndexTablesFileName = newPath + "/" + logResourceName;
       mIndexTablesFileName += BinaryLogStream::INDEX_EXT;
       mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"wb");
       if (mIndexTablesFile == NULL)
@@ -131,18 +137,24 @@ namespace dtGame
       //This check is done in case the file is not in write mode as Mac OS X won't set
       //ferror if it couldn't write the data.
       if (written < count)
-         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Error writing to IO stream.  Data not written.  Check to see if the log file is in write mode.");         
+         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Error writing to IO stream.  Data not written. "
+            "Check to see if the log file is in write mode.");         
       
    }
 
    //////////////////////////////////////////////////////////////////////////   
-   void BinaryLogStream::Open(const std::string &logResourceName)
+   void BinaryLogStream::Open(const std::string &logsPath, const std::string &logResourceName)
    {
       //Make sure the stream is not already open.
       Close();
       
+      //Make sure we remove any trailing slashes from the cache path.
+      std::string newPath = logsPath;
+      if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
+         newPath = newPath.substr(0,newPath.length()-1);
+      
       //Open the messages file.
-      mMessagesFileName = logResourceName;
+      mMessagesFileName = newPath + "/" + logResourceName;
       mMessagesFileName += BinaryLogStream::MESSAGE_DB_EXT;
       mMessagesFile = fopen(mMessagesFileName.c_str(),"rb");
       if (mMessagesFile == NULL)
@@ -152,7 +164,7 @@ namespace dtGame
       //Open the index tables file.  Note, we open this file in
       //read and write mode so we can read the existing index and 
       //append to it if needed.      
-      mIndexTablesFileName = logResourceName;
+      mIndexTablesFileName = newPath + "/" + logResourceName;
       mIndexTablesFileName += BinaryLogStream::INDEX_EXT;
       mIndexTablesFile = fopen(mIndexTablesFileName.c_str(),"rb");
       if (mIndexTablesFile == NULL)
@@ -175,6 +187,70 @@ namespace dtGame
       mIndexTablesFile = NULL;
       
       mEndOfStream = false;
+   }
+
+   //////////////////////////////////////////////////////////////////////////      
+   void BinaryLogStream::Delete(const std::string &logsPath,
+      const std::string &logResourceName)
+   {
+      //Make sure we remove any trailing slashes from the cache path.
+      std::string newPath = logsPath;
+      if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
+         newPath = newPath.substr(0,newPath.length()-1);
+         
+      dtDAL::FileUtils &fileUtils = dtDAL::FileUtils::GetInstance();
+      if (!fileUtils.DirExists(logsPath))
+         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not get available logs"
+            ".  Log Directory: " + logsPath + " does not exist.");
+                 
+      std::string msgPath = newPath + "/" + logResourceName + ".dlm";
+      std::string indexPath = newPath + "/" + logResourceName + ".dli";
+      
+      if (!fileUtils.FileExists(msgPath) || !fileUtils.FileExists(indexPath))
+         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not delete log. "
+            + logResourceName + ".  Resource not found.");
+            
+      fileUtils.FileDelete(msgPath);
+      fileUtils.FileDelete(indexPath);
+   }
+   
+   //////////////////////////////////////////////////////////////////////////      
+   void BinaryLogStream::GetAvailableLogs(const std::string &logsPath, 
+            std::vector<std::string> &logs)
+   {
+      dtDAL::FileUtils &fileUtils = dtDAL::FileUtils::GetInstance();
+      if (!fileUtils.DirExists(logsPath))
+         EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Could not get available log"
+            " files.  Log Directory: " + logsPath + " does not exist.");
+      
+      logs.clear();      
+      
+      //First sort all the files in the specified directory into bins
+      //containing index files and messages files.
+      dtDAL::DirectoryContents fileList = fileUtils.DirGetFiles(logsPath);
+      dtDAL::DirectoryContents::iterator itor = fileList.begin();
+      std::set<std::string> messagesFiles,indexFiles;
+      for (itor=fileList.begin(); itor!=fileList.end(); ++itor)
+      {
+         if (itor->length() < 4)
+            continue;
+       
+         if (itor->substr(itor->length()-4,4) == ".dlm")
+            messagesFiles.insert(itor->substr(0,itor->length()-4));
+         else if ((itor->substr(itor->length()-4,4) == ".dli"))
+            indexFiles.insert(itor->substr(0,itor->length()-4));
+      }      
+      
+      //Now using the messages file set, match it with the index file set.  If
+      //we found a match, then add it to the list of available logs.
+      std::set<std::string>::iterator msgItor;
+      for (msgItor=messagesFiles.begin(); msgItor!=messagesFiles.end(); ++msgItor)
+      {
+         std::set<std::string>::iterator indexItor;
+         indexItor = indexFiles.find(*msgItor);
+         if (indexItor != indexFiles.end())
+            logs.push_back(*msgItor);
+      }
    }
    
    //////////////////////////////////////////////////////////////////////////   
@@ -546,7 +622,7 @@ namespace dtGame
       unsigned int bufferSize;
       
       stream << tag.GetName() << tag.GetDescription() << tag.GetSimTimeStamp() <<
-         tag.GetUniqueId();
+         tag.GetUniqueId() << tag.GetKeyframeUniqueId() << tag.GetCaptureKeyframe();
       bufferSize = stream.GetBufferSize();
       
       WriteToLog((char *)&BinaryLogStream::TAG_DEID,1,1,mIndexTablesFile);
@@ -569,14 +645,17 @@ namespace dtGame
       
       DataStream stream(tempBuffer,bufferSize);
       std::string name,desc;
-      dtCore::UniqueId uuid;
+      dtCore::UniqueId uuid,kfuuid;
       double simTime;      
-      stream >> name >> desc >> simTime >> uuid;
+      bool captureKeyframe;
+      stream >> name >> desc >> simTime >> uuid >> kfuuid >> captureKeyframe;
       
       tag.SetName(name);
       tag.SetDescription(desc);
       tag.SetSimTimeStamp(simTime);      
-      tag.SetUniqueId(uuid);            
+      tag.SetUniqueId(uuid);   
+      tag.SetKeyframeUniqueId(kfuuid);
+      tag.SetCaptureKeyframe(captureKeyframe);         
       return tag;
    }
     
@@ -587,7 +666,8 @@ namespace dtGame
       unsigned int bufferSize;
       
       stream << keyFrame.GetName() << keyFrame.GetDescription() << keyFrame.GetSimTimeStamp() <<
-         keyFrame.GetUniqueId() << keyFrame.GetActiveMap() << keyFrame.GetLogFileOffset();
+         keyFrame.GetUniqueId() << keyFrame.GetTagUniqueId() << 
+         keyFrame.GetActiveMap() << keyFrame.GetLogFileOffset();
       bufferSize = stream.GetBufferSize();
       
       WriteToLog((char *)&BinaryLogStream::KEYFRAME_DEID,1,1,mIndexTablesFile);
@@ -612,13 +692,14 @@ namespace dtGame
       std::string name,desc,activeMap;
       double simTime;
       long offset;
-      dtCore::UniqueId uuid;               
-      stream >> name >> desc >> simTime >> uuid >> activeMap >> offset;
+      dtCore::UniqueId uuid,taguuid;        
+      stream >> name >> desc >> simTime >> uuid >> taguuid >>activeMap >> offset;
       
       keyFrame.SetName(name);
       keyFrame.SetDescription(desc);
       keyFrame.SetSimTimeStamp(simTime);
       keyFrame.SetUniqueId(uuid);
+      keyFrame.SetTagUniqueId(taguuid);
       keyFrame.SetActiveMap(activeMap);
       keyFrame.SetLogFileOffset(offset);      
       return keyFrame;

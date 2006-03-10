@@ -65,17 +65,16 @@ namespace dtUtil
           */
          class LibraryHandle : public osg::Referenced
          {
-            public:
-               LibraryHandle() {}
+            public:               
+               typedef void* HANDLE;
+               typedef void* SYMBOL_ADDRESS;
+               
+               virtual HANDLE GetHandle() const = 0;
                
                /**
-                * @return a reference to the DynamicLibrary.
+                * @return The address of the given symbol or NULL if it was not found.
                 */
-               virtual const osgDB::DynamicLibrary& GetDynamicLibrary() const = 0;
-               /**
-                * @return a reference to the DynamicLibrary.
-                */
-               virtual osgDB::DynamicLibrary& GetDynamicLibrary() = 0;
+               virtual SYMBOL_ADDRESS FindSymbol(const std::string& symbolName) const = 0;
                
                /**
                 * @return the system-independent name of the library.
@@ -83,6 +82,7 @@ namespace dtUtil
                virtual const std::string& GetLibName() const = 0;
                
             protected:
+               LibraryHandle() {}
                virtual ~LibraryHandle() {}
                void release(); 
             private:
@@ -133,7 +133,7 @@ namespace dtUtil
       	 LibrarySharingManager();
       	 virtual ~LibrarySharingManager();
          //map of the platform independent name to the actual library
-         std::map<std::string, dtCore::RefPtr<osgDB::DynamicLibrary> > mLibraries;
+         std::map<std::string, dtCore::RefPtr<LibraryHandle> > mLibraries;
 
          /**
           * This releases the handle to a loaded library.  If there are no other handles to 

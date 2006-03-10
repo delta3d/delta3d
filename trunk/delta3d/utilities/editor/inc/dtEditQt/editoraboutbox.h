@@ -20,10 +20,10 @@
 * @author William E. Johnson II
 */
 
-#ifndef _EDITOR_ABOUT_BOX_H_
-#define _EDITOR_ABOUT_BOX_H_
+#ifndef DELTA_EDITOR_ABOUT_BOX
+#define DELTA_EDITOR_ABOUT_BOX
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QTextEdit;
 

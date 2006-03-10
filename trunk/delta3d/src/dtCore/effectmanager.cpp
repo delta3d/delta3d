@@ -9,6 +9,7 @@
 
 #include <osgDB/ReadFile>
 
+#include <osgParticle/ParticleSystemUpdater>
 #include <osgParticle/Emitter>
 #include <osgParticle/Particle>
 

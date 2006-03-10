@@ -30,4 +30,5 @@ namespace dtGame
    ExceptionEnum ExceptionEnum::ACTOR_IS_REMOTE("Actor is remote");   
    ExceptionEnum ExceptionEnum::INVALID_ACTOR_STATE("Invalid Actor State");
    ExceptionEnum ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR("Game Application Config Failed.");
+   ExceptionEnum ExceptionEnum::DEAD_RECKONING_EXCEPTION("Dead Reckoning Exception");
 }

@@ -76,7 +76,7 @@ namespace dtGame
           * @note If any error occurs while creating the stream, a LogStream::LOGGER_IO_EXCEPTION
           *    is thrown.
           */
-         virtual void Create(const std::string &logResourceName);
+         virtual void Create(const std::string &logsPath, const std::string &logResourceName);
          
          /**
           * Opens an existing log.  Again, this implies that two physical files are opened
@@ -88,7 +88,32 @@ namespace dtGame
           * @note If any error occurs while creating the stream, a LogStream::LOGGER_IO_EXCEPTION
           *    is thrown.
           */
-         virtual void Open(const std::string &logResourceName);
+         virtual void Open(const std::string &logsPath, const std::string &logResourceName);
+         
+         /**
+          * Deletes the specified log resource.
+          * @param logsPath The absolute path containing the logs.
+          * @param logResourceName The base name of the log resource to destroy.
+          *    Implementation should use this in some form in their naming conventions
+          *    for log files.
+          */
+         virtual void Delete(const std::string &logsPAth, 
+            const std::string &logResourceName);
+         
+         /**
+          * Gets a list of the current logs available to the log stream by 
+          * searching the specified directory.
+          * @param logsPath An absolute path to the directory containing the
+          *    available logs.
+          * @param logs Filled with the available logs.
+          * @note The log format for the binary log stream actually stores the 
+          *    log in two files.  Therefore, each entry in the resulting
+          *    logs list contains the base name of each log.  This name is used
+          *    by the other methods in the BinaryLogStream to identity logs
+          *    for reading and writing.
+          */
+         virtual void GetAvailableLogs(const std::string &logsPath, 
+            std::vector<std::string> &logs);
          
          /**
           * Writes a game message to the message database file.

@@ -55,7 +55,9 @@ namespace dtGame
    /**
     * This is an interface class to a stream used by the ServerLoggerComponent
     * to stream data to and from a log file.  It can be extended to support any
-    * log file format desired.  
+    * log file format desired.  In addition to streaming, this interface supports
+    * methods that provide an abstract look at a log thereby allowing any custom
+    * log formats to plug in to the existing system.
     * @note There are no return values for errors.  
     *    Implementations of this interface should throw exceptions when an error
     *    occurs.
@@ -82,7 +84,7 @@ namespace dtGame
           * @param logResourceName The base name of the new log resource.  Implementations
           *    should use this in some form in their naming conventions for log files.
           */
-         virtual void Create(const std::string &logResourceName) = 0;
+         virtual void Create(const std::string &logsPath, const std::string &logResourceName) = 0;
          
          /**
           * Implementations should cleanup any used resources and close the 
@@ -95,7 +97,16 @@ namespace dtGame
           * @param logResourceName The base name of the new log resource.  Implementations
           *    should use this in some form in their naming conventions for log files.
           */
-         virtual void Open(const std::string &logResourceName) = 0;
+         virtual void Open(const std::string &logsPath, const std::string &logResourceName) = 0;
+         
+         /**
+          * Deletes the specified log resource.
+          * @param logsPath The absolute path containing the logs.
+          * @param logResourceName The base name of the log resource to destroy.
+          *    Implementation should use this in some form in their naming conventions
+          *    for log files.
+          */
+         virtual void Delete(const std::string &logsPath, const std::string &logResourceName) = 0;
          
          /**
           * Writes a game message to the stream.
@@ -149,6 +160,16 @@ namespace dtGame
          virtual void GetKeyFrameIndex(std::vector<LogKeyframe> &keyFrames) = 0;
          
          /**
+          * Gets a list of the current logs available to the log stream by 
+          * searching the specified directory.
+          * @param logsPath An absolute path to the directory containing the
+          *    available logs.
+          * @param logs Filled with the available logs.
+          */
+         virtual void GetAvailableLogs(const std::string &logsPath, 
+            std::vector<std::string> &logs) = 0;
+         
+         /**
           * This method should flush the stream, thereby writing any cached
           * data the stream might contain.
           */
@@ -173,6 +194,7 @@ namespace dtGame
           ///Empty Destructor...         
          virtual ~LogStream() { }   
          bool mEndOfStream;
+         bool mIsOpen;
          
       private:
          MessageFactory *mMessageFactory;                 

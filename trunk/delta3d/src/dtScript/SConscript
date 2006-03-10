@@ -6,6 +6,10 @@ deps = [ 'dtCore', 'python' ]
 extraLink = []
 if OS == 'windows':
    extraLink = ['/NODEFAULTLIB:'+extLibs['python']+'_d']
+
+defines = []
+if OS == 'windows':
+   defines = ['DT_SCRIPT_LIBRARY']
        
-env.BuildLib( 'dtScript', srcs, deps, ['DT_SCRIPT_LIBRARY'], extraLink )
+env.BuildLib( 'dtScript', srcs, deps, defines, extraLink )
 

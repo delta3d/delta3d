@@ -40,6 +40,14 @@
 #include <QtCore/qdebug.h>
 #include <limits.h>
 
+#ifdef KeyPress
+#undef KeyPress
+#endif
+
+#ifdef KeyRelease
+#undef KeyRelease
+#endif
+
 namespace dtEditQt 
 {
 

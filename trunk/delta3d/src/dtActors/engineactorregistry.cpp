@@ -19,29 +19,30 @@
  * @author Matthew W. Campbell
  * @author Chris Osborn
 */
-#include <dtActors/engineactorregistry.h>
-#include <dtActors/infinitelightactorproxy.h>
-#include <dtActors/deltaobjectactorproxy.h>
-#include <dtActors/staticmeshactorproxy.h>
-#include <dtActors/particlesystemactorproxy.h>
-#include <dtActors/positionallightactorproxy.h>
-#include <dtActors/spotlightactorproxy.h>
-#include <dtActors/characteractorproxy.h>
-#include <dtActors/infiniteterrainactorproxy.h>
-#include <dtActors/environmentactorproxy.h>
-#include <dtActors/autotriggeractorproxy.h> 
-#include <dtActors/beziercontrolleractorproxy.h>
-#include <dtActors/meshterrainactorproxy.h>
-#include <dtActors/clouddomeactorproxy.h>
-#include <dtActors/cloudplaneactorproxy.h>
-#include <dtActors/skyboxactorproxy.h>
-#include <dtActors/skydomeactorproxy.h>
-#include <dtActors/beziernodeactorproxy.h>
-#include <dtActors/beziercontrolpointactorproxy.h>
-#include <dtActors/triggeractorproxy.h>
-#include <dtActors/proximitytriggeractorproxy.h>
-#include <dtActors/cameraactorproxy.h>
-#include <dtActors/tripodactorproxy.h>
+#include "dtActors/engineactorregistry.h"
+#include "dtActors/infinitelightactorproxy.h"
+#include "dtActors/deltaobjectactorproxy.h"
+#include "dtActors/staticmeshactorproxy.h"
+#include "dtActors/particlesystemactorproxy.h"
+#include "dtActors/positionallightactorproxy.h"
+#include "dtActors/spotlightactorproxy.h"
+#include "dtActors/characteractorproxy.h"
+#include "dtActors/infiniteterrainactorproxy.h"
+#include "dtActors/environmentactorproxy.h"
+#include "dtActors/autotriggeractorproxy.h"
+#include "dtActors/beziercontrolleractorproxy.h"
+#include "dtActors/meshterrainactorproxy.h"
+#include "dtActors/clouddomeactorproxy.h"
+#include "dtActors/cloudplaneactorproxy.h"
+#include "dtActors/skyboxactorproxy.h"
+#include "dtActors/skydomeactorproxy.h"
+#include "dtActors/beziernodeactorproxy.h"
+#include "dtActors/beziercontrolpointactorproxy.h"
+#include "dtActors/triggeractorproxy.h"
+#include "dtActors/proximitytriggeractorproxy.h"
+#include "dtActors/cameraactorproxy.h"
+#include "dtActors/tripodactorproxy.h"
+#include "dtActors/taskactor.h"
 
 namespace dtActors
 {
@@ -73,6 +74,11 @@ namespace dtActors
         //In this method we will add each of the actor types the engine actor
         //registry supports to the object factory.  These will then get
         //registered with the LibraryManager.
+        
+        //Generic Task Actor
+        dtDAL::ActorType *taskActor = new dtDAL::ActorType("Task Actor",
+         "dtcore.Tasks","Generic task actor.");
+        mActorFactory->RegisterType<TaskActorProxy>(taskActor);
 
         //Infinite light...
         dtDAL::ActorType *infLightActor = new dtDAL::ActorType("Infinite Light",
@@ -91,17 +97,17 @@ namespace dtActors
 
         //Static Mesh...
         dtDAL::ActorType *staticMeshActor = new dtDAL::ActorType("Static Mesh",
-            "dtcore", "Loadable static mesh actor.");
+            "dtcore","Loadable static mesh actor.");
         mActorFactory->RegisterType<StaticMeshActorProxy>(staticMeshActor);
 
         //Particle System...
         dtDAL::ActorType *particleActor = new dtDAL::ActorType("Particle System",
-            "dtcore", "dtCore::ParticleSystem actor.");
+            "dtcore","dtCore::ParticleSystem actor.");
         mActorFactory->RegisterType<ParticleSystemActorProxy>(particleActor);
 
         //Animated character...
         dtDAL::ActorType *characterActor = new dtDAL::ActorType("Character",
-            "dtcore", "dtChar::Character actor.");
+            "dtcore","dtChar::Character actor.");
         mActorFactory->RegisterType<CharacterActorProxy>(characterActor);
 
         //Infinite terrain...

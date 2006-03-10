@@ -21,12 +21,8 @@
 #ifndef DELTA_MESSAGE
 #define DELTA_MESSAGE
 
-#include <string>
 #include <map>
 #include <limits.h>
-#include <osg/Referenced>
-#include <dtCore/refptr.h>
-#include <dtCore/uniqueid.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtUtil/exception.h>
 #include "dtGame/export.h"
@@ -135,7 +131,7 @@ namespace dtGame
           * Reassigns the Source.  
           * @param the machine info to assign as the source.  It is a reference so that it may not be NULL.
           */
-         void SetSource(const MachineInfo &mi)      { mSource      = &mi; }
+         void SetSource(const MachineInfo &mi) { mSource = &mi; }
 
          /**
           * Reassigns the destination.  

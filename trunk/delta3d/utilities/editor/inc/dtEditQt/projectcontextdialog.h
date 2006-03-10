@@ -20,10 +20,10 @@
 * @author William E. Johnson II
 */
 
-#ifndef _PROJECT_CONTEXT_DIALOG_H_
-#define _PROJECT_CONTEXT_DIALOG_H_
+#ifndef DELTA_PROJECT_CONTEXT_DIALOG
+#define DELTA_PROJECT_CONTEXT_DIALOG
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 class QLineEdit;
 class QPushButton;

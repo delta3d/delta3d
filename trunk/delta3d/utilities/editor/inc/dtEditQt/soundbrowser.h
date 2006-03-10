@@ -20,10 +20,10 @@
 * @author Teague Coonan
 */
 
-#ifndef __SoundBrowser_h
-#define __SoundBrowser_h
+#ifndef DELTA_SOUND_BROWSER
+#define DELTA_SOUND_BROWSER
 
-#include <QSound>
+#include <QtGui/QSound>
 #include "dtEditQt/resourceabstractbrowser.h"
 #include <osg/ref_ptr>
 

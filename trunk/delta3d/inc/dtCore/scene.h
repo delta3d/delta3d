@@ -26,13 +26,18 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <Producer/Camera>
-#include <ode/ode.h>
+#include <ode/common.h>
+#include <ode/collision.h>
+#include <ode/collision_space.h>
 #include <osg/Vec3>
 
-#include <dtCore/stats.h>
+#include <dtCore/timer.h>
 #include <dtCore/light.h>
 
-#include <osgParticle/ParticleSystemUpdater>
+namespace osgParticle
+{
+   class ParticleSystem;   
+}
 
 namespace dtCore
 {         
@@ -188,7 +193,7 @@ namespace dtCore
       }
    
       ///Get the number of Drawables which have been directly added to the Scene
-      int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}     
+      unsigned int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}     
 
       /**
       * Enables paging when called ONLY AFTER a page-able

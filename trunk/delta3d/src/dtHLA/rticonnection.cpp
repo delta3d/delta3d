@@ -1365,27 +1365,13 @@ void RTIConnection::ClampToGround(Entity* entity)
          //sgXformVec3(oldNormal, rotMat);
          oldNormal = osg::Matrix::transform3x3(oldNormal, rotMat);
          
-         osg::Vec3 axis;
+         osg::Matrix normalRot;
          
-         //sgVectorProductVec3(axis, oldNormal, groundNormal);
-         axis = oldNormal ^ groundNormal;
+         normalRot.makeRotate(oldNormal, groundNormal);
+
+         rotMat = normalRot * rotMat;
          
-         float angle = osg::RadiansToDegrees(asinf(axis.length()));//sgASin(sgLengthVec3(axis));
-         
-         if(angle > 0.0001f)
-         {
-            axis.normalize();
-            
-            osg::Matrix deltaRot;
-            
-            //sgMakeRotMat4(deltaRot, angle, axis);
-            deltaRot.makeRotate(angle, axis);
-            
-            //sgPostMultMat4(rotMat, deltaRot);
-            rotMat = deltaRot * rotMat;
-            
-            transform.SetRotation(rotMat);
-         }
+         transform.SetRotation(rotMat);
       }
       
       entity->SetTransform(&transform, dtCore::Transformable::REL_CS);

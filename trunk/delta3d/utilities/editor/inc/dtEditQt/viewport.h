@@ -27,6 +27,7 @@
 
 #include <map>
 
+#include <osgUtil/SceneView>
 #include <dtCore/base.h>
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>

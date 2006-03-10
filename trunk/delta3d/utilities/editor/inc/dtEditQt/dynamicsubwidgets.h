@@ -23,14 +23,14 @@
 #define DELTA_DYNAMICSUBWIDGETS
 
 #include "dtEditQt/dynamicabstractcontrol.h"
-#include <QComboBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QObject>
-#include <QPalette>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QWidget>
+#include <QtGui/QComboBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtCore/QObject>
+#include <QtGui/QPalette>
+#include <QtGui/QPushButton>
+#include <QtGui/QSpinBox>
+#include <QtGui/QWidget>
 #include <vector>
 
 

@@ -19,10 +19,10 @@
  *
  * @author Matthew W. Campbell
 */
-#ifndef __EditorSettings__h
-#define __EditorSettings__h
+#ifndef DELTA_EDITOR_SETTINGS
+#define DELTA_EDITOR_SETTINGS
 
-#include <QSettings>
+#include <QtCore/QSettings>
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 

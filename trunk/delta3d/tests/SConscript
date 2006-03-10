@@ -12,8 +12,11 @@ projectEnv = env.Copy()
 #in this list, put your test cpp files in with the names "*tests.cpp"
 #and the files will be added to both allTests and to a test just
 #for the new set of files.
-suites = ['dtCore', 'dtDAL', 'dtGame', 'dtUtil']
+suites = ['dtCore', 'dtDAL', 'dtGame', 'dtUtil', 'dtActors']
 
+if env.get('rti') != 0 :
+	suites += [ 'dtHLAGM' ]
+	
 sources = {}
 mainSources = glob.glob('*.cpp')
 sources['all'] = mainSources + []
@@ -26,13 +29,25 @@ for suite in suites:
    #add the "main" source files.
    sources[suite] += mainSources  
 
-mainlibs = ['dtDAL', 'dtUtil', 'dtAudio', 'dtABC', 'dtCore', 'dtChar', 'dtGame', 'cppunit'] 
+mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar',  'cppunit'] 
+	
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
+
+if env.get('rti') != 0:
+	mainlibs += rtiLibs
+
 projectEnv.Append(LIBS = mainlibs)
+
+#Add this so we can include files from testActorLib.h
+projectEnv.Append(CPPPATH = ['#examples'])
 
 programs = {}
 
 result = 'true'
+
+if projectEnv['usePrefixHeaders'] and OS != 'windows':
+ 	projectEnv.Append(CPPFLAGS = " -include inc/prefix/dtutilprefix.h ")
+
 
 #create all the program names base on the sets of sources.
 for prog in sources.keys():
@@ -42,6 +57,7 @@ for prog in sources.keys():
    if mode == 'debug' and OS == 'windows':
       programs[prog] += 'd'
    #create the program
+     
    app = projectEnv.Program(programs[prog], sources[prog])
    
    if (app == '[]') :

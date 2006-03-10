@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -32,214 +32,214 @@ namespace dtDAL
      */
     class DT_DAL_EXPORT DataType : public dtUtil::Enumeration
     {
-        DECLARE_ENUM(DataType);
-    public:
-        /**
-         * Data type used to represent an unknown type.  For example, the GenericActorProperty
-         * returns identifies its datatype as unknown.  It does this because the
-         * GenericActorProperty can be any type.
-         * @see GenericActorProperty
-         */
-        static DataType UNKNOWN;
+         DECLARE_ENUM(DataType);
+      public:
+         /**
+          * Data type used to represent an unknown type.  For example, the GenericActorProperty
+          * returns identifies its datatype as unknown.  It does this because the
+          * GenericActorProperty can be any type.
+          * @see GenericActorProperty
+          */
+         static DataType UNKNOWN;
 
-        /**
-         * Standard 8-bit signed char value.
-         */
-        static DataType CHAR;
+         /**
+          * Standard 8-bit signed char value.
+          */
+         static DataType CHAR;
 
-        /**
-         * Standard 8-bit unsigned char value.
-         */
-        static DataType UCHAR;
+         /**
+          * Standard 8-bit unsigned char value.
+          */
+         static DataType UCHAR;
 
-        /**
-         * Standard 32-bit floating point value.
-         */
-        static DataType FLOAT;
+         /**
+          * Standard 32-bit floating point value.
+          */
+         static DataType FLOAT;
 
-        /**
-         * Standard 64-bit precision decimal number.
-         */
-        static DataType DOUBLE;
+         /**
+          * Standard 64-bit precision decimal number.
+          */
+         static DataType DOUBLE;
 
-        /**
-         * Standard 32-bit signed integer value.
-         */
-        static DataType INT;
+         /**
+          * Standard 32-bit signed integer value.
+          */
+         static DataType INT;
 
-        /**
-         * Standard 32-bit unsigned integer value.
-         */
-        static DataType UINT;
+         /**
+          * Standard 32-bit unsigned integer value.
+          */
+         static DataType UINT;
 
-        /**
-         * Similar to the long datatype.
-         */
-        static DataType LONGINT;
+         /**
+          * Similar to the long datatype.
+          */
+         static DataType LONGINT;
 
-        /**
-         * Similar to the unsigned long datatype.
-         */
-        static DataType ULONGINT;
+         /**
+          * Similar to the unsigned long datatype.
+          */
+         static DataType ULONGINT;
 
-        /**
-         * Similar to the short datatype.
-         */
-        static DataType SHORTINT;
+         /**
+          * Similar to the short datatype.
+          */
+         static DataType SHORTINT;
 
-        /**
-         * Similar to the unsigned short datatype.
-         */
-        static DataType USHORTINT;
+         /**
+          * Similar to the unsigned short datatype.
+          */
+         static DataType USHORTINT;
 
-        /**
-         * String data type.
-         */
-        static DataType STRING;
+         /**
+          * String data type.
+          */
+         static DataType STRING;
 
-        /**
-         * Boolean data type.
-         */
-        static DataType BOOLEAN;
+         /**
+          * Boolean data type.
+          */
+         static DataType BOOLEAN;
 
-        /**
-         * A vector of 4 values.
-         */
-        static DataType VEC4;
+         /**
+          * A vector of 4 values.
+          */
+         static DataType VEC4;
 
-        /**
-         * A vector of 3 values.
-         */
-        static DataType VEC3;
+         /**
+          * A vector of 3 values.
+          */
+         static DataType VEC3;
+         
+         /**
+          * A vector of 2 values.
+          */
+         static DataType VEC2;
+         
+         /**
+          * A vector of 4 values.
+          */
+         static DataType VEC4F;
 
-        /**
-         * A vector of 2 values.
-         */
-        static DataType VEC2;
+         /**
+          * A vector of 3 values.
+          */
+         static DataType VEC3F;
 
-        /**
-        * A vector of 4 values.
-        */
-        static DataType VEC4F;
+         /**
+          * A vector of 2 values.
+          */
+         static DataType VEC2F;
 
-        /**
-        * A vector of 3 values.
-        */
-        static DataType VEC3F;
+         /**
+          * A vector of 4 values.
+          */
+         static DataType VEC4D;
 
-        /**
-        * A vector of 2 values.
-        */
-        static DataType VEC2F;
+         /**
+          * A vector of 3 values.
+          */
+         static DataType VEC3D;
 
-        /**
-        * A vector of 4 values.
-        */
-        static DataType VEC4D;
+         /**
+          * A vector of 2 values.
+          */
+         static DataType VEC2D;
 
-        /**
-        * A vector of 3 values.
-        */
-        static DataType VEC3D;
+         /**
+          * A color data type with 3 values, Red, Green, and Blue.
+          */
+         static DataType RGBCOLOR;
 
-        /**
-        * A vector of 2 values.
-        */
-        static DataType VEC2D;
+         /**
+          * A color data type with 4 values, Red, Green, Blue, and Alpha.
+          */
+         static DataType RGBACOLOR;
 
-        /**
-         * A color data type with 3 values, Red, Green, and Blue.
-         */
-        static DataType RGBCOLOR;
+         /**
+          * A group
+          */
+         static DataType GROUP;
 
-        /**
-         * A color data type with 4 values, Red, Green, Blue, and Alpha.
-         */
-        static DataType RGBACOLOR;
+         /**
+          * An actor
+          */
+         static DataType ACTOR;
 
-        /**
-         * A group
-         */
-        static DataType GROUP;
+         /**
+          * Datatype which represents an enumeration.
+          * @see dtDAL::Enumeration
+          */
+         static DataType ENUMERATION;
 
-        /**
-         * An actor
-         */
-        static DataType ACTOR;
+         /**
+          * A static mesh resource
+          */
+         static DataType STATIC_MESH;
 
-        /**
-         * Datatype which represents an enumeration.
-         * @see dtDAL::Enumeration
-         */
-        static DataType ENUMERATION;
+         /**
+          * A texture resource
+          */
+         static DataType TEXTURE;
+         
+         /**
+          * A replicant body character
+          */
+         static DataType CHARACTER;
+         
+         /**
+          * Geometry, textures, etc that together should be used as a terrain.
+          */
+         static DataType TERRAIN;
+         
+         /**
+          * A Sound resource
+          */
+         static DataType SOUND;
+         
+         /**
+          * A Particle System resource
+          */
+         static DataType PARTICLE_SYSTEM;
+         
+         /**
+          * @return true if this datatype represents a resource
+          */
+         bool IsResource() const { return mResource; };
+         
+         /**
+          * Gets a pretty name that can be used in the UI.
+          * @return The pretty name
+          */
+         const std::string &GetDisplayName() { return mDisplayName; }
+         
+         /**
+          * Gets the id associated with this datatype
+          */
+         unsigned char GetTypeId() const { return mId; }
+         
+         /**
+          * Sets the id of a datatype
+          */
+         void SetTypeId(unsigned char newId) { mId = newId; }
+         
+       private:
+         /**
+          * Private constructor which registers a new DataType enumeration
+          * with the static list of available DataType enumerations.
+          */
+         DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name) 
+         {
+               AddInstance(this);
+               mResource = resource;
+               mDisplayName = displayName;
+               mId = id;
+         }
 
-        /**
-         * A static mesh resource
-         */
-        static DataType STATIC_MESH;
-
-        /**
-         * A texture resource
-         */
-        static DataType TEXTURE;
-
-        /**
-         * A replicant body character
-         */
-        static DataType CHARACTER;
-
-        /**
-         * Geometry, textures, etc that together should be used as a terrain.
-         */
-        static DataType TERRAIN;
-
-        /**
-         * A Sound resource
-         */
-        static DataType SOUND;
-
-        /**
-        * A Particle System resource
-        */
-        static DataType PARTICLE_SYSTEM;
-
-        /**
-         * @return true if this datatype represents a resource
-         */
-        bool IsResource() const { return mResource; };
-
-        /**
-         * Gets a pretty name that can be used in the UI.
-         * @return The pretty name
-         */
-        const std::string &GetDisplayName() { return mDisplayName; }
-
-        /**
-         * Gets the id associated with this datatype
-         */
-        unsigned char GetTypeId() const { return mId; }
-
-        /**
-         * Sets the id of a datatype
-         */
-        void SetTypeId(unsigned char newId) { mId = newId; }
-
-    private:
-        /**
-         * Private constructor which registers a new DataType enumeration
-         * with the static list of available DataType enumerations.
-         */
-        DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name) 
-        {
-            AddInstance(this);
-            mResource = resource;
-            mDisplayName = displayName;
-            mId = id;
-        }
-
-        bool mResource;
-        std::string mDisplayName;
-        unsigned char mId;
+         bool mResource;
+         std::string mDisplayName;
+         unsigned char mId;
     };
 }
 

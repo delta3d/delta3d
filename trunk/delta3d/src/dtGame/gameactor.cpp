@@ -28,14 +28,16 @@
 #include "dtGame/gameactor.h"
 #include "dtGame/actorupdatemessage.h"
 #include "dtGame/gamemanager.h"
+#include "dtGame/gmcomponent.h"
+
 
 namespace dtGame
 {
-    IMPLEMENT_ENUM(GameActorProxy::Ownership);
-    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_PUBLISHED("Server+Published");
-    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_LOCAL("Server Local");
-    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_LOCAL("Client Local");
-    GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL("Client and Server Local");
+   IMPLEMENT_ENUM(GameActorProxy::Ownership);
+   GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_PUBLISHED("Server+Published");
+   GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_LOCAL("Server Local");
+   GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_LOCAL("Client Local");
+   GameActorProxy::Ownership GameActorProxy::Ownership::CLIENT_AND_SERVER_LOCAL("Client and Server Local");
 
 	///////////////////////////////////////////
 	// Actor Proxy code
@@ -150,7 +152,17 @@ namespace dtGame
       
       const StringMessageParameter* nameParam = static_cast<const StringMessageParameter*>(msg.GetParameter("Name"));
       if (nameParam != NULL)
+      {
+         if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+               "Setting name on actor type \"%s.%s\" to value \"%s\"",
+               GetActorType().GetCategory().c_str(),
+               GetActorType().GetName().c_str(), nameParam->ToString().c_str()
+               );
+         }
          SetName(nameParam->GetValue()); 
+      }
 
       std::vector<const MessageParameter*> params;
       msg.GetUpdateParameters(params);
@@ -163,23 +175,33 @@ namespace dtGame
    
          if (property == NULL)
          {
-            LOG_ERROR(("Property " + params[i]->GetName() + " was not found on the actor.").c_str());
+            LOG_ERROR(("Property \"" + params[i]->GetName() + "\" was not found on the actor.").c_str());
+            continue;
+         }
+
+         //can't set a read-only property.
+         if (property->IsReadOnly())
+         {
+            if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+            {
+               dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  "Not setting property \"%s\" on actor type \"%s.%s\" to value \"%s\" because the property is read only.",
+                  params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
+                  GetActorType().GetName().c_str(), params[i]->ToString().c_str()
+                  );
+            }
             continue;
          }
 
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
             dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
-               "Setting property %s on actor type %s.%s to value %s",
+               "Setting property \"%s\" on actor type \"%s.%s\" to value \"%s\"",
                params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
                GetActorType().GetName().c_str(), params[i]->ToString().c_str()
                );
          }
-         
-         //can't set a read-only property.
-         if (property->IsReadOnly())
-            continue;
-         
+                  
          if (paramType == dtDAL::DataType::BOOLEAN)
          {
             dtDAL::BooleanActorProperty *bap = static_cast<dtDAL::BooleanActorProperty*> (property);
@@ -216,7 +238,7 @@ namespace dtGame
             std::string value = params[i]->ToString();
             
             if (!prop->SetValueFromString(value))
-               LOG_ERROR(("Failed to set the value on property " + params[i]->GetName() + ".").c_str());
+               LOG_ERROR(("Failed to set the value on property \"" + params[i]->GetName() + "\".").c_str());
          }
          else if (paramType == dtDAL::DataType::ACTOR)
          {
@@ -277,7 +299,7 @@ namespace dtGame
             vap->SetValue(&newValue);
          }
          else
-            LOG_ERROR(("Message parameter type " + paramType.GetName() + " is not supported").c_str());
+            LOG_ERROR(("Message parameter type \"" + paramType.GetName() + "\" is not supported").c_str());
       }
       
    }
@@ -377,7 +399,6 @@ namespace dtGame
             break;
          }
       }
-      
    }
    
    void GameActorProxy::SetRemote(bool remote)

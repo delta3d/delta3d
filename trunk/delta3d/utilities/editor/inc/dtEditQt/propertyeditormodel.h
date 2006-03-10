@@ -26,7 +26,7 @@
 #include "dtEditQt/dynamicabstractcontrol.h"
 #include "dtEditQt/dynamicabstractparentcontrol.h"
 #include "dtEditQt/dynamicgroupcontrol.h"
-#include <QAbstractItemModel>
+#include <QtCore/QAbstractItemModel>
 
 namespace dtEditQt 
 {

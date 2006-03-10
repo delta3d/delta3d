@@ -1,4 +1,4 @@
-/* 
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine 
  * Copyright (C) 2004-2005 MOVES Institute 
  *
@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef DELTA_DAL_EXPORT
 #define DELTA_DAL_EXPORT

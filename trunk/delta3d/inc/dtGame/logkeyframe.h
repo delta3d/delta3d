@@ -36,21 +36,13 @@ namespace dtGame
    {
       public:
 
-         virtual ~LogKeyframe() {}
-
          // Constructor
-         LogKeyframe() : mSimTimeStamp(0), mLogFileOffset(0) { }
-
-         // Copy Constructor
-         LogKeyframe(const LogKeyframe& toCopy) 
+         LogKeyframe() : mSimTimeStamp(0), mLogFileOffset(0) 
          { 
-            mName = toCopy.mName;
-            mDescription = toCopy.mDescription;
-            mUniqueId = toCopy.mUniqueId;
-            mSimTimeStamp = toCopy.mSimTimeStamp;
-            mActiveMap = toCopy.mActiveMap;
-            mLogFileOffset = toCopy.mLogFileOffset;
+            mTagId = dtCore::UniqueId(""); 
          }
+         
+         virtual ~LogKeyframe() {}
 
          /**
           * Gets the name 
@@ -100,6 +92,20 @@ namespace dtGame
           * @param The new unique id
           */
          void SetUniqueId(const dtCore::UniqueId &newId) { mUniqueId = newId; }
+         
+         /**
+          * Sets the id of the tag owning this keyframe.
+          * @param The unique id for a tag owning this keyframe or an empty id
+          *    if there is no owner tag.
+          */
+         void SetTagUniqueId(const dtCore::UniqueId &tagId) { mTagId = tagId; }
+         
+         /**
+          * Gets the uniqueid of the tag owning this keyframe is one exists.
+          * @return A valid identifier for the tag or an empty identifier if no tag
+          *    currently owns this keyframe.
+          */
+         const dtCore::UniqueId &GetTagUniqueId() const { return mTagId; }
 
          /**
           * Gets the map name that was active when this keyframe was generated
@@ -151,26 +157,13 @@ namespace dtGame
          {
             return mUniqueId > compareTo.mUniqueId;
          }
-
-         LogKeyframe& operator=(const LogKeyframe& assignFrom) 
-         {
-            if (&assignFrom == this)
-               return *this;
-
-            mName = assignFrom.mName;
-            mDescription = assignFrom.mDescription;
-            mUniqueId = assignFrom.mUniqueId;
-            mSimTimeStamp = assignFrom.mSimTimeStamp;
-            mActiveMap = assignFrom.mActiveMap;
-            mLogFileOffset = assignFrom.mLogFileOffset;
-            return *this;
-         }
          
       private:
          
          std::string mName;
          std::string mDescription;
          dtCore::UniqueId mUniqueId;
+         dtCore::UniqueId mTagId;
          double mSimTimeStamp;
          std::string mActiveMap;
          long mLogFileOffset;

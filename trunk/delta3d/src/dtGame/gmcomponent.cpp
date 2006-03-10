@@ -26,7 +26,8 @@
 
 namespace dtGame
 {
-   GMComponent::GMComponent() : mParent(NULL) 
+   GMComponent::GMComponent(const std::string& name) : dtCore::Base(name), mParent(NULL),
+      mPriority(&GameManager::ComponentPriority::NORMAL)
    {
    }
 

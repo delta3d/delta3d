@@ -23,15 +23,13 @@
 
 #include <string>
 #include "dtGame/gmcomponent.h"
-#include "dtGame/logtag.h"
-#include "dtCore/sigslot.h"
 #include "dtGame/logstatus.h"
+#include "dtGame/logkeyframe.h"
+#include "dtCore/sigslot.h"
 
 namespace dtGame
 {
-   class LogKeyframe;
    class LogTag;
-   class LogStatus;
    
    /**
     * The Log Controller is a GM Component 
@@ -70,7 +68,7 @@ namespace dtGame
           * Sends a request to the server logger component to tell it to 
           * insert a new keyframe.  Primarily used in Record.  May work in 
           * playback mode depending on the server's implementation and the logstream.
-          * @par keyframe The keyframe information to send to the server.
+          * @param keyframe The keyframe information to send to the server.
           */
          virtual void RequestCaptureKeyframe(const LogKeyframe &keyframe);
 
@@ -102,14 +100,14 @@ namespace dtGame
           * Sends a request to the server logger component to tell it to 
           * insert a new tag.  Primarily used in Record.  May work in 
           * playback mode depending on the server's implementation and the logstream.
-          * @par logTag The tag information to send to the server.
+          * @param logTag The tag information to send to the server.
           */
          virtual void RequestInsertTag(const LogTag &tag);
 
          /**
           * Sends a request to the server logger component to tell it to delete the specified 
           * log file by name.  Only valid in Idle state (sends request anyway).
-          * @par logFile The log file to tell the server to delete.
+          * @param logFile The log file to tell the server to delete.
           */
          virtual void RequestDeleteLogFile(const std::string &logFile);
 
@@ -117,7 +115,7 @@ namespace dtGame
           * Sends a request to the server logger component to tell it to change the log 
           * file name.  Only valid in Idle state (sends request anyway).  A successful set
           * should cause a status message, error (like not idle state) sends a reject.
-          * @par logFile The log file to send to the server.
+          * @param logFile The log file to send to the server.
           */
          virtual void RequestSetLogFile(const std::string &logFile);
 
@@ -128,17 +126,46 @@ namespace dtGame
           * that you keep this interval far apart (like 5-10 minutes).  A keyframe is a 
           * fairly expensive operation.  If you set this interval small, your performance 
           * will most likely greatly suffer.
-          * @par interval The interval to send to the server.
+          * @param interval The interval to send to the server.
           */
-         virtual void RequestSetAutoKeyframeInterval(const double interval);
+         virtual void RequestSetAutoKeyframeInterval(double interval);
 
          /**
           * Returns the last received LogStatus.  No Set, since only this object should set it.
           */
          const LogStatus &GetLastKnownStatus() { return mLastKnownStatus; }
+         
+         /**
+          * Gets the list of logs cached since the last query from the server logger component.
+          * @return A list of logs stored as strings.
+          */
+         const std::vector<std::string> &GetLastKnownLogList() const 
+         { 
+            return mLastKnownLogList; 
+         }
+         
+         /**
+          * Gets the list of keyframes cached since the last query to the server logger
+          * component.
+          * @return A list of keyframes.
+          */
+         const std::vector<LogKeyframe> &GetLastKnownKeyframeList() const
+         {
+            return mLastKnownKeyframeList;
+         }
+         
+         /**
+          * Gets the list of tags cached since the last query to the server logger
+          * component.
+          * @return A list of tags.
+          */
+         const std::vector<LogTag> &GetLastKnownTagList() const
+         {
+            return mLastKnownTagList;
+         }
 
          /**
-          * D3D signal/slot - sent when a logger status message is received by 
+          * Delta3D signal/slot - sent when a logger status message is received by 
           * the logger controller component.  Bind to this with something like this:
           *    myController->SignalReceivedStatus().connect_slot(this, &MyClass::MySlotMethod)
           * @return the signal
@@ -146,24 +173,32 @@ namespace dtGame
          sigslot::signal1<const LogStatus &> &SignalReceivedStatus() { return _receivedStatus; }
 
          /**
-          * D3D signal/slot - sent when a logger rejection message is received by 
+          * Delta3D signal/slot - sent when a logger rejection message is received by 
           * the logger controller component.  Bind to this with something like this:
           *    myController->SignalReceivedRejection().connect_slot(this, &MyClass::MySlotMethod)
           * @return the signal
           */
          sigslot::signal1<const Message &> &SignalReceivedRejection() { return _receivedRejection; }
 
-
       protected:
       
          virtual ~LogController();
 
       private:
-         dtGame::LogStatus mLastKnownStatus;
+         LogStatus mLastKnownStatus;
+         
+         //Holds the list of keyframes retreived from the last request.
+         std::vector<LogKeyframe> mLastKnownKeyframeList;
+         
+         //Holds the list of tags retreived from the last request.
+         std::vector<LogTag> mLastKnownTagList;
+         
+         //This list stores the list of logs available since the last query to the server logger component.
+         std::vector<std::string> mLastKnownLogList;
 
          // The signal that gets triggered when processMessage receives a LOG_INFO_STATUS message
          sigslot::signal1<const LogStatus &> _receivedStatus;
-         // The signal that gets triggered when processMessage receives a LOG_INFO_STATUS message
+         // The signal that gets triggered when processMessage receives a rejection message
          sigslot::signal1<const Message &> _receivedRejection;
 
    };

@@ -19,12 +19,12 @@
 *
 * @author Teague Coonan
 */
-#ifndef __TabWrapper_h
-#define __TabWrapper_h
+#ifndef DELTA_TAB_WRAPPER
+#define DELTA_TAB_WRAPPER
 
-#include <QObject>
-#include <QWidget>
-#include <QString>
+#include <QtCore/QObject>
+#include <QtGui/QWidget>
+#include <QtCore/QString>
 
 namespace dtEditQt 
 {
