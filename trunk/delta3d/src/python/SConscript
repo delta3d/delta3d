@@ -153,10 +153,12 @@ if CheckForBoost() :
    
    prefixHeaderFlags = ""
    if OS != 'windows' and env['usePrefixHeaders']:
-   	prefixHeaderFlags = " -include inc/prefix/dtprefix.h "
+      prefixHeaderFlags = " -include inc/prefix/dtprefix.h "
    
-   pythonCPPFlags = env['CPPFLAGS'] + prefixHeaderFlags
-   
+   pythonCPPFlags = prefixHeaderFlags
+   if env.has_key('CPPFLAGS') :
+      pythonCPPFlags = env['CPPFLAGS'] + pythonCPPFlags
+    
    pythonDtCoreLib = env.SharedLibrary(  dtCoreBindingsTarget,    pythonSrcs['dtCore'],   LIBS = addToLibs + [dtLibs['dtCore'],dtLibs['dtUtil']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    pythonDtAbcLib = env.SharedLibrary(   dtAbcBindingsTarget,     pythonSrcs['dtABC'],    LIBS = addToLibs + [dtLibs['dtABC'],dtLibs['dtCore'],dtLibs['dtDAL']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
    pythonDtAudioLib = env.SharedLibrary( dtAudioBindingsTarget,   pythonSrcs['dtAudio'],  LIBS = addToLibs + [dtLibs['dtAudio'],dtLibs['dtCore']], LINKFLAGS = addToLink, CPPFLAGS=pythonCPPFlags )
