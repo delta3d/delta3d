@@ -965,7 +965,7 @@ elif OS == 'linux' :
       'uuid'                : 'uuid',
       'opengl'              : 'GL',
       'cppunit'             : 'cppunit',
-      'curses'              : 'curses'
+      'ncurses'             : 'ncurses'
       }
 elif OS == 'darwin' :
    extLibs = { 
@@ -1003,7 +1003,7 @@ elif OS == 'darwin' :
       'IOKit'          : 'IOKit',
       'Carbon'         : 'Carbon',
       'cppunit'        : 'cppunit',
-      'curses'         : 'curses'
+      'ncurses'        : 'ncurses'
       }
 else :
    extLibs = {}
@@ -1044,9 +1044,9 @@ linkOrder = [
 if OS == 'windows' :
    linkOrder = linkOrder + [ 'User32', 'Advapi32', 'Rpcrt4',  'Winmm', 'Gdi32', 'opengl', 'winsock', 'shell32', 'ole32' ]
 elif OS == 'darwin' :
-   linkOrder = [ 'CoreFoundation', 'IOKit', 'Carbon', 'curses' ] + linkOrder
+   linkOrder = [ 'CoreFoundation', 'IOKit', 'Carbon', 'ncurses' ] + linkOrder
 elif OS == 'linux' :
-   linkOrder = [ 'Xxf86vm', 'uuid', 'curses' ] + linkOrder 
+   linkOrder = [ 'Xxf86vm', 'uuid', 'ncurses' ] + linkOrder 
 
 foundLibs = {}
 
