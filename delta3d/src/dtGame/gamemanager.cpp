@@ -233,7 +233,7 @@ namespace dtGame
    {
       // stats information used to track statistics per fragment (usually about 1 second)
       dtCore::Timer statsTickClock; 
-      dtCore::Timer_t frameTickStart;
+      dtCore::Timer_t frameTickStart(0);
       
       if (mStatisticsInterval > 0) 
          frameTickStart = statsTickClock.tick();
