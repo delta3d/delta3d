@@ -678,7 +678,7 @@ namespace dtGame
        {
          mLogStream->InsertKeyFrame(kf);
        }
-       catch (dtUtil::Exception &e)
+       catch (dtUtil::Exception&)
        {
          return;
        }
