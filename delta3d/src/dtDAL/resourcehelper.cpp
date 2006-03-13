@@ -94,7 +94,7 @@ namespace dtDAL
 
       virtual bool ResourceIsDirectory() const { return false; }
 
-      //this returns false because the resources is not a directory 
+      //this returns false because the resources is not a directory
       virtual const std::string& GetResourceDirectoryExtension() const { return mResourceDirExt; };
 
       virtual const std::map<std::string, std::string>& GetFileFilters() const
@@ -102,7 +102,7 @@ namespace dtDAL
          return mFileFilters;
       }
 
-      virtual const std::string& GetTypeHandlerDescription() const 
+      virtual const std::string& GetTypeHandlerDescription() const
       {
          return mDescription;
       }
@@ -162,13 +162,13 @@ namespace dtDAL
          std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > extMap;
 
          mTypeHandlers.insert(std::make_pair(&d, extMap));
-            
+
          mResourceDirectoryTypeHandlers.insert(std::make_pair(&d, extMap));
       }
 
       //Not yet working properly
       RegisterResourceTypeHander(*new RBodyResourceTypeHandler);
-        
+
       std::vector<std::string> fltMasterFiles;
       fltMasterFiles.push_back("main.flt");
       fltMasterFiles.push_back("terrain.flt");
@@ -221,7 +221,7 @@ namespace dtDAL
             //ask the handler if it handles the given file.
             if (handler != NULL && handler->HandlesFile(filePath, fType))
                return handler;
-                
+
          }
          else
          {
@@ -229,7 +229,7 @@ namespace dtDAL
             if (fType == FILE_NOT_FOUND)
             {
                return NULL;
-                    
+
             }
             else if (fType == DIRECTORY)
             {
@@ -241,7 +241,7 @@ namespace dtDAL
                   if (handler != NULL && handler->HandlesFile(filePath, fType))
                      return handler;
                }
-                    
+
                //if ext is empty or the ResourceDirectoryTypeHandlers map had no matches, look at all
                //the directory importers to see if there is a match.
                for (std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
@@ -266,12 +266,12 @@ namespace dtDAL
 
    //////////////////////////////////////////////////////////
    const ResourceTypeHandler* ResourceHelper::FindHandlerForDataTypeAndExtension(
-      const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch, 
+      const std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >& mapToSearch,
       DataType& dt, const std::string& ext) const
    {
       std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::const_iterator found
          = mapToSearch.find(&dt);
-        
+
       if (found != mapToSearch.end())
       {
          const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& handlerMap = found->second;
@@ -312,11 +312,11 @@ namespace dtDAL
                tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
             }
          }
-            
+
          //lookup directory handlers by type.
          found = mResourceDirectoryTypeHandlers.find(dt);
-            
-         if (found != mTypeHandlers.end())
+
+         if (found != mResourceDirectoryTypeHandlers.end())
          {
             const std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& extMap = found->second;
             for (std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = extMap.begin();
@@ -332,7 +332,7 @@ namespace dtDAL
          {
             tempSet.insert(osg::ref_ptr<const ResourceTypeHandler>(i->second.get()));
          }
-            
+
          toFill.insert(toFill.begin(), tempSet.begin(), tempSet.end());
       }
       else
@@ -394,16 +394,16 @@ namespace dtDAL
 
       if (handler.ImportsDirectory())
          mDirectoryImportingTypeHandlers.insert(std::make_pair(dt, osg::ref_ptr<ResourceTypeHandler>(&handler)));
-        
-      if (handler.ResourceIsDirectory()) 
+
+      if (handler.ResourceIsDirectory())
       {
          //get the map for the
          std::map<DataType*, std::map<std::string, osg::ref_ptr<ResourceTypeHandler> > >::iterator foundRDMap = mResourceDirectoryTypeHandlers.find(dt);
-            
-         if (foundRDMap != mResourceDirectoryTypeHandlers.end()) 
+
+         if (foundRDMap != mResourceDirectoryTypeHandlers.end())
          {
             std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >& dirExtMap = foundRDMap->second;
-                
+
             std::map<std::string, osg::ref_ptr<ResourceTypeHandler> >::iterator dirExtFound = dirExtMap.find(handler.GetResourceDirectoryExtension());
             if (dirExtFound == dirExtMap.end())
             {
@@ -416,9 +416,9 @@ namespace dtDAL
                                    "Not inserting new handler for resource directory extension \"%s\" because a handler is already registered for it.",
                                    handler.GetResourceDirectoryExtension().c_str());
             }
-                
+
          }
-                
+
       }
    }
 
