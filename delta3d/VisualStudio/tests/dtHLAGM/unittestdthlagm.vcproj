@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="unittestdthlagm"
+	Name="UnitTestDtHLAGM"
 	ProjectGUID="{8F56325D-411A-49D3-BAA9-FD46C6B80FD8}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -34,7 +34,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtild.lib dtCored.lib dtHLAGMd.lib dtGamed.lib dtDALd.lib osgd.lib osgDBd.lib cppunitd.lib"
-				OutputFile="../../../tests/UnitTestsDtHlaGmd.exe"
+				OutputFile="../../../tests/UnitTestsDtHLAGMd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
 				IgnoreDefaultLibraryNames="libcmtd"
@@ -86,7 +86,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtil.lib dtCore.lib dtHLAGM.lib dtGame.lib dtDAL.lib osg.lib osgDB.lib cppunit.lib"
-				OutputFile="../../../tests/UnitTestsDtHlaGm.exe"
+				OutputFile="../../../tests/UnitTestsDtHLAGM.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
 				IgnoreDefaultLibraryNames="libcmtd"
