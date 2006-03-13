@@ -1,6 +1,6 @@
 Import('*')
 
 srcs = SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtNet', 'gne', 'HawkNL', 'winsock', 'curses' ]
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtNet', 'gne', 'HawkNL', 'winsock', 'ncurses' ]
 
 env.BuildProgram( 'testNetwork', srcs, deps )
