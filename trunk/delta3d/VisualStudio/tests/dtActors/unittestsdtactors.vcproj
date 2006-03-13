@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="unittestsdtactors"
+	Name="UnitTestsDtActors"
 	ProjectGUID="{14A49BBF-6E94-4F08-81A8-469E5A050632}"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../../tests/dtActor/windows-msvc-debug"
-			IntermediateDirectory="../../../tests/dtActor/windows-msvc-debug"
+			OutputDirectory="../../../tests/dtActors/windows-msvc-debug"
+			IntermediateDirectory="../../../tests/dtActors/windows-msvc-debug"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtBSPd.lib dtUtild.lib dtActorsd.lib ul_d.lib cppunitd.lib dtGamed.lib"
+				AdditionalDependencies="dtCored.lib dtDALd.lib dtUtild.lib dtActorsd.lib cppunitd.lib"
 				OutputFile="../../../tests/UnitTestsDtActorsd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -65,8 +65,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../../tests/dtActor/windows-msvc-release"
-			IntermediateDirectory="../../../tests/dtActor/windows-msvc-release"
+			OutputDirectory="../../../tests/dtActors/windows-msvc-release"
+			IntermediateDirectory="../../../tests/dtActors/windows-msvc-release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -84,11 +84,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib dtGame.lib dtActorsd.lib xerces-c_2.lib osg.lib"
+				AdditionalDependencies="dtCore.lib dtDAL.lib dtUtil.lib cppunit.lib dtActors.lib"
 				OutputFile="../../../tests/UnitTestsDtActors.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
 				IgnoreDefaultLibraryNames="libcmtd"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
