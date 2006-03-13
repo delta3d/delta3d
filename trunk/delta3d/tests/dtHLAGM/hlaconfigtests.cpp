@@ -147,9 +147,14 @@ void HLAConfigTests::CheckObjectToActorMapping(
    else
    {
       CPPUNIT_ASSERT_MESSAGE("DIS ID should not be NULL.", otoa->GetDisID() != NULL);
-      std::ostringstream ss;
-      ss << "DIS ID should be equal to \"" << *entityType << "\" but it is \"" << *otoa->GetDisID() << ".\"";
-      CPPUNIT_ASSERT_MESSAGE(ss.str(), *otoa->GetDisID() == *entityType);      
+      
+      // Somehow this won't link because of an unresolved std::ostream& operator<<(std::ostream &o, const EntityType &et)
+      // on VS2003...
+
+      //std::ostringstream ss;
+      //ss << "DIS ID should be equal to \"" << *entityType << "\" but it is \"" << *otoa->GetDisID() << ".\"";
+      //CPPUNIT_ASSERT_MESSAGE(ss.str(), *otoa->GetDisID() == *entityType);      
+      CPPUNIT_ASSERT(*otoa->GetDisID() == *entityType);
    }  
    
    const std::vector<dtHLAGM::AttributeToProperty>& propsActual = otoa->GetOneToOneMappingVector();
