@@ -145,7 +145,15 @@ namespace dtCore
          else
          {
             mKeyFrames.clear();
-            mSources.erase(source);
+            for( typename RecordablePtrContainer::iterator i = mSources.begin();
+                 i != mSources.end();
+                 ++i )
+            {
+               if( *i == source )
+               {
+                  mSources.erase(i);
+               }
+            }
          }
       }
 
