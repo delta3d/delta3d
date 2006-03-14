@@ -74,12 +74,11 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(HLAConfigTests);
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
+#if defined (_DEBUG) && defined (_WIN32)
 const char* const HLAConfigTests::mHLAActorRegistry="testGameActorLibraryd";
 #else
 const char* const HLAConfigTests::mHLAActorRegistry="testGameActorLibrary";
 #endif
-
 
 // Called implicitly by CPPUNIT when the app starts
 void HLAConfigTests::setUp()
