@@ -74,11 +74,9 @@ class HLAConfigTests : public CPPUNIT_NS::TestFixture
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(HLAConfigTests);
 
-#if defined (_DEBUG) && defined (_WIN32)
-const char* const HLAConfigTests::mHLAActorRegistry="testGameActorLibraryd";
-#else
+// The HLAMappingExample.xml file only references the library with the 'd',
+// so it must match here, else the unit tets will fail.
 const char* const HLAConfigTests::mHLAActorRegistry="testGameActorLibrary";
-#endif
 
 // Called implicitly by CPPUNIT when the app starts
 void HLAConfigTests::setUp()
@@ -229,7 +227,7 @@ void HLAConfigTests::TestConfigure()
 
       config.LoadConfiguration(*mTranslator, "Federations/HLAMappingExample.xml");
 
-      CPPUNIT_ASSERT_MESSAGE(std::string("Library should be loaded:") + mHLAActorRegistry, 
+      CPPUNIT_ASSERT_MESSAGE(std::string("Library should be loaded: ") + mHLAActorRegistry, 
          dtDAL::LibraryManager::GetInstance().GetRegistry(mHLAActorRegistry) != NULL);
       
       {
