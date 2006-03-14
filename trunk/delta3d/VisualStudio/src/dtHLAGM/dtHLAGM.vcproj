@@ -28,17 +28,17 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtGamed.lib osgd.lib osgDB.lib xerces-c_2D.lib librti13.lib Wsock32.lib"
-				OutputFile="../../../bin/dtHLAGM.dll"
+				OutputFile="../../../bin/dtHLAGMd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/dtHLAGM.pdb"
+				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				SubSystem="1"
 				ImportLibrary="../../../lib/dtHLAGMd.lib"
 				TargetMachine="1"/>
@@ -78,7 +78,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -87,7 +87,7 @@
 				OutputFile="../../../bin/dtHLAGM.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
