@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
         mainWindow.setWindowMenuTabsChecked();
 
         dtCore::System::Instance()->Start();
+        dtCore::System::Instance()->Config();
         result = app.exec();
         dtCore::System::Instance()->Stop();
     }
