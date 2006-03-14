@@ -18,7 +18,7 @@
  *
 */
 
-/** @file 
+/** @file
   * Utility methods for using strings.
   * @author David Guthrie
   * @author John K. Grant
@@ -44,7 +44,8 @@ namespace dtUtil
    class IsSpace;
 
    template <class Pred=IsSpace>
-   class StringTokenizer {
+   class StringTokenizer
+   {
    public:
       //The predicate should evaluate to true when applied to a separator.
       static void tokenize(std::vector<std::string>& roResult, std::string const& rostr,
@@ -54,21 +55,30 @@ namespace dtUtil
    //The predicate should evaluate to true when applied to a separator.
    template <class Pred>
    inline void StringTokenizer<Pred>::tokenize(std::vector<std::string>& roResult,
-                                             std::string const& rostr, Pred const& roPred) {
+                                             std::string const& rostr, Pred const& roPred)
+   {
       //First clear the results std::vector
       roResult.clear();
       std::string::const_iterator it = rostr.begin();
       std::string::const_iterator itTokenEnd = rostr.begin();
-      while(it != rostr.end()) {
+      while(it != rostr.end())
+      {
          //Eat seperators
-         while(roPred(*it))
-         it++;
-         //Find next token
-         itTokenEnd = std::find_if(it, rostr.end(), roPred);
-         //Append token to result
-         if(it < itTokenEnd)
-         roResult.push_back(std::string(it, itTokenEnd));
-         it = itTokenEnd;
+         if(roPred(*it))
+         {
+            it++;
+         }
+         else
+         {
+            //Find next token
+            itTokenEnd = std::find_if(it, rostr.end(), roPred);
+            //Append token to result
+            if(it < itTokenEnd)
+            {
+               roResult.push_back(std::string(it, itTokenEnd));
+            }
+            it = itTokenEnd;
+         }
       }
    }
 
@@ -80,7 +90,7 @@ namespace dtUtil
       public:
          #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
             IsSpace(const std::locale& loc=std::locale("english") ) : mLocale(loc) {}
-         #elif defined (__APPLE__) 
+         #elif defined (__APPLE__)
             IsSpace(const std::locale& loc=std::locale("C") ) : mLocale(loc) {}
          #else
             IsSpace(const std::locale& loc=std::locale("en_US.UTF-8") ) : mLocale(loc) {}
@@ -101,7 +111,7 @@ namespace dtUtil
        public:
            bool operator()(char c) const { return c == '/'; }
    };
-      
+
    /**
     * Generic string delimeter check function class.  Based on the character
     * passed to the constructor, this class will check for that character.
@@ -110,7 +120,7 @@ namespace dtUtil
    {
       public:
          IsDelimeter(char delim) : mDelimeter(delim) { }
-         bool operator()(char c) const { return c == mDelimeter; }         
+         bool operator()(char c) const { return c == mDelimeter; }
       private:
          char mDelimeter;
    };
@@ -119,12 +129,12 @@ namespace dtUtil
    * Trims whitespace off the front and end of a string
    * @param toTrim the string to trim.
    */
-   inline void trim(std::string& toTrim) 
+   inline void trim(std::string& toTrim)
    {
       if(toTrim.empty())
          return;
 
-      for (std::string::iterator i = toTrim.begin(); i != toTrim.end();) 
+      for (std::string::iterator i = toTrim.begin(); i != toTrim.end();)
       {
          if (isspace(*i))
                i = toTrim.erase(i);
@@ -132,7 +142,7 @@ namespace dtUtil
                break;
       }
 
-      for (unsigned int i = (toTrim.size() - 1); i >= 0; --i) 
+      for (unsigned int i = (toTrim.size() - 1); i >= 0; --i)
       {
          if (isspace(toTrim[i]))
                //we can just erase from the end because
@@ -161,7 +171,7 @@ namespace dtUtil
    {
       bool result = true;
       unsigned int i;
-       
+
       if (value.empty() || value == "NULL")
       {
          for (i = 0; i < size; ++i)
@@ -184,9 +194,9 @@ namespace dtUtil
       }
 
       return result;
-   }   
+   }
 
-   /** 
+   /**
     * A utility function to convert a basic type into a string. Use
     * template argument T for the type you'd like to convert.
     *
@@ -204,9 +214,9 @@ namespace dtUtil
    float DT_UTIL_EXPORT ToFloat(const std::string& d);
 
    double DT_UTIL_EXPORT ToDouble(const std::string& str);
-   
+
    unsigned int DT_UTIL_EXPORT ToUnsignedInt(const std::string& u);
-   
+
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
 };
 
