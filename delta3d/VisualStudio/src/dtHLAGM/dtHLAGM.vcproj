@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtGamed.lib osgd.lib osgDB.lib xerces-c_2D.lib librti13.lib Wsock32.lib"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib dtGamed.lib osgd.lib osgDBd.lib xerces-c_2D.lib librti13d.lib Wsock32.lib"
 				OutputFile="../../../bin/dtHLAGMd.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
