@@ -46,16 +46,16 @@
 
 #include <dtCore/globals.h>
 
-#include "dtDAL/project.h"
+#include <dtDAL/project.h>
 #include <dtUtil/log.h>
-#include "dtDAL/map.h"
-#include "dtDAL/mapxml.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/fileutils.h"
-#include "dtUtil/stringutils.h"
+#include <dtDAL/map.h>
+#include <dtDAL/mapxml.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/fileutils.h>
+#include <dtUtil/stringutils.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/actorproxyicon.h"
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/actorproxyicon.h>
 
 namespace dtDAL
 {
@@ -78,7 +78,8 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   Project::~Project() {
+   Project::~Project()
+   {
       MapXMLConstants::StaticShutdown();
       MapParser::StaticShutdown();
       //make sure the maps get closed before
@@ -550,12 +551,6 @@ namespace dtDAL
             scene.DisablePaging();
            
          scene.EnablePaging();
-      }
-
-      if (!addBillBoards)
-      {
-         osgUtil::Optimizer o;
-         o.optimize(scene.GetSceneNode(), osgUtil::Optimizer::DEFAULT_OPTIMIZATIONS);
       }
    }
 
