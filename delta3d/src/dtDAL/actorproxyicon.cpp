@@ -187,7 +187,7 @@ namespace dtDAL
       tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
       tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
       tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
       mConeStateSet->setTextureAttributeAndModes(0,tex,turnOn);
       mConeStateSet->setAttributeAndModes(pm,turnOn);
       mConeStateSet->setMode(GL_LIGHTING,turnOff);
@@ -198,7 +198,7 @@ namespace dtDAL
       tex->setWrap(osg::Texture2D::WRAP_S,osg::Texture2D::CLAMP);
       tex->setWrap(osg::Texture2D::WRAP_T,osg::Texture2D::CLAMP);
       tex->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR_MIPMAP_NEAREST);
-      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR_MIPMAP_LINEAR);
+      tex->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
       mCylinderStateSet->setTextureAttributeAndModes(0,tex,turnOn);
       mCylinderStateSet->setAttributeAndModes(pm,turnOn);
       mCylinderStateSet->setMode(GL_LIGHTING,turnOff);
