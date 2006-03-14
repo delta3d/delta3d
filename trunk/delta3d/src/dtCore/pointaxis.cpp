@@ -606,7 +606,17 @@ PointAxis::AxesSetup( void )
    geome->setVertexArray( new osg::Vec3Array(6, vertices) );
    geome->setColorArray( new osg::Vec4Array(3, mColor) );
    geome->setColorBinding( osg::Geometry::BIND_PER_PRIMITIVE );
-   geome->addPrimitiveSet( new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6) );
+
+   if( geome->getPrimitiveSetList().empty() )
+   {
+      geome->addPrimitveSet( new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6) );
+   }
+   else
+   {
+      assert( geome->getPrimitiveSetList().size() == 1 );
+      geome->setPrimitiveSet( 0, new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6) );
+   }
+   
 }
 
 
