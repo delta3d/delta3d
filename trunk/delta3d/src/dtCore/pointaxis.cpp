@@ -609,7 +609,7 @@ PointAxis::AxesSetup( void )
 
    if( geome->getPrimitiveSetList().empty() )
    {
-      geome->addPrimitveSet( new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6) );
+      geome->addPrimitiveSet( new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 6) );
    }
    else
    {
