@@ -427,17 +427,6 @@ namespace dtHLAGM
       mSpecific = buf[6];
       mExtra = buf[7];
    }
-    
-   std::ostream& operator<<(std::ostream &o, const EntityType &et)
-   {
-      //strange g++ compiler bugs make this not work.
-      // std::string space(" ");
-       
-       /*o << (int)et.GetKind() << space <<  (int)et.GetDomain() << space <<  (int)et.GetCountry() 
-         << space <<  (int)et.GetCategory() << space <<  (int)et.GetSubcategory() <<  space <<  (int)et.GetSpecific() 
-         << space <<  (int)et.GetExtra();*/
-       return o;
-   }
   
    /**
     * Constructor.
