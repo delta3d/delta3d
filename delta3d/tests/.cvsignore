@@ -4,3 +4,9 @@ dtDALTests
 dtGameTests
 dtUtilTests
 delta3d_log.html
+D3DDefaultMessageLog.dli
+D3DDefaultMessageLog.dlm
+dtActorsTests
+dtHLAGMTests
+testlog.dli
+testlog.dlm
