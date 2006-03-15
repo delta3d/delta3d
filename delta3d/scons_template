@@ -19,16 +19,9 @@ for K in os.environ.keys():
    else:
       env['ENV'][K] = os.environ[K]
 
-# add the Visual Studio paths
-if os.sys.platform == 'win32' :
-   if os.environ.has_key( 'INCLUDE' ) :
-     env.Append( CPPPATH = env['ENV']['INCLUDE'].split(os.pathsep) )
-   if os.environ.has_key( 'LIB' ) :
-     env.Append( LIBPATH = env['ENV']['LIB'].split(os.pathsep) )
-
 # set compiler options
 env.Append( CPPPATH    = [ '/usr/X11R6/include' ] + env['ENV']['DELTA_INC'].split( os.pathsep ) ) 
-env.Append( CXXDEFINES = ['SIGSLOT_PURE_ISO'] ) # for debug mode, add 'DEBUG' and '_DEBUG'
+env.Append( CPPDEFINES = ['SIGSLOT_PURE_ISO'] ) # for debug mode, add 'DEBUG' and '_DEBUG'
 env.Append( CXXFLAGS   = [ '-O2', '-pipe', '-Wall' ]) # for debug mode, add '-g' and replace '-O2' with 'O0'
 env.Append( LIBPATH    = [ '/usr/X11R6/lib' ] + env['ENV']['DELTA_LIB'].split( os.pathsep) ) 
 
