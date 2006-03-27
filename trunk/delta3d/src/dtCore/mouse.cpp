@@ -101,7 +101,7 @@ bool Mouse::GetButtonState(MouseButton button)
  */
 void Mouse::AddMouseListener(MouseListener* mouseListener)
 {
-   mMouseListeners.insert(mouseListener);
+   mMouseListeners.push_back(mouseListener);
 }
 
 /**
@@ -111,7 +111,7 @@ void Mouse::AddMouseListener(MouseListener* mouseListener)
  */
 void Mouse::RemoveMouseListener(MouseListener* mouseListener)
 {
-   mMouseListeners.erase(mouseListener);
+   mMouseListeners.remove(mouseListener);
 }
 
 /**
@@ -138,7 +138,7 @@ void Mouse::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
          break;
    }
 
-   for(MouseListenerSet::iterator it = mMouseListeners.begin();
+   for(MouseListenerList::iterator it = mMouseListeners.begin();
        it != mMouseListeners.end();
        it++)
    {
@@ -157,7 +157,7 @@ void Mouse::mouseMotion(float x, float y)
    GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
    GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
 
-   for(MouseListenerSet::iterator it = mMouseListeners.begin();
+   for(MouseListenerList::iterator it = mMouseListeners.begin();
        it != mMouseListeners.end();
        it++)
    {
@@ -176,7 +176,7 @@ void Mouse::passiveMouseMotion(float x, float y)
    GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
    GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
 
-   for(MouseListenerSet::iterator it = mMouseListeners.begin();
+   for(MouseListenerList::iterator it = mMouseListeners.begin();
        it != mMouseListeners.end();
        it++)
    {
@@ -199,7 +199,7 @@ void Mouse::buttonPress(float x, float y, unsigned int button)
 
    GetButton(mouseButton)->SetState(true);
 
-   for(MouseListenerSet::iterator it = mMouseListeners.begin();
+   for(MouseListenerList::iterator it = mMouseListeners.begin();
        it != mMouseListeners.end();
        it++)
    {
@@ -222,7 +222,7 @@ void Mouse::doubleButtonPress(float x, float y, unsigned int button)
 
    GetButton(mouseButton)->SetState(true);
 
-   for(MouseListenerSet::iterator it = mMouseListeners.begin();
+   for(MouseListenerList::iterator it = mMouseListeners.begin();
        it != mMouseListeners.end();
        it++)
    {
@@ -245,7 +245,7 @@ void Mouse::buttonRelease(float x, float y, unsigned int button)
 
    GetButton(mouseButton)->SetState(false);
 
-   for(MouseListenerSet::iterator it = mMouseListeners.begin();
+   for(MouseListenerList::iterator it = mMouseListeners.begin();
        it != mMouseListeners.end();
        it++)
    {
