@@ -71,6 +71,10 @@ namespace dtCore
       virtual ~Mouse();
 
       public:
+         /**
+          * The list of mouse listeners.
+          */
+         typedef std::list<MouseListener*> MouseListenerList;
 
          /**
           * Gets the current mouse position.
@@ -125,13 +129,10 @@ namespace dtCore
          ///Producer callback methods
          virtual void buttonRelease( float x, float y, unsigned int button);
 
-      protected:
+         const MouseListenerList& GetListeners() const { return mMouseListeners; }
 
-         /**
-          * The list of mouse listeners.
-          */
-         typedef std::set<MouseListener*> MouseListenerSet;
-         MouseListenerSet mMouseListeners;
+      protected:
+         MouseListenerList mMouseListeners;
 
          Producer::KeyboardMouse* mKeyboardMouse;
    };
