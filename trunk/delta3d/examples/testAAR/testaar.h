@@ -73,12 +73,16 @@ class AARApplication : public dtABC::Application
        * Constructs the test application.
        */       
       AARApplication();
-      
+
+   protected:
+
       /**
        * Destroys the test application.
        */
       virtual ~AARApplication();      
-      
+   
+   public:   
+
       /**
        * Configures the application and prepares it to start the game/simulation.
        */
@@ -90,7 +94,7 @@ class AARApplication : public dtABC::Application
        * @param key The key that was pressed.
        * @param character Character pressed if the key represented an ASCII character.
        */     
-      void KeyPressed(dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
+      bool HandleKeyPressed(dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
          Producer::KeyCharacter character);
       
       /**
