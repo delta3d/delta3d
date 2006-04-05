@@ -45,7 +45,7 @@
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/transformableactorproxy.h>
 
-#include <time.h>
+#include <ctime>
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_ENUM(AppException);
@@ -53,7 +53,7 @@ AppException AppException::INIT_ERROR("INIT_ERROR");
 
 
 //////////////////////////////////////////////////////////////////////////
-AARApplication::AARApplication() : dtABC::Application("testLogger.xml"), mKeyIsPressed(false)
+AARApplication::AARApplication() : dtABC::Application("testaarconfig.xml"), mKeyIsPressed(false)
 {
    mSimSpeedFactor = 1.0;
    srand(static_cast<unsigned>(time(NULL)));
@@ -244,7 +244,7 @@ void AARApplication::PreFrame(const double deltaFrameTime)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void AARApplication::KeyPressed(dtCore::Keyboard *keyBoard, 
+bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard, 
    Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
    dtABC::Application::KeyPressed(keyBoard,key,character); 
@@ -338,6 +338,8 @@ void AARApplication::KeyPressed(dtCore::Keyboard *keyBoard,
       default:
          break;         
    };  
+
+   return true;
 }
 
 void AARApplication::PlaceActor()
