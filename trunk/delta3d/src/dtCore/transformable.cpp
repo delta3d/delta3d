@@ -692,7 +692,10 @@ void Transformable::SetCollisionSphere( osg::Node* node )
       }
       else
       {
-         LOG_WARNING( "Calculated values for collision sphere size are invalid." )
+         // This case happens in STAGE when the collision shape property is
+         // parsed _before_ the mesh filename. After the mesh has been
+         // loaded then the box will be recalculated.
+         LOG_WARNING( "Calculated values for collision sphere are invalid. If you are reading this from STAGE, don't worry, it just means the collision shape ActorProperty was parsed from XML before the actual mesh. The collision shape will be recalculated when the mesh is loaded." )
       }
    }
 }
@@ -913,7 +916,10 @@ void Transformable::SetCollisionCappedCylinder(osg::Node* node)
       }
       else
       {
-         LOG_WARNING( "Calculated values for collision cylinder are invalid." )
+         // This case happens in STAGE when the collision shape property is
+         // parsed _before_ the mesh filename. After the mesh has been
+         // loaded then the box will be recalculated.
+         LOG_WARNING( "Calculated values for collision cylinder are invalid. If you are reading this from STAGE, don't worry, it just means the collision shape ActorProperty was parsed from XML before the actual mesh. The collision shape will be recalculated when the mesh is loaded." )
       }
    }
 }
