@@ -31,7 +31,11 @@ public:
    {
       if( override FilterContact = this->get_override("FilterContact") )
       {
+         #if defined(_MSC_VER) && _MSC_VER == 1400
+         return call<bool>(FilterContact(contact,collider));
+         #else
          return FilterContact(contact, collider);
+         #endif
       }
       return Transformable::FilterContact(contact, collider);
    }
