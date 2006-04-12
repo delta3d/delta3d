@@ -165,7 +165,7 @@ namespace dtHLAGM
         
          std::string thisObjectClassString = thisObjectToActor->GetObjectTypeName();
 
-         RTI::ObjectClassHandle thisObjectClassHandle;
+         RTI::ObjectClassHandle thisObjectClassHandle(0);
 
          try {
             thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
