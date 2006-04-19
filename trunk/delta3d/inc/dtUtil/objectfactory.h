@@ -141,7 +141,8 @@ namespace dtUtil
          if (itor == this->objectTypeMap.end())
          {
             std::ostringstream ss;
-            std::cout << "ObjectFactory::CreateObject() Unable to create object of type: " << id << " Reason: Unknown type." << std::endl;
+            ss << "ObjectFactory::CreateObject() Unable to create object of type: " << id << " Reason: Unknown type.";
+            LOG_ERROR( ss.str() );
             //EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,ss.str());
             return 0;
          }
