@@ -36,6 +36,29 @@
 #define  BIT(a)   ((unsigned int)(1L<<(unsigned int)(a)))
 #endif
 
+// soundeffectbinder.h: Declaration of the EffectManager class.
+//
+//////////////////////////////////////////////////////////////////////
+
+/******************************************************************************
+ * Change Advisory (15 January 2006 submitted by LT Ryan Ernst)
+ * 
+ * Discussion:
+ * The Detonation class replaced the DetonationType parameter with a 
+ * std::stringdue for extensibility.  The soundeffectbinder class utilized
+ * DetonationType to associate sound effects to a particular Detonation.
+ *
+ * Solution:
+ * A string value replaces DetonationType.
+ *
+ * Backward Compatability:
+ * DetonationType remains supported but is converted internally to a string
+ * representing the numeric value of the DetonationType.
+ * For example; SmokeDetonation is converted to the string value "2000".
+ *
+ * Developer Recommendations:
+ * Utilize string functionality to avoid future deprecation.
+ *****************************************************************************/
 
 
 namespace dtAudio
@@ -59,9 +82,9 @@ namespace dtAudio
          typedef  std::vector<dtCore::EffectManager*>    MGR_LST;
          typedef  std::vector<SfxObj*>                   SFX_LST;
          typedef  std::queue<SfxObj*>                    SFX_QUE;
-         typedef  std::map<unsigned int,std::string>     FIL_MAP;
+         typedef  std::map<std::string,std::string>      FIL_MAP;
          typedef  std::map<dtCore::Detonation*,SfxObj*>  SFX_MAP;
-         typedef  std::map<unsigned int,float>           FLT_MAP;
+         typedef  std::map<std::string,float>            FLT_MAP;
 
          static   const char* kPreFrame;
          static   const char* kFrame;
@@ -81,7 +104,7 @@ namespace dtAudio
                virtual           ~SfxObj();
 
                         void     SetList( SFX_LST* list );
-                        Sound*   GetSound()        const {  return   mSnd; }
+                        Sound*   GetSound( void )        const {  return   mSnd; }
 
             private:
                         Sound*   mSnd;
@@ -102,7 +125,7 @@ namespace dtAudio
          /**
           * Shutdown the SoundEffectBinder.
           */
-         virtual  void        Shutdown();
+         virtual  void        Shutdown( void );
 
          /**
           * Adds an effect manager whos effects we'll monitor.
@@ -124,12 +147,33 @@ namespace dtAudio
           * @param fxType the effect type to map
           * @param filename the sound filename corresponding to the effect type
           */
+         virtual  void        AddEffectTypeMapping( const std::string& fxType, const std::string& filename );
+
+         /**
+          * Maps the specified effect type to the given filename.
+          *
+          * @param fxType the effect type to map
+          * @param filename the sound filename corresponding to the effect type
+          *
+          * Note: This may be deprecated in the future, use string 
+          * functionality instead.
+          */
          virtual  void        AddEffectTypeMapping( unsigned int fxType, const char* filename );
 
          /**
           * Removes the specified effect type from the mapping.
           *
           * @param fxType the effect type to remove
+          */
+         virtual  void        RemoveEffectTypeMapping( const std::string& fxType );
+
+         /**
+          * Removes the specified effect type from the mapping.
+          *
+          * @param fxType the effect type to remove
+          *
+          * Note: This may be deprecated in the future, use string 
+          * functionality instead.
           */
          virtual  void        RemoveEffectTypeMapping( unsigned int fxType );
 
@@ -138,7 +182,19 @@ namespace dtAudio
           *
           * @param fxType the effect type to map
           * @param value to map
-          * @param minimum_range if true, else maximum range
+          * @param minimum range if true, else maximum range
+          */
+         virtual  void        AddEffectTypeRange( const std::string& fxType, float value, bool minimum_range = true );
+
+         /**
+          * Maps the specified effect type to and audible range value.
+          *
+          * @param fxType the effect type to map
+          * @param value to map
+          * @param minimum range if true, else maximum range
+          *
+          * Note: This may be deprecated in the future, use string 
+          * functionality instead.
           */
          virtual  void        AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range = true );
 
@@ -146,7 +202,18 @@ namespace dtAudio
           * Removes the specified effect type's audible range value.
           *
           * @param fxType the effect type to map
-          * @param minimum_range if true, else maximum range
+          * @param minimum range if true, else maximum range
+          */
+         virtual  void        RemoveEffectTypeRange( const std::string& fxType, bool minimum_range = true );
+
+         /**
+          * Removes the specified effect type's audible range value.
+          *
+          * @param fxType the effect type to map
+          * @param minimum range if true, else maximum range
+          *
+          * Note: This may be deprecated in the future, use string 
+          * functionality instead.
           */
          virtual  void        RemoveEffectTypeRange( unsigned int fxType, bool minimum_range = true );
 

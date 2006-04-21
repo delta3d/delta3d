@@ -6,8 +6,12 @@
 
 #include <osg/Vec3>
 
+#include <dtUtil/deprecationmgr.h>
+#include <dtUtil/stringutils.h>
+
 // namespaces
 using namespace dtAudio;
+using namespace std;
 
 
 
@@ -55,7 +59,7 @@ SoundEffectBinder::~SoundEffectBinder()
  *
  * @param fxMgr the effect manager to add
  */
-void
+void 
 SoundEffectBinder::Initialize( dtCore::EffectManager* fxMgr /*= NULL*/ )
 {
    AddEffectManager( fxMgr );
@@ -66,8 +70,8 @@ SoundEffectBinder::Initialize( dtCore::EffectManager* fxMgr /*= NULL*/ )
 /**
 * Shutdown the SoundEffectBinder.
 */
-void
-SoundEffectBinder::Shutdown()
+void 
+SoundEffectBinder::Shutdown( void )
 {
    mQueued.clear();
    mDone.clear();
@@ -90,7 +94,7 @@ SoundEffectBinder::Shutdown()
  *
  * @param fxMgr the effect manager to add
  */
-void
+void 
 SoundEffectBinder::AddEffectManager( dtCore::EffectManager* fxMgr )
 {
    if( fxMgr == NULL )
@@ -113,7 +117,7 @@ SoundEffectBinder::AddEffectManager( dtCore::EffectManager* fxMgr )
  *
  * @param fxMgr the effect manager to remove
  */
-void
+void 
 SoundEffectBinder::RemoveEffectManager( dtCore::EffectManager* fxMgr )
 {
    if( fxMgr == NULL )
@@ -138,32 +142,58 @@ SoundEffectBinder::RemoveEffectManager( dtCore::EffectManager* fxMgr )
  * @param fxType the effect type to map
  * @param filename the sound filename corresponding to the effect type
  */
-void
-SoundEffectBinder::AddEffectTypeMapping( unsigned int fxType, const char* filename )
+void 
+SoundEffectBinder::AddEffectTypeMapping( const std::string& fxType, const std::string& filename )
 {
-   if( ( filename == NULL ) || ( std::string(filename) == std::string("") ) )
-      return;
-
    mFileMap[fxType]  = filename;
 }
 
-
+/**
+ * Maps the specified effect type to the given filename.
+ *
+ * @param fxType the effect type to map
+ * @param filename the sound filename corresponding to the effect type
+ *
+ * Note: This may be deprecated in the future, use string 
+ * functionality instead.
+ */
+void
+SoundEffectBinder::AddEffectTypeMapping( unsigned int fxType, const char* filename )
+{
+   DEPRECATE(  "void SoundEffectBinder::AddEffectTypeMapping( unsigned int fxType, const char* filename )", 
+               "void SoundEffectBinder::AddEffectTypeMapping( const std::string& fxType, const char* filename )" )
+   AddEffectTypeMapping( dtUtil::ToString( fxType ), std::string(filename) );
+}
 
 /**
  * Removes the specified effect type from the mapping.
  *
  * @param fxType the effect type to map
  */
-void
-SoundEffectBinder::RemoveEffectTypeMapping( unsigned int fxType )
+void 
+SoundEffectBinder::RemoveEffectTypeMapping( const std::string& fxType )
 {
    mFileMap.erase( fxType );
    RemoveEffectTypeRange( fxType, true );
    RemoveEffectTypeRange( fxType, false );
 }
 
-
-
+/**
+ * Removes the specified effect type from the mapping.
+ *
+ * @param fxType the effect type to remove
+ *
+ * Note: This may be deprecated in the future, use string 
+ * functionality instead.
+ */
+void        
+SoundEffectBinder::RemoveEffectTypeMapping( unsigned int fxType )
+{
+   DEPRECATE(  "void SoundEffectBinder::RemoveEffectTypeMapping( unsigned int fxType )",
+               "void SoundEffectBinder::RemoveEffectTypeMapping( const std::string& fxType )" )
+   RemoveEffectTypeMapping( dtUtil::ToString( fxType ) );
+}
+         
 /**
  * Maps the specified effect type to and audible range value.
  *
@@ -171,8 +201,8 @@ SoundEffectBinder::RemoveEffectTypeMapping( unsigned int fxType )
  * @param value to map
  * @param minimum range if true, else maximum range
  */
-void
-SoundEffectBinder::AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range /*= true*/ )
+void 
+SoundEffectBinder::AddEffectTypeRange( const std::string& fxType, float value, bool minimum_range /*= true*/ )
 {
    if( minimum_range )
       mMinDist[fxType]  = value;
@@ -182,13 +212,33 @@ SoundEffectBinder::AddEffectTypeRange( unsigned int fxType, float value, bool mi
 
 
 /**
+ * Maps the specified effect type to and audible range value.
+ *
+ * @param fxType the effect type to map
+ * @param value to map
+ * @param minimum range if true, else maximum range
+ *
+ * Note: This may be deprecated in the future, use string 
+ * functionality instead.
+ */
+void        
+SoundEffectBinder::AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range /*= true*/ )
+{
+   DEPRECATE(  "void SoundEffectBinder::AddEffectTypeRange( unsigned int fxType, float value, bool minimum_range )",
+               "void SoundEffectBinder::AddEffectTypeRange( const std::string& fxType, float value, bool minimum_range )" )
+   AddEffectTypeRange( dtUtil::ToString( fxType ), value, minimum_range);
+}
+
+
+
+/**
  * Removes the specified effect type's audible range value.
  *
  * @param fxType the effect type to map
  * @param minimum range if true, else maximum range
  */
-void
-SoundEffectBinder::RemoveEffectTypeRange( unsigned int fxType, bool minimum_range /*= true*/ )
+void 
+SoundEffectBinder::RemoveEffectTypeRange( const std::string& fxType, bool minimum_range /*= true*/ )
 {
    if( minimum_range )
       mMinDist.erase( fxType );
@@ -196,14 +246,29 @@ SoundEffectBinder::RemoveEffectTypeRange( unsigned int fxType, bool minimum_rang
       mMaxDist.erase( fxType );
 }
 
-
+/**
+ * Removes the specified effect type's audible range value.
+ *
+ * @param fxType the effect type to map
+ * @param minimum range if true, else maximum range
+ *
+ * Note: This may be deprecated in the future, use string 
+ * functionality instead.
+ */
+void        
+SoundEffectBinder::RemoveEffectTypeRange( unsigned int fxType, bool minimum_range /*= true*/ )
+{
+   DEPRECATE(  "void SoundEffectBinder::RemoveEffectTypeRange( unsigned int fxType, bool minimum_range )",
+               "void SoundEffectBinder::RemoveEffectTypeRange( const std::string& fxType, bool minimum_range )" )
+   RemoveEffectTypeRange(dtUtil::ToString( fxType ), minimum_range);
+}
 
 /**
 * Called when a message is sent to this object.
 *
 * @param data the message received by this object
 */
-void
+void 
 SoundEffectBinder::OnMessage( MessageData* data )
 {
    if( data == NULL )
@@ -236,7 +301,7 @@ SoundEffectBinder::OnMessage( MessageData* data )
  * @param fxMgr the effect manager that generated the event
  * @param fx the effect object
  */
-void
+void 
 SoundEffectBinder::EffectAdded( dtCore::EffectManager* fxMgr, dtCore::Effect* fx )
 {
    if( ( fxMgr == NULL ) || ( fx == NULL ) )
@@ -273,7 +338,7 @@ SoundEffectBinder::EffectAdded( dtCore::EffectManager* fxMgr, dtCore::Effect* fx
  * @param fxMgr the effect manager that generated the event
  * @param fx the effect object
  */
-void
+void 
 SoundEffectBinder::EffectRemoved( dtCore::EffectManager* fxMgr, dtCore::Effect* fx )
 {
    if( ( fxMgr == NULL ) || ( fx == NULL ) )
@@ -310,7 +375,7 @@ SoundEffectBinder::EffectRemoved( dtCore::EffectManager* fxMgr, dtCore::Effect* 
  * @param fxMgr the effect manager that generated the event
  * @param fx the detonation object
  */
-void
+void 
 SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detonation* fx )
 {
    assert( fxMgr );
@@ -318,7 +383,7 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
 
 
    // locate filename in the map
-   FIL_MAP::iterator iter(mFileMap.find( fx->GetType() ));
+   FIL_MAP::iterator iter = mFileMap.find( fx->GetType() );
    if( iter == mFileMap.end() )
    {
       // sound file is not mapped
@@ -354,7 +419,7 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
    {
       //bool success = parent->AddChild( snd );
       parent->AddChild( snd );
-
+      
       dtCore::Transform transform( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
       snd->SetTransform( &transform, dtCore::Transformable::REL_CS );
    }
@@ -379,7 +444,7 @@ SoundEffectBinder::DetonationAdded( dtCore::EffectManager* fxMgr, dtCore::Detona
  * @param fxMgr the effect manager that generated the event
  * @param fx the detonation object
  */
-void
+void 
 SoundEffectBinder::DetonationRemoved( dtCore::EffectManager* fxMgr, dtCore::Detonation* fx )
 {
    assert( fxMgr );
@@ -402,7 +467,7 @@ SoundEffectBinder::DetonationRemoved( dtCore::EffectManager* fxMgr, dtCore::Deto
 /**
  * Override for preframe
  */
-void
+void 
 SoundEffectBinder::PreFrame( const double deltaFrameTime )
 {
    while( mQueued.size() )
@@ -418,7 +483,7 @@ SoundEffectBinder::PreFrame( const double deltaFrameTime )
 /**
  * Override for frame
  */
-void
+void 
 SoundEffectBinder::Frame( const double deltaFrameTime )
 {
    SFX_QUE  temp;
@@ -482,7 +547,7 @@ SoundEffectBinder::PlayCB( Sound* sound, void* param )
    assert( param );
 
    SoundEffectBinder*   binder   = static_cast<SoundEffectBinder*>(param);
-   SFX_MAP::iterator    iter;
+   SFX_MAP::iterator    iter(NULL);
 
    for( iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); iter++ )
    {
@@ -515,7 +580,7 @@ SoundEffectBinder::StopCB( Sound* sound, void* param )
    assert( param );
 
    SoundEffectBinder*   binder   = static_cast<SoundEffectBinder*>(param);
-   SFX_MAP::iterator    iter;
+   SFX_MAP::iterator    iter(NULL);
 
    for( iter = binder->mSfxMap.begin(); iter != binder->mSfxMap.end(); iter++ )
    {

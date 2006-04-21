@@ -10,40 +10,49 @@
 using namespace boost::python;
 using namespace dtCore;
 
-class EffectListenerWrap : public EffectListener
+class EffectManagerWrap : public EffectManager, public wrapper<EffectManager>
 {
    public:
-      
-      EffectListenerWrap(PyObject* self)
-         : mSelf(self)
-      {}
-      
-      virtual void EffectAdded(EffectManager* effectManager, Effect* effect)
-      {
-         call_method<void>(mSelf, "EffectAdded", effectManager, effect);
-      }
-      
-      void DefaultEffectAdded(EffectManager* effectManager, Effect* effect)
-      {
-         EffectListener::EffectAdded(effectManager, effect);
-      }
-      
-      virtual void EffectRemoved(EffectManager* effectManager, Effect* effect)
-      {
-         call_method<void>(mSelf, "EffectRemoved", effectManager, effect);
-      }
-      
-      void DefaultEffectRemoved(EffectManager* effectManager, Effect* effect)
-      {
-         EffectListener::EffectRemoved(effectManager, effect);
-      }
-      
-   private:
-      
-      PyObject* mSelf;
-};
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(AD_overloads, AddDetonation, 1, 4)
+      EffectManagerWrap( const std::string& name = "effectManager") : EffectManager(name)
+      {
+      }
+
+      Detonation* AddDetonation1( const osg::Vec3& position )
+      { 
+         return AddDetonation( position );
+      }
+
+      Detonation* AddDetonation2( const osg::Vec3& position, const std::string& type )
+      {
+         return AddDetonation( position, type );
+      }
+
+      Detonation* AddDetonation3( const osg::Vec3& position, const std::string& type, double timeToLive )
+      {
+         return AddDetonation( position, type, timeToLive );
+      }
+
+      Detonation* AddDetonation4( const osg::Vec3& position, const std::string& type, double timeToLive, Transformable* parent )
+      {
+         return AddDetonation( position, type, timeToLive, parent );
+      }
+
+      Detonation* AddDetonation5( const osg::Vec3& position, DetonationType type )
+      {
+         return AddDetonation( position, type );
+      }
+
+      Detonation* AddDetonation6( const osg::Vec3& position, DetonationType type, double timeToLive )
+      {
+         return AddDetonation( position, type, timeToLive );
+      }
+
+      Detonation* AddDetonation7( const osg::Vec3& position, DetonationType type, double timeToLive, Transformable* parent )
+      {
+         return AddDetonation( position, type, timeToLive, parent );
+      }
+};
 
 void initEffectManagerBindings()
 {
@@ -54,37 +63,66 @@ void initEffectManagerBindings()
       .value("HighExplosiveDetonation", HighExplosiveDetonation)
       .value("SmokeDetonation", SmokeDetonation)
       .export_values();
-      
-   class_<EffectManager, bases<DeltaDrawable>, dtCore::RefPtr<EffectManager> >("EffectManager", init<optional<std::string> >())
+
+   void (EffectManager::*AddDetonationTypeMapping1)(DetonationType, const std::string&) = &EffectManager::AddDetonationTypeMapping;
+   void (EffectManager::*AddDetonationTypeMapping2)(const std::string&, const std::string&) = &EffectManager::AddDetonationTypeMapping;
+
+   void (EffectManager::*RemoveDetonationTypeMapping1)(DetonationType) = &EffectManager::RemoveDetonationTypeMapping;
+   void (EffectManager::*RemoveDetonationTypeMapping2)(const std::string&) = &EffectManager::RemoveDetonationTypeMapping;
+  
+   class_<EffectManagerWrap, bases<DeltaDrawable>, dtCore::RefPtr<EffectManagerWrap>, boost::noncopyable >("EffectManager", init<optional<const std::string&> >())
       .def("GetInstanceCount", &EffectManager::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", EffectManagerGI1, return_internal_reference<>())
       .def("GetInstance", EffectManagerGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("AddDetonationTypeMapping", &EffectManager::AddDetonationTypeMapping)
-      .def("RemoveDetonationTypeMapping", &EffectManager::RemoveDetonationTypeMapping)
+      .def("AddDetonationTypeMapping", AddDetonationTypeMapping1)
+      .def("AddDetonationTypeMapping", AddDetonationTypeMapping2)
+      .def("RemoveDetonationTypeMapping", RemoveDetonationTypeMapping1)
+      .def("RemoveDetonationTypeMapping", RemoveDetonationTypeMapping2)
       .def("GetEffectCount", &EffectManager::GetEffectCount)
       .def("GetEffect", &EffectManager::GetEffect, return_internal_reference<>())
-      .def("AddDetonation", &EffectManager::AddDetonation, AD_overloads()[return_internal_reference<>()])
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation1, return_internal_reference<>())
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation2, return_internal_reference<>())      
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation3, return_internal_reference<>())
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation4, return_internal_reference<>())      
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation5, return_internal_reference<>())
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation6, return_internal_reference<>())
+      .def("AddDetonation", &EffectManagerWrap::AddDetonation7, return_internal_reference<>())
       .def("RemoveEffect", &EffectManager::RemoveEffect)
       .def("AddEffectListener", &EffectManager::AddEffectListener)
       .def("RemoveEffectListener", &EffectManager::RemoveEffectListener);
       
-   class_<EffectListener, EffectListenerWrap, boost::noncopyable>("EffectListener")
-      .def("EffectAdded", &EffectListener::EffectAdded, &EffectListenerWrap::DefaultEffectAdded)
-      .def("EffectRemoved", &EffectListener::EffectRemoved, &EffectListenerWrap::DefaultEffectRemoved);
-      
+   class_<EffectListener, boost::noncopyable>("EffectListener", no_init)
+      .def("EffectAdded", pure_virtual(&EffectListener::EffectAdded) )
+      .def("EffectRemoved", pure_virtual(&EffectListener::EffectRemoved) );
+
+   osg::Node* (Effect::*GetNode1)() = &Effect::GetNode;
+   const osg::Node* (Effect::*GetNode2)() const = &Effect::GetNode;
+
    class_<Effect>("Effect", init<osg::Node*, double>())
-      .def("GetNode", &Effect::GetNode, return_internal_reference<>())
+      .def("GetNode", GetNode1, return_internal_reference<>())
+      .def("GetNode", GetNode2, return_internal_reference<>())
       .def("SetTimeToLive", &Effect::SetTimeToLive)
       .def("GetTimeToLive", &Effect::GetTimeToLive)
       .def("SetDying", &Effect::SetDying)
       .def("IsDying", &Effect::IsDying);
       
-   void (Detonation::*GetPosition1)(osg::Vec3& res) = &Detonation::GetPosition;
+   void (Detonation::*GetPosition1)(osg::Vec3& res) const = &Detonation::GetPosition;
+   const osg::Vec3& (Detonation::*GetPosition2)() const = &Detonation::GetPosition;
 
-   class_<Detonation, bases<Effect> >("Detonation", init<osg::Node*, double, const osg::Vec3&, DetonationType, Transformable*>())
-      .def("GetPosition", GetPosition1)
-      .def("GetType", &Detonation::GetType)
-      .def("GetParent", &Detonation::GetParent, return_internal_reference<>());
+   Transformable* (Detonation::*GetParent1)() = &Detonation::GetParent;
+   const Transformable* (Detonation::*GetParent2)() const = &Detonation::GetParent;
+
+   const std::string& (Detonation::*GetType1)() = &Detonation::GetType;
+   void (Detonation::*GetType2)( DetonationType& type ) = &Detonation::GetType;
+
+   class_<Detonation, bases<Effect> >("Detonation", init<osg::Node*, double, const osg::Vec3&, const std::string&, Transformable*>() )
+      .def("GetPosition", GetPosition1, return_value_policy<copy_const_reference>())
+      .def("GetPosition", GetPosition2, return_value_policy<copy_const_reference>())
+      .def("GetType", GetType1, return_value_policy<copy_const_reference>())
+      .def("GetType", GetType2)
+      .def("GetParent", GetParent1, return_internal_reference<>())
+      .def("GetParent", GetParent2, return_internal_reference<>())
+      ;
 }

@@ -3303,7 +3303,8 @@ void RTIConnection::EffectAdded(dtCore::EffectManager* effectManager, dtCore::Ef
          2
          );
 
-      unsigned short munType = (unsigned short)detonation->GetType();
+      dtCore::DetonationType munType;
+      detonation->GetType( munType );
       EntityType munitionType(2,9,255,2,14,2,0); //Default
 
       if (munType == 1000)
