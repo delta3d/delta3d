@@ -25,6 +25,25 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+/******************************************************************************
+ * Change Advisory (13 January 2006 submitted by LT Ryan Ernst)
+ * 
+ * Discussion:
+ * The enumerated DetonationType parameter restricts extensibility of the
+ * EffectManager.
+ *
+ * Solution:
+ * A string value replaces DetonationType.
+ *
+ * Backward Compatability:
+ * DetonationType remains supported but is converted internally to a string
+ * representing the numeric value of the DetonationType.
+ * For example; SmokeDetonation is converted to the string value "2000".
+ *
+ * Developer Recommendations:
+ * Utilize string functionality to avoid future deprecation.
+ *****************************************************************************/
+
 
 #include <map>
 #include <set>
@@ -34,11 +53,12 @@
 #include <Producer/Timer>
 #include <osg/Node>
 #include <osg/Group>
+#include <osgParticle/ParticleSystemUpdater>
 
 #include <osg/Vec3>
 
-#include "dtCore/deltadrawable.h"
-#include "dtUtil/deprecationmgr.h"
+#include <dtCore/deltadrawable.h>
+#include <dtUtil/deprecationmgr.h>
 
 namespace dtCore
 {
@@ -50,6 +70,9 @@ namespace dtCore
    
    /**
     * Detonation types 
+    *
+    * Note: This may be deprecated in the future, use string functionality
+    * instead.
     */
    enum DetonationType
    {
@@ -77,24 +100,49 @@ namespace dtCore
           * @param name the instance name
           */
          EffectManager(const std::string& name = "effectManager");
-
+      
+      protected:
          /**
           * Destructor.
           */
          virtual ~EffectManager();
+
+      public:
+         /**
+          * Maps the specified detonation name to the given filename. It will
+          * replace any existing filename bound to the detonationName string.
+          *
+          * @param detonationName the detonation name to map
+          * @param filename the filename corresponding to the detonation type
+          */
+         void AddDetonationTypeMapping(const std::string& detonationName, 
+                                       const std::string& filename);
 
          /**
           * Maps the specified detonation type to the given filename.
           *
           * @param detonationType the detonation type to map
           * @param filename the filename corresponding to the detonation type
+          *
+          * Note: This is deprecated, use string functionality instead.
           */
-         void AddDetonationTypeMapping(DetonationType detonationType, const std::string& filename);
+         void AddDetonationTypeMapping(DetonationType detonationType, 
+                                       const std::string& filename);
+
+         /**
+          * Removes the mapping for the given detonation name.
+          *
+          * @param detonationName the detonation name to unmap
+          */
+         void RemoveDetonationTypeMapping(const std::string& detonationName);
 
          /**
           * Removes the mapping for the given detonation type.
           *
           * @param detonationType the detonation type to unmap
+          *
+          * Note: This may be deprecated in the future, use string 
+          * functionality instead.
           */
          void RemoveDetonationTypeMapping(DetonationType detonationType);
 
@@ -111,7 +159,23 @@ namespace dtCore
           * @param index the index of the effect to retrieve
           * @return the effect at the specified index
           */
-         Effect* GetEffect(int index) const;
+         const Effect* GetEffect(int index) const;
+
+         /**
+          * Adds a new detonation effect.
+          *
+          * @param position the position of the detonation
+          * @param type the name of the detonation
+          * @param timeToLive the lifespan of the detonation, in seconds,
+          * or 0.0 for unlimited
+          * @param parent the parent of the detonation, or 0 for
+          * none
+          * @return a pointer to the detonation object
+          */
+         Detonation* AddDetonation( const osg::Vec3& position,
+                                    const std::string& detonationName = "HighExplosiveDetonation",
+                                    double timeToLive = 5.0,
+                                    Transformable* parent = 0 );
 
          /**
           * Adds a new detonation effect.
@@ -123,13 +187,14 @@ namespace dtCore
           * @param parent the parent of the detonation, or NULL for
           * none
           * @return a pointer to the detonation object
+          *
+          * Note: This may be deprecated in the future, use string 
+          * functionality instead.
           */
-         Detonation* AddDetonation(
-            const osg::Vec3& position,
-            DetonationType type = HighExplosiveDetonation,
-            double timeToLive = 5.0,
-            Transformable* parent = NULL
-         );
+         Detonation* AddDetonation( const osg::Vec3& position,
+                                    DetonationType type,
+                                    double timeToLive = 5.0,
+                                    Transformable* parent = 0 );
 
 
          /**
@@ -159,6 +224,7 @@ namespace dtCore
           * @return the OpenSceneGraph node
           */
          virtual osg::Node* GetOSGNode();
+         virtual const osg::Node* GetOSGNode() const;
 
          /**
           * Processes a received message.
@@ -166,7 +232,6 @@ namespace dtCore
           * @param data the message structure
           */
          virtual void OnMessage(MessageData *data);
-
 
       protected:
 
@@ -177,36 +242,36 @@ namespace dtCore
           */
          void AddEffect(Effect* effect);
 
-
       private:
-
+        
          /**
           * The group that contains all effect nodes.
           */
          RefPtr<osg::Group> mGroup;
 
          /**
-          * Maps detonation types to filenames.
+          * Maps detonation names to filenames.
           */
-         typedef std::map< DetonationType, std::string > DetonationStringMap;
-         DetonationStringMap mDetonationTypeFilenameMap;
+         typedef std::map< std::string, std::string > StringMap;
+         StringMap mDetonationTypeFilenameMap;
 
          /**
           * The vector of active effects.
           */
-         std::vector<Effect*> mEffects;
+         typedef std::vector<Effect*> EffectVector;
+         EffectVector mEffects;
 
          /**
           * The set of effect listeners.
-          */
-         std::set<EffectListener*> mEffectListeners;
+          */         
+         typedef std::set<EffectListener*> EffectListenerSet;
+         EffectListenerSet mEffectListeners;
 
          /**
           * The last recorded time.
           */
          double mLastTime;
    };
-
 
    /**
     * An interface for objects interested in the addition and removal
@@ -223,10 +288,7 @@ namespace dtCore
           * the event
           * @param effect the effect object
           */
-         virtual void EffectAdded(
-            EffectManager* effectManager,
-            Effect* effect
-         ) {}
+         virtual void EffectAdded( EffectManager* effectManager, Effect* effect ) = 0;
 
          /**
           * Called when an effect is removed from the manager.
@@ -235,12 +297,8 @@ namespace dtCore
           * the event
           * @param effect the effect object
           */
-         virtual void EffectRemoved(
-            EffectManager* effectManager,
-            Effect* effect
-         ) {}
+         virtual void EffectRemoved( EffectManager* effectManager, Effect* effect ) = 0;
    };
-
 
    /**
     * The base class of all effects.
@@ -269,6 +327,7 @@ namespace dtCore
           * @return the effect's OpenSceneGraph node
           */
          osg::Node* GetNode();
+         const osg::Node* GetNode() const;
 
          /** 
           * Sets the remaining lifespan of this effect.
@@ -300,7 +359,6 @@ namespace dtCore
           */
          bool IsDying();
 
-
       private:
 
          /**
@@ -322,7 +380,6 @@ namespace dtCore
          bool mDying;
    };
 
-
    /**
     * A detonation effect.
     */
@@ -341,38 +398,41 @@ namespace dtCore
           * @param parent the parent of the detonation, or NULL
           * for none
           */
-         Detonation(osg::Node* node,
-                    double timeToLive,
-                    const osg::Vec3& position,
-                    DetonationType type,
-                    Transformable* parent);
-
+         Detonation( osg::Node* node,
+                     double timeToLive,
+                     const osg::Vec3& position,
+                     const std::string& detonationName,
+                     Transformable* parent);
 
          /**
           * Retrieves the position of this detonation.
           *
           * @param result a vector to hold the result
           */
-         void GetPosition(osg::Vec3& res);
-
+         void GetPosition(osg::Vec3& res) const;
+         const osg::Vec3& GetPosition() const;
 
          /**
           * Returns the type of this detonation.
           *
           * @return the type of this detonation
           */
-         DetonationType GetType();
+         const std::string& GetType();
+         void GetType( DetonationType& type );
 
          /**
           * Returns the Transformable parent of the detonation, or
-          * NULL if the detonation is unparented.
+          * 0 if the detonation is unparented.
           *
           * @return the parent of the detonation
           */
          Transformable* GetParent();
+         const Transformable* GetParent() const;
          
-
       private:
+
+         typedef std::map< std::string, DetonationType > StringDetonationTypeMap;
+         static StringDetonationTypeMap mLegacyTypeMapping;
 
          /**
           * The position of the detonation.
@@ -380,9 +440,9 @@ namespace dtCore
          osg::Vec3 mPosition;
 
          /**
-          * The type of the detonation.
+          * The name of the detonation.
           */
-         DetonationType mType;
+         std::string mDetonationName;
          
          /**
           * The optional parent of the transformation.

@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtAudio/soundeffectbinder.h"
+#include <python/dtpython.h>
+#include <dtAudio/soundeffectbinder.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -13,6 +13,12 @@ void initSoundEffectBinderBindings()
 {
    SoundEffectBinder* (*SoundEffectBinderGI1)(int) = &SoundEffectBinder::GetInstance;
    SoundEffectBinder* (*SoundEffectBinderGI2)(std::string) = &SoundEffectBinder::GetInstance;
+
+   void (SoundEffectBinder::*AddEffectTypeMapping1)(const std::string& fxType, const std::string& filename) = &SoundEffectBinder::AddEffectTypeMapping;  
+   void (SoundEffectBinder::*AddEffectTypeMapping2)(unsigned int fxType, const char* filename) = &SoundEffectBinder::AddEffectTypeMapping;
+
+   void (SoundEffectBinder::*RemoveEffectTypeMapping1)(const std::string& fxType) = &SoundEffectBinder::RemoveEffectTypeMapping;  
+   void (SoundEffectBinder::*RemoveEffectTypeMapping2)(unsigned int fxType) = &SoundEffectBinder::RemoveEffectTypeMapping;
 
    class_<SoundEffectBinder, bases<Base>, dtCore::RefPtr<SoundEffectBinder> >("SoundEffectBinder", init<optional<const std::string&> >())
       .def("GetInstanceCount", &SoundEffectBinder::GetInstanceCount)
@@ -24,6 +30,9 @@ void initSoundEffectBinderBindings()
       .def("Shutdown", &SoundEffectBinder::Shutdown)
       .def("AddEffectManager", &SoundEffectBinder::AddEffectManager)
       .def("RemoveEffectManager", &SoundEffectBinder::RemoveEffectManager)
-      .def("AddEffectTypeMapping", &SoundEffectBinder::AddEffectTypeMapping)
-      .def("RemoveEffectTypeMapping", &SoundEffectBinder::RemoveEffectTypeMapping);
+      .def("AddEffectTypeMapping", AddEffectTypeMapping1)
+      .def("AddEffectTypeMapping", AddEffectTypeMapping2)
+      .def("RemoveEffectTypeMapping", RemoveEffectTypeMapping1)
+      .def("RemoveEffectTypeMapping", RemoveEffectTypeMapping2)
+      ;
 }

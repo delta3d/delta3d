@@ -9,6 +9,9 @@
 using namespace dtCore;
 using namespace dtABC;
 
+const std::string kHighExplosiveDetonation = "HighExplosiveDetonation";
+const std::string kSmokeDetonation = "SmokeDetonation";
+
 class Updater : public Base
 {
 public:
@@ -48,10 +51,7 @@ public:
             location[1] = 100*( float(rand()) / RAND_MAX ) + 50;
             location[2] = 100*( float(rand()) / RAND_MAX ) - 50;
 
-            mEffectManager->AddDetonation(
-               location,
-               HighExplosiveDetonation
-               );
+            mEffectManager->AddDetonation( location, kHighExplosiveDetonation );
          }
 
          mAngle = mAngle + 45.0f*delta;
@@ -61,15 +61,10 @@ public:
             mAngle -= 360.0f;
          }
 
-         mPosition.Set(
-            40*cosf( osg::DegreesToRadians(mAngle) ), 
-            100 + 40*sinf( osg::DegreesToRadians(mAngle) ),
-            0,
-            mAngle,
-            0,
-            -45.0,
-            1.0f, 1.0f, 1.0f
-            );
+         mPosition.SetTranslation(  40*cosf( osg::DegreesToRadians(mAngle) ), 
+                                    100 + 40*sinf( osg::DegreesToRadians(mAngle) ),
+                                    0 );
+         mPosition.SetRotation( mAngle, 0, -45.0 );
 
          mEntity->SetTransform(&mPosition);
 
@@ -90,11 +85,8 @@ public:
             mCameraHeading -= delta*45.0;
          }
 
-         mPosition.Set(
-            0.0f, -50.0f, 0.0f,
-            mCameraHeading, mCameraPitch, 0.0f,
-            1.0f, 1.0f, 1.0f
-            );
+         mPosition.SetTranslation( 0.0f, -50.0f, 0.0f );
+         mPosition.SetRotation( mCameraHeading, mCameraPitch, 0.0f );
 
          mCamera->SetTransform(&mPosition);
       }
@@ -126,8 +118,7 @@ public:
    {
       Application::Config();
 
-      Transform position;
-      position.Set(0.f, -50.f, 0.f, 0.f, 0.f, 0.f, 1.0f, 1.0f, 1.0f);
+      Transform position(0.0f, -50.0f, 0.0f);
       GetCamera()->SetTransform( &position );
 
       entity = new Object("UH-1N");
@@ -140,14 +131,10 @@ public:
       entity->AddChild(smoke.get());
 
       effectManager = new EffectManager;
-      effectManager->AddDetonationTypeMapping(
-         HighExplosiveDetonation,
-         "effects/explosion.osg"
-         );
-      effectManager->AddDetonationTypeMapping(
-         SmokeDetonation,
-         "effects/smoke.osg"
-         );
+      effectManager->AddDetonationTypeMapping(  kHighExplosiveDetonation,
+                                                "effects/explosion.osg" );
+      effectManager->AddDetonationTypeMapping(  kSmokeDetonation,
+                                                "effects/smoke.osg" );
 
       AddDrawable( effectManager.get() );
 
@@ -165,7 +152,7 @@ public:
 
 };
 
-int main( int argc, char **argv )
+int main()
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testEffects/;" +
                         GetDeltaDataPathList()+ ";" + GetDeltaDataPathList()+"/effects/"  );

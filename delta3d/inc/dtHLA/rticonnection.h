@@ -624,6 +624,11 @@ namespace dtHLA
             dtCore::Effect* effect
          );
 
+         virtual void EffectRemoved(   dtCore::EffectManager* effectManager,
+                                       dtCore::Effect* effect )
+         {
+         }
+
 
       private:
          /** \brief A class to perform the necessary features while a Xerces SAX parser is operating.
