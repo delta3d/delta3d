@@ -589,8 +589,8 @@ namespace dtCore
                            const std::string& detonationName,
                            Transformable* parent) : Effect(node, timeToLive),
       mDetonationName(detonationName),
-      mParent(parent),
-      mPosition( position )
+      mPosition( position ),
+      mParent(parent)
    {
       // Ugly, but I'm running out of time here!
       static bool first(true);
