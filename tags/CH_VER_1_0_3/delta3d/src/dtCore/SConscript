@@ -1,0 +1,31 @@
+import os
+
+Import('*')
+
+srcs = SGlob( '*.cpp' )
+
+deps=[ 'dtUtil', 'isense', 'ode', 'OpenThreads', 'osg', 'osgDB', 'osgParticle',
+       'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX',
+       'osgProducer','gdal', 'js', 'ul', 'Producer', 'opengl',
+       'User32', 'Advapi32', 'Rpcrt4', 'Winmm', 'Gdi32', 'uuid', 'Xxf86vm',
+       'CoreFoundation', 'IOKit', 'Carbon' ]
+
+defines = []
+
+if OS == 'windows':
+   defines = ['DT_CORE_LIBRARY', 'NOMINMAX']
+
+
+if OS != 'windows' :
+   srcs.remove( 'deltawin_win32.cpp' )
+   srcs.remove( 'uniqueid_win32.cpp' )
+
+if OS != 'linux':
+   srcs.remove( 'deltawin_x11.cpp' )
+   srcs.remove( 'uniqueid_linux.cpp' )
+
+if OS != 'darwin':
+   srcs.remove( 'deltawin_carbon.cpp' )
+   srcs.remove( 'uniqueid_macosx.cpp' )
+    
+env.BuildLib( 'dtCore', srcs, deps,  defines, prefixHeader = 'inc/prefix/dtcoreprefix.h')

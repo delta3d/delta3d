@@ -1,0 +1,13 @@
+Import('*')
+
+srcs = SGlob('*.cpp')
+
+deps = [ 'dtCore', 'dtDAL', 'fltk', 'dtUtil', 'isense', 'OpenThreads', 'osg', 'osgDB',
+         'osgParticle', 'osgText', 'osgUtil', 'osgGA', 'osgSim', 'osgFX',
+         'osgProducer', 'ul', 'js', 'Producer', 'xerces-c', 'opengl', 'User32', 'rbody', 'cal3d' ]
+
+defines = []
+if OS == 'windows':
+   defines = ['DT_ABC_LIBRARY']       
+
+env.BuildLib( 'dtABC', srcs, deps, defines, prefixHeader = 'inc/prefix/dtcoreprefix.h')
