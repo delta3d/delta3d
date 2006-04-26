@@ -10,10 +10,12 @@
 #include <osg/TexEnv>
 #include <osg/BlendFunc>
 #include <osg/Shape>
+#include <osg/StateSet>
 
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
+
 
 const int MAX_HEIGHT = 2000;
 
@@ -129,6 +131,9 @@ void CloudPlane::Create( void )
 	mCloudTexture->setWrap(osg::Texture2D::WRAP_S, osg::Texture2D::REPEAT);
 	mCloudTexture->setWrap(osg::Texture2D::WRAP_T, osg::Texture2D::REPEAT);
 
+   mTexMat = new osg::TexMat();
+   stateset->setTextureAttribute(0, mTexMat.get());
+
 	// Texture Blending
 	osg::TexEnv* texenv = new osg::TexEnv;
 	texenv->setMode(osg::TexEnv::BLEND);
@@ -198,14 +203,12 @@ void CloudPlane::OnMessage(MessageData *data)
 
 void CloudPlane::Update(const double deltaFrameTime)
 {
+	// Change the texture coordinates of clouds
 
-	
-	// Change the texture coordinates of clouds via the mTexCoords[]
-	for(int i = 0; i < 36; ++i)
-		(*mTexCoords)[i] += *mWind;
-	
-	mPlane->setTexCoordArray(0, mTexCoords);
-
+   osg::Matrix mat = mTexMat->getMatrix();
+   mat(3,0) += (*mWind)[0];
+   mat(3,1) += (*mWind)[1];
+   mTexMat->setMatrix(mat);
 }
 
 osg::Geometry* CloudPlane::createPlane(float size, float height)
@@ -307,6 +310,7 @@ osg::Geometry* CloudPlane::createPlane(float size, float height)
 	normals->push_back(osg::Vec3(0.0f,0.0f,1.0f)); // set up a single normal for the plane
 
 	osg::Geometry* geom = new osg::Geometry;
+
 	
 	// Set Arrays
 	geom->setVertexArray(coords);

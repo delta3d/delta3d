@@ -32,6 +32,7 @@
 #include <osg/Geometry>
 #include <osg/Transform>
 #include <osg/Texture2D>
+#include <osg/TexMat>
 #include <osgUtil/CullVisitor>
 #include <osg/Fog>
 
@@ -130,6 +131,7 @@ namespace dtCore
        osg::Vec2Array *mTexCoords;
        osg::Vec4Array *mColors;
        dtCore::RefPtr<MoveEarthySkyWithEyePointTransform> mXform;
+       osg::ref_ptr<osg::TexMat> mTexMat;
 
    };
 
