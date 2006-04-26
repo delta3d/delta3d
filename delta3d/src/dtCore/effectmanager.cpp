@@ -8,7 +8,7 @@
 #include <osg/NodeVisitor>
 
 #include <osgDB/ReadFile>
-
+#include <osgDB/FileUtils>
 #include <osgParticle/Emitter>
 #include <osgParticle/Particle>
 
@@ -208,9 +208,24 @@ namespace dtCore
       {
          RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
          options->setObjectCacheHint( osgDB::ReaderWriter::Options::CACHE_IMAGES );
-         
-         osg::ref_ptr<osg::Node> node = osgDB::readNodeFile( found->second, options.get() );
-         assert( node.valid() );
+         osg::ref_ptr<osg::Node> node;
+
+         std::string psFile = osgDB::findDataFile(found->second);
+         if (psFile.empty())
+         {
+            LOG_WARNING("Can't find particle effect file:" + found->second);
+            return 0;
+         }
+         else
+         {
+            node = osgDB::readNodeFile( psFile, options.get() );
+         }
+
+         if (!node.valid() ) 
+         {
+            LOG_WARNING("Can't load particle effect:" + found->second);
+            return 0;
+         }
         
          Detonation* detonation = new Detonation(node.get(), timeToLive, position, detonationName, parent);
 
