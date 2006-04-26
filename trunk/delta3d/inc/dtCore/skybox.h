@@ -146,6 +146,8 @@ protected:
 	std::string mTexList[6];
 	bool mTexPreSetList[6];
 
+   osg::ref_ptr<osg::Geode> mTempGeode;
+
 
 	///this is a custom drawable for the AngularMapProfile
 	///and the CubeMapProfile
