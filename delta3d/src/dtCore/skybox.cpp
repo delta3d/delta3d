@@ -50,9 +50,10 @@ mInitializedTextures(false)
 {
    RegisterInstance(this);
 
-   AddSender(System::Instance()); //hook us up to the System
-
    mNode = new osg::Group();
+
+   mNode->setUpdateCallback(new SkyBox::ConfigCallback(this));
+
    memset(mTexPreSetList, 0, sizeof(bool) * 6);
 }
 
@@ -61,18 +62,11 @@ SkyBox::~SkyBox(void)
    DeregisterInstance(this);
 }
 
-void SkyBox::OnMessage(MessageData *data)
-{
-	if (data->message == "configure")
-	{
-		Config();
-		RemoveSender(System::Instance());
-	}
-}
-
 
 void SkyBox::Config()
 {
+   mNode->setUpdateCallback(0);
+
 	SetRenderProfile(mRenderProfilePreference);
 
 	if(mInitializedTextures)

@@ -102,12 +102,25 @@ public:
 		SKYBOX_BOTTOM
 	} SkyBoxSideEnum;
 
+
+   class ConfigCallback: public osg::NodeCallback
+   {
+   public:
+      ConfigCallback(SkyBox* mp):mSkyBox(mp){}
+
+      void operator()(osg::Node*, osg::NodeVisitor* nv)
+      {				
+         mSkyBox->Config();
+      }
+   private:
+      SkyBox* mSkyBox;
+   };
+
+   friend class ConfigCallback;
+
 public:
    SkyBox(const std::string& name="SkyBox", RenderProfileEnum pRenderProfile = RP_DEFAULT);
    virtual ~SkyBox(void);
-
-   ///this listens to configure to set the
-   void SkyBox::OnMessage(MessageData *data);
 
    /// Must override this to supply the repainting routine
    virtual void Repaint(osg::Vec3 skyColor, osg::Vec3 fogColor,
