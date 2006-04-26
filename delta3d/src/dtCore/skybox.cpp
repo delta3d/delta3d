@@ -52,7 +52,7 @@ mInitializedTextures(false)
 
    mNode = new osg::Group();
 
-   mNode->setUpdateCallback(new SkyBox::ConfigCallback(this));
+   mNode->setCullCallback(new SkyBox::ConfigCallback(this));
 
    memset(mTexPreSetList, 0, sizeof(bool) * 6);
 }
@@ -65,7 +65,7 @@ SkyBox::~SkyBox(void)
 
 void SkyBox::Config()
 {
-   mNode->setUpdateCallback(0);
+   mNode->setCullCallback(0);
 
 	SetRenderProfile(mRenderProfilePreference);
 
@@ -617,7 +617,7 @@ void dtCore::SkyBox::FixedFunctionProfile::SetTexture(SkyBox::SkyBoxSideEnum sid
 void SkyBox::SkyBoxDrawable::drawImplementation(osg::State& state) const
 {
 
-	glOrtho(0, 1, 0, 1, 0, 1);
+   glOrtho(0, 1, 0, 1, 0, 1);
 
 	glBegin(GL_QUADS);
 
