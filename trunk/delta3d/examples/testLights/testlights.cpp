@@ -1,7 +1,8 @@
 #include "testlights.h"
+#include <dtCore/globals.h>
 
-using namespace   dtABC;
-using namespace   dtCore;
+using namespace dtABC;
+using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER( TestLightsApp )
 
@@ -9,12 +10,11 @@ float TestLightsApp::countOne = 0.0f;
 float TestLightsApp::countTwo = 0.0f;
 float TestLightsApp::countThree = 0.0f;
 
-TestLightsApp::TestLightsApp( std::string configFilename )
+TestLightsApp::TestLightsApp( const std::string& configFilename )
 :  Application( configFilename )
 {}
 
-void
-TestLightsApp::Config()
+void TestLightsApp::Config()
 {
    // turn off scene light so we only see the lights we create
    GetScene()->UseSceneLight( false );
@@ -72,10 +72,9 @@ TestLightsApp::Config()
    mOmm->SetDistance( distance );
 }
 
-void
-TestLightsApp::KeyPressed( Keyboard*               keyboard, 
-                           Producer::KeyboardKey   key,
-                           Producer::KeyCharacter  character )
+void TestLightsApp::KeyPressed(  Keyboard*               keyboard, 
+                                 Producer::KeyboardKey   key,
+                                 Producer::KeyCharacter  character )
 {
    switch( key )
    {
@@ -105,8 +104,7 @@ TestLightsApp::KeyPressed( Keyboard*               keyboard,
    }
 }
 
-void 
-TestLightsApp::PreFrame( const double deltaFrameTime )
+void TestLightsApp::PreFrame( const double deltaFrameTime )
 {
    // increment some values at different rates
    countOne +=50.0f*deltaFrameTime;
@@ -149,8 +147,7 @@ TestLightsApp::PreFrame( const double deltaFrameTime )
 }
 
 
-int 
-main( int argc, const char* argv[] )
+int main( int argc, const char* argv[] )
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testLights/;" +
                         GetDeltaDataPathList()  );

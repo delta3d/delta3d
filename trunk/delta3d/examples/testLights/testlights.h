@@ -1,8 +1,12 @@
 #ifndef DELTA_TESTLIGHTS
 #define DELTA_TESTLIGHTS
 
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
+#include <dtCore/object.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/infinitelight.h>
+#include <dtCore/positionallight.h>
+#include <dtCore/spotlight.h>
+#include <dtABC/application.h>
 
 class TestLightsApp : public dtABC::Application
 {
@@ -10,7 +14,7 @@ class TestLightsApp : public dtABC::Application
 
 public:
 
-   TestLightsApp( std::string configFilename = "config.xml" );
+   TestLightsApp( const std::string& configFilename = "config.xml" );
 
    void Config();
 
