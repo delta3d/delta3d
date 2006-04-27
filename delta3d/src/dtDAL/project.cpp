@@ -42,8 +42,6 @@
 
 #include <osgDB/FileNameUtils>
 
-#include <osgUtil/Optimizer>
-
 #include <dtCore/globals.h>
 
 #include <dtDAL/project.h>
