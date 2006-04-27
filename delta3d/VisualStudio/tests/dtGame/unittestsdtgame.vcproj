@@ -48,7 +48,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=%PATH%;$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
+				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
 $(TargetPath)"/>
@@ -105,7 +105,7 @@ $(TargetPath)"/>
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="set PATH=%PATH%;$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
+				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
 $(TargetPath)"/>
