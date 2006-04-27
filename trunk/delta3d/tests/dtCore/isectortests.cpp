@@ -19,12 +19,13 @@
  * @author David Guthrie
  */
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/isector.h>
-#include <dtCore/camera.h>
-#include <dtCore/system.h>
-#include <dtCore/particlesystem.h>
-#include <dtCore/infiniteterrain.h>
 
+#include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/infiniteterrain.h>
+#include <dtCore/isector.h>
+#include <dtCore/particlesystem.h>
+#include <dtCore/system.h>
 
 class IsectorTests : public CPPUNIT_NS::TestFixture 
 {
@@ -109,7 +110,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->SetEndPosition(point2);
 
          CPPUNIT_ASSERT(mIsector->GetDirection() == (point2 - point1));
-         CPPUNIT_ASSERT(mIsector->GetLength() == (mIsector->GetDirection().length()));
+         CPPUNIT_ASSERT_EQUAL( mIsector->GetLength(), mIsector->GetDirection().length() );
          
       }
 
