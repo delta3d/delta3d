@@ -442,8 +442,13 @@ void SkyBox::CubeMapProfile::SetTexture(SkyBoxSideEnum side, const std::string& 
 void SkyBox::CubeMapProfile::UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat)
 {
 
-	osg::Matrix proj;
-	proj.invert(projMat);
+	osg::Matrix proj = projMat;       
+
+	proj.invert(proj);     
+
+   //these should be opposite but aren't always
+   //do to precision issues
+   proj(3,3) = -proj(2,3);
 
 	osg::Matrix view;
 	view.invert(viewMat);
