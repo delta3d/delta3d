@@ -710,7 +710,10 @@ namespace dtEditQt
            // \TODO: Find out why this const_cast is necessary. It compiles without
            // it on MSVC 7.1, but not on gcc4.0.2 -osb
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
-            deleteProxy(proxy, currMap);
+            if(deleteProxy(proxy, currMap))
+            {
+               itor = selection.begin();
+            }
         }
 
         //Now that we have removed the selected objects, clear the current selection.
