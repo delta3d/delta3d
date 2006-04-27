@@ -37,6 +37,7 @@
 #include <dtGame/logkeyframe.h>
 #include <dtGame/basemessages.h>
 #include <dtGame/defaultmessageprocessor.h>
+#include <dtDAL/fileutils.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
@@ -290,7 +291,7 @@ class TestLogStream : public dtGame::LogStream
 //Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
-const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+"\\tests";
+const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtDAL::FileUtils::PATH_SEPARATOR+"tests";
 
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibraryd";
@@ -443,7 +444,7 @@ void GMLoggerTests::TestBinaryLogStreamDeleteLog()
       stream->Delete(TESTS_DIR,LOGFILE+"3");
       
       stream->GetAvailableLogs(TESTS_DIR,logList);
-      CPPUNIT_ASSERT_MESSAGE("There should be only one log in the list, but there are " + dtUtil::ToString( logList.size() ), logList.size() == 1);      
+      CPPUNIT_ASSERT_MESSAGE("There should be only one log in the list, but there are " + dtUtil::ToString( logList.size() ), logList.size() == 1);               
    }
    catch(const dtUtil::Exception &e) 
    {      
