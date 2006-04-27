@@ -33,6 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtCored.lib dtABCd.lib osgd.lib"
 				OutputFile="../../../bin/testLightsd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -84,6 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtCore.lib dtABC.lib osg.lib"
 				OutputFile="../../../bin/testLights.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
