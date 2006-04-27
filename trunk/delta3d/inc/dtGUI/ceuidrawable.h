@@ -64,8 +64,7 @@ namespace dtGUI
 
          virtual void drawImplementation(osg::State& state) const
          { //tell the UI to update and to render
-            if (!mUI) return;
-            state.setActiveTextureUnit(0); //makes it work with other multitexture Objects
+            if (!mUI) return;       
             mUI->getSingletonPtr()->renderGUI();
          }
 
