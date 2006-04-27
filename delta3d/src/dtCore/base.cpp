@@ -2,13 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/base.h"
+#include <dtCore/base.h>
 #include <dtUtil/log.h>
 
-#include <iostream>
-
-using namespace dtCore;
 using namespace dtUtil;
+
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(Base)
 
@@ -53,26 +53,30 @@ const std::string& Base::GetName() const
    return mName;
 }
 
-/** Subscribe this instance to the supplied sender.  Any message that sender
-  * sends, will be received in the OnMessage() method.
-  * @param sender The sender that this instance should listen to
-  */
-void Base::AddSender( Base *sender)
+/**
+ * Subscribe this instance to the supplied sender.  Any message that sender
+ * sends, will be received in the OnMessage() method.
+ * @param sender The sender that this instance should listen to
+ */
+void Base::AddSender(Base *sender)
 {
    //connect the sender's signal to our slot
-   sender->_sendMessage.connect_slot( this, &Base::OnMessage );
+   sender->mSendMessage.connect_slot( this, &Base::OnMessage );
 }
 
-///Stop receiving messages from the supplied sender instance
-void Base::RemoveSender( Base *sender )
+/**
+ * Stop receiving messages from the supplied sender instance
+ */
+void Base::RemoveSender(Base *sender)
 {
-   sender->_sendMessage.disconnect( this );
+   sender->mSendMessage.disconnect( this );
 }
 
-/** Send a message to any instance thats subscribed to us.
-  * @param message Optional text message (def = "")
-  * @param data Optional void pointer to any user data (def = NULL)
-  */
+/**
+ * Send a message to any instance thats subscribed to us.
+ * @param message Optional text message (def = "")
+ * @param data Optional void pointer to any user data (def = 0)
+ */
 void Base::SendMessage(const std::string& message, void *data)
 {
    //make a new MessageData, load it up, and pass it to our signal
@@ -80,5 +84,7 @@ void Base::SendMessage(const std::string& message, void *data)
    dataToSend.message = message;
    dataToSend.sender = this;
    dataToSend.userData = data;
-   _sendMessage( &dataToSend );
+   mSendMessage( &dataToSend );
+}
+
 }

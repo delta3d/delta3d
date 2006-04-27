@@ -28,10 +28,10 @@
 
 #include <string>
 
-#include "dtCore/uniqueid.h"
-#include "dtCore/export.h"
-#include "dtCore/macros.h"
-#include "dtCore/sigslot.h"
+#include <dtCore/uniqueid.h>
+#include <dtCore/export.h>
+#include <dtCore/macros.h>
+#include <dtCore/sigslot.h>
 
 #include <osg/Referenced>
 
@@ -39,51 +39,38 @@ namespace dtCore
 {
    ///Base class to support naming and message passing
 
-   /** The Base class handles things that are required by most of the dtCore 
-     * classes such as naming, RTTI, and message passing.
-     * To name an instance, call SetName() or pass it to the constructor.
-     *
-     * Inter-class message passing is handled by "subscribing" the 
-     * instance to a sender using AddSender().  Anytime the sender
-     * calls SendMessage(), the receiver class' OnMessage() will get triggered.
-     * The MessageData that gets passed to OnMessage() contains a pointer to the
-     * sender, and optionally, a text message and pointer to user data.
-     *
-     * This class is also reference counted using the osg::Referenced class.  To
-     * safely keep the reference count up-to-date, pointers to Base classes should
-     * be stored in a RefPtr template.  For example:
-     * \code 
-     * RefPtr<Base> mPointerToMyBase;
-     * \endcode
-     */
+   /**
+    * The Base class handles things that are required by most of the dtCore 
+    * classes such as naming, RTTI, and message passing.
+    * To name an instance, call SetName() or pass it to the constructor.
+    *
+    * Inter-class message passing is handled by "subscribing" the 
+    * instance to a sender using AddSender().  Anytime the sender
+    * calls SendMessage(), the receiver class' OnMessage() will get triggered.
+    * The MessageData that gets passed to OnMessage() contains a pointer to the
+    * sender, and optionally, a text message and pointer to user data.
+    *
+    * This class is also reference counted using the osg::Referenced class.  To
+    * safely keep the reference count up-to-date, pointers to Base classes should
+    * be stored in a RefPtr template.  For example:
+    * \code 
+    * RefPtr<Base> mPointerToMyBase;
+    * \endcode
+    */
    class DT_CORE_EXPORT Base : public sigslot::has_slots<>, public osg::Referenced
    {
       DECLARE_MANAGEMENT_LAYER(Base)
 
-
       public:
 
          ///Data that gets passed through SendMessage
-         struct DT_CORE_EXPORT MessageData{
-            std::string message;   ///<Textual message
-            Base *sender;     ///<Pointer to the sender
-            void *userData;   ///<Void pointer to user data
+         struct DT_CORE_EXPORT MessageData
+         {
+            std::string message; ///<Textual message
+            Base *sender;        ///<Pointer to the sender
+            void *userData;      ///<Void pointer to user data
          };
          
-      private:
-
-         /**
-          * The name of this instance.
-          */
-         std::string mName;
-         
-         ///The actual signal that gets triggered from SendMessage()
-         sigslot::signal1<MessageData *> _sendMessage;
-         
-         UniqueId mId;
-
-      public:
-
          /**
           * Constructor.
           *
@@ -91,11 +78,15 @@ namespace dtCore
           */
          Base(const std::string& name = "base");
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~Base();
 
+      public:
+      
          /**
           * Sets the name of this instance.
           *
@@ -110,30 +101,51 @@ namespace dtCore
           */
          const std::string& GetName() const;
          
-         ///This sets the unique ID, for general purposes this should not be used
+         /**
+          * This sets the unique ID, for general purposes this should not be used.
+          */
          void SetUniqueId( const UniqueId& id ) { mId = id; };
 
-         ///This class returns an instance the the UniqueID
+         /**
+          * This class returns an instance the the UniqueID
+          */
          const UniqueId& GetUniqueId() const { return mId; }
 
-         ///Override to receive messages
+         /**
+          * Override to receive messages
+          */
          virtual void OnMessage(MessageData *data) {}
 
-         ///Receive all messages from the supplied sender instance
+         /**
+          * Receive all messages from the supplied sender instance
+          */
          void AddSender( Base *sender );
 
-         ///Stop receiving messages from the supplied sender instance
+         /**
+          * Stop receiving messages from the supplied sender instance
+          */
          void RemoveSender( Base *sender );
          
-         /** Send a message to any instances that are subscribed
+         /**
+          *  Send a message to any instances that are subscribed
           *  to this instance.  Any supplied string or void* data will be passed
           *  to the receiver's OnMessage() method.
+          *
           *  @param message Optional string message
           *  @param data Optional pointer to user data
           */
-         void SendMessage(const std::string& message="", void *data=NULL);
+         void SendMessage(const std::string& message="", void *data=0);
+
+      private:
+
+         ///< The name of this instance.
+         std::string mName;
+         
+         ///< The actual signal that gets triggered from SendMessage()
+         sigslot::signal1<MessageData *> mSendMessage;
+         
+         UniqueId mId;
    };
 };
-
 
 #endif // DELTA_BASE

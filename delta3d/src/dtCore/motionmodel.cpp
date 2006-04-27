@@ -4,8 +4,10 @@
 
 #include <dtCore/motionmodel.h>
 #include <dtCore/scene.h>
+#include <dtCore/transformable.h>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(MotionModel)
 
@@ -69,4 +71,6 @@ void MotionModel::SetEnabled(bool enabled)
 bool MotionModel::IsEnabled() const
 {
    return mEnabled;
+}
+
 }

@@ -2,14 +2,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/logicalinputdevice.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/scene.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/transformable.h>
 #include <dtUtil/matrixutil.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(OrbitMotionModel)
 
@@ -480,4 +486,6 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
       
       GetTarget()->SetTransform(&transform);
    }
+}
+
 }

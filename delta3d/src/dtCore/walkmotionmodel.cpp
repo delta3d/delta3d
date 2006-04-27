@@ -3,33 +3,37 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/walkmotionmodel.h>
-#include <dtCore/scene.h>
+
 #include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
-#include <dtCore/logicalinputdevice.h>
 #include <dtCore/inputdevice.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/mouse.h>
+#include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/transformable.h>
 
 #include <osg/Vec3>
+#include <osgUtil/IntersectVisitor>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(WalkMotionModel)
 
 /**
  * Constructor.
  *
- * @param keyboard the keyboard instance, or NULL to
+ * @param keyboard the keyboard instance, or 0 to
  * avoid creating default input mappings
- * @param mouse the mouse instance, or NULL to avoid
+ * @param mouse the mouse instance, or 0 to avoid
  * creating default input mappings
  */
 WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
                                  Mouse* mouse)
    : MotionModel("WalkMotionModel"),
-     mWalkForwardBackwardAxis(NULL),
-     mTurnLeftRightAxis(NULL),
-     mSidestepLeftRightAxis(NULL),
+     mWalkForwardBackwardAxis(0),
+     mTurnLeftRightAxis(0),
+     mSidestepLeftRightAxis(0),
      mMaximumWalkSpeed(10.0f),
      mMaximumTurnSpeed(90.0f),
      mMaximumSidestepSpeed(5.0f),
@@ -39,7 +43,7 @@ WalkMotionModel::WalkMotionModel(Keyboard* keyboard,
 {
    RegisterInstance(this);
    
-   if(keyboard != NULL && mouse != NULL)
+   if(keyboard != 0 && mouse != 0)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -86,7 +90,7 @@ Scene* WalkMotionModel::GetScene()
  */
 void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
-   if(mDefaultInputDevice.get() == NULL)
+   if(mDefaultInputDevice.get() == 0)
    {
       mDefaultInputDevice = new LogicalInputDevice;
       
@@ -364,11 +368,11 @@ float WalkMotionModel::GetMaximumStepUpDistance()
  */
 void WalkMotionModel::OnMessage(MessageData *data)
 {
-   if(GetTarget() != NULL &&
+   if(GetTarget() != 0 &&
       IsEnabled() && 
       data->message == "preframe")
    {
-      double dtCore = *(double*)data->userData;
+      double dtCore = *static_cast<double*>(data->userData);
       
       Transform transform;
       
@@ -378,10 +382,9 @@ void WalkMotionModel::OnMessage(MessageData *data)
       
       transform.Get(xyz, hpr, scale);
       
-      if(mTurnLeftRightAxis != NULL)
+      if(mTurnLeftRightAxis != 0)
       {
-         hpr[0] -= 
-            (float)(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
+         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
       }
       
       hpr[1] = 0.0f;
@@ -391,16 +394,14 @@ void WalkMotionModel::OnMessage(MessageData *data)
       
       osg::Vec3 translation(0, 0, 0);
       
-      if(mWalkForwardBackwardAxis != NULL)
+      if(mWalkForwardBackwardAxis != 0)
       {
-         translation[1] = 
-            (float)(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * dtCore);
+         translation[1] = float(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * dtCore);
       }
       
-      if(mSidestepLeftRightAxis != NULL)
+      if(mSidestepLeftRightAxis != 0)
       {
-         translation[0] =
-            (float)(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * dtCore);
+         translation[0] = float(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * dtCore);
       }
       
       osg::Matrix mat;
@@ -413,7 +414,7 @@ void WalkMotionModel::OnMessage(MessageData *data)
       //sgAddVec3(xyz, translation);
       xyz += translation;
       
-      if(mScene.get() != NULL)
+      if(mScene.get() != 0)
       {
          osgUtil::IntersectVisitor iv;
       
@@ -452,9 +453,9 @@ void WalkMotionModel::OnMessage(MessageData *data)
          }
          else if(xyz[2] > height)
          {
-            xyz[2] -= (float)(mDownwardSpeed * dtCore);
+            xyz[2] -= float(mDownwardSpeed * dtCore);
             
-            mDownwardSpeed += (float)(9.8 * dtCore);
+            mDownwardSpeed += float(9.8 * dtCore);
          }
       }
       
@@ -462,4 +463,6 @@ void WalkMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->SetTransform(&transform);  
    }
+}
+
 }

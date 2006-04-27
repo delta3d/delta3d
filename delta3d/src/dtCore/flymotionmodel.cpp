@@ -3,35 +3,41 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/flymotionmodel.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/mouse.h>
 #include <dtCore/scene.h>
+#include <dtCore/system.h>
+#include <dtCore/transformable.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
 
 /**
  * Constructor.
  *
- * @param keyboard the keyboard instance, or NULL to
+ * @param keyboard the keyboard instance, or 0 to
  * avoid creating default input mappings
- * @param mouse the mouse instance, or NULL to avoid
+ * @param mouse the mouse instance, or 0 to avoid
  * creating default input mappings
  */
 FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
                                Mouse* mouse)
    : MotionModel("FlyMotionModel"),
-     mFlyForwardBackwardAxis(NULL),
-     mTurnLeftRightAxis(NULL),
-     mTurnUpDownAxis(NULL),
+     mFlyForwardBackwardAxis(0),
+     mTurnLeftRightAxis(0),
+     mTurnUpDownAxis(0),
      mMaximumFlySpeed(100.0f),
      mMaximumTurnSpeed(90.0f)
 {
    RegisterInstance(this);
    
-   if(keyboard != NULL && mouse != NULL)
+   if(keyboard != 0 && mouse != 0)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -315,7 +321,7 @@ float FlyMotionModel::GetMaximumTurnSpeed()
  */
 void FlyMotionModel::OnMessage(MessageData *data)
 {
-   if(GetTarget() != NULL &&
+   if(GetTarget() != 0 &&
       IsEnabled() && 
       data->message == "preframe")
    {
@@ -329,12 +335,12 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       transform.Get(xyz, hpr, scale);
       
-      if(mTurnLeftRightAxis != NULL)
+      if(mTurnLeftRightAxis != 0)
       {
          hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * delta);
       }
       
-      if(mTurnUpDownAxis != NULL)
+      if(mTurnUpDownAxis != 0)
       {
          hpr[1] += float(mTurnUpDownAxis->GetState() * mMaximumTurnSpeed * delta);
       }
@@ -345,12 +351,12 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       osg::Vec3 translation;
       
-      if(mFlyForwardBackwardAxis != NULL)
+      if(mFlyForwardBackwardAxis != 0)
       {
          translation[1] = float(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * delta);
       }
       
-      if(mFlyLeftRightAxis != NULL)
+      if(mFlyLeftRightAxis != 0)
       {
          translation[0] = float(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * delta);
       }
@@ -367,4 +373,6 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->SetTransform(&transform);  
    }
+}
+
 }

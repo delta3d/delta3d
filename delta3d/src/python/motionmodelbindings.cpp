@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/motionmodel.h"
+#include <python/dtpython.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/transformable.h>
 
 using namespace boost::python;
 using namespace dtCore;

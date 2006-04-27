@@ -6,14 +6,19 @@
 
 #include <dtCore/camera.h>
 #include <dtCore/cameragroup.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
 
+#include <osg/FrameStamp>
 #include <osg/Matrix>
+#include <osgUtil/SceneView>
 
-using namespace dtCore;
 using namespace dtUtil;
+
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(Camera)
 
@@ -99,7 +104,6 @@ void Camera::_SceneHandler::draw( Producer::Camera &cam )
    DrawImplementation( cam );
 };
 
-
 void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
 {
    mStats->SetTime(Stats::TIME_BEFORE_DRAW);
@@ -108,7 +112,6 @@ void Camera::_SceneHandler::DrawImplementation( Producer::Camera &cam )
    mStats->SetTime(Stats::TIME_AFTER_DRAW);
    mStats->Draw();
 }
-
 
 CameraGroup* Camera::mCameraGroup = new CameraGroup;
 
@@ -314,7 +317,6 @@ void Camera::SetScene(Scene *scene)
    }
 }
 
-
 void Camera::SetClearColor(float r, float g, float b, float a)
 {
    mClearColor.set(r, g, b, a);
@@ -411,4 +413,6 @@ void Camera::AddedToScene( Scene* scene )
    mAddedToSceneGraph = bool(scene != 0);
    
    Transformable::AddedToScene(scene);
+}
+
 }

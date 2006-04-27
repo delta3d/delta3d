@@ -2,8 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/ufomotionmodel.h"
+#include <python/dtpython.h>
+#include <dtCore/ufomotionmodel.h>
+#include <dtCore/inputdevice.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/transformable.h>
 
 using namespace boost::python;
 using namespace dtCore;

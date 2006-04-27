@@ -8,6 +8,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/scene.h>
+#include <dtCore/transformable.h>
 
 using namespace boost::python;
 using namespace dtCore;

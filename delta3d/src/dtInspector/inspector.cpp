@@ -6,6 +6,7 @@
 #include <dtCore/transformable.h>
 #include <dtCore/camera.h>
 #include <dtCore/deltadrawable.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/environment.h>
 #include <dtCore/skydome.h>
 #include <dtCore/clouddome.h>

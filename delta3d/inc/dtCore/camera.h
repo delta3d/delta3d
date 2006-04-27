@@ -28,38 +28,43 @@
 #include <Producer/Camera>
 #include <dtCore/stats.h>
 #include <dtCore/timer.h>
-#include <dtCore/deltawin.h>
 #include <dtCore/base.h>
-#include <dtCore/scene.h>
-#include <dtUtil/deprecationmgr.h>
 #include <dtCore/transformable.h>
-#include <osg/FrameStamp>
-#include <osgUtil/SceneView>
 #include <osg/Vec4>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class FrameStamp;
+}
+
+namespace osgUtil
+{
+   class SceneView;
+}
+/// @endcond
 
 namespace dtCore
 {
-   
-   ///A dtCore::Camera
-
-   /** A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to 
-    *  render the the Scene into.  If no DeltaWin is supplied, a default DeltaWin 
-    *  will be created and will be overridden when a valid DeltaWin is supplied
-    *  using SetWindow().
-    * 
-    *  The method SetScene() supplies the geometry to be rendered from the 
-    *  Camera's point of view.
-    *
-    *  Any part of the Scene that doesn't contain renderable geometry will be
-    *  drawn a solid color using the values supplied to SetClearColor().
-    *
-    *  The Frame() method must be called once per frame.  This will update the
-    *  scene, then cull and draw the visual objects.
-    */
-
    class CameraGroup;
-   
+   class DeltaWin;
+   class Scene;
 
+   /**
+    * A dtCore::Camera is a view into the Scene.  It requires a dtCore::DeltaWin to 
+    * render the the Scene into.  If no DeltaWin is supplied, a default DeltaWin 
+    * will be created and will be overridden when a valid DeltaWin is supplied
+    * using SetWindow().
+    * 
+    * The method SetScene() supplies the geometry to be rendered from the 
+    * Camera's point of view.
+    *
+    * Any part of the Scene that doesn't contain renderable geometry will be
+    * drawn a solid color using the values supplied to SetClearColor().
+    *
+    * The Frame() method must be called once per frame.  This will update the
+    * scene, then cull and draw the visual objects.
+    */
    class DT_CORE_EXPORT Camera : public Transformable
    {
       DECLARE_MANAGEMENT_LAYER(Camera)
@@ -70,8 +75,9 @@ namespace dtCore
       {
       public:
          _SceneHandler(bool useSceneLight=true);
+      protected:
          virtual ~_SceneHandler();
-
+      public:
          osgUtil::SceneView* GetSceneView() { return mSceneView.get(); }
 
          virtual void clear(Producer::Camera& cam);
@@ -105,8 +111,10 @@ namespace dtCore
       };
 
       Camera( const std::string& name = "camera" );
-      virtual ~Camera();
 
+   protected:
+      virtual ~Camera();
+   public:
       void SetFrameBin( unsigned int frameBin );
       unsigned int GetFrameBin() const { return mFrameBin; }
 

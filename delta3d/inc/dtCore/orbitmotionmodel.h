@@ -25,23 +25,26 @@
 #ifndef DELTA_ORBIT_MOTION_MODEL
 #define DELTA_ORBIT_MOTION_MODEL
 
-#include "dtCore/keyboard.h"
-#include "dtCore/mouse.h"
-#include "dtCore/logicalinputdevice.h"
-#include "dtCore/motionmodel.h"
-#include "dtCore/inputdevice.h"
+#include <dtCore/inputdevice.h>
+#include <dtCore/motionmodel.h>
 
 namespace dtCore
 {
+   class ButtonAxisToAxis;
+   class ButtonsToAxis;
+   class Keyboard;
+   class Mouse;
+   class LogicalAxis;
+   class LogicalInputDevice;
+
    /**
     * A motion model that causes its target to orbit around a point
     * (initially its local origin).
     */
    class DT_CORE_EXPORT OrbitMotionModel : public MotionModel,
-                                      public AxisListener
+                                           public AxisListener
    {
       DECLARE_MANAGEMENT_LAYER(OrbitMotionModel)
-
 
       public:
 
@@ -56,12 +59,16 @@ namespace dtCore
          OrbitMotionModel(Keyboard* keyboard = NULL,
                           Mouse* mouse = NULL);
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~OrbitMotionModel();
-         
-         /**
+
+      public:
+      
+         /**            
           * Sets the input axes to a set of default mappings for mouse
           * and keyboard.
           *
