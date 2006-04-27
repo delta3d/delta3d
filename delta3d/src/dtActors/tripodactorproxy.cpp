@@ -20,6 +20,8 @@
 */
 
 #include <dtActors/tripodactorproxy.h>
+#include <dtCore/camera.h>
+#include <dtCore/transformable.h>
 #include <dtCore/tripod.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
