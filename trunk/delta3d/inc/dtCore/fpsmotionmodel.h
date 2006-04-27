@@ -27,21 +27,24 @@
 
 #include <dtCore/motionmodel.h>
 
-#include <osgUtil/IntersectVisitor>
-
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class IntersectVisitor;
+}
+/// @endcond
 
 namespace dtCore
 {
-   //forward declaration
-   class Scene;
-   class Keyboard;
-   class Mouse;
-   class LogicalInputDevice;
-   class ButtonAxisToAxis;
-   class AxisToAxis;
    class Axis;
+   class AxisToAxis;
+   class ButtonAxisToAxis;
    class ButtonsToAxis;
+   class Keyboard;
    class LogicalAxis;
+   class LogicalInputDevice;
+   class Mouse;
+   class Scene;
 
    /**
     * A motion model that simulates the action of walking or driving.
@@ -61,13 +64,17 @@ namespace dtCore
           * creating default input mappings
           */
          FPSMotionModel(   Keyboard* keyboard = 0,
-                           Mouse* mouse = 0);
+                           Mouse* mouse = 0 );
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~FPSMotionModel();
-         
+
+      public:
+      
          /**
           * Sets the active Scene, which is used for ground following.
           *
@@ -243,8 +250,7 @@ namespace dtCore
           * @param data the message data
           */
          virtual void OnMessage(MessageData *data);
-         
-         
+                  
       private:
          
          /**
@@ -292,7 +298,7 @@ namespace dtCore
           */
          LogicalAxis* mDefaultTurnLeftRightAxis;
          
-		 /**
+		   /**
           * The default look up/down axis.
           */
          LogicalAxis* mDefaultLookUpDownAxis;
@@ -352,7 +358,7 @@ namespace dtCore
           */
          float mDownwardSpeed;
 
-		 Mouse * mMouse;
+         dtCore::RefPtr<Mouse> mMouse;
    };
 };
 

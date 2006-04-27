@@ -26,7 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
-#include <osgUtil/IntersectVisitor>
 
 namespace dtCore
 {
@@ -47,26 +46,28 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(WalkMotionModel)
 
-
       public:
-
 
          /**
           * Constructor.
           *
-          * @param keyboard the keyboard instance, or NULL to
+          * @param keyboard the keyboard instance, or 0 to
           * avoid creating default input mappings
-          * @param mouse the mouse instance, or NULL to avoid
+          * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         WalkMotionModel(Keyboard* keyboard = NULL,
-                         Mouse* mouse = NULL);
+         WalkMotionModel(Keyboard* keyboard = 0,
+                         Mouse* mouse = 0);
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~WalkMotionModel();
-         
+
+      public:
+      
          /**
           * Sets the active Scene, which is used for ground following.
           *

@@ -3,14 +3,18 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/fpsmotionmodel.h>
-#include <dtCore/scene.h>
+
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
-#include <dtCore/logicalinputdevice.h>
 #include <dtCore/inputdevice.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtCore/transformable.h>
+#include <osgUtil/IntersectVisitor>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
 
@@ -23,7 +27,7 @@ IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
  * creating default input mappings
  */
 FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
-                                 Mouse* mouse) : MotionModel("FPSMotionModel"),
+                                 Mouse* mouse ) : MotionModel("FPSMotionModel"),
    mWalkForwardBackwardAxis(0),
    mTurnLeftRightAxis(0),
    mLookUpDownAxis(0),
@@ -464,4 +468,6 @@ void FPSMotionModel::OnMessage(MessageData *data)
       transform.SetTranslation(xyz);
       GetTarget()->SetTransform(&transform); 
    }
+}
+
 }

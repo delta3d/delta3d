@@ -32,13 +32,10 @@
 
 namespace dtCore
 {
-   //forward declaration
    class Scene;
 
-   ///A renderable object. 
-
    /**
-    * A Drawable is a virtual base class which cannot be
+    * A renderable object. A Drawable is a virtual base class which cannot be
     * created, but rather must be derived.  The derived class must instantiate 
     * the mNode protected variable which is some type of osg::Node. 
     * A Drawable instance must be added to the Scene for it to be rendered.
@@ -135,6 +132,5 @@ namespace dtCore
       bool mRenderingProxy;
    };
 };
-
 
 #endif // DELTA_DELTA_DRAWABLE

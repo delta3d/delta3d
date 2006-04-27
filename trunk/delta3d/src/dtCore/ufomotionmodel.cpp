@@ -3,33 +3,41 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/ufomotionmodel.h>
-#include <dtCore/scene.h>
 
-using namespace dtCore;
+#include <dtCore/inputdevice.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/logicalinputdevice.h>
+#include <dtCore/motionmodel.h>
+#include <dtCore/mouse.h>
+#include <dtCore/system.h>
+#include <dtCore/transformable.h>
+
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(UFOMotionModel)
 
 /**
  * Constructor.
  *
- * @param keyboard the keyboard instance, or NULL to
+ * @param keyboard the keyboard instance, or 0 to
  * avoid creating default input mappings
- * @param mouse the mouse instance, or NULL to avoid
+ * @param mouse the mouse instance, or 0 to avoid
  * creating default input mappings
  */
 UFOMotionModel::UFOMotionModel(Keyboard* keyboard,
                                Mouse* mouse)
    : MotionModel("UFOMotionModel"),
-     mFlyForwardBackwardAxis(NULL),
-     mFlyLeftRightAxis(NULL),
-     mFlyUpDownAxis(NULL),
-     mTurnLeftRightAxis(NULL),
+     mFlyForwardBackwardAxis(0),
+     mFlyLeftRightAxis(0),
+     mFlyUpDownAxis(0),
+     mTurnLeftRightAxis(0),
      mMaximumFlySpeed(100.0f),
      mMaximumTurnSpeed(90.0f)
 {
    RegisterInstance(this);
    
-   if(keyboard != NULL && mouse != NULL)
+   if(keyboard != 0 && mouse != 0)
    {
       SetDefaultMappings(keyboard, mouse);
    }
@@ -323,7 +331,7 @@ float UFOMotionModel::GetMaximumTurnSpeed()
  */
 void UFOMotionModel::OnMessage(MessageData *data)
 {
-   if(GetTarget() != NULL &&
+   if(GetTarget() != 0 &&
       IsEnabled() && 
       data->message == "preframe")
    {
@@ -337,7 +345,7 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       transform.Get(xyz, hpr, scale);
       
-      if(mTurnLeftRightAxis != NULL)
+      if(mTurnLeftRightAxis != 0)
       {
          hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * dtCore);
       }
@@ -349,19 +357,19 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       osg::Vec3 translation;
       
-      if(mFlyForwardBackwardAxis != NULL)
+      if(mFlyForwardBackwardAxis != 0)
       {
          translation[1] = 
             (float)(mFlyForwardBackwardAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
       
-      if(mFlyLeftRightAxis != NULL)
+      if(mFlyLeftRightAxis != 0)
       {
          translation[0] = 
             (float)(mFlyLeftRightAxis->GetState() * mMaximumFlySpeed * dtCore);
       }
       
-      if(mFlyUpDownAxis != NULL)
+      if(mFlyUpDownAxis != 0)
       {
          translation[2] = 
             (float)(mFlyUpDownAxis->GetState() * mMaximumFlySpeed * dtCore);
@@ -379,4 +387,6 @@ void UFOMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->SetTransform(&transform);  
    }
+}
+
 }

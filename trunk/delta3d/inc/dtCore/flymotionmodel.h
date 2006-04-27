@@ -25,16 +25,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
-#include <dtCore/logicalinputdevice.h>
 #include <dtCore/motionmodel.h>
-#include <dtCore/inputdevice.h>
-#include <dtCore/system.h>
 
 namespace dtCore
 {
+   class Axis;
+   class ButtonAxisToAxis;
+   class ButtonsToAxis;
+   class Keyboard;
+   class LogicalAxis;
+   class LogicalInputDevice;
+   class Mouse;
+   
    /**
     * A motion model that simulates the action of flying.
     */
@@ -47,19 +49,23 @@ namespace dtCore
          /**
           * Constructor.
           *
-          * @param keyboard the keyboard instance, or NULL to
+          * @param keyboard the keyboard instance, or 0 to
           * avoid creating default input mappings
-          * @param mouse the mouse instance, or NULL to avoid
+          * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         FlyMotionModel(Keyboard* keyboard = NULL,
-                        Mouse* mouse = NULL);
+         FlyMotionModel(Keyboard* keyboard = 0,
+                        Mouse* mouse = 0);
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~FlyMotionModel();
-         
+
+      public:
+      
          /**
           * Sets the input axes to a set of default mappings for mouse
           * and keyboard.

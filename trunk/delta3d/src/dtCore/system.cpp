@@ -6,14 +6,17 @@
 #include <dtUtil/log.h>
 #include <dtCore/camera.h>
 #include <dtCore/cameragroup.h>
+#include <dtCore/deltawin.h>
 
-using namespace dtCore;
 using namespace dtUtil;
+
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(System)
 
 bool System::mInstanceFlag = false;
-System* System::mSystem = NULL;
+System* System::mSystem = 0;
 
 System::System():
    mSimulationTime(0.0),
@@ -49,8 +52,10 @@ System* System::Instance()
 void System::SetPause( bool paused )
 {
    //don't send out a message unless it actually changes.
-   if (mPaused == paused)
+   if( mPaused == paused )
+   {
       return;
+   }
       
    mPaused = paused;
    
@@ -138,7 +143,7 @@ void System::Run()
    mSimulationClockTime = mLastClockTime;
 
    //This should have been ifdef'd, not commented out.
-#ifdef __APPLE__   
+   #ifdef __APPLE__   
    for( int i = 0; i < DeltaWin::GetInstanceCount(); i++ )
    {
       Producer::RenderSurface* rs = DeltaWin::GetInstance(i)->GetRenderSurface();
@@ -148,7 +153,8 @@ void System::Run()
       rs->fullScreen(false);
       rs->startThread();
    }
-#endif   
+   #endif
+   
    while( mRunning )
    {	  
       SystemStep();
@@ -211,4 +217,6 @@ void System::Config()
 void System::CameraFrame()
 {
   Camera::GetCameraGroup()->Frame();
+}
+
 }

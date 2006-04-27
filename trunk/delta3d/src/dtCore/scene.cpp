@@ -3,24 +3,26 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <osg/FrameStamp>
-#include <osgUtil/IntersectVisitor>
 #include <osg/PolygonMode>
 #include <osgDB/DatabasePager>
 #include <osgDB/Registry>
-#include <osg/FrameStamp>
 #include <osgParticle/ParticleSystemUpdater>
+#include <osgUtil/IntersectVisitor>
 
 #include <ode/ode.h>
 
-#include <dtCore/scene.h>
 #include <dtCore/camera.h>
-#include <dtCore/system.h>
-#include <dtUtil/log.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/physical.h>
+#include <dtCore/system.h>
+#include <dtCore/scene.h>
+#include <dtUtil/deprecationmgr.h>
+#include <dtUtil/log.h>
 
-using namespace dtCore;
 using namespace dtUtil;
+
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
@@ -664,4 +666,6 @@ void Scene::DisablePaging()
    {
       LOG_ERROR("DisablePaging was called when paging wasn't enabled");
    }
+}
+
 }

@@ -3,7 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
+#include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -51,5 +53,6 @@ void initCameraBindings()
       .def("GetAutoAspect", &Camera::GetAutoAspect)
       .def("SetAspectRatio", &Camera::SetAspectRatio)
       .def("GetAspectRatio", &Camera::GetAspectRatio)
-      .def("SetNextStatisticsType", &Camera::SetNextStatisticsType);
+      .def("SetNextStatisticsType", &Camera::SetNextStatisticsType)
+      ;
 }

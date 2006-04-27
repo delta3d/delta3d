@@ -26,13 +26,13 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "dtCore/refptr.h"
-
-#include "dtCore/base.h"
-#include "dtCore/transformable.h"
+#include <dtCore/base.h>
+#include <dtCore/refptr.h>
 
 namespace dtCore
 {
+   class Transformable;
+   
    /**
     * The base class for all motion models: objects that update the
     * transforms of Transformable objects according to input gathered
@@ -52,11 +52,15 @@ namespace dtCore
           */
          MotionModel(const std::string& name = "MotionModel");
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~MotionModel();
-         
+
+      public:
+      
          /**
           * Sets the target of this motion model.
           *
