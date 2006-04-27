@@ -104,6 +104,8 @@ void CEUIDrawable::Config()
    stateset->setRenderBinDetails(11,"RenderBin");
    stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
 
+   stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
+
    geod->setStateSet(stateset);
 
    osg::ref_ptr<osgCEUIDrawable> osgCEUI = new osgCEUIDrawable(mUI);
