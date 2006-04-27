@@ -80,25 +80,16 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( ProjectTests );
 
-
-void ProjectTests::setUp() {
-    try {
+void ProjectTests::setUp()
+{
+    try
+    {
         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("projectTest");
 
-//        logger = &dtUtil::Log::GetInstance("project.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-
         logger = &dtUtil::Log::GetInstance(logName);
-
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
-        fileUtils.PushDirectory("dtDAL");
+        fileUtils.PushDirectory(dtCore::GetDeltaRootPath()+"/tests/dtDAL");
 
         fileUtils.PushDirectory("WorkingProject");
         fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);
@@ -112,13 +103,16 @@ void ProjectTests::setUp() {
 
         fileUtils.FileCopy("../../data/models/dirt.ive", ".", false);
         fileUtils.FileCopy("../../data/models/flatdirt.ive", ".", false);
-    } catch (const dtUtil::Exception& ex) {
+    }
+    catch (const dtUtil::Exception& ex)
+    {
         CPPUNIT_FAIL(ex.What());
     }
 }
 
 
-void ProjectTests::tearDown() {
+void ProjectTests::tearDown()
+{
     dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
 
     fileUtils.FileDelete("dirt.ive");
@@ -129,7 +123,8 @@ void ProjectTests::tearDown() {
     fileUtils.PopDirectory();
 }
 
-void ProjectTests::testFileIO() {
+void ProjectTests::testFileIO()
+{
     try
     {
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
@@ -139,9 +134,12 @@ void ProjectTests::testFileIO() {
         std::string Dir2(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2Name);
 
         //cleanup
-        try {
+        try
+        {
             fileUtils.DirDelete(Dir1, true);
-        } catch (const dtUtil::Exception& ex) {
+        }
+        catch (const dtUtil::Exception& ex)
+        {
             CPPUNIT_ASSERT_MESSAGE((ex.What() + ": Error deleting Directory, but file exists.").c_str(),
                 ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
         }
@@ -155,9 +153,11 @@ void ProjectTests::testFileIO() {
         struct dtDAL::FileInfo file1Info = fileUtils.GetFileInfo(file1);
         struct dtDAL::FileInfo file2Info = fileUtils.GetFileInfo(file2);
 
-        try {
+        try
+        {
             fileUtils.GetFileInfo(file2 + "euaoeuaiao.ao.u");
-        } catch (const dtUtil::Exception& ex) {
+        }
+        catch (const dtUtil::Exception& ex) {
             //this should throw a file not found.
             CPPUNIT_ASSERT_MESSAGE(ex.What().c_str(), ex.TypeEnum() == dtDAL::ExceptionEnum::ProjectFileNotFound);
             //correct
@@ -177,10 +177,13 @@ void ProjectTests::testFileIO() {
 
         CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
 
-        try {
+        try
+        {
             fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("The file copy should have failed since it was attempting to overwrite the file and overwriting was disabled.");
-        } catch (const dtUtil::Exception&) {
+        }
+        catch (const dtUtil::Exception&)
+        {
             //correct
         }
 
@@ -191,9 +194,12 @@ void ProjectTests::testFileIO() {
         struct dtDAL::FileInfo fi = fileUtils.GetFileInfo(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1);
         CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as the original", fi.size == file1Info.size);
 
-        try {
+        try
+        {
             fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, true);
-        } catch (const dtUtil::Exception& ex) {
+        }
+        catch (const dtUtil::Exception& ex)
+        {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
@@ -409,7 +415,8 @@ dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator ProjectTests::findTreeNode
     return ti;
 }
 
-void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter) {
+void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_iterator& iter)
+{
     for (unsigned tabs = 0; tabs < iter.level(); ++tabs)
         std::cout << "\t";
 
@@ -429,7 +436,8 @@ void ProjectTests::printTree(const dtUtil::tree<dtDAL::ResourceTreeNode>::const_
     }
 }
 
-void ProjectTests::testReadonlyFailure() {
+void ProjectTests::testReadonlyFailure()
+{
     try {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
@@ -551,8 +559,10 @@ void ProjectTests::testReadonlyFailure() {
 
 }
 
-void ProjectTests::testCategories() {
-    try {
+void ProjectTests::testCategories()
+{
+    try
+    {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
@@ -628,7 +638,9 @@ void ProjectTests::testCategories() {
 
 
 
-    } catch (const dtUtil::Exception& ex) {
+    }
+    catch (const dtUtil::Exception& ex)
+    {
         CPPUNIT_FAIL(ex.What());
     }  
 //    catch (const std::exception& ex) {
@@ -637,8 +649,10 @@ void ProjectTests::testCategories() {
 
 }
 
-void ProjectTests::testResources() {
-    try {
+void ProjectTests::testResources()
+{
+    try
+    {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
@@ -646,9 +660,12 @@ void ProjectTests::testResources() {
         //Open an existing project.
         std::string projectDir = "WorkingProject";
 
-        try {
+        try
+        {
             p.SetContext(projectDir);
-        } catch (const dtUtil::Exception& e) {
+        }
+        catch (const dtUtil::Exception& e)
+        {
             CPPUNIT_FAIL((std::string("Project should have been able to Set context. Exception: ")
                 + e.What()).c_str());
         }
@@ -898,7 +915,9 @@ void ProjectTests::testResources() {
         //this should work fine even if the file is deleted.
         p.RemoveResource(rd);
 
-    } catch (const dtUtil::Exception& ex) {
+    }
+    catch (const dtUtil::Exception& ex)
+    {
         CPPUNIT_FAIL(ex.What());
     } 
 //    catch (const std::exception& ex) {
@@ -908,9 +927,11 @@ void ProjectTests::testResources() {
 }
 
 
-void ProjectTests::testProject() {
+void ProjectTests::testProject()
+{
 
-    try {
+    try
+    {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
@@ -918,19 +939,26 @@ void ProjectTests::testProject() {
         std::string originalPathList = dtCore::GetDataFilePathList();
 
 
-        try {
+        try
+        {
             p.SetContext(std::string("/usr/:**/../^^jojo/funky/\\\\/,/,.uchor"));
             CPPUNIT_FAIL("Project should not have been able to Set context.");
-        } catch (const dtUtil::Exception&) {
+        }
+        catch (const dtUtil::Exception&)
+        {
             //correct
         }
 
         std::string projectDir("TestProject");
 
-        if (osgDB::fileExists(projectDir)) {
-            try {
+        if (osgDB::fileExists(projectDir))
+        {
+            try
+            {
                 fileUtils.DirDelete(projectDir, true);
-            } catch (const dtUtil::Exception& ex) {
+            }
+            catch (const dtUtil::Exception& ex)
+            {
                 CPPUNIT_FAIL(ex.What().c_str());
             }
 
@@ -939,10 +967,13 @@ void ProjectTests::testProject() {
 
         fileUtils.MakeDirectory(projectDir);
 
-        try {
+        try
+        {
             p.SetContext(projectDir, true);
             CPPUNIT_FAIL("Project should not have been able to Set the readonly context because it is empty.");
-        } catch (const dtUtil::Exception&) {
+        }
+        catch (const dtUtil::Exception&)
+        {
             //correct
         }
 
