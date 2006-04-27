@@ -686,7 +686,7 @@ namespace dtEditQt
     {
         LOG_INFO("Deleting current actor selection. ");
 
-        ViewportOverlay::ActorProxyList &selection =
+        ViewportOverlay::ActorProxyList selection =
                 ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         osg::ref_ptr<dtDAL::Map> currMap = EditorData::getInstance().getCurrentMap();
 
@@ -710,10 +710,7 @@ namespace dtEditQt
            // \TODO: Find out why this const_cast is necessary. It compiles without
            // it on MSVC 7.1, but not on gcc4.0.2 -osb
             dtDAL::ActorProxy *proxy = const_cast<dtDAL::ActorProxy*>(itor->get());
-            if(deleteProxy(proxy, currMap))
-            {
-               itor = selection.begin();
-            }
+            deleteProxy(proxy, currMap);
         }
 
         //Now that we have removed the selected objects, clear the current selection.
