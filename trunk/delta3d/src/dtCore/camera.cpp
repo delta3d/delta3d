@@ -298,6 +298,11 @@ void Camera::SetWindow( DeltaWin* win )
    }
 }
 
+DeltaWin* Camera::GetWindow()
+{ 
+   return mWindow.get();
+}
+
 void Camera::SetScene(Scene *scene)
 {
    mScene = scene;

@@ -8,6 +8,11 @@
 #include <dtCore/cameragroup.h>
 #include <dtCore/deltawin.h>
 
+// These REALLY should not be needed here, must investigate further...
+#ifdef _MSC_VER
+#include <dtCore/scene.h>
+#endif
+
 using namespace dtUtil;
 
 namespace dtCore

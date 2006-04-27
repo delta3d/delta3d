@@ -1,10 +1,17 @@
+#include <dtCore/tripod.h>
+
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtCore/transform.h>
-#include <dtCore/tripod.h>
 #include <dtUtil/log.h>
 
 #include <osg/Matrix>
+
+// These REALLY should not be needed here, must investigate further...
+#ifdef _MSC_VER
+#include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
+#endif
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -49,6 +56,11 @@ void Tripod::SetCamera( const std::string& camName )
       else Log::GetInstance().LogMessage(Log::LOG_WARNING, __FILE__, 
          "Tripod: Can't find Camera %s", camName.c_str());
    }
+}
+
+Camera* Tripod::GetCamera()
+{
+   return mCamera.get();
 }
 
 /** The supplied Transformable will be used as the basis for where the Tripod
