@@ -290,6 +290,7 @@ class TestLogStream : public dtGame::LogStream
 //Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
+const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+"\\tests";
 
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibraryd";
@@ -375,7 +376,7 @@ void GMLoggerTests::TestBinaryLogStreamCreate()
    
    try 
    {
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       stream->Close(); 
    }
    catch(const dtUtil::Exception &e) 
@@ -392,9 +393,9 @@ void GMLoggerTests::TestBinaryLogStreamOpen()
    
    try
    {
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       stream->Close();
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->Close();
    }
    catch(const dtUtil::Exception &e) 
@@ -413,10 +414,10 @@ void GMLoggerTests::TestBinaryLogStreamDeleteLog()
    {
       std::vector<std::string> logList;
       
-      stream->Create(".",LOGFILE);
-      stream->Create(".",LOGFILE+"1");
-      stream->Create(".",LOGFILE+"2");
-      stream->Create(".",LOGFILE+"3");
+      stream->Create(TESTS_DIR,LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE+"1");
+      stream->Create(TESTS_DIR,LOGFILE+"2");
+      stream->Create(TESTS_DIR,LOGFILE+"3");
       
       try
       {
@@ -427,22 +428,22 @@ void GMLoggerTests::TestBinaryLogStreamDeleteLog()
       
       try
       {
-         stream->Delete(".","nothing");
+         stream->Delete(TESTS_DIR,"nothing");
          CPPUNIT_FAIL("Should get an exception when deleting for a log that does not exist.");
       }
       catch (dtUtil::Exception &e) {}
       
       //This list will also return the default log as well...      
-      stream->GetAvailableLogs(".",logList);
-      CPPUNIT_ASSERT_MESSAGE("There should be five logs in the list.", logList.size() == 5);      
+      stream->GetAvailableLogs(TESTS_DIR,logList);
+      CPPUNIT_ASSERT_MESSAGE("There should be five logs in the list, but there are " + dtUtil::ToString( logList.size() ), logList.size() == 5);      
       
-      stream->Delete(".",LOGFILE);
-      stream->Delete(".",LOGFILE+"1");
-      stream->Delete(".",LOGFILE+"2");
-      stream->Delete(".",LOGFILE+"3");
+      stream->Delete(TESTS_DIR,LOGFILE);
+      stream->Delete(TESTS_DIR,LOGFILE+"1");
+      stream->Delete(TESTS_DIR,LOGFILE+"2");
+      stream->Delete(TESTS_DIR,LOGFILE+"3");
       
-      stream->GetAvailableLogs(".",logList);
-      CPPUNIT_ASSERT_MESSAGE("There should be only one log in the list.", logList.size() == 1);      
+      stream->GetAvailableLogs(TESTS_DIR,logList);
+      CPPUNIT_ASSERT_MESSAGE("There should be only one log in the list, but there are " + dtUtil::ToString( logList.size() ), logList.size() == 1);      
    }
    catch(const dtUtil::Exception &e) 
    {      
@@ -460,10 +461,10 @@ void GMLoggerTests::TestBinaryLogStreamGetLogs()
    {      
       std::vector<std::string> logList;
     
-      stream->Create(".",LOGFILE);
-      stream->Create(".",LOGFILE+"1");
-      stream->Create(".",LOGFILE+"2");
-      stream->Create(".",LOGFILE+"3");
+      stream->Create(TESTS_DIR,LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE+"1");
+      stream->Create(TESTS_DIR,LOGFILE+"2");
+      stream->Create(TESTS_DIR,LOGFILE+"3");
       
       try
       {
@@ -474,7 +475,7 @@ void GMLoggerTests::TestBinaryLogStreamGetLogs()
       catch (dtUtil::Exception &e) {}
             
       //This list will also return the default log as well...
-      stream->GetAvailableLogs(".",logList);
+      stream->GetAvailableLogs(TESTS_DIR,logList);
       CPPUNIT_ASSERT_MESSAGE("There should be five logs in the list.", logList.size() == 5);      
       int count = 0;
       for (unsigned int i=0; i<logList.size(); i++)
@@ -513,7 +514,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
             new dtGame::BinaryLogStream(msgFactory);
          
          //First, open for read...
-         errorStream->Open(".",LOGFILE);
+         errorStream->Open(TESTS_DIR,LOGFILE);
          
          //Now try writing to it.. this should throw an exception.
          errorStream->WriteMessage(*tickMessage.get(),100.0);
@@ -531,7 +532,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteErrors()
             new dtGame::BinaryLogStream(msgFactory);
          
          //First, open for read...
-         errorStream->Create(".",LOGFILE);
+         errorStream->Create(TESTS_DIR,LOGFILE);
          
          //Now try reading from it.. this should throw an exception.
          double timeStamp;
@@ -559,7 +560,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteMessages()
    
    try 
    {
-      stream->Create(".",LOGFILE);     
+      stream->Create(TESTS_DIR,LOGFILE);     
       for (i=0; i<100; i++)
       {
          tickMessage->SetDeltaSimTime(i*2.0f);
@@ -570,7 +571,7 @@ void GMLoggerTests::TestBinaryLogStreamReadWriteMessages()
       }
       stream->Close();
       
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       for (i=0; i<100; i++)
       {
          float t1 = i*2.0f;
@@ -613,13 +614,13 @@ void GMLoggerTests::TestBinaryLogStreamTags()
       dtGame::LogTag newTag,tag2;
                  
       //First we create the file and do a little sanity check to make sure we have no tags.
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);
       CPPUNIT_ASSERT_MESSAGE("Newly created binary log files should not contain any tags", 
          tagList.size() == 0);      
       stream->Close();
       
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);
       CPPUNIT_ASSERT_MESSAGE("Tag list should have been empty.",tagList.size() == 0);
       
@@ -643,7 +644,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
       stream->Close();      
       
       //Now we need to make sure the tag got saved and loaded from the index tables file properly.
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);   
       CPPUNIT_ASSERT_MESSAGE("Tag list should have a single tag.",tagList.size() == 1); 
       
@@ -662,7 +663,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
       std::vector<dtGame::LogTag> tagsToCompare;
       newTag.SetName("bob");
       newTag.SetDescription("bob_desc_test");
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       for (i=0; i<100; i++)
       {
          newTag.SetUniqueId(dtCore::UniqueId());
@@ -681,7 +682,7 @@ void GMLoggerTests::TestBinaryLogStreamTags()
       }                      
       stream->Close();
       
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);
       CPPUNIT_ASSERT_MESSAGE("Tag list should have a 100 tags.",tagList.size() == tagsToCompare.size());
       for (i=0; i<100; i++)
@@ -714,13 +715,13 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       dtGame::LogKeyframe newFrame,frame2;
                  
       //First we create the file and do a little sanity check to make sure we have no key frames.
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       stream->GetKeyFrameIndex(kfList);
       CPPUNIT_ASSERT_MESSAGE("Newly created binary log files should not contain any keyframe entries.", 
          kfList.size() == 0);      
       stream->Close();
       
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetKeyFrameIndex(kfList);
       CPPUNIT_ASSERT_MESSAGE("Keyframe list should have been empty.",kfList.size() == 0);
       
@@ -744,7 +745,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       stream->Close();      
       
       //Now we need to make sure the key frames got saved and loaded from the index tables file properly.
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetKeyFrameIndex(kfList);   
       CPPUNIT_ASSERT_MESSAGE("Keyframe list should have a single key frame.",kfList.size() == 1);      
       frame2 = kfList[0];
@@ -763,7 +764,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       newFrame.SetName("bob");
       newFrame.SetDescription("bob_desc");
       newFrame.SetActiveMap("activemap.xml");
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       for (i=0; i<100; i++)
       {
          newFrame.SetUniqueId(dtCore::UniqueId());
@@ -777,7 +778,7 @@ void GMLoggerTests::TestBinaryLogStreamKeyFrames()
       }                      
       stream->Close();
       
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetKeyFrameIndex(kfList);
       CPPUNIT_ASSERT_MESSAGE("KeyFrame list should have a 100 key frames.",kfList.size() == framesToCompare.size());
       for (i=0; i<100; i++)
@@ -811,7 +812,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
             
       //This test makes sure that interleaved keyframes and tags are correctly
       //stored and retreived from the log stream's index table.
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       for (i=0; i<1000; i++)
       {
          if ((i%2) == 0)
@@ -843,7 +844,7 @@ void GMLoggerTests::TestBinaryLogStreamTagsAndKeyFrames()
       stream->Close();
       
       //Now read it back and compare with the lists we just built.
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       stream->GetTagIndex(tagList);
       stream->GetKeyFrameIndex(kfList);
       
@@ -890,7 +891,7 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
    
    try
    {
-      stream->Create(".",LOGFILE);
+      stream->Create(TESTS_DIR,LOGFILE);
       for (i=0; i<1000; i++)
       {
          tickMessage->SetDeltaSimTime(i);
@@ -912,7 +913,7 @@ void GMLoggerTests::TestBinaryLogStreamJumpToKeyFrame()
       }      
       
       stream->Close();
-      stream->Open(".",LOGFILE);
+      stream->Open(TESTS_DIR,LOGFILE);
       
       std::vector<dtGame::LogKeyframe> kfList;
       stream->GetKeyFrameIndex(kfList);

@@ -499,7 +499,7 @@ void CoordinateTests::CheckMilsConversion(float degrees, unsigned expectedMils, 
    ss.str("");
 
    ss << "The conversion to back to degress for " << mils << " mils should be " << expectedReverseDegrees << " but it is " << reverseDegrees << std::endl;      
-   CPPUNIT_ASSERT_MESSAGE(ss.str(), expectedReverseDegrees == reverseDegrees);   
+   CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent( expectedReverseDegrees, reverseDegrees, 0.00001f ) );   
 }
 
 void CoordinateTests::TestMilConversions()

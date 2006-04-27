@@ -90,28 +90,17 @@ char* MapTests::mExampleLibraryName="testActorLibraryd";
 char* MapTests::mExampleLibraryName="testActorLibrary";
 #endif
 
+void MapTests::setUp()
+{
+    try
+    {
+       dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList()  );
 
-void MapTests::setUp() {
-    try {
-        dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("mapTest");
-
-//        logger = &dtUtil::Log::GetInstance();
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_ERROR);
-//        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-
         logger = &dtUtil::Log::GetInstance(logName);
-//
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
         dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
         std::string currentDir = fileUtils.CurrentDirectory();
-        std::string projectDir("dtDAL");
-        if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
-            fileUtils.PushDirectory(projectDir);
+        fileUtils.PushDirectory(dtCore::GetDeltaRootPath()+"/tests/dtDAL");
 
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
