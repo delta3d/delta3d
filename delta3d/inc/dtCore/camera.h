@@ -29,6 +29,7 @@
 #include <dtCore/stats.h>
 #include <dtCore/timer.h>
 #include <dtCore/base.h>
+#include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
 #include <osg/Vec4>
 
@@ -130,8 +131,7 @@ namespace dtCore
 	   void SetWindow( DeltaWin *win );
 
       ///Get the supplied DeltaWin (could be NULL)
-      DeltaWin *GetWindow() { return mWindow.get(); }
-
+      DeltaWin* GetWindow();
       /** 
        *  Redraw the view.
        *  @param lastCamera Pass true if this is the last camera

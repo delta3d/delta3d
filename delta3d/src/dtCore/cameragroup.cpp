@@ -2,6 +2,12 @@
 #include <dtCore/camera.h>
 #include <cassert>
 
+// These REALLY should not be needed here, must investigate further...
+#ifdef _MSC_VER
+#include <dtCore/deltawin.h>
+#include <dtCore/scene.h>
+#endif
+
 using namespace dtCore;
 
 CameraGroup::CameraGroup()

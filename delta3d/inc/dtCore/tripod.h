@@ -22,12 +22,14 @@
 #define DELTA_TRIPOD
 
 #include <dtCore/deltadrawable.h>
-#include <dtCore/camera.h>
 #include <dtUtil/deprecationmgr.h>
 #include <osg/Vec3>
 
 namespace dtCore
 {
+   class Camera;
+   class Transformable;
+
    ///A Tripod is used to attach a Camera to a Transformable
 
    /** The Tripod is useful for attaching a Camera to another
@@ -70,7 +72,7 @@ namespace dtCore
       }
 
       ///Get a non-const pointer to the currently connected Camera
-      Camera* GetCamera() {return mCamera.get();}
+      Camera* GetCamera();
 
       ///Attach this Tripod to a Transformable
       void SetAttachToTransformable(Transformable *parent);
