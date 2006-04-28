@@ -581,7 +581,6 @@ opts.AddOptions(
             allowed_values = ( 'debug', 'release' ),
             map = {}, ignorecase = 1 ),
    BoolOption( 'no_warnings', 'Disable all warnings', 0 ),
-   BoolOption( 'unit_tests', 'Perform Unit Tests', 0 ),
    BoolOption( 'usePrefixHeaders', 'use a prefix/precompiled header', 0 ),
    PackageOption( 'boost', 'Boost installation directory', 'no' ),
    PackageOption( 'rti', 'RTI installation directory', 'no' )
@@ -1095,7 +1094,7 @@ Export( 'env', 'OS', 'mode', 'SGlob', 'extLibs' , 'CheckForBoost',
 
 env.SConsignFile()
 
-Default( [ 'lib', 'bin' ] )
+Default( [ 'lib', 'bin', 'tests' ] )
 if OS == 'darwin':
    Default(['Applications'])
 
@@ -1112,10 +1111,7 @@ SConscript( dirs=['doc'] )
 SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
-
-if env.get('unit_tests') or mode == 'debug' :
-   SConscript( dirs=['tests'] )
-   Default( [ 'tests' ] )
+SConscript( dirs=['tests'] )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')
