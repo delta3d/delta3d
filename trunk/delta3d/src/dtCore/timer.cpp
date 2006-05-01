@@ -1,68 +1,55 @@
-#include <iostream>
-#include <string>
 #include <dtCore/timer.h>
-#include <dtUtil/log.h>
 
-using namespace dtCore;
-using namespace dtUtil;
 
-// borrowed from osg/Timer.cpp...
-
-const Timer* Timer::instance()
+namespace dtCore
 {
-   static Timer s_timer;
-   return &s_timer;
-}
 
-#ifdef WIN32
-
-#include <sys/types.h>
-#include <fcntl.h>
-#include <windows.h>
-#include <winbase.h>
 Timer::Timer()
 {
-   LARGE_INTEGER frequency;
-   if(QueryPerformanceFrequency(&frequency))
-   {
-      _secsPerTick = 1.0/(double)frequency.QuadPart;
-   }
-   else
-   {
-      _secsPerTick = 1.0;
-      LOG_ERROR("Timer::Timer() unable to use QueryPerformanceFrequency, ");
-      LOG_ERROR("timing code will be wrong.");
-   }
+
 }
 
-Timer_t Timer::tick() const
+Timer::~Timer()
 {
-   LARGE_INTEGER qpc;
-   if (QueryPerformanceCounter(&qpc))
-   {
-      return qpc.QuadPart;
-   }
-   else
-   {
-      LOG_ERROR("Timer::Timer() unable to use QueryPerformanceFrequency, ");
-      LOG_ERROR("timing code will be wrong.");
-      return 0;
-   }
+
 }
 
-#else
 
-#include <sys/time.h>
-
-Timer::Timer( void )
+const Timer* Timer::Instance()
 {
-   _secsPerTick = (1.0 / (double) 1000000);
+   static Timer sTimer;
+   return &sTimer;
 }
 
-Timer_t Timer::tick() const
+Timer_t Timer::Tick() const
 {
-   struct timeval tv;
-   gettimeofday(&tv, NULL);
-   return ((osg::Timer_t)tv.tv_sec)*1000000+(osg::Timer_t)tv.tv_usec;
+   return mTimer.tick();
 }
-#endif
+
+double Timer::DeltaSec( Timer_t t1, Timer_t t2 ) const
+{
+   return mTimer.delta_s(t1, t2);
+}
+
+double Timer::DeltaMil( Timer_t t1, Timer_t t2 ) const
+{
+   return mTimer.delta_m(t1, t2);
+}
+
+double Timer::DeltaMicro( Timer_t t1, Timer_t t2 ) const
+{
+   return mTimer.delta_u(t1, t2);
+}
+
+double Timer::DeltaNano( Timer_t t1, Timer_t t2 ) const
+{
+   return mTimer.delta_n(t1, t2);
+}
+
+double Timer::GetSecondsPerTick() const
+{
+   return mTimer.getSecondsPerTick();
+}
+
+}//namespace dtCore
+

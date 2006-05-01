@@ -163,7 +163,7 @@ namespace dtCore
       void Record()
       {
          mState = Recording;
-         mStartTime = mClock.tick();
+         mStartTime = mClock.Tick();
 
          FrameDataPtrContainer sourcedata;
          sourcedata.reserve( mSources.size() );
@@ -194,7 +194,7 @@ namespace dtCore
       {
          if(mState == Recording)
          {
-            mDeltaTime = mClock.tick();
+            mDeltaTime = mClock.Tick();
          }
 
          mState = Stopped;
@@ -308,8 +308,8 @@ namespace dtCore
             {
                if( data->message == "postframe" )
                {
-                  mDeltaTime = mClock.tick();
-                  double timeCode = mClock.delta_s(mStartTime, mDeltaTime);
+                  mDeltaTime = mClock.Tick();
+                  double timeCode = mClock.DeltaSec(mStartTime, mDeltaTime);
 
                   FrameDataPtrContainer sourcedata;
                   sourcedata.reserve( mSources.size() );

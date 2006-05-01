@@ -236,7 +236,7 @@ namespace dtGame
       dtCore::Timer_t frameTickStart(0);
       
       if (mStatisticsInterval > 0) 
-         frameTickStart = statsTickClock.tick();
+         frameTickStart = statsTickClock.Tick();
 
       // SEND MESSAGES - Forward Send Messages to all components (no actors)
       while (!mSendMessageQueue.empty())
@@ -379,16 +379,16 @@ namespace dtGame
          mStatsNumFrames++;
          // Compute GM process time.  Note - You can't use GetRealClockTime() for GM work time
          // because mClock on system is only updated at the start of the whole tick.
-         dtCore::Timer_t frameTickStop = statsTickClock.tick();
-         double fragmentDelta = statsTickClock.delta_u(mStatsLastFragmentDump, frameTickStop);
-         mStatsCumGMProcessTime += (dtCore::Timer_t)(statsTickClock.delta_u(frameTickStart, frameTickStop));
+         dtCore::Timer_t frameTickStop = statsTickClock.Tick();
+         double fragmentDelta = statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
+         mStatsCumGMProcessTime += (dtCore::Timer_t)(statsTickClock.DeltaMicro(frameTickStart, frameTickStop));
 
          if (fragmentDelta < 0) // handle wierd case of wrap around (just to be safe)
             mStatsLastFragmentDump = frameTickStop;
             
          else if (fragmentDelta >= (mStatisticsInterval * 1000000))
          {
-            dtCore::Timer_t realTimeElapsed = (dtCore::Timer_t)statsTickClock.delta_u(mStatsLastFragmentDump, frameTickStop);
+            dtCore::Timer_t realTimeElapsed = (dtCore::Timer_t)statsTickClock.DeltaMicro(mStatsLastFragmentDump, frameTickStop);
             float gmPercentTime = ComputeStatsPercent(realTimeElapsed, mStatsCumGMProcessTime);
 
             std::ostringstream ss;

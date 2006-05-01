@@ -38,19 +38,28 @@ namespace dtCore
 #endif
 
    /** Time stamper. */
-   class DT_CORE_EXPORT Timer : public osg::Timer
+   class DT_CORE_EXPORT Timer
    {
 
    public:
 
       Timer();
-      ~Timer() {}
+      ~Timer();
 
-      ///get a static reference to the timer
-      static const Timer* instance();
+      static const Timer* Instance();
 
-      ///updates the timer
-      Timer_t tick() const;
+      Timer_t Tick() const;
+
+      double DeltaSec( Timer_t t1, Timer_t t2 ) const;
+      double DeltaMil( Timer_t t1, Timer_t t2 ) const;
+      double DeltaMicro( Timer_t t1, Timer_t t2 ) const;
+      double DeltaNano( Timer_t t1, Timer_t t2 ) const;
+
+      double GetSecondsPerTick() const;
+
+   private:
+
+      osg::Timer mTimer;
 
    };
 };

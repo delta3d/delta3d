@@ -431,7 +431,7 @@ void Scene::OnMessage(MessageData *data)
       if(mPagingEnabled)
       {
 		  osg::ref_ptr<osg::FrameStamp> frameStamp = new osg::FrameStamp;
-         frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(mStartTick, osg::Timer::instance()->tick()));
+         frameStamp->setReferenceTime(Timer::Instance()->DeltaSec(mStartTick, Timer::Instance()->Tick()));
          frameStamp->setFrameNumber(mFrameNum++);
 
          if (osgDB::Registry::instance()->getDatabasePager())
