@@ -31,7 +31,7 @@ System::System():
    mPaused(false)
 {
    mClockTime = 0;
-   mLastClockTime = mClock.tick();
+   mLastClockTime = mClock.Tick();
    mDt = 0.0;
    RegisterInstance(this);
 }
@@ -97,8 +97,8 @@ void System::Pause( const double deltaRealTime )
 ///private
 void System::SystemStep()
 {
-   mClockTime = mClock.tick();
-   mDt = mClock.delta_s(mLastClockTime, mClockTime);
+   mClockTime = mClock.Tick();
+   mDt = mClock.DeltaSec(mLastClockTime, mClockTime);
 
    if( mPaused )
    {
@@ -144,7 +144,7 @@ void System::StepWindow()
 void System::Run()
 {
    mRunning = true;
-   mLastClockTime = mClock.tick();
+   mLastClockTime = mClock.Tick();
    mSimulationClockTime = mLastClockTime;
 
    //This should have been ifdef'd, not commented out.
@@ -187,7 +187,7 @@ void System::Step()
 
    if (first)
    {
-      mLastClockTime = mClock.tick();
+      mLastClockTime = mClock.Tick();
       mSimulationClockTime = mLastClockTime;
       first = false;
    }

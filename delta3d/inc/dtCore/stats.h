@@ -49,10 +49,10 @@ namespace dtCore
       void SetTime(int type);
       void SelectType(osgUtil::Statistics::statsType type);
       void SelectNextType(void);
-      double FrameSeconds() { return mTimer.delta_s(mLastFrameTick,mFrameTick); }
+      double FrameSeconds() { return mTimer.DeltaSec(mLastFrameTick,mFrameTick); }
       double FrameRate() { return 1.0/FrameSeconds(); }
       double GetTime(int type=0);
-      double ClockSeconds() { return mTimer.delta_s(mInitialTick,ClockTick()); }
+      double ClockSeconds() { return mTimer.DeltaSec(mInitialTick,ClockTick()); }
 
       enum timeType
       {
@@ -98,7 +98,7 @@ namespace dtCore
       // system tick.
       //inline osg::Timer_t ClockTick() {return mTimer.tick();}
       //inline osg::Timer_t FrameTick() {return mFrameTick;}
-      inline dtCore::Timer_t ClockTick() {return mTimer.tick();}
+      inline dtCore::Timer_t ClockTick() {return mTimer.Tick();}
       inline dtCore::Timer_t FrameTick() {return mFrameTick;}
 
       dtCore::RefPtr<osgUtil::SceneView> mSV;

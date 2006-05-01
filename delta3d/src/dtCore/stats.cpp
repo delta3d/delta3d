@@ -16,7 +16,7 @@ using namespace dtUtil;
 Stats::Stats(osgUtil::SceneView *sv)
 {
    mPrintStats = osgUtil::Statistics::STAT_NONE;            // gwm change from bool was : false;
-   mInitialTick = mTimer.tick();
+   mInitialTick = mTimer.Tick();
    mFrameTick = mInitialTick;
    mFrameRate=0;                   // added by gwm to display fram Rate smoothed
    mSV = sv;
@@ -38,14 +38,14 @@ void Stats::Init(osgUtil::RenderStage* stg)
 //------------------------------------------------------------------
 void Stats::SetTime(int type)
 {
-  mRegTimes[type] = mTimer.tick();
+  mRegTimes[type] = mTimer.Tick();
 }
 
 double Stats::GetTime(int type)
 {
-	return mTimer.delta_m(mRegTimes[TIME_BEFORE_APP], mRegTimes[TIME_AFTER_APP]) +
-		   mTimer.delta_m(mRegTimes[TIME_BEFORE_CULL], mRegTimes[TIME_AFTER_CULL]) +
-	       mTimer.delta_m(mRegTimes[TIME_BEFORE_DRAW], mRegTimes[TIME_AFTER_DRAW]);
+	return mTimer.DeltaMil(mRegTimes[TIME_BEFORE_APP], mRegTimes[TIME_AFTER_APP]) +
+		   mTimer.DeltaMil(mRegTimes[TIME_BEFORE_CULL], mRegTimes[TIME_AFTER_CULL]) +
+	       mTimer.DeltaMil(mRegTimes[TIME_BEFORE_DRAW], mRegTimes[TIME_AFTER_DRAW]);
 }
 
 
@@ -58,9 +58,9 @@ void Stats::Draw()
   times[2].timeCull=0.0f;
   times[2].timeDraw=0.0f;
 
-  times[2].timeApp  += mTimer.delta_m(mRegTimes[TIME_BEFORE_APP], mRegTimes[TIME_AFTER_APP]);
-  times[2].timeCull += mTimer.delta_m(mRegTimes[TIME_BEFORE_CULL], mRegTimes[TIME_AFTER_CULL]);
-  times[2].timeDraw += mTimer.delta_m(mRegTimes[TIME_BEFORE_DRAW], mRegTimes[TIME_AFTER_DRAW]);
+  times[2].timeApp  += mTimer.DeltaMil(mRegTimes[TIME_BEFORE_APP], mRegTimes[TIME_AFTER_APP]);
+  times[2].timeCull += mTimer.DeltaMil(mRegTimes[TIME_BEFORE_CULL], mRegTimes[TIME_AFTER_CULL]);
+  times[2].timeDraw += mTimer.DeltaMil(mRegTimes[TIME_BEFORE_DRAW], mRegTimes[TIME_AFTER_DRAW]);
 
   // absolute time
   times[2].frameend=UpdateFrameTick();
@@ -83,7 +83,7 @@ void Stats::Draw()
 dtCore::Timer_t Stats::UpdateFrameTick()
 {
   mLastFrameTick = mFrameTick;
-  mFrameTick = mTimer.tick();
+  mFrameTick = mTimer.Tick();
   return mFrameTick;
 }
 

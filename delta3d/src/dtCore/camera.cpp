@@ -47,7 +47,7 @@ mFrameStamp(new osg::FrameStamp())
    mStats = new Stats( mSceneView.get() );
    mStats->Init( mSceneView.get()->getRenderStage() );
 
-   mStartTime = mTimer.tick();
+   mStartTime = mTimer.Tick();
 }
 
 Camera::_SceneHandler::~_SceneHandler()
@@ -79,7 +79,7 @@ void Camera::_SceneHandler::CullImplementation(Producer::Camera &cam)
    mStats->SetTime(Stats::TIME_BEFORE_CULL);
 
    mFrameStamp->setFrameNumber(mFrameStamp->getFrameNumber()+1);
-   mFrameStamp->setReferenceTime( mTimer.delta_s( mStartTime, mTimer.tick() ) );
+   mFrameStamp->setReferenceTime( mTimer.DeltaSec( mStartTime, mTimer.Tick() ) );
 
    //copy the Producer Camera's position to osg::SceneView  
    mSceneView->getProjectionMatrix().set(cam.getProjectionMatrix());
