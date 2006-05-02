@@ -7,6 +7,7 @@
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtUtil;
+using namespace dtGUI;
 
 class TestGUIApp : public dtABC::Application
 {
@@ -19,7 +20,6 @@ public:
 
    virtual void Config()
    {
-
       dtABC::Application::Config();
 
       ///put something in the background to look at
@@ -30,14 +30,23 @@ public:
       ///move the camera up
       Transform xform(-30.0f, 0.0f, 0.0f, -90.0f, 0.0f, 0.0f );
       GetCamera()->SetTransform( &xform );
-      GetCamera()->SetClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 
+      ///lets hide the stock cursor and just use CEGUI's rendered cursor
       GetWindow()->ShowCursor( false );
 
-      mGUI = new dtGUI::CEUIDrawable(GetWindow());
+      ///We'll make a new ScriptModule which will handle subscribing callbacks
+      ///to widgets when it loads the Layout file.
+      ScriptModule *sm = new ScriptModule();
+      sm->AddCallback("quitHandler", &quitHandler );
+      sm->AddCallback("sliderHandler", &sliderHandler );
 
+      ///make a new drawable, supplying the DeltaWin and the ScriptModule
+      mGUI = new dtGUI::CEUIDrawable(GetWindow(), sm);
+
+      ///make some cool UI
       BuildGUI();
 
+      ///and finally add the CEUIDrawable to the Scene for rendering
       GetScene()->AddDrawable(mGUI.get());
    }
 
@@ -103,11 +112,12 @@ private:
             panel->addChildWindow(slider);
             slider->setPosition(CEGUI::Point(0.12f, 0.1f));
             slider->setSize(CEGUI::Size(0.76f, 0.05f));
-            slider->setDocumentSize(256.f);
+            slider->setDocumentSize(100.f);
             slider->setPageSize(16.f);
             slider->setStepSize(1.f);
             slider->setOverlapSize(1.f);
-            slider->setScrollPosition(255.f);
+            slider->setScrollPosition(100.f);
+            slider->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, &sliderHandler);
 
             // quit button
             CEGUI::PushButton* btn = (CEGUI::PushButton*)wm->createWindow("WindowsLook/Button", "QuitButton");
@@ -115,17 +125,8 @@ private:
             btn->setText("Exit");
             btn->setPosition( CEGUI::Point(0.4f, 0.7f) );
             btn->setSize( CEGUI::Size(0.2f, 0.1f) );
+            btn->subscribeEvent(CEGUI::PushButton::EventClicked, &quitHandler);
          }
-
-         //hook up subscribers
-         //we'll use the "doubleclick" to print out some Window properties
-         wm->getWindow("Panel 1")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);      
-         wm->getWindow("Delta_3D")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
-         wm->getWindow("EditBox")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
-         wm->getWindow("slider1")->subscribeEvent(CEGUI::Scrollbar::EventScrollPositionChanged, &sliderHandler);
-         wm->getWindow("slider1")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
-         wm->getWindow("QuitButton")->subscribeEvent(CEGUI::PushButton::EventClicked, &quitHandler);
-         wm->getWindow("QuitButton")->subscribeEvent(CEGUI::Window::EventMouseDoubleClick, &OutputHandler);
       }
 
       // catch to prevent exit (errors will be logged).
@@ -136,14 +137,6 @@ private:
       }
    }
 
-   //display all the properties of this Window
-   static bool OutputHandler(const CEGUI::EventArgs &e)
-   {
-      CEGUI::Window *w = (CEGUI::Window*)((const CEGUI::WindowEventArgs&)e).window;
-      dtGUI::CEUIDrawable::DisplayProperties(w, false);
-      return true;
-   }
-
    //quit!
    static bool quitHandler(const CEGUI::EventArgs& e)
    {
@@ -151,15 +144,20 @@ private:
       return true;
    }
 
-   //adjust the alpha of the whole "sheet"
+   //the scrollbar has changed positions, do something cool like change the alpha value.
    static bool sliderHandler(const CEGUI::EventArgs& e)
    {
       CEGUI::Scrollbar* slider = (CEGUI::Scrollbar*)((const CEGUI::WindowEventArgs&)e).window;
 
-      float alpha = slider->getScrollPosition()/255.f;
-      CEGUI::Window* sheet=CEGUI::System::getSingleton().getGUISheet();
+      //get the scrollbar position (0..1)
+      float alphaPercent = slider->getScrollPosition()/slider->getDocumentSize();
 
-      if(sheet) sheet->setAlpha(alpha);
+      //we don't want alpha of 0.0, so map it to something greater.
+      float alphaVal = dtUtil::MapRangeValue(alphaPercent, 0.f, 1.f, 0.2f, 1.f);
+
+      CEGUI::Window* sheet = CEGUI::System::getSingleton().getGUISheet();
+
+      if(sheet) sheet->setAlpha(alphaVal);
 
       return true;
    }
