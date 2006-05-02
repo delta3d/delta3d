@@ -21,9 +21,7 @@
 #ifndef DELTA_ENVEFFECT
 #define DELTA_ENVEFFECT
 
-#include "dtCore/deltadrawable.h"
-#include "dtUtil/deprecationmgr.h"
-#include <osg/Group>
+#include <dtCore/deltadrawable.h>
 #include <osg/Vec3>
 
 namespace dtCore
@@ -31,17 +29,24 @@ namespace dtCore
    ///A base class for all Environmental Effects
    class DT_CORE_EXPORT EnvEffect : public dtCore::DeltaDrawable
    {
-   public:
-      DECLARE_MANAGEMENT_LAYER(EnvEffect)
+         DECLARE_MANAGEMENT_LAYER(EnvEffect)
 
-      EnvEffect( const std::string& name = 0 );
-      virtual ~EnvEffect() = 0;
+      public:
 
-      /// Must override this to supply the repainting routine
-      virtual void Repaint(   const osg::Vec3& skyColor, const osg::Vec3& fogColor,
-                              double sunAngle, double sunAzimuth,
-                              double visibility );
+         EnvEffect( const std::string& name = "EnvEffect" );
 
+      protected:
+
+         virtual ~EnvEffect();
+   
+      public:
+
+         /// Must override this to supply the repainting routine
+         virtual void Repaint(   const osg::Vec3& skyColor, 
+                                 const osg::Vec3& fogColor,
+                                 double sunAngle, 
+                                 double sunAzimuth,
+                                 double visibility ) = 0;
    };
 }
 

@@ -3,9 +3,9 @@
 //////////////////////////////////////////////////////////////////////
 #include <dtHLA/rticonnection.h>
 
-#include <math.h>
-#include <memory.h>
-#include <stdlib.h>
+#include <cmath>
+#include <memory>
+#include <cstdlib>
 #include <ctime>
 
 #if defined(__APPLE__)
@@ -28,6 +28,7 @@
 #include <xercesc/util/XMLString.hpp>
 
 #include <dtCore/system.h>
+#include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/xercesparser.h>

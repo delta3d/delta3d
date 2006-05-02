@@ -5,7 +5,7 @@
 #include <osg/PolygonMode>
 #include <osgDB/ReadFile>
 
-using  namespace dtCore;
+using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(SkyDome)
 

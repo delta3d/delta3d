@@ -22,7 +22,6 @@
 #define DELTA_TRIPOD
 
 #include <dtCore/deltadrawable.h>
-#include <dtUtil/deprecationmgr.h>
 #include <osg/Vec3>
 
 namespace dtCore
@@ -56,20 +55,18 @@ namespace dtCore
       
       ///Contructor which takes in a optional Camera and Transformable
       Tripod(Camera *cam = 0, Transformable *parent = 0);
+      
+   protected:
+
+      virtual ~Tripod();
+
+   public:
 
       ///Supply a Camera to connect to this Tripod
       void SetCamera( Camera *cam );
 
       ///set camera by name
       void SetCamera( const std::string& camName );
-
-      RefPtr<Camera> GetCamera() const
-      {
-         DEPRECATE(  "RefPtr<Camera> GetCamera()",
-                     "Camera* GetCamera()" )
-
-         return mCamera;
-      }
 
       ///Get a non-const pointer to the currently connected Camera
       Camera* GetCamera();
@@ -79,14 +76,6 @@ namespace dtCore
 
       ///Attach to transformable by name
       void SetAttachToTransformable(const std::string& parentName);
-
-      RefPtr<Transformable> GetAttachedTransformable() const
-      {
-         DEPRECATE(  "RefPtr<Transformable> GetAttachedTransformable()",
-                     "Transformable* GetAttachedTransformable()" )
-
-         return mParentTrans;
-      }
 
       ///Get a non-const pointer to the currently connected Transformable
       Transformable* GetAttachedTransformable() {return mParentTrans.get();}
@@ -128,8 +117,6 @@ namespace dtCore
 
    protected:
 
-      virtual ~Tripod();
-
       ///Override to receive messages
       virtual void OnMessage(MessageData *data);
 
@@ -144,6 +131,7 @@ namespace dtCore
       osg::Vec3 mXYZScale; ///<The scale factors for x,y,z
       osg::Vec3 mHPRScale; ///<The scale factors for h,p,r
       RefPtr<Transformable> mLookAtTarget; ///<the look-at target
+
    };
 
 }

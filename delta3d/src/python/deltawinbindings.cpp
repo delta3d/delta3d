@@ -2,8 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/deltawin.h"
+#include <python/dtpython.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -15,7 +17,6 @@ int IVR1( const DeltaWin::ResolutionVec& rv, int w) { return DeltaWin::IsValidRe
 int IVR2( const DeltaWin::ResolutionVec& rv, int w, int h) { return DeltaWin::IsValidResolution(rv, w, h); }
 int IVR3( const DeltaWin::ResolutionVec& rv, int w, int h, int r) { return DeltaWin::IsValidResolution(rv, w, h, r); }
 int IVR4( const DeltaWin::ResolutionVec& rv, int w, int h, int r, int d) { return DeltaWin::IsValidResolution(rv, w, h, r, d); }
-
 
 void initDeltaWinBindings()
 {
@@ -29,7 +30,7 @@ void initDeltaWinBindings()
    Keyboard* (DeltaWin::*GK1)() = &DeltaWin::GetKeyboard;
    Mouse* (DeltaWin::*GM1)() = &DeltaWin::GetMouse;
 
-   scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin> >("DeltaWin")
+   scope DeltaWinScope = class_<DeltaWin, bases<Base>, dtCore::RefPtr<DeltaWin>, boost::noncopyable >("DeltaWin")
       .def(init<optional<const std::string&, int, int, int, int, bool, bool> >())
       .def(init<const std::string&,dtCore::Keyboard*,dtCore::Mouse*>())
       .def("GetInstanceCount", &DeltaWin::GetInstanceCount)

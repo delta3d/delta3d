@@ -4,7 +4,7 @@
 #include <dtGUI/basescriptmodule.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/system.h>
-#include <dtCore/scene.h>
+#include <dtUtil/log.h>
 
 #include <osg/Geode>
 #include <osg/Projection>

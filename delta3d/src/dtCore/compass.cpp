@@ -15,10 +15,10 @@
 #include <dtCore/pointaxis.h>
 #include <dtCore/camera.h>
 
-// These REALLY should not be needed here, must investigate further...
-#ifdef _MSC_VER
-#include <dtCore/scene.h>
-#endif
+//// These REALLY should not be needed here, must investigate further...
+//#ifdef _MSC_VER
+//#include <dtCore/scene.h>
+//#endif
 
 using namespace   dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Compass)

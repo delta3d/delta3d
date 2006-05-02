@@ -21,25 +21,26 @@
 #ifndef DELTA_CLOUDDOME
 #define DELTA_CLOUDDOME
 
-/* clouddome.h
-* Date: 28/04/04
-*/
-
 #include <dtCore/enveffect.h>
-#include <dtUtil/noisetexture.h>
 #include <dtCore/refptr.h>
-#include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <osg/Geometry>
-#include <osg/Program>
-#include <osg/Transform>
-#include <osg/Texture3D>
-#include <osgUtil/CullVisitor>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Geode;
+   class Geometry;
+   class Program;
+   class Texture3D;
+}
+/// @endcond
 
 namespace dtCore
 {
+   class MoveEarthySkyWithEyePointTransform;
+
    /**
    * CloudDome:  This class can be used to generate procedural cloud cover
    * 
@@ -63,7 +64,7 @@ namespace dtCore
 				      float cutoff,
                   float exponent,
                   float radius,
-				      int   segments);
+				      int   segments );
 
       /**
       *Constructor
@@ -74,60 +75,37 @@ namespace dtCore
 				      int   segments,
 				      const std::string& filename );
 
-		~CloudDome();
+   protected:
 
-     
-		float GetScale()                 const { return mScale; }
-		float GetExponent()              const { return mExponent; }
-		float GetCutoff()                const { return mCutoff; }
-		float GetSpeedX()                const { return mSpeedX; }
-		float GetSpeedY()                const { return mSpeedY; }
-		float GetBias()                  const { return mBias; }
-		osg::Vec3 GetCloudColor()        const { return mCloudColor; } //return-by-value for dtDAL propety types
-		bool GetEnable()                 const { return mEnable; }
+		virtual ~CloudDome();
 
-		void SetScale(float scale)                   { mScale      = scale; }
-		void SetExponent(float exponent)             { mExponent   = exponent; }
-		void SetCutoff(float cutoff)                 { mCutoff     = cutoff; }
-		void SetSpeedX(float speedX)                 { mSpeedX     = speedX; }
-		void SetSpeedY(float speedY)                 { mSpeedY     = speedY; }
-		void SetBias(float bias)                     { mBias       = bias; }
-		void SetCloudColor(const osg::Vec3& mCC)     { mCloudColor = mCC; }
-		void SetShaderEnable(bool enable)            { mEnable     = enable; }
-   
+   public:
 
-      ///the virtual overload draw function
-      virtual void Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
-			double sun_angle, double sunAzimuth,
-			double vis);
+		float GetScale() const { return mScale; }
+		float GetExponent() const { return mExponent; }
+		float GetCutoff() const { return mCutoff; }
+		float GetSpeedX() const { return mSpeedX; }
+		float GetSpeedY() const { return mSpeedY; }
+		float GetBias() const { return mBias; }
+		osg::Vec3 GetCloudColor() const { return mCloudColor; } //return-by-value for dtDAL propety types
+		bool GetEnable() const { return mEnable; }
+
+		void SetScale(float scale) { mScale = scale; }
+		void SetExponent(float exponent) { mExponent = exponent; }
+		void SetCutoff(float cutoff) { mCutoff = cutoff; }
+		void SetSpeedX(float speedX) { mSpeedX = speedX; }
+		void SetSpeedY(float speedY) { mSpeedY = speedY; }
+		void SetBias(float bias) { mBias = bias; }
+		void SetCloudColor(const osg::Vec3& mCC) { mCloudColor = mCC; }
+		void SetShaderEnable(bool enable) { mEnable = enable; }
+
+      virtual void Repaint(   const osg::Vec3& skyColor, 
+                              const osg::Vec3& fogColor,
+                              double sunAngle, 
+                              double sunAzimuth,
+                              double visibility );
 
 	private:
-		class MoveEarthySkyWithEyePointTransform : public osg::Transform
-		{
-		public:
-
-			///Get the transformation matrix which moves from local coords to world coords.
-			virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
-			{
-				if (osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv))
-				{
-					osg::Vec3 eyePointLocal = cv->getEyeLocal();
-					matrix.preMult(osg::Matrix::translate(eyePointLocal.x(),eyePointLocal.y(),eyePointLocal.z()));
-				}
-				return true;
-			}
-
-			///Get the transformation matrix which moves from world coords to local coords.
-			virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
-			{   
-				if (osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv))
-				{
-					osg::Vec3 eyePointLocal = cv->getEyeLocal();
-					matrix.postMult(osg::Matrix::translate(-eyePointLocal.x(),-eyePointLocal.y(),-eyePointLocal.z()));
-				}
-				return true;
-			}
-		};
 
 		void Create();
 		osg::Geode* CreateDome( float radius, int segs );

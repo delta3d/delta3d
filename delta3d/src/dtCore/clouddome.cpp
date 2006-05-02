@@ -1,10 +1,14 @@
 #include <dtCore/clouddome.h>
 #include <dtCore/globals.h>
+#include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>
-#include <dtCore/scene.h>
 #include <dtUtil/log.h>
+#include <dtUtil/noisetexture.h>
 
 #include <osg/BlendFunc>
+#include <osg/Geometry>
+#include <osg/Program>
+#include <osg/Texture3D>
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
 
@@ -287,9 +291,11 @@ void CloudDome::Create()
    }
 }
 
-void CloudDome::Repaint(   osg::Vec4 sky_color, osg::Vec4 fog_color, 
-                           double sun_angle, double sunAzimuth,
-                           double vis )
+void CloudDome::Repaint(   const osg::Vec3& skyColor, 
+                           const osg::Vec3& fogColor,
+                           double sunAngle, 
+                           double sunAzimuth,
+                           double visibility )
 {
 }
 

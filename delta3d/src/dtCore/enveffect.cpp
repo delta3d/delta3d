@@ -1,25 +1,17 @@
-#include "dtCore/enveffect.h"
-#include "dtCore/scene.h"
+#include <dtCore/enveffect.h>
 
-using namespace dtCore;
-
-IMPLEMENT_MANAGEMENT_LAYER(EnvEffect)
-
-EnvEffect::EnvEffect( const std::string& name )
+namespace dtCore
 {
-   RegisterInstance(this);
-   SetName(name);
-}
+   IMPLEMENT_MANAGEMENT_LAYER(EnvEffect)
 
-EnvEffect::~EnvEffect()
-{
-   DeregisterInstance(this);
-}
+   EnvEffect::EnvEffect( const std::string& name )
+   {
+      RegisterInstance(this);
+      SetName(name);
+   }
 
-
-void EnvEffect::Repaint( const osg::Vec3& skyColor, const osg::Vec3& fogColor,
-                     double sunAngle, double sunAzimuth,
-                     double visibility )
-{
-
+   EnvEffect::~EnvEffect()
+   {
+      DeregisterInstance(this);
+   }
 }

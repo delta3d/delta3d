@@ -26,8 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/base.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
 #include <dtCore/refptr.h>
 #include <Producer/KeyboardMouse>   // for InputCallback's base class
 
@@ -35,13 +33,15 @@
 namespace Producer
 {
    class InputArea;
-   class KeyboardMouse;
    class RenderSurface;
 }
 /// @endcond
 
 namespace dtCore
 {
+   class Keyboard;
+   class Mouse;
+
    /**
    * DeltaWin: The base window class for delta3D
    */
@@ -85,7 +85,11 @@ namespace dtCore
       */
       DeltaWin( const std::string& name, Keyboard* keyboard, Mouse* mouse );
 
+   protected:
+
       virtual ~DeltaWin();
+
+   public:
 
       ///Calculate the screen pixel coords ([0,w],[0,h]) given the window coords (x,y) ([-1,1],[-1,1])
       bool CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y );
@@ -191,6 +195,13 @@ namespace dtCore
       };
 
       RefPtr<InputCallback> mInputCallback;
+
+      // Disallowed to prevent compile errors on VS2003. It apparently
+      // creates this functions even if they are not used, and if
+      // this class is forward declared, these implicit functions will
+      // cause compiler errors for missing calls to "ref".
+      DeltaWin& operator=( const DeltaWin& );
+      DeltaWin( const DeltaWin& );
    };
 };
 

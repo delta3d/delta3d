@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #include <dtCore/deltawin.h>
 #include <dtUtil/log.h>

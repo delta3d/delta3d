@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib cppunitd.lib osgd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib cppunitd.lib osgd.lib xerces-c_2D.lib"
 				OutputFile="../../../tests/UnitTestsDtUtild.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -50,7 +50,8 @@
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-$(TargetPath)"/>
+$(TargetPath)
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -89,7 +90,7 @@ $(TargetPath)"/>
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib cppunit.lib osg.lib xerces-c_2.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib cppunit.lib osg.lib xerces-c_2.lib"
 				OutputFile="../../../tests/UnitTestsDtUtil.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -106,7 +107,8 @@ $(TargetPath)"/>
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-$(TargetPath)"/>
+$(TargetPath)
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -154,7 +156,7 @@ $(TargetPath)"/>
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
 			</File>
 			<File
-				RelativePath=".\mathtests.cpp">
+				RelativePath="..\..\..\tests\dtUtil\mathtests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtUtil\stringutiltests.cpp">
