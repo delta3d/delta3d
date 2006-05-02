@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtDALd.lib cppunitd.lib osgd.lib xerces-c_2D.lib"
+				AdditionalDependencies="dtUtild.lib cppunitd.lib osgd.lib xerces-c_2D.lib"
 				OutputFile="../../../tests/UnitTestsDtUtild.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -89,7 +89,7 @@ $(TargetPath)"/>
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib cppunit.lib osg.lib xerces-c_2.lib"
+				AdditionalDependencies="dtUtil.lib cppunit.lib osg.lib xerces-c_2.lib"
 				OutputFile="../../../tests/UnitTestsDtUtil.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -152,6 +152,9 @@ $(TargetPath)"/>
 			</File>
 			<File
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
+			</File>
+			<File
+				RelativePath=".\mathtests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtUtil\stringutiltests.cpp">
