@@ -22,11 +22,11 @@
 #define DELTA_TERRAINDATAREADER
 
 #include <osg/Shape>
-#include "dtCore/base.h"
-#include "dtCore/refptr.h"
-#include "dtUtil/enumeration.h"
-#include "dtTerrain/terraindatatype.h"
-#include "dtTerrain/pagedterraintile.h"
+#include <dtCore/base.h>
+#include <dtCore/refptr.h>
+#include <dtUtil/enumeration.h>
+#include <dtTerrain/terraindatatype.h>
+#include <dtTerrain/pagedterraintile.h>
 
 namespace dtTerrain 
 {
@@ -236,7 +236,7 @@ namespace dtTerrain
           * @param x The x coordinate to sample from.
           * @param y The y coordinate to sample from.
           */
-         float TerrainDataReader::GetInterpolatedHeight(const osg::HeightField *hf, 
+         float GetInterpolatedHeight(const osg::HeightField *hf, 
             float x, float y);
          
          ///Allow the terrain to have access to this class.

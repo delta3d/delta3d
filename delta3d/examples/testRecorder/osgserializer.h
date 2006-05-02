@@ -14,6 +14,8 @@
 #include <osg/Vec4>
 #include <osg/Matrix>
 
+#include <dtUtil/deprecationmgr.h>
+
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 
@@ -40,7 +42,14 @@ public:
    OSGSerializer();
    ~OSGSerializer();
 
-   static void OSGSerializer::intialize();
+   static void Initialize();
+   
+   static void initialize()
+   {
+      DEPRECATE(  "static void OSGSerializer::initialize()",
+                  "static void OSGSerializer::Initialize();" )
+      Initialize();
+   }
 
    // serializing
    static XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* OSGVec3(const osg::Vec3& vec, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc);

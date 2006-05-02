@@ -20,7 +20,7 @@ XERCES_CPP_NAMESPACE_USE
 // -- CameraRecorderAdaptor implementation -- //
 CameraRecorderAdaptor::CameraRecorderAdaptor(dtCore::Camera* cam): BaseClass("CameraRecorderAdaptor"), mCamera(cam)
 {
-   OSGSerializer::intialize();
+   OSGSerializer::Initialize();
 }
 
 CameraRecorderAdaptor::~CameraRecorderAdaptor()
