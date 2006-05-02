@@ -21,22 +21,24 @@
 
 #include <dtCore/skybox.h>
 
+#include <dtCore/moveearthtransform.h>
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 #include <dtUtil/log.h>
 
-#include <osg/TextureCubeMap>
-#include <osg/Projection>
 #include <osg/Depth>
+#include <osg/Group>
+#include <osg/Image>
 #include <osg/MatrixTransform>
-#include <osg/ShapeDrawable>
-#include <osg/Depth>
 #include <osg/PolygonMode> ///for wireframe rendering
+#include <osg/Projection>
+#include <osg/ShapeDrawable>
+#include <osg/Vec3>
+#include <osg/VertexProgram>
 #include <osg/Texture2D>
+#include <osg/TextureCubeMap>
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
-#include <osg/Image>
-#include <osg/VertexProgram>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -58,7 +60,7 @@ mInitializedTextures(false)
    memset(mTexPreSetList, 0, sizeof(bool) * 6);
 }
 
-SkyBox::~SkyBox(void)
+SkyBox::~SkyBox()
 {
    DeregisterInstance(this);
 }
@@ -249,8 +251,8 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 	//setup shaders
 
 	mProgram = new osg::Program;
-	osg::ref_ptr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
-	osg::ref_ptr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+	dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
+	dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
 
    std::string vertFile = osgDB::findDataFile("/shaders/AngularMapSkyBox.vert");
    std::string fragFile = osgDB::findDataFile("/shaders/AngularMapSkyBox.frag");
@@ -262,7 +264,7 @@ void SkyBox::AngularMapProfile::Config(osg::Group* pGroup)
 	mProgram->addShader(vertShader.get());
 	mProgram->addShader(fragShader.get());
 
-	osg::ref_ptr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_2D, "angularMap");
+	dtCore::RefPtr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_2D, "angularMap");
 	tex->set(0);
 	ss->addUniform(tex.get());
 
@@ -339,12 +341,12 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 	ss->setRenderBinDetails(-2,"RenderBin");
 
 
-	osg::ref_ptr<osg::MatrixTransform> modelview_abs = new osg::MatrixTransform;
+	dtCore::RefPtr<osg::MatrixTransform> modelview_abs = new osg::MatrixTransform;
 	modelview_abs->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
 	modelview_abs->setMatrix(osg::Matrix::identity());
 	modelview_abs->addChild(mGeode.get());
 
-	osg::ref_ptr<osg::Projection> projection = new osg::Projection;
+	dtCore::RefPtr<osg::Projection> projection = new osg::Projection;
 	projection->setMatrix(osg::Matrix::ortho2D(0,1,0,1));
 	projection->addChild(modelview_abs.get());
 
@@ -355,8 +357,8 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 	//setup shaders
 
 	mProgram = new osg::Program;
-	osg::ref_ptr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
-	osg::ref_ptr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
+	dtCore::RefPtr<osg::Shader> vertShader = new osg::Shader(osg::Shader::VERTEX);
+	dtCore::RefPtr<osg::Shader> fragShader = new osg::Shader(osg::Shader::FRAGMENT);
 
 	mProgram->addShader(vertShader.get());
 	mProgram->addShader(fragShader.get());
@@ -367,7 +369,7 @@ void SkyBox::CubeMapProfile::Config(osg::Group* pGroup)
 	vertShader->loadShaderSourceFromFile(vertFile);
 	fragShader->loadShaderSourceFromFile(fragFile);
 
-	osg::ref_ptr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_CUBE, "cubeMap");
+	dtCore::RefPtr<osg::Uniform> tex = new osg::Uniform(osg::Uniform::SAMPLER_CUBE, "cubeMap");
 	tex->set(0);
 	ss->addUniform(tex.get());
 
@@ -478,7 +480,7 @@ void dtCore::SkyBox::FixedFunctionProfile::Config(osg::Group* pNode)
    //Drawing a skybox eliminates the need for clearing the color and depth buffers.
    osg::ClearNode* clearNode = new osg::ClearNode;
    clearNode->setRequiresClear(false); //Sky eliminates need for clearing
-   clearNode->addChild(mXform);
+   clearNode->addChild(mXform.get());
    pNode->addChild(clearNode);
  
 }
@@ -494,56 +496,56 @@ osg::Node* dtCore::SkyBox::FixedFunctionProfile::MakeBox()
    osg::Vec3 coords0[] = //front
    {
       osg::Vec3(-mX, mY, -mZ),
-         osg::Vec3(mX, mY,-mZ),
-         osg::Vec3(mX, mY, +mZ),
-         osg::Vec3(-mX, mY, +mZ),
+      osg::Vec3(mX, mY,-mZ),
+      osg::Vec3(mX, mY, +mZ),
+      osg::Vec3(-mX, mY, +mZ),
    };
 
    osg::Vec3 coords1[] = //right
    {
-         osg::Vec3(mX, mY, -mZ),
-         osg::Vec3(mX, -mY, -mZ),
-         osg::Vec3(mX, -mY, mZ),
-         osg::Vec3(mX, mY, mZ)
+      osg::Vec3(mX, mY, -mZ),
+      osg::Vec3(mX, -mY, -mZ),
+      osg::Vec3(mX, -mY, mZ),
+      osg::Vec3(mX, mY, mZ)
    };
 
    osg::Vec3 coords2[] = //back
    {
       osg::Vec3(mX, -mY, -mZ),
-         osg::Vec3(-mX, -mY, -mZ),
-         osg::Vec3(-mX, -mY, mZ),
-         osg::Vec3(mX, -mY, mZ)
+      osg::Vec3(-mX, -mY, -mZ),
+      osg::Vec3(-mX, -mY, mZ),
+      osg::Vec3(mX, -mY, mZ)
    };
 
    osg::Vec3 coords3[] = //left
    {
       osg::Vec3(-mX, -mY, -mZ),
-         osg::Vec3(-mX, mY, -mZ),
-         osg::Vec3(-mX, mY, mZ),
-         osg::Vec3(-mX, -mY, mZ)
+      osg::Vec3(-mX, mY, -mZ),
+      osg::Vec3(-mX, mY, mZ),
+      osg::Vec3(-mX, -mY, mZ)
    };
 
    osg::Vec3 coords4[] = //top
    {
       osg::Vec3(-mX, mY, mZ),
-         osg::Vec3(mX, mY, mZ),
-         osg::Vec3(mX, -mY, mZ),
-         osg::Vec3(-mX, -mY, mZ)
+      osg::Vec3(mX, mY, mZ),
+      osg::Vec3(mX, -mY, mZ),
+      osg::Vec3(-mX, -mY, mZ)
    };
    osg::Vec3 coords5[] = //bottom
    {
       osg::Vec3(-mX, mY, -mZ),
-         osg::Vec3(-mX, -mY, -mZ),
-         osg::Vec3(mX, -mY, -mZ),
-         osg::Vec3(mX, mY, -mZ)
+      osg::Vec3(-mX, -mY, -mZ),
+      osg::Vec3(mX, -mY, -mZ),
+      osg::Vec3(mX, mY, -mZ)
    };
 
    osg::Vec2 tCoords[] =
    {
       osg::Vec2(0,0),
-         osg::Vec2(1,0),
-         osg::Vec2(1,1),
-         osg::Vec2(0,1)
+      osg::Vec2(1,0),
+      osg::Vec2(1,1),
+      osg::Vec2(0,1)
    };
    osg::Geometry *polyGeom[6];
 
@@ -602,8 +604,6 @@ osg::Node* dtCore::SkyBox::FixedFunctionProfile::MakeBox()
 /** Pass in the filenames for the textures to be applied to the SkyBox.*/
 void dtCore::SkyBox::FixedFunctionProfile::SetTexture(SkyBox::SkyBoxSideEnum side, const std::string& filename)
 {
-   //mTextureFilenameMap[side] = filename;
-
    osg::Image *newImage = osgDB::readImageFile(filename);
    if (newImage == 0)
    {
@@ -632,4 +632,3 @@ void SkyBox::SkyBoxDrawable::drawImplementation(osg::State& state) const
 	glEnd();
 
 }
-

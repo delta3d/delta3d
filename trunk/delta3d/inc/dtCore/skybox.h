@@ -22,18 +22,22 @@
 #ifndef DELTA_SKYBOX
 #define DELTA_SKYBOX
 
-#include "dtCore/enveffect.h"
-#include "dtCore/skydome.h"
-#include "dtCore/refptr.h"
+#include <dtCore/enveffect.h>
+#include <dtCore/skydome.h>
+#include <dtCore/refptr.h>
 
-#include <osg/Vec3>
-#include <osg/Texture2D>
-#include <osg/Group>
-#include <dtUtil/deprecationmgr.h>
-#include <osg/TextureCubeMap>
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Group;
+   class Texture2D;
+   class TextureCubeMap;
+}
+/// @endcond
 
 namespace dtCore
 {
+   class MoveEarthySkyWithEyePointTransform;
 
    ///A six-sided textured cube to represent distant scenery
 
@@ -63,7 +67,7 @@ namespace dtCore
    * Environment.  Adding fog, sun, and clouds typically make things look a 
    * little weird.
    */
-class DT_CORE_EXPORT SkyBox :  public EnvEffect
+class DT_CORE_EXPORT SkyBox : public EnvEffect
 {
 protected:
    class RenderProfile;
@@ -78,30 +82,29 @@ public:
 	//as those used with hdr, they are called light probes
 	//http://www.debevec.org/Probes/
 	*/
-	typedef enum
+	enum RenderProfileEnum
 	{
 		RP_FIXED_FUNCTION = 0,
 		RP_CUBE_MAP,
 		RP_ANGULAR_MAP,
 		RP_DEFAULT,
 		RP_COUNT
-
-	} RenderProfileEnum;
+	};
 
 	/**
 	//SkyBoxSideEnum selects the side of the cube to texture
 	//if RenderProfileEnum is set to RP_ANGULAR_MAP, this is irrelevant
 	//and ignores the side
 	*/
-	typedef enum   {
+   enum SkyBoxSideEnum
+   {
 		SKYBOX_FRONT = 0,
 		SKYBOX_RIGHT,
 		SKYBOX_BACK,      
 		SKYBOX_LEFT,
 		SKYBOX_TOP,
 		SKYBOX_BOTTOM
-	} SkyBoxSideEnum;
-
+	};
 
    class ConfigCallback: public osg::NodeCallback
    {
@@ -113,15 +116,18 @@ public:
          mSkyBox->Config();
       }
    private:
-      SkyBox* mSkyBox;
+      SkyBox* mSkyBox; ///< Weak pointer to SkyBox to prevent circular reference
    };
 
    friend class ConfigCallback;
 
 public:
-   SkyBox(const std::string& name="SkyBox", RenderProfileEnum pRenderProfile = RP_DEFAULT);
-   virtual ~SkyBox(void);
+   SkyBox(  const std::string& name="SkyBox", 
+            RenderProfileEnum pRenderProfile = RP_DEFAULT );
+protected:
+   virtual ~SkyBox();
 
+public:
    /// Must override this to supply the repainting routine
    virtual void Repaint(   const osg::Vec3& skyColor, 
                            const osg::Vec3& fogColor,
@@ -132,7 +138,6 @@ public:
    /// Set the texture for this side of the skybox
    void SetTexture(SkyBoxSideEnum side, const std::string& filename);
 
-
 protected:
 	
 	virtual void Config();
@@ -141,14 +146,13 @@ protected:
 
 	RenderProfileEnum mRenderProfilePreference;
 	bool mSupportedProfiles[RP_COUNT];
-	osg::ref_ptr<RenderProfile> mRenderProfile;
+   dtCore::RefPtr<RenderProfile> mRenderProfile;
 	
 	bool mInitializedTextures;
 	std::string mTexList[6];
 	bool mTexPreSetList[6];
 
-   osg::ref_ptr<osg::Geode> mTempGeode;
-
+   dtCore::RefPtr<osg::Geode> mTempGeode;
 
 	///this is a custom drawable for the AngularMapProfile
 	///and the CubeMapProfile
@@ -164,8 +168,6 @@ protected:
 		SkyBoxDrawable(){setUseDisplayList(false);}
 
 		/*virtual*/ void drawImplementation(osg::State& state) const;
-
-	private:
 	};
 
 	///a base class to allow the user to choose different ways
@@ -195,7 +197,7 @@ protected:
 				}
 			}
 		private:
-			AngularMapProfile* mProfile;
+			dtCore::RefPtr<AngularMapProfile> mProfile;
 		};
 
 		friend class UpdateViewCallback;
@@ -210,11 +212,10 @@ protected:
 
 		void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
 
-
-		osg::ref_ptr<osg::Geode>			mGeode;
-		osg::ref_ptr<osg::Texture2D>		mAngularMap;
-		osg::ref_ptr<osg::Program>			mProgram;
-		osg::ref_ptr<osg::Uniform>			mInverseModelViewProjMatrix;
+		dtCore::RefPtr<osg::Geode>			   mGeode;
+		dtCore::RefPtr<osg::Texture2D>		mAngularMap;
+		dtCore::RefPtr<osg::Program>			mProgram;
+		dtCore::RefPtr<osg::Uniform>			mInverseModelViewProjMatrix;
 
 	};
 
@@ -236,7 +237,7 @@ protected:
 				}
 			}
 		private:
-			CubeMapProfile* mProfile;
+         dtCore::RefPtr<CubeMapProfile> mProfile;
 		};
 
 		friend class UpdateViewCallback;
@@ -249,20 +250,18 @@ protected:
 	protected:
 		void UpdateViewMatrix(const osg::Matrix& viewMat, const osg::Matrix& projMat);
 
-		osg::ref_ptr<osg::Geode>			mGeode;
-		osg::ref_ptr<osg::TextureCubeMap>	mCubeMap;
-		osg::ref_ptr<osg::Program>			mProgram;
-		osg::ref_ptr<osg::Uniform>			mInverseModelViewProjMatrix;
-
+		dtCore::RefPtr<osg::Geode>			   mGeode;
+		dtCore::RefPtr<osg::TextureCubeMap>	mCubeMap;
+		dtCore::RefPtr<osg::Program>			mProgram;
+		dtCore::RefPtr<osg::Uniform>			mInverseModelViewProjMatrix;
 	};
 
 	///this render profile will render the skybox as usual with the
 	///fixed function pipeline
 	class DT_CORE_EXPORT FixedFunctionProfile: public SkyBox::RenderProfile
 	{
-		class MoveEarthySkyWithEyePointTransform;
 
-	public:
+   public:
 		FixedFunctionProfile();
 		void Config(osg::Group* pNode);
 		void SetTexture(SkyBox::SkyBoxSideEnum side, const std::string& filename);
@@ -271,42 +270,9 @@ protected:
 
 		osg::Node* MakeBox();
 
-		osg::ref_ptr<osg::Geode> mGeode;
-		MoveEarthySkyWithEyePointTransform *mXform;
-		osg::ref_ptr<osg::Texture2D> mTextureList[6];
-
-	private:
-
-		class MoveEarthySkyWithEyePointTransform : public osg::Transform
-		{
-		public:
-
-			/** Get the transformation matrix which moves from local coords to world coords.*/
-			virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
-			{
-				osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-				if (cv)
-				{
-					osg::Vec3 eyePointLocal = cv->getEyeLocal();
-					matrix.preMult(osg::Matrix::translate(eyePointLocal.x(),eyePointLocal.y(),eyePointLocal.z()));
-					// matrix.preMult(osg::Matrix::rotate(osg::DegreesToRadians(-mAzimuth-90.f), 0.f, 0.f, 1.f));
-				}
-				return true;
-			}
-
-			/** Get the transformation matrix which moves from world coords to local coords.*/
-			virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
-			{    
-				osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-				if (cv)
-				{
-					osg::Vec3 eyePointLocal = cv->getEyeLocal();
-					matrix.postMult(osg::Matrix::translate(-eyePointLocal.x(),-eyePointLocal.y(),-eyePointLocal.z()));
-				}
-				return true;
-			}
-		};
-
+		dtCore::RefPtr<osg::Geode> mGeode;
+      dtCore::RefPtr<dtCore::MoveEarthySkyWithEyePointTransform> mXform;
+		dtCore::RefPtr<osg::Texture2D> mTextureList[6];
 	};
    
 };
