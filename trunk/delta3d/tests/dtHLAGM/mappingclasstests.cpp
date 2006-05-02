@@ -127,7 +127,7 @@ void MappingClassTests::TestOneToOneMapping(dtHLAGM::OneToOneMapping& thisOneToO
    thisOneToOneMapping.AddEnumerationMapping(8, "horse");
    
    std::string gameEnumValue;
-   int hlaEnumValue;
+   int hlaEnumValue(0);
    CPPUNIT_ASSERT(thisOneToOneMapping.GetHLAEnumerationValue("hello", hlaEnumValue));
    CPPUNIT_ASSERT(hlaEnumValue == 1);
    CPPUNIT_ASSERT(thisOneToOneMapping.GetHLAEnumerationValue("chicken", hlaEnumValue));
