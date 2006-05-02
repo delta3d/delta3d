@@ -6,6 +6,7 @@
 #include "osgserializer.h"
 
 #include <dtCore/camera.h>
+#include <dtUtil/log.h>
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/xercesutils.h>
 

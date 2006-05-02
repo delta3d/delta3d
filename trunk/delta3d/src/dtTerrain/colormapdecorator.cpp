@@ -19,7 +19,8 @@
 * @author Matthew W. Campbell
 */
 
-#include "dtTerrain/colormapdecorator.h"
+#include <dtTerrain/colormapdecorator.h>
+#include <dtUtil/log.h>
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
 

@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/base.h>
-#include <dtUtil/log.h>
+
 #include <dtCore/refptr.h>
 #include <osg/Node>
 
@@ -94,14 +94,7 @@ namespace dtCore
          * 0 and the number of children-1 if found, if not found then
          * return the number of children.
          */
-         inline unsigned int GetChildIndex( const DeltaDrawable* child ) const
-         {
-            for (unsigned int childNum=0;childNum<mChildList.size();++childNum)
-            {
-               if (mChildList[childNum]==child) return childNum;
-            } 
-            return mChildList.size(); // node not found.
-         }
+         unsigned int GetChildIndex( const DeltaDrawable* child ) const;
 
          ///Check if the supplied DeltaDrawable can actually be a chil of this instance.
          /** 
@@ -110,14 +103,11 @@ namespace dtCore
           */
          bool CanBeChild( DeltaDrawable *child );
 
-         virtual void RenderProxyNode( bool enable = true )
-         {  
-            if( mProxyNode == 0 )
-               LOG_WARNING("Proxy node is not implemented, overwrite RenderProxyNode." );
-         };
+         virtual void RenderProxyNode( bool enable = true );
 
    protected:
-      DeltaDrawable( const std::string& name = "DeltaDrawable");
+
+      DeltaDrawable( const std::string& name = "DeltaDrawable" );
       virtual ~DeltaDrawable();
 
       RefPtr<osg::Node> mNode; ///< The node to store anything

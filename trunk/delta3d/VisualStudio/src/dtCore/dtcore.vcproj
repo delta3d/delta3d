@@ -227,6 +227,9 @@
 				RelativePath="..\..\..\src\dtCore\mouse.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\moveearthtransform.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\notify.cpp">
 			</File>
 			<File
@@ -391,6 +394,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\mouse.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\moveearthtransform.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\notify.h">

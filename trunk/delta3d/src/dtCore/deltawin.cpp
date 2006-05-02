@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/deltawin.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 

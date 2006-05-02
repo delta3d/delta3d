@@ -28,7 +28,6 @@
 #include <Producer/Camera>
 #include <dtCore/stats.h>
 #include <dtCore/timer.h>
-#include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
 #include <osg/Vec4>
@@ -111,11 +110,14 @@ namespace dtCore
          dtCore::Timer_t mStartTime;
       };
 
-      Camera( const std::string& name = "camera" );
+      Camera( const std::string& name = "camera" );      
 
    protected:
+
       virtual ~Camera();
+
    public:
+
       void SetFrameBin( unsigned int frameBin );
       unsigned int GetFrameBin() const { return mFrameBin; }
 
@@ -225,6 +227,13 @@ namespace dtCore
       virtual void AddedToScene( Scene* scene );
 
    private:
+
+      // Disallowed to prevent compile errors on VS2003. It apparently
+      // creates this functions even if they are not used, and if
+      // this class is forward declared, these implicit functions will
+      // cause compiler errors for missing calls to "ref".
+      Camera& operator=( const Camera& ); 
+      Camera( const Camera& );
 
       unsigned int mFrameBin;
       static CameraGroup* mCameraGroup;

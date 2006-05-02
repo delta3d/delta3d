@@ -21,28 +21,32 @@
 #ifndef DELTA_CLOUDPLANE
 #define DELTA_CLOUDPLANE
 
+#include <dtCore/enveffect.h>
+#include <dtCore/refptr.h>
 
-#include "dtCore/enveffect.h"
-#include "dtCore/refptr.h"
-
+#include <osg/Array>
 #include <osg/Vec2>
 #include <osg/Vec4>
-#include <osg/Group>
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <osg/Transform>
-#include <osg/Texture2D>
-#include <osg/TexMat>
-#include <osgUtil/CullVisitor>
-#include <osg/Fog>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Fog;
+   class Geode;
+   class Geometry;
+   class TexMat;
+   class Texture2D;
+   class Texture3D;
+}
+/// @endcond
 
 namespace dtCore
 {
+   class MoveEarthySkyWithEyePointTransform;
+
    /**
-   * CloudPlane:  This class can be used to simulate cloud cover
-   *                 it derives from EnvEffect
-   *
-   */
+    * This class can be used to simulate cloud cover it derives from EnvEffect.
+    */
    class DT_CORE_EXPORT CloudPlane : public dtCore::EnvEffect
    {
    public:
@@ -50,68 +54,44 @@ namespace dtCore
        DECLARE_MANAGEMENT_LAYER(CloudPlane)
 
        /**
-       * Constructor: These params initialize the noise function
-       * for a detailed description see dtUtil::Fractal   
-       *
-       *@sa dtUtil::Fractal
-       */
-       CloudPlane(int  octaves,
-                 float cutoff,
-                 int   frequency,
-                 float amp,
-                 float persistence,
-                 float density,
-                 int   texSize,
-                 float height,
-                 const std::string& name = "CloudPlane");
+        * Constructor: These params initialize the noise function
+        * for a detailed description see dtUtil::Fractal   
+        *
+        * @sa dtUtil::Fractal
+        */
+       CloudPlane(   int  octaves,
+                     float cutoff,
+                     int   frequency,
+                     float amp,
+                     float persistence,
+                     float density,
+                     int   texSize,
+                     float height,
+                     const std::string& name = "CloudPlane");
       
-      ~CloudPlane();
+   protected:
 
-      ///the virtual overloaded draw function
-      virtual void Repaint(   osg::Vec4 sky_color, osg::Vec4 fog_color, 
-                              double sun_angle, double sunAzimuth,
-                              double vis);
+      virtual ~CloudPlane();
+
+   public:
+
+      virtual void Repaint(   const osg::Vec3& skyColor, 
+                              const osg::Vec3& fogColor,
+                              double sunAngle, 
+                              double sunAzimuth,
+                              double visibility );
 
       ///@return height of skyplane
       float GetHeight() { return mHeight; };
 
    private:
-       class MoveEarthySkyWithEyePointTransform : public osg::Transform
-       {
-       public:
 
-           /** Get the transformation matrix which moves from local coords to world coords.*/
-           virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
-           {
-               osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-               if (cv)
-               {
-                   osg::Vec3 eyePointLocal = cv->getEyeLocal();
-                   matrix.preMult(osg::Matrix::translate(eyePointLocal.x(),eyePointLocal.y(),eyePointLocal.z()));
-               }
-               return true;
-           }
-
-           /** Get the transformation matrix which moves from world coords to local coords.*/
-           virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
-           {    
-               osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
-               if (cv)
-               {
-                   osg::Vec3 eyePointLocal = cv->getEyeLocal();
-                   matrix.postMult(osg::Matrix::translate(-eyePointLocal.x(),-eyePointLocal.y(),-eyePointLocal.z()));
-               }
-               return true;
-           }
-       };
-
-       void Create( void );
-       osg::Texture2D *createPerlinTexture(void);
+       void Create();
+       osg::Texture2D *createPerlinTexture();
        virtual void OnMessage(MessageData *data);
        void Update(const double deltaFrameTime);
        osg::Geometry *createPlane(float, float);
 
-       //dtCore::RefPtr<osg::Group> mNode;
        dtCore::RefPtr<osg::Geode> mGeode;
        dtCore::RefPtr<osg::Geometry> mPlane;
        dtCore::RefPtr<osg::Image> mImage;
@@ -131,11 +111,8 @@ namespace dtCore
        osg::Vec2Array *mTexCoords;
        osg::Vec4Array *mColors;
        dtCore::RefPtr<MoveEarthySkyWithEyePointTransform> mXform;
-       osg::ref_ptr<osg::TexMat> mTexMat;
-
+       dtCore::RefPtr<osg::TexMat> mTexMat;
    };
-
 }
-
 
 #endif // DELTA_CLOUDPLANE

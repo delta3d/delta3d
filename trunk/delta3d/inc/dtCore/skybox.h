@@ -123,10 +123,11 @@ public:
    virtual ~SkyBox(void);
 
    /// Must override this to supply the repainting routine
-   virtual void Repaint(osg::Vec3 skyColor, osg::Vec3 fogColor,
-      double sunAngle, double sunAzimuth,
-      double visibility);
-
+   virtual void Repaint(   const osg::Vec3& skyColor, 
+                           const osg::Vec3& fogColor,
+                           double sunAngle, 
+                           double sunAzimuth,
+                           double visibility );
 
    /// Set the texture for this side of the skybox
    void SetTexture(SkyBoxSideEnum side, const std::string& filename);

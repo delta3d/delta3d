@@ -1,5 +1,5 @@
-#include "dtCore/deltadrawable.h"
-#include "dtCore/scene.h"
+#include <dtCore/deltadrawable.h>
+#include <dtCore/scene.h>
 #include <dtUtil/log.h>
 
 using namespace dtCore;
@@ -70,6 +70,24 @@ void DeltaDrawable::RemoveChild(DeltaDrawable *child)
    }
 }
 
+/** 
+ * Return a value between
+ * 0 and the number of children-1 if found, if not found then
+ * return the number of children.
+ */
+unsigned int DeltaDrawable::GetChildIndex( const DeltaDrawable* child ) const
+{
+   for( unsigned int childNum = 0; childNum < mChildList.size(); ++childNum )
+   {
+      if( mChildList[childNum] == child )
+      {
+         return childNum;
+      }
+   }
+
+   return mChildList.size(); // node not found.
+}
+
 /*!
 * Check to see if the supplied DeltaDrawable can be a child to this instance.
 * To be valid, it can't already have a parent, can't be this instance, and
@@ -93,6 +111,14 @@ bool DeltaDrawable::CanBeChild(DeltaDrawable *child)
    }
    
    return true;
+}
+
+void DeltaDrawable::RenderProxyNode( bool enable )
+{  
+   if( mProxyNode == 0 )
+   {
+      LOG_WARNING("Proxy node is not implemented, overwrite RenderProxyNode." );
+   }
 }
 
 /**

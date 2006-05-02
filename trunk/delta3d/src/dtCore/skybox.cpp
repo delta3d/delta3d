@@ -19,9 +19,11 @@
 *@author Bradley Anderegg
 */
 
-#include "dtCore/system.h"
-#include "dtCore/skybox.h"
-#include "dtCore/scene.h"
+#include <dtCore/skybox.h>
+
+#include <dtCore/system.h>
+#include <dtCore/globals.h>
+#include <dtUtil/log.h>
 
 #include <osg/TextureCubeMap>
 #include <osg/Projection>
@@ -35,7 +37,6 @@
 #include <osgDB/FileUtils>
 #include <osg/Image>
 #include <osg/VertexProgram>
-#include <dtCore/globals.h>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -185,17 +186,14 @@ void SkyBox::SetTexture(SkyBoxSideEnum side, const std::string& filename)
 	}
 }
 
-
-/// Must override this to supply the repainting routine
-void SkyBox::Repaint(osg::Vec3 skyColor, osg::Vec3 fogColor,
-					 double sunAngle, double sunAzimuth,
-					 double visibility)
+void SkyBox::Repaint(   const osg::Vec3& skyColor, 
+                        const osg::Vec3& fogColor,
+                        double sunAngle, 
+                        double sunAzimuth,
+                        double visibility )
 {
 	//need to recolor anything?
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 //Now for the implementation of the different render profiles			//

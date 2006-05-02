@@ -2,9 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtCore/camera.h>
+
 #include <Producer/RenderSurface>
 
-#include <dtCore/camera.h>
 #include <dtCore/cameragroup.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/scene.h>

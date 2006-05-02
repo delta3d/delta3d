@@ -15,7 +15,7 @@ void initCloudDomeBindings()
    CloudDome* (*CloudDomeGI1)(int) = &CloudDome::GetInstance;
    CloudDome* (*CloudDomeGI2)(std::string) = &CloudDome::GetInstance;
 
-   class_<CloudDome, bases<EnvEffect>, dtCore::RefPtr<CloudDome> >("CloudDome", init<int, int, float, float, float, float, float, int>())
+   class_<CloudDome, bases<EnvEffect>, dtCore::RefPtr<CloudDome>, boost::noncopyable >("CloudDome", init<int, int, float, float, float, float, float, int>())
       .def(init<float,int,const std::string&>())
       .def("GetInstanceCount", &CloudDome::GetInstanceCount)
       .staticmethod("GetInstanceCount")

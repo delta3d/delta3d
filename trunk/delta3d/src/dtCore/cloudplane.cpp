@@ -1,21 +1,22 @@
+#include <dtCore/cloudplane.h>
+#include <dtCore/moveearthtransform.h>
+#include <dtCore/system.h>
+#include <dtUtil/noisetexture.h>
 
-#include "dtCore/cloudplane.h"
-#include "dtUtil/noisetexture.h"
-#include "dtCore/system.h"
-#include "dtCore/scene.h"
-
-#include <osg/Vec2>
-#include <osg/Vec3>
-#include <osg/Texture2D>
-#include <osg/TexEnv>
 #include <osg/BlendFunc>
+#include <osg/Fog>
+#include <osg/Geometry>
 #include <osg/Shape>
 #include <osg/StateSet>
+#include <osg/Texture2D>
+#include <osg/TexEnv>
+#include <osg/TexMat>
+#include <osg/Vec2>
+#include <osg/Vec3>
 
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
-
 
 const int MAX_HEIGHT = 2000;
 
@@ -104,7 +105,7 @@ osg::Texture2D* CloudPlane::createPerlinTexture()
 }
 
 
-void CloudPlane::Create( void ) 
+void CloudPlane::Create() 
 {
 	mXform = new MoveEarthySkyWithEyePointTransform();
 	mXform->setCullingActive(false);
@@ -160,36 +161,39 @@ void CloudPlane::Create( void )
    dynamic_cast<osg::Group*>(mNode.get())->addChild(mXform.get());
 
    //init the colors to something believable
-   osg::Vec4 sky (1.f, 1.f, 1.f, 1.f);
-   osg::Vec4 fogColor (1.f, 1.f, 1.f, 1.f);
-   Repaint(sky, fogColor, 45.0, 45.0, 10000.0);
+   osg::Vec3 sky( 1.0f, 1.0f, 1.0f );
+   osg::Vec3 fogColor( 1.0f, 1.0f, 1.0f );
+   Repaint( sky, fogColor, 45.0, 45.0, 10000.0 );
 }
 
-void CloudPlane::Repaint(osg::Vec4 sky_color, osg::Vec4 fog_color, 
-						 double sun_angle, double sunAzimuth,
-						 double vis)
+void CloudPlane::Repaint(  const osg::Vec3& skyColor, 
+                           const osg::Vec3& fogColor,
+                           double sunAngle, 
+                           double sunAzimuth,
+                           double visibility)
 {
-	mFog->setColor(osg::Vec4(fog_color[0], fog_color[1], fog_color[2], 1.f) );
-	mFog->setEnd(vis);
+	mFog->setColor( osg::Vec4(fogColor[0], fogColor[1], fogColor[2], 1.0f) );
+	mFog->setEnd( visibility );
 	
-	int pm = 500;
-	if(sun_angle < 13)
-		mCloudColor->set(0.3f, 0.3f, 0.3f, 1.0f);
-	else if (sun_angle > 13 && sun_angle <= 18)
+	int pm( 500 );
+	if( sunAngle < 13 )
+   {
+		mCloudColor->set( 0.3f, 0.3f, 0.3f, 1.0f );
+   }
+	else if( sunAngle > 13 && sunAngle <= 18 )
 	{
-		float fr = (18 - sun_angle)  / 5.f; 
-
-		mCloudColor->set(fr*(pm/mHeight), .9f *fr*(pm/mHeight), .76f *fr*(pm/mHeight), 1.0f);
+		float fr = (18 - sunAngle)  / 5.0f; 
+		mCloudColor->set( fr*(pm/mHeight), 0.9f *fr*(pm/mHeight), 0.76f *fr*(pm/mHeight), 1.0f );
 	}
 	else
-		mCloudColor->set(1.0f, 1.0f, 1.0f, 1.0f);
+   {
+		mCloudColor->set( 1.0f, 1.0f, 1.0f, 1.0f );
+   }
 
+	(*mColors)[0].set( fogColor[0], fogColor[1], fogColor[2], 0.0f );
+	(*mColors)[1].set( (*mCloudColor)[0], (*mCloudColor)[1], (*mCloudColor)[2], 1 );
 
-	(*mColors)[0].set(fog_color[0], fog_color[1], fog_color[2], 0.0f);
-	(*mColors)[1].set((*mCloudColor)[0], (*mCloudColor)[1], (*mCloudColor)[2], 1);
-
-	mPlane->setColorArray(mColors);
-
+	mPlane->setColorArray( mColors );
 }
 
 void CloudPlane::OnMessage(MessageData *data)

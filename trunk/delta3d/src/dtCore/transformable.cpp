@@ -1,6 +1,7 @@
 #include <dtCore/pointaxis.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
+#include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 
 #include <osg/BoundingBox>
