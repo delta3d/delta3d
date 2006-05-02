@@ -31,7 +31,7 @@ OSGSerializer::~OSGSerializer()
    std::for_each( mRep.begin(), mRep.end(), ReleaseSecond() );
 }
 
-void OSGSerializer::intialize()
+void OSGSerializer::Initialize()
 {
    if( mInitialized )
       return;
