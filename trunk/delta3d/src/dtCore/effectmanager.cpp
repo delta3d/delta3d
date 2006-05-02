@@ -17,6 +17,7 @@
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 #include <dtUtil/deprecationmgr.h>
+#include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 #include <dtUtil/stringutils.h>
 
@@ -603,8 +604,8 @@ namespace dtCore
                            const osg::Vec3& position,
                            const std::string& detonationName,
                            Transformable* parent) : Effect(node, timeToLive),
-      mDetonationName(detonationName),
       mPosition( position ),
+      mDetonationName(detonationName),
       mParent(parent)
    {
       // Ugly, but I'm running out of time here!
