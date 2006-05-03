@@ -49,7 +49,7 @@
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-$(TargetPath)
+&quot;$(TargetPath)&quot;
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -106,7 +106,7 @@ $(TargetPath)
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-$(TargetPath)
+&quot;$(TargetPath)&quot;
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
