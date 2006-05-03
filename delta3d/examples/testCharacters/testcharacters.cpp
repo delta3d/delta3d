@@ -13,8 +13,8 @@ class KeyController : public dtCore::Base
 {
 public:
    KeyController(Character* character, Keyboard* keyboard) : Base("KeyController"),
-      mKeyboard(keyboard),
-      mCharacter(character)
+      mCharacter(character),
+      mKeyboard(keyboard)
    {
       AddSender(System::Instance());
    }

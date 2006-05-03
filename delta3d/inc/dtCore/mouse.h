@@ -116,18 +116,16 @@ namespace dtCore
           */
          void RemoveMouseListener(MouseListener* mouseListener);
 
-         ///Producer callback methods
+         // Producer callback methods
          virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion );
-         ///Producer callback methods
          virtual bool MouseMotion( float x, float y);
-         ///Producer callback methods
          virtual bool PassiveMouseMotion( float x, float y);
-         ///Producer callback methods
-         virtual bool ButtonPress( float x, float y, unsigned int button );
-         ///Producer callback methods
-         virtual bool DoubleButtonPress( float x, float y , unsigned int button );
-         ///Producer callback methods
-         virtual bool ButtonRelease( float x, float y, unsigned int button);
+
+         // These are called ButtonDown & ButtonUp instead of ButtonPress and ButtonRelease
+         // to avoid a define clash with X11's X.h
+         virtual bool ButtonDown( float x, float y, unsigned int button );
+         virtual bool DoubleButtonDown( float x, float y , unsigned int button );
+         virtual bool ButtonUp( float x, float y, unsigned int button);
 
          const MouseListenerList& GetListeners() const { return mMouseListeners; }
 

@@ -50,8 +50,8 @@ namespace dtCore
                      float energy, 
                      float molecules );
       
-      inline osg::VertexProgram* GetLightScatterinVP();
-      inline osg::FragmentProgram* GetDomeFP();
+      osg::VertexProgram* GetLightScatterinVP() { return mLightScatterinVP.get(); }
+      osg::FragmentProgram* GetDomeFP() { return mDomeFP.get(); }
 
    private:
       

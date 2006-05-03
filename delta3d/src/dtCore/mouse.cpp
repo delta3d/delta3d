@@ -187,7 +187,7 @@ bool Mouse::PassiveMouseMotion(float x, float y)
  * @param y the y coordinate
  * @param button the button identifier
  */
-bool Mouse::ButtonPress(float x, float y, unsigned int button)
+bool Mouse::ButtonDown(float x, float y, unsigned int button)
 {
    if ((int)button > GetButtonCount() ) return false;
 
@@ -214,7 +214,7 @@ bool Mouse::ButtonPress(float x, float y, unsigned int button)
  * @param y the y coordinate
  * @param button the button identifier
  */
-bool Mouse::DoubleButtonPress(float x, float y, unsigned int button)
+bool Mouse::DoubleButtonDown(float x, float y, unsigned int button)
 {
    if (int(button) > GetButtonCount() ) return false;
 
@@ -240,7 +240,7 @@ bool Mouse::DoubleButtonPress(float x, float y, unsigned int button)
  * @param y the y coordinate
  * @param button the button identifier
  */
-bool Mouse::ButtonRelease(float x, float y, unsigned int button)
+bool Mouse::ButtonUp(float x, float y, unsigned int button)
 {
    if (int(button) > GetButtonCount() ) return false;
 

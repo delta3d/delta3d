@@ -1,4 +1,8 @@
 #include <dtABC/baseabc.h>
+
+#include <dtABC/applicationmouselistener.h>        // for member
+#include <dtABC/applicationkeyboardlistener.h>     // for member
+
 #include <dtDAL/map.h>
 
 #include <dtCore/keyboard.h>

@@ -561,7 +561,7 @@ Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter
  *
  * @param kc the key character
  */
-bool Keyboard::KeyPress(Producer::KeyCharacter kc)
+bool Keyboard::KeyDown(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
    bool handled(false);
@@ -581,7 +581,7 @@ bool Keyboard::KeyPress(Producer::KeyCharacter kc)
  *
  * @param kc the key character
  */
-bool Keyboard::KeyRelease(Producer::KeyCharacter kc)
+bool Keyboard::KeyUp(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
    bool handled(false);

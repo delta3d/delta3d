@@ -30,8 +30,8 @@
 #include <dtCore/deltadrawable.h>
 #include <dtDAL/project.h>
 #include <dtCore/refptr.h>                         // for members
-#include <dtABC/applicationmouselistener.h>        // for member
-#include <dtABC/applicationkeyboardlistener.h>     // for member
+//#include <dtABC/applicationmouselistener.h>        // for member
+//#include <dtABC/applicationkeyboardlistener.h>     // for member
 
 namespace dtDAL
 {
@@ -46,6 +46,9 @@ namespace dtCore
 
 namespace dtABC
 {
+   class ApplicationMouseListener;
+   class ApplicationKeyboardListener;
+   
    class DT_ABC_EXPORT BaseABC : public dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(BaseABC)

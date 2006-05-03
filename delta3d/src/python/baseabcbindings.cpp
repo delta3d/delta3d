@@ -5,6 +5,10 @@
 #include <python/dtpython.h>
 #include <dtABC/baseabc.h>
 #include <dtDAL/map.h>
+#include <dtCore/camera.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 
 using namespace boost::python;
 using namespace dtABC;
@@ -112,7 +116,7 @@ void initBaseABCBindings()
    dtDAL::Map& (BaseABC::*LoadMap1)( const std::string&, bool ) = &BaseABC::LoadMap;
    void (BaseABC::*LoadMap2)( dtDAL::Map&, bool ) = &BaseABC::LoadMap;
    
-   class_<BaseABC, bases<Base,KeyboardListener,MouseListener>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
+   class_<BaseABC, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", BaseABCGI1, return_internal_reference<>())
