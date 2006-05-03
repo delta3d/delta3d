@@ -15,15 +15,16 @@
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
 #include <dtCore/compass.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
 #include <dtChar/dtchar.h>
 
-#include <assert.h>
+#include <cassert>
 
 #include "viewstate.h"
 #include "viewer.h"
-
 
 
 using namespace   dtCore;
