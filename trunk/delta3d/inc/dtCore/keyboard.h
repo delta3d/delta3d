@@ -84,10 +84,10 @@ namespace dtCore
           */
          void RemoveKeyboardListener(KeyboardListener* keyboardListener);
 
-         ///Producer callback methods
-         virtual bool KeyPress( Producer::KeyCharacter );
-         ///Producer callback methods
-         virtual bool KeyRelease( Producer::KeyCharacter );
+         // Producer callback methods. These are KeyDown and KeyUp instead of
+         // KeyPress and KeyRelease to avoid a define clash with X11's X.h.
+         virtual bool KeyDown( Producer::KeyCharacter );
+         virtual bool KeyUp( Producer::KeyCharacter );
 
          const KeyboardListenerList& GetListeners() const { return mKeyboardListeners; }
 

@@ -192,16 +192,6 @@ void SunlightShader::Update(  const osg::Vec2& sunDir,
    mTerrainFP->setProgramLocalParameter(1, osg::Vec4( mBrightness, mContrast, 0, 0));
 }
 
-osg::VertexProgram* SunlightShader::GetLightScatterinVP()
-{
-   return mLightScatterinVP.get();
-}
-
-osg::FragmentProgram* SunlightShader::GetTerrainFP()
-{ 
-   return mTerrainFP.get();
-}
-
 float SunlightShader::ConcentrationFactor(float turbidity)
 {
    return (6.544 * turbidity - 6.51) * 1e-17; ///<more magic numbers

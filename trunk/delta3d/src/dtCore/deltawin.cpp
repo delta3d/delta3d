@@ -36,37 +36,37 @@ void DeltaWin::InputCallback::passiveMouseMotion(float x, float y)
 
 void DeltaWin::InputCallback::buttonPress(float x, float y, unsigned int button)
 {
-   mMouse->ButtonPress(x, y, button);
+   mMouse->ButtonDown(x, y, button);
 }
 
 void DeltaWin::InputCallback::doubleButtonPress(float x, float y, unsigned int button)
 {
-   mMouse->DoubleButtonPress(x, y, button);
+   mMouse->DoubleButtonDown(x, y, button);
 }
 
 void DeltaWin::InputCallback::buttonRelease(float x, float y, unsigned int button)
 {
-   mMouse->ButtonRelease(x, y, button);
+   mMouse->ButtonUp(x, y, button);
 }
 
 void DeltaWin::InputCallback::keyPress(Producer::KeyCharacter kc)
 {
-   mKeyboard->KeyPress(kc);
+   mKeyboard->KeyDown(kc);
 }
 
 void DeltaWin::InputCallback::keyRelease(Producer::KeyCharacter kc)
 {
-   mKeyboard->KeyRelease(kc);
+   mKeyboard->KeyUp(kc);
 }
 
 void DeltaWin::InputCallback::specialKeyPress(Producer::KeyCharacter kc)
 {
-   mKeyboard->KeyPress(kc);
+   mKeyboard->KeyDown(kc);
 }
 
 void DeltaWin::InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
 {
-   mKeyboard->KeyRelease(kc);
+   mKeyboard->KeyUp(kc);
 }
 
 void DeltaWin::InputCallback::SetKeyboard(Keyboard* kb)

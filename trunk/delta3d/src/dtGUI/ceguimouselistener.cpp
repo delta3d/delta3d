@@ -17,8 +17,8 @@ void CEGUIMouseListener::SetWindowSize(unsigned int width, unsigned int height)
 {
    mWidth = width;
    mHeight = height;
-   mHalfWidth = 0.5f*(float)width;
-   mHalfHeight = 0.5f*(float)height;
+   mHalfWidth = width/2;
+   mHalfHeight = height/2;
 }
 
 bool CEGUIMouseListener::HandleMouseMoved(const dtCore::Mouse* mouse, float x, float y)

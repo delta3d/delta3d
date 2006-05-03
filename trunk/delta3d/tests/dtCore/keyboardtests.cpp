@@ -103,12 +103,12 @@ void KeyboardTests::TestObservers()
 
    // ------------------------------------- //
    // test press
-   CPPUNIT_ASSERT( kb->KeyPress( obs->GetKeyChar() ) );   // obs should handle it
-   CPPUNIT_ASSERT( !kb->KeyPress(Producer::KeyChar_K) );  // obs should not handle it
+   CPPUNIT_ASSERT( kb->KeyDown( obs->GetKeyChar() ) );   // obs should handle it
+   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_K) );  // obs should not handle it
 
    // test release
-   CPPUNIT_ASSERT( kb->KeyRelease( obs->GetKeyChar() ) );   // obs should handle it
-   CPPUNIT_ASSERT( !kb->KeyRelease(Producer::KeyChar_K) );  // obs should not handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) );   // obs should handle it
+   CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_K) );  // obs should not handle it
 
    // ------------------------------------- //
    // test extra listener
@@ -118,14 +118,14 @@ void KeyboardTests::TestObservers()
    CPPUNIT_ASSERT_EQUAL( 2 , (int)kb->GetListeners().size() );  // better be 2
 
    // test press
-   CPPUNIT_ASSERT( !kb->KeyPress(Producer::KeyChar_A) );  // none should handle it
-   CPPUNIT_ASSERT( kb->KeyPress( obs2->GetKeyChar() ) );  // obs2 should handle it
-   CPPUNIT_ASSERT( kb->KeyRelease( obs->GetKeyChar() ) );  // obs should handle it
+   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_A) );  // none should handle it
+   CPPUNIT_ASSERT( kb->KeyDown( obs2->GetKeyChar() ) );  // obs2 should handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) );  // obs should handle it
 
    // test release
-   CPPUNIT_ASSERT( !kb->KeyRelease(Producer::KeyChar_A) );  // none should handle it
-   CPPUNIT_ASSERT( kb->KeyRelease( obs2->GetKeyChar() ) );  // obs2 should handle it
-   CPPUNIT_ASSERT( kb->KeyRelease( obs->GetKeyChar() ) );  // obs should handle it
+   CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_A) );  // none should handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obs2->GetKeyChar() ) );  // obs2 should handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) );  // obs should handle it
 
    // ------------------------------------- //
    // test ordering (chain of responsibility)
@@ -135,7 +135,7 @@ void KeyboardTests::TestObservers()
    obs2->ResetHit();
    CPPUNIT_ASSERT( !obs2->GetHit() );  // better be reset
 
-   CPPUNIT_ASSERT( kb->KeyPress( obs->GetKeyChar() ) );       // obs should handle it
+   CPPUNIT_ASSERT( kb->KeyDown( obs->GetKeyChar() ) );       // obs should handle it
    CPPUNIT_ASSERT( obs->GetHit() );    // better have been hit since it is first in listener list.
    CPPUNIT_ASSERT( !obs2->GetHit() );   // better have NOT been hit since previous listener handles it.
 
@@ -145,7 +145,7 @@ void KeyboardTests::TestObservers()
    obs2->ResetHit();
    CPPUNIT_ASSERT( !obs2->GetHit() );  // better be reset
 
-   CPPUNIT_ASSERT( kb->KeyRelease( obs->GetKeyChar() ) ); // obs should handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obs->GetKeyChar() ) ); // obs should handle it
    CPPUNIT_ASSERT( obs->GetHit() );    // better have been hit since it is first in listener list.
    CPPUNIT_ASSERT( !obs2->GetHit() );   // better have NOT been hit since previous listener handles it.
 
@@ -167,10 +167,10 @@ void KeyboardTests::TestObservers()
    obsSL->ResetHit();
    CPPUNIT_ASSERT( !obsSL->GetHit() );  // better be reset
 
-   CPPUNIT_ASSERT( kb->KeyPress( obsEsc->GetKeyChar() ) ); // osbEsc should handle it
+   CPPUNIT_ASSERT( kb->KeyDown( obsEsc->GetKeyChar() ) ); // osbEsc should handle it
    CPPUNIT_ASSERT( obsEsc->GetHit() );    // better have been hit since it handles it.
    CPPUNIT_ASSERT( !obsSL->GetHit() );    // better have NOT been hit since it is after the handler.
-   CPPUNIT_ASSERT( kb->KeyPress( obsSL->GetKeyChar() ) ); // obsSL should handle it
+   CPPUNIT_ASSERT( kb->KeyDown( obsSL->GetKeyChar() ) ); // obsSL should handle it
 
    // test release
    obsEsc->ResetHit();
@@ -178,10 +178,10 @@ void KeyboardTests::TestObservers()
    obsSL->ResetHit();
    CPPUNIT_ASSERT( !obsSL->GetHit() );  // better be reset
 
-   CPPUNIT_ASSERT( kb->KeyRelease( obsEsc->GetKeyChar() ) ); // osbEsc should handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obsEsc->GetKeyChar() ) ); // osbEsc should handle it
    CPPUNIT_ASSERT( obsEsc->GetHit() );    // better have been hit since it handles it.
    CPPUNIT_ASSERT( !obsSL->GetHit() );    // better have NOT been hit since it is after the handler.
 
-   CPPUNIT_ASSERT( kb->KeyRelease( obsSL->GetKeyChar() ) );      // obsSL should handle it
+   CPPUNIT_ASSERT( kb->KeyUp( obsSL->GetKeyChar() ) );      // obsSL should handle it
 }
 

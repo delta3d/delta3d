@@ -286,15 +286,15 @@ void Widget::HandleMouseEvent( const MouseEvent& ev )
    switch( ev.event )
    {
        case  MouseEvent::PUSH:
-         mMouse->ButtonPress( ev.pos_x, ev.pos_y, ev.button );
+         mMouse->ButtonDown( ev.pos_x, ev.pos_y, ev.button );
          break;
 
       case  MouseEvent::DOUBLE:
-         mMouse->DoubleButtonPress( ev.pos_x, ev.pos_y, ev.button );
+         mMouse->DoubleButtonDown( ev.pos_x, ev.pos_y, ev.button );
          break;
 
       case  MouseEvent::RELEASE:
-         mMouse->ButtonRelease( ev.pos_x, ev.pos_y, ev.button );
+         mMouse->ButtonUp( ev.pos_x, ev.pos_y, ev.button );
          break;
 
       case  MouseEvent::DRAG:
@@ -333,16 +333,16 @@ void Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
    {
       case  KeyboardEvent::KEYDOWN:
          if( IsSpecialKeyboardEvent( ev ) )
-            mKeyboard->KeyPress( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyDown( Producer::KeyCharacter(ev.key) );
          else
-            mKeyboard->KeyPress( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyDown( Producer::KeyCharacter(ev.key) );
          break;
 
       case  KeyboardEvent::KEYUP:
          if( IsSpecialKeyboardEvent( ev ) )
-            mKeyboard->KeyRelease( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyUp( Producer::KeyCharacter(ev.key) );
          else
-            mKeyboard->KeyRelease( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyUp( Producer::KeyCharacter(ev.key) );
          break;
 
       default:

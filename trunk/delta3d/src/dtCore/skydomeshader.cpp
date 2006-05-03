@@ -176,16 +176,6 @@ void SkyDomeShader::Update(   const osg::Vec2& sunDir,
    mDomeFP->setProgramLocalParameter(0, osg::Vec4( mBrightness, mContrast, 0, 0));
 }
 
-osg::VertexProgram* SkyDomeShader::GetLightScatterinVP()
-{ 
-   return mLightScatterinVP.get();
-}
-
-osg::FragmentProgram* SkyDomeShader::GetDomeFP()
-{ 
-   return mDomeFP.get();
-}
-
 float SkyDomeShader::ConcentrationFactor(float turbidity)
 {
    return (6.544 * turbidity - 6.51) * 1e-17; ///<more magic numbers
