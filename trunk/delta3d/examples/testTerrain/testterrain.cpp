@@ -35,6 +35,9 @@
 #include <dtTerrain/lcctype.h>
 #include <dtTerrain/geotiffdecorator.h>
 #include <dtTerrain/colormapdecorator.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
+#include <dtCore/keyboard.h>
 #include <sstream>
 
 class TestTerrainApp : public dtABC::Application

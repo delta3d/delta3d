@@ -70,7 +70,7 @@ public:
    * @param key the key pressed
    * @param character the corresponding character
    */
-   virtual  void              KeyPressed( dtCore::Keyboard*       keyboard, 
+   virtual  bool              KeyPressed(const dtCore::Keyboard*       keyboard, 
       Producer::KeyboardKey   key,
       Producer::KeyCharacter  character );
 

@@ -4,6 +4,8 @@
 
 #include <dtCore/stats.h>
 #include <dtCore/system.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
 #include <dtUtil/log.h>
 #include <dtUtil/xerceswriter.h>
 #include <dtUtil/xerceserrorhandler.h>

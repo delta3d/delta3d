@@ -4,8 +4,13 @@
 #include <dtABC/widget.h>
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/motionmodel.h>
+#include <osg/Node>
 
-
+namespace osg
+{
+   class Group;
+   class MatrixTransform;
+}
 
 // forward references
 class ViewState;

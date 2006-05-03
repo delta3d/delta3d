@@ -1,5 +1,7 @@
 #include "testlights.h"
 #include <dtCore/globals.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
 
 using namespace dtABC;
 using namespace dtCore;

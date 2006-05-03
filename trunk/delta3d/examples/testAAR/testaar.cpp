@@ -44,6 +44,8 @@
 #include <dtDAL/map.h>
 #include <dtDAL/actorproxy.h>
 #include <dtDAL/transformableactorproxy.h>
+#include <dtCore/camera.h>
+#include <dtCore/keyboard.h>
 
 #include <ctime>
 
@@ -244,16 +246,21 @@ void AARApplication::PreFrame(const double deltaFrameTime)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard, 
+bool AARApplication::KeyPressed(const dtCore::Keyboard *keyBoard, 
    Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
-   dtABC::Application::KeyPressed(keyBoard,key,character); 
+   bool handled = dtABC::Application::KeyPressed(keyBoard,key,character); 
+   if( handled )  // == true
+   {
+      return handled;
+   }
    
    std::ostringstream ss;   
    switch (key)
    {
       case Producer::Key_space:
          mLogController->RequestServerGetStatus();
+         handled = true;
          break;
            
       case Producer::Key_1:
@@ -265,10 +272,12 @@ bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard,
          
          mLogController->RequestChangeStateToIdle();
          mClientGM->SetPaused(false);
+         handled = true;
          break;
          
       case Producer::Key_2:
          mLogController->RequestChangeStateToRecord();
+         handled = true;
          break;
          
       case Producer::Key_3:
@@ -281,6 +290,7 @@ bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard,
          
          mLogController->RequestChangeStateToPlayback();
          mClientGM->SetPaused(false);
+         handled = true;
          break;
 
       case Producer::Key_bracketleft:
@@ -295,6 +305,7 @@ bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard,
 
          mClientGM->ChangeTimeSettings(mClientGM->GetSimulationTime(), 
             mSimSpeedFactor, mClientGM->GetSimulationClockTime());
+         handled = true;
          break;
 
       case Producer::Key_bracketright:
@@ -309,6 +320,7 @@ bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard,
 
          mClientGM->ChangeTimeSettings(mClientGM->GetSimulationTime(), 
             mSimSpeedFactor, mClientGM->GetSimulationClockTime());
+         handled = true;
          break;
 
       case Producer::Key_0:
@@ -317,29 +329,34 @@ bool AARApplication::HandleKeyPressed(dtCore::Keyboard *keyBoard,
          std::cout << ss.str() << std::endl;
          mClientGM->ChangeTimeSettings(mClientGM->GetSimulationTime(), 
             mSimSpeedFactor, mClientGM->GetSimulationClockTime());
+         handled = true;
          break;
 
       case Producer::Key_P:
          mClientGM->SetPaused(!mClientGM->IsPaused()); 
+         handled = true;
          break;
 
       case Producer::Key_B:
          PlaceActor();         
+         handled = true;
          break;
          
       case Producer::Key_T:
          PrintTasks();
+         handled = true;
          break;
 
       case Producer::Key_Return:
          GetCamera()->SetNextStatisticsType();
+         handled = true;
          break;
 
       default:
          break;         
    };  
 
-   return true;
+   return handled;
 }
 
 void AARApplication::PlaceActor()

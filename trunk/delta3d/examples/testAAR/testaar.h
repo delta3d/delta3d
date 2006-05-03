@@ -94,7 +94,7 @@ class AARApplication : public dtABC::Application
        * @param key The key that was pressed.
        * @param character Character pressed if the key represented an ASCII character.
        */     
-      bool HandleKeyPressed(dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
+      bool KeyPressed(const dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
          Producer::KeyCharacter character);
       
       /**

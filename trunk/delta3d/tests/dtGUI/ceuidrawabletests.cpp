@@ -107,7 +107,7 @@ void CEUIDrawableTests::TestInput()
    dtGUI::GUIManager::SetLayout( sheet );
 
    // test to see if the applicaiton's pressed callback is connected
-   CPPUNIT_ASSERT( !kb->KeyPress(Producer::KeyChar_M) );  // better NOT handle it
+   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_M) );  // better NOT handle it
    //CPPUNIT_ASSERT( obs.GetHit() );  // better be hit
    //CPPUNIT_ASSERT( kb->KeyPress(Producer::KeyChar_n) );  // better handle it
 

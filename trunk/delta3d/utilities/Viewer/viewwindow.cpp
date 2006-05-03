@@ -3,6 +3,7 @@
 #include <dtCore/globals.h>
 #include <dtABC/widget.h>
 #include <dtDAL/fileutils.h>
+#include <dtCore/camera.h>
 
 #include "viewstate.h"
 #include "viewwindow.h"

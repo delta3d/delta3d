@@ -3,6 +3,8 @@
 #include <dtGUI/scriptmodule.h>
 #include <dtCore/globals.h>
 #include <dtUtil/stringutils.h>
+#include <dtCore/scene.h>
+#include <dtUtil/log.h>
 
 #include <sstream>
 

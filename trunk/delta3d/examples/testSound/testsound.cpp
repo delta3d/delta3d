@@ -79,22 +79,21 @@ TestSoundApp::~TestSoundApp()
 * @param key the key pressed
 * @param character the corresponding character
 */
-void
-TestSoundApp::KeyPressed(  dtCore::Keyboard*       keyboard,
+bool TestSoundApp::KeyPressed(const dtCore::Keyboard*       keyboard,
                          Producer::KeyboardKey   key,
                          Producer::KeyCharacter  character )
 {
    // pass the keyboard event to the overlords
-   Application::KeyPressed( keyboard, key, character );
+   bool handled = Application::KeyPressed(keyboard, key, character );
+   if( handled )  /// == true
+   {
+      return handled;
+   }
 
    // do something depending on which key was pressed
    switch( key )
    {
-   case  Producer::Key_Escape:
-      // app should be shutting down now
-      break;
-
-   case  Producer::Key_space:
+   case Producer::Key_space:
       {
          // get a new sound from the manager
          Sound*   sound = AudioManager::GetManager()->NewSound();
@@ -115,16 +114,20 @@ TestSoundApp::KeyPressed(  dtCore::Keyboard*       keyboard,
          // sound created here, the stop callback must be
          // set to free the sounds after playing.
          // this allows the AudioManager to recycle sound objects.
-      }
-      break;
+         handled = true;
+      } break;
 
    default:
-      // play our one sound.
-      // if it's currently playing, this
-      // call will have no effect.
-      mSound->Play();
-      break;
+      {
+         // play our one sound.
+         // if it's currently playing, this
+         // call will have no effect.
+         mSound->Play();
+         handled = true;
+      } break;
    }
+
+   return handled;
 }
 
 

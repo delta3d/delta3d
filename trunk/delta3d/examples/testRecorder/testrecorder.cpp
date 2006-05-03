@@ -5,6 +5,7 @@
 
 #include "testrecorder.h"
 #include <dtCore/flymotionmodel.h>
+#include <dtCore/camera.h>
 
 TestRecorder::TestRecorder(const std::string& config): BaseClass(config),
 mRecorder(new CameraRecorder()), mRecordable(0), mMotionModel(0), mTerrain(new dtCore::InfiniteTerrain()), mFileHandle("recording.xml")

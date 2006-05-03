@@ -7,6 +7,9 @@
 #include <dtABC/widget.h>
 #include <dtABC/applicationkeyboardlistener.h>
 #include <dtABC/applicationmouselistener.h>
+#include <dtCore/deltawin.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>    ///\todo needs to be included because of some issue with BaseABC.
 
 #if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
@@ -62,8 +65,7 @@ Widget::~Widget()
  *
  * @param data the window handle and size
  */
-void
-Widget::Config( const WinData* d /*= NULL*/ )
+void Widget::Config( const WinData* d /*= NULL*/ )
 {
    System*  sys   = System::Instance();
    assert( sys );

@@ -21,17 +21,12 @@
 #ifndef DELTA_BASEABC
 #define DELTA_BASEABC
 
+#include <dtCore/base.h>        // for base class
 #include <string>
 
 #include <dtABC/export.h>
-#include <dtCore/deltawin.h>
-#include <dtCore/camera.h>
-#include <dtCore/system.h>
-#include <dtCore/deltadrawable.h>
-#include <dtDAL/project.h>
-#include <dtCore/refptr.h>                         // for members
-//#include <dtABC/applicationmouselistener.h>        // for member
-//#include <dtABC/applicationkeyboardlistener.h>     // for member
+#include <dtCore/refptr.h>      // for members
+#include <Producer/Keyboard>    // for key enums
 
 namespace dtDAL
 {
@@ -40,15 +35,19 @@ namespace dtDAL
 
 namespace dtCore
 {
+   class DeltaDrawable;
    class Keyboard;
    class Mouse;
+   class DeltaWin;
+   class Camera;
+   class Scene;
 }
 
 namespace dtABC
 {
    class ApplicationMouseListener;
    class ApplicationKeyboardListener;
-   
+
    class DT_ABC_EXPORT BaseABC : public dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(BaseABC)
@@ -101,12 +100,7 @@ namespace dtABC
        * @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
        * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
        */
-      dtDAL::Map& LoadMap( const std::string& name, bool addBillBoards = false )
-      {
-         dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
-         LoadMap( map, addBillBoards );
-         return map;
-      }
+      dtDAL::Map& LoadMap( const std::string& name, bool addBillBoards = false );
       
       /**
        * Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
@@ -116,24 +110,6 @@ namespace dtABC
        * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
        */
       void LoadMap( dtDAL::Map& map, bool addBillBoards = false );
-
-   protected:
-      ///Override for preframe
-      virtual  void  PreFrame( const double deltaFrameTime )   = 0L;
-
-      ///Override for frame
-      virtual  void  Frame( const double deltaFrameTime )      = 0L;
-
-      ///Override for postframe
-      virtual  void  PostFrame( const double deltaFrameTime )  = 0L;
-
-      /**
-       * Base override to receive messages.
-       * This method should be called from derived classes
-       *
-       * @param data the message to receive
-       */
-      virtual void OnMessage( MessageData *data );
 
       /**
        * KeyboardListener override
@@ -156,12 +132,28 @@ namespace dtABC
       virtual bool KeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
    protected:
+      ///Override for preframe
+      virtual  void  PreFrame( const double deltaFrameTime )   = 0L;
+
+      ///Override for frame
+      virtual  void  Frame( const double deltaFrameTime )      = 0L;
+
+      ///Override for postframe
+      virtual  void  PostFrame( const double deltaFrameTime )  = 0L;
+
+      /**
+       * Base override to receive messages.
+       * This method should be called from derived classes
+       *
+       * @param data the message to receive
+       */
+      virtual void OnMessage( MessageData *data );
+
+   protected:
       ///Create basic instances
       virtual void CreateInstances();
 
    protected:
-      friend class ApplicationKeyboardListener;
-
       dtCore::RefPtr<dtCore::DeltaWin>         mWindow; ///<built-in Window
       dtCore::RefPtr<dtCore::Camera>           mCamera; ///<built-in Camera
       dtCore::RefPtr<dtCore::Scene>            mScene; ///<built-in Scene
@@ -170,6 +162,12 @@ namespace dtABC
 
       dtCore::RefPtr<ApplicationKeyboardListener> mKeyboardListener;
       dtCore::RefPtr<ApplicationMouseListener> mMouseListener;
+
+   private:
+      void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+      void HandleKeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+      void KeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+      void HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
    };
 };
 
