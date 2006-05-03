@@ -2,6 +2,7 @@
 #include <dtCore/globals.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/object.h>
+#include <dtCore/camera.h>
 
 #include "bumpmapdrawable.h"
 
@@ -59,7 +60,7 @@ public:
 
    }
 
-   bool KeyPressed(dtCore::Keyboard* keyboard, 
+   bool KeyPressed(const dtCore::Keyboard* keyboard, 
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
    {

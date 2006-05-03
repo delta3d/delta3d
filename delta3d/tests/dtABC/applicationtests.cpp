@@ -117,19 +117,19 @@ void ApplicationTests::TestInput()
    CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
 
    // test to see if the applicaiton's pressed callback is connected
-   CPPUNIT_ASSERT( !kb->KeyPress(Producer::KeyChar_M) );  // better NOT handle it
+   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_M) );  // better NOT handle it
    CPPUNIT_ASSERT( app->GetPressedHit() );  // better be hit
    CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better NOT be hit
-   CPPUNIT_ASSERT( kb->KeyPress(app->GetCharacter()) );  // better handle it
+   CPPUNIT_ASSERT( kb->KeyDown(app->GetCharacter()) );  // better handle it
 
    app->ResetHits();
    CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
    CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
 
    // test to see if the applicaiton's released callback is connected
-   CPPUNIT_ASSERT( !kb->KeyRelease(Producer::KeyChar_M) );  // better NOT handle it
+   CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_M) );  // better NOT handle it
    CPPUNIT_ASSERT( !app->GetPressedHit() );  // better be hit
    CPPUNIT_ASSERT( app->GetReleasedHit() );  // better be hit
-   CPPUNIT_ASSERT( kb->KeyRelease(app->GetCharacter()) );  // better handle it
+   CPPUNIT_ASSERT( kb->KeyUp(app->GetCharacter()) );  // better handle it
 }
 

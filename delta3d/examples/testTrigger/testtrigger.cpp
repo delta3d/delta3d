@@ -2,6 +2,7 @@
 
 #include <osgDB/FileUtils>
 #include <dtCore/keyboard.h>
+#include <dtCore/camera.h>
 
 using namespace dtCore;
 using namespace dtABC;

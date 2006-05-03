@@ -6,6 +6,9 @@
 #include <dtCore/logicalinputdevice.h>
 #include <dtCore/joystick.h>
 #include <dtGUI/ceuidrawable.h>
+#include <dtCore/scene.h>
+#include <dtUtil/log.h>
+#include <osgDB/FileUtils>
 
 using namespace dtCore;
 using namespace dtABC;

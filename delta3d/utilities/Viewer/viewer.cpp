@@ -9,13 +9,17 @@
 #include <osgFX/Scribe>
 #include <osgDB/WriteFile>
 #include <osgDB/ReaderWriter>
+#include <osg/ColorMask>
 
+#include <dtCore/system.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/orbitmotionmodel.h>
 #include <dtCore/ufomotionmodel.h>
 #include <dtCore/walkmotionmodel.h>
 #include <dtCore/compass.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
 #include <dtCore/mouse.h>
 #include <dtCore/object.h>
 #include <dtUtil/log.h>

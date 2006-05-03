@@ -4,6 +4,7 @@
 #include <osg/Drawable>
 #include <osg/PrimitiveSet>
 #include <osg/Program>
+#include <dtCore/camera.h>
 
 using namespace dtABC;
 using namespace dtCore;

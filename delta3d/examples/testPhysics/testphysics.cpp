@@ -2,6 +2,9 @@
 #include <dtCore/object.h>
 #include <dtCore/globals.h>
 #include <dtCore/orbitmotionmodel.h>
+#include <dtCore/scene.h>
+#include <dtCore/camera.h>
+#include <dtCore/system.h>
 
 #include <ode/ode.h>
 #include <cassert>

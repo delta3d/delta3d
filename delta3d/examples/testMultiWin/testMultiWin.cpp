@@ -3,6 +3,8 @@
 #include "testMultiWin.h"
 #include <dtCore/object.h>
 #include <dtCore/globals.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
 
 using namespace dtCore;
 using namespace dtABC;

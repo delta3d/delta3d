@@ -1,6 +1,13 @@
 #include <dtABC/applicationmouselistener.h>
 #include <dtABC/baseabc.h>
 
+#include <dtCore/deltawin.h>   ///\todo needs to be included because of some issue in BaseABC.
+#include <dtCore/keyboard.h>   ///\todo needs to be included because of some issue in BaseABC.
+#include <dtABC/applicationkeyboardlistener.h>   ///\todo needs to be included because of some issue in BaseABC.
+#include <dtCore/camera.h>   ///\todo needs to be included because of some issue in BaseABC.
+#include <dtCore/scene.h>   ///\todo needs to be included because of some issue in BaseABC.
+
+
 using namespace dtABC;
 
 ApplicationMouseListener::ApplicationMouseListener() : BaseClass(),

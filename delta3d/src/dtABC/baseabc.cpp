@@ -7,6 +7,13 @@
 
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <dtABC/applicationmouselistener.h>        // for member
+#include <dtABC/applicationkeyboardlistener.h>     // for member
+#include <dtCore/deltawin.h>
+#include <dtCore/camera.h>
+#include <dtCore/scene.h>
+#include <dtCore/system.h>
+#include <dtDAL/project.h>
 
 #include <cassert>
 
@@ -20,6 +27,11 @@ IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
  * Constructors
  */
 BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :  Base(name),
+   mWindow(0),
+   mCamera(0),
+   mScene(0),
+   mKeyboard(0),
+   mMouse(0),
    mKeyboardListener(new ApplicationKeyboardListener()),
    mMouseListener(new ApplicationMouseListener())
 {
@@ -207,4 +219,11 @@ void BaseABC::LoadMap( dtDAL::Map& map, bool addBillBoards )
    }
    
    dtDAL::Project::GetInstance().LoadMapIntoScene( map, *GetScene(), addBillBoards );
+}
+
+dtDAL::Map& BaseABC::LoadMap( const std::string& name, bool addBillBoards)
+{
+   dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
+   LoadMap( map, addBillBoards );
+   return map;
 }
