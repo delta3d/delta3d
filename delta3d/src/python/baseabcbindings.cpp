@@ -9,6 +9,7 @@
 #include <dtCore/deltawin.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtABC;

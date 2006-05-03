@@ -1,6 +1,8 @@
 #include <dtABC/application.h>
+#include <dtCore/camera.h>
 #include <dtCore/globals.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/system.h>
 #include <dtHLA/rticonnection.h>
 
 #include <cmath>
