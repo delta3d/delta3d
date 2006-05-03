@@ -7,7 +7,7 @@
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUITexture.h>
 
-#include <tests/dtGUI/GUIManager.h>
+#include "guimanager.h"
 #include <dtUtil/log.h>
 #include <dtGUI/ceuidrawable.h>
 

@@ -19,12 +19,14 @@
  * @author John K. Grant
  */
 #include <cppunit/extensions/HelperMacros.h>
+
 #include <dtCore/keyboard.h>
-#include <tests/dtGUI/GUIApp.h>
 #include <CEGUI/CEGUIInputEvent.h>
 #include <dtGUI/ceguikeyboardlistener.h>
-#include <tests/dtGUI/GUIManager.h>
 #include <CEGUI/CEGUIWindow.h>
+
+#include "guiapp.h"
+#include "guimanager.h"
 
 namespace dtTest
 {
