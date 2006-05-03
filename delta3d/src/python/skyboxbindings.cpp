@@ -4,7 +4,6 @@
 
 #include <python/dtpython.h>
 #include <dtCore/skybox.h>
-#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -14,7 +13,7 @@ void initSkyBoxBindings()
    SkyBox* (*SkyBoxGI1)(int) = &SkyBox::GetInstance;
    SkyBox* (*SkyBoxGI2)(std::string) = &SkyBox::GetInstance;
 
-   scope SkyBox_scope = class_<SkyBox, bases<EnvEffect>, dtCore::RefPtr<SkyBox> >("SkyBox", init<optional<std::string> >())
+   scope SkyBox_scope = class_<SkyBox, bases<EnvEffect>, dtCore::RefPtr<SkyBox>, boost::noncopyable >("SkyBox", init<optional<std::string> >())
       .def("GetInstanceCount", &SkyBox::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SkyBoxGI1, return_internal_reference<>())

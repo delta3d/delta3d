@@ -4,7 +4,6 @@
 
 #include <python/dtpython.h>
 #include <dtCore/pointaxis.h>
-#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -26,7 +25,7 @@ void initPointAxisBindings()
    void (PointAxis::*SetLabelColor1)(PointAxis::AXIS, PointAxis::AXISCOLOR) = &PointAxis::SetLabelColor;
    void (PointAxis::*SetLabelColor2)(PointAxis::AXIS, const osg::Vec4) = &PointAxis::SetLabelColor;
    
-   scope PointAxis_scope = class_<PointAxis, bases<Transformable>, dtCore::RefPtr<PointAxis> >("PointAxis", init<>())
+   scope PointAxis_scope = class_<PointAxis, bases<Transformable>, dtCore::RefPtr<PointAxis>, boost::noncopyable >("PointAxis", init<>())
       .def("GetInstanceCount", &PointAxis::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", PointAxisGI1, return_internal_reference<>())

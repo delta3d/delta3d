@@ -26,9 +26,14 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/base.h>
-
 #include <dtCore/refptr.h>
-#include <osg/Node>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Node;
+}
+/// @endcond
 
 namespace dtCore
 {
@@ -48,31 +53,27 @@ namespace dtCore
 
       public:
 
-         ///Get the internal node
          /**
-          * Returns this object's OpenSceneGraph node.
+          * Get the internal node. Returns this object's OpenSceneGraph node.
+          *
           * @return the OpenSceneGraph node
           */
-         virtual osg::Node* GetOSGNode() 
-         {
-            return mNode.get();
-         }
+         virtual osg::Node* GetOSGNode() { return mNode.get(); }
          
-         virtual const osg::Node* GetOSGNode() const
-         {
-            return mNode.get();
-         }
+         virtual const osg::Node* GetOSGNode() const { return mNode.get(); }
 
          ///Supply the Scene this Drawable has been added to
          virtual void AddedToScene( Scene* scene );
 
          ///Override function for derived object to know when attaching to scene
-         virtual void SetParent(DeltaDrawable* parent) {mParent=parent;}
+         virtual void SetParent( DeltaDrawable* parent ) { mParent = parent; }
 
          DeltaDrawable* GetParent() { return mParent; }
+         const DeltaDrawable* GetParent() const { return mParent; }
          
          ///Get a pointer to the Scene this Drawable has been added to
-         Scene* GetSceneParent();
+         Scene* GetSceneParent() { return mParentScene; }
+         const Scene* GetSceneParent() const { return mParentScene; }
 
          ///Add a child to this DeltaDrawable
          virtual bool AddChild( DeltaDrawable *child );
@@ -84,20 +85,21 @@ namespace dtCore
          void Emancipate();
 
          ///Return the number of DeltaDrawable children added
-         inline unsigned int GetNumChildren() { return mChildList.size(); }
+         unsigned int GetNumChildren() { return mChildList.size(); }
 
          ///Get the child specified by idx (0 to number of children-1)
-         DeltaDrawable* GetChild( unsigned int idx ) {return mChildList[idx].get();}
+         DeltaDrawable* GetChild( unsigned int idx ) { return mChildList[idx].get(); }
 
-         ///Get the index number of child
-         /** Return a value between
-         * 0 and the number of children-1 if found, if not found then
-         * return the number of children.
-         */
+         /** 
+          * Get the index number of child. Return a value between
+          * 0 and the number of children-1 if found, if not found then
+          * return the number of children.
+          */
          unsigned int GetChildIndex( const DeltaDrawable* child ) const;
 
-         ///Check if the supplied DeltaDrawable can actually be a chil of this instance.
-         /** 
+         /**
+          * Check if the supplied DeltaDrawable can actually be a chil of this instance.
+          *
           * @param child : The child to test
           * @return true if the supplied parameter can be a child
           */
@@ -111,15 +113,24 @@ namespace dtCore
       virtual ~DeltaDrawable();
 
       RefPtr<osg::Node> mNode; ///< The node to store anything
-      DeltaDrawable* mParent; ///<Any immediate parent of this instance
+      DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
 
-      typedef std::vector<RefPtr<DeltaDrawable> > ChildList;
+      typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
       ChildList mChildList;      ///<List of children DeltaDrawable added
 
-      Scene* mParentScene; ///<The Scene this Drawable was added to
+      Scene* mParentScene; ///<The Scene this Drawable was added to (Weak pointer to prevent circular reference).
 
       RefPtr<osg::Node> mProxyNode;
       bool mRenderingProxy;
+
+   private:
+
+      // Disallowed to prevent compile errors on VS2003. It apparently
+      // creates this functions even if they are not used, and if
+      // this class is forward declared, these implicit functions will
+      // cause compiler errors for missing calls to "ref".
+      DeltaDrawable& operator=( const DeltaDrawable& ); 
+      DeltaDrawable( const DeltaDrawable& );
    };
 };
 

@@ -46,4 +46,27 @@ namespace dtCore
 		}
 		return true;
 	}
+
+   ///Get the transformation matrix which moves from local coords to world coords.
+   bool MoveEarthySkyWithEyePointTransformAzimuth::ComputeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
+	{
+		if( osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv) )
+		{
+			osg::Vec3 eyePointLocal = cv->getEyeLocal();
+			matrix.preMult(osg::Matrix::translate(eyePointLocal.x(),eyePointLocal.y(),eyePointLocal.z()));
+         matrix.preMult(osg::Matrix::rotate(osg::DegreesToRadians(mAzimuth-90.0f), 0.0f, 0.0f, 1.0f));
+		}
+		return true;
+	}
+
+	///Get the transformation matrix which moves from world coords to local coords.
+	bool MoveEarthySkyWithEyePointTransformAzimuth::ComputeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	{   
+		if( osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv) )
+		{
+			osg::Vec3 eyePointLocal = cv->getEyeLocal();
+			matrix.postMult(osg::Matrix::translate(-eyePointLocal.x(),-eyePointLocal.y(),-eyePointLocal.z()));
+		}
+		return true;
+	}
 }

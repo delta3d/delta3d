@@ -4,14 +4,14 @@
 
 #include <osgDB/FileUtils>
 
-/*!
+/**
  * Set the list of paths that dtCore should use to search for files to load.  Paths
  * are separated with a single ";" on Win32 and a single ":" on Linux. Remember to
  * double-up your backslashes, lest they be escaped.
  *
  * @param pathList : The list of all paths to be used to find data files
  */
-void dtCore::SetDataFilePathList(const std::string& pathList )
+void dtCore::SetDataFilePathList( const std::string& pathList )
 {
    std::string modpath = pathList;
    for( std::string::size_type i = 0; i < pathList.size(); i++ )
@@ -24,7 +24,7 @@ void dtCore::SetDataFilePathList(const std::string& pathList )
             modpath.at(i) = ';';
          }
       }
-      catch( std::out_of_range myexcept)
+      catch( std::out_of_range myexcept )
       {
          LOG_WARNING(myexcept.what());
       }
@@ -38,22 +38,24 @@ void dtCore::SetDataFilePathList(const std::string& pathList )
    osgDB::setDataFilePathList(modpath);
 }
 
-/*!
-* Get the list of paths that dtCore should use to search for files to load.  Paths
-* are separated with a single ";" on Win32 and a single ":" on Linux.
-* 
-* @see SetDataFilePathList()
-*/
+/**
+ * Get the list of paths that dtCore should use to search for files to load.  Paths
+ * are separated with a single ";" on Win32 and a single ":" on Linux.
+ * 
+ * @see SetDataFilePathList()
+ */
 std::string dtCore::GetDataFilePathList()
 {
    osgDB::FilePathList pathList = osgDB::getDataFilePathList();
 
    std::string pathString = "";
-   for(std::deque<std::string>::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
+
+   typedef std::deque<std::string> StringDeque;
+   for(StringDeque::iterator itr = pathList.begin(); itr != pathList.end(); itr++)
    {
       pathString += *itr;
 
-      std::deque<std::string>::iterator next = itr + 1;
+      StringDeque::iterator next = itr + 1;
       if( next != pathList.end() )
       {
          #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
@@ -68,36 +70,39 @@ std::string dtCore::GetDataFilePathList()
 }
 
 /** 
- *  Simple method to return the system environment variable.  If the env var
- *  is not set, the local path will be returned.
+ * Simple method to return the system environment variable.  If the env var
+ * is not set, the local path will be returned.
  *
  * @param env The system environment variable to be queried
  * @return The value of the environment variable
  */
-DT_CORE_EXPORT std::string dtCore::GetEnvironment( std::string env)
+DT_CORE_EXPORT std::string dtCore::GetEnvironment( const std::string& env )
 {
-   char *ptr;
-   if( (ptr = getenv( env.c_str() )) )
+   if( char* ptr = getenv( env.c_str() ) )
    {
-      return (std::string(ptr));
+      return std::string(ptr);
    }
-   else return (std::string("./"));
+   else
+   {
+      return std::string("./");
+   }
 }
 
-/*!
+/**
  * Get the Delta Data file path.  This comes directly from the environment 
  * variable "DELTA_DATA".  If the environment variable is not set, the local
  * directory will be returned.
  */
-DT_CORE_EXPORT std::string dtCore::GetDeltaDataPathList(void)
+DT_CORE_EXPORT std::string dtCore::GetDeltaDataPathList()
 {
-   return  GetEnvironment("DELTA_DATA") ;
+   return GetEnvironment("DELTA_DATA");
 }
 
-/** If the DELTA_ROOT environment is not set, the local directory will be
- *  returned.
+/** 
+ * If the DELTA_ROOT environment is not set, the local directory will be
+ * returned.
  */
-DT_CORE_EXPORT std::string dtCore::GetDeltaRootPath(void)
+DT_CORE_EXPORT std::string dtCore::GetDeltaRootPath()
 {
-   return  GetEnvironment("DELTA_ROOT") ;
+   return GetEnvironment("DELTA_ROOT");
 }

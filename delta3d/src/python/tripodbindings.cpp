@@ -36,7 +36,7 @@ void initTripodBindings()
 
    Transformable* (Tripod::*GetLookAtTarget1)() = &Tripod::GetLookAtTarget;
    
-   scope Tripod_scope = class_<Tripod, bases<Transformable>, dtCore::RefPtr<Tripod> >("Tripod", init<optional<Camera*, Transformable*> >())
+   scope Tripod_scope = class_<Tripod, bases<Transformable>, dtCore::RefPtr<Tripod>, boost::noncopyable >("Tripod", init<optional<Camera*, Transformable*> >())
       .def("GetInstanceCount", &Tripod::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", TripodGI1, return_internal_reference<>())

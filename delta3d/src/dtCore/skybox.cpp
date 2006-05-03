@@ -27,6 +27,7 @@
 #include <dtUtil/log.h>
 
 #include <osg/Depth>
+#include <osg/Geometry>
 #include <osg/Group>
 #include <osg/Image>
 #include <osg/MatrixTransform>

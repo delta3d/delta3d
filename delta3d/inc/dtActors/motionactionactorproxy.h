@@ -3,7 +3,8 @@
 
 #include <dtDAL/plugin_export.h>
 #include <dtUtil/enumeration.h>
-#include "actionactorproxy.h"
+#include <dtActors/actionactorproxy.h>
+#include <osg/Vec3>
 
 /* 
 * Delta3D Open Source Game and Simulation Engine 

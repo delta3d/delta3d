@@ -19,8 +19,9 @@
 * @author William E. Johnson II
 */
 
-#include "dtActors/environmentactorproxy.h"
-#include "dtDAL/enginepropertytypes.h"
+#include <dtActors/environmentactorproxy.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtCore/enveffect.h>
 
 using namespace dtCore;
 using namespace dtDAL;

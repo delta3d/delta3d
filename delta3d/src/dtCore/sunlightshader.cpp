@@ -1,6 +1,10 @@
-#include "dtCore/sunlightshader.h"
+#include <dtCore/sunlightshader.h>
 
-using namespace dtCore;
+#include <osg/VertexProgram>
+#include <osg/FragmentProgram>
+
+namespace dtCore
+{
 
 SunlightShader::SunlightShader()
 {
@@ -85,6 +89,7 @@ SunlightShader::SunlightShader()
       "   MOV result.texcoord[3], norm;                        \n"
       "   END                                                  \n";
 
+
    mLightScatterinVP->setVertexProgram(data);
 
    char data2[] =
@@ -114,12 +119,13 @@ SunlightShader::SunlightShader()
       "   ADD result.color, color, bc.x;  \n"
       "                                      \n"
       "   END  \n";
+   
    mTerrainFP->setFragmentProgram( data2 );
-
 
    lambda = osg::Vec3(1.0 / 650e-9,1.0 / 570e-9,1.0 / 475e-9);
 
-   for(int i = 0; i < 3; i++) {
+   for(int i = 0; i < 3; i++)
+   {
       lambda2[i] = lambda[i] * lambda[i];
       lambda4[i] = lambda2[i] * lambda2[i];
    }
@@ -150,9 +156,11 @@ SunlightShader::~SunlightShader()
   *@param molecules: The number of molecules per unit volume (0 = fully opaque,
   *                  2.545e25 looks about right)
   */
-void SunlightShader::Update(const osg::Vec2& sunDir,
-                            const osg::Vec3& eyeXYZ, float turbidity, float energy,
-                           float molecules)
+void SunlightShader::Update(  const osg::Vec2& sunDir,
+                              const osg::Vec3& eyeXYZ, 
+                              float turbidity, 
+                              float energy,
+                              float molecules )
 {
    osg::Vec3 sunVec;
 
@@ -184,7 +192,19 @@ void SunlightShader::Update(const osg::Vec2& sunDir,
    mTerrainFP->setProgramLocalParameter(1, osg::Vec4( mBrightness, mContrast, 0, 0));
 }
 
+osg::VertexProgram* SunlightShader::GetLightScatterinVP()
+{
+   return mLightScatterinVP.get();
+}
+
+osg::FragmentProgram* SunlightShader::GetTerrainFP()
+{ 
+   return mTerrainFP.get();
+}
+
 float SunlightShader::ConcentrationFactor(float turbidity)
 {
-   return ((6.544 * turbidity - 6.51) * 1e-17); ///<more magic numbers
+   return (6.544 * turbidity - 6.51) * 1e-17; ///<more magic numbers
+}
+
 }

@@ -32,7 +32,9 @@ namespace osg
 {
    class Geode;
    class Geometry;
+   class Image;
    class Program;
+   class Shader;
    class Texture3D;
 }
 /// @endcond

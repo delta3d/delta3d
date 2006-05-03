@@ -2,13 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/environment.h"
+#include <python/dtpython.h>
+#include <dtCore/environment.h>
+#include <dtCore/enveffect.h>
 
 using namespace boost::python;
 using namespace dtCore;
-
-
 
 void initEnvironmentBindings()
 {
@@ -16,24 +15,22 @@ void initEnvironmentBindings()
    Environment* (*EnvironmentGI2)(std::string) = &Environment::GetInstance;
 
    void (Environment::*SetSkyColor1)( const osg::Vec3& ) = &Environment::SetSkyColor;
-
    void (Environment::*GetSkyColor1)( osg::Vec3& ) const = &Environment::GetSkyColor;
 
    void (Environment::*SetFogColor1)( const osg::Vec3& ) = &Environment::SetFogColor;
-
    void (Environment::*GetFogColor1)( osg::Vec3& ) const = &Environment::GetFogColor;
    void (Environment::*GetModFogColor1)( osg::Vec3& ) const = &Environment::GetModFogColor;
 
    void (Environment::*SetAdvFogCtrl1)( const osg::Vec3& ) = &Environment::SetAdvFogCtrl;
-
    void (Environment::*GetAdvFogCtrl1)( osg::Vec3& ) const = &Environment::GetAdvFogCtrl;
 
    void (Environment::*GetSunColor1)( osg::Vec3& ) = &Environment::GetSunColor;
 
    void (Environment::*SetRefLatLong1)( const osg::Vec2& ) = &Environment::SetRefLatLong;
-
    void (Environment::*GetRefLatLong1)( osg::Vec2& ) const = &Environment::GetRefLatLong;
 
+   void (Environment::*GetSunAzEl1)( float&, float& ) const = &Environment::GetSunAzEl;
+   void (Environment::*GetDateTime1)( int&, int&, int&, int&, int&, int& ) = &Environment::GetDateTime;
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
@@ -63,10 +60,10 @@ void initEnvironmentBindings()
       .def("SetVisibility", &Environment::SetVisibility)
       .def("GetVisibility", &Environment::GetVisibility)
       .def("GetSunColor", GetSunColor1)
-      .def("GetSunAzEl", &Environment::GetSunAzEl)
+      .def("GetSunAzEl", GetSunAzEl1)
       .def("Repaint", &Environment::Repaint)
       .def("SetDateTime", &Environment::SetDateTime)
-      .def("GetDateTime", &Environment::GetDateTime)
+      .def("GetDateTime", GetDateTime1)
       .def("SetRefLatLong", SetRefLatLong1)
       .def("GetRefLatLong", GetRefLatLong1);
       

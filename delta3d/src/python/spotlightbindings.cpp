@@ -4,14 +4,13 @@
 
 #include <python/dtpython.h>
 #include <dtCore/spotlight.h>
-#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
 
 void initSpotLightBindings()
 {
-   class_<SpotLight, bases<PositionalLight>, dtCore::RefPtr<SpotLight> >("SpotLight", init<int, optional<std::string, Light::LightingMode> >())
+   class_<SpotLight, bases<PositionalLight>, dtCore::RefPtr<SpotLight>, boost::noncopyable >("SpotLight", init<int, optional<std::string, Light::LightingMode> >())
       .def("SetSpotCutoff", &SpotLight::SetSpotCutoff)
       .def("GetSpotCutoff", &SpotLight::GetSpotCutoff)
       .def("SetSpotExponent", &SpotLight::SetSpotExponent)

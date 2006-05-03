@@ -4,7 +4,6 @@
 
 #include <python/dtpython.h>
 #include <dtCore/compass.h>
-#include <dtCore/scene.h>
 #include <dtCore/camera.h>
 
 using namespace boost::python;
@@ -15,7 +14,7 @@ void initCompassBindings()
    Compass* (*CompassGI1)(int) = &Compass::GetInstance;
    Compass* (*CompassGI2)(std::string) = &Compass::GetInstance;
 
-   class_<Compass, bases<Transformable>, dtCore::RefPtr<Compass> >("Compass", init<Camera*>())
+   class_<Compass, bases<Transformable>, dtCore::RefPtr<Compass>, boost::noncopyable >("Compass", init<Camera*>())
       .def("GetInstanceCount", &Compass::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", CompassGI1, return_internal_reference<>())

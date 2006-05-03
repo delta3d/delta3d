@@ -21,30 +21,25 @@
 #ifndef DELTA_GLOBALS
 #define DELTA_GLOBALS
 
-
+#include <dtCore/export.h>
 #include <string>
-
-#include "dtCore/export.h"
 
 namespace dtCore
 {
    ///Set the list of data file paths
-   DT_CORE_EXPORT void SetDataFilePathList(const std::string& pathList );
+   DT_CORE_EXPORT void SetDataFilePathList( const std::string& pathList );
 
    ///Get the list of data file paths
    DT_CORE_EXPORT std::string GetDataFilePathList();
 
    ///Get the Delta Data path list (equivalent to the DELTA_DATA environment)
-   DT_CORE_EXPORT std::string GetDeltaDataPathList(void);
+   DT_CORE_EXPORT std::string GetDeltaDataPathList();
 
    ///Get the root path to Delta3D (equivalent to the DELTA_ROOT environment)
-   DT_CORE_EXPORT std::string GetDeltaRootPath(void);
+   DT_CORE_EXPORT std::string GetDeltaRootPath();
 
    ///Convienence method to get the supplied environment
-   DT_CORE_EXPORT std::string GetEnvironment( std::string env);
-
-
+   DT_CORE_EXPORT std::string GetEnvironment( const std::string& env );
 };
-
 
 #endif // DELTA_GLOBALS

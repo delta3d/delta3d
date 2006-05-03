@@ -23,11 +23,13 @@
 
 #include <osg/Vec2>
 #include <osg/Vec3>
+
+#include <dtCore/export.h>
+#include <dtCore/refptr.h>
+
+// For some reason, you can't forward declare these.
 #include <osg/VertexProgram>
 #include <osg/FragmentProgram>
-
-#include "dtCore/export.h"
-#include "dtUtil/deprecationmgr.h"
 
 namespace dtCore
 {
@@ -38,30 +40,37 @@ namespace dtCore
      */
    class DT_CORE_EXPORT SunlightShader
    {
-   public:
-      SunlightShader();
-      ~SunlightShader();
+      public:
+         SunlightShader();
+         ~SunlightShader();
 
-      ///Update the shader with new values
-      void Update(const osg::Vec2& sunDir, const osg::Vec3& eyeXYZ,
-         float turbidity, float energy, float molecules);
+         ///Update the shader with new values
+         void Update(   const osg::Vec2& sunDir, 
+                        const osg::Vec3& eyeXYZ,
+                        float turbidity, 
+                        float energy, 
+                        float molecules );
 
-      osg::VertexProgram *mLightScatterinVP;
-      osg::FragmentProgram *mTerrainFP;
+         inline osg::VertexProgram* GetLightScatterinVP();
+         inline osg::FragmentProgram* GetTerrainFP();
 
-   private:
-      osg::Vec3 lambda;
-      osg::Vec3 lambda2;
-      osg::Vec3 lambda4;
-      float n; ///<Refractive index of air
-      float pn; ///<depolarization factor of air
-      float greenstein; ///<eccentricity value
-      float mBrightness; ///<scene brightness adjustment
-      float mContrast; ///<scene contrast adjustment
-      osg::Vec3 betaRay;
-      osg::Vec3 betaMie;
+      private:
 
-      float ConcentrationFactor(float turbidity);
+         dtCore::RefPtr<osg::VertexProgram> mLightScatterinVP;
+         dtCore::RefPtr<osg::FragmentProgram> mTerrainFP;
+
+         osg::Vec3 lambda;
+         osg::Vec3 lambda2;
+         osg::Vec3 lambda4;
+         float n; ///<Refractive index of air
+         float pn; ///<depolarization factor of air
+         float greenstein; ///<eccentricity value
+         float mBrightness; ///<scene brightness adjustment
+         float mContrast; ///<scene contrast adjustment
+         osg::Vec3 betaRay;
+         osg::Vec3 betaMie;
+
+         float ConcentrationFactor(float turbidity);
    };
 }
 
