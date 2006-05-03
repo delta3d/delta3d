@@ -31,7 +31,7 @@ protected:
    virtual ~TestRecorder();
 
    // inherited functions
-   virtual void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
    // initializations
    void SetupCamera();

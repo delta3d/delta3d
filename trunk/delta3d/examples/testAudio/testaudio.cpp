@@ -137,27 +137,30 @@ TestAudioApp::PostFrame( const double deltaFrameTime )
 }
 
 
-
-void
-TestAudioApp::KeyPressed(  Keyboard*       keyboard,
-                           Producer::KeyboardKey   key,
-                           Producer::KeyCharacter  character   )
+bool TestAudioApp::KeyPressed(const Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
-   dtABC::Application::KeyPressed( keyboard, key, character );
-   osg::Vec3   pos   ( 0.0f, 0.0f, 0.0f );
+   bool verdict = dtABC::Application::KeyPressed( keyboard, key, character );
+   if( verdict == true )
+   {
+      return verdict;
+   }
+   osg::Vec3 pos( 0.0f, 0.0f, 0.0f );
 
    switch( key )
    {
       case  Producer::Key_A:
          LoadPlaySound( kSoundFile[0L] );
+         verdict = true;
          break;
 
       case  Producer::Key_S:
          mFXMgr->AddDetonation( pos, HighExplosiveDetonation );
+         verdict = true;
          break;
 
       case  Producer::Key_D:
          LoadPlaySound( kSoundFile[2L], TRUCK );
+         verdict = true;
          break;
 
       case  Producer::Key_F:
@@ -167,78 +170,94 @@ TestAudioApp::KeyPressed(  Keyboard*       keyboard,
       case  Producer::Key_0:
       case  Producer::Key_KP_Insert:
          ChangeSoundGain( 0.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_1:
       case  Producer::Key_KP_End:
          ChangeSoundGain( 1.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_2:
       case  Producer::Key_KP_Down:
          ChangeSoundGain( 2.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_3:
       case  Producer::Key_KP_Page_Down:
          ChangeSoundGain( 3.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_4:
       case  Producer::Key_KP_Left:
          ChangeSoundGain( 4.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_5:
       case  Producer::Key_KP_Begin:
          ChangeSoundGain( 5.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_6:
       case  Producer::Key_KP_Right:
          ChangeSoundGain( 6.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_7:
       case  Producer::Key_KP_Home:
          ChangeSoundGain( 7.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_8:
       case  Producer::Key_KP_Up:
          ChangeSoundGain( 8.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_9:
       case  Producer::Key_KP_Page_Up:
          ChangeSoundGain( 9.0f / 9.0f );
+         verdict = true;
          break;
 
       case  Producer::Key_minus:
       case  Producer::Key_KP_Subtract:
          ChangeSoundPitch( 0.9f );
+         verdict = true;
          break;
 
       case  Producer::Key_equal:
       case  Producer::Key_KP_Add:
          ChangeSoundPitch( 1.1f );
+         verdict = true;
          break;
 
       case  Producer::Key_L:
          ToggleSoundLooping();
+         verdict = true;
          break;
 
       case  Producer::Key_Pause:
          PauseAllSounds();
+         verdict = true;
          break;
 
       case  Producer::Key_Return:
       case  Producer::Key_KP_Enter:
          RewindAllSounds();
+         verdict = true;
          break;
 
       case  Producer::Key_space:
          StopAllSounds();
+         verdict = true;
          break;
 
       case Producer::Key_R:
@@ -251,6 +270,7 @@ TestAudioApp::KeyPressed(  Keyboard*       keyboard,
             {
                StartRecording();
             }
+         verdict = true;
          } break;
 
       case Producer::Key_Y:
@@ -259,11 +279,14 @@ TestAudioApp::KeyPressed(  Keyboard*       keyboard,
             LOG_INFO("Saving to file: "+ sfile )
             mRecorder->SaveFile( sfile );
             LOG_INFO("...Done saving file: " + sfile)
+         verdict = true;
          } break;
 
       default:
          break;
    }
+
+   return verdict;
 }
 
 void TestAudioApp::LoadPlaySound( const char* fname, unsigned int box /*= 0L*/ )
@@ -634,7 +657,7 @@ TestAudioApp::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "left mouse button up/down",
                                  new ButtonAxisToAxis(
-                                       m->GetButton( LeftButton ),
+                                       m->GetButton( Mouse::LeftButton ),
                                        m->GetAxis( 1 )
                                                              )
                               );
@@ -644,7 +667,7 @@ TestAudioApp::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "left mouse button left/right",
                                  new ButtonAxisToAxis(
-                                       m->GetButton( LeftButton ),
+                                       m->GetButton( Mouse::LeftButton ),
                                        m->GetAxis( 0 )
                                                              )
                               );
@@ -654,7 +677,7 @@ TestAudioApp::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "middle mouse button up/down",
                                  new ButtonAxisToAxis(
-                                       m->GetButton( MiddleButton ),
+                                       m->GetButton( Mouse::MiddleButton ),
                                        m->GetAxis( 1 )
                                                              )
                               );
@@ -664,7 +687,7 @@ TestAudioApp::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "right mouse button up/down",
                                  new ButtonAxisToAxis(
-                                       m->GetButton( RightButton ),
+                                       m->GetButton( Mouse::RightButton ),
                                        m->GetAxis( 1 )
                                                              )
                               );
@@ -674,7 +697,7 @@ TestAudioApp::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "right mouse button left/right",
                                  new ButtonAxisToAxis(
-                                       m->GetButton( RightButton ),
+                                       m->GetButton( Mouse::RightButton ),
                                        m->GetAxis( 0 )
                                                              )
                               );

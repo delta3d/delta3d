@@ -75,19 +75,23 @@ void TestMultiWin::Config()
    }
 }
 
-void TestMultiWin::KeyPressed(   Keyboard*      keyboard, 
+bool TestMultiWin::KeyPressed(const Keyboard*      keyboard, 
                                     Producer::KeyboardKey  key,
                                     Producer::KeyCharacter character )
 {
+   bool verdict(false);
    switch( key )
    {
       case Producer::Key_Escape:
          Quit();
+         verdict = true;
          break;
       //make cases for other keys
       default:
          break;
    }
+
+   return verdict;
 }
 
 

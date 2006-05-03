@@ -55,13 +55,13 @@ public:
       mEnabled = true;
    }
 
-   virtual void KeyPressed(dtCore::Keyboard* keyboard, 
-      Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
    {
+      bool verdict(false);
       if (key == Producer::Key_Escape)
       {
          this->Quit();
+         verdict = true;
       }
       else if(key == Producer::Key_space)
       {
@@ -79,7 +79,10 @@ public:
             ss->setAttributeAndModes( mProg.get(), osg::StateAttribute::ON );            
             mEnabled = true;
          }
+         verdict = true;
       }
+
+      return verdict;
    }
 
    virtual void PreFrame(const double deltaFrameTime )

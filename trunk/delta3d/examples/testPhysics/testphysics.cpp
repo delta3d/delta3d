@@ -171,15 +171,17 @@ protected:
       }
    }
 
-   virtual void KeyPressed(   dtCore::Keyboard* keyboard, 
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
                               Producer::KeyboardKey key,
                               Producer::KeyCharacter character)
    {
+      bool verdict(false);
       switch( key )
       {
          case Producer::Key_P:
          {
             System::Instance()->SetPause( !System::Instance()->GetPause() );
+            verdict = true;
             break;
          }
          case Producer::Key_Escape :
@@ -200,6 +202,7 @@ protected:
             }
             
             Quit();
+            verdict = true;
             break;
          }
          case Producer::Key_B :
@@ -239,6 +242,7 @@ protected:
             {
                mToRemove.push( mObjects.front() );
             }
+            verdict = true;
             break;
          }
          case Producer::Key_S :
@@ -275,6 +279,7 @@ protected:
             {         
                mToRemove.push( mObjects.front() );
             }
+            verdict = true;
             break;
          }
          case Producer::Key_C :
@@ -313,6 +318,7 @@ protected:
             {
                mToRemove.push( mObjects.front() );
             }
+            verdict = true;
             break;
          } 
          default:
@@ -320,6 +326,8 @@ protected:
             break;
          }
       }
+
+      return verdict;
    }
 
    private:

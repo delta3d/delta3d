@@ -1,5 +1,9 @@
 #include <dtABC/baseabc.h>
 #include <dtDAL/map.h>
+
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+
 #include <cassert>
 
 using namespace dtABC;
@@ -11,11 +15,14 @@ IMPLEMENT_MANAGEMENT_LAYER(BaseABC)
 /**
  * Constructors
  */
-BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ )
-:  Base(name),
-   KeyboardListener()
+BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :  Base(name),
+   mKeyboardListener(new ApplicationKeyboardListener()),
+   mMouseListener(new ApplicationMouseListener())
 {
    RegisterInstance(this);
+
+   mKeyboardListener->SetApplication(this);
+   mMouseListener->SetApplication(this);
 
    System*  sys   = System::Instance();
    assert( sys );
@@ -113,18 +120,22 @@ void BaseABC::OnMessage( MessageData* data )
  * @param key the producer key-code
  * @param character producer character
  */
-void BaseABC::KeyPressed(  dtCore::Keyboard*       keyboard, 
-                           Producer::KeyboardKey   key,
-                           Producer::KeyCharacter  character )
+bool BaseABC::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
    switch (key)
    {
-      case Producer::Key_Escape:
+   case Producer::Key_Escape:
+      {
          Quit();
-         break;
-      default:
-         break;
+         return true;
+      } break;
+   default:
+      {
+         return false;
+      } break;
    }
+
+   return false;
 }
 
 
@@ -136,11 +147,9 @@ void BaseABC::KeyPressed(  dtCore::Keyboard*       keyboard,
  * @param key the producer key-code
  * @param character producer character
  */
-void
-BaseABC::KeyReleased(   dtCore::Keyboard*          keyboard, 
-                        Producer::KeyboardKey   key,
-                        Producer::KeyCharacter  character )
+bool BaseABC::KeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
+   return false;
 }
 
 

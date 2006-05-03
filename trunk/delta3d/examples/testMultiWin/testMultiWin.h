@@ -15,9 +15,7 @@ class TestMultiWin : public dtABC::Application
    public:
       virtual void Config();
 
-      virtual void KeyPressed(  dtCore::Keyboard*      keyboard, 
-                                Producer::KeyboardKey  key,
-                                Producer::KeyCharacter character );
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
    private:
       dtCore::RefPtr<dtCore::DeltaWin> mWin2;

@@ -18,9 +18,7 @@ public:
 
    void Config();
 
-   void KeyPressed(  dtCore::Keyboard*      keyboard, 
-                     Producer::KeyboardKey  key,
-                     Producer::KeyCharacter character );
+   bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
    void PreFrame( const double deltaFrameTime );
 
@@ -39,7 +37,6 @@ private:
    dtCore::RefPtr<dtCore::InfiniteLight> mGlobalInfinite;
 
    dtCore::RefPtr<dtCore::OrbitMotionModel> mOmm;
-
 };
 
 #endif // DELTA_TESTLIGHTS

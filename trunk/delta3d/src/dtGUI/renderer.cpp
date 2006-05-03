@@ -3,11 +3,9 @@
 
 using namespace dtGUI;
 
-Renderer::Renderer(unsigned int max_quads, int width, int height):
-OpenGLRenderer(max_quads, width, height)
+Renderer::Renderer(unsigned int max_quads, int width, int height): OpenGLRenderer(max_quads)
 {
 }
-
 
 CEGUI::ResourceProvider* Renderer::createResourceProvider(void)
 {

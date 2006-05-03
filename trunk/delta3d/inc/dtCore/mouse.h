@@ -26,27 +26,19 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <set>
+#include <list>
 #include <string>
 
 #include <Producer/KeyboardMouse>
 #include <dtCore/inputdevice.h>
 #include <dtUtil/deprecationmgr.h>
+#include <osg/Referenced>               // for listener's base class
+#include <dtCore/refptr.h>             // for typedef, list member
 
 namespace dtCore
 {
    class DeltaWin;
    class MouseListener;
-
-   /**
-    * Mouse buttons.
-    */
-   enum MouseButton
-   {
-      LeftButton,
-      MiddleButton,
-      RightButton
-   };
 
    /**
     * A mouse device.
@@ -71,10 +63,18 @@ namespace dtCore
       virtual ~Mouse();
 
       public:
+         /// Mouse buttons.
+         enum MouseButton
+         {
+            LeftButton,
+            MiddleButton,
+            RightButton
+         };
+
          /**
           * The list of mouse listeners.
           */
-         typedef std::list<MouseListener*> MouseListenerList;
+         typedef std::list<dtCore::RefPtr<MouseListener> > MouseListenerList;
 
          /**
           * Gets the current mouse position.
@@ -84,7 +84,7 @@ namespace dtCore
           * @param y a reference to the location in which to store the
           * y coordinate
           */
-         void GetPosition(float& x, float& y);
+         void GetPosition(float& x, float& y) const;
          
          /**
          * Sets the current mouse position.
@@ -100,7 +100,7 @@ namespace dtCore
           * @param button the button to check
           * @return true if the button is pressed, false otherwise
           */
-         bool GetButtonState(MouseButton button);
+         bool GetButtonState(MouseButton button) const;
 
          /**
           * Adds a listener for mouse events.
@@ -117,48 +117,35 @@ namespace dtCore
          void RemoveMouseListener(MouseListener* mouseListener);
 
          ///Producer callback methods
-         virtual void mouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion );
+         virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion );
          ///Producer callback methods
-         virtual void mouseMotion( float x, float y);
+         virtual bool MouseMotion( float x, float y);
          ///Producer callback methods
-         virtual void passiveMouseMotion( float x, float y);
+         virtual bool PassiveMouseMotion( float x, float y);
          ///Producer callback methods
-         virtual void buttonPress( float x, float y, unsigned int button );
+         virtual bool ButtonPress( float x, float y, unsigned int button );
          ///Producer callback methods
-         virtual void doubleButtonPress( float x, float y , unsigned int button );
+         virtual bool DoubleButtonPress( float x, float y , unsigned int button );
          ///Producer callback methods
-         virtual void buttonRelease( float x, float y, unsigned int button);
+         virtual bool ButtonRelease( float x, float y, unsigned int button);
 
          const MouseListenerList& GetListeners() const { return mMouseListeners; }
 
       protected:
          MouseListenerList mMouseListeners;
 
-         Producer::KeyboardMouse* mKeyboardMouse;
+         dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
    };
 
 
    /**
     * An interface for objects interested in mouse events.
     */
-   class DT_CORE_EXPORT MouseListener
+   class DT_CORE_EXPORT MouseListener : public osg::Referenced
    {   
       public:
-
          virtual ~MouseListener() {}
-      
-         /**
-          * Called when a button is pressed.
-          *
-          * @param mouse the source of the event
-          * @param button the button pressed
-          */
-         virtual void ButtonPressed(Mouse* mouse, MouseButton button)
-         {
-            DEPRECATE("void ButtonPressed(Mouse* mouse, MouseButton button)",
-                      "bool HandleButtonPressed(Mouse* mouse, MouseButton button)")
-         }
-      
+
          /**
           * Called when a button is pressed.
           *
@@ -168,20 +155,8 @@ namespace dtCore
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleButtonPressed(Mouse* mouse, MouseButton button);
-      
-         /**
-          * Called when a button is released.
-          *
-          * @param mouse the source of the event
-          * @param button the button released
-          */
-         virtual void ButtonReleased(Mouse* mouse, MouseButton button)
-         {
-            DEPRECATE("void ButtonReleased(Mouse* mouse, MouseButton button)",
-                      "bool HandleButtonReleased(Mouse* mouse, MouseButton button)")
-         }
-      
+         virtual bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button)=0;
+
          /**
           * Called when a button is released.
           *
@@ -191,21 +166,8 @@ namespace dtCore
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleButtonReleased(Mouse* mouse, MouseButton button);
-      
-         /**
-          * Called when a button is clicked.
-          *
-          * @param mouse the source of the event
-          * @param button the button clicked
-          * @param clickCount the click count
-          */
-         virtual void ButtonClicked(Mouse* mouse, MouseButton button, int clickCount)
-         {
-            DEPRECATE("void ButtonClicked(Mouse* mouse, MouseButton button, int clickCount)",
-                      "bool HandleButtonClicked(Mouse* mouse, MouseButton button, int clickCount)")
-         }
-      
+         virtual bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button)=0;
+
          /**
           * Called when a button is clicked.
           *
@@ -216,21 +178,8 @@ namespace dtCore
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleButtonClicked(Mouse* mouse, MouseButton button, int clickCount);
-            
-         /**
-          * Called when the mouse pointer is moved.
-          *
-          * @param mouse the source of the event
-          * @param x the x coordinate
-          * @param y the y coordinate
-          */
-         virtual void MouseMoved(Mouse* mouse, float x, float y)
-         {
-            DEPRECATE("void MouseMoved(Mouse* mouse, float x, float y)",
-                      "bool HandleMouseMoved(Mouse* mouse, float x, float y)")
-         }
-      
+         virtual bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount)=0;
+
          /**
           * Called when the mouse pointer is moved.
           *
@@ -241,21 +190,8 @@ namespace dtCore
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleMouseMoved(Mouse* mouse, float x, float y);
-            
-         /**
-          * Called when the mouse pointer is dragged.
-          *
-          * @param mouse the source of the event
-          * @param x the x coordinate
-          * @param y the y coordinate
-          */
-         virtual void MouseDragged(Mouse* mouse, float x, float y)
-         {
-            DEPRECATE("void MouseDragged(Mouse* mouse, float x, float y)",
-                      "bool HandleMouseDragged(Mouse* mouse, float x, float y)")
-         }
-      
+         virtual bool HandleMouseMoved(const Mouse* mouse, float x, float y)=0;
+
          /**
           * Called when the mouse pointer is dragged.
           *
@@ -266,19 +202,7 @@ namespace dtCore
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleMouseDragged(Mouse* mouse, float x, float y);
-            
-         /**
-          * Called when the mouse is scrolled.
-          *
-          * @param mouse the source of the event
-          * @param delta the scroll delta (+1 for up one, -1 for down one)
-          */
-         virtual void MouseScrolled(Mouse* mouse, int delta)
-         {
-            DEPRECATE("void MouseScrolled(Mouse* mouse, int delta)",
-                      "bool HandleMouseScrolled(Mouse* mouse, int delta)")
-         }
+         virtual bool HandleMouseDragged(const Mouse* mouse, float x, float y)=0;
 
          /**
           * Called when the mouse is scrolled.
@@ -289,7 +213,7 @@ namespace dtCore
           * Mouse calling this function is responsbile for using this
           * return value or not.
           */
-        virtual bool HandleMouseScrolled(Mouse* mouse, int delta);
+        virtual bool HandleMouseScrolled(const Mouse* mouse, int delta)=0;
    };
 }
 

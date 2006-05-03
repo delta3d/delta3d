@@ -72,20 +72,24 @@ void TestLightsApp::Config()
    mOmm->SetDistance( distance );
 }
 
-void TestLightsApp::KeyPressed(  Keyboard*               keyboard, 
+bool TestLightsApp::KeyPressed(const Keyboard*           keyboard, 
                                  Producer::KeyboardKey   key,
                                  Producer::KeyCharacter  character )
 {
+   bool verdict( false );
    switch( key )
    {
    case Producer::Key_Escape:
       Quit();
+      verdict = true;
       break;
    case Producer::Key_1: 
       mGlobalSpot->SetEnabled( !mGlobalSpot->GetEnabled() );
+      verdict = true;
       break;
    case Producer::Key_2:
       mPositional->SetEnabled( !mPositional->GetEnabled() );
+      verdict = true;
       break;
    case Producer::Key_3:
    {
@@ -94,14 +98,18 @@ void TestLightsApp::KeyPressed(  Keyboard*               keyboard,
       else
          mPositional->SetLightingMode( Light::GLOBAL );
 
+      verdict = true;
       break;
    }
    case Producer::Key_4:
       mGlobalInfinite->SetEnabled( !mGlobalInfinite->GetEnabled() );
+      verdict = true;
       break;
    default:
       break;
    }
+
+   return verdict;
 }
 
 void TestLightsApp::PreFrame( const double deltaFrameTime )

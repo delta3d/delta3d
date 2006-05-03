@@ -15,9 +15,7 @@ class TestNetwork : public dtABC::Application
    
       virtual void Config();
 
-      virtual void KeyPressed(  dtCore::Keyboard*      keyboard, 
-                                Producer::KeyboardKey  key,
-                                Producer::KeyCharacter character );
+      bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
       virtual void PreFrame( const double deltaFrameTime );
       virtual void Frame( const double deltaFrameTime );

@@ -97,7 +97,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       Axis* leftButtonUpAndDown = mDefaultInputDevice->AddAxis(
          "left mouse button up/down",
          mLeftButtonUpDownMapping = new ButtonAxisToAxis(
-            mouse->GetButton(LeftButton),
+            mouse->GetButton(Mouse::LeftButton),
             mouse->GetAxis(1)
          )
       );
@@ -105,7 +105,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       Axis* leftButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "left mouse button left/right",
          mLeftButtonLeftRightMapping = new ButtonAxisToAxis(
-            mouse->GetButton(LeftButton),
+            mouse->GetButton(Mouse::LeftButton),
             mouse->GetAxis(0)
          )
       );
@@ -113,7 +113,7 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       Axis* rightButtonLeftAndRight = mDefaultInputDevice->AddAxis(
          "right mouse button left/right",
          mRightButtonLeftRightMapping = new ButtonAxisToAxis(
-            mouse->GetButton(RightButton),
+            mouse->GetButton(Mouse::RightButton),
             mouse->GetAxis(0)
          )
       );
@@ -159,13 +159,13 @@ void WalkMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
    }
    else
    {
-      mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(LeftButton));
+      mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
       
-      mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(LeftButton));
+      mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
       
-      mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(RightButton));
+      mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
       
       mArrowKeysUpDownMapping->SetSourceButtons(

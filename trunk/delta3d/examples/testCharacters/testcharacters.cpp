@@ -3,26 +3,23 @@
 #include <dtABC/dtabc.h>
 #include <iostream>
 
+#include <dtCore/keyboard.h>   // for base class
+
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtChar;
 
-class KeyController : public Base, public KeyboardListener
+class KeyController : public dtCore::Base
 {
-
 public:
-
-   KeyController(Character* character, Keyboard* keyboard)
-      : Base("KeyController"),
-      mCharacter(character),
-      mKeyboard(keyboard)
+   KeyController(Character* character, Keyboard* keyboard) : Base("KeyController"),
+      mKeyboard(keyboard),
+      mCharacter(character)
    {
       AddSender(System::Instance());
-
-      mKeyboard->AddKeyboardListener(this);
    }
 
-   virtual void OnMessage(MessageData *data)
+   void OnMessage(dtCore::Base::MessageData* data)
    {
       if(data->message == "preframe")
       {
@@ -59,34 +56,15 @@ public:
       }
    }
 
-   virtual void KeyPressed(Keyboard* keyboard, 
-      Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
-   {
-      switch(key)
-      {
-      case Producer::Key_Escape:
-         System::Instance()->Stop();
-         break;
-      default:
-         break;
-      }
-   }
-
 private:
-
    RefPtr<Character> mCharacter;
    RefPtr<Keyboard> mKeyboard;
-        
 };
 
 class FollowController : public Base
 {
- 
 public:
-
-   FollowController(Character* character, Transformable* target)
-      : Base("FollowController"),
+   FollowController(Character* character, Transformable* target) : Base("FollowController"),
       mCharacter(character),
       mTarget(target)
    {
@@ -154,7 +132,6 @@ public:
    }
 
 private:
-
    RefPtr<Character> mCharacter;
    RefPtr<Transformable> mTarget;
 };
@@ -230,25 +207,27 @@ public:
       mFollowController = new FollowController( mMarine.get(), mOpFor.get() );
    }
 
-     void KeyPressed( dtCore::Keyboard* keyboard,
-                    Producer::KeyboardKey key,
-                    Producer::KeyCharacter character )
+   bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
    {
+      bool verdict(false);
       switch( key )
       {
          case Producer::Key_P:
          {
             System::Instance()->SetPause( !System::Instance()->GetPause() );
+            verdict = true;
             break;
          }
          case Producer::Key_Escape:
          {
             Quit();
+            verdict = true;
             break;
          }
          default:
             break;
       }
+      return verdict;
    }
 
 

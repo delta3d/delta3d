@@ -98,6 +98,7 @@ namespace dtCore
           * @return a pointer to the feature
           */
          Button* GetButton(int index);
+         const Button* GetButton(int index) const;
 
          /**
           * Returns the number of features (buttons, axes, etc.) contained in 
@@ -114,6 +115,7 @@ namespace dtCore
           * @return a pointer to the feature
           */
          Axis* GetAxis(int index);
+         const Axis* GetAxis(int index) const;
 
          /**
           * Adds a button listener.

@@ -72,37 +72,48 @@ protected:
    * @param key the key pressed
    * @param character the corresponding character
    */
-   virtual void KeyPressed(dtCore::Keyboard* keyboard, 
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
    {
-      Application::KeyPressed(keyboard, key, character);
+      bool verdict = Application::KeyPressed(keyboard, key, character);
+      if( verdict == true )
+      {
+         return verdict;
+      }
 
       switch(key)
       {
       case Producer::Key_1:
          LOG_ALWAYS("Walk");
          SetMotionModel(WALK);
+         verdict = true;
          break;
       case Producer::Key_2:
          LOG_ALWAYS("Fly");
          SetMotionModel(FLY);
+         verdict = true;
          break;
       case Producer::Key_3:
          LOG_ALWAYS("UFO");
          SetMotionModel(UFO);
+         verdict = true;
          break;
       case Producer::Key_4:
          LOG_ALWAYS("Orbit");
          SetMotionModel(ORBIT);
+         verdict = true;
          break;
       case Producer::Key_5:
          LOG_ALWAYS("FPS");
          SetMotionModel(FPS);
+         verdict = true;
          break;
       default:
          break;
       }
+
+      return verdict;
    }
 
 

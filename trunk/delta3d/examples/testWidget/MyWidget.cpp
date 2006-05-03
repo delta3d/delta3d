@@ -117,7 +117,7 @@ MyWidget::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "left mouse button up/down",
                                  new ButtonAxisToAxis(
-                                                         m->GetButton( LeftButton ),
+                                                         m->GetButton( Mouse::LeftButton ),
                                                          m->GetAxis( 1 )
                                                      )
                               );
@@ -127,7 +127,7 @@ MyWidget::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "left mouse button left/right",
                                  new ButtonAxisToAxis(
-                                                         m->GetButton( LeftButton ),
+                                                         m->GetButton( Mouse::LeftButton ),
                                                          m->GetAxis( 0 )
                                                      )
                               );
@@ -137,7 +137,7 @@ MyWidget::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "middle mouse button up/down",
                                  new ButtonAxisToAxis(
-                                                         m->GetButton( MiddleButton ),
+                                                         m->GetButton( Mouse::MiddleButton ),
                                                          m->GetAxis( 1 )
                                                      )
                               );
@@ -147,7 +147,7 @@ MyWidget::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "right mouse button up/down",
                                  new ButtonAxisToAxis(
-                                                         m->GetButton( RightButton ),
+                                                         m->GetButton( Mouse::RightButton ),
                                                          m->GetAxis( 1 )
                                                      )
                               );
@@ -157,7 +157,7 @@ MyWidget::InitInputDevices( void )
          mInputDevice->AddAxis(
                                  "right mouse button left/right",
                                  new ButtonAxisToAxis(
-                                                         m->GetButton( RightButton ),
+                                                         m->GetButton( Mouse::RightButton ),
                                                          m->GetAxis( 0 )
                                                      )
                               );

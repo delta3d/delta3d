@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtGUI.lib dtCore.lib dtUtil.lib osg.lib osgDB.lib odbccp32.lib"
+				AdditionalDependencies="dtGUI.lib dtCore.lib dtUtil.lib osg.lib osgDB.lib odbccp32.lib CEGUIBase.lib"
 				OutputFile="../../../bin/testWin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -106,7 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtGUId.lib dtUtild.lib dtCored.lib osgd.lib osgDBd.lib"
+				AdditionalDependencies="dtGUId.lib dtUtild.lib dtCored.lib osgd.lib osgDBd.lib CEGUIBase_d.lib"
 				OutputFile="../../../bin/testWind.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -21,52 +21,52 @@ DeltaWin::InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyb
 
 void DeltaWin::InputCallback::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 {
-   mMouse->mouseScroll(sm);
+   mMouse->MouseScroll(sm);
 }
 
 void DeltaWin::InputCallback::mouseMotion(float x, float y)
 {
-   mMouse->mouseMotion( x, y );
+   mMouse->MouseMotion( x, y );
 }
 
 void DeltaWin::InputCallback::passiveMouseMotion(float x, float y)
 {
-   mMouse->passiveMouseMotion( x, y );
+   mMouse->PassiveMouseMotion( x, y );
 }
 
 void DeltaWin::InputCallback::buttonPress(float x, float y, unsigned int button)
 {
-   mMouse->buttonPress(x, y, button);
+   mMouse->ButtonPress(x, y, button);
 }
 
 void DeltaWin::InputCallback::doubleButtonPress(float x, float y, unsigned int button)
 {
-   mMouse->doubleButtonPress(x, y, button);
+   mMouse->DoubleButtonPress(x, y, button);
 }
 
 void DeltaWin::InputCallback::buttonRelease(float x, float y, unsigned int button)
 {
-   mMouse->buttonRelease(x, y, button);
+   mMouse->ButtonRelease(x, y, button);
 }
 
 void DeltaWin::InputCallback::keyPress(Producer::KeyCharacter kc)
 {
-   mKeyboard->keyPress(kc);
+   mKeyboard->KeyPress(kc);
 }
 
 void DeltaWin::InputCallback::keyRelease(Producer::KeyCharacter kc)
 {
-   mKeyboard->keyRelease(kc);
+   mKeyboard->KeyRelease(kc);
 }
 
 void DeltaWin::InputCallback::specialKeyPress(Producer::KeyCharacter kc)
 {
-   mKeyboard->specialKeyPress(kc);
+   mKeyboard->KeyPress(kc);
 }
 
 void DeltaWin::InputCallback::specialKeyRelease(Producer::KeyCharacter kc)
 {
-   mKeyboard->specialKeyRelease(kc);
+   mKeyboard->KeyRelease(kc);
 }
 
 void DeltaWin::InputCallback::SetKeyboard(Keyboard* kb)
@@ -90,9 +90,9 @@ DeltaWin::DeltaWin(  const std::string& name,
                      bool cursor, bool fullScreen ) :
    Base(name),
    mRenderSurface( new Producer::RenderSurface ),
-   mKeyboardMouse( new Producer::KeyboardMouse( mRenderSurface ) ),
+   mKeyboardMouse( new Producer::KeyboardMouse( mRenderSurface.get() ) ),
    mKeyboard( new Keyboard ),
-   mMouse( new Mouse(mKeyboardMouse,"mouse") ),
+   mMouse( new Mouse(mKeyboardMouse.get(),"mouse") ),
    mShowCursor(true),
    mInputCallback(new InputCallback( mKeyboard.get(), mMouse.get() ))
 {
@@ -131,10 +131,10 @@ DeltaWin::DeltaWin(  const std::string& name,
    }
    else // otherwise use the passed RenderSurface
    {
-      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface);
+      mKeyboardMouse = new Producer::KeyboardMouse(mRenderSurface.get());
    }
 
-   mMouse = new Mouse( mKeyboardMouse, "mouse" );
+   mMouse = new Mouse( mKeyboardMouse.get(), "mouse" );
 
    mInputCallback = new InputCallback( mKeyboard.get(), mMouse.get() );
    mKeyboardMouse->setCallback( new InputCallback( mKeyboard.get(), mMouse.get() ) );
@@ -148,7 +148,7 @@ DeltaWin::DeltaWin(  const std::string& name,
                      dtCore::Mouse* mouse ) :
    Base(name),
    mRenderSurface( new Producer::RenderSurface ),
-   mKeyboardMouse( new Producer::KeyboardMouse(mRenderSurface) ),
+   mKeyboardMouse( new Producer::KeyboardMouse(mRenderSurface.get()) ),
    mKeyboard(keyboard),
    mMouse(mouse),
    mShowCursor(true)
@@ -230,7 +230,7 @@ const std::string& DeltaWin::GetWindowTitle() const
 
 void DeltaWin::Update()
 {
-   if( mKeyboardMouse && !mKeyboardMouse->isRunning() )
+   if( mKeyboardMouse.valid() && !mKeyboardMouse->isRunning() )
    {
       mKeyboardMouse->update( *mKeyboardMouse->getCallback() );
    }

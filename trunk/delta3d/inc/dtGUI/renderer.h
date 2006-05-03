@@ -22,7 +22,8 @@ namespace dtGUI
    class DT_GUI_EXPORT Renderer : public CEGUI::OpenGLRenderer
    {
    public:
-      Renderer(unsigned int max_quads, int width, int height);
+      ///\todo deprecate this unnecessary ctor
+      Renderer(unsigned int max_quads=0, int width=0, int height=0);
       ~Renderer(void) {};
 
       ///Create the ResourceProvider (a dtGUI::ResourceProvider)

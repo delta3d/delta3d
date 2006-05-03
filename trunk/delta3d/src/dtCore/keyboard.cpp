@@ -561,18 +561,19 @@ Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter
  *
  * @param kc the key character
  */
-void Keyboard::keyPress(Producer::KeyCharacter kc)
+bool Keyboard::KeyPress(Producer::KeyCharacter kc)
 {
-   Producer::KeyboardKey kk = KeyCharacterToKeyboardKey(kc);
-
-   GetButton(kk)->SetState(true);
-
-   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
-       it != mKeyboardListeners.end();
-       it++)
+   Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
+   bool handled(false);
+   KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
+   KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleKeyPressed(this, kk, kc);
+      handled = (*iter)->HandleKeyPressed(this, kbkey, kc);
+      ++iter;
    }
+
+   return handled;
 }
 
 /**
@@ -580,108 +581,18 @@ void Keyboard::keyPress(Producer::KeyCharacter kc)
  *
  * @param kc the key character
  */
-void Keyboard::keyRelease(Producer::KeyCharacter kc)
+bool Keyboard::KeyRelease(Producer::KeyCharacter kc)
 {
-   Producer::KeyboardKey kk = KeyCharacterToKeyboardKey(kc);
-
-   GetButton(kk)->SetState(false);
-
-   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
-       it != mKeyboardListeners.end();
-       it++)
+   Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
+   bool handled(false);
+   KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
+   KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleKeyReleased(this, kk, kc);
+      handled = (*iter)->HandleKeyReleased(this, kbkey, kc);
+      ++iter;
    }
+
+   return handled;
 }
 
-/**
- * Producer callback for special key press events.
- *
- * @param kc the key character
- */
-void Keyboard::specialKeyPress(Producer::KeyCharacter kc)
-{
-   Producer::KeyboardKey kk = KeyCharacterToKeyboardKey(kc);
-
-   GetButton(kk)->SetState(true);
-
-   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
-       it != mKeyboardListeners.end();
-       it++)
-   {
-      (*it)->HandleKeyPressed(this, kk, kc);
-   }
-}
-
-/**
- * Producer callback for special key release events.
- *
- * @param kc the key character
- */
-void Keyboard::specialKeyRelease(Producer::KeyCharacter kc)
-{
-   Producer::KeyboardKey kk = KeyCharacterToKeyboardKey(kc);
-
-   GetButton(kk)->SetState(false);
-
-   for(KeyboardListenerList::iterator it = mKeyboardListeners.begin();
-       it != mKeyboardListeners.end();
-       it++)
-   {
-      (*it)->HandleKeyReleased(this, kk, kc);
-   }
-}
-
-/**
- * Called when a key is pressed. 
- *
- * @param keyboard the source of the event
- * @param key the key pressed
- * @param character the corresponding character
- * @return true if this KeyboardListener handled the event. The
- * Keyboard calling this function is responsbile for using this
- * return value or not.
- */
-bool KeyboardListener::HandleKeyPressed( Keyboard* keyboard,
-                                         Producer::KeyboardKey key,
-                                         Producer::KeyCharacter character )
-{
-   KeyPressed( keyboard, key, character );
-   return true;
-}
-
-/**
- * Called when a key is released.
- *
- * @param keyboard the source of the event
- * @param key the key released
- * @param character the corresponding character
- * @return true if this KeyboardListener handled the event. The
- * Keyboard calling this function is responsbile for using this
- * return value or not.
- */
-bool KeyboardListener::HandleKeyReleased( Keyboard* keyboard,
-                                          Producer::KeyboardKey key,
-                                          Producer::KeyCharacter character )
-{
-   KeyReleased( keyboard, key, character );
-   return true;   
-}
-
-/**
- * Called when a key is typed.
- *
- * @param keyboard the source of the event
- * @param key the key typed
- * @param character the corresponding character
- * @return true if this KeyboardListener handled the event. The
- * Keyboard calling this function is responsbile for using this
- * return value or not.
- */
-bool KeyboardListener::HandleKeyTyped( Keyboard* keyboard,
-                                       Producer::KeyboardKey key,
-                                       Producer::KeyCharacter character )
-{
-   KeyTyped( keyboard, key, character );
-   return true;  
-}

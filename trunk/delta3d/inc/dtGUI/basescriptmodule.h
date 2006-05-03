@@ -1,7 +1,7 @@
 #ifndef DT_BASE_SCRIPTMODULE_INC
 #define DT_BASE_SCRIPTMODULE_INC
 
-#include <CEGUIScriptModule.h>        // for base class
+#include <CEGUI/CEGUIScriptModule.h>        // for base class
 #include <dtGUI/export.h>            // for Windows export symbols
 
 namespace dtGUI

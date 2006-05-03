@@ -61,6 +61,18 @@ void initInputDeviceBindings()
    InputDevice* (*InputDeviceGI1)(int) = &InputDevice::GetInstance;
    InputDevice* (*InputDeviceGI2)(std::string) = &InputDevice::GetInstance;
 
+   typedef const dtCore::Axis* (dtCore::InputDevice::*ConstAxesInputDeviceMemFun)(int) const;
+   ConstAxesInputDeviceMemFun caxes = &InputDevice::GetAxis;
+
+   typedef dtCore::Axis* (dtCore::InputDevice::*NonConstAxesInputDeviceMemFun)(int);
+   NonConstAxesInputDeviceMemFun ncaxes = &InputDevice::GetAxis;
+
+   typedef const dtCore::Button* (InputDevice::*ConstButtonInputDeviceMemFun)(int) const;
+   ConstButtonInputDeviceMemFun cbutton = &InputDevice::GetButton;
+
+   typedef Button* (InputDevice::*NonConstButtonInputDeviceMemFun)(int);
+   NonConstButtonInputDeviceMemFun ncbutton = &InputDevice::GetButton;
+
    class_<InputDevice, bases<Base>, dtCore::RefPtr<InputDevice> >("InputDevice", no_init)
       .def("GetInstanceCount", &InputDevice::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -70,9 +82,11 @@ void initInputDeviceBindings()
       .def("GetFeatureCount", &InputDevice::GetFeatureCount)
       .def("GetFeature", &InputDevice::GetFeature, return_internal_reference<>())
       .def("GetButtonCount", &InputDevice::GetButtonCount)
-      .def("GetButton", &InputDevice::GetButton, return_internal_reference<>())
+      .def("GetButton", cbutton, return_internal_reference<>())
+      .def("GetButton", ncbutton, return_internal_reference<>())
       .def("GetAxisCount", &InputDevice::GetAxisCount)
-      .def("GetAxis", &InputDevice::GetAxis, return_internal_reference<>())
+      .def("GetAxis", caxes, return_internal_reference<>())
+      .def("GetAxis", ncaxes, return_internal_reference<>())
       .def("AddButtonListener", &InputDevice::AddButtonListener)
       .def("RemoveButtonListener", &InputDevice::RemoveButtonListener)
       .def("AddAxisListener", &InputDevice::AddAxisListener)

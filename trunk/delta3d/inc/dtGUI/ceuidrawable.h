@@ -1,3 +1,22 @@
+/* 
+* Delta3D Open Source Game and Simulation Engine 
+* Copyright (C) 2004-2005 MOVES Institute 
+*
+* This library is free software; you can redistribute it and/or modify it under
+* the terms of the GNU Lesser General Public License as published by the Free 
+* Software Foundation; either version 2.1 of the License, or (at your option) 
+* any later version.
+*
+* This library is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+* FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+* details.
+*
+* You should have received a copy of the GNU Lesser General Public License 
+* along with this library; if not, write to the Free Software Foundation, Inc., 
+* 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+*
+*/
 #ifndef DELTA_CEUIDRAWABLE
 #define DELTA_CEUIDRAWABLE
 
@@ -6,20 +25,31 @@
 #pragma once
 #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
-#include <dtGUI/renderer.h>
-#include <dtCore/deltadrawable.h>
-#include <dtCore/mouse.h>
-#include <dtCore/keyboard.h>
+#include <dtCore/deltadrawable.h>           // for base class
+#include <dtGUI/ceguimouselistener.h>       // for member
+#include <dtGUI/ceguikeyboardlistener.h>    // for member
+#include <dtCore/refptr.h>                  // for members
+#include <dtGUI/export.h>                   // for export symbols
 
-#include <CEGUI/CEGUISystem.h>
-
-#include <osg/Drawable>
-#include <osg/Group>
+#include <osg/Drawable>                     // for base class
 #include <osg/CopyOp>
+
+namespace CEGUI
+{
+   class System;
+   class Renderer;
+}
+
+namespace osg
+{
+   class MatrixTransform;
+   class Projection;
+}
 
 namespace dtGUI
 {
    class BaseScriptModule;
+   class Renderer;
 
    ///A DeltaDrawable used to render the CEGUI
 
@@ -35,9 +65,7 @@ namespace dtGUI
     *  has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
     * 
     */
-   class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable,
-                                  public dtCore::MouseListener,
-                                  public dtCore::KeyboardListener
+   class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable
    {
 
       ///private class that ties the GUI rendering to an OSG node
@@ -91,10 +119,11 @@ namespace dtGUI
       CEGUI::System* GetUI(void) {return mUI;}
 
       ///Get a pointer to the underlying CEGUI::Renderer
-      CEGUI::Renderer* GetRenderer(void) const {return mRenderer;}
+      ///\todo shouldn't this be dtGUI::Renderer return type?
+      //CEGUI::Renderer* GetRenderer() {return mRenderer;}
 
       /// Attaches the Delta3D child's OSG graphics Node
-      bool AddChild(DeltaDrawable *child);
+      bool AddChild(dtCore::DeltaDrawable *child);
 
       ///Display all the properties of the supplied CEGUI::Window
       static void DisplayProperties(CEGUI::Window *window, bool onlyNonDefault=true);
@@ -117,38 +146,6 @@ namespace dtGUI
    protected: 
 
       void OnMessage(dtCore::Base::MessageData *data);
-
-      virtual bool HandleMouseMoved(dtCore::Mouse* mouse, float x, float y);
-      virtual bool HandleMouseDragged(dtCore::Mouse* mouse, float x, float y);
-      virtual bool HandleButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button);
-      virtual bool HandleButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button);
-      virtual bool HandleKeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
-      virtual bool HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter kchar);
-      virtual bool HandleMouseScrolled(dtCore::Mouse* mouse, int delta);
-
-      ///pass the mouse moved events to CEGUI
-      virtual void MouseMoved(dtCore::Mouse* mouse, float x, float y);
-
-      ///pass the mouse dragged events to CEGUI
-      virtual void MouseDragged(dtCore::Mouse* mouse, float x, float y);
-
-      ///pass the button pressed events to CEGUI
-      virtual void ButtonPressed(dtCore::Mouse* mouse, dtCore::MouseButton button);
-
-      ///pass the button released events to CEGUI
-      virtual void ButtonReleased(dtCore::Mouse* mouse, dtCore::MouseButton button);
-
-      ///pass the key pressed events to CEGUI
-      virtual void KeyPressed(dtCore::Keyboard* keyboard, 
-                              Producer::KeyboardKey key,
-                              Producer::KeyCharacter character);
-
-      ///pass the key released event to CEGUI
-      virtual void KeyReleased(dtCore::Keyboard* keyboard,
-                               Producer::KeyboardKey key,
-                               Producer::KeyCharacter character);
-
-      virtual void MouseScrolled(dtCore::Mouse* mouse, int change);
       
       /**
        * Determines the CEGUI scancode that corresponds to the specified Producer::KeyboardKey.
@@ -159,24 +156,23 @@ namespace dtGUI
       static CEGUI::Key::Scan KeyboardKeyToKeyScan( Producer::KeyboardKey key );
       
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
-      int mWidth; ///<the width of the Window
-      int mHeight; ///<The height of the Window
-      int mHalfWidth; ///<the width of the Window
-      int mHalfHeight; ///<The height of the Window
-      float mMouseX; ///<The current Mouse X position
-      float mMouseY; ///<the current Mouse Y position
 
       Renderer* mRenderer; ///<The opengl renderer we're using
       dtGUI::BaseScriptModule* mScriptModule;
-      osg::ref_ptr<osg::Projection> mProjection;
-      osg::ref_ptr<osg::MatrixTransform> mTransform;
+      dtCore::RefPtr<osg::Projection> mProjection;
+      dtCore::RefPtr<osg::MatrixTransform> mTransform;
       dtCore::RefPtr<dtCore::DeltaWin> mWindow; ///<The window this UI is being rendered in
+      int mWidth;
+      int mHeight;
 
    private:
       ///setup the internals
       void Config();
 
       bool mAutoResize; ///<Automatically tell CEGUI about DeltaWin size changes?
+
+      dtCore::RefPtr<CEGUIKeyboardListener> mKeyboardListener;
+      dtCore::RefPtr<CEGUIMouseListener> mMouseListener;
    };
 }//namespace dtGUI
 
