@@ -1,5 +1,5 @@
-#include <tests/dtGUI/GUIApp.h>
-#include <tests/dtGUI/GUIManager.h>
+#include "guiapp.h"
+#include "guimanager.h"
 #include <dtGUI/scriptmodule.h>
 #include <dtCore/globals.h>
 #include <string>
