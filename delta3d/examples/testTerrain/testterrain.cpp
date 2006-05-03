@@ -240,14 +240,16 @@ public:
    }
 
    ////////////////////////////////////////////////////////////////////////// 
-   virtual void KeyPressed(dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
+   virtual bool KeyPressed(const dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
       Producer::KeyCharacter character)
    {
+      bool verdict(false);
       static bool wireFrame = false;
       switch (key)
       {
       case Producer::Key_Return:
          ShowStatistics();
+         verdict = true;
          break;
 
       case Producer::Key_space:
@@ -256,6 +258,8 @@ public:
             GetScene()->SetRenderState(dtCore::Scene::FRONT_AND_BACK, dtCore::Scene::LINE);
          else
             GetScene()->SetRenderState(dtCore::Scene::FRONT, dtCore::Scene::FILL);
+
+         verdict = true;
          break;
 
       case Producer::Key_G:
@@ -271,33 +275,42 @@ public:
          {
             mMotionModel->SetMaximumFlySpeed(128);
          }         
+
+         verdict = true;
          break;
                
       case Producer::Key_F:
          mFlyFast = true;
          mMotionModel->SetMaximumFlySpeed(2500);
+
+         verdict = true;
          break;     
       default:
-         dtABC::Application::KeyPressed(keyBoard,key,character);
+         verdict = dtABC::Application::KeyPressed(keyBoard,key,character);
          break;
-      } 
+      }
+
+      return verdict;
    }
 
    //////////////////////////////////////////////////////////////////////////
-   virtual void KeyReleased(dtCore::Keyboard *keyBoard, Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
+   virtual bool KeyReleased(const dtCore::Keyboard *keyBoard, Producer::KeyboardKey key, Producer::KeyCharacter character)
    {
+      bool verdict(false);
       switch (key)
       {
       case Producer::Key_F:
          mFlyFast = false;
          mMotionModel->SetMaximumFlySpeed(1200);
+         verdict = true;
          break;
 
       default:
-         dtABC::Application::KeyReleased(keyBoard,key,character);
+         verdict = dtABC::Application::KeyReleased(keyBoard,key,character);
          break;
-      }         
+      }
+
+      return verdict;
    }
 
    //////////////////////////////////////////////////////////////////////////

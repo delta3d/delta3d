@@ -59,19 +59,24 @@ public:
 
    }
 
-   virtual void KeyPressed(dtCore::Keyboard* keyboard, 
+   bool KeyPressed(dtCore::Keyboard* keyboard, 
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
    {
+      bool verdict(false);
       if (key == Producer::Key_Escape)
       {
          this->Quit();
+         verdict = true;
       }
       else if(key == Producer::Key_space)
       {  
          mWireframe = !mWireframe;
          mBumpMapDrawable->SetWireframe(mWireframe);
+         verdict = true;
       }
+
+      return verdict;
    }
 
 	virtual ~TestBumpMapApp()

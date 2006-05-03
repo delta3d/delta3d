@@ -2650,17 +2650,17 @@ class OrbitMotionModel : public MouseListener
          UpdateTargetTransform();
       }
 
-      virtual void ButtonPressed(Mouse* mouse, MouseButton button)
+      virtual bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button)
       {
-         mouse->GetPosition(mLastX, 
-            mLastY);
+         mouse->GetPosition(mLastX, mLastY);
+         return true;
       }
 
-      virtual void MouseDragged(Mouse* mouse, float x, float y)
+      virtual bool HandleMouseDragged(const Mouse* mouse, float x, float y)
       {
          float dX = x - mLastX, dY = y - mLastY;
 
-         if(mouse->GetButtonState(LeftButton))
+         if(mouse->GetButtonState(Mouse::LeftButton))
          {
             mAzimuth -= dX*90;
             mElevation -= dY*90;
@@ -2669,14 +2669,14 @@ class OrbitMotionModel : public MouseListener
             else if(mElevation > 90.0f) mElevation = 90.0f;
          }
          
-         if(mouse->GetButtonState(MiddleButton))
+         if(mouse->GetButtonState(Mouse::MiddleButton))
          {
             mDistance -= dY*20.0f;
             
             if(mDistance < 1.0f) mDistance = 1.0f;
          }
          
-         if(mouse->GetButtonState(RightButton))
+         if(mouse->GetButtonState(Mouse::RightButton))
          {
             Transform transform;
             
@@ -2699,16 +2699,23 @@ class OrbitMotionModel : public MouseListener
          
          mLastX = x;
          mLastY = y;
+
+         return true;
       }
 
-      virtual void MouseScrolled(Mouse* mouse, int delta)
+      virtual bool HandleMouseScrolled(const Mouse* mouse, int delta)
       {
          mDistance -= delta*5;
 
          if(mDistance < 1.0f) mDistance = 1.0f;
 
          UpdateTargetTransform();
+         return true;
       }
+
+      bool HandleMouseMoved(const Mouse* mouse, float x, float y) { return false; }
+      bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount) { return false; }
+      bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button) { return false; }
 
    private:
 

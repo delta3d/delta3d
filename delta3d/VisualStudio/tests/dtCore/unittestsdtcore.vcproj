@@ -48,7 +48,8 @@
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-$(TargetPath)"/>
+$(TargetPath)
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -103,7 +104,8 @@ $(TargetPath)"/>
 				CommandLine="set PATH=$(PATH);$(DELTA_ROOT)\bin;$(DELTA_ROOT)\ext\bin
 set DELTA_ROOT=$(DELTA_ROOT)
 set DELTA_DATA=$(DELTA_DATA)
-$(TargetPath)"/>
+$(TargetPath)
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -130,7 +132,13 @@ $(TargetPath)"/>
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\tests\dtCore\keyboardtests.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtCore\mousetests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\scenetests.cpp">

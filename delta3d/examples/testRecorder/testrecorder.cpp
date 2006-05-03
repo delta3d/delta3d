@@ -21,10 +21,11 @@ TestRecorder::~TestRecorder()
 }
 
 // inherited functions
-void TestRecorder::KeyPressed(dtCore::Keyboard* keyboard,
+bool TestRecorder::KeyPressed(const dtCore::Keyboard* keyboard,
                               Producer::KeyboardKey key,
                               Producer::KeyCharacter character)
 {
+   bool verdict(false);
    switch( key )
    {
    case Producer::Key_R:  // start recording
@@ -40,6 +41,7 @@ void TestRecorder::KeyPressed(dtCore::Keyboard* keyboard,
             LOG_ALWAYS("Recording now.")
             mRecorder->Record();
          }
+         verdict = true;
       } break;
 
    case Producer::Key_F:  // save to file
@@ -47,6 +49,7 @@ void TestRecorder::KeyPressed(dtCore::Keyboard* keyboard,
          LOG_ALWAYS("Saving file " + mFileHandle )
          mRecorder->SaveFile( mFileHandle );
          LOG_ALWAYS("...Finished saving file " + mFileHandle )
+         verdict = true;
       } break;
 
    case Producer::Key_L:  // load from file
@@ -54,19 +57,23 @@ void TestRecorder::KeyPressed(dtCore::Keyboard* keyboard,
          LOG_ALWAYS("Loading file: " + mFileHandle)
          mRecorder->LoadFile( mFileHandle );
          LOG_ALWAYS("...done loading file: " + mFileHandle)
+         verdict = true;
       } break;
 
    case Producer::Key_P:  // play loaded file
       {
          LOG_ALWAYS("Playing loaded data.")
          mRecorder->Play();
-      };
+         verdict = true;
+      }; break;
 
    default:   // don't care about the key
       {
-         BaseClass::KeyPressed(keyboard,key,character);
+         verdict = BaseClass::KeyPressed(keyboard,key,character);
       } break;
    }
+
+   return verdict;
 }
 
 void TestRecorder::SetupCamera()

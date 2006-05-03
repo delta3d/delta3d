@@ -26,12 +26,14 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <set>
 #include <string>
+#include <list>
 
 #include <Producer/KeyboardMouse>
 #include <dtCore/inputdevice.h>
 #include <dtUtil/deprecationmgr.h>
+#include <osg/Referenced>               // for listener's base class
+#include <dtCore/refptr.h>             // for typedef, list member
 
 namespace dtCore
 {
@@ -45,7 +47,7 @@ namespace dtCore
       DECLARE_MANAGEMENT_LAYER(Keyboard)
 
       public:
-         typedef std::list<KeyboardListener*> KeyboardListenerList;
+         typedef std::list<dtCore::RefPtr<KeyboardListener> > KeyboardListenerList;
 
          /**
           * Constructor.
@@ -83,21 +85,15 @@ namespace dtCore
          void RemoveKeyboardListener(KeyboardListener* keyboardListener);
 
          ///Producer callback methods
-         virtual void keyPress( Producer::KeyCharacter );
+         virtual bool KeyPress( Producer::KeyCharacter );
          ///Producer callback methods
-         virtual void keyRelease( Producer::KeyCharacter );
-         ///Producer callback methods
-         virtual void specialKeyPress( Producer::KeyCharacter );
-         ///Producer callback methods
-         virtual void specialKeyRelease( Producer::KeyCharacter );
+         virtual bool KeyRelease( Producer::KeyCharacter );
 
-         // not implemented because clients should not be manipulating the container directly.
-         //KeyboardList& GetListeners() { return mKeyboardListeners; }
          const KeyboardListenerList& GetListeners() const { return mKeyboardListeners; }
 
-      protected:
-
          static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc);
+
+      protected:
 
          /**
           * The set of keyboard listeners.
@@ -109,27 +105,12 @@ namespace dtCore
    /**
     * An interface for objects interested in receiving keyboard events.
     */
-   class DT_CORE_EXPORT KeyboardListener
+   class DT_CORE_EXPORT KeyboardListener : public osg::Referenced
    {
       public:
 
          virtual ~KeyboardListener() {}
 
-         /**
-          * Called when a key is pressed. DEPRECATED.
-          *
-          * @param keyboard the source of the event
-          * @param key the key pressed
-          * @param character the corresponding character
-          */
-         virtual void KeyPressed( Keyboard* keyboard, 
-                                  Producer::KeyboardKey key,
-                                  Producer::KeyCharacter character )
-         {
-            DEPRECATE("void KeyPressed( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )",
-                      "bool HandleKeyPressed( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )")
-         }
-      
          /**
           * Called when a key is pressed. 
           *
@@ -140,24 +121,9 @@ namespace dtCore
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyPressed( Keyboard* keyboard, 
+         virtual bool HandleKeyPressed(const Keyboard* keyboard, 
                                         Producer::KeyboardKey key,
-                                        Producer::KeyCharacter character );
-         /**
-          * Called when a key is released. DEPRECATED.
-          *
-          * @param keyboard the source of the event
-          * @param key the key released
-          * @param character the corresponding character
-         */
-         virtual void KeyReleased( Keyboard* keyboard, 
-                                   Producer::KeyboardKey key,
-                                   Producer::KeyCharacter character )
-         {
-            DEPRECATE("void KeyReleased( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )",
-                      "bool HandleKeyReleased( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )")
-         }
-      
+                                        Producer::KeyCharacter character )=0;
          /**
           * Called when a key is released.
           *
@@ -168,24 +134,10 @@ namespace dtCore
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyReleased( Keyboard* keyboard, 
+         virtual bool HandleKeyReleased(const Keyboard* keyboard, 
                                          Producer::KeyboardKey key,
-                                         Producer::KeyCharacter character );
-         /**
-          * Called when a key is typed. DEPRECATED.
-          *
-          * @param keyboard the source of the event
-          * @param key the key typed
-          * @param character the corresponding character
-          */
-         virtual void KeyTyped( Keyboard* keyboard, 
-                                Producer::KeyboardKey key,
-                                Producer::KeyCharacter character )
-         {
-            DEPRECATE("void KeyTyped( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )",
-                      "bool HandleKeyTyped( Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character )")
-         }
-      
+                                         Producer::KeyCharacter character )=0;
+
          /**
           * Called when a key is typed.
           *
@@ -196,9 +148,9 @@ namespace dtCore
           * Keyboard calling this function is responsbile for using this
           * return value or not.
           */
-         virtual bool HandleKeyTyped( Keyboard* keyboard, 
+         virtual bool HandleKeyTyped(const Keyboard* keyboard, 
                                       Producer::KeyboardKey key,
-                                      Producer::KeyCharacter character );
+                                      Producer::KeyCharacter character )=0;
    };
 }
 

@@ -400,6 +400,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtHLAGM", "src\dtHLAGM\dtHL
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtABC", "tests\dtABC\unittestsdtabc.vcproj", "{D4DD1004-CC6B-484B-B9EE-521A88AAED08}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestsDtGUI", "tests\dtGUI\unittestsdtgui.vcproj", "{4003AA54-5D0A-41BE-BE90-AAB849204B63}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -647,6 +655,14 @@ Global
 		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Debug.Build.0 = Debug|Win32
 		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Release.ActiveCfg = Release|Win32
 		{C094C032-3742-43FA-92C8-BED2C0449DDB}.Release.Build.0 = Release|Win32
+		{D4DD1004-CC6B-484B-B9EE-521A88AAED08}.Debug.ActiveCfg = Debug|Win32
+		{D4DD1004-CC6B-484B-B9EE-521A88AAED08}.Debug.Build.0 = Debug|Win32
+		{D4DD1004-CC6B-484B-B9EE-521A88AAED08}.Release.ActiveCfg = Release|Win32
+		{D4DD1004-CC6B-484B-B9EE-521A88AAED08}.Release.Build.0 = Release|Win32
+		{4003AA54-5D0A-41BE-BE90-AAB849204B63}.Debug.ActiveCfg = Debug|Win32
+		{4003AA54-5D0A-41BE-BE90-AAB849204B63}.Debug.Build.0 = Debug|Win32
+		{4003AA54-5D0A-41BE-BE90-AAB849204B63}.Release.ActiveCfg = Release|Win32
+		{4003AA54-5D0A-41BE-BE90-AAB849204B63}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

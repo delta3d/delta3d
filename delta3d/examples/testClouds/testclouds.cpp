@@ -46,61 +46,68 @@ public:
    }
 
 protected:
-   virtual void KeyPressed(dtCore::Keyboard* keyboard, 
-      Producer::KeyboardKey key,
-      Producer::KeyCharacter character)
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
    {
-      switch(key) {
-case Producer::Key_Escape:    this->Quit();    	 break;
-case Producer::Key_H:
-   {
-      dtInspector::Inspector *ui = new dtInspector::Inspector();
-      ui->Show(); //to prevent unused variable warnings
-   }
-   break;
-case Producer::Key_F1: weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
-case Producer::Key_F2: weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
-case Producer::Key_F3: weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
-case Producer::Key_F4: weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
-case Producer::Key_F5: weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
-case Producer::Key_P:
-   if(isDomeEnabled)
-   {
-      for(int i = 0; i < cloudLayers; ++i)
-         weather->GetEnvironment()->AddEffect(cp[i].get());
+      bool verdict(false);
+      switch(key)
+      {
+      case Producer::Key_Escape:
+         {
+            this->Quit();
+            verdict = true;
+         } break;
+      case Producer::Key_H:
+         {
+            dtInspector::Inspector *ui = new dtInspector::Inspector();
+            ui->Show(); //to prevent unused variable warnings
+            verdict = true;
+         } break;
+      case Producer::Key_F1: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_UNLIMITED); break;
+      case Producer::Key_F2: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_FAR);       break;
+      case Producer::Key_F3: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_MODERATE);  break;
+      case Producer::Key_F4: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_LIMITED);   break;
+      case Producer::Key_F5: verdict=true; weather->SetBasicVisibilityType(Weather::VIS_CLOSE);     break;
+      case Producer::Key_P:
+         {
+            if(isDomeEnabled)
+            {
+               for(int i = 0; i < cloudLayers; ++i)
+                  weather->GetEnvironment()->AddEffect(cp[i].get());
 
-      weather->GetEnvironment()->RemEffect(cd.get());
-      isDomeEnabled = false;
-   }
-   break;
-case Producer::Key_D:
-   if(!isDomeEnabled)
-   {
-      weather->GetEnvironment()->AddEffect(cd.get());
-      isDomeEnabled = true;
-      for(int i = 0; i < cloudLayers; ++i)
-         weather->GetEnvironment()->RemEffect(cp[i].get());
-   }
-   break;
-case Producer::Key_KP_Add:
-case Producer::Key_equal:
-   if (!isDomeEnabled && cloudLayers >= 0 && cloudLayers < 3)
-   {	
-      weather->GetEnvironment()->AddEffect(cp[cloudLayers].get());
-      ++cloudLayers;
-   }
-   break;
-case Producer::Key_KP_Subtract:
-case Producer::Key_minus:
-   if (!isDomeEnabled && cloudLayers > 0)
-   {
-      --cloudLayers;
-      weather->GetEnvironment()->RemEffect(cp[cloudLayers].get());
-   }	
-   break;
-default:
-   break;
+               weather->GetEnvironment()->RemEffect(cd.get());
+               isDomeEnabled = false;
+            }
+            verdict = true;
+         } break;
+      case Producer::Key_D:
+         if(!isDomeEnabled)
+         {
+            weather->GetEnvironment()->AddEffect(cd.get());
+            isDomeEnabled = true;
+            for(int i = 0; i < cloudLayers; ++i)
+               weather->GetEnvironment()->RemEffect(cp[i].get());
+            verdict = true;
+         } break;
+      case Producer::Key_KP_Add:
+      case Producer::Key_equal:
+         if (!isDomeEnabled && cloudLayers >= 0 && cloudLayers < 3)
+         {	
+            weather->GetEnvironment()->AddEffect(cp[cloudLayers].get());
+            ++cloudLayers;
+            verdict = true;
+         } break;
+      case Producer::Key_KP_Subtract:
+      case Producer::Key_minus:
+         if (!isDomeEnabled && cloudLayers > 0)
+         {
+            --cloudLayers;
+            weather->GetEnvironment()->RemEffect(cp[cloudLayers].get());
+            verdict = true;
+         } break;
+      default:
+         break;
       }
+      return verdict;
    }
 
 private:

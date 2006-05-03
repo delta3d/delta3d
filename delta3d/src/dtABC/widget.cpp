@@ -4,7 +4,9 @@
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
 
-#include "dtABC/widget.h"
+#include <dtABC/widget.h>
+#include <dtABC/applicationkeyboardlistener.h>
+#include <dtABC/applicationmouselistener.h>
 
 #if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
@@ -95,12 +97,12 @@ Widget::Config( const WinData* d /*= NULL*/ )
       mKeyboard = mWindow->GetKeyboard();
       assert( mKeyboard.get() );
 
-      mKeyboard->AddKeyboardListener( this );
+      mKeyboard->AddKeyboardListener( this->GetApplicationKeyboardListener() );
 
       mMouse = mWindow->GetMouse();
       assert( mMouse.get() );
 
-      mMouse->AddMouseListener( this );
+      mMouse->AddMouseListener( this->GetApplicationMouseListener() );
 
       sys->Start();
    }
@@ -277,39 +279,38 @@ Widget::Resize( const WinRect* r )
  *
  * @param ev event data packet
  */
-void
-Widget::HandleMouseEvent( const MouseEvent& ev )
+void Widget::HandleMouseEvent( const MouseEvent& ev )
 {
    assert( mMouse.get() );
 
    switch( ev.event )
    {
        case  MouseEvent::PUSH:
-         mMouse->buttonPress( ev.pos_x, ev.pos_y, ev.button );
+         mMouse->ButtonPress( ev.pos_x, ev.pos_y, ev.button );
          break;
 
       case  MouseEvent::DOUBLE:
-         mMouse->doubleButtonPress( ev.pos_x, ev.pos_y, ev.button );
+         mMouse->DoubleButtonPress( ev.pos_x, ev.pos_y, ev.button );
          break;
 
       case  MouseEvent::RELEASE:
-         mMouse->buttonRelease( ev.pos_x, ev.pos_y, ev.button );
+         mMouse->ButtonRelease( ev.pos_x, ev.pos_y, ev.button );
          break;
 
       case  MouseEvent::DRAG:
-         mMouse->mouseMotion( ev.pos_x, ev.pos_y );
+         mMouse->MouseMotion( ev.pos_x, ev.pos_y );
          break;
 
       case  MouseEvent::MOVE:
-         mMouse->passiveMouseMotion( ev.pos_x, ev.pos_y );
+         mMouse->PassiveMouseMotion( ev.pos_x, ev.pos_y );
          break;
 
       case  MouseEvent::WHEEL_UP:
-         mMouse->mouseScroll( Producer::KeyboardMouseCallback::ScrollUp );
+         mMouse->MouseScroll( Producer::KeyboardMouseCallback::ScrollUp );
          break;
 
       case  MouseEvent::WHEEL_DN:
-         mMouse->mouseScroll( Producer::KeyboardMouseCallback::ScrollDown );
+         mMouse->MouseScroll( Producer::KeyboardMouseCallback::ScrollDown );
          break;
 
       default:
@@ -324,8 +325,7 @@ Widget::HandleMouseEvent( const MouseEvent& ev )
  *
  * @param ev event data packet
  */
-void
-Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
+void Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
 {
    assert( mKeyboard.get() );
 
@@ -333,16 +333,16 @@ Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
    {
       case  KeyboardEvent::KEYDOWN:
          if( IsSpecialKeyboardEvent( ev ) )
-            mKeyboard->specialKeyPress( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyPress( Producer::KeyCharacter(ev.key) );
          else
-            mKeyboard->keyPress( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyPress( Producer::KeyCharacter(ev.key) );
          break;
 
       case  KeyboardEvent::KEYUP:
          if( IsSpecialKeyboardEvent( ev ) )
-            mKeyboard->specialKeyRelease( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyRelease( Producer::KeyCharacter(ev.key) );
          else
-            mKeyboard->keyRelease( Producer::KeyCharacter(ev.key) );
+            mKeyboard->KeyRelease( Producer::KeyCharacter(ev.key) );
          break;
 
       default:

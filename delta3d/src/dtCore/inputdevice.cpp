@@ -71,6 +71,11 @@ namespace dtCore
       return mButtons[index].get();
    }
    
+   const Button* InputDevice::GetButton(int index) const
+   {
+      return mButtons[index].get();
+   }
+
    /**
     * Returns the number of features (buttons, axes, etc.) contained in 
     * this device.
@@ -93,6 +98,11 @@ namespace dtCore
       return mAxes[index].get();
    }
    
+   const Axis* InputDevice::GetAxis(int index) const
+   {
+      return mAxes[index].get();
+   }
+
    /**
     * Adds a button listener.
     *

@@ -16,7 +16,7 @@ class [!output PROJECT_NAME] : public dtABC::Application
    
       virtual void Config();
 
-      virtual void KeyPressed(  dtCore::Keyboard*      keyboard, 
+      virtual bool KeyPressed(const dtCore::Keyboard*  keyboard, 
                                 Producer::KeyboardKey  key,
                                 Producer::KeyCharacter character );
 

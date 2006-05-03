@@ -36,10 +36,11 @@ public:
 
    }
    
-   virtual void KeyPressed(   dtCore::Keyboard* keyboard, 
+   virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
                               Producer::KeyboardKey key, 
                               Producer::KeyCharacter character )
    {
+      bool verdict(false);
       switch( key )
       {
          case Producer::Key_Escape:
@@ -47,24 +48,27 @@ public:
             // Make sure to stop the thread before exiting
             mScriptManager->Stop();
             Quit();
+            verdict = true;
             break;
          }
          case Producer::Key_S:
          {
             // Kick off a Python script in its own thread
             mScriptManager->Run();
+            verdict = true;
             break;
          }
          default:
-         {
-         
+         {         
          }
-      }   
+      }
+
+      return verdict;
    }
    
-   private:
-   
-      dtCore::RefPtr< dtScript::ScriptManager > mScriptManager;
+private:
+
+   dtCore::RefPtr< dtScript::ScriptManager > mScriptManager;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(TestPythonApp)

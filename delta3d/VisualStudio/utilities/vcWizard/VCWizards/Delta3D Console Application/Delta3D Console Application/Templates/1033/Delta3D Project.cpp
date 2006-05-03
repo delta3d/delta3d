@@ -34,19 +34,23 @@ void [!output PROJECT_NAME]::Config()
    Application::Config();
 }
 
-void [!output PROJECT_NAME]::KeyPressed(   Keyboard*      keyboard, 
+bool [!output PROJECT_NAME]::KeyPressed(const Keyboard*      keyboard, 
                                     Producer::KeyboardKey  key,
                                     Producer::KeyCharacter character )
 {
+   bool handled(false);
    switch( key )
    {
       case Producer::Key_Escape:
          Quit();
+		 handled = true;
          break;
       //make cases for other keys
       default:
          break;
    }
+   
+   return handled;
 }
 
 void [!output PROJECT_NAME]::PreFrame( const double deltaFrameTime )

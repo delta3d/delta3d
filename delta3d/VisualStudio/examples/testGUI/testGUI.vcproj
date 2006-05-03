@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtABCd.lib dtCored.lib dtDALd.lib dtGUId.lib"
+				AdditionalDependencies="dtUtild.lib dtABCd.lib dtCored.lib dtDALd.lib dtGUId.lib CEGUIBase_d.lib"
 				OutputFile="../../../bin/testGUId.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtABC.lib dtCore.lib dtDAL.lib dtGUI.lib"
+				AdditionalDependencies="dtUtil.lib dtABC.lib dtCore.lib dtDAL.lib dtGUI.lib CEGUIBase.lib"
 				OutputFile="../../../bin/testGUI.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

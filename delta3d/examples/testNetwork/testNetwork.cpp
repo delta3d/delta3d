@@ -51,27 +51,32 @@ void TestNetwork::Config()
    Application::Config();
 }
 
-void TestNetwork::KeyPressed(   Keyboard*      keyboard, 
-                                    Producer::KeyboardKey  key,
-                                    Producer::KeyCharacter character )
+bool TestNetwork::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
 {
+   bool verdict(false);
    switch( key )
    {
-      case Producer::Key_Escape:
+   case Producer::Key_Escape:
+      {
          Quit();
-         break;
-         
-      case Producer::Key_P:
-         {
-            //send a "ping" packet for latency info
-            GNE::PingPacket ping;
-            mNet->SendPacket("all", ping);
-         }
-         break;
+         verdict = true;
+      } break;
 
-      default:
-         break;
+   case Producer::Key_P:
+      {
+         //send a "ping" packet for latency info
+         GNE::PingPacket ping;
+         mNet->SendPacket("all", ping);
+         verdict = true;
+      } break;
+
+   default:
+      {
+         verdict = false;
+      } break;
    }
+
+   return verdict;
 }
 
 void TestNetwork::PreFrame( const double deltaFrameTime )

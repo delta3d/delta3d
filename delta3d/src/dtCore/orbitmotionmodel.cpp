@@ -77,7 +77,7 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultElevationAxis = mDefaultInputDevice->AddAxis(
          "left mouse button up/down",
          mLeftButtonUpDownMapping = new ButtonAxisToAxis(
-            mouse->GetButton(LeftButton),
+            mouse->GetButton(Mouse::LeftButton),
             mouse->GetAxis(1)
          )
       );
@@ -85,7 +85,7 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultAzimuthAxis = mDefaultInputDevice->AddAxis(
          "left mouse button left/right",
          mLeftButtonLeftRightMapping = new ButtonAxisToAxis(
-            mouse->GetButton(LeftButton),
+            mouse->GetButton(Mouse::LeftButton),
             mouse->GetAxis(0)
          )
       );
@@ -93,7 +93,7 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultDistanceAxis = mDefaultInputDevice->AddAxis(
          "middle mouse button left/right",
          mMiddleButtonUpDownMapping = new ButtonAxisToAxis(
-            mouse->GetButton(MiddleButton),
+            mouse->GetButton(Mouse::MiddleButton),
             mouse->GetAxis(1)
          )
       );
@@ -101,7 +101,7 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultUpDownTranslationAxis = mDefaultInputDevice->AddAxis(
          "right mouse button up/down",
          mRightButtonUpDownMapping = new ButtonAxisToAxis(
-            mouse->GetButton(RightButton),
+            mouse->GetButton(Mouse::RightButton),
             mouse->GetAxis(1)
          )
       );
@@ -109,26 +109,26 @@ void OrbitMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
       mDefaultLeftRightTranslationAxis = mDefaultInputDevice->AddAxis(
          "right mouse button left/right",
          mRightButtonLeftRightMapping = new ButtonAxisToAxis(
-            mouse->GetButton(RightButton),
+            mouse->GetButton(Mouse::RightButton),
             mouse->GetAxis(0)
          )
       );
    }
    else
    {
-      mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(LeftButton));
+      mLeftButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
       
-      mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(LeftButton));
+      mLeftButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::LeftButton));
       mLeftButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
       
-      mRightButtonUpDownMapping->SetSourceButton(mouse->GetButton(RightButton));
+      mRightButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
       
-      mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(RightButton));
+      mRightButtonLeftRightMapping->SetSourceButton(mouse->GetButton(Mouse::RightButton));
       mRightButtonLeftRightMapping->SetSourceAxis(mouse->GetAxis(0));
       
-      mMiddleButtonUpDownMapping->SetSourceButton(mouse->GetButton(MiddleButton));
+      mMiddleButtonUpDownMapping->SetSourceButton(mouse->GetButton(Mouse::MiddleButton));
       mMiddleButtonUpDownMapping->SetSourceAxis(mouse->GetAxis(1));
    }
    

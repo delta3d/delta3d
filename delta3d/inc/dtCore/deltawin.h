@@ -126,8 +126,8 @@ namespace dtCore
       void GetPosition( int& x, int& y, int& width, int& height );
 
       ///Get a handle to the underlying RenderSurface
-      Producer::RenderSurface* GetRenderSurface() { return mRenderSurface; }
-      const Producer::RenderSurface* GetRenderSurface() const { return mRenderSurface; }
+      Producer::RenderSurface* GetRenderSurface() { return mRenderSurface.get(); }
+      const Producer::RenderSurface* GetRenderSurface() const { return mRenderSurface.get(); }
       
       ///Get a handle to the Keyboard associated with the DeltaWin
       Keyboard* GetKeyboard() { return mKeyboard.get(); }
@@ -161,8 +161,8 @@ namespace dtCore
 
       static int CalcRefreshRate( int width, int height, int dotclock );
       
-      Producer::RenderSurface* mRenderSurface; //changed from straight-up RS
-      Producer::KeyboardMouse* mKeyboardMouse;
+      dtCore::RefPtr<Producer::RenderSurface> mRenderSurface; //changed from straight-up RS
+      dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
 
       RefPtr<Keyboard> mKeyboard;
       RefPtr<Mouse> mMouse;

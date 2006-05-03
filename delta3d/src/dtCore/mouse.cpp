@@ -18,29 +18,12 @@ IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 {
    RegisterInstance(this);
 
-   AddFeature(
-      new Axis(this, "mouse x axis")
-   );
-
-   AddFeature(
-      new Axis(this, "mouse y axis")
-   );
-
-   AddFeature(
-      new Axis(this, "mouse z axis")
-   );
-
-   AddFeature(
-      new Button(this, "left mouse button")   
-   );
-
-   AddFeature(
-      new Button(this, "middle mouse button")   
-   );
-
-   AddFeature(
-      new Button(this, "right mouse button")   
-   );
+   AddFeature(new Axis(this, "mouse x axis"));
+   AddFeature(new Axis(this, "mouse y axis"));
+   AddFeature(new Axis(this, "mouse z axis"));
+   AddFeature(new Button(this, "left mouse button"));
+   AddFeature(new Button(this, "middle mouse button"));
+   AddFeature(new Button(this, "right mouse button"));
 }
 
 /**
@@ -64,7 +47,7 @@ Mouse::~Mouse()
 * @param y a reference to the location in which to store the
 * y coordinate
 */
-void Mouse::GetPosition(float& x, float& y)
+void Mouse::GetPosition(float& x, float& y) const
 {
    x = GetAxis(0)->GetState();
    y = GetAxis(1)->GetState();
@@ -78,7 +61,7 @@ void Mouse::GetPosition(float& x, float& y)
 */
 void Mouse::SetPosition(float x, float y)
 {
-   if(mKeyboardMouse)
+   if( mKeyboardMouse.valid() )
    {
       mKeyboardMouse->positionPointer(x,y);
    }
@@ -90,7 +73,7 @@ void Mouse::SetPosition(float x, float y)
  * @param button the button to check
  * @return true if the button is pressed, false otherwise
  */
-bool Mouse::GetButtonState(MouseButton button)
+bool Mouse::GetButtonState(MouseButton button) const
 {
    return GetButton(button)->GetState();
 }
@@ -120,9 +103,9 @@ void Mouse::RemoveMouseListener(MouseListener* mouseListener)
  *
  * @param sm the scroll type
  */
-void Mouse::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
+bool Mouse::MouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 {
-   int delta = 0;
+   int delta(0);
 
    switch(sm)
    {
@@ -139,12 +122,16 @@ void Mouse::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
          break;
    }
 
-   for(MouseListenerList::iterator it = mMouseListeners.begin();
-       it != mMouseListeners.end();
-       it++)
+   bool handled(false);
+   MouseListenerList::iterator iter = mMouseListeners.begin();
+   MouseListenerList::iterator enditer = mMouseListeners.end();
+   while( !handled && iter!=enditer )
    {
-          (*it)->HandleMouseScrolled(this, delta);
+      handled = (*iter)->HandleMouseScrolled(this, delta);
+      ++iter;
    }
+
+   return handled;
 }
 
 /**
@@ -153,17 +140,21 @@ void Mouse::mouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
  * @param x the x coordinate
  * @param y the y coordinate
  */
-void Mouse::mouseMotion(float x, float y)
+bool Mouse::MouseMotion(float x, float y)
 {
    GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
    GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
 
-   for(MouseListenerList::iterator it = mMouseListeners.begin();
-       it != mMouseListeners.end();
-       it++)
+   bool handled(false);
+   MouseListenerList::iterator iter = mMouseListeners.begin();
+   MouseListenerList::iterator enditer = mMouseListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleMouseDragged(this, x, y);      
+      handled = (*iter)->HandleMouseDragged(this, x, y);
+      ++iter;
    }
+
+   return handled;
 }
 
 /**
@@ -172,17 +163,21 @@ void Mouse::mouseMotion(float x, float y)
  * @param x the x coordinate
  * @param y the y coordinate
  */
-void Mouse::passiveMouseMotion(float x, float y)
+bool Mouse::PassiveMouseMotion(float x, float y)
 {
    GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
    GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
 
-   for(MouseListenerList::iterator it = mMouseListeners.begin();
-       it != mMouseListeners.end();
-       it++)
+   bool handled(false);
+   MouseListenerList::iterator iter = mMouseListeners.begin();
+   MouseListenerList::iterator enditer = mMouseListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleMouseMoved(this, x, y);      
+      handled = (*iter)->HandleMouseMoved(this, x, y);
+      ++iter;
    }
+
+   return handled;
 }
 
 /**
@@ -192,20 +187,24 @@ void Mouse::passiveMouseMotion(float x, float y)
  * @param y the y coordinate
  * @param button the button identifier
  */
-void Mouse::buttonPress(float x, float y, unsigned int button)
+bool Mouse::ButtonPress(float x, float y, unsigned int button)
 {
-   if ((int)button > GetButtonCount() ) return;
+   if ((int)button > GetButtonCount() ) return false;
 
    MouseButton mouseButton = MouseButton(button-1);
 
    GetButton(mouseButton)->SetState(true);
 
-   for(MouseListenerList::iterator it = mMouseListeners.begin();
-       it != mMouseListeners.end();
-       it++)
+   bool handled(false);
+   MouseListenerList::iterator iter = mMouseListeners.begin();
+   MouseListenerList::iterator enditer = mMouseListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleButtonPressed(this, mouseButton);
+      handled = (*iter)->HandleButtonPressed(this, mouseButton);
+      ++iter;
    }
+
+   return handled;
 }
 
 /**
@@ -215,20 +214,23 @@ void Mouse::buttonPress(float x, float y, unsigned int button)
  * @param y the y coordinate
  * @param button the button identifier
  */
-void Mouse::doubleButtonPress(float x, float y, unsigned int button)
+bool Mouse::DoubleButtonPress(float x, float y, unsigned int button)
 {
-   if (int(button) > GetButtonCount() ) return;
+   if (int(button) > GetButtonCount() ) return false;
 
    MouseButton mouseButton = MouseButton(button-1);
-
    GetButton(mouseButton)->SetState(true);
 
-   for(MouseListenerList::iterator it = mMouseListeners.begin();
-       it != mMouseListeners.end();
-       it++)
+   bool handled(false);
+   MouseListenerList::iterator iter = mMouseListeners.begin();
+   MouseListenerList::iterator enditer = mMouseListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleButtonClicked(this, mouseButton, 2);
+      handled = (*iter)->HandleButtonClicked(this, mouseButton, 2);
+      ++iter;
    }
+
+   return handled;
 }
 
 /**
@@ -238,111 +240,21 @@ void Mouse::doubleButtonPress(float x, float y, unsigned int button)
  * @param y the y coordinate
  * @param button the button identifier
  */
-void Mouse::buttonRelease(float x, float y, unsigned int button)
+bool Mouse::ButtonRelease(float x, float y, unsigned int button)
 {
-   if (int(button) > GetButtonCount() ) return;
+   if (int(button) > GetButtonCount() ) return false;
 
    MouseButton mouseButton = MouseButton(button-1);
-
    GetButton(mouseButton)->SetState(false);
 
-   for(MouseListenerList::iterator it = mMouseListeners.begin();
-       it != mMouseListeners.end();
-       it++)
+   bool handled(false);
+   MouseListenerList::iterator iter = mMouseListeners.begin();
+   MouseListenerList::iterator enditer = mMouseListeners.end();
+   while( !handled && iter!=enditer )
    {
-      (*it)->HandleButtonReleased(this, mouseButton);
+      handled = (*iter)->HandleButtonReleased(this, mouseButton);
+      ++iter;
    }
-}
 
-/**
- * Called when a button is pressed.
- *
- * @param mouse the source of the event
- * @param button the button pressed
- * @return true if this MouseListener handled the event. The
- * Mouse calling this function is responsbile for using this
- * return value or not.
- */
-bool MouseListener::HandleButtonPressed( Mouse* mouse, MouseButton button )
-{
-   ButtonPressed( mouse, button );
-   return true;
-}
-
-/**
- * Called when a button is released.
- *
- * @param mouse the source of the event
- * @param button the button released
- * @return true if this MouseListener handled the event. The
- * Mouse calling this function is responsbile for using this
- * return value or not.
- */
-bool MouseListener::HandleButtonReleased( Mouse* mouse, MouseButton button )
-{
-   ButtonReleased( mouse, button );
-   return true;
-}
-
-/**
- * Called when a button is clicked.
- *
- * @param mouse the source of the event
- * @param button the button clicked
- * @param clickCount the click count
- * @return true if this MouseListener handled the event. The
- * Mouse calling this function is responsbile for using this
- * return value or not.
- */
-bool MouseListener::HandleButtonClicked( Mouse* mouse, MouseButton button, int clickCount )
-{
-   ButtonClicked( mouse, button, clickCount );
-   return true;
-}
-
-/**
- * Called when the mouse pointer is moved.
- *
- * @param mouse the source of the event
- * @param x the x coordinate
- * @param y the y coordinate
- * @return true if this MouseListener handled the event. The
- * Mouse calling this function is responsbile for using this
- * return value or not.
- */
-bool MouseListener::HandleMouseMoved( Mouse* mouse, float x, float y )
-{
-   MouseMoved( mouse, x, y );
-   return true;
-}
-
-/**
- * Called when the mouse pointer is dragged.
- *
- * @param mouse the source of the event
- * @param x the x coordinate
- * @param y the y coordinate
- * @return true if this MouseListener handled the event. The
- * Mouse calling this function is responsbile for using this
- * return value or not.
- */
-bool MouseListener::HandleMouseDragged( Mouse* mouse, float x, float y )
-{
-   MouseDragged( mouse, x, y );
-   return true;
-}
-
-/**
- * Called when the mouse is scrolled.
- *
- * @param mouse the source of the event
- * @param delta the scroll delta (+1 for up one, -1 for down one)
- * @return true if this MouseListener handled the event. The
- * Mouse calling this function is responsbile for using this
- * return value or not.
- */
-bool MouseListener::HandleMouseScrolled( Mouse* mouse, int delta )
-{
-   MouseScrolled( mouse, delta );
-   return true;
+   return handled;
 }

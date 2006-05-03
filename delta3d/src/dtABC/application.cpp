@@ -1,4 +1,6 @@
-#include "dtABC/application.h"
+#include <dtABC/application.h>
+#include <dtABC/applicationkeyboardlistener.h>
+#include <dtABC/applicationmouselistener.h>
 
 #include <dtCore/stats.h>
 #include <dtCore/system.h>
@@ -101,12 +103,12 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
    mKeyboard = mWindow->GetKeyboard();
    assert( mKeyboard.get() );
 
-   mKeyboard->AddKeyboardListener( this );
+   mKeyboard->AddKeyboardListener( this->GetApplicationKeyboardListener() );
 
    mMouse = mWindow->GetMouse();
    assert( mMouse.get() );
 
-   mMouse->AddMouseListener( this );
+   mMouse->AddMouseListener( this->GetApplicationMouseListener() );
 }
 
 

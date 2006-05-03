@@ -24,22 +24,29 @@
 #include <string>
 
 #include <dtABC/export.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
 #include <dtCore/deltadrawable.h>
 #include <dtDAL/project.h>
+#include <dtCore/refptr.h>                         // for members
+#include <dtABC/applicationmouselistener.h>        // for member
+#include <dtABC/applicationkeyboardlistener.h>     // for member
 
 namespace dtDAL
 {
    class Map;
 }
 
-namespace   dtABC
+namespace dtCore
 {
-   class DT_ABC_EXPORT BaseABC  :  public   dtCore::Base,  public   dtCore::KeyboardListener,  public   dtCore::MouseListener
+   class Keyboard;
+   class Mouse;
+}
+
+namespace dtABC
+{
+   class DT_ABC_EXPORT BaseABC : public dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(BaseABC)
 
@@ -71,9 +78,15 @@ namespace   dtABC
       ///Get the default Application Keyboard
       dtCore::Keyboard*       GetKeyboard()  { return mKeyboard.get(); }
 
+      const ApplicationKeyboardListener* GetApplicationKeyboardListener() const { return mKeyboardListener.get(); }
+      ApplicationKeyboardListener* GetApplicationKeyboardListener() { return mKeyboardListener.get(); }
+
       ///Get the default Application Mouse
       dtCore::Mouse*          GetMouse()     { return mMouse.get(); }
       
+      const ApplicationMouseListener* GetApplicationMouseListener() const { return mMouseListener.get(); }
+      ApplicationMouseListener* GetApplicationMouseListener() { return mMouseListener.get(); }
+
       /**
        * Loads a map by name into an application.  If the map is already opened, the currently
        * loaded map will be reused. If there is a Camera contained within your Map, the default
@@ -117,7 +130,7 @@ namespace   dtABC
        *
        * @param data the message to receive
        */
-      virtual  void  OnMessage( MessageData *data );
+      virtual void OnMessage( MessageData *data );
 
       /**
        * KeyboardListener override
@@ -127,9 +140,7 @@ namespace   dtABC
        * @param key the key pressed
        * @param character the corresponding character
        */
-      virtual  void  KeyPressed( dtCore::Keyboard*          keyboard, 
-                                 Producer::KeyboardKey   key,
-                                 Producer::KeyCharacter  character );
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
       /**
        * KeyboardListener override
@@ -139,20 +150,23 @@ namespace   dtABC
        * @param key the key pressed
        * @param character the corresponding character
        */
-      virtual  void  KeyReleased(   dtCore::Keyboard*          keyboard, 
-                                    Producer::KeyboardKey   key,
-                                    Producer::KeyCharacter  character);
+      virtual bool KeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
    protected:
       ///Create basic instances
-      virtual  void  CreateInstances( void );
+      virtual void CreateInstances();
 
    protected:
+      friend class ApplicationKeyboardListener;
+
       dtCore::RefPtr<dtCore::DeltaWin>         mWindow; ///<built-in Window
       dtCore::RefPtr<dtCore::Camera>           mCamera; ///<built-in Camera
       dtCore::RefPtr<dtCore::Scene>            mScene; ///<built-in Scene
       dtCore::RefPtr<dtCore::Keyboard>         mKeyboard; ///<built-in Keyboard
       dtCore::RefPtr<dtCore::Mouse>            mMouse;  ///<built-in Mouse
+
+      dtCore::RefPtr<ApplicationKeyboardListener> mKeyboardListener;
+      dtCore::RefPtr<ApplicationMouseListener> mMouseListener;
    };
 };
 

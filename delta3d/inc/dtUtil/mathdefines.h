@@ -74,18 +74,17 @@ Real Lerp(Real x, Real y, Real t)
    e = *(float *)&_i;                                                       \
 }
 
-//this floors the int
-//__forceinline void FloatToInt(int *int_pointer, float f) 
-//{
-//      __asm  fld  f
-//      __asm  mov  edx,int_pointer
-//      __asm  FRNDINT
-//      __asm  fistp dword ptr [edx];
-//
-//}
-
 namespace dtUtil
 {
+   ////this floors the int
+   //__forceinline void FloatToInt(int *int_pointer, float f) 
+   //{
+   //      __asm  fld  f
+   //      __asm  mov  edx,int_pointer
+   //      __asm  FRNDINT
+   //      __asm  fistp dword ptr [edx];
+   //}
+
    /// Normalizes a value within a specified space range.
    /// Usage:  To find the normalized value for a range:
    /// float nX = CalculateNormal( valueX , xMin , xMax );
