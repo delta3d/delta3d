@@ -15,21 +15,15 @@
 #include <dtCore/pointaxis.h>
 #include <dtCore/camera.h>
 
-//// These REALLY should not be needed here, must investigate further...
-//#ifdef _MSC_VER
-//#include <dtCore/scene.h>
-//#endif
-
-using namespace   dtCore;
+using namespace dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(Compass)
-
 
 // callback functor objects
 class _updateCompassCallback  :  public   osg::NodeCallback
 {
    public:
                      _updateCompassCallback( dtCore::Compass* compass )
-                     :  mCompass(NULL)
+                     :  mCompass(0)
                      {
                         assert( compass );
                         mCompass = compass;
@@ -49,8 +43,7 @@ class _updateCompassCallback  :  public   osg::NodeCallback
          osg::Matrix mat;
          xform.Get( mat );
 
-         dtCore::Camera*   cam   = mCompass->GetCamera();
-         if( cam )
+         if( dtCore::Camera*   cam   = mCompass->GetCamera() )
          {
             Transform   cam_xform;
             cam->GetTransform( &cam_xform );
@@ -154,7 +147,7 @@ Compass::SetScreenPosition( float x, float y )
 
 
 dtCore::Camera*
-Compass::GetCamera( void )
+Compass::GetCamera()
 {
    return   mCamera.get();
 }
@@ -173,7 +166,7 @@ Compass::SetCamera( dtCore::Camera* cam )
 
 /** PRIVATE MEMBER FUNCTIONS */
 void
-Compass::ctor( void )
+Compass::ctor()
 {
    PointAxis*  axis = new PointAxis;
    assert( axis );
@@ -206,7 +199,9 @@ Compass::ctor( void )
    SetName( "Compass" );
 
    if( mCamera.get() )
+   {
       SetWindow( mCamera->GetWindow() );
+   }
 }
 
 
@@ -214,8 +209,10 @@ Compass::ctor( void )
 void
 Compass::SetWindow( dtCore::DeltaWin* win )
 {
-   if( win == NULL )
+   if( win == 0 )
+   {
       return;
+   }
 
    int   x(0L);
    int   y(0L);

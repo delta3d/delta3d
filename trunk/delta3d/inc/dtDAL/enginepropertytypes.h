@@ -23,13 +23,16 @@
 
 #include <sstream>
 #include <osg/Vec3>
+#include <osg/Vec3d>
 #include <osg/Vec4>
+#include <osg/Vec4d>
 #include <osg/Vec2>
+#include <osg/Vec2d>
 #include <dtCore/deltadrawable.h>
-#include "dtDAL/resourcedescriptor.h"
-#include "dtDAL/actorproperty.h"
-#include "dtDAL/datatype.h"
-#include "dtDAL/export.h"
+#include <dtDAL/resourcedescriptor.h>
+#include <dtDAL/actorproperty.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/export.h>
 
 namespace dtDAL
 {

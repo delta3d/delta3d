@@ -21,15 +21,18 @@
 #ifndef DELTA_EPHEMERIS
 #define DELTA_EPHEMERIS
 
-#include <time.h>
-
-#include "dtCore/export.h"
+#include <dtCore/export.h>
+#include <ctime>
 
 namespace dtCore
 {
    ///Get the Sun's alt and azimuth based on date/time, eyepoint lat,long, elev
-   DT_CORE_EXPORT void GetSunPos(time_t time, double lat, double lon, double elev,
-                            double *sun_alt, double *sun_az);
+   DT_CORE_EXPORT void GetSunPos(   time_t time, 
+                                    double lat, 
+                                    double lon, 
+                                    double elev,
+                                    double *sun_alt, 
+                                    double *sun_az );
 
    ///Get the Greenwich Mean Time for the give day and time
    DT_CORE_EXPORT time_t GetGMT(int year, int month, int day, int hour, int min, int sec);

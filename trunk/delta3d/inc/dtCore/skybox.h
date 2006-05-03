@@ -26,10 +26,15 @@
 #include <dtCore/skydome.h>
 #include <dtCore/refptr.h>
 
+#include <osg/CameraNode>
+#include <osg/Drawable>
+#include <osg/NodeCallback>
+
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Group;
+   class NodeCallback;
    class Texture2D;
    class TextureCubeMap;
 }

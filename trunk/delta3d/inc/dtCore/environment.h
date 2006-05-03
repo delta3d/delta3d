@@ -21,32 +21,43 @@
 #ifndef DELTA_ENVIRONMENT
 #define DELTA_ENVIRONMENT
 
-#include "dtCore/deltadrawable.h"
-#include "dtCore/enveffect.h"
-#include "dtCore/sunlightshader.h"
-#include "dtCore/skydomeshader.h"
-#include "dtCore/skydome.h"
-#include "dtCore/scene.h"
-#include "dtUtil/deprecationmgr.h"
-
+#include <dtCore/deltadrawable.h>
+#include <dtUtil/deprecationmgr.h>
 
 #include <osg/Vec2>
 #include <osg/Vec3>
-#include <osg/Group>
-#include <osg/Fog>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Fog;
+   class Group;
+}
+/// @endcond
 
 namespace dtCore
 {
+   class EnvEffect;
+   class Light;
+   class Scene;
+   class SkyDome;
+   class SkyDomeShader;
+   class SunlightShader;
+
    ///A unique environment which controls lighting and visibility
    class DT_CORE_EXPORT Environment : public dtCore::DeltaDrawable
    {
-   public:
-            DECLARE_MANAGEMENT_LAYER(Environment)
+     DECLARE_MANAGEMENT_LAYER(Environment)
 
+   public:
       Environment( const std::string& name = "Environment" );
+   protected:
       virtual ~Environment();
 
-      enum FogMode {
+   public:
+
+      enum FogMode
+      {
          LINEAR = 0, ///<Linear fog
          EXP,        ///<Exponential fog
          EXP2,       ///<Exponential squared fog
@@ -61,7 +72,6 @@ namespace dtCore
 
 		///Remove a DeltaDrawable added to the Environment.
 		void RemoveChild( DeltaDrawable *child );
-
 
       /// Add an Environmental Effect to the Environment
       void AddEffect( EnvEffect *effect );
@@ -81,8 +91,7 @@ namespace dtCore
            
       ///Set the base color of the fog
       void SetFogColor( const osg::Vec3& color );
-      void GetFogColor( osg::Vec3& color ) const { color = mFogColor; }
-      
+      void GetFogColor( osg::Vec3& color ) const { color = mFogColor; }      
 
 	   ///Get the modified color of the fog
       void GetModFogColor( osg::Vec3& color ) const { color = mModFogColor; }
@@ -111,7 +120,18 @@ namespace dtCore
       void GetSunColor( osg::Vec3& color ) {color = mSunColor;}
       
       ///Get the sun's azimuth and elevation (degrees)
-      void GetSunAzEl( float *az, float *el ) {*az=mSunAzimuth; *el=mSunAltitude;}
+      void GetSunAzEl( float *az, float *el ) const
+      { 
+         DEPRECATE(  "void GetSunAzEl( float *az, float *el )", 
+                     "void GetSunAzEl( float& az, float& el )" );
+         GetSunAzEl( *az, *el );
+      }
+
+      void GetSunAzEl( float& az, float& el ) const
+      { 
+         az = mSunAzimuth; 
+         el = mSunAltitude;
+      }
 
       void Repaint();
 
@@ -120,26 +140,36 @@ namespace dtCore
                         int hr, int mi, int sc);
 
       ///Get the current date/time of the environment
-      void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc );
+      void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc )
+      {
+         DEPRECATE(  "void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc )",
+                     "void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc )" );
+         GetDateTime( *yr, *mo, *da, *hr, *mi, *sc );
+      }
+
+      void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc );
 
       ///Set the ephemeris reference lat/long
       void SetRefLatLong( const osg::Vec2& latLong );
-      void GetRefLatLong( osg::Vec2& latLong )const{latLong = mRefLatLong;}
+      void GetRefLatLong( osg::Vec2& latLong ) const { latLong = mRefLatLong; }
       
-
    private:
+
       class InterpTable
       {
          struct TableEntry
          {
-            TableEntry():
-         ind(0.0), dep(0.0){}
+            TableEntry() :
+               ind(0.0), 
+               dep(0.0)
+            {
+            }
 
-         TableEntry(double independent, double dependent):
-         ind(independent), dep(dependent) {}
+            TableEntry(double independent, double dependent):
+            ind(independent), dep(dependent) {}
 
-         double ind;
-         double dep;
+            double ind;
+            double dep;
          };
 
          int mSize;
@@ -169,7 +199,7 @@ namespace dtCore
       RefPtr<osg::Group> mDrawableNode; ///<Contains the actual model
       virtual void OnMessage(MessageData *data);
       void Update(const double deltaFrameTime);
-      void RemoveEffectCache(void);///<actually remove EnvEffects from the Env
+      void RemoveEffectCache();///<actually remove EnvEffects from the Env
 
       RefPtr<Light> mSkyLight; ///< The sky light
       
@@ -193,13 +223,13 @@ namespace dtCore
       double mLastUpdate;
       SunlightShader *mSunlightShader; ///<pixel shader for light scattering
       SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
-      RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be NULL)
+      RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be 0)
 
-      void UpdateSkyLight(void);
-      void UpdateFogColor(void);
-      void UpdateSunColor(void);
-      void UpdateEnvColors(void);
-      void UpdateShaders(void);
+      void UpdateSkyLight();
+      void UpdateFogColor();
+      void UpdateSunColor();
+      void UpdateEnvColors();
+      void UpdateShaders();
 };
 }
 

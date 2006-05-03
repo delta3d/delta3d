@@ -1,6 +1,7 @@
 #include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
+#include <osg/Node>
 
 using namespace dtCore;
 using namespace dtUtil;
@@ -136,17 +137,12 @@ void DeltaDrawable::AddedToScene( Scene *scene )
    //TODO Should DeltaDrawable remove itself from it's existing parent Scene?
    mParentScene = scene;
 
-   for (ChildList::iterator itr = mChildList.begin();
-      itr != mChildList.end();
-      ++itr)
+   for(  ChildList::iterator itr = mChildList.begin();
+         itr != mChildList.end();
+         ++itr)
    {
       (*itr)->AddedToScene(scene);
    }
-}
-
-Scene* DeltaDrawable::GetSceneParent()
-{
-   return mParentScene;
 }
 
 /** Remove this DeltaDrawable from it's parent DeltaDrawable if it has one.

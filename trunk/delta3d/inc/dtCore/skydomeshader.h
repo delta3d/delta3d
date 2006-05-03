@@ -23,10 +23,13 @@
 
 #include <osg/Vec3>
 #include <osg/Vec2>
+
+#include <dtCore/export.h>
+#include <dtCore/refptr.h>
+
+// For some reason, you can't forward declare these.
 #include <osg/VertexProgram>
 #include <osg/FragmentProgram>
-#include "dtCore/export.h"
-#include "dtUtil/deprecationmgr.h"
 
 namespace dtCore
 {
@@ -42,16 +45,21 @@ namespace dtCore
       ~SkyDomeShader();
 
       ///Update the shader with new values
-      void Update(const osg::Vec2& sunDir,
-         float turbidity, float energy, float molecules);
-
-
-      ///our vertex program pointer
-      osg::VertexProgram *mLightScatterinVP;
-      ///our fragment program pointer
-      osg::FragmentProgram *mDomeFP;
+      void Update(   const osg::Vec2& sunDir,
+                     float turbidity, 
+                     float energy, 
+                     float molecules );
+      
+      inline osg::VertexProgram* GetLightScatterinVP();
+      inline osg::FragmentProgram* GetDomeFP();
 
    private:
+      
+      ///our vertex program pointer
+      dtCore::RefPtr<osg::VertexProgram> mLightScatterinVP;
+      ///our fragment program pointer
+      dtCore::RefPtr<osg::FragmentProgram> mDomeFP;
+
       osg::Vec3 lambda;
       osg::Vec3 lambda2;
       osg::Vec3 lambda4;

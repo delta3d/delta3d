@@ -21,25 +21,21 @@
 #ifndef DELTA_COMPASS
 #define DELTA_COMPASS
 
-#include "dtCore/refptr.h"
-#include <osg/MatrixTransform>
-
 #include <dtCore/macros.h>
+#include <dtCore/refptr.h>
 #include <dtCore/transformable.h>
-
 
 namespace dtCore
 {
-   //forward declaration
    class Camera;
    class DeltaWin;
 
-   ///A special visual Object which constantly aligns with the world axes
-
-   /** The Compass represents visual axes in the Scene.  The Compass is positioned
-    *  by screen space and is set in it's own renderbin to render after everything else.
-    *  The compass is derived from Transformable so the user could manipulate it's translations,
-    *  however, this is discouraged.
+   /** 
+    * A special visual Object which constantly aligns with the world axes. 
+    * The Compass represents visual axes in the Scene.  The Compass is positioned
+    * by screen space and is set in it's own renderbin to render after everything else.
+    * The compass is derived from Transformable so the user could manipulate it's translations,
+    * however, this is discouraged.
     *
     * The Compass must be added to a Scene to be viewed using Scene::AddDrawable().
     */
@@ -61,23 +57,25 @@ namespace dtCore
 
       public:
                                     Compass( dtCore::Camera* cam );
+      protected:
          virtual                    ~Compass();
-         
+      
+      public:   
          virtual  void              GetScreenPosition( float& x, float& y )   const;
          virtual  void              SetScreenPosition( float x, float y );
 
          ///@return returns a pointer to the current camera
-         virtual  dtCore::Camera*      GetCamera( void );
+         virtual  dtCore::Camera*      GetCamera();
          
          //@param stes the current camera
          virtual  void              SetCamera( dtCore::Camera* cam );
 
       private:
-         inline   void              ctor( void );
+         inline   void              ctor();
          inline   void              SetWindow( dtCore::DeltaWin* win );
 
       private:
-                  RefPtr<dtCore::Camera>           mCamera;    /// camera who's window we place the model
+                  RefPtr<dtCore::Camera>              mCamera;    /// camera who's window we place the model
                   float                               mScreenX;   /// screen position of model
                   float                               mScreenY;   /// screen position of model
                   float                               mScreenW;   /// screen width

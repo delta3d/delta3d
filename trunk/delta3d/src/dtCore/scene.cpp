@@ -19,11 +19,6 @@
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 
-//// These REALLY should not be needed here, must investigate further...
-//#ifdef _MSC_VER
-//#include <dtCore/deltawin.h>
-//#endif
-
 using namespace dtUtil;
 
 namespace dtCore

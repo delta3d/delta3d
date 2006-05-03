@@ -1,6 +1,7 @@
-#include "dtCore/skydomeshader.h"
+#include <dtCore/skydomeshader.h>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 SkyDomeShader::SkyDomeShader()
 {
@@ -108,10 +109,10 @@ SkyDomeShader::SkyDomeShader()
       "   END  \n";
    mDomeFP->setFragmentProgram( data2 );
 
-
    lambda = osg::Vec3(1.0 / 650e-9,1.0 / 570e-9,1.0 / 475e-9);
 
-   for(int i = 0; i < 3; i++) {
+   for(int i = 0; i < 3; i++)
+   {
       lambda2[i] = lambda[i] * lambda[i];
       lambda4[i] = lambda2[i] * lambda2[i];
    }
@@ -142,8 +143,10 @@ SkyDomeShader::~SkyDomeShader()
   *@param molecules: The number of molecules per unit volume (0 = fully opaque,
   *                  2.545e25 looks about right)
   */
-void SkyDomeShader::Update(const osg::Vec2& sunDir, float turbidity, float energy,
-                           float molecules)
+void SkyDomeShader::Update(   const osg::Vec2& sunDir, 
+                              float turbidity, 
+                              float energy,
+                              float molecules )
 {
    osg::Vec3 sunVec; ///<To the sun, unit vector
    float cos_alt = cos(osg::DegreesToRadians(sunDir[1]));
@@ -173,7 +176,19 @@ void SkyDomeShader::Update(const osg::Vec2& sunDir, float turbidity, float energ
    mDomeFP->setProgramLocalParameter(0, osg::Vec4( mBrightness, mContrast, 0, 0));
 }
 
+osg::VertexProgram* SkyDomeShader::GetLightScatterinVP()
+{ 
+   return mLightScatterinVP.get();
+}
+
+osg::FragmentProgram* SkyDomeShader::GetDomeFP()
+{ 
+   return mDomeFP.get();
+}
+
 float SkyDomeShader::ConcentrationFactor(float turbidity)
 {
-   return ((6.544 * turbidity - 6.51) * 1e-17); ///<more magic numbers
+   return (6.544 * turbidity - 6.51) * 1e-17; ///<more magic numbers
+}
+
 }

@@ -1,24 +1,31 @@
-#include "dtCore/ephemeris.h"
-#include <time.h>
+#include <dtCore/ephemeris.h>
 #include <osg/Math>
 
 using namespace dtCore;
 
-/* conversions among hours (of ra), degrees and radians. */
-#define hrrad(x)        osg::DegreesToRadians(1.0)*15.0*x
-#define radhr(x)        osg::RadiansToDegrees(1.0)*x/15.0
+// Conversions among hours (of ra), degrees and radians.
+template< typename T >
+T hrrad( T x )
+{
+   return osg::DegreesToRadians(1.0)*15.0*x;
+}
 
+template< typename T >
+T radhr( T x )
+{
+   return osg::RadiansToDegrees(1.0)*x/15.0;
+}
 
 /* info about the local observing circumstances and misc preferences */
-typedef struct {
+struct Now
+{
    double n_mjd;   /* modified Julian date, ie, days since
                      * Jan 0.5 1900 (== 12 noon, Dec 30, 1899), utc.
                      * enough precision to get well better than 1 second. */
    double n_lat;   /* latitude, >0 north, rads */
    double n_lng;   /* longitude, >0 east, rads */
    double n_elev;  /* elevation above sea level, earth radii */
-} Now;
-
+};
 
 /* given the mean anomaly, ma, and the eccentricity, s, of elliptical motion,
 * find the true anomaly, *nu, and the eccentric anomaly, *ea.
@@ -28,30 +35,35 @@ static void GetAnomaly (double ma, double s, double *nu, double *ea)
 {
    double m, fea;
 
-   m = ma-(2.f*osg::PI)*(int)(ma/(2.f*osg::PI));
+   m = ma-(2.f*osg::PI)*int(ma/(2.f*osg::PI));
    if (m > osg::PI) m -= (2.0*osg::PI);
    if (m < -osg::PI) m += (2.0*osg::PI);
    fea = m;
 
-   if (s < 1.0) {
+   if (s < 1.0)
+   {
       /* elliptical */
       double dla;
-      for (;;) {
+      for (;;)
+      {
          dla = fea-(s*sin(fea))-m;
          if (fabs(dla)<1e-6)
             break;
          dla /= 1-(s*cos(fea));
          fea -= dla;
       }
-      *nu = 2*atan((double)(sqrt((1+s)/(1-s))*tan(fea/2)));
-   } else {
+      *nu = 2*atan(double(sqrt((1+s)/(1-s))*tan(fea/2)));
+   }
+   else
+   {
       /* hyperbolic */
       double corr = 1;
-      while (fabs(corr) > 0.000001) {
+      while (fabs(corr) > 0.000001)
+      {
          corr = (m - s * sinh(fea) + fea) / (s*cosh(fea) - 1);
          fea += corr;
       }
-      *nu = 2*atan((double)(sqrt((s+1)/(s-1))*tanh(fea/2)));
+      *nu = 2*atan(double(sqrt((s+1)/(s-1))*tanh(fea/2)));
    }
    *ea = fea;
 }
@@ -60,7 +72,6 @@ static void range (double *v, double r)
 {
    *v -= r*floor(*v/r);
 }
-
 
 /* given the modified JD, mjd, return the true geocentric ecliptic longitude
 *   of the sun for the mean equinox of the date, *lsn, in radians, and the
@@ -78,7 +89,8 @@ static void sunpos( double mjd, double *lsn, double *rsn)
    double s, nu, ea; /* eccentricity, true anomaly, eccentric anomaly */
    double a, b, a1, b1, c1, d1, e1, h1, dl, dr;
 
-   if (mjd == last_mjd) {
+   if (mjd == last_mjd)
+   {
       *lsn = last_lsn;
       *rsn = last_rsn;
       return;
@@ -122,8 +134,6 @@ static void sunpos( double mjd, double *lsn, double *rsn)
    last_mjd = mjd;
 }
 
-
-
 /* given a date in months, mn, days, dy, years, yr,
 * return the modified Julian date (number of days elapsed since 1900 jan 0.5),
 * *mjd.
@@ -135,32 +145,41 @@ static void CalcMJD (int mn, double dy, int yr, double *mjd)
    int b, d, m, y;
    int c;
 
-   if (mn == last_mn && yr == last_yr && dy == last_dy) {
+   if (mn == last_mn && yr == last_yr && dy == last_dy)
+   {
       *mjd = last_mjd;
       return;
    }
 
    m = mn;
    y = (yr < 0) ? yr + 1 : yr;
-   if (mn < 3) {
+   if (mn < 3)
+   {
       m += 12;
       y -= 1;
    }
 
-   if (yr < 1582 || yr == 1582 && (mn < 10 || mn == 10 && dy < 15)) 
+   if (yr < 1582 || yr == 1582 && (mn < 10 || mn == 10 && dy < 15))
+   {
       b = 0;
-   else {
+   }
+   else
+   {
       int a;
       a = y/100;
       b = 2 - a + a/4;
    }
 
    if (y < 0)
-      c = (int)((365.25*y) - 0.75) - 694025L;
+   {
+      c = int((365.25*y) - 0.75) - 694025L;
+   }
    else
-      c = (int)(365.25*y) - 694025L;
+   {
+      c = int(365.25*y) - 694025L;
+   }
 
-   d = (int)(30.6001*(m+1));
+   d = int(30.6001*(m+1));
 
    *mjd = b + c + d + dy - 0.5;
 
@@ -169,7 +188,6 @@ static void CalcMJD (int mn, double dy, int yr, double *mjd)
    last_yr = yr;
    last_mjd = *mjd;
 }
-
 
 /* given the modified Julian date (number of days elapsed since 1900 jan 0.5,),
 * mjd, return the calendar date in months, *mn, days, *dy, and years, *yr.
@@ -184,14 +202,16 @@ static void CalcCalFromMJD (double mjd, int *mn, double *dy, int *yr)
    /* we get called with 0 quite a bit from unused epoch fields.
    * 0 is noon the last day of 1899.
    */
-   if (mjd == 0.0) {
+   if (mjd == 0.0)
+   {
       *mn = 12;
       *dy = 31.5;
       *yr = 1899;
       return;
    }
 
-   if (mjd == last_mjd) {
+   if (mjd == last_mjd)
+   {
       *mn = last_mn;
       *yr = last_yr;
       *dy = last_dy;
@@ -201,12 +221,14 @@ static void CalcCalFromMJD (double mjd, int *mn, double *dy, int *yr)
    d = mjd + 0.5;
    i = floor(d);
    f = d-i;
-   if (f == 1) {
+   if (f == 1)
+   {
       f = 0;
       i += 1;
    }
 
-   if (i > -115860.0) {
+   if (i > -115860.0)
+   {
       a = floor((i/36524.25)+.9983573)+14;
       i += 1 + a - floor(a/4.0);
    }
@@ -214,16 +236,24 @@ static void CalcCalFromMJD (double mjd, int *mn, double *dy, int *yr)
    b = floor((i/365.25)+.802601);
    ce = i - floor((365.25*b)+.750001)+416;
    g = floor(ce/30.6001);
-   *mn = (int)(g - 1);
+   *mn = int(g - 1);
    *dy = ce - floor(30.6001*g)+f;
-   *yr = (int)(b + 1899);
+   *yr = int(b + 1899);
 
    if (g > 13.5)
-      *mn = (int)(g - 13);
+   {
+      *mn = int(g - 13);
+   }
+
    if (*mn < 2.5)
-      *yr = (int)(b + 1900);
+   {
+      *yr = int(b + 1900);
+   }
+
    if (*yr < 1)
+   {
       *yr -= 1;
+   }
 
    last_mn = *mn;
    last_dy = *dy;
@@ -231,23 +261,20 @@ static void CalcCalFromMJD (double mjd, int *mn, double *dy, int *yr)
    last_mjd = mjd;
 }
 
-
 static double tnaught (double mjd)
 {
    double dmjd;
    int m, y;
    double d;
-   double t, t0;
 
    CalcCalFromMJD (mjd, &m, &d, &y);
    CalcMJD(1, 0., y, &dmjd);
-   t = dmjd/36525;
-   t0 = 6.57098e-2 * (mjd - dmjd) - 
+   double t = dmjd/36525;
+   double t0 = 6.57098e-2 * (mjd - dmjd) - 
       (24 - (6.6460656 + (5.1262e-2 + (t * 2.581e-5))*t) -
-      (2400 * (t - (((double)y - 1900)/100))));
-   return (t0);
+      (2400 * (t - ((double(y) - 1900)/100))));
+   return t0;
 }
-
 
 /* given a modified julian date, mjd, and a universally coordinated time, utc,
 * return greenwich mean siderial time, *gst.
@@ -255,42 +282,38 @@ static double tnaught (double mjd)
 */
 static double GetGST (double mjd, double utc)
 {
-   double gst;
    static double lastmjd = -10000;
    static double t0;
    
    /* ratio of from synodic (solar) to sidereal (stellar) rate */
    const double SIDRATE  = .9972695677;
 
-   if (mjd != lastmjd) {
+   if (mjd != lastmjd)
+   {
       t0 = tnaught(mjd);
       lastmjd = mjd;
    }
-   gst = (1.0/SIDRATE)*utc + t0;
+   double gst = (1.0/SIDRATE)*utc + t0;
    range(&gst, 24.0);
-   return (gst);
+   return gst;
 }
-
 
 static double GetMidday(double jd)
 {
-   return (floor(jd-0.5)+0.5);
+   return floor(jd-0.5)+0.5;
 }
 
 static double GetHour(double jd)
 {
-   return ((jd-GetMidday(jd))*24.0);
+   return (jd-GetMidday(jd))*24.0;
 }
-
-
 
 static double GetLST( double mjd, double longitude )
 {
-   double lst;
-   lst = GetGST(GetMidday(mjd), GetHour(mjd));
+   double lst = GetGST(GetMidday(mjd), GetHour(mjd));
    lst += radhr(longitude);
    range(&lst, 24.0);
-   return (lst);
+   return lst;
 }
 
 /* given true ha and dec, tha and tdec, the geographical latitude, phi, the
@@ -311,7 +334,8 @@ static void CalcParallax (double tha, double tdec, double phi, double ht,
    double caha;
 
    /* avoid calcs involving the same phi and ht */
-   if (phi != last_phi || ht != last_ht) {
+   if (phi != last_phi || ht != last_ht)
+   {
       double cphi, sphi, u;
       cphi = cos(phi);
       sphi = sin(phi);
@@ -349,7 +373,8 @@ static void aaha_aux (double lat, double x, double y, double *p, double *q)
 
    /* latitude doesn't change much, so try to reuse the sin and cos evals.
    */
-   if (lat != lastlat) {
+   if (lat != lastlat)
+   {
       sinlastlat = sin (lat);
       coslastlat = cos (lat);
       lastlat = lat;
@@ -364,20 +389,28 @@ static void aaha_aux (double lat, double x, double y, double *p, double *q)
    double a;
    double cp;
 
-#define	EPS	(1e-20)
+   const double EPS(1e-20);
    sq = (sy*sinlastlat) + (cy*coslastlat*cx);
    *q = asin (sq);
    cq = cos (*q);
    a = coslastlat*cq;
    if (a > -EPS && a < EPS)
+   {
       a = a < 0 ? -EPS : EPS; /* avoid / 0 */
+   }
    cp = (sy - (sinlastlat*sq))/a;
    if (cp >= 1.0)	/* the /a can be slightly > 1 */
+   {
       *p = 0.0;
+   }
    else if (cp <= -1.0)
+   {
       *p = osg::PI;
+   }
    else
+   {
       *p = acos ((sy - (sinlastlat*sq))/a);
+   }
    if (sx>0) *p = 2.0*osg::PI - *p;
 }
 
@@ -390,7 +423,6 @@ static void CalcAltAz (double lat, double ha, double dec, double *alt, double *a
 {
    aaha_aux (lat, ha, dec, az, alt);
 }
-
 
 static void equitorial_aux (int sw, double mjd, double x, double y, double *p, double *q)
 {
@@ -420,7 +452,7 @@ static void equitorial_aux (int sw, double mjd, double x, double y, double *p, d
    cx = cos(x);
    sx = sin(x);
    *q = asin((sy*ceps)-(cy*seps*sx*sw));
-   *p = atan((double)(((sx*ceps)+(ty*seps*sw))/cx));
+   *p = atan(double(((sx*ceps)+(ty*seps*sw))/cx));
    if (cx<0) *p += osg::PI;		/* account for atan quad ambiguity */
    range(p, 2.0*osg::PI);
 }
@@ -434,7 +466,6 @@ static void CalcEquitorialRaDec (double mjd, double lat, double lng, double *ra,
 {
    equitorial_aux (-1, mjd, lng, lat, ra, dec);
 }
-
 
 static void sun_pos (Now *np, double *altitude, double *azimuth)
 {
@@ -464,7 +495,6 @@ static void sun_pos (Now *np, double *altitude, double *azimuth)
    *azimuth = az;
 }
 
-
 /** Given a GMT, convert it to a Modified Julian Date */
 static double GetMJD( time_t GMT)
 {
@@ -472,9 +502,8 @@ static double GetMJD( time_t GMT)
    * mjd was 25567.5 then.
    */
 
-  return (25567.5 + GMT/3600.0/24.0);
+  return 25567.5 + GMT/3600.0/24.0;
 }
-
 
 /** Get the altitude and azimuth of the Sun given the GMT time/date, a reference
   * Latitude/longitude/elevation.
@@ -486,8 +515,12 @@ static double GetMJD( time_t GMT)
   * @param sun_alt : The output sun altitude (in degrees above the horizon)
   * @param sun_az : The output sun Azimuth (in degrees (from North?))
   */
-void dtCore::GetSunPos(time_t time, double lat, double lon,
-                    double elev, double *sun_alt, double *sun_az)
+void dtCore::GetSunPos( time_t time, 
+                        double lat, 
+                        double lon,
+                        double elev, 
+                        double *sun_alt, 
+                        double *sun_az )
 {
    double alt, azm;
    Now np;

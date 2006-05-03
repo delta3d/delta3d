@@ -4,7 +4,6 @@
 
 #include <python/dtpython.h>
 #include <dtCore/infiniteterrain.h>
-#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -25,7 +24,7 @@ void initInfiniteTerrainBindings()
    void (InfiniteTerrain::*GetNormal2)(float, float, osg::Vec3&, bool) = &InfiniteTerrain::GetNormal;
    //void (InfiniteTerrain::*GetNormal3)(float, float, sgVec3) = &InfiniteTerrain::GetNormal;
 
-   class_<InfiniteTerrain, bases<Transformable>, dtCore::RefPtr<InfiniteTerrain> >("InfiniteTerrain", init<optional<const std::string&> >())
+   class_<InfiniteTerrain, bases<Transformable>, dtCore::RefPtr<InfiniteTerrain>, boost::noncopyable >("InfiniteTerrain", init<optional<const std::string&> >())
       .def("GetInstanceCount", &InfiniteTerrain::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", InfiniteTerrainGI1, return_internal_reference<>())
