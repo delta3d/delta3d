@@ -26,18 +26,11 @@
 
 namespace dtCore
 {
-   /** Delta3D Implementation of OSG's Timer. osg::Timer does not
-   * provide a public API to switch the bool controlling the use
-   * of the system clock, and since it's inaccurate, we must flip it.
-   */
+   typedef osg::Timer_t Timer_t;
 
-#if defined(_MSC_VER)
-   typedef __int64 Timer_t;
-#else
-   typedef unsigned long long Timer_t;
-#endif
-
-   /** Time stamper. */
+   /**
+    * High-level wrapper for osg::Timer.
+    */
    class DT_CORE_EXPORT Timer
    {
 
