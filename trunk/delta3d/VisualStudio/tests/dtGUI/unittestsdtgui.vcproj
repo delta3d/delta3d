@@ -134,16 +134,16 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\dtGUI\ceuidrawabletests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtGUI\GUIApp.cpp">
+				RelativePath="..\..\..\tests\dtGUI\guiapp.h">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtGUI\GUIApp.h">
+				RelativePath="..\..\..\tests\dtGUI\guiapptests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtGUI\GUIManager.cpp">
+				RelativePath="..\..\..\tests\dtGUI\guimanager.h">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtGUI\GUIManager.h">
+				RelativePath="..\..\..\tests\dtGUI\guimanagertests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtGUI\mainTestRunner.cpp">
