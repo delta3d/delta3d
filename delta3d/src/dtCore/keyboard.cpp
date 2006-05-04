@@ -564,6 +564,8 @@ Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter
 bool Keyboard::KeyDown(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
+   GetButton(kbkey)->SetState(true);
+
    bool handled(false);
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
    KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
@@ -584,6 +586,8 @@ bool Keyboard::KeyDown(Producer::KeyCharacter kc)
 bool Keyboard::KeyUp(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
+   GetButton(kbkey)->SetState(false);
+
    bool handled(false);
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
    KeyboardListenerList::iterator enditer = mKeyboardListeners.end();
