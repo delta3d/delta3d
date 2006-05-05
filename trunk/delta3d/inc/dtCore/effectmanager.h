@@ -265,8 +265,8 @@ namespace dtCore
          /**
           * The set of effect listeners.
           */         
-         typedef std::set< dtCore::RefPtr<EffectListener> > EffectListenerSet;
-         EffectListenerSet mEffectListeners;
+         typedef std::vector< dtCore::RefPtr<EffectListener> > EffectListenerVector;
+         EffectListenerVector mEffectListeners;
 
          /**
           * The last recorded time.
