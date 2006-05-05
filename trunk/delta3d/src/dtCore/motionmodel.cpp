@@ -51,6 +51,11 @@ Transformable* MotionModel::GetTarget()
    return mTarget.get();
 }
 
+const Transformable* MotionModel::GetTarget() const
+{
+   return mTarget.get();
+}
+
 /**
  * Enables or disables this motion model.
  *

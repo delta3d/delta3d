@@ -45,7 +45,7 @@
 #ifdef IS_A
 #undef IS_A
 #endif
-#define IS_A(P, T) (dynamic_cast<T>(P)!=NULL)
+#define IS_A(P, T) (dynamic_cast<T>(P)!=0)
 
 //
 // The management layer declaration macro.  Should be included in the
@@ -108,7 +108,7 @@
             return *it;                                        \
          }                                                     \
       }                                                        \
-      return NULL;                                             \
+      return 0;                                                \
    }
 
 // Bit-packing helpers
@@ -123,5 +123,10 @@
 #undef BIT
 #endif
 #define BIT(a) (long(1L<<long(a)))
+
+#ifdef   UNSIGNED_INT_BIT
+#undef   UNSIGNED_INT_BIT
+#endif
+#define  UNSIGNED_INT_BIT(a)   ((unsigned int)(1L<<(unsigned int)(a)))
 
 #endif // DELTA_MACROS

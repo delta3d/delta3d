@@ -4,6 +4,7 @@
 
 #include <python/dtpython.h>
 #include <dtCore/isector.h>
+#include <dtCore/scene.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -24,7 +25,6 @@ void initIsectorBindings()
    DeltaDrawable* (Isector::*GetClosestDeltaDrawable1)() = &Isector::GetClosestDeltaDrawable;
 
    const DeltaDrawable* (Isector::*GetClosestDeltaDrawable2)() const = &Isector::GetClosestDeltaDrawable;
-
 
    class_<Isector, bases<Transformable>, dtCore::RefPtr<Isector>, boost::noncopyable >("Isector", init<optional<Scene*> >() )
       .def(init<const osg::Vec3&, const osg::Vec3&, optional<Scene*> >())

@@ -53,11 +53,16 @@ namespace dtCore
     */
    class DT_CORE_EXPORT System : public Base 
    {
+
    public:
 
       DECLARE_MANAGEMENT_LAYER(System)
 
+   protected:
+
       virtual ~System();
+
+   public:
 
       ///Perform any configuration required.  Message: "configure"
       void Config();

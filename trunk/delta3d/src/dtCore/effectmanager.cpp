@@ -1,25 +1,24 @@
 // effectmanager.cpp: Implementation of the EffectManager class.
 //
 //////////////////////////////////////////////////////////////////////
+#include <dtCore/effectmanager.h>
+#include <dtCore/transformable.h>
+#include <dtCore/system.h>
+#include <dtUtil/deprecationmgr.h>
+#include <dtUtil/log.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/stringutils.h>
+
 #include <osg/Matrix>
 #include <osg/MatrixTransform>
 #include <osg/Geode>
 #include <osg/Group>
+#include <osg/Node>
 #include <osg/NodeVisitor>
 
 #include <osgDB/ReadFile>
 #include <osgDB/FileUtils>
 #include <osgParticle/Emitter>
-#include <osgParticle/Particle>
-
-#include <dtCore/effectmanager.h>
-#include <dtCore/transformable.h>
-#include <dtCore/system.h>
-#include <dtCore/scene.h>
-#include <dtUtil/deprecationmgr.h>
-#include <dtUtil/log.h>
-#include <dtUtil/matrixutil.h>
-#include <dtUtil/stringutils.h>
 
 #include <cassert>
 
@@ -66,7 +65,7 @@ namespace dtCore
          
          virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
          {
-            assert( mDetonation );
+            assert( mDetonation.valid() );
 
             osg::Vec3 position;
             
@@ -91,7 +90,7 @@ namespace dtCore
          
       private:
       
-         Detonation* mDetonation;
+         dtCore::RefPtr<Detonation> mDetonation;
    };
 
 
@@ -185,7 +184,7 @@ namespace dtCore
     */
    const Effect* EffectManager::GetEffect(int index) const
    {
-      return mEffects[index];
+      return mEffects[index].get();
    }
 
    /**
@@ -276,6 +275,7 @@ namespace dtCore
     */
    void EffectManager::AddEffect(Effect* effect)
    {
+      assert(effect);
       mEffects.push_back(effect);
 
       if(effect->GetNode() != 0)
@@ -305,7 +305,7 @@ namespace dtCore
             it != mEffects.end();
             it++)
       {
-         if((*it) == effect)
+         if( it->get() == effect )
          {
             mGroup->removeChild(effect->GetNode());
 
@@ -319,8 +319,6 @@ namespace dtCore
             {
                (*it2)->EffectRemoved(this, effect);
             }
-
-            delete effect;
 
             return;
          }
@@ -461,6 +459,7 @@ namespace dtCore
                   it != mEffects.end();
                   it++)
             {
+               assert( it->valid() );
                double ttl = (*it)->GetTimeToLive();
                
                if(ttl != 0.0)
@@ -501,7 +500,7 @@ namespace dtCore
                   it2 != effectsToRemove.end();
                   it2++)
             {
-               RemoveEffect(*it2);
+               RemoveEffect(it2->get());
             }
          }
 

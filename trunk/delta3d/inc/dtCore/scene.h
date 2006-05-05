@@ -25,22 +25,32 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <Producer/Camera>
+#include <dtCore/base.h>
+#include <dtCore/refptr.h>
+#include <dtCore/timer.h>
+
 #include <ode/common.h>
-#include <ode/collision.h>
 #include <ode/collision_space.h>
+
+#include <osg/NodeVisitor>
 #include <osg/Vec3>
 
-#include <dtCore/timer.h>
-#include <dtCore/light.h>
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Group;   
+}
 
 namespace osgParticle
 {
    class ParticleSystem;   
 }
+/// @endcond
 
 namespace dtCore
 {         
+   class DeltaDrawable;
+   class Light;
    class Physical;
    class Transformable;
 
@@ -71,13 +81,6 @@ namespace dtCore
          ParticleSystemBoolMap mPreviousFrozenState;
       };
 
-      enum Face 
-      {
-         FRONT,
-         BACK,
-         FRONT_AND_BACK
-      };
-
       enum Mode 
       {
          POINT = GL_POINT,
@@ -85,10 +88,23 @@ namespace dtCore
          FILL = GL_FILL
       };
 
+      enum Face 
+      {
+         FRONT,
+         BACK,
+         FRONT_AND_BACK
+      };
+
       Scene(const std::string& name = "scene", bool useSceneLight = true);
+   
+   protected:
+
+      virtual ~Scene();
+
+   public:
 
       ///Get a pointer to the internal scene node
-      osg::Group *GetSceneNode() {return mSceneNode.get();}
+      osg::Group *GetSceneNode() { return mSceneNode.get(); }
       
       ///Add a DeltaDrawable to the Scene to be viewed.
       void AddDrawable( DeltaDrawable* drawable );
@@ -140,17 +156,19 @@ namespace dtCore
       ///Supply a user-defined collision callback to replace the internal one
       void SetUserCollisionCallback( dNearCallback *func, void *data=0 );
 
-      /** Get the step size of the physics.  The physics will 
-      *  be updated numerous times per frame based on this number.  For example,
-      *  if the delta frame rate is 33ms and the step size is 2ms, the physics
-      *  will be updated 16 times.
-      *  @return the step size in seconds
-      *  @see SetPhysicsStepSize()
-      */
-      inline double GetPhysicsStepSize() const { return mPhysicsStepSize; }
+      /** 
+       * Get the step size of the physics.  The physics will 
+       * be updated numerous times per frame based on this number.  For example,
+       * if the delta frame rate is 33ms and the step size is 2ms, the physics
+       * will be updated 16 times.
+       *
+       * @return the step size in seconds
+       * @see SetPhysicsStepSize()
+       */
+      double GetPhysicsStepSize() const { return mPhysicsStepSize; }
 
       /// @see GetPhysicsStepSize()
-      inline void SetPhysicsStepSize( double stepSize = 0.0 ){ mPhysicsStepSize = stepSize; };    
+      void SetPhysicsStepSize( double stepSize = 0.0 ) { mPhysicsStepSize = stepSize; };    
 
       /// Register a Physical with the Scene (Deprecated)
       void RegisterPhysical( Physical* physical );
@@ -162,76 +180,68 @@ namespace dtCore
       /// UnRegister a Transformable with the Scene
       void UnRegisterCollidable( Transformable* collidable );
 
-      ///returns a pointer to the light specified by the param number
-      inline Light* GetLight( const int number ) const { return mLights[ number ]; }
-      ///returns a pointer to the light specified by the current string
-      Light* GetLight( const std::string& name ) const;
+      /// Returns a pointer to the light specified by the param number
+      Light* GetLight( const int number ) { return mLights[ number ].get(); }
+      const Light* GetLight( const int number ) const { return mLights[ number ].get(); }
+      /// Returns a pointer to the light specified by the current string
+      Light* GetLight( const std::string& name );
+      const Light* GetLight( const std::string& name ) const;
 
-      ///registers a light using the light number
-      inline void RegisterLight( Light* light )
-      { 
-         mLights[ light->GetNumber() ] = light; //add to internal array of lights
-      }
+      /// Registers a light using the light number
+      void RegisterLight( Light* light );
 
-      ///unreferences the current light, by number, Note: does not erase
-      inline void UnRegisterLight( Light* light )
-      { 
-         mLights[ light->GetNumber() ] = 0; 
-      }
+      /// Unreferences the current light, by number, Note: does not erase
+      void UnRegisterLight( Light* light );
 
-      ///Use the internal scene light
+      /// Use the internal scene light
       void UseSceneLight( bool lightState = true );
 
-      ///Get the index number of the supplied drawable
-      unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const
-      {
-         for (unsigned int childNum=0;childNum<mAddedDrawables.size();++childNum)
-         {
-            if (mAddedDrawables[childNum]==drawable) return childNum;
-         }
-         return mAddedDrawables.size(); // node not found.
-      }
+      /// Get the index number of the supplied drawable
+      unsigned int GetDrawableIndex( const DeltaDrawable* drawable ) const;
    
-      ///Get the number of Drawables which have been directly added to the Scene
+      /// Get the number of Drawables which have been directly added to the Scene
       unsigned int GetNumberOfAddedDrawable() const {return mAddedDrawables.size();}     
 
       /**
-      * Enables paging when called ONLY AFTER a page-able
-      * node has been added to the scene
-      * @note all settings must be made before this call
-      */
+       * Enables paging when called ONLY AFTER a page-able
+       * node has been added to the scene
+       * @note all settings must be made before this call
+       */
       void EnablePaging();
       
       /**
-      *  Disables Paging, after enabled
-      *  called on scene cleanup
-      */
+       *  Disables Paging, after enabled
+       *  called on scene cleanup
+       */
       void DisablePaging();
 
       /// Returns if paging is enabled
-      inline bool IsPagingEnabled() const { return mPagingEnabled; }
+      bool IsPagingEnabled() const { return mPagingEnabled; }
 
       /**
-      *  Set's Slice time allocated for scene cleanup
-      *  default 0.0025
-      *  @param allocated cleanup time in seconds
-      */
+       *  Set's Slice time allocated for scene cleanup
+       *  default 0.0025
+       *  @param allocated cleanup time in seconds
+       */
       void SetPagingCleanup(double pCleanup){mCleanupTime = pCleanup;}
 
       /// Get the cleanup time for paging
       double GetPagingCleanup() { return mCleanupTime; }
 
       /**
-      * Sets target frame rate for database pager, default 60
-      * @param target framerate for paging thread in Frames / Sec
-      */
+       * Sets target frame rate for database pager, default 60
+       * @param target framerate for paging thread in Frames / Sec
+       */
       void SetTargetFrameRate(double pTargetFR){mTargetFrameRate = pTargetFR;}
-   
-   protected:
-
-      virtual ~Scene();
 
     private:
+
+      // Disallowed to prevent compile errors on VS2003. It apparently
+      // creates this functions even if they are not used, and if
+      // this class is forward declared, these implicit functions will
+      // cause compiler errors for missing calls to "ref".
+      Scene& operator=( const Scene& ); 
+      Scene( const Scene& );
       
       ///ODE collision callback
       static void NearCallback(void *data, dGeomID o1, dGeomID o2);
@@ -241,8 +251,8 @@ namespace dtCore
       dWorldID mWorldID;
       osg::Vec3 mGravity;
       
-      // The time (seconds) for the physics time step. 
-      // (default = 0.0, indicating to use the System deltaFrameTime )
+      ///<The time (seconds) for the physics time step. 
+      ///<(default = 0.0, indicating to use the System deltaFrameTime )
       double mPhysicsStepSize;
       
       typedef std::vector< Transformable* > TransformableVector;
@@ -252,7 +262,8 @@ namespace dtCore
       dNearCallback *mUserNearCallback;   ///<The user-supplied collision callback func
       void *mUserNearCallbackData; ///< pointer to user-supplied data
 
-      Light* mLights[ MAX_LIGHTS ]; // contains all light associated with this scene
+      typedef std::vector< RefPtr<Light> > LightVector;
+      LightVector mLights; ///<Contains all light associated with this scene
 
       typedef std::vector< RefPtr<DeltaDrawable> > DrawableList;
       DrawableList mAddedDrawables; ///<The list of Drawable directly added

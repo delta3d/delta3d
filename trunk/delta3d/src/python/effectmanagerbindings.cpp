@@ -93,14 +93,14 @@ void initEffectManagerBindings()
       .def("AddEffectListener", &EffectManager::AddEffectListener)
       .def("RemoveEffectListener", &EffectManager::RemoveEffectListener);
       
-   class_<EffectListener, boost::noncopyable>("EffectListener", no_init)
+   class_<EffectListener, dtCore::RefPtr<EffectListener>, boost::noncopyable>("EffectListener", no_init)
       .def("EffectAdded", pure_virtual(&EffectListener::EffectAdded) )
       .def("EffectRemoved", pure_virtual(&EffectListener::EffectRemoved) );
 
    osg::Node* (Effect::*GetNode1)() = &Effect::GetNode;
    const osg::Node* (Effect::*GetNode2)() const = &Effect::GetNode;
 
-   class_<Effect>("Effect", init<osg::Node*, double>())
+   class_<Effect, dtCore::RefPtr<Effect> >("Effect", init<osg::Node*, double>())
       .def("GetNode", GetNode1, return_internal_reference<>())
       .def("GetNode", GetNode2, return_internal_reference<>())
       .def("SetTimeToLive", &Effect::SetTimeToLive)
@@ -117,7 +117,7 @@ void initEffectManagerBindings()
    const std::string& (Detonation::*GetType1)() = &Detonation::GetType;
    void (Detonation::*GetType2)( DetonationType& type ) = &Detonation::GetType;
 
-   class_<Detonation, bases<Effect> >("Detonation", init<osg::Node*, double, const osg::Vec3&, const std::string&, Transformable*>() )
+   class_<Detonation, bases<Effect>, dtCore::RefPtr<Detonation> >("Detonation", init<osg::Node*, double, const osg::Vec3&, const std::string&, Transformable*>() )
       .def("GetPosition", GetPosition1, return_value_policy<copy_const_reference>())
       .def("GetPosition", GetPosition2, return_value_policy<copy_const_reference>())
       .def("GetType", GetType1, return_value_policy<copy_const_reference>())

@@ -38,14 +38,15 @@
 
 #define RTI_USES_STD_FSTREAM
 
-#include "RTI.hh"
-#include "NullFederateAmbassador.hh"
+#include <RTI.hh>
+#include <NullFederateAmbassador.hh>
 
-#include "dtCore/base.h"
-#include "dtHLA/dis_types.h"
-#include "dtHLA/entity.h"
-#include "dtCore/scene.h"
-#include "dtCore/effectmanager.h"
+#include <dtCore/base.h>
+#include <dtHLA/dis_types.h>
+#include <dtHLA/entity.h>
+#include <dtCore/scene.h>
+#include <dtCore/effectmanager.h>
+#include <dtUtil/functor.h>
 
 #define PI           3.14159265358979323e0    /* PI                        */
 #define MIN_LAT      ( (-80.5 * PI) / 180.0 ) /* -80.5 degrees in radians    */
@@ -131,7 +132,6 @@ static double Geocent_f = 1 / 298.257223563;  /* Flattening of ellipsoid        
 static double Geocent_e2 = 0.0066943799901413800;   /* Eccentricity squared  */
 static double Geocent_ep2 = 0.00673949675658690300; /* 2nd eccentricity squared */
 
-
 namespace dtHLA
 {
    class DetonationListener;
@@ -139,16 +139,13 @@ namespace dtHLA
    struct MasterData;
    struct GhostData;
 
-
    /**
     * Represents a connection to the HLA run-time infrastructure.
     */
    class DT_HLA_EXPORT RTIConnection : public dtCore::Base,
-                                   public dtCore::EffectListener,
-                                   public NullFederateAmbassador
+                                       public NullFederateAmbassador
    {
       DECLARE_MANAGEMENT_LAYER(RTIConnection)
-
 
       public:
 
@@ -158,7 +155,9 @@ namespace dtHLA
           * @param name the instance name
           */
          RTIConnection(std::string name = "RTIConnection");
-
+      
+      protected:
+      
          /**
           * Destructor.
           */
@@ -166,6 +165,16 @@ namespace dtHLA
          virtual ~RTIConnection()
                  throw (RTI::FederateInternalError);
 
+      private:
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         RTIConnection& operator=( const RTIConnection& ); 
+         RTIConnection( const RTIConnection& );
+
+      public:
 
          /**
           * Creates/joins a federation execution.
@@ -613,22 +622,13 @@ namespace dtHLA
          );
 
          /**
-          * Called when an effect is added to the manager.
+          * Called when an effect is added to the manager via the enacapsulated EffectListener Functor;
           *
           * @param effectManager the effect manager that generated
           * the event
           * @param effect the effect object
           */
-         virtual void EffectAdded(
-            dtCore::EffectManager* effectManager,
-            dtCore::Effect* effect
-         );
-
-         virtual void EffectRemoved(   dtCore::EffectManager* effectManager,
-                                       dtCore::Effect* effect )
-         {
-         }
-
+         virtual void EffectAdded( dtCore::EffectManager* effectManager, dtCore::Effect* effect );
 
       private:
          /** \brief A class to perform the necessary features while a Xerces SAX parser is operating.
@@ -790,9 +790,24 @@ namespace dtHLA
           *
           * @param entity the entity to clamp
           */
-         void ClampToGround(Entity* entity);
+         void ClampToGround(Entity* entity);         
          
+         class RTIEffectListener : public dtCore::EffectListener
+         {
+            public:
+               typedef dtUtil::Functor< void, TYPELIST_2( dtCore::EffectManager*, dtCore::Effect* ) > EffectFunctor;
+               RTIEffectListener( const EffectFunctor& effectFunctor );
+            protected:
+               virtual ~RTIEffectListener();
+            public:
+               virtual void EffectAdded( dtCore::EffectManager* effectManager, dtCore::Effect* effect );
+               virtual void EffectRemoved( dtCore::EffectManager* effectManager, dtCore::Effect* effect );
+            private:
 
+               EffectFunctor mEffectFunctor;
+         };
+
+         dtCore::RefPtr<RTIEffectListener> mEffectListener;
 
          /**
           * The RTI ambassador.

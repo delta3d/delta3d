@@ -14,6 +14,9 @@ void initMotionModelBindings()
    MotionModel* (*MotionModelGI1)(int) = &MotionModel::GetInstance;
    MotionModel* (*MotionModelGI2)(std::string) = &MotionModel::GetInstance;
 
+   Transformable* (MotionModel::*GetTransformable1)() = &MotionModel::GetTarget;
+   const Transformable* (MotionModel::*GetTransformable2)() const = &MotionModel::GetTarget;
+
    class_<MotionModel, bases<Base>, dtCore::RefPtr<MotionModel> >("MotionModel", init<optional<std::string> >())
       .def("GetInstanceCount", &MotionModel::GetInstanceCount)
       .staticmethod("GetInstanceCount")
@@ -21,7 +24,9 @@ void initMotionModelBindings()
       .def("GetInstance", MotionModelGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
       .def("SetTarget", &MotionModel::SetTarget)
-      .def("GetTarget", &MotionModel::GetTarget, return_internal_reference<>())
+      .def("GetTarget", GetTarget1, return_internal_reference<>())
+      .def("GetTarget", GetTarget2, return_internal_reference<>())
       .def("SetEnabled", &MotionModel::SetEnabled)
-      .def("IsEnabled", &MotionModel::IsEnabled);
+      .def("IsEnabled", &MotionModel::IsEnabled)
+      ;
 }

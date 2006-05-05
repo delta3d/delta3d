@@ -532,19 +532,19 @@ TestAudioApp::SetUpVisuals( void )
 {
    for( unsigned int ii(0L); ii < kNumGfx; ii++ )
    {
-      mGfxObj[ii] = LoadGfxFile( kGfxFile[ii] );
+      mGfxObj[ii] = LoadGfxFile( kGfxFile[ii] ).get();
       assert( mGfxObj[ii].get() );
    }
 
-   mFXMgr   = LoadFxFile( kFxFile[EXPLODE] );
+   mFXMgr   = LoadFxFile( kFxFile[EXPLODE] ).get();
    assert( mFXMgr.get() );
 
-   mPSysA   = LoadPSFile( kFxFile[SMOKE] );
+   mPSysA   = LoadPSFile( kFxFile[SMOKE] ).get();
    assert( mPSysA.get() );
 
    mGfxObj[TRUCK]->AddChild( mPSysA.get() );
 
-   mPSysC   = LoadPSFile( kFxFile[SMOKE] );
+   mPSysC   = LoadPSFile( kFxFile[SMOKE] ).get();
    assert( mPSysC.get() );
 
    mGfxObj[HELO]->AddChild( mPSysC.get() );
@@ -555,7 +555,7 @@ TestAudioApp::SetUpVisuals( void )
 
 
 
-Object*
+dtCore::RefPtr<Object>
 TestAudioApp::LoadGfxFile( const char* fname )
 {
    if( fname == NULL )
@@ -572,8 +572,8 @@ TestAudioApp::LoadGfxFile( const char* fname )
    }
 
 
-   Object*  fileobj  = new Object;
-   assert( fileobj );
+   dtCore::RefPtr<Object>  fileobj  = new Object;
+   assert( fileobj.valid() );
 
 
    // load the graphics file from disk
@@ -584,8 +584,8 @@ TestAudioApp::LoadGfxFile( const char* fname )
    {
       Log::GetInstance().LogMessage( Log::LOG_WARNING,__FUNCTION__,
          "can't load gfx file '%s'", filename.c_str() );
-      delete   fileobj;
-      return   NULL;
+      fileobj = 0;
+      return 0;
    }
 
    if( std::string(fname) == kGfxFile[1] )
@@ -596,47 +596,47 @@ TestAudioApp::LoadGfxFile( const char* fname )
    }
 
    // add the object to the scene
-   AddDrawable( fileobj );
+   AddDrawable( fileobj.get() );
 
-   osg::Node*  filenode = fileobj->GetOSGNode();
-   assert( filenode );
+   dtCore::RefPtr<osg::Node> filenode = fileobj->GetOSGNode();
+   assert( filenode.valid() );
 
    filenode->setNodeMask( 0xFFFFFFFF );
-   return   fileobj;
+   return fileobj;
 }
 
 
 
-EffectManager*
+dtCore::RefPtr<EffectManager>
 TestAudioApp::LoadFxFile( const char* fname )
 {
-   EffectManager* effectManager  = new EffectManager;
-   assert( effectManager );
+   dtCore::RefPtr<EffectManager> effectManager  = new EffectManager;
+   assert( effectManager.valid() );
 
    effectManager->AddDetonationTypeMapping(
       HighExplosiveDetonation,
       fname
    );
 
-   AddDrawable( effectManager );
+   AddDrawable( effectManager.get() );
 
-   return   effectManager;
+   return effectManager;
 }
 
 
 
-ParticleSystem*
+dtCore::RefPtr<ParticleSystem>
 TestAudioApp::LoadPSFile( const char* fname )
 {
-   ParticleSystem*   particlesystem = new ParticleSystem;
+   dtCore::RefPtr<ParticleSystem> particlesystem = new ParticleSystem;
 
-   assert( particlesystem );
+   assert( particlesystem.valid() );
 
    particlesystem->LoadFile( fname, false );
 
    particlesystem->SetEnabled(false);
 
-   return   particlesystem;
+   return particlesystem;
 }
 
 

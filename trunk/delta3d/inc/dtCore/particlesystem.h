@@ -26,8 +26,8 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "dtCore/transformable.h"
-#include "dtCore/loadable.h"
+#include <dtCore/transformable.h>
+#include <dtCore/loadable.h>
 
 namespace dtCore
 {
@@ -47,10 +47,14 @@ namespace dtCore
           */
          ParticleSystem(std::string name = "ParticleSystem");
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~ParticleSystem();         
+
+      public:
 
          ///Load a file from disk
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = false);
@@ -92,7 +96,6 @@ namespace dtCore
           */
          bool IsParentRelative();
          
-
    private:
          
          /**
@@ -110,6 +113,5 @@ namespace dtCore
          
    };
 };
-
 
 #endif // DELTA_PARTICLESYSTEM

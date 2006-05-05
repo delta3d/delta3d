@@ -25,12 +25,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <osg/Group>
-#include <osg/LOD>
-#include <osg/Node>
-#include <osg/Vec3>
-#include <dtCore/physical.h>
+#include <dtCore/transformable.h>
 #include <dtUtil/noiseutility.h>
+#include <osg/Vec3>
 
 namespace dtCore
 {
@@ -56,11 +53,15 @@ namespace dtCore
          InfiniteTerrain(const std::string& name = "infiniteTerrain",
                          osg::Image* textureImage = 0);
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~InfiniteTerrain();
-         
+      
+      public:
+      
          /**
           * Regenerates the terrain surface.
           */
@@ -176,7 +177,6 @@ namespace dtCore
           * instead of triangle mesh height
           */
          void GetNormal(float x, float y, osg::Vec3& normal, bool smooth = false);
- 
 
       private:
 
@@ -303,7 +303,6 @@ namespace dtCore
           * Flags the segments as needing to be cleared.
           */
          bool mClearFlag;
-
 
          //added for vertex coloring
          float mMinHeight, mIdealHeight, mMaxHeight;

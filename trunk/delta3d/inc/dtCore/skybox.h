@@ -23,7 +23,7 @@
 #define DELTA_SKYBOX
 
 #include <dtCore/enveffect.h>
-#include <dtCore/skydome.h>
+//#include <dtCore/skydome.h>
 #include <dtCore/refptr.h>
 
 #include <osg/CameraNode>

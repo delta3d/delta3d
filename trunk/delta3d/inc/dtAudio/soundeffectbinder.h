@@ -30,11 +30,7 @@
 #include <dtCore/effectmanager.h>
 #include <dtAudio/audiomanager.h>
 #include <dtAudio/export.h>
-
-// definitions
-#if   !  defined(BIT)
-#define  BIT(a)   ((unsigned int)(1L<<(unsigned int)(a)))
-#endif
+#include <dtUtil/functor.h>
 
 // soundeffectbinder.h: Declaration of the EffectManager class.
 //
@@ -70,7 +66,7 @@ namespace dtAudio
     * then supply a unique id for an audible effect with the sound-
     * filename.
     */
-   class DT_AUDIO_EXPORT SoundEffectBinder :  public   dtCore::EffectListener, public   dtCore::Base
+   class DT_AUDIO_EXPORT SoundEffectBinder : public   dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(SoundEffectBinder)
         
@@ -111,9 +107,41 @@ namespace dtAudio
                         SFX_LST* mList;
          };
 
+         class SoundEffectListener : public dtCore::EffectListener
+         {
+            public:
+               typedef dtUtil::Functor< void, TYPELIST_2( dtCore::EffectManager*, dtCore::Effect* ) > EffectFunctor;
+               SoundEffectListener( const EffectFunctor& addEffect,
+                                    const EffectFunctor& removeEffect );
+            protected:
+               virtual ~SoundEffectListener();
+            public:
+               virtual void EffectAdded( dtCore::EffectManager* effectManager, dtCore::Effect* effect );
+               virtual void EffectRemoved( dtCore::EffectManager* effectManager, dtCore::Effect* effect );
+            private:
+
+               EffectFunctor mAddEffect;
+               EffectFunctor mRemoveEffect;
+         };
+
       public:
                               SoundEffectBinder( const std::string& name = "soundeffectbinder" );
+
+      protected:
+
          virtual              ~SoundEffectBinder();
+
+
+      private:
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         SoundEffectBinder& operator=( const SoundEffectBinder& ); 
+         SoundEffectBinder( const SoundEffectBinder& );
+
+      public:
 
          /**
           * Initialize the SoundEffectBinder.
@@ -289,6 +317,8 @@ namespace dtAudio
          static   void     StopCB( Sound* sound, void* param );
 
       private:
+                  dtCore::RefPtr<SoundEffectListener> mSoundEffectListener;
+
                   SFX_LST     mQueued;
                   SFX_LST     mActive;
                   SFX_LST     mDone;

@@ -19,8 +19,9 @@
 * @author Matthew W. Campbell
 */
 
-
 #include <dtCore/isector.h>
+
+#include <dtCore/deltadrawable.h>
 #include <dtCore/scene.h>
 #include <stack>
 
@@ -28,8 +29,7 @@ namespace dtCore
 {
 
    IMPLEMENT_MANAGEMENT_LAYER(Isector)
-   
-   
+      
    ///////////////////////////////////////////////////////////////////////////////
    Isector::Isector(dtCore::Scene *scene) :
       mStart(0,0,0), mDirection(0,1,0), mLineLength(1000000.0f), mUpdateLineSegment(true), mScene(scene), mLineSegment(new osg::LineSegment()), mClosestDrawable(0)

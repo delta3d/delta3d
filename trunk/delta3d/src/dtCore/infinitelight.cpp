@@ -1,62 +1,64 @@
-#include "dtCore/infinitelight.h"
-#include "dtCore/scene.h"
-#include "dtUtil/matrixutil.h"
+#include <dtCore/infinitelight.h>
 
-using namespace dtCore;
+#include <dtUtil/matrixutil.h>
 
-IMPLEMENT_MANAGEMENT_LAYER(InfiniteLight)
+#include <osg/Light>
+#include <osg/LightSource>
 
-InfiniteLight::InfiniteLight( int number, const std::string& name, LightingMode mode )
-: Light( number, name, mode )
+namespace dtCore
 {
-   RegisterInstance(this);
+   IMPLEMENT_MANAGEMENT_LAYER(InfiniteLight)
 
-   osg::Vec4 position = mLightSource->getLight()->getPosition();
+   InfiniteLight::InfiniteLight( int number, const std::string& name, LightingMode mode )
+   : Light( number, name, mode )
+   {
+      RegisterInstance(this);
 
-   position[3] = 0.0f;
+      osg::Vec4 position = mLightSource->getLight()->getPosition();
 
-   mLightSource->getLight()->setPosition( position );
-}
+      position[3] = 0.0f;
 
-InfiniteLight::InfiniteLight( const osg::LightSource& source, const std::string& name, LightingMode mode )
-: Light( source, name, mode )
-{
-   RegisterInstance(this);
+      mLightSource->getLight()->setPosition( position );
+   }
 
-   osg::Vec4 position = mLightSource->getLight()->getPosition();
+   InfiniteLight::InfiniteLight( const osg::LightSource& source, const std::string& name, LightingMode mode )
+   : Light( source, name, mode )
+   {
+      RegisterInstance(this);
 
-   position[3] = 0.0f;
+      osg::Vec4 position = mLightSource->getLight()->getPosition();
 
-   mLightSource->getLight()->setPosition( position );
-}
+      position[3] = 0.0f;
 
+      mLightSource->getLight()->setPosition( position );
+   }
 
-InfiniteLight::~InfiniteLight()
-{
-   mLightSource = 0;
+   InfiniteLight::~InfiniteLight()
+   {
+      mLightSource = 0;
 
-   DeregisterInstance(this);
-}
+      DeregisterInstance(this);
+   }
 
+   void InfiniteLight::SetAzimuthElevation( float az, float el )
+   {
+      osg::Matrix hprRot;
+      dtUtil::MatrixUtil::HprToMatrix( hprRot, osg::Vec3( az, el, 0.0f ) );
 
-void InfiniteLight::SetAzimuthElevation( float az, float el )
-{
-   osg::Matrix hprRot;
-   dtUtil::MatrixUtil::HprToMatrix( hprRot, osg::Vec3( az, el, 0.0f ) );
+      osg::Vec3 forwardVector( 0.0f, -1.0f, 0.0f );
+      osg::Vec3 xyz = hprRot.preMult( forwardVector );
 
-   osg::Vec3 forwardVector( 0.0f, -1.0f, 0.0f );
-   osg::Vec3 xyz = hprRot.preMult( forwardVector );
+      //force w=0.0f to ensure "infinite" light
+      mLightSource->getLight()->setPosition( osg::Vec4( xyz, 0.0f ) );  
+   }
 
-   //force w=0.0f to ensure "infinite" light
-   mLightSource->getLight()->setPosition( osg::Vec4( xyz, 0.0f ) );  
-}
+   void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
+   {
+      osg::Vec4 position = mLightSource->getLight()->getPosition();
 
-void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
-{
-   osg::Vec4 position = mLightSource->getLight()->getPosition();
+      osg::Vec3 xyz = osg::Vec3( -position[0], -position[1], position[2] );
 
-   osg::Vec3 xyz = osg::Vec3( -position[0], -position[1], position[2] );
-
-   az = osg::RadiansToDegrees( -atan2f( xyz[0], xyz[1] ) );
-   el = osg::RadiansToDegrees( -atan2f( xyz[2], sqrt( ( osg::square( xyz[0] ) + osg::square( xyz[1] ) ) ) ) );
+      az = osg::RadiansToDegrees( -atan2f( xyz[0], xyz[1] ) );
+      el = osg::RadiansToDegrees( -atan2f( xyz[2], sqrt( ( osg::square( xyz[0] ) + osg::square( xyz[1] ) ) ) ) );
+   }
 }

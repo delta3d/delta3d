@@ -49,11 +49,15 @@ namespace dtCore
           * @param name the instance name
           */
          LogicalInputDevice(const std::string& name = "LogicalInputDevice");
+   
+      protected:
 
          /**
           * Destructor.
           */
          virtual ~LogicalInputDevice();
+
+      public:
 
          /**
           * Adds a new logical button to this device.
@@ -103,7 +107,6 @@ namespace dtCore
           */
          void RemoveAxis(LogicalAxis* axis);
    };
-
    
    /**
     * A logical button.
@@ -122,6 +125,12 @@ namespace dtCore
          LogicalButton(LogicalInputDevice* owner,
                        const std::string& description, 
                        ButtonMapping *mapping);
+
+      protected:
+
+         virtual ~LogicalButton() {}
+
+      public:
 
          /**
           * Sets this button's mapping.
@@ -157,18 +166,11 @@ namespace dtCore
 
       public:
 
-         /**
-          * Constructor.
-          */
          ButtonMapping();
-
-         /**
-          * Destructor.
-          */
-         virtual ~ButtonMapping();
-
-
+      
       protected:
+
+         virtual ~ButtonMapping();
 
          /**
           * Sets the target button.
@@ -189,8 +191,8 @@ namespace dtCore
    /**
     * Maps a button to a logical button.
     */
-   class DT_CORE_EXPORT ButtonToButton : public ButtonMapping,
-                                    public ButtonListener
+   class DT_CORE_EXPORT ButtonToButton :  public ButtonMapping,
+                                          public ButtonListener
    {
       public:
 
@@ -201,10 +203,14 @@ namespace dtCore
           */
          ButtonToButton(Button* sourceButton);
 
+      protected:
+         
          /**
           * Destructor.
           */
          virtual ~ButtonToButton();
+
+      public:
 
          /**
           * Sets the source button.
@@ -264,7 +270,6 @@ namespace dtCore
          void UpdateTargetButtonState();
    };
 
-
    /**
     * A logical axis.
     */
@@ -283,6 +288,12 @@ namespace dtCore
                      const std::string& description,
                      AxisMapping* mapping);
 
+      protected:
+
+         virtual ~LogicalAxis() {}
+
+      public:
+
          /**
           * Sets this axis' mapping.
           *
@@ -296,7 +307,6 @@ namespace dtCore
           * @return the current mapping
           */
          AxisMapping* GetMapping();
-
 
       private:
 
@@ -317,18 +327,11 @@ namespace dtCore
 
       public:
 
-         /**
-          * Constructor.
-          */
          AxisMapping();
 
-         /**
-          * Destructor.
-          */
-         virtual ~AxisMapping();
-
-
       protected:
+
+         virtual ~AxisMapping();
 
          /**
           * Sets the target axis.
@@ -344,7 +347,6 @@ namespace dtCore
           */
          virtual LogicalAxis* GetTargetAxis() = 0;
    };
-
 
    /**
     * Maps an axis to a logical axis with an optional linear transformation.
@@ -363,10 +365,14 @@ namespace dtCore
           */
          AxisToAxis(Axis* sourceAxis, double scale = 1.0, double offset = 0.0);
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~AxisToAxis();
+
+      public:
 
          /**
           * Sets the source axis.
@@ -476,11 +482,15 @@ namespace dtCore
          AxesToAxis(Axis* firstSourceAxis = NULL,
                     Axis* secondSourceAxis = NULL);
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~AxesToAxis();
          
+      public:
+
          /**
           * Adds a source axis.
           *
@@ -584,10 +594,14 @@ namespace dtCore
                        double secondButtonValue = 1.0,
                        double neutralValue = 0.0);
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~ButtonsToAxis();
+
+      public:
 
          /**
           * Sets the two source buttons.
@@ -719,11 +733,15 @@ namespace dtCore
           */
          ButtonAxisToAxis(Button* sourceButton, Axis* sourceAxis);
          
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~ButtonAxisToAxis();
          
+      public:
+
          /**
           * Sets the source button.
           *

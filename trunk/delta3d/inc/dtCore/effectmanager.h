@@ -44,21 +44,22 @@
  * Utilize string functionality to avoid future deprecation.
  *****************************************************************************/
 
+#include <dtCore/deltadrawable.h>
+#include <dtCore/refptr.h>
+#include <osg/Vec3>
 
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <Producer/Timer>
-#include <osg/Node>
-#include <osg/Group>
-#include <osgParticle/ParticleSystemUpdater>
-
-#include <osg/Vec3>
-
-#include <dtCore/deltadrawable.h>
-#include <dtUtil/deprecationmgr.h>
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Group;
+   class Node;
+}
+/// @endcond
 
 namespace dtCore
 {
@@ -258,13 +259,13 @@ namespace dtCore
          /**
           * The vector of active effects.
           */
-         typedef std::vector<Effect*> EffectVector;
+         typedef std::vector< dtCore::RefPtr<Effect> > EffectVector;
          EffectVector mEffects;
 
          /**
           * The set of effect listeners.
           */         
-         typedef std::set<EffectListener*> EffectListenerSet;
+         typedef std::set< dtCore::RefPtr<EffectListener> > EffectListenerSet;
          EffectListenerSet mEffectListeners;
 
          /**
@@ -277,7 +278,7 @@ namespace dtCore
     * An interface for objects interested in the addition and removal
     * of effects from the manager.
     */
-   class DT_CORE_EXPORT EffectListener
+   class DT_CORE_EXPORT EffectListener : public osg::Referenced
    {
       public:
       
@@ -303,7 +304,7 @@ namespace dtCore
    /**
     * The base class of all effects.
     */
-   class DT_CORE_EXPORT Effect
+   class DT_CORE_EXPORT Effect : public osg::Referenced
    {
       public:
 
@@ -316,10 +317,14 @@ namespace dtCore
           */
          Effect(osg::Node* node, double timeToLive);
 
+      protected:
+      
          /**
           * Destructor.
           */
          virtual ~Effect();
+
+      public:
 
          /**
           * Returns the effect's OpenSceneGraph node.

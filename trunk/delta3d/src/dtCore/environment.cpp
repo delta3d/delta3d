@@ -14,6 +14,7 @@
 #include <osg/Fog>
 #include <osg/FragmentProgram>
 #include <osg/Group>
+#include <osg/LightSource>
 #include <osg/VertexProgram>
 
 #include <cmath>

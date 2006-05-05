@@ -25,7 +25,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 
@@ -41,7 +40,6 @@ namespace dtCore
    class DT_CORE_EXPORT MotionModel : public Base
    {
       DECLARE_MANAGEMENT_LAYER(MotionModel)
-
 
       public:
 
@@ -74,6 +72,7 @@ namespace dtCore
           * @return the current target
           */
          Transformable* GetTarget();
+         const Transformable* GetTarget() const;
          
          /**
           * Enables or disables this motion model.
@@ -90,8 +89,7 @@ namespace dtCore
           * if it is disabled
           */
          bool IsEnabled() const;
-         
-         
+                  
       private:
       
          /**

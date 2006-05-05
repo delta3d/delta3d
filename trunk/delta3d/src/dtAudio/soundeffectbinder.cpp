@@ -1,6 +1,7 @@
+#include <dtAudio/soundeffectbinder.h>
+
 #include <cassert>
 
-#include <dtAudio/soundeffectbinder.h>
 #include <dtCore/system.h>
 #include <dtCore/scene.h>
 
@@ -33,12 +34,17 @@ IMPLEMENT_MANAGEMENT_LAYER(SoundEffectBinder)
  * @param name the instance name
  */
 SoundEffectBinder::SoundEffectBinder( const std::string& name /*= "SoundEffectBinder"*/ )
-:  dtCore::Base(name)
+:  dtCore::Base(name),
+   mSoundEffectListener(0)
 {
    dtCore::System*  sys   = dtCore::System::Instance();
    assert( sys );
 
    AddSender( sys );
+
+   SoundEffectListener::EffectFunctor addEffect( this, &SoundEffectBinder::EffectAdded );
+   SoundEffectListener::EffectFunctor removeEffect( this, &SoundEffectBinder::EffectRemoved );
+   mSoundEffectListener = new SoundEffectListener( addEffect, removeEffect );
 }
 
 
@@ -106,7 +112,7 @@ SoundEffectBinder::AddEffectManager( dtCore::EffectManager* fxMgr )
          return;
    }
 
-   fxMgr->AddEffectListener( this );
+   fxMgr->AddEffectListener( mSoundEffectListener.get() );
    mFxMgr.push_back( fxMgr );
 }
 
@@ -128,7 +134,7 @@ SoundEffectBinder::RemoveEffectManager( dtCore::EffectManager* fxMgr )
       if( *iter != fxMgr )
          continue;
 
-      fxMgr->RemoveEffectListener( this );
+      fxMgr->RemoveEffectListener( mSoundEffectListener.get() );
       mFxMgr.erase( iter );
       break;
    }
@@ -679,3 +685,25 @@ SoundEffectBinder::SfxObj::SetList( SFX_LST* list )
    mList = list;
    mList->push_back( this );
 }
+
+SoundEffectBinder::SoundEffectListener::SoundEffectListener(   const EffectFunctor& addEffect,
+                                                               const EffectFunctor& removeEffect ) : dtCore::EffectListener(),
+   mAddEffect( addEffect ),
+   mRemoveEffect( removeEffect )
+{
+}
+
+SoundEffectBinder::SoundEffectListener::~SoundEffectListener()
+{
+}
+
+void SoundEffectBinder::SoundEffectListener::EffectAdded( dtCore::EffectManager* effectManager, dtCore::Effect* effect )
+{
+   mAddEffect( effectManager, effect );
+}
+
+void SoundEffectBinder::SoundEffectListener::EffectRemoved( dtCore::EffectManager* effectManager, dtCore::Effect* effect )
+{
+   mRemoveEffect( effectManager, effect );
+}
+

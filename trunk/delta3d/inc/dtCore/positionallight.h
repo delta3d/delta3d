@@ -21,8 +21,8 @@
 #ifndef DELTA_POSITIONAL_LIGHT
 #define DELTA_POSITIONAL_LIGHT
 
-#include "dtCore/light.h"
-#include "dtCore/transformable.h"
+#include <dtCore/light.h>
+#include <dtCore/transformable.h>
 
 namespace dtCore
 {
@@ -34,20 +34,25 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(PositionalLight)
          
-         public:
+   public:
       
       /**
-      *Constructor
-      *
-      *@param number: the light number, 0-7, this will overright any other light with that number
-      *@param name: a name for the light, defaulted to defaultPositonalLight
-      *@param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
-      */
+       * Constructor
+       *
+       * @param number: the light number, 0-7, this will overright any other light with that number
+       * @param name: a name for the light, defaulted to defaultPositonalLight
+       * @param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
+       */
       PositionalLight( int number, const std::string& name = "defaultPositonalLight", LightingMode mode = GLOBAL );
 
       ///Copy constructor from an osg::LightSource
       PositionalLight( const osg::LightSource& source, const std::string& name = "defaultPositonalLight", LightingMode mode = GLOBAL );
+
+   protected:
+
       virtual ~PositionalLight();
+
+   public:
 
       virtual osg::Node* GetOSGNode() { return mNode.get(); }
 

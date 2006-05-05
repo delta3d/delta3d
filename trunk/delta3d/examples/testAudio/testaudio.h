@@ -69,13 +69,13 @@ private:
    inline void PauseAllSounds( void );
    inline void RewindAllSounds( void );
 
-   inline void                    SetUpVisuals( void );
-   inline dtCore::Object*         LoadGfxFile( const char* fname );
-   inline dtCore::EffectManager*  LoadFxFile( const char* fname );
-   inline dtCore::ParticleSystem* LoadPSFile( const char* fname );
-   inline void                    InitInputDevices( void );
-   inline void                    SetUpCamera( void );
-   inline void                    MoveTheObject( unsigned int obj );
+   inline void                                     SetUpVisuals( void );
+   inline dtCore::RefPtr<dtCore::Object>           LoadGfxFile( const char* fname );
+   inline dtCore::RefPtr<dtCore::EffectManager>    LoadFxFile( const char* fname );
+   inline dtCore::RefPtr<dtCore::ParticleSystem>   LoadPSFile( const char* fname );
+   inline void                                     InitInputDevices( void );
+   inline void                                     SetUpCamera( void );
+   inline void                                     MoveTheObject( unsigned int obj );
 
    static void MakeSmoke( dtAudio::Sound* sound, void* param );
    static void StopSmoke( dtAudio::Sound* sound, void* param );

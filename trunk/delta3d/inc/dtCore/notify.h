@@ -21,33 +21,29 @@
 #ifndef DELTA_NOTIFY
 #define DELTA_NOTIFY
 
-
 #include <ostream>
-#include <iostream>
-
-#include "dtCore/export.h"
-#include "dtUtil/deprecationmgr.h"
-#include <dtUtil/log.h>
+#include <dtCore/export.h>
 
 namespace dtCore
 {
    
- /** Range of notify levels from DEBUG_INFO through to FATAL, ALWAYS
+  /** 
+   * Range of notify levels from DEBUG_INFO through to FATAL, ALWAYS
    * is reserved for forcing the absorption of all messages.  
    */
-   enum NotifySeverity {
-      ALWAYS=0,
-         FATAL=1,
-         WARN=2,
-         NOTICE=3,
-         INFO=4,
-         DEBUG_INFO=5
+   enum NotifySeverity
+   {
+      ALWAYS = 0,
+      FATAL = 1,
+      WARN = 2,
+      NOTICE = 3,
+      INFO = 4,
+      DEBUG_INFO = 5
    };
    
-
    ///Deprecated 8/23/05
-   extern DT_CORE_EXPORT void SetNotifyLevel( NotifySeverity severity, 
-                                         NotifySeverity osgSeverity = FATAL );
+   extern DT_CORE_EXPORT void SetNotifyLevel(   NotifySeverity severity, 
+                                                NotifySeverity osgSeverity = FATAL );
 
    ///Deprecated 8/23/05
    extern DT_CORE_EXPORT void Notify(NotifySeverity level, const char *fmt, ...);

@@ -123,7 +123,7 @@ namespace dtCore
           */
          void SetCenterOfGravity(const osg::Vec3& centerOfGravity);
 
-          /**
+         /**
           * Retrieves this object's center of gravity.
           *
           * @param dest the vector in which to place the center
@@ -155,17 +155,16 @@ namespace dtCore
          virtual void PostPhysicsStepUpdate();
 
          /**
-         * Modifies or cancels the specified contact joint definition
-         * according to the relationship between this object and the
-         * specified collider.  Should only be called by dtCore::Scene.
-         *
-         * @param contact the joint definition to modify
-         * @param collider the object with which this is colliding
-         * @return true to keep the contact joint as modified,
-         * false to cancel it
-         */
-         virtual bool FilterContact(dContact* contact, Transformable* collider)
-         { return true; }
+          * Modifies or cancels the specified contact joint definition
+          * according to the relationship between this object and the
+          * specified collider.  Should only be called by dtCore::Scene.
+          *
+          * @param contact the joint definition to modify
+          * @param collider the object with which this is colliding
+          * @return true to keep the contact joint as modified,
+          * false to cancel it
+          */
+         virtual bool FilterContact(dContact* contact, Transformable* collider) { return true; }
 
       private:
          
