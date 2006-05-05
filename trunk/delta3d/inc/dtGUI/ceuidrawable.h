@@ -67,48 +67,8 @@ namespace dtGUI
     */
    class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable
    {
-
-      ///private class that ties the GUI rendering to an OSG node
-
-      /** This is a private class that is used by the UIDrawable class.  To use,
-      * it needs to have a valid CUI_UI passed on the constructor.
-      */
-      class osgCEUIDrawable : public osg::Drawable
-      {
-      public:
-         osgCEUIDrawable(const osgCEUIDrawable& drawable,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY){}
-
-         osgCEUIDrawable(CEGUI::System *ui)
-            :  mUI(ui)
-         {
-            this->setSupportsDisplayList(false);
-            this->setUseDisplayList(false);
-         }
-
-         virtual ~osgCEUIDrawable() {}
-
-         virtual Object* cloneType() const { return new osgCEUIDrawable(mUI); }
-         virtual Object* clone(const osg::CopyOp& copyop) const { return new osgCEUIDrawable(*this,copyop); }        
-
-         virtual void drawImplementation(osg::State& state) const
-         { //tell the UI to update and to render
-            if (!mUI) return;       
-            mUI->getSingletonPtr()->renderGUI();
-         }
-
-      private:
-         CEGUI::System *mUI; ///< osgCEUIDrawable's pointer to CEGUI
-      };
-
    public:
       DECLARE_MANAGEMENT_LAYER(CEUIDrawable)
-
-      /** Default constructor
-        * @param width is the width of the window, only relevant upon window realization.
-        * @param height is the width of the window, only relevant upon window realization.
-        * @param sm is a derivation of BaseScriptModule, provide an instance of this to handle CEGUI::Event triggered by CEGUI::Windows.
-        */
-      CEUIDrawable(int width=1024, int height=768, dtGUI::BaseScriptModule* sm=0);
 
       ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
       CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm=0);
@@ -118,9 +78,9 @@ namespace dtGUI
       ///Get a pointer to the underlying CEGUI::System
       CEGUI::System* GetUI(void) {return mUI;}
 
-      ///Get a pointer to the underlying CEGUI::Renderer
-      ///\todo shouldn't this be dtGUI::Renderer return type?
-      //CEGUI::Renderer* GetRenderer() {return mRenderer;}
+      ///Get a pointer to the underlying Renderer
+      dtGUI::Renderer* GetRenderer() {return mRenderer;}
+      const dtGUI::Renderer* GetRenderer() const {return mRenderer;}
 
       /// Attaches the Delta3D child's OSG graphics Node
       bool AddChild(dtCore::DeltaDrawable *child);
@@ -142,6 +102,8 @@ namespace dtGUI
       
       bool GetAutoResizing() const {return mAutoResize;}
 
+      const CEGUIMouseListener* GetMouseListener() const { return mMouseListener.get(); }
+      const CEGUIKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
 
    protected: 
 
@@ -166,6 +128,37 @@ namespace dtGUI
       int mHeight;
 
    private:
+      /** Default constructor
+        * @param width is the width of the window, only relevant upon window realization.
+        * @param height is the width of the window, only relevant upon window realization.
+        * @param sm is a derivation of BaseScriptModule, provide an instance of this to handle CEGUI::Event triggered by CEGUI::Windows.
+        */
+      //CEUIDrawable(int width=1024, int height=768, dtGUI::BaseScriptModule* sm=0);
+      CEUIDrawable();
+      CEUIDrawable(int);
+      CEUIDrawable(int,int);
+      CEUIDrawable(int,int,dtGUI::BaseScriptModule*);
+
+      /// private class that ties the GUI rendering to an OSG node
+      /// This is a private class that is used by the UIDrawable class.
+      /// To use, it needs to have a valid CUI_UI passed on the constructor.
+      class osgCEUIDrawable : public osg::Drawable
+      {
+      public:
+         osgCEUIDrawable(const osgCEUIDrawable& drawable,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+         osgCEUIDrawable(CEGUI::System *ui);
+
+         virtual osg::Object* cloneType() const;
+         virtual osg::Object* clone(const osg::CopyOp& copyop) const;
+         virtual void drawImplementation(osg::State& state) const;
+
+      protected:
+         virtual ~osgCEUIDrawable();
+
+      private:
+         CEGUI::System *mUI; ///< osgCEUIDrawable's pointer to CEGUI
+      };
+
       ///setup the internals
       void Config();
 

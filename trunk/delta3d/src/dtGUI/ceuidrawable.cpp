@@ -17,32 +17,6 @@ using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(CEUIDrawable)
 
-/** The constructor.  Supply the width and height
-* of the parent Window.  The constructor will create a new CEUI and 
-* OpenGLRenderer,and create the OSG nodes.
-* The user must manually notify CEGUIDrawable if the parent DeltaWin changes
-* size.
-* @see SetRenderingSize()
-*/
-CEUIDrawable::CEUIDrawable(int width, int height, dtGUI::BaseScriptModule* sm):
-   DeltaDrawable("CEUIDrawable"),
-   mUI(0),
-   mRenderer(new dtGUI::Renderer()),
-   mScriptModule(sm),
-   mProjection(new osg::Projection(osg::Matrix::ortho2D(0,width,0,height))),
-   mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
-   mWindow(DeltaWin::GetInstance(0)),
-   mWidth(0),
-   mHeight(0),
-   mAutoResize(false),
-   mKeyboardListener(new CEGUIKeyboardListener()),
-   mMouseListener(new CEGUIMouseListener())
-{
-   ///\todo throw exception if win == NULL
-   Config();
-}
-
-
 /** The supplied DeltaWin will automatically be monitored for size change and pass the new
   * size onto the CEGUI Renderer.
   * @param win : The DeltaWin to monitor for size change
@@ -56,11 +30,33 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    mProjection(new osg::Projection()),
    mTransform(new osg::MatrixTransform(osg::Matrix::identity())),
    mWindow(win),
+   mWidth(0),
+   mHeight(0),
    mAutoResize(true),
    mKeyboardListener(new CEGUIKeyboardListener()),
    mMouseListener(new CEGUIMouseListener())
 {
-   ///\todo throw exception if win == NULL
+   // make the listener the first in the list
+   dtCore::Mouse* ms = mWindow->GetMouse();
+   if( ms->GetListeners().empty() )
+   {
+      ms->AddMouseListener( mMouseListener.get() );
+   }
+   else
+   {
+      ms->InsertMouseListener( ms->GetListeners().front() , mMouseListener.get() );
+   }
+
+   dtCore::Keyboard* kb = mWindow->GetKeyboard();
+   if( kb->GetListeners().empty() )
+   {
+      kb->AddKeyboardListener( mKeyboardListener.get() );
+   }
+   else
+   {
+      kb->InsertKeyboardListener( kb->GetListeners().front() , mKeyboardListener.get() );
+   }
+
    Config();
 }
 
@@ -86,9 +82,6 @@ void CEUIDrawable::Config()
    int x(0), y(0), w(0), h(0);
    mWindow->GetPosition(&x, &y, &w, &h);
    SetRenderingSize(w, h);
-
-   mWindow->GetMouse()->AddMouseListener( mMouseListener.get() ); 
-   mWindow->GetKeyboard()->AddKeyboardListener( mKeyboardListener.get() );
 
    if( mScriptModule )
       new CEGUI::System(mRenderer,mScriptModule);
@@ -215,4 +208,26 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
    mHeight = height;
    mRenderer->setDisplaySize( CEGUI::Size(width, height) );
    mMouseListener->SetWindowSize( width , height );
+}
+
+// implementation details for private class
+CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(const CEUIDrawable::osgCEUIDrawable& drawable,const osg::CopyOp& copyop)
+{
+}
+
+CEUIDrawable::osgCEUIDrawable::osgCEUIDrawable(CEGUI::System *ui) :  mUI(ui)
+{
+   this->setSupportsDisplayList(false);
+   this->setUseDisplayList(false);
+}
+
+CEUIDrawable::osgCEUIDrawable::~osgCEUIDrawable() {}
+
+osg::Object* CEUIDrawable::osgCEUIDrawable::cloneType() const { return new osgCEUIDrawable(mUI); }
+osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) const { return new osgCEUIDrawable(*this,copyop); }        
+
+void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
+{ //tell the UI to update and to render
+   if (!mUI) return;       
+   mUI->getSingletonPtr()->renderGUI();
 }

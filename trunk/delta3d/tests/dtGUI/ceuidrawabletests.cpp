@@ -20,6 +20,7 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 
+#include <dtGUI/ceuidrawable.h>
 #include <dtCore/keyboard.h>
 #include <CEGUI/CEGUIInputEvent.h>
 #include <dtGUI/ceguikeyboardlistener.h>
@@ -97,7 +98,10 @@ void CEUIDrawableTests::TestInput()
    dtCore::RefPtr<dtCore::Keyboard> kb = app->GetKeyboard();
    CPPUNIT_ASSERT_EQUAL( 2, static_cast<int>(kb->GetListeners().size()) );  // better be application & gui listeners
 
-   ///\todo CHECK THE ORDER OF THE LISTENERS!  GUI SHOULD BE FIRST
+   // CHECK THE ORDER OF THE LISTENERS!  GUI SHOULD BE FIRST
+   dtGUI::GUIManager* gmgr = app->GetGUIManager();
+   CPPUNIT_ASSERT_EQUAL(static_cast<const dtCore::KeyboardListener*>(gmgr->GetGUIDrawable()->GetKeyboardListener()),
+                        kb->GetListeners().front().get() );
 
    KeyScanObserver obs(CEGUI::Key::N);
    obs.ResetHit();

@@ -47,16 +47,7 @@ namespace dtCore
    {
          DECLARE_MANAGEMENT_LAYER(Mouse)
 
-         friend class DeltaWin;
-
-      protected:
-
-         /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
+   protected:
 
          /**
           * Destructor.
@@ -64,6 +55,12 @@ namespace dtCore
          virtual ~Mouse();
 
       public:
+         /**
+          * Constructor.
+          *
+          * @param name the instance name
+          */
+         Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
 
          /// Mouse buttons.
          enum MouseButton
@@ -111,6 +108,9 @@ namespace dtCore
           */
          void AddMouseListener(MouseListener* mouseListener);
 
+         /// Inserts the listener into the list at a position BEFORE pos.
+         void InsertMouseListener(const MouseListenerList::value_type& pos, MouseListener* ml);
+
          /**
           * Removes a listener for mouse events.
           *
@@ -125,9 +125,9 @@ namespace dtCore
 
          // These are called ButtonDown & ButtonUp instead of ButtonPress and ButtonRelease
          // to avoid a define clash with X11's X.h
-         virtual bool ButtonDown( float x, float y, unsigned int button );
-         virtual bool DoubleButtonDown( float x, float y , unsigned int button );
-         virtual bool ButtonUp( float x, float y, unsigned int button);
+         virtual bool ButtonDown( float x, float y, MouseButton button );
+         virtual bool DoubleButtonDown( float x, float y , MouseButton button );
+         virtual bool ButtonUp( float x, float y, MouseButton button);
 
          const MouseListenerList& GetListeners() const { return mMouseListeners; }
 

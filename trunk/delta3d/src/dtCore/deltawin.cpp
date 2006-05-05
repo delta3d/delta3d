@@ -36,17 +36,82 @@ void DeltaWin::InputCallback::passiveMouseMotion(float x, float y)
 
 void DeltaWin::InputCallback::buttonPress(float x, float y, unsigned int button)
 {
-   mMouse->ButtonDown(x, y, button);
+   // an unknown button number defaults to LeftButton.
+   Mouse::MouseButton mb(Mouse::LeftButton);
+
+   // prepare the value from Producer to be what Delta3D is expecting.
+   if( button > 0 )
+   {
+      button -= 1;
+   }
+
+   switch( button )
+   {
+   case Mouse::RightButton:
+      {
+         mb = Mouse::RightButton;
+      } break;
+
+   case Mouse::MiddleButton:
+      {
+         mb = Mouse::MiddleButton;
+      } break;
+   }
+   mMouse->ButtonDown(x, y, mb);
 }
 
 void DeltaWin::InputCallback::doubleButtonPress(float x, float y, unsigned int button)
 {
-   mMouse->DoubleButtonDown(x, y, button);
+   // an unknown button number defaults to LeftButton.
+   Mouse::MouseButton mb(Mouse::LeftButton);
+
+   // prepare the value from Producer to be what Delta3D is expecting.
+   if( button > 0 )
+   {
+      button -= 1;
+   }
+
+   switch( button )
+   {
+   case Mouse::RightButton:
+      {
+         mb = Mouse::RightButton;
+      } break;
+
+   case Mouse::MiddleButton:
+      {
+         mb = Mouse::MiddleButton;
+      } break;
+   }
+
+   mMouse->DoubleButtonDown(x, y, mb);
 }
 
 void DeltaWin::InputCallback::buttonRelease(float x, float y, unsigned int button)
 {
-   mMouse->ButtonUp(x, y, button);
+   // an unknown button number defaults to LeftButton.
+   Mouse::MouseButton mb(Mouse::LeftButton);
+
+   // prepare the value from Producer to be what Delta3D is expecting.
+   if( button > 0 )
+   {
+      button -= 1;
+   }
+
+   switch( button )
+   {
+   case Mouse::RightButton:
+      {
+         mb = Mouse::RightButton;
+      } break;
+
+   case Mouse::MiddleButton:
+      {
+         mb = Mouse::MiddleButton;
+      } break;
+   }
+
+   mMouse->ButtonUp(x, y, mb);
 }
 
 void DeltaWin::InputCallback::keyPress(Producer::KeyCharacter kc)

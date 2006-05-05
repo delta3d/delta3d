@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/keyboard.h>
+#include <algorithm>
 
 using namespace dtCore;
 
@@ -156,6 +157,12 @@ bool Keyboard::GetKeyState(Producer::KeyboardKey key)
 void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
 {
    mKeyboardListeners.push_back( keyboardListener );
+}
+
+void Keyboard::InsertKeyboardListener(const KeyboardListenerList::value_type& pos, KeyboardListener* kbl)
+{
+   KeyboardListenerList::iterator iter = std::find( mKeyboardListeners.begin() , mKeyboardListeners.end() , pos );
+   mKeyboardListeners.insert(iter,kbl);
 }
 
 /**
