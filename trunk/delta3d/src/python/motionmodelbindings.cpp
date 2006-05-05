@@ -14,8 +14,8 @@ void initMotionModelBindings()
    MotionModel* (*MotionModelGI1)(int) = &MotionModel::GetInstance;
    MotionModel* (*MotionModelGI2)(std::string) = &MotionModel::GetInstance;
 
-   Transformable* (MotionModel::*GetTransformable1)() = &MotionModel::GetTarget;
-   const Transformable* (MotionModel::*GetTransformable2)() const = &MotionModel::GetTarget;
+   Transformable* (MotionModel::*GetTarget1)() = &MotionModel::GetTarget;
+   const Transformable* (MotionModel::*GetTarget2)() const = &MotionModel::GetTarget;
 
    class_<MotionModel, bases<Base>, dtCore::RefPtr<MotionModel> >("MotionModel", init<optional<std::string> >())
       .def("GetInstanceCount", &MotionModel::GetInstanceCount)
