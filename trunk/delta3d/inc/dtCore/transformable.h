@@ -29,17 +29,6 @@
 #include <dtCore/transform.h>
 #include <dtUtil/enumeration.h>
 
-// MSDN hack to export STL objects.
-//#ifdef WIN32                                       
-//#   pragma warning (disable : 4231)                   
-//#   ifndef DT_CORE_EXPORT                              
-//#      define EXPIMP_TEMPLATE extern                  
-//#   else                                              
-//#      define EXPIMP_TEMPLATE                         
-//#   endif //DT_CORE_EXPORT                                             
-//EXPIMP_TEMPLATE template class DT_CORE_EXPORT std::vector<float>;    
-//#endif //WIN32                                            
-
 namespace dtCore
 {
    ///Anything that can be located and moved in 3D space
@@ -140,174 +129,178 @@ namespace dtCore
       bool GetNormalRescaling() const;
 
       /**
-      * Returns the ODE geometry identifier associated with this
-      * object.
-      *
-      * @return the object's geometry identifier
-      */
+       * Returns the ODE geometry identifier associated with this
+       * object.
+       *
+       * @return the object's geometry identifier
+       */
       dGeomID GetGeomID() const { return mGeomID; }
 
       /**
-      * Returns the type of collision geometry associated with this
-      * object.
-      *
-      * @return the object's collision geometry type
-      */
+       * Returns the type of collision geometry associated with this
+       * object.
+       *
+       * @return the object's collision geometry type
+       */
       CollisionGeomType* GetCollisionGeomType() const;
 
       /**
-      * Returns the dimensions of collision geometry associated with this
-      * object. Note: This is not const function since it requires an update
-      * to the underlying ODE geometry if we are out of sync with OSG.
-      *
-      * @param dimensions The dimenstions of the object's collision geometry.
-      * What is filled into the vector is dependent on Collision type.
-      * CUBE     : ( lx, ly, lz )
-      * SPHERE   : ( radius )
-      * CYLINDER : ( radius, length )
-      * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
-      */
+       * Returns the dimensions of collision geometry associated with this
+       * object. Note: This is not const function since it requires an update
+       * to the underlying ODE geometry if we are out of sync with OSG.
+       *
+       * @param dimensions The dimenstions of the object's collision geometry.
+       * What is filled into the vector is dependent on Collision type.
+       * CUBE     : ( lx, ly, lz )
+       * SPHERE   : ( radius )
+       * CYLINDER : ( radius, length )
+       * RAY      : ( length, start_x, start_y, start_z, dir_x, dir_y, dir_z )
+       */
       void GetCollisionGeomDimensions( std::vector<float>& dimensions );
 
       /**
-      * Sets whether or not collisions detection will be performed.
-      * Note: This does not handle collisions in any way, the user
-      * is still responsible for implementing collision response
-      * (or just use Physical). Collision detected is enabled by default
-      * if a collision shape has been set.
-      *
-      * @param enabled true if the Transformable will perform collision detection
-      */
+       * Sets whether or not collisions detection will be performed.
+       * Note: This does not handle collisions in any way, the user
+       * is still responsible for implementing collision response
+       * (or just use Physical). Collision detected is enabled by default
+       * if a collision shape has been set.
+       *
+       * @param enabled true if the Transformable will perform collision detection
+       */
       void SetCollisionDetection( bool enabled );
 
       /**
-      * Gets whether or not collisions with other Transformables
-      * will be detected.
-      *
-      * @return true if the Transformable will perform collision detection
-      */
+       * Gets whether or not collisions with other Transformables
+       * will be detected.
+       *
+       * @return true if the Transformable will perform collision detection
+       */
       bool GetCollisionDetection() const;
 
       /**
-      * Sets this object's collision geometry to the specified ODE
-      * geom.
-      *
-      * @param geom the new collision geom
-      */
+       * Sets this object's collision geometry to the specified ODE
+       * geom.
+       *
+       * @param geom the new collision geom
+       */
       void SetCollisionGeom(dGeomID geom);
 
       /**
-      * Sets this object's collision geometry to a sphere with the
-      * specified radius.
-      *
-      * @param radius the radius of the collision sphere
-      */
+       * Sets this object's collision geometry to a sphere with the
+       * specified radius.
+       *
+       * @param radius the radius of the collision sphere
+       */
       void SetCollisionSphere(float radius);
 
       /**
-      * Sets this object's collision geometry to a sphere with
-      * radius derived from the specified OpenSceneGraph node.
-      *
-      * @param node the node from which to obtain the sphere radius
-      * (if 0, attempt to use own node)
-      */
+       * Sets this object's collision geometry to a sphere with
+       * radius derived from the specified OpenSceneGraph node.
+       *
+       * @param node the node from which to obtain the sphere radius
+       * (if 0, attempt to use own node)
+       */
       void SetCollisionSphere(osg::Node* node = 0);
 
       /**
-      * Sets this object's collision geometry to a box with the
-      * specified dimensions.
-      *
-      * @param lx the length of the box in the x direction
-      * @param ly the length of the box in the y direction
-      * @param lz the length of the box in the z direction
-      */
+       * Sets this object's collision geometry to a box with the
+       * specified dimensions.
+       *
+       * @param lx the length of the box in the x direction
+       * @param ly the length of the box in the y direction
+       * @param lz the length of the box in the z direction
+       */
       void SetCollisionBox(float lx, float ly, float lz);
 
       /**
-      * Sets this object's collision geometry to a box with parameters
-      * derived from the specified OpenSceneGraph node.
-      *
-      * @param node the node from which to obtain the box parameters
-      * (if 0, attempt to use own node)
-      */
+       * Sets this object's collision geometry to a box with parameters
+       * derived from the specified OpenSceneGraph node.
+       *
+       * @param node the node from which to obtain the box parameters
+       * (if 0, attempt to use own node)
+       */
       void SetCollisionBox(osg::Node* node = 0);
 
       /**
-      * Sets this object's collision geometry to a capped cylinder
-      * (oriented along the z axis) with the specified radius and length.
-      *
-      * @param radius the radius of the cylinder
-      * @param length the length of the cylinder
-      */
+       * Sets this object's collision geometry to a capped cylinder
+       * (oriented along the z axis) with the specified radius and length.
+       *
+       * @param radius the radius of the cylinder
+       * @param length the length of the cylinder
+       */
       void SetCollisionCappedCylinder(float radius, float length);
 
       /**
-      * Sets this object's collision geometry to a capped cylinder with
-      * parameters derived from the given OpenSceneGraph node.
-      *
-      * @param node the node from which to obtain the cylinder parameters
-      * (if 0, attempt to use own node)
-      */
+       * Sets this object's collision geometry to a capped cylinder with
+       * parameters derived from the given OpenSceneGraph node.
+       *
+       * @param node the node from which to obtain the cylinder parameters
+       * (if 0, attempt to use own node)
+       */
       void SetCollisionCappedCylinder(osg::Node* node = 0);
 
       /**
-      * Sets this object's collision geometry to a ray (along the z axis)
-      * with the specified length.
-      *
-      * @param length the length of the ray
-      */
+       * Sets this object's collision geometry to a ray (along the z axis)
+       * with the specified length.
+       *
+       * @param length the length of the ray
+       */
       void SetCollisionRay(float length);
 
       /**
-      * Sets this object's collision geometry to a triangle mesh derived
-      * from the given OpenSceneGraph node.
-      *
-      * @param node the node from which to obtain the mesh data
-      * (if 0, attempt to use own node)
-      */
+       * Sets this object's collision geometry to a triangle mesh derived
+       * from the given OpenSceneGraph node.
+       *
+       * @param node the node from which to obtain the mesh data
+       * (if 0, attempt to use own node)
+       */
       void SetCollisionMesh(osg::Node* node = 0);
 
       /**
-      * Removes any collision geometry specified for this object.
-      */
+       * Removes any collision geometry specified for this object.
+       */
       void ClearCollisionGeometry();
 
       /**
-      * Updates the state of this object just before a physical
-      * simulation step.  Should only be called by dtCore::Scene.
-      * The default implementation updates the state of the body
-      * to reflect any user-applied transformation.
-      */
+       * Updates the state of this object just before a physical
+       * simulation step.  Should only be called by dtCore::Scene.
+       * The default implementation updates the state of the body
+       * to reflect any user-applied transformation.
+       */
       virtual void PrePhysicsStepUpdate();
 
       /**
-      * Modifies or cancels the specified contact joint definition
-      * according to the relationship between this object and the
-      * specified collider.  Should only be called by dtCore::Scene.
-      *
-      * @param contact the joint definition to modify
-      * @param collider the object with which this is colliding
-      * @return true to keep the contact joint as modified,
-      * false to cancel it
-      */
-      virtual bool FilterContact(dContact* contact, Transformable* collider)
-      { return false; }
+       * Modifies or cancels the specified contact joint definition
+       * according to the relationship between this object and the
+       * specified collider.  Should only be called by dtCore::Scene.
+       *
+       * This is false by default since most things that move should not
+       * cause collisions (Lights, Isector's, Camera, etc.)
+       *
+       * @param contact the joint definition to modify
+       * @param collider the object with which this is colliding
+       * @return true to keep the contact joint as modified,
+       * false to cancel it
+       */
+      virtual bool FilterContact(dContact* contact, Transformable* collider) { return false; }
 
       /**
-      * Updates the state of this object just after a physical
-      * simulation step.  Should only be called by dtCore::Scene.
-      * The default implementation here does nothing. Physical
-      * overrides it and copies the new object position into the 
-      * user-accessible transformation.
-      */
+       * Updates the state of this object just after a physical
+       * simulation step.  Should only be called by dtCore::Scene.
+       * The default implementation here does nothing. Physical
+       * overrides it and copies the new object position into the 
+       * user-accessible transformation.
+       */
       virtual void PostPhysicsStepUpdate() {}
 
-      /** Enable or disable the rendering of the collision geometry.
-      *  This will draw a purple outline of shape the collision
-      *  detection routine is using.
-      *  @param enable If true, the scene will now render the collision
-      *  geomertry.
-      */
+      /** 
+       * Enable or disable the rendering of the collision geometry.
+       * This will draw a purple outline of shape the collision
+       * detection routine is using.
+       *
+       * @param enable If true, the scene will now render the collision
+       * geomertry.
+       */
       void RenderCollisionGeometry( bool enable = true );
 
       /** 
@@ -323,7 +316,8 @@ namespace dtCore
        */
       virtual void AddedToScene( Scene* scene );
       
-      /** Set the category bits of this collision geom. Here's the defaults:
+      /** 
+       * Set the category bits of this collision geom. Here's the defaults:
        *
        * dtABC::ProximityTrigger  0
        *
@@ -356,7 +350,8 @@ namespace dtCore
          return dGeomGetCategoryBits(mGeomID);
       }
       
-      /** Set the collide bits of this collision geom. If you want this geom to
+      /** 
+       * Set the collide bits of this collision geom. If you want this geom to
        * collide with a geom of category bit 00000010 for example, make sure these
        * collide bits contain 00000010. The UNSIGNED_BIT macro in dtCore/macros.h
        * comes in handy here. UNSIGNED_BIT(4) = 00000100
@@ -374,37 +369,37 @@ namespace dtCore
    protected:
       
       /**
-      * The last geometry transform reported to ODE.
-      */
+       * The last geometry transform reported to ODE.
+       */
       Transform mGeomTransform; 
 
    private:
 
       /**
-      * The ODE geometry identifier of the geometry transform.
-      */
+       * The ODE geometry identifier of the geometry transform.
+       */
       dGeomID mGeomID;
 
       /**
-      * The original geometry set in SetCollisionShape functions.
-      * The scale values in our matrix transform will be applied to
-      * this value to modify the shape of mGeomID.
-      */
+       * The original geometry set in SetCollisionShape functions.
+       * The scale values in our matrix transform will be applied to
+       * this value to modify the shape of mGeomID.
+       */
       dGeomID mOriginalGeomID;
 
       /**
-      * The ODE triangle mesh data identifier, if any.
-      */
+       * The ODE triangle mesh data identifier, if any.
+       */
       dTriMeshDataID mTriMeshDataID;
 
       /**
-      * The heap-allocated array of mesh vertices.
-      */
+       * The heap-allocated array of mesh vertices.
+       */
       dVector3* mMeshVertices;
 
       /**
-      * The heap-allocated array of mesh indices.
-      */
+       * The heap-allocated array of mesh indices.
+       */
       int* mMeshIndices;
 
       /**
@@ -428,10 +423,10 @@ namespace dtCore
       {}
 
       /**
-      * Visits the specified geode.
-      *
-      * @param node the geode to visit
-      */
+       * Visits the specified geode.
+       *
+       * @param node the geode to visit
+       */
       virtual void apply(osg::Geode& node)
       {
          osg::NodePath nodePath = getNodePath();
@@ -459,8 +454,8 @@ namespace dtCore
       }
 
       /**
-      * The aggregate bounding box.
-      */
+       * The aggregate bounding box.
+       */
       osg::BoundingBox mBoundingBox;
    };
 };

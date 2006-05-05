@@ -161,9 +161,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
       0, GL_TEXTURE_2D, GL_TRUE
    );
    
-   mNode->setCullCallback(
-      new InfiniteTerrainCallback(this)
-   );
+   mNode->setCullCallback( new InfiniteTerrainCallback(this) );
    
    if(dInfiniteTerrainClass == 0)
    {
@@ -182,7 +180,12 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
    
    *(InfiniteTerrain**)dGeomGetClassData(geom) = this;
    
-   SetCollisionGeom(geom);
+   SetCollisionGeom( geom );
+
+   // This is normally set to true whenever a collision shape is set.
+   // But since we are creating our own geom class here, we must enable
+   // it manually.
+   SetCollisionDetection( true );
    
    RegisterInstance(this);
 
