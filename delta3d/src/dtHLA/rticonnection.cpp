@@ -70,8 +70,9 @@ const osg::Node::NodeMask entityMask = 0x01;
  */
 RTIConnection::RTIConnection(std::string name)
    : Base(name),
-     mScene(NULL),
-     mEffectManager(NULL),
+     mEffectListener(0),
+     mScene(0),
+     mEffectManager(0),
      mGlobeModeEnabled(false),
      mUTMModeEnabled(false),
      mGlobeRadius(100.0f),
@@ -79,6 +80,8 @@ RTIConnection::RTIConnection(std::string name)
      mGroundClampMode(NO_CLAMP),
      mEffectClampMode(true)
 {
+   mEffectListener = new RTIEffectListener( RTIEffectListener::EffectFunctor( this, &RTIConnection::EffectAdded ) );
+
    RegisterInstance(this);
    
    AddSender(dtCore::System::Instance());
@@ -537,14 +540,14 @@ void RTIConnection::SetEffectManager(dtCore::EffectManager* effectManager)
 {
    if(mEffectManager != NULL)
    {
-      mEffectManager->RemoveEffectListener(this);
+      mEffectManager->RemoveEffectListener( mEffectListener.get() );
    }
 
    mEffectManager = effectManager;
 
    if(mEffectManager != NULL)
    {
-      mEffectManager->AddEffectListener(this);
+      mEffectManager->AddEffectListener( mEffectListener.get() );
    }
 }
 
@@ -1377,6 +1380,24 @@ void RTIConnection::ClampToGround(Entity* entity)
       
       entity->SetTransform(&transform, dtCore::Transformable::REL_CS);
    }
+}
+
+RTIConnection::RTIEffectListener::RTIEffectListener( const EffectFunctor& effectFunctor ) : dtCore::EffectListener(),
+   mEffectFunctor( effectFunctor )
+{
+}
+
+RTIConnection::RTIEffectListener::~RTIEffectListener()
+{
+}
+
+void RTIConnection::RTIEffectListener::EffectAdded( dtCore::EffectManager* effectManager, dtCore::Effect* effect )
+{
+   mEffectFunctor( effectManager, effect );
+}
+
+void RTIConnection::RTIEffectListener::EffectRemoved( dtCore::EffectManager* effectManager, dtCore::Effect* effect )
+{
 }
 
 /**

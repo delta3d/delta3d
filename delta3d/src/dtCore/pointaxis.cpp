@@ -1,4 +1,4 @@
-#include <cassert>
+#include <dtCore/pointaxis.h>
 
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -6,9 +6,7 @@
 #include <osg/MatrixTransform>
 #include <osgText/Text>
 
-#include "dtCore/pointaxis.h"
-#include "dtCore/scene.h"
-
+#include <cassert>
 
 using namespace   dtCore;
 IMPLEMENT_MANAGEMENT_LAYER(PointAxis)

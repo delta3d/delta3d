@@ -4,22 +4,19 @@
 
 #include <dtUtil/mathdefines.h>
 #include <dtCore/infiniteterrain.h>
-#include <dtCore/scene.h>
 #include <dtUtil/matrixutil.h>
 
-#include <osg/CullFace>
 #include <osg/Drawable>
 #include <osg/Geode>
 #include <osg/Geometry>
-#include <osg/Material>
 #include <osg/Plane>
 #include <osg/TexEnv>
-#include <osg/TexGen>
 #include <osg/Texture2D>
 #include <osg/PrimitiveSet>
 #include <osgDB/ReadFile>
 
-using namespace dtCore;
+namespace dtCore
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(InfiniteTerrain)
 
@@ -87,12 +84,10 @@ class dtCore::InfiniteTerrainCallback : public osg::NodeCallback
       InfiniteTerrain* mTerrain;
 };
 
-
 /**
  * The ODE InfiniteTerrain class identifier.
  */
 static int dInfiniteTerrainClass = 0;
-
 
 /**
  * Constructor.
@@ -848,4 +843,6 @@ int InfiniteTerrain::AABBTest(dGeomID o1, dGeomID o2, dReal aabb2[6])
    {
       return 0;
    }
+}
+
 }

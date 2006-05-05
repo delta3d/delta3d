@@ -21,16 +21,15 @@
 #ifndef DELTA_SPOT_LIGHT
 #define DELTA_SPOT_LIGHT
 
-#include "dtCore/positionallight.h"
-
-#include <iostream>
+#include <dtCore/positionallight.h>
 
 namespace dtCore
 {
-   /** A light that has a position in the scene and also spotlight properties.
-   * By maniupulating the SpotCutoff and SpotExponent you can get lights that
-   * look like flashlights, lamps, or even pseudo-laser beams.
-   */
+   /** 
+    * A light that has a position in the scene and also spotlight properties.
+    * By maniupulating the SpotCutoff and SpotExponent you can get lights that
+    * look like flashlights, lamps, or even pseudo-laser beams.
+    */
    class DT_CORE_EXPORT SpotLight : public PositionalLight
    {
       DECLARE_MANAGEMENT_LAYER(SpotLight)
@@ -38,34 +37,33 @@ namespace dtCore
    public:
 
       /**
-      *Constructor
-      *
-      *@param number: the light number, 0-7, this will overright any other light with that number
-      *@param name: a name for the light, defaulted to defaultPositonalLight
-      *@param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
-      */
+       * Constructor
+       *
+       * @param number: the light number, 0-7, this will overright any other light with that number
+       * @param name: a name for the light, defaulted to defaultPositonalLight
+       * @param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
+       */
       SpotLight( int number, const std::string& name = "defaultSpotLight", LightingMode mode = GLOBAL );
 
       ///Copy constructor from an osg::LightSource
       SpotLight( const osg::LightSource& source, const std::string& name = "defaultSpotLight", LightingMode mode = GLOBAL  );
+
+   protected:
+
       virtual ~SpotLight();
 
-      ///SpotCutoff is half the angle the SpotLight's cone, default is 22.5
-      void SetSpotCutoff( float spot_cutoff )
-      { mLightSource->getLight()->setSpotCutoff( spot_cutoff ); }
+   public:
 
-      float GetSpotCutoff() const
-      { return mLightSource->getLight()->getSpotCutoff(); }
+      ///SpotCutoff is half the angle the SpotLight's cone, default is 22.5
+      void SetSpotCutoff( float spot_cutoff );
+
+      float GetSpotCutoff() const;
 
       ///The higher the SpotExponent, the more concentrated the light will be in the center of the cone, default is 1.0
-      void SetSpotExponent( float spot_exponent )
-      { mLightSource->getLight()->setSpotExponent( spot_exponent ); }
+      void SetSpotExponent( float spot_exponent );
 
-      float GetSpotExponent() const
-      { return mLightSource->getLight()->getSpotExponent(); }
-
+      float GetSpotExponent() const;
    };
-
 }
 
 #endif // DELTA_SPOT_LIGHT

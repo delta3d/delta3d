@@ -47,11 +47,9 @@ namespace dtCore
    class DT_CORE_EXPORT InputDevice : public Base
    {
       friend class Button;
-      friend class Axis;
-      
+      friend class Axis;      
       
       DECLARE_MANAGEMENT_LAYER(InputDevice)
-
 
       public:
 
@@ -62,10 +60,14 @@ namespace dtCore
           */
          InputDevice(const std::string& name = "InputDevice");
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~InputDevice();
+
+      public:
 
          /**
           * Returns the number of features (buttons, axes, etc.) contained in 
@@ -208,10 +210,14 @@ namespace dtCore
           */
          InputDeviceFeature(InputDevice* owner, const std::string& description);
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~InputDeviceFeature() = 0;
+
+      public:
 
          /**
           * Returns a pointer to the owner of this feature.
@@ -233,7 +239,6 @@ namespace dtCore
           * @return a description of this feature
           */
          std::string GetDescription() const;
-
 
       private:
 
@@ -263,6 +268,12 @@ namespace dtCore
           * @param description a description of this button
           */
          Button(InputDevice* owner, const std::string& description);
+
+      protected:
+
+         virtual ~Button() {}
+
+      public:
 
          /**
           * Sets the state of this button.
@@ -345,6 +356,12 @@ namespace dtCore
           */
          Axis(InputDevice* owner, const std::string& description);
 
+      protected:
+
+         virtual ~Axis() {}
+
+      public:
+
          /**
           * Sets the state of this axis.  The delta value is used to
           * indicate stateless motion, such as mouse scrolling.
@@ -375,7 +392,6 @@ namespace dtCore
           */
          void RemoveAxisListener(AxisListener* axisListener);
 
-
       private:
 
          /**
@@ -388,7 +404,6 @@ namespace dtCore
           */
          std::set<AxisListener*> mAxisListeners;
    };
-
 
    /**
     * An interface for objects interested in changes to axes.

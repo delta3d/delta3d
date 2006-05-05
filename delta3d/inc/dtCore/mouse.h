@@ -45,24 +45,26 @@ namespace dtCore
     */
    class DT_CORE_EXPORT Mouse : public InputDevice
    {
-      DECLARE_MANAGEMENT_LAYER(Mouse)
+         DECLARE_MANAGEMENT_LAYER(Mouse)
 
-      friend class DeltaWin;
+         friend class DeltaWin;
 
-   protected:
-      /**
-      * Constructor.
-      *
-      * @param name the instance name
-      */
-      Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
+      protected:
 
-      /**
-      * Destructor.
-      */
-      virtual ~Mouse();
+         /**
+          * Constructor.
+          *
+          * @param name the instance name
+          */
+         Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
+
+         /**
+          * Destructor.
+          */
+         virtual ~Mouse();
 
       public:
+
          /// Mouse buttons.
          enum MouseButton
          {
@@ -117,7 +119,7 @@ namespace dtCore
          void RemoveMouseListener(MouseListener* mouseListener);
 
          // Producer callback methods
-         virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion );
+         virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion sm );
          virtual bool MouseMotion( float x, float y);
          virtual bool PassiveMouseMotion( float x, float y);
 
@@ -135,15 +137,14 @@ namespace dtCore
          dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
    };
 
-
    /**
     * An interface for objects interested in mouse events.
     */
    class DT_CORE_EXPORT MouseListener : public osg::Referenced
    {   
-      public:
+      protected:
          virtual ~MouseListener() {}
-
+      public:
          /**
           * Called when a button is pressed.
           *

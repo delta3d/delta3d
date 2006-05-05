@@ -30,32 +30,34 @@
 
 namespace dtCore
 {
-
-   ///A visual Object with physical properties
-
-   /** The Object represents a virtual object which is renderable, movable,
-    *  and has physical properties.
-    *
+   /** 
+    * A visual Object with physical properties. The Object represents a 
+    * virtual object which is renderable, movable, and has physical properties.
     */
    class DT_CORE_EXPORT Object : public Loadable, public Physical
    {
       DECLARE_MANAGEMENT_LAYER(Object)
          
       public:
+      
          Object(const std::string& name = "Object");
+
+      protected:
+
          virtual ~Object();
+
+      public:
                   
          ///Load a file from disk
          virtual osg::Node* LoadFile(const std::string& filename, bool useCache = true);
 
          ///recenters the object geometry on LoadFile
-         void RecenterGeometryUponLoad( const bool enable = true )
-         { mRecenterGeometry = enable; }
+         void RecenterGeometryUponLoad( const bool enable = true ) { mRecenterGeometry = enable; }
 
-   private:
+      private:
+
           bool mRecenterGeometry;///<if we want to recenter the geometry of the object about the origin upon load
    };   
 };
-
 
 #endif // DELTA_OBJECT

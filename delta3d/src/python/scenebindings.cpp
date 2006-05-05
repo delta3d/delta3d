@@ -21,8 +21,10 @@ void initSceneBindings()
    void (Scene::*GetGravity1)(osg::Vec3&) const = &Scene::GetGravity;
    void (Scene::*GetGravity2)(float*, float*, float*) const = &Scene::GetGravity;
 
-   Light* (Scene::*GetLight1)(const int) const = &Scene::GetLight;
-   Light* (Scene::*GetLight2)(const std::string&) const = &Scene::GetLight;
+   Light* (Scene::*GetLight1)(int) = &Scene::GetLight;
+   const Light* (Scene::*GetLight2)(int) const = &Scene::GetLight;
+   Light* (Scene::*GetLight3)(const std::string&) = &Scene::GetLight;
+   const Light* (Scene::*GetLight4)(const std::string&) const = &Scene::GetLight;
    
    scope sceneScope = class_<Scene, bases<Base>, dtCore::RefPtr<Scene> >("Scene", init<optional<const std::string&,bool> >())
       .def("GetInstanceCount", &Scene::GetInstanceCount)
@@ -46,6 +48,8 @@ void initSceneBindings()
       .def("GetPhysicsStepSize", &Scene::GetPhysicsStepSize)
       .def("GetLight", GetLight1, return_internal_reference<>())
       .def("GetLight", GetLight2, return_internal_reference<>())
+      .def("GetLight", GetLight3, return_internal_reference<>())
+      .def("GetLight", GetLight4, return_internal_reference<>())
       .def("UseSceneLight", &Scene::UseSceneLight)
       .def("GetDrawableIndex", &Scene::GetDrawableIndex)
       .def("GetNumberOfAddedDrawable", &Scene::GetNumberOfAddedDrawable)

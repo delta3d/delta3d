@@ -21,25 +21,24 @@
 #ifndef DELTA_POINTAXIS
 #define DELTA_POINTAXIS
 
-#include <string>
+#include <dtCore/refptr.h>
 
-#include "dtCore/refptr.h"
 #include <osg/Vec3>
 #include <osg/Vec4>
-#include <osg/Geode>
-#include <osg/Switch>
+
 #include <osg/MatrixTransform>
 #include <dtCore/macros.h>
 #include <dtCore/transformable.h>
-//#include <dtCore/deltadrawable.h>
 
+#include <string>
 
-
-#if   !defined(BIT)
-#define  BIT(a)   (1L<<a)
-#endif
-
-
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Geode;
+   class Switch;
+}
+/// @endcond
 
 namespace dtCore
 {
@@ -121,8 +120,12 @@ namespace dtCore
       public:
          /// default constructor - no parameters
                               PointAxis();
+      protected:
+
          /// destructor
          virtual              ~PointAxis();
+
+      public:
 
          /// enable rendering axes, labels and types of labels
          virtual  void        Enable( int f );
@@ -160,18 +163,18 @@ namespace dtCore
          virtual  void        SetLabelColor( AXIS a, const osg::Vec4 c );
 
       private:
-         inline   void        ctor( void );
-         inline   void        AxesSetup( void );
+         inline   void        ctor();
+         inline   void        AxesSetup();
          inline   void        LabelSetup( osg::Geode* g, const char* l, osg::Vec3 p, osg::Vec4 c, float s = 1.0f );
 
       private:
-                  std::string                         mLabel[NUMAXES];     ///< lable for each axis
-                  std::string                         mCLabel[NUMAXES];    ///< user labels for each axis
-                  AXISCOLOR                           mColorID[NUMAXES];   ///< color id for each axis
-                  AXISCOLOR                           mLColorID[NUMAXES];  ///< color id for each axis label
-                  osg::Vec4                           mColor[NUMAXES];     ///< color for each axis
-                  osg::Vec4                           mLColor[NUMAXES];    ///< color for each label
-                  osg::Vec3                           mPoint[NUMAXES+1L];  ///< data points to construct geometry
+                  std::string                   mLabel[NUMAXES];     ///< lable for each axis
+                  std::string                   mCLabel[NUMAXES];    ///< user labels for each axis
+                  AXISCOLOR                     mColorID[NUMAXES];   ///< color id for each axis
+                  AXISCOLOR                     mLColorID[NUMAXES];  ///< color id for each axis label
+                  osg::Vec4                     mColor[NUMAXES];     ///< color for each axis
+                  osg::Vec4                     mLColor[NUMAXES];    ///< color for each label
+                  osg::Vec3                     mPoint[NUMAXES+1L];  ///< data points to construct geometry
                   RefPtr<osg::Switch>           mMainSwitch;         ///< toggle for axis and all lables
                   RefPtr<osg::Switch>           mLabelSwitch;        ///< toggle for individual labels
    };

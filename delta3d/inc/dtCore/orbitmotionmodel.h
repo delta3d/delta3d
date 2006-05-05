@@ -51,13 +51,13 @@ namespace dtCore
          /**
           * Constructor.
           *
-          * @param keyboard the keyboard instance, or NULL to
+          * @param keyboard the keyboard instance, or 0 to
           * avoid creating default input mappings
-          * @param mouse the mouse instance, or NULL to avoid
+          * @param mouse the mouse instance, or 0 to avoid
           * creating default input mappings
           */
-         OrbitMotionModel(Keyboard* keyboard = NULL,
-                          Mouse* mouse = NULL);
+         OrbitMotionModel(Keyboard* keyboard = 0,
+                          Mouse* mouse = 0);
 
       protected:
       
@@ -202,8 +202,7 @@ namespace dtCore
          virtual void AxisStateChanged(Axis* axis,
                                        double oldState, 
                                        double newState, 
-                                       double delta);
-         
+                                       double delta);         
          
       private:
       
@@ -215,77 +214,77 @@ namespace dtCore
          /**
           * The left button up/down mapping.
           */
-         ButtonAxisToAxis* mLeftButtonUpDownMapping;
+         RefPtr<ButtonAxisToAxis> mLeftButtonUpDownMapping;
          
          /**
           * The left button right/left mapping.
           */
-         ButtonAxisToAxis* mLeftButtonLeftRightMapping;
+         RefPtr<ButtonAxisToAxis> mLeftButtonLeftRightMapping;
          
          /**
           * The right button up/down mapping.
           */
-         ButtonAxisToAxis* mRightButtonUpDownMapping;
+         RefPtr<ButtonAxisToAxis> mRightButtonUpDownMapping;
          
          /**
           * The right button left/right mapping.
           */
-         ButtonAxisToAxis* mRightButtonLeftRightMapping;
+         RefPtr<ButtonAxisToAxis> mRightButtonLeftRightMapping;
          
          /**
           * The middle button up/down mapping.
           */
-         ButtonAxisToAxis* mMiddleButtonUpDownMapping;
+         RefPtr<ButtonAxisToAxis> mMiddleButtonUpDownMapping;
          
          /**
           * The default azimuth axis.
           */
-         LogicalAxis* mDefaultAzimuthAxis;
+         RefPtr<LogicalAxis> mDefaultAzimuthAxis;
          
          /**
           * The default azimuth axis.
           */
-         LogicalAxis* mDefaultElevationAxis;
+         RefPtr<LogicalAxis> mDefaultElevationAxis;
          
          /**
           * The default azimuth axis.
           */
-         LogicalAxis* mDefaultDistanceAxis;
+         RefPtr<LogicalAxis> mDefaultDistanceAxis;
          
          /**
           * The default azimuth axis.
           */
-         LogicalAxis* mDefaultLeftRightTranslationAxis;
+         RefPtr<LogicalAxis> mDefaultLeftRightTranslationAxis;
          
          /**
           * The default azimuth axis.
           */
-         LogicalAxis* mDefaultUpDownTranslationAxis;
+         RefPtr<LogicalAxis> mDefaultUpDownTranslationAxis;
          
          /**
           * The axis that affects the azimuth of the orbit.
           */
-         Axis* mAzimuthAxis;
+         RefPtr<Axis> mAzimuthAxis;
          
          /**
           * The axis that affects the elevation of the orbit.
           */
-         Axis* mElevationAxis;
+         RefPtr<Axis> mElevationAxis;
          
          /**
           * The axis that affects the distance of the orbit.
           */
-         Axis* mDistanceAxis;
+         RefPtr<Axis> mDistanceAxis;
          
          /**
           * The axis that affects the left/right translation of the orbit.
           */
-         Axis* mLeftRightTranslationAxis;
+         RefPtr<Axis> mLeftRightTranslationAxis;
          
          /**
           * The axis that affects the up/down translation of the orbit.
           */
-         Axis* mUpDownTranslationAxis;
+         RefPtr<Axis> mUpDownTranslationAxis;
          
          /**
           * The angular rate (ratio between axis units and angular movement).

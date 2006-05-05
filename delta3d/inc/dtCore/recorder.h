@@ -37,20 +37,20 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/dom/DOMNodeFilter.hpp>           // for Walker settings
 
-#include "dtUtil/xerceswriter.h"
-#include "dtCore/timer.h"
-#include "dtCore/refptr.h"
-#include "dtCore/base.h"
-#include "dtCore/system.h"
-#include "dtUtil/log.h"
-#include "dtUtil/stringutils.h"
-#include "dtUtil/xerceserrorhandler.h"
-#include "dtUtil/keyframedecoder.h"
+#include <dtUtil/xerceswriter.h>
+#include <dtCore/timer.h>
+#include <dtCore/refptr.h>
+#include <dtCore/base.h>
+#include <dtCore/system.h>
+#include <dtUtil/log.h>
+#include <dtUtil/stringutils.h>
+#include <dtUtil/xerceserrorhandler.h>
+#include <dtUtil/keyframedecoder.h>
 
 namespace dtCore
 {
    /**
-    * \brief A generic utility for recording frame information.
+    * A generic utility for recording frame information.
     * The Recorder class is generic utility used to
     * record interesting data for instances of arbitrary type.
     *

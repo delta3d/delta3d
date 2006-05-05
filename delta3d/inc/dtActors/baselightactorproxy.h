@@ -24,8 +24,10 @@
 #include <dtCore/light.h>
 #include <dtDAL/exceptionenum.h>
 #include <dtUtil/enumeration.h>
-#include "dtDAL/plugin_export.h"
-#include "dtDAL/actorproxy.h"
+#include <dtDAL/plugin_export.h>
+#include <dtDAL/actorproxy.h>
+
+#include <osg/Vec4>
 
 namespace dtActors
 {

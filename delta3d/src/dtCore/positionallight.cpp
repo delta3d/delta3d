@@ -1,6 +1,9 @@
-#include "dtCore/positionallight.h"
-#include "dtCore/scene.h"
-#include "dtUtil/matrixutil.h"
+#include <dtCore/positionallight.h>
+
+#include <dtUtil/matrixutil.h>
+
+#include <osg/Light>
+#include <osg/LightSource>
 
 #include <osg/ShapeDrawable>
 

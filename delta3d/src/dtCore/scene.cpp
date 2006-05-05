@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <dtCore/scene.h>
+
 #include <osg/FrameStamp>
 #include <osg/PolygonMode>
 #include <osgDB/DatabasePager>
@@ -13,9 +15,10 @@
 
 #include <dtCore/camera.h>
 #include <dtCore/infinitelight.h>
+#include <dtCore/light.h>
 #include <dtCore/physical.h>
 #include <dtCore/system.h>
-#include <dtCore/scene.h>
+
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
 
@@ -94,20 +97,28 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Scene::Scene( const std::string& name, bool useSceneLight )
-   : Base(name),
-     mPhysicsStepSize(0.0),
-     mPagingEnabled(false),
-     mStartTick(0),
-     mFrameNum(0),
-     mCleanupTime(0.0025),
-     mTargetFrameRate(30.0)
+Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
+   mSceneNode(0),
+   mSpaceID(0),
+   mWorldID(0),
+   mGravity(),
+   mPhysicsStepSize(0.0),
+   mCollidableContents(),
+   mContactJointGroupID(0),
+   mUserNearCallback(0),
+   mUserNearCallbackData(0),
+   mLights(MAX_LIGHTS),
+   mAddedDrawables(),
+   mRenderMode(POINT),
+   mRenderFace(FRONT),
+   mPagingEnabled(false),
+   mStartTick(0),
+   mFrameNum(0),
+   mCleanupTime(0.0025),
+   mTargetFrameRate(30.0),
+   mFreezer()
 {
    RegisterInstance(this);
-
-   for( int i = 0; i < MAX_LIGHTS; i++ )
-      mLights[ i ] = 0;
-
    SetName(name);
 
    mSceneNode = new osg::Group;
@@ -612,19 +623,79 @@ void Scene::SetUserCollisionCallback(dNearCallback *func, void *data)
    mUserNearCallbackData = data;
 }
 
-Light* Scene::GetLight( const std::string& name ) const
+template< typename T >
+struct HasName : public std::binary_function< dtCore::RefPtr<T>, std::string, bool >
 {
-   for( int i = 0; i < MAX_LIGHTS; i++ )
+   bool operator()( const dtCore::RefPtr<T>& obj, const std::string& name ) const
    {
-      if( mLights[ i ]->GetName() == name )
+      if( obj.valid() )
       {
-         return mLights[ i ];
+         return obj->GetName() == name;
+      }
+      else
+      {
+         return false;
       }
    }
-   
-   return 0;
+};
+
+Light* Scene::GetLight( const std::string& name )
+{
+   LightVector::iterator found = std::find_if(  mLights.begin(), 
+                                                mLights.end(), 
+                                                std::bind2nd( HasName<Light>(), name ) );
+
+   if( found != mLights.end() )
+   {
+      return found->get();
+   }
+   else
+   {
+      return 0;
+   }
 }
 
+const Light* Scene::GetLight( const std::string& name ) const
+{
+   LightVector::const_iterator found = std::find_if(  mLights.begin(), 
+                                                      mLights.end(), 
+                                                      std::bind2nd( HasName<Light>(), name ) );
+
+   if( found != mLights.end() )
+   {
+      return found->get();
+   }
+   else
+   {
+      return 0;
+   }
+}
+
+///Get the index number of the supplied drawable
+unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
+{
+   for( unsigned int childNum = 0; childNum < mAddedDrawables.size(); ++childNum )
+   {
+      if( mAddedDrawables[childNum] == drawable )
+      {
+         return childNum;
+      }
+   }
+
+   return mAddedDrawables.size(); // node not found.
+}
+
+///registers a light using the light number
+void Scene::RegisterLight( Light* light )
+{ 
+   mLights[ light->GetNumber() ] = light; //add to internal array of lights
+}
+
+///unreferences the current light, by number, Note: does not erase
+void Scene::UnRegisterLight( Light* light )
+{ 
+   mLights[ light->GetNumber() ] = 0; 
+}
 
 void Scene::UseSceneLight( bool lightState )
 { 
@@ -656,10 +727,10 @@ void Scene::EnablePaging()
 
 void Scene::DisablePaging()
 {
-   if(mPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != NULL)
+   if(mPagingEnabled && osgDB::Registry::instance()->getDatabasePager() != 0)
    {
       osgDB::Registry::instance()->getDatabasePager()->clear();
-      osgDB::Registry::instance()->setDatabasePager(NULL);
+      osgDB::Registry::instance()->setDatabasePager(0);
       mPagingEnabled = false;
    }
    else

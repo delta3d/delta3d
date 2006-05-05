@@ -32,11 +32,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 Mouse::~Mouse()
 {
    DeregisterInstance(this);
-
-   for(int i=0;i<GetFeatureCount();i++)
-   {
-      delete GetFeature(i);
-   }
 }
 
 /**

@@ -27,9 +27,9 @@
 #include <osg/Projection>
 #include <osg/Switch>
 
-#include "dtCore/export.h"
-#include "dtCore/timer.h"
-#include "dtCore/refptr.h"
+#include <dtCore/export.h>
+#include <dtCore/timer.h>
+#include <dtCore/refptr.h>
 
 namespace dtCore
 {
@@ -38,12 +38,13 @@ namespace dtCore
    /** This class is used internally by the Scene to gather and report 
      * statistics on the frame rate, primitive totals, etc.
      */
-   class DT_CORE_EXPORT Stats
+   class DT_CORE_EXPORT Stats : public osg::Referenced
    {
    public:
       Stats(osgUtil::SceneView *sv);
+   protected:
       ~Stats() {};
-
+   public:
       void Init(osgUtil::RenderStage* stg);
       void Draw();
       void SetTime(int type);
@@ -84,7 +85,6 @@ namespace dtCore
       // time from the current frame update and the previous one in seconds.
       // time since initClock() in seconds.
       // update the number of ticks since the last frame update.
-      //osg::Timer_t UpdateFrameTick();
       dtCore::Timer_t UpdateFrameTick();
 
       // initialize the clock.
@@ -96,10 +96,8 @@ namespace dtCore
       void Display();
 
       // system tick.
-      //inline osg::Timer_t ClockTick() {return mTimer.tick();}
-      //inline osg::Timer_t FrameTick() {return mFrameTick;}
-      inline dtCore::Timer_t ClockTick() {return mTimer.Tick();}
-      inline dtCore::Timer_t FrameTick() {return mFrameTick;}
+      dtCore::Timer_t ClockTick() {return mTimer.Tick();}
+      dtCore::Timer_t FrameTick() {return mFrameTick;}
 
       dtCore::RefPtr<osgUtil::SceneView> mSV;
       dtCore::RefPtr<osgText::Text> mFrameRateCounterText;

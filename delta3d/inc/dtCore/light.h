@@ -21,12 +21,16 @@
 #ifndef DELTA_LIGHT
 #define DELTA_LIGHT
 
-#include <osg/LightSource>
-#include <osg/LightModel>
-
 #include <dtCore/export.h>
 #include <dtCore/macros.h>
 #include <dtCore/deltadrawable.h>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class LightSource;
+}
+/// @endcond
 
 namespace dtCore
 {
@@ -52,72 +56,67 @@ namespace dtCore
       };
 
       /**
-      *Constructor
-      *
-      *@param number: the light number, 0-7, this will overright any other light with that number
-      *@param name: a name for the light, defaulted to defaultLight
-      *@param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
-      */
+       * Constructor
+       *
+       * @param number: the light number, 0-7, this will overright any other light with that number
+       * @param name: a name for the light, defaulted to defaultLight
+       * @param mode: specifys a lighting mode, GLOBAL effects whole scene, LOCAL only effects children
+       */
       Light( int number, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
 
       ///Copy constructor from an osg::LightSource
       Light( const osg::LightSource& lightSource, const std::string& name = "defaultLight", LightingMode mode = GLOBAL );
       
+   protected:
+
       virtual ~Light() = 0;
 
-      virtual osg::Node* GetOSGNode() { return mLightSource.get(); } 
+   public:
+
+      virtual osg::Node* GetOSGNode();
 
       ///Get the const internal osg::LightSource
-      const osg::LightSource* GetLightSource() const
-      { return mLightSource.get(); }
+      const osg::LightSource* GetLightSource() const;
 
       ///Get the non-const internal osg::LightSource
-      osg::LightSource* GetLightSource()
-      { return mLightSource.get(); }
+      osg::LightSource* GetLightSource();
 
       ///Change lighting mode to GLOBAL or LOCAL mode
       void SetLightingMode( LightingMode mode );
       
-      LightingMode GetLightingMode() const
-      { return mLightingMode; }
+      LightingMode GetLightingMode() const { return mLightingMode; }
 
       ///Turn light on or off
       void SetEnabled( bool enabled );
       
-      bool GetEnabled()
-      { return mEnabled; }
+      bool GetEnabled() { return mEnabled; }
 
-      /*!
-      * Sets the OpenGL light number associated with this light. Lights numbers
-      * must be in the range 0-7. There is a default scene light setup at light
-      * number 0, so that will be overwritten if you set your own light to 0.
-      *
-      * @param number : The OpenGL light number
-      */
-      void SetNumber( int number )
-      { mLightSource->getLight()->setLightNum( number ); }
+      /**
+       * Sets the OpenGL light number associated with this light. Lights numbers
+       * must be in the range 0-7. There is a default scene light setup at light
+       * number 0, so that will be overwritten if you set your own light to 0.
+       *
+       * @param number : The OpenGL light number
+       */
+      void SetNumber( int number );
 
       ///Returns the number of the light as specified in the constructor
-      int GetNumber() const
-      { return mLightSource->getLight()->getLightNum(); }
+      int GetNumber() const;
 
       ///sets the ambient light color
-      void SetAmbient( float r, float g, float b, float a )
-      { mLightSource->getLight()->setAmbient( osg::Vec4( r, g, b, a) ); }
+      void SetAmbient( float r, float g, float b, float a );
       
       ///gets the ambient light color
       void GetAmbient( float& r, float& g, float& b, float& a ) const;
       
       ///sets the diffuse light color
-      void SetDiffuse( float r, float g, float b, float a )
-      { mLightSource->getLight()->setDiffuse( osg::Vec4( r, g, b, a) ); }
+      void SetDiffuse( float r, float g, float b, float a );
       
       ///Gets the diffuse light color
       void GetDiffuse( float& r, float& g, float& b, float& a ) const;
       
       ///sets the specular light color
-      void SetSpecular( float r, float g, float b, float a )
-      { mLightSource->getLight()->setSpecular( osg::Vec4( r, g, b, a) ); }
+      void SetSpecular( float r, float g, float b, float a );
       
       ///gets the specular light color
       void GetSpecular( float& r, float& g, float& b, float& a ) const;

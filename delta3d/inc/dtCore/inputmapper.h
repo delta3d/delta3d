@@ -25,7 +25,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include <dtCore/refptr.h>
 
 #include <OpenThreads/Thread>
@@ -38,7 +37,6 @@ namespace dtCore
 {
    class InputMapperCallback;
    
-   
    /**
     * Acquires mappings for logical input device features by listening to
     * a set of devices.
@@ -48,8 +46,7 @@ namespace dtCore
                                        public AxisListener
    {
       DECLARE_MANAGEMENT_LAYER(InputMapper)
-      
-      
+            
       public:
       
          /**
@@ -59,11 +56,15 @@ namespace dtCore
           */
          InputMapper(const std::string& name = "InputMapper");
          
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~InputMapper();
          
+      public:
+
          /**
           * Adds an input device to this mapper.
           *
