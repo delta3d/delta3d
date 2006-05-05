@@ -25,6 +25,7 @@
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/isector.h>
 #include <dtCore/particlesystem.h>
+#include <dtCore/scene.h>
 #include <dtCore/system.h>
 
 class IsectorTests : public CPPUNIT_NS::TestFixture 

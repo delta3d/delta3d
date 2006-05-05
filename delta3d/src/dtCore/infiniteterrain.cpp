@@ -24,7 +24,7 @@ IMPLEMENT_MANAGEMENT_LAYER(InfiniteTerrain)
  * The terrain callback class.  Builds terrain segments
  * around viewer.
  */
-class dtCore::InfiniteTerrainCallback : public osg::NodeCallback
+class InfiniteTerrainCallback : public osg::NodeCallback
 {
    public:
    

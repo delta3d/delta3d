@@ -285,7 +285,7 @@ namespace dtCore
 
       // Replace with something cooler, can be refactored to use the same
       // code as EffectRemoved below
-      for(  EffectListenerSet::iterator it = mEffectListeners.begin();
+      for(  EffectListenerVector::iterator it = mEffectListeners.begin();
             it != mEffectListeners.end();
             it++)
       {
@@ -313,7 +313,7 @@ namespace dtCore
 
             // Replace with something cooler, can be refactored to use the same
             // code as EffectAdded above
-            for(  EffectListenerSet::iterator it2 = mEffectListeners.begin();
+            for(  EffectListenerVector::iterator it2 = mEffectListeners.begin();
                   it2 != mEffectListeners.end();
                   it2++ )
             {
@@ -324,15 +324,31 @@ namespace dtCore
          }
       }
    }
+   
+   template< typename T >
+   struct IsPointer : public std::binary_function< dtCore::RefPtr<T>, T*, bool >
+   {
+      bool operator()( const dtCore::RefPtr<T>& refPtr, const T* ptr ) const
+      {
+         return refPtr.get() == ptr;
+      }
+   };
 
    /**
     * Adds a listener for effect events.
     *
     * @param effectListener the listener to add
     */
-   void EffectManager::AddEffectListener(EffectListener* effectListener)
+   void EffectManager::AddEffectListener( EffectListener* effectListener )
    {
-      mEffectListeners.insert(effectListener);
+      EffectListenerVector::iterator found = std::find_if(  mEffectListeners.begin(), 
+                                                            mEffectListeners.end(), 
+                                                            std::bind2nd( IsPointer<EffectListener>(),
+                                                                          effectListener ) );
+      if( found == mEffectListeners.end() )
+      {
+         mEffectListeners.push_back( effectListener );
+      }
    }
 
    /**
@@ -340,9 +356,13 @@ namespace dtCore
     *
     * @param effectListener the listener to remove
     */
-   void EffectManager::RemoveEffectListener(EffectListener* effectListener)
+   void EffectManager::RemoveEffectListener( EffectListener* effectListener )
    {
-      mEffectListeners.erase(effectListener);
+      mEffectListeners.erase( std::remove_if( mEffectListeners.begin(),
+                                              mEffectListeners.end(),
+                                              std::bind2nd( IsPointer<EffectListener>(),
+                                                            effectListener ) ),
+                              mEffectListeners.end() );
    }
 
    /**
