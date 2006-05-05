@@ -77,6 +77,9 @@ namespace dtCore
           */
          void AddKeyboardListener(KeyboardListener* keyboardListener);
 
+         /// Inserts the listener into the list at a position BEFORE pos.
+         void InsertKeyboardListener(const KeyboardListenerList::value_type& pos, KeyboardListener* kbl);
+
          /**
           * Removes a keyboard listener.
           *
@@ -99,6 +102,15 @@ namespace dtCore
           * The set of keyboard listeners.
           */
          KeyboardListenerList mKeyboardListeners;
+
+   private:
+      /// the following are not implemented by design,
+      /// to cause compile errors for users that need to use the new interface.
+      bool KeyPressed(Producer::KeyCharacter);
+      void keyPressed(Producer::KeyCharacter);
+
+      bool KeyReleased(Producer::KeyCharacter);
+      void keyReleased(Producer::KeyCharacter);
    };
 
    

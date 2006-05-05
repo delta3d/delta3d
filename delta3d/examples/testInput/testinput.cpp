@@ -123,7 +123,7 @@ public:
 
       GetWindow()->GetPosition(&x, &y, &w, &h);
 
-      mUIDrawable = new dtGUI::CEUIDrawable(w, h);
+      mUIDrawable = new dtGUI::CEUIDrawable( GetWindow() );
 
       try
       {

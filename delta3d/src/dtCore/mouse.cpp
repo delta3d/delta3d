@@ -4,6 +4,7 @@
 
 #include <dtCore/mouse.h>
 #include <dtCore/deltawin.h>
+#include <algorithm>
 
 using namespace dtCore;
 
@@ -81,6 +82,12 @@ bool Mouse::GetButtonState(MouseButton button) const
 void Mouse::AddMouseListener(MouseListener* mouseListener)
 {
    mMouseListeners.push_back(mouseListener);
+}
+
+void Mouse::InsertMouseListener(const MouseListenerList::value_type& pos, MouseListener* ml)
+{
+   MouseListenerList::iterator iter = std::find( mMouseListeners.begin() , mMouseListeners.end() , pos );
+   mMouseListeners.insert(iter,ml);
 }
 
 /**
@@ -182,20 +189,18 @@ bool Mouse::PassiveMouseMotion(float x, float y)
  * @param y the y coordinate
  * @param button the button identifier
  */
-bool Mouse::ButtonDown(float x, float y, unsigned int button)
+bool Mouse::ButtonDown(float x, float y, MouseButton button)
 {
    if ((int)button > GetButtonCount() ) return false;
 
-   MouseButton mouseButton = MouseButton(button-1);
-
-   GetButton(mouseButton)->SetState(true);
+   GetButton(button)->SetState(true);
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
    while( !handled && iter!=enditer )
    {
-      handled = (*iter)->HandleButtonPressed(this, mouseButton);
+      handled = (*iter)->HandleButtonPressed(this, button);
       ++iter;
    }
 
@@ -209,19 +214,18 @@ bool Mouse::ButtonDown(float x, float y, unsigned int button)
  * @param y the y coordinate
  * @param button the button identifier
  */
-bool Mouse::DoubleButtonDown(float x, float y, unsigned int button)
+bool Mouse::DoubleButtonDown(float x, float y, MouseButton button)
 {
    if (int(button) > GetButtonCount() ) return false;
 
-   MouseButton mouseButton = MouseButton(button-1);
-   GetButton(mouseButton)->SetState(true);
+   GetButton(button)->SetState(true);
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
    while( !handled && iter!=enditer )
    {
-      handled = (*iter)->HandleButtonClicked(this, mouseButton, 2);
+      handled = (*iter)->HandleButtonClicked(this, button, 2);
       ++iter;
    }
 
@@ -235,19 +239,18 @@ bool Mouse::DoubleButtonDown(float x, float y, unsigned int button)
  * @param y the y coordinate
  * @param button the button identifier
  */
-bool Mouse::ButtonUp(float x, float y, unsigned int button)
+bool Mouse::ButtonUp(float x, float y, MouseButton button)
 {
    if (int(button) > GetButtonCount() ) return false;
 
-   MouseButton mouseButton = MouseButton(button-1);
-   GetButton(mouseButton)->SetState(false);
+   GetButton(button)->SetState(false);
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
    while( !handled && iter!=enditer )
    {
-      handled = (*iter)->HandleButtonReleased(this, mouseButton);
+      handled = (*iter)->HandleButtonReleased(this, button);
       ++iter;
    }
 

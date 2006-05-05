@@ -19,7 +19,6 @@
  * @author John K. Grant
  */
 #include <cppunit/extensions/HelperMacros.h>
-#include <dtCore/deltawin.h>
 #include <dtCore/mouse.h>
 
 namespace dtTest
@@ -158,8 +157,7 @@ void MouseTests::tearDown()
 
 void MouseTests::TestClickObservers()
 {
-   dtCore::RefPtr<dtCore::DeltaWin> dw(new dtCore::DeltaWin());
-   dtCore::RefPtr<dtCore::Mouse> ms = dw->GetMouse();
+   dtCore::RefPtr<dtCore::Mouse> ms = new dtCore::Mouse(0);
    CPPUNIT_ASSERT( ms->GetListeners().empty() );  // better be empty
 
    dtCore::RefPtr<MouseObserver> lefty(new MouseObserver(MouseObserver::BUTTON,dtCore::Mouse::LeftButton));
@@ -174,11 +172,11 @@ void MouseTests::TestClickObservers()
    CPPUNIT_ASSERT( !ms->MouseMotion(x,y) );                                         // motion: lefty should NOT handle it
    CPPUNIT_ASSERT( !ms->PassiveMouseMotion(x,y) );                                  // passive: lefty should NOT handle it
    ///\todo Why does the Mouse change the Button value?
-   CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()+1) );                     // press: lefty should handle it
+   CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()) );                     // press: lefty should handle it
    ///\todo Why does the Mouse change the Button value?
-   CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()+1) );                 // double: lefty should handle it
+   CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()) );                 // double: lefty should handle it
    ///\todo Why does the Mouse change the Button value?
-   CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()+1) );                     // release: lefty should handle it
+   CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()) );                     // release: lefty should handle it
    CPPUNIT_ASSERT( lefty->GetHit() );                                               // better be hit
 
    // -- test chain of responsibility -- //
@@ -191,15 +189,15 @@ void MouseTests::TestClickObservers()
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
    ///\todo Why does the Mouse change the Button value?
-   CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()+1) );                       // press: lefty should handle it
+   CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()) );                       // press: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
    ///\todo Why does the Mouse change the Button value?
-   CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()+1) );                 // double: lefty should handle it
+   CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()) );                 // double: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
    ///\todo Why does the Mouse change the Button value?
-   CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()+1) );                     // release: lefty should handle it
+   CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()) );                     // release: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
    CPPUNIT_ASSERT( !ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown) ); // scroll: movesy should NOT handle it
