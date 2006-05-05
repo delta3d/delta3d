@@ -178,6 +178,11 @@ namespace dtCore
           */
          void GetNormal(float x, float y, osg::Vec3& normal, bool smooth = false);
 
+         /**
+          * We want we collision to happen by default with this class.
+          */
+         virtual bool FilterContact( dContact* contact, Transformable* collider ) { return true; }
+
       private:
 
          /**

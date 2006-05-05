@@ -593,17 +593,13 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 
                if( p1 != 0 || p2 != 0 )
                {
-                  dJointID joint = dJointCreateContact(
-                     scene->mWorldID, 
-                     scene->mContactJointGroupID, 
-                     &contact
-                     );
+                  dJointID joint = dJointCreateContact(  scene->mWorldID, 
+                                                         scene->mContactJointGroupID, 
+                                                         &contact );
 
-                  dJointAttach(
-                     joint, 
-                     p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
-                     p2->DynamicsEnabled() ? p2->GetBodyID() : 0
-                     );
+                  dJointAttach(  joint, 
+                                 p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
+                                 p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );
                }
             }
          }
