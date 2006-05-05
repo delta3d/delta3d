@@ -20,7 +20,7 @@ void initSoundEffectBinderBindings()
    void (SoundEffectBinder::*RemoveEffectTypeMapping1)(const std::string& fxType) = &SoundEffectBinder::RemoveEffectTypeMapping;  
    void (SoundEffectBinder::*RemoveEffectTypeMapping2)(unsigned int fxType) = &SoundEffectBinder::RemoveEffectTypeMapping;
 
-   class_<SoundEffectBinder, bases<Base>, dtCore::RefPtr<SoundEffectBinder> >("SoundEffectBinder", init<optional<const std::string&> >())
+   class_<SoundEffectBinder, bases<Base>, dtCore::RefPtr<SoundEffectBinder>, boost::noncopyable >("SoundEffectBinder", init<optional<const std::string&> >())
       .def("GetInstanceCount", &SoundEffectBinder::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", SoundEffectBinderGI1, return_internal_reference<>())
