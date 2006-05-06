@@ -20,7 +20,6 @@
 #ifndef NETMGR_INCLUDED
 #define NETMGR_INCLUDED
 
-
 #include <dtCore/base.h>
 #include <gnelib.h>
 #include <dtUtil/log.h>
@@ -49,8 +48,9 @@ namespace dtNet
    {
    public:
       NetMgr();
+   protected:
       virtual ~NetMgr();
-
+   public:
       ///Initialize the networking and game environment
       void InitializeGame(const std::string &gameName, int gameVersion, const std::string &logFile );
 
@@ -71,7 +71,6 @@ namespace dtNet
 
       ///Is this instance setup as a server?
       bool GetIsServer() const {return mIsServer;}
-
 
       //////////////////////////////////////////////////////////////////////////
       /// virtual methods

@@ -31,7 +31,7 @@ public:
       FrameData(const osg::Matrix& m);
 
    protected:
-      ~FrameData();
+      virtual ~FrameData();
 
    private:
       FrameData(const FrameData& f);             /// not implemented by design

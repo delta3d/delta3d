@@ -32,8 +32,9 @@ class ViewWindow  :  public   Fl_DT_Window<Viewer>
                                        ViewWindow();
                                        ViewWindow( int w, int h, const char* l = 0L );
                                        ViewWindow( int x, int y, int w, int h, const char* l = 0L );
+   protected:
       virtual                          ~ViewWindow();
-
+   public:
       virtual  void                    show( void );
       virtual  void                    OnMessage( dtCore::Base::MessageData* data );
       virtual  void                    FileLoaded( bool loaded, const char* filename );

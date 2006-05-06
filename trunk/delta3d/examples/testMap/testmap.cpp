@@ -157,6 +157,8 @@ class TestMap : public Application
       mStep = -1.0f;
       mBufferExplosion = true;
    }
+
+protected:
    
    virtual ~TestMap()
    {

@@ -42,7 +42,7 @@ const char* Widget::msgQuit            = "quit";
 
 /** public methods */
 /** constructor */
-Widget::Widget( std::string name /*= "Widget"*/ )
+Widget::Widget( const std::string& name /*= "Widget"*/ )
 :  BaseABC(name)
 {
    RegisterInstance( this );

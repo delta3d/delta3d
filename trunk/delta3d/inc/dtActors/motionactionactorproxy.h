@@ -59,7 +59,6 @@ public:
 
 public:
 
-
    /*virtual*/ void BuildPropertyMap();
    /*virtual*/ bool IsPlaceable();
 
@@ -80,6 +79,10 @@ public:
 
    void SetScale(const osg::Vec3 &scale);
    osg::Vec3 GetScale();
+
+protected:
+
+   virtual ~MotionActionActorProxy() {}
 };
 
 }//namespace dtActors

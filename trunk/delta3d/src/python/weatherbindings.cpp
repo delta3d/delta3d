@@ -2,8 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtABC/weather.h"
+#include <python/dtpython.h>
+#include <dtABC/weather.h>
+#include <dtCore/cloudplane.h>
+#include <dtCore/environment.h>
 
 using namespace boost::python;
 using namespace dtABC;

@@ -25,8 +25,15 @@
 #include <osg/StateSet>
 #include <osg/Program>
 #include <osg/MatrixTransform>
-#include "dtTerrain/terraindatarenderer.h"
-#include "dtTerrain/soarxdrawable.h"
+#include <dtTerrain/terraindatarenderer.h>
+#include <dtTerrain/soarxdrawable.h>
+
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osg
+{
+   class Texture2D;
+}
+/// @endcond
 
 namespace dtTerrain
 {   

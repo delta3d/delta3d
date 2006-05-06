@@ -27,6 +27,12 @@ public:
       GetWindow()->SetWindowTitle("testShaders");
    }
 
+protected:
+
+   virtual ~TestShadersApp() {}
+
+public:
+
    void LoadGeometry()
    {
       mObject = new dtCore::Object("Happy Sphere");
@@ -96,10 +102,6 @@ public:
       mObject->GetTransform(&xform);
       xform.SetRotation(rotateMat);
       mObject->SetTransform(&xform);
-   }
-
-   virtual ~TestShadersApp()
-   {
    }
 
 private:

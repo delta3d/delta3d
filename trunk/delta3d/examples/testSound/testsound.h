@@ -56,12 +56,12 @@ public:
    * @param configuration file name
    */
    TestSoundApp( const std::string& configFilename = "config.xml" );
-
+protected:
    /**
    * Destructor.
    */
    virtual                    ~TestSoundApp();
-
+public:
    /**
    * KeyboardListener override
    * Called when a key is pressed.

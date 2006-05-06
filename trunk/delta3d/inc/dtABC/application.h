@@ -53,8 +53,11 @@ namespace dtABC
 
    public:
       Application( const std::string& configFilename = "" );
+
+   protected:
       virtual ~Application();
 
+   public:
       ///Start the Application
       virtual void Run();
 
@@ -103,7 +106,6 @@ namespace dtABC
       };
 
       friend class AppXMLContentHandler;
-
 
       /// Read the supplied config file, called from the constructor
       bool ParseConfigFile(const std::string& file);

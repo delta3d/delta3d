@@ -46,8 +46,9 @@ namespace dtDAL
    {
       public:
          ResourceTypeHandler() {}
+      protected:
          virtual ~ResourceTypeHandler() {}
-
+      public:
          /**
           * @note the file type is provided so that implementations that only need to
           *       check extensions will not have to stat the file

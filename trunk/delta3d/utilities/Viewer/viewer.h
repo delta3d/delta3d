@@ -105,10 +105,10 @@ class Viewer :  public   dtABC::Widget
 
 
    public:
-                              Viewer( std::string name = "Viewer" );
-      virtual                 ~Viewer();
+                              Viewer( const std::string& name = "Viewer" );
 
    protected:
+      virtual                 ~Viewer();
       ///Configure the internal components.
       virtual  void           Config( const dtABC::WinData* data = NULL );
 

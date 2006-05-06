@@ -94,12 +94,12 @@ namespace dtDAL
    {
       try
       {
-         mXercesParser->setContentHandler(&mHandler);
-         mXercesParser->setErrorHandler(&mHandler);
+         mXercesParser->setContentHandler(mHandler.get());
+         mXercesParser->setErrorHandler(mHandler.get());
          mXercesParser->parse(path.c_str());
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.\n");
-         osg::ref_ptr<Map> mapRef = mHandler.GetMap();
-         mHandler.ClearMap();
+         osg::ref_ptr<Map> mapRef = mHandler->GetMap();
+         mHandler->ClearMap();
          return mapRef.release();
       }
       catch (const OutOfMemoryException&)
@@ -129,15 +129,15 @@ namespace dtDAL
       XMLPScanToken token;
       try
       {
-         mXercesParser->setContentHandler(&mHandler);
-         mXercesParser->setErrorHandler(&mHandler);
+         mXercesParser->setContentHandler(mHandler.get());
+         mXercesParser->setErrorHandler(mHandler.get());
 
          if (mXercesParser->parseFirst(path.c_str(), token))
          {
             parserNeedsReset = true;
 
             bool cont = mXercesParser->parseNext(token);
-            while (cont && !mHandler.HasFoundMapName())
+            while (cont && !mHandler->HasFoundMapName())
             {
                cont = mXercesParser->parseNext(token);
             }
@@ -146,11 +146,11 @@ namespace dtDAL
             //reSet the parser and close the file handles.
             mXercesParser->parseReset(token);
 
-            if (mHandler.HasFoundMapName())
+            if (mHandler->HasFoundMapName())
             {
                mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Parsing complete.");
-               std::string name = mHandler.GetMap()->GetName();
-               mHandler.ClearMap();
+               std::string name = mHandler->GetMap()->GetName();
+               mHandler->ClearMap();
                return name;
             }
             else
@@ -190,8 +190,9 @@ namespace dtDAL
       }
    }
 
-   MapParser::MapParser()
-   {
+   MapParser::MapParser() :
+      mHandler( new MapContentHandler() )
+   { 
       mLogger = &dtUtil::Log::GetInstance(logName);
 
       mXercesParser = XMLReaderFactory::createXMLReader();

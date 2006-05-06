@@ -14,14 +14,11 @@ using namespace dtCore;
 using namespace dtABC;
 using namespace dtUtil;
 
-/**
-* The application instance.
-*/
-class TestInputApp* app;
-
 ///colors to reflect the button states
 CEGUI::colour kOff(0.f, 0.f, 0.f, 1.f);
 CEGUI::colour kOn(1.f, 0.f, 0.f, 1.f);
+
+class TestInputApp* app;
 
 /**
 * The input test application.
@@ -112,6 +109,11 @@ public:
       mInputMapper->SetCancelButton(GetKeyboard()->GetButton(Producer::Key_Escape));
    }
 
+protected:
+
+   virtual ~TestInputApp() {}
+
+public:
    /**
    * Configures the application.
    */
@@ -372,11 +374,11 @@ int main( int argc, char **argv )
    app->Config();
 
    if(!app->IsGUILoaded())
+   {
       return 0;
+   }
 
    app->Run();
-
-   delete app;
 
    return 0;
 }

@@ -35,6 +35,12 @@ public:
       }
 
    }
+
+protected:
+
+   virtual ~TestPythonApp() {}
+
+public:
    
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
                               Producer::KeyboardKey key, 

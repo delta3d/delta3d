@@ -2,14 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <sstream>
+#include <dtChar/character.h>
 
+#include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtChar/character.h>
 #include <dtUtil/log.h>
+
 #include <osgDB/FileUtils>
-#include <dtCore/camera.h>
+
+#include <sstream>
 
 using namespace dtCore;
 using namespace dtChar;
@@ -264,8 +266,15 @@ void Character::SetRotation(float rotation)
    }
    
    // Normalize
-   while(rotation < 0.0f) rotation += 360.0f;
-   while(rotation > 360.0f) rotation -= 360.0f;
+   while(rotation < 0.0f) 
+   {
+      rotation += 360.0f;
+   }
+
+   while(rotation > 360.0f)
+   {
+      rotation -= 360.0f;
+   }
    
    mRotation = rotation;
 }

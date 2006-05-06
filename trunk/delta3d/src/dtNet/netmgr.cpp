@@ -20,7 +20,7 @@ mIsServer(true)
    SetName("NetMgr");
 }
 
-NetMgr::~NetMgr(void)
+NetMgr::~NetMgr()
 {
    LOG_DEBUG("Shutting down network...");
 

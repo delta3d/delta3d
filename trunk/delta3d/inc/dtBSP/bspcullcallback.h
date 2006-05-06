@@ -37,8 +37,7 @@
 namespace dtBSP
 {
    class BSPNode;
-   
-   
+      
    /**
     * A cull callback that contains a BSP tree with sets of potentially
     * visible geodes in its leaves.
@@ -60,6 +59,12 @@ namespace dtBSP
           */
          BSPCullCallback(const BSPCullCallback& bspCullCallback,
                          const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY);
+
+      protected:
+
+         virtual ~BSPCullCallback() {}
+
+      public:
 
          /**
           * OSG node class helper macro.
@@ -124,6 +129,12 @@ namespace dtBSP
           */
          PotentiallyVisibleSet(const PotentiallyVisibleSet& pvs,
                                const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY);
+
+      protected:
+
+         virtual ~PotentiallyVisibleSet() {}
+
+      public:
                          
          /**
           * OSG node class helper macro.
@@ -175,6 +186,10 @@ namespace dtBSP
           * @return the potentially visible set
           */
          virtual PotentiallyVisibleSet* GetPotentiallyVisibleSet(const osg::Vec3& eyepoint) = 0;
+
+      protected:
+
+         virtual ~BSPNode() {}
    };
    
    
@@ -194,6 +209,12 @@ namespace dtBSP
           */
          BSPInternalNode(const osg::Plane& partitioningPlane,
                          BSPNode* leftChild, BSPNode* rightChild);
+
+      protected:
+
+         virtual ~BSPInternalNode() {}
+
+      public:
          
          /**
           * Returns this internal node's partitioning plane.
@@ -260,6 +281,12 @@ namespace dtBSP
           * with this leaf node
           */
          BSPLeafNode(PotentiallyVisibleSet* potentiallyVisibleSet);
+
+      protected:
+
+         virtual ~BSPLeafNode() {}
+
+      public:
          
          /**
           * Returns the potentially visible set of this leaf node.

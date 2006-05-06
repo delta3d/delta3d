@@ -51,19 +51,18 @@ namespace dtGUI
    class BaseScriptModule;
    class Renderer;
 
-   ///A DeltaDrawable used to render the CEGUI
-
-   /** This class is a derivative of DeltaDrawable and is used to render and 
-    *  manage the CEGUI system.  The CEUIDrawable is responsible for setting
-    *  up the CEGUI system and supplying mouse and keyboard events to the UI.
+   /** 
+    * A DeltaDrawable used to render the CEGUI.
+    * This class is a derivative of DeltaDrawable and is used to render and 
+    * manage the CEGUI system.  The CEUIDrawable is responsible for setting
+    * up the CEGUI system and supplying mouse and keyboard events to the UI.
     *
-    *  To create a new GUI, instantiate a CEGUIDrawable and add it to the Scene
-    *  using Scene::AddDrawable().  You can then use the CEGUI API to create
-    *  CEGUI::Windows and adjust their properties.
+    * To create a new GUI, instantiate a CEGUIDrawable and add it to the Scene
+    * using Scene::AddDrawable().  You can then use the CEGUI API to create
+    * CEGUI::Windows and adjust their properties.
     *
-    *  NOTE: The CEGUIDrawable class must be instantiated *after* the application
-    *  has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
-    * 
+    * NOTE: The CEGUIDrawable class must be instantiated *after* the application
+    * has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
     */
    class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable
    {
@@ -72,11 +71,11 @@ namespace dtGUI
 
       ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
       CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm=0);
-
+   protected:
       virtual ~CEUIDrawable();
-
+   public:
       ///Get a pointer to the underlying CEGUI::System
-      CEGUI::System* GetUI(void) {return mUI;}
+      CEGUI::System* GetUI() {return mUI;}
 
       ///Get a pointer to the underlying Renderer
       dtGUI::Renderer* GetRenderer() {return mRenderer;}

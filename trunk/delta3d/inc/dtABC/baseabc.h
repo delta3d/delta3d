@@ -54,7 +54,12 @@ namespace dtABC
 
    public:
                      BaseABC( const std::string& name = "BaseABC" );
+
+   protected:
+
       virtual        ~BaseABC();
+
+   public:
 
       ///configure the internal components
       virtual  void  Config();

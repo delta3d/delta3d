@@ -21,7 +21,7 @@
 #ifndef DELTA_DTSCRIPT
 #define DELTA_DTSCRIPT
 
-#include "dtScript/scriptmanager.h"
+#include <dtScript/scriptmanager.h>
 
 /** Contains the functionality to call Python scripts from a C++ application.
 */

@@ -11,8 +11,7 @@ class TestWeatherApp : public dtABC::Application
    DECLARE_MANAGEMENT_LAYER( TestWeatherApp )
 
 public:
-   TestWeatherApp( std::string configFile = "config.xml" )
-  : Application( configFile )
+   TestWeatherApp( const std::string& configFile = "config.xml" ) : Application( configFile )
    {
       terr = new dtCore::InfiniteTerrain();
       terr->SetHorizontalScale(0.005);
@@ -32,13 +31,10 @@ public:
 
       dtInspector::Inspector *ui = new dtInspector::Inspector();
       ui = ui; //no-op to prevent warning for unused variable
-
- }
-	~TestWeatherApp()
-   {
    }
-
 protected:
+	virtual ~TestWeatherApp() {}
+
    virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
       Producer::KeyboardKey key,
       Producer::KeyCharacter character)
@@ -75,7 +71,7 @@ private:
 
 IMPLEMENT_MANAGEMENT_LAYER( TestWeatherApp )
 
-int main(int argc, char* argv[])
+int main()
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testWeather/;" +
                         GetDeltaDataPathList()  );
