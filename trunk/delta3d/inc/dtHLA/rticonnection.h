@@ -96,8 +96,7 @@ typedef struct win_addr {
 typedef int socklen_t;
 #endif
 
-
-         /* Ellipsoid Parameters, default to WGS 84  */
+/* Ellipsoid Parameters, default to WGS 84  */
 static double TranMerc_a = 6378137.0;              /* Semi-major axis of ellipsoid i meters */
 static double TranMerc_f = 1 / 298.257223563;      /* Flattening of ellipsoid  */
 static double TranMerc_es = 0.0066943799901413800; /* Eccentricity (0.08181919084262188000) squared */
@@ -1230,6 +1229,34 @@ namespace dtHLA
           * The set of objects for which to provide updates.
           */
          std::set<RTI::ObjectHandle> mObjectsToUpdate;
+
+         static void GCCWarningSuppressor()
+         {
+            // To prevent gcc warnings...
+            TranMerc_a = TranMerc_a;
+            TranMerc_f = TranMerc_f;
+            TranMerc_es = TranMerc_es;
+            TranMerc_ebs = TranMerc_ebs;
+            UTM_a = UTM_a;
+            UTM_f = UTM_f;
+            UTM_Override = UTM_Override;
+            TranMerc_Origin_Lat = TranMerc_Origin_Lat;
+            TranMerc_Origin_Long = TranMerc_Origin_Long;
+            TranMerc_False_Northing = TranMerc_False_Northing;
+            TranMerc_False_Easting = TranMerc_False_Easting;
+            TranMerc_Scale_Factor = TranMerc_Scale_Factor;
+            TranMerc_ap = TranMerc_ap;
+            TranMerc_bp = TranMerc_bp;
+            TranMerc_cp = TranMerc_cp;
+            TranMerc_dp = TranMerc_dp;
+            TranMerc_ep = TranMerc_ep;
+            TranMerc_Delta_Easting = TranMerc_Delta_Easting;
+            TranMerc_Delta_Northing = TranMerc_Delta_Northing;
+            Geocent_a = Geocent_a;
+            Geocent_f = Geocent_f;
+            Geocent_e2 = Geocent_e2;
+            Geocent_ep2 = Geocent_ep2;
+         }
    };
 
 
