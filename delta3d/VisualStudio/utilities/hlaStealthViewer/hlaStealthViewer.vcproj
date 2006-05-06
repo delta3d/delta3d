@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtABC.lib dtDAL.lib dtHLA.lib osg.lib"
 				OutputFile="..\..\..\bin\hlaStealthViewer.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -106,6 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtABCd.lib dtDALd.lib dtHLAd.lib osgd.lib"
 				OutputFile="..\..\..\bin\hlaStealthViewerd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

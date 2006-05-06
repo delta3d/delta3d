@@ -16,6 +16,12 @@ public:
 
    TestLightsApp( const std::string& configFilename = "config.xml" );
 
+protected:
+
+   virtual ~TestLightsApp() {}
+
+public:
+
    void Config();
 
    bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);

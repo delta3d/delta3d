@@ -134,6 +134,12 @@ class TriangleVisitor : public NodeVisitor
       {
          mRecorder.mDetail = false;
       }
+
+   protected:
+
+      virtual ~TriangleVisitor() {}
+
+   public:
       
       /**
        * Applies this visitor to a node.
@@ -747,6 +753,13 @@ Node* scene;
  */
 struct WorkingBSPNode : public Referenced
 {
+public:
+   WorkingBSPNode() {}
+protected:
+   virtual ~WorkingBSPNode() {}
+
+public:
+
    /**
     * The parent of this node, or NULL for root.
     */
@@ -852,6 +865,15 @@ int numberOfPortalsBeforeClipping = 0;
  */
 struct WorkingBSPInternalNode : public WorkingBSPNode
 {
+
+   WorkingBSPInternalNode() {}
+
+protected:
+
+   virtual ~WorkingBSPInternalNode() {}
+
+public:
+
    /**
     * The partitioning plane.
     */
@@ -1270,13 +1292,12 @@ vector<PotentiallyVisibleSet*> potentiallyVisibleSets;
 class PotentiallyVisibleSetVisitor : public NodeVisitor
 {
    public:
-   
       /**
        * The potentially visible set.
        */
       osg::ref_ptr<PotentiallyVisibleSet> mPotentiallyVisibleSet;
       
-      
+     
       /**
        * Constructor.
        */
@@ -1286,6 +1307,12 @@ class PotentiallyVisibleSetVisitor : public NodeVisitor
          mPotentiallyVisibleSet = new PotentiallyVisibleSet;
       }
       
+   protected:
+
+      virtual ~PotentiallyVisibleSetVisitor() {}
+
+   public:
+
       /**
        * Applies this visitor to a node.
        *
@@ -1370,6 +1397,15 @@ class PotentiallyVisibleSetVisitor : public NodeVisitor
  */
 struct WorkingBSPLeafNode : public WorkingBSPNode
 {
+   public:
+      WorkingBSPLeafNode() {}
+
+   protected:
+
+      virtual ~WorkingBSPLeafNode() {}
+
+   public:
+   
    /**
     * The triangles in this leaf.
     */
@@ -1991,7 +2027,7 @@ struct WorkingBSPLeafNode : public WorkingBSPNode
     */
    virtual BSPNode* CreateFinalTree()
    {
-      PotentiallyVisibleSetVisitor pvsv;
+      osg::ref_ptr<PotentiallyVisibleSetVisitor> pvsv( new PotentiallyVisibleSetVisitor() );
       
       for(set<WorkingBSPLeafNode*>::iterator l = mPotentiallyVisibleLeaves.begin();
           l != mPotentiallyVisibleLeaves.end();
@@ -2003,19 +2039,19 @@ struct WorkingBSPLeafNode : public WorkingBSPNode
                 t != (*l)->mTriangles.end();
                 t++)
             {
-               pvsv.mPotentiallyVisibleSet->GetNodesToEnable().insert((*t).mGeode.get());
+               pvsv->mPotentiallyVisibleSet->GetNodesToEnable().insert((*t).mGeode.get());
             }
          }
          else
          {
-            pvsv.mPotentiallyVisibleSet->GetNodesToEnable().insert(
+            pvsv->mPotentiallyVisibleSet->GetNodesToEnable().insert(
                (*l)->mGeodes.begin(),
                (*l)->mGeodes.end()
             );
          }
       }
       
-      scene->accept(pvsv);
+      scene->accept(*pvsv.get());
       
       for(vector<PotentiallyVisibleSet*>::iterator pvs = potentiallyVisibleSets.begin();
           pvs != potentiallyVisibleSets.end();
@@ -2026,16 +2062,16 @@ struct WorkingBSPLeafNode : public WorkingBSPNode
          set_symmetric_difference(
             (*pvs)->GetNodesToDisable().begin(),
             (*pvs)->GetNodesToDisable().end(),
-            pvsv.mPotentiallyVisibleSet->GetNodesToDisable().begin(),
-            pvsv.mPotentiallyVisibleSet->GetNodesToDisable().end(),
+            pvsv->mPotentiallyVisibleSet->GetNodesToDisable().begin(),
+            pvsv->mPotentiallyVisibleSet->GetNodesToDisable().end(),
             insert_iterator<NodeSet>(diff1, diff1.end())
          );
          
          set_symmetric_difference(
             (*pvs)->GetNodesToEnable().begin(),
             (*pvs)->GetNodesToEnable().end(),
-            pvsv.mPotentiallyVisibleSet->GetNodesToEnable().begin(),
-            pvsv.mPotentiallyVisibleSet->GetNodesToEnable().end(),
+            pvsv->mPotentiallyVisibleSet->GetNodesToEnable().begin(),
+            pvsv->mPotentiallyVisibleSet->GetNodesToEnable().end(),
             insert_iterator<NodeSet>(diff2, diff2.end())
          );
          
@@ -2045,9 +2081,9 @@ struct WorkingBSPLeafNode : public WorkingBSPNode
          }
       }
       
-      potentiallyVisibleSets.push_back(pvsv.mPotentiallyVisibleSet.get());
+      potentiallyVisibleSets.push_back(pvsv->mPotentiallyVisibleSet.get());
       
-      return new BSPLeafNode(pvsv.mPotentiallyVisibleSet.get());
+      return new BSPLeafNode(pvsv->mPotentiallyVisibleSet.get());
    }
 };
 
@@ -2476,6 +2512,12 @@ class GeodeCollector : public NodeVisitor
       GeodeCollector()
          : NodeVisitor(TRAVERSE_ACTIVE_CHILDREN)
       {}
+
+   protected:
+
+      virtual ~GeodeCollector() {}
+
+   public:
       
       /**
        * Applies this visitor to a node.
@@ -2895,14 +2937,14 @@ Node* Compile(Node* input)
    {
       cout << "Clipping geodes";
    
-      GeodeCollector gc;
+      osg::ref_ptr<GeodeCollector> gc( new GeodeCollector() );
       
-      input->accept(gc);
+      input->accept(*gc.get());
    
       vector<NodePath>::iterator it;
       
-      for(it = gc.mPaths.begin();
-          it != gc.mPaths.end();
+      for(it = gc->mPaths.begin();
+          it != gc->mPaths.end();
           it++)
       {
          tree->ClipGeode(*it);
@@ -2916,12 +2958,12 @@ Node* Compile(Node* input)
       {
          cout << "Regrouping geodes" << endl;
          
-         gc.mPaths.clear();
+         gc->mPaths.clear();
          
-         input->accept(gc);
+         input->accept(*gc.get());
          
-         for(it = gc.mPaths.begin();
-             it != gc.mPaths.end();
+         for(it = gc->mPaths.begin();
+             it != gc->mPaths.end();
              it++)
          {
             FlattenGeodeTransformAndState(*it);
@@ -2958,9 +3000,7 @@ Node* Compile(Node* input)
    
    scene = input;
    
-   bspcc->SetBSPTree(
-      tree->CreateFinalTree()
-   );
+   bspcc->SetBSPTree( tree->CreateFinalTree() );
    
    input->setCullCallback(bspcc);
    

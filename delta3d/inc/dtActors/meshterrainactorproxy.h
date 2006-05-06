@@ -69,6 +69,10 @@ namespace dtActors
          * @return
          */
         virtual dtDAL::ActorProxyIcon* GetBillBoardIcon();
+
+    protected:
+
+       virtual ~MeshTerrainActorProxy() {}
     };
 }
 

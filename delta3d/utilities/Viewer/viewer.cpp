@@ -71,7 +71,7 @@ IMPLEMENT_MANAGEMENT_LAYER(Viewer)
 
 
 
-Viewer::Viewer( std::string name /*= "Viewer"*/ )
+Viewer::Viewer( const std::string& name /*= "Viewer"*/ )
 :  Widget(name),
    mInputDevice(NULL),
    mCurState(_CurState)

@@ -22,6 +22,7 @@
 #include <dtABC/application.h>
 #include <dtABC/weather.h>
 #include <dtCore/refptr.h>
+#include <dtCore/environment.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/globals.h>
 #include <dtTerrain/terrain.h>
@@ -50,6 +51,12 @@ public:
       mFlyFast(false)
    {
    }
+
+protected:
+
+   virtual ~TestTerrainApp() {}
+
+public:
 
    //////////////////////////////////////////////////////////////////////////
    void CreateTerrain()

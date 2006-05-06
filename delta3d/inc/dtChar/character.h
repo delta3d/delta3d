@@ -41,6 +41,13 @@
 #include <osgUtil/UpdateVisitor>
 #include <dtChar/export.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+namespace osgUtil
+{
+   class UpdateVisitor;
+}
+/// @endcond
+
 namespace dtChar
 {
    /**
@@ -50,7 +57,6 @@ namespace dtChar
    {
       DECLARE_MANAGEMENT_LAYER(Character)
 
-
       public:
 
          /**
@@ -59,11 +65,15 @@ namespace dtChar
           * @param name the instance name
           */
          Character(const std::string& name = "character");
+      
+      protected:
 
          /**
           * Destructor.
           */
          virtual ~Character();
+
+      public:
 
          virtual osg::Node* GetOSGNode()
          { 
@@ -195,12 +205,11 @@ namespace dtChar
          
 
          /**
-         * 
-         * Returns a pointer to the rbody osg node
-         *
-         */
+          * 
+          * Returns a pointer to the rbody osg node
+          *
+          */
          rbody::OsgBodyNode* GetBodyNode() {return mBodyNode.get();}
-
 
       private:
          
@@ -234,10 +243,9 @@ namespace dtChar
           */
          rbody::OsgBodyNode::UpdateMode mPreviousUpdateMode;
          rbody::OsgBodyNode::UpdateMode mPreviousInternalUpdateMode;
-         osg::ref_ptr< osgUtil::UpdateVisitor > mUpdateVisitor;
+         dtCore::RefPtr< osgUtil::UpdateVisitor > mUpdateVisitor;
          int mPauseFrameNumber;
    };
 };
-
 
 #endif // DELTA_CHARACTER

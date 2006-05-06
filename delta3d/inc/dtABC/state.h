@@ -19,7 +19,12 @@ namespace dtABC
          typedef dtUtil::Enumeration Type;
 
          State( const Type* type, std::string name );
+
+      protected:
+
          virtual ~State();
+
+      public:
 
          virtual const Type* GetType() const { return mType; }
 

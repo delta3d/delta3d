@@ -50,8 +50,9 @@ namespace dtDAL
    {
       public:
          RBodyResourceTypeHandler();
+      protected:
          virtual ~RBodyResourceTypeHandler();
-
+      public:
          /**
           * @param path The full path to the file or directory to check.
           * @param type The filetype, whether a directory or file.

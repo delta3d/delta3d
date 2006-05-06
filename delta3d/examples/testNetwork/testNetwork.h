@@ -11,8 +11,9 @@ class TestNetwork : public dtABC::Application
 {
    public:
       TestNetwork( const std::string &hostName, const std::string& configFilename = "testnetworkconfig.xml" );
+   protected:
       virtual ~TestNetwork() {}
-   
+   public:
       virtual void Config();
 
       bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);

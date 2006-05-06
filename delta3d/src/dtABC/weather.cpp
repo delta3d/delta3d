@@ -1,25 +1,27 @@
-#include "dtABC/weather.h"
-#include "dtCore/skydome.h"
+#include <dtABC/weather.h>
+
+#include <dtCore/cloudplane.h>
+#include <dtCore/environment.h>
+#include <dtCore/skydome.h>
 #include <dtUtil/log.h>
 
-using namespace dtABC;
 using namespace dtUtil;
+
+namespace dtABC
+{
 
 IMPLEMENT_MANAGEMENT_LAYER(Weather)
 
-Weather::Weather(void):
-mEnvironment(NULL),
-mCloudType(CLOUD_CLEAR),
-mVisType(VIS_UNLIMITED),
-mWindType(WIND_NONE),
-mRateOfChange(0.f),
-mTheme(THEME_CLEAR),
-mTimePeriod(TIME_DAY),
-mSeason(SEASON_SUMMER)
+Weather::Weather(): Base("Weather"),
+   mEnvironment( new dtCore::Environment("weatherEnv") ),
+   mCloudType(CLOUD_CLEAR),
+   mVisType(VIS_UNLIMITED),
+   mWindType(WIND_NONE),
+   mRateOfChange(0.0f),
+   mTheme(THEME_CLEAR),
+   mTimePeriod(TIME_DAY),
+   mSeason(SEASON_SUMMER)
 {
-   SetName("Weather");
-
-   mEnvironment = new dtCore::Environment("weatherEnv");
    dtCore::SkyDome *sky = new dtCore::SkyDome();
    mEnvironment->AddEffect(sky);
    mEnvironment->SetFogEnable(true);
@@ -35,124 +37,145 @@ mSeason(SEASON_SUMMER)
    RegisterInstance(this);
 }
 
-Weather::~Weather(void)
+Weather::~Weather()
 {
    DeregisterInstance(this);
 }
 
 void Weather::SetTheme(const WeatherTheme theme)
 {
-   if (theme == mTheme) return;
+   if (theme == mTheme)
+   {
+      return;
+   }
 
-
-   switch (theme) {
-   case THEME_CLEAR:
-      SetBasicWindType(WIND_BREEZE);
-      SetBasicCloudType(CLOUD_CLEAR);
-      SetBasicVisibilityType(VIS_UNLIMITED);
-   	break;
-   case THEME_FAIR:
-      SetBasicWindType(WIND_LIGHT);
-      SetBasicCloudType(CLOUD_FEW);
-      SetBasicVisibilityType(VIS_MODERATE);
-   	break;
-   case THEME_FOGGY:
-      SetBasicWindType(WIND_LIGHT);
-      SetBasicCloudType(CLOUD_OVERCAST);
-      SetBasicVisibilityType(VIS_CLOSE);
-   	break;
-   case THEME_RAINY:
-      SetBasicWindType(WIND_MODERATE);
-      SetBasicCloudType(CLOUD_OVERCAST);
-      SetBasicVisibilityType(VIS_LIMITED);
-   	break;
-   default:
-      break;
+   switch (theme)
+   {
+      case THEME_CLEAR:
+      {
+         SetBasicWindType(WIND_BREEZE);
+         SetBasicCloudType(CLOUD_CLEAR);
+         SetBasicVisibilityType(VIS_UNLIMITED);
+   	   break;
+      }
+      case THEME_FAIR:
+      {
+         SetBasicWindType(WIND_LIGHT);
+         SetBasicCloudType(CLOUD_FEW);
+         SetBasicVisibilityType(VIS_MODERATE);
+   	   break;
+      }
+      case THEME_FOGGY:
+      {
+         SetBasicWindType(WIND_LIGHT);
+         SetBasicCloudType(CLOUD_OVERCAST);
+         SetBasicVisibilityType(VIS_CLOSE);
+   	   break;
+      }
+      case THEME_RAINY:
+      {
+         SetBasicWindType(WIND_MODERATE);
+         SetBasicCloudType(CLOUD_OVERCAST);
+         SetBasicVisibilityType(VIS_LIMITED);
+   	   break;
+      }
+      default:
+      {
+         break;
+      }
    }
 
    //The theme will be set to CUSTOM because of the above,
    //this will reset it to what it's supposed to be
    mTheme = theme;
-
-   
 }
 
-void Weather::SetBasicCloudType( const CloudType type)
+void Weather::SetBasicCloudType(const CloudType type)
 {
    //create a set of cloud layers EnvEffects to represent the 
    //supplied cloud type
 
    mTheme = THEME_CUSTOM;
 
-   if (type == mCloudType) return;
+   if (type == mCloudType)
+   {
+      return;
+   }
 
    mCloudType = type;
 
    //remove any existing Clouds that have been added to the Env
-   for (CloudPlaneList::iterator it = mClouds.begin();
-      it != mClouds.end(); it++)
+   for ( CloudPlaneList::iterator it = mClouds.begin();
+         it != mClouds.end(); 
+         it++ )
    {
       mEnvironment->RemEffect( it->get() );
    }
 
-
-   switch (mCloudType) {
-   case CLOUD_CLEAR:
-   	break;
-   case CLOUD_FEW:
+   switch (mCloudType)
+   {
+      case CLOUD_CLEAR:
+      {
+   	   break;
+      }
+      case CLOUD_FEW:
       {
          mEnvironment->AddEffect( mClouds[CLOUD_FEW-1].get() );
+        	break;
       }
-   	break;
-   case CLOUD_SCATTERED:
+      case CLOUD_SCATTERED:
       {
          mEnvironment->AddEffect( mClouds[CLOUD_SCATTERED-1].get() );
+   	   break;
       }
-   	break;
-   case CLOUD_BROKEN:
+      case CLOUD_BROKEN:
       {
          mEnvironment->AddEffect( mClouds[CLOUD_BROKEN-1].get() );
+         break;
       }
-   	break;
-   case CLOUD_OVERCAST:
+   	case CLOUD_OVERCAST:
       {
          mEnvironment->AddEffect( mClouds[CLOUD_OVERCAST-1].get() );
+         break;   
       }
-     break;   
-   default: 
-      break;
+      default: 
+      {
+         break;
+      }
    }
-
 }
 
 /**
  *
  */
-void Weather::SetBasicWindType( const WindType windType)
+void Weather::SetBasicWindType(const WindType windType)
 {
    mTheme = THEME_CUSTOM;
 
-   if (mWindType == windType) return;
+   if (mWindType == windType)
+   {
+      return;
+   }
 
    mWindType = windType;
 
-   switch (mWindType) {
-   case WIND_NONE:
-   	break;
-   case WIND_BREEZE:
-   	break;
-   case WIND_LIGHT:
-   	break;
-   case WIND_MODERATE:
-   	break;
-   case WIND_HEAVY:
-      break;
-   case WIND_SEVERE:
-      break;
-   default:
-      break;
-   }
-   
+   switch (mWindType)
+   {
+      case WIND_NONE:
+   	   break;
+      case WIND_BREEZE:
+   	   break;
+      case WIND_LIGHT:
+   	   break;
+      case WIND_MODERATE:
+   	   break;
+      case WIND_HEAVY:
+         break;
+      case WIND_SEVERE:
+         break;
+      default:
+         break;
+   }   
 }
 
 /**
@@ -163,31 +186,33 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
 {
    mTheme = THEME_CUSTOM;
 
-   if (mVisType == visType) return;
+   if (mVisType == visType)
+   {
+      return;
+   }
 
    mVisType = visType;
-   switch (mVisType) {
-   case VIS_UNLIMITED:
-      mEnvironment->SetVisibility(100000.f);
-   	break;
-   case VIS_FAR:
-      mEnvironment->SetVisibility(50000.f);
-   	break;
-   case VIS_MODERATE:
-      mEnvironment->SetVisibility(25000.f);
-   	break;
-   case VIS_LIMITED:
-      mEnvironment->SetVisibility(8000.f);
-   	break;
-   case VIS_CLOSE:
-      mEnvironment->SetVisibility(1500.f);
-      break;
-   default:
-      LOG_WARNING("Weather: unhandled visibility type" );
-      break;
+   switch (mVisType)
+   {
+      case VIS_UNLIMITED:
+         mEnvironment->SetVisibility(100000.f);
+   	   break;
+      case VIS_FAR:
+         mEnvironment->SetVisibility(50000.f);
+   	   break;
+      case VIS_MODERATE:
+         mEnvironment->SetVisibility(25000.f);
+   	   break;
+      case VIS_LIMITED:
+         mEnvironment->SetVisibility(8000.f);
+   	   break;
+      case VIS_CLOSE:
+         mEnvironment->SetVisibility(1500.f);
+         break;
+      default:
+         LOG_WARNING("Weather: unhandled visibility type" );
+         break;
    }
-   
-
 }
 
 /** 
@@ -199,16 +224,24 @@ void Weather::SetBasicVisibilityType(const VisibilityType visType)
 void Weather::SetRateOfChange(const float rate)
 {
    mRateOfChange = rate;
-   if (mRateOfChange<-1.f) mRateOfChange = -1.f;
-   else if (mRateOfChange > 1.f) mRateOfChange = 1.f;
-
+   if (mRateOfChange<-1.f)
+   {
+      mRateOfChange = -1.f;
+   }
+   else if (mRateOfChange > 1.f)
+   {
+      mRateOfChange = 1.f;
+   }
 }
 
 /** Set the Weather's rough time period.  This doesn't affect the date.
  */
 void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season season)
 {
-   if (mTimePeriod == period && mSeason == season) return;
+   if (mTimePeriod == period && mSeason == season)
+   {
+      return;
+   }
 
    mTimePeriod = period;
    mSeason = season;
@@ -220,20 +253,20 @@ void Weather::SetTimePeriodAndSeason(const TimePeriod period, const Season seaso
    //corresponding to the date
    switch ( mTimePeriod )
    {
-   case TIME_DAWN:  hr=6;  mi=0; sc=0; break;      
-   case TIME_DAY:   hr=12; mi=30;sc=0; break;
-   case TIME_DUSK:  hr=18; mi=0; sc=0; break;
-   case TIME_NIGHT: hr=23; mi=0; sc=0; break;
-   default:         hr=12; mi=0; sc=0; break;
+      case TIME_DAWN:  hr=6;  mi=0; sc=0; break;      
+      case TIME_DAY:   hr=12; mi=30;sc=0; break;
+      case TIME_DUSK:  hr=18; mi=0; sc=0; break;
+      case TIME_NIGHT: hr=23; mi=0; sc=0; break;
+      default:         hr=12; mi=0; sc=0; break;
    }
 
    switch (mSeason) 
    {
-   case SEASON_SPRING: yr=2004; mo=3; da=15; break;
-   case SEASON_SUMMER: yr=2004; mo=7; da=15; break;
-   case SEASON_FALL:   yr=2004; mo=10; da=15;break;
-   case SEASON_WINTER: yr=2004; mo=12; da=15;break;
-   default:            yr=2004; mo=7; da=15; break;
+      case SEASON_SPRING: yr=2004; mo=3; da=15; break;
+      case SEASON_SUMMER: yr=2004; mo=7; da=15; break;
+      case SEASON_FALL:   yr=2004; mo=10; da=15;break;
+      case SEASON_WINTER: yr=2004; mo=12; da=15;break;
+      default:            yr=2004; mo=7; da=15; break;
    }
 
    mEnvironment->SetDateTime(yr, mo, da, hr, mi, sc);
@@ -245,13 +278,17 @@ void Weather::GetTimePeriodAndSeason(TimePeriod *period, Season *season) const
    *season = mSeason;
 }
 
-
 bool Weather::AddChild(dtCore::DeltaDrawable *child)
 {
-   return( mEnvironment->AddChild(child) );
+   return mEnvironment->AddChild(child);
 }
 
 void Weather::RemoveChild( dtCore::DeltaDrawable *child)
 {
-   if (child)  mEnvironment->RemoveChild(child);
+   if (child)
+   {
+      mEnvironment->RemoveChild(child);
+   }
+}
+
 }

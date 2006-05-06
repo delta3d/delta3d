@@ -40,6 +40,10 @@ namespace dtActors
 
       /*virtual*/ void BuildPropertyMap();
 
+    protected:
+
+      virtual ~ActionActorProxy() {}
+
    };
 
 

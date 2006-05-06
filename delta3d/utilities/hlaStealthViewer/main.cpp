@@ -1,22 +1,15 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-#include "dtHLA/dthla.h"
+#include <dtABC/application.h>
+#include <dtCore/camera.h>
+#include <dtCore/globals.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtHLA/rticonnection.h>
 
-#include <osg/Billboard>
-#include <osg/Geode>
-#include <osg/Image>
-#include <osg/PolygonMode>
-#include <osg/Shape>
-#include <osg/ShapeDrawable>
-
-#include <osgDB/ReadFile>
-#include <osgDB/WriteFile>
+#include <iostream>
+#include <string>
 
 using namespace dtCore;
 using namespace dtABC;
 using namespace dtHLA;
-using namespace osg;
-using namespace std;
 
 /**
  * HLA stealth viewer application.
@@ -24,7 +17,6 @@ using namespace std;
 class HLAStealthViewerApplication : public Application
 {
    DECLARE_MANAGEMENT_LAYER(HLAStealthViewerApplication)
-   
    
    public:
    
@@ -34,7 +26,7 @@ class HLAStealthViewerApplication : public Application
        * @param executionName the name of the federation execution to join
        * @param fedFilename the name of the fed file to use
        */
-      HLAStealthViewerApplication(string executionName, string fedFilename)
+      HLAStealthViewerApplication(const std::string& executionName, const std::string& fedFilename)
          : Application(),
            mExecutionName(executionName),
            mFedFilename(fedFilename)
@@ -67,7 +59,7 @@ class HLAStealthViewerApplication : public Application
          
          GetCamera()->SetClearColor(0.f, 0.f, 0.f, 1.f);
          
-         mEarth = new dtCore::Object;
+         mEarth = new Object;
          
          mEarth->LoadFile("earth.osg");
          
@@ -75,7 +67,7 @@ class HLAStealthViewerApplication : public Application
          
          mRTIConnection->SetGlobeRadius(80.0f);
          
-         dtCore::Transform transform(0, -350, 0);
+         Transform transform(0, -350, 0);
          
          GetCamera()->SetTransform(&transform);
       }
@@ -87,11 +79,9 @@ class HLAStealthViewerApplication : public Application
       {
          Application::Config();
          
-         mRTIConnection->JoinFederationExecution(
-            mExecutionName, 
-            mFedFilename,
-            "StealthViewer"
-         );
+         mRTIConnection->JoinFederationExecution(  mExecutionName, 
+                                                   mFedFilename,
+                                                   "StealthViewer" );
       }
       
       /**
@@ -101,39 +91,42 @@ class HLAStealthViewerApplication : public Application
       {
          mRTIConnection->LeaveFederationExecution();
       }
-      
-      
+
+   protected:
+
+      virtual ~HLAStealthViewerApplication() {}
+            
    private:
       
       /**
        * The name of the federation execution to join.
        */
-      string mExecutionName;
+      std::string mExecutionName;
       
       /**
        * The name of the fed filename to use.
        */
-      string mFedFilename;
+      std::string mFedFilename;
       
       /**
        * The effect manager.
        */
-      dtCore::RefPtr<EffectManager> mEffectManager;
+      RefPtr<EffectManager> mEffectManager;
       
       /**
        * The RTI connection object.
        */
-      dtCore::RefPtr<RTIConnection> mRTIConnection;
+      RefPtr<RTIConnection> mRTIConnection;
       
       /**
        * Orbit motion model for the camera.
        */
-      dtCore::RefPtr<OrbitMotionModel> mOrbitMotionModel;
+      RefPtr<OrbitMotionModel> mOrbitMotionModel;
       
       /**
        * The Earth object.
        */
-      dtCore::RefPtr<dtCore::Object> mEarth;
+      RefPtr<Object> mEarth;
 };
 
 IMPLEMENT_MANAGEMENT_LAYER(HLAStealthViewerApplication)
@@ -141,14 +134,14 @@ IMPLEMENT_MANAGEMENT_LAYER(HLAStealthViewerApplication)
 int main( int argc, char **argv )
 {
    bool printHelp = false;
-   string executionName = "dtCore";
-   string fedFilename = "RPR-FOM.fed";
+   std::string executionName = "dtCore";
+   std::string fedFilename = "RPR-FOM.fed";
    
    for(int i=1;i<argc;i++)
    {
       if(argv[i][0] == '-')
       {
-         string command = argv[i] + 1;
+         std::string command = argv[i] + 1;
          
          if(command == "h" || command == "?" || command == "help")
          {
@@ -160,7 +153,7 @@ int main( int argc, char **argv )
             
             if(i == argc || argv[i][0] == '-')
             {
-               cerr << "Missing argument: federation execution name" << endl;
+               std::cerr << "Missing argument: federation execution name" << std::endl;
             }
             else
             {
@@ -173,7 +166,7 @@ int main( int argc, char **argv )
             
             if(i == argc || argv[i][0] == '-')
             {
-               cerr << "Missing argument: fed filename" << endl;
+               std::cerr << "Missing argument: fed filename" << std::endl;
             }
             else
             {
@@ -182,22 +175,22 @@ int main( int argc, char **argv )
          }
          else
          {
-            cerr << "Unrecognized argument: " << command << endl;
+            std::cerr << "Unrecognized argument: " << command << std::endl;
          }
       }   
    }
    
    if(printHelp)
    {
-      cout << "usage: hlaStealthViewer [-options]" << endl;
-      cout << endl;
-      cout << "where options include:" << endl;
-      cout << "    -execution <federation execution name>" << endl;
-      cout << "    -fed <fed filename>" << endl;
+      std::cout << "usage: hlaStealthViewer [-options]" << std::endl;
+      std::cout << std::endl;
+      std::cout << "where options include:" << std::endl;
+      std::cout << "    -execution <federation execution name>" << std::endl;
+      std::cout << "    -fed <fed filename>" << std::endl;
       return 1;
    }
    
-   HLAStealthViewerApplication* hlaStealthViewerApp = 
+   RefPtr<HLAStealthViewerApplication> hlaStealthViewerApp = 
       new HLAStealthViewerApplication(executionName, fedFilename);
    
    hlaStealthViewerApp->Config();

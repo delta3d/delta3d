@@ -235,13 +235,10 @@ namespace dtDAL
          /**
           * @see DocumentHandler#startElement
           */
-         virtual void startElement
-            (
-               const XMLCh*  const  uri,
-               const XMLCh*  const  localname,
-               const XMLCh*  const  qname,
-               const xerces_dt::Attributes& attrs
-               );
+         virtual void startElement( const XMLCh*  const  uri,
+                                    const XMLCh*  const  localname,
+                                    const XMLCh*  const  qname,
+                                    const xerces_dt::Attributes& attrs );
 
          /**
           * @see DocumentHandler#startPrefixMapping
@@ -316,8 +313,10 @@ namespace dtDAL
          void ClearMap() { mMap = NULL; }
 
          MapContentHandler();
-         virtual ~MapContentHandler();
 
+      protected: // This class is referenced counted, but this causes an error...
+
+         virtual ~MapContentHandler();
 
       private:
          //A string using the xerces multibyte character.  This allows
@@ -412,11 +411,16 @@ namespace dtDAL
           */
          const std::string ParseMapName(const std::string& path);
 
-         const std::set<std::string>& GetMissingActorTypes() { return mHandler.GetMissingActorTypes(); };
-         const std::vector<std::string>& GetMissingLibraries() { return mHandler.GetMissingLibraries(); };
+         const std::set<std::string>& GetMissingActorTypes() { return mHandler->GetMissingActorTypes(); };
+         const std::vector<std::string>& GetMissingLibraries() { return mHandler->GetMissingLibraries(); };
 
          MapParser();
-         ~MapParser();
+
+   protected:
+
+         virtual ~MapParser();
+
+   public:
 
          /**
           * this is called automatically on startup.
@@ -430,7 +434,7 @@ namespace dtDAL
       private:
          MapParser(const MapParser& copyParser);
          MapParser& operator=(const MapParser& assignParser);
-         MapContentHandler mHandler;
+         dtCore::RefPtr<MapContentHandler> mHandler;
          xerces_dt::SAX2XMLReader* mXercesParser;
          dtUtil::Log* mLogger;
    };

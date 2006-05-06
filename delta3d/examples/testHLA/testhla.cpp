@@ -30,6 +30,12 @@ public:
       srand( unsigned( time(0) ) );
    }
 
+protected:
+
+   virtual ~Updater() {}
+
+public:
+
    float Random() { return float(rand()) / RAND_MAX; }
 
    virtual void OnMessage(MessageData* data)
@@ -92,7 +98,6 @@ public:
       }
    }
 
-
 private:
 
    RefPtr<Keyboard> mKeyboard;
@@ -118,10 +123,14 @@ public:
    {
    }
 
+protected:
+
    virtual ~TestHLAApp()
    {
       mRtic->LeaveFederationExecution();
    }
+
+public:
 
    void Config()
    {

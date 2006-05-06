@@ -46,6 +46,8 @@ public:
    /*virtual*/ //const ActorProxy::RenderMode& GetRenderMode();
 
 protected:
+   /*virtual*/ ~BezierControllerActorProxy() {}
+
    /*virtual*/ void CreateActor();
    static int mNumControllers;
 

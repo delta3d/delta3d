@@ -49,10 +49,14 @@ namespace dtHLA
           */
          Entity(const std::string& name = "Entity");
 
+      protected:
+         
          /**
           * Destructor.
           */
          virtual ~Entity();
+
+      public:
 
          /**
           * Sets this entity's DIS/RPR-FOM entity identifier.

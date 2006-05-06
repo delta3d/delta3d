@@ -1,8 +1,8 @@
 #ifndef DELTA_TESTSTATEMANAGER
 #define DELTA_TESTSTATEMANAGER
 
-#include "dtCore/base.h"  // for base class
-#include "dtABC/statemanager.h"
+#include <dtCore/base.h>  // for base class
+#include <dtABC/statemanager.h>
 
 class StateWalker : public dtCore::Base
 {

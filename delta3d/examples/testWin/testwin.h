@@ -13,7 +13,7 @@ class TestWinApp : public dtABC::Application
 public:
    TestWinApp( const std::string& configFilename = "config.xml" );
 protected:
-   ~TestWinApp() {};
+   virtual ~TestWinApp() {};
 public:
 
    virtual void Config();

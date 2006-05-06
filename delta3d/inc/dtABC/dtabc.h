@@ -21,11 +21,24 @@
 #ifndef DELTA_DTABC
 #define DELTA_DTABC
 
+#include <dtABC/action.h>
 #include <dtABC/application.h>
+#include <dtABC/applicationkeyboardlistener.h>
+#include <dtABC/applicationmouselistener.h>
+#include <dtABC/autotrigger.h>
 #include <dtABC/baseabc.h>
+#include <dtABC/beziercontroller.h>
+#include <dtABC/beziercontrolpoint.h>
+#include <dtABC/curvenode.h>
 #include <dtABC/event.h>
+#include <dtABC/export.h>
+#include <dtABC/fl_dt_window.h>
+#include <dtABC/motionaction.h>
+#include <dtABC/pathpoint.h>
+#include <dtABC/pathpointconverter.h>
 #include <dtABC/state.h>
 #include <dtABC/statemanager.h>
+#include <dtABC/trigger.h>
 #include <dtABC/weather.h>
 #include <dtABC/widget.h>
 

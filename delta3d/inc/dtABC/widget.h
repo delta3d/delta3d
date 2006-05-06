@@ -84,8 +84,12 @@ namespace dtABC
 
 
    public:
-                              Widget( std::string name = "Widget" );
+                              Widget( const std::string& name = "Widget" );
+   protected:
+   
       virtual                 ~Widget();
+   
+   public:
 
       /**
        * configure the internal components and

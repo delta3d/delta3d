@@ -23,13 +23,16 @@ class TestMotionModelsApp : public Application
 
 public:
 
-   /**
-   * Constructor.
-   */
-   TestMotionModelsApp( std::string configFile = "config.xml" )
+   TestMotionModelsApp( const std::string& configFile = "config.xml" )
       : Application( configFile )
    {
    }
+
+protected:
+
+   virtual ~TestMotionModelsApp(){}
+
+public:
 
    virtual void TestMotionModelsApp::Config()
    {
@@ -149,7 +152,7 @@ private:
 
 IMPLEMENT_MANAGEMENT_LAYER( TestMotionModelsApp )
 
-int main( int argc, char **argv )
+int main()
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testMotionModels/;" +
                         GetDeltaDataPathList()  );

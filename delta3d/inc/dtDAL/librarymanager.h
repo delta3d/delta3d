@@ -169,7 +169,7 @@ namespace dtDAL
          /**
           * Free resources used by the library manager.
           */
-         ~LibraryManager();
+         virtual ~LibraryManager();
 
          ///Singleton instance of this class.
          static dtCore::RefPtr<LibraryManager> mInstance;

@@ -28,14 +28,15 @@
 
 namespace dtScript
 {
-   /** This class assists the user in executing Python scripts from within
-   * the C++ Delta3D world. Just instantiate a ScriptManager, call Load(filename)
-   * on your Python script, and then sucessive Run() calls will execute it by
-   * kicking off a new thread. Alternatively you can call Run(filename) to load 
-   * and execute in one step.
-   */
-   class DT_SCRIPT_EXPORT ScriptManager :  public dtCore::Base,
-                                    public OpenThreads::Thread
+   /** 
+    * This class assists the user in executing Python scripts from within
+    * the C++ Delta3D world. Just instantiate a ScriptManager, call Load(filename)
+    * on your Python script, and then sucessive Run() calls will execute it by
+    * kicking off a new thread. Alternatively you can call Run(filename) to load 
+    * and execute in one step.
+    */
+   class DT_SCRIPT_EXPORT ScriptManager : public dtCore::Base,
+                                          public OpenThreads::Thread
 	{
 
       DECLARE_MANAGEMENT_LAYER(ScriptManager)
@@ -43,8 +44,13 @@ namespace dtScript
 	public:
 	
 	   ScriptManager( const std::string& name = "ScriptManager" );
+
+   protected:
+
 	   virtual ~ScriptManager();
-	   
+
+   public:
+
       ///Load a Python script (.py) into memory
 	   void Load( const std::string& filename );
 
@@ -52,10 +58,7 @@ namespace dtScript
 	   void Run( const std::string& filename = "" );
 	   
 	   ///Stops the ScriptManager thread. Make sure to call this before you exit your app.
-	   void Stop()
-	   {
-	      cancel();
-	   }
+	   void Stop() { cancel(); }
 
    protected:
    
@@ -63,9 +66,7 @@ namespace dtScript
    
       PyObject* mFileObject;
       std::string mFilename;
-      
 	};
-	
 }
 
 #endif // DELTA_SCRIPT_MANAGER

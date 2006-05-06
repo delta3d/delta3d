@@ -38,9 +38,9 @@ namespace dtDAL {
                                     const std::string& resourceDirectoryExtension,
                                     const std::string& resourceDescription,
                                     std::vector<std::string> alternateMasterFiles);
-
+      protected:
          virtual ~DirectoryResourceTypeHandler();
-
+      public:
          /**
           * @param path The full path to the file or directory to check.
           * @param type The filetype, whether a directory or file.

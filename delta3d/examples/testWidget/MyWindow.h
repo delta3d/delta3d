@@ -1,10 +1,8 @@
 #ifndef DELTA_MYWINDOW
 #define DELTA_MYWINDOW
 
-#include "dtABC/fl_dt_window.h"
+#include <dtABC/fl_dt_window.h>
 #include "MyWidget.h"
-
-
 
 class MyWindow :  public   Fl_DT_Window<MyWidget>
 {
@@ -19,8 +17,9 @@ public:
                   MyWindow();
                   MyWindow( int w, int h, const char* l = 0L );
                   MyWindow( int x, int y, int w, int h, const char* l = 0L );
+protected:
    virtual        ~MyWindow();
-
+public:
    virtual  void  show( void );
 
 private:
