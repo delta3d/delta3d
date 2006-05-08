@@ -63,7 +63,7 @@ void CoreTests::TestScene()
    CPPUNIT_ASSERT_MESSAGE( std::string("Light number 0 should have a valid pointer but it is ")+dtUtil::ToString(light0), light0 != 0 );
 
    // The rest of the lights should be 0
-   for( unsigned int i = 1; i < dtCore::MAX_LIGHTS; ++i )
+   for( int i = 1; i < dtCore::MAX_LIGHTS; ++i )
    {
       std::string msg(std::string("Light number ")+dtUtil::ToString(i)+" should have a 0 pointer but it is "+dtUtil::ToString(scene->GetLight(i)));
       CPPUNIT_ASSERT_MESSAGE( msg, scene->GetLight(i) == 0 );
