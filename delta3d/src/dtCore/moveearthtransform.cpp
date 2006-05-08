@@ -26,7 +26,7 @@
 namespace dtCore
 {
 	///Get the transformation matrix which moves from local coords to world coords.
-   bool MoveEarthySkyWithEyePointTransform::ComputeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
+   bool MoveEarthySkyWithEyePointTransform::computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
 	{
 		if( osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv) )
 		{
@@ -37,7 +37,7 @@ namespace dtCore
 	}
 
 	///Get the transformation matrix which moves from world coords to local coords.
-	bool MoveEarthySkyWithEyePointTransform::ComputeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	bool MoveEarthySkyWithEyePointTransform::computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
 	{   
 		if( osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv) )
 		{
@@ -48,7 +48,7 @@ namespace dtCore
 	}
 
    ///Get the transformation matrix which moves from local coords to world coords.
-   bool MoveEarthySkyWithEyePointTransformAzimuth::ComputeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
+   bool MoveEarthySkyWithEyePointTransformAzimuth::computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const 
 	{
 		if( osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv) )
 		{
@@ -60,7 +60,7 @@ namespace dtCore
 	}
 
 	///Get the transformation matrix which moves from world coords to local coords.
-	bool MoveEarthySkyWithEyePointTransformAzimuth::ComputeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
+	bool MoveEarthySkyWithEyePointTransformAzimuth::computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const
 	{   
 		if( osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv) )
 		{

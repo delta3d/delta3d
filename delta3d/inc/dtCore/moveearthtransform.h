@@ -18,6 +18,7 @@
  *
  */
 
+#include <dtCore/export.h>
 #include <osg/Transform>
 
 #ifndef DELTA_MOVEEARTHYSKYWITHEYEPOINTTRANSFORM
@@ -27,26 +28,26 @@
 
 namespace dtCore
 {
-   class MoveEarthySkyWithEyePointTransform : public osg::Transform
+   class DT_CORE_EXPORT MoveEarthySkyWithEyePointTransform : public osg::Transform
    {
       public:
 
 	      ///Get the transformation matrix which moves from local coords to world coords.
-	      virtual bool ComputeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
+	      virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
 
 	      ///Get the transformation matrix which moves from world coords to local coords.
-	      virtual bool ComputeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
+	      virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
    };
 
-   class MoveEarthySkyWithEyePointTransformAzimuth : public osg::Transform
+   class DT_CORE_EXPORT MoveEarthySkyWithEyePointTransformAzimuth : public osg::Transform
    {
       public:
 
 	      ///Get the transformation matrix which moves from local coords to world coords.
-	      virtual bool ComputeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
+	      virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
 
 	      ///Get the transformation matrix which moves from world coords to local coords.
-	      virtual bool ComputeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
+	      virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
 
          float GetAzimuth() const { return mAzimuth; }
          void SetAzimuth( float azimuth ) { mAzimuth = azimuth; }
