@@ -695,7 +695,7 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
          );
       
          osg::Vec3 normal;
-      
+       
          it->GetNormal(
             corners[i][0], 
             corners[i][1], 
@@ -728,7 +728,7 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
             contact = (dContactGeom*)(((char*)contact) + skip);
          }   
       }
-   }
+   }   
    else if(geomClass == dSphereClass)
    {
       dReal radius = dGeomSphereGetRadius(o2);
@@ -737,52 +737,119 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
 
       dtUtil::MatrixUtil::TransformVec3(center, mat);
 
-      osg::Vec3 point
-      (
-         center[0], 
-         center[1], 
-         it->GetHeight(
-            center[0], 
-            center[1], 
-            it->mSmoothCollisionsEnabled
-         )
-      );
-      
-      osg::Vec3 normal;
-      
-      it->GetNormal(
-         center[0], 
-         center[1], 
-         normal, 
-         true
-      );
-      
-      osg::Plane plane;
-      plane.set(normal, point);
-      
-      float dist = plane.distance(center);
-      
-      if(dist <= radius && maxContacts >= 1)
-      {
-         contact->pos[0] = center[0] - dist*normal[0];
-         contact->pos[1] = center[1] - dist*normal[1];
-         contact->pos[2] = center[2] - dist*normal[2];
-         
-         contact->normal[0] = -normal[0];
-         contact->normal[1] = -normal[1];
-         contact->normal[2] = -normal[2];
-         
-         contact->depth = radius - dist;
-         
+      if(CollideSphere(it, center, radius, contact))
+      {    
          contact->g1 = o1;
          contact->g2 = o2;
          
          numContacts++;
       }
    }
+
+   else if(geomClass == dCCylinderClass)
+   {
+      dReal pRadius, pLength;
+      dGeomCCylinderGetParams(o2, &pRadius, &pLength);
+      
+      float lengthOver2 = pLength * 0.5f;
+
+      osg::Vec3 pFrom(0.0f, 0.0f, -lengthOver2);
+      osg::Vec3 pTo(0.0f, 0.0f, lengthOver2);
+      osg::Vec3 pCenter(0.0f, 0.0f, 0.0f);
+      
+      dtUtil::MatrixUtil::TransformVec3(pFrom, mat);
+      dtUtil::MatrixUtil::TransformVec3(pTo, mat);
+      dtUtil::MatrixUtil::TransformVec3(pCenter, mat);
+
+      if(numContacts < maxContacts && CollideSphere(it, pTo, pRadius, contact))
+      {
+         contact->g1 = o1;
+         contact->g2 = o2;
+        
+         ++contact;
+         numContacts++;              
+      }
+
+      if(numContacts < maxContacts && CollideSphere(it, pFrom, pRadius, contact))
+      {
+         contact->g1 = o1;
+         contact->g2 = o2;
+         
+         ++contact;
+         numContacts++;              
+      }
+
+      if(numContacts < maxContacts && CollideSphere(it, pCenter, pRadius, contact))
+      {
+         contact->g1 = o1;
+         contact->g2 = o2;
+
+         ++contact;
+         numContacts++;              
+      }
+
+
+   }
    
    return numContacts;
 }
+
+
+/**
+* A Helper function for Collider to detect collision with terrain between two points,
+* used to do collision with a Capped Cylinder.
+*  
+* @param pFrom the start of the line segment to collide with
+* @param pTo the end of the line segment to collide with
+* @param pRadius the radius of the line segment        
+* @param the ode contact point to fill 
+*/
+
+bool InfiniteTerrain::CollideSphere(InfiniteTerrain* it, const osg::Vec3& center, float pRadius, dContactGeom* contact)
+{
+   osg::Vec3 point
+      (
+      center[0], 
+      center[1], 
+      it->GetHeight(
+      center[0], 
+      center[1], 
+      it->mSmoothCollisionsEnabled
+      )
+      );
+
+   osg::Vec3 normal;
+
+   it->GetNormal(
+      center[0], 
+      center[1], 
+      normal, 
+      true
+      );
+
+   osg::Plane plane;
+   plane.set(normal, point);
+
+   float dist = plane.distance(center);
+
+   if(dist <= pRadius)
+   {
+      contact->pos[0] = center[0] - dist*normal[0];
+      contact->pos[1] = center[1] - dist*normal[1];
+      contact->pos[2] = center[2] - dist*normal[2];
+
+      contact->normal[0] = -normal[0];
+      contact->normal[1] = -normal[1];
+      contact->normal[2] = -normal[2];
+
+      contact->depth = pRadius - dist;
+
+      return true;
+   }
+
+   return false;
+}
+
 
 /**
  * ODE collision function: Finds the collider function appropriate
@@ -794,8 +861,7 @@ int InfiniteTerrain::Collider(dGeomID o1, dGeomID o2, int flags,
  */
 dColliderFn* InfiniteTerrain::GetColliderFn(int num)
 {
-   if(num == dBoxClass ||
-      num == dSphereClass)
+   if(num == dBoxClass || num == dSphereClass || num == dCCylinderClass)
    {
       return Collider;
    }
