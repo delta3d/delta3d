@@ -18,7 +18,7 @@
 *
 * @author John K. Grant
 */
-#ifndef DELTA_APPLICATION_MOUSE_LISTENER
+#ifndef DELTA_APPLICATION_MOUSE_LISTENER 
 #define DELTA_APPLICATION_MOUSE_LISTENER
 
 #include <dtCore/mouse.h>                // for base class
@@ -39,7 +39,7 @@ namespace dtABC
       ApplicationMouseListener(dtABC::BaseABC* app);
 
       void SetApplication(dtABC::BaseABC* app);
-      const dtABC::BaseABC* GetApplication() const { return mApplication.get(); }
+      const dtABC::BaseABC* GetApplication() const { return mApplication; }
 
       // inherited methods
       bool HandleButtonPressed(const dtCore::Mouse* mouse, dtCore::Mouse::MouseButton button);
@@ -53,7 +53,7 @@ namespace dtABC
       ~ApplicationMouseListener();
 
    private:
-      dtCore::RefPtr<dtABC::BaseABC> mApplication;
+      dtABC::BaseABC* mApplication;
    };
 }
 

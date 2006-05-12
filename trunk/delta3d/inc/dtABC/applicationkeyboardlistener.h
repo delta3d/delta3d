@@ -19,7 +19,7 @@
 * @author John K. Grant
 */
 #ifndef DELTA_APPLICATION_KEYBOARD_LISTENER
-#define DELTA_APPLICATION_KEYBOARD_LISTENER
+#define DELTA_APPLICATION_KEYBOARD_LISTENER 
 
 #include <dtCore/keyboard.h>   // for base class
 #include <dtCore/refptr.h>     // for member
@@ -39,7 +39,7 @@ namespace dtABC
       ApplicationKeyboardListener(dtABC::BaseABC* app);
 
       void SetApplication(dtABC::BaseABC* app);
-      const dtABC::BaseABC* GetApplication() const { return mApplication.get(); }
+      const dtABC::BaseABC* GetApplication() const { return mApplication; }
 
       // inherited methods
       bool HandleKeyPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc);
@@ -49,7 +49,7 @@ namespace dtABC
    protected:
       ~ApplicationKeyboardListener();
 
-      dtCore::RefPtr<dtABC::BaseABC> mApplication;
+      dtABC::BaseABC* mApplication;
    };
 }
 
