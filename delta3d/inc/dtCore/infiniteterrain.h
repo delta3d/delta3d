@@ -206,6 +206,17 @@ namespace dtCore
           */
          static int Collider(dGeomID o1, dGeomID o2, int flags,
                              dContactGeom* contact, int skip);
+
+         /**
+         * A Helper function for Collider to detect collision with terrain and a sphere
+         *  
+         * @param it the the pointer to the infinite terrain we want to collide with
+         * @param pCenter the center of the sphere
+         * @param pRadius the radius of the sphere
+         * @param pContact the ode contact point to fill 
+         * @return whether or not a collision occured
+         */
+         static bool CollideSphere(InfiniteTerrain* it, const osg::Vec3& pCenter, float pRadius, dContactGeom* pContact);
          
          /**
           * ODE collision function: Finds the collider function appropriate
@@ -216,6 +227,7 @@ namespace dtCore
           * @return the appropriate collider function, or NULL for none
           */
          static dColliderFn* GetColliderFn(int num);
+
          
          /**
           * ODE collision function: Computes the axis-aligned bounding box
