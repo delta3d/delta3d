@@ -35,7 +35,7 @@
 #include <osg/Projection>
 #include <osg/ShapeDrawable>
 #include <osg/Vec3>
-#include <osg/VertexProgram>
+#include <osg/GLExtensions>
 #include <osg/Texture2D>
 #include <osg/TextureCubeMap>
 #include <osgDB/ReadFile>
@@ -134,7 +134,7 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
 					mRenderProfile = new SkyBox::FixedFunctionProfile();	
 				}
 
-			}
+			} 
 
 		default:
 			{
@@ -148,13 +148,11 @@ void SkyBox::SetRenderProfile(RenderProfileEnum pRenderProfile)
 
 void SkyBox::CheckHardware()
 {
-	osg::TextureCubeMap::Extensions* cmExt = osg::TextureCubeMap::getExtensions(0, true);
-	osg::VertexProgram::Extensions* vpExt = osg::VertexProgram::getExtensions(0,true);
 
 	//this should always be supported
 	mSupportedProfiles[RP_FIXED_FUNCTION] = true;
 	
-	if(cmExt && cmExt->isCubeMapSupported() && vpExt && vpExt->isVertexProgramSupported())
+	if(osg::isGLExtensionSupported(0, "GL_ARB_texture_cube_map") && osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
 	{
 		mSupportedProfiles[RP_CUBE_MAP] = true;
 	}
@@ -163,7 +161,7 @@ void SkyBox::CheckHardware()
 		mSupportedProfiles[RP_CUBE_MAP] = false;
 	}
 	
-	if (vpExt && vpExt->isVertexProgramSupported())
+	if (osg::isGLExtensionSupported(0, "GL_ARB_fragment_shader") && osg::isGLExtensionSupported(0, "GL_ARB_vertex_shader"))
 	{
         mSupportedProfiles[RP_ANGULAR_MAP] = true;
 	}
