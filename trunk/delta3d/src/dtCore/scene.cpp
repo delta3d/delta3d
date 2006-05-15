@@ -101,7 +101,7 @@ Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
    mSceneNode(0),
    mSpaceID(0),
    mWorldID(0),
-   mGravity(),
+   mGravity(0.f, 0.f, 0.f),
    mPhysicsStepSize(0.0),
    mCollidableContents(),
    mContactJointGroupID(0),
@@ -135,7 +135,7 @@ Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
    
    dSpaceSetCleanup(mSpaceID, 0);
    
-   mGravity.set(0.0f, 0.0f, 0.0f);
+   SetGravity( osg::Vec3(.0f, 0.0f, -9.81f) );
    
    mContactJointGroupID = dJointGroupCreate(0);
    
