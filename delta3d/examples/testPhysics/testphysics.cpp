@@ -5,8 +5,6 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
-#include <dtCore/infiniteterrain.h>
-
 #include <ode/ode.h>
 #include <cassert>
 #include <queue>
@@ -65,11 +63,11 @@ public:
       :  Application( configFile ),
          mLimit(50)
    {
-      RefPtr<InfiniteTerrain> obj1 = new InfiniteTerrain("Ground");
+      RefPtr<Object> obj1 = new Object("Ground");
       RefPtr<Object> obj2 = new Object("FallingCrate");
       RefPtr<Object> obj3 = new Object("GroundCrate");
 
-      //obj1->LoadFile("models/dirt.ive");
+      obj1->LoadFile("models/dirt.ive");
       obj2->LoadFile("models/physics_crate.ive");
       obj3->LoadFile("models/physics_crate.ive");
 
@@ -91,7 +89,7 @@ public:
       double lz = 1.0;
 
       //create collision meshes
-      //obj1->SetCollisionMesh(); 
+      obj1->SetCollisionMesh(); 
       obj2->SetCollisionBox();
       obj3->SetCollisionBox();
 
