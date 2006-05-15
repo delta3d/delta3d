@@ -108,7 +108,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
 
    SetupColorInfo();
 
-   osg::StateSet* ss = mNode->getOrCreateStateSet();
+   osg::StateSet* ss = GetOSGNode()->getOrCreateStateSet();
    
    ss->setMode(GL_CULL_FACE, GL_TRUE);
    
@@ -161,7 +161,7 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
       0, GL_TEXTURE_2D, GL_TRUE
    );
    
-   mNode->setCullCallback( new InfiniteTerrainCallback(this) );
+   GetOSGNode()->setCullCallback( new InfiniteTerrainCallback(this) );
    
    if(dInfiniteTerrainClass == 0)
    {

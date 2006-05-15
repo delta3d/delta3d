@@ -107,30 +107,40 @@ namespace dtCore
 
          virtual void RenderProxyNode( bool enable = true );
 
-   protected:
+      protected:
 
-      DeltaDrawable( const std::string& name = "DeltaDrawable" );
-      virtual ~DeltaDrawable();
+         DeltaDrawable( const std::string& name = "DeltaDrawable" );
+         virtual ~DeltaDrawable();
 
-      RefPtr<osg::Node> mNode; ///< The node to store anything
-      DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
+         /** 
+          * Replaces the osg::Node which this DeltaDrawable wraps. This function
+          * should only be called by subclasses of DeltaDrawable. It should never
+          * be made public nor called by other DeltaDrawables.
+          */
+         void SetOSGNode( osg::Node* node );
 
-      typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
-      ChildList mChildList;      ///<List of children DeltaDrawable added
+         osg::Node* GetProxyNode() { return mProxyNode.get(); }         
+         const osg::Node* GetProxyNode() const { return mProxyNode.get(); }
+         void SetProxyNode( osg::Node* proxyNode );
 
-      Scene* mParentScene; ///<The Scene this Drawable was added to (Weak pointer to prevent circular reference).
+      private:
 
-      RefPtr<osg::Node> mProxyNode;
-      bool mRenderingProxy;
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         DeltaDrawable& operator=( const DeltaDrawable& ); 
+         DeltaDrawable( const DeltaDrawable& );
 
-   private:
+         RefPtr<osg::Node> mNode; ///< The node to store anything
+         DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
 
-      // Disallowed to prevent compile errors on VS2003. It apparently
-      // creates this functions even if they are not used, and if
-      // this class is forward declared, these implicit functions will
-      // cause compiler errors for missing calls to "ref".
-      DeltaDrawable& operator=( const DeltaDrawable& ); 
-      DeltaDrawable( const DeltaDrawable& );
+         typedef std::vector< RefPtr<DeltaDrawable> > ChildList;
+         ChildList mChildList; ///< List of children DeltaDrawable added
+
+         Scene* mParentScene; ///< The Scene this Drawable was added to (Weak pointer to prevent circular reference).
+
+         RefPtr<osg::Node> mProxyNode;
    };
 };
 

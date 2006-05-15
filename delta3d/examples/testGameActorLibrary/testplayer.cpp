@@ -32,7 +32,8 @@
 #include <iostream> 
  
 //////////////////////////////////////////////////////////////////////////////
-TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy) 
+TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
+   mIsector( new dtCore::Isector() )
 {
    mVelocity = 0.0f;
    mTurnRate = 0.0f;      
@@ -87,13 +88,14 @@ void TestPlayer::HandleTick(const double deltaSimTime)
       // attempt to ground clamp the actor so that he doesn't go through
       // mountains.
       osg::Vec3 intersection;
-      dtCore::Isector query(GetSceneParent());
-      query.SetStartPosition(osg::Vec3(pos.x(),pos.y(),-10000) /*pos*/);
-      query.SetDirection(osg::Vec3(0,0,1));
-      if (query.Update())
+      mIsector->Reset();
+      mIsector->SetScene( GetSceneParent() );
+      mIsector->SetStartPosition(osg::Vec3(pos.x(),pos.y(),-10000) /*pos*/);
+      mIsector->SetDirection(osg::Vec3(0,0,1));
+      if (mIsector->Update())
       {
-         osgUtil::IntersectVisitor &iv = query.GetIntersectVisitor();
-         osg::Vec3 p = iv.getHitList(query.GetLineSegment())[0].getWorldIntersectPoint();
+         osgUtil::IntersectVisitor &iv = mIsector->GetIntersectVisitor();
+         osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
          pos.z() = p.z()+ 0.55f;
       }   
       

@@ -16,7 +16,7 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef DELTA_ISECTOR
 #define DELTA_ISECTOR
@@ -26,6 +26,9 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/transformable.h>
+#include <dtCore/export.h>
+#include <dtCore/macros.h>
+#include <dtCore/refptr.h>
 
 #include <osg/Vec3>
 #include <osgUtil/IntersectVisitor>
@@ -35,7 +38,7 @@ namespace dtCore
    class DeltaDrawable;
    class Scene;
 
-   /*!
+   /**
       This class is used to check for intersections of a line segment with 
       geometry.  Supply the starting position, the direction vector, the length
       of the Isector, and the geometry to intersect with.
@@ -52,24 +55,24 @@ namespace dtCore
       To search the whole scene for the height of terrain at a given xyz:
    \code
       Isector *isect = new Isector();
-      sgVec3 queryPoint = {500.f, 500.f, 1000.f};
+      osg::Vec3 queryPoint( 500.0f, 500.0f, 1000.0f );
       isect->SetStartPosition( queryPoint );
-      sgVec3 direction = {0.f, 0.f, -1.f};
+      osg::Vec3 direction( 0.0f, 0.0f, -1.0f );
       isect->SetDirection( direction );
 
       isect->Update();
 
-      sgVec3 hitPt;
+      osg::Vec3 hitPt;
       isect->GetHitPoint( hitPt );
    \endcode
    */
 
-   class DT_CORE_EXPORT Isector : public Transformable  
+   class DT_CORE_EXPORT Isector : public Transformable
    {
 
-   public:
-
       DECLARE_MANAGEMENT_LAYER(Isector)
+
+   public:
 
       /**
        * Constructs a new intersection query.
@@ -78,7 +81,7 @@ namespace dtCore
        * @note The default ray has a starting position of (0,0,0) and a
        *  direction of (0,1,0).
        */
-      Isector(dtCore::Scene *scene = 0);
+      Isector(Scene *scene = 0);
 
       /**
        * Constructs a new intersection query using a ray constructed with the
@@ -87,7 +90,7 @@ namespace dtCore
        * @param dir The direction the ray is traveling.
        * @param scene The Delta3D scene to intersect.
        */
-      Isector(const osg::Vec3 &start, const osg::Vec3 &dir, dtCore::Scene *scene = 0);
+      Isector(const osg::Vec3 &start, const osg::Vec3 &dir, Scene *scene = 0);
 
       /**
        * Constructs a new intersection query using a line segment with the
@@ -96,14 +99,20 @@ namespace dtCore
        * @param start The start of the line segment.
        * @param end The end point of the line segment.
        */
-      Isector(dtCore::Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end);
+      Isector(Scene *scene, const osg::Vec3 &start, const osg::Vec3 &end);
+
+   protected:
+
+      virtual ~Isector();
+
+   public:
 
       /**
        * Sets a drawable as the root of the intersection tests.  If this is specified,
        * it will take precedence over the currently assigned Delta3D scene.
        * @param drawable The drawable to intersect.
        */
-      void SetGeometry(dtCore::DeltaDrawable *drawable) 
+      void SetGeometry(DeltaDrawable *drawable) 
       {
          mSceneRoot = drawable;
       }
@@ -119,7 +128,7 @@ namespace dtCore
       /**
        * @return the root of the scene to query.  It will return if this is using the entire scene.
        */
-      dtCore::DeltaDrawable* GetQueryRoot() 
+      DeltaDrawable* GetQueryRoot() 
       {
          return mSceneRoot.get();
       }
@@ -127,27 +136,24 @@ namespace dtCore
       /**
        * @return the root of the scene to query.  It will return if this is using the entire scene.
        */
-      const dtCore::DeltaDrawable* GetQueryRoot() const
+      const DeltaDrawable* GetQueryRoot() const
       {
          return mSceneRoot.get();
       }
 
       ///Sets the scene to use as the base for the scene query.
-      void SetScene(dtCore::Scene* newScene)
-      {
-         mScene = newScene;
-      }
+      void SetScene(Scene* newScene);
       
       ///@return the scene being queried.
-      dtCore::Scene* GetScene()
+      Scene* GetScene()
       {
-         return mScene.get();
+         return mScene;
       }
 
       ///@return the scene being queried.
-      const dtCore::Scene* GetScene() const
+      const Scene* GetScene() const
       {
-         return mScene.get();
+         return mScene;
       }
 
       /**
@@ -267,7 +273,7 @@ namespace dtCore
        * along the intersection ray.
        * @return A valid DeltaDrawable.
        */
-      dtCore::DeltaDrawable *GetClosestDeltaDrawable()
+      DeltaDrawable *GetClosestDeltaDrawable()
       {
          return mClosestDrawable.get();
       }
@@ -277,7 +283,7 @@ namespace dtCore
        * along the intersection ray.
        * @return A valid DeltaDrawable.
        */
-      const dtCore::DeltaDrawable *GetClosestDeltaDrawable() const
+      const DeltaDrawable *GetClosestDeltaDrawable() const
       {
          return mClosestDrawable.get();
       }
@@ -306,7 +312,7 @@ namespace dtCore
        * @param geode The node to search for.
        * @return A valid DeltaDrawable if one was found or 0 otherwise.
        */
-      dtCore::DeltaDrawable *MapNodePathToDrawable(osg::NodePath &geode);
+      DeltaDrawable *MapNodePathToDrawable(osg::NodePath &geode);
 
       /**
        * Get the Hitlist member. Do not assume this list is sorted based on distance from
@@ -324,15 +330,22 @@ namespace dtCore
 
    private:
 
+      // Disallowed to prevent compile errors on VS2003. It apparently
+      // creates this functions even if they are not used, and if
+      // this class is forward declared, these implicit functions will
+      // cause compiler errors for missing calls to "ref".
+      Isector& operator=( const Isector& ); 
+      Isector( const Isector& );
+
       osg::Vec3 mStart;
       osg::Vec3 mDirection;
       float mLineLength;
       bool mUpdateLineSegment;
 
-      dtCore::RefPtr<dtCore::Scene> mScene;
-      dtCore::RefPtr<osg::LineSegment> mLineSegment;
-      dtCore::RefPtr<dtCore::DeltaDrawable> mSceneRoot;
-      dtCore::RefPtr<dtCore::DeltaDrawable> mClosestDrawable;
+      Scene* mScene;
+      RefPtr<osg::LineSegment> mLineSegment;
+      RefPtr<DeltaDrawable> mSceneRoot;
+      RefPtr<DeltaDrawable> mClosestDrawable;
       osgUtil::IntersectVisitor mIntersectVisitor;
       osgUtil::IntersectVisitor::HitList mHitList; 
       void CalcLineSegment();

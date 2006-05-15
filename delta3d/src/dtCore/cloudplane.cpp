@@ -56,8 +56,8 @@ CloudPlane::CloudPlane( int   octaves,
 	if(mHeight > MAX_HEIGHT)
 		mHeight = MAX_HEIGHT;
 
-	mNode = new osg::Group();
-   dynamic_cast<osg::Group*>(mNode.get())->setNodeMask(0xf0000000);
+	SetOSGNode( new osg::Group() );
+   GetOSGNode()->setNodeMask(0xf0000000);
 
 	Create();
 	AddSender(System::Instance());
@@ -158,7 +158,7 @@ void CloudPlane::Create()
 	mGeode->addDrawable(mPlane.get());
 
 	mXform->addChild(mGeode.get());
-   dynamic_cast<osg::Group*>(mNode.get())->addChild(mXform.get());
+   GetOSGNode()->asGroup()->addChild(mXform.get());
 
    //init the colors to something believable
    osg::Vec3 sky( 1.0f, 1.0f, 1.0f );

@@ -13,8 +13,7 @@ DeltaDrawable::DeltaDrawable(const std::string& name)
    mNode(0),
    mParent(0), 
    mParentScene(0),
-   mProxyNode(0), 
-   mRenderingProxy(false)
+   mProxyNode(0)
 {
    RegisterInstance(this);
 }
@@ -156,4 +155,14 @@ void DeltaDrawable::Emancipate()
    {
       mParent->RemoveChild(this);
    }
+}
+
+void DeltaDrawable::SetOSGNode( osg::Node* node )
+{
+   mNode = node;
+}
+
+void DeltaDrawable::SetProxyNode( osg::Node* proxyNode )
+{
+   mProxyNode = proxyNode;
 }

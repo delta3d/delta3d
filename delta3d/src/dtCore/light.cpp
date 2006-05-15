@@ -166,7 +166,7 @@ void Light::AddedToScene( Scene *scene )
    else
    {
       SetEnabled( false );
-      mParentScene->UnRegisterLight( this );
+      DeltaDrawable::GetSceneParent()->UnRegisterLight( this );
       DeltaDrawable::AddedToScene( scene );
    }
 }

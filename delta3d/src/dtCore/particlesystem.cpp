@@ -220,7 +220,7 @@ void ParticleSystem::SetEnabled(bool enable)
    mEnabled = enable;
 
    ParticleSystemParameterVisitor pspv = ParticleSystemParameterVisitor( mEnabled );
-   mNode->accept( pspv );
+   GetOSGNode()->accept( pspv );
 }
 
 /**

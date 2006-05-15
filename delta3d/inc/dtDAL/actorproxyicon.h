@@ -68,18 +68,18 @@ namespace dtDAL
             public:
                BillBoardDrawable()
                {
-                  mNode = new osg::Group();
+                  SetOSGNode( new osg::Group() );
                }
 
                virtual bool AddChild(dtCore::DeltaDrawable *child)
                {
-                  dynamic_cast<osg::Group *>(mNode.get())->addChild(child->GetOSGNode());
+                  GetOSGNode()->asGroup()->addChild(child->GetOSGNode());
                   return dtCore::DeltaDrawable::AddChild(child);
                }
 
                virtual void RemoveChild(dtCore::DeltaDrawable *child)
                {
-                  dynamic_cast<osg::Group *>(mNode.get())->removeChild(child->GetOSGNode());
+                  GetOSGNode()->asGroup()->removeChild(child->GetOSGNode());
                   dtCore::DeltaDrawable::RemoveChild(child);
                }
 

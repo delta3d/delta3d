@@ -54,9 +54,9 @@ mInitializedTextures(false)
 {
    RegisterInstance(this);
 
-   mNode = new osg::Group();
+   SetOSGNode( new osg::Group() );
 
-   mNode->setCullCallback(new SkyBox::ConfigCallback(this));
+   GetOSGNode()->setCullCallback(new SkyBox::ConfigCallback(this));
 
    memset(mTexPreSetList, 0, sizeof(bool) * 6);
 }
@@ -69,7 +69,7 @@ SkyBox::~SkyBox()
 
 void SkyBox::Config()
 {
-   mNode->setCullCallback(0);
+   GetOSGNode()->setCullCallback(0);
 
 	SetRenderProfile(mRenderProfilePreference);
 
@@ -84,7 +84,7 @@ void SkyBox::Config()
 		}
 	}
 
-	mRenderProfile->Config(mNode->asGroup()); 	
+	mRenderProfile->Config(GetOSGNode()->asGroup()); 	
 }
 
 

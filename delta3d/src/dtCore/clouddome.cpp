@@ -58,8 +58,8 @@ CloudDome::CloudDome(   int   octaves,
    mOffset(.01f, .01f, 0.f)
 {
    RegisterInstance(this);
-   mNode = new osg::Group();
-   mNode->setName( this->GetName() );
+   SetOSGNode( new osg::Group() );
+   GetOSGNode()->setName( this->GetName() );
    Create();
    AddSender(System::Instance());
 }
@@ -99,8 +99,8 @@ CloudDome::CloudDome(   float radius,
 {
    RegisterInstance(this);
 
-   mNode = new osg::Group();
-   mNode->setName( this->GetName() );
+   SetOSGNode( new osg::Group() );
+   GetOSGNode()->setName( this->GetName() );
 
    Create();
    AddSender( System::Instance() );
@@ -285,7 +285,7 @@ void CloudDome::Create()
 
    mXform->addChild( mDome.get() );
 
-   if( osg::Group* group = dynamic_cast<osg::Group*>( mNode.get() ) )
+   if( osg::Group* group = GetOSGNode()->asGroup() )
    {
       group->addChild( mXform.get() );
    }

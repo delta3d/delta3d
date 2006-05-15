@@ -17,7 +17,7 @@ Object::Object(const std::string& name)
 {
    RegisterInstance(this);
 
-   osg::StateSet *stateSet = mNode->getOrCreateStateSet();
+   osg::StateSet *stateSet = GetOSGNode()->getOrCreateStateSet();
    stateSet->setMode(GL_NORMALIZE, osg::StateAttribute::ON);
 
    // Default collision category = 5

@@ -76,7 +76,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     Viewport::Viewport(ViewportManager::ViewportType &type, const std::string &name,
         QWidget *parent, QGLWidget *shareWith) :
-            QGLWidget(parent,shareWith), inChangeTransaction(false), name(name), viewPortType(type)
+         QGLWidget(parent,shareWith), inChangeTransaction(false), name(name), viewPortType(type), mIsector(new dtCore::Isector())
     {
         this->frameStamp = new osg::FrameStamp();
         this->mouseSensitivity = 10.0f;
@@ -299,29 +299,32 @@ namespace dtEditQt
         if (getAutoSceneUpdate())
             updateActorProxyBillboards();
 
-        dtCore::Isector query(getScene());
+        mIsector->Reset();
+        mIsector->SetScene( getScene() );
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toSelect;
         osg::Vec3 nearPoint,farPoint;
         int yLoc = this->sceneView->getViewport()->height()-y;
 
         this->sceneView->projectWindowXYIntoObject(x,yLoc,nearPoint,farPoint);
-        query.SetStartPosition(nearPoint);
-        query.SetDirection(farPoint-nearPoint);
+        mIsector->SetStartPosition(nearPoint);
+        mIsector->SetDirection(farPoint-nearPoint);
 
         //If we found no intersections no need to continue so emit an empty selection
         //and return.
-        if (!query.Update()) {
+        if (!mIsector->Update())
+        {
             EditorEvents::getInstance().emitActorsSelected(toSelect);
             return;
         }
 
-        if (query.GetClosestDeltaDrawable() == NULL) {
+        if (mIsector->GetClosestDeltaDrawable() == NULL)
+        {
             LOG_ERROR("Intersection query reported an intersection but returned an "
                     "invalid DeltaDrawable.");
             return;
         }
 
-        dtCore::DeltaDrawable *drawable = query.GetClosestDeltaDrawable();
+        dtCore::DeltaDrawable *drawable = mIsector->GetClosestDeltaDrawable();
         ViewportOverlay *overlay = ViewportManager::getInstance().getViewportOverlay();
         ViewportOverlay::ActorProxyList &selection = overlay->getCurrentActorSelection();
 

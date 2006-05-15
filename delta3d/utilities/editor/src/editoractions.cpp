@@ -74,7 +74,8 @@ namespace dtEditQt
     osg::ref_ptr<EditorActions> EditorActions::instance(NULL);
 
     ///////////////////////////////////////////////////////////////////////////////
-    EditorActions::EditorActions()
+    EditorActions::EditorActions() :
+      mIsector( new dtCore::Isector() )
     {
         LOG_INFO("Initializing Editor Actions.");
         setupFileActions();
@@ -772,7 +773,8 @@ namespace dtEditQt
             ViewportManager::getInstance().getViewportOverlay()->getCurrentActorSelection();
         dtCore::Scene *scene = ViewportManager::getInstance().getMasterScene();
 
-        if (scene == NULL) {
+        if (scene == NULL)
+        {
             LOG_ERROR("Current scene is not valid.");
             return;
         }
@@ -785,7 +787,9 @@ namespace dtEditQt
         //Iterate through the current selection, trace a ray directly below it.  If there is
         //an intersection, move the current proxy to that point.
         ViewportOverlay::ActorProxyList::iterator itor;
-        dtCore::Isector query(scene);
+
+        mIsector->Reset();
+        mIsector->SetScene(scene);
 
         for (itor=selection.begin(); itor!=selection.end(); ++itor)
         {
@@ -797,15 +801,16 @@ namespace dtEditQt
             {
                 osg::Vec3 pos = tProxy->GetTranslation();
 
-                query.SetStartPosition(pos);
-                query.SetDirection(osg::Vec3(0,0,-1));
-                query.Reset();
+                mIsector->SetStartPosition(pos);
+                mIsector->SetDirection(osg::Vec3(0,0,-1));
+                mIsector->Reset();
 
                 //Find a possible intersection point.  If we find an intersection
                 //point, move the actor to that location.
-                if (query.Update()) {
-                    osgUtil::IntersectVisitor &iv = query.GetIntersectVisitor();
-                    osg::Vec3 p = iv.getHitList(query.GetLineSegment())[0].getWorldIntersectPoint();
+                if (mIsector->Update())
+                {
+                    osgUtil::IntersectVisitor &iv = mIsector->GetIntersectVisitor();
+                    osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
                     tProxy->SetTranslation(p);
                 }
             }

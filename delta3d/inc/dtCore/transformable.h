@@ -105,10 +105,14 @@ namespace dtCore
       ///Convenience function to return back the internal matrix transform node
       ///Convenience function to return back the internal matrix transform node
       virtual osg::MatrixTransform* GetMatrixNode()
-      { return dynamic_cast<osg::MatrixTransform*>( mNode.get() ); }
+      { 
+         return dynamic_cast<osg::MatrixTransform*>( GetOSGNode() );
+      }
 
       virtual const osg::MatrixTransform* GetMatrixNode() const
-      { return dynamic_cast<const osg::MatrixTransform*>( mNode.get() ); }
+      {
+         return dynamic_cast<const osg::MatrixTransform*>( GetOSGNode() );
+      }
 
       ///Render method for an object which may not have geometry
       virtual void RenderProxyNode( bool enable = true );

@@ -47,6 +47,15 @@ namespace dtCore
                                  double sunAngle, 
                                  double sunAzimuth,
                                  double visibility ) = 0;
+
+      private:
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         EnvEffect& operator=( const EnvEffect& ); 
+         EnvEffect( const EnvEffect& );
    };
 }
 

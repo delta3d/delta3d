@@ -54,7 +54,7 @@ namespace dtCore
 
    public:
 
-      virtual osg::Node* GetOSGNode() { return mNode.get(); }
+      virtual osg::Node* GetOSGNode() { return DeltaDrawable::GetOSGNode(); }
 
       ///Set that values that control how fast light fades as one moves away from the light
       void SetAttenuation( float constant, float linear, float quadratic );

@@ -29,6 +29,7 @@
 #include <osg/ref_ptr>
 #include <dtDAL/actorproxy.h>
 #include "dtEditQt/typedefs.h"
+#include <dtCore/refptr.h>
 
 class QAction;
 class QActionGroup;
@@ -36,6 +37,11 @@ class QListWidgetItem;
 class QListWidget;
 class QDialog;
 class QTimer;
+
+namespace dtCore
+{
+   class Isector;
+}
 
 namespace dtDAL
 {
@@ -333,8 +339,8 @@ namespace dtEditQt
      * Constructs the EditorActions class.   This is private because it's a singleton
      */
     EditorActions();
-    EditorActions &operator=(const EditorActions &rhs) { return *this; }
-    EditorActions(const EditorActions &rhs) { }
+    EditorActions &operator=(const EditorActions &rhs);
+    EditorActions(const EditorActions &rhs);
 
     friend class MainWindow;
 
@@ -373,6 +379,8 @@ namespace dtEditQt
 
     ///Singleton instance of this class.
     static osg::ref_ptr<EditorActions> instance;
+
+    dtCore::RefPtr<dtCore::Isector> mIsector;
   };
 }
 
