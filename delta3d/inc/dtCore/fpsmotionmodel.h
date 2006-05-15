@@ -26,6 +26,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
+#include <dtcore/inputdevice.h>
+#include <dtUtil/functor.h>
+
+#include <osg/vec3>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -45,9 +49,10 @@ namespace dtCore
    class LogicalInputDevice;
    class Mouse;
    class Scene;
+   class Isector;
 
    /**
-    * A motion model that simulates the action of walking or driving.
+    * A motion model used for typical First Person Shooter motion.
     */
    class DT_CORE_EXPORT FPSMotionModel : public MotionModel
    {
@@ -72,6 +77,31 @@ namespace dtCore
           * Destructor.
           */
          virtual ~FPSMotionModel();
+
+
+         ///internal class, used by FPSMotionModel for InputDevice listening
+         /** Helper class used to call the supplied functor when an axis value
+           * changes.  Used only by the FPSMotionModel.
+           */
+         class DT_CORE_EXPORT FPSAxisListener :  public dtCore::AxisListener
+         {
+         public:
+            typedef dtUtil::Functor<void, TYPELIST_2(const double&,
+                                                     const double&)> SetFunctor;
+
+            FPSAxisListener(const SetFunctor& setFunc);
+
+            virtual ~FPSAxisListener(void) {}; 
+
+            virtual void AxisStateChanged(Axis* axis,
+                                          double oldState, 
+                                          double newState, 
+                                          double delta);
+
+         private:
+            SetFunctor mSetFunctor;
+         };
+
 
       public:
       
@@ -243,6 +273,18 @@ namespace dtCore
           * @return the maximum step-up distance
           */
          float GetMaximumStepUpDistance();
+
+
+         /**
+          * Set the height distance at which point we're falling.  If the MotionModel
+          * elevation is higher than fallingHeight plus the height of terrain, than
+          * we'll let gravity take over. (defaults to 1.0 meter)
+          * @param fallingHeight: The distance above terrain at which point we're falling (meters)
+          */
+         void SetFallingHeight( float fallingHeight );
+
+         ///Get the distance above terrain at which point we're falling.
+         float GetFallingHeight() const;
          
          /**
           * Message handler callback.
@@ -328,6 +370,11 @@ namespace dtCore
           */
          Axis* mSidestepLeftRightAxis;
          
+         FPSAxisListener *mSidestepListener;       ///<Side step Axis listener
+         FPSAxisListener *mForwardBackwardListener;///<Forward/back Axis listener
+         FPSAxisListener *mLookLeftRightListener;  ///<LeftRight Axis listener
+         FPSAxisListener *mLookUpDownListener;     ///<Up/Down Axis listener
+
          /**
           * The maximum walk speed (meters per second).
           */
@@ -353,12 +400,34 @@ namespace dtCore
           */
          float mMaximumStepUpDistance;
          
+         /** 
+          * The height at which the motion model will "fall" and have gravity take over
+          */
+         float mFallingHeight;
+
          /**
           * The current downward speed.
           */
-         float mDownwardSpeed;
+         osg::Vec3 mFallingVec;
+
+         bool mFalling; ///<are we currently falling?
 
          dtCore::RefPtr<Mouse> mMouse;
+
+         dtCore::RefPtr<dtCore::Isector> mIsector; ///<used for ground clamping
+
+         void OnForwardBackwardChanged(const double &newState, const double &delta);
+         void OnSidestepChanged(const double &newState, const double &delta);
+         void OnLookLeftRightChanged(const double &newState, const double &delta);
+         void OnLookUpDownChanged(const double &newState, const double &delta);
+
+         float mForwardBackCtrl; ///<control value for forward/back movement (-1.0, 1.0)
+         float mSidestepCtrl;    ///<control value for sidestep movement (-1.0, 1.0)
+         float mLookLeftRightCtrl;///<control value for Left/Right rotation (-1.0, 1.0)
+         float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
+   
+         ///private method used to ground clamp or adjust the falling velocity/position
+         void AdjustElevation(osg::Vec3 &xyz, const double &deltaFrameTime);
    };
 };
 

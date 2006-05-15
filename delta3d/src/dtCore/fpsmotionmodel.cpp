@@ -11,12 +11,29 @@
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
 #include <dtCore/transformable.h>
-#include <osgUtil/IntersectVisitor>
+#include <dtCore/isector.h>
+#include <dtUtil/mathdefines.h>
 
 namespace dtCore
 {
 
 IMPLEMENT_MANAGEMENT_LAYER(FPSMotionModel)
+
+
+FPSMotionModel::FPSAxisListener::FPSAxisListener(const SetFunctor& setFunc):
+mSetFunctor(setFunc)
+{
+}
+
+///When the axis changes, just call the functor with the new values
+void FPSMotionModel::FPSAxisListener::AxisStateChanged(Axis* axis,
+                                          double oldState, 
+                                          double newState, 
+                                          double delta)
+{
+   mSetFunctor(newState, delta);
+}
+
 
 /**
  * Constructor.
@@ -32,15 +49,36 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    mTurnLeftRightAxis(0),
    mLookUpDownAxis(0),
    mSidestepLeftRightAxis(0),
+   mSidestepListener(0),
+   mForwardBackwardListener(0),
+   mLookLeftRightListener(0),
+   mLookUpDownListener(0),
    mMaximumWalkSpeed(10.0f),
    mMaximumTurnSpeed(1440.0f),
    mMaximumSidestepSpeed(10.0f),
    mHeightAboveTerrain(2.0f),
    mMaximumStepUpDistance(1.0f),
-   mDownwardSpeed(10.0f)
+   mFallingHeight(1.f),
+   mFallingVec(0.f, 0.f, 0.f),
+   mFalling(false),
+   mForwardBackCtrl(0.f),
+   mSidestepCtrl(0.f),
+   mLookLeftRightCtrl(0.f),
+   mLookUpDownCtrl(0.f)
 {
    RegisterInstance(this);
    
+   //setup some axis listeners with functors 
+   FPSAxisListener::SetFunctor fbFunc(this, &FPSMotionModel::OnForwardBackwardChanged);
+   FPSAxisListener::SetFunctor sideStepFunc(this, &FPSMotionModel::OnSidestepChanged);  
+   FPSAxisListener::SetFunctor lookLeftRightFunc(this, &FPSMotionModel::OnLookLeftRightChanged);
+   FPSAxisListener::SetFunctor lookUpDownFunc(this, &FPSMotionModel::OnLookUpDownChanged);
+
+   mLookUpDownListener = new FPSAxisListener( lookUpDownFunc );
+   mLookLeftRightListener = new FPSAxisListener( lookLeftRightFunc );
+   mSidestepListener = new FPSAxisListener( sideStepFunc );
+   mForwardBackwardListener = new FPSAxisListener( fbFunc );
+
    if(keyboard != 0 && mouse != 0)
    {
       SetDefaultMappings(keyboard, mouse);
@@ -49,6 +87,10 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
    AddSender(System::Instance());
    
    mMouse = mouse;
+
+   mIsector = new Isector();
+   mIsector->SetDirection( osg::Vec3(0.f, 0.f, -1.f) );
+   mIsector->SetLength(1000.f);
 }
 
 /**
@@ -57,7 +99,19 @@ FPSMotionModel::FPSMotionModel(  Keyboard* keyboard,
 FPSMotionModel::~FPSMotionModel()
 {
    RemoveSender(System::Instance());
-   
+
+   mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+   mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+   mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+   mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+
+   delete mLookUpDownListener;
+   delete mLookLeftRightListener;
+   delete mSidestepListener;
+   delete mForwardBackwardListener;
+
+   mIsector->SetScene(0);
+
    DeregisterInstance(this);
 }
 
@@ -69,6 +123,7 @@ FPSMotionModel::~FPSMotionModel()
 void FPSMotionModel::SetScene(Scene* scene)
 {
    mScene = scene;
+   mIsector->SetScene( mScene.get() );
 }
 
 /**
@@ -108,7 +163,7 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
 {
    if(mDefaultInputDevice.get() == 0)
    {
-      mDefaultInputDevice = new LogicalInputDevice;
+      mDefaultInputDevice = new LogicalInputDevice("FPSLogicalInputDevice");
       
 	  Axis* leftRightMouseMovement = mDefaultInputDevice->AddAxis(
          "left/right mouse movement",
@@ -171,7 +226,14 @@ void FPSMotionModel::SetDefaultMappings(Keyboard* keyboard, Mouse* mouse)
  */
 void FPSMotionModel::SetWalkForwardBackwardAxis(Axis* walkForwardBackwardAxis)
 {
+   if (mWalkForwardBackwardAxis) 
+   {
+      mWalkForwardBackwardAxis->RemoveAxisListener(mForwardBackwardListener);
+   }
+
    mWalkForwardBackwardAxis = walkForwardBackwardAxis;
+
+   mWalkForwardBackwardAxis->AddAxisListener(mForwardBackwardListener);
 }
 
 /**
@@ -193,7 +255,14 @@ Axis* FPSMotionModel::GetWalkForwardBackwardAxis()
  */
 void FPSMotionModel::SetTurnLeftRightAxis(Axis* turnLeftRightAxis)
 {
+   if (mTurnLeftRightAxis)
+   {
+      mTurnLeftRightAxis->RemoveAxisListener(mLookLeftRightListener);
+   }
+
    mTurnLeftRightAxis = turnLeftRightAxis;  
+
+   mTurnLeftRightAxis->AddAxisListener(mLookLeftRightListener);
 }
 
 /**
@@ -215,7 +284,14 @@ Axis* FPSMotionModel::GetTurnLeftRightAxis()
  */
 void FPSMotionModel::SetLookUpDownAxis(Axis* lookUpDownAxis)
 {
+   if (mLookUpDownAxis)
+   {
+      mLookUpDownAxis->RemoveAxisListener(mLookUpDownListener);
+   }
+
    mLookUpDownAxis = lookUpDownAxis;  
+
+   mLookUpDownAxis->AddAxisListener(mLookUpDownListener);
 }
 
 /**
@@ -237,7 +313,14 @@ Axis* FPSMotionModel::GetLookUpDownAxis()
  */
 void FPSMotionModel::SetSidestepLeftRightAxis(Axis* sidestepLeftRightAxis)
 {
+   if (mSidestepLeftRightAxis)
+   {
+      mSidestepLeftRightAxis->RemoveAxisListener(mSidestepListener);
+   }
+
    mSidestepLeftRightAxis = sidestepLeftRightAxis;
+
+   mSidestepLeftRightAxis->AddAxisListener(mSidestepListener);
 }
 
 /**
@@ -355,6 +438,12 @@ float FPSMotionModel::GetMaximumStepUpDistance()
    return mMaximumStepUpDistance;
 }
          
+
+float FPSMotionModel::GetFallingHeight() const
+{
+   return mFallingHeight;
+}
+
 /**
  * Message handler callback.
  *
@@ -371,103 +460,134 @@ void FPSMotionModel::OnMessage(MessageData *data)
       const double deltaFrameTime = static_cast<const double*>(data->userData)[1];
 
       Transform transform;
-
       GetTarget()->GetTransform(&transform);
 
       osg::Vec3 xyz, hpr;
-      
+      float newH = 0.f, newP = 0.f;
+      osg::Vec3 newXYZ;
+
       transform.GetRotation(hpr);
-
-      if(mTurnLeftRightAxis->GetState() != 0)
-      {
-         hpr[0] -= float(mTurnLeftRightAxis->GetState() * mMaximumTurnSpeed * deltaFrameTime);
-         mMouse->SetPosition(0.0f,0.0f); //keeps cursor at center of screen
-      }
-      if(mLookUpDownAxis->GetState() != 0)
-      {
-         hpr[1] += float(mLookUpDownAxis->GetState() * mMaximumTurnSpeed * deltaFrameTime);
-         mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
-         mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
-      }
-
-      float temp_hpr = hpr[1]; //save current y axis value to be set later
-      hpr[1] = 0.0f; //set to 0 to stop camera translating above terrain
-
-      hpr[2] = 0.0f;
-      transform.SetRotation(hpr);
-
-      osg::Vec3 translation;
-
-      if(mWalkForwardBackwardAxis != 0)
-      {
-         translation[1] = float(mWalkForwardBackwardAxis->GetState() * mMaximumWalkSpeed * deltaFrameTime);
-      }
-
-      if(mSidestepLeftRightAxis != 0)
-      {
-         translation[0] = float(mSidestepLeftRightAxis->GetState() * mMaximumSidestepSpeed * deltaFrameTime);
-      }
-
       transform.GetTranslation(xyz);
+
+      //calculate our new heading
+      newH = hpr[0] - mLookLeftRightCtrl * mMaximumTurnSpeed * deltaFrameTime;
+
+      //calculate our new pitch
+      newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
+      CLAMP(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+      mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
+
+      //calculate x/y delta
+      osg::Vec3 translation;
+      translation[0] = mSidestepCtrl * mMaximumSidestepSpeed * deltaFrameTime;
+      translation[1] = mForwardBackCtrl * mMaximumWalkSpeed * deltaFrameTime;
       
+      //transform our x/y delta by our new heading
       osg::Matrix mat;
-      transform.GetRotation(mat);
+      mat.makeRotate(osg::DegreesToRadians(newH), osg::Vec3(0.f, 0.f, 1.f) );
       translation = translation * mat;
 
-      //patch - stops camera from translating off terrain while looking up
-      hpr[1] = temp_hpr;
-      transform.SetRotation(hpr);
-
-      xyz += translation;
+      newXYZ = xyz + translation;
 
       if(mScene.valid())
-      {
-         osgUtil::IntersectVisitor iv;
-
-         osg::Vec3 start(
-            xyz[0],
-            xyz[1],
-            xyz[2] + mMaximumStepUpDistance - mHeightAboveTerrain
-            );
-
-         osg::Vec3 end(
-            xyz[0], 
-            xyz[1], 
-            xyz[2] - 10000.0f
-            );
-
-         osg::LineSegment* seg = new osg::LineSegment(start, end);
-
-         iv.addLineSegment(seg);
-
-         mScene->GetSceneNode()->accept(iv);
-
-         float height = 0.0f;
-
-         if(iv.hits())
-         {
-            height = iv.getHitList(seg)[0].getWorldIntersectPoint()[2];
-         }
-
-         height += mHeightAboveTerrain;
-
-         if(xyz[2] <= height)
-         {
-            xyz[2] = height;
-
-            mDownwardSpeed = 0.0f;
-         }
-         else if(xyz[2] > height)
-         {
-            xyz[2] -= float(mDownwardSpeed * deltaFrameTime);
-
-            mDownwardSpeed += float(9.8 * deltaFrameTime);
-         }
+      {         
+         //ground clamp if required
+         AdjustElevation(newXYZ, deltaFrameTime);
       }
 
-      transform.SetTranslation(xyz);
+      //set our new position/rotation
+      transform.SetTranslation(newXYZ);
+      transform.SetRotation(newH, newP, 0.f);
       GetTarget()->SetTransform(&transform); 
+
+      mMouse->SetPosition(0.0f,0.0f);//keeps cursor at center of screen
    }
+}
+
+///Update the MotionModel's elevation by either ground clamping, or "falling"
+void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, const double &deltaFrameTime)
+{
+   mIsector->Reset();
+
+   osg::Vec3 start(
+      xyz[0],
+      xyz[1],
+      xyz[2] + mMaximumStepUpDistance - mHeightAboveTerrain
+      );
+
+   mIsector->SetStartPosition(start);
+
+   float hot = 0.0f;
+
+   if (mIsector->Update() == true)
+   {
+      osg::Vec3 hitPt;
+      mIsector->GetHitPoint(hitPt, 0);
+      hot = hitPt[2];
+   }
+   else
+   {
+      //no intersection - lets just stay at the same elevation
+      hot = xyz[2]-mHeightAboveTerrain;
+   }
+
+   //add in the offset distance off the height of terrain
+   const float targetHeight = hot + mHeightAboveTerrain;
+
+   //if we're too high off the terrain, then let gravity take over
+   if( (xyz[2]-targetHeight) > mFallingHeight)
+   {
+      mFalling = true;
+   }
+
+   if (mFalling)
+   {
+      //adjust the position based on the gravity vector
+
+      osg::Vec3 gravityVec;
+      mScene->GetGravity(gravityVec);
+
+      mFallingVec += gravityVec * deltaFrameTime;
+
+      //modify our position using the falling vector
+      xyz += mFallingVec * deltaFrameTime;    
+
+      //make sure didn't fall below the terrain
+      if (xyz[2] <= targetHeight)
+      {
+         //stop falling
+         mFallingVec.set(0.f, 0.f, 0.f);
+         xyz[2] = targetHeight;
+         mFalling = false;
+      }
+   }
+
+   //otherwise, lets clamp to the terrain
+   else 
+   {
+      mFallingVec.set(0.f, 0.f, 0.f);
+      xyz[2] = targetHeight;
+   }
+}
+
+void FPSMotionModel::OnForwardBackwardChanged(const double &newState, const double &delta )
+{
+   mForwardBackCtrl = newState;
+}
+
+void FPSMotionModel::OnSidestepChanged( const double &newState, const double &delta )
+{
+   mSidestepCtrl = newState;
+}
+
+void FPSMotionModel::OnLookLeftRightChanged( const double &newState, const double &delta )
+{
+   mLookLeftRightCtrl = newState;
+}
+
+void FPSMotionModel::OnLookUpDownChanged( const double &newState, const double &delta )
+{
+   mLookUpDownCtrl = newState;
 }
 
 }
