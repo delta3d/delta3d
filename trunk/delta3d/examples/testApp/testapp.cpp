@@ -51,10 +51,6 @@ int main()
 * <b>When you include these header files, the library files get automatically linked in</b>.
 * \skip dt.h
 * \until dtabc.h
-* 
-* After that, we can tell the compiler that we're going to be using some namespaces:
-* \skip using namespace dtCore;
-* \until using namespace dtABC;
 *
 * Now we can set up our search paths to find the data files we'll use in the application.  In
 * this case, we append a couple of strings together, separated by a semi-colon:
