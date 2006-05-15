@@ -22,12 +22,11 @@
 #define DELTA_ACTOR_PLUGIN_REGISTRY
 
 #include <vector>
-#include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtUtil/objectfactory.h>
-#include "dtDAL/actortype.h"
-#include "dtDAL/actorproxy.h"
-#include "dtDAL/export.h"
+#include <dtDAL/actortype.h>
+#include <dtDAL/actorproxy.h>
+#include <dtDAL/export.h>
 
 namespace dtDAL
 {
@@ -43,7 +42,7 @@ namespace dtDAL
     * @see ActorType
     * @see ActorProxy
     */
-   class DT_DAL_EXPORT ActorPluginRegistry : public osg::Referenced
+   class DT_DAL_EXPORT ActorPluginRegistry
    {
       public:
 
@@ -58,10 +57,10 @@ namespace dtDAL
          }
 
          /**
-          * Empty destructor.  Usually this is made protected since registry
-          * objects are smart pointers.  However, we need to manually free
-          * pointers to the registry objects from their corresponding dynamic
-          * library, therefore, we need access to the object's destructor.
+          * Empty destructor. This class is not reference counted since we need
+          * to manually free pointers to the registry objects from their
+          * corresponding dynamic library, therefore, we need access to the 
+          * object's destructor.
           */
          virtual ~ActorPluginRegistry() { }
 

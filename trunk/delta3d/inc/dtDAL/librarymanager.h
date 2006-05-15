@@ -25,8 +25,8 @@
 #include <dtCore/refptr.h>
 #include <dtUtil/librarysharingmanager.h>
 #include <osg/Referenced>
-#include "dtDAL/actorpluginregistry.h"
-#include "dtDAL/export.h"
+#include <dtDAL/actorpluginregistry.h>
+#include <dtDAL/export.h>
 
 namespace dtDAL 
 {
@@ -62,15 +62,14 @@ namespace dtDAL
        */
       struct RegistryEntry 
       {
-         dtCore::RefPtr<ActorPluginRegistry> registry;
+         ActorPluginRegistry* registry;
          dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> lib;
          CreatePluginRegistryFn createFn;
          DestroyPluginRegistryFun destroyFn;
       };		
 
       public:
-         typedef std::map<dtCore::RefPtr<ActorType>,
-            dtCore::RefPtr<ActorPluginRegistry>, ActorType::RefPtrComp> ActorTypeMap;
+         typedef std::map<dtCore::RefPtr<ActorType>, ActorPluginRegistry*, ActorType::RefPtrComp> ActorTypeMap;
          typedef ActorTypeMap::iterator ActorTypeMapItor;
 
          typedef std::map<std::string, RegistryEntry> RegistryMap;			

@@ -40,12 +40,12 @@ class DT_ABC_EXPORT BezierController: public MotionAction
 
 private:
 
-   typedef struct 
+   struct PathData
    {
       PathPoint mPoint;
       float mTime;
 
-   }PathData;
+   };
 
    
    class BezierPathDrawable: public osg::Drawable

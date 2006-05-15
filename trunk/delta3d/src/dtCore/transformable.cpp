@@ -59,7 +59,7 @@ Transformable::Transformable( const std::string& name )
    SetName(name);
 
    RegisterInstance(this);
-   mNode = new osg::MatrixTransform;
+   SetOSGNode( new osg::MatrixTransform );
 
    SetNormalRescaling( true );
 
@@ -156,11 +156,11 @@ void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
       //in relative coords
 
       //if this has a parent
-      if(mParent)
+      if( GetParent() )
       {
          //get the parent's world position
          osg::Matrix parentMat;
-         GetAbsoluteMatrix( mParent->GetOSGNode(), parentMat );
+         GetAbsoluteMatrix( GetParent()->GetOSGNode(), parentMat );
 
          //calc the difference between xform and the parent's world position
          //child * parent^-1
@@ -261,7 +261,7 @@ void Transformable::RenderProxyNode( const bool enable )
       osg::Sphere* sphere = new osg::Sphere(  osg::Vec3( 0.0, 0.0, 0.0 ), radius );
 
       osg::Geode* proxyGeode = new osg::Geode();
-      mProxyNode = proxyGeode;
+      SetProxyNode( proxyGeode );
 
       osg::TessellationHints* hints = new osg::TessellationHints;
       hints->setDetailRatio( 0.5f );
@@ -279,13 +279,13 @@ void Transformable::RenderProxyNode( const bool enable )
       polyoffset->setFactor( -1.0f );
       polyoffset->setUnits( -1.0f );
 
-      osg::StateSet *ss = mProxyNode.get()->getOrCreateStateSet();
+      osg::StateSet *ss = GetProxyNode()->getOrCreateStateSet();
       ss->setAttributeAndModes( mat, osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON );
       ss->setMode( GL_BLEND, osg::StateAttribute::ON );
       ss->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
       ss->setAttributeAndModes( polyoffset, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON) ;
 
-      GetMatrixNode()->addChild( mProxyNode.get() );
+      GetMatrixNode()->addChild( GetProxyNode() );
 
       PointAxis* paxis = new PointAxis();
       paxis->Enable( PointAxis::X );
@@ -296,15 +296,11 @@ void Transformable::RenderProxyNode( const bool enable )
       paxis->Enable( PointAxis::LABEL_Z );
 
       AddChild( paxis );
-
    }
    else
    {
-      GetMatrixNode()->removeChild( mProxyNode.get() );
-      mProxyNode = 0;
+      GetMatrixNode()->removeChild( GetProxyNode() );
    }
-
-   mRenderingProxy = enable;
 }
 
 void Transformable::SetNormalRescaling( const bool enable )
@@ -319,7 +315,7 @@ void Transformable::SetNormalRescaling( const bool enable )
 
 bool Transformable::GetNormalRescaling() const
 {
-   osg::StateAttribute::GLModeValue state = mNode->getStateSet()->getMode( GL_RESCALE_NORMAL );
+   osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode( GL_RESCALE_NORMAL );
 
    if( state & osg::StateAttribute::ON )
    {
@@ -1375,9 +1371,9 @@ void Transformable::AddedToScene( Scene* scene )
    {
       //remove us from our existing parent scene, if we already have one.
       //TODO This ends up calling AddedToScene again with a 0.  Is this bad?
-      if( mParentScene )
+      if( GetSceneParent() )
       {
-         mParentScene->RemoveDrawable( this );
+         GetSceneParent()->RemoveDrawable( this );
       }
 
       DeltaDrawable::AddedToScene( scene );
@@ -1385,9 +1381,9 @@ void Transformable::AddedToScene( Scene* scene )
    }
    else
    {
-      if( mParentScene )
+      if( GetSceneParent() )
       {
-         mParentScene->UnRegisterCollidable( this );
+         GetSceneParent()->UnRegisterCollidable( this );
       }
       DeltaDrawable::AddedToScene( scene );
    }

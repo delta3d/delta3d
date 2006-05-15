@@ -13,5 +13,5 @@ void main(void)
   const float LOG2E = 1.442695;   // = 1/log(2)
   float fog = exp2(-gl_Fog.density * .3 * gl_Fog.density * gl_FogFragCoord * gl_FogFragCoord * LOG2E);
   fog = clamp(fog, 0.0, 1.0);
-  gl_FragColor = mix(gl_Fog.color, gl_FragColor, fog);
+  gl_FragColor = mix(gl_FragColor, gl_Fog.color, fog);
 }

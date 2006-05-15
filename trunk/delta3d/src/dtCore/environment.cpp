@@ -48,11 +48,11 @@ Environment::Environment(const std::string& name):
    RegisterInstance(this);
 
    SetName(name);
-   mNode = new osg::Group();
+   SetOSGNode( new osg::Group() );
    mEnvEffectNode = new osg::Group();
    mDrawableNode = new osg::Group();
-   mNode->asGroup()->addChild(mEnvEffectNode.get());
-   mNode->asGroup()->addChild(mDrawableNode.get());
+   GetOSGNode()->asGroup()->addChild(mEnvEffectNode.get());
+   GetOSGNode()->asGroup()->addChild(mDrawableNode.get());
 
    mSkyColor.set(0.39f, 0.50f, 0.74f);
    mFogColor.set(0.84f, 0.87f, 1.f);

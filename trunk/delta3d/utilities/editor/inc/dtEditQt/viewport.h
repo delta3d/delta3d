@@ -36,19 +36,21 @@
 #include "dtEditQt/camera.h"
 #include "dtEditQt/viewportmanager.h"
 #include "dtEditQt/typedefs.h"
+#include <dtCore/refptr.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
-    class FrameStamp;
-    class StateSet;
-    class ClearNode;
+   class FrameStamp;
+   class StateSet;
+   class ClearNode;
 }
 /// @endcond
 
 namespace dtCore
 {
-    class Scene;
+   class Isector;
+   class Scene;
 }
 
 namespace dtEditQt
@@ -544,6 +546,8 @@ namespace dtEditQt
          * a part of the actual scene.
          */
         osg::ref_ptr<osg::Group> rootNodeGroup;
+
+        dtCore::RefPtr<dtCore::Isector> mIsector;
     };
 
 }

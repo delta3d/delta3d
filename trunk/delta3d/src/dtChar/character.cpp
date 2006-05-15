@@ -180,7 +180,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       }
    }
    
-   if( osg::Group* group = mNode->asGroup() )
+   if( osg::Group* group = GetOSGNode()->asGroup() )
    {
       group->addChild( mBodyNode.get() );
    }

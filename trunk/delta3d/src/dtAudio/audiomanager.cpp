@@ -149,11 +149,6 @@ AudioManager::~AudioManager()
       delete   bd;
    }
    mBufferMap.clear();
-
-   //for( SND_LST::iterator iter(mSoundList.begin()); iter != mSoundList.end(); iter++ )
-   //{
-   //   *iter = NULL;
-   //}
    mSoundList.clear();
 
    while( mSoundCommand.size() )
@@ -2463,9 +2458,9 @@ AudioManager::SoundObj::Clear( void )
    mStopCB     = NULL;
    mStopCBData = NULL;
 
-   if( mParent )
+   if( GetParent() )
    {
-      mParent->RemoveChild( this );
+      GetParent()->RemoveChild( this );
    }
 }
 

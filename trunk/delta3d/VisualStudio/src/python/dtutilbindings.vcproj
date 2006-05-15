@@ -76,6 +76,9 @@
 				RelativePath="..\..\..\src\python\dtutilbindings.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\python\enumerationbindings.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\python\logbindings.cpp">
 			</File>
 			<File

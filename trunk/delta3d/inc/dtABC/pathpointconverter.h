@@ -44,7 +44,7 @@ public:
 
    PathPoint GetPathPoint()const 
    {
-      const osg::MatrixTransform* mat = (dynamic_cast<const osg::MatrixTransform*>( mNode.get()));
+      const osg::MatrixTransform* mat = GetMatrixNode();
       return PathPoint(dtUtil::MatrixUtil::GetRow3(mat->getMatrix(), 3), mat->getMatrix());      
    }
 

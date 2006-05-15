@@ -24,7 +24,7 @@ BezierController::BezierController()
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
    mRenderGeode = false;
 
-   mNode = new osg::Group;
+   SetOSGNode( new osg::Group );
 }
 
 BezierController::~BezierController()
@@ -199,11 +199,11 @@ void BezierController::RenderProxyNode(bool pEnable)
   mRenderGeode = pEnable;
   if(mRenderGeode)
   {
-     dynamic_cast<osg::Group*>(mNode.get())->addChild(mGeode.get());
+     GetOSGNode()->asGroup()->addChild(mGeode.get());
   }
   else
   {
-     dynamic_cast<osg::Group*>(mNode.get())->removeChild(mGeode.get());
+     GetOSGNode()->asGroup()->removeChild(mGeode.get());
   }
 }
 

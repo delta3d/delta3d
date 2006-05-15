@@ -60,7 +60,7 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    Config();
 }
 
-CEUIDrawable::~CEUIDrawable(void)
+CEUIDrawable::~CEUIDrawable()
 {
    RemoveSender( System::Instance() );
    DeregisterInstance(this);
@@ -68,7 +68,7 @@ CEUIDrawable::~CEUIDrawable(void)
    mWindow->GetMouse()->RemoveMouseListener( mMouseListener.get() );
    mWindow->GetKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
    
-   mNode = NULL;
+   SetOSGNode(0);
    delete mUI;
    delete mRenderer;
 }
@@ -110,7 +110,7 @@ void CEUIDrawable::Config()
 
    mProjection->addChild( mTransform.get() );
 
-   mNode = mProjection.get();
+   SetOSGNode( mProjection.get() );
 }
 
 bool CEUIDrawable::AddChild(DeltaDrawable *child)

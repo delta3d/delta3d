@@ -440,6 +440,13 @@ void Scene::OnMessage(MessageData *data)
          frameStamp->setReferenceTime(Timer::Instance()->DeltaSec(mStartTick, Timer::Instance()->Tick()));
          frameStamp->setFrameNumber(mFrameNum++);
 
+         // Patch submitted by user to allow multiple camera to work with the database pager
+         for( int camNum = 0; camNum < Camera::GetInstanceCount(); ++camNum )
+         {
+            Camera::GetInstance( camNum )->GetSceneHandler()->GetSceneView()->setFrameStamp( frameStamp.get() );
+         }
+         //
+
          if (osgDB::Registry::instance()->getDatabasePager())
          {
             osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());

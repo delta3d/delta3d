@@ -26,6 +26,11 @@
 #include <dtGame/gameactor.h>
 #include "export.h"
 
+namespace dtCore
+{
+   class Isector;
+}
+
 class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
 {
    public:
@@ -52,6 +57,7 @@ class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
    private:
       float mVelocity,mTurnRate;
       std::string mModelFile;
+      dtCore::RefPtr<dtCore::Isector> mIsector;
 };
 
 class DT_EXAMPLE_EXPORT TestPlayerProxy : public dtGame::GameActorProxy

@@ -20,7 +20,7 @@ SkyDome::SkyDome(const std::string& name)
 {
    RegisterInstance(this);
 
-   mNode = new osg::Group();
+   SetOSGNode( new osg::Group() );
    mBaseColor.set(0.5f, 0.5f, 0.2f);
    Config();
 }
@@ -50,7 +50,7 @@ void dtCore::SkyDome::Config()
    group->addChild(mXform.get());
    group->setNodeMask(0xf0000000);
 
-   mNode->asGroup()->addChild(group);
+   GetOSGNode()->asGroup()->addChild(group);
 }
 
 osg::Node* dtCore::SkyDome::MakeDome()
@@ -146,7 +146,6 @@ osg::Node* dtCore::SkyDome::MakeDome()
 
     return mGeode.get();
 }
-
 
 void dtCore::SkyDome::SetBaseColor(const osg::Vec3& color)
 {

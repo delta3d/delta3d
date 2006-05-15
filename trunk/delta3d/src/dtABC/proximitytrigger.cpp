@@ -24,7 +24,7 @@ ProximityTrigger::ProximityTrigger( const std::string& name )
    SetCollisionCategoryBits(0);
 
    // Set the update callback which keeps track of traversal numbers.
-   mNode->setUpdateCallback( new NodeCallback(this) );
+   GetOSGNode()->setUpdateCallback( new NodeCallback(this) );
 }
 
 bool ProximityTrigger::FilterContact( dContact* contact, Transformable* collider )

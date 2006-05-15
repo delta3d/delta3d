@@ -60,12 +60,7 @@ namespace dtDAL
       RegistryMapItor itor = mRegistries.begin();
       while (itor != mRegistries.end())
       {
-         //At this point, we know that the smart pointer holding the registry has a
-         //reference count of 1 since the LibraryManager's registry map is the owner
-         //of the registry and is the last to be destructed.  Therefore,
-         //take control from the smart pointer so it doesn't get deleted and manually
-         //delete it in the plugin.
-         ActorPluginRegistry *reg = itor->second.registry.take();
+         ActorPluginRegistry *reg = itor->second.registry;
          itor->second.destroyFn(reg);
          ++itor;
       }
@@ -226,7 +221,7 @@ namespace dtDAL
       if (itor == mRegistries.end())
          return NULL;
       else
-         return itor->second.registry.get();
+         return itor->second.registry;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -247,7 +242,7 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType,error.str());
       }
         
-      return found->second.get();        
+      return found->second;        
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -279,7 +274,7 @@ namespace dtDAL
 
       //Now that all references are gone, take the pointer to the registry so that we can
       //manually free it in the plugin.
-      ActorPluginRegistry *reg = regEntry.registry.take();
+      ActorPluginRegistry *reg = regEntry.registry;
 
       LOG_INFO("Unloading actor plugin registry: " + reg->GetName());
       regEntry.destroyFn(reg);

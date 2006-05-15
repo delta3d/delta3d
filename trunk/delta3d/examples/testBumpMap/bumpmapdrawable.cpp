@@ -6,14 +6,11 @@
 
 BumpMapDrawable::BumpMapDrawable()
 {
-
-   mNode = new osg::Group;
-
+   SetOSGNode( new osg::Group );
 }
 
 BumpMapDrawable::~BumpMapDrawable()
 {
-
 
 }
 
@@ -45,12 +42,10 @@ void BumpMapDrawable::SetWireframe(bool pWireframe)
 
 void BumpMapDrawable::Initialize()
 {
-
    CreateGeometry();
    EnableShaders();
 
-   osg::Group* grp = dynamic_cast<osg::Group*>(mNode.get());
-   grp->addChild(mGeode.get());
+   GetOSGNode()->asGroup()->addChild(mGeode.get());
 }
 
 void BumpMapDrawable::CreateGeometry()
