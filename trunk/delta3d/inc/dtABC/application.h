@@ -43,10 +43,14 @@ namespace dtABC
      * supplied to the constructor.
      *
      * Typical use:
+     * \code
      * Application *app = new Application("Mydatafile.xml");
      * app->Config();
      * app->Run();
+     * \endcode
      */
+
+
    class DT_ABC_EXPORT Application : public dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Application)
@@ -112,6 +116,12 @@ namespace dtABC
 
       dtCore::DeltaWin::Resolution mOriginalRes;
    };
+
 }
+
+/** \example testapp.cpp 
+ *  This is an example of using Application in a test app.
+ */
+
 
 #endif // DELTA_APPLICATION

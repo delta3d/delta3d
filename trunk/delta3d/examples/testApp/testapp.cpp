@@ -4,16 +4,20 @@
 using namespace dtCore;
 using namespace dtABC;
 
+
+
 int main()
 {
 
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testApp/;" +
                         GetDeltaDataPathList()  );
                         
-   RefPtr<Application> app = new Application( "config.xml" );
+ 
+   RefPtr<Application> app = new dtABC::Application( "config.xml" );
+
 
    //load some terrain
-   RefPtr<Object> terrain = new Object( "Terrain" );
+   dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object( "Terrain" );
    terrain->LoadFile( "models/dirt.ive" );
    app->AddDrawable( terrain.get() );
 
@@ -37,3 +41,48 @@ int main()
 
    return 0;
 }
+
+/** \page testApp Application Tutorial
+*  \dontinclude testApp.cpp
+* This tutorial will decompose the testApp example, found in the Delta3D/Examples folder. It
+* is meant as a very simple introduction to the dtABC::Application class.  When you run
+* testApp.exe, this is what you should see:
+* \image html testApp.jpg
+* 
+* The first thing we need to do is include some header files.  In this example, we'll include
+* dt.h and dtabc.h, which correspond to namespaces and subsequently, the libraries we need.
+* <b>When you include these header files, the library files get automatically linked in</b>.
+* \skip dt.h
+* \until dtabc.h
+* 
+* After that, we can tell the compiler that we're going to be using some namespaces:
+* \skip using namespace dtCore;
+* \until using namespace dtABC;
+*
+* Now we can set up our search paths to find the data files we'll use in the application.  In
+* this case, we append a couple of strings together, separated by a semi-colon:
+* \skip main
+* \until );
+*
+* Now we can create a new dtABC::Application.  Notice we're storing it as a dtCore::RefPtr.  This
+* will allow it to be delete automatrically when the variable goes out of scope.  We're also
+* passing in the name of a config file which will allow us to change some aspects of this application.
+* \skipline RefPtr
+
+* Then we create a couple of dtCore::Object and give them files to load.  Don't forget to add it to the Scene,
+* or else it won't get rendered. To do this, we can just use dtABC::Application::AddDrawable().
+* \skipline "Terrain"
+* \until brdm.get
+*
+* On the second dtCore::Object, lets set its position using the dtCore::Transform
+* class.  In this case, the Transform just changes the heading  by 90 degrees.
+* \until SetTransform
+*
+* Now we can set up the dtCore::Camera position by giving it a position and a place to look at.
+* \until app->GetCamera()
+* 
+* And finally, tell the dtABC::Application to configure and to run.  The dtABC::Application::Run() method
+* is blocking, meaning it won't return control back until the the Application has exited.  To quit the 
+* app, just hit the escape key.
+* \until return
+*/
