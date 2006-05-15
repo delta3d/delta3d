@@ -40,6 +40,9 @@ public:
       Application::Config();
 
       mTerrain = new InfiniteTerrain;
+      mTerrain->SetBuildDistance(1500.f);
+      mTerrain->SetSegmentDivisions(64);
+
       AddDrawable( mTerrain.get() );
 
       RefPtr<WalkMotionModel> wmm = new WalkMotionModel( GetKeyboard(), GetMouse() );
