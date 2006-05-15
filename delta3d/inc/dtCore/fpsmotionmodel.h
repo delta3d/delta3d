@@ -26,10 +26,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/motionmodel.h>
-#include <dtcore/inputdevice.h>
+#include <dtCore/inputdevice.h>
 #include <dtUtil/functor.h>
 
-#include <osg/vec3>
+#include <osg/Vec3>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
