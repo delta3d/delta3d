@@ -1,19 +1,16 @@
 #include "dtCore/dt.h"
 #include "dtABC/dtabc.h"
 
-using namespace dtCore;
-using namespace dtABC;
-
 
 
 int main()
 {
 
-   SetDataFilePathList( GetDeltaRootPath() + "/examples/testApp/;" +
-                        GetDeltaDataPathList()  );
+   dtCore::SetDataFilePathList( dtCore::GetDeltaRootPath() + "/examples/testApp/;" +
+                                dtCore::GetDeltaDataPathList()  );
                         
  
-   RefPtr<Application> app = new dtABC::Application( "config.xml" );
+   dtCore::RefPtr<dtABC::Application> app = new dtABC::Application( "config.xml" );
 
 
    //load some terrain
@@ -22,14 +19,14 @@ int main()
    app->AddDrawable( terrain.get() );
 
    //load an object
-   RefPtr<Object> brdm = new Object( "BRDM" );
+   dtCore::RefPtr<dtCore::Object> brdm = new dtCore::Object( "BRDM" );
    brdm->LoadFile( "models/brdm.ive" );
    app->AddDrawable( brdm.get() );
-   Transform trans = Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
+   dtCore::Transform trans = dtCore::Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
    brdm->SetTransform( &trans );
    
    //adjust the Camera position
-   Transform camPos;
+   dtCore::Transform camPos;
    osg::Vec3 camXYZ( 0.f, -50.f, 20.f );
    osg::Vec3 lookAtXYZ ( 0.f, 0.f, 0.f );
    osg::Vec3 upVec ( 0.f, 0.f, 1.f );
