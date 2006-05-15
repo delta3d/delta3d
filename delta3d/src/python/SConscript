@@ -22,6 +22,7 @@ if CheckForBoost() :
                      'enveffectbindings.cpp',
                      'environmentbindings.cpp',
                      'flymotionmodelbindings.cpp',
+                     'fpsmotionmodelbindings.cpp',
                      'infinitelightbindings.cpp',
                      'infiniteterrainbindings.cpp',
                      'inputdevicebindings.cpp',
@@ -75,7 +76,9 @@ if CheckForBoost() :
    'dtChar' : [     'characterbindings.cpp', 
                     'dtcharbindings.cpp' ],
 
-   'dtDAL'  : [     'actorproxybindings.cpp', 
+   'dtDAL'  : [     'actorpropertybindings.cpp',
+                    'actorproxybindings.cpp',
+                    'datatypebindings.cpp',
                     'dtdalbindings.cpp', 
                     'mapbindings.cpp', 
                     'projectbindings.cpp' ],
@@ -87,7 +90,8 @@ if CheckForBoost() :
                     'entitybindings.cpp', 
                     'rticonnectionbindings.cpp' ],
     
-   'dtUtil' : [     'dtutilbindings.cpp', 
+   'dtUtil' : [     'dtutilbindings.cpp',
+                    'enumerationbindings.cpp',
                     'logbindings.cpp', 
                     'matrixutilbindings.cpp', 
                     'noisebindings.cpp', 

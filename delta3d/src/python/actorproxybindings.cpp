@@ -61,7 +61,7 @@ void initActorProxyBindings()
    const ActorProxy* (ActorProxy::*GetLinkedActorConst)( const std::string& ) const = &ActorProxy::GetLinkedActor;
 
    void (ActorProxy::*GetPropertyListNonConst)( ActorPropertyVector& ) = &ActorProxy::GetPropertyList;
-   void (ActorProxy::*GetPropertyListConst)( ConstActorPropertyVector& ) const = &ActorProxy::GetPropertyList;
+   //void (ActorProxy::*GetPropertyListConst)( ConstActorPropertyVector& ) const = &ActorProxy::GetPropertyList;
 
    dtCore::DeltaDrawable* (ActorProxy::*GetActorNonConst)() = &ActorProxy::GetActor;
    const dtCore::DeltaDrawable* (ActorProxy::*GetActorConst)() const = &ActorProxy::GetActor;

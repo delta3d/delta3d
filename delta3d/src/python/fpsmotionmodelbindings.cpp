@@ -1,6 +1,7 @@
 #include <python/dtpython.h>
 #include <dtCore/fpsmotionmodel.h>
 #include <dtCore/logicalinputdevice.h>
+#include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
 #include <dtCore/scene.h>
 #include <dtCore/transformable.h>
