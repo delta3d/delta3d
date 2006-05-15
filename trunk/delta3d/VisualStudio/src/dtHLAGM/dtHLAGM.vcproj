@@ -65,8 +65,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="..\..\..\src\dtHLAGM\windows-msvc-release"
+			IntermediateDirectory="..\..\..\src\dtHLAGM\windows-msvc-release"
 			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
