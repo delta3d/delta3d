@@ -91,7 +91,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gdal_i.lib dtCore.lib osg.lib osgUtil.lib osgDB.lib ul.lib ode.lib opengl32.lib dtDAL.lib dtTerrain.lib dtUtil.lib Producer.lib"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtDAL.lib dtABC.lib dtTerrain.lib gdal_i.lib osg.lib osgUtil.lib osgDB.lib ul.lib ode.lib opengl32.lib Producer.lib"
 				OutputFile="../../../bin/testTerrain.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
