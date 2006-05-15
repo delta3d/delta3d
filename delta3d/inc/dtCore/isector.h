@@ -52,9 +52,9 @@ namespace dtCore
       inherited functionality from Transformable at this point.
 
 
-      To search the whole scene for the height of terrain at a given xyz:
+      To search the whole Scene for the height of terrain at a given xyz:
    \code
-      Isector *isect = new Isector();
+      Isector *isect = new Isector( mScene );
       osg::Vec3 queryPoint( 500.0f, 500.0f, 1000.0f );
       isect->SetStartPosition( queryPoint );
       osg::Vec3 direction( 0.0f, 0.0f, -1.0f );

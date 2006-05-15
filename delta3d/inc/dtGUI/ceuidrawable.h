@@ -34,6 +34,7 @@
 #include <osg/Drawable>                     // for base class
 #include <osg/CopyOp>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
    class System;
@@ -45,6 +46,7 @@ namespace osg
    class MatrixTransform;
    class Projection;
 }
+/// @endcond
 
 namespace dtGUI
 {
