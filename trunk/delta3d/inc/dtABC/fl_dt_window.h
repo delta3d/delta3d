@@ -106,7 +106,34 @@ public:
    {
    }
 
+   int EventButtonToMouseButton( int eventButton )
+   {
+      switch( eventButton )
+      {
+         case 1:
+         {
+            return 0;
+            break;
+         }
+         case 2:
+         {
+            return 1;
+            break;
+         }
+         case 3:
+         {
+            return 2;
+            break;
+         }
+         default:
+         {
+            return 0;
+            break;
+         }
+      }
 
+      return 0;
+   }
 
    /**
     * Fl_Window override to handle event's from FLTK.
@@ -131,7 +158,7 @@ public:
                                        FL_PUSH,
                                        float(Fl::event_x()),
                                        float(Fl::event_y()),
-                                       Fl::event_button()
+                                       EventButtonToMouseButton( Fl::event_button() )
                                     );
 
                TranslateMouseEvent( ev );
@@ -147,7 +174,7 @@ public:
                                        FL_RELEASE,
                                        float(Fl::event_x()),
                                        float(Fl::event_y()),
-                                       Fl::event_button()
+                                       EventButtonToMouseButton( Fl::event_button() )
                                     );
 
                TranslateMouseEvent( ev );
@@ -321,7 +348,7 @@ public:
                                        FL_DND_RELEASE,
                                        float(Fl::event_x()),
                                        float(Fl::event_y()),
-                                       Fl::event_button()
+                                       EventButtonToMouseButton( Fl::event_button() )
                                     );
 
                TranslateMouseEvent( ev );

@@ -286,18 +286,30 @@ void Widget::HandleMouseEvent( const MouseEvent& ev )
    assert( mMouse.get() );
 
    // an unknown button number defaults to LeftButton.
-   dtCore::Mouse::MouseButton mb(dtCore::Mouse::LeftButton);
+   dtCore::Mouse::MouseButton mb( dtCore::Mouse::LeftButton );
+   
    switch( ev.button )
    {
-   case dtCore::Mouse::RightButton:
+      case 0 :
       {
-         mb = dtCore::Mouse::RightButton;
-      } break;
-
-   case dtCore::Mouse::MiddleButton:
+         mb = dtCore::Mouse::LeftButton;
+         break;
+      }
+      case 1 :
       {
          mb = dtCore::Mouse::MiddleButton;
-      } break;
+         break;
+      }
+      case 2 :
+      {
+         mb = dtCore::Mouse::RightButton;
+         break;
+      }
+      default :
+      {
+         mb = dtCore::Mouse::LeftButton;
+         break;
+      }
    }
 
    switch( ev.event )
