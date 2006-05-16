@@ -141,7 +141,7 @@ namespace dtCore
    {
       DEPRECATE(  "void EffectManager::AddDetonationTypeMapping(DetonationType detonationType, const std::string& filename)",
                   "void EffectManager::AddDetonationTypeMapping(const std::string& detonationName, const std::string& filename)" )
-      AddDetonationTypeMapping( dtUtil::ToString( int(detonationType) ), filename );
+      AddDetonationTypeMapping( DetonationTypeToString( detonationType ), filename );
    }
 
    /**
@@ -163,7 +163,7 @@ namespace dtCore
    {
       DEPRECATE(  "void EffectManager::RemoveDetonationTypeMapping(DetonationType detonationType)",
                   "void EffectManager::RemoveDetonationTypeMapping(const std::string& detonationName)" )
-      RemoveDetonationTypeMapping( dtUtil::ToString( int(detonationType) ) );
+      RemoveDetonationTypeMapping( DetonationTypeToString( detonationType ) );
    }
 
    /**
@@ -259,13 +259,13 @@ namespace dtCore
     * @return a pointer to the detonation object
     */
    Detonation* EffectManager::AddDetonation( const osg::Vec3& position,
-                                             DetonationType dtype,
+                                             DetonationType detonationType,
                                              double timeToLive,
                                              Transformable* parent)
    {
       DEPRECATE(  "Detonation* EffectManager::AddDetonation( const osg::Vec3& position, DetonationType type, double timeToLive, const Transformable* parent)",
                   "Detonation* EffectManager::AddDetonation( const osg::Vec3& position, const std::string& detonationName, double timeToLive, const Transformable* parent)" )
-      return AddDetonation(position, dtUtil::ToString( int(dtype) ), timeToLive, parent);
+      return AddDetonation(position, DetonationTypeToString( detonationType ), timeToLive, parent);
    }
 
    /**
@@ -528,6 +528,80 @@ namespace dtCore
       }
    }
 
+   DetonationType StringToDetonationType( const std::string& stringType )
+   {
+      if( stringType == "HighExplosiveDetonation" )
+      {
+         return HighExplosiveDetonation;
+      }
+      else if( stringType == "SmokeDetonation" )
+      {
+         return SmokeDetonation;
+      }
+      else if( stringType == "WP" )
+      {
+         return WP;
+      }      
+      else if( stringType == "VT" )
+      {
+         return VT;
+      }
+      else if( stringType == "ICM" )
+      {
+         return ICM;
+      }
+      else if( stringType == "M825" )
+      {
+         return M825;
+      }
+      else
+      {
+         return HighExplosiveDetonation;
+      }
+   }
+   
+   std::string DetonationTypeToString( DetonationType detonationType )
+   {
+      switch( detonationType )
+      {
+         case HighExplosiveDetonation :
+         {
+            return "HighExplosiveDetonation";
+            break;
+         }
+         case SmokeDetonation :
+         {
+            return "SmokeDetonation";
+            break;
+         }
+         case WP :
+         {
+            return "WP";
+            break;
+         }
+         case VT:
+         {
+            return "VT";
+            break;
+         }         
+         case ICM:
+         {
+            return "ICM";
+            break;
+         }         
+         case M825:
+         {
+            return "M825";
+            break;
+         }         
+         default:
+         {
+            return "HighExplosiveDetonation";
+            break;
+         }
+      }
+   }
+
    /**
     * Constructor.
     *
@@ -605,8 +679,6 @@ namespace dtCore
       return mDying;
    }
 
-   Detonation::StringDetonationTypeMap Detonation::mLegacyTypeMapping;
-
    /**
     * Constructor.
     *
@@ -627,18 +699,6 @@ namespace dtCore
       mDetonationName(detonationName),
       mParent(parent)
    {
-      // Ugly, but I'm running out of time here!
-      static bool first(true);
-      if( first )
-      {
-         mLegacyTypeMapping.insert( std::make_pair("1000", HighExplosiveDetonation ) );
-         mLegacyTypeMapping.insert( std::make_pair("2000", SmokeDetonation ) );
-         mLegacyTypeMapping.insert( std::make_pair("3000", WP ) );
-         mLegacyTypeMapping.insert( std::make_pair("4000", VT ) );
-         mLegacyTypeMapping.insert( std::make_pair("5000", ICM ) );
-         mLegacyTypeMapping.insert( std::make_pair("6000", M825 ) );
-         first = false;
-      }
    }
 
    /**
@@ -666,9 +726,9 @@ namespace dtCore
       return mDetonationName;
    }
 
-   void Detonation::GetType( DetonationType& dtype )
+   void Detonation::GetType( DetonationType& detonationType )
    {
-      dtype = mLegacyTypeMapping[mDetonationName];
+      detonationType = StringToDetonationType( mDetonationName );
    }
 
    /**
