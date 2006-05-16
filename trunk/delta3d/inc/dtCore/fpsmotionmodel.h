@@ -86,14 +86,13 @@ namespace dtCore
          class DT_CORE_EXPORT FPSAxisListener :  public dtCore::AxisListener
          {
          public:
-            typedef dtUtil::Functor<void, TYPELIST_2(const double&,
-                                                     const double&)> SetFunctor;
+            typedef dtUtil::Functor<bool, TYPELIST_2(double,double)> SetFunctor;
 
             FPSAxisListener(const SetFunctor& setFunc);
 
-            virtual ~FPSAxisListener(void) {}; 
+            virtual ~FPSAxisListener() {}; 
 
-            virtual void AxisStateChanged(Axis* axis,
+            virtual bool AxisStateChanged(const Axis* axis,
                                           double oldState, 
                                           double newState, 
                                           double delta);
@@ -416,10 +415,10 @@ namespace dtCore
 
          dtCore::RefPtr<dtCore::Isector> mIsector; ///<used for ground clamping
 
-         void OnForwardBackwardChanged(const double &newState, const double &delta);
-         void OnSidestepChanged(const double &newState, const double &delta);
-         void OnLookLeftRightChanged(const double &newState, const double &delta);
-         void OnLookUpDownChanged(const double &newState, const double &delta);
+         bool OnForwardBackwardChanged(double newState, double delta);
+         bool OnSidestepChanged(double newState, double delta);
+         bool OnLookLeftRightChanged(double newState, double delta);
+         bool OnLookUpDownChanged(double newState, double delta);
 
          float mForwardBackCtrl; ///<control value for forward/back movement (-1.0, 1.0)
          float mSidestepCtrl;    ///<control value for sidestep movement (-1.0, 1.0)
@@ -427,7 +426,7 @@ namespace dtCore
          float mLookUpDownCtrl;   ///<control value for up/down rotation (-1.0, 1.0)
    
          ///private method used to ground clamp or adjust the falling velocity/position
-         void AdjustElevation(osg::Vec3 &xyz, const double &deltaFrameTime);
+         void AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime);
    };
 };
 

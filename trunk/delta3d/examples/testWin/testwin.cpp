@@ -15,9 +15,17 @@ using namespace dtABC;
 using namespace dtGUI;
 using namespace dtUtil;
 
-TestWinApp::TestWinApp( const std::string& configFilename )
-: Application( configFilename )
+TestWinApp::TestWinApp( const std::string& configFilename ) : Application( configFilename ),
+   mGUI(0),
+   mResolutionVec(),
+   mScriptModule(new dtGUI::ScriptModule())
 {
+}
+
+TestWinApp::~TestWinApp()
+{
+   mGUI->ShutdownGUI();
+   delete mScriptModule;
 }
 
 void TestWinApp::Config()
@@ -25,23 +33,22 @@ void TestWinApp::Config()
    dtABC::Application::Config();
 
    int x,y,w,h;
-   GetWindow()->GetPosition(&x, &y, &w, &h);
+   GetWindow()->GetPosition(x, y, w, h);
    GetWindow()->ShowCursor(false);
-   ScriptModule *sm = new ScriptModule();
 
-   mGUI = new dtGUI::CEUIDrawable( GetWindow(), sm);
+   mGUI = new dtGUI::CEUIDrawable( GetWindow(), mScriptModule);
 
    dtGUI::ScriptModule::HandlerFunctor handler0( dtUtil::MakeFunctor( &TestWinApp::FullScreenToggleCB, this ) );
-   sm->AddCallback("FullScreenToggleCB", handler0 );
+   mScriptModule->AddCallback("FullScreenToggleCB", handler0 );
 
    dtGUI::ScriptModule::HandlerFunctor handler1( dtUtil::MakeFunctor( &TestWinApp::WindowPositionCB, this ) );
-   sm->AddCallback("WindowPositionCB", handler1 );
+   mScriptModule->AddCallback("WindowPositionCB", handler1 );
 
    dtGUI::ScriptModule::HandlerFunctor handler2( dtUtil::MakeFunctor( &TestWinApp::WindowTitleCB, this ) );
-   sm->AddCallback("WindowTitleCB", handler2 );
+   mScriptModule->AddCallback("WindowTitleCB", handler2 );
 
    dtGUI::ScriptModule::HandlerFunctor handler3( dtUtil::MakeFunctor( &TestWinApp::ChangeResolutionCB, this ) );
-   sm->AddCallback("ChangeResolutionCB", handler3 );
+   mScriptModule->AddCallback("ChangeResolutionCB", handler3 );
 
    // dump all valid resolutions into a vector
    mResolutionVec = DeltaWin::GetResolutions();
@@ -158,7 +165,7 @@ void TestWinApp::UpdateWidgets()
    static int lastX, lastY, lastW, lastH;
 
    int x,y,w,h;
-   GetWindow()->GetPosition(&x, &y, &w, &h);
+   GetWindow()->GetPosition(x, y, w, h);
 
    if (lastX != x || lastY != y || lastW != w || lastH != h)
    {

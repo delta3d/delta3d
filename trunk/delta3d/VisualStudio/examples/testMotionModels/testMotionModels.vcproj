@@ -23,7 +23,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;..\..\..\ext\inc\CEGUI"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -42,7 +42,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib dtUtil.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib js.lib dtUtil.lib dtGUI.lib CEGUIBase.lib"
 				OutputFile="../../../bin/testMotionModels.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -87,7 +87,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;..\..\..\ext\inc\CEGUI"
 				PreprocessorDefinitions="WIN32;_DEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib dtUtild.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib dtUtild.lib dtGUId.lib CEGUIBase_d.lib"
 				OutputFile="../../../bin/testMotionModelsd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -162,6 +162,9 @@
 		</Filter>
 		<File
 			RelativePath="..\..\..\examples\testMotionModels\config.xml">
+		</File>
+		<File
+			RelativePath="..\..\..\examples\testMotionModels\gui.xml">
 		</File>
 		<File
 			RelativePath="..\..\..\examples\testMotionModels\readme.txt">

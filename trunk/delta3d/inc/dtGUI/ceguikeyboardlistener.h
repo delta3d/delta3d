@@ -24,6 +24,7 @@
 #include <dtCore/keyboard.h>   // for base class
 #include <CEGUI/CEGUIInputEvent.h>  // for internal type, CEGUI::Key::Scan
 #include <dtGUI/export.h>                   // for export symbols
+#include <Producer/Keyboard>                // for parameter
 
 namespace dtGUI
 {

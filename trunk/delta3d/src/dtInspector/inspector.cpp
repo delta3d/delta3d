@@ -223,7 +223,7 @@ void UserInterface::SelectInstance()
       InstanceClassName->label( "dtCore::DeltaWin" ); 
 
       int x,y,width,height;
-      w->GetPosition(&x, &y, &width, &height);
+      w->GetPosition(x, y, width, height);
       WinPosX->value(x);     WinPosY->value(y);
       WinPosW->value(width); WinPosH->value(height);
 

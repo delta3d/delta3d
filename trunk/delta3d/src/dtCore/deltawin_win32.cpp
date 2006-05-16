@@ -172,7 +172,7 @@ bool DeltaWin::ChangeScreenResolution( int width, int height, int colorDepth, in
       {
          //reset window position
          int x,y,w,h;
-         DeltaWin::GetInstance(i)->GetPosition(&x,&y,&w,&h);
+         DeltaWin::GetInstance(i)->GetPosition(x,y,w,h);
          DeltaWin::GetInstance(i)->SetPosition(x,y,w,h);
       }
    }

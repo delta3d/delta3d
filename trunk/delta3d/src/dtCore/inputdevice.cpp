@@ -2,70 +2,39 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "dtCore/inputdevice.h"
+#include <dtCore/inputdevice.h>
+#include <algorithm>
 
 namespace dtCore
 {
 
    IMPLEMENT_MANAGEMENT_LAYER(InputDevice)
    
-   /**
-    * Constructor.
-    *
-    * @param name the instance name
-    */
     InputDevice::InputDevice(const std::string& name) : Base(name)
    {
       RegisterInstance(this);
    }
    
-   /**
-    * Destructor.
-    */
    InputDevice::~InputDevice()
    {
       DeregisterInstance(this);
    }
    
-   /**
-    * Returns the number of features (buttons, axes, etc.) contained in 
-    * this device.
-    *
-    * @return the number of features contained in this device
-    */
    int InputDevice::GetFeatureCount() const
    {
       return mFeatures.size();
    }
    
-   /**
-    * Returns a pointer to the specified feature.
-    *
-    * @param index the index of the desired feature
-    * @return a pointer to the feature
-    */
    InputDeviceFeature* InputDevice::GetFeature(int index)
    {
       return mFeatures[index].get();
    }
    
-   /**
-    * Returns the number of features (buttons, axes, etc.) contained in 
-    * this device.
-    *
-    * @return the number of features contained in this device
-    */
    int InputDevice::GetButtonCount() const
    {
       return mButtons.size();
    }
    
-   /**
-    * Returns a pointer to the specified feature.
-    *
-    * @param index the index of the desired feature
-    * @return a pointer to the feature
-    */
    Button* InputDevice::GetButton(int index)
    {
       return mButtons[index].get();
@@ -76,23 +45,11 @@ namespace dtCore
       return mButtons[index].get();
    }
 
-   /**
-    * Returns the number of features (buttons, axes, etc.) contained in 
-    * this device.
-    *
-    * @return the number of features contained in this device
-    */
    int InputDevice::GetAxisCount() const
    {
       return mAxes.size();
    }
    
-   /**
-    * Returns a pointer to the specified feature.
-    *
-    * @param index the index of the desired feature
-    * @return a pointer to the feature
-    */
    Axis* InputDevice::GetAxis(int index)
    {
       return mAxes[index].get();
@@ -103,44 +60,24 @@ namespace dtCore
       return mAxes[index].get();
    }
 
-   /**
-    * Adds a button listener.
-    *
-    * @param buttonListener a pointer to the listener to add
-    */
    void InputDevice::AddButtonListener(ButtonListener* buttonListener)
    {
-      mButtonListeners.insert(buttonListener);
+      mButtonListeners.push_back(buttonListener);
    }
    
-   /**
-    * Removes a button listener.
-    *
-    * @param buttonListener a pointer to the listener to remove
-    */
    void InputDevice::RemoveButtonListener(ButtonListener* buttonListener)
    {
-      mButtonListeners.erase(buttonListener);
+      mButtonListeners.remove(buttonListener);
    }
-   
-   /**
-    * Adds an axis listener.
-    *
-    * @param axisListener a pointer to the listener to add
-    */
+
    void InputDevice::AddAxisListener(AxisListener* axisListener)
    {
-      mAxisListeners.insert(axisListener);
+      mAxisListeners.push_back(axisListener);
    }
    
-   /**
-    * Removes an axis listener.
-    *
-    * @param axisListener a pointer to the listener to remove
-    */
    void InputDevice::RemoveAxisListener(AxisListener* axisListener)
    {
-      mAxisListeners.erase(axisListener);
+      mAxisListeners.remove(axisListener);
    }
    
    /**
@@ -163,11 +100,6 @@ namespace dtCore
       }
    }
    
-   /**
-   * Removes a feature from this device.
-   *
-   * @param feature a pointer to the feature to remove
-   */
    void InputDevice::RemoveFeature(InputDeviceFeature* feature)
    {
       for(std::vector< RefPtr<InputDeviceFeature> >::iterator it = mFeatures.begin();
@@ -210,85 +142,54 @@ namespace dtCore
          }
       }
    }
-   
-   /**
-    * Constructor.
-    *
-    * @param owner the owner of this feature
-    * @param description a description of this feature
-    */
+
    InputDeviceFeature::InputDeviceFeature(InputDevice* owner, const std::string& description) :
       mOwner(owner),
       mDescription(description)
    {}
    
-   /**
-    * Destructor.
-    */
    InputDeviceFeature::~InputDeviceFeature()
    {}
    
-   /**
-    * Returns a pointer to the owner of this feature.
-    *
-    * @return a pointer to the owner of this feature
-    */
    InputDevice* InputDeviceFeature::GetOwner() const
    {
       return mOwner;
    }
    
-   /**
-    * Sets the description of this feature.
-    *
-    * @param description the new description
-    */
    void InputDeviceFeature::SetDescription(const std::string& description)
    {
       mDescription = description;
    }
    
-   /**
-    * Returns a description of this feature.
-    *
-    * @return a description of this feature
-    */
    std::string InputDeviceFeature::GetDescription() const
    {
       return mDescription;
    }
    
-   /**
-    * Constructor.
-    *
-    * @param owner the owner of this button
-    * @param description a description of this button
-    */
    Button::Button(InputDevice* owner, const std::string& description) :
       InputDeviceFeature(owner, description),
       mState(false)
    {}
    
-   /**
-    * Sets the state of this button.
-    *
-    * @param state the new state
-    */
-   void Button::SetState(bool state)
+   bool Button::SetState(bool state)
    {
+      bool handled(false);
       if(state != mState)
       {
          mState = state;
    
-         std::set<ButtonListener*>::iterator it;
-         
-         for(it = mButtonListeners.begin();
-             it != mButtonListeners.end();
-             it++)
+         ButtonListenerList::iterator it;
+
+         // perform the chain of responsibility
+         ButtonListenerList::iterator iter = mButtonListeners.begin();
+         ButtonListenerList::iterator enditer = mButtonListeners.end();
+         while( !handled && iter!=enditer )
          {
-            (*it)->ButtonStateChanged(this, !mState, mState);
+            handled = (*iter)->ButtonStateChanged( this, !mState, mState);
+            ++iter;
          }
-         
+
+         ///\todo Grasp why this is here
          for(it = GetOwner()->mButtonListeners.begin();
              it != GetOwner()->mButtonListeners.end();
              it++)
@@ -296,74 +197,57 @@ namespace dtCore
             (*it)->ButtonStateChanged(this, !mState, mState);
          }
       }
+
+      return handled;
    }
-   
-   /**
-    * Returns the current state of this button.
-    *
-    * @return true if this button is pressed, false
-    * otherwise
-    */
+
    bool Button::GetState() const
    {
       return mState;
    }
    
-   /**
-    * Adds a button listener.
-    *
-    * @param buttonListener a pointer to the listener to add
-    */
    void Button::AddButtonListener(ButtonListener* buttonListener)
    {
-      mButtonListeners.insert(buttonListener);
+      mButtonListeners.push_back(buttonListener);
    }
-   
-   /**
-    * Removes a button listener.
-    *
-    * @param buttonListener a pointer to the listener to remove
-    */
+
+   void Button::InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl)
+   {
+      ButtonListenerList::iterator iter = std::find( mButtonListeners.begin() , mButtonListeners.end() , pos );
+      mButtonListeners.insert(iter,bl);
+   }
+
    void Button::RemoveButtonListener(ButtonListener* buttonListener)
    {
-      mButtonListeners.erase(buttonListener);
+      mButtonListeners.remove(buttonListener);
    }
    
-   /**
-    * Constructor.
-    *
-    * @param owner the owner of this axis
-    * @param description a description of this axis
-    */
    Axis::Axis(InputDevice* owner, const std::string& description) : 
       InputDeviceFeature(owner, description),
       mState(0.0)
    {}
-   
-   /**
-    * std::sets the state of this axis.  The delta value is used to indicate
-    * stateless motion, such as mouse scrolling.
-    *
-    * @param axis the new state
-    * @param delta the optional delta value
-    */
-   void Axis::SetState(double state, double delta)
+
+   bool Axis::SetState(double state, double delta)
    {
+      bool handled(false);
+
       if(state != mState || delta != 0.0)
       {
          double oldState = mState;
-   
          mState = state;
-   
-         std::set<AxisListener*>::iterator it;
-         
-         for(it = mAxisListeners.begin();
-             it != mAxisListeners.end();
-             it++)
+
+         // perform the chain of responsibility
+         AxisListenerList::iterator iter = mAxisListeners.begin();
+         AxisListenerList::iterator enditer = mAxisListeners.end();
+         while( !handled && iter!=enditer )
          {
-            (*it)->AxisStateChanged(this, oldState, mState, delta);
+            handled = (*iter)->AxisStateChanged(this, oldState, mState, delta);
+            ++iter;
          }
-         
+
+         ///\todo Grasp why this is here.
+         // update all of the device's listeners?????????????????????
+         AxisListenerList::iterator it;
          for(it = GetOwner()->mAxisListeners.begin();
              it != GetOwner()->mAxisListeners.end();
              it++)
@@ -371,35 +255,28 @@ namespace dtCore
             (*it)->AxisStateChanged(this, oldState, mState, delta);
          }
       }
+
+      return handled;
    }
-   
-   /**
-    * Returns the current state of this axis.
-    *
-    * @return the current state of this axis
-    */
+
    double Axis::GetState() const
    {
       return mState;
    }
    
-   /**
-    * Adds an axis listener.
-    *
-    * @param axisListener a pointer to the listener to add
-    */
    void Axis::AddAxisListener(AxisListener* axisListener)
    {
-      mAxisListeners.insert(axisListener);
+      mAxisListeners.push_back(axisListener);
    }
-   
-   /**
-    * Removes an axis listener.
-    *
-    * @param axisListener a pointer to the listener to remove
-    */
+
+   void Axis::InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al)
+   {
+      AxisListenerList::iterator iter = std::find( mAxisListeners.begin() , mAxisListeners.end() , pos );
+      mAxisListeners.insert(iter,al);
+   }
+
    void Axis::RemoveAxisListener(AxisListener* axisListener)
    {
-      mAxisListeners.erase(axisListener);
+      mAxisListeners.remove(axisListener);
    }
 }

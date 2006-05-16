@@ -39,9 +39,7 @@ namespace dtCore
 {
    class KeyboardListener;
 
-   /**
-    * The interface to the keyboard
-    */
+   /// The model of the keyboard used throughout Delta3D.
    class DT_CORE_EXPORT Keyboard : public InputDevice
    {
       DECLARE_MANAGEMENT_LAYER(Keyboard)

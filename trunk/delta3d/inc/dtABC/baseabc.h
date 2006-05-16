@@ -54,13 +54,10 @@ namespace dtABC
 
    public:
                      BaseABC( const std::string& name = "BaseABC" );
-
    protected:
-
       virtual        ~BaseABC();
 
    public:
-
       ///configure the internal components
       virtual  void  Config();
 
@@ -85,12 +82,14 @@ namespace dtABC
       ///Get the default Application Keyboard
       dtCore::Keyboard*       GetKeyboard()  { return mKeyboard.get(); }
 
+      void SetApplicationKeyboardListener(ApplicationKeyboardListener* appkl);
       const ApplicationKeyboardListener* GetApplicationKeyboardListener() const { return mKeyboardListener.get(); }
       ApplicationKeyboardListener* GetApplicationKeyboardListener() { return mKeyboardListener.get(); }
 
       ///Get the default Application Mouse
       dtCore::Mouse*          GetMouse()     { return mMouse.get(); }
-      
+
+      void SetApplicationMouseListener(ApplicationMouseListener* appml);
       const ApplicationMouseListener* GetApplicationMouseListener() const { return mMouseListener.get(); }
       ApplicationMouseListener* GetApplicationMouseListener() { return mMouseListener.get(); }
 

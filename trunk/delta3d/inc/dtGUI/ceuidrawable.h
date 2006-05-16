@@ -26,19 +26,17 @@
 #endif // defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 
 #include <dtCore/deltadrawable.h>           // for base class
-#include <dtGUI/ceguimouselistener.h>       // for member
-#include <dtGUI/ceguikeyboardlistener.h>    // for member
 #include <dtCore/refptr.h>                  // for members
 #include <dtGUI/export.h>                   // for export symbols
 
 #include <osg/Drawable>                     // for base class
 #include <osg/CopyOp>
 
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace CEGUI
 {
    class System;
    class Renderer;
+   class Window;
 }
 
 namespace osg
@@ -46,25 +44,32 @@ namespace osg
    class MatrixTransform;
    class Projection;
 }
-/// @endcond
+
+namespace dtCore
+{
+   class DeltaWin;
+}
 
 namespace dtGUI
 {
    class BaseScriptModule;
    class Renderer;
+   class CEGUIKeyboardListener;
+   class CEGUIMouseListener;
 
-   /** 
-    * A DeltaDrawable used to render the CEGUI.
-    * This class is a derivative of DeltaDrawable and is used to render and 
-    * manage the CEGUI system.  The CEUIDrawable is responsible for setting
-    * up the CEGUI system and supplying mouse and keyboard events to the UI.
+   ///A DeltaDrawable used to render CEGUI
+
+   /** This class is a derivative of DeltaDrawable and is used to render and 
+    *  manage the CEGUI system.  The CEUIDrawable is responsible for setting
+    *  up the CEGUI system and supplying mouse and keyboard events to the UI.
     *
-    * To create a new GUI, instantiate a CEGUIDrawable and add it to the Scene
-    * using Scene::AddDrawable().  You can then use the CEGUI API to create
-    * CEGUI::Windows and adjust their properties.
+    *  To create a new GUI, instantiate a CEGUIDrawable and add it to the Scene
+    *  using Scene::AddDrawable().  You can then use the CEGUI API to create
+    *  CEGUI::Windows and adjust their properties.
     *
-    * NOTE: The CEGUIDrawable class must be instantiated *after* the application
-    * has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
+    *  NOTE: The CEGUIDrawable class must be instantiated *after* the application
+    *  has created a valid OpenGL context (i.e., during dtABC::Application::Config()).
+    * 
     */
    class DT_GUI_EXPORT CEUIDrawable : public dtCore::DeltaDrawable
    {
@@ -73,8 +78,10 @@ namespace dtGUI
 
       ///Overloaded constructor, will automatically update CEGUI when the supplied Window is resized
       CEUIDrawable(dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm=0);
+
    protected:
       virtual ~CEUIDrawable();
+
    public:
       ///Get a pointer to the underlying CEGUI::System
       CEGUI::System* GetUI() {return mUI;}
@@ -95,28 +102,30 @@ namespace dtGUI
       /// Not usually needed, but this getter is provided for unusual scenarios.
       osg::MatrixTransform* GetTransformNode() { return mTransform.get(); }
 
-      /// Manually set the size of the rendering area (in pixels)
+      /// Manually set the size of the rendering area (in pixels).
+      /// Set the width and height of the rendering area.  Typically this is just the size
+      /// of the DeltaWin the GUI is being rendered in.  If AutoResizing is enabled, these values
+      /// will be overwritten.  Disable AutoResizing to manually control the rendered area.
+      /// @see SetAutoResizing()
+      /// @param width : the width of the rendered area (pixels)
+      /// @param height : the heigh tof hte rendered area (pixels)
       void SetRenderingSize( int width, int height );
 
       /// Automatically notify CEGUI of DeltaWin resizes (enabled by default)
       void SetAutoResizing(bool enable=true) {mAutoResize=enable;}
-      
+
       bool GetAutoResizing() const {return mAutoResize;}
 
       const CEGUIMouseListener* GetMouseListener() const { return mMouseListener.get(); }
       const CEGUIKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
 
+      /// Turns off the GUI System, no longer yielding GUI support.
+      /// The System will do its clean up at this time.
+      void ShutdownGUI();
+
    protected: 
 
       void OnMessage(dtCore::Base::MessageData *data);
-      
-      /**
-       * Determines the CEGUI scancode that corresponds to the specified Producer::KeyboardKey.
-       *
-       * @param key the key to map
-       * @return the corresponding CEGUI key scancode
-       */
-      static CEGUI::Key::Scan KeyboardKeyToKeyScan( Producer::KeyboardKey key );
       
       CEGUI::System *mUI; ///<Pointer to the CUI_UI
 

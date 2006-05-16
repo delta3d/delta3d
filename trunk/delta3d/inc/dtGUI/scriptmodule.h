@@ -29,17 +29,17 @@ namespace dtGUI
       ScriptModule();
       virtual ~ScriptModule();
 
-      /** \brief Add a callback handler.
-        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
-        * @param MemFun is the pointer to the member function to be called when the CEGUI::Event is activated.
-        * @param instance is the pointer of type InstT which will be used to call the member function.
-        */
-      template<typename InstT>
-      bool AddCallback(const std::string& name, bool (InstT::*MemFun)(const CEGUI::EventArgs&), InstT* instance)
-      {
-         HandlerFunctor hf(MemFun,instance);
-         return mCallbacks.insert( CallbackRegistry::value_type( name , hf ) ).second;
-      }
+      ///** \brief Add a callback handler.
+      //  * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
+      //  * @param MemFun is the pointer to the member function to be called when the CEGUI::Event is activated.
+      //  * @param instance is the pointer of type InstT which will be used to call the member function.
+      //  */
+      //template<typename InstT>
+      //bool AddCallback(const std::string& name, bool (InstT::*MemFun)(const CEGUI::EventArgs&), InstT* instance)
+      //{
+      //   HandlerFunctor hf(instance,MemFun);
+      //   return mCallbacks.insert( CallbackRegistry::value_type( name , hf ) ).second;
+      //}
 
       /** \brief Add a callback handler.
         * @param name is the string representation of the handler function to be executed for the CEGUI::Event.

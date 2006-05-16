@@ -129,9 +129,6 @@ IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
    AddFeature(new Button(this, "Keypad Enter"));
 }
 
-/**
- * Destructor.
- */
 Keyboard::~Keyboard()
 {
    DeregisterInstance(this);
@@ -563,11 +560,6 @@ Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter
    }
 }
 
-/**
- * Producer callback for key press events.
- *
- * @param kc the key character
- */
 bool Keyboard::KeyDown(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
@@ -585,11 +577,6 @@ bool Keyboard::KeyDown(Producer::KeyCharacter kc)
    return handled;
 }
 
-/**
- * Producer callback for key release events.
- *
- * @param kc the key character
- */
 bool Keyboard::KeyUp(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);

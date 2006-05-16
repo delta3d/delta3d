@@ -247,7 +247,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual void ButtonStateChanged(Button* button,
+         virtual bool ButtonStateChanged(const Button* button,
                                          bool oldState,
                                          bool newState);
 
@@ -367,9 +367,6 @@ namespace dtCore
 
       protected:
 
-         /**
-          * Destructor.
-          */
          virtual ~AxisToAxis();
 
       public:
@@ -427,39 +424,28 @@ namespace dtCore
           * @param oldState the old state of the axis
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
+          * @return Whether the event was handled.
           */
-         virtual void AxisStateChanged(Axis* axis,
+         virtual bool AxisStateChanged(const Axis* axis,
                                        double oldState, 
                                        double newState, 
                                        double delta);
 
       private:
-
-         /**
-          * The source axis.
-          */
+         /// The source axis.
          RefPtr<Axis> mSourceAxis;
 
-         /**
-          * The target axis.
-          */
+         /// The target axis.
          RefPtr<LogicalAxis> mTargetAxis;
 
-         /**
-          * The transformation scale.
-          */
+         /// The transformation scale.
          double mScale;
 
-         /**
-          * The transformation offset.
-          */
+         /// The transformation offset.
          double mOffset;
 
-
-         /**
-          * Updates the state of the target axis.
-          */
-         void UpdateTargetAxisState();
+         /// Updates the state of the target axis.
+         bool UpdateTargetAxisState();
    };
 
 
@@ -542,29 +528,19 @@ namespace dtCore
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
           */
-         virtual void AxisStateChanged(Axis* axis,
-                                       double oldState, 
-                                       double newState, 
-                                       double delta);
+         virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
       
          
       private:
-      
-         /**
-          * The source axes.
-          */
+         /// The source axes.
          std::vector< RefPtr<Axis> > mSourceAxes;
          
-         /**
-          * The target axis.
-          */
+         /// The target axis.
          RefPtr<LogicalAxis> mTargetAxis;
          
-         
-         /**
-          * Updates the state of the target axis.
-          */
-         void UpdateTargetAxisState();
+
+         /// Updates the state of the target axis.
+         bool UpdateTargetAxisState();
    };
    
    
@@ -669,7 +645,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual void ButtonStateChanged(Button* button,
+         virtual bool ButtonStateChanged(const Button* button,
                                          bool oldState,
                                          bool newState);
 
@@ -686,31 +662,21 @@ namespace dtCore
           */
          RefPtr<Button> mSecondSourceButton;
 
-         /**
-          * The target axis.
-          */
+         /// The target axis.
          RefPtr<LogicalAxis> mTargetAxis;
 
-         /**
-          * The value corresponding to the first button.
-          */
+         /// The value corresponding to the first button.
          double mFirstButtonValue;
 
-         /**
-          * The value corresponding to the second button.
-          */
+         /// The value corresponding to the second button.
          double mSecondButtonValue;
 
-         /**
-          * The neutral value.
-          */
+         /// The neutral value.
          double mNeutralValue;
 
 
-         /**
-          * Updates the state of the target axis.
-          */
-         void UpdateTargetAxisState();
+         /// Updates the state of the target axis.
+         bool UpdateTargetAxisState();
    };
    
    
@@ -791,9 +757,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual void ButtonStateChanged(Button* button,
-                                         bool oldState,
-                                         bool newState);
+         virtual bool ButtonStateChanged(const Button* button, bool oldState, bool newState);
          
          /**
           * Called when an axis' state has changed.
@@ -803,34 +767,21 @@ namespace dtCore
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
           */
-         virtual void AxisStateChanged(Axis* axis,
-                                       double oldState, 
-                                       double newState, 
-                                       double delta);
-         
-         
+         virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta);
+
+
       private:
-      
-         /**
-          * The source button.
-          */
+         /// The source button.
          RefPtr<Button> mSourceButton;
-         
-         /**
-          * The source axis.
-          */
+
+         /// The source axis.
          RefPtr<Axis> mSourceAxis;
-         
-         /**
-          * The target axis.
-          */
+
+         /// The target axis.
          RefPtr<LogicalAxis> mTargetAxis;
-         
-         
-         /**
-          * Updates the state of the target axis.
-          */
-         void UpdateTargetAxisState();
+
+         /// Updates the state of the target axis.
+         bool UpdateTargetAxisState();
    };
 };
 

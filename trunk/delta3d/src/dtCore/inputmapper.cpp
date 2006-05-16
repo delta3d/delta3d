@@ -9,11 +9,6 @@ namespace dtCore
 
    IMPLEMENT_MANAGEMENT_LAYER(InputMapper)
    
-   /**
-    * Constructor.
-    *
-    * @param name the instance name
-    */
     InputMapper::InputMapper(const std::string& name)
       : Base(name),
         mAcquiringButtonMapping(false),
@@ -22,19 +17,11 @@ namespace dtCore
       RegisterInstance(this);
    }
    
-   /**
-    * Destructor.
-    */
    InputMapper::~InputMapper()
    {
       DeregisterInstance(this);
    }
    
-   /**
-    * Adds an input device to this manager.
-    *
-    * @param device the device to add
-    */
    void InputMapper::AddDevice(InputDevice* device)
    {
       device->AddButtonListener(this);
@@ -43,11 +30,6 @@ namespace dtCore
       mDevices.push_back(device);
    }
    
-   /**
-    * Removes an input device from this manager.
-    *
-    * @param device the device to remove
-    */
    void InputMapper::RemoveDevice(InputDevice* device)
    {
       for(std::vector< RefPtr<InputDevice> >::iterator it = mDevices.begin();
@@ -66,55 +48,26 @@ namespace dtCore
       }
    }
    
-   /**
-    * Returns the number of devices watched by this mapper.
-    *
-    * @return the number of devices
-    */
    int InputMapper::GetNumDevices()
    {
       return mDevices.size();
    }
    
-   /**
-    * Returns the device at the specified index
-    *
-    * @param index the index
-    * @return the device at the index
-    */
    InputDevice* InputMapper::GetDevice(int index)
    {
       return mDevices[index].get();
    }
    
-   /**
-    * Sets the cancel button.
-    *
-    * @param button the cancel button
-    */
    void InputMapper::SetCancelButton(Button* button)
    {
       mCancelButton = button;
    }
    
-   /**
-    * Returns the cancel button.
-    *
-    * @return the cancel button
-    */
    Button* InputMapper::GetCancelButton()
    {
       return mCancelButton.get();
    }
    
-   /**
-    * Acquires a button mapping.
-    *
-    * @param callback the callback interface, used to report
-    * the result
-    * @return true if the acquisition process was initiated, false
-    * if an acquisition is already taking place
-    */
    bool InputMapper::AcquireButtonMapping(InputMapperCallback* callback)
    {
       if(!mAcquiringButtonMapping && !mAcquiringAxisMapping)
@@ -129,15 +82,7 @@ namespace dtCore
          return false;
       }
    }
-   
-   /**
-    * Acquires an axis mapping.
-    *
-    * @param callback the callback interface, used to report
-    * the result
-    * @return true if the acquisition process was initiated, false
-    * if an acquisition is already taking place
-    */
+
    bool InputMapper::AcquireAxisMapping(InputMapperCallback* callback)
    {
       if(!mAcquiringButtonMapping && !mAcquiringAxisMapping)
@@ -152,17 +97,8 @@ namespace dtCore
          return false;
       }
    }
-   
-   /**
-    * Called when a button's state has changed.
-    *
-    * @param button the origin of the event
-    * @param oldState the old state of the button
-    * @param newState the new state of the button
-    */
-   void InputMapper::ButtonStateChanged(Button* button,
-                                        bool oldState,
-                                        bool newState)
+
+   bool InputMapper::ButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       if(newState)
       {
@@ -184,32 +120,65 @@ namespace dtCore
          else if(mAcquiringButtonMapping)
          {
             mAcquiringButtonMapping = false;
-            
-            mCallback->ButtonMappingAcquired(
-               new ButtonToButton(button)
-            );
+
+            // find the first device containing the non const button that is equivalent to this button
+            bool button_found(false);
+            DeviceVector::iterator deviter = mDevices.begin();
+            DeviceVector::iterator devend = mDevices.end();
+            while( deviter != devend && !button_found )
+            {
+               InputDevice::ButtonVector& idbv = (*deviter)->GetButtons();
+               InputDevice::ButtonVector::iterator butiter = idbv.begin();
+               InputDevice::ButtonVector::iterator butend = idbv.end();
+               while( butiter != butend && !button_found )
+               {
+                  if(button == (*butiter).get() )
+                  {
+                     button_found = true;
+                     mCallback->ButtonMappingAcquired(new ButtonToButton( butiter->get() ));
+                  }
+
+                  butiter++;
+               }
+
+               deviter++;
+            }
          }
       }
+
+      return false;
    }
-   
-   /**
-    * Called when an axis' state has changed.
-    *
-    * @param axis the changed axis
-    * @param oldState the old state of the axis
-    * @param newState the new state of the axis
-    * @param delta a delta value indicating stateless motion
-    */
-   void InputMapper::AxisStateChanged(Axis* axis,
-                                      double oldState, 
-                                      double newState, 
-                                      double delta)
+
+   bool InputMapper::AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
    {
       if(mAcquiringAxisMapping)
       {
          mAcquiringAxisMapping = false;
-      
-         mCallback->AxisMappingAcquired( new AxisToAxis(axis) );
+
+            // find the first device containing the non const axis that is equivalent to this axis
+            bool axis_found(false);
+            DeviceVector::iterator deviter = mDevices.begin();
+            DeviceVector::iterator devend = mDevices.end();
+            while( deviter != devend && !axis_found )
+            {
+               InputDevice::AxisVector& idav = (*deviter)->GetAxes();
+               InputDevice::AxisVector::iterator axsiter = idav.begin();
+               InputDevice::AxisVector::iterator axsend = idav.end();
+               while( axsiter != axsend && !axis_found )
+               {
+                  if(axis == (*axsiter).get() )
+                  {
+                     axis_found = true;
+                     mCallback->AxisMappingAcquired(new AxisToAxis( axsiter->get() ));
+                  }
+
+                  axsiter++;
+               }
+
+               deviter++;
+            }
       }
+
+      return false;
    }
 }

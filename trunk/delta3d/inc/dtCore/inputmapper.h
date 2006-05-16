@@ -138,9 +138,7 @@ namespace dtCore
           * @param oldState the old state of the button
           * @param newState the new state of the button
           */
-         virtual void ButtonStateChanged(Button* button,
-                                         bool oldState,
-                                         bool newState);
+         virtual bool ButtonStateChanged(const Button* button, bool oldState, bool newState);
                                          
          /**
           * Called when an axis' state has changed.
@@ -149,8 +147,9 @@ namespace dtCore
           * @param oldState the old state of the axis
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
+          * \todo fix this compile error!
           */
-         virtual void AxisStateChanged(Axis* axis,
+         virtual bool AxisStateChanged(const Axis* axis,
                                        double oldState, 
                                        double newState, 
                                        double delta);
@@ -161,7 +160,8 @@ namespace dtCore
          /**
           * The set of devices to watch.
           */
-         std::vector< RefPtr<InputDevice> > mDevices;
+         typedef std::vector< RefPtr<InputDevice> > DeviceVector;
+         DeviceVector mDevices;
          
          /**
           * The cancel button.

@@ -12,11 +12,16 @@ using namespace dtGUI;
 class TestGUIApp : public dtABC::Application
 {
 public:
-   TestGUIApp(const std::string& configFilename = "" ): Application( configFilename )
+   TestGUIApp(const std::string& configFilename = "" ): Application( configFilename ),
+      mScriptModule(new ScriptModule())
    {
    }
 
-   virtual ~TestGUIApp() {}
+   virtual ~TestGUIApp()
+   {
+      mGUI->ShutdownGUI();
+      delete mScriptModule;
+   }
 
    virtual void Config()
    {
@@ -36,12 +41,11 @@ public:
 
       ///We'll make a new ScriptModule which will handle subscribing callbacks
       ///to widgets when it loads the Layout file.
-      ScriptModule *sm = new ScriptModule();
-      sm->AddCallback("quitHandler", &quitHandler );
-      sm->AddCallback("sliderHandler", &sliderHandler );
+      mScriptModule->AddCallback("quitHandler", &quitHandler );
+      mScriptModule->AddCallback("sliderHandler", &sliderHandler );
 
       ///make a new drawable, supplying the DeltaWin and the ScriptModule
-      mGUI = new dtGUI::CEUIDrawable(GetWindow(), sm);
+      mGUI = new dtGUI::CEUIDrawable(GetWindow(), mScriptModule);
 
       ///make some cool UI
       BuildGUI();
@@ -59,6 +63,7 @@ public:
 private:
    RefPtr<dtGUI::CEUIDrawable> mGUI;
    std::string mLayoutFilename;
+   dtGUI::ScriptModule* mScriptModule;
 
    void BuildGUI(void)
    {
@@ -341,3 +346,4 @@ int main( int argc, const char* argv[] )
 * \skip return
 * \until }
 */
+

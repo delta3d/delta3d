@@ -171,11 +171,8 @@ void MouseTests::TestClickObservers()
    CPPUNIT_ASSERT( !ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown) ); // scroll: lefty should NOT handle it
    CPPUNIT_ASSERT( !ms->MouseMotion(x,y) );                                         // motion: lefty should NOT handle it
    CPPUNIT_ASSERT( !ms->PassiveMouseMotion(x,y) );                                  // passive: lefty should NOT handle it
-   ///\todo Why does the Mouse change the Button value?
    CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()) );                     // press: lefty should handle it
-   ///\todo Why does the Mouse change the Button value?
    CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()) );                 // double: lefty should handle it
-   ///\todo Why does the Mouse change the Button value?
    CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()) );                     // release: lefty should handle it
    CPPUNIT_ASSERT( lefty->GetHit() );                                               // better be hit
 
@@ -188,15 +185,12 @@ void MouseTests::TestClickObservers()
    CPPUNIT_ASSERT_EQUAL( 2 , (int)ms->GetListeners().size() );  // better have new observer
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
-   ///\todo Why does the Mouse change the Button value?
    CPPUNIT_ASSERT( ms->ButtonDown(x,y,lefty->GetButton()) );                       // press: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
-   ///\todo Why does the Mouse change the Button value?
    CPPUNIT_ASSERT( ms->DoubleButtonDown(x,y,lefty->GetButton()) );                 // double: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
-   ///\todo Why does the Mouse change the Button value?
    CPPUNIT_ASSERT( ms->ButtonUp(x,y,lefty->GetButton()) );                     // release: lefty should handle it
    CPPUNIT_ASSERT( !movesy->GetHit() );  // better NOT be hit
 
