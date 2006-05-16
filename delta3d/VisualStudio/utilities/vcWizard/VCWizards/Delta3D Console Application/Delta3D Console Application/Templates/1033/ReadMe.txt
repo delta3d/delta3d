@@ -27,7 +27,8 @@ main.cpp
     
 
 /////////////////////////////////////////////////////////////////////////////
-Other notes: This wizard was designed to work with Delta3D Build 0.8.5 
-             Please check for the latest version at www.delta3d.org
+Other notes: This wizard was designed to work with the latest Delta3D release.  It may not be
+             backward/forward compatible. 
+             Please check for the latest version at http://www.delta3d.org
 
 /////////////////////////////////////////////////////////////////////////////
