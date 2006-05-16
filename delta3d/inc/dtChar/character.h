@@ -209,7 +209,8 @@ namespace dtChar
           * Returns a pointer to the rbody osg node
           *
           */
-         rbody::OsgBodyNode* GetBodyNode() {return mBodyNode.get();}
+         rbody::OsgBodyNode* GetBodyNode() { return mBodyNode.get(); }
+         const rbody::OsgBodyNode* GetBodyNode() const { return mBodyNode.get(); }
 
       private:
          
