@@ -310,12 +310,12 @@ void Transformable::SetNormalRescaling( const bool enable )
    if( enable )   state = osg::StateAttribute::ON;
    else           state = osg::StateAttribute::OFF;
 
-   GetOSGNode()->getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, state );
+   DeltaDrawable::GetOSGNode()->getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, state );
 }
 
 bool Transformable::GetNormalRescaling() const
 {
-   osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode( GL_RESCALE_NORMAL );
+   osg::StateAttribute::GLModeValue state = DeltaDrawable::GetOSGNode()->getStateSet()->getMode( GL_RESCALE_NORMAL );
 
    if( state & osg::StateAttribute::ON )
    {
