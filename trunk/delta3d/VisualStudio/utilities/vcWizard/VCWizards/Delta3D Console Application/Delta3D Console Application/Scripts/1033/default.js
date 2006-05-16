@@ -6,13 +6,18 @@ function OnFinish(selProj, selObj)
 		var strProjectPath = wizard.FindSymbol('PROJECT_PATH');
 		var strProjectName = wizard.FindSymbol('PROJECT_NAME');
 		var strRootName = wizard.FindSymbol('ROOT_NAME');
+		var bEmptyProject = wizard.FindSymbol("EMPTY_PROJECT");
+
 
 		selProj = CreateCustomProject(strProjectName, strProjectPath);
 		//AddConfig(selProj, strProjectName);
 		AddFilters(selProj);
 
 		var InfFile = CreateCustomInfFile();
-		AddFilesToCustomProj(selProj, strProjectName, strProjectPath, InfFile);
+		if (!bEmptyProject)
+		{
+			AddFilesToCustomProj(selProj, strProjectName, strProjectPath, InfFile);
+		}
 		PchSettings(selProj);
 		InfFile.Delete();
 
