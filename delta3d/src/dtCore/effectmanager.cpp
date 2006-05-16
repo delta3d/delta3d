@@ -259,13 +259,13 @@ namespace dtCore
     * @return a pointer to the detonation object
     */
    Detonation* EffectManager::AddDetonation( const osg::Vec3& position,
-                                             DetonationType type,
+                                             DetonationType dtype,
                                              double timeToLive,
                                              Transformable* parent)
    {
       DEPRECATE(  "Detonation* EffectManager::AddDetonation( const osg::Vec3& position, DetonationType type, double timeToLive, const Transformable* parent)",
                   "Detonation* EffectManager::AddDetonation( const osg::Vec3& position, const std::string& detonationName, double timeToLive, const Transformable* parent)" )
-      return AddDetonation(position, dtUtil::ToString( int(type) ), timeToLive, parent);
+      return AddDetonation(position, dtUtil::ToString( int(dtype) ), timeToLive, parent);
    }
 
    /**
@@ -666,9 +666,9 @@ namespace dtCore
       return mDetonationName;
    }
 
-   void Detonation::GetType( DetonationType& type )
+   void Detonation::GetType( DetonationType& dtype )
    {
-      type = mLegacyTypeMapping[mDetonationName];
+      dtype = mLegacyTypeMapping[mDetonationName];
    }
 
    /**
