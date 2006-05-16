@@ -193,7 +193,7 @@ namespace dtCore
           * functionality instead.
           */
          Detonation* AddDetonation( const osg::Vec3& position,
-                                    DetonationType type,
+                                    DetonationType detonationType,
                                     double timeToLive = 5.0,
                                     Transformable* parent = 0 );
 
@@ -244,7 +244,7 @@ namespace dtCore
          void AddEffect(Effect* effect);
 
       private:
-        
+
          /**
           * The group that contains all effect nodes.
           */
@@ -274,6 +274,9 @@ namespace dtCore
          double mLastTime;
    };
 
+   DetonationType StringToDetonationType( const std::string& stringType );
+   std::string DetonationTypeToString( DetonationType detonationType );
+     
    /**
     * An interface for objects interested in the addition and removal
     * of effects from the manager.
@@ -423,7 +426,7 @@ namespace dtCore
           * @return the type of this detonation
           */
          const std::string& GetType();
-         void GetType( DetonationType& type );
+         void GetType( DetonationType& detonationType );
 
          /**
           * Returns the Transformable parent of the detonation, or
@@ -435,9 +438,6 @@ namespace dtCore
          const Transformable* GetParent() const;
          
       private:
-
-         typedef std::map< std::string, DetonationType > StringDetonationTypeMap;
-         static StringDetonationTypeMap mLegacyTypeMapping;
 
          /**
           * The position of the detonation.
