@@ -8,50 +8,22 @@
 using namespace boost::python;
 using namespace dtCore;
 
-class ButtonListenerWrap : public ButtonListener
+class ButtonListenerWrap : public ButtonListener, public wrapper<ButtonListener>
 {
-   public:
-   
-      ButtonListenerWrap(PyObject* self)
-         : mSelf(self)
-      {}
-      
-      virtual void ButtonStateChanged(Button* button, bool oldState, bool newState)
+   public:   
+      bool ButtonStateChanged(const Button* button, bool oldState, bool newState)
       {
-         call_method<void>(mSelf, "ButtonStateChanged", button, oldState, newState);
+         return this->get_override("ButtonStateChanged")(button,oldState,newState);
       }
-      
-      void DefaultButtonStateChanged(Button* button, bool oldState, bool newState)
-      {
-         ButtonListener::ButtonStateChanged(button, oldState, newState);
-      }
-      
-   private:
-      
-      PyObject* mSelf;
 };
 
-class AxisListenerWrap : public AxisListener
+class AxisListenerWrap : public AxisListener, public wrapper<AxisListener>
 {
-   public:
-   
-      AxisListenerWrap(PyObject* self)
-         : mSelf(self)
-      {}
-      
-      virtual void AxisStateChanged(Axis* axis, double oldState, double newState, double delta)
+   public:      
+      bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)
       {
-         call_method<void>(mSelf, "AxisStateChanged", axis, oldState, newState, delta);
+         return this->get_override("AxisStateChanged")(axis, oldState, newState, delta);
       }
-      
-      void DefaultAxisStateChanged(Axis* axis, double oldState, double newState, double delta)
-      {
-         AxisListener::AxisStateChanged(axis, oldState, newState, delta);
-      }
-      
-   private:
-      
-      PyObject* mSelf;
 };
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SS_overloads, SetState, 1, 2)
@@ -103,8 +75,8 @@ void initInputDeviceBindings()
       .def("AddButtonListener", &Button::AddButtonListener)
       .def("RemoveButtonListener", &Button::RemoveButtonListener);
       
-   class_<ButtonListener, ButtonListenerWrap, boost::noncopyable>("ButtonListener")
-      .def("ButtonStateChanged", &ButtonListener::ButtonStateChanged, &ButtonListenerWrap::DefaultButtonStateChanged);
+   class_<ButtonListenerWrap, ButtonListenerWrap*, boost::noncopyable>("ButtonListener")
+      .def("ButtonStateChanged", pure_virtual(&ButtonListener::ButtonStateChanged));
       
    class_<Axis, bases<InputDeviceFeature>, dtCore::RefPtr<Axis> >("Axis", no_init)
       .def("SetState", &Axis::SetState, SS_overloads())
@@ -112,6 +84,6 @@ void initInputDeviceBindings()
       .def("AddAxisListener", &Axis::AddAxisListener)
       .def("RemoveAxisListener", &Axis::RemoveAxisListener);
       
-   class_<AxisListener, AxisListenerWrap, boost::noncopyable>("AxisListener")
-      .def("AxisStateChanged", &AxisListener::AxisStateChanged, &AxisListenerWrap::DefaultAxisStateChanged);
+   class_<AxisListenerWrap, AxisListenerWrap*, boost::noncopyable>("AxisListener")
+      .def("AxisStateChanged", pure_virtual(&AxisListener::AxisStateChanged));
 }
