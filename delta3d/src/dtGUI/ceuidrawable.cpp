@@ -1,6 +1,11 @@
-#include <CEGUI.h>
+#include <CEGUI/CEGUIPropertySet.h>
+#include <CEGUI/CEGUISystem.h>
+#include <CEGUI/CEGUIWindow.h>
+#include <CEGUI/CEGUIExceptions.h>
 
 #include <dtGUI/ceuidrawable.h>
+#include <dtGUI/ceguimouselistener.h>       // for member
+#include <dtGUI/ceguikeyboardlistener.h>    // for member
 #include <dtGUI/renderer.h>
 #include <dtGUI/basescriptmodule.h>
 #include <dtCore/deltawin.h>
@@ -36,6 +41,9 @@ CEUIDrawable::CEUIDrawable( dtCore::DeltaWin *win, dtGUI::BaseScriptModule *sm):
    mKeyboardListener(new CEGUIKeyboardListener()),
    mMouseListener(new CEGUIMouseListener())
 {
+   mProjection->setName("CEUIDrawable_Projection");
+   mTransform->setName("CEUIDrawable_MatrixTransform");
+
    // make the listener the first in the list
    dtCore::Mouse* ms = mWindow->GetMouse();
    if( ms->GetListeners().empty() )
@@ -69,7 +77,7 @@ CEUIDrawable::~CEUIDrawable()
    mWindow->GetKeyboard()->RemoveKeyboardListener( mKeyboardListener.get() );
    
    SetOSGNode(0);
-   delete mUI;
+
    delete mRenderer;
 }
 
@@ -80,7 +88,7 @@ void CEUIDrawable::Config()
    RegisterInstance(this);
 
    int x(0), y(0), w(0), h(0);
-   mWindow->GetPosition(&x, &y, &w, &h);
+   mWindow->GetPosition(x, y, w, h);
    SetRenderingSize(w, h);
 
    if( mScriptModule )
@@ -91,6 +99,7 @@ void CEUIDrawable::Config()
    mUI = CEGUI::System::getSingletonPtr();
 
    osg::Geode *geod = new osg::Geode();
+   geod->setName("CEUIDrawable_Geode");
 
    osg::StateSet* stateset = geod->getOrCreateStateSet();
    stateset->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
@@ -178,8 +187,7 @@ void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
          if (!mWindow.valid()) return;
 
          int x,y,w,h;
-
-         mWindow->GetPosition(&x, &y, &w, &h);
+         mWindow->GetPosition(x, y, w, h);
 
          //if window is the same size, don't do anything
          if (w == mWidth && h == mHeight) return;
@@ -195,19 +203,17 @@ void CEUIDrawable::OnMessage(dtCore::Base::MessageData *data)
    }
 }
 
-/** Set the width and height of the rendering area.  Typically this is just the size
- *  of the DeltaWin the GUI is being rendered in.  If AutoResizing is enabled, these values
- *  will be overwritten.  Disable AutoResizing to manually control the rendered area.
- * @see SetAutoResizing()
- * @param width : the width of the rendered area (pixels)
- * @param height : the heigh tof hte rendered area (pixels)
- */
 void CEUIDrawable::SetRenderingSize(int width, int height)
 {
    mWidth = width;
    mHeight = height;
    mRenderer->setDisplaySize( CEGUI::Size(width, height) );
    mMouseListener->SetWindowSize( width , height );
+}
+
+void CEUIDrawable::ShutdownGUI()
+{
+   delete mUI;
 }
 
 // implementation details for private class

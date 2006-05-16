@@ -70,6 +70,8 @@ namespace dtGUI
 
       static void ProducerToNormalized(float& x, float& y);
 
+      void ShutdownGUI();
+
    protected:
       ~GUIManager();
 

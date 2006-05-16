@@ -26,12 +26,12 @@ mSetFunctor(setFunc)
 }
 
 ///When the axis changes, just call the functor with the new values
-void FPSMotionModel::FPSAxisListener::AxisStateChanged(Axis* axis,
+bool FPSMotionModel::FPSAxisListener::AxisStateChanged(const Axis* axis,
                                           double oldState, 
                                           double newState, 
                                           double delta)
 {
-   mSetFunctor(newState, delta);
+   return mSetFunctor(newState, delta);
 }
 
 
@@ -505,7 +505,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
 }
 
 ///Update the MotionModel's elevation by either ground clamping, or "falling"
-void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, const double &deltaFrameTime)
+void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, double deltaFrameTime)
 {
    mIsector->Reset();
 
@@ -570,24 +570,28 @@ void FPSMotionModel::AdjustElevation(osg::Vec3 &xyz, const double &deltaFrameTim
    }
 }
 
-void FPSMotionModel::OnForwardBackwardChanged(const double &newState, const double &delta )
+bool FPSMotionModel::OnForwardBackwardChanged(double newState, double delta)
 {
    mForwardBackCtrl = newState;
+   return true;
 }
 
-void FPSMotionModel::OnSidestepChanged( const double &newState, const double &delta )
+bool FPSMotionModel::OnSidestepChanged(double newState, double delta)
 {
    mSidestepCtrl = newState;
+   return true;
 }
 
-void FPSMotionModel::OnLookLeftRightChanged( const double &newState, const double &delta )
+bool FPSMotionModel::OnLookLeftRightChanged(double newState, double delta)
 {
    mLookLeftRightCtrl = newState;
+   return true;
 }
 
-void FPSMotionModel::OnLookUpDownChanged( const double &newState, const double &delta )
+bool FPSMotionModel::OnLookUpDownChanged(double newState, double delta)
 {
    mLookUpDownCtrl = newState;
+   return true;
 }
 
 }

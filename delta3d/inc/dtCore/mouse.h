@@ -26,13 +26,12 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <list>
-#include <string>
+#include <list>                        // for typedef, member.
+#include <string>                      // for parameter
 
-#include <Producer/KeyboardMouse>
-#include <dtCore/inputdevice.h>
-#include <dtUtil/deprecationmgr.h>
-#include <osg/Referenced>               // for listener's base class
+#include <Producer/KeyboardMouse>      // for member giving cursor control
+#include <dtCore/inputdevice.h>        // for base class
+#include <osg/Referenced>              // for listener's base class
 #include <dtCore/refptr.h>             // for typedef, list member
 
 namespace dtCore
@@ -40,179 +39,158 @@ namespace dtCore
    class DeltaWin;
    class MouseListener;
 
-   /**
-    * A mouse device.
-    */
+   /// The model of the mouse used throughout Delta3D.
    class DT_CORE_EXPORT Mouse : public InputDevice
    {
-         DECLARE_MANAGEMENT_LAYER(Mouse)
+      DECLARE_MANAGEMENT_LAYER(Mouse)
 
    protected:
 
-         /**
-          * Destructor.
-          */
-         virtual ~Mouse();
+      /// Destructor.
+      virtual ~Mouse();
 
-      public:
-         /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
+   public:
+      /// Constructor.
+      /// @param name the instance name
+      Mouse(Producer::KeyboardMouse* km,const std::string& name = "mouse");
 
-         /// Mouse buttons.
-         enum MouseButton
-         {
-            LeftButton,
-            MiddleButton,
-            RightButton
-         };
+      /// Mouse buttons.
+      enum MouseButton
+      {
+         LeftButton,
+         MiddleButton,
+         RightButton
+      };
 
-         /**
-          * The list of mouse listeners.
-          */
-         typedef std::list<dtCore::RefPtr<MouseListener> > MouseListenerList;
+      /// The list of mouse listeners.
+      typedef std::list<dtCore::RefPtr<MouseListener> > MouseListenerList;
 
-         /**
-          * Gets the current mouse position.
-          *
-          * @param x a reference to the location in which to store the
-          * x coordinate
-          * @param y a reference to the location in which to store the
-          * y coordinate
-          */
-         void GetPosition(float& x, float& y) const;
-         
-         /**
-         * Sets the current mouse position.
-         *
-         * @param x the new x coordinate
-         * @param y the new y coordinate
-         */
-         void SetPosition(float x, float y);
+      /// Gets the current mouse position.
+      /// @param x a reference to the location in which to store the x coordinate
+      /// @param y a reference to the location in which to store the y coordinate
+      void GetPosition(float& x, float& y) const;
 
-         /**
-          * Gets the state of the specified mouse button.
-          *
-          * @param button the button to check
-          * @return true if the button is pressed, false otherwise
-          */
-         bool GetButtonState(MouseButton button) const;
+      /// Sets the current mouse position.
+      /// @param x the new x coordinate
+      /// @param y the new y coordinate
+      void SetPosition(float x, float y);
 
-         /**
-          * Adds a listener for mouse events.
-          *
-          * @param mouseListener the listener to add
-          */
-         void AddMouseListener(MouseListener* mouseListener);
+      /// Gets the state of the specified mouse button.
+      /// @param button the button to check
+      /// @return true if the button is pressed, false otherwise
+      bool GetButtonState(MouseButton button) const;
 
-         /// Inserts the listener into the list at a position BEFORE pos.
-         void InsertMouseListener(const MouseListenerList::value_type& pos, MouseListener* ml);
+      /// Pushes a listener to the back of its list.
+      /// @param mouseListener the listener to add
+      void AddMouseListener(MouseListener* mouseListener);
 
-         /**
-          * Removes a listener for mouse events.
-          *
-          * @param mouseListener the listener to remove
-          */
-         void RemoveMouseListener(MouseListener* mouseListener);
+      /// Inserts the listener into the list at a position BEFORE pos.
+      void InsertMouseListener(const MouseListenerList::value_type& pos, MouseListener* ml);
 
-         // Producer callback methods
-         virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion sm );
-         virtual bool MouseMotion( float x, float y);
-         virtual bool PassiveMouseMotion( float x, float y);
+      /// Removes a listener for mouse events.
+      /// @param mouseListener the listener to remove
+      void RemoveMouseListener(MouseListener* mouseListener);
 
-         // These are called ButtonDown & ButtonUp instead of ButtonPress and ButtonRelease
-         // to avoid a define clash with X11's X.h
-         virtual bool ButtonDown( float x, float y, MouseButton button );
-         virtual bool DoubleButtonDown( float x, float y , MouseButton button );
-         virtual bool ButtonUp( float x, float y, MouseButton button);
+      /// Producer callback for mouse scroll events.
+      /// @param sm the scroll type
+      virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion sm );
 
-         const MouseListenerList& GetListeners() const { return mMouseListeners; }
+      /// Producer callback for mouse motion events.
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      virtual bool MouseMotion( float x, float y);
 
-      protected:
-         MouseListenerList mMouseListeners;
+      /// For injecting passive mouse motion events.
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      virtual bool PassiveMouseMotion( float x, float y);
 
-         dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
+      /// For injecting button press events.
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      /// @param button the button identifier
+      virtual bool ButtonDown( float x, float y, MouseButton button );
+
+      /// For injecting double button press events.
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      /// @param button the button identifier
+      virtual bool DoubleButtonDown( float x, float y , MouseButton button );
+
+      /// For injecting button release events.
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      /// @param button the button identifier
+      virtual bool ButtonUp( float x, float y, MouseButton button);
+
+      /// @return the container of MouseListener instances.
+      const MouseListenerList& GetListeners() const { return mMouseListeners; }
+
+   protected:
+      /// The container of observers.
+      MouseListenerList mMouseListeners;
+
+      /// needed to control the cursor on the window.
+      dtCore::RefPtr<Producer::KeyboardMouse> mKeyboardMouse;
    };
 
-   /**
-    * An interface for objects interested in mouse events.
-    */
+   /// An interface for objects interested in mouse events.
    class DT_CORE_EXPORT MouseListener : public osg::Referenced
    {   
-      protected:
-         virtual ~MouseListener() {}
-      public:
-         /**
-          * Called when a button is pressed.
-          *
-          * @param mouse the source of the event
-          * @param button the button pressed
-          * @return true if this MouseListener handled the event. The
-          * Mouse calling this function is responsbile for using this
-          * return value or not.
-          */
-         virtual bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button)=0;
+   protected:
+      virtual ~MouseListener() {}
+   public:
 
-         /**
-          * Called when a button is released.
-          *
-          * @param mouse the source of the event
-          * @param button the button released
-          * @return true if this MouseListener handled the event. The
-          * Mouse calling this function is responsbile for using this
-          * return value or not.
-          */
-         virtual bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button)=0;
+      /// Called when a button is pressed.
+      /// @param mouse the source of the event
+      /// @param button the button pressed
+      /// @return true if this MouseListener handled the event. The
+      /// Mouse calling this function is responsbile for using this
+      /// return value or not.
+      virtual bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button)=0;
 
-         /**
-          * Called when a button is clicked.
-          *
-          * @param mouse the source of the event
-          * @param button the button clicked
-          * @param clickCount the click count
-          * @return true if this MouseListener handled the event. The
-          * Mouse calling this function is responsbile for using this
-          * return value or not.
-          */
-         virtual bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount)=0;
+      /// Called when a button is released.
+      /// @param mouse the source of the event
+      /// @param button the button released
+      /// @return true if this MouseListener handled the event. The
+      /// Mouse calling this function is responsbile for using this
+      /// return value or not.
+      virtual bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button)=0;
 
-         /**
-          * Called when the mouse pointer is moved.
-          *
-          * @param mouse the source of the event
-          * @param x the x coordinate
-          * @param y the y coordinate
-          * @return true if this MouseListener handled the event. The
-          * Mouse calling this function is responsbile for using this
-          * return value or not.
-          */
-         virtual bool HandleMouseMoved(const Mouse* mouse, float x, float y)=0;
+      /// Called when a button is clicked.
+      /// @param mouse the source of the event
+      /// @param button the button clicked
+      /// @param clickCount the click count
+      /// @return true if this MouseListener handled the event. The
+      /// Mouse calling this function is responsbile for using this
+      /// return value or not.
+      virtual bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount)=0;
 
-         /**
-          * Called when the mouse pointer is dragged.
-          *
-          * @param mouse the source of the event
-          * @param x the x coordinate
-          * @param y the y coordinate
-          * @return true if this MouseListener handled the event. The
-          * Mouse calling this function is responsbile for using this
-          * return value or not.
-          */
-         virtual bool HandleMouseDragged(const Mouse* mouse, float x, float y)=0;
+      /// Called when the mouse pointer is moved.
+      /// @param mouse the source of the event
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      /// @return true if this MouseListener handled the event. The
+      /// Mouse calling this function is responsbile for using this
+      /// return value or not.
+      virtual bool HandleMouseMoved(const Mouse* mouse, float x, float y)=0;
 
-         /**
-          * Called when the mouse is scrolled.
-          *
-          * @param mouse the source of the event
-          * @param delta the scroll delta (+1 for up one, -1 for down one)
-          * @return true if this MouseListener handled the event. The
-          * Mouse calling this function is responsbile for using this
-          * return value or not.
-          */
-        virtual bool HandleMouseScrolled(const Mouse* mouse, int delta)=0;
+      /// Called when the mouse pointer is dragged.
+      /// @param mouse the source of the event
+      /// @param x the x coordinate
+      /// @param y the y coordinate
+      /// @return true if this MouseListener handled the event. The
+      /// Mouse calling this function is responsbile for using this
+      /// return value or not.
+      virtual bool HandleMouseDragged(const Mouse* mouse, float x, float y)=0;
+
+      /// Called when the mouse is scrolled.
+      /// @param mouse the source of the event
+      /// @param delta the scroll delta (+1 for up one, -1 for down one)
+      /// @return true if this MouseListener handled the event. The
+      /// Mouse calling this function is responsbile for using this
+      /// return value or not.
+      virtual bool HandleMouseScrolled(const Mouse* mouse, int delta)=0;
    };
 }
 

@@ -9,6 +9,8 @@
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
 #include <osgDB/FileUtils>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
 
 using namespace dtCore;
 using namespace dtABC;
@@ -123,7 +125,7 @@ public:
 
       int x, y, w, h;
 
-      GetWindow()->GetPosition(&x, &y, &w, &h);
+      GetWindow()->GetPosition(x, y, w, h);
 
       mUIDrawable = new dtGUI::CEUIDrawable( GetWindow() );
 
@@ -284,7 +286,7 @@ protected:
 
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
-            w->setText("");
+            w->setText("waiting for input");
             app->mButtonIndex = 0;
             app->mButtonName = w->getName().c_str();
          }
@@ -293,7 +295,7 @@ protected:
       case 2: // Action 2
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
-            w->setText("");
+            w->setText("waiting for input");
             app->mButtonIndex = 1;
             app->mButtonName = w->getName().c_str();
          }
@@ -302,7 +304,7 @@ protected:
       case 3: // Action 3
          if(app->mInputMapper->AcquireButtonMapping(app))
          {
-            w->setText("");
+            w->setText("waiting for input");
             app->mButtonIndex = 2;
             app->mButtonName = w->getName().c_str();
          }
@@ -311,7 +313,7 @@ protected:
       case 4: // Axis 1
          if(app->mInputMapper->AcquireAxisMapping(app))
          {
-            w->setText("");
+            w->setText("waiting for input");
             app->mAxisIndex = 0;
             app->mAxisName = w->getName().c_str();
          }
@@ -320,7 +322,7 @@ protected:
       case 5: // Axis 2
          if(app->mInputMapper->AcquireAxisMapping(app))
          {
-            w->setText("");
+            w->setText("waiting for input");
             app->mAxisIndex = 1;
             app->mAxisName = w->getName().c_str();
          }

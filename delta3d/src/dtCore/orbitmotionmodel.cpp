@@ -348,7 +348,7 @@ float OrbitMotionModel::GetDistance()
  * @param newState the new state of the axis
  * @param delta a delta value indicating stateless motion
  */
-void OrbitMotionModel::AxisStateChanged(Axis* axis,
+bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
                                         double oldState, 
                                         double newState, 
                                         double delta)
@@ -471,6 +471,8 @@ void OrbitMotionModel::AxisStateChanged(Axis* axis,
       
       GetTarget()->SetTransform(&transform);
    }
+
+   return true;
 }
 
 }

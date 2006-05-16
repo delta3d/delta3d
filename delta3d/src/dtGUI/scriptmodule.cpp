@@ -6,6 +6,7 @@ using namespace dtGUI;
 
 ScriptModule::ScriptModule(): BaseScriptModule(), mCallbacks()
 {
+   d_identifierString = "dtGUI/ScriptModule";
 }
 
 ScriptModule::~ScriptModule()
@@ -43,7 +44,6 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    }
 }
 
-///\todo deprecate manager this
 bool ScriptModule::AddCallback(const std::string& name, STATIC_FUNCTION f)
 {
    HandlerFunctor hf( f );

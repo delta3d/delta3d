@@ -227,3 +227,21 @@ dtDAL::Map& BaseABC::LoadMap( const std::string& name, bool addBillBoards)
    LoadMap( map, addBillBoards );
    return map;
 }
+
+void BaseABC::SetApplicationKeyboardListener(ApplicationKeyboardListener* appkl)
+{
+   dtCore::Keyboard* kb = mWindow->GetKeyboard();
+   kb->RemoveKeyboardListener( mKeyboardListener.get() );
+
+   mKeyboardListener = appkl;
+   kb->AddKeyboardListener( mKeyboardListener.get() );
+}
+
+void BaseABC::SetApplicationMouseListener(ApplicationMouseListener* appml)
+{
+   dtCore::Mouse* ms = mWindow->GetMouse();
+   ms->RemoveMouseListener( mMouseListener.get() );
+
+   mMouseListener = appml;
+   ms->AddMouseListener( mMouseListener.get() );
+}

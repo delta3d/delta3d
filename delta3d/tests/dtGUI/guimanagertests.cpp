@@ -55,7 +55,7 @@ CEGUI::Scheme* GUIManager::LoadScheme(const std::string& file)
    try
    {
       CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
-      scheme = sm->loadScheme( schemefile );
+      scheme = sm->loadScheme( schemefile );  ///< populate the window factories
    }
    catch(...)
    {
@@ -99,7 +99,7 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
       try
       {
          CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-         layoutwindow = wm->loadWindowLayout( file );
+         layoutwindow = wm->loadWindowLayout( file );  ///< populate the system with windows
 
          ///\todo push the full path as the key, so that different local
          mLoadedLayouts.insert( LoadedLayoutMap::value_type(file,layoutwindow) );
@@ -223,3 +223,9 @@ void GUIManager::ProducerToNormalized(float& mx, float& my)
    mx = nx;
    my = ny;
 }
+
+void GUIManager::ShutdownGUI()
+{
+   mDrawable->ShutdownGUI();
+}
+

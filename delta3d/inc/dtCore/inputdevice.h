@@ -26,7 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <set>
+#include <list>
 #include <string>
 #include <vector>
 
@@ -41,17 +41,18 @@ namespace dtCore
    class Axis;
    class AxisListener;
 
-   /**
-    * Represents an input device.
-    */
+   /// Represents an input device.
    class DT_CORE_EXPORT InputDevice : public Base
    {
       friend class Button;
       friend class Axis;      
-      
+
       DECLARE_MANAGEMENT_LAYER(InputDevice)
 
-      public:
+   public:
+      typedef std::vector< dtCore::RefPtr<InputDeviceFeature> > FeatureVector;
+      typedef std::vector< dtCore::RefPtr<Button> > ButtonVector;
+      typedef std::vector< dtCore::RefPtr<Axis> > AxisVector;
 
          /**
           * Constructor.
@@ -146,58 +147,35 @@ namespace dtCore
           * @param axisListener a pointer to the listener to remove
           */
          void RemoveAxisListener(AxisListener* axisListener);
-         
 
-      protected:
-
-         /**
-          * Adds a feature to this device.
-          *
-          * @param feature a pointer to the feature to add
-          */
+         /// Adds a feature to this device.
+         /// @param feature a pointer to the feature to add
          void AddFeature(InputDeviceFeature* feature);
 
-         /**
-          * Removes a feature from this device.
-          *
-          * @param feature a pointer to the feature to remove
-          */
+         /// Removes a feature from this device.
+         /// @param feature a pointer to the feature to remove
          void RemoveFeature(InputDeviceFeature* feature);
 
+         const ButtonVector& GetButtons() const { return mButtons; }
+         ButtonVector& GetButtons() { return mButtons; }
+
+         const AxisVector& GetAxes() const { return mAxes; }
+         AxisVector& GetAxes() { return mAxes; }
 
       private:
-         
-         /**
-          * The list of features.
-          */
-         std::vector< dtCore::RefPtr<InputDeviceFeature> > mFeatures;
+         FeatureVector mFeatures;  ///< The list of features.
+         ButtonVector mButtons;  ///< The list of buttons.
+         AxisVector mAxes;  ///< The list of axes.
 
-         /**
-          * The list of buttons.
-          */
-         std::vector< dtCore::RefPtr<Button> > mButtons;
+         typedef std::list<ButtonListener*> ButtonListenerList; ///< A container of ButtonListeners.
+         typedef std::list<AxisListener*> AxisListenerList;     ///< A container of AxisListeners.
 
-         /**
-          * The list of axes.
-          */
-         std::vector< dtCore::RefPtr<Axis> > mAxes;
-         
-         /**
-          * The set of button listeners.
-          */
-         std::set<ButtonListener*> mButtonListeners;
-         
-         /**
-          * The set of axis listeners.
-          */
-         std::set<AxisListener*> mAxisListeners;
+         ButtonListenerList mButtonListeners;  ///< The container of ButtonListeners.
+         AxisListenerList mAxisListeners;      ///< The container of AxisListeners.
    };
 
 
-   /**
-    * The abstract base class of all input device features: buttons, axes,
-    * etc.
-    */
+   /// The base class of all input device features: buttons, axes, etc.
    class DT_CORE_EXPORT InputDeviceFeature : public osg::Referenced
    {
       public:
@@ -242,24 +220,19 @@ namespace dtCore
 
       private:
 
-         /**
-          * The owner of this feature.
-          */
+         /// The owner of this feature.
          InputDevice* mOwner;
 
-         /**
-          * A description of this feature.
-          */
+         /// A description of this feature.
          std::string mDescription;
    };
 
 
-   /**
-    * Buttons are features with binary state.
-    */
+   /// Buttons are features with binary state.
    class DT_CORE_EXPORT Button : public InputDeviceFeature
    {
-      public:
+   public:
+      typedef std::list<ButtonListener*> ButtonListenerList;  ///< A container of ButtonListeners
       
          /**
           * Constructor.
@@ -274,13 +247,10 @@ namespace dtCore
          virtual ~Button() {}
 
       public:
-
-         /**
-          * Sets the state of this button.
-          *
-          * @param state the new state
-          */
-         void SetState(bool state);
+         /// Sets the state of this button.
+         /// @param state the new state
+         /// @return The result of the listeners
+         bool SetState(bool state);
 
          /**
           * Returns the current state of this button.
@@ -304,49 +274,36 @@ namespace dtCore
           */
          void RemoveButtonListener(ButtonListener* buttonListener);
 
+         /// Inserts the listener into the list at a position BEFORE pos.
+         void InsertButtonListener(const ButtonListenerList::value_type& pos, ButtonListener* bl);
+
+         const ButtonListenerList& GetListeners() const { return mButtonListeners; }
 
       private:
-
-         /**
-          * The state of this button.
-          */
-         bool mState;
-
-         /**
-          * Listeners to this button.
-          */
-         std::set<ButtonListener*> mButtonListeners; 
+         bool mState;  ///< The state of this button.
+         ButtonListenerList mButtonListeners;  ///< Listeners to this button.
    };
 
 
-   /**
-    * An interface for objects interested in button state changes.
-    */
+   /// An interface for objects interested in button state changes.
    class DT_CORE_EXPORT ButtonListener
    {
-      public:
+   public:
 
-         virtual ~ButtonListener() {}
-      
-         /**
-          * Called when a button's state has changed.
-          *
-          * @param button the origin of the event
-          * @param oldState the old state of the button
-          * @param newState the new state of the button
-          */
-         virtual void ButtonStateChanged(Button* button,
-                                         bool oldState,
-                                         bool newState) {}
+      virtual ~ButtonListener() {}
+
+      /// Called when a button's state has changed.
+      /// @param button the origin of the event
+      /// @param oldState the old state of the button
+      /// @param newState the new state of the button
+      virtual bool ButtonStateChanged(const Button* button, bool oldState, bool newState)=0;
    };
 
-
-   /**
-    * Axes are features with double-valued state.
-    */
+   /// Axes are features with double-valued state.
    class DT_CORE_EXPORT Axis : public InputDeviceFeature
    {
       public:
+         typedef std::list<AxisListener*> AxisListenerList;
 
          /**
           * Constructor.
@@ -369,7 +326,7 @@ namespace dtCore
           * @param state the new state
           * @param delta the optional delta value
           */
-         void SetState(double state, double delta = 0.0);
+         bool SetState(double state, double delta = 0.0);
 
          /**
           * Returns the current state of this axis.
@@ -392,40 +349,32 @@ namespace dtCore
           */
          void RemoveAxisListener(AxisListener* axisListener);
 
+         const AxisListenerList& GetListeners() const { return mAxisListeners; }
+
+         /// Inserts the listener into the list at a position BEFORE pos.
+         void InsertAxisListener(const AxisListenerList::value_type& pos, AxisListener* al);
+
       private:
-
-         /**
-          * The state of this axis.
-          */
-         double mState;
-
-         /**
-          * Listeners to this axis.
-          */
-         std::set<AxisListener*> mAxisListeners;
+         double mState;  ///< The state of this axis.
+         AxisListenerList mAxisListeners;  ///< Listeners to this axis.
    };
 
-   /**
-    * An interface for objects interested in changes to axes.
-    */
+   /// An interface for objects interested in changes to axes.
    class DT_CORE_EXPORT AxisListener
    {
-      public:
+   public:
 
-         virtual ~AxisListener() {}
-      
-         /**
-          * Called when an axis' state has changed.
-          *
-          * @param axis the changed axis
-          * @param oldState the old state of the axis
-          * @param newState the new state of the axis
-          * @param delta a delta value indicating stateless motion
-          */
-         virtual void AxisStateChanged(Axis* axis,
-                                       double oldState, 
-                                       double newState, 
-                                       double delta) {}
+      virtual ~AxisListener() {}
+
+      /**
+      * Called when an axis' state has changed.
+      *
+      * @param axis the changed axis
+      * @param oldState the old state of the axis
+      * @param newState the new state of the axis
+      * @param delta a delta value indicating stateless motion
+      */
+      virtual bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta)=0;
    };
 };
 

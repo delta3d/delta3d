@@ -198,8 +198,9 @@ namespace dtCore
           * @param oldState the old state of the axis
           * @param newState the new state of the axis
           * @param delta a delta value indicating stateless motion
+          * @return If the 
           */
-         virtual void AxisStateChanged(Axis* axis,
+         virtual bool AxisStateChanged(const Axis* axis,
                                        double oldState, 
                                        double newState, 
                                        double delta);         

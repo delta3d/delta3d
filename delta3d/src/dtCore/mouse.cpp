@@ -10,11 +10,6 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Mouse)
 
-/**
- * Constructor.
- *
- * @param name the instance name
- */
  Mouse::Mouse(Producer::KeyboardMouse* km, const std::string& name) : InputDevice(name), mKeyboardMouse(km)
 {
    RegisterInstance(this);
@@ -27,34 +22,17 @@ IMPLEMENT_MANAGEMENT_LAYER(Mouse)
    AddFeature(new Button(this, "right mouse button"));
 }
 
-/**
- * Destructor.
- */
 Mouse::~Mouse()
 {
    DeregisterInstance(this);
 }
 
-/**
-* Gets the current mouse position.
-*
-* @param x a reference to the location in which to store the
-* x coordinate
-* @param y a reference to the location in which to store the
-* y coordinate
-*/
 void Mouse::GetPosition(float& x, float& y) const
 {
    x = GetAxis(0)->GetState();
    y = GetAxis(1)->GetState();
 }
 
-/**
-* Sets the current mouse position.
-*
-* @param x the new x coordinate
-* @param y the new y coordinate
-*/
 void Mouse::SetPosition(float x, float y)
 {
    if( mKeyboardMouse.valid() )
@@ -63,22 +41,11 @@ void Mouse::SetPosition(float x, float y)
    }
 }
 
-/**
- * Gets the state of the specified mouse button.
- *
- * @param button the button to check
- * @return true if the button is pressed, false otherwise
- */
 bool Mouse::GetButtonState(MouseButton button) const
 {
    return GetButton(button)->GetState();
 }
 
-/**
- * Adds a listener for mouse events.
- *
- * @param mouseListener the listener to add
- */
 void Mouse::AddMouseListener(MouseListener* mouseListener)
 {
    mMouseListeners.push_back(mouseListener);
@@ -90,21 +57,11 @@ void Mouse::InsertMouseListener(const MouseListenerList::value_type& pos, MouseL
    mMouseListeners.insert(iter,ml);
 }
 
-/**
- * Removes a listener for mouse events.
- *
- * @param mouseListener the listener to remove
- */
 void Mouse::RemoveMouseListener(MouseListener* mouseListener)
 {
    mMouseListeners.remove(mouseListener);
 }
 
-/**
- * Producer callback for mouse scroll events.
- *
- * @param sm the scroll type
- */
 bool Mouse::MouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
 {
    int delta(0);
@@ -136,17 +93,8 @@ bool Mouse::MouseScroll(Producer::KeyboardMouseCallback::ScrollingMotion sm)
    return handled;
 }
 
-/**
- * Producer callback for mouse motion events.
- *
- * @param x the x coordinate
- * @param y the y coordinate
- */
 bool Mouse::MouseMotion(float x, float y)
 {
-   GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
-   GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
-
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
@@ -156,15 +104,16 @@ bool Mouse::MouseMotion(float x, float y)
       ++iter;
    }
 
+   // a temporary workaround for classes that listen to input device features
+   if( !handled )
+   {
+      GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
+      GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
+   }
+
    return handled;
 }
 
-/**
- * Producer callback for passive mouse motion events.
- *
- * @param x the x coordinate
- * @param y the y coordinate
- */
 bool Mouse::PassiveMouseMotion(float x, float y)
 {
    GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
@@ -179,21 +128,19 @@ bool Mouse::PassiveMouseMotion(float x, float y)
       ++iter;
    }
 
+   // a temporary workaround for classes that listen to input device features
+   if( !handled )
+   {
+      GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
+      GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
+   }
+
    return handled;
 }
 
-/**
- * Producer callback for button press events.
- *
- * @param x the x coordinate
- * @param y the y coordinate
- * @param button the button identifier
- */
 bool Mouse::ButtonDown(float x, float y, MouseButton button)
 {
    if ((int)button > GetButtonCount() ) return false;
-
-   GetButton(button)->SetState(true);
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
@@ -204,21 +151,17 @@ bool Mouse::ButtonDown(float x, float y, MouseButton button)
       ++iter;
    }
 
+   if( !handled )
+   {
+      GetButton(button)->SetState(true);
+   }
+
    return handled;
 }
 
-/**
- * Producer callback for double button press events.
- *
- * @param x the x coordinate
- * @param y the y coordinate
- * @param button the button identifier
- */
 bool Mouse::DoubleButtonDown(float x, float y, MouseButton button)
 {
    if (int(button) > GetButtonCount() ) return false;
-
-   GetButton(button)->SetState(true);
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
@@ -229,21 +172,17 @@ bool Mouse::DoubleButtonDown(float x, float y, MouseButton button)
       ++iter;
    }
 
+   if( !handled )
+   {
+      GetButton(button)->SetState(true);
+   }
+
    return handled;
 }
 
-/**
- * Producer callback for button release events.
- *
- * @param x the x coordinate
- * @param y the y coordinate
- * @param button the button identifier
- */
 bool Mouse::ButtonUp(float x, float y, MouseButton button)
 {
    if (int(button) > GetButtonCount() ) return false;
-
-   GetButton(button)->SetState(false);
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
@@ -252,6 +191,11 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
    {
       handled = (*iter)->HandleButtonReleased(this, button);
       ++iter;
+   }
+
+   if( !handled )
+   {
+      GetButton(button)->SetState(false);
    }
 
    return handled;

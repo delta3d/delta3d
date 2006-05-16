@@ -21,11 +21,9 @@ GUIApp::GUIApp() : BaseClass(),
 
 GUIApp::~GUIApp()
 {
-   ///\todo shutdown the GUI system when CEUIDrawable stops calling delete on the damn thing.
-   //mGUIManager->ShutdownGUI();
+   mGUIManager->ShutdownGUI();
 
-   ///\todo do not leak the scriptmodule
-   //delete mScriptModule;
+   delete mScriptModule;
 }
 
 void GUIApp::Config()

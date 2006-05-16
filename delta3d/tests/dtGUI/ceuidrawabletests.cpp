@@ -31,7 +31,7 @@
 
 namespace dtTest
 {
-   /// unit tests for dtCore::Application
+   /// unit tests for dtGUI::CEUIDrawable
    class CEUIDrawableTests : public CPPUNIT_NS::TestFixture
    {
       CPPUNIT_TEST_SUITE( CEUIDrawableTests );

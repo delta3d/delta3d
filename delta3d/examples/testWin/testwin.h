@@ -7,13 +7,18 @@
 #include <dtGUI/ceuidrawable.h>
 #include <dtCore/deltawin.h>
 
+namespace dtGUI
+{
+   class ScriptModule;
+}
+
 class TestWinApp : public dtABC::Application
 {
 
 public:
    TestWinApp( const std::string& configFilename = "config.xml" );
 protected:
-   virtual ~TestWinApp() {};
+   ~TestWinApp();
 public:
 
    virtual void Config();
@@ -22,6 +27,7 @@ public:
 private:
    dtCore::RefPtr<dtGUI::CEUIDrawable> mGUI;
    dtCore::DeltaWin::ResolutionVec mResolutionVec; ///<vector of available resolutions
+   dtGUI::ScriptModule* mScriptModule;
 
    void BuildGUI( dtCore::DeltaWin::ResolutionVec &resolutions,
                   dtCore::DeltaWin::Resolution &currentRes);

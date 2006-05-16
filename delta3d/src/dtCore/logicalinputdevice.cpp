@@ -260,14 +260,14 @@ namespace dtCore
     * @param oldState the old state of the button
     * @param newState the new state of the button
     */
-   void ButtonToButton::ButtonStateChanged(Button* button,
-                                           bool oldState,
-                                           bool newState)
+   bool ButtonToButton::ButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
       if(mTargetButton.valid())
       {
-         mTargetButton->SetState(newState);
+         return mTargetButton->SetState(newState);
       }
+
+      return false;
    }
    
    /**
@@ -327,25 +327,14 @@ namespace dtCore
       }
    }
    
-   /**
-    * Returns this axis' mapping.
-    *
-    * @return the current mapping
-    */
    AxisMapping* LogicalAxis::GetMapping()
    {
       return mMapping.get();
    }
    
-   /**
-    * Constructor.
-    */
    AxisMapping::AxisMapping()
    {}
    
-   /**
-    * Destructor.
-    */
    AxisMapping::~AxisMapping()
    {}
    
@@ -363,9 +352,6 @@ namespace dtCore
         mOffset(offset)
    {}
    
-   /**
-    * Destructor.
-    */
    AxisToAxis::~AxisToAxis()
    {
       if(mSourceAxis.valid())
@@ -473,21 +459,20 @@ namespace dtCore
     * @param newState the new state of the axis
     * @param delta a delta value indicating stateless motion
     */
-   void AxisToAxis::AxisStateChanged(Axis* axis,
+   bool AxisToAxis::AxisStateChanged(const Axis* axis,
                                      double oldState, 
                                      double newState, 
                                      double delta)
    {
       if(mTargetAxis.valid())
       {
-         mTargetAxis->SetState(newState*mScale + mOffset, delta*mScale);
+         return mTargetAxis->SetState(newState*mScale + mOffset, delta*mScale);
       }
+
+      return false;
    }
-   
-   /**
-    * Updates the state of the target axis.
-    */
-   void AxisToAxis::UpdateTargetAxisState()
+
+   bool AxisToAxis::UpdateTargetAxisState()
    {
       if(mTargetAxis.valid())
       {
@@ -498,8 +483,10 @@ namespace dtCore
             value = mSourceAxis->GetState();
          }
    
-         mTargetAxis->SetState(value*mScale + mOffset);
+         return mTargetAxis->SetState(value*mScale + mOffset);
       }
+
+      return false;
    }
    
    
@@ -524,9 +511,6 @@ namespace dtCore
       }
    }
    
-   /**
-    * Destructor.
-    */
    AxesToAxis::~AxesToAxis()
    {
       for(std::vector< RefPtr<Axis> >::iterator it = mSourceAxes.begin();
@@ -626,36 +610,36 @@ namespace dtCore
     * @param newState the new state of the axis
     * @param delta a delta value indicating stateless motion
     */
-   void AxesToAxis::AxisStateChanged(Axis* axis,
+   bool AxesToAxis::AxisStateChanged(const Axis* axis,
                                      double oldState, 
                                      double newState, 
                                      double delta)
    {
       if(mTargetAxis.valid())
       {
-         mTargetAxis->SetState(newState, delta);
+         return mTargetAxis->SetState(newState, delta);
       }
+
+      return false;
    }
    
-   /**
-    * Updates the state of the target axis.
-    */
-   void AxesToAxis::UpdateTargetAxisState()
+   bool AxesToAxis::UpdateTargetAxisState()
    {
       if(mTargetAxis.valid())
       {
          if(mSourceAxes.size() == 0)
          {
-            mTargetAxis->SetState( mSourceAxes[mSourceAxes.size()-1]->GetState() );
+            return mTargetAxis->SetState( mSourceAxes[mSourceAxes.size()-1]->GetState() );
          }
          else
          {
-            mTargetAxis->SetState(0.0f);
+            return mTargetAxis->SetState(0.0f);
          }
       }
+
+      return false;
    }
-   
-                                      
+
    /**
     * Constructor.
     *
@@ -832,25 +816,13 @@ namespace dtCore
       (*secondButtonValue) = mSecondButtonValue;
       (*neutralValue) = mNeutralValue;
    }
-   
-   /**
-    * Called when a button's state has changed.
-    *
-    * @param button the origin of the event
-    * @param oldState the old state of the button
-    * @param newState the new state of the button
-    */
-   void ButtonsToAxis::ButtonStateChanged(Button* button,
-                                          bool oldState,
-                                          bool newState)
+
+   bool ButtonsToAxis::ButtonStateChanged(const Button* button, bool oldState, bool newState)
    {
-      UpdateTargetAxisState();
+      return UpdateTargetAxisState();
    }
-   
-   /**
-    * Updates the state of the target axis.
-    */
-   void ButtonsToAxis::UpdateTargetAxisState()
+
+   bool ButtonsToAxis::UpdateTargetAxisState()
    {
       if(mTargetAxis.valid())
       {
@@ -869,17 +841,19 @@ namespace dtCore
    
          if(firstButtonState && !secondButtonState)
          {
-            mTargetAxis->SetState(mFirstButtonValue);
+            return mTargetAxis->SetState(mFirstButtonValue);
          }
          else if(secondButtonState && !firstButtonState)
          {
-            mTargetAxis->SetState(mSecondButtonValue);
+            return mTargetAxis->SetState(mSecondButtonValue);
          }
          else
          {
-            mTargetAxis->SetState(mNeutralValue);
+            return mTargetAxis->SetState(mNeutralValue);
          }
       }
+
+      return false;
    }
    
    
@@ -894,9 +868,6 @@ namespace dtCore
         mSourceAxis(sourceAxis)
    {}
    
-   /**
-    * Destructor.
-    */
    ButtonAxisToAxis::~ButtonAxisToAxis()
    {
       if(mSourceButton.valid())
@@ -1028,11 +999,11 @@ namespace dtCore
     * @param oldState the old state of the button
     * @param newState the new state of the button
     */
-   void ButtonAxisToAxis::ButtonStateChanged(Button* button,
+   bool ButtonAxisToAxis::ButtonStateChanged(const Button* button,
                                              bool oldState,
                                              bool newState)
    {
-      UpdateTargetAxisState();
+      return UpdateTargetAxisState();
    }
    
    /**
@@ -1043,7 +1014,7 @@ namespace dtCore
     * @param newState the new state of the axis
     * @param delta a delta value indicating stateless motion
     */
-   void ButtonAxisToAxis::AxisStateChanged(Axis* axis,
+   bool ButtonAxisToAxis::AxisStateChanged(const Axis* axis,
                                            double oldState, 
                                            double newState, 
                                            double delta)
@@ -1052,14 +1023,13 @@ namespace dtCore
          mSourceButton.valid() &&
          mSourceButton->GetState())
       {
-         mTargetAxis->SetState(newState, delta);
+         return mTargetAxis->SetState(newState, delta);
       }
+
+      return false;
    }
    
-   /**
-    * Updates the state of the target axis.
-    */
-   void ButtonAxisToAxis::UpdateTargetAxisState()
+   bool ButtonAxisToAxis::UpdateTargetAxisState()
    {
       if(mTargetAxis.valid())
       {
@@ -1067,12 +1037,15 @@ namespace dtCore
             mSourceAxis.valid() &&
             mSourceButton->GetState())
          {
-            mTargetAxis->SetState(mSourceAxis->GetState());
+            return mTargetAxis->SetState(mSourceAxis->GetState());
          }
          else
          {
-            mTargetAxis->SetState(0.0f);
+            return mTargetAxis->SetState(0.0f);
          }
       }
+
+      return false;
    }
-}
+
+}   // end of namespace
