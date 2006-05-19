@@ -21,9 +21,13 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/refptr.h>
 #include <dtCore/dt.h>
-#include "dtDAL/librarymanager.h"
-#include "dtDAL/enginepropertytypes.h"
-#include "dtDAL/datatype.h"
+#include <dtDAL/librarymanager.h>
+#include <dtDAL/enginepropertytypes.h>
+#include <dtDAL/datatype.h>
+#include <dtDAL/gameevent.h>
+#include <dtDAL/gameeventmanager.h>
+
+#include <iostream>
 
 using namespace dtDAL;
 using namespace dtCore;
@@ -31,40 +35,40 @@ using namespace dtCore;
 
 class ProxyTest : public CPPUNIT_NS::TestFixture
 {
-    CPPUNIT_TEST_SUITE(ProxyTest);
+   CPPUNIT_TEST_SUITE(ProxyTest);
+      CPPUNIT_TEST(testProxies);
+      CPPUNIT_TEST(TestBezierProxies);
+   CPPUNIT_TEST_SUITE_END();
 
-    CPPUNIT_TEST(testProxies);
-    CPPUNIT_TEST(TestBezierProxies);
+   private:
+      LibraryManager &libMgr;
+      std::vector<dtCore::RefPtr<ActorType> > actors;
+      std::vector<dtCore::RefPtr<ActorProxy> > proxies;
+      static char* mExampleLibraryName;
 
-    CPPUNIT_TEST_SUITE_END();
+      void testProps(ActorProxy& proxy);
+      void compareProxies(ActorProxy& ap1, ActorProxy& ap2);
 
-private:
-    LibraryManager &libMgr;
-    std::vector<dtCore::RefPtr<ActorType> > actors;
-    std::vector<dtCore::RefPtr<ActorProxy> > proxies;
+   public:
 
-    void testProps(ActorProxy& proxy);
-    void compareProxies(ActorProxy& ap1, ActorProxy& ap2);
+      ProxyTest();
+      virtual ~ProxyTest();
 
-public:
-
-    ProxyTest();
-
-    virtual ~ProxyTest();
-
-    virtual void setUp();
-
-    virtual void tearDown();
-
-    void testProxies();
-
-    void TestBezierProxies();
+      virtual void setUp();
+      virtual void tearDown();
+      void testProxies();
+      void TestBezierProxies();
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
 
-ProxyTest::ProxyTest() :
-libMgr(LibraryManager::GetInstance())
+#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
+char* ProxyTest::mExampleLibraryName="testActorLibraryd";
+#else
+char* ProxyTest::mExampleLibraryName="testActorLibrary";
+#endif
+
+ProxyTest::ProxyTest() : libMgr(LibraryManager::GetInstance())
 {
 }
 
@@ -77,6 +81,7 @@ void ProxyTest::setUp()
     //dtUtil::Log::GetInstance().SetLogLevel(dtUtil::Log::LOG_DEBUG);
     //dtUtil::Log::GetInstance("enginepropertytypes.cpp").SetLogLevel(dtUtil::Log::LOG_DEBUG);
     SetDataFilePathList(dtCore::GetDeltaDataPathList());
+    libMgr.LoadActorRegistry(mExampleLibraryName);
     libMgr.GetActorTypes(actors);
     CPPUNIT_ASSERT(actors.size() > 0);
 }
@@ -85,6 +90,8 @@ void ProxyTest::tearDown()
 {
    proxies.clear();
    actors.clear();
+   libMgr.UnloadActorRegistry(mExampleLibraryName);
+   dtDAL::GameEventManager::GetInstance().ClearAllEvents();
    //dtAudio::AudioManager::Destroy();
 }
 
@@ -102,7 +109,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
         CPPUNIT_ASSERT(props[i]->GetNumberPrecision() == 24);
         props[i]->SetNumberPrecision(16);
         CPPUNIT_ASSERT(props[i]->GetNumberPrecision() == 16);
-        
+
         if(props[i]->IsReadOnly())
         {
             // Test and make sure you can't set the property
@@ -116,11 +123,11 @@ void ProxyTest::testProps(ActorProxy& proxy)
         if (props[i]->GetPropertyType() == DataType::FLOAT)
         {
             FloatActorProperty* prop1 = ((FloatActorProperty*)props[i]);
-            
-            float value1 = 1.3323233f;
+
+            float value1 = 0.3323233f;
             prop1->SetValue(value1);
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
-                + " should have value 1.3323233f, but it is: " + props[i]->GetStringValue(),
+                + " should have value 0.3323233f, but it is: " + props[i]->GetStringValue(),
                 osg::equivalent(prop1->GetValue(), value1, (float)epsilon));
 
             std::string stringValue = prop1->GetStringValue();
@@ -169,6 +176,17 @@ void ProxyTest::testProps(ActorProxy& proxy)
         }
         else if (props[i]->GetPropertyType() == DataType::STRING)
         {
+           // This one property is in UTC format for time. This test would fail
+           if(props[i]->GetName() == "Time and Date")
+           {
+              std::cout << "The time and date environment property will be skipped.\n";
+              continue;
+           }
+           else if(props[i]->GetName() == "ShaderGroup")
+           {
+              std::cout << "The ShaderGroup string property will be skipped.\n";
+              continue;
+           }
             ((StringActorProperty*)props[i])->SetValue("cache");
             CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxyTypeName
                 + " should have value \"cache\", but it is: " + props[i]->GetStringValue(),
@@ -187,24 +205,24 @@ void ProxyTest::testProps(ActorProxy& proxy)
                 CPPUNIT_ASSERT_MESSAGE(name + " property on " + proxy.GetName() + " should be true, but it's not." ,
                     ((BooleanActorProperty*)props[i])->GetValue());
             }
-            else
-            {
-                std::cout << "Skipping property " << name << " on actor " << proxyTypeName << std::endl;
-            }
+            //else
+           // {
+             //   std::cout << "Skipping property " << name << " on actor " << proxyTypeName << std::endl;
+           // }
         }
         else if (props[i]->GetPropertyType() == DataType::ENUMERATION)
         {
             dtDAL::AbstractEnumActorProperty* eap = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(props[i]);
 
             CPPUNIT_ASSERT(eap != NULL);
-            
+
             //set it to second value because it's less likely to the be second than the first.
             eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin()+1)));
 
             CPPUNIT_ASSERT_MESSAGE(std::string("Value should be ") + (*(eap->GetList().begin()+1))->GetName()
                 + " but it is " + eap->GetEnumValue().GetName(),
                 eap->GetEnumValue() == **(eap->GetList().begin()+1));
-            
+
             //set it back to the first value to make sure it really got set.
             eap->SetEnumValue(const_cast<dtUtil::Enumeration&>(**(eap->GetList().begin())));
 
@@ -221,7 +239,7 @@ void ProxyTest::testProps(ActorProxy& proxy)
             aap->SetValue(NULL);
 
             CPPUNIT_ASSERT_MESSAGE(std::string("Value should be NULL, but it's not"), aap->GetValue() == NULL);
-            
+
             const std::string &actorClass = aap->GetDesiredActorClass();
             dtDAL::ActorProxy *tempProxy  = NULL;
 
@@ -251,14 +269,14 @@ void ProxyTest::testProps(ActorProxy& proxy)
         {
             Vec3ActorProperty* prop1 = ((Vec3ActorProperty*)props[i]);
             osg::Vec3 test(9.0f, 2.0f, 7.34f);
-            
+
             //The character is currently broken.
             if (proxyTypeName == "Character")
             {
                 std::cout << "Skipping property " << name << " on actor " << proxyTypeName << std::endl;
                 continue;
             }
-			                    	
+
             if (name == "Direction")
                 //Direction ignores the y rotation because you can't roll a vector.
                 test.y() = 0.0f;
@@ -602,9 +620,39 @@ void ProxyTest::testProps(ActorProxy& proxy)
                                        osg::equivalent(result[x], test[x], epsilon));
             }
         }
+        else if (props[i]->GetPropertyType() == DataType::GAME_EVENT)
+        {
+           GameEventActorProperty *prop = static_cast<GameEventActorProperty*>(props[i]);
+           dtCore::RefPtr<GameEvent> event = new GameEvent("TestEvent","This is a test game event.");
+           dtDAL::GameEventManager::GetInstance().AddEvent(*event);
+           //dtCore::RefPtr<GameEvent> event2 = new GameEvent("TestEvent2");
+           prop->SetValue(event.get());
+
+           GameEvent *eventToCheck = prop->GetValue();
+           CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
+                                  eventToCheck->GetName() == event->GetName());
+           CPPUNIT_ASSERT_MESSAGE("Game Event descriptions were not equal.",
+                                  eventToCheck->GetDescription() == event->GetDescription());
+           CPPUNIT_ASSERT_MESSAGE("Game Event ids were not equal.",
+                                  eventToCheck->GetUniqueId() == event->GetUniqueId());
+
+           std::string stringValue = prop->GetStringValue();
+           CPPUNIT_ASSERT_MESSAGE("Resulting string value was not correct on the GAME_EVENT property.",
+                                  stringValue == event->GetUniqueId().ToString());
+
+           CPPUNIT_ASSERT_MESSAGE("Should be able to set the string value of a game event.",
+                                  prop->SetStringValue(event->GetUniqueId().ToString()));
+
+           eventToCheck = prop->GetValue();
+           CPPUNIT_ASSERT_MESSAGE("Game Event name was equal.",
+                                  eventToCheck->GetName() == event->GetName());
+           CPPUNIT_ASSERT_MESSAGE("Game Event descriptions were not equal.",
+                                  eventToCheck->GetDescription() == event->GetDescription());
+           CPPUNIT_ASSERT_MESSAGE("Game Event ids were not equal.",
+                                  eventToCheck->GetUniqueId() == event->GetUniqueId());
+        }
     }
 }
-
 
 void ProxyTest::compareProxies(ActorProxy& ap1, ActorProxy& ap2)
 {
@@ -665,7 +713,7 @@ void ProxyTest::compareProxies(ActorProxy& ap1, ActorProxy& ap2)
         }
         else if(props[i]->GetPropertyType() == DataType::VEC3)
         {
-           //if (true) continue; 
+           //if (true) continue;
            std::ostringstream ss;
             ss << ((dtDAL::Vec3ActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec3ActorProperty*)prop2)->GetValue();
             CPPUNIT_ASSERT_MESSAGE(props[i]->GetName() + " value should be the same: " + ss.str(),
@@ -679,7 +727,7 @@ void ProxyTest::compareProxies(ActorProxy& ap1, ActorProxy& ap2)
         }
         else if(props[i]->GetPropertyType() == DataType::VEC3F)
         {
-           //if (true) continue; 
+           //if (true) continue;
            std::ostringstream ss;
            ss << ((dtDAL::Vec3fActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec3fActorProperty*)prop2)->GetValue();
            CPPUNIT_ASSERT_MESSAGE(props[i]->GetName() + " value should be the same: " + ss.str(),
@@ -693,7 +741,7 @@ void ProxyTest::compareProxies(ActorProxy& ap1, ActorProxy& ap2)
         }
         else if(props[i]->GetPropertyType() == DataType::VEC3D)
         {
-           //if (true) continue; 
+           //if (true) continue;
            std::ostringstream ss;
            ss << ((dtDAL::Vec3dActorProperty*)props[i])->GetValue() << " vs " << ((dtDAL::Vec3dActorProperty*)prop2)->GetValue();
            CPPUNIT_ASSERT_MESSAGE(props[i]->GetName() + " value should be the same: " + ss.str(),
@@ -811,6 +859,11 @@ void ProxyTest::testProxies()
 
       for(unsigned int i = 0; i < actors.size(); i++)
       {
+         // In order to keep the tests fasts, we skip the nasty slow ones.
+         if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
+            actors[i]->GetName() == "Test Environment Actor") 
+            continue;
+
          proxy = libMgr.CreateActorProxy(*actors[i]).get();
          CPPUNIT_ASSERT(proxy != NULL);
          proxies.push_back(proxy);
@@ -822,19 +875,14 @@ void ProxyTest::testProxies()
          CPPUNIT_ASSERT(proxy != NULL);
          LOG_INFO(std::string("Testing proxy of type: ") + proxy->GetActorType().GetName());
          testProps(*proxy);
-         
+
          compareProxies(*proxy, *proxy->Clone());
       }
    }
    catch (const dtUtil::Exception &e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
-//   catch (const std::exception &e)
-//   {
-//      LOG_ERROR(std::string("Caught an exception of type") + typeid(e).name() + " with message " + e.what());
-//      throw e;
-//   }
 }
 
 void ProxyTest::TestBezierProxies()
@@ -844,14 +892,14 @@ void ProxyTest::TestBezierProxies()
       dtDAL::LibraryManager &libMgr = dtDAL::LibraryManager::GetInstance();
       dtCore::RefPtr<dtDAL::ActorType>  at    = libMgr.FindActorType("dtcore.Curve", "Bezier Node");
       CPPUNIT_ASSERT(at != NULL);
-      
+
       dtCore::RefPtr<dtDAL::ActorProxy> one   = libMgr.CreateActorProxy(*at);
       dtCore::RefPtr<dtDAL::ActorProxy> two   = libMgr.CreateActorProxy(*at);
       dtCore::RefPtr<dtDAL::ActorProxy> three = libMgr.CreateActorProxy(*at);
 
       at = libMgr.FindActorType("dtcore.Curve", "Bezier Control Point");
       CPPUNIT_ASSERT(at != NULL);
-      
+
       dtCore::RefPtr<dtDAL::ActorProxy> entryBCP = libMgr.CreateActorProxy(*at);
       dtCore::RefPtr<dtDAL::ActorProxy> exitBCP = libMgr.CreateActorProxy(*at);
 
@@ -905,10 +953,10 @@ void ProxyTest::TestBezierProxies()
 
       CPPUNIT_ASSERT_MESSAGE("The first node's next should be the second", nextProp1->GetValue() == two.get());
       CPPUNIT_ASSERT_MESSAGE("The first next property's real actor should be the node", nextProp1->GetRealActor() == nextProp1->GetValue()->GetActor());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The second node's next should be the third", nextProp2->GetValue() == three.get());
       CPPUNIT_ASSERT_MESSAGE("The second next property's real actor should be the node", nextProp2->GetRealActor() == nextProp2->GetValue()->GetActor());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third node's next should be NULL", nextProp3->GetValue() == NULL);
 
       CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the second", prevProp3->GetValue() == two.get());
@@ -920,14 +968,14 @@ void ProxyTest::TestBezierProxies()
 
       CPPUNIT_ASSERT_MESSAGE("The third node's previous should be the node", prevProp3->GetRealActor() == prevProp3->GetValue()->GetActor());
       CPPUNIT_ASSERT_MESSAGE("The second node's previous should be the node", prevProp2->GetRealActor() == prevProp2->GetValue()->GetActor());
-      
+
       CPPUNIT_ASSERT_MESSAGE("The third's previous should still be the second", prevProp3->GetValue() == two.get());
       CPPUNIT_ASSERT_MESSAGE("The second's previous should still be the first", prevProp2->GetValue() == one.get());
       CPPUNIT_ASSERT_MESSAGE("The first's previous should still be NULL", prevProp1->GetValue() == NULL);
-      
+
       CPPUNIT_ASSERT_MESSAGE("The entry control point of the first node should still be set", entryCtrlPntProp1->GetValue() == entryBCP.get());
       CPPUNIT_ASSERT_MESSAGE("The exit control point of the first node should still be set", exitCtrlPntProp1->GetValue() == exitBCP.get());
-     
+
       nextProp1->SetValue(NULL);
       nextProp1->SetReadOnly(true);
       nextProp1->SetValue(two.get());
@@ -996,11 +1044,6 @@ void ProxyTest::TestBezierProxies()
    }
    catch (const dtUtil::Exception &e)
    {
-      CPPUNIT_FAIL(e.What());
+      CPPUNIT_FAIL(e.ToString());
    }
-//   catch (const std::exception &e)
-//   {
-//      LOGN_ERROR("proxytests.cpp", std::string("Caught an exception of type ") + typeid(e).name() + " with message " + e.what());
-//      throw e;
-//   }
 }

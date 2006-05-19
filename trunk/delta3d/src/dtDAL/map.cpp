@@ -63,7 +63,7 @@ namespace dtDAL
    
    void Map::SetFileName(const std::string& newFileName) 
    {
-      //if "" is passed into the constructor is SetmFileName
+      //if "" is passed into the constructor is SetFileName
       //then it should be ignored.
       mFileName = newFileName;
       
@@ -330,5 +330,22 @@ namespace dtDAL
       return result;
    }
     
-    
+   void Map::SetEnvironmentActor(ActorProxy *envActor)
+   {
+      if(envActor == NULL)
+      {
+         RemoveProxy(*mEnvActor);
+         mEnvActor = NULL;
+         return;
+      }
+
+      EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(envActor->GetActor());
+      if(ea == NULL)
+      {
+         LOG_ERROR("The actor specified is not an EnvironmentActor. Ignoring.");
+         return;
+      }
+      mEnvActor = envActor;
+      AddProxy(*mEnvActor);
+   }
 }

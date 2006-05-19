@@ -29,88 +29,89 @@
 #include <dtDAL/enginepropertytypes.h>
 
 #include <osg/io_utils>
-#include <iostream> 
- 
+#include <iostream>
+
 //////////////////////////////////////////////////////////////////////////////
 TestPlayer::TestPlayer(dtGame::GameActorProxy& proxy): dtGame::GameActor(proxy),
-   mIsector( new dtCore::Isector() )
+                                                       mIsector(new dtCore::Isector())
 {
    mVelocity = 0.0f;
-   mTurnRate = 0.0f;      
+   mTurnRate = 0.0f;
 }
- 
+
 //////////////////////////////////////////////////////////////////////////////
 TestPlayer::~TestPlayer()
 {
 }
- 
+
 //////////////////////////////////////////////////////////////////////////////
 void TestPlayer::TickLocal(const dtGame::Message &tickMessage)
 {
-   const dtGame::TickMessage &tick = 
+   const dtGame::TickMessage &tick =
       static_cast<const dtGame::TickMessage&>(tickMessage);
-      
+
    HandleTick(tick.GetDeltaSimTime());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void TestPlayer::TickRemote(const dtGame::Message &tickMessage)
 {
-   const dtGame::TickMessage &tick = 
+   const dtGame::TickMessage &tick =
       static_cast<const dtGame::TickMessage&>(tickMessage);
    HandleTick(tick.GetDeltaSimTime());
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestPlayer::HandleTick(const double deltaSimTime)
+void TestPlayer::HandleTick(double deltaSimTime, bool forceGroundClamp)
 {
-   if (deltaSimTime == 0.0f) 
+   if (deltaSimTime == 0.0f)
       return;
 
-   dtCore::Transform tx;
-   osg::Matrix mat;
-   osg::Quat q;
-   osg::Vec3 viewDir;
-   
-   GetTransform(&tx);
-   tx.GetRotation(mat);
-   mat.get(q);
-   viewDir = q*osg::Vec3(0,-1,0);   
-   
-   if (mVelocity != 0.0f)
+   if (forceGroundClamp || mVelocity > 0.0001f || mVelocity < -0.0001f ||
+       mTurnRate > 0.0001f || mTurnRate < -0.0001f)
    {
+      dtCore::Transform tx;
+      osg::Matrix mat;
+      osg::Quat q;
+      osg::Vec3 viewDir;
+
+      GetTransform(&tx);
+      tx.GetRotation(mat);
+      mat.get(q);
+
+      viewDir = q*osg::Vec3(0,-1,0);
+
       //Translate the player along its current view direction based on its
       //current velocity.
       osg::Vec3 pos;
       tx.GetTranslation(pos);
       pos = pos + (viewDir*(mVelocity*deltaSimTime));
-      
+
       // attempt to ground clamp the actor so that he doesn't go through
       // mountains.
       osg::Vec3 intersection;
       mIsector->Reset();
-      mIsector->SetScene( GetSceneParent() );
-      mIsector->SetStartPosition(osg::Vec3(pos.x(),pos.y(),-10000) /*pos*/);
+      mIsector->SetScene(GetSceneParent());
+      mIsector->SetStartPosition(osg::Vec3(pos.x(),pos.y(),-10000));
       mIsector->SetDirection(osg::Vec3(0,0,1));
       if (mIsector->Update())
       {
+         //std::cout << "Got an intersection!" << std::endl;
          osgUtil::IntersectVisitor &iv = mIsector->GetIntersectVisitor();
          osg::Vec3 p = iv.getHitList(mIsector->GetLineSegment())[0].getWorldIntersectPoint();
-         pos.z() = p.z()+ 0.55f;
-      }   
-      
-      tx.SetTranslation(pos);
-   }
-   
-   //Adjust the player's rotation.   
-   osg::Vec3 xyz = GetGameActorProxy().GetRotation();   
-   xyz[2] += 360.0f*mTurnRate*deltaSimTime;
-   if (xyz[2] > 360.0f)
-      xyz[2] -= 360.0f;
+         pos.z() = p.z() + 2.55f;
+      }
 
-   SetTransform(&tx);
-   GetGameActorProxy().SetRotation(xyz);
-   //tx.SetRotation(osg::Matrix::rotate(osg::DegreesToRadians(h), osg::Vec3(0,0,1)));
+      osg::Vec3 xyz = GetGameActorProxy().GetRotation();
+      xyz[2] += 360.0f*mTurnRate*deltaSimTime;
+      if (xyz[2] > 360.0f)
+         xyz[2] -= 360.0f;
+
+      tx.SetTranslation(pos);
+      SetTransform(&tx);
+      GetGameActorProxy().SetRotation(xyz);
+   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -119,8 +120,8 @@ void TestPlayer::SetModel(const std::string &fileName)
    if (mModelFile != fileName)
    {
       dtCore::RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options();
-        
-      options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL); 
+
+      options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
       osg::Node *model = osgDB::readNodeFile(fileName,options.get());
       if (model != NULL)
       {
@@ -133,7 +134,7 @@ void TestPlayer::SetModel(const std::string &fileName)
       {
          LOG_ERROR("Unable to load model file: " + fileName);
       }
-      
+
       //the game manager is not set when this property is first set at map load time.
       if (!IsRemote() && GetGameActorProxy().GetGameManager() != NULL)
       {
@@ -141,7 +142,7 @@ void TestPlayer::SetModel(const std::string &fileName)
             GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
          dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *> (updateMsg.get());
          GetGameActorProxy().PopulateActorUpdate(*message);
-         
+
          GetGameActorProxy().GetGameManager()->ProcessMessage(*updateMsg);
       }
    }
@@ -149,10 +150,10 @@ void TestPlayer::SetModel(const std::string &fileName)
 
 //////////////////////////////////////////////////////////////////////////////
 void TestPlayer::SetVelocity(float velocity)
-{ 
-   if (mVelocity != velocity) 
+{
+   if (mVelocity != velocity)
    {
-      mVelocity = velocity; 
+      mVelocity = velocity;
       // if local, then we need to do an actor update - let the world know.
       //the game manager is not set when this property is first set at map load time.
       if (!IsRemote() && GetGameActorProxy().GetGameManager() != NULL)
@@ -161,7 +162,7 @@ void TestPlayer::SetVelocity(float velocity)
             GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
          dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *> (updateMsg.get());
          GetGameActorProxy().PopulateActorUpdate(*message);
-         
+
          GetGameActorProxy().GetGameManager()->ProcessMessage(*updateMsg);
       }
    }
@@ -169,16 +170,16 @@ void TestPlayer::SetVelocity(float velocity)
 
 //////////////////////////////////////////////////////////////////////////////
 float TestPlayer::GetVelocity() const
-{ 
-   return mVelocity; 
+{
+   return mVelocity;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void TestPlayer::SetTurnRate(float rate) 
-{ 
+void TestPlayer::SetTurnRate(float rate)
+{
    if (mTurnRate != rate)
    {
-      mTurnRate = rate; 
+      mTurnRate = rate;
 
       //the game manager is not set when this property is first set at map load time.
       if (!IsRemote() && GetGameActorProxy().GetGameManager() != NULL)
@@ -187,7 +188,7 @@ void TestPlayer::SetTurnRate(float rate)
             GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
          dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *> (updateMsg.get());
          GetGameActorProxy().PopulateActorUpdate(*message);
-         
+
          GetGameActorProxy().GetGameManager()->ProcessMessage(*updateMsg);
       }
    }
@@ -195,10 +196,10 @@ void TestPlayer::SetTurnRate(float rate)
 
 //////////////////////////////////////////////////////////////////////////////
 float TestPlayer::GetTurnRate() const
-{ 
-   return mTurnRate; 
+{
+   return mTurnRate;
 }
- 
+
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -207,7 +208,7 @@ TestPlayerProxy::TestPlayerProxy()
    SetClassName("TestPlayer");
    mEnteredBefore = false;
 }
- 
+
 //////////////////////////////////////////////////////////////////////////////
 TestPlayerProxy::~TestPlayerProxy()
 {
@@ -217,45 +218,50 @@ TestPlayerProxy::~TestPlayerProxy()
 void TestPlayerProxy::BuildPropertyMap()
 {
    dtGame::GameActorProxy::BuildPropertyMap();
-  
+
    TestPlayer &player = static_cast<TestPlayer &>(GetGameActor());
    AddProperty(new dtDAL::StringActorProperty("mesh","mesh",
       dtDAL::MakeFunctor(player,&TestPlayer::SetModel),
       dtDAL::MakeFunctorRet(player,&TestPlayer::GetModel)));
-      
+
    AddProperty(new dtDAL::FloatActorProperty("velocity","velocity",
       dtDAL::MakeFunctor(player,&TestPlayer::SetVelocity),
-      dtDAL::MakeFunctorRet(player,&TestPlayer::GetVelocity)));      
-      
+      dtDAL::MakeFunctorRet(player,&TestPlayer::GetVelocity)));
+
    AddProperty(new dtDAL::FloatActorProperty("turnrate","turnrate",
       dtDAL::MakeFunctor(player,&TestPlayer::SetTurnRate),
-      dtDAL::MakeFunctorRet(player,&TestPlayer::GetTurnRate)));     
+      dtDAL::MakeFunctorRet(player,&TestPlayer::GetTurnRate)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void TestPlayerProxy::BuildInvokables()
 {
-   dtGame::GameActorProxy::BuildInvokables();  
+   dtGame::GameActorProxy::BuildInvokables();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void TestPlayerProxy::OnEnteredWorld()
 {
-
    if (!mEnteredBefore)
    {
       mEnteredBefore = true;
+
+      TestPlayer &actor = static_cast<TestPlayer&>(GetGameActor());
+
+      //std::cout << "Here in on entered world.  Attempting to ground clamp." << std::endl;
+      actor.HandleTick(1.0,true);
+
       //enable receiving tick messages.
       if (IsRemote())
       {
          GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::TICK_REMOTE,
             *this,"Tick Remote");
       }
-      else 
+      else
       {
          GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::TICK_LOCAL,
             *this,"Tick Local");
-      }         
+      }
    }
 }
 

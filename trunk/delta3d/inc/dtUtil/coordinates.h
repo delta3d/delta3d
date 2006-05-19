@@ -78,6 +78,9 @@ namespace dtUtil
    
    ///Scale used in UTM calculations.
    const double CentralMeridianScale = 0.9996;
+
+   const double MagneticNorthLatitude  = 82.116; 
+   const double MagneticNorthLongitude = 114.0666;
          
    class DT_UTIL_EXPORT IncomingCoordinateType : public dtUtil::Enumeration
    {
@@ -175,6 +178,20 @@ namespace dtUtil
           * the terrain which will be used as the actual point of reference. 
           */
          void SetGeoOriginRotation(double latitude, double longitude);
+
+         /**
+          * Stub function to expose this property to the editor
+          * it does nothing more than set a value, then call the 
+          * SetGeoOriginRotation function
+          * @param latlon The latitude and longitude in degrees
+          */
+         void SetGeoOriginRotation(const osg::Vec2d &latlon);
+
+         /**
+          * Stub get function that exposes the internal value
+          * @return mGeoRotationLatLon in degrees
+          */
+         osg::Vec2d GetGeoOriginRotation() const { return mGeoRotationLatLon; }
          
          /**
           * Sets the location of the origin in geocentric coordinates.
@@ -445,6 +462,18 @@ namespace dtUtil
                                                    double& Easting, double& Northing) const;
          
          /**
+          * Non static method to set the magnetic north offset variable on this class
+          * @param magNorth The new offset to set
+          */
+         void SetMagneticNorthOffset(float magNorth) { mMagneticNorthOffset = magNorth; }
+
+         /**
+          * Non static accessor to the magentic north offset variable of this class
+          * @return mMagneticNorthOffset
+          */
+         float GetMagneticNorthOffset() const { return mMagneticNorthOffset; }
+
+         /**
           * Converts a set of geodetic coordinates to the equivalent geocentric
           * coordinates.  Uses the formula given at
           * <A HREF="http://www.colorado.edu/geography/gcraft/notes/datum/datum_f.html">
@@ -473,6 +502,14 @@ namespace dtUtil
           * to 6400 implicitly
           */
          static float MilsToDegrees(const unsigned int mils);
+
+         /**
+          * Adjusts for magnetic north of the earth
+          * @param latitude the latitude in DEGREES
+          * @param longitude the longitude in DEGREES
+          * @return The rotation offset in DEGREES
+          */
+         static float CalculateMagneticNorthOffset(const float latitude, const float longitude); 
          
       private:
          
@@ -510,6 +547,8 @@ namespace dtUtil
          
          ///The radius of the globe if the local coordinates are in globe mode.
          float mGlobeRadius;
+
+         float mMagneticNorthOffset;
   
          /**
           * The location of the origin in geocentric coordinates.
@@ -525,6 +564,8 @@ namespace dtUtil
           * The rotation offset matrix inverse.
           */
          osg::Matrix mRotationOffsetInverse;
+
+         osg::Vec2d mGeoRotationLatLon;
                   
          double SPHTMD(double Latitude) const;         
          double SPHSN(double Latitude) const; 

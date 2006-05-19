@@ -12,12 +12,16 @@ buildHeader() {
   if ! [ -e "$DEST" ]; then
     CMD="g++ $DEFAULT_FLAGS $DEFINES $CPPFLAGS $FRAMEWORK_INCLUDES $INCLUDES $SOURCE -o $DEST"
     echo $CMD
-    $CMD
+    if [ -n "$EXEC" ]; then 
+       $CMD &
+    else
+       $CMD
+    fi
   fi
 }
 
 
-
+EXEC=""
 MODE="DEBUG"
 
 while [ -n "$1" ]; do
@@ -26,6 +30,10 @@ while [ -n "$1" ]; do
     echo "Cleaning..."
     echo ""
     rm -f inc/prefix/*.gch
+  elif [ "$1" = "-j" ]; then
+    echo "Parallelizing..."
+    echo ""
+    EXEC="y"
   else
     MODE="$1"
   fi
@@ -91,3 +99,5 @@ buildHeader dtgameprefix
 DEFINES="$DEFINES -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_SHARED -D_REENTRANT"
 
 buildHeader dtstageprefix
+
+wait

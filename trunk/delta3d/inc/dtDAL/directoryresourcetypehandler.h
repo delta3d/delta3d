@@ -46,7 +46,7 @@ namespace dtDAL {
           * @param type The filetype, whether a directory or file.
           * @return true if the file name refers to an rbody file.
           */
-         virtual bool HandlesFile(const std::string& path, FileType type) const;
+		 virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const;
 
          /**
           * Creates a resource descriptor based on the path to the resource.

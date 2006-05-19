@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc;../../../examples;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -77,7 +77,7 @@ set DELTA_DATA=$(DELTA_DATA)
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc;../../../examples;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"

@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc;../../../examples;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtDALd.lib dtUtild.lib cppunitd.lib dtGamed.lib osgd.lib"
+				AdditionalDependencies="dtCored.lib dtDALd.lib dtUtild.lib dtABCd.lib cppunitd.lib dtGamed.lib osgd.lib testGameActorLibraryd.lib"
 				OutputFile="../../../tests/UnitTestsDtGamed.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -78,7 +78,7 @@ set DELTA_DATA=$(DELTA_DATA)
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../inc;../../../ext/inc"
+				AdditionalIncludeDirectories="../../../inc;../../../ext/inc;../../../examples;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -92,7 +92,7 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtDAL.lib dtUtil.lib cppunit.lib dtGame.lib osg.lib"
+				AdditionalDependencies="dtCore.lib dtDAL.lib dtABC.lib dtUtil.lib cppunit.lib dtGame.lib osg.lib testGameActorLibrary.lib"
 				OutputFile="../../../tests/UnitTestsDtGame.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -150,6 +150,9 @@ set DELTA_DATA=$(DELTA_DATA)
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtGame\messagetests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtGame\taskcomponenttests.cpp">
 			</File>
 		</Filter>
 		<Filter

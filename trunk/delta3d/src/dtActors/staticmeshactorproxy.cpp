@@ -184,17 +184,18 @@ namespace dtActors
     void StaticMeshActorProxy::LoadFile(const std::string &fileName)
     {
         dtCore::Object *obj = dynamic_cast<dtCore::Object*>(mActor.get());
-        if(!obj)
+        if (obj == NULL)
         {
             EXCEPT(dtDAL::ExceptionEnum::InvalidActorException,
                 "Actor should be type dtCore::Object");
         }
 
         //First load the mesh.
-        
+
         if (obj->LoadFile(fileName) == NULL)
         {
-            LOG_ERROR("Error loading mesh file: " + fileName);
+           if (!fileName.empty())
+              LOG_ERROR("Error loading mesh file: " + fileName);
             return;
         }
 

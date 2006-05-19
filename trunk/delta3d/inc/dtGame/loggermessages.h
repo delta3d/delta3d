@@ -402,6 +402,45 @@ namespace dtGame
    };
 
    /**
+    * This message class is sent to the ServerLoggerComponent to jump to a specific keyframe. 
+    * Keyframes are complete snapshots in time.  They capture every game actor currently
+    * in the system and log it.  Keyframes are required to jump back and forth in time.  You
+    * also have a keyframe at the start of every log file.  Keyframes should be completely sufficient
+    * to define the state of a simulation.  You can only jump to a keyframe during playback.  
+    * Note that this message wraps the keyframe params with a LogKeyframe object.
+    * @par
+    *    Related Message Types: LOG_REQ_JUMP_TO_KEYFRAME\n
+    *    Parameter: KeyframeName: Simple name of the keyframe (may be blank).\n
+    *    Parameter: KeyframeDescription: Longer Description of the keyframe (may be blank).\n
+    *    Parameter: UniqueId: Unique ID for the Keyframe object (required).\n
+    *    Parameter: SimTime: The simulation time that the Keyframe was created (required - double).\n
+    *    Parameter: ActiveMap: The map name that was current when the keyframe was snapshotted (required).\n
+    */
+   class DT_GAME_EXPORT LogJumpToKeyframeMessage : public Message
+   {      
+      public:          
+         /*
+          * Construct - Adds this messages parameters to its parameter list.
+          */            
+         LogJumpToKeyframeMessage();
+         
+         /**
+          * Creates a LogKeyframe and populates it with the keyframe values from the message
+          * @return A LogKeyframe object with the message's keyframe parameter values.
+          */
+         LogKeyframe GetKeyframe() const;
+         
+         /**
+          * Sets the messages Keyframe parameters from the passed in log keyframe
+          * @param keyframe The keyframe object - the attributes will be set on the message
+          */
+         void SetKeyframe(const LogKeyframe &keyframe);
+
+      protected:      
+         virtual ~LogJumpToKeyframeMessage() { }
+   };
+
+   /**
     * This message class is sent to the ServerLoggerComponent to change the current automatic 
     * keyframe interval (in seconds).  This interval causes the server to automatically
     * generate a periodic keyframe. If you use this at all, it is strongly recommended that 

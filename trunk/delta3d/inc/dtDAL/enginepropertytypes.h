@@ -29,10 +29,11 @@
 #include <osg/Vec2>
 #include <osg/Vec2d>
 #include <dtCore/deltadrawable.h>
-#include <dtDAL/resourcedescriptor.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/export.h>
+#include "dtDAL/resourcedescriptor.h"
+#include "dtDAL/actorproperty.h"
+#include "dtDAL/datatype.h"
+#include "dtDAL/gameevent.h"
+#include "dtDAL/export.h"
 
 namespace dtDAL
 {
@@ -49,14 +50,14 @@ namespace dtDAL
                            const std::string& name,
                            const std::string& label,
                            Functor1<ActorProxy*> Set,
-                           Functor0Ret<dtCore::DeltaDrawable*> Get, 
+                           Functor0Ret<dtCore::DeltaDrawable*> Get,
                            const std::string& desiredActorClass = "",
                            const std::string& desc = "",
                            const std::string& groupName = "") :
          ActorProperty(name, label, desc, groupName),
             mProxy(&actorProxy),
             SetPropFunctor(Set),
-            GetActorFunctor(Get), 
+            GetActorFunctor(Get),
             mDesiredActorClass(desiredActorClass)
             {
 
@@ -144,6 +145,47 @@ namespace dtDAL
 
    ////////////////////////////////////////////////////////////////////////////
    /**
+    * This actor property represents a game event property.
+    *
+    */
+   ////////////////////////////////////////////////////////////////////////////
+   class DT_DAL_EXPORT GameEventActorProperty
+      : public GenericActorProperty<GameEvent *,GameEvent *>
+   {
+      public:
+
+         GameEventActorProperty(const std::string &name, const std::string &label,
+                                Functor1<GameEvent *> set, Functor0Ret<GameEvent *> get,
+                                const std::string &desc = "",
+                                const std::string &groupName = "") :
+            GenericActorProperty<GameEvent *,GameEvent *>(name,label,set,get,desc,groupName)
+         {
+         }
+
+         DataType &GetPropertyType() const { return DataType::GAME_EVENT; }
+
+         /**
+          * Sets the value of this property using the given string.
+          * @param value The string representing the game event.  This string contains
+          *   unique id of the game event.  This is used to look up the actual event
+          *   which then gets referenced by this property.
+          * @return True if the value could be parsed and the specified event was found, false otherwise.
+          */
+         virtual bool SetStringValue(const std::string& value);
+
+         /**
+          * Gets a string version of the game event data.
+          * @return A string containing the unique id of the game event.
+          * @see #SetStringValue
+         */
+         virtual const std::string GetStringValue() const;
+
+      protected:
+         virtual ~GameEventActorProperty() { }
+   };
+
+   ////////////////////////////////////////////////////////////////////////////
+   /**
     * This actor property represents a resource
     */
    ////////////////////////////////////////////////////////////////////////////
@@ -212,7 +254,7 @@ namespace dtDAL
           * @see #SetStringValue
           */
          virtual const std::string GetStringValue() const;
-         
+
       private:
          DataType *mDataType;
          ActorProxy *mProxy;
@@ -458,7 +500,7 @@ namespace dtDAL
 
       protected:
          virtual ~BooleanActorProperty() { }
-   };
+      };
 
    ////////////////////////////////////////////////////////////////////////////
    /**
@@ -925,11 +967,11 @@ namespace dtDAL
          Vec4ActorProperty(name,label,set,get,desc,groupName) { }
 
          DataType &GetPropertyType() const { return DataType::RGBACOLOR; }
-           
+
          // This is a work around a bug in Visual Studio where the Unit Tests would fail at runtime because
-         // it couldn't find these functions in this class, even though they are inherited. 
+         // it couldn't find these functions in this class, even though they are inherited.
          virtual bool SetStringValue(const std::string& value) { return Vec4ActorProperty::SetStringValue(value); }
-         virtual const std::string GetStringValue() const      { return Vec4ActorProperty::GetStringValue(); } 
+         virtual const std::string GetStringValue() const      { return Vec4ActorProperty::GetStringValue(); }
 
       protected:
          virtual ~ColorRgbaActorProperty() { }

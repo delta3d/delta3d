@@ -19,7 +19,9 @@
  * @author Matthew W. Campbell
  */
 #include "dtActors/taskactor.h"
-#include "dtGame/exceptionenum.h"
+#include <dtGame/exceptionenum.h>
+#include <dtGame/gamemanager.h>
+#include <dtGame/actorupdatemessage.h>
 #include <dtDAL/enginepropertytypes.h>
 
 namespace dtActors
@@ -35,20 +37,23 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   bool TaskActor::NotifyParent()
-   {
-      //TODO Return the parent's notify parent.  Have to get the parent and
-      //children from the proxy.
-      return false;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////
    void TaskActor::SetComplete(bool flag)
    {
       if (flag)
       {
-         //TODO Set time stamp here...
-         //SetCompletedTimeStamp(
+         if (GetGameActorProxy().GetGameManager() == NULL)
+         {
+            LOG_ERROR("Error setting complete flag.  Game Manager was invalid on this actor.");
+         }
+         else
+         {
+            double currSimTime = GetGameActorProxy().GetGameManager()->GetSimulationTime();
+            SetCompletedTimeStamp(currSimTime);
+         }
+      }
+      else
+      {
+         SetCompletedTimeStamp(-1.0);
       }
 
       mComplete = flag;
@@ -57,12 +62,14 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActor::Reset()
    {
-      mDescription = "";
       mPassingScore = 1.0f;
       mScore = 0.0f;
       mWeight = 1.0f;
       mCompletedTimeStamp = -1.0;
       mComplete = false;
+
+      TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
+      proxy.NotifyActorUpdate();
    }
 
    ////////////////////////////END TASK ACTOR////////////////////////////////////
@@ -84,39 +91,52 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::BuildPropertyMap()
    {
+      const std::string GROUPNAME = "BaseTask";
+
       dtGame::GameActorProxy::BuildPropertyMap();
       TaskActor &task = static_cast<TaskActor &>(GetGameActor());
 
       //Description...
       AddProperty(new dtDAL::StringActorProperty("Description","Description",
          dtDAL::MakeFunctor(task,&TaskActor::SetDescription),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetDescription)));
+         dtDAL::MakeFunctorRet(task,&TaskActor::GetDescription),
+         "Sets/gets the description of this task.",GROUPNAME));
 
       //Passing Score...
       AddProperty(new dtDAL::FloatActorProperty("PassingScore","Passing Score",
          dtDAL::MakeFunctor(task,&TaskActor::SetPassingScore),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetPassingScore)));
+         dtDAL::MakeFunctorRet(task,&TaskActor::GetPassingScore),
+         "Sets/gets the passing score for this task.",GROUPNAME));
 
       //Score...
       AddProperty(new dtDAL::FloatActorProperty("Score","Score",
          dtDAL::MakeFunctor(task,&TaskActor::SetScore),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetScore)));
+         dtDAL::MakeFunctorRet(task,&TaskActor::GetScore),
+         "Sets/gets the current score of this task.",GROUPNAME));
 
       //Weight...
       AddProperty(new dtDAL::FloatActorProperty("Weight","Weight",
          dtDAL::MakeFunctor(task,&TaskActor::SetWeight),
-         dtDAL::MakeFunctorRet(task,&TaskActor::GetWeight)));
-         
+         dtDAL::MakeFunctorRet(task,&TaskActor::GetWeight),
+         "Sets/gets the current weight assigned to this task.",GROUPNAME));
+
       //Complete...
       AddProperty(new dtDAL::BooleanActorProperty("Complete","Complete",
          dtDAL::MakeFunctor(task,&TaskActor::SetComplete),
-         dtDAL::MakeFunctorRet(task,&TaskActor::IsComplete)));
-      GetProperty("Complete")->SetReadOnly(true);
-      
+         dtDAL::MakeFunctorRet(task,&TaskActor::IsComplete),
+         "Gets the complete status of this task.",GROUPNAME));
+
+      //Completed time...
+      AddProperty(new dtDAL::DoubleActorProperty("CompleteTime","Complete Time",
+                  dtDAL::MakeFunctor(task,&TaskActor::SetCompletedTimeStamp),
+                  dtDAL::MakeFunctorRet(task,&TaskActor::GetCompletedTimeStamp),
+                  "Gets the simulation time in which this task was completed.",GROUPNAME));
+
       //IsTopLevel...
       AddProperty(new dtDAL::BooleanActorProperty("IsTopLevel","Top Level Task",
          dtDAL::MakeFunctor(*this,&TaskActorProxy::SetTopLevelTask),
-         dtDAL::MakeFunctorRet(*this,&TaskActorProxy::IsTopLevelTask)));
+         dtDAL::MakeFunctorRet(*this,&TaskActorProxy::IsTopLevelTask),
+         "Sets/gets whether or not this task contains a parent task.",GROUPNAME));
       GetProperty("IsTopLevel")->SetReadOnly(true);
    }
 
@@ -138,6 +158,26 @@ namespace dtActors
    }
 
    //////////////////////////////////////////////////////////////////////////////
+   bool TaskActorProxy::RequestScoreChange(const TaskActorProxy &childTask, const TaskActorProxy &origTask)
+   {
+      //Default implementation just returns true by default if this task is
+      //a top level task, else just passes the request up the chain.  Note, the original
+      //task is the task that this method was first called on.
+      if (GetParentTaskProxy() != NULL)
+         return true && GetParentTaskProxy()->RequestScoreChange(*this,origTask);
+      else
+         return true;
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void TaskActorProxy::NotifyScoreChanged(const TaskActorProxy &childTask)
+   {
+      //Default implementation just needs to pass the notification up the chain.
+      if (GetParentTaskProxy() != NULL)
+         return GetParentTaskProxy()->NotifyScoreChanged(*this);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::AddSubTaskProxy(TaskActorProxy &subTask)
    {
       if (FindSubTaskProxy(subTask.GetGameActor().GetUniqueId()) != NULL)
@@ -148,14 +188,19 @@ namespace dtActors
          subTask.GetParentTaskProxy()->RemoveSubTaskProxy(subTask);
 
       subTask.SetParentTaskProxy(this);
-      mSubTaskProxies.insert(std::make_pair(subTask.GetGameActor().GetUniqueId(),&subTask));
+      mSubTaskProxies.push_back(&subTask);
    }
 
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::RemoveSubTaskProxy(const TaskActorProxy &subTask)
    {
-      std::map<dtCore::UniqueId,dtCore::RefPtr<TaskActorProxy> >::iterator itor =
-         mSubTaskProxies.find(subTask.GetGameActor().GetUniqueId());
+      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+
+      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
+      {
+         if ((*itor)->GetId() == subTask.GetId())
+            break;
+      }
 
       if (itor == mSubTaskProxies.end())
       {
@@ -164,7 +209,7 @@ namespace dtActors
       }
       else
       {
-         itor->second->SetParentTaskProxy(NULL);
+         (*itor)->SetParentTaskProxy(NULL);
          mSubTaskProxies.erase(itor);
       }
    }
@@ -172,11 +217,10 @@ namespace dtActors
    //////////////////////////////////////////////////////////////////////////////
    void TaskActorProxy::RemoveSubTaskProxy(const std::string &name)
    {
-      //Have to do a linear search since our map is stored by unique id.
-      std::map<dtCore::UniqueId,dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
       for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
       {
-         if (itor->second->GetName() == name)
+         if ((*itor)->GetName() == name)
             break;
       }
 
@@ -187,48 +231,55 @@ namespace dtActors
       }
       else
       {
-         itor->second->SetParentTaskProxy(NULL);
+         (*itor)->SetParentTaskProxy(NULL);
          mSubTaskProxies.erase(itor);
       }
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<TaskActorProxy> TaskActorProxy::FindSubTaskProxy(const std::string &name)
+   TaskActorProxy *TaskActorProxy::FindSubTaskProxy(const std::string &name)
    {
-      std::map<dtCore::UniqueId,dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
 
       for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
       {
-         if (itor->second->GetName() == name)
+         if ((*itor)->GetName() == name)
             break;
       }
 
       if (itor != mSubTaskProxies.end())
-         return itor->second;
+         return itor->get();
       else
          return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   dtCore::RefPtr<TaskActorProxy> TaskActorProxy::FindSubTaskProxy(const dtCore::UniqueId &id)
+   TaskActorProxy *TaskActorProxy::FindSubTaskProxy(const dtCore::UniqueId &id)
    {
-      std::map<dtCore::UniqueId,dtCore::RefPtr<TaskActorProxy> >::iterator itor =
-         mSubTaskProxies.find(id);
+      std::vector<dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
+      {
+         if ((*itor)->GetId() == id)
+            break;
+
+      }
 
       if (itor != mSubTaskProxies.end())
-         return itor->second;
+         return itor->get();
       else
          return NULL;
    }
 
    //////////////////////////////////////////////////////////////////////////////
-   void TaskActorProxy::GetAllSubTaskProxies(std::vector<dtCore::RefPtr<TaskActorProxy> > &subTasks)
+   void TaskActorProxy::NotifyActorUpdate()
    {
-      std::map<dtCore::UniqueId,dtCore::RefPtr<TaskActorProxy> >::iterator itor;
+      if (GetGameManager() == NULL || GetGameActor().IsRemote())
+         return;
 
-      subTasks.clear();
-      subTasks.reserve(mSubTaskProxies.size());
-      for (itor=mSubTaskProxies.begin(); itor!=mSubTaskProxies.end(); ++itor)
-         subTasks.push_back(itor->second);
+      dtCore::RefPtr<dtGame::Message> updateMsg =
+            GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
+      dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
+      PopulateActorUpdate(*message);
+      GetGameManager()->ProcessMessage(*updateMsg);
    }
 }

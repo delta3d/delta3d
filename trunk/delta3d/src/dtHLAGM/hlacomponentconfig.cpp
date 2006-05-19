@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
  *
@@ -21,7 +21,7 @@
 
 #include <dtUtil/log.h>
 #include <dtUtil/exception.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 
 #include "dtHLAGM/hlacomponentconfig.h"
 #include "dtHLAGM/exceptionenum.h"
@@ -79,7 +79,7 @@ namespace dtHLAGM
 
       std::string schemaFileName = osgDB::findDataFile("Federations/HLAMapping.xsd");
 
-      if (!dtDAL::FileUtils::GetInstance().FileExists(schemaFileName))
+      if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
              "Error, unable to load required file \"Federations/HLAMapping.xsd\".  Aborting.");
@@ -103,7 +103,7 @@ namespace dtHLAGM
         try
         {
             std::string path = osgDB::findDataFile(dataFilePath);
-            if (!dtDAL::FileUtils::GetInstance().FileExists(path))
+            if (!dtUtil::FileUtils::GetInstance().FileExists(path))
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                    "XML configuration file \"%s\" not found.  Aborting.", dataFilePath.c_str());

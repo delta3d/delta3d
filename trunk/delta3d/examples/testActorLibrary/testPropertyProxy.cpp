@@ -41,8 +41,8 @@ const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
 
     ///////////////////////////////////////////////////////////////////////////////
     ExampleTestPropertyProxy::ExampleTestPropertyProxy()
-        : myInt(0), myReadOnlyInt(5), myFloat(0.0), myDouble(0.0), myLong(0), myBool(0), 
-        myString(""), myEnum(&TestEnum::OPTION1) 
+        : myInt(0), myReadOnlyInt(5), myFloat(0.0), myDouble(0.0), myLong(0), myBool(0),
+        myString(""), myEnum(&TestEnum::OPTION1)
     {
         //static int count = 0;
         //std::ostringstream ss;
@@ -173,8 +173,13 @@ const std::string ExampleTestPropertyProxy::GROUPNAME("Example Test");
 
         AddProperty(new ActorActorProperty(*this, "Test_Actor", "Test Actor",
             MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestActor),
-            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestActor), 
+            MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestActor),
             "dtCore::Transformable",
             "An example linked actor property", GROUPNAME));
+
+        AddProperty(new GameEventActorProperty("TestGameEvent", "Test Game Event",
+                    MakeFunctor(*this, &ExampleTestPropertyProxy::SetTestGameEvent),
+                    MakeFunctorRet(*this, &ExampleTestPropertyProxy::GetTestGameEvent),
+                    "Holds a test game event property", GROUPNAME));
     }
 

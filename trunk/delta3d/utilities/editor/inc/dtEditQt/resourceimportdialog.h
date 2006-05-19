@@ -43,7 +43,7 @@
 #include <dtDAL/project.h>
 #include <dtDAL/resourcedescriptor.h>
 #include <dtDAL/resourcehelper.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 
 class QMainWindow;
 class QVBoxWidget;
@@ -333,7 +333,7 @@ namespace dtEditQt{
         {
             // grab an instance to our project
             dtDAL::Project& project = dtDAL::Project::GetInstance();
-            //dtDAL::FileUtils& futil = dtDAL::FileUtils::GetInstance();
+            //dtUtil::FileUtils& futil = dtUtil::FileUtils::GetInstance();
 
             // full path to our category
             QString fullCategory;

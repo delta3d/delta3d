@@ -51,10 +51,11 @@
 
 #include <osgDB/FileNameUtils>
 
-#include <dtDAL/mapxml.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/enginepropertytypes.h>
-#include <dtDAL/fileutils.h>
+#include "dtDAL/mapxml.h"
+#include "dtDAL/librarymanager.h"
+#include "dtDAL/enginepropertytypes.h"
+
+#include <dtUtil/fileutils.h>
 #include <dtUtil/stringutils.h>
 #include <dtUtil/xercesutils.h>
 
@@ -209,7 +210,7 @@ namespace dtDAL
 
       std::string schemaFileName = osgDB::findDataFile("map.xsd");
 
-      if (!FileUtils::GetInstance().FileExists(schemaFileName))
+      if (!dtUtil::FileUtils::GetInstance().FileExists(schemaFileName))
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
                              "Error, unable to load required file \"map.xsd\".  Aborting.");
@@ -246,7 +247,7 @@ namespace dtDAL
             mActorProperty->GetPropertyType() == DataType::VEC3D || mActorProperty->GetPropertyType() == DataType::VEC3F ||
             mActorProperty->GetPropertyType() == DataType::VEC4D || mActorProperty->GetPropertyType() == DataType::VEC4F)
          {
-            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, 
+            mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
                                 "Problem differentiating between a osg::vecf/osg::vecd and a osg::vec. Ignoring.");
             return true;
          }
@@ -316,9 +317,18 @@ namespace dtDAL
                mLibVersion = dtUtil::XMLStringConverter(chars).ToString();
             }
          }
-         else if (mInActors && mInActor && !mIgnoreCurrentActor)
+         else if (mInActors)
          {
-            ActorCharacters(chars);
+            if(mInActor)
+            {
+               if(!mIgnoreCurrentActor)
+                  ActorCharacters(chars);
+            }
+            else
+            {
+               if(topEl == MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT)
+                  mEnvActorId = dtUtil::XMLStringConverter(chars).ToString();
+            }
          }
       }
 
@@ -509,7 +519,7 @@ namespace dtDAL
          if(actualType == DataType::VEC2)
          {
             Vec2ActorProperty& p = static_cast<Vec2ActorProperty&>(*mActorProperty);
-                
+
             osg::Vec2 vec = p.GetValue();
             if (topEl == MapXMLConstants::ACTOR_VEC_1_ELEMENT)
             {
@@ -616,7 +626,7 @@ namespace dtDAL
             }
             p.SetValue(vec);
          }
-      } 
+      }
       else if (*mActorPropertyType == DataType::VEC4)
       {
          DataType &actualType = mActorProperty->GetPropertyType();
@@ -737,8 +747,13 @@ namespace dtDAL
          if (!dataValue.empty() && dataValue != "NULL")
          {
             mActorLinking.insert(std::make_pair(mActorProxy->GetId(), std::make_pair(mActorProperty->GetName(), dtCore::UniqueId(dataValue))));
-               
+
          }
+         mActorPropertyType = NULL;
+      }
+      else if (*mActorPropertyType == DataType::GAME_EVENT)
+      {
+         mActorProperty->SetStringValue(dataValue);
          mActorPropertyType = NULL;
       }
       else if (mActorPropertyType->IsResource())
@@ -882,17 +897,22 @@ namespace dtDAL
                         mActorPropertyType = &DataType::ACTOR;
                      }
                      else if (XMLString::compareString(localname,
+                              MapXMLConstants::ACTOR_PROPERTY_GAMEEVENT_ELEMENT) == 0)
+                     {
+                        mActorPropertyType = &DataType::GAME_EVENT;
+                     }
+                     else if (XMLString::compareString(localname,
                                                        MapXMLConstants::ACTOR_PROPERTY_RESOURCE_TYPE_ELEMENT) == 0)
                      {
-                        //Need the character contents to know the type, so this will be 
+                        //Need the character contents to know the type, so this will be
                         //handled later.
                      }
-                     else 
+                     else
                      {
-                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__, 
-                                            "Found actor property data element with name %s, but this does not map to a known type.\n", 
+                        mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
+                                            "Found actor property data element with name %s, but this does not map to a known type.\n",
                                             dtUtil::XMLStringConverter(localname).c_str());
-                              
+
                      }
 
                   }
@@ -990,7 +1010,7 @@ namespace dtDAL
             {
                if (LibraryManager::GetInstance().GetRegistry(mLibName) == NULL)
                {
-                  LibraryManager::GetInstance().LoadActorRegistry(mLibName);                       
+                  LibraryManager::GetInstance().LoadActorRegistry(mLibName);
                }
                mMap->AddLibrary(mLibName, mLibVersion);
                ClearLibraryValues();
@@ -1053,6 +1073,41 @@ namespace dtDAL
    void MapContentHandler::endDocument()
    {
       LinkActors();
+
+      if(!mEnvActorId.ToString().empty())
+      {
+         try
+         {
+            osg::ref_ptr<ActorProxy> proxy = mMap->GetProxyById(mEnvActorId);
+            if(!proxy.valid())
+            {
+               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  "No environment actor was located in the map.");
+               return;
+            }
+            else
+            {
+               if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                  mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                  "An environment actor was located in the map.");
+            }
+
+            EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(proxy->GetActor());
+            if(ea == NULL)
+            {
+               EXCEPT(ExceptionEnum::InvalidActorException, "The environment actor proxy's actor should be an environment, but a dynamic_cast failed");
+            }
+            mMap->SetEnvironmentActor(proxy.get());
+         }
+         catch(dtUtil::Exception &e)
+         {
+            LOG_ERROR("Exception caught: " + e.What());
+            throw e;
+         }
+         
+      }
+
       mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                           "Parsing Map Document Ended.\n");
    }
@@ -1110,6 +1165,8 @@ namespace dtDAL
       mInActorProperty = false;
       mInActor = false;
 
+      mEnvActorId = "";
+
       while (!mElements.empty()) mElements.pop();
       mMissingActorTypes.clear();
 
@@ -1150,21 +1207,21 @@ namespace dtDAL
          if (proxyToModify == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
-                                "Proxy with ID %s was defined to have an actor property set, but the proxy does not exist in the new map.", 
+                                "Proxy with ID %s was defined to have an actor property set, but the proxy does not exist in the new map.",
                                 id.ToString().c_str());
             continue;
          }
          std::pair<std::string, dtCore::UniqueId> data = i->second;
          std::string& propertyName = data.first;
          dtCore::UniqueId& propValueId = data.second;
-         if (propValueId.ToString().empty()) 
+         if (propValueId.ToString().empty())
          {
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__,  __LINE__,
                                 "Proxy with ID %s was defined to have actor property %s set, but the id is empty.",
                                 id.ToString().c_str(), propertyName.c_str(), propValueId.ToString().c_str());
-              
+
          }
-         ActorProxy* valueProxy = mMap->GetProxyById(propValueId);           
+         ActorProxy* valueProxy = mMap->GetProxyById(propValueId);
          if (valueProxy == NULL)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__,  __LINE__,
@@ -1190,6 +1247,7 @@ namespace dtDAL
          }
          aap->SetValue(valueProxy);
       }
+
    }
 
 
@@ -1198,7 +1256,8 @@ namespace dtDAL
       mLogger = &dtUtil::Log::GetInstance();
       //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
       mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Creating Map Content Handler.\n");
-
+      
+      mEnvActorId = "";
    }
 
    MapContentHandler::~MapContentHandler() {}
@@ -1309,7 +1368,7 @@ namespace dtDAL
 
          time_t currTime;
          time(&currTime);
-         const std::string& utcTime = TimeAsUTC(currTime);
+         const std::string& utcTime = dtUtil::TimeAsUTC(currTime);
 
          BeginElement(MapXMLConstants::MAP_ELEMENT, MapXMLConstants::MAP_NAMESPACE);
          BeginElement(MapXMLConstants::HEADER_ELEMENT);
@@ -1362,6 +1421,15 @@ namespace dtDAL
          EndElement();
 
          BeginElement(MapXMLConstants::ACTORS_ELEMENT);
+
+         if(map.GetEnvironmentActor() != NULL)
+         {
+            ActorProxy &proxy = *map.GetEnvironmentActor();
+            BeginElement(MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
+            AddCharacters(proxy.GetId().ToString());
+            EndElement();
+         }
+
          const std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >& proxies = map.GetAllProxies();
          for (std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> >::const_iterator i = proxies.begin();
               i != proxies.end(); i++)
@@ -1393,11 +1461,11 @@ namespace dtDAL
             {
                //printf("Printing actor property number %d", x++);
                const ActorProperty& property = *(*i);
-                    
+
                // If the property is read only, skip it
                if(property.IsReadOnly())
                   continue;
-					
+
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_ELEMENT);
                BeginElement(MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT);
                AddCharacters(property.GetName());
@@ -1684,6 +1752,12 @@ namespace dtDAL
                   AddCharacters(property.GetStringValue());
                   EndElement();
                }
+               else if (propertyType == DataType::GAME_EVENT)
+               {
+                  BeginElement(MapXMLConstants::ACTOR_PROPERTY_GAMEEVENT_ELEMENT);
+                  AddCharacters(property.GetStringValue());
+                  EndElement();
+               }
                else
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
@@ -1700,14 +1774,14 @@ namespace dtDAL
          //closes the file.
          mFormatTarget.SetOutputFile(NULL);
       }
-      catch (dtUtil::Exception& ex) 
+      catch (dtUtil::Exception& ex)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                              "Caught Exception \"%s\" while attempting to save map \"%s\".",
                              ex.What().c_str(), map.GetName().c_str());
          mFormatTarget.SetOutputFile(NULL);
          throw ex;
-      } 
+      }
       catch (...)
       {
          mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
@@ -1771,47 +1845,6 @@ namespace dtDAL
       XMLString::release(&stringX);
    }
 
-#ifdef __APPLE__
-   long GetTimeZone(struct tm& timeParts)
-   {
-      return timeParts.tm_gmtoff;
-   }
-#else
-   long GetTimeZone(struct tm& timeParts)
-   {
-      tzset();
-      return timezone * -1;
-   }
-#endif
-
-
-   const std::string MapWriter::TimeAsUTC(time_t time)
-   {
-      char data[28];
-      std::string result;
-      struct tm timeParts;
-      struct tm* tp = localtime(&time);
-      timeParts = *tp;
-
-      long tz = GetTimeZone(timeParts);
-
-      int tzHour = (int)floor(fabs((double)tz / 3600));
-      int tzMin = (int)floor(fabs((double)tz / 60) - (60 * tzHour));
-
-      //since the function of getting hour does fabs,
-      //this needs to check the sign of tz.
-      if (tz < 0)
-         tzHour *= -1;
-
-      snprintf(data, 28, "%04d-%02d-%02dT%02d:%02d:%02d.0%+03d:%02d",
-               timeParts.tm_year + 1900, timeParts.tm_mon + 1, timeParts.tm_mday,
-               timeParts.tm_hour, timeParts.tm_min, timeParts.tm_sec,
-               tzHour, tzMin);
-
-      result.assign(data);
-      return result;
-   }
-
    /////////////////////////////////////////////////////
    //// Constant Initialization ////////////////////////
    /////////////////////////////////////////////////////
@@ -1848,6 +1881,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_TYPE_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_ID_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_NAME_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_ENVIRONMENT_ACTOR_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_NAME_ELEMENT = NULL;
@@ -1868,6 +1902,7 @@ namespace dtDAL
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_ACTOR_ID_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_PROPERTY_VECTOR_ELEMENT = NULL;
+   XMLCh* MapXMLConstants::ACTOR_PROPERTY_GAMEEVENT_ELEMENT = NULL;
 
    XMLCh* MapXMLConstants::ACTOR_VEC_1_ELEMENT = NULL;
    XMLCh* MapXMLConstants::ACTOR_VEC_2_ELEMENT = NULL;
@@ -1910,11 +1945,13 @@ namespace dtDAL
       ACTOR_TYPE_ELEMENT = XMLString::transcode("type");
       ACTOR_ID_ELEMENT = XMLString::transcode("id");
       ACTOR_NAME_ELEMENT = XMLString::transcode("name");
+      ACTOR_ENVIRONMENT_ACTOR_ELEMENT = XMLString::transcode("environmentActor");
 
       ACTOR_PROPERTY_ELEMENT = XMLString::transcode("property");
       ACTOR_PROPERTY_NAME_ELEMENT = XMLString::transcode("name");
       ACTOR_PROPERTY_STRING_ELEMENT = XMLString::transcode("string");
       ACTOR_PROPERTY_ENUM_ELEMENT = XMLString::transcode("enumerated");
+      ACTOR_PROPERTY_GAMEEVENT_ELEMENT = XMLString::transcode("gameevent");
       ACTOR_PROPERTY_FLOAT_ELEMENT = XMLString::transcode("float");
       ACTOR_PROPERTY_DOUBLE_ELEMENT = XMLString::transcode("double");
       ACTOR_PROPERTY_INTEGER_ELEMENT = XMLString::transcode("integer");
@@ -1972,6 +2009,7 @@ namespace dtDAL
       XMLString::release(&ACTOR_TYPE_ELEMENT);
       XMLString::release(&ACTOR_ID_ELEMENT);
       XMLString::release(&ACTOR_NAME_ELEMENT);
+      XMLString::release(&ACTOR_ENVIRONMENT_ACTOR_ELEMENT);
 
       XMLString::release(&ACTOR_PROPERTY_ELEMENT);
       XMLString::release(&ACTOR_PROPERTY_NAME_ELEMENT);
@@ -1992,6 +2030,7 @@ namespace dtDAL
       XMLString::release(&ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT);
       XMLString::release(&ACTOR_PROPERTY_ACTOR_ID_ELEMENT);
       XMLString::release(&ACTOR_PROPERTY_VECTOR_ELEMENT);
+      XMLString::release(&ACTOR_PROPERTY_GAMEEVENT_ELEMENT);
 
       XMLString::release(&ACTOR_VEC_1_ELEMENT);
       XMLString::release(&ACTOR_VEC_2_ELEMENT);

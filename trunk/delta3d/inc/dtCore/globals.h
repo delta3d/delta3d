@@ -1,6 +1,6 @@
 /* 
  * Delta3D Open Source Game and Simulation Engine 
- * Copyright (C) 2004-2005 MOVES Institute 
+ * Copyright (C) 2004-2006 MOVES Institute 
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free 
@@ -16,13 +16,15 @@
  * along with this library; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
-*/
+ */
 
 #ifndef DELTA_GLOBALS
 #define DELTA_GLOBALS
 
-#include <dtCore/export.h>
+
 #include <string>
+
+#include "dtCore/export.h"
 
 namespace dtCore
 {
@@ -39,7 +41,18 @@ namespace dtCore
    DT_CORE_EXPORT std::string GetDeltaRootPath();
 
    ///Convienence method to get the supplied environment
-   DT_CORE_EXPORT std::string GetEnvironment( const std::string& env );
+   DT_CORE_EXPORT std::string GetEnvironment(const std::string& env );
+
+   /**
+    * Searches for a file in the list of paths found by calling dtCore::GetDataFilePathList() 
+    * @param fileName Can be a single filename or a path and file name relative
+    *  to the current Delta3D data path list.
+    * @return The full path to the file requested or empty string if it's not found. 
+    */
+   DT_CORE_EXPORT std::string FindFileInPathList(const std::string &fileName) throw();
+
+
 };
+
 
 #endif // DELTA_GLOBALS

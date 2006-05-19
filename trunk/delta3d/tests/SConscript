@@ -29,7 +29,7 @@ for suite in suites:
    #add the "main" source files.
    sources[suite] += mainSources  
 
-mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar', 'cppunit', 'dtGUI'] 
+mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit'] 
 	
 mainlibs = [ dtLibs[lib] for lib in mainlibs if dtLibs.has_key(lib) ]
 
@@ -40,6 +40,9 @@ projectEnv.Append(LIBS = mainlibs)
 
 #Add this so we can include files from testActorLib.h
 projectEnv.Append(CPPPATH = ['#examples'])
+
+#Add the testGameActorLibrary directly to the unit tests...
+projectEnv.Append(LIBS = ['testGameActorLibrary'])
 
 programs = {}
 

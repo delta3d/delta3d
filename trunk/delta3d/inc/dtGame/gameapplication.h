@@ -24,6 +24,7 @@
 #include <dtCore/refptr.h>
 #include <dtABC/application.h>
 #include <dtUtil/librarysharingmanager.h>
+#include <dtGame/export.h>
 
 namespace dtGame
 {
@@ -34,7 +35,7 @@ namespace dtGame
     * @class GameApplication
     * Base application for a GameManager app.  It loads a game entry point library to use at startup.  
     */
-   class GameApplication: public dtABC::Application
+   class DT_GAME_EXPORT GameApplication: public dtABC::Application
    {
       DECLARE_MANAGEMENT_LAYER(GameApplication)
 
@@ -50,15 +51,35 @@ namespace dtGame
           */
          typedef void (*DestroyEntryPointFn)(GameEntryPoint*);
 
-         GameApplication();
+         /**
+          * Constructor.  It takes the command line parameters.
+          * @param argc the number of arguments
+          * @param argv An array of string pointers with the command line data.
+          */
+         GameApplication(int argc, char** argv);
+         
+         ///Destructor
          virtual ~GameApplication();
          
          /**
-          * Configure the application, load the game library,
-          * and call the entry point to configure the game.
+          * Configures the application, loads the game library,
+          * and calls the entry point to configure the game.
           */
          virtual void Config();
+         
+         ///@return the platform independent library name.
+         const std::string& GetGameLibraryName() const { return mLibName; }
+         
+         ///Sets the name of the library to load that has the game.  This should be a platform independent name (no lib, .so, .dll, etc.).  
+         void SetGameLibraryName(const std::string& newName) { mLibName = newName; }
+         
       private:
+      
+         std::string mLibName;
+      
+         int mArgc;
+         char** mArgv;
+         
          dtCore::RefPtr<GameManager> mGameManager;
          dtCore::RefPtr<dtUtil::LibrarySharingManager::LibraryHandle> mEntryPointLib;
          dtGame::GameEntryPoint* mEntryPoint;

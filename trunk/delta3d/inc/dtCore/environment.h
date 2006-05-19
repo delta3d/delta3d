@@ -70,8 +70,8 @@ namespace dtCore
       ///Add a DeltaDrawable to be rendered using this Environment's properties.
       virtual bool AddChild( DeltaDrawable *child );
 
-		///Remove a DeltaDrawable added to the Environment.
-		void RemoveChild( DeltaDrawable *child );
+      ///Remove a DeltaDrawable added to the Environment.
+      void RemoveChild( DeltaDrawable *child );
 
       /// Add an Environmental Effect to the Environment
       void AddEffect( EnvEffect *effect );
@@ -140,14 +140,14 @@ namespace dtCore
                         int hr, int mi, int sc);
 
       ///Get the current date/time of the environment
-      void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc )
+      void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc ) const
       {
          DEPRECATE(  "void GetDateTime( int *yr, int *mo, int *da, int *hr, int *mi, int *sc )",
                      "void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc )" );
          GetDateTime( *yr, *mo, *da, *hr, *mi, *sc );
       }
 
-      void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc );
+      void GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const;
 
       ///Set the ephemeris reference lat/long
       void SetRefLatLong( const osg::Vec2& latLong );

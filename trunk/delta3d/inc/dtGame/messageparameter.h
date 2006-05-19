@@ -44,38 +44,40 @@
 
 namespace dtGame
 {
-   
+
    /**
     * @class MessageParameter
     */
    class DT_GAME_EXPORT MessageParameter : public osg::Referenced
    {
       public:
-      
-         static const char DEFAULT_DELIMETER;         
-               
-         MessageParameter(const std::string &name, bool isList = false) : 
+
+         static const char DEFAULT_DELIMETER;
+
+         MessageParameter(const std::string &name, bool isList = false) :
             mName(name), mIsList(isList)
          {
             SetParamDelimeter(DEFAULT_DELIMETER);
-         }         
-        
+         }
+
          const std::string &GetName() const { return mName; }
-        
+
          virtual const dtDAL::DataType &GetDataType() const = 0;
-        
+
          virtual void ToDataStream(DataStream &stream) const = 0;
-        
+
          virtual void FromDataStream(DataStream &stream) = 0;
-        
+
          virtual const std::string ToString() const = 0;
-         
+
+         void WriteToLog(dtUtil::Log &logger, dtUtil::Log::LogMessageType level = dtUtil::Log::LOG_DEBUG) const;
+
          /**
           * @return True if the paramater contains a list of
           *    data, false if this parameter only stores one value.
           */
          bool IsList() const { return mIsList; }
-        
+
          /**
           * @return true if it was able to assign the value based on the string or false if not.
           * @param value the string value to assign the parameter to.
@@ -84,9 +86,9 @@ namespace dtGame
 
          /**
           * @param otherParam the message parameter to make this one match.
-          */        
+          */
          virtual void CopyFrom(const MessageParameter &otherParam) = 0;
-         
+
          /**
           * Creates a message parameter that will hold the given type.
           * @param type the datatype the parameter should hold.
@@ -94,19 +96,19 @@ namespace dtGame
           * @throw dtUtil::Exception with dtGame::ExceptionEnum::INVALID_PARAMETER if the type is unsupported.
           */
          static dtCore::RefPtr<MessageParameter> CreateFromType(
-         	const dtDAL::DataType& type, 
+         	const dtDAL::DataType& type,
          	const std::string& name, bool isList=false) throw(dtUtil::Exception);
-         
+
          /**
           * Gets the character used as a delimeter between parameters when serializing
           * a message parameter containing a list of values to a string.
           * @return The delimeter.  By default, this is equal to "|".
           */
-         char GetParamDelimeter() const 
+         char GetParamDelimeter() const
          {
             return mParamListDelimeter;
          }
-         
+
          /**
           * Allows one to override the default delimeter used to serialize message
           * parmeters to a string.
@@ -118,32 +120,32 @@ namespace dtGame
          {
             mParamListDelimeter = delim;
          }
-         
+
       protected:
-        
+
          virtual ~MessageParameter() { }
-        
-      private:      
+
+      private:
          std::string mName;
-         
+
          //This value is used as a delimeter between list data elements
          //when converting to and from a string.
          char mParamListDelimeter;
-         
-         bool mIsList;  
+
+         bool mIsList;
    };
 
    template <class ParamType>
    class GenericMessageParameter : public MessageParameter
    {
-      public:                  
-         GenericMessageParameter(const std::string &name, const ParamType& defaultValue, bool isList=false) 
+      public:
+         GenericMessageParameter(const std::string &name, const ParamType& defaultValue, bool isList=false)
             : MessageParameter(name,isList)
          {
             mValue = defaultValue;
             mNumberPrecision = 16;
-            
-            if (IsList()) 
+
+            if (IsList())
             {
                mValueList = new std::vector<ParamType>();
                mValueList->push_back(defaultValue);
@@ -153,9 +155,9 @@ namespace dtGame
                mValueList = NULL;
             }
          }
-         
+
          /**
-          * Sets the precision of floating point number as they are 
+          * Sets the precision of floating point number as they are
           * converted to and from string values.
           * @param precision The amount of numeric percision.
           * @note This value defaults to 16.
@@ -164,7 +166,7 @@ namespace dtGame
          {
             mNumberPrecision = precision;
          }
-         
+
          /**
           * Gets the current floating point precision value on this
           * parameter.
@@ -174,21 +176,21 @@ namespace dtGame
          {
             return mNumberPrecision;
          }
-        
+
          inline virtual void CopyFrom(const MessageParameter &otherParam)
          {
             const GenericMessageParameter<ParamType> *param =
                 static_cast<const GenericMessageParameter<ParamType> *>(&otherParam);
-         
+
             //First make sure this parameter does not have a list if the
             //other parameter does and vice versa.
             if ((IsList() && !otherParam.IsList()) ||(!IsList() && otherParam.IsList()))
                EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
                   "Cannot assign two parameters with one being a list of values and the other not.");
-            
+
             if (param != NULL)
-            {   
-               if (!IsList()) 
+            {
+               if (!IsList())
                  SetValue(param->GetValue());
                else
                   SetValueList(param->GetValueList());
@@ -197,27 +199,27 @@ namespace dtGame
             {
                if (!FromString(otherParam.ToString()))
                   LOGN_ERROR("MessageParameter", "Parameter types are incompatible. Cannot copy the value.");
-            }            
+            }
          }
-            
-         inline virtual void SetValue(const ParamType& value) 
-         { 
+
+         inline virtual void SetValue(const ParamType& value)
+         {
             if (IsList())
                EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
                   "Cannot call SetValue() on message parameter with a list of values.");
-            
-            mValue = value; 
+
+            mValue = value;
          }
-               
-         inline virtual const ParamType& GetValue() const 
-         { 
+
+         inline virtual const ParamType& GetValue() const
+         {
             if (IsList())
                EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
                   "Cannot call GetValue() on message parameter with a list of values.");
-            
+
             return mValue;
          }
-         
+
          inline const std::vector<ParamType> &GetValueList() const
          {
             if (!IsList())
@@ -225,7 +227,7 @@ namespace dtGame
                   "Cannot retrieve the parameters value list.  Parameter does not contain a list.");
             return *mValueList;
          }
-         
+
          inline std::vector<ParamType> &GetValueList()
          {
             if (!IsList())
@@ -233,18 +235,18 @@ namespace dtGame
                   "Cannot retrieve the parameters value list.  Parameter does not contain a list.");
             return *mValueList;
          }
-         
+
          inline void SetValueList(const std::vector<ParamType> &newValues)
          {
             if (!IsList())
                EXCEPT(ExceptionEnum::GENERAL_GAMEMANAGER_EXCEPTION,
                   "Cannot set a list of new values on a parameter that is not a list.");
-                  
+
             *mValueList = newValues;
          }
-         
-         inline virtual void ToDataStream(DataStream &stream) const 
-         { 
+
+         inline virtual void ToDataStream(DataStream &stream) const
+         {
             if (IsList())
             {
                stream << mValueList->size();
@@ -252,20 +254,20 @@ namespace dtGame
                   stream << (*mValueList)[i];
             }
             else
-            {         
+            {
                stream << mValue;
             }
          }
-        
-         inline virtual void FromDataStream(DataStream &stream) 
-         { 
+
+         inline virtual void FromDataStream(DataStream &stream)
+         {
             if (IsList())
             {
                mValueList->clear();
-               
+
                unsigned int listSize;
                stream >> listSize;
-               for (unsigned int i=0; i<listSize; i++) 
+               for (unsigned int i=0; i<listSize; i++)
                {
                   ParamType newElement;
                   stream >> newElement;
@@ -273,18 +275,18 @@ namespace dtGame
                }
             }
             else
-            {  
+            {
                stream >> mValue;
-            } 
-         }    
+            }
+         }
 
          virtual const std::string ToString() const { return std::string(); }
          virtual bool FromString(const std::string &value) { return false; }
-        
+
       protected:
          ///Keep destructors protected to ensure property smart pointer management.
          virtual ~GenericMessageParameter() { delete mValueList; }
-      
+
       private:
          std::vector<ParamType> *mValueList;
          ParamType mValue;
@@ -293,7 +295,7 @@ namespace dtGame
 
    /**
     * @class PODMessageParameter
-    * This is a template for the single piece of data types to make reading data to and from a string easier. 
+    * This is a template for the single piece of data types to make reading data to and from a string easier.
     */
    template <class ParamType>
    class PODMessageParameter: public GenericMessageParameter<ParamType>
@@ -301,54 +303,54 @@ namespace dtGame
       public:
          PODMessageParameter(const std::string &name, const ParamType& defaultValue, bool isList=false)
             : GenericMessageParameter<ParamType>(name, defaultValue, isList) { }
-              
-         virtual const std::string ToString() const 
-         {                     
+
+         virtual const std::string ToString() const
+         {
             std::ostringstream stream;
-            stream.precision(GenericMessageParameter<ParamType>::GetNumberPrecision());        
+            stream.precision(GenericMessageParameter<ParamType>::GetNumberPrecision());
             if (GenericMessageParameter<ParamType>::IsList())
             {
-               const std::vector<ParamType> &values = 
+               const std::vector<ParamType> &values =
                   GenericMessageParameter<ParamType>::GetValueList();
-                  
+
                stream << values[0];
                for (unsigned int i=1; i<values.size(); i++)
-                  stream << GenericMessageParameter<ParamType>::GetParamDelimeter() 
+                  stream << GenericMessageParameter<ParamType>::GetParamDelimeter()
                      << values[i];
             }
             else
-            {         
+            {
               stream << GenericMessageParameter<ParamType>::GetValue();
             }
-            
-            return stream.str();            
+
+            return stream.str();
          }
-        
-         virtual bool FromString(const std::string &value) 
-         {  
-            std::istringstream stream;               
-            stream.precision(GenericMessageParameter<ParamType>::GetNumberPrecision());        
-            
+
+         virtual bool FromString(const std::string &value)
+         {
+            std::istringstream stream;
+            stream.precision(GenericMessageParameter<ParamType>::GetNumberPrecision());
+
             if (GenericMessageParameter<ParamType>::IsList())
-            {               
-               std::vector<ParamType> &result = 
+            {
+               std::vector<ParamType> &result =
                   GenericMessageParameter<ParamType>::GetValueList();
-               
+
                ParamType actual;
                result.clear();
                stream.str(value);
                stream >> actual;
                result.push_back(actual);
-               while (stream) 
+               while (stream)
                {
                   char sep;
                   stream >> sep;
                   if (!stream)
                      break;
-                     
+
                   stream >> actual;
                   result.push_back(actual);
-               }               
+               }
             }
             else
             {
@@ -357,28 +359,28 @@ namespace dtGame
                stream >> newValue;
                GenericMessageParameter<ParamType>::SetValue(newValue);
             }
-            
+
             return true;
          }
-      
+
       protected:
-         virtual ~PODMessageParameter() {}         
+         virtual ~PODMessageParameter() {}
    };
 
    /**
-    * @class BooleanMessageParameter 
+    * @class BooleanMessageParameter
     */
    class DT_GAME_EXPORT BooleanMessageParameter: public PODMessageParameter<bool>
    {
       public:
          BooleanMessageParameter(const std::string &name, bool defaultValue = false,
             bool isList=false);
-            
+
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::BOOLEAN; }
 
          ///overridden to return "true" and "false"
          virtual const std::string ToString() const;
-        
+
          ///overridden to accept "true" and other such strings as well as numbers.
          virtual bool FromString(const std::string &value);
 
@@ -387,12 +389,12 @@ namespace dtGame
    };
 
    /**
-     * @class UnsignedCharMessageParameter 
+     * @class UnsignedCharMessageParameter
      */
    class DT_GAME_EXPORT UnsignedCharMessageParameter: public PODMessageParameter<unsigned char>
    {
       public:
-         UnsignedCharMessageParameter(const std::string &name, 
+         UnsignedCharMessageParameter(const std::string &name,
              unsigned char defaultValue = 0, bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::UCHAR; }
       protected:
@@ -400,7 +402,7 @@ namespace dtGame
    };
 
    /**
-     * @class ShortIntMessageParameter 
+     * @class ShortIntMessageParameter
      */
    class DT_GAME_EXPORT ShortIntMessageParameter: public PODMessageParameter<short>
    {
@@ -412,7 +414,7 @@ namespace dtGame
    };
 
    /**
-     * @class UnsignedShortIntMessageParameter 
+     * @class UnsignedShortIntMessageParameter
      */
    class DT_GAME_EXPORT UnsignedShortIntMessageParameter: public PODMessageParameter<unsigned short>
    {
@@ -425,7 +427,7 @@ namespace dtGame
    };
 
    /**
-     * @class UnsignedIntMessageParameter 
+     * @class UnsignedIntMessageParameter
      */
    class DT_GAME_EXPORT UnsignedIntMessageParameter: public PODMessageParameter<unsigned int>
    {
@@ -437,7 +439,7 @@ namespace dtGame
    };
 
    /**
-     * @class IntMessageParameter 
+     * @class IntMessageParameter
      */
    class DT_GAME_EXPORT IntMessageParameter: public PODMessageParameter<int>
    {
@@ -447,14 +449,14 @@ namespace dtGame
       protected:
          virtual ~IntMessageParameter();
    };
-  
+
    /**
-    * @class UnsignedLongIntMessageParameter 
+    * @class UnsignedLongIntMessageParameter
     */
    class DT_GAME_EXPORT UnsignedLongIntMessageParameter: public PODMessageParameter<unsigned long>
    {
       public:
-         UnsignedLongIntMessageParameter(const std::string &name, 
+         UnsignedLongIntMessageParameter(const std::string &name,
             unsigned long defaultValue = 0, bool isList=false);
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::ULONGINT; }
       protected:
@@ -462,7 +464,7 @@ namespace dtGame
    };
 
    /**
-     * @class LongIntMessageParameter 
+     * @class LongIntMessageParameter
      */
    class DT_GAME_EXPORT LongIntMessageParameter: public PODMessageParameter<long>
    {
@@ -474,7 +476,7 @@ namespace dtGame
    };
 
    /**
-     * @class FloatMessageParameter 
+     * @class FloatMessageParameter
      */
    class DT_GAME_EXPORT FloatMessageParameter: public PODMessageParameter<float>
    {
@@ -486,7 +488,7 @@ namespace dtGame
    };
 
    /**
-     * @class DoubleMessageParameter 
+     * @class DoubleMessageParameter
      */
    class DT_GAME_EXPORT DoubleMessageParameter: public PODMessageParameter<double>
    {
@@ -498,32 +500,32 @@ namespace dtGame
    };
 
    /**
-     * @class StringMessageParameter 
+     * @class StringMessageParameter
      */
    class DT_GAME_EXPORT StringMessageParameter: public GenericMessageParameter<std::string>
    {
       public:
          StringMessageParameter(const std::string& name, const std::string& defaultValue = "",
-             bool isList=false);        
+             bool isList=false);
 
-         virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::STRING; }         
+         virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::STRING; }
          virtual const std::string ToString() const;
-         virtual bool FromString(const std::string& value);       
-         
+         virtual bool FromString(const std::string& value);
+
       protected:
-         virtual ~StringMessageParameter();  
+         virtual ~StringMessageParameter();
    };
 
    /**
      * @class EnumMessageParameter
-     * The EnumMessageParameter works like the string message parameter because there is no way for the message to 
+     * The EnumMessageParameter works like the string message parameter because there is no way for the message to
      * efficiently know how to fetch proper enumeration object when the data is populated from a string or stream.
      */
    class DT_GAME_EXPORT EnumMessageParameter: public StringMessageParameter
    {
       public:
          EnumMessageParameter(const std::string& name, const std::string& defaultValue = "", bool isList=false);
-         virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ENUMERATION; }         
+         virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ENUMERATION; }
       protected:
          virtual ~EnumMessageParameter();
    };
@@ -536,39 +538,59 @@ namespace dtGame
    class DT_GAME_EXPORT ActorMessageParameter: public GenericMessageParameter<dtCore::UniqueId>
    {
       public:
-         ActorMessageParameter(const std::string& name, 
-          const dtCore::UniqueId& defaultValue = dtCore::UniqueId(""), bool isList=false);               
+         ActorMessageParameter(const std::string& name,
+          const dtCore::UniqueId& defaultValue = dtCore::UniqueId(""), bool isList=false);
 
-         virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ACTOR; }         
-         virtual const std::string ToString() const;          
+         virtual const dtDAL::DataType& GetDataType() const { return dtDAL::DataType::ACTOR; }
+         virtual const std::string ToString() const;
          virtual bool FromString(const std::string& value);
-         
+
       protected:
          virtual ~ActorMessageParameter();
    };
 
    /**
+    * @class GameEventMessageParameter
+    * The GameEventMessageParameter stores a unique id that can be used to get the associated
+    * game event from the EventManager.
+    * @see #dtDAL::GameEventManager
+    */
+   class DT_GAME_EXPORT GameEventMessageParameter : public GenericMessageParameter<dtCore::UniqueId>
+   {
+      public:
+         GameEventMessageParameter(const std::string &name,
+                                   const dtCore::UniqueId &defaultValue = dtCore::UniqueId(""),
+                                   bool isList = false);
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::GAME_EVENT; }
+         virtual const std::string ToString() const;
+         virtual bool FromString(const std::string &value);
+
+      protected:
+         virtual ~GameEventMessageParameter();
+   };
+
+   /**
     * @class VecMessageParameter
-    * This is a template for the vector types to make reading data from a string easier. 
+    * This is a template for the vector types to make reading data from a string easier.
     */
    template <class ParamType>
    class VecMessageParameter: public GenericMessageParameter<ParamType>
    {
       public:
-         virtual const std::string ToString() const 
+         virtual const std::string ToString() const
          {
             std::ostringstream ss;
-            ss.precision(GenericMessageParameter<ParamType>::GetNumberPrecision());        
-                        
+            ss.precision(GenericMessageParameter<ParamType>::GetNumberPrecision());
+
             if (GenericMessageParameter<ParamType>::IsList())
             {
-               const std::vector<ParamType> &values = 
+               const std::vector<ParamType> &values =
                   GenericMessageParameter<ParamType>::GetValueList();
-                  
+
                ss << values[0];
                for (unsigned int i=1; i<values.size(); i++)
-                  ss << GenericMessageParameter<ParamType>::GetParamDelimeter() << 
-                     values[i];                  
+                  ss << GenericMessageParameter<ParamType>::GetParamDelimeter() <<
+                     values[i];
                return ss.str();
             }
             else
@@ -577,43 +599,43 @@ namespace dtGame
                return ss.str();
             }
          }
-         
+
       protected:
          VecMessageParameter(const std::string &name, const ParamType& defaultValue,
             bool isList=false) : GenericMessageParameter<ParamType>(name, defaultValue, isList) {}
-         virtual ~VecMessageParameter() {}   
-  
-         bool InternalFromString(const std::string &value, unsigned size) 
-         {  
+         virtual ~VecMessageParameter() {}
+
+         bool InternalFromString(const std::string &value, unsigned size)
+         {
             if (GenericMessageParameter<ParamType>::IsList())
             {
-               std::vector<ParamType> &result = 
+               std::vector<ParamType> &result =
                   GenericMessageParameter<ParamType>::GetValueList();
-                  
+
                std::vector<std::string> stringList;
                dtUtil::IsDelimeter delimCheck(GenericMessageParameter<ParamType>::GetParamDelimeter());
                dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(stringList,value,delimCheck);
-               
+
                result.clear();
                for (unsigned int i=0; i<stringList.size(); i++)
                {
                   ParamType v;
-                  if (!dtUtil::ParseVec<ParamType>(stringList[i],v,size))                  
+                  if (!dtUtil::ParseVec<ParamType>(stringList[i],v,size))
                      return false;
                   result.push_back(v);
-               }                 
-                  
+               }
+
                return true;
             }
-            else 
+            else
             {
-               ParamType newValue;   
+               ParamType newValue;
                if (dtUtil::ParseVec<ParamType>(value, newValue, size))
                {
                   GenericMessageParameter<ParamType>::SetValue(newValue);
                   return true;
                }
-               else 
+               else
                   return false;
             }
          }
@@ -625,12 +647,12 @@ namespace dtGame
    class DT_GAME_EXPORT Vec2MessageParameter: public VecMessageParameter<osg::Vec2>
    {
       public:
-         Vec2MessageParameter(const std::string &name, 
+         Vec2MessageParameter(const std::string &name,
              const osg::Vec2& defaultValue = osg::Vec2(0.0,0.0), bool isList=false);
 
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2; }         
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
-         
+
       protected:
          virtual ~Vec2MessageParameter();
    };
@@ -641,11 +663,11 @@ namespace dtGame
    class DT_GAME_EXPORT Vec2fMessageParameter: public VecMessageParameter<osg::Vec2f>
    {
       public:
-         Vec2fMessageParameter(const std::string &name, 
+         Vec2fMessageParameter(const std::string &name,
              const osg::Vec2f& defaultValue = osg::Vec2f(0.0,0.0), bool isList=false);
 
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2F; }         
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }    
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2F; }
+         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
 
       protected:
          virtual ~Vec2fMessageParameter();
@@ -657,11 +679,11 @@ namespace dtGame
    class DT_GAME_EXPORT Vec2dMessageParameter: public VecMessageParameter<osg::Vec2d>
    {
       public:
-         Vec2dMessageParameter(const std::string &name, 
+         Vec2dMessageParameter(const std::string &name,
          	   const osg::Vec2d& defaultValue = osg::Vec2d(0.0,0.0), bool isList=false);
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC2D; }
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); } 
+         virtual bool FromString(const std::string &value) { return InternalFromString(value, 2); }
 
       protected:
          virtual ~Vec2dMessageParameter();
@@ -673,11 +695,11 @@ namespace dtGame
    class DT_GAME_EXPORT Vec3MessageParameter: public VecMessageParameter<osg::Vec3>
    {
       public:
-         Vec3MessageParameter(const std::string &name, 
+         Vec3MessageParameter(const std::string &name,
          	   const osg::Vec3& defaultValue = osg::Vec3(0.0, 0.0, 0.0), bool isList=false);
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3; }
-         virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); } 
+         virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
 
       protected:
          virtual ~Vec3MessageParameter();
@@ -689,23 +711,23 @@ namespace dtGame
    class DT_GAME_EXPORT Vec3fMessageParameter: public VecMessageParameter<osg::Vec3f>
    {
       public:
-         Vec3fMessageParameter(const std::string &name, 
+         Vec3fMessageParameter(const std::string &name,
          	   const osg::Vec3f& defaultValue = osg::Vec3f(0.0, 0.0, 0.0), bool isList=false);
 
-         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3F; }                 
+         virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3F; }
          virtual bool FromString(const std::string &value) { return InternalFromString(value, 3); }
 
       protected:
          virtual ~Vec3fMessageParameter();
    };
-   
+
    /**
      * @class Vec3dMessageParameter
      */
    class DT_GAME_EXPORT Vec3dMessageParameter: public VecMessageParameter<osg::Vec3d>
    {
       public:
-         Vec3dMessageParameter(const std::string &name, 
+         Vec3dMessageParameter(const std::string &name,
              const osg::Vec3d& defaultValue = osg::Vec3d(0.0, 0.0, 0.0), bool isList=false);
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC3D; }
@@ -714,14 +736,14 @@ namespace dtGame
       protected:
          virtual ~Vec3dMessageParameter();
    };
- 
+
    /**
      * @class Vec4MessageParameter
      */
    class DT_GAME_EXPORT Vec4MessageParameter: public VecMessageParameter<osg::Vec4>
    {
       public:
-         Vec4MessageParameter(const std::string &name, 
+         Vec4MessageParameter(const std::string &name,
              const osg::Vec4& defaultValue = osg::Vec4(0.0, 0.0, 0.0, 0.0), bool isList=false);
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4; }
@@ -730,14 +752,14 @@ namespace dtGame
       protected:
          virtual ~Vec4MessageParameter();
    };
-   
+
    /**
     * @class Vec4fMessageParameter
     */
    class DT_GAME_EXPORT Vec4fMessageParameter: public VecMessageParameter<osg::Vec4f>
    {
       public:
-         Vec4fMessageParameter(const std::string &name, 	
+         Vec4fMessageParameter(const std::string &name,
           const osg::Vec4f& defaultValue = osg::Vec4f(0.0, 0.0, 0.0, 0.0), bool isList=false);
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4F; }
@@ -753,7 +775,7 @@ namespace dtGame
    class DT_GAME_EXPORT Vec4dMessageParameter: public VecMessageParameter<osg::Vec4d>
    {
       public:
-         Vec4dMessageParameter(const std::string &name, 
+         Vec4dMessageParameter(const std::string &name,
          	const osg::Vec4d& defaultValue = osg::Vec4d(0.0, 0.0, 0.0, 0.0), bool isList=false);
 
          virtual const dtDAL::DataType &GetDataType() const { return dtDAL::DataType::VEC4D; }
@@ -769,38 +791,38 @@ namespace dtGame
    class DT_GAME_EXPORT ResourceMessageParameter: public MessageParameter
    {
       public:
-         ResourceMessageParameter(const dtDAL::DataType& type, const std::string &name, 
+         ResourceMessageParameter(const dtDAL::DataType& type, const std::string &name,
             bool isList=false);
-                
+
          virtual const dtDAL::DataType& GetDataType() const { return *mDataType; }
-         
+
          virtual void ToDataStream(DataStream &stream) const;
-        
+
          virtual void FromDataStream(DataStream &stream);
-        
+
          virtual const std::string ToString() const;
-        
+
          virtual bool FromString(const std::string &value);
 
          virtual void CopyFrom(const MessageParameter &otherParam);
-         
+
          void SetValue(const dtDAL::ResourceDescriptor* descriptor);
-            
-         const dtDAL::ResourceDescriptor* GetValue() const; 
-         
+
+         const dtDAL::ResourceDescriptor* GetValue() const;
+
          const std::vector<dtDAL::ResourceDescriptor> &GetValueList() const;
-         
+
          std::vector<dtDAL::ResourceDescriptor> &GetValueList();
-                  
-         void SetValueList(const std::vector<dtDAL::ResourceDescriptor> &newValues);         
+
+         void SetValueList(const std::vector<dtDAL::ResourceDescriptor> &newValues);
 
       protected:
          virtual ~ResourceMessageParameter();
-         
+
       private:
          const dtDAL::DataType* mDataType;
          std::vector<dtDAL::ResourceDescriptor> *mValueList;
-         dtDAL::ResourceDescriptor mDescriptor;            
+         dtDAL::ResourceDescriptor mDescriptor;
    };
 
 

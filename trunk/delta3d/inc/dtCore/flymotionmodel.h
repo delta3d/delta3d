@@ -49,23 +49,27 @@ namespace dtCore
          /**
           * Constructor.
           *
-          * @param keyboard the keyboard instance, or 0 to
+          * @param keyboard the keyboard instance, or NULL to
           * avoid creating default input mappings
-          * @param mouse the mouse instance, or 0 to avoid
+          * @param mouse the mouse instance, or NULL to avoid
           * creating default input mappings
+          * @param useSimTimeForSpeed true if the motion model should use the 
+          * simulation time, which can be scaled, for motion or false if it 
+          * should use the real time.
           */
          FlyMotionModel(Keyboard* keyboard = 0,
-                        Mouse* mouse = 0);
+                        Mouse* mouse = 0, 
+                        bool useSimTimeForSpeed = true);
 
       protected:
-      
+
          /**
           * Destructor.
           */
          virtual ~FlyMotionModel();
 
       public:
-      
+         
          /**
           * Sets the input axes to a set of default mappings for mouse
           * and keyboard.
@@ -167,6 +171,18 @@ namespace dtCore
           */
          float GetMaximumTurnSpeed();
          
+         /**
+          * Gets whether we are using sim time or not (aka real time)
+          * for the speed of movement and rotation.
+          */
+         bool GetUseSimTimeForSpeed() { return mUseSimTimeForSpeed; }
+
+         /**
+          * Sets whether we use sim time or not (aka real time)
+          * for the speed of movement and rotation.
+          */
+         void SetUseSimTimeForSpeed(bool useSimTimeForSpeed) { mUseSimTimeForSpeed = useSimTimeForSpeed; }
+
          /**
           * Message handler callback.
           *
@@ -271,6 +287,12 @@ namespace dtCore
           * The maximum turn speed (degrees per second).
           */
          float mMaximumTurnSpeed;
+
+         /**
+          * Indicates whether the fly motion model will use Sim Time
+          * or not (aka Real Time) for speed of movement and turn rotation
+          */
+         bool mUseSimTimeForSpeed;
    };
 };
 

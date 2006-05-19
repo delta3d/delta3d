@@ -77,6 +77,9 @@ namespace dtEditQt
             this, SLOT(onBeginChangeTransaction()));
         connect(editorEvents, SIGNAL(endChangeTransaction()),
             this, SLOT(onEndChangeTransaction()));
+
+        connect(&EditorEvents::getInstance(), SIGNAL(editorCloseEvent()),
+                 this, SLOT(onEditorShutDown()));
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -201,6 +204,8 @@ namespace dtEditQt
                 this->masterScene->RemoveDrawable(proxy->GetActor());
             }
         }
+        if (isPagingEnabled)
+           EnablePaging(false);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -222,7 +227,7 @@ namespace dtEditQt
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::EnablePaging(bool enable)
     {
-       if(enable)
+       if (enable)
        {
           osgDB::DatabasePager *databasePager = osgDB::Registry::instance()->getOrCreateDatabasePager();
           databasePager->setTargetFrameRate(60);
@@ -247,8 +252,12 @@ namespace dtEditQt
              osgDB::Registry::instance()->getDatabasePager()->clear();
              osgDB::Registry::instance()->setDatabasePager(NULL);
              isPagingEnabled = false;
+             LOG_INFO("Paging is disabled");
           }
-          LOG_INFO("Paging is disabled");
+          else
+          {
+             LOG_INFO("Paging is already disabled.");
+          }
        }
     }
 
@@ -285,7 +294,8 @@ namespace dtEditQt
             {
                 LOG_ERROR("Proxy [" + proxy->GetName() + "] billboard was NULL.");
             }
-            else {
+            else
+            {
                 this->viewportOverlay->unSelect(billBoard->GetDrawable());
                 this->masterScene->RemoveDrawable(billBoard->GetDrawable());
             }
@@ -321,7 +331,8 @@ namespace dtEditQt
                 this->viewportOverlay->select(proxy->GetActor());
             }
         }
-        else {
+        else
+        {
             //If we got here, then the proxy wishes the system to determine how to display
             //the proxy.
         }
@@ -331,6 +342,14 @@ namespace dtEditQt
         if (!inChangeTransaction)
             refreshAllViewports();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void ViewportManager::onEditorShutDown()
+    {
+       if (isPagingEnabled)
+          EnablePaging(false);
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////
     void ViewportManager::onActorProxyCreated(

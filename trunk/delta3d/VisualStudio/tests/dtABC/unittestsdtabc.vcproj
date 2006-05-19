@@ -137,7 +137,7 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\dtABC\baseabctests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtABC\mainTestRunner.cpp">
+				RelativePath="..\..\..\tests\mainTestRunner.cpp">
 			</File>
 		</Filter>
 		<Filter

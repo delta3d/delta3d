@@ -48,13 +48,14 @@ namespace dtDAL
    DataType DataType::RGBCOLOR("RGBCOLOR", "RGB Color", false, 21);
    DataType DataType::RGBACOLOR("RGBACOLOR", "RGBA Color", false, 22);
    DataType DataType::ENUMERATION("ENUMERATION",  "Enumeration", false, 23);
-   DataType DataType::GROUP("GROUP", "Group", false, 24);
-   DataType DataType::ACTOR("ACTOR", "Actor", false, 25);
+   DataType DataType::GAME_EVENT("GAME_EVENT","Game Event",false,24);
+   DataType DataType::GROUP("GROUP", "Group", false, 25);
+   DataType DataType::ACTOR("ACTOR", "Actor", false, 26);
 
-   DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, 26);
-   DataType DataType::TEXTURE("Textures", "Texture", true, 27);
-   DataType DataType::CHARACTER("Characters", "Character", true, 28);
-   DataType DataType::TERRAIN("Terrains", "Terrain", true, 29);
+   DataType DataType::STATIC_MESH("StaticMeshes", "Static Mesh", true, 27);
+   DataType DataType::TEXTURE("Textures", "Texture", true, 28);
+   DataType DataType::CHARACTER("Characters", "Character", true, 29);
+   DataType DataType::TERRAIN("Terrains", "Terrain", true, 30);
    DataType DataType::SOUND("Sounds", "Sound", true, 31);
    DataType DataType::PARTICLE_SYSTEM("Particles", "Particle", true, 32);
 

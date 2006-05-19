@@ -98,7 +98,7 @@ namespace dtUtil
          *  @param msgType - Type of message being displayed. (error,warning,info)
          */
         void LogMessage(const std::string &source, int line, const std::string &msg,
-                            LogMessageType msgType = LOG_INFO);
+                            LogMessageType msgType = LOG_INFO) const;
 
         /**
          * Little more sophisticated method for logging messages.  Allows for
@@ -111,7 +111,7 @@ namespace dtUtil
          *      Max length of the string to be printed is 2048 characters.
          */
         void LogMessage(LogMessageType msgType, const std::string &source, int line,
-                            const char *msg, ...);
+                            const char *msg, ...) const;
 
         /**
          * Little more sophisticated method for logging messages.  Allows for
@@ -123,7 +123,7 @@ namespace dtUtil
          *      Max length of the string to be printed is 2048 characters.
          */
         void LogMessage(LogMessageType msgType, const std::string &source,
-                            const char *msg, ...);
+                            const char *msg, ...) const;
         /**
          * Inserts a horizontal rule into the log file.
          */
@@ -144,7 +144,7 @@ namespace dtUtil
          */
         void SetLogLevel(LogMessageType msgType)  { mLevel = msgType; };
 
-        std::string GetLogLevelString( LogMessageType msgType);
+        const std::string GetLogLevelString( LogMessageType msgType) const;
 
         /*
          * Retrieve singleton instance of the log class.

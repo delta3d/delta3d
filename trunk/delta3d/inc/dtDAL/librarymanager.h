@@ -124,6 +124,18 @@ namespace dtDAL
          dtCore::RefPtr<ActorProxy> CreateActorProxy(ActorType& actorType);
 
          /**
+          * Creates a new actor proxy.  The actor type is used by the library
+          * manager to determine which type of actor proxy to create.
+          * @return Returns a pointer to the base actor proxy which can be
+          * safely typecast'd to the appropriate derived type.
+          * @throws Throws a ObjectFactoryUnknownType exception if the type
+          * @param category The category corresponding to the actor type
+          * @param name The name corresponding to the actor type
+          * is unknown.
+          */
+         dtCore::RefPtr<ActorProxy> CreateActorProxy(const std::string &category, const std::string &name);
+
+         /**
           * Gets a registry currently loaded by the library manager.  
           * @param name The name of the library.  Note, this name is the
           * system independent name.

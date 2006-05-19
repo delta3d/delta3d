@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="delta3dMap"
 	elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
@@ -51,6 +51,7 @@
 
   <xsd:complexType name="ActorsType">
     <xsd:sequence>
+      <xsd:element name="environmentActor" type="xsd:string" minOccurs="0" maxOccurs="1" />
       <xsd:element name="actor" minOccurs="0" maxOccurs="unbounded">
         <xsd:complexType>
           <xsd:sequence>
@@ -89,6 +90,7 @@
           </xsd:sequence>
           <xsd:element name="actorId" type="xsd:string" />
           <xsd:element name="vector" type="VectorType"/>
+          <xsd:element name="gameevent" type="xsd:string"/>
         </xsd:choice>
     </xsd:sequence>
   </xsd:complexType>

@@ -58,11 +58,13 @@ namespace dtGame
       {
          const LogGetKeyframeListMessage &kfListMsg = static_cast<const LogGetKeyframeListMessage&>(message);
          mLastKnownKeyframeList = kfListMsg.GetKeyframeList();
+         _receivedKeyframes(mLastKnownKeyframeList);
       }
       else if (message.GetMessageType() == MessageType::LOG_INFO_TAGS)
       {
          const LogGetTagListMessage &tagListMsg = static_cast<const LogGetTagListMessage&>(message);
          mLastKnownTagList = tagListMsg.GetTagList();
+         _receivedTags(mLastKnownTagList);
       }
       else if (message.GetMessageType() == MessageType::SERVER_REQUEST_REJECTED)
       {
@@ -80,7 +82,8 @@ namespace dtGame
                type == MessageType::LOG_REQ_SET_LOGFILE || type == MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL ||
                type == MessageType::LOG_INFO_KEYFRAMES || type == MessageType::LOG_INFO_LOGFILES ||
                type == MessageType::LOG_INFO_TAGS || type == MessageType::LOG_INFO_STATUS || 
-               type == MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS || type == MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS)
+               type == MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS || 
+               type == MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS || type == MessageType::LOG_REQ_JUMP_TO_KEYFRAME)
             {
                // send the status out to anyone that was listening for the signal
                _receivedRejection(message);
@@ -114,6 +117,19 @@ namespace dtGame
    {
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_CHANGESTATE_IDLE);
+
+      GetGameManager()->ProcessMessage(*message);
+      GetGameManager()->SendMessage(*message);
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   void LogController::RequestJumpToKeyframe(const LogKeyframe &keyframe)
+   {
+      dtCore::RefPtr<Message> message = 
+         GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_JUMP_TO_KEYFRAME);
+      LogJumpToKeyframeMessage *pMsg = static_cast<LogJumpToKeyframeMessage *> (message.get());
+      pMsg->SetKeyframe(keyframe);
 
       GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);

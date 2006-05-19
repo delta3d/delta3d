@@ -117,7 +117,7 @@ namespace dtUtil
 
     //////////////////////////////////////////////////////////////////////////
     void Log::LogMessage(const std::string &source, int line, const std::string &msg,
-                LogMessageType msgType)
+                LogMessageType msgType) const
     {
         if (msgType < mLevel)
             return;
@@ -176,7 +176,7 @@ namespace dtUtil
 
     //////////////////////////////////////////////////////////////////////////
     void Log::LogMessage(LogMessageType msgType, const std::string &source,
-                            const char *msg, ...) 
+                            const char *msg, ...) const
     {
         static char buffer[2049];
         va_list list;
@@ -238,7 +238,7 @@ namespace dtUtil
 
     //////////////////////////////////////////////////////////////////////////
     void Log::LogMessage(LogMessageType msgType, const std::string &source, int line,
-                            const char *msg, ...)
+                            const char *msg, ...) const
     {
         static char buffer[2049];
         va_list list;
@@ -330,7 +330,7 @@ namespace dtUtil
     }
 
     //////////////////////////////////////////////////////////////////////////
-    std::string Log::GetLogLevelString( LogMessageType msgType)
+    const std::string Log::GetLogLevelString( LogMessageType msgType) const
     {
        std::string lev;
 

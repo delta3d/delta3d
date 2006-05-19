@@ -38,7 +38,7 @@ namespace dtGame
    DeadReckoningAlgorithm DeadReckoningAlgorithm::VELOCITY_AND_ACCELERATION("Velocity and Acceleration");
 
 
-   DeadReckoningHelper::DeadReckoningHelper() : 
+   DeadReckoningHelper::DeadReckoningHelper() :
       mUpdated(false), mFlying(false), mLastUpdatedTime(0.0), mSmoothingSteps(0.0f), mMinDRAlgorithm(&DeadReckoningAlgorithm::NONE) 
    {}
 
@@ -96,7 +96,7 @@ namespace dtGame
    }      
    
   
-   const float DeadReckoningComponent::ForceClampTime(0.25f);
+   const float DeadReckoningComponent::ForceClampTime(1.25f);
 
    DeadReckoningComponent::DeadReckoningComponent(const std::string& name): dtGame::GMComponent(name), 
       mTerrainActorName("Terrain"), mTerrainQueried(false), mTimeUntilForceClamp(ForceClampTime)
@@ -309,7 +309,6 @@ namespace dtGame
 
       if (mIsector == NULL)
          mIsector = new dtCore::Isector;
-         
       
       //Setup the iSector to use the player position only once so that get transform is not called
       //for every single actor to be clamped.

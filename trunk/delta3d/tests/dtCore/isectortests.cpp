@@ -27,6 +27,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
+#include <dtABC/application.h>
 
 class IsectorTests : public CPPUNIT_NS::TestFixture 
 {
@@ -43,12 +44,17 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       void setUp()
       {
          mIsector = new dtCore::Isector();
+         mApp = new dtABC::Application;
+         mApp->Config();
+         mApp->GetWindow()->SetPosition(0, 0, 50, 50);
+         dtCore::System::Instance()->SetShutdownOnWindowClose(false);
          dtCore::System::Instance()->Start();
       }
       
       void tearDown()
       {
          mIsector = NULL;
+         mApp = NULL;
          dtCore::System::Instance()->Stop();
       }
       
@@ -122,16 +128,9 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->SetStartPosition(point1);
          mIsector->SetEndPosition(point2);
          
-         dtCore::RefPtr<dtCore::Scene> testScene = new dtCore::Scene();
          dtCore::RefPtr<dtCore::InfiniteTerrain> terrain = new dtCore::InfiniteTerrain();
-         mIsector->SetScene(testScene.get());  
-         
-         testScene->AddDrawable(terrain.get());
-      
-         dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("", 0, 0, 50, 50, true, false);
-         dtCore::RefPtr<dtCore::Camera> camera = new dtCore::Camera("defaultCam");
-         camera->SetWindow(win.get());
-         camera->SetScene(testScene.get());
+         mIsector->SetScene(mApp->GetScene());
+         mApp->GetScene()->AddDrawable(terrain.get());
 
          dtCore::System::Instance()->Step();
 
@@ -185,6 +184,7 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
 
    private:
       dtCore::RefPtr<dtCore::Isector> mIsector;
+      dtCore::RefPtr<dtABC::Application> mApp;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IsectorTests);

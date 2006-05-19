@@ -62,7 +62,7 @@
 #include "dtDAL/map.h"
 #include <dtDAL/exceptionenum.h>
 #include "dtDAL/transformableactorproxy.h"
-#include "dtDAL/fileutils.h"
+#include "dtUtil/fileutils.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/actorproxyicon.h"
 
@@ -214,6 +214,15 @@ namespace dtEditQt
         connect(actionEditGroundClampActors,SIGNAL(triggered()),
                 this,SLOT(slotEditGroundClampActors()));
 
+        // Edit - Toggle terrain paging.
+        actionToggleTerrainPaging = new QAction(QIcon(UIResources::ICON_GROUND_CLAMP.c_str()),
+                                                      tr("&Toggle Paging"),this);
+        actionToggleTerrainPaging->setShortcut(tr("Ctrl+T"));
+        actionToggleTerrainPaging->setStatusTip(tr("Turns off or on terrain paging."));
+        connect(actionToggleTerrainPaging,SIGNAL(triggered()),
+                this,SLOT(slotToggleTerrainPaging()));
+        
+        
         // Edit - Goto Actor
         actionEditGotoActor = new QAction(QIcon(UIResources::LARGE_ICON_EDIT_GOTO.c_str()),
             tr("Goto Actor"), this);
@@ -280,7 +289,7 @@ namespace dtEditQt
         actionWindowsActorSearch->setCheckable(true);
         actionWindowsActorSearch->setChecked(true);
 
-        actionWindowsResourceBrowser = new QAction(tr("Resource Broswer"), this);
+        actionWindowsResourceBrowser = new QAction(tr("Resource Browser"), this);
         actionWindowsResourceBrowser->setShortcut(tr("Alt+3"));
         actionWindowsResourceBrowser->setStatusTip(tr("Hides and retrieves the resource browser"));
         actionWindowsResourceBrowser->setCheckable(true);
@@ -521,7 +530,7 @@ namespace dtEditQt
         slotPauseAutosave();
 
         dtDAL::Map *currMap = dtEditQt::EditorData::getInstance().getCurrentMap().get();
-        if(currMap == NULL)
+        if (currMap == NULL)
         {
             EditorEvents::getInstance().emitEditorCloseEvent();
             qApp->quit();
@@ -548,8 +557,12 @@ namespace dtEditQt
             slotRestartAutosave();
             return;
         }
-
+        
         EditorEvents::getInstance().emitEditorCloseEvent();
+        //close the map because the actor libraries will be closed before the DAL, so a crash could
+        //happen when the project tries to close the open maps in the destructor.
+        changeMaps(currMap, NULL);
+        
         qApp->quit();
     }
 
@@ -819,6 +832,15 @@ namespace dtEditQt
         EditorEvents::getInstance().emitEndChangeTransaction();
         EditorData::getInstance().getMainWindow()->endWaitCursor();
     }
+   
+    //////////////////////////////////////////////////////////////////////////////
+    void EditorActions::slotToggleTerrainPaging()
+    {
+       if (ViewportManager::getInstance().IsPagingEnabled())
+          ViewportManager::getInstance().EnablePaging(false);
+       else
+          ViewportManager::getInstance().EnablePaging(true);
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     void EditorActions::slotEditGotoActor()
@@ -905,7 +927,7 @@ namespace dtEditQt
         std::string temp = dtDAL::Project::GetInstance().GetContext();
         if(temp.empty())
             return name;
-        unsigned int index = temp.find_last_of(dtDAL::FileUtils::PATH_SEPARATOR);
+        unsigned int index = temp.find_last_of(dtUtil::FileUtils::PATH_SEPARATOR);
         projDir = temp.substr(index+1);
         name += " - ";
         name += projDir;
@@ -973,7 +995,6 @@ namespace dtEditQt
         changeMaps(EditorData::getInstance().getCurrentMap().get(),newMap);
     }
 
-
     //////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
 
@@ -1001,7 +1022,8 @@ namespace dtEditQt
             {
                 EditorEvents::getInstance().emitLibraryAboutToBeRemoved();
                 dtDAL::Project::GetInstance().CloseMap(*oldMap,true);
-                ViewportManager::getInstance().EnablePaging(false);
+                if (ViewportManager::getInstance().IsPagingEnabled())
+                   ViewportManager::getInstance().EnablePaging(false);
                 EditorEvents::getInstance().emitMapLibraryRemoved();
 
                 EditorData::getInstance().getMainWindow()->endWaitCursor();
@@ -1039,12 +1061,9 @@ namespace dtEditQt
             {
                dtDAL::Project::GetInstance().LoadMapIntoScene(*newMap,
                     *(ViewportManager::getInstance().getMasterScene()), true, false);
-
-               if(ViewportManager::getInstance().IsPagingEnabled())
-                  ViewportManager::getInstance().EnablePaging(false);
-               ViewportManager::getInstance().EnablePaging(true);
+               
             }
-            catch (const dtUtil::Exception &e)
+            catch (const dtUtil::Exception& e)
             {
                 QMessageBox::critical((QWidget *)EditorData::getInstance().getMainWindow(),
                     tr("Error"), e.What().c_str(), tr("OK"));
@@ -1052,11 +1071,14 @@ namespace dtEditQt
         }
 
         EditorData::getInstance().getMainWindow()->endWaitCursor();
-
         //Update the editor state to reflect the changes.
         EditorData::getInstance().setCurrentMap(newMap);
         EditorEvents::getInstance().emitCurrentMapChanged();
 
+        if (ViewportManager::getInstance().IsPagingEnabled())
+           ViewportManager::getInstance().EnablePaging(false);
+        ViewportManager::getInstance().EnablePaging(true);        
+        
         //Now that we have changed maps, clear the current selection.
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > emptySelection;
         EditorEvents::getInstance().emitActorsSelected(emptySelection);

@@ -18,7 +18,7 @@
  *
  * @author Matthew W. Campbell
  */
- 
+
 #include "dtGame/taskcomponent.h"
 #include "dtGame/message.h"
 #include "dtGame/messagetype.h"
@@ -33,82 +33,99 @@ namespace dtGame
    TaskComponent::TaskComponent()
    {
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    TaskComponent::~TaskComponent()
    {
-         
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::ProcessMessage(const Message &message)
    {
       if (message.GetMessageType() == MessageType::INFO_ACTOR_CREATED ||
-          message.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED ||
-          message.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
-      {         
+          message.GetMessageType() == MessageType::INFO_ACTOR_UPDATED ||
+          message.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
+      {
          const dtCore::UniqueId &id = message.GetAboutActorId();
          dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(id);
-         
+
          if (proxy == NULL)
          {
             LOG_WARNING("Newly created actor could not be found in the game manager.");
             return;
          }
-         
+
          if (proxy->GetActorType().InstanceOf("dtcore.Tasks","Task Actor"))
-            InsertTaskActor(*proxy);         
+         {
+            InsertTaskActor(*proxy);
+         }
       }
       else if (message.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
       {
          const dtCore::UniqueId &id = message.GetAboutActorId();
          dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(id);
-         
+
          if (proxy == NULL)
          {
             LOG_WARNING("Actor to delete could not be found in the game manager.");
             return;
          }
-         
+
          if (proxy->GetActorType().InstanceOf("dtcore.Tasks","Task Actor"))
-            RemoveTaskActor(*proxy);     
+            RemoveTaskActor(*proxy);
       }
       else if (message.GetMessageType() == MessageType::INFO_MAP_LOADED)
       {
          //If we got this message it means a new map was sucessfully loaded.
-         //So we need to clear our list of tasks and check the game manager 
+         //So we need to clear our list of tasks and check the game manager
          //for a new list.
          HandleMapLoaded();
       }
-   }   
-   
+   }
+
    //////////////////////////////////////////////////////////////////////////
-   void TaskComponent::InsertTaskActor(const GameActorProxy &taskProxy)
-   {  
-      mTaskList.insert(taskProxy.GetId());
-      const dtDAL::BooleanActorProperty *prop =             
+   void TaskComponent::InsertTaskActor(GameActorProxy &taskProxy)
+   {
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator itor =
+            mTaskList.find(taskProxy.GetName());
+
+      if (itor != mTaskList.end())
+      {
+         //LOG_ERROR("Cannot add new task to task component.  Duplicate name encountered:  " + taskProxy.GetName());
+         return;
+      }
+
+      mTaskList.insert(std::make_pair(taskProxy.GetName(),&taskProxy));
+      const dtDAL::BooleanActorProperty *prop =
          static_cast<const dtDAL::BooleanActorProperty *>(taskProxy.GetProperty("IsTopLevel"));
       if (prop != NULL && prop->GetValue())
-         mTopLevelTaskList.insert(taskProxy.GetId());    
+         mTopLevelTaskList.insert(std::make_pair(taskProxy.GetName(),&taskProxy));
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
-   void TaskComponent::RemoveTaskActor(const GameActorProxy &toRemove)
-   {  
-      std::set<dtCore::UniqueId>::iterator itor = 
-         mTaskList.find(toRemove.GetId());
-      mTaskList.erase(itor);
-      
-      itor = mTopLevelTaskList.find(toRemove.GetId());
-      mTopLevelTaskList.erase(itor);
+   void TaskComponent::RemoveTaskActor(GameActorProxy &toRemove)
+   {
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator itor =
+            mTaskList.find(toRemove.GetName());
+
+      if (itor != mTaskList.end())
+      {
+         mTaskList.erase(itor);
+      }
+
+      itor = mTopLevelTaskList.find(toRemove.GetName());
+      if (itor != mTopLevelTaskList.end())
+      {
+         mTopLevelTaskList.erase(itor);
+      }
    }
- 
+
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::HandleMapLoaded()
    {
       mTopLevelTaskList.clear();
       mTaskList.clear();
-      
+
       std::vector<dtCore::RefPtr<GameActorProxy> > toFill;
       std::vector<dtCore::RefPtr<GameActorProxy> >::iterator itor;
       GetGameManager()->GetAllGameActors(toFill);
@@ -117,65 +134,71 @@ namespace dtGame
          if ((*itor)->GetActorType().InstanceOf("dtcore.Tasks","Task Actor"))
             InsertTaskActor(*(*itor));
       }
-      
+
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::GenerateTaskUpdates()
    {
-      dtGame::GameActorProxy *proxy = NULL;
-      std::set<dtCore::UniqueId>::iterator itor;
-      
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator itor;
       for (itor=mTaskList.begin(); itor!=mTaskList.end(); ++itor)
       {
-         proxy = GetGameManager()->FindGameActorById(*itor);
-         if (proxy != NULL)
-         {
-            dtCore::RefPtr<ActorUpdateMessage> updateMsg = static_cast<ActorUpdateMessage *>
-               (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED).get());
-            proxy->PopulateActorUpdate(*updateMsg);
-            GetGameManager()->ProcessMessage(*updateMsg);
-         }
+         dtCore::RefPtr<ActorUpdateMessage> updateMsg = static_cast<ActorUpdateMessage *>
+            (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED).get());
+         itor->second->PopulateActorUpdate(*updateMsg);
+         GetGameManager()->ProcessMessage(*updateMsg);
       }
    }
-   
+
+   //////////////////////////////////////////////////////////////////////////
+   void TaskComponent::CheckTaskHierarchy()
+   {
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator itor;      
+
+      itor = mTopLevelTaskList.begin();
+      while (itor != mTopLevelTaskList.end())
+      {         
+         if (itor->second->GetProperty("IsTopLevel")->GetStringValue() == "false")
+            mTopLevelTaskList.erase(itor++);
+         else
+            ++itor;
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::GetTopLevelTasks(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill)
    {
-      std::set<dtCore::UniqueId>::iterator taskItor;
-      
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator taskItor;
+
       toFill.clear();
       for (taskItor=mTopLevelTaskList.begin(); taskItor!=mTopLevelTaskList.end(); ++taskItor)
       {
-         GameActorProxy *proxy = GetGameManager()->FindGameActorById(*taskItor);
-         if (proxy != NULL)
-            toFill.push_back(proxy);
+         toFill.push_back(taskItor->second);
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::GetAllTasks(std::vector<dtCore::RefPtr<GameActorProxy> > &toFill)
    {
-      std::set<dtCore::UniqueId>::iterator taskItor;
-      
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator taskItor;
+
       toFill.clear();
       for (taskItor=mTaskList.begin(); taskItor!=mTaskList.end(); ++taskItor)
       {
-         GameActorProxy *proxy = GetGameManager()->FindGameActorById(*taskItor);
-         if (proxy != NULL)
-            toFill.push_back(proxy);
+         toFill.push_back(taskItor->second);
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<GameActorProxy> TaskComponent::GetTaskByName(const std::string &name)
    {
-      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > toFill;
-      GetGameManager()->FindActorsByName(name,toFill);
-      if (!toFill.empty() && toFill[0]->IsGameActorProxy())
-         return dynamic_cast<GameActorProxy *>(toFill[0].get());
+      std::map<std::string,dtCore::RefPtr<dtGame::GameActorProxy> >::iterator taskItor =
+            mTaskList.find(name);
+
+      if (taskItor != mTaskList.end())
+         return taskItor->second;
       else
          return NULL;
    }
-     
+
 }

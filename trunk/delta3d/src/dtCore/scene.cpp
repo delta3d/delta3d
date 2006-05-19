@@ -29,13 +29,13 @@ namespace dtCore
 
 IMPLEMENT_MANAGEMENT_LAYER(Scene)
 
-// Replacement message handler for ODE 
+// Replacement message handler for ODE
 extern "C" void ODEMessageHandler(int errnum, const char *msg, va_list ap)
-{  
+{
    Log::GetInstance().LogMessage(Log::LOG_INFO, __FILE__, msg, ap);
 }
 
-// Replacement debug handler for ODE  
+// Replacement debug handler for ODE
 extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
 {
    Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
@@ -43,7 +43,7 @@ extern "C" void ODEDebugHandler(int errnum, const char *msg, va_list ap)
    exit(1);
 }
 
-// Replacement error handler for ODE  
+// Replacement error handler for ODE
 extern "C" void ODEErrorHandler(int errnum, const char *msg, va_list ap)
 {
    Log::GetInstance().LogMessage(Log::LOG_ERROR, __FILE__, msg, ap);
@@ -68,7 +68,7 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
    if( osgParticle::ParticleSystemUpdater* psu = dynamic_cast< osgParticle::ParticleSystemUpdater* >( &node ) )
    {
       for( unsigned int i = 0; i < psu->getNumParticleSystems(); i++ )
-      {         
+      {
          if( osgParticle::ParticleSystem* ps = psu->getParticleSystem( i ) )
          {
             if( mFreezing )
@@ -89,7 +89,7 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
          }
       }
    }
-   
+
    traverse(node);
 }
 
@@ -98,51 +98,49 @@ void Scene::ParticleSystemFreezer::apply( osg::Node& node )
 //////////////////////////////////////////////////////////////////////
 
 Scene::Scene( const std::string& name, bool useSceneLight ) : Base(name),
-   mSceneNode(0),
+   mSceneNode(new osg::Group),
    mSpaceID(0),
    mWorldID(0),
    mGravity(0.f, 0.f, 0.f),
    mPhysicsStepSize(0.0),
-   mCollidableContents(),
    mContactJointGroupID(0),
    mUserNearCallback(0),
    mUserNearCallbackData(0),
    mLights(MAX_LIGHTS),
-   mAddedDrawables(),
    mRenderMode(POINT),
    mRenderFace(FRONT),
    mPagingEnabled(false),
    mStartTick(0),
    mFrameNum(0),
    mCleanupTime(0.0025),
-   mTargetFrameRate(30.0),
-   mFreezer()
+   mTargetFrameRate(30.0)
 {
    RegisterInstance(this);
    SetName(name);
-
-   mSceneNode = new osg::Group;
 
    InfiniteLight* skyLight = new InfiniteLight( 0, "SkyLight" );
    AddDrawable( skyLight );
    skyLight->SetEnabled( true );
 
+   mSpaceID = dHashSpaceCreate(0);
+   mWorldID = dWorldCreate();
+
+   //These are assigned in the CIL.  Do theses need to be
+   //assigned again?  Is something changing them or is it just a
+   //mistake?
    mUserNearCallback = 0;
    mUserNearCallbackData = 0;
 
-   mSpaceID = dHashSpaceCreate(0);
-   mWorldID = dWorldCreate();
-   
    dSpaceSetCleanup(mSpaceID, 0);
-   
-   SetGravity( osg::Vec3(.0f, 0.0f, -9.81f) );
-   
+
+   SetGravity(0.0f, 0.0f, -9.81f);
+
    mContactJointGroupID = dJointGroupCreate(0);
-   
+
    dSetMessageHandler(ODEMessageHandler);
    dSetDebugHandler(ODEDebugHandler);
    dSetErrorHandler(ODEErrorHandler);
-   
+
    AddSender(System::Instance());
 
    //TODO set default render face, mode
@@ -168,14 +166,14 @@ Scene::~Scene()
    dJointGroupDestroy(mContactJointGroupID);
 
    // Remove the remaining DeltaDrawables from the Scene. This is redundant to help prevent
-   // crash-on-exits. The "exit" message should have the same effect. This must be called 
+   // crash-on-exits. The "exit" message should have the same effect. This must be called
    // after the above code that destroys the ODE world.
    RemoveAllDrawables();
 
    dSpaceDestroy(mSpaceID);
 
    DeregisterInstance(this);
-   
+
    if(mPagingEnabled)
    {
       DisablePaging();
@@ -189,20 +187,20 @@ void Scene::AddDrawable( DeltaDrawable *drawable )
    // This is modified to put a RefPtr in the scene
    // They are required or when you change the stateset
    // Everything is killed and you get a blank screen.
-   // I still pushback the original *drawable 
+   // I still pushback the original *drawable
    // so remove will still work
    RefPtr<DeltaDrawable> drawme = drawable;
    mSceneNode->addChild( drawme->GetOSGNode() );
    drawable->AddedToScene(this);
 
    mAddedDrawables.push_back(drawable);
-   
+
    // this is the original code
    //mSceneNode->addChild( drawable->GetOSGNode() );
    //drawable->AddedToScene(this);
 
    //mAddedDrawables.push_back(drawable);
-   
+
 }
 
 void Scene::RemoveDrawable(DeltaDrawable *drawable)
@@ -213,7 +211,7 @@ void Scene::RemoveDrawable(DeltaDrawable *drawable)
    unsigned int pos = GetDrawableIndex(drawable);
    if (pos<mAddedDrawables.size())
    {
-      mAddedDrawables.erase( mAddedDrawables.begin()+pos );                           
+      mAddedDrawables.erase( mAddedDrawables.begin()+pos );
    }
 }
 
@@ -284,11 +282,11 @@ void Scene::SetRenderState( Face face, Mode mode )
    polymode->setMode(myface, mymode);
 
    osg::StateSet *stateSet = mSceneNode.get()->getOrCreateStateSet();
-   stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON); 
+   stateSet->setAttributeAndModes(polymode.get(),osg::StateAttribute::OVERRIDE|osg::StateAttribute::ON);
 }
 
-/** Register a Physical with the Scene.  This method is automatically called 
-  * when adding Drawables to the Scene.  Typically, this only needs to be 
+/** Register a Physical with the Scene.  This method is automatically called
+  * when adding Drawables to the Scene.  Typically, this only needs to be
   * called when a creating a Physical that is not added to the Scene like a
   * Drawable.
   * @param physical The Physical to register with the Scene
@@ -353,7 +351,7 @@ void Scene::UnRegisterCollidable( Transformable* collidable )
 }
 
 /*!
- * Get the height of terrain at the specified (X,Y).  This essentially 
+ * Get the height of terrain at the specified (X,Y).  This essentially
  * does an intersection check of the whole scene from (X,Y,10k) to (X,Y,-10k).
  * Any geometry that intersects is considered the "terrain".
  *
@@ -367,13 +365,13 @@ float Scene::GetHeightOfTerrain( float x, float y )
    float HOT = 0.f;
    osgUtil::IntersectVisitor iv;
    RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
-   
+
    segDown->set(osg::Vec3(x, y, 10000.f),osg::Vec3(x,y, -10000.f));
    iv.addLineSegment(segDown.get());
    iv.setTraversalMask(0x0fffffff);
-   
+
    mSceneNode->accept(iv);
-   
+
    if (iv.hits())
    {
       osgUtil::IntersectVisitor::HitList& hitList = iv.getHitList(segDown.get());
@@ -390,7 +388,7 @@ float Scene::GetHeightOfTerrain( float x, float y )
 void Scene::SetGravity( const osg::Vec3& gravity )
 {
    mGravity.set(gravity);
-   
+
    dWorldSetGravity(mWorldID, mGravity[0], mGravity[1], mGravity[2]);
 }
 
@@ -423,9 +421,9 @@ void Scene::OnMessage(MessageData *data)
                Camera *cam = Camera::GetInstance(camNum);
 
                osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*(cam->GetSceneHandler()->GetSceneView()->getState()), cleanup);
-               
+
                cam->GetSceneHandler()->GetSceneView()->flushDeletedGLObjects(cleanup);
-             }  
+             }
          }
       }
    }
@@ -457,7 +455,7 @@ void Scene::OnMessage(MessageData *data)
       bool usingDeltaStep = false;
 
       // if step size is 0.0, use the deltaFrameTime instead
-      if( mPhysicsStepSize == 0.0 ) 
+      if( mPhysicsStepSize == 0.0 )
       {
          SetPhysicsStepSize( dt );
          usingDeltaStep = true;
@@ -466,7 +464,7 @@ void Scene::OnMessage(MessageData *data)
       const int numSteps = int(dt/mPhysicsStepSize);
 
       TransformableVector::iterator it;
-      
+
       for(  it = mCollidableContents.begin();
             it != mCollidableContents.end();
             it++ )
@@ -486,14 +484,14 @@ void Scene::OnMessage(MessageData *data)
          }
 
          dWorldQuickStep(mWorldID, mPhysicsStepSize);
-         
+
          dJointGroupEmpty(mContactJointGroupID);
       }
 
       double leftOver = dt - (numSteps * mPhysicsStepSize);
-      
+
       if(leftOver > 0.0)
-      {   
+      {
          if (mUserNearCallback)
          {
             dSpaceCollide(mSpaceID, mUserNearCallbackData, mUserNearCallback);
@@ -504,10 +502,10 @@ void Scene::OnMessage(MessageData *data)
          }
 
          dWorldStep(mWorldID, leftOver);
-         
+
          dJointGroupEmpty(mContactJointGroupID);
       }
-      
+
       for(it = mCollidableContents.begin();
           it != mCollidableContents.end();
           it++)
@@ -536,7 +534,7 @@ void Scene::OnMessage(MessageData *data)
    }
 }
 
-// ODE collision callback     
+// ODE collision callback
 void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 {
    if( data == 0 || o1 == 0 || o2 == 0 )
@@ -545,37 +543,37 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
    }
 
    Scene* scene = static_cast<Scene*>(data);
-   
+
    Transformable* c1 = static_cast<Transformable*>( dGeomGetData(o1) );
    Transformable* c2 = static_cast<Transformable*>( dGeomGetData(o2) );
-             
+
    dContactGeom contactGeoms[8];
-   
+
    int numContacts = dCollide( o1, o2, 8, contactGeoms, sizeof(dContactGeom) );
-   
+
    if( numContacts > 0 && c1 != 0 && c2 != 0 )
    {
       CollisionData cd;
-      
+
       cd.mBodies[0] = c1;
       cd.mBodies[1] = c2;
-    
-      cd.mLocation.set( 
+
+      cd.mLocation.set(
          contactGeoms[0].pos[0], contactGeoms[0].pos[1], contactGeoms[0].pos[2]
       );
-      
-      cd.mNormal.set( 
+
+      cd.mNormal.set(
          contactGeoms[0].normal[0], contactGeoms[0].normal[1], contactGeoms[0].normal[2]
       );
-      
+
       cd.mDepth = contactGeoms[0].depth;
-      
+
       scene->SendMessage("collision", &cd);
-      
+
       if( c1 != 0 || c2 != 0 )
       {
          dContact contact;
-      
+
          for( int i = 0; i < numContacts; i++ )
          {
             contact.surface.mode = dContactMu2 | dContactBounce;
@@ -583,7 +581,7 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
             contact.surface.mu2 = 1000.0;
             contact.surface.bounce = 0.75;
             contact.surface.bounce_vel = 0.001;
-            
+
             contact.geom = contactGeoms[i];
 
             // Make sure to call these both, because in the case of
@@ -591,7 +589,7 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
             // is false.
             bool contactResult1 = c1->FilterContact(&contact, c2);
             bool contactResult2 = c2->FilterContact(&contact, c1);
-       
+
             if( contactResult1 && contactResult2 )
             {
                // All this also should be in a virtual function.
@@ -600,13 +598,13 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 
                if( p1 != 0 || p2 != 0 )
                {
-                  dJointID joint = dJointCreateContact(  scene->mWorldID, 
-                                                         scene->mContactJointGroupID, 
-                                                         &contact );
-
-                  dJointAttach(  joint, 
-                                 p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,
-                                 p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );
+                  dJointID joint = dJointCreateContact( scene->mWorldID, 
+                                                        scene->mContactJointGroupID, 
+                                                        &contact );
+                  
+                  dJointAttach( joint, 
+                                p1 != 0 && p1->DynamicsEnabled() ? p1->GetBodyID() : 0,   
+                                p2 != 0 && p2->DynamicsEnabled() ? p2->GetBodyID() : 0 );              
                }
             }
          }
@@ -616,7 +614,7 @@ void Scene::NearCallback( void* data, dGeomID o1, dGeomID o2 )
 
 
 /** The supplied function will be used instead of the built-in collision
- *  callback.  
+ *  callback.
  * @param func : The function to handle collision detection
  * @param data : A void pointer to user data.  This gets passed directly to func.
  */
@@ -674,6 +672,7 @@ const Light* Scene::GetLight( const std::string& name ) const
    }
 }
 
+
 ///Get the index number of the supplied drawable
 unsigned int Scene::GetDrawableIndex( const DeltaDrawable* drawable ) const
 {
@@ -700,9 +699,19 @@ void Scene::UnRegisterLight( Light* light )
    mLights[ light->GetNumber() ] = 0; 
 }
 
+
 void Scene::UseSceneLight( bool lightState )
-{ 
-   mLights[0]->SetEnabled(lightState);
+{
+   if (mLights[0] == NULL && lightState)
+   {
+      InfiniteLight *skyLight = new InfiniteLight( 0, "SkyLight" );
+      AddDrawable(skyLight);
+      skyLight->SetEnabled(true);
+   }
+   else
+   {
+      mLights[0]->SetEnabled(lightState);
+   }
 }
 
 void Scene::EnablePaging()
@@ -721,7 +730,7 @@ void Scene::EnablePaging()
          cam->GetSceneHandler()->GetSceneView()->getCullVisitor()->setDatabaseRequestHandler(databasePager);
 
          databasePager->setCompileGLObjectsForContextID(cam->GetSceneHandler()->GetSceneView()->getState()->getContextID(),true);
-      }    
+      }
 
       mStartTick = osg::Timer::instance()->tick();
       mPagingEnabled = true;

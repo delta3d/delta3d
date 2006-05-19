@@ -50,6 +50,7 @@ class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture
 
       void setUp()
       {
+         dtCore::System::Instance()->SetShutdownOnWindowClose(false);
          dtCore::System::Instance()->Start();
          mGM = new dtGame::GameManager(*new dtCore::Scene());
          mDeadReckoningComponent = new dtGame::DeadReckoningComponent("DeadReckoningComponent");

@@ -37,7 +37,7 @@
 #include "dtEditQt/editoractions.h"
 #include "dtDAL/librarymanager.h"
 #include "dtDAL/actorpluginregistry.h"
-#include "dtDAL/fileutils.h"
+#include "dtUtil/fileutils.h"
 #include "dtDAL/map.h"
 #include <dtUtil/log.h>
 

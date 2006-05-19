@@ -34,26 +34,26 @@ namespace dtCore
 class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
 {
    public:
-   
+
       TestPlayer(dtGame::GameActorProxy& proxy);
-      
+
       void SetModel(const std::string &fileName);
       std::string GetModel() const { return mModelFile; }
-      
-      void SetVelocity(float velocity); 
+
+      void SetVelocity(float velocity);
       float GetVelocity() const;
-      
-      void SetTurnRate(float rate); 
-      float GetTurnRate() const; 
-      
+
+      void SetTurnRate(float rate);
+      float GetTurnRate() const;
+
       virtual void TickLocal(const dtGame::Message &tickMessage);
-      virtual void TickRemote(const dtGame::Message &tickMessage);  
-                
-      void HandleTick(const double deltaSimTime);
-      
+      virtual void TickRemote(const dtGame::Message &tickMessage);
+
+      void HandleTick(double deltaSimTime, bool forceGroundClamp=false);
+
    protected:
       virtual ~TestPlayer();
-            
+
    private:
       float mVelocity,mTurnRate;
       std::string mModelFile;
@@ -62,13 +62,12 @@ class DT_EXAMPLE_EXPORT TestPlayer : public dtGame::GameActor
 
 class DT_EXAMPLE_EXPORT TestPlayerProxy : public dtGame::GameActorProxy
 {
-   public:   
+   public:
       TestPlayerProxy();
-      
+
       virtual void BuildPropertyMap();
       virtual void BuildInvokables();
-      
-         
+
    protected:
       virtual ~TestPlayerProxy();
       virtual void CreateActor();

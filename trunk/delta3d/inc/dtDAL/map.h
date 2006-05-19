@@ -30,6 +30,7 @@
 
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/export.h"
+#include "dtDAL/environmentactor.h"
 
 namespace dtDAL 
 {
@@ -314,6 +315,26 @@ namespace dtDAL
           */
          static bool WildMatch(const std::string& sWild, const std::string& sString);
 
+         /**
+          * Returns the environment actor of this map or NULL if no environment is set
+          * @return A pointer to the environment actor or NULL
+          */
+         ActorProxy* GetEnvironmentActor() { return mEnvActor.get(); }
+
+         /**
+          * const version of the above function
+          * Returns the environment actor of this map or NULL if no environment is set
+          * @return A pointer to the environment actor or NULL
+          */
+         const ActorProxy* GetEnvironmentActor() const { return mEnvActor.get(); }
+
+         /**
+          * Sets the environment actor on this map
+          * @param envActor The new environment actor to set
+          */
+         void SetEnvironmentActor(ActorProxy *envActor);
+         
+
       protected:
          friend class Project;
 
@@ -353,9 +374,9 @@ namespace dtDAL
           */
          void AddMissingActorTypes(const std::set<std::string>& types);
 
-
          virtual ~Map() {}
-      private:
+      
+       private:
          bool mModified;
          //typedef std::multimap<std::string, osg::ref_ptr<ActorProxy> > ProxiesByClassMap;
          std::string mName;
@@ -368,6 +389,8 @@ namespace dtDAL
 
          std::string mCopyright;
          std::string mCreateDateTime;
+
+         osg::ref_ptr<dtDAL::ActorProxy> mEnvActor;
 
          //ProxiesByClassMap proxiesByClass;
          std::map<dtCore::UniqueId, osg::ref_ptr<ActorProxy> > mProxyMap;

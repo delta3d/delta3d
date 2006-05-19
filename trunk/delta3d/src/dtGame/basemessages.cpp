@@ -20,13 +20,14 @@
  */
 
 #include "dtGame/basemessages.h"
+#include "dtDAL/gameeventmanager.h"
 
 namespace dtGame
 {
    float TickMessage::GetDeltaSimTime() const
    {
       const FloatMessageParameter *mp = static_cast<const FloatMessageParameter*>(GetParameter("DeltaSimTime"));
-      return mp->GetValue(); 
+      return mp->GetValue();
    }
 
    float TickMessage::GetDeltaRealTime() const
@@ -143,6 +144,26 @@ namespace dtGame
    {
       StringMessageParameter *mp = static_cast<StringMessageParameter*> (GetParameter("LoadedMapName"));
       mp->SetValue(name);
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+
+   void GameEventMessage::SetGameEvent(dtDAL::GameEvent &event)
+   {
+      GameEventMessageParameter *mp = static_cast<GameEventMessageParameter*>(GetParameter("GameEvent"));
+      mp->SetValue(event.GetUniqueId());
+   }
+
+   const dtDAL::GameEvent *GameEventMessage::GetGameEvent() const
+   {
+      const GameEventMessageParameter *mp = static_cast<const GameEventMessageParameter*>(GetParameter("GameEvent"));
+      const dtCore::UniqueId id = mp->GetValue();
+
+      //Need to look up in the event manager for the specified event.
+      dtDAL::GameEvent *event = dtDAL::GameEventManager::GetInstance().FindEvent(id);
+      if (event == NULL)
+         LOG_WARNING("Game event message parameter had an invalid game event id.");
+      return event;
    }
 
    //////////////////////////////////////////////////////////////////////////////

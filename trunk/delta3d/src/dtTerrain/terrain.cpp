@@ -23,7 +23,7 @@
 
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/exception.h>
 
 #include "dtTerrain/terrain.h"
@@ -142,11 +142,11 @@ namespace dtTerrain
       if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
          newPath = newPath.substr(0,newPath.length()-1);
          
-      if (!dtDAL::FileUtils::GetInstance().DirExists(newPath))
+      if (!dtUtil::FileUtils::GetInstance().DirExists(newPath))
       {
          try 
          {
-            dtDAL::FileUtils::GetInstance().MakeDirectory(newPath);
+            dtUtil::FileUtils::GetInstance().MakeDirectory(newPath);
          }
          catch (dtUtil::Exception &ex)
          {
@@ -397,11 +397,11 @@ namespace dtTerrain
             
             //Now that we generated a tile's cache path, make sure it exists.  If it does
             //not go ahead and create it.
-            if (!dtDAL::FileUtils::GetInstance().DirExists(tilePath))
+            if (!dtUtil::FileUtils::GetInstance().DirExists(tilePath))
             {
                try 
                {
-                  dtDAL::FileUtils::GetInstance().MakeDirectory(tilePath);
+                  dtUtil::FileUtils::GetInstance().MakeDirectory(tilePath);
                   currTile->SetCachePath(tilePath);                  
                }
                catch (dtUtil::Exception &ex)

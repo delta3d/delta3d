@@ -1,6 +1,10 @@
 #include "dtUtil/stringutils.h"
 
-#include <cstdio>                         // for sscanf
+#include <cstdio>        // for sscanf
+
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #define snprintf _snprintf
+#endif
 
 // scan '?' and '*'
 static bool Scan(char*& wildCards, char*& str) 
@@ -99,4 +103,42 @@ unsigned int dtUtil::ToUnsignedInt(const std::string& str)
    unsigned int tmp(0);
    sscanf(str.c_str(), " %u", &tmp);
    return tmp;
+}
+
+
+long dtUtil::GetTimeZone(tm &timeParts)
+{
+   #ifdef __APPLE__
+      return timeParts.tm_gmtoff;
+   #else
+      tzset();
+      return timezone * -1;
+   #endif
+}
+
+const std::string dtUtil::TimeAsUTC(time_t time)
+{
+   char data[28];
+   std::string result;
+   struct tm timeParts;
+   struct tm* tp = localtime(&time);
+   timeParts = *tp;
+
+   long tz = GetTimeZone(timeParts);
+
+   int tzHour = (int)floor(fabs((double)tz / 3600));
+   int tzMin = (int)floor(fabs((double)tz / 60) - (60 * tzHour));
+
+   //since the function of getting hour does fabs,
+   //this needs to check the sign of tz.
+   if (tz < 0)
+      tzHour *= -1;
+
+   snprintf(data, 28, "%04d-%02d-%02dT%02d:%02d:%02d.0%+03d:%02d",
+      timeParts.tm_year + 1900, timeParts.tm_mon + 1, timeParts.tm_mday,
+      timeParts.tm_hour, timeParts.tm_min, timeParts.tm_sec,
+      tzHour, tzMin);
+
+   result.assign(data);
+   return result;
 }

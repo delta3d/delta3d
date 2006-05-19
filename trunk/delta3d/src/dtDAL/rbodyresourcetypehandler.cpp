@@ -35,7 +35,6 @@
 
 #include <osgDB/FileNameUtils>
 #include "dtDAL/rbodyresourcetypehandler.h"
-#include "dtDAL/fileutils.h"
 #include <dtUtil/xercesutils.h>
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
@@ -43,6 +42,11 @@
 #endif
 
 XERCES_CPP_NAMESPACE_USE;
+
+namespace dtUtil
+{
+   class FileUtils;
+}
 
 namespace dtDAL
 {
@@ -63,11 +67,11 @@ namespace dtDAL
 
    RBodyResourceTypeHandler::~RBodyResourceTypeHandler() {}
 
-   bool RBodyResourceTypeHandler::HandlesFile(const std::string& path, FileType type) const
+   bool RBodyResourceTypeHandler::HandlesFile(const std::string& path, dtUtil::FileType type) const
    {
       if (osgDB::getLowerCaseFileExtension(path) == mResourceDirectoryExtension )
       {
-         if (type == REGULAR_FILE)
+         if (type == dtUtil::REGULAR_FILE)
          {
             //It has the right extension, but can we parse the file?
             if (mRBodyConfig.Open(path, mConfigFileHeader))
@@ -77,11 +81,11 @@ namespace dtDAL
             }
 
          }
-         else if (type == DIRECTORY)
+         else if (type == dtUtil::DIRECTORY)
          {
             //the format is always the directory will match the internal file name,
             //e.g. marine.rbody/marine.rbody
-            const std::string& filePath = path + FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(path);
+            const std::string& filePath = path + dtUtil::FileUtils::PATH_SEPARATOR + osgDB::getSimpleFileName(path);
 
             //See if the file exists and if we can parse it?
             if (mRBodyConfig.Open(filePath, mConfigFileHeader))
@@ -120,10 +124,10 @@ namespace dtDAL
 
       //std::cout << "adding RBODY resource " << srcPath << " as " << newName << "." << std::endl;
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
-      FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
-      if (ftype != REGULAR_FILE)
+      if (ftype != dtUtil::REGULAR_FILE)
       {
          EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                 std::string("No such file:\"") + srcPath + "\".");
@@ -132,10 +136,10 @@ namespace dtDAL
       std::string extension = osgDB::getLowerCaseFileExtension(srcPath);
       std::string resourceFileName = newName + '.' + extension;
 
-      const std::string& destDir = destCategoryPath + FileUtils::PATH_SEPARATOR + resourceFileName;
+      const std::string& destDir = destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName;
       //the format is the directory will match the internal file name,
       //e.g. marine.rbody/marine.rbody
-      const std::string& destFile = destDir + FileUtils::PATH_SEPARATOR + resourceFileName;
+      const std::string& destFile = destDir + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName;
 
       fileUtils.MakeDirectory(destDir);
 
@@ -152,13 +156,13 @@ namespace dtDAL
             {
                try
                {
-                  fileUtils.FileCopy(srcDir + FileUtils::PATH_SEPARATOR + value, destDir, true);
+                  fileUtils.FileCopy(srcDir + dtUtil::FileUtils::PATH_SEPARATOR + value, destDir, true);
                }
                catch (const dtUtil::Exception& ex)
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                       "Error \"%s\" copying associated rbody resource file %s to %s",
-                                      ex.What().c_str(), (srcDir + FileUtils::PATH_SEPARATOR + value).c_str(), destDir.c_str());
+                                      ex.What().c_str(), (srcDir + dtUtil::FileUtils::PATH_SEPARATOR + value).c_str(), destDir.c_str());
                   throw ex;
                }
             }
@@ -222,20 +226,20 @@ namespace dtDAL
       const std::string& sectionName, const std::string& keyName, const std::string& srcDir, const std::string& destDir) const
    {
       std::string value;
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       for (int i = 1; mRBodyConfig.Push(sectionName, i); ++i)
       {
          if (mRBodyConfig.Get(keyName, value))
          {
             try
             {
-               fileUtils.FileCopy(srcDir + FileUtils::PATH_SEPARATOR + value, destDir, true);
+               fileUtils.FileCopy(srcDir + dtUtil::FileUtils::PATH_SEPARATOR + value, destDir, true);
             }
             catch (const dtUtil::Exception& ex)
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                    "Error \"%s\" copying associated rbody resource file %s to %s",
-                                   ex.What().c_str(), (srcDir + FileUtils::PATH_SEPARATOR + value).c_str(), destDir.c_str());
+                                   ex.What().c_str(), (srcDir + dtUtil::FileUtils::PATH_SEPARATOR + value).c_str(), destDir.c_str());
                throw ex;
             }
             //if it's a material file, it will probably have referenced values.
@@ -251,11 +255,11 @@ namespace dtDAL
 
    void RBodyResourceTypeHandler::RemoveResource(const std::string& resourcePath) const
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (fileUtils.FileExists(resourcePath))
       {
          const std::string& path = osgDB::getFilePath(resourcePath);
-         if (HandlesFile(path, DIRECTORY))
+         if (HandlesFile(path, dtUtil::DIRECTORY))
             fileUtils.DirDelete(path, true);
       }
    }
@@ -263,9 +267,9 @@ namespace dtDAL
    void RBodyResourceTypeHandler::ParseMaterialAndCopyReferenecedFiles(
       const std::string& srcDir, const std::string& docFileName, const std::string& destDir) const
    {
-      const std::string& srcPath = srcDir + FileUtils::PATH_SEPARATOR + docFileName;
+      const std::string& srcPath = srcDir + dtUtil::FileUtils::PATH_SEPARATOR + docFileName;
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       size_t size = fileUtils.GetFileInfo(srcPath).size;
 
       char* xmlWrapperFmt = "<Hack>%s</Hack>";
@@ -385,11 +389,11 @@ namespace dtDAL
                const std::string fileName(fileNameChar);
                XMLString::release(&fileNameChar);
 
-               const std::string& materialPath = srcDir + FileUtils::PATH_SEPARATOR + fileName;
-               FileUtils& fileUtils = FileUtils::GetInstance();
+               const std::string& materialPath = srcDir + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
+               dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
                //if we found a file in the MAP element, copy it.
-               if (fileUtils.GetFileInfo(materialPath).fileType == REGULAR_FILE)
+               if (fileUtils.GetFileInfo(materialPath).fileType == dtUtil::REGULAR_FILE)
                {
                   try
                   {
@@ -400,6 +404,7 @@ namespace dtDAL
                      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                                          "Error \"%s\" copying associated rbody resource file %s to %s",
                                          ex.What().c_str(), (srcPath).c_str(), destDir.c_str());
+                                         
                      throw ex;
                   }
                }

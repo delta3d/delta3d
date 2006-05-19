@@ -1,6 +1,6 @@
 Import('*')
 
 srcs = SGlob( '*.cpp' )
-deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtGame', 'dtActors' ]
+deps = [ 'dtCore', 'dtABC', 'dtUtil', 'dtGame', 'dtActors', 'dtGUI', 'CEGUIBase', 'CEGUIOpenGLRenderer', 'CEGUIWindowsLook']
 
 env.BuildProgram( 'testAAR', srcs, deps )

@@ -52,7 +52,9 @@ namespace dtGame
          static const MessageType INFO_RESUMED;
          static const MessageType INFO_RESTARTED;
          static const MessageType INFO_TIME_CHANGED;
-         
+         static const MessageType INFO_GAME_EVENT;
+         static const MessageType INFO_ENVIRONMENT_CHANGED;
+
          ///Message sent when a player enters the world.  The Actor deleted message can be used when the player leaves.
          static const MessageType INFO_PLAYER_ENTERED_WORLD;
 
@@ -74,7 +76,7 @@ namespace dtGame
          static const MessageType NETCLIENT_NOTIFY_DISCONNECT;
          static const MessageType NETSERVER_ACCEPT_CONNECTION;
          static const MessageType NETSERVER_REJECT_CONNECTION;
-         
+
          //LOGGER MESSAGES
          static const MessageType LOG_REQ_CHANGESTATE_PLAYBACK;
          static const MessageType LOG_REQ_CHANGESTATE_RECORD;
@@ -94,6 +96,7 @@ namespace dtGame
          static const MessageType LOG_INFO_STATUS; // DATA
          static const MessageType LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS;
          static const MessageType LOG_COMMAND_END_LOADKEYFRAME_TRANS; // data
+         static const MessageType LOG_REQ_JUMP_TO_KEYFRAME; // data
 
          /**
           * Gets the category of this message type
@@ -128,15 +131,15 @@ namespace dtGame
       protected:
 
          /// Constructor
-         MessageType(const std::string &name, const std::string &category = "", 
-                     const std::string description = "", const unsigned short id = 0) : 
-                     dtUtil::Enumeration(name), category(category), description(description), mId(id) 
+         MessageType(const std::string &name, const std::string &category = "",
+                     const std::string description = "", const unsigned short id = 0) :
+                     dtUtil::Enumeration(name), category(category), description(description), mId(id)
          {
             AddInstance(this);
          }
 
          /// Destructor
-         virtual ~MessageType() { } 
+         virtual ~MessageType() { }
 
          std::string category, description;
          const unsigned short mId;

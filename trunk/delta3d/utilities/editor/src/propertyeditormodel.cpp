@@ -27,7 +27,7 @@ namespace dtEditQt
 
     /////////////////////////////////////////////////////////////////////////////////
     PropertyEditorModel::PropertyEditorModel(QObject *parent)
-        : QAbstractItemModel(parent)
+        : QAbstractItemModel(parent),rootControl(NULL)
     {
     }
 
@@ -39,22 +39,49 @@ namespace dtEditQt
     /////////////////////////////////////////////////////////////////////////////////
     QModelIndex PropertyEditorModel::index(int row, int column, const QModelIndex &parent) const
     {
-        DynamicAbstractControl *parentProp = privateData(parent);
+		#if (QT_VERSION == 0x040001)
+		DynamicAbstractControl *parentProp = privateData(parent);
 
         if (!parent.isValid() || parentProp == NULL)
             // special case for root.
             parentProp = rootControl;
 
         DynamicAbstractControl *childProp = parentProp->getChild(row);
-        if (childProp != NULL) {
+        if (childProp != NULL) 
+		{
             return createIndex(row, column, childProp);
-        } else {
+        } 
+		else 
+		{
             return QModelIndex();
         }
+		#else
+		DynamicAbstractControl *parentProp = privateData(parent);
+		DynamicAbstractControl *childProp = NULL;
+        
+		if(rootControl == NULL)
+			return QModelIndex();
+			// createIndex(row, column, rootControl);
 
+		if (!parent.isValid() || parentProp == NULL)
+            // special case for root.
+            parentProp = rootControl;
+
+		if(parentProp != NULL)
+			childProp = parentProp->getChild(row);
+        
+        if (childProp != NULL) 
+		{
+            return createIndex(row, column, childProp);
+        }
+		else 
+		{
+            return QModelIndex();
+        }
+		#endif
     }
 
-    /////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
     QModelIndex PropertyEditorModel::parent(const QModelIndex &index) const
     {
         DynamicAbstractControl *prop = privateData(index);

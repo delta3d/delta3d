@@ -28,6 +28,7 @@
 #include <dtUtil/enumeration.h>
 #include <dtUtil/log.h>
 #include <dtDAL/plugin_export.h>
+#include <dtDAL/gameevent.h>
 
 using namespace dtActors;
 
@@ -364,13 +365,13 @@ public:
         return myVec3d;
     }
 
-    void setTestEnum(TestEnum &mode) 
+    void setTestEnum(TestEnum &mode)
     {
         //dtCore::Light *l = dynamic_cast<dtCore::Light *>(this->actor.get());
         myEnum = &mode;
     }
 
-    TestEnum &getTestEnum() 
+    TestEnum &getTestEnum()
     {
         return *myEnum;
     }
@@ -397,15 +398,15 @@ public:
 
     void setTextureResourceName(const std::string &fileName) { myTexture = fileName; }
 
-    dtCore::DeltaDrawable* GetTestActor() 
+    dtCore::DeltaDrawable* GetTestActor()
     {
        //LOG_ALWAYS("ActorProxy get");
-       
+
        ActorProxy* proxy = GetLinkedActor("Test_Actor");
        return proxy->GetActor();
     }
 
-    void SetTestActor(ActorProxy* proxy) 
+    void SetTestActor(ActorProxy* proxy)
     {
         this->SetLinkedActor("Test_Actor", proxy);
         //LOG_ALWAYS("ActorProxy set");
@@ -418,6 +419,9 @@ public:
 
     //    obj->LoadFile(fileName);
     }
+
+    void SetTestGameEvent(dtDAL::GameEvent *event) { mTestGameEvent = event; }
+    dtDAL::GameEvent *GetTestGameEvent() { return mTestGameEvent.get(); }
 
 protected:
     virtual ~ExampleTestPropertyProxy() { }
@@ -443,6 +447,7 @@ private:
     TestEnum *myEnum;
     std::string mySound;
     std::string myTexture;
+    dtCore::RefPtr<dtDAL::GameEvent> mTestGameEvent;
 
     static const std::string GROUPNAME;
 

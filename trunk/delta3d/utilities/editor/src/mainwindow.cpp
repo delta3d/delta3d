@@ -34,7 +34,7 @@
 
 #include "dtDAL/project.h"
 #include "dtDAL/librarymanager.h"
-#include "dtDAL/fileutils.h"
+#include "dtUtil/fileutils.h"
 #include "dtEditQt/global.h"
 #include "dtEditQt/mainwindow.h"
 #include "dtEditQt/editoractions.h"
@@ -164,6 +164,7 @@ namespace dtEditQt
         editToolBar->addAction(EditorActions::getInstance().actionEditDeleteActor);
         editToolBar->addAction(EditorActions::getInstance().actionEditGotoActor);
         editToolBar->addAction(EditorActions::getInstance().actionEditGroundClampActors);
+        editToolBar->addAction(EditorActions::getInstance().actionToggleTerrainPaging);
         addToolBar(editToolBar);
 
         undoToolBar = new QToolBar(this);
@@ -665,7 +666,7 @@ namespace dtEditQt
                 std::string project = settings.value(EditorSettings::RECENT_PROJECT0,
                     QString("")).toString().toStdString();
 
-                if(dtDAL::FileUtils::GetInstance().DirExists(project))
+                if(dtUtil::FileUtils::GetInstance().DirExists(project))
                 {
                     EditorData::getInstance().addRecentProject(project);
                     if(EditorData::getInstance().getLoadLastProject())
@@ -738,7 +739,7 @@ namespace dtEditQt
             }
             else if(result == 1)
             {
-                /*if(!dtDAL::FileUtils::GetInstance().FileExists(str))
+                /*if(!dtUtil::FileUtils::GetInstance().FileExists(str))
                 {
                     QMessageBox::critical(this, tr("Error loading map"),
                         tr("The map ") + str.c_str() + tr(" does not exist or has become corrupted, backup file still retained."));

@@ -24,6 +24,7 @@
 #include "dtDAL/exceptionenum.h"
 #include "dtDAL/map.h"
 #include "dtDAL/mapxml.h"
+#include "dtDAL/gameeventmanager.h"
 #include <dtUtil/stringutils.h>
 #include <dtUtil/log.h>
 
@@ -37,27 +38,27 @@ namespace dtDAL
    {
       if (IsReadOnly())
          return false;
-       
+
       if (value.empty() || value == "NULL")
       {
          SetValue(NULL);
          return true;
       }
-       
+
       dtCore::UniqueId newIdValue = value;
-      try 
+      try
       {
          Map* map = Project::GetInstance().GetMapForActorProxy(*mProxy);
-           
+
          if (map == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
                                                                            __FUNCTION__, __LINE__, "Actor does not exist in a map.  Setting property %s with string value failed.",
                                                                            GetName().c_str());
             return false;
-         }           
-           
-         ActorProxy* newProxyValue = map->GetProxyById(newIdValue); 
+         }
+
+         ActorProxy* newProxyValue = map->GetProxyById(newIdValue);
          if (newProxyValue == NULL)
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_INFO,
@@ -65,7 +66,7 @@ namespace dtDAL
                                                                            value.c_str(), GetName().c_str());
             return false;
          }
-           
+
          SetValue(newProxyValue);
          return true;
       }
@@ -76,16 +77,16 @@ namespace dtDAL
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
                                                                            __FUNCTION__, __LINE__, "Project context is not set, unable to lookup actors.  Setting property %s with string value failed. Error Message %s.",
                                                                            GetName().c_str(), ex.What().c_str());
-         } 
-         else 
+         }
+         else
          {
             dtUtil::Log::GetInstance("enginepropertytypes.cpp").LogMessage(dtUtil::Log::LOG_WARNING,
                                                                            __FUNCTION__, __LINE__, "Error setting ActorActorProperty.  Setting property %s with string value failed. Error Message %s.",
                                                                            GetName().c_str(), ex.What().c_str());
          }
-           
+
       }
-       
+
       return false;
    }
 
@@ -132,7 +133,21 @@ namespace dtDAL
    }
 
    ////////////////////////////////////////////////////////////////////////////
-   void ResourceActorProperty::SetValue(ResourceDescriptor *value)
+   bool GameEventActorProperty::SetStringValue(const std::string& value)
+   {
+      GameEvent *event = GameEventManager::GetInstance().FindEvent(dtCore::UniqueId(value));
+      SetValue(event);
+      return (event != NULL) ? true : false;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   const std::string GameEventActorProperty::GetStringValue() const
+   {
+      return GetValue() == NULL ? "" : GetValue()->GetUniqueId().ToString();
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   void ResourceActorProperty::SetValue(ResourceDescriptor* value)
    {
       if (IsReadOnly())
       {
@@ -207,12 +222,12 @@ namespace dtDAL
          }
          else
          {
-            //assume the value is a descriptor and use it for both the 
+            //assume the value is a descriptor and use it for both the
             //data and the display name.
             displayName = tokens[0];
             identifier = tokens[0];
          }
-            
+
          dtUtil::trim(identifier);
          dtUtil::trim(displayName);
 
@@ -297,7 +312,7 @@ namespace dtDAL
       }
 
       std::istringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream.str(value);
       float i;
       stream >> i;
@@ -309,7 +324,7 @@ namespace dtDAL
    const std::string FloatActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -324,7 +339,7 @@ namespace dtDAL
       }
 
       std::istringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream.str(value);
       double i;
       stream >> i;
@@ -336,7 +351,7 @@ namespace dtDAL
    const std::string DoubleActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -351,7 +366,7 @@ namespace dtDAL
       }
 
       std::istringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream.str(value);
       long i;
       stream >> i;
@@ -363,7 +378,7 @@ namespace dtDAL
    const std::string LongActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -392,7 +407,7 @@ namespace dtDAL
    const std::string Vec2ActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -421,7 +436,7 @@ namespace dtDAL
    const std::string Vec2fActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -450,7 +465,7 @@ namespace dtDAL
    const std::string Vec2dActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -463,7 +478,7 @@ namespace dtDAL
          LOG_WARNING("SetStringValue has been called on a property that is read only.");
          return false;
       }
-        
+
       osg::Vec3 newValue;
 
       if (dtUtil::ParseVec<osg::Vec3>(value, newValue, 3))
@@ -478,7 +493,7 @@ namespace dtDAL
    const std::string Vec3ActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -506,7 +521,7 @@ namespace dtDAL
    const std::string Vec3fActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -534,7 +549,7 @@ namespace dtDAL
    const std::string Vec3dActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -562,7 +577,7 @@ namespace dtDAL
    const std::string Vec4ActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -590,7 +605,7 @@ namespace dtDAL
    const std::string Vec4fActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }
@@ -618,7 +633,7 @@ namespace dtDAL
    const std::string Vec4dActorProperty::GetStringValue() const
    {
       std::ostringstream stream;
-      stream.precision(GetNumberPrecision());        
+      stream.precision(GetNumberPrecision());
       stream << GetValue();
       return stream.str();
    }

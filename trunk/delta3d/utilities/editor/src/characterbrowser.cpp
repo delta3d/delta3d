@@ -234,7 +234,7 @@ namespace dtEditQt
                 context = QString(project.GetContext().c_str());
 
                 file = context+"\\"+file;
-                file.replace("\\",QString(dtDAL::FileUtils::PATH_SEPARATOR));
+                file.replace("\\",QString(dtUtil::FileUtils::PATH_SEPARATOR));
 
                 if(characterScene->GetDrawableIndex(previewObject.get())==(unsigned)characterScene->GetNumberOfAddedDrawable())
                 {

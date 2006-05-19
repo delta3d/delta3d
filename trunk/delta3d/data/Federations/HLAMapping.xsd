@@ -65,16 +65,17 @@
         <xsd:complexType>
           <xsd:sequence>
             <xsd:choice>
-		        <xsd:complexType>
-		          <xsd:sequence>
-	               <xsd:element name="objectClass" type="xsd:string" />
-	               <xsd:element name="actorType" type="xsd:string"/>
-		            <xsd:element name="remoteOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
-		            <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
-		          </xsd:sequence>
-		        </xsd:complexType>	             
+	      <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="objectClass" type="xsd:string" />
+                  <xsd:element name="actorType" type="xsd:string"/>
+                  <xsd:element name="remoteOnly" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+                  <xsd:element name="disEntityEnum" minOccurs="0" maxOccurs="1" type="DISEntityEnumType"/>
+                </xsd:sequence>
+              </xsd:complexType>	             
               <xsd:element name="abstract" type="xsd:string"/>
             </xsd:choice>
+            <xsd:element name="entityIdAttributeName" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
             <xsd:element name="attrToProp" minOccurs="0" maxOccurs="unbounded" type="OneToOneType"/>
           </xsd:sequence>
         </xsd:complexType>

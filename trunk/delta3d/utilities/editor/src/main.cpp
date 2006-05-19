@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
         dtEditQt::EditorEvents::getInstance().emitEditorInitiationEvent();
         mainWindow.setWindowMenuTabsChecked();
 
+        dtCore::System::Instance()->SetShutdownOnWindowClose(false);
         dtCore::System::Instance()->Start();
         dtCore::System::Instance()->Config();
         result = app.exec();

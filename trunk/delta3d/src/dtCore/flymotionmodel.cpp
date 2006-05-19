@@ -3,18 +3,19 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <dtCore/flymotionmodel.h>
-#include <dtCore/keyboard.h>
-#include <dtCore/logicalinputdevice.h>
-#include <dtCore/mouse.h>
 #include <dtCore/scene.h>
-#include <dtCore/system.h>
-#include <dtCore/transformable.h>
 
 #include <osg/Vec3>
 #include <osg/Matrix>
 
-namespace dtCore
-{
+#include "dtCore/system.h"
+#include "dtCore/logicalinputdevice.h"
+#include "dtCore/mouse.h"
+#include "dtCore/keyboard.h"
+#include "dtCore/transform.h"
+#include "dtCore/transformable.h"
+
+using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
 
@@ -25,16 +26,22 @@ IMPLEMENT_MANAGEMENT_LAYER(FlyMotionModel)
  * avoid creating default input mappings
  * @param mouse the mouse instance, or 0 to avoid
  * creating default input mappings
+ * @param useSimTimeForSpeed true if the motion model should use the 
+ * simulation time, which can be scaled, for motion or false if it   
+ * should use the real time.
  */
 FlyMotionModel::FlyMotionModel(Keyboard* keyboard,
-                               Mouse* mouse)
+                               Mouse* mouse, 
+                               bool useSimTimeForSpeed)
    : MotionModel("FlyMotionModel"),
      mFlyForwardBackwardAxis(0),
      mTurnLeftRightAxis(0),
      mTurnUpDownAxis(0),
      mMaximumFlySpeed(100.0f),
-     mMaximumTurnSpeed(90.0f)
+     mMaximumTurnSpeed(90.0f),
+     mUseSimTimeForSpeed(useSimTimeForSpeed)
 {
+
    RegisterInstance(this);
    
    if(keyboard != 0 && mouse != 0)
@@ -323,10 +330,19 @@ void FlyMotionModel::OnMessage(MessageData *data)
 {
    if(GetTarget() != 0 &&
       IsEnabled() && 
-      data->message == "preframe")
+      (data->message == "preframe" || 
+        (!mUseSimTimeForSpeed && data->message == "pause")))
    {
-      const double delta = *static_cast<const double *>(data->userData);
-      
+      // Get the time change (sim time or real time)
+      double delta;
+      double* timeChange = (double*)data->userData;
+      if (data->message == "pause") // paused and !useSimTime
+         delta = *timeChange; // 0 is real time when paused
+      else if (mUseSimTimeForSpeed) 
+         delta = timeChange[1]; // 0 is sim time
+      else
+         delta = timeChange[1]; // 1 is real time
+
       Transform transform;
       
       GetTarget()->GetTransform(&transform);
@@ -373,6 +389,4 @@ void FlyMotionModel::OnMessage(MessageData *data)
       
       GetTarget()->SetTransform(&transform);  
    }
-}
-
 }

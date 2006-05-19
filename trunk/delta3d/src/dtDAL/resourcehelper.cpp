@@ -23,11 +23,11 @@
 #include <iostream>
 
 #include <osgDB/FileNameUtils>
+#include <dtUtil/fileutils.h>
 
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/datatype.h"
 #include "dtDAL/resourcetreenode.h"
-#include "dtDAL/fileutils.h"
 #include "dtUtil/stringutils.h"
 #include "dtDAL/rbodyresourcetypehandler.h"
 #include "dtDAL/directoryresourcetypehandler.h"
@@ -47,9 +47,9 @@ namespace dtDAL
       {
       }
 
-      virtual bool HandlesFile(const std::string& path, FileType type) const
+	  virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const
       {
-         if (type != REGULAR_FILE)
+         if (type != dtUtil::REGULAR_FILE)
             return false;
 
          const std::string extension = osgDB::getLowerCaseFileExtension(path);
@@ -67,10 +67,10 @@ namespace dtDAL
       virtual const std::string ImportResourceToPath(const std::string& newName, const std::string& srcPath,
                                                      const std::string& destCategoryPath) const
       {
-         FileUtils& fileUtils = FileUtils::GetInstance();
-         FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+		 dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
-         if (ftype != REGULAR_FILE)
+         if (ftype != dtUtil::REGULAR_FILE)
          {
             EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("No such file:\"") + srcPath + "\".");
@@ -79,13 +79,13 @@ namespace dtDAL
          std::string extension = osgDB::getLowerCaseFileExtension(srcPath);
          std::string resourceFileName = newName + '.' + extension;
 
-         fileUtils.FileCopy(srcPath, destCategoryPath + FileUtils::PATH_SEPARATOR + resourceFileName, true);
+         fileUtils.FileCopy(srcPath, destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName, true);
          return resourceFileName;
       }
 
       virtual void RemoveResource(const std::string& resourcePath) const
       {
-         FileUtils& fileUtils = FileUtils::GetInstance();
+         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          if (fileUtils.FileExists(resourcePath))
             fileUtils.FileDelete(resourcePath);
       }
@@ -207,15 +207,15 @@ namespace dtDAL
 
          //there is a bug in the function to get the extension when using relative paths
          //and the file has no extension.
-         if (ext.find(FileUtils::PATH_SEPARATOR) != std::string::npos)
+         if (ext.find(dtUtil::FileUtils::PATH_SEPARATOR) != std::string::npos)
             ext.clear();
 
          //To work around a weird compiler bug...
          DataType* dt = const_cast<DataType*>(&resourceType);
 
-         FileType fType = FileUtils::GetInstance().GetFileInfo(filePath).fileType;
+		 dtUtil::FileType fType = dtUtil::FileUtils::GetInstance().GetFileInfo(filePath).fileType;
 
-         if (fType == REGULAR_FILE && !ext.empty())
+         if (fType == dtUtil::REGULAR_FILE && !ext.empty())
          {
             const ResourceTypeHandler* handler = FindHandlerForDataTypeAndExtension(mTypeHandlers, *dt, ext);
             //ask the handler if it handles the given file.
@@ -226,12 +226,12 @@ namespace dtDAL
          else
          {
             //the file doesn't exist, so we obviously can't check for a datatype.
-            if (fType == FILE_NOT_FOUND)
+            if (fType == dtUtil::FILE_NOT_FOUND)
             {
                return NULL;
 
             }
-            else if (fType == DIRECTORY)
+            else if (fType == dtUtil::DIRECTORY)
             {
                //if we have an extension, look for it in the ResourceDirectoryTypeHandlers
                if (!ext.empty())
@@ -247,7 +247,7 @@ namespace dtDAL
                for (std::multimap<DataType*, osg::ref_ptr<ResourceTypeHandler> >::const_iterator i = mDirectoryImportingTypeHandlers.find(dt);
                     i != mDirectoryImportingTypeHandlers.end() && i->first == dt; ++i)
                {
-                  if (i->second->HandlesFile(filePath, DIRECTORY))
+                  if (i->second->HandlesFile(filePath, dtUtil::DIRECTORY))
                   {
                      return i->second.get();
                   }
@@ -432,7 +432,7 @@ namespace dtDAL
       {
          if (*i == ResourceDescriptor::DESCRIPTOR_SEPARATOR)
          {
-            path[x] = FileUtils::PATH_SEPARATOR;
+            path[x] = dtUtil::FileUtils::PATH_SEPARATOR;
          }
          x++;
       }
@@ -468,7 +468,7 @@ namespace dtDAL
             currentPath = *i;
          }
          else
-            currentPath += FileUtils::PATH_SEPARATOR + *i;
+            currentPath += dtUtil::FileUtils::PATH_SEPARATOR + *i;
 
          //file and directories handled by handlers MUST have extensions.
          const std::string& ext = osgDB::getLowerCaseFileExtension(currentPath);
@@ -481,7 +481,7 @@ namespace dtDAL
       }
 
       //it's only a problem that we don't have a handler if the file doesn't exist.
-      if (handler == NULL && FileUtils::GetInstance().FileExists(currentPath))
+      if (handler == NULL && dtUtil::FileUtils::GetInstance().FileExists(currentPath))
       {
          EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
                 std::string("Could not find a resource handler for resource descriptor: ")
@@ -506,11 +506,11 @@ namespace dtDAL
                                                         const DataType& type, dtUtil::tree<ResourceTreeNode>*  dataTypeTree) const
    {
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      FileType ftype = fileUtils.GetFileInfo(pathToFile).fileType;
+	  dtUtil::FileType ftype = fileUtils.GetFileInfo(pathToFile).fileType;
 
-      if (ftype == FILE_NOT_FOUND)
+      if (ftype == dtUtil::FILE_NOT_FOUND)
       {
          EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                 std::string("No such file:\"") + pathToFile + "\".");
@@ -574,7 +574,7 @@ namespace dtDAL
          else
             currentCategory += ResourceDescriptor::DESCRIPTOR_SEPARATOR + *i;
 
-         sofar += FileUtils::PATH_SEPARATOR + *i;
+         sofar += dtUtil::FileUtils::PATH_SEPARATOR + *i;
 
          currentLevelTree = VerifyDirectoryExists(sofar, currentCategory, currentLevelTree);
       }
@@ -591,20 +591,20 @@ namespace dtDAL
    {
       bool result = true;
       //start with the datetype name
-      std::string sofar = type.GetName() + FileUtils::PATH_SEPARATOR;
+      std::string sofar = type.GetName() + dtUtil::FileUtils::PATH_SEPARATOR;
 
       //replace all
       for (std::string::const_iterator i = category.begin(); i != category.end(); ++i)
       {
          if (*i == ResourceDescriptor::DESCRIPTOR_SEPARATOR)
          {
-            sofar += FileUtils::PATH_SEPARATOR;
+            sofar += dtUtil::FileUtils::PATH_SEPARATOR;
          }
          else
             sofar += *i;
       }
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       if (fileUtils.DirExists(sofar))
       {
@@ -677,17 +677,17 @@ namespace dtDAL
    dtUtil::tree<ResourceTreeNode>* ResourceHelper::VerifyDirectoryExists(const std::string& path,
                                                                          const std::string& category, dtUtil::tree<ResourceTreeNode>* parentTree) const
    {
-      FileType ft = FileUtils::GetInstance().GetFileInfo(path).fileType;
-      if (ft == REGULAR_FILE)
+	   dtUtil::FileType ft = dtUtil::FileUtils::GetInstance().GetFileInfo(path).fileType;
+      if (ft == dtUtil::REGULAR_FILE)
       {
          EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError, std::string("File: \"")
                 + path + "\" must be a directory.");
       }
-      else if (ft == FILE_NOT_FOUND)
+      else if (ft == dtUtil::FILE_NOT_FOUND)
       {
          try
          {
-            FileUtils::GetInstance().MakeDirectory(path);
+            dtUtil::FileUtils::GetInstance().MakeDirectory(path);
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -740,7 +740,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    void ResourceHelper::IndexResources(dtUtil::tree<ResourceTreeNode>& tree) const
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       for (std::vector<dtUtil::Enumeration *>::const_iterator i = DataType::Enumerate().begin();
            i != DataType::Enumerate().end(); ++i)
       {
@@ -762,7 +762,7 @@ namespace dtDAL
             fileUtils.PushDirectory(dt.GetName());
             try
             {
-               IndexResources(FileUtils::GetInstance(), dataTypeTree, dt, std::string(""), std::string(""));
+               IndexResources(dtUtil::FileUtils::GetInstance(), dataTypeTree, dt, std::string(""), std::string(""));
             }
             catch (const dtUtil::Exception& ex)
             {
@@ -775,7 +775,7 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
-   void ResourceHelper::IndexResources(FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
+   void ResourceHelper::IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
                                        const DataType& dt, const std::string& categoryPath, const std::string& category) const
    {
       std::string resourcePath = categoryPath;
@@ -786,28 +786,28 @@ namespace dtDAL
       fileUtils.PushDirectory(osgDB::getSimpleFileName(resourcePath));
       try
       {
-         DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory());
-         for (DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
+         dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(fileUtils.CurrentDirectory());
+         for (dtUtil::DirectoryContents::const_iterator j = contents.begin(); j != contents.end(); ++j)
          {
             if (*j == "." || *j == "..")
                continue;
 
             const std::string& currentFile = *j;
 
-            FileInfo fi = fileUtils.GetFileInfo(currentFile);
+            dtUtil::FileInfo fi = fileUtils.GetFileInfo(currentFile);
 
             const ResourceTypeHandler* handler = NULL;
             //only look for a handler if the file/dir has an extension.
             if (!osgDB::getLowerCaseFileExtension(currentFile).empty())
                handler = GetHandlerForFile(dt, currentFile);
 
-            if (fi.fileType == DIRECTORY && handler == NULL)
+            if (fi.fileType == dtUtil::DIRECTORY && handler == NULL)
             {
                //always put a path separator on the end.  The categoryPath should always
                //have a separator on both ends.
                std::string newCategoryPath;
                if (!categoryPath.empty())
-                  newCategoryPath = categoryPath + FileUtils::PATH_SEPARATOR + currentFile;
+                  newCategoryPath = categoryPath + dtUtil::FileUtils::PATH_SEPARATOR + currentFile;
                else
                   newCategoryPath = currentFile;
 
@@ -842,6 +842,7 @@ namespace dtDAL
       {
          fileUtils.PopDirectory();
          throw ex;
+         
       }
       fileUtils.PopDirectory();
    }

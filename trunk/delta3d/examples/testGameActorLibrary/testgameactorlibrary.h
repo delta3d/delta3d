@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -18,13 +18,22 @@
  *
  * @author William E. Johnson II
  */
-#include <dtGame/export.h>
 #include <dtDAL/actorpluginregistry.h>
 #include "export.h"
 
 class DT_EXAMPLE_EXPORT TestGameActorLibrary : public dtDAL::ActorPluginRegistry
 {
    public:
+
+      static dtCore::RefPtr<dtDAL::ActorType> TEST1_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST2_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_PLAYER_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_TASK_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_COUNTER_TASK_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_TANK_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_JET_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_HELICOPTER_GAME_ACTOR_PROXY_TYPE;
+      static dtCore::RefPtr<dtDAL::ActorType> TEST_ENVIRONMENT_GAME_ACTOR_PROXY_TYPE;
 
       /// Constructor
       TestGameActorLibrary();

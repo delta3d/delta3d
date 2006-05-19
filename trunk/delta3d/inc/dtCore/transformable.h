@@ -99,19 +99,31 @@ namespace dtCore
       ///Set the Transform to reposition this Transformable
       virtual void SetTransform(const Transform* xform, CoordSysEnum cs = ABS_CS );
 
+      ///Set the Transform to reposition this Transformable
+      void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS )
+      {
+         SetTransform(&xform, cs);
+      }
+
       ///Get the current Transform of this Transformable
       virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
 
-      ///Convenience function to return back the internal matrix transform node
+      ///Get the current Transform of this Transformable
+      void GetTransform( Transform& xform, CoordSysEnum cs = ABS_CS ) const
+      {
+         GetTransform(&xform, cs);
+      }
+
       ///Convenience function to return back the internal matrix transform node
       virtual osg::MatrixTransform* GetMatrixNode()
       { 
-         return dynamic_cast<osg::MatrixTransform*>( GetOSGNode() );
+         return dynamic_cast<osg::MatrixTransform*>( GetOSGNode() ); 
       }
 
+      ///Convenience function to return back the internal matrix transform node
       virtual const osg::MatrixTransform* GetMatrixNode() const
-      {
-         return dynamic_cast<const osg::MatrixTransform*>( GetOSGNode() );
+      { 
+         return dynamic_cast<const osg::MatrixTransform*>( GetOSGNode() ); 
       }
 
       ///Render method for an object which may not have geometry

@@ -35,6 +35,7 @@ namespace dtGame
    class LogKeyframe;
    class LogCaptureKeyframeMessage;
    class LogInsertTagMessage;
+   class LogJumpToKeyframeMessage;
    
    /**
     * This is a GameManager component that servers as the primary component 
@@ -120,6 +121,13 @@ namespace dtGame
           */
          void HandleCaptureKeyFrame(const LogCaptureKeyframeMessage &msg);
          
+         /**
+          * Performs some basic error checking and then jumps to the keyframe. Only in Playback.
+          * @param msg The message containing the keyframe specifications.  
+          * @see JumpToKeyFrame
+          */
+         void HandleJumpToKeyFrame(const LogJumpToKeyframeMessage &message);
+
          /**
           * Initiates a keyframe capture.  This is a heavy operation that queries the
           * Game Manager for a list of the game actors, captures their state, and dumps

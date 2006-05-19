@@ -8,6 +8,7 @@
 #include <dtGame/datastream.h>
 #include <dtGame/defaultmessageprocessor.h>
 #include <dtGame/exceptionenum.h>
+#include <dtGame/environmentactor.h>
 #include <dtGame/export.h>
 #include <dtGame/gameactor.h>
 #include <dtGame/gameapplication.h>

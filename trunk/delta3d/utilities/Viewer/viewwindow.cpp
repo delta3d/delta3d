@@ -1,9 +1,9 @@
 #include <string>
 
 #include <dtCore/globals.h>
-#include <dtABC/widget.h>
-#include <dtDAL/fileutils.h>
 #include <dtCore/camera.h>
+#include <dtABC/widget.h>
+#include <dtUtil/fileutils.h>
 
 #include "viewstate.h"
 #include "viewwindow.h"
@@ -353,7 +353,7 @@ ViewWindow::CommandLine( int argc, char** argv )
    if (!flag)
    {
       //set our default path to the current working directory
-      SetPath( dtDAL::FileUtils::GetInstance().CurrentDirectory().c_str()); 
+      SetPath( dtUtil::FileUtils::GetInstance().CurrentDirectory().c_str()); 
 
       for( int ii(1); ii < argc; ii++ )
       {

@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine
 * Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -156,7 +156,7 @@ namespace dtEditQt
         propertyModel = new PropertyEditorModel(this);
         rootProperty = new DynamicGroupControl("root");
 
-        // Left here.  This is the code you need here if you want to NOT recreate the 
+        // Left here.  This is the code you need here if you want to NOT recreate the
         // tree everytime.  See the comment a few methods down.
         //propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
         //propertyTree->setMinimumSize(100, 100);
@@ -215,17 +215,32 @@ namespace dtEditQt
         // deleted when we change selections.  So, delete the tree and start over :(
         // This was originally found in Beta2.
         //
-        // Note 2 - 6/23/05 - This was attempted with RC1 but it still seems to have problems 
-        // when you try to add and remove elements from the tree.  If you attempt to not recreate 
-        // it, you need to do some work in dynamicGroupControl and DynamicAbstractParentControl with their 
+        // Note 2 - 6/23/05 - This was attempted with RC1 but it still seems to have problems
+        // when you try to add and remove elements from the tree.  If you attempt to not recreate
+        // it, you need to do some work in dynamicGroupControl and DynamicAbstractParentControl with their
         // adding and removing children.  See there for more info.
-        if (propertyTree != NULL)
-            delete propertyTree;
-        propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
-        rootProperty->removeAllChildren(propertyModel);
-        propertyTree->setRoot(rootProperty);
-        dynamicControlLayout->addWidget(propertyTree);
-
+		//
+		// Note 3 - 5/19/06 - Fixed so no more crashy for version 4.1.2
+		//					  added if / else for version numbers.
+		#if (QT_VERSION == 0x040001)
+		
+				if (propertyTree != NULL) delete propertyTree;
+				propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
+				rootProperty->removeAllChildren(propertyModel);
+				propertyTree->setRoot(rootProperty);
+				dynamicControlLayout->addWidget(propertyTree);
+		
+		#else
+			if (propertyTree != NULL)
+			{
+				delete propertyTree;
+				propertyTree = NULL;
+			}
+			rootProperty->removeAllChildren(propertyModel);
+			propertyTree = new PropertyEditorTreeView(propertyModel, actorPropBox);
+			propertyTree->setRoot(rootProperty);
+			dynamicControlLayout->addWidget(propertyTree);
+		#endif
         resetGroupBoxLabel();
 
         // Walk our selection items.
@@ -344,11 +359,11 @@ namespace dtEditQt
                 // first create the control.  Sometimes the controls aren't creatable, so
                 // check that first before we do other work.  Excepts if it fails
                 newControl = controlFactory->CreateObject(&curProp->GetPropertyType());
-                if (newControl == NULL) 
+                if (newControl == NULL)
                 {
                     LOG_ERROR("Object Factory failed to create a control for property: " + curProp->GetPropertyType().GetName());
                 }
-                else 
+                else
                 {
                     newControl->setTreeView(propertyTree);
 
@@ -495,8 +510,8 @@ namespace dtEditQt
         if(property->GetPropertyType() == dtDAL::DataType::TERRAIN)
         {
            if(ViewportManager::getInstance().IsPagingEnabled())
-              ViewportManager::getInstance().EnablePaging(true);
-           
+              ViewportManager::getInstance().EnablePaging(false);
+
            ViewportManager::getInstance().EnablePaging(true);
         }
     }

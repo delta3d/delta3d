@@ -20,8 +20,8 @@ namespace dtUtil
    const IncomingCoordinateType IncomingCoordinateType::UTM("UTM");
 
    IMPLEMENT_ENUM(LocalCoordinateType);
-   const LocalCoordinateType LocalCoordinateType::GLOBE("World Coordinate");
-   const LocalCoordinateType LocalCoordinateType::CARTESIAN("Euler Angle");
+   const LocalCoordinateType LocalCoordinateType::GLOBE("Globe");
+   const LocalCoordinateType LocalCoordinateType::CARTESIAN("Cartesian");
 
    IMPLEMENT_ENUM(CoordinateConversionExceptionEnum);
    CoordinateConversionExceptionEnum CoordinateConversionExceptionEnum::INVALID_INPUT("Illegal argument");
@@ -63,6 +63,8 @@ namespace dtUtil
       /* Ellipsoid Parameters, default to WGS 84  */
       TranMerc_f = Geocent_f;      /* Flattening of ellipsoid  */
       TranMerc_ebs = 0.0067394967565869;   /* Second Eccentricity squared */
+
+      mMagneticNorthOffset = 0.0f;
    }
    
    Coordinates::~Coordinates()
@@ -95,6 +97,7 @@ namespace dtUtil
       TranMerc_ebs            = rhs.TranMerc_ebs;
       mZone                   = rhs.mZone;
       mGlobeRadius            = rhs.mGlobeRadius;
+      mMagneticNorthOffset    = rhs.mMagneticNorthOffset;
 
       memcpy(mLocationOffset, rhs.mLocationOffset, sizeof(double) * 3);
 
@@ -150,6 +153,8 @@ namespace dtUtil
       if(mZone != rhs.mZone)
          return false;
       if(mGlobeRadius != rhs.mGlobeRadius)
+         return false;
+      if(mMagneticNorthOffset != rhs.mMagneticNorthOffset)
          return false;
 
       if(mLocationOffset[0] != rhs.mLocationOffset[0] || 
@@ -226,6 +231,12 @@ namespace dtUtil
       mRotationOffset(2,2) =  sin_lat;
 
       mRotationOffsetInverse.invert(mRotationOffset);
+   }
+
+   void Coordinates::SetGeoOriginRotation(const osg::Vec2d &latlon)
+   {
+      mGeoRotationLatLon = latlon;
+      SetGeoOriginRotation(mGeoRotationLatLon[0], mGeoRotationLatLon[1]);
    }
   
    void Coordinates::SetOriginRotation(float h, float p, float r)
@@ -1420,5 +1431,19 @@ namespace dtUtil
       float positiveMils = mils > 6400 ? 6400.0f : float(mils);
       float degrees = float(positiveMils * (360.0f / 6400.0f));
       return 360.0f - degrees;
+   }
+
+   float Coordinates::CalculateMagneticNorthOffset(const float latitude, const float longitude)
+   {
+      float phi      = osg::DegreesToRadians(latitude);
+      float lambda   = osg::DegreesToRadians(longitude);
+      float phiMN    = float(osg::DegreesToRadians(MagneticNorthLatitude));
+      float lambdaMN = float(osg::DegreesToRadians(MagneticNorthLongitude));
+      
+      float ldiff    = lambdaMN - lambda;
+      float cosPhiMN = cosf(phiMN);
+
+      return osg::RadiansToDegrees(atan2(cosPhiMN * sinf(ldiff), 
+         (cosf(phi) * sinf(phiMN) - sinf(phi) * cosPhiMN * cosf(ldiff))));
    }
 }

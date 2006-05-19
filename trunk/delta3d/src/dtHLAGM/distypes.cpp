@@ -1,20 +1,20 @@
-/* 
- * Delta3D Open Source Game and Simulation Engine 
+/* -*-c++-*-
+ * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
  *
  * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free 
- * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this library; if not, write to the Free Software Foundation, Inc., 
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  * @author Olen A. Bruce
  * @author David Guthrie
@@ -22,23 +22,13 @@
 
 #include <dtHLAGM/distypes.h>
 #include <osg/Endian>
+#include "dtHLAGM/rprparametertranslator.h"
 
 using namespace osg;
 
 namespace dtHLAGM
 {
-   IMPLEMENT_ENUM(AttributeType);
-   const AttributeType AttributeType::WORLD_COORDINATE_TYPE("World Coordinate", 0);
-   const AttributeType AttributeType::EULER_ANGLES_TYPE("Euler Angle", 1);
-   const AttributeType AttributeType::VELOCITY_VECTOR_TYPE("Velocity Vector", 2);
-   const AttributeType AttributeType::UNSIGNED_INT_TYPE("Unsigned Int", 3);
-   const AttributeType AttributeType::UNSIGNED_CHAR_TYPE("Unsigned Char", 4);
-   const AttributeType AttributeType::UNSIGNED_SHORT_TYPE("Unsigned Short", 5);
-   const AttributeType AttributeType::DOUBLE("Double", 6);
-   const AttributeType AttributeType::ENTITY_TYPE("Entity", 7);
-   const AttributeType AttributeType::EVENT_IDENTIFIER_TYPE("Event Identifier", 8);
-   const AttributeType AttributeType::MARKING_TYPE("Marking", 9);
-   
+
    /**
     * Constructor.
     *
@@ -53,17 +43,17 @@ namespace dtHLAGM
         mApplicationIdentifier(applicationIdentifier),
         mEntityIdentifier(entityIdentifier)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int EntityIdentifier::EncodedLength() const
+   size_t EntityIdentifier::EncodedLength() const
    {
-      return 6;
+      return RPRAttributeType::ENTITY_IDENTIFIER_TYPE.GetEncodedLength();
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -74,7 +64,7 @@ namespace dtHLAGM
       unsigned short siteIdentifier = mSiteIdentifier,
         applicationIdentifier = mApplicationIdentifier,
         entityIdentifier = mEntityIdentifier;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&siteIdentifier), sizeof(short));
@@ -82,12 +72,12 @@ namespace dtHLAGM
          swapBytes((char*)(&entityIdentifier), sizeof(short));
          //ulEndianSwap(&entityIdentifier);
       }
-      
+
       *(unsigned short *)(&buf[0]) = siteIdentifier;
       *(unsigned short *)(&buf[2]) = applicationIdentifier;
       *(unsigned short *)(&buf[4]) = entityIdentifier;
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -98,7 +88,7 @@ namespace dtHLAGM
       unsigned short siteIdentifier = *(unsigned short*)(&buf[0]),
         applicationIdentifier = *(unsigned short*)(&buf[2]),
         entityIdentifier = *(unsigned short*)(&buf[4]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&siteIdentifier), sizeof(short));
@@ -106,12 +96,12 @@ namespace dtHLAGM
          swapBytes((char*)(&entityIdentifier), sizeof(short));
          //ulEndianSwap(&entityIdentifier);
       }
-      
+
       mSiteIdentifier = siteIdentifier;
       mApplicationIdentifier = applicationIdentifier;
       mEntityIdentifier = entityIdentifier;
    }
-  
+
    /**
     * Sets the value of the site identifier field.
     *
@@ -121,7 +111,7 @@ namespace dtHLAGM
    {
       mSiteIdentifier = siteIdentifier;
    }
-  
+
    /**
     * Returns the value of the site identifier field.
     *
@@ -131,7 +121,7 @@ namespace dtHLAGM
    {
       return mSiteIdentifier;
    }
-  
+
    /**
     * Sets the value of the application identifier field.
     *
@@ -142,7 +132,7 @@ namespace dtHLAGM
    {
       mApplicationIdentifier = applicationIdentifier;
    }
-  
+
    /**
     * Returns the value of the application identifier field.
     *
@@ -152,7 +142,7 @@ namespace dtHLAGM
    {
       return mApplicationIdentifier;
    }
-  
+
    /**
     * Sets the value of the entity identifier field.
     *
@@ -162,7 +152,7 @@ namespace dtHLAGM
    {
       mEntityIdentifier = entityIdentifier;
    }
-  
+
    /**
     * Returns the value of the entity identifier field.
     *
@@ -172,14 +162,14 @@ namespace dtHLAGM
    {
       return mEntityIdentifier;
    }
-  
+
    bool EntityIdentifier::operator==(const EntityIdentifier& compareTo) const
    {
       return ((mSiteIdentifier == compareTo.mSiteIdentifier)
               && (mApplicationIdentifier == compareTo.mApplicationIdentifier)
               && (mEntityIdentifier == compareTo.mEntityIdentifier));
    }
-  
+
    bool EntityIdentifier::operator<(const EntityIdentifier& entityId) const
    {
       if(mSiteIdentifier != entityId.mSiteIdentifier)
@@ -199,7 +189,7 @@ namespace dtHLAGM
          return false;
       }
    }
-  
+
    /**
     * Constructor.
     *
@@ -226,7 +216,7 @@ namespace dtHLAGM
         mSpecific(specific),
         mExtra(extra)
    {}
-  
+
    /**
     * Compares this object to another of its type.
     *
@@ -244,7 +234,7 @@ namespace dtHLAGM
                && (mSpecific == entityType.mSpecific)
                && (mExtra == entityType.mExtra));
    }
-  
+
    /**
     * Compares this object to another of its type.  Imposes
     * a total ordering, allowing this object to be used as a
@@ -289,7 +279,7 @@ namespace dtHLAGM
          return false;
       }
    }
-  
+
    /**
     * Ranks the match between this entity type and another.
     *
@@ -301,7 +291,7 @@ namespace dtHLAGM
    int EntityType::RankMatch(const EntityType& entityType) const
    {
       int rank = 0;
-      
+
       if(mKind == entityType.mKind)
       {
          rank++;
@@ -310,7 +300,7 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       if(mDomain == entityType.mDomain)
       {
          rank++;
@@ -319,7 +309,7 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       if(mCountry == entityType.mCountry)
       {
          rank++;
@@ -328,7 +318,7 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       if(mCategory == entityType.mCategory)
       {
          rank++;
@@ -337,7 +327,7 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       if(mSubcategory == entityType.mSubcategory)
       {
          rank++;
@@ -346,7 +336,7 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       if(mSpecific == entityType.mSpecific)
       {
          rank++;
@@ -355,7 +345,7 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       if(mExtra == entityType.mExtra)
       {
          rank++;
@@ -364,20 +354,20 @@ namespace dtHLAGM
       {
          return -1;
       }
-      
+
       return rank;
    }
-            
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int EntityType::EncodedLength() const
+   size_t EntityType::EncodedLength() const
    {
-      return 8;
+      return RPRAttributeType::ENTITY_TYPE.GetEncodedLength();
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -387,22 +377,22 @@ namespace dtHLAGM
    {
       buf[0] = mKind;
       buf[1] = mDomain;
-      
+
       unsigned short country = mCountry;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&country), sizeof(short));
       }
-      
+
       *(unsigned short *)(&buf[2]) = country;
-      
+
       buf[4] = mCategory;
       buf[5] = mSubcategory;
       buf[6] = mSpecific;
       buf[7] = mExtra;
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -412,22 +402,33 @@ namespace dtHLAGM
    {
       mKind = buf[0];
       mDomain = buf[1];
-      
+
       unsigned short country = *(unsigned short*)(&buf[2]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&country), sizeof(short));
       }
-      
+
       mCountry = country;
-      
+
       mCategory = buf[4];
       mSubcategory = buf[5];
       mSpecific = buf[6];
       mExtra = buf[7];
    }
-  
+
+   //std::ostream& operator<<(std::ostream &o, const EntityType &et)
+   //{
+      // strange g++ compiler bugs make this not work.
+      // std::string space(" ");
+       
+       /*o << (int)et.GetKind() << space <<  (int)et.GetDomain() << space <<  (int)et.GetCountry() 
+         << space <<  (int)et.GetCategory() << space <<  (int)et.GetSubcategory() <<  space <<  (int)et.GetSpecific() 
+         << space <<  (int)et.GetExtra();*/
+   //    return o;
+   //}
+
    /**
     * Constructor.
     *
@@ -436,17 +437,17 @@ namespace dtHLAGM
    EventIdentifier::EventIdentifier(unsigned short eventIdentifier)
       : mEventIdentifier(eventIdentifier)
    {}
-   
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int EventIdentifier::EncodedLength() const
+   size_t EventIdentifier::EncodedLength() const
    {
-      return 5;
+      return RPRAttributeType::EVENT_IDENTIFIER_TYPE.GetEncodedLength();
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -455,16 +456,16 @@ namespace dtHLAGM
    void EventIdentifier::Encode(char* buf) const
    {
       unsigned short eventIdentifier = mEventIdentifier;
-      
+
       if(getCpuByteOrder() == LittleEndian)
-      {      
+      {
          swapBytes((char*)(&eventIdentifier), sizeof(short));
       }
-      
+
       *(unsigned short *)(&buf[0]) = eventIdentifier;
       strcpy(buf+2,"oo");  //filler for now
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -473,14 +474,14 @@ namespace dtHLAGM
    void EventIdentifier::Decode(const char* buf)
    {
       unsigned short eventIdentifier = *(unsigned short*)(&buf[0]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
-      {      
+      {
          swapBytes((char*)(&eventIdentifier), sizeof(short));
       }
       mEventIdentifier = eventIdentifier;
    }
-   
+
    /**
     * Sets the value of the event identifier field.
     *
@@ -490,7 +491,7 @@ namespace dtHLAGM
    {
       mEventIdentifier = eventIdentifier;
    }
-  
+
    /**
     * Returns the value of the event identifier field.
     *
@@ -500,7 +501,7 @@ namespace dtHLAGM
    {
       return mEventIdentifier;
    }
- 
+
    /**
     * Constructor.
     *
@@ -508,24 +509,24 @@ namespace dtHLAGM
     * @param y the value of the y field
     * @param z the value of the z field
     */
-   WorldCoordinate::WorldCoordinate(double x, 
-                                    double y, 
+   WorldCoordinate::WorldCoordinate(double x,
+                                    double y,
                                     double z)
       : mX(x),
         mY(y),
         mZ(z)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int WorldCoordinate::EncodedLength() const
+   size_t WorldCoordinate::EncodedLength() const
    {
-      return 24;
+      return RPRAttributeType::WORLD_COORDINATE_TYPE.GetEncodedLength();
    }
-   
+
    /**
     * Converts the referenced double from little to big
     * endian format, or vice-versa.
@@ -535,19 +536,19 @@ namespace dtHLAGM
    static void endianSwap(double* d)
    {
       char* c = (char*)d;
-      
+
       char tmp;
-      
+
       for(int i=0;i<4;i++)
       {
          tmp = c[i];
-         
+
          c[i] = c[7-i];
-         
+
          c[7-i] = tmp;
       }
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -558,19 +559,19 @@ namespace dtHLAGM
       double x = mX,
         y = mY,
         z = mZ;
-                     
+
       if(getCpuByteOrder() == LittleEndian)
       {
          endianSwap(&x);
          endianSwap(&y);
          endianSwap(&z);
       }
-      
+
       *(double *)(&buf[0]) = x;
       *(double *)(&buf[8]) = y;
       *(double *)(&buf[16]) = z;
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -581,19 +582,19 @@ namespace dtHLAGM
       double x = *(double *)(&buf[0]),
         y = *(double *)(&buf[8]),
         z = *(double *)(&buf[16]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          endianSwap(&x);
          endianSwap(&y);
          endianSwap(&z);
       }
-      
+
       mX = x;
       mY = y;
       mZ = z;
    }
-  
+
    /**
     * Sets the value of the x field.
     *
@@ -603,7 +604,7 @@ namespace dtHLAGM
    {
       mX = x;
    }
-  
+
    /**
     * Returns the value of the x field.
     *
@@ -613,7 +614,7 @@ namespace dtHLAGM
    {
       return mX;
    }
-  
+
    /**
     * Sets the value of the y field.
     *
@@ -623,7 +624,7 @@ namespace dtHLAGM
    {
       mY = y;
    }
-  
+
    /**
     * Returns the value of the y field.
     *
@@ -633,7 +634,7 @@ namespace dtHLAGM
    {
       return mY;
    }
-   
+
    /**
     * Sets the value of the z field.
     *
@@ -643,7 +644,7 @@ namespace dtHLAGM
    {
       mZ = z;
    }
-  
+
    /**
     * Returns the value of the z field.
     *
@@ -653,7 +654,7 @@ namespace dtHLAGM
    {
       return mZ;
    }
-  
+
    /**
     * Constructor.
     *
@@ -668,17 +669,17 @@ namespace dtHLAGM
         mTheta(theta),
         mPhi(phi)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int EulerAngles::EncodedLength() const
+   size_t EulerAngles::EncodedLength() const
    {
-      return 12;
+      return RPRAttributeType::EULER_ANGLES_TYPE.GetEncodedLength();
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -689,19 +690,19 @@ namespace dtHLAGM
       float psi = mPsi,
         theta = mTheta,
         phi = mPhi;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&psi), sizeof(float));
          swapBytes((char*)(&theta), sizeof(float));
          swapBytes((char*)(&phi), sizeof(float));
       }
-      
+
       *(float *)(&buf[0]) = psi;
       *(float *)(&buf[4]) = theta;
       *(float *)(&buf[8]) = phi;
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -712,19 +713,19 @@ namespace dtHLAGM
       float psi = *(float *)(&buf[0]),
         theta = *(float *)(&buf[4]),
         phi = *(float *)(&buf[8]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&psi), sizeof(float));
          swapBytes((char*)(&theta), sizeof(float));
          swapBytes((char*)(&phi), sizeof(float));
       }
-      
+
       mPsi = psi;
       mTheta = theta;
       mPhi = phi;
    }
-  
+
    /**
     * Sets the value of the psi field.
     *
@@ -734,7 +735,7 @@ namespace dtHLAGM
    {
       mPsi = psi;
    }
-  
+
    /**
     * Returns the value of the psi field.
     *
@@ -744,7 +745,7 @@ namespace dtHLAGM
    {
       return mPsi;
    }
-  
+
    /**
     * Sets the value of the theta field.
     *
@@ -754,7 +755,7 @@ namespace dtHLAGM
    {
       mTheta = theta;
    }
-  
+
    /**
     * Returns the value of the theta field.
     *
@@ -764,7 +765,7 @@ namespace dtHLAGM
    {
       return mTheta;
    }
-  
+
    /**
     * Sets the value of the phi field.
     *
@@ -774,7 +775,7 @@ namespace dtHLAGM
    {
       mPhi = phi;
    }
-  
+
    /**
     * Returns the value of the phi field.
     *
@@ -784,7 +785,7 @@ namespace dtHLAGM
    {
       return mPhi;
    }
-  
+
    /**
     * Constructor.
     *
@@ -799,17 +800,17 @@ namespace dtHLAGM
         mY(y),
         mZ(z)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int VelocityVector::EncodedLength() const
+   size_t VelocityVector::EncodedLength() const
    {
       return 12;
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -820,19 +821,19 @@ namespace dtHLAGM
       float x = mX,
         y = mY,
         z = mZ;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&x), sizeof(float));
          swapBytes((char*)(&y), sizeof(float));
          swapBytes((char*)(&z), sizeof(float));
       }
-      
+
       *(float *)(&buf[0]) = x;
       *(float *)(&buf[4]) = y;
       *(float *)(&buf[8]) = z;
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -843,19 +844,19 @@ namespace dtHLAGM
       float x = *(float *)(&buf[0]),
         y = *(float *)(&buf[4]),
         z = *(float *)(&buf[8]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&x), sizeof(float));
          swapBytes((char*)(&y), sizeof(float));
          swapBytes((char*)(&z), sizeof(float));
       }
-      
+
       mX = x;
       mY = y;
       mZ = z;
    }
-  
+
    /**
     * Sets the value of the x field.
     *
@@ -865,7 +866,7 @@ namespace dtHLAGM
    {
       mX = x;
    }
-  
+
    /**
     * Returns the value of the x field.
     *
@@ -875,7 +876,7 @@ namespace dtHLAGM
    {
       return mX;
    }
-  
+
    /**
     * Sets the value of the y field.
     *
@@ -885,7 +886,7 @@ namespace dtHLAGM
    {
       mY = y;
    }
-  
+
    /**
     * Returns the value of the y field.
     *
@@ -895,7 +896,7 @@ namespace dtHLAGM
    {
       return mY;
    }
-  
+
    /**
     * Sets the value of the z field.
     *
@@ -905,7 +906,7 @@ namespace dtHLAGM
    {
       mZ = z;
    }
-  
+
    /**
     * Returns the value of the z field.
     *
@@ -915,7 +916,7 @@ namespace dtHLAGM
    {
       return mZ;
    }
-  
+
    /**
     * Constructor.
     *
@@ -930,17 +931,17 @@ namespace dtHLAGM
         mTypeMetric(typeMetric),
         mValue(value)
    {}
-             
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int ArticulatedParts::EncodedLength() const
+   size_t ArticulatedParts::EncodedLength() const
    {
       return 12;
    }
-   
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -950,21 +951,21 @@ namespace dtHLAGM
    {
       unsigned int tClass = mClass,
         typeMetric = mTypeMetric;
-      
+
       float value = mValue;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&tClass), sizeof(int));
          swapBytes((char*)(&typeMetric), sizeof(int));
          swapBytes((char*)(&value), sizeof(float));
       }
-      
+
       *(unsigned int *)(&buf[0]) = tClass;
       *(unsigned int *)(&buf[4]) = typeMetric;
       *(float *)(&buf[8]) = value;
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -974,21 +975,21 @@ namespace dtHLAGM
    {
       unsigned int tClass = *(unsigned int *)(&buf[0]),
         typeMetric = *(unsigned int *)(&buf[4]);
-      
+
       float value = *(float *)(&buf[8]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&tClass), sizeof(int));
          swapBytes((char*)(&typeMetric), sizeof(int));
          swapBytes((char*)(&value), sizeof(float));
       }
-      
+
       mClass = tClass;
       mTypeMetric = typeMetric;
       mValue = value;
    }
-  
+
    /**
     * Sets the part class.
     *
@@ -998,7 +999,7 @@ namespace dtHLAGM
    {
       mClass = pClass;
    }
-  
+
    /**
     * Returns the part class.
     *
@@ -1008,7 +1009,7 @@ namespace dtHLAGM
    {
       return mClass;
    }
-  
+
    /**
     * Sets the type metric.
     *
@@ -1018,7 +1019,7 @@ namespace dtHLAGM
    {
       mTypeMetric = typeMetric;
    }
-  
+
    /**
     * Returns the type metric.
     *
@@ -1028,7 +1029,7 @@ namespace dtHLAGM
    {
       return mTypeMetric;
    }
-  
+
    /**
     * Sets the part value.
     *
@@ -1038,7 +1039,7 @@ namespace dtHLAGM
    {
       mValue = value;
    }
-  
+
    /**
     * Returns the part value.
     *
@@ -1048,7 +1049,7 @@ namespace dtHLAGM
    {
       return mValue;
    }
-  
+
    /**
     * Constructor.
     *
@@ -1057,7 +1058,7 @@ namespace dtHLAGM
    AttachedParts::AttachedParts(unsigned int station)
       : mStation(station)
    {}
-  
+
    /**
     * Constructor.
     *
@@ -1069,17 +1070,17 @@ namespace dtHLAGM
       : mStation(station),
         mStoreType(storeType)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int AttachedParts::EncodedLength() const
+   size_t AttachedParts::EncodedLength() const
    {
       return 12;
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -1088,16 +1089,16 @@ namespace dtHLAGM
    void AttachedParts::Encode(char* buf) const
    {
       unsigned int station = mStation;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&station), sizeof(int));
       }
-      
+
       *(unsigned int *)(&buf[0]) = station;
       mStoreType.Encode(&buf[4]);
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -1106,17 +1107,17 @@ namespace dtHLAGM
    void AttachedParts::Decode(const char* buf)
    {
       unsigned int station = *(unsigned int *)(&buf[0]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&station), sizeof(int));
       }
-      
+
       mStation = station;
-      
+
       mStoreType.Decode(&buf[4]);
    }
-  
+
    /**
     * Sets the part station.
     *
@@ -1126,7 +1127,7 @@ namespace dtHLAGM
    {
       mStation = station;
    }
-  
+
    /**
     * Returns the part station.
     *
@@ -1136,7 +1137,7 @@ namespace dtHLAGM
    {
       return mStation;
    }
-  
+
    /**
     * Sets the store type.
     *
@@ -1146,7 +1147,7 @@ namespace dtHLAGM
    {
       mStoreType = storeType;
    }
-  
+
    /**
     * Returns the store type.
     *
@@ -1156,7 +1157,7 @@ namespace dtHLAGM
    {
       return mStoreType;
    }
-  
+
    /**
     * Constructor.
     *
@@ -1165,7 +1166,7 @@ namespace dtHLAGM
    ParameterValue::ParameterValue(ArticulatedParameterType type)
       : mArticulatedParameterType(type)
    {}
-  
+
    /**
     * Constructor.
     *
@@ -1175,7 +1176,7 @@ namespace dtHLAGM
       : mArticulatedParameterType(ArticulatedPart),
         mArticulatedParts(articulatedParts)
    {}
-  
+
    /**
     * Constructor.
     *
@@ -1185,17 +1186,17 @@ namespace dtHLAGM
       : mArticulatedParameterType(AttachedPart),
         mAttachedParts(attachedParts)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int ParameterValue::EncodedLength() const
+   size_t ParameterValue::EncodedLength() const
    {
       return 16;
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -1204,14 +1205,14 @@ namespace dtHLAGM
    void ParameterValue::Encode(char* buf) const
    {
       unsigned int articulatedParameterType = mArticulatedParameterType;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&articulatedParameterType), sizeof(int));
       }
-      
+
       *(unsigned int *)(&buf[0]) = articulatedParameterType;
-      
+
       if(mArticulatedParameterType == ArticulatedPart)
       {
          mArticulatedParts.Encode(&buf[4]);
@@ -1221,7 +1222,7 @@ namespace dtHLAGM
          mAttachedParts.Encode(&buf[4]);
       }
    }
-  
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -1230,15 +1231,15 @@ namespace dtHLAGM
    void ParameterValue::Decode(const char* buf)
    {
       unsigned int articulatedParameterType = *(unsigned int *)(&buf[0]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&articulatedParameterType), sizeof(int));
       }
-      
-      mArticulatedParameterType = 
+
+      mArticulatedParameterType =
         (ArticulatedParameterType)articulatedParameterType;
-      
+
       if(mArticulatedParameterType == ArticulatedPart)
       {
          mArticulatedParts.Decode(&buf[4]);
@@ -1248,7 +1249,7 @@ namespace dtHLAGM
          mAttachedParts.Decode(&buf[4]);
       }
    }
-  
+
    /**
     * Sets the articulated parameter type.
     *
@@ -1258,7 +1259,7 @@ namespace dtHLAGM
    {
       mArticulatedParameterType = type;
    }
-  
+
    /**
     * Returns the articulated parameter type.
     *
@@ -1268,7 +1269,7 @@ namespace dtHLAGM
    {
       return mArticulatedParameterType;
    }
-  
+
    /**
     * Sets the articulated parts structure.
     *
@@ -1278,7 +1279,7 @@ namespace dtHLAGM
    {
       mArticulatedParts = articulatedParts;
    }
-  
+
    /**
     * Returns the articulated parts structure.
     *
@@ -1288,7 +1289,7 @@ namespace dtHLAGM
    {
       return mArticulatedParts;
    }
-  
+
    /**
     * Sets the attached parts structure.
     *
@@ -1298,7 +1299,7 @@ namespace dtHLAGM
    {
       mAttachedParts = attachedParts;
    }
-  
+
    /**
     * Returns the attached parts structure.
     *
@@ -1308,7 +1309,7 @@ namespace dtHLAGM
    {
       return mAttachedParts;
    }
-  
+
    /**
     * Constructor.
     *
@@ -1320,7 +1321,7 @@ namespace dtHLAGM
       : mArticulatedParameterChange(articulatedParameterChange),
         mPartAttachedTo(partAttachedTo)
    {}
-  
+
    /**
     * Constructor.
     *
@@ -1335,17 +1336,17 @@ namespace dtHLAGM
         mPartAttachedTo(partAttachedTo),
         mParameterValue(parameterValue)
    {}
-  
+
    /**
     * Returns the encoded length of this object.
     *
     * @return the encoded length of this object, in bytes
     */
-   int ArticulatedParameter::EncodedLength() const
+   size_t ArticulatedParameter::EncodedLength() const
    {
       return 20;
    }
-  
+
    /**
     * Encodes this object into the specified buffer.
     *
@@ -1354,18 +1355,18 @@ namespace dtHLAGM
    void ArticulatedParameter::Encode(char* buf) const
    {
       unsigned short partAttachedTo = mPartAttachedTo;
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&partAttachedTo), sizeof(short));
       }
-      
+
       *(unsigned char *)(&buf[0]) = mArticulatedParameterChange;
       *(unsigned char *)(&buf[1]) = 0; // padding
       *(unsigned short *)(&buf[2]) = partAttachedTo;
       mParameterValue.Encode(&buf[4]);
    }
-   
+
    /**
     * Decodes the values contained in the specified buffer.
     *
@@ -1374,19 +1375,19 @@ namespace dtHLAGM
    void ArticulatedParameter::Decode(const char* buf)
    {
       mArticulatedParameterChange = *(unsigned char *)(&buf[0]);
-      
+
       unsigned short partAttachedTo = *(unsigned short *)(&buf[2]);
-      
+
       if(getCpuByteOrder() == LittleEndian)
       {
          swapBytes((char*)(&partAttachedTo), sizeof(short));
       }
-      
+
       mPartAttachedTo = partAttachedTo;
-      
+
       mParameterValue.Decode(&buf[4]);
    }
-  
+
    /**
     * Sets the articulated parameter change.
     *
@@ -1396,7 +1397,7 @@ namespace dtHLAGM
    {
       mArticulatedParameterChange = articulatedParameterChange;
    }
-  
+
    /**
     * Returns the articulated parameter change.
     *
@@ -1406,7 +1407,7 @@ namespace dtHLAGM
    {
       return mArticulatedParameterChange;
    }
-  
+
    /**
     * Sets the part attached to.
     *
@@ -1416,7 +1417,7 @@ namespace dtHLAGM
    {
       mPartAttachedTo = partAttachedTo;
    }
-  
+
    /**
     * Returns the part attached to.
     *
@@ -1426,7 +1427,7 @@ namespace dtHLAGM
    {
       return mPartAttachedTo;
    }
-  
+
    /**
     * Sets the parameter value.
     *
@@ -1436,7 +1437,7 @@ namespace dtHLAGM
    {
       mParameterValue = parameterValue;
    }
-  
+
    /**
     * Returns the parameter value.
     *

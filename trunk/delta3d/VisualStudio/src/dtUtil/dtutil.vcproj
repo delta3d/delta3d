@@ -134,6 +134,9 @@
 				RelativePath="..\..\..\src\dtUtil\exception.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\fileutils.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\librarysharingmanager.cpp">
 			</File>
 			<File
@@ -191,6 +194,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\export.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\fileutils.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\fractal.h">

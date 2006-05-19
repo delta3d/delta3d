@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine
 * Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -199,7 +199,7 @@ namespace dtEditQt
 
         if(ViewportManager::getInstance().IsPagingEnabled())
         {
-           if (osgDB::Registry::instance()->getDatabasePager())
+           if (osgDB::Registry::instance()->getDatabasePager() != NULL)
            {
               osgDB::Registry::instance()->getDatabasePager()->signalBeginFrame(frameStamp.get());
               osgDB::Registry::instance()->getDatabasePager()->updateSceneGraph(frameStamp->getReferenceTime());
@@ -207,23 +207,22 @@ namespace dtEditQt
         }
 
         frameStamp->setReferenceTime(osg::Timer::instance()->delta_s(ViewportManager::getInstance().GetStartTick(), osg::Timer::instance()->tick()));
-        frameStamp->setFrameNumber(frameStamp->getFrameNumber()+1);
+        frameStamp->setFrameNumber(frameStamp->getFrameNumber() + 1);
 
-
-        this->sceneView->update();
-        this->sceneView->cull();
-        this->sceneView->draw();
+        sceneView->update();
+        sceneView->cull();
+        sceneView->draw();
 
         if(ViewportManager::getInstance().IsPagingEnabled())
         {
-           if(osgDB::Registry::instance()->getDatabasePager())
+           if(osgDB::Registry::instance()->getDatabasePager() != NULL)
            {
               osgDB::Registry::instance()->getDatabasePager()->signalEndFrame();
 
               double cleanupTime = ViewportManager::getInstance().getMasterScene()->GetPagingCleanup();
               osgDB::Registry::instance()->getDatabasePager()->compileGLObjects(*sceneView->getState(), cleanupTime);
 
-              sceneView->flushDeletedGLObjects(cleanupTime);  
+              sceneView->flushDeletedGLObjects(cleanupTime);
            }
         }
     }
@@ -412,6 +411,10 @@ namespace dtEditQt
             this->oldMouseLocation = QCursor::pos();
             this->cacheMouseLocation = false;
         }
+
+
+        //I disabled this because the mouse move event does this whenever the mouse moves.
+        //Commenting this out helps mouse movement work better in Mac OS X.
 
         //Put the mouse cursor in the center of the viewport.
         QPoint center((x()+width())/2,(y()+height())/2);

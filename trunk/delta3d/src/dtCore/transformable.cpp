@@ -1385,6 +1385,6 @@ void Transformable::AddedToScene( Scene* scene )
       {
          GetSceneParent()->UnRegisterCollidable( this );
       }
-      DeltaDrawable::AddedToScene( scene );
+      DeltaDrawable::AddedToScene( NULL );
    }
 }

@@ -31,12 +31,17 @@
 #include <dtCore/scene.h>
 
 #include <dtUtil/tree.h>
+#include <dtUtil/fileutils.h>
 #include "dtDAL/resourcedescriptor.h"
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/resourcehelper.h"
-#include "dtDAL/fileutils.h"
 #include "dtDAL/actorproxy.h"
 #include "dtDAL/export.h"
+
+namespace dtUtil
+{
+   class Log;
+}
 
 namespace dtDAL
 {
@@ -44,7 +49,6 @@ namespace dtDAL
    class Map;
    class MapParser;
    class MapWriter;
-   class dtUtil::Log;
    class DataType;
    class LibraryManager;
 
@@ -117,11 +121,11 @@ namespace dtDAL
          //recursive helper method for the other indexResources
          //The category AND the categoryPath are passed so that
          //they won't have to be converted on every recursive call.
-         void IndexResources(FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
+         void IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
                            const DataType& dt, const std::string& categoryPath,const std::string& category) const;
 
          //Gets the list of backup map files.
-         void GetBackupMapFilesList(DirectoryContents& toFill) const;
+         void GetBackupMapFilesList(dtUtil::DirectoryContents& toFill) const;
 
          //searches the resource tree for a category node and returns
          //an iterator to it or resources.end() if not found.
@@ -129,9 +133,8 @@ namespace dtDAL
             const DataType* dt, const std::string& category) const;
 
 
-         const std::string GetBackupDir() const {
-            return Project::MAP_DIRECTORY + FileUtils::PATH_SEPARATOR + Project::MAP_BACKUP_SUB_DIRECTORY;
-         }
+         const std::string GetBackupDir() const;
+
          //Later
    /*    dtUtil::tree<ResourceTreeNode>* getMatchingBranch(
          dtUtil::tree<ResourceTreeNode>::iterator level,
@@ -194,7 +197,7 @@ namespace dtDAL
           * @param name the name of the map as specified by the getMapNames() vector.
           * @return the opened map
           * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-          * @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
+          * @throws FileExceptionEnum::FileNotFound if the map does not exist.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           */
          Map& GetMap(const std::string& name);
@@ -206,7 +209,7 @@ namespace dtDAL
           * @param name the name of the map as specified by the getMapNames() vector.
           * @return the opened map
           * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-          * @throws ExceptionEnum::ProjectFileNotFound if a backup does not exist.
+          * @throws FileExceptionEnum::FileNotFound if a backup does not exist.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           */
          Map& OpenMapBackup(const std::string& name);
@@ -220,7 +223,7 @@ namespace dtDAL
           * @param enablePaging pass true to enable paging in the scene
           * @return the map that was loaded into the scene.
           * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-          * @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
+          * @throws FileExceptionEnum::FileNotFound if the map does not exist.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           */
          Map& LoadMapIntoScene(const std::string& name, dtCore::Scene& scene, bool addBillBoards = false, bool enablePaging = true)
@@ -406,7 +409,7 @@ namespace dtDAL
           * @return The path to load a resource.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           * @throws ExceptionEnum::ProjectResourceError if the string representation is invalid.
-          * @throws ExceptionEnum::ProjectFileNotFound if the file was not found.
+          * @throws FileExceptionEnum::FileNotFound if the file was not found.
           */
          const std::string GetResourcePath(const ResourceDescriptor& resource) const;
 
@@ -418,9 +421,9 @@ namespace dtDAL
           * @param type the resounce datatype of the resource.  This must be one of the enums that define a resource.
           * @return the resource's unique identifier string.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-          * @throws ExceptionEnum::ProjectIOException if the could not complete because of some sort of IO exception.
+          * @throws FileExceptionEnum::IOException if the could not complete because of some sort of IO exception.
           * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
-          * @throws ExceptionEnum::ProjectFileeNotFound if the file to import does not exist.
+          * @throws FileExceptionEnum::FileNotFound if the file to import does not exist.
           * @throws ExceptionEnum::ProjectResourceError if the file could not be imported if the Datatype is not a resource type.
           */
          const ResourceDescriptor AddResource(const std::string& newName, const std::string& pathToFile, const std::string& category, const DataType& type);
@@ -431,7 +434,7 @@ namespace dtDAL
           * @param resource The resource descriptor object.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
-          * @throws ExceptionEnum::ProjectIOException if the could not complete because of some sort of IO exception.
+          * @throws FileExceptionEnum::IOException if the could not complete because of some sort of IO exception.
           * @throws ExceptionEnum::ProjectResourceError if the resource could not be removed for reasons other than file io.
           */
          void RemoveResource(const ResourceDescriptor& resource);
@@ -443,7 +446,7 @@ namespace dtDAL
           * @param type the data type to add the category into.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
-          * @throws ExceptionEnum::ProjectIOException if the operation could not complete because of some sort of IO exception.
+          * @throws FileExceptionEnum::IOException if the operation could not complete because of some sort of IO exception.
           * @throws ExceptionEnum::ProjectResourceError if type is not a resource type.
           */
          void CreateResourceCategory(const std::string& category, const DataType& type);
@@ -457,9 +460,9 @@ namespace dtDAL
           *         recursive was false and the category was not empty.
           * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
           * @throws ExceptionEnum::ProjectReadOnly if the project is read only.
-          * @throws ExceptionEnum::ProjectIOException if the operation could not complete because of some sort of IO exception.
+          * @throws FileExceptionEnum::IOException if the operation could not complete because of some sort of IO exception.
           * @throws ExceptionEnum::ProjectResourceError if the resource could not be removed for reasons other than file io.
-          * @throws ExceptionEnum::ProjectFileNotFound on rare occasion, this could possibly be thrown if the file contents
+          * @throws FileExceptionEnum::FileNotFound on rare occasion, this could possibly be thrown if the file contents
           *              are changed while the recusive delete is occuring.
           */
          bool RemoveResourceCategory(const std::string& category, const DataType& type, bool recursive);
