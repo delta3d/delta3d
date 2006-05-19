@@ -164,8 +164,8 @@ namespace dtEditQt
         bool IsPagingEnabled() const { return isPagingEnabled; }
 
         /// Sets is database paging is enabled
-        void EnablePaging(bool enable); 
-        
+        void EnablePaging(bool enable);
+
         dtCore::Timer_t GetStartTick() { return startTick; }
 
         void SetStartTick(unsigned int time) { startTick = time; }
@@ -218,6 +218,11 @@ namespace dtEditQt
          */
         void onEndChangeTransaction();
 
+        /**
+         * Called when the editor is shutting down.  It cleans up the scene.
+         */
+        void onEditorShutDown();
+
      private:
         ///Singletons shouldn't be created at the user's discretion.
         ViewportManager();
@@ -250,7 +255,7 @@ namespace dtEditQt
         int numTextureUnits;
         bool inChangeTransaction, isPagingEnabled;
         dtCore::Timer_t startTick;
-    };   
+    };
 }
 
 #endif

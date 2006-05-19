@@ -226,6 +226,7 @@ void GUIManager::ProducerToNormalized(float& mx, float& my)
 
 void GUIManager::ShutdownGUI()
 {
-   mDrawable->ShutdownGUI();
+   if (mDrawable != NULL)
+      mDrawable->ShutdownGUI();
 }
 

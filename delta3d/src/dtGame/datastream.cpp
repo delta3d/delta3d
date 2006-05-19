@@ -22,10 +22,10 @@
 #include <osg/Endian>
 #include "dtGame/datastream.h"
 
-namespace dtGame 
+namespace dtGame
 {
    static const char* LOGNAME = "DataStream";
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(DataStream::SeekTypeEnum);
    const DataStream::SeekTypeEnum DataStream::SeekTypeEnum::SET("SET");
@@ -43,20 +43,20 @@ namespace dtGame
    DataStream::DataStream(): mBufferSize(0), mBufferCapacity(16), mReadPos(0), mWritePos(0)
    {
       mBuffer = new char[this->mBufferCapacity];
-      mIsLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;   
+      mIsLittleEndian = osg::getCpuByteOrder() == osg::LittleEndian;
       mAutoFreeBuffer = true;
       mForceLittleEndian = false;
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    DataStream::DataStream(char *buffer, unsigned int bufferSize, bool autoFree)
    {
       if (bufferSize == 0)
          EXCEPT(DataStreamException::BUFFER_INVALID,"Buffer size cannot be zero.");
-         
+
       if (buffer == NULL)
          EXCEPT(DataStreamException::BUFFER_INVALID,"Source buffer is not valid.");
-         
+
       mBufferSize = bufferSize;
       mBufferCapacity = bufferSize;
       mReadPos = mWritePos = 0;
@@ -75,7 +75,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    DataStream &DataStream::operator=(const DataStream &rhs)
    {
-      if (this != &rhs) 
+      if (this != &rhs)
       {
          if (rhs.mBufferSize == 0)
             EXCEPT(DataStreamException::BUFFER_INVALID,
@@ -142,7 +142,7 @@ namespace dtGame
       if (mWritePos > mBufferSize)
          mBufferSize = mWritePos;
    }
-   
+
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Read(char& c)
    {
@@ -174,10 +174,10 @@ namespace dtGame
             "Buffer underflow detected.");
 
       s = *((short *)(&mBuffer[mReadPos]));
-      
+
       if (mForceLittleEndian ^ mIsLittleEndian)
          osg::swapBytes((char *)&s,sizeof(s));
-                  
+
       mReadPos += sizeof(short);
    }
 
@@ -260,7 +260,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Read(unsigned& i)
    {
- 
+
       if (mReadPos + sizeof(unsigned) > mBufferSize)
          EXCEPT(DataStreamException::BUFFER_READ_ERROR,
             "Buffer underflow detected.");
@@ -321,7 +321,7 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void DataStream::Read(unsigned long& i)
    {
- 
+
       if (mReadPos + sizeof(unsigned long) > mBufferSize)
          EXCEPT(DataStreamException::BUFFER_READ_ERROR,
             "Buffer underflow detected.");
@@ -429,7 +429,7 @@ namespace dtGame
       {
          unsigned char cStrSize;
          Read(cStrSize);
-         strSize = (unsigned)cStrSize;         
+         strSize = (unsigned)cStrSize;
       }
 
       str.clear();
@@ -446,12 +446,12 @@ namespace dtGame
    void DataStream::Write(const std::string &str)
    {
       //it will truncate any strings longer than a short can handle
-     
+
       if (str.length() > SHRT_MAX)
          LOGN_WARNING(LOGNAME, "Attempting to write string a string longer than the max size for messages, truncating.");
-      
+
       short strSize = (short)str.length();
-      
+
       //for short and long strings: write one byte for a short string and write the
       //the negative length for the long string so that when the string is read back in, it
       //the first bit of the size can be checked to see if one should read one or two bytes.
@@ -461,7 +461,7 @@ namespace dtGame
          Write((unsigned char)strSize);
       else
          Write((short)-strSize);
-         
+
       while (mWritePos + strSize > mBufferCapacity)
          ResizeBuffer();
 
@@ -586,23 +586,23 @@ namespace dtGame
    void DataStream::Seekp(unsigned int offset, const SeekTypeEnum &type)
    {
       //Position the write marker..
-      if (type == SeekTypeEnum::SET) 
+      if (type == SeekTypeEnum::SET)
       {
          if (offset > mBufferSize)
             EXCEPT(DataStreamException::BUFFER_INVALID_POS,
                "Write position cannot be greater than the current data size.");
-         
+
          mWritePos = offset;
       }
-      else if (type == SeekTypeEnum::CURRENT) 
+      else if (type == SeekTypeEnum::CURRENT)
       {
          if (mWritePos + offset > mBufferSize)
             EXCEPT(DataStreamException::BUFFER_INVALID_POS,
                "Write position cannot be greater than the current data size.");
-         
+
          mWritePos += offset;
       }
-      else if (type == SeekTypeEnum::END) 
+      else if (type == SeekTypeEnum::END)
       {
          if (offset > mBufferSize)
             EXCEPT(DataStreamException::BUFFER_INVALID_POS,
@@ -615,21 +615,21 @@ namespace dtGame
    void DataStream::Seekg(unsigned int offset, const SeekTypeEnum &type)
    {
       //Position the read marker..
-      if (type == SeekTypeEnum::SET) 
+      if (type == SeekTypeEnum::SET)
       {
          if (offset > mBufferSize)
             EXCEPT(DataStreamException::BUFFER_INVALID_POS,
                "Read position cannot be greater than the current data size.");
          mReadPos = offset;
       }
-      else if (type == SeekTypeEnum::CURRENT) 
+      else if (type == SeekTypeEnum::CURRENT)
       {
          if (mReadPos + offset > mBufferSize)
             EXCEPT(DataStreamException::BUFFER_INVALID_POS,
                "Read position cannot be greater than the current data size.");
          mReadPos += offset;
       }
-      else if (type == SeekTypeEnum::END) 
+      else if (type == SeekTypeEnum::END)
       {
          if (offset > mBufferSize)
             EXCEPT(DataStreamException::BUFFER_INVALID_POS,

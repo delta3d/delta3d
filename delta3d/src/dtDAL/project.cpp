@@ -44,16 +44,18 @@
 
 #include <dtCore/globals.h>
 
-#include <dtDAL/project.h>
 #include <dtUtil/log.h>
-#include <dtDAL/map.h>
-#include <dtDAL/mapxml.h>
-#include <dtDAL/datatype.h>
-#include <dtDAL/fileutils.h>
 #include <dtUtil/stringutils.h>
-#include <dtDAL/exceptionenum.h>
-#include <dtDAL/librarymanager.h>
-#include <dtDAL/actorproxyicon.h>
+#include <dtUtil/fileutils.h>
+
+#include "dtDAL/project.h"
+#include "dtDAL/map.h"
+#include "dtDAL/mapxml.h"
+#include "dtDAL/datatype.h"
+#include "dtDAL/exceptionenum.h"
+#include "dtDAL/librarymanager.h"
+#include "dtDAL/actorproxyicon.h"
+#include "dtDAL/environmentactor.h"
 
 namespace dtDAL
 {
@@ -88,7 +90,7 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    Project::Project(const Project&) {}
    //////////////////////////////////////////////////////////
-   Project& Project::operator=(const Project&) 
+   Project& Project::operator=(const Project&)
    {
       return *this;
    }
@@ -96,8 +98,8 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    void Project::SetContext(const std::string& path, bool mOpenReadOnly)
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
-      FileType ft = fileUtils.GetFileInfo(path).fileType;
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      dtUtil::FileType ft = fileUtils.GetFileInfo(path).fileType;
 
       if (mValidContext)
       {
@@ -133,7 +135,7 @@ namespace dtDAL
          try
          {
             fileUtils.MakeDirectory(path);
-            ft = DIRECTORY;
+            ft = dtUtil::DIRECTORY;
          }
          catch (const dtUtil::Exception& ex)
          {
@@ -143,7 +145,7 @@ namespace dtDAL
          }
       }
 
-      if (ft == FILE_NOT_FOUND)
+      if (ft == dtUtil::FILE_NOT_FOUND)
       {
          char* fmt = "Directory %s does not exist";
          int size = strlen(fmt) + path.length();
@@ -154,7 +156,7 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, s);
       }
 
-      if (ft == REGULAR_FILE)
+      if (ft == dtUtil::REGULAR_FILE)
       {
          std::string s(path);
          s.append(" is not a directory");
@@ -166,14 +168,14 @@ namespace dtDAL
       std::string pPath = path;
       std::string::iterator last = pPath.end();
       --last;
-      if (*last == FileUtils::PATH_SEPARATOR)
+      if (*last == dtUtil::FileUtils::PATH_SEPARATOR)
          pPath.erase(last);
 
       fileUtils.PushDirectory(path);
 
       try
       {
-         const DirectoryContents contents = fileUtils.DirGetFiles(".");
+         const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(".");
          if (contents.empty())
          {
             if (mOpenReadOnly)
@@ -213,12 +215,12 @@ namespace dtDAL
                   EXCEPT(dtDAL::ExceptionEnum::ProjectInvalidContext, ss.str());
                }
             }
-            else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != DIRECTORY)
+            else if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType != dtUtil::DIRECTORY)
             {
                std::string s(path);
                s.append(" is not a valid project directory.  The ");
                s.append(Project::MAP_DIRECTORY);
-               if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == REGULAR_FILE)
+               if (fileUtils.GetFileInfo(Project::MAP_DIRECTORY).fileType == dtUtil::REGULAR_FILE)
                   s.append(" is not a directory.");
                else
                   s.append(" does not exist.");
@@ -227,16 +229,8 @@ namespace dtDAL
          }
 
          mValidContext = true;
-         if (mParser == NULL)
-         {
-            //create the parser after setting the context.
-            //because the parser looks for map.xsd in the constructor.
-            //that way users can put map.xsd in the project and not need 
-            //a "data" path.
-            mParser = new MapParser;
-         }
-            
-         mContext = FileUtils::GetInstance().CurrentDirectory();
+
+         mContext = dtUtil::FileUtils::GetInstance().CurrentDirectory();
          mContextReadOnly = mOpenReadOnly;
          std::string searchPath = dtCore::GetDataFilePathList();
 
@@ -245,14 +239,24 @@ namespace dtDAL
 
          dtCore::SetDataFilePathList(searchPath + ':' + mContext);
 
+
+         if (mParser == NULL)
+         {
+            //create the parser after setting the context.
+            //because the parser looks for map.xsd in the constructor.
+            //that way users can put map.xsd in the project and not need
+            //a "data" path.
+            mParser = new MapParser;
+         }
+
          GetMapNames();
       }
       catch (const dtUtil::Exception& ex)
       {
-         FileUtils::GetInstance().PopDirectory();
+         dtUtil::FileUtils::GetInstance().PopDirectory();
          throw ex;
       }
-      FileUtils::GetInstance().PopDirectory();
+      dtUtil::FileUtils::GetInstance().PopDirectory();
 
    }
 
@@ -292,18 +296,18 @@ namespace dtDAL
       {
          mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                              "The list of map names is empty, so the project is preparing to load the list.");
-         FileUtils& fileUtils = FileUtils::GetInstance();
+         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
          fileUtils.PushDirectory(mContext);
 
          try
          {
-            const DirectoryContents contents = fileUtils.DirGetFiles(Project::MAP_DIRECTORY);
+            const dtUtil::DirectoryContents contents = fileUtils.DirGetFiles(Project::MAP_DIRECTORY);
 
-            for (DirectoryContents::const_iterator i = contents.begin(); i < contents.end(); ++i)
+            for (dtUtil::DirectoryContents::const_iterator i = contents.begin(); i < contents.end(); ++i)
             {
                const std::string& f = *i;
-               std::string fp = Project::MAP_DIRECTORY + FileUtils::PATH_SEPARATOR + f;
-               if (fileUtils.GetFileInfo(fp).fileType == REGULAR_FILE)
+               std::string fp = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + f;
+               if (fileUtils.GetFileInfo(fp).fileType == dtUtil::REGULAR_FILE)
                {
                   try
                   {
@@ -334,13 +338,13 @@ namespace dtDAL
    //////////////////////////////////////////////////////////
    Map& Project::InternalLoadMap(const std::string& name, const std::string& fullPath, bool clearModified)
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(this->mContext);
 
       Map* map = NULL;
       try
       {
-         if (fileUtils.GetFileInfo(fullPath).fileType != REGULAR_FILE)
+         if (fileUtils.GetFileInfo(fullPath).fileType != dtUtil::REGULAR_FILE)
             EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                    std::string("Map file \"") + fullPath + "\" not found.");
 
@@ -396,7 +400,7 @@ namespace dtDAL
 
       const std::string& mapFileName = i->second;
 
-      const std::string& fp = Project::MAP_DIRECTORY + FileUtils::PATH_SEPARATOR + mapFileName;
+      const std::string& fp = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + mapFileName;
 
       Map& map = InternalLoadMap(name, fp, true);
 
@@ -426,7 +430,7 @@ namespace dtDAL
 
       const std::string& mapFileName = i->second;
 
-      const std::string& fp = GetBackupDir() + FileUtils::PATH_SEPARATOR + mapFileName + ".backup";
+      const std::string& fp = GetBackupDir() + dtUtil::FileUtils::PATH_SEPARATOR + mapFileName + ".backup";
 
       Map& map = InternalLoadMap(name, fp, false);
       map.SetFileName(mapFileName);
@@ -533,21 +537,46 @@ namespace dtDAL
             {
                //If we got here, then the proxy wishes the system to determine how to display
                //the proxy. (Currently defaults to DRAW_ACTOR.
-               scene.AddDrawable(proxy.GetActor());
+               if(map.GetEnvironmentActor() != NULL)
+               {
+                  EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
+                  if(ea == NULL)
+                     EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be of type dtDAL::EnvironmentActor");
+
+                  ea->AddActor(proxy);
+               }
+               else
+                  scene.AddDrawable(proxy.GetActor());
             }
          }
          else
          {
             //if we aren't drawing billboards, then the actors should always be in the scene.
-            scene.AddDrawable(proxy.GetActor());
+            if(map.GetEnvironmentActor() != NULL)
+            {
+               EnvironmentActor *ea = dynamic_cast<EnvironmentActor*>(map.GetEnvironmentActor()->GetActor());
+               if(ea == NULL)
+                  EXCEPT(ExceptionEnum::InvalidActorException, "Actor should be of type dtDAL::EnvironmentActor");
+
+               // Hack to ensure the environment doesn't add itself from the map 
+               if(proxy.GetActor() != dynamic_cast<dtCore::DeltaDrawable*>(ea))
+                  ea->AddActor(proxy);
+            }
+            else
+               scene.AddDrawable(proxy.GetActor());
          }
+      }
+
+      if(map.GetEnvironmentActor() != NULL)
+      {
+         scene.AddDrawable(map.GetEnvironmentActor()->GetActor());
       }
 
       if(enablePaging)
       {
          if(scene.IsPagingEnabled())
             scene.DisablePaging();
-           
+
          scene.EnablePaging();
       }
    }
@@ -599,7 +628,7 @@ namespace dtDAL
          }
          if (libMayClose)
          {
-            ActorPluginRegistry* aprToClose = 
+            ActorPluginRegistry* aprToClose =
                LibraryManager::GetInstance().GetRegistry(libToClose);
 
             if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
@@ -614,17 +643,17 @@ namespace dtDAL
                  i != proxies.end(); ++i)
             {
                osg::ref_ptr<ActorProxy>& proxy = *i;
-                 
-               try 
+
+               try
                {
                   ActorPluginRegistry* registry = LibraryManager::GetInstance().GetRegistryForType(proxy->GetActorType());
                   //the proxy is found in the library that is about to close.
-                  if (aprToClose == registry) 
+                  if (aprToClose == registry)
                   {
                      libMayClose = false;
                      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_INFO))
                         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-                                            "Library %s will not be closed because proxy with type %s and name %s has external references.", 
+                                            "Library %s will not be closed because proxy with type %s and name %s has external references.",
                                             proxy->GetActorType().GetName().c_str(), libToClose.c_str(),
                                             proxy->GetName().c_str());
                   }
@@ -632,11 +661,11 @@ namespace dtDAL
                catch (const dtUtil::Exception& ex)
                {
                   mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                                      "Error finding library for actor type %s: %s", 
+                                      "Error finding library for actor type %s: %s",
                                       proxy->GetActorType().GetName().c_str(), ex.What().c_str());
                }
             }
-                
+
             //if the library may still close.
             if (libMayClose)
                LibraryManager::GetInstance().UnloadActorRegistry(libToClose);
@@ -743,8 +772,8 @@ namespace dtDAL
    {
       ReloadMapNames();
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
-      fileUtils.PushDirectory(this->mContext + FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      fileUtils.PushDirectory(this->mContext + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_DIRECTORY);
       try
       {
          if (fileUtils.FileExists(mapFileName))
@@ -895,10 +924,10 @@ namespace dtDAL
          }
       }
 
-      std::string fullPath = Project::MAP_DIRECTORY + FileUtils::PATH_SEPARATOR + map.GetFileName();
+      std::string fullPath = Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
       std::string fullPathSaving = fullPath + ".saving";
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(mContext);
       try
       {
@@ -961,9 +990,9 @@ namespace dtDAL
 
       std::string backupDir = GetBackupDir();
 
-      std::string path = backupDir + FileUtils::PATH_SEPARATOR + map.GetFileName();
+      std::string path = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + map.GetFileName();
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(mContext);
       try
       {
@@ -1011,11 +1040,11 @@ namespace dtDAL
 
       const std::string& fileName = found->second;
 
-      std::string backupDir = GetContext() + FileUtils::PATH_SEPARATOR + GetBackupDir();
+      std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
 
-      const std::string& backupFileName = backupDir + FileUtils::PATH_SEPARATOR + fileName + ".backup";
+      const std::string& backupFileName = backupDir + dtUtil::FileUtils::PATH_SEPARATOR + fileName + ".backup";
 
-      return FileUtils::GetInstance().FileExists(backupFileName);
+      return dtUtil::FileUtils::GetInstance().FileExists(backupFileName);
    }
 
    //////////////////////////////////////////////////////////
@@ -1040,25 +1069,25 @@ namespace dtDAL
 
       std::string& fileName = found->second;
 
-      std::string backupDir = GetContext() + FileUtils::PATH_SEPARATOR + GetBackupDir();
+      std::string backupDir = GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + GetBackupDir();
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
       if (!fileUtils.DirExists(backupDir))
          return;
 
-      DirectoryContents dc = fileUtils.DirGetFiles(backupDir);
+      dtUtil::DirectoryContents dc = fileUtils.DirGetFiles(backupDir);
 
       size_t fileNameSize = fileName.size();
-      for (DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i)
+      for (dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i)
       {
          const std::string& file = *i;
          if (file.size() > fileNameSize
              && file.substr(0, fileNameSize) == fileName)
          {
 
-            if (fileUtils.GetFileInfo(backupDir + FileUtils::PATH_SEPARATOR + file).fileType == REGULAR_FILE)
-               fileUtils.FileDelete(backupDir + FileUtils::PATH_SEPARATOR + file);
+            if (fileUtils.GetFileInfo(backupDir + dtUtil::FileUtils::PATH_SEPARATOR + file).fileType == dtUtil::REGULAR_FILE)
+               fileUtils.FileDelete(backupDir + dtUtil::FileUtils::PATH_SEPARATOR + file);
          }
       }
 
@@ -1075,7 +1104,7 @@ namespace dtDAL
       {
          ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
-            return i->second.get();    
+            return i->second.get();
       }
       return NULL;
    }
@@ -1091,7 +1120,7 @@ namespace dtDAL
       {
          const ActorProxy* ap = i->second->GetProxyById(proxy.GetId());
          if (ap != NULL)
-            return i->second.get();    
+            return i->second.get();
       }
       return NULL;
    }
@@ -1109,6 +1138,12 @@ namespace dtDAL
    }
 
    //////////////////////////////////////////////////////////
+   const std::string Project::GetBackupDir() const
+   {
+      return Project::MAP_DIRECTORY + dtUtil::FileUtils::PATH_SEPARATOR + Project::MAP_BACKUP_SUB_DIRECTORY;
+   }
+
+   //////////////////////////////////////////////////////////
    const std::string Project::GetResourcePath(const ResourceDescriptor& resource) const
    {
       if (!mValidContext)
@@ -1117,21 +1152,21 @@ namespace dtDAL
       const std::string& path = mResourceHelper.GetResourcePath(resource);
 
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(this->mContext);
 
       try
       {
-         FileType ftype = fileUtils.GetFileInfo(path).fileType;
+		  dtUtil::FileType ftype = fileUtils.GetFileInfo(path).fileType;
 
-         if (ftype != REGULAR_FILE)
+         if (ftype != dtUtil::REGULAR_FILE)
          {
-            if (ftype == FILE_NOT_FOUND)
+            if (ftype == dtUtil::FILE_NOT_FOUND)
             {
                EXCEPT(dtDAL::ExceptionEnum::ProjectFileNotFound,
                       std::string("The specified resource was not found: ") + path);
             }
-            else if (ftype == DIRECTORY)
+            else if (ftype == dtUtil::DIRECTORY)
             {
                EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
                       std::string("The resource identifier does not specify a resource file: ") + path);
@@ -1165,7 +1200,7 @@ namespace dtDAL
                 + ". It is not a resource type.");
       }
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(mContext);
 
       try
@@ -1206,7 +1241,7 @@ namespace dtDAL
                 + ". It is not a resource type.");
       }
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(mContext);
 
       bool result;
@@ -1252,7 +1287,7 @@ namespace dtDAL
                 + ". It is not a resource type.");
       }
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(mContext);
 
       ResourceDescriptor result;
@@ -1284,7 +1319,7 @@ namespace dtDAL
       if (IsReadOnly())
          EXCEPT(dtDAL::ExceptionEnum::ProjectReadOnly, std::string("The context is readonly."));
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(mContext);
       try
       {
@@ -1309,7 +1344,7 @@ namespace dtDAL
       if (mResourcesIndexed)
          return;
 
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       fileUtils.PushDirectory(GetContext());
       try
       {

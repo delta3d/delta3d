@@ -1,4 +1,4 @@
-/* 
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine 
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
  *
@@ -64,14 +64,14 @@ namespace dtHLAGM
             return mInteractionHandle;
          }
          
-         const std::vector<ParameterToParameter> &GetOneToOneMappingVector() const
+         const std::vector<ParameterToParameterList> &GetOneToManyMappingVector() const
          {
-            return mOneToOne;
+            return mOneToMany;
          }
          
-         std::vector<ParameterToParameter> &GetOneToOneMappingVector()
+         std::vector<ParameterToParameterList> &GetOneToManyMappingVector()
          {
-            return mOneToOne;
+            return mOneToMany;
          }
          
          void SetMessageType(const dtGame::MessageType& messageType)
@@ -89,9 +89,9 @@ namespace dtHLAGM
             mInteractionHandle = interactionHandle;
          }
          
-         void SetOneToOneMappingVector(std::vector<ParameterToParameter> &thisOneToOneVector)
+         void SetOneToManyMappingVector(std::vector<ParameterToParameterList> &thisOneToManyVector)
          {
-            mOneToOne = thisOneToOneVector;
+            mOneToMany = thisOneToManyVector;
          }
 
          InteractionToMessage& operator=(const InteractionToMessage& setTo)
@@ -99,7 +99,7 @@ namespace dtHLAGM
             mType = setTo.mType;
             mInteractionName = setTo.mInteractionName;      
             mInteractionHandle = setTo.mInteractionHandle;
-            mOneToOne = setTo.mOneToOne;
+            mOneToMany = setTo.mOneToMany;
             
             return *this;
          }
@@ -109,7 +109,7 @@ namespace dtHLAGM
             return mType == toCompare.mType &&
                mInteractionName == toCompare.mInteractionName &&
                mInteractionHandle == toCompare.mInteractionHandle &&
-               mOneToOne == toCompare.mOneToOne;
+               mOneToMany == toCompare.mOneToMany;
          }
          
          bool operator!=(const InteractionToMessage& toCompare) const
@@ -123,7 +123,7 @@ namespace dtHLAGM
          const dtGame::MessageType* mType;
          std::string mInteractionName;      
          RTI::InteractionClassHandle mInteractionHandle;
-         std::vector<ParameterToParameter> mOneToOne;
+         std::vector<ParameterToParameterList> mOneToMany;
    };
 };
 

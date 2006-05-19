@@ -31,11 +31,14 @@
 //xerces xml dom parser
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <dtUtil/log.h>
-#include "dtDAL/datatype.h"
-#include "dtDAL/resourcehelper.h"
+#include <dtUtil/fileutils.h>
+
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
+
 #include "dtDAL/export.h"
+#include "dtDAL/datatype.h"
+#include "dtDAL/resourcehelper.h"
 
 XERCES_CPP_NAMESPACE_USE;
 
@@ -58,7 +61,7 @@ namespace dtDAL
           * @param type The filetype, whether a directory or file.
           * @return true if the file name refers to an rbody file.
           */
-         virtual bool HandlesFile(const std::string& path, FileType type) const;
+		 virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const;
 
          /**
           * @return A description for this handler.

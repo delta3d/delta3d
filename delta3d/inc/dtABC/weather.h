@@ -143,6 +143,9 @@ namespace dtABC
       ///Get a handle to the Weather's Environment instance
       dtCore::Environment* GetEnvironment() {return mEnvironment.get();}
 
+      ///const version to get a handle to the Weather's Environment instance
+      const dtCore::Environment* GetEnvironment() const {return mEnvironment.get();}
+
       ///Set the weather's rate of change (-1.0 to 1.0)
       void SetRateOfChange(const float rate);
       float GetRateOfChange() const {return mRateOfChange;}
@@ -152,8 +155,8 @@ namespace dtABC
       void GetTimePeriodAndSeason(TimePeriod *period, Season *season) const;
 
       ///Add a DeltaDrawable to be affected by this weather's lighting and fog
-      bool AddChild(dtCore::DeltaDrawable *child);
-      void RemoveChild(dtCore::DeltaDrawable *child);
+      bool AddChild( dtCore::DeltaDrawable *child);
+      void RemoveChild( dtCore::DeltaDrawable *child);
 
    private:
       typedef std::vector<dtCore::RefPtr<dtCore::CloudPlane> > CloudPlaneList;

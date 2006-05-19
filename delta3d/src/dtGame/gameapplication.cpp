@@ -19,39 +19,56 @@
  * @author David Guthrie
  */
 
-#include <dtGame/gamemanager.h>
-#include <dtGame/gameapplication.h>
-#include <dtGame/gameentrypoint.h>
-#include <dtGame/exceptionenum.h>
+#include <dtUtil/log.h>
+
+#include "dtGame/gamemanager.h"
+#include "dtGame/gameapplication.h"
+#include "dtGame/gameentrypoint.h"
+#include "dtGame/exceptionenum.h"
 #include <dtUtil/exception.h>
- 
+#include <dtCore/camera.h>
+#include <dtABC/application.h>
+#include <dtABC/applicationkeyboardlistener.h>
+#include <dtABC/applicationmouselistener.h>
+
 namespace dtGame
 {
    IMPLEMENT_MANAGEMENT_LAYER(GameApplication)
 
-   GameApplication::GameApplication(): dtABC::Application()
+   GameApplication::GameApplication(int argc, char** argv): dtABC::Application(), mArgc(argc), mArgv(argv)
    {
       RegisterInstance(this);
    }
-   
+
    GameApplication::~GameApplication()
    {
       DeregisterInstance(this);
+
+      GetScene()->RemoveAllDrawables();
+
+      if (mGameManager.valid())
+         mGameManager = NULL;
+
       if (mDestroyFunction != NULL)
       {
          mDestroyFunction(mEntryPoint);
          mEntryPoint = NULL;
-      }   
+      }
    }
- 
+
    void GameApplication::Config()
    {
       Application::Config();
       dtUtil::LibrarySharingManager& lsm = dtUtil::LibrarySharingManager::GetInstance();
-      std::string libName = "client";
-      
+      std::string libName = GetGameLibraryName();
+
+      if (libName.empty())
+      {
+         EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR,
+            "The game library name must be set before configuring a application.");
+      }
+
       std::ostringstream msg;
-      
       try
       {
          mEntryPointLib = lsm.LoadSharedLibrary(libName);
@@ -59,10 +76,10 @@ namespace dtGame
       catch (dtUtil::Exception)
       {
          msg.str("");
-         msg << "Unable to game library " << libName;
+         msg << "Unable to load game library " << libName;
          EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR, msg.str());
       }
-        
+
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS createAddr;
       dtUtil::LibrarySharingManager::LibraryHandle::SYMBOL_ADDRESS destroyAddr;
       createAddr = mEntryPointLib->FindSymbol("CreateGameEntryPoint");
@@ -91,10 +108,18 @@ namespace dtGame
       mCreateFunction =  (CreateEntryPointFn)createAddr;
       mDestroyFunction = (DestroyEntryPointFn)destroyAddr;
       mEntryPoint =  mCreateFunction();
-      
-      mEntryPoint->Initialize(*this);
-      
-      mGameManager = mEntryPoint->CreateGameManager();
+
+      try
+      {
+         mEntryPoint->Initialize(*this, mArgc, mArgv);
+         mGameManager = mEntryPoint->CreateGameManager(*GetScene());
+      }
+      catch (const dtUtil::Exception& ex)
+      {
+         ex.LogException(dtUtil::Log::LOG_ERROR);
+         throw ex;
+      }
+
       if (mGameManager == NULL)
       {
          msg.str("");
@@ -102,8 +127,10 @@ namespace dtGame
                 " \"GameEntryPoint failed to create Game Manager.\"";
          EXCEPT(dtGame::ExceptionEnum::GAME_APPLICATION_CONFIG_ERROR ,msg.str());
       }
-      
-      mEntryPoint->OnStartup(*this);  
+
+      mGameManager->SetApplication(*this);
+
+      mEntryPoint->OnStartup();
    }
- 
+
 }

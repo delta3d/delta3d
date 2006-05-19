@@ -27,5 +27,8 @@ if OS != 'linux':
 if OS != 'darwin':
    srcs.remove( 'deltawin_carbon.cpp' )
    srcs.remove( 'uniqueid_macosx.cpp' )
+
+if OS == 'darwin':
+   srcs.remove( 'tracker.cpp' )
     
 env.BuildLib( 'dtCore', srcs, deps,  defines, prefixHeader = 'inc/prefix/dtcoreprefix.h')

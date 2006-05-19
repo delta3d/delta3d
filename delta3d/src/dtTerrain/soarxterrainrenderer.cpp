@@ -36,7 +36,7 @@
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
 
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 
 #include "dtTerrain/terraindatareader.h"
 #include "dtTerrain/terraindecorationlayer.h"
@@ -440,7 +440,7 @@ namespace dtTerrain
          std::string cachePath = GetParentTerrain()->GetCachePath() + "/" +
             SoarXCacheResourceName::DETAIL_SCALE_MAP.GetName();
          
-         if (dtDAL::FileUtils::GetInstance().FileExists(cachePath))
+         if (dtUtil::FileUtils::GetInstance().FileExists(cachePath))
          {
             LOG_INFO("Reading detail scale map from cache: " + cachePath);
             scaleMapImage = osgDB::readImageFile(cachePath);
@@ -503,7 +503,7 @@ namespace dtTerrain
          std::string cachePath = GetParentTerrain()->GetCachePath() + "/" +
             SoarXCacheResourceName::DETAIL_GRADIENT_TEXTURE.GetName();
             
-         if (dtDAL::FileUtils::GetInstance().FileExists(cachePath))
+         if (dtUtil::FileUtils::GetInstance().FileExists(cachePath))
          {
             LOG_INFO("Reading detail gradient texture from cache: " + cachePath);
             gradientImage = osgDB::readImageFile(cachePath);
@@ -570,7 +570,7 @@ namespace dtTerrain
          std::string cachePath = tile.GetCachePath() + "/" +
             SoarXCacheResourceName::BASE_GRADIENT_TEXTURE.GetName();
          
-         if (dtDAL::FileUtils::GetInstance().FileExists(cachePath))
+         if (dtUtil::FileUtils::GetInstance().FileExists(cachePath))
          {
             LOG_INFO("Reading base gradient from cache: " + cachePath);
             baseGradientImage = osgDB::readImageFile(cachePath);

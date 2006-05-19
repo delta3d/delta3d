@@ -32,6 +32,8 @@
 #include <dtCore/globals.h>
 #include <dtABC/application.h>
 
+#include <dtUtil/stringutils.h>
+
 #include <dtDAL/project.h>
 #include <dtDAL/map.h>
 #include <dtUtil/tree.h>
@@ -39,13 +41,14 @@
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
 #include <dtDAL/mapxml.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtDAL/datatype.h>
 
 
 #include <cppunit/extensions/HelperMacros.h>
 
-namespace dtDAL {
+namespace dtDAL 
+{
     class ResourceTreeNode;
     class DataType;
 }
@@ -80,16 +83,31 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( ProjectTests );
 
-void ProjectTests::setUp()
-{
-    try
-    {
+const std::string DATA_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"data";
+const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
+const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
+
+
+void ProjectTests::setUp() {
+    try {
         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("projectTest");
 
+//        logger = &dtUtil::Log::GetInstance("project.cpp");
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+//        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+//        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+
         logger = &dtUtil::Log::GetInstance(logName);
-        dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
-        fileUtils.PushDirectory(dtCore::GetDeltaRootPath()+"/tests/dtDAL");
+
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+//        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
+        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+        fileUtils.ChangeDirectory(TESTS_DIR);
+        fileUtils.PushDirectory("dtDAL");
 
         fileUtils.PushDirectory("WorkingProject");
         fileUtils.DirDelete(dtDAL::DataType::STATIC_MESH.GetName(), true);
@@ -101,19 +119,16 @@ void ProjectTests::setUp()
         fileUtils.DirDelete("Testing", true);
         fileUtils.DirDelete("recursiveDir", true);
 
-        fileUtils.FileCopy("../../data/models/dirt.ive", ".", false);
-        fileUtils.FileCopy("../../data/models/flatdirt.ive", ".", false);
-    }
-    catch (const dtUtil::Exception& ex)
-    {
+        fileUtils.FileCopy(DATA_DIR + "/models/dirt.ive", ".", false);
+        fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
+    } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
     }
 }
 
 
-void ProjectTests::tearDown()
-{
-    dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+void ProjectTests::tearDown() {
+    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
     fileUtils.FileDelete("dirt.ive");
     fileUtils.FileDelete("flatdirt.ive");
@@ -127,11 +142,11 @@ void ProjectTests::testFileIO()
 {
     try
     {
-        dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
         std::string Dir1("Testing");
         std::string Dir2Name("Testing1");
-        std::string Dir2(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2Name);
+        std::string Dir2(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name);
 
         //cleanup
         try
@@ -150,8 +165,8 @@ void ProjectTests::testFileIO()
         std::string file1("dirt.ive");
         std::string file2("flatdirt.ive");
 
-        struct dtDAL::FileInfo file1Info = fileUtils.GetFileInfo(file1);
-        struct dtDAL::FileInfo file2Info = fileUtils.GetFileInfo(file2);
+        struct dtUtil::FileInfo file1Info = fileUtils.GetFileInfo(file1);
+        struct dtUtil::FileInfo file2Info = fileUtils.GetFileInfo(file2);
 
         try
         {
@@ -169,93 +184,87 @@ void ProjectTests::testFileIO()
 
         CPPUNIT_ASSERT_MESSAGE("The original dirt.ive should exist.", fileUtils.FileExists(file1));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         fileUtils.FileCopy(file1, Dir1, true);
 
         CPPUNIT_ASSERT_MESSAGE("The original dirt.ive should exist.", fileUtils.FileExists(file1));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-        try
-        {
-            fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
+        try {
+            fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("The file copy should have failed since it was attempting to overwrite the file and overwriting was disabled.");
-        }
-        catch (const dtUtil::Exception&)
-        {
+        } catch (const dtUtil::Exception&) {
             //correct
         }
 
         CPPUNIT_ASSERT_MESSAGE("The original flatdirt.ive should exist.", fileUtils.FileExists(file2));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should still exist.", fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should still exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-        struct dtDAL::FileInfo fi = fileUtils.GetFileInfo(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1);
+        struct dtUtil::FileInfo fi = fileUtils.GetFileInfo(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
         CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as the original", fi.size == file1Info.size);
 
-        try
-        {
-            fileUtils.FileCopy(file2, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, true);
-        }
-        catch (const dtUtil::Exception& ex)
-        {
+        try {
+            fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
+        } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("The original flatdirt.ive should exist.", fileUtils.FileExists(file2));
 
         CPPUNIT_ASSERT_MESSAGE("The new dirt.ive, copied from flatdirt.ive, should exist.",
-            fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-        fi = fileUtils.GetFileInfo(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1);
+        fi = fileUtils.GetFileInfo(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
 
         CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
         try {
-            fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
+            fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
         } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should not exist.",!fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("dirt.ive should not exist.",!fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The new dirt.ive, copied from dirt.ive, should exist.",
-            fileUtils.FileExists(Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-        fi = fileUtils.GetFileInfo(Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1);
+        fi = fileUtils.GetFileInfo(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
         CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
         //copy the file back so we can try to move it again with overwriting.
         try {
-            fileUtils.FileCopy(Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
+            fileUtils.FileCopy(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
         } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
         try {
-            fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, false);
+            fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
             CPPUNIT_FAIL("Moving the file should have failed since overwriting was turned off.");
         } catch (const dtUtil::Exception&) {
             //correct
         }
 
         try {
-            fileUtils.FileMove(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1, true);
+            fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
         } catch (const dtUtil::Exception& ex) {
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
         CPPUNIT_ASSERT_MESSAGE("dirt.ive should not exist.",
-            !fileUtils.FileExists(Dir1 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            !fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The new dirt.ive, copied from dirt.ive, should exist.",
-            fileUtils.FileExists(Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
 
         try {
             //copy a directory into itself with "copy contents only"
-            fileUtils.DirCopy(Dir1, Dir1+ dtDAL::FileUtils::PATH_SEPARATOR + ".."+ dtDAL::FileUtils::PATH_SEPARATOR + Dir1, true, true);
+            fileUtils.DirCopy(Dir1, Dir1+ dtUtil::FileUtils::PATH_SEPARATOR + ".."+ dtUtil::FileUtils::PATH_SEPARATOR + Dir1, true, true);
             CPPUNIT_FAIL("DirCopy should not be able to copy a directory onto itself.");
         } catch (const dtUtil::Exception&) {
             //correct
@@ -292,11 +301,11 @@ void ProjectTests::testFileIO()
         fileUtils.DirCopy(Dir1, Dir3, false);
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should exist.",
-            fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should exist.",
-            fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir1
-            + dtDAL::FileUtils::PATH_SEPARATOR + Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir1
+            + dtUtil::FileUtils::PATH_SEPARATOR + Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
 
         fileUtils.DirDelete(Dir3, true);
@@ -308,14 +317,14 @@ void ProjectTests::testFileIO()
         fileUtils.DirCopy(Dir1, Dir3, false);
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should NOT exist.",
-            !fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir1
-            + dtDAL::FileUtils::PATH_SEPARATOR + Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            !fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir1
+            + dtUtil::FileUtils::PATH_SEPARATOR + Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should exist.",
-            fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2Name + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should exist.",
-            fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
 
         fileUtils.DirDelete(Dir3, true);
@@ -327,24 +336,24 @@ void ProjectTests::testFileIO()
         //copy with the directory existing, but with copy contents only. This should be the same as the directory NOT existing before the call.
         fileUtils.DirCopy(Dir1, Dir3, false, true);
         CPPUNIT_ASSERT_MESSAGE("The recursive file should NOT exist.",
-            !fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir1
-            + dtDAL::FileUtils::PATH_SEPARATOR + Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            !fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir1
+            + dtUtil::FileUtils::PATH_SEPARATOR + Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should exist.",
-            fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2Name + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2Name + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         CPPUNIT_ASSERT_MESSAGE("The recursive file should exist.",
-            fileUtils.FileExists(Dir3 + dtDAL::FileUtils::PATH_SEPARATOR + Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1));
+            fileUtils.FileExists(Dir3 + dtUtil::FileUtils::PATH_SEPARATOR + Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
 
-        fi = fileUtils.GetFileInfo(Dir2 + dtDAL::FileUtils::PATH_SEPARATOR + file1);
+        fi = fileUtils.GetFileInfo(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
         CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
-        osgDB::DirectoryContents dc = fileUtils.DirGetSubs(Dir1);
+        dtUtil::DirectoryContents dc = fileUtils.DirGetSubs(Dir1);
 
         CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries.").c_str(), dc.size() == 2);
 
-        for (osgDB::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i) {
+        for (dtUtil::DirectoryContents::const_iterator i = dc.begin(); i != dc.end(); ++i) {
             const std::string& s = *i;
             CPPUNIT_ASSERT_MESSAGE((Dir1 + " Should only contain 2 entries and they should be \"Testing1\" and \"Testing\".").c_str(),
                 s == "Testing1" || s == "Testing");
@@ -565,7 +574,7 @@ void ProjectTests::testCategories()
     {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
-        dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
         std::string projectDir("TestProject");
 
@@ -603,17 +612,17 @@ void ProjectTests::testCategories()
                     "attempting to remove a simple category should succeed.",
                     p.RemoveResourceCategory("abomb:hbomb", d, false));
 
-                std::string catPath(p.GetContext() + dtDAL::FileUtils::PATH_SEPARATOR
-                    + d.GetName() + dtDAL::FileUtils::PATH_SEPARATOR + "abomb");
+                std::string catPath(p.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR
+                    + d.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "abomb");
 
                 CPPUNIT_ASSERT_MESSAGE("Static mesh category abomb should exist.",
                     fileUtils.DirExists(catPath));
 
                 p.CreateResourceCategory("abomb:jojo:eats:hummus", d);
 
-                std::string longPath(catPath + dtDAL::FileUtils::PATH_SEPARATOR + "jojo"
-                    + dtDAL::FileUtils::PATH_SEPARATOR + "eats"
-                    + dtDAL::FileUtils::PATH_SEPARATOR + "hummus");
+                std::string longPath(catPath + dtUtil::FileUtils::PATH_SEPARATOR + "jojo"
+                    + dtUtil::FileUtils::PATH_SEPARATOR + "eats"
+                    + dtUtil::FileUtils::PATH_SEPARATOR + "hummus");
 
                 CPPUNIT_ASSERT_MESSAGE(std::string("Static mesh category ") + longPath + " should exist.",
                     fileUtils.DirExists(longPath));
@@ -627,8 +636,8 @@ void ProjectTests::testCategories()
                     !p.RemoveResourceCategory("abomb:jojo", d, false));
 
                 CPPUNIT_ASSERT_MESSAGE("Static mesh category abomb should exist.",
-                    fileUtils.DirExists(catPath + dtDAL::FileUtils::PATH_SEPARATOR + "jojo"
-                    + dtDAL::FileUtils::PATH_SEPARATOR + "eats"));
+                    fileUtils.DirExists(catPath + dtUtil::FileUtils::PATH_SEPARATOR + "jojo"
+                    + dtUtil::FileUtils::PATH_SEPARATOR + "eats"));
 
                 CPPUNIT_ASSERT(p.RemoveResourceCategory("abomb", d, true));
                 CPPUNIT_ASSERT_MESSAGE("Static mesh category abomb should not exist.",
@@ -642,9 +651,9 @@ void ProjectTests::testCategories()
     catch (const dtUtil::Exception& ex)
     {
         CPPUNIT_FAIL(ex.What());
-    }  
+    }
 //    catch (const std::exception& ex) {
-//        CPPUNIT_FAIL(ex.what());        
+//        CPPUNIT_FAIL(ex.what());
 //    }
 
 }
@@ -655,7 +664,7 @@ void ProjectTests::testResources()
     {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
-        dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
         //Open an existing project.
         std::string projectDir = "WorkingProject";
@@ -680,16 +689,16 @@ void ProjectTests::testResources()
 
         time_t currentTime;
         time(&currentTime);
-        const std::string& utcTime = dtDAL::MapWriter::TimeAsUTC(currentTime);
+        const std::string& utcTime = dtUtil::TimeAsUTC(currentTime);
 
         logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
             "Current time as UTC is %s", utcTime.c_str());
 
         std::vector<osg::ref_ptr<const dtDAL::ResourceTypeHandler> > handlers;
-        
+
         p.GetHandlersForDataType(dtDAL::DataType::TERRAIN, handlers);
         CPPUNIT_ASSERT_MESSAGE("There should be 4 terrain type handlers",  handlers.size() == 4);
-        
+
         std::string testResult;
 
         try {
@@ -714,21 +723,21 @@ void ProjectTests::testResources()
         std::string dirtCategory = "fun:bigmamajama";
 
         //add one marine before indexing
-        dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", "../../../data/marine/marine.rbody", "",
+        dtDAL::ResourceDescriptor marineRD = p.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "",
             dtDAL::DataType::CHARACTER);
 
-        dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", "../../../data/models/exampleTerrain", "terrain",
+        dtDAL::ResourceDescriptor terrain1RD = p.AddResource("terrain1", DATA_DIR + "/models/exampleTerrain", "terrain",
                 dtDAL::DataType::TERRAIN);
 
         //force resources to be indexed.
         p.GetAllResources();
 
         //add one marine after indexing
-        dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", "../../../data/marine/marine.rbody", "marine",
+        dtDAL::ResourceDescriptor marine2RD = p.AddResource("marine2", DATA_DIR + "/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
 
 
-        dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", "../../../data/models/exampleTerrain/terrain.3ds", "",
+        dtDAL::ResourceDescriptor terrain2RD = p.AddResource("terrain2", DATA_DIR + "/models/exampleTerrain/terrain.3ds", "",
                 dtDAL::DataType::TERRAIN);
 
         //printTree(p.GetAllResources());
@@ -756,15 +765,15 @@ void ProjectTests::testResources()
         CPPUNIT_ASSERT_MESSAGE("The marine resource should have been found.", marineResource != p.GetAllResources().end());
         CPPUNIT_ASSERT_MESSAGE("The second marine resource should have been found.", marine2Resource != p.GetAllResources().end());
 
-        std::string characterDir(p.GetContext() + dtDAL::FileUtils::PATH_SEPARATOR + dtDAL::DataType::CHARACTER.GetName() + dtDAL::FileUtils::PATH_SEPARATOR);
-        
-        CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine.rbody") &&
-                       fileUtils.FileExists(characterDir + "marine.rbody" + dtDAL::FileUtils::PATH_SEPARATOR + "marine.rbody"));
+        std::string characterDir(p.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::CHARACTER.GetName() + dtUtil::FileUtils::PATH_SEPARATOR);
 
-        CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine" + 
-                       dtDAL::FileUtils::PATH_SEPARATOR + "marine2.rbody") &&
-                       fileUtils.FileExists(characterDir + "marine" + dtDAL::FileUtils::PATH_SEPARATOR + "marine2.rbody" + dtDAL::FileUtils::PATH_SEPARATOR + "marine2.rbody"));
-        
+        CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine.rbody") &&
+                       fileUtils.FileExists(characterDir + "marine.rbody" + dtUtil::FileUtils::PATH_SEPARATOR + "marine.rbody"));
+
+        CPPUNIT_ASSERT(fileUtils.DirExists(characterDir + "marine" +
+                       dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody") &&
+                       fileUtils.FileExists(characterDir + "marine" + dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody" + dtUtil::FileUtils::PATH_SEPARATOR + "marine2.rbody"));
+
         //Done with the marines
 
         p.GetResourcesOfType(dtDAL::DataType::TERRAIN, toFill);
@@ -789,18 +798,18 @@ void ProjectTests::testResources()
         CPPUNIT_ASSERT_MESSAGE("The terrain2 resource should have been found.", terrain2Resource != p.GetAllResources().end());
         CPPUNIT_ASSERT_MESSAGE("The terrain1 resource should have been found.", terrain1Resource != p.GetAllResources().end());
 
-        std::string terrainDir(p.GetContext() + dtDAL::FileUtils::PATH_SEPARATOR + dtDAL::DataType::TERRAIN.GetName() + dtDAL::FileUtils::PATH_SEPARATOR);
-        
+        std::string terrainDir(p.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + dtDAL::DataType::TERRAIN.GetName() + dtUtil::FileUtils::PATH_SEPARATOR);
+
         CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir + "terrain2.3dst" ) &&
-                       fileUtils.FileExists(terrainDir + "terrain2.3dst" + dtDAL::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
-        
-        CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir + "terrain" + 
-                                           dtDAL::FileUtils::PATH_SEPARATOR + "terrain1.3dst") &&
-                       fileUtils.FileExists(terrainDir + "terrain" + dtDAL::FileUtils::PATH_SEPARATOR + "terrain1.3dst" + dtDAL::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
-        
+                       fileUtils.FileExists(terrainDir + "terrain2.3dst" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
+
+        CPPUNIT_ASSERT(fileUtils.DirExists(terrainDir + "terrain" +
+                                           dtUtil::FileUtils::PATH_SEPARATOR + "terrain1.3dst") &&
+                       fileUtils.FileExists(terrainDir + "terrain" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain1.3dst" + dtUtil::FileUtils::PATH_SEPARATOR + "terrain.3ds"));
+
         //Done with the terrains
 
-        dtDAL::ResourceDescriptor rd = p.AddResource("dirt", std::string("../../../data/models/flatdirt.ive"),
+        dtDAL::ResourceDescriptor rd = p.AddResource("dirt", std::string(DATA_DIR + "/models/flatdirt.ive"),
             dirtCategory, dtDAL::DataType::STATIC_MESH);
 
         CPPUNIT_ASSERT_MESSAGE("Descriptor id should not be empty.", !rd.GetResourceIdentifier().empty());
@@ -808,9 +817,9 @@ void ProjectTests::testResources()
         testResult = p.GetResourcePath(rd);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
-			testResult == dtDAL::DataType::STATIC_MESH.GetName() + dtDAL::FileUtils::PATH_SEPARATOR 
-			+ "fun" + dtDAL::FileUtils::PATH_SEPARATOR + "bigmamajama" 
-			+ dtDAL::FileUtils::PATH_SEPARATOR + "dirt.ive");
+			testResult == dtDAL::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
+			+ "fun" + dtUtil::FileUtils::PATH_SEPARATOR + "bigmamajama"
+			+ dtUtil::FileUtils::PATH_SEPARATOR + "dirt.ive");
 
 
         for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++) {
@@ -866,21 +875,21 @@ void ProjectTests::testResources()
         CPPUNIT_ASSERT_MESSAGE(std::string("the category \"") + "fun"
             + "\" should not have been found in the resource tree", treeResult == p.GetAllResources().end());
 
-        rd = p.AddResource("pow", std::string("../../../data/sounds/pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND);
+        rd = p.AddResource("pow", std::string(DATA_DIR + "/sounds/pow.wav"), std::string("tea:money"), dtDAL::DataType::SOUND);
         testResult = p.GetResourcePath(rd);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult ,
-            testResult == dtDAL::DataType::SOUND.GetName() + dtDAL::FileUtils::PATH_SEPARATOR 
-			+ "tea" + dtDAL::FileUtils::PATH_SEPARATOR 
-			+ "money" + dtDAL::FileUtils::PATH_SEPARATOR + "pow.wav");
+            testResult == dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
+			+ "tea" + dtUtil::FileUtils::PATH_SEPARATOR
+			+ "money" + dtUtil::FileUtils::PATH_SEPARATOR + "pow.wav");
 
-        dtDAL::ResourceDescriptor rd1 = p.AddResource("bang", std::string("../../../data/sounds/bang.wav"),
+        dtDAL::ResourceDescriptor rd1 = p.AddResource("bang", std::string(DATA_DIR + "/sounds/bang.wav"),
             std::string("tee:cash"), dtDAL::DataType::SOUND);
         testResult = p.GetResourcePath(rd1);
 
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
-            testResult == dtDAL::DataType::SOUND.GetName() + dtDAL::FileUtils::PATH_SEPARATOR + "tee" 
-			+ dtDAL::FileUtils::PATH_SEPARATOR + "cash" + dtDAL::FileUtils::PATH_SEPARATOR + "bang.wav");
+            testResult == dtDAL::DataType::SOUND.GetName() + dtUtil::FileUtils::PATH_SEPARATOR + "tee"
+			+ dtUtil::FileUtils::PATH_SEPARATOR + "cash" + dtUtil::FileUtils::PATH_SEPARATOR + "bang.wav");
 
         p.Refresh();
 
@@ -919,9 +928,9 @@ void ProjectTests::testResources()
     catch (const dtUtil::Exception& ex)
     {
         CPPUNIT_FAIL(ex.What());
-    } 
+    }
 //    catch (const std::exception& ex) {
-//        CPPUNIT_FAIL(ex.what());        
+//        CPPUNIT_FAIL(ex.what());
 //    }
 
 }
@@ -934,7 +943,7 @@ void ProjectTests::testProject()
     {
         dtDAL::Project& p = dtDAL::Project::GetInstance();
 
-        dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
         std::string originalPathList = dtCore::GetDataFilePathList();
 
@@ -1030,9 +1039,9 @@ void ProjectTests::testProject()
 
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
-    } 
+    }
 //    catch (const std::exception& ex) {
-//        CPPUNIT_FAIL(ex.what());        
+//        CPPUNIT_FAIL(ex.what());
 //    }
 
 }

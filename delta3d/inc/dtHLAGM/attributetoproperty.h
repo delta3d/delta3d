@@ -28,8 +28,9 @@
 #define RTI_USES_STD_FSTREAM
 #include"RTI.hh"
 
-#include "dtHLAGM/onetoonemapping.h"
 #include "dtHLAGM/export.h"
+#include "dtHLAGM/onetoonemapping.h"
+#include "dtHLAGM/onetomanymapping.h"
 
 namespace dtHLAGM
 {
@@ -83,6 +84,46 @@ namespace dtHLAGM
          
          RTI::AttributeHandle mAttributeHandle;
    };
+
+   class DT_HLAGM_EXPORT AttributeToPropertyList : public OneToManyMapping
+   {
+      public:
+     
+         AttributeToPropertyList()
+         {}
+
+         /**
+          * Constructor setting the basic values
+          * @param hlaName the name of the HLA value to map to.
+          * @param hlaType the type of the HLA value.
+          * @param requiredForHLA true if this field is required in the HLA FOM.
+          */
+         AttributeToPropertyList(const std::string& hlaName,
+                             const AttributeType& attributeType,
+                             bool requiredForHLA):
+                             OneToManyMapping(hlaName,
+                                attributeType,
+                                requiredForHLA)
+         {}
+         
+         virtual ~AttributeToPropertyList()
+         {}
+         
+         RTI::AttributeHandle GetAttributeHandle()
+         {
+            return mAttributeHandle;
+         }
+         
+         void SetAttributeHandle(RTI::AttributeHandle attributeHandle)
+         {
+            mAttributeHandle = attributeHandle;
+         }  
+                  
+      private:
+         
+         RTI::AttributeHandle mAttributeHandle;
+   };
+
 };
 
 #endif //DELTA_ATTRIBUTE_TO_PROPERTY

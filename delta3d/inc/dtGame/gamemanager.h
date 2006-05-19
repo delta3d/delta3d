@@ -30,6 +30,7 @@
 #include "dtGame/messagefactory.h"
 #include "dtGame/message.h"
 #include "dtGame/machineinfo.h"
+#include "dtGame/environmentactor.h"
 #include <dtCore/refptr.h>
 #include <dtCore/base.h>
 #include <dtCore/scene.h>
@@ -43,6 +44,13 @@ namespace dtDAL
    class ActorType;
    class ActorPluginRegistry;
 }
+
+// Forward declarations
+namespace dtABC
+{
+   class Application;
+}
+
 
 /** 
  * A high-level library that manages interaction between game actors.
@@ -203,11 +211,31 @@ namespace dtGame
          void GetAllComponents(std::vector<const GMComponent*>& toFill) const;
 
          /**
-          * Creates ana actor based on the actor type.
+          * Sets an environment actor on the game manager
+          * @param envActor The environment actor to set
+          */
+         void SetEnvironmentActor(EnvironmentActorProxy *envActor);
+
+         /**
+          * Gets the environment actor on the game manager
+          * @return mEnvProxy or NULL if no environment actor has been set
+          */
+         EnvironmentActorProxy* GetEnvironmentActor() { return mEnvironment.get(); }
+
+         /**
+          * Creates an actor based on the actor type.
           * @param The actor type to create.
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
          dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType) throw(dtUtil::Exception);
+
+         /**
+          * Creates an actor based on the actor type
+          * @param category The category corresponding to the actor type
+          * @param name The name corresponding to the actor type
+          * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+          */
+         dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const std::string &category, const std::string &name) throw(dtUtil::Exception);
 
          /**
           * Adds an actor to the list of actors that the game manager knows about
@@ -300,6 +328,12 @@ namespace dtGame
          void GetAllActors(std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
 
          /**
+          * Fills a vector with actors that are currently in the scene
+          * @param vec The vector to fill
+          */
+         void GetActorsInScene(std::vector<dtCore::RefPtr<dtCore::DeltaDrawable> > &vec);
+
+         /**
           * Fills a vector with the game proxys whose names match the name parameter
           * @param The name to search for
           * @param The vector to fill
@@ -313,6 +347,13 @@ namespace dtGame
           */
          void FindActorsByType(const dtDAL::ActorType &type, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
 
+         /**
+          * Fills out a vector of actors with the specified class name
+          * @param className the classname
+          * @param toFill The vector to fill
+          */
+         void FindActorsByClassName(const std::string &className, std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > &toFill);
+         
          /**
           * Fills a vector with the game proxys whose position is within the radius parameter
           * @param The radius to search in 
@@ -394,9 +435,19 @@ namespace dtGame
 
          /**
           * Sets the scene member of the class
+          * This should not be changed after startup.
           * @param The new scene to assign
           */
          void SetScene(dtCore::Scene &newScene) { mScene = &newScene; }
+
+         ///@return the application that owns this game mananger.
+         dtABC::Application& GetApplication() throw(dtUtil::Exception); 
+
+         ///@return the application that owns this game mananger.
+         const dtABC::Application& GetApplication() const throw(dtUtil::Exception);
+         
+         ///sets the application that owns this game manager.  This should NOT be changes after startup.
+         void SetApplication(dtABC::Application& application);
 
          /**
           * Gets the interval (in seconds) used for writing out GM Statistics. This 
@@ -620,8 +671,15 @@ namespace dtGame
           * @param partial The partial amount that we are using for the percentage
           */
          float ComputeStatsPercent(dtCore::Timer_t total, dtCore::Timer_t partial);
+
+         /**
+          * Private helper method to send an environment changed message
+          * @param envActor The about actor of the message
+          */
+         void SendEnvironmentChangedMessage(EnvironmentActorProxy *envActor);
       
-         dtCore::RefPtr<MachineInfo> mMachineInfo; 
+         dtCore::RefPtr<MachineInfo> mMachineInfo;
+         dtCore::RefPtr<EnvironmentActorProxy> mEnvironment;
 
          std::map<dtCore::UniqueId, dtCore::RefPtr<GameActorProxy> > mGameActorProxyMap;
          std::map<dtCore::UniqueId, dtCore::RefPtr<dtDAL::ActorProxy> > mActorProxyMap;
@@ -649,6 +707,8 @@ namespace dtGame
          long mStatsNumSendMessages;
          long mStatsNumFrames;
          dtCore::Timer_t mStatsCumGMProcessTime;
+         
+         dtABC::Application* mApplication;
          
          // -----------------------------------------------------------------------
          //  Unimplemented constructors and operators

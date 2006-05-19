@@ -1,5 +1,5 @@
 /*
-* Delta3D Open Source Game and Simulation Engine 
+* Delta3D Open Source Game and Simulation Engine
 * Simulation, Training, and Game Editor (STAGE)
 * Copyright (C) 2005, BMH Associates, Inc.
 *
@@ -71,7 +71,7 @@ namespace dtEditQt
         //We do not want OSG to compute our near and far clipping planes when in
         //orthographic view
         getSceneView()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-        
+
         //Default to wireframe view.
         setRenderStyle(Viewport::RenderStyle::WIREFRAME,false);
     }
@@ -179,9 +179,9 @@ namespace dtEditQt
     void OrthoViewport::mouseMoveEvent(QMouseEvent *e)
     {
         static bool mouseMoving = false;
-
         //Moving the mouse back to the center makes the movement recurse
         //so this is a flag to prevent the recursion
+
         if (mouseMoving)
             return;
 

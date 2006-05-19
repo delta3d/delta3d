@@ -123,6 +123,9 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\src\dtHLAGM\attributetype.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtHLAGM\distypes.cpp">
 			</File>
 			<File
@@ -137,6 +140,12 @@
 			<File
 				RelativePath="..\..\..\src\dtHLAGM\hlafomconfigxml.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\objectruntimemappinginfo.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtHLAGM\rprparametertranslator.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -144,6 +153,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\attributetoproperty.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\attributetype.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\distypes.h">
@@ -179,13 +191,25 @@
 				RelativePath="..\..\..\inc\dtHLAGM\interactiontomessage.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtHLAGM\objectruntimemappinginfo.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtHLAGM\objecttoactor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\onetomanymapping.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\onetoonemapping.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtHLAGM\parametertoparameter.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\parametertranslator.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtHLAGM\rprparametertranslator.h">
 			</File>
 		</Filter>
 		<Filter

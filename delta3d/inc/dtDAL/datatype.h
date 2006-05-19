@@ -111,12 +111,12 @@ namespace dtDAL
           * A vector of 3 values.
           */
          static DataType VEC3;
-         
+
          /**
           * A vector of 2 values.
           */
          static DataType VEC2;
-         
+
          /**
           * A vector of 4 values.
           */
@@ -174,6 +174,11 @@ namespace dtDAL
          static DataType ENUMERATION;
 
          /**
+          * Game event data type.
+          */
+         static DataType GAME_EVENT;
+
+         /**
           * A static mesh resource
           */
          static DataType STATIC_MESH;
@@ -182,54 +187,54 @@ namespace dtDAL
           * A texture resource
           */
          static DataType TEXTURE;
-         
+
          /**
           * A replicant body character
           */
          static DataType CHARACTER;
-         
+
          /**
           * Geometry, textures, etc that together should be used as a terrain.
           */
          static DataType TERRAIN;
-         
+
          /**
           * A Sound resource
           */
          static DataType SOUND;
-         
+
          /**
           * A Particle System resource
           */
          static DataType PARTICLE_SYSTEM;
-         
+
          /**
           * @return true if this datatype represents a resource
           */
          bool IsResource() const { return mResource; };
-         
+
          /**
           * Gets a pretty name that can be used in the UI.
           * @return The pretty name
           */
          const std::string &GetDisplayName() { return mDisplayName; }
-         
+
          /**
           * Gets the id associated with this datatype
           */
          unsigned char GetTypeId() const { return mId; }
-         
+
          /**
           * Sets the id of a datatype
           */
          void SetTypeId(unsigned char newId) { mId = newId; }
-         
+
        private:
          /**
           * Private constructor which registers a new DataType enumeration
           * with the static list of available DataType enumerations.
           */
-         DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name) 
+         DataType(const std::string &name, const std::string &displayName, bool resource = false, unsigned char id = 0) : dtUtil::Enumeration(name)
          {
                AddInstance(this);
                mResource = resource;

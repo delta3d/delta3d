@@ -73,6 +73,14 @@ namespace dtGame
          virtual void RequestCaptureKeyframe(const LogKeyframe &keyframe);
 
          /**
+          * Sends a request to the server logger component to tell it to 
+          * jump to the keyframe.  Only works in Playback.  This is a heavy operation 
+          * that WILL change the state of the system.
+          * @param keyframe The keyframe information to send to the server.
+          */
+         virtual void RequestJumpToKeyframe(const LogKeyframe &keyframe);
+
+         /**
           * Sends a request to the server logger component to ask it to 
           * send out the current list of keyframes.  Valid in Playback or Record.
           */
@@ -173,6 +181,22 @@ namespace dtGame
          sigslot::signal1<const LogStatus &> &SignalReceivedStatus() { return _receivedStatus; }
 
          /**
+          * Delta3D signal/slot - sent when a tag list message is received by 
+          * the logger controller component.  Bind to this with something like this:
+          *    myController->SignalReceivedTags().connect_slot(this, &MyClass::MySlotMethod)
+          * @return the signal
+          */
+         sigslot::signal1<const std::vector<LogTag> &> &SignalReceivedTags() { return _receivedTags; }
+
+         /**
+          * Delta3D signal/slot - sent when a keyframe list message is received by 
+          * the logger controller component.  Bind to this with something like this:
+          *    myController->SignalReceivedKeyframes().connect_slot(this, &MyClass::MySlotMethod)
+          * @return the signal
+          */
+         sigslot::signal1<const std::vector<LogKeyframe> &> &SignalReceivedKeyframes() { return _receivedKeyframes; }
+
+         /**
           * Delta3D signal/slot - sent when a logger rejection message is received by 
           * the logger controller component.  Bind to this with something like this:
           *    myController->SignalReceivedRejection().connect_slot(this, &MyClass::MySlotMethod)
@@ -198,8 +222,13 @@ namespace dtGame
 
          // The signal that gets triggered when processMessage receives a LOG_INFO_STATUS message
          sigslot::signal1<const LogStatus &> _receivedStatus;
+         // The signal that gets triggered when processMessage receives a LOG_INFO_TAGS message
+         sigslot::signal1<const std::vector<LogTag> &> _receivedTags;
+         // The signal that gets triggered when processMessage receives a LOG_INFO_KEYFRAMES message
+         sigslot::signal1<const std::vector<LogKeyframe> &> _receivedKeyframes;
          // The signal that gets triggered when processMessage receives a rejection message
          sigslot::signal1<const Message &> _receivedRejection;
+         
 
    };
    

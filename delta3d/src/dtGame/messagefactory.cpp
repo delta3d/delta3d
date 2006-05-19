@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  * @author William E. Johnson II
  */
 
@@ -32,15 +32,15 @@ namespace dtGame
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_ALREADY_REGISTERED("Type already registered");
    MessageFactory::MessageFactoryException MessageFactory::MessageFactoryException::TYPE_NOT_REGISTERED("Type not registered");
 
-   MessageFactory::MessageFactory(const std::string &name, 
-                                  const MachineInfo& machine, 
-                                  const std::string &desc) : 
-   mName(name), 
-   mDescription(desc), 
-   mMachine(&machine) 
+   MessageFactory::MessageFactory(const std::string &name,
+                                  const MachineInfo& machine,
+                                  const std::string &desc) :
+   mName(name),
+   mDescription(desc),
+   mMachine(&machine)
    {
       mMessageFactory = new dtUtil::ObjectFactory<const MessageType*, Message>;
-      
+
       //base messages
       RegisterMessageType<TickMessage>(MessageType::TICK_LOCAL);
       RegisterMessageType<TickMessage>(MessageType::TICK_REMOTE);
@@ -51,7 +51,7 @@ namespace dtGame
       RegisterMessageType<Message>(MessageType::INFO_RESUMED);
       RegisterMessageType<RestartMessage>(MessageType::INFO_RESTARTED);
       RegisterMessageType<TimeChangeMessage>(MessageType::INFO_TIME_CHANGED);
-      
+
       RegisterMessageType<NetServerRejectMessage>(MessageType::NETSERVER_REJECT_CONNECTION);
 
       RegisterMessageType<Message>(MessageType::COMMAND_PAUSE);
@@ -64,6 +64,7 @@ namespace dtGame
       RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_UPDATED);
       RegisterMessageType<ActorUpdateMessage>(MessageType::INFO_ACTOR_DELETED);
       RegisterMessageType<ActorPublishedMessage>(MessageType::INFO_ACTOR_PUBLISHED);
+      RegisterMessageType<Message>(MessageType::INFO_ENVIRONMENT_CHANGED);
 
       RegisterMessageType<Message>(MessageType::INFO_PLAYER_ENTERED_WORLD);
 
@@ -73,7 +74,7 @@ namespace dtGame
       RegisterMessageType<RestartMessage>(MessageType::REQUEST_RESTART);
       RegisterMessageType<TimeChangeMessage>(MessageType::REQUEST_SET_TIME);
 
-      
+
       //Logger messages.
       RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
       RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
@@ -94,6 +95,10 @@ namespace dtGame
       RegisterMessageType<dtGame::LogStatusMessage>(dtGame::MessageType::LOG_INFO_STATUS);
       RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_COMMAND_BEGIN_LOADKEYFRAME_TRANS);
       RegisterMessageType<dtGame::LogEndLoadKeyframeMessage>(dtGame::MessageType::LOG_COMMAND_END_LOADKEYFRAME_TRANS);
+      RegisterMessageType<dtGame::LogJumpToKeyframeMessage>(dtGame::MessageType::LOG_REQ_JUMP_TO_KEYFRAME);
+
+      //Game Event...
+      RegisterMessageType<dtGame::GameEventMessage>(dtGame::MessageType::INFO_GAME_EVENT);
    }
 
    MessageFactory::~MessageFactory()
@@ -126,11 +131,11 @@ namespace dtGame
       msg->SetDestination(NULL);
       return msg;
    }
-   
+
    dtCore::RefPtr<Message> MessageFactory::CloneMessage(const Message& msg) throw(dtUtil::Exception)
    {
       dtCore::RefPtr<Message> theClone = CreateMessage(msg.GetMessageType());
-      try 
+      try
       {
          msg.CopyDataTo(*theClone);
          if (msg.GetCausingMessage() != NULL)
@@ -142,14 +147,14 @@ namespace dtGame
       catch (const dtUtil::Exception& ex)
       {
          //log a little extra info about the exception.
-         LOGN_DEBUG("messagefactory.cpp", 
-            std::string("Exception trying to clone message of class ") + typeid(msg).name() 
+         LOGN_DEBUG("messagefactory.cpp",
+            std::string("Exception trying to clone message of class ") + typeid(msg).name()
             + " with type " + msg.GetMessageType().GetName() + ": " + ex.What());
          throw ex;
       }
       return theClone;
    }
-   
+
    const MessageType &MessageFactory::GetMessageTypeById(unsigned short id) const throw(dtUtil::Exception)
    {
       std::map<unsigned short, const MessageType*>::const_iterator itor = mIdMap.find(id);
@@ -160,10 +165,10 @@ namespace dtGame
             "type map.";
          EXCEPT(MessageFactoryException::TYPE_NOT_REGISTERED,ss.str());
       }
-       
+
       return *itor->second;
    }
-   
+
    const MessageType* MessageFactory::GetMessageTypeByName(const std::string& name) const throw()
    {
       for (std::map<unsigned short, const MessageType*>::const_iterator i = mIdMap.begin(); i != mIdMap.end(); ++i)
@@ -171,7 +176,7 @@ namespace dtGame
          if (i->second->GetName() == name)
             return i->second;
       }
-      
-      return NULL;       
+
+      return NULL;
    }
 }

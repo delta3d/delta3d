@@ -80,6 +80,12 @@ namespace dtUtil
          */
         const Enumeration& TypeEnum() const { return mType; }
 
+        /**
+         * Converts this exception to a string.  The string contains the reason,
+         * line number and file the exception was thrown from.
+         * @return The string version of this exception.
+         */
+	std::string ToString() const;
 
         /**
          * Prints the exception to the console.

@@ -19,7 +19,7 @@
  * @author William E. Johnson II and David Guthrie
  */
 
-#include <dtCore/scene.h>
+//#include <dtCore/scene.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
 #include "dtGame/message.h"
@@ -29,6 +29,10 @@
 #include "dtGame/actorupdatemessage.h"
 #include "dtGame/gamemanager.h"
 #include "dtGame/gmcomponent.h"
+
+#include <dtCore/shadergroup.h>
+#include <dtCore/shader.h>
+#include <dtCore/shadermanager.h>
 
 
 namespace dtGame
@@ -49,63 +53,70 @@ namespace dtGame
 	GameActorProxy::~GameActorProxy()
 	{
 	}
-   
+
 	void GameActorProxy::BuildPropertyMap()
 	{
-		//GameActor& ga = GetGameActor();
+		GameActor& ga = GetGameActor();
 
       dtDAL::PhysicalActorProxy::BuildPropertyMap();
-		
-		dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty("IsGameActor", "Is Game Actor", 
-			dtDAL::MakeFunctor(*this, &GameActorProxy::SetIsGameActorProxy), 
-			dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsGameActorProxy), 
+
+		dtDAL::BooleanActorProperty *bap = new dtDAL::BooleanActorProperty("IsGameActor", "Is Game Actor",
+			dtDAL::MakeFunctor(*this, &GameActorProxy::SetIsGameActorProxy),
+			dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsGameActorProxy),
 			"Read only property that always returns true", "");
 		bap->SetReadOnly(true);
 		AddProperty(bap);
-		
-      bap = new dtDAL::BooleanActorProperty("IsRemote", "Is Remote", 
-         dtDAL::MakeFunctor(*this, &GameActorProxy::SetRemote), 
-         dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsRemote), 
+
+      bap = new dtDAL::BooleanActorProperty("IsRemote", "Is Remote",
+         dtDAL::MakeFunctor(*this, &GameActorProxy::SetRemote),
+         dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsRemote),
          "Sets/Gets if a game actor is remote", "");
      bap->SetReadOnly(true);
      AddProperty(bap);
-		
-	  bap = new dtDAL::BooleanActorProperty("IsPublished", "Is Published", 
-			dtDAL::MakeFunctor(*this, &GameActorProxy::SetPublished), 
-			dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsPublished), 
+
+	  bap = new dtDAL::BooleanActorProperty("IsPublished", "Is Published",
+			dtDAL::MakeFunctor(*this, &GameActorProxy::SetPublished),
+			dtDAL::MakeFunctorRet(*this, &GameActorProxy::IsPublished),
 			"Sets/Gets if a game actor is published", "");
      bap->SetReadOnly(true);
      AddProperty(bap);
 
-     AddProperty(new dtDAL::EnumActorProperty<Ownership>("Initial Ownership", "Initial Ownership", 
+     AddProperty(new dtDAL::EnumActorProperty<Ownership>("Initial Ownership", "Initial Ownership",
         dtDAL::MakeFunctor(*this, &GameActorProxy::SetInitialOwnership),
-        dtDAL::MakeFunctorRet(*this, &GameActorProxy::GetInitialOwnership), 
+        dtDAL::MakeFunctorRet(*this, &GameActorProxy::GetInitialOwnership),
         "Sets/Gets the initial ownership of the actor proxy"));
+
+     const std::string GROUPNAME = "ShaderParams";
+
+     AddProperty(new dtDAL::StringActorProperty("ShaderGroup","ShaderGroup",
+        dtDAL::MakeFunctor(ga, &GameActor::SetShaderGroup),
+        dtDAL::MakeFunctorRet(ga, &GameActor::GetShaderGroup),
+        "Sets the shader group on the game actor.",GROUPNAME));
 	}
-   
+
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) throw()
    {
-      PopulateActorUpdate(update, propNames, true); 
+      PopulateActorUpdate(update, propNames, true);
    }
-   
+
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update) throw()
    {
-      PopulateActorUpdate(update, std::vector<std::string>(), false); 
+      PopulateActorUpdate(update, std::vector<std::string>(), false);
    }
-   
+
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames, bool limitProperties) throw()
    {
       StringMessageParameter* nameParam = static_cast<StringMessageParameter*>(update.GetParameter("Name"));
       if (nameParam != NULL)
-         nameParam->SetValue(GetName()); 
+         nameParam->SetValue(GetName());
 
       StringMessageParameter* typeParam = static_cast<StringMessageParameter*>(update.GetParameter("Actor Type Name"));
       if (typeParam != NULL)
-         typeParam->SetValue(GetActorType().GetName()); 
+         typeParam->SetValue(GetActorType().GetName());
 
       StringMessageParameter* catParam = static_cast<StringMessageParameter*>(update.GetParameter("Actor Type Category"));
       if (catParam != NULL)
-         catParam->SetValue(GetActorType().GetCategory()); 
+         catParam->SetValue(GetActorType().GetCategory());
 
       update.SetAboutActorId(GetId());
       if (limitProperties)
@@ -115,7 +126,7 @@ namespace dtGame
             dtDAL::ActorProperty* property = GetProperty(propNames[i]);
             if (property != NULL)
             {
-               
+
             }
          }
       }
@@ -126,12 +137,12 @@ namespace dtGame
          for (unsigned i = 0; i < toFill.size(); ++i)
          {
             dtDAL::ActorProperty& property = *toFill[i];
-            
+
             //don't send read-only properties
             if (property.IsReadOnly())
                continue;
-            
-            try 
+
+            try
             {
                MessageParameter* mp = update.AddUpdateParameter(property.GetName(), property.GetPropertyType());
                if (mp != NULL)
@@ -143,25 +154,25 @@ namespace dtGame
                update.GetUpdateParameter(property.GetName());
             }
          }
-         
-      } 
+
+      }
    }
-  
+
    void GameActorProxy::ApplyActorUpdate(const ActorUpdateMessage& msg) throw()
    {
-      
+
       const StringMessageParameter* nameParam = static_cast<const StringMessageParameter*>(msg.GetParameter("Name"));
       if (nameParam != NULL)
       {
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Setting name on actor type \"%s.%s\" to value \"%s\"",
                GetActorType().GetCategory().c_str(),
                GetActorType().GetName().c_str(), nameParam->ToString().c_str()
                );
          }
-         SetName(nameParam->GetValue()); 
+         SetName(nameParam->GetValue());
       }
 
       std::vector<const MessageParameter*> params;
@@ -172,7 +183,7 @@ namespace dtGame
          const dtDAL::DataType& paramType = params[i]->GetDataType();
 
          dtDAL::ActorProperty* property = GetProperty(params[i]->GetName());
-   
+
          if (property == NULL)
          {
             LOG_ERROR(("Property \"" + params[i]->GetName() + "\" was not found on the actor.").c_str());
@@ -184,7 +195,7 @@ namespace dtGame
          {
             if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             {
-               dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+               dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                   "Not setting property \"%s\" on actor type \"%s.%s\" to value \"%s\" because the property is read only.",
                   params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
                   GetActorType().GetName().c_str(), params[i]->ToString().c_str()
@@ -195,13 +206,13 @@ namespace dtGame
 
          if (dtUtil::Log::GetInstance().IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
          {
-            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+            dtUtil::Log::GetInstance().LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Setting property \"%s\" on actor type \"%s.%s\" to value \"%s\"",
                params[i]->GetName().c_str(), GetActorType().GetCategory().c_str(),
                GetActorType().GetName().c_str(), params[i]->ToString().c_str()
                );
          }
-                  
+
          if (paramType == dtDAL::DataType::BOOLEAN)
          {
             dtDAL::BooleanActorProperty *bap = static_cast<dtDAL::BooleanActorProperty*> (property);
@@ -236,7 +247,7 @@ namespace dtGame
          {
             dtDAL::AbstractEnumActorProperty *prop = dynamic_cast<dtDAL::AbstractEnumActorProperty*>(property);
             std::string value = params[i]->ToString();
-            
+
             if (!prop->SetValueFromString(value))
                LOG_ERROR(("Failed to set the value on property \"" + params[i]->GetName() + "\".").c_str());
          }
@@ -276,7 +287,7 @@ namespace dtGame
          {
             dtDAL::Vec3dActorProperty *vap = static_cast<dtDAL::Vec3dActorProperty*> (property);
             vap->SetValue(static_cast<const Vec3dMessageParameter*>(params[i])->GetValue());
-         }  
+         }
          else if (paramType == dtDAL::DataType::VEC4)
          {
             dtDAL::Vec4ActorProperty *vap = static_cast<dtDAL::Vec4ActorProperty*> (property);
@@ -298,13 +309,18 @@ namespace dtGame
             dtDAL::ResourceDescriptor newValue(*static_cast<const ResourceMessageParameter*>(params[i])->GetValue());
             vap->SetValue(&newValue);
          }
+         else if (paramType == dtDAL::DataType::GAME_EVENT)
+         {
+            dtDAL::GameEventActorProperty *gap = static_cast<dtDAL::GameEventActorProperty*>(property);
+            gap->SetStringValue(static_cast<const GameEventMessageParameter*>(params[i])->ToString());
+         }
          else
             LOG_ERROR(("Message parameter type \"" + paramType.GetName() + "\" is not supported").c_str());
       }
-      
+
    }
-   
-   
+
+
    void GameActorProxy::AddInvokable(Invokable& newInvokable)
    {
       std::map<std::string,dtCore::RefPtr<Invokable> >::iterator itor =
@@ -321,13 +337,13 @@ namespace dtGame
          mInvokables.insert(std::make_pair(newInvokable.GetName(), dtCore::RefPtr<Invokable>(&newInvokable)));
       }
    }
-   
-   void GameActorProxy::BuildInvokables() 
+
+   void GameActorProxy::BuildInvokables()
    {
-      AddInvokable(*new Invokable("Tick Local", 
+      AddInvokable(*new Invokable("Tick Local",
          dtDAL::MakeFunctor(GetGameActor(), &GameActor::TickLocal)));
 
-      AddInvokable(*new Invokable("Tick Remote", 
+      AddInvokable(*new Invokable("Tick Remote",
          dtDAL::MakeFunctor(GetGameActor(), &GameActor::TickRemote)));
    }
 
@@ -361,7 +377,7 @@ namespace dtGame
          toFill.push_back(i->second.get());
       }
    }
-   
+
    void GameActorProxy::GetMessageHandlers(const MessageType& type, std::vector<Invokable*>& toFill)
    {
       toFill.clear();
@@ -372,7 +388,7 @@ namespace dtGame
       }
    }
 
-   void GameActorProxy::RegisterMessageHandler(const MessageType& type, const std::string& invokableName) 
+   void GameActorProxy::RegisterMessageHandler(const MessageType& type, const std::string& invokableName)
    {
       Invokable* invokable = GetInvokable(invokableName);
       if (invokable != NULL)
@@ -382,12 +398,12 @@ namespace dtGame
          std::ostringstream ss;
          ss << "Could not register invokable " << invokableName << " as a handler because "
              << "no invokable with that name exists.";
-         
+
          LOGN_ERROR("gameactor.cpp", ss.str());
       }
-         
+
    }
-   
+
    void GameActorProxy::UnregisterMessageHandler(const MessageType& type, const std::string& invokableName)
    {
       for (std::multimap<const MessageType*, dtCore::RefPtr<Invokable> >::iterator i = mMessageHandlers.find(&type);
@@ -400,27 +416,27 @@ namespace dtGame
          }
       }
    }
-   
+
    void GameActorProxy::SetRemote(bool remote)
    {
       GameActor& ga = GetGameActor();
       ga.SetRemote(remote);
    }
-    
+
    void GameActorProxy::SetPublished(bool published)
    {
       GameActor& ga = GetGameActor();
       ga.SetPublished(published);
    }
-   
+
    void GameActorProxy::InvokeEnteredWorld()
    {
       GameActor& ga = GetGameActor();
       ga.OnEnteredWorld();
-      
+
       OnEnteredWorld();
-   }   
-   
+   }
+
 
 	///////////////////////////////////////////
 	// Actor code
@@ -428,7 +444,7 @@ namespace dtGame
    GameActor::GameActor(GameActorProxy& proxy) : mProxy(&proxy), mPublished(false), mRemote(false)
 	{
 	}
-	
+
 	GameActor::~GameActor()
 	{
 	}
@@ -439,5 +455,50 @@ namespace dtGame
 
    void GameActor::TickRemote(const Message& tickMessage)
    {
+   }
+
+   void GameActor::SetShaderGroup(const std::string &groupName)
+   {
+      mShaderGroup = groupName;
+      OnShaderGroupChanged();
+   }
+
+   void GameActor::OnShaderGroupChanged()
+   {
+      const dtCore::ShaderGroup *shaderGroup =
+         dtCore::ShaderManager::GetInstance().FindShaderGroup(mShaderGroup);
+
+      /*if (GetOSGNode() == NULL)
+      {
+         mShaderGroup = groupName;
+         return;
+      }*/
+
+      //First get the shader group assigned to this actor.
+      if (shaderGroup == NULL)
+      {
+         LOG_INFO("Could not find shader group: " + mShaderGroup);
+         return;
+      }
+
+      const dtCore::Shader *defaultShader = shaderGroup->GetDefaultShader();
+
+      try
+      {
+         if (defaultShader != NULL)
+         {
+            dtCore::ShaderManager::GetInstance().AssignShader(*defaultShader, *GetOSGNode());
+         }
+         else
+         {
+            LOG_WARNING("Could not find a default shader in shader group: " + mShaderGroup);
+            return;
+         }
+      }
+      catch (const dtUtil::Exception &e)
+      {
+         LOG_WARNING("Caught Exception while assigning shader: " + e.ToString());
+         return;
+      }
    }
 }

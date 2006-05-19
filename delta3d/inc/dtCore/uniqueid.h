@@ -67,7 +67,7 @@ namespace dtCore
           * member variables.  Use const to control when they are changed.
           */
          UniqueId& operator=( const std::string& rhs )
-         { 
+         {
              mId = rhs; 
              return *this;
          }

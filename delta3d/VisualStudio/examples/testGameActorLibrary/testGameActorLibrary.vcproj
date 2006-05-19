@@ -143,6 +143,12 @@
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactorlibrary.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testgameenvironmentactor.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testhlaobject.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testplayer.cpp">
 			</File>
 		</Filter>
@@ -164,6 +170,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testgameactorlibrary.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testgameenvironmentactor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testGameActorLibrary\testhlaobject.h">
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testGameActorLibrary\testplayer.h">

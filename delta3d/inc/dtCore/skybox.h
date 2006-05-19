@@ -1,4 +1,4 @@
-/* 
+/* -*-c++-*- 
  * Delta3D Open Source Game and Simulation Engine 
  * Copyright (C) 2004-2005 MOVES Institute 
  *
@@ -101,8 +101,8 @@ public:
 	//if RenderProfileEnum is set to RP_ANGULAR_MAP, this is irrelevant
 	//and ignores the side
 	*/
-   enum SkyBoxSideEnum
-   {
+       enum SkyBoxSideEnum
+       {
 		SKYBOX_FRONT = 0,
 		SKYBOX_RIGHT,
 		SKYBOX_BACK,      

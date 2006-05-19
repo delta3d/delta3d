@@ -38,11 +38,12 @@
 #include <dtUtil/log.h>
 #include <dtCore/uniqueid.h>
 
-#include <dtDAL/map.h>
-#include <dtDAL/actorproperty.h>
-#include <dtDAL/actorproxy.h>
-#include <dtDAL/datatype.h>
+#include "dtDAL/map.h"
+#include "dtDAL/actorproperty.h"
+#include "dtDAL/actorproxy.h"
+#include "dtDAL/datatype.h"
 #include "dtDAL/export.h"
+#include "dtDAL/environmentactor.h"
 
 // Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
 #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
@@ -53,7 +54,7 @@ namespace std
    {
       typedef unsigned short char_type;
 
-      static void 
+      static void
          assign(char_type& __c1, const char_type& __c2)
       { __c1 = __c2; }
 
@@ -71,7 +72,7 @@ namespace std
          length(const char_type* __s)
       { size_t __n = 0; while (*__s++) ++__n; return __n; }
 
-      static char_type* 
+      static char_type*
          copy(char_type* __s1, const char_type* __s2, size_t __n)
       {  return static_cast<char_type*>(memcpy(__s1, __s2, __n * sizeof(char_type))); }
 
@@ -95,7 +96,7 @@ namespace dtDAL
     * changes the value of these.  They are assumed to be allocated by the memory allocator
     * used internally to xerces and changing them will likely cause memory errors.</p>
     */
-   class DT_DAL_EXPORT MapXMLConstants 
+   class DT_DAL_EXPORT MapXMLConstants
    {
       public:
 
@@ -130,6 +131,7 @@ namespace dtDAL
          static XMLCh* ACTOR_TYPE_ELEMENT;
          static XMLCh* ACTOR_ID_ELEMENT;
          static XMLCh* ACTOR_NAME_ELEMENT;
+         static XMLCh* ACTOR_ENVIRONMENT_ACTOR_ELEMENT;
 
          static XMLCh* ACTOR_PROPERTY_ELEMENT;
          static XMLCh* ACTOR_PROPERTY_NAME_ELEMENT;
@@ -150,6 +152,7 @@ namespace dtDAL
          static XMLCh* ACTOR_PROPERTY_RESOURCE_IDENTIFIER_ELEMENT;
          static XMLCh* ACTOR_PROPERTY_ACTOR_ID_ELEMENT;
          static XMLCh* ACTOR_PROPERTY_VECTOR_ELEMENT;
+         static XMLCh* ACTOR_PROPERTY_GAMEEVENT_ELEMENT;
 
          static XMLCh* ACTOR_VEC_1_ELEMENT;
          static XMLCh* ACTOR_VEC_2_ELEMENT;
@@ -342,6 +345,8 @@ namespace dtDAL
          std::string mLibName;
          std::string mLibVersion;
 
+         dtCore::UniqueId mEnvActorId;
+
          std::stack<xmlCharString> mElements;
 
          std::vector<std::string> mMissingLibraries;
@@ -458,11 +463,7 @@ namespace dtDAL
          */
          void Save(Map& map, const std::string& filePath);
 
-         /**
-         * @param time the time in seconds since the epoch to convert.
-         * @return the given time as a UTC formatted string.
-         */
-         static const std::string TimeAsUTC(time_t time);
+         
       protected:
          virtual ~MapWriter(); ///Protected destructor so that this could be subclassed.
       private:
@@ -507,12 +508,12 @@ namespace dtDAL
          void AddCharacters(const std::string& string);
 
          void AddIndent();
-           
+
          //disable copy constructor
          MapWriter(const MapWriter& toCopy): mFormatter("UTF-8", NULL, &mFormatTarget, xerces_dt::XMLFormatter::NoEscapes, xerces_dt::XMLFormatter::DefaultUnRep) {}
-         //disable operator = 
+         //disable operator =
          MapWriter& operator=(const MapWriter& assignTo) { return *this;}
-           
+
 
    };
 

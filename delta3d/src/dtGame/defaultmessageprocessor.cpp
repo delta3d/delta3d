@@ -68,6 +68,8 @@ namespace dtGame
          ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
       else if (msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
          ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
+      else if (msg.GetMessageType() == MessageType::INFO_PLAYER_ENTERED_WORLD)
+         ProcessPlayerEnteredWorldMessage(msg);
       else if (msg.GetMessageType() == MessageType::TICK_LOCAL ||
             msg.GetMessageType() == MessageType::TICK_REMOTE)
          ProcessTick(static_cast<const TickMessage&>(msg));

@@ -210,6 +210,15 @@ namespace dtUtil
       return ss.str();
    }
 
+   // Gets the current timezone
+   long DT_UTIL_EXPORT GetTimeZone(tm &timeParts);
+
+   /**
+    * @param time the time in seconds since the epoch to convert.
+    * @return the given time as a UTC formatted string.
+    */
+   const std::string DT_UTIL_EXPORT TimeAsUTC(time_t time);
+
    /** Converts a string to a float.*/
    float DT_UTIL_EXPORT ToFloat(const std::string& d);
 

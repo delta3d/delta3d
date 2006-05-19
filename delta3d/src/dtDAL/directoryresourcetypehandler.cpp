@@ -20,8 +20,9 @@
  */
 
 #include <osgDB/FileNameUtils>
+#include <dtUtil/fileutils.h>
+
 #include "dtDAL/datatype.h"
-#include "dtDAL/fileutils.h"
 #include "dtDAL/directoryresourcetypehandler.h"
 
 namespace dtDAL
@@ -47,22 +48,22 @@ namespace dtDAL
 
    DirectoryResourceTypeHandler::~DirectoryResourceTypeHandler() {}
 
-   bool DirectoryResourceTypeHandler::HandlesFile(const std::string& path, FileType type) const
+   bool DirectoryResourceTypeHandler::HandlesFile(const std::string& path, dtUtil::FileType type) const
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
-      if (type == REGULAR_FILE)
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+      if (type == dtUtil::REGULAR_FILE)
       {
          //check for the file in a way that will handle both case sensitive and insensitive filesystems.
          if (osgDB::equalCaseInsensitive(osgDB::getSimpleFileName(path), mMasterFile))
          {
-            return fileUtils.FileExists(osgDB::getFilePath(path) + FileUtils::PATH_SEPARATOR + mMasterFile);
+            return fileUtils.FileExists(osgDB::getFilePath(path) + dtUtil::FileUtils::PATH_SEPARATOR + mMasterFile);
          }
          else if (osgDB::getLowerCaseFileExtension(path) == mExtension)
          {
             return true;
          }
       }
-      else if (type == DIRECTORY)
+      else if (type == dtUtil::DIRECTORY)
       {
          //quick short circuit for speed in the resource directory.
          if (osgDB::getFileExtension(path) == mResourceDirectoryExtension)
@@ -77,7 +78,7 @@ namespace dtDAL
             if (i->first == mResourceDirectoryExtension)
                continue;
 
-            if (fileUtils.FileExists(path + FileUtils::PATH_SEPARATOR + i->first))
+            if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + i->first))
                return true;
 
          }
@@ -108,19 +109,19 @@ namespace dtDAL
    const std::string DirectoryResourceTypeHandler::ImportResourceToPath(const std::string& newName,
                                                                         const std::string& srcPath, const std::string& destCategoryPath) const
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-      FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
+	  dtUtil::FileType ftype = fileUtils.GetFileInfo(srcPath).fileType;
 
       std::string mainSrcFileName;
       std::string dirToCopy;
 
-      if (ftype == REGULAR_FILE)
+      if (ftype == dtUtil::REGULAR_FILE)
       {
          mainSrcFileName = osgDB::getSimpleFileName(srcPath);
          dirToCopy = osgDB::getFilePath(srcPath);
       }
-      else if (ftype == DIRECTORY)
+      else if (ftype == dtUtil::DIRECTORY)
       {
          //look for any of the possible master files.
          for (std::map<std::string, std::string>::const_iterator i = mFilters.begin(); i != mFilters.end(); ++i)
@@ -129,7 +130,7 @@ namespace dtDAL
             if (i->first == mResourceDirectoryExtension)
                continue;
 
-            if (fileUtils.FileExists(srcPath + FileUtils::PATH_SEPARATOR + i->first))
+            if (fileUtils.FileExists(srcPath + dtUtil::FileUtils::PATH_SEPARATOR + i->first))
             {
                mainSrcFileName = i->first;
                break;
@@ -144,7 +145,7 @@ namespace dtDAL
 
       std::string resourceFileName = newName + '.' + mResourceDirectoryExtension;
 
-      const std::string& destDir = destCategoryPath + FileUtils::PATH_SEPARATOR + resourceFileName;
+      const std::string& destDir = destCategoryPath + dtUtil::FileUtils::PATH_SEPARATOR + resourceFileName;
 
       fileUtils.MakeDirectory(destDir);
 
@@ -155,19 +156,19 @@ namespace dtDAL
       if (mainSrcFileName != mMasterFile && 
           //This will catch the case where the names differ only by case, but the
           //filesystem is not case sensitive.
-          !fileUtils.FileExists(destDir + FileUtils::PATH_SEPARATOR + mMasterFile))
-         fileUtils.FileMove(destDir + FileUtils::PATH_SEPARATOR + mainSrcFileName, destDir + FileUtils::PATH_SEPARATOR + mMasterFile, false);
+          !fileUtils.FileExists(destDir + dtUtil::FileUtils::PATH_SEPARATOR + mMasterFile))
+         fileUtils.FileMove(destDir + dtUtil::FileUtils::PATH_SEPARATOR + mainSrcFileName, destDir + dtUtil::FileUtils::PATH_SEPARATOR + mMasterFile, false);
 
       return resourceFileName;
    }
 
    void DirectoryResourceTypeHandler::RemoveResource(const std::string& resourcePath) const
    {
-      FileUtils& fileUtils = FileUtils::GetInstance();
+      dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
       if (fileUtils.FileExists(resourcePath))
       {
          const std::string& path = osgDB::getFilePath(resourcePath);
-         if (HandlesFile(path, DIRECTORY))
+         if (HandlesFile(path, dtUtil::DIRECTORY))
             fileUtils.DirDelete(path, true);
       }
    }

@@ -43,15 +43,16 @@ osg::Node* Object::LoadFile(const std::string& filename, bool useCache)
    osg::Node *node = NULL;
    node = Loadable::LoadFile(filename, useCache);
 
+   //We should always clear the geometry.  If LoadFile fails, we should have no geometry.
+   if (GetMatrixNode()->getNumChildren() != 0)
+   {
+      GetMatrixNode()->removeChild(0,GetMatrixNode()->getNumChildren() );
+   }
+
    //attach our geometry node to the matrix node
    if (node!=NULL)
    {
-      if (GetMatrixNode()->getNumChildren() != 0)
-      {
-         GetMatrixNode()->removeChild(0,GetMatrixNode()->getNumChildren() );
-      }
-
-      //recenter the geometry about the origin by finding the center of it's 
+      //recenter the geometry about the origin by finding the center of it's
       //bounding box and adding a transform between the loaded group node
       //and the top transform which undo's any offsets
       if( mRecenterGeometry )
@@ -72,7 +73,7 @@ osg::Node* Object::LoadFile(const std::string& filename, bool useCache)
       {
          GetMatrixNode()->addChild(node);
       }
-   
+
       return node;
    }
    else

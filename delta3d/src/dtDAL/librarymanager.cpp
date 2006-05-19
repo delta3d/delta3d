@@ -194,12 +194,22 @@ namespace dtDAL
    ///////////////////////////////////////////////////////////////////////////////
    dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(ActorType& actorType)
    {
-      ActorPluginRegistry* apr = GetRegistryForType(actorType);
+      ActorPluginRegistry* apr = GetRegistryForType(actorType); 
 
       //Now we know which registry to use, so tell the registry to
       //create the proxy object and return it.
       dtCore::RefPtr<ActorProxy> proxy = apr->CreateActorProxy(actorType).get();
       return proxy;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   dtCore::RefPtr<ActorProxy> LibraryManager::CreateActorProxy(const std::string &category, const std::string &name)
+   {
+      dtCore::RefPtr<ActorType> type = FindActorType(category, name);
+      if(!type.valid())
+         EXCEPT(dtDAL::ExceptionEnum::ObjectFactoryUnknownType, "No actor exists of the specified name and category");
+
+      return CreateActorProxy(*type);
    }
 
    ///////////////////////////////////////////////////////////////////////////////

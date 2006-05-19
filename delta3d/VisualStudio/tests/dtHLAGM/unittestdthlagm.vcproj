@@ -33,10 +33,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtild.lib dtCored.lib dtHLAGMd.lib dtGamed.lib dtDALd.lib osgd.lib osgDBd.lib cppunitd.lib"
-				OutputFile="../../../tests/UnitTestsDtHLAGMd.exe"
+				AdditionalDependencies="dtUtild.lib dtCored.lib dtHLAGMd.lib dtGamed.lib dtDALd.lib osgd.lib osgDBd.lib cppunitd.lib librti13d.lib"
+				OutputFile="../../../tests/UnitTestsDtHlaGmd.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
 				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
@@ -90,11 +90,11 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtUtil.lib dtCore.lib dtHLAGM.lib dtGame.lib dtDAL.lib osg.lib osgDB.lib cppunit.lib"
-				OutputFile="../../../tests/UnitTestsDtHLAGM.exe"
+				AdditionalDependencies="dtUtil.lib dtCore.lib dtHLAGM.lib dtGame.lib dtDAL.lib osg.lib osgDB.lib cppunit.lib librti13.lib"
+				OutputFile="../../../tests/UnitTestsDtHlaGm.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
-				IgnoreDefaultLibraryNames="libcmt"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;"
+				IgnoreDefaultLibraryNames="libcmtd"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"

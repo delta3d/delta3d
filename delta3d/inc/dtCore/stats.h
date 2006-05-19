@@ -74,6 +74,7 @@ namespace dtCore
       dtCore::Timer_t mLastFrameTick;
       dtCore::Timer_t mFrameTick;
       dtCore::Timer_t mRegTimes[6];
+      dtCore::Timer_t mLastStatsDataUpdate;
 
       struct
       {

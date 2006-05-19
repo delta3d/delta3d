@@ -116,8 +116,6 @@ void System::SystemStep()
 
 void System::StepWindow()
 {
-   SystemStep();
-
    if( mShutdownOnWindowClose )
    {
       bool renderSurfaceIsRunning = false;
@@ -169,6 +167,11 @@ void System::Run()
 void System::Start()
 {
    mRunning = true;
+   //make the time delta reset
+   mLastClockTime = mClock.Tick();
+   mSimulationClockTime = mLastClockTime;
+   //This should have been ifdef'd, not commented out.
+
 }
 
 void System::Step()
@@ -188,6 +191,7 @@ void System::Step()
    }
 
    SystemStep();
+   StepWindow();
 }
 
 void System::Stop()

@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib"
+				AdditionalDependencies="dtCored.lib dtUtild.lib dtDALd.lib dtABCd.lib osgd.lib OpenThreadsWin32d.lib Producerd.lib osgDBd.lib xerces-c_2D.lib"
 				OutputFile="..\..\..\bin\dtGamed.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -89,7 +89,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib OpenThreadsWin32.lib Producer.lib"
+				AdditionalDependencies="dtCore.lib dtUtil.lib dtDAL.lib dtABC.lib osg.lib osgDB.lib OpenThreadsWin32.lib Producer.lib xerces-c_2.lib"
 				OutputFile="..\..\..\bin\dtGame.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -151,6 +151,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\defaultmessageprocessor.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtGame\environmentactor.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtGame\exceptionenum.cpp">
@@ -237,6 +240,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\defaultmessageprocessor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\environmentactor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\exceptionenum.h">

@@ -30,8 +30,9 @@
 
 //You must include RTI.hh before including this file.
 
-#include "dtHLAGM/onetoonemapping.h"
 #include "dtHLAGM/export.h"
+#include "dtHLAGM/onetoonemapping.h"
+#include "dtHLAGM/onetomanymapping.h"
 
 namespace dtHLAGM
 {
@@ -91,6 +92,52 @@ namespace dtHLAGM
          
          RTI::ParameterHandle mParameterHandle;
    }; 
-};
+
+   class DT_HLAGM_EXPORT ParameterToParameterList : public OneToManyMapping
+   {
+      public:
+     
+         ParameterToParameterList()
+         {}
+
+         /**
+          * Constructor setting the basic values
+          * @param hlaName the name of the HLA value to map to.
+          * @param hlaType the type of the HLA value.
+          * @param requiredForHLA true if this field is required in the HLA FOM.
+          */
+         ParameterToParameterList(const std::string& hlaName,
+                             const AttributeType& attributeType,
+                             bool requiredForHLA):
+                             OneToManyMapping(hlaName,
+                                attributeType,
+                                requiredForHLA)
+         {}
+
+         
+         virtual ~ParameterToParameterList()
+         {}
+         
+         RTI::ParameterHandle GetParameterHandle()
+         {
+            return mParameterHandle;
+         }
+         
+         const RTI::ParameterHandle GetParameterHandle() const
+         {
+            return mParameterHandle;
+         }
+         
+         void SetParameterHandle(RTI::ParameterHandle parameterHandle)
+         {
+            mParameterHandle = parameterHandle;
+         }
+                  
+      private:
+         
+         RTI::ParameterHandle mParameterHandle;
+   }; 
+
+}
 
 #endif //DELTA_PARAMETER_TO_PARAMETER

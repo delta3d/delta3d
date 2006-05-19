@@ -25,7 +25,7 @@
 
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 #include <osgDB/FileUtils>

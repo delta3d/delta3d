@@ -18,6 +18,7 @@
  *
  * @author Matthew W. Campbell
 */
+#include <sstream>
 #include <dtUtil/exception.h>
 #include <dtUtil/log.h>
 #include <iostream>
@@ -38,6 +39,14 @@ namespace dtUtil
         std::cerr << "Exception: " << mMessage << std::endl <<
             "\tFile: " << mFileName << std::endl <<
             "\tLine: " << mLineNum << std::endl;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    std::string Exception::ToString() const
+    {
+       std::ostringstream ss;
+       ss << "Reason: " << mMessage << " | File: " << mFileName << " | Line: " << mLineNum;
+       return ss.str();
     }
 
     //////////////////////////////////////////////////////////////////////////

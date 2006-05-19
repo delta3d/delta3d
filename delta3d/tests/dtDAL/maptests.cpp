@@ -31,6 +31,7 @@
 
 #include <dtCore/dt.h>
 #include <dtCore/globals.h>
+#include <dtCore/timer.h>
 #include <dtABC/application.h>
 
 #include <dtDAL/project.h>
@@ -38,26 +39,31 @@
 #include <dtUtil/log.h>
 #include <dtDAL/mapxml.h>
 #include <dtUtil/exception.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/datatype.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/actorproxy.h>
+#include <dtDAL/environmentactor.h>
+#include <testActorLibrary/testActorLib.h>
+#include <testActorLibrary/testdalenvironmentactor.h>
 
 #include <rbody/config_error.h>
 
 #include <cppunit/extensions/HelperMacros.h>
 
-class MapTests : public CPPUNIT_NS::TestFixture {
+class MapTests : public CPPUNIT_NS::TestFixture
+{
     CPPUNIT_TEST_SUITE( MapTests );
-    CPPUNIT_TEST( testMapAddRemoveProxies );
-    CPPUNIT_TEST( testMapProxySearch );
-    CPPUNIT_TEST( testMapLibraryHandling );
-    CPPUNIT_TEST( testLoadMapIntoScene );
-    CPPUNIT_TEST( testLoadErrorHandling );
-    CPPUNIT_TEST( testMapSaveAndLoad );
-    CPPUNIT_TEST( testLibraryMethods );
-    CPPUNIT_TEST( testWildCard );
+      CPPUNIT_TEST( testMapAddRemoveProxies );
+      CPPUNIT_TEST( testMapProxySearch );
+      CPPUNIT_TEST( testMapLibraryHandling );
+      CPPUNIT_TEST( testLoadMapIntoScene );
+      CPPUNIT_TEST( testMapSaveAndLoad );
+      CPPUNIT_TEST( testLibraryMethods );
+      CPPUNIT_TEST( testWildCard );
+      CPPUNIT_TEST( testEnvironmentMapLoading );
+      CPPUNIT_TEST( testLoadEnvironmentMapIntoScene );
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -69,8 +75,9 @@ public:
     void testMapLibraryHandling();
     void testMapSaveAndLoad();
     void testLoadMapIntoScene();
-    void testLoadErrorHandling();
     void testLibraryMethods();
+    void testEnvironmentMapLoading();
+    void testLoadEnvironmentMapIntoScene();
     void testWildCard();
 private:
     static char* mExampleLibraryName;
@@ -84,23 +91,41 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( MapTests );
 
+const std::string DATA_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "data";
+const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PATH_SEPARATOR + "tests";
+const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
+const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
+
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* MapTests::mExampleLibraryName="testActorLibraryd";
 #else
 char* MapTests::mExampleLibraryName="testActorLibrary";
 #endif
 
+
 void MapTests::setUp()
 {
     try
     {
-       dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList()  );
-
+        dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("mapTest");
+
+//        logger = &dtUtil::Log::GetInstance();
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+//        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
+//        logger->SetLogLevel(dtUtil::Log::LOG_ERROR);
+//        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+
         logger = &dtUtil::Log::GetInstance(logName);
-        dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+//
+//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
+//        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
+        dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
         std::string currentDir = fileUtils.CurrentDirectory();
-        fileUtils.PushDirectory(dtCore::GetDeltaRootPath()+"/tests/dtDAL");
+        std::string projectDir("dtDAL");
+        if (currentDir.substr(currentDir.size() - projectDir.size()) != projectDir)
+            fileUtils.PushDirectory(projectDir);
 
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
@@ -129,10 +154,9 @@ void MapTests::setUp()
 
 void MapTests::tearDown()
 {
-    dtDAL::FileUtils& fileUtils = dtDAL::FileUtils::GetInstance();
+    dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
     try
     {
-
         dtDAL::Project::GetInstance().SetContext("WorkingMapProject");
         //copy the vector because the act of deleting a map will reload the map names list.
         const std::set<std::string> v = dtDAL::Project::GetInstance().GetMapNames();
@@ -140,20 +164,22 @@ void MapTests::tearDown()
         //for (std::set<std::string>::const_iterator i = v.begin(); i != v.end(); i++) {
         //    dtDAL::Project::GetInstance().deleteMap(*i);
         //}
-        
+
         std::string rbodyToDelete("WorkingMapProject/Characters/marine/marine.rbody");
 
         if (fileUtils.DirExists(rbodyToDelete))
             fileUtils.DirDelete(rbodyToDelete, true);
         else if (fileUtils.FileExists(rbodyToDelete))
            fileUtils.FileDelete(rbodyToDelete);
-        
+
         if (dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName) != NULL)
         {
            dtDAL::LibraryManager::GetInstance().UnloadActorRegistry(mExampleLibraryName);
         }
 
-    } catch (const dtUtil::Exception& e) {
+    }
+    catch (const dtUtil::Exception& e)
+    {
         fileUtils.PopDirectory();
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
@@ -162,54 +188,78 @@ void MapTests::tearDown()
 }
 
 
-void MapTests::createActors(dtDAL::Map& map) 
+void MapTests::createActors(dtDAL::Map& map)
 {
-  dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
-  std::vector<dtCore::RefPtr<dtDAL::ActorType> > actors;
-  std::vector<dtDAL::ActorProperty *> props;
+   dtDAL::LibraryManager& libMgr = dtDAL::LibraryManager::GetInstance();
+   std::vector<dtCore::RefPtr<dtDAL::ActorType> > actors;
+   std::vector<dtDAL::ActorProperty *> props;
+   
+   libMgr.GetActorTypes(actors);
+   
+   int skippedActors = 0;
+   int nameCounter = 0;
+   char nameAsString[21];
+   
+   logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
 
-  libMgr.GetActorTypes(actors);
-
-  int nameCounter = 0;
-  char nameAsString[21];
-
-  logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__, "Adding one of each proxy type to the map:");
-
-  for (unsigned int i=0; i< actors.size(); i++) 
-  {
-    dtCore::RefPtr<dtDAL::ActorProxy> proxy;
-
-    logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-      "Creating actor proxy %s with category %s.", actors[i]->GetName().c_str(), actors[i]->GetCategory().c_str());
-
-    proxy = libMgr.CreateActorProxy(*actors[i]);
-    snprintf(nameAsString, 21, "%d", nameCounter);
-    proxy->SetName(std::string(nameAsString));
-    nameCounter++;
-
-    logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-      "Set proxy name to: %s", proxy->GetName().c_str());
-
-
-    proxy->GetPropertyList(props);
-    for (unsigned int j=0; j<props.size(); j++) {
+   //only create half the actors :-)
+   for (unsigned int i=0; i < actors.size(); ++i)
+   {
+      // In order to keep the tests fasts, we skip the nasty slow ones.
+      if (actors[i]->GetName() == "Cloud Plane" || actors[i]->GetName() == "Environment" || 
+          actors[i]->GetName() == "Test Environment Actor") 
+      {
+         skippedActors ++;
+         continue; // go to next actor
+      }
+      
+      dtCore::RefPtr<dtDAL::ActorProxy> proxy;
+      // Test timing Stuff
+      dtCore::Timer testClock;
+      dtCore::Timer_t testClockStart = testClock.Tick();
+      
       logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
-        "Property: Name: %s, Type: %s",
-            props[j]->GetName().c_str(), props[j]->GetPropertyType().GetName().c_str());
-    }
-
-    map.AddProxy(*proxy);
-
-    CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
-        map.GetAllProxies().size() == i + 1);
-    CPPUNIT_ASSERT_MESSAGE("Last proxy in the list should equal the new proxy.",
-        map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
-  }
+                         "Creating actor proxy %s with category %s.", actors[i]->GetName().c_str(), actors[i]->GetCategory().c_str());
+      
+      proxy = libMgr.CreateActorProxy(*actors[i]);
+      snprintf(nameAsString, 21, "%d", nameCounter);
+      proxy->SetName(std::string(nameAsString));
+      nameCounter++;
+      
+      logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                         "Set proxy name to: %s", proxy->GetName().c_str());
+      
+      proxy->GetPropertyList(props);
+      for (unsigned int j=0; j<props.size(); j++)
+      {
+         logger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                            "Property: Name: %s, Type: %s",
+                            props[j]->GetName().c_str(), props[j]->GetPropertyType().GetName().c_str());
+      }
+      
+      // Temporary timing for map tests...  when we get a slow one, we should exclude it from
+      // the tests so that tests don't slow down universally.
+      dtCore::Timer_t testClockDone = testClock.Tick();
+      double timeToCreate = testClock.DeltaSec(testClockStart, testClockDone);
+      if (timeToCreate > 0.5) // more than .5 seconds is too long for 1 object in a test
+         logger->LogMessage(dtUtil::Log::LOG_ALWAYS, __FUNCTION__, __LINE__,
+                            "SLOW ACTOR CREATED IN TESTS - Type: %s, time[%f].  To ignore this slow actor in tests, modify these files (maptests.cpp, messagetests.cpp, proxytests.cpp, and gamemanagertests.cpp)", 
+                            actors[i]->GetName().c_str(), timeToCreate);
+      
+      map.AddProxy(*proxy);
+      
+      CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
+                             map.GetAllProxies().size() == (i + 1 - skippedActors));
+      CPPUNIT_ASSERT_MESSAGE("Last proxy in the list should equal the new proxy.",
+                             map.GetAllProxies().find(proxy->GetId())->second == proxy.get());
+   }
+   CPPUNIT_ASSERT_MESSAGE("The actors that should have been skipped when creating the actors for the test were not found.  This code is out of date.", 
+      skippedActors >= 2);
 }
 
-void MapTests::testMapAddRemoveProxies() 
+void MapTests::testMapAddRemoveProxies()
 {
-    try 
+    try
     {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
@@ -230,7 +280,7 @@ void MapTests::testMapAddRemoveProxies()
             map.GetProxyActorClasses().size() == copy.size() );
 
         unsigned int maxId = map.GetAllProxies().size();
-        for (unsigned int x = 0;  x < maxId; x++) 
+        for (unsigned int x = 0;  x < maxId; x++)
         {
             CPPUNIT_ASSERT_MESSAGE("Unable to remove item 0",
                 map.RemoveProxy(*map.GetAllProxies().begin()->second));
@@ -244,7 +294,7 @@ void MapTests::testMapAddRemoveProxies()
 
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > proxies;
         map.GetAllProxies(proxies);
-        
+
         map.AddLibrary(mExampleLibraryName, "1.0");
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
@@ -277,15 +327,17 @@ void MapTests::testMapAddRemoveProxies()
         CPPUNIT_ASSERT_MESSAGE("Proxy 1 is not linked to proxy2", static_cast<dtDAL::ActorActorProperty*>(proxy1->GetProperty("Test_Actor"))->GetValue() == proxy2.get());
         CPPUNIT_ASSERT_MESSAGE("Proxy 2 is linked still", static_cast<dtDAL::ActorActorProperty*>(proxy2->GetProperty("Test_Actor"))->GetValue() == NULL);
         CPPUNIT_ASSERT_MESSAGE("Proxy 3 is linked still", static_cast<dtDAL::ActorActorProperty*>(proxy3->GetProperty("Test_Actor"))->GetValue() == NULL);
-    } 
-    catch (const dtUtil::Exception& e) 
+    }
+    catch (const dtUtil::Exception& e)
     {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
 }
 
-void MapTests::testMapProxySearch() {
-    try {
+void MapTests::testMapProxySearch()
+{
+    try
+    {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         project.SetContext("WorkingMapProject");
@@ -312,7 +364,8 @@ void MapTests::testMapProxySearch() {
 
         map.FindProxies(results, "", "", "","", dtDAL::Map::Placeable);
         for (std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator i = results.begin();
-            i != results.end(); ++i) {
+            i != results.end(); ++i)
+        {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
                 + " should not be in the results, it is not placeable",
                  (*i)->IsPlaceable());
@@ -320,7 +373,8 @@ void MapTests::testMapProxySearch() {
 
         map.FindProxies(results, "", "", "","", dtDAL::Map::NotPlaceable);
         for (std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator i = results.begin();
-            i != results.end(); ++i) {
+            i != results.end(); ++i)
+        {
             CPPUNIT_ASSERT_MESSAGE(std::string("Proxy ") + (*i)->GetName()
                 + " should not be in the results, it is placeable",
                 !(*i)->IsPlaceable());
@@ -331,7 +385,8 @@ void MapTests::testMapProxySearch() {
 
 
         for (std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator i = results.begin();
-            i != results.end(); ++i) {
+            i != results.end(); ++i)
+        {
             CPPUNIT_ASSERT_MESSAGE("All results should be instances of dtCore::Light",
                 (*i)->IsInstanceOf("dtCore::Light"));
         }
@@ -340,8 +395,8 @@ void MapTests::testMapProxySearch() {
 
         map.GetAllProxies(proxies);
 
-        for (unsigned x = 0;  x < proxies.size(); x++) {
-
+        for (unsigned x = 0;  x < proxies.size(); x++)
+        {
             osg::ref_ptr<dtDAL::ActorProxy> proxyPTR = map.GetProxyById(proxies[x]->GetId());
 
             CPPUNIT_ASSERT_MESSAGE("Proxy should be found in the map by the project.", &map == dtDAL::Project::GetInstance().GetMapForActorProxy(*proxyPTR));
@@ -387,43 +442,49 @@ void MapTests::testMapProxySearch() {
             CPPUNIT_ASSERT_MESSAGE("Proxy list has the wrong size.",
                 map.GetAllProxies().size() == (unsigned)(maxId - (x + 1)));
         }
-    } catch (const dtUtil::Exception& e) {
+    }
+    catch (const dtUtil::Exception& e)
+    {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
 }
 
 dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
-    const std::string& propName, dtDAL::DataType& type, unsigned which) 
+    const std::string& propName, dtDAL::DataType& type, unsigned which)
 {
     for (std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator i = map.GetAllProxies().begin();
-        i != map.GetAllProxies().end(); ++i) 
+        i != map.GetAllProxies().end(); ++i)
     {
 
         dtDAL::ActorProxy* proxy = map.GetProxyById(i->first);
 
         CPPUNIT_ASSERT_MESSAGE("ERROR: Proxy is NULL", proxy!= NULL );
 
-        if (propName != "") 
+        if (propName != "")
         {
             dtDAL::ActorProperty* prop = proxy->GetProperty(propName);
-            if (prop != NULL) 
+            if (prop != NULL)
             {
                 if (prop->GetPropertyType() == type && which-- == 0)
                 {
-                   LOGN_ALWAYS("maptests.cpp", proxy->GetActorType().GetName());
-                   return prop;                   
+                   LOGN_DEBUG("maptests.cpp", proxy->GetActorType().GetName());
+                   return prop;
                 }
             }
-        } 
-        else 
+        }
+        else
         {
             std::vector<dtDAL::ActorProperty*> props;
             proxy->GetPropertyList(props);
-            for (std::vector<dtDAL::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j) 
+            for (std::vector<dtDAL::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
             {
                 dtDAL::ActorProperty* prop = *j;
                 if (prop->GetPropertyType() == type && which-- == 0)
+                {
+                    //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId().ToString() << std::endl;
+                    //std::cout << "  " << proxy->GetActorType().GetName() << std::endl;
                     return prop;
+                }
             }
         }
     }
@@ -435,8 +496,10 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
 }
 
 
-void MapTests::testLibraryMethods() {
-    try {
+void MapTests::testLibraryMethods()
+{
+    try
+    {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         project.SetContext("WorkingMapProject");
@@ -516,13 +579,17 @@ void MapTests::testLibraryMethods() {
         CPPUNIT_ASSERT_MESSAGE(lib1 + " should be the first lib.", map->GetAllLibraries()[0] == lib1);
         CPPUNIT_ASSERT_MESSAGE(lib2 + " should be the second lib.", map->GetAllLibraries()[1] == lib2);
 
-    } catch (const dtUtil::Exception& e) {
+    }
+    catch (const dtUtil::Exception& e)
+    {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
 }
 
-void MapTests::testMapLibraryHandling() {
-    try {
+void MapTests::testMapLibraryHandling()
+{
+    try
+    {
        dtDAL::Project& project = dtDAL::Project::GetInstance();
 
        project.SetContext("WorkingMapProject");
@@ -589,13 +656,17 @@ void MapTests::testMapLibraryHandling() {
        reg = dtDAL::LibraryManager::GetInstance().GetRegistry(mExampleLibraryName);
        CPPUNIT_ASSERT_MESSAGE("testActorLibrary should have been closed.", reg == NULL);
 
-    } catch (const dtUtil::Exception& e) {
+    }
+    catch (const dtUtil::Exception& e)
+    {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
     }
 }
 
-void MapTests::testMapSaveAndLoad() {
-    try {
+void MapTests::testMapSaveAndLoad()
+{
+    try
+    {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         project.SetContext("WorkingMapProject");
@@ -643,21 +714,21 @@ void MapTests::testMapSaveAndLoad() {
         dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
 
 #if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
-        dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", "../../../data/marine/marine.rbody", "marine",
+        dtDAL::ResourceDescriptor marineRD = project.AddResource("marine", DATA_DIR + "/marine/marine.rbody", "marine",
             dtDAL::DataType::CHARACTER);
 #else
         LOG_ERROR("RBody unit tests fail on windows, not testing");
 #endif
 
-        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", "../../../data/models/dirt.ive", "dirt",
-            dtDAL::DataType::STATIC_MESH);
+        dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", 
+           DATA_DIR + "/models/dirt.ive", "dirt", dtDAL::DataType::STATIC_MESH);
 
         createActors(*map);
 
         dtDAL::ActorProperty* ap;
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STRING);
-        ((dtDAL::StringActorProperty*)ap)->SetValue("hello");
+        ((dtDAL::StringActorProperty*)ap)->SetValue("2006-04-20T06:22:08");
 
         ap = getActorProperty(*map, "", dtDAL::DataType::BOOLEAN, 1);
         ((dtDAL::BooleanActorProperty*)ap)->SetValue(false);
@@ -670,13 +741,13 @@ void MapTests::testMapSaveAndLoad() {
 
 
         //ActorActorProperty
-        ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);        
+        ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
         dtDAL::ActorActorProperty* aap = static_cast<dtDAL::ActorActorProperty*>(ap);
         const std::string& className = aap->GetDesiredActorClass();
         std::vector<osg::ref_ptr<dtDAL::ActorProxy> > toFill;
         //Do a search for the class name.
         map->FindProxies(toFill, "", "", "", className);
-        
+
         CPPUNIT_ASSERT(toFill.size() > 0);
         //Set the value.
         aap->SetValue(toFill[0].get());
@@ -697,8 +768,12 @@ void MapTests::testMapSaveAndLoad() {
         ap = getActorProperty(*map, "Scale", dtDAL::DataType::VEC3, 1);
         ((dtDAL::Vec3ActorProperty*)ap)->SetValue(testVec3_3);
 
+        // Note - some properties, especially orientation ones, tend to mangle the 
+        // values that we set so that we don't get back what we passed in.  To handle that
+        // in the test, we get back whatever they think the value should be.
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F);
         ((dtDAL::Vec3fActorProperty*)ap)->SetValue(testVec3_2);
+        osg::Vec3 testVec3_2_actualValues = ((dtDAL::Vec3fActorProperty*)ap)->GetValue();
 
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3D);
         ((dtDAL::Vec3dActorProperty*)ap)->SetValue(testVec3_3);
@@ -743,7 +818,7 @@ void MapTests::testMapSaveAndLoad() {
         else
            logger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, "Enum only has one value.");
 
-#if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__) 
+#if !defined (WIN32) && !defined (_WIN32) && !defined (__WIN32__)
         ap = getActorProperty(*map, "model", dtDAL::DataType::CHARACTER);
         dtDAL::ResourceActorProperty& rap = static_cast<dtDAL::ResourceActorProperty&>(*ap);
 
@@ -769,8 +844,8 @@ void MapTests::testMapSaveAndLoad() {
         unsigned numProxies = map->GetAllProxies().size();
         std::map<dtCore::UniqueId, std::string> names;
         for (std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator i = map->GetAllProxies().begin();
-            i != map->GetAllProxies().end(); i++) {
-
+            i != map->GetAllProxies().end(); i++)
+        {
             names.insert(std::make_pair(i->first, i->second->GetName()));
         }
 
@@ -814,15 +889,16 @@ void MapTests::testMapSaveAndLoad() {
             map->GetAllProxies().size() == numProxies);
 
         for (std::map<dtCore::UniqueId, std::string>::const_iterator j = names.begin();
-            j != names.end(); ++j) {
+            j != names.end(); ++j)
+        {
             dtDAL::ActorProxy* ap = map->GetProxyById(j->first);
             CPPUNIT_ASSERT(ap != NULL);
             CPPUNIT_ASSERT_MESSAGE(j->first.ToString() + " name should be " + j ->second, j->second == ap->GetName());
         }
 
         ap = getActorProperty(*map, "", dtDAL::DataType::STRING, 0);
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be hello",
-            ((dtDAL::StringActorProperty*)ap)->GetValue() == "hello");
+        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 2006-04-20T06:22:08",
+            ((dtDAL::StringActorProperty*)ap)->GetValue() == "2006-04-20T06:22:08");
 
         ap = getActorProperty(*map, "", dtDAL::DataType::BOOLEAN, 1);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be false",
@@ -840,7 +916,8 @@ void MapTests::testMapSaveAndLoad() {
 
         ap = getActorProperty(*map, "Rotation", dtDAL::DataType::VEC3,1);
 
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+        {
             osg::Vec3f val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
@@ -854,7 +931,8 @@ void MapTests::testMapSaveAndLoad() {
 
         ap = getActorProperty(*map, "Translation", dtDAL::DataType::VEC3, 1);
 
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+        {
             osg::Vec3 val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
@@ -870,30 +948,33 @@ void MapTests::testMapSaveAndLoad() {
             && osg::equivalent(((dtDAL::Vec3ActorProperty*)ap)->GetValue()[2], testVec3_2[2], 1e-2f)
             );
 
+        // VEC3 
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3F, 0);
-
-
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+        {
             osg::Vec3 val = ((dtDAL::Vec3fActorProperty*)ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
+            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+               "Property: name [%s], label [%s], desc [%s], readonly[%d], tostring[%s], precision[%d]", 
+               ap->GetName().c_str(), ap->GetLabel().c_str(), ap->GetDescription().c_str(), ap->IsReadOnly(),
+               ap->ToString().c_str(), ap->GetNumberPrecision());
         }
-
-        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f",
-            osg::equivalent(((dtDAL::Vec3fActorProperty*)ap)->GetValue()[0], testVec3_2[0], 1e-2f)
-            && osg::equivalent(((dtDAL::Vec3fActorProperty*)ap)->GetValue()[1], testVec3_2[1], 1e-2f)
-            && osg::equivalent(((dtDAL::Vec3fActorProperty*)ap)->GetValue()[2], testVec3_2[2], 1e-2f)
+        osg::Vec3 val3 = ((dtDAL::Vec3fActorProperty*)ap)->GetValue();
+        CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be -34.75f, 96.03125f, 8.0f (unless mangled)",
+            osg::equivalent(val3[0], testVec3_2_actualValues[0], 1e-2f)
+            && osg::equivalent(val3[1], testVec3_2_actualValues[1], 1e-2f)
+            && osg::equivalent(val3[2], testVec3_2_actualValues[2], 1e-2f)
             );
 
+ 
         ap = getActorProperty(*map, "", dtDAL::DataType::VEC3D, 0);
-
-
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+        {
             osg::Vec3 val = ((dtDAL::Vec3dActorProperty*)ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
         }
-
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 3.125, 90.25, 87.0625",
             osg::equivalent((double)((dtDAL::Vec3dActorProperty*)ap)->GetValue()[0], (double)testVec3_3[0], (double)1e-2)
             && osg::equivalent((double)((dtDAL::Vec3dActorProperty*)ap)->GetValue()[1], (double)testVec3_3[1], (double)1e-2)
@@ -902,7 +983,8 @@ void MapTests::testMapSaveAndLoad() {
 
         ap = getActorProperty(*map, "Scale", dtDAL::DataType::VEC3, 1);
 
-        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG)) {
+        if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+        {
             osg::Vec3f val = ((dtDAL::Vec3ActorProperty*)ap)->GetValue();
             logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                 "Vec3f Property values: %f, %f, %f", val[0], val[1], val[2]);
@@ -1001,7 +1083,7 @@ void MapTests::testMapSaveAndLoad() {
 
         const int value1 = 5, value2 = 27;
         ap = getActorProperty(*map, "Test_Read_Only_Int", dtDAL::DataType::INT);
-        
+
         {
             CPPUNIT_ASSERT_MESSAGE("Test_Read_Only_Int should be in the map", ap != NULL);
             dtDAL::IntActorProperty *p = dynamic_cast<dtDAL::IntActorProperty*> (ap);
@@ -1031,7 +1113,7 @@ void MapTests::testMapSaveAndLoad() {
         }
 
         ap = getActorProperty(*map, "", dtDAL::DataType::ACTOR);
-        
+
         //aap is used above in the method
         aap = static_cast<dtDAL::ActorActorProperty*> (ap);
 
@@ -1075,24 +1157,33 @@ void MapTests::testMapSaveAndLoad() {
         CPPUNIT_ASSERT_MESSAGE("A backup was just saved.  The map should have a backup.",
             project.HasBackup(*map) && project.HasBackup(newMapName));
 
-        try {
+        try
+        {
             project.SaveMapAs(*map, newMapName, mapFileName);
             CPPUNIT_FAIL("Calling SaveAs on a map with the same name and filename should fail.");
-        } catch (const dtUtil::Exception&) {
+        }
+        catch (const dtUtil::Exception&)
+        {
             //correct
         }
 
-        try {
+        try
+        {
             project.SaveMapAs(*map, mapName, mapFileName);
             CPPUNIT_FAIL("Calling SaveAs on a map with the same filename should fail.");
-        } catch (const dtUtil::Exception&) {
+        }
+        catch (const dtUtil::Exception&)
+        {
             //correct
         }
 
-        try {
+        try
+        {
             project.SaveMapAs(*map, newMapName, "oo");
             CPPUNIT_FAIL("Calling SaveAs on a map with the same name should fail.");
-        } catch (const dtUtil::Exception&) {
+        }
+        catch (const dtUtil::Exception&)
+        {
             //correct
         }
 
@@ -1111,44 +1202,30 @@ void MapTests::testMapSaveAndLoad() {
         CPPUNIT_ASSERT_MESSAGE(mapName + " should be the new map name.",
             map->GetName() == mapName && map->GetSavedName() == mapName);
 
-        std::string newMapFilePath = project.GetContext() + dtDAL::FileUtils::PATH_SEPARATOR + "maps"
-            + dtDAL::FileUtils::PATH_SEPARATOR + "oo" + dtDAL::Map::MAP_FILE_EXTENSION;
+        std::string newMapFilePath = project.GetContext() + dtUtil::FileUtils::PATH_SEPARATOR + "maps"
+            + dtUtil::FileUtils::PATH_SEPARATOR + "oo" + dtDAL::Map::MAP_FILE_EXTENSION;
 
         CPPUNIT_ASSERT_MESSAGE(std::string("The new map file should exist: ") + newMapFilePath,
-            dtDAL::FileUtils::GetInstance().FileExists(newMapFilePath));
+            dtUtil::FileUtils::GetInstance().FileExists(newMapFilePath));
 
         //set the map name before deleting it to make sure
         //I can delete with a changed name.
         map->SetName("some new name");
 
         project.DeleteMap(*map, true);
-    } catch (const dtUtil::Exception& e) {
+    }
+    catch (const dtUtil::Exception& e)
+    {
         CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    } 
+    }
 //    catch (const std::exception& ex) {
 //        LOGN_ERROR("maptests.cpp", ex.what());
 //        throw ex;
 //    }
 }
 
-void MapTests::testLoadErrorHandling() {
-    try {
-        dtDAL::Project& project = dtDAL::Project::GetInstance();
-
-        project.SetContext("WorkingMapProject");
-
-        dtDAL::Map* map = &project.CreateMap("Neato Map", "neatomap");
-
-        createActors(*map);
-
-        //LibraryManager::GetInstance().loadActorRegistry(mExampleLibraryName);
-
-    } catch (const dtUtil::Exception& e) {
-        CPPUNIT_FAIL((std::string("Error: ") + e.What()).c_str());
-    }
-}
-
-void MapTests::testWildCard() {
+void MapTests::testWildCard()
+{
     CPPUNIT_ASSERT(dtDAL::Map::WildMatch("*", "sthsthsth"));
     CPPUNIT_ASSERT(dtDAL::Map::WildMatch("sth*", "sthsthsth"));
     CPPUNIT_ASSERT(dtDAL::Map::WildMatch("a*eda", "aeeeda"));
@@ -1163,8 +1240,10 @@ void MapTests::testWildCard() {
 }
 
 
-void MapTests::testLoadMapIntoScene() {
-    try {
+void MapTests::testLoadMapIntoScene()
+{
+    try
+    {
         dtDAL::Project& project = dtDAL::Project::GetInstance();
 
         project.SetContext("WorkingMapProject");
@@ -1177,7 +1256,8 @@ void MapTests::testLoadMapIntoScene() {
 
         //add all the names of the actors that should be in the scene to set so we can track them.
         for (std::map<dtCore::UniqueId, osg::ref_ptr<dtDAL::ActorProxy> >::const_iterator i = map.GetAllProxies().begin();
-            i != map.GetAllProxies().end(); ++i) {
+            i != map.GetAllProxies().end(); ++i)
+        {
             const dtDAL::ActorProxy::RenderMode &renderMode = const_cast<dtDAL::ActorProxy&>(*i->second).GetRenderMode();
 
             if (renderMode == dtDAL::ActorProxy::RenderMode::DRAW_ACTOR ||
@@ -1192,12 +1272,14 @@ void MapTests::testLoadMapIntoScene() {
         project.LoadMapIntoScene(map, scene, true);
 
         //spin through the scene removing each actor found from the set.
-        for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); x++) {
+        for (unsigned x = 0; x < (unsigned)scene.GetNumberOfAddedDrawable(); x++)
+        {
             dtCore::DeltaDrawable* dd = scene.GetDrawable(x);
             std::set<dtCore::UniqueId>::iterator found = ids.find(dd->GetUniqueId());
             //Need to check to see if the actor exists in the set before removing it
             //because this is a test and because the scene could add drawables itself.
-            if (found != ids.end()) {
+            if (found != ids.end())
+            {
                 ids.erase(found);
             }
         }
@@ -1210,7 +1292,121 @@ void MapTests::testLoadMapIntoScene() {
         CPPUNIT_ASSERT_MESSAGE(ostream.str() ,
             ids.size() == 0);
 
-    } catch (dtUtil::Exception& ex) {
+    }
+    catch (dtUtil::Exception& ex)
+    {
         CPPUNIT_FAIL((std::string("Error: ") + ex.What()).c_str());
     }
+}
+
+void MapTests::testEnvironmentMapLoading()
+{
+   try
+   {
+      dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+      dtDAL::Project &project = dtDAL::Project::GetInstance();
+      dtDAL::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
+
+      std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+      CPPUNIT_ASSERT(container.empty());
+
+      const unsigned int numProxies = 4;
+      for(unsigned int i = 0; i < numProxies; i++)
+      {
+         dtCore::RefPtr<dtDAL::ActorProxy> p =
+            dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
+         CPPUNIT_ASSERT(p.valid());
+         container.push_back(p);
+      }
+
+      CPPUNIT_ASSERT(container.size() == numProxies);
+
+      for(unsigned int i = 0; i < container.size(); i++)
+         map.AddProxy(*container[i]);
+
+      std::vector<osg::ref_ptr<dtDAL::ActorProxy> > mapProxies;
+      map.GetAllProxies(mapProxies);
+      CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
+
+      dtCore::RefPtr<dtDAL::ActorProxy> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+      CPPUNIT_ASSERT(envProxy.valid());
+
+      map.SetEnvironmentActor(envProxy.get());
+      mapProxies.clear();
+
+      map.GetAllProxies(mapProxies);
+      CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies + the environment actor", mapProxies.size() == numProxies + 1);
+      CPPUNIT_ASSERT_MESSAGE("GetEnvironmentActor should return what was set", map.GetEnvironmentActor() == envProxy.get());
+
+      std::string mapName = map.GetName();
+      project.SaveMap(mapName);
+      project.CloseMap(map);
+
+      dtDAL::Map &savedMap = project.GetMap(mapName);
+      mapProxies.clear();
+      savedMap.GetAllProxies(mapProxies);
+      CPPUNIT_ASSERT_MESSAGE("Saved map should have the correct number of proxies in it", mapProxies.size() == numProxies + 1);
+
+      envProxy = savedMap.GetEnvironmentActor();
+      CPPUNIT_ASSERT_MESSAGE("The environment actor should not be NULL", envProxy.valid());
+      project.DeleteMap(mapName, true);
+   }
+   catch(const dtUtil::Exception &e)
+   {
+      CPPUNIT_FAIL(e.What());
+   }
+}
+
+void MapTests::testLoadEnvironmentMapIntoScene()
+{
+   dtDAL::LibraryManager::GetInstance().LoadActorRegistry(mExampleLibraryName);
+   dtDAL::Project &project = dtDAL::Project::GetInstance();
+   dtDAL::Map &map = project.CreateMap("TestEnvironmentMap", "TestEnvironmentMap");
+   dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
+
+   scene->RemoveAllDrawables();
+   CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
+
+   std::vector<dtCore::RefPtr<dtDAL::ActorProxy> > container;
+   CPPUNIT_ASSERT(container.empty());
+
+   const unsigned int numProxies = 4;
+   for(unsigned int i = 0; i < numProxies; i++)
+   {
+      dtCore::RefPtr<dtDAL::ActorProxy> p =
+         dtDAL::LibraryManager::GetInstance().CreateActorProxy("dtcore.examples", "Test All Properties");
+      CPPUNIT_ASSERT(p.valid());
+      container.push_back(p);
+   }
+
+   CPPUNIT_ASSERT(container.size() == numProxies);
+
+   for(unsigned int i = 0; i < container.size(); i++)
+      map.AddProxy(*container[i]);
+
+   std::vector<osg::ref_ptr<dtDAL::ActorProxy> > mapProxies;
+   map.GetAllProxies(mapProxies);
+   CPPUNIT_ASSERT_MESSAGE("The map should have the correct number of proxies", mapProxies.size() == numProxies);
+
+   dtCore::RefPtr<dtDAL::ActorProxy> envProxy = dtDAL::LibraryManager::GetInstance().CreateActorProxy("Test Environment Actor", "Test Environment Actor");
+   CPPUNIT_ASSERT(envProxy.valid());
+
+   project.LoadMapIntoScene(map, *scene);
+   unsigned int numDrawables = scene->GetNumberOfAddedDrawable();
+   CPPUNIT_ASSERT_MESSAGE("The number of drawables should equal the number of proxies", numDrawables == numProxies);
+   scene->RemoveAllDrawables();
+   CPPUNIT_ASSERT(scene->GetNumberOfAddedDrawable() == 0);
+
+   dtDAL::EnvironmentActor *tea = dynamic_cast<dtDAL::EnvironmentActor*>(envProxy->GetActor());
+   CPPUNIT_ASSERT(tea != NULL);
+   unsigned int numChildren = tea->GetNumEnvironmentChildren();
+   CPPUNIT_ASSERT(numChildren == 0);
+
+   map.SetEnvironmentActor(envProxy.get());
+   project.LoadMapIntoScene(map, *scene);
+   numDrawables = scene->GetNumberOfAddedDrawable();
+   CPPUNIT_ASSERT_MESSAGE("The number of drawables should only be 1, the environment actor", numDrawables == 1);
+
+   numChildren = tea->GetNumEnvironmentChildren();
+   CPPUNIT_ASSERT_MESSAGE("The environment actor should have all the proxies as its children", numChildren == numProxies);
 }

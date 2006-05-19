@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_NOAUTOLIBMSG;NOMINMAX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtUtild.lib dtDALd.lib dtGamed.lib dtActorsd.lib osgd.lib"
+				AdditionalDependencies="dtCored.lib dtABCd.lib dtUtild.lib dtDALd.lib dtGamed.lib CEGUIBase_d.lib osgDBd.lib dtActorsd.lib osgd.lib"
 				OutputFile="../../../bin/testAARd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_NOAUTOLIBMSG;NOMINMAX"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtUtil.lib dtDAL.lib dtGame.lib dtActors.lib osg.lib"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtUtil.lib dtDAL.lib dtGame.lib dtActors.lib osg.lib CEGUIBase.lib osgDB.lib"
 				OutputFile="../../../bin/testAAR.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -131,6 +131,9 @@
 			<File
 				RelativePath="..\..\..\examples\testAAR\testaar.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarhud.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -138,6 +141,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\examples\testAAR\testaar.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testAAR\testaarhud.h">
 			</File>
 		</Filter>
 		<Filter

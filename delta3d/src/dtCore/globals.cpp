@@ -1,5 +1,28 @@
+/* 
+ * Delta3D Open Source Game and Simulation Engine 
+ * Copyright (C) 2004-2006 MOVES Institute 
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free 
+ * Software Foundation; either version 2.1 of the License, or (at your option) 
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License 
+ * along with this library; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
+
+#include "dtUtil/fileutils.h"
+#include "dtUtil/stringutils.h"
+#include "dtUtil/log.h"
+
 #include <dtCore/globals.h>
-#include <dtUtil/log.h>
 #include <stdexcept>
 
 #include <osgDB/FileUtils>
@@ -69,6 +92,37 @@ std::string dtCore::GetDataFilePathList()
    return pathString;
 }
 
+std::string dtCore::FindFileInPathList(const std::string &fileName) throw()
+{
+   std::vector<std::string> pathList;
+   std::vector<std::string>::const_iterator itor;
+   
+#if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
+   dtUtil::IsDelimeter delimCheck(';');
+#else
+   dtUtil::IsDelimeter delimCheck(':');
+#endif
+   
+   dtUtil::StringTokenizer<dtUtil::IsDelimeter>::tokenize(pathList,
+                                                          GetDataFilePathList(),delimCheck);
+   
+   dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
+   
+   //Make sure we remove any trailing slashes from the cache path.
+   std::string path;          
+   for (itor=pathList.begin(); itor!=pathList.end(); ++itor)
+   {
+      path = *itor;
+      if (path[path.length()-1] == '/' || path[path.length()-1] == '\\')
+         path = path.substr(0,path.length()-1);
+      if (fileUtils.FileExists(path + dtUtil::FileUtils::PATH_SEPARATOR + fileName))
+         return path + dtUtil::FileUtils::PATH_SEPARATOR + fileName;
+   }     
+   
+   return std::string();
+}
+
+
 /** 
  * Simple method to return the system environment variable.  If the env var
  * is not set, the local path will be returned.
@@ -92,6 +146,7 @@ DT_CORE_EXPORT std::string dtCore::GetEnvironment( const std::string& env )
  * Get the Delta Data file path.  This comes directly from the environment 
  * variable "DELTA_DATA".  If the environment variable is not set, the local
  * directory will be returned.
+ * @todo need to decide how paths will be handled.  We need to decide if DELTA_DATA is a list or a single item.
  */
 DT_CORE_EXPORT std::string dtCore::GetDeltaDataPathList()
 {

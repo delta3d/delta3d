@@ -30,7 +30,7 @@
 #include <dtDAL/directoryresourcetypehandler.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtDAL/functor.h>
 #include <dtDAL/librarymanager.h>
 #include <dtDAL/map.h>

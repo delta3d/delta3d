@@ -20,7 +20,7 @@
 */
 #include <dtCore/refptr.h>
 #include <dtCore/scene.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include "dtTerrain/terraindatareader.h"
 #include "dtTerrain/terraindatarenderer.h"
 #include "dtTerrain/terrain.h"

@@ -152,6 +152,12 @@ namespace dtGame
           */
          virtual void ProcessUnhandledRemoteMessage(const Message &msg);
 
+         /**
+          * Processes the player entered world message
+          * @param msg The message
+          */
+         virtual void ProcessPlayerEnteredWorldMessage(const Message &msg) { }
+
       private:
    };
 }

@@ -27,9 +27,9 @@
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 
+#include <dtUtil/fileutils.h>
 #include <dtUtil/tree.h>
 #include <dtDAL/exceptionenum.h>
-#include "dtDAL/fileutils.h"
 #include "dtDAL/resourcetreenode.h"
 #include "dtDAL/export.h"
 
@@ -57,7 +57,7 @@ namespace dtDAL
           * @param type The filetype, whether a directory or file.
           * @return true if the file name is a file that would be handled by this handler.
           */
-         virtual bool HandlesFile(const std::string& path, FileType type) const  = 0;
+		 virtual bool HandlesFile(const std::string& path, dtUtil::FileType type) const  = 0;
 
          /**
           * Creates a resource descriptor based on the path to the resource.
@@ -254,7 +254,7 @@ namespace dtDAL
          ResourceHelper(const ResourceHelper&){}
          ResourceHelper& operator=(const ResourceHelper&) { return *this; }
 
-         void IndexResources(FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
+         void IndexResources(dtUtil::FileUtils& fileUtils, dtUtil::tree<ResourceTreeNode>::iterator& i,
                            const DataType& dt, const std::string& categoryPath, const std::string& category) const;
 
          dtUtil::tree<ResourceTreeNode>* VerifyDirectoryExists(const std::string& path,

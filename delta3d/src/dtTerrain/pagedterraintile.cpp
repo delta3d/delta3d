@@ -22,7 +22,7 @@
 #include "dtTerrain/pagedterraintile.h"
 #include "dtTerrain/heightfield.h"
 #include "dtTerrain/terrain.h"
-#include "dtDAL/fileutils.h"
+#include "dtUtil/fileutils.h"
 #include "dtUtil/exception.h"
 #include "dtCore/scene.h"
 #include "dtTerrain/terraindatareader.h"

@@ -89,7 +89,21 @@ namespace dtGame
           * @param tickMessage the actual message
           */
          virtual void TickRemote(const Message& tickMessage);
+
+         /**
+          * Sets the shader group on the terrain actor.  This implementation uses
+          * the default shader in the group to shade the terrain.
+          * @param groupName The name of the shader group.
+          */
+         virtual void SetShaderGroup(const std::string &groupName);
+
+         /**
+          * Gets the current shader group assigned to this terrain.
+          * @return The name of the group.
+          */
+         std::string GetShaderGroup() const { return mShaderGroup; }
          
+         virtual void OnShaderGroupChanged();
 
       protected:
    
@@ -117,6 +131,7 @@ namespace dtGame
          
          bool mPublished;
          bool mRemote;
+         std::string mShaderGroup;
    };
 		
    /**

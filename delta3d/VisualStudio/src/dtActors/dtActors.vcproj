@@ -142,6 +142,9 @@
 				RelativePath="..\..\..\src\dtActors\baselightactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\basicenvironmentactorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\beziercontrolleractorproxy.cpp">
 			</File>
 			<File
@@ -163,6 +166,9 @@
 				RelativePath="..\..\..\src\dtActors\cloudplaneactorproxy.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\coordinateconfigactorproxy.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\deltaobjectactorproxy.cpp">
 			</File>
 			<File
@@ -170,9 +176,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\enveffectactorproxy.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtActors\environmentactorproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\infinitelightactorproxy.cpp">
@@ -214,6 +217,15 @@
 				RelativePath="..\..\..\src\dtActors\taskactor.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtActors\taskactorgameevent.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\taskactorordered.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\taskactorrollup.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtActors\triggeractorproxy.cpp">
 			</File>
 			<File
@@ -232,6 +244,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\baselightactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\basicenvironmentactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\beziercontrolleractorproxy.h">
@@ -255,6 +270,9 @@
 				RelativePath="..\..\..\inc\dtActors\cloudplaneactorproxy.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtActors\coordinateconfigactorproxy.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h">
 			</File>
 			<File
@@ -262,9 +280,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\enveffectactorproxy.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtActors\environmentactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\infinitelightactorproxy.h">
@@ -304,6 +319,15 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\taskactor.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\taskactorgameevent.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\taskactorordered.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\taskactorrollup.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\triggeractorproxy.h">

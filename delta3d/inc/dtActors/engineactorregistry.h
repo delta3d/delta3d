@@ -39,7 +39,32 @@ namespace dtActors
     class DT_PLUGIN_EXPORT EngineActorRegistry : public dtDAL::ActorPluginRegistry
     {
     public:
-
+         
+       static dtCore::RefPtr<dtDAL::ActorType> TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> GAME_EVENT_TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> ROLL_UP_TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> ORDERED_TASK_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> INFINITE_LIGHT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> POSITIONAL_LIGHT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> SPOT_LIGHT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> STATIC_MESH_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> PARTICLE_SYSTEM_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> CHARACTER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> INFINITE_TERRAIN_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> MESH_TERRAIN_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> SKY_BOX_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> SKY_DOME_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> BEZIER_NODE_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> BEZIER_CONTROL_POINT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> BEZIER_CONTROLLER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> CLOUD_PLANE_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> TRIGGER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> PROXIMITY_TRIGGER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> AUTOTRIGGER_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> CAMERA_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> TRIPOD_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> ENVIRONMENT_ACTOR_TYPE;
+       static dtCore::RefPtr<dtDAL::ActorType> COORDINATE_CONFIG_ACTOR_TYPE;
 
         /**
          * Constructs the engine actor registry.

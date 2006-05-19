@@ -24,6 +24,7 @@
     <objects>
         <object name="BaseEntity">
             <abstract/>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>EntityType</hlaName>
                 <hlaDataType>Entity</hlaDataType>
@@ -31,6 +32,15 @@
                 <gameName>Entity Type</gameName>
                 <gameDataType>ENUMERATION</gameDataType>
                 <gameRequired>false</gameRequired>
+                <default></default>
+            </attrToProp>            
+            <attrToProp>
+                <hlaName>EntityIdentifier</hlaName>
+                <hlaDataType>Entity Identifier</hlaDataType>
+                <hlaRequired>true</hlaRequired>
+                <gameName>sendingActorId</gameName>
+                <gameDataType>ACTOR</gameDataType>
+                <gameRequired>true</gameRequired>
                 <default></default>
             </attrToProp>            
             <attrToProp>
@@ -42,10 +52,10 @@
                 <gameRequired>false</gameRequired>
                 <default>Destroyed</default>
                 <enumerationMapping>
-                	<value id="0">No Damage</value>
-                	<value id="1">Slight Damage</value>
-                	<value id="2">Moderate Damage</value>
-                	<value id="3">Destroyed</value>
+                    <value id="0">No Damage</value>
+                    <value id="1">Damaged</value>
+                    <value id="2">Damaged</value>
+                    <value id="3">Destroyed</value>
                 </enumerationMapping>
             </attrToProp>            
             <attrToProp>
@@ -68,8 +78,8 @@
                 <hlaName>WorldLocation</hlaName>
                 <hlaDataType>World Coordinate</hlaDataType>
                 <hlaRequired>true</hlaRequired>
-                <gameName>Location</gameName>
-                <gameDataType>VEC3F</gameDataType>
+                <gameName>Translation</gameName>
+                <gameDataType>VEC3</gameDataType>
                 <gameRequired>true</gameRequired>
                 <default></default>
             </attrToProp>            
@@ -122,6 +132,7 @@
                 <specific>6</specific>
                 <extra>0</extra>
             </disEntityEnum>
+            <entityIdAttributeName>HeloIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
                 <hlaDataType>Velocity Vector</hlaDataType>
@@ -184,8 +195,23 @@
     	</interaction>
 
     	<interaction extends="DetonationLoc">
-    	    <interactionClass>InteractionRoot.MunitionDetonation</interactionClass>
+    	    <interactionClass>MunitionDetonation</interactionClass>
     	    <messageType>Restarted</messageType>
     	</interaction>
+
+        <interaction>
+           <interactionClass>WeaponFire</interactionClass>
+           <messageType>Resumed</messageType>
+           <paramToParam>
+              <hlaName>FiringObjectIdentifier</hlaName>
+              <hlaDataType>Entity Identifier</hlaDataType>
+              <hlaRequired>true</hlaRequired>
+              <gameName>aboutActorId</gameName>
+              <gameDataType>ACTOR</gameDataType>
+              <gameRequired>true</gameRequired>
+           </paramToParam>
+        </interaction>
     </interactions>
+
+
 </hla>

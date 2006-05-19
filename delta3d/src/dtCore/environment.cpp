@@ -494,7 +494,7 @@ void dtCore::Environment::SetDateTime( const int yr, const int mo, const int da,
 * @param mi minute
 * @param sc second
 */
-void dtCore::Environment::GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc )
+void dtCore::Environment::GetDateTime( int& yr, int& mo, int& da, int& hr, int& mi, int& sc ) const
 {
    struct tm *tmp = localtime(&mCurrTime);
    yr = tmp->tm_year+1900;

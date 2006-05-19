@@ -1,4 +1,5 @@
-#include <dtCore/stats.h>
+#include "dtCore/stats.h"
+#include "dtCore/timer.h"
 #include <osg/BlendFunc>
 #include <osg/Geode>
 #include <osg/MatrixTransform>
@@ -20,6 +21,7 @@ Stats::Stats(osgUtil::SceneView *sv)
    mFrameTick = mInitialTick;
    mFrameRate=0;                   // added by gwm to display fram Rate smoothed
    mSV = sv;
+   mLastStatsDataUpdate = 0;
 }
 
 
@@ -215,15 +217,11 @@ void Stats::ShowStats()
   {
     char clin[72];            // buffer to print
 
-    if (mFrameRate>10.0f)
+    // only update the calc twice a second... otherwise, it is completely unreadable
+    float timeSinceLastUpdate = mTimer.DeltaMicro(mLastStatsDataUpdate, mFrameTick);
+    if (timeSinceLastUpdate < 0.0 || timeSinceLastUpdate > 500000.0)
     {
-      float smoothRatio = 0.3;// should be >0 and <= 1.0,
-                              // lower the value greater smoothing.
-                              // smooth out variations in frame rate
-      mFrameRate=(1.0f-smoothRatio)*mFrameRate+smoothRatio*FrameRate();
-    }
-    else
-    {
+      mLastStatsDataUpdate = mFrameTick;
       mFrameRate=FrameRate();     // frame rate so slow no need to smooth in frame rate
     }
     sprintf(clin,"%.1f Hz.", mFrameRate);

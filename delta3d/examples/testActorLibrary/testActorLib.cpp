@@ -18,17 +18,17 @@
 *
 * @author William E. Johnson II
 */
+
 #include "testActorLib.h"
 #include "testPropertyProxy.h"
+#include "testdalenvironmentactor.h"
 
-using namespace dtDAL;
-
-extern "C" DT_PLUGIN_EXPORT ActorPluginRegistry* CreatePluginRegistry()
+extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
 {
    return new ExampleActorLib;
 }
 
-extern "C" DT_PLUGIN_EXPORT void DestroyPluginRegistry(ActorPluginRegistry *registry)
+extern "C" DT_PLUGIN_EXPORT void DestroyPluginRegistry(dtDAL::ActorPluginRegistry *registry)
 {
    if (registry != NULL)
       delete registry;
@@ -41,8 +41,11 @@ ExampleActorLib::ExampleActorLib() : ActorPluginRegistry("ExampleActors")
 
 void ExampleActorLib::RegisterActorTypes()
 {
-    ActorType *testAllPropertiesType = new ActorType("Test All Properties",
+    dtDAL::ActorType *testAllPropertiesType = new dtDAL::ActorType("Test All Properties",
         "dtcore.examples", "Used to test any property types that haven't been tested.");
 
+    dtDAL::ActorType *testEnvActor = new dtDAL::ActorType("Test Environment Actor", "Test Environment Actor");
+
     mActorFactory->RegisterType<ExampleTestPropertyProxy>(testAllPropertiesType);
+    mActorFactory->RegisterType<TestDALEnvironmentActorProxy>(testEnvActor);
 }

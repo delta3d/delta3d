@@ -681,6 +681,8 @@ if env.get('rti') not in [ 0, 1 ] and os.path.exists( env.get('rti') ) and os.pa
    
    if OS == 'windows' :      
      pattern = '(.*?)\.dll'
+   elif OS == 'darwin' :
+     pattern = 'lib(.*?)\.dylib'
    else :
      pattern = 'lib(.*?)\.so'
 
@@ -729,8 +731,10 @@ if mode == 'debug':
                   #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
 		  CPPDEFINES=['SIGSLOT_PURE_ISO'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
-	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc'] )
+      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
+	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
+      env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1' 
+      #-install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -746,9 +750,11 @@ else:
  #             LINKFLAGS=['-Wl,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/lib,-rpath-link=' + env['ENV']['DELTA_ROOT'] + '/ext/lib'] )
 
    elif OS == 'darwin':     
-     env.Append(CXXFLAGS=['-Os', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386'],
-	CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030'], 
-	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386'] )
+      env.Append(CXXFLAGS=['-Os', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386'],
+         CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030'], 
+         LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386'] )
+      env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1' 
+      #-install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 
 #add to the CPPFLAGS variable if it's set in the environment
 if os.environ.has_key('CPPFLAGS'):
@@ -790,8 +796,6 @@ if OS == 'darwin' :
   env['FRAMEWORKS'] = []
   env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
   env['SHLIBSUFFIX'] = '.dylib'
-  env['SHLINKFLAGS'] = '$LINKFLAGS -arch ppc -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1' 
-   #-install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 
 launchDir = env.GetLaunchDir()
 
@@ -989,7 +993,7 @@ elif OS == 'darwin' :
       'gdal'           : 'gdal',
       'gne'            : 'gne',
       'HawkNL'         : 'NL',
-      'isense'         : 'isense',
+#      'isense'         : 'isense', # broken on intel
       'openal'         : 'OpenAL', 
 #      'alut'           : 'alut',  # OSX is still on a staic alut     
       'ode'            : 'ode', 

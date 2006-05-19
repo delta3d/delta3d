@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtDALd.lib dtActorsd.lib dtUtild.lib osgd.lib ul_d.lib"
+				AdditionalDependencies="dtCored.lib dtDALd.lib dtActorsd.lib dtABCd.lib dtUtild.lib osgd.lib ul_d.lib"
 				OutputFile="../../../bin/testActorLibraryd.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtDAL.lib dtActors.lib dtUtil.lib osg.lib ul.lib"
+				AdditionalDependencies="dtCore.lib dtDAL.lib dtActors.lib dtABC.lib dtUtil.lib osg.lib ul.lib"
 				OutputFile="../../../bin/testActorLibrary.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
@@ -127,6 +127,9 @@
 				RelativePath="..\..\..\examples\testActorLibrary\testactorlib.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\examples\testActorLibrary\testdalenvironmentactor.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\examples\testActorLibrary\testpropertyproxy.cpp">
 			</File>
 		</Filter>
@@ -136,6 +139,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\examples\testActorLibrary\testactorlib.h">
+			</File>
+			<File
+				RelativePath="..\..\..\examples\testActorLibrary\testdalenvironmentactor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\examples\testActorLibrary\testpropertyproxy.h">

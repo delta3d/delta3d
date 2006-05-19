@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2006, Alion Science and Technology, BMH Operation.
  *
@@ -19,26 +19,31 @@
  * @author David Guthrie
  */
 
-#include <plib/ul.h>
+#include <dtUtil/matrixutil.h>
+#include <dtUtil/log.h>
+
+#include <dtCore/uniqueid.h>
+
+#include <dtDAL/actortype.h>
+
+#include <dtGame/message.h>
 #include <dtGame/actorupdatemessage.h>
 #include <dtGame/gamemanager.h>
 #include <dtGame/machineinfo.h>
-#include <dtCore/system.h>
-#include <dtUtil/matrixutil.h>
-#include <dtUtil/log.h>
-#include <dtGame/message.h>
 
 #include <osg/Vec3d>
 #include <osg/Endian>
 #include <osg/io_utils>
 #include <osgDB/FileUtils>
-#include "dtHLAGM/hlacomponent.h"
 
+#include "dtHLAGM/hlacomponent.h"
 #include "dtHLAGM/objecttoactor.h"
 #include "dtHLAGM/distypes.h"
 #include "dtHLAGM/attributetoproperty.h"
 #include "dtHLAGM/parametertoparameter.h"
 #include "dtHLAGM/interactiontomessage.h"
+#include "dtHLAGM/parametertranslator.h"
+#include "dtHLAGM/rprparametertranslator.h"
 
 #if defined(__APPLE__)
 #include <sys/socket.h>
@@ -46,6 +51,25 @@
 #elif !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include <sys/socket.h>
 #include <linux/in.h>
+#endif
+
+#if !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
+typedef unsigned int SOCKET;
+
+typedef struct win_addr {
+   union {
+      struct {
+         unsigned char s_b1,s_b2,s_b3,s_b4;
+      } S_un_b;
+      struct {
+         unsigned short s_w1,s_w2;
+      } S_un_w;
+      unsigned long S_addr;
+   } S_un;
+} win_addr;
+
+#else
+typedef int socklen_t;
 #endif
 
 /**
@@ -56,32 +80,157 @@ const osg::Node::NodeMask entityMask = 0x01;
 
 namespace dtHLAGM
 {
+
+   const std::string HLAComponent::ABOUT_ACTOR_ID("aboutActorId");
+   const std::string HLAComponent::SENDING_ACTOR_ID("sendingActorId");
+
    //IMPLEMENT_MANAGEMENT_LAYER(HLAComponent);
-  
+
    HLAComponent::HLAComponent()
       : mRTIAmbassador(NULL),
-        mLocalIPAddress(0x7f000001)
+        mLocalIPAddress(0x7f000001),
+        mMachineInfo(new dtGame::MachineInfo)        
    {
-      
+
       mLogger = &dtUtil::Log::GetInstance("hlafomtranslator.cpp");
-     //      mCoordinates.SetGeoOrigin(0, 0, 0);
-      
+
       mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
-      mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535)); 
-                 
-      mMachineInfo = new dtGame::MachineInfo;
+      mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));
+      mParameterTranslators.push_back(new RPRParameterTranslator(mCoordinates, mRuntimeMappings));
    }
-  
+
    HLAComponent::~HLAComponent()
       throw (RTI::FederateInternalError)
    {
-      //RemoveSender(dtCore::System::Instance());
-    
       //DeregisterInstance(this);
       LeaveFederationExecution();
    }
-  
-  
+
+
+   void HLAComponent::RegisterObjectToActorWithRTI(ObjectToActor& objectToActor)
+   {
+      const std::string& thisObjectClassString = objectToActor.GetObjectTypeName();
+      RTI::ObjectClassHandle thisObjectClassHandle;
+
+      try
+      {
+         thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
+      }
+      catch (const RTI::NameNotFound &)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                              "Could not find Object Class Name: %s", thisObjectClassString.c_str());
+      }
+      catch (const RTI::FederateNotExecutionMember &)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                              "Federate not Execution Member");
+      }
+      catch (const RTI::ConcurrentAccessAttempted &)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                              "Concurrent Access Attempted");
+      }
+      catch (const RTI::RTIinternalError &)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                              "RTIinternal Error");
+      }
+
+      objectToActor.SetObjectClassHandle(thisObjectClassHandle);
+      std::vector<AttributeToPropertyList>& thisAttributeToPropertyListVector = objectToActor.GetOneToManyMappingVector();
+
+      RTI::AttributeHandleSet* ahs =
+            RTI::AttributeHandleSetFactory::create(thisAttributeToPropertyListVector.size());
+
+      std::vector<AttributeToPropertyList>::iterator attributeToPropertyListIterator = thisAttributeToPropertyListVector.begin();
+
+         //if we have a name for the entity id attribute, subscribe to it and save the handle.
+      if (!objectToActor.GetEntityIdAttributeName().empty())
+      {
+         RTI::AttributeHandle entityIdentifierAttributeHandle =
+               mRTIAmbassador->getAttributeHandle(objectToActor.GetEntityIdAttributeName().c_str(), thisObjectClassHandle);
+
+         objectToActor.SetEntityIdAttributeHandle(entityIdentifierAttributeHandle);
+
+         ahs->add(entityIdentifierAttributeHandle);
+      }
+
+      while (attributeToPropertyListIterator != thisAttributeToPropertyListVector.end())
+      {
+         AttributeToPropertyList& thisAttributeToPropertyList = *attributeToPropertyListIterator;
+         std::string thisAttributeHandleString = thisAttributeToPropertyList.GetHLAName();
+
+         if (!(thisAttributeHandleString.empty()))
+         {
+            RTI::AttributeHandle thisAttributeHandle = mRTIAmbassador->getAttributeHandle(thisAttributeHandleString.c_str(),
+                  thisObjectClassHandle);
+            thisAttributeToPropertyList.SetAttributeHandle(thisAttributeHandle);
+
+            if (!ahs->isMember(thisAttributeHandle))
+               ahs->add(thisAttributeHandle);
+         }
+
+         ++attributeToPropertyListIterator;
+      }
+
+      bool subscribed = false;
+      try
+      {
+         mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle, *ahs);
+         subscribed = true;
+         if (!objectToActor.IsRemoteOnly())
+            mRTIAmbassador->publishObjectClass(thisObjectClassHandle, *ahs);
+      }
+      catch (const RTI::Exception &)
+      {
+         if (!subscribed)
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Error subscribing to object class %s.", thisObjectClassString.c_str());
+         else
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                 "Error publishing object class %s.", thisObjectClassString.c_str());
+      }
+
+      delete ahs;
+   }
+
+   void HLAComponent::RegisterInteractionToMessageWithRTI(InteractionToMessage& interactionToMessage)
+   {
+      const std::string& thisInteractionClassString = interactionToMessage.GetInteractionName();
+      RTI::InteractionClassHandle thisInteractionClassHandle
+            = mRTIAmbassador->getInteractionClassHandle(thisInteractionClassString.c_str());
+      interactionToMessage.SetInteractionClassHandle(thisInteractionClassHandle);
+      std::vector<ParameterToParameterList>& thisParameterToParameterListVector = interactionToMessage.GetOneToManyMappingVector();
+      std::vector<ParameterToParameterList>::iterator parameterToParameterIterator = thisParameterToParameterListVector.begin();
+
+      while (parameterToParameterIterator != thisParameterToParameterListVector.end())
+      {
+         ParameterToParameterList& thisParameterToParameterList = *parameterToParameterIterator;
+         const std::string& thisParameterHandleString = thisParameterToParameterList.GetHLAName();
+         RTI::ParameterHandle thisParameterHandle = mRTIAmbassador->getParameterHandle(thisParameterHandleString.c_str(), thisInteractionClassHandle);
+         thisParameterToParameterList.SetParameterHandle(thisParameterHandle);
+         ++parameterToParameterIterator;
+      }
+
+      bool subscribed = false;
+      try
+      {
+         mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);
+         subscribed = true;
+         mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
+      }
+      catch (const RTI::Exception &)
+      {
+         if (!subscribed)
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                "Error subscribing to interaction class %s.", thisInteractionClassString.c_str());
+         else
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                "Error publishing interaction class %s.", thisInteractionClassString.c_str());
+      }
+   }
+
    /**
     * Creates/joins a federation execution.
     *
@@ -99,33 +248,33 @@ namespace dtHLAGM
       //
       int len;
       sockaddr_in other, me;
-      
+
       memset(&other, 0, sizeof(other));
-      
+
       other.sin_family = AF_INET;
       other.sin_port = 8192;
-      
+
       #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
       other.sin_addr.S_un.S_addr = 0x7F000001;
       #else
       other.sin_addr.s_addr = 0x7F000001;
       #endif
-      
+
       if(connect(some_socket, (sockaddr*)&other, sizeof(other)) == 0)
       {
          if(getsockname(some_socket, (sockaddr*)&me, (socklen_t*)&len) == 0)
-         { 
+         {
             #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
             mLocalIPAddress = me.sin_addr.S_un.S_addr;
             #else
             mLocalIPAddress = me.sin_addr.s_addr;
             #endif
-            
-            if(ulIsLittleEndian)
+
+            if(osg::getCpuByteOrder() == osg::LittleEndian)
             {
-               ulEndianSwap(&mLocalIPAddress);
+               osg::swapBytes((char*)&mLocalIPAddress, sizeof(mLocalIPAddress));
             }
-            
+
             #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
             mSiteIdentifier = me.sin_addr.S_un.S_un_w.s_w1;
             #else
@@ -135,116 +284,38 @@ namespace dtHLAGM
             #endif
          }
       }
-      
+
       mRTIAmbassador = new RTI::RTIambassador();
-      
+
       try
       {
-         mRTIAmbassador->createFederationExecution(executionName.c_str(),
-                                                  osgDB::findDataFile(fedFilename).c_str());
+         std::string fedFile = osgDB::findDataFile(fedFilename).c_str();
+         mRTIAmbassador->createFederationExecution(executionName.c_str(), fedFile.c_str());
       }
-      catch(RTI::FederationExecutionAlreadyExists feae)
-      {}
-   
+      catch(RTI::FederationExecutionAlreadyExists&)
+      {
+         //okay, this is fine, but it's odd that this would happen.
+      }
+
       mEntityIdentifierCounter = 1;
       mEventIdentifierCounter = 1;
-      
-      mRTIAmbassador->joinFederationExecution(federateName.c_str(), 
-                                             executionName.c_str(), this);
-      
+
+      mRTIAmbassador->joinFederationExecution(federateName.c_str(),
+                                              executionName.c_str(), this);
+
       mExecutionName = executionName;
 
-      std::set<std::string> thisObjectClassHandleMap;
-      
       std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator
         = mActorToObjectMap.begin();
-      
+
       while (actorToObjectIterator != mActorToObjectMap.end())
       {
          dtCore::RefPtr<ObjectToActor> thisObjectToActor = actorToObjectIterator->second;
-        
-         std::string thisObjectClassString = thisObjectToActor->GetObjectTypeName();
+         const std::string& thisObjectClassString = thisObjectToActor->GetObjectTypeName();
 
-         RTI::ObjectClassHandle thisObjectClassHandle(0);
+         if (!thisObjectClassString.empty())
+            RegisterObjectToActorWithRTI(*thisObjectToActor);
 
-         try {
-            thisObjectClassHandle = mRTIAmbassador->getObjectClassHandle(thisObjectClassString.c_str());
-         }
-         catch (RTI::NameNotFound &){
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Could not find Object Class Name: %s", thisObjectClassString.c_str());
-         }
-         catch (RTI::FederateNotExecutionMember &){
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Federate not Execution Member");
-         }
-         catch (RTI::ConcurrentAccessAttempted &){
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Concurrent Access Attempted");
-         }
-         catch (RTI::RTIinternalError &){
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "RTIinternal Error");
-         }
-         if (thisObjectClassString != "")
-         { 
-            thisObjectToActor->SetObjectClassHandle(thisObjectClassHandle);
-            
-            std::vector<AttributeToProperty>& thisAttributeToPropertyVector = thisObjectToActor->GetOneToOneMappingVector();
-
-            RTI::AttributeHandleSet* ahs = 
-               RTI::AttributeHandleSetFactory::create(thisAttributeToPropertyVector.size());
-
-            std::vector<AttributeToProperty>::iterator attributeToPropertyIterator = thisAttributeToPropertyVector.begin();
-
-            mEntityIdentifierAttributeHandle = 
-               mRTIAmbassador->getAttributeHandle("EntityIdentifier", thisObjectClassHandle);
-            ahs->add(mEntityIdentifierAttributeHandle);
-
-            while (attributeToPropertyIterator != thisAttributeToPropertyVector.end())
-            {
-               AttributeToProperty& thisAttributeToProperty = *attributeToPropertyIterator;
-
-               std::string thisAttributeHandleString = thisAttributeToProperty.GetHLAName();
-
-               if (!(thisAttributeHandleString.empty()))
-               {
-
-                  RTI::AttributeHandle thisAttributeHandle = mRTIAmbassador->getAttributeHandle(thisAttributeHandleString.c_str(), 
-                                                                                               thisObjectClassHandle);
-
-                  thisAttributeToProperty.SetAttributeHandle(thisAttributeHandle);
-
-                  if (!ahs->isMember(thisAttributeHandle))
-                     ahs->add(thisAttributeHandle);
-               }
-
-               ++attributeToPropertyIterator;
-            }
-            std::set<std::string>::iterator thisObjectClassHandleIterator = thisObjectClassHandleMap.find(thisObjectClassString);
-
-            if (thisObjectClassHandleIterator == thisObjectClassHandleMap.end())
-            {
-               thisObjectClassHandleMap.insert(std::set<std::string>::value_type(thisObjectClassString));
-
-               try {
-                  mRTIAmbassador->subscribeObjectClassAttributes(thisObjectClassHandle,
-                                                                *ahs);
-               }
-               catch (RTI::Exception &){
-                 //Do something here if you wish.
-               }
-               try {
-                  mRTIAmbassador->publishObjectClass(thisObjectClassHandle,
-                                                    *ahs);
-               }
-               catch (RTI::Exception &){
-                 //Do something here if you wish.
-               }
-            
-               delete ahs;
-            }
-         }
          ++ actorToObjectIterator;
       }
 
@@ -255,56 +326,51 @@ namespace dtHLAGM
       {
          dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage = messageToInteractionIterator->second;
          const std::string& thisInteractionClassString = thisInteractionToMessage->GetInteractionName();
-         RTI::InteractionClassHandle thisInteractionClassHandle = mRTIAmbassador->getInteractionClassHandle(thisInteractionClassString.c_str());
-         thisInteractionToMessage->SetInteractionClassHandle(thisInteractionClassHandle);
-         std::vector<ParameterToParameter>& thisParameterToParameterVector = thisInteractionToMessage->GetOneToOneMappingVector();
-         std::vector<ParameterToParameter>::iterator parameterToParameterIterator = thisParameterToParameterVector.begin();
 
-         while (parameterToParameterIterator != thisParameterToParameterVector.end())
-         {
-           ParameterToParameter& thisParameterToParameter = *parameterToParameterIterator;
-           const std::string& thisParameterHandleString = thisParameterToParameter.GetHLAName();
-           RTI::ParameterHandle thisParameterHandle = mRTIAmbassador->getParameterHandle(thisParameterHandleString.c_str(), thisInteractionClassHandle);
-           thisParameterToParameter.SetParameterHandle(thisParameterHandle);
-           ++parameterToParameterIterator;
-         }
-
-         mRTIAmbassador->publishInteractionClass(thisInteractionClassHandle);
-         mRTIAmbassador->subscribeInteractionClass(thisInteractionClassHandle);
+         if (!thisInteractionClassString.empty())
+            RegisterInteractionToMessageWithRTI(*thisInteractionToMessage);
 
          ++messageToInteractionIterator;
       }
    }
-  
+
    /**
     * Leaves/destroys the joined execution.
     */
    void HLAComponent::LeaveFederationExecution()  //this is kind of broken
    {
+      //drop all instance mapping data.
+      mRuntimeMappings.Clear();
+
       if (!mExecutionName.empty())
       {
          try
          {
             mRTIAmbassador->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
          }
-         catch(RTI::RTIinternalError ine)
-         {}
-         
+         catch(RTI::RTIinternalError&)
+         {
+            //okay since we already resigned
+         }
+
          try
          {
             mRTIAmbassador->destroyFederationExecution(mExecutionName.c_str());
          }
-         catch(RTI::FederatesCurrentlyJoined fcj)
+         catch(RTI::FederatesCurrentlyJoined&)
          {
             //std::cout<<"Problem DestroyingFed: " << fcj <<std::endl;
          }
-         
+
          mExecutionName.clear();
       }
       if (mRTIAmbassador != NULL)
          delete mRTIAmbassador;
+
+      mRTIAmbassador = NULL;
+
    }
-    
+
    /**
     * Sets the DIS/RPR-FOM site identifier.
     *
@@ -314,7 +380,7 @@ namespace dtHLAGM
    {
       mSiteIdentifier = siteIdentifier;
    }
-  
+
    /**
     * Returns the DIS/RPR-FOM site identifier.
     *
@@ -324,7 +390,7 @@ namespace dtHLAGM
    {
       return mSiteIdentifier;
    }
-  
+
    /**
     * Sets the DIS/RPR-FOM application identifier.
     *
@@ -334,7 +400,7 @@ namespace dtHLAGM
    {
       mApplicationIdentifier = applicationIdentifier;
    }
-  
+
    /**
     * Returns the DIS/RPR-FOM application identifier.
     *
@@ -344,7 +410,7 @@ namespace dtHLAGM
    {
       return mApplicationIdentifier;
    }
-  
+
    /**
     * Invoked by the RTI ambassador to request that the federate provide
     * updated attribute values for the specified object.
@@ -360,7 +426,7 @@ namespace dtHLAGM
              RTI::FederateInternalError)
    {
    }
-  
+
    /**
     * Invoked by the RTI ambassador to notify the federate of updated object
     * attribute values.
@@ -380,11 +446,11 @@ namespace dtHLAGM
              RTI::AttributeNotKnown,
              RTI::FederateOwnsAttributes,
              RTI::InvalidFederationTime,
-             RTI::FederateInternalError)        
+             RTI::FederateInternalError)
    {
       reflectAttributeValues(theObject, theAttributes, theTag);
    }
-  
+
    /**
     * Invoked by the RTI ambassador to notify the federate of a deleted object
     * instance.
@@ -400,35 +466,26 @@ namespace dtHLAGM
                                                RTI::EventRetractionHandle theHandle)
       throw (RTI::ObjectNotKnown,
              RTI::InvalidFederationTime,
-             RTI::FederateInternalError)        
+             RTI::FederateInternalError)
    {
       removeObjectInstance(theObject, theTag);
    }
-  
-   /**
-    * Invoked by the RTI ambassador to notify the federate of a removed object
-    * instance.
-    *
-    * @param theObject the handle of the removed object
-    * @param theTag the user-supplied tag associated with the event
-    */
+
    void HLAComponent::removeObjectInstance(RTI::ObjectHandle theObject,
                                                const char *theTag)
       throw (RTI::ObjectNotKnown,
-             RTI::FederateInternalError)        
+             RTI::FederateInternalError)
    {
       std::map<RTI::ObjectHandle, dtCore::UniqueId>::iterator hlaToActorIterator;
-      
-      if ((hlaToActorIterator = mHLAtoActorMap.find(theObject))
-          != mHLAtoActorMap.end())
-      {
-         dtCore::UniqueId actorID = hlaToActorIterator->second;
-         
-         mHLAtoActorMap.erase(theObject);
-         mActorToHLAMap.erase(actorID);
-         mUniqueIdToEntityIdentifierMap.erase(actorID);
 
-         DeleteActor(actorID);
+      const dtCore::UniqueId* actorId = mRuntimeMappings.GetId(theObject);
+
+      if (actorId != NULL)
+      {
+         DeleteActor(*actorId);
+         //This is subtle, but the mapping has to be removed after sending the message because
+         //the actorId is deleted when it's removed from the mappings.
+         mRuntimeMappings.Remove(theObject);
       }
    }
 
@@ -453,8 +510,33 @@ namespace dtHLAGM
       }
       return thisObjectToActor;
    }
-   
+
+   ObjectToActor* HLAComponent::GetActorMapping(dtDAL::ActorType &type)
+   {
+      std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
+      dtCore::RefPtr<dtDAL::ActorType> refActorType = &type;
+      ObjectToActor* thisObjectToActor = NULL;
+
+      actorToObjectIterator = mActorToObjectMap.find(refActorType);
+      if (actorToObjectIterator != mActorToObjectMap.end())
+      {
+         thisObjectToActor = actorToObjectIterator->second.get();
+      }
+
+      return thisObjectToActor;
+   }
+
    const ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const
+   {
+      return InternalGetObjectMapping(objTypeName, thisDisID);
+   }
+
+   ObjectToActor* HLAComponent::GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
+   {
+      return const_cast<ObjectToActor*>(InternalGetObjectMapping(objTypeName, thisDisID));
+   }
+
+   const ObjectToActor* HLAComponent::InternalGetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::const_iterator objectToActorIterator;
       const ObjectToActor* thisObjectToActor = NULL;
@@ -470,42 +552,42 @@ namespace dtHLAGM
                if (objectToActorIterator->second->GetDisID() != NULL &&
                   *objectToActorIterator->second->GetDisID() == *thisDisID)
                   break;
-                  
+
                ++objectToActorIterator;
             }
-            
+
             if (objectToActorIterator->second->GetDisID() == NULL)
                return NULL;
-               
+
             if (*objectToActorIterator->second->GetDisID() != *thisDisID)
                return NULL;
          }
-            
+
          thisObjectToActor = objectToActorIterator->second.get();
       }
       return thisObjectToActor;
    }
- 
-   void HLAComponent::RegisterActorMapping(dtDAL::ActorType &type, 
-                                               const std::string& objTypeName, 
-                                               const EntityType* thisDisID, 
-                                               std::vector<AttributeToProperty> &oneToOneActorVector,
+
+   void HLAComponent::RegisterActorMapping(dtDAL::ActorType &type,
+                                               const std::string& objTypeName,
+                                               const EntityType* thisDisID,
+                                               std::vector<AttributeToPropertyList> &oneToOneActorVector,
                                                bool remoteOnly)
    {
       dtCore::RefPtr<ObjectToActor> thisActorMapping = new ObjectToActor;
-      
+
       thisActorMapping->SetActorType(type);
       thisActorMapping->SetObjectTypeName(objTypeName);
       thisActorMapping->SetDisID(thisDisID);
-      thisActorMapping->SetOneToOneMappingVector(oneToOneActorVector);
+      thisActorMapping->SetOneToManyMappingVector(oneToOneActorVector);
       thisActorMapping->SetRemoteOnly(remoteOnly);
-      
+
       dtCore::RefPtr<dtDAL::ActorType> refActorType = &type;
 
       RegisterActorMapping(*thisActorMapping);
-      
+
    }
-  
+
    void HLAComponent::RegisterActorMapping(ObjectToActor& objectToActor)
    {
       if (!objectToActor.IsRemoteOnly())
@@ -519,46 +601,46 @@ namespace dtHLAGM
                objectToActor.GetObjectTypeName().c_str());
             objectToActor.SetRemoteOnly(true);
          }
-         
+
       }
       mObjectToActorMap.insert(std::make_pair(objectToActor.GetObjectTypeName(), &objectToActor));
    }
-  
+
    void HLAComponent::UnregisterActorMapping(dtDAL::ActorType &type)
-   {    
+   {
       dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterActorMapping(type);
       if (otoa.valid())
          InternalUnregisterObjectMapping(otoa->GetObjectTypeName(), otoa->GetDisID());
    }
-  
+
    void HLAComponent::UnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
    {
       dtCore::RefPtr<ObjectToActor> otoa =  InternalUnregisterObjectMapping(objTypeName, thisDisID);
       if (otoa.valid() && !otoa->IsRemoteOnly())
          InternalUnregisterActorMapping(otoa->GetActorType());
    }
-   
+
    dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterActorMapping(dtDAL::ActorType &type)
    {
       std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
       dtCore::RefPtr<ObjectToActor> thisObjectToActor;
-      
+
       actorToObjectIterator = mActorToObjectMap.find(&type);
       if (actorToObjectIterator != mActorToObjectMap.end())
       {
          thisObjectToActor = actorToObjectIterator->second;
-                           
+
          mActorToObjectMap.erase(actorToObjectIterator);
 
       }
       return thisObjectToActor;
    }
-   
+
    dtCore::RefPtr<ObjectToActor> HLAComponent::InternalUnregisterObjectMapping(const std::string& objTypeName, const EntityType* thisDisID)
    {
       std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
       dtCore::RefPtr<ObjectToActor> thisObjectToActor;
-      
+
       objectToActorIterator = mObjectToActorMap.find(objTypeName);
       if (objectToActorIterator != mObjectToActorMap.end())
       {
@@ -571,31 +653,43 @@ namespace dtHLAGM
                if (objectToActorIterator->second->GetDisID() != NULL &&
                   *objectToActorIterator->second->GetDisID() == *thisDisID)
                   break;
-                  
+
                ++objectToActorIterator;
             }
-            
+
             if (objectToActorIterator->second->GetDisID() == NULL)
                return NULL;
-               
+
             if (*objectToActorIterator->second->GetDisID() != *thisDisID)
                return NULL;
          }
          thisObjectToActor = objectToActorIterator->second;
-         
+
          mObjectToActorMap.erase(objectToActorIterator);
       }
       return thisObjectToActor;
    }
-  
+
    const InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType &type) const
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::const_iterator messageToInteractionIterator;
       const InteractionToMessage* thisInteractionToMessage = NULL;
-      
+
       if ((messageToInteractionIterator = mMessageToInteractionMap.find(&type)) != (mMessageToInteractionMap.end()))
       {
-         thisInteractionToMessage = messageToInteractionIterator->second.get();         
+         thisInteractionToMessage = messageToInteractionIterator->second.get();
+      }
+      return thisInteractionToMessage;
+   }
+
+   InteractionToMessage* HLAComponent::GetMessageMapping(const dtGame::MessageType &type)
+   {
+      std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator;
+      InteractionToMessage* thisInteractionToMessage = NULL;
+
+      if ((messageToInteractionIterator = mMessageToInteractionMap.find(&type)) != (mMessageToInteractionMap.end()))
+      {
+         thisInteractionToMessage = messageToInteractionIterator->second.get();
       }
       return thisInteractionToMessage;
    }
@@ -604,7 +698,7 @@ namespace dtHLAGM
    {
       std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::const_iterator interactionToMessageIterator;
       const InteractionToMessage* thisInteractionToMessage = NULL;
-      
+
       interactionToMessageIterator = mInteractionToMessageMap.find(interName);
       if (interactionToMessageIterator != mInteractionToMessageMap.end())
       {
@@ -612,34 +706,47 @@ namespace dtHLAGM
       }
       return thisInteractionToMessage;
    }
-   
+
+   InteractionToMessage* HLAComponent::GetInteractionMapping(const std::string& interName)
+   {
+      std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
+      InteractionToMessage* thisInteractionToMessage = NULL;
+
+      interactionToMessageIterator = mInteractionToMessageMap.find(interName);
+      if (interactionToMessageIterator != mInteractionToMessageMap.end())
+      {
+         thisInteractionToMessage = interactionToMessageIterator->second.get();
+      }
+      return thisInteractionToMessage;
+   }
+
    void HLAComponent::RegisterMessageMapping(InteractionToMessage& interactionToMessage)
    {
       mMessageToInteractionMap.insert(std::make_pair(&interactionToMessage.GetMessageType(), &interactionToMessage));
-      
+
       mInteractionToMessageMap.insert(std::make_pair(interactionToMessage.GetInteractionName(), &interactionToMessage));
    }
 
    void HLAComponent::RegisterMessageMapping(const dtGame::MessageType &type,
                                                  const std::string& interactionTypeName,
-                                                 std::vector<ParameterToParameter> &oneToOneMessageVector)
+                                                 std::vector<ParameterToParameterList> &oneToOneMessageVector)
    {
       dtCore::RefPtr<InteractionToMessage> thisMessageMapping = new InteractionToMessage;
-      
+
       thisMessageMapping->SetMessageType(type);
       thisMessageMapping->SetInteractionName(interactionTypeName);
-      thisMessageMapping->SetOneToOneMappingVector(oneToOneMessageVector);
+      thisMessageMapping->SetOneToManyMappingVector(oneToOneMessageVector);
 
-      RegisterMessageMapping(*thisMessageMapping);      
+      RegisterMessageMapping(*thisMessageMapping);
    }
-  
+
    void HLAComponent::UnregisterMessageMapping(const dtGame::MessageType &type)
    {
       dtCore::RefPtr<InteractionToMessage> itom = InternalUnregisterMessageMapping(type);
       if (itom.valid())
          InternalUnregisterInteractionMapping(itom->GetInteractionName());
    }
-  
+
    void HLAComponent::UnregisterInteractionMapping(const std::string& interName)
    {
       dtCore::RefPtr<InteractionToMessage> itom = InternalUnregisterInteractionMapping(interName);
@@ -651,12 +758,12 @@ namespace dtHLAGM
    {
       std::map<const dtGame::MessageType*, dtCore::RefPtr<InteractionToMessage> >::iterator messageToInteractionIterator;
       dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage;
-      
+
       messageToInteractionIterator = mMessageToInteractionMap.find(&type);
       if (messageToInteractionIterator != mMessageToInteractionMap.end())
       {
          thisInteractionToMessage = messageToInteractionIterator->second;
-         
+
          mMessageToInteractionMap.erase(messageToInteractionIterator);
       }
       return thisInteractionToMessage;
@@ -666,37 +773,37 @@ namespace dtHLAGM
    {
       std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
       dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage;
-      
+
       interactionToMessageIterator = mInteractionToMessageMap.find(interName);
       if (interactionToMessageIterator != mInteractionToMessageMap.end())
       {
          thisInteractionToMessage = interactionToMessageIterator->second;
-         
+
          mInteractionToMessageMap.erase(interactionToMessageIterator);
       }
       return thisInteractionToMessage;
    }
-  
+
    void HLAComponent::RegisterMessageTranslator()
    {
-     
+
    }
-  
+
    void HLAComponent::UnregisterMessageTranslator()
    {
-     
+
    }
-  
+
    void HLAComponent::RegisterInteractionTranslator()
    {
-     
+
    }
-  
+
    void HLAComponent::UnregisterInteractionTranslator()
    {
-     
+
    }
-  
+
    /**
     * Called to remove all current mappings from instance of HLAComponent class
     */
@@ -706,212 +813,29 @@ namespace dtHLAGM
       mObjectToActorMap.clear();
       mMessageToInteractionMap.clear();
       mInteractionToMessageMap.clear();
-   } 
-   
-   void HLAComponent::MapHLAFieldToMessageParameter(const OneToOneMapping& mapping, const char* buffer, dtGame::MessageParameter& parameter)
-   {
-      const AttributeType& hlaType = mapping.GetHLAType();
-      
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
-            
-      if (hlaType == AttributeType::WORLD_COORDINATE_TYPE)
-      {
-         WorldCoordinate wc;
-         wc.Decode(buffer);
-   
-         osg::Vec3d inPos(wc.GetX(), wc.GetY(), wc.GetZ());
-         osg::Vec3 position = mCoordinates.ConvertToLocalTranslation(inPos);
-
-         if (parameterDataType == dtDAL::DataType::VEC3)
-         {
-            static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(position);
-         }
-      }
-      else if (hlaType == AttributeType::EULER_ANGLES_TYPE)
-      {
-         EulerAngles eulerAngles;
-         
-         eulerAngles.Decode(buffer);
-         
-         //std::cout << eulerAngles.GetPsi() << " " << eulerAngles.GetTheta() << " " << eulerAngles.GetPhi() << " " << std::endl;
-         osg::Vec3 result = mCoordinates.ConvertToLocalRotation(eulerAngles.GetPsi(), eulerAngles.GetTheta(), eulerAngles.GetPhi());
-                  
-         if (parameterDataType == dtDAL::DataType::VEC3)
-         {
-            //convert to x,y,z
-            osg::Vec3 thisEulerAngle(result[1], result[2], result[0]);
-            
-            static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(thisEulerAngle);
-         }
-         else if (parameterDataType == dtDAL::DataType::VEC3D)
-         {
-            //convert to x,y,z
-            osg::Vec3d thisEulerAngle(result[1], result[2], result[0]);
-            
-            static_cast<dtGame::Vec3dMessageParameter&>(parameter).SetValue(thisEulerAngle);
-         }
-      }
-      else if(hlaType == AttributeType::VELOCITY_VECTOR_TYPE)
-      {
-         // USED FOR ANGULAR VELOCITY, ACCELERATION VECTOR, AND VELOCITY VECTOR
-         VelocityVector velocityVector;
-         velocityVector.Decode(buffer);
-     
-         if (parameterDataType == dtDAL::DataType::VEC3)
-         {
-            osg::Vec3 thisVector;
-                        
-            thisVector[0] = velocityVector.GetX();
-            thisVector[1] = velocityVector.GetY();
-            thisVector[2] = velocityVector.GetZ();
-
-            thisVector =  mCoordinates.GetOriginRotationMatrix().preMult(thisVector);
-            
-            static_cast<dtGame::Vec3MessageParameter&>(parameter).SetValue(thisVector);
-         }
-      }
-      else if (hlaType == AttributeType::UNSIGNED_INT_TYPE)
-      {
-         unsigned int value = *(unsigned int*)(&buffer[0]);
-   
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-         {
-            osg::swapBytes((char*)(&value), sizeof(unsigned int));
-         }
-        
-         SetIntegerValue((long)value, parameter, mapping);
-        
-      }
-      else if (hlaType == AttributeType::UNSIGNED_SHORT_TYPE)
-      {
-         unsigned short value = *(unsigned short*)(&buffer[0]);
-         
-         if (osg::getCpuByteOrder() == osg::LittleEndian)
-           osg::swapBytes((char*)(&value), sizeof(unsigned short));
-
-         SetIntegerValue((long)value, parameter, mapping);
-      }
-      else if (hlaType == AttributeType::UNSIGNED_CHAR_TYPE)
-      {
-         unsigned char value = *(unsigned char*)(&buffer[0]);         
-         SetIntegerValue((long)value, parameter, mapping);
-      }
-      else if (hlaType == AttributeType::EVENT_IDENTIFIER_TYPE)
-      {
-         EventIdentifier eventIdentifier;
-         eventIdentifier.Decode(buffer);
-         //if (
-      }
-      else if (hlaType == AttributeType::ENTITY_TYPE)
-      {
-         EntityType entityType;
-         entityType.Decode(buffer);
-      }
-      else if (hlaType == AttributeType::MARKING_TYPE)
-      {
-         if (parameterDataType == dtDAL::DataType::STRING)
-         {
-            //unsigned char markingEnum = *(unsigned char*)(&buffer[0]);
-            std::string markingText;
-            //1 is ASCII
-            //if (markingEnum == 1)
-            //{
-            for (int i=0; i < 11; ++i)
-            {
-               char c = buffer[i + 1];
-               if (c == '\0')
-                  break;
-               markingText.append(1, c);
-            }            
-            //}
-            static_cast<dtGame::StringMessageParameter&>(parameter).SetValue(markingText);
-         }
-         else
-         {
-            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Unable to map HLA type \"%s\" to \"%s\"", AttributeType::MARKING_TYPE.GetName().c_str(),
-               parameterDataType.GetName().c_str());            
-         }         
-      }
-      else
-      {
-         //NOT A RECOGNIZED ATTRIBUTE DATA TYPE.
-      }
    }
-   
-   void HLAComponent::SetIntegerValue(long value, dtGame::MessageParameter& parameter, const OneToOneMapping& mapping)
-   {
-      const dtDAL::DataType& parameterDataType = parameter.GetDataType();
-      
-      //std::cout << mapping.GetHLAName() << " " << value << std::endl;
-      
-      if (parameterDataType == dtDAL::DataType::UINT)
-      {
-         static_cast<dtGame::UnsignedIntMessageParameter&>(parameter).SetValue(unsigned(value));
-      }
-      else if (parameterDataType == dtDAL::DataType::ULONGINT)
-      {
-         static_cast<dtGame::UnsignedLongIntMessageParameter&>(parameter).SetValue((unsigned long)(value));
-      }
-      else if (parameterDataType == dtDAL::DataType::USHORTINT)
-      {
-         static_cast<dtGame::UnsignedShortIntMessageParameter&>(parameter).SetValue((unsigned short)(value));
-      }
-      else if (parameterDataType == dtDAL::DataType::INT)
-      {
-         static_cast<dtGame::IntMessageParameter&>(parameter).SetValue(int(value));
-      }
-      else if (parameterDataType == dtDAL::DataType::LONGINT)
-      {
-         static_cast<dtGame::LongIntMessageParameter&>(parameter).SetValue(long(value));
-      }
-      else if (parameterDataType == dtDAL::DataType::SHORTINT)
-      {
-         static_cast<dtGame::ShortIntMessageParameter&>(parameter).SetValue(short(value));
-      }
-      else if (parameterDataType == dtDAL::DataType::BOOLEAN)
-      {
-         static_cast<dtGame::BooleanMessageParameter&>(parameter).SetValue(value != 0);
-      }
-      else if (parameterDataType == dtDAL::DataType::ENUMERATION)
-      {
-         std::string sValue;
-         if (mapping.GetGameEnumerationValue(int(value), sValue))
-            static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(sValue);
-         else
-         {
-            if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-               mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                  "No mapping was specified for value \"%d\" for an enumeration on mapping of \"%s\" to \"%s\". " 
-                  "Using default value \"%s\".", (int)value, mapping.GetGameName().c_str(), 
-                  mapping.GetHLAName().c_str(), mapping.GetDefaultValue().c_str());
-            
-            static_cast<dtGame::EnumMessageParameter&>(parameter).SetValue(mapping.GetDefaultValue());
-            
-         }
-      }    
-   }
-  
+
+
    dtGame::MessageParameter* HLAComponent::FindOrAddMessageParameter(const std::string& name, const dtDAL::DataType& type, dtGame::Message& msg)
    {
       //first check to see if the named parameter is one of the default parameters
       //on an actor update message.
       dtCore::RefPtr<dtGame::MessageParameter> propertyParameter = msg.GetParameter(name);
-      
-      if (propertyParameter == NULL)   
+
+      if (propertyParameter == NULL)
       {
          //Check to see if an update parameter already exists.
-         propertyParameter = static_cast<dtGame::ActorUpdateMessage&>(msg).GetUpdateParameter(name);                           
+         propertyParameter = static_cast<dtGame::ActorUpdateMessage&>(msg).GetUpdateParameter(name);
          if (propertyParameter == NULL)
          {
-            try 
+            try
             {
-               propertyParameter = static_cast<dtGame::ActorUpdateMessage&>(msg).AddUpdateParameter(name, type);                           
+               propertyParameter = static_cast<dtGame::ActorUpdateMessage&>(msg).AddUpdateParameter(name, type);
             }
             catch (const dtUtil::Exception& ex)
             {
                mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-                  "Exception thrown attempting to create an update parameter of type \"%s\" with name \"%s\".", 
+                  "Exception thrown attempting to create an update parameter of type \"%s\" with name \"%s\".",
                   type.GetName().c_str(), name.c_str());
                ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
             }
@@ -920,24 +844,26 @@ namespace dtHLAGM
          {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Attempting to map a second object attribute to update parameter \"%s\". Mapping will be ignored.", name.c_str());
-            
+
             propertyParameter = NULL;
-            
+
          }
       }
-      
+
       if (propertyParameter != NULL && propertyParameter->GetDataType() != type)
       {
             mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
-               "Parameter named \"%s\" should be mapping to type \"%s\" but it really has type \"%s\".  The mapping is being ignored.", 
+               "Parameter named \"%s\" should be mapping to type \"%s\" but it really has type \"%s\".  The mapping is being ignored.",
                name.c_str(), type.GetName().c_str(), propertyParameter->GetDataType().GetName().c_str());
-            
+
             propertyParameter = NULL;
       }
-      
+
       return propertyParameter.get();
    }
-   
+
+   //void HLAComponent::ReadAndMapEntityId()
+
    /**
     * Invoked by the RTI ambassador to notify the federate of updated object
     * attribute values.
@@ -947,8 +873,8 @@ namespace dtHLAGM
     * @param theTag the user-supplied tag associated with the event
     */
    void HLAComponent::reflectAttributeValues(RTI::ObjectHandle theObject,
-                                                 const RTI::AttributeHandleValuePairSet& theAttributes,
-                                                 const char *theTag)
+                                             const RTI::AttributeHandleValuePairSet& theAttributes,
+                                             const char *theTag)
       throw (RTI::ObjectNotKnown,
              RTI::AttributeNotKnown,
              RTI::FederateOwnsAttributes,
@@ -957,162 +883,246 @@ namespace dtHLAGM
       try
       {
          dtCore::RefPtr<ObjectToActor> bestObjectToActor;
-         dtCore::UniqueId currentEntityID;
+         const dtCore::UniqueId* currentActorId;
          bool bNewObject = false;
-    
-         std::map<RTI::ObjectHandle, dtCore::UniqueId>::iterator mHLAtoActorMapIterator;
-         
-         if ((mHLAtoActorMapIterator = mHLAtoActorMap.find(theObject)) 
-             != mHLAtoActorMap.end())
+
+         currentActorId = mRuntimeMappings.GetId(theObject);
+
+         if (currentActorId == NULL)
+            return;
+
+         bool needBestMapping = false;
+
          {
-            currentEntityID = mHLAtoActorMapIterator->second;
-   
-            std::map<RTI::ObjectHandle, dtCore::RefPtr<ObjectToActor> >::iterator mObjectHandleToClassMapIterator;
-   
-            if ((mObjectHandleToClassMapIterator = mObjectHandleToClassMap.find(theObject))
-                != mObjectHandleToClassMap.end())
-              bestObjectToActor = mObjectHandleToClassMapIterator->second;
-            else 
-              bestObjectToActor = GetBestObjectToActor(theObject, theAttributes);
-         }
-         else
-         {
-            mHLAtoActorMap.insert(std::map<RTI::ObjectHandle, dtCore::UniqueId>
-                                  ::value_type(theObject, currentEntityID));
-            mActorToHLAMap.insert(std::map<dtCore::UniqueId, RTI::ObjectHandle>
-                                  ::value_type(currentEntityID, theObject));
-            bNewObject = true;
-   
-            bestObjectToActor = GetBestObjectToActor(theObject, theAttributes);
-         }
-         
-         if (bestObjectToActor != NULL)
-         {
-            //USE OBJECTTOACTOR TO CREATE ACTOR UPDATE
-            std::vector<AttributeToProperty> currentAttributeToPropertyVector = bestObjectToActor->GetOneToOneMappingVector();
-           
-            std::vector<AttributeToProperty>::iterator vectorIterator;
-         
-            dtCore::RefPtr<dtGame::GameManager> gameManager = GetGameManager();
-         
-            dtGame::MessageFactory& factory = gameManager->GetMessageFactory();
-         
-            dtCore::RefPtr<dtGame::Message> msg;
-            if (bNewObject)
-               msg = factory.CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED);
-            else
-               msg = factory.CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
-         
-            for (vectorIterator = currentAttributeToPropertyVector.begin();
-                 vectorIterator != currentAttributeToPropertyVector.end();
-                 vectorIterator++)
+            bestObjectToActor = mRuntimeMappings.GetObjectToActor(theObject);
+            if (!bestObjectToActor.valid())
             {
-               if (vectorIterator->IsInvalid()) continue;
-               
-               const std::string& propertyString = vectorIterator->GetGameName();
-               const std::string& attributeString = vectorIterator->GetHLAName();
-   
-               bool matched = false;
-               for(unsigned int i=0;i<theAttributes.size();i++)
+               needBestMapping = true;
+               bNewObject = true;
+            }
+         }
+
+         if (needBestMapping)
+         {
+            bool hadEntityTypeProperty;
+            bestObjectToActor = GetBestObjectToActor(theObject, theAttributes, hadEntityTypeProperty);
+
+            if (!bestObjectToActor.valid())
+            {
+            
+               //support for the useEntityId concept needs to be added.
+               if (hadEntityTypeProperty) //|| !useEntityId)
                {
-                  RTI::AttributeHandle handle = theAttributes.getHandle(i);
-               
-                  if (handle == vectorIterator->GetAttributeHandle())
+                  // Test clean up.  This is not a complete solution as we don't want to return
+                  // an error everytime we get a partial update 
+                  mRuntimeMappings.Remove(*currentActorId);
+                  mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                     "Unable to map in object, no object to actor found.");
+                                     
+                  mRuntimeMappings.Remove(theObject);
+               }
+               else
+               {
+                  if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
+                                        "No mapping was found, but the PDU had no entity type data.  Waiting for a full update.");
+               }
+
+               return;
+            }
+            else
+            {
+               mRuntimeMappings.Put(theObject, *bestObjectToActor);
+            }
+         }
+
+         if (bNewObject)
+         {
+            for (unsigned i=0; i < theAttributes.size(); ++i)
+            {
+               RTI::AttributeHandle handle = theAttributes.getHandle(i);
+               if (handle == bestObjectToActor->GetEntityIdAttributeHandle())
+               {
+                  EntityIdentifier ei;
+
+                  unsigned long length;
+                  char* buffer = theAttributes.getValuePointer(i, length);
+                  if (length < (unsigned long)(ei.EncodedLength()))
                   {
-                     matched = true;
-                     unsigned long length;
-                     char* buf = theAttributes.getValuePointer(i, length);
-   
-                     if (!(propertyString.empty()) && !(attributeString.empty()))
-                     {                    
-                        const dtDAL::DataType& propertyDataType = vectorIterator->GetGameType();
-                        
-                        dtCore::RefPtr<dtGame::MessageParameter> propertyParameter = FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-                         
-                        if (propertyParameter != NULL)
-                        {
-                           MapHLAFieldToMessageParameter(*vectorIterator, buf, *propertyParameter);
-                        }
-                        else
-                        {
-                           //this is logged in the call to find the parameter.
-                           vectorIterator->SetInvalid(true);
-                        }
-                        
-                     }
+                     mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                         "Expected Entity id attribute to have length %u, but it has length %u.  Id will be ignored",
+                                         ei.EncodedLength(), length);
+                  }
+                  else
+                  {
+                     ei.Decode(buffer);
+                     mRuntimeMappings.Put(ei, *currentActorId);
+                     if(mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+                        mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+                        "\nThe Entity Identifier value is %s and the currect actor id is %s\n", 
+                        ei.ToString().c_str(), currentActorId->ToString().c_str());
                   }
                }
-               //if this mapping is not in the HLA message
-               if (!matched)
-               {
-                  if (bNewObject || vectorIterator->IsRequiredForGame())
-                  {
-                     const std::string& defaultValue = vectorIterator->GetDefaultValue();
-                     if (!defaultValue.empty() && !propertyString.empty())
-                     {
-                        const dtDAL::DataType& propertyDataType = vectorIterator->GetGameType();
-       
-                        dtCore::RefPtr<dtGame::MessageParameter> propertyParameter = FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
-                         
-                        if (propertyParameter != NULL)
-                        {
-                           propertyParameter->FromString(defaultValue);
-                        }
-                        else
-                        {
-                           //this is logged in the call to find the parameter.
-                           vectorIterator->SetInvalid(true);
-                        }
+            }
+         }
 
+         //USE OBJECTTOACTOR TO CREATE ACTOR UPDATE
+         std::vector<AttributeToPropertyList>& currentAttributeToPropertyListVector = bestObjectToActor->GetOneToManyMappingVector();
+
+         std::vector<AttributeToPropertyList>::iterator vectorIterator;
+
+         dtCore::RefPtr<dtGame::GameManager> gameManager = GetGameManager();
+
+         dtGame::MessageFactory& factory = gameManager->GetMessageFactory();
+
+         dtCore::RefPtr<dtGame::Message> msg;
+         if (bNewObject)
+            msg = factory.CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED);
+         else
+            msg = factory.CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
+
+         for (vectorIterator = currentAttributeToPropertyListVector.begin();
+               vectorIterator != currentAttributeToPropertyListVector.end();
+               vectorIterator++)
+         {
+            if (vectorIterator->IsInvalid()) continue;
+
+            const std::string& propertyString = vectorIterator->GetParameterDefinitions()[0].GetGameName();
+            const std::string& attributeString = vectorIterator->GetHLAName();
+
+            bool matched = false;
+            for(unsigned i=0; i < theAttributes.size(); ++i)
+            {
+               RTI::AttributeHandle handle = theAttributes.getHandle(i);
+
+
+               if (handle == vectorIterator->GetAttributeHandle())
+               {
+                  matched = true;
+                  unsigned long length;
+                  char* buf = theAttributes.getValuePointer(i, length);
+
+                  if (!(propertyString.empty()) && !(attributeString.empty()))
+                  {
+                     const dtDAL::DataType& propertyDataType = vectorIterator->GetParameterDefinitions()[0].GetGameType();
+
+                     dtCore::RefPtr<dtGame::MessageParameter> propertyParameter;
+
+                     //The about actor id and source actor ID are special cases.
+                     //We create a dummy parameter to allow the mapper code to work, and
+                     //then set it back to the message after the fact.
+                     if (propertyDataType == dtDAL::DataType::ACTOR &&
+                        (propertyString == ABOUT_ACTOR_ID ||
+                         propertyString == SENDING_ACTOR_ID))
+                     {
+                        propertyParameter =
+                              dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                                                                      "propertyString");
+                     }
+                     else
+                     {
+                        propertyParameter =
+                           FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
+                     }
+
+                     if (propertyParameter != NULL)
+                     {
+                        std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+                        messageParameters.push_back(propertyParameter);
+
+                        MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
+
+                        if (propertyDataType == dtDAL::DataType::ACTOR)
+                        {
+                           if (propertyString == ABOUT_ACTOR_ID)
+                              msg->SetAboutActorId(propertyParameter->ToString());
+                           else if (propertyString == SENDING_ACTOR_ID)
+                              msg->SetSendingActorId(propertyParameter->ToString());
+                        }
+                     }
+                     else
+                     {
+                        //this is logged in the call to find the parameter.
+                        vectorIterator->SetInvalid(true);
                      }
                   }
                }
             }
-   
-            dtGame::ActorUpdateMessage& auMsg = static_cast<dtGame::ActorUpdateMessage&>(*msg);
-   
-            auMsg.SetActorTypeName(bestObjectToActor->GetActorType().GetName());
-            auMsg.SetActorTypeCategory(bestObjectToActor->GetActorType().GetCategory());
-   
-            auMsg.SetAboutActorId(currentEntityID);
-            auMsg.SetSource(*mMachineInfo);
-            
-            gameManager->ProcessMessage(*msg);
+
+            //if this mapping is not in the HLA message
+            if (!matched)
+            {
+               if (bNewObject || vectorIterator->GetParameterDefinitions()[0].IsRequiredForGame())
+               {
+                  const std::string& defaultValue = vectorIterator->GetParameterDefinitions()[0].GetDefaultValue();
+                  if (!defaultValue.empty() && !propertyString.empty())
+                  {
+                     const dtDAL::DataType& propertyDataType = vectorIterator->GetParameterDefinitions()[0].GetGameType();
+
+                     //The actor id special cases are not supported here because people can't hard
+                     //code actor id's with default values.
+                     dtCore::RefPtr<dtGame::MessageParameter> propertyParameter =
+                        FindOrAddMessageParameter(propertyString, propertyDataType, *msg);
+
+                     if (propertyParameter != NULL)
+                     {
+                        propertyParameter->FromString(defaultValue);
+                     }
+                     else
+                     {
+                        //this is logged in the call to find the parameter.
+                        vectorIterator->SetInvalid(true);
+                     }
+
+                  }
+               }
+            }
          }
+
+         dtGame::ActorUpdateMessage& auMsg = static_cast<dtGame::ActorUpdateMessage&>(*msg);
+
+         auMsg.SetActorTypeName(bestObjectToActor->GetActorType().GetName());
+         auMsg.SetActorTypeCategory(bestObjectToActor->GetActorType().GetCategory());
+
+         auMsg.SetAboutActorId(*currentActorId);
+         auMsg.SetSource(*mMachineInfo);
+
+         gameManager->ProcessMessage(*msg);
       }
       catch (const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
       }
    }
-  
-   ObjectToActor* HLAComponent::GetBestObjectToActor(RTI::ObjectHandle theObject, 
-                                                              const RTI::AttributeHandleValuePairSet& theAttributes)
+
+   ObjectToActor* HLAComponent::GetBestObjectToActor(RTI::ObjectHandle theObject,
+      const RTI::AttributeHandleValuePairSet& theAttributes, bool& hadEntityTypeProperty)
    {
       int bestRank = -1;
       ObjectToActor* bestObjectToActor = NULL;
-      
+
       RTI::ObjectClassHandle classHandle = mRTIAmbassador->getObjectClass(theObject);
-      
+
       std::string classHandleString = mRTIAmbassador->getObjectClassName(classHandle);
-      
-      bool foundType = false;
+
+      hadEntityTypeProperty = false;
       EntityType currentEntityType;
-      
-      for(unsigned int i=0;i<theAttributes.size();i++)
+
+      for (unsigned int i=0; i < theAttributes.size(); i++)
       {
          RTI::AttributeHandle handle = theAttributes.getHandle(i);
-       
-         if (std::string(mRTIAmbassador->getAttributeName(handle, classHandle)) == "EntityType")
+
+		 std::string attribName = std::string(mRTIAmbassador->getAttributeName(handle, classHandle));
+         if (attribName == "EntityType")
          {
             unsigned long length;
             char* buf = theAttributes.getValuePointer(i, length);
-            
-            foundType = true;
+
+            hadEntityTypeProperty = true;
             currentEntityType.Decode(buf);
-            
+
             std::multimap<std::string, dtCore::RefPtr<ObjectToActor> >::iterator objectToActorIterator;
-            
+
             for (objectToActorIterator = mObjectToActorMap.find(classHandleString); objectToActorIterator != mObjectToActorMap.end();
                  objectToActorIterator++)
             {
@@ -1129,6 +1139,7 @@ namespace dtHLAGM
             break;
          }
       }
+
       if (bestObjectToActor != NULL)
       {
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -1137,22 +1148,20 @@ namespace dtHLAGM
                "Creating actor of type %s.%s for DIS ID [%d %d %d %d %d %d %d].",
                bestObjectToActor->GetActorType().GetCategory().c_str(),
                bestObjectToActor->GetActorType().GetName().c_str(),
-               (int)currentEntityType.GetKind(), (int)currentEntityType.GetDomain(), (int)currentEntityType.GetCountry(), 
-               (int)currentEntityType.GetCategory(), (int)currentEntityType.GetSubcategory(), (int)currentEntityType.GetSpecific(), 
+               (int)currentEntityType.GetKind(), (int)currentEntityType.GetDomain(), (int)currentEntityType.GetCountry(),
+               (int)currentEntityType.GetCategory(), (int)currentEntityType.GetSubcategory(), (int)currentEntityType.GetSpecific(),
                (int)currentEntityType.GetExtra());
          }
 
-         mObjectHandleToClassMap.insert(std::map<RTI::ObjectHandle, dtCore::RefPtr<ObjectToActor> >
-                                        ::value_type(theObject, bestObjectToActor));
       }
       else
       {
-         if (foundType)
+         if (hadEntityTypeProperty)
          {
             mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
                "Ignoring entity update with DIS ID [%d %d %d %d %d %d %d].",
-               (int)currentEntityType.GetKind(), (int)currentEntityType.GetDomain(), (int)currentEntityType.GetCountry(), 
-               (int)currentEntityType.GetCategory(), (int)currentEntityType.GetSubcategory(), (int)currentEntityType.GetSpecific(), 
+               (int)currentEntityType.GetKind(), (int)currentEntityType.GetDomain(), (int)currentEntityType.GetCountry(),
+               (int)currentEntityType.GetCategory(), (int)currentEntityType.GetSubcategory(), (int)currentEntityType.GetSpecific(),
                (int)currentEntityType.GetExtra());
          }
          else
@@ -1163,7 +1172,6 @@ namespace dtHLAGM
 
       }
 
-      
       return bestObjectToActor;
    }
 
@@ -1183,27 +1191,47 @@ namespace dtHLAGM
              RTI::ObjectClassNotKnown,
              RTI::FederateInternalError)
    {
-     /*      //Create a new Unique ID
-      dtCore::UniqueId actorID;
+      dtCore::UniqueId newId;
+      mRuntimeMappings.Put(theObject, newId);
+   }
+
+   const ParameterTranslator* HLAComponent::FindTranslatorForAttributeType(const AttributeType& type) const
+   {
+      for (unsigned i = 0; i < mParameterTranslators.size(); ++i)
+      {
+         if (mParameterTranslators[i]->TranslatesAttributeType(type))
+         {
+            return mParameterTranslators[i].get();
+         }
+      }
       
-      //ADD to HmHLAtoActorMap, mActorToHLAMap
-      mHLAtoActorMap.insert(std::map<RTI::ObjectHandle, dtCore::UniqueId>
-      ::value_type(theObject, actorID));
+      mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+         "No parameter translator was found to mapping attribute type \"%s\"",
+         type.GetName().c_str());
+
+      return NULL;
+   }
+
+   void HLAComponent::MapToMessageParameters(const char* buffer, 
+                                             size_t size, 
+                                             std::vector<dtCore::RefPtr<dtGame::MessageParameter> >& parameters, 
+                                             const OneToManyMapping& mapping) const
+   {
+      const ParameterTranslator* pt = FindTranslatorForAttributeType(mapping.GetHLAType());
       
-      mActorToHLAMap.insert(std::map<dtCore::UniqueId, RTI::ObjectHandle>
-      ::value_type(actorID, theObject));
+      if (pt != NULL)
+         pt->MapToMessageParameters(buffer, size, parameters, mapping);
+   }
+
+   void HLAComponent::MapFromMessageParameters(char* buffer,
+                                 size_t maxSize,
+                                 std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
+                                 const OneToManyMapping& mapping) const
+   {
+      const ParameterTranslator* pt = FindTranslatorForAttributeType(mapping.GetHLAType());
       
-      //Create INFO_ACTOR_CREATED msg.
-      dtCore::RefPtr<dtGame::GameManager> gameManager = GetGameManager();
-      
-      dtGame::MessageFactory& factory = gameManager->GetMessageFactory();
-      
-      dtCore::RefPtr<dtGame::Message> msg = factory.CreateMessage(dtGame::MessageType::INFO_ACTOR_CREATED);
-      
-      //Add Unique ID to Message, and send.
-      
-      //Does this really need to be done???
-      */
+      if (pt != NULL)
+         pt->MapFromMessageParameters(buffer, maxSize, parameters, mapping);
    }
 
    /**
@@ -1215,79 +1243,285 @@ namespace dtHLAGM
     * @param theTag the user-supplied tag associated with the event
     */
    void HLAComponent::receiveInteraction(RTI::InteractionClassHandle theInteraction,
-                                             const RTI::ParameterHandleValuePairSet& theParameters,
-                                             const char *theTag)
+                                         const RTI::ParameterHandleValuePairSet& theParameters,
+                                         const char *theTag)
       throw (RTI::InteractionClassNotKnown,
              RTI::InteractionParameterNotKnown,
              RTI::FederateInternalError)
    {
       try
       {
-         //Compare RTI InteractionClassHandle to InteractionToMessageMap Class Handle
+         // Compare RTI InteractionClassHandle to InteractionToMessageMap Class Handle
          std::string classHandleString = mRTIAmbassador->getInteractionClassName(theInteraction);
-         
+
          std::map<std::string, dtCore::RefPtr<InteractionToMessage> >::iterator interactionToMessageIterator;
          interactionToMessageIterator = mInteractionToMessageMap.find(classHandleString);
-         
+
+         if (interactionToMessageIterator == mInteractionToMessageMap.end())
+         {
+            mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
+                                "\"%s\" does not have a registered mapping.",
+                                classHandleString.c_str());
+            return;
+         }
+
          dtCore::RefPtr<InteractionToMessage> thisInteractionToMessage = interactionToMessageIterator->second;
-         
+
          const dtGame::MessageType& messageType = thisInteractionToMessage->GetMessageType();
          dtCore::RefPtr<dtGame::Message> message = GetGameManager()->GetMessageFactory().CreateMessage(messageType);
-   
-         std::vector<ParameterToParameter> currentParameterToParameterVector = thisInteractionToMessage->GetOneToOneMappingVector();      
-         std::vector<ParameterToParameter>::iterator vectorIterator;
-         
-         for (vectorIterator = currentParameterToParameterVector.begin();
-              vectorIterator != currentParameterToParameterVector.end();
+
+         std::vector<ParameterToParameterList> currentParameterToParameterListVector = thisInteractionToMessage->GetOneToManyMappingVector();
+         std::vector<ParameterToParameterList>::iterator vectorIterator;
+
+         for (vectorIterator = currentParameterToParameterListVector.begin();
+              vectorIterator != currentParameterToParameterListVector.end();
               vectorIterator++)
          {
-            for (unsigned int i=0; i<theParameters.size(); i++)
+            for (unsigned int i = 0; i < theParameters.size(); i++)
             {
                RTI::ParameterHandle handle = theParameters.getHandle(i);
                if (handle == vectorIterator->GetParameterHandle())
                {
                   unsigned long length;
                   char* buf = theParameters.getValuePointer(i, length);
-                  const dtDAL::DataType& gameParameterDataType = vectorIterator->GetGameType();
-                                 
-                  const std::string& gameParameterName = vectorIterator->GetGameName();
-                  dtGame::MessageParameter* messageParameter = message->GetParameter(gameParameterName);                
-                  
-                  if (messageParameter == NULL)
+                  const dtDAL::DataType& gameParameterDataType = vectorIterator->GetParameterDefinitions()[0].GetGameType();
+
+                  const std::string& gameParameterName = vectorIterator->GetParameterDefinitions()[0].GetGameName();
+
+                  // The about actor id and source actor ID are special cases.
+                  // We create a dummy parameter to allow the mapper code to work, and
+                  // then set it back to the message after the fact.
+                  if (gameParameterDataType == dtDAL::DataType::ACTOR &&
+                     (gameParameterName == ABOUT_ACTOR_ID ||
+                     gameParameterName == SENDING_ACTOR_ID))
                   {
-                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-                        "No message parameter named %s found in messageType %s when trying to map from HLA interaction %s",
-                        gameParameterName.c_str(), 
-                        messageType.GetName().c_str(),
-                        classHandleString.c_str());
-                     continue;
-                  }
-                  else if (gameParameterDataType != messageParameter->GetDataType())
+                     
+                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+                     
+                     dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
+                           dtGame::MessageParameter::CreateFromType(dtDAL::DataType::ACTOR,
+                              gameParameterName);
+                     
+                     messageParameters.push_back(messageParameter);
+
+                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
+
+                     if (gameParameterName == ABOUT_ACTOR_ID)
+                        message->SetAboutActorId(messageParameter->ToString());
+                     else
+                        message->SetSendingActorId(messageParameter->ToString());
+                  } 
+                  else 
                   {
-                     mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-                        "Message parameter named %s found in messageType %s has unexpected type %s.  %s was expected.  Attempting to set anyway.",
-                        gameParameterName.c_str(), 
-                        messageType.GetName().c_str(),
-                        messageParameter->GetDataType().GetName().c_str(),
-                        gameParameterDataType.GetName().c_str());
-                     continue;
+                     dtCore::RefPtr<dtGame::MessageParameter> messageParameter =
+                           message->GetParameter(gameParameterName);
+
+                     if (messageParameter == NULL)
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                            "No message parameter named %s found in messageType %s when trying to map from HLA interaction %s",
+                                            gameParameterName.c_str(),
+                                            messageType.GetName().c_str(),
+                                            classHandleString.c_str());
+                        continue;
+                     }
+                     else if (gameParameterDataType != messageParameter->GetDataType())
+                     {
+                        mLogger->LogMessage(dtUtil::Log::LOG_WARNING, __FUNCTION__, __LINE__,
+                                            "Message parameter named %s found in messageType %s has unexpected type %s.  %s was expected.  Attempting to set anyway.",
+                                            gameParameterName.c_str(),
+                                            messageType.GetName().c_str(),
+                                            messageParameter->GetDataType().GetName().c_str(),
+                                            gameParameterDataType.GetName().c_str());
+                        continue;
+                     }
+
+                     std::vector<dtCore::RefPtr<dtGame::MessageParameter> > messageParameters;
+                     messageParameters.push_back(messageParameter);
+
+                     MapToMessageParameters(buf, length, messageParameters, *vectorIterator);
                   }
-                  
-                  MapHLAFieldToMessageParameter(*vectorIterator, buf, *messageParameter);
-                  
+
                }
             }
          }
-         
-         message->SetSource(*mMachineInfo);         
+
+         message->SetSource(*mMachineInfo);
          GetGameManager()->ProcessMessage(*message);
+      }
+      catch (const RTI::Exception&)
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "RTI Error receiving interation");
       }
       catch (const dtUtil::Exception& ex)
       {
          ex.LogException(dtUtil::Log::LOG_ERROR, *mLogger);
       }
-      
+
    }
+
+   void HLAComponent::SendDelete(const dtGame::Message& message)
+   {
+      // Delete HLA Object, and all Mappings referencing the Actor or the Object.
+      const dtCore::UniqueId& actorId = message.GetAboutActorId();
+      const RTI::ObjectHandle* thisObjectHandle = mRuntimeMappings.GetHandle(actorId);
+
+      if (thisObjectHandle != NULL)
+      {
+         mRuntimeMappings.Remove(actorId);
+         mRTIAmbassador->deleteObjectInstance(*thisObjectHandle, "");
+      }
+      else
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                             "Ignoring actor with id \"%s\" delete because it is not published in HLA",
+                             actorId.ToString().c_str());
+      }
+   }
+
+   void HLAComponent::SendUpdate(const dtGame::Message& message)
+   {
+      const dtCore::UniqueId actorID = message.GetAboutActorId();
+
+      const std::string actorName = actorID.ToString();
+
+      // Get Actor Type
+      dtGame::GameActorProxy* ga = GetGameManager()->FindGameActorById(actorID);
+
+      dtCore::RefPtr<dtDAL::ActorType> actorType = &ga->GetActorType();
+
+      // Lookup ObjectToActor from mActorToObjectMap
+      dtCore::RefPtr<ObjectToActor> thisObjectToActor;
+
+      thisObjectToActor = GetActorMapping(*actorType);
+
+      if (!thisObjectToActor.valid())
+      {
+         mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__, __LINE__,
+                             "Ignoring actor with type \"%s.%s\" no mapping defined for it.",
+                             actorID.ToString().c_str());
+         return;
+      }
+
+      //Get ClassHandle from ObjectToActor
+      RTI::ObjectClassHandle classHandle = thisObjectToActor->GetObjectClassHandle();
+
+      const RTI::ObjectHandle* tmpObjectHandle = mRuntimeMappings.GetHandle(actorID);
+      RTI::ObjectHandle objectHandle;
+
+      if (tmpObjectHandle == NULL)
+      {
+         //Pass ClassHandle to registerObjectInstance
+         objectHandle = mRTIAmbassador->registerObjectInstance(classHandle,
+               actorName.c_str());
+
+         mRuntimeMappings.Put(objectHandle, actorID);
+      }
+      else
+      {
+         objectHandle = *tmpObjectHandle;
+      }
+
+      //Create AttributeHandleValuePairSet to hold the attributes.
+      RTI::AttributeHandleValuePairSet* theAttributes =
+            RTI::AttributeSetFactory::create(thisObjectToActor->GetOneToManyMappingVector().size());
+
+      theAttributes->empty();
+
+      bool useEntityId = !thisObjectToActor->GetEntityIdAttributeName().empty();
+
+      if (useEntityId)
+      {
+         EntityIdentifier thisEntityId;
+
+         const EntityIdentifier* tempEntityId = mRuntimeMappings.GetEntityId(actorID);
+
+         if (tempEntityId != NULL)
+         {
+            thisEntityId = *tempEntityId;
+         }
+         else
+         {
+            //If not, add entityIdentifier
+            thisEntityId.SetApplicationIdentifier(GetApplicationIdentifier());
+            thisEntityId.SetSiteIdentifier(GetSiteIdentifier());
+            thisEntityId.SetEntityIdentifier(mEntityIdentifierCounter);
+            mEntityIdentifierCounter++;
+
+            mRuntimeMappings.Put(thisEntityId, actorID);
+         }
+
+         size_t bufferSize;
+         char* buffer;
+         
+         ParameterTranslator::AllocateBuffer(buffer, bufferSize, RPRAttributeType::ENTITY_TYPE);
+
+         thisEntityId.Encode(buffer);
+
+         theAttributes->add(thisObjectToActor->GetEntityIdAttributeHandle(),
+                            buffer,
+                            bufferSize);
+
+         ParameterTranslator::DeallocateBuffer(buffer);
+      }
+
+      //Make a loop that looks at all parameter to attribute mappings inside of ObjectToActor
+      std::vector<AttributeToPropertyList> attributeToPropertyListVector = thisObjectToActor->GetOneToManyMappingVector();
+
+      std::vector<AttributeToPropertyList>::iterator vectorIterator;
+
+      std::vector<dtCore::RefPtr<const dtGame::MessageParameter> > messageParameters; 
+
+      for (vectorIterator = attributeToPropertyListVector.begin();
+           vectorIterator != attributeToPropertyListVector.end();
+           vectorIterator++)
+      {
+         //Check if Parameter returns NULL
+         std::string gameName = vectorIterator->GetParameterDefinitions()[0].GetGameName();
+
+         dtCore::RefPtr<const dtGame::MessageParameter> messageParameter = message.GetParameter(gameName);
+
+         if (messageParameter != NULL)
+         {
+            const AttributeType& hlaType = vectorIterator->GetHLAType();
+
+            size_t bufferSize;
+            char* buffer;
+            
+            ParameterTranslator::AllocateBuffer(buffer, bufferSize, hlaType);
+
+            try 
+            {
+               messageParameters.clear();
+               messageParameters.push_back(messageParameter);
+                           
+               MapFromMessageParameters(buffer, bufferSize, messageParameters, *vectorIterator);
+               theAttributes->add(vectorIterator->GetAttributeHandle(), buffer, bufferSize);
+
+               ParameterTranslator::DeallocateBuffer(buffer);
+            }
+            catch (...)
+            {
+               //be sure the buffer is deleted.
+               if (buffer != NULL)
+                  ParameterTranslator::DeallocateBuffer(buffer);
+            }             
+
+         }
+      }
+
+      if (theAttributes->size() > 0)
+      {
+         mRTIAmbassador->updateAttributeValues(objectHandle,
+                                               *theAttributes,
+                                               "");
+      }
+      
+      delete theAttributes;
+
+      mRTIAmbassador->tick();
+   }
+
 
    void HLAComponent::SendMessage(const dtGame::Message& message)
    {
@@ -1295,338 +1529,18 @@ namespace dtHLAGM
       {
          if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
          {
-            //Delete HLA Object, and all Mappings referencing the Actor or the Object.
-            const dtCore::UniqueId actorID = message.GetAboutActorId();
-            std::map<dtCore::UniqueId, RTI::ObjectHandle>::iterator actorToHLAiterator;
-            
-            if ((actorToHLAiterator = mActorToHLAMap.find(actorID))
-                != mActorToHLAMap.end())
-            {
-               RTI::ObjectHandle thisObjectHandle = actorToHLAiterator->second;
-               
-               mActorToHLAMap.erase(actorID);
-               mHLAtoActorMap.erase(thisObjectHandle);
-               mUniqueIdToEntityIdentifierMap.erase(actorID);
-               
-               mRTIAmbassador->deleteObjectInstance(thisObjectHandle, "");
-            }
+            SendDelete(message);
          }
          else if ((message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_CREATED)
                   || (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_UPDATED))
          {
-            const dtCore::UniqueId actorID = message.GetAboutActorId();
-            
-            const std::string actorName = actorID.ToString();
-            
-            const char* objectName = actorName.c_str();
-            
-            unsigned short thisEntityId;
-            
-            //Check to see if this object has been created in HLA.  
-            std::map<dtCore::UniqueId, unsigned short>::iterator entityIdentifierIterator;
-	    
-            if ((entityIdentifierIterator = mUniqueIdToEntityIdentifierMap.find(actorID)) 
-                != mUniqueIdToEntityIdentifierMap.end())
-            {
-               thisEntityId = entityIdentifierIterator->second;
-            }
-            else
-            {
-               //If not, add entityIdentifier
-               thisEntityId = mEntityIdentifierCounter;
-               mEntityIdentifierCounter++;
-               
-               mUniqueIdToEntityIdentifierMap.insert(std::map<dtCore::UniqueId, unsigned short>
-                                                     ::value_type(actorID, thisEntityId));
-            }
-	    
-            //Get Actor Type
-            dtGame::GameActorProxy* ga = GetGameManager()->FindGameActorById(actorID);
-            
-            dtCore::RefPtr<dtDAL::ActorType> actorType = &ga->GetActorType();
-            
-            //Lookup ObjectToActor from mActorToObjectMap
-            std::map<dtCore::RefPtr<dtDAL::ActorType>, dtCore::RefPtr<ObjectToActor> >::iterator actorToObjectIterator;
-            dtCore::RefPtr<ObjectToActor> thisObjectToActor = new ObjectToActor;
-            
-            if ((actorToObjectIterator = mActorToObjectMap.find(actorType)) != (mActorToObjectMap.end()))
-            {
-               thisObjectToActor = actorToObjectIterator->second;
-            }
-            //Get ClassHandle from ObjectToActor
-            RTI::ObjectClassHandle classHandle = thisObjectToActor->GetObjectClassHandle();
-            
-            RTI::ObjectHandle objectHandle;
-            //IF objectHandle has not been created...
-            std::map<dtCore::UniqueId, RTI::ObjectHandle>::iterator uniqueIdToObjectHandleIterator;
-            
-            if ((uniqueIdToObjectHandleIterator = mActorToHLAMap.find(actorID))
-                != mActorToHLAMap.end())
-            {
-               objectHandle = uniqueIdToObjectHandleIterator->second;
-            }
-            else
-            {
-               //Pass ClassHandle to registerObjectInstance
-               objectHandle = mRTIAmbassador->registerObjectInstance(classHandle,
-                                                                    objectName);
-               mActorToHLAMap.insert(std::map<dtCore::UniqueId, RTI::ObjectHandle>
-                                     ::value_type(actorID, objectHandle));
-               
-               mHLAtoActorMap.insert(std::map<RTI::ObjectHandle, dtCore::UniqueId>
-                                     ::value_type(objectHandle, actorID));
-            }
-            
-            //Create AttributeHandleValuePairSet
-            RTI::AttributeHandleValuePairSet* theAttributes = 
-              RTI::AttributeSetFactory::create(15);
-            
-            theAttributes->empty();
-            
-            //Make a loop that looks at all parameter to attribute mappings inside of ObjectToActor
-            std::vector<AttributeToProperty> attributeToPropertyVector = thisObjectToActor->GetOneToOneMappingVector();
-            
-            std::vector<AttributeToProperty>::iterator vectorIterator;
-	    
-            for (vectorIterator = attributeToPropertyVector.begin();
-                 vectorIterator != attributeToPropertyVector.end();
-                 vectorIterator++)
-            {
-               //Check if Parameter returns NULL
-               std::string gameName = vectorIterator->GetGameName();
-	       
-               dtCore::RefPtr<const dtGame::MessageParameter> messageParameter = message.GetParameter(gameName);
-               
-               if (messageParameter != NULL)
-               {
-                  const dtDAL::DataType& gameDataType = vectorIterator->GetGameType();
-                  const AttributeType& hlaType = vectorIterator->GetHLAType();
-                  
-                  if (gameDataType == dtDAL::DataType::ENUMERATION)
-                    //This is probably not the way to do it.  Probably just get the DIS Enumeration from
-                    // the objectToActor mapping.
-                  {
-                     if (hlaType == AttributeType::ENTITY_TYPE)
-                     {
-                        EntityType entityType;
-                        
-                        std::string valueString = static_cast<const dtGame::EnumMessageParameter*>(messageParameter.get())->GetValue();
-                        
-                        char encodedEntityType[8];
-                        
-                        strcpy(encodedEntityType, valueString.c_str());
-                        
-                        entityType.SetKind(encodedEntityType[0]);
-                        entityType.SetDomain(encodedEntityType[1]);
-                        entityType.SetCountry(*(unsigned short *)(&encodedEntityType[2]));
-                        entityType.SetCategory(encodedEntityType[4]);
-                        entityType.SetSubcategory(encodedEntityType[5]);
-                        entityType.SetSpecific(encodedEntityType[6]);
-                        entityType.SetExtra(encodedEntityType[7]);
-                        
-                        entityType.Encode(encodedEntityType);
-                        
-                        theAttributes->add(vectorIterator->GetAttributeHandle(),
-                                           encodedEntityType, 8);
-                     }
-                     else if (hlaType == AttributeType::UNSIGNED_INT_TYPE)
-                     {
-                        char encodedDamageState[4];
-                        std::string valueString = static_cast<const dtGame::EnumMessageParameter*>(messageParameter.get())->GetValue();
-                        
-                        *((int*)encodedDamageState) = atoi(valueString.c_str());
-                        
-                        if(ulIsLittleEndian)
-                        {
-                           ulEndianSwap((int*)encodedDamageState);
-                        }
-                        
-                        theAttributes->add(vectorIterator->GetAttributeHandle(),
-                                           encodedDamageState, 4);
-                     }
-                  }
-                  else if (gameDataType == dtDAL::DataType::VEC3)
-                  {
-                     if (hlaType == AttributeType::EULER_ANGLES_TYPE)
-                     {
-                        EulerAngles eulerAngles;
-                        char encodedOrientation[12];
-                        
-                        osg::Vec3f vec = static_cast<const dtGame::Vec3fMessageParameter*>(messageParameter.get())->GetValue();
-                        
-                        eulerAngles.SetPsi(vec[0]);
-                        eulerAngles.SetTheta(vec[1]);
-                        eulerAngles.SetPhi(vec[2]);
-                        
-                        eulerAngles.Encode(encodedOrientation);
-                        
-                        theAttributes->add(vectorIterator->GetAttributeHandle(),
-                                           encodedOrientation,
-                                           12);
-                     }
-                     else if (hlaType == AttributeType::VELOCITY_VECTOR_TYPE)
-                     {
-                        VelocityVector velocityVector;
-                        char encodedVelocityVector[12];
-                        
-                        osg::Vec3f vec = static_cast<const dtGame::Vec3fMessageParameter*>(messageParameter.get())->GetValue();
-                        
-                        velocityVector.SetX(vec[0]);
-                        velocityVector.SetY(vec[1]);
-                        velocityVector.SetZ(vec[2]);
-                        
-                        velocityVector.Encode(encodedVelocityVector);
-                        
-                        theAttributes->add(vectorIterator->GetAttributeHandle(),
-                                           encodedVelocityVector,
-                                           12);
-                     }
-                  }
-                  else if (gameDataType == dtDAL::DataType::VEC3)
-                  {
-                     osg::Vec3d vec = static_cast<const dtGame::Vec3dMessageParameter*>(messageParameter.get())->GetValue();
-                     
-                     WorldCoordinate worldLocation;
-                     char encodedWorldLocation[24];
-                     worldLocation.SetX(vec[0]);
-                     worldLocation.SetY(vec[1]);
-                     worldLocation.SetZ(vec[2]);
-                     
-                     worldLocation.Encode(encodedWorldLocation);
-                     
-                     theAttributes->add(vectorIterator->GetAttributeHandle(),
-                                        encodedWorldLocation,
-                                        24);
-                  }
-               }
-            }
-            
-            //Since there is not mapping for Entity Identifier, add this attribute manually.
-            EntityIdentifier thisEntityIdentifier;
-            thisEntityIdentifier.SetSiteIdentifier(mSiteIdentifier);
-            thisEntityIdentifier.SetApplicationIdentifier(mApplicationIdentifier);
-            thisEntityIdentifier.SetEntityIdentifier(thisEntityId);
-            
-            char encodedEntityIdentifier[6];
-            
-            thisEntityIdentifier.Encode(encodedEntityIdentifier);
-            
-            theAttributes->add(mEntityIdentifierAttributeHandle,
-                               encodedEntityIdentifier,
-                               6);
-            
-            if(theAttributes->size() > 0)
-            {
-               mRTIAmbassador->updateAttributeValues(objectHandle,
-                                                    *theAttributes,
-                                                    "");
-            }
-            delete theAttributes;
-	    
-            mRTIAmbassador->tick();     
+            SendUpdate(message);
          }
+         //else 
+            //figure out if this message needs to be converted to an interaction.
       }
-      /*	osg::Vec3 vec;
-                
-      osg::Matrix mat;
-      
-      char 	  encodedDeadReckoningAlgorithm[1],
-      encodedForceIdentifier[1],
-      encodedMarking[12],
-      encodedFirePowerDisabled[1],
-      encodedImmobilized[1],
-      encodedCamouflageType[4],
-      encodedIsConcealed[1],
-      encodedTrailingEffectsCode[4],
-      encodedPowerPlantOn[1];
-      
-      if(mObjectsToUpdate.count((*m).first) > 0)
-      {
-      encodedDeadReckoningAlgorithm[0] = 2; // DRM(F, P, W)
-      
-      theAttributes->add(mDeadReckoningAlgorithmAttributeHandle,
-      encodedDeadReckoningAlgorithm, 1);
-      
-      *((char*)encodedForceIdentifier) = 0; // Other
-      
-      theAttributes->add(mForceIdentifierAttributeHandle,
-      encodedForceIdentifier, 1);
-      
-      encodedMarking[0] = 1; // ASCII
-      
-      memset(encodedMarking + 1, 0, 11);
-      
-      theAttributes->add(mMarkingAttributeHandle,
-      encodedMarking, 12);
-      
-      *((char*)encodedFirePowerDisabled) = 0; // False
-      
-      theAttributes->add(mFirePowerDisabledAttributeHandle,
-      encodedFirePowerDisabled, 1);
-      
-      *((char*)encodedImmobilized) = 0; // False
-      
-      theAttributes->add(mImmobilizedAttributeHandle,
-      encodedImmobilized, 1);
-      
-      *((int*)encodedCamouflageType) = 0; // None
-      
-      theAttributes->add(mCamouflageTypeAttributeHandle,
-      encodedCamouflageType, 4);
-      
-      *((char*)encodedIsConcealed) = 0; // False
-      
-      theAttributes->add(mIsConcealedAttributeHandle,
-      encodedIsConcealed, 1);
-      
-      *((int*)encodedTrailingEffectsCode) = 0; // No trail
-      
-      theAttributes->add(mTrailingEffectsCodeAttributeHandle,
-      encodedTrailingEffectsCode, 4);
-      
-      *((char*)encodedPowerPlantOn) = 0; // Whatever
-      
-      theAttributes->add(mPowerPlantOnAttributeHandle,
-      encodedPowerPlantOn, 1);
-      }
-      
-      if(theAttributes->size() > 0)
-      {
-      mRTIAmbassador->updateAttributeValues((*m).first,
-      *theAttributes,
-      "");
-      }
-      }
-      
-      mObjectsToUpdate.clear();
-      
-      delete theAttributes;
-      
-      mRTIAmbassador->tick();     
-      
-      // Request types of newly discovered objects
-      
-      RTI::AttributeHandleSet* requiredAttributes =
-      RTI::AttributeHandleSetFactory::create(2);
-      
-      requiredAttributes->add(mEntityIdentifierAttributeHandle);
-      requiredAttributes->add(mEntityTypeAttributeHandle);
-      
-      //	for(std::set<RTI::ObjectHandle>::iterator objs =
-      //    mNewlyDiscoveredObjects.begin();
-      //  objs != mNewlyDiscoveredObjects.end(); objs++)
-      //	{
-      // mRTIAmbassador->requestObjectAttributeValueUpdate(*objs,
-      //						    *requiredAttributes);
-      //	}
-      
-      //	mNewlyDiscoveredObjects.clear();
-      
-      delete requiredAttributes;
-      }    
-      } */
    }
-   
+
    void HLAComponent::ProcessMessage(const dtGame::Message& message)
    {
       if (message.GetMessageType() == dtGame::MessageType::TICK_LOCAL)
@@ -1657,7 +1571,7 @@ namespace dtHLAGM
    {
       mCoordinates.SetOriginRotation(rotation[0], rotation[1], rotation[2]);
    }
-  
+
    const osg::Vec3 HLAComponent::GetOriginRotation() const
    {
       osg::Vec3 rotation;

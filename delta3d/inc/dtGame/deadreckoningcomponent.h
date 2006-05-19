@@ -80,7 +80,7 @@ namespace dtGame
           * it will follow the ground as it moves.
           * @param newFlying the new value to set.
           */
-               void SetFlying(bool newFlying);
+          void SetFlying(bool newFlying);
     
     
          /**

@@ -34,7 +34,7 @@
 #include "dtEditQt/resourceimportdialog.h"
 #include <dtDAL/datatype.h>
 #include <dtDAL/project.h>
-#include <dtDAL/fileutils.h>
+#include <dtUtil/fileutils.h>
 #include <dtUtil/log.h>
 
 namespace dtEditQt
@@ -276,8 +276,8 @@ namespace dtEditQt
                     // insert the directory context
                     QFileInfo fi(file);
                     QString actualPath = fi.path();
-                    actualPath = actualPath.replace("/",QString(dtDAL::FileUtils::PATH_SEPARATOR));
-                    actualPath = actualPath.replace("\\",QString(dtDAL::FileUtils::PATH_SEPARATOR));
+                    actualPath = actualPath.replace("/",QString(dtUtil::FileUtils::PATH_SEPARATOR));
+                    actualPath = actualPath.replace("\\",QString(dtUtil::FileUtils::PATH_SEPARATOR));
                     fileEdit->insert(actualPath);
                     
                     // add the filenames to the name field
@@ -321,7 +321,7 @@ namespace dtEditQt
         QString suffix;
 
         dtDAL::Project &project = dtDAL::Project::GetInstance();
-        //dtDAL::FileUtils &fileUtil = dtDAL::FileUtils::GetInstance();
+        //dtUtil::FileUtils &fileUtil = dtUtil::FileUtils::GetInstance();
         
         if(!fileList.isEmpty())
         {
@@ -332,8 +332,8 @@ namespace dtEditQt
                 
                 // Create the full path to the file
                 fullPath = fileEdit->text()+"/"+resourceName;
-                fullPath = fullPath.replace("/",QString(dtDAL::FileUtils::PATH_SEPARATOR));
-                fullPath = fullPath.replace("\\",QString(dtDAL::FileUtils::PATH_SEPARATOR));
+                fullPath = fullPath.replace("/",QString(dtUtil::FileUtils::PATH_SEPARATOR));
+                fullPath = fullPath.replace("\\",QString(dtUtil::FileUtils::PATH_SEPARATOR));
 
                 QFileInfo fi(fullPath);
      

@@ -23,6 +23,7 @@
 
 #include "dtGame/message.h"
 #include "dtGame/messageparameter.h"
+#include "dtDAL/gameevent.h"
 
 namespace dtGame
 {
@@ -38,7 +39,7 @@ namespace dtGame
             AddParameter(new FloatMessageParameter("SimTimeScale"));
             AddParameter(new DoubleMessageParameter("SimulationTime"));
          }
-         
+
          /**
           * Gets the delta sim time variable associated with this message
           * @return The deltaSimTime
@@ -86,13 +87,13 @@ namespace dtGame
           * @param newTime the new time to set
           */
          void SetSimulationTime(double newSimulationTime);
-         
+
 
       protected:
          /// Destructor
          virtual ~TickMessage() { }
 
-         
+
    };
 
    class DT_GAME_EXPORT TimerElapsedMessage : public Message
@@ -129,7 +130,7 @@ namespace dtGame
           * @return The simTimeOfDay
           */
          void SetLateTime(float newTime);
-         
+
       protected:
          /// Destructor
          virtual ~TimerElapsedMessage() { }
@@ -199,7 +200,7 @@ namespace dtGame
          MapLoadedMessage() : Message()
          {
             AddParameter(new StringMessageParameter("LoadedMapName"));
-         }  
+         }
 
          /**
           * Gets the name of the map that was loaded
@@ -214,7 +215,36 @@ namespace dtGame
       protected:
          /// Destructor
          virtual ~MapLoadedMessage() { }
-      
+
+   };
+
+   class DT_GAME_EXPORT GameEventMessage : public Message
+   {
+      public:
+
+         /**
+          * Constructs the game event message.  The message has one
+          * parameter called "GameEvent".
+          */
+         GameEventMessage()
+         {
+            AddParameter(new GameEventMessageParameter("GameEvent"));
+         }
+
+         /**
+          * Sets the game event contained within this message.
+          * @param event The game event.
+          */
+         void SetGameEvent(dtDAL::GameEvent &event);
+
+         /**
+          * Gets a reference to the game event contained within this message.
+          * @return A const reference to the game event.
+          */
+         const dtDAL::GameEvent *GetGameEvent() const;
+
+      protected:
+         virtual ~GameEventMessage() { }
    };
 
    class DT_GAME_EXPORT ActorPublishedMessage : public Message
@@ -224,8 +254,8 @@ namespace dtGame
          /// Constructor
          ActorPublishedMessage() : Message()
          {
-            
-         }  
+
+         }
 
       protected:
          /// Destructor
@@ -240,7 +270,7 @@ namespace dtGame
          ActorDeletedMessage() : Message()
          {
 
-         }  
+         }
 
       protected:
          /// Destructor
@@ -256,7 +286,7 @@ namespace dtGame
          {
             AddParameter(new StringMessageParameter("RejectionMessage"));
          }
-         
+
          /**
           * Gets the rejection reason of the message
           * @return The message string
@@ -264,14 +294,14 @@ namespace dtGame
          const std::string& GetRejectionMessage() const;
 
          /**
-          * Sets the rejection message 
+          * Sets the rejection message
           * @param The message
           */
          void SetRejectionMessage(const std::string &msg);
       protected:
          /// Destructor
          virtual ~NetServerRejectMessage() { }
-         
+
    };
 
    class DT_GAME_EXPORT RestartMessage : public Message
@@ -335,7 +365,7 @@ namespace dtGame
          CommandLoadMapMessage() : Message()
          {
             AddParameter(new StringMessageParameter("RequestedMapName"));
-         }  
+         }
 
          /**
          * Gets the name of the map that was loaded
@@ -347,7 +377,7 @@ namespace dtGame
          * @param The name of the map
          */
          void SetMapName(const std::string &name);
-         
+
       protected:
          /// Destructor
          virtual ~CommandLoadMapMessage() { }
@@ -362,7 +392,7 @@ namespace dtGame
          RequestLoadMapMessage() : Message()
          {
            AddParameter(new StringMessageParameter("RequestedMapName"));
-         }  
+         }
 
          /**
           * Gets the name of the map that was loaded
@@ -374,7 +404,7 @@ namespace dtGame
           * @param The name of the map
           */
          void SetRequestedMapName(const std::string &name);
-         
+
       protected:
          /// Destructor
          virtual ~RequestLoadMapMessage() { }

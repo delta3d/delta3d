@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
    }
    catch (dtUtil::Exception &ex)
    {
-      std::cout << "Caught Exception: " << ex.What() << std::endl;
+      std::cout << "Caught Exception: " << ex.ToString() << std::endl;
    }
    
    return 0;

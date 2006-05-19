@@ -1,4 +1,4 @@
-/*
+/* -*-c++-*-
  * Delta3D Open Source Game and Simulation Engine
  * Copyright (C) 2005, BMH Associates, Inc.
  *
@@ -22,6 +22,12 @@
 #define DELTA_GAME_ENTRY_POINT
 
 #include <dtCore/refptr.h>
+#include <dtUtil/exception.h>
+
+namespace dtCore 
+{
+   class Scene;
+}
 
 namespace dtGame
 {
@@ -42,19 +48,22 @@ namespace dtGame
          /**
           * Called to initialize the game application.
           * @param app the current application
+          * @param argc number of startup arguments.
+          * @param argv array of string pointers to the arguments.
+          * @throwns dtUtil::Exception if initialization fails.
           */
-         virtual void Initialize(GameApplication& app) = 0;
+         virtual void Initialize(GameApplication& app, int argc, char **argv) 
+            throw (dtUtil::Exception) = 0;
          
          /**
           * Override the method to create the game manager.
           */
-         virtual dtCore::RefPtr<GameManager> CreateGameManager() = 0;
+         virtual dtCore::RefPtr<GameManager> CreateGameManager(dtCore::Scene& scene) = 0;
          
          /**
           * Called after all startup related code is run.
-          * @param app the current application
           */
-         virtual void OnStartup(GameApplication& app) = 0;
+         virtual void OnStartup() = 0;
    };
 
 }

@@ -18,15 +18,14 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __BaseLightActorProxy__h
-#define __BaseLightActorProxy__h
+#ifndef DELTA_BASELIGHTACTORPROXY
+#define DELTA_BASELIGHTACTORPROXY
 
+#include <dtUtil/enumeration.h>
 #include <dtCore/light.h>
 #include <dtDAL/exceptionenum.h>
-#include <dtUtil/enumeration.h>
 #include <dtDAL/plugin_export.h>
 #include <dtDAL/actorproxy.h>
-
 #include <osg/Vec4>
 
 namespace dtActors

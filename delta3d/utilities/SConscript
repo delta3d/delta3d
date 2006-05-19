@@ -20,3 +20,4 @@ for module in modules :
    SConscript( dirs=[module], build_dir = os.path.join( module, OS+'-'+tool+'-'+mode ), duplicate = 0 )
 
 SConscript( dirs=['editor'] )
+SConscript( dirs='GameStart' )

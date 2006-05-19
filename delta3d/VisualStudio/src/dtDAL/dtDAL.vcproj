@@ -149,10 +149,16 @@
 				RelativePath="..\..\..\src\dtDAL\enginepropertytypes.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtDAL\environmentactor.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtDAL\exceptionenum.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtDAL\fileutils.cpp">
+				RelativePath="..\..\..\src\dtDAL\gameevent.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtDAL\gameeventmanager.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtDAL\librarymanager.cpp">
@@ -218,16 +224,22 @@
 				RelativePath="..\..\..\inc\dtDAL\enginepropertytypes.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtDAL\environmentactor.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtDAL\exceptionenum.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\export.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtDAL\fileutils.h">
+				RelativePath="..\..\..\inc\dtDAL\functor.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtDAL\functor.h">
+				RelativePath="..\..\..\inc\dtDAL\gameevent.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtDAL\gameeventmanager.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtDAL\librarymanager.h">
