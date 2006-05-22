@@ -12,7 +12,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LM_overloads, LogMessage, 3, 4)
 void init_LogBindings()
 {
 
-   void (Log::*LogMessage2)( const std::string&, int, const std::string&, Log::LogMessageType) = &Log::LogMessage;
+   void (Log::*LogMessage2)( const std::string&, int, const std::string&, Log::LogMessageType)const = &Log::LogMessage;
 
    Log& (*GetInstance1)() = &Log::GetInstance;
    Log& (*GetInstance2)(const std::string&) = &Log::GetInstance;
