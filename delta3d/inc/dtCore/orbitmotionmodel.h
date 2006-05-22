@@ -40,6 +40,19 @@ namespace dtCore
    /**
     * A motion model that causes its target to orbit around a point
     * (initially its local origin).
+    * Supply a valid Keyboard and Mouse to the constructor to setup the default
+    * control mappings.  Otherwise pass valid instances of Axis to setup the
+    * MotionModel your own way.
+    * 
+    * Enable the OrbitMotionModel by calling MotionModel::SetEnabled().  Give the
+    * OrbitMotionModel something to control by calling SetTarget().
+    *
+    * Typical usage:
+    * \code
+    * dtCore::RefPtr<OrbitMotionModel> orbit = new dtCore::OrbitMotionModel(GetKeyboard(), GetMouse());
+    * orbit->SetTarget( GetCamera() );
+    * \endcode
+    * 
     */
    class DT_CORE_EXPORT OrbitMotionModel : public MotionModel,
                                            public AxisListener
