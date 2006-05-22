@@ -418,6 +418,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameStart", "utilities\Game
 		{E8B2FBBF-19C9-4814-9F30-90FE0A036232} = {E8B2FBBF-19C9-4814-9F30-90FE0A036232}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testGameEnvironment", "examples\testGameEnvironment\testGameEnvironment.vcproj", "{EBACBA32-E24E-46EE-947C-9BDBF883271E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -677,6 +681,10 @@ Global
 		{47EDED5A-2744-4131-934D-3C7FC0559DEB}.Debug.Build.0 = Debug|Win32
 		{47EDED5A-2744-4131-934D-3C7FC0559DEB}.Release.ActiveCfg = Release|Win32
 		{47EDED5A-2744-4131-934D-3C7FC0559DEB}.Release.Build.0 = Release|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Debug.ActiveCfg = Debug|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Debug.Build.0 = Debug|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Release.ActiveCfg = Release|Win32
+		{EBACBA32-E24E-46EE-947C-9BDBF883271E}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
