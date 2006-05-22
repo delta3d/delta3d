@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtABCd.lib dtCored.lib dtUtild.lib dtDALd.lib oded.lib cppunitd.lib xerces-c_2d.lib osgd.lib osgDBd.lib"
+				AdditionalDependencies="dtABCd.lib dtCored.lib dtDALd.lib dtUtild.lib oded.lib cppunitd.lib xerces-c_2d.lib osgd.lib osgDBd.lib Producerd.lib OpenThreadsWin32d.lib"
 				OutputFile="../../../tests/UnitTestsDtCored.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -88,7 +88,7 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtABC.lib dtCore.lib dtUtil.lib dtDAL.lib ode.lib cppunit.lib xerces-c_2.lib osg.lib osgDB.lib"
+				AdditionalDependencies="dtABCd.lib dtCore.lib dtUtil.lib dtDAL.lib ode.lib cppunit.lib xerces-c_2.lib osg.lib osgDB.lib Producer.lib  OpenThreadsWin32.lib"
 				OutputFile="../../../tests/UnitTestsDtCore.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -136,6 +136,9 @@ set DELTA_DATA=$(DELTA_DATA)
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\buttontests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtCore\deltawintests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtCore\isectortests.cpp">
