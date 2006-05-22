@@ -42,8 +42,25 @@ namespace dtCore
    class Keyboard;
    class Mouse;
 
+
    /**
-   * DeltaWin: The base window class for delta3D
+   * \brief The rendering area that a dtCore::Camera will render to
+   *
+   * The DeltaWin class is used as a canvas for the dtCore::Cameras to render upon.
+   * The DeltaWin can be positioned and sized using SetPosition(), set to be fullscreen using
+   * SetFullScreenMode(), and the cursor can be hidden using ShowCursor().
+   * A DeltaWin can be embedded inside an existing window by supplying the window handle
+   * to a Producer::RenderSurface, then passing the RenderSurface to the DeltaWin constructor.
+   * See dtABC::Widget for more information.
+   *
+   * Typical usage:
+   * \code
+   * dtCore::RefPtr<dtCore::DeltaWin> win = new dtCore::DeltaWin("myWin");
+   * win->SetPosition(100, 100, 640, 480);
+   * win->SetWindowTitle("My example window");
+   * \endcode
+   *
+   * \see dtCore::Camera::SetWindow()
    */
    class DT_CORE_EXPORT DeltaWin : public Base
    {
@@ -68,7 +85,7 @@ namespace dtCore
       /** 
       * Constructor
       *
-      * @param the name of the class as well as the window title
+      * @param name : the name of the class as well as the window title
       * @param rs if you have created your own Producer::RenderSurface and wish to use it
       * with this instance of DeltaWin, pass it in here.
       * @param ia if you have your own Producer::InputArea, pass it here. If 0 is passed, then
@@ -79,7 +96,7 @@ namespace dtCore
       /** 
       * Constructor
       *
-      * @param the name of the class as well as the window title
+      * @param name : the name of the class as well as the window title
       * @param keyboard a custom keyboard
       * @param mouse a custom mouse
       */
@@ -133,7 +150,10 @@ namespace dtCore
       Keyboard* GetKeyboard() { return mKeyboard.get(); }
       const Keyboard* GetKeyboard() const { return mKeyboard.get(); }
 
+      ///Supply an instance of a Keyboard to be used instead of the internal one
       void SetKeyboard( Keyboard* keyboard );
+
+      ///Supply an instance of a Mouse to be used instead of the internal one
       void SetMouse( Mouse* mouse );
 
       ///Get a handle to the Mouse associated with the DeltaWin
@@ -204,5 +224,6 @@ namespace dtCore
       DeltaWin( const DeltaWin& );
    };
 };
+
 
 #endif // DELTA_DELTA_WIN

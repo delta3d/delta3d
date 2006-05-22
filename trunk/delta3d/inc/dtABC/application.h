@@ -47,10 +47,8 @@ namespace dtABC
      * Application *app = new Application("Mydatafile.xml");
      * app->Config();
      * app->Run();
-     * \endcode
+     * \endcode     
      */
-
-
    class DT_ABC_EXPORT Application : public dtABC::BaseABC
    {
       DECLARE_MANAGEMENT_LAYER(Application)
@@ -119,9 +117,6 @@ namespace dtABC
 
 }
 
-/** \example testapp.cpp 
- *  This is an example of using Application in a test app.
- */
 
 
 #endif // DELTA_APPLICATION
