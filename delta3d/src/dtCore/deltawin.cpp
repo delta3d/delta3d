@@ -7,13 +7,14 @@
 #include <dtCore/mouse.h>
 #include <dtUtil/deprecationmgr.h>
 #include <dtUtil/log.h>
-
-#include <cassert>
+#include <dtCore/exceptionenum.h>
+#include <dtUtil/exception.h>
 
 using namespace dtCore;
 using namespace dtUtil;
 
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
+
 
 DeltaWin::InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
 {
@@ -187,8 +188,11 @@ DeltaWin::DeltaWin(  const std::string& name,
 {
    RegisterInstance(this);
 
-   // \TODO: Throw exception if NULL RenderSurface is passed
-   assert( mRenderSurface != 0 );
+   if( mRenderSurface == 0 )
+   {
+      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied Producer::RenderSurface is NULL");
+   }
    
    if(ia) // use the passed InputArea if not NULL
    {
@@ -218,9 +222,11 @@ DeltaWin::DeltaWin(  const std::string& name,
    mMouse(mouse),
    mShowCursor(true)
 {
-   // \TODO: Throw exception if NULL Keyboard or Mouse is passed
-   assert( mKeyboard.valid() );
-   assert( mMouse.valid() );
+   if( !mKeyboard.valid() || !mMouse.valid() )
+   {
+      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Keyboard or dtCore::Mouse is invalid");
+   }
 
    RegisterInstance(this);
 
@@ -274,16 +280,39 @@ void DeltaWin::GetPosition( int& x, int& y, int& width, int& height )
    height = h;
 }
 
+/** 
+ * Supply an instance of a Keyboard to be used instead of the default, 
+ * internal Keyboard, or the one supplied in the constructor.
+ * @param keyboard : instance of a valid Keyboard to use
+ * @pre keyboard != 0
+ * @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
+ * is NULL.  The original Keyboard will still be used.
+ */
 void DeltaWin::SetKeyboard( Keyboard* keyboard )
 {
-   assert( keyboard != 0 );
+   if( keyboard == 0 )
+   {
+      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Keyboard is invalid");
+   }
    mKeyboard = keyboard;
    mInputCallback->SetKeyboard( mKeyboard.get() );
 }
 
+/** Supply an instance of a Mouse to be used instead of the default internal
+ *  Mouse, or the one supplied in the constructor.
+ *  @param mouse : Instance of a valid Mouse
+ *  @pre mouse != 0
+ *  @exception dtCore::ExceptionEnum::INVALID_PARAMETER The supplied instance
+ *  is NULL.  The original Mouse will still be used.
+ */
 void DeltaWin::SetMouse( Mouse* mouse )
 {
-   assert( mouse != 0 );
+   if( mouse == 0 )
+   {
+      EXCEPT(dtCore::ExceptionEnum::INVALID_PARAMETER,
+         "Supplied dtCore::Mouse is invalid");
+   }
    mMouse = mouse;
    mInputCallback->SetMouse( mMouse.get() );
 }

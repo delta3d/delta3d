@@ -182,6 +182,9 @@
 				RelativePath="..\..\..\src\dtCore\ephemeris.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\exceptionenum.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\floatshaderparameter.cpp">
 			</File>
 			<File
@@ -367,6 +370,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\ephemeris.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\exceptionenum.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\export.h">
