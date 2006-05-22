@@ -74,6 +74,8 @@ namespace dtTerrain
       mDetailVerticalResolution = 0.0012f;
       mThreshold = 2.0f;
       mDetailMultiplier = 3.0f;
+      mRenderWithFog = false;
+      mUniformRenderWithFog = 0;
    }   
    
    //////////////////////////////////////////////////////////////////////////    
@@ -289,6 +291,10 @@ namespace dtTerrain
       uniform->set(1);
       ss.addUniform(uniform);
       
+      mUniformRenderWithFog = new osg::Uniform(osg::Uniform::BOOL, "renderWithFog");
+      mUniformRenderWithFog->set(mRenderWithFog);
+      ss.addUniform(mUniformRenderWithFog.get());
+
       if (tile.GetBaseTextureImage() != NULL)
       {
          osg::Texture2D *baseColorTexture = new osg::Texture2D();
@@ -642,4 +648,17 @@ namespace dtTerrain
       }     
    }
    
+
+
+   void SoarXTerrainRenderer::SetEnableFog(bool pEnableFog)
+   {  
+      mRenderWithFog = pEnableFog;
+
+      if(mUniformRenderWithFog.valid())
+      {
+         mUniformRenderWithFog->set(pEnableFog);
+      }
+
+   }
+
 }

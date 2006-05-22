@@ -41,6 +41,7 @@
 #include <dtCore/keyboard.h>
 #include <sstream>
 
+
 class TestTerrainApp : public dtABC::Application
 {
 public:
@@ -50,6 +51,7 @@ public:
       mTerrainClamp(false),
       mFlyFast(false)
    {
+
    }
 
 protected:
@@ -99,7 +101,7 @@ public:
       };
 
       //Create the terrain renderer...
-      mRenderer = new dtTerrain::SoarXTerrainRenderer();
+      mRenderer = new dtTerrain::SoarXTerrainRenderer();      
             
       //Connect our reader and renderer to the terrain.
       mTerrain->SetDataReader(reader);         
@@ -157,7 +159,10 @@ public:
       mEnvironment->SetDateTime(2005,3,7,14,0,0);
      
       mEnvironment->AddChild(mTerrain.get());
+      mRenderer->SetEnableFog(true);
+
       GetScene()->AddDrawable(mEnvironment.get());
+
    }
 
    //////////////////////////////////////////////////////////////////////////
