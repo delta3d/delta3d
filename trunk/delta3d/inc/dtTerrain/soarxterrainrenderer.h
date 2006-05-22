@@ -194,7 +194,14 @@ namespace dtTerrain
          const std::string &GetTerrainFragmentShader() const
          {
             return mFragShaderPath;
-         }  
+         }
+
+         /**
+         * Tells the terrain whether or not to use the fog variables when rendering the terrain
+         * by default there is no fog
+         */
+         void SetEnableFog(bool pEnableFog);
+
          
       protected:
       
@@ -291,6 +298,9 @@ namespace dtTerrain
          ///terrain tiles.
          dtCore::RefPtr<osg::Program> mShaderProgram;         
         
+         ///tells the renderer to use gl fog constants when rendering the terrain
+         dtCore::RefPtr<osg::Uniform> mUniformRenderWithFog;
+         bool mRenderWithFog;
    };   
 }
 
