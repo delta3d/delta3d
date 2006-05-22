@@ -19,6 +19,7 @@
  * @author William E. Johnson II
  */
 #include <dtABC/application.h>
+#include <dtCore/camera.h>
 #include <dtCore/environment.h>
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/flymotionmodel.h>
@@ -76,10 +77,12 @@ class App : public dtABC::Application
          Config();
       }
 
-      virtual void KeyPressed(dtCore::Keyboard* keyboard, 
+      bool KeyPressed(const dtCore::Keyboard* keyboard, 
                               Producer::KeyboardKey key, 
                               Producer::KeyCharacter character)
       {
+         bool handled = true;
+
          if(key == Producer::Key_1)
          {
             static bool enable = false;
@@ -137,7 +140,12 @@ class App : public dtABC::Application
             mGM->SetEnvironmentActor(mGM->GetEnvironmentActor() != NULL ? NULL : mEnvironmentProxy.get());
             GetScene()->AddDrawable(new dtCore::InfiniteLight(0));
          }
-         dtABC::Application::KeyPressed(keyboard, key, character);
+         else
+         {
+            handled = dtABC::Application::KeyPressed(keyboard, key, character);
+         }
+
+         return handled;
       }
 
    protected:
