@@ -152,8 +152,6 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
    float curYPos;
    float helpTextWidth = 400;
    float taskTextWidth = 300;
-   int x(0), y(0), w(0), h(0);
-   mWin->GetPosition(&x, &y, &w, &h);
 
    try {
       // Initialize CEGUI
