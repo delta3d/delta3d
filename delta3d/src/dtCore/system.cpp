@@ -116,6 +116,8 @@ void System::SystemStep()
 
 void System::StepWindow()
 {
+   SystemStep();
+
    if( mShutdownOnWindowClose )
    {
       bool renderSurfaceIsRunning = false;
@@ -155,7 +157,6 @@ void System::Run()
    
    while( mRunning )
    {	  
-      SystemStep();
       StepWindow();     
    }
 
@@ -191,7 +192,6 @@ void System::Step()
    }
 
    SystemStep();
-   StepWindow();
 }
 
 void System::Stop()
