@@ -81,8 +81,8 @@ namespace dtCore
        */
       void Step();
 
-      /** Performs one complete frame step and performs DeltaWin processing.  This is
-       *  usefull if you wish to control the entire System's frame processing.
+      /** Performs one complete System frame step and performs DeltaWin processing.  This is
+       *  useful if you wish to control the entire System's frame processing.
        *  Emits the "preframe", "frame", and "postframe" messages. 
        */
       void StepWindow();
