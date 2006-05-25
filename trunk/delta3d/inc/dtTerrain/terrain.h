@@ -159,7 +159,20 @@ namespace dtTerrain
           *    method.  If the renderer is invalid, the height returned is 0.0f.
           */
          float GetHeight(float x, float y);
-         
+
+         /** 
+         * true if vector from pt1 to pt2 does NOT intersect Height Field
+         * false if it intersects
+         *
+         * ideally a functor should be provided to override the very simple
+         * algorithm implemented in Terrain.
+         */
+         bool IsClearLineOfSight(osg::Vec3 pt1, osg::Vec3 pt2);
+
+         void SetLineOfSightSpacing(float spacing){mLOSPostSpacing = spacing;}
+
+         float GetLineOfSightSpacing() {return mLOSPostSpacing;}
+
          virtual void LoadTerrainTile(PagedTerrainTile &newTile);
          
          virtual void UnloadTerrainTile(PagedTerrainTile &toRemove);
@@ -370,7 +383,9 @@ namespace dtTerrain
          dtCore::RefPtr<PagedTerrainTileFactory> mTileFactory;
          
          ///List of the layers currently attached to this terrain.
-         TerrainLayerMap mDecorationLayers;         
+         TerrainLayerMap mDecorationLayers;  
+
+		 float mLOSPostSpacing;
    };
 
 }
