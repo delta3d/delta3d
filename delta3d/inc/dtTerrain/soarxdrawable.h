@@ -419,8 +419,11 @@ namespace dtTerrain
          /**
           * Retrieves a vertex from the procedural terrain mesh.
           */
-         void GetVertex(Vertex &v);      
-         
+         void GetVertex(Vertex &v);
+
+         void SetBufferSize(unsigned int size) { BUFFER_SIZE = size;}
+         unsigned int GetBufferSize() { return BUFFER_SIZE;}
+
       private:         
          
          float mThresholdValue;
@@ -486,6 +489,9 @@ namespace dtTerrain
          unsigned int mBaseLevels;           
          
          friend struct SoarXCullCallback;
+
+         ///Number of vertices and indices in the render buffers.
+         unsigned int BUFFER_SIZE;
    };   
    
 }

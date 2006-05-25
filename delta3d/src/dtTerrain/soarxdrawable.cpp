@@ -41,10 +41,7 @@
 #include "dtTerrain/heightfield.h"
 
 namespace dtTerrain
-{
-   ///Number of vertices and indices in the render buffers.
-   const unsigned int BUFFER_SIZE = 512*1024 + 1024;
-   
+{ 
    ///Constants used during the refinement process.
    const bool BOTTOM = false;
    const bool SIDE = true;
@@ -108,6 +105,9 @@ namespace dtTerrain
       //is dynamic and computed on the fly.
       setSupportsDisplayList(false);
       //setUseVertexBufferObjects(true);
+
+      BUFFER_SIZE = 512*1024 + 1024;
+
       mCurrentPage = 0;
       mVAIndex = 0;
       mIAIndex = 0;
@@ -130,7 +130,7 @@ namespace dtTerrain
       mBaseSize = (1 << mBaseBits) + 1;
       mEmbeddedSize = 1 << mEmbeddedBits;
       
-      mBaseVerticalResolution = 1.5f;
+      mBaseVerticalResolution = 1.0f;
       mBaseHorizontalResolution = horizontalResolution;
       mBaseVerticalBias = 0.0f;
       mDetailHorizontalResolution = mBaseHorizontalResolution / (float)mEmbeddedSize;
@@ -337,6 +337,8 @@ namespace dtTerrain
          usedCache = false;
       }      
       
+	  // isdale: too big a buffer size will run us out of memory
+	  // should be a way to catch this, pre-test for it.
       mVertexArray[0] = new osg::Vec3[BUFFER_SIZE];
       mVertexArray[1] = new osg::Vec3[BUFFER_SIZE];      
       mIndexArray[0] = new unsigned int[BUFFER_SIZE];
@@ -360,7 +362,7 @@ namespace dtTerrain
       baseIndex >>= mMapBits-mBaseBits;
       detailIndex &= mDetailSize-1;
       interpolateIndex &= mEmbeddedSize-1;
-      
+
       int iBase = (baseIndex.y << mBaseBits) + baseIndex.y + baseIndex.x;
       int iDetail = (detailIndex.y << mDetailBits) + detailIndex.x;
       
