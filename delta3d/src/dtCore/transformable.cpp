@@ -4,8 +4,6 @@
 #include <dtUtil/log.h>
 #include <dtUtil/matrixutil.h>
 
-#include <osg/BoundingBox>
-#include <osg/BoundingSphere>
 #include <osg/Geode>
 #include <osg/NodeVisitor>
 #include <osg/LineWidth>
