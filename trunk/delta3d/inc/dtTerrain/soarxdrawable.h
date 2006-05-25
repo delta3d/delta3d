@@ -316,7 +316,10 @@ namespace dtTerrain
          bool RestoreDataFromCache(const PagedTerrainTile &tile);
          
          void WriteDataToCache(const PagedTerrainTile &tile);
-         
+
+         void SetBufferSize(unsigned int size) { BUFFER_SIZE = size;}
+         unsigned int GetBufferSize() { return BUFFER_SIZE;}
+
       protected:
       
          ///Simply destroys the terrain drawable.
@@ -420,9 +423,6 @@ namespace dtTerrain
           * Retrieves a vertex from the procedural terrain mesh.
           */
          void GetVertex(Vertex &v);
-
-         void SetBufferSize(unsigned int size) { BUFFER_SIZE = size;}
-         unsigned int GetBufferSize() { return BUFFER_SIZE;}
 
       private:         
          
