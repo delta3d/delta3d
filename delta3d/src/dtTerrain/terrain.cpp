@@ -39,10 +39,10 @@
 
 namespace dtTerrain 
 {
-    
+
    //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_MANAGEMENT_LAYER(Terrain);
-   
+
    //////////////////////////////////////////////////////////////////////////
    IMPLEMENT_ENUM(TerrainException);
    TerrainException TerrainException::NULL_POINTER("NULL_POINTER");
@@ -51,55 +51,55 @@ namespace dtTerrain
    TerrainException TerrainException::INVALID_DATA_READER("INVALID_DATA_READER");
    TerrainException TerrainException::INVALID_DATA_RENDERER("INVALID_DATA_RENDERER");
    TerrainException TerrainException::INVALID_DECORATION_LAYER("INVALID_DECORATION_LAYER");
-   
+
    //////////////////////////////////////////////////////////////////////////    
    class TerrainCullCallback : public osg::NodeCallback
    {
-      public:
-      
-         TerrainCullCallback(Terrain *terrain) : mTerrain(terrain) { }         
-         virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
+   public:
+
+      TerrainCullCallback(Terrain *terrain) : mTerrain(terrain) { }         
+      virtual void operator()(osg::Node *node, osg::NodeVisitor *nv)
+      {
+         GeoCoordinates coords;
+         int i,j;
+
+         coords.SetCartesianPoint(nv->getEyePoint());
+
+         //Now that we have the location of the camera, figure out how many tiles to 
+         //load.  The tiles to load are based on latitude and longitude for now.  A
+         //cartesian based system should probably be used instead.
+         double bounds = (mTerrain->GetLoadDistance() / GeoCoordinates::EQUATORIAL_RADIUS) * 
+            osg::RadiansToDegrees(1.0);
+
+         int minLat = (int)floor(coords.GetLatitude() - bounds);
+         int maxLat = (int)ceil(coords.GetLatitude() + bounds);
+         int minLon = (int)floor(coords.GetLongitude() - bounds);
+         int maxLon = (int)ceil(coords.GetLongitude() + bounds);
+
+         //First build a set of tiles that should be resident for this frame.
+         std::set<GeoCoordinates> residentTileLocations;
+         for (i=minLat; i<=maxLat; i++)
          {
-            GeoCoordinates coords;
-            int i,j;
-            
-            coords.SetCartesianPoint(nv->getEyePoint());
-            
-            //Now that we have the location of the camera, figure out how many tiles to 
-            //load.  The tiles to load are based on latitude and longitude for now.  A
-            //cartesian based system should probably be used instead.
-            double bounds = (mTerrain->GetLoadDistance() / GeoCoordinates::EQUATORIAL_RADIUS) * 
-               osg::RadiansToDegrees(1.0);
-                        
-            int minLat = (int)floor(coords.GetLatitude() - bounds);
-            int maxLat = (int)ceil(coords.GetLatitude() + bounds);
-            int minLon = (int)floor(coords.GetLongitude() - bounds);
-            int maxLon = (int)ceil(coords.GetLongitude() + bounds);
-            
-            //First build a set of tiles that should be resident for this frame.
-            std::set<GeoCoordinates> residentTileLocations;
-            for (i=minLat; i<=maxLat; i++)
+            for (j=minLon; j<=maxLon; j++)
             {
-               for (j=minLon; j<=maxLon; j++)
-               {
-                  GeoCoordinates resCoords;
-                  resCoords.SetLatitude(i);
-                  resCoords.SetLongitude(j);
-                  resCoords.SetAltitude(0);
-                  residentTileLocations.insert(resCoords);   
-               }   
-            }
-            
-            //Inform the terrain of the tile set that should be visible for this
-            //frame.
-            mTerrain->EnsureTileVisibility(residentTileLocations);  
-            traverse(node,nv);     
+               GeoCoordinates resCoords;
+               resCoords.SetLatitude(i);
+               resCoords.SetLongitude(j);
+               resCoords.SetAltitude(0);
+               residentTileLocations.insert(resCoords);   
+            }   
          }
-         
-      private:
-        Terrain *mTerrain;
+
+         //Inform the terrain of the tile set that should be visible for this
+         //frame.
+         mTerrain->EnsureTileVisibility(residentTileLocations);  
+         traverse(node,nv);     
+      }
+
+   private:
+      Terrain *mTerrain;
    };   
-   
+
    //////////////////////////////////////////////////////////////////////////
    Terrain::Terrain(const std::string &name)
    {
@@ -111,8 +111,9 @@ namespace dtTerrain
 
       // Default collision category = 16
       SetCollisionCategoryBits( UNSIGNED_BIT(16) );
+      SetLineOfSightSpacing(25.f); // a bit less than DTED L2
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    Terrain::~Terrain()
    {
@@ -129,11 +130,74 @@ namespace dtTerrain
    {
       if (!mDataRenderer.valid())
          EXCEPT(TerrainException::INVALID_DATA_RENDERER,
-            "Cannot retrieve the height of the terrain.");
-      
+         "Cannot retrieve the height of the terrain.");
+
       return mDataRenderer->GetHeight(x,y);  
    }
-   
+
+   ////////////////////////////////////////////////////////////////////////// 
+
+   /**
+   * Trivial Line Of Sight calcuator.
+   * We basically walk along the ray between the
+   * two points, doing point sampling.  This is brute
+   * force and not the most efficient means of doing
+   * this test, but this is the first implementation.
+
+   * This routine ONLY checks visibility against ground
+   * terrain!  We do not check test against other 
+   * objects, such as buildings or other vehicles.
+   * 
+   * Sampling rate: our DTED data is sampled at about 30m
+   * resolution.  Therefore we adjust the postSpacing to be
+   * smaller than that, and use that to step along the 
+   * viewing ray.
+   * 
+   * This uses dtTerrain->GetHeight which uses the current Renderer
+   * this may be cause lots extra work, especially when called repeatedly
+   * might be better to do it directly on heightField of tile?
+   */
+   static bool SimpleLOS(dtTerrain::Terrain *pT, osg::Vec3 pt1, osg::Vec3 pt2)
+   {   
+      osg::Vec3 ray = pt2 - pt1;
+      double length = ray.length();
+      // if closer than post spacing, then clear LOS
+      if (length < pT->GetLineOfSightSpacing())
+         return (true);
+
+      float stepsize = pT->GetLineOfSightSpacing() / length;
+      double s = 0.0;
+
+      while (s < 1.0)
+      {
+         osg::Vec3 testPt = pt1 + ray*s;
+         double h = pT->GetHeight(testPt.x(), testPt.y());
+         // segment blocked by terrain
+         if (h >= testPt.z())
+            return(false);
+         s += stepsize;
+      }
+
+      // walked full ray, so clear LOS
+      return (true);
+
+   }
+
+   /**
+   * Given point1 and point2, both in world space
+   * and with all coordinates in Cartesian space
+   * (essentially in meters along X, Y and Z),
+   * returns true if there is a clear line of sight
+   * and false if the view is blocked.
+   *
+   */
+   bool Terrain::IsClearLineOfSight(osg::Vec3 pt1, osg::Vec3 pt2)
+   {
+      // would be nice to have a functor 
+      // instead of very simple built-in
+      return SimpleLOS(this, pt1, pt2);
+   }
+
    //////////////////////////////////////////////////////////////////////////
    bool Terrain::SetCachePath(const std::string &path)
    {
@@ -141,7 +205,7 @@ namespace dtTerrain
       std::string newPath(path);
       if (newPath[newPath.length()-1] == '/' || newPath[newPath.length()-1] == '\\')
          newPath = newPath.substr(0,newPath.length()-1);
-         
+
       if (!dtUtil::FileUtils::GetInstance().DirExists(newPath))
       {
          try 
@@ -154,11 +218,11 @@ namespace dtTerrain
             return false;
          }         
       }
-      
+
       mCachePath = path;
       return true;      
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::AddResourcePath(const std::string &path)
    {
@@ -168,7 +232,7 @@ namespace dtTerrain
       else
          mResourcePathList.push_back(path);
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::RemoveResourcePath(const std::string &path)
    {
@@ -182,7 +246,7 @@ namespace dtTerrain
          }
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////   
    const std::string Terrain::FindResource(const std::string &path)
    {
@@ -190,7 +254,7 @@ namespace dtTerrain
       osgDB::FilePathList::const_iterator pathItor;
       std::list<std::string>::iterator resItor;     
       std::string fullPath;
-      
+
       //In order to find a resource, we must try all combinations of 
       //the terrain's resource path list with that of the Delta3D
       //path lists.
@@ -214,10 +278,10 @@ namespace dtTerrain
             }
          }
       }
-      
+
       return fullPath;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////   
    void Terrain::FindAllResources(const std::string &path, 
       std::vector<std::string> &resourcePaths)
@@ -226,10 +290,10 @@ namespace dtTerrain
       osgDB::FilePathList::const_iterator pathItor;
       std::list<std::string>::iterator resItor;     
       std::string fullPath;
-      
+
       //Just to make sure, clear the result vector.
       resourcePaths.clear();
-      
+
       //In order to find a resource, we must try all combinations of 
       //the terrain's resource path list with that of the Delta3D
       //path lists.
@@ -263,26 +327,26 @@ namespace dtTerrain
          LOG_ERROR("Cannot create new tile.  The terrain data reader is NULL.");
          return NULL;
       }
-      
+
       if (!mTileFactory.valid())
       {
          LOG_ERROR("Cannot create new paged terrain tile.  The tile factory is NULL.");
          return NULL;
       }
-      
+
       PagedTerrainTile *newTile = mTileFactory->CreateNewTile(coords,*this);
       if (!newTile)
          return NULL;     
-          
+
       return newTile;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////   
    void Terrain::LoadTerrainTile(PagedTerrainTile &newTile)
    {      
       mTilesToLoadQ.push(&newTile);
    }
-   
+
    //////////////////////////////////////////////////////////////////////////   
    void Terrain::UnloadTerrainTile(PagedTerrainTile &toRemove)
    {
@@ -291,7 +355,7 @@ namespace dtTerrain
       mTilesToUnloadQ.push(&toRemove);
       mResidentTiles.erase(toRemove.GetGeoCoordinates());     
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::UnloadAllTerrainTiles()
    {
@@ -300,7 +364,7 @@ namespace dtTerrain
          mTilesToUnloadQ.push(itor->second.get());
       mResidentTiles.clear();
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    bool Terrain::IsTerrainTileResident(const GeoCoordinates &coords)
    {
@@ -310,7 +374,7 @@ namespace dtTerrain
       else
          return true;
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::EnsureTileVisibility(const std::set<GeoCoordinates> &coordList)
    {
@@ -321,7 +385,7 @@ namespace dtTerrain
       TerrainTileMap::iterator resItor;
       std::vector<dtCore::RefPtr<PagedTerrainTile> > result;
       std::vector<dtCore::RefPtr<PagedTerrainTile> >::iterator resultItor;
-      
+
       //Loop through the currently visible set of tiles, if there is a tile not 
       //in the newly specified list, unload it.      
       resItor = mResidentTiles.begin();
@@ -332,13 +396,13 @@ namespace dtTerrain
          {
             result.push_back(resItor->second);
          }       
-         
+
          ++resItor;
       }
-            
+
       for (resultItor=result.begin(); resultItor!=result.end(); ++resultItor)
          UnloadTerrainTile(*resultItor->get());
-      
+
       //Now we need to make sure all tiles from the requested visible set
       //that are not currently loaded are put in the load queue.
       for (visItor=coordList.begin(); visItor!=coordList.end(); ++visItor)
@@ -351,19 +415,19 @@ namespace dtTerrain
          }
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::OnMessage(dtCore::Base::MessageData *data)
    {
       //Make sure we call our super class implementation of this method.
       dtCore::Physical::OnMessage(data);
-      
+
       if (data->message == "preframe")
          PreFrame(*(double *)data->userData);
       else if (data->message == "postframe")
          PostFrame(*(double *)data->userData);     
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::PreFrame(double frameTime)
    {      
@@ -377,24 +441,23 @@ namespace dtTerrain
       //dependent on the failed stages.
       if (!mDataReader.valid())
          EXCEPT(TerrainException::INVALID_DATA_READER,
-            "Cannot flush the terrain tile load queue.  The terrain reader is not valid.");
-      
+         "Cannot flush the terrain tile load queue.  The terrain reader is not valid.");
+
       if (!mDataRenderer.valid())
          EXCEPT(TerrainException::INVALID_DATA_RENDERER,
-            "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.");
-            
+         "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.");
+
       while (!mTilesToLoadQ.empty())      
       {
-         LOG_INFO("Loading new terrain tile.");
          PagedTerrainTile *currTile = mTilesToLoadQ.front().get();
-         
+
          //Create a cache path for the tile being loaded if it does not already
          //exist.
          if (!mCachePath.empty())
          {
             std::string tilePath = mCachePath + "/" + "tile_" + 
                mDataReader->GenerateTerrainTileCachePath(*currTile);
-            
+
             //Now that we generated a tile's cache path, make sure it exists.  If it does
             //not go ahead and create it.
             if (!dtUtil::FileUtils::GetInstance().DirExists(tilePath))
@@ -418,7 +481,7 @@ namespace dtTerrain
          {
             currTile->SetCachePath("");
          }
-         
+
          //First, we tell the tile to load any tile specific data from its cache.
          //This is to allow subclassed terrain tiles to cache and restore application
          //specific data.  Note, the base paged tile implementation of this method
@@ -426,7 +489,7 @@ namespace dtTerrain
          try
          {
             currTile->ReadFromCache();
-            
+
             //When the tile is first loaded its contents are in sync with its cache.
             //This should be set to "true" by either an external class if any tile
             //related data needs to be updated in the cache.
@@ -436,7 +499,7 @@ namespace dtTerrain
          {
             LOG_ERROR("Error loading terrain tile. (RestoreFromCache): " + ex.What());
          }
-         
+
          //Second, tell the terrain reader we need to load the tile.
          try
          {
@@ -454,7 +517,7 @@ namespace dtTerrain
             mTilesToLoadQ.pop();
             continue;          
          }       
-         
+
          //Third, we pass the terrain tile to each of the decorator
          //layers so they may load or create data relating to the tile.
          TerrainLayerMap::iterator layerItor;
@@ -471,7 +534,7 @@ namespace dtTerrain
                   + "):  " + ex.What());
             }  
          }  
-         
+
          //Finally, we tell the terrain renderer to load the tile.  This gives the
          //renderer a chance to generate, preprocess, or do any data loading
          //it needs for an individual tile.
@@ -483,7 +546,7 @@ namespace dtTerrain
          {
             LOG_ERROR("Error loading terrain tile. (TerrainRenderer): " + ex.What());
          }         
-         
+
          //Need to make one final pass over all the decorators in case they need to 
          //perform any post tile loading operations.
          for (layerItor=mDecorationLayers.begin(); layerItor!=mDecorationLayers.end(); 
@@ -500,14 +563,14 @@ namespace dtTerrain
                   + "):  " + ex.What());
             }  
          }  
-         
+
          //Now once we have finished loading a tile, remove it from the load queue,
          //and add it to the lisbt of loaded and resident tiles.
          mResidentTiles.insert(std::make_pair(currTile->GetGeoCoordinates(),currTile));
          mTilesToLoadQ.pop();
       }     
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::PostFrame(double frameTime)
    {
@@ -517,17 +580,17 @@ namespace dtTerrain
       //any necessary clean up operations that should occur.      
       if (!mDataReader.valid())
          EXCEPT(TerrainException::INVALID_DATA_READER,
-            "Cannot flush the terrain tile load queue.  The terrain reader is not valid.");
-      
+         "Cannot flush the terrain tile load queue.  The terrain reader is not valid.");
+
       if (!mDataRenderer.valid())
          EXCEPT(TerrainException::INVALID_DATA_RENDERER,
-            "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.");
-            
+         "Cannot flush the terrain tile load queue.  The terrain renderer is not valid.");
+
       while (!mTilesToUnloadQ.empty())
       {
          LOG_INFO("UnLoading new terrain tile.");
          PagedTerrainTile *currTile = mTilesToUnloadQ.front().get();
-         
+
          //First, we tell the tile to unload any tile specific data to its cache.
          //This is to allow subclassed terrain tiles to save and restore application
          //specific data.  By default, heightfield data and base image data are cached.
@@ -540,7 +603,7 @@ namespace dtTerrain
          {
             LOG_ERROR("Error unloading terrain tile. (SaveToCache): " + ex.What());
          }
-         
+
          //Second, inform the terrain reader that a tile is being unloaded.
          try
          {
@@ -550,7 +613,7 @@ namespace dtTerrain
          {
             LOG_ERROR("Error unloading terrain tile. (TerrainReader): " + ex.What());
          }         
-         
+
          //Third, we pass the terrain tile to each of the decorator
          //layers so they may cache any data relating to the tile.
          TerrainLayerMap::iterator layerItor;
@@ -567,7 +630,7 @@ namespace dtTerrain
                   + "):  " + ex.What());
             }  
          }       
-         
+
          //Finally, we tell the terrain renderer to unload the tile.  This gives the
          //renderer a chance to save off any data it does not want to pregenerate
          //every time a tile is loaded.
@@ -579,7 +642,7 @@ namespace dtTerrain
          {
             LOG_ERROR("Error unloading terrain tile. (TerrainRenderer): " + ex.What());
          }
-      
+
          //Finally, we're done.
          mTilesToUnloadQ.pop();         
       }
@@ -590,7 +653,7 @@ namespace dtTerrain
    {
       if (mDataReader != NULL)
          mDataReader->mParentTerrain = NULL;
-         
+
       mDataReader = reader;
       if (mDataReader != NULL)
          mDataReader->mParentTerrain = this;
@@ -601,32 +664,32 @@ namespace dtTerrain
    {
       if (mDataRenderer != NULL)
          mDataRenderer->mParentTerrain = NULL;
-         
+
       mDataRenderer = renderer;
-            
+
       //Now we need to initialize the renderer.  Once it has been initialized
       //we can add its scene graph node.
       if (mDataRenderer != NULL)
       {
          mDataRenderer->mParentTerrain = this;
          GetMatrixNode()->addChild(mDataRenderer->GetRootDrawable());
-         
+
          //If we have a valid renderer that means we should enable the
          //cull callback which queues the visible tiles to be rendered.
          GetMatrixNode()->setCullCallback(new TerrainCullCallback(this));
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::AddDecorationLayer(TerrainDecorationLayer *newLayer)
    {
       if (newLayer == NULL)
          EXCEPT(TerrainException::INVALID_DECORATION_LAYER,
-            "Cannot add NULL decoration layer.");
-      
+         "Cannot add NULL decoration layer.");
+
       //First make sure we have a unique name for the new layer.      
       TerrainLayerMap::iterator itor = mDecorationLayers.find(newLayer->GetName());
-      
+
       if (itor != mDecorationLayers.end())
       {
          static int layerCount = 0;
@@ -637,36 +700,36 @@ namespace dtTerrain
          LOG_WARNING("New decoration layer name was not unique. OldName: " +
             oldName + " NewName: " + newLayer->GetName());
       }
-      
+
       //Finally add the new layer to our list and to the terrain itself.
       newLayer->mParentTerrain = this;
       mDecorationLayers.insert(std::make_pair(newLayer->GetName(),newLayer));      
       if (newLayer->IsVisible())
          GetMatrixNode()->addChild(newLayer->GetOSGNode());           
    }         
-     
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::RemoveDecorationLayer(TerrainDecorationLayer *toRemove)
    {
       TerrainLayerMap::iterator itor = mDecorationLayers.begin();
-      
+
       while (itor != mDecorationLayers.end())
       {
          if (itor->second.get() == toRemove)
             break;
          ++itor;
       }
-      
+
       toRemove->mParentTerrain = NULL;
       GetMatrixNode()->removeChild(toRemove->GetOSGNode());
       mDecorationLayers.erase(itor);
    }
-         
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::RemoveDecorationLayer(const std::string &name)
    {
       TerrainLayerMap::iterator itor = mDecorationLayers.find(name);
-      
+
       if (itor != mDecorationLayers.end())
       {
          itor->second->mParentTerrain = NULL;
@@ -674,23 +737,23 @@ namespace dtTerrain
          mDecorationLayers.erase(itor);
       }
    }
-         
+
    //////////////////////////////////////////////////////////////////////////
    TerrainDecorationLayer *Terrain::GetDecorationLayer(const std::string &name)
    {
       TerrainLayerMap::iterator itor = mDecorationLayers.find(name);
-      
+
       if (itor != mDecorationLayers.end())
          return itor->second.get();
       else 
          return NULL;
    }
-         
+
    //////////////////////////////////////////////////////////////////////////
    const TerrainDecorationLayer *Terrain::GetDecorationLayer(const std::string &name) const
    {
       TerrainLayerMap::const_iterator itor = mDecorationLayers.find(name);
-      
+
       if (itor != mDecorationLayers.end())
          return itor->second.get();
       else
@@ -701,16 +764,16 @@ namespace dtTerrain
    void Terrain::ClearDecorationLayers()
    {
       TerrainLayerMap::iterator itor;
-      
+
       for (itor=mDecorationLayers.begin(); itor!=mDecorationLayers.end(); ++itor)
       {
          itor->second->mParentTerrain = NULL;
          GetMatrixNode()->removeChild(itor->second->GetOSGNode());
       }
-      
+
       mDecorationLayers.clear();         
    }
-   
+
    //////////////////////////////////////////////////////////////////////////   
    void Terrain::HideDecorationLayer(const std::string &name)
    {
@@ -721,17 +784,17 @@ namespace dtTerrain
          GetMatrixNode()->removeChild(layer->GetOSGNode());
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::HideDecorationLayer(TerrainDecorationLayer *toHide)
    {
       if (toHide == NULL)
          return;
-      
+
       toHide->mIsVisible = false;
       GetMatrixNode()->removeChild(toHide->GetOSGNode());
    }
-   
+
    //////////////////////////////////////////////////////////////////////////    
    void Terrain::ShowDecorationLayer(const std::string &name)
    {
@@ -743,27 +806,27 @@ namespace dtTerrain
             GetMatrixNode()->addChild(layer->GetOSGNode());
       }
    }
-   
+
    //////////////////////////////////////////////////////////////////////////
    void Terrain::ShowDecorationLayer(TerrainDecorationLayer *toShow)
    {
       if (toShow == NULL)
          return;
-         
+
       toShow->mIsVisible = true;
       if (!GetMatrixNode()->containsNode(toShow->GetOSGNode()))
          GetMatrixNode()->addChild(toShow->GetOSGNode());
    }
-      
+
    //////////////////////////////////////////////////////////////////////////   
    void Terrain::GetDecorationLayers(std::vector<dtCore::RefPtr<TerrainDecorationLayer> > &layers)
    {
       TerrainLayerMap::iterator itor = mDecorationLayers.begin();
-      
+
       //Make sure we clear out any data that was passed to this method.
       if (!layers.empty())
          layers.clear();
-         
+
       layers.reserve(mDecorationLayers.size());
       while (itor != mDecorationLayers.end())
       {

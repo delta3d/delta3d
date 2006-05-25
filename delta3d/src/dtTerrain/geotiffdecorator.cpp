@@ -203,10 +203,10 @@ namespace dtTerrain
                      goodcolor = imgcolor;
                }
             }
-           
-            *(ptr++) = (unsigned char)osg::clampTo(color[0]*255.0f, 0.0f, 255.0f);  
-            *(ptr++) = (unsigned char)osg::clampTo(color[1]*255.0f, 0.0f, 255.0f);  
-            *(ptr++) = (unsigned char)osg::clampTo(color[2]*255.0f, 0.0f, 255.0f);  
+
+            *(ptr++) = (unsigned char)osg::clampTo(imgcolor[0]*255.0f, 0.0f, 255.0f);  
+            *(ptr++) = (unsigned char)osg::clampTo(imgcolor[1]*255.0f, 0.0f, 255.0f);  
+            *(ptr++) = (unsigned char)osg::clampTo(imgcolor[2]*255.0f, 0.0f, 255.0f);  
 
             currLon += lonStep;            
          }

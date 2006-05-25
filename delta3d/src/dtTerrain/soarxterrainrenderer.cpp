@@ -110,11 +110,8 @@ namespace dtTerrain
       DrawableEntry newEntry;                 
       int baseSize = tile.GetHeightField()->GetNumColumns() - 1;
       
-      //This is probably not the correct method to calculate horizonal
-      //resolution.. it works for now, but probably should be looked into
-      //further.
       double gridSpacing = GeoCoordinates::EQUATORIAL_RADIUS *
-         osg::DegreesToRadians(1.0f);
+         osg::DegreesToRadians(1.0);
       
       double horizRes;
       int baseBits;
@@ -173,37 +170,46 @@ namespace dtTerrain
    {
       GeoCoordinates coords;
       int lat,lon;
-      
+
       coords.SetCartesianPoint(osg::Vec3(x,y,0));
-      lat = (int)ceil(osg::absolute(coords.GetLatitude()));
-      lon = (int)ceil(osg::absolute(coords.GetLongitude()));
+
       if (coords.GetLatitude() < 0.0)
-         lat = -lat;
+         lat = -1 * (int)ceil(osg::absolute(coords.GetLatitude()));
+      else
+         lat = (int) (osg::absolute(coords.GetLatitude()));
+
       if (coords.GetLongitude() < 0.0)
-         lon = -lon;
-      
+         lon = -1 * (int)ceil(osg::absolute(coords.GetLongitude()));
+      else
+         lon = (int) (osg::absolute(coords.GetLongitude()));
+
       DrawableMap::iterator itor;
       for (itor=mDrawables.begin(); itor!=mDrawables.end(); ++itor)
       {
-         int drawableLat = (int)ceil(osg::absolute(itor->first->GetGeoCoordinates().GetLatitude()));
-         int drawableLon = (int)ceil(osg::absolute(itor->first->GetGeoCoordinates().GetLongitude()));
-         
-         if (itor->first->GetGeoCoordinates().GetLatitude() < 0.0)
-            drawableLat = -drawableLat;
-         if (itor->first->GetGeoCoordinates().GetLongitude() < 0.0)
-            drawableLon = -drawableLon;
-         
+         int drawableLat, drawableLon;
+         double tile_baseLat = itor->first->GetGeoCoordinates().GetLatitude();
+         double tile_baseLong = itor->first->GetGeoCoordinates().GetLongitude();
+         if (tile_baseLat < 0.0)
+            drawableLat = -1 * (int)ceil(osg::absolute(tile_baseLat));
+         else
+            drawableLat = (int) (osg::absolute(tile_baseLat));
+
+         if (tile_baseLong < 0.0)
+            drawableLon = -1 * (int)ceil(osg::absolute(tile_baseLong));
+         else
+            drawableLon = (int) (osg::absolute(tile_baseLong));
+
          if (drawableLat == lat && drawableLon == lon)
          {
             GeoCoordinates testCoords;
             testCoords.SetLatitude(lat);
             testCoords.SetLongitude(lon);
-            
+
             osg::Vec3 pos = testCoords.GetCartesianPoint();        
             return itor->second.drawable->GetHeight(x-pos.x(),y-pos.y());
          }
       }
-      
+
       return 0.0f;
    }
          
@@ -305,11 +311,12 @@ namespace dtTerrain
             osg::Texture2D::LINEAR);
          baseColorTexture->setWrap(osg::Texture::WRAP_S,osg::Texture::CLAMP_TO_EDGE);
          baseColorTexture->setWrap(osg::Texture::WRAP_T,osg::Texture::CLAMP_TO_EDGE);
-         ss.setTextureAttributeAndModes(2,baseColorTexture,osg::StateAttribute::ON);
       
          uniform = new osg::Uniform(osg::Uniform::SAMPLER_2D,"baseColor");
          uniform->set(2);
          ss.addUniform(uniform);
+
+         ss.setTextureAttributeAndModes(2,baseColorTexture,osg::StateAttribute::ON);
       }
       
       //Setup our basic render state used for all tiles.
@@ -647,7 +654,6 @@ namespace dtTerrain
          }
       }     
    }
-   
 
 
    void SoarXTerrainRenderer::SetEnableFog(bool pEnableFog)
@@ -660,5 +666,5 @@ namespace dtTerrain
       }
 
    }
-
+   
 }

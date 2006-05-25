@@ -57,9 +57,8 @@ namespace dtTerrain
       {      
          for (unsigned int j=0; j<newHF->getNumColumns(); j++)
          {
-            float value = osg::clampTo(newHF->getHeight(j,i),(float)SHRT_MIN,
-               (float)SHRT_MAX);
-            result->SetHeight(j,i,(short)value);
+            float value = osg::clampTo(newHF->getHeight(j,i),(float)SHRT_MIN, (float)SHRT_MAX);
+            result->SetHeight(j, newHF->getNumRows()-i-1, (short)value);
          }
       }
       
