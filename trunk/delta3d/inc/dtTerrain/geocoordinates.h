@@ -21,7 +21,7 @@
 #ifndef DELTA_GEOCOORDINATES
 #define DELTA_GEOCOORDINATES
 
-#include <osg/Vec3d>
+#include <osg/Vec3>
 #include "dtUtil/enumeration.h"
 #include "dtTerrain/terrain_export.h"
 
@@ -200,7 +200,7 @@ namespace dtTerrain
           * @note Internally, this origin in cartesian space is also converted
           *    to latitude, longitude coordinates.
           */
-         void SetCartesianPoint(const osg::Vec3d &newLocation);
+         void SetCartesianPoint(const osg::Vec3 &newLocation);
          
          /**
           * Gets this coordinate's location in cartesian space.
@@ -209,12 +209,13 @@ namespace dtTerrain
           *    methods, the origin in cartesian space is calculated and cached
           *    as required.
           */
-         const osg::Vec3d &GetCartesianPoint();
-         
+         const osg::Vec3 &GetCartesianPoint();
+         void GetCartesianPoint( osg::Vec3& point ); 
+        
       protected:
       
          ///Cached version of this coordinate sytems's origin in cartesian space.
-         osg::Vec3d mCartesianPoint;
+         osg::Vec3 mCartesianPoint;
          
          ///Latitude origin in decimal degrees.
          double mLatitude;
