@@ -30,7 +30,7 @@ void initEnvironmentBindings()
    void (Environment::*GetRefLatLong1)( osg::Vec2& ) const = &Environment::GetRefLatLong;
 
    void (Environment::*GetSunAzEl1)( float&, float& ) const = &Environment::GetSunAzEl;
-   void (Environment::*GetDateTime1)( int&, int&, int&, int&, int&, int& ) = &Environment::GetDateTime;
+   void (Environment::*GetDateTime1)( int&, int&, int&, int&, int&, int& ) const = &Environment::GetDateTime;
 
    scope Environment_scope = class_<Environment, bases<DeltaDrawable>, dtCore::RefPtr<Environment>, boost::noncopyable>("Environment", init<optional<const std::string&> >())
       .def("GetInstanceCount", &Environment::GetInstanceCount)
