@@ -91,11 +91,11 @@ namespace dtCore
       /// @param mouseListener the listener to remove
       void RemoveMouseListener(MouseListener* mouseListener);
 
-      /// Producer callback for mouse scroll events.
+      /// For injecting mouse scroll events.
       /// @param sm the scroll type
       virtual bool MouseScroll( Producer::KeyboardMouseCallback::ScrollingMotion sm );
 
-      /// Producer callback for mouse motion events.
+      /// For injecting mouse drag events.
       /// @param x the x coordinate
       /// @param y the y coordinate
       virtual bool MouseMotion( float x, float y);

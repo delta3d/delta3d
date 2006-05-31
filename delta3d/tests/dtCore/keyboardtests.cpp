@@ -20,6 +20,7 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/generickeyboardlistener.h>
 
 namespace dtTest
 {
@@ -28,6 +29,7 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE( KeyboardTests );
       CPPUNIT_TEST( TestObservers );
+      CPPUNIT_TEST( TestGenericObserver );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -36,6 +38,9 @@ namespace dtTest
 
          /// tests handling and order of handling of multiple listeners for key presses and releases.
          void TestObservers();
+
+         /// tests dtCore::GenericKeyboardListener
+         void TestGenericObserver();
 
       private:
    };
@@ -74,6 +79,41 @@ namespace dtTest
    private:
       Producer::KeyCharacter mKey;
       bool mHit;
+   };
+
+   // a quick class to find out if we have hit the callbacks of an arbitrary class
+   class HasKeyboardCallbacks
+   {
+   public:
+      HasKeyboardCallbacks(): mPressedHit(false), mReleasedHit(false), mTypedHit(false) {}
+      ~HasKeyboardCallbacks() {}
+
+      bool HitPressed(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      {
+         mPressedHit=true;
+         return true;
+      }
+
+      bool HitReleased(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      {
+         mReleasedHit=true;
+         return true;
+      }
+
+      bool HitTyped(const dtCore::Keyboard* kb, Producer::KeyboardKey key, Producer::KeyCharacter kc)
+      {
+         mTypedHit=true;
+         return true;
+      }
+
+      bool WasPressedHit() const { return mPressedHit; }
+      bool WasReleasedHit() const { return mReleasedHit; }
+      bool WasTypedHit() const { return mTypedHit; }
+
+      void ResetAllHits() { mPressedHit=false; mReleasedHit=false; mTypedHit=false; }
+
+   private:
+      bool mPressedHit, mReleasedHit, mTypedHit;
    };
 }
 
@@ -159,7 +199,7 @@ void KeyboardTests::TestObservers()
    dtCore::RefPtr<KeyCharObserver> obsSL(new KeyCharObserver(Producer::KeyChar_Scroll_Lock));
    CPPUNIT_ASSERT_EQUAL( Producer::KeyChar_Scroll_Lock, obsSL->GetKeyChar() );  // better be Scroll Lock
    kb->AddKeyboardListener( obsSL.get() );
-   CPPUNIT_ASSERT_EQUAL( 4 , (int)kb->GetListeners().size() );  // better be 3
+   CPPUNIT_ASSERT_EQUAL( 4 , (int)kb->GetListeners().size() );  // better be 4
 
    // test press
    obsEsc->ResetHit();
@@ -185,3 +225,60 @@ void KeyboardTests::TestObservers()
    CPPUNIT_ASSERT( kb->KeyUp( obsSL->GetKeyChar() ) );      // obsSL should handle it
 }
 
+void KeyboardTests::TestGenericObserver()
+{
+   // make an instance to test
+   dtCore::RefPtr<dtCore::GenericKeyboardListener> kgen(new dtCore::GenericKeyboardListener());
+
+   // check that the default state will not use the callbacks
+   CPPUNIT_ASSERT( !kgen->IsPressedCallbackEnabled() );      // better not be enabled
+   CPPUNIT_ASSERT( !kgen->IsReleasedCallbackEnabled() );     // better not be enabled
+   CPPUNIT_ASSERT( !kgen->IsTypedCallbackEnabled() );        // better not be enabled
+
+   // hook up callbacks
+   HasKeyboardCallbacks hcb;
+   kgen->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(&hcb,&HasKeyboardCallbacks::HitPressed));
+   kgen->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(&hcb,&HasKeyboardCallbacks::HitReleased));
+   kgen->SetTypedCallback(dtCore::GenericKeyboardListener::CallbackType(&hcb,&HasKeyboardCallbacks::HitTyped));
+
+   // check to see if the callbacks will be used now
+   CPPUNIT_ASSERT( kgen->IsPressedCallbackEnabled() );      // better be enabled
+   CPPUNIT_ASSERT( kgen->IsReleasedCallbackEnabled() );     // better be enabled
+   CPPUNIT_ASSERT( kgen->IsTypedCallbackEnabled() );        // better be enabled
+
+   // test if the callbacks get hit
+   dtCore::RefPtr<dtCore::Keyboard> kb(new dtCore::Keyboard());
+   kb->AddKeyboardListener( kgen.get() );
+   CPPUNIT_ASSERT( !hcb.WasPressedHit() );  // better not be hit
+   CPPUNIT_ASSERT( kb->KeyDown( Producer::KeyChar_0 ) );  // hcb is coded to handle it.
+   CPPUNIT_ASSERT( hcb.WasPressedHit() );  // better be hit
+
+   CPPUNIT_ASSERT( !hcb.WasReleasedHit() );  // better not be hit
+   CPPUNIT_ASSERT( kb->KeyUp( Producer::KeyChar_0 ) );  // hcb is coded to handle it.
+   CPPUNIT_ASSERT( hcb.WasReleasedHit() );  // better be hit
+
+   ///\todo WHY DO WE HAVE A CALLBACK WHEN WE DON'T SUPPORT IT?  take off the '!'
+   CPPUNIT_ASSERT( !hcb.WasTypedHit() );  // better be hit
+
+   // disable the callbacks
+   kgen->DisablePressedCallback();
+   kgen->DisableReleasedCallback();
+   kgen->DisableTypedCallback();
+
+   // check to see the disable worked
+   CPPUNIT_ASSERT( !kgen->IsPressedCallbackEnabled() );      // better not be enabled
+   CPPUNIT_ASSERT( !kgen->IsReleasedCallbackEnabled() );     // better not be enabled
+   CPPUNIT_ASSERT( !kgen->IsTypedCallbackEnabled() );        // better not be enabled
+
+   // check to see if the callbacks get hit when callbacks are disabled
+   hcb.ResetAllHits();
+   CPPUNIT_ASSERT( !hcb.WasPressedHit() );  // better not be hit
+   CPPUNIT_ASSERT( !kb->KeyDown( Producer::KeyChar_0 ) );  // kgen is coded to handle it when disabled.
+   CPPUNIT_ASSERT( !hcb.WasPressedHit() );  // better not be hit
+
+   CPPUNIT_ASSERT( !hcb.WasReleasedHit() );  // better not be hit
+   CPPUNIT_ASSERT( !kb->KeyUp( Producer::KeyChar_0 ) );  // kgen is coded to not handle it when disabled.
+   CPPUNIT_ASSERT( !hcb.WasReleasedHit() );  // better not be hit
+
+   CPPUNIT_ASSERT( !hcb.WasTypedHit() );  // better not be hit
+}

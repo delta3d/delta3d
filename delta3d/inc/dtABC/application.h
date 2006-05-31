@@ -28,6 +28,10 @@
 #include <xercesc/sax2/ContentHandler.hpp>  // for a base class
 #include <xercesc/sax2/Attributes.hpp>      // for a parameter
 
+namespace dtCore
+{
+   class GenericKeyboardListener;
+}
 
 namespace dtABC
 {
@@ -63,8 +67,19 @@ namespace dtABC
       ///Start the Application
       virtual void Run();
 
-      ///Generate a default configuration file
+      /// Generate a default configuration file.
+      /// This method writes out all the default attributes from the internal Application
+      /// members and writes them out to a .xml file ("config.xml").
       static std::string GenerateDefaultConfigFile();
+
+      /// Called when a key is pressed.
+      /// @param keyboard the source of the event
+      /// @param key the key pressed
+      /// @param character the corresponding character
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+
+      const dtCore::GenericKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
+      dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
    protected:
       ///override for preframe 
@@ -110,9 +125,13 @@ namespace dtABC
       friend class AppXMLContentHandler;
 
       /// Read the supplied config file, called from the constructor
+      /// Read an existing data file and setup the internal class
+      /// members with attributes from the data file.
       bool ParseConfigFile(const std::string& file);
 
       dtCore::DeltaWin::Resolution mOriginalRes;
+
+      dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
    };
 
 }

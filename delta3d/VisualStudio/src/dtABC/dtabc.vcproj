@@ -128,12 +128,6 @@
 				RelativePath="..\..\..\src\dtABC\application.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtABC\applicationkeyboardlistener.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\src\dtABC\applicationmouselistener.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\src\dtABC\autotrigger.cpp">
 			</File>
 			<File
@@ -176,12 +170,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\application.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtABC\applicationkeyboardlistener.h">
-			</File>
-			<File
-				RelativePath="..\..\..\inc\dtABC\applicationmouselistener.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\autotrigger.h">

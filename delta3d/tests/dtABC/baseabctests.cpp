@@ -21,8 +21,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/keyboard.h>
 #include <dtABC/application.h>
-#include <dtABC/applicationkeyboardlistener.h>
-#include <dtABC/applicationmouselistener.h>
 #include <dtCore/refptr.h>
 
 namespace dtTest
@@ -105,16 +103,6 @@ namespace dtTest
       Producer::KeyboardKey mKey;
       Producer::KeyCharacter mChar;
    };
-
-   /// a quick subclass for tests
-   class UserKBL : public dtABC::ApplicationKeyboardListener
-   {
-   };
-
-   /// a quick subclass for tests
-   class UserMSL : public dtABC::ApplicationMouseListener
-   {
-   };
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION( dtTest::BaseABCTests );
@@ -126,16 +114,5 @@ void BaseABCTests::TestInput()
    // it is really weird that an app must be used to test the BaseABC function,
    // but this is how it must be when Application allocates BaseABC's members, like mDeltaWin.
    dtCore::RefPtr<TestApp2> app(new TestApp2(Producer::Key_0,Producer::KeyChar_0));
-
-   dtCore::RefPtr<dtABC::ApplicationKeyboardListener> defaultkbl = app->GetApplicationKeyboardListener();
-   dtCore::RefPtr<dtABC::ApplicationMouseListener> defaultmsl = app->GetApplicationMouseListener();
-
-   app->SetApplicationKeyboardListener( new UserKBL() );
-   app->SetApplicationMouseListener( new UserMSL() );
-
-   dtCore::RefPtr<dtABC::ApplicationKeyboardListener> userkbl = app->GetApplicationKeyboardListener();
-   dtCore::RefPtr<dtABC::ApplicationMouseListener> usermsl = app->GetApplicationMouseListener();
-
-   CPPUNIT_ASSERT(defaultkbl != userkbl);  // should NOT be the same pointer
-   CPPUNIT_ASSERT(defaultmsl != usermsl);  // should NOT be the same pointer
+   CPPUNIT_ASSERT( app->GetKeyboardListener() != NULL );
 }

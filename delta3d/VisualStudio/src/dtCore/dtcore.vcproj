@@ -194,6 +194,12 @@
 				RelativePath="..\..\..\src\dtCore\fpsmotionmodel.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtCore\generickeyboardlistener.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtCore\genericmouselistener.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtCore\globals.cpp">
 			</File>
 			<File
@@ -385,6 +391,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\fpsmotionmodel.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\generickeyboardlistener.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtCore\genericmouselistener.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtCore\globals.h">

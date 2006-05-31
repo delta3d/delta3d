@@ -1,14 +1,8 @@
 #include <dtABC/baseabc.h>
-
-#include <dtABC/applicationmouselistener.h>        // for member
-#include <dtABC/applicationkeyboardlistener.h>     // for member
-
 #include <dtDAL/map.h>
 
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
-#include <dtABC/applicationmouselistener.h>        // for member
-#include <dtABC/applicationkeyboardlistener.h>     // for member
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
@@ -31,36 +25,21 @@ BaseABC::BaseABC( const std::string& name /*= "BaseABC"*/ ) :  Base(name),
    mCamera(0),
    mScene(0),
    mKeyboard(0),
-   mMouse(0),
-   mKeyboardListener(new ApplicationKeyboardListener()),
-   mMouseListener(new ApplicationMouseListener())
+   mMouse(0)
 {
    RegisterInstance(this);
-
-   mKeyboardListener->SetApplication(this);
-   mMouseListener->SetApplication(this);
 
    System*  sys   = System::Instance();
    assert( sys );
    AddSender( sys );
 }
 
-
-
-/**
- * Destructors
- */
 BaseABC::~BaseABC()
 {
    DeregisterInstance(this);
    RemoveSender( System::Instance() );
 }
 
-
-
-/**
- * Configure the system and messages.
- */
 void BaseABC::Config()
 {
    System*  sys   = System::Instance();
@@ -69,48 +48,23 @@ void BaseABC::Config()
    sys->Config();
 }
 
-
-
-/**
- * Stop the system render loop.
- */
 void BaseABC::Quit()
 {
    System::Instance()->Stop();
 }
 
-
-
-/**
- * Add a visual object to the Scene.
- *
- * @param obj the object to add to the scene
- */
 void BaseABC::AddDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    mScene->AddDrawable( obj );
 }
 
-
-/**
- * Remove a visual object from the Scene.
- *
- * @param obj the object to remove from the scene
- */
 void BaseABC::RemoveDrawable( DeltaDrawable* obj )
 {
    assert( obj );
    mScene->RemoveDrawable( obj );
 }
 
-
-/** Protected methods */
-/**
- * Process the render loop messages.
- *
- * @param data the render event message
- */
 void BaseABC::OnMessage( MessageData* data )
 {
    if( data->message == "preframe" )
@@ -127,52 +81,6 @@ void BaseABC::OnMessage( MessageData* data )
    }
 }
 
-
-
-/**
- * Process a keyboard key-press messages.
- *
- * @param keyboard pointer to the input device
- * @param key the producer key-code
- * @param character producer character
- */
-bool BaseABC::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
-{
-   switch (key)
-   {
-   case Producer::Key_Escape:
-      {
-         Quit();
-         return true;
-      } break;
-   default:
-      {
-         return false;
-      } break;
-   }
-
-   return false;
-}
-
-
-
-/**
- * Process a keyboard key-release messages.
- *
- * @param keyboard pointer to the input device
- * @param key the producer key-code
- * @param character producer character
- */
-bool BaseABC::KeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
-{
-   return false;
-}
-
-
-
-/**
- * Create the basic instances
- */
 void BaseABC::CreateInstances()
 {
    // create the scene
@@ -226,22 +134,4 @@ dtDAL::Map& BaseABC::LoadMap( const std::string& name, bool addBillBoards)
    dtDAL::Map& map = dtDAL::Project::GetInstance().GetMap(name);
    LoadMap( map, addBillBoards );
    return map;
-}
-
-void BaseABC::SetApplicationKeyboardListener(ApplicationKeyboardListener* appkl)
-{
-   dtCore::Keyboard* kb = mWindow->GetKeyboard();
-   kb->RemoveKeyboardListener( mKeyboardListener.get() );
-
-   mKeyboardListener = appkl;
-   kb->AddKeyboardListener( mKeyboardListener.get() );
-}
-
-void BaseABC::SetApplicationMouseListener(ApplicationMouseListener* appml)
-{
-   dtCore::Mouse* ms = mWindow->GetMouse();
-   ms->RemoveMouseListener( mMouseListener.get() );
-
-   mMouseListener = appml;
-   ms->AddMouseListener( mMouseListener.get() );
 }

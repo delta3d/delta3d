@@ -45,15 +45,13 @@ namespace dtCore
 
 namespace dtABC
 {
-   class ApplicationMouseListener;
-   class ApplicationKeyboardListener;
 
    class DT_ABC_EXPORT BaseABC : public dtCore::Base
    {
       DECLARE_MANAGEMENT_LAYER(BaseABC)
 
    public:
-                     BaseABC( const std::string& name = "BaseABC" );
+      BaseABC( const std::string& name = "BaseABC" );
    protected:
       virtual        ~BaseABC();
 
@@ -69,7 +67,7 @@ namespace dtABC
 
       ///Remove a visual object from the Scene
       virtual  void  RemoveDrawable( dtCore::DeltaDrawable* obj );
-      
+
       ///Get the default Application Window
       dtCore::DeltaWin*    GetWindow()    { return mWindow.get(); }
 
@@ -82,58 +80,27 @@ namespace dtABC
       ///Get the default Application Keyboard
       dtCore::Keyboard*       GetKeyboard()  { return mKeyboard.get(); }
 
-      void SetApplicationKeyboardListener(ApplicationKeyboardListener* appkl);
-      const ApplicationKeyboardListener* GetApplicationKeyboardListener() const { return mKeyboardListener.get(); }
-      ApplicationKeyboardListener* GetApplicationKeyboardListener() { return mKeyboardListener.get(); }
-
       ///Get the default Application Mouse
-      dtCore::Mouse*          GetMouse()     { return mMouse.get(); }
+      dtCore::Mouse*          GetMouse()       { return mMouse.get(); }
+      const dtCore::Mouse*    GetMouse() const { return mMouse.get(); }
 
-      void SetApplicationMouseListener(ApplicationMouseListener* appml);
-      const ApplicationMouseListener* GetApplicationMouseListener() const { return mMouseListener.get(); }
-      ApplicationMouseListener* GetApplicationMouseListener() { return mMouseListener.get(); }
-
-      /**
-       * Loads a map by name into an application.  If the map is already opened, the currently
-       * loaded map will be reused. If there is a Camera contained within your Map, the default
-       * Camera in BaseABC will be disabled.
-       * @param name The name of the map to load.
-       * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
-       * @return the map that was loaded into the scene.
-       * @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
-       * @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-       */
+      /// Loads a map by name into an application.  If the map is already opened, the currently
+      /// loaded map will be reused. If there is a Camera contained within your Map, the default
+      /// Camera in BaseABC will be disabled.
+      /// @param name The name of the map to load.
+      /// @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+      /// @return the map that was loaded into the scene.
+      /// @throws ExceptionEnum::MapLoadParsingError if an error occurs reading the map file.
+      /// @throws ExceptionEnum::ProjectFileNotFound if the map does not exist.
+      /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
       dtDAL::Map& LoadMap( const std::string& name, bool addBillBoards = false );
-      
-      /**
-       * Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
-       * Camera in BaseABC will be disabled.
-       * @param map The map to load into the scene
-       * @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
-       * @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
-       */
+
+      /// Loads a map into the scene held by BaseABC. If there is a Camera contained within your Map, the default
+      /// Camera in BaseABC will be disabled.
+      /// @param map The map to load into the scene
+      /// @param addBillBoards pass true to add the billboards for any proxies that have the drawmode set to add the billboards.
+      /// @throws ExceptionEnum::ProjectInvalidContext if the context is not set.
       void LoadMap( dtDAL::Map& map, bool addBillBoards = false );
-
-      /**
-       * KeyboardListener override
-       * Called when a key is pressed.
-       *
-       * @param keyboard the source of the event
-       * @param key the key pressed
-       * @param character the corresponding character
-       */
-      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
-
-      /**
-       * KeyboardListener override
-       * Called when a key is released.
-       *
-       * @param keyboard the source of the event
-       * @param key the key pressed
-       * @param character the corresponding character
-       */
-      virtual bool KeyReleased(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
    protected:
       ///Override for preframe
@@ -145,16 +112,13 @@ namespace dtABC
       ///Override for postframe
       virtual  void  PostFrame( const double deltaFrameTime )  = 0L;
 
-      /**
-       * Base override to receive messages.
-       * This method should be called from derived classes
-       *
-       * @param data the message to receive
-       */
+      /// Base override to receive messages.
+      /// This method should be called from derived classes
+      /// @param data the message to receive
       virtual void OnMessage( MessageData *data );
 
    protected:
-      ///Create basic instances
+      ///Create the basic instances
       virtual void CreateInstances();
 
    protected:
@@ -164,14 +128,11 @@ namespace dtABC
       dtCore::RefPtr<dtCore::Keyboard>         mKeyboard; ///<built-in Keyboard
       dtCore::RefPtr<dtCore::Mouse>            mMouse;  ///<built-in Mouse
 
-      dtCore::RefPtr<ApplicationKeyboardListener> mKeyboardListener;
-      dtCore::RefPtr<ApplicationMouseListener> mMouseListener;
-
    private:
-      void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
-      void HandleKeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
-      void KeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
-      void HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
+      void KeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character); ///< private & unimplemented by design.
+      void HandleKeyPressed(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character); ///< private & unimplemented by design.
+      void KeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character); ///< private & unimplemented by design.
+      void HandleKeyReleased(dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character); ///< private & unimplemented by design.
    };
 };
 
