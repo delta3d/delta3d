@@ -70,6 +70,8 @@ namespace dtCore
       ///Get a pointer to the System
       static System *Instance();
 
+      static void Destroy();
+
       ///Toggles the running flag to true
       void Start();
 
