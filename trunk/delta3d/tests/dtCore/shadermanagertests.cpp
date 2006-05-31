@@ -21,13 +21,15 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/stringutils.h>
-#include <dtDAL/project.h>
+#include <dtUtil/fileutils.h>
+//#include <dtDAL/project.h>
 #include <dtCore/shadermanager.h>
 #include <dtCore/shader.h>
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtCore/integershaderparameter.h>
 #include <dtCore/floatshaderparameter.h>
 #include <dtCore/globals.h>
+#include <osg/geode>
 
 const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
@@ -79,7 +81,8 @@ void ShaderManagerTests::setUp()
    try
    {
       mShaderMgr = &dtCore::ShaderManager::GetInstance();
-      dtDAL::Project::GetInstance().SetContext(projectContext);
+      //dtDAL::Project::GetInstance().SetContext(projectContext);
+      dtCore::SetDataFilePathList(projectContext);
       mShaderMgr->LoadShaderDefinitions("Shaders/TestShaderDefinitions.xml",false);
 
       dtCore::ShaderGroup *testGroup = mShaderMgr->FindShaderGroup("ParamsGroup");

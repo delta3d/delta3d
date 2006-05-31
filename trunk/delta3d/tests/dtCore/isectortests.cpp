@@ -27,7 +27,7 @@
 #include <dtCore/particlesystem.h>
 #include <dtCore/scene.h>
 #include <dtCore/system.h>
-#include <dtABC/application.h>
+//#include <dtABC/application.h>
 
 class IsectorTests : public CPPUNIT_NS::TestFixture 
 {
@@ -44,9 +44,17 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       void setUp()
       {
          mIsector = new dtCore::Isector();
-         mApp = new dtABC::Application;
-         mApp->Config();
-         mApp->GetWindow()->SetPosition(0, 0, 50, 50);
+         //mApp = new dtABC::Application;
+         //mApp->Config();
+         //mApp->GetWindow()->SetPosition(0, 0, 50, 50);
+         mScene = new dtCore::Scene();
+         mWin = new dtCore::DeltaWin();
+         mWin->SetPosition(0, 0, 50, 50);
+         mCamera = new dtCore::Camera();
+         mCamera->SetScene(mScene.get());
+         mCamera->SetWindow(mWin.get());
+         dtCore::System::Instance()->Config();
+
          dtCore::System::Instance()->SetShutdownOnWindowClose(false);
          dtCore::System::Instance()->Start();
       }
@@ -54,7 +62,12 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
       void tearDown()
       {
          mIsector = NULL;
-         mApp = NULL;
+         //mApp = NULL;
+         mScene = NULL;
+         mCamera->SetScene(NULL);
+         mCamera->SetWindow(NULL);
+         mCamera = NULL;
+         mWin = NULL;
          dtCore::System::Instance()->Stop();
       }
       
@@ -129,8 +142,11 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
          mIsector->SetEndPosition(point2);
          
          dtCore::RefPtr<dtCore::InfiniteTerrain> terrain = new dtCore::InfiniteTerrain();
-         mIsector->SetScene(mApp->GetScene());
-         mApp->GetScene()->AddDrawable(terrain.get());
+         mIsector->SetScene(mScene.get());
+         mScene->AddDrawable(terrain.get() );
+         //mIsector->SetScene(mApp->GetScene());
+         //mApp->GetScene()->AddDrawable(terrain.get());
+
 
          dtCore::System::Instance()->Step();
 
@@ -184,7 +200,11 @@ class IsectorTests : public CPPUNIT_NS::TestFixture
 
    private:
       dtCore::RefPtr<dtCore::Isector> mIsector;
-      dtCore::RefPtr<dtABC::Application> mApp;
+      //dtCore::RefPtr<dtABC::Application> mApp;
+      dtCore::RefPtr<dtCore::Scene> mScene;
+      dtCore::RefPtr<dtCore::Camera> mCamera;
+      dtCore::RefPtr<dtCore::DeltaWin> mWin;
+
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IsectorTests);
