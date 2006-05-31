@@ -9,6 +9,7 @@
 #include <osgFX/Scribe>
 #include <osgDB/WriteFile>
 #include <osgDB/ReaderWriter>
+#include <osgDB/FileNameUtils>
 #include <osg/ColorMask>
 
 #include <dtCore/system.h>
@@ -24,6 +25,8 @@
 #include <dtCore/object.h>
 #include <dtUtil/log.h>
 #include <dtChar/dtchar.h>
+#include <dtDAL/project.h>
+#include <dtDAL/map.h>
 
 #include <cassert>
 
@@ -335,24 +338,51 @@ void Viewer::LoadFile( ViewState* vs )
    // generate default states for this object
    GetDefaultState( vs );
 
-
-   // create a new p51 object
-   dtCore::RefPtr<Object>  fileobj  = new Object;
-
-   // load the graphics file from disk
    bool fileLoaded = false;
-   fileLoaded = fileobj->LoadFile( filename );
    osg::Node*  filenode = 0;
+   dtCore::RefPtr<dtChar::Character> pChar = 0;
+   dtCore::RefPtr<dtCore::Object> fileobj = 0;
 
-   if (!fileLoaded) 
+   const std::string ext = osgDB::getLowerCaseFileExtension(filename);
+   if (ext == "xml")
+   {
+      std::string path = osgDB::getFilePath(filename);
+      path.erase( path.find("/maps"), path.size() );
+      std::string name = osgDB::getStrippedName(filename);
+      dtDAL::Map *theMap = NULL;
+      try
+      {
+         dtDAL::Project::GetInstance().SetContext(path, true);
+         //dtDAL::Project::GetInstance().LoadMapIntoScene(name, *GetScene());
+         theMap = &dtDAL::Project::GetInstance().GetMap(name);
+         fileLoaded = true;
+      }
+      catch (const dtUtil::Exception &e)
+      {   
+         fileLoaded = false;
+         std::string msg;
+         msg = "Problem loading map: " + e.What();
+         DisplayError(msg);
+      }
+
+      filenode = new osg::Group();
+
+      std::vector<osg::ref_ptr<dtDAL::ActorProxy> > container;
+      theMap->GetAllProxies(container);
+      for (std::vector<osg::ref_ptr<dtDAL::ActorProxy> >::iterator i = container.begin();
+            i != container.end(); ++i)
+      {
+         dtDAL::ActorProxy& proxy = **i;
+         filenode->asGroup()->addChild( proxy.GetActor()->GetOSGNode() );
+      }
+
+
+   }
+   else if (ext == "rbody")
    {
       //see if it is a replicant body file
-     dtCore::RefPtr<dtChar::Character> pChar = new dtChar::Character();
+      pChar = new dtChar::Character();
       fileLoaded = pChar->LoadFile(filename);
-
-      if(fileLoaded)
-      {
-         filenode = pChar->GetOSGNode();
 
          /*
             //this code gets a list of animations from rbody
@@ -378,60 +408,75 @@ void Viewer::LoadFile( ViewState* vs )
                std::cout << animationNames.front().c_str();
             }
          }*/
-      }
-      else
+
+      if(fileLoaded)
       {
-         //tell the GUI the file didn't load
-         FileLoaded( false, filename.c_str() );
-         return;
+         filenode = pChar->GetOSGNode();
       }
    }
-   else 
+   else
    {
-      //Tell the GUI the file loaded
-      filenode = fileobj->GetOSGNode();
+      fileobj  = new Object;
+
+     // load the graphics file from disk
+      fileLoaded = fileobj->LoadFile( filename );
+
+      if (fileLoaded)
+      {
+         filenode = fileobj->GetOSGNode();
+      }
+  }
+
+
+   if (fileLoaded)
+   {
+      //notify viewer that the file loaded
+      FileLoaded( true, filename.c_str() );
+   }
+   else
+   {
+      //tell the GUI the file didn't load
+      FileLoaded( false, filename.c_str() );
+      return;
    }
 
-   //notify viewer that the file loaded
-   FileLoaded( true, filename.c_str() );
 
- 
-   assert( filenode );
+   if (filenode != NULL)
+   {
+      // set up the scribe node (turned off) then attach the file object
+      osgFX::Scribe* scribe   = new osgFX::Scribe;
+      assert( scribe );
+      scribe->setName("fileScribe");
 
+      scribe->setEnabled( false );
+      scribe->addChild( filenode );
 
-   // set up the scribe node (turned off) then attach the file object
-   osgFX::Scribe* scribe   = new osgFX::Scribe;
-   assert( scribe );
-   scribe->setName("fileScribe");
+      // set default cam position for this object based on it's bounding sphere
+      osg::BoundingSphere  bs(scribe->getBound());
 
-   scribe->setEnabled( false );
-   scribe->addChild( filenode );
+      osg::Vec3   pos      ( bs.center().x(), bs.center().y() - bs.radius() * MUL_Y, bs.center().z() + bs.radius() * MUL_Z );
+      osg::Vec3   lookat   ( bs.center().x(), bs.center().y(), bs.center().z() );
+      osg::Vec3   up       ( 0.f, 0.f, 1.f );
 
-   // set default cam position for this object based on it's bounding sphere
-   osg::BoundingSphere  bs(scribe->getBound());
+      Transform   cam;
+      cam.SetLookAt( pos, lookat, up );
 
-   osg::Vec3   pos      ( bs.center().x(), bs.center().y() - bs.radius() * MUL_Y, bs.center().z() + bs.radius() * MUL_Z );
-   osg::Vec3   lookat   ( bs.center().x(), bs.center().y(), bs.center().z() );
-   osg::Vec3   up       ( 0.f, 0.f, 1.f );
+      float dist(( lookat - pos ).length());
 
-   Transform   cam;
-   cam.SetLookAt( pos, lookat, up );
-    
-   float dist(( lookat - pos ).length());
+      vs->SetCamPosition( cam, true );
+      vs->SetCamPosition( cam, false );
+      vs->SetCamOrbitDist( dist, true );
+      vs->SetCamOrbitDist( dist, false );
 
-   vs->SetCamPosition( cam, true );
-   vs->SetCamPosition( cam, false );
-   vs->SetCamOrbitDist( dist, true );
-   vs->SetCamOrbitDist( dist, false );
+      // turn off node visibility
+      scribe->setNodeMask( NODEMASK_OFF );
 
-   // turn off node visibility
-   scribe->setNodeMask( NODEMASK_OFF );
-   
-   // add the object to the scene
-   osg::Group* scenenode  = GetDisplayObj( FILEOBJS );
-   assert( scenenode );
+      // add the object to the scene
+      osg::Group* scenenode  = GetDisplayObj( FILEOBJS );
+      assert( scenenode );
 
-   scenenode->addChild( scribe );
+      scenenode->addChild( scribe );
+   }
 }
 
 //protected
