@@ -32,6 +32,8 @@
 #include <dtCore/effectmanager.h>
 #include <dtCore/flymotionmodel.h>
 #include <dtCore/fpsmotionmodel.h>
+#include <dtCore/generickeyboardlistener.h>
+#include <dtCore/genericmouselistener.h>
 #include <dtCore/globals.h>
 #include <dtCore/infinitelight.h>
 #include <dtCore/infiniteterrain.h>

@@ -49,6 +49,10 @@ System* System::Instance()
    return mSystem;
 }
 
+void System::Destroy()
+{
+}
+
 void System::SetPause( bool paused )
 {
    //don't send out a message unless it actually changes.

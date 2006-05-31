@@ -40,6 +40,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/keyboard.h>
 #include <sstream>
+#include <dtCore/generickeyboardlistener.h>
 
 
 class TestTerrainApp : public dtABC::Application
@@ -51,7 +52,7 @@ public:
       mTerrainClamp(false),
       mFlyFast(false)
    {
-
+      GetKeyboardListener()->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&TestTerrainApp::KeyReleased));
    }
 
 protected:
@@ -311,21 +312,20 @@ public:
    //////////////////////////////////////////////////////////////////////////
    virtual bool KeyReleased(const dtCore::Keyboard *keyBoard, Producer::KeyboardKey key, Producer::KeyCharacter character)
    {
-      bool verdict(false);
+      bool handled(false);
       switch (key)
       {
       case Producer::Key_F:
          mFlyFast = false;
          mMotionModel->SetMaximumFlySpeed(1200);
-         verdict = true;
+         handled = true;
          break;
 
       default:
-         verdict = dtABC::Application::KeyReleased(keyBoard,key,character);
          break;
       }
 
-      return verdict;
+      return handled;
    }
 
    //////////////////////////////////////////////////////////////////////////

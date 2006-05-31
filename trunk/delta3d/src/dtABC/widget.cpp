@@ -1,15 +1,13 @@
-/** header files */
 #include <cassert>
-#include <iostream> //tests
 #include <dtCore/system.h>
 #include <dtCore/globals.h>
+#include <dtCore/mouse.h>
+#include <dtCore/keyboard.h>
 
 #include <dtABC/widget.h>
-#include <dtABC/applicationkeyboardlistener.h>
-#include <dtABC/applicationmouselistener.h>
 #include <dtCore/deltawin.h>
 #include <dtCore/camera.h>
-#include <dtCore/scene.h>    ///\todo needs to be included because of some issue with BaseABC.
+#include <dtCore/scene.h>    ///<\todo needs to be included because of some issue with BaseABC.
 
 #if !defined(__APPLE__) && !defined(_WIN32) && !defined(WIN32) && !defined(__WIN32__)
 #include "X11/Xlib.h"
@@ -39,9 +37,6 @@ const char* Widget::msgWindowData      = "windata";
 const char* Widget::msgQuit            = "quit";
 
 
-
-/** public methods */
-/** constructor */
 Widget::Widget( const std::string& name /*= "Widget"*/ )
 :  BaseABC(name)
 {
@@ -49,22 +44,11 @@ Widget::Widget( const std::string& name /*= "Widget"*/ )
    CreateInstances();
 }
 
-
-
-/** destructor */
 Widget::~Widget()
 {
    DeregisterInstance( this );
 }
 
-
-
-/**
- * configure the internal components and
- * set system to render in a given window.
- *
- * @param data the window handle and size
- */
 void Widget::Config( const WinData* d /*= NULL*/ )
 {
    System*  sys   = System::Instance();
@@ -97,92 +81,37 @@ void Widget::Config( const WinData* d /*= NULL*/ )
       assert( mWindow.get() );
 
       mKeyboard = mWindow->GetKeyboard();
-      assert( mKeyboard.get() );
-
-      mKeyboard->AddKeyboardListener( this->GetApplicationKeyboardListener() );
-
       mMouse = mWindow->GetMouse();
-      assert( mMouse.get() );
-
-      mMouse->AddMouseListener( this->GetApplicationMouseListener() );
-
       sys->Start();
    }
-
    
    BaseABC::Config();
 }
 
-
-
-/**Quit the application (call's system quit) */
-void
-Widget::Quit( void )
+void Widget::Quit( void )
 {
    BaseABC::Quit();
    SendMessage( msgStopped );
 }
 
-
-
-/**
- * Set the data path to use.
- *
- * @param path to the data directory
- */
-void
-Widget::SetPath( std::string path )
+void Widget::SetPath( std::string path )
 {
    SetDataFilePathList( path );
 }
 
-
-
-/** protected methods */
-/**
- * Called durring the frame cycle steps.
- *
- * @param deltaFrameTime time since last call
- */
-void
-Widget::PreFrame( const double deltaFrameTime )
+void Widget::PreFrame( const double deltaFrameTime )
 {
 }
 
-
-
-/**
- * Called durring the frame cycle steps.
- *
- * @param deltaFrameTime time since last call
- */
-void
-Widget::Frame( const double deltaFrameTime )
+void Widget::Frame( const double deltaFrameTime )
 {
 }
 
-
-
-/**
- * Called durring the frame cycle steps.
- * Process commands from window events.
- *
- * @param deltaFrameTime time since last call
- */
-void
-Widget::PostFrame( const double deltaFrameTime )
+void Widget::PostFrame( const double deltaFrameTime )
 {
 }
 
-
-
-/**
- * Base override to receive messages.
- *
- * @param data the message to receive
- */
-void
-Widget::OnMessage( Base::MessageData* data )
+void Widget::OnMessage( Base::MessageData* data )
 {
    assert( data );
 
@@ -239,14 +168,7 @@ Widget::OnMessage( Base::MessageData* data )
    BaseABC::OnMessage( data );
 }
 
-
-
-/** private methods */
-/**
- * Advance a single frame cycle.
- */
-void
-Widget::Step( void )
+void Widget::Step( void )
 {
    System*  sys   = System::Instance();
    assert( sys );
@@ -255,13 +177,7 @@ Widget::Step( void )
    //SendMessage( msgRedraw );
 }
 
-
-
-/**
- * Handle a window resize event.
- */
-void
-Widget::Resize( const WinRect* r )
+void Widget::Resize( const WinRect* r )
 {
    assert( r );
 
@@ -274,13 +190,6 @@ Widget::Resize( const WinRect* r )
    prs->setWindowRectangle( r->pos_x, r->pos_y, r->width, r->height, false );
 }
 
-
-
-/**
- * Handle mouse events.
- *
- * @param ev event data packet
- */
 void Widget::HandleMouseEvent( const MouseEvent& ev )
 {
    assert( mMouse.get() );
@@ -347,47 +256,26 @@ void Widget::HandleMouseEvent( const MouseEvent& ev )
    }
 }
 
-
-
-/**
- * Handle keyboard events.
- *
- * @param ev event data packet
- */
 void Widget::HandleKeyboardEvent( const KeyboardEvent& ev )
 {
    assert( mKeyboard.get() );
 
    switch( ev.event )
    {
-      case  KeyboardEvent::KEYDOWN:
-         if( IsSpecialKeyboardEvent( ev ) )
-            mKeyboard->KeyDown( Producer::KeyCharacter(ev.key) );
-         else
-            mKeyboard->KeyDown( Producer::KeyCharacter(ev.key) );
-         break;
+   case  KeyboardEvent::KEYDOWN:
+      mKeyboard->KeyDown( Producer::KeyCharacter(ev.key) );
+      break;
 
-      case  KeyboardEvent::KEYUP:
-         if( IsSpecialKeyboardEvent( ev ) )
-            mKeyboard->KeyUp( Producer::KeyCharacter(ev.key) );
-         else
-            mKeyboard->KeyUp( Producer::KeyCharacter(ev.key) );
-         break;
+   case  KeyboardEvent::KEYUP:
+      mKeyboard->KeyUp( Producer::KeyCharacter(ev.key) );
+      break;
 
-      default:
-         break;
+   default:
+      break;
    }
 }
 
-
-
-/**
- * Determin if special keyboard event.
- *
- * @param ev event data packet
- */
-bool
-Widget::IsSpecialKeyboardEvent( const KeyboardEvent& ev )
+bool Widget::IsSpecialKeyboardEvent( const KeyboardEvent& ev )
 {
    switch( ev.key )
    {

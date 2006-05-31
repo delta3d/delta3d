@@ -28,8 +28,9 @@
 #include <dtUtil/exception.h>
 #include <dtCore/camera.h>
 #include <dtABC/application.h>
-#include <dtABC/applicationkeyboardlistener.h>
-#include <dtABC/applicationmouselistener.h>
+#include <dtCore/keyboard.h>
+#include <dtCore/mouse.h>
+#include <dtCore/generickeyboardlistener.h>
 
 namespace dtGame
 {

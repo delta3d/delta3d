@@ -1,6 +1,5 @@
 #include <dtABC/application.h>
-#include <dtABC/applicationkeyboardlistener.h>
-#include <dtABC/applicationmouselistener.h>
+#include <dtCore/generickeyboardlistener.h>
 
 #include <dtCore/stats.h>
 #include <dtCore/system.h>
@@ -11,6 +10,7 @@
 #include <dtUtil/xerceserrorhandler.h>
 #include <dtUtil/xercesutils.h>
 #include <dtUtil/xercesparser.h>
+#include <dtCore/mouse.h>
 
 #include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -25,9 +25,12 @@ XERCES_CPP_NAMESPACE_USE
 
 IMPLEMENT_MANAGEMENT_LAYER(Application)
 
-Application::Application(const std::string& configFilename) : BaseABC("Application")
+Application::Application(const std::string& configFilename) : BaseABC("Application"),
+   mKeyboardListener(new dtCore::GenericKeyboardListener())
 {
    RegisterInstance(this);
+
+   mKeyboardListener->SetPressedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&Application::KeyPressed));
 
    if( !configFilename.empty() )
    {
@@ -35,60 +38,57 @@ Application::Application(const std::string& configFilename) : BaseABC("Applicati
       if( foundPath.empty() )
       {
          LOG_WARNING("Application: Can't find config file, " + configFilename + ", using defaults instead.")
-         CreateInstances(); //create default window, camera, etc.
       }
       else if( !ParseConfigFile( foundPath ) )
       {
          LOG_WARNING("Application: Error loading config file, using defaults instead.");
-         CreateInstances(); //create default window, camera, etc.
       }
    }
-   else
-   {
-      CreateInstances(); //create default window, camera, etc.
-   }
+
+   CreateInstances(); //create default window, camera, etc.
 }
 
-/** destructor */
 Application::~Application(void)
 {  
    DeregisterInstance(this);   
 }
 
-
-
-/** This method kicks off the forever process which will start triggering the
-  * PreFrame(), Frame(), and PostFrame() methods.
-  */
-void  Application::Run( void )
+void Application::Run( void )
 {
    dtCore::System::Instance()->Run();
 }
 
-
-/** protected methods */
-/** virtual*/
-void  Application::PreFrame( const double deltaFrameTime )
+void Application::PreFrame( const double deltaFrameTime )
 {
-   // NOP
 }
 
-/** virtual*/
-void  Application::Frame( const double deltaFrameTime )
+void Application::Frame( const double deltaFrameTime )
 {
-   // NOP
 }
 
-/** virtual*/
-void  Application::PostFrame( const double deltaFrameTime )
+void Application::PostFrame( const double deltaFrameTime )
 {
-   // NOP
+}
+
+bool Application::KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character)
+{
+   switch (key)
+   {
+   case Producer::Key_Escape:
+      {
+         Quit();
+         return true;
+      } break;
+   default:
+      {
+         return false;
+      } break;
+   }
+
+   return false;
 }
 
 
-
-/** Private methods */
-/** Create basic instances and set up system hooks */
 void  Application::CreateInstances(const std::string& name, int x, int y, int width, int height, bool cursor, bool fullScreen )
 {
    //create the instances and hook-up the default
@@ -105,18 +105,9 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
    mKeyboard = mWindow->GetKeyboard();
    assert( mKeyboard.get() );
 
-   mKeyboard->AddKeyboardListener( this->GetApplicationKeyboardListener() );
-
-   mMouse = mWindow->GetMouse();
-   assert( mMouse.get() );
-
-   mMouse->AddMouseListener( this->GetApplicationMouseListener() );
+   mKeyboard->AddKeyboardListener( mKeyboardListener.get() );
 }
 
-
-/** Read an existing data file and setup the internal class
-  * members with attributes from the data file.
-  */
 bool Application::ParseConfigFile(const std::string& file)
 {
    AppXMLContentHandler handler(this);
@@ -124,10 +115,6 @@ bool Application::ParseConfigFile(const std::string& file)
    return parser.Parse(file, handler, "application.xsd");
 }
 
-
-/** This method writes out all the default attributes from the internal Application
-  * members and writes them out to a .xml file ("config.xml").
-  */
 std::string dtABC::Application::GenerateDefaultConfigFile()
 {
    std::string filename("config.xml");
