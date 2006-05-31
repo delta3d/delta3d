@@ -24,10 +24,9 @@ void initListenerBindings()
       .def("GetInstance", ListenerGI1, return_internal_reference<>())
       .def("GetInstance", ListenerGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
-      .def("SetTransform", &Listener::SetTransform)
-      .def("GetTransform", &Listener::GetTransform)
       .def("SetVelocity", SetVelocity1)
       .def("GetVelocity", GetVelocity1)
       .def("SetGain", &Listener::SetGain)
-      .def("GetGain", &Listener::GetGain);
+      .def("GetGain", &Listener::GetGain)
+	  ;
 }

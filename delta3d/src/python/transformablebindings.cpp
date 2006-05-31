@@ -85,6 +85,8 @@ void initTransformableBindings()
 
    void (Transformable::*SetCollisionCappedCylinder1)(float, float) = &Transformable::SetCollisionCappedCylinder;
    void (Transformable::*SetCollisionCappedCylinder2)(osg::Node*) = &Transformable::SetCollisionCappedCylinder;
+   void (Transformable::*SetTransformRef)(const Transform&, Transformable::CoordSysEnum ) = &Transformable::SetTransform;
+   void (Transformable::*GetTransformRef)(Transform&, Transformable::CoordSysEnum ) const = &Transformable::GetTransform;
 
    scope Transformable_scope = class_< TransformableWrap, bases<DeltaDrawable>, RefPtr<TransformableWrap>, boost::noncopyable >("Transformable", no_init)
       .def("GetInstanceCount", &Transformable::GetInstanceCount)
@@ -94,8 +96,8 @@ void initTransformableBindings()
       .staticmethod("GetInstance")
       .def("AddChild", &Transformable::AddChild, with_custodian_and_ward<1, 2>())
       .def("RemoveChild", &Transformable::RemoveChild)
-      .def("SetTransform", &Transformable::SetTransform, ST_overloads())
-      .def("GetTransform", &Transformable::GetTransform, GT_overloads())
+      .def("SetTransform", SetTransformRef, ST_overloads())
+	  .def("GetTransform", GetTransformRef, GT_overloads())
       .def("RenderProxyNode", &Transformable::RenderProxyNode, RPN_overloads())
       .def("SetNormalRescaling", &Transformable::SetNormalRescaling)
       .def("GetNormalRescaling", &Transformable::GetNormalRescaling)
