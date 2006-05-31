@@ -112,6 +112,12 @@ ViewWindow::FileLoaded( bool loaded, const char* filename )
    mFileLoaded = loaded;
 }
 
+void 
+ViewWindow::DisplayError( const std::string &msg )
+{
+   fl_alert(msg.c_str());
+}
+
 const char*
 ViewWindow::GetPath( void )
 {
@@ -123,7 +129,7 @@ ViewWindow::GetPath( void )
 void
 ViewWindow::SetPath( const char* path )
 {
-   mPath = path;
+   mPath = std::string(path) + ";" + dtCore::GetDeltaDataPathList();
    dtCore::SetDataFilePathList(mPath);
 }
 
@@ -353,6 +359,7 @@ ViewWindow::CommandLine( int argc, char** argv )
    if (!flag)
    {
       //set our default path to the current working directory
+
       SetPath( dtUtil::FileUtils::GetInstance().CurrentDirectory().c_str()); 
 
       for( int ii(1); ii < argc; ii++ )
@@ -437,6 +444,7 @@ ViewWindow::ctor( void )
    SetEvent( FL_KEYUP );
 
    mCurFile = &bogus;
+   SetPath( dtUtil::FileUtils::GetInstance().CurrentDirectory().c_str() );
 }
 
 

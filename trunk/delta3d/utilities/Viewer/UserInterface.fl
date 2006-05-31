@@ -17,7 +17,7 @@ decl {\#include "viewwindow.h"} {public
 decl {\#include "viewstate.h"} {public
 } 
 
-decl {\#define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds,txp})\\tOSG Files (*.osg)\\tIVE Files (*.ive)\\tFlight Files (*.flt)\\t3ds Export Files (*.3ds)\\tTerraPage Files (*.txp)"} {public
+decl {\#define kDefFltr "Geometry Files (*.{osg,ive,flt,3ds,txp,xml,rbody})\\tOSG Files (*.osg)\\tIVE Files (*.ive)\\tFlight Files (*.flt)\\t3ds Export Files (*.3ds)\\tTerraPage Files (*.txp)\\tMap Files (*.xml)\\tRBody Files (*.rbody)"} {public
 } 
 
 decl {class ChoicePopUp;   // forward reference} {public
