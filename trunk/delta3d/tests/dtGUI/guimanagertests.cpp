@@ -99,7 +99,7 @@ CEGUI::Window* GUIManager::LoadLayout(const std::string& file)
       try
       {
          CEGUI::WindowManager* wm = CEGUI::WindowManager::getSingletonPtr();
-         layoutwindow = wm->loadWindowLayout( file );  ///< populate the system with windows
+         layoutwindow = wm->loadWindowLayout( file );  // populate the system with windows
 
          ///\todo push the full path as the key, so that different local
          mLoadedLayouts.insert( LoadedLayoutMap::value_type(file,layoutwindow) );
