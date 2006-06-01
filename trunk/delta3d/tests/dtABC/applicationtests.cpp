@@ -20,6 +20,7 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtCore/keyboard.h>
+#include <dtCore/generickeyboardlistener.h>
 #include <dtABC/application.h>
 
 namespace dtTest
@@ -51,6 +52,7 @@ namespace dtTest
          mKey(key),
          mChar(kc)
       {
+         GetKeyboardListener()->SetReleasedCallback(dtCore::GenericKeyboardListener::CallbackType(this,&TestApp::KeyReleased));
       }
 
       void Config()
