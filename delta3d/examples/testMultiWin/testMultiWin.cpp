@@ -14,6 +14,10 @@ TestMultiWin::TestMultiWin( const std::string& configFilename )
 {
 }
 
+TestMultiWin::~TestMultiWin()
+{
+}
+
 void TestMultiWin::Config()
 {
    //call the parent Config()
@@ -103,7 +107,6 @@ int main()
    //set data search path to parent directory and delta3d/data
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testMultiWin/;" +
                         GetDeltaDataPathList()  );
-
 
    //Instantiate the application and look for the config file
    RefPtr<TestMultiWin> app = new TestMultiWin( "config.xml" );
