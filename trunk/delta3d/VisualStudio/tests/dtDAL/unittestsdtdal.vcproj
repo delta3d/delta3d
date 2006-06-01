@@ -34,7 +34,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtBSPd.lib dtUtild.lib ul_d.lib cppunitd.lib dtGamed.lib"
+				AdditionalDependencies="dtCored.lib dtABCd.lib dtDALd.lib dtUtild.lib cppunitd.lib"
 				OutputFile="../../../tests/UnitTestsDtDALd.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
@@ -90,7 +90,7 @@ set DELTA_DATA=$(DELTA_DATA)
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtBSP.lib dtUtil.lib ul.lib cppunit.lib dtGame.lib xerces-c_2.lib osg.lib"
+				AdditionalDependencies="dtCore.lib dtABC.lib dtDAL.lib dtUtil.lib cppunit.lib xerces-c_2.lib osg.lib"
 				OutputFile="../../../tests/UnitTestsDtDAL.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../lib;../../../ext/lib"
