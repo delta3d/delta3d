@@ -28,6 +28,7 @@
 #include <dtCore/base.h>
 #include <dtCore/refptr.h>
 #include <Producer/KeyboardMouse>   // for InputCallback's base class
+#include <vector>                   // for member
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace Producer
@@ -79,8 +80,10 @@ namespace dtCore
        * @param cursor true if you wish to use the default cursor, false if not
        * @param fullScreen true if this window should be displayed fullscreen
        */
-      DeltaWin( const std::string& name = "window", int x = 100, int y = 100, int width = 640, 
-                int height = 480, bool cursor = true, bool fullScreen = false );
+      DeltaWin(const std::string& name = "window",
+               int x = 100, int y = 100,
+               int width = 640, int height = 480,
+               bool cursor = true, bool fullScreen = false );
 
       /** 
       * Constructor
@@ -189,6 +192,8 @@ namespace dtCore
 
       bool mShowCursor;
  
+   public:
+      /// A class to support operating system callbacks for the keyboard and mouse.
       class InputCallback : public Producer::KeyboardMouseCallback
       {
       public:
@@ -210,10 +215,17 @@ namespace dtCore
          void SetMouse(Mouse* m);
 
       private:
+         InputCallback();  ///< not implemented by design
+         InputCallback(const InputCallback&);  ///< not implemented by design
+
          RefPtr<Keyboard> mKeyboard;
          RefPtr<Mouse> mMouse;
       };
 
+      InputCallback* GetInputCallback() { return mInputCallback.get(); }
+      const InputCallback* GetInputCallback() const { return mInputCallback.get(); }
+
+   private:
       RefPtr<InputCallback> mInputCallback;
 
       // Disallowed to prevent compile errors on VS2003. It apparently
