@@ -10,7 +10,7 @@ class TestMultiWin : public dtABC::Application
    public:
       TestMultiWin( const std::string& configFilename = "" );
    protected:
-      virtual ~TestMultiWin() {}
+      virtual ~TestMultiWin();
 
    public:
       virtual void Config();
