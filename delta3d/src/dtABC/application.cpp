@@ -105,6 +105,9 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
    mKeyboard = mWindow->GetKeyboard();
    assert( mKeyboard.get() );
 
+   mMouse = mWindow->GetMouse();
+   assert( mMouse.get() );
+
    mKeyboard->AddKeyboardListener( mKeyboardListener.get() );
 }
 
