@@ -107,8 +107,10 @@ bool Mouse::MouseMotion(float x, float y)
    // a temporary workaround for classes that listen to input device features
    if( !handled )
    {
-      GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
-      GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
+      Axis* zero = GetAxis(0);
+      zero->SetState(x, x - zero->GetState());
+      Axis* one = GetAxis(1);
+      one->SetState(y, y - one->GetState());
    }
 
    return handled;
@@ -116,9 +118,6 @@ bool Mouse::MouseMotion(float x, float y)
 
 bool Mouse::PassiveMouseMotion(float x, float y)
 {
-   GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
-   GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
-
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
    MouseListenerList::iterator enditer = mMouseListeners.end();
@@ -131,8 +130,10 @@ bool Mouse::PassiveMouseMotion(float x, float y)
    // a temporary workaround for classes that listen to input device features
    if( !handled )
    {
-      GetAxis(0)->SetState(x, x - GetAxis(0)->GetState());
-      GetAxis(1)->SetState(y, y - GetAxis(1)->GetState());
+      Axis* zero = GetAxis(0);
+      zero->SetState(x, x - zero->GetState());
+      Axis* one = GetAxis(1);
+      one->SetState(y, y - one->GetState());
    }
 
    return handled;
