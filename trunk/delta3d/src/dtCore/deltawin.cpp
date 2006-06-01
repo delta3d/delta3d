@@ -16,6 +16,7 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(DeltaWin)
 
 
+// --- InputCallback's implementation --- //
 DeltaWin::InputCallback::InputCallback(Keyboard* keyboard, Mouse* mouse) : mKeyboard(keyboard), mMouse(mouse)
 {
 }
@@ -144,12 +145,9 @@ void DeltaWin::InputCallback::SetMouse(Mouse* m)
 {
    mMouse = m;
 }
+// --- end of InputCallback's implementation --- //
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-
+// --- DeltaWin's implementation --- //
 DeltaWin::DeltaWin(  const std::string& name, 
                      int x, int y, 
                      int width, int height, 
@@ -355,7 +353,6 @@ bool DeltaWin::CalcPixelCoords( float x, float y, float &pixel_x, float &pixel_y
    pixel_y = ( h/2 ) * (1.0f - y);
    
    return true;
-
 }
 
 bool DeltaWin::CalcWindowCoords( float pixel_x, float pixel_y, float &x, float &y )
