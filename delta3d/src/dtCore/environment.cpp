@@ -593,13 +593,7 @@ void dtCore::Environment::UpdateSkyLight()
    {
       if( InfiniteLight *sun = dynamic_cast<InfiniteLight*>( mSkyLight.get() ) )
       {
-         sun->GetLightSource()->getLight()->setPosition(
-            osg::Vec4(
-            sinf(osg::DegreesToRadians(mSunAzimuth))*cosf(osg::DegreesToRadians(mSunAltitude)),
-            cosf(osg::DegreesToRadians(mSunAzimuth))*cosf(osg::DegreesToRadians(mSunAltitude)),
-            sinf(osg::DegreesToRadians(mSunAltitude)),
-            0.0f )
-            );
+         sun->SetAzimuthElevation( mSunAzimuth, mSunAltitude );
       }
    }
 }

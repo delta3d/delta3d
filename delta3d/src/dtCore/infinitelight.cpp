@@ -42,14 +42,14 @@ namespace dtCore
 
    void InfiniteLight::SetAzimuthElevation( float az, float el )
    {
-      osg::Matrix hprRot;
-      dtUtil::MatrixUtil::HprToMatrix( hprRot, osg::Vec3( az, el, 0.0f ) );
-
-      osg::Vec3 forwardVector( 0.0f, -1.0f, 0.0f );
-      osg::Vec3 xyz = hprRot.preMult( forwardVector );
-
-      //force w=0.0f to ensure "infinite" light
-      mLightSource->getLight()->setPosition( osg::Vec4( xyz, 0.0f ) );  
+      
+      mLightSource->getLight()->setPosition(
+         osg::Vec4(
+         sinf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
+         cosf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
+         sinf(osg::DegreesToRadians(el)),
+         0.0f )//force w=0.0f to ensure "infinite" light
+         );
    }
 
    void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
