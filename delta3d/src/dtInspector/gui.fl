@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0106 
+version 1.0107 
 header_name {gui_fltk.h} 
 code_name {gui_fltk.cpp}
 decl {\#include "dtCore/base.h"} {public
@@ -14,7 +14,7 @@ class UserInterface {open
   } {
     Fl_Window MainWindow {
       label dtCore open
-      xywh {726 67 545 555} type Double visible
+      xywh {691 118 545 555} type Double visible
     } {
       Fl_Browser InstanceList {
         user_data this
@@ -153,7 +153,7 @@ class UserInterface {open
           xywh {500 265 25 25}
         }
       }
-      Fl_Group CameraGroup {selected
+      Fl_Group CameraGroup {
         xywh {10 265 530 120} box ENGRAVED_FRAME align 5 hide
       } {
         Fl_Group {} {
@@ -234,23 +234,23 @@ class UserInterface {open
             callback {((UserInterface*)v)->WinSizeCB(o)}
             private tooltip {Preset Window sizes} xywh {340 205 25 25}
           } {
-            menuitem {} {
+            MenuItem {} {
               label 640x480
               xywh {0 0 100 20}
             }
-            menuitem {} {
+            MenuItem {} {
               label 800x600
               xywh {10 10 100 20}
             }
-            menuitem {} {
+            MenuItem {} {
               label 1024x768
               xywh {20 20 100 20}
             }
-            menuitem {} {
+            MenuItem {} {
               label 1280x1024
               xywh {30 30 100 20}
             }
-            menuitem {} {
+            MenuItem {} {
               label 1600x1200
               xywh {40 40 100 20}
             }
@@ -393,19 +393,19 @@ class UserInterface {open
           callback {((UserInterface*)v)->EnvFogModeCB(o)} open
           xywh {244 322 101 25} down_box BORDER_BOX
         } {
-          menuitem {} {
+          MenuItem {} {
             label Linear
             xywh {0 0 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Exp
             xywh {10 10 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Exp2
             xywh {20 20 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Advanced
             xywh {30 30 100 20}
           }
@@ -645,19 +645,19 @@ class UserInterface {open
           callback {((UserInterface*)v)->WeatherTimeCB(o)}
           xywh {270 185 90 30} down_box BORDER_BOX
         } {
-          menuitem {} {
+          MenuItem {} {
             label Dawn
             xywh {40 40 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Day
             xywh {40 40 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Dusk
             xywh {40 40 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Night
             xywh {40 40 100 20}
           }
@@ -668,19 +668,19 @@ class UserInterface {open
           callback {((UserInterface*)v)->WeatherSeasonCB(o)}
           xywh {425 185 90 30} down_box BORDER_BOX
         } {
-          menuitem {} {
+          MenuItem {} {
             label Spring
             xywh {50 50 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Summer
             xywh {50 50 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Fall
             xywh {50 50 100 20}
           }
-          menuitem {} {
+          MenuItem {} {
             label Winter
             xywh {50 50 100 20}
           }
@@ -793,29 +793,6 @@ class UserInterface {open
           }
         }
         Fl_Group {} {
-          label Attenuation
-          xywh {294 274 215 50} box THIN_DOWN_BOX
-        } {
-          Fl_Value_Input LightConstAtt {
-            label Constant
-            user_data this
-            callback {((UserInterface*)v)->LightAttCB(o)}
-            private xywh {298 295 60 25} align 1 maximum 100 step 0.001
-          }
-          Fl_Value_Input LightLinAtt {
-            label Linear
-            user_data this
-            callback {((UserInterface*)v)->LightAttCB(o)}
-            private xywh {373 293 60 25} align 1 maximum 100 step 0.001
-          }
-          Fl_Value_Input LightQuadAtt {
-            label Quadratic
-            user_data this
-            callback {((UserInterface*)v)->LightAttCB(o)}
-            private xywh {444 294 60 25} align 1 maximum 100 step 0.001
-          }
-        }
-        Fl_Group {} {
           label Diffuse
           xywh {29 344 130 85} box THIN_DOWN_FRAME
         } {
@@ -902,22 +879,67 @@ class UserInterface {open
             private xywh {410 348 25 75}
           }
         }
-        Fl_Group LightSpotGroup {
-          label Spot
-          xywh {125 274 139 50} box THIN_DOWN_BOX
+      }
+      Fl_Group PositionalLightGroup {
+        user_data this
+        xywh {280 259 235 71} box ENGRAVED_BOX hide
+      } {
+        Fl_Group {} {
+          label Attenuation
+          xywh {290 275 205 50} box THIN_DOWN_BOX
         } {
-          Fl_Value_Input LightExponentInput {
-            label Exp
+          Fl_Value_Input LightConstAtt {
+            label Constant
             user_data this
-            callback {((UserInterface*)v)->LightSpotCB(o)}
-            private xywh {197 295 60 25} align 1 maximum 500000 step 0.1
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {295 295 60 25} align 1 maximum 100 step 0.001
           }
-          Fl_Value_Input LightCutoffInput {
-            label Cutoff
+          Fl_Value_Input LightLinAtt {
+            label Linear
             user_data this
-            callback {((UserInterface*)v)->LightSpotCB(o)}
-            private xywh {129 295 60 25} align 1 maximum 500000 step 0.1
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {360 295 60 25} align 1 maximum 100 step 0.001
           }
+          Fl_Value_Input LightQuadAtt {
+            label Quadratic
+            user_data this
+            callback {((UserInterface*)v)->LightAttCB(o)}
+            private xywh {427 295 60 25} align 1 maximum 100 step 0.001
+          }
+        }
+      }
+      Fl_Group LightSpotGroup {
+        label Spot
+        xywh {130 279 139 50} box THIN_DOWN_BOX hide
+      } {
+        Fl_Value_Input LightExponentInput {
+          label Exp
+          user_data this
+          callback {((UserInterface*)v)->LightSpotCB(o)}
+          private xywh {202 300 60 25} align 1 maximum 500000 step 0.1
+        }
+        Fl_Value_Input LightCutoffInput {
+          label Cutoff
+          user_data this
+          callback {((UserInterface*)v)->LightSpotCB(o)}
+          private xywh {134 300 60 25} align 1 maximum 500000 step 0.1
+        }
+      }
+      Fl_Group InfiniteLightGroup {
+        label {Azimuth/Elevation} open
+        xywh {130 279 142 50} box THIN_DOWN_BOX
+      } {
+        Fl_Value_Input InfLightAzInput {
+          label {Az.}
+          user_data this
+          callback {((UserInterface*)v)->InfLightCB(o)} selected
+          private xywh {134 300 60 25} align 1 maximum 500000 step 0.1
+        }
+        Fl_Value_Input InfLightElevInput {
+          label {Elev.}
+          user_data this
+          callback {((UserInterface*)v)->InfLightCB(o)}
+          private xywh {202 300 60 25} align 1 maximum 500000 step 0.1
         }
       }
       Fl_Group ParticleGroup {
@@ -1016,6 +1038,7 @@ class UserInterface {open
   decl {void LightSpecColorBrowserCB(Fl_Button*);} {}
   decl {void LightAttCB(Fl_Value_Input*);} {}
   decl {void LightSpotCB(Fl_Value_Input*);} {}
+  decl {void InfLightCB(Fl_Value_Input*);} {}
   decl {void ParticleRelativeCB(Fl_Check_Button*);} {}
   decl {void ParticleEnabledCB(Fl_Check_Button*);} {}
   decl {void CamStatisticsCB(Fl_Button*);} {}
