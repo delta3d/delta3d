@@ -29,7 +29,7 @@
 #include <dtCore/integershaderparameter.h>
 #include <dtCore/floatshaderparameter.h>
 #include <dtCore/globals.h>
-#include <osg/geode>
+#include <osg/Geode>
 
 const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
