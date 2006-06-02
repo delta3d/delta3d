@@ -10,7 +10,7 @@
 #include <dtCore/sunlightshader.h>
 #include <dtCore/system.h>
 #include <dtUtil/log.h>
-
+#include <dtUtil/mathdefines.h>
 #include <osg/Fog>
 #include <osg/FragmentProgram>
 #include <osg/Group>
@@ -643,24 +643,37 @@ void dtCore::Environment::UpdateFogColor()
    mFog->setColor(osg::Vec4(mModFogColor[0], mModFogColor[1], mModFogColor[2], 1.f) );
 }
 
-/** Update the color of the sun based on it's angle.
+/** Update the color of the sun light based on it's angle.
 */
 void dtCore::Environment::UpdateSunColor()
 {
-   float sunFactor = 4.f * cosf(osg::DegreesToRadians(mSunAltitude)); //-4..4
+   //magic light color code borrowed from osgEphemeris, courtesy of Don Burns
 
-   if (sunFactor > 1.f) sunFactor = 1.f;
-   else if (sunFactor<-1.f) sunFactor = -1.f;
+   double red = mSunAltitude * 0.5;
+   double green = mSunAltitude * 0.25;
+   double blue = mSunAltitude * 0.125;
 
-   sunFactor = sunFactor/2.f + 0.5f; //1..0
+   CLAMP(red, 0.0, 1.0);
+   CLAMP(green, 0.0, 1.0);
+   CLAMP(blue, 0.0, 1.0);
+   osg::Vec3 diff(red, green, blue);
 
-   osg::Vec3 color;
-   color[1] = sqrtf(sunFactor);
-   color[0] = sqrtf(color[1]);
-   color[2] = sunFactor * sunFactor;
-   color[2] *= color[2];
-   
-   mSunColor = color;
+   red = (mSunAltitude + 10.0) * 0.04;
+   green = (mSunAltitude + 10.0) * 0.02;
+   blue = (mSunAltitude + 10.0) * 0.01;
+   CLAMP(red, 0.01, 0.3);
+   CLAMP(green, 0.01, 0.3);
+   CLAMP(blue, 0.01, 0.3);
+   osg::Vec3 amb(red, green, blue);
+
+   mSunColor = diff;
+
+   if(mSkyLight.valid())
+   {
+      mSkyLight->SetDiffuse( diff[0], diff[1], diff[2], 1.f );
+      mSkyLight->SetAmbient( amb[0], amb[1], amb[2], 1.f );
+   }
+
 }
 
 /** Private method used to pass parameters to the light scattering shader */
