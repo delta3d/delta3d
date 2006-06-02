@@ -16,6 +16,7 @@
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/positionallight.h>
 #include <dtCore/spotlight.h>
+#include <dtCore/infinitelight.h>
 #include <dtABC/weather.h>
 
 #ifdef _MSC_VER
@@ -514,11 +515,10 @@ void UserInterface::SelectInstance()
    }
    else WeatherGroup->hide();
 
-   // Light
-   if (PositionalLight *l = dynamic_cast<PositionalLight*>(b))
+   // Light 
+   if(Light *l = dynamic_cast<Light *>(b))
    {
-      InstanceClassName->label( "dtCore::PositionalLight" );
-
+      InstanceClassName->label( "dtCore::Light" );
 
       if (l->GetLightingMode()==Light::GLOBAL)
       {
@@ -540,8 +540,8 @@ void UserInterface::SelectInstance()
       LightAmbBlue->value(b);
 
       Fl_Color fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                                    int(g*(FL_NUM_GREEN-1)),
-                                    int(b*(FL_NUM_BLUE-1)) );
+                                 int(g*(FL_NUM_GREEN-1)),
+                                 int(b*(FL_NUM_BLUE-1)) );
 
       LightAmbColorLoadButton->color(fc);
       LightAmbColorLoadButton->redraw();
@@ -553,8 +553,8 @@ void UserInterface::SelectInstance()
       LightSpecBlue->value(b);
 
       fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                                 int(g*(FL_NUM_GREEN-1)),
-                                 int(b*(FL_NUM_BLUE-1)) );
+                        int(g*(FL_NUM_GREEN-1)),
+                        int(b*(FL_NUM_BLUE-1)) );
 
       LightSpecColorLoadButton->color(fc);
       LightSpecColorLoadButton->redraw();
@@ -566,13 +566,24 @@ void UserInterface::SelectInstance()
       LightDifBlue->value(b);
 
       fc = fl_color_cube( int(r*(FL_NUM_RED-1)),
-                                    int(g*(FL_NUM_GREEN-1)),
-                                    int(b*(FL_NUM_BLUE-1)) );
+                        int(g*(FL_NUM_GREEN-1)),
+                        int(b*(FL_NUM_BLUE-1)) );
 
       LightDifColorLoadButton->color(fc);
       LightDifColorLoadButton->redraw();
 
 
+   	LightGroup->show();
+   }
+   else
+   {
+      LightGroup->hide();
+   }
+
+   //PositionalLight
+   if (PositionalLight *l = dynamic_cast<PositionalLight*>(b))
+   {
+      InstanceClassName->label( "dtCore::PositionalLight" );
 
       float con, lin, quad;
       l->GetAttenuation(con, lin, quad);
@@ -580,13 +591,32 @@ void UserInterface::SelectInstance()
       LightLinAtt->value(lin);
       LightQuadAtt->value(quad);
 
-      LightGroup->show();
+      PositionalLightGroup->show();
    }
    else
    {
-      LightGroup->hide();
+      PositionalLightGroup->hide();
    }
 
+   
+   if(InfiniteLight *l = dynamic_cast<InfiniteLight *>(b))
+   {
+      InstanceClassName->label( "dtCore::InfiniteLight" );
+      
+      float az, el;
+      l->GetAzimuthElevation(az, el);
+
+      InfLightAzInput->value(az);
+      InfLightElevInput->value(el);
+
+      InfiniteLightGroup->show();
+   }
+   else
+   {
+      InfiniteLightGroup->hide();
+   }
+
+   //SpotLight
    if (SpotLight *l = dynamic_cast<SpotLight*>(b))
    {
       InstanceClassName->label( "dtCore::SpotLight" );
@@ -1512,7 +1542,7 @@ void UserInterface::LightNumCB(Fl_Value_Input *o)
 
 void UserInterface::LightAmbColorCB(Fl_Value_Input*)
 {
-   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    float r,g,b;
    r = LightAmbRed->value();
@@ -1531,7 +1561,7 @@ void UserInterface::LightAmbColorCB(Fl_Value_Input*)
 
 void UserInterface::LightDifColorCB(Fl_Value_Input*)
 {
-   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    float r,g,b;
    r = LightDifRed->value();
@@ -1550,7 +1580,7 @@ void UserInterface::LightDifColorCB(Fl_Value_Input*)
 
 void UserInterface::LightSpecColorCB(Fl_Value_Input*)
 {
-   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    float r,g,b;
    r = LightSpecRed->value();
@@ -1570,7 +1600,7 @@ void UserInterface::LightSpecColorCB(Fl_Value_Input*)
 
 void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
 {
-   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    double r = LightAmbRed->value();
    double g = LightAmbGreen->value();
@@ -1594,7 +1624,7 @@ void UserInterface::LightAmbColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightDifColorBrowserCB(Fl_Button *)
 {
-   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    double r = LightDifRed->value();
    double g = LightDifGreen->value();
@@ -1618,7 +1648,7 @@ void UserInterface::LightDifColorBrowserCB(Fl_Button *)
 
 void UserInterface::LightSpecColorBrowserCB(Fl_Button *)
 {
-   PositionalLight *l = dynamic_cast<PositionalLight*>(GetSelectedInstance(this));
+   Light *l = dynamic_cast<Light*>(GetSelectedInstance(this));
 
    double r = LightSpecRed->value();
    double g = LightSpecGreen->value();
@@ -1654,6 +1684,13 @@ void UserInterface::LightSpotCB(Fl_Value_Input*)
    l->SetSpotCutoff( LightCutoffInput->value() );
    l->SetSpotExponent( LightExponentInput->value() );
    
+}
+
+void UserInterface::InfLightCB(Fl_Value_Input*)
+{
+   InfiniteLight *l = dynamic_cast<InfiniteLight*>(GetSelectedInstance(this));
+
+   l->SetAzimuthElevation(InfLightAzInput->value(), InfLightElevInput->value() );
 }
 
 void UserInterface::ParticleRelativeCB( Fl_Check_Button *o)
