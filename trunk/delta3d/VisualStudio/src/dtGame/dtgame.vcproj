@@ -257,6 +257,9 @@
 				RelativePath="..\..\..\inc\dtGame\gameapplication.h">
 			</File>
 			<File
+				RelativePath="..\..\..\inc\dtGame\gameentrypoint.h">
+			</File>
+			<File
 				RelativePath="..\..\..\inc\dtGame\gamemanager.h">
 			</File>
 			<File
