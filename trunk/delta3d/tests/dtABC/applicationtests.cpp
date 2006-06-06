@@ -22,6 +22,7 @@
 #include <dtCore/keyboard.h>
 #include <dtCore/generickeyboardlistener.h>
 #include <dtABC/application.h>
+#include <dtUtil/fileutils.h>                  // for verification when writing the config file
 
 namespace dtTest
 {
@@ -30,15 +31,18 @@ namespace dtTest
    {
       CPPUNIT_TEST_SUITE( ApplicationTests );
       CPPUNIT_TEST( TestInput );
+      CPPUNIT_TEST( TestGenerateConfig );
       CPPUNIT_TEST_SUITE_END();
 
       public:
-         void setUp() {}
+         void setUp();
          void tearDown() {}
 
          void TestInput();
+         void TestGenerateConfig();
 
       private:
+         std::string mConfigName;
    };
 
    class TestApp : public dtABC::Application
@@ -106,6 +110,11 @@ CPPUNIT_TEST_SUITE_REGISTRATION( dtTest::ApplicationTests );
 
 using namespace dtTest;
 
+void ApplicationTests::setUp()
+{
+   mConfigName = "test_config.xml";
+}
+
 void ApplicationTests::TestInput()
 {
    dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
@@ -128,10 +137,31 @@ void ApplicationTests::TestInput()
    CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
    CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
 
-   // test to see if the applicaiton's released callback is connected
+   // test to see if the application's released callback is connected
    CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_M) );  // better NOT handle it
    CPPUNIT_ASSERT( !app->GetPressedHit() );  // better be hit
    CPPUNIT_ASSERT( app->GetReleasedHit() );  // better be hit
    CPPUNIT_ASSERT( kb->KeyUp(app->GetCharacter()) );  // better handle it
+}
+
+void ApplicationTests::TestGenerateConfig()
+{
+   // create the file
+   const std::string created( dtABC::Application::GenerateDefaultConfigFile( mConfigName ) );
+
+   dtCore::RefPtr<dtABC::Application> app(new dtABC::Application(created));
+
+   // make sure it exists
+   CPPUNIT_ASSERT( dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+   // test the content from the parser
+   dtCore::DeltaWin* dwin = app->GetWindow();
+   dtCore::DeltaWin::Resolution res = dwin->GetCurrentResolution();
+
+   // delete the file
+   dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+
+   // make sure it does not exist
+   CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
 }
 
