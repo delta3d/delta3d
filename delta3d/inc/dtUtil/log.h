@@ -31,6 +31,15 @@
 
 namespace dtUtil 
 {
+    class DT_UTIL_EXPORT LogFile
+   {
+   public:
+      ///Change the name of the log file (defaults to "delta3d_log.html")
+      static void SetFileName(const std::string& name);
+
+      ///Get the current filename of the log file.
+      static const std::string GetFileName();
+   };
 
     /**
      * Helps making logging a little easier.  However, printf style
@@ -177,6 +186,7 @@ namespace dtUtil
 
 
     };
+
 }
 
 #endif
