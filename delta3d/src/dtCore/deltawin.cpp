@@ -430,6 +430,28 @@ int DeltaWin::IsValidResolution( const ResolutionVec &rv, int width, int height,
    return -1;
 }
 
+bool DeltaWin::IsValidResolution(const DeltaWin::Resolution& candidate)
+{
+   ResolutionVec vec = DeltaWin::GetResolutions();
+
+   DeltaWin::ResolutionVec::iterator iter = vec.begin();
+   DeltaWin::ResolutionVec::iterator enditer = vec.end();
+   while(iter != enditer)
+   {
+      if( (candidate.width==iter->width) &&
+          (candidate.height==iter->height) &&
+          (candidate.bitDepth==iter->bitDepth) &&
+          (candidate.refresh==iter->refresh) )
+      {
+         return true;
+      }
+
+      ++iter;
+   }
+
+   return false;
+}
+
 int DeltaWin::CalcRefreshRate( int horzTotal, int vertTotal, int dotclock )
 {
    return static_cast<int>( 0.5f + ( ( 1000.0f * dotclock ) / ( horzTotal * vertTotal ) ) );
