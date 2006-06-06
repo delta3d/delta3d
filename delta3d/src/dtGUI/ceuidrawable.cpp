@@ -2,8 +2,6 @@
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIExceptions.h>
-#include <CEGUI/CEGUIFontManager.h>
-#include <CEGUI/CEGUIImagesetManager.h>
 
 #include <dtGUI/ceuidrawable.h>
 #include <dtGUI/ceguimouselistener.h>       // for member
@@ -89,6 +87,9 @@ void CEUIDrawable::Config()
    
    RegisterInstance(this);
 
+   int x(0), y(0), w(0), h(0);
+   mWindow->GetPosition(x, y, w, h);
+   SetRenderingSize(w, h);
 
    if( mScriptModule )
       new CEGUI::System(mRenderer,mScriptModule);
@@ -96,11 +97,6 @@ void CEUIDrawable::Config()
       new CEGUI::System(mRenderer);
 
    mUI = CEGUI::System::getSingletonPtr();
-
-   //update the screen size - must come *after* creating the CEGUI::System
-   int x(0), y(0), w(0), h(0);
-   mWindow->GetPosition(x, y, w, h);
-   SetRenderingSize(w, h);
 
    osg::Geode *geod = new osg::Geode();
    geod->setName("CEUIDrawable_Geode");
@@ -211,10 +207,7 @@ void CEUIDrawable::SetRenderingSize(int width, int height)
 {
    mWidth = width;
    mHeight = height;
-   CEGUI::Size size(width, height);
-   mRenderer->setDisplaySize(size);
-   CEGUI::FontManager::getSingleton().notifyScreenResolution(size);
-   CEGUI::ImagesetManager::getSingleton().notifyScreenResolution(size);
+   mRenderer->setDisplaySize( CEGUI::Size(width, height) );
    mMouseListener->SetWindowSize( width , height );
 }
 
