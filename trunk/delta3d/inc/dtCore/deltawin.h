@@ -178,7 +178,13 @@ namespace dtCore
       static Resolution GetCurrentResolution();
       static bool ChangeScreenResolution( int width, int height, int colorDepth, int refreshRate );
       static bool ChangeScreenResolution( Resolution res );
+
       static int IsValidResolution( const ResolutionVec &rv, int width = 0, int height = 0, int refreshRate = 0, int colorDepth = 0 );
+
+      /// Tests to see if the system supports the desired resolution.
+      /// @param candidate the Resolution to be tested.
+      /// @return 'true' when the Resolution is supported.
+      bool IsValidResolution(const Resolution& candidate);
 
    private:
 
@@ -191,7 +197,7 @@ namespace dtCore
       RefPtr<Mouse> mMouse;
 
       bool mShowCursor;
- 
+
    public:
       /// A class to support operating system callbacks for the keyboard and mouse.
       class InputCallback : public Producer::KeyboardMouseCallback
