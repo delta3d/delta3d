@@ -70,7 +70,10 @@ namespace dtABC
       /// Generate a default configuration file.
       /// This method writes out all the default attributes from the internal Application
       /// members and writes them out to a .xml file ("config.xml").
-      static std::string GenerateDefaultConfigFile();
+      /// @param the file path to be used when writing.
+      /// @return the file path to the newly created file, as seen by the delta3d resource management tool,
+      /// unless the file already exists, then the path to the existing file is returned.
+      static std::string GenerateDefaultConfigFile(const std::string& filename="config.xml");
 
       /// Called when a key is pressed.
       /// @param keyboard the source of the event
@@ -78,7 +81,9 @@ namespace dtABC
       /// @param character the corresponding character
       virtual bool KeyPressed(const dtCore::Keyboard* keyboard, Producer::KeyboardKey key, Producer::KeyCharacter character);
 
+      /// @return the instance of the listener used for callbacks
       const dtCore::GenericKeyboardListener* GetKeyboardListener() const { return mKeyboardListener.get(); }
+      /// @return the instance of the listener used for callbacks
       dtCore::GenericKeyboardListener* GetKeyboardListener() { return mKeyboardListener.get(); }
 
    protected:
@@ -124,6 +129,90 @@ namespace dtABC
 
       friend class AppXMLContentHandler;
 
+      /// defines API used to model the XML schema for the config file.
+      class ConfigSchemaModel
+      {
+      public:
+         static const std::string WINDOW;
+         static const std::string NAME;
+         static const std::string SCENE;
+         static const std::string CAMERA;
+
+         static const std::string X;
+         static const std::string Y;
+         static const std::string WIDTH;
+         static const std::string HEIGHT;
+
+         static const std::string PIXELDEPTH;
+         static const std::string REFRESHRATE;
+         static const std::string SHOWCURSOR;
+         static const std::string FULLSCREEN;
+         static const std::string CHANGEDISPLAYRESOLUTION;
+
+         static const std::string WINDOWINSTANCE;
+         static const std::string SCENEINSTANCE;
+      };
+
+      /// A class that writes config files for the dtABC::Application
+      class AppConfigWriter
+      {
+      public:
+         void operator ()(const std::string& filename);
+
+         /// defines the API to obtain default values
+         /// for the values used when generating an application config file.
+         /// Also generates the xerces character types needed for string operations.
+         class DefaultModel
+         {
+         public:
+            DefaultModel();
+            ~DefaultModel();
+
+            XMLCh* WINDOW_NAME;
+            XMLCh* WINDOW_X;
+            XMLCh* WINDOW_Y;
+            XMLCh* WINDOW_WIDTH;
+            XMLCh* WINDOW_HEIGHT;
+
+            XMLCh* REFRESH;
+            XMLCh* PIXEL_DEPTH;
+            XMLCh* SHOW_CURSOR;
+            XMLCh* FULL_SCREEN;
+            XMLCh* CHANGE_RESOLUTION;
+
+            XMLCh* CAMERA_NAME;
+            XMLCh* SCENE_NAME;
+         };
+
+         /// Defines the API to obtain values used when parsing the config file.
+         /// Also generates the xerces character types needed for string operations.
+         class SchemaModel
+         {
+         public:
+            SchemaModel();
+            ~SchemaModel();
+
+            XMLCh* WINDOW;
+            XMLCh* NAME;
+            XMLCh* SCENE;
+            XMLCh* CAMERA;
+
+            XMLCh* X;
+            XMLCh* Y;
+            XMLCh* WIDTH;
+            XMLCh* HEIGHT;
+
+            XMLCh* PIXELDEPTH;
+            XMLCh* REFRESHRATE;
+            XMLCh* SHOWCURSOR;
+            XMLCh* FULLSCREEN;
+            XMLCh* CHANGEDISPLAYRESOLUTION;
+
+            XMLCh* WINDOWINSTANCE;
+            XMLCh* SCENEINSTANCE;
+         };
+      };
+
       /// Read the supplied config file, called from the constructor
       /// Read an existing data file and setup the internal class
       /// members with attributes from the data file.
@@ -135,7 +224,6 @@ namespace dtABC
    };
 
 }
-
 
 
 #endif // DELTA_APPLICATION
