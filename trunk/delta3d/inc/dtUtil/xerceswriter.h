@@ -40,33 +40,32 @@ XERCES_CPP_NAMESPACE_END
 
 namespace dtUtil
 {
-   /** A class that manages one XML document.
-     */
+   /// A class that manages one XML DOM document.
    class DT_UTIL_EXPORT XercesWriter : public osg::Referenced
    {
    public:
+      /// Initializes the xerces system.
       XercesWriter();
 
    protected:
+      /// Does <b>NOT</b> destroy the xerces system.
       ~XercesWriter();
 
    public:
-      /** Create a new document for the instance to use.
-        * @param rootname the name of the root XML node.
-        */
+      /// Create a new document for the instance to use.
+      /// @param rootname the name of the root XML node.
       void CreateDocument(const std::string& rootname);
 
       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() { return mDocument; }
       const XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* GetDocument() const { return mDocument; }
 
-      /**
-      * This is the call that serializes the XML Tree
-      * @param the filename
-      */
+      /// This is the call that serializes the XML Tree
+      /// @param the filename
       void WriteFile(const std::string& file);
 
    private:
       XercesWriter(const XercesWriter&); /// not implemented because copying these members would be bad
+      XercesWriter& operator =(const XercesWriter&); /// not implemented because copying these members would be bad
 
       XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* mImplementation;
       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* mDocument;
