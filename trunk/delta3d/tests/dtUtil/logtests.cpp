@@ -35,6 +35,7 @@ class LogTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST( TestLogMessage2 );
    CPPUNIT_TEST( TestLogMessage3 );
    CPPUNIT_TEST( TestIsLevelEnabled );
+   CPPUNIT_TEST( TestLogFilename );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -56,6 +57,8 @@ class LogTests : public CPPUNIT_NS::TestFixture {
        */
       void TestLogMessage3();
       void TestIsLevelEnabled();
+
+      void TestLogFilename();
 
    private:
       std::string mMsgStr;
@@ -265,4 +268,19 @@ void LogTests::TestIsLevelEnabled()
    {
       CPPUNIT_FAIL((std::string("Error: ") + e.what()).c_str());
    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+void LogTests::TestLogFilename()
+{
+   const std::string newFileName("logtest.html");
+   dtUtil::LogFile::SetFileName(newFileName);
+
+   LOG_ALWAYS("Filename test");
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Filename should be: " + newFileName +
+      " but returned: " + dtUtil::LogFile::GetFileName(),
+      newFileName, dtUtil::LogFile::GetFileName() );
+
+   //hmm, not much of a test.  Does the file exist?
 }
