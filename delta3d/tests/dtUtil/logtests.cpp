@@ -36,6 +36,7 @@ class LogTests : public CPPUNIT_NS::TestFixture {
    CPPUNIT_TEST( TestLogMessage3 );
    CPPUNIT_TEST( TestIsLevelEnabled );
    CPPUNIT_TEST( TestLogFilename );
+   CPPUNIT_TEST( TestOutputStream );
    CPPUNIT_TEST_SUITE_END();
 
    public:
@@ -59,6 +60,8 @@ class LogTests : public CPPUNIT_NS::TestFixture {
       void TestIsLevelEnabled();
 
       void TestLogFilename();
+
+      void TestOutputStream();
 
    private:
       std::string mMsgStr;
@@ -283,4 +286,24 @@ void LogTests::TestLogFilename()
       newFileName, dtUtil::LogFile::GetFileName() );
 
    //hmm, not much of a test.  Does the file exist?
+}
+
+//////////////////////////////////////////////////////////////////////////
+void LogTests::TestOutputStream()
+{
+   unsigned int option = dtUtil::Log::NO_OUTPUT;
+
+   dtUtil::Log::GetInstance().SetOutputStreamBit( option );
+   unsigned int newBit = dtUtil::Log::GetInstance().GetOutputStreamBit();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Returned bit doesn't match set bit",
+                                option, newBit);
+
+   option = dtUtil::Log::TO_CONSOLE | dtUtil::Log::TO_FILE;
+   dtUtil::Log::GetInstance().SetOutputStreamBit( option );
+   newBit = dtUtil::Log::GetInstance().GetOutputStreamBit();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Returned bit doesn't match set bit",
+                                 option, newBit);
+
 }

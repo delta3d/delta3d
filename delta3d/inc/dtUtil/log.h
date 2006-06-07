@@ -25,6 +25,7 @@
 #include <map>
 #include <fstream>
 
+
 #include <osg/Referenced>
 #include <osg/ref_ptr>
 #include <dtUtil/export.h>
@@ -166,6 +167,19 @@ namespace dtUtil
          */
         static Log& GetInstance(const std::string& name);
 
+        enum OutputStreamOptions
+        {
+           NO_OUTPUT =   0x00000000, ///<Log messages don't get written to any device
+           TO_FILE =     0x00000001,   ///<Log messages get sent to the output file
+           TO_CONSOLE =  0x00000002,///<Log messages get sent to the console
+           STANDARD = TO_FILE | TO_CONSOLE ///<The default setting
+        };
+
+        ///Configure where the Log messages get directed
+        void SetOutputStreamBit(unsigned int option);
+
+        ///Get the currently defined output stream options
+        unsigned int GetOutputStreamBit() const;
 
     //Constructor and destructor are both protected since this is a singleton.
     protected:
@@ -183,7 +197,7 @@ namespace dtUtil
         static const std::string mDefaultName;
 
         LogMessageType mLevel;
-
+        unsigned int mOutputStreamBit; ///<the current output stream option
 
     };
 
