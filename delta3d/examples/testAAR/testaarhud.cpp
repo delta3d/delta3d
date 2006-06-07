@@ -157,7 +157,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       // Initialize CEGUI
       mGUI = new dtGUI::CEUIDrawable(win);
 
-      std::string scheme = "gui/schemes/TaharezLook.scheme";
+      std::string scheme = "gui/schemes/WindowsLookSkin.scheme";
       std::string path = osgDB::findDataFile(scheme);
       if(path.empty())
       {
@@ -177,7 +177,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       // MEDIUM FIELDS - on in Medium or max
 
       mHUDOverlay = static_cast<CEGUI::StaticImage*>(wm->createWindow
-         ("TaharezLook/StaticImage", "medium_overlay"));
+         ("WindowsLook/StaticImage", "medium_overlay"));
       mMainWindow->addChildWindow(mHUDOverlay);
       mHUDOverlay->setPosition(CEGUI::Point(0.0f, 0.0f));
       mHUDOverlay->setSize(CEGUI::Size(1.0f, 1.0f));
@@ -187,7 +187,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       // Main State - idle/playback/record
       mStateText = CreateText("State Text", mHUDOverlay, "", 10.0f, 20.0f, 120.0f, mTextHeight + 5);
       mStateText->setTextColours(CEGUI::colour(1.0, 0.1, 0.1));
-      mStateText->setFont("Tahoma-14");
+      mStateText->setFont("Tahoma-12");
 
       // Core sim info
       mSimTimeText = CreateText("Sim Time", mHUDOverlay, "Sim Time",
@@ -228,7 +228,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       curYPos = 70;
       mTasksHeaderText = CreateText(std::string("Task Header"), mHUDOverlay, std::string("Tasks:"),
          4, curYPos, taskTextWidth - 2, mTextHeight + 2);
-      mTasksHeaderText->setFont("Tahoma-14");
+      mTasksHeaderText->setFont("Tahoma-12");
       curYPos += 2;
 
       // 11 placeholders for tasks
@@ -243,7 +243,7 @@ void TestAARHUD::SetupGUI(dtCore::DeltaWin *win)
       // HELP FIELDS
 
       mHelpOverlay = static_cast<CEGUI::StaticImage*>(wm->createWindow
-         ("TaharezLook/StaticImage", "Help Overlay"));
+         ("WindowsLook/StaticImage", "Help Overlay"));
       mMainWindow->addChildWindow(mHelpOverlay);
       mHelpOverlay->setPosition(CEGUI::Point(0.0f, 0.0f));
       mHelpOverlay->setSize(CEGUI::Size(1.0f, 1.0f));
@@ -717,7 +717,7 @@ CEGUI::StaticText * TestAARHUD::CreateText(const std::string &name, CEGUI::Stati
    CEGUI::WindowManager *wm = CEGUI::WindowManager::getSingletonPtr();
 
    // create base window and set our default attribs
-   CEGUI::StaticText* result = static_cast<CEGUI::StaticText*>(wm->createWindow("TaharezLook/StaticText", name));
+   CEGUI::StaticText* result = static_cast<CEGUI::StaticText*>(wm->createWindow("WindowsLook/StaticText", name));
    parent->addChildWindow(result);
    result->setMetricsMode(CEGUI::Absolute);
    result->setText(text);
