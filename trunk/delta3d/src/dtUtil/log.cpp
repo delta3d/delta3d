@@ -19,6 +19,7 @@
 * @author Matthew W. Campbell
 */
 #include <dtUtil/log.h>
+#include <dtUtil/bits.h>
 #include <iomanip>
 #include <iostream>
 #include <stdarg.h>
@@ -168,7 +169,8 @@ namespace dtUtil
 
    //////////////////////////////////////////////////////////////////////////
    Log::Log()
-      :mLevel(LOG_WARNING)
+      :mLevel(LOG_WARNING),
+      mOutputStreamBit(Log::STANDARD)
    {
    }
 
@@ -183,8 +185,12 @@ namespace dtUtil
    void Log::LogMessage(const std::string &source, int line, const std::string &msg,
                 LogMessageType msgType) const
    {
+      if (mOutputStreamBit == Log::NO_OUTPUT) 
+         return;
+
       if (msgType < mLevel)
          return;
+
       if (!manager->logFile.is_open())
          return;
 
@@ -219,23 +225,30 @@ namespace dtUtil
 
       }
 
-      manager->logFile << color << GetLogLevelString(msgType) << ": "
-         << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-         << source;
-      if (line > 0)
-         manager->logFile << ":" << line;
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      {
+         manager->logFile << color << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
+            << source;
+         if (line > 0)
+            manager->logFile << ":" << line;
 
-      manager->logFile << "&gt; " << msg << "</font></b><br>" << std::endl;
+         manager->logFile << "&gt; " << msg << "</font></b><br>" << std::endl;
+        
+         manager->logFile.flush(); //Make sure everything is written, in case of a crash.
+      }
 
-      std::cout << GetLogLevelString(msgType) << ": "
-         << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-         << source << ":" << line << ">" << msg << std::endl;
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
+      {
+         std::cout << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+            << source << ":" << line << ">" << msg << std::endl;
+      }
 
-      manager->logFile.flush(); //Make sure everything is written, in case of a crash.
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -248,6 +261,9 @@ namespace dtUtil
       time_t cTime;
       std::string color;
 
+      if (mOutputStreamBit == Log::NO_OUTPUT) 
+         return;
+
       if (msgType < mLevel)
          return;
 
@@ -285,19 +301,26 @@ namespace dtUtil
       vsprintf(buffer,msg,list);
       va_end(list);
 
-      manager->logFile << color << GetLogLevelString(msgType) << ": "
-         << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-         << source << "&gt; " << buffer << "</font></b><br>" << std::endl;
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      {
+         manager->logFile << color << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
+            << source << "&gt; " << buffer << "</font></b><br>" << std::endl;
+ 
+         manager->logFile.flush();
+      }
 
-      std::cout << GetLogLevelString(msgType) << ": "
-         << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-         << source << ">" << buffer << std::endl;
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
+      {
+         std::cout << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+            << source << ">" << buffer << std::endl;
+      }
 
-      manager->logFile.flush();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -310,6 +333,9 @@ namespace dtUtil
       time_t cTime;
       std::string color;
 
+      if (mOutputStreamBit == Log::NO_OUTPUT) 
+         return;
+
       if (msgType < mLevel)
          return;
 
@@ -347,20 +373,27 @@ namespace dtUtil
       vsprintf(buffer,msg,list);
       va_end(list);
 
-      manager->logFile << color << GetLogLevelString(msgType) << ": "
-         << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
-         << source << ":" << line << "&gt; " << buffer << "</font></b><br>" << std::endl;
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      {
+         manager->logFile << color << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ": &lt;"
+            << source << ":" << line << "&gt; " << buffer << "</font></b><br>" << std::endl;
+ 
+         manager->logFile.flush();
+      }
 
 
-      std::cout << GetLogLevelString(msgType) << ": "
-         << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_min << ":"
-         << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
-         << source << ":" << line << ">" << buffer << std::endl;
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_CONSOLE))
+      {
+         std::cout << GetLogLevelString(msgType) << ": "
+            << std::setw(2) << std::setfill('0') << t->tm_hour << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_min << ":"
+            << std::setw(2) << std::setfill('0') << t->tm_sec << ":<"
+            << source << ":" << line << ">" << buffer << std::endl;
+      }
 
-      manager->logFile.flush();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -369,7 +402,13 @@ namespace dtUtil
       if (!manager->logFile.is_open())
          return;
 
-      manager->logFile << "<hr>" << std::endl;
+      if (mOutputStreamBit == Log::NO_OUTPUT) 
+         return;
+
+      if (dtUtil::Bits::Has(mOutputStreamBit, Log::TO_FILE))
+      {
+         manager->logFile << "<hr>" << std::endl;
+      }
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -412,4 +451,22 @@ namespace dtUtil
       return lev;
    }
 
+   /** Tell the Log where to send output messages.  The supplied parameter is a
+    *  bitwise combination of OutputStreamOptions.  The default is STANDARD, which 
+    *  directs messages to both the console and the output file.
+    *  For example, to tell the Log to output to the file and console:
+    *  \code 
+    *   dtUtil::Log::GetInstance().SetOutputStreamBit(dtUtil::Log::TO_FILE | dtUtil::Log::TO_CONSOLE);
+    *  \endcode
+    *  \param option A bitwise combination of options.
+    */
+   void Log::SetOutputStreamBit(unsigned int option)
+   {
+      mOutputStreamBit = option;
+   }
+
+   unsigned int Log::GetOutputStreamBit() const
+   {
+      return mOutputStreamBit;
+   }
 } //end namespace
