@@ -40,6 +40,13 @@ namespace dtUtil
 
       ///Get the current filename of the log file.
       static const std::string GetFileName();
+      
+      /// change the title string used in HTML 
+      /// defaults to "Delta 3D Engine Log File" or "Delta 3D Engine Log File (Debug Libs)"
+      static void LogFile::SetTitle(const std::string& title);
+      
+      ///Get the current HTML title string.
+      static const std::string LogFile::GetTitle();
    };
 
     /**

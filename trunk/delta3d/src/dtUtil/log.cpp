@@ -30,6 +30,12 @@ namespace dtUtil
    const std::string Log::mDefaultName("__+default+__");
    static const char *sLogFileName = "delta3d_log.html";
 
+#ifdef _DEBUG
+static const char *sTitle = "Delta 3D Engine Log File (Debug Libs)";
+#else
+static const char *sTitle = "Delta 3D Engine Log File";
+#endif
+
    //////////////////////////////////////////////////////////////////////////
 
    class LogManager: public osg::Referenced 
@@ -91,8 +97,8 @@ namespace dtUtil
             //std::cout << "Using file \"delta3d_log.html\" for logging" << std::endl;
          }
          //Write a decent header to the html file.
-         logFile << "<html><title>Delta 3D Engine</title><body>" << std::endl;
-         logFile << "<h1 align=\"center\">Delta 3D Engine Log File</h1><hr>" << std::endl;
+         logFile << "<html><title>" << sTitle <<"</title><body>" << std::endl;
+         logFile << "<h1 align=\"center\">" << sTitle << "</h1><hr>" << std::endl;
          logFile << "<pre><h3 align=\"center\""
             "<font color=#808080><b>  Debug     </b></font>"
             "<font color=#008080><b>  Information     </b></font>"
@@ -165,6 +171,16 @@ namespace dtUtil
    const std::string LogFile::GetFileName()
    {
       return std::string(sLogFileName);
+   }
+
+   void LogFile::SetTitle(const std::string& title)
+   {
+      sTitle = title.c_str();
+   }
+
+   const std::string LogFile::GetTitle()
+   {
+      return std::string(sTitle);
    }
 
    //////////////////////////////////////////////////////////////////////////
