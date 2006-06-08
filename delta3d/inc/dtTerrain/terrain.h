@@ -160,18 +160,23 @@ namespace dtTerrain
           */
          float GetHeight(float x, float y);
 
-         /** 
-         * true if vector from pt1 to pt2 does NOT intersect Height Field
-         * false if it intersects
-         *
-         * ideally a functor should be provided to override the very simple
-         * algorithm implemented in Terrain.
-         */
-         bool IsClearLineOfSight(osg::Vec3 pt1, osg::Vec3 pt2);
+         /**
+          * Given pointOne and pointTwo, both in world space and with all coordinates
+          * in Cartesian space (essentially in meters along X, Y and Z),
+          * returns true if there is a clear line of sight and false if the view
+          * is blocked.
+          *
+          * @param pointOne The start point.
+          * @param pointTwo The end point.
+          * @return Returns true if there is a clear line of sight from pointOne to
+          * pointTwo and false if the view is blocked.
+          */
+         bool IsClearLineOfSight( const osg::Vec3& pointOne,
+                                  const osg::Vec3& pointTwo );
 
-         void SetLineOfSightSpacing(float spacing){mLOSPostSpacing = spacing;}
+         void SetLineOfSightSpacing(float spacing) {mLOSPostSpacing = spacing;}
 
-         float GetLineOfSightSpacing() {return mLOSPostSpacing;}
+         float GetLineOfSightSpacing() const {return mLOSPostSpacing;}
 
          virtual void LoadTerrainTile(PagedTerrainTile &newTile);
          
@@ -387,6 +392,32 @@ namespace dtTerrain
 
 		 float mLOSPostSpacing;
    };
+
+   /**
+    * Trivial Line Of Sight calcuator. We basically walk along the ray between
+    * the two points, doing point sampling.  This is brute force and not the
+    * most efficient means of doing this test, but this is the first implementation.
+    *
+    * This routine ONLY checks visibility against ground terrain!  We do not
+    * check test against other objects, such as buildings or other vehicles.
+    * 
+    * Sampling rate: our DTED data is sampled at about 30m resolution. Therefore
+    * we adjust the postSpacing to be smaller than that, and use that to step along
+    * the viewing ray.
+    * 
+    * This uses dtTerrain::GetHeight which uses the current Renderer
+    * this may be cause lots extra work, especially when called repeatedly
+    * might be better to do it directly on heightField of tile?
+    *
+    * @param terrain Test the line of sight against this instance of Terrain.
+    * @param pointOne The start point.
+    * @param pointTwo The end point.
+    *
+    * @pre terrain != 0
+    */
+   bool SimpleLineOfSight( dtTerrain::Terrain* terrain,
+                           const osg::Vec3& pointOne,
+                           const osg::Vec3& pointTwo );
 
 }
 

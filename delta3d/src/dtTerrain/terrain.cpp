@@ -136,66 +136,11 @@ namespace dtTerrain
    }
 
    ////////////////////////////////////////////////////////////////////////// 
-
-   /**
-   * Trivial Line Of Sight calcuator.
-   * We basically walk along the ray between the
-   * two points, doing point sampling.  This is brute
-   * force and not the most efficient means of doing
-   * this test, but this is the first implementation.
-
-   * This routine ONLY checks visibility against ground
-   * terrain!  We do not check test against other 
-   * objects, such as buildings or other vehicles.
-   * 
-   * Sampling rate: our DTED data is sampled at about 30m
-   * resolution.  Therefore we adjust the postSpacing to be
-   * smaller than that, and use that to step along the 
-   * viewing ray.
-   * 
-   * This uses dtTerrain->GetHeight which uses the current Renderer
-   * this may be cause lots extra work, especially when called repeatedly
-   * might be better to do it directly on heightField of tile?
-   */
-   static bool SimpleLOS(dtTerrain::Terrain *pT, osg::Vec3 pt1, osg::Vec3 pt2)
-   {   
-      osg::Vec3 ray = pt2 - pt1;
-      double length = ray.length();
-      // if closer than post spacing, then clear LOS
-      if (length < pT->GetLineOfSightSpacing())
-         return (true);
-
-      float stepsize = pT->GetLineOfSightSpacing() / length;
-      double s = 0.0;
-
-      while (s < 1.0)
-      {
-         osg::Vec3 testPt = pt1 + ray*s;
-         double h = pT->GetHeight(testPt.x(), testPt.y());
-         // segment blocked by terrain
-         if (h >= testPt.z())
-            return(false);
-         s += stepsize;
-      }
-
-      // walked full ray, so clear LOS
-      return (true);
-
-   }
-
-   /**
-   * Given point1 and point2, both in world space
-   * and with all coordinates in Cartesian space
-   * (essentially in meters along X, Y and Z),
-   * returns true if there is a clear line of sight
-   * and false if the view is blocked.
-   *
-   */
-   bool Terrain::IsClearLineOfSight(osg::Vec3 pt1, osg::Vec3 pt2)
+   bool Terrain::IsClearLineOfSight( const osg::Vec3& pointOne,
+                                     const osg::Vec3& pointTwo )
    {
-      // would be nice to have a functor 
-      // instead of very simple built-in
-      return SimpleLOS(this, pt1, pt2);
+      // Would be nice to have a functor instead of very simple built-in
+      return SimpleLineOfSight(this, pointOne, pointTwo);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -833,5 +778,37 @@ namespace dtTerrain
          layers.push_back(itor->second);
          ++itor;
       }
+   }
+
+   bool SimpleLineOfSight( dtTerrain::Terrain* terrain,
+                           const osg::Vec3& pointOne,
+                           const osg::Vec3& pointTwo )
+   {   
+      osg::Vec3 ray = pointTwo - pointOne;
+      double length( ray.length() );
+      // If closer than post spacing, then clear LOS
+      if( length < terrain->GetLineOfSightSpacing() )
+      {
+         return true;
+      }
+
+      float stepsize( terrain->GetLineOfSightSpacing() / length );
+      double s( 0.0 );
+
+      while( s < 1.0 )
+      {
+         osg::Vec3 testPt = pointOne + ray*s;
+         double h( terrain->GetHeight( testPt.x(), testPt.y() ) );
+
+         // Segment blocked by terrain
+         if( h >= testPt.z() )
+         {
+            return false;
+         }
+         s += stepsize;
+      }
+
+      // Walked full ray, so clear LOS
+      return true;
    }
 }
