@@ -137,7 +137,7 @@ namespace dtTerrain
       return ost.str();
    }
 
-//////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    void GeoCoordinates::SetCartesianPoint(const osg::Vec3 &point)
    {
       // need to do conversions in dbl precision
@@ -146,18 +146,11 @@ namespace dtTerrain
          (double)point.y() + gOriginOffset.y(),
          (double)point.z() + gOriginOffset.z()
          );
-      //LOG_DEBUG("SetCartiesian:     pt ="+vec3dToString(point));
-      //LOG_DEBUG("SetCartiesian: origin ="+vec3dToString(gOriginOffset));
-      //LOG_DEBUG("SetCartiesian:    tmp ="+vec3dToString(tmp));
-
       // azuma: removed negation on mLatitude, so that as latitude increases, Y increases
-      //      mLatitude = (-point.y() / EQUATORIAL_RADIUS) * osg::RadiansToDegrees(1.0);
       mLatitude = (tmp.y() / EQUATORIAL_RADIUS) * osg::RadiansToDegrees(1.0);
       mLongitude = (tmp.x() / EQUATORIAL_RADIUS) * osg::RadiansToDegrees(1.0);
       mAltitude = tmp.z();
       
-      //LOG_DEBUG("SetCartiesian: "+ToStringAll());
-
       //Finally, make sure we keep the cartesian origin around.
       mCartesianPoint = point;
    }
@@ -170,7 +163,6 @@ namespace dtTerrain
          osg::Vec3d tmp = osg::Vec3d();
          GetRawCartesianPoint(tmp);
          mCartesianPoint = tmp - gOriginOffset;
-         //LOG_DEBUG("Updated Cartesian Point"+ToStringAll());
          mUpdateCartesianPoint = false;
       }
 
@@ -181,12 +173,8 @@ namespace dtTerrain
    void GeoCoordinates::GetCartesianPoint( osg::Vec3& point )
    {
       osg::Vec3 tmp ;
-      //LOG_DEBUG("v3 getCart raw tmp3d:"+vec3dToString(tmp));
       tmp = GetCartesianPoint();
-      //LOG_DEBUG("v3 getCart mCart:"+vec3dToString(mCartesianPoint));
-      //LOG_DEBUG("v3 getCart tmp3d:"+vec3dToString(tmp));
       point.set( tmp.x(), tmp.y(), tmp.z() );
-      //LOG_DEBUG("v3 getCart pt:"+vec3ToString(point));
    }
 
    void GeoCoordinates::SetOrigin(const GeoCoordinates &geo)
@@ -194,13 +182,7 @@ namespace dtTerrain
       geoOrigin = geo;
       geoOrigin.GetRawCartesianPoint(gOriginOffset);
 
-      // INFO Output
-      //osg::Vec3d pt;
-      //geoOrigin.GetRawCartesianPoint(pt);
-      //osg::Vec3 pos = geoOrigin.GetCartesianPoint();
       LOG_INFO("SetGeoOrigin: "+geoOrigin.ToStringAll());
-      //LOG_INFO("      xyz:" + vec3dToString(pt));
-      //LOG_INFO("      pos:" + vec3ToString(pos));
       LOG_INFO("   offset:" +vec3dToString(gOriginOffset));
    }
 
@@ -213,7 +195,6 @@ namespace dtTerrain
    void GeoCoordinates::GetRawCartesianPoint(osg::Vec3d &pt)
    {
       pt.x() = (mLongitude * EQUATORIAL_RADIUS) * osg::DegreesToRadians(1.0);
-      //         mCartesianPoint.y() = (-mLatitude * EQUATORIAL_RADIUS) * osg::DegreesToRadians(1.0);
       // azuma: removed negation on mLatitude, so that as latitude increases, Y increases
       pt.y() = (mLatitude * EQUATORIAL_RADIUS) * osg::DegreesToRadians(1.0);
       pt.z() = mAltitude;
