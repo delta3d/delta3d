@@ -86,7 +86,7 @@ namespace dtExample
          {
             std::string schemefile( osgDB::findDataFile("schemes/WindowsLookSkin.scheme") );
             CEGUI::SchemeManager* sm = CEGUI::SchemeManager::getSingletonPtr();
-            CEGUI::Scheme* scheme = sm->loadScheme( schemefile );  ///< populate the window factories
+            sm->loadScheme( schemefile );  ///< populate the window factories
          }
          catch(CEGUI::Exception& )
          {
