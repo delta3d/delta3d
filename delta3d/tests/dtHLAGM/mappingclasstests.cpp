@@ -309,7 +309,7 @@ class MappingClassTests : public CPPUNIT_NS::TestFixture
          mapping.AddEnumerationMapping(8, "horse");
 
          std::string gameEnumValue;
-         int hlaEnumValue;
+         int hlaEnumValue(0);
          CPPUNIT_ASSERT(mapping.GetHLAEnumerationValue("hello", hlaEnumValue));
          CPPUNIT_ASSERT(hlaEnumValue == 1);
          CPPUNIT_ASSERT(mapping.GetHLAEnumerationValue("chicken", hlaEnumValue));

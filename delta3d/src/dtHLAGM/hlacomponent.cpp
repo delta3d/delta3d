@@ -110,7 +110,7 @@ namespace dtHLAGM
    void HLAComponent::RegisterObjectToActorWithRTI(ObjectToActor& objectToActor)
    {
       const std::string& thisObjectClassString = objectToActor.GetObjectTypeName();
-      RTI::ObjectClassHandle thisObjectClassHandle;
+      RTI::ObjectClassHandle thisObjectClassHandle(0);
 
       try
       {

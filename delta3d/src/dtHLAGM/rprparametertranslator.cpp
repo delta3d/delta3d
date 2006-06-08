@@ -565,7 +565,7 @@ namespace dtHLAGM
       else if (parameterDataType == dtDAL::DataType::ENUMERATION)
       {
          std::string sValue = static_cast<const dtGame::EnumMessageParameter&>(parameter).GetValue();
-         int value;
+         int value(0);
          if (paramDef.GetHLAEnumerationValue(sValue, value))
          {
             return long(value);

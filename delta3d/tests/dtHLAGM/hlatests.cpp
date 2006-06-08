@@ -679,7 +679,7 @@ void HLATests::TestReceiveInteraction()
       RTI::RTIambassador* rtiamb = mHLAComponent->GetRTIAmbassador();
       CPPUNIT_ASSERT(rtiamb != NULL);
 
-      RTI::InteractionClassHandle classHandle1;//, classHandle2;
+      RTI::InteractionClassHandle classHandle1(0);//, classHandle2;
       try
       {
          classHandle1 = rtiamb->getInteractionClassHandle(
