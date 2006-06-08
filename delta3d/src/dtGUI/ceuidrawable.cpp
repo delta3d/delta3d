@@ -109,6 +109,7 @@ void CEUIDrawable::Config()
 
    stateset->setTextureMode(0, GL_TEXTURE_2D, osg::StateAttribute::ON);
 
+
    geod->setStateSet(stateset);
 
    osg::ref_ptr<osgCEUIDrawable> osgCEUI = new osgCEUIDrawable(mUI);
@@ -235,5 +236,7 @@ osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) con
 void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
 { //tell the UI to update and to render
    if (!mUI) return;       
+   state.setActiveTextureUnit(0);
    mUI->getSingletonPtr()->renderGUI();
+   
 }
