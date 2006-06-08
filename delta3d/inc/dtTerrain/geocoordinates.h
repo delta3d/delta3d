@@ -22,6 +22,7 @@
 #define DELTA_GEOCOORDINATES
 
 #include <osg/Vec3>
+#include <osg/Vec3d>
 #include "dtUtil/enumeration.h"
 #include "dtTerrain/terrain_export.h"
 
@@ -212,6 +213,12 @@ namespace dtTerrain
          const osg::Vec3 &GetCartesianPoint();
          void GetCartesianPoint( osg::Vec3& point ); 
         
+         static void SetOrigin(const GeoCoordinates &geoOrigin);
+         static void GetOrigin(GeoCoordinates &geoOrigin);
+
+         std::string ToString(); // GeoCoord(lat,long,alt)
+         std::string ToStringAll(); // GeoCoord(geo: lat,long,alt cart:x,y,z)
+
       protected:
       
          ///Cached version of this coordinate sytems's origin in cartesian space.
@@ -228,6 +235,10 @@ namespace dtTerrain
          
          ///Flag to indicate the cartesian origin needs to be updated.
          bool mUpdateCartesianPoint;
+
+         void GetRawCartesianPoint( osg::Vec3d &point ); 
+         static osg::Vec3d gOriginOffset;
+         static GeoCoordinates geoOrigin;
    };
    
 }         
