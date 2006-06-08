@@ -554,7 +554,10 @@ private:
   void CamStatisticsCB(Fl_Button*);
   void CameraFrameBinCB(Fl_Value_Input*);
 };
-#pragma comment(lib, "fltk.lib")
-#pragma comment(lib, "wsock32.lib")
-#pragma comment(lib, "comctl32.lib")
+#ifdef _MSC_VER
+#   pragma comment(lib, "fltk.lib")
+#   pragma comment(lib, "wsock32.lib")
+#   pragma comment(lib, "comctl32.lib")
+#endif // _MSC_VER
+
 #endif
