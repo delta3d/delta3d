@@ -151,8 +151,10 @@ namespace dtActors
 
    BasicEnvironmentActor::BasicEnvironmentActor(dtGame::GameActorProxy &proxy) :
       dtGame::EnvironmentActor(proxy),
+      mIsCloudPlaneEnabled(false),
       mWeather(new dtABC::Weather),
-      mIsCloudPlaneEnabled(false)
+      mCloudPlane(0),
+      mAddedActors()
    {
       mCloudPlane = new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f);
       AddChild(mWeather->GetEnvironment());
