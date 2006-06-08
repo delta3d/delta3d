@@ -23,8 +23,8 @@
 
 #include <osg/Vec3>
 #include <osg/Vec3d>
-#include "dtUtil/enumeration.h"
-#include "dtTerrain/terrain_export.h"
+#include <dtUtil/enumeration.h>
+#include <dtTerrain/terrain_export.h>
 
 namespace dtTerrain
 {
