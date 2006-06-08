@@ -42,6 +42,21 @@
 #include <sstream>
 #include <dtCore/generickeyboardlistener.h>
 
+      // helper func that should be somewhere
+   std::string vec3dToString(const osg::Vec3d &pt)
+   {
+      std::ostringstream ost;
+      ost << "Vec3d("<< pt.x()<< ", " << pt.y()<< ", " << pt.z()<< " )";
+      return ost.str();
+   }
+
+   // helper func that should be somewhere
+   std::string vec3ToString(const osg::Vec3 &pt)
+   {
+      std::ostringstream ost;
+      ost << "Vec3 ("<< pt.x()<< ", " << pt.y()<< ", " << pt.z()<< " )";
+      return ost.str();
+   }
 
 class TestTerrainApp : public dtABC::Application
 {
@@ -64,6 +79,49 @@ public:
    //////////////////////////////////////////////////////////////////////////
    void CreateTerrain()
    {
+     //Before we load any resources, lets set our origin to correlate to the data we
+      //are loading.
+      dtCore::Transform tx;
+      dtTerrain::GeoCoordinates coords;
+      osg::Vec3d pos;
+      osg::Vec3 posV3;
+      pos = coords.GetCartesianPoint();
+      coords.GetCartesianPoint(posV3);
+      LOG_DEBUG("Raw Geo: "+coords.ToStringAll());
+      LOG_DEBUG("  gotPt: "+vec3dToString(pos));
+      LOG_DEBUG("  altPt: "+vec3ToString(posV3));
+
+      dtTerrain::GeoCoordinates origin;
+      dtTerrain::GeoCoordinates::GetOrigin(origin);
+      pos = coords.GetCartesianPoint();
+      coords.GetCartesianPoint(posV3);
+      LOG_DEBUG("Origin : "+coords.ToStringAll());
+      LOG_DEBUG("  gotPt: "+vec3dToString(pos));
+      LOG_DEBUG("  altPt: "+vec3ToString(posV3));
+
+      coords.SetLatitude(mLatitude);
+      coords.SetLongitude(mLongitude);
+      coords.SetAltitude(0.0);
+      pos = coords.GetCartesianPoint();
+      coords.GetCartesianPoint(posV3);
+
+      LOG_DEBUG("Set Geo: "+coords.ToStringAll());
+      LOG_DEBUG("  gotPt: "+vec3dToString(pos));
+      LOG_DEBUG("  atlPt: "+vec3ToString(posV3));
+
+      // Set Origin to avoid floating point round off errors
+      // geo <-> cartesian is done in dbl precision
+      // while rest of calculations are single precision
+      dtTerrain::GeoCoordinates::SetOrigin(coords);
+
+      coords.SetAltitude(1000.0);
+      coords.GetCartesianPoint(posV3);
+      tx.SetTranslation(posV3); 
+      LOG_DEBUG("SetCam: "+vec3ToString(posV3));
+
+      //std::cout << "Camera Pos = " <<  pos.x() << ", " << pos.y() << ", " << pos.z() << std::endl;
+      GetCamera()->SetTransform(&tx);         
+
       // Set up a motion model so we can move the camera
       mMotionModel = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
       mMotionModel->SetMaximumFlySpeed(1200.0f);
@@ -108,15 +166,6 @@ public:
       mTerrain->SetDataReader(reader);         
       mTerrain->SetDataRenderer(mRenderer.get());        
          
-      //Before we load any resources, lets set our origin to correlate to the data we
-      //are loading.
-      dtCore::Transform tx;
-      dtTerrain::GeoCoordinates coords;
-      coords.SetLatitude(mLatitude);
-      coords.SetLongitude(mLongitude);
-      coords.SetAltitude(1000.0);
-      tx.SetTranslation(coords.GetCartesianPoint());                          
-      GetCamera()->SetTransform(&tx);         
 
       //Add a decorator to generate a base texture for the terrain.
       mColorMapDecorator = new dtTerrain::ColorMapDecorator();
