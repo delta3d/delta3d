@@ -70,16 +70,11 @@ const char*                Viewer::msgResetCam("resetcam");
 
 
 
-IMPLEMENT_MANAGEMENT_LAYER(Viewer)
-
-
 
 Viewer::Viewer( const std::string& name /*= "Viewer"*/ )
 :  Widget(name),
-   mInputDevice(NULL),
    mCurState(_CurState)
 {
-   RegisterInstance( this );
    memset( mMotionModel, 0L, sizeof(mMotionModel) );
    memset( mDispXform, 0L, sizeof(mDispXform) );
 }
@@ -88,7 +83,6 @@ Viewer::Viewer( const std::string& name /*= "Viewer"*/ )
 
 Viewer::~Viewer( void )
 {
-   DeregisterInstance( this );
 }
 
 
@@ -384,30 +378,28 @@ void Viewer::LoadFile( ViewState* vs )
       pChar = new dtChar::Character();
       fileLoaded = pChar->LoadFile(filename);
 
-         /*
-            //this code gets a list of animations from rbody
-            //in order to add support for playback of animations
-            //we will need to save this string and provide a gui
-            //to cycle through animations
-            //NOTE: this code is commented out because
-            //rbody's getActionPrototypeNames is currently 
-            //unimplemented
-            //this is the output
-            //FIXME--Unimplemented
-            //Anderegg
-         */
+      //this code gets a list of animations from rbody
+      //in order to add support for playback of animations
+      //we will need to save this string and provide a gui
+      //to cycle through animations
+      //NOTE: this code is commented out because
+      //rbody's getActionPrototypeNames is currently 
+      //unimplemented
+      //this is the output
+      //FIXME--Unimplemented
+      //Anderegg
 
-         /*rbody::OsgBodyNode* bnode = pChar->GetBodyNode();
-         if(bnode)
-         {
-            rbody::Body* body = bnode->getBody();
-            if(body)
-            {
-               std::list<std::string> animationNames;
-               body->getActionPrototypeNames(animationNames);
-               std::cout << animationNames.front().c_str();
-            }
-         }*/
+      //rbody::OsgBodyNode* bnode = pChar->GetBodyNode();
+      //if(bnode)
+      //{
+      //   rbody::Body* body = bnode->getBody();
+      //   if(body)
+      //   {
+      //      std::list<std::string> animationNames;
+      //      body->getActionPrototypeNames(animationNames);
+      //      std::cout << animationNames.front().c_str();
+      //   }
+      //}
 
       if(fileLoaded)
       {
@@ -702,182 +694,24 @@ Viewer::EnableJoystick( bool on, JOYSTICKID jy )
 
 void Viewer::InitInputDevices()
 {
-   mInputDevice   = new LogicalInputDevice;
-
-   dtCore::Keyboard* k     = GetKeyboard();
-   assert( k );
-
-   dtCore::Mouse* m     = GetMouse();
-   assert( m );
-
-   Axis* leftButtonUpAndDown  =
-         mInputDevice->AddAxis(
-                                 "left mouse button up/down",
-                                 new ButtonAxisToAxis(
-                                 m->GetButton( Mouse::LeftButton ),
-                                                         m->GetAxis( 1 )
-                                                     )
-                              );
-
-
-   Axis* leftButtonLeftAndRight  =
-         mInputDevice->AddAxis(
-                                 "left mouse button left/right",
-                                 new ButtonAxisToAxis(
-                                                         m->GetButton( Mouse::LeftButton ),
-                                                         m->GetAxis( 0 )
-                                                     )
-                              );
-
-
-   Axis* middleButtonUpAndDown   =
-         mInputDevice->AddAxis(
-                                 "middle mouse button up/down",
-                                 new ButtonAxisToAxis(
-                                                         m->GetButton( Mouse::MiddleButton ),
-                                                         m->GetAxis( 1 )
-                                                     )
-                              );
-
-
-   Axis* rightButtonUpAndDown    =
-         mInputDevice->AddAxis(
-                                 "right mouse button up/down",
-                                 new ButtonAxisToAxis(
-                                                         m->GetButton( Mouse::RightButton ),
-                                                         m->GetAxis( 1 )
-                                                     )
-                              );
-
-
-   Axis* rightButtonLeftAndRight =
-         mInputDevice->AddAxis(
-                                 "right mouse button left/right",
-                                 new ButtonAxisToAxis(
-                                                         m->GetButton( Mouse::RightButton ),
-                                                         m->GetAxis( 0 )
-                                                     )
-                              );
-
-
-   Axis* arrowKeysUpAndDown      =
-         mInputDevice->AddAxis(
-                                 "arrow keys up/down",
-                                 new ButtonsToAxis(
-                                                      k->GetButton( Producer::Key_Down ),
-                                                      k->GetButton( Producer::Key_Up )
-                                                  )
-                              );
-
-
-   Axis* arrowKeysLeftAndRight   =
-         mInputDevice->AddAxis(
-                                 "arrow keys left/right",
-                                 new ButtonsToAxis(
-                                                      k->GetButton( Producer::Key_Left ),
-                                                      k->GetButton( Producer::Key_Right )
-                                                  )
-                              );
-
-
-   Axis* wsKeysUpAndDown         =
-         mInputDevice->AddAxis(
-                                 "w/s keys up/down",
-                                 new ButtonsToAxis(
-                                                      k->GetButton( Producer::Key_S ),
-                                                      k->GetButton( Producer::Key_W )
-                                                  )
-                              );
-
-
-   Axis* adKeysLeftAndRight      =
-         mInputDevice->AddAxis(
-                                 "a/d keys left/right",
-                                 new ButtonsToAxis(
-                                                      k->GetButton( Producer::Key_A ),
-                                                      k->GetButton( Producer::Key_D )
-                                                  )
-                              );
-
-
-   Axis* primaryUpAndDown        =
-         mInputDevice->AddAxis(
-                                 "primary up/down",
-                                 new AxesToAxis(
-                                                   arrowKeysUpAndDown,
-                                                   leftButtonUpAndDown
-                                               )
-                              );
-
-
-   Axis* secondaryUpAndDown      =
-         mInputDevice->AddAxis(
-                                 "secondary up/down",
-                                 new AxesToAxis(
-                                                   wsKeysUpAndDown,
-                                                   rightButtonUpAndDown
-                                               )
-                              );
-
-
-   Axis* primaryLeftAndRight     =
-         mInputDevice->AddAxis(
-                                 "primary left/right",
-                                 new AxesToAxis(
-                                                   arrowKeysLeftAndRight,
-                                                   leftButtonLeftAndRight
-                                               )
-                              );
-
-
-   Axis* secondaryLeftAndRight   =
-         mInputDevice->AddAxis(
-                                 "secondary left/right",
-                                 new AxesToAxis(
-                                                   adKeysLeftAndRight,
-                                                   rightButtonLeftAndRight
-                                               )
-                              );
-
-
-
-   WalkMotionModel*  wmm   = new WalkMotionModel;
+   WalkMotionModel*  wmm   = new WalkMotionModel( GetKeyboard(), GetMouse() );
    assert( wmm );
-
    wmm->SetScene( GetScene() );
-   wmm->SetWalkForwardBackwardAxis( primaryUpAndDown );
-   wmm->SetTurnLeftRightAxis( primaryLeftAndRight );
-   wmm->SetSidestepLeftRightAxis( secondaryLeftAndRight );
    mMotionModel[WALK]  = wmm;
 
 
-   FlyMotionModel*   fmm   = new FlyMotionModel;
+   FlyMotionModel*   fmm   = new FlyMotionModel( GetKeyboard(), GetMouse() );
    assert( fmm );
-
-   fmm->SetTurnUpDownAxis( primaryUpAndDown );
-   fmm->SetTurnLeftRightAxis( primaryLeftAndRight );
-   fmm->SetFlyForwardBackwardAxis( secondaryUpAndDown );
    mMotionModel[FLY]   = fmm;
 
 
-   UFOMotionModel*   umm   = new UFOMotionModel;
+   UFOMotionModel*   umm   = new UFOMotionModel( GetKeyboard(), GetMouse() );
    assert( umm );
-
-   umm->SetFlyForwardBackwardAxis( primaryUpAndDown );
-   umm->SetFlyLeftRightAxis( primaryLeftAndRight );
-   umm->SetFlyUpDownAxis( secondaryUpAndDown );
-   umm->SetTurnLeftRightAxis( secondaryLeftAndRight );
    mMotionModel[UFO]   = umm;
 
 
-   OrbitMotionModel* omm   = new OrbitMotionModel;
+   OrbitMotionModel* omm   = new OrbitMotionModel( GetKeyboard(), GetMouse() );
    assert( omm );
-
-   omm->SetAzimuthAxis( primaryLeftAndRight );
-   omm->SetElevationAxis( primaryUpAndDown );
-   omm->SetDistanceAxis( middleButtonUpAndDown );
-   omm->SetLeftRightTranslationAxis( secondaryLeftAndRight );
-   omm->SetUpDownTranslationAxis( secondaryUpAndDown );
 
    mMotionModel[ORBIT]  = omm;
 
@@ -895,9 +729,6 @@ void Viewer::InitInputDevices()
 void
 Viewer::InitObjects( void )
 {
-   //Scene*   scene = GetScene();
-   //assert( scene );
-
    osgFX::Scribe* scribe   = new osgFX::Scribe;
    assert( scribe );
    scribe->setName("HeadScribe");

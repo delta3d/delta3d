@@ -19,8 +19,6 @@ class ViewState;
 
 class Viewer :  public   dtABC::Widget
 {
-   DECLARE_MANAGEMENT_LAYER(Viewer)
-
                enum     ITEMCOLOR
                         {
                            BLACK    = 0L,
@@ -139,11 +137,10 @@ class Viewer :  public   dtABC::Widget
                void           InitGridPlanes( void );
 
    private:
-      dtCore::RefPtr<dtCore::LogicalInputDevice>   mInputDevice;
       dtCore::MotionModel*                       mMotionModel[NUMMOTIONMODELS];
       osg::MatrixTransform*                      mDispXform[NUMGRIDS];
       ViewState&                                 mCurState;
-      dtCore::RefPtr<osg::Group>                   mViewerNode;
+      dtCore::RefPtr<osg::Group>                 mViewerNode;
 };
 
 
