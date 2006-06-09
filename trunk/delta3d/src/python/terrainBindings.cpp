@@ -7,10 +7,6 @@
 // provide access to soarxdrawable::setBufferSize
 ///////////////////////////////////////////////////////////
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
 #include <python/dtpython.h>
 
 #include <dtTerrain/terrain.h>
@@ -18,19 +14,13 @@
 
 using namespace boost::python;
 using namespace dtTerrain;
-using namespace dtCore;
-
 
 void initTerrainBindings()
 {
-
-	//class_< Terrain, bases<Base>, Terrain*, boost::noncopyable >("Terrain",no_init) // init<optional<std::string> >())
-	class_< Terrain, bases<DeltaDrawable>, dtCore::RefPtr<Terrain>, boost::noncopyable >("Terrain", no_init) 
-		.def("SetBufferSize",SoarXDrawable::SetBufferSize)
-		.staticmethod("SetBufferSize")
+   class_< Terrain, bases<dtCore::DeltaDrawable>, dtCore::RefPtr<Terrain>, boost::noncopyable >("Terrain", init< optional< const std::string& > >() ) 
+		//.def("SetBufferSize",SoarXDrawable::SetBufferSize)
+		//.staticmethod("SetBufferSize")
 		.def("GetHeight",&Terrain::GetHeight)
 		.def("IsClearLineOfSight", &Terrain::IsClearLineOfSight)
-        ;
-
+      ;
 }
-
