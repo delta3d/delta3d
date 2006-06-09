@@ -163,6 +163,7 @@ namespace dtCore
       Mouse* GetMouse() { return mMouse.get(); }
       const Mouse* GetMouse() const { return mMouse.get(); }
 
+      /// The data structure modeling monitor resolution
       struct Resolution
       {
          int width;  ///<In pixels
