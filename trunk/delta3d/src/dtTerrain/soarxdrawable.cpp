@@ -106,6 +106,8 @@ namespace dtTerrain
       setSupportsDisplayList(false);
       //setUseVertexBufferObjects(true);
 
+      // How the hell did these magik numbers appear? Note that it is now
+      // overwritten in Build. -osb
       BUFFER_SIZE = 512*1024 + 1024;
 
       mCurrentPage = 0;
@@ -335,10 +337,13 @@ namespace dtTerrain
          }        
             
          usedCache = false;
-      }      
+      }
+
+      BUFFER_SIZE = tile.GetHeightField()->GetNumRows() * 
+                    tile.GetHeightField()->GetNumColumns() * 1.1;
       
-	  // isdale: too big a buffer size will run us out of memory
-	  // should be a way to catch this, pre-test for it.
+	   // isdale: too big a buffer size will run us out of memory
+	   // should be a way to catch this, pre-test for it.
       mVertexArray[0] = new osg::Vec3[BUFFER_SIZE];
       mVertexArray[1] = new osg::Vec3[BUFFER_SIZE];      
       mIndexArray[0] = new unsigned int[BUFFER_SIZE];
