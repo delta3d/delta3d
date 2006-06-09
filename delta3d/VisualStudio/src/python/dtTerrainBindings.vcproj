@@ -38,7 +38,7 @@
 				OutputFile="../../../bin/PyDtTerrain.pyd"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;$(PYTHON_LIB_PATH);$(BOOST_LIB)"
+				AdditionalLibraryDirectories="../../../lib;../../../ext/lib;&quot;$(PYTHON_LIB_PATH)&quot;"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="FALSE"
 				SubSystem="0"
