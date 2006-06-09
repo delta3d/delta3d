@@ -21,7 +21,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
 #include <dtUtil/fileutils.h>
-#include <dtDAL/project.h>
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtCore/floatshaderparameter.h>
 #include <dtCore/integershaderparameter.h>
@@ -64,16 +63,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ShaderParameterTests);
 ///////////////////////////////////////////////////////////////////////////////
 void ShaderParameterTests::setUp()
 {
-   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() );
-
-   try
-   {
-      dtDAL::Project::GetInstance().SetContext(projectContext);
-   }
-   catch (const dtUtil::Exception& e)
-   {
-      CPPUNIT_FAIL(e.ToString());
-   }
+   dtCore::SetDataFilePathList(  dtCore::GetDeltaDataPathList() + ";" + 
+                                 projectContext );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
