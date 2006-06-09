@@ -206,7 +206,7 @@ class TestMotionModelsApp : public Application
 public:
 
    /// Constructor.
-   TestMotionModelsApp( std::string configFile = "config.xml" ): Application( configFile ),
+   TestMotionModelsApp( const std::string& configFile = "config.xml" ) : Application( configFile ),
       mTerrain(0),
       mGUIDrawable(0),
       mMenuManager(0)
