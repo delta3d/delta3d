@@ -173,7 +173,17 @@ bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& dat
 {
    // apply the window settings
    dtCore::DeltaWin* dwin = app->GetWindow();
-   dwin->SetName( data.WINDOW_NAME );
+
+   // John's unwittingly caught a confusing aspect of the Applications's config file here.
+   // Historically, the Window's "name" attribute is used for the WindowTitle, while other
+   // elements, such as Screen, use the "name" attribute for the Base name. John had followed
+   // convention and just called SetName. Perhaps we need to add a new paramter called
+   // "title". However, this would break the expectation of users with previously written
+   // configuration files. Maybe we could do an automatically update whenver a config file
+   // without the "title" attribute is passed to Application. See Case 722 -osb
+   dwin->SetWindowTitle( data.WINDOW_NAME );
+   dwin->SetName( data.WINDOW_NAME ); // Perhaps a different parameter is needed for this?
+
    dwin->SetPosition( data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height );
    dwin->ShowCursor( data.SHOW_CURSOR );
    dwin->SetFullScreenMode( data.FULL_SCREEN );
