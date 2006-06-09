@@ -12,7 +12,6 @@ using namespace dtTerrain;
 
 namespace
 {
-
    std::string geocoord_repr(GeoCoordinates * self)
    {
       std::ostringstream ost;
@@ -26,9 +25,6 @@ namespace
       ost << "GeoCoord(" << self->GetLatitude() << ", " << self->GetLongitude() << ", " << self->GetAltitude() << ")";
       return ost.str();
    }
-
-
-
 } // namespace
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SetLat_overloads,SetLatitude,1,3);
@@ -36,15 +32,15 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(SetLong_overloads,SetLongitude,1,3);
 
 void initGeoCoordinatesBindings()
 {
-   void (GeoCoordinates::*SetLat_Dbl)(double)			= &GeoCoordinates::SetLatitude;
-   void (GeoCoordinates::*SetLat_Int)(int, int, int)	= &GeoCoordinates::SetLatitude;
-   void (GeoCoordinates::*SetLong_Dbl)(double)			= &GeoCoordinates::SetLongitude;
+   void (GeoCoordinates::*SetLat_Dbl)(double) = &GeoCoordinates::SetLatitude;
+   void (GeoCoordinates::*SetLat_Int)(int, int, int) = &GeoCoordinates::SetLatitude;
+   void (GeoCoordinates::*SetLong_Dbl)(double) = &GeoCoordinates::SetLongitude;
    void (GeoCoordinates::*SetLong_Int)(int, int, int)	= &GeoCoordinates::SetLongitude;
 
    double (GeoCoordinates::*GetLat_Dbl)() const = &GeoCoordinates::GetLatitude;
-   void   (GeoCoordinates::*GetLat_Int)(int&, int&, int&) = &GeoCoordinates::GetLatitude;
+   void (GeoCoordinates::*GetLat_Int)(int&, int&, int&) = &GeoCoordinates::GetLatitude;
    double (GeoCoordinates::*GetLong_Dbl)() const = &GeoCoordinates::GetLongitude;
-   void   (GeoCoordinates::*GetLong_Int)(int&, int&, int&) = &GeoCoordinates::GetLongitude;
+   void (GeoCoordinates::*GetLong_Int)(int&, int&, int&) = &GeoCoordinates::GetLongitude;
 
    void (GeoCoordinates::*SetCP1)(const osg::Vec3&) = &GeoCoordinates::SetCartesianPoint;
    void (GeoCoordinates::*GetCP1)(osg::Vec3&) = &GeoCoordinates::GetCartesianPoint;
@@ -64,14 +60,11 @@ void initGeoCoordinatesBindings()
       .def("GetAltitude", &GeoCoordinates::GetAltitude)
       .def("SetCartesianPoint", SetCP1)
       .def("GetCartesianPoint", GetCP1)
-
       .def("SetOrigin", &GeoCoordinates::SetOrigin)
       .staticmethod("SetOrigin")
       .def("GetOrigin", &GeoCoordinates::GetOrigin)
       .staticmethod("GetOrigin")
-
       .def("__str__", &GeoCoordinates::ToString)
       .def("__repr__", &geocoord_repr)
       ;
-
 }
