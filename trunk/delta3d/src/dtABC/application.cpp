@@ -1,4 +1,6 @@
 #include <dtABC/application.h>
+#include <dtABC/applicationconfigwriter.h>
+#include <dtABC/applicationconfighandler.h>
 #include <dtCore/generickeyboardlistener.h>
 
 #include <dtCore/stats.h>
@@ -6,19 +8,16 @@
 #include <dtCore/camera.h>
 #include <dtCore/scene.h>
 #include <dtUtil/log.h>
-#include <dtUtil/xerceswriter.h>
-#include <dtUtil/xerceserrorhandler.h>
-#include <dtUtil/xercesutils.h>
+#include <dtUtil/stringutils.h>
 #include <dtUtil/xercesparser.h>
 #include <dtCore/mouse.h>
-
-#include <xercesc/sax2/XMLReaderFactory.hpp>
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMElement.hpp>
 
 #include <osgDB/FileUtils>
 
 #include <cassert>
+
+#include <dtUtil/xercesutils.h>
+#include <xercesc/util/XMLString.hpp>
 
 using namespace dtABC;
 XERCES_CPP_NAMESPACE_USE
@@ -89,7 +88,7 @@ bool Application::KeyPressed(const dtCore::Keyboard* keyboard, Producer::Keyboar
 }
 
 
-void  Application::CreateInstances(const std::string& name, int x, int y, int width, int height, bool cursor, bool fullScreen )
+void Application::CreateInstances(const std::string& name, int x, int y, int width, int height, bool cursor, bool fullScreen )
 {
    //create the instances and hook-up the default
    //connections.  The instance attributes may be
@@ -113,9 +112,16 @@ void  Application::CreateInstances(const std::string& name, int x, int y, int wi
 
 bool Application::ParseConfigFile(const std::string& file)
 {
-   AppXMLContentHandler handler(this);
+   ApplicationConfigHandler handler;
    dtUtil::XercesParser parser;
-   return parser.Parse(file, handler, "application.xsd");
+   ///\todo log the result
+   bool parsed_well = parser.Parse(file, handler, "application.xsd");
+
+   AppXMLApplicator applicator;
+   ///\todo log the result
+   bool applied_well = applicator(handler.mConfigData, this);
+
+   return( applied_well || parsed_well );
 }
 
 std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& filename)
@@ -129,302 +135,91 @@ std::string dtABC::Application::GenerateDefaultConfigFile(const std::string& fil
    }
 
    // write out a new file
-   AppConfigWriter writer;
+   ApplicationConfigWriter writer;
    writer( filename );
 
    // return the resource path to the new file
    return osgDB::findDataFile( filename );
 }
 
-void Application::AppXMLContentHandler::startElement(const XMLCh* const uri,
-                                                     const XMLCh* const localname,
-                                                     const XMLCh* const qname,
-                                                     const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs)
+ApplicationConfigData Application::GetDefaultConfigData()
 {
-   char* elementname = XMLString::transcode( localname );
-   std::string ename( elementname );
-   XMLString::release( &elementname );
+   ApplicationConfigData data;
 
-   if( ename == "Window" )
+   data.WINDOW_X = 100;
+   data.WINDOW_Y = 100;
+
+   data.SHOW_CURSOR = true;
+   data.FULL_SCREEN = false;
+   data.CHANGE_RESOLUTION = false;
+
+   data.CAMERA_NAME = "defaultCam";
+   data.SCENE_NAME = "defaultScene";
+   data.WINDOW_NAME = "defaultWin";
+
+   data.SCENE_INSTANCE = "defaultScene";
+   data.WINDOW_INSTANCE = "defualtWindow";
+
+   data.RESOLUTION.width = 640;
+   data.RESOLUTION.height = 480;
+   data.RESOLUTION.bitDepth = 24;
+   data.RESOLUTION.refresh = 60;
+
+   return data;
+}
+
+// --- applicator's implementation --- //
+bool Application::AppXMLApplicator::operator ()(const ApplicationConfigData& data, dtABC::Application* app)
+{
+   // apply the window settings
+   dtCore::DeltaWin* dwin = app->GetWindow();
+   dwin->SetName( data.WINDOW_NAME );
+   dwin->SetPosition( data.WINDOW_X, data.WINDOW_Y, data.RESOLUTION.width, data.RESOLUTION.height );
+   dwin->ShowCursor( data.SHOW_CURSOR );
+   dwin->SetFullScreenMode( data.FULL_SCREEN );
+
+   // change the resolution if needed and valid
+   if( data.CHANGE_RESOLUTION )
    {
-      // set up some defaults
-      std::string name("DefaultApp"),
-                  xstring("100"), ystring("100"),
-                  wstring("640"), hstring("480"),
-                  showstring("1"), fullstring("0"),
-                  changeres("0"), bitdepth("24"), refresh("60");
-
-      // search for specific named attributes, append the list of searched strings
-      dtUtil::AttributeSearch windowattrs;
-
-      // perform the search
-      typedef dtUtil::AttributeSearch::ResultMap RMap;
-      RMap results = windowattrs( attrs );
-
-      // if the named attributes were found, use them, else use defaults
-      RMap::iterator iter = results.find("Name");
-      if( iter != results.end() )
-         name = iter->second;
-
-      iter = results.find("X");
-      if( iter != results.end() )
-         xstring = iter->second;
-
-      iter = results.find("Y");
-      if( iter != results.end() )
-         ystring = iter->second;
-
-      iter = results.find("Width");
-      if( iter != results.end() )
-         wstring = iter->second;
-
-      iter = results.find("Height");
-      if( iter != results.end() )
-         hstring = iter->second;
-
-      iter = results.find("ShowCursor");
-      if( iter != results.end() )
-         showstring = iter->second;
-
-      iter = results.find("FullScreen");
-      if( iter != results.end() )
-         fullstring = iter->second;
-
-      iter = results.find("ChangeDisplayResolution");
-      if( iter != results.end() )
-         changeres = iter->second;
-
-      iter = results.find("PixelDepth");
-      if( iter != results.end() )
-         bitdepth = iter->second;
-
-      iter = results.find("RefreshRate");
-      if( iter != results.end() )
-         refresh = iter->second;
-
-      int winX = atoi(xstring.c_str());
-      int winY = atoi(ystring.c_str());
-      int width = atoi(wstring.c_str());
-      int height = atoi(hstring.c_str());
-      bool showCursor = atoi(showstring.c_str());
-      bool fullScreen = atoi(fullstring.c_str());
-      bool resolution_changed = atoi(changeres.c_str());
-      int depth = atoi(bitdepth.c_str());
-      int rate = atoi(refresh.c_str());
-
-      dtCore::DeltaWin* mWindow = mApp->GetWindow();
-      mWindow->SetName(name);
-      mWindow->SetPosition(winX,winY,width,height);
-      mWindow->ShowCursor(showCursor);
-      mWindow->SetFullScreenMode(fullScreen);
-
-      if( resolution_changed )
+      if( dwin->IsValidResolution( data.RESOLUTION ) )
       {
-         dtCore::DeltaWin::Resolution res;
-         res.width = width;
-         res.height = height;
-         res.bitDepth = depth;
-         res.refresh = rate;
-         if( mWindow->IsValidResolution(res) )
-         {
-            mWindow->ChangeScreenResolution(res);
-         }
+         dwin->ChangeScreenResolution( data.RESOLUTION );
       }
    }
 
-   if( ename == "Scene" )
+   // set up the scene
+   dtCore::Scene* scene = app->GetScene();
+   ///\todo should this only override when the string is not empty?
+   scene->SetName( data.SCENE_NAME );
+
+   // set up the camera
+   dtCore::Camera* camera = app->GetCamera();
+   ///\todo should this only override when the string is not empty?
+   camera->SetName( data.CAMERA_NAME );
+
+   // connect the camera, scene, and window
+   // since they might not be the same as the app's instances, we will use the instance management layer
+   dtCore::DeltaWin* dinst = dtCore::DeltaWin::GetInstance( data.WINDOW_INSTANCE );
+   if( dinst != NULL )
    {
-      dtCore::Scene* scene = mApp->GetScene();
-
-      dtUtil::AttributeSearch sceneattrs;
-      dtUtil::AttributeSearch::ResultMap results = sceneattrs( attrs );
-
-      dtUtil::AttributeSearch::ResultMap::iterator iter = results.find("Name");
-      if( iter != results.end() )
-      {
-         scene->SetName( iter->second );
-      }
+      camera->SetWindow( dinst );
+   }
+   else
+   {
+      LOG_WARNING("Application:Can't find instance of DeltaWin, " + data.SCENE_INSTANCE )
    }
 
-   if( ename == "Camera" )
+   dtCore::Scene* sinst = dtCore::Scene::GetInstance( data.SCENE_INSTANCE );
+   if( sinst != NULL )
    {
-      // push some keys
-      dtUtil::AttributeSearch camattrs;
-
-      // do the attribute search, catch the results
-      dtUtil::AttributeSearch::ResultMap results = camattrs( attrs );
-
-      dtUtil::AttributeSearch::ResultMap::iterator iter = results.find("Name");
-      if( iter != results.end() )
-      {
-         mApp->GetCamera()->SetName( iter->second );
-      }
-
-      iter = results.find("WindowInstance");
-      if( iter != results.end() )
-      {
-         if(dtCore::DeltaWin* win = dtCore::DeltaWin::GetInstance( iter->second) )
-         {
-            mApp->GetCamera()->SetWindow( win );
-         }
-         else
-         {
-            LOG_WARNING("Application:Can't find instance of DeltaWin, " + iter->second )
-         }
-      }
-
-      iter = results.find("SceneInstance");
-      if( iter != results.end() )
-      {
-         if(dtCore::Scene* scene = dtCore::Scene::GetInstance( iter->second) )
-         {
-            mApp->GetCamera()->SetScene( scene );
-         }
-         else
-         {
-            LOG_WARNING("Application:Can't find instance of Scene, " + iter->second )
-         }
-      }
+      camera->SetScene( sinst );
    }
+   else
+   {
+      LOG_WARNING("Application:Can't find instance of Scene, " + data.SCENE_INSTANCE )
+   }
+
+   ///\todo Determine a way to know if something went wrong,
+   /// maybe when instances were not found.
+   return true;
 }
-
-
-// --- App config code's implementation --- //
-void Application::AppConfigWriter::operator ()(const std::string& filename)
-{
-   // initialize the xerces xml system.
-   dtCore::RefPtr<dtUtil::XercesWriter> writer = new dtUtil::XercesWriter();
-
-   // create instances of the models, using the xerces system,
-   // so it needs to be initilized with the writer first.
-   DefaultModel def;
-   SchemaModel sch;
-
-   // specify the name of the top node.
-   writer->CreateDocument( "Application" );
-   XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = writer->GetDocument();
-   DOMElement* app = doc->getDocumentElement();
-
-   DOMElement* windo = doc->createElement(sch.WINDOW);
-   windo->setAttribute( sch.NAME, def.WINDOW_NAME );
-   windo->setAttribute( sch.X , def.WINDOW_X );
-   windo->setAttribute( sch.Y , def.WINDOW_Y );
-   windo->setAttribute( sch.WIDTH , def.WINDOW_WIDTH );
-   windo->setAttribute( sch.HEIGHT , def.WINDOW_HEIGHT );
-   windo->setAttribute( sch.PIXELDEPTH , def.PIXEL_DEPTH );
-   windo->setAttribute( sch.REFRESHRATE, def.REFRESH );
-   windo->setAttribute( sch.SHOWCURSOR, def.SHOW_CURSOR );
-   windo->setAttribute( sch.FULLSCREEN , def.FULL_SCREEN );
-   windo->setAttribute( sch.CHANGEDISPLAYRESOLUTION, def.CHANGE_RESOLUTION );
-   app->appendChild( windo );
-
-   DOMElement* scene = doc->createElement(sch.SCENE);
-   scene->setAttribute( sch.NAME , def.SCENE_NAME );
-   app->appendChild( scene );
-
-   DOMElement* camera = doc->createElement(sch.CAMERA);
-   camera->setAttribute( sch.NAME , def.CAMERA_NAME );
-   camera->setAttribute( sch.WINDOW , def.WINDOW_NAME );
-   camera->setAttribute( sch.SCENE , def.SCENE_NAME );
-   app->appendChild( camera );
-
-   writer->WriteFile( filename );
-}
-
-Application::AppConfigWriter::SchemaModel::SchemaModel()
-{
-   WINDOW = XMLString::transcode( Application::ConfigSchemaModel::WINDOW.c_str() );
-   NAME = XMLString::transcode( Application::ConfigSchemaModel::NAME.c_str() );
-   SCENE = XMLString::transcode( Application::ConfigSchemaModel::SCENE.c_str() );
-   CAMERA = XMLString::transcode( Application::ConfigSchemaModel::CAMERA.c_str() );
-
-   X = XMLString::transcode( Application::ConfigSchemaModel::X.c_str() );
-   Y = XMLString::transcode( Application::ConfigSchemaModel::Y.c_str() );
-   WIDTH = XMLString::transcode( Application::ConfigSchemaModel::WIDTH.c_str() );
-   HEIGHT = XMLString::transcode( Application::ConfigSchemaModel::HEIGHT.c_str() );
-
-   PIXELDEPTH = XMLString::transcode( Application::ConfigSchemaModel::PIXELDEPTH.c_str() );
-   REFRESHRATE = XMLString::transcode( Application::ConfigSchemaModel::REFRESHRATE.c_str() );
-   SHOWCURSOR = XMLString::transcode( Application::ConfigSchemaModel::SHOWCURSOR.c_str() );
-   FULLSCREEN = XMLString::transcode( Application::ConfigSchemaModel::FULLSCREEN.c_str() );
-   CHANGEDISPLAYRESOLUTION = XMLString::transcode( Application::ConfigSchemaModel::CHANGEDISPLAYRESOLUTION.c_str() );
-
-   WINDOWINSTANCE = XMLString::transcode( Application::ConfigSchemaModel::WINDOWINSTANCE.c_str() );
-   SCENEINSTANCE = XMLString::transcode( Application::ConfigSchemaModel::SCENEINSTANCE.c_str() );
-}
-
-Application::AppConfigWriter::SchemaModel::~SchemaModel()
-{
-   XMLString::release( &WINDOW );
-   XMLString::release( &NAME );
-   XMLString::release( &SCENE );
-   XMLString::release( &CAMERA );
-
-   XMLString::release( &X );
-   XMLString::release( &Y );
-   XMLString::release( &WIDTH );
-   XMLString::release( &HEIGHT );
-
-   XMLString::release( &PIXELDEPTH );
-   XMLString::release( &REFRESHRATE );
-   XMLString::release( &SHOWCURSOR );
-   XMLString::release( &FULLSCREEN );
-   XMLString::release( &CHANGEDISPLAYRESOLUTION );
-
-   XMLString::release( &WINDOWINSTANCE );
-   XMLString::release( &SCENEINSTANCE );
-}
-
-Application::AppConfigWriter::DefaultModel::DefaultModel()
-{
-   WINDOW_X = XMLString::transcode("100");
-   WINDOW_Y = XMLString::transcode("100");
-   WINDOW_WIDTH = XMLString::transcode("640");
-   WINDOW_HEIGHT = XMLString::transcode("480");
-   REFRESH = XMLString::transcode("60");
-   PIXEL_DEPTH = XMLString::transcode("24");
-   SHOW_CURSOR = XMLString::transcode("1");
-   FULL_SCREEN = XMLString::transcode("0");
-   CHANGE_RESOLUTION = XMLString::transcode("0");
-
-   SCENE_NAME = XMLString::transcode("defaultScene");
-   WINDOW_NAME = XMLString::transcode("defaultWin");
-   CAMERA_NAME = XMLString::transcode("defaultCam");
-}
-
-Application::AppConfigWriter::DefaultModel::~DefaultModel()
-{
-   XMLString::release( &WINDOW_NAME );
-   XMLString::release( &WINDOW_X );
-   XMLString::release( &WINDOW_Y );
-   XMLString::release( &WINDOW_WIDTH );
-   XMLString::release( &WINDOW_HEIGHT );
-
-   XMLString::release( &REFRESH );
-   XMLString::release( &PIXEL_DEPTH );
-   XMLString::release( &SHOW_CURSOR );
-   XMLString::release( &FULL_SCREEN );
-
-   XMLString::release( &SCENE_NAME );
-   XMLString::release( &CAMERA_NAME );
-}
-
-// --- config model implementation --- //
-const std::string Application::ConfigSchemaModel::WINDOW="Window";
-const std::string Application::ConfigSchemaModel::NAME="Name";
-const std::string Application::ConfigSchemaModel::SCENE="Scene";
-const std::string Application::ConfigSchemaModel::CAMERA="Camera";
-
-const std::string Application::ConfigSchemaModel::X="X";
-const std::string Application::ConfigSchemaModel::Y="Y";
-const std::string Application::ConfigSchemaModel::WIDTH="Width";
-const std::string Application::ConfigSchemaModel::HEIGHT="Height";
-
-const std::string Application::ConfigSchemaModel::PIXELDEPTH="PixelDepth";
-const std::string Application::ConfigSchemaModel::REFRESHRATE="RefreshRate";
-const std::string Application::ConfigSchemaModel::SHOWCURSOR="ShowCursor";
-const std::string Application::ConfigSchemaModel::FULLSCREEN="FullScreen";
-const std::string Application::ConfigSchemaModel::CHANGEDISPLAYRESOLUTION="ChangeDisplayResolution";
-
-const std::string Application::ConfigSchemaModel::WINDOWINSTANCE="WINDOWINSTANCE";
-const std::string Application::ConfigSchemaModel::SCENEINSTANCE="SCENEINSTANCE";
