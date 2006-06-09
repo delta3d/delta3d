@@ -439,6 +439,8 @@ void StringUtilTests::TestToPrimitives()
    const std::string threePointFourString("3.4");
    const float threePointFourFloat(3.4f);
    const double threePointFourDouble(3.4);
+   const int threeInt(3);
+   const bool trueBool(true);
    
    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToFloat.\n");
    float floatValue = dtUtil::ToFloat(threePointFourString);
@@ -450,9 +452,31 @@ void StringUtilTests::TestToPrimitives()
 
    mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToUnsignedInt.\n");
    const std::string threeString("3");
-   const unsigned int threeInt(3);
+   const unsigned int threeUInt(3);
 
    unsigned int unsignedValue = dtUtil::ToUnsignedInt(threeString);
-   CPPUNIT_ASSERT( threeInt == unsignedValue );
-}
+   CPPUNIT_ASSERT( threeUInt == unsignedValue );
 
+   // -- test the dtUtil::ToType with fundamental types -- //
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToType<int>.\n");
+   int intValue = dtUtil::ToType<int>(threeString);
+   CPPUNIT_ASSERT( threeInt == intValue );
+
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToType<bool>.\n");
+   std::string boolString("1");
+   bool boolValue = dtUtil::ToType<bool>(boolString);
+   CPPUNIT_ASSERT( trueBool == boolValue );
+
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToType<unsigned int>.\n");
+   unsignedValue = dtUtil::ToType<unsigned int>(threeString);
+   CPPUNIT_ASSERT( threeUInt == unsignedValue );
+
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToType<float>.\n");
+   floatValue = dtUtil::ToType<float>(threePointFourString);
+   CPPUNIT_ASSERT( threePointFourFloat == floatValue );
+
+   mLogger->LogMessage(dtUtil::Log::LOG_INFO, __FUNCTION__,  __LINE__, "Testing ToType<double>.\n");
+   doubleValue = dtUtil::ToType<double>(threePointFourString);
+   CPPUNIT_ASSERT( threePointFourDouble == doubleValue );
+   // -- ---------------------------------------------- -- //
+}
