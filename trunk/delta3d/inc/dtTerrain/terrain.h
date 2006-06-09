@@ -390,7 +390,7 @@ namespace dtTerrain
          ///List of the layers currently attached to this terrain.
          TerrainLayerMap mDecorationLayers;  
 
-		 float mLOSPostSpacing;
+		   float mLOSPostSpacing;
    };
 
    /**
