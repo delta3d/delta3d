@@ -4,18 +4,14 @@
 // May 16, 2006, Jerry Isdale
 ///////////////////////////////////////////////////////////
 
-#include <string>
-#include <iostream>
-#include <sstream>
-
 #include <boost/python.hpp>
-
 #include <dtTerrain/geocoordinates.h>
 
 using namespace boost::python;
 using namespace dtTerrain;
 
-namespace {
+namespace
+{
 
    std::string geocoord_repr(GeoCoordinates * self)
    {
@@ -74,10 +70,8 @@ void initGeoCoordinatesBindings()
       .def("GetOrigin", &GeoCoordinates::GetOrigin)
       .staticmethod("GetOrigin")
 
-      //.def("__str__", &geocoord_str)
       .def("__str__", &GeoCoordinates::ToString)
       .def("__repr__", &geocoord_repr)
       ;
 
 }
-
