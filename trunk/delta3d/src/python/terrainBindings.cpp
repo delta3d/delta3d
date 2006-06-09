@@ -5,22 +5,96 @@
 // minimal bindings provided, use CreateTerrain factory method
 // since we only have dted and soarx
 // provide access to soarxdrawable::setBufferSize
+//
+// June 9, 2006, Chris Osborn
+// Added more bindings
+// Remove reference to SoarXDrawable's functions
 ///////////////////////////////////////////////////////////
 
 #include <python/dtpython.h>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 #include <dtTerrain/terrain.h>
-#include <dtTerrain/soarxdrawable.h>
 
 using namespace boost::python;
 using namespace dtTerrain;
 
+typedef std::vector< std::string > StringVector;
+
+class TerrainWrap : public Terrain, public wrapper< Terrain >
+{
+   public:
+
+      TerrainWrap( const std::string& name = "Terrain" ) :
+         Terrain( name )
+      {
+      }
+
+	   void UnloadAllTerrainTiles()
+	   {
+		   if( override UnloadAllTerrainTiles = this->get_override( "UnloadAllTerrainTiles" ) )
+		   {
+			   UnloadAllTerrainTiles();
+		   }
+		   Terrain::UnloadAllTerrainTiles();
+	   }
+
+	   void DefaultUnloadAllTerrainTiles()
+	   {
+		   this->Terrain::UnloadAllTerrainTiles();
+	   }
+
+      bool IsTerrainTileResident( const GeoCoordinates& coords )
+	   {
+		   if( override IsTerrainTileResident = this->get_override( "IsTerrainTileResident" ) )
+		   {
+			   return IsTerrainTileResident( coords );
+		   }
+		   return Terrain::IsTerrainTileResident( coords );
+	   }
+
+	   bool DefaultIsTerrainTileResident( const GeoCoordinates& coords )
+	   {
+		   return this->Terrain::IsTerrainTileResident( coords );
+	   }
+};
+
 void initTerrainBindings()
 {
-   class_< Terrain, bases<dtCore::DeltaDrawable>, dtCore::RefPtr<Terrain>, boost::noncopyable >("Terrain", init< optional< const std::string& > >() ) 
-		//.def("SetBufferSize",SoarXDrawable::SetBufferSize)
-		//.staticmethod("SetBufferSize")
-		.def("GetHeight",&Terrain::GetHeight)
-		.def("IsClearLineOfSight", &Terrain::IsClearLineOfSight)
+   class_< StringVector >( "StringVector" )
+      .def( vector_indexing_suite< StringVector, true >() )
+      ;
+
+   // I am only bindings the string versions for now since TerrainDecorateLayer has not
+   // yet been bound. -osb
+   void ( Terrain::*RemoveDecorationLayerByPointer )( TerrainDecorationLayer* ) = &Terrain::RemoveDecorationLayer;
+   void ( Terrain::*RemoveDecorationLayerByString )( const std::string& ) = &Terrain::RemoveDecorationLayer;
+
+   void ( Terrain::*HideDecorationLayerByPointer )( TerrainDecorationLayer* ) = &Terrain::HideDecorationLayer;
+   void ( Terrain::*HideDecorationLayerByString )( const std::string& ) = &Terrain::HideDecorationLayer;
+
+   void ( Terrain::*ShowDecorationLayerByPointer )( TerrainDecorationLayer* ) = &Terrain::ShowDecorationLayer;
+   void ( Terrain::*ShowDecorationLayerByString )( const std::string& ) = &Terrain::ShowDecorationLayer;
+
+   class_< TerrainWrap, bases<dtCore::Physical>, dtCore::RefPtr<TerrainWrap>, boost::noncopyable >("Terrain", init< optional< const std::string& > >() ) 
+		.def( "AddResourcePath", &Terrain::AddResourcePath )
+      .def( "RemoveResourcePath", &Terrain::RemoveResourcePath )
+      .def( "FindResource", &Terrain::FindResource )
+      .def( "FindAllResources", &Terrain::FindAllResources )
+      .def( "GetHeight", &Terrain::GetHeight )
+      .def( "IsClearLineOfSight", &Terrain::IsClearLineOfSight )
+      .def( "SetLineOfSightSpacing", &Terrain::SetLineOfSightSpacing )
+      .def( "GetLineOfSightSpacing", &Terrain::GetLineOfSightSpacing )
+      .def( "UnloadAllTerrainTiles", &Terrain::UnloadAllTerrainTiles, &TerrainWrap::DefaultUnloadAllTerrainTiles )
+      .def( "IsTerrainTileResident", &Terrain::IsTerrainTileResident, &TerrainWrap::DefaultIsTerrainTileResident )
+      .def( "SetCachePath", &Terrain::SetCachePath )
+      .def( "GetCachePath", &Terrain::GetCachePath, return_value_policy<copy_const_reference>() )
+      .def( "SetLoadDistance", &Terrain::SetLoadDistance )
+      .def( "GetLoadDistance", &Terrain::GetLoadDistance )
+      .def( "RemoveDecorationLayer", RemoveDecorationLayerByString )
+      .def( "GetNumDecorationLayers", &Terrain::GetNumDecorationLayers )
+      .def( "ClearDecorationLayers", &Terrain::ClearDecorationLayers )
+      .def( "HideDecorationLayer", HideDecorationLayerByString )
+      .def( "ShowDecorationLayer", ShowDecorationLayerByString )
       ;
 }
