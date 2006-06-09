@@ -317,9 +317,6 @@ namespace dtTerrain
          
          void WriteDataToCache(const PagedTerrainTile &tile);
 
-         void SetBufferSize(unsigned int size) { BUFFER_SIZE = size;}
-         unsigned int GetBufferSize() { return BUFFER_SIZE;}
-
       protected:
       
          ///Simply destroys the terrain drawable.
