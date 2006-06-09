@@ -20,7 +20,8 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/exception.h>
-//#include <dtDAL/project.h>
+#include <dtUtil/fileutils.h>
+#include <dtDAL/project.h>
 #include <dtCore/texture2dshaderparameter.h>
 #include <dtCore/floatshaderparameter.h>
 #include <dtCore/integershaderparameter.h>
@@ -29,8 +30,8 @@
 #include <osg/StateSet>
 #include <osg/Texture2D>
 
-//const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
-//const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
+const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
+const std::string projectContext = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtCore" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #include <Windows.h>
@@ -63,9 +64,11 @@ CPPUNIT_TEST_SUITE_REGISTRATION(ShaderParameterTests);
 ///////////////////////////////////////////////////////////////////////////////
 void ShaderParameterTests::setUp()
 {
+   dtCore::SetDataFilePathList( dtCore::GetDeltaDataPathList() );
+
    try
    {
-      //dtDAL::Project::GetInstance().SetContext(projectContext);
+      dtDAL::Project::GetInstance().SetContext(projectContext);
    }
    catch (const dtUtil::Exception& e)
    {
