@@ -31,7 +31,7 @@
 
 #include <dtUtil/export.h>
 
-#include <sstream>         // for std::ostringstream
+#include <sstream>         // for std::ostringstream, std::istringstream
 #include <algorithm>
 #include <locale>          // for std::locale, std::isspace
 #include <string>
@@ -219,12 +219,38 @@ namespace dtUtil
     */
    const std::string DT_UTIL_EXPORT TimeAsUTC(time_t time);
 
-   /** Converts a string to a float.*/
+   /// Converts a string to a 'float'
+   ///\deprecated Favor ToType<float> instead
    float DT_UTIL_EXPORT ToFloat(const std::string& d);
 
+   /// converts a std::string to a 'double'
+   ///\deprecated Favor ToType<double> instead
    double DT_UTIL_EXPORT ToDouble(const std::string& str);
 
+   /// converts a std::string to an 'unsigned int'
+   ///\deprecated Favor ToType<unsigned int> instead
    unsigned int DT_UTIL_EXPORT ToUnsignedInt(const std::string& u);
+
+   /// Converts a string to a specified type.
+   /// @param the string to be converted to the specified template argument type.
+   /// @return the type that you specify as the template argument.
+   ///
+   /// Typical use:
+   /// @code
+   /// std::string mystring("0");
+   /// bool mybool = dtUtil::ToType<bool>( mystring );
+   /// @endcode
+   ///
+   /// @todo make a specialization for 'bool' supporting "false" and "true".
+   template<typename T>
+   T ToType(const std::string& u)
+   {
+      T result;
+      std::istringstream is;
+      is.str(u);
+      is >> result;
+      return result;
+   }
 
    bool DT_UTIL_EXPORT Match(char* wildCards, char* str);
 };

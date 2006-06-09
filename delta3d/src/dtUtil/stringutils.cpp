@@ -1,6 +1,6 @@
 #include "dtUtil/stringutils.h"
 
-#include <cstdio>        // for sscanf
+#include <cstdio>        // for sscanf, atoi
 
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #define snprintf _snprintf
@@ -104,7 +104,6 @@ unsigned int dtUtil::ToUnsignedInt(const std::string& str)
    sscanf(str.c_str(), " %u", &tmp);
    return tmp;
 }
-
 
 long dtUtil::GetTimeZone(tm &timeParts)
 {
