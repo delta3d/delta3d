@@ -67,13 +67,8 @@ void initTerrainBindings()
 
    // I am only bindings the string versions for now since TerrainDecorateLayer has not
    // yet been bound. -osb
-   void ( Terrain::*RemoveDecorationLayerByPointer )( TerrainDecorationLayer* ) = &Terrain::RemoveDecorationLayer;
    void ( Terrain::*RemoveDecorationLayerByString )( const std::string& ) = &Terrain::RemoveDecorationLayer;
-
-   void ( Terrain::*HideDecorationLayerByPointer )( TerrainDecorationLayer* ) = &Terrain::HideDecorationLayer;
    void ( Terrain::*HideDecorationLayerByString )( const std::string& ) = &Terrain::HideDecorationLayer;
-
-   void ( Terrain::*ShowDecorationLayerByPointer )( TerrainDecorationLayer* ) = &Terrain::ShowDecorationLayer;
    void ( Terrain::*ShowDecorationLayerByString )( const std::string& ) = &Terrain::ShowDecorationLayer;
 
    class_< TerrainWrap, bases<dtCore::Physical>, dtCore::RefPtr<TerrainWrap>, boost::noncopyable >("Terrain", init< optional< const std::string& > >() ) 

@@ -340,7 +340,7 @@ namespace dtTerrain
       }
 
       BUFFER_SIZE = tile.GetHeightField()->GetNumRows() * 
-                    tile.GetHeightField()->GetNumColumns() * 1.1;
+                    unsigned( double( tile.GetHeightField()->GetNumColumns() ) * 1.1 );
       
 	   // isdale: too big a buffer size will run us out of memory
 	   // should be a way to catch this, pre-test for it.
