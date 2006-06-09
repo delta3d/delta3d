@@ -128,6 +128,18 @@
 				RelativePath="..\..\..\src\dtABC\application.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtABC\applicationconfigdata.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtABC\applicationconfighandler.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtABC\applicationconfigschema.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtABC\applicationconfigwriter.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtABC\autotrigger.cpp">
 			</File>
 			<File
@@ -170,6 +182,18 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\application.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\applicationconfigdata.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\applicationconfighandler.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\applicationconfigschema.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtABC\applicationconfigwriter.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtABC\autotrigger.h">

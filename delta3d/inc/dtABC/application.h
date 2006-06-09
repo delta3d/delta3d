@@ -23,10 +23,7 @@
 
 #include <dtABC/baseabc.h>
 #include <dtABC/export.h>
-#include <dtCore/deltawin.h>
-
-#include <xercesc/sax2/ContentHandler.hpp>  // for a base class
-#include <xercesc/sax2/Attributes.hpp>      // for a parameter
+#include <dtABC/applicationconfigdata.h>           // for return type, member
 
 namespace dtCore
 {
@@ -99,131 +96,32 @@ namespace dtABC
       ///Create basic instances and set up system hooks
       virtual void CreateInstances(const std::string& name="defaultWin", int x=100, int y=100, int width=640, int height=480, bool cursor=true, bool fullScreen=false );
 
+   public:
+      /// the publicized default settings for a generated config file.
+      static ApplicationConfigData GetDefaultConfigData();
+
    private:
-      /** \brief A class to perform the necessary features while a Xerces SAX parser is operating.
-        * Use this with the Xerces SAX2XMLReader.
-        */
-      class AppXMLContentHandler : public XERCES_CPP_NAMESPACE_QUALIFIER ContentHandler
-      {
-      public:
-         AppXMLContentHandler(dtABC::Application* app): mApp(app) {}
-         ~AppXMLContentHandler() {}
-
-         // inherited pure virtual functions
-         virtual void characters(const XMLCh* const chars, const unsigned int length) {}
-         virtual void endDocument() {}
-         virtual void endElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname) {}
-         virtual void ignorableWhitespace(const XMLCh* const chars, const unsigned int length) {}
-         virtual void processingInstruction(const XMLCh* const target, const XMLCh* const data) {}
-         virtual void setDocumentLocator(const XERCES_CPP_NAMESPACE_QUALIFIER Locator* const locator) {}
-         virtual void startDocument() {}
-         virtual void startElement(const XMLCh* const uri,const XMLCh* const localname,const XMLCh* const qname, const XERCES_CPP_NAMESPACE_QUALIFIER Attributes& attrs);
-         virtual void startPrefixMapping(const	XMLCh* const prefix,const XMLCh* const uri) {}
-         virtual void endPrefixMapping(const XMLCh* const prefix) {}
-         virtual void skippedEntity(const XMLCh* const name) {}
-
-      private:
-         AppXMLContentHandler();   /// not implemented by design
-         dtABC::Application* mApp;
-      };
-
-      friend class AppXMLContentHandler;
-
-      /// defines API used to model the XML schema for the config file.
-      class ConfigSchemaModel
-      {
-      public:
-         static const std::string WINDOW;
-         static const std::string NAME;
-         static const std::string SCENE;
-         static const std::string CAMERA;
-
-         static const std::string X;
-         static const std::string Y;
-         static const std::string WIDTH;
-         static const std::string HEIGHT;
-
-         static const std::string PIXELDEPTH;
-         static const std::string REFRESHRATE;
-         static const std::string SHOWCURSOR;
-         static const std::string FULLSCREEN;
-         static const std::string CHANGEDISPLAYRESOLUTION;
-
-         static const std::string WINDOWINSTANCE;
-         static const std::string SCENEINSTANCE;
-      };
-
-      /// A class that writes config files for the dtABC::Application
-      class AppConfigWriter
-      {
-      public:
-         void operator ()(const std::string& filename);
-
-         /// defines the API to obtain default values
-         /// for the values used when generating an application config file.
-         /// Also generates the xerces character types needed for string operations.
-         class DefaultModel
-         {
-         public:
-            DefaultModel();
-            ~DefaultModel();
-
-            XMLCh* WINDOW_NAME;
-            XMLCh* WINDOW_X;
-            XMLCh* WINDOW_Y;
-            XMLCh* WINDOW_WIDTH;
-            XMLCh* WINDOW_HEIGHT;
-
-            XMLCh* REFRESH;
-            XMLCh* PIXEL_DEPTH;
-            XMLCh* SHOW_CURSOR;
-            XMLCh* FULL_SCREEN;
-            XMLCh* CHANGE_RESOLUTION;
-
-            XMLCh* CAMERA_NAME;
-            XMLCh* SCENE_NAME;
-         };
-
-         /// Defines the API to obtain values used when parsing the config file.
-         /// Also generates the xerces character types needed for string operations.
-         class SchemaModel
-         {
-         public:
-            SchemaModel();
-            ~SchemaModel();
-
-            XMLCh* WINDOW;
-            XMLCh* NAME;
-            XMLCh* SCENE;
-            XMLCh* CAMERA;
-
-            XMLCh* X;
-            XMLCh* Y;
-            XMLCh* WIDTH;
-            XMLCh* HEIGHT;
-
-            XMLCh* PIXELDEPTH;
-            XMLCh* REFRESHRATE;
-            XMLCh* SHOWCURSOR;
-            XMLCh* FULLSCREEN;
-            XMLCh* CHANGEDISPLAYRESOLUTION;
-
-            XMLCh* WINDOWINSTANCE;
-            XMLCh* SCENEINSTANCE;
-         };
-      };
-
       /// Read the supplied config file, called from the constructor
       /// Read an existing data file and setup the internal class
       /// members with attributes from the data file.
+      /// @param file the name of the data file to be parsed.
+      /// @return true, if both parsing and applying went well.
       bool ParseConfigFile(const std::string& file);
 
-      dtCore::DeltaWin::Resolution mOriginalRes;
+      /// A utility to apply the parsed data to the Application instance
+      class AppXMLApplicator
+      {
+      public:
+         /// the method to apply the data
+         /// @param data The data to be applied
+         /// @param app The application to apply the data to
+         /// @return true, if all went well.
+         bool operator ()(const ApplicationConfigData& data, Application* app);
+      };
 
       dtCore::RefPtr<dtCore::GenericKeyboardListener> mKeyboardListener;
    };
 
 }
-
 
 #endif // DELTA_APPLICATION
