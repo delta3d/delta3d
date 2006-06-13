@@ -516,7 +516,7 @@ void initKeyboardBindings()
       .def("HandleKeyReleased", pure_virtual(&KeyboardListener::HandleKeyReleased))
       .def("HandleKeyTyped", pure_virtual(&KeyboardListener::HandleKeyTyped));
 
-   class_<Keyboard, bases<InputDevice>, dtCore::RefPtr<Keyboard> >("Keyboard", no_init)
+   class_<Keyboard, bases<InputDevice>, dtCore::RefPtr<Keyboard>, boost::noncopyable >("Keyboard", no_init)
       .def("GetInstanceCount", &Keyboard::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", KeyboardGI1, return_internal_reference<>())
