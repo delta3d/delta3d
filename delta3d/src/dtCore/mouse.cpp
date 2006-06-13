@@ -141,7 +141,7 @@ bool Mouse::PassiveMouseMotion(float x, float y)
 
 bool Mouse::ButtonDown(float x, float y, MouseButton button)
 {
-   if ((int)button > GetButtonCount() ) return false;
+   if (int(button) > GetButtonCount() ) return false;
 
    bool handled(false);
    MouseListenerList::iterator iter = mMouseListeners.begin();
