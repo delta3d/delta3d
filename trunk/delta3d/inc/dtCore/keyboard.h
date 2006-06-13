@@ -54,10 +54,14 @@ namespace dtCore
           */
          Keyboard(const std::string& name = "keyboard");
 
+      protected:
+
          /**
           * Destructor.
           */
          virtual ~Keyboard();
+
+      public:
 
          /**
           * Checks the state of the specified key.
@@ -102,13 +106,22 @@ namespace dtCore
          KeyboardListenerList mKeyboardListeners;
 
    private:
-      /// the following are not implemented by design,
-      /// to cause compile errors for users that need to use the new interface.
-      bool KeyPressed(Producer::KeyCharacter);
-      void keyPressed(Producer::KeyCharacter);
 
-      bool KeyReleased(Producer::KeyCharacter);
-      void keyReleased(Producer::KeyCharacter);
+         /// the following are not implemented by design,
+         /// to cause compile errors for users that need to use the new interface.
+         bool KeyPressed(Producer::KeyCharacter);
+         void keyPressed(Producer::KeyCharacter);
+
+         bool KeyReleased(Producer::KeyCharacter);
+         void keyReleased(Producer::KeyCharacter);
+
+         // Disallowed to prevent compile errors on VS2003. It apparently
+         // creates this functions even if they are not used, and if
+         // this class is forward declared, these implicit functions will
+         // cause compiler errors for missing calls to "ref".
+         Keyboard& operator=( const Keyboard& ); 
+         Keyboard( const Keyboard& );
+         
    };
 
    
