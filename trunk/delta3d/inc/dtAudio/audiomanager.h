@@ -183,6 +183,18 @@ namespace   dtAudio
             private:
                typedef  std::queue<const char*>   CMD_QUE;
 
+               struct SourceObj
+               {
+                  SourceObj() :
+                     mSource(0),
+                     mInitialized(false)
+                  {
+                  }
+
+                  ALuint mSource;
+                  bool mInitialized;
+               };
+
             public:
                                        SoundObj();
                virtual                 ~SoundObj();
@@ -212,6 +224,8 @@ namespace   dtAudio
                /// set/get this sounds source id
                         void           Source( ALuint source );
                         ALuint         Source( void );
+                        bool           IsInitialized() const;
+
 
                /// set/reset/get various state flags
                         void           SetState( unsigned int flag );
@@ -224,7 +238,7 @@ namespace   dtAudio
             private:
                         CMD_QUE        mCommand;
                         ALuint         mBuffer;
-                        ALuint         mSource;
+                        SourceObj      mSource;
                         unsigned int   mState;
          };
 

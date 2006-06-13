@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtAudio/audiomanager.h"
+#include <python/dtpython.h>
+#include <dtAudio/audiomanager.h>
 
 using namespace boost::python;
 using namespace dtCore;
@@ -118,8 +118,8 @@ void initAudioManagerBindings()
       .def("Config", &AudioManager::Config, C_overloads())
       .def("NewSound", &AudioManager::NewSound, return_internal_reference<>())
       .def("FreeSound", &AudioManager::FreeSound)
-      .def("LoadWaveFile", &AudioManager::LoadWaveFile)
-      .def("UnloadWaveFile", &AudioManager::UnloadWaveFile);
+      .def("LoadFile", &AudioManager::LoadFile)
+      .def("UnloadFile", &AudioManager::UnloadFile);
    
    {
       scope ACD_scope = class_<AudioConfigData>("AudioConfigData", init<optional<unsigned int, bool, unsigned int> >())

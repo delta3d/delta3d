@@ -253,275 +253,280 @@ AudioManager::OnMessage( MessageData* data )
 {
    assert( data );
 
-   // system messages
-   if( data->message == "preframe" )
+   if( data->sender == dtCore::System::Instance() )
    {
-      PreFrame( *static_cast<const double*>(data->userData) );
-      return;
-   }
-
-   if( data->message == "frame" )
-   {
-      Frame( *static_cast<const double*>(data->userData) );
-      return;
-   }
-
-   if( data->message == "postframe" )
-   {
-      PostFrame( *static_cast<const double*>(data->userData) );
-      return;
-   }
-
-   if( data->message == "pause" )
-   {
-      // During a system-wide pause, we want the AudioManager to behave
-      // as normal. In many games, there are sounds that occur during
-      // during a pause, such as background music or GUI clicks. So
-      // here we just call the normal functions all at once.
-      PreFrame( *static_cast<const double*>(data->userData) );
-      Frame( *static_cast<const double*>(data->userData) );
-      PostFrame( *static_cast<const double*>(data->userData) );      
-      return;
-   }
-
-   if( data->message == "pause_start" )
-   {
-      mSoundStateMap.clear();
-      
-      // Pause all sounds that are currently playing, and
-      // save their previous state.
-      for( SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
+      // system messages
+      if( data->message == "preframe" )
       {
-         SoundObj* sob = iter->get();
-
-         if( sob->IsPaused() )
-         {
-            mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, PAUSED ) );
-         }
-         else if( sob->IsPlaying() )
-         {
-            mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, PLAYING ) );
-         }
-         else if( sob->IsStopped() )
-         {
-            mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, STOPPED ) );
-         }
-
-         PauseSound( sob );
+         PreFrame( *static_cast<const double*>(data->userData) );
+         return;
       }
-   }
 
-   if( data->message == "pause_end" )
-   {
-      // Restore all paused sounds to their previous state.
-      for( SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
+      if( data->message == "frame" )
       {
-         SoundObj* sob = iter->get();
+         Frame( *static_cast<const double*>(data->userData) );
+         return;
+      }
+
+      if( data->message == "postframe" )
+      {
+         PostFrame( *static_cast<const double*>(data->userData) );
+         return;
+      }
+
+      if( data->message == "pause" )
+      {
+         // During a system-wide pause, we want the AudioManager to behave
+         // as normal. In many games, there are sounds that occur during
+         // during a pause, such as background music or GUI clicks. So
+         // here we just call the normal functions all at once.
+         PreFrame( *static_cast<const double*>(data->userData) );
+         Frame( *static_cast<const double*>(data->userData) );
+         PostFrame( *static_cast<const double*>(data->userData) );      
+         return;
+      }
+
+      if( data->message == "pause_start" )
+      {
+         mSoundStateMap.clear();
          
-         switch( mSoundStateMap[ sob ] )
+         // Pause all sounds that are currently playing, and
+         // save their previous state.
+         for( SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
          {
-            case PAUSED:
+            SoundObj* sob = iter->get();
+
+            if( sob->IsPaused() )
             {
-               PauseSound( sob );
-               break;
+               mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, PAUSED ) );
             }
-            case PLAYING:
+            else if( sob->IsPlaying() )
             {
-               PlaySound( sob );
-               break;
+               mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, PLAYING ) );
             }
-            case STOPPED:
+            else if( sob->IsStopped() )
             {
-               StopSound( sob );
-               break;
+               mSoundStateMap.insert( SoundObjectStateMap::value_type( sob, STOPPED ) );
             }
-            default:
+
+            PauseSound( sob );
+         }
+      }
+
+      if( data->message == "pause_end" )
+      {
+         // Restore all paused sounds to their previous state.
+         for( SND_LST::iterator iter = mSoundList.begin(); iter != mSoundList.end(); iter++ )
+         {
+            SoundObj* sob = iter->get();
+            
+            switch( mSoundStateMap[ sob ] )
             {
-               break;
+               case PAUSED:
+               {
+                  PauseSound( sob );
+                  break;
+               }
+               case PLAYING:
+               {
+                  PlaySound( sob );
+                  break;
+               }
+               case STOPPED:
+               {
+                  StopSound( sob );
+                  break;
+               }
+               default:
+               {
+                  break;
+               }
             }
          }
       }
    }
-
-   // sound commands
-   if( data->message == Sound::kCommand[Sound::POSITION] )
+   else
    {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::POSITION] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      // sound commands
+      if( data->message == Sound::kCommand[Sound::POSITION] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::POSITION] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::DIRECTION] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::DIRECTION] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::DIRECTION] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::DIRECTION] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::VELOCITY] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::VELOCITY] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::VELOCITY] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::VELOCITY] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::PLAY] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::PLAY] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::PLAY] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::PLAY] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::STOP] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::STOP] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::STOP] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::STOP] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::PAUSE] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::PAUSE] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::PAUSE] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::PAUSE] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::LOAD] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::LOAD] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::LOAD] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::LOAD] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::UNLOAD] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::UNLOAD] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::UNLOAD] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::UNLOAD] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::LOOP] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::LOOP] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::LOOP] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::LOOP] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::UNLOOP] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::UNLOOP] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::UNLOOP] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::UNLOOP] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::GAIN] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::GAIN] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::GAIN] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::GAIN] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::PITCH] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::PITCH] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::PITCH] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::PITCH] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::REWIND] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::REWIND] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::REWIND] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::REWIND] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::REL] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::REL] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::REL] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::REL] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::ABS] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::ABS] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::ABS] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::ABS] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::MIN_DIST] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::MIN_DIST] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::MIN_DIST] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::MIN_DIST] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::MAX_DIST] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::MAX_DIST] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::MAX_DIST] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::MAX_DIST] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::ROL_FACT] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::ROL_FACT] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::ROL_FACT] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::ROL_FACT] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::MIN_GAIN] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::MIN_GAIN] );
-      mSoundCommand.push( snd );
-      return;
-   }
+      if( data->message == Sound::kCommand[Sound::MIN_GAIN] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::MIN_GAIN] );
+         mSoundCommand.push( snd );
+         return;
+      }
 
-   if( data->message == Sound::kCommand[Sound::MAX_GAIN] )
-   {
-      assert( data->userData );
-      SoundObj*   snd(static_cast<SoundObj*>(data->userData));
-      snd->Command( Sound::kCommand[Sound::MAX_GAIN] );
-      mSoundCommand.push( snd );
-      return;
+      if( data->message == Sound::kCommand[Sound::MAX_GAIN] )
+      {
+         assert( data->userData );
+         SoundObj*   snd(static_cast<SoundObj*>(data->userData));
+         snd->Command( Sound::kCommand[Sound::MAX_GAIN] );
+         mSoundCommand.push( snd );
+         return;
+      }
    }
 }
 
@@ -1408,7 +1413,7 @@ AudioManager::LoadSound( SoundObj* snd )
    if( file == NULL )
       return;
 
-   LoadWaveFile( file );
+   LoadFile( file );
 
    BufferData* bd = mBufferMap[file];
 
@@ -1440,7 +1445,7 @@ AudioManager::UnloadSound( SoundObj* snd )
 
    bd->use--;
 
-   UnloadWaveFile( file );
+   UnloadFile( file );
 }
 
 
@@ -1461,8 +1466,8 @@ AudioManager::PlaySound( SoundObj* snd )
       return;
 
    // then check if sound has a source
-   src   = snd->Source();
-   if( alIsSource( src ) == AL_FALSE )
+   src = snd->Source();
+   if( ! snd->IsInitialized() )
    {
       // no source, gotta get one
       if( ! GetSource( snd ) )
@@ -2189,7 +2194,7 @@ AudioManager::FreeSource( SoundObj* snd )
 AudioManager::SoundObj::SoundObj()
 :  Sound(),
    mBuffer(0L),
-   mSource(0L),
+   mSource( SourceObj() ),
    mState(BIT(STOP))
 {
    RegisterInstance( this );
@@ -2216,7 +2221,7 @@ AudioManager::SoundObj::OnMessage( MessageData* data )
 
    if( data->message == "frame" )
    {
-      if( alIsSource( mSource ) == AL_FALSE )
+      if( alIsSource( Source() ) == AL_FALSE || !IsInitialized() )
          // no source, don't bother with positions or direction
          return;
 
@@ -2403,7 +2408,8 @@ AudioManager::SoundObj::Buffer( void )
 void
 AudioManager::SoundObj::Source( ALuint source )
 {
-   mSource  = source;
+   mSource.mSource = source;
+   mSource.mInitialized = true;
 }
 
 
@@ -2411,9 +2417,16 @@ AudioManager::SoundObj::Source( ALuint source )
 ALuint
 AudioManager::SoundObj::Source( void )
 {
-   return   mSource;
+   return mSource.mSource;
 }
 
+
+
+bool
+AudioManager::SoundObj::IsInitialized() const
+{
+   return mSource.mInitialized;
+}
 
 
 void
@@ -2445,7 +2458,7 @@ AudioManager::SoundObj::Clear( void )
 {
    mFilename   = "";
    mBuffer     = 0L;
-   mSource     = 0L;
+   mSource     = SourceObj();
    while( mCommand.size() )
    {
       mCommand.pop();
