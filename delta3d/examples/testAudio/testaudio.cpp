@@ -1,7 +1,16 @@
-#include <assert.h>
+#include <cassert>
 #include <stack>
 
 #include "testaudio.h"
+
+#include <dtAudio/audiomanager.h>
+#include <dtAudio/sound.h>
+#include <dtAudio/soundeffectbinder.h>
+#include <dtCore/camera.h>
+#include <dtCore/effectmanager.h>
+#include <dtCore/object.h>
+#include <dtCore/orbitmotionmodel.h>
+#include <dtCore/particlesystem.h>
 
 // name spaces
 using namespace   dtCore;
@@ -32,7 +41,11 @@ const char*    TestAudioApp::kFxFile[kNumFx] =
                   "effects/smoke.osg"
                };
 
-
+const char*    TestAudioApp::kFxDetonationType[kNumFx] =
+               {
+                  "HighExplosiveDetonation",
+                  "SmokeDetonation"
+               };
 
 TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ )
 :  Application(configFilename),
@@ -40,8 +53,7 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    mSndPitch(1.0f),
    mLooping(false),
    mMic(NULL),
-   mInputDevice(NULL),
-   mMotionModel(NULL),
+   mOribitMotionModel(NULL),
    mSmokeCountA(0L),
    mSmokeCountC(0L),
    mRecorder(new SoundRecorder())
@@ -77,8 +89,8 @@ TestAudioApp::TestAudioApp(const std::string& configFilename /*= "config.xml"*/ 
    if( mFXMgr.get() )
    {
       mSFXBinder->Initialize( mFXMgr.get() );
-      mSFXBinder->AddEffectTypeMapping( HighExplosiveDetonation, kSoundFile[1L] );
-      mSFXBinder->AddEffectTypeRange( HighExplosiveDetonation, 35.0f );
+      mSFXBinder->AddEffectTypeMapping( kFxDetonationType[EXPLODE], kSoundFile[1L] );
+      mSFXBinder->AddEffectTypeRange( kFxDetonationType[EXPLODE], 35.0f );
    }
 
 }
@@ -89,8 +101,8 @@ TestAudioApp::~TestAudioApp()
 {
    if( mSFXBinder.get() )
    {
-      mSFXBinder->RemoveEffectTypeRange( HighExplosiveDetonation );
-      mSFXBinder->RemoveEffectTypeMapping( HighExplosiveDetonation );
+      mSFXBinder->RemoveEffectTypeRange( kFxDetonationType[EXPLODE] );
+      mSFXBinder->RemoveEffectTypeMapping( kFxDetonationType[EXPLODE] );
       mSFXBinder->Shutdown();
       mSFXBinder  = NULL;
    }
@@ -100,7 +112,7 @@ TestAudioApp::~TestAudioApp()
 
    for( unsigned int ii(0L); ii < kNumSoundFiles; ii++ )
    {
-      AudioManager::GetManager()->UnloadWaveFile( kSoundFile[ii] );
+      AudioManager::GetManager()->UnloadFile( kSoundFile[ii] );
    }
 
    AudioManager::Destroy();
@@ -154,7 +166,7 @@ bool TestAudioApp::KeyPressed(const Keyboard* keyboard, Producer::KeyboardKey ke
          break;
 
       case  Producer::Key_S:
-         mFXMgr->AddDetonation( pos, HighExplosiveDetonation );
+         mFXMgr->AddDetonation( pos, kFxDetonationType[EXPLODE] );
          verdict = true;
          break;
 
@@ -614,7 +626,7 @@ TestAudioApp::LoadFxFile( const char* fname )
    assert( effectManager.valid() );
 
    effectManager->AddDetonationTypeMapping(
-      HighExplosiveDetonation,
+      kFxDetonationType[EXPLODE],
       fname
    );
 
@@ -644,157 +656,9 @@ TestAudioApp::LoadPSFile( const char* fname )
 void
 TestAudioApp::InitInputDevices( void )
 {
-   mInputDevice   = new LogicalInputDevice;
-   //assert( mInputDevice );
-
-   Keyboard* k  = GetKeyboard();
-   assert( k );
-
-   Mouse*    m  = GetMouse();
-   assert( m );
-
-   Axis* leftButtonUpAndDown  =
-         mInputDevice->AddAxis(
-                                 "left mouse button up/down",
-                                 new ButtonAxisToAxis(
-                                       m->GetButton( Mouse::LeftButton ),
-                                       m->GetAxis( 1 )
-                                                             )
-                              );
-
-
-   Axis* leftButtonLeftAndRight  =
-         mInputDevice->AddAxis(
-                                 "left mouse button left/right",
-                                 new ButtonAxisToAxis(
-                                       m->GetButton( Mouse::LeftButton ),
-                                       m->GetAxis( 0 )
-                                                             )
-                              );
-
-
-   Axis* middleButtonUpAndDown   =
-         mInputDevice->AddAxis(
-                                 "middle mouse button up/down",
-                                 new ButtonAxisToAxis(
-                                       m->GetButton( Mouse::MiddleButton ),
-                                       m->GetAxis( 1 )
-                                                             )
-                              );
-
-
-   Axis* rightButtonUpAndDown    =
-         mInputDevice->AddAxis(
-                                 "right mouse button up/down",
-                                 new ButtonAxisToAxis(
-                                       m->GetButton( Mouse::RightButton ),
-                                       m->GetAxis( 1 )
-                                                             )
-                              );
-
-
-   Axis* rightButtonLeftAndRight =
-         mInputDevice->AddAxis(
-                                 "right mouse button left/right",
-                                 new ButtonAxisToAxis(
-                                       m->GetButton( Mouse::RightButton ),
-                                       m->GetAxis( 0 )
-                                                             )
-                              );
-
-
-   Axis* arrowKeysUpAndDown      =
-         mInputDevice->AddAxis(
-                                 "arrow keys up/down",
-                                 new ButtonsToAxis(
-                                       k->GetButton( Producer::Key_Down ),
-                                       k->GetButton( Producer::Key_Up )
-                                                          )
-                              );
-
-
-   Axis* arrowKeysLeftAndRight   =
-         mInputDevice->AddAxis(
-                                 "arrow keys left/right",
-                                 new ButtonsToAxis(
-                                       k->GetButton( Producer::Key_Left ),
-                                       k->GetButton( Producer::Key_Right )
-                                                          )
-                              );
-
-
-   Axis* wsKeysUpAndDown         =
-         mInputDevice->AddAxis(
-                                 "w/s keys up/down",
-                                 new ButtonsToAxis(
-                                       k->GetButton( Producer::Key_S ),
-                                       k->GetButton( Producer::Key_W )
-                                                          )
-                              );
-
-
-   Axis* adKeysLeftAndRight      =
-         mInputDevice->AddAxis(
-                                 "a/d keys left/right",
-                                 new ButtonsToAxis(
-                                       k->GetButton( Producer::Key_A ),
-                                       k->GetButton( Producer::Key_D )
-                                                          )
-                              );
-
-
-   Axis* primaryUpAndDown        =
-         mInputDevice->AddAxis(
-                                 "primary up/down",
-                                 new AxesToAxis(
-                                       arrowKeysUpAndDown,
-                                       leftButtonUpAndDown
-                                                       )
-                              );
-
-
-   Axis* secondaryUpAndDown      =
-         mInputDevice->AddAxis(
-                                 "secondary up/down",
-                                 new AxesToAxis(
-                                       wsKeysUpAndDown,
-                                       rightButtonUpAndDown
-                                                       )
-                              );
-
-
-   Axis* primaryLeftAndRight     =
-         mInputDevice->AddAxis(
-                                 "primary left/right",
-                                 new AxesToAxis(
-                                       arrowKeysLeftAndRight,
-                                       leftButtonLeftAndRight
-                                                       )
-                              );
-
-
-   Axis* secondaryLeftAndRight   =
-         mInputDevice->AddAxis(
-                                 "secondary left/right",
-                                 new AxesToAxis(
-                                       adKeysLeftAndRight,
-                                       rightButtonLeftAndRight
-                                                       )
-                              );
-
-
-   OrbitMotionModel* omm   = new OrbitMotionModel;
-   assert( omm );
-
-   omm->SetAzimuthAxis( primaryLeftAndRight );
-   omm->SetElevationAxis( primaryUpAndDown );
-   omm->SetDistanceAxis( middleButtonUpAndDown );
-   omm->SetLeftRightTranslationAxis( secondaryLeftAndRight );
-   omm->SetUpDownTranslationAxis( secondaryUpAndDown );
-   mMotionModel   = omm;
-
-   mMotionModel->SetTarget( GetCamera() );
-   mMotionModel->SetEnabled( true );
+   mOribitMotionModel = new OrbitMotionModel( GetKeyboard(), GetMouse() );
+   mOribitMotionModel->SetTarget( GetCamera() );
+   mOribitMotionModel->SetEnabled( true );
 }
 
 
@@ -816,12 +680,7 @@ TestAudioApp::SetUpCamera( void )
 
    cam->SetTransform( &xform );
 
-
-   OrbitMotionModel*  omm   =
-      static_cast<OrbitMotionModel*>(mMotionModel.get());
-   assert( omm );
-
-   omm->SetDistance( dist );
+   mOribitMotionModel->SetDistance( dist );
 }
 
 
@@ -954,7 +813,7 @@ void TestAudioApp::StopRecording()
    mRecorder->Stop();
 }
 
-int main( int argc, const char* argv[] )
+int main()
 {
    SetDataFilePathList( GetDeltaRootPath() + "/examples/testAudio/;" +
                         GetDeltaDataPathList() + ";" + GetDeltaDataPathList()+"/effects/"  );
@@ -965,4 +824,3 @@ int main( int argc, const char* argv[] )
 
    return 0;
 }
-
