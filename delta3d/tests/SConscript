@@ -18,16 +18,16 @@ if env.get('rti') != 0 :
 	suites += [ 'dtHLAGM' ]
 	
 sources = {}
-mainSources = glob.glob('*.cpp')
+mainSources = SGlob( '*.cpp' )
 sources['all'] = mainSources + []
 
 for suite in suites:
    #get the sources for each program
-   sources[suite] = glob.glob(suite + '/*tests.cpp')
+   sources[suite] = SGlob(suite + '/*tests.cpp')
    #add the sources to the allTests program
    sources['all'] += sources[suite]
    #add the "main" source files.
-   sources[suite] += mainSources  
+   sources[suite] += mainSources
 
 mainlibs = suites + ['dtAudio', 'dtABC', 'dtChar', 'dtActors', 'cppunit'] 
 	
