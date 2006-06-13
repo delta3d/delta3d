@@ -380,8 +380,6 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
 
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
-
-         return true;
       }
       else if(axis == mElevationAxis.get())
       {
@@ -409,8 +407,6 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
          
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
-
-         return true;
       }
       else if(axis == mDistanceAxis.get())
       {
@@ -432,8 +428,6 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          xyz += translation;
          
          mDistance += distDelta;
-
-         return true;
       }
       else if(axis == mLeftRightTranslationAxis.get())
       {
@@ -451,8 +445,6 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          translation = osg::Matrix::transform3x3(translation, mat);
          
          xyz += translation;
-
-         return true;
       }
       else if(axis == mUpDownTranslationAxis.get())
       {
@@ -470,13 +462,13 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          translation = osg::Matrix::transform3x3(translation, mat);
          
          xyz += translation;
-
-         return true;
       }
       
       transform.Set(xyz, hpr, scale);
       
-      GetTarget()->SetTransform(&transform);      
+      GetTarget()->SetTransform(&transform);
+
+      return true;
    }
 
    return false;
