@@ -1115,7 +1115,17 @@ SConscript( dirs=['doc'] )
 SConscript( dirs=['src'] )
 SConscript( dirs=['examples'] )
 SConscript( dirs=['utilities'] )
-SConscript( dirs=['tests'] )
+
+# TODO: this should defintely be using the env['TOOLS'] list and extracting the 'default' cxx tool,
+#       problem is that on win32 the c_compiler and cxx_compiler are the same, so there's one
+#       less element in the list, so we can't use an index to find the proper tool. instead we
+#       need to query what scons chooses from the list and actually uses...
+if OS == 'windows' :
+   tool = 'msvc'
+elif OS == 'linux' or OS == 'darwin' :
+   tool = 'g++'
+
+SConscript( dirs=['tests'], build_dir = os.path.join( 'tests', OS+'-'+tool+'-'+mode ), duplicate = 0 )
 
 #if libs == '[]' :
 #   errorLog.write('Failed to create the libraries or executable file')
