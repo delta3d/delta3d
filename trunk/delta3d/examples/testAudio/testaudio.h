@@ -5,10 +5,27 @@
 #include <vector>
 #include <queue>
 
-#include "dtCore/dt.h"
-#include "dtAudio/dtaudio.h"
-#include "dtABC/dtabc.h"
-#include "dtCore/recorder.h"
+#include <dtCore/globals.h>
+#include <dtAudio/sound.h>
+#include <dtABC/application.h>
+#include <dtCore/recorder.h>
+#include <dtCore/refptr.h>
+
+namespace dtAudio
+{
+   class Listener;
+   class Sound;
+   class SoundEffectBinder;
+}
+
+namespace dtCore
+{
+   class Camera;
+   class EffectManager;
+   class Object;
+   class OrbitMotionModel;
+   class ParticleSystem;
+}
 
 class TestAudioApp : public dtABC::Application
 {
@@ -23,8 +40,7 @@ private:
    typedef  dtCore::RefPtr<dtCore::EffectManager>        FXM_PTR;
    typedef  dtCore::RefPtr<dtCore::ParticleSystem>       PAR_PTR;
    typedef  dtCore::RefPtr<dtAudio::SoundEffectBinder>   BIN_PTR;
-   typedef  dtCore::RefPtr<dtCore::LogicalInputDevice>   LID_PTR;
-   typedef  dtCore::RefPtr<dtCore::MotionModel>          MM_PTR;
+   typedef  dtCore::RefPtr<dtCore::OrbitMotionModel>     OMM_PTR;
 
 private:
    static unsigned int kNumSoundFiles;
@@ -48,11 +64,14 @@ private:
    };
 
    static const char* kFxFile[kNumFx];
+   static const char* kFxDetonationType[kNumFx];
 
 public:
    TestAudioApp(const std::string& configFilename = "config.xml" );
+protected:
    virtual ~TestAudioApp();
 
+public:
    virtual void PreFrame( const double deltaFrameTime );
    virtual void Frame( const double deltaFrameTime );
    virtual void PostFrame( const double deltaFrameTime );
@@ -96,8 +115,7 @@ private:
    PAR_PTR                       mPSysC;
    FXM_PTR                       mFXMgr;
    BIN_PTR                       mSFXBinder;
-   LID_PTR                       mInputDevice;
-   MM_PTR                        mMotionModel;
+   OMM_PTR                       mOribitMotionModel;
    unsigned int                  mSmokeCountA;
    unsigned int                  mSmokeCountC;
    dtCore::RefPtr<SoundRecorder> mRecorder;
