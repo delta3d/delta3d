@@ -377,11 +377,11 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          
          osg::Vec3 offset( 0.0f, -mDistance, 0.0f );
          
-         //sgMakeCoordMat4(mat, focus, hpr);
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
 
-         //sgXformPnt3(xyz, offset, mat);
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
+
+         return true;
       }
       else if(axis == mElevationAxis.get())
       {
@@ -391,7 +391,6 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          
          transform.Get(mat);
          
-         //sgXformPnt3(focus, mat);
          dtUtil::MatrixUtil::TransformVec3(focus, mat);
          
          hpr[1] += float(delta * mAngularRate);
@@ -410,6 +409,8 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          dtUtil::MatrixUtil::PositionAndHprToMatrix(mat, focus, hpr);
          
          dtUtil::MatrixUtil::TransformVec3(xyz, offset, mat);
+
+         return true;
       }
       else if(axis == mDistanceAxis.get())
       {
@@ -431,6 +432,8 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          xyz += translation;
          
          mDistance += distDelta;
+
+         return true;
       }
       else if(axis == mLeftRightTranslationAxis.get())
       {
@@ -448,6 +451,8 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          translation = osg::Matrix::transform3x3(translation, mat);
          
          xyz += translation;
+
+         return true;
       }
       else if(axis == mUpDownTranslationAxis.get())
       {
@@ -465,14 +470,16 @@ bool OrbitMotionModel::AxisStateChanged(const Axis* axis,
          translation = osg::Matrix::transform3x3(translation, mat);
          
          xyz += translation;
+
+         return true;
       }
       
       transform.Set(xyz, hpr, scale);
       
-      GetTarget()->SetTransform(&transform);
+      GetTarget()->SetTransform(&transform);      
    }
 
-   return true;
+   return false;
 }
 
 }
