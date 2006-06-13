@@ -57,7 +57,7 @@ public:
 
             mEffectManager->AddDetonation(
                location,
-               ( rand() < RAND_MAX/2) ? HighExplosiveDetonation : SmokeDetonation );
+               ( rand() < RAND_MAX/2) ? "HighExplosiveDetonation" : "SmokeDetonation" );
          }
 
          mAngle = mAngle + 45.0f*delta;
@@ -149,12 +149,12 @@ public:
       AddDrawable( mEntity.get() );
 
       mEffectManager->AddDetonationTypeMapping(
-         HighExplosiveDetonation,
+         "HighExplosiveDetonation",
          "effects/explosion.osg"
          );
 
       mEffectManager->AddDetonationTypeMapping(
-         SmokeDetonation,
+         "SmokeDetonation",
          "effects/smoke.osg"
          );
 
