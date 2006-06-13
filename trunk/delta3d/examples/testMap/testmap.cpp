@@ -54,7 +54,7 @@ class TestMap : public Application
       mSmoke = new ParticleSystem;
       mExplosionManager = new EffectManager;
       mSmoke->LoadFile("Particles/smoke.osg");
-      mExplosionManager->AddDetonationTypeMapping(HighExplosiveDetonation, "Particles/explosion.osg");
+      mExplosionManager->AddDetonationTypeMapping("HighExplosiveDetonation", "Particles/explosion.osg");
       
       for(unsigned int i = 0; i < proxies.size(); i++)
       {
