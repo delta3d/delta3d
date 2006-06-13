@@ -223,6 +223,7 @@ namespace dtCore
 
       private:
          InputCallback();  ///< not implemented by design
+         InputCallback& operator=( const InputCallback& );
          InputCallback(const InputCallback&);  ///< not implemented by design
 
          RefPtr<Keyboard> mKeyboard;
