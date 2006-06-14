@@ -10,7 +10,7 @@ using namespace dtUtil;
 IMPLEMENT_MANAGEMENT_LAYER(Light)
 
 Light::Light( int number, const std::string& name, LightingMode mode )
-:  DeltaDrawable(name),
+:  Transformable(name),
    mLightingMode( mode ), 
    mEnabled ( false )
 {

@@ -23,7 +23,7 @@
 
 #include <dtCore/export.h>
 #include <dtCore/macros.h>
-#include <dtCore/deltadrawable.h>
+#include <dtCore/transformable.h>
 
 /// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
@@ -41,7 +41,7 @@ namespace dtCore
    * An abstract class declaring the base functionality for a vertex light.
    * It's properties are thin wrappers of OpenGL light calls.
    */
-   class DT_CORE_EXPORT Light : virtual public DeltaDrawable
+   class DT_CORE_EXPORT Light : public Transformable
    {
 
       DECLARE_MANAGEMENT_LAYER(Light)
