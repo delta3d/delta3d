@@ -9,12 +9,7 @@ using namespace dtCore;
 
 IMPLEMENT_MANAGEMENT_LAYER(Keyboard)
 
-/**
- * Constructor.
- *
- * @param name the instance name
- */
- Keyboard::Keyboard(const std::string& name) : InputDevice(name)
+Keyboard::Keyboard(const std::string& name) : InputDevice(name)
 {
    RegisterInstance(this);
 
@@ -134,23 +129,11 @@ Keyboard::~Keyboard()
    DeregisterInstance(this);
 }
 
-/**
- * Checks the state of the specified key.
- *
- * @param key the key to check
- * @return true if the key is being held down, false
- * otherwise
- */
 bool Keyboard::GetKeyState(Producer::KeyboardKey key)
 {
    return GetButton(key)->GetState();
 }
 
-/**
- * Adds a listener for keyboard events.
- *
- * @param keyboardListener the listener to add
- */
 void Keyboard::AddKeyboardListener(KeyboardListener* keyboardListener)
 {
    mKeyboardListeners.push_back( keyboardListener );
@@ -162,22 +145,11 @@ void Keyboard::InsertKeyboardListener(const KeyboardListenerList::value_type& po
    mKeyboardListeners.insert(iter,kbl);
 }
 
-/**
- * Removes a keyboard listener.
- *
- * @param keyboardListener the listener to remove
- */
 void Keyboard::RemoveKeyboardListener(KeyboardListener* keyboardListener)
 {
    mKeyboardListeners.remove(keyboardListener);
 }
 
-/**
- * Determines the key that corresponds to the specified character.
- *
- * @param kc the character to map
- * @return the corresponding key
- */
 Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter kc)
 {
    switch(kc)
@@ -563,7 +535,6 @@ Producer::KeyboardKey Keyboard::KeyCharacterToKeyboardKey(Producer::KeyCharacter
 bool Keyboard::KeyDown(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
-   GetButton(kbkey)->SetState(true);
 
    bool handled(false);
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
@@ -574,13 +545,21 @@ bool Keyboard::KeyDown(Producer::KeyCharacter kc)
       ++iter;
    }
 
+   if( !handled )  // affect the return value
+   {
+      handled = GetButton(kbkey)->SetState(true);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
+   {
+      GetButton(kbkey)->SetState(true);
+   }
+
    return handled;
 }
 
 bool Keyboard::KeyUp(Producer::KeyCharacter kc)
 {
    Producer::KeyboardKey kbkey = KeyCharacterToKeyboardKey(kc);
-   GetButton(kbkey)->SetState(false);
 
    bool handled(false);
    KeyboardListenerList::iterator iter = mKeyboardListeners.begin();
@@ -589,6 +568,15 @@ bool Keyboard::KeyUp(Producer::KeyCharacter kc)
    {
       handled = (*iter)->HandleKeyReleased(this, kbkey, kc);
       ++iter;
+   }
+
+   if( !handled )   // affect the return value
+   {
+      handled = GetButton(kbkey)->SetState(false);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
+   {
+      GetButton(kbkey)->SetState(false);
    }
 
    return handled;
