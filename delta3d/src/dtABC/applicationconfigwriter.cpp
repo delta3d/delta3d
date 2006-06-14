@@ -2,6 +2,8 @@
 #include <dtABC/applicationconfigschema.h>
 #include <dtABC/applicationconfigdata.h>
 
+// These are the classes that need to be included to use dtABC::Application.
+// we should only need the application.h file.
 #include <dtABC/application.h>
 #include <dtCore/keyboard.h>
 #include <dtCore/mouse.h>
