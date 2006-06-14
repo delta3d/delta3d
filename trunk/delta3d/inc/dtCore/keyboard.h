@@ -44,133 +44,108 @@ namespace dtCore
    {
       DECLARE_MANAGEMENT_LAYER(Keyboard)
 
-      public:
-         typedef std::list<dtCore::RefPtr<KeyboardListener> > KeyboardListenerList;
+   public:
+      typedef std::list<dtCore::RefPtr<KeyboardListener> > KeyboardListenerList;
 
-         /**
-          * Constructor.
-          *
-          * @param name the instance name
-          */
-         Keyboard(const std::string& name = "keyboard");
+      /// Registers many Buttons as DeviceFeatures with the base class, InputDevice.
+      /// It also registers itself with the instance management layer.
+      /// @param name the instance name
+      Keyboard(const std::string& name = "keyboard");
 
-      protected:
+   protected:
 
-         /**
-          * Destructor.
-          */
-         virtual ~Keyboard();
+      /// Deregisters itself with the instance management layer.
+      virtual ~Keyboard();
 
-      public:
+   public:
 
-         /**
-          * Checks the state of the specified key.
-          *
-          * @param key the key to check
-          * @return true if the key is being held down, false
-          * otherwise
-          */
-         bool GetKeyState(Producer::KeyboardKey key);
+      /// Checks the state of the specified key.
+      /// @param key the key to check
+      /// @return true if the key is being held down, false otherwise
+      bool GetKeyState(Producer::KeyboardKey key);
 
-         /**
-          * Pushes a listener for keyboard events to the back of the container.
-          *
-          * @param keyboardListener the listener to add
-          */
-         void AddKeyboardListener(KeyboardListener* keyboardListener);
+      /// Pushes a listener for keyboard events to the back of the container.
+      /// @param keyboardListener the listener to add
+      void AddKeyboardListener(KeyboardListener* keyboardListener);
 
-         /// Inserts the listener into the list at a position BEFORE pos.
-         void InsertKeyboardListener(const KeyboardListenerList::value_type& pos, KeyboardListener* kbl);
+      /// Inserts the listener into the list at a position BEFORE pos.
+      void InsertKeyboardListener(const KeyboardListenerList::value_type& pos, KeyboardListener* kbl);
 
-         /**
-          * Removes a keyboard listener.
-          *
-          * @param keyboardListener the listener to remove
-          */
-         void RemoveKeyboardListener(KeyboardListener* keyboardListener);
+      /// Removes a keyboard listener.
+      /// @param keyboardListener the listener to remove from the container of listeners.
+      void RemoveKeyboardListener(KeyboardListener* keyboardListener);
 
-         // Producer callback methods. These are KeyDown and KeyUp instead of
-         // KeyPress and KeyRelease to avoid a define clash with X11's X.h.
-         virtual bool KeyDown( Producer::KeyCharacter );
-         virtual bool KeyUp( Producer::KeyCharacter );
+      // Producer callback methods. These are KeyDown and KeyUp instead of
+      // KeyPress and KeyRelease to avoid a define clash with X11's X.h.
+      virtual bool KeyDown( Producer::KeyCharacter );
+      virtual bool KeyUp( Producer::KeyCharacter );
 
-         const KeyboardListenerList& GetListeners() const { return mKeyboardListeners; }
+      /// @return The container of listeners.
+      const KeyboardListenerList& GetListeners() const { return mKeyboardListeners; }
 
-         static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc);
+      /// Determines the key that corresponds to the specified character.
+      /// @param kc the character to map
+      /// @return the corresponding key
+      static Producer::KeyboardKey KeyCharacterToKeyboardKey(Producer::KeyCharacter kc);
 
-      protected:
+   protected:
 
-         /**
-          * The set of keyboard listeners.
-          */
-         KeyboardListenerList mKeyboardListeners;
+      /// The container of keyboard listeners.
+      KeyboardListenerList mKeyboardListeners;
 
    private:
+      // the following are not implemented by design,
+      // to cause compile errors for users that need to use the new interface.
+      bool KeyPressed(Producer::KeyCharacter);
+      void keyPressed(Producer::KeyCharacter);
 
-         /// the following are not implemented by design,
-         /// to cause compile errors for users that need to use the new interface.
-         bool KeyPressed(Producer::KeyCharacter);
-         void keyPressed(Producer::KeyCharacter);
+      bool KeyReleased(Producer::KeyCharacter);
+      void keyReleased(Producer::KeyCharacter);
 
-         bool KeyReleased(Producer::KeyCharacter);
-         void keyReleased(Producer::KeyCharacter);
-
-         // Disallowed to prevent compile errors on VS2003. It apparently
-         // creates this functions even if they are not used, and if
-         // this class is forward declared, these implicit functions will
-         // cause compiler errors for missing calls to "ref".
-         Keyboard& operator=( const Keyboard& ); 
-         Keyboard( const Keyboard& );
-         
+      // Disallowed to prevent compile errors on VS2003. It apparently
+      // creates this functions even if they are not used, and if
+      // this class is forward declared, these implicit functions will
+      // cause compiler errors for missing calls to "ref".
+      Keyboard& operator=( const Keyboard& ); 
+      Keyboard( const Keyboard& );
    };
 
    
-   /**
-    * An interface for objects interested in receiving keyboard events.
-    */
+   /// An interface for objects interested in receiving keyboard events.
    class DT_CORE_EXPORT KeyboardListener : public osg::Referenced
    {
       public:
 
          virtual ~KeyboardListener() {}
 
-         /**
-          * Called when a key is pressed. 
-          *
-          * @param keyboard the source of the event
-          * @param key the key pressed
-          * @param character the corresponding character
-          * @return true if this KeyboardListener handled the event. The
-          * Keyboard calling this function is responsbile for using this
-          * return value or not.
-          */
+         /// Called when a key is pressed. 
+         /// @param keyboard the source of the event
+         /// @param key the key pressed
+         /// @param character the corresponding character
+         /// @return true if this KeyboardListener handled the event. The
+         /// Keyboard calling this function is responsbile for using this
+         /// return value or not.
          virtual bool HandleKeyPressed(const Keyboard* keyboard, 
                                         Producer::KeyboardKey key,
                                         Producer::KeyCharacter character )=0;
-         /**
-          * Called when a key is released.
-          *
-          * @param keyboard the source of the event
-          * @param key the key released
-          * @param character the corresponding character
-          * @return true if this KeyboardListener handled the event. The
-          * Keyboard calling this function is responsbile for using this
-          * return value or not.
-          */
+         /// Called when a key is released.
+         /// @param keyboard the source of the event
+         /// @param key the key released
+         /// @param character the corresponding character
+         /// @return true if this KeyboardListener handled the event. The
+         /// Keyboard calling this function is responsbile for using this
+         /// return value or not.
          virtual bool HandleKeyReleased(const Keyboard* keyboard, 
                                          Producer::KeyboardKey key,
                                          Producer::KeyCharacter character )=0;
 
-         /**
-          * Called when a key is typed.
-          *
-          * @param keyboard the source of the event
-          * @param key the key typed
-          * @param character the corresponding character
-          * @return true if this KeyboardListener handled the event. The
-          * Keyboard calling this function is responsbile for using this
-          * return value or not.
-          */
+         /// Called when a key is typed.
+         /// @param keyboard the source of the event
+         /// @param key the key typed
+         /// @param character the corresponding character
+         /// @return true if this KeyboardListener handled the event. The
+         /// Keyboard calling this function is responsbile for using this
+         /// return value or not.
          virtual bool HandleKeyTyped(const Keyboard* keyboard, 
                                       Producer::KeyboardKey key,
                                       Producer::KeyCharacter character )=0;

@@ -104,12 +104,18 @@ bool Mouse::MouseMotion(float x, float y)
       ++iter;
    }
 
-   // a temporary workaround for classes that listen to input device features
+   // a workaround for classes that listen to input device features
+   Axis* zero = GetAxis(0);
+   Axis* one = GetAxis(1);
    if( !handled )
    {
-      Axis* zero = GetAxis(0);
+      bool zero_handled = zero->SetState(x, x - zero->GetState());
+      bool one_handled = one->SetState(y, y - one->GetState());
+      handled = (one_handled || zero_handled);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
+   {
       zero->SetState(x, x - zero->GetState());
-      Axis* one = GetAxis(1);
       one->SetState(y, y - one->GetState());
    }
 
@@ -127,12 +133,18 @@ bool Mouse::PassiveMouseMotion(float x, float y)
       ++iter;
    }
 
-   // a temporary workaround for classes that listen to input device features
-   if( !handled )
+   // a workaround for classes that listen to input device features
+   Axis* zero = GetAxis(0);
+   Axis* one = GetAxis(1);
+   if( !handled )  // affect the return value
    {
-      Axis* zero = GetAxis(0);
+      bool zero_handled = zero->SetState(x, x - zero->GetState());
+      bool one_handled = one->SetState(y, y - one->GetState());
+      handled = (one_handled || zero_handled);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
+   {
       zero->SetState(x, x - zero->GetState());
-      Axis* one = GetAxis(1);
       one->SetState(y, y - one->GetState());
    }
 
@@ -152,7 +164,12 @@ bool Mouse::ButtonDown(float x, float y, MouseButton button)
       ++iter;
    }
 
-   if( !handled )
+   // a workaround for classes that listen to input device features
+   if( !handled )  // affect the return value
+   {
+      handled = GetButton(button)->SetState(true);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
    {
       GetButton(button)->SetState(true);
    }
@@ -173,7 +190,11 @@ bool Mouse::DoubleButtonDown(float x, float y, MouseButton button)
       ++iter;
    }
 
-   if( !handled )
+   if( !handled )  // affect the return value
+   {
+      handled = GetButton(button)->SetState(true);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
    {
       GetButton(button)->SetState(true);
    }
@@ -194,7 +215,11 @@ bool Mouse::ButtonUp(float x, float y, MouseButton button)
       ++iter;
    }
 
-   if( !handled )
+   if( !handled )   // affect the return value
+   {
+      handled = GetButton(button)->SetState(false);
+   }
+   else  // don't affect the return value, but change the state for "pollers of the state"
    {
       GetButton(button)->SetState(false);
    }
