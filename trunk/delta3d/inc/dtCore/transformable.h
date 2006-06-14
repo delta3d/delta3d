@@ -44,7 +44,7 @@ namespace dtCore
      * The Transformable class creates a osg::MatrixTransform node for the
      * protected member mNode.  
      */
-   class DT_CORE_EXPORT Transformable : virtual public DeltaDrawable  
+   class DT_CORE_EXPORT Transformable : public DeltaDrawable  
    {
    public:
       /*

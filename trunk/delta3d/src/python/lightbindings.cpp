@@ -2,15 +2,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "python/dtpython.h"
-#include "dtCore/light.h"
+#include <python/dtpython.h>
+#include <dtCore/light.h>
 
 using namespace boost::python;
 using namespace dtCore;
 
 void initLightBindings()
 {
-   scope LightScope = class_<Light, bases<DeltaDrawable>, dtCore::RefPtr<Light>, boost::noncopyable>("Light", no_init)
+   scope LightScope = class_<Light, bases<Transformable>, dtCore::RefPtr<Light>, boost::noncopyable>("Light", no_init)
       .def("SetLightingMode", &Light::SetLightingMode)
       .def("GetLightingMode", &Light::GetLightingMode)
       .def("SetEnabled", &Light::SetEnabled)

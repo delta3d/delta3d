@@ -10,7 +10,7 @@ using namespace dtCore;
 
 void initInfiniteLightBindings()
 {
-   class_<InfiniteLight, bases<Light>, dtCore::RefPtr<InfiniteLight>, boost::noncopyable >("InfiniteLight", init<int, optional<std::string, Light::LightingMode> >())
+   class_<InfiniteLight, bases<Light>, dtCore::RefPtr<InfiniteLight>, boost::noncopyable >("InfiniteLight", init<int, optional<const std::string&, Light::LightingMode> >())
       .def("SetAzimuthElevation", &InfiniteLight::SetAzimuthElevation)
       .def("GetAzimuthElevation", &InfiniteLight::GetAzimuthElevation);
 }

@@ -30,7 +30,7 @@ namespace dtCore
    * A transformable light. This is the class to use for omni-directional
    * lights that have actual locations within the scene.
    */
-   class DT_CORE_EXPORT PositionalLight : public Light, public Transformable
+   class DT_CORE_EXPORT PositionalLight : public Light
    {
       DECLARE_MANAGEMENT_LAYER(PositionalLight)
          
