@@ -54,11 +54,10 @@ namespace dtCore
 
    void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
    {
-      osg::Vec4 position = mLightSource->getLight()->getPosition();
+      osg::Vec4 xyz = mLightSource->getLight()->getPosition();
+      xyz.normalize();
 
-      osg::Vec3 xyz = osg::Vec3( -position[0], -position[1], position[2] );
-
-      az = osg::RadiansToDegrees( -atan2f( xyz[0], xyz[1] ) );
-      el = osg::RadiansToDegrees( -atan2f( xyz[2], sqrt( ( osg::square( xyz[0] ) + osg::square( xyz[1] ) ) ) ) );
+      az = osg::RadiansToDegrees( -atan2f( -xyz[0], xyz[1] ) );
+      el = osg::RadiansToDegrees( asinf( xyz[2] ) );
    }
 }
