@@ -134,9 +134,9 @@ InfiniteTerrain::InfiniteTerrain(const std::string& name, osg::Image* textureIma
          {
             float val = 0.7f + texNoise.GetNoise(osg::Vec2f(i*0.1f, j*0.1f))*0.3f;
 
-            texture[k++] = dtUtil::Min<unsigned char>( 50 + (val*255), 255);
-            texture[k++] = dtUtil::Min<unsigned char>( 50 + (val*255), 255);
-            texture[k++] = dtUtil::Min<unsigned char>( 50 + (val*255), 255);
+            texture[k++] = dtUtil::Min( 50 + (unsigned char)(val*255), 255);
+            texture[k++] = dtUtil::Min( 50 + (unsigned char)(val*255), 255);
+            texture[k++] = dtUtil::Min( 50 + (unsigned char)(val*255), 255);
          }
       }
 
