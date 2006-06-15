@@ -121,6 +121,7 @@ void AARApplication::Config()
    #endif
 
    dtABC::Application::Config();
+   GetWindow()->SetWindowTitle("testAAR");
    SetupScene();
    dtCore::Transform tx(0.0f,-25.0f,10.0f,0.0f,-15.0f,0.0f);
    GetCamera()->SetTransform(&tx);
