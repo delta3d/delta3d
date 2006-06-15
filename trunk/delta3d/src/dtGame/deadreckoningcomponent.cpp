@@ -386,7 +386,7 @@ namespace dtGame
          }
          
          //make sure it's greater than 0 in case of time being set.
-         CLAMP(timeSinceUpdate, 0.0, timeSinceUpdate);
+         dtUtil::Clamp<double>(timeSinceUpdate, 0.0, timeSinceUpdate);
 
          if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
          {

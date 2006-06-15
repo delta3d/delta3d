@@ -474,7 +474,7 @@ void FPSMotionModel::OnMessage(MessageData *data)
 
       //calculate our new pitch
       newP = hpr[1] + mLookUpDownCtrl * mMaximumTurnSpeed * deltaFrameTime;
-      CLAMP(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
+      dtUtil::Clamp<float>(newP, -89.9f, 89.9f); //stay away from 90.0 as it causes funky gimbal lock
       mLookUpDownAxis->SetState(0.0f);//necessary to stop camera drifting down
 
       //calculate x/y delta

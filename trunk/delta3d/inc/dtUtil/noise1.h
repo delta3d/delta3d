@@ -93,11 +93,9 @@ void Noise1<Real, Vector>::Reseed(unsigned int pSeed)
 template <class Real, class Vector>
 void Noise1<Real, Vector>::BuildTable()
 {
-/* #define RAND_RANGE(x,y) ((x) + (rand() % (((y) - (x)) + 1 ))) */
-/* #define RAND_PERCENT()((rand() & 0x7FFF) / ((float) 0x7FFF)) */
    for(int i = 0; i < TABLE_SIZE; i++)
    {	
-      m_gTable[i] = 1.0f - ( 2.0f * RAND_PERCENT() );;
+      m_gTable[i] = 1.0f - ( 2.0f * dtUtil::RandPercent() );
    }
 
    
@@ -109,7 +107,7 @@ void Noise1<Real, Vector>::BuildTable()
 
    for(int j = 0; j < TABLE_SIZE; ++j)
    {
-      int r = RAND_RANGE(0, TABLE_SIZE - 1);
+      int r = dtUtil::RandRange(0, TABLE_SIZE - 1);
       int temp = m_iPerm[j];
       m_iPerm[j] = m_iPerm[r];
       m_iPerm[r] = temp;
