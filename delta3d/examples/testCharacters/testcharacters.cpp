@@ -152,7 +152,7 @@ public:
       GetScene()->UseSceneLight(false);
 
       mInfiniteLight = new InfiniteLight(0);
-      mInfiniteLight->SetAzimuthElevation( 0, -45 );
+      mInfiniteLight->SetAzimuthElevation( 90.0f, 45.0f );
       mInfiniteLight->SetDiffuse( 255, 255, 255, 1 );
       mInfiniteLight->SetSpecular( 255, 255, 255, 1 );
       mInfiniteLight->SetEnabled( true );
