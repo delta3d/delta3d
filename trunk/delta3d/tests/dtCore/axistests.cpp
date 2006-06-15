@@ -34,7 +34,7 @@ namespace dtTest
          void setUp();
          void tearDown();
 
-         /// tests handling and order of handling of multiple listeners for key presses and releases.
+         /// tests handling and order of handling of multiple listeners for state changes.
          void TestObservers();
 
       private:
