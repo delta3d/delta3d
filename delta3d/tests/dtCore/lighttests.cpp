@@ -83,17 +83,17 @@ void LightTests::DoAzElTest( dtCore::InfiniteLight *inf, float az, float el )
 
 void LightTests::TestInfiniteLight()
 {
-
    dtCore::RefPtr<dtCore::InfiniteLight> inf = new dtCore::InfiniteLight(0);
-   
-   DoAzElTest(inf.get(), 45.1f, 30.1f);
-   DoAzElTest(inf.get(), 45.1f, 95.2f);
-   DoAzElTest(inf.get(), 135.f, 50.1f);   
-   DoAzElTest(inf.get(), 195.f, 95.1f);   
-   DoAzElTest(inf.get(), 295.f, 195.1f);   
 
-   DoAzElTest(inf.get(), -45.1f, -30.1f);
-   DoAzElTest(inf.get(), -135.f, -50.1f);   
-   DoAzElTest(inf.get(), -195.f, -95.1f);   
-   DoAzElTest(inf.get(), -295.f, -195.1f);   
+   // test northern hemisphere (0<el<90)
+   DoAzElTest(inf.get(), 30.1f,  30.1f);       // test NE quadrant
+   DoAzElTest(inf.get(), 120.1f, 30.1f);       // test SE quadrant
+   DoAzElTest(inf.get(), 210.1f, 30.1f);       // test SW quadrant
+   DoAzElTest(inf.get(), 300.1f, 30.1f);       // test NW quadrant
+   
+   // test northern hemisphere (-90<el<0)
+   DoAzElTest(inf.get(), 30.1f,  -30.1f);       // test NE quadrant
+   DoAzElTest(inf.get(), 120.1f, -30.1f);       // test SE quadrant
+   DoAzElTest(inf.get(), 210.1f, -30.1f);       // test SW quadrant
+   DoAzElTest(inf.get(), 300.1f, -30.1f);       // test NW quadrant
 }

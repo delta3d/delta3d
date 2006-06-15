@@ -42,14 +42,13 @@ namespace dtCore
 
    void InfiniteLight::SetAzimuthElevation( float az, float el )
    {
-      
-      mLightSource->getLight()->setPosition(
-         osg::Vec4(
-         sinf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
-         cosf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
-         sinf(osg::DegreesToRadians(el)),
-         0.0f )//force w=0.0f to ensure "infinite" light
-         );
+      // create the directional vector
+      osg::Vec4 direction(sinf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
+                          cosf(osg::DegreesToRadians(az))*cosf(osg::DegreesToRadians(el)),
+                          sinf(osg::DegreesToRadians(el)),
+                          0.0f );  //force w=0.0f to ensure "infinite" light
+
+      mLightSource->getLight()->setPosition( direction );
    }
 
    void InfiniteLight::GetAzimuthElevation( float& az, float& el ) const
@@ -57,7 +56,16 @@ namespace dtCore
       osg::Vec4 xyz = mLightSource->getLight()->getPosition();
       xyz.normalize();
 
-      az = osg::RadiansToDegrees( -atan2f( -xyz[0], xyz[1] ) );
+      float x(xyz[0]);
+      if( x < 0.0f )
+      {
+         az = 360.0 + osg::RadiansToDegrees( atan2f( x , xyz[1] ) );
+      }
+      else
+      {
+         az = osg::RadiansToDegrees( atan2f( x , xyz[1] ) );
+      }
+
       el = osg::RadiansToDegrees( asinf( xyz[2] ) );
    }
 }
