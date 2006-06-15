@@ -2521,7 +2521,7 @@ void AudioManager::ListenerObj::GetVelocity( osg::Vec3& velocity )  const
 void AudioManager::ListenerObj::SetGain( float gain )
 {
    // force gain to range from zero to one
-   CLAMP( gain, 0.0f, 1.0f );
+   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
    mGain = static_cast<ALfloat>(gain);
 }
 

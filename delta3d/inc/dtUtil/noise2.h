@@ -94,24 +94,13 @@ void Noise2<Real, Vector>::Reseed(unsigned int pSeed)
 template <class Real, class Vector>
 void Noise2<Real, Vector>::BuildTable()
 {
-
-/* #define RAND_RANGE(x,y) ((x) + (rand() % (((y) - (x)) + 1 ))) */
-/* #define RAND_PERCENT()((rand() & 0x7FFF) / ((float) 0x7FFF)) */
    //create a table of vector gradients
    for(int i = 0; i < TABLE_SIZE; ++i)
    {
-      Real x = 1.0f  -  ( 2.0f * RAND_PERCENT() );
-      Real y = 1.0f  -  ( 2.0f * RAND_PERCENT() );
+      Real x = 1.0f  -  ( 2.0f * dtUtil::RandPercent() );
+      Real y = 1.0f  -  ( 2.0f * dtUtil::RandPercent() );
 
-      /*if(((x * x) + (y * y)) < 1.0f)
-      {*/
-         m_gTable[i] = Vector(x, y);
-        // m_gTable[i].normalize();
-      /*}
-      else 
-      {
-         --i;
-      }*/
+      m_gTable[i] = Vector(x, y);        
    }
 
    //create a table of random permuations 
@@ -123,7 +112,7 @@ void Noise2<Real, Vector>::BuildTable()
    
    for(int j = 0; j < TABLE_SIZE; ++j)
    {
-      int r = RAND_RANGE(0, TABLE_SIZE - 1);
+      int r = dtUtil::RandRange(0, TABLE_SIZE - 1);
       int temp = m_iPerm[j];
       m_iPerm[j] = m_iPerm[r];
       m_iPerm[r] = temp;

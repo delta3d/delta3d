@@ -20,6 +20,7 @@
  */
 #include <cppunit/extensions/HelperMacros.h>
 #include <dtUtil/mathdefines.h>
+#include <math.h>
 
 namespace dtTest
 {
@@ -58,6 +59,30 @@ void MathTests::TestNormalizer()
    // set up
    double x(-0.5), xMin(-1.0), xMax(1.0);
    double yMin(-1.0), yMax(3.0);
+
+   double minTest = dtUtil::Min<double>(xMin, xMax);
+   CPPUNIT_ASSERT_EQUAL(xMin, minTest);   
+
+   double maxTest = dtUtil::Max<double>(xMin, xMax);
+   CPPUNIT_ASSERT_EQUAL(xMax, maxTest);   
+
+   double randRange = dtUtil::RandRange(5, 10);
+   CPPUNIT_ASSERT(randRange <= 10 && randRange >= 5);   
+
+   float randFloat = dtUtil::RandFloat(xMin, xMax);
+   CPPUNIT_ASSERT(randFloat <= xMax && randFloat >= xMin);   
+
+   float randPercent = dtUtil::RandPercent();
+   CPPUNIT_ASSERT(randPercent <= 1.0 && randPercent >= 0.0);
+
+   double absTest = dtUtil::Abs<double>(x);
+   CPPUNIT_ASSERT_EQUAL( 0.5, absTest);
+
+   dtUtil::Clamp<double>(absTest, xMin, xMax);
+   CPPUNIT_ASSERT_EQUAL( 0.5, absTest);
+
+   double xLerp = dtUtil::Lerp<double>(xMin, xMax, 0.25);
+   CPPUNIT_ASSERT_EQUAL( x, xLerp);
 
    double xN( dtUtil::CalculateNormal(x,xMin,xMax) );
    CPPUNIT_ASSERT_EQUAL( 0.25 , xN );

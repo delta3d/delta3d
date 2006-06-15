@@ -801,7 +801,7 @@ namespace dtUtil
 
    void Coordinates::CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone)
    {
-      CLAMP(latitude, -80.0, 84.0);
+      dtUtil::Clamp<double>(latitude, -80.0, 84.0);
 
       long Lat_Degrees = long(latitude);
       long Long_Degrees = long(longitude);
@@ -878,7 +878,7 @@ namespace dtUtil
        // Note that origin repeats every 3 zones (18 degrees)         
        // Note that the 8 results from there being 8*3 or 24 letters!
        int index = (((eastWestZone - 1) % 3) * 8) + (int)(easting / 100000) - 1;
-       CLAMP(index, 0, 23);
+       dtUtil::Clamp<int>(index, 0, 23);
        eastingLetter = gridLetters[index];
    
        // Calculate north-south 100,000 km square grid designator        
@@ -890,7 +890,7 @@ namespace dtUtil
          offset = fmod(northing + 500000.0, 2000000.0);
 
        index = (int)(offset / 100000.0);
-       CLAMP(index, 0, 23);   
+       dtUtil::Clamp<int>(index, 0, 23);   
        northingLetter = gridLetters[index];
    
        eastingNum  = (((long)easting)  % 100000) / resolutionDivisor[resolution];

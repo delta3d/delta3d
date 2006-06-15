@@ -271,7 +271,7 @@ namespace dtUtil
           * Set the UTM zone to be used when converting coodinates from cartesian (Assumed to be UTM) to lat/lon.
           * @param zone the utm zone.  If it's not between 1 and 60 inclusive, it will be clamped. 
           */
-         void SetUTMZone(unsigned zone) { CLAMP(zone, 1L, 60L); mZone = zone; };
+         void SetUTMZone(unsigned zone) { Clamp<unsigned>(zone, 1L, 60L); mZone = zone; };
                   
          /**
           * Converts XYZ coordinates to a local translation vector based on the current

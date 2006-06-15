@@ -137,8 +137,8 @@ Compass::GetScreenPosition( float& x, float& y )   const
 void
 Compass::SetScreenPosition( float x, float y )
 {
-   CLAMP( x, MIN_SCREEN_X, MAX_SCREEN_X );
-   CLAMP( y, MIN_SCREEN_Y, MAX_SCREEN_Y );
+   dtUtil::Clamp<float>( x, MIN_SCREEN_X, MAX_SCREEN_X );
+   dtUtil::Clamp<float>( y, MIN_SCREEN_Y, MAX_SCREEN_Y );
    mScreenX = x;
    mScreenY = y;
 }

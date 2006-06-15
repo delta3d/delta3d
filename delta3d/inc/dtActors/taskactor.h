@@ -84,7 +84,7 @@ namespace dtActors
           * player did in accomblishing this task.
           * @param score The score to assign to this task.  This value is clamped from 0.0 - 1.0.
           */
-         void SetScore(float score) { mScore = CLAMP(score,0.0f,1.0f); }
+         void SetScore(float score) { dtUtil::Clamp<float>(score,0.0f,1.0f); }
 
          /**
           * Gets the score currently assigned to this task.

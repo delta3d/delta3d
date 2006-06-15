@@ -647,17 +647,17 @@ void dtCore::Environment::UpdateSunColor()
    double green = mSunAltitude * 0.25;
    double blue = mSunAltitude * 0.125;
 
-   CLAMP(red, 0.0, 1.0);
-   CLAMP(green, 0.0, 1.0);
-   CLAMP(blue, 0.0, 1.0);
+   dtUtil::Clamp<double>(red, 0.0, 1.0);
+   dtUtil::Clamp<double>(green, 0.0, 1.0);
+   dtUtil::Clamp<double>(blue, 0.0, 1.0);
    osg::Vec3 diff(red, green, blue);
 
    red = (mSunAltitude + 10.0) * 0.04;
    green = (mSunAltitude + 10.0) * 0.02;
    blue = (mSunAltitude + 10.0) * 0.01;
-   CLAMP(red, 0.01, 0.3);
-   CLAMP(green, 0.01, 0.3);
-   CLAMP(blue, 0.01, 0.3);
+   dtUtil::Clamp<double>(red, 0.01, 0.3);
+   dtUtil::Clamp<double>(green, 0.01, 0.3);
+   dtUtil::Clamp<double>(blue, 0.01, 0.3);
    osg::Vec3 amb(red, green, blue);
 
    mSunColor = diff;

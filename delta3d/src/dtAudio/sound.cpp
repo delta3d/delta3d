@@ -246,7 +246,7 @@ void Sound::SetLooping( bool loop /*= true*/ )
 void Sound::SetGain( float gain )
 {
    // force gain to range from zero to one
-   CLAMP( gain, 0.0f, 1.0f );
+   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
    mGain = gain;
 
    SendMessage( kCommand[GAIN], this );
@@ -264,7 +264,7 @@ void Sound::SetPitch( float pitch )
    // force pitch to range from zero+ to two
    // for some reason openAL chokes on 2+
    // also, openAL states zero to be invalid
-   CLAMP( pitch, 0.000001f, 2.0f );
+   dtUtil::Clamp<float>( pitch, 0.000001f, 2.0f );
    mPitch = pitch;
 
    SendMessage( kCommand[PITCH], this );
@@ -416,7 +416,7 @@ void Sound::GetVelocity( osg::Vec3& velocity ) const
  */
 void Sound::SetMinDistance( float dist )
 {
-   mMinDist = MAX( 0.0f, dist );
+   mMinDist = dtUtil::Max<float>( 0.0f, dist );
 
    SendMessage( kCommand[MIN_DIST], this );
 }
@@ -431,7 +431,7 @@ void Sound::SetMinDistance( float dist )
  */
 void Sound::SetMaxDistance( float dist )
 {
-   mMaxDist = MAX( 0.0f, dist );
+   mMaxDist = dtUtil::Max<float>( 0.0f, dist );
 
    SendMessage( kCommand[MAX_DIST], this );
 }
@@ -445,7 +445,7 @@ void Sound::SetMaxDistance( float dist )
  */
 void Sound::SetRolloffFactor( float rolloff )
 {
-   mRolloff = MAX( 0.0f, rolloff );
+   mRolloff = dtUtil::Max<float>( 0.0f, rolloff );
 
    SendMessage( kCommand[ROL_FACT], this );
 }
@@ -461,7 +461,7 @@ void Sound::SetRolloffFactor( float rolloff )
 void
 Sound::SetMinGain( float gain )
 {
-   CLAMP( gain, 0.0f, 1.0f );
+   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
    mMinDist = gain;
 
    SendMessage( kCommand[MIN_DIST], this );
@@ -478,7 +478,7 @@ Sound::SetMinGain( float gain )
 void
 Sound::SetMaxGain( float gain )
 {
-   CLAMP( gain, 0.0f, 1.0f );
+   dtUtil::Clamp<float>( gain, 0.0f, 1.0f );
    mMaxDist = gain;
 
    SendMessage( kCommand[MAX_DIST], this );
