@@ -840,7 +840,8 @@ dtLibs = { 'dtABC'       : 'dtABC',
            'dtBSP'       : 'dtBSP',
            'dtInspector' : 'dtInspector',
            'dtTerrain'   : 'dtTerrain', 
-           'dtGame'      : 'dtGame' }
+           'dtGame'      : 'dtGame',
+			'testGameActorLibrary' : 'testGameActorLibrary' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
