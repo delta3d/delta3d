@@ -156,7 +156,7 @@ void Tripod::Update(double deltaFrameTime) //virtual
    }
 
    const osg::Vec3 ident(1.f, 1.f, 1.f);
-    if (mXYZScale != ident)
+   if (mXYZScale != ident)
    {
       //adjust the new xyz using the xyzScale values
       osg::Vec3 xyzDiff(newMat(3,0) - currMat(3,0), newMat(3,1) - currMat(3,1), newMat(3,2) - currMat(3,2));
