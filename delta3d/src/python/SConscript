@@ -99,7 +99,6 @@ if CheckForBoost() :
                     'logbindings.cpp', 
                     'matrixutilbindings.cpp', 
                     'noisebindings.cpp',
-                    'noisetexturebindings.cpp',
                     'polardecompbindings.cpp' ] }
        
    ##############
