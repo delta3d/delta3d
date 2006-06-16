@@ -69,7 +69,7 @@ void MathTests::TestNormalizer()
    double randRange = dtUtil::RandRange(5, 10);
    CPPUNIT_ASSERT(randRange <= 10 && randRange >= 5);   
 
-   float randFloat = dtUtil::RandFloat(xMin, xMax);
+   float randFloat = dtUtil::RandFloat(float(xMin), float(xMax));
    CPPUNIT_ASSERT(randFloat <= xMax && randFloat >= xMin);   
 
    float randPercent = dtUtil::RandPercent();
