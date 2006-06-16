@@ -153,15 +153,15 @@ public:
 
       mInfiniteLight = new InfiniteLight(0);
       mInfiniteLight->SetAzimuthElevation( 90.0f, 45.0f );
-      mInfiniteLight->SetDiffuse( 255, 255, 255, 1 );
-      mInfiniteLight->SetSpecular( 255, 255, 255, 1 );
+      mInfiniteLight->SetDiffuse( 255.0f, 255.0f, 255.0f, 1.0f );
+      mInfiniteLight->SetSpecular( 255.0f, 255.0f, 255.0f, 1.0f );
       mInfiniteLight->SetEnabled( true );
 
       AddDrawable( mInfiniteLight.get() );      
 
       //position the camera
       Transform position;
-      position.SetTranslation( -0.75f, -10.f, 0.5f );
+      position.SetTranslation( -0.75f, -10.f, 5.0f );
       GetCamera()->SetTransform( &position );
 
       osg::Vec3 camLoc;
@@ -181,17 +181,17 @@ public:
       
       //load up a terrain
       mTerrain = new Object( "Terrain" );
-      mTerrain->LoadFile( "models/dirt.ive" );
+      mTerrain->LoadFile( "models/terrain_simple.ive" );
       AddDrawable( mTerrain.get() );
 
       //create some characters
       mOpFor = new Character( "Bob" );
       mMarine = new Character( "Dave" );
       
-      position.SetTranslation( 0.0f, 0.0f, 0.0f );
+      position.SetTranslation( 0.0f, 0.0f, 3.5f );
       mOpFor->SetTransform( &position);
 
-      position.SetTranslation( -2.0f, 0.0f, 0.0f );
+      position.SetTranslation( -2.0f, 0.0f, 3.5f );
       mMarine->SetTransform( &position );
 
       mOpFor->LoadFile( "opfor/opfor.rbody" );

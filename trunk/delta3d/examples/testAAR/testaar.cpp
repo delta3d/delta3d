@@ -139,7 +139,7 @@ void AARApplication::SetupScene()
 
    // setup terrain
    dtCore::Object *terrain = new dtCore::Object();
-   terrain->LoadFile("models/terrain_simple.ive");//dirt.ive
+   terrain->LoadFile("models/terrain_simple.ive");
    GetScene()->AddDrawable(terrain);
 
    // Create and register the events we need so we can send messages and update our tasks

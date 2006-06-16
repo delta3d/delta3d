@@ -5,6 +5,7 @@
 #include <dtCore/scene.h>
 #include <dtCore/camera.h>
 #include <dtCore/system.h>
+#include <dtUtil/mathdefines.h>
 #include <ode/ode.h>
 #include <cassert>
 #include <queue>
@@ -57,8 +58,6 @@ class TestPhysicsApp : public Application
 
 public:
 
-   float Random( float min, float max ) { return min + (max-min)*float(rand())/float(RAND_MAX); }
-
    TestPhysicsApp( const std::string& configFile = "config.xml" )
       :  Application( configFile ),
          mLimit(50)
@@ -67,21 +66,21 @@ public:
       RefPtr<Object> obj2 = new Object("FallingCrate");
       RefPtr<Object> obj3 = new Object("GroundCrate");
 
-      obj1->LoadFile("models/dirt.ive");
+      obj1->LoadFile("models/terrain_simple.ive");
       obj2->LoadFile("models/physics_crate.ive");
       obj3->LoadFile("models/physics_crate.ive");
 
       //position the camera
       Transform position;
-      position.Set( 0.0f, -20.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+      position.Set( 0.0f, -20.0f, 7.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
       GetCamera()->SetTransform(&position);
 
       //position first falling crate
-      position.Set( 0.55f, 0.0f, 3.0f, 0.0f, 40.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+      position.Set( 0.55f, 0.0f, 6.0f, 0.0f, 40.0f, 0.0f, 1.0f, 1.0f, 1.0f );
       obj2->SetTransform(&position);
 
       //position the crate on the ground
-      position.Set( 0.0f, 0.f, 0.525f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+      position.Set( 0.0f, 0.0f, 3.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
       obj3->SetTransform(&position);
 
       double lx = 1.0;
@@ -216,14 +215,14 @@ protected:
                RefPtr<Object> box = new Object("box");
                box->LoadFile( "models/physics_crate.ive" );
                
-               Transform xform(  Random( -2.0f,2.0f ),
-                                 Random( -2.0f, 2.0f ),
-                                 Random( 5.0f, 10.0f ),
-                                 Random( 0.0f, 180.0f ),
-                                 Random( 0.0f, 90.0f ),
-                                 Random( 0.0f, 90.0f ) );
+               Transform xform(  RandFloat( -2.0f,2.0f ),
+                                 RandFloat( -2.0f, 2.0f ),
+                                 RandFloat( 8.0f, 13.0f ),
+                                 RandFloat( 0.0f, 180.0f ),
+                                 RandFloat( 0.0f, 90.0f ),
+                                 RandFloat( 0.0f, 90.0f ) );
 
-               float randomScale = Random( 0.5f, 2.0f );
+               float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
                box->SetTransform(&xform);
@@ -256,14 +255,14 @@ protected:
                RefPtr<Object> sphere = new Object("sphere");
                sphere->LoadFile( "models/physics_happy_sphere.ive" );
                
-               Transform xform(  Random( -2.0f, 2.0f ),
-                                 Random( -2.0f, 2.0f ),
-                                 Random( 5.0f, 10.0f ),
-                                 Random( 0.0f, 180.0f ),
-                                 Random( 0.0f, 90.0f ),
-                                 Random( 0.0f, 90.0f ) );
+               Transform xform(  RandFloat( -2.0f, 2.0f ),
+                                 RandFloat( -2.0f, 2.0f ),
+                                 RandFloat( 8.0f, 13.0f ),
+                                 RandFloat( 0.0f, 180.0f ),
+                                 RandFloat( 0.0f, 90.0f ),
+                                 RandFloat( 0.0f, 90.0f ) );
                
-               float randomScale = Random( 0.5f, 2.0f );
+               float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
                sphere->SetTransform(&xform);
@@ -293,14 +292,14 @@ protected:
                RefPtr<Object> cyl = new Object("cylinder");
                cyl->LoadFile( "models/physics_barrel.ive" );
                
-               Transform xform(  Random( -2.0f,2.0f),
-                                 Random( -2.0f, 2.0f ),
-                                 Random( 5.0f, 10.0f ),
-                                 Random( 0.0f, 180.0f ),
-                                 Random( 0.0f, 90.0f ),
-                                 Random( 0.0f, 90.0f ) );
+               Transform xform(  RandFloat( -2.0f,2.0f),
+                                 RandFloat( -2.0f, 2.0f ),
+                                 RandFloat( 8.0f, 13.0f ),
+                                 RandFloat( 0.0f, 180.0f ),
+                                 RandFloat( 0.0f, 90.0f ),
+                                 RandFloat( 0.0f, 90.0f ) );
                
-               float randomScale = Random( 0.5f, 2.0f );
+               float randomScale = RandFloat( 0.5f, 2.0f );
                xform.SetScale( randomScale, randomScale, randomScale );
                
                cyl->SetTransform(&xform);

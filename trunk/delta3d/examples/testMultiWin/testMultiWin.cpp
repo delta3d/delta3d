@@ -25,33 +25,36 @@ void TestMultiWin::Config()
 
    //change the title of the pre-built Window 
    //(this already has a Camera and Scene assigned to it)
-   GetWindow()->SetWindowTitle("win1");
+   GetWindow()->SetWindowTitle("testMultWin - Window 1");
    GetWindow()->SetPosition(0, 0, 640, 480);
 
    //create a new Window and Camera
-   mWin2 = new DeltaWin("win2");
+   mWin2 = new DeltaWin("testMultWin - Window 2");
    mWin2->SetPosition(640, 0, 640, 480);
 
-   mCam2 = new Camera("cam2");
+   Transform transform( 0.0f, 0.0f, 5.0f );
+
+   GetCamera()->SetTransform( &transform );
+
+   mCam2 = new Camera("Camera 2");
    mCam2->SetWindow( mWin2.get() );
    mCam2->SetScene( GetScene() ); //use the default, pre-built Scene
    mCam2->GetCamera()->setProjectionRectangle (0.0f, 1.0f, 0.5f, 1.0f);
+   mCam2->SetTransform( &transform );
 
-   mCam3 = new Camera("cam3");
+   mCam3 = new Camera("Camera 3");
    mCam3->SetWindow( mWin2.get() );
    mCam3->SetScene( GetScene() );
    mCam3->GetCamera()->setProjectionRectangle (0.0f, 1.0f, 0.0f, 0.5f);
+   mCam3->SetTransform( &transform );
 
    //setup scene here
    RefPtr<Object> terr = new Object();
-   terr->LoadFile("models/dirt.ive");
+   terr->LoadFile("models/terrain_simple.ive");
    GetScene()->AddDrawable( terr.get() );
 
-
-   /*
    // make sure any camera's which share the same render surface also share the same osg::State.
    // use a std::map to keep track of what render surfaces are associated with what state.
-   */ 
    typedef std::map<Producer::RenderSurface*,osg::State*> RenderSurfaceStateMap;
    RenderSurfaceStateMap _renderSurfaceStateMap;
    unsigned int contextID = 0;
@@ -80,27 +83,6 @@ void TestMultiWin::Config()
       }
    }
 }
-
-bool TestMultiWin::KeyPressed(const Keyboard*      keyboard, 
-                                    Producer::KeyboardKey  key,
-                                    Producer::KeyCharacter character )
-{
-   bool verdict(false);
-   switch( key )
-   {
-      case Producer::Key_Escape:
-         Quit();
-         verdict = true;
-         break;
-      //make cases for other keys
-      default:
-         break;
-   }
-
-   return verdict;
-}
-
-
 
 int main()
 {

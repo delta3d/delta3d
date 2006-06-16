@@ -721,7 +721,7 @@ void MapTests::testMapSaveAndLoad()
 #endif
 
         dtDAL::ResourceDescriptor dirtRD = project.AddResource("dirt", 
-           DATA_DIR + "/models/dirt.ive", "dirt", dtDAL::DataType::STATIC_MESH);
+           DATA_DIR + "/models/terrain_simple.ive", "dirt", dtDAL::DataType::STATIC_MESH);
 
         createActors(*map);
 
