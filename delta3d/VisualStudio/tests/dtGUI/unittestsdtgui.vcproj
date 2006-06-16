@@ -35,7 +35,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="cppunitd.lib osgd.lib dtGUId.lib dtCored.lib CEGUIBase_d.lib osgDBd.lib dtABCd.lib dtUtild.lib"
 				OutputFile="../../../tests/UnitTestsDtGUId.exe"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\lib;..\..\..\ext\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(IntDir)/$(ProjectName).pdb"
