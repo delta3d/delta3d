@@ -43,9 +43,12 @@ void TestNetwork::Config()
    mMotion = new FlyMotionModel(GetKeyboard(), GetMouse());
    mMotion->SetTarget( GetCamera() );
 
+   Transform transform( 0.0f, 0.0f, 5.0f );
+   GetCamera()->SetTransform( &transform );
+
    //setup scene here
    mTerrain = new Object("Terrain");
-   mTerrain->LoadFile("models/dirt.ive");
+   mTerrain->LoadFile("models/terrain_simple.ive");
    AddDrawable( mTerrain.get() );
 
    Application::Config();

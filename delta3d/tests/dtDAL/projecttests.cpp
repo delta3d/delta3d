@@ -114,12 +114,12 @@ void ProjectTests::setUp() {
         fileUtils.DirDelete(dtDAL::DataType::TERRAIN.GetName(), true);
         fileUtils.PopDirectory();
 
-        fileUtils.FileDelete("dirt.ive");
+        fileUtils.FileDelete("terrain_simple.ive");
         fileUtils.FileDelete("flatdirt.ive");
         fileUtils.DirDelete("Testing", true);
         fileUtils.DirDelete("recursiveDir", true);
 
-        fileUtils.FileCopy(DATA_DIR + "/models/dirt.ive", ".", false);
+        fileUtils.FileCopy(DATA_DIR + "/models/terrain_simple.ive", ".", false);
         fileUtils.FileCopy(DATA_DIR + "/models/flatdirt.ive", ".", false);
     } catch (const dtUtil::Exception& ex) {
         CPPUNIT_FAIL(ex.What());
@@ -130,7 +130,7 @@ void ProjectTests::setUp() {
 void ProjectTests::tearDown() {
     dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
 
-    fileUtils.FileDelete("dirt.ive");
+    fileUtils.FileDelete("terrain_simple.ive");
     fileUtils.FileDelete("flatdirt.ive");
     fileUtils.DirDelete("Testing", true);
     fileUtils.DirDelete("recursiveDir", true);
@@ -162,7 +162,7 @@ void ProjectTests::testFileIO()
         osgDB::makeDirectory(Dir1);
         osgDB::makeDirectory(Dir2);
 
-        std::string file1("dirt.ive");
+        std::string file1("terrain_simple.ive");
         std::string file2("flatdirt.ive");
 
         struct dtUtil::FileInfo file1Info = fileUtils.GetFileInfo(file1);
@@ -178,19 +178,19 @@ void ProjectTests::testFileIO()
             //correct
         }
 
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should exist.", fileUtils.FileExists(file1));
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should exist.", fileUtils.FileExists(file1));
 
         fileUtils.FileCopy(file1, Dir1, false);
 
-        CPPUNIT_ASSERT_MESSAGE("The original dirt.ive should exist.", fileUtils.FileExists(file1));
+        CPPUNIT_ASSERT_MESSAGE("The original terrain_simple.ive should exist.", fileUtils.FileExists(file1));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         fileUtils.FileCopy(file1, Dir1, true);
 
-        CPPUNIT_ASSERT_MESSAGE("The original dirt.ive should exist.", fileUtils.FileExists(file1));
+        CPPUNIT_ASSERT_MESSAGE("The original terrain_simple.ive should exist.", fileUtils.FileExists(file1));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive should exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         try {
             fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
@@ -201,10 +201,10 @@ void ProjectTests::testFileIO()
 
         CPPUNIT_ASSERT_MESSAGE("The original flatdirt.ive should exist.", fileUtils.FileExists(file2));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive should still exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive should still exist.", fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         struct dtUtil::FileInfo fi = fileUtils.GetFileInfo(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as the original", fi.size == file1Info.size);
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as the original", fi.size == file1Info.size);
 
         try {
             fileUtils.FileCopy(file2, Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, true);
@@ -214,12 +214,12 @@ void ProjectTests::testFileIO()
 
         CPPUNIT_ASSERT_MESSAGE("The original flatdirt.ive should exist.", fileUtils.FileExists(file2));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive, copied from flatdirt.ive, should exist.",
+        CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive, copied from flatdirt.ive, should exist.",
             fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         fi = fileUtils.GetFileInfo(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
 
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
         try {
             fileUtils.FileMove(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1, Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1, false);
@@ -227,13 +227,13 @@ void ProjectTests::testFileIO()
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should not exist.",!fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should not exist.",!fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive, copied from dirt.ive, should exist.",
+        CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive, copied from terrain_simple.ive, should exist.",
             fileUtils.FileExists(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
         fi = fileUtils.GetFileInfo(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
         //copy the file back so we can try to move it again with overwriting.
         try {
@@ -255,10 +255,10 @@ void ProjectTests::testFileIO()
             CPPUNIT_FAIL(ex.What().c_str());
         }
 
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should not exist.",
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should not exist.",
             !fileUtils.FileExists(Dir1 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
-        CPPUNIT_ASSERT_MESSAGE("The new dirt.ive, copied from dirt.ive, should exist.",
+        CPPUNIT_ASSERT_MESSAGE("The new terrain_simple.ive, copied from terrain_simple.ive, should exist.",
             fileUtils.FileExists(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1));
 
 
@@ -347,7 +347,7 @@ void ProjectTests::testFileIO()
 
 
         fi = fileUtils.GetFileInfo(Dir2 + dtUtil::FileUtils::PATH_SEPARATOR + file1);
-        CPPUNIT_ASSERT_MESSAGE("dirt.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
+        CPPUNIT_ASSERT_MESSAGE("terrain_simple.ive should be the same size as flatdirt.ive", fi.size == file2Info.size);
 
         dtUtil::DirectoryContents dc = fileUtils.DirGetSubs(Dir1);
 
@@ -711,7 +711,7 @@ void ProjectTests::testResources()
         }
 
         try {
-            p.AddResource("dirt", std::string("../dirt.ive"),
+            p.AddResource("dirt", std::string("../terrain_simple.ive"),
                 std::string("fun:bigmamajama"), dtDAL::DataType::BOOLEAN);
             CPPUNIT_FAIL("The add resource call to add boolean should have failed.");
         } catch (const dtUtil::Exception& ex) {
@@ -809,7 +809,7 @@ void ProjectTests::testResources()
 
         //Done with the terrains
 
-        dtDAL::ResourceDescriptor rd = p.AddResource("dirt", std::string(DATA_DIR + "/models/flatdirt.ive"),
+        dtDAL::ResourceDescriptor rd = p.AddResource("flatdirt", std::string(DATA_DIR + "/models/flatdirt.ive"),
             dirtCategory, dtDAL::DataType::STATIC_MESH);
 
         CPPUNIT_ASSERT_MESSAGE("Descriptor id should not be empty.", !rd.GetResourceIdentifier().empty());
@@ -819,7 +819,7 @@ void ProjectTests::testResources()
         CPPUNIT_ASSERT_MESSAGE("Getting the resource path returned the wrong value: " + testResult,
 			testResult == dtDAL::DataType::STATIC_MESH.GetName() + dtUtil::FileUtils::PATH_SEPARATOR
 			+ "fun" + dtUtil::FileUtils::PATH_SEPARATOR + "bigmamajama"
-			+ dtUtil::FileUtils::PATH_SEPARATOR + "dirt.ive");
+			+ dtUtil::FileUtils::PATH_SEPARATOR + "flatdirt.ive");
 
 
         for (std::set<std::string>::const_iterator i = mapNames.begin(); i != mapNames.end(); i++) {
@@ -906,7 +906,7 @@ void ProjectTests::testResources()
 
         fileUtils.PushDirectory(projectDir);
         CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
-            !fileUtils.FileExists(dtDAL::DataType::STATIC_MESH.GetName() + std::string("/fun/bigmamajama/dirt.ive")));
+            !fileUtils.FileExists(dtDAL::DataType::STATIC_MESH.GetName() + std::string("/fun/bigmamajama/terrain_simple.ive")));
         CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",
             !fileUtils.FileExists(dtDAL::DataType::SOUND.GetName() + std::string("/tea/money/pow.wav")));
         CPPUNIT_ASSERT_MESSAGE("Resource should have been deleted, but the file still exists.",

@@ -98,8 +98,11 @@ void MyNetwork::MakePlayer( const std::string& ownerID )
 
    LOG_INFO("Making a new remote player named: " + ownerID)
 
-   dtCore::Object* object = new dtCore::Object(ownerID);
+   dtCore::RefPtr<dtCore::Object> object = new dtCore::Object(ownerID);
    object->LoadFile("models/uh-1n.ive");
+
+   Transform transform( 0.0f, 0.0f, 5.0f );
+   object->SetTransform( &transform );
 
    //Insert the new Objects into our map of IDs->Objects
    StringObjectMap::value_type value( ownerID,  object );

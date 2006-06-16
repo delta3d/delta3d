@@ -1,7 +1,8 @@
-#include "dtCore/dt.h"
-#include "dtABC/dtabc.h"
-
-
+#include <dtCore/camera.h>
+#include <dtCore/globals.h>
+#include <dtCore/object.h>
+#include <dtCore/transform.h>
+#include <dtABC/application.h>
 
 int main()
 {
@@ -15,20 +16,24 @@ int main()
 
    //load some terrain
    dtCore::RefPtr<dtCore::Object> terrain = new dtCore::Object( "Terrain" );
-   terrain->LoadFile( "models/dirt.ive" );
+   terrain->LoadFile( "models/terrain_simple.ive" );
    app->AddDrawable( terrain.get() );
 
    //load an object
    dtCore::RefPtr<dtCore::Object> brdm = new dtCore::Object( "BRDM" );
    brdm->LoadFile( "models/brdm.ive" );
    app->AddDrawable( brdm.get() );
-   dtCore::Transform trans = dtCore::Transform( 0.0f, 0.0f, 0.0f, 90.0f, 0.0f, 0.0f );
+   osg::Vec3 brdmPosition( 0.0f, 0.0f, 3.5f );
+   osg::Vec3 brdmRotation( 90.0f, 0.0f, 0.0f );
+   dtCore::Transform trans;
+   trans.SetTranslation( brdmPosition );
+   trans.SetRotation( brdmRotation );
    brdm->SetTransform( &trans );
    
    //adjust the Camera position
    dtCore::Transform camPos;
    osg::Vec3 camXYZ( 0.f, -50.f, 20.f );
-   osg::Vec3 lookAtXYZ ( 0.f, 0.f, 0.f );
+   osg::Vec3 lookAtXYZ ( brdmPosition );
    osg::Vec3 upVec ( 0.f, 0.f, 1.f );
    camPos.SetLookAt( camXYZ, lookAtXYZ, upVec );
    app->GetCamera()->SetTransform( &camPos );
