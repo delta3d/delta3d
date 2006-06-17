@@ -6,7 +6,7 @@
 
 BumpMapDrawable::BumpMapDrawable()
 {
-   SetOSGNode( new osg::Group );
+   mNode = new osg::Group;
 }
 
 BumpMapDrawable::~BumpMapDrawable()

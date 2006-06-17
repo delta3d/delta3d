@@ -58,10 +58,9 @@ namespace dtCore
           *
           * @return the OpenSceneGraph node
           */
-         virtual osg::Node* GetOSGNode() { return mNode.get(); }
+         virtual osg::Node* GetOSGNode() = 0;
+         virtual const osg::Node* GetOSGNode() const = 0;
          
-         virtual const osg::Node* GetOSGNode() const { return mNode.get(); }
-
          ///Supply the Scene this Drawable has been added to
          virtual void AddedToScene( Scene* scene );
 
@@ -112,13 +111,6 @@ namespace dtCore
          DeltaDrawable( const std::string& name = "DeltaDrawable" );
          virtual ~DeltaDrawable();
 
-         /** 
-          * Replaces the osg::Node which this DeltaDrawable wraps. This function
-          * should only be called by subclasses of DeltaDrawable. It should never
-          * be made public nor called by other DeltaDrawables.
-          */
-         void SetOSGNode( osg::Node* node );
-
          osg::Node* GetProxyNode() { return mProxyNode.get(); }         
          const osg::Node* GetProxyNode() const { return mProxyNode.get(); }
          void SetProxyNode( osg::Node* proxyNode );
@@ -132,7 +124,6 @@ namespace dtCore
          DeltaDrawable& operator=( const DeltaDrawable& ); 
          DeltaDrawable( const DeltaDrawable& );
 
-         RefPtr<osg::Node> mNode; ///< The node to store anything
          DeltaDrawable* mParent; ///< Any immediate parent of this instance (Weak pointer to prevent circular reference).
 
          typedef std::vector< RefPtr<DeltaDrawable> > ChildList;

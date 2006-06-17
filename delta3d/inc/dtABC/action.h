@@ -1,7 +1,10 @@
 #ifndef __ACTION_H__
 #define __ACTION_H__
 
+#include <dtCore/refptr.h>
 #include <dtCore/deltadrawable.h>
+#include <osg/Node>
+
 #include "export.h"
 
 /* 
@@ -52,6 +55,9 @@ class DT_ABC_EXPORT Action: public dtCore::DeltaDrawable
       void SetTimeStep(float dt){mTimeStep = dt;}
       float GetTimeStep(){return mTimeStep;}
 
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode()const{return mNode.get();}
+
    protected:
       /*virtual*/ ~Action();
       Action(const Action&); //not implemented by design
@@ -88,6 +94,7 @@ protected:
    float mAccumTime;
    bool mIsRunning;
 
+   dtCore::RefPtr<osg::Node> mNode;
 
 };
 

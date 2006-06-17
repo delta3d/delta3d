@@ -25,6 +25,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <set>
 #include <dtCore/transformable.h>
 #include <dtUtil/noiseutility.h>
 #include <osg/Vec3>
@@ -182,6 +183,7 @@ namespace dtCore
           * We want we collision to happen by default with this class.
           */
          virtual bool FilterContact( dContact* contact, Transformable* collider ) { return true; }
+
 
       private:
 

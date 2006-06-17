@@ -10,7 +10,6 @@ IMPLEMENT_MANAGEMENT_LAYER(DeltaDrawable)
 
 DeltaDrawable::DeltaDrawable(const std::string& name)
 :  Base(name),
-   mNode(0),
    mParent(0), 
    mParentScene(0),
    mProxyNode(0)
@@ -157,10 +156,6 @@ void DeltaDrawable::Emancipate()
    }
 }
 
-void DeltaDrawable::SetOSGNode( osg::Node* node )
-{
-   mNode = node;
-}
 
 void DeltaDrawable::SetProxyNode( osg::Node* proxyNode )
 {

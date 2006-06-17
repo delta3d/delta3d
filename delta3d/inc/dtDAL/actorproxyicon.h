@@ -68,7 +68,7 @@ namespace dtDAL
             public:
                BillBoardDrawable()
                {
-                  SetOSGNode( new osg::Group() );
+                  mNode = new osg::Group() ;
                }
 
                virtual bool AddChild(dtCore::DeltaDrawable *child)
@@ -83,8 +83,14 @@ namespace dtDAL
                   dtCore::DeltaDrawable::RemoveChild(child);
                }
 
+               ///required by DeltaDrawable
+               osg::Node* GetOSGNode(){return mNode.get();}
+               const osg::Node* GetOSGNode() const{return mNode.get();}
+
             protected:
                virtual ~BillBoardDrawable() { }
+
+               dtCore::RefPtr<osg::Node> mNode;
          };
 
          //These are resources used by the editor to display billboards

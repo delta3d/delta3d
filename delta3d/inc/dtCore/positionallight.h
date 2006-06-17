@@ -54,8 +54,6 @@ namespace dtCore
 
    public:
 
-      virtual osg::Node* GetOSGNode() { return DeltaDrawable::GetOSGNode(); }
-
       ///Set that values that control how fast light fades as one moves away from the light
       void SetAttenuation( float constant, float linear, float quadratic );
 
@@ -68,10 +66,10 @@ namespace dtCore
       virtual void RemoveChild( DeltaDrawable *child );
 
       ///Adds the scene to this light, which makes the whole scene use this light
-      virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
+      //virtual void AddedToScene( Scene *scene ) { Light::AddedToScene( scene ); }
 
       ///this class renders the light as a sphere for debugging purposes
-      virtual void RenderProxyNode( bool enable = true ) { Transformable::RenderProxyNode( enable ); }
+      //virtual void RenderProxyNode( bool enable = true ) { Transformable::RenderProxyNode( enable ); }
 
    };
 }

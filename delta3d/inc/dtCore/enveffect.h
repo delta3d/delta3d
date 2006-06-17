@@ -21,7 +21,9 @@
 #ifndef DELTA_ENVEFFECT
 #define DELTA_ENVEFFECT
 
+#include <dtCore/refptr.h>
 #include <dtCore/deltadrawable.h>
+#include <osg/Node>
 #include <osg/Vec3>
 
 namespace dtCore
@@ -48,6 +50,12 @@ namespace dtCore
                                  double sunAzimuth,
                                  double visibility ) = 0;
 
+         ///required by DeltaDrawable
+         osg::Node* GetOSGNode(){return mNode.get();}
+         const osg::Node* GetOSGNode() const{return mNode.get();}
+
+         void SetOSGNode(osg::Node* pNode){mNode = pNode;}
+
       private:
 
          // Disallowed to prevent compile errors on VS2003. It apparently
@@ -56,6 +64,8 @@ namespace dtCore
          // cause compiler errors for missing calls to "ref".
          EnvEffect& operator=( const EnvEffect& ); 
          EnvEffect( const EnvEffect& );
+
+         dtCore::RefPtr<osg::Node> mNode;
    };
 }
 

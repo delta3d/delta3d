@@ -116,6 +116,7 @@ namespace dtABC
 
       typedef std::map< Transformable*, int >   TransformableIntMap;
       TransformableIntMap                       mTraversalNumberMap;
+
    };
 };
 

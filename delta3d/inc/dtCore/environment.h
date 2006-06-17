@@ -153,6 +153,12 @@ namespace dtCore
       void SetRefLatLong( const osg::Vec2& latLong );
       void GetRefLatLong( osg::Vec2& latLong ) const { latLong = mRefLatLong; }
       
+      ///required by DeltaDrawable
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode() const{return mNode.get();}
+
+      void SetOSGNode(osg::Node* pNode){mNode = pNode;}
+
    private:
 
       class InterpTable
@@ -224,6 +230,8 @@ namespace dtCore
       SunlightShader *mSunlightShader; ///<pixel shader for light scattering
       SkyDomeShader *mSkyDomeShader; ///<pixel shader for the skydome
       RefPtr<SkyDome> mSkyDome; ///<the added SkyDome (couuld be 0)
+
+      RefPtr<osg::Node> mNode;
 
       void UpdateSkyLight();
       void UpdateFogColor();

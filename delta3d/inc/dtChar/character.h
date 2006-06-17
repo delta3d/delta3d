@@ -75,16 +75,6 @@ namespace dtChar
 
       public:
 
-         virtual osg::Node* GetOSGNode()
-         { 
-            return mBodyNode.get();
-         }
-
-         virtual const osg::Node* GetOSGNode() const
-         {
-            return mBodyNode.get();
-         }
-
          virtual osg::MatrixTransform* GetMatrixNode()
          {
             return mBodyNode.get();
@@ -204,14 +194,6 @@ namespace dtChar
          void StopAction(const std::string& name);
          
 
-         /**
-          * 
-          * Returns a pointer to the rbody osg node
-          *
-          */
-         rbody::OsgBodyNode* GetBodyNode() { return mBodyNode.get(); }
-         const rbody::OsgBodyNode* GetBodyNode() const { return mBodyNode.get(); }
-
       private:
          
          /**
@@ -223,7 +205,7 @@ namespace dtChar
           * The collision root node.
           */
          dtCore::RefPtr<osg::Node> mCollisionRootNode;
-         
+
          /**
           * The name of the last file loaded.
           */

@@ -51,6 +51,7 @@ public:
 protected:
    /*virtual*/ ~PathPointConverter(){}
 
+
 };
 
 

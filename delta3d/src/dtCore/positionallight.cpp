@@ -59,9 +59,7 @@ private:
 PositionalLight::PositionalLight( int number, const std::string& name, LightingMode mode )
    :  Light( number, name, mode )
 {
-   GetMatrixNode()->addChild( mLightSource.get() );
-
-   mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
+   mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
    
    // Default collision category = 9
    SetCollisionCategoryBits( UNSIGNED_BIT(9) );
@@ -70,9 +68,7 @@ PositionalLight::PositionalLight( int number, const std::string& name, LightingM
 PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const std::string& name, LightingMode mode )
    : Light( osgLightSource, name, mode )
 {
-   GetMatrixNode()->addChild( mLightSource.get() );
-
-   mLightSource.get()->setUpdateCallback( new PositionalLightCallback( this ) );
+   mLightSource->setUpdateCallback( new PositionalLightCallback( this ) );
 
    // Default collision category = 9
    SetCollisionCategoryBits( UNSIGNED_BIT(9) );

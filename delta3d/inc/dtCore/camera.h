@@ -226,6 +226,7 @@ namespace dtCore
       */
       virtual void AddedToScene( Scene* scene );
 
+
    private:
 
       // Disallowed to prevent compile errors on VS2003. It apparently

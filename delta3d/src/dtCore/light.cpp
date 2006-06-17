@@ -28,6 +28,8 @@ Light::Light( int number, const std::string& name, LightingMode mode )
 
    mLightSource = new osg::LightSource;
    mLightSource->setLight( light );
+
+   GetMatrixNode()->addChild( mLightSource.get() );
 }
 
 Light::Light( const osg::LightSource& lightSource, const std::string& name, LightingMode mode )
@@ -37,17 +39,14 @@ Light::Light( const osg::LightSource& lightSource, const std::string& name, Ligh
    SetName( name );
 
    mLightSource = new osg::LightSource( lightSource );
+
+   GetMatrixNode()->addChild( mLightSource.get() );
 }
 
 Light::~Light()
 {
    DeregisterInstance(this);
 }
-
-osg::Node* Light::GetOSGNode()
-{ 
-   return mLightSource.get();
-} 
 
 ///Get the const internal osg::LightSource
 const osg::LightSource* Light::GetLightSource() const

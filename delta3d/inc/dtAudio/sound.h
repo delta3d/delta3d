@@ -459,6 +459,7 @@ namespace dtAudio
          /** turns the FrameData into its XML representation.*/
          XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* Serialize(const FrameData* d, XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc) const;
 
+
       protected:
          std::string mFilename;
          CallBack     mPlayCB;
@@ -475,6 +476,7 @@ namespace dtAudio
          float       mRolloff;
          float       mMinGain;
          float       mMaxGain;
+
    };
 };
 

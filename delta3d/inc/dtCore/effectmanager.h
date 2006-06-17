@@ -234,6 +234,7 @@ namespace dtCore
           */
          virtual void OnMessage(MessageData *data);
 
+
       protected:
 
          /**
@@ -249,6 +250,7 @@ namespace dtCore
           * The group that contains all effect nodes.
           */
          RefPtr<osg::Group> mGroup;
+
 
          /**
           * Maps detonation names to filenames.
@@ -453,6 +455,7 @@ namespace dtCore
           * The optional parent of the transformation.
           */
          RefPtr<Transformable> mParent;
+
    };
 };
 
