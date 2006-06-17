@@ -114,9 +114,10 @@ namespace dtCore
    /// An interface for objects interested in receiving keyboard events.
    class DT_CORE_EXPORT KeyboardListener : public osg::Referenced
    {
-      public:
-
+      protected:
          virtual ~KeyboardListener() {}
+
+      public:
 
          /// Called when a key is pressed. 
          /// @param keyboard the source of the event
