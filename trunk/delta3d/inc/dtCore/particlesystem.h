@@ -95,6 +95,7 @@ namespace dtCore
           * false if not
           */
          bool IsParentRelative();
+
          
    private:
          
@@ -110,7 +111,7 @@ namespace dtCore
          bool mParentRelative;
 
          RefPtr<osg::Node> mLoadedFile; ///<handle to the whole system
-         
+
    };
 };
 

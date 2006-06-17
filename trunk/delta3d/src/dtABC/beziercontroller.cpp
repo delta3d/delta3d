@@ -24,7 +24,7 @@ BezierController::BezierController()
    ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
    mRenderGeode = false;
 
-   SetOSGNode( new osg::Group );
+   mNode = new osg::Group;
 }
 
 BezierController::~BezierController()

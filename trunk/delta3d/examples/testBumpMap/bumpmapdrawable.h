@@ -31,11 +31,17 @@ public:
    void SetUniforms(const osg::Vec3& pLightPos, const osg::Vec3& pEyePos);
    void SetWireframe(bool pWireframe);
 
+
+   ///required by DeltaDrawable
+   osg::Node* GetOSGNode(){return mNode.get();}
+   const osg::Node* GetOSGNode() const{return mNode.get();}
+
 private:
 
    void CreateGeometry();
    void EnableShaders();
 
+   RefPtr<osg::Node>                         mNode;
    RefPtr<osg::Geometry>                     mGeometry;
    RefPtr<osg::Geode>		                  mGeode;
 

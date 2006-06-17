@@ -61,11 +61,13 @@ namespace dtABC
       void SetTimeDelay(float delay){mTrigger->SetTimeDelay(delay);}
       float GetTimeDelay()const{return mTrigger->GetTimeDelay();}
 
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode() const{return mNode.get();}
 
    private:
 
       dtCore::RefPtr<Trigger>                   mTrigger;
-   
+      dtCore::RefPtr<osg::Node>                 mNode;      
    };
 };
 

@@ -115,6 +115,10 @@ namespace dtCore
       Transformable* GetLookAtTarget() { return mLookAtTarget.get(); }
       const Transformable* GetLookAtTarget() const { return mLookAtTarget.get(); }
 
+      ///required by DeltaDrawable
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode() const{return mNode.get();}
+
    protected:
 
       ///Override to receive messages
@@ -131,6 +135,7 @@ namespace dtCore
       osg::Vec3 mXYZScale; ///<The scale factors for x,y,z
       osg::Vec3 mHPRScale; ///<The scale factors for h,p,r
       RefPtr<Transformable> mLookAtTarget; ///<the look-at target
+      RefPtr<osg::Node> mNode;
 
    };
 

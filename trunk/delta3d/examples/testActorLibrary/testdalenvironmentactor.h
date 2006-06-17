@@ -22,6 +22,7 @@
 #include <dtDAL/environmentactor.h>
 #include <dtABC/weather.h>
 #include <dtCore/cloudplane.h>
+#include <osg/Node>
 
 class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::EnvironmentActor, public dtCore::DeltaDrawable
 {
@@ -100,8 +101,13 @@ class DT_PLUGIN_EXPORT TestDALEnvironmentActor : public dtDAL::EnvironmentActor,
        */
       unsigned int GetNumEnvironmentChildren() const;
 
+
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode()const{return mNode.get();}
+
      private:
 
+      dtCore::RefPtr<osg::Node> mNode;
       dtCore::RefPtr<dtABC::Weather> mWeather;
       std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*> mAddedActors;
 };

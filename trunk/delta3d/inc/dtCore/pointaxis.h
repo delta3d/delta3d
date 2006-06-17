@@ -162,6 +162,7 @@ namespace dtCore
          /// set a custom color value of an label
          virtual  void        SetLabelColor( AXIS a, const osg::Vec4 c );
 
+
       private:
          inline   void        ctor();
          inline   void        AxesSetup();

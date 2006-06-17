@@ -183,7 +183,7 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
    // Make sure to call DeltaDrawable's GetOSGNode (not Characters)
    // since the local override returns mBodyNode which would
    // cause a recurisve add in the scene graph.
-   if( osg::Group* group = DeltaDrawable::GetOSGNode()->asGroup() )
+   if( osg::Group* group = Transformable::GetOSGNode()->asGroup() )
    {
       group->addChild( mBodyNode.get() );
    }

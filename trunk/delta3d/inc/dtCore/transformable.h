@@ -117,13 +117,13 @@ namespace dtCore
       ///Convenience function to return back the internal matrix transform node
       virtual osg::MatrixTransform* GetMatrixNode()
       { 
-         return dynamic_cast<osg::MatrixTransform*>( GetOSGNode() ); 
+         return mNode.get(); 
       }
 
       ///Convenience function to return back the internal matrix transform node
       virtual const osg::MatrixTransform* GetMatrixNode() const
       { 
-         return dynamic_cast<const osg::MatrixTransform*>( GetOSGNode() ); 
+         return mNode.get(); 
       }
 
       ///Render method for an object which may not have geometry
@@ -381,7 +381,12 @@ namespace dtCore
       {
          return dGeomGetCollideBits(mGeomID);
       }
-      
+
+
+      ///required by DeltaDrawable
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode() const{return mNode.get();}
+            
    protected:
       
       /**
@@ -422,6 +427,11 @@ namespace dtCore
        *  Pointer to the collision geometry representation
        */
       RefPtr<osg::Geode> mGeomGeod;
+
+      /**
+      * The node passed on GetOSGNode()
+      */
+      RefPtr<osg::MatrixTransform> mNode;
 
       /**
        * If we're rendering the collision geometry.                                                                    

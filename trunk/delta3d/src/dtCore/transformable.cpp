@@ -47,6 +47,7 @@ Transformable::Transformable( const std::string& name )
       mMeshVertices(0),
       mMeshIndices(0),
       mGeomGeod(0),
+      mNode(new osg::MatrixTransform),
       mRenderingGeometry(false)
 {
    // Haxor! In Transformable we virutally derive from DeltaDrawable 
@@ -57,7 +58,6 @@ Transformable::Transformable( const std::string& name )
    SetName(name);
 
    RegisterInstance(this);
-   SetOSGNode( new osg::MatrixTransform );
 
    SetNormalRescaling( true );
 
@@ -308,12 +308,12 @@ void Transformable::SetNormalRescaling( const bool enable )
    if( enable )   state = osg::StateAttribute::ON;
    else           state = osg::StateAttribute::OFF;
 
-   DeltaDrawable::GetOSGNode()->getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, state );
+   GetOSGNode()->getOrCreateStateSet()->setMode( GL_RESCALE_NORMAL, state );
 }
 
 bool Transformable::GetNormalRescaling() const
 {
-   osg::StateAttribute::GLModeValue state = DeltaDrawable::GetOSGNode()->getStateSet()->getMode( GL_RESCALE_NORMAL );
+   osg::StateAttribute::GLModeValue state = GetOSGNode()->getStateSet()->getMode( GL_RESCALE_NORMAL );
 
    if( state & osg::StateAttribute::ON )
    {

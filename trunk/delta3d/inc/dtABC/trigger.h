@@ -26,6 +26,8 @@
 #include <dtABC/action.h>
 #include <dtABC/export.h>
 
+#include <osg/Node>
+
 namespace dtABC
 {
    class DT_ABC_EXPORT Trigger : public dtCore::DeltaDrawable
@@ -75,6 +77,12 @@ namespace dtABC
        */
       void SetTimesActive(int pTimesActive){mTimesActive = pTimesActive;}
 
+      
+      //this is required by deltadrawable
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode() const{return mNode.get();}
+
+
    private:
 
       void Update( double time );
@@ -86,6 +94,7 @@ namespace dtABC
       double mTimeLeft;
       int mTimesActive, mTimesTriggered;
       dtCore::RefPtr<Action> mActionToFire;
+      dtCore::RefPtr<osg::Node> mNode;
 
    };
 };

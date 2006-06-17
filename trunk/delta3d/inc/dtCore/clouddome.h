@@ -151,6 +151,7 @@ namespace dtCore
 		osg::Vec3 mCloudColor;
 		osg::Vec3 mOffset;
 
+
 	};
 }
 

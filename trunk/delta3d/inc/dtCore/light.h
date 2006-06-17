@@ -73,8 +73,6 @@ namespace dtCore
 
    public:
 
-      virtual osg::Node* GetOSGNode();
-
       ///Get the const internal osg::LightSource
       const osg::LightSource* GetLightSource() const;
 

@@ -31,6 +31,7 @@
 
 #include <osg/Drawable>                     // for base class
 #include <osg/CopyOp>
+#include <osg/Node>                         //for member
 
 namespace CEGUI
 {
@@ -123,6 +124,12 @@ namespace dtGUI
       /// The System will do its clean up at this time.
       void ShutdownGUI();
 
+      ///required by DeltaDrawable
+      osg::Node* GetOSGNode(){return mNode.get();}
+      const osg::Node* GetOSGNode() const{return mNode.get();}
+
+      void SetOSGNode(osg::Node* pNode){mNode = pNode;}
+
    protected: 
 
       void OnMessage(dtCore::Base::MessageData *data);
@@ -134,6 +141,7 @@ namespace dtGUI
       dtCore::RefPtr<osg::Projection> mProjection;
       dtCore::RefPtr<osg::MatrixTransform> mTransform;
       dtCore::RefPtr<dtCore::DeltaWin> mWindow; ///<The window this UI is being rendered in
+      dtCore::RefPtr<osg::Node> mNode;
       int mWidth;
       int mHeight;
 
