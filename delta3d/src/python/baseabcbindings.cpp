@@ -15,48 +15,76 @@ using namespace boost::python;
 using namespace dtABC;
 using namespace dtCore;
 
-class BaseABCWrap : public BaseABC
+class BaseABCWrap : public BaseABC, public wrapper<BaseABC>
 {
    public:
 
-      BaseABCWrap( PyObject* self, const std::string& name )
-         : BaseABC(name),
-           mSelf(self)
-      {}
+      BaseABCWrap( const std::string& name )
+         : BaseABC(name)
+      {
+      }
 
       virtual void Config()
       {
-         call_method<void>(mSelf, "Config");
+         if( override Config = this->get_override("Config") )
+         {
+            Config();
+         }
+         else
+         {
+            BaseABC::Config();
+         }  
       }
       
       void DefaultConfig()
       {
-         BaseABC::Config();
+         this->BaseABC::Config();
       }
       
       virtual void Quit()
       {
-         call_method<void>(mSelf, "Quit");
+         if( override Quit = this->get_override("Quit") )
+         {
+            Quit();
+         }
+         else
+         {
+            BaseABC::Quit();
+         }
       }
       
       void DefaultQuit()
       {
-         BaseABC::Quit();
+         this->BaseABC::Quit();
       }
       
       virtual void AddDrawable(DeltaDrawable* drawable)
       {
-         call_method<void>(mSelf, "AddDrawable", drawable);
+         if( override AddDrawable = this->get_override("AddDrawable") )
+         {
+            AddDrawable( drawable );
+         }
+         else
+         {
+            BaseABC::AddDrawable( drawable );
+         }
       }
       
       void DefaultAddDrawable(DeltaDrawable* drawable)
       {
-         BaseABC::AddDrawable(drawable);
+         BaseABC::AddDrawable( drawable );
       }
       
       virtual void RemoveDrawable(DeltaDrawable* drawable)
       {
-         call_method<void>(mSelf, "RemoveDrawable", drawable);
+         if( override RemoveDrawable = this->get_override("RemoveDrawable") )
+         {
+            RemoveDrawable(drawable);
+         }
+         else
+         {
+            BaseABC::RemoveDrawable(drawable);
+         }
       }
       
       void DefaultRemoveDrawable(DeltaDrawable* drawable)
@@ -68,43 +96,16 @@ class BaseABCWrap : public BaseABC
       
       virtual void PreFrame(const double deltaFrameTime)
       {
-         if(PyObject_HasAttrString(mSelf, "PreFrame"))
-         {
-            call_method<void>(mSelf, "PreFrame", deltaFrameTime);
-         }
-         else
-         {
-            BaseABC::PreFrame(deltaFrameTime);
-         }
+         this->get_override("PreFrame")(deltaFrameTime);
       }
-      
       virtual void Frame(const double deltaFrameTime)
       {
-         if(PyObject_HasAttrString(mSelf, "Frame"))
-         {
-            call_method<void>(mSelf, "Frame", deltaFrameTime);
-         }
-         else
-         {
-            BaseABC::Frame(deltaFrameTime);
-         }
+         this->get_override("Frame")(deltaFrameTime);
       }
-      
       virtual void PostFrame(const double deltaFrameTime)
       {
-         if(PyObject_HasAttrString(mSelf, "PostFrame"))
-         {
-            call_method<void>(mSelf, "PostFrame", deltaFrameTime);
-         }
-         else
-         {
-            BaseABC::PostFrame(deltaFrameTime);
-         }
+         this->get_override("PostFrame")(deltaFrameTime);
       }
-      
-   private:
-      
-      PyObject* mSelf;
 };
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(LoadMap_overloads, LoadMap, 1, 2)
@@ -118,7 +119,7 @@ void initBaseABCBindings()
    void (BaseABC::*LoadMap2)( dtDAL::Map&, bool ) = &BaseABC::LoadMap;
    const dtCore::Mouse*(BaseABC::*GETMOUSE)() const =&BaseABC::GetMouse;
    
-   class_<BaseABC, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
+   class_<BaseABCWrap, bases<Base>, dtCore::RefPtr<BaseABCWrap>, boost::noncopyable>("BaseABC", no_init)
       .def("GetInstanceCount", &BaseABC::GetInstanceCount)
       .staticmethod("GetInstanceCount")
       .def("GetInstance", BaseABCGI1, return_internal_reference<>())
@@ -126,7 +127,6 @@ void initBaseABCBindings()
       .staticmethod("GetInstance")
       .def("Config", &BaseABC::Config, &BaseABCWrap::DefaultConfig)
       .def("Quit", &BaseABC::Quit, &BaseABCWrap::DefaultQuit)
-
       .def("AddDrawable", &BaseABC::AddDrawable, &BaseABCWrap::DefaultAddDrawable)
       .def("RemoveDrawable", &BaseABC::RemoveDrawable, &BaseABCWrap::DefaultRemoveDrawable)
       .def("GetWindow", &BaseABC::GetWindow, return_internal_reference<>())
