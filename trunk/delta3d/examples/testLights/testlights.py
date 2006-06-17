@@ -45,15 +45,18 @@ class TestLightsApp(Application):
         self.GetScene().AddDrawable( self.mGlobalSpot )
         
         self.mSphere.LoadFile( "models/physics_happy_sphere.ive" )
+        trans.Set( 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 )
+        self.mSphere.SetTransform( trans )
         
         self.mPositional.SetDiffuse( 1.0, 1.0, 0.0, 1.0 ) # yellow light
         self.mPositional.AddChild( self.mSphere ) #move sphere along with light
 
         self.GetScene().AddDrawable( self.mPositional )
-        self.mPositional.SetEnabled( 1 )
+        self.mPositional.SetEnabled( 0 )
+
         
         self.GetScene().AddDrawable( self.mGlobalInfinite )
-        self.mGlobalInfinite.SetEnabled( 1 )
+        self.mGlobalInfinite.SetEnabled( 0 )
         
         #set camera stuff
         trans.SetTranslation( Vec3(30.0, -20.0, 25.0) )
@@ -71,7 +74,28 @@ class TestLightsApp(Application):
         self.mOmm.SetTarget( self.GetCamera() )
         self.mOmm.SetDistance( Distance( camLoc, origin ) )
 
-    #def KeyPressed(self,keyboard,key,character):
+    def KeyPressed( self, keyboard, key, character ) :
+        verdict = 0
+        if key is KeyboardKey.Key_Escape :
+            self.Quit()
+            verdict = 1
+        elif key is KeyboardKey.Key_1 :
+            self.mGlobalSpot.SetEnabled( not self.mGlobalSpot.GetEnabled() )
+            verdict = 1
+        elif key is KeyboardKey.Key_2 :
+            self.mPositional.SetEnabled( not self.mPositional.GetEnabled() )
+            verdict = 1
+        elif key is KeyboardKey.Key_3 :
+            if self.mPositional.GetLightingMode() is Light.GLOBAL :
+                self.mPositional.SetLightingMode( Light.LOCAL )
+            else :
+                self.mPositional.SetLightingMode( Light.GLOBAL )
+            verdict = 1
+        elif key is KeyboardKey.Key_4 :
+            self.mGlobalInfinite.SetEnabled( not self.mGlobalInfinite.GetEnabled() )
+            verdict = 1
+
+        return verdict
     
     def PreFrame(self, deltaFrameTime):
     
