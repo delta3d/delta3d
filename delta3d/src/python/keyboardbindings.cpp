@@ -9,6 +9,39 @@
 using namespace boost::python;
 using namespace dtCore;
 
+class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardListener>
+{
+   public:
+   KeyboardListenerWrap()
+   {
+   }
+   protected:
+   virtual ~KeyboardListenerWrap()
+   {
+   }
+   public:
+   virtual bool HandleKeyPressed(const Keyboard* keyboard, 
+                                 Producer::KeyboardKey key,
+                                 Producer::KeyCharacter character )
+   {
+      return this->get_override( "HandleKeyPressed" )( boost::ref(keyboard), key, character );
+   }
+   
+   virtual bool HandleKeyReleased(const Keyboard* keyboard, 
+                                  Producer::KeyboardKey key,
+                                  Producer::KeyCharacter character )
+   {
+      return this->get_override( "HandleKeyReleased" )( boost::ref(keyboard), key, character );
+   }
+   
+   virtual bool HandleKeyTyped(const Keyboard* keyboard, 
+                               Producer::KeyboardKey key,
+                               Producer::KeyCharacter character )
+   {
+      return this->get_override( "HandleKeyTyped" )( boost::ref(keyboard), key, character );
+   }
+};
+
 void initKeyboardBindings()
 {
    #define ENUM_KEYBOARD_KEY(VALUE) keyboard_key.value(#VALUE, Producer::VALUE)
@@ -507,48 +540,15 @@ void initKeyboardBindings()
    ENUM_KEY_MODIFIER(KeyMod_Alt);
    ENUM_KEY_MODIFIER(KeyMod_Super);
    key_modifier.export_values();
-
-   class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardListener>
-   {
-      public:
-      KeyboardListenerWrap()
-      {
-      }
-      protected:
-      virtual ~KeyboardListenerWrap()
-      {
-      }
-      public:
-      virtual bool HandleKeyPressed(const Keyboard* keyboard, 
-                                    Producer::KeyboardKey key,
-                                    Producer::KeyCharacter character )
-      {
-         return this->get_override( "HandleKeyPressed" )( keyboard, key, character );
-      }
-      
-      virtual bool HandleKeyReleased(const Keyboard* keyboard, 
-                                     Producer::KeyboardKey key,
-                                     Producer::KeyCharacter character )
-      {
-         return this->get_override( "HandleKeyReleased" )( keyboard, key, character );
-      }
-      
-      virtual bool HandleKeyTyped(const Keyboard* keyboard, 
-                                  Producer::KeyboardKey key,
-                                  Producer::KeyCharacter character )
-      {
-         return this->get_override( "HandleKeyTyped" )( keyboard, key, character );
-      }
-   };
    
    Keyboard* (*KeyboardGI1)(int) = &Keyboard::GetInstance;
    Keyboard* (*KeyboardGI2)(std::string) = &Keyboard::GetInstance;
 
-   // class_<KeyboardListenerWrap, dtCore::RefPtr<KeyboardListenerWrap>, boost::noncopyable>("KeyboardListener",no_init)
-//       .def("HandleKeyPressed", pure_virtual(&KeyboardListener::HandleKeyPressed))
-//       .def("HandleKeyReleased", pure_virtual(&KeyboardListener::HandleKeyReleased))
-//       .def("HandleKeyTyped", pure_virtual(&KeyboardListener::HandleKeyTyped))
-//       ;
+   class_<KeyboardListenerWrap, dtCore::RefPtr<KeyboardListenerWrap>, boost::noncopyable>("KeyboardListener")
+       .def("HandleKeyPressed", pure_virtual(&KeyboardListener::HandleKeyPressed))
+       .def("HandleKeyReleased", pure_virtual(&KeyboardListener::HandleKeyReleased))
+       .def("HandleKeyTyped", pure_virtual(&KeyboardListener::HandleKeyTyped))
+       ;
 
    class_<Keyboard, bases<InputDevice>, dtCore::RefPtr<Keyboard>, boost::noncopyable >("Keyboard", init< optional<const std::string&> >())
       .def("GetInstanceCount", &Keyboard::GetInstanceCount)
@@ -557,6 +557,6 @@ void initKeyboardBindings()
       .def("GetInstance", KeyboardGI2, return_internal_reference<>())
       .staticmethod("GetInstance")
       .def("GetKeyState", &Keyboard::GetKeyState)
-      .def("AddKeyboardListener", &Keyboard::AddKeyboardListener)
+      .def("AddKeyboardListener", &Keyboard::AddKeyboardListener, with_custodian_and_ward<1,2>() )
       .def("RemoveKeyboardListener", &Keyboard::RemoveKeyboardListener);
 }
