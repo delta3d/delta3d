@@ -300,7 +300,10 @@ void ParticleSystem::SetupParticleLayers()
          // delta3d since it was set up where you can only load in 1 per system. Which
          // makes sense. 
          // Auto loads one for each file, to tell the system everything else is in here.
-         printf("");
+
+         // printf without a formatting string causes a warning on gcc. Why is this here
+         // anyways??? -osb
+         //printf("");
       }
 
       // See if this is the particle system of the geode
