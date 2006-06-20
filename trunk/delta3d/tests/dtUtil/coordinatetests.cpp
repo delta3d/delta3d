@@ -37,6 +37,7 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
 {
    CPPUNIT_TEST_SUITE(CoordinateTests);
       CPPUNIT_TEST(TestConfigure);   
+      CPPUNIT_TEST(TestGeoOrigin);   
       CPPUNIT_TEST(TestGeocentricToCartesianConversions);   
       CPPUNIT_TEST(TestUTMToCartesianConversions);   
       CPPUNIT_TEST(TestUTMZoneCalculations);
@@ -48,10 +49,12 @@ class CoordinateTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST_SUITE_END();
 
    public:
+   
       void setUp();
       void tearDown();
 
       void TestConfigure(); 
+      void TestGeoOrigin();
       void TestGeocentricToCartesianConversions();   
       void TestUTMToMGRS();   
       void TestMGRSToUTM();
@@ -197,7 +200,42 @@ void CoordinateTests::TestConfigure()
    CPPUNIT_ASSERT(converter->GetOriginRotationMatrix() == m);
    m.invert(m);
    CPPUNIT_ASSERT(converter->GetOriginRotationMatrixInverse() == m);
+      
+}
+
+void CoordinateTests::TestGeoOrigin()
+{
+   osg::Vec3d origin(33.62, 117.77, 0.0);
+   unsigned zone;
+   converter->SetUTMZone(3);
+   zone = converter->GetUTMZone();
+   CPPUNIT_ASSERT_EQUAL(unsigned(3), zone);
    
+   converter->SetGeoOriginRotation(origin.x(), origin.y());
+
+   zone = converter->GetUTMZone();
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the Geo Origin rotation should NOT set the UTM zone.", unsigned(3), zone);
+   
+   //TODO check the rotatin value.
+
+   converter->SetGeoOrigin(origin.x(), origin.y(), origin.z());
+   
+   osg::Vec3d actual;
+   converter->GetOriginLocation(actual.x(), actual.y(), actual.z());
+   
+   char hemisphere;
+   osg::Vec3d expected;
+   
+   //Note that "zone" is getting reset here.
+   converter->ConvertGeodeticToUTM(osg::DegreesToRadians(origin.x()), osg::DegreesToRadians(origin.y()), zone, hemisphere, 
+      expected.x(), expected.y());
+      
+   expected.z() = origin.z();
+
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the geo-origin should yield the same result as doing a conversion to UTM.", expected, actual);
+   
+   CPPUNIT_ASSERT_EQUAL_MESSAGE("Setting the geo-origin should set the UTM zone", zone, converter->GetUTMZone());
+
 }
 
 void CoordinateTests::TestGeocentricToCartesianConversions()
@@ -210,6 +248,7 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
    
    converter->SetOriginLocation(562078.225268, 3788040.632974, -32.0);
    converter->SetGeoOriginRotation(34.231594444, -116.32595);
+   converter->SetUTMZone(11);
 
    {
       osg::Vec3d testLoc(-2321639.117695, -4740372.413446, 3569341.066936);
@@ -228,9 +267,16 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
       osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
       osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
 
-      CPPUNIT_ASSERT(osg::equivalent(resultBack.x(), testLoc.x(), 1e-2) 
+      std::ostringstream ss;
+      ss << "Expected: " << testLoc << ", Actual: " << resultBack; 
+
+      CPPUNIT_ASSERT_MESSAGE(ss.str(), osg::equivalent(resultBack.x(), testLoc.x(), 1e-2) 
          && osg::equivalent(resultBack.y(), testLoc.y(), 1e-2) 
          && osg::equivalent(resultBack.z(), testLoc.z(), 1e-2));
+
+      ss.str("");
+      ss << "Expected: " << testRot << ", Actual: " << resultRotBack; 
+
       CPPUNIT_ASSERT(osg::equivalent(resultRotBack[0], testRot[0], 1e-2f) 
          && osg::equivalent(resultRotBack[1],  testRot[1], 1e-2f) 
          && osg::equivalent(resultRotBack[2], testRot[2], 1e-2f));
@@ -255,9 +301,16 @@ void CoordinateTests::TestGeocentricToCartesianConversions()
       osg::Vec3d resultBack = converter->ConvertToRemoteTranslation(result);
       osg::Vec3 resultRotBack = converter->ConvertToRemoteRotation(resultRot);
 
+      std::ostringstream ss;
+      ss << "Expected: " << testLoc << ", Actual: " << resultBack; 
+
       CPPUNIT_ASSERT(osg::equivalent(resultBack.x(), testLoc.x(), 1e-2) 
          && osg::equivalent(resultBack.y(), testLoc.y(), 1e-2) 
          && osg::equivalent(resultBack.z(), testLoc.z(), 1e-2));
+
+      ss.str("");
+      ss << "Expected: " << testRot << ", Actual: " << resultRotBack; 
+
       CPPUNIT_ASSERT(osg::equivalent(resultRotBack[0], testRot[0], 1e-2f) 
          && osg::equivalent(resultRotBack[1],  testRot[1], 1e-2f) 
          && osg::equivalent(resultRotBack[2], testRot[2], 1e-2f));

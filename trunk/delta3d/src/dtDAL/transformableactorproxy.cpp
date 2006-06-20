@@ -108,28 +108,30 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                 "dtCore::Transformable\n");
 
-      mHPR = rotation;
+      osg::Vec3 hpr = rotation;
 
       //Normalize the rotation.
-      if (mHPR.x() < 0.0f)
-         mHPR.x() += 360.0f;
-      if (mHPR.x() > 360.0f)
-         mHPR.x() -= 360.0f;
+      if (hpr.x() < 0.0f)
+         hpr.x() += 360.0f;
+      if (hpr.x() > 360.0f)
+         hpr.x() -= 360.0f;
 
-      if (mHPR.y() < 0.0f)
-         mHPR.y() += 360.0f;
-      if (mHPR.y() > 360.0f)
-         mHPR.y() -= 360.0f;
+      if (hpr.y() < 0.0f)
+         hpr.y() += 360.0f;
+      if (hpr.y() > 360.0f)
+         hpr.y() -= 360.0f;
 
-      if (mHPR.z() < 0.0f)
-         mHPR.z() += 360.0f;
-      if (mHPR.z() > 360.0f)
-         mHPR.z() -= 360.0f;
+      if (hpr.z() < 0.0f)
+         hpr.z() += 360.0f;
+      if (hpr.z() > 360.0f)
+         hpr.z() -= 360.0f;
 
       dtCore::Transform trans;
-      t->GetTransform(&trans);
-      trans.SetRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]));
-      t->SetTransform(&trans);
+      t->GetTransform(trans);
+      osg::Vec3 oldValue;
+      trans.GetRotation(oldValue);
+      trans.SetRotation(osg::Vec3(hpr[2],hpr[0],hpr[1]));
+      t->SetTransform(trans);
 
       //If we have a billboard update its rotation as well.
       if (GetRenderMode() == ActorProxy::RenderMode::DRAW_ACTOR_AND_BILLBOARD_ICON ||
@@ -137,17 +139,17 @@ namespace dtDAL
       {
          ActorProxyIcon *billBoard = GetBillBoardIcon();
          if (billBoard != NULL)
-            billBoard->SetActorRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]));
+            billBoard->SetActorRotation(osg::Vec3(hpr[2], hpr[0], hpr[1]));
       }
 
-      OnRotation(osg::Vec3(mHPR[2],mHPR[0],mHPR[1]), rotation);
+      OnRotation(osg::Vec3(oldValue[1], oldValue[2], oldValue[0]), hpr);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
    void TransformableActorProxy::SetRotationFromMatrix(const osg::Matrix &rotation)
    {
       osg::Vec3 hpr;
-      dtUtil::MatrixUtil::MatrixToHpr(hpr,rotation);        
+      dtUtil::MatrixUtil::MatrixToHpr(hpr,rotation);
       SetRotation(osg::Vec3(hpr[1],hpr[2],hpr[0]));
    }
 
@@ -159,7 +161,13 @@ namespace dtDAL
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type "
                 "dtCore::Transformable\n");
 
-      return mHPR;
+      dtCore::Transform trans;
+      t->GetTransform(trans);
+
+      osg::Vec3 hpr;
+      trans.GetRotation(hpr);
+
+      return osg::Vec3(hpr[1],hpr[2],hpr[0]);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -320,7 +328,7 @@ namespace dtDAL
       if (phys == NULL)
          EXCEPT(dtDAL::ExceptionEnum::InvalidActorException, "Actor should be type dtCore::Transformable.");
 
-      mCollisionBoxDims = dims;        
+      mCollisionBoxDims = dims;
       SetBoxCollision();
    }
 

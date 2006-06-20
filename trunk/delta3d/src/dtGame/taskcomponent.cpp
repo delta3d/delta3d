@@ -42,19 +42,21 @@ namespace dtGame
    //////////////////////////////////////////////////////////////////////////
    void TaskComponent::ProcessMessage(const Message &message)
    {
+      const dtCore::UniqueId &id = message.GetAboutActorId();
+      dtGame::GameActorProxy *proxy;
+
       if (message.GetMessageType() == MessageType::INFO_ACTOR_CREATED ||
-          message.GetMessageType() == MessageType::INFO_ACTOR_UPDATED ||
-          message.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
+         message.GetMessageType() == MessageType::INFO_ACTOR_UPDATED ||
+         message.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
       {
-         const dtCore::UniqueId &id = message.GetAboutActorId();
-         dtGame::GameActorProxy *proxy = GetGameManager()->FindGameActorById(id);
+         proxy = GetGameManager()->FindGameActorById(id);
 
          if (proxy == NULL)
          {
             LOG_WARNING("Newly created actor could not be found in the game manager.");
             return;
          }
-
+      
          if (proxy->GetActorType().InstanceOf("dtcore.Tasks","Task Actor"))
          {
             InsertTaskActor(*proxy);
@@ -72,7 +74,7 @@ namespace dtGame
          }
 
          if (proxy->GetActorType().InstanceOf("dtcore.Tasks","Task Actor"))
-            RemoveTaskActor(*proxy);
+         RemoveTaskActor(*proxy);
       }
       else if (message.GetMessageType() == MessageType::INFO_MAP_LOADED)
       {
@@ -146,7 +148,7 @@ namespace dtGame
          dtCore::RefPtr<ActorUpdateMessage> updateMsg = static_cast<ActorUpdateMessage *>
             (GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_UPDATED).get());
          itor->second->PopulateActorUpdate(*updateMsg);
-         GetGameManager()->ProcessMessage(*updateMsg);
+         GetGameManager()->SendMessage(*updateMsg);
       }
    }
 

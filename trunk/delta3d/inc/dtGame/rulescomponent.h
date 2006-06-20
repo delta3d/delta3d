@@ -51,7 +51,7 @@ namespace dtGame
           * Sends a message
           * @param The message to send
           */
-         virtual void SendMessage(const Message &msg);
+         virtual void DispatchNetworkMessage(const Message &msg);
 
       protected:
 

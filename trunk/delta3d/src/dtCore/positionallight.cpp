@@ -76,19 +76,19 @@ PositionalLight::PositionalLight( const osg::LightSource& osgLightSource, const 
 
 PositionalLight::~PositionalLight()
 {
-   mLightSource = 0;
+   mLightSource = NULL;
 }
 
 /**
-* Determines how fast the light fades as one moves away from the light. It is
-* determined by the following equation: 
-*
-* attenuation factor = 1 / ( constant + linear*(distance) + quadratic*(distance^2) )
-*
-* @param constant the constant factor
-* @param linear the linear factor
-* @param quadractic the quadractic factor
-*/
+ * Determines how fast the light fades as one moves away from the light. It is
+ * determined by the following equation: 
+ *
+ * attenuation factor = 1 / ( constant + linear*(distance) + quadratic*(distance^2) )
+ *
+ * @param constant the constant factor
+ * @param linear the linear factor
+ * @param quadractic the quadractic factor
+ */
 void PositionalLight::SetAttenuation( float constant, float linear, float quadratic )
 {
    mLightSource->getLight()->setConstantAttenuation( constant );
@@ -110,8 +110,8 @@ bool PositionalLight::AddChild( DeltaDrawable *child )
       mLightSource->addChild( child->GetOSGNode() );
       return true;
    }
-   else 
-      return false;
+  
+   return false;
 }
 
 void PositionalLight::RemoveChild( DeltaDrawable *child )

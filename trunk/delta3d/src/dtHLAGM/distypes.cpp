@@ -190,6 +190,16 @@ namespace dtHLAGM
       }
    }
 
+   std::ostream& operator << (std::ostream &o, const EntityIdentifier &eid)
+   {
+      std::string space(" ");
+
+      o << eid.GetSiteIdentifier() << space << eid.GetApplicationIdentifier() << space << eid.GetEntityIdentifier();
+
+      return o;
+   }
+
+
    /**
     * Constructor.
     *
@@ -418,16 +428,48 @@ namespace dtHLAGM
       mExtra = buf[7];
    }
 
-   //std::ostream& operator<<(std::ostream &o, const EntityType &et)
-   //{
-      // strange g++ compiler bugs make this not work.
-      // std::string space(" ");
-       
-       /*o << (int)et.GetKind() << space <<  (int)et.GetDomain() << space <<  (int)et.GetCountry() 
-         << space <<  (int)et.GetCategory() << space <<  (int)et.GetSubcategory() <<  space <<  (int)et.GetSpecific() 
-         << space <<  (int)et.GetExtra();*/
-   //    return o;
-   //}
+   std::ostream& operator << (std::ostream &o, const EntityType &et)
+   {
+      std::string space(" ");
+
+      o << int(et.GetKind()) << space << int(et.GetDomain()) << space << int(et.GetCountry())
+            << space << int(et.GetCategory()) << space << int(et.GetSubcategory()) << space 
+            << int(et.GetSpecific()) << space << int(et.GetExtra());
+
+      return o;
+   }
+
+   std::istream& operator >> (std::istream &is, EntityType &et)
+   {
+      std::string space(" ");
+      
+      unsigned short temp = 0;
+
+      //Note: forced to c-cast these since "unsigned char(temp)" won't compile in g++
+      is >> temp;
+      et.SetKind((unsigned char)temp);
+      temp = 0;
+      is >> temp;
+      et.SetDomain((unsigned char)temp);
+      temp = 0;
+      is >> temp;
+      et.SetCountry(temp);
+      temp = 0;
+      is >> temp;
+      et.SetCategory((unsigned char)temp);
+      temp = 0;
+      is >> temp;
+      et.SetSubcategory((unsigned char)temp);
+      temp = 0;
+      is >> temp;
+      et.SetSpecific((unsigned char)temp);
+      temp = 0;
+      is >> temp;
+      et.SetExtra((unsigned char)temp);
+
+      return is;
+   }
+
 
    /**
     * Constructor.
@@ -1447,4 +1489,6 @@ namespace dtHLAGM
    {
       return mParameterValue;
    }
+
 }
+

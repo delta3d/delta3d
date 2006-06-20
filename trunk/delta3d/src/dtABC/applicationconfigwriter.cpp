@@ -56,8 +56,8 @@ void ApplicationConfigWriter::operator ()(const std::string& filename)
 
    DOMElement* camera = doc->createElement(sch.CAMERA);
    camera->setAttribute( sch.NAME , def.CAMERA_NAME );
-   camera->setAttribute( sch.WINDOW , def.WINDOW_NAME );
-   camera->setAttribute( sch.SCENE , def.SCENE_NAME );
+   camera->setAttribute( sch.WINDOWINSTANCE , def.WINDOW_NAME );
+   camera->setAttribute( sch.SCENEINSTANCE , def.SCENE_NAME );
    app->appendChild( camera );
 
    writer->WriteFile( filename );

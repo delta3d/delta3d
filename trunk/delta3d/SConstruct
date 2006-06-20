@@ -580,8 +580,9 @@ opts.AddOptions(
    EnumOption( 'mode', 'Build as either debug or release', 'release',
             allowed_values = ( 'debug', 'release' ),
             map = {}, ignorecase = 1 ),
-   BoolOption( 'no_warnings', 'Disable all warnings', 0 ),
-   BoolOption( 'usePrefixHeaders', 'use a prefix/precompiled header', 0 ),
+   BoolOption( 'no_warnings', 'Disable all warnings', False ),
+   BoolOption( 'usePrefixHeaders', 'use a prefix/precompiled header', False ),
+   BoolOption( 'buildPythonBindings', 'compile the python binding libraries', True ),
    PackageOption( 'boost', 'Boost installation directory', 'no' ),
    PackageOption( 'rti', 'RTI installation directory', 'no' )
 )
@@ -731,10 +732,8 @@ if mode == 'debug':
                   #removed _DEBUG for now because of problem with GNE and DEBUG because of a python issue.
 		  CPPDEFINES=['SIGSLOT_PURE_ISO'] )
    elif OS == 'darwin':      
-      env.Append(CXXFLAGS=['-g', '-O0', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
+      env.Append(CXXFLAGS=['-ggdb', '-O0', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk'], CPPDEFINES=['_DEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030' ],
 	LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk'] )
-      env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1' 
-      #-install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 else:
    print 'Build Configuration: Release'
    errorLog.write('Build Configuration: Release\n\n')
@@ -753,8 +752,6 @@ else:
       env.Append(CXXFLAGS=['-Os', '-pipe', '-fPIC', '-isysroot', '/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386'],
          CPPDEFINES=['NDEBUG', '__USE_OSX_AGL_IMPLEMENTATION__', 'SIGSLOT_PURE_ISO', 'MAC_OS_X_VERSION_MIN_REQUIRED=1030'], 
          LINKFLAGS=['-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk', '-arch', 'ppc', '-arch', 'i386'] )
-      env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 1' 
-      #-install_name "Frameworks/$(LIBNAME).framework/Versions/A/$(LIBNAME)"'
 
 #add to the CPPFLAGS variable if it's set in the environment
 if os.environ.has_key('CPPFLAGS'):
@@ -795,7 +792,7 @@ if OS == 'darwin' :
   env.Append(FRAMEWORKPATH=['ext/Frameworks' ])
   env['FRAMEWORKS'] = []
   env.Append(LIBPATH=['/usr/lib','/usr/local/lib'])
-  env['SHLIBSUFFIX'] = '.dylib'
+  env['SHLINKFLAGS'] = '$LINKFLAGS -Wl,-single_module -dynamiclib -compatibility_version 1 -current_version 3 -install_name "' + env.get('prefix') + '/lib/$SHLIBPREFIX$LIBNAME$SHLIBSUFFIX"'
 
 launchDir = env.GetLaunchDir()
 
@@ -841,7 +838,7 @@ dtLibs = { 'dtABC'       : 'dtABC',
            'dtInspector' : 'dtInspector',
            'dtTerrain'   : 'dtTerrain', 
            'dtGame'      : 'dtGame',
-			'testGameActorLibrary' : 'testGameActorLibrary' }
+	   'testGameActorLibrary' : 'testGameActorLibrary' }
 
 if mode == 'debug' and OS == 'windows' :
    for lib in dtLibs :
@@ -1028,8 +1025,12 @@ linkOrder = [
    'osgFX',
    'osgParticle',
    'osgGA',
-   'osgProducer',
-   'python',
+   'osgProducer']
+
+if env.get('buildPythonBindings'):
+   linkOrder += ['python']
+
+linkOrder += [
    'cal3d',
    'fltk',
    'isense',

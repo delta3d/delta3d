@@ -131,7 +131,7 @@ namespace dtGame
 
       mGameManager->SetApplication(*this);
 
-      mEntryPoint->OnStartup();
+      mEntryPoint->OnStartup(*mGameManager);
    }
 
 }

@@ -132,7 +132,7 @@ namespace dtGame
       }
    }
 
-   void DeadReckoningComponent::SendMessage(const dtGame::Message& message)
+   void DeadReckoningComponent::DispatchNetworkMessage(const dtGame::Message& message)
    {
    }
    
@@ -210,11 +210,11 @@ namespace dtGame
    }
 
    double DeadReckoningComponent::GetTerrainZIntersectionPoint(dtCore::DeltaDrawable& terrainActor, const osg::Vec3& point)
-   {
+   {   
       mIsector->Reset();
       
-      mIsector->SetStartPosition(osg::Vec3(point[0], point[1], point[2] + 100.0));
-      mIsector->SetEndPosition(osg::Vec3(point[0], point[1], point[2] - 100.0));
+      mIsector->SetStartPosition(osg::Vec3(point[0], point[1], point[2] + 100.0f));
+      mIsector->SetEndPosition(osg::Vec3(point[0], point[1], point[2] - 100.0f));
       
       mIsector->SetGeometry(&terrainActor);
 
@@ -223,9 +223,22 @@ namespace dtGame
          osg::Vec3 hp;
          mIsector->GetHitPoint(hp);
          
+         if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+         {
+            std::ostringstream ss;
+            ss << "Found a hit - old z " << point.z() << " new z " << hp.z();
+            mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+         }
+
          return hp.z();
       }
       //if no hits are found, just return the original value.
+      if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
+      {
+	     std::ostringstream ss;
+	     ss << "Found no hit";
+	     mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, ss.str().c_str());
+      }
       return point.z();
    }
 
@@ -273,12 +286,12 @@ namespace dtGame
       }
       else 
       {
-         float zVal = position.z() - (9.8f / 2.0f) * (timeSinceUpdate * timeSinceUpdate);
+         //float zVal = position.z() - (9.8f / 2.0f) * (timeSinceUpdate * timeSinceUpdate);
          //fall by the acceleration of gravity.
-         if (zVal < averageZ)
-            position.z() = averageZ;
-         else
-            position.z() = zVal;
+         //if (zVal < averageZ)
+         position.z() = averageZ;
+         //else
+         //   position.z() = zVal;
       }
       
       osg::Vec3 ab = point1 - point3;
@@ -386,7 +399,7 @@ namespace dtGame
          }
          
          //make sure it's greater than 0 in case of time being set.
-         dtUtil::Clamp<double>(timeSinceUpdate, 0.0, timeSinceUpdate);
+         dtUtil::Clamp(timeSinceUpdate, 0.0, timeSinceUpdate);
 
          if (helper.GetDeadReckoningAlgorithm() == DeadReckoningAlgorithm::NONE)
          {
@@ -410,6 +423,10 @@ namespace dtGame
                {
                   ClampToGround(timeSinceUpdate, pos, rot, xform, gameActorProxy);
                } 
+
+               xform.SetTranslation(pos);
+               xform.SetRotation(rot);
+               gameActor.SetTransform(&xform);
             }
          }
          else

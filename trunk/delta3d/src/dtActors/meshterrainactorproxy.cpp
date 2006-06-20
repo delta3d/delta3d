@@ -142,11 +142,27 @@ namespace dtActors
    {
       if(!mBillBoardIcon.valid())
       {
-         mBillBoardIcon =
-         new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::MESHTERRAIN);
+         mBillBoardIcon = new dtDAL::ActorProxyIcon(dtDAL::ActorProxyIcon::IconType::MESHTERRAIN);
       }
       
       return mBillBoardIcon.get();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   MeshTerrainActor::MeshTerrainActor()
+   {
+
+   }
+
+   MeshTerrainActor::~MeshTerrainActor()
+   {
+
+   }
+
+   void MeshTerrainActor::AddedToScene(dtCore::Scene* scene)
+   {
+      dtCore::Object::AddedToScene(scene);
+      if(!GetFilename().empty())
+         LoadFile(GetFilename());
+   }
 }

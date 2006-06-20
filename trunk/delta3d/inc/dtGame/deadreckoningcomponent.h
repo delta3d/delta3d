@@ -207,10 +207,10 @@ namespace dtGame
          
          /**
           * handles a sent a message
-          * @see dtGame::GMComponent#SendMessage
+          * @see dtGame::GMComponent#DispatchNetworkMessage
           * @param The message
           */
-         virtual void SendMessage(const dtGame::Message& message);
+         virtual void DispatchNetworkMessage(const dtGame::Message& message);
 
          /**
           * handles a processed a message

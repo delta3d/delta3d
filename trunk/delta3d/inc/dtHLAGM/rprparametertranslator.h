@@ -23,24 +23,29 @@
 #define DELTA_RPR_PARAMETER_TRANSLATOR
 
 #include <dtHLAGM/export.h>
+#include <dtHLAGM/onetomanymapping.h>
 #include <dtHLAGM/parametertranslator.h>
 
-namespace dtUtil 
+namespace dtUtil
 {
    class Log;
    class Coordinates;
 }
 
-namespace dtGame 
+namespace dtDAL
+{
+   class DataType;
+}
+
+namespace dtGame
 {
    class MessageParameter;
 }
 
 namespace dtHLAGM
 {
-   class OneToManyMapping;
    class ObjectRuntimeMappingInfo;
-   
+
    class DT_HLAGM_EXPORT RPRAttributeType : public AttributeType
    {
       DECLARE_ENUM(RPRAttributeType);
@@ -70,13 +75,16 @@ namespace dtHLAGM
          ///An unsigned short integer.
          static const RPRAttributeType UNSIGNED_SHORT_TYPE;
 
+         ///single precision floating point value.
+         static const RPRAttributeType FLOAT_TYPE;
+
          ///double precision floating point value.
-         static const RPRAttributeType DOUBLE;
+         static const RPRAttributeType DOUBLE_TYPE;
 
          ///struct holding a DIS entity enumeration.
          static const RPRAttributeType ENTITY_TYPE;
 
-         ///struct holding a DIS entity enumeration.
+         /// An identifier uniquely marking an entity.
          static const RPRAttributeType ENTITY_IDENTIFIER_TYPE;
 
          ///An indentifier uniquely marking an event.
@@ -90,10 +98,10 @@ namespace dtHLAGM
          {
             AddInstance(this);
          }
-         
+
          virtual ~RPRAttributeType() {}
    };
-   
+
    class DT_HLAGM_EXPORT RPRParameterTranslator : public ParameterTranslator
    {
       public:
@@ -114,12 +122,56 @@ namespace dtHLAGM
       protected:
          dtUtil::Log* mLogger;
          dtUtil::Coordinates& mCoordinates;
-         
+
          ObjectRuntimeMappingInfo& mRuntimeMappings;
 
          virtual ~RPRParameterTranslator();
          void SetIntegerValue(long value, dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
          long GetIntegerValue(const dtGame::MessageParameter& parameter, const OneToManyMapping& mapping, unsigned parameterDefIndex) const;
+
+         void MapFromParamToWorldCoord(
+            char* buffer, 
+            const size_t maxSize,
+            const dtGame::MessageParameter& parameter, 
+            const dtDAL::DataType& parameterDataType) const throw();
+            
+         void MapFromParamToEulerAngles(
+            char* buffer, 
+            const size_t maxSize,
+            const dtGame::MessageParameter& parameter, 
+            const dtDAL::DataType& parameterDataType) const throw();
+
+         void MapFromParamToVelocityVector(
+            char* buffer, 
+            const size_t maxSize,
+            const dtGame::MessageParameter& parameter, 
+            const dtDAL::DataType& parameterDataType) const throw();
+
+         void MapFromParamToEntityType(
+            char* buffer,
+            const size_t maxSize,
+            const dtGame::MessageParameter& parameter,
+            const OneToManyMapping& mapping,
+            const OneToManyMapping::ParameterDefinition& paramDef) const throw();
+            
+         void MapFromWorldCoordToMessageParam(
+            const char* buffer, 
+            const size_t size,
+            dtGame::MessageParameter& parameter,
+            const dtDAL::DataType& parameterDataType ) const throw();
+
+         void MapFromEulerAnglesToMessageParam(
+            const char* buffer, 
+            const size_t size,
+            dtGame::MessageParameter& parameter,
+            const dtDAL::DataType& parameterDataType ) const throw();
+            
+         void MapFromVelocityVectorToMessageParam(
+            const char* buffer, 
+            const size_t size,
+            dtGame::MessageParameter& parameter,
+            const dtDAL::DataType& parameterDataType ) const throw();
+
 
    };
 

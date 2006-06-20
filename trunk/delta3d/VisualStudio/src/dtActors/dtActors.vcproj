@@ -166,7 +166,7 @@
 				RelativePath="..\..\..\src\dtActors\cloudplaneactorproxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\dtActors\coordinateconfigactorproxy.cpp">
+				RelativePath="..\..\..\src\dtActors\coordinateconfigactor.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\deltaobjectactorproxy.cpp">
@@ -176,6 +176,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\enveffectactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\gamemeshactor.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\infinitelightactorproxy.cpp">
@@ -191,6 +194,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\particlesystemactorproxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\src\dtActors\playerstartactorproxy.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\src\dtActors\positionallightactorproxy.cpp">
@@ -270,7 +276,7 @@
 				RelativePath="..\..\..\inc\dtActors\cloudplaneactorproxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\inc\dtActors\coordinateconfigactorproxy.h">
+				RelativePath="..\..\..\inc\dtActors\coordinateconfigactor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\deltaobjectactorproxy.h">
@@ -280,6 +286,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\enveffectactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\gamemeshactor.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\infinitelightactorproxy.h">
@@ -295,6 +304,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\particlesystemactorproxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtActors\playerstartactorproxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtActors\positionallightactorproxy.h">

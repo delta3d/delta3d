@@ -153,50 +153,27 @@ namespace dtEditQt
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    void PerspectiveViewport::mouseMoveEvent(QMouseEvent *e)
+    void PerspectiveViewport::onMouseMoveEvent(QMouseEvent* e, float dx, float dy)
     {
-        static bool mouseMoving = false;
-        //Moving the mouse back to the center makes the movement recurse
-        //so this is a flag to prevent the recursion
-        if (mouseMoving)
-            return;
+      if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
+      {
+          return;
+      }
+      else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
+      {
+          if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
+              return;
 
-        QPoint center((x()+width())/2,(y()+height())/2);
-        float dx,dy;
-
-        dx = (float)(e->pos().x() - center.x());
-        dy = (float)(e->pos().y() - center.y());
-
-        if (dx != 0 || dy != 0)
-        {
-            if (getInteractionMode() == Viewport::InteractionMode::SELECT_ACTOR)
-            {
-                return;
-            }
-            else if (getInteractionMode() == Viewport::InteractionMode::CAMERA)
-            {
-                if (*this->currentMode == InteractionModeExt::NOTHING || getCamera() == NULL)
-                    return;
-
-                moveCamera(dx,dy);
-            }
-            else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
-            {
-               translateCurrentSelection(e,dx,dy);
-            }
-            else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
-            {
-                rotateCurrentSelection(e,dx,dy);
-            }
-
-            //Moving the mouse back to the center makes the movement recurse
-            //so this is a flag to prevent the recursion
-            mouseMoving = true;
-            QCursor::setPos(mapToGlobal(center));
-            mouseMoving = false;
-
-            updateGL();
-        }
+          moveCamera(dx,dy);
+      }
+      else if (getInteractionMode() == Viewport::InteractionMode::TRANSLATE_ACTOR)
+      {
+         translateCurrentSelection(e,dx,dy);
+      }
+      else if (getInteractionMode() == Viewport::InteractionMode::ROTATE_ACTOR)
+      {
+          rotateCurrentSelection(e,dx,dy);
+      }
 
     }
 

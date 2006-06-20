@@ -148,14 +148,6 @@ namespace dtEditQt
          */
         void resizeGL(int width, int height);
 
-        /**
-         * Called when the user presses a mouse button in the viewport.  Based on
-         * the combination of buttons pressed, the viewport's current mode will
-         * be set.
-         * @param e
-         * @see ModeType
-         */
-        void mousePressEvent(QMouseEvent *e);
 
         /**
          * Called when the user releases a mouse button in the viewport.  Based on
@@ -166,11 +158,21 @@ namespace dtEditQt
         void mouseReleaseEvent(QMouseEvent *e);
 
         /**
+         * Called when the user presses a mouse button in the viewport.  Based on
+         * the combination of buttons pressed, the viewport's current mode will
+         * be set.
+         * @param e
+         * @see ModeType
+         */
+        void mousePressEvent(QMouseEvent*);
+
+        /**
          * Called when the user moves the mouse while pressing any combination of
          * mouse buttons.  Based on the current mode, the camera is updated.
-         * @param e
+         * @param dx the adjusted change in x that the mouse moved.
+         * @param dy the adjusted change in y that the mouse moved.
          */
-        void mouseMoveEvent(QMouseEvent *e);
+        virtual void onMouseMoveEvent(QMouseEvent *e, float dx, float dy);
 
         /**
          * Called when the user moves the wheel on a mouse containing a scroll wheel.

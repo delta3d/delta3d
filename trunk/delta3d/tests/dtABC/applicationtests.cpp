@@ -106,95 +106,98 @@ namespace dtTest
       Producer::KeyboardKey mKey;
       Producer::KeyCharacter mChar;
    };
+
+   // Registers the fixture into the 'registry'
+   CPPUNIT_TEST_SUITE_REGISTRATION( ApplicationTests );
+
+   void ApplicationTests::setUp()
+   {
+      mConfigName = "test_config.xml";
+      // delete the file
+      dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+   }
+
+   void ApplicationTests::TestInput()
+   {
+      dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
+
+      app->Config();
+      dtCore::RefPtr<dtCore::Keyboard> kb = app->GetKeyboard();
+      const dtCore::KeyboardListener* applistener = app->GetKeyboardListener();
+      const dtCore::KeyboardListener* firstlistener = kb->GetListeners().front().get();
+      CPPUNIT_ASSERT_EQUAL( firstlistener , applistener );  // better be the app's listener
+
+      app->ResetHits();
+      CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
+      CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
+
+      // test to see if the applicaiton's pressed callback is connected
+      CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_M) );  // better NOT handle it
+      CPPUNIT_ASSERT( app->GetPressedHit() );  // better be hit
+      CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better NOT be hit
+      CPPUNIT_ASSERT( kb->KeyDown(app->GetCharacter()) );  // better handle it
+
+      app->ResetHits();
+      CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
+      CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
+
+      // test to see if the application's released callback is connected
+      CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_M) );  // better NOT handle it
+      CPPUNIT_ASSERT( !app->GetPressedHit() );  // better be hit
+      CPPUNIT_ASSERT( app->GetReleasedHit() );  // better be hit
+      CPPUNIT_ASSERT( kb->KeyUp(app->GetCharacter()) );  // better handle it
+   }
+
+   void ApplicationTests::TestConfigSupport()
+   {
+      //make sure the file doesn't already exist.
+      CPPUNIT_ASSERT_MESSAGE("The config file should not exist yet.", !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+      // create the file
+      const std::string created( dtABC::Application::GenerateDefaultConfigFile( mConfigName ) );
+
+      // make sure it exists
+      CPPUNIT_ASSERT( dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+      // machine specific, should not be tested
+      //dtCore::RefPtr<dtABC::Application> app(new dtABC::Application(created));
+      //dtCore::DeltaWin* dwin = app->GetWindow();
+      //dtCore::DeltaWin::Resolution res = dwin->GetCurrentResolution();
+      //CPPUNIT_ASSERT_EQUAL( res.width , dtABC::Application::ConfigDefaultModel::RESOLUTION.width );
+      //CPPUNIT_ASSERT_EQUAL( res.height , dtABC::Application::ConfigDefaultModel::RESOLUTION.height );
+      //CPPUNIT_ASSERT_EQUAL( res.bitDepth , dtABC::Application::ConfigDefaultModel::RESOLUTION.bitDepth );
+      //CPPUNIT_ASSERT_EQUAL( res.refresh , dtABC::Application::ConfigDefaultModel::RESOLUTION.refresh );
+
+      // test the content from the parser
+      dtABC::ApplicationConfigHandler handler;
+      dtUtil::XercesParser parser;
+      CPPUNIT_ASSERT( parser.Parse( mConfigName , handler , "application.xsd" ) );
+
+      // compare the content that was parsed to the advertised default values
+      // in order to confirm that:
+      // a) the parser works, but more importantly
+      // b) the writer wrote the right default values
+      dtABC::ApplicationConfigData truth = dtABC::Application::GetDefaultConfigData();
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.FULL_SCREEN , truth.FULL_SCREEN );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.bitDepth , truth.RESOLUTION.bitDepth );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.height , truth.RESOLUTION.height );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.refresh , truth.RESOLUTION.refresh );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.width , truth.RESOLUTION.width );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.SCENE_NAME , truth.SCENE_NAME );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.SHOW_CURSOR , truth.SHOW_CURSOR );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_NAME , truth.WINDOW_NAME );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_X , truth.WINDOW_X );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_Y , truth.WINDOW_Y );
+      CPPUNIT_ASSERT_EQUAL( handler.mConfigData.CAMERA_NAME , truth.CAMERA_NAME );
+
+      // delete the file
+      dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
+
+      // make sure it does not exist
+      CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
+
+      ///\todo test applying the data to an Application instance
+   }
+
 }
-
-// Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION( dtTest::ApplicationTests );
-
-using namespace dtTest;
-
-void ApplicationTests::setUp()
-{
-   mConfigName = "test_config.xml";
-}
-
-void ApplicationTests::TestInput()
-{
-   dtCore::RefPtr<dtTest::TestApp> app(new dtTest::TestApp(Producer::Key_N,Producer::KeyChar_n));
-
-   app->Config();
-   dtCore::RefPtr<dtCore::Keyboard> kb = app->GetKeyboard();
-   const dtCore::KeyboardListener* applistener = app->GetKeyboardListener();
-   const dtCore::KeyboardListener* firstlistener = kb->GetListeners().front().get();
-   CPPUNIT_ASSERT_EQUAL( firstlistener , applistener );  // better be the app's listener
-
-   app->ResetHits();
-   CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
-   CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
-
-   // test to see if the applicaiton's pressed callback is connected
-   CPPUNIT_ASSERT( !kb->KeyDown(Producer::KeyChar_M) );  // better NOT handle it
-   CPPUNIT_ASSERT( app->GetPressedHit() );  // better be hit
-   CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better NOT be hit
-   CPPUNIT_ASSERT( kb->KeyDown(app->GetCharacter()) );  // better handle it
-
-   app->ResetHits();
-   CPPUNIT_ASSERT( !app->GetPressedHit() );  // better not be hit
-   CPPUNIT_ASSERT( !app->GetReleasedHit() );  // better not be hit
-
-   // test to see if the application's released callback is connected
-   CPPUNIT_ASSERT( !kb->KeyUp(Producer::KeyChar_M) );  // better NOT handle it
-   CPPUNIT_ASSERT( !app->GetPressedHit() );  // better be hit
-   CPPUNIT_ASSERT( app->GetReleasedHit() );  // better be hit
-   CPPUNIT_ASSERT( kb->KeyUp(app->GetCharacter()) );  // better handle it
-}
-
-void ApplicationTests::TestConfigSupport()
-{
-   // create the file
-   const std::string created( dtABC::Application::GenerateDefaultConfigFile( mConfigName ) );
-
-   // make sure it exists
-   CPPUNIT_ASSERT( dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
-
-   // machine specific, should not be tested
-   //dtCore::RefPtr<dtABC::Application> app(new dtABC::Application(created));
-   //dtCore::DeltaWin* dwin = app->GetWindow();
-   //dtCore::DeltaWin::Resolution res = dwin->GetCurrentResolution();
-   //CPPUNIT_ASSERT_EQUAL( res.width , dtABC::Application::ConfigDefaultModel::RESOLUTION.width );
-   //CPPUNIT_ASSERT_EQUAL( res.height , dtABC::Application::ConfigDefaultModel::RESOLUTION.height );
-   //CPPUNIT_ASSERT_EQUAL( res.bitDepth , dtABC::Application::ConfigDefaultModel::RESOLUTION.bitDepth );
-   //CPPUNIT_ASSERT_EQUAL( res.refresh , dtABC::Application::ConfigDefaultModel::RESOLUTION.refresh );
-
-   // test the content from the parser
-   dtABC::ApplicationConfigHandler handler;
-   dtUtil::XercesParser parser;
-   CPPUNIT_ASSERT( parser.Parse( mConfigName , handler , "application.xsd" ) );
-
-   // compare the content that was parsed to the advertised default values
-   // in order to confirm that:
-   // a) the parser works, but more importantly
-   // b) the writer wrote the right default values
-   dtABC::ApplicationConfigData truth = dtABC::Application::GetDefaultConfigData();
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.CAMERA_NAME , truth.CAMERA_NAME );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.CHANGE_RESOLUTION , truth.CHANGE_RESOLUTION );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.FULL_SCREEN , truth.FULL_SCREEN );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.bitDepth , truth.RESOLUTION.bitDepth );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.height , truth.RESOLUTION.height );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.refresh , truth.RESOLUTION.refresh );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.RESOLUTION.width , truth.RESOLUTION.width );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.SCENE_NAME , truth.SCENE_NAME );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.SHOW_CURSOR , truth.SHOW_CURSOR );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_NAME , truth.WINDOW_NAME );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_X , truth.WINDOW_X );
-   CPPUNIT_ASSERT_EQUAL( handler.mConfigData.WINDOW_Y , truth.WINDOW_Y );
-
-   // delete the file
-   dtUtil::FileUtils::GetInstance().FileDelete( mConfigName );
-
-   // make sure it does not exist
-   CPPUNIT_ASSERT( !dtUtil::FileUtils::GetInstance().FileExists( mConfigName ) );
-
-   ///\todo test applying the data to an Application instance
-}
-

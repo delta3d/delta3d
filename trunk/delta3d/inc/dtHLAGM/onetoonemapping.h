@@ -235,13 +235,13 @@ namespace dtHLAGM
          void SetInvalid(bool newInvalid) {  mInvalid = newInvalid; }
 
          /**
-          * Maps an HLA numeric enumerated value to a string-base game enumeration value.
+          * Maps an HLA enumerated value to a string-base game enumeration value.
           * @note using this only makes sense if the GameType property is set to ENUMERATION.
-          * @param hlaValue the integer value to map.
+          * @param hlaValue the hla value to map.
           * @param gameValue the name of the enumeration value to map to.  This will be passed to the property's
           *                  SetStringValue method.
           */
-         void AddEnumerationMapping(int hlaValue, const std::string& gameValue)
+         void AddEnumerationMapping(const std::string& hlaValue, const std::string& gameValue)
          {
             mHLAEnumerationMapping.insert(std::make_pair(hlaValue, gameValue));
             mGameEnumerationMapping.insert(std::make_pair(gameValue, hlaValue));
@@ -259,13 +259,13 @@ namespace dtHLAGM
          /**
           * Get the HLA value for an enumeration based on the given string game value.
           * @return true if the string value has been mapped or false if not.
-          * @param gameValue the string name of the enumeration value to get the integer value for.
-          * @param hlaValue output parameter that will be set the requested HLA numeric value if
+          * @param gameValue the string name of the enumeration value to get the value for.
+          * @param hlaValue output parameter that will be set the requested HLA value if
           *                this method returns true or undefined if not.
           */
-         bool GetHLAEnumerationValue(const std::string& gameValue, int& hlaValue) const
+         bool GetHLAEnumerationValue(const std::string& gameValue, std::string& hlaValue) const
          {
-            std::map<std::string, int>::const_iterator i = mGameEnumerationMapping.find(gameValue);
+            std::map<std::string, std::string>::const_iterator i = mGameEnumerationMapping.find(gameValue);
             if (i == mGameEnumerationMapping.end())
                return false;
 
@@ -274,15 +274,15 @@ namespace dtHLAGM
          }
 
          /**
-          * Get the game value for an enumeration based on the given integer HLA value.
-          * @return true if the int value has been mapped or false if not.
-          * @param hlaValue the integer value to get the string enumeration value for.
+          * Get the game value for an enumeration based on the given HLA value.
+          * @return true if the hla value has been mapped or false if not.
+          * @param hlaValue the string value to get the string enumeration value for.
           * @param gameValue output parameter that will be set the requested game string value
           *                   if this method returns true or undefined if not.
           */
-         bool GetGameEnumerationValue(int hlaValue, std::string& gameValue) const
+         bool GetGameEnumerationValue(const std::string& hlaValue, std::string& gameValue) const
          {
-            std::map<int, std::string>::const_iterator i = mHLAEnumerationMapping.find(hlaValue);
+            std::map<std::string, std::string>::const_iterator i = mHLAEnumerationMapping.find(hlaValue);
             if (i == mHLAEnumerationMapping.end())
                return false;
 
@@ -325,13 +325,13 @@ namespace dtHLAGM
          ///Boolean for whether this field is required for an Actor Update.
          bool mRequiredForGame;
 
-         ///mapping of integer to string values to map HLA enumerated values to
+         ///mapping of string to string values to map HLA enumerated values to
          ///ActorProxy stlye type-safe enumeration values.
-         std::map<int, std::string> mHLAEnumerationMapping;
+         std::map<std::string, std::string> mHLAEnumerationMapping;
 
-         ///mapping of string to integer values to map ActorProxy stlye
+         ///mapping of string to string values to map ActorProxy stlye
          ///type-safe enumeration values to HLA enumerated values.
-         std::map<std::string, int> mGameEnumerationMapping;
+         std::map<std::string, std::string> mGameEnumerationMapping;
 
          ///whether or not this mapping is invalid.
          bool mInvalid;

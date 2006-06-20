@@ -38,10 +38,15 @@ namespace dtUtil
 
    LibrarySharingManager::ExceptionEnum LibrarySharingManager::ExceptionEnum::LibraryLoadingError("Base Exception");
 
-   void LibrarySharingManager::LibraryHandle::release() 
+   bool LibrarySharingManager::LibraryHandle::IsShuttingDown() const
    {
-      //Tell this manager the handle is being deleted.
-      LibrarySharingManager::GetInstance().ReleaseSharedLibraryHandle(this);
+      return (!LibrarySharingManager::mInstance.valid()) || LibrarySharingManager::mInstance->mShuttingDown;
+   } 
+
+   void LibrarySharingManager::LibraryHandle::release()
+   {
+      if (!IsShuttingDown())
+         LibrarySharingManager::GetInstance().ReleaseSharedLibraryHandle(this);
       
    }  
    
@@ -122,13 +127,13 @@ namespace dtUtil
             return mLibName;
          } 
 
-
       protected:
          virtual ~InternalLibraryHandle() 
          {
             if (mHandle != NULL)
             {
-               LOG_INFO("Closing DynamicLibrary: " + mLibName);
+               if (!IsShuttingDown())
+                  LOG_INFO("Closing DynamicLibrary: " + mLibName);
 #if defined(WIN32) && !defined(__CYGWIN__)
                if (mClose)
                   FreeLibrary((HMODULE)mHandle);
@@ -156,13 +161,15 @@ namespace dtUtil
    dtCore::RefPtr<LibrarySharingManager> LibrarySharingManager::mInstance;
 
    ///////////////////////////////////////////////////////////////////////////////
-   LibrarySharingManager::LibrarySharingManager()
+   LibrarySharingManager::LibrarySharingManager(): mShuttingDown(false)
    {
    }
    
    ///////////////////////////////////////////////////////////////////////////////
    LibrarySharingManager::~LibrarySharingManager()
    {
+      mShuttingDown = true;
+      mLibraries.clear();
    }
    
    ///////////////////////////////////////////////////////////////////////////////
@@ -177,6 +184,9 @@ namespace dtUtil
    dtCore::RefPtr<LibrarySharingManager::LibraryHandle> LibrarySharingManager::LoadSharedLibrary(const std::string& libName) 
    throw(dtUtil::Exception)
    {
+      if (mShuttingDown)
+         EXCEPT(LibrarySharingManager::ExceptionEnum::LibraryLoadingError, "Library Manager is shutting down.");  
+         
       dtCore::RefPtr<LibrarySharingManager::LibraryHandle> dynLib;
         
         
@@ -226,6 +236,9 @@ namespace dtUtil
    {
       if (handle == NULL)
          return;
+
+      if (mShuttingDown)
+         return;
          
       std::map<std::string, dtCore::RefPtr<LibrarySharingManager::LibraryHandle> >::iterator itor = mLibraries.find(handle->GetLibName());
       if (itor != mLibraries.end()) 
@@ -241,7 +254,11 @@ namespace dtUtil
    std::string LibrarySharingManager::GetPlatformSpecificLibraryName(const std::string &libBase) throw()
    {
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+         #ifdef _DEBUG
+         return libBase + "d.dll";
+         #else
          return libBase + ".dll";
+         #endif
       #elif defined(__APPLE__)
          return "lib" + libBase + ".dylib";
       #else
@@ -255,7 +272,12 @@ namespace dtUtil
       std::string iName = osgDB::getStrippedName(libName);
    
       #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined( __BCPLUSPLUS__)  || defined( __MWERKS__)
+         #ifdef _DEBUG
+         //Pull off the final "d"
+         return std::string(iName.begin(),iName.end() - 1);
+         #else
          return iName;
+         #endif
       #else
          return std::string(iName.begin()+3,iName.end());
       #endif

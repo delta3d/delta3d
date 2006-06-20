@@ -23,7 +23,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc"
+				AdditionalIncludeDirectories="..\..\..\inc;..\..\..\ext\inc;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_NOAUTOLIBMSG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"

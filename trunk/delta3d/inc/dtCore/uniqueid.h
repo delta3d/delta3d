@@ -26,6 +26,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <string>
+#include <iostream>
 
 #include "dtCore/export.h"
 
@@ -75,6 +76,13 @@ namespace dtCore
          std::string mId;
              
    };
+   
+   inline std::ostream& operator << (std::ostream &o, const UniqueId &id)
+   {
+      o << id.ToString();
+      return o;
+   }
+
 };
 
 

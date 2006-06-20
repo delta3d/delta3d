@@ -135,6 +135,9 @@
 				RelativePath="..\..\..\src\dtGame\actorupdatemessage.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtGame\baseinputcomponent.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtGame\basemessages.cpp">
 			</File>
 			<File
@@ -222,6 +225,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath="..\..\..\inc\dtGame\actorupdatemessage.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtGame\baseinputcomponent.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtGame\basemessages.h">

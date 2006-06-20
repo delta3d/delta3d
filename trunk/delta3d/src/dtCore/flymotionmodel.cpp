@@ -352,7 +352,7 @@ void FlyMotionModel::OnMessage(MessageData *data)
       if (data->message == "pause") // paused and !useSimTime
          delta = *timeChange; // 0 is real time when paused
       else if (mUseSimTimeForSpeed) 
-         delta = timeChange[1]; // 0 is sim time
+         delta = timeChange[0]; // 0 is sim time
       else
          delta = timeChange[1]; // 1 is real time
 

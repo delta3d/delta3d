@@ -31,7 +31,7 @@ namespace dtGame
 {
    
    //////////////////////////////////////////////////////////////////////////
-   LogController::LogController()
+   LogController::LogController(const std::string &name) : GMComponent(name)
    {
    }
    
@@ -98,8 +98,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -108,8 +108,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_CHANGESTATE_RECORD);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -118,8 +118,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_CHANGESTATE_IDLE);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
 
@@ -131,8 +131,8 @@ namespace dtGame
       LogJumpToKeyframeMessage *pMsg = static_cast<LogJumpToKeyframeMessage *> (message.get());
       pMsg->SetKeyframe(keyframe);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -143,8 +143,8 @@ namespace dtGame
       LogCaptureKeyframeMessage *pMsg = static_cast<LogCaptureKeyframeMessage *> (message.get());
       pMsg->SetKeyframe(keyframe);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -153,8 +153,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_GET_KEYFRAMES);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -163,8 +163,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_GET_LOGFILES);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -173,8 +173,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_GET_TAGS);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
    //////////////////////////////////////////////////////////////////////////
    void LogController::RequestServerGetStatus()
@@ -182,8 +182,8 @@ namespace dtGame
       dtCore::RefPtr<Message> message = 
          GetGameManager()->GetMessageFactory().CreateMessage(MessageType::LOG_REQ_GET_STATUS);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -194,8 +194,8 @@ namespace dtGame
       LogInsertTagMessage *pMsg = static_cast<LogInsertTagMessage *> (message.get());
       pMsg->SetTag(tag);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -206,8 +206,8 @@ namespace dtGame
       LogDeleteLogfileMessage *pMsg = static_cast<LogDeleteLogfileMessage *> (message.get());
       pMsg->SetLogFileName(logFile);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -218,8 +218,8 @@ namespace dtGame
       LogSetLogfileMessage *pMsg = static_cast<LogSetLogfileMessage *> (message.get());
       pMsg->SetLogFileName(logFile);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -230,8 +230,8 @@ namespace dtGame
       LogSetAutoKeyframeIntervalMessage *pMsg = static_cast<LogSetAutoKeyframeIntervalMessage *> (message.get());
       pMsg->SetAutoKeyframeInterval(interval);
 
-      GetGameManager()->ProcessMessage(*message);
       GetGameManager()->SendMessage(*message);
+      GetGameManager()->SendNetworkMessage(*message);
    }
 
 }

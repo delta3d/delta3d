@@ -62,7 +62,7 @@ else
   DEFINES="-DSIGSLOT_PURE_ISO"
   if echo $OS | grep Darwin > /dev/null ; then 
      DEFINES="$DEFINES -D_DEBUG -D__USE_OSX_AGL_IMPLEMENTATION__ -DMAC_OS_X_VERSION_MIN_REQUIRED=1030"
-     DEFAULT_FLAGS="-g -O0 -pipe -fPIC -Wall -Wno-non-virtual-dtor"
+     DEFAULT_FLAGS="-ggdb -O0 -pipe -fPIC -Wall -Wno-non-virtual-dtor"
   else
      DEFAULT_FLAGS="-g -O0 -pipe -fPIC -Wall -Wno-non-virtual-dtor"
   fi

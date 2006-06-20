@@ -19,11 +19,10 @@
  * @author William E. Johnson II
  */
 #include <dtABC/application.h>
-#include <dtCore/camera.h>
 #include <dtCore/environment.h>
 #include <dtCore/infiniteterrain.h>
 #include <dtCore/flymotionmodel.h>
-#include <dtCore/infinitelight.h>
+#include <dtCore/camera.h>
 #include <dtDAL/actorproxy.h>
 #include <dtActors/basicenvironmentactorproxy.h>
 #include <dtUtil/exception.h>
@@ -69,20 +68,17 @@ class App : public dtABC::Application
          mFMM = new dtCore::FlyMotionModel(GetKeyboard(), GetMouse());
          mFMM->SetTarget(GetCamera());
 
-         dtCore::RefPtr<dtCore::InfiniteLight> light = new dtCore::InfiniteLight(0);
-         GetScene()->AddDrawable(light.get());
-
+         GetScene()->UseSceneLight(true);
          GetCamera()->SetTransform(&dtCore::Transform(0, 0, 1));
 
          Config();
       }
 
-      bool KeyPressed(const dtCore::Keyboard* keyboard, 
+      virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
                               Producer::KeyboardKey key, 
                               Producer::KeyCharacter character)
       {
          bool handled = true;
-
          if(key == Producer::Key_1)
          {
             static bool enable = false;
@@ -138,13 +134,16 @@ class App : public dtABC::Application
          else if(key == Producer::Key_space)
          {
             mGM->SetEnvironmentActor(mGM->GetEnvironmentActor() != NULL ? NULL : mEnvironmentProxy.get());
-            GetScene()->AddDrawable(new dtCore::InfiniteLight(0));
+            GetScene()->UseSceneLight(true);
+         }
+         else if(key == Producer::Key_Escape)
+         {
+            Quit();
          }
          else
          {
-            handled = dtABC::Application::KeyPressed(keyboard, key, character);
+            handled = false;
          }
-
          return handled;
       }
 

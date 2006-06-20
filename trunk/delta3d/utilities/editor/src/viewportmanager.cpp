@@ -348,6 +348,8 @@ namespace dtEditQt
     {
        if (isPagingEnabled)
           EnablePaging(false);
+          
+       masterScene->RemoveAllDrawables();
     }
 
 

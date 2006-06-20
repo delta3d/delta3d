@@ -43,7 +43,12 @@ class DT_EXAMPLE_EXPORT TestGameActor2 : public dtGame::GameActor
       int GetMapLoadedCount() const { return mMapLoadedCount; }
       void SetMapLoadedCount(int newValue)  { mMapLoadedCount = newValue; } 
 
+      // tests setting an invokable with a new name - does +1 on each message counter
       void LogMessage(const dtGame::Message& message);
+
+      // tests the default processor - does +2 on each message counter
+      void ProcessMessage(const dtGame::Message& message);
+
    private:
       int mActorDeletedCount;
       int mActorPublishedCount;

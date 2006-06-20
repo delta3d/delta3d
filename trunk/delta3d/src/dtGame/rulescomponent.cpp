@@ -6,7 +6,7 @@
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -44,7 +44,7 @@ namespace dtGame
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
          return;
       }
-      
+
       if(msg.GetMessageType() == MessageType::TICK_LOCAL)
       {
          ProcessTick(static_cast<const TickMessage&>(msg));
@@ -55,38 +55,38 @@ namespace dtGame
       }
       else if(msg.GetMessageType() == MessageType::INFO_ACTOR_PUBLISHED)
       {
-         GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
+         GameActorProxy* ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
          if(ga && ga->IsPublished())
             ProcessPublishActor(static_cast<const ActorPublishedMessage&>(msg));
       }
       else if(msg.GetMessageType() == MessageType::INFO_ACTOR_DELETED)
       {
-         GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
+         GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
          if(ga && ga->IsPublished())
             ProcessDeleteActor(static_cast<const ActorDeletedMessage&>(msg));
       }
       else if(msg.GetMessageType() == MessageType::INFO_ACTOR_UPDATED)
       {
-         GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
+         GameActorProxy *ga = GetGameManager()->FindGameActorById(msg.GetAboutActorId());
          if(ga && ga->IsPublished())
             ProcessUpdateActor(static_cast<const ActorUpdateMessage&>(msg));
       }
       else
       {
          if (logger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
-            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__, 
+            logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__, __LINE__,
                "Received a message of unknown type: ",  msg.GetMessageType().GetName().c_str());
          ProcessUnhandledLocalMessage(msg);
       }
    }
 
-   void RulesComponent::SendMessage(const Message &msg)
+   void RulesComponent::DispatchNetworkMessage(const Message &msg)
    {
       if (GetGameManager() == NULL)
       {
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Rules Component has no GameManager, but a message was received.");
          return;
-      }     
+      }
    }
 
    void RulesComponent::ProcessTick(const TickMessage &msg)
@@ -100,7 +100,7 @@ namespace dtGame
       {
          dtCore::RefPtr<Message> newMsg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_CREATED);
          gap->PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*newMsg));
-         GetGameManager()->SendMessage(*newMsg);
+         GetGameManager()->SendNetworkMessage(*newMsg);
       }
       else
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a publish message from an actor that isn't part of the GameManager");
@@ -113,16 +113,16 @@ namespace dtGame
       {
          try
          {
-            GetGameManager()->SendMessage(msg);
+            GetGameManager()->SendNetworkMessage(msg);
          }
          catch (const dtUtil::Exception& ex)
          {
-            logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+            logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
                "Exception trying to clone a delete message: ", ex.What().c_str());
          }
       }
       else
-         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, 
+         logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__,
             "Received a delete actor message from an actor that isn't part of the GameManager");
    }
 
@@ -131,7 +131,7 @@ namespace dtGame
       GameActorProxy *gap = GetGameManager()->FindGameActorById(msg.GetSendingActorId());
       if(gap != NULL)
       {
-         GetGameManager()->SendMessage(msg);
+         GetGameManager()->SendNetworkMessage(msg);
       }
       else
          logger->LogMessage(dtUtil::Log::LOG_ERROR, __FUNCTION__, __LINE__, "Received a update actor message from an actor that isn't part of the GameManager");

@@ -97,7 +97,7 @@ const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARA
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-char* MapTests::mExampleLibraryName="testActorLibraryd";
+char* MapTests::mExampleLibraryName="testActorLibrary";
 #else
 char* MapTests::mExampleLibraryName="testActorLibrary";
 #endif
@@ -463,6 +463,8 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
         if (propName != "")
         {
             dtDAL::ActorProperty* prop = proxy->GetProperty(propName);
+            //if a prop of a certain name is requested, readonly is allowed since the called should know which property
+            //They will be getting.
             if (prop != NULL)
             {
                 if (prop->GetPropertyType() == type && which-- == 0)
@@ -479,9 +481,9 @@ dtDAL::ActorProperty* MapTests::getActorProperty(dtDAL::Map& map,
             for (std::vector<dtDAL::ActorProperty*>::iterator j = props.begin(); j<props.end(); ++j)
             {
                 dtDAL::ActorProperty* prop = *j;
-                if (prop->GetPropertyType() == type && which-- == 0)
+                if (!prop->IsReadOnly() && prop->GetPropertyType() == type && which-- == 0)
                 {
-                    //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId().ToString() << std::endl;
+                    //std::cout << "Using prop " << prop->GetName() << " on actor with id " << proxy->GetId() << std::endl;
                     //std::cout << "  " << proxy->GetActorType().GetName() << std::endl;
                     return prop;
                 }
@@ -796,16 +798,16 @@ void MapTests::testMapSaveAndLoad()
         ap = getActorProperty(*map, "", dtDAL::DataType::RGBACOLOR, 1);
         ((dtDAL::ColorRgbaActorProperty*)ap)->SetValue(testVec4_2);
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC4, 0);
+        ap = getActorProperty(*map, "Test_Vec4", dtDAL::DataType::VEC4, 0);
         ((dtDAL::Vec4ActorProperty*)ap)->SetValue(testVec4_1);
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC4F, 0);
+        ap = getActorProperty(*map, "Test_Vec4f", dtDAL::DataType::VEC4F, 0);
         ((dtDAL::Vec4fActorProperty*)ap)->SetValue(testVec4f_1);
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC4D, 0);
+        ap = getActorProperty(*map, "Test_Vec4d", dtDAL::DataType::VEC4D, 0);
         ((dtDAL::Vec4dActorProperty*)ap)->SetValue(testVec4d_1);
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::INT);
+        ap = getActorProperty(*map, "Test_Int", dtDAL::DataType::INT);
         ((dtDAL::IntActorProperty*)ap)->SetValue(128);
 
 
@@ -1019,7 +1021,7 @@ void MapTests::testMapSaveAndLoad()
             && osg::equivalent(((dtDAL::ColorRgbaActorProperty*)ap)->GetValue()[3], testVec4_2[3], 1e-2f)
             );
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC4, 0);
+        ap = getActorProperty(*map, "Test_Vec4", dtDAL::DataType::VEC4, 0);
 
         osg::Vec4 v4 = ((dtDAL::Vec4ActorProperty*)ap)->GetValue();
 
@@ -1030,7 +1032,7 @@ void MapTests::testMapSaveAndLoad()
             && osg::equivalent(((dtDAL::Vec4ActorProperty*)ap)->GetValue()[3], testVec4_1[3], 1e-2f)
             );
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC4F, 0);
+        ap = getActorProperty(*map, "Test_Vec4f", dtDAL::DataType::VEC4F, 0);
 
         osg::Vec4f v4f = ((dtDAL::Vec4fActorProperty*)ap)->GetValue();
 
@@ -1041,7 +1043,7 @@ void MapTests::testMapSaveAndLoad()
             && osg::equivalent(((dtDAL::Vec4fActorProperty*)ap)->GetValue()[3], testVec4f_1[3], 1e-2f)
             );
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::VEC4D, 0);
+        ap = getActorProperty(*map, "Test_Vec4d", dtDAL::DataType::VEC4D, 0);
 
         osg::Vec4d v4d = ((dtDAL::Vec4dActorProperty*)ap)->GetValue();
 
@@ -1052,7 +1054,7 @@ void MapTests::testMapSaveAndLoad()
             && osg::equivalent(((dtDAL::Vec4dActorProperty*)ap)->GetValue()[3], testVec4d_1[3], 1e-2)
             );
 
-        ap = getActorProperty(*map, "", dtDAL::DataType::INT);
+        ap = getActorProperty(*map, "Test_Int", dtDAL::DataType::INT);
         CPPUNIT_ASSERT_MESSAGE(ap->GetName() + " value should be 128",
              ((dtDAL::IntActorProperty*)ap)->GetValue() == 128);
 

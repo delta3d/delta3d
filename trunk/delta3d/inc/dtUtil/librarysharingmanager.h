@@ -84,7 +84,8 @@ namespace dtUtil
             protected:
                LibraryHandle() {}
                virtual ~LibraryHandle() {}
-               void release(); 
+               void release();
+               bool IsShuttingDown() const; 
             private:
                
                // -----------------------------------------------------------------------
@@ -130,10 +131,12 @@ namespace dtUtil
       private:
          static dtCore::RefPtr<LibrarySharingManager> mInstance;
 
-      	 LibrarySharingManager();
-      	 virtual ~LibrarySharingManager();
+         LibrarySharingManager();
+         virtual ~LibrarySharingManager();
          //map of the platform independent name to the actual library
          std::map<std::string, dtCore::RefPtr<LibraryHandle> > mLibraries;
+
+         bool mShuttingDown;
 
          /**
           * This releases the handle to a loaded library.  If there are no other handles to 

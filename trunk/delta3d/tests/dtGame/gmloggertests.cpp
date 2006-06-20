@@ -150,23 +150,24 @@ class GMLoggerTests : public CPPUNIT_NS::TestFixture
 class TestComponent: public dtGame::GMComponent
 {
    public:
+      TestComponent() : GMComponent("Awesome Test Component") { }
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
          { return mReceivedProcessMessages; }
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedSendMessages()
-         { return mReceivedSendMessages; }
+      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
+         { return mReceivedDispatchNetworkMessages; }
 
       virtual void ProcessMessage(const dtGame::Message& msg)
       {
          mReceivedProcessMessages.push_back(&msg);
       }
-      virtual void SendMessage(const dtGame::Message& msg)
+      virtual void DispatchNetworkMessage(const dtGame::Message& msg)
       {
-         mReceivedSendMessages.push_back(&msg);
+         mReceivedDispatchNetworkMessages.push_back(&msg);
       }
 
       void reset()
       {
-         mReceivedSendMessages.clear();
+         mReceivedDispatchNetworkMessages.clear();
          mReceivedProcessMessages.clear();
       }
 
@@ -179,18 +180,18 @@ class TestComponent: public dtGame::GMComponent
          }
          return NULL;
       }
-      dtCore::RefPtr<const dtGame::Message> FindSendMessageOfType(const dtGame::MessageType& type)
+      dtCore::RefPtr<const dtGame::Message> FindDispatchNetworkMessageOfType(const dtGame::MessageType& type)
       {
-         for (unsigned i = 0; i < mReceivedSendMessages.size(); ++i)
+         for (unsigned i = 0; i < mReceivedDispatchNetworkMessages.size(); ++i)
          {
-            if (mReceivedSendMessages[i]->GetMessageType() == type)
-               return mReceivedSendMessages[i];
+            if (mReceivedDispatchNetworkMessages[i]->GetMessageType() == type)
+               return mReceivedDispatchNetworkMessages[i];
          }
          return NULL;
       }
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedSendMessages;
+      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -296,8 +297,8 @@ const std::string LOGFILE = "testlog";
 const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibraryd";
-char* GMLoggerTests::mTestActorLibrary="testActorLibraryd";
+char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
+char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
 #else
 char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
 char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
@@ -358,13 +359,13 @@ void GMLoggerTests::tearDown()
    {
       if (mGameManager.valid())
       {
-         std::vector<dtGame::GMComponent*> components;
-         for (unsigned int i=0; i<components.size(); i++)
-            mGameManager->RemoveComponent(*components[i]);
-
          dtCore::RefPtr<dtGame::BinaryLogStream> stream =  new dtGame::BinaryLogStream(mGameManager->GetMessageFactory());
          std::vector<std::string> logList;
 
+         mGameManager->DeleteAllActors(true);
+         mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
+         mGameManager = NULL;
+         
          stream->GetAvailableLogs(TESTS_DIR,logList);
          for (unsigned int i=0; i<logList.size(); i++)
             stream->Delete(TESTS_DIR,logList[i]);
@@ -373,9 +374,6 @@ void GMLoggerTests::tearDown()
 
          dtCore::System::Instance()->SetPause(false);
          dtCore::System::Instance()->Stop();
-         mGameManager->DeleteAllActors();
-         mGameManager->UnloadActorRegistry(mTestGameActorLibrary);
-         mGameManager = NULL;
       }
    }
    catch (const dtUtil::Exception& e)
@@ -956,16 +954,9 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       mGameManager->AddComponent(*tc, dtGame::GameManager::ComponentPriority::NORMAL);
       testSignal->RegisterSignals(*logController);
 
-      dtCore::RefPtr<dtDAL::ActorType> actorType =
-         mGameManager->FindActorType("ExampleActors", "TestPlayer");
-      CPPUNIT_ASSERT_MESSAGE("Could not find test player actor type.",
-         actorType != NULL);
+      mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
+      CPPUNIT_ASSERT(gameProxy.valid());
 
-      proxy = mGameManager->CreateActor(*actorType);
-      CPPUNIT_ASSERT_MESSAGE("Could not create test player actor.",
-         actorType != NULL);
-
-      gameProxy =  dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
       mGameManager->AddActor(*gameProxy,false,false);
       SLEEP(10);
       dtCore::System::Instance()->Step();
@@ -979,14 +970,10 @@ void GMLoggerTests::TestPlaybackRecordCycle()
       SLEEP(10);
       dtCore::System::Instance()->Step();
 
-      actorType = mGameManager->FindActorType("ExampleActors", "Test1Actor");
-
-      proxy = mGameManager->CreateActor(*actorType);
-      gameProxy =  dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      mGameManager->CreateActor("ExampleActors", "Test1Actor", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
 
-      proxy = mGameManager->CreateActor(*actorType);
-      gameProxy = dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      mGameManager->CreateActor("ExampleActors", "Test1Actor", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
 
       SLEEP(10);
@@ -1184,16 +1171,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       mGameManager->AddComponent(*(new dtGame::DefaultMessageProcessor()), dtGame::GameManager::ComponentPriority::HIGHEST);
       rejectMsgSignal->RegisterSignals(*logController);
 
-      dtCore::RefPtr<dtDAL::ActorType> actorType =
-         mGameManager->FindActorType("ExampleActors", "TestPlayer");
-      CPPUNIT_ASSERT_MESSAGE("Could not find test player actor type.",
-         actorType != NULL);
-
-      proxy = mGameManager->CreateActor(*actorType);
-      CPPUNIT_ASSERT_MESSAGE("Could not create test player actor.",
-         actorType != NULL);
-
-      gameProxy =  dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
 
       dtCore::System::Instance()->Step();
@@ -1219,8 +1197,7 @@ void GMLoggerTests::TestLoggerGetKeyframes()
             "first keyframe: " + errorMsg, rejectMsgSignal->mRejectMessage != NULL);
       }
 
-      proxy = mGameManager->CreateActor(*actorType);
-      gameProxy =  dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
       dtCore::System::Instance()->Step();
       SLEEP(10);
@@ -1258,9 +1235,9 @@ void GMLoggerTests::TestLoggerGetKeyframes()
       SLEEP(10);
       dtCore::System::Instance()->Step();
 
-      proxy = mGameManager->CreateActor(*actorType);
-      gameProxy =  dynamic_cast<dtGame::GameActorProxy*>(proxy.get());
+      mGameManager->CreateActor("ExampleActors", "TestPlayer", gameProxy);
       mGameManager->AddActor(*gameProxy,false,false);
+
       dtCore::System::Instance()->Step();
       SLEEP(10);
 
@@ -1928,9 +1905,9 @@ void GMLoggerTests::TestLogControllerComponent()
       {
          CPPUNIT_ASSERT(tc->GetReceivedProcessMessages()[i].valid());
       }
-      for (unsigned i = 0; i < tc->GetReceivedSendMessages().size(); ++i)
+      for (unsigned i = 0; i < tc->GetReceivedDispatchNetworkMessages().size(); ++i)
       {
-         CPPUNIT_ASSERT(tc->GetReceivedSendMessages()[i].valid());
+         CPPUNIT_ASSERT(tc->GetReceivedDispatchNetworkMessages()[i].valid());
       }
 
       // find the processed (processMessage) Messages
@@ -1981,23 +1958,23 @@ void GMLoggerTests::TestLogControllerComponent()
 
       // find the SENT (sendMessage) Messages
 
-      dtCore::RefPtr<const dtGame::Message> sentReqStatePlayback = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
-      dtCore::RefPtr<const dtGame::Message> sentReqStateRecord = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
-      dtCore::RefPtr<const dtGame::Message> sentReqStateIdle = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE);
+      dtCore::RefPtr<const dtGame::Message> sentReqStatePlayback = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);
+      dtCore::RefPtr<const dtGame::Message> sentReqStateRecord = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_RECORD);
+      dtCore::RefPtr<const dtGame::Message> sentReqStateIdle = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CHANGESTATE_IDLE);
       dtCore::RefPtr<const dtGame::LogCaptureKeyframeMessage> sentCaptureKeyframeMsg =
-         (const dtGame::LogCaptureKeyframeMessage *)( tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME)).get();
-      dtCore::RefPtr<const dtGame::Message> sentReqGeyKeyframes = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_GET_KEYFRAMES);
-      dtCore::RefPtr<const dtGame::Message> sentReqGetLogfiles = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_GET_LOGFILES);
-      dtCore::RefPtr<const dtGame::Message> sentReqGetTags = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_GET_TAGS);
-      dtCore::RefPtr<const dtGame::Message> sentReqGetStatus = tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_GET_STATUS);
+         (const dtGame::LogCaptureKeyframeMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_CAPTURE_KEYFRAME)).get();
+      dtCore::RefPtr<const dtGame::Message> sentReqGeyKeyframes = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_KEYFRAMES);
+      dtCore::RefPtr<const dtGame::Message> sentReqGetLogfiles = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_LOGFILES);
+      dtCore::RefPtr<const dtGame::Message> sentReqGetTags = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_TAGS);
+      dtCore::RefPtr<const dtGame::Message> sentReqGetStatus = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_GET_STATUS);
       dtCore::RefPtr<const dtGame::LogInsertTagMessage> sentInsertTagMsg =
-         (const dtGame::LogInsertTagMessage *)( tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_INSERT_TAG)).get();
+         (const dtGame::LogInsertTagMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_INSERT_TAG)).get();
       dtCore::RefPtr<const dtGame::LogDeleteLogfileMessage> sentDeleteLogMsg =
-         (const dtGame::LogDeleteLogfileMessage *)( tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_DELETE_LOG)).get();
+         (const dtGame::LogDeleteLogfileMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_DELETE_LOG)).get();
       dtCore::RefPtr<const dtGame::LogSetLogfileMessage> sentSetLogMsg =
-         (const dtGame::LogSetLogfileMessage *)( tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_SET_LOGFILE)).get();
+         (const dtGame::LogSetLogfileMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_SET_LOGFILE)).get();
       dtCore::RefPtr<const dtGame::LogSetAutoKeyframeIntervalMessage> sentSetKeyframeIntMsg =
-         (const dtGame::LogSetAutoKeyframeIntervalMessage *)( tc->FindSendMessageOfType(dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)).get();
+         (const dtGame::LogSetAutoKeyframeIntervalMessage *)( tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::LOG_REQ_SET_AUTOKEYFRAMEINTERVAL)).get();
       //dtCore::RefPtr<dtGame::LogStatusMessage> infoStatusMsg = tc->FindProcessMessageOfType(dtGame::MessageType::TICK_LOCAL);
 
       // test that they were SENT(sendMessage())
@@ -2056,8 +2033,8 @@ void GMLoggerTests::TestControllerSignals()
          mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::LOG_INFO_STATUS);
       dtGame::LogStatusMessage *pMsg = static_cast<dtGame::LogStatusMessage *> (statusMessage.get());
       pMsg->SetStatus(status);
-      mGameManager->ProcessMessage(*statusMessage);
-      //mGameManager->SendMessage(*statusMessage);
+      mGameManager->SendMessage(*statusMessage);
+      //mGameManager->SendNetworkMessage(*statusMessage);
       double deltaTime[2] = {0.3, 0.3};
       dtCore::System::Instance()->SendMessage("preframe", &deltaTime); // let the GM send 'em.
 
@@ -2278,7 +2255,7 @@ void GMLoggerTests::TestServerLogger2()
       message = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_MAP_LOADED);
       dtGame::MapLoadedMessage *mapLoadedMsg = (dtGame::MapLoadedMessage *) message.get();
       mapLoadedMsg->SetLoadedMapName("MyBogusMapName");
-      mGameManager->ProcessMessage(*mapLoadedMsg);
+      mGameManager->SendMessage(*mapLoadedMsg);
       logController->RequestServerGetStatus();
       SLEEP(10); // tick the GM so it can send the messages
       dtCore::System::Instance()->Step();

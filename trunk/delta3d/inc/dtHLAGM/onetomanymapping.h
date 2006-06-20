@@ -24,6 +24,7 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 #include <dtDAL/datatype.h>
 #include <dtCore/refptr.h>
 #include "dtHLAGM/export.h"
@@ -42,7 +43,7 @@ namespace dtHLAGM
    {
       public:
       
-         class ParameterDefinition
+         class DT_HLAGM_EXPORT ParameterDefinition
          {
             public:
 
@@ -148,27 +149,20 @@ namespace dtHLAGM
                }
 
                /**
-                * Maps an HLA numeric enumerated value to a string-base game enumeration value.
+                * Maps an HLA enumerated value to a string-base game enumeration value.
                 * @note using this only makes sense if the GameType property is set to ENUMERATION.
-                * @param hlaValue the integer value to map.
+                * @param hlaValue the hla value to map.  This should be in a format that the parameter translator can translate
+                *                 into the hla type of the hla data.
                 * @param gameValue the name of the enumeration value to map to.  This will be passed to the property's
                 *                  SetStringValue method.
                 */
-               void AddEnumerationMapping(int hlaValue, const std::string& gameValue)
-               {
-                  mHLAEnumerationMapping.insert(std::make_pair(hlaValue, gameValue));
-                  mGameEnumerationMapping.insert(std::make_pair(gameValue, hlaValue));
-               }
+               void AddEnumerationMapping(const std::string& hlaValue, const std::string& gameValue);
 
                /**
                 * A simple method to clear all of the current enumeration mappings created using
                 * AddEnumerationMapping.
                 */
-               void ClearEnumerationMapping()
-               {
-                  mHLAEnumerationMapping.clear();
-                  mGameEnumerationMapping.clear();
-               }
+               void ClearEnumerationMapping();
                
                /**
                 * Get the HLA value for an enumeration based on the given string game value.
@@ -177,42 +171,34 @@ namespace dtHLAGM
                 * @param hlaValue output parameter that will be set the requested HLA numeric value if
                 *                this method returns true or undefined if not.
                 */
-               bool GetHLAEnumerationValue(const std::string& gameValue, int& hlaValue) const
-               {
-                  std::map<std::string, int>::const_iterator i = mGameEnumerationMapping.find(gameValue);
-                  if (i == mGameEnumerationMapping.end())
-                     return false;
-
-                  hlaValue = i->second;
-                  return true;
-               }
+               bool GetHLAEnumerationValue(const std::string& gameValue, std::string& hlaValue) const;
 
                /**
                 * Get the game value for an enumeration based on the given integer HLA value.
-                * @return true if the int value has been mapped or false if not.
-                * @param hlaValue the integer value to get the string enumeration value for.
+                * @return true if the value has been mapped or false if not.
+                * @param hlaValue the value to get the string enumeration value for.
                 * @param gameValue output parameter that will be set the requested game string value
                 *                   if this method returns true or undefined if not.
                 */
-               bool GetGameEnumerationValue(int hlaValue, std::string& gameValue) const
-               {
-                  std::map<int, std::string>::const_iterator i = mHLAEnumerationMapping.find(hlaValue);
-                  if (i == mHLAEnumerationMapping.end())
-                     return false;
+               bool GetGameEnumerationValue(const std::string& hlaValue, std::string& gameValue) const;
 
-                  gameValue = i->second;
-                  return true;
+               /**
+                * @return a const map of the HLA values mapped to the game values
+                */
+               const std::map<std::string, std::string>& GetHLAToGameEnumerationMappings() const
+               {
+                  return mHLAEnumerationMapping;
+               }
+
+               /**
+                * @return a const map of the game values mapped to the HLA values
+                */
+               const std::map<std::string, std::string>& GetGameToHLAEnumerationMappings() const
+               {
+                  return mGameEnumerationMapping;
                }
                
-               bool operator==(const ParameterDefinition& compareTo) const
-               {
-                   return (mGameName == compareTo.mGameName)
-                   && (mGameType == compareTo.mGameType)
-                   && (mDefaultValue == compareTo.mDefaultValue)
-                   && (mRequiredForGame == compareTo.mRequiredForGame)
-                   && (mHLAEnumerationMapping == compareTo.mHLAEnumerationMapping)
-                   && (mGameEnumerationMapping == compareTo.mGameEnumerationMapping);
-               }
+               bool operator==(const ParameterDefinition& compareTo) const;
 
             private:
                ///The Game Parameter Name.
@@ -227,13 +213,13 @@ namespace dtHLAGM
                ///Boolean for whether this field is required for an Actor Update.
                bool mRequiredForGame;
 
-               ///mapping of integer to string values to map HLA enumerated values to
+               ///mapping of string to string values to map HLA enumerated values to
                ///ActorProxy stlye type-safe enumeration values.
-               std::map<int, std::string> mHLAEnumerationMapping;
+               std::map<std::string, std::string> mHLAEnumerationMapping;
 
-               ///mapping of string to integer values to map ActorProxy stlye
+               ///mapping of string to string values to map ActorProxy stlye
                ///type-safe enumeration values to HLA enumerated values.
-               std::map<std::string, int> mGameEnumerationMapping;
+               std::map<std::string, std::string> mGameEnumerationMapping;
          };
 
          /**
@@ -360,5 +346,11 @@ namespace dtHLAGM
          //A vector of the game parameter definitions for this mapping to use.
          std::vector<ParameterDefinition> mGameParameters; 
    };
+
+   DT_HLAGM_EXPORT std::ostream& operator << (std::ostream& os, const OneToManyMapping& otmm);
+
+   DT_HLAGM_EXPORT std::ostream& operator << (std::ostream& os, const OneToManyMapping::ParameterDefinition& pd);
+
 };
+
 #endif // DELTA_ONE_TO_MANY_MAPPING

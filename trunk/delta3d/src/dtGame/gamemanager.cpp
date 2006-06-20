@@ -54,7 +54,7 @@ namespace dtGame
       mStatisticsInterval(0),
       mStatsLastFragmentDump(0),
       mStatsNumProcMessages(0),
-      mStatsNumSendMessages(0),
+      mStatsNumSendNetworkMessages(0),
       mStatsNumFrames(0),
       mStatsCumGMProcessTime(0),
       mApplication(NULL)
@@ -64,6 +64,10 @@ namespace dtGame
       AddSender(dtCore::System::Instance());
       mPaused = dtCore::System::Instance()->GetPause();
 
+      // when we come alive, the first message everyone gets will be INFO_RESTARTED
+      dtCore::RefPtr<Message> restartMessage = 
+         GetMessageFactory().CreateMessage(MessageType::INFO_RESTARTED);
+      SendMessage(*restartMessage);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -188,15 +192,15 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::SendMessage(const Message& message)
+   void GameManager::SendNetworkMessage(const Message& message)
    {
-      mSendMessageQueue.push(dtCore::RefPtr<const Message>(&message));
+      mSendNetworkMessageQueue.push(dtCore::RefPtr<const Message>(&message));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::ProcessMessage(const Message& message)
+   void GameManager::SendMessage(const Message& message)
    {
-      mProcessMessageQueue.push(dtCore::RefPtr<const Message>(&message));
+      mSendMessageQueue.push(dtCore::RefPtr<const Message>(&message));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -235,7 +239,7 @@ namespace dtGame
       tcm->SetSimulationTime(newTime);
       tcm->SetSimulationClockTime(newClockTime);
       tcm->SetTimeScale(newTimeScale);
-      ProcessMessage(*timeChangeMsg);
+      SendMessage(*timeChangeMsg);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -248,11 +252,11 @@ namespace dtGame
       dtCore::System::Instance()->SetPause(mPaused);
       if (mPaused)
       {
-         ProcessMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_PAUSED));
+         SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_PAUSED));
       }
       else
       {
-         ProcessMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_RESUMED));
+         SendMessage(*GetMessageFactory().CreateMessage(MessageType::INFO_RESUMED));
       }
    }
 
@@ -267,13 +271,13 @@ namespace dtGame
          frameTickStart = statsTickClock.Tick();
 
       // SEND MESSAGES - Forward Send Messages to all components (no actors)
-      while (!mSendMessageQueue.empty())
+      while (!mSendNetworkMessageQueue.empty())
       {
-         mStatsNumSendMessages += 1;
-         dtCore::RefPtr<const Message> message = mSendMessageQueue.front();
-         mSendMessageQueue.pop();
+         mStatsNumSendNetworkMessages += 1;
+         dtCore::RefPtr<const Message> message = mSendNetworkMessageQueue.front();
+         mSendNetworkMessageQueue.pop();
          for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
-            (*i)->SendMessage(*message);
+            (*i)->DispatchNetworkMessage(*message);
       }
 
       double simulationTime = dtCore::System::Instance()->GetSimulationTime();
@@ -298,20 +302,20 @@ namespace dtGame
       tickRemoteMessage.SetDestination(&GetMachineInfo());
       tickRemoteMessage.SetSimulationTime(simulationTime);
 
-      ProcessMessage(*tick);
-      ProcessMessage(*tickRemote);
+      SendMessage(*tick);
+      SendMessage(*tickRemote);
 
       ProcessTimers(mRealTimeTimers, GetRealClockTime());
       ProcessTimers(mSimulationTimers, GetSimulationClockTime());
 
       // PROCESS MESSAGES - Send all Process messages to components and interested actors
-      while (!mProcessMessageQueue.empty())
+      while (!mSendMessageQueue.empty())
       {
          mStatsNumProcMessages += 1;
 
          // Forward to Components first
-         dtCore::RefPtr<const Message> message = mProcessMessageQueue.front();
-         mProcessMessageQueue.pop();
+         dtCore::RefPtr<const Message> message = mSendMessageQueue.front();
+         mSendMessageQueue.pop();
          for (std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin(); i != mComponentList.end(); ++i)
          {
             (*i)->ProcessMessage(*message);
@@ -359,7 +363,7 @@ namespace dtGame
             //next, sent it to all actors listening to that actor for that message type.
             // TODO - This should be refactored like we did for the Global Invokables a few lines up. It should work with the map directly instead of filling lists repeatedly
             std::vector<std::pair<GameActorProxy*, std::string > > toFill;
-            GetGameActorMessageListeners(message->GetMessageType(), message->GetAboutActorId(), toFill);
+            GetRegistrantsForMessagesAboutActor(message->GetMessageType(), message->GetAboutActorId(), toFill);
             for (unsigned i = 0; i < toFill.size(); ++i)
             {
                std::pair<GameActorProxy*, std::string >& listener = toFill[i];
@@ -421,7 +425,7 @@ namespace dtGame
 
             std::ostringstream ss;
             ss << "GM Stats: SimTime[" << GetSimulationTime() << "], TimeInGM[" << gmPercentTime << "%], Ticks[" <<
-                  mStatsNumFrames << "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendMessages <<
+                  mStatsNumFrames << "], #Msgs[" << mStatsNumProcMessages << " P/" << mStatsNumSendNetworkMessages <<
                   " S], #Actors[" << mActorProxyMap.size() << "/" << mGameActorProxyMap.size() << " Game]";
             mLogger->LogMessage(__FUNCTION__, __LINE__, ss.str(), dtUtil::Log::LOG_ALWAYS);
 
@@ -429,7 +433,7 @@ namespace dtGame
             mStatsLastFragmentDump = frameTickStop;
             mStatsNumFrames = 0;
             mStatsNumProcMessages = 0;
-            mStatsNumSendMessages = 0;
+            mStatsNumSendNetworkMessages = 0;
             mStatsCumGMProcessTime = 0;
          }
       }
@@ -443,6 +447,9 @@ namespace dtGame
    ///////////////////////////////////////////////////////////////////////////////
    void GameManager::AddComponent(GMComponent& component, const GameManager::ComponentPriority& priority)
    {
+      if(GetComponentByName(component.GetName()) != NULL)
+         EXCEPT(ExceptionEnum::INVALID_PARAMETER, "A component was already registered with the Game Manager with the name: " + component.GetName());
+      
       component.SetGameManager(this);
       component.SetComponentPriority(priority);
       //we sort the items by priority so that components of higher priority get messages first.
@@ -459,6 +466,9 @@ namespace dtGame
 
       if (!inserted)
          mComponentList.push_back(dtCore::RefPtr<GMComponent>(&component));
+
+      // notify the component that it was added to the GM
+      component.OnAddedToGM();
 
    }
 
@@ -494,6 +504,30 @@ namespace dtGame
       {
          toFill.push_back(mComponentList[i].get());
       }
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   GMComponent* GameManager::GetComponentByName(const std::string &name)
+   {
+      for(std::vector<dtCore::RefPtr<GMComponent> >::iterator i = mComponentList.begin();
+          i != mComponentList.end(); ++i)
+      {
+         if((*i)->GetName() == name)
+            return (*i).get();
+      }
+      return NULL;
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+   const GMComponent* GameManager::GetComponentByName(const std::string &name) const
+   {
+      for(std::vector<dtCore::RefPtr<GMComponent> >::const_iterator i = mComponentList.begin();
+         i != mComponentList.end(); ++i)
+      {
+         if((*i)->GetName() == name)
+            return (*i).get();
+      }
+      return NULL;
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -599,7 +633,7 @@ namespace dtGame
       {
          dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_CREATED);
          gameActorProxy.PopulateActorUpdate(static_cast<ActorUpdateMessage&>(*msg));
-         ProcessMessage(*msg);
+         SendMessage(*msg);
       }
       if (publish)
          PublishActor(gameActorProxy);
@@ -669,7 +703,7 @@ namespace dtGame
 
          if (time == NULL)
          {
-            LOG_ERROR("The sim clock time is set to a time before January 1, 1970. Unsupported time");
+            LOG_WARNING("The sim clock time is set to a time before January 1, 1970. Unsupported time");
          }
          else
          {
@@ -712,7 +746,7 @@ namespace dtGame
       msg->SetDestination(&GetMachineInfo());
       msg->SetAboutActorId(gameActorProxy.GetId());
       msg->SetSendingActorId(gameActorProxy.GetId());
-      ProcessMessage(*msg);
+      SendMessage(*msg);
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -767,7 +801,7 @@ namespace dtGame
             dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(id);
 
-            ProcessMessage(*msg);
+            SendMessage(*msg);
          }
       }
    }
@@ -1084,7 +1118,7 @@ namespace dtGame
       dtCore::RefPtr<Message> refMsg = mFactory.CreateMessage(MessageType::INFO_MAP_LOADED);
       MapLoadedMessage *loadedMsg = static_cast<MapLoadedMessage*>(refMsg.get());
       loadedMsg->SetLoadedMapName(mapName);
-      ProcessMessage(*loadedMsg); // rules component determines whether to send and/or process
+      SendMessage(*loadedMsg); // rules component determines whether to send and/or process
    }
 
    ///////////////////////////////////////////////////////////////////////////////
@@ -1160,7 +1194,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetGlobalMessageListeners(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill)
+   void GameManager::GetRegistrantsForMessages(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill)
    {
       toFill.clear();
       std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator  itor
@@ -1175,7 +1209,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::GetGameActorMessageListeners(const MessageType& type, const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*, std::string > >& toFill)
+   void GameManager::GetRegistrantsForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, std::vector<std::pair<GameActorProxy*, std::string > >& toFill)
    {
       toFill.clear();
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
@@ -1196,13 +1230,13 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterGlobalMessageListener(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::RegisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName)
    {
       mGlobalMessageListeners.insert(std::make_pair(&type, std::make_pair(dtCore::RefPtr<GameActorProxy>(&proxy), invokableName)));
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterGlobalMessageListener(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName)
    {
       std::multimap<const MessageType*, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> >::iterator itor
          = mGlobalMessageListeners.find(&type);
@@ -1223,7 +1257,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::RegisterGameActorMessageListener(const MessageType& type, const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::RegisterForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, const std::string& invokableName)
    {
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
          = mActorMessageListeners.find(&type);
@@ -1245,7 +1279,7 @@ namespace dtGame
    }
 
    ///////////////////////////////////////////////////////////////////////////////
-   void GameManager::UnregisterGameActorMessageListener(const MessageType& type, const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, const std::string& invokableName)
+   void GameManager::UnregisterForMessagesAboutActor(const MessageType& type, const dtCore::UniqueId& targetActorId, GameActorProxy& proxy, const std::string& invokableName)
    {
       std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > >::iterator itor
          = mActorMessageListeners.find(&type);
@@ -1319,14 +1353,14 @@ namespace dtGame
       // if it's from us, just process it
       if (*mMachineInfo == causingMachine)
       {
-         ProcessMessage(*rejectMsg);
+         SendMessage(*rejectMsg);
       }
       // if from someone else, only send it.  Else, if we are the server GM, our local components
       // may try to process a reject message that was meant for a client - most components assume
       // a reject message was only sent to them
       else
       {
-         SendMessage(*rejectMsg);
+         SendNetworkMessage(*rejectMsg);
       }
 
    }
@@ -1349,7 +1383,7 @@ namespace dtGame
             lateTime /= 1e6;
             timerMsg->SetLateTime(lateTime);
             timerMsg->SetAboutActorId(itor->aboutActor);
-            ProcessMessage(*timerMsg.get());
+            SendMessage(*timerMsg.get());
             if(itor->repeat)
             {
                TimerInfo tInfo = *itor;
@@ -1388,6 +1422,6 @@ namespace dtGame
       dtCore::RefPtr<Message> msg = mFactory.CreateMessage(MessageType::INFO_ENVIRONMENT_CHANGED);
       msg->SetAboutActorId(mEnvironment.valid() ? envActor->GetActor()->GetUniqueId() : dtCore::UniqueId(""));
       msg->SetSource(*mMachineInfo);
-      ProcessMessage(*msg);
+      SendMessage(*msg);
    }
 }

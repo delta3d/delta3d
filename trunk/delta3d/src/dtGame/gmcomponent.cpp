@@ -35,7 +35,7 @@ namespace dtGame
    {
    }
 
-   void GMComponent::SendMessage(const Message& message)
+   void GMComponent::DispatchNetworkMessage(const Message& message)
    {
 
    }

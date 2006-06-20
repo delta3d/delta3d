@@ -36,10 +36,8 @@ void TestDALEnvironmentActorProxy::BuildPropertyMap()
 
 }
 
-TestDALEnvironmentActor::TestDALEnvironmentActor() : 
-   mWeather(new dtABC::Weather)
+TestDALEnvironmentActor::TestDALEnvironmentActor()
 {
-   AddChild(mWeather->GetEnvironment());
 }
 
 TestDALEnvironmentActor::~TestDALEnvironmentActor()
@@ -49,13 +47,13 @@ TestDALEnvironmentActor::~TestDALEnvironmentActor()
 
 void TestDALEnvironmentActor::AddActor(dtDAL::ActorProxy &child)
 {
-   mWeather->GetEnvironment()->AddChild(child.GetActor());
+   AddChild(child.GetActor());
    mAddedActors.insert(std::make_pair(&child, child.GetActor()));
 }
 
 void TestDALEnvironmentActor::RemoveActor(dtDAL::ActorProxy &proxy)
 {
-   mWeather->GetEnvironment()->RemoveChild(proxy.GetActor());
+   RemoveChild(proxy.GetActor());
 
    std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i =
       mAddedActors.find(&proxy);
@@ -74,8 +72,8 @@ bool TestDALEnvironmentActor::ContainsActor(dtDAL::ActorProxy &proxy) const
 
 void TestDALEnvironmentActor::RemoveAllActors()
 {
-   while(mWeather->GetEnvironment()->GetNumChildren() > 0)
-      mWeather->GetEnvironment()->RemoveChild(mWeather->GetEnvironment()->GetChild(0));
+   while(GetNumChildren() > 0)
+      RemoveChild(GetChild(GetNumChildren() - 1));
 
    mAddedActors.clear();
 }

@@ -47,7 +47,7 @@ namespace dtGame
           * handles a sent a message
           * @param The message
           */
-         virtual void SendMessage(const Message& message);
+         virtual void DispatchNetworkMessage(const Message& message);
 
          /**
           * handles a processed a message
@@ -75,6 +75,12 @@ namespace dtGame
           */
          const GameManager::ComponentPriority& GetComponentPriority() const { return *mPriority; };
          
+         /**
+          * Called immediately after a component is added to the GM. Override this 
+          * to do init type behavior that needs access to the GameManager.
+          */
+         virtual void OnAddedToGM() { }
+
       private:
          friend class GameManager;
          /**

@@ -153,10 +153,8 @@ namespace dtActors
       dtGame::EnvironmentActor(proxy),
       mIsCloudPlaneEnabled(false),
       mWeather(new dtABC::Weather),
-      mCloudPlane(0),
-      mAddedActors()
+      mCloudPlane(new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f))
    {
-      mCloudPlane = new dtCore::CloudPlane(6, 0.5f, 6, 1, 0.3f, 0.96f, 512, 1400.0f);
       AddChild(mWeather->GetEnvironment());
       EnableFog(false);
       EnableCloudPlane(false);
@@ -226,7 +224,7 @@ namespace dtActors
 
    void BasicEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const
    {
-      mWeather->GetEnvironment()->GetDateTime(&year, &month, &day, &hour, &min, &sec);
+      mWeather->GetEnvironment()->GetDateTime(year, month, day, hour, min, sec);
    }
 
    void BasicEnvironmentActor::SetTimeAndDate(const int year, const int month, const int day,

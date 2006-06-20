@@ -24,9 +24,30 @@
 #include "dtDAL/plugin_export.h"
 #include "dtActors/deltaobjectactorproxy.h"
 #include <dtDAL/exceptionenum.h>
+#include <dtCore/object.h>
+
+namespace dtCore
+{
+   class Scene;
+}
 
 namespace dtActors
 {
+   class DT_PLUGIN_EXPORT MeshTerrainActor : public dtCore::Object
+   {
+      public:
+
+         /// Constructor
+         MeshTerrainActor();
+
+         virtual void AddedToScene(dtCore::Scene* scene);
+
+      protected:
+
+         /// Destructor
+         virtual ~MeshTerrainActor();
+
+   };
     /**
      * @class MeshTerrainActorProxy
      * @brief This proxy wraps mesh terrains

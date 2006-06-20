@@ -51,7 +51,9 @@ namespace dtHLAGM
          /**
           * Constructor.
           */
-         ObjectToActor(): mRemoteOnly(false), mDISIDSet(false)
+         ObjectToActor(): mRemoteOnly(false), mDISIDSet(false),
+            mObjectClassHandle(0), mEntityIdAttributeHandle(0), 
+            mDisIDAttributeHandle(0)
          {}
 
          /**
@@ -90,19 +92,19 @@ namespace dtHLAGM
           * may have this property set to false.
           * @param newRemoteOnly the new value of the remote property
           */
-   		 void SetRemoteOnly(bool newRemoteOnly)
-   		 {
-   		 	mRemoteOnly = newRemoteOnly;
-   		 }
+         void SetRemoteOnly(bool newRemoteOnly)
+         {
+            mRemoteOnly = newRemoteOnly;
+         }
 
          /**
           * Gets the HLA Object Type Name from the Object to Actor mapping.
           *
           * @return HLA Object Type Name
           */
-         const std::string &GetObjectTypeName() const
+         const std::string &GetObjectClassName() const
          {
-            return mObjectTypeName;
+            return mObjectClassName;
          }
 
          /**
@@ -110,17 +112,22 @@ namespace dtHLAGM
           *
           * @return HLA Object Class Handle
           */
-         const RTI::ObjectClassHandle &GetObjectClassHandle() const
+         const RTI::ObjectClassHandle GetObjectClassHandle() const
          {
             return mObjectClassHandle;
          }
 
          /// @return The attribute handle storing the entity id attribute.
-         const RTI::AttributeHandle &GetEntityIdAttributeHandle() const
+         const RTI::AttributeHandle GetEntityIdAttributeHandle() const
          {
             return mEntityIdAttributeHandle;
          }
 
+         /// @return The attribute handle storing the dis id attribute.
+         const RTI::AttributeHandle GetDisIDAttributeHandle() const
+         {
+            return mDisIDAttributeHandle;
+         }
 
          /**
           * Gets the Object DIS ID from the Object to Actor mapping
@@ -175,9 +182,9 @@ namespace dtHLAGM
           *
           * @param objTypeName the HLA Object Type Name
           */
-         void SetObjectTypeName(const std::string& objTypeName)
+         void SetObjectClassName(const std::string& objTypeName)
          {
-            mObjectTypeName = objTypeName;
+            mObjectClassName = objTypeName;
          }
 
          /**
@@ -191,9 +198,15 @@ namespace dtHLAGM
          }
 
          /// Sets The attribute handle storing the entity id attribute.
-         void SetEntityIdAttributeHandle(const RTI::AttributeHandle& newEntityIdAttributeHandle)
+         void SetEntityIdAttributeHandle(const RTI::AttributeHandle newEntityIdAttributeHandle)
          {
             mEntityIdAttributeHandle = newEntityIdAttributeHandle;
+         }
+
+         /// Sets The attribute handle storing DIS Id attribute.
+         void SetDisIDAttributeHandle(const RTI::AttributeHandle newDisIDAttributeHandle)
+         {
+            mDisIDAttributeHandle = newDisIDAttributeHandle;
          }
 
          /**
@@ -227,7 +240,7 @@ namespace dtHLAGM
          ObjectToActor& operator=(const ObjectToActor& setTo)
          {
             mActorType = setTo.mActorType;
-            mObjectTypeName = setTo.mObjectTypeName;
+            mObjectClassName = setTo.mObjectClassName;
             mObjectClassHandle = setTo.mObjectClassHandle;
             mObjectDisID = setTo.mObjectDisID;
             mDISIDSet = setTo.mDISIDSet;
@@ -242,7 +255,7 @@ namespace dtHLAGM
          bool operator==(const ObjectToActor& toCompare) const
          {
             return mActorType == toCompare.mActorType &&
-            mObjectTypeName == toCompare.mObjectTypeName &&
+            mObjectClassName == toCompare.mObjectClassName &&
             mObjectDisID == toCompare.mObjectDisID &&
             mDISIDSet == toCompare.mDISIDSet &&
             mOneToMany == toCompare.mOneToMany &&
@@ -272,7 +285,11 @@ namespace dtHLAGM
          bool mRemoteOnly;
 
          /// The HLA Object Type Name for this Object to Actor mapping.
-         std::string mObjectTypeName;
+         std::string mObjectClassName;
+
+         /// The Object DIS ID for this Object to Actor mapping.
+         EntityType mObjectDisID;
+         bool mDISIDSet;
 
          /// The HLA Object Class Handle for this Object to Actor mapping.
          RTI::ObjectClassHandle mObjectClassHandle;
@@ -283,9 +300,8 @@ namespace dtHLAGM
          //The name of the attribute used for the entity id.
          std::string mEntityIdAttribute;
 
-         /// The Object DIS ID for this Object to Actor mapping.
-         EntityType mObjectDisID;
-         bool mDISIDSet;
+         ///DIS Id attribute handle.  This will be set after connection if the name is not empty.
+         RTI::AttributeHandle mDisIDAttributeHandle;
 
          /// A vector of One to One mappings for this Object to Actor mapping.
          std::vector<AttributeToPropertyList> mOneToMany;

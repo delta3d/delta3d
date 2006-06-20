@@ -248,7 +248,8 @@ namespace dtEditQt
             // Note, don't use the temporary variable here.  It can cause errors with QT.
             SubQLineEdit *editBox = static_cast<SubQLineEdit *>(widget);
             bool success = false;
-            float result = editBox->text().toFloat(&success);
+            //float floatResult = -999.999f; 
+            double doubleResult = editBox->text().toDouble(&success);
 
             // set our value to our object
             if (success)
@@ -257,9 +258,9 @@ namespace dtEditQt
                 // else we get epsilon differences that cause the map to be marked dirty with no edits :(
                 QString proxyValue = QString::number(getValue(), 'f', NUM_DECIMAL_DIGITS);
                 QString newValue = editBox->text();
-                if (result != getValue() && proxyValue != newValue)
+                if (doubleResult != getValue() && proxyValue != newValue)
                 {
-                    setValue(result);
+                    setValue(doubleResult);
                     dataChanged = true;
                 }
             } 
