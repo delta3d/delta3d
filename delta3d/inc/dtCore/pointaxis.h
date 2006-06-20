@@ -56,10 +56,6 @@ namespace dtCore
      *
      * Custom labels can be set or HPR can be enabled.  Colors of the axes and the length
      * of the line can also be set through the interface functions.
-     *
-     * To position (or orient) the PointAxis anywhere other than the origin, use the
-     * GetOSGNode function while casting to an osg::MatrixTransform pointer, then manipulate
-     * the matrix.
      */
    class DT_CORE_EXPORT PointAxis  :  public   Transformable
    {
