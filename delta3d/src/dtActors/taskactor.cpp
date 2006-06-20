@@ -67,6 +67,7 @@ namespace dtActors
       mWeight = 1.0f;
       mCompletedTimeStamp = -1.0;
       mComplete = false;
+      mNotifyLMSOnUpdate = false;
 
       TaskActorProxy &proxy = static_cast<TaskActorProxy&>(GetGameActorProxy());
       proxy.NotifyActorUpdate();
@@ -125,6 +126,12 @@ namespace dtActors
          dtDAL::MakeFunctor(task,&TaskActor::SetComplete),
          dtDAL::MakeFunctorRet(task,&TaskActor::IsComplete),
          "Gets the complete status of this task.",GROUPNAME));
+
+	  //NotifyLMSOnUpdate
+	  AddProperty(new dtDAL::BooleanActorProperty("NotifyLMSOnUpdate","Notify LMS On Update",
+		  dtDAL::MakeFunctor(task,&TaskActor::SetNotifyLMSOnUpdate),
+		  dtDAL::MakeFunctorRet(task,&TaskActor::GetNotifyLMSOnUpdate),
+		  "Sets/gets the flag that determines if this task should notify an LMS when it is updated.",GROUPNAME));
 
       //Completed time...
       AddProperty(new dtDAL::DoubleActorProperty("CompleteTime","Complete Time",
@@ -280,6 +287,6 @@ namespace dtActors
             GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
       dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
       PopulateActorUpdate(*message);
-      GetGameManager()->ProcessMessage(*updateMsg);
+      GetGameManager()->SendMessage(*updateMsg);
    }
 }

@@ -24,6 +24,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include <dtUtil/coordinates.h>
 #include <dtDAL/datatype.h>
 #include <dtGame/messagetype.h>
@@ -40,6 +41,7 @@ class EntityTypeTests : public CPPUNIT_NS::TestFixture
   
    CPPUNIT_TEST(TestGetSet);
    CPPUNIT_TEST(TestAssign);
+   CPPUNIT_TEST(TestEncodeDecode);
 
    CPPUNIT_TEST_SUITE_END();
 
@@ -106,12 +108,14 @@ void EntityTypeTests::TestAssign()
 
 void EntityTypeTests::TestEncodeDecode()
 {
-   char buffer[6];
+   char buffer[8];
    et.Encode(buffer);
    
    dtHLAGM::EntityType et2;
    et2.Decode(buffer);
    
    CheckValues(et2);
-   CPPUNIT_ASSERT(et2.EncodedLength() == 6);
+   CPPUNIT_ASSERT(et2.EncodedLength() == 8);
+
+   std::cout << et;
 }

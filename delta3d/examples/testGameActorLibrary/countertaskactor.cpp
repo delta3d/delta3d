@@ -86,7 +86,7 @@ void CounterTaskActorProxy::SetCounter(int value)
       dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
       PopulateActorUpdate(*message);
       
-      GetGameManager()->ProcessMessage(*updateMsg);
+      GetGameManager()->SendMessage(*updateMsg);
    }
 }
 
@@ -102,6 +102,6 @@ void CounterTaskActorProxy::SetTargetCount(int value)
       dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
       PopulateActorUpdate(*message);
       
-      GetGameManager()->ProcessMessage(*updateMsg);
+      GetGameManager()->SendMessage(*updateMsg);
    }
 }

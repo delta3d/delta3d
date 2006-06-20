@@ -76,7 +76,7 @@ namespace dtGame
           * Method for handling local ticks.  This will called by the "Tick Local" invokable.
           * This is designed to be registered to receive TICK_LOCAL messages, but that registration is not done
           * be default
-          * @see GameManager#RegisterGlobalMessageListener
+          * @see GameManager#RegisterForMessages
           * @param tickMessage the actual message
           */
          virtual void TickLocal(const Message& tickMessage);
@@ -85,10 +85,21 @@ namespace dtGame
           * Method for handling remote ticks.  This will called by the "Tick Remote" invokable
           * This is designed to be registered to receive TICK_REMOTE messages, but that registration is not done
           * be default
-          * @see GameManager#RegisterGlobalMessageListener
+          * @see GameManager#RegisterForMessages
           * @param tickMessage the actual message
           */
          virtual void TickRemote(const Message& tickMessage);
+
+         /**
+          * Default invokable for handling messages. This is only called if you register
+          * a message using the default PROCESS_MSG_INVOKABLE name. To use this, override it
+          * and handle any messages that you want. Then, in the OnEnteredWorld() method on your 
+          * proxy, add a line, something either of these:
+          *    RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT);
+          *    RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT, PROCESS_MSG_INVOKABLE);
+          * @param message the actual message
+          */
+         virtual void ProcessMessage(const Message& message);
 
          /**
           * Sets the shader group on the terrain actor.  This implementation uses
@@ -143,6 +154,11 @@ namespace dtGame
 	class DT_GAME_EXPORT GameActorProxy : public dtDAL::PhysicalActorProxy
 	{
 		public:
+         // Use this when you register a message type and want to receive it in ProcessMessage()
+         static const std::string PROCESS_MSG_INVOKABLE;
+         // invokables for tick local and remote - will call TickLocal() and TickRemote();
+         static const std::string TICK_LOCAL_INVOKABLE;
+         static const std::string TICK_REMOTE_INVOKABLE;
 
          /// Internal class to represent the ownership of an actor proxy
          class DT_GAME_EXPORT Ownership : public dtUtil::Enumeration
@@ -240,7 +256,24 @@ namespace dtGame
           * Game actor proxy.
           */
          void GetInvokables(std::vector<const Invokable*>& toFill) const;
-         
+
+         /** 
+          * Creates an ActorUpdateMessage, populates it with ALL properties on the actor
+          * and calls SendMessage() on the Game Manager.
+          * Note - This will do nothing if the actor is Remote.
+          */
+         virtual void NotifyFullActorUpdate();
+
+         /** 
+          * This is like NotifyFullActorUpdate() except that on subclasses, it might
+          * only update some fields.  The Full would always send all properties, where
+          * this one might only send what it thinks has updated since the last update. 
+          * The default implementation just calls NotifyFullActorUpdate().
+          * Note - This will do nothing if the actor is Remote.
+          * @see NotifyFullActorUpdate
+          */
+         virtual void NotifyActorUpdate();
+
          /**
           * Populates an update message from the actor proxy.
           * @param update The message to populate.
@@ -303,7 +336,78 @@ namespace dtGame
           * @see dtGame::GameActorProxy::Ownership
           */
          inline void SetInitialOwnership(Ownership &newOwnership) { ownership = &newOwnership; }
-         		          
+         
+         /**
+          * Registers to receive a specific tyep of message from the GM.  You will receive 
+          * all instances of this message, regardless of whether you are the about actor or not.
+          * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+          * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
+          * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
+          * @see dtGame::GameActor::ProcessMessage
+          * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+          */
+         void RegisterForMessages(const MessageType& type, 
+            const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+
+         /**
+          * Registers to receive a specific type of message from the GM.  You will ONLY receive 
+          * messages about this other actor.  Use this when you want to track interactions with 
+          * other actors - such as a player listening for when a vehicle he is in gets damaged.
+          * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+          * @see dtGame::GameActorProxy::RegisterForMessages
+          * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
+          * @see dtGame::GameActor::ProcessMessage
+          * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+          */
+         void RegisterForMessagesAboutOtherActor(const MessageType& type, 
+            const dtCore::UniqueId& targetActorId, 
+            const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+
+         /**
+          * Registers to receive a specific type of message from the GM.  You will ONLY receive 
+          * messages about yourself. This is the normal use case for registering for messages.
+          * Typically, you only want to know when YOU have fired a weapon, or when YOU have been 
+          * shot. Not when another player is shot.
+          * By default, it will use the ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+          * @see dtGame::GameActorProxy::RegisterForMessages
+          * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
+          * @see dtGame::GameActor::ProcessMessage
+          * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+          */
+         void RegisterForMessagesAboutSelf(const MessageType& type, 
+            const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+
+         /**
+          * Unregisters the invokable for a specific type of message from the GM.  This is the 
+          * reverse of RegisterForMessages for global messages. By default, it will unregister the 
+          * ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+          * @see dtGame::GameActorProxy::RegisterForMessages
+          * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+          */
+         void UnregisterForMessages(const MessageType& type, 
+            const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+
+         /**
+          * Unregisters the invokable for a specific type of message for a specific Actor.  This 
+          * is the reverse of RegisterForMessagesAboutOtherActor. By default, it will unregister the 
+          * ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+          * @see dtGame::GameActorProxy::RegisterForMessagesAboutOtherActor
+          * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+          */
+         void UnregisterForMessagesAboutOtherActor(const MessageType& type, 
+            const dtCore::UniqueId& targetActorId, 
+            const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+
+         /**
+          * Unregisters the invokable for a specific type of message from the GM.  This is the 
+          * reverse of RegisterForMessagesAboutSelf. By default, it will unregister the 
+          * ProcessMessage() invokable on GameActor (PROCESS_MSG_INVOKABLE)
+          * @see dtGame::GameActorProxy::RegisterForMessagesAboutSelf
+          * @see dtGame::GameActorProxy::PROCESS_MSG_INVOKABLE
+          */
+         void UnregisterForMessagesAboutSelf(const MessageType& type, 
+            const std::string& invokableName = PROCESS_MSG_INVOKABLE);
+
       protected:
          
          /**
@@ -317,8 +421,8 @@ namespace dtGame
           */
          virtual void OnEnteredWorld() { }	
          
-         void RegisterMessageHandler(const MessageType& type, const std::string& invokableName);	
-         void UnregisterMessageHandler(const MessageType& type, const std::string& invokableName);   
+         //void RegisterMessageHandler(const MessageType& type, const std::string& invokableName);	
+         //void UnregisterMessageHandler(const MessageType& type, const std::string& invokableName);   
 		
       private:
              

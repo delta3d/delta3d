@@ -20,6 +20,7 @@
  */
 #include "dtGame/actorupdatemessage.h"
 #include "dtGame/exceptionenum.h"
+#include "dtGame/messageparameter.h"
 #include <dtDAL/datatype.h>
 
 namespace dtGame

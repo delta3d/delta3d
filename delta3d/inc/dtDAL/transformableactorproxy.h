@@ -18,6 +18,7 @@
  *
  * @author William E. Johnson II
  */
+
 #ifndef DELTA_TRANSFORMABLE_ACTOR_PROXY
 #define DELTA_TRANSFORMABLE_ACTOR_PROXY
 
@@ -41,8 +42,8 @@ namespace dtDAL
           * Constructor
           */
          TransformableActorProxy()
-         { 
-            SetClassName("dtCore::Transformable");             
+         {
+            SetClassName("dtCore::Transformable");
             mCollisionType = &dtCore::Transformable::CollisionGeomType::NONE;
             mCollisionRadius = mCollisionLength = 0.0f;
             mCollisionBoxDims = osg::Vec3(0,0,0);
@@ -104,7 +105,8 @@ namespace dtDAL
          virtual void OnScale(const osg::Vec3 &oldValue, const osg::Vec3 &newValue) { }
 
          /**
-          * Called when the SetRotation function is called
+          * Called when the SetRotation function is called.  The rotation will
+          * be passed in using x,y,z order (p,r,h)
           * @param oldValue The previous value
           * @param newValue The new value
           */
@@ -207,9 +209,8 @@ namespace dtDAL
          ///Sets mesh collision geometry.
          void SetMeshCollision();
 
-         osg::Vec3 mHPR;
-
       private:
+      
          osg::Vec3 mCollisionBoxDims;
          float mCollisionRadius;
          float mCollisionLength;

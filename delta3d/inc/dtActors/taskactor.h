@@ -150,11 +150,32 @@ namespace dtActors
           *    Score = 0.0 <br>
           *    Weight = 1.0 <br>
           *    Complete = false
-          *    Completed Time Stamp = -1.0
+          *    Completed Time Stamp = -1.0 <br>
+		  *    NotifyLMSOnUpdate = false
           * @note Calling this method does not change the parent child task hierarchy
           *    if it exists.
           */
          virtual void Reset();
+
+		 /**
+		  * Gets the value that determines if this task should notify
+		  * a Learning Management System (LMS) when it is updated.
+		  * @return True if this task should notify an LMS when it is updated, false
+		  * otherwise.
+		  * @note The actual notification of an LMS is handled by the
+		  * TaskComponent class.
+		  */
+		 bool GetNotifyLMSOnUpdate() const { return mNotifyLMSOnUpdate; }
+
+		 /**
+		  * Sets the value that determines if this task should notify
+		  * a Learning Management System (LMS) when it is updated.
+		  * @param flag True if this task should notify an LMS when it is updated, false
+		  * otherwise.
+		  * @note The actual notification of an LMS is handled by the
+		  * TaskComponent class.
+		  */
+		 void SetNotifyLMSOnUpdate(bool flag) { mNotifyLMSOnUpdate = flag; }
 
       protected:
 
@@ -172,6 +193,7 @@ namespace dtActors
          float mWeight;
          double mCompletedTimeStamp;
          bool mComplete;
+         bool mNotifyLMSOnUpdate;
    };
 
    /**

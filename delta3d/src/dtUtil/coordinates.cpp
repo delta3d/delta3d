@@ -1,5 +1,6 @@
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
+#include <cfloat>
 
 #include "dtUtil/matrixutil.h"
 #include "dtUtil/coordinates.h"
@@ -11,6 +12,16 @@
 #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
    #define snprintf _snprintf
 #endif
+
+template <typename T> 
+bool IsFinite(const T value)
+{
+   #if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+      return _finite(value) ? true : false;
+   #else
+      return std::isfinite(value) ? true : false;
+   #endif
+}
 
 namespace dtUtil
 {     
@@ -172,14 +183,17 @@ namespace dtUtil
   
    void Coordinates::SetGeoOrigin(double latitude, double longitude, double elevation)
    {
-      GeodeticToGeocentric(latitude, 
-                           longitude, 
-                           elevation,
-                           mLocationOffset[0],
-                           mLocationOffset[1],
-                           mLocationOffset[2]);      
+      unsigned zone;
+      char hemisphere;
+      
+      ConvertGeodeticToUTM(osg::DegreesToRadians(latitude), osg::DegreesToRadians(longitude), zone, hemisphere, mLocationOffset[0], mLocationOffset[1]);
+         
+      mLocationOffset[2] = elevation;
+      
+      SetUTMZone(zone);
+      
    }
-  
+
    void Coordinates::SetOriginLocation(double x, double y, double z)
    {
       mLocationOffset[0] = x;
@@ -206,8 +220,6 @@ namespace dtUtil
       ConvertGeodeticToUTM(lat, osg::DegreesToRadians(longitude), 
          zone, hemisphere, easting, northing);
       
-      SetUTMZone(zone);
-
       double lon = TranMerc_Origin_Long;
 
       double sin_lat = sin(lat);
@@ -233,12 +245,6 @@ namespace dtUtil
       mRotationOffsetInverse.invert(mRotationOffset);
    }
 
-   void Coordinates::SetGeoOriginRotation(const osg::Vec2d &latlon)
-   {
-      mGeoRotationLatLon = latlon;
-      SetGeoOriginRotation(mGeoRotationLatLon[0], mGeoRotationLatLon[1]);
-   }
-  
    void Coordinates::SetOriginRotation(float h, float p, float r)
    {
      dtUtil::MatrixUtil::HprToMatrix(mRotationOffset, osg::Vec3(h, p, r)); 
@@ -369,6 +375,14 @@ namespace dtUtil
          LOGN_ERROR("coordinates.cpp", "Unsupported local coordinate mode: " + mLocalCoordinateType->GetName());
       } 
       
+      for (unsigned i = 0; i < 3; ++i)
+      {
+         if (!IsFinite(position[i]))
+         {
+            position[i] = 0.0f;
+         }
+      }
+      
       if (mLogger->IsLevelEnabled(Log::LOG_DEBUG))
       {
          mLogger->LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
@@ -461,6 +475,15 @@ namespace dtUtil
             "Converting coordinates.  Resulting coordinates are %f, %f, %f.",
             remoteLoc[0], remoteLoc[1], remoteLoc[2]);
       }
+
+      for (unsigned i = 0; i < 3; ++i)
+      {
+         if (!IsFinite(remoteLoc[i]))
+         {
+            remoteLoc[i] = 0.0;
+         }
+      }
+
       return remoteLoc; 
    }
   
@@ -516,6 +539,15 @@ namespace dtUtil
             "Converting rotation.  resulting rotations are %f, %f, %f.",
             rotation[0], rotation[1], rotation[2]);
       }
+
+      for (unsigned i = 0; i < 3; ++i)
+      {
+         if (!IsFinite(rotation[i]))
+         {
+            rotation[i] = 0.0f;
+         }
+      }
+
       return rotation;
    }
 
@@ -559,6 +591,15 @@ namespace dtUtil
       rotation[0] = psi;
       rotation[1] = theta;
       rotation[2] = phi;
+
+      for (unsigned i = 0; i < 3; ++i)
+      {
+         if (!IsFinite(rotation[i]))
+         {
+            rotation[i] = 0.0f;
+         }
+      }
+
       return rotation;
    }
   
@@ -668,7 +709,7 @@ namespace dtUtil
 
       unsigned tempZone;
       ConvertGeodeticToUTM(Latitude,Longitude,tempZone,Hemisphere,Easting,Northing);
-                           Zone = tempZone;
+      Zone = tempZone;
    }
 
    void Coordinates::ConvertGeodeticToUTM (double Latitude, double Longitude,
@@ -801,7 +842,7 @@ namespace dtUtil
 
    void Coordinates::CalculateUTMZone(double latitude, double longitude, unsigned& ewZone, char& nsZone)
    {
-      dtUtil::Clamp<double>(latitude, -80.0, 84.0);
+      Clamp(latitude, -80.0, 84.0);
 
       long Lat_Degrees = long(latitude);
       long Long_Degrees = long(longitude);
@@ -878,7 +919,7 @@ namespace dtUtil
        // Note that origin repeats every 3 zones (18 degrees)         
        // Note that the 8 results from there being 8*3 or 24 letters!
        int index = (((eastWestZone - 1) % 3) * 8) + (int)(easting / 100000) - 1;
-       dtUtil::Clamp<int>(index, 0, 23);
+       Clamp(index, 0, 23);
        eastingLetter = gridLetters[index];
    
        // Calculate north-south 100,000 km square grid designator        
@@ -890,7 +931,7 @@ namespace dtUtil
          offset = fmod(northing + 500000.0, 2000000.0);
 
        index = (int)(offset / 100000.0);
-       dtUtil::Clamp<int>(index, 0, 23);   
+       Clamp(index, 0, 23);   
        northingLetter = gridLetters[index];
    
        eastingNum  = (((long)easting)  % 100000) / resolutionDivisor[resolution];
@@ -962,7 +1003,8 @@ namespace dtUtil
       char control[20];
       char e_char, n_char;
       int e_num, n_num;
-      sprintf( control, "%%c%%c%%%ud%%%ud", numLen, numLen );
+      //Mac OS g++ complains about size_t not being an unsigned int here.
+      sprintf( control, "%%c%%c%%%ud%%%ud", unsigned(numLen), unsigned(numLen) );
       int sscanf_return = sscanf( working.c_str(), control, &e_char, &n_char, &e_num, &n_num );
       if (sscanf_return != 4)
          EXCEPT(CoordinateConversionExceptionEnum::INVALID_INPUT, 

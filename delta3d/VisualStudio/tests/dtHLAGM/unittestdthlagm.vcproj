@@ -138,16 +138,19 @@ set DELTA_DATA=$(DELTA_DATA)
 				RelativePath="..\..\..\tests\dtHLAGM\entitytypetests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtHLAGM\hlaconfigtests.cpp">
+				RelativePath="..\..\..\tests\dtHLAGM\hlacomponenttests.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\tests\dtHLAGM\hlatests.cpp">
+				RelativePath="..\..\..\tests\dtHLAGM\hlaconfigtests.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\mainTestRunner.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\tests\dtHLAGM\mappingclasstests.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\tests\dtHLAGM\rprparametertranslatortests.cpp">
 			</File>
 		</Filter>
 		<Filter

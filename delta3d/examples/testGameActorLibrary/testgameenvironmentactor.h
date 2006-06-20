@@ -23,14 +23,14 @@
 
 #include "export.h"
 #include <dtGame/environmentactor.h>
+#include <dtABC/weather.h>
 
 class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::EnvironmentActor
 {
    public:
 
       TestGameEnvironmentActor(dtGame::GameActorProxy &proxy) :
-         dtGame::EnvironmentActor(proxy),
-         mEnvironment(new dtCore::Environment) { }
+         dtGame::EnvironmentActor(proxy), mYear(0), mMonth(0), mDay(0), mHour(0), mMin(0), mSec(0) { }
 
       virtual void AddActor(dtDAL::ActorProxy &proxy);
 
@@ -62,8 +62,13 @@ class DT_EXAMPLE_EXPORT TestGameEnvironmentActor : public dtGame::EnvironmentAct
       virtual ~TestGameEnvironmentActor() { }
 
    private:
+      int mYear; 
+      int mMonth;
+      int mDay;
+      int mHour; 
+      int mMin;   
+      int mSec;
       
-      dtCore::RefPtr<dtCore::Environment> mEnvironment;
       std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*> mAddedActors;
 };
 

@@ -493,6 +493,15 @@ namespace dtEditQt
         void updateActorProxyBillboards();
 
         /**
+         * Called when the user moves the mouse while pressing any combination of
+         * mouse buttons.  Based on the current mode, the camera is updated.
+         */
+        void mouseMoveEvent(QMouseEvent *e);
+   
+        ///Called by the mouse move event with the adjusted x and y so that subclasses can do what they need. 
+        virtual void onMouseMoveEvent(QMouseEvent *e, float dx, float dy) = 0;
+
+        /**
          * Camera attached to this viewport.
          * @note
          *  This is not created by this viewport.  It must be created by
@@ -528,6 +537,8 @@ namespace dtEditQt
         QPoint oldMouseLocation;
         bool cacheMouseLocation;
 
+        QPoint lastMouseUpdateLocation;
+         
         // holds the original values of translation and/or rotation.  This should
         // be set in BeginEdit and cleared in EndEdit
         std::map<std::string,std::vector<std::string> > selectedActorOrigValues;

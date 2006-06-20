@@ -70,6 +70,8 @@ namespace dtHLAGM
          {
             size = type.GetEncodedLength();
             buffer = new char[size];
+            //zero the buffer.
+            memset((void*)buffer, 0, size);
          }
    
          /**

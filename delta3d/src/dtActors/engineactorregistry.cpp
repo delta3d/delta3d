@@ -46,7 +46,9 @@
 #include "dtActors/taskactorrollup.h"
 #include "dtActors/taskactorordered.h"
 #include "dtActors/basicenvironmentactorproxy.h"
-#include "dtActors/coordinateconfigactorproxy.h"
+#include "dtActors/coordinateconfigactor.h"
+#include "dtActors/playerstartactorproxy.h"
+#include "dtActors/gamemeshactor.h"
 
 namespace dtActors
 {
@@ -75,6 +77,10 @@ namespace dtActors
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::TRIPOD_ACTOR_TYPE(new dtDAL::ActorType("Tripod", "dtcore", "dtCore::Tripod Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::ENVIRONMENT_ACTOR_TYPE(new dtDAL::ActorType("Environment", "dtcore.Environment", "dtCore::BasicEnvironment Actor."));
    dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::COORDINATE_CONFIG_ACTOR_TYPE(new dtDAL::ActorType("Coordinate Config", "dtutil", "dtUtil::Coordinates Actor"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::PLAYER_START_ACTOR_TYPE(new dtDAL::ActorType("Player Start", "dtcore", "This can be dropped into a map and the player actor will spawn himself there on startup"));
+   dtCore::RefPtr<dtDAL::ActorType> EngineActorRegistry::GAME_MESH_ACTOR_TYPE(
+      new dtDAL::ActorType("Game Mesh Actor", "dtcore.Game.Actors", 
+      "Simple base Game Actor that supports a Mesh - you should not typically use this directly"));
 
    extern "C" DT_PLUGIN_EXPORT dtDAL::ActorPluginRegistry* CreatePluginRegistry()
    {
@@ -148,6 +154,10 @@ namespace dtActors
       mActorFactory->RegisterType<TripodActorProxy>(TRIPOD_ACTOR_TYPE.get());
       mActorFactory->RegisterType<BasicEnvironmentActorProxy>(ENVIRONMENT_ACTOR_TYPE.get());
       mActorFactory->RegisterType<CoordinateConfigActorProxy>(COORDINATE_CONFIG_ACTOR_TYPE.get());
+      mActorFactory->RegisterType<PlayerStartActorProxy>(PLAYER_START_ACTOR_TYPE.get());
+
+      // Base Game Mesh actor - typically subclassed (maybe shouldn't even be registered
+      mActorFactory->RegisterType<GameMeshActorProxy>(GAME_MESH_ACTOR_TYPE.get());
    }
 
 }

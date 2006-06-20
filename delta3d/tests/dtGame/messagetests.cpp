@@ -116,7 +116,7 @@ private:
 
    void createActors(dtDAL::Map& map);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool remote);
-   void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote);
+   void TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial);
    void TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool remote);
    dtUtil::Log* mLogger;
 
@@ -129,21 +129,21 @@ class TestComponent: public dtGame::GMComponent
    public:
       std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedProcessMessages()
          { return mReceivedProcessMessages; }
-      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedSendMessages()
-         { return mReceivedSendMessages; }
+      std::vector<dtCore::RefPtr<const dtGame::Message> >& GetReceivedDispatchNetworkMessages()
+         { return mReceivedDispatchNetworkMessages; }
 
       virtual void ProcessMessage(const dtGame::Message& msg)
       {
          mReceivedProcessMessages.push_back(&msg);
       }
-      virtual void SendMessage(const dtGame::Message& msg)
+      virtual void DispatchNetworkMessage(const dtGame::Message& msg)
       {
-         mReceivedSendMessages.push_back(&msg);
+         mReceivedDispatchNetworkMessages.push_back(&msg);
       }
 
       void reset()
       {
-         mReceivedSendMessages.clear();
+         mReceivedDispatchNetworkMessages.clear();
          mReceivedProcessMessages.clear();
       }
 
@@ -156,18 +156,18 @@ class TestComponent: public dtGame::GMComponent
          }
          return NULL;
       }
-      dtCore::RefPtr<const dtGame::Message> FindSendMessageOfType(const dtGame::MessageType& type)
+      dtCore::RefPtr<const dtGame::Message> FindDispatchNetworkMessageOfType(const dtGame::MessageType& type)
       {
-         for (unsigned i = 0; i < mReceivedSendMessages.size(); ++i)
+         for (unsigned i = 0; i < mReceivedDispatchNetworkMessages.size(); ++i)
          {
-            if (mReceivedSendMessages[i]->GetMessageType() == type)
-               return mReceivedSendMessages[i];
+            if (mReceivedDispatchNetworkMessages[i]->GetMessageType() == type)
+               return mReceivedDispatchNetworkMessages[i];
          }
          return NULL;
       }
    private:
       std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedProcessMessages;
-      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedSendMessages;
+      std::vector<dtCore::RefPtr<const dtGame::Message> > mReceivedDispatchNetworkMessages;
 };
 
 
@@ -175,8 +175,8 @@ class TestComponent: public dtGame::GMComponent
 CPPUNIT_TEST_SUITE_REGISTRATION(MessageTests);
 
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-char* MessageTests::mTestGameActorLibrary="testGameActorLibraryd";
-char* MessageTests::mTestActorLibrary="testActorLibraryd";
+char* MessageTests::mTestGameActorLibrary="testGameActorLibrary";
+char* MessageTests::mTestActorLibrary="testActorLibrary";
 #else
 char* MessageTests::mTestGameActorLibrary="testGameActorLibrary";
 char* MessageTests::mTestActorLibrary="testActorLibrary";
@@ -454,13 +454,15 @@ void MessageTests::TestMessageFactory()
       factory.GetMessageTypeById(dtGame::MessageType::SERVER_REQUEST_REJECTED.GetId());
       factory.GetMessageTypeById(dtGame::MessageType::INFO_PLAYER_ENTERED_WORLD.GetId());
 
-      dtCore::RefPtr<dtGame::Message> tickMsg = factory.CreateMessage(dtGame::MessageType::TICK_LOCAL);
+      dtCore::RefPtr<dtGame::TickMessage> tickMsg;
+      factory.CreateMessage(dtGame::MessageType::TICK_LOCAL, tickMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a tick local message", tickMsg != NULL);
       CPPUNIT_ASSERT_MESSAGE("The Message should have the type TICK_LOCAL",tickMsg->GetMessageType() == dtGame::MessageType::TICK_LOCAL);
-      tickMsg = factory.CreateMessage(dtGame::MessageType::TICK_REMOTE);
+      factory.CreateMessage(dtGame::MessageType::TICK_REMOTE, tickMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a tick remote message", tickMsg != NULL);
       CPPUNIT_ASSERT_MESSAGE("The Message should have the type TICK_REMOTE",tickMsg->GetMessageType() == dtGame::MessageType::TICK_REMOTE);
-      dtCore::RefPtr<dtGame::Message> timerMsg = factory.CreateMessage(dtGame::MessageType::INFO_TIMER_ELAPSED);
+      dtCore::RefPtr<dtGame::TimerElapsedMessage> timerMsg;
+      factory.CreateMessage(dtGame::MessageType::INFO_TIMER_ELAPSED, timerMsg);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a timer elapsed message", timerMsg != NULL);
       dtCore::RefPtr<dtGame::Message> mapMsg = factory.CreateMessage(dtGame::MessageType::INFO_MAP_LOADED);
       CPPUNIT_ASSERT_MESSAGE("The message factory should be able to create a map loaded message", mapMsg != NULL);
@@ -497,13 +499,13 @@ void MessageTests::TestMessageFactory()
       for(unsigned int i = 0; i < v.size(); i++)
          CPPUNIT_ASSERT_MESSAGE("The vector of supported message types should register as supported in the factory", factory.IsMessageTypeSupported(*v[i]));
 
-      static_cast<dtGame::TickMessage*>(tickMsg.get())->SetDeltaRealTime(1.34f);
-      static_cast<dtGame::TickMessage*>(tickMsg.get())->SetDeltaSimTime(2.56f);
-      static_cast<dtGame::TickMessage*>(tickMsg.get())->SetSimulationTime(103330.000);
-      static_cast<dtGame::TickMessage*>(tickMsg.get())->SetSimTimeScale(6.32f);
+      tickMsg->SetDeltaRealTime(1.34f);
+      tickMsg->SetDeltaSimTime(2.56f);
+      tickMsg->SetSimulationTime(103330.000);
+      tickMsg->SetSimTimeScale(6.32f);
 
-      static_cast<dtGame::TimerElapsedMessage*>(timerMsg.get())->SetLateTime(1.0f);
-      static_cast<dtGame::TimerElapsedMessage*>(timerMsg.get())->SetTimerName("Bob");
+      timerMsg->SetLateTime(1.0f);
+      timerMsg->SetTimerName("Bob");
 
       tickMsg->SetCausingMessage(timerMsg.get());
       timerMsg->SetCausingMessage(serverMsg.get());
@@ -550,10 +552,11 @@ void MessageTests::TestMessageDelivery()
       dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
       CPPUNIT_ASSERT(type != NULL);
-      dtCore::RefPtr<dtDAL::ActorProxy> gap = mGameManager->CreateActor(*type);
+      dtCore::RefPtr<dtGame::GameActorProxy> gap;
+      mGameManager->CreateActor(*type, gap);
 
       CPPUNIT_ASSERT(gap->IsGameActorProxy());
-      mGameManager->AddActor(*dynamic_cast<dtGame::GameActorProxy*>(gap.get()), false, false);
+      mGameManager->AddActor(*gap, false, false);
       std::vector<const dtDAL::ActorType*> vec;
       mGameManager->GetActorTypes(vec);
       CPPUNIT_ASSERT_MESSAGE("The amount of actor types supported should not be 0", vec.size() != 0);
@@ -665,8 +668,8 @@ void MessageTests::TestActorPublish()
       CPPUNIT_ASSERT_MESSAGE("The Actor Created message should have GetDestination of NULL.", actorCreatedMsg->GetDestination() == NULL);
       CPPUNIT_ASSERT_MESSAGE("The Actor Published message should have GetDestination matching the GameManager.", publishedMsg->GetDestination() == &mGameManager->GetMachineInfo());
 
-      dtCore::RefPtr<const dtGame::Message> sendActorCreateMsg = tc->FindSendMessageOfType(dtGame::MessageType::INFO_ACTOR_CREATED);
-      dtCore::RefPtr<const dtGame::Message> sendPublishedMsg = tc->FindSendMessageOfType(dtGame::MessageType::INFO_ACTOR_PUBLISHED);
+      dtCore::RefPtr<const dtGame::Message> sendActorCreateMsg = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::INFO_ACTOR_CREATED);
+      dtCore::RefPtr<const dtGame::Message> sendPublishedMsg = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::INFO_ACTOR_PUBLISHED);
 
       CPPUNIT_ASSERT(sendActorCreateMsg == NULL);
       CPPUNIT_ASSERT(sendPublishedMsg == NULL);
@@ -675,15 +678,15 @@ void MessageTests::TestActorPublish()
       SLEEP(10);
       dtCore::System::Instance()->Step();
 
-      CPPUNIT_ASSERT(tc->GetReceivedSendMessages().size() > 0);
-      for (unsigned i = 0; i < tc->GetReceivedSendMessages().size(); ++i)
+      CPPUNIT_ASSERT(tc->GetReceivedDispatchNetworkMessages().size() > 0);
+      for (unsigned i = 0; i < tc->GetReceivedDispatchNetworkMessages().size(); ++i)
       {
-         CPPUNIT_ASSERT(tc->GetReceivedSendMessages()[i].valid());
-         //std::cout << tc->GetReceivedSendMessages()[i]->GetMessageType().GetName();
+         CPPUNIT_ASSERT(tc->GetReceivedDispatchNetworkMessages()[i].valid());
+         //std::cout << tc->GetReceivedDispatchNetworkMessages()[i]->GetMessageType().GetName();
       }
 
-      sendActorCreateMsg = tc->FindSendMessageOfType(dtGame::MessageType::INFO_ACTOR_CREATED);
-      sendPublishedMsg = tc->FindSendMessageOfType(dtGame::MessageType::INFO_ACTOR_PUBLISHED);
+      sendActorCreateMsg = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::INFO_ACTOR_CREATED);
+      sendPublishedMsg = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::INFO_ACTOR_PUBLISHED);
 
       CPPUNIT_ASSERT_MESSAGE("An actor create message should have been sent.", sendActorCreateMsg != NULL);
       CPPUNIT_ASSERT_MESSAGE("No publish message should be been sent.", sendPublishedMsg == NULL);
@@ -817,7 +820,7 @@ void MessageTests::TestRejectMessage()
    // message should have been processed (not sent)
 
    dtCore::RefPtr<const dtGame::Message> processedRejection1 = tc->FindProcessMessageOfType(dtGame::MessageType::SERVER_REQUEST_REJECTED);
-   dtCore::RefPtr<const dtGame::Message> sentRejection1 = tc->FindSendMessageOfType(dtGame::MessageType::SERVER_REQUEST_REJECTED);
+   dtCore::RefPtr<const dtGame::Message> sentRejection1 = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::SERVER_REQUEST_REJECTED);
    CPPUNIT_ASSERT_MESSAGE("Local reject message should have been processed.", processedRejection1.valid());
    CPPUNIT_ASSERT_MESSAGE("Local reject message should NOT have been sent.", !sentRejection1.valid());
 
@@ -846,7 +849,7 @@ void MessageTests::TestRejectMessage()
    // message should have been sent (not processed)
 
    dtCore::RefPtr<const dtGame::Message> processedRejection2 = tc->FindProcessMessageOfType(dtGame::MessageType::SERVER_REQUEST_REJECTED);
-   dtCore::RefPtr<const dtGame::Message> sentRejection2 = tc->FindSendMessageOfType(dtGame::MessageType::SERVER_REQUEST_REJECTED);
+   dtCore::RefPtr<const dtGame::Message> sentRejection2 = tc->FindDispatchNetworkMessageOfType(dtGame::MessageType::SERVER_REQUEST_REJECTED);
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should NOT have been processed.", !processedRejection2.valid());
    CPPUNIT_ASSERT_MESSAGE("Non-local reject message should have been sent.", sentRejection2.valid());
 
@@ -1099,15 +1102,18 @@ void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
 
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should not start out paused.", !mGameManager->IsPaused());
 
-   dtCore::RefPtr<dtGame::Message> pauseCommand = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_PAUSE);
-   mGameManager->ProcessMessage(*pauseCommand);
+   dtCore::RefPtr<dtGame::Message> pauseCommand;
+   mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_PAUSE, pauseCommand);
+   
+   mGameManager->SendMessage(*pauseCommand);
    SLEEP(10);
    dtCore::System::Instance()->Step();
 
    CPPUNIT_ASSERT_MESSAGE("The Game Manager should now be paused.", mGameManager->IsPaused());
 
-   dtCore::RefPtr<dtGame::Message> resumeCommand = mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_RESUME);
-   mGameManager->ProcessMessage(*resumeCommand);
+   dtCore::RefPtr<dtGame::Message> resumeCommand;
+   mGameManager->GetMessageFactory().CreateMessage(dtGame::MessageType::COMMAND_RESUME, resumeCommand);
+   mGameManager->SendMessage(*resumeCommand);
    SLEEP(10);
    dtCore::System::Instance()->Step();
 
@@ -1117,18 +1123,24 @@ void MessageTests::TestDefaultMessageProcessorWithPauseResumeCommands()
 
 void MessageTests::TestDefaultMessageProcessorWithRemoteActorUpdates()
 {
-   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(true);
+   dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
+   mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::HIGHEST);
+
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(true, true);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(true, false);
 }
 
 void MessageTests::TestDefaultMessageProcessorWithLocalActorUpdates()
 {
-   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false);
-}
-
-void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote)
-{
    dtGame::DefaultMessageProcessor& defMsgProcessor = *new dtGame::DefaultMessageProcessor();
    mGameManager->AddComponent(defMsgProcessor, dtGame::GameManager::ComponentPriority::HIGHEST);
+
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, true);
+   TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(false, false);
+}
+
+void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool remote, bool partial)
+{
 
    dtCore::RefPtr<dtDAL::ActorType> type = mGameManager->FindActorType("ExampleActors","Test1Actor");
 
@@ -1155,7 +1167,16 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be 0.", gap->GetProperty("Local Tick Count")->GetStringValue() == "0");
    CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be 0.", gap->GetProperty("Remote Tick Count")->GetStringValue() == "0");
 
-   gap->PopulateActorUpdate(*actorUpdateMsg);
+   if (partial)
+   {
+      std::vector<std::string> params;
+      params.push_back("Has Fired");
+      gap->PopulateActorUpdate(*actorUpdateMsg, params);
+   }
+   else
+   {
+      gap->PopulateActorUpdate(*actorUpdateMsg);
+   }
 
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Name") != NULL);
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Actor Type Name") != NULL);
@@ -1166,31 +1187,61 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorUpdates(bool
    CPPUNIT_ASSERT(actorUpdateMsg->GetParameter("Actor Type Category")->ToString() == gap->GetActorType().GetCategory());
 
    CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Has Fired") != NULL);
-   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Local Tick Count") != NULL);
-   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Remote Tick Count") != NULL);
-
    CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Has Fired")->ToString() == "false");
-   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Local Tick Count")->ToString() == "0");
-   CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->ToString() == "0");
-
    actorUpdateMsg->GetUpdateParameter("Has Fired")->FromString("true");
-   actorUpdateMsg->GetUpdateParameter("Local Tick Count")->FromString("96");
-   actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
 
-   mGameManager->ProcessMessage(*actorUpdateMsg);
+   if (partial)
+   {
+      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should not be part of the update.", 
+         actorUpdateMsg->GetUpdateParameter("Local Tick Count") == NULL);
+      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should not be part of the update.",
+         actorUpdateMsg->GetUpdateParameter("Remote Tick Count") == NULL);
+   }
+   else
+   {
+      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be part of the update.", 
+         actorUpdateMsg->GetUpdateParameter("Local Tick Count") != NULL);
+      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be part of the update.",
+         actorUpdateMsg->GetUpdateParameter("Remote Tick Count") != NULL);
+
+      CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Local Tick Count")->ToString() == "0");
+      CPPUNIT_ASSERT(actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->ToString() == "0");
+
+      actorUpdateMsg->GetUpdateParameter("Local Tick Count")->FromString("96");
+      actorUpdateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
+
+   }
+
+   mGameManager->SendMessage(*actorUpdateMsg);
    SLEEP(10);
    dtCore::System::Instance()->Step();
    if (remote)
    {
-      CPPUNIT_ASSERT_MESSAGE("Has Fired should be changed to true.", gap->GetProperty("Has Fired")->GetStringValue() == "true");
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should be changed to 96.", gap->GetProperty("Local Tick Count")->GetStringValue() == "96");
-      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should be changed to 107.", gap->GetProperty("Remote Tick Count")->GetStringValue() == "107");
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should be changed to true.", 
+                             gap->GetProperty("Has Fired")->GetStringValue(), std::string("true"));
+      if (partial)
+      {
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.", 
+                                gap->GetProperty("Local Tick Count")->GetStringValue(), std::string("0"));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.", 
+                                gap->GetProperty("Remote Tick Count")->GetStringValue(), std::string("0"));
+      }
+      else
+      {
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should be changed to 96.", 
+                                gap->GetProperty("Local Tick Count")->GetStringValue(), std::string("96"));
+         CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should be changed to 107.", 
+                                gap->GetProperty("Remote Tick Count")->GetStringValue(), std::string("107"));
+      }
    }
    else
    {
-      CPPUNIT_ASSERT_MESSAGE("Has Fired should still be false.", gap->GetProperty("Has Fired")->GetStringValue() == "false");
-      CPPUNIT_ASSERT_MESSAGE("Local Tick Count should still be 0.", gap->GetProperty("Local Tick Count")->GetStringValue() == "0");
-      CPPUNIT_ASSERT_MESSAGE("Remote Tick Count should still be 0.", gap->GetProperty("Remote Tick Count")->GetStringValue() == "0");
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Has Fired should still be false.", 
+                                    gap->GetProperty("Has Fired")->GetStringValue(), std::string("false"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Local Tick Count should still be 0.", 
+                                    gap->GetProperty("Local Tick Count")->GetStringValue(), std::string("0"));
+      CPPUNIT_ASSERT_EQUAL_MESSAGE("Remote Tick Count should still be 0.", 
+                                    gap->GetProperty("Remote Tick Count")->GetStringValue(), std::string("0"));
    }
 
 }
@@ -1232,7 +1283,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorDeletes(bool
 
    actorDeleteMsg->SetAboutActorId(gap->GetId());
 
-   mGameManager->ProcessMessage(*actorDeleteMsg);
+   mGameManager->SendMessage(*actorDeleteMsg);
    SLEEP(10);
    dtCore::System::Instance()->Step();
 
@@ -1305,7 +1356,7 @@ void MessageTests::TestDefaultMessageProcessorWithLocalOrRemoteActorCreates(bool
    actorCreateMsg->GetUpdateParameter("Local Tick Count")->FromString("96");
    actorCreateMsg->GetUpdateParameter("Remote Tick Count")->FromString("107");
 
-   mGameManager->ProcessMessage(*actorCreateMsg);
+   mGameManager->SendMessage(*actorCreateMsg);
 
    CPPUNIT_ASSERT(mGameManager->FindGameActorById(gap->GetId()) == NULL);
 

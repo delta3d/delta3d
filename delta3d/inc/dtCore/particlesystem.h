@@ -25,12 +25,113 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
 #include <dtCore/transformable.h>
 #include <dtCore/loadable.h>
 
+#include <osgParticle/ModularEmitter>
+#include <osgParticle/Program>
+#include <osgParticle/Particle>
+#include <osgParticle/ParticleSystem>
+#include <osgParticle/ParticleSystemUpdater>
+
 namespace dtCore
 {
+   class DT_CORE_EXPORT ParticleLayer
+   {
+      DECLARE_MANAGEMENT_LAYER(ParticleLayer)
+
+      public:
+         /// Constructor
+         ParticleLayer() : mProgTypeIsModular(false) {}
+         
+         /// Destructor
+         virtual ~ParticleLayer(){}
+
+         /// Copy Constructor
+         ParticleLayer(const ParticleLayer &copyLayer)
+         {
+            mGeode            = copyLayer.mGeode;
+            mParticleSystem   = copyLayer.mParticleSystem;
+            mEmitterTransform = copyLayer.mEmitterTransform;
+            mModularEmitter   = copyLayer.mModularEmitter;
+            mProgram          = copyLayer.mProgram;
+            mLayerName        = copyLayer.mLayerName;
+            mProgTypeIsModular= copyLayer.mProgTypeIsModular;
+         }
+       
+      private:   
+         /**
+         * The geode that holds the drawable particle system, and whose name is
+         * the name of the layer.
+         */
+         RefPtr<osg::Geode> mGeode;
+
+         /**
+         * The active particle system.
+         */
+         RefPtr<osgParticle::ParticleSystem> mParticleSystem;
+
+         /**
+         * The transform that controls the position of the emitter.
+         */
+         RefPtr<osg::MatrixTransform> mEmitterTransform;
+
+         /**
+         * The active emitter.
+         */
+         RefPtr<osgParticle::ModularEmitter> mModularEmitter;
+
+         /**
+         * The active program.
+         * Can be modular or fluid
+         */
+         RefPtr<osgParticle::Program> mProgram;
+         
+         /**
+         * Name of the layer
+         */
+         std::string mLayerName;
+
+      public:
+         /// mutators for RefPtr Variables and string
+         void SetGeode           (osg::Geode& geode)                           {mGeode            = &geode;}
+         void SetParticleSystem  (osgParticle::ParticleSystem& particleSystem) {mParticleSystem   = &particleSystem;}
+         void SetEmitterTransform(osg::MatrixTransform&        matrixtransform){mEmitterTransform = &matrixtransform;}
+         void SetModularEmitter  (osgParticle::ModularEmitter& modularEmitter) {mModularEmitter   = &modularEmitter;}
+         void SetProgram         (osgParticle::Program&        program)        {mProgram          = &program;}
+         void SetLayerName       (const std::string           &name)           {mLayerName     = name;}
+
+         /// accessors for RefPtrVariables and string
+         osg::Geode&                   GetGeode()           {return *mGeode.get();}
+         osgParticle::ParticleSystem&  GetParticleSystem()  {return *mParticleSystem.get();}
+         osg::MatrixTransform&         GetEmitterTransform(){return *mEmitterTransform.get();}
+         osgParticle::ModularEmitter&  GetModularEmitter()  {return *mModularEmitter.get();}
+         osgParticle::Program&         GetProgram()         {return *mProgram.get();}
+         const std::string&            GetLayerName()       {return mLayerName;}
+
+      public:
+         /// Methods for telling if the Program is modular or fluid
+         bool IsFluidProgram()              {return !mProgTypeIsModular;}
+         bool IsModularProgram()            {return mProgTypeIsModular ;}
+
+         /// Methods for Getting if the program is modular or fluid
+         void SetIsModularProgram(bool Val) {mProgTypeIsModular  =  Val;}
+         void SetIsFluidProgram(  bool Val) {mProgTypeIsModular  = !Val;}
+     
+      public:
+         
+         /// Operator overloadin' luvin
+         bool operator==(const ParticleLayer& testLayer) const
+         {
+            return (testLayer.mLayerName == mLayerName);
+         }
+
+      private:
+         /// For getting Program type, fluid or modular.
+         /// Setuped on setup values functions
+         bool mProgTypeIsModular;
+   };
+
    /**
     * A particle system.
     */
@@ -59,6 +160,9 @@ namespace dtCore
          ///Load a file from disk
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = false);
          
+         ///Get the loaded file, if not loaded in will return NULL
+         //const osg::Node* GetLoadedFile() {return mLoadedFile.get();}
+
          /**
           * Enables or disables this particle system.  Particle systems
           * are enabled by default.
@@ -96,8 +200,43 @@ namespace dtCore
           */
          bool IsParentRelative();
 
-         
-   private:
+         /**
+          * GetAllLayers can be called to change all the effects
+          * that were loaded in to do the same thing.
+          * @return The link list of all the layers
+          */
+         std::list<ParticleLayer>& GetAllLayers() {return mLayers;}
+
+         /**
+          * GetSingleLayer will return the Layer of said name,
+          * Null will return if bad name sent in.
+          *
+          * @return Will return the link list you requested by name
+          */
+         ParticleLayer* GetSingleLayer(const std::string &layerName);
+
+         /**
+          * SetAllLayers Will take in the new list of layers
+          * and set all the current layers to those of that 
+          * sent in
+          */
+         void SetAllLayers(const std::list<ParticleLayer> &layersToSet);
+
+         /**
+          * SetSingleLayer will take in the layerToSet 
+          * and set the layer in mlLayers to that sent in
+          */
+         void SetSingleLayer(ParticleLayer& layerToSet);
+
+   protected:
+       
+         /**
+          *  Called from LoadFile() function, should never be called
+          *  from user
+          */
+         void SetupParticleLayers();
+
+      private:
          
          /**
           * Whether or not the particle system is enabled.
@@ -110,8 +249,17 @@ namespace dtCore
           */
          bool mParentRelative;
 
-         RefPtr<osg::Node> mLoadedFile; ///<handle to the whole system
+         /**
+          * Layer for all the attributes for a particle system
+          * All particle systems contained within that we loaded
+          */
+         std::list<ParticleLayer> mLayers;
 
+         /**
+          * Handle to the whole system
+          */ 
+         RefPtr<osg::Node> mLoadedFile; 
+         
    };
 };
 

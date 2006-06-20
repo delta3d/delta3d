@@ -68,12 +68,10 @@ namespace dtGame
 
       RegisterMessageType<Message>(MessageType::INFO_PLAYER_ENTERED_WORLD);
 
-
       RegisterMessageType<Message>(MessageType::REQUEST_PAUSE);
       RegisterMessageType<Message>(MessageType::REQUEST_RESUME);
       RegisterMessageType<RestartMessage>(MessageType::REQUEST_RESTART);
       RegisterMessageType<TimeChangeMessage>(MessageType::REQUEST_SET_TIME);
-
 
       //Logger messages.
       RegisterMessageType<dtGame::Message>(dtGame::MessageType::LOG_REQ_CHANGESTATE_PLAYBACK);

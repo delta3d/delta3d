@@ -63,7 +63,7 @@ class ProxyTest : public CPPUNIT_NS::TestFixture
 CPPUNIT_TEST_SUITE_REGISTRATION(ProxyTest);
 
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-char* ProxyTest::mExampleLibraryName="testActorLibraryd";
+char* ProxyTest::mExampleLibraryName="testActorLibrary";
 #else
 char* ProxyTest::mExampleLibraryName="testActorLibrary";
 #endif

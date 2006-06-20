@@ -143,7 +143,7 @@ void TestPlayer::SetModel(const std::string &fileName)
          dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *> (updateMsg.get());
          GetGameActorProxy().PopulateActorUpdate(*message);
 
-         GetGameActorProxy().GetGameManager()->ProcessMessage(*updateMsg);
+         GetGameActorProxy().GetGameManager()->SendMessage(*updateMsg);
       }
    }
 }
@@ -163,7 +163,7 @@ void TestPlayer::SetVelocity(float velocity)
          dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *> (updateMsg.get());
          GetGameActorProxy().PopulateActorUpdate(*message);
 
-         GetGameActorProxy().GetGameManager()->ProcessMessage(*updateMsg);
+         GetGameActorProxy().GetGameManager()->SendMessage(*updateMsg);
       }
    }
 }
@@ -189,7 +189,7 @@ void TestPlayer::SetTurnRate(float rate)
          dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *> (updateMsg.get());
          GetGameActorProxy().PopulateActorUpdate(*message);
 
-         GetGameActorProxy().GetGameManager()->ProcessMessage(*updateMsg);
+         GetGameActorProxy().GetGameManager()->SendMessage(*updateMsg);
       }
    }
 }
@@ -254,12 +254,12 @@ void TestPlayerProxy::OnEnteredWorld()
       //enable receiving tick messages.
       if (IsRemote())
       {
-         GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::TICK_REMOTE,
+         GetGameManager()->RegisterForMessages(dtGame::MessageType::TICK_REMOTE,
             *this,"Tick Remote");
       }
       else
       {
-         GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::TICK_LOCAL,
+         GetGameManager()->RegisterForMessages(dtGame::MessageType::TICK_LOCAL,
             *this,"Tick Local");
       }
    }

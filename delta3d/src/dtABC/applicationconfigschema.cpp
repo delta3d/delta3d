@@ -19,6 +19,6 @@ const std::string ApplicationConfigSchema::SHOWCURSOR="ShowCursor";
 const std::string ApplicationConfigSchema::FULLSCREEN="FullScreen";
 const std::string ApplicationConfigSchema::CHANGEDISPLAYRESOLUTION="ChangeDisplayResolution";
 
-const std::string ApplicationConfigSchema::WINDOWINSTANCE="WINDOWINSTANCE";
-const std::string ApplicationConfigSchema::SCENEINSTANCE="SCENEINSTANCE";
+const std::string ApplicationConfigSchema::WINDOWINSTANCE="WindowInstance";
+const std::string ApplicationConfigSchema::SCENEINSTANCE="SceneInstance";
 

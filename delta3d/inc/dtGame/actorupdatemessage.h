@@ -25,7 +25,6 @@
 #include <map>
 #include <dtUtil/exception.h>
 #include "dtGame/message.h"
-#include "dtGame/messageparameter.h"
 
 
 // Forward declarations
@@ -36,6 +35,8 @@ namespace dtDAL
 
 namespace dtGame
 {
+   class MessageParameter;
+
    /**
     * Class the represents messages that are related to actors
     */

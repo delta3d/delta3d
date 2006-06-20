@@ -22,13 +22,13 @@
 
 void TestGameEnvironmentActor::AddActor(dtDAL::ActorProxy &proxy)
 {
-   mEnvironment->AddChild(proxy.GetActor());
+   AddChild(proxy.GetActor());
    mAddedActors.insert(std::make_pair(&proxy, proxy.GetActor()));
 }
 
 void TestGameEnvironmentActor::RemoveActor(dtDAL::ActorProxy &proxy)
 {
-   mEnvironment->RemoveChild(proxy.GetActor());
+   RemoveChild(proxy.GetActor());
    std::map<dtCore::RefPtr<dtDAL::ActorProxy>, dtCore::DeltaDrawable*>::iterator i =
       mAddedActors.find(&proxy);
 
@@ -38,8 +38,8 @@ void TestGameEnvironmentActor::RemoveActor(dtDAL::ActorProxy &proxy)
 
 void TestGameEnvironmentActor::RemoveAllActors()
 {
-   while(mEnvironment->GetNumChildren() > 0)
-      mEnvironment->RemoveChild(mEnvironment->GetChild(0));
+   while(GetNumChildren() > 0)
+      RemoveChild(GetChild(GetNumChildren() - 1));
 
    mAddedActors.clear();
 }
@@ -79,12 +79,22 @@ void TestGameEnvironmentActor::GetAllActors(std::vector<const dtDAL::ActorProxy*
 void TestGameEnvironmentActor::SetTimeAndDate(const int year, const int month, const int day, 
                                           const int hour, const int min,   const int sec)
 {
-   mEnvironment->SetDateTime(year, month, day, hour, min, sec);
+   mYear = year;
+   mMonth = month;
+   mDay = day;
+   mHour = hour;
+   mMin = min;
+   mSec = sec;
 }
 
 void TestGameEnvironmentActor::GetTimeAndDate(int &year, int &month, int &day, int &hour, int &min, int &sec) const
 {
-   mEnvironment->GetDateTime(&year, &month, &day, &hour, &min, &sec);
+   year = mYear;
+   month = mMonth;
+   day = mDay;
+   hour = mHour;
+   min = mMin;
+   sec = mSec;
 }
 
 void TestGameEnvironmentActor::SetTimeAndDateString(const std::string &timeAndDate)

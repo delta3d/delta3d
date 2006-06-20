@@ -403,14 +403,7 @@ namespace dtHLAGM
       dtUtil::AttributeSearch::ResultMap::iterator itor = rMap.find(ONE_TO_MANY_ENUM_HLA_ID_ATTRIBUTE);
       if (itor != rMap.end())
       {
-         std::istringstream iss;
-         iss.str(itor->second);
-         iss >> mCurrentEnumHLAID;
-      }
-      else
-      {
-         //If the id is not specified, increment it.
-         mCurrentEnumHLAID++;
+         mCurrentEnumHLAID = itor->second;
       }
    }
 
@@ -529,7 +522,7 @@ namespace dtHLAGM
 
       if (elementName == OBJECT_CLASS_ELEMENT)
       {
-         mCurrentObjectToActor->SetObjectTypeName(characters);
+         mCurrentObjectToActor->SetObjectClassName(characters);
       }
       else if (elementName == OBJECT_ACTOR_TYPE_ELEMENT)
       {
@@ -563,7 +556,7 @@ namespace dtHLAGM
          if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
             mLogger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__,
                                "Setting Object To Actor with Object Class Type \"%s\" Remote Only value to \"%s\".",
-                               mCurrentObjectToActor->GetObjectTypeName().c_str(),
+                               mCurrentObjectToActor->GetObjectClassName().c_str(),
                                characters.c_str());
          mCurrentObjectToActor->SetRemoteOnly(characters == "true" || characters == "1");
       }

@@ -19,7 +19,6 @@
  * @author William E. Johnson II and David Guthrie
  */
 
-//#include <dtCore/scene.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <dtDAL/functor.h>
 #include "dtGame/message.h"
@@ -37,6 +36,11 @@
 
 namespace dtGame
 {
+   // invokable names
+   const std::string GameActorProxy::PROCESS_MSG_INVOKABLE("Process Message");
+   const std::string GameActorProxy::TICK_LOCAL_INVOKABLE("Tick Local");
+   const std::string GameActorProxy::TICK_REMOTE_INVOKABLE("Tick Remote");
+
    IMPLEMENT_ENUM(GameActorProxy::Ownership);
    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_PUBLISHED("Server+Published");
    GameActorProxy::Ownership GameActorProxy::Ownership::SERVER_LOCAL("Server Local");
@@ -94,6 +98,25 @@ namespace dtGame
         "Sets the shader group on the game actor.",GROUPNAME));
 	}
 
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::NotifyActorUpdate()
+   {
+      NotifyFullActorUpdate();
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::NotifyFullActorUpdate()
+   {
+      if (GetGameManager() == NULL || GetGameActor().IsRemote())
+         return;
+
+      dtCore::RefPtr<dtGame::Message> updateMsg =
+            GetGameManager()->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_ACTOR_UPDATED);
+      dtGame::ActorUpdateMessage *message = static_cast<dtGame::ActorUpdateMessage *>(updateMsg.get());
+      PopulateActorUpdate(*message);
+      GetGameManager()->SendMessage(*updateMsg);
+   }
+
    void GameActorProxy::PopulateActorUpdate(ActorUpdateMessage& update, const std::vector<std::string> &propNames) throw()
    {
       PopulateActorUpdate(update, propNames, true);
@@ -118,15 +141,27 @@ namespace dtGame
       if (catParam != NULL)
          catParam->SetValue(GetActorType().GetCategory());
 
+      update.SetSendingActorId(GetId());
       update.SetAboutActorId(GetId());
+
       if (limitProperties)
       {
          for (unsigned i = 0; i < propNames.size(); ++i)
          {
             dtDAL::ActorProperty* property = GetProperty(propNames[i]);
-            if (property != NULL)
+            if (property != NULL && !property->IsReadOnly())
             {
-
+               try
+               {
+                  MessageParameter* mp = update.AddUpdateParameter(property->GetName(), property->GetPropertyType());
+                  if (mp != NULL)
+                     mp->FromString(property->GetStringValue());
+               }
+               catch (const dtUtil::Exception&)
+               {
+                  //hmm, someone should not have added a property already.
+                  update.GetUpdateParameter(property->GetName());
+               }
             }
          }
       }
@@ -340,11 +375,14 @@ namespace dtGame
 
    void GameActorProxy::BuildInvokables()
    {
-      AddInvokable(*new Invokable("Tick Local",
+      AddInvokable(*new Invokable(TICK_LOCAL_INVOKABLE,
          dtDAL::MakeFunctor(GetGameActor(), &GameActor::TickLocal)));
 
-      AddInvokable(*new Invokable("Tick Remote",
+      AddInvokable(*new Invokable(TICK_REMOTE_INVOKABLE,
          dtDAL::MakeFunctor(GetGameActor(), &GameActor::TickRemote)));
+
+      AddInvokable(*new Invokable(PROCESS_MSG_INVOKABLE,
+         dtDAL::MakeFunctor(GetGameActor(), &GameActor::ProcessMessage)));
    }
 
    Invokable* GameActorProxy::GetInvokable(const std::string& name)
@@ -388,7 +426,27 @@ namespace dtGame
       }
    }
 
-   void GameActorProxy::RegisterMessageHandler(const MessageType& type, const std::string& invokableName)
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RegisterForMessages(const MessageType& type, const std::string& invokableName)
+   {
+      if (GetGameManager() != NULL)
+      {
+         GetGameManager()->RegisterForMessages(type,*this, invokableName);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RegisterForMessagesAboutOtherActor(const MessageType& type, 
+      const dtCore::UniqueId& targetActorId, const std::string& invokableName)
+   {
+      if (GetGameManager() != NULL)
+      {
+         GetGameManager()->RegisterForMessagesAboutActor(type,targetActorId, *this, invokableName);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::RegisterForMessagesAboutSelf(const MessageType& type, const std::string& invokableName)
    {
       Invokable* invokable = GetInvokable(invokableName);
       if (invokable != NULL)
@@ -404,7 +462,27 @@ namespace dtGame
 
    }
 
-   void GameActorProxy::UnregisterMessageHandler(const MessageType& type, const std::string& invokableName)
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::UnregisterForMessages(const MessageType& type, const std::string& invokableName)
+   {
+      if (GetGameManager() != NULL)
+      {
+         GetGameManager()->UnregisterForMessages(type,*this, invokableName);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::UnregisterForMessagesAboutOtherActor(const MessageType& type, 
+      const dtCore::UniqueId& targetActorId, const std::string& invokableName)
+   {
+      if (GetGameManager() != NULL)
+      {
+         GetGameManager()->UnregisterForMessagesAboutActor(type, targetActorId, *this, invokableName);
+      }
+   }
+
+   //////////////////////////////////////////////////////////////////////////////
+   void GameActorProxy::UnregisterForMessagesAboutSelf(const MessageType& type, const std::string& invokableName)
    {
       for (std::multimap<const MessageType*, dtCore::RefPtr<Invokable> >::iterator i = mMessageHandlers.find(&type);
             (i != mMessageHandlers.end()) && (*i->first == type); ++i)
@@ -438,22 +516,26 @@ namespace dtGame
    }
 
 
-	///////////////////////////////////////////
-	// Actor code
-	///////////////////////////////////////////
+   ///////////////////////////////////////////
+   // Actor code
+   ///////////////////////////////////////////
    GameActor::GameActor(GameActorProxy& proxy) : mProxy(&proxy), mPublished(false), mRemote(false)
-	{
-	}
+   {
+   }
 
-	GameActor::~GameActor()
-	{
-	}
+   GameActor::~GameActor()
+   {
+   }
 
    void GameActor::TickLocal(const Message& tickMessage)
    {
    }
 
    void GameActor::TickRemote(const Message& tickMessage)
+   {
+   }
+
+   void GameActor::ProcessMessage(const Message& message)
    {
    }
 

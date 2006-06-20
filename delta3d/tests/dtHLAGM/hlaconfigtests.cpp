@@ -149,9 +149,9 @@ void HLAConfigTests::CheckObjectToActorMapping(
 
    CPPUNIT_ASSERT_MESSAGE("The GetActorType method should return the same type as it was mapped to.",
       otoa->GetActorType() == *type);
-   CPPUNIT_ASSERT_MESSAGE("The GetObjectTypeName method should return " + objectClassName
-      + "  not " + otoa->GetObjectTypeName() + ".",
-      otoa->GetObjectTypeName() == objectClassName);
+   CPPUNIT_ASSERT_MESSAGE("The GetObjectClassName method should return " + objectClassName
+      + "  not " + otoa->GetObjectClassName() + ".",
+      otoa->GetObjectClassName() == objectClassName);
 
    if (entityType == NULL)
       CPPUNIT_ASSERT_MESSAGE("DIS ID should be NULL.", otoa->GetDisID() == NULL);
@@ -191,7 +191,6 @@ void HLAConfigTests::CheckInteractionToMessageMapping(
       itom != NULL);
 
 
-
    CPPUNIT_ASSERT_MESSAGE("The GetActorType method should return the same type as it was mapped to.",
       itom->GetMessageType() == messageType);
    CPPUNIT_ASSERT_MESSAGE("The GetInteractionName method should return " +  interactionName
@@ -203,7 +202,7 @@ void HLAConfigTests::CheckInteractionToMessageMapping(
    for (unsigned i = 0; i < params.size(); ++i)
    {
       std::ostringstream ss;
-      ss << "ParameterToParameter " << i << " with name " << params[i].GetHLAName() << " should match the one in the mapping with name " << paramsActual[i].GetHLAName() << ".";
+      ss << "ParameterToParameter " << i << " with name " << params[i].GetHLAName() << " should match the one in the mapping with name " << paramsActual[i].GetHLAName() << ". " << paramsActual[i];
       CPPUNIT_ASSERT_MESSAGE(ss.str(),  params[i] == paramsActual[i]);
    }
 }
@@ -257,10 +256,10 @@ void HLAConfigTests::TestConfigure()
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Damage State", dtDAL::DataType::ENUMERATION, "Destroyed", false);
 
-            pd.AddEnumerationMapping(0, "No Damage");
-            pd.AddEnumerationMapping(1, "Damaged");
-            pd.AddEnumerationMapping(2, "Damaged");
-            pd.AddEnumerationMapping(3, "Destroyed");
+            pd.AddEnumerationMapping("0", "No Damage");
+            pd.AddEnumerationMapping("1", "Damaged");
+            pd.AddEnumerationMapping("2", "Damaged");
+            pd.AddEnumerationMapping("3", "Destroyed");
 
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
@@ -309,10 +308,10 @@ void HLAConfigTests::TestConfigure()
 
             dtHLAGM::OneToManyMapping::ParameterDefinition pd("Damage State", dtDAL::DataType::ENUMERATION, "Destroyed", false);
 
-            pd.AddEnumerationMapping(0, "No Damage");
-            pd.AddEnumerationMapping(1, "Damaged");
-            pd.AddEnumerationMapping(2, "Damaged");
-            pd.AddEnumerationMapping(3, "Destroyed");
+            pd.AddEnumerationMapping("0", "No Damage");
+            pd.AddEnumerationMapping("1", "Damaged");
+            pd.AddEnumerationMapping("2", "Damaged");
+            pd.AddEnumerationMapping("3", "Destroyed");
 
             attrToProp.GetParameterDefinitions().push_back(pd); 
             props.push_back(attrToProp);
@@ -346,7 +345,7 @@ void HLAConfigTests::TestConfigure()
 
          dtHLAGM::EntityType type2(1, 2, 222, 20, 2, 6, 0);
          CheckObjectToActorMapping("TestHLA", "Helicopter", "BaseEntity.PhysicalEntity.Platform.Aircraft",
-            "HeloIdentifier", &type2, true, props);
+            "EntityIdentifier", &type2, true, props);
       }
 
       {
@@ -388,8 +387,26 @@ void HLAConfigTests::TestConfigure()
             paramToParam.GetParameterDefinitions().push_back(pd); 
             params.push_back(paramToParam);
          }
+         {
+            dtHLAGM::ParameterToParameterList paramToParam("FireControlSolutionRange", dtHLAGM::RPRAttributeType::FLOAT_TYPE, true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("LateTime", dtDAL::DataType::FLOAT, "", true);
+            paramToParam.GetParameterDefinitions().push_back(pd); 
+            params.push_back(paramToParam);
+         }
+         {
+            dtHLAGM::ParameterToParameterList paramToParam("MunitionType", dtHLAGM::RPRAttributeType::ENTITY_TYPE, true);
+            dtHLAGM::OneToManyMapping::ParameterDefinition pd("TestProp", dtDAL::DataType::ENUMERATION, "LARGE EXPLOSION", true);
+            
+            pd.AddEnumerationMapping("2 2 225 2 2 0 0", "LARGE BULLET");
+            pd.AddEnumerationMapping("2 9 225 2 14 0 0", "SHORT SMOKE");
+            pd.AddEnumerationMapping("2 9 225 2 14 1 0", "LONG SMOKE");
 
-         CheckInteractionToMessageMapping(dtGame::MessageType::INFO_RESUMED, "WeaponFire", params);
+            paramToParam.GetParameterDefinitions().push_back(pd); 
+            params.push_back(paramToParam);
+
+         }
+
+         CheckInteractionToMessageMapping(dtGame::MessageType::INFO_TIMER_ELAPSED, "WeaponFire", params);
       }
    }
    catch (const dtUtil::Exception& ex)

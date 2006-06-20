@@ -418,6 +418,7 @@ namespace dtEditQt
 
         //Put the mouse cursor in the center of the viewport.
         QPoint center((x()+width())/2,(y()+height())/2);
+        lastMouseUpdateLocation = center;
         QCursor::setPos(mapToGlobal(center));
     }
 
@@ -432,6 +433,46 @@ namespace dtEditQt
             QCursor::setPos(this->oldMouseLocation);
 
         this->cacheMouseLocation = true;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    void Viewport::mouseMoveEvent(QMouseEvent *e)
+    {
+        static bool mouseMoving = false;
+        //Moving the mouse back to the center makes the movement recurse
+        //so this is a flag to prevent the recursion
+
+        if (mouseMoving)
+            return;
+
+        float dx,dy;
+
+        dx = (float)(e->pos().x() - lastMouseUpdateLocation.x());
+        dy = (float)(e->pos().y() - lastMouseUpdateLocation.y());
+
+        onMouseMoveEvent(e, dx, dy);        
+
+        QPoint center((x()+width())/2,(y()+height())/2);
+        
+        float dxCenter = fabs(float(e->pos().x() - center.x()));
+        float dyCenter = fabs(float(e->pos().y() - center.y()));
+        
+        if (dxCenter > (width()/2) || dyCenter > (height()/2))
+        {
+            //Moving the mouse back to the center makes the movement recurse
+            //so this is a flag to prevent the recursion
+            mouseMoving = true;
+            QCursor::setPos(mapToGlobal(center));
+            lastMouseUpdateLocation = center;
+            mouseMoving = false;
+        }
+        else
+        {
+           lastMouseUpdateLocation.setX(e->pos().x());
+           lastMouseUpdateLocation.setY(e->pos().y());
+        }
+        
+        refresh();
     }
 
     ///////////////////////////////////////////////////////////////////////////////

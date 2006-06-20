@@ -160,17 +160,16 @@ namespace dtUtil
          Coordinates();
          virtual ~Coordinates();
          
-         
-         
          /**
-          * Sets the location of the origin in geodetic coordinates.
+          * Sets the location of the game space origin in lat lon and converts it to an offset in UTM.
+          * It also sets the utm zone.
           *
           * @param latitude the latitude of the origin
           * @param longitude the longitude of the origin
           * @param elevation the elevation of the origin
           */
          void SetGeoOrigin(double latitude, double longitude, double elevation);
-
+         
          /**
           * Creates a rotation offset matrix used when converting rotations
           * from geocentric one relative to the zone of the given latitude and longitude.
@@ -178,20 +177,6 @@ namespace dtUtil
           * the terrain which will be used as the actual point of reference. 
           */
          void SetGeoOriginRotation(double latitude, double longitude);
-
-         /**
-          * Stub function to expose this property to the editor
-          * it does nothing more than set a value, then call the 
-          * SetGeoOriginRotation function
-          * @param latlon The latitude and longitude in degrees
-          */
-         void SetGeoOriginRotation(const osg::Vec2d &latlon);
-
-         /**
-          * Stub get function that exposes the internal value
-          * @return mGeoRotationLatLon in degrees
-          */
-         osg::Vec2d GetGeoOriginRotation() const { return mGeoRotationLatLon; }
          
          /**
           * Sets the location of the origin in geocentric coordinates.
@@ -265,13 +250,13 @@ namespace dtUtil
          /**
           * @return the currently set UTM zone.
           */
-         unsigned GetUTMZone() { return mZone; }
+         unsigned GetUTMZone() const { return mZone; }
          
          /**
           * Set the UTM zone to be used when converting coodinates from cartesian (Assumed to be UTM) to lat/lon.
           * @param zone the utm zone.  If it's not between 1 and 60 inclusive, it will be clamped. 
           */
-         void SetUTMZone(unsigned zone) { Clamp<unsigned>(zone, 1L, 60L); mZone = zone; };
+         void SetUTMZone(unsigned zone) { Clamp(zone, unsigned(1), unsigned(60)); mZone = zone; };
                   
          /**
           * Converts XYZ coordinates to a local translation vector based on the current
@@ -564,8 +549,6 @@ namespace dtUtil
           * The rotation offset matrix inverse.
           */
          osg::Matrix mRotationOffsetInverse;
-
-         osg::Vec2d mGeoRotationLatLon;
                   
          double SPHTMD(double Latitude) const;         
          double SPHSN(double Latitude) const; 

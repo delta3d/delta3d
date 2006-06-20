@@ -74,9 +74,11 @@ void TestGameActorProxy1::BuildInvokables()
    //register local tick handles.  
    //This is just to test local handler registration.  If you want to
    //register to receive tick messages, you would override OnEnteredWorld()
-   //and add code like GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::TICK_LOCAL, *this, "Tick Local")
-   RegisterMessageHandler(dtGame::MessageType::TICK_LOCAL, "Tick Local");
-   RegisterMessageHandler(dtGame::MessageType::TICK_REMOTE, "Tick Remote");
+   //and add code like GetGameManager()->RegisterForMessages(dtGame::MessageType::TICK_LOCAL, *this, "Tick Local")
+   RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL, dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+   RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE, dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
+   //RegisterMessageHandler(dtGame::MessageType::TICK_LOCAL, "Tick Local");
+   //RegisterMessageHandler(dtGame::MessageType::TICK_REMOTE, "Tick Remote");
    ticksEnabled = true;
 }
 
@@ -89,14 +91,18 @@ void TestGameActorProxy1::ToggleTicks(const dtGame::Message& message)
 {
    if (ticksEnabled)
    {
-      UnregisterMessageHandler(dtGame::MessageType::TICK_LOCAL, "Tick Local");
-      UnregisterMessageHandler(dtGame::MessageType::TICK_REMOTE, "Tick Remote");
+      UnregisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL, 
+         dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      UnregisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE, 
+         dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
       ticksEnabled = false;
    }
    else
    {
-      RegisterMessageHandler(dtGame::MessageType::TICK_LOCAL, "Tick Local");
-      RegisterMessageHandler(dtGame::MessageType::TICK_REMOTE, "Tick Remote");
+      RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_LOCAL, 
+         dtGame::GameActorProxy::TICK_LOCAL_INVOKABLE);
+      RegisterForMessagesAboutSelf(dtGame::MessageType::TICK_REMOTE, 
+         dtGame::GameActorProxy::TICK_REMOTE_INVOKABLE);
       ticksEnabled = true;
    }      
 }

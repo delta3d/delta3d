@@ -104,6 +104,7 @@ namespace dtEditQt
                 QModelIndex newSelection = propertyModel->indexOf(property, 1);
                 QRect rect = visualRect(newSelection);
                 setSelection(rect, QItemSelectionModel::SelectCurrent);
+                break;
             }
         }
     }

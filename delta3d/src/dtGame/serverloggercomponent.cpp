@@ -37,7 +37,8 @@ namespace dtGame
    const std::string ServerLoggerComponent::AUTO_KEYFRAME_TIMER_NAME = "ServerLoggerKeyframeTimer";
 
    //////////////////////////////////////////////////////////////////////////
-   ServerLoggerComponent::ServerLoggerComponent(LogStream &logStream) :
+   ServerLoggerComponent::ServerLoggerComponent(LogStream &logStream, const std::string &name) :
+      GMComponent(name), 
       mLogComponentMachineInfo(new MachineInfo("__Server Logger Component__"))
    {
       mLogStatus.SetStateEnum(LogStateEnumeration::LOGGER_STATE_IDLE);
@@ -181,8 +182,8 @@ namespace dtGame
          response->SetDestination(destination);
       }
 
-      GetGameManager()->ProcessMessage(*response.get());
       GetGameManager()->SendMessage(*response.get());
+      GetGameManager()->SendNetworkMessage(*response.get());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -388,8 +389,8 @@ namespace dtGame
             "Server Logger Component - Could not retrieve log file list " + e.What());
       }
 
-      GetGameManager()->ProcessMessage(*response.get());
       GetGameManager()->SendMessage(*response.get());
+      GetGameManager()->SendNetworkMessage(*response.get());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -446,8 +447,8 @@ namespace dtGame
             "Server Logger Component - Could not retrieve key frame index: " + e.What());
       }
 
-      GetGameManager()->ProcessMessage(*response.get());
       GetGameManager()->SendMessage(*response.get());
+      GetGameManager()->SendNetworkMessage(*response.get());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -470,8 +471,8 @@ namespace dtGame
             "Server Logger Component - Could not retrieve tags index: " + e.What());
       }
 
-      GetGameManager()->ProcessMessage(*response.get());
       GetGameManager()->SendMessage(*response.get());
+      GetGameManager()->SendNetworkMessage(*response.get());
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -622,8 +623,8 @@ namespace dtGame
                // No other complaints. So, get it ready and send it out.
                mNextMessage->SetSource(*mLogComponentMachineInfo);
                mLogStatus.SetNumMessages(mLogStatus.GetNumMessages() + 1);
-               GetGameManager()->ProcessMessage(*mNextMessage);
                GetGameManager()->SendMessage(*mNextMessage);
+               GetGameManager()->SendNetworkMessage(*mNextMessage);
             }
 
             // get our next message and do it all over again
@@ -778,8 +779,8 @@ namespace dtGame
          EXCEPT(LogStreamException::LOGGER_IO_EXCEPTION,"Malformed keyframe detected in the log "
             "stream.  Cannot proceed.");
 
-      GetGameManager()->ProcessMessage(*kfMsg.get());
       GetGameManager()->SendMessage(*kfMsg.get());
+      GetGameManager()->SendNetworkMessage(*kfMsg.get());
 
       //Read all messages from the keyframe, track them, then compare them to what's
       //currently in the game.  If an actor exists that is not in the game, send a delete
@@ -809,8 +810,8 @@ namespace dtGame
             dtCore::RefPtr<Message> msg = GetGameManager()->GetMessageFactory().CreateMessage(MessageType::INFO_ACTOR_DELETED);
             msg->SetAboutActorId(proxy->GetId());
             msg->SetDestination(&GetGameManager()->GetMachineInfo());
-            GetGameManager()->ProcessMessage(*msg);
             GetGameManager()->SendMessage(*msg);
+            GetGameManager()->SendNetworkMessage(*msg);
 
             GetGameManager()->DeleteActor(*proxy);
          }
@@ -821,8 +822,8 @@ namespace dtGame
          //If it is in the keyframe then send out an update message.  Note, that the
          //update message causes the actor to be created if it does not yet exist.
          updateMapItor->second->SetSource(*mLogComponentMachineInfo);
-         GetGameManager()->ProcessMessage(*(updateMapItor->second.get()));
          GetGameManager()->SendMessage(*(updateMapItor->second.get()));
+         GetGameManager()->SendNetworkMessage(*(updateMapItor->second.get()));
       }
 
       //Finally, send out the simulation time located in the keyframe and send out
@@ -834,8 +835,8 @@ namespace dtGame
       mNextMessage = NULL;
 
       GetGameManager()->ChangeTimeSettings(simTime, GetGameManager()->GetTimeScale(), GetGameManager()->GetSimulationClockTime());
-      GetGameManager()->ProcessMessage(*endMsg.get());
       GetGameManager()->SendMessage(*endMsg.get());
+      GetGameManager()->SendNetworkMessage(*endMsg.get());
    }
 
    //////////////////////////////////////////////////////////////////////////

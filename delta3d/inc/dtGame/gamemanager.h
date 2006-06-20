@@ -172,22 +172,23 @@ namespace dtGame
          virtual void OnMessage(MessageData *data);
 
          /**
-          * Calls SendMessage on all of the components
+          * Calls DispatchNetworkMessage on all of the components
           * @param The message to send
           */
-         void SendMessage(const Message& message);
+         void SendNetworkMessage(const Message& message);
 
          /**
           * Calls ProcessMessage on all of the components
           * @param The message to process
           */
-         void ProcessMessage(const Message& message);
+         void SendMessage(const Message& message);
 
          /**
           * Adds a component to the list of components the game mananger
           * will communicate with
           * @param The component to add
           * @param priority the priority of the component.  This translates into the order of message delivery.
+          * @throw dtGame::ExceptionEnum::INVALID_PARAMETER if the component lacks a unique name
           */
          void AddComponent(GMComponent& component, const ComponentPriority& priority);
 
@@ -211,6 +212,18 @@ namespace dtGame
          void GetAllComponents(std::vector<const GMComponent*>& toFill) const;
 
          /**
+          * Returns a const component of the requested name or NULL if none exists
+          * @return A pointer to the requested component, or NULL
+          */
+         GMComponent* GetComponentByName(const std::string &name);
+
+         /**
+          * Returns a const component of the requested name or NULL if none exists
+          * @return A pointer to the requested component, or NULL
+          */
+         const GMComponent* GetComponentByName(const std::string &name) const;
+
+         /**
           * Sets an environment actor on the game manager
           * @param envActor The environment actor to set
           */
@@ -230,12 +243,42 @@ namespace dtGame
          dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(dtDAL::ActorType& actorType) throw(dtUtil::Exception);
 
          /**
+          * Creates an actor based on the actor type and store it in a ref pointer.
+          * This method is templated so that the caller can create a ref pointer to the actual type of the proxy,
+          * not ActorProxy.  This is very handy with GameActorProxies since it is typical that uses will create those most often.
+          * @param The actor type to create.
+          * @param proxy a RefPtr to fill with the created actor.  If the actor is not type specified, the RefPtr will be NULL.
+          * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+          */
+         template <typename ProxyType>
+         void CreateActor(dtDAL::ActorType& actorType, dtCore::RefPtr<ProxyType>& proxy) throw(dtUtil::Exception)
+         {
+            dtCore::RefPtr<dtDAL::ActorProxy> tmpProxy = CreateActor(actorType);
+            proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
+         }
+
+         /**
           * Creates an actor based on the actor type
           * @param category The category corresponding to the actor type
           * @param name The name corresponding to the actor type
           * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
           */
          dtCore::RefPtr<dtDAL::ActorProxy> CreateActor(const std::string &category, const std::string &name) throw(dtUtil::Exception);
+
+         /**
+          * Creates an actor based on the string version of the actor type and store it in a ref pointer.
+          * This method is templated so that the caller can create a ref pointer to the actual type of the proxy,
+          * not ActorProxy.  This is very handy with GameActorProxies since it is typical that uses will create those most often.
+          * @param The actor type to create.
+          * @param proxy a RefPtr to fill with the created actor.  If the actor is not type specified, the RefPtr will be NULL.
+          * @throws dtDAL::ExceptionEnum::ObjectFactoryUnknownType
+          */
+         template <typename ProxyType>
+         void CreateActor(const std::string& category, const std::string& name, dtCore::RefPtr<ProxyType>& proxy) throw(dtUtil::Exception)
+         {
+            dtCore::RefPtr<dtDAL::ActorProxy> tmpProxy = CreateActor(category, name);
+            proxy = dynamic_cast<ProxyType*>(tmpProxy.get());
+         }
 
          /**
           * Adds an actor to the list of actors that the game manager knows about
@@ -535,7 +578,7 @@ namespace dtGame
           * @param type the message type to query for.
           * @param toFill a vector to fill with pairs GameActorProxies and the name of the invokable.
           */
-         void GetGlobalMessageListeners(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill);
+         void GetRegistrantsForMessages(const MessageType& type, std::vector<std::pair<GameActorProxy*, std::string > >& toFill);
          
          /**
           * Get all of the GameActorProxies registered to receive messages of a given type for a given GameActor.
@@ -543,7 +586,7 @@ namespace dtGame
           * @param targetActorId the id of the GameActor to query for.
           * @param toFill a vector to fill with the GameActorProxies.
           */
-         void GetGameActorMessageListeners(
+         void GetRegistrantsForMessagesAboutActor(
             const MessageType& type, 
             const dtCore::UniqueId& targetActorId, 
             std::vector<std::pair<GameActorProxy*, std::string > >& toFill);
@@ -553,14 +596,14 @@ namespace dtGame
           * @param proxy
           * @param invokableName
           */ 
-         void RegisterGlobalMessageListener(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
+         void RegisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
          
          /**
           * @param type
           * @param proxy
           * @param invokableName
           */ 
-         void UnregisterGlobalMessageListener(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
+         void UnregisterForMessages(const MessageType& type, GameActorProxy& proxy, const std::string& invokableName);
       
          /**
           * @param type
@@ -568,7 +611,7 @@ namespace dtGame
           * @param proxy
           * @param invokableName
           */ 
-         void RegisterGameActorMessageListener(
+         void RegisterForMessagesAboutActor(
             const MessageType& type, 
             const dtCore::UniqueId& targetActorId, 
             GameActorProxy& proxy, 
@@ -580,7 +623,7 @@ namespace dtGame
           * @param proxy
           * @param invokableName
           */ 
-         void UnregisterGameActorMessageListener(
+         void UnregisterForMessagesAboutActor(
             const MessageType& type, 
             const dtCore::UniqueId& targetActorId, 
             GameActorProxy& proxy, 
@@ -608,7 +651,7 @@ namespace dtGame
           * when it has determined that a request message is invalid and it needs to reject it.
           * The method creates a ServerMessageRejected - SERVER_REQUEST_REJECTED message.  If the 
           * reasonMessage has a MachineInfo that indicates it came from this server, then this method
-          * does a ProcessMessage on the new rejected message.  Otherwise, it does a SendMessage.
+          * does a SendMessage on the new rejected message.  Otherwise, it does a SendNetworkMessage.
           * The resulting reject message will eventually make its way back to the source client-component.
           * @param toReject the Message that you are trying to reject.
           * @param rejectDescription A text message describing why the message was rejected.
@@ -691,8 +734,8 @@ namespace dtGame
          std::map<const MessageType*, std::multimap<dtCore::UniqueId, std::pair<dtCore::RefPtr<GameActorProxy>, std::string> > > mActorMessageListeners;
 
          std::vector<dtCore::RefPtr<GMComponent> > mComponentList; 
+         std::queue<dtCore::RefPtr<const Message> > mSendNetworkMessageQueue;
          std::queue<dtCore::RefPtr<const Message> > mSendMessageQueue;
-         std::queue<dtCore::RefPtr<const Message> > mProcessMessageQueue;
          dtCore::RefPtr<dtCore::Scene> mScene;
          dtCore::RefPtr<dtDAL::LibraryManager> mLibMgr;
          MessageFactory mFactory;
@@ -704,7 +747,7 @@ namespace dtGame
          // statistics data
          dtCore::Timer_t mStatsLastFragmentDump;
          long mStatsNumProcMessages;
-         long mStatsNumSendMessages;
+         long mStatsNumSendNetworkMessages;
          long mStatsNumFrames;
          dtCore::Timer_t mStatsCumGMProcessTime;
          

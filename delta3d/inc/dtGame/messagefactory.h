@@ -111,9 +111,27 @@ namespace dtGame
           * @return A pointer to the MessageType or NULL if there was no matching message type.
           */
          const MessageType* GetMessageTypeByName(const std::string& name) const throw();
+         
+         /**
+          * Creates a message from the factory and fills a passed in refptr.
+          * This is templated so one can pass in a ref ptr to the actual subclass of 
+          * dtGame::Message and fill it without having to do a cast outside the method.
+          * @param msgType The type of message to generate
+          * @param result A RefPtr to fill with the created message.
+          * @return A pointer to the message, or NULL if error
+          * @throws dtUtil::Exception if the given message type is not registered.
+          */
+         template <typename MessageClassName>
+         void CreateMessage(const MessageType &msgType, dtCore::RefPtr<MessageClassName>& result) throw(dtUtil::Exception)
+         {
+            dtCore::RefPtr<Message> msg = CreateMessage(msgType);
+            result = static_cast<MessageClassName*>(msg.get());
+         }
 
          /**
-          * Creates a message from the factory
+          * Creates a message from the factory.  This only returns a poiner to a Message.
+          * One should use the templated version of the method unless there is no need
+          * to have a subclass of Message.
           * @param msgType The type of message to generate
           * @return A pointer to the message, or NULL if error
           * @throws dtUtil::Exception if the given message type is not registered.

@@ -159,13 +159,6 @@ namespace dtHLAGM
 
          bool operator<(const EntityIdentifier& entityId) const;
 
-         std::string ToString() const 
-         {
-            std::ostringstream oss("");
-            oss << mSiteIdentifier << ' ' << mApplicationIdentifier << ' ' << mEntityIdentifier;
-            return oss.str();
-         }
-
       private:
 
          /**
@@ -183,6 +176,9 @@ namespace dtHLAGM
           */
          unsigned short mEntityIdentifier;
    };
+
+   std::ostream& operator << (std::ostream &o, const EntityIdentifier &eid);
+
 
    /**
     * A DIS/RPR-FOM entity type.
@@ -397,13 +393,22 @@ namespace dtHLAGM
    };
 
    /**
-    * Allows writing the elemens of this class to a stream
+    * Allows writing the elements of this class to a stream
     * @param o the ostream to write to
     * @param et the entity type.
     * @return the stream that was written to.
     */
-   //std::ostream& operator<<(std::ostream &o, const EntityType &et);
+   DT_HLAGM_EXPORT std::ostream& operator << (std::ostream &o, const EntityType &et);
 
+   /**
+    * Allows reading the elements of this class from a stream.  Any values that could not be read
+    * will be set to 0.  The format is expected to be each number separated by whitespace.
+    * @param is the istream to read from
+    * @param et the entity type.
+    * @return the stream that was read from.
+    */
+   DT_HLAGM_EXPORT std::istream& operator >> (std::istream &is, EntityType &et);
+   
    /**
     * A DIS/RPR-FOM event identifier.
     */

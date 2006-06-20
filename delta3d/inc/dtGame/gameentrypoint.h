@@ -23,6 +23,7 @@
 
 #include <dtCore/refptr.h>
 #include <dtUtil/exception.h>
+#include <dtGame/gamemanager.h>
 
 namespace dtCore 
 {
@@ -31,7 +32,7 @@ namespace dtCore
 
 namespace dtGame
 {
-   class GameManager;
+   //class GameManager;
    class GameApplication;
 
    /**
@@ -53,17 +54,18 @@ namespace dtGame
           * @throwns dtUtil::Exception if initialization fails.
           */
          virtual void Initialize(GameApplication& app, int argc, char **argv) 
-            throw (dtUtil::Exception) = 0;
+            throw (dtUtil::Exception) {}
          
          /**
           * Override the method to create the game manager.
           */
-         virtual dtCore::RefPtr<GameManager> CreateGameManager(dtCore::Scene& scene) = 0;
+         virtual dtCore::RefPtr<GameManager> CreateGameManager(dtCore::Scene& scene) { return new GameManager(scene); }
          
          /**
           * Called after all startup related code is run.
+          * @param gameManager The game manager to init
           */
-         virtual void OnStartup() = 0;
+         virtual void OnStartup(dtGame::GameManager &gameManager) = 0;
    };
 
 }

@@ -59,8 +59,8 @@ class GMTaskComponentTests : public CPPUNIT_NS::TestFixture
 
 CPPUNIT_TEST_SUITE_REGISTRATION(GMTaskComponentTests);
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-char* GMTaskComponentTests::mTestGameActorLibrary="testGameActorLibraryd";
-char* GMTaskComponentTests::mTestActorLibrary="testActorLibraryd";
+char* GMTaskComponentTests::mTestGameActorLibrary="testGameActorLibrary";
+char* GMTaskComponentTests::mTestActorLibrary="testActorLibrary";
 #else
 char* GMTaskComponentTests::mTestGameActorLibrary="testGameActorLibrary";
 char* GMTaskComponentTests::mTestActorLibrary="testActorLibrary";
@@ -235,7 +235,7 @@ void GMTaskComponentTests::TestChangeMap()
       dtGame::MessageFactory &msgFactory = mGameManager->GetMessageFactory();
       dtCore::RefPtr<dtGame::MapLoadedMessage> mapLoadMessage =
          (dtGame::MapLoadedMessage *)(msgFactory.CreateMessage(dtGame::MessageType::INFO_MAP_LOADED)).get();
-      mGameManager->ProcessMessage(*mapLoadMessage);
+      mGameManager->SendMessage(*mapLoadMessage);
       dtCore::System::Instance()->Step();
 
       CPPUNIT_ASSERT_MESSAGE("Task component should have 0 top level tasks.",

@@ -39,6 +39,8 @@ TestGameActorProxy2::~TestGameActorProxy2()
 
 void TestGameActorProxy2::BuildInvokables()
 {
+   GameActorProxy::BuildInvokables();
+
    AddInvokable(*new dtGame::Invokable("Test Message Listener", 
       dtDAL::MakeFunctor(static_cast<TestGameActor2&>(GetGameActor()), &TestGameActor2::LogMessage)));
    
@@ -83,6 +85,24 @@ TestGameActor2::~TestGameActor2()
 
 }
 
+/////////////////////////////////////////////////////
+void TestGameActor2::ProcessMessage(const dtGame::Message& message)
+{
+   if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_PUBLISHED)
+   {
+      mActorPublishedCount+=2;
+   }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_MAP_LOADED)
+   {
+      mMapLoadedCount+=2;
+   }
+   else if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_DELETED)
+   {
+      mActorDeletedCount+=2;
+   }
+}
+
+/////////////////////////////////////////////////////
 void TestGameActor2::LogMessage(const dtGame::Message& message)
 {
    if (message.GetMessageType() == dtGame::MessageType::INFO_ACTOR_PUBLISHED)

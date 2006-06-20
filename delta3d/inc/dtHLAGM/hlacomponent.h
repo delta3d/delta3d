@@ -70,8 +70,14 @@ namespace dtHLAGM
       public NullFederateAmbassador
    {
       public:
+         //Constant for the name of the about actor id property on a message.
+         //It's used to map data to it like a message parameter in the mapping.
+         static const std::string ABOUT_ACTOR_ID;
+         ///Constant for the name of the source actor id property on a message.
+         //It's used to map data to it like a message parameter in the mapping.
+         static const std::string SENDING_ACTOR_ID;
 
-         HLAComponent();
+         HLAComponent(const std::string& name = "hla");
 
          /**
           * Creates/joins a federation execution.
@@ -226,6 +232,19 @@ namespace dtHLAGM
          const ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const;
          ObjectToActor* GetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID);
 
+         ///Fills a vector with all object to actor mappings currently registered.
+         void GetAllObjectToActorMappings(std::vector<ObjectToActor*> toFill);
+         
+         ///Fills a vector with all const object to actor mappings.
+         void GetAllObjectToActorMappings(std::vector<const ObjectToActor*> toFill) const;
+
+         ///Fills a vector with all interaction to message mappings.
+         void GetAllInteractionToMessageMappings(std::vector<InteractionToMessage*> toFill);
+
+         ///Fills a vector with all const interaction to message mappings.
+         void GetAllInteractionToMessageMappings(std::vector<const InteractionToMessage*> toFill) const;
+
+
          /**
           * Called to Register an Object to Actor mapping.
           *
@@ -314,7 +333,7 @@ namespace dtHLAGM
           * Overridden to receive messages for published actors so that any actors or messages
           * defined in the configuration can be translated into HLA.
           */
-         virtual void SendMessage(const dtGame::Message& message);
+         virtual void DispatchNetworkMessage(const dtGame::Message& message);
 
          /**
           * Overridden to handle tick messages.
@@ -360,6 +379,17 @@ namespace dtHLAGM
       protected:
 
          /**
+          * Prepares the interaction parameters for an interaction.  This may be overridden in a subclass
+          * to do one-off translations of outgoing data.
+          * @param message the message that holds the data to be translated.
+          * @param interactionParams a ParameterHandleValuePairSet to be filled with parameters.
+          * @param interactionToMessage the mapping object specifying the mapping information.
+          */
+         virtual void PrepareInteraction(const dtGame::Message& message, 
+            RTI::ParameterHandleValuePairSet& interactionParams, 
+            const InteractionToMessage& interactionToMessage);
+
+         /**
           * Maps a value in a buffer from HLA to a message parameter.
           * @param mapping the mapping object for the given field.
           * @param buffer the buffer of data bytes that holds the value.
@@ -368,14 +398,19 @@ namespace dtHLAGM
          const ObjectToActor* InternalGetObjectMapping(const std::string& objTypeName, const EntityType* thisDisID) const;
 
          /**
-          * Called by SendMessage if the message received is to delete an actor.
+          * Called by DispatchNetworkMessage if the message received is to delete an actor.
           */
-         virtual void SendDelete(const dtGame::Message& message);
+         void DispatchDelete(const dtGame::Message& message);
 
          /**
-          * Called by SendMessage if the message received is to update or create an actor.
+          * Called by DispatchNetworkMessage if the message received is to update or create an actor.
           */
-         virtual void SendUpdate(const dtGame::Message& message);
+         void DispatchUpdate(const dtGame::Message& message);
+
+         /**
+          * Called by DispatchNetworkMessage when a message other than an actor lifecycle message is passed in.
+          */
+         void DispatchInteraction(const dtGame::Message& message);
 
          /**
           * Sends out the message required to delete an actor.
@@ -388,13 +423,6 @@ namespace dtHLAGM
            throw (RTI::FederateInternalError);
 
       private:
-
-         //Constant for the name of the about actor id property on a message.
-         //It's used to map data to it like a message parameter in the mapping.
-         static const std::string ABOUT_ACTOR_ID;
-         ///Constant for the name of the source actor id property on a message.
-         //It's used to map data to it like a message parameter in the mapping.
-         static const std::string SENDING_ACTOR_ID;
 
          ObjectToActor* GetBestObjectToActor(RTI::ObjectHandle theObject,
                                                    const RTI::AttributeHandleValuePairSet& theAttributes,
@@ -419,6 +447,7 @@ namespace dtHLAGM
                                        size_t maxSize,
                                        std::vector<dtCore::RefPtr<const dtGame::MessageParameter> >& parameters,
                                        const OneToManyMapping& mapping) const;
+
          /**
           * The RTI ambassador.
           */

@@ -288,7 +288,7 @@ namespace dtHLAGM
          //and that needs to be mapped to the numeric values coming
          //from HLA.
          bool mParsingEnumMapping;
-         int mCurrentEnumHLAID;
+         std::string mCurrentEnumHLAID;
 
          std::string mLibName;
          std::string mLibVersion;

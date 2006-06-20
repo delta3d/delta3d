@@ -156,7 +156,7 @@ class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture
          dtCore::RefPtr<dtGame::GameActorProxy> actor;
          type = mGM->FindActorType("ExampleActors", "Test1Actor");
          CPPUNIT_ASSERT(type.valid());
-         actor = dynamic_cast<dtGame::GameActorProxy*>(mGM->CreateActor(*type).get());
+         mGM->CreateActor(*type, actor);
          CPPUNIT_ASSERT(actor.valid());
          dtCore::RefPtr<dtGame::DeadReckoningHelper> helper = new dtGame::DeadReckoningHelper;
          mDeadReckoningComponent->RegisterActor(*actor, *helper);
@@ -173,10 +173,10 @@ class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture
 
          type = mGM->FindActorType("ExampleActors", "Test1Actor");
          CPPUNIT_ASSERT(type.valid());
-         actor = dynamic_cast<dtGame::GameActorProxy*>(mGM->CreateActor(*type).get());
+         mGM->CreateActor(*type, actor);
          CPPUNIT_ASSERT(actor.valid());
          
-         actor = dynamic_cast<dtGame::GameActorProxy*>(mGM->CreateActor(*type).get());
+         mGM->CreateActor(*type, actor);
          CPPUNIT_ASSERT(actor.valid());
          mGM->AddActor(*actor, true, false);
          mDeadReckoningComponent->RegisterActor(*actor, *helper);

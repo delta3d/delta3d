@@ -30,7 +30,7 @@
 namespace dtDAL
 {
 #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-   static const std::string ACTOR_LIBRARY("dtActorsd");
+   static const std::string ACTOR_LIBRARY("dtActors");
 #else
    static const std::string ACTOR_LIBRARY("dtActors");
 #endif

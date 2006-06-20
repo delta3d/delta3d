@@ -87,14 +87,17 @@ void CEUIDrawable::Config()
    
    RegisterInstance(this);
 
+   if(!CEGUI::System::getSingletonPtr())
+   {
+      if(mScriptModule)
+         new CEGUI::System(mRenderer,mScriptModule);
+      else
+         new CEGUI::System(mRenderer);
+   }
+
    int x(0), y(0), w(0), h(0);
    mWindow->GetPosition(x, y, w, h);
    SetRenderingSize(w, h);
-
-   if( mScriptModule )
-      new CEGUI::System(mRenderer,mScriptModule);
-   else
-      new CEGUI::System(mRenderer);
 
    mUI = CEGUI::System::getSingletonPtr();
 
@@ -234,7 +237,8 @@ osg::Object* CEUIDrawable::osgCEUIDrawable::cloneType() const { return new osgCE
 osg::Object* CEUIDrawable::osgCEUIDrawable::clone(const osg::CopyOp& copyop) const { return new osgCEUIDrawable(*this,copyop); }        
 
 void CEUIDrawable::osgCEUIDrawable::drawImplementation(osg::State& state) const
-{ //tell the UI to update and to render
+{
+   //tell the UI to update and to render
    if (!mUI) return;       
    state.setActiveTextureUnit(0);
    mUI->getSingletonPtr()->renderGUI();

@@ -19,8 +19,8 @@
 *
 * @author Matthew W. Campbell
 */
-#ifndef __PerspectiveViewport__h
-#define __PerspectiveViewport__h
+#ifndef DELTA_PERSPECTIVE_VIEWPORT
+#define DELTA_PERSPECTIVE_VIEWPORT
 
 #include "dtEditQt/viewport.h"
 
@@ -155,9 +155,10 @@ namespace dtEditQt
         /**
          * Called when the user moves the mouse while pressing any combination of
          * mouse buttons.  Based on the current mode, the camera is updated.
-         * @param e
+         * @param dx the adjusted change in x that the mouse moved.
+         * @param dy the adjusted change in y that the mouse moved.
          */
-        void mouseMoveEvent(QMouseEvent *e);
+        virtual void onMouseMoveEvent(QMouseEvent *e, float dx, float dy);
 
         /**
          * Called from the mousePressEvent handler.  This sets the viewport state
@@ -241,4 +242,4 @@ namespace dtEditQt
     };
 }
 
-#endif
+#endif //DELTA_PERSPECTIVE_VIEWPORT

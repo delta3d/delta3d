@@ -145,7 +145,7 @@ namespace dtActors
 
       if (!IsRemote())
       {
-         GetGameManager()->RegisterGlobalMessageListener(dtGame::MessageType::INFO_GAME_EVENT,
+         GetGameManager()->RegisterForMessages(dtGame::MessageType::INFO_GAME_EVENT,
             *this,"HandleGameEvent");
       }
    }

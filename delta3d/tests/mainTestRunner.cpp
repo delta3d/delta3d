@@ -32,6 +32,9 @@
 #include <time.h>    // for clock()
 #include <dtCore/timer.h>
 
+#include <sstream>
+
+static std::ostringstream mSlowTests;
 
 class TimingListener : public CppUnit::TestListener
 {
@@ -44,19 +47,19 @@ class TimingListener : public CppUnit::TestListener
  
       void endTest( CppUnit::Test *test )
       {
+         // handle timing - for checking slow tests
+         std::ostringstream testResult;
          dtCore::Timer_t testClockStop = mTestClock.Tick();
          double timeDelta = mTestClock.DeltaSec(mTestClockStart, testClockStop);
          timeDelta = ((int)(timeDelta * 10000)) / 10000.0; // force data truncation
+         testResult << test->getName()  << ((!mFailure) ? ": OK " : ": FAILURE ") <<
+            ": time [" << timeDelta << "]";
          if (timeDelta > 2.0)
          {
-            std::cerr << test->getName()  << ((!mFailure) ? ": OK " : ": FAILURE ") 
-               << ": *** SLOW TEST *** time [" << timeDelta << "]" << std::endl;
+            testResult << " *** SLOW TEST ***";
+            mSlowTests << testResult.str() << std::endl;
          }
-         else 
-         {
-            std::cerr << test->getName()  << ((!mFailure) ? ": OK " : ": FAILURE ") 
-               << ": time [" << timeDelta << "]" << std::endl;
-         }
+         std::cerr << testResult.str() << std::endl;
       }
 
       void addFailure( const CppUnit::TestFailure &failure )
@@ -64,24 +67,22 @@ class TimingListener : public CppUnit::TestListener
          mFailure = true;
       }
 
-    // ... (interface to add/read test timing result)
     private:
        dtCore::Timer mTestClock;
        dtCore::Timer_t mTestClockStart; 
        bool mFailure;
-       //Clock _chronometer;
 };
  
 
 int main (int argc, char* argv[])
 {
+   dtCore::Timer testsClock;
+   dtCore::Timer_t testsTimerStart = testsClock.Tick(); 
+
    CPPUNIT_NS::TestResult testResult;
 
    CPPUNIT_NS::TestResultCollector collectedResults;
    testResult.addListener(&collectedResults);
-
-   //CPPUNIT_NS::BriefTestProgressListener progressListener;
-   //testResult.addListener(&progressListener);
 
    TimingListener timelistener;
    testResult.addListener(&timelistener);
@@ -92,6 +93,19 @@ int main (int argc, char* argv[])
 
    CPPUNIT_NS::CompilerOutputter compilerOutputter(&collectedResults,std::cerr);
    compilerOutputter.write();
+
+   // print out slow tests and total time.
+   dtCore::Timer_t testsTimerStop = testsClock.Tick();
+   double timeDelta = testsClock.DeltaSec(testsTimerStart, testsTimerStop);
+   timeDelta = ((int)(timeDelta * 10000)) / 10000.0; // force data truncation
+   if (mSlowTests.str() != "")
+   {
+      std::cerr << " <<< SLOW TEST RESULTS ::: START >>> " << std::endl << 
+         mSlowTests.str() << " <<< SLOW TEST RESULTS ::: END ::: TotalTime[" << 
+         timeDelta << "] >>> " << std::endl;
+   }
+   else 
+      std::cerr << " <<< SLOW TEST RESULTS ::: ALL TESTS RAN FAST!!! WOOT! ::: TotalTime[" << timeDelta << "] >>> " << std::endl;
 
    return collectedResults.wasSuccessful () ? 0 : 1;
 }

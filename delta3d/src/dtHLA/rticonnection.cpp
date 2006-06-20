@@ -83,7 +83,7 @@ RTIConnection::RTIConnection(std::string name)
    mEffectListener = new RTIEffectListener( RTIEffectListener::EffectFunctor( this, &RTIConnection::EffectAdded ) );
 
    RegisterInstance(this);
-   
+
    AddSender(dtCore::System::Instance());
 
    SetGeoOrigin(0, 0, 0);
@@ -91,8 +91,8 @@ RTIConnection::RTIConnection(std::string name)
    srand(unsigned(time(0)));
 
    mSiteIdentifier = (unsigned short)(1 + (rand() % 65535));
-   mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535)); 
-  
+   mApplicationIdentifier = (unsigned short)(1 + (rand() % 65535));
+
    SOCKET some_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
    /**
@@ -112,7 +112,7 @@ RTIConnection::RTIConnection(std::string name)
    #else
    other.sin_addr.s_addr = 0x7F000001;
    #endif
-   
+
    if(connect(some_socket, (sockaddr*)&other, sizeof(other)) == 0)
    {
 
@@ -123,7 +123,7 @@ RTIConnection::RTIConnection(std::string name)
          #else
          mLocalIPAddress = me.sin_addr.s_addr;
          #endif
-         
+
          if(osg::getCpuByteOrder() == osg::LittleEndian)
          {
             osg::swapBytes((char*)&mLocalIPAddress, sizeof(mLocalIPAddress));
@@ -144,25 +144,25 @@ RTIConnection::RTIConnection(std::string name)
  * Destructor.
  */
 RTIConnection::~RTIConnection()
-throw (RTI::FederateInternalError)        
+throw (RTI::FederateInternalError)
 {
    if( mScene != 0 )
    {
-      for(  std::map<RTI::ObjectHandle, GhostData>::iterator it = 
+      for(  std::map<RTI::ObjectHandle, GhostData>::iterator it =
          mObjectHandleGhostDataMap.begin();
          it != mObjectHandleGhostDataMap.end();
       it++ )
       {
-         mScene->RemoveDrawable( (*it).second.mEntity.get() ); 
+         mScene->RemoveDrawable( (*it).second.mEntity.get() );
       }
    }
 
    mObjectHandleGhostDataMap.clear();
 
    RemoveSender(dtCore::System::Instance());
-   
+
    DeregisterInstance(this);
-} 
+}
 
 /**
  * Creates/joins a federation execution.
@@ -184,19 +184,19 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    }
    catch( RTI::FederationExecutionAlreadyExists& )
    {
-      LOG_INFO("Federation "+executionName+" already exists.")
+      LOG_INFO("Federation "+executionName+" already exists.");
    }
-   
+
    mIgnoreEffect = false;
    mEntityIdentifierCounter = 1;
    mEventIdentifierCounter = 1;
-   
+
    mObjectHandleMasterDataMap.clear();
    mObjectHandleGhostDataMap.clear();
    mNewlyDiscoveredObjects.clear();
    mObjectsToUpdate.clear();
 
-   // This causes a crash on exit with some versions of RTI-s. 
+   // This causes a crash on exit with some versions of RTI-s.
    // Still there on RTI-s D11A. Caused by an array-size mismatch
    // between DVTE.fed/RPR-FOM.fed and RTI-s_1.3_D11A.rid.
    //
@@ -207,19 +207,19 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    try
    {
       mRTIAmbassador.joinFederationExecution(
-         federateName.c_str(), executionName.c_str(), this     
+         federateName.c_str(), executionName.c_str(), this
       );
    }
-   catch( rti13::FederateAlreadyExecutionMember& )
+   catch( RTI::FederateAlreadyExecutionMember& )
    {
       LOG_WARNING("Federate, "+federateName+", tried to connect to Federation, "+
-                  executionName+", more than once. Multiple attempts are ignored.")
+            executionName+", more than once. Multiple attempts are ignored.");
       return;
    }
 
    mExecutionName = executionName;
-   
-   mBaseEntityClassHandle = 
+
+   mBaseEntityClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity");
 
    mPhysicalEntityClassHandle =
@@ -233,7 +233,7 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
 
    mGroundVehicleClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.Platform.GroundVehicle");
-      
+
    mLifeFormClassHandle =
       mRTIAmbassador.getObjectClassHandle("BaseEntity.PhysicalEntity.LifeForm");
 
@@ -244,12 +244,12 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
       "AccelerationVector",
       mBaseEntityClassHandle
    );
-   
+
    mAngularVelocityVectorAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "AngularVelocityVector",
       mBaseEntityClassHandle
    );
-   
+
    mDeadReckoningAlgorithmAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "DeadReckoningAlgorithm",
       mBaseEntityClassHandle
@@ -274,17 +274,17 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
       "Orientation",
       mBaseEntityClassHandle
    );
-    
+
    mVelocityVectorAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "VelocityVector",
       mBaseEntityClassHandle
    );
-   
+
    mArticulatedParametersArrayAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "ArticulatedParametersArray",
       mPhysicalEntityClassHandle
    );
-   
+
    mDamageStateAttributeHandle = mRTIAmbassador.getAttributeHandle(
       "DamageState",
       mPhysicalEntityClassHandle
@@ -365,12 +365,12 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
    mFuseTypeParameterHandle = mRTIAmbassador.getParameterHandle(
       "FuseType",
       mMunitionDetonationClassHandle
-   ); 
+   );
 
    mMunitionObjectIdentifierHandle = mRTIAmbassador.getParameterHandle(
       "MunitionObjectIdentifier",
       mMunitionDetonationClassHandle
-   ); 
+   );
 
    mMunitionTypeParameterHandle = mRTIAmbassador.getParameterHandle(
       "MunitionType",
@@ -402,12 +402,12 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
       mMunitionDetonationClassHandle
    );
 
-   RTI::AttributeHandleSet* ahs = 
+   RTI::AttributeHandleSet* ahs =
       RTI::AttributeHandleSetFactory::create(17);//was4
 
    ahs->add(mEntityIdentifierAttributeHandle);
    ahs->add(mEntityTypeAttributeHandle);
-   ahs->add(mWorldLocationAttributeHandle);   
+   ahs->add(mWorldLocationAttributeHandle);
    ahs->add(mOrientationAttributeHandle);
    ahs->add(mDeadReckoningAlgorithmAttributeHandle);
    ahs->add(mVelocityVectorAttributeHandle);
@@ -448,9 +448,9 @@ void RTIConnection::JoinFederationExecution(std::string executionName,
       mGroundVehicleClassHandle,
       *ahs
    );
-   
+
    delete ahs;
-   
+
    mRTIAmbassador.publishInteractionClass(
       mMunitionDetonationClassHandle
    );
@@ -474,30 +474,30 @@ void RTIConnection::LeaveFederationExecution()  //this is kind of broken
 {
    try
    {
-      mRTIAmbassador.resignFederationExecution(   
+      mRTIAmbassador.resignFederationExecution(
          RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES
-         
+
       );
    }
    catch(RTI::RTIinternalError ine)
    {
-     
+
    }
 
    try
    {
-      
+
       mRTIAmbassador.destroyFederationExecution(
          mExecutionName.c_str()
       );
-      
+
 
    }
    catch(RTI::FederatesCurrentlyJoined fcj)
    {
       //std::cout<<"Problem DestroyingFed: " << fcj <<std::endl;
    }
-   
+
    mExecutionName = "";
 }
 
@@ -622,28 +622,28 @@ float RTIConnection::GetGlobeRadius()
 void RTIConnection::SetGeoOrigin(double latitude, double longitude, double elevation)
 {
    GeodeticToGeocentric(
-      latitude, 
-      longitude, 
+      latitude,
+      longitude,
       elevation,
       mLocationOffset,
       mLocationOffset + 1,
       mLocationOffset + 2
    );
-   
+
    osg::Vec3 xVec ( 1, 0, 0 );
    osg::Vec3 zVec( 0, 0, 1 );
-   
+
    //sgMakeRotMat4(mRotationOffset, 90.0 - latitude, xVec);
    mRotationOffset.makeRotate(osg::DegreesToRadians(90.0f - latitude), xVec);
-   
+
    osg::Matrix mat;
-   
+
    //sgMakeRotMat4(mat, longitude + 90.0, zVec);
    mat.makeRotate(osg::DegreesToRadians(longitude + 90.0f), zVec);
-   
+
    //sgPostMultMat4(mRotationOffset, mat);
    mRotationOffset = mat * mRotationOffset;
-   
+
    //sgInvertMat4(mRotationOffsetInverse, mRotationOffset);
    mRotationOffsetInverse.invert(mRotationOffset);
 }
@@ -686,7 +686,7 @@ void RTIConnection::GetOriginLocation(double* x, double* y, double* z) const
 void RTIConnection::SetOriginRotation(float h, float p, float r)
 {
    //sgMakeRotMat4(mRotationOffset, h, p, r);
-   dtUtil::MatrixUtil::HprToMatrix(mRotationOffset, osg::Vec3(h, p, r)); 
+   dtUtil::MatrixUtil::HprToMatrix(mRotationOffset, osg::Vec3(h, p, r));
 
    //sgInvertMat4(mRotationOffsetInverse, mRotationOffset);
    mRotationOffsetInverse.invert(mRotationOffset);
@@ -757,17 +757,17 @@ unsigned short RTIConnection::GetApplicationIdentifier() const
 void RTIConnection::EulersToMatrix(osg::Matrix& dst, float psi, float theta, float phi)
 {
    /*sgMakeRotMat4(
-      dst, 
-      -psi * osg::RadiansToDegrees(1.0) - 90.0f, 
+      dst,
+      -psi * osg::RadiansToDegrees(1.0) - 90.0f,
       theta * osg::RadiansToDegrees(1.0),
       phi * osg::RadiansToDegrees(1.0)
    );*/
    dtUtil::MatrixUtil::HprToMatrix(dst, osg::Vec3(osg::RadiansToDegrees(-psi) - 90.0f, osg::RadiansToDegrees(theta), osg::RadiansToDegrees(phi)));
-   
+
    dst(0,1) = -dst(0,1);
    dst(1,1) = -dst(1,1);
    dst(2,1) = -dst(2,1);
-   
+
    dst(0,2) = -dst(0,2);
    dst(1,2) = -dst(1,2);
    dst(2,2) = -dst(2,2);
@@ -785,21 +785,21 @@ void RTIConnection::EulersToMatrix(osg::Matrix& dst, float psi, float theta, flo
 void RTIConnection::MatrixToEulers(osg::Matrix& src, float* psi, float* theta, float* phi)
 {
    /*sgMat4 mat;
-   
+
    sgCopyMat4(mat, src);
-   
+
    mat[0][1] = -mat[0][1];
    mat[1][1] = -mat[1][1];
    mat[2][1] = -mat[2][1];
-   
+
    mat[0][2] = -mat[0][2];
    mat[1][2] = -mat[1][2];
    mat[2][2] = -mat[2][2];*/
-   
+
    //sgCoord coord;
 
    //sgSetCoord(&coord, mat);
-   
+
    osg::Vec3 coord;
    osg::Matrix mat = src;
 
@@ -832,7 +832,7 @@ void RTIConnection::MatrixToEulers(osg::Matrix& src, float* psi, float* theta, f
  * @param elevation the location in which to store the geodetic elevation
  */
 void RTIConnection::GeocentricToGeodetic(double x, double y, double z,
-                                         double* latitude, double* longitude, 
+                                         double* latitude, double* longitude,
                                          double* elevation)
 {
    double p = sqrt(x*x + y*y),
@@ -842,17 +842,17 @@ void RTIConnection::GeocentricToGeodetic(double x, double y, double z,
           theta = atan( (z*a)/(p*b) ),
           epsqu = (a*a - b*b)/(b*b),
           esqu = 2.0*f - f*f;
-                   
+
    *latitude = atan(
       (z + epsqu * b * pow(sin(theta), 3)) /
       (p - esqu * a * pow(cos(theta), 3))
    );
-                
+
    *longitude = atan2(y, x);
-                
-   *elevation = p/cos(*latitude) - 
+
+   *elevation = p/cos(*latitude) -
                 a/sqrt(1.0-esqu*pow(sin(*latitude), 2.0));
-        
+
    *latitude *= osg::RadiansToDegrees(1.0);
    *longitude *= osg::RadiansToDegrees(1.0);
 }
@@ -872,7 +872,7 @@ void RTIConnection::GeocentricToGeodetic(double x, double y, double z,
 */
 void RTIConnection::ConvertGeodeticToUTM (double Latitude, double Longitude,
                                              long   *Zone, char   *Hemisphere, double *Easting, double *Northing)
-{ 
+{
 
 
   long Lat_Degrees;
@@ -885,7 +885,7 @@ void RTIConnection::ConvertGeodeticToUTM (double Latitude, double Longitude,
   double False_Northing = 0;
   double Scale = 0.9996;
 
-  
+
    /* no errors */
     if (Longitude < 0)
       Longitude += (2*PI) + 1.0e-10;
@@ -914,8 +914,8 @@ void RTIConnection::ConvertGeodeticToUTM (double Latitude, double Longitude,
     if ((Lat_Degrees > 71) && (Long_Degrees > 32) && (Long_Degrees < 42))
       temp_zone = 37;
 
-    
-    
+
+
       if (temp_zone >= 31)
         Central_Meridian = (6 * temp_zone - 183) * PI / 180.0;
       else
@@ -932,12 +932,12 @@ void RTIConnection::ConvertGeodeticToUTM (double Latitude, double Longitude,
                                          Central_Meridian, False_Easting, False_Northing, Scale);
       ConvertGeodeticToTransverseMercator(Latitude, Longitude, Easting,
                                               Northing);
-      
+
 } /* END OF Convert_Geodetic_To_UTM */
 
 /*
 * The function ConvertGeocentricToGeodetic converts geocentric
-* coordinates (X, Y, Z) to geodetic coordinates (latitude, longitude, 
+* coordinates (X, Y, Z) to geodetic coordinates (latitude, longitude,
 * and height), according to the current ellipsoid parameters.
 * Code taken from http://earth-info.nga.mil/GandG/geotrans/
 *
@@ -1005,7 +1005,7 @@ void RTIConnection::ConvertGeocentricToGeodetic (double X, double Y, double Z, d
         *Latitude = PI_OVER_2;
         *Height = -Geocent_b;
         return;
-      } 
+      }
     }
   }
   W2 = X*X + Y*Y;
@@ -1042,7 +1042,7 @@ void RTIConnection::ConvertGeocentricToGeodetic (double X, double Y, double Z, d
 /*
 * The function SetTranverseMercatorParameters receives the ellipsoid
 * parameters and Tranverse Mercator projection parameters as inputs, and
-* sets the corresponding state variables. 
+* sets the corresponding state variables.
 * Code taken from http://earth-info.nga.mil/GandG/geotrans/
 *
 * @param   a                 : Semi-major axis of ellipsoid, in meters    (input)
@@ -1053,15 +1053,15 @@ void RTIConnection::ConvertGeocentricToGeodetic (double X, double Y, double Z, d
 *                         projection
 * @param   False_Easting     : Easting/X at the center of the projection  (input)
 * @param   False_Northing    : Northing/Y at the center of the projection (input)
-* @param   Scale_Factor      : Projection scale factor                    (input) 
+* @param   Scale_Factor      : Projection scale factor                    (input)
 */
 
 void RTIConnection::SetTransverseMercatorParameters(double a, double f, double Origin_Latitude,
-                                                     double Central_Meridian, double False_Easting, 
+                                                     double Central_Meridian, double False_Easting,
                                                      double False_Northing, double Scale_Factor)
 
 { /* BEGIN Set_Tranverse_Mercator_Parameters */
- 
+
 
   double tn;        /* True Meridianal distance constant  */
   double tn2;
@@ -1073,13 +1073,13 @@ void RTIConnection::SetTransverseMercatorParameters(double a, double f, double O
   //double inv_f = 1 / f;
   //long Error_Code = TRANMERC_NO_ERROR;
 
-  
+
     TranMerc_a = a;
     TranMerc_f = f;
     TranMerc_Origin_Lat = 0;
     TranMerc_Origin_Long = 0;
     TranMerc_False_Northing = 0;
-    TranMerc_False_Easting = 0; 
+    TranMerc_False_Easting = 0;
     TranMerc_Scale_Factor = 1;
 
     /* Eccentricity Squared */
@@ -1087,7 +1087,7 @@ void RTIConnection::SetTransverseMercatorParameters(double a, double f, double O
     /* Second Eccentricity Squared */
     TranMerc_ebs = (1 / (1 - TranMerc_es)) - 1;
 
-    TranMerc_b = TranMerc_a * (1 - TranMerc_f);    
+    TranMerc_b = TranMerc_a * (1 - TranMerc_f);
     /*True meridianal constants  */
     tn = (TranMerc_a - TranMerc_b) / (TranMerc_a + TranMerc_b);
     tn2 = tn * tn;
@@ -1115,17 +1115,17 @@ void RTIConnection::SetTransverseMercatorParameters(double a, double f, double O
       Central_Meridian -= (2*PI);
     TranMerc_Origin_Long = Central_Meridian;
     TranMerc_False_Northing = False_Northing;
-    TranMerc_False_Easting = False_Easting; 
+    TranMerc_False_Easting = False_Easting;
     TranMerc_Scale_Factor = Scale_Factor;
- 
-  
+
+
 }  /* END of Set_Transverse_Mercator_Parameters  */
 
 /*
 * The function ConvertGeodeticToTransverse_Mercator converts geodetic
 * (latitude and longitude) coordinates to Transverse Mercator projection
 * (easting and northing) coordinates, according to the current ellipsoid
-* and Transverse Mercator projection coordinates.  
+* and Transverse Mercator projection coordinates.
 *
 * @param   Latitude      : Latitude in radians                         (input)
 * @param   Longitude     : Longitude in radians                        (input)
@@ -1141,7 +1141,7 @@ void RTIConnection::ConvertGeodeticToTransverseMercator (double Latitude,
 
 {      /* BEGIN Convert_Geodetic_To_Transverse_Mercator */
 
-  
+
 
   double c;       /* Cosine of latitude                          */
   double c2;
@@ -1175,7 +1175,7 @@ void RTIConnection::ConvertGeodeticToTransverseMercator (double Latitude,
   double temp_Origin;
   double temp_Long;
 
-  
+
   if (Longitude > PI)
     Longitude -= (2 * PI);
   if ((Longitude < (TranMerc_Origin_Long - MAX_DELTA_LONG))
@@ -1189,16 +1189,16 @@ void RTIConnection::ConvertGeodeticToTransverseMercator (double Latitude,
       temp_Origin = TranMerc_Origin_Long + 2 * PI;
     else
       temp_Origin = TranMerc_Origin_Long;
-    
-  }
-  
 
-    /* 
+  }
+
+
+    /*
      *  Delta Longitude
      */
     dlam = Longitude - TranMerc_Origin_Long;
 
-    
+
 
     if (dlam > PI)
       dlam -= (2 * PI);
@@ -1236,33 +1236,33 @@ void RTIConnection::ConvertGeodeticToTransverseMercator (double Latitude,
     /* northing */
     t1 = (tmd - tmdo) * TranMerc_Scale_Factor;
     t2 = sn * s * c * TranMerc_Scale_Factor/ 2.e0;
-    t3 = sn * s * c3 * TranMerc_Scale_Factor * (5.e0 - tan2 + 9.e0 * eta 
-                                                + 4.e0 * eta2) /24.e0; 
+    t3 = sn * s * c3 * TranMerc_Scale_Factor * (5.e0 - tan2 + 9.e0 * eta
+                                                + 4.e0 * eta2) /24.e0;
 
     t4 = sn * s * c5 * TranMerc_Scale_Factor * (61.e0 - 58.e0 * tan2
                                                 + tan4 + 270.e0 * eta - 330.e0 * tan2 * eta + 445.e0 * eta2
-                                                + 324.e0 * eta3 -680.e0 * tan2 * eta2 + 88.e0 * eta4 
+                                                + 324.e0 * eta3 -680.e0 * tan2 * eta2 + 88.e0 * eta4
                                                 -600.e0 * tan2 * eta3 - 192.e0 * tan2 * eta4) / 720.e0;
 
-    t5 = sn * s * c7 * TranMerc_Scale_Factor * (1385.e0 - 3111.e0 * 
+    t5 = sn * s * c7 * TranMerc_Scale_Factor * (1385.e0 - 3111.e0 *
                                                 tan2 + 543.e0 * tan4 - tan6) / 40320.e0;
 
     *Northing = TranMerc_False_Northing + t1 + pow(dlam,2.e0) * t2
                 + pow(dlam,4.e0) * t3 + pow(dlam,6.e0) * t4
-                + pow(dlam,8.e0) * t5; 
+                + pow(dlam,8.e0) * t5;
 
     /* Easting */
     t6 = sn * c * TranMerc_Scale_Factor;
     t7 = sn * c3 * TranMerc_Scale_Factor * (1.e0 - tan2 + eta ) /6.e0;
     t8 = sn * c5 * TranMerc_Scale_Factor * (5.e0 - 18.e0 * tan2 + tan4
-                                            + 14.e0 * eta - 58.e0 * tan2 * eta + 13.e0 * eta2 + 4.e0 * eta3 
+                                            + 14.e0 * eta - 58.e0 * tan2 * eta + 13.e0 * eta2 + 4.e0 * eta3
                                             - 64.e0 * tan2 * eta2 - 24.e0 * tan2 * eta3 )/ 120.e0;
     t9 = sn * c7 * TranMerc_Scale_Factor * ( 61.e0 - 479.e0 * tan2
                                              + 179.e0 * tan4 - tan6 ) /5040.e0;
 
-    *Easting = TranMerc_False_Easting + dlam * t6 + pow(dlam,3.e0) * t7 
+    *Easting = TranMerc_False_Easting + dlam * t6 + pow(dlam,3.e0) * t7
                + pow(dlam,5.e0) * t8 + pow(dlam,7.e0) * t9;
-  
+
 } /* END OF Convert_Geodetic_To_Transverse_Mercator */
 
 
@@ -1288,11 +1288,11 @@ void RTIConnection::GeodeticToGeocentric(double latitude, double longitude, doub
           f = 1.0/flatteningReciprocal,
           esqu = 2.0*f - f*f,
           n = a/sqrt(1.0-esqu*pow(sin(rlatitude), 2.0));
-                   
+
    *x = (n + elevation)*cos(rlatitude)*cos(rlongitude);
-            
+
    *y = (n + elevation)*cos(rlatitude)*sin(rlongitude);
-            
+
    *z = (n*(1.0-esqu) + elevation)*sin(rlatitude);
 }
 
@@ -1302,15 +1302,15 @@ void RTIConnection::GeodeticToGeocentric(double latitude, double longitude, doub
  * @param entity the entity to clamp
  */
 void RTIConnection::ClampToGround(Entity* entity)
-{  
-   bool groundBased = 
+{
+   bool groundBased =
       (entity->GetEntityType().GetKind() == PlatformKind ||
        entity->GetEntityType().GetKind() == LifeFormKind) &&
       (entity->GetEntityType().GetDomain() == LandPlatformDomain ||
        entity->GetEntityType().GetDomain() == SurfacePlatformDomain);
-   
+
    bool destroyed = (entity->GetDamageState() == Destroyed);
-   
+
    if((groundBased && mGroundClampMode != NO_CLAMP) || destroyed)
    {
       dtCore::Transform transform;
@@ -1320,64 +1320,64 @@ void RTIConnection::ClampToGround(Entity* entity)
       osg::Vec3 xyz;
       osg::Vec3 groundNormal(0, 0, 1);
       float HOT = 0.0f;
-      
+
       transform.GetTranslation(xyz);
-      
+
       osgUtil::IntersectVisitor iv;
-   
+
       dtCore::RefPtr<osg::LineSegment> segDown = new osg::LineSegment;
-   
+
       segDown->set(
          osg::Vec3(xyz[0], xyz[1], 10000.f),
          osg::Vec3(xyz[0], xyz[1], -10000.f)
       );
-      
+
       iv.addLineSegment(segDown.get());
-   
+
       iv.setTraversalMask(~entityMask);
-      
+
       mScene->GetSceneNode()->accept(iv);
-   
+
       if (iv.hits())
       {
          osgUtil::IntersectVisitor::HitList& hitList = iv.getHitList(segDown.get());
-         
+
          if (!hitList.empty())
          {
             osg::Vec3 ip = hitList.front().getWorldIntersectPoint();
             osg::Vec3 np = hitList.front().getWorldIntersectNormal();
-            
+
             HOT = ip.z();
-            
+
             groundNormal[0] = np.x();
             groundNormal[1] = np.y();
             groundNormal[2] = np.z();
          }
       }
-      
+
       xyz[2] = HOT;
-      
+
       transform.SetTranslation(xyz);
-      
+
       if(groundBased && mGroundClampMode == CLAMP_ELEVATION_AND_ROTATION && !destroyed)
       {
          osg::Vec3 oldNormal ( 0, 0, 1 );
          osg::Matrix rotMat;
-         
+
          transform.GetRotation(rotMat);
-         
+
          //sgXformVec3(oldNormal, rotMat);
          oldNormal = osg::Matrix::transform3x3(oldNormal, rotMat);
-         
+
          osg::Matrix normalRot;
-         
+
          normalRot.makeRotate(oldNormal, groundNormal);
 
          rotMat = normalRot * rotMat;
-         
+
          transform.SetRotation(rotMat);
       }
-      
+
       entity->SetTransform(&transform, dtCore::Transformable::REL_CS);
    }
 }
@@ -1411,20 +1411,20 @@ RTIConnection::EntityTypeMapping* RTIConnection::FindBestMapping(const EntityTyp
 {
    EntityTypeMapping* bestMapping = NULL;
    int bestRank = -1;
-   
+
    for(std::map<EntityType, EntityTypeMapping>::iterator it = mEntityTypeMappings.begin();
        it != mEntityTypeMappings.end();
        it++)
    {
       int rank = (*it).first.RankMatch(entityType);
-      
+
       if(rank > bestRank)
       {
          bestRank = rank;
          bestMapping = &(*it).second;
       }
    }
-   
+
    return bestMapping;
 }
 
@@ -1437,13 +1437,13 @@ RTIConnection::EntityTypeMapping* RTIConnection::FindBestMapping(const EntityTyp
 void RTIConnection::RegisterMasterEntity(Entity* entity)
 {
    mMasterEntities.insert(entity);
-   
+
    if(mExecutionName != "")
    {
       EntityType entityType = entity->GetEntityType();
 
       RTI::ObjectHandle handle;
-      
+
       EntityIdentifier entityIdentifier(
          mSiteIdentifier,
          mApplicationIdentifier,
@@ -1458,15 +1458,15 @@ void RTIConnection::RegisterMasterEntity(Entity* entity)
       entity->SetEntityIdentifier(entityIdentifier);
 
       char name[128];
-      
+
       sprintf(
-         name, 
-         "Delta3D/%x/%hu/%hu", 
+         name,
+         "Delta3D/%x/%hu/%hu",
          mLocalIPAddress,
          entityIdentifier.GetApplicationIdentifier(),
          entityIdentifier.GetEntityIdentifier()
       );
-      
+
       if(entityType.GetKind() == PlatformKind &&
          entityType.GetDomain() == AirPlatformDomain)
       {
@@ -1514,21 +1514,21 @@ void RTIConnection::RegisterMasterEntity(Entity* entity)
 void RTIConnection::DeregisterMasterEntity(Entity* entity)
 {
    mMasterEntities.erase(entity);
-   
-   for(std::map<RTI::ObjectHandle, MasterData>::iterator it = 
+
+   for(std::map<RTI::ObjectHandle, MasterData>::iterator it =
          mObjectHandleMasterDataMap.begin();
        it != mObjectHandleMasterDataMap.end();
        it++)
-   { 
+   {
       if( (*it).second.mEntity == entity )
       {
          mRTIAmbassador.deleteObjectInstance(
             (*it).first,
             ""
          );
-         
+
          mObjectHandleMasterDataMap.erase((*it).first);
-         
+
          return;
       }
    }
@@ -1561,7 +1561,7 @@ Entity* RTIConnection::GetMasterEntity(int index)
           return const_cast<Entity*>((*it).get());
       }
    }
-   
+
    return 0;
 }
 
@@ -1592,10 +1592,10 @@ Entity* RTIConnection::GetGhostEntity(int index)
          return (*it).second.mEntity.get();
       }
    }
-   
+
    return 0;
 }
-         
+
 /**
  * Maps the specified entity type to the given filename.
  *
@@ -1626,13 +1626,13 @@ void RTIConnection::AddEntityTypeMapping(const EntityType& entityType,
                                          const std::string& iconFilename)
 {
    mEntityTypeMappings[entityType].mModelFilename = modelFilename;
-   
-   mEntityTypeMappings[entityType].mArticulatedPartClassNameMap = 
+
+   mEntityTypeMappings[entityType].mArticulatedPartClassNameMap =
       articulatedPartClassNameMap;
-      
+
    mEntityTypeMappings[entityType].mIconFilename = iconFilename;
 }
-                                   
+
 /**
  * Removes the mapping for the given entity type.
  *
@@ -1809,7 +1809,7 @@ bool RTIConnection::GetEffectClampMode()
 {
    return mEffectClampMode;
 }
-         
+
 /**
  * Adds a detonation listener.
  *
@@ -1840,7 +1840,7 @@ void RTIConnection::OnMessage(MessageData *data)
    if(data->message == "preframe" && mExecutionName != "")
    {
       double dt = *(double*)data->userData;
-      
+
       bool doHeartbeat = false;
 
       Producer::Timer_t currentTime = mTimer.tick();
@@ -1863,7 +1863,7 @@ void RTIConnection::OnMessage(MessageData *data)
       VelocityVector velocityVector;
 
       dtCore::Transform transform;
-   
+
       osg::Vec3 vec;
 
       osg::Matrix mat;
@@ -1930,7 +1930,7 @@ void RTIConnection::OnMessage(MessageData *data)
             );
 
             *((int*)encodedDamageState) = master->GetDamageState();
-            
+
             if(osg::getCpuByteOrder() == osg::LittleEndian)
             {
                osg::swapBytes((char*)encodedDamageState, sizeof(encodedDamageState));
@@ -1951,9 +1951,9 @@ void RTIConnection::OnMessage(MessageData *data)
             );
 
             encodedMarking[0] = 1; // ASCII
-            
+
             memset(encodedMarking + 1, 0, 11);
-                  
+
             theAttributes->add(
                mMarkingAttributeHandle,
                encodedMarking,
@@ -2036,13 +2036,13 @@ void RTIConnection::OnMessage(MessageData *data)
             float psi, theta, phi;
 
             MatrixToEulers(mat, &psi, &theta, &phi);
-            
+
             orientation.SetPsi(psi);
 
             orientation.SetTheta(theta);
 
             orientation.SetPhi(phi);
-        
+
             orientation.Encode(encodedOrientation);
 
             theAttributes->add(
@@ -2068,7 +2068,7 @@ void RTIConnection::OnMessage(MessageData *data)
 
       delete theAttributes;
 
-      
+
       for(std::map<RTI::ObjectHandle, GhostData>::iterator g =
             mObjectHandleGhostDataMap.begin();
           g != mObjectHandleGhostDataMap.end();
@@ -2076,26 +2076,26 @@ void RTIConnection::OnMessage(MessageData *data)
       {
          GhostData& gd = (*g).second;
          Entity* ghost = (*g).second.mEntity.get();
-         
+
          UpdateGhostPosition(dt, gd, ghost);
-         
+
          const std::vector<ArticulatedParameter>& params =
             ghost->GetArticulatedParametersArray();
-         
+
          std::map<unsigned int, std::map<unsigned int, float> > classTypeValueMap;
-         
+
          std::vector<ArticulatedParameter> newParams;
-         
+
          for(std::vector<ArticulatedParameter>::const_iterator p = params.begin();
              p != params.end();
              p++)
          {
             const ParameterValue& pv = (*p).GetParameterValue();
-                        
+
             if(pv.GetArticulatedParameterType() == ArticulatedPart)
             {
                const ArticulatedParts& ap = pv.GetArticulatedParts();
-               
+
                switch(ap.GetTypeMetric())
                {
                   case AzimuthMetric:
@@ -2108,7 +2108,7 @@ void RTIConnection::OnMessage(MessageData *data)
                         classTypeValueMap[ap.GetClass()][AzimuthMetric] += ap.GetValue();
                      }
                      break;
-                     
+
                   case AzimuthRateMetric:
                      if(classTypeValueMap[ap.GetClass()].count(AzimuthMetric) == 0)
                      {
@@ -2120,7 +2120,7 @@ void RTIConnection::OnMessage(MessageData *data)
                      }
                      newParams.push_back(*p);
                      break;
-                     
+
                   case ElevationMetric:
                      if(classTypeValueMap[ap.GetClass()].count(ElevationMetric) == 0)
                      {
@@ -2131,7 +2131,7 @@ void RTIConnection::OnMessage(MessageData *data)
                         classTypeValueMap[ap.GetClass()][ElevationMetric] += ap.GetValue();
                      }
                      break;
-                     
+
                   case ElevationRateMetric:
                      if(classTypeValueMap[ap.GetClass()].count(ElevationMetric) == 0)
                      {
@@ -2143,7 +2143,7 @@ void RTIConnection::OnMessage(MessageData *data)
                      }
                      newParams.push_back(*p);
                      break;
-                     
+
                   case RotationMetric:
                      if(classTypeValueMap[ap.GetClass()].count(RotationMetric) == 0)
                      {
@@ -2154,7 +2154,7 @@ void RTIConnection::OnMessage(MessageData *data)
                         classTypeValueMap[ap.GetClass()][RotationMetric] += ap.GetValue();
                      }
                      break;
-                     
+
                   case RotationRateMetric:
                      if(classTypeValueMap[ap.GetClass()].count(RotationMetric) == 0)
                      {
@@ -2166,7 +2166,7 @@ void RTIConnection::OnMessage(MessageData *data)
                      }
                      newParams.push_back(*p);
                      break;
-                     
+
                   case XMetric:
                      if(classTypeValueMap[ap.GetClass()].count(XMetric) == 0)
                      {
@@ -2177,7 +2177,7 @@ void RTIConnection::OnMessage(MessageData *data)
                         classTypeValueMap[ap.GetClass()][XMetric] += ap.GetValue();
                      }
                      break;
-                  
+
                   case XRateMetric:
                      if(classTypeValueMap[ap.GetClass()].count(XMetric) == 0)
                      {
@@ -2189,7 +2189,7 @@ void RTIConnection::OnMessage(MessageData *data)
                      }
                      newParams.push_back(*p);
                      break;
-                     
+
                   case YMetric:
                      if(classTypeValueMap[ap.GetClass()].count(YMetric) == 0)
                      {
@@ -2200,7 +2200,7 @@ void RTIConnection::OnMessage(MessageData *data)
                         classTypeValueMap[ap.GetClass()][YMetric] += ap.GetValue();
                      }
                      break;
-                  
+
                   case YRateMetric:
                      if(classTypeValueMap[ap.GetClass()].count(YMetric) == 0)
                      {
@@ -2212,7 +2212,7 @@ void RTIConnection::OnMessage(MessageData *data)
                      }
                      newParams.push_back(*p);
                      break;
-                     
+
                   case ZMetric:
                      if(classTypeValueMap[ap.GetClass()].count(ZMetric) == 0)
                      {
@@ -2223,7 +2223,7 @@ void RTIConnection::OnMessage(MessageData *data)
                         classTypeValueMap[ap.GetClass()][ZMetric] += ap.GetValue();
                      }
                      break;
-                     
+
                   case ZRateMetric:
                      if(classTypeValueMap[ap.GetClass()].count(ZMetric) == 0)
                      {
@@ -2235,7 +2235,7 @@ void RTIConnection::OnMessage(MessageData *data)
                      }
                      newParams.push_back(*p);
                      break;
-               
+
                   default:
                      newParams.push_back(*p);
                      break;
@@ -2246,7 +2246,7 @@ void RTIConnection::OnMessage(MessageData *data)
                newParams.push_back(*p);
             }
          }
-         
+
          for(std::map<unsigned int, std::map<unsigned int, float> >::iterator ctvm =
                classTypeValueMap.begin();
              ctvm != classTypeValueMap.end();
@@ -2254,15 +2254,15 @@ void RTIConnection::OnMessage(MessageData *data)
          {
             osgSim::DOFTransform* transform = NULL;
             osg::Vec3 hpr, translate;
-            
+
             if(gd.mArticulatedPartClassTransformMap.count((*ctvm).first) > 0)
             {
                transform = gd.mArticulatedPartClassTransformMap[(*ctvm).first];
-            
+
                hpr = transform->getCurrentHPR();
                translate = transform->getCurrentTranslate();
             }
-            
+
             if((*ctvm).second.count(AzimuthMetric) > 0)
             {
                hpr[0] = -(*ctvm).second[AzimuthMetric];
@@ -2283,7 +2283,7 @@ void RTIConnection::OnMessage(MessageData *data)
             if((*ctvm).second.count(ElevationMetric) > 0)
             {
                hpr[1] = (*ctvm).second[ElevationMetric];
-               
+
                newParams.push_back(
                   ArticulatedParameter(
                      0, 0,
@@ -2300,7 +2300,7 @@ void RTIConnection::OnMessage(MessageData *data)
             if((*ctvm).second.count(RotationMetric) > 0)
             {
                hpr[2] = (*ctvm).second[RotationMetric];
-               
+
                newParams.push_back(
                   ArticulatedParameter(
                      0, 0,
@@ -2314,11 +2314,11 @@ void RTIConnection::OnMessage(MessageData *data)
                   )
                );
             }
-            
+
             if((*ctvm).second.count(XMetric) > 0)
             {
                translate[0] = (*ctvm).second[XMetric];
-               
+
                newParams.push_back(
                   ArticulatedParameter(
                      0, 0,
@@ -2335,7 +2335,7 @@ void RTIConnection::OnMessage(MessageData *data)
             if((*ctvm).second.count(YMetric) > 0)
             {
                translate[1] = (*ctvm).second[YMetric];
-               
+
                newParams.push_back(
                   ArticulatedParameter(
                      0, 0,
@@ -2352,7 +2352,7 @@ void RTIConnection::OnMessage(MessageData *data)
             if((*ctvm).second.count(ZMetric) > 0)
             {
                translate[2] = -(*ctvm).second[ZMetric];
-               
+
                newParams.push_back(
                   ArticulatedParameter(
                      0, 0,
@@ -2366,26 +2366,26 @@ void RTIConnection::OnMessage(MessageData *data)
                   )
                );
             }
-            
+
             if(transform != NULL)
             {
                transform->setCurrentHPR(hpr);
                transform->setCurrentTranslate(translate);
             }
          }
-         
+
          ghost->SetArticulatedParametersArray(newParams);
       }
-      
-            
-      mRTIAmbassador.tick();     
-      
-      
+
+
+      mRTIAmbassador.tick();
+
+
       // Request types of newly discovered objects
 
       RTI::AttributeHandleSet* requiredAttributes =
          RTI::AttributeHandleSetFactory::create(2);
-      
+
       requiredAttributes->add(mEntityIdentifierAttributeHandle);
       requiredAttributes->add(mEntityTypeAttributeHandle);
 
@@ -2483,7 +2483,7 @@ void RTIConnection::discoverObjectInstance(
    Entity* ghost = new Entity(theObjectName);
 
    ghost->GetOSGNode()->setNodeMask(entityMask);
-   
+
    GhostData ghostData;
 
    ghostData.mEntity = ghost;
@@ -2541,7 +2541,7 @@ throw (
             RTI::FederateOwnsAttributes,
             RTI::InvalidFederationTime,
             RTI::FederateInternalError
-         )        
+         )
 {
    reflectAttributeValues(theObject, theAttributes, theTag);
 }
@@ -2556,9 +2556,9 @@ throw (
  */
 osgSim::DOFTransform* FindNamedTransform(osg::Node* parent, std::string name)
 {
-   osgSim::DOFTransform* transform = 
+   osgSim::DOFTransform* transform =
       dynamic_cast<osgSim::DOFTransform*>(parent);
-   
+
    if(transform != NULL && transform->getName() == name)
    {
       return transform;
@@ -2566,20 +2566,20 @@ osgSim::DOFTransform* FindNamedTransform(osg::Node* parent, std::string name)
    else
    {
       osg::Group* group = parent->asGroup();
-   
+
       if(group != NULL)
       {
          for(unsigned int i=0;i<group->getNumChildren();i++)
          {
             transform = FindNamedTransform(group->getChild(i), name);
-            
+
             if(transform != NULL)
             {
                return transform;
             }
          }
       }
-      
+
       return NULL;
    }
 }
@@ -2601,7 +2601,7 @@ void RTIConnection::reflectAttributeValues(
             RTI::AttributeNotKnown,
             RTI::FederateOwnsAttributes,
             RTI::FederateInternalError
-         ) 
+         )
 {
    GhostData& ghostData = mObjectHandleGhostDataMap[theObject];
 
@@ -2647,9 +2647,9 @@ void RTIConnection::reflectAttributeValues(
             ghost->SetEntityType(entityType);
 
             EntityTypeMapping* mapping = FindBestMapping(entityType);
-            
+
             std::string filename;
-            
+
             if(mapping != NULL)
             {
                if(mGlobeModeEnabled)
@@ -2661,11 +2661,11 @@ void RTIConnection::reflectAttributeValues(
                   filename = mapping->mModelFilename;
                }
             }
-            
+
             if(filename != ghost->GetFilename())
             {
                ghost->LoadFile(filename);
-               
+
                if(mapping != NULL)
                {
                   for(std::map<unsigned int, std::string>::iterator it =
@@ -2673,13 +2673,13 @@ void RTIConnection::reflectAttributeValues(
                       it != mapping->mArticulatedPartClassNameMap.end();
                       it++)
                   {
-                     osgSim::DOFTransform* transform = 
+                     osgSim::DOFTransform* transform =
                         FindNamedTransform(ghost->GetOSGNode(), (*it).second);
-                        
+
                      if(transform != NULL)
                      {
                         transform->setAnimationOn(false);
-                        
+
                         ghostData.mArticulatedPartClassTransformMap[(*it).first] =
                            transform;
                      }
@@ -2701,9 +2701,9 @@ void RTIConnection::reflectAttributeValues(
             worldCoordinate.Decode(buf);
 
             ghost->SetWorldLocation(worldCoordinate);
-            
+
             osg::Vec3 position;
-            
+
             if(mGlobeModeEnabled)
             {
                position[0] = (worldCoordinate.GetX()/semiMajorAxis)*mGlobeRadius;
@@ -2712,14 +2712,14 @@ void RTIConnection::reflectAttributeValues(
             }
             else if(mUTMModeEnabled)
             {
-            
+
                ConvertGeocentricToGeodetic(worldCoordinate.GetX(),worldCoordinate.GetY(),worldCoordinate.GetZ(),&mLat,&mLong,&mElevation);
                ConvertGeodeticToUTM(mLat,mLong,&mZone,&mHemisphere,&mEasting,&mNorthing);
                position[0] = mEasting - mLocationOffset[0];
                position[1] = mNorthing - mLocationOffset[1];
                position[2] = mElevation - mLocationOffset[2];
                //sgXformVec3(position, mRotationOffsetInverse); //not sure if I need this
-               position = position * mRotationOffsetInverse;            
+               position = position * mRotationOffsetInverse;
 
             }
             else
@@ -2731,7 +2731,7 @@ void RTIConnection::reflectAttributeValues(
                //sgXformVec3(position, mRotationOffsetInverse);
                position = position * mRotationOffsetInverse;
             }
-            
+
             transform.SetTranslation(position);
          }
       }
@@ -2748,16 +2748,16 @@ void RTIConnection::reflectAttributeValues(
             eulerAngles.Decode(buf);
 
             ghost->SetOrientation(eulerAngles);
-            
+
             osg::Matrix rotMat;
-            
+
             EulersToMatrix(
-               rotMat, 
-               eulerAngles.GetPsi(), 
-               eulerAngles.GetTheta(), 
+               rotMat,
+               eulerAngles.GetPsi(),
+               eulerAngles.GetTheta(),
                eulerAngles.GetPhi()
             );
-            
+
 
             if(!mGlobeModeEnabled)
             {
@@ -2770,14 +2770,14 @@ void RTIConnection::reflectAttributeValues(
                //sgCopyMat4(rotMat, mRotationOffset);
                rotMat = mRotationOffset;
             }
-            
+
             transform.SetRotation(rotMat);
          }
       }
       else if(handle == mVelocityVectorAttributeHandle)
       {
          unsigned long length;
-         
+
          char* buf = theAttributes.getValuePointer(i, length);
 
          if(length == 12)
@@ -2792,7 +2792,7 @@ void RTIConnection::reflectAttributeValues(
       else if(handle == mAccelerationVectorAttributeHandle)
       {
          unsigned long length;
-         
+
          char* buf = theAttributes.getValuePointer(i, length);
 
          if(length == 12)
@@ -2807,7 +2807,7 @@ void RTIConnection::reflectAttributeValues(
       else if(handle == mAngularVelocityVectorAttributeHandle)
       {
          unsigned long length;
-         
+
          char* buf = theAttributes.getValuePointer(i, length);
 
          if(length == 12)
@@ -2822,67 +2822,67 @@ void RTIConnection::reflectAttributeValues(
       else if(handle == mArticulatedParametersArrayAttributeHandle)
       {
          unsigned long length;
-         
+
          char* buf = theAttributes.getValuePointer(i, length);
-         
+
          int numParams = length/20;
-         
+
          std::vector<ArticulatedParameter> params;
-         
+
          params.resize(numParams);
-         
+
          for(int i=0;i<numParams;i++)
          {
             params[i].Decode(&buf[i*20]);
          }
-         
+
          ghost->SetArticulatedParametersArray(params);
-         
+
          for(std::vector<ArticulatedParameter>::iterator p = params.begin();
              p != params.end();
              p++)
          {
             const ParameterValue& pv = (*p).GetParameterValue();
-                        
+
             if(pv.GetArticulatedParameterType() == ArticulatedPart)
             {
                const ArticulatedParts& ap = pv.GetArticulatedParts();
-               
+
                if(ghostData.mArticulatedPartClassTransformMap.count(ap.GetClass()) > 0)
                {
-                  osgSim::DOFTransform* transform = 
+                  osgSim::DOFTransform* transform =
                      ghostData.mArticulatedPartClassTransformMap[ap.GetClass()];
-                     
+
                   osg::Vec3 hpr = transform->getCurrentHPR(),
                             translate = transform->getCurrentTranslate();
-                            
+
                   switch(ap.GetTypeMetric())
                   {
                      case AzimuthMetric:
                         hpr[0] = -ap.GetValue();
                         break;
-                        
+
                      case ElevationMetric:
                         hpr[1] = ap.GetValue();
                         break;
-                        
+
                      case RotationMetric:
                         hpr[2] = ap.GetValue();
                         break;
-                        
+
                      case XMetric:
                         translate[0] = ap.GetValue();
                         break;
-                        
+
                      case YMetric:
                         translate[1] = ap.GetValue();
                         break;
-                        
+
                      case ZMetric:
                         translate[2] = -ap.GetValue();
                         break;
                   }
-                  
+
                   transform->setCurrentHPR(hpr);
                   transform->setCurrentTranslate(translate);
                }
@@ -2900,15 +2900,15 @@ void RTIConnection::reflectAttributeValues(
          if(osg::getCpuByteOrder() == osg::LittleEndian)
          {
             osg::swapBytes((char*)&damageAttribute, sizeof(damageAttribute));
-            
+
          }
 
          ghost->SetDamageState((DamageState)damageAttribute);
-         
+
          if(damageAttribute!=0)
          {
             if(mEffectManager != NULL)
-            {   
+            {
                mIgnoreEffect = true;
                mEffectManager->AddDetonation(
                   position,//position,
@@ -2920,33 +2920,33 @@ void RTIConnection::reflectAttributeValues(
          }
 
          osg::StateSet* ss = ghost->GetOSGNode()->getOrCreateStateSet();
-                  
-         osg::Material* mat = 
+
+         osg::Material* mat =
             (osg::Material*)ss->getAttribute(osg::StateAttribute::MATERIAL);
-         
+
          if(mat == NULL)
          {
             mat = new osg::Material;
-            
+
             mat->setDiffuse(
                osg::Material::FRONT_AND_BACK,
                osg::Vec4(0, 0, 0, 1)
             );
          }
-         
+
          ss->setAttributeAndModes(
-            mat, 
+            mat,
             damageAttribute == Destroyed ?
                (osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE) :
                osg::StateAttribute::OFF
          );
-               
+
          //std::cout<<"Got Damage update type: "<<damageAttribute<<std::endl;
       }
    }
 
    ghost->SetTransform(&transform, dtCore::Transformable::REL_CS);
-   
+
    if( mScene != 0 )
    {
       ClampToGround(ghost);
@@ -2982,7 +2982,7 @@ throw (
             RTI::ObjectNotKnown,
             RTI::InvalidFederationTime,
             RTI::FederateInternalError
-         )        
+         )
 {
    removeObjectInstance(theObject, theTag);
 }
@@ -3000,13 +3000,13 @@ void RTIConnection::removeObjectInstance(
 throw (
             RTI::ObjectNotKnown,
             RTI::FederateInternalError
-         )        
+         )
 {
    Entity* entity = mObjectHandleGhostDataMap[ theObject ].mEntity.get();
 
    if( mScene != 0 )
    {
-      mScene->RemoveDrawable( entity ); 
+      mScene->RemoveDrawable( entity );
    }
 
    SendMessage( "entity_removed", entity );
@@ -3031,7 +3031,7 @@ throw (
             RTI::InteractionClassNotKnown,
             RTI::InteractionParameterNotKnown,
             RTI::FederateInternalError
-         )        
+         )
 {
    if(theInteraction == mMunitionDetonationClassHandle)
    {
@@ -3042,10 +3042,10 @@ throw (
       unsigned short warheadType;
       unsigned char detonationResultCode = 0;
       unsigned short quantityFired;
-      
-      
+
+
       osg::Vec3 position;
-      
+
       for(unsigned int i=0;i<theParameters.size();i++)
       {
          RTI::ParameterHandle handle = theParameters.getHandle(i);
@@ -3069,7 +3069,7 @@ throw (
 
                if(mEffectClampMode && mScene != 0)
                {
-                  position[2] = mScene->GetHeightOfTerrain(position[0], position[1]); 
+                  position[2] = mScene->GetHeightOfTerrain(position[0], position[1]);
                }
             }
          }
@@ -3170,7 +3170,7 @@ throw (
             quantityFired
          );
       }
-      
+
       if(mEffectManager != NULL)
       {
 
@@ -3200,7 +3200,7 @@ throw (
 						expType = 6000L;
 						break;
 					}
-				case 1: //ICM					
+				case 1: //ICM
 				case 3: //ICM
 					{
 						expType = 5000L;
@@ -3245,7 +3245,7 @@ void RTIConnection::EffectAdded(dtCore::EffectManager* effectManager, dtCore::Ef
 
 
       char encodedDetonationLocation[24],
-         encodedEventIdentifier[5], 
+         encodedEventIdentifier[5],
          encodedWarheadType[2],
          encodedFuseType[2],
          encodedMunitionType[8],
