@@ -39,7 +39,8 @@ void StateManager::PreFrame( const double deltaFrameTime )
          if( iter != mTransitions.end() )
          {
             State* to = (*iter).second.get();
-            TransitionOccurredEvent* event = new TransitionOccurredEvent( mCurrentState.get() , to );
+            TransitionOccurredEvent* event = new TransitionOccurredEvent( mCurrentState.get(), to );
+            mCurrentState->Shutdown();
             MakeCurrent( to );
             mSwitch = false;
             SendMessage( "event" , event );
@@ -66,14 +67,6 @@ void StateManager::PostFrame( const double deltaFrameTime )
    if( mCurrentState.valid() )
    {
       mCurrentState->PostFrame( deltaFrameTime );
-   }
-
-   if( mSwitch ) //shutdown state if switched or stopped
-   {
-      if( mCurrentState.valid() )
-      {
-         mCurrentState->Shutdown();
-      }
    }
 }
 
