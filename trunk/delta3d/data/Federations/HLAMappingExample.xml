@@ -27,7 +27,7 @@
             <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>EntityType</hlaName>
-                <hlaDataType>Entity</hlaDataType>
+                <hlaDataType>ENTITY_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
                 <gameName>Entity Type</gameName>
                 <gameDataType>ENUMERATION</gameDataType>
@@ -36,7 +36,7 @@
             </attrToProp>            
             <attrToProp>
                 <hlaName>EntityIdentifier</hlaName>
-                <hlaDataType>Entity Identifier</hlaDataType>
+                <hlaDataType>ENTITY_IDENTIFIER_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
                 <gameName>sendingActorId</gameName>
                 <gameDataType>ACTOR</gameDataType>
@@ -45,7 +45,7 @@
             </attrToProp>            
             <attrToProp>
                 <hlaName>DamageState</hlaName>
-                <hlaDataType>Unsigned Int</hlaDataType>
+                <hlaDataType>UNSIGNED_INT_TYPE</hlaDataType>
                 <hlaRequired>false</hlaRequired>
                 <gameName>Damage State</gameName>
                 <gameDataType>ENUMERATION</gameDataType>
@@ -60,7 +60,7 @@
             </attrToProp>            
             <attrToProp>
                 <hlaName>Orientation</hlaName>
-                <hlaDataType>Euler Angle</hlaDataType>
+                <hlaDataType>EULER_ANGLES_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
                 <gameName>Rotation</gameName>
                 <gameDataType>VEC3</gameDataType>
@@ -68,15 +68,15 @@
                 <default></default>
                 <!-- this should be ignored -->
                 <enumerationMapping>
-                	<value id="0">No Damage</value>
-                	<value id="1">Slight Damage</value>
-                	<value id="2">Moderate Damage</value>
-                	<value id="3">Destroyed</value>
+                   <value id="0">No Damage</value>
+                   <value id="1">Slight Damage</value>
+                   <value id="2">Moderate Damage</value>
+                   <value id="3">Destroyed</value>
                 </enumerationMapping>
             </attrToProp>            
             <attrToProp>
                 <hlaName>WorldLocation</hlaName>
-                <hlaDataType>World Coordinate</hlaDataType>
+                <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
                 <hlaRequired>true</hlaRequired>
                 <gameName>Translation</gameName>
                 <gameDataType>VEC3</gameDataType>
@@ -112,7 +112,7 @@
             </disEntityEnum>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
-                <hlaDataType>Velocity Vector</hlaDataType>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
                 <gameName>Velocity Vector</gameName>
                 <gameDataType>VEC3D</gameDataType>
                 <default></default>
@@ -132,10 +132,10 @@
                 <specific>6</specific>
                 <extra>0</extra>
             </disEntityEnum>
-            <entityIdAttributeName>HeloIdentifier</entityIdAttributeName>
+            <entityIdAttributeName>EntityIdentifier</entityIdAttributeName>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
-                <hlaDataType>Velocity Vector</hlaDataType>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
                 <gameName>Velocity Vector</gameName>
                 <gameDataType>VEC3D</gameDataType>
                 <default></default>
@@ -157,7 +157,7 @@
             </disEntityEnum>
             <attrToProp>
                 <hlaName>VelocityVector</hlaName>
-                <hlaDataType>Velocity Vector</hlaDataType>
+                <hlaDataType>VELOCITY_VECTOR_TYPE</hlaDataType>
                 <gameName>Velocity Vector</gameName>
                 <gameDataType>VEC3D</gameDataType>
                 <default></default>
@@ -186,7 +186,7 @@
     	    <abstract/>
     	    <paramToParam>
     	        <hlaName>DetonationLocation</hlaName>
-    	        <hlaDataType>World Coordinate</hlaDataType>
+    	        <hlaDataType>WORLD_COORDINATE_TYPE</hlaDataType>
     	        <hlaRequired>true</hlaRequired>
     	        <gameName>Location</gameName>
     	        <gameDataType>VEC3</gameDataType>
@@ -201,14 +201,36 @@
 
         <interaction>
            <interactionClass>WeaponFire</interactionClass>
-           <messageType>Resumed</messageType>
+           <messageType>Timer Elapsed</messageType>
            <paramToParam>
               <hlaName>FiringObjectIdentifier</hlaName>
-              <hlaDataType>Entity Identifier</hlaDataType>
+              <hlaDataType>ENTITY_IDENTIFIER_TYPE</hlaDataType>
               <hlaRequired>true</hlaRequired>
               <gameName>aboutActorId</gameName>
               <gameDataType>ACTOR</gameDataType>
               <gameRequired>true</gameRequired>
+           </paramToParam>
+           <paramToParam>
+              <hlaName>FireControlSolutionRange</hlaName>
+              <hlaDataType>FLOAT_TYPE</hlaDataType>
+              <hlaRequired>true</hlaRequired>
+              <gameName>LateTime</gameName>
+              <gameDataType>FLOAT</gameDataType>
+              <gameRequired>true</gameRequired>
+           </paramToParam>
+           <paramToParam>
+              <hlaName>MunitionType</hlaName>
+              <hlaDataType>ENTITY_TYPE</hlaDataType>
+              <hlaRequired>true</hlaRequired>
+              <gameName>TestProp</gameName>
+              <gameDataType>ENUMERATION</gameDataType>
+              <gameRequired>true</gameRequired>
+              <default>LARGE EXPLOSION</default>
+              <enumerationMapping>
+                 <value id="2 2 225 2 2 0 0">LARGE BULLET</value>
+                 <value id="2 9 225 2 14 0 0">SHORT SMOKE</value>
+                 <value id="2 9 225 2 14 1 0">LONG SMOKE</value>
+              </enumerationMapping>
            </paramToParam>
         </interaction>
     </interactions>
