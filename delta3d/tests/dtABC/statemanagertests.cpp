@@ -210,7 +210,7 @@ namespace dtTest
    //////////////////////////////////////////////////////////////////////////
    void StateManagerTests::TestStateManagerTransition()
    {
-      bool valid = mSM->AddTransition(&EventTypes::EVENT_A, 
+      mSM->AddTransition(&EventTypes::EVENT_A, 
                                        mStateA.get(),
                                        mStateB.get() );
       mSM->MakeCurrent(mStateA.get());
