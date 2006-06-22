@@ -58,9 +58,12 @@ namespace dtCore
 
       if (GetTextureSourceType() == TextureShaderParameter::TextureSourceType::IMAGE)
       {
+         RefPtr<osgDB::ReaderWriter::Options> options = new osgDB::ReaderWriter::Options;
+         options->setObjectCacheHint(osgDB::ReaderWriter::Options::CACHE_ALL);
+
          dtCore::RefPtr<osg::Texture2D> tex2D = new osg::Texture2D();
          std::string filePath = dtCore::FindFileInPathList(GetTexture());
-         osg::Image *image = osgDB::readImageFile(filePath);
+         osg::Image *image = osgDB::readImageFile(filePath,options.get());
          if (image == NULL)
             EXCEPT(ShaderParameterException::INVALID_ATTRIBUTE,"Could not find image for texture at location: "
                + GetTexture());
