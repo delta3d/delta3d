@@ -708,7 +708,7 @@ class ParameterTranslatorTests : public CPPUNIT_NS::TestFixture
          messageParameters.push_back(enumParam.get());
 
          TranslateOutgoingParameter(buffer, size, messageParameters, mMapping);
-         CPPUNIT_ASSERT_EQUAL(size, size_t(expectedResult.EncodedLength()));
+         CPPUNIT_ASSERT_EQUAL(unsigned(size), unsigned(expectedResult.EncodedLength()));
 
          dtHLAGM::EntityType actualValue;
          actualValue.Decode(buffer);
