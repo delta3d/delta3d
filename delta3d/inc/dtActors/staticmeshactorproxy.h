@@ -38,7 +38,11 @@ namespace dtActors
      * @class StaticMeshActorProxy
      * This proxy represents a static mesh. A static mesh contains geometry and 
      * textures representing an object in the scene such as a chair,a desk, a 
-     * tree, a boulder, etc.
+     * tree, a boulder, etc. Note that this class will instance geometry. So
+     * changes to one model at runtime will happen to all of them. Since this
+     * class is normally used for static objects (trees, buildings, etc) if you
+     * are using the same resource then you probably want to share geometry in
+     * memory for efficiency.
      */
     class DT_PLUGIN_EXPORT StaticMeshActorProxy : public DeltaObjectActorProxy
     {

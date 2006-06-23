@@ -190,9 +190,8 @@ namespace dtActors
                 "Actor should be type dtCore::Object");
         }
 
-        //First load the mesh.
-
-        if (obj->LoadFile(fileName) == NULL)
+        //First load the mesh (with cacheing on).
+        if (obj->LoadFile(fileName,true) == NULL)
         {
            if (!fileName.empty())
               LOG_ERROR("Error loading mesh file: " + fileName);
