@@ -92,7 +92,11 @@ namespace dtActors
     * This class is the proxy for a basic game object that has a single static mesh.
     * Use this base class if you are using the Game Manager and want to create a 
     * simple game object that has one mesh.  It is basically a GameActorProxy with the 
-    * code from StaticMeshActorProxy in dtActors.
+    * code from StaticMeshActorProxy in dtActors. Note, this class does NOT cache
+    * geometry in memory. The reasoning is that since this is a dynamic GameActor
+    * that is intended to respond to message and have behavior, changes to its
+    * geometry (damaged states, etc.) should happen to each instances. If you
+    * want to share geometry for a static actor, check out StaticMeshActorProxy.
     * @see GameActorProxy
     * @see GameMeshActor
     * @see StaticMeshActorProxy
