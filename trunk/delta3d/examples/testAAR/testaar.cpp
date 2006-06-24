@@ -114,11 +114,7 @@ void AARApplication::Config()
    mClientGM->AddComponent(*mTaskComponent,dtGame::GameManager::ComponentPriority::NORMAL);
 
    //Load the library with the test game actors...
-   #if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-      mClientGM->LoadActorRegistry("testGameActorLibrary");
-   #else
-      mClientGM->LoadActorRegistry("testGameActorLibrary");
-   #endif
+   mClientGM->LoadActorRegistry("testGameActorLibrary");
 
    dtABC::Application::Config();
    GetWindow()->SetWindowTitle("testAAR");
@@ -321,6 +317,7 @@ void AARApplication::Reset()
 
    dtCore::RefPtr<dtDAL::ActorType> playerType = mClientGM->FindActorType("ExampleActors", "TestPlayer");
    mPlayer = dynamic_cast<dtGame::GameActorProxy *>(mClientGM->CreateActor(*playerType).get());
+   mPlayer->SetTranslation( osg::Vec3( 0.0f, 0.0f, 5.0f ) );
 
    dtDAL::StringActorProperty *prop = static_cast<dtDAL::StringActorProperty *>(mPlayer->GetProperty("mesh"));
    prop->SetValue("models/physics_happy_sphere.ive");
@@ -649,9 +646,6 @@ void AARApplication::FireEvent(dtDAL::GameEvent *event)
    if (event != NULL && (mLogController->GetLastKnownStatus().GetStateEnum()
        != dtGame::LogStateEnumeration::LOGGER_STATE_PLAYBACK))
    {
-      //dtCore::RefPtr<dtGame::GameEventMessage> eventMsg = static_cast<dtGame::GameEventMessage*>
-      //      (mClientGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT).get());
-
       dtCore::RefPtr<dtGame::GameEventMessage> eventMsg;
       mClientGM->GetMessageFactory().CreateMessage(dtGame::MessageType::INFO_GAME_EVENT, eventMsg);
 

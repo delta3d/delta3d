@@ -205,15 +205,7 @@ class HLATests : public CPPUNIT_NS::TestFixture
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(HLATests);
-#if (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-  #if defined (_DEBUG)
-      const std::string HLATests::mTestGameActorLibrary="testGameActorLibrary";
-  #else
-      const std::string HLATests::mTestGameActorLibrary="testGameActorLibrary";
-  #endif
-#else
-   const std::string HLATests::mTestGameActorLibrary="testGameActorLibrary";
-#endif
+const std::string HLATests::mTestGameActorLibrary="testGameActorLibrary";
 
 // Called implicitly by CPPUNIT when the app starts
 void HLATests::setUp()

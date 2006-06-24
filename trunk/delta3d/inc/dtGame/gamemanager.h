@@ -25,7 +25,6 @@
 #include <map>
 #include <queue>
 #include "dtGame/export.h"
-//#include "dtGame/gmcomponent.h"
 #include "dtGame/gameactor.h"
 #include "dtGame/messagefactory.h"
 #include "dtGame/message.h"
@@ -99,9 +98,13 @@ namespace dtGame
          /// Constructor
          GameManager(dtCore::Scene &scene);
 
+      protected:
+
          /// Destructor
          virtual ~GameManager();
-
+      
+      public:
+      
          /**
           * Loads an actor registry
           * @param libName the name of the library to load

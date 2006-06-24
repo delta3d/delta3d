@@ -46,10 +46,14 @@ namespace dtGame
       public:
          /// Constructor
    		GameActor(GameActorProxy& proxy);
+
+      protected:
              
          /// Destructor
    		virtual ~GameActor();
-         
+
+      public:
+      
          /**
           * @return the GameActorProxy for this game actor.
           */

@@ -22,8 +22,8 @@
 #include <string>
 #include <sstream>
 
-#include <stdio.h>
-#include <time.h>
+#include <cstdio>
+#include <ctime>
 
 #include <osg/Math>
 #include <osgDB/FileUtils>
@@ -96,12 +96,7 @@ const std::string TESTS_DIR = dtCore::GetDeltaRootPath() + dtUtil::FileUtils::PA
 const std::string MAPPROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingMapProject";
 const std::string PROJECTCONTEXT = TESTS_DIR + dtUtil::FileUtils::PATH_SEPARATOR + "dtDAL" + dtUtil::FileUtils::PATH_SEPARATOR + "WorkingProject";
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* MapTests::mExampleLibraryName="testActorLibrary";
-#else
-char* MapTests::mExampleLibraryName="testActorLibrary";
-#endif
-
 
 void MapTests::setUp()
 {
@@ -110,17 +105,8 @@ void MapTests::setUp()
         dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
         std::string logName("mapTest");
 
-//        logger = &dtUtil::Log::GetInstance();
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger = &dtUtil::Log::GetInstance("fileutils.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_ERROR);
-//        logger = &dtUtil::Log::GetInstance("mapxml.cpp");
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-
         logger = &dtUtil::Log::GetInstance(logName);
-//
-//        logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
-//        logger->LogMessage(dtUtil::Log::LOG_DEBUG, __FUNCTION__,  __LINE__, "Log initialized.\n");
+
         dtUtil::FileUtils& fileUtils = dtUtil::FileUtils::GetInstance();
         std::string currentDir = fileUtils.CurrentDirectory();
         std::string projectDir("dtDAL");

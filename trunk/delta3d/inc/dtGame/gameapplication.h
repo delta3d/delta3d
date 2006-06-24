@@ -57,10 +57,14 @@ namespace dtGame
           * @param argv An array of string pointers with the command line data.
           */
          GameApplication(int argc, char** argv);
+      
+      protected:
          
          ///Destructor
          virtual ~GameApplication();
-         
+      
+      public:
+      
          /**
           * Configures the application, loads the game library,
           * and calls the entry point to configure the game.

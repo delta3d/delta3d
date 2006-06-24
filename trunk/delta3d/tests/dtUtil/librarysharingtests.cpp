@@ -22,8 +22,8 @@
 #include <string>
 #include <sstream>
 
-#include <stdio.h>
-#include <time.h>
+#include <cstdio>
+#include <ctime>
 
 #include <osg/Math>
 #include <osgDB/FileUtils>
@@ -168,11 +168,6 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( UtilTests );
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-char* UtilTests::mExampleLibraryName="testActorLibraryd";
-char* UtilTests::mActorLibraryName="dtActorsd";
-#else
 char* UtilTests::mExampleLibraryName="testActorLibrary";
 char* UtilTests::mActorLibraryName="dtActors";
-#endif
 

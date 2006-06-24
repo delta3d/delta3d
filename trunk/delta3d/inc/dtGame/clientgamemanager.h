@@ -39,10 +39,14 @@ namespace dtGame
       
          /// Constructor
          ClientGameManager(dtCore::Scene &scene);
-
+      
+      protected:
+      
          /// Destructor
          virtual ~ClientGameManager();
-
+      
+      public:
+      
          void SetClientNetworkComponent(ClientNetworkComponent &component) { mComponent = &component; }
 
          void ConnectToServer();

@@ -71,13 +71,8 @@ class TaskActorTests : public CPPUNIT_NS::TestFixture
 
 //Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(TaskActorTests);
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* TaskActorTests::mTestGameActorLibrary="testGameActorLibrary";
 char* TaskActorTests::mTestActorLibrary="testActorLibrary";
-#else
-char* TaskActorTests::mTestGameActorLibrary="testGameActorLibrary";
-char* TaskActorTests::mTestActorLibrary="testActorLibrary";
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 void TaskActorTests::setUp()

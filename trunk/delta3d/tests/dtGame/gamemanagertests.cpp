@@ -19,7 +19,7 @@
  * @author Eddie Johnson and David Guthrie
  */
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <osg/Math>
 #include <osg/io_utils>
@@ -694,13 +694,8 @@ int TestOrderComponent::MessageCounter(0);
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameManagerTests);
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GameManagerTests::mTestGameActorLibrary="testGameActorLibrary";
 char* GameManagerTests::mTestActorLibrary="testActorLibrary";
-#else
-char* GameManagerTests::mTestGameActorLibrary="testGameActorLibrary";
-char* GameManagerTests::mTestActorLibrary="testActorLibrary";
-#endif
 
 void GameManagerTests::setUp()
 {
