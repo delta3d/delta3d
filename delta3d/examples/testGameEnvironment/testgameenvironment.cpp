@@ -28,11 +28,11 @@
 #include <dtUtil/exception.h>
 #include <dtGame/gamemanager.h>
 
-class App : public dtABC::Application
+class TestGameEnvironmentApp : public dtABC::Application
 {
    public:
 
-      App()
+      TestGameEnvironmentApp()
       {
          mGM = new dtGame::GameManager(*GetScene());
         
@@ -48,7 +48,6 @@ class App : public dtABC::Application
             LOG_ERROR("The infinite terrain proxy was created, but has an invalid actor. Aborting.");
             Quit();
          }
-         //mTerrain->SetVerticalScale(0.1f);
          mGM->AddActor(*proxy);
 
          mEnvironmentProxy = dynamic_cast<dtActors::BasicEnvironmentActorProxy*>(mGM->CreateActor("dtcore.Environment", "Environment").get());
@@ -69,9 +68,14 @@ class App : public dtABC::Application
          mFMM->SetTarget(GetCamera());
 
          GetScene()->UseSceneLight(true);
-         GetCamera()->SetTransform(&dtCore::Transform(0, 0, 1));
 
-         Config();
+         dtCore::Transform transform(0.0f, 0.0f, 30.0f);
+         GetCamera()->SetTransform(&transform);
+      }
+
+      virtual void Config()
+      {
+         GetWindow()->SetWindowTitle("testGameEnvironment");
       }
 
       virtual bool KeyPressed(const dtCore::Keyboard* keyboard, 
@@ -79,77 +83,91 @@ class App : public dtABC::Application
                               Producer::KeyCharacter character)
       {
          bool handled = true;
-         if(key == Producer::Key_1)
+         switch(key)
          {
-            static bool enable = false;
-            mEnvironmentActor->EnableCloudPlane(enable);
-            enable = !enable;
-         }
-         else if(key == Producer::Key_2)
-         {
-            static bool enable = false;
-            mEnvironmentActor->EnableFog(enable);
-            enable = !enable;
-         }
-         else if(key == Producer::Key_3)
-         {
-            mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_CLOSE);
-         }
-         else if(key == Producer::Key_4)
-         {
-            mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_MODERATE);
-         }
-         else if(key == Producer::Key_5)
-         {
-            mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED);
-         }
-         else if(key == Producer::Key_6)
-         {
-            static bool enable = true;
-            if(enable)
-               mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_RAINY);
-            else
-               mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_FAIR);
-            
-            enable = !enable;
-         }
-         else if(key == Producer::Key_7)
-         {
-            static bool enable = true;
-            if(enable)
-               mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_NIGHT, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_WINTER);
-            else
-               mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_DAY, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER);
-            
-            enable = !enable;
-         }
-         else if(key == Producer::Key_8)
-         {
-            static bool enable = true;
-            if(enable)
-               mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_SEVERE);
-            else
-               mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_NONE);
-         }
-         else if(key == Producer::Key_space)
-         {
-            mGM->SetEnvironmentActor(mGM->GetEnvironmentActor() != NULL ? NULL : mEnvironmentProxy.get());
-            GetScene()->UseSceneLight(true);
-         }
-         else if(key == Producer::Key_Escape)
-         {
-            Quit();
-         }
-         else
-         {
-            handled = false;
+            case Producer::Key_1:
+            {
+               static bool enable = false;
+               mEnvironmentActor->EnableCloudPlane(enable);
+               enable = !enable;
+               break;
+            }
+            case Producer::Key_2:
+            {
+               static bool enable = false;
+               mEnvironmentActor->EnableFog(enable);
+               enable = !enable;
+               break;
+            }
+            case Producer::Key_3:
+            {
+               mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_CLOSE);
+               break;
+            }
+            case Producer::Key_4:
+            {
+               mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_MODERATE);
+               break;
+            }
+            case Producer::Key_5:
+            {
+               mEnvironmentActor->SetWeatherVisibility(dtActors::BasicEnvironmentActor::VisibilityTypeEnum::VISIBILITY_UNLIMITED);
+               break;
+            }
+            case Producer::Key_6:
+            {
+               static bool enable = true;
+               if(enable)
+                  mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_RAINY);
+               else
+                  mEnvironmentActor->SetWeatherTheme(dtActors::BasicEnvironmentActor::WeatherThemeEnum::THEME_FAIR);
+               
+               enable = !enable;
+               break;
+            }
+            case Producer::Key_7:
+            {
+               static bool enable = true;
+               if(enable)
+                  mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_NIGHT, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_WINTER);
+               else
+                  mEnvironmentActor->SetTimePeriodAndSeason(dtActors::BasicEnvironmentActor::TimePeriodEnum::TIME_DAY, dtActors::BasicEnvironmentActor::SeasonEnum::SEASON_SUMMER);
+               
+               enable = !enable;
+               break;
+            }
+            case Producer::Key_8:
+            {
+               static bool enable = true;
+               if(enable)
+                  mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_SEVERE);
+               else
+                  mEnvironmentActor->SetWindType(dtActors::BasicEnvironmentActor::WindTypeEnum::WIND_NONE);
+               break;
+            }
+            case Producer::Key_space:
+            {
+               mGM->SetEnvironmentActor(mGM->GetEnvironmentActor() != NULL ? NULL : mEnvironmentProxy.get());
+               GetScene()->UseSceneLight(true);
+               break;
+            }
+            case Producer::Key_Escape:
+            {
+               Quit();
+               break;
+            }
+            default:
+            {
+               handled = false;
+               break;
+            }
          }
          return handled;
       }
 
    protected:
 
-      virtual ~App()
+      virtual ~TestGameEnvironmentApp()
       {
 
       }
@@ -168,7 +186,8 @@ int main(int argc, char **argv)
 {
    try
    {
-      dtCore::RefPtr<App> app = new App;
+      dtCore::RefPtr<TestGameEnvironmentApp> app = new TestGameEnvironmentApp;
+      app->Config();
       app->Run();
    }
    catch(const dtUtil::Exception &e) 

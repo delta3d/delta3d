@@ -296,13 +296,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION(GMLoggerTests);
 const std::string LOGFILE = "testlog";
 const std::string TESTS_DIR = dtCore::GetDeltaRootPath()+dtUtil::FileUtils::PATH_SEPARATOR+"tests";
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
 char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
-#else
-char* GMLoggerTests::mTestGameActorLibrary="testGameActorLibrary";
-char* GMLoggerTests::mTestActorLibrary="testActorLibrary";
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 void GMLoggerTests::setUp()

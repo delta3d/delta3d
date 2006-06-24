@@ -247,9 +247,5 @@ class DeadReckoningComponentTests : public CPPUNIT_NS::TestFixture
 
 CPPUNIT_TEST_SUITE_REGISTRATION(DeadReckoningComponentTests);
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
-const std::string DeadReckoningComponentTests::mTestGameActorRegistry("testGameActorLibraryd");
-#else
 const std::string DeadReckoningComponentTests::mTestGameActorRegistry("testGameActorLibrary");
-#endif
 

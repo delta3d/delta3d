@@ -35,9 +35,13 @@ namespace dtGame
          /// Constructor
          ServerGameManager(dtCore::Scene &scene);
 
+      protected:
+
          /// Destructor
          virtual ~ServerGameManager();
 
+      public:
+      
          /**
           * Sets the server network component of this server game manager
           * @param The component to set

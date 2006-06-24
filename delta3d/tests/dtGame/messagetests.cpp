@@ -174,13 +174,8 @@ class TestComponent: public dtGame::GMComponent
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(MessageTests);
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
 char* MessageTests::mTestGameActorLibrary="testGameActorLibrary";
 char* MessageTests::mTestActorLibrary="testActorLibrary";
-#else
-char* MessageTests::mTestGameActorLibrary="testGameActorLibrary";
-char* MessageTests::mTestActorLibrary="testActorLibrary";
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 void MessageTests::setUp()
@@ -189,7 +184,6 @@ void MessageTests::setUp()
    {
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
       mLogger = &dtUtil::Log::GetInstance("messagetests.cpp");
-      //mLogger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       dtCore::Scene* scene = new dtCore::Scene();
       mGameManager = new dtGame::GameManager(*scene);

@@ -22,7 +22,8 @@
 #include "dtGame/exceptionenum.h"
 #include "dtGame/messageparameter.h"
 
-namespace dtGame {
+namespace dtGame
+{
 
 
    ///////////////////////////////////////////////////////////////////////////////

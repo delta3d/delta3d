@@ -140,13 +140,8 @@ private:
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GameActorTests);
 
-#if defined (_DEBUG) && (defined (WIN32) || defined (_WIN32) || defined (__WIN32__))
    std::string GameActorTests::mTestGameActorLibrary = "testGameActorLibrary";
    std::string GameActorTests::mTestActorLibrary     = "testActorLibrary";
-#else
-   std::string GameActorTests::mTestGameActorLibrary = "testGameActorLibrary";
-   std::string GameActorTests::mTestActorLibrary     = "testActorLibrary";
-#endif
 
 void GameActorTests::setUp()
 {
@@ -155,8 +150,6 @@ void GameActorTests::setUp()
       dtCore::System::Instance()->SetShutdownOnWindowClose(false);
       dtCore::System::Instance()->Start();
       dtCore::SetDataFilePathList(dtCore::GetDeltaDataPathList());
-      //dtUtil::Log* logger = &dtUtil::Log::GetInstance("MessageParameter");
-      //logger->SetLogLevel(dtUtil::Log::LOG_DEBUG);
 
       dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene;
       mManager = new dtGame::GameManager(*scene);

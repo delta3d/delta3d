@@ -160,9 +160,6 @@ namespace dtCore
          ///Load a file from disk
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = false);
          
-         ///Get the loaded file, if not loaded in will return NULL
-         //const osg::Node* GetLoadedFile() {return mLoadedFile.get();}
-
          /**
           * Enables or disables this particle system.  Particle systems
           * are enabled by default.

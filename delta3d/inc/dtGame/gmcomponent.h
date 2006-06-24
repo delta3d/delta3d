@@ -40,8 +40,12 @@ namespace dtGame
          /// Constructor
          GMComponent(const std::string& name = "GMComponent");
 
+      protected:
+
          /// Destructor
          virtual ~GMComponent();
+
+      public:
 
          /**
           * handles a sent a message
