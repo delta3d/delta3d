@@ -41,22 +41,15 @@ Transformable::CollisionGeomType::MESH("MESH");
 
 Transformable::Transformable( const std::string& name )
    :  DeltaDrawable(name),
-      mGeomID(0),
-      mOriginalGeomID(0),
-      mTriMeshDataID(0),
-      mMeshVertices(0),
-      mMeshIndices(0),
-      mGeomGeod(0),
+      mGeomID(NULL),
+      mOriginalGeomID(NULL),
+      mTriMeshDataID(NULL),
+      mMeshVertices(NULL),
+      mMeshIndices(NULL),
+      mGeomGeod(NULL),
       mNode(new osg::MatrixTransform),
       mRenderingGeometry(false)
 {
-   // Haxor! In Transformable we virutally derive from DeltaDrawable 
-   // in order to avoid collisions in PositionalLight (diamond o' death
-   // baby!). Unfortunately, the "name" paramter in the constructor
-   // is not passed up the chain in this situation. Bummer. Instead
-   // we have to overwrite it aftewards when we get to this constructor.
-   SetName(name);
-
    RegisterInstance(this);
 
    SetNormalRescaling( true );
@@ -125,7 +118,7 @@ bool Transformable::GetAbsoluteMatrix( osg::Node* node, osg::Matrix& wcMatrix )
    return false;
 }
 
-/*!
+/**
  * Set position/attitude of this Transformable using the supplied Transform.
  * An optional coordinate system parameter may be supplied to specify whether
  * the Transform is in relation to this Transformable's parent.  
@@ -181,7 +174,7 @@ void Transformable::SetTransform( const Transform* xform, CoordSysEnum cs )
    PrePhysicsStepUpdate();
 }
 
-/*!
+/**
  * Get the current Transform of this Transformable.
  *
  * @param *xform : The Transform to be filled in
@@ -208,7 +201,7 @@ void Transformable::GetTransform( Transform *xform, CoordSysEnum cs ) const
    xform->Set( newMat );
 }
 
-/*!
+/**
  * Add a child to this Transformable.  This will allow the child to be 
  * repositioned whenever the parent moves.  An optional offset may be applied to
  * the child.  Any number of children may be added to a parent.
@@ -233,10 +226,9 @@ bool Transformable::AddChild(DeltaDrawable *child)
    {
       return false;
    }
-
 }
 
-/*!
+/**
  * Remove a child from this Transformable.  This will detach the child from its
  * parent so that its free to be repositioned on its own.
  *
