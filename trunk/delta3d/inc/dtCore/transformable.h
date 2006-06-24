@@ -31,28 +31,27 @@
 
 namespace dtCore
 {
-   ///Anything that can be located and moved in 3D space
-   
-   /** The Transformable class is the base class of anything that can move in the 
-     * virtual world and can be added to the Scene.
-     * 
-     * The default coordinate system of dtCore is +X to the right, +Y forward into
-     * the screen, and +Z is up.  Therefore, heading is around the Z axis, pitch
-     * is around the X axis, and roll is around the Y axis.  The angles are all
-     * right-hand-rule.
-     * 
-     * The Transformable class creates a osg::MatrixTransform node for the
-     * protected member mNode.  
-     */
+   /** 
+    * The Transformable class is the base class of anything that can move in the 
+    * virtual world and can be added to the Scene.
+    * 
+    * The default coordinate system of dtCore is +X to the right, +Y forward into
+    * the screen, and +Z is up.  Therefore, heading is around the Z axis, pitch
+    * is around the X axis, and roll is around the Y axis.  The angles are all
+    * right-hand-rule.
+    * 
+    * The Transformable class creates a osg::MatrixTransform node for the
+    * protected member mNode.  
+    */
    class DT_CORE_EXPORT Transformable : public DeltaDrawable  
    {
    public:
-      /*
-      * We need an enumeration to allow the user to set which type
-      * of collision geometry to use.  The other properties in this
-      * proxy such as radius, length, etc. affect the current type
-      * of collision geometry.
-      */
+      /**
+       * We need an enumeration to allow the user to set which type
+       * of collision geometry to use.  The other properties in this
+       * proxy such as radius, length, etc. affect the current type
+       * of collision geometry.
+       */
       class DT_CORE_EXPORT CollisionGeomType : public dtUtil::Enumeration
       {
          DECLARE_ENUM(CollisionGeomType);
@@ -73,7 +72,8 @@ namespace dtCore
 
       DECLARE_MANAGEMENT_LAYER(Transformable)
 
-      enum CoordSysEnum{
+      enum CoordSysEnum
+      {
          REL_CS, ///< The Transform coordinate system is relative to the parent
          ABS_CS  ///< The Transform coordinate system is absolute
       } ;
@@ -85,6 +85,21 @@ namespace dtCore
       Transformable( const std::string& name = "Transformable" );
 
    protected:
+
+      /**
+       * Replaces the scene graph node with a new MatrixTransform.
+       * WARNING! This function is a big fat hack to get RepliacntBody
+       * to play nice with our API. This will almost certainly be removed
+       * in future version, so don't get to comfy using it! ;)
+       *
+       * @param matrixTransform The node you wish to squeeze into this
+       * Transformable.
+       * @pre matrixTransform != NULL
+       */
+      void SetMatrixNode( osg::MatrixTransform* matrixTransform )
+      {
+         mNode = matrixTransform;
+      }
 
       virtual ~Transformable();
 
@@ -106,7 +121,7 @@ namespace dtCore
       }
 
       ///Get the current Transform of this Transformable
-      virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
+      void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
 
       ///Get the current Transform of this Transformable
       void GetTransform( Transform& xform, CoordSysEnum cs = ABS_CS ) const
@@ -115,13 +130,13 @@ namespace dtCore
       }
 
       ///Convenience function to return back the internal matrix transform node
-      virtual osg::MatrixTransform* GetMatrixNode()
+      osg::MatrixTransform* GetMatrixNode()
       { 
          return mNode.get(); 
       }
 
       ///Convenience function to return back the internal matrix transform node
-      virtual const osg::MatrixTransform* GetMatrixNode() const
+      const osg::MatrixTransform* GetMatrixNode() const
       { 
          return mNode.get(); 
       }

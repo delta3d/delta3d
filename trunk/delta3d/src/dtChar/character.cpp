@@ -29,11 +29,9 @@ IMPLEMENT_MANAGEMENT_LAYER(Character)
       mRotation(0.0f),
       mVelocity(0.0f),
       mPreviousUpdateMode( rbody::OsgBodyNode::UPDATE_NONE ),
-      mUpdateVisitor( 0 ),
-      mPauseFrameNumber( 0 )
+      mUpdateVisitor(NULL),
+      mPauseFrameNumber(0)
 {
-   mBodyNode = new rbody::OsgBodyNode(false);
-   
    RegisterInstance(this);
 
    AddSender( System::Instance() );
@@ -51,6 +49,51 @@ Character::~Character()
 }
 
 /**
+ * Add any DeltaDrawable as a child of this Character. In the scene
+ * graph, the osg::Node inside the the DeltaDrawable child which is
+ * returned by GetOSGNode() will be attached to the rbody::OsgNodeNode
+ * that is contained in the Character class.
+ *
+ * @param child The DeltaDrawable which to add as a child.
+ * @return Whether or not the child was added successfully.
+ *
+ * @pre child != NULL
+ */
+bool Character::AddChild( DeltaDrawable* child )
+{
+   if( DeltaDrawable::AddChild(child) && GetMatrixNode() != NULL ) 
+   {
+      GetMatrixNode()->addChild( child->GetOSGNode() );
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+}
+   
+/**
+ * Removes any DeltaDrawable from being a child of this Character. 
+ * In the scene graph, the osg::Node inside the the DeltaDrawable child
+ * which is returned by GetOSGNode() will be removed from the 
+ * rbody::OsgNodeNode that is contained in the Character class if is
+ * inded a child already.
+ *
+ * @param child The DeltaDrawable which to remove as a child.
+ * @return Whether or not the child was removed successfully.
+ *
+ * @pre child != NULL
+ */
+void Character::RemoveChild( DeltaDrawable* child )
+{
+   if( GetMatrixNode() != NULL )
+   {
+      GetMatrixNode()->removeChild( child->GetOSGNode() );
+      DeltaDrawable::RemoveChild(child);
+   }
+}
+
+/**
  * Notifies this drawable object that it has been added to
  * a scene.
  *
@@ -59,49 +102,29 @@ Character::~Character()
  */
 void Character::AddedToScene(Scene* scene)
 {
-   if(mBodyNode.valid() && scene)
+   if( GetBodyNode() != NULL && scene != NULL )
    {
       mCollisionRootNode = scene->GetSceneNode();
-      mBodyNode->setCollisionRootNode(mCollisionRootNode.get());    
+      GetBodyNode()->setCollisionRootNode(mCollisionRootNode.get());    
    }
 }
 
-/**
- * Loads a ReplicantBody data file for this character.
- *
- * @param filename the name of the file to load
- */
 osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
 {
-   mFilename = filename;
-   
    //clear out the children.
-   if (GetMatrixNode()->getNumChildren() != 0)
+   if( GetMatrixNode()->getNumChildren() != 0 )
    {
-      GetMatrixNode()->removeChild(0, GetMatrixNode()->getNumChildren() );
+      GetMatrixNode()->removeChild( 0, GetMatrixNode()->getNumChildren() );
    }
 
-   std::string path = osgDB::findDataFile(mFilename);
+   std::string path = osgDB::findDataFile(filename);
    
-   if(path.empty())
+   if( path.empty() )
    {
-      if (mFilename.empty())
-         Log::GetInstance("character.cpp").
-            LogMessage(Log::LOG_DEBUG, __FUNCTION__, __LINE__,
-                       "Character: Clearing character model.");
-      else
-         Log::GetInstance("character.cpp").
-            LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-                       "Character: Can't find file \"%s\". Clearing character model.", 
-                       mFilename.c_str());
-      osg::Matrix mat;
-      if (mBodyNode.valid())
-      {
-         mat = mBodyNode->getMatrix();
-      }
-      
-      mBodyNode = new rbody::OsgBodyNode(false);
-      mBodyNode->setMatrix(mat);
+      Log::GetInstance("character.cpp").
+         LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, 
+                     "Character: Can't find file \"%s\".", 
+                     filename.c_str());
    }
    else
    {
@@ -111,84 +134,59 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
       putenv("REPLICANTBODY_FILE_PATH=."); 
       
       // Find a unique name for the instance
-      std::string name = GetName();
-      
-      for(int i = 2;
-          rbody::ReplicantBodyMgr::instance()->findCharacter(name) != NULL;
-          i++)
+      std::string name = GetName();      
+      for(  int i = 2;
+            rbody::ReplicantBodyMgr::instance()->findCharacter(name) != NULL;
+            ++i )
       {
          std::ostringstream buf;
-
-         buf << GetName() << " " << i;
-         
+         buf << GetName() << " " << i;         
          name = buf.str();
       }
       
       osg::Matrix mat;
-      if (mBodyNode.valid())
+      if( GetMatrixNode() )
       {
-         mat = mBodyNode->getMatrix();
-         mBodyNode = NULL;
+         mat = GetMatrixNode()->getMatrix();
       }
 
-      mBodyNode = rbody::ReplicantBodyMgr::instance()->createCharacter(
-         path,
-         name,
-         mCollisionRootNode.get()
-      );
+      SetMatrixNode( rbody::ReplicantBodyMgr::instance()->createCharacter( path,
+                                                                           name,
+                                                                           mCollisionRootNode.get() ) );
 
-      if(!mBodyNode.valid())
+      //HACK: Somehow fixes bug where multi-textures models drop their textures when
+      //      a character is in the scene. Weird. Please someone fix this fo' real!
+      for( unsigned int i = 0; i < GetMatrixNode()->getNumChildren(); ++i )
       {
-         Log::GetInstance("character.cpp").
-            LogMessage(Log::LOG_WARNING, __FUNCTION__, __LINE__, 
-                       "Character: Can't load \"%s\", creating empty node.", mFilename.c_str());
-         mBodyNode = new rbody::OsgBodyNode(false);
-         mBodyNode->setMatrix(mat);
-      } 
-      else 
-      {
-         //HACK: Somehow fixes bug where multi-textures models drop their textures when
-         //      a character is in the scene. Weird. Please someone fix this fo' real!
-         for( unsigned int i = 0; i < mBodyNode->getNumChildren(); i++ )
+         if( osg::MatrixTransform* scale = dynamic_cast<osg::MatrixTransform*>( GetMatrixNode()->getChild(i) ) )
          {
-            osg::MatrixTransform* scale = dynamic_cast<osg::MatrixTransform*>( mBodyNode->getChild(i) );
-
-            for( unsigned int j = 0; j < scale->getNumChildren(); j++ )
+            for( unsigned int j = 0; j < scale->getNumChildren(); ++j )
             {
-               osg::Geode* geode = dynamic_cast<osg::Geode*>( scale->getChild(j) );
-
-               for( unsigned int k = 0; k < geode->getNumDrawables(); k++ )
+               if( osg::Geode* geode = dynamic_cast<osg::Geode*>( scale->getChild(j) ) )
                {
-                  osg::Drawable* drawable = dynamic_cast<osg::Drawable*>( geode->getDrawable(k) );
+                  for( unsigned int k = 0; k < geode->getNumDrawables(); ++k )
+                  {
+                     osg::Drawable* drawable = dynamic_cast<osg::Drawable*>( geode->getDrawable(k) );
 
-                  osg::StateSet* stateSet = drawable->getOrCreateStateSet();
-                  stateSet->setMode(GL_TEXTURE_COORD_ARRAY, osg::StateAttribute::OFF);
+                     osg::StateSet* stateSet = drawable->getOrCreateStateSet();
+                     stateSet->setMode(GL_TEXTURE_COORD_ARRAY, osg::StateAttribute::OFF);
+                  }
                }
             }
          }
-
-         mBodyNode->setMatrix(mat);
-
-         mBodyNode->setUpdateMode(  rbody::OsgBodyNode::UPDATE_ANIMATION | 
-                                    rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
-                                    rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );
-         
-         mBodyNode->setRotation(osg::DegreesToRadians(mRotation));
-         
-         SetVelocity(mVelocity);
-         
       }
+ 
+      GetMatrixNode()->setMatrix(mat);
+
+      GetBodyNode()->setUpdateMode( rbody::OsgBodyNode::UPDATE_ANIMATION | 
+                                    rbody::OsgBodyNode::UPDATE_CONTACT_TRANSLATION | 
+                                    rbody::OsgBodyNode::UPDATE_GROUND_FOLLOWING );     
+      GetBodyNode()->setRotation(osg::DegreesToRadians(mRotation));     
+
+      SetVelocity(mVelocity);            
    }
 
-   // Make sure to call DeltaDrawable's GetOSGNode (not Characters)
-   // since the local override returns mBodyNode which would
-   // cause a recurisve add in the scene graph.
-   if( osg::Group* group = Transformable::GetOSGNode()->asGroup() )
-   {
-      group->addChild( mBodyNode.get() );
-   }
-
-   return mBodyNode.get();
+   return GetMatrixNode();
 }
 
 void Character::OnMessage( Base::MessageData* data )
@@ -204,28 +202,25 @@ void Character::OnMessage( Base::MessageData* data )
    
    if( data->message == "pause" )
    {
-      if( mBodyNode.valid() )
+      if( GetMatrixNode() != NULL )
       {
-         if( osg::Group* g1 = mBodyNode->asGroup() )
+         if( osg::Node* n1 = GetMatrixNode()->getChild(0) )
          {
-            if( osg::Node* n1 = g1->getChild(0) )
+            if( osg::Group* g2 = n1->asGroup() )
             {
-               if( osg::Group* g2 = n1->asGroup() )
+               if( osg::Node* n2 = g2->getChild(0) )
                {
-                  if( osg::Node* n2 = g2->getChild(0) )
+                  if( osg::NodeCallback* callback = n2->getUpdateCallback() )
                   {
-                     if( osg::NodeCallback* callback = n2->getUpdateCallback() )
+                     if( !mUpdateVisitor.valid() )
                      {
-                        if( !mUpdateVisitor.valid() )
-                        {
-                           mUpdateVisitor = new osgUtil::UpdateVisitor;
-                        }
-                        
-                        mUpdateVisitor->reset();
-                        mUpdateVisitor->setTraversalNumber( mPauseFrameNumber++ );
-                        
-                        (*callback)( n2, mUpdateVisitor.get() );
+                        mUpdateVisitor = new osgUtil::UpdateVisitor;
                      }
+                     
+                     mUpdateVisitor->reset();
+                     mUpdateVisitor->setTraversalNumber( mPauseFrameNumber++ );
+                     
+                     (*callback)( n2, mUpdateVisitor.get() );
                   }
                }
             }
@@ -236,21 +231,21 @@ void Character::OnMessage( Base::MessageData* data )
    {
       mPauseFrameNumber = 0;
 
-      if( mBodyNode.valid() )
+      if( GetBodyNode() != NULL )
       {
-         mPreviousUpdateMode = mBodyNode->getUpdateMode();
-         mBodyNode->setUpdateMode( rbody::OsgBodyNode::UPDATE_NONE );
+         mPreviousUpdateMode = GetBodyNode()->getUpdateMode();
+         GetBodyNode()->setUpdateMode( rbody::OsgBodyNode::UPDATE_NONE );
          
-         mPreviousInternalUpdateMode = mBodyNode->getInternalUpdateMode();
-         mBodyNode->setInternalUpdateMode( rbody::OsgBodyNode::UPDATE_NONE );
+         mPreviousInternalUpdateMode = GetBodyNode()->getInternalUpdateMode();
+         GetBodyNode()->setInternalUpdateMode( rbody::OsgBodyNode::UPDATE_NONE );
       }
    }
    else if( data->message == "pause_end" )
    {
-      if( mBodyNode.valid() )
+      if( GetBodyNode() != NULL )
       {
-         mBodyNode->setUpdateMode( mPreviousUpdateMode );
-         mBodyNode->setInternalUpdateMode( mPreviousInternalUpdateMode );
+         GetBodyNode()->setUpdateMode( mPreviousUpdateMode );
+         GetBodyNode()->setInternalUpdateMode( mPreviousInternalUpdateMode );
       }
    }
 }
@@ -263,9 +258,9 @@ void Character::OnMessage( Base::MessageData* data )
  */
 void Character::SetRotation(float rotation)
 {
-   if( mBodyNode.valid() )
+   if( GetBodyNode() != NULL )
    {
-      mBodyNode->setRotation( osg::DegreesToRadians(rotation - mRotation) );
+      GetBodyNode()->setRotation( osg::DegreesToRadians(rotation - mRotation) );
    }
    
    // Normalize
@@ -306,7 +301,7 @@ void Character::SetVelocity(float velocity)
    
       float walkSpeed;
       
-      rbody::ActionRequest* walk = mBodyNode->getBody()->getActionPrototype("ACT_WALK");
+      rbody::ActionRequest* walk = GetBodyNode()->getBody()->getActionPrototype("ACT_WALK");
          
       walkSpeed = walk->getPropertyFloat("speed");
       
@@ -314,7 +309,7 @@ void Character::SetVelocity(float velocity)
       
       if(mVelocity > walkSpeed)
       {
-         action = mBodyNode->getBody()->getActionPrototype("ACT_RUN");
+         action = GetBodyNode()->getBody()->getActionPrototype("ACT_RUN");
       }
       else if(mVelocity > 0.0f)
       {
@@ -322,12 +317,12 @@ void Character::SetVelocity(float velocity)
       }
       else
       {
-         action = mBodyNode->getBody()->getActionPrototype("ACT_STAND");
+         action = GetBodyNode()->getBody()->getActionPrototype("ACT_STAND");
       }
 
       action->setPrioritized(false);
 
-      mBodyNode->getBody()->executeAction(action);
+      GetBodyNode()->getBody()->executeAction(action);
    }
 }
 
@@ -352,13 +347,13 @@ void Character::ExecuteAction(const std::string& name,
                               bool priority,
                               bool force)
 {
-   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
+   if( rbody::ActionRequest* action = GetBodyNode()->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
       action->setPrioritized(priority);
       
-      mBodyNode->getBody()->executeAction(action, force);
+      GetBodyNode()->getBody()->executeAction(action, force);
    }
 }
 
@@ -375,7 +370,7 @@ void Character::ExecuteActionWithSpeed(const std::string& name,
                                        bool priority,
                                        bool force)
 {
-   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
+   if( rbody::ActionRequest* action = GetBodyNode()->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
@@ -383,7 +378,7 @@ void Character::ExecuteActionWithSpeed(const std::string& name,
       
       action->setPropertyFloat("speed", speed);
       
-      mBodyNode->getBody()->executeAction(action, force);
+      GetBodyNode()->getBody()->executeAction(action, force);
    }
 }
 
@@ -400,7 +395,7 @@ void Character::ExecuteActionWithAngle(const std::string& name,
                                        bool priority, 
                                        bool force)
 {
-   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
+   if( rbody::ActionRequest* action = GetBodyNode()->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
@@ -408,7 +403,7 @@ void Character::ExecuteActionWithAngle(const std::string& name,
       
       action->setPropertyFloat("angle", angle);
    
-      mBodyNode->getBody()->executeAction(action, force);
+      GetBodyNode()->getBody()->executeAction(action, force);
    }
 }
 
@@ -427,7 +422,7 @@ void Character::ExecuteActionWithSpeedAndAngle(const std::string& name,
                                                bool priority,
                                                bool force)
 {
-   if( rbody::ActionRequest* action = mBodyNode->getBody()->getActionPrototype(name) )
+   if( rbody::ActionRequest* action = GetBodyNode()->getBody()->getActionPrototype(name) )
    {
       action = action->clone();
       
@@ -436,7 +431,7 @@ void Character::ExecuteActionWithSpeedAndAngle(const std::string& name,
       action->setPropertyFloat("speed", speed);
       action->setPropertyFloat("angle", angle);
    
-      mBodyNode->getBody()->executeAction(action, force);
+      GetBodyNode()->getBody()->executeAction(action, force);
    }
 }
                                              
@@ -447,5 +442,5 @@ void Character::ExecuteActionWithSpeedAndAngle(const std::string& name,
  */
 void Character::StopAction(const std::string& name)
 {
-   mBodyNode->getBody()->stopAction(name);
+   GetBodyNode()->getBody()->stopAction(name);
 }

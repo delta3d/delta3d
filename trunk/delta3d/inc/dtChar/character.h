@@ -75,15 +75,45 @@ namespace dtChar
 
       public:
 
-         virtual osg::MatrixTransform* GetMatrixNode()
+         /**
+          * Returns the ReplicantBody node. Eventually we may want
+          * to save a weak pointer to the OsgBodyNode to avoid the
+          * casting here.
+          */          
+         rbody::OsgBodyNode* GetBodyNode()
          {
-            return mBodyNode.get();
+            return dynamic_cast<rbody::OsgBodyNode*>( GetMatrixNode() );
          }
 
-         virtual const osg::MatrixTransform* GetMatrixNode() const
+         /**
+          * Returns the ReplicantBody node. Eventually we may want
+          * to save a weak pointer to the OsgBodyNode to avoid the
+          * casting here.
+          */          
+         const rbody::OsgBodyNode* GetBodyNode() const
          {
-            return mBodyNode.get() ;
+            return dynamic_cast<const rbody::OsgBodyNode*>( GetMatrixNode() );
          }
+
+         /**
+          * Add any DeltaDrawable as a child of this Character.
+          *
+          * @param child The DeltaDrawable which to add as a child.
+          * @return Whether or not the child was added successfully.
+          *
+          * @pre child != NULL
+          */
+         virtual bool AddChild( DeltaDrawable* child );
+            
+         /**
+          * Removes any DeltaDrawable from being a child of this Character.
+          *
+          * @param child The DeltaDrawable which to remove as a child.
+          * @return Whether or not the child was removed successfully.
+          *
+          * @pre child != NULL
+          */
+         virtual void RemoveChild( DeltaDrawable* child );
 
          /**
           * Notifies this drawable object that it has been added to
@@ -101,8 +131,6 @@ namespace dtChar
           * @return true if successful, false if not
           */
          virtual osg::Node* LoadFile( const std::string& filename, bool useCache = true );
-
-         virtual void OnMessage( dtCore::Base::MessageData* data );
 
          /**
           * Sets the rotation of this character.
@@ -140,6 +168,8 @@ namespace dtChar
           * @param name the name of the action to execute
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
+          *
+          * @pre GetBodyNode() != NULL
           */
          void ExecuteAction(const std::string& name,
                             bool priority = true, 
@@ -152,6 +182,8 @@ namespace dtChar
           * @param speed the speed at which to execute the action
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
+          *
+          * @pre GetBodyNode() != NULL
           */
          void ExecuteActionWithSpeed(const std::string& name, 
                                      float speed,
@@ -165,6 +197,8 @@ namespace dtChar
           * @param angle the angle at which to execute the action
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
+          *
+          * @pre GetBodyNode() != NULL
           */
          void ExecuteActionWithAngle(const std::string& name, 
                                      float angle,
@@ -179,6 +213,8 @@ namespace dtChar
           * @param angle the angle at which to execute the action
           * @param priority whether or not the action is high-priority
           * @param force whether or not to force the action
+          *
+          * @pre GetBodyNode() != NULL
           */
          void ExecuteActionWithSpeedAndAngle(const std::string& name, 
                                              float speed, 
@@ -192,25 +228,16 @@ namespace dtChar
           * @param name the name of the action to stop
           */
          void StopAction(const std::string& name);
-         
 
-      private:
+         virtual void OnMessage( dtCore::Base::MessageData* data );
          
-         /**
-          * The ReplicantBody OSG node.
-          */
-         dtCore::RefPtr<rbody::OsgBodyNode> mBodyNode;
+      private:
          
          /**
           * The collision root node.
           */
          dtCore::RefPtr<osg::Node> mCollisionRootNode;
 
-         /**
-          * The name of the last file loaded.
-          */
-         std::string mFilename;
-         
          /**
           * The character's current rotation.
           */
