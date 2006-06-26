@@ -9,6 +9,7 @@ import string
 import SCons.Util
 import macosx
 import SCons.Util
+import platform
 from SCons.Script.SConscript import SConsEnvironment
 
 from email.MIMEText import MIMEText
@@ -329,9 +330,15 @@ def TOOL_BUNDLE(env):
           envProg.Default (bundle)
     
           inst = envProg.InstallBundle ('$prefix/share/delta3d/Applications', bundle)
-       elif launchDir != env.get('prefix') :
-          envProg.Install( '$prefix/share/delta3d/bin', program )
-                    
+       elif OS == 'linux':
+          if env.get('bindir') and launchDir+'/bin' != env.get('bindir'):
+             envProg.Install( '$bindir', program )
+          elif env.get('prefix') and launchDir != env.get('prefix') :
+             envProg.Install( '$prefix/share/delta3d/bin', program )
+       else:
+          if launchDir != env.get('prefix') : 
+             envProg.Install( '$prefix/share/delta3d/bin', program )
+                   
 ########################
     
     def BuildLib(env, name, srcs, deps, extraDefines = [], extraLinkFlags = [],
@@ -426,10 +433,13 @@ def TOOL_BUNDLE(env):
              envLib.Install( '$prefix/lib', builtlib[1] )
              envLib.Install( '$prefix/lib', builtlib[2] )
        else:
-    
+
+          # TODO: This should be a build dir settable by command-line params
           lib = envLib.Install( '#/lib', builtlib )
-    
-          if launchDir != env.get('prefix') :
+
+          if env.get('libdir') and env.get('libdir') != launchDir+'/lib':
+             lib = envLib.Install( '$libdir', builtlib )
+          elif launchDir != env.get('prefix'):
              lib = envLib.Install( '$prefix/lib', builtlib )
     
        incDirDict = { 'dtABC'       : 'dtABC',
@@ -450,9 +460,13 @@ def TOOL_BUNDLE(env):
                       'dtGame'      : 'dtGame' }
     
        #install headers, there's gotta be a cleaner way ;)
-       if incDirDict.has_key(name) and launchDir != env.get('prefix') :
-          for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
-             envLib.InstallAs( '$prefix/include/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )
+       if incDirDict.has_key(name):
+          if env.get('includedir') and launchDir+'/inc' != env.get('includedir'):
+             for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
+                envLib.InstallAs( '$includedir/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )          
+          elif env.get('prefix') and launchDir != env.get('prefix'):
+             for header in SGlob('../../inc/'+incDirDict[name]+'/*.h') :
+                envLib.InstallAs( '$prefix/include/'+incDirDict[name]+'/'+os.path.basename(header), '../'+header )
     
        return lib   
 
@@ -580,7 +594,6 @@ opts.AddOptions(
    EnumOption( 'mode', 'Build as either debug or release', 'release',
             allowed_values = ( 'debug', 'release' ),
             map = {}, ignorecase = 1 ),
-   BoolOption( 'no_warnings', 'Disable all warnings', False ),
    BoolOption( 'usePrefixHeaders', 'use a prefix/precompiled header', False ),
    BoolOption( 'buildPythonBindings', 'compile the python binding libraries', True ),
    PackageOption( 'boost', 'Boost installation directory', 'no' ),
@@ -595,6 +608,16 @@ opts.Add( 'libpath', 'Additional library directories (comma delimited)', convert
 
 if OS == 'windows' :
    opts.Add( PathOption( 'prefix', 'Directory to install under', os.getcwd() ) )
+elif OS == 'linux':
+
+   defaultLibDir = 'lib'
+   if platform.architecture()[0] == '64bit' :
+      defaultLibDir = 'lib64'
+   
+   opts.Add( PathOption( 'prefix', 'Directory to install under', '/usr/local' ) )
+   opts.Add( PathOption( 'libdir', 'Directory to install libraries under (if set, this will override the normal prefix option)', '/usr/local/'+defaultLibDir ) )
+   opts.Add( PathOption( 'bindir', 'Directory to install executables under (if set, this will override the normal prefix option)', '/usr/local/bin' ) )
+   opts.Add( PathOption( 'includedir', 'Directory to install headers under (if set, this will override the normal prefix option)', '/usr/local/include' ) )
 else :
    opts.Add( PathOption( 'prefix', 'Directory to install under', '/usr/local' ) )
 
@@ -759,25 +782,19 @@ if os.environ.has_key('CPPFLAGS'):
 
 env.get('usePrefixHeaders')
    
-if env.get('no_warnings'):
-   if OS == 'windows':
-     env.Append(CXXFLAGS=['/w'])
-   elif OS == 'linux' or OS == 'darwin':
-     env.Append(CXXFLAGS=['-w'])
-else:
-   if OS == 'windows':
-     env.Append(CXXFLAGS=['/W3'])
-   elif OS == 'linux' or OS == 'darwin':
-      if env['CC'][:3] == 'gcc' or env['CXX'][:3] == 'g++':
-         env.Append(CXXFLAGS=['-Wall'])
-         if env.has_key('CCVERSION') :
-            if int( env['CCVERSION'][:1] ) >= 4 :
-               env.Append(CXXFLAGS=['-ftree-vectorize'])
-         if env.has_key('CXXVERSION') :
-            if int( env['CXXVERSION'][:1] ) >= 4 :
-               env.Append(CXXFLAGS=['-ftree-vectorize'])
-      if env['CXX'][:3] == 'g++':
-         env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
+if OS == 'windows':
+   env.Append(CXXFLAGS=['/W3'])
+elif OS == 'linux' or OS == 'darwin':
+   if env['CC'][:3] == 'gcc' or env['CXX'][:3] == 'g++':
+      env.Append(CXXFLAGS=['-Wall'])
+      if env.has_key('CCVERSION') :
+         if int( env['CCVERSION'][:1] ) >= 4 :
+            env.Append(CXXFLAGS=['-ftree-vectorize'])
+      if env.has_key('CXXVERSION') :
+         if int( env['CXXVERSION'][:1] ) >= 4 :
+            env.Append(CXXFLAGS=['-ftree-vectorize'])
+   if env['CXX'][:3] == 'g++':
+      env.Append(CXXFLAGS=['-Wno-non-virtual-dtor'])
 
 if OS == 'linux' :
   env.Append(CPPPATH=['/usr/X11R6/include','/usr/include','/usr/local/include'])
@@ -785,8 +802,11 @@ if OS == 'linux' :
   localCEGUIPath = '/usr/local/include/CEGUI'
   if os.path.exists( localCEGUIPath ) and os.path.isdir( localCEGUIPath ) :
      env.Append(CPPPATH=[localCEGUIPath])
-     
-  env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
+
+  if platform.architecture()[0] == '64bit':
+     env.Append(LIBPATH=['/usr/X11R6/lib64','/usr/lib64','/usr/local/lib64'])
+  else:
+     env.Append(LIBPATH=['/usr/X11R6/lib','/usr/lib','/usr/local/lib'])
 if OS == 'darwin' :
   env.Append(CPPPATH=['/usr/include','/usr/local/include', '/usr/include/malloc'])
   env.Append(FRAMEWORKPATH=['ext/Frameworks' ])
