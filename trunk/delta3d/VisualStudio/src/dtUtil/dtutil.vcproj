@@ -161,6 +161,9 @@
 				RelativePath="..\..\..\src\dtUtil\stringutils.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\dtUtil\version.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\dtUtil\xerceserrorhandler.cpp">
 			</File>
 			<File
@@ -263,6 +266,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\stringutils.h">
+			</File>
+			<File
+				RelativePath="..\..\..\inc\dtUtil\version.h">
 			</File>
 			<File
 				RelativePath="..\..\..\inc\dtUtil\xerceserrorhandler.h">
