@@ -111,19 +111,61 @@ namespace dtCore
       ///Remove a DeltaDrawable child
       virtual void RemoveChild( DeltaDrawable* child );
 
-      ///Set the Transform to reposition this Transformable
+      /**
+       * Sets the Transform to reposition this Transformable. Note: The by-pointer version
+       * of this function will soon be deprecated in favor of the by-reference version
+       * since passing NULL for xform is almost a guaranteed crash. Note that if this
+       * function is overriden, then GetMatrix()->getMatrix() may return diffirent
+       * values.
+       *
+       * @param xform The value to set on this Transformable.
+       * @param cs The coordinate system of the returned Transform. For absolute,
+       * use ABS_CS, and for relative, us REL_CS.
+       *
+       * @pre xform != NULL
+       */
       virtual void SetTransform(const Transform* xform, CoordSysEnum cs = ABS_CS );
 
-      ///Set the Transform to reposition this Transformable
+      /**
+       * Sets the Transform to reposition this Transformable. Note: The by-pointer version
+       * of this function will soon be deprecated in favor of the by-reference version
+       * since passing NULL for xform is almost a guaranteed crash. Note that if this
+       * function is overriden, then GetMatrix()->getMatrix() may return diffirent
+       * values.
+       *
+       * @param xform The value to set on this Transformable.
+       * @param cs The coordinate system of the returned Transform. For absolute,
+       * use ABS_CS, and for relative, us REL_CS.
+       */
       void SetTransform(const Transform& xform, CoordSysEnum cs = ABS_CS )
       {
          SetTransform(&xform, cs);
       }
 
-      ///Get the current Transform of this Transformable
-      void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
+      /**
+       * Get the current Transform of this Transformable. Note: The by-pointer version
+       * of this function will soon be deprecated in favor of the by-reference version
+       * since passing NULL for xform is almost a guaranteed crash. Note that if this
+       * function is overriden, then it may return different values than set by
+       * GetMatrix()->setMatrix().
+       *
+       * @param xform The value will by assigned to this pointer.
+       * @param cs The coordinate system of the returned Transform. For absolute,
+       * use ABS_CS, and for relative, us REL_CS.
+       *
+       * @pre xform != NULL
+       */
+      virtual void GetTransform( Transform* xform, CoordSysEnum cs = ABS_CS ) const;
 
-      ///Get the current Transform of this Transformable
+      /**
+       * Get the current Transform of this Transformable. Note: The by-pointer version
+       * of this function will soon be deprecated in favor of the by-reference version
+       * since passing NULL for xform is almost a guarunteed crash.
+       *
+       * @param xform The value will by assigned to this reference.
+       * @param cs The coordinate system of the returned Transform. For absolute,
+       * use ABS_CS, and for relative, us REL_CS.
+       */
       void GetTransform( Transform& xform, CoordSysEnum cs = ABS_CS ) const
       {
          GetTransform(&xform, cs);
