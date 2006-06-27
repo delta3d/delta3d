@@ -129,7 +129,7 @@ Keyboard::~Keyboard()
    DeregisterInstance(this);
 }
 
-bool Keyboard::GetKeyState(Producer::KeyboardKey key)
+bool Keyboard::GetKeyState(Producer::KeyboardKey key) const
 {
    return GetButton(key)->GetState();
 }
