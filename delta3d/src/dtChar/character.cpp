@@ -102,6 +102,8 @@ void Character::RemoveChild( DeltaDrawable* child )
  */
 void Character::AddedToScene(Scene* scene)
 {
+   Transformable::AddedToScene(scene);
+
    if( GetBodyNode() != NULL && scene != NULL )
    {
       mCollisionRootNode = scene->GetSceneNode();
@@ -150,9 +152,9 @@ osg::Node* Character::LoadFile(const std::string& filename, bool useCache)
          mat = GetMatrixNode()->getMatrix();
       }
 
-      SetMatrixNode( rbody::ReplicantBodyMgr::instance()->createCharacter( path,
-                                                                           name,
-                                                                           mCollisionRootNode.get() ) );
+      ReplaceMatrixNode( rbody::ReplicantBodyMgr::instance()->createCharacter(   path,
+                                                                                 name,
+                                                                                 mCollisionRootNode.get() ) );
 
       //HACK: Somehow fixes bug where multi-textures models drop their textures when
       //      a character is in the scene. Weird. Please someone fix this fo' real!
