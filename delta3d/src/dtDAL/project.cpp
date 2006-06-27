@@ -57,6 +57,12 @@
 #include "dtDAL/actorproxyicon.h"
 #include "dtDAL/environmentactor.h"
 
+#if defined (WIN32) || defined (_WIN32) || defined (__WIN32__)
+   #ifndef snprintf
+      #define snprintf _snprintf
+   #endif
+#endif
+
 namespace dtDAL
 {
    const std::string Project::LOG_NAME("project.cpp");
