@@ -35,6 +35,15 @@ instructions on how to build it on Windows.
 For linux, simply have QTDIR set to your Qt installation and do a:
 'scons .', which should build everything Delta3D has to offer.
 
+GameStart
+---------
+GameStart is a handy little utility that let's you build your game's
+starting logic and setup into a game actor library. Simply make a class
+that derives from dtGame::GameEntryPoint and export it in your library
+(let's call the libary MyGameActorLibrary), overriding the pure virtual 
+function OnStartup. Then you can use the GameStart executable like this:
+   GameStart.exe MyGameActorLibrary
+
 hlaStealthViewer
 ----------------
 An simple tool that plots the location of HLA entities on a globe. Use this
