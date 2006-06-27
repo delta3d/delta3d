@@ -37,11 +37,19 @@ T      - Print tasks
 1      - Change to idle state (do this before replaying)
 2      - Start logging
 3      - Replay logged events
-[      - Decreate simulation speed
-]      - Increase simulation speed
+-      - Decreate simulation speed
++/=    - Increase simulation speed
 0      - Reset simulation speed to realtime
-Return - Display next statistics type
 P      - Pause
+B      - Drop an object
+T      - Insert tag
+F      - Insert key frame
+F1     - Turn on help
+F2     - Cycle HUD help
+Return - Display next statistics type
+M      - Print tasks
+,      - Go to previous key frame
+.      - Go to next key frame
 Esc    - Exit
 
 Left   Mouse Button - Rotate camera
