@@ -301,20 +301,12 @@ namespace dtGame
       normal.normalize();
       
       osg::Vec3 oldNormal ( 0, 0, 1 );
-      
+
+      oldNormal = osg::Matrix::transform3x3(oldNormal, rotation);
       osg::Matrix normalRot;
       normalRot.makeRotate(oldNormal, normal);
 
-      xform.SetRotation(rotation);
-      osg::Vec3 rotV;
-      xform.GetRotation(rotV);
-      //clear pitch and roll.
-      rotV[1] = 0.0f;
-      rotV[2] = 0.0f;
-      xform.SetRotation(rotV);
-      xform.GetRotation(rotation);
-      
-      rotation = normalRot * rotation;
+      rotation = rotation * normalRot;
    }
 
    void DeadReckoningComponent::TickRemote(const dtGame::TickMessage& tickMessage)
