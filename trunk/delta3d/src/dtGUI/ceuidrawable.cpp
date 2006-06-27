@@ -2,6 +2,9 @@
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUIWindow.h>
 #include <CEGUI/CEGUIExceptions.h>
+#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+#include <CEGUI/XMLParserModules/XercesParser/CEGUIXercesParser.h>
+#endif
 
 #include <dtGUI/ceuidrawable.h>
 #include <dtGUI/ceguimouselistener.h>       // for member
@@ -90,9 +93,19 @@ void CEUIDrawable::Config()
    if(!CEGUI::System::getSingletonPtr())
    {
       if(mScriptModule)
+      {
+         #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+         // CEGUI 0.5.0 introduces a "unified" constructor. 
+         // The new 0 here is for using the default ResourceProvider as well as the default XML parser.
+         new CEGUI::System(mRenderer,0,new CEGUI::XercesParser(),mScriptModule);          
+         #else
          new CEGUI::System(mRenderer,mScriptModule);
+         #endif // CEGUI 0.5.0
+      }
       else
+      {
          new CEGUI::System(mRenderer);
+      }
    }
 
    int x(0), y(0), w(0), h(0);

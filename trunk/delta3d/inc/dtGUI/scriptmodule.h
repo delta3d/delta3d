@@ -29,31 +29,26 @@ namespace dtGUI
       ScriptModule();
       virtual ~ScriptModule();
 
-      ///** \brief Add a callback handler.
-      //  * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
-      //  * @param MemFun is the pointer to the member function to be called when the CEGUI::Event is activated.
-      //  * @param instance is the pointer of type InstT which will be used to call the member function.
-      //  */
-      //template<typename InstT>
-      //bool AddCallback(const std::string& name, bool (InstT::*MemFun)(const CEGUI::EventArgs&), InstT* instance)
-      //{
-      //   HandlerFunctor hf(instance,MemFun);
-      //   return mCallbacks.insert( CallbackRegistry::value_type( name , hf ) ).second;
-      //}
-
-      /** \brief Add a callback handler.
-        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
-        * @param func is the pointer to the function to be called when the CEGUI::Event is activated.
-        */
+      /** 
+       * Add a callback handler.
+       * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
+       * @param func is the pointer to the function to be called when the CEGUI::Event is activated.
+       */
       bool AddCallback(const std::string& name, STATIC_FUNCTION func);
 
-      /** \brief Add a callback handler.
-        * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
-        * @param func is an instance of a function object to be called when the CEGUI::Event is activated.
-        */
+      /** 
+       * Add a callback handler. 
+       * @param name is the string representation of the handler function to be executed for the CEGUI::Event.
+       * @param func is an instance of a function object to be called when the CEGUI::Event is activated.
+       * @attention An attempt was make an implemenation with the signature template<typename InstT> bool 
+       * AddCallback(const std::string& name, bool (InstT::*MemFun)(const CEGUI::EventArgs&), InstT* instance)
+       * but somehow creating the HandleFunctor intenal to the function caused some problems.
+       */
       bool AddCallback(const std::string& name, const HandlerFunctor& callback);
 
-      /** Returns the StaticRegistry.*/
+      /** 
+       * Returns the StaticRegistry.
+       */
       const CallbackRegistry& GetRegistry() const { return mCallbacks; }
 
       // inherited methods
@@ -61,6 +56,11 @@ namespace dtGUI
       virtual int  executeScriptGlobal(const CEGUI::String& function_name);
       virtual void executeString(const CEGUI::String& str);
       virtual bool executeScriptedEventHandler(const CEGUI::String& handler_name, const CEGUI::EventArgs& ea);
+
+      #if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+      virtual CEGUI::Event::Connection subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, const CEGUI::String& subscriber_name);
+      virtual CEGUI::Event::Connection	subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name);
+      #endif // CEGUI 0.5.0
 
    private:
       ScriptModule(const ScriptModule&);  // not implemented by design
