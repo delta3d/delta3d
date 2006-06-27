@@ -83,6 +83,56 @@ Transformable::~Transformable()
    DeregisterInstance(this);
 }
 
+void Transformable::SetMatrixNode( osg::MatrixTransform* matrixTransform )
+{
+   RefPtr<DeltaDrawable> oldParent(NULL);
+   if( GetParent() != NULL )
+   {
+      oldParent = GetParent();
+      GetParent()->RemoveChild(this);
+   }
+
+   typedef std::vector< RefPtr<DeltaDrawable> > DrawableVector;
+   DrawableVector children;
+   for( unsigned i = 0; i < GetNumChildren(); ++i )
+   {
+      children.push_back( GetChild(i) );
+      RemoveChild( GetChild(i) );
+   }
+   
+   // Make sure to grab the old state set on the matrix
+   osg::ref_ptr<const osg::StateSet> oldStateSet( mNode->getStateSet() );
+
+   // Replace the node pointer
+   mNode = matrixTransform;
+
+   // Preserve the old state set as well as the new one.
+   if( oldStateSet.valid() )
+   {
+      mNode->getOrCreateStateSet()->merge( *oldStateSet );
+   }
+
+   // Proxy node
+
+   // collision shapes
+
+   RenderCollisionGeometry( GetRenderCollisionGeometry() );
+
+   for( DrawableVector::iterator iter = children.begin();
+        iter != children.end();
+        ++iter )
+   {
+      AddChild( iter->get() );
+   }
+
+   if( oldParent.valid() )
+   {
+      oldParent->AddChild(this);
+   }
+
+
+}
+
 /** Calculates the world coordinate system matrix using the supplied node.
  * @param node : the node to calculate the world coordinate matrix from
  * @param wcMat : The supplied matrix to return with world coordinates

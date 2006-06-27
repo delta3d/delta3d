@@ -25,12 +25,32 @@
 
 using namespace dtCore;
 
+class TransformableSubClass : public Transformable
+{
+   public:
+   TransformableSubClass()
+   {
+   }
+
+   void ReplaceMatrixNode()
+   {
+      osg::ref_ptr<osg::MatrixTransform> mNewNode( new osg::MatrixTransform() );
+      mNewNode->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::ON );
+      SetMatrixNode( mNewNode.get() );
+   }
+   protected:
+   virtual ~TransformableSubClass()
+   {
+   }
+};
+
 class TransformableTests : public CPPUNIT_NS::TestFixture 
 {
    CPPUNIT_TEST_SUITE(TransformableTests);
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestSetTransform);
+   CPPUNIT_TEST(TestSetMatrixNode);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -42,6 +62,7 @@ public:
    void TestSetCollisionBox();
    void TestSetTransform();
    void TestSceneAddDrawable();
+   void TestSetMatrixNode();
 
 private:
 
@@ -197,4 +218,78 @@ void TransformableTests::TestSceneAddDrawable()
 {
    //dtCore::RefPtr<dtCore::Scene> scene = new dtCore::Scene("TestScene"); 
    //scene->AddDrawable( mTransformable.get() );
+}
+
+bool HasChild( dtCore::DeltaDrawable* parent, dtCore::DeltaDrawable* child )
+{
+   bool result(false);
+   for( unsigned i = 0; i < parent->GetNumChildren(); ++i )
+   {
+      result = result || parent->GetChild(i) == child;
+   }
+   return result;
+}
+
+bool HasChild( osg::Group* parent, osg::Node* child )
+{
+   return parent->containsNode(child);
+}
+
+void TransformableTests::TestSetMatrixNode()
+{
+   // This subclass should immediately call SetMatrixNode in the constructor with
+   // GL_LIGHTING turned on.
+   dtCore::RefPtr<TransformableSubClass> subClassOne( new TransformableSubClass() );
+   subClassOne->ReplaceMatrixNode();
+
+   // So, the new node should...
+   // 1) Have a StateSet
+   osg::ref_ptr<const osg::StateSet> stateSet( subClassOne->GetOSGNode()->getStateSet() );
+   CPPUNIT_ASSERT( stateSet.valid() );
+
+   // 2) Still have GL_LIGHTING turned on (from new Node)
+   CPPUNIT_ASSERT( osg::StateAttribute::ON == stateSet->getMode( GL_LIGHTING ) );
+
+   // 3) Still have GL_NORMAL_RESCALING turned on (from original Node)
+   CPPUNIT_ASSERT( osg::StateAttribute::ON == stateSet->getMode( GL_RESCALE_NORMAL ) );
+
+   dtCore::RefPtr<TransformableSubClass> subClassTwo( new TransformableSubClass() );
+   
+   dtCore::RefPtr<Transformable> parent( new Transformable("Parent") );
+                     
+   dtCore::RefPtr<Transformable> childOne( new Transformable("ChildOne") );
+   dtCore::RefPtr<Transformable> childTwo( new Transformable("ChildTwo") );
+
+   parent->AddChild( subClassTwo.get() );
+   subClassTwo->AddChild( childTwo.get() );
+   subClassTwo->AddChild( childOne.get() );
+
+   // Verify Delta3D hierarchy before replacement
+   CPPUNIT_ASSERT( HasChild( parent.get(), subClassTwo.get() ) );
+   CPPUNIT_ASSERT( HasChild( subClassTwo.get(), childTwo.get() ) );
+   CPPUNIT_ASSERT( HasChild( subClassTwo.get(), childOne.get() ) );
+
+   // Verify OSG hierarchy before replacement
+   CPPUNIT_ASSERT( HasChild( parent->GetMatrixNode(), subClassTwo->GetOSGNode() ) );
+   CPPUNIT_ASSERT( HasChild( subClassTwo->GetMatrixNode(), childTwo->GetOSGNode() ) );
+   CPPUNIT_ASSERT( HasChild( subClassTwo->GetMatrixNode(), childOne->GetOSGNode() ) );
+
+   CPPUNIT_ASSERT_EQUAL( 2U, subClassTwo->GetMatrixNode()->getNumChildren() );
+
+   bool renderingCollisionGeometry = subClassTwo->GetRenderCollisionGeometry();
+   
+   subClassTwo->ReplaceMatrixNode();
+
+   CPPUNIT_ASSERT_EQUAL( renderingCollisionGeometry, subClassTwo->GetRenderCollisionGeometry() );
+
+   // Verify Delta3D hierarchy after replacement
+   CPPUNIT_ASSERT( HasChild( parent.get(), subClassTwo.get() ) );
+   CPPUNIT_ASSERT( HasChild( subClassTwo.get(), childTwo.get() ) );
+   CPPUNIT_ASSERT( HasChild( subClassTwo.get(), childOne.get() ) );
+
+   //CPPUNIT_ASSERT_EQUAL( 2U, subClassTwo->GetMatrixNode()->getNumChildren() );
+   
+   CPPUNIT_ASSERT( HasChild( parent->GetMatrixNode(), subClassTwo->GetOSGNode() ) );
+   //CPPUNIT_ASSERT( HasChild( subClassTwo->GetMatrixNode(), childTwo->GetOSGNode() ) );
+   //CPPUNIT_ASSERT( HasChild( subClassTwo->GetMatrixNode(), childOne->GetOSGNode() ) );
 }

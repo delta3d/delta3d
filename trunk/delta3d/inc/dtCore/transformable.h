@@ -96,10 +96,7 @@ namespace dtCore
        * Transformable.
        * @pre matrixTransform != NULL
        */
-      void SetMatrixNode( osg::MatrixTransform* matrixTransform )
-      {
-         mNode = matrixTransform;
-      }
+      void SetMatrixNode( osg::MatrixTransform* matrixTransform );
 
       virtual ~Transformable();
 
