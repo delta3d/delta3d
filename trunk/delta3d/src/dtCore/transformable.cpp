@@ -83,41 +83,68 @@ Transformable::~Transformable()
    DeregisterInstance(this);
 }
 
-void Transformable::SetMatrixNode( osg::MatrixTransform* matrixTransform )
+void Transformable::ReplaceMatrixNode( osg::MatrixTransform* matrixTransform )
 {
+   // Save off the parent
    RefPtr<DeltaDrawable> oldParent(NULL);
+   RefPtr<Scene> oldScene(NULL);
    if( GetParent() != NULL )
    {
       oldParent = GetParent();
       GetParent()->RemoveChild(this);
    }
+   else if( GetSceneParent() != NULL )
+   {
+      // If the parent is NULL, but the Scene is not, then we
+      // know this has been added directly to the scene root.
+      oldScene = GetSceneParent();
+      GetSceneParent()->RemoveDrawable(this);
+   }
 
+   // Save off each of the children
    typedef std::vector< RefPtr<DeltaDrawable> > DrawableVector;
    DrawableVector children;
    for( unsigned i = 0; i < GetNumChildren(); ++i )
    {
       children.push_back( GetChild(i) );
-      RemoveChild( GetChild(i) );
    }
-   
-   // Make sure to grab the old state set on the matrix
-   osg::ref_ptr<const osg::StateSet> oldStateSet( mNode->getStateSet() );
+
+   // Then actually remove them from the old node. This is not done
+   // in the previous loop or else GetChild(++i) will return a bad value.
+   for( DrawableVector::iterator iter = children.begin();
+        iter != children.end();
+        ++iter )
+   {
+      RemoveChild( iter->get() );
+   }
+
+   // Save preseve normal rescaling property
+   bool normalRescaling = GetNormalRescaling();
+     
+   // Save whether or not we are rendering the proxy node
+   bool usingProxyNode(false);
+   if( GetMatrixNode()->containsNode( GetProxyNode() ) )
+   {
+      usingProxyNode = true;
+      RenderProxyNode(false);
+   }
 
    // Replace the node pointer
    mNode = matrixTransform;
 
-   // Preserve the old state set as well as the new one.
-   if( oldStateSet.valid() )
+   // Preseve normal rescaling property
+   SetNormalRescaling( normalRescaling );
+
+   // Re-enable proxy node if it was on
+   if( usingProxyNode )
    {
-      mNode->getOrCreateStateSet()->merge( *oldStateSet );
+      RenderProxyNode(true);
    }
 
-   // Proxy node
-
-   // collision shapes
-
+   // Now enable the rendering of collision geometry if that was on
    RenderCollisionGeometry( GetRenderCollisionGeometry() );
 
+   // Next, add back all the children
    for( DrawableVector::iterator iter = children.begin();
         iter != children.end();
         ++iter )
@@ -125,12 +152,16 @@ void Transformable::SetMatrixNode( osg::MatrixTransform* matrixTransform )
       AddChild( iter->get() );
    }
 
+   // Finally, add this as a child of its old parent. Delta3D enforces a
+   // single-parent hierarchy.
    if( oldParent.valid() )
    {
       oldParent->AddChild(this);
    }
-
-
+   else if( oldScene.valid() )
+   {
+      oldScene->AddDrawable(this);
+   }
 }
 
 /** Calculates the world coordinate system matrix using the supplied node.

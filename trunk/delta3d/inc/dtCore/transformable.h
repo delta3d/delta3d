@@ -90,13 +90,15 @@ namespace dtCore
        * Replaces the scene graph node with a new MatrixTransform.
        * WARNING! This function is a big fat hack to get RepliacntBody
        * to play nice with our API. This will almost certainly be removed
-       * in future version, so don't get to comfy using it! ;)
+       * in future version, so don't get to comfy using it! ;) Properties
+       * set on this Transformable are merged onto the new node, however
+       * the old collision geometry will remain.
        *
        * @param matrixTransform The node you wish to squeeze into this
        * Transformable.
        * @pre matrixTransform != NULL
        */
-      void SetMatrixNode( osg::MatrixTransform* matrixTransform );
+      void ReplaceMatrixNode( osg::MatrixTransform* matrixTransform );
 
       virtual ~Transformable();
 
