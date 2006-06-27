@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Application">
+	<xs:element name="TopLevel">
+		<xs:complexType>
+			<xs:all minOccurs="0">
+				<xs:element name="Elem1">
+					<xs:complexType>
+						<xs:attribute name="Elem1Attr1" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Elem2">
+					<xs:complexType>
+						<xs:attribute name="Elem2Attr1" type="xs:string" use="required"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
