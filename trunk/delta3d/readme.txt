@@ -90,7 +90,6 @@ Python - Needed for Python script support.
 RTI 1.3 - Needed for HLA libraries, utilities, & examples.
 
 ################
-
 # Example Data #
 ################
 
@@ -315,6 +314,12 @@ Windows w/ SCons & Linux
    To build the Delta3D libraries from the root delta3d directory type:
     scons
 
+   By default, this will build everything possible, including all
+   Delta3D libraries, examples, utilities, and Python bindings. If SCons
+   cannot find Boost.Python (or buildPythonBindings=0 is passed to scons)
+   the bindings will be skipped. Likewise, if RTI cannot be found, the HLA
+   libraries, examples, and utilities will be skipped.
+    
    To install the shared libraries in the lib folder under the prefix
    you specified:
     scons install
