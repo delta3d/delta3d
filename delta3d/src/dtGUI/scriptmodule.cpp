@@ -44,6 +44,20 @@ bool ScriptModule::executeScriptedEventHandler(const CEGUI::String& handler_name
    }
 }
 
+#if defined(CEGUI_VERSION_MAJOR) && CEGUI_VERSION_MAJOR >= 0 && defined(CEGUI_VERSION_MINOR) && CEGUI_VERSION_MINOR >= 5
+CEGUI::Event::Connection ScriptModule::subscribeEvent(   CEGUI::EventSet* target,
+                                                         const CEGUI::String& name,
+                                                         const CEGUI::String& subscriber_name)
+{
+   return CEGUI::Event::Connection();
+}
+
+CEGUI::Event::Connection ScriptModule::subscribeEvent(CEGUI::EventSet* target, const CEGUI::String& name, CEGUI::Event::Group group, const CEGUI::String& subscriber_name)
+{
+   return CEGUI::Event::Connection();
+}
+#endif // CEGUI 0.5.0
+
 bool ScriptModule::AddCallback(const std::string& name, STATIC_FUNCTION f)
 {
    HandlerFunctor hf( f );
@@ -54,5 +68,3 @@ bool ScriptModule::AddCallback(const std::string& name, const HandlerFunctor& ca
 {
    return mCallbacks.insert( CallbackRegistry::value_type( name , callback ) ).second;
 }
-
-
