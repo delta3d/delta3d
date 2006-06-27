@@ -62,7 +62,7 @@ namespace dtCore
       /// Checks the state of the specified key.
       /// @param key the key to check
       /// @return true if the key is being held down, false otherwise
-      bool GetKeyState(Producer::KeyboardKey key);
+      bool GetKeyState(Producer::KeyboardKey key) const;
 
       /// Pushes a listener for keyboard events to the back of the container.
       /// @param keyboardListener the listener to add
