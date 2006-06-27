@@ -5,6 +5,129 @@
 ##############################
 
 ---------
+| 1.3.0 |
+---------
+
+New Features
+------------
+
+-The SoarXDrawable renderer in dtTerrain now auto-calculates it's memory buffer size.
+
+-Started new Doxygen-generated example tutorials (testApp, testGUI).
+
+-KeyboardListener and MouseListener classes will derive from a reference counted base class.
+
+-Callbacks added via dtGUI::ScriptModule::AddCallback must now return bool, conforming to the signature defined by dtGUI::ScriptModule::HandlerFunctor (breaking change).
+
+-Default Mouse and Keyboards class now use the chain of responsibility pattern for input handling.
+
+-Keyboard's specialKeyPress and specialKeyRelease are now merged into keyPress and keyRelease (breaking change).
+
+-All code referencing dtCore::MouseButton will now need to reference dtCore::Mouse::MouseButton (breaking change).
+
+-To support the chain of responsibility pattern, ButtonListener::ButtonStateChanged changed its signature to: bool ButtonStateChanged(const Button* button, bool oldState, bool newState);
+and AxisListener::AxisStateChanged changed its signature to: bool AxisStateChanged(const Axis* axis, double oldState, double newState, double delta) (breaking change).
+
+-Set the dtCore::Scene's default gravity to -9.81 in the Z axis
+
+-dtCore::Light now derives from dtCore::Transformable instead of dtCore::DeltaDrawable.
+
+-DeltaDrawable::GetOSGNode is now a pure virtual interface function. Subclasses are responsible for storing their own osg::Node's and returning them via GetOSGNode.
+
+-KeyboardListener and MouseListener are now reference counted (breaking change).
+
+-KeyboardListener and MouseListener are abstract classes now (breaking change).
+
+-dtABC::Application lost several member functions when its inheritance was changed with respect to keyboard and mouse callbacks.  It now supports one, for ease of use, which is dtABC::Application::KeyPressed.
+
+-DeltaWin now throws exceptions if invalid input parameters are passed to its constructor.
+
+-New unit tests for dtGUI.
+
+-The member functions of Keyboard and Mouse listener classes now return a bool and receive a const Keyboard pointer or const Mouse pointer, respectively (breaking change).
+
+- Mouse::ButtonPress changed to Mouse::ButtonDown. Mouse::ButtonRelease changed to Mouse::ButtonUp.
+Both functions now take a MouseButton enum rather than an integer (breaking change).
+
+-dtInspector now supports all three types of Lights.
+
+-dtCore::Timer has bee modified to provide a high-level wrapper around osg::Timer (breaking change).
+
+-dtGUI::ScriptModule now supports non-static callbacks.
+
+-Squelched a warning from the Xerces parser if the user doesn't use a schema file.
+
+-There are now Python bindings for dtUtil::Enumeration, dtDAL::DataType, and dtDAL::ActorProperty.
+
+-Mouse and Keyboards can now be created in user code.
+
+-dtCore::EnvEffet is now an abstract class. Repaint is pure virtual (breaking change).
+
+-dtCore::EffectListener is now an abstract class (EffectAdded and EffectRemoved are pure virtual). The class is now also referenced counted (breaking changes).
+
+-The unit tests now build by default when using the SCons build system.
+
+-Viewer now can load and display Map files.
+
+-EffectManager has been refactored to allow extensible DetonationTypes by string. Small breaking change: the deprecated function "DetonationType Detonation::GetType() const" is now "void Detonation::GetType(DetonationType& type) const" is order to let the GetType with no arguments return the string DetonationType.
+
+-Added basic Python bindings for dtTerrain::Terrain and dtTerrain::GeoCoordinates.
+
+-Added ability to change the dtUtil::Log filename (contribued by Isdale).
+
+-Added dtUtil/version.h which allows users to test for the working version of Delta3D at compile time or at runtime.
+
+-Mouse's members functions buttonPress and buttonRelease have been renamed ButtonDown and ButtonUp to be consistent with our style guide and not conflict with #defines in X11 headers. Similarly, Keyboard's keyPress and keyRelease have been changed to KeyDown and KeyUp.
+
+-dtTerrain now has API added to control if the terrain should be rendered with fog on/off.
+
+-Added basic line of sight calculation in dtTerrain (courtesy of Jerry Isdale).
+
+-testRecorder's "initialize" function is deprecated in favor of "Initialize" per our style guide.
+
+-Public data members in dtCore::SunlightShader & dtCore::SkydomeShader are now private with accessors (breaking change).
+
+-New build script options for Linux:
+  bindir=install directory for exectuables (overrides prefix)
+  includedir=install directory for headers (overrides prefix)
+  libdir=install directory for libraries (overrides prefix)
+
+-New data package 1.3.0
+
+Bug Fixes
+---------
+
+-All reference counted classes now have protected destructors (breaking change).
+
+-OpenAL buffers are now being properly intialized. This fixes a problem on some sound cards where two sounds could not be played at once.
+
+- Replaced dirt.ive in example data with simple_terrain.ive in examples and tests since dirt.ive was causing issues with CEGUI.
+
+-InfiniteTerrain now supports collisions with cylinders.
+
+-Globals actors can now be deleted from STAGE via the global actor menu using the toolbar 'X' button.
+
+-CEGUI stuff can be properly shutdown now by calling CEUIDrawable::ShutdownGUI.
+
+-Fixed bug in dtTerrain that results in an invisible terrain if fog is turned off.
+
+-Fixed bug that caused the dtABC::Application not to use the ChangeDisplayResolution attribute in the config.xml file.
+
+-Fixed bug in InfiniteLight which would result returning the wrong Azimuth and Elevation values.
+
+-Fixed bug that would case a dtABC::State not to have it's ShutDown() method called.
+
+-An exception in DeltaWin's constructor no longer can cause bad memory to live in the MANAGEMENT_LAYER vector.
+
+-Changing display resolution in fullscreen mode works both ways now.
+
+-InfiniteLight::GetAzimuthElevation is now returning correct values.
+
+-Cleaned up FPSMotionModel.  Integrated changes from the user "gcw".
+
+-Transformables now correctly collide with InfiniteTerrain.
+  
+---------
 | 1.2.0 |
 ---------
 

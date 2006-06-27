@@ -4,7 +4,7 @@
 #                                      #
 ########################################
 
-Uses modules: dtCore, dtABC, dtUtil
+Uses modules: dtCore, dtABC, dtUtil, dtGUI
 
 Purpose
 -------
@@ -42,6 +42,8 @@ Controls
 3    -  Choose "UFO" motion model
 4    -  Choose "Orbit" motion model
 Esc  - Exit
+
+Clicking on the HUD will switch motion models as well.
 
 Use arrow keys or hold left mouse button over corresponding areas of the 
 window to move camera based on chosen motion model.

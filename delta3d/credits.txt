@@ -88,3 +88,6 @@ Terry Jordan
 
 Rudolf Kastl
 - RPM Help, http://newrpms.sunsite.dk/
+
+Jerry Isdale
+- Contributions to dtTerrain & Python bindings
