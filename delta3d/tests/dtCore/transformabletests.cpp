@@ -50,7 +50,7 @@ class TransformableTests : public CPPUNIT_NS::TestFixture
    CPPUNIT_TEST(TestGetCollisionGeomDimensions);
    CPPUNIT_TEST(TestSetCollisionBox);
    CPPUNIT_TEST(TestSetTransform);
-   CPPUNIT_TEST(TestSetMatrixNode);
+   CPPUNIT_TEST(TestReplaceMatrixNode);
    CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -62,7 +62,7 @@ public:
    void TestSetCollisionBox();
    void TestSetTransform();
    void TestSceneAddDrawable();
-   void TestSetMatrixNode();
+   void TestReplaceMatrixNode();
 
 private:
 
@@ -235,7 +235,7 @@ bool HasChild( osg::Group* parent, osg::Node* child )
    return parent->containsNode(child);
 }
 
-void TransformableTests::TestSetMatrixNode()
+void TransformableTests::TestReplaceMatrixNode()
 {
    // This subclass should immediately call SetMatrixNode in the constructor with
    // GL_LIGHTING turned on.
