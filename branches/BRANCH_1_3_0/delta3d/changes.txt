@@ -11,6 +11,45 @@
 New Features
 ------------
 
+-dtHLAGM: A networking component for the GameManager that support an Agile FOM interface using XML.
+
+-Enhanced coordinate conversion code in dtHLAGM
+
+-Brand new dtCore::SkyBox which support three render profiles: fixed function, cube map, and angular map. This refactor fixes the infamous ATI/SkyBox bug.
+
+-Added Shader architecture - supports XML definition of Shaders to load OpenGL vertex and fragment(pixel) shaders
+
+-Added Dead Reckoning GMComponent - added Actor helper object and dead reckoning component for the Game Manager architecture to tick and move objects with less actor updates (particularly useful for networked apps).
+
+-Added BaseInputComponent - enables easy use of keyboard & mouse behavior in the GM using the recent changes to keyboard and mouse listeners.
+
+-Added GameMeshActor - Like the StaticMeshActor. Provides a Game Actor that can load a mesh file.
+
+-Renamed ProcessMessage() and SendMessage() on both the GameManager and on GMComponent to be more clear. On the GameManager, ProcessMessage is now called SendMessage() and the old SendMessage() is now called SendNetworkMessage(). On GMComponent, ProcessMessage() stays the same, but SendMessage() is now called DispatchNetworkMessage().
+
+-Added a default invokable to GameActorProxy so you can register messages without having to create an invokable at all - just override GameActorProxy::ProcessMessage() like you would on a component.
+
+-Massively enhanced Game Manager After Action Review capability
+    o Finished ServerLoggerComponent and LogControllerComponent for full round trip communication
+    o Added HUD & Help screen to testAAR - written in Crazy Eddie's GUI
+    o Fixed several bugs related to time & speed factor in the record/playback
+    o Support for repeatedly starting & stopping playback and/or record
+    o Added keyframe support - ability to jump forward/backward to 'chapters'
+    o Added display of message traffic, tags, keyframes, and task status (see below)
+    o Renamed example from testLogger to testAAR to reflect new capabilities
+
+-Added Task Actors to track a player's status
+    o Added base Task Actors with name, timestamp, score, weight, and completion status
+    o Added ability to nest Task Actors as ordered (blocking or failing) or rolled-up
+    o Added Task Component to track tasks
+    o Added new Actor property data type: Game Event. Game Events can be registered with the GameEventManager and then fired in the GM with the GameEventMessage.
+    o Added TaskActorGameEvent that automatically listens for Game Events.
+    o Added demonstration of Tasks to the testAAR example app including HUD.
+
+-Added support for generic environments to the Game Manager with example implementation for dtCore::Weather
+
+-Added interface for particle manipulation through code. Particles on the fly!
+
 -The SoarXDrawable renderer in dtTerrain now auto-calculates it's memory buffer size.
 
 -Started new Doxygen-generated example tutorials (testApp, testGUI).
