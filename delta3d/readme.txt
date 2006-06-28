@@ -186,8 +186,8 @@ Windows w/ Visual Studio .NET 7.1
    
    ...or just use delta_all.sln.
 
-   dtPython
-   --------  
+   The Python Bindings
+   -------------------
    Building the Delta3D Python bindings requires the following additional 
    packages: Python and Boost.Python. 
 
