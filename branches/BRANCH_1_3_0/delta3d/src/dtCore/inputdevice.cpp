@@ -37,12 +37,26 @@ namespace dtCore
    
    Button* InputDevice::GetButton(int index)
    {
-      return mButtons[index].get();
+      if( mButtons.empty() || unsigned(index) > mButtons.size()-1U )
+      {
+         return 0;
+      }
+      else
+      {
+         return mButtons[index].get();
+      }
    }
    
    const Button* InputDevice::GetButton(int index) const
    {
-      return mButtons[index].get();
+      if( mButtons.empty() || unsigned(index) > mButtons.size()-1U )
+      {
+         return 0;
+      }
+      else
+      {
+         return mButtons[index].get();
+      }
    }
 
    int InputDevice::GetAxisCount() const
@@ -52,12 +66,26 @@ namespace dtCore
    
    Axis* InputDevice::GetAxis(int index)
    {
-      return mAxes[index].get();
+      if( mAxes.empty() || unsigned(index) > mAxes.size()-1U )
+      {
+         return 0;
+      }
+      else
+      {
+         return mAxes[index].get();
+      }
    }
    
    const Axis* InputDevice::GetAxis(int index) const
    {
-      return mAxes[index].get();
+      if( mAxes.empty() || unsigned(index) > mAxes.size()-1U )
+      {
+         return 0;
+      }
+      else
+      {
+         return mAxes[index].get();
+      }
    }
 
    void InputDevice::AddButtonListener(ButtonListener* buttonListener)
