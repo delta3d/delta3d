@@ -30,6 +30,7 @@ namespace dtTest
       CPPUNIT_TEST_SUITE( MouseTests );
       CPPUNIT_TEST( TestObservers );
       CPPUNIT_TEST( TestGenericObserver );
+      CPPUNIT_TEST( TestAxes );
       CPPUNIT_TEST_SUITE_END();
 
       public:
@@ -41,6 +42,9 @@ namespace dtTest
 
          /// tests dtCore::GenericMouseListener
          void TestGenericObserver();
+
+         // Test change of state on the default mouse axes
+         void TestAxes();
 
       private:
    };
@@ -353,4 +357,61 @@ void MouseTests::TestGenericObserver()
    CPPUNIT_ASSERT( !hcb.WasScrolledHit() );  // better not be hit
    CPPUNIT_ASSERT( !ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp) );  // mgen is coded not to handle it when disabled.
    CPPUNIT_ASSERT( !hcb.WasScrolledHit() );  // better be hit
+}
+
+void MouseTests::TestAxes()
+{
+   dtCore::RefPtr<dtCore::GenericMouseListener> mgen(new dtCore::GenericMouseListener());
+
+   // reusable variables
+   float x(2.3f), y(8.45f);
+
+   // test if the callbacks get hit
+   dtCore::RefPtr<dtCore::Mouse> ms( new dtCore::Mouse(0) );
+   CPPUNIT_ASSERT_EQUAL( 3, ms->GetAxisCount() );
+   CPPUNIT_ASSERT( ms->GetAxis(0) != NULL );
+   CPPUNIT_ASSERT( ms->GetAxis(1) != NULL );
+   CPPUNIT_ASSERT( ms->GetAxis(2) != NULL );
+   CPPUNIT_ASSERT_EQUAL( static_cast<dtCore::Axis*>(NULL), ms->GetAxis(3) );
+
+   ms->AddMouseListener( mgen.get() );
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(0)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(1)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
+   
+   ms->PassiveMouseMotion(x,y); 
+   
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( double(x), ms->GetAxis(0)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( double(y), ms->GetAxis(1)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
+
+   ms->MouseMotion(x,y);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( double(x), ms->GetAxis(0)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( double(y), ms->GetAxis(1)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
+
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+
+   // Verify the other axes are left untouched
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( double(x), ms->GetAxis(0)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( double(y), ms->GetAxis(1)->GetState(), 0.001 );
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, ms->GetAxis(2)->GetState(), 0.001 );
+
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown);
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
+
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollNone);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0, ms->GetAxis(2)->GetState(), 0.001 );
+
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollDown);
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+   ms->MouseScroll(Producer::KeyboardMouseCallback::ScrollUp);
+
+   CPPUNIT_ASSERT_DOUBLES_EQUAL( 4.0, ms->GetAxis(2)->GetState(), 0.001 );
 }
