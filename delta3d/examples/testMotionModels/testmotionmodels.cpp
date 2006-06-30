@@ -215,7 +215,7 @@ public:
       mMenuManager = new dtExample::QuickMenuManager(ff);
    }
 
-   void TestMotionModelsApp::Config()
+   void Config()
    {
       //make sure to call the Base Config() as well.
       Application::Config();
