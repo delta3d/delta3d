@@ -285,7 +285,7 @@ namespace dtDAL
       }
 
       size_t numRead = fread(srcFileData, 1, size, srcFile);
-      if( numRead != size )
+      if( numRead < size && !feof(srcFile) )
       {
          EXCEPT(dtDAL::ExceptionEnum::ProjectResourceError,
                 std::string("Error occurred while reading material file " + srcPath));

@@ -236,7 +236,7 @@ namespace dtUtil
                   if (readCount > 0) 
                   {
                      size_t numWritten = fwrite(buffer, 1, readCount, pDestFile );
-                     if(numWritten!=readCount)
+                     if(numWritten<readCount)
                      {
                         EXCEPT(FileExceptionEnum::IOException,
                                std::string("Unable to write to destinate file: \"") + destFile + "\"");
