@@ -154,9 +154,6 @@
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\camera.h">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\characterbrowser.h">
-			</File>
-			<File
 				RelativePath="..\..\..\utilities\editor\inc\dtEditQt\dialoglistselection.h">
 			</File>
 			<File
@@ -361,9 +358,6 @@
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_actorsearcher.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\utilities\editor\src\moc\moc_characterbrowser.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\utilities\editor\src\moc\moc_dialoglistselection.cpp">
 			</File>
 			<File
@@ -544,9 +538,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\camera.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\utilities\editor\src\characterbrowser.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\utilities\editor\src\dialoglistselection.cpp">
