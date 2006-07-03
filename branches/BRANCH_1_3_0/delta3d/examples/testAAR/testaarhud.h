@@ -91,7 +91,7 @@ class HUDState : public dtUtil::Enumeration
  * status information like AAR state (record, playback, idle), sim time,
  * speed factor, num messages, and other help info etc...
  */
-class TestAARHUD : public dtGame::GMComponent //public osg::Referenced
+class TestAARHUD : public dtGame::GMComponent
 {
    public:
 
@@ -101,11 +101,14 @@ class TestAARHUD : public dtGame::GMComponent //public osg::Referenced
       TestAARHUD(dtCore::DeltaWin *win, dtGame::ClientGameManager &clientGM,
                  dtGame::LogController &logController, dtGame::TaskComponent &taskComponent,
                  dtGame::ServerLoggerComponent &serverLogger);
+   protected:
 
       /**
        * Destroys the test application.
        */
       virtual ~TestAARHUD();
+
+   public:
 
       /**
        * Get messages from the GM component
@@ -130,7 +133,7 @@ class TestAARHUD : public dtGame::GMComponent //public osg::Referenced
 
       void TickHUD();
 
-protected:
+   protected:
 
       /**
        * Helper method that creates an actor with random movement behavior.
@@ -150,7 +153,7 @@ protected:
       void UpdateStaticText(CEGUI::StaticText *textControl, char *newText,
                             float red = -1.0, float blue = -1.0, float green = -1.0,
                             float x = -1, float y = -1);
-private:
+   private:
 
       /**
        * During the tickHUD() - update our medium data
@@ -167,7 +170,7 @@ private:
        * we have to do it recursively.  The numCompleted is increased (+1) if the taskProxy
        * was complete.
        */
-      int RecursivelyAddTasks(std::string indent, int curIndex,
+      int RecursivelyAddTasks(const std::string &indent, int curIndex,
                               const dtActors::TaskActorProxy *taskProxy, int &numCompleted);
 
       /**
