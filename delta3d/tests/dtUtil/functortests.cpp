@@ -106,6 +106,7 @@ private:
 
    struct A
    {
+      virtual ~A() {}
       int f0def() { return 2; }
       int f1def(int i) { return i; }
       static int f2defstatic(int i, long j) { return i + j; }
@@ -119,6 +120,7 @@ private:
 
    struct C : public A
    {
+      virtual ~C() {}
    };
 
    struct M
@@ -128,12 +130,14 @@ private:
 
    struct V
    {
+      virtual ~V() {}
       virtual int f2virta(int i, long j) = 0;
       char c_[2]; 
    };
 
    struct D : public M, virtual public V, virtual public A
    {
+      virtual ~D() {}
       virtual void f2() { }
       virtual int f2defvirt(int i, long j) { return i + j + 1; }
       int f2def(int i, long j) { return i + j + 3; }

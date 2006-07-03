@@ -2560,7 +2560,13 @@ void AudioManager::ListenerObj::OnMessage( MessageData* data )
             ALfloat  at[3L];  
             ALfloat  up[3L];  
          };
-      } orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+      } orient = { 0.0f };
+      orient.ort[0] = 0.0f;
+      orient.ort[1] = 1.0f;
+      orient.ort[2] = 0.0f;
+      orient.ort[3] = 0.0f;
+      orient.ort[4] = 0.0f;
+      orient.ort[5] = 1.0f;
 
       GetTransform( &transform );
       osg::Vec3 tmp;
@@ -2613,7 +2619,13 @@ void AudioManager::ListenerObj::Clear( void )
          ALfloat  at[3L];
          ALfloat  up[3L];
       };
-   }  orient   = { 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+   }  orient = { 0.0f };
+   orient.ort[0] = 0.0f;
+   orient.ort[1] = 1.0f;
+   orient.ort[2] = 0.0f;
+   orient.ort[3] = 0.0f;
+   orient.ort[4] = 0.0f;
+   orient.ort[5] = 1.0f;
 
    ALfloat  pos[3L]  = { 0.0f, 0.0f, 0.0f };
 
