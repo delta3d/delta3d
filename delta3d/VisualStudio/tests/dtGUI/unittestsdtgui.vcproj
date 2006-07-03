@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NOMINMAX"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
