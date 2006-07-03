@@ -59,8 +59,6 @@ _CRTIMP extern int errno;
 
 #include <osgDB/FileNameUtils>
 
-#include <cassert>
-
 #ifndef S_ISREG
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
 #endif
@@ -234,11 +232,15 @@ namespace dtUtil
                char buffer[4096]; 
                while (i<tagStat.st_size)
                {
-                  int readCount = fread(buffer, 1, 4096, pSrcFile );
+                  size_t readCount = fread(buffer, 1, 4096, pSrcFile );
                   if (readCount > 0) 
                   {
                      size_t numWritten = fwrite(buffer, 1, readCount, pDestFile );
-                     assert(numWritten==readCount);
+                     if(numWritten!=readCount)
+                     {
+                        EXCEPT(FileExceptionEnum::IOException,
+                               std::string("Unable to write to destinate file: \"") + destFile + "\"");
+                     }
                      i += readCount;
                   }
                }
@@ -390,7 +392,11 @@ namespace dtUtil
       }
       char buf[512];
       char* bufAddress = getcwd(buf, 512);
-      assert(buf==bufAddress);
+      if(buf != bufAddress)
+      {
+         EXCEPT( FileExceptionEnum::IOException, std::string("Cannot get current working directory") );         
+      }
+      
       mCurrentDirectory = buf;
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -444,7 +450,10 @@ namespace dtUtil
          }
          char buf[512];
          char* bufAddress = getcwd(buf, 512);
-         assert(bufAddress==buf);
+         if( bufAddress != buf )
+         {
+            EXCEPT( FileExceptionEnum::IOException, std::string("Cannot get current working directory") );
+         }
          result = buf;
       }
       catch (const dtUtil::Exception& ex)
