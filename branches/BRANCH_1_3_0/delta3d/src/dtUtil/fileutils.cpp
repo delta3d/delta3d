@@ -48,9 +48,9 @@ _CRTIMP extern int errno;
 #include <osg/Notify>
 #include <stack>
 
-#include "dtUtil/fileutils.h"
+#include <dtUtil/fileutils.h>
 #include <dtCore/globals.h>
-#include "dtUtil/stringutils.h"
+#include <dtUtil/stringutils.h>
 
 #include <string.h>
 #include <sys/types.h>
@@ -58,6 +58,8 @@ _CRTIMP extern int errno;
 #include <iostream>
 
 #include <osgDB/FileNameUtils>
+
+#include <cassert>
 
 #ifndef S_ISREG
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
@@ -235,7 +237,8 @@ namespace dtUtil
                   int readCount = fread(buffer, 1, 4096, pSrcFile );
                   if (readCount > 0) 
                   {
-                     fwrite(buffer, 1, readCount, pDestFile );
+                     size_t numWritten = fwrite(buffer, 1, readCount, pDestFile );
+                     assert(numWritten==readCount);
                      i += readCount;
                   }
                }
@@ -386,7 +389,8 @@ namespace dtUtil
          EXCEPT(FileExceptionEnum::FileNotFound, std::string("Cannot open directory ") + path);
       }
       char buf[512];
-      getcwd(buf, 512);
+      char* bufAddress = getcwd(buf, 512);
+      assert(buf==bufAddress);
       mCurrentDirectory = buf;
 
       if (mLogger->IsLevelEnabled(dtUtil::Log::LOG_DEBUG))
@@ -439,7 +443,8 @@ namespace dtUtil
             EXCEPT(FileExceptionEnum::FileNotFound, std::string("Cannot open directory ") + relativePath);
          }
          char buf[512];
-         getcwd(buf, 512);
+         char* bufAddress = getcwd(buf, 512);
+         assert(bufAddress==buf);
          result = buf;
       }
       catch (const dtUtil::Exception& ex)
