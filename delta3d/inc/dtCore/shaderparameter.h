@@ -27,11 +27,13 @@
 #include <osg/Referenced>
 #include <string>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class StateSet;
    class Uniform;
 }
+/// @endcond
 
 namespace dtCore
 {

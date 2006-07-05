@@ -30,10 +30,12 @@
 #include <map>
 #include <string>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Node;
 }
+/// @endcond
 
 namespace dtCore
 {
