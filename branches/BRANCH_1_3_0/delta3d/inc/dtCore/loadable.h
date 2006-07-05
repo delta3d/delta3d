@@ -4,10 +4,13 @@
 #include <string>
 #include <dtCore/export.h>
 
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace osg
 {
    class Node;
 }
+/// @endcond
+
 
 namespace dtCore
 {   

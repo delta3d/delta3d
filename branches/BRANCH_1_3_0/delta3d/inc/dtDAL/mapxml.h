@@ -47,6 +47,7 @@
 
 // Default iimplementation of char_traits<XMLCh>, needed for gcc3.3
 #if (__GNUC__ == 3 && __GNUC_MINOR__ <= 3)
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
 namespace std
 {
    template<>
@@ -78,6 +79,7 @@ namespace std
 
    };
 }
+/// @endcond
 #endif
 
 namespace xerces_dt = XERCES_CPP_NAMESPACE;
