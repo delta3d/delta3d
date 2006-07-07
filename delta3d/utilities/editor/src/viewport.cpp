@@ -239,34 +239,36 @@ namespace dtEditQt
                    "because the current scene view is invalid.");
 
         osg::StateAttribute::GLModeValue turnOn =
-                osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON;
+                osg::StateAttribute::OVERRIDE | 
+                osg::StateAttribute::ON;
         osg::StateAttribute::GLModeValue turnOff =
-                osg::StateAttribute::OVERRIDE | osg::StateAttribute::OFF;
+                osg::StateAttribute::OVERRIDE | 
+                osg::StateAttribute::OFF;
 
         osg::PolygonMode *pm = dynamic_cast<osg::PolygonMode *>(
                 this->globalStateSet->getAttribute(osg::StateAttribute::POLYGONMODE));
 
-        if (this->renderStyle == &RenderStyle::WIREFRAME) {
+        if (*this->renderStyle == RenderStyle::WIREFRAME) {
             for (i=0; i<numTextureUnits; i++)
                 this->globalStateSet->setTextureMode(i,GL_TEXTURE_2D,turnOff);
             this->globalStateSet->setMode(GL_LIGHTING,turnOff);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
         }
-        else if (this->renderStyle == &RenderStyle::TEXTURED) {
+        else if (*this->renderStyle == RenderStyle::TEXTURED) {
             for (i=0; i<numTextureUnits; i++)
-                this->globalStateSet->setTextureMode(i,GL_TEXTURE_2D,turnOn);
+                this->globalStateSet->removeTextureMode(i,GL_TEXTURE_2D);
             this->globalStateSet->setMode(GL_LIGHTING,turnOff);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
         }
-        else if (this->renderStyle == &RenderStyle::LIT) {
+        else if (*this->renderStyle == RenderStyle::LIT) {
             for (i=0; i<numTextureUnits; i++)
                 this->globalStateSet->setTextureMode(i,GL_TEXTURE_2D,turnOff);
             this->globalStateSet->setMode(GL_LIGHTING,turnOn);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
         }
-        else if (this->renderStyle == &RenderStyle::LIT_AND_TEXTURED) {
+        else if (*this->renderStyle == RenderStyle::LIT_AND_TEXTURED) {
             for (i=0; i<numTextureUnits; i++)
-                this->globalStateSet->setTextureMode(i,GL_TEXTURE_2D,turnOn);
+                this->globalStateSet->removeTextureMode(i,GL_TEXTURE_2D);
             this->globalStateSet->setMode(GL_LIGHTING,turnOn);
             pm->setMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::FILL);
         }
