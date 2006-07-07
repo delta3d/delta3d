@@ -24,21 +24,33 @@ class KeyboardListenerWrap : public KeyboardListener, public wrapper<KeyboardLis
                                  Producer::KeyboardKey key,
                                  Producer::KeyCharacter character )
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleKeyPressed" ).ptr(), boost::ref(keyboard), key, character );
+      #else
       return this->get_override( "HandleKeyPressed" )( boost::ref(keyboard), key, character );
+      #endif
    }
    
    virtual bool HandleKeyReleased(const Keyboard* keyboard, 
                                   Producer::KeyboardKey key,
                                   Producer::KeyCharacter character )
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleKeyReleased" ).ptr(), boost::ref(keyboard), key, character );
+      #else
       return this->get_override( "HandleKeyReleased" )( boost::ref(keyboard), key, character );
+      #endif
    }
    
    virtual bool HandleKeyTyped(const Keyboard* keyboard, 
                                Producer::KeyboardKey key,
                                Producer::KeyCharacter character )
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleKeyTyped" ).ptr(), boost::ref(keyboard), key, character );
+      #else
       return this->get_override( "HandleKeyTyped" )( boost::ref(keyboard), key, character );
+      #endif
    }
 };
 

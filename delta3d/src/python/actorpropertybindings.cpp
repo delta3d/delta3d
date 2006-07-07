@@ -1,6 +1,5 @@
 #include <python/dtpython.h>
 #include <dtDAL/datatype.h>
-//#include <dtDAL/actorproxy.h>
 #include <dtDAL/actorproperty.h>
 #include <dtDAL/enginepropertytypes.h>
 #include <boost/python/register_ptr_to_python.hpp>
@@ -11,11 +10,26 @@ using namespace dtDAL;
 
 class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
 {
+   protected:
+
+   ActorPropertyWrap(const std::string &name,
+                     const std::string &label,
+                     const std::string &desc,
+                     const std::string &groupName,
+                     bool  readOnly = false) :
+      ActorProperty(name,label,desc,groupName,readOnly)
+   {
+   }
+
+   virtual ~ActorPropertyWrap()
+   {
+   }
+   
    public:
 
       DataType& GetPropertyType() const
       {
-         #if defined( _MSC_VER ) && ( _MSC_VER == 1310 )
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
          return call<DataType&>( this->get_override("GetPropertyType").ptr() );
          #else
          return this->get_override( "GetPropertyType" )();
@@ -24,17 +38,29 @@ class ActorPropertyWrap : public ActorProperty, public wrapper<ActorProperty>
 
       void CopyFrom( ActorProperty* otherProp )
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( this->get_override("GetPropertyType").ptr(), otherProp );
+         #else
          this->get_override( "GetPropertyType" )( otherProp );
+         #endif
       }
    	
       bool SetStringValue( const std::string& value )
 	   {
-		   return this->get_override( "SetStringValue" )(value);  
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( this->get_override("SetStringValue").ptr(), value );         
+         #else
+		   return this->get_override( "SetStringValue" )(value);
+         #endif
 	   }
 
       const std::string GetStringValue()
       {
-		   return this->get_override("GetStringValue")();  
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<const std::string&>( this->get_override("GetStringValue").ptr() );
+         #else
+		   return this->get_override("GetStringValue")();
+         #endif
 	   }
 };
 

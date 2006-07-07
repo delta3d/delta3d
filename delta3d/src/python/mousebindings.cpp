@@ -22,32 +22,56 @@ class MouseListenerWrap : public MouseListener, public wrapper<MouseListener>
    
    bool HandleButtonPressed(const Mouse* mouse, Mouse::MouseButton button)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleButtonPressed" ).ptr(), boost::ref(mouse), button );
+      #else
       return this->get_override( "HandleButtonPressed" )( boost::ref(mouse), button );
+      #endif
    }
    
    bool HandleButtonReleased(const Mouse* mouse, Mouse::MouseButton button)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleButtonReleased" ).ptr(), boost::ref(mouse), button );
+      #else
       return this->get_override( "HandleButtonReleased" )( boost::ref(mouse), button );
+      #endif
    }
    
    bool HandleButtonClicked(const Mouse* mouse, Mouse::MouseButton button, int clickCount)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleButtonClicked" ).ptr(), boost::ref(mouse), button, clickCount );
+      #else
       return this->get_override( "HandleButtonClicked" )( boost::ref(mouse), button, clickCount );
+      #endif
    }
    
    bool HandleMouseMoved(const Mouse* mouse, float x, float y)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleMouseMoved" ).ptr(), boost::ref(mouse), x, y );
+      #else
       return this->get_override( "HandleMouseMoved" )( boost::ref(mouse), x, y );
+      #endif
    }
    
    bool HandleMouseDragged(const Mouse* mouse, float x, float y)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleMouseDragged" ).ptr(), boost::ref(mouse), x, y );
+      #else
       return this->get_override( "HandleMouseDragged" )( boost::ref(mouse), x, y );
+      #endif
    }
    
    bool HandleMouseScrolled(const Mouse* mouse, int delta)
    {
+      #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+      return call<bool>( this->get_override( "HandleMouseScrolled" ).ptr(), boost::ref(mouse), delta );
+      #else
       return this->get_override( "HandleMouseScrolled" )( boost::ref(mouse), delta );
+      #endif
    }
 };
 

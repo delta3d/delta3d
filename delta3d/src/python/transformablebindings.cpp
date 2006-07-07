@@ -17,9 +17,16 @@ public:
    {
       if( override PrePhysicsStepUpdate = this->get_override("PrePhysicsStepUpdate") )
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( PrePhysicsStepUpdate.ptr() );
+         #else
          PrePhysicsStepUpdate();
+         #endif
       }
-      Transformable::PrePhysicsStepUpdate();
+      else
+      {
+         Transformable::PrePhysicsStepUpdate();
+      }
    }
 
    void DefaultPrePhysicsStepUpdate()
@@ -31,8 +38,8 @@ public:
    {
       if( override FilterContact = this->get_override("FilterContact") )
       {
-         #if defined(_MSC_VER) && _MSC_VER == 1400
-         return call<bool>(FilterContact(contact,collider));
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         return call<bool>( FilterContact.ptr(), contact, collider );
          #else
          return FilterContact(contact, collider);
          #endif
@@ -49,9 +56,16 @@ public:
    {
       if( override PostPhysicsStepUpdate = this->get_override("PostPhysicsStepUpdate") )
       {
+         #if defined( _MSC_VER ) && ( _MSC_VER == 1400 ) // MSVC 8.0
+         call<void>( PostPhysicsStepUpdate.ptr() );
+         #else
          PostPhysicsStepUpdate();
+         #endif
       }
-      Transformable::PostPhysicsStepUpdate();
+      else
+      {
+         Transformable::PostPhysicsStepUpdate();
+      }
    }
 
    void DefaultPostPhysicsStepUpdate()
